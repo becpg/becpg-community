@@ -61,7 +61,7 @@ import fr.becpg.repo.web.scripts.WebscriptHelper;
  */
 public class DockBarWebScript extends AbstractWebScript {
 
-	private final static Log logger = LogFactory.getLog(DockBarWebScript.class);
+	private static final Log logger = LogFactory.getLog(DockBarWebScript.class);
 
 	private static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
 	
@@ -71,7 +71,7 @@ public class DockBarWebScript extends AbstractWebScript {
 
 	private static final String PREF_DOCKBAR_HISTORY = "fr.becpg.DockBarHistory";
 
-	private final static int DOCKBAR_SIZE = 6;
+	private static final  int DOCKBAR_SIZE = 6;
 
 	private AttributeExtractorService attributeExtractorService;
 
@@ -144,7 +144,7 @@ public class DockBarWebScript extends AbstractWebScript {
 			LinkedList<NodeRef> elements = new LinkedList<>();
 			Map<NodeRef, String> items = new HashMap<>();
 			
-			if (nodeRefs != null && nodeRefs.length() > 0) {
+			if (nodeRefs != null && !nodeRefs.isEmpty()) {
 				String[] splitted = nodeRefs.split(",");
 				
 				boolean isFirst = true;
@@ -188,7 +188,7 @@ public class DockBarWebScript extends AbstractWebScript {
 
 					nodeRefs = "";
 					for (NodeRef nodeRef : elements) {
-						if (nodeRefs.length() > 0) {
+						if (!nodeRefs.isEmpty()) {
 							nodeRefs += ",";
 						}
 						nodeRefs += nodeRef.toString() + DELIMITER + items.get(nodeRef) ;

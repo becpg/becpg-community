@@ -36,7 +36,7 @@ public class CharactTestHelper {
 	
 	/**
 	 * Generic method to get or create a node based on the provided path, type, and properties.
-	 * 
+	 *
 	 * @param nodeService the NodeService instance
 	 * @param path the path to the parent folder
 	 * @param nodeName the name of the node to find or create
@@ -184,6 +184,14 @@ public class CharactTestHelper {
 				properties);
 	}
 
+	/**
+	 * <p>getOrCreateClaim.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param code a {@link java.lang.String} object
+	 * @param name a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public static NodeRef getOrCreateClaim(NodeService nodeService, String code, String name) {
 		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
@@ -248,6 +256,13 @@ public class CharactTestHelper {
 				PLMModel.TYPE_TOX, properties);
 	}
 
+	/**
+	 * <p>getOrCreateDocumentType.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param name a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public static NodeRef getOrCreateDocumentType(NodeService nodeService, String name) {
 		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);

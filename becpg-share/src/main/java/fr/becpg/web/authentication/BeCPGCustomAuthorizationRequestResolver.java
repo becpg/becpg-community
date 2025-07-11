@@ -11,6 +11,11 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequ
 
 import jakarta.servlet.http.HttpServletRequest;
 
+/**
+ * <p>BeCPGCustomAuthorizationRequestResolver class.</p>
+ *
+ * @author matthieu
+ */
 public class BeCPGCustomAuthorizationRequestResolver implements OAuth2AuthorizationRequestResolver
 {
 
@@ -18,6 +23,13 @@ public class BeCPGCustomAuthorizationRequestResolver implements OAuth2Authorizat
     private AIMSConfig aimsConfig;
     private static final  String AUDIENCE="audience";
 
+    /**
+     * <p>Constructor for BeCPGCustomAuthorizationRequestResolver.</p>
+     *
+     * @param repo a {@link org.springframework.security.oauth2.client.registration.ClientRegistrationRepository} object
+     * @param authorizationRequestBaseUri a {@link java.lang.String} object
+     * @param aimsConfig a {@link org.alfresco.web.site.servlet.config.AIMSConfig} object
+     */
     public BeCPGCustomAuthorizationRequestResolver(ClientRegistrationRepository repo, String authorizationRequestBaseUri,
                                               AIMSConfig aimsConfig)
     {
@@ -25,6 +37,7 @@ public class BeCPGCustomAuthorizationRequestResolver implements OAuth2Authorizat
         this.aimsConfig = aimsConfig;
     }
 
+    /** {@inheritDoc} */
     @Override
     public OAuth2AuthorizationRequest resolve(HttpServletRequest httpServletRequest)
     {
@@ -36,6 +49,7 @@ public class BeCPGCustomAuthorizationRequestResolver implements OAuth2Authorizat
         return oAuth2AuthorizationRequest;
     }
 
+    /** {@inheritDoc} */
     @Override
     public OAuth2AuthorizationRequest resolve(HttpServletRequest httpServletRequest, String clientRegistrationId)
     {

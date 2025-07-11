@@ -160,8 +160,8 @@ public class FormulationIT extends AbstractFinishedProductTest {
 							ingListDataItem1.getBioOrigin().contains(bioOrigin1));
 					assertEquals("ing1.getBioOrigin() doesn't contain bio2, actual values: " + trace1, false,
 							ingListDataItem1.getBioOrigin().contains(bioOrigin2));
-					assertEquals("ing1.getIsGMO() is false, actual values: " + trace1, true, ingListDataItem1.getIsGMO().booleanValue());
-					assertEquals("ing1.getIsGMO() is false, actual values: " + trace1, true, ingListDataItem1.getIsIonized().booleanValue());
+					assertEquals("ing1.getIsGMO() is false, actual values: " + trace1, true, Boolean.TRUE.equals(ingListDataItem1.getIsGMO()));
+					assertEquals("ing1.getIsGMO() is false, actual values: " + trace1, true, Boolean.TRUE.equals(ingListDataItem1.getIsIonized()));
 				}
 				// ing: ing2 - qty: 24.074074074074076 - geo origins:
 				// geoOrigin1, geoOrigin2, - bio origins: bioOrigin1,
@@ -177,8 +177,8 @@ public class FormulationIT extends AbstractFinishedProductTest {
 							ingListDataItem1.getBioOrigin().contains(bioOrigin1));
 					assertEquals("ing2.getBioOrigin() contains bio2, actual values: " + trace1, true,
 							ingListDataItem1.getBioOrigin().contains(bioOrigin2));
-					assertEquals("ing2.getIsGMO() is false, actual values: " + trace1, false, ingListDataItem1.getIsGMO().booleanValue());
-					assertEquals("ing2.getIsGMO() is false, actual values: " + trace1, false, ingListDataItem1.getIsIonized().booleanValue());
+					assertEquals("ing2.getIsGMO() is false, actual values: " + trace1, false, Boolean.TRUE.equals(ingListDataItem1.getIsGMO()));
+					assertEquals("ing2.getIsGMO() is false, actual values: " + trace1, false, Boolean.TRUE.equals(ingListDataItem1.getIsIonized()));
 				}
 				// ing: ing3 - qty: 55.55555555555556 - geo origins: geoOrigin2,
 				// - bio origins: bioOrigin1, bioOrigin2, is gmo: true
@@ -193,8 +193,8 @@ public class FormulationIT extends AbstractFinishedProductTest {
 							ingListDataItem1.getBioOrigin().contains(bioOrigin1));
 					assertEquals("ing3.getBioOrigin() contains bio2, actual values: " + trace1, true,
 							ingListDataItem1.getBioOrigin().contains(bioOrigin2));
-					assertEquals("ing3.getIsGMO() is false, actual values: " + trace1, true, ingListDataItem1.getIsGMO().booleanValue());
-					assertEquals("ing3.getIsGMO() is false, actual values: " + trace1, true, ingListDataItem1.getIsIonized().booleanValue());
+					assertEquals("ing3.getIsGMO() is false, actual values: " + trace1, true, Boolean.TRUE.equals(ingListDataItem1.getIsGMO()));
+					assertEquals("ing3.getIsGMO() is false, actual values: " + trace1, true, Boolean.TRUE.equals(ingListDataItem1.getIsIonized()));
 				}
 				// ing: ing4 - qty: 11.11111111111111 - geo origins: geoOrigin2,
 				// - bio origins: bioOrigin1, bioOrigin2, is gmo: true
@@ -209,8 +209,8 @@ public class FormulationIT extends AbstractFinishedProductTest {
 							ingListDataItem1.getBioOrigin().contains(bioOrigin1));
 					assertEquals("ing3.getBioOrigin() contains bio2, actual values: " + trace1, true,
 							ingListDataItem1.getBioOrigin().contains(bioOrigin2));
-					assertEquals("ing3.getIsGMO() is false, actual values: " + trace1, true, ingListDataItem1.getIsGMO().booleanValue());
-					assertEquals("ing3.getIsGMO() is false, actual values: " + trace1, true, ingListDataItem1.getIsIonized().booleanValue());
+					assertEquals("ing3.getIsGMO() is false, actual values: " + trace1, true, Boolean.TRUE.equals(ingListDataItem1.getIsGMO()));
+					assertEquals("ing3.getIsGMO() is false, actual values: " + trace1, true, Boolean.TRUE.equals(ingListDataItem1.getIsIonized()));
 				}
 			}
 
@@ -289,8 +289,8 @@ public class FormulationIT extends AbstractFinishedProductTest {
 							ingListDataItem2.getBioOrigin().contains(bioOrigin1));
 					assertEquals("ing1.getBioOrigin() doesn't contain bio2, actual values: " + trace2, false,
 							ingListDataItem2.getBioOrigin().contains(bioOrigin2));
-					assertEquals("ing1.getIsGMO() is false, actual values: " + trace2, true, ingListDataItem2.getIsGMO().booleanValue());
-					assertEquals("ing1.getIsGMO() is false, actual values: " + trace2, true, ingListDataItem2.getIsIonized().booleanValue());
+					assertEquals("ing1.getIsGMO() is false, actual values: " + trace2, true, Boolean.TRUE.equals(ingListDataItem2.getIsGMO()));
+					assertEquals("ing1.getIsGMO() is false, actual values: " + trace2, true, Boolean.TRUE.equals(ingListDataItem2.getIsIonized()));
 				}
 				// ing: ing2 - qty: 24.074074074074076 - geo origins:
 				// geoOrigin1, geoOrigin2, - bio origins: bioOrigin1,
@@ -305,8 +305,8 @@ public class FormulationIT extends AbstractFinishedProductTest {
 							ingListDataItem2.getBioOrigin().contains(bioOrigin1));
 					assertEquals("ing2.getBioOrigin() contains bio2, actual values: " + trace2, true,
 							ingListDataItem2.getBioOrigin().contains(bioOrigin2));
-					assertEquals("ing2.getIsGMO() is false, actual values: " + trace2, false, ingListDataItem2.getIsGMO().booleanValue());
-					assertEquals("ing2.getIsGMO() is false, actual values: " + trace2, false, ingListDataItem2.getIsIonized().booleanValue());
+					assertEquals("ing2.getIsGMO() is false, actual values: " + trace2, false, Boolean.FALSE.equals(ingListDataItem2.getIsGMO()));
+					assertEquals("ing2.getIsGMO() is false, actual values: " + trace2, false, Boolean.FALSE.equals(ingListDataItem2.getIsIonized()));
 				}
 				// ing: ing3 - qty: 55.55555555555556 - geo origins: geoOrigin2,
 				// - bio origins: bioOrigin1, bioOrigin2, is gmo: true
@@ -320,8 +320,8 @@ public class FormulationIT extends AbstractFinishedProductTest {
 							ingListDataItem2.getBioOrigin().contains(bioOrigin1));
 					assertEquals("ing3.getBioOrigin() contains bio2, actual values: " + trace2, true,
 							ingListDataItem2.getBioOrigin().contains(bioOrigin2));
-					assertEquals("ing3.getIsGMO() is false, actual values: " + trace2, true, ingListDataItem2.getIsGMO().booleanValue());
-					assertEquals("ing3.getIsGMO() is false, actual values: " + trace2, true, ingListDataItem2.getIsIonized().booleanValue());
+					assertEquals("ing3.getIsGMO() is false, actual values: " + trace2, true, Boolean.TRUE.equals(ingListDataItem2.getIsGMO()));
+					assertEquals("ing3.getIsGMO() is false, actual values: " + trace2, true, Boolean.TRUE.equals(ingListDataItem2.getIsIonized()));
 				}
 				// ing: ing4 - qty: 11.11111111111111 - geo origins: geoOrigin2,
 				// - bio origins: bioOrigin1, bioOrigin2, is gmo: true
@@ -335,8 +335,8 @@ public class FormulationIT extends AbstractFinishedProductTest {
 							ingListDataItem2.getBioOrigin().contains(bioOrigin1));
 					assertEquals("ing3.getBioOrigin() contains bio2, actual values: " + trace2, true,
 							ingListDataItem2.getBioOrigin().contains(bioOrigin2));
-					assertEquals("ing3.getIsGMO() is false, actual values: " + trace2, true, ingListDataItem2.getIsGMO().booleanValue());
-					assertEquals("ing3.getIsGMO() is false, actual values: " + trace2, true, ingListDataItem2.getIsIonized().booleanValue());
+					assertEquals("ing3.getIsGMO() is false, actual values: " + trace2, true, Boolean.TRUE.equals(ingListDataItem2.getIsGMO()));
+					assertEquals("ing3.getIsGMO() is false, actual values: " + trace2, true, Boolean.TRUE.equals(ingListDataItem2.getIsIonized()));
 				}
 			}
 
@@ -905,8 +905,8 @@ public class FormulationIT extends AbstractFinishedProductTest {
 				// allergen1 - voluntary: true - involuntary: false - voluntary
 				// sources:Raw material 1, Raw material 2 - involuntary sources:
 				if (allergenListDataItem1.getAllergen().equals(allergen1)) {
-					assertEquals("SF1 allergen1.getVoluntary().booleanValue()", true, allergenListDataItem1.getVoluntary().booleanValue());
-					assertEquals("SF1 allergen1.getInVoluntary().booleanValue()", false, allergenListDataItem1.getInVoluntary().booleanValue());
+					assertEquals("SF1 allergen1.getVoluntary()", true, Boolean.TRUE.equals(allergenListDataItem1.getVoluntary()));
+					assertEquals("SF1 allergen1.getInVoluntary()", false, Boolean.TRUE.equals(allergenListDataItem1.getInVoluntary()));
 					assertEquals("SF1 allergen1.getVoluntarySources()", true,
 							allergenListDataItem1.getVoluntarySources().contains(rawMaterial1NodeRef));
 					assertEquals("SF1 allergen1.getVoluntarySources()", true,
@@ -916,8 +916,8 @@ public class FormulationIT extends AbstractFinishedProductTest {
 				// allergen2 - voluntary: false - involuntary: true - voluntary
 				// sources: - involuntary sources:Raw material 2,
 				if (allergenListDataItem1.getAllergen().equals(allergen2)) {
-					assertEquals("SF1 allergen2.getVoluntary().booleanValue() ", false, allergenListDataItem1.getVoluntary().booleanValue());
-					assertEquals("SF1 allergen2.getInVoluntary().booleanValue() ", true, allergenListDataItem1.getInVoluntary().booleanValue());
+					assertEquals("SF1 allergen2.getVoluntary() ", false, Boolean.TRUE.equals(allergenListDataItem1.getVoluntary()));
+					assertEquals("SF1 allergen2.getInVoluntary() ", true, Boolean.TRUE.equals(allergenListDataItem1.getInVoluntary()));
 					assertEquals("SF1 allergen2.getInVoluntarySources()", true,
 							allergenListDataItem1.getInVoluntarySources().contains(rawMaterial2NodeRef));
 					assertEquals("SF1 allergen2.getVoluntarySources()", 0, allergenListDataItem1.getVoluntarySources().size());
@@ -926,18 +926,18 @@ public class FormulationIT extends AbstractFinishedProductTest {
 				// voluntary sources:Raw material 3, - involuntary sources:Raw
 				// material 3,
 				if (allergenListDataItem1.getAllergen().equals(allergen3)) {
-					assertEquals("SF1 allergen3.getVoluntary().booleanValue() ", false, allergenListDataItem1.getVoluntary().booleanValue());
-					assertEquals("SF1 allergen3.getInVoluntary().booleanValue() ", false, allergenListDataItem1.getInVoluntary().booleanValue());
+					assertEquals("SF1 allergen3.getVoluntary() ", false, Boolean.TRUE.equals(allergenListDataItem1.getVoluntary()));
+					assertEquals("SF1 allergen3.getInVoluntary() ", false, Boolean.TRUE.equals(allergenListDataItem1.getInVoluntary()));
 					assertEquals("SF1 allergen3.getVoluntarySources()", 0, allergenListDataItem1.getVoluntarySources().size());
 					assertEquals("SF1 allergen3.getInVoluntarySources() ", 0, allergenListDataItem1.getInVoluntarySources().size());
 				}
 				// allergen4 - voluntary: false - involuntary: false - voluntary
 				// sources: - involuntary sources:
 				if (allergenListDataItem1.getAllergen().equals(allergen4)) {
-					assertEquals("SF1 allergen4.getVoluntary().booleanValue() == false, actual values: " + trace1, false,
-							allergenListDataItem1.getVoluntary().booleanValue());
-					assertEquals("SF1 allergen4.getInVoluntary().booleanValue() == false, actual values: " + trace1, false,
-							allergenListDataItem1.getInVoluntary().booleanValue());
+					assertEquals("SF1 allergen4.getVoluntary() == false, actual values: " + trace1, false,
+							Boolean.TRUE.equals(allergenListDataItem1.getVoluntary()));
+					assertEquals("SF1 allergen4.getInVoluntary() == false, actual values: " + trace1, false,
+							Boolean.TRUE.equals(allergenListDataItem1.getInVoluntary()));
 					assertEquals("SF1 allergen4.getVoluntarySources()", 0, allergenListDataItem1.getVoluntarySources().size());
 					assertEquals("SF1 allergen4.getInVoluntarySources()", 0, allergenListDataItem1.getInVoluntarySources().size());
 				}
@@ -967,8 +967,8 @@ public class FormulationIT extends AbstractFinishedProductTest {
 				// allergen1 - voluntary: true - involuntary: false - voluntary
 				// sources:Raw material 1, Raw material 2 - involuntary sources:
 				if (allergenListDataItem2.getAllergen().equals(allergen1)) {
-					assertEquals("SF2 allergen1.getVoluntary().booleanValue()", false, allergenListDataItem2.getVoluntary().booleanValue());
-					assertEquals("SF2 allergen1.getInVoluntary().booleanValue()", false, allergenListDataItem2.getInVoluntary().booleanValue());
+					assertEquals("SF2 allergen1.getVoluntary()", false, Boolean.TRUE.equals(allergenListDataItem2.getVoluntary()));
+					assertEquals("SF2 allergen1.getInVoluntary()", false, Boolean.TRUE.equals(allergenListDataItem2.getInVoluntary()));
 					assertEquals("SF2 allergen1.getVoluntarySources()", 0, allergenListDataItem2.getVoluntarySources().size());
 					assertEquals("SF2 allergen1.getVoluntarySources()", 0, allergenListDataItem2.getVoluntarySources().size());
 					assertEquals("SF2 allergen1.getInVoluntarySources()", 0, allergenListDataItem2.getInVoluntarySources().size());
@@ -976,8 +976,8 @@ public class FormulationIT extends AbstractFinishedProductTest {
 				// allergen2 - voluntary: false - involuntary: true - voluntary
 				// sources: - involuntary sources:Raw material 2,
 				if (allergenListDataItem2.getAllergen().equals(allergen2)) {
-					assertEquals("SF2 allergen2.getVoluntary().booleanValue() ", false, allergenListDataItem2.getVoluntary().booleanValue());
-					assertEquals("SF2 allergen2.getInVoluntary().booleanValue() ", false, allergenListDataItem2.getInVoluntary().booleanValue());
+					assertEquals("SF2 allergen2.getVoluntary() ", false, Boolean.TRUE.equals(allergenListDataItem2.getVoluntary()));
+					assertEquals("SF2 allergen2.getInVoluntary() ", false, Boolean.TRUE.equals(allergenListDataItem2.getInVoluntary()));
 					assertEquals("SF2 allergen2.getInVoluntarySources()", 0, allergenListDataItem2.getInVoluntarySources().size());
 					assertEquals("SF2 allergen2.getVoluntarySources()", 0, allergenListDataItem2.getVoluntarySources().size());
 				}
@@ -985,8 +985,8 @@ public class FormulationIT extends AbstractFinishedProductTest {
 				// voluntary sources:Raw material 3, - involuntary sources:Raw
 				// material 3,
 				if (allergenListDataItem2.getAllergen().equals(allergen3)) {
-					assertEquals("SF2 allergen3.getVoluntary().booleanValue() ", true, allergenListDataItem2.getVoluntary().booleanValue());
-					assertEquals("SF2 allergen3.getInVoluntary().booleanValue() ", true, allergenListDataItem2.getInVoluntary().booleanValue());
+					assertEquals("SF2 allergen3.getVoluntary() ", true, Boolean.TRUE.equals(allergenListDataItem2.getVoluntary()));
+					assertEquals("SF2 allergen3.getInVoluntary() ", true, Boolean.TRUE.equals(allergenListDataItem2.getInVoluntary()));
 					assertEquals("SF2 allergen3.getVoluntarySources()", true,
 							allergenListDataItem2.getVoluntarySources().contains(rawMaterial3NodeRef));
 					assertEquals("SF2 allergen3.getInVoluntarySources() ", true,
@@ -995,10 +995,10 @@ public class FormulationIT extends AbstractFinishedProductTest {
 				// allergen4 - voluntary: false - involuntary: false - voluntary
 				// sources: - involuntary sources:
 				if (allergenListDataItem2.getAllergen().equals(allergen4)) {
-					assertEquals("SF2 allergen4.getVoluntary().booleanValue() == false, actual values: " + trace2, false,
-							allergenListDataItem2.getVoluntary().booleanValue());
-					assertEquals("SF2 allergen4.getInVoluntary().booleanValue() == false, actual values: " + trace2, false,
-							allergenListDataItem2.getInVoluntary().booleanValue());
+					assertEquals("SF2 allergen4.getVoluntary() == false, actual values: " + trace2, false,
+							Boolean.TRUE.equals(allergenListDataItem2.getVoluntary()));
+					assertEquals("SF2 allergen4.getInVoluntary() == false, actual values: " + trace2, false,
+							Boolean.TRUE.equals(allergenListDataItem2.getInVoluntary()));
 					assertEquals("SF2 allergen4.getVoluntarySources()", 0, allergenListDataItem2.getVoluntarySources().size());
 					assertEquals("SF1 allergen4.getInVoluntarySources()", 0, allergenListDataItem2.getInVoluntarySources().size());
 				}
@@ -1027,10 +1027,10 @@ public class FormulationIT extends AbstractFinishedProductTest {
 				// allergen1 - voluntary: true - involuntary: false - voluntary
 				// sources:Raw material 1, Raw material 2 - involuntary sources:
 				if (allergenListDataItem3.getAllergen().equals(allergen1)) {
-					assertEquals("allergen1.getVoluntary().booleanValue() == true, actual values: " + trace3, true,
-							allergenListDataItem3.getVoluntary().booleanValue());
-					assertEquals("allergen1.getInVoluntary().booleanValue() == false, actual values: " + trace3, false,
-							allergenListDataItem3.getInVoluntary().booleanValue());
+					assertEquals("allergen1.getVoluntary() == true, actual values: " + trace3, true,
+							Boolean.TRUE.equals(allergenListDataItem3.getVoluntary()));
+					assertEquals("allergen1.getInVoluntary() == false, actual values: " + trace3, false,
+							Boolean.TRUE.equals(allergenListDataItem3.getInVoluntary()));
 					assertEquals("allergen1.getVoluntarySources() contains Raw material 1, actual values: " + trace3, true,
 							allergenListDataItem3.getVoluntarySources().contains(rawMaterial1NodeRef));
 					assertEquals("allergen1.getVoluntarySources() contains Raw material 2, actual values: " + trace3, true,
@@ -1041,10 +1041,10 @@ public class FormulationIT extends AbstractFinishedProductTest {
 				// allergen2 - voluntary: false - involuntary: true - voluntary
 				// sources: - involuntary sources:Raw material 2,
 				if (allergenListDataItem3.getAllergen().equals(allergen2)) {
-					assertEquals("allergen2.getVoluntary().booleanValue() == false, actual values: " + trace3, false,
-							allergenListDataItem3.getVoluntary().booleanValue());
-					assertEquals("allergen2.getInVoluntary().booleanValue() == true, actual values: " + trace3, true,
-							allergenListDataItem3.getInVoluntary().booleanValue());
+					assertEquals("allergen2.getVoluntary() == false, actual values: " + trace3, false,
+							Boolean.TRUE.equals(allergenListDataItem3.getVoluntary()));
+					assertEquals("allergen2.getInVoluntary() == true, actual values: " + trace3, true,
+							Boolean.TRUE.equals(allergenListDataItem3.getInVoluntary()));
 					assertEquals("allergen2.getInVoluntarySources() contains Raw material 2, actual values: " + trace3, true,
 							allergenListDataItem3.getInVoluntarySources().contains(rawMaterial2NodeRef));
 					assertEquals("allergen2.getVoluntarySources() is empty, actual values: " + trace3, 0,
@@ -1054,10 +1054,10 @@ public class FormulationIT extends AbstractFinishedProductTest {
 				// voluntary sources:Raw material 3, - involuntary sources:Raw
 				// material 3,
 				if (allergenListDataItem3.getAllergen().equals(allergen3)) {
-					assertEquals("allergen3.getVoluntary().booleanValue() == true, actual values: " + trace3, true,
-							allergenListDataItem3.getVoluntary().booleanValue());
-					assertEquals("allergen3.getInVoluntary().booleanValue() == true, actual values: " + trace3, true,
-							allergenListDataItem3.getInVoluntary().booleanValue());
+					assertEquals("allergen3.getVoluntary() == true, actual values: " + trace3, true,
+							Boolean.TRUE.equals(allergenListDataItem3.getVoluntary()));
+					assertEquals("allergen3.getInVoluntary() == true, actual values: " + trace3, true,
+							Boolean.TRUE.equals(allergenListDataItem3.getInVoluntary()));
 					assertEquals("allergen3.getVoluntarySources() contains Raw material 3, actual values: " + trace3, true,
 							allergenListDataItem3.getVoluntarySources().contains(rawMaterial3NodeRef));
 					assertEquals("allergen3.getInVoluntarySources() contains Raw material 3, actual values: " + trace3, true,
@@ -1066,10 +1066,10 @@ public class FormulationIT extends AbstractFinishedProductTest {
 				// allergen4 - voluntary: false - involuntary: false - voluntary
 				// sources: - involuntary sources:
 				if (allergenListDataItem3.getAllergen().equals(allergen4)) {
-					assertEquals("allergen4.getVoluntary().booleanValue() == false, actual values: " + trace3, false,
-							allergenListDataItem3.getVoluntary().booleanValue());
-					assertEquals("allergen4.getInVoluntary().booleanValue() == false, actual values: " + trace3, false,
-							allergenListDataItem3.getInVoluntary().booleanValue());
+					assertEquals("allergen4.getVoluntary() == false, actual values: " + trace3, false,
+							Boolean.TRUE.equals(allergenListDataItem3.getVoluntary()));
+					assertEquals("allergen4.getInVoluntary() == false, actual values: " + trace3, false,
+							Boolean.TRUE.equals(allergenListDataItem3.getInVoluntary()));
 					assertEquals("allergen4.getVoluntarySources() is empty, actual values: " + trace3, 0,
 							allergenListDataItem3.getVoluntarySources().size());
 					assertEquals("allergen4.getInVoluntarySources() is empty, actual values: " + trace3, 0,
@@ -1260,10 +1260,10 @@ public class FormulationIT extends AbstractFinishedProductTest {
 				// allergen1 - voluntary: true - involuntary: false - voluntary
 				// sources:Raw material 1, Raw material 2 - involuntary sources:
 				if (allergenListDataItem.getAllergen().equals(allergen1)) {
-					assertEquals("allergen1.getVoluntary().booleanValue() == true, actual values: " + trace3, true,
-							allergenListDataItem.getVoluntary().booleanValue());
-					assertEquals("allergen1.getInVoluntary().booleanValue() == false, actual values: " + trace3, false,
-							allergenListDataItem.getInVoluntary().booleanValue());
+					assertEquals("allergen1.getVoluntary() == true, actual values: " + trace3, true,
+							Boolean.TRUE.equals(allergenListDataItem.getVoluntary()));
+					assertEquals("allergen1.getInVoluntary() == false, actual values: " + trace3, false,
+							Boolean.TRUE.equals(allergenListDataItem.getInVoluntary()));
 					assertEquals("allergen1.getVoluntarySources() contains Raw material 1, actual values: " + trace3, true,
 							allergenListDataItem.getVoluntarySources().contains(rawMaterial1NodeRef));
 					assertEquals("allergen1.getVoluntarySources() contains Raw material 2, actual values: " + trace3, true,
@@ -1274,10 +1274,10 @@ public class FormulationIT extends AbstractFinishedProductTest {
 				// allergen2 - voluntary: false - involuntary: true - voluntary
 				// sources: - involuntary sources:Raw material 2,
 				if (allergenListDataItem.getAllergen().equals(allergen2)) {
-					assertEquals("allergen2.getVoluntary().booleanValue() == false, actual values: " + trace3, false,
-							allergenListDataItem.getVoluntary().booleanValue());
-					assertEquals("allergen2.getInVoluntary().booleanValue() == true, actual values: " + trace3, true,
-							allergenListDataItem.getInVoluntary().booleanValue());
+					assertEquals("allergen2.getVoluntary() == false, actual values: " + trace3, false,
+							Boolean.TRUE.equals(allergenListDataItem.getVoluntary()));
+					assertEquals("allergen2.getInVoluntary() == true, actual values: " + trace3, true,
+							Boolean.TRUE.equals(allergenListDataItem.getInVoluntary()));
 					assertEquals("allergen2.getInVoluntarySources() contains Raw material 2, actual values: " + trace3, true,
 							allergenListDataItem.getInVoluntarySources().contains(rawMaterial2NodeRef));
 					assertEquals("allergen2.getVoluntarySources() is empty, actual values: " + trace3, 0,
@@ -1287,10 +1287,10 @@ public class FormulationIT extends AbstractFinishedProductTest {
 				// voluntary sources:Raw material 3, - involuntary sources:Raw
 				// material 3,
 				if (allergenListDataItem.getAllergen().equals(allergen3)) {
-					assertEquals("allergen3.getVoluntary().booleanValue() == true, actual values: " + trace3, true,
-							allergenListDataItem.getVoluntary().booleanValue());
-					assertEquals("allergen3.getInVoluntary().booleanValue() == true, actual values: " + trace3, true,
-							allergenListDataItem.getInVoluntary().booleanValue());
+					assertEquals("allergen3.getVoluntary() == true, actual values: " + trace3, true,
+							Boolean.TRUE.equals(allergenListDataItem.getVoluntary()));
+					assertEquals("allergen3.getInVoluntary() == true, actual values: " + trace3, true,
+							Boolean.TRUE.equals(allergenListDataItem.getInVoluntary()));
 					assertEquals("allergen3.getVoluntarySources() contains Raw material 3, actual values: " + trace3, true,
 							allergenListDataItem.getVoluntarySources().contains(rawMaterial3NodeRef));
 					assertEquals("allergen3.getInVoluntarySources() contains Raw material 3, actual values: " + trace3, true,
@@ -1299,10 +1299,10 @@ public class FormulationIT extends AbstractFinishedProductTest {
 				// allergen4 - voluntary: false - involuntary: false - voluntary
 				// sources: - involuntary sources:
 				if (allergenListDataItem.getAllergen().equals(allergen4)) {
-					assertEquals("allergen4.getVoluntary().booleanValue() == false, actual values: " + trace3, false,
-							allergenListDataItem.getVoluntary().booleanValue());
-					assertEquals("allergen4.getInVoluntary().booleanValue() == false, actual values: " + trace3, false,
-							allergenListDataItem.getInVoluntary().booleanValue());
+					assertEquals("allergen4.getVoluntary() == false, actual values: " + trace3, false,
+							Boolean.TRUE.equals(allergenListDataItem.getVoluntary()));
+					assertEquals("allergen4.getInVoluntary() == false, actual values: " + trace3, false,
+							Boolean.TRUE.equals(allergenListDataItem.getInVoluntary()));
 					assertEquals("allergen4.getVoluntarySources() is empty, actual values: " + trace3, 0,
 							allergenListDataItem.getVoluntarySources().size());
 					assertEquals("allergen4.getInVoluntarySources() is empty, actual values: " + trace3, 0,
@@ -1357,9 +1357,9 @@ public class FormulationIT extends AbstractFinishedProductTest {
 							ingListDataItem.getBioOrigin().contains(bioOrigin1));
 					assertEquals("ing1.getBioOrigin() doesn't contain bio2, actual values: " + trace4, false,
 							ingListDataItem.getBioOrigin().contains(bioOrigin2));
-					assertEquals("ing1.getIsGMO() is false, actual values: " + trace4, true, ingListDataItem.getIsGMO().booleanValue());
-					assertEquals("ing1.getIsIonized().booleanValue() is false, actual values: " + trace4, true,
-							ingListDataItem.getIsIonized().booleanValue());
+					assertEquals("ing1.getIsGMO() is false, actual values: " + trace4, true, Boolean.TRUE.equals(ingListDataItem.getIsGMO()));
+					assertEquals("ing1.getIsIonized() is false, actual values: " + trace4, true,
+							Boolean.TRUE.equals(ingListDataItem.getIsIonized()));
 					checks++;
 				}
 				// ing2 - qty: 36.111111111111114 - geo origins: geoOrigin1,
@@ -1376,9 +1376,9 @@ public class FormulationIT extends AbstractFinishedProductTest {
 							ingListDataItem.getBioOrigin().contains(bioOrigin1));
 					assertEquals("ing2.getBioOrigin() contains bio2, actual values: " + trace4, true,
 							ingListDataItem.getBioOrigin().contains(bioOrigin2));
-					assertEquals("ing2.getIsGMO() is false, actual values: " + trace4, false, ingListDataItem.getIsGMO().booleanValue());
-					assertEquals("ing2.getIsIonized().booleanValue() is false, actual values: " + trace4, false,
-							ingListDataItem.getIsIonized().booleanValue());
+					assertEquals("ing2.getIsGMO() is false, actual values: " + trace4, false, Boolean.FALSE.equals(ingListDataItem.getIsGMO()));
+					assertEquals("ing2.getIsIonized() is false, actual values: " + trace4, false,
+							Boolean.FALSE.equals(ingListDataItem.getIsIonized()));
 					checks++;
 				}
 				// ing3 - qty: 50 - geo origins: geoOrigin2, - bio origins:
@@ -1393,9 +1393,9 @@ public class FormulationIT extends AbstractFinishedProductTest {
 							ingListDataItem.getBioOrigin().contains(bioOrigin1));
 					assertEquals("ing3.getBioOrigin() contains bio2, actual values: " + trace4, true,
 							ingListDataItem.getBioOrigin().contains(bioOrigin2));
-					assertEquals("ing3.getIsGMO() is false, actual values: " + trace4, true, ingListDataItem.getIsGMO().booleanValue());
-					assertEquals("ing3.getIsIonized().booleanValue() is false, actual values: " + trace4, true,
-							ingListDataItem.getIsIonized().booleanValue());
+					assertEquals("ing3.getIsGMO() is false, actual values: " + trace4, true, Boolean.TRUE.equals(ingListDataItem.getIsGMO()));
+					assertEquals("ing3.getIsIonized() is false, actual values: " + trace4, true,
+							Boolean.TRUE.equals(ingListDataItem.getIsIonized()));
 					checks++;
 				}
 			}

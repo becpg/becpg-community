@@ -21,6 +21,8 @@ package fr.becpg.repo.helper;
 
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -53,16 +55,24 @@ public class VariantAttributeExtractorPlugin extends AbstractExprNameExtractor {
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractPropName(QName type, NodeRef nodeRef) {
-		return (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+	@Nonnull
+	public String extractPropName(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
+		String name = (String)nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+		return name != null ? name : "";
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractMetadata(QName type, NodeRef nodeRef) {
+	@Nonnull
+	public String extractMetadata(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
 		Boolean isDefault = (Boolean) nodeService.getProperty(nodeRef, BeCPGModel.PROP_IS_DEFAULT_VARIANT);
-		String color =  (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_COLOR);
-		return (Boolean.TRUE.equals(isDefault) ? "variant-default": "variant")+(color!=null && color.indexOf("#")==0 ? color : "");
+		String color = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_COLOR);
+		StringBuilder result = new StringBuilder();
+		result.append(Boolean.TRUE.equals(isDefault) ? "variant-default" : "variant");
+		if (color != null && color.startsWith("#")) {
+		    result.append(color);
+		}
+		return result.toString();
 	}
 
 }

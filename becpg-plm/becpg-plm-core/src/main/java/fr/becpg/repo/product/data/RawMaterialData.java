@@ -22,7 +22,7 @@ import fr.becpg.repo.repository.annotation.MultiLevelLeaf;
  * <p>RawMaterialData class.</p>
  *
  * @author matthieu
- * @version : 
+ * @version :
  */
 @AlfType
 @AlfQname(qname = "bcpg:rawMaterial")
@@ -174,6 +174,12 @@ public class RawMaterialData extends ProductData {
 		return this;
 	}
 
+    /**
+     * <p>withLabelClaimList.</p>
+     *
+     * @param labelClaimList a {@link java.util.List} object
+     * @return a {@link fr.becpg.repo.product.data.RawMaterialData} object
+     */
     public RawMaterialData withLabelClaimList(List<LabelClaimListDataItem> labelClaimList) {
         setLabelClaimList(labelClaimList);
         return this;

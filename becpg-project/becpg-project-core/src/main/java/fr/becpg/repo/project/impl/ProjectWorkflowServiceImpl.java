@@ -392,7 +392,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 										authorityName = (String) nodeService.getProperty(newActor, ContentModel.PROP_USERNAME);
 									}
 									
-									if (!oldPooledActors.contains(newActor) && !authorityName.equals(oldOwnerUsername)) {
+									if ((oldPooledActors == null || !oldPooledActors.contains(newActor)) && !authorityName.equals(oldOwnerUsername)) {
 										newAuthorityNames.add(authorityName);
 									}
 									

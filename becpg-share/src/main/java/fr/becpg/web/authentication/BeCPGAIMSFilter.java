@@ -154,6 +154,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+/**
+ * <p>BeCPGAIMSFilter class.</p>
+ *
+ * @author matthieu
+ */
 public class BeCPGAIMSFilter implements Filter
 {
     private static final Log LOGGER = LogFactory.getLog(BeCPGAIMSFilter.class);
@@ -167,12 +172,19 @@ public class BeCPGAIMSFilter implements Filter
 
     private String principalAttribute;
 
+    /** Constant <code>ALFRESCO_ENDPOINT_ID="alfresco"</code> */
     public static final String ALFRESCO_ENDPOINT_ID = "alfresco";
+    /** Constant <code>ALFRESCO_API_ENDPOINT_ID="alfresco-api"</code> */
     public static final String ALFRESCO_API_ENDPOINT_ID = "alfresco-api";
+    /** Constant <code>SHARE_AIMS_LOGOUT="/page/aims/logout"</code> */
     public static final String SHARE_AIMS_LOGOUT = "/page/aims/logout";
+    /** Constant <code>SHARE_PAGE="/page"</code> */
     public static final String SHARE_PAGE = "/page";
+    /** Constant <code>DEFAULT_AUTHORIZATION_REQUEST_BASE_URI="/oauth2/authorization"</code> */
     public static final String DEFAULT_AUTHORIZATION_REQUEST_BASE_URI = "/oauth2/authorization";
+    /** Constant <code>SHARE_AIMS_LOGIN_PAGE="/page/aims-login"</code> */
     public static final String SHARE_AIMS_LOGIN_PAGE = "/page/aims-login";
+    /** Constant <code>SHARE_AIMS_DOLOGIN="/page/aims-dologin"</code> */
     public static final String SHARE_AIMS_DOLOGIN = "/page/aims-dologin";
 
     private ClientRegistrationRepository clientRegistrationRepository;
@@ -195,16 +207,18 @@ public class BeCPGAIMSFilter implements Filter
     private String audience;
     private String shareContext;
 
+    /**
+     * <p>Constructor for BeCPGAIMSFilter.</p>
+     */
     public BeCPGAIMSFilter()
     {
         this.authorizationRedirectStrategy = new DefaultRedirectStrategy();
     }
 
     /**
-     * Initialize the filter
+     * {@inheritDoc}
      *
-     * @param filterConfig
-     * @throws ServletException
+     * Initialize the filter
      */
     public void init(FilterConfig filterConfig) throws ServletException
     {
@@ -244,13 +258,7 @@ public class BeCPGAIMSFilter implements Filter
         }
     }
 
-    /**
-     * @param sreq  Servlet Request
-     * @param sres  Servlet Response
-     * @param chain Filter Chain
-     * @throws IOException
-     * @throws ServletException
-     */
+    /** {@inheritDoc} */
     public void doFilter(ServletRequest sreq, ServletResponse sres, FilterChain chain)
         throws IOException, ServletException
     {
@@ -504,6 +512,13 @@ public class BeCPGAIMSFilter implements Filter
 	/** Constant <code>PARAM_USERNAME="username"</code> */
 	protected static final String PARAM_USERNAME = "username";
 
+    /**
+     * <p>beforeSuccess.</p>
+     *
+     * @param request a {@link jakarta.servlet.http.HttpServletRequest} object
+     * @param response a {@link jakarta.servlet.http.HttpServletResponse} object
+     * @throws java.lang.Exception if any.
+     */
     protected void beforeSuccess(HttpServletRequest request, HttpServletResponse response) throws Exception
     {
         try
@@ -776,6 +791,10 @@ public class BeCPGAIMSFilter implements Filter
 
     /**
      * Performs the Authentication based on Authentication Request
+     *
+     * @param authentication a {@link org.springframework.security.core.Authentication} object
+     * @return a {@link org.springframework.security.core.Authentication} object
+     * @throws org.springframework.security.core.AuthenticationException if any.
      */
     public Authentication authenticate(Authentication authentication) throws AuthenticationException
     {

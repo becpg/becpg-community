@@ -22,6 +22,8 @@ package fr.becpg.repo.publication.helper;
 import java.util.Collection;
 import java.util.Collections;
 
+import javax.annotation.Nonnull;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -58,7 +60,7 @@ public class ChannelListAttributeExtractorPlugin implements AttributeExtractorPl
 	
 	/** {@inheritDoc} */
 	@Override
-	public String extractPropName(QName type, NodeRef nodeRef) {
+	public String extractPropName(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
 		
 		NodeRef channel = associationService.getTargetAssoc(nodeRef, PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL);
 		
@@ -73,14 +75,17 @@ public class ChannelListAttributeExtractorPlugin implements AttributeExtractorPl
 
 	/** {@inheritDoc} */
 	@Override
+	@Nonnull
 	public Collection<QName> getMatchingTypes() {
 		return Collections.singletonList(PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST);
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractMetadata(QName type, NodeRef nodeRef) {
-		return type.toPrefixString(namespaceService).split(":")[1];
+	@Nonnull
+	public String extractMetadata(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
+		String[] parts = type.toPrefixString(namespaceService).split(":");
+		return parts.length > 1 ? parts[1] : "";
 	}
 
 
