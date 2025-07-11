@@ -175,10 +175,10 @@ public class FormulationGenericRawMaterialIT extends AbstractFinishedProductTest
 			// voluntary sources:Raw material 1, Raw material 2 -
 			// involuntary sources:
 			if (allergenListDataItem.getAllergen().equals(allergen1)) {
-				assertEquals("allergen1.getVoluntary().booleanValue() == true, actual values: " + trace, true,
-						allergenListDataItem.getVoluntary().booleanValue());
-				assertEquals("allergen1.getInVoluntary().booleanValue() == false, actual values: " + trace, false,
-						allergenListDataItem.getInVoluntary().booleanValue());
+				assertEquals("allergen1.getVoluntary() == true, actual values: " + trace, true,
+						Boolean.TRUE.equals(allergenListDataItem.getVoluntary()));
+				assertEquals("allergen1.getInVoluntary() == false, actual values: " + trace, false,
+						Boolean.TRUE.equals(allergenListDataItem.getInVoluntary()));
 				assertEquals("allergen1.getVoluntarySources() contains Raw material 1, actual values: " + trace, true,
 						allergenListDataItem.getVoluntarySources().contains(rawMaterial1NodeRef));
 				assertEquals("allergen1.getVoluntarySources() contains Raw material 2, actual values: " + trace, true,
@@ -192,10 +192,10 @@ public class FormulationGenericRawMaterialIT extends AbstractFinishedProductTest
 			// allergen2 - voluntary: false - involuntary: true -
 			// voluntary sources: - involuntary sources:Raw material 2,
 			if (allergenListDataItem.getAllergen().equals(allergen2)) {
-				assertEquals("allergen2.getVoluntary().booleanValue() == false, actual values: " + trace, false,
-						allergenListDataItem.getVoluntary().booleanValue());
-				assertEquals("allergen2.getInVoluntary().booleanValue() == true, actual values: " + trace, true,
-						allergenListDataItem.getInVoluntary().booleanValue());
+				assertEquals("allergen2.getVoluntary() == false, actual values: " + trace, false,
+						Boolean.TRUE.equals(allergenListDataItem.getVoluntary()));
+				assertEquals("allergen2.getInVoluntary() == true, actual values: " + trace, true,
+						Boolean.TRUE.equals(allergenListDataItem.getInVoluntary()));
 				assertEquals("allergen2.getInVoluntarySources() contains Raw material 2, actual values: " + trace, true,
 						allergenListDataItem.getInVoluntarySources().contains(rawMaterial2NodeRef));
 				assertEquals("allergen2.getVoluntarySources() is empty, actual values: " + trace, 0,
@@ -208,10 +208,10 @@ public class FormulationGenericRawMaterialIT extends AbstractFinishedProductTest
 			// - voluntary sources:Raw material 3, - involuntary
 			// sources:Raw material 3,
 			if (allergenListDataItem.getAllergen().equals(allergen3)) {
-				assertEquals("allergen3.getVoluntary().booleanValue() == true, actual values: " + trace, false,
-						allergenListDataItem.getVoluntary().booleanValue());
-				assertEquals("allergen3.getInVoluntary().booleanValue() == true, actual values: " + trace, false,
-						allergenListDataItem.getInVoluntary().booleanValue());
+				assertEquals("allergen3.getVoluntary() == true, actual values: " + trace, false,
+						Boolean.TRUE.equals(allergenListDataItem.getVoluntary()));
+				assertEquals("allergen3.getInVoluntary() == true, actual values: " + trace, false,
+						Boolean.TRUE.equals(allergenListDataItem.getInVoluntary()));
 				assertEquals("allergen3.getVoluntarySources() is empty, actual values: " + trace, 0,
 						allergenListDataItem.getVoluntarySources().size());
 				assertEquals("allergen3.getInVoluntarySources() is empty, actual values: " + trace, 0,
@@ -222,10 +222,10 @@ public class FormulationGenericRawMaterialIT extends AbstractFinishedProductTest
 			// allergen4 - voluntary: false - involuntary: false -
 			// voluntary sources: - involuntary sources:
 			if (allergenListDataItem.getAllergen().equals(allergen4)) {
-				assertEquals("allergen4.getVoluntary().booleanValue() == false, actual values: " + trace, false,
-						allergenListDataItem.getVoluntary().booleanValue());
-				assertEquals("allergen4.getInVoluntary().booleanValue() == false, actual values: " + trace, false,
-						allergenListDataItem.getInVoluntary().booleanValue());
+				assertEquals("allergen4.getVoluntary() == false, actual values: " + trace, false,
+						Boolean.TRUE.equals(allergenListDataItem.getVoluntary()));
+				assertEquals("allergen4.getInVoluntary() == false, actual values: " + trace, false,
+						Boolean.TRUE.equals(allergenListDataItem.getInVoluntary()));
 				assertEquals("allergen4.getVoluntarySources() is empty, actual values: " + trace, 0,
 						allergenListDataItem.getVoluntarySources().size());
 				assertEquals("allergen4.getInVoluntarySources() is empty, actual values: " + trace, 0,

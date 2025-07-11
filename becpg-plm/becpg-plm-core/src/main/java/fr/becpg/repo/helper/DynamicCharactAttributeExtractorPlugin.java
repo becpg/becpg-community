@@ -22,6 +22,8 @@ package fr.becpg.repo.helper;
 import java.util.Collection;
 import java.util.Collections;
 
+import javax.annotation.Nonnull;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -52,6 +54,7 @@ public class DynamicCharactAttributeExtractorPlugin implements AttributeExtracto
 	
 	/** {@inheritDoc} */
 	@Override
+	@Nonnull
 	public Collection<QName> getMatchingTypes() {
 		return Collections.singletonList(PLMModel.TYPE_DYNAMICCHARACTLIST);
 	}
@@ -59,19 +62,22 @@ public class DynamicCharactAttributeExtractorPlugin implements AttributeExtracto
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractPropName(QName type, NodeRef nodeRef) {
-		String title =  (String) nodeService.getProperty(nodeRef, ContentModel.PROP_TITLE);
-		if(title == null || title.isBlank()) {
+	@Nonnull
+	public String extractPropName(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
+		String title = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_TITLE);
+		if (title == null || title.isBlank()) {
 			title = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_DYNAMICCHARACT_TITLE);
 		}
-		return title;
+		return title != null ? title : "";
 	}
 
 	
 	/** {@inheritDoc} */
 	@Override
-	public String extractMetadata(QName type, NodeRef nodeRef) {
-		return PLMModel.TYPE_DYNAMICCHARACTLIST.toPrefixString(namespaceService).split(":")[1];
+	@Nonnull
+	public String extractMetadata(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
+		String[] parts = PLMModel.TYPE_DYNAMICCHARACTLIST.toPrefixString(namespaceService).split(":");
+		return parts.length > 1 ? parts[1] : "";
 	}
 
 

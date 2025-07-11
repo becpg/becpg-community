@@ -3,6 +3,8 @@ package fr.becpg.repo.security.helper;
 import java.util.Collection;
 import java.util.Collections;
 
+import javax.annotation.Nonnull;
+
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -23,7 +25,8 @@ public class ACLEntryAttributeExtractorPlugin extends CharactAttributeExtractorP
 	
 	/** {@inheritDoc} */
 	@Override
-	public String extractPropName(QName type, NodeRef nodeRef) {
+	@Nonnull
+	public String extractPropName(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
 		String permission = MessageHelper.getMessage("listconstraint.sec_aclPermission." + nodeService.getProperty(nodeRef, SecurityModel.PROP_ACL_PERMISSION));
 		String qname = (String) nodeService.getProperty(nodeRef, SecurityModel.PROP_ACL_PROPNAME);
 		if (qname != null && !qname.isBlank()) {
@@ -45,6 +48,7 @@ public class ACLEntryAttributeExtractorPlugin extends CharactAttributeExtractorP
 
 	/** {@inheritDoc} */
 	@Override
+	@Nonnull
 	public Collection<QName> getMatchingTypes() {
 		return Collections.singletonList(SecurityModel.TYPE_ACL_ENTRY);
 	}

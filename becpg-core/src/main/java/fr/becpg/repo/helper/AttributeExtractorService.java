@@ -22,6 +22,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -67,7 +69,7 @@ public interface AttributeExtractorService {
 		 * @param nodeRef the reference to the node
 		 * @return the extracted property name
 		 */
-		String extractPropName(QName type, NodeRef nodeRef);
+		String extractPropName(@Nonnull QName type, @Nonnull NodeRef nodeRef);
 		
 		/**
 		 * Extracts the property name from a node based on its type.
@@ -85,7 +87,7 @@ public interface AttributeExtractorService {
 			return null;
 		}
 
-		String extractMetadata(QName type,NodeRef nodeRef);
+		String extractMetadata(@Nonnull QName type,@Nonnull NodeRef nodeRef);
 		
 		/**
 		 * Gets the collection of QNames that match the criteria for this extractor.
