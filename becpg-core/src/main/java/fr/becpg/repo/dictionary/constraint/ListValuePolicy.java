@@ -6,6 +6,7 @@ package fr.becpg.repo.dictionary.constraint;
 import java.io.Serializable;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.alfresco.repo.node.NodeServicePolicies;
@@ -20,8 +21,6 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
-
-import com.google.common.base.Objects;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.cache.BeCPGCacheService;
@@ -138,7 +137,7 @@ public class ListValuePolicy extends AbstractBeCPGPolicy implements OnUpdateProp
 				if (after.get(BeCPGModel.PROP_LV_VALUE) instanceof MLText afterMltext) {
 					afterDefaultValue = MLTextHelper.getClosestValue(afterMltext, Locale.getDefault());
 				}
-				if (!Objects.equal(beforeDefaultValue, afterDefaultValue)) {
+				if (!Objects.equals(beforeDefaultValue, afterDefaultValue)) {
 					throw new IllegalStateException("You cannot update bcpg:lvValue because bcpg:lvCode is empty");
 				}
 			}

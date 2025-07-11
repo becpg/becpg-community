@@ -407,7 +407,14 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 
 			// create datalists
 			List<TaskListDataItem> taskList = new LinkedList<>();
-			taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build()
+    .withTaskName("task1")
+    .withIsMilestone(false)
+    .withDuration(2)
+    .withPrevTasks(null)
+    .withResources(assigneesOne)
+    .withTaskLegend(taskLegends.get(0))
+    .withWorkflowName("activiti$projectAdhoc"));
 			projectData.setTaskList(taskList);
 
 			projectData.setParentNodeRef(getTestFolderNodeRef());
@@ -505,8 +512,22 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			// create datalists
 			List<TaskListDataItem> taskList = new LinkedList<>();
 
-			taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectAdhoc"));
-			taskList.add(new TaskListDataItem(null, "task2", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build()
+    .withTaskName("task1")
+    .withIsMilestone(false)
+    .withDuration(2)
+    .withPrevTasks(null)
+    .withResources(assigneesOne)
+    .withTaskLegend(taskLegends.get(0))
+    .withWorkflowName("activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build()
+    .withTaskName("task2")
+    .withIsMilestone(false)
+    .withDuration(2)
+    .withPrevTasks(null)
+    .withResources(assigneesOne)
+    .withTaskLegend(taskLegends.get(0))
+    .withWorkflowName("activiti$projectAdhoc"));
 
 			projectData.setTaskList(taskList);
 			projectData = (ProjectData) alfrescoRepository.save(projectData);

@@ -428,7 +428,7 @@ public class GlopIT extends AbstractFinishedProductTest {
 			finishedProduct.setNutList(nutList);
 			
 			List<DynamicCharactListItem> dynamicCharactList = new ArrayList<>();
-			dynamicCharactList.add(new DynamicCharactListItem("test1", "var glopData = @glop.optimize({target: {var: cost['" + cost1 + "'], task: \"min\"}, constraints: {{var: nut['" + nut3 + "'], min: 10, max: \"inf\"}, {var: nut['" + nut4 + "'], min: 4, max: 4},{var:\"recipeQtyUsed\", min:\"-inf\", max:\"inf\"}}}); #glopData.toString();"));
+			dynamicCharactList.add(DynamicCharactListItem.build().withTitle("test1").withFormula("var glopData = @glop.optimize({target: {var: cost['" + cost1 + "'], task: \"min\"}, constraints: {{var: nut['" + nut3 + "'], min: 10, max: \"inf\"}, {var: nut['" + nut4 + "'], min: 4, max: 4},{var:\"recipeQtyUsed\", min:\"-inf\", max:\"inf\"}}}); #glopData.toString();"));
 			finishedProduct.getCompoListView().setDynamicCharactList(dynamicCharactList);
 			
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -506,7 +506,7 @@ public class GlopIT extends AbstractFinishedProductTest {
 			finishedProduct.setNutList(nutList);
 			
 			List<DynamicCharactListItem> dynamicCharactList = new ArrayList<>();
-			dynamicCharactList.add(new DynamicCharactListItem("test1", "var glopData = @glop.optimize({target: {var: cost['" + cost1 + "'], task: \"min\"}, constraints: {{var: nut['" + nut1 + "'], min: 2, max: 2, tol:50}, {var: nut['" + nut2 + "'], min: 3, max: 3, tol:50}, {var: nut['" + nut3 + "'], min: 8, max: 8, tol:50}}}); #glopData.toString();"));
+			dynamicCharactList.add(DynamicCharactListItem.build().withTitle("test1").withFormula("var glopData = @glop.optimize({target: {var: cost['" + cost1 + "'], task: \"min\"}, constraints: {{var: nut['" + nut1 + "'], min: 2, max: 2, tol:50}, {var: nut['" + nut2 + "'], min: 3, max: 3, tol:50}, {var: nut['" + nut3 + "'], min: 8, max: 8, tol:50}}}); #glopData.toString();"));
 			finishedProduct.getCompoListView().setDynamicCharactList(dynamicCharactList);
 			
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();

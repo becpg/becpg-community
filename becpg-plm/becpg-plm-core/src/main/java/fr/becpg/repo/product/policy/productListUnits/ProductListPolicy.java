@@ -260,8 +260,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 				}
 			}
 
-			if (logger.isDebugEnabled()) {
-				watch.stop();
+			if (logger.isDebugEnabled() && watch!=null) {
 				logger.debug("BeforeCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + KEY_PRODUCTS + "  - pendingNodesSize : "
 						+ productNodeRefs.size());
 			}
@@ -404,8 +403,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 				}
 			}
 
-			if (logger.isDebugEnabled()) {
-				watch.stop();
+			if (logger.isDebugEnabled() && watch!=null) {
 				logger.debug("BeforeCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + KEY_PRODUCT_LISTITEMS
 						+ "  - pendingNodesSize : " + assocRefs.size());
 			}

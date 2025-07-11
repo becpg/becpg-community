@@ -916,7 +916,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						}
 					}
 
-					if (!activityType.equals(ActivityType.Entity) || !activityEvent.equals(ActivityEvent.Update) || (updatedProperties != null)) {
+					if (!ActivityType.Entity.equals(activityType) || activityEvent == null || !ActivityEvent.Update.equals(activityEvent) || (updatedProperties != null)) {
 						activityListDataItem.setActivityType(activityType);
 						activityListDataItem.setActivityData(data.toString());
 						activityListDataItem.setParentNodeRef(activityListNodeRef);

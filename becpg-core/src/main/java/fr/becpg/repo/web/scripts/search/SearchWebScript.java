@@ -110,7 +110,7 @@ public class SearchWebScript extends AbstractSearchWebScript {
 		} catch (JSONException e) {
 			throw new WebScriptException("Unable to serialize JSON");
 		} finally {
-			if (logger.isDebugEnabled()) {
+			if (logger.isDebugEnabled() && watch!=null) {
 				watch.stop();
 				logger.debug("SearchWebScript execute in " + watch.getTotalTimeSeconds() + "s");
 			}
