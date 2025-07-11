@@ -789,8 +789,16 @@
           </field>
           <set id="conditioningTab" label-id="becpg.forms.set.conditioning.label"/>
           <set appearance="bordered-panel" id="primaryPackaging" label-id="becpg.forms.set.primaryPackaging.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field help-id="becpg.forms.help.gs1.packagingTypeCode" id="gs1:packagingTypeCode" mandatory="false" read-only="false" set="primaryPackaging"/>
-          <field help-id="becpg.forms.help.gs1.packagingFunctionCode" id="gs1:packagingFunctionCode" mandatory="false" read-only="false" set="primaryPackaging"/>
+          <field help-id="becpg.forms.help.gs1.packagingTypeCode" id="gs1:packagingTypeCode" mandatory="false" read-only="false" set="primaryPackaging">
+          	<control template="/org/alfresco/components/form/controls/selectone.ftl">
+          	  <control-param name="dropdown">true</control-param>
+            </control>
+          </field>
+          <field help-id="becpg.forms.help.gs1.packagingFunctionCode" id="gs1:packagingFunctionCode" mandatory="false" read-only="false" set="primaryPackaging">
+          	<control template="/org/alfresco/components/form/controls/selectone.ftl">
+          	  <control-param name="dropdown">true</control-param>
+            </control>
+          </field>
           <field help-id="becpg.forms.help.gs1.height" id="gs1:height" mandatory="false" read-only="false" set="primaryPackaging">
             <control template="/org/alfresco/components/form/controls/number-unit.ftl">
               <control-param name="unit">mm</control-param>
@@ -832,7 +840,11 @@
           <field id="bcpg:dropPackagingOfComponents" help-id="becpg.forms.help.dropPackagingOfComponents" mandatory="false" read-only="false" set="primaryPackaging"/>
           <field id="gs1:sustainabilityFeatureCode" mandatory="false" read-only="false" set="primaryPackaging"/>
           <set appearance="bordered-panel" id="innerPack" label-id="becpg.forms.set.innerPack.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="gs1:innerPackTypeCode" mandatory="false" read-only="false" set="innerPack"/>
+          <field id="gs1:innerPackTypeCode" mandatory="false" read-only="false" set="innerPack">
+          	<control template="/org/alfresco/components/form/controls/selectone.ftl">
+          	  <control-param name="dropdown">true</control-param>
+            </control>
+          </field>
           <field id="gs1:productPerInnerPack" mandatory="false" read-only="false" set="innerPack"/>
           <field id="gs1:innerPackPerBox" mandatory="false" read-only="false" set="innerPack"/>
           <field id="gs1:innerPackNetWeight" mandatory="false" read-only="false" set="innerPack">
@@ -861,7 +873,11 @@
             </control>
           </field>
           <set appearance="bordered-panel" id="secondaryPackaging" label-id="becpg.forms.set.secondaryPackaging.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field help-id="becpg.forms.help.gs1.packagingTypeCode" id="gs1:secondaryPackagingTypeCode" mandatory="false" read-only="false" set="secondaryPackaging"/>
+          <field help-id="becpg.forms.help.gs1.packagingTypeCode" id="gs1:secondaryPackagingTypeCode" mandatory="false" read-only="false" set="secondaryPackaging">
+          	<control template="/org/alfresco/components/form/controls/selectone.ftl">
+          	  <control-param name="dropdown">true</control-param>
+            </control>
+          </field>
           <field id="pack:palletProductsPerBox" mandatory="false" read-only="false" set="secondaryPackaging"/>
           <field help-id="becpg.forms.help.gs1.isTradeItemPackedIrregularly" id="gs1:isTradeItemPackedIrregularly" mandatory="false" read-only="false" set="secondaryPackaging">
             <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
@@ -914,7 +930,11 @@
           <field help-id="becpg.forms.help.gs1.dataCarrierTypeCode" id="gs1:secondaryDataCarrierTypeCode" mandatory="false" read-only="false" set="secondaryPackaging"/>
           
           <set appearance="bordered-panel" id="tertiaryPackaging" label-id="becpg.forms.set.tertiaryPackaging.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field help-id="becpg.forms.help.gs1.packagingTypeCode" id="gs1:tertiaryPackagingTypeCode" mandatory="false" read-only="false" set="tertiaryPackaging"/>
+          <field help-id="becpg.forms.help.gs1.packagingTypeCode" id="gs1:tertiaryPackagingTypeCode" mandatory="false" read-only="false" set="tertiaryPackaging">
+          	<control template="/org/alfresco/components/form/controls/selectone.ftl">
+          	  <control-param name="dropdown">true</control-param>
+            </control>
+          </field>
           <field help-id="becpg.forms.help.gs1.palletTypeCode" id="gs1:palletTypeCode" mandatory="false" read-only="false" set="tertiaryPackaging"/>
           <field id="pack:palletLayers" mandatory="false" read-only="false" set="tertiaryPackaging"/>
           <field id="pack:palletBoxesPerLayer" mandatory="false" read-only="false" set="tertiaryPackaging"/>
