@@ -460,7 +460,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		}
 
 		if (isWithSurvey) {
-			product.withSurveyList(createEclairQMSSurveyList());
+			product.withSurveyList(new ArrayList<>(createEclairQMSSurveyList()));
 		}
 
 		if (isWithScoreList) {
