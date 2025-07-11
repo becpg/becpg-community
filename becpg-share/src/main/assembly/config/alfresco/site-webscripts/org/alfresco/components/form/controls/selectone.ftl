@@ -10,6 +10,11 @@
 <#else>
    <#assign labelSeparator="|">
 </#if>
+<#if field.control.params.dropdown??>
+   <#assign dropdown=field.control.params.dropdown>
+<#else>
+   <#assign dropdown="false">
+</#if>
 
 
 <#assign fieldValue=field.value>
@@ -67,7 +72,33 @@
       </div>
    <#else>
       <label for="${fieldHtmlId}">${field.label?html}:<#if field.mandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>
-      <#if field.control.params.options?? && field.control.params.options != "">
+      
+      <#if dropdown == "true">
+		<input class="dropdown" list="${fieldHtmlId}_list"
+	       id="${fieldHtmlId}"
+	       name="${field.name}"
+	       value="${field.value?html}"
+	       tabindex="0"
+	       <#if field.description??>title="${field.description}"</#if>
+	       <#if field.indexTokenisationMode??>class="non-tokenised"</#if>
+	       <#if field.control.params.style??>style="${field.control.params.style}"</#if>
+	       <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if>/>
+	
+		<datalist id="${fieldHtmlId}_list">
+		   <#if field.control.params.insertBlank??>
+       			<option value="" <#if fieldValue?length &lt; 1 >selected="selected"</#if> ></option>
+           </#if>
+		
+		   <#list field.control.params.options?split(optionSeparator) as nameValue>
+              <#if nameValue?index_of(labelSeparator) == -1>
+                 <option value="<#if field.control.params.isSearch?? && nameValue?has_content && "-" != nameValue>=</#if><#if field.control.params.isSearch?? && (!nameValue?has_content || "-" == nameValue)>""<#else><#if field.control.params.isSearch??>${nameValue?string?replace(" ","\\ ")?html}<#else>${nameValue?html}</#if></#if>"<#if (nameValue == fieldValue?string || (fieldValue?is_number && fieldValue?c == nameValue)) > selected="selected"</#if>>${nameValue?html}</option>
+              <#else>
+                 <#assign choice=nameValue?split(labelSeparator)>
+                 <option value="<#if field.control.params.isSearch?? && choice[0]?has_content && "-" != choice[0]>=</#if><#if field.control.params.isSearch?? && (!choice[0]?has_content || "-" == choice[0])>""<#else><#if field.control.params.isSearch??>${choice[0]?string?replace(" ","\\ ")?html}<#else>${choice[0]?html}</#if></#if>"<#if (choice[0] == fieldValue?string || (fieldValue?is_number && fieldValue?c == choice[0])) > selected="selected"</#if>><#if field.control.params.showCode?? && choice[0]?has_content && "-" != choice[0]>${choice[0]?html} - </#if>${msg(choice[1])?html}</option>
+              </#if>
+           </#list>
+		</datalist>
+      <#elseif field.control.params.options?? && field.control.params.options != "">
          <select id="${fieldHtmlId}" name="${field.name}" tabindex="0"
                <#if field.description??>title="${field.description}"</#if>
                <#if field.indexTokenisationMode??>class="non-tokenised"</#if>
@@ -114,7 +145,7 @@
 				
 			 }
 			</script>
-	       </#if>  
+	       </#if>
       <#else>
          <div id="${fieldHtmlId}" class="missing-options">${msg("form.control.selectone.missing-options")}</div>
       </#if>
