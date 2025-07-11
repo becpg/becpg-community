@@ -169,17 +169,14 @@ public class ExportSearchServiceIT extends RepoBaseTestCase {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			Set<String> entryNames = new TreeSet<>();
 			ContentReader reader = contentService.getReader(downloadNode, ContentModel.PROP_CONTENT);
-			ZipArchiveInputStream zipInputStream = new ZipArchiveInputStream(reader.getContentInputStream());
-			try {
-				ZipArchiveEntry zipEntry = zipInputStream.getNextZipEntry();
+			try(ZipArchiveInputStream zipInputStream = new ZipArchiveInputStream(reader.getContentInputStream())){
+				ZipArchiveEntry zipEntry = zipInputStream.getNextEntry();
 				while (zipEntry != null) {
 					String name = zipEntry.getName();
 					entryNames.add(name);
-					zipEntry = zipInputStream.getNextZipEntry();
+					zipEntry = zipInputStream.getNextEntry();
 				}
-			} finally {
-				zipInputStream.close();
-			}
+			} 
 			return entryNames;
 		});
 	}

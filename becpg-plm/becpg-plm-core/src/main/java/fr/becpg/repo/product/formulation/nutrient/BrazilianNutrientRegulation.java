@@ -25,7 +25,11 @@ public class BrazilianNutrientRegulation extends AbstractNutrientRegulation {
 	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
 
-		if(value != null && nutrientTypeCode != null){
+		if (value == null) {
+			return null;
+		}
+
+		if( nutrientTypeCode != null){
 			if (nutrientTypeCode.equals(NutrientCode.Energykcal)) {
 				if (value <= 4){
 					return 0.0;
@@ -74,6 +78,7 @@ public class BrazilianNutrientRegulation extends AbstractNutrientRegulation {
 				}
 			}
 		}
+		
 		
 		BigDecimal bd = BigDecimal.valueOf(value);
 		bd = bd.round(new MathContext(3,RoundingMode.HALF_EVEN));
