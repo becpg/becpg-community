@@ -41,17 +41,16 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 /**
  * The Class FormulationTest. TODO Split in several classes and refactor
- * 
+ *
  * @author querephi
  */
 public class FormulationIT extends AbstractFinishedProductTest {
 
 	protected static final Log logger = LogFactory.getLog(FormulationIT.class);
 
-
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see fr.becpg.test.RepoBaseTestCase#setUp()
 	 */
 	@Override
@@ -72,7 +71,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 		logger.info("testIngredientsCalculating");
 
-		NodeRef finishedProductNodeRef1 = 	transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			/**
 			 * Finished product 1
@@ -87,31 +86,29 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.setUnit(ProductUnit.kg);
 			finishedProduct1.setDensity(1d);
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
-			compoList1
-					.add(new CompoListDataItem(null, compoList1.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
-			compoList1
-					.add(new CompoListDataItem(null, compoList1.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial12NodeRef));
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF12NodeRef));
-			compoList1
-					.add(new CompoListDataItem(null, compoList1.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial13NodeRef));
-			compoList1
-					.add(new CompoListDataItem(null, compoList1.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial14NodeRef));
+			compoList1.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF11NodeRef));
+			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(0)).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial11NodeRef));
+			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(0)).withQty(null).withQtyUsed(2d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial12NodeRef));
+			compoList1.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF12NodeRef));
+			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(3)).withQty(null).withQtyUsed(3d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial13NodeRef));
+			compoList1.add(CompoListDataItem.build().withParent(compoList1.get(3)).withQty(null).withQtyUsed(3d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial14NodeRef));
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
 
-			
 		}, false, true);
-		
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			
 			/*-- Formulate product --*/
 			logger.debug("/*-- Formulate product --*/");
 			productService.formulate(finishedProductNodeRef1);
 
-
-			
 			/*-- Verify formulation --*/
 			logger.debug("/*-- Verify formulation --*/");
 			ProductData formulatedProduct1 = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef1);
@@ -130,9 +127,9 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			assertEquals(4, formulatedProduct1.getIngList().size());
 			for (IngListDataItem ingListDataItem1 : formulatedProduct1.getIngList()) {
 
-				String geoOriginsText1 = "";
+				StringBuilder geoOriginsText1 = new StringBuilder();
 				for (NodeRef geoOrigin1 : ingListDataItem1.getGeoOrigin()) {
-					geoOriginsText1 += nodeService.getProperty(geoOrigin1, BeCPGModel.PROP_CHARACT_NAME) + ", ";
+					geoOriginsText1.append(nodeService.getProperty(geoOrigin1, BeCPGModel.PROP_CHARACT_NAME)).append(", ");
 				}
 
 				String bioOriginsText1 = "";
@@ -141,8 +138,9 @@ public class FormulationIT extends AbstractFinishedProductTest {
 				}
 
 				String trace1 = "ing: " + nodeService.getProperty(ingListDataItem1.getIng(), BeCPGModel.PROP_CHARACT_NAME) + " - qty: "
-						+ ingListDataItem1.getQtyPerc() + " - geo origins: " + geoOriginsText1 + " - bio origins: " + bioOriginsText1 + " is gmo: "
-						+ ingListDataItem1.getIsGMO() + " is ionized: " + ingListDataItem1.getIsIonized();
+						+ ingListDataItem1.getQtyPerc() + " - geo origins: "
+						+ geoOriginsText1.append(" - bio origins: ").append(bioOriginsText1).append(" is gmo: ").append(ingListDataItem1.getIsGMO())
+								.append(" is ionized: ").append(ingListDataItem1.getIsIonized()).toString();
 				logger.debug(trace1);
 
 				DecimalFormat df1 = new DecimalFormat("0.000000");
@@ -227,16 +225,18 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct2.setUnit(ProductUnit.kg);
 			finishedProduct2.setDensity(1d);
 			List<CompoListDataItem> compoList2 = new ArrayList<>();
-			compoList2.add(new CompoListDataItem(null, null,null,  1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
-			compoList2
-					.add(new CompoListDataItem(null, compoList2.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
-			compoList2
-					.add(new CompoListDataItem(null, compoList2.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial12NodeRef));
-			compoList2.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF12NodeRef));
-			compoList2
-					.add(new CompoListDataItem(null, compoList2.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial13NodeRef));
-			compoList2.add(
-					new CompoListDataItem(null, compoList2.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.DoNotDeclare, rawMaterial14NodeRef));
+			compoList2.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF11NodeRef));
+			compoList2.add(CompoListDataItem.build().withParent(compoList2.get(0)).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial11NodeRef));
+			compoList2.add(CompoListDataItem.build().withParent(compoList2.get(0)).withQty(null).withQtyUsed(2d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial12NodeRef));
+			compoList2.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF12NodeRef));
+			compoList2.add(CompoListDataItem.build().withParent(compoList2.get(3)).withQty(null).withQtyUsed(3d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial13NodeRef));
+			compoList2.add(CompoListDataItem.build().withParent(compoList2.get(3)).withQty(null).withQtyUsed(3d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.DoNotDeclare).withProduct(rawMaterial14NodeRef));
 			finishedProduct2.getCompoListView().setCompoList(compoList2);
 			NodeRef finishedProductNodeRef2 = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct2).getNodeRef();
 
@@ -261,9 +261,9 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			assertNotNull("IngList is null", formulatedProduct2.getIngList());
 			for (IngListDataItem ingListDataItem2 : formulatedProduct2.getIngList()) {
 
-				String geoOriginsText2 = "";
+				StringBuilder geoOriginsText2 = new StringBuilder();
 				for (NodeRef geoOrigin2 : ingListDataItem2.getGeoOrigin()) {
-					geoOriginsText2 += nodeService.getProperty(geoOrigin2, BeCPGModel.PROP_CHARACT_NAME) + ", ";
+					geoOriginsText2.append(nodeService.getProperty(geoOrigin2, BeCPGModel.PROP_CHARACT_NAME)).append(", ");
 				}
 
 				String bioOriginsText2 = "";
@@ -273,8 +273,9 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 				DecimalFormat df2 = new DecimalFormat("0.000000");
 				String trace2 = "ing: " + nodeService.getProperty(ingListDataItem2.getIng(), BeCPGModel.PROP_CHARACT_NAME) + " - qty: "
-						+ df2.format(ingListDataItem2.getQtyPerc()) + " - geo origins: " + geoOriginsText2 + " - bio origins: " + bioOriginsText2
-						+ " is gmo: " + ingListDataItem2.getIsGMO() + " is ionized: " + ingListDataItem2.getIsIonized();
+						+ df2.format(ingListDataItem2.getQtyPerc()) + " - geo origins: "
+						+ geoOriginsText2.append(" - bio origins: ").append(bioOriginsText2).append(" is gmo: ").append(ingListDataItem2.getIsGMO())
+								.append(" is ionized: ").append(ingListDataItem2.getIsIonized()).toString();
 				logger.debug(trace2);
 
 				// ing: ing1 - qty: 9.25925925925926 - geo origins: geoOrigin1,
@@ -368,12 +369,18 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(2d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.g, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(null).withQtyUsed(2d).withUnit(ProductUnit.g)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQty(null).withQtyUsed(3d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQty(null).withQtyUsed(3d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial4NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			List<CostListDataItem> costList = new ArrayList<>();
@@ -382,8 +389,8 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setCostList(costList);
 
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
+			nutList.add(NutListDataItem.build().withNut(nut1));
+			nutList.add(NutListDataItem.build().withNut(nut2));
 			finishedProduct.setNutList(nutList);
 
 			NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -470,12 +477,18 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setUnit(ProductUnit.P);
 			finishedProduct.setDensity(0.1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 42d, ProductUnit.g, 0d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 40d, ProductUnit.g, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.mL, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 30d, ProductUnit.g, 0d, DeclarationType.Detail, localSF2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 30d, ProductUnit.g, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 0.05d, ProductUnit.P, 0d, DeclarationType.Omit, rawMaterial5NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(42d).withUnit(ProductUnit.g).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(null).withQtyUsed(40d).withUnit(ProductUnit.g)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(null).withQtyUsed(2d).withUnit(ProductUnit.mL)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(30d).withUnit(ProductUnit.g).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQty(null).withQtyUsed(30d).withUnit(ProductUnit.g)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQty(null).withQtyUsed(0.05d).withUnit(ProductUnit.P)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial5NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			List<CostListDataItem> costList = new ArrayList<>();
@@ -484,8 +497,8 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setCostList(costList);
 
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
+			nutList.add(NutListDataItem.build().withNut(nut1));
+			nutList.add(NutListDataItem.build().withNut(nut2));
 			finishedProduct.setNutList(nutList);
 
 			NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -573,8 +586,10 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setUnit(ProductUnit.kg);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 2d, ProductUnit.L, 0d, DeclarationType.Declare, rawMaterial6NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(2d).withUnit(ProductUnit.L).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial6NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
@@ -620,193 +635,6 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 	}
 
-	// /**
-	// * Test sort nut list.
-	// */
-	// @Test
-	// public void testSortNutList(){
-	//
-	// logger.info("testSortNutList");
-	//
-	// final NodeRef SFProduct2NodeRef =
-	// transactionService.getRetryingTransactionHelper().doInTransaction(new
-	// RetryingTransactionCallback<NodeRef>(){
-	// public NodeRef execute() throws Throwable {
-	//
-	// Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-	// properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut3");
-	// properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
-	// properties.put(BeCPGModel.PROP_NUTGROUP, GROUP1);
-	// NodeRef nut3 = nodeService.createNode(getTestFolderNodeRef(),
-	// ContentModel.ASSOC_CONTAINS,
-	// QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
-	// (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-	// BeCPGModel.TYPE_NUT, properties).getChildRef();
-	//
-	// properties.clear();
-	// properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut14");
-	// properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
-	// properties.put(BeCPGModel.PROP_NUTGROUP, GROUP1);
-	// NodeRef nut14 = nodeService.createNode(getTestFolderNodeRef(),
-	// ContentModel.ASSOC_CONTAINS,
-	// QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
-	// (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-	// BeCPGModel.TYPE_NUT, properties).getChildRef();
-	//
-	// properties.clear();
-	// properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut5");
-	// properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
-	// properties.put(BeCPGModel.PROP_NUTGROUP, GROUP1);
-	// NodeRef nut5 = nodeService.createNode(getTestFolderNodeRef(),
-	// ContentModel.ASSOC_CONTAINS,
-	// QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
-	// (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-	// BeCPGModel.TYPE_NUT, properties).getChildRef();
-	//
-	// properties.clear();
-	// properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut26");
-	// properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
-	// properties.put(BeCPGModel.PROP_NUTGROUP, GROUP2);
-	// NodeRef nut26 = nodeService.createNode(getTestFolderNodeRef(),
-	// ContentModel.ASSOC_CONTAINS,
-	// QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
-	// (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-	// BeCPGModel.TYPE_NUT, properties).getChildRef();
-	//
-	// properties.clear();
-	// properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut17");
-	// properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
-	// properties.put(BeCPGModel.PROP_NUTGROUP, GROUP2);
-	// NodeRef nut17 = nodeService.createNode(getTestFolderNodeRef(),
-	// ContentModel.ASSOC_CONTAINS,
-	// QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
-	// (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-	// BeCPGModel.TYPE_NUT, properties).getChildRef();
-	//
-	// properties.clear();
-	// properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut8");
-	// properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
-	// properties.put(BeCPGModel.PROP_NUTGROUP, GROUPOTHER);
-	// NodeRef nut8 = nodeService.createNode(getTestFolderNodeRef(),
-	// ContentModel.ASSOC_CONTAINS,
-	// QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
-	// (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-	// BeCPGModel.TYPE_NUT, properties).getChildRef();
-	//
-	// properties.clear();
-	// properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut9");
-	// properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
-	// properties.put(BeCPGModel.PROP_NUTGROUP, GROUPOTHER);
-	// NodeRef nut9 = nodeService.createNode(getTestFolderNodeRef(),
-	// ContentModel.ASSOC_CONTAINS,
-	// QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
-	// (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-	// BeCPGModel.TYPE_NUT, properties).getChildRef();
-	//
-	// properties.clear();
-	// properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut10");
-	// properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
-	// properties.put(BeCPGModel.PROP_NUTGROUP, GROUPOTHER);
-	// NodeRef nut10 = nodeService.createNode(getTestFolderNodeRef(),
-	// ContentModel.ASSOC_CONTAINS,
-	// QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
-	// (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-	// BeCPGModel.TYPE_NUT, properties).getChildRef();
-	//
-	// List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
-	// nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Autre",
-	// nut10, false));
-	// nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1",
-	// nut3, false));
-	// nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1",
-	// nut5, false));
-	// nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1",
-	// nut14, false));
-	// nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Autre",
-	// nut9, false));
-	// nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1",
-	// nut1, false));
-	// nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d, 0d, "Groupe 2",
-	// nut26, false));
-	// nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d, 0d, "Groupe 2",
-	// nut2, false));
-	// nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d, 0d, "Groupe 2",
-	// nut17, false));
-	// nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Autre",
-	// nut8, false));
-	//
-	// //SF1
-	// SemiFinishedProductData SFProduct1 = new SemiFinishedProductData();
-	// SFProduct1.setName("semi fini 1");
-	// SFProduct1.setLegalName("Legal semi fini 1");
-	// SFProduct1.setUnit(ProductUnit.kg);
-	// SFProduct1.setQty(1d);
-	// SFProduct1.setNutList(nutList);
-	// NodeRef SFProduct1NodeRef =
-	// alfrescoRepository.create(getTestFolderNodeRef(),
-	// SFProduct1).getNodeRef();
-	//
-	// alfrescoRepository.findOne(SFProduct1NodeRef).getNodeRef();
-	//
-	// //SF2
-	// SemiFinishedProductData SFProduct2 = new SemiFinishedProductData();
-	// SFProduct2.setName("semi fini 2");
-	// SFProduct2.setLegalName("Legal semi fini 2");
-	// SFProduct2.setUnit(ProductUnit.kg);
-	// SFProduct2.setQty(1d);
-	// List<CompoListDataItem> compoList2 = new ArrayList<CompoListDataItem>();
-	// compoList2.add(new CompoListDataItem(null, (CompoListDataItem)null, 3d,
-	// null, ProductUnit.kg, 0d, DeclarationType.Declare, SFProduct1NodeRef));
-	// SFProduct2.getCompoListView().setCompoList(compoList2);
-	//
-	// nutList = new ArrayList<NutListDataItem>();
-	// NodeRef [] nuts = {nut10, nut3, nut5, nut14, nut9, nut1, nut26, nut2,
-	// nut17, nut8};
-	// for(NodeRef nut : nuts){
-	// nutList.add(new NutListDataItem(null, null, null, null, null, null, nut,
-	// null));
-	// }
-	// SFProduct2.setNutList(nutList);
-	//
-	// NodeRef productNodeRef =
-	// alfrescoRepository.create(getTestFolderNodeRef(),
-	// SFProduct2).getNodeRef();
-	//
-	// productService.formulate(productNodeRef);
-	//
-	//
-	//
-	//
-	// return productNodeRef;
-	//
-	// }},false,true);
-	//
-	// transactionService.getRetryingTransactionHelper().doInTransaction(new
-	// RetryingTransactionCallback<NodeRef>(){
-	// public NodeRef execute() throws Throwable {
-	//
-	// ProductData formulatedSF2 =
-	// alfrescoRepository.findOne(SFProduct2NodeRef);
-	//
-	// String [] nutNames = {"nut1", "nut14", "nut3", "nut5", "nut17", "nut2",
-	// "nut26", "nut10", "nut8", "nut9"};
-	// int i = 0;
-	//
-	// for(String nutName : nutNames){
-	// logger.debug("nutName : " + nutName+"
-	// "+(String)nodeService.getProperty(formulatedSF2.getNutList().get(i).getNut(),
-	// BeCPGModel.PROP_CHARACT_NAME));
-	// assertEquals(nutName,
-	// (String)nodeService.getProperty(formulatedSF2.getNutList().get(i).getNut(),
-	// BeCPGModel.PROP_CHARACT_NAME));
-	// i++;
-	// }
-	//
-	// return null;
-	//
-	// }},false,true);
-	// }
-
 	/**
 	 * Test allergen list calculating.
 	 *
@@ -830,8 +658,10 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			SFProduct1.setUnit(ProductUnit.kg);
 			SFProduct1.setQty(1d);
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList1.add(new CompoListDataItem(null, null, null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+			compoList1.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList1.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
 			SFProduct1.getCompoListView().setCompoList(compoList1);
 			return alfrescoRepository.create(getTestFolderNodeRef(), SFProduct1).getNodeRef();
 
@@ -846,8 +676,10 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			SFProduct2.setUnit(ProductUnit.kg);
 			SFProduct2.setQty(1d);
 			List<CompoListDataItem> compoList2 = new ArrayList<>();
-			compoList2.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList2.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+			compoList2.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+			compoList2.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial4NodeRef));
 			SFProduct2.getCompoListView().setCompoList(compoList2);
 			return alfrescoRepository.create(getTestFolderNodeRef(), SFProduct2).getNodeRef();
 
@@ -863,8 +695,10 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(2d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, SFProduct1NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, SFProduct2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(SFProduct1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(SFProduct2NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
@@ -887,9 +721,9 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			// allergens
 			assertNotNull("AllergenList is not null", formulatedSF1.getAllergenList());
 			for (AllergenListDataItem allergenListDataItem1 : formulatedSF1.getAllergenList()) {
-				String voluntarySources1 = "";
+				StringBuilder voluntarySources1 = new StringBuilder();
 				for (NodeRef part1 : allergenListDataItem1.getVoluntarySources()) {
-					voluntarySources1 += nodeService.getProperty(part1, BeCPGModel.PROP_CHARACT_NAME) + ", ";
+					voluntarySources1.append(nodeService.getProperty(part1, BeCPGModel.PROP_CHARACT_NAME)).append(", ");
 				}
 
 				String inVoluntarySources1 = "";
@@ -899,7 +733,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 				String trace1 = "SF1 allergen: " + nodeService.getProperty(allergenListDataItem1.getAllergen(), BeCPGModel.PROP_CHARACT_NAME)
 						+ " - voluntary: " + allergenListDataItem1.getVoluntary() + " - involuntary: " + allergenListDataItem1.getInVoluntary()
-						+ " - voluntary sources:" + voluntarySources1 + " - involuntary sources:" + inVoluntarySources1;
+						+ " - voluntary sources:" + voluntarySources1.append(" - involuntary sources:").append(inVoluntarySources1).toString();
 				logger.debug(trace1);
 
 				// allergen1 - voluntary: true - involuntary: false - voluntary
@@ -949,9 +783,9 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			// allergens
 			assertNotNull("AllergenList is not null", formulatedSF2.getAllergenList());
 			for (AllergenListDataItem allergenListDataItem2 : formulatedSF2.getAllergenList()) {
-				String voluntarySources2 = "";
+				StringBuilder voluntarySources2 = new StringBuilder();
 				for (NodeRef part3 : allergenListDataItem2.getVoluntarySources()) {
-					voluntarySources2 += nodeService.getProperty(part3, BeCPGModel.PROP_CHARACT_NAME) + ", ";
+					voluntarySources2.append(nodeService.getProperty(part3, BeCPGModel.PROP_CHARACT_NAME)).append(", ");
 				}
 
 				String inVoluntarySources2 = "";
@@ -961,7 +795,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 				String trace2 = "SF2 allergen: " + nodeService.getProperty(allergenListDataItem2.getAllergen(), BeCPGModel.PROP_CHARACT_NAME)
 						+ " - voluntary: " + allergenListDataItem2.getVoluntary() + " - involuntary: " + allergenListDataItem2.getInVoluntary()
-						+ " - voluntary sources:" + voluntarySources2 + " - involuntary sources:" + inVoluntarySources2;
+						+ " - voluntary sources:" + voluntarySources2.append(" - involuntary sources:").append(inVoluntarySources2).toString();
 				logger.debug(trace2);
 
 				// allergen1 - voluntary: true - involuntary: false - voluntary
@@ -1009,9 +843,9 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			// allergens
 			assertNotNull("AllergenList is null", formulatedProduct.getAllergenList());
 			for (AllergenListDataItem allergenListDataItem3 : formulatedProduct.getAllergenList()) {
-				String voluntarySources3 = "";
+				StringBuilder voluntarySources3 = new StringBuilder();
 				for (NodeRef part5 : allergenListDataItem3.getVoluntarySources()) {
-					voluntarySources3 += nodeService.getProperty(part5, BeCPGModel.PROP_CHARACT_NAME) + ", ";
+					voluntarySources3.append(nodeService.getProperty(part5, BeCPGModel.PROP_CHARACT_NAME)).append(", ");
 				}
 
 				String inVoluntarySources3 = "";
@@ -1021,7 +855,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 				String trace3 = "PF allergen: " + nodeService.getProperty(allergenListDataItem3.getAllergen(), BeCPGModel.PROP_CHARACT_NAME)
 						+ " - voluntary: " + allergenListDataItem3.getVoluntary() + " - involuntary: " + allergenListDataItem3.getInVoluntary()
-						+ " - voluntary sources:" + voluntarySources3 + " - involuntary sources:" + inVoluntarySources3;
+						+ " - voluntary sources:" + voluntarySources3.append(" - involuntary sources:").append(inVoluntarySources3).toString();
 				logger.debug(trace3);
 
 				// allergen1 - voluntary: true - involuntary: false - voluntary
@@ -1183,12 +1017,18 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(2d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 20d, DeclarationType.Detail, localSF2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(10d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg)
+					.withLossPerc(5d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(null).withQtyUsed(2d).withUnit(ProductUnit.kg)
+					.withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(20d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQty(null).withQtyUsed(3d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQty(null).withQtyUsed(3d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial4NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
@@ -1242,9 +1082,9 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			// allergens
 			assertNotNull("AllergenList is null", formulatedProduct.getAllergenList());
 			for (AllergenListDataItem allergenListDataItem : formulatedProduct.getAllergenList()) {
-				String voluntarySources = "";
+				StringBuilder voluntarySources = new StringBuilder();
 				for (NodeRef part1 : allergenListDataItem.getVoluntarySources()) {
-					voluntarySources += nodeService.getProperty(part1, BeCPGModel.PROP_CHARACT_NAME) + ", ";
+					voluntarySources.append(nodeService.getProperty(part1, BeCPGModel.PROP_CHARACT_NAME)).append(", ");
 				}
 
 				String inVoluntarySources = "";
@@ -1254,7 +1094,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 				String trace3 = "allergen: " + nodeService.getProperty(allergenListDataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME)
 						+ " - voluntary: " + allergenListDataItem.getVoluntary() + " - involuntary: " + allergenListDataItem.getInVoluntary()
-						+ " - voluntary sources:" + voluntarySources + " - involuntary sources:" + inVoluntarySources;
+						+ " - voluntary sources:" + voluntarySources.append(" - involuntary sources:").append(inVoluntarySources).toString();
 				logger.debug(trace3);
 
 				// allergen1 - voluntary: true - involuntary: false - voluntary
@@ -1327,9 +1167,9 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			assertNotNull("IngList is null", formulatedProduct.getIngList());
 			for (IngListDataItem ingListDataItem : formulatedProduct.getIngList()) {
 
-				String geoOriginsText = "";
+				StringBuilder geoOriginsText = new StringBuilder();
 				for (NodeRef geoOrigin : ingListDataItem.getGeoOrigin()) {
-					geoOriginsText += nodeService.getProperty(geoOrigin, BeCPGModel.PROP_CHARACT_NAME) + ", ";
+					geoOriginsText.append(nodeService.getProperty(geoOrigin, BeCPGModel.PROP_CHARACT_NAME)).append(", ");
 				}
 
 				String bioOriginsText = "";
@@ -1338,8 +1178,9 @@ public class FormulationIT extends AbstractFinishedProductTest {
 				}
 
 				String trace4 = "ing: " + nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME) + " - qty: "
-						+ ingListDataItem.getQtyPerc() + " - geo origins: " + geoOriginsText + " - bio origins: " + bioOriginsText + " is gmo: "
-						+ ingListDataItem.getIsGMO() + " is ionized: " + ingListDataItem.getIsIonized();
+						+ ingListDataItem.getQtyPerc() + " - geo origins: "
+						+ geoOriginsText.append(" - bio origins: ").append(bioOriginsText).append(" is gmo: ").append(ingListDataItem.getIsGMO())
+								.append(" is ionized: ").append(ingListDataItem.getIsIonized()).toString();
 				logger.debug(trace4);
 
 				df = new DecimalFormat("0.000000");
@@ -1358,8 +1199,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 					assertEquals("ing1.getBioOrigin() doesn't contain bio2, actual values: " + trace4, false,
 							ingListDataItem.getBioOrigin().contains(bioOrigin2));
 					assertEquals("ing1.getIsGMO() is false, actual values: " + trace4, true, Boolean.TRUE.equals(ingListDataItem.getIsGMO()));
-					assertEquals("ing1.getIsIonized() is false, actual values: " + trace4, true,
-							Boolean.TRUE.equals(ingListDataItem.getIsIonized()));
+					assertEquals("ing1.getIsIonized() is false, actual values: " + trace4, true, Boolean.TRUE.equals(ingListDataItem.getIsIonized()));
 					checks++;
 				}
 				// ing2 - qty: 36.111111111111114 - geo origins: geoOrigin1,
@@ -1394,8 +1234,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 					assertEquals("ing3.getBioOrigin() contains bio2, actual values: " + trace4, true,
 							ingListDataItem.getBioOrigin().contains(bioOrigin2));
 					assertEquals("ing3.getIsGMO() is false, actual values: " + trace4, true, Boolean.TRUE.equals(ingListDataItem.getIsGMO()));
-					assertEquals("ing3.getIsIonized() is false, actual values: " + trace4, true,
-							Boolean.TRUE.equals(ingListDataItem.getIsIonized()));
+					assertEquals("ing3.getIsIonized() is false, actual values: " + trace4, true, Boolean.TRUE.equals(ingListDataItem.getIsIonized()));
 					checks++;
 				}
 			}
@@ -1429,17 +1268,22 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(2d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 2d, ProductUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 10d, DeclarationType.Detail, localSF2NodeRef));
-			compoList.add(
-					new CompoListDataItem(null, compoList.get(1), null, 0.80d, ProductUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(
-					new CompoListDataItem(null, compoList.get(1), null, 0.30d, ProductUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 20d, DeclarationType.Detail, localSF3NodeRef));
-			compoList.add(
-					new CompoListDataItem(null, compoList.get(4), null, 0.170d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(4), null, 0.40d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(4), null, 1d, ProductUnit.P, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(10d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg)
+					.withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(1)).withQty(null).withQtyUsed(0.80d).withUnit(ProductUnit.kg)
+					.withLossPerc(5d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(1)).withQty(null).withQtyUsed(0.30d).withUnit(ProductUnit.kg)
+					.withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg)
+					.withLossPerc(20d).withDeclarationType(DeclarationType.Detail).withProduct(localSF3NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(4)).withQty(null).withQtyUsed(0.170d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(4)).withQty(null).withQtyUsed(0.40d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial4NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(4)).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.P)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial5NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
@@ -1502,7 +1346,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 	}
 
 	@Test
-	public void testPackagingCosts() throws Exception {
+	public void testPackagingCosts() {
 
 		logger.info("testPackagingCosts");
 
@@ -1517,12 +1361,12 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(2d);
 			finishedProduct.setDensity(1d);
 			List<PackagingListDataItem> packagingList = new ArrayList<>();
-			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P).withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial1NodeRef)
-);
-			packagingList.add(PackagingListDataItem.build().withQty(3d).withUnit(ProductUnit.m).withPkgLevel(PackagingLevel.Primary).withIsMaster(true).withProduct(packagingMaterial2NodeRef)
-);
-			packagingList.add(PackagingListDataItem.build().withQty(8d).withUnit(ProductUnit.PP).withPkgLevel(PackagingLevel.Tertiary).withIsMaster(true).withProduct(packagingMaterial3NodeRef)
-);
+			packagingList.add(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P).withPkgLevel(PackagingLevel.Primary)
+					.withIsMaster(true).withProduct(packagingMaterial1NodeRef));
+			packagingList.add(PackagingListDataItem.build().withQty(3d).withUnit(ProductUnit.m).withPkgLevel(PackagingLevel.Primary)
+					.withIsMaster(true).withProduct(packagingMaterial2NodeRef));
+			packagingList.add(PackagingListDataItem.build().withQty(8d).withUnit(ProductUnit.PP).withPkgLevel(PackagingLevel.Tertiary)
+					.withIsMaster(true).withProduct(packagingMaterial3NodeRef));
 			finishedProduct.getPackagingListView().setPackagingList(packagingList);
 			List<CostListDataItem> costList = new ArrayList<>();
 			costList.add(new CostListDataItem(null, null, null, null, pkgCost1, false));
@@ -1561,9 +1405,8 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			assertEquals(2, checks);
 
 			// add packaging kit
-			formulatedProduct.getPackagingList()
-					.add(PackagingListDataItem.build().withQty(25d).withUnit(ProductUnit.PP).withPkgLevel(PackagingLevel.Secondary).withIsMaster(true).withProduct(packagingKit1NodeRef)
-);
+			formulatedProduct.getPackagingList().add(PackagingListDataItem.build().withQty(25d).withUnit(ProductUnit.PP)
+					.withPkgLevel(PackagingLevel.Secondary).withIsMaster(true).withProduct(packagingKit1NodeRef));
 			alfrescoRepository.save(formulatedProduct);
 			productService.formulate(finishedProductNodeRef);
 			formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
@@ -1618,12 +1461,18 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(2d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(null).withQtyUsed(2d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQty(null).withQtyUsed(3d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQty(null).withQtyUsed(3d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial4NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			List<CostListDataItem> costList = new ArrayList<>();
@@ -1632,8 +1481,8 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setCostList(costList);
 
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
-			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
+			nutList.add(NutListDataItem.build().withNut(nut1));
+			nutList.add(NutListDataItem.build().withNut(nut2));
 			finishedProduct.setNutList(nutList);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -1705,8 +1554,8 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			 * maxi
 			 */
 			formulatedProduct.getCompoListView().getCompoList().clear();
-			formulatedProduct.getCompoListView().getCompoList()
-					.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+			formulatedProduct.getCompoListView().getCompoList().add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(3d)
+					.withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
 			alfrescoRepository.save(formulatedProduct);
 			productService.formulate(finishedProductNodeRef);
 			formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
@@ -1738,168 +1587,6 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 	}
 
-	// /**
-	// * Test formulate product, that has requirements
-	// *
-	// * @throws Exception the exception
-	// */
-	// public void testFormulationWithRequirements() throws Exception{
-	//
-	// transactionService.getRetryingTransactionHelper().doInTransaction(new
-	// RetryingTransactionCallback<NodeRef>(){
-	// public NodeRef execute() throws Throwable {
-	//
-	// Collection<QName> dataLists = productDictionaryService.getDataLists();
-	//
-	// /*-- Create finished product --*/
-	// logger.debug("/*-- Create finished product --*/");
-	// FinishedProductData finishedProduct = new FinishedProductData();
-	// finishedProduct.setName("Produit fini 1");
-	// finishedProduct.setLegalName("Legal Produit fini 1");
-	// finishedProduct.setUnit(ProductUnit.kg);
-	// finishedProduct.setQty(2d);
-	// List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-	// compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d,
-	// null, ProductUnit.kg, 0d, grpPate, DeclarationType.Detail,
-	// localSF1NodeRef));
-	// compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, null,
-	// ProductUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial1NodeRef));
-	// compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, null,
-	// ProductUnit.kg, 0d, null, DeclarationType.Detail, rawMaterial2NodeRef));
-	// compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d,
-	// null, ProductUnit.kg, 0d, grpGarniture, DeclarationType.Detail,
-	// localSF2NodeRef));
-	// compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, null,
-	// ProductUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial3NodeRef));
-	// compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, null,
-	// ProductUnit.kg, 0d, null, DeclarationType.Omit, rawMaterial4NodeRef));
-	// finishedProduct.setCompoList(compoList);
-	// NodeRef finishedProductNodeRef =
-	// alfrescoRepository.create(getTestFolderNodeRef(),
-	// finishedProduct).getNodeRef();
-	//
-	// /*-- Formulate product --*/
-	// logger.debug("/*-- Formulate product --*/");
-	// productService.formulate(finishedProductNodeRef);
-	//
-	// /*-- Verify formulation --*/
-	// logger.debug("/*-- Verify formulation --*/");
-	// ProductData formulatedProduct =
-	// alfrescoRepository.findOne(finishedProductNodeRef);
-	//
-	// //costs
-	// assertNotNull("CostList is null", formulatedProduct.getCostList());
-	// for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-	// String trace = "cost: " +
-	// nodeService.getProperty(costListDataItem.getCost(),
-	// BeCPGModel.PROP_CHARACT_NAME) + " - value: " +
-	// costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
-	// logger.debug(trace);
-	// if(costListDataItem.getCost().equals(cost1)){
-	// assertEquals("cost1.getValue() == 4.0, actual values: " + trace, 4.0d,
-	// costListDataItem.getValue());
-	// assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg",
-	// costListDataItem.getUnit());
-	// }
-	// if(costListDataItem.getCost().equals(cost2)){
-	// assertEquals("cost1.getValue() == 6.0, actual values: " + trace, 6.0d,
-	// costListDataItem.getValue());
-	// assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg",
-	// costListDataItem.getUnit());
-	// }
-	// }
-	// //nuts
-	// assertNotNull("NutList is null", formulatedProduct.getNutList());
-	// for(NutListDataItem nutListDataItem : formulatedProduct.getNutList()){
-	// String trace = "nut: " +
-	// nodeService.getProperty(nutListDataItem.getNut(),
-	// BeCPGModel.PROP_CHARACT_NAME) + " - value: " + nutListDataItem.getValue()
-	// + " - unit: " + nutListDataItem.getUnit();
-	// logger.debug(trace);
-	// if(nutListDataItem.getNut().equals(nut1)){
-	// assertEquals("nut1.getValue() == 3, actual values: " + trace, 3d,
-	// nutListDataItem.getValue());
-	// assertEquals("nut1.getUnit() == kJ/100g, actual values: " + trace,
-	// "kJ/100g", nutListDataItem.getUnit());
-	// assertEquals("must be group1", GROUP1, nutListDataItem.getGroup());
-	// }
-	// if(nutListDataItem.getNut().equals(nut2)){
-	// assertEquals("nut2.getValue() == 6, actual values: " + trace, 6d,
-	// nutListDataItem.getValue());
-	// assertEquals("nut2.getUnit() == kcal/100g, actual values: " + trace,
-	// "kcal/100g", nutListDataItem.getUnit());
-	// assertEquals("must be group2", GROUP2, nutListDataItem.getGroup());
-	// }
-	// }
-	//
-	// /*
-	// * Add requirements
-	// */
-	//
-	// for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-	//
-	// if(costListDataItem.getCost().equals(cost1)){
-	// costListDataItem.setMaxi(3d);
-	// }
-	// }
-	// //nuts
-	// assertNotNull("NutList is null", formulatedProduct.getNutList());
-	// for(NutListDataItem nutListDataItem : formulatedProduct.getNutList()){
-	// if(nutListDataItem.getNut().equals(nut1)){
-	// nutListDataItem.setMini(3.1d);
-	// }
-	// if(nutListDataItem.getNut().equals(nut2)){
-	// nutListDataItem.setMaxi(5d);
-	// }
-	// }
-	//
-	// alfrescoRepository.update(finishedProductNodeRef, formulatedProduct);
-	//
-	// productService.formulate(finishedProductNodeRef);
-	//
-	// /*
-	// * Checks requirements
-	// */
-	//
-	// formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
-	//
-	// int checks = 0;
-	// for(ReqCtrlListDataItem reqCtrlList :
-	// formulatedProduct.getReqCtrlList()){
-	//
-	// logger.debug("reqCtrlList.getReqMessage(): " +
-	// reqCtrlList.getReqMessage());
-	// if(reqCtrlList.getReqMessage().equals("Exigence non respectée sur le coût
-	// 'cost1'. Valeur:'4' - Max:'3'")){
-	//
-	// assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
-	// checks++;
-	// }
-	// else if(reqCtrlList.getReqMessage().equals("Exigence non respectée sur le
-	// nutriment 'nut1'. Valeur:'3' - Min:'3,1' - Max:'null'")){
-	//
-	// assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
-	// checks++;
-	// }
-	// else if(reqCtrlList.getReqMessage().equals("Exigence non respectée sur le
-	// nutriment 'nut2'. Valeur:'6' - Min:'null' - Max:'5'")){
-	//
-	// assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
-	// checks++;
-	// }
-	// else{
-	// checks++;
-	// }
-	// }
-	//
-	// assertEquals(3, checks);
-	//
-	// return null;
-	//
-	// }},false,true);
-	//
-	// }
-
 	/**
 	 * Test formulate product, that the yield field is calculated
 	 *
@@ -1922,20 +1609,24 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(2d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 2d, ProductUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 10d, DeclarationType.Detail, localSF2NodeRef));
-			compoList
-					.add(new CompoListDataItem(null, compoList.get(1), null, 0.8d, ProductUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList
-					.add(new CompoListDataItem(null, compoList.get(1), null, 0.3d, ProductUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 20d, DeclarationType.Detail, localSF3NodeRef));
-			compoList.add(
-					new CompoListDataItem(null, compoList.get(4), null, 0.17d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			CompoListDataItem temp = new CompoListDataItem(null, compoList.get(4), null, 0.40d, ProductUnit.kg, 0d, DeclarationType.Omit,
-					rawMaterial4NodeRef);
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(10d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg)
+					.withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(1)).withQty(null).withQtyUsed(0.8d).withUnit(ProductUnit.kg)
+					.withLossPerc(5d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(1)).withQty(null).withQtyUsed(0.3d).withUnit(ProductUnit.kg)
+					.withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(null).withQtyUsed(2d).withUnit(ProductUnit.kg)
+					.withLossPerc(20d).withDeclarationType(DeclarationType.Detail).withProduct(localSF3NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(4)).withQty(null).withQtyUsed(0.17d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+			CompoListDataItem temp = CompoListDataItem.build().withParent(compoList.get(4)).withQty(null).withQtyUsed(0.40d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial4NodeRef);
 			temp.setYieldPerc(200d);
 			compoList.add(temp);
-			compoList.add(new CompoListDataItem(null, compoList.get(4), null, 1d, ProductUnit.P, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(4)).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.P)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial5NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
@@ -2006,14 +1697,20 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(2d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			CompoListDataItem parent = new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef);
+			CompoListDataItem parent = CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef);
 			compoList.add(parent);
-			compoList.add(new CompoListDataItem(null, parent, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, parent, null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			parent = new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef);
+			compoList.add(CompoListDataItem.build().withParent(parent).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(parent).withQty(null).withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+			parent = CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef);
 			compoList.add(parent);
-			compoList.add(new CompoListDataItem(null, parent, null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, parent, null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(parent).withQty(null).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(parent).withQty(null).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial4NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			List<CostListDataItem> costList = new ArrayList<>();
@@ -2266,8 +1963,8 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setCostList(costList);
 
 			List<PackagingListDataItem> packList = new ArrayList<>();
-			packList.add(PackagingListDataItem.build().withQty(25d).withUnit(ProductUnit.PP).withPkgLevel(PackagingLevel.Secondary).withIsMaster(true).withProduct(packagingKit1NodeRef)
-);
+			packList.add(PackagingListDataItem.build().withQty(25d).withUnit(ProductUnit.PP).withPkgLevel(PackagingLevel.Secondary).withIsMaster(true)
+					.withProduct(packagingKit1NodeRef));
 			finishedProduct.getPackagingListView().setPackagingList(packList);
 
 			NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -2410,18 +2107,22 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(2d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 100d, ProductUnit.Perc, 10d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 45d, ProductUnit.Perc, 10d, DeclarationType.Detail, localSF2NodeRef));
-			compoList.add(
-					new CompoListDataItem(null, compoList.get(1), null, 20d, ProductUnit.Perc, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(
-					new CompoListDataItem(null, compoList.get(1), null, 25d, ProductUnit.Perc, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 55d, ProductUnit.Perc, 20d, DeclarationType.Detail, localSF3NodeRef));
-			compoList.add(
-					new CompoListDataItem(null, compoList.get(4), null, 10d, ProductUnit.Perc, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(4), null, 25d, ProductUnit.Perc, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
-			compoList.add(
-					new CompoListDataItem(null, compoList.get(4), null, 20d, ProductUnit.Perc, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(100d).withUnit(ProductUnit.Perc).withLossPerc(10d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(null).withQtyUsed(45d).withUnit(ProductUnit.Perc)
+					.withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(1)).withQty(null).withQtyUsed(20d).withUnit(ProductUnit.Perc)
+					.withLossPerc(5d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(1)).withQty(null).withQtyUsed(25d).withUnit(ProductUnit.Perc)
+					.withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(null).withQtyUsed(55d).withUnit(ProductUnit.Perc)
+					.withLossPerc(20d).withDeclarationType(DeclarationType.Detail).withProduct(localSF3NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(4)).withQty(null).withQtyUsed(10d).withUnit(ProductUnit.Perc)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(4)).withQty(null).withQtyUsed(25d).withUnit(ProductUnit.Perc)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial4NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(4)).withQty(null).withQtyUsed(20d).withUnit(ProductUnit.Perc)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial5NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
@@ -2506,12 +2207,18 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setUnitPrice(12.4d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(null).withQtyUsed(2d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQty(null).withQtyUsed(3d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQty(null).withQtyUsed(3d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial4NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			List<PhysicoChemListDataItem> physicoChemList = new ArrayList<>();
@@ -2552,13 +2259,10 @@ public class FormulationIT extends AbstractFinishedProductTest {
 					assertEquals(6.2d, pcListDataItem.getMaxi());
 					checks++;
 				}
-				/* #1787: check physico in % cannot be over 100%
-				if (pcListDataItem.getPhysicoChem().equals(physicoChem5)) {
-					assertEquals(100d, pcListDataItem.getValue());
-					assertEquals(100d, pcListDataItem.getMini());
-					assertEquals(100d, pcListDataItem.getMaxi());
-					checks++;
-				} */
+				/*
+				 * #1787: check physico in % cannot be over 100% if (pcListDataItem.getPhysicoChem().equals(physicoChem5)) { assertEquals(100d, pcListDataItem.getValue()); assertEquals(100d,
+				 * pcListDataItem.getMini()); assertEquals(100d, pcListDataItem.getMaxi()); checks++; }
+				 */
 			}
 			assertEquals(2, checks);
 
@@ -2569,7 +2273,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 	}
 
 	@Test
-	public void testOverrunAndVolume() throws Exception {
+	public void testOverrunAndVolume() {
 
 		logger.info("testOverrunAndVolume");
 
@@ -2589,19 +2293,24 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setNetWeight(2d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 100d, ProductUnit.Perc, 10d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 45d, ProductUnit.Perc, 10d, DeclarationType.Detail, localSF2NodeRef));
-			compoList.add(
-					new CompoListDataItem(null, compoList.get(1), null, 20d, ProductUnit.Perc, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(
-					new CompoListDataItem(null, compoList.get(1), null, 25d, ProductUnit.Perc, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 55d, ProductUnit.Perc, 20d, DeclarationType.Detail, localSF3NodeRef));
-			compoList.add(
-					new CompoListDataItem(null, compoList.get(4), null, 10d, ProductUnit.Perc, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(4), null, 25d, ProductUnit.Perc, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
-			compoList.add(
-					new CompoListDataItem(null, compoList.get(4), null, 20d, ProductUnit.Perc, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.P, null, DeclarationType.Declare, rawMaterial15NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(100d).withUnit(ProductUnit.Perc).withLossPerc(10d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(null).withQtyUsed(45d).withUnit(ProductUnit.Perc)
+					.withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(1)).withQty(null).withQtyUsed(20d).withUnit(ProductUnit.Perc)
+					.withLossPerc(5d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(1)).withQty(null).withQtyUsed(25d).withUnit(ProductUnit.Perc)
+					.withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(null).withQtyUsed(55d).withUnit(ProductUnit.Perc)
+					.withLossPerc(20d).withDeclarationType(DeclarationType.Detail).withProduct(localSF3NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(4)).withQty(null).withQtyUsed(10d).withUnit(ProductUnit.Perc)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(4)).withQty(null).withQtyUsed(25d).withUnit(ProductUnit.Perc)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial4NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(4)).withQty(null).withQtyUsed(20d).withUnit(ProductUnit.Perc)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial5NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.P).withLossPerc(null)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial15NodeRef));
 
 			// add overrun
 			compoList.get(6).setOverrunPerc(80d);
@@ -2660,7 +2369,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 	}
 
 	@Test
-	public void testNutrientLost() throws Exception {
+	public void testNutrientLost() {
 
 		logger.info("testNutrientLost");
 
@@ -2670,9 +2379,12 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setName("Finished product 1");
 			finishedProduct.setServingSize(300d);
 			List<NutListDataItem> nutList = new ArrayList<>();
-			nutList.add(new NutListDataItem(null, 12d, null, 11d, 13d, null, nut1, false));
+			nutList.add(NutListDataItem.build().withValue(12d).withMini(11d).withMaxi(13d).withNut(nut1));
+			
+
+			
 			nutList.get(0).setLossPerc(30d);
-			nutList.add(new NutListDataItem(null, 12d, null, 11d, 13d, null, nut2, false));
+			nutList.add(NutListDataItem.build().withValue(12d).withMini(11d).withMaxi(13d).withNut(nut2));
 			finishedProduct.setNutList(nutList);
 			NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
@@ -2696,7 +2408,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 		}, false, true);
 
 	}
-	
+
 	@Test
 	public void testMiniMaxi() {
 		logger.info("testMiniMaxi");
@@ -2712,9 +2424,12 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setServingSize(50d);// 50g
 			finishedProduct.setProjectedQty(10000l);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(null).withQtyUsed(2d).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -2728,12 +2443,12 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			int checks = 0;
 			for (IngListDataItem ing : formulatedFinishedProduct.getIngList()) {
-				if (ing.getIng().equals(ing1) && ing.getMini() != null && ing.getMaxi() != null) {
+				if (ing.getIng().equals(ing1) && (ing.getMini() != null) && (ing.getMaxi() != null)) {
 					logger.info("FP ing1 mini: " + ing.getMini() + " maxi: " + ing.getMaxi());
 					checks++;
 					assertEquals(ing.getMini(), 18.333333333333332);
 					assertEquals(ing.getMaxi(), 80.0);
-				} else if (ing.getIng().equals(ing2) && ing.getMini() != null && ing.getMaxi() != null) {
+				} else if (ing.getIng().equals(ing2) && (ing.getMini() != null) && (ing.getMaxi() != null)) {
 					logger.info("FP ing2 mini: " + ing.getMini() + " maxi: " + ing.getMaxi());
 					assertEquals(ing.getMini(), 22.666666666666668);
 					assertEquals(ing.getMaxi(), 84.0);

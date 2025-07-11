@@ -223,8 +223,7 @@ public class DockBarWebScript extends AbstractWebScript {
 		} catch (JSONException e) {
 			throw new WebScriptException("Unable to serialize JSON", e);
 		} finally {
-			if (logger.isDebugEnabled()) {
-				assert watch != null;
+			if (logger.isDebugEnabled() && watch!=null) {
 				watch.stop();
 				logger.debug("DockBarWebScript execute in " + watch.getTotalTimeSeconds() + "s");
 			}

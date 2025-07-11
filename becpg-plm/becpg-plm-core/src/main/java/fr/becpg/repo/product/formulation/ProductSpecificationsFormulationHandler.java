@@ -382,7 +382,7 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 							}
 						}, false, true);
 
-						if (logger.isDebugEnabled()) {
+						if (logger.isDebugEnabled() && stopWatch != null) {
 							stopWatch.stop();
 							logger.debug("Formulate specification :" + formulatedProduct.getName() + " in " + stopWatch.getTotalTimeSeconds()
 									+ "s success: " + ret);

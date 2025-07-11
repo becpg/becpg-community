@@ -239,6 +239,7 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	private void cleanThumbnails(NodeRef reportNodeRef) {
 
 		// Ensure thumbnail is regenerated before preview

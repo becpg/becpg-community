@@ -168,11 +168,9 @@
 		<property name="preferenceService" ref="preferenceService" />
 		<property name="projectService" ref="projectService" />
 		<property name="securityService" ref="securityService" />
-		<property name="namespaceService" ref="namespaceService" />
 		<property name="entityActivityExtractorService" ref="entityActivityExtractorService" />
 		<property name="dataListExtractorFactory" ref="dataListExtractorFactory" />
 		<property name="defaultExtractor" value="false" />
-		<property name="systemConfigurationService" ref="systemConfigurationService" />
 	</bean>
 
   

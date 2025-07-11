@@ -5,9 +5,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.domain.node.NodeDAO;
-import org.alfresco.repo.domain.patch.PatchDAO;
-import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.Pair;
@@ -33,38 +30,7 @@ public class WUsedListPatch extends AbstractBeCPGPatch {
 
 	private EntityTplService entityTplService;
 
-	private NodeDAO nodeDAO;
-	private PatchDAO patchDAO;
-	private QNameDAO qnameDAO;
 	
-	
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>Setter for the field <code>nodeDAO</code>.</p>
-	 */
-	public void setNodeDAO(NodeDAO nodeDAO) {
-		this.nodeDAO = nodeDAO;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>Setter for the field <code>patchDAO</code>.</p>
-	 */
-	public void setPatchDAO(PatchDAO patchDAO) {
-		this.patchDAO = patchDAO;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>Setter for the field <code>qnameDAO</code>.</p>
-	 */
-	public void setQnameDAO(QNameDAO qnameDAO) {
-		this.qnameDAO = qnameDAO;
-	}
-
 	/**
 	 * <p>Setter for the field <code>entityTplService</code>.</p>
 	 *
@@ -134,8 +100,8 @@ public class WUsedListPatch extends AbstractBeCPGPatch {
 					if (!status.isDeleted()) {
 						NodeRef entityTplNodeRef = status.getNodeRef();
 						if (nodeService.exists(entityTplNodeRef) && !nodeService.hasAspect(entityTplNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
-								&& productType.equals(nodeService.getType(entityTplNodeRef))) {
-	
+								&& productType.equals(nodeService.getType(entityTplNodeRef)) && wusedQName!=null) {
+
 							logger.info("Adding wusedList : " + wusedQName.toPrefixString() + " to "
 									+ nodeService.getProperty(entityTplNodeRef, ContentModel.PROP_NAME));
 	

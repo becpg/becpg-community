@@ -25,7 +25,11 @@ public class CanadianNutrientRegulation extends AbstractNutrientRegulation {
 	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
 
-		if(value != null){
+		if (value == null) {
+			return null;
+		}
+
+		if(nutrientTypeCode != null){
 			if (nutrientTypeCode.equals(NutrientCode.EnergykcalUS)) {
 				if (value > 50) {
 					return roundValue(value,10d);
