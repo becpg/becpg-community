@@ -61,7 +61,8 @@
 
 .form-container .yui-ac .ac-body,
 .form-container .yui-g.number-range,
-.form-container .form-field input.number {
+.form-container .form-field input.number,
+.form-container .form-field input.dropdown {
 	width: 28em;
 }
 
@@ -90,6 +91,7 @@
 	:not(.bd) > .form-container .yui-g .form-field input[type="text"]:not(.number-range,.date-range,.date-entry,.number-unit,.yui-ac-input), 
 	:not(.bd) > .form-container .yui-g .form-field input[type="file"],
 	:not(.bd) > .form-container .yui-g .form-field input[type="password"],
+	:not(.bd) > .form-container .yui-g .form-field input.dropdown,
 	:not(.bd) > .form-container .yui-g .form-field input:not(.number-range,.date-range,.date-entry,.number-unit,.yui-ac-input,.formsCheckBox), 
 	:not(.bd) > .form-container .yui-g .form-field select,
 	:not(.bd) > .form-container .yui-g .form-field textarea, 
@@ -144,11 +146,16 @@
 	 :not(.bd) > .form-container .yui-navset .form-field input[type="text"]:not(.date-entry,.number-range,.date-range,.number-unit,.yui-ac-input),
 	 :not(.bd) > .form-container .yui-navset .form-field input[type="file"],
 	 :not(.bd) > .form-container .yui-navset .form-field input[type="password"],
+	 :not(.bd) > .form-container .yui-navset .form-field input.dropdown,
 	 :not(.bd) > .form-container .yui-navset .form-field input:not(.number-range,.date-entry,.number-range,.date-range,.number-unit,.yui-ac-input,.formsCheckBox), 
 	 :not(.bd) > .form-container .yui-navset .form-field select,
 	 :not(.bd) > .form-container .yui-navset .form-field textarea, .form-container .yui-navset .yui-ac .ac-body
 	{
 	width: 26em !important;
+}
+
+:not(.bd) > .form-container .yui-navset .form-field input.dropdown {
+	border: 1px solid #ccc;
 }
 
 .form-container .yui-navset .form-field input.number-unit {
@@ -170,6 +177,7 @@
 	 :not(.bd) > .form-container .yui-gb .form-field input[type="text"]:not(.number-range):not(.date-range):not(.number-unit):not(.yui-ac-input), 
 	 :not(.bd) > .form-container .yui-gb .form-field input[type="file"],
 	 :not(.bd) > .form-container .yui-gb .form-field input[type="password"],
+	 :not(.bd) > .form-container .yui-gb .form-field input.dropdown,
 	 :not(.bd) > .form-container .yui-gb .form-field input:not(.number-range):not(.date-range):not(.number-unit):not(.yui-ac-input):not(.formsCheckBox), 
 	 :not(.bd) > .form-container .yui-gb .form-field select,
 	 :not(.bd) > .form-container .yui-gb .form-field textarea, .form-container .yui-gb .yui-ac .ac-body
