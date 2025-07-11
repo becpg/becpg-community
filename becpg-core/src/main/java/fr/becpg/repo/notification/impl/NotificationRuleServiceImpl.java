@@ -404,7 +404,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 					alfrescoRepository.save(notification);
 				}
 			});
-			batchQueueService.queueBatch(new BatchInfo("notificationScript", "becpg.batch.notificationScript"), List.of(batchStep));
+			batchQueueService.queueBatch(new BatchInfo("notificationScript-" + notification.getNodeRef().getId(), "becpg.batch.notificationScript"), List.of(batchStep));
 		} else if (ScriptMode.ALL.equals(notification.getScriptMode())) {
 			model.put("items", items.stream().map(n -> new ScriptNode(n, serviceRegistry)).toArray());
 			scriptService.executeScript(notification.getScript(), ContentModel.PROP_CONTENT, model);
