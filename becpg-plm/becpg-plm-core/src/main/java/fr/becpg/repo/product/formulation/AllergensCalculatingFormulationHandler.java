@@ -31,13 +31,13 @@ import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.AllergenType;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.requirement.AllergenRequirementScanner;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.variant.model.VariantDataItem;
@@ -120,8 +120,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			}
 
 			List<AllergenListDataItem> retainNodes = new ArrayList<>();
-			Map<String, ReqCtrlListDataItem> errors = new HashMap<>();
-			Map<String, ReqCtrlListDataItem> rclCtrlMap = new HashMap<>();
+			Map<String, RequirementListDataItem> errors = new HashMap<>();
+			Map<String, RequirementListDataItem> rclCtrlMap = new HashMap<>();
 
 			// compoList
 			Double netQty = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
@@ -153,11 +153,11 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 													partProduct.getAllergenList().get(0).getParentNodeRef(), BeCPGModel.PROP_ENTITYLIST_STATE))) {
 
 										String message = I18NUtil.getMessage(MESSAGE_NOT_VALIDATED_ALLERGEN);
-										ReqCtrlListDataItem error = rclCtrlMap.get(message);
+										RequirementListDataItem error = rclCtrlMap.get(message);
 
 										List<NodeRef> sourceNodeRefs = new ArrayList<>();
 										if (error == null) {
-											error = ReqCtrlListDataItem.tolerated().ofDataType(RequirementDataType.Allergen)
+											error = RequirementListDataItem.tolerated().ofDataType(RequirementDataType.Allergen)
 													.withMessage(MLTextHelper.getI18NMessage(MESSAGE_NOT_VALIDATED_ALLERGEN))
 													.withSources(sourceNodeRefs);
 										} else {
@@ -358,10 +358,10 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	 * @param allergenMap
 	 *            the allergen map
 	 */
-	private List<ReqCtrlListDataItem> visitPart(VariantDataItem variantDataItem, ProductData partProduct, ProductData formulatedProduct,
-			List<AllergenListDataItem> retainNodes, Double qtyUsed, Double netQty, Map<String, ReqCtrlListDataItem> errors) {
+	private List<RequirementListDataItem> visitPart(VariantDataItem variantDataItem, ProductData partProduct, ProductData formulatedProduct,
+			List<AllergenListDataItem> retainNodes, Double qtyUsed, Double netQty, Map<String, RequirementListDataItem> errors) {
 
-		List<ReqCtrlListDataItem> ret = new ArrayList<>();
+		List<RequirementListDataItem> ret = new ArrayList<>();
 
 		for (AllergenListDataItem allergenListDataItem : partProduct.getAllergenList()) {
 
@@ -486,7 +486,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 					} else {
 
 						String message = I18NUtil.getMessage(MESSAGE_NULL_PERC, extractName(allergenNodeRef));
-						ReqCtrlListDataItem error = errors.get(message);
+						RequirementListDataItem error = errors.get(message);
 
 						if ((allergenListDataItem.getQtyPerc() != null) && (qtyUsed != null)
 								&& ((newAllergenListDataItem.getQtyPerc() != null) || (error == null))) {
@@ -519,7 +519,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 								List<NodeRef> sourceNodeRefs = new ArrayList<>();
 								sourceNodeRefs.add(partProduct.getNodeRef());
 
-								error = ReqCtrlListDataItem.forbidden().ofDataType(RequirementDataType.Allergen)
+								error = RequirementListDataItem.forbidden().ofDataType(RequirementDataType.Allergen)
 										.withMessage(MLTextHelper.getI18NMessage(MESSAGE_NULL_PERC,
 												mlNodeService.getProperty(allergenNodeRef, BeCPGModel.PROP_CHARACT_NAME)))
 										.withSources(sourceNodeRefs).withCharact(allergenNodeRef);
@@ -561,13 +561,13 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		return ret;
 	}
 
-	private void addEmptyError(Map<String, ReqCtrlListDataItem> errors, List<ReqCtrlListDataItem> ret, ProductData partProduct) {
+	private void addEmptyError(Map<String, RequirementListDataItem> errors, List<RequirementListDataItem> ret, ProductData partProduct) {
 		String message = I18NUtil.getMessage(MESSAGE_EMPTY_ALLERGEN);
-		ReqCtrlListDataItem error = errors.get(message);
+		RequirementListDataItem error = errors.get(message);
 
 		List<NodeRef> sourceNodeRefs = new ArrayList<>();
 		if (error == null) {
-			error = ReqCtrlListDataItem.forbidden().ofDataType(RequirementDataType.Allergen)
+			error = RequirementListDataItem.forbidden().ofDataType(RequirementDataType.Allergen)
 					.withMessage(MLTextHelper.getI18NMessage(MESSAGE_EMPTY_ALLERGEN)).withSources(sourceNodeRefs);
 			ret.add(error);
 		} else {

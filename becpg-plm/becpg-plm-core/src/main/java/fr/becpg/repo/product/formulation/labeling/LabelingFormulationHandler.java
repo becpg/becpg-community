@@ -57,7 +57,6 @@ import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
 import fr.becpg.repo.product.data.constraints.PlaceOfActivityTypeCode;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.ing.CompositeLabeling;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.ing.LabelingComponent;
@@ -67,10 +66,11 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.spel.LabelingFormulaFilterContext;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.helper.IngListHelper;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.system.SystemConfigurationService;
@@ -275,7 +275,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 						} catch (Exception e) {
 							formulatedProduct.getReqCtrlList()
-									.add(ReqCtrlListDataItem.tolerated()
+									.add(RequirementListDataItem.tolerated()
 											.withMessage(MLTextHelper.getI18NMessage("message.formulate.labelRule.error",
 													labelingRuleListDataItem.getName(), e.getLocalizedMessage()))
 											.ofDataType(RequirementDataType.Labelling)
@@ -428,7 +428,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 								} catch (Exception e) {
 									formulatedProduct.getReqCtrlList()
-											.add(ReqCtrlListDataItem.tolerated()
+											.add(RequirementListDataItem.tolerated()
 													.withMessage(MLTextHelper.getI18NMessage("message.formulate.labelRule.error",
 															labelingRuleListDataItem.getName(), e.getLocalizedMessage()))
 													.ofDataType(RequirementDataType.Labelling));
@@ -1126,7 +1126,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 										toAdd.put(aggregateRuleNodeRef, compositeLabeling);
 									}
 
-									ReqCtrlListDataItem error = null;
+									RequirementListDataItem error = null;
 
 									if (DeclarationType.Declare.equals(component.getDeclarationType())) {
 										for (CompositeLabeling childComponent : component.getIngList().values()) {
@@ -1224,7 +1224,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
-	private ReqCtrlListDataItem appendToAggregate(CompositeLabeling component, CompositeLabeling compositeLabeling, AggregateRule aggregateRule,
+	private RequirementListDataItem appendToAggregate(CompositeLabeling component, CompositeLabeling compositeLabeling, AggregateRule aggregateRule,
 			Double qty, Double volume, Double qtyWithYield, Double volumeWithYield) {
 		CompositeLabeling current = compositeLabeling.getIngList().get(component.getNodeRef());
 		boolean is100Perc = (aggregateRule.getQty() == null) || (aggregateRule.getQty() == 100d);
@@ -1298,7 +1298,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				volumeWithYield != null ? volumeWithYield : 0d, true, true);
 
 		if ((qty == null) && (current != null)) {
-			return ReqCtrlListDataItem.forbidden().withMessage(MLTextHelper.getI18NMessage(NULL_ING_ERROR, getName(current)))
+			return RequirementListDataItem.forbidden().withMessage(MLTextHelper.getI18NMessage(NULL_ING_ERROR, getName(current)))
 					.ofDataType(RequirementDataType.Labelling);
 
 		}
@@ -1459,7 +1459,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private void visitCompoList(CompositeLabeling parent, Composite<CompoListDataItem> parentComposite, LabelingFormulaContext labelingFormulaContext,
 			final BigDecimal ratio, final Double currYield, final boolean apply) {
 
-		Map<String, ReqCtrlListDataItem> errors = new HashMap<>();
+		Map<String, RequirementListDataItem> errors = new HashMap<>();
 
 		for (Composite<CompoListDataItem> composite : parentComposite.getChildren()) {
 
@@ -2190,7 +2190,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	private CompositeLabeling visitIngList(CompositeLabeling parent, ProductData product, Composite<IngListDataItem> compositeIngList,
 			Double omitQtyPerc, Double qty, Double volume, Double qtyWithYield, Double volumeWithYield, LabelingFormulaContext labelingFormulaContext,
-			CompoListDataItem compoListDataItem, Map<String, ReqCtrlListDataItem> errors, Double calculatedYield) {
+			CompoListDataItem compoListDataItem, Map<String, RequirementListDataItem> errors, Double calculatedYield) {
 
 		boolean applyThreshold = false;
 		if (nodeService.hasAspect(product.getNodeRef(), PLMModel.ASPECT_WATER)
@@ -2349,7 +2349,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						if (qtyPerc == null) {
 
 							String message = I18NUtil.getMessage(NULL_ING_ERROR, getName(ingLabelItem));
-							ReqCtrlListDataItem error = errors.get(message);
+							RequirementListDataItem error = errors.get(message);
 							if (error != null) {
 								error.addSource(product.getNodeRef());
 							} else {
@@ -2390,7 +2390,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							if ((ingLabelItem.getQty() == null) && (qty == null)) {
 
 								String message = I18NUtil.getMessage(NULL_ING_ERROR, getName(ingLabelItem));
-								ReqCtrlListDataItem error = errors.get(message);
+								RequirementListDataItem error = errors.get(message);
 								if (error != null) {
 									if ((qty == null) && !error.getSources().contains(product.getNodeRef())) {
 										error.getSources().add(product.getNodeRef());
@@ -2502,12 +2502,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		return false;
 	}
 
-	private ReqCtrlListDataItem createError(CompositeLabeling ingItem, NodeRef productNodeRef) {
+	private RequirementListDataItem createError(CompositeLabeling ingItem, NodeRef productNodeRef) {
 		List<NodeRef> sourceNodeRefs = new ArrayList<>();
 		if (productNodeRef != null) {
 			sourceNodeRefs.add(productNodeRef);
 		}
-		return ReqCtrlListDataItem.forbidden().withMessage(MLTextHelper.getI18NMessage(NULL_ING_ERROR, getName(ingItem)))
+		return RequirementListDataItem.forbidden().withMessage(MLTextHelper.getI18NMessage(NULL_ING_ERROR, getName(ingItem)))
 				.ofDataType(RequirementDataType.Labelling).withSources(sourceNodeRefs);
 
 	}

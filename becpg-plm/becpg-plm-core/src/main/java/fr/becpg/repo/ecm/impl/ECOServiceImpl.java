@@ -102,7 +102,7 @@ import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
@@ -1500,7 +1500,7 @@ public class ECOServiceImpl implements ECOService {
 		StringBuilder reqDetails = null;
 
 		if ((targetData.getCompoListView() != null) && (targetData.getReqCtrlList() != null)) {
-			for (ReqCtrlListDataItem rcl : targetData.getReqCtrlList()) {
+			for (RequirementListDataItem rcl : targetData.getReqCtrlList()) {
 
 				RequirementType newReqType = rcl.getReqType();
 

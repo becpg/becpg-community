@@ -257,22 +257,22 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 
 	private void updateEntityAuditedFields(NodeRef entityNodeRef, Set<NodeRef> listNodeRefs, boolean catalogOnly) {
 		if ((entityNodeRef != null) && !isVersionNode(entityNodeRef) && isNotLocked(entityNodeRef)) {
-			try {
+			
 				if (policyBehaviourFilter.isEnabled(entityNodeRef, ContentModel.ASPECT_AUDITABLE) && !catalogOnly) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Update modified date of entity:" + entityNodeRef);
 					}
 					
 					TransactionSupportUtil.bindResource(UPDATED_LISTS + entityNodeRef, listNodeRefs);
-					policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-					nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIED, Calendar.getInstance().getTime());
-					nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIER, authenticationService.getCurrentUserName());
+					try {
+						policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+						nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIED, Calendar.getInstance().getTime());
+						nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIER, authenticationService.getCurrentUserName());
+					} finally {
+						policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+					}
 				}
 				entityCatalogService.updateAuditedField(entityNodeRef, null, listNodeRefs);
-			} finally {
-				policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-			}
-
 		}
 	}
 

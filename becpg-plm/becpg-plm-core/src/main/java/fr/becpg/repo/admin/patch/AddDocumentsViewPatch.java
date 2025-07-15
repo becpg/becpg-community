@@ -59,12 +59,15 @@ public class AddDocumentsViewPatch extends AbstractBeCPGPatch {
 	@Override
 	protected String applyInternal() throws Exception {
 
-		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-
-		doForType(PLMModel.ASPECT_PRODUCT, true);
-		doForType(PLMModel.TYPE_CLIENT, false);
-		doForType(PLMModel.TYPE_SUPPLIER, false);
-		doForType(ProjectModel.TYPE_PROJECT, false);
+		AuthenticationUtil.runAsSystem(new AuthenticationUtil.RunAsWork<Void>() {
+			public Void doWork() throws Exception {
+				doForType(PLMModel.ASPECT_PRODUCT, true);
+				doForType(PLMModel.TYPE_CLIENT, false);
+				doForType(PLMModel.TYPE_SUPPLIER, false);
+				doForType(ProjectModel.TYPE_PROJECT, false);
+				return null;
+			}
+		});
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
@@ -145,19 +148,22 @@ public class AddDocumentsViewPatch extends AbstractBeCPGPatch {
 			@Override
 			public void process(NodeRef entityNodeRef) throws Throwable {
 
-				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-
-				if (nodeService.exists(entityNodeRef)) {
-					if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
-							|| nodeService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF).isEmpty()) {
-						logger.debug("Create views on entity " + entityNodeRef);
-						ruleService.disableRules();
-						entityTplService.createView(entityNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
-						ruleService.enableRules();
+				AuthenticationUtil.runAsSystem(new AuthenticationUtil.RunAsWork<Void>() {
+					public Void doWork() throws Exception {
+						if (nodeService.exists(entityNodeRef)) {
+							if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
+									|| nodeService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF).isEmpty()) {
+								logger.debug("Create views on entity " + entityNodeRef);
+								ruleService.disableRules();
+								entityTplService.createView(entityNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
+								ruleService.enableRules();
+							}
+						} else {
+							logger.warn("entityNodeRef doesn't exist : " + entityNodeRef);
+						}
+						return null;
 					}
-				} else {
-					logger.warn("entityNodeRef doesn't exist : " + entityNodeRef);
-				}
+				});
 
 			}
 

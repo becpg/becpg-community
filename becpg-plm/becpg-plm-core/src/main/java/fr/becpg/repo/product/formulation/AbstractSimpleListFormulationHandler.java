@@ -53,13 +53,13 @@ import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -552,14 +552,14 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 * @param mandatoryCharacts a {@link java.util.Map} object.
 	 * @param dataType a {@link fr.becpg.repo.product.data.constraints.RequirementDataType} object.
 	 */
-	protected void addReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList, Map<NodeRef, List<NodeRef>> mandatoryCharacts,
+	protected void addReqCtrlList(List<RequirementListDataItem> reqCtrlList, Map<NodeRef, List<NodeRef>> mandatoryCharacts,
 			RequirementDataType dataType) {
 
 		// ReqCtrlList
 		for (Map.Entry<NodeRef, List<NodeRef>> mandatoryCharact : mandatoryCharacts.entrySet()) {
 			if ((mandatoryCharact.getValue() != null) && !mandatoryCharact.getValue().isEmpty()) {
 
-				reqCtrlList.add( ReqCtrlListDataItem.build().ofType( RequirementType.Tolerated)
+				reqCtrlList.add( RequirementListDataItem.build().ofType( RequirementType.Tolerated)
 					.withMessage(MLTextHelper.getI18NMessage(MESSAGE_UNDEFINED_CHARACT,
 							mlNodeService.getProperty(mandatoryCharact.getKey(), BeCPGModel.PROP_CHARACT_NAME)))
 					.withCharact(mandatoryCharact.getKey())
@@ -965,7 +965,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				if (error != null) {
 					formulatedCharactDataItem.setValue(null);
 
-					formulatedProduct.getReqCtrlList().add(ReqCtrlListDataItem.build()
+					formulatedProduct.getReqCtrlList().add(RequirementListDataItem.build()
 							.ofType( RequirementType.Tolerated)
 							.withMessage(MLTextHelper.getI18NMessage(errorKey,
 									mlNodeService.getProperty(formulatedCharactDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME), error))

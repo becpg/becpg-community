@@ -29,10 +29,10 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
@@ -187,7 +187,7 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 						p.setRateProduct(p.getRateResource() * formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes());
 					} else {
 						formulatedProduct.getReqCtrlList()
-								.add(ReqCtrlListDataItem.forbidden()
+								.add(RequirementListDataItem.forbidden()
 										.withMessage(MLTextHelper.getI18NMessage(FormulationHelper.MISSING_NUMBER_OF_PRODUCT_PER_BOX))
 										.ofDataType(RequirementDataType.Packaging));
 					}
