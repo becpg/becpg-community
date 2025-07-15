@@ -186,7 +186,6 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 		List<ACLEntryDataItem> acls = new ArrayList<>();
 
 		List<NodeRef> group1s = new ArrayList<>();
-		group1s = new ArrayList<>();
 		group1s.add(authorityService.getAuthorityNodeRef(grp1));
 
 		acls.add(new ACLEntryDataItem("sec:propName", PermissionModel.READ_WRITE, group1s));

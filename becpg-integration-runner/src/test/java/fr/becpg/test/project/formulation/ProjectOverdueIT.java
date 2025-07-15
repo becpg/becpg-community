@@ -104,13 +104,9 @@ public class ProjectOverdueIT extends AbstractProjectTestCase {
 
 			// add a parallel task
 			TaskListDataItem task = TaskListDataItem.build()
-    .withTaskName("Task in parallel")
-    .withIsMilestone(false)
-    .withDuration(2)
-    .withPrevTasks(null)
-    .withResources(null)
-    .withTaskLegend(null)
-    .withWorkflowName(null);
+		    .withTaskName("Task in parallel")
+		    .withIsMilestone(false)
+		    .withDuration(2);
 			task.setStart(new Date());
 			task.setEnd(ProjectHelper.calculateNextDate(new Date(), 5, true));
 			task.setTaskState(TaskState.Completed);

@@ -67,11 +67,11 @@ public class FormulationIT extends AbstractFinishedProductTest {
 	 *             the exception
 	 */
 	@Test
-	public void testIngredientsCalculating() throws Exception {
+	public void testIngredientsCalculating()  {
 
 		logger.info("testIngredientsCalculating");
 
-		NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef finishedProductNodeRef1 = inWriteTx(() -> {
 
 			/**
 			 * Finished product 1
@@ -101,9 +101,9 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- Formulate product --*/
 			logger.debug("/*-- Formulate product --*/");
@@ -343,7 +343,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -354,11 +354,11 @@ public class FormulationIT extends AbstractFinishedProductTest {
 	 *             the exception
 	 */
 	@Test
-	public void testFormulateCostAndNutOfProductInkgAndg() throws Exception {
+	public void testFormulateCostAndNutOfProductInkgAndg() {
 
 		logger.info("testFormulateCostAndNutOfProductInkgAndg");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- Create finished product --*/
 			logger.debug("/*-- Create finished product --*/");
@@ -450,7 +450,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -465,7 +465,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 		logger.info("testFormulateCostAndNutOfProductInkgAndgAndmLAndm");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- Create finished product --*/
 			logger.debug("/*-- Create finished product --*/");
@@ -560,7 +560,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -575,7 +575,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 		logger.info("testFormulateWithDensity");
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
 			/*-- Create finished product --*/
 			logger.debug("/*-- Create finished product --*/");
@@ -593,9 +593,9 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- Formulate product --*/
 			logger.debug("/*-- Formulate product --*/");
@@ -631,7 +631,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -646,7 +646,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 		logger.info("testAllergenListCalculating");
 
-		final NodeRef SFProduct1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef SFProduct1NodeRef = inWriteTx(() -> {
 
 			/*-- Create products --*/
 			logger.debug("/*-- Create products --*/");
@@ -665,9 +665,9 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			SFProduct1.getCompoListView().setCompoList(compoList1);
 			return alfrescoRepository.create(getTestFolderNodeRef(), SFProduct1).getNodeRef();
 
-		}, false, true);
+		});
 
-		final NodeRef SFProduct2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef SFProduct2NodeRef = inWriteTx(() -> {
 
 			// SF2
 			SemiFinishedProductData SFProduct2 = new SemiFinishedProductData();
@@ -683,9 +683,9 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			SFProduct2.getCompoListView().setCompoList(compoList2);
 			return alfrescoRepository.create(getTestFolderNodeRef(), SFProduct2).getNodeRef();
 
-		}, false, true);
+		});
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
 			// PF1
 			FinishedProductData finishedProduct = new FinishedProductData();
@@ -702,9 +702,9 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- Formulate product --*/
 			logger.debug("/*-- Formulate products --*/");
@@ -913,7 +913,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -928,7 +928,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 		logger.info("testFormulateRawMaterial");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			// check before formulation
 			RawMaterialData rmData1 = (RawMaterialData) alfrescoRepository.findOne(rawMaterial1NodeRef);
 			assertNotNull("check costList", rmData1.getCostList());
@@ -991,7 +991,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -1002,11 +1002,11 @@ public class FormulationIT extends AbstractFinishedProductTest {
 	 *             the exception
 	 */
 	@Test
-	public void testCalculateWithLoss() throws Exception {
+	public void testCalculateWithLoss() {
 
 		logger.info("testCalculateWithLoss");
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
 			/*-- Create finished product --*/
 			logger.debug("/*-- Create finished product --*/");
@@ -1017,24 +1017,25 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.setQty(2d);
 			finishedProduct.setDensity(1d);
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(10d)
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(10d)
 					.withDeclarationType(DeclarationType.Detail).withProduct(localSF1NodeRef));
-			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg)
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(1d).withUnit(ProductUnit.kg)
 					.withLossPerc(5d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
-			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(null).withQtyUsed(2d).withUnit(ProductUnit.kg)
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQtyUsed(2d).withUnit(ProductUnit.kg)
 					.withLossPerc(10d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
-			compoList.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(20d)
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(20d)
 					.withDeclarationType(DeclarationType.Detail).withProduct(localSF2NodeRef));
-			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQty(null).withQtyUsed(3d).withUnit(ProductUnit.kg)
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg)
 					.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
-			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQty(null).withQtyUsed(3d).withUnit(ProductUnit.kg)
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg)
 					.withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(rawMaterial4NodeRef));
+			
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- Formulate product --*/
 			logger.debug("/*-- Formulate product --*/");
@@ -1216,8 +1217,8 @@ public class FormulationIT extends AbstractFinishedProductTest {
 							ingListDataItem.getBioOrigin().contains(bioOrigin1));
 					assertEquals("ing2.getBioOrigin() contains bio2, actual values: " + trace4, true,
 							ingListDataItem.getBioOrigin().contains(bioOrigin2));
-					assertEquals("ing2.getIsGMO() is false, actual values: " + trace4, false, Boolean.FALSE.equals(ingListDataItem.getIsGMO()));
-					assertEquals("ing2.getIsIonized() is false, actual values: " + trace4, false,
+					assertEquals("ing2.getIsGMO() is true, actual values: " + trace4, false, Boolean.FALSE.equals(ingListDataItem.getIsGMO()));
+					assertEquals("ing2.getIsIonized() is true, actual values: " + trace4, false,
 							Boolean.FALSE.equals(ingListDataItem.getIsIonized()));
 					checks++;
 				}
@@ -1242,7 +1243,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -1257,7 +1258,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 		logger.info("testCalculateSubFormula");
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
 			/*-- Create finished product --*/
 			logger.debug("/*-- Create finished product --*/");
@@ -1287,9 +1288,9 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- Formulate product --*/
 			logger.debug("/*-- Formulate product --*/");
@@ -1341,7 +1342,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -1350,7 +1351,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 		logger.info("testPackagingCosts");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- Create finished product --*/
 			logger.debug("/*-- Create finished product --*/");
@@ -1436,7 +1437,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -1451,7 +1452,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 		logger.info("testFormulationWithCostAndNutMiniMaxi");
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 			/*-- Create finished product --*/
 			logger.debug("/*-- Create finished product --*/");
 			FinishedProductData finishedProduct = new FinishedProductData();
@@ -1487,9 +1488,9 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- Formulate product --*/
 			logger.debug("/*-- Formulate product --*/");
@@ -1583,7 +1584,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -1598,7 +1599,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 		logger.info("testCalculateYieldField");
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
 			/*-- Create finished product --*/
 			logger.debug("/*-- Create finished product --*/");
@@ -1630,9 +1631,9 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- Formulate product --*/
 			logger.debug("/*-- Formulate product --*/");
@@ -1671,7 +1672,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			assertEquals("verify checks", 4, checks);
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -1686,7 +1687,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 		logger.info("testManualListItem");
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
 			/*-- Create finished product --*/
 			logger.debug("/*-- Create finished product --*/");
@@ -1720,9 +1721,9 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- Formulate product --*/
 			logger.debug("/*-- Formulate product --*/");
@@ -1791,7 +1792,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -1806,7 +1807,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 		logger.info("testProcess");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- Create process steps, resources --*/
 			logger.debug("/*-- Create process steps, resources --*/");
@@ -2081,7 +2082,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -2096,7 +2097,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 		logger.info("testCalculateCompoPercent");
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
 			/*-- Create finished product --*/
 			logger.debug("/*-- Create finished product --*/");
@@ -2126,9 +2127,9 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- Formulate product --*/
 			logger.debug("/*-- Formulate product --*/");
@@ -2180,7 +2181,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -2195,7 +2196,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 		logger.info("testPhysicoChem");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- Create finished product --*/
 			logger.info("/*-- Create finished product --*/");
@@ -2268,7 +2269,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -2277,7 +2278,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 		logger.info("testOverrunAndVolume");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/**
 			 * Finished product 1
@@ -2364,7 +2365,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -2373,7 +2374,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 		logger.info("testNutrientLost");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Finished product 1");
@@ -2405,7 +2406,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -2413,7 +2414,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 	public void testMiniMaxi() {
 		logger.info("testMiniMaxi");
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setLegalName("Legal " + name);
@@ -2434,9 +2435,9 @@ public class FormulationIT extends AbstractFinishedProductTest {
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			productService.formulate(finishedProductNodeRef);
 
 			FinishedProductData formulatedFinishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
@@ -2458,7 +2459,7 @@ public class FormulationIT extends AbstractFinishedProductTest {
 			assertEquals(2, checks);
 			return null;
 
-		}, false, true);
+		});
 
 	}
 }
