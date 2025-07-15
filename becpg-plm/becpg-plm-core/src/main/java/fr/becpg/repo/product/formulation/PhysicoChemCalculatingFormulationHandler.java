@@ -19,8 +19,8 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
+import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 
 /**

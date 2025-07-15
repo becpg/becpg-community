@@ -44,7 +44,6 @@ import fr.becpg.repo.product.data.constraints.CostType;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.packaging.PackagingData;
 import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.AbstractEffectiveVariantListDataItem;
@@ -63,13 +62,14 @@ import fr.becpg.repo.product.data.productList.OrganoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.product.formulation.CostCalculatingHelper;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.PackagingHelper;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
 import fr.becpg.repo.product.helper.AllocationHelper;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.report.entity.EntityReportParameters;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 import fr.becpg.repo.report.entity.impl.DefaultExtractorContext;
@@ -970,7 +970,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_VALUE_PREPARED.getLocalName(), value);
 					}
 
-					for (ReqCtrlListDataItem reqCtrlList : productData.getReqCtrlList()) {
+					for (RequirementListDataItem reqCtrlList : productData.getReqCtrlList()) {
 						if (reqCtrlList.getReqDataType().equals(RequirementDataType.Nutrient)
 								&& dataListItem.getCharactNodeRef().equals(reqCtrlList.getCharact())) {
 							nutListElt.addAttribute(PLMModel.PROP_NUTLIST_FORMULA_ERROR.getLocalName(), "Error");
@@ -1690,10 +1690,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	 * @param reqCtrlList a {@link java.util.List} object.
 	 * @param dataListElt a {@link org.dom4j.Element} object.
 	 */
-	protected void loadReqCtrlList(DefaultExtractorContext context, List<ReqCtrlListDataItem> reqCtrlList, Element dataListElt) {
+	protected void loadReqCtrlList(DefaultExtractorContext context, List<RequirementListDataItem> reqCtrlList, Element dataListElt) {
 
 		Element reqCtrlListsElt = dataListElt.addElement(PLMModel.TYPE_REQCTRLLIST.getLocalName() + "s");
-		for (ReqCtrlListDataItem r : reqCtrlList) {
+		for (RequirementListDataItem r : reqCtrlList) {
 
 			Element reqCtrlListElt = reqCtrlListsElt.addElement(PLMModel.TYPE_REQCTRLLIST.getLocalName());
 

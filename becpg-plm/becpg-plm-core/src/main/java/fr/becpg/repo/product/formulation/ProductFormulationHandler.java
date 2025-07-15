@@ -42,10 +42,10 @@ import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
@@ -273,7 +273,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 	}
 
-	private void checkCompositionItem(List<ReqCtrlListDataItem> reqCtrlListDataItem, NodeRef productNodeRef, CompoListDataItem c) {
+	private void checkCompositionItem(List<RequirementListDataItem> reqCtrlListDataItem, NodeRef productNodeRef, CompoListDataItem c) {
 
 		if ((productNodeRef != null) && !PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.isMatch(nodeService.getType(productNodeRef))) {
 
@@ -298,7 +298,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 	}
 
-	private void checkPackagingItem(List<ReqCtrlListDataItem> reqCtrlListDataItem, PackagingListDataItem p) {
+	private void checkPackagingItem(List<RequirementListDataItem> reqCtrlListDataItem, PackagingListDataItem p) {
 		NodeRef productNodeRef = p.getProduct();
 		ProductData subComponent = alfrescoRepository.findOne(productNodeRef);
 
@@ -342,8 +342,8 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 	}
 
-	private void addMissingReq(List<ReqCtrlListDataItem> reqCtrlListDataItem, NodeRef sourceNodeRef, String reqMsg, RequirementDataType reqDataType) {
-		reqCtrlListDataItem.add(ReqCtrlListDataItem.forbidden().withMessage(MLTextHelper.getI18NMessage(reqMsg))
+	private void addMissingReq(List<RequirementListDataItem> reqCtrlListDataItem, NodeRef sourceNodeRef, String reqMsg, RequirementDataType reqDataType) {
+		reqCtrlListDataItem.add(RequirementListDataItem.forbidden().withMessage(MLTextHelper.getI18NMessage(reqMsg))
 				.withSources(Arrays.asList(sourceNodeRef)).ofDataType(reqDataType));
 	}
 }

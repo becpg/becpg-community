@@ -24,10 +24,10 @@ import fr.becpg.repo.decernis.impl.DefaultDecernisAnalysisPlugin;
 import fr.becpg.repo.decernis.impl.V5DecernisAnalysisPlugin;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
@@ -388,7 +388,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				
 				regulatoryList.add(item1);
 				
-				List<ReqCtrlListDataItem> requirements = decernisService.extractRequirements(product);
+				List<RequirementListDataItem> requirements = decernisService.extractRequirements(product);
 				
 				assertEquals(1, requirements.size());
 				
@@ -513,7 +513,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				
 				regulatoryList.add(item1);
 				
-				List<ReqCtrlListDataItem> requirements = decernisService.extractRequirements(product);
+				List<RequirementListDataItem> requirements = decernisService.extractRequirements(product);
 				
 				assertEquals(1, requirements.size());
 				
@@ -738,7 +738,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				
 				regulatoryList.add(item1);
 				
-				List<ReqCtrlListDataItem> requirements = decernisService.extractRequirements(product);
+				List<RequirementListDataItem> requirements = decernisService.extractRequirements(product);
 				
 				assertEquals(2, requirements.size());
 				
@@ -752,7 +752,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				
 				int checks = 0;
 				
-				for (ReqCtrlListDataItem req : requirements) {
+				for (RequirementListDataItem req : requirements) {
 					if (ing3.equals(req.getCharact())) {
 						checks++;
 					} else if (ing4.equals(req.getCharact())) {
@@ -942,7 +942,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				
 				regulatoryList.add(item1);
 				
-				List<ReqCtrlListDataItem> requirements = decernisService.extractRequirements(product);
+				List<RequirementListDataItem> requirements = decernisService.extractRequirements(product);
 				
 				assertEquals(2, requirements.size());
 				
@@ -956,7 +956,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				
 				int checks = 0;
 				
-				for (ReqCtrlListDataItem req : requirements) {
+				for (RequirementListDataItem req : requirements) {
 					if (ing3.equals(req.getCharact())) {
 						checks++;
 					} else if (ing4.equals(req.getCharact())) {

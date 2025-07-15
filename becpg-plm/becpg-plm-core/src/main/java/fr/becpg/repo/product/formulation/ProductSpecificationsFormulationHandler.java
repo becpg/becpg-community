@@ -41,11 +41,11 @@ import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.SpecCompatibilityModes;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.SpecCompatibilityDataItem;
 import fr.becpg.repo.product.requirement.RequirementScanner;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -224,7 +224,7 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 												
 												StringBuilder reqDetails = null;
 												
-												for (ReqCtrlListDataItem reqCtrlListDataItem : scanner.checkRequirements(productData,
+												for (RequirementListDataItem reqCtrlListDataItem : scanner.checkRequirements(productData,
 														Arrays.asList((ProductSpecificationData) formulatedProduct))) {
 													if (RequirementType.Forbidden.equals(reqCtrlListDataItem.getReqType())
 															&& RequirementDataType.Specification.equals(reqCtrlListDataItem.getReqDataType())) {

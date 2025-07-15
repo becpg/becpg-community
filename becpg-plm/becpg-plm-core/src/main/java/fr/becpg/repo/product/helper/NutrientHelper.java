@@ -13,12 +13,12 @@ import fr.becpg.model.NutrientProfileCategory;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.NutDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.score.NutriScoreContext;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -204,7 +204,7 @@ public class NutrientHelper {
 
 			if (!missingCharacts.isEmpty()) {
 				productData.getReqCtrlList()
-						.add(ReqCtrlListDataItem.forbidden().withMessage(MLTextHelper.getI18NMessage("nutriscore.message.missingCharacts"))
+						.add(RequirementListDataItem.forbidden().withMessage(MLTextHelper.getI18NMessage("nutriscore.message.missingCharacts"))
 								.ofDataType(RequirementDataType.Nutrient).withSources(new ArrayList<>(missingCharacts.values())));
 			}
 
@@ -296,7 +296,7 @@ public class NutrientHelper {
 
 			if (physicoCode.equals(nodeService.getProperty(physico.getPhysicoChem(), PLMModel.PROP_PHYSICO_CHEM_CODE))) {
 
-				for (ReqCtrlListDataItem reqCtrl : productData.getReqCtrlList()) {
+				for (RequirementListDataItem reqCtrl : productData.getReqCtrlList()) {
 					if (RequirementType.Forbidden.equals(reqCtrl.getReqType()) && RequirementDataType.Physicochem.equals(reqCtrl.getReqDataType())
 							&& physico.getPhysicoChem().equals(reqCtrl.getCharact())) {
 						missingCharacts.put(physicoCode, reqCtrl.getCharact());
@@ -319,7 +319,7 @@ public class NutrientHelper {
 
 			if (nutrientCode.equals(nut.getNutCode())) {
 
-				for (ReqCtrlListDataItem reqCtrl : productData.getReqCtrlList()) {
+				for (RequirementListDataItem reqCtrl : productData.getReqCtrlList()) {
 					if (RequirementType.Forbidden.equals(reqCtrl.getReqType()) && RequirementDataType.Nutrient.equals(reqCtrl.getReqDataType())
 							&& nutList.getNut().equals(reqCtrl.getCharact())) {
 						missingCharacts.put(nutrientCode, reqCtrl.getCharact());
