@@ -77,6 +77,21 @@
                                     + ( question.id.length < 10 ? question.id.toUpperCase()+' - ' : "")
                                     + (question.label ? question.label: this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".label"))
                                     +'</legend>';
+                           
+                           if (question.requirements && question.requirements.length > 0) {
+                              htmlForm += '<div class="decision-tree-requirements">';
+                              for (var r = 0; r < question.requirements.length; r++) {
+                                 var req = question.requirements[r];
+                                 var reqClass = "requirement-" + (req.type.toLowerCase() || "info");
+                                 htmlForm += '<div class="decision-tree-requirement ' + reqClass + '">';
+                                 if (req.code) {
+                                    htmlForm += '<span class="requirement-code">' + req.code + '</span>: ';
+                                 }
+                                 htmlForm += '<span class="requirement-message">' + req.message + '</span>';
+                                 htmlForm += '</div>';
+                              }
+                              htmlForm += '</div>';
+                           }
                            if(question.note){
                         	   htmlForm += '<span class="decision-tree-note">'+question.note+'</span>';
                            }

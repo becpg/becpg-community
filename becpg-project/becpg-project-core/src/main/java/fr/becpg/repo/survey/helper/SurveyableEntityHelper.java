@@ -68,11 +68,15 @@ public class SurveyableEntityHelper {
 		// run from a unit test ?
 		final boolean transientEntity = isTransient(entity);
 		for (final String surveyListName : SURVEY_LIST_NAMES) {
-			namesSurveyLists.put(surveyListName, (SurveyableEntityHelper.SURVEY_LIST_BASE_NAME.equals(surveyListName)
-					? entity.getSurveyList()
-					: alfrescoRepository.loadDataList(entity.getNodeRef(), surveyListName, SurveyModel.TYPE_SURVEY_LIST)
-							.stream().map(SurveyListDataItem.class::cast)
-							.collect(Collectors.toCollection(ArrayList::new))));
+			final boolean defaultSurveyListName = isDefault(surveyListName);
+			if (defaultSurveyListName || alfrescoRepository.hasDataList(entity.getNodeRef(), surveyListName)) {
+				namesSurveyLists.put(surveyListName,
+						defaultSurveyListName ? entity.getSurveyList()
+								: alfrescoRepository
+										.loadDataList(entity.getNodeRef(), surveyListName, SurveyModel.TYPE_SURVEY_LIST)
+										.stream().map(SurveyListDataItem.class::cast)
+										.collect(Collectors.toCollection(ArrayList::new)));
+			}
 			// if test context, only the default survey list is added to the map
 			if (transientEntity) break;
 		}

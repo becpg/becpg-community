@@ -26,11 +26,11 @@ import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.CheckSumHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.regulatory.RegulatoryEntity;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -85,7 +85,7 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 
 	/** {@inheritDoc} */
 	@Override
-	public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
+	public List<RequirementListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
 
 		if (!DecernisService.DECERNIS_CHAIN_ID.equals(formulatedProduct.getFormulationChainId())) {
 			logger.debug("Formulation chain is not decernis");
@@ -132,7 +132,7 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 				watch.start();
 			}
 			
-			List<ReqCtrlListDataItem> requirements = decernisService.extractRequirements(formulatedProduct);
+			List<RequirementListDataItem> requirements = decernisService.extractRequirements(formulatedProduct);
 			if (!hasError(requirements)) {
 				updateChecksums(formulatedProduct);
 				formulatedProduct.setRegulatoryFormulatedDate(new Date());
@@ -187,8 +187,8 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 		return linkedSearches;
 	}
 
-	private boolean hasError(List<ReqCtrlListDataItem> reqList) {
-		for (ReqCtrlListDataItem req : reqList) {
+	private boolean hasError(List<RequirementListDataItem> reqList) {
+		for (RequirementListDataItem req : reqList) {
 			if (RequirementType.Forbidden.equals(req.getReqType())
 					&& RequirementDataType.Formulation.equals(req.getReqDataType())) {
 				return true;

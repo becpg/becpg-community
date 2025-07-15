@@ -45,8 +45,8 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class FormulationFullIT extends AbstractFinishedProductTest {
@@ -525,7 +525,7 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 		String message2 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_MAXIMAL_DAILY_VALUE,
 				nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME));
 		logger.info(formulatedProduct.getReqCtrlList().size());
-		for (ReqCtrlListDataItem r : formulatedProduct.getReqCtrlList()) {
+		for (RequirementListDataItem r : formulatedProduct.getReqCtrlList()) {
 
 			logger.info("reqCtrl " + r.getReqMessage() + r.getReqType() + r.getSources());
 

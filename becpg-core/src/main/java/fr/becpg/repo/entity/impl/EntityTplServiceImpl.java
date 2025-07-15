@@ -454,8 +454,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 															((CompositeDataItem<RepositoryEntity>) dataListItemTpl).getParent(), dataListItems));
 												}
 
-												if (dataListItemTpl instanceof Synchronisable) {
-													if (((Synchronisable) dataListItemTpl).isSynchronisable()) {
+												if (dataListItemTpl instanceof Synchronisable synchronisable) {
+													if (synchronisable.isSynchronisable()) {
 														dataListItems.add((BeCPGDataObject) dataListItemTpl);
 														update = true;
 													}
@@ -471,7 +471,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 								}
 
 								if (update) {
-									alfrescoRepository.saveDataList(listContainerNodeRef, dataListQName, dataListQName, dataListItems);
+									alfrescoRepository.saveDataList(listContainerNodeRef, dataListQName, dataListItems);
 								}
 
 							}

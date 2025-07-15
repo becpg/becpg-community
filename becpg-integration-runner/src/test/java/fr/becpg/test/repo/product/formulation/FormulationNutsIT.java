@@ -41,12 +41,12 @@ import fr.becpg.repo.product.data.constraints.NutRequirementType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.nutrient.NutrientCode;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
 import fr.becpg.repo.product.requirement.NutsRequirementScanner;
 import fr.becpg.repo.product.requirement.SimpleListRequirementScanner;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
@@ -152,7 +152,7 @@ public class FormulationNutsIT extends AbstractFinishedProductTest {
 				nodeService.getProperty(nut4, BeCPGModel.PROP_CHARACT_NAME), "0.75", "1,5<=", " <=10");
 
 		logger.info("Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItems");
-		for (ReqCtrlListDataItem r : formulatedProduct.getReqCtrlList()) {
+		for (RequirementListDataItem r : formulatedProduct.getReqCtrlList()) {
 
 			logger.info("reqCtrl " + r.getReqMessage() + r.getReqType() + r.getSources());
 

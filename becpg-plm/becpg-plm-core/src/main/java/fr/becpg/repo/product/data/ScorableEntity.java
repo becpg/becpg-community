@@ -4,7 +4,7 @@ import java.util.List;
 
 import fr.becpg.repo.entity.catalog.CataloguableEntity;
 import fr.becpg.repo.formulation.ReportableEntity;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementAwareEntity;
 
 /**
  * <p>ScorableEntity interface.</p>
@@ -12,14 +12,7 @@ import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
  * @author matthieu
  * @version $Id: $Id
  */
-public interface ScorableEntity extends CataloguableEntity, ReportableEntity {
-
-	/**
-	 * <p>getReqCtrlList.</p>
-	 *
-	 * @return a {@link java.util.List} object
-	 */
-	List<ReqCtrlListDataItem> getReqCtrlList();
+public interface ScorableEntity extends CataloguableEntity, ReportableEntity, RequirementAwareEntity {
 
 	/**
 	 * <p>getViews.</p>

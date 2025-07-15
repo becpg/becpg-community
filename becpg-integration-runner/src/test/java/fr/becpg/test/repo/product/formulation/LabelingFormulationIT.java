@@ -61,8 +61,8 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
@@ -2082,7 +2082,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			assertFalse(formulatedProduct.getReqCtrlList().isEmpty());
 
 			boolean found = false;
-			for (ReqCtrlListDataItem reqCtrlListDataItem : formulatedProduct.getReqCtrlList()) {
+			for (RequirementListDataItem reqCtrlListDataItem : formulatedProduct.getReqCtrlList()) {
 				if (RequirementType.Forbidden.equals(reqCtrlListDataItem.getReqType())) {
 
 					String error = reqCtrlListDataItem.getReqMessage();

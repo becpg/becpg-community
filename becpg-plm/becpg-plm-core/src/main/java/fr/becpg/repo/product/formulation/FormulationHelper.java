@@ -20,13 +20,13 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.TareUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 import fr.becpg.repo.variant.model.VariantData;
 
@@ -256,7 +256,7 @@ public class FormulationHelper {
 						&& (formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null)) {
 					productQtyToTransform = productQtyToTransform / formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes();
 				} else {
-					formulatedProduct.getReqCtrlList().add(ReqCtrlListDataItem.forbidden()
+					formulatedProduct.getReqCtrlList().add(RequirementListDataItem.forbidden()
 							.withMessage(MLTextHelper.getI18NMessage(MISSING_NUMBER_OF_PRODUCT_PER_BOX)).ofDataType(RequirementDataType.Packaging));
 				}
 			}
