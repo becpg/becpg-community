@@ -378,11 +378,13 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent implements 
 	/** {@inheritDoc} */
 	@Override
 	public QName getAssocIndexQName(QName assocQName) {
-		ClassAttributeDefinition indexProp = getPropDef(QName.createQName(assocQName.getNamespaceURI(), assocQName.getLocalName() + "AssocIndex"));
-		if (indexProp != null) {
-			return indexProp.getName();
-		}
-		return null;
+		return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(), assocQName.toString() + ".assocIndex", () -> {
+			ClassAttributeDefinition indexProp = getPropDef(QName.createQName(assocQName.getNamespaceURI(), assocQName.getLocalName() + "AssocIndex"));
+			if (indexProp != null) {
+				return indexProp.getName();
+			}
+			return null;
+		});
 	}
 
 }
