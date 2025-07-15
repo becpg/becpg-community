@@ -56,6 +56,7 @@ public class SupplierSecurityPlugin implements SecurityServicePlugin {
 		return AuthorityHelper.isCurrentUserExternal() && entityDictionaryService.isSubClass(nodeType, BeCPGModel.TYPE_ENTITY_V2);
 	}
 
+	//TODO Cache
 	/** {@inheritDoc} */
 	@Override
 	public int computeAccessMode(NodeRef entityNodeRef, int accesMode) {
