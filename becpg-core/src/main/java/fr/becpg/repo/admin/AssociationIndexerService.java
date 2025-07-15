@@ -61,7 +61,7 @@ public class AssociationIndexerService {
 
 	public void reindexAssocs(QName sourceName, QName assocQName) {
 		if (entityDictionaryService.getAssocIndexQName(assocQName) == null) {
-			throw new IllegalStateException("indexQName does not exist for assoc: " + assocQName);
+			logger.error("indexQName does not exist for assoc: " + assocQName);
 		}
 		if (entityDictionaryService.getType(sourceName) != null) {
 			applyToType(sourceName, assocQName);
