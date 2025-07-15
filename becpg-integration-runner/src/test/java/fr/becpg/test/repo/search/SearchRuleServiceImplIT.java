@@ -25,9 +25,7 @@ public class SearchRuleServiceImplIT extends PLMBaseTestCase {
 		filter.setNodeType(PLMModel.TYPE_RAWMATERIAL);
 		filter.setNodePath(nodeService.getPath(getTestFolderNodeRef()));
 
-		inWriteTx(() -> {
-			return BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP search rule test");
-		});
+		inWriteTx(() -> BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP search rule test"));
 
 		waitForSolr();
 
@@ -40,5 +38,6 @@ public class SearchRuleServiceImplIT extends PLMBaseTestCase {
 
 		results = searchRuleService.search(filter).getResults();
 		Assert.assertEquals(10, results.size());
+
 	}
 }

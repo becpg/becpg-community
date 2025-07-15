@@ -615,9 +615,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 
 			IngListDataItem rawMaterial1Ing2 = IngListDataItem.build().withQtyPerc(200 / 3d).withGeoOrigin(geoOrigins).withGeoTransfo(geoTransfo)
 					.withBioOrigin(bioOrigins)
-
 					.withIngredient(ing2)
-
 					.withMini(18d);
 			rawMaterial1Ing2.setMaxi(80d);
 			ingList.add(rawMaterial1Ing2);
@@ -886,8 +884,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			bioOrigins.add(bioOrigin2);
 			geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin2);
-			ingList.add(IngListDataItem.build().withQtyPerc(20d).withGeoOrigin(geoOrigins).withBioOrigin(bioOrigins).withIsGMO(true)
-					.withIsIonized(true).withIngredient(ing2).withIsManual(false));
+			ingList.add(IngListDataItem.build().withQtyPerc(20d).withGeoOrigin(geoOrigins).withBioOrigin(bioOrigins).withIsGMO(false)
+					.withIsIonized(false).withIngredient(ing2).withIsManual(false));
 			rawMaterial6.setIngList(ingList);
 			rawMaterial6NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial6).getNodeRef();
 
@@ -1031,7 +1029,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin2);
 			ingList.add(IngListDataItem.build().withQtyPerc(300 / 4d).withGeoOrigin(geoOrigins).withBioOrigin(bioOrigins).withIsGMO(false)
-					.withIsIonized(false).withIsProcessingAid(false).withIngredient(ing2).withIsManual(false));
+					.withIsIonized(false).withIsProcessingAid(true).withIngredient(ing2).withIsManual(false));
 			rawMaterial12.setIngList(ingList);
 			rawMaterial12NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial12).getNodeRef();
 
@@ -1153,7 +1151,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 					.withIsProcessingAid(false).withIngredient(ing1).withIsManual(false));
 			ingList.add(IngListDataItem.build().withQtyPerc(55d).withGeoOrigin(geoOrigins).withBioOrigin(bioOrigins).withIsGMO(true)
 					.withIsIonized(true).withIsProcessingAid(false).withIngredient(ing3).withIsManual(false));
-			ingList.add(IngListDataItem.build().withGeoOrigin(geoOrigins).withBioOrigin(bioOrigins).withIsGMO(true).withIsIonized(true)
+			ingList.add(IngListDataItem.build().withGeoOrigin(geoOrigins).withBioOrigin(bioOrigins).withIsGMO(false).withIsIonized(false)
 					.withIsProcessingAid(false).withIngredient(ing2).withIsManual(false));
 			rawMaterial16.setIngList(ingList);
 			rawMaterial16NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial16).getNodeRef();
