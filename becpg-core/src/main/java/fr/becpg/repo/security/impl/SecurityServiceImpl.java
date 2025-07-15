@@ -133,7 +133,7 @@ public class SecurityServiceImpl implements SecurityService {
 					accesMode = computeAccessMode(nodeRef, nodeType, permissions);
 				}
 
-				if(nodeRef!=null) {
+				if (nodeRef != null) {
 					accesMode = computePluginAccessMode(nodeRef, nodeType, accesMode);
 				}
 
@@ -388,29 +388,21 @@ public class SecurityServiceImpl implements SecurityService {
 	}
 
 	private int computePluginAccessMode(NodeRef nodeRef, QName nodeType, int accesMode) {
-
-		return Math.min(accesMode, beCPGCacheService.getFromTransactionCache(SecurityService.class.getName() + ".computePluginAccessMode",
-				nodeRef.getId() , () -> {
-					int pluginAccessMode = SecurityService.WRITE_ACCESS;
-					for (SecurityServicePlugin plugin : securityPlugins) {
-						if (plugin.accept(nodeType)) {
-							pluginAccessMode = plugin.computeAccessMode(nodeRef, accesMode);
-						}
-					}
-					return pluginAccessMode;
-				}));
+		for (SecurityServicePlugin plugin : securityPlugins) {
+			if (plugin.accept(nodeType)) {
+				accesMode = plugin.computeAccessMode(nodeRef, accesMode);
+			}
+		}
+		return accesMode;
 	}
 
 	private String buildCacheKey(NodeRef nodeRef, List<NodeRef> groups) {
+
+		String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
 		String nodePart = (nodeRef != null) ? nodeRef.getId() : "null";
-	    String groupPart = (groups != null) ?
-	        groups.stream()
-	              .filter(Objects::nonNull)
-	              .sorted(Comparator.comparing(NodeRef::getId))
-	              .map(NodeRef::getId)
-	              .collect(Collectors.joining("_"))
-	        : "no_groups";
-	    return nodePart + "_" + groupPart;
+		String groupPart = (groups != null) ? groups.stream().filter(Objects::nonNull).sorted(Comparator.comparing(NodeRef::getId))
+				.map(NodeRef::getId).collect(Collectors.joining("_")) : "no_groups";
+		return nodePart + "_" + groupPart + "_" + currentUser;
 	}
 
 	private String computeNodeTypePropKey(QName nodeType, String propName) {
