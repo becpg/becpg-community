@@ -500,7 +500,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 
 		for (String siteId : new String[] { SIMULATION_SITE_ID, VALID_SITE_ID, ARCHIVED_SITE_ID }) {
-
+			
 			SiteInfo siteInfo = siteService.getSite(siteId);
 			if (siteInfo == null) {
 				siteInfo = siteService.createSite(siteId + "-product-site-dashboard", siteId, I18NUtil.getMessage("plm.site." + siteId + ".title"),
@@ -557,11 +557,24 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					}
 
 				} else if (ARCHIVED_SITE_ID.equals(siteId)) {
+					
 					// Manager
 					for (PLMGroup authority : new PLMGroup[] { PLMGroup.RDMgr, PLMGroup.QualityMgr }) {
 
 						siteService.setMembership(siteInfo.getShortName(), PermissionService.GROUP_PREFIX + authority.toString(),
 								SiteModel.SITE_MANAGER);
+					}
+					
+					// Create Project folder
+					ClassDefinition classDef = dictionaryService.getClass(ProjectModel.TYPE_PROJECT);
+					NodeRef projectFolderNodeRef = repoService.getOrCreateFolderByPath(documentLibraryNodeRef, ProjectModel.TYPE_PROJECT.getLocalName(),
+							classDef.getTitle(dictionaryService));
+					
+					// Contributor on Project Folder
+					for (SystemGroup authority : new SystemGroup[] { SystemGroup.LicenseWriteConcurrent, SystemGroup.LicenseWriteNamed }) {
+
+						permissionService.setPermission(projectFolderNodeRef, PermissionService.GROUP_PREFIX + authority.toString(),
+								PermissionService.CONTRIBUTOR, true);
 					}
 				}
 
