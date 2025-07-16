@@ -18,6 +18,7 @@
 package fr.becpg.test.repo.product.formulation;
 
 import org.alfresco.repo.model.Repository;
+import org.alfresco.service.namespace.NamespaceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
@@ -42,6 +43,8 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 
 	private static final Log logger = LogFactory.getLog(FormulationScoreListIT.class);
 
+	private static final double DELTA = .00001;
+	
 	@Autowired
 	protected ProductService productService;
 
@@ -50,12 +53,16 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 
 	@Autowired
 	protected Repository repositoryHelper;
+	
+	@Autowired
+	private NamespaceService namespaceService;
 
 	@Test
 	public void testGreenScoreCalculation() {
 		ProductData greenScoreProductData = inWriteTx(
-				() -> new GreenScoreSpecificationTestProduct.Builder().withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService)
-						.withDestFolder(getTestFolderNodeRef()).withSpecification(true).build().createTestProduct());
+				() -> new GreenScoreSpecificationTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
+						.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withSpecification(true)
+						.withNamespacePrefixResolver(namespaceService).build().createTestProduct());
 
 		inWriteTx(() -> {
 			productService.formulate(greenScoreProductData);
@@ -92,8 +99,10 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 	public void testFormulationSimpleScore() {
 		logger.info("Starting testFormulationScore");
 
-		FinishedProductData product = inWriteTx(() -> new StandardChocolateEclairTestProduct.Builder().withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService)
-				.withDestFolder(getTestFolderNodeRef()).withCompo(true).withSurvey(true).withScoreList(true).build().createTestProduct());
+		FinishedProductData product = inWriteTx(() -> new StandardChocolateEclairTestProduct.Builder()
+				.withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService)
+				.withDestFolder(getTestFolderNodeRef()).withCompo(true).withSurvey(true).withScoreList(true)
+				.withNamespacePrefixResolver(namespaceService).build().createTestProduct());
 
 		inWriteTx(() -> {
 			
@@ -139,11 +148,11 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 	  - Expected Score List:
 	     - Score Item 1:
 	     	- Question Type: PASTRY_QUALITY
-	     	- Question Score: ~23.07 (100 * (Q1 + Q2 / Q1MAX + Q2MAX))
+	     	- Question Score: ~16.6 (100 * Q1 / Q1MAX)
 
 	     - Score Item 2:
 	     	- Question Type: FILLING_QUALITY
-	     	- Question Score: 50 (mean of responses of type B)
+	     	- Question Score: ~23.07 (mean of responses of type B)
 
 	     - Score Item 3:
 	     	- Question Type: CCP_COMPLIANCE
@@ -157,17 +166,17 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 			if (scoreListDataItem.getScoreCriterion()
 					.equals(CharactTestHelper.getOrCreateScoreCriterion(nodeService, StandardChocolateEclairTestProduct.PASTRY_QUALITY))) {
 				// Calculate expected score for type A
-				assertEquals("The mean of the type PASTRY_QUALITY is incorrect", 100d * (20 + 40) / (120 + 140), scoreListDataItem.getScore());
+				assertEquals("The mean of the type PASTRY_QUALITY is incorrect", 100d * 20 / 120, scoreListDataItem.getScore(), DELTA);
 				checks++;
 			} else if (scoreListDataItem.getScoreCriterion()
 					.equals(CharactTestHelper.getOrCreateScoreCriterion(nodeService, StandardChocolateEclairTestProduct.CCP_COMPLIANCE))) {
 				// Calculate expected score for type B
-				assertEquals("The mean of the type CCP_COMPLIANCE is incorrect", 80d, scoreListDataItem.getScore());
+				assertEquals("The mean of the type CCP_COMPLIANCE is incorrect", 80d, scoreListDataItem.getScore(), DELTA);
 				checks++;
 			} else if (scoreListDataItem.getScoreCriterion()
 					.equals(CharactTestHelper.getOrCreateScoreCriterion(nodeService, StandardChocolateEclairTestProduct.FILLING_QUALITY))) {
 				// Calculate expected score for type C
-				assertEquals("The mean of the type FILLING_QUALITY is incorrect", 50d, scoreListDataItem.getScore());
+				assertEquals("The mean of the type FILLING_QUALITY is incorrect", 100d * 30 / (30 + 100), scoreListDataItem.getScore(), DELTA);
 				checks++;
 			}
 			

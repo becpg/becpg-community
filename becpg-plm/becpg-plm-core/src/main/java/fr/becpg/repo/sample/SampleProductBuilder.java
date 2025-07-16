@@ -4,6 +4,7 @@ import java.util.Calendar;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.NamespacePrefixResolver;
 
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -26,6 +27,7 @@ public abstract class SampleProductBuilder {
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	protected NodeService nodeService;
 	protected NodeRef destFolder;
+	protected NamespacePrefixResolver namespacePrefixResolver;
 
 	// Protected constructor to prevent direct instantiation
 	/**
@@ -37,6 +39,7 @@ public abstract class SampleProductBuilder {
 		this.alfrescoRepository = builder.alfrescoRepository;
 		this.nodeService = builder.nodeService;
 		this.destFolder = builder.destFolder;
+		this.namespacePrefixResolver = builder.namespacePrefixResolver;
 	}
 
 	// Static generic Builder class
@@ -44,6 +47,7 @@ public abstract class SampleProductBuilder {
 		private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 		private NodeService nodeService;
 		private NodeRef destFolder;
+		private NamespacePrefixResolver namespacePrefixResolver;
 
 		public T withAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 			this.alfrescoRepository = alfrescoRepository;
@@ -57,6 +61,11 @@ public abstract class SampleProductBuilder {
 
 		public T withDestFolder(NodeRef destFolder) {
 			this.destFolder = destFolder;
+			return self();
+		}
+		
+		public T withNamespacePrefixResolver(NamespacePrefixResolver namespacePrefixResolver) {
+			this.namespacePrefixResolver = namespacePrefixResolver;
 			return self();
 		}
 
