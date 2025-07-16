@@ -24,8 +24,11 @@ public class HongKongNutrientRegulation extends AbstractNutrientRegulation {
 	/** {@inheritDoc} */
 	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
-
-		if(value != null && nutrientTypeCode != null){
+		if (value == null) {
+			return null;
+		}
+		
+		if( nutrientTypeCode != null){
 			if (nutrientTypeCode.equals(NutrientCode.Energykcal) || nutrientTypeCode.equals(NutrientCode.EnergykJ)
 					|| nutrientTypeCode.equals(NutrientCode.Sodium) || nutrientTypeCode.equals(NutrientCode.Cholesterol)){
 					return roundValue(value, 1d);

@@ -24,6 +24,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.json.JSONObject;
@@ -74,35 +76,49 @@ public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractPropName(QName type, NodeRef nodeRef) {
-		return extractExpr(nodeRef, productNameFormat());
+	@Nonnull
+	public String extractPropName(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
+		String result = extractExpr(nodeRef, productNameFormat());
+		return result != null ? result : "";
 	}
 
 	/** {@inheritDoc} */
 	@Override
+	@Nonnull
 	public String extractPropName(JSONObject jsonEntity) {
-		return expressionService.extractExpr(jsonEntity, productNameFormat());
+		String result = expressionService.extractExpr(jsonEntity, productNameFormat());
+		return result != null ? result : "";
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractMetadata(QName type, NodeRef nodeRef) {
-		String typeCss =  type.toPrefixString(namespaceService).split(":")[1];
+	@Nonnull
+	public String extractMetadata(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
+		StringBuilder ret = new StringBuilder();
 		
-		String ret = typeCss+" "+typeCss + "-" + nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE);
+		// Add type CSS
+		String[] typeParts = type.toPrefixString(namespaceService).split(":");
+		String typeCss = typeParts.length > 1 ? typeParts[1] : "";
+		
+		// Add base type and state
+		Object productState = nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE);
+		ret.append(typeCss).append(" ").append(typeCss).append("-").append(productState != null ? productState.toString() : "");
+		
+		// Add nutrient class if applicable
 		if (nodeService.hasAspect(nodeRef, PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE)) {
 			String nutClass = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_NUTRIENT_PROFILING_CLASS);
 			if (nutClass != null && !nutClass.isEmpty() && nutClass.length() < 5) {
-				ret += " nutrientClass-" + nutClass;
+				ret.append(" nutrientClass-").append(nutClass);
 			}
 		}
 
+		// Add entity template reference if available
 		NodeRef entityTplRef = associationService.getTargetAssoc(nodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
 		if (entityTplRef != null) {
-			ret += " "+typeCss + "-" + entityTplRef.getId();
+			ret.append(" ").append(typeCss).append("-").append(entityTplRef.getId());
 		}
 
-		return ret;
+		return ret.toString();
 	}
 
 	/** {@inheritDoc} */
@@ -138,7 +154,8 @@ public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
 		return false;
 	}
 
-	private List<NodeRef> extractNodeRefs(String propValue) {
+	@Nonnull
+	private List<NodeRef> extractNodeRefs(@Nonnull String propValue) {
 		String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
 		List<NodeRef> ret = new ArrayList<>();
 

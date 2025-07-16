@@ -56,7 +56,14 @@ public class NPDServiceIT extends AbstractProjectTestCase {
 
 			// create datalists
 			List<TaskListDataItem> taskList = new LinkedList<>();
-			taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectNewProduct"));
+			taskList.add(TaskListDataItem.build()
+    .withTaskName("task1")
+    .withIsMilestone(false)
+    .withDuration(2)
+    .withPrevTasks(null)
+    .withResources(assigneesOne)
+    .withTaskLegend(taskLegends.get(0))
+    .withWorkflowName("activiti$projectNewProduct"));
 			projectData.setTaskList(taskList);
 
 			projectData.setParentNodeRef(getTestFolderNodeRef());

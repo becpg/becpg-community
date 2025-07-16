@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -35,16 +37,25 @@ public class GeoOriginAttributeExtractorPlugin implements AttributeExtractorPlug
 	
 	/** {@inheritDoc} */
 	@Override
-	public String extractPropName(QName type, NodeRef nodeRef) {
+	@Nonnull
+	public String extractPropName(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
+		StringBuilder ret = new StringBuilder();
 		
+		// Get the character name
+		Object charactName = nodeService.getProperty(nodeRef, BeCPGModel.PROP_CHARACT_NAME);
+		if (charactName != null) {
+			ret.append(charactName);
+		}
+		
+		// Get activity type code if available
 		@SuppressWarnings("unchecked")
 		List<String> placeOfActivityCode = (List<String>) nodeService.getProperty(nodeRef, GS1Model.PROP_PRODUCT_ACTIVITY_TYPE_CODE);
-		StringBuilder ret = new StringBuilder();
-		ret.append(nodeService.getProperty(nodeRef, BeCPGModel.PROP_CHARACT_NAME));
-		
-		if(placeOfActivityCode!=null && !placeOfActivityCode.isEmpty() && placeOfActivityCode.get(0)!=null){
+		if (placeOfActivityCode != null && !placeOfActivityCode.isEmpty() && placeOfActivityCode.get(0) != null) {
 			ret.append(" (");
-			ret.append(I18NUtil.getMessage("listconstraint.gs1_productActivityTypeCodes."+placeOfActivityCode.get(0)));
+			String message = I18NUtil.getMessage("listconstraint.gs1_productActivityTypeCodes." + placeOfActivityCode.get(0));
+			if (message != null) {
+				ret.append(message);
+			}
 			ret.append(")");
 		}
 		
@@ -53,22 +64,29 @@ public class GeoOriginAttributeExtractorPlugin implements AttributeExtractorPlug
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractMetadata(QName type, NodeRef nodeRef) {
-		
+	@Nonnull
+	public String extractMetadata(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
 		StringBuilder ret = new StringBuilder();
-		ret.append(PLMModel.TYPE_GEO_ORIGIN.toPrefixString(namespaceService).split(":")[1]);
-		if(nodeRef!=null) {
-			@SuppressWarnings("unchecked")
-			List<String> placeOfActivityCode = (List<String>) nodeService.getProperty(nodeRef, GS1Model.PROP_PRODUCT_ACTIVITY_TYPE_CODE);
-			if(placeOfActivityCode!=null && !placeOfActivityCode.isEmpty() && placeOfActivityCode.get(0)!=null){
-				ret.append("-"+placeOfActivityCode.get(0));
-			}
+		
+		// Add the base type name
+		String[] typeParts = PLMModel.TYPE_GEO_ORIGIN.toPrefixString(namespaceService).split(":");
+		if (typeParts.length > 1) {
+			ret.append(typeParts[1]);
 		}
+		
+		// Add activity type code if available
+		@SuppressWarnings("unchecked")
+		List<String> placeOfActivityCode = (List<String>) nodeService.getProperty(nodeRef, GS1Model.PROP_PRODUCT_ACTIVITY_TYPE_CODE);
+		if (placeOfActivityCode != null && !placeOfActivityCode.isEmpty() && placeOfActivityCode.get(0) != null) {
+			ret.append("-").append(placeOfActivityCode.get(0));
+		}
+		
 		return ret.toString();
 	}
 
 	/** {@inheritDoc} */
 	@Override
+	@Nonnull
 	public Collection<QName> getMatchingTypes() {
 		return Collections.singletonList(PLMModel.TYPE_GEO_ORIGIN);
 	}

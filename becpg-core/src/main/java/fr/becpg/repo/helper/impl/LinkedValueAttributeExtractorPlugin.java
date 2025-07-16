@@ -22,6 +22,8 @@ package fr.becpg.repo.helper.impl;
 import java.util.Collection;
 import java.util.Collections;
 
+import javax.annotation.Nonnull;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -54,15 +56,19 @@ public class LinkedValueAttributeExtractorPlugin implements AttributeExtractorPl
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractPropName(QName type, NodeRef nodeRef) {
-		return (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_LKV_VALUE);
+	@Nonnull
+	public String extractPropName(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
+		String value = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_LKV_VALUE);
+		return value != null ? value : "";
 	}
 
 	
 	/** {@inheritDoc} */
 	@Override
-	public String extractMetadata(QName type, NodeRef nodeRef) {
-		return BeCPGModel.PROP_LKV_VALUE.getLocalName();
+	@Nonnull
+	public String extractMetadata(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
+		return BeCPGModel.PROP_LKV_VALUE.getLocalName() != null ? 
+		       BeCPGModel.PROP_LKV_VALUE.getLocalName() : "";
 	}
 
 

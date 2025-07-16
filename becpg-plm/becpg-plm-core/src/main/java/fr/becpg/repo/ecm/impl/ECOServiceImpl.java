@@ -311,11 +311,10 @@ public class ECOServiceImpl implements ECOService {
 		
 		batchStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<Object>() {
 			
+			@SuppressWarnings("deprecation")
 			@Override
 			public void process(Object entry) throws Throwable {
-				if (entry instanceof NodeRef && !nodeService.hasAspect((NodeRef) entry, ECMModel.ASPECT_CHANGE_ORDER)) {
-					
-					NodeRef nodeRef = (NodeRef) entry;
+				if (entry instanceof NodeRef  nodeRef && !nodeService.hasAspect((NodeRef) entry, ECMModel.ASPECT_CHANGE_ORDER)) {
 					
 					JSONObject lockInfo = new JSONObject();
 					

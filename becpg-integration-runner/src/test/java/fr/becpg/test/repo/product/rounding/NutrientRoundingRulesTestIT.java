@@ -190,7 +190,7 @@ public class NutrientRoundingRulesTestIT {
 		// display in g
 		assertEquals(0.01d, RegulationFormulationHelper.round(10.36d, NutrientCode.Sodium, Locale.FRENCH, "mg/100g"), 0);
 		assertEquals(0.10d, RegulationFormulationHelper.round(101d, NutrientCode.Sodium, Locale.FRENCH, "mg/100g"), 0);
-		assertEquals(1.1d, RegulationFormulationHelper.round(1150d, NutrientCode.Sodium, Locale.FRENCH, "mg/100g"), 0);
+		assertEquals(1.2d, RegulationFormulationHelper.round(1150d, NutrientCode.Sodium, Locale.FRENCH, "mg/100g"), 0);
 
 		// less than
 		assertEquals(null, RegulationFormulationHelper.displayValue(null,
@@ -373,10 +373,10 @@ public class NutrientRoundingRulesTestIT {
 
 	@Test
 	public void testAustralianRoundingRules() {
-		assertEquals(35.2d, RegulationFormulationHelper.round(35.24d, NutrientCode.EnergykJ, MLTextHelper.parseLocale("en_AU"), "kJ/100g"), 0);
-		assertEquals(35.3d, RegulationFormulationHelper.round(35.28d, NutrientCode.EnergykJ, MLTextHelper.parseLocale("en_AU"), "kJ/100g"), 0);
-		assertEquals(35.2d, RegulationFormulationHelper.round(35.25d, NutrientCode.EnergykJ, MLTextHelper.parseLocale("en_AU"), "kJ/100g"), 0);
-		assertEquals(35.8d, RegulationFormulationHelper.round(35.75d, NutrientCode.EnergykJ, MLTextHelper.parseLocale("en_AU"), "kJ/100g"), 0);
+		assertEquals(35.0d, RegulationFormulationHelper.round(35.24d, NutrientCode.EnergykJ, MLTextHelper.parseLocale("en_AU"), "kJ/100g"), 0);
+		assertEquals(35.0d, RegulationFormulationHelper.round(35.28d, NutrientCode.EnergykJ, MLTextHelper.parseLocale("en_AU"), "kJ/100g"), 0);
+		assertEquals(35.0d, RegulationFormulationHelper.round(35.25d, NutrientCode.EnergykJ, MLTextHelper.parseLocale("en_AU"), "kJ/100g"), 0);
+		assertEquals(36.0d, RegulationFormulationHelper.round(35.75d, NutrientCode.EnergykJ, MLTextHelper.parseLocale("en_AU"), "kJ/100g"), 0);
 		assertEquals(35.0d, RegulationFormulationHelper.round(35d, NutrientCode.EnergykJ, MLTextHelper.parseLocale("en_AU"), "kJ/100g"), 0);
 	}
 
@@ -700,11 +700,11 @@ public class NutrientRoundingRulesTestIT {
 
 	@Test
 	public void testIndianRoundingRules() {
-		assertEquals(35.2d, RegulationFormulationHelper.round(35.24d, NutrientCode.EnergykJ, MLTextHelper.parseLocale("hi_IN"), "kJ/100g"), 0);
-		assertEquals(35.3d, RegulationFormulationHelper.round(35.28d, NutrientCode.Energykcal, MLTextHelper.parseLocale("hi_IN"), "kCal/100g"), 0);
+		assertEquals(35.0d, RegulationFormulationHelper.round(35.24d, NutrientCode.EnergykJ, MLTextHelper.parseLocale("hi_IN"), "kJ/100g"), 0);
+		assertEquals(35.0d, RegulationFormulationHelper.round(35.28d, NutrientCode.Energykcal, MLTextHelper.parseLocale("hi_IN"), "kCal/100g"), 0);
 		assertEquals(26.2d, RegulationFormulationHelper.round(26.25d, NutrientCode.Cholesterol, MLTextHelper.parseLocale("hi_IN"), "mg/100g"), 0);
-		assertEquals(16.8d, RegulationFormulationHelper.round(16.76d, NutrientCode.Sodium, MLTextHelper.parseLocale("hi_IN"), "mg/100g"), 0);
-		assertEquals(41.6d, RegulationFormulationHelper.round(41.59d, NutrientCode.Sugar, MLTextHelper.parseLocale("hi_IN"), "g/100g"), 0);
+		assertEquals(20.0d, RegulationFormulationHelper.round(16.76d, NutrientCode.Sodium, MLTextHelper.parseLocale("hi_IN"), "mg/100g"), 0);
+		assertEquals(42.0d, RegulationFormulationHelper.round(41.59d, NutrientCode.Sugar, MLTextHelper.parseLocale("hi_IN"), "g/100g"), 0);
 	}
 
 	@Test

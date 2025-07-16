@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,8 @@ public class ForbiddenIngAttributeExtractorPlugin extends CharactAttributeExtrac
 	
 	/** {@inheritDoc} */
 	@Override
-	public String extractPropName(QName type, NodeRef nodeRef) {
+	@Nonnull
+	public String extractPropName(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
 		return associationService.getTargetAssocs(nodeRef, PLMModel.ASSOC_FIL_INGS).stream()
 		.map(i -> nodeService.getProperty(i, BeCPGModel.PROP_CHARACT_NAME))
 		.map(String.class::cast)
@@ -35,6 +38,7 @@ public class ForbiddenIngAttributeExtractorPlugin extends CharactAttributeExtrac
 
 	/** {@inheritDoc} */
 	@Override
+	@Nonnull
 	public Collection<QName> getMatchingTypes() {
 		return Collections.singletonList(PLMModel.TYPE_FORBIDDENINGLIST);
 	}

@@ -436,6 +436,11 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 	 */
 	public CompoListDataItem withParent(CompoListDataItem parent) {
 		this.parent = parent;
+		if (parent == null || parent.getDepthLevel() == null) {
+			this.depthLevel = 1;
+		} else {
+			this.depthLevel = parent.getDepthLevel() + 1;
+		}
 		return this;
 	}
 
@@ -474,51 +479,11 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 		return this;
 	}
 	
-	/**
-	 * <p>
-	 * Constructor for CompoListDataItem.
-	 * </p>
-	 *
-	 * @param nodeRef
-	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param parent
-	 *            a
-	 *            {@link fr.becpg.repo.product.data.productList.CompoListDataItem}
-	 *            object.
-	 * @param qty
-	 *            a {@link java.lang.Double} object.
-	 * @param qtySubFormula
-	 *            a {@link java.lang.Double} object.
-	 * @param compoListUnit
-	 *            a {@link fr.becpg.repo.product.data.constraints.ProductUnit}
-	 *            object.
-	 * @param lossPerc
-	 *            a {@link java.lang.Double} object.
-	 * @param declType
-	 *            a
-	 *            {@link fr.becpg.repo.product.data.constraints.DeclarationType}
-	 *            object.
-	 * @param product
-	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 */
-	@Deprecated
-	public CompoListDataItem(NodeRef nodeRef, CompoListDataItem parent, Double qty, Double qtySubFormula, ProductUnit compoListUnit, Double lossPerc,
-			DeclarationType declType, NodeRef product) {
-		super();
-		this.nodeRef = nodeRef;
-		this.parent = parent;
-		this.qty = qty;
-		this.qtySubFormula = qtySubFormula;
-		this.compoListUnit = compoListUnit;
-		this.lossPerc = lossPerc;
-		this.declType = declType;
-		this.product = product;
-		if (parent == null) {
-			depthLevel = 1;
-		} else {
-			depthLevel = parent.getDepthLevel() + 1;
-		}
+	public CompoListDataItem withYieldPerc(Double yieldPerc) {
+		this.yieldPerc = yieldPerc;
+		return this;
 	}
+	
 
 	/**
 	 * Copy constructor
@@ -648,6 +613,8 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 	public Double getValue() {
 		return getQty();
 	}
+
+	
 
 
 }

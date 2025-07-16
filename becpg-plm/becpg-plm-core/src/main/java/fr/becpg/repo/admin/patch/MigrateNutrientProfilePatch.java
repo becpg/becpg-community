@@ -9,9 +9,6 @@ import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorkerAdaptor;
-import org.alfresco.repo.domain.node.NodeDAO;
-import org.alfresco.repo.domain.patch.PatchDAO;
-import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -46,9 +43,6 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 	
 	private static final String PATH_NUTRIENTPROFILES = "NutrientProfiles";
 
-	private NodeDAO nodeDAO;
-	private PatchDAO patchDAO;
-	private QNameDAO qnameDAO;
 	private RuleService ruleService;
 	private BehaviourFilter policyBehaviourFilter;
 	private IntegrityChecker integrityChecker;
@@ -70,72 +64,6 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 	 */
 	public void setIntegrityChecker(IntegrityChecker integrityChecker) {
 		this.integrityChecker = integrityChecker;
-	}
-
-	/**
-	 * <p>
-	 * Getter for the field <code>nodeDAO</code>.
-	 * </p>
-	 *
-	 * @return a {@link org.alfresco.repo.domain.node.NodeDAO} object.
-	 */
-	public NodeDAO getNodeDAO() {
-		return nodeDAO;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * Setter for the field <code>nodeDAO</code>.
-	 * </p>
-	 */
-	public void setNodeDAO(NodeDAO nodeDAO) {
-		this.nodeDAO = nodeDAO;
-	}
-
-	/**
-	 * <p>
-	 * Getter for the field <code>patchDAO</code>.
-	 * </p>
-	 *
-	 * @return a {@link org.alfresco.repo.domain.patch.PatchDAO} object.
-	 */
-	public PatchDAO getPatchDAO() {
-		return patchDAO;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * Setter for the field <code>patchDAO</code>.
-	 * </p>
-	 */
-	public void setPatchDAO(PatchDAO patchDAO) {
-		this.patchDAO = patchDAO;
-	}
-
-	/**
-	 * <p>
-	 * Getter for the field <code>qnameDAO</code>.
-	 * </p>
-	 *
-	 * @return a {@link org.alfresco.repo.domain.qname.QNameDAO} object.
-	 */
-	public QNameDAO getQnameDAO() {
-		return qnameDAO;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * Setter for the field <code>qnameDAO</code>.
-	 * </p>
-	 */
-	public void setQnameDAO(QNameDAO qnameDAO) {
-		this.qnameDAO = qnameDAO;
 	}
 
 	/**
@@ -242,27 +170,27 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 							&& (nutrientProfileClass.contains("Others") ||
 									nutrientProfileClass.contains("Autres") 
 									|| nutrientProfileClass.contains("Beverages") 
-									|| nutrientProfileClass.contains("Boissons") 
-									|| nutrientProfileClass.contains("Fats") || nutrientProfileClass.contains("Matières grasses")
-									|| nutrientProfileClass.contains("Cheeses")
-									|| nutrientProfileClass.contains("Fromages")
-									|| nutrientProfileClass.contains("Red meats") || nutrientProfileClass.contains("Viandes rouges"));
+										|| (nutrientProfileClass != null && (nutrientProfileClass.contains("Boissons") 
+										|| nutrientProfileClass.contains("Fats") || nutrientProfileClass.contains("Matières grasses")
+										|| nutrientProfileClass.contains("Cheeses")
+										|| nutrientProfileClass.contains("Fromages")
+										|| nutrientProfileClass.contains("Red meats") || nutrientProfileClass.contains("Viandes rouges"))));
 					
 					if (nutrientProfileClassKnown) {
 						for (NodeRef sourceAssoc : sourceAssocs) {
-							if (nutrientProfileClass.contains("Others") || nutrientProfileClass.contains("Autres")) {
+							if (nutrientProfileClass != null && (nutrientProfileClass.contains("Others") || nutrientProfileClass.contains("Autres"))) {
 								nodeService.setProperty(sourceAssoc, PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Others.toString());
-							} else if (nutrientProfileClass.contains("Beverages") || nutrientProfileClass.contains("Boissons")) {
+							} else if (nutrientProfileClass != null && (nutrientProfileClass.contains("Beverages") || nutrientProfileClass.contains("Boissons"))) {
 								nodeService.setProperty(sourceAssoc, PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Beverages.toString());
-							} else if (nutrientProfileClass.contains("Fats") || nutrientProfileClass.contains("Matières grasses")) {
+							} else if (nutrientProfileClass != null && (nutrientProfileClass.contains("Fats") || nutrientProfileClass.contains("Matières grasses"))) {
 								nodeService.setProperty(sourceAssoc, PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Fats.toString());
-							} else if (nutrientProfileClass.contains("Cheeses") || nutrientProfileClass.contains("Fromages")) {
+							} else if (nutrientProfileClass != null && (nutrientProfileClass.contains("Cheeses") || nutrientProfileClass.contains("Fromages"))) {
 								nodeService.setProperty(sourceAssoc, PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Cheeses.toString());
-							} else if (nutrientProfileClass.contains("Red meats") || nutrientProfileClass.contains("Viandes rouges")) {
+							} else if (nutrientProfileClass != null && (nutrientProfileClass.contains("Red meats") || nutrientProfileClass.contains("Viandes rouges"))) {
 								nodeService.setProperty(sourceAssoc, PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.RedMeats.toString());
 							}
 							
-							if (nutrientProfileClass.contains(NutrientProfileVersion.VERSION_2023.toString())) {
+							if (nutrientProfileClass!=null && nutrientProfileClass.contains(NutrientProfileVersion.VERSION_2023.toString())) {
 								nodeService.setProperty(sourceAssoc, PLMModel.PROP_NUTRIENT_PROFILE_VERSION, NutrientProfileVersion.VERSION_2023.toString());
 							}
 							

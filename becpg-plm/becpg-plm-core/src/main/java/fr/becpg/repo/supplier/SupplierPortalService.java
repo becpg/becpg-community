@@ -112,7 +112,20 @@ public interface SupplierPortalService {
 	 */
 	void deleteExternalUser(NodeRef userNodeRef, NodeRef supplierNodeRef);
 
+	/**
+	 * <p>getOrCreateSupplierGroup.</p>
+	 *
+	 * @param supplierNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param resources a {@link java.util.List} object
+	 * @return a {@link java.lang.String} object
+	 */
 	String getOrCreateSupplierGroup(NodeRef supplierNodeRef, List<NodeRef> resources);
 
+	/**
+	 * <p>isCurrentUserInSupplierGroup.</p>
+	 *
+	 * @param supplierNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	boolean isCurrentUserInSupplierGroup(NodeRef supplierNodeRef);
 }

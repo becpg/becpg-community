@@ -3,6 +3,8 @@ package fr.becpg.repo.helper;
 import java.util.Collection;
 import java.util.Collections;
 
+import javax.annotation.Nonnull;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +30,15 @@ public class CompoListAttributeExtractorPlugin extends CharactAttributeExtractor
 	
 	/** {@inheritDoc} */
 	@Override
-	public String extractPropName(QName type, NodeRef nodeRef) {
+	@Nonnull
+	public String extractPropName(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
 		NodeRef product = associationService.getTargetAssoc(nodeRef, PLMModel.ASSOC_COMPOLIST_PRODUCT);
 		return super.extractExpr(product, systemConfigurationService.confValue("beCPG.product.name.format"));
 	}
 
 	/** {@inheritDoc} */
 	@Override
+	@Nonnull
 	public Collection<QName> getMatchingTypes() {
 		return Collections.singletonList(PLMModel.TYPE_COMPOLIST);
 	}

@@ -684,7 +684,7 @@ public class VariantPackagingData implements Serializable {
 	/**
 	 * <p>Setter for the field <code>tertiaryPackagingTypeCode</code>.</p>
 	 *
-	 * @param secondaryPackagingTypeCode a {@link java.lang.String} object
+	 * @param tertiaryPackagingTypeCode a {@link java.lang.String} object
 	 */
 	public void setTertiaryPackagingTypeCode(String tertiaryPackagingTypeCode) {
 		this.tertiaryPackagingTypeCode = tertiaryPackagingTypeCode;

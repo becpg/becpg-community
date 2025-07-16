@@ -529,24 +529,22 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		}
 		if (mlTextBefore != null) {
 			newMlTextBefore = compareMLTexts(mlTextBefore, mlTextAfter);
+			if (newMlTextBefore != null) {
+				Iterator<Entry<Locale, String>> it = mlTextBefore.entrySet().iterator();
+				while (it.hasNext()) {
+					Locale locale = it.next().getKey();
+					mlTextBefore.put(locale, newMlTextBefore.get(locale));
+				}
+			}
 		}
 		if (mlTextAfter != null) {
 			newMlTextAfter = compareMLTexts(mlTextAfter, mlTextBefore);
-		}
-		if (newMlTextBefore != null) {
-			Iterator<Entry<Locale, String>> it = mlTextBefore.entrySet().iterator();
-
-			while (it.hasNext()) {
-				Locale locale = it.next().getKey();
-				mlTextBefore.put(locale, newMlTextBefore.get(locale));
-			}
-		}
-		if (newMlTextAfter != null) {
-			Iterator<Entry<Locale, String>> it = mlTextAfter.entrySet().iterator();
-
-			while (it.hasNext()) {
-				Locale locale = it.next().getKey();
-				mlTextAfter.put(locale, newMlTextAfter.get(locale));
+			if (newMlTextAfter != null) {
+				Iterator<Entry<Locale, String>> it = mlTextAfter.entrySet().iterator();
+				while (it.hasNext()) {
+					Locale locale = it.next().getKey();
+					mlTextAfter.put(locale, newMlTextAfter.get(locale));
+				}
 			}
 		}
 	}
@@ -889,7 +887,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					data.put(PROP_ENTITY_NODEREF, entityNodeRef);
 					data.put(PROP_ENTITY_TYPE, nodeService.getType(entityNodeRef));
 					data.put(PROP_TITLE, nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
-					if (activityEvent.equals(ActivityEvent.Update)) {
+					if (activityEvent != null && activityEvent.equals(ActivityEvent.Update)) {
 						if (activityType.equals(ActivityType.AspectsAddition)) {
 							data.put(ADDED_ASPECTS, extractAspectNames(updatedProperties.keySet()));
 						} else if (activityType.equals(ActivityType.AspectsRemoval)) {
@@ -918,7 +916,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						}
 					}
 
-					if (!activityType.equals(ActivityType.Entity) || !activityEvent.equals(ActivityEvent.Update) || (updatedProperties != null)) {
+					if (!ActivityType.Entity.equals(activityType) || activityEvent == null || !ActivityEvent.Update.equals(activityEvent) || (updatedProperties != null)) {
 						activityListDataItem.setActivityType(activityType);
 						activityListDataItem.setActivityData(data.toString());
 						activityListDataItem.setParentNodeRef(activityListNodeRef);

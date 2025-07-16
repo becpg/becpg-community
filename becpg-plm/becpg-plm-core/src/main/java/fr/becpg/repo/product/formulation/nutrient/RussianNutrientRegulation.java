@@ -25,7 +25,11 @@ public class RussianNutrientRegulation extends AbstractNutrientRegulation {
 	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
 
-		if(value != null && nutrientTypeCode != null){
+		if (value == null) {
+			return null;
+		}
+		
+		if( nutrientTypeCode != null){
 			if (nutrientTypeCode.equals(NutrientCode.Energykcal) || nutrientTypeCode.equals(NutrientCode.EnergykJ)){
 				if (value <= 1) {
 					return 1.0;

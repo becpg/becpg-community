@@ -68,18 +68,38 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 	
 	private NamespaceService namespaceService;
 	
+	/**
+	 * <p>Setter for the field <code>personService</code>.</p>
+	 *
+	 * @param personService a {@link org.alfresco.service.cmr.security.PersonService} object
+	 */
 	public void setPersonService(PersonService personService) {
 		this.personService = personService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
+	 *
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object
+	 */
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
+	 *
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 */
 	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
 		this.systemConfigurationService = systemConfigurationService;
 	}

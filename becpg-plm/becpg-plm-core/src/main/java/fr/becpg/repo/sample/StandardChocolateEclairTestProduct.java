@@ -67,10 +67,15 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 	/** Constant <code>CLAIM_HALAL_LABEL="Halal"</code> */
 	public static final String CLAIM_HALAL_LABEL = "Halal";
 
+	/** Constant <code>CERT_ISO_9001="ISO 9001"</code> */
 	public static final String CERT_ISO_9001 = "ISO 9001";
+	/** Constant <code>CERT_BRC="BRC"</code> */
 	public static final String CERT_BRC = "BRC";
+	/** Constant <code>CERT_IFS="IFS"</code> */
 	public static final String CERT_IFS = "IFS";
+	/** Constant <code>CERT_ISO_22000="ISO 22000"</code> */
 	public static final String CERT_ISO_22000 = "ISO 22000";
+	/** Constant <code>CERT_FSSC_22000="FSSC 22000"</code> */
 	public static final String CERT_FSSC_22000 = "FSSC 22000";
 	
 	/** Constant <code>SUGAR_NAME="Sucre"</code> */
@@ -119,23 +124,35 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
     public static final String CCP_COMPLIANCE = "CCP Compliance";
 
     // Survey question labels
+    /** Constant <code>SURVEY_PASTRY_QUESTION="Evaluate the choux pastry characteristi"{trunked}</code> */
     public static final String SURVEY_PASTRY_QUESTION = "Evaluate the choux pastry characteristics:";
+    /** Constant <code>SURVEY_FILLING_QUESTION="Assess the pastry cream filling:"</code> */
     public static final String SURVEY_FILLING_QUESTION = "Assess the pastry cream filling:";
+    /** Constant <code>SURVEY_CHOCOLATE_QUESTION="Evaluate the chocolate glaze characteri"{trunked}</code> */
     public static final String SURVEY_CHOCOLATE_QUESTION = "Evaluate the chocolate glaze characteristics:";
 
     // Survey answer labels - Pastry
+    /** Constant <code>ANSWER_PASTRY_PERFECT="Perfect - Golden brown, hollow, crisp e"{trunked}</code> */
     public static final String ANSWER_PASTRY_PERFECT = "Perfect - Golden brown, hollow, crisp exterior (18-20cm length)";
+    /** Constant <code>ANSWER_PASTRY_MINOR_DEFECTS="Minor defects - Slight color variation,"{trunked}</code> */
     public static final String ANSWER_PASTRY_MINOR_DEFECTS = "Minor defects - Slight color variation, size within 17-21cm";
+    /** Constant <code>ANSWER_PASTRY_MAJOR_DEFECTS="Major defects - Improper rise, inconsis"{trunked}</code> */
     public static final String ANSWER_PASTRY_MAJOR_DEFECTS = "Major defects - Improper rise, inconsistent texture";
     
     // Survey answer labels - Filling
+    /** Constant <code>ANSWER_FILLING_PERFECT="Perfect - Smooth, creamy, vanilla flavo"{trunked}</code> */
     public static final String ANSWER_FILLING_PERFECT = "Perfect - Smooth, creamy, vanilla flavor (5-7°C)";
+    /** Constant <code>ANSWER_FILLING_MINOR_ISSUES="Minor issues - Slight graininess or tem"{trunked}</code> */
     public static final String ANSWER_FILLING_MINOR_ISSUES = "Minor issues - Slight graininess or temperature deviation (4-8°C)";
+    /** Constant <code>ANSWER_FILLING_MAJOR_ISSUES="Major issues - Curdled, separated, or i"{trunked}</code> */
     public static final String ANSWER_FILLING_MAJOR_ISSUES = "Major issues - Curdled, separated, or incorrect temperature";
     
     // Survey answer labels - Chocolate
+    /** Constant <code>ANSWER_CHOCOLATE_CORRECT="Correct viscosity (65-70% chocolate con"{trunked}</code> */
     public static final String ANSWER_CHOCOLATE_CORRECT = "Correct viscosity (65-70% chocolate content), uniform texture";
+    /** Constant <code>ANSWER_CHOCOLATE_DEVIATION="Slight viscosity deviation (60-75% cont"{trunked}</code> */
     public static final String ANSWER_CHOCOLATE_DEVIATION = "Slight viscosity deviation (60-75% content), minor texture issues";
+    /** Constant <code>ANSWER_CHOCOLATE_OUT_OF_SPEC="Out of specification - improper viscosi"{trunked}</code> */
     public static final String ANSWER_CHOCOLATE_OUT_OF_SPEC = "Out of specification - improper viscosity or crystallization";
 	
 	protected FinishedProductData product;
@@ -321,6 +338,11 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 	
 	
 
+	/**
+	 * <p>Getter for the field <code>product</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.FinishedProductData} object
+	 */
 	public FinishedProductData getProduct() {
 		return product;
 	}
@@ -420,6 +442,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public FinishedProductData createTestProduct() {
 		 product = FinishedProductData.build().withName("Éclair au chocolat").withUnit(ProductUnit.kg).withQty(550d)
@@ -488,7 +511,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
 	/**
 	 * Creates product specifications for the test product.
-	 * 
+	 *
 	 * @return List of product specifications
 	 */
 	protected List<ProductSpecificationData> createProductSpecifications() {

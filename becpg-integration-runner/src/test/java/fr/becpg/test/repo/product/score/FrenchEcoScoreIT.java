@@ -117,7 +117,7 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 		// SARDINES DE BRETAGNE
 
 		final List<PackMaterialListDataItem> packMaterial3 = new ArrayList<>();
-		final List<LabelClaimListDataItem> labelClaimList = new ArrayList<LabelClaimListDataItem>();
+		final List<LabelClaimListDataItem> labelClaimList = new ArrayList<>();
 
 		properties.clear();
 		properties.put(BeCPGModel.PROP_LV_VALUE, "Alluminium");
@@ -162,7 +162,8 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_LABEL_CLAIM,
 				properties).getChildRef();
 
-		LabelClaimListDataItem labelClaimItem = new LabelClaimListDataItem(labelClaimNodeRef, "Test claim type", Boolean.TRUE);
+		LabelClaimListDataItem labelClaimItem = new LabelClaimListDataItem().withLabelClaim(labelClaimNodeRef).withType("Test claim type")
+				.withIsClaimed(Boolean.TRUE);
 
 		labelClaimList.add(labelClaimItem);
 
@@ -175,7 +176,7 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
 				PackModel.TYPE_PACKAGING_MATERIAL, properties).getChildRef();
 
-		packMaterial.add(new PackMaterialListDataItem(packMaterialNodeRef, qty, null, null, PackagingLevel.Primary));
+		packMaterial.add(PackMaterialListDataItem.build().withMaterial(packMaterialNodeRef).withWeight(qty).withPkgLevel(PackagingLevel.Primary));
 
 		return packMaterial;
 	}
@@ -207,7 +208,8 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 
 			List<IngListDataItem> ingList = new ArrayList<>();
 
-			ingList.add(new IngListDataItem(null, ingQty, Arrays.asList(geoOrigin), new ArrayList<>(), true, true, false, ing, false));
+			ingList.add(IngListDataItem.build().withQtyPerc(ingQty).withGeoOrigin(Arrays.asList(geoOrigin)).withBioOrigin(new ArrayList<>())
+					.withIsGMO(true).withIsIonized(true).withIsProcessingAid(false).withIngredient(ing).withIsManual(false));
 
 			finishedProductData.setIngList(ingList);
 

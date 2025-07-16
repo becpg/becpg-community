@@ -136,7 +136,7 @@ public class CompareEntityDataSourceWebScript extends AbstractWebScript {
 
 		NodeRef entity1NodeRef = null;
 
-		String versionLabel = templateArgs.get(PARAM_VERSION_LABEL);
+		String versionLabel = (templateArgs != null) ? templateArgs.get(PARAM_VERSION_LABEL) : null;
 		if (versionLabel != null) {
 			VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
 			if (versionHistory != null) {

@@ -1,7 +1,6 @@
 package fr.becpg.repo.product.formulation.nutrient;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 
 /**
@@ -24,7 +23,13 @@ public class AustralianNutrientRegulation extends AbstractNutrientRegulation {
 	/** {@inheritDoc} */
 	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
-		if(value != null){
+
+
+		if (value == null) {
+			return null;
+		}
+		
+		if(nutrientTypeCode != null){
 			if (nutrientTypeCode.equals(NutrientCode.Energykcal) || nutrientTypeCode.equals(NutrientCode.EnergykJ)) {
 				return roundValue(value,1d);
 			} else if ((nutrientTypeCode.equals(NutrientCode.Protein) ||

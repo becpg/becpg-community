@@ -549,6 +549,7 @@ public interface PLMModel {
 	/** Constant <code>PROP_SUPPLIER_STATE</code> */
 	QName PROP_SUPPLIER_STATE = QName.createQName(BeCPGModel.BECPG_URI, "supplierState");
 	
+	/** Constant <code>PROP_EXTERNAL_ACCESS_GROUP</code> */
 	QName PROP_EXTERNAL_ACCESS_GROUP = QName.createQName(BeCPGModel.BECPG_URI, "externalAccessGroup");
 
 	// supplier

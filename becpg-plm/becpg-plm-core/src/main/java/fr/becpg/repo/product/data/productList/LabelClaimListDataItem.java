@@ -382,6 +382,12 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 	}
 	
 
+	/**
+	 * <p>withIsCertified.</p>
+	 *
+	 * @param isCertified a {@link java.lang.Boolean} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.LabelClaimListDataItem} object
+	 */
 	public LabelClaimListDataItem withIsCertified(Boolean isCertified) {
 		if(Boolean.TRUE.equals(isCertified)){
 			this.labelClaimValue = VALUE_CERTIFIED;
@@ -474,27 +480,13 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 	
 	/**
 	 * Creates a new builder for LabelClaimListDataItem
+	 *
 	 * @return a new builder instance
 	 */
 	public static LabelClaimListDataItem build() {
 		return new LabelClaimListDataItem();
 	}
 	
-	
-	/**
-	 * <p>Constructor for LabelClaimListDataItem.</p>
-	 *
-	 * @param labelClaim a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param type a {@link java.lang.String} object.
-	 * @param isClaimed a {@link java.lang.Boolean} object.
-	 */
-	@Deprecated
-	public LabelClaimListDataItem(NodeRef labelClaim, String type, Boolean isClaimed) {
-		super();
-		this.labelClaim = labelClaim;
-		this.type = type;
-		this.labelClaimValue = Boolean.TRUE.equals(isClaimed) ? VALUE_TRUE : VALUE_FALSE;
-	}
 	
 	/**
 	 * <p>Constructor for LabelClaimListDataItem.</p>

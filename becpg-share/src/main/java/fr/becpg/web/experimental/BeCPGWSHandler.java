@@ -36,6 +36,7 @@ public class BeCPGWSHandler {
 	 * @param session a {@link jakarta.websocket.Session} object.
 	 * @param room a {@link java.lang.String} object.
 	 * @param user a {@link java.lang.String} object.
+	 * @param mode a {@link java.lang.String} object
 	 */
 	@OnOpen
 	public void onOpen(Session session, @PathParam("id") final String room, @PathParam("user") final String user, @PathParam("mode") final String mode) {
