@@ -235,24 +235,6 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 		return this;
 	}
 
-	/**
-	 * <p>Constructor for PackMaterialListDataItem.</p>
-	 *
-	 * @param pmlMaterial a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param pmlWeight a {@link java.lang.Double} object.
-	 * @param pmlPerc a {@link java.lang.Double} object
-	 * @param pmlRecycledPercentage a {@link java.lang.Double} object
-	 * @param pkgLevel a {@link fr.becpg.repo.product.data.constraints.PackagingLevel} object
-	 */
-	@Deprecated
-	public PackMaterialListDataItem(NodeRef pmlMaterial, Double pmlWeight, Double pmlPerc, Double pmlRecycledPercentage, PackagingLevel pkgLevel) {
-		super();
-		this.pmlMaterial = pmlMaterial;
-		this.pmlPerc = pmlPerc;
-		this.pmlWeight = pmlWeight;
-		this.pkgLevel = pkgLevel;
-		this.pmlRecycledPercentage = pmlRecycledPercentage;
-	}
 
 	/**
 	 * <p>Constructor for PackMaterialListDataItem.</p>

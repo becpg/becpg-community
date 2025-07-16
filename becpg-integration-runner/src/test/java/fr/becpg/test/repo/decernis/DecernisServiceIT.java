@@ -193,7 +193,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 		
 	}
 	
-	private NodeRef createFinishedProduct(final String finishedProductName) throws Exception {
+	private NodeRef createFinishedProduct(final String finishedProductName) {
 		return inWriteTx(() -> {
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName(finishedProductName);
@@ -202,7 +202,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 	}
 	
 	@Test
-	public void testProductUpdateFromList() throws Exception {
+	public void testProductUpdateFromList()  {
 		NodeRef finishedProductNodeRef = createFinishedProduct("PF Decernis testProductUpdateFromList");
 		
 		inWriteTx(() -> {
@@ -258,7 +258,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 	}
 	
 	@Test
-	public void testDefaultAnalysis() throws Exception {
+	public void testDefaultAnalysis()  {
 		
 		inWriteTx(() -> {
 			systemConfigurationService.updateConfValue("beCPG.decernis.serverUrl", mockServerUrl);
@@ -377,7 +377,8 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				
 				List<IngListDataItem> ingList = product.getIngList();
 				
-				ingList.add(new IngListDataItem(null, 1d, null, null, null, null, null, ing1, null));
+				ingList.add(IngListDataItem.build().withQtyPerc(1d).withGeoOrigin(null).withBioOrigin(null).withIsGMO(false).withIsIonized(false)
+					.withIsProcessingAid(false).withIngredient(ing1).withIsManual(false).withMini(0d).withMaxi(0d));
 				
 				List<RegulatoryListDataItem> regulatoryList = product.getRegulatoryList();
 				
@@ -409,7 +410,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 	}
 
 	@Test
-	public void testV5Analysis() throws Exception {
+	public void testV5Analysis()  {
 		
 		inWriteTx(() -> {
 			systemConfigurationService.updateConfValue("beCPG.decernis.serverUrl", mockServerUrl);
@@ -502,7 +503,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				
 				List<IngListDataItem> ingList = product.getIngList();
 				
-				ingList.add(new IngListDataItem(null, 1d, null, null, null, null, null, ing1, null));
+				ingList.add(IngListDataItem.build().withQtyPerc(1d).withGeoOrigin(null).withBioOrigin(null).withIsGMO(null).withIsIonized(null).withIsProcessingAid(null).withIngredient(ing1).withIsManual(null));
 				
 				List<RegulatoryListDataItem> regulatoryList = product.getRegulatoryList();
 				
@@ -535,7 +536,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 	}
 	
 	@Test
-	public void testDefaultDoubleFunction() throws Exception {
+	public void testDefaultDoubleFunction()  {
 		
 		inWriteTx(() -> {
 			systemConfigurationService.updateConfValue("beCPG.decernis.serverUrl", mockServerUrl);
@@ -726,8 +727,8 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				
 				List<IngListDataItem> ingList = product.getIngList();
 				
-				ingList.add(new IngListDataItem(null, 2d, null, null, null, null, null, ing3, null));
-				ingList.add(new IngListDataItem(null, 2d, null, null, null, null, null, ing4, null));
+				ingList.add(IngListDataItem.build().withQtyPerc(2d).withGeoOrigin(null).withBioOrigin(null).withIsGMO(null).withIsIonized(null).withIsProcessingAid(null).withIngredient(ing3).withIsManual(null));
+				ingList.add(IngListDataItem.build().withQtyPerc(2d).withGeoOrigin(null).withBioOrigin(null).withIsGMO(null).withIsIonized(null).withIsProcessingAid(null).withIngredient(ing4).withIsManual(null));
 				
 				List<RegulatoryListDataItem> regulatoryList = product.getRegulatoryList();
 				
@@ -753,9 +754,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				int checks = 0;
 				
 				for (RequirementListDataItem req : requirements) {
-					if (ing3.equals(req.getCharact())) {
-						checks++;
-					} else if (ing4.equals(req.getCharact())) {
+					if (ing3.equals(req.getCharact()) || ing4.equals(req.getCharact())) {
 						checks++;
 					}
 				}
@@ -775,7 +774,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 	}
 	
 	@Test
-	public void testV5DoubleFunction() throws Exception {
+	public void testV5DoubleFunction()  {
 		
 		inWriteTx(() -> {
 			systemConfigurationService.updateConfValue("beCPG.decernis.serverUrl", mockServerUrl);
@@ -930,8 +929,8 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				
 				List<IngListDataItem> ingList = product.getIngList();
 				
-				ingList.add(new IngListDataItem(null, 2d, null, null, null, null, null, ing3, null));
-				ingList.add(new IngListDataItem(null, 2d, null, null, null, null, null, ing4, null));
+				ingList.add(IngListDataItem.build().withQtyPerc(2d).withGeoOrigin(null).withBioOrigin(null).withIsGMO(null).withIsIonized(null).withIsProcessingAid(null).withIngredient(ing3).withIsManual(null));
+				ingList.add(IngListDataItem.build().withQtyPerc(2d).withGeoOrigin(null).withBioOrigin(null).withIsGMO(null).withIsIonized(null).withIsProcessingAid(null).withIngredient(ing4).withIsManual(null));
 				
 				List<RegulatoryListDataItem> regulatoryList = product.getRegulatoryList();
 				
@@ -957,9 +956,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				int checks = 0;
 				
 				for (RequirementListDataItem req : requirements) {
-					if (ing3.equals(req.getCharact())) {
-						checks++;
-					} else if (ing4.equals(req.getCharact())) {
+					if (ing3.equals(req.getCharact()) || ing4.equals(req.getCharact())) {
 						checks++;
 					}
 				}

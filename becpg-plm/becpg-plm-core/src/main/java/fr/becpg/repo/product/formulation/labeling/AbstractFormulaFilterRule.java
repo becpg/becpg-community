@@ -71,6 +71,11 @@ public abstract class AbstractFormulaFilterRule implements Serializable {
 		return locales.isEmpty() || locales.contains(locale);
 	}
 	
+	/**
+	 * <p>hasLocales.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean hasLocales() {
 		return !locales.isEmpty();
 	}

@@ -41,7 +41,7 @@ public interface AssociationService {
 
 	/**
 	 * Updates the associations for a given node with the specified association type.
-	 * 
+	 *
 	 * @param nodeRef the node reference to update associations for
 	 * @param qName the association type QName
 	 * @param assocNodeRefs the list of node references to associate with the node
@@ -50,7 +50,7 @@ public interface AssociationService {
 	
 	/**
 	 * Updates the associations for a given node with the specified association type.
-	 * 
+	 *
 	 * @param nodeRef the node reference to update associations for
 	 * @param qName the association type QName
 	 * @param assocNodeRef the node reference to associate with the node
@@ -59,7 +59,7 @@ public interface AssociationService {
 	
 	/**
 	 * Retrieves the target association for a given node with the specified association type.
-	 * 
+	 *
 	 * @param nodeRef the node reference to retrieve the target association for
 	 * @param qName the association type QName
 	 * @return the target association node reference
@@ -68,7 +68,7 @@ public interface AssociationService {
 	
 	/**
 	 * Retrieves the target associations for a given node with the specified association type.
-	 * 
+	 *
 	 * @param nodeRef the node reference to retrieve the target associations for
 	 * @param qName the association type QName
 	 * @return the list of target association node references
@@ -77,7 +77,7 @@ public interface AssociationService {
 	
 	/**
 	 * Retrieves the child association for a given node with the specified association type.
-	 * 
+	 *
 	 * @param nodeRef the node reference to retrieve the child association for
 	 * @param qName the association type QName
 	 * @return the child association node reference
@@ -86,7 +86,7 @@ public interface AssociationService {
 	
 	/**
 	 * Retrieves the child associations for a given node with the specified association type.
-	 * 
+	 *
 	 * @param nodeRef the node reference to retrieve the child associations for
 	 * @param qName the association type QName
 	 * @return the list of child association node references
@@ -95,7 +95,7 @@ public interface AssociationService {
 	
 	/**
 	 * Retrieves the child associations for a given node with the specified association type and child type.
-	 * 
+	 *
 	 * @param nodeRef the node reference to retrieve the child associations for
 	 * @param qName the association type QName
 	 * @param childTypeQName the child type QName
@@ -105,7 +105,7 @@ public interface AssociationService {
 	
 	/**
 	 * Retrieves the child associations for a given list node with the specified association type and list type.
-	 * 
+	 *
 	 * @param listNodeRef the list node reference to retrieve the child associations for
 	 * @param assocContains the association type QName
 	 * @param listQNameFilter the list type QName filter
@@ -116,7 +116,7 @@ public interface AssociationService {
 	
 	/**
 	 * Retrieves the source associations for a given node.
-	 * 
+	 *
 	 * @param nodeRef the node reference to retrieve the source associations for
 	 * @return the list of source association node references
 	 */
@@ -124,7 +124,7 @@ public interface AssociationService {
 	
 	/**
 	 * Retrieves the source associations for a given node with the specified association type.
-	 * 
+	 *
 	 * @param nodeRef the node reference to retrieve the source associations for
 	 * @param qNamePattern the association type QName pattern
 	 * @return the list of source association node references
@@ -133,7 +133,7 @@ public interface AssociationService {
 	
 	/**
 	 * Retrieves the source associations for a given node with the specified association type and versioning options.
-	 * 
+	 *
 	 * @param nodeRef the node reference to retrieve the source associations for
 	 * @param qNamePattern the association type QName pattern
 	 * @param includeVersions whether to include versioned associations
@@ -143,7 +143,7 @@ public interface AssociationService {
 	
 	/**
 	 * Retrieves the source associations for a given node with the specified association type, versioning options, and pagination.
-	 * 
+	 *
 	 * @param nodeRef the node reference to retrieve the source associations for
 	 * @param qNamePattern the association type QName pattern
 	 * @param includeVersions whether to include versioned associations
@@ -155,7 +155,7 @@ public interface AssociationService {
 	
 	/**
 	 * Retrieves the source associations for a given node with the specified association type, versioning options, pagination, and permission checking.
-	 * 
+	 *
 	 * @param nodeRef the node reference to retrieve the source associations for
 	 * @param qName the association type QName
 	 * @param includeVersions whether to include versioned associations
@@ -168,7 +168,7 @@ public interface AssociationService {
 	
 	/**
 	 * Retrieves entity source associations with filtering and pagination.
-	 * 
+	 *
 	 * @param nodeRefs the node references to check
 	 * @param assocQName the association type QName
 	 * @param listTypeQname the list type QName
@@ -180,7 +180,7 @@ public interface AssociationService {
 	
 	/**
 	 * Retrieves entity source associations with filtering, pagination, and permission checking.
-	 * 
+	 *
 	 * @param nodeRefs the node references to check
 	 * @param assocQName the association type QName
 	 * @param listTypeQname the list type QName
@@ -193,7 +193,7 @@ public interface AssociationService {
 	
 	/**
 	 * Retrieves entity source associations with filtering, pagination, and permission checking.
-	 * 
+	 *
 	 * @param nodeRefs the node references to check
 	 * @param assocQName the association type QName
 	 * @param listTypeQname the list type QName
@@ -207,7 +207,7 @@ public interface AssociationService {
 	
 	/**
 	 * Removes the child cached association for a given node with the specified association type.
-	 * 
+	 *
 	 * @param nodeRef the node reference to remove the child cached association for
 	 * @param qName the association type QName
 	 */
@@ -215,14 +215,14 @@ public interface AssociationService {
 	
 	/**
 	 * Removes all cached associations for a given node.
-	 * 
+	 *
 	 * @param nodeRef the node reference to remove all cached associations for
 	 */
 	void removeAllCacheAssocs(NodeRef nodeRef);
 	
 	/**
 	 * Retrieves the child associations by type for a given node with the specified association type.
-	 * 
+	 *
 	 * @param nodeRef the node reference to retrieve the child associations by type for
 	 * @param qName the association type QName
 	 * @return the child association cache entry

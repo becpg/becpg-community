@@ -20,6 +20,11 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.PublicationModel;
 
+/**
+ * <p>RemoveDeprecatedPubAspectsPatch class.</p>
+ *
+ * @author matthieu
+ */
 public class RemoveDeprecatedPubAspectsPatch extends AbstractBeCPGPatch {
 
     private static final QName ASPECT_MAILING_LIST = QName.createQName(PublicationModel.PUBLICATION_URI, "MailingListChannelAspect");
@@ -42,6 +47,7 @@ public class RemoveDeprecatedPubAspectsPatch extends AbstractBeCPGPatch {
     private RuleService ruleService;
     private IntegrityChecker integrityChecker;
 
+    /** {@inheritDoc} */
     @Override
     protected String applyInternal() throws Exception {
         AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
@@ -188,20 +194,40 @@ public class RemoveDeprecatedPubAspectsPatch extends AbstractBeCPGPatch {
         return I18NUtil.getMessage(MSG_SUCCESS);
     }
 
+    /**
+     * <p>Setter for the field <code>integrityChecker</code>.</p>
+     *
+     * @param integrityChecker a {@link org.alfresco.repo.node.integrity.IntegrityChecker} object
+     */
     public void setIntegrityChecker(IntegrityChecker integrityChecker) {
         this.integrityChecker = integrityChecker;
     }
 
  
 
+    /**
+     * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
+     *
+     * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object
+     */
     public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
         this.policyBehaviourFilter = policyBehaviourFilter;
     }
 
+    /**
+     * <p>Getter for the field <code>ruleService</code>.</p>
+     *
+     * @return a {@link org.alfresco.service.cmr.rule.RuleService} object
+     */
     public RuleService getRuleService() {
         return ruleService;
     }
 
+    /**
+     * <p>Setter for the field <code>ruleService</code>.</p>
+     *
+     * @param ruleService a {@link org.alfresco.service.cmr.rule.RuleService} object
+     */
     public void setRuleService(RuleService ruleService) {
         this.ruleService = ruleService;
     }

@@ -148,11 +148,26 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			ProductSpecificationData productSpec1 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef1);
 			productSpec1.setLabelClaimList(new ArrayList<LabelClaimListDataItem>());
 
-			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef, "toto", Boolean.TRUE));
-			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef2, "toto", Boolean.FALSE));
-			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef3, "toto", Boolean.TRUE));
-			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef5, "toto", Boolean.FALSE));
-			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef6, "toto", Boolean.TRUE));
+			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem()
+				.withLabelClaim(labelClaimNodeRef)
+				.withType("toto")
+				.withIsClaimed(Boolean.TRUE));
+			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem()
+				.withLabelClaim(labelClaimNodeRef2)
+				.withType("toto")
+				.withIsClaimed(Boolean.FALSE));
+			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem()
+				.withLabelClaim(labelClaimNodeRef3)
+				.withType("toto")
+				.withIsClaimed(Boolean.TRUE));
+			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem()
+				.withLabelClaim(labelClaimNodeRef5)
+				.withType("toto")
+				.withIsClaimed(Boolean.FALSE));
+			productSpec1.getLabelClaimList().add(new LabelClaimListDataItem()
+				.withLabelClaim(labelClaimNodeRef6)
+				.withType("toto")
+				.withIsClaimed(Boolean.TRUE));
 			alfrescoRepository.save(productSpec1);
 
 			properties = new HashMap<>();
@@ -164,9 +179,18 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			ProductSpecificationData productSpec2 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef2);
 
 			productSpec2.setLabelClaimList(new ArrayList<LabelClaimListDataItem>());
-			productSpec2.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef, "toto", Boolean.FALSE));
-			productSpec2.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef2, "toto", Boolean.TRUE));
-			productSpec2.getLabelClaimList().add(new LabelClaimListDataItem(labelClaimNodeRef5, "toto", Boolean.FALSE));
+			productSpec2.getLabelClaimList().add(new LabelClaimListDataItem()
+				.withLabelClaim(labelClaimNodeRef)
+				.withType("toto")
+				.withIsClaimed(Boolean.FALSE));
+			productSpec2.getLabelClaimList().add(new LabelClaimListDataItem()
+				.withLabelClaim(labelClaimNodeRef2)
+				.withType("toto")
+				.withIsClaimed(Boolean.TRUE));
+			productSpec2.getLabelClaimList().add(new LabelClaimListDataItem()
+				.withLabelClaim(labelClaimNodeRef5)
+				.withType("toto")
+				.withIsClaimed(Boolean.FALSE));
 
 			alfrescoRepository.save(productSpec2);
 
@@ -186,16 +210,40 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			product.setProductSpecifications(new ArrayList<ProductSpecificationData>());
 			product.getProductSpecifications().add(globalSpec);
 			product.setLabelClaimList(new ArrayList<LabelClaimListDataItem>());
-			LabelClaimListDataItem productLabelClaimFalse = new LabelClaimListDataItem(labelClaimNodeRef, "toto", Boolean.TRUE);
-			LabelClaimListDataItem productLabelClaimFalse2 = new LabelClaimListDataItem(labelClaimNodeRef2, "toto", Boolean.FALSE);
-			LabelClaimListDataItem productLabelClaimFalse4 = new LabelClaimListDataItem(labelClaimNodeRef4, "toto", Boolean.TRUE);
-			LabelClaimListDataItem productLabelClaimFalse5 = new LabelClaimListDataItem(labelClaimNodeRef5, "toto", Boolean.TRUE);
-			LabelClaimListDataItem productLabelClaimFalse6 = new LabelClaimListDataItem(labelClaimNodeRef6, "toto", Boolean.TRUE);
-			LabelClaimListDataItem productLabelClaimFalse7 = new LabelClaimListDataItem(labelClaimNodeRef7, "toto", Boolean.TRUE);
+			LabelClaimListDataItem productLabelClaimFalse = new LabelClaimListDataItem()
+				.withLabelClaim(labelClaimNodeRef)
+				.withType("toto")
+				.withIsClaimed(Boolean.TRUE);
+			LabelClaimListDataItem productLabelClaimFalse2 = new LabelClaimListDataItem()
+				.withLabelClaim(labelClaimNodeRef2)
+				.withType("toto")
+				.withIsClaimed(Boolean.FALSE);
+			LabelClaimListDataItem productLabelClaimFalse4 = new LabelClaimListDataItem()
+				.withLabelClaim(labelClaimNodeRef4)
+				.withType("toto")
+				.withIsClaimed(Boolean.TRUE);
+			LabelClaimListDataItem productLabelClaimFalse5 = new LabelClaimListDataItem()
+				.withLabelClaim(labelClaimNodeRef5)
+				.withType("toto")
+				.withIsClaimed(Boolean.TRUE);
+			LabelClaimListDataItem productLabelClaimFalse6 = new LabelClaimListDataItem()
+				.withLabelClaim(labelClaimNodeRef6)
+				.withType("toto")
+				.withIsClaimed(Boolean.TRUE);
+			LabelClaimListDataItem productLabelClaimFalse7 = new LabelClaimListDataItem()
+				.withLabelClaim(labelClaimNodeRef7)
+				.withType("toto")
+				.withIsClaimed(Boolean.TRUE);
 
-			LabelClaimListDataItem subProductLabelClaim6 = new LabelClaimListDataItem(labelClaimNodeRef6, "toto", Boolean.TRUE);
+			LabelClaimListDataItem subProductLabelClaim6 = new LabelClaimListDataItem()
+				.withLabelClaim(labelClaimNodeRef6)
+				.withType("toto")
+				.withIsClaimed(Boolean.TRUE);
 			subProductLabelClaim6.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
-			LabelClaimListDataItem subProductLabelClaim7 = new LabelClaimListDataItem(labelClaimNodeRef7, "toto", Boolean.TRUE);
+			LabelClaimListDataItem subProductLabelClaim7 = new LabelClaimListDataItem()
+				.withLabelClaim(labelClaimNodeRef7)
+				.withType("toto")
+				.withIsClaimed(Boolean.TRUE);
 			subProductLabelClaim7.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
 
 			productLabelClaimFalse.setIsManual(Boolean.TRUE);
@@ -745,10 +793,10 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			IngListDataItem gmoAndIonizedIng1 = new IngListDataItem(null, null, new ArrayList<>(), new ArrayList<>(), true, true, false, ing1, true);
-			IngListDataItem ionizedIng2 = new IngListDataItem(null, null, new ArrayList<>(), new ArrayList<>(), false, true, false, ing2, true);
-			IngListDataItem gmoIng3 = new IngListDataItem(null, null, new ArrayList<>(), new ArrayList<>(), true, false, false, ing3, true);
-			IngListDataItem cleanIng4 = new IngListDataItem(null, null, new ArrayList<>(), new ArrayList<>(), false, false, false, ing4, true);
+			IngListDataItem gmoAndIonizedIng1 = IngListDataItem.build().withQtyPerc(null).withGeoOrigin(new ArrayList<>()).withBioOrigin(new ArrayList<>()).withIsGMO(true).withIsIonized(true).withIsProcessingAid(false).withIngredient(ing1).withIsManual(true);
+			IngListDataItem ionizedIng2 = IngListDataItem.build().withQtyPerc(null).withGeoOrigin(new ArrayList<>()).withBioOrigin(new ArrayList<>()).withIsGMO(false).withIsIonized(true).withIsProcessingAid(false).withIngredient(ing2).withIsManual(true);
+			IngListDataItem gmoIng3 = IngListDataItem.build().withQtyPerc(null).withGeoOrigin(new ArrayList<>()).withBioOrigin(new ArrayList<>()).withIsGMO(true).withIsIonized(false).withIsProcessingAid(false).withIngredient(ing3).withIsManual(true);
+			IngListDataItem cleanIng4 = IngListDataItem.build().withQtyPerc(null).withGeoOrigin(new ArrayList<>()).withBioOrigin(new ArrayList<>()).withIsGMO(false).withIsIonized(false).withIsProcessingAid(false).withIngredient(ing4).withIsManual(true);
 
 			RawMaterialData rawMaterial1 = new RawMaterialData();
 			rawMaterial1.setName("Raw material 1b");

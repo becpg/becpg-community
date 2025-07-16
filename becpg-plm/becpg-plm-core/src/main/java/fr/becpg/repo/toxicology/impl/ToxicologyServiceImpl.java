@@ -55,6 +55,7 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 	@Autowired
 	private BatchQueueService batchQueueService;
 	
+	/** {@inheritDoc} */
 	@Override
 	public Double getMaxValue(NodeRef ingNodeRef, NodeRef toxNodeRef) {
 		NodeRef toxIngNodeRef = getToxIngNodeRef(ingNodeRef, toxNodeRef);

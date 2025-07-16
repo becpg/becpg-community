@@ -39,7 +39,7 @@ public interface SignatureProjectPlugin {
 	 *
 	 * @param project a {@link fr.becpg.repo.project.data.ProjectData} object
 	 * @param lastsTasks a {@link java.util.List} object
-	 * @param firstTask 
+	 * @param firstTask a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
 	 */
 	void createOrUpdateClosingTask(ProjectData project, List<NodeRef> lastsTasks, TaskListDataItem firstTask);
 

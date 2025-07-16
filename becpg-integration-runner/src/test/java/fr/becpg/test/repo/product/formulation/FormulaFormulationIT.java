@@ -94,7 +94,7 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 				FinishedProductData finishedProductData = new FinishedProductData();
 				finishedProductData.setName("test FP " + unsafeFormula.hashCode());
 				List<DynamicCharactListItem> dynamicCharactListItems = new ArrayList<>();
-				dynamicCharactListItems.add(new DynamicCharactListItem("formula", unsafeFormula));
+				dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("formula").withFormula(unsafeFormula));
 				finishedProductData.getCompoListView().setDynamicCharactList(dynamicCharactListItems);
 				alfrescoRepository.create(getTestFolderNodeRef(), finishedProductData);
 				return finishedProductData.getNodeRef();
@@ -128,7 +128,7 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 				FinishedProductData finishedProductData = new FinishedProductData();
 				finishedProductData.setName("test FP " + unsafeFormula.hashCode());
 				List<DynamicCharactListItem> dynamicCharactListItems = new ArrayList<>();
-				dynamicCharactListItems.add(new DynamicCharactListItem("formula", unsafeFormula));
+				dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("formula").withFormula(unsafeFormula));
 				finishedProductData.getCompoListView().setDynamicCharactList(dynamicCharactListItems);
 				alfrescoRepository.create(getTestFolderNodeRef(), finishedProductData);
 				return finishedProductData.getNodeRef();
@@ -160,7 +160,7 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 			finishedProductData.setName("testAuthorizedTypes FP");
 
 			List<DynamicCharactListItem> dynamicCharactListItems = new ArrayList<>();
-			dynamicCharactListItems.add(new DynamicCharactListItem("formula", "T(fr.becpg.repo.product.data.RawMaterialData).toString();"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("formula").withFormula("T(fr.becpg.repo.product.data.RawMaterialData).toString();"));
 
 			finishedProductData.getCompoListView().setDynamicCharactList(dynamicCharactListItems);
 
@@ -187,7 +187,7 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 			FinishedProductData finishedProductData = (FinishedProductData) alfrescoRepository.findOne(finishedProductDataNodeRef);
 			List<DynamicCharactListItem> dynamicCharactList = finishedProductData.getCompoListView().getDynamicCharactList();
 			dynamicCharactList.clear();
-			dynamicCharactList.add(new DynamicCharactListItem("formula", "T(java.lang.System).toString();"));
+			dynamicCharactList.add(DynamicCharactListItem.build().withTitle("formula").withFormula("T(java.lang.System).toString();"));
 			return alfrescoRepository.save(finishedProductData);
 		});
 
@@ -252,8 +252,10 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 
 			List<DynamicCharactListItem> dynamicCharactListItems = new ArrayList<>();
 			// Product
-			dynamicCharactListItems.add(new DynamicCharactListItem("Sync method", "@beCPG.copy(@beCPG.findOne(\"" + finishedProductData1NodeRef
-					+ "\"),{\"bcpg:suppliers\",\"bcpg:legalName\",\"bcpg:clients\" },{\"bcpg:costList\",\"bcpg:compoList\"})"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build()
+					.withTitle("Sync method")
+					.withFormula("@beCPG.copy(@beCPG.findOne(\"" + finishedProductData1NodeRef
+						+ "\"),{\"bcpg:suppliers\",\"bcpg:legalName\",\"bcpg:clients\" },{\"bcpg:costList\",\"bcpg:compoList\"})"));
 
 			finishedProductData2.getCompoListView().setDynamicCharactList(dynamicCharactListItems);
 
@@ -269,8 +271,10 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 
 			List<DynamicCharactListItem> dynamicCharactListItems = new ArrayList<>();
 			// Product
-			dynamicCharactListItems.add(new DynamicCharactListItem("Sync method", "@beCPG.copy(@beCPG.findOne(\"" + finishedProductData1NodeRef
-					+ "\"),{\"bcpg:suppliers\",\"bcpg:legalName\",\"bcpg:clients\" },{\"bcpg:costList\",\"bcpg:compoList|true\"})"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build()
+					.withTitle("Sync method")
+					.withFormula("@beCPG.copy(@beCPG.findOne(\"" + finishedProductData1NodeRef
+						+ "\"),{\"bcpg:suppliers\",\"bcpg:legalName\",\"bcpg:clients\" },{\"bcpg:costList\",\"bcpg:compoList|true\"})"));
 
 			finishedProductData2.getCompoListView().setDynamicCharactList(dynamicCharactListItems);
 
@@ -358,7 +362,7 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 			FinishedProductData fp1 = new FinishedProductData();
 			fp1.setName("FP1");
 
-			DynamicCharactListItem dynamicChar = new DynamicCharactListItem("formula", "90");
+			DynamicCharactListItem dynamicChar = DynamicCharactListItem.build().withTitle("formula").withFormula("90");
 			dynamicChar.setMultiLevelFormula(true);
 			dynamicChar.setColumnName("bcpg_dynamicCharactColumn1");
 

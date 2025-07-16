@@ -23,8 +23,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import java.util.Objects;
 
-import com.google.common.base.Objects;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemGroup;
@@ -163,7 +163,7 @@ public class AuthorityHelper implements InitializingBean {
 				if (isFirst) {
 					commonLocale = personLocale;
 					isFirst = false;
-				} else if (!Objects.equal(personLocale, commonLocale)) {
+				} else if (!Objects.equals(personLocale, commonLocale)) {
 					return null;
 				}
 			}
@@ -245,6 +245,12 @@ public class AuthorityHelper implements InitializingBean {
 		return instance.authorityService.hasAdminAuthority();
 	}
 	
+	/**
+	 * <p>isAccountEnabled.</p>
+	 *
+	 * @param userName a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	public static boolean isAccountEnabled(String userName) {
 		if (instance.personService.personExists(userName)) {
 			NodeRef person = instance.personService.getPerson(userName);
