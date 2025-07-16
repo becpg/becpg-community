@@ -18,7 +18,7 @@ import fr.becpg.repo.survey.data.SurveyListDataItem;
 
 /**
  * <p>SurveyListRequirementScanner class.</p>
- * 
+ *
  * <p>This scanner checks that a question in a survey list matches the correct answer
  * according to specifications.</p>
  *

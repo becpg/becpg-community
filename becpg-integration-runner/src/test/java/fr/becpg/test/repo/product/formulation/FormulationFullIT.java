@@ -103,78 +103,96 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 
 			List<DynamicCharactListItem> dynamicCharactListItems = new ArrayList<>();
 			// Product
-			dynamicCharactListItems.add(new DynamicCharactListItem("Product qty 1", "qty"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Product qty 1").withFormula("qty"));
 			// Literal formula
-			dynamicCharactListItems.add(new DynamicCharactListItem("Literal 1", "'Hello World'"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Literal 2", "6.0221415E+23"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Literal 3", "1+1+10-(4/100)"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Literal 4", "0x7dFFFFFF"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Literal 5", "true"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Literal 6", "null"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Literal 1").withFormula("'Hello World'"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Literal 2").withFormula("6.0221415E+23"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Literal 3").withFormula("1+1+10-(4/100)"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Literal 4").withFormula("0x7dFFFFFF"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Literal 5").withFormula("true"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Literal 6").withFormula("null"));
 			// Properties formulae
-			dynamicCharactListItems.add(new DynamicCharactListItem("Property  1", "costList[0].value"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Property  1Bis", "costList[1].value"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Property  2", "costList[0].unit"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Property  3", "costList[0].value / costList[1].value"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Property  4", "profitability"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Collection Selection  1", "costList.?[value == 4.0][0].unit"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Collection Selection  2", "costList.?[value < 5.0][0].value"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Collection Projection  1", "costList.![value]"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Property  1").withFormula("costList[0].value"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Property  1Bis").withFormula("costList[1].value"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Property  2").withFormula("costList[0].unit"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Property  3").withFormula("costList[0].value / costList[1].value"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Property  4").withFormula("profitability"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Collection Selection  1").withFormula("costList.?[value == 4.0][0].unit"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Collection Selection  2").withFormula("costList.?[value < 5.0][0].value"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Collection Projection  1").withFormula("costList.![value]"));
 			// Variables
-			dynamicCharactListItems
-					.add(new DynamicCharactListItem("Variable  1", "compoListView.dynamicCharactList.?[title == 'Property  1' ][0].value"));
+			dynamicCharactListItems.add(
+				DynamicCharactListItem.build().withTitle("Variable  1").withFormula("compoListView.dynamicCharactList.?[title == 'Property  1' ][0].value"));
 			// Template need Template Context
-			// dynamicCharactListItems.add(new
-			// DynamicCharactListItem("Template 1","Cost1/Cost2 :
-			// #{costList[1].value / costList[2].value}% Profitability :
-			// #{profitability}"
-			// ));
+			// dynamicCharactListItems.add(DynamicCharactListItem.build()
+			// 	.withTitle("Template 1")
+			// 	.withFormula("Cost1/Cost2 : #{costList[1].value / costList[2].value}% Profitability : #{profitability}")
+			// );
 			// Elvis
-			dynamicCharactListItems.add(new DynamicCharactListItem("Elvis  1", "null?:'Unknown'"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Elvis  1").withFormula("null?:'Unknown'"));
 			// Boolean
-			dynamicCharactListItems.add(new DynamicCharactListItem("Boolean  1", "costList[1].value > 1"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Boolean  1").withFormula("costList[1].value > 1"));
 			// Assignment
-			dynamicCharactListItems.add(new DynamicCharactListItem("Assignement  1", "nutList.?[nut.toString() == '" + nut1 + "' ][0].value = 4d"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build()
+				.withTitle("Assignement  1")
+				.withFormula("nutList.?[nut.toString() == '" + nut1 + "' ][0].value = 4d"));
 
 			// Spel method
-			dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG findOne", "@beCPG.findOne(nodeRef).qty"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build()
+				.withTitle(" beCPG findOne")
+				.withFormula("@beCPG.findOne(nodeRef).qty"));
 
-			dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG propValue", "@beCPG.propValue(nodeRef,'bcpg:bestBeforeDate')\n"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build()
+				.withTitle(" beCPG propValue")
+				.withFormula("@beCPG.propValue(nodeRef,'bcpg:bestBeforeDate')\n"));
 
-			dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG SUM ",
-					"@beCPG.sum(compoListView.compoList.?[parent == null],\"entity.costList[0].value + dataListItem.qty\")"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build()
+				.withTitle(" beCPG SUM ")
+				.withFormula("@beCPG.sum(compoListView.compoList.?[parent == null],\"entity.costList[0].value + dataListItem.qty\")"));
 
-			dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG SUM++ ",
-					"@beCPG.sum(compoListView.compoList.?[parent == null],\"@beCPG.propValue(dataListItem.nodeRef,'bcpg:compoListQtyPercForSF')\")"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build()
+				.withTitle(" beCPG SUM++ ")
+				.withFormula("@beCPG.sum(compoListView.compoList.?[parent == null],\"@beCPG.propValue(dataListItem.nodeRef,'bcpg:compoListQtyPercForSF')\")"));
 
 			// Static fonction
-			dynamicCharactListItems.add(new DynamicCharactListItem("Autonum V1 ",
-					"T(fr.becpg.repo.helper.AutoNumHelper).getAutoNumValue(\"bcpg:finishedProduct\",\"bcpg:eanCode\")"));
-			dynamicCharactListItems.add(
-					new DynamicCharactListItem("Autonum V2 ", "T(fr.becpg.repo.helper.AutoNumHelper).getOrCreateCode(nodeRef,\"bcpg:eanCode\")"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build()
+				.withTitle("Autonum V1 ")
+				.withFormula("T(fr.becpg.repo.helper.AutoNumHelper).getAutoNumValue(\"bcpg:finishedProduct\",\"bcpg:eanCode\")"));
+			
+			dynamicCharactListItems.add(DynamicCharactListItem.build()
+				.withTitle("Autonum V2 ")
+				.withFormula("T(fr.becpg.repo.helper.AutoNumHelper).getOrCreateCode(nodeRef,\"bcpg:eanCode\")"));
 
 			// Formulate twice
-			dynamicCharactListItems.add(new DynamicCharactListItem("Formulate twice", "reformulateCount=1"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Formulate twice").withFormula("reformulateCount=1"));
 
 			// Multi Lines
-			dynamicCharactListItems.add(new DynamicCharactListItem("MTLine1", "var abc=10+30;\n#abc + 5;"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("MTLine2", "var b = costList[1].value;\n#abc + #b;"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("MTLine3", "#abc - #b;\n\n"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("MTLine1").withFormula("var abc=10+30;\n#abc + 5;"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build()
+				.withTitle("MTLine2")
+				.withFormula("var b = costList[1].value;\n#abc + #b;"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build()
+				.withTitle("MTLine3")
+				.withFormula("#abc - #b;\n\n"));
 
 			// DynamicColumn
 
-			DynamicCharactListItem dynCol = new DynamicCharactListItem("Col Dyn 1", "entity.costList[0].value + dataListItem.qty");
+			DynamicCharactListItem dynCol = DynamicCharactListItem.build()
+				.withTitle("Col Dyn 1")
+				.withFormula("entity.costList[0].value + dataListItem.qty");
 			dynCol.setColumnName("bcpg_dynamicCharactColumn1");
 			dynamicCharactListItems.add(dynCol);
 
-			dynCol = new DynamicCharactListItem("Col Dyn 2",
-					"dataListItem.parent!=null ? entity.costList[0].value + dataListItem.qty : sum(entity.compoListView.compoList.?[parent == #root.dataListItem],\"entity.costList[0].value + dataListItem.qty\" )");
-
+			dynCol = DynamicCharactListItem.build()
+				.withTitle("Col Dyn 2")
+				.withFormula("dataListItem.parent!=null ? entity.costList[0].value + dataListItem.qty : sum(entity.compoListView.compoList.?[parent == #root.dataListItem],\"entity.costList[0].value + dataListItem.qty\" )");
 
 			dynCol.setColumnName("bcpg_dynamicCharactColumn2");
 			dynamicCharactListItems.add(dynCol);
 
-			dynCol = new DynamicCharactListItem("Col Dyn 3", "entity.costList[0].value + dataListItem.qty");
+			dynCol = DynamicCharactListItem.build()
+				.withTitle("Col Dyn 3")
+				.withFormula("entity.costList[0].value + dataListItem.qty");
 			dynCol.setColumnName("bcpg_dynamicCharactColumn3");
 			dynCol.setMultiLevelFormula(true);
 			dynamicCharactListItems.add(dynCol);
@@ -193,8 +211,14 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			nodeService.setProperty(labelClaims.get(1), PLMModel.PROP_LABEL_CLAIM_FORMULA,
 					"nutList.?[nut.toString() == '" + nut1 + "'][0].value <= 4");
 
-			labelClaimListDataItems.add(new LabelClaimListDataItem(labelClaims.get(0), "Nutritionnelle", false));
-			labelClaimListDataItems.add(new LabelClaimListDataItem(labelClaims.get(1), "Nutritionnelle", false));
+			labelClaimListDataItems.add(new LabelClaimListDataItem()
+				.withLabelClaim(labelClaims.get(0))
+				.withType("Nutritionnelle")
+				.withIsClaimed(false));
+			labelClaimListDataItems.add(new LabelClaimListDataItem()
+				.withLabelClaim(labelClaims.get(1))
+				.withType("Nutritionnelle")
+				.withIsClaimed(false));
 
 			finishedProduct.setLabelClaimList(labelClaimListDataItems);
 
@@ -355,10 +379,10 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			// voluntary sources:Raw material 1, Raw material 2 -
 			// involuntary sources:
 			if (allergenListDataItem.getAllergen().equals(allergen1)) {
-				assertEquals("allergen1.getVoluntary().booleanValue() == true, actual values: " + trace, true,
-						allergenListDataItem.getVoluntary().booleanValue());
-				assertEquals("allergen1.getInVoluntary().booleanValue() == false, actual values: " + trace, false,
-						allergenListDataItem.getInVoluntary().booleanValue());
+				assertEquals("allergen1.getVoluntary() == true, actual values: " + trace, true,
+						Boolean.TRUE.equals(allergenListDataItem.getVoluntary()));
+				assertEquals("allergen1.getInVoluntary() == false, actual values: " + trace, false,
+						Boolean.TRUE.equals(allergenListDataItem.getInVoluntary()));
 				assertEquals("allergen1.getVoluntarySources() contains Raw material 1, actual values: " + trace, true,
 						allergenListDataItem.getVoluntarySources().contains(rawMaterial1NodeRef));
 				assertEquals("allergen1.getVoluntarySources() contains Raw material 2, actual values: " + trace, true,
@@ -372,10 +396,10 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			// allergen2 - voluntary: false - involuntary: true -
 			// voluntary sources: - involuntary sources:Raw material 2,
 			if (allergenListDataItem.getAllergen().equals(allergen2)) {
-				assertEquals("allergen2.getVoluntary().booleanValue() == false, actual values: " + trace, false,
-						allergenListDataItem.getVoluntary().booleanValue());
-				assertEquals("allergen2.getInVoluntary().booleanValue() == true, actual values: " + trace, true,
-						allergenListDataItem.getInVoluntary().booleanValue());
+				assertEquals("allergen2.getVoluntary() == false, actual values: " + trace, false,
+						Boolean.TRUE.equals(allergenListDataItem.getVoluntary()));
+				assertEquals("allergen2.getInVoluntary() == true, actual values: " + trace, true,
+						Boolean.TRUE.equals(allergenListDataItem.getInVoluntary()));
 				assertEquals("allergen2.getInVoluntarySources() contains Raw material 2, actual values: " + trace, true,
 						allergenListDataItem.getInVoluntarySources().contains(rawMaterial2NodeRef));
 				assertEquals("allergen2.getVoluntarySources() is empty, actual values: " + trace, 0,
@@ -388,10 +412,10 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			// - voluntary sources:Raw material 3, - involuntary
 			// sources:Raw material 3,
 			if (allergenListDataItem.getAllergen().equals(allergen3)) {
-				assertEquals("allergen3.getVoluntary().booleanValue() == true, actual values: " + trace, true,
-						allergenListDataItem.getVoluntary().booleanValue());
-				assertEquals("allergen3.getInVoluntary().booleanValue() == true, actual values: " + trace, true,
-						allergenListDataItem.getInVoluntary().booleanValue());
+				assertEquals("allergen3.getVoluntary() == true, actual values: " + trace, true,
+						Boolean.TRUE.equals(allergenListDataItem.getVoluntary()));
+				assertEquals("allergen3.getInVoluntary() == true, actual values: " + trace, true,
+						Boolean.TRUE.equals(allergenListDataItem.getInVoluntary()));
 				assertEquals("allergen3.getVoluntarySources() contains Raw material 3, actual values: " + trace, true,
 						allergenListDataItem.getVoluntarySources().contains(rawMaterial3NodeRef));
 				assertEquals("allergen3.getInVoluntarySources() contains Raw material 3, actual values: " + trace, true,
@@ -402,10 +426,10 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			// allergen4 - voluntary: false - involuntary: false -
 			// voluntary sources: - involuntary sources:
 			if (allergenListDataItem.getAllergen().equals(allergen4)) {
-				assertEquals("allergen4.getVoluntary().booleanValue() == false, actual values: " + trace, false,
-						allergenListDataItem.getVoluntary().booleanValue());
-				assertEquals("allergen4.getInVoluntary().booleanValue() == false, actual values: " + trace, false,
-						allergenListDataItem.getInVoluntary().booleanValue());
+				assertEquals("allergen4.getVoluntary() == false, actual values: " + trace, false,
+						Boolean.TRUE.equals(allergenListDataItem.getVoluntary()));
+				assertEquals("allergen4.getInVoluntary() == false, actual values: " + trace, false,
+						Boolean.TRUE.equals(allergenListDataItem.getInVoluntary()));
 				assertEquals("allergen4.getVoluntarySources() is empty, actual values: " + trace, 0,
 						allergenListDataItem.getVoluntarySources().size());
 				assertEquals("allergen4.getInVoluntarySources() is empty, actual values: " + trace, 0,

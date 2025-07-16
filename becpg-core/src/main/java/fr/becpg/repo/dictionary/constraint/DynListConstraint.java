@@ -95,6 +95,11 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 	private List<String> allowedValuesSuffix = null;
 	
+	/**
+	 * <p>Setter for the field <code>contentService</code>.</p>
+	 *
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object
+	 */
 	public static void setContentService(ContentService contentService) {
 		DynListConstraint.contentService = contentService;
 	}

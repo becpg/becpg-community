@@ -138,7 +138,7 @@ public class DiffMatchPatch {
 		List<Diff> diffs;
 		if (text1.equals(text2)) {
 			diffs = new LinkedList<>();
-			if (text1.length() != 0) {
+			if (!text1.isEmpty()) {
 				diffs.add(new Diff(Operation.EQUAL, text1));
 			}
 			return diffs;
@@ -160,10 +160,10 @@ public class DiffMatchPatch {
 		diffs = diffCompute(text1, text2, checklines, deadline);
 
 		// Restore the prefix and suffix.
-		if (commonprefix.length() != 0) {
+		if (!commonprefix.isEmpty()) {
 			((LinkedList<Diff>) diffs).addFirst(new Diff(Operation.EQUAL, commonprefix));
 		}
-		if (commonsuffix.length() != 0) {
+		if (!commonsuffix.isEmpty()) {
 			((LinkedList<Diff>) diffs).addLast(new Diff(Operation.EQUAL, commonsuffix));
 		}
 
@@ -666,11 +666,14 @@ public class DiffMatchPatch {
 		}
 
 		// A half-match was found, sort out the return data.
-		if (text1.length() > text2.length()) {
-			return hm;
-		} else {
-			return new String[] { hm[2], hm[3], hm[0], hm[1], hm[4] };
+		if (hm != null) {
+			if (text1.length() > text2.length()) {
+				return hm;
+			} else {
+				return new String[] { hm[2], hm[3], hm[0], hm[1], hm[4] };
+			}
 		}
+		return null;
 	}
 
 	/**
@@ -873,7 +876,7 @@ public class DiffMatchPatch {
 
 	    // Intentionally ignore the first and last element (don't need checking).
 	    while (nextDiff != null) {
-	        if (prevDiff.getOperation() == Operation.EQUAL && nextDiff.getOperation() == Operation.EQUAL) {
+	        if (thisDiff != null && prevDiff != null && prevDiff.getOperation() == Operation.EQUAL && nextDiff.getOperation() == Operation.EQUAL) {
 	            // This is a single edit surrounded by equalities.
 	            equality1.append(prevDiff.getText());
 	            edit.append(thisDiff.getText());
@@ -1059,10 +1062,10 @@ public class DiffMatchPatch {
 						}
 					}
 					// Insert the merged records.
-					if (textdelete.length() != 0) {
+					if (!textdelete.isEmpty()) {
 						pointer.add(new Diff(Operation.DELETE, textdelete));
 					}
-					if (textinsert.length() != 0) {
+					if (!textinsert.isEmpty()) {
 						pointer.add(new Diff(Operation.INSERT, textinsert));
 					}
 					// Step forward to the equality.
@@ -1083,7 +1086,7 @@ public class DiffMatchPatch {
 			}
 			thisDiff = pointer.hasNext() ? pointer.next() : null;
 		}
-		if (((LinkedList<Diff>) diffs).getLast().getText().length() == 0) {
+		if (((LinkedList<Diff>) diffs).getLast().getText().isEmpty()) {
 			((LinkedList<Diff>) diffs).removeLast(); // Remove the dummy entry at the end.
 		}
 

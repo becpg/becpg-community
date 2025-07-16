@@ -204,6 +204,11 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	private BeCPGUserAccountService beCPGUserAccountService;
 
+	/**
+	 * <p>Setter for the field <code>beCPGUserAccountService</code>.</p>
+	 *
+	 * @param beCPGUserAccountService a {@link fr.becpg.repo.authentication.BeCPGUserAccountService} object
+	 */
 	public void setBeCPGUserAccountService(BeCPGUserAccountService beCPGUserAccountService) {
 		this.beCPGUserAccountService = beCPGUserAccountService;
 	}
@@ -1455,6 +1460,13 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		return entityService.changeEntityListStates(entity.getNodeRef(), EntityListState.valueOf(state));
 	}
 
+	/**
+	 * <p>getEntity.</p>
+	 *
+	 * @param childNode a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @param itemType a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 */
 	public ScriptNode getEntity(ScriptNode childNode, String itemType) {
 		NodeRef entityNodeRef = entityService.getEntityNodeRef(childNode.getNodeRef(), getQName(itemType));
 		if (entityNodeRef != null) {
@@ -2429,6 +2441,18 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 				updatedProperties);
 	}
 
+	/**
+	 * <p>createPerson.</p>
+	 *
+	 * @param userName a {@link java.lang.String} object
+	 * @param firstName a {@link java.lang.String} object
+	 * @param lastName a {@link java.lang.String} object
+	 * @param email a {@link java.lang.String} object
+	 * @param password a {@link java.lang.String} object
+	 * @param enableAccount a boolean
+	 * @param isIdsUser a boolean
+	 * @return a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 */
 	public ScriptNode createPerson(String userName, String firstName, String lastName, String email, String password, boolean enableAccount,
 			boolean isIdsUser) {
 		BeCPGUserAccount beCPGUserAccount = new BeCPGUserAccount();

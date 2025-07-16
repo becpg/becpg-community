@@ -39,6 +39,7 @@ public class DefaultSecurityServicePlugin implements SecurityServicePlugin {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int computeAccessMode(NodeRef nodeRef, int accesMode) {
 		return accesMode;

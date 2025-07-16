@@ -17,7 +17,6 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.authentication.provider.IdentityServiceAccountProvider;
-import fr.becpg.repo.entity.datalist.policy.AuditEntityListItemPolicy;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**

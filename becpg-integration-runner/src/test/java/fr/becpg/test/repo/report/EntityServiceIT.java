@@ -1,7 +1,6 @@
 package fr.becpg.test.repo.report;
 
 import java.util.Iterator;
-import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;

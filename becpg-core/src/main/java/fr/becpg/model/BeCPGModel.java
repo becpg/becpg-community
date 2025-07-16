@@ -334,6 +334,7 @@ public final class BeCPGModel {
 	/** Constant <code>ASPECT_UNDELETABLE_ASPECT</code> */
 	public static final QName ASPECT_UNDELETABLE_ASPECT = QName.createQName(BECPG_URI, "undeletableAspect");
 	
+	/** Constant <code>ASPECT_PENDING_ENTITY_REPORT_ASPECT</code> */
 	public static final QName ASPECT_PENDING_ENTITY_REPORT_ASPECT = QName.createQName(BECPG_URI, "pendingEntityReportAspect");
 	
 	

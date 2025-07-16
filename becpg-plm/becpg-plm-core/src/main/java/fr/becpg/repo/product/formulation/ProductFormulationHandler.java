@@ -223,8 +223,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 						productService.formulate(productData);
 						alfrescoRepository.save(productData);
 
-						if (logger.isDebugEnabled()) {
-							assert watch != null;
+						if (logger.isDebugEnabled() && watch!=null) {
 							watch.stop();
 							logger.debug("auto-formulate : " + this.getClass().getName() + " takes " + watch.getTotalTimeSeconds() + " seconds");
 						}

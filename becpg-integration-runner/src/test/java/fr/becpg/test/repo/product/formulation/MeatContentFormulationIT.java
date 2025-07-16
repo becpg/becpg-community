@@ -168,12 +168,12 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 			// nutList
 			List<NutListDataItem> nutList = new ArrayList<>();
 
-			nutList.add(NutListDataItem.build().withValue(90d).withUnit("g/100g").withMini(null).withMaxi(null).withGroup("Groupe 1").withNut(fat).withIsManual(false)
-);
-			nutList.add(NutListDataItem.build().withValue(10d).withUnit("g/100g").withMini(null).withMaxi(null).withGroup("Groupe 1").withNut(protein).withIsManual(false)
-);
-			nutList.add(NutListDataItem.build().withValue(0.5d).withUnit("mg/100g").withMini(null).withMaxi(null).withGroup("Groupe 1").withNut(collagen).withIsManual(false)
-);
+			nutList.add(NutListDataItem.build().withValue(90d).withUnit("g/100g").withMini(null).withMaxi(null).withGroup("Groupe 1").withNut(fat)
+					.withIsManual(false));
+			nutList.add(NutListDataItem.build().withValue(10d).withUnit("g/100g").withMini(null).withMaxi(null).withGroup("Groupe 1").withNut(protein)
+					.withIsManual(false));
+			nutList.add(NutListDataItem.build().withValue(0.5d).withUnit("mg/100g").withMini(null).withMaxi(null).withGroup("Groupe 1")
+					.withNut(collagen).withIsManual(false));
 
 			rawMaterial1.setNutList(nutList);
 
@@ -182,7 +182,8 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 			bioOrigins.add(bioOrigin1);
 			List<NodeRef> geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin1);
-			ingList.add(new IngListDataItem(null, 100d, geoOrigins, bioOrigins, false, false, false, beef, false));
+			ingList.add(IngListDataItem.build().withQtyPerc(100d).withGeoOrigin(geoOrigins).withBioOrigin(bioOrigins).withIsGMO(false)
+					.withIsIonized(false).withIsProcessingAid(false).withIngredient(beef).withIsManual(false));
 
 			rawMaterial1.setIngList(ingList);
 
@@ -202,17 +203,18 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 
 			// nutList
 			nutList = new ArrayList<>();
-			nutList.add(NutListDataItem.build().withValue(3.90d).withUnit("g/100g").withMini(null).withMaxi(null).withGroup("Groupe 1").withNut(fat).withIsManual(false)
-);
-			nutList.add(NutListDataItem.build().withValue(20.270d).withUnit("g/100g").withMini(null).withMaxi(null).withGroup("Groupe 1").withNut(protein).withIsManual(false)
-);
-			nutList.add(NutListDataItem.build().withValue(105d).withUnit("mg/100g").withMini(null).withMaxi(null).withGroup("Groupe 1").withNut(collagen).withIsManual(false)
-);
+			nutList.add(NutListDataItem.build().withValue(3.90d).withUnit("g/100g").withMini(null).withMaxi(null).withGroup("Groupe 1").withNut(fat)
+					.withIsManual(false));
+			nutList.add(NutListDataItem.build().withValue(20.270d).withUnit("g/100g").withMini(null).withMaxi(null).withGroup("Groupe 1")
+					.withNut(protein).withIsManual(false));
+			nutList.add(NutListDataItem.build().withValue(105d).withUnit("mg/100g").withMini(null).withMaxi(null).withGroup("Groupe 1")
+					.withNut(collagen).withIsManual(false));
 
 			rawMaterial2.setNutList(nutList);
 
 			ingList = new ArrayList<>();
-			ingList.add(new IngListDataItem(null, 100d, new ArrayList<>(), new ArrayList<>(), false, false, false, porc, false));
+			ingList.add(IngListDataItem.build().withQtyPerc(100d).withGeoOrigin(new ArrayList<>()).withBioOrigin(new ArrayList<>()).withIsGMO(false)
+					.withIsIonized(false).withIsProcessingAid(false).withIngredient(porc).withIsManual(false));
 
 			rawMaterial2.setIngList(ingList);
 
@@ -238,7 +240,8 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 			semifinishedProduct1.setName("Semi Finished product " + Calendar.getInstance().getTimeInMillis());
 
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
-			compoList1.add(CompoListDataItem.build().withQtyUsed(100d).withUnit(ProductUnit.Perc).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(mpPorc2));
+			compoList1.add(CompoListDataItem.build().withQtyUsed(100d).withUnit(ProductUnit.Perc).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(mpPorc2));
 			semifinishedProduct1.getCompoListView().setCompoList(compoList1);
 
 			/**
@@ -254,8 +257,11 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.setUnit(ProductUnit.kg);
 			finishedProduct1.setDensity(1d);
 			compoList1 = new ArrayList<>();
-			compoList1.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(mpBeef1));
-			compoList1.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(alfrescoRepository.create(getTestFolderNodeRef(), semifinishedProduct1).getNodeRef()));
+			compoList1.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(mpBeef1));
+			compoList1.add(
+					CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Declare)
+							.withProduct(alfrescoRepository.create(getTestFolderNodeRef(), semifinishedProduct1).getNodeRef()));
 
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
@@ -273,9 +279,10 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 		// Declare
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
 
-		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render)
-);
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "", LabelingRuleType.ShowPerc, null, null));
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("%").withFormula("").withLabelingRuleType(LabelingRuleType.ShowPerc)
+				.withComponents(null).withReplacements(null));
 
 		checkILL(finishedProductNodeRef1, labelingRuleList, "porc french 60%, beef french 40%", Locale.FRENCH);
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -297,13 +304,14 @@ public class MeatContentFormulationIT extends AbstractFinishedProductTest {
 
 		labelingRuleList = new ArrayList<>();
 
-		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render)
-);
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "", LabelingRuleType.ShowPerc, null, null));
-		labelingRuleList.add(new LabelingRuleListDataItem("QUID Boeuf", MeatType.Mammals.toString(), LabelingRuleType.Group, Arrays.asList(beef),
-				Arrays.asList(beefFat)));
-		labelingRuleList.add(new LabelingRuleListDataItem("QUID porc", MeatType.Porcines.toString(), LabelingRuleType.Group, Arrays.asList(porc),
-				Arrays.asList(porcFat)));
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("%").withFormula("").withLabelingRuleType(LabelingRuleType.ShowPerc)
+				.withComponents(null).withReplacements(null));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("QUID Boeuf").withFormula(MeatType.Mammals.toString())
+				.withLabelingRuleType(LabelingRuleType.Group).withComponents(Arrays.asList(beef)).withReplacements(Arrays.asList(beefFat)));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("QUID porc").withFormula(MeatType.Porcines.toString())
+				.withLabelingRuleType(LabelingRuleType.Group).withComponents(Arrays.asList(porc)).withReplacements(Arrays.asList(porcFat)));
 
 		checkILL(finishedProductNodeRef1, labelingRuleList, "porc french 60%, beefFat french 34,7%, beef french 5,3%", Locale.FRENCH);
 

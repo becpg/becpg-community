@@ -157,7 +157,7 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 
 		NodeRef entity1NodeRef = null;
 
-		String versionLabel = templateArgs.get(PARAM_VERSION_LABEL);
+		String versionLabel = templateArgs != null ? templateArgs.get(PARAM_VERSION_LABEL) : null;
 		if (versionLabel != null) {
 			VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
 			if (versionHistory != null) {
@@ -226,7 +226,7 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 				templateNodeRef = reportTplService.getDefaultReportTemplate(ReportType.Compare, null);
 			}
 
-			String fileName = compareEntityReportService.getReportFileName(templateNodeRef, templateArgs.get(PARAM_FILE_NAME));
+			String fileName = compareEntityReportService.getReportFileName(templateNodeRef, templateArgs != null ? templateArgs.get(PARAM_FILE_NAME): "");
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("entity1NodeRef : " + entity1NodeRef);

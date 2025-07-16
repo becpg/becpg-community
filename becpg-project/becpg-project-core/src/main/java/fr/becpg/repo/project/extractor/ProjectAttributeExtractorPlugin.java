@@ -22,6 +22,8 @@ package fr.becpg.repo.project.extractor;
 import java.util.Arrays;
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,25 +60,31 @@ public class ProjectAttributeExtractorPlugin extends AbstractExprNameExtractor {
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractPropName(QName type, NodeRef nodeRef) {
+	@Nonnull
+	public String extractPropName(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
+		String result = "";
 		if (ProjectModel.TYPE_DELIVERABLE_LIST.equals(type)) {
-			return (String) nodeService.getProperty(nodeRef, ProjectModel.PROP_DL_DESCRIPTION);
+			result = (String) nodeService.getProperty(nodeRef, ProjectModel.PROP_DL_DESCRIPTION);
 		} else if (ProjectModel.TYPE_BUDGET_LIST.equals(type)) {
-			return (String) nodeService.getProperty(nodeRef, ProjectModel.PROP_BL_ITEM);
-		}else if (ProjectModel.TYPE_INVOICE_LIST.equals(type) || ProjectModel.TYPE_LOG_TIME_LIST.equals(type)) {
-			return type.toPrefixString();
-		} else if (ProjectModel.TYPE_PROJECT.equals(type) ) {
-			return extractExpr(nodeRef,projectNameFormat());
-		} 
-		return (String) nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_TASK_NAME);
+			result = (String) nodeService.getProperty(nodeRef, ProjectModel.PROP_BL_ITEM);
+		} else if (ProjectModel.TYPE_INVOICE_LIST.equals(type) || ProjectModel.TYPE_LOG_TIME_LIST.equals(type)) {
+			result = type.toPrefixString();
+		} else if (ProjectModel.TYPE_PROJECT.equals(type)) {
+			result = extractExpr(nodeRef, projectNameFormat());
+		} else {
+			result = (String) nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_TASK_NAME);
+		}
+		return result != null ? result : "";
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractMetadata(QName type, NodeRef nodeRef) {
+	@Nonnull
+	public String extractMetadata(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
 		// TODO task state
 		// TODO Handle also project state (search results)
-		return type.toPrefixString(namespaceService).split(":")[1];
+		String[] parts = type.toPrefixString(namespaceService).split(":");
+		return parts.length > 1 ? parts[1] : "";
 	}
 
 	/** {@inheritDoc} */

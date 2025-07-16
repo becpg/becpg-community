@@ -1131,31 +1131,6 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		super(nodeRef, name);
 	}
 
-	/**
-	 * <p>Constructor for TaskListDataItem.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param taskName a {@link java.lang.String} object.
-	 * @param isMilestone a {@link java.lang.Boolean} object.
-	 * @param duration a {@link java.lang.Integer} object.
-	 * @param prevTasks a {@link java.util.List} object.
-	 * @param resources a {@link java.util.List} object.
-	 * @param taskLegend a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param workflowName a {@link java.lang.String} object.
-	 */
-	@Deprecated
-	public TaskListDataItem(NodeRef nodeRef, String taskName, Boolean isMilestone, Integer duration, List<NodeRef> prevTasks,
-			List<NodeRef> resources, NodeRef taskLegend, String workflowName) {
-		super();
-		this.nodeRef = nodeRef;
-		this.taskName = taskName;
-		this.isMilestone = isMilestone;
-		this.duration = duration;
-		this.prevTasks = prevTasks;
-		this.resources = resources;
-		this.taskLegend = taskLegend;
-		this.workflowName = workflowName;
-	}
 
 	/**
 	 * <p>Constructor for TaskListDataItem.</p>
@@ -1194,6 +1169,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		this.workflowName = workflowName;
 		this.workflowInstance = workflowInstance;
 		this.expense = expense;
+		
 	}
 
 	/** {@inheritDoc} */

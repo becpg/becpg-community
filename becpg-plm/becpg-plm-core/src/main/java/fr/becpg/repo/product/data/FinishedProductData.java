@@ -200,6 +200,12 @@ public class FinishedProductData extends ProductData {
 		return this;
 	}
 	
+	/**
+	 * <p>withLabelClaimList.</p>
+	 *
+	 * @param labelClaimList a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.FinishedProductData} object
+	 */
 	public FinishedProductData withLabelClaimList(List<LabelClaimListDataItem> labelClaimList) {
 		setLabelClaimList(labelClaimList);
 		return this;

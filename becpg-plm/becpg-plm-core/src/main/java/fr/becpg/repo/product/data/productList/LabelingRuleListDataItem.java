@@ -327,6 +327,12 @@ public class LabelingRuleListDataItem extends BeCPGDataObject implements Synchro
 		return this;
 	}
 	
+	public LabelingRuleListDataItem withLabel(MLText label) {
+		this.label = label;
+		return this;
+	}
+	
+	
 	/**
 	 * <p>withFormula.</p>
 	 *
@@ -372,64 +378,6 @@ public class LabelingRuleListDataItem extends BeCPGDataObject implements Synchro
 		return this;
 	}
 
-	/**
-	 * <p>Constructor for LabelingRuleListDataItem.</p>
-	 *
-	 * @param name a {@link java.lang.String} object.
-	 * @param formula a {@link java.lang.String} object.
-	 * @param labelingRuleType a {@link fr.becpg.repo.product.data.constraints.LabelingRuleType} object.
-	 */
-	@Deprecated
-	public LabelingRuleListDataItem(String name, String formula, LabelingRuleType labelingRuleType) {
-		super();
-		this.name = name;
-		this.formula = formula;
-		this.labelingRuleType = labelingRuleType;
-	}
-
-	
-	
-	
-	
-	/**
-	 * <p>Constructor for LabelingRuleListDataItem.</p>
-	 *
-	 * @param name a {@link java.lang.String} object.
-	 * @param formula a {@link java.lang.String} object.
-	 * @param labelingRuleType a {@link fr.becpg.repo.product.data.constraints.LabelingRuleType} object.
-	 * @param components a {@link java.util.List} object.
-	 * @param replacements a {@link java.util.List} object.
-	 */
-	@Deprecated
-	public LabelingRuleListDataItem(String name, String formula, LabelingRuleType labelingRuleType, List<NodeRef> components, List<NodeRef> replacements) {
-		super();
-		this.name = name;
-		this.formula = formula;
-		this.labelingRuleType = labelingRuleType;
-		this.components = components;
-		this.replacements = replacements;
-	}
-
-	/**
-	 * <p>Constructor for LabelingRuleListDataItem.</p>
-	 *
-	 * @param name a {@link java.lang.String} object.
-	 * @param label a {@link org.alfresco.service.cmr.repository.MLText} object.
-	 * @param formula a {@link java.lang.String} object.
-	 * @param labelingRuleType a {@link fr.becpg.repo.product.data.constraints.LabelingRuleType} object.
-	 * @param components a {@link java.util.List} object.
-	 * @param replacements a {@link java.util.List} object.
-	 */
-	public LabelingRuleListDataItem(String name, MLText label ,String formula, LabelingRuleType labelingRuleType, List<NodeRef> components, List<NodeRef> replacements) {
-		super();
-		this.name = name;
-		this.label = label;
-		this.formula = formula;
-		this.labelingRuleType = labelingRuleType;
-		this.components = components;
-		this.replacements = replacements;
-	}
-	
 
 	/**
 	 * <p>update.</p>

@@ -25,8 +25,12 @@ public class MexicanNutrientRegulation extends AbstractNutrientRegulation {
 	/** {@inheritDoc} */
 	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
-
-		if(value != null && nutrientTypeCode != null){
+		
+		if (value == null) {
+			return null;
+		}
+		
+		if(nutrientTypeCode != null){
 			if (nutrientTypeCode.equals(NutrientCode.Energykcal)){
 				if (value < 5) {
 					return 0.0;

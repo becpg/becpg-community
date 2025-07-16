@@ -197,6 +197,12 @@ public interface RemoteEntityService {
 	 */
 	RemoteServiceRegisty serviceRegistry();
 
+	/**
+	 * <p>toSearchCriterion.</p>
+	 *
+	 * @param entityQuery a {@link org.json.JSONObject} object
+	 * @return a {@link java.util.Map} object
+	 */
 	Map<String, String> toSearchCriterion(JSONObject entityQuery);
 
 

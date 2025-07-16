@@ -103,7 +103,10 @@ public class ProjectOverdueIT extends AbstractProjectTestCase {
 			assertEquals(1, projectData.getOverdue().intValue());
 
 			// add a parallel task
-			TaskListDataItem task = new TaskListDataItem(null, "Task in parallel", false, 2, null, null, null, null);
+			TaskListDataItem task = TaskListDataItem.build()
+		    .withTaskName("Task in parallel")
+		    .withIsMilestone(false)
+		    .withDuration(2);
 			task.setStart(new Date());
 			task.setEnd(ProjectHelper.calculateNextDate(new Date(), 5, true));
 			task.setTaskState(TaskState.Completed);

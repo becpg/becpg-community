@@ -208,6 +208,12 @@ public interface EntityService {
 	 */
 	Map<String, NodeRef> getEntityIcons();
 
+	/**
+	 * <p>getDocumentsByType.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.util.Map} object
+	 */
 	Map<NodeRef, NodeRef> getDocumentsByType(NodeRef entityNodeRef);
 
 }

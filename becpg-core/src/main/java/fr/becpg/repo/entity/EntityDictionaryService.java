@@ -185,5 +185,11 @@ public interface EntityDictionaryService extends DictionaryService {
 	 */
 	String getDescription(ClassAttributeDefinition attributeDefinition, QName nodeType);
 	
+	/**
+	 * <p>getAssocIndexQName.</p>
+	 *
+	 * @param assocQName a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link org.alfresco.service.namespace.QName} object
+	 */
 	QName getAssocIndexQName(QName assocQName);
 }

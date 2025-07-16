@@ -37,7 +37,6 @@ import org.alfresco.service.cmr.repository.MalformedNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PersonService;
-import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -61,7 +60,6 @@ import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.security.SecurityService;
-import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>ProjectListExtractor class.</p>
@@ -93,10 +91,6 @@ public class ProjectListExtractor extends SimpleExtractor {
 
 	private static final String PROP_SORT = "sort";
 
-	private String myProjectAttributes() {
-		return systemConfigurationService.confValue("project.extractor.myProjectAttributes");
-	}
-
 	private String projectSearchTemplate = "%(cm:name bcpg:code cm:title)";
 
 	private ProjectService projectService;
@@ -107,19 +101,7 @@ public class ProjectListExtractor extends SimpleExtractor {
 
 	private SecurityService securityService;
 
-	private NamespaceService namespaceService;
 
-	private SystemConfigurationService systemConfigurationService;
-
-	/**
-	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
-	 *
-	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
-	 */
-	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
-		this.systemConfigurationService = systemConfigurationService;
-	}
-	
 	private EntityActivityExtractorService entityActivityExtractorService;
 	
 	private static final Log logger = LogFactory.getLog(ProjectListExtractor.class);
@@ -169,14 +151,6 @@ public class ProjectListExtractor extends SimpleExtractor {
 		this.preferenceService = preferenceService;
 	}
 
-	/**
-	 * <p>Setter for the field <code>namespaceService</code>.</p>
-	 *
-	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
-	 */
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -378,7 +352,7 @@ public class ProjectListExtractor extends SimpleExtractor {
 			results = projectResults;
 		}
 
-		if (FILTER_FAVOURITES.equals(dataListFilter.getFilterId())) {
+		if (FILTER_FAVOURITES.equals(dataListFilter.getFilterId()) && results != null) {
 			logger.debug("Keep only favorites");
 			results.retainAll(favorites);
 		}

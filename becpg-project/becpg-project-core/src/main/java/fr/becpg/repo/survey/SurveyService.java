@@ -21,9 +21,9 @@ public interface SurveyService {
 	 *
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param dataListName a {@link java.lang.String} object
-	 * @param writeAccessTester a {@java.util.function.Predicate} object
 	 * @return a {@link org.json.JSONObject} object
 	 * @throws org.json.JSONException if any.
+	 * @param disabled a {@link java.lang.Boolean} object
 	 */
 	JSONObject getSurveyData(NodeRef entityNodeRef, String dataListName, Boolean disabled)
 			throws JSONException;

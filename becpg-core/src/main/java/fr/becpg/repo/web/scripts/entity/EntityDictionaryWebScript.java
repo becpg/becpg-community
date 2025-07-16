@@ -133,7 +133,7 @@ public class EntityDictionaryWebScript extends AbstractWebScript {
 					JSONObject item = new JSONObject();
 					item.put("label", assocDef.getTitle(dictionaryService) + " - " + assocDef.getSourceClass().getTitle(dictionaryService));
 					item.put("assocType", assocDef.getName().toPrefixString(namespaceService));
-					item.put("itemType", assocDef.getSourceClass().getName().toPrefixString(namespaceService));
+					item.put(PARAM_ITEMTYPE, assocDef.getSourceClass().getName().toPrefixString(namespaceService));
 					if (assocQname != null && assocQname.equals(assocDef.getName())) {
 						item.put("selected", true);
 					}
@@ -152,7 +152,7 @@ public class EntityDictionaryWebScript extends AbstractWebScript {
 		} catch (JSONException e) {
 			throw new WebScriptException("Unable to serialize JSON", e);
 		} finally {
-			if (logger.isDebugEnabled()) {
+			if (logger.isDebugEnabled()&& watch!=null) {
 				watch.stop();
 				logger.debug("EntityDictionaryWebScript execute in " + watch.getTotalTimeSeconds() + "s");
 			}

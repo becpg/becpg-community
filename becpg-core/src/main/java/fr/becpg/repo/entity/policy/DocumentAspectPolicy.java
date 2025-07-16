@@ -25,7 +25,6 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  * @author maxime
  * @version $Id: $Id
  */
-
 public class DocumentAspectPolicy extends AbstractBeCPGPolicy
 		implements ContentServicePolicies.OnContentUpdatePolicy, NodeServicePolicies.OnCreateAssociationPolicy {
 
@@ -33,10 +32,16 @@ public class DocumentAspectPolicy extends AbstractBeCPGPolicy
 
 	private AssociationService associationService;
 
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void doInit() {
 		policyComponent.bindClassBehaviour(ContentServicePolicies.OnContentUpdatePolicy.QNAME, BeCPGModel.ASPECT_DOCUMENT_ASPECT,
@@ -47,12 +52,14 @@ public class DocumentAspectPolicy extends AbstractBeCPGPolicy
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onContentUpdate(NodeRef nodeRef, boolean newContent) {
 		queueNode(nodeRef);
 
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCreateAssociation(AssociationRef nodeAssocRef) {
 		if (policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE)) {
@@ -61,6 +68,7 @@ public class DocumentAspectPolicy extends AbstractBeCPGPolicy
 	}
 		
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		for (NodeRef nodeRef : pendingNodes) {

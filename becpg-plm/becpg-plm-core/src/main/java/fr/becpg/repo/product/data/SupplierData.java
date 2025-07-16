@@ -146,6 +146,11 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
+	/**
+	 * <p>Getter for the field <code>entityScore</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:entityScore")
 	public String getEntityScore() {

@@ -102,16 +102,31 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 
 	
 
+	/**
+	 * <p>Getter for the field <code>nodeDAO</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.repo.domain.node.NodeDAO} object
+	 */
 	public NodeDAO getNodeDAO() {
 		return nodeDAO;
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>patchDAO</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.repo.domain.patch.PatchDAO} object
+	 */
 	public PatchDAO getPatchDAO() {
 		return patchDAO;
 	}
 
 
+	/**
+	 * <p>Getter for the field <code>qnameDAO</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.repo.domain.qname.QNameDAO} object
+	 */
 	public QNameDAO getQnameDAO() {
 		return qnameDAO;
 	}
@@ -144,7 +159,7 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 	}
 
 	/**
-	protected
+	 *	protected
 	 * <p>Setter for the field <code>repoService</code>.</p>
 	 *
 	 * @param repoService a {@link fr.becpg.repo.helper.RepoService} object.
@@ -241,6 +256,13 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 		return entitySystemService.getSystemEntityDataList(systemEntityNodeRef, dataListPath);
 	}
 
+	/**
+	 * <p>createBatchTypeProcessor.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @param includeOnlyTenantNodes a boolean
+	 * @return a {@link org.alfresco.repo.batch.BatchProcessor} object
+	 */
 	protected BatchProcessor<NodeRef> createBatchTypeProcessor(QName type, boolean includeOnlyTenantNodes) {
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			private final long maxNodeId = nodeDAO.getMaxNodeId();
@@ -290,6 +312,13 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 				applicationEventPublisher, logger, 500);
 	}
 	
+	/**
+	 * <p>createBatchAspectProcessor.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @param includeOnlyTenantNodes a boolean
+	 * @return a {@link org.alfresco.repo.batch.BatchProcessor} object
+	 */
 	protected BatchProcessor<NodeRef> createBatchAspectProcessor(QName type, boolean includeOnlyTenantNodes) {
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			private final long maxNodeId = nodeDAO.getMaxNodeId();
@@ -339,6 +368,13 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 				applicationEventPublisher, logger, 500);
 	}
 
+	/**
+	 * <p>formatTenantNodeRef.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param includeOnlyTenantNodes a boolean
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef formatTenantNodeRef(NodeRef nodeRef, boolean includeOnlyTenantNodes) {
 		if (nodeRef == null || !includeOnlyTenantNodes) {
 			return nodeRef;
@@ -350,6 +386,12 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 		return null;
 	}
 
+	/**
+	 * <p>getBaseName.</p>
+	 *
+	 * @param name a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getBaseName(String name) {
 		if (name == null) {
 			return null;
