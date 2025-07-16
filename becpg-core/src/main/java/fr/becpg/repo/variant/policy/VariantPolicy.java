@@ -167,12 +167,14 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 						}
 					}
 
-					for (ChildAssociationRef childAssoc1 : childAssocs) {
-						if (logger.isDebugEnabled()) {
-							logger.debug("Remove variant on OrigNode " + childAssoc1.getChildRef() + " "
-									+ nodeService.getProperty(childAssoc1.getChildRef(), ContentModel.PROP_NAME) + " to origNode ");
+					if (childAssocs != null) {
+						for (ChildAssociationRef childAssoc1 : childAssocs) {
+							if (logger.isDebugEnabled()) {
+								logger.debug("Remove variant on OrigNode " + childAssoc1.getChildRef() + " "
+										+ nodeService.getProperty(childAssoc1.getChildRef(), ContentModel.PROP_NAME) + " to origNode ");
+							}
+							nodeService.removeChildAssociation(childAssoc1);
 						}
-						nodeService.removeChildAssociation(childAssoc1);
 					}
 
 					// move variants of working copy

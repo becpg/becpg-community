@@ -224,26 +224,26 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 
 			List<DynamicCharactListItem> dynamicCharactListItems = new ArrayList<>();
 			// Product
-			dynamicCharactListItems.add(new DynamicCharactListItem("Product qty 1", "qty"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Product qty 1").withFormula("qty"));
 			// Literal formula
-			dynamicCharactListItems.add(new DynamicCharactListItem("Literal 1", "'Hello World'"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Literal 2", "6.0221415E+23"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Literal 3", "1+1+10-(4/100)"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Literal 4", "0x7dFFFFFF"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Literal 5", "true"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Literal 6", "null"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Literal 1").withFormula("'Hello World'"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Literal 2").withFormula("6.0221415E+23"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Literal 3").withFormula("1+1+10-(4/100)"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Literal 4").withFormula("0x7dFFFFFF"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Literal 5").withFormula("true"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Literal 6").withFormula("null"));
 			// Properties formulae
-			dynamicCharactListItems.add(new DynamicCharactListItem("Property  1", "costList[0].value"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Property  1Bis", "costList[1].value"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Property  2", "costList[0].unit"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Property  3", "costList[0].value / costList[1].value"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Property  4", "profitability"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Collection Selection  1", "costList.?[value == 4.0][0].unit"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Collection Selection  2", "costList.?[value < 5.0][0].value"));
-			dynamicCharactListItems.add(new DynamicCharactListItem("Collection Projection  1", "costList.![value]"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Property  1").withFormula("costList[0].value"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Property  1Bis").withFormula("costList[1].value"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Property  2").withFormula("costList[0].unit"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Property  3").withFormula("costList[0].value / costList[1].value"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Property  4").withFormula("profitability"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Collection Selection  1").withFormula("costList.?[value == 4.0][0].unit"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Collection Selection  2").withFormula("costList.?[value < 5.0][0].value"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Collection Projection  1").withFormula("costList.![value]"));
 			// Variables
-			dynamicCharactListItems
-					.add(new DynamicCharactListItem("Variable  1", "compoListView.dynamicCharactList.?[title == 'Property  1' ][0].value"));
+			dynamicCharactListItems.add(
+				DynamicCharactListItem.build().withTitle("Variable  1").withFormula("compoListView.dynamicCharactList.?[title == 'Property  1' ][0].value"));
 
 			finishedProduct.getCompoListView().setDynamicCharactList(dynamicCharactListItems);
 

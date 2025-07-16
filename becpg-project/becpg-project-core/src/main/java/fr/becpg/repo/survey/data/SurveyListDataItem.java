@@ -251,12 +251,13 @@ public class SurveyListDataItem extends BeCPGDataObject implements RegulatoryEnt
 	/**
 	 * <p>Setter for the field <code>reportKinds</code>.</p>
 	 *
-	 * @param choices a {@link java.util.List} object
+	 * @param reportKinds a {@link java.util.List} object
 	 */
 	public void setReportKinds(List<String> reportKinds) {
 		this.reportKinds = reportKinds;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -266,6 +267,7 @@ public class SurveyListDataItem extends BeCPGDataObject implements RegulatoryEnt
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -282,6 +284,7 @@ public class SurveyListDataItem extends BeCPGDataObject implements RegulatoryEnt
 				&& Objects.equals(sort, other.sort);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "SurveyListDataItem [comment=" + comment + ", question=" + question + ", choices=" + choices + ", sort="

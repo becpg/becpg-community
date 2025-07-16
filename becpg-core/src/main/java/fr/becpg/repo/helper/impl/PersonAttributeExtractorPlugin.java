@@ -80,28 +80,32 @@ public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin 
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractPropName(@Nonnull QName type,@Nonnull NodeRef nodeRef) {
+	@Nonnull
+	public String extractPropName(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
 		if (type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
-			
 			Serializable propAuthorityDisplayName = nodeService.getProperty(nodeRef, ContentModel.PROP_AUTHORITY_DISPLAY_NAME);
-			
 			if (propAuthorityDisplayName != null) {
-				return (String) propAuthorityDisplayName;
+				String displayName = (String) propAuthorityDisplayName;
+				return displayName != null ? displayName : "";
 			}
-			
-			return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+			String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+			return name != null ? name : "";
 		} 
-		return getPersonDisplayName((String) nodeService.getProperty(nodeRef, ContentModel.PROP_USERNAME));
+		String username = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_USERNAME);
+		return getPersonDisplayName(username != null ? username : "");
 	}
 
 	
 	/** {@inheritDoc} */
 	@Override
-	public String extractMetadata(@Nonnull QName type,@Nonnull NodeRef nodeRef) {
+	@Nonnull
+	public String extractMetadata(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
 		if (type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
-			return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_AUTHORITY_NAME);
+			String authorityName = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_AUTHORITY_NAME);
+			return authorityName != null ? authorityName : "";
 		} 
-		return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_USERNAME);
+		String username = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_USERNAME);
+		return username != null ? username : "";
 	}
 
 	
@@ -111,10 +115,9 @@ public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin 
 	 * @param userId a {@link java.lang.String} object.
 	 * @return a {@link java.lang.String} object.
 	 */
-	public String getPersonDisplayName(String userId) {
-		if (userId == null) {
-			return "";
-		}
+	@Nonnull
+	public String getPersonDisplayName(@Nonnull String userId) {
+
 		if (userId.equalsIgnoreCase(AuthenticationUtil.getSystemUserName())
 				|| (AuthenticationUtil.isMtEnabled() && 
 						userId.equalsIgnoreCase(tenantService.getDomainUser(AuthenticationUtil.getSystemUserName(),tenantService.getCurrentUserDomain())))) {
@@ -135,9 +138,11 @@ public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin 
 				try {
 					NodeRef personNodeRef = personService.getPersonOrNull(finalUserId);
 					if (personNodeRef != null) {
-						displayName = nodeService.getProperty(personNodeRef, ContentModel.PROP_FIRSTNAME) + " " + nodeService.getProperty(personNodeRef, ContentModel.PROP_LASTNAME);
+						String firstName = (String) nodeService.getProperty(personNodeRef, ContentModel.PROP_FIRSTNAME);
+						String lastName = (String) nodeService.getProperty(personNodeRef, ContentModel.PROP_LASTNAME);
+						displayName = ((firstName != null) ? firstName : "") + " " + ((lastName != null) ? lastName : "").trim();
 					} else {
-						return finalUserId;
+						return finalUserId != null ? finalUserId : "";
 					}
 				} catch (NoSuchPersonException | TenantDomainMismatchException e){
 					logger.debug("Cannot find user : "+finalUserId, e);

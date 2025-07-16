@@ -3,6 +3,8 @@ package fr.becpg.repo.helper;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -22,13 +24,15 @@ public class EntityDataListAttributeExtractorPlugin extends CharactAttributeExtr
 	
 	/** {@inheritDoc} */
 	@Override
-	public String extractPropName(QName type, NodeRef nodeRef) {
+	@Nonnull
+	public String extractPropName(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
 		QName assoc = entityDictionaryService.getDefaultPivotAssoc(type);
 		if (assoc != null) {
 			List<AssociationRef> targetAssocs = nodeService.getTargetAssocs(nodeRef, assoc);
 			if (!targetAssocs.isEmpty()) {
 				AssociationRef targetAssoc = targetAssocs.get(0);
-				return super.extractPropName(null, targetAssoc.getTargetRef());
+				// Use the original type since we know it's not null (enforced by @Nonnull)
+				return super.extractPropName(type, targetAssoc.getTargetRef());
 			}
 		}
 		return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
@@ -36,7 +40,8 @@ public class EntityDataListAttributeExtractorPlugin extends CharactAttributeExtr
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractMetadata(QName type, NodeRef nodeRef) {
+	@Nonnull
+	public String extractMetadata(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
 		QName assoc = entityDictionaryService.getDefaultPivotAssoc(type);
 		if (assoc != null) {
 			List<AssociationRef> targetAssocs = nodeService.getTargetAssocs(nodeRef, assoc);
@@ -50,6 +55,7 @@ public class EntityDataListAttributeExtractorPlugin extends CharactAttributeExtr
 
 	/** {@inheritDoc} */
 	@Override
+	@Nonnull
 	public Collection<QName> getMatchingTypes() {
 		return entityDictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 	}

@@ -184,8 +184,7 @@ public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 			return ret;
 
 		} finally {
-			if (logger.isDebugEnabled()) {
-				assert watch != null;
+			if (logger.isDebugEnabled() && watch!=null) {
 				watch.stop();
 				logger.debug(getClass().getSimpleName() + " extract metadata in  " + watch.getTotalTimeSeconds() + "s");
 			}

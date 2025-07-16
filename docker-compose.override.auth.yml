@@ -1,0 +1,126 @@
+services:
+  becpg:
+    environment:
+      CATALINA_OPTS: "-Xmx4G   -Duser.language=fr -Duser.country=FR 
+       -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888 
+       -Dcom.sun.management.jmxremote.rmi.port=9091
+       -Dcom.sun.management.jmxremote=true
+       -Dcom.sun.management.jmxremote.port=9091
+       -Dcom.sun.management.jmxremote.ssl=false
+       -Dcom.sun.management.jmxremote.authenticate=false
+       -Dcom.sun.management.jmxremote.local.only=false
+       -Djava.rmi.server.hostname=127.0.0.1
+       -DbeCPG.translate.googleAPIKey=AIzaSyCdQih9oYUZ9dr7VmYIV46xy6D4jPgkUlo
+       -javaagent:/usr/local/tomcat/jacoco-runtime.jar=output=tcpserver,address=*,port=10001,includes=fr/becpg/**
+       -Dauthentication.chain=identity-service1:identity-service,alfrescoNtlm1:alfrescoNtlm
+       -Didentity-service.auth-server-url=http://becpg-auth:8080/auth
+       -Didentity-service.realm=inst1
+       -Didentity-service.resource=inst1-openid
+       -Didentity-service.create-user.enabled=true
+       -Didentity-service.public-client=false
+       -Didentity-service.credentials.secret=N7omo6RvwtbH7jt6sjIFLlxX269l22n2
+       -Dtoken.authentication.defaultAdministratorUserNames=inst1-account-admin
+       -Dcreate.missing.people=true"
+#       --XXaltjvm=dcevm -javaagent:/usr/java/jbr_jcef-17.0.10-linux-x64-b1207.14/lib/hotswap/hotswap-agent.jar
+#       -XX:+AllowEnhancedClassRedefinition -XX:HotswapAgent=fatjar
+#        --add-opens=java.base/java.lang=ALL-UNNAMED
+#        --add-opens=java.base/java.lang.invoke=ALL-UNNAMED
+#        --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+#        --add-opens=java.base/java.io=ALL-UNNAMED
+#        --add-opens=java.base/java.net=ALL-UNNAMED
+#        --add-opens=java.base/java.nio=ALL-UNNAMED
+#        --add-opens=java.base/java.util=ALL-UNNAMED
+#        --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+#        --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED
+#        --add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+#        --add-opens=java.base/sun.nio.cs=ALL-UNNAMED
+#        --add-opens=java.base/sun.security.action=ALL-UNNAMED
+#        --add-opens=java.base/sun.util.calendar=ALL-UNNAMED
+#        --add-opens=java.security.jgss/sun.security.krb5=ALL-UNNAMED"
+#      JAVA_HOME : "/usr/lib/jvm/java"
+#      CATALINA_OPTS: "-Xmx4G -Duser.language=fr -Duser.country=FR 
+#       -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888 
+#       -XX:+FlightRecorder
+#       -Dcom.sun.management.jmxremote.rmi.port=9091
+#       -Dcom.sun.management.jmxremote=true
+#       -Dcom.sun.management.jmxremote.port=9091
+#       -Dcom.sun.management.jmxremote.ssl=false
+#       -Dcom.sun.management.jmxremote.authenticate=false
+#       -Dcom.sun.management.jmxremote.local.only=false
+#       -Djava.rmi.server.hostname=127.0.0.1"     
+    volumes:
+      - becpg_data:/usr/local/tomcat/data
+#      - ../../becpg-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-core/target/classes
+#      - ../../becpg-plm/becpg-plm-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-plm-core/target/classes
+#      - ../../becpg-project/becpg-project-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-project-core/target/classes
+#      - ../../becpg-integration-runner/target/test-classes:/usr/local/tomcat/hotswap-agent/becpg-integration-runner/target/test-classes
+    ports:
+    - 10001:10001
+    - 8080:8080        
+#  busybox-chown:
+#    image: busybox
+#    volumes:
+#      - becpg_data:/data2
+#      - becpg_share_data:/data1      
+#    command: sh -c "chown -R 33000:1000 /data1 && chown -R alfresco:alfresco /data2"   
+
+  becpg-report:
+    image:  europe-west1-docker.pkg.dev/becpg-314807/becpg-docker/becpg-report:4.17.0.0
+    user: root
+    ports:
+     - "8086:8080"
+
+  http:
+    image: becpg/becpg-http:23.4.2
+    mem_limit: 256m
+    restart: unless-stopped
+    ports:
+       - "80:80"
+    environment : 
+      APACHE_SERVERADMIN: "beCPG"
+      APACHE_SERVERNAME: "becpg.local"
+    logging:
+      options:
+        max-size: 50m
+    healthcheck:
+      test: ["CMD", "curl", "-f",  "http://localhost:80/alfresco/service/becpg/check"]
+      timeout: 10s
+      interval: 1m30s
+      retries: 5
+      
+  becpg-auth:
+    image: becpg/becpg-ids:23.4.2
+    command: ["start-dev", "--import-realm","--proxy-headers=forwarded"]
+    environment:
+      KC_DB: mysql
+      KC_DB_URL: jdbc:mysql://becpg-db:3306/auth
+      KC_DB_USERNAME: root
+      KC_DB_PASSWORD: becpg
+      KEYCLOAK_ADMIN: inst1-account-admin
+      KEYCLOAK_ADMIN_PASSWORD: becpg
+      KC_HEALTH_ENABLED: 'true'
+      KC_METRICS_ENABLED: 'true'
+      KC_HTTP_RELATIVE_PATH: /auth
+      KC_HTTP_ENABLED: true
+    healthcheck:
+      test: ['CMD-SHELL', '[ -f /tmp/HealthCheck.java ] || echo "public class HealthCheck { public static void main(String[] args) throws java.lang.Throwable { java.net.URI uri = java.net.URI.create(args[0]); System.exit(java.net.HttpURLConnection.HTTP_OK == ((java.net.HttpURLConnection)uri.toURL().openConnection()).getResponseCode() ? 0 : 1); } }" > /tmp/HealthCheck.java && java /tmp/HealthCheck.java http://localhost:9000/auth/health/live']
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    volumes:
+      - ../../becpg-enterprise/distribution/src/main/docker/becpg-ids/inst1-realm.json:/opt/keycloak/data/import/inst1-realm.json:ro
+    depends_on:
+      - becpg-db     
+   
+  becpg-share:
+    environment:
+      AI_HOST: becpg.local
+      AI_PORT: 8087
+      BECPG_AUTH_OAUTH2: true
+      OAUTH2_REALM: inst1
+      OAUTH2_RESOURCE: inst1-openid
+      OAUTH2_SERVER_URL: http://becpg-auth:8080/auth
+      OAUTH2_SECRET: N7omo6RvwtbH7jt6sjIFLlxX269l22n2
+    depends_on:
+      becpg-auth:
+        condition: service_healthy

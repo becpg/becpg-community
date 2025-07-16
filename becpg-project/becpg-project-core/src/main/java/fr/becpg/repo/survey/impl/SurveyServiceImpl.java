@@ -159,6 +159,7 @@ public class SurveyServiceImpl implements SurveyService {
 		return result;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void saveSurveyData(NodeRef entityNodeRef, String dataListName, JSONObject data) throws JSONException {
 		if (data.has("data")) {

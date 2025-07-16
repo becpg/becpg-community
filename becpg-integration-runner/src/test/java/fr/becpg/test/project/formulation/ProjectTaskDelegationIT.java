@@ -66,11 +66,25 @@ public class ProjectTaskDelegationIT extends AbstractProjectTestCase {
 
 			List<TaskListDataItem> taskList = new LinkedList<>();
 			
-			TaskListDataItem task5 = new TaskListDataItem(null, "task5", false, 2, null, assigneesThree, taskLegends.get(1), "activiti$projectAdhoc");
+			TaskListDataItem task5 = TaskListDataItem.build()
+    .withTaskName("task5")
+    .withIsMilestone(false)
+    .withDuration(2)
+    .withPrevTasks(null)
+    .withResources(assigneesThree)
+    .withTaskLegend(taskLegends.get(1))
+    .withWorkflowName("activiti$projectAdhoc");
 			task5.setNotificationAuthorities(assigneesThree);
 			taskList.add(task5);
 			
-			taskList.add(new TaskListDataItem(null, "task6", false, 2, null, assigneesFour, taskLegends.get(1), "activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build()
+    .withTaskName("task6")
+    .withIsMilestone(false)
+    .withDuration(2)
+    .withPrevTasks(null)
+    .withResources(assigneesFour)
+    .withTaskLegend(taskLegends.get(1))
+    .withWorkflowName("activiti$projectAdhoc"));
 			projectData.setTaskList(taskList);
 
 			now = Calendar.getInstance();

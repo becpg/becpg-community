@@ -2,6 +2,11 @@ package fr.becpg.repo.regulatory;
 
 import java.util.List;
 
+/**
+ * <p>RequirementAwareEntity interface.</p>
+ *
+ * @author matthieu
+ */
 public interface RequirementAwareEntity {
 
 
