@@ -154,8 +154,8 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 	public void calculateScoreType(SurveyableEntity surveyableEntity) {
 
 		surveyableEntity.getScoreList().forEach(
-				n -> n.setCriterion((String) nodeService.getProperty(n.getCharactNodeRef(),
-						ProjectModel.PROP_SCORE_CRITERION_TYPE))
+				n -> n.setCriterion(n.getCharactNodeRef() != null ? (String) nodeService.getProperty(n.getCharactNodeRef(),
+						ProjectModel.PROP_SCORE_CRITERION_TYPE) : null)
 		);
 
 	}
