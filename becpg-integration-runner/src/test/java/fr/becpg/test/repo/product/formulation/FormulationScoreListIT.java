@@ -156,7 +156,7 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 
 	     - Score Item 3:
 	     	- Question Type: CCP_COMPLIANCE
-	     	- Question Score: 80 (no survey question of this type, we keep the score provided manually
+	     	- Question Score: ~33.33 (mean of responses of type B)
 	 */
 	private void verifyScoreList(ProductData formulatedProduct) {
 		logger.info("Verifying formulated Score List");
@@ -171,7 +171,7 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 			} else if (scoreListDataItem.getScoreCriterion()
 					.equals(CharactTestHelper.getOrCreateScoreCriterion(nodeService, StandardChocolateEclairTestProduct.CCP_COMPLIANCE))) {
 				// Calculate expected score for type B
-				assertEquals("The mean of the type CCP_COMPLIANCE is incorrect", 80d, scoreListDataItem.getScore(), DELTA);
+				assertEquals("The mean of the type CCP_COMPLIANCE is incorrect", 100d * 50 / (50 + 100), scoreListDataItem.getScore(), DELTA);
 				checks++;
 			} else if (scoreListDataItem.getScoreCriterion()
 					.equals(CharactTestHelper.getOrCreateScoreCriterion(nodeService, StandardChocolateEclairTestProduct.FILLING_QUALITY))) {
