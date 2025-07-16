@@ -929,35 +929,6 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	}
 
 	/**
-	 * Instantiates a new nut list data item.
-	 *
-	 * @param nodeRef
-	 *            the node ref
-	 * @param value
-	 *            the value
-	 * @param unit
-	 *            the unit
-	 * @param group
-	 *            the group
-	 * @param nut
-	 *            the nut
-	 * @param mini a {@link java.lang.Double} object.
-	 * @param maxi a {@link java.lang.Double} object.
-	 * @param isManual a {@link java.lang.Boolean} object.
-	 */
-	@Deprecated
-	public NutListDataItem(NodeRef nodeRef, Double value, String unit, Double mini, Double maxi, String group, NodeRef nut, Boolean isManual) {
-		setNodeRef(nodeRef);
-		setValue(value);
-		setUnit(unit);
-		setMini(mini);
-		setMaxi(maxi);
-		setGroup(group);
-		setNut(nut);
-		setIsManual(isManual);
-	}
-
-	/**
 	 * <p>build.</p>
 	 *
 	 * @return a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object

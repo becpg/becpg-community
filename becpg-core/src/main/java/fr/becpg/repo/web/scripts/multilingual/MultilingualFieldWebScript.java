@@ -179,11 +179,11 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 				try {
 
 					Serializable value = serviceRegistry.getNodeService().getProperty(formNodeRef, fieldQname);
-					if (value instanceof MLText) {
-						mlText = (MLText) value;
-					} else if (value instanceof String) {
+					if (value instanceof MLText mltext) {
+						mlText = mltext;
+					} else if (value instanceof String stVal) {
 						mlText = new MLText();
-						mlText.addValue(toSaveUnderLocale, (String) value);
+						mlText.addValue(toSaveUnderLocale,stVal);
 					} else {
 						mlText = new MLText();
 						mlText.addValue(toSaveUnderLocale, "");
@@ -282,7 +282,7 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 		} catch (JSONException e) {
 			throw new WebScriptException("Unable to serialize JSON", e);
 		} finally {
-			if (logger.isDebugEnabled()) {
+			if (logger.isDebugEnabled() && watch!=null) {
 				watch.stop();
 				logger.debug("MultilingualFieldWebScript execute in " + watch.getTotalTimeSeconds() + "s");
 			}
@@ -331,11 +331,11 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 
 			Map<String, String> vars = new HashMap<>();
 			vars.put("key", googleApiKey);
-			vars.put("target", target.split("_")[0]);
+			vars.put(PARAM_TARGET, target.split("_")[0]);
 			vars.put("source", language);
 			vars.put("q", defaultValue);
 
-			String url = "https://www.googleapis.com/language/translate/v2?key={key}&source={source}&target={target}&q={q}";
+			String url = "https://www.googleapis.com/language/translate/v2?key={key}&source={source}&{" + PARAM_TARGET + "}={" + PARAM_TARGET + "}&q={q}";
 
 
 			String ret = RestTemplateHelper.getRestTemplate().getForObject(url, String.class, vars);

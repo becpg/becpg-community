@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,8 @@ public class RegulatoryListAttributeExtractorPlugin extends CharactAttributeExtr
 	
 	/** {@inheritDoc} */
 	@Override
-	public String extractPropName(QName type, NodeRef nodeRef) {
+	@Nonnull
+	public String extractPropName(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
 		String countries = associationService.getTargetAssocs(nodeRef, PLMModel.ASSOC_REGULATORY_COUNTRIES)
 				.stream()
 				.map(i -> nodeService.getProperty(i, BeCPGModel.PROP_CHARACT_NAME))
@@ -42,6 +45,7 @@ public class RegulatoryListAttributeExtractorPlugin extends CharactAttributeExtr
 
 	/** {@inheritDoc} */
 	@Override
+	@Nonnull
 	public Collection<QName> getMatchingTypes() {
 		return Collections.singletonList(PLMModel.TYPE_REGULATORY_LIST);
 	}

@@ -21,6 +21,9 @@ package fr.becpg.repo.helper;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Locale;
+
+import javax.annotation.Nonnull;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -59,17 +62,21 @@ public class ListValueHeritedNameExtractorPlugin extends AbstractExprNameExtract
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractPropName(QName type, NodeRef nodeRef) {
+	@Nonnull
+	public String extractPropName(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
 		MLText tmp = (MLText) mlNodeService.getProperty(nodeRef, BeCPGModel.PROP_LV_VALUE);
-	   
-		return  MLTextHelper.getClosestValue(tmp, I18NUtil.getContentLocale());
+		Locale locale = I18NUtil.getContentLocale();
+		String value = MLTextHelper.getClosestValue(tmp, locale);
+		return value != null ? value : "";
 	}
 
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractMetadata(QName type, NodeRef nodeRef) {
-		return type.toPrefixString(namespaceService).split(":")[1];
+	@Nonnull
+	public String extractMetadata(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
+		String[] parts = type.toPrefixString(namespaceService).split(":");
+		return parts.length > 1 ? parts[1] : "";
 	}
 
 

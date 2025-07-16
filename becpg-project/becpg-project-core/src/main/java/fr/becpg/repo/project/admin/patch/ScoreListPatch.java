@@ -43,9 +43,15 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
 import fr.becpg.repo.survey.SurveyModel;
 
+/**
+ * <p>ScoreListPatch class.</p>
+ *
+ * @author matthieu
+ */
 public class ScoreListPatch extends AbstractBeCPGPatch {
 	private static final Log logger = LogFactory.getLog(ScoreListPatch.class);
 
+	/** Constant <code>QUESTION_CRITERION</code> */
 	protected static final QName QUESTION_CRITERION = QName.createQName(SurveyModel.SURVEY_URI, "questionCriterion");
 
 	private EntityListDAO entityListDAO;
@@ -58,30 +64,61 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 
 	private AssociationService associationService;
 
+	/**
+	 * <p>Setter for the field <code>entityListDAO</code>.</p>
+	 *
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object
+	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
 
+	/**
+	 * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
+	 *
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object
+	 */
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
+	/**
+	 * <p>Setter for the field <code>ruleService</code>.</p>
+	 *
+	 * @param ruleService a {@link org.alfresco.service.cmr.rule.RuleService} object
+	 */
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>lockService</code>.</p>
+	 *
+	 * @param lockService a {@link org.alfresco.service.cmr.lock.LockService} object
+	 */
 	public void setLockService(LockService lockService) {
 		this.lockService = lockService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
 		return migrateScoreList();
 	}
 
+	/**
+	 * <p>migrateScoreList.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String migrateScoreList() {
 		
 		logger.info("Current tenant: " + TenantUtil.getCurrentDomain());

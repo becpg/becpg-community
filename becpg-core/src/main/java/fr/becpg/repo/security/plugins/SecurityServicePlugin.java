@@ -17,8 +17,8 @@ public interface SecurityServicePlugin {
 	 * <p>checkIsInSecurityGroup.</p>
 	 *
 	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @param permissionModel a {@link fr.becpg.repo.security.data.PermissionModel} object
 	 * @return a boolean
+	 * @param groups a {@link java.util.List} object
 	 */
 	boolean checkIsInSecurityGroup(NodeRef nodeRef,  List<NodeRef> groups);
 
@@ -30,6 +30,13 @@ public interface SecurityServicePlugin {
 	 */
 	boolean accept(QName nodeType);
 
+	/**
+	 * <p>computeAccessMode.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param accesMode a int
+	 * @return a int
+	 */
 	int computeAccessMode(NodeRef nodeRef, int accesMode);
 
 }

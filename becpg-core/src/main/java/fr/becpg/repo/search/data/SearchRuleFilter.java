@@ -72,10 +72,20 @@ public class SearchRuleFilter {
 	
 	private Integer maxResults = null;
 	
+	/**
+	 * <p>Setter for the field <code>maxResults</code>.</p>
+	 *
+	 * @param maxResults a {@link java.lang.Integer} object
+	 */
 	public void setMaxResults(Integer maxResults) {
 		this.maxResults = maxResults;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>maxResults</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object
+	 */
 	public Integer getMaxResults() {
 		return maxResults;
 	}
@@ -376,11 +386,14 @@ public class SearchRuleFilter {
 	 */
 	public SearchRuleFilter fromJsonString(String jsonString, NamespaceService namespaceService) {
 		try {
-			if ((jsonString != null) && !jsonString.isEmpty()) {
+			if (jsonString == null) {
+				return this;
+			}
+			if (!jsonString.isEmpty()) {
 				return fromJsonObject(new JSONObject(jsonString), namespaceService);
 			}
 		} catch (JSONException e) {
-			if (jsonString.contains("{")) {
+			if (jsonString != null && jsonString.contains("{")) {
 				logger.warn("Invalid JSON notification filter", e);
 			} else {
 				setQuery(jsonString);

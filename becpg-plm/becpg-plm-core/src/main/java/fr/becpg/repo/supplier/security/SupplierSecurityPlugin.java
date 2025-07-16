@@ -21,6 +21,11 @@ import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.security.plugins.SecurityServicePlugin;
 import fr.becpg.repo.supplier.SupplierPortalService;
 
+/**
+ * <p>SupplierSecurityPlugin class.</p>
+ *
+ * @author matthieu
+ */
 @Service
 public class SupplierSecurityPlugin implements SecurityServicePlugin {
 
@@ -39,16 +44,20 @@ public class SupplierSecurityPlugin implements SecurityServicePlugin {
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean checkIsInSecurityGroup(NodeRef entityNodeRef, List<NodeRef> groups) {
 		return false;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean accept(QName nodeType) {
 		return AuthorityHelper.isCurrentUserExternal() && entityDictionaryService.isSubClass(nodeType, BeCPGModel.TYPE_ENTITY_V2);
 	}
 
+	//TODO Cache
+	/** {@inheritDoc} */
 	@Override
 	public int computeAccessMode(NodeRef entityNodeRef, int accesMode) {
 	    if (entityNodeRef != null) {

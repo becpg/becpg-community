@@ -90,10 +90,10 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 
 	@Autowired
 	NamespaceService namespaceService;
-	
+
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
-	
+
 	private void createUsers() {
 
 		/*
@@ -182,11 +182,10 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 		aclGroupData.setName("Test read only ACL");
 		aclGroupData.setNodeType(SecurityModel.TYPE_ACL_ENTRY.toPrefixString(namespaceService));
 		aclGroupData.setIsDefaultReadOnly(true);
-		
+
 		List<ACLEntryDataItem> acls = new ArrayList<>();
 
 		List<NodeRef> group1s = new ArrayList<>();
-		group1s = new ArrayList<>();
 		group1s.add(authorityService.getAuthorityNodeRef(grp1));
 
 		acls.add(new ACLEntryDataItem("sec:propName", PermissionModel.READ_WRITE, group1s));
@@ -199,6 +198,7 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 		return aclGroupData.getNodeRef();
 
 	}
+
 	private NodeRef createGlobalACLGroup() {
 		createUsers();
 		List<NodeRef> group1s = new ArrayList<>();
@@ -254,7 +254,7 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 
 	private Map<String, NodeRef> createTestProducts(NodeRef localAclGroupNodeRef) {
 
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		return inWriteTx(() -> {
 			// Create products
 			Map<String, NodeRef> products = new HashMap<>();
 
@@ -275,14 +275,14 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 			products.put(RM_LOCAL_ACL, rmLocalNodeRef);
 
 			return products;
-		}, false, true);
+		});
 
 	}
 
 	@Test
 	public void testComputeAccessMode() {
 
-		final NodeRef aclGroupNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef aclGroupNodeRef = inWriteTx(() -> {
 
 			NodeRef ret = createACLGroup();
 
@@ -290,153 +290,128 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 
 			return ret;
 
-		}, false, true);
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			
+		});
+
+		inWriteTx(() -> {
+
 			authenticationComponent.setCurrentUser(USER_TWO);
-			
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
-					SecurityService.READ_ACCESS);
-			
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
-					SecurityService.READ_ACCESS);
-			
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
-					SecurityService.NONE_ACCESS);
-			
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"),
-					SecurityService.READ_ACCESS);
-			
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"),
-					SecurityService.READ_ACCESS);
-			
+
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"), SecurityService.READ_ACCESS);
+
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"), SecurityService.READ_ACCESS);
+
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"), SecurityService.NONE_ACCESS);
+
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"), SecurityService.READ_ACCESS);
+
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"), SecurityService.READ_ACCESS);
+
 			authenticationComponent.setCurrentUser(USER_ONE);
-			
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
-					SecurityService.NONE_ACCESS);
-			
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
-					SecurityService.WRITE_ACCESS);
-			
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
-					SecurityService.READ_ACCESS);
-			
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"),
-					SecurityService.WRITE_ACCESS);
-			
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"),
-					SecurityService.WRITE_ACCESS);
-			
+
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"), SecurityService.NONE_ACCESS);
+
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"), SecurityService.WRITE_ACCESS);
+
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"), SecurityService.READ_ACCESS);
+
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"), SecurityService.WRITE_ACCESS);
+
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"), SecurityService.WRITE_ACCESS);
+
 			authenticationComponent.setCurrentUser(USER_THREE);
-			
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"),
-					SecurityService.NONE_ACCESS);
-			
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"),
-					SecurityService.NONE_ACCESS);
-			
+
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"), SecurityService.NONE_ACCESS);
+
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"), SecurityService.NONE_ACCESS);
+
 			authenticationComponent.setCurrentUser("admin");
-			
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
-					SecurityService.WRITE_ACCESS);
-			
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
-					SecurityService.WRITE_ACCESS);
-			
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
-					SecurityService.WRITE_ACCESS);
+
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"), SecurityService.WRITE_ACCESS);
+
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"), SecurityService.WRITE_ACCESS);
+
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"), SecurityService.WRITE_ACCESS);
 
 			return null;
 
-		}, false, true);
+		});
 
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			nodeService.deleteNode(aclGroupNodeRef);
 
 			return null;
-		}, false, true);
+		});
 
 	}
 
 	@Test
 	public void testLocalComputeAccessMode() {
 
-		final NodeRef globalAclGroupNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			return  createGlobalACLGroup();
+		final NodeRef globalAclGroupNodeRef = inWriteTx(this::createGlobalACLGroup);
 
-		}, false, true);
+		final NodeRef localAclGroupNodeRef = inWriteTx(this::createLocalACLGroup);
 
-		final NodeRef localAclGroupNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			return  createLocalACLGroup();
-
-
-		}, false, true);
-
-		final Map<String, NodeRef> products = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final Map<String, NodeRef> products = inWriteTx(() -> {
 			Map<String, NodeRef> ret = createTestProducts(localAclGroupNodeRef);
 			securityService.refreshAcls();
 
 			return ret;
 
-		}, false, true);
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			
+		});
+
+		inWriteTx(() -> {
+
 			NodeRef rmGlobalNodeRef = products.get(RM_GLOBAL_ACL);
 			NodeRef rmLocalNodeRef = products.get(RM_LOCAL_ACL);
-			
+
 			productService.formulate(rmGlobalNodeRef);
 			productService.formulate(rmLocalNodeRef);
-			
-			if (rmGlobalNodeRef != null && rmLocalNodeRef != null) {
-				
+
+			if ((rmGlobalNodeRef != null) && (rmLocalNodeRef != null)) {
+
 				authenticationComponent.setCurrentUser(USER_ONE);
-				
-				assertEquals(securityService.computeAccessMode(rmGlobalNodeRef, PLMModel.TYPE_RAWMATERIAL,
-						PLMModel.TYPE_NUTLIST), SecurityService.READ_ACCESS);
-				
-				assertEquals(securityService.computeAccessMode(rmGlobalNodeRef, PLMModel.TYPE_RAWMATERIAL,
-						BeCPGModel.PROP_ERP_CODE), SecurityService.NONE_ACCESS);
-				
-				assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL,
-						PLMModel.TYPE_ORGANOLIST), SecurityService.NONE_ACCESS);
-				
-				assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL,
-						PLMModel.TYPE_ALLERGENLIST), SecurityService.WRITE_ACCESS);
-				
-				assertEquals(
-						securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_NUTLIST),
+
+				assertEquals(securityService.computeAccessMode(rmGlobalNodeRef, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_NUTLIST),
+						SecurityService.READ_ACCESS);
+
+				assertEquals(securityService.computeAccessMode(rmGlobalNodeRef, PLMModel.TYPE_RAWMATERIAL, BeCPGModel.PROP_ERP_CODE),
+						SecurityService.NONE_ACCESS);
+
+				assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_ORGANOLIST),
+						SecurityService.NONE_ACCESS);
+
+				assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_ALLERGENLIST),
 						SecurityService.WRITE_ACCESS);
-				
-				assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL,
-						BeCPGModel.PROP_ERP_CODE), SecurityService.WRITE_ACCESS);
-				
+
+				assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_NUTLIST),
+						SecurityService.WRITE_ACCESS);
+
+				assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL, BeCPGModel.PROP_ERP_CODE),
+						SecurityService.WRITE_ACCESS);
+
 				authenticationComponent.setCurrentUser(USER_TWO);
-				
-				assertEquals(securityService.computeAccessMode(rmGlobalNodeRef, PLMModel.TYPE_RAWMATERIAL,
-						PLMModel.TYPE_NUTLIST), SecurityService.NONE_ACCESS);
-				
-				assertEquals(securityService.computeAccessMode(rmGlobalNodeRef, PLMModel.TYPE_RAWMATERIAL,
-						BeCPGModel.PROP_ERP_CODE), SecurityService.WRITE_ACCESS);
-				
-				assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL,
-						PLMModel.TYPE_ORGANOLIST), SecurityService.WRITE_ACCESS);
-				
-				assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL,
-						PLMModel.TYPE_ALLERGENLIST), SecurityService.READ_ACCESS);
-				
-				assertEquals(
-						securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_NUTLIST),
+
+				assertEquals(securityService.computeAccessMode(rmGlobalNodeRef, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_NUTLIST),
+						SecurityService.NONE_ACCESS);
+
+				assertEquals(securityService.computeAccessMode(rmGlobalNodeRef, PLMModel.TYPE_RAWMATERIAL, BeCPGModel.PROP_ERP_CODE),
 						SecurityService.WRITE_ACCESS);
-				
-				assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL,
-						BeCPGModel.PROP_ERP_CODE), SecurityService.WRITE_ACCESS);
-				
+
+				assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_ORGANOLIST),
+						SecurityService.WRITE_ACCESS);
+
+				assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_ALLERGENLIST),
+						SecurityService.READ_ACCESS);
+
+				assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_NUTLIST),
+						SecurityService.WRITE_ACCESS);
+
+				assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL, BeCPGModel.PROP_ERP_CODE),
+						SecurityService.WRITE_ACCESS);
+
 				// Check permissions
-				
+
 				authenticationComponent.setSystemUserAsCurrentUser();
 				// Global rm datalists
 				NodeRef globalRmListContainerNodeRef = entityListDAO.getListContainer(rmGlobalNodeRef);
@@ -453,11 +428,11 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 					}
 				}
 				// Global rm folder
-				List<PermissionModel> globalFolderPerms = securityService.getPermissionContext(rmGlobalNodeRef,
-						nodeService.getType(rmGlobalNodeRef), "View-documents").getPermissions();
+				List<PermissionModel> globalFolderPerms = securityService
+						.getPermissionContext(rmGlobalNodeRef, nodeService.getType(rmGlobalNodeRef), "View-documents").getPermissions();
 				if (globalFolderPerms != null) {
-					List<ChildAssociationRef> folders = nodeService.getChildAssocs(rmGlobalNodeRef,
-							ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL);
+					List<ChildAssociationRef> folders = nodeService.getChildAssocs(rmGlobalNodeRef, ContentModel.ASSOC_CONTAINS,
+							RegexQNamePattern.MATCH_ALL);
 					for (ChildAssociationRef folder : folders) {
 						for (AccessPermission permission : permissionService.getAllSetPermissions(folder.getChildRef())) {
 							if (permission.getAuthority().equals(grp1)) {
@@ -471,30 +446,29 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 				NodeRef localRmListContainerNodeRef = entityListDAO.getListContainer(rmLocalNodeRef);
 				List<NodeRef> localRmDatalists = entityListDAO.getExistingListsNodeRef(localRmListContainerNodeRef);
 				for (NodeRef localRmDatalist : localRmDatalists) {
-					String localDataListQName = (String) nodeService.getProperty(localRmDatalist,
-							DataListModel.PROP_DATALISTITEMTYPE);
+					String localDataListQName = (String) nodeService.getProperty(localRmDatalist, DataListModel.PROP_DATALISTITEMTYPE);
 					if (localDataListQName.equals("bcpg:organoList")) {
 						for (AccessPermission permission : permissionService.getAllSetPermissions(localRmDatalist)) {
 							if (permission.getAuthority().equals(grp3)) {
-								logger.info("Local organoList permission: " +  permission);
+								logger.info("Local organoList permission: " + permission);
 								assertEquals(permission.getPermission(), PermissionService.CONTRIBUTOR);
 							}
 						}
 					} else if (localDataListQName.equals("bcpg:allergenList")) {
 						for (AccessPermission permission : permissionService.getAllSetPermissions(localRmDatalist)) {
 							if (permission.getAuthority().equals(grp1)) {
-								logger.info("Local allergenList permission: " +  permission);
+								logger.info("Local allergenList permission: " + permission);
 								assertEquals(permission.getPermission(), PermissionService.CONTRIBUTOR);
 							}
 						}
 					}
 				}
 				//Local folder permission
-				List<PermissionModel> localDocPerms = securityService.getPermissionContext(rmLocalNodeRef,
-						nodeService.getType(rmLocalNodeRef), "View-documents").getPermissions();
+				List<PermissionModel> localDocPerms = securityService
+						.getPermissionContext(rmLocalNodeRef, nodeService.getType(rmLocalNodeRef), "View-documents").getPermissions();
 				if (localDocPerms != null) {
-					List<ChildAssociationRef> folders = nodeService.getChildAssocs(rmLocalNodeRef,
-							ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL);
+					List<ChildAssociationRef> folders = nodeService.getChildAssocs(rmLocalNodeRef, ContentModel.ASSOC_CONTAINS,
+							RegexQNamePattern.MATCH_ALL);
 					for (ChildAssociationRef folder : folders) {
 						for (AccessPermission permission : permissionService.getAllSetPermissions(folder.getChildRef())) {
 							if (permission.getAuthority().equals(grp2)) {
@@ -505,18 +479,17 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 					}
 				}
 			}
-			
+
 			return null;
 
-		}, false, true);
+		});
 
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			nodeService.deleteNode(globalAclGroupNodeRef);
 
 			return null;
-		}, false, true);
+		});
 
 	}
 
@@ -533,105 +506,84 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 		}
 
 	}
-	
+
 	@Test
 	public void testDefaultReadOnly() {
 
-		final NodeRef aclGroupNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef aclGroupNodeRef = inWriteTx(() -> {
 			NodeRef ret = createDefaultReadOnlyACLGroup();
 			securityService.refreshAcls();
 			return ret;
 
-		}, false, true);
+		});
 
 		inReadTx(() -> {
 			authenticationComponent.setCurrentUser(USER_TWO);
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
-					SecurityService.READ_ACCESS);
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
-					SecurityService.READ_ACCESS);
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
-					SecurityService.READ_ACCESS);
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"),
-					SecurityService.READ_ACCESS);
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"),
-					SecurityService.NONE_ACCESS);
-			
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"), SecurityService.READ_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"), SecurityService.READ_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"), SecurityService.READ_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"), SecurityService.READ_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"), SecurityService.NONE_ACCESS);
+
 			authenticationComponent.setCurrentUser(USER_ONE);
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
-					SecurityService.READ_ACCESS);
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
-					SecurityService.WRITE_ACCESS);
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
-					SecurityService.READ_ACCESS);
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"),
-					SecurityService.WRITE_ACCESS);
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"),
-					SecurityService.WRITE_ACCESS);
-			
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"), SecurityService.READ_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"), SecurityService.WRITE_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"), SecurityService.READ_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"), SecurityService.WRITE_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"), SecurityService.WRITE_ACCESS);
+
 			authenticationComponent.setCurrentUser(USER_THREE);
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
-					SecurityService.READ_ACCESS);
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
-					SecurityService.READ_ACCESS);
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
-					SecurityService.READ_ACCESS);
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"),
-					SecurityService.READ_ACCESS);
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"),
-					SecurityService.NONE_ACCESS);
-			
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"), SecurityService.READ_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"), SecurityService.READ_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"), SecurityService.READ_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"), SecurityService.READ_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"), SecurityService.NONE_ACCESS);
+
 			authenticationComponent.setCurrentUser("admin");
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
-					SecurityService.WRITE_ACCESS);
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
-					SecurityService.WRITE_ACCESS);
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
-					SecurityService.WRITE_ACCESS);
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"),
-					SecurityService.WRITE_ACCESS);
-			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"),
-					SecurityService.WRITE_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"), SecurityService.WRITE_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"), SecurityService.WRITE_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"), SecurityService.WRITE_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"), SecurityService.WRITE_ACCESS);
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"), SecurityService.WRITE_ACCESS);
 			return null;
 		});
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+		inWriteTx(() -> {
 			nodeService.deleteNode(aclGroupNodeRef);
 			return null;
-		}, false, true);
+		});
 	}
-	
+
 	@Test
 	public void testDataListPermissions() {
-		
+
 		inWriteTx(() -> {
 			systemConfigurationService.updateConfValue("beCPG.formulation.security.enforceACL", "true");
 			return null;
 		});
-		
+
 		initParts();
-		
-		NodeRef securityRuleNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+		NodeRef securityRuleNodeRef = inWriteTx(() -> {
 			NodeRef ret = createDataListSecurityRule();
 			securityService.refreshAcls();
 			return ret;
-		}, false, true);
-		
+		});
+
 		try {
-			
-			NodeRef productNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			NodeRef productNodeRef = inWriteTx(() -> {
 				FinishedProductData productData = new FinishedProductData();
 				productData.setParentNodeRef(getTestFolderNodeRef());
 				productData.setName("FP testDataListPermissions");
 				List<NutListDataItem> nutList = new LinkedList<>();
-				nutList.add(NutListDataItem.build().withValue(1d).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(nut1)
-);
+				nutList.add(NutListDataItem.build().withValue(1d).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(nut1));
 				productData.setNutList(nutList);
 				return alfrescoRepository.save(productData).getNodeRef();
-			}, false, true);
-			
+			});
+
 			// grp1 write and grp2 read
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			inWriteTx(() -> {
 				productService.formulate(productNodeRef);
 				FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
 				NodeRef nutListNodeRef = productData.getNutList().get(0).getParentNodeRef();
@@ -639,11 +591,10 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 				Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
 				checkPermissions(productNodeRef, permissions, new ArrayList<>(List.of(grp2)), new ArrayList<>(List.of(grp1)));
 				return null;
-			}, false, true);
-			
-			
+			});
+
 			// grp2 read
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			inWriteTx(() -> {
 				ACLGroupData securityRule = (ACLGroupData) alfrescoRepository.findOne(securityRuleNodeRef);
 				for (ACLEntryDataItem permissionList : securityRule.getAcls()) {
 					if (permissionList.getAclPermission().equals(PermissionModel.READ_WRITE)) {
@@ -659,10 +610,10 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 				Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
 				checkPermissions(productNodeRef, permissions, new ArrayList<>(List.of(grp2)), new ArrayList<>(List.of()));
 				return null;
-			}, false, true);
-			
+			});
+
 			// grp1 write
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			inWriteTx(() -> {
 				ACLGroupData securityRule = (ACLGroupData) alfrescoRepository.findOne(securityRuleNodeRef);
 				for (ACLEntryDataItem permissionList : securityRule.getAcls()) {
 					if (permissionList.getAclPermission().equals(PermissionModel.READ_WRITE)) {
@@ -680,13 +631,14 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 				Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
 				checkPermissions(productNodeRef, permissions, new ArrayList<>(List.of()), new ArrayList<>(List.of(grp1)));
 				return null;
-			}, false, true);
-			
+			});
+
 			// grp1 write and grp2 read
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			inWriteTx(() -> {
 				ACLGroupData securityRule = (ACLGroupData) alfrescoRepository.findOne(securityRuleNodeRef);
 				for (ACLEntryDataItem permissionList : securityRule.getAcls()) {
-					if (permissionList.getAclPermission().equals(PermissionModel.READ_ONLY) || permissionList.getAclPermission().equals(PermissionModel.READ_WRITE)) {
+					if (permissionList.getAclPermission().equals(PermissionModel.READ_ONLY)
+							|| permissionList.getAclPermission().equals(PermissionModel.READ_WRITE)) {
 						permissionList.setPropName("bcpg:nutList");
 					}
 				}
@@ -699,10 +651,10 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 				Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
 				checkPermissions(productNodeRef, permissions, new ArrayList<>(List.of(grp2)), new ArrayList<>(List.of(grp1)));
 				return null;
-			}, false, true);
-			
+			});
+
 			// nothing
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			inWriteTx(() -> {
 				ACLGroupData securityRule = (ACLGroupData) alfrescoRepository.findOne(securityRuleNodeRef);
 				for (ACLEntryDataItem permissionList : securityRule.getAcls()) {
 					permissionList.setPropName("cm:description");
@@ -716,8 +668,8 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 				Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
 				checkPermissions(productNodeRef, permissions, new ArrayList<>(List.of()), new ArrayList<>(List.of()));
 				return null;
-			}, false, true);
-			
+			});
+
 		} finally {
 			inWriteTx(() -> {
 				nodeService.deleteNode(securityRuleNodeRef);
@@ -725,52 +677,51 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 				return null;
 			});
 		}
-		
+
 	}
-	
+
 	@Test
 	public void testDocumentViewPermissions() {
-		
+
 		initParts();
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+		inWriteTx(() -> {
 			NodeRef ret = createDocumentViewSecurityRule();
 			securityService.refreshAcls();
 			return ret;
-		}, false, true);
-		
-		ProductData entityTpl = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		});
+
+		ProductData entityTpl = inWriteTx(() -> {
 			FinishedProductData templateFinishedProduct = new FinishedProductData();
 			templateFinishedProduct.setName("FP TPL");
 			templateFinishedProduct.getAspects().add(BeCPGModel.ASPECT_ENTITY_TPL);
 			return (ProductData) alfrescoRepository.create(getTestFolderNodeRef(), templateFinishedProduct);
-		}, false, true);
-		
-		NodeRef productNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		});
+
+		NodeRef productNodeRef = inWriteTx(() -> {
 			FinishedProductData productData = new FinishedProductData();
 			productData.setParentNodeRef(getTestFolderNodeRef());
 			productData.setName("FP testDocumentViewPermissions");
 			productData.setEntityTpl(entityTpl);
 			return alfrescoRepository.save(productData).getNodeRef();
-		}, false, true);
-		
+		});
+
 		// grp1 write and grp2 read
-		Set<AccessPermission> beforeTemplatePermissions = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		Set<AccessPermission> beforeTemplatePermissions = inWriteTx(() -> {
 			productService.formulate(productNodeRef);
 			NodeRef folderNodeRef = nodeService.getChildByName(productNodeRef, ContentModel.ASSOC_CONTAINS, "Brief");
 			assertFalse(permissionService.getInheritParentPermissions(folderNodeRef));
 			return permissionService.getAllSetPermissions(folderNodeRef);
-		}, false, true);
-		
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		});
+
+		inWriteTx(() -> {
 			NodeRef folderNodeRef = nodeService.getChildByName(entityTpl.getNodeRef(), ContentModel.ASSOC_CONTAINS, "Brief");
 			permissionService.setInheritParentPermissions(folderNodeRef, false);
 			permissionService.setPermission(folderNodeRef, "TEST_AUTHORITY", PermissionService.READ, true);
 			return null;
-		}, false, true);
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		});
+
+		inWriteTx(() -> {
 			productService.formulate(productNodeRef);
 			NodeRef folderNodeRef = nodeService.getChildByName(productNodeRef, ContentModel.ASSOC_CONTAINS, "Brief");
 			assertFalse(permissionService.getInheritParentPermissions(folderNodeRef));
@@ -779,9 +730,9 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 			assertEquals("TEST_AUTHORITY", permissions.iterator().next().getAuthority());
 			assertEquals(PermissionService.READ, permissions.iterator().next().getPermission());
 			return null;
-		}, false, true);
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		});
+
+		inWriteTx(() -> {
 			NodeRef tplFolderNodeRef = nodeService.getChildByName(entityTpl.getNodeRef(), ContentModel.ASSOC_CONTAINS, "Brief");
 			permissionService.setInheritParentPermissions(tplFolderNodeRef, true);
 			permissionService.clearPermission(tplFolderNodeRef, "TEST_AUTHORITY");
@@ -791,35 +742,33 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 			Set<AccessPermission> permissions = permissionService.getAllSetPermissions(folderNodeRef);
 			assertEquals(beforeTemplatePermissions, permissions);
 			return null;
-		}, false, true);
-		
+		});
+
 	}
-	
+
 	private void checkPermissions(NodeRef productNodeRef, Set<AccessPermission> permissions, List<String> allowedRead, List<String> allowedWrite) {
-		
+
 		int readChecks = 0;
 		int writeChecks = 0;
-		
+
 		for (AccessPermission permission : permissions) {
 			if (AccessStatus.ALLOWED.equals(permission.getAccessStatus())) {
-				if ((PermissionService.READ.equals(permission.getPermission()) || PermissionService.CONSUMER.equals(permission.getPermission()))) {
-					if (grp1.equals(permission.getAuthority()) || grp2.equals(permission.getAuthority())) {
-						assertTrue(allowedRead.contains(permission.getAuthority()));
-						readChecks++;
-					}
+				if ((PermissionService.READ.equals(permission.getPermission()) || PermissionService.CONSUMER.equals(permission.getPermission()))
+						&& (grp1.equals(permission.getAuthority()) || grp2.equals(permission.getAuthority()))) {
+					assertTrue(allowedRead.contains(permission.getAuthority()));
+					readChecks++;
 				}
-				if ((PermissionService.WRITE.equals(permission.getPermission()) || PermissionService.CONTRIBUTOR.equals(permission.getPermission()))) {
-					if (grp1.equals(permission.getAuthority()) || grp2.equals(permission.getAuthority())) {
-						assertTrue(allowedWrite.contains(permission.getAuthority()));
-						writeChecks++;
-					}
+				if ((PermissionService.WRITE.equals(permission.getPermission()) || PermissionService.CONTRIBUTOR.equals(permission.getPermission()))
+						&& (grp1.equals(permission.getAuthority()) || grp2.equals(permission.getAuthority()))) {
+					assertTrue(allowedWrite.contains(permission.getAuthority()));
+					writeChecks++;
 				}
 			}
 		}
-		
+
 		assertEquals(allowedRead.size(), readChecks);
 		assertEquals(allowedWrite.size(), writeChecks);
-		
+
 		checkPermissionsAreSameAfterReformulation(productNodeRef, permissions);
 	}
 
@@ -845,30 +794,30 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 		return alfrescoRepository.create(getTestFolderNodeRef(), rmAclGroupData).getNodeRef();
 
 	}
-	
+
 	private NodeRef createDocumentViewSecurityRule() {
 		createUsers();
 		List<NodeRef> group1s = new ArrayList<>();
 		group1s.add(authorityService.getAuthorityNodeRef(grp1));
 		List<NodeRef> group2s = new ArrayList<>();
 		group2s.add(authorityService.getAuthorityNodeRef(grp2));
-		
+
 		ACLGroupData rmAclGroupData = new ACLGroupData();
 		rmAclGroupData.setName("Test Document View ACL");
 		rmAclGroupData.setNodeType(PLMModel.TYPE_FINISHEDPRODUCT.toPrefixString(namespaceService));
 		rmAclGroupData.setIsLocalPermission(false);
-		
+
 		List<ACLEntryDataItem> permissionList = new ArrayList<>();
-		
+
 		permissionList.add(new ACLEntryDataItem("View-documents", PermissionModel.READ_WRITE, group1s));
 		permissionList.add(new ACLEntryDataItem("View-documents", PermissionModel.READ_ONLY, group2s));
-		
+
 		rmAclGroupData.setAcls(permissionList);
-		
+
 		return alfrescoRepository.create(getTestFolderNodeRef(), rmAclGroupData).getNodeRef();
-		
+
 	}
-	
+
 	private void checkPermissionsAreSameAfterReformulation(NodeRef productNodeRef, Set<AccessPermission> expectedPermissions) {
 		productService.formulate(productNodeRef);
 		FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
@@ -876,44 +825,40 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 		Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
 		assertEquals(expectedPermissions, permissions);
 	}
-	
+
 	@Test
 	public void testDatalistEnforceACL() {
-		
+
 		inWriteTx(() -> {
 			systemConfigurationService.updateConfValue("beCPG.formulation.security.enforceACL", "true");
 			return null;
 		});
-		
+
 		initParts();
-		
-		NodeRef securityRuleNodeRef = inWriteTx(() -> {
-			return createDataListSecurityRuleEnforceACL();
-		});
-		
+
+		NodeRef securityRuleNodeRef = inWriteTx(this::createDataListSecurityRuleEnforceACL);
+
 		try {
-			
+
 			inWriteTx(() -> {
 				permissionService.setInheritParentPermissions(getTestFolderNodeRef(), false);
 				permissionService.setPermission(getTestFolderNodeRef(), grp1, PermissionService.READ, true);
 				permissionService.setPermission(getTestFolderNodeRef(), grp2, PermissionService.READ, true);
 				return null;
 			});
-			
-			
+
 			NodeRef productNodeRef = inWriteTx(() -> {
 				FinishedProductData productData = new FinishedProductData();
 				productData.setParentNodeRef(getTestFolderNodeRef());
 				productData.setName("FP testDataListPermissions");
 				List<NutListDataItem> nutList = new LinkedList<>();
-				nutList.add(NutListDataItem.build().withValue(1d).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(nut1)
-);
+				nutList.add(NutListDataItem.build().withValue(1d).withUnit(null).withMini(null).withMaxi(null).withGroup(null).withNut(nut1));
 				productData.setNutList(nutList);
 				return alfrescoRepository.save(productData).getNodeRef();
 			});
-			
+
 			// grp1 write and grp2 read
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			inWriteTx(() -> {
 				productService.formulate(productNodeRef);
 				FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
 				NodeRef nutListNodeRef = productData.getNutList().get(0).getParentNodeRef();
@@ -921,8 +866,8 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 				Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
 				checkPermissions(productNodeRef, permissions, new ArrayList<>(List.of(grp2)), new ArrayList<>(List.of(grp1)));
 				return null;
-			}, false, true);
-			
+			});
+
 		} finally {
 			inWriteTx(() -> {
 				nodeService.deleteNode(securityRuleNodeRef);
@@ -930,9 +875,9 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 				return null;
 			});
 		}
-		
+
 	}
-	
+
 	private NodeRef createDataListSecurityRuleEnforceACL() {
 		createUsers();
 		List<NodeRef> group1s = new ArrayList<>();

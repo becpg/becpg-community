@@ -135,8 +135,7 @@ public class ProjectModuleInfoWebScript extends AbstractWebScript {
 		} catch (JSONException e) {
 			throw new WebScriptException("Unable to serialize JSON", e);
 		} finally {
-			if (logger.isDebugEnabled()) {
-				watch.stop();
+			if (logger.isDebugEnabled() && watch!=null) {
 				logger.debug("ProjectModuleInfoWebScript execute in " + watch.getTotalTimeSeconds() + "s");
 			}
 		}
