@@ -252,7 +252,7 @@ public class ImportHelper {
 					MLText mlText = new MLText();
 
 					// load translations
-					boolean first = true;
+					boolean currentLocaleUnset = true;
 					for (int z_idx = pos; z_idx < importContext.getColumns().size() && z_idx < values.size(); z_idx++) {
 
 						// bcpg:legalName_en
@@ -274,14 +274,18 @@ public class ImportHelper {
 								} else {
 									throw new IllegalStateException("Unsupported locale : "+locale);
 								}
-							} else if (first) {
+							} else if (currentLocaleUnset) {
 								mlText.addValue(I18NUtil.getContentLocaleLang(), values.get(z_idx));
-								first = false;
+								currentLocaleUnset = false;
 							} else {
 								// the translation is finished
 								break;
 							}
 						}
+					}
+					
+					if (currentLocaleUnset) {
+						mlText.addValue(I18NUtil.getContentLocaleLang(), "");
 					}
 
 					value = mlText;
@@ -422,11 +426,12 @@ public class ImportHelper {
 		if (value != null) {
 			if (currentValue != null) {
 				for (Locale loc : value.getLocales()) {
-					if (ImportHelper.NULL_VALUE.equals(value.get(loc))) {
-						currentValue.remove(loc);
-					} else {
-
-						currentValue.put(loc, value.get(loc));
+					if (!(I18NUtil.getContentLocaleLang().equals(loc) && "".equals(value.get(loc)) && !"".equals(currentValue))) {
+						if (ImportHelper.NULL_VALUE.equals(value.get(loc))) {
+							currentValue.remove(loc);
+						} else {
+							currentValue.put(loc, value.get(loc));
+						}
 					}
 				}
 				return currentValue;
