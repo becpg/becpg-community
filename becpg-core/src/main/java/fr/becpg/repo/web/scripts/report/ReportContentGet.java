@@ -115,13 +115,16 @@ public class ReportContentGet extends ContentGet {
 
 		// render content
 		QName propertyQName = ContentModel.PROP_CONTENT;
-		String contentPart = templateArgs.get(PARAM_PROPERTY);
-		if ((contentPart.length() > 0) && (contentPart.charAt(0) == ';')) {
+		String contentPart = templateArgs != null ? templateArgs.get(PARAM_PROPERTY) : null;
+		if (contentPart == null) {
+			contentPart = "";
+		}
+		if ((!contentPart.isEmpty()) && (contentPart.charAt(0) == ';')) {
 			if (contentPart.length() < 2) {
 				throw new WebScriptException(HttpServletResponse.SC_BAD_REQUEST, "Content property malformed");
 			}
 			String propertyName = contentPart.substring(1);
-			if (propertyName.length() > 0) {
+			if (!propertyName.isEmpty()) {
 				propertyQName = QName.createQName(propertyName, namespaceService);
 			}
 		}

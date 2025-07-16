@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -104,7 +103,7 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 		String preparedQuery = BeCPGQueryHelper.prepareQuery(query).replace("*", "");
 
 		matches.addAll(ecoScoreService.getEnvironmentalFootprints().values().stream().filter(res -> BeCPGQueryHelper.isQueryMatch(query, res.getValue())).limit(100)
-				.collect(Collectors.toList()));
+				.toList());
 
 		matches.sort((o1, o2) -> {
 

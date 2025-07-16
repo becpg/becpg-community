@@ -25,8 +25,11 @@ public class MalaysianNutrientRegulation extends AbstractNutrientRegulation {
 	/** {@inheritDoc} */
 	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
-
-		if(value != null && nutrientTypeCode != null){
+		if (value == null) {
+			return null;
+		}
+		
+		if(nutrientTypeCode != null){
 			if (nutrientTypeCode.equals(NutrientCode.Protein) || nutrientTypeCode.equals(NutrientCode.CarbohydrateByDiff)
 					|| nutrientTypeCode.equals(NutrientCode.CarbohydrateWithFiber)
 					|| nutrientTypeCode.equals(NutrientCode.Fat) || nutrientTypeCode.equals(NutrientCode.Sugar)) {

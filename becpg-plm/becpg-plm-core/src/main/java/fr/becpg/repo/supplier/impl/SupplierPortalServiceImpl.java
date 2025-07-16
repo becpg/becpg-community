@@ -345,6 +345,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		return supplierNodeRef;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getOrCreateSupplierGroup(NodeRef supplierNodeRef, List<NodeRef> resources) {
 		if (supplierNodeRef != null) {
@@ -376,6 +377,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		return null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isCurrentUserInSupplierGroup(NodeRef supplierNodeRef) {
 		if (supplierNodeRef != null) {

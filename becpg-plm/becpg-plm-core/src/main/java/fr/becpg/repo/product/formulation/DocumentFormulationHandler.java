@@ -69,11 +69,14 @@ import fr.becpg.repo.survey.helper.SurveyableEntityHelper;
  *   <li>Support for dynamic document naming through templates</li>
  * </ul>
  * </p>
+ *
+ * @author matthieu
  */
 public class DocumentFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static final Log logger = LogFactory.getLog(DocumentFormulationHandler.class);
 
+	/** Constant <code>MESSAGE_DOCUMENT_FORMULATION_ERROR="message.formulate.document.error"</code> */
 	public static final String MESSAGE_DOCUMENT_FORMULATION_ERROR = "message.formulate.document.error";
 
 	private static final String DEFAULT_SUPPLIER_DOCUMENTS_PATH = "SupplierDocuments";
@@ -202,6 +205,11 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 		this.formulaService = formulaService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
+	 *
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object
+	 */
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
@@ -223,9 +231,6 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 	 * when the associated claims are actually claimed (isClaimed=true). This is crucial for
 	 * handling cases where products have multiple label claims with different claim statuses.
 	 * </p>
-	 *
-	 * @param productData the product data to process documents for
-	 * @return true if processing was successful, false otherwise
 	 */
 	@Override
 	public boolean process(ProductData productData) {

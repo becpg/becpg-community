@@ -54,6 +54,9 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 		return new SimpleDateFormat("yyyy" + SEPARATOR + "MM" + SEPARATOR + "dd");
 	});
 
+	/**
+	 * <p>cleanupThreadLocal.</p>
+	 */
 	public void cleanupThreadLocal() {
 		formatter.remove();
 	}

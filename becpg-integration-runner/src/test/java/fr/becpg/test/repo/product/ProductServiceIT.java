@@ -449,9 +449,12 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Finished Product");
 			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 4d, ProductUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef));
-			compoList.add(new CompoListDataItem(null, compoList.get(1), 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterialNodeRef));
+			compoList.add(CompoListDataItem.build().withParent(null).withQty(1d).withQtyUsed(1d).withUnit(ProductUnit.P).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(lSF1NodeRef)
+);
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(1d).withQtyUsed(4d).withUnit(ProductUnit.P).withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(lSF2NodeRef)
+);
+			compoList.add(CompoListDataItem.build().withParent(compoList.get(1)).withQty(3d).withQtyUsed(0d).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(rawMaterialNodeRef)
+);
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
@@ -499,9 +502,8 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			ProductUnit compoListUnit = ProductUnit.valueOf((String) properties.get(PLMModel.PROP_COMPOLIST_UNIT));
 			DeclarationType declType = DeclarationType.valueOf((String) properties.get(PLMModel.PROP_COMPOLIST_DECL_TYPE));
 
-			CompoListDataItem compoListDataItem = new CompoListDataItem(kv.getKey(), null, (Double) properties.get(PLMModel.PROP_COMPOLIST_QTY),
-					(Double) properties.get(PLMModel.PROP_COMPOLIST_QTY_SUB_FORMULA), compoListUnit,
-					(Double) properties.get(PLMModel.PROP_COMPOLIST_LOSS_PERC), declType, kv.getValue().getEntityNodeRef());
+			CompoListDataItem compoListDataItem = CompoListDataItem.build().withParent(null).withQty((Double) properties.get(PLMModel.PROP_COMPOLIST_QTY)).withQtyUsed((Double) properties.get(PLMModel.PROP_COMPOLIST_QTY_SUB_FORMULA)).withUnit(compoListUnit).withLossPerc((Double) properties.get(PLMModel.PROP_COMPOLIST_LOSS_PERC)).withDeclarationType(declType).withProduct(kv.getValue()
+.getEntityNodeRef());
 
 			wUsedList.add(compoListDataItem);
 		}

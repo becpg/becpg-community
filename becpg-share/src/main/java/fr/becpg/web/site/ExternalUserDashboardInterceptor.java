@@ -78,6 +78,7 @@ public class ExternalUserDashboardInterceptor extends AbstractWebFrameworkInterc
 	 * (org.springframework.web.context.request.WebRequest)
 	 */
 	/** {@inheritDoc} */
+	@SuppressWarnings("deprecation")
 	@Override
 	public void preHandle(WebRequest request) throws Exception {
 		final RequestContext rc = ThreadLocalRequestContext.getRequestContext();

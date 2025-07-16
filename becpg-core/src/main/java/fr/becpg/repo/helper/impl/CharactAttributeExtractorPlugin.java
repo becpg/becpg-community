@@ -21,6 +21,8 @@ package fr.becpg.repo.helper.impl;
 
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,13 +56,13 @@ public class CharactAttributeExtractorPlugin extends AbstractExprNameExtractor {
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractPropName(QName type, NodeRef nodeRef) {
+	public String extractPropName(@Nonnull QName type,@Nonnull  NodeRef nodeRef) {
 		return extractExpr(nodeRef, systemConfigurationService.confValue("beCPG.charact.name.format"));
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractMetadata(QName type, NodeRef nodeRef) {
+	public String extractMetadata(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
 		return entityDictionaryService.toPrefixString(type).split(":")[1];
 	}
 

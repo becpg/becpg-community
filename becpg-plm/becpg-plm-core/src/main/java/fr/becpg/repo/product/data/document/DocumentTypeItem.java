@@ -72,116 +72,231 @@ public class DocumentTypeItem extends BeCPGDataObject {
 		return category;
 	}
 
+	/**
+	 * <p>Setter for the field <code>category</code>.</p>
+	 *
+	 * @param category a {@link java.lang.String} object
+	 */
 	public void setCategory(String category) {
 		this.category = category;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>linkedCharactRefs</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:docTypeLinkedCharacts")
 	public List<NodeRef> getLinkedCharactRefs() {
 		return linkedCharactRefs;
 	}
 
+	/**
+	 * <p>Setter for the field <code>linkedCharactRefs</code>.</p>
+	 *
+	 * @param linkedCharactRefs a {@link java.util.List} object
+	 */
 	public void setLinkedCharactRefs(List<NodeRef> linkedCharactRefs) {
 		this.linkedCharactRefs = linkedCharactRefs;
 	}
 
+	/**
+	 * <p>Getter for the field <code>linkedTypes</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:docTypeLinkedTypes")
 	public List<String> getLinkedTypes() {
 		return linkedTypes;
 	}
 
+	/**
+	 * <p>Setter for the field <code>linkedTypes</code>.</p>
+	 *
+	 * @param linkedTypes a {@link java.util.List} object
+	 */
 	public void setLinkedTypes(List<String> linkedTypes) {
 		this.linkedTypes = linkedTypes;
 	}
 
+	/**
+	 * <p>Getter for the field <code>linkedHierarchy</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:docTypeLinkedHierarchy")
 	public List<NodeRef> getLinkedHierarchy() {
 		return linkedHierarchy;
 	}
 
+	/**
+	 * <p>Setter for the field <code>linkedHierarchy</code>.</p>
+	 *
+	 * @param linkedHierarchy a {@link java.util.List} object
+	 */
 	public void setLinkedHierarchy(List<NodeRef> linkedHierarchy) {
 		this.linkedHierarchy = linkedHierarchy;
 	}
 
+	/**
+	 * <p>Getter for the field <code>destPath</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:docTypeDestPath")
 	public String getDestPath() {
 		return destPath;
 	}
 
+	/**
+	 * <p>Setter for the field <code>destPath</code>.</p>
+	 *
+	 * @param destPath a {@link java.lang.String} object
+	 */
 	public void setDestPath(String destPath) {
 		this.destPath = destPath;
 	}
 
+	/**
+	 * <p>Getter for the field <code>subsidiaryRefs</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:subsidiaryRefs")
 	public List<NodeRef> getSubsidiaryRefs() {
 		return subsidiaryRefs;
 	}
 
+	/**
+	 * <p>Setter for the field <code>subsidiaryRefs</code>.</p>
+	 *
+	 * @param subsidiaryRefs a {@link java.util.List} object
+	 */
 	public void setSubsidiaryRefs(List<NodeRef> subsidiaryRefs) {
 		this.subsidiaryRefs = subsidiaryRefs;
 	}
 
+	/**
+	 * <p>Getter for the field <code>plants</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:plants")
 	public List<NodeRef> getPlants() {
 		return plants;
 	}
 
+	/**
+	 * <p>Setter for the field <code>plants</code>.</p>
+	 *
+	 * @param plants a {@link java.util.List} object
+	 */
 	public void setPlants(List<NodeRef> plants) {
 		this.plants = plants;
 	}
 
+	/**
+	 * <p>Getter for the field <code>isMandatory</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:docTypeIsMandatory")
 	public Boolean getIsMandatory() {
 		return isMandatory;
 	}
 
+	/**
+	 * <p>Setter for the field <code>isMandatory</code>.</p>
+	 *
+	 * @param isMandatory a {@link java.lang.Boolean} object
+	 */
 	public void setIsMandatory(Boolean isMandatory) {
 		this.isMandatory = isMandatory;
 	}
 
+	/**
+	 * <p>Getter for the field <code>effectivityType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.model.DocumentEffectivityType} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:docTypeEffectivityType")
 	public DocumentEffectivityType getEffectivityType() {
 		return effectivityType;
 	}
 
+	/**
+	 * <p>Setter for the field <code>effectivityType</code>.</p>
+	 *
+	 * @param effectivityType a {@link fr.becpg.model.DocumentEffectivityType} object
+	 */
 	public void setEffectivityType(DocumentEffectivityType effectivityType) {
 		this.effectivityType = effectivityType;
 	}
 
+	/**
+	 * <p>Getter for the field <code>autoExpirationDelay</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:docTypeAutoExpirationDelay")
 	public Integer getAutoExpirationDelay() {
 		return autoExpirationDelay;
 	}
 
+	/**
+	 * <p>Setter for the field <code>autoExpirationDelay</code>.</p>
+	 *
+	 * @param autoExpirationDelay a {@link java.lang.Integer} object
+	 */
 	public void setAutoExpirationDelay(Integer autoExpirationDelay) {
 		this.autoExpirationDelay = autoExpirationDelay;
 	}
 
+	/**
+	 * <p>Getter for the field <code>formula</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:docTypeFormula")
 	public String getFormula() {
 		return formula;
 	}
 
+	/**
+	 * <p>Setter for the field <code>formula</code>.</p>
+	 *
+	 * @param formula a {@link java.lang.String} object
+	 */
 	public void setFormula(String formula) {
 		this.formula = formula;
 	}
 
+	/**
+	 * <p>Getter for the field <code>nameFormat</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:docTypeNameFormat")
 	public String getNameFormat() {
 		return nameFormat;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nameFormat</code>.</p>
+	 *
+	 * @param nameFormat a {@link java.lang.String} object
+	 */
 	public void setNameFormat(String nameFormat) {
 		this.nameFormat = nameFormat;
 	}
@@ -350,6 +465,7 @@ public class DocumentTypeItem extends BeCPGDataObject {
     }
 
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -360,6 +476,7 @@ public class DocumentTypeItem extends BeCPGDataObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -380,11 +497,11 @@ public class DocumentTypeItem extends BeCPGDataObject {
 	}
 
 	/**
-     * Returns a string representation of this document type item.
-     * The string representation includes all the properties of the document type.
-     *
-     * @return a string representation of this document type item
-     */
+	 * {@inheritDoc}
+	 *
+	 * Returns a string representation of this document type item.
+	 * The string representation includes all the properties of the document type.
+	 */
 	@Override
 	public String toString() {
 		return "DocumentTypeItem [isMandatory=" + isMandatory + ", effectivityType=" + effectivityType + ", autoExpirationDelay="

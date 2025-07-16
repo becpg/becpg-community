@@ -18,11 +18,15 @@
 package fr.becpg.repo.repository.impl;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.namespace.QName;
@@ -124,44 +128,93 @@ public class BeCPGHashCodeBuilder {
 	 * Constant to use in building the hashCode.
 	 */
 	private static final int iConstant = 37;
+	private static final int NULL_MULTIPLIER = iConstant + 12;
+	private static final Map<Class<?>, List<Method>> annotatedMethodsCache = new ConcurrentHashMap<>();
 
-	
-	private  long reflectionAppend(RepositoryEntity object, Set<RepositoryEntity> visited ) {
+	private long reflectionAppend(RepositoryEntity object, Set<RepositoryEntity> visited) {
 		long total = 17;
 
-		if(!visited.contains(object)) {
-			visited.add(object);
+		if (visited.contains(object)) {
+			return total;
+		}
 
-			BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(object);
+		visited.add(object);
 
-			for (PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
-				Method readMethod = pd.getReadMethod();
-				if (readMethod != null) {
-					if (readMethod.isAnnotationPresent(AlfProp.class) || readMethod.isAnnotationPresent(AlfSingleAssoc.class)
-							|| readMethod.isAnnotationPresent(AlfMultiAssoc.class)) {
-						Object fieldValue = beanWrapper.getPropertyValue(pd.getName());
+		Class<?> clazz = object.getClass();
+		List<Method> methods = annotatedMethodsCache.computeIfAbsent(clazz, this::getCachedMethods);
 
-						total = append(total, fieldValue, visited);
-					}
-				}
+		for (Method method : methods) {
+			try {
+				Object fieldValue = method.invoke(object);
+				total = append(total, fieldValue, visited);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				// Log error but continue processing
+				e.printStackTrace();
 			}
+		}
 
-			total = append(total, object.getNodeRef(), visited);
+		total = append(total, object.getNodeRef(), visited);
 
-			if ((object instanceof AspectAwareDataItem) && (((AspectAwareDataItem) object).getAspects() != null)) {
-				int tmp = 0;
-				for (QName aspect : ((AspectAwareDataItem) object).getAspects()) {
-					if ((aspect != null) && !((AspectAwareDataItem) object).getAspectsToRemove().contains(aspect)) {
-						tmp += aspect.hashCode();
-					}
-				}
-				total = append(total, tmp, visited);
-			}
+		if (object instanceof AspectAwareDataItem aspectAwareDataItem) {
+			total = appendAspects(total, aspectAwareDataItem, visited);
+		}
 
+		return total;
+	}
+
+	/**
+	 * Extract method caching logic for better readability
+	 */
+	private List<Method> getCachedMethods(Class<?> clazz) {
+		List<Method> methodList = new ArrayList<>();
+		
+		// Use a dummy object to get property descriptors - this is safe since we only need metadata
+		Object dummyObject;
+		try {
+			dummyObject = clazz.getDeclaredConstructor().newInstance();
+		} catch (Exception e) {
+			// Fallback: return empty list if we can't create a dummy object
+			return methodList;
 		}
 		
+		BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(dummyObject);
+		for (PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
+			Method readMethod = pd.getReadMethod();
+			if (readMethod != null && isAnnotatedMethod(readMethod)) {
+				methodList.add(readMethod);
+			}
+		}
+		return methodList;
+	}
+
+	/**
+	 * Check if method has relevant annotations
+	 */
+	private boolean isAnnotatedMethod(Method method) {
+		return method.isAnnotationPresent(AlfProp.class) || 
+		       method.isAnnotationPresent(AlfSingleAssoc.class) || 
+		       method.isAnnotationPresent(AlfMultiAssoc.class);
+	}
+
+	/**
+	 * Optimized aspect handling
+	 */
+	private long appendAspects(long total, AspectAwareDataItem aspectAwareDataItem, Set<RepositoryEntity> visited) {
+		Set<QName> aspects = aspectAwareDataItem.getAspects();
+		if (aspects == null || aspects.isEmpty()) {
+			return total;
+		}
+
+		Set<QName> aspectsToRemove = aspectAwareDataItem.getAspectsToRemove();
+		int aspectsHash = 0;
 		
-		return total;
+		for (QName aspect : aspects) {
+			if (aspect != null && !aspectsToRemove.contains(aspect)) {
+				aspectsHash += aspect.hashCode();
+			}
+		}
+		
+		return append(total, aspectsHash, visited);
 	}
 
 	/**
@@ -180,93 +233,114 @@ public class BeCPGHashCodeBuilder {
 		BeCPGHashCodeBuilder builder1 = new BeCPGHashCodeBuilder();
 		BeCPGHashCodeBuilder builder2 = new BeCPGHashCodeBuilder();
 
+		Set<RepositoryEntity> visited1 = new HashSet<>();
+		Set<RepositoryEntity> visited2 = new HashSet<>();
+
 		for (PropertyDescriptor pd : beanWrapper1.getPropertyDescriptors()) {
 			Method readMethod = pd.getReadMethod();
-			if (readMethod != null) {
-				if (readMethod.isAnnotationPresent(AlfProp.class) || readMethod.isAnnotationPresent(AlfSingleAssoc.class)
-						|| readMethod.isAnnotationPresent(AlfMultiAssoc.class)) {
-					Object fieldValue = beanWrapper1.getPropertyValue(pd.getName());
-					Object fieldValue2 = beanWrapper2.getPropertyValue(pd.getName());
+			if (readMethod != null && builder1.isAnnotatedMethod(readMethod)) {
+				Object fieldValue = beanWrapper1.getPropertyValue(pd.getName());
+				Object fieldValue2 = beanWrapper2.getPropertyValue(pd.getName());
 
-					long total1 = builder1.append(17, fieldValue, new HashSet<>());
-					long total2 = builder2.append(17, fieldValue2, new HashSet<>());
+				long total1 = builder1.append(17, fieldValue, visited1);
+				long total2 = builder2.append(17, fieldValue2, visited2);
 
-					if ((total1 != total2)) {
-
-						ret.append( "\n append :" + pd.getName()  +"  hash " + total1 + "/" + total2 + "\n");
-						
-						if (fieldValue instanceof RepositoryEntity) {
-							// skip recursion
-							if (obj1.equals(fieldValue) && obj2.equals(fieldValue2)) continue;
-							ret.append( "\n-- Recur diff ");
-							ret.append(printDiff((RepositoryEntity) fieldValue, (RepositoryEntity) fieldValue2));
-						} else if (fieldValue instanceof List && fieldValue2 instanceof List) {
-							ret.append( "\n-- Recur list:  "+((List<?>) fieldValue).size()+" "+((List<?>)fieldValue2).size());
-							boolean printList = false;
-							for (Object el : (List<?>) (fieldValue2)) {
-								if ((el != null) && (el instanceof RepositoryEntity)) {
-									for (Object el2 : (List<?>) (fieldValue)) {
-										
-										if (((RepositoryEntity) el).getNodeRef().equals(((RepositoryEntity) el2).getNodeRef())) {
-											ret.append( "-- Recur diff ");
-											ret.append( printDiff((RepositoryEntity) el, (RepositoryEntity) el2));
-										}
-
-									}
-								} else {
-									printList = true;
-								}
-							}
-							if(printList) {
-								ret.append(((List<?>) fieldValue).toString() +" - "+((List<?>) fieldValue2).toString());
-							}
-							
-						} else {
-
-							ret.append( " --- To save " + (fieldValue != null ? fieldValue.toString() : "null") + "/ Saved "
-									+ (fieldValue2 != null ? fieldValue2.toString() : "null") + " "
-									+ (fieldValue != null ? fieldValue.getClass().getName() : "") + "\n");
-						}
-
-					}
-
+				if (total1 != total2) {
+					ret.append("\n append :").append(pd.getName()).append("  hash ").append(total1).append("/").append(total2).append("\n");
+					appendDiffDetails(ret, fieldValue, fieldValue2, obj1, obj2);
 				}
 			}
 		}
 
-		if (obj1.getNodeRef()!=null && !obj1.getNodeRef().equals(obj2.getNodeRef())) {
-			ret.append("nodeRef differs\n");
-		}
-
-		int tmp1 = 0;
-		int tmp2 = 0;
-		if ((obj1 instanceof AspectAwareDataItem) && (((AspectAwareDataItem) obj1).getAspects() != null)) {
-			for (QName aspect : ((AspectAwareDataItem) obj1).getAspects()) {
-				if ((aspect != null) && !((AspectAwareDataItem) obj1).getAspectsToRemove().contains(aspect)) {
-					tmp1 += aspect.hashCode();
-				}
-			}
-		}
-
-		if ((obj2 instanceof AspectAwareDataItem) && (((AspectAwareDataItem) obj2).getAspects() != null)) {
-			for (QName aspect : ((AspectAwareDataItem) obj2).getAspects()) {
-				if ((aspect != null) && !((AspectAwareDataItem) obj2).getAspectsToRemove().contains(aspect)) {
-					tmp2 += aspect.hashCode();
-				}
-			}
-		}
-
-		if (tmp1 != tmp2) {
-			ret.append( "aspect differs:\n");
-			if (((AspectAwareDataItem) obj1).getAspects() != null) {
-				ret.append( " ---- To save " + ((AspectAwareDataItem) obj1).getAspects().toString() + "\n");
-			}
-			if (((AspectAwareDataItem) obj2).getAspects() != null) {
-				ret.append( " ---- Saved " + ((AspectAwareDataItem) obj2).getAspects().toString() + "\n");
-			}
-		}
+		appendNodeRefDiff(ret, obj1, obj2);
+		appendAspectsDiff(ret, obj1, obj2);
 
 		return ret.toString();
+	}
+
+	/**
+	 * Extract diff details logic for better readability
+	 */
+	private static void appendDiffDetails(StringBuilder ret, Object fieldValue, Object fieldValue2, RepositoryEntity obj1, RepositoryEntity obj2) {
+		if (fieldValue instanceof RepositoryEntity repoEntity && fieldValue2 instanceof RepositoryEntity repoEntity2) {
+			// skip recursion
+			if (!obj1.equals(fieldValue) || !obj2.equals(fieldValue2)) {
+				ret.append("\n-- Recur diff ");
+				ret.append(printDiff(repoEntity, repoEntity2));
+			}
+		} else if (fieldValue instanceof List<?> list1 && fieldValue2 instanceof List<?> list2) {
+			ret.append("\n-- Recur list:  ").append(list1.size()).append(" ").append(list2.size());
+			appendListDiff(ret, list1, list2);
+		} else {
+			ret.append(" --- To save ").append(fieldValue != null ? fieldValue.toString() : "null")
+			   .append("/ Saved ").append(fieldValue2 != null ? fieldValue2.toString() : "null")
+			   .append(" ").append(fieldValue != null ? fieldValue.getClass().getName() : "").append("\n");
+		}
+	}
+
+	/**
+	 * Extract list diff logic
+	 */
+	private static void appendListDiff(StringBuilder ret, List<?> list1, List<?> list2) {
+		boolean printList = false;
+		for (Object el : list2) {
+			if (el instanceof RepositoryEntity repoEntity) {
+				for (Object el2 : list1) {
+					if (el2 instanceof RepositoryEntity repoEntity2 && 
+					    repoEntity.getNodeRef().equals(repoEntity2.getNodeRef())) {
+						ret.append("-- Recur diff ");
+						ret.append(printDiff(repoEntity, repoEntity2));
+					}
+				}
+			} else {
+				printList = true;
+			}
+		}
+		if (printList) {
+			ret.append(list1.toString()).append(" - ").append(list2.toString());
+		}
+	}
+
+	/**
+	 * Extract nodeRef diff logic
+	 */
+	private static void appendNodeRefDiff(StringBuilder ret, RepositoryEntity obj1, RepositoryEntity obj2) {
+		if (obj1.getNodeRef() != null && !obj1.getNodeRef().equals(obj2.getNodeRef())) {
+			ret.append("nodeRef differs\n");
+		}
+	}
+
+	/**
+	 * Extract aspects diff logic
+	 */
+	private static void appendAspectsDiff(StringBuilder ret, RepositoryEntity obj1, RepositoryEntity obj2) {
+		int tmp1 = calculateAspectsHash(obj1);
+		int tmp2 = calculateAspectsHash(obj2);
+
+		if (tmp1 != tmp2) {
+			ret.append("aspect differs:\n");
+			if (obj1 instanceof AspectAwareDataItem aspectAware1 && aspectAware1.getAspects() != null) {
+				ret.append(" ---- To save ").append(aspectAware1.getAspects().toString()).append("\n");
+			}
+			if (obj2 instanceof AspectAwareDataItem aspectAware2 && aspectAware2.getAspects() != null) {
+				ret.append(" ---- Saved ").append(aspectAware2.getAspects().toString()).append("\n");
+			}
+		}
+	}
+
+	/**
+	 * Calculate aspects hash for diff comparison
+	 */
+	private static int calculateAspectsHash(RepositoryEntity obj) {
+		int tmp = 0;
+		if (obj instanceof AspectAwareDataItem aspectAwareDataItem && aspectAwareDataItem.getAspects() != null) {
+			for (QName aspect : aspectAwareDataItem.getAspects()) {
+				if (aspect != null && !aspectAwareDataItem.getAspectsToRemove().contains(aspect)) {
+					tmp += aspect.hashCode();
+				}
+			}
+		}
+		return tmp;
 	}
 
 	/**
@@ -306,12 +380,8 @@ public class BeCPGHashCodeBuilder {
 			throw new IllegalArgumentException("The object to build a hash code for must not be null");
 		}
 		BeCPGHashCodeBuilder builder = new BeCPGHashCodeBuilder();
-
 		return builder.reflectionAppend(object, new HashSet<>());
 	}
-
-
-	
 
 	/**
 	 * <p>
@@ -353,15 +423,12 @@ public class BeCPGHashCodeBuilder {
 	private long append(long total, boolean[] array) {
 		if (array == null) {
 			return total * iConstant;
-		} else {
-			for (boolean anArray : array) {
-				total = append(total, anArray);
-			}
+		}
+		for (boolean element : array) {
+			total = append(total, element);
 		}
 		return total;
 	}
-
-	// -------------------------------------------------------------------------
 
 	/**
 	 * <p>
@@ -376,8 +443,6 @@ public class BeCPGHashCodeBuilder {
 		return (total * iConstant) + value;
 	}
 
-	// -------------------------------------------------------------------------
-
 	/**
 	 * <p>
 	 * Append a <code>hashCode</code> for a <code>byte</code> array.
@@ -390,10 +455,9 @@ public class BeCPGHashCodeBuilder {
 	private long append(long total, byte[] array) {
 		if (array == null) {
 			return total * iConstant;
-		} else {
-			for (byte anArray : array) {
-				total = append(total, anArray);
-			}
+		}
+		for (byte element : array) {
+			total = append(total, element);
 		}
 		return total;
 	}
@@ -423,10 +487,9 @@ public class BeCPGHashCodeBuilder {
 	private long append(long total, char[] array) {
 		if (array == null) {
 			return total * iConstant;
-		} else {
-			for (char anArray : array) {
-				total = append(total, anArray);
-			}
+		}
+		for (char element : array) {
+			total = append(total, element);
 		}
 		return total;
 	}
@@ -456,10 +519,9 @@ public class BeCPGHashCodeBuilder {
 	private long append(long total, double[] array) {
 		if (array == null) {
 			return total * iConstant;
-		} else {
-			for (double anArray : array) {
-				total = append(total, anArray);
-			}
+		}
+		for (double element : array) {
+			total = append(total, element);
 		}
 		return total;
 	}
@@ -489,10 +551,9 @@ public class BeCPGHashCodeBuilder {
 	private long append(long total, float[] array) {
 		if (array == null) {
 			return total * iConstant;
-		} else {
-			for (float anArray : array) {
-				total = append(total, anArray);
-			}
+		}
+		for (float element : array) {
+			total = append(total, element);
 		}
 		return total;
 	}
@@ -522,10 +583,9 @@ public class BeCPGHashCodeBuilder {
 	private long append(long total, int[] array) {
 		if (array == null) {
 			return total * iConstant;
-		} else {
-			for (int anArray : array) {
-				total = append(total, anArray);
-			}
+		}
+		for (int element : array) {
+			total = append(total, element);
 		}
 		return total;
 	}
@@ -539,14 +599,6 @@ public class BeCPGHashCodeBuilder {
 	 *            the long to add to the <code>hashCode</code>
 	 * @return this
 	 */
-	// NOTE: This method uses >> and not >>> as Effective Java and
-	// Long.hashCode do. Ideally we should switch to >>> at
-	// some stage. There are backwards compat issues, so
-	// that will have to wait for the time being. cf LANG-342.
-	// NOTE: This method uses >> and not >>> as Effective Java and
-	// Long.hashCode do. Ideally we should switch to >>> at
-	// some stage. There are backwards compat issues, so
-	// that will have to wait for the time being. cf LANG-342.
 	private long append(long total, long value) {
 		return (total * iConstant) + ((int) (value ^ (value >> 32)));
 	}
@@ -563,10 +615,9 @@ public class BeCPGHashCodeBuilder {
 	private long append(long total, long[] array) {
 		if (array == null) {
 			return total * iConstant;
-		} else {
-			for (long anArray : array) {
-				total = append(total, anArray);
-			}
+		}
+		for (long element : array) {
+			total = append(total, element);
 		}
 		return total;
 	}
@@ -583,47 +634,51 @@ public class BeCPGHashCodeBuilder {
 	private long append(long total, Object object, Set<RepositoryEntity> visited) {
 		if (object == null || (object instanceof MLText mlText && mlText.isEmpty())) {
 			// beCPG avoid collision on NULL == 0 #1159
-			return total * (iConstant + 12);
-
-		} else {
-			if (object.getClass().isArray()) {
-				// 'Switch' on type of array, to dispatch to the correct handler
-				// This handles multi dimensional arrays
-				if (object instanceof long[]) {
-					return append(total, (long[]) object);
-				} else if (object instanceof int[]) {
-					return append(total, (int[]) object);
-				} else if (object instanceof short[]) {
-					return append(total, (short[]) object);
-				} else if (object instanceof char[]) {
-					return append(total, (char[]) object);
-				} else if (object instanceof byte[]) {
-					return append(total, (byte[]) object);
-				} else if (object instanceof double[]) {
-					return append(total, (double[]) object);
-				} else if (object instanceof float[]) {
-					return append(total, (float[]) object);
-				} else if (object instanceof boolean[]) {
-					return append(total, (boolean[]) object);
-				} else {
-					// Not an array of primitives
-					return append(total, (Object[]) object, visited);
-				}
-			} else {
-				if (object instanceof RepositoryEntity) {
-					return (total * iConstant) + reflectionAppend((RepositoryEntity) object, visited);
-				} else if (object instanceof Collection<?>) {
-					int tmp = 0;
-					for (Object el : (Collection<?>) (object)) {
-						if (el != null) {
-							tmp += append(total,el,visited);
-						}
-					}
-					return (total * iConstant) + tmp;
-				} else {
-					return (total * iConstant) + object.hashCode();
-				}
+			return total * NULL_MULTIPLIER;
+		}
+		
+		if (object.getClass().isArray()) {
+			return appendArray(total, object, visited);
+		}
+		
+		if (object instanceof RepositoryEntity repoEntity) {
+			return (total * iConstant) + reflectionAppend(repoEntity, visited);
+		}
+		
+		if (object instanceof Collection<?> collection) {
+			for (Object el : collection) {
+				total = append(total, el, visited);
 			}
+			return total;
+		}
+		
+		return (total * iConstant) + object.hashCode();
+	}
+
+	/**
+	 * Optimized array handling
+	 */
+	private long appendArray(long total, Object object, Set<RepositoryEntity> visited) {
+		// Handle primitive arrays more efficiently
+		if (object instanceof int[] array) {
+			return append(total, array);
+		} else if (object instanceof long[] array) {
+			return append(total, array);
+		} else if (object instanceof short[] array) {
+			return append(total, array);
+		} else if (object instanceof char[] array) {
+			return append(total, array);
+		} else if (object instanceof byte[] array) {
+			return append(total, array);
+		} else if (object instanceof double[] array) {
+			return append(total, array);
+		} else if (object instanceof float[] array) {
+			return append(total, array);
+		} else if (object instanceof boolean[] array) {
+			return append(total, array);
+		} else {
+			// Object array
+			return append(total, (Object[]) object, visited);
 		}
 	}
 
@@ -641,10 +696,9 @@ public class BeCPGHashCodeBuilder {
 	public long append(long total, Object[] array, Set<RepositoryEntity> visited) {
 		if (array == null) {
 			return total * iConstant;
-		} else {
-			for (Object anArray : array) {
-				total = append(total, anArray, visited);
-			}
+		}
+		for (Object element : array) {
+			total = append(total, element, visited);
 		}
 		return total;
 	}
@@ -674,12 +728,10 @@ public class BeCPGHashCodeBuilder {
 	private long append(long total, short[] array) {
 		if (array == null) {
 			return total * iConstant;
-		} else {
-			for (short anArray : array) {
-				total = append(total, anArray);
-			}
+		}
+		for (short element : array) {
+			total = append(total, element);
 		}
 		return total;
 	}
-
 }

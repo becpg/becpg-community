@@ -21,6 +21,8 @@ package fr.becpg.repo.quality.helper;
 
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,15 +54,19 @@ public class StockListAttributeExtractorPlugin extends AbstractExprNameExtractor
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractPropName(QName type, NodeRef nodeRef) {
-		return  (String) nodeService.getProperty(nodeRef, QualityModel.PROP_BATCH_ID);
+	@Nonnull
+	public String extractPropName(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
+		String batchId = (String) nodeService.getProperty(nodeRef, QualityModel.PROP_BATCH_ID);
+		return batchId != null ? batchId : "";
 
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractMetadata(QName type, NodeRef nodeRef) {
-		return type.toPrefixString(namespaceService).split(":")[1];
+	@Nonnull
+	public String extractMetadata(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
+		String[] parts = type.toPrefixString(namespaceService).split(":");
+		return parts.length > 1 ? parts[1] : "";
 	}
 
 }

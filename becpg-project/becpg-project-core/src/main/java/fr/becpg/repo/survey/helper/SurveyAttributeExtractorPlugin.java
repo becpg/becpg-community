@@ -22,6 +22,8 @@ package fr.becpg.repo.survey.helper;
 import java.util.Arrays;
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -45,20 +47,25 @@ public class SurveyAttributeExtractorPlugin implements AttributeExtractorPlugin 
 
 	/** {@inheritDoc} */
 	@Override
+	@Nonnull
 	public Collection<QName> getMatchingTypes() {
 		return Arrays.asList(SurveyModel.TYPE_SURVEY_QUESTION);
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractPropName(QName type, NodeRef nodeRef) {
-		return (String) nodeService.getProperty(nodeRef, SurveyModel.PROP_SURVEY_QUESTION_LABEL);
+	@Nonnull
+	public String extractPropName(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
+		String label = (String) nodeService.getProperty(nodeRef, SurveyModel.PROP_SURVEY_QUESTION_LABEL);
+		return label != null ? label : "";
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public String extractMetadata(QName type, NodeRef nodeRef) {
-		return SurveyModel.PROP_SURVEY_QUESTION_LABEL.getLocalName();
+	@Nonnull
+	public String extractMetadata(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
+		String localName = SurveyModel.PROP_SURVEY_QUESTION_LABEL.getLocalName();
+		return localName != null ? localName : "";
 	}
 
 	/** {@inheritDoc} */
