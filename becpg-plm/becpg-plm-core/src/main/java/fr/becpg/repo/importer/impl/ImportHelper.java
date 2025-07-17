@@ -252,6 +252,7 @@ public class ImportHelper {
 					MLText mlText = new MLText();
 
 					// load translations
+					boolean currentLocaleUnset = true;
 					for (int z_idx = pos; z_idx < importContext.getColumns().size() && z_idx < values.size(); z_idx++) {
 
 						// bcpg:legalName_en
@@ -262,31 +263,29 @@ public class ImportHelper {
 									? transColumn.split(RepoConsts.MODEL_PREFIX_SEPARATOR)[1]
 									: null;
 							
-							// other locales
-							if ((transLocalName != null) && transLocalName.startsWith(qName.getLocalName())) {
-								
-								if (transLocalName.startsWith(qName.getLocalName() + MLTEXT_SEPARATOR)) {
-									
-									String strLocale = transLocalName.replace(qName.getLocalName() + MLTEXT_SEPARATOR, "");
-									Locale locale = MLTextHelper.parseLocale(strLocale);
-									
-									if(values.get(z_idx) == null || values.get(z_idx).isBlank()) {
-										mlText.removeValue(locale);
-									} else 	if (MLTextHelper.isSupportedLocale(locale)) {
-										mlText.addValue(locale, values.get(z_idx));
-									} else {
-										throw new IllegalStateException("Unsupported locale : "+locale);
-									}
-									
+							if ((transLocalName != null) && transLocalName.startsWith(qName.getLocalName() + MLTEXT_SEPARATOR)) {
+
+								String strLocale = transLocalName.replace(qName.getLocalName() + MLTEXT_SEPARATOR, "");
+								Locale locale = MLTextHelper.parseLocale(strLocale);
+								if(values.get(z_idx) == null || values.get(z_idx).isBlank()) {
+									mlText.removeValue(locale);
+								} else 	if (MLTextHelper.isSupportedLocale(locale)) {
+									mlText.addValue(locale, values.get(z_idx));
 								} else {
-									mlText.addValue(I18NUtil.getContentLocaleLang(), values.get(z_idx));
+									throw new IllegalStateException("Unsupported locale : "+locale);
 								}
-								
+							} else if (currentLocaleUnset) {
+								mlText.addValue(I18NUtil.getContentLocaleLang(), values.get(z_idx));
+								currentLocaleUnset = false;
 							} else {
 								// the translation is finished
 								break;
 							}
 						}
+					}
+					
+					if (currentLocaleUnset) {
+						mlText.addValue(I18NUtil.getContentLocaleLang(), "");
 					}
 
 					value = mlText;
@@ -427,11 +426,12 @@ public class ImportHelper {
 		if (value != null) {
 			if (currentValue != null) {
 				for (Locale loc : value.getLocales()) {
-					if (ImportHelper.NULL_VALUE.equals(value.get(loc))) {
-						currentValue.remove(loc);
-					} else {
-
-						currentValue.put(loc, value.get(loc));
+					if (!(I18NUtil.getContentLocaleLang().equals(loc) && "".equals(value.get(loc)) && !"".equals(currentValue))) {
+						if (ImportHelper.NULL_VALUE.equals(value.get(loc))) {
+							currentValue.remove(loc);
+						} else {
+							currentValue.put(loc, value.get(loc));
+						}
 					}
 				}
 				return currentValue;
