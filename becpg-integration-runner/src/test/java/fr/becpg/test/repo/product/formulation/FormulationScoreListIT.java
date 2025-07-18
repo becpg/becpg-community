@@ -18,7 +18,6 @@
 package fr.becpg.test.repo.product.formulation;
 
 import org.alfresco.repo.model.Repository;
-import org.alfresco.service.namespace.NamespaceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
@@ -53,16 +52,13 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 
 	@Autowired
 	protected Repository repositoryHelper;
-	
-	@Autowired
-	private NamespaceService namespaceService;
 
 	@Test
 	public void testGreenScoreCalculation() {
 		ProductData greenScoreProductData = inWriteTx(
 				() -> new GreenScoreSpecificationTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
 						.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withSpecification(true)
-						.withNamespacePrefixResolver(namespaceService).build().createTestProduct());
+						.build().createTestProduct());
 
 		inWriteTx(() -> {
 			productService.formulate(greenScoreProductData);
@@ -102,7 +98,7 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 		FinishedProductData product = inWriteTx(() -> new StandardChocolateEclairTestProduct.Builder()
 				.withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService)
 				.withDestFolder(getTestFolderNodeRef()).withCompo(true).withSurvey(true).withScoreList(true)
-				.withNamespacePrefixResolver(namespaceService).build().createTestProduct());
+				.build().createTestProduct());
 
 		inWriteTx(() -> {
 			
