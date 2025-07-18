@@ -89,6 +89,17 @@ public class ProductScoreListFormulationHandler extends AbstractSimpleListFormul
 		if ((formulatedProduct.getEntityTpl() != null) && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
 			synchronizeWithEntityTemplate(formulatedProduct, simpleListDataList, toRemove);
 		}
+		
+		if (formulatedProduct.getProductSpecifications() != null) {
+			for (ProductSpecificationData productSpecificationData : formulatedProduct.getProductSpecifications()) {
+				List<ScoreListDataItem> templateScoreList = productSpecificationData.getScoreList();
+				if ((templateScoreList != null) && !templateScoreList.isEmpty()) {
+					templateScoreList.forEach(templateScoreItem -> synchronizeScore(templateScoreItem, simpleListDataList, true, toRemove));
+					updateScoreListSorting(simpleListDataList, templateScoreList);
+				}
+			}
+
+		}
 
 		// Synchronize with clients, suppliers, and product specifications
 		synchronizeWithRelatedEntities(formulatedProduct, simpleListDataList, toRemove);
@@ -102,18 +113,6 @@ public class ProductScoreListFormulationHandler extends AbstractSimpleListFormul
 			templateScoreList.forEach(templateScoreItem -> synchronizeScore(templateScoreItem, simpleListDataList, true, toRemove));
 			updateScoreListSorting(simpleListDataList, templateScoreList);
 		}
-
-		if (formulatedProduct.getProductSpecifications() != null) {
-			for (ProductSpecificationData productSpecificationData : formulatedProduct.getProductSpecifications()) {
-				templateScoreList = productSpecificationData.getScoreList();
-				if ((templateScoreList != null) && !templateScoreList.isEmpty()) {
-					templateScoreList.forEach(templateScoreItem -> synchronizeScore(templateScoreItem, simpleListDataList, true, toRemove));
-					updateScoreListSorting(simpleListDataList, templateScoreList);
-				}
-			}
-
-		}
-
 	}
 
 	private void updateScoreListSorting(List<ScoreListDataItem> simpleListDataList, List<ScoreListDataItem> templateScoreList) {
