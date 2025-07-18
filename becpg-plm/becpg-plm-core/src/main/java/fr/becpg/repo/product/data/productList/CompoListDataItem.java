@@ -479,6 +479,13 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 		return this;
 	}
 	
+	/**
+	 * <p>withYieldPerc.</p>
+	 *
+	 * @param yieldPerc a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 * @since 23.4.2.22
+	 */
 	public CompoListDataItem withYieldPerc(Double yieldPerc) {
 		this.yieldPerc = yieldPerc;
 		return this;
