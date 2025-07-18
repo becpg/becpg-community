@@ -118,7 +118,7 @@
                               if(choice.list!=null){
                                   var listOption = this.getCurrentListOptions(question.id, choice.id );
                                  if(!choice.checkboxes){
-                                	 htmlForm +="<p>";
+                                	 htmlForm += '<p class="form-field">';
                                  }
                                   var msgKey  =  choice.id == "-" ? "form.control.decision-tree.empty" : "form.control.decision-tree."+this.options.prefix+"."+question.id+"."+choice.id;           
 
@@ -140,7 +140,7 @@
                                                   }
                                               }  
                                           }
-                                          htmlForm +='<p><input type="checkbox" id="checkbox-'+this.id+question.id+'_'+choice.id+'_'+z+'" name="--group_'+this.id+question.id+'_'+choice.id+'" '+(this.options.disabled?'disabled':'')+' tabindex="0"  class="'+QUESTION_EVENTCLASS+'"  value="'+val+'" '+( selected ? 'checked="checked"':"")+'>';
+                                          htmlForm +='<p class="form-field"><input type="checkbox" id="checkbox-'+this.id+question.id+'_'+choice.id+'_'+z+'" name="--group_'+this.id+question.id+'_'+choice.id+'" '+(this.options.disabled?'disabled':'')+' tabindex="0"  class="'+QUESTION_EVENTCLASS+'"  value="'+val+'" '+( selected ? 'checked="checked"':"")+'>';
                                           htmlForm +='<label for="checkbox-'+this.id+question.id+'_'+choice.id+'_'+z+'" >'+lbl+'</label></p>';
                                 	  
                                 	  }	  
@@ -189,7 +189,7 @@
                               
                                   if(choice.label != "hidden"){
                                 	  var checked = this.getCurrentValueChecked(question.id, choice.id );
-	                                  htmlForm +="<p>";
+	                                  htmlForm +='<p class="form-field">';
 	                                  htmlForm +='<input '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-choice_'+question.id+'_'+choice.id+'" class="'+QUESTION_EVENTCLASS+'" name="--group_'+this.id+question.id+'" type="radio"  '+(checked?'checked="checked"':"")+' />';
 	                                  var msgKey  =  choice.id == "-" ? "form.control.decision-tree.empty" : "form.control.decision-tree."+this.options.prefix+"."+question.id+"."+choice.id;
 	                                  htmlForm +='<label for="'+this.id+'-choice_'+question.id+'_'+choice.id+'">'+(choice.label ? choice.label:  this.msg(msgKey))+'</label>';
