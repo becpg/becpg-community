@@ -493,16 +493,18 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private List<SiteInfo> visitSites() {
 
 		List<SiteInfo> ret = new ArrayList<>();
-
 		List<SiteInfo> sites = siteService.listSites(null, null);
+		
+		Boolean shouldCreateDefaultSite = true;
+		
 		if ((sites != null) && (sites.size() > 2)) {
-			return ret;
+			shouldCreateDefaultSite = false;
 		}
 
 		for (String siteId : new String[] { SIMULATION_SITE_ID, VALID_SITE_ID, ARCHIVED_SITE_ID }) {
-
+			
 			SiteInfo siteInfo = siteService.getSite(siteId);
-			if (siteInfo == null) {
+			if (siteInfo == null && shouldCreateDefaultSite) {
 				siteInfo = siteService.createSite(siteId + "-product-site-dashboard", siteId, I18NUtil.getMessage("plm.site." + siteId + ".title"),
 						"", SiteVisibility.PRIVATE);
 
@@ -557,6 +559,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					}
 
 				} else if (ARCHIVED_SITE_ID.equals(siteId)) {
+					
 					// Manager
 					for (PLMGroup authority : new PLMGroup[] { PLMGroup.RDMgr, PLMGroup.QualityMgr }) {
 
@@ -566,6 +569,23 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				}
 
 				ret.add(siteInfo);
+				
+			}
+			
+			if (ARCHIVED_SITE_ID.equals(siteId) && siteInfo != null) {
+				// Create Project folder
+				NodeRef documentLibraryNodeRef = siteService.getContainer(siteId, SiteService.DOCUMENT_LIBRARY);
+				ClassDefinition classDef = dictionaryService.getClass(ProjectModel.TYPE_PROJECT);
+				
+				NodeRef projectFolderNodeRef = repoService.getOrCreateFolderByPath(documentLibraryNodeRef, ProjectModel.TYPE_PROJECT.getLocalName(),
+						classDef.getTitle(dictionaryService));
+				
+				// Contributor on Project Folder
+				for (SystemGroup authority : new SystemGroup[] { SystemGroup.LicenseWriteConcurrent, SystemGroup.LicenseWriteNamed }) {
+
+					permissionService.setPermission(projectFolderNodeRef, PermissionService.GROUP_PREFIX + authority.toString(),
+							PermissionService.CONTRIBUTOR, true);
+				}
 			}
 
 		}
