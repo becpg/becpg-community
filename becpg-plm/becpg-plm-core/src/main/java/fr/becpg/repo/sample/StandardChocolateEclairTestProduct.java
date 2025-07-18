@@ -15,8 +15,6 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.Pair;
 
-import fr.becpg.model.BeCPGModel;
-
 // Removed unused import
 
 import fr.becpg.model.PLMModel;
@@ -337,7 +335,6 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 	}
 	
 	
-
 	/**
 	 * <p>Getter for the field <code>product</code>.</p>
 	 *
@@ -483,14 +480,9 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 									.withLabelingRuleType(LabelingRuleType.Prefs)));
 
 		}
-		
-		final NodeRef hierarchy1NodeRef = CharactTestHelper.getOrCreateNode(nodeService, nodeService.getPath(destFolder).toPrefixString(namespacePrefixResolver), "H1",
-				BeCPGModel.TYPE_LINKED_VALUE, new HashMap<>(Map.of(BeCPGModel.PROP_LV_VALUE, "H1")));
-		
-		product.setHierarchy1(hierarchy1NodeRef);
 
 		if (isWithSurvey) {
-			product.withSurveyList(new ArrayList<>(createEclairQMSSurveyList(hierarchy1NodeRef)));
+			product.withSurveyList(new ArrayList<>(createEclairQMSSurveyList()));
 		}
 
 		if (isWithScoreList) {
@@ -511,7 +503,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
 	/**
 	 * Creates product specifications for the test product.
-	 *
+	 * 
 	 * @return List of product specifications
 	 */
 	protected List<ProductSpecificationData> createProductSpecifications() {
@@ -949,10 +941,10 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		});
 	}
 
-	private List<SurveyListDataItem> createEclairQMSSurveyList(NodeRef fsLinkedHierarchy) {
+	private List<SurveyListDataItem> createEclairQMSSurveyList() {
         // Question 1: Choux Pastry Quality Check
         final SurveyQuestion question1 = getOrCreateSurveyQuestion(SURVEY_PASTRY_QUESTION, PASTRY_QUALITY,
-                ResponseType.multiChoicelist.name(), null, fsLinkedHierarchy);
+                ResponseType.multiChoicelist.name(), null);
 
         getOrCreateSurveyAnswer(question1, ANSWER_PASTRY_PERFECT, 100d);
         final SurveyQuestion q1Answer1 = getOrCreateSurveyAnswer(question1, ANSWER_PASTRY_MINOR_DEFECTS, 20d);
@@ -964,7 +956,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
         // Question 2: Pastry Cream Filling
         final SurveyQuestion question2 = getOrCreateSurveyQuestion(SURVEY_FILLING_QUESTION, FILLING_QUALITY,
-                ResponseType.multiChoicelist.name(), null, fsLinkedHierarchy);
+                ResponseType.multiChoicelist.name(), null);
 
         getOrCreateSurveyAnswer(question2, ANSWER_FILLING_PERFECT, 100d);
         final SurveyQuestion q2Answer2 = getOrCreateSurveyAnswer(question2, ANSWER_FILLING_MINOR_ISSUES, 30d);
@@ -976,7 +968,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
         // Question 3: Chocolate Glaze
         final SurveyQuestion question3 = getOrCreateSurveyQuestion(SURVEY_CHOCOLATE_QUESTION, CCP_COMPLIANCE,
-                ResponseType.multiChoicelist.name(), null, fsLinkedHierarchy);
+                ResponseType.multiChoicelist.name(), null);
 
         getOrCreateSurveyAnswer(question3, ANSWER_CHOCOLATE_CORRECT, 100d);
         getOrCreateSurveyAnswer(question3, ANSWER_CHOCOLATE_DEVIATION, 0d);
@@ -997,8 +989,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 								.withScore(80d)));
 	}
 
-	private SurveyQuestion getOrCreateSurveyQuestion(String label, String scoreCriterion, String responseType,
-			Double questionScore, NodeRef fsLinkedHierarchy) {
+	private SurveyQuestion getOrCreateSurveyQuestion(String label, String scoreCriterion, String responseType, Double questionScore) {
 
 		// Create new question if not found
 		final SurveyQuestion question = (SurveyQuestion) alfrescoRepository
@@ -1007,7 +998,6 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		question.setScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, scoreCriterion));
 		question.setResponseType(responseType);
 		question.setQuestionScore(questionScore);
-		question.setFsLinkedHierarchy(List.of(fsLinkedHierarchy));
 
 		return (SurveyQuestion) alfrescoRepository.save(question);
 	}
