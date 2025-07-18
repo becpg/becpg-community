@@ -327,6 +327,13 @@ public class LabelingRuleListDataItem extends BeCPGDataObject implements Synchro
 		return this;
 	}
 	
+	/**
+	 * <p>withLabel.</p>
+	 *
+	 * @param label a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.LabelingRuleListDataItem} object
+	 * @since 23.4.2.22
+	 */
 	public LabelingRuleListDataItem withLabel(MLText label) {
 		this.label = label;
 		return this;
