@@ -450,7 +450,11 @@
 	                                        successCallback:
 	                                        {
 	                                            fn: function(response) {
-	                                                Dom.get(self.id + "-step-" + step.id).innerHTML = response.serverResponse.responseText;
+													const stepDOM = Dom.get(self.id + "-step-" + step.id);
+													stepDOM.innerHTML = response.serverResponse.responseText;
+													if (step.type == "form" && (readOnly || validated)) {
+	                                                	stepDOM.classList.add("properties-view");
+	                                                }
 	                                                step.loaded = true;
 	                                                if (step.type == "entityDataList") {
 	                                                    self.loadDataList(step, datalists);
