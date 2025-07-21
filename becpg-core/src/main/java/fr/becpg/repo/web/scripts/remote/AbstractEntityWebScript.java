@@ -285,38 +285,38 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			}
 			
 			Integer pageSize = maxResults;
+			boolean isMaxResultsQuery = RepoConsts.MAX_RESULTS_UNLIMITED.equals(maxResults);
+			if (page == null || page <= 0 || isMaxResultsQuery) {
+				page = 1;
+			}
 			if (pageSize == null) {
 				pageSize = RepoConsts.MAX_RESULTS_256;
 			}
-			if (page == null || page <= 0 || pageSize.equals(RepoConsts.MAX_RESULTS_UNLIMITED)) {
-				page = 1;
-			}
 			
 			int advSearchMaxResults = page * pageSize + 1;
-			if (pageSize == RepoConsts.MAX_RESULTS_UNLIMITED.intValue() || pageSize > RepoConsts.MAX_RESULTS_1000) {
+			if (isMaxResultsQuery || pageSize > RepoConsts.MAX_RESULTS_1000) {
 				advSearchMaxResults = RepoConsts.MAX_RESULTS_5000; // unlimited in advSearch
 			}
 			
 			List<NodeRef> advSearchResults = advSearchService.queryAdvSearch(type, queryBuilder, criteria, advSearchMaxResults);
 			int advSearchResultsSize = advSearchResults.size();
-			int finalResultsSize = pageSize.intValue() == RepoConsts.MAX_RESULTS_UNLIMITED ? advSearchResultsSize : Math.min(pageSize, advSearchResultsSize);
 			List<NodeRef> pagingNodes;
-			int start = (page - 1) * pageSize;
-			int end = Math.min(start + pageSize, finalResultsSize);
+			int startIndex = isMaxResultsQuery ? 0 : (page - 1) * pageSize;
+			int endIndex = isMaxResultsQuery ? advSearchResultsSize : Math.min(startIndex + pageSize, advSearchResultsSize);
 
-			if (start >= finalResultsSize || finalResultsSize == 0) {
+			if (startIndex >= advSearchResultsSize || advSearchResultsSize == 0) {
 			    pagingNodes = List.of();
 			} else {
-			    pagingNodes = advSearchResults.subList(start, end);
+			    pagingNodes = advSearchResults.subList(startIndex, endIndex);
 			}
 			return new PagingResults<NodeRef>() {
 				@Override
 				public boolean hasMoreItems() {
-					return end < advSearchResultsSize;
+					return endIndex < advSearchResultsSize;
 				}
 				@Override
 				public Pair<Integer, Integer> getTotalResultCount() {
-					return new Pair<>(pagingNodes.size(), pagingNodes.size());
+					return new Pair<>(endIndex, endIndex);
 				}
 				@Override
 				public String getQueryExecutionId() {
