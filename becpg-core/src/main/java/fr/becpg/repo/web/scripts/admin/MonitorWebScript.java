@@ -42,6 +42,7 @@ import com.google.common.net.HttpHeaders;
 import fr.becpg.common.BeCPGException;
 import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.batch.BatchQueueService;
+import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.license.BeCPGLicenseManager;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -227,19 +228,20 @@ public class MonitorWebScript extends DeclarativeWebScript {
 				if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser)
 						&& userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseSupplierConcurrent)) {
 					concurrentSupplierUsers++;
-				} else if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteNamed)) {
-					namedWriteUsers++;
-				} else if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadNamed)) {
-					namedReadUsers++;
 				} else if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteConcurrent)) {
 					concurrentWriteUsers++;
 				} else if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadConcurrent)) {
 					concurrentReadUsers++;
-				} else {
+				} else if (userAuthorities.stream().noneMatch(a -> a.contains(PermissionService.GROUP_PREFIX + "License"))) {
 					withoutLicenseUsers++;
 				}
 			}
 		}
+		
+		namedReadUsers = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadNamed).stream()
+				.filter(u -> !licenseManager.isSpecialLicenseUser(u)).count();		
+		namedWriteUsers = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteNamed).stream()
+				.filter(u -> !licenseManager.isSpecialLicenseUser(u)).count();		
 	
 		MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
 	
