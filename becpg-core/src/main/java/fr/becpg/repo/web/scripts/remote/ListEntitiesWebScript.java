@@ -17,8 +17,8 @@
  ******************************************************************************/
 package fr.becpg.repo.web.scripts.remote;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.SocketException;
 import java.util.Set;
 
@@ -44,36 +44,37 @@ public class ListEntitiesWebScript extends AbstractEntityWebScript {
 	@Override
 	public void executeInternal(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 
-
-		try (OutputStream out = resp.getOutputStream()) {
-
+		try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
 			RemoteParams params = new RemoteParams(getFormat(req));
-			
-			Set<String>  fields = extractFields(req);
+
+			Set<String> fields = extractFields(req);
 			Set<String> lists = extractLists(req);
 			params.setFilteredFields(fields, namespaceService);
 			params.setFilteredLists(lists);
-			
-			boolean shouldLimit =  fields !=null && !fields.isEmpty() || lists!=null && !lists.isEmpty();
+
+			boolean shouldLimit = fields != null && !fields.isEmpty() || lists != null && !lists.isEmpty();
 
 			resp.setContentType(getContentType(req));
 			resp.setContentEncoding("UTF-8");
-			
+
 			Integer maxResults = intParam(req, PARAM_MAX_RESULTS);
-			if(shouldLimit && maxResults!=null) {
-				if(maxResults <= 0 || maxResults >  maxResultsLimit()) {
+			if (shouldLimit && maxResults != null) {
+				if (maxResults <= 0 || maxResults > maxResultsLimit()) {
 					maxResults = maxResultsLimit();
 				}
 			}
-			
+
 			PagingResults<NodeRef> entities = findEntities(req, maxResults);
 
 			logger.debug("List entities");
 
-			remoteEntityService.listEntities(entities, out, params);
+			// Write to secondary buffer
+			remoteEntityService.listEntities(entities, buffer, params);
+
+			// Write buffer content to response output stream
+			buffer.writeTo(resp.getOutputStream());
 
 			resp.setStatus(Status.STATUS_OK);
-
 		} catch (BeCPGException e) {
 			logger.error("Cannot export entity", e);
 			throw new WebScriptException(e.getMessage());
