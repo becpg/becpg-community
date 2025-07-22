@@ -1945,6 +1945,8 @@
 					<show id="bcpg:ingToxAcuteInhalationType" force="true" />
 					<show id="bcpg:ingToxAquaticMFactor" force="true" />
 					<show id="bcpg:ingToxData" force="true" />
+					<show id="bcpg:ingToxSystemicValues" force="true" />
+					<show id="bcpg:ingToxMaxValues" force="true" />
 					<show id="bcpg:ingToxIsSuperSensitizing" force="true" />
 
 					<show id="ghs:sdsHazardClassifications" force="true" />
@@ -2033,6 +2035,18 @@
 					<field id="bcpg:ingToxAcuteInhalationType" set="toxTab" />
 					<field id="bcpg:ingToxAquaticMFactor" set="toxTab" />
 					<field id="bcpg:ingToxData" set="toxTab" />
+					<field id="bcpg:ingToxSystemicValues" set="toxTab" read-only="true">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+                            <control-param name="maxLength">10000</control-param>
+                            <control-param name="rows">6</control-param>
+                        </control>
+                    </field>
+					<field id="bcpg:ingToxMaxValues" set="toxTab" read-only="true">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+                            <control-param name="maxLength">10000</control-param>
+                            <control-param name="rows">6</control-param>
+                        </control>
+                    </field>
 					<field id="bcpg:ingToxIsSuperSensitizing" set="toxTab" />
 					<field id="ghs:sdsHazardClassifications" help-id="becpg.forms.help.sdsHazardClassifications" set="clpTab" >
 					     <control template="/org/alfresco/components/form/controls/textarea.ftl">
@@ -2455,6 +2469,8 @@
 					<show id="bcpg:ingAllergensQtyPerc" />
 					<show id="bcpg:isSubstanceOfVeryHighConcern" force="true" />
 					<show id="bcpg:svhcReasonsForInclusion" force="true" />
+					<show id="bcpg:ingToxSystemicValues" force="true" />
+					<show id="bcpg:ingToxMaxValues" force="true" />
 					<show id="bcpg:parentEntityRef" force="true" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
