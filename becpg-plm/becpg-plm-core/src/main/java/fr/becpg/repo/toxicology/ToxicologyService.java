@@ -13,8 +13,6 @@ public interface ToxicologyService {
 	
 	void updateToxIngAfterToxUpdate(NodeRef toxNodeRef);
 	
-	void deleteToxIngBeforeIngDelete(NodeRef ingNodeRef);
-	
 	void deleteToxIngBeforeToxDelete(NodeRef toxNodeRef);
 
 	/**
