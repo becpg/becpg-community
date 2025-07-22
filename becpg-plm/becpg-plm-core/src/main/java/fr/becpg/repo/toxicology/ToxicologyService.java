@@ -24,13 +24,6 @@ public interface ToxicologyService {
 	void updateToxIngAfterToxUpdate(NodeRef toxNodeRef);
 	
 	/**
-	 * <p>deleteToxIngBeforeIngDelete.</p>
-	 *
-	 * @param ingNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 */
-	void deleteToxIngBeforeIngDelete(NodeRef ingNodeRef);
-	
-	/**
 	 * <p>deleteToxIngBeforeToxDelete.</p>
 	 *
 	 * @param toxNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
