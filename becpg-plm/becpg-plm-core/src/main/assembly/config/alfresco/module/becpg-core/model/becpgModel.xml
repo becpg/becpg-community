@@ -6752,6 +6752,16 @@
 
 		<aspect name="bcpg:ingToxAspect">
 			<properties>
+				<property name="bcpg:ingToxSystemicValues">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxMaxValues">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:ingToxData">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
