@@ -39,7 +39,6 @@ public class IngToxPolicy extends AbstractBeCPGPolicy implements OnUpdatePropert
 	public void doInit() {
 		policyComponent.bindClassBehaviour(OnUpdatePropertiesPolicy.QNAME, PLMModel.TYPE_ING, new JavaBehaviour(this, "onUpdateProperties"));
 		policyComponent.bindClassBehaviour(OnUpdatePropertiesPolicy.QNAME, PLMModel.TYPE_TOX, new JavaBehaviour(this, "onUpdateProperties"));
-		policyComponent.bindClassBehaviour(BeforeDeleteNodePolicy.QNAME, PLMModel.TYPE_ING, new JavaBehaviour(this, "beforeDeleteNode"));
 		policyComponent.bindClassBehaviour(BeforeDeleteNodePolicy.QNAME, PLMModel.TYPE_TOX, new JavaBehaviour(this, "beforeDeleteNode"));
 	}
 	
@@ -47,9 +46,7 @@ public class IngToxPolicy extends AbstractBeCPGPolicy implements OnUpdatePropert
 	@Override
 	public void beforeDeleteNode(NodeRef nodeRef) {
 		QName type = nodeService.getType(nodeRef);
-		if (PLMModel.TYPE_ING.equals(type)) {
-			toxicologyService.deleteToxIngBeforeIngDelete(nodeRef);
-		} else if (PLMModel.TYPE_TOX.equals(type)) {
+		if (PLMModel.TYPE_TOX.equals(type)) {
 			toxicologyService.deleteToxIngBeforeToxDelete(nodeRef);
 		}
 	}
