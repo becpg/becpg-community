@@ -409,7 +409,8 @@ public class SurveyServiceImpl implements SurveyService {
 	public List<SurveyListDataItem> getVisibles(List<SurveyListDataItem> surveyListDataItems) {
 		final List<SurveyListDataItem> visibleSurveyListDataItems = new ArrayList<>(surveyListDataItems.size());
 		final Map<NodeRef, SurveyQuestion> nodeRefSurveyQuestions = surveyListDataItems.stream()
-				.map(SurveyListDataItem::getQuestion).map(alfrescoRepository::findOne).map(SurveyQuestion.class::cast)
+				.map(SurveyListDataItem::getQuestion).distinct().map(alfrescoRepository::findOne)
+				.map(SurveyQuestion.class::cast)
 				.collect(Collectors.toMap(SurveyQuestion::getNodeRef, Function.identity()));
 		for (final SurveyListDataItem surveyListDataItem : surveyListDataItems) {
 			final SurveyQuestion surveyQuestion = nodeRefSurveyQuestions.get(surveyListDataItem.getQuestion());
