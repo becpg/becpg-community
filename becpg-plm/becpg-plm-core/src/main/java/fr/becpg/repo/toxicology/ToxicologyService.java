@@ -9,11 +9,26 @@ import org.alfresco.service.cmr.repository.NodeRef;
  */
 public interface ToxicologyService {
 
-	void updateToxIngAfterIngUpdate(NodeRef ingNodeRef);
+	/**
+	 * <p>updateToxIngAfterIngUpdate.</p>
+	 *
+	 * @param ingNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	void updateIngredient(NodeRef ingNodeRef);
 	
-	void updateToxIngAfterToxUpdate(NodeRef toxNodeRef);
+	/**
+	 * <p>updateToxIngAfterToxUpdate.</p>
+	 *
+	 * @param toxNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	void updateIngredientsFromTox(NodeRef toxNodeRef);
 	
-	void deleteToxIngBeforeToxDelete(NodeRef toxNodeRef);
+	/**
+	 * <p>deleteToxIngBeforeToxDelete.</p>
+	 *
+	 * @param toxNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	void removeToxFromIngredients(NodeRef toxNodeRef);
 
 	/**
 	 * <p>getMaxValue.</p>
