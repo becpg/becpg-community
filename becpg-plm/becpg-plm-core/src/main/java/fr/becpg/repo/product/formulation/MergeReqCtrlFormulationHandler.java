@@ -172,7 +172,6 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 						.withMessage(tmp.getReqMlMessage()).withCharact(tmp.getCharact())
 						.withSources((addChildRclSources() == null || Boolean.TRUE.equals(addChildRclSources())) ? tmp.getSources() : new ArrayList<>())
 						.ofDataType(tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutrient)
-						.withFormulationChainId(tmp.getFormulationChainId())
 						.withRegulatoryCode(tmp.getRegulatoryCode());
 				toAdd.add(reqCtl);
 			}
