@@ -41,7 +41,7 @@ public class ToxHelper {
 	
 	public static String appendToxValue(String values, String toxName, Double newValue) {
 		if (newValue == null) {
-			return null;
+			return values;
 		}
 		StringBuilder newValuesBuilder = new StringBuilder();
 		boolean valueFound = false;
