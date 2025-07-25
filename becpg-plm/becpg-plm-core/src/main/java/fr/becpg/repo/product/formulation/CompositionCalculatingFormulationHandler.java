@@ -175,6 +175,10 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 	private void visitVariantData(List<VariantData> variants, Composite<CompoListDataItem> composite, ProductData formulatedProduct, Double parentLossRatio) {
 
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
+			
+			if (component.getData().getVariants() != null && component.getData().getVariants().isEmpty()) {
+				component.getData().setVariants(null);
+			}
 
 			if (!DeclarationType.Omit.equals(component.getData().getDeclType())) {
 				
