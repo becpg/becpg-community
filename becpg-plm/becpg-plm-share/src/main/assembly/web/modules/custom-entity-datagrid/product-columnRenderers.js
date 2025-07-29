@@ -30,7 +30,7 @@ if (beCPG.module.EntityDataGridRenderers) {
             , "cm:cmobject_bcpg:lrComponents", "bcpg:product_gs1:cplProduct"],
         renderer: function(oRecord, data, label, scope, z, zz, elCell, oColumn) {
 
-            var url = beCPG.util.entityURL(data.siteId, data.value), version = "";
+            var url = data.value ? beCPG.util.entityURL(data.siteId, data.value) : null, version = "";
             var toogleGroupButton = null;
             var padding = 0;
             var tr = scope.widgets.dataTable.getTrEl(elCell);
@@ -43,9 +43,9 @@ if (beCPG.module.EntityDataGridRenderers) {
 
             if (label == "mpm:plProduct" || label == "bcpg:compoListProduct" || label == "bcpg:packagingListProduct" || label == "mpm:plResource" || label == "bcpg:productListProduct") {
                 // datalist
-                if (data.metadata.indexOf("finishedProduct") != -1 || data.metadata.indexOf("semiFinishedProduct") != -1) {
+                if (data.value != null && (data.metadata.indexOf("finishedProduct") != -1 || data.metadata.indexOf("semiFinishedProduct") != -1)) {
                     url = beCPG.util.entityURL(data.siteId, data.value, null, null, "compoList");
-                } else if (data.metadata.indexOf("packagingKit") != -1) {
+                } else if (data.value != null && (data.metadata.indexOf("packagingKit") != -1)) {
                     url = beCPG.util.entityURL(data.siteId, data.value, null, null, "packagingList");
                 } else if (data.metadata.indexOf("localSemiFinishedProduct") != -1) {
                     url = null;
