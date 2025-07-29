@@ -1882,11 +1882,13 @@ if (beCPG.module.EntityDataGridRenderers) {
 			var accounts = itemData["assoc_bcpg_supplierAccountRef"];
 			var accountMail = accounts != null && accounts.length > 0 ? accounts[0].metadata : "";
 			var contactMail = itemData["prop_bcpg_contactListEmail"];
-			contactMail = contactMail != null ? contactMail.displayValue.toLowerCase() : "";
-			if (accountMail != contactMail) {
-	            Dom.setStyle(elTr, 'background-color', "rgb(255, 106, 106)");
-			} else {
-				Dom.setStyle(elTr, 'background-color', "");
+			if (contactMail) {
+				contactMail = contactMail.displayValue.toLowerCase();
+				if (accountMail != contactMail) {
+		            Dom.setStyle(elTr, 'background-color', "rgb(255, 106, 106)");
+				} else {
+					Dom.setStyle(elTr, 'background-color', "");
+				}
 			}
             return Alfresco.util.encodeHTML(data.displayValue);
         }
