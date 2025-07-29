@@ -30,7 +30,6 @@ if (beCPG.module.EntityDataGridRenderers) {
             , "cm:cmobject_bcpg:lrComponents", "bcpg:product_gs1:cplProduct"],
         renderer: function(oRecord, data, label, scope, z, zz, elCell, oColumn) {
 
-
             var url = data.value ? beCPG.util.entityURL(data.siteId, data.value) : null, version = "";
             var toogleGroupButton = null;
             var padding = 0;
