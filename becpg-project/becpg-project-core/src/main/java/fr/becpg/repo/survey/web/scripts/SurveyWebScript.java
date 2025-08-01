@@ -63,9 +63,10 @@ public class SurveyWebScript extends AbstractEntityDataListWebScript {
 		try {
 
 			JSONObject ret = new JSONObject();
-			if ((JSONObject) req.parseContent() != null) {
+			final JSONObject jsonReq = (JSONObject) req.parseContent();
+			if (jsonReq != null) {
 
-				surveyService.saveSurveyData(entityNodeRef, dataListName, (JSONObject) req.parseContent());
+				surveyService.saveSurveyData(entityNodeRef, dataListName, jsonReq);
 
 				ret.put("persistedObject", entityNodeRef);
 				ret.put("message", "Success");
