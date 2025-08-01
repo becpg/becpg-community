@@ -183,11 +183,15 @@ public class BeCPGLicenseManager {
 
 
 	private boolean namedLicenseExceeded() {
-		int namedRead = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadNamed.toString()).size();
+		Set<String> namedReadList = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadNamed.toString());
+		namedReadList.removeIf(this::isSpecialLicenseUser);
+		int namedRead = namedReadList.size();
 		if (namedRead > getLicense().allowedNamedRead) {
 			return true;
 		}
-		int namedWrite = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteNamed.toString()).size();
+		Set<String> namedWriteList = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteNamed.toString());
+		int namedWrite = namedWriteList.size();
+		namedWriteList.removeIf(this::isSpecialLicenseUser);
 		if (namedWrite > getLicense().allowedNamedWrite) {
 			return true;
 		}
