@@ -2,6 +2,11 @@
    <#-- CSS Dependencies -->
    <#include "../form/form.css.ftl"/>
    <@link href="${url.context}/res/components/search/search.css" group="search"/>
+   <style>
+    	.search .share-form .form-container .form-fields,  .search .form-row {
+			width: 1000px !important;
+		}
+   </style>
 </@>
 
 <@markup id="customSearch-js" target="js" action="replace">

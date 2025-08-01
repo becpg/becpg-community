@@ -1,4 +1,18 @@
 (function() {
+	                   
+ 	const QUESTION_EVENTCLASS = Alfresco.util.generateDomId(null, "question"),
+     	  LIST_EVENTCLASS     = Alfresco.util.generateDomId(null, "list"),
+          COMMENT_EVENTCLASS  = Alfresco.util.generateDomId(null, "comment");
+	
+	const INPUTS = {
+  		"text": { type: "text" },
+  		"number": { type: "number" },
+  		"int": { type: "number", step: 1, pattern: "\\d+", onchange: "this.value = parseInt(this.value)" },
+  		"percentage":  { type: "number", min: 0, max: 100, onchange: "this.value = this.value < 0 ? 0 : this.value > 100 ? 100 : this.value" },
+  		"date": { type: "date" },
+  		"dateTime": { type: "datetime-local" }
+	};
+	
    /**
     * YUI Library aliases
     */
@@ -61,15 +75,12 @@
                    */
                   onReady : function DecisionTree_onReady() {
                      
-                     var QUESTION_EVENTCLASS = Alfresco.util.generateDomId(null, "question"),
-                         LIST_EVENTCLASS = Alfresco.util.generateDomId(null, "list"),
-                         COMMENT_EVENTCLASS= Alfresco.util.generateDomId(null, "comment");
-                     
                     
                      var htmlForm = "";
+                     var afterFormInitStack = [];
                      for(var i = 0; i< this.options.data.length; i++){
                         var question = this.options.data[i],showComment = false, textarea = false , commentLabel = null;
-                      
+                        var afterFormInit = function() {};
                         if(question.choices){
                         
                            htmlForm += '<fieldset  id="'+this.id+'-question_'+question.id+'" class="hidden">';
@@ -111,6 +122,7 @@
                                }
                               }
                           
+                           var commentChoice = null;
                            
                            for(var j = 0; j< question.choices.length; j++){
                               var choice = question.choices[j];
@@ -201,28 +213,18 @@
                               
                               if(choice.comment){
                                   showComment = true;
-                                  
-                                  if(choice.textarea){
-                                      textarea = choice.textarea;
-                                  }
+                                  commentChoice = choice;
                                }
                            }
                            
-                           if(showComment){
-                              htmlForm +='<div id="'+this.id+'-comment_'+question.id+'" class="decision-tree-comments hidden" >';
-                              if(choice.label!="hidden") {
-                            	  htmlForm +='<label id="'+this.id+'-comment_'+question.id+'-label" for="'+this.id+'-comment_'+question.id+'-input">'+this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".comment")+':</label>';
-                              }
-                              if(this.options.disabled){
-                                  htmlForm +='<span id="'+this.id+'-comment_'+question.id+'-input" >'+this.getCurrentValueComment(question.id)+'</span>';
-                              } else {
-                                  if(textarea){
-                                      htmlForm +='<textarea '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-comment_'+question.id+'-input" class="'+COMMENT_EVENTCLASS+'"  name="--comment_'+this.id+question.id+'" >'+this.getCurrentValueComment(question.id)+'</textarea>';
-                                  } else {
-                                      htmlForm +='<input '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-comment_'+question.id+'-input" class="'+COMMENT_EVENTCLASS+'"  type="text"  value="'+this.getCurrentValueComment(question.id)+'" name="--comment_'+this.id+question.id+'" />';
-                                  }
-                              }
-                               htmlForm +='</div>';
+                           if(showComment && commentChoice != null){
+                              htmlForm +='<div id="'+this.id+'-comment_'+question.id+'" class="decision-tree-comments hidden" ></div>';
+                           	  const self = this;
+                           	  const questionId = question.id;
+                           	  const _commentChoice = commentChoice;
+                           	  afterFormInit = function () {
+							  	self.insertComment(questionId, _commentChoice);
+							  };
                            }
                            
                            if(question.lowerNote){
@@ -235,11 +237,12 @@
                            htmlForm += '<span>'+(question.label ? question.label:  this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".label"))+'</span>';
                            htmlForm += '</div>';
                         }
+                        afterFormInitStack.push(afterFormInit);
                      }
                      
                      var ctrlBody = Dom.get(this.id+"-body");
                      ctrlBody.innerHTML = htmlForm;
-
+					 for (var i = 0; i < afterFormInitStack.length; ++i) afterFormInitStack[i]();
                      
                      
                      var me = this;
@@ -341,7 +344,6 @@
                            var showComment = false;
                            for(var j = 0; j< question.choices.length; j++){
                              var choice = question.choices[j];
-                             
                              if(this.formRuntime!=null && question.mandatory){
                                  if(choice.list!=null && !choice.checkboxes){
 									if(!choice.hasValidation){
@@ -437,6 +439,7 @@
                                 }
                                 
                                 if(choice.comment){
+								   this.insertComment(question.id, choice);
                                    showComment = true;
                                    if(choice.commentLabel && choice.commentLabel.length > 0 &&  Dom.get(this.id+'-comment_'+question.id+'-label')!=null) {
 									  const labelEl = Dom.get(this.id+'-comment_'+question.id+'-label');
@@ -499,7 +502,25 @@
                      if(!this.options.disabled){
                          YAHOO.Bubbling.fire("mandatoryControlValueUpdated");
                      }
-                  }
+                  },
+                  insertComment: function(questionId, choice) {
+					    const container = Dom.get(this.id + '-comment_' + questionId);
+					    if (container.children.length != 0 && container.children[1].hasAttribute(choice.id)) return;
+						var htmlForm = "";
+					   	if(choice.label != "hidden") {
+                        	htmlForm += '<label id="' + this.id + '-comment_' + questionId + '-label" for="' + this.id + '-comment_' + questionId + '-input">' + this.msg("form.control.decision-tree." + this.options.prefix + "." + questionId + ".comment") + ':</label>';
+                  		}
+                        if(this.options.disabled){
+                            htmlForm += '<span id="' + this.id + '-comment_' + questionId + '-input" >' + this.getCurrentValueComment(questionId) + '</span>';
+                         } else {
+                            if (choice.commentType == "textarea") {
+                               htmlForm += '<textarea ' + choice.id + (this.options.disabled ? ' disabled' : '') + ' tabindex="0" id="' + this.id + '-comment_' + questionId + '-input" class="'+COMMENT_EVENTCLASS + '"  name="--comment_' + this.id + questionId + '">' + this.getCurrentValueComment(questionId) + '</textarea>';
+                            } else {
+                               htmlForm += '<input ' + choice.id + (this.options.disabled ? ' disabled' : '') + ' tabindex="0" id="' + this.id + '-comment_' + questionId + '-input" class="'+COMMENT_EVENTCLASS+'" ' + Object.keys(INPUTS[choice.commentType]).map(function (key) { return key + '="' + INPUTS[choice.commentType][key] + '"'; }).join(' ') + ' value="'+this.getCurrentValueComment(questionId) + '" name="--comment_' + this.id + questionId + '" />';
+                            }
+                         }
+                         container.innerHTML = htmlForm;
+				  }
                     
 
                }, true);
