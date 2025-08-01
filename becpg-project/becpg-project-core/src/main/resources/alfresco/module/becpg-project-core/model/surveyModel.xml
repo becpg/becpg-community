@@ -39,7 +39,11 @@
 					<value>none</value>
 					<value>text</value>
 					<value>textarea</value>
-					<value>file</value>
+					<value>number</value>
+					<value>int</value>
+					<value>percentage</value>
+					<value>date</value>
+					<value>dateTime</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -77,6 +81,12 @@
 			<properties>
 				<property name="survey:slComment">
 					<type>d:text</type>
+				</property>
+				<property name="survey:slNumberComment">
+					<type>d:double</type>
+				</property>
+				<property name="survey:slDateComment">
+					<type>d:date</type>
 				</property>
 				<property name="survey:slResponse">
 					<type>d:any</type>
@@ -149,7 +159,7 @@
 				<property name="survey:responseCommentType">
 					<type>d:text</type>
 					<default>none</default>
-					<constraints>pro
+					<constraints>
 						<constraint ref="survey:responseCommentTypes" />
 					</constraints>
 				</property>
@@ -233,6 +243,180 @@
 			</associations>
 		</aspect>
 		<aspect name="survey:advSurveySearchAspect">
+			<properties>
+				<property name="survey:advSearchResponseCommentType1">
+					<type>d:text</type>
+					<default>none</default>
+					<constraints>
+						<constraint ref="survey:responseCommentTypes" />
+					</constraints>
+				</property>
+				<property name="survey:advSearchSlDisabledComment1">
+					<type>d:text</type>
+				</property>
+				<property name="survey:advSearchSlComment1">
+					<type>d:text</type>
+				</property>
+				<property name="survey:advSearchSlNumberComment1">
+					<type>d:double</type>
+				</property>
+				<property name="survey:advSearchSlDateComment1">
+					<type>d:date</type>
+				</property>
+				<property name="survey:advSearchResponseCommentType2">
+					<type>d:text</type>
+					<default>none</default>
+					<constraints>
+						<constraint ref="survey:responseCommentTypes" />
+					</constraints>
+				</property>
+				<property name="survey:advSearchSlDisabledComment2">
+					<type>d:text</type>
+				</property>
+				<property name="survey:advSearchSlComment2">
+					<type>d:text</type>
+				</property>
+				<property name="survey:advSearchSlNumberComment2">
+					<type>d:double</type>
+				</property>
+				<property name="survey:advSearchSlDateComment2">
+					<type>d:date</type>
+				</property>
+				<property name="survey:advSearchResponseCommentType3">
+					<type>d:text</type>
+					<default>none</default>
+					<constraints>
+						<constraint ref="survey:responseCommentTypes" />
+					</constraints>
+				</property>
+				<property name="survey:advSearchSlDisabledComment3">
+					<type>d:text</type>
+				</property>
+				<property name="survey:advSearchSlComment3">
+					<type>d:text</type>
+				</property>
+				<property name="survey:advSearchSlNumberComment3">
+					<type>d:double</type>
+				</property>
+				<property name="survey:advSearchSlDateComment3">
+					<type>d:date</type>
+				</property>
+				<property name="survey:advSearchResponseCommentType4">
+					<type>d:text</type>
+					<default>none</default>
+					<constraints>
+						<constraint ref="survey:responseCommentTypes" />
+					</constraints>
+				</property>
+				<property name="survey:advSearchSlDisabledComment4">
+					<type>d:text</type>
+				</property>
+				<property name="survey:advSearchSlComment4">
+					<type>d:text</type>
+				</property>
+				<property name="survey:advSearchSlNumberComment4">
+					<type>d:double</type>
+				</property>
+				<property name="survey:advSearchSlDateComment4">
+					<type>d:date</type>
+				</property>
+				<property name="survey:advSearchResponseCommentType5">
+					<type>d:text</type>
+					<default>none</default>
+					<constraints>
+						<constraint ref="survey:responseCommentTypes" />
+					</constraints>
+				</property>
+				<property name="survey:advSearchSlComment5">
+					<type>d:text</type>
+				</property>
+				<property name="survey:advSearchSlNumberComment5">
+					<type>d:double</type>
+				</property>
+				<property name="survey:advSearchSlDateComment5">
+					<type>d:date</type>
+				</property>
+				<property name="survey:advSearchResponseCommentType6">
+					<type>d:text</type>
+					<default>none</default>
+					<constraints>
+						<constraint ref="survey:responseCommentTypes" />
+					</constraints>
+				</property>
+				<property name="survey:advSearchSlComment6">
+					<type>d:text</type>
+				</property>
+				<property name="survey:advSearchSlNumberComment6">
+					<type>d:double</type>
+				</property>
+				<property name="survey:advSearchSlDateComment6">
+					<type>d:date</type>
+				</property>
+				<property name="survey:advSearchResponseCommentType7">
+					<type>d:text</type>
+					<default>none</default>
+					<constraints>
+						<constraint ref="survey:responseCommentTypes" />
+					</constraints>
+				</property>
+				<property name="survey:advSearchSlComment7">
+					<type>d:text</type>
+				</property>
+				<property name="survey:advSearchSlNumberComment7">
+					<type>d:double</type>
+				</property>
+				<property name="survey:advSearchSlDateComment7">
+					<type>d:date</type>
+				</property>
+				<property name="survey:advSearchResponseCommentType8">
+					<type>d:text</type>
+					<default>none</default>
+					<constraints>
+						<constraint ref="survey:responseCommentTypes" />
+					</constraints>
+				</property>
+				<property name="survey:advSearchSlComment8">
+					<type>d:text</type>
+				</property>
+				<property name="survey:advSearchSlNumberComment8">
+					<type>d:double</type>
+				</property>
+				<property name="survey:advSearchSlDateComment8">
+					<type>d:date</type>
+				</property>
+				<property name="survey:advSearchResponseCommentType9">
+					<type>d:text</type>
+					<default>none</default>
+					<constraints>
+						<constraint ref="survey:responseCommentTypes" />
+					</constraints>
+				</property>
+				<property name="survey:advSearchSlComment9">
+					<type>d:text</type>
+				</property>
+				<property name="survey:advSearchSlNumberComment9">
+					<type>d:double</type>
+				</property>
+				<property name="survey:advSearchSlDateComment9">
+					<type>d:date</type>
+				</property>
+				<property name="survey:advSearchResponseCommentType10">
+					<type>d:text</type>
+					<default>none</default>
+					<constraints>
+						<constraint ref="survey:responseCommentTypes" />
+					</constraints>
+				</property>
+				<property name="survey:advSearchSlComment10">
+					<type>d:text</type>
+				</property>
+				<property name="survey:advSearchSlNumberComment10">
+					<type>d:double</type>
+				</property>
+				<property name="survey:advSearchSlDateComment10">
+					<type>d:date</type>
+				</property>
+			</properties>
 			<associations>
 				<association name="survey:advSearchSurveyQuestion1">
 					<source>
