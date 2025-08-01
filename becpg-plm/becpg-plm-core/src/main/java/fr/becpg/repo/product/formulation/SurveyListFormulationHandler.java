@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -114,8 +115,12 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 		final List<NodeRef> subsidiaryRefs = formulatedProduct.getSubsidiaryRefs();
 		final List<NodeRef> plants = formulatedProduct.getPlants();
 		final Set<SurveyQuestion> surveyQuestions = new HashSet<>();
+		final Map<String, List<SurveyListDataItem>> namesSurveyLists = SurveyableEntityHelper
+				.getNamesSurveyLists(alfrescoRepository, formulatedProduct);
+		
+		if (namesSurveyLists.isEmpty()) return true;
 
-		logger.debug("SurveyQuestionFormulationHandler::process() <- " + formulatedProduct.getNodeRef());
+		logger.debug("Starting SurveyQuestionFormulationHandler::process for " + formulatedProduct.getNodeRef());
 
 		// Create a predicate that checks the product type against the question's linked types.
 
@@ -124,10 +129,12 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 				subsidiaryRefs != null ? subsidiaryRefs : new ArrayList<>(), plants != null ? plants : new ArrayList<>());
 
 		// Process associations based on the criteria.
-		processSurveyQuestionAssociations(criteriaNodeRefs, surveyQuestions);
+		processSurveyQuestionAssociations(criteriaNodeRefs, surveyQuestions, namesSurveyLists.keySet());
 
 		// Update the survey lists for the formulated product.
-		updateSurveyLists(formulatedProduct, surveyQuestions);
+		updateSurveyLists(formulatedProduct, surveyQuestions, namesSurveyLists);
+		
+		logger.debug("Ending SurveyQuestionFormulationHandler::process for " + formulatedProduct.getNodeRef());
 
 		return true;
 	}
@@ -185,7 +192,9 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 	 */
 	@SuppressWarnings("unchecked")
 	private void processSurveyQuestionAssociations(Map<Criterion, List<? extends Serializable>> criteriaNodeRefs,
-			Set<SurveyQuestion> surveyQuestions) {
+			Set<SurveyQuestion> surveyQuestions, Set<String> surveyListNames) {
+		final Set<NodeRef> surveyQuestionNodeRefs = surveyQuestions.stream().map(SurveyQuestion::getNodeRef)
+				.collect(Collectors.toSet());
 		for (final Entry<Criterion, List<? extends Serializable>> entry : criteriaNodeRefs.entrySet()) {
 			final Criterion criterion = entry.getKey();
 			final Stream<NodeRef> nodeRefStream;
@@ -197,28 +206,33 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 			} else {
 				nodeRefStream = BeCPGQueryBuilder.createQuery().ofType(SurveyModel.TYPE_SURVEY_QUESTION)
 						.andPropEquals(criterion.qName(), entry.getValue().get(0).toString())
-						.inDB().list().stream();
+						.isNotNull(SurveyModel.PROP_SURVEY_FS_SURVEY_LIST_NAME).andNotIDs(surveyQuestionNodeRefs).inDB()
+						.list().stream();
 			}
-			nodeRefStream.forEach(surveyQuestionNodeRef -> {
-				final SurveyQuestion surveyQuestion = (SurveyQuestion) alfrescoRepository
-						.findOne(surveyQuestionNodeRef);
-				// Check that the survey question passes the type filter and all other criteria.
-				boolean criteriaMatch = criteriaNodeRefs.keySet().stream().map(Criterion::filter)
-						.filter(filter -> !filter.equals(criterion.filter())).allMatch(filter -> filter.test(surveyQuestion));
-				if (criteriaMatch) {
-					logger.debug(String.format("Found SurveyQuestion %s matching %s criteria", surveyQuestion.getNodeRef(),
-							criterion.displayedName()));
-					surveyQuestions.add(surveyQuestion);
-				}
-			});
+			nodeRefStream.filter(Predicate.not(surveyQuestionNodeRefs::contains)).map(alfrescoRepository::findOne)
+					.map(SurveyQuestion.class::cast)
+					.filter(surveyQuestion -> surveyListNames.contains(surveyQuestion.getFsSurveyListName()))
+					.forEach(surveyQuestion -> {
+						// Check that the survey question passes the type filter and all other criteria.
+						boolean criteriaMatch = criteriaNodeRefs.keySet().stream().map(Criterion::filter)
+								.filter(filter -> !filter.equals(criterion.filter()))
+								.allMatch(filter -> filter.test(surveyQuestion));
+						if (criteriaMatch) {
+							logger.debug(String.format("Found SurveyQuestion %s matching %s criteria",
+									surveyQuestion.getNodeRef(), criterion.displayedName()));
+							surveyQuestions.add(surveyQuestion);
+						}
+					});
 		}
 	}
 
 	/**
 	 * Updates the survey lists for the formulated product by adding any missing survey questions.
 	 * If not in a transient context, the data is saved to the repository.
+	 * @param namesSurveyLists2 
 	 */
-	private void updateSurveyLists(ProductData formulatedProduct, Set<SurveyQuestion> surveyQuestions) {
+	private void updateSurveyLists(ProductData formulatedProduct, Set<SurveyQuestion> surveyQuestions,
+			Map<String, List<SurveyListDataItem>> namesSurveyLists2) {
 		final Map<String, List<SurveyListDataItem>> namesSurveyLists = SurveyableEntityHelper.getNamesSurveyLists(alfrescoRepository,
 				formulatedProduct);
 		for (final SurveyQuestion surveyQuestion : surveyQuestions) {
