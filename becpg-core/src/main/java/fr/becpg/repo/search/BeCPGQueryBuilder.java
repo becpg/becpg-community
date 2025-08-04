@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -38,6 +37,7 @@ import org.alfresco.query.CannedQueryFactory;
 import org.alfresco.query.CannedQueryResults;
 import org.alfresco.query.PagingRequest;
 import org.alfresco.query.PagingResults;
+import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.model.filefolder.GetChildrenCannedQueryFactory;
 import org.alfresco.repo.node.getchildren.GetChildrenCannedQuery;
 import org.alfresco.repo.rule.RuleModel;
@@ -57,7 +57,6 @@ import org.alfresco.service.cmr.search.SearchParameters;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.repo.model.Repository;
 import org.alfresco.util.ISO9075;
 import org.alfresco.util.Pair;
 import org.alfresco.util.registry.NamedObjectRegistry;
@@ -1766,7 +1765,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		PagingResults<NodeRef> pageOfNodeInfos = null;
 
-		List<Pair<QName, Boolean>> tmp = new LinkedList<>();
+		List<Pair<QName, Boolean>> tmp = new ArrayList<>();
 
 		for (Map.Entry<String, Boolean> entry : sortProps.entrySet()) {
 			if (entry.getKey().indexOf(QName.NAMESPACE_BEGIN) != -1) {

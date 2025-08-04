@@ -1,7 +1,6 @@
 package fr.becpg.repo.product.requirement;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -30,7 +29,7 @@ public class AllergenRequirementScanner extends AbstractRequirementScanner<Aller
 	/** {@inheritDoc} */
 	@Override
 	public List<RequirementListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
-		List<RequirementListDataItem> ret = new LinkedList<>();
+		List<RequirementListDataItem> ret = new ArrayList<>();
 
 		if ((formulatedProduct.getAllergenList() != null) && !formulatedProduct.getAllergenList().isEmpty()) {
 
