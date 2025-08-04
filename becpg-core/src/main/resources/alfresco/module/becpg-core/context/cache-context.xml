@@ -54,6 +54,7 @@
 			  <entry key="fr.becpg.repo.search.AdvSearchService" value="100" />
 			  <entry key="fr.becpg.repo.system.SystemConfigurationService" value="100" />
 			  <entry key="fr.becpg.repo.publication.impl.PublicationChannelServiceImpl" value="20" />
+			  <entry key="fr.becpg.repo.survey.data.SurveyQuestion" value="1000" />
 			</map>
 		</property>
 	</bean>
