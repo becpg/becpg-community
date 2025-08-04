@@ -11,10 +11,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.collections4.CollectionUtils;
@@ -22,9 +20,8 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -48,61 +45,33 @@ import fr.becpg.repo.survey.helper.SurveyableEntityHelper;
 public class SurveyListFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static final Log logger = LogFactory.getLog(SurveyListFormulationHandler.class);
+	
+	private static final String CACHE_KEY = SurveyQuestion.class.getName();
 
-	private NamespaceService namespaceService;
+	private final NamespaceService namespaceService;
 
-	private AlfrescoRepository<BeCPGDataObject> alfrescoRepository;
-
-	private AssociationService associationService;
-
-	private NodeService nodeService;
-
-	/**
-	 * <p>
-	 * Setter for the field <code>namespaceService</code>.
-	 * </p>
-	 *
-	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService}
-	 *                    object.
-	 */
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
-
-	/**
-	 * <p>
-	 * Setter for the field <code>alfrescoRepository</code>.
-	 * </p>
-	 *
-	 * @param alfrescoRepository a
-	 *                           {@link fr.becpg.repo.repository.AlfrescoRepository}
-	 *                           object.
-	 */
-	public void setAlfrescoRepository(AlfrescoRepository<BeCPGDataObject> alfrescoRepository) {
-		this.alfrescoRepository = alfrescoRepository;
-	}
-
-	/**
-	 * <p>
-	 * Setter for the field <code>associationService</code>.
-	 * </p>
-	 *
-	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService}
-	 *                           object.
-	 */
-	public void setAssociationService(AssociationService associationService) {
-		this.associationService = associationService;
-	}
+	private final AlfrescoRepository<BeCPGDataObject> alfrescoRepository;
+	
+	private final BeCPGCacheService beCPGCacheService;
 	
 	/**
 	 * <p>
-	 * Setter for the field <code>nodeService</code>.
+	 * Constructor.
 	 * </p>
-	 *
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService}
+	 *                    object.
+	 * @param alfrescoRepository a
+	 *                           {@link fr.becpg.repo.repository.AlfrescoRepository}
+	 *                           object.
+	 * @param beCPGCacheService a {@link fr.becpg.repo.cache.BeCPGCacheService} object.
 	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
+	public SurveyListFormulationHandler(NamespaceService namespaceService,
+			AlfrescoRepository<BeCPGDataObject> alfrescoRepository, BeCPGCacheService beCPGCacheService) {
+		super();
+		this.namespaceService = namespaceService;
+		this.alfrescoRepository = alfrescoRepository;
+		this.beCPGCacheService = beCPGCacheService;
+		beCPGCacheService.storeInCache(CACHE_KEY, CACHE_KEY, null);
 	}
 
 	/** {@inheritDoc} */
@@ -161,26 +130,26 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 			QName productTypeQName, List<NodeRef> subsidiaryRefs, List<NodeRef> plants) {
 		final Map<String, QName> qNameCache = new HashMap<>();
 		return Map.of(
-				new Criterion(true, SurveyModel.ASSOC_SURVEY_FS_LINKED_CHARACT_REFS, "PackMaterialListDataItem",
+				new Criterion("PackMaterialListDataItem",
 						surveyQuestion -> CollectionUtils.isEmpty(surveyQuestion.getFsLinkedCharactRefs())
 								|| surveyQuestion.getFsLinkedCharactRefs().stream().anyMatch(packMaterialListCharactNodeRefs::contains)),
 					packMaterialListCharactNodeRefs,
-				new Criterion(true, SurveyModel.ASSOC_SURVEY_FS_LINKED_HIERARCHY, "Hierarchy",
+				new Criterion("Hierarchy",
 						surveyQuestion -> CollectionUtils.isEmpty(surveyQuestion.getFsLinkedHierarchy())
 								|| surveyQuestion.getFsLinkedHierarchy().contains(hierarchyNodeRef)),
 					hierarchyNodeRef != null ? Collections.singletonList(hierarchyNodeRef) : Collections.emptyList(),
-				new Criterion(false, SurveyModel.PROP_SURVEY_FS_LINKED_TYPE, "Type",
+				new Criterion("Type",
 						surveyQuestion -> CollectionUtils.isEmpty(surveyQuestion.getFsLinkedTypes())
 								|| surveyQuestion.getFsLinkedTypes().stream()
 										.map(typeName -> qNameCache.computeIfAbsent(typeName,
 												q -> QName.createQName(typeName, namespaceService)))
 										.anyMatch(productTypeQName::equals)),
 						Collections.singletonList(productTypeQName.toPrefixString()),
-				new Criterion(true, BeCPGModel.ASSOC_SUBSIDIARY_REF, "SubsidiaryRefs",
+				new Criterion("SubsidiaryRefs",
 						surveyQuestion -> CollectionUtils.isEmpty(surveyQuestion.getSubsidiaryRefs())
 								|| !Collections.disjoint(surveyQuestion.getSubsidiaryRefs(), subsidiaryRefs)),
 					subsidiaryRefs, 
-				new Criterion(true, BeCPGModel.ASSOC_PLANTS, "Plants", surveyQuestion -> CollectionUtils.isEmpty(surveyQuestion.getPlants())
+				new Criterion("Plants", surveyQuestion -> CollectionUtils.isEmpty(surveyQuestion.getPlants())
 						|| !Collections.disjoint(surveyQuestion.getPlants(), plants)),
 					plants
 		);
@@ -190,28 +159,19 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 	 * Iterates over the criteria and, for each association found, checks if the corresponding
 	 * survey question meets all the criteria. If so, the question is added to the surveyQuestions set.
 	 */
-	@SuppressWarnings("unchecked")
 	private void processSurveyQuestionAssociations(Map<Criterion, List<? extends Serializable>> criteriaNodeRefs,
 			Set<SurveyQuestion> surveyQuestions, Set<String> surveyListNames) {
 		final Set<NodeRef> surveyQuestionNodeRefs = surveyQuestions.stream().map(SurveyQuestion::getNodeRef)
 				.collect(Collectors.toSet());
+		final List<SurveyQuestion> allSurveyQuestions = beCPGCacheService.getFromCache(CACHE_KEY, CACHE_KEY,
+				() -> BeCPGQueryBuilder.createQuery().ofType(SurveyModel.TYPE_SURVEY_QUESTION)
+						.isNotNull(SurveyModel.PROP_SURVEY_FS_SURVEY_LIST_NAME).inDB().list().stream()
+						.map(alfrescoRepository::findOne).map(SurveyQuestion.class::cast).toList());
 		for (final Entry<Criterion, List<? extends Serializable>> entry : criteriaNodeRefs.entrySet()) {
 			final Criterion criterion = entry.getKey();
-			final Stream<NodeRef> nodeRefStream;
-			if (criterion.assoc()) {
-				nodeRefStream = ((List<NodeRef>) CollectionUtils.emptyIfNull(entry.getValue())).stream()
-						.flatMap(criterionNodeRef -> associationService
-								.getSourcesAssocs(criterionNodeRef, criterion.qName()).stream())
-						.filter(nodeRef -> SurveyModel.TYPE_SURVEY_QUESTION.equals(nodeService.getType(nodeRef)));
-			} else {
-				nodeRefStream = BeCPGQueryBuilder.createQuery().ofType(SurveyModel.TYPE_SURVEY_QUESTION)
-						.andPropEquals(criterion.qName(), entry.getValue().get(0).toString())
-						.isNotNull(SurveyModel.PROP_SURVEY_FS_SURVEY_LIST_NAME).andNotIDs(surveyQuestionNodeRefs).inDB()
-						.list().stream();
-			}
-			nodeRefStream.filter(Predicate.not(surveyQuestionNodeRefs::contains)).map(alfrescoRepository::findOne)
+			allSurveyQuestions.stream().filter(criterion.filter())
+					.filter(surveyQuestion -> !surveyQuestionNodeRefs.contains(surveyQuestion.getNodeRef()))
 					.map(SurveyQuestion.class::cast)
-					.filter(surveyQuestion -> surveyListNames.contains(surveyQuestion.getFsSurveyListName()))
 					.forEach(surveyQuestion -> {
 						// Check that the survey question passes the type filter and all other criteria.
 						boolean criteriaMatch = criteriaNodeRefs.keySet().stream().map(Criterion::filter)
@@ -267,9 +227,9 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 	}
 
 	/**
-	 * A simple record to group the citerion type (FALSE = prop, TRUE = assoc), QName, a display name, a predicate filter and a transformer together.
+	 * A simple record to group a display name, a predicate filter and a transformer together.
 	 */
-	private record Criterion(boolean assoc, QName qName, String displayedName, Predicate<SurveyQuestion> filter) {
+	private record Criterion(String displayedName, Predicate<SurveyQuestion> filter) {
 	}
 
 	private QName getTypeQName(ProductData formulatedProduct) {
