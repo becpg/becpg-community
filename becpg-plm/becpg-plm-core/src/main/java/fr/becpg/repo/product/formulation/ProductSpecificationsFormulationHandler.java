@@ -9,7 +9,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -58,7 +58,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class ProductSpecificationsFormulationHandler extends FormulationBaseHandler<ProductData> {
 
-	private List<RequirementScanner> requirementScanners = new LinkedList<>();
+	private List<RequirementScanner> requirementScanners = new ArrayList<>();
 
 	private static Log logger = LogFactory.getLog(ProductSpecificationsFormulationHandler.class);
 
@@ -322,7 +322,7 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 		} else {
 
 			if (formulatedProduct.getReqCtrlList() == null) {
-				formulatedProduct.setReqCtrlList(new LinkedList<>());
+				formulatedProduct.setReqCtrlList(new ArrayList<>());
 			}
 
 			for (RequirementScanner scanner : requirementScanners) {

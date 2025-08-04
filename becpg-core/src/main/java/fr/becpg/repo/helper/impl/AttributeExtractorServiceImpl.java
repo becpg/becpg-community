@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -61,7 +60,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.config.format.FormatMode;
-import fr.becpg.config.format.PropertyFormatService;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SecurityModel;
@@ -125,9 +123,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 	@Autowired
 	private BeCPGCacheService beCPGCacheService;
-
-	@Autowired
-	private PropertyFormatService propertyFormatService;
 
 	private CommonDataListCallBack commonDataListCallBack = new CommonDataListCallBack();
 
@@ -621,7 +616,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	@Override
 	public List<AttributeExtractorStructure> readExtractStructure(QName itemType, List<AttributeExtractorField> metadataFields) {
 
-		List<AttributeExtractorStructure> ret = new LinkedList<>();
+		List<AttributeExtractorStructure> ret = new ArrayList<>();
 
 		int formulaCount = 0;
 
@@ -1160,7 +1155,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			I18NUtil.setLocale((Locale.getDefault()));
 			I18NUtil.setContentLocale(null);
 
-			LinkedList<AttributeExtractorField> fields = new LinkedList<>();
+			ArrayList<AttributeExtractorField> fields = new ArrayList<>();
 			for (String metadataField : criteriaMap.keySet()) {
 				AttributeExtractorField field = new AttributeExtractorField(metadataField, null);
 				fields.add(field);
@@ -1315,6 +1310,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	/** {@inheritDoc} */
 	@Override
 	public PropertyFormats getPropertyFormats(FormatMode mode, boolean useServerLocale) {
-		return propertyFormatService.getPropertyFormats(mode, useServerLocale);
+		return PropertyFormats.forMode(mode, useServerLocale);
 	}
 }

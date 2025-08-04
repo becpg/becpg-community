@@ -11,7 +11,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -937,7 +936,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 				List<LabelingRuleListDataItem> tmp = ret.get(group);
 				if (tmp == null) {
-					tmp = new LinkedList<>();
+					tmp = new ArrayList<>();
 				}
 				tmp.add(labelingRule);
 				ret.put(group, tmp);
@@ -946,7 +945,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			String group = LabelingRuleListDataItem.DEFAULT_LABELING_GROUP;
 			List<LabelingRuleListDataItem> tmp = ret.get(group);
 			if (tmp == null) {
-				tmp = new LinkedList<>();
+				tmp = new ArrayList<>();
 			}
 			tmp.add(labelingRule);
 			ret.put(group, tmp);
@@ -974,7 +973,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							}
 						}
 					} else {
-						formulatedProduct.getLabelingListView().setLabelingRuleList(new LinkedList<>());
+						formulatedProduct.getLabelingListView().setLabelingRuleList(new ArrayList<>());
 					}
 
 					if (!contains) {
@@ -1308,7 +1307,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	// Move Group at top
 	private List<CompositeLabeling> reorderCompositeLabeling(LabelingFormulaContext context, CompositeLabeling current, boolean isFirst) {
-		List<CompositeLabeling> ret = new LinkedList<>();
+		List<CompositeLabeling> ret = new ArrayList<>();
 
 		for (Iterator<Map.Entry<NodeRef, CompositeLabeling>> iterator = current.getIngList().entrySet().iterator(); iterator.hasNext();) {
 			CompositeLabeling component = iterator.next().getValue();
@@ -1397,7 +1396,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		List<IngLabelingListDataItem> ret = new ArrayList<>();
 
 		if (labelingFormulaContext.isLabelingByLanguage()) {
-			List<Locale> langs = new LinkedList<>();
+			List<Locale> langs = new ArrayList<>();
 			for (Locale orderedLocale : labelingFormulaContext.availableLocales) {
 				if (label.containsKey(orderedLocale)) {
 					langs.add(orderedLocale);

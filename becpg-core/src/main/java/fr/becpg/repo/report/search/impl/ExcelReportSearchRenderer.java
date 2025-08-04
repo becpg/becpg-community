@@ -3,7 +3,7 @@ package fr.becpg.repo.report.search.impl;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -183,7 +183,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
 			QName itemType = QName.createQName(headerRow.getCell(1).getStringCellValue(), namespaceService);
 
-			List<String> parameters = new LinkedList<>();
+			List<String> parameters = new ArrayList<>();
 			if (headerRow.getCell(2) != null) {
 				parameters.add(headerRow.getCell(2).getStringCellValue());
 			}
@@ -271,7 +271,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 	}
 
 	private List<AttributeExtractorStructure> extractListStruct(QName itemType, Row headerRow) {
-		List<AttributeExtractorField> metadataFields = new LinkedList<>();
+		List<AttributeExtractorField> metadataFields = new ArrayList<>();
 		String currentNested = "";
 		for (int i = 1; i < headerRow.getLastCellNum(); i++) {
 			if (headerRow.getCell(i) != null) {

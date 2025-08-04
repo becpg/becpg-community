@@ -72,17 +72,17 @@ public class XmlMappingLoader implements MappingLoader {
 
 		Node dateFormat = mappingsElt.selectSingleNode(ImportHelper.QUERY_XPATH_DATE_FORMAT);
 		if (dateFormat != null) {
-			importContext.getPropertyFormats().setDateFormat(dateFormat.getStringValue());
+			importContext.setPropertyFormats(importContext.getPropertyFormats().withDateFormat(dateFormat.getStringValue()));
 		}
 
 		Node datetimeFormat = mappingsElt.selectSingleNode(ImportHelper.QUERY_XPATH_DATETIME_FORMAT);
 		if (datetimeFormat != null) {
-			importContext.getPropertyFormats().setDatetimeFormat(datetimeFormat.getStringValue());
+			importContext.setPropertyFormats(importContext.getPropertyFormats().withDateTimeFormat(datetimeFormat.getStringValue()));
 		}
 
 		Node decimalFormatPattern = mappingsElt.selectSingleNode(ImportHelper.QUERY_XPATH_DECIMAL_PATTERN);
 		if (decimalFormatPattern != null) {
-			importContext.getPropertyFormats().setDecimalFormat(decimalFormatPattern.getStringValue());
+			importContext.setPropertyFormats(importContext.getPropertyFormats().withDecimalFormat(decimalFormatPattern.getStringValue()));
 		}
 
 		for (Node mappingNode : mappingNodes) {
@@ -109,8 +109,6 @@ public class XmlMappingLoader implements MappingLoader {
 					}
 				}
 
-				// classMapping.getNodeColumnKeys().add(new
-				// KeyAttributeMapping(id, attributeDef, classQName));
 				classMapping.getNodeColumnKeys().add(attribute);
 			}
 
@@ -128,8 +126,6 @@ public class XmlMappingLoader implements MappingLoader {
 					}
 				}
 
-				// classMapping.getDataListColumnKeys().add(new
-				// KeyAttributeMapping(id, attributeDef, classQName));
 				classMapping.getDataListColumnKeys().add(attribute);
 			}
 
