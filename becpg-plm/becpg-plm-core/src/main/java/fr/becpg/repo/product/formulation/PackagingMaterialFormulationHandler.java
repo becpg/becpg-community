@@ -5,7 +5,7 @@ import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -105,7 +105,7 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 
 				// Create/Update Packaging Material List
 				if (formulatedProduct.getPackMaterialList() == null) {
-					formulatedProduct.setPackMaterialList(new LinkedList<>());
+					formulatedProduct.setPackMaterialList(new ArrayList<>());
 				}
 
 				List<PackMaterialListDataItem> toRemove = new ArrayList<>();

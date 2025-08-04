@@ -3,7 +3,7 @@ package fr.becpg.repo.product.formulation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -116,7 +116,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 			synchronizeTemplate(productData.getEntityTpl().getLabelClaimList(), productData.getLabelClaimList(), sort);
 		}
 
-		List<ProductSpecificationData> specDatas = new LinkedList<>(extractSpecifications(productData.getProductSpecifications()));
+		List<ProductSpecificationData> specDatas = new ArrayList<>(extractSpecifications(productData.getProductSpecifications()));
 		if ((specDatas != null) && !specDatas.isEmpty()) {
 			specDatas.sort((o1, o2) -> o1.getName().compareTo(o2.getName()));
 
