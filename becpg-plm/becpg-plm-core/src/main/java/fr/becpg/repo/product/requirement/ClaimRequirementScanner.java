@@ -2,7 +2,6 @@ package fr.becpg.repo.product.requirement;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +34,7 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 	/** {@inheritDoc} */
 	@Override
 	public List<RequirementListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
-		List<RequirementListDataItem> ret = new LinkedList<>();
+		List<RequirementListDataItem> ret = new ArrayList<>();
 
 		if (getDataListVisited(formulatedProduct) != null) {
 

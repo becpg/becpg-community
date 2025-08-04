@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -207,7 +206,7 @@ public class ECOServiceImpl implements ECOService {
 				batchInfo.enableNotifyByMail(isSimulated ? "eco.simulate" : "eco.apply", String.format(ACTION_URL_PREFIX, ecoNodeRef.toString()));
 			}
 
-			List<BatchStep<Object>> batchStepList = new LinkedList<>();
+			List<BatchStep<Object>> batchStepList = new ArrayList<>();
 			
 			BatchClosingHook closingHook = null;
 			
@@ -547,12 +546,12 @@ public class ECOServiceImpl implements ECOService {
 			logger.trace("WUsedList to impact :" + composite.toString());
 		}
 		
-		List<Object> compositesList = new LinkedList<>();
+		List<Object> compositesList = new ArrayList<>();
 		
 		for (final Composite<WUsedListDataItem> component : composite.getChildren()) {
 			if (component.getData() != null && ChangeOrderType.Merge.equals(ecoData.getEcoType())) {
 				
-				List<Composite<WUsedListDataItem>> composites = new LinkedList<>();
+				List<Composite<WUsedListDataItem>> composites = new ArrayList<>();
 				
 				composites.add(component);
 				composites.addAll(findAllImpactedChildrenComposites(component, ecoData));
@@ -560,7 +559,7 @@ public class ECOServiceImpl implements ECOService {
 				compositesList.add(composites);
 			} else {
 				for (final Composite<WUsedListDataItem> childComponent : component.getChildren()) {
-					List<Composite<WUsedListDataItem>> composites = new LinkedList<>();
+					List<Composite<WUsedListDataItem>> composites = new ArrayList<>();
 					
 					if (childComponent.getData() != null && Boolean.TRUE.equals(childComponent.getData().getIsWUsedImpacted())) {
 						composites.add(childComponent);
@@ -895,7 +894,7 @@ public class ECOServiceImpl implements ECOService {
 				batchInfo.enableNotifyByMail("eco.calculateWUsed", String.format(ACTION_URL_PREFIX, ecoNodeRef.toString()));
 			}
 			
-			List<BatchStep<Object>> batchStepList = new LinkedList<>();
+			List<BatchStep<Object>> batchStepList = new ArrayList<>();
 			
 			batchStepList.add(createCalculateWUsedListBatchStep(ecoData, isWUsedImpacted, false));
 			
@@ -918,7 +917,7 @@ public class ECOServiceImpl implements ECOService {
 		BatchInfo closingBatchInfo = new BatchInfo(String.format("closeECO-%s", ecoNodeRef.getId()), "becpg.batch.eco.close", entityDescription);
 		closingBatchInfo.setRunAsSystem(true);
 		
-		List<BatchStep<Object>> closingBatchStepList = new LinkedList<>();
+		List<BatchStep<Object>> closingBatchStepList = new ArrayList<>();
 		
 		if (impactedProducts.isEmpty()) {
 			impactedProducts.addAll(provideImpactedProducts(CompositeHelper.getHierarchicalCompoList(ecoData.getWUsedList()), true));
@@ -1122,7 +1121,7 @@ public class ECOServiceImpl implements ECOService {
 	
 	private List<Composite<WUsedListDataItem>> findAllImpactedChildrenComposites(Composite<WUsedListDataItem> composite, final ChangeOrderData ecoData) {
 		
-		List<Composite<WUsedListDataItem>> composites = new LinkedList<>();
+		List<Composite<WUsedListDataItem>> composites = new ArrayList<>();
 		
 		for (final Composite<WUsedListDataItem> component : composite.getChildren()) {
 			

@@ -194,7 +194,6 @@
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="contentService" ref="contentService" />
-		<property name="propertyFormatService" ref="propertyFormatService" />
 	</bean>
 
 	<bean id="webscript.fr.becpg.project.projectTaskEditUrl.get" class="fr.becpg.repo.project.web.scripts.ProjectTaskEditUrlWebScript"
