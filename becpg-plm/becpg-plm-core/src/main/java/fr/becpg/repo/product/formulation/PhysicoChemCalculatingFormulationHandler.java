@@ -5,7 +5,6 @@ package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +49,7 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 			logger.debug("Physico chemical calculating visitor");
 
 			if (formulatedProduct.getPhysicoChemList() == null) {
-				formulatedProduct.setPhysicoChemList(new LinkedList<>());
+				formulatedProduct.setPhysicoChemList(new ArrayList<>());
 			}
 
 			boolean hasCompoEl = formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))

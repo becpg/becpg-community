@@ -85,8 +85,7 @@ public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin 
 		if (type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
 			Serializable propAuthorityDisplayName = nodeService.getProperty(nodeRef, ContentModel.PROP_AUTHORITY_DISPLAY_NAME);
 			if (propAuthorityDisplayName != null) {
-				String displayName = (String) propAuthorityDisplayName;
-				return displayName != null ? displayName : "";
+				return (String) propAuthorityDisplayName;
 			}
 			String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 			return name != null ? name : "";

@@ -6,10 +6,10 @@ package fr.becpg.repo.dictionary.constraint;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -284,7 +284,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 			String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
 
 			allowedValues = AuthenticationUtil.runAsSystem(() -> {
-				List<String> valuesToReturn = new LinkedList<>();
+				List<String> valuesToReturn = new ArrayList<>();
 				for (Map.Entry<String, DynListEntry> entry : values.entrySet()) {
 					if (!Boolean.TRUE.equals(entry.getValue().getIsDeleted()) && ((currentUser == null) || entry.getValue().getGroups() ==null || entry.getValue().getGroups().isEmpty()
 							|| entry.getValue().getGroups().stream().anyMatch(key -> serviceRegistry.getAuthorityService()
@@ -298,11 +298,11 @@ public class DynListConstraint extends ListOfValuesConstraint {
 			});
 
 		} else {
-			allowedValues = new LinkedList<>(values.keySet());
+			allowedValues = new ArrayList<>(values.keySet());
 		}
 
 		if (allowedValuesSuffix != null) {
-			List<String> valuesToReturnWithSuffixes = new LinkedList<>();
+			List<String> valuesToReturnWithSuffixes = new ArrayList<>();
 			allowedValues.forEach(value -> allowedValuesSuffix.forEach(suffix -> valuesToReturnWithSuffixes.add(value + suffix)));
 			return valuesToReturnWithSuffixes;
 		}
