@@ -140,5 +140,11 @@
 		<property name="permissionService" ref="permissionService" />
 		<property name="securityService" ref="securityService" />
 	</bean>
+    
+    <!-- SurveyQuestion -->
+	
+	<bean id="surveyQuestionPolicy" class="fr.becpg.repo.survey.SurveyQuestionPolicy" parent="abstractBeCPGPolicy">
+	  <property name="beCPGCacheService" ref="beCPGCacheService"/>
+    </bean>
 
 </beans>
