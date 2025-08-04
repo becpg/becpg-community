@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -307,16 +307,14 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getTargetAssocs(NodeRef nodeRef, QName qName) {
-		//always return a new List ensuring cache immutability
-		//TO should be better using unmodifiable set
-		return new LinkedList<>(getFromCache(assocsCache, new AssociationCacheRegion(nodeRef, qName), () -> {
-			List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, qName);
-			Set<NodeRef> listItems = new HashSet<>();
-			for (AssociationRef assocRef : assocRefs) {
-				listItems.add(assocRef.getTargetRef());
-			}
-			return listItems;
-		}));
+		 Set<NodeRef> cachedSet = getFromCache(assocsCache, new AssociationCacheRegion(nodeRef, qName), () -> 
+	        nodeService.getTargetAssocs(nodeRef, qName)
+	            .stream()
+	            .map(AssociationRef::getTargetRef)
+	            .collect(Collectors.toSet())
+	    );
+	    
+	    return new ArrayList<>(cachedSet);
 
 	}
 
@@ -371,18 +369,20 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	@Override
 	public ChildAssocCacheEntry getChildAssocsByType(final NodeRef nodeRef, final QName qName) {
 		return getFromCache(childsAssocsCache, new AssociationCacheRegion(nodeRef, qName), () -> {
-			ChildAssocCacheEntry childAssocCacheEntry = new ChildAssocCacheEntry();
-
-			for (ChildAssociationRef assocRef : nodeService.getChildAssocs(nodeRef, qName, RegexQNamePattern.MATCH_ALL, true)) {
-				if (nodeService.exists(assocRef.getChildRef())) {
-					QName type = nodeService.getType(assocRef.getChildRef());
-					childAssocCacheEntry.add(assocRef.getChildRef(), type);
-				}
-			}
-
-			childAssocCacheEntry.sort(commonDataListSort);
-
-			return childAssocCacheEntry;
+	        List<ChildAssociationRef> allAssocs = nodeService.getChildAssocs(nodeRef, qName, RegexQNamePattern.MATCH_ALL, true);
+	        
+	        ChildAssocCacheEntry childAssocCacheEntry = new ChildAssocCacheEntry(allAssocs.size());
+	        
+	        for (ChildAssociationRef assocRef : allAssocs) {
+	            NodeRef childRef = assocRef.getChildRef();
+	            if (nodeService.exists(childRef)) {
+	                QName type = nodeService.getType(childRef);
+	                childAssocCacheEntry.add(childRef, type);
+	            }
+	        }
+	        
+	        childAssocCacheEntry.sort(commonDataListSort);
+	        return childAssocCacheEntry;
 
 		});
 	}
@@ -394,7 +394,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 	private List<NodeRef> dbChildAssocSearch(final NodeRef nodeRef, final QName childType, Map<String, Boolean> sortProps) {
 
-		List<NodeRef> ret = new LinkedList<>();
+		List<NodeRef> ret = new ArrayList<>();
 		QName sortFieldQName = null;
 		String sortDirection = null;
 		String createSortDirection = "ASC";

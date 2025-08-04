@@ -18,7 +18,7 @@
 package fr.becpg.repo.web.scripts;
 
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -53,7 +53,7 @@ public class WebscriptHelper {
 	public static List<AttributeExtractorField> extractMetadataFields(WebScriptRequest req){
 	
 		String fields = req.getParameter(PARAM_FIELDS);
-		List<AttributeExtractorField> metadataFields = new LinkedList<>();
+		List<AttributeExtractorField> metadataFields = new ArrayList<>();
 	
 		if (fields != null && fields.length() > 0) {
 			String[] splitted = fields.split(",");

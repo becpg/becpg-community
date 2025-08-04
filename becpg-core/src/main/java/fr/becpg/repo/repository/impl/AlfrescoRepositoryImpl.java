@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -839,7 +838,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			}
 
 			if ((assocRefs != null) && readMethod.getAnnotation(AlfMultiAssoc.class).isEntity()) {
-				List<RepositoryEntity> entities = new LinkedList<>();
+				List<RepositoryEntity> entities = new ArrayList<>(assocRefs.size());
 				for (NodeRef nodeRef : assocRefs) {
 					entities.add(findOne(nodeRef,
 							readMethod.getAnnotation(AlfMultiAssoc.class).isCacheable() ? CacheType.FORCE_SHARED_CACHE : CacheType.STANDARD,
@@ -920,7 +919,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			}
 		}
 
-		return new LinkedList<>();
+		return new ArrayList<>();
 	}
 
 	/** {@inheritDoc} */
@@ -937,10 +936,10 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				T ret = findOne(el, CacheType.NO_SHARED_CACHE, localCache);
 				ret.setParentNodeRef(dataListNodeRef);
 				return ret;
-			}).collect(Collectors.toCollection(LinkedList::new));
+			}).toList();
 
 		}
-		return new LinkedList<>();
+		return new ArrayList<>();
 	}
 
 	/** {@inheritDoc} */

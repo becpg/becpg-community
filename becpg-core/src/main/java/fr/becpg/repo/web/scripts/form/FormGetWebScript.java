@@ -18,7 +18,7 @@
 package fr.becpg.repo.web.scripts.form;
 
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -82,8 +82,8 @@ public class FormGetWebScript extends AbstractWebScript {
 		String formId = req.getParameter(PARAM_FORMID);
 		String siteId = req.getParameter(PARAM_SITEID);
 		String entityNodeRef = req.getParameter(PARAM_NODE_REF);
-		List<String> fields = new LinkedList<>();
-		List<String> forcedFields = new LinkedList<>();
+		List<String> fields = new ArrayList<>();
+		List<String> forcedFields = new ArrayList<>();
 
 		/* Parse the JSON content */
 

@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.config.format.FormatMode;
-import fr.becpg.config.format.PropertyFormatService;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.helper.AssociationService;
@@ -43,15 +42,13 @@ public class ProjectProcessListPlugin implements EntityProcessListPlugin {
 	@Autowired
 	private AlfrescoRepository<ProjectData> alfrescoRepository;
 
-	@Autowired
-	private PropertyFormatService propertyFormatService;
 	
 	/** {@inheritDoc} */
 	@Override
 	public List<Map<String, Object>> buildModel(NodeRef nodeRef){
 		
 
-		PropertyFormats formater = propertyFormatService.getPropertyFormats(FormatMode.PROCESS, true);
+		PropertyFormats formater = PropertyFormats.forMode(FormatMode.PROCESS, true);
 		
 		List<Map<String, Object>> ret = new ArrayList<>();
 			

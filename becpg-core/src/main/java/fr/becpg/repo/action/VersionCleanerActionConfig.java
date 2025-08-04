@@ -24,7 +24,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -108,7 +107,7 @@ public class VersionCleanerActionConfig {
 
 				List<Version> versionByDay = cacheByDay.get(key);
 				if (versionByDay == null) {
-					versionByDay = new LinkedList<>();
+					versionByDay = new ArrayList<>();
 				}
 				versionByDay.add(version);
 				cacheByDay.put(key, versionByDay);
@@ -154,9 +153,9 @@ public class VersionCleanerActionConfig {
 
 			List<Version> ret = new ArrayList<>(versions);
 			List<Version> majorToKeep = versionToKeep(versions, VersionType.MAJOR, numberOfDayMajor, numberByDayMajor, numberOfVersionMajor);
-			List<Version> minorToKeep = new LinkedList<>();
+			List<Version> minorToKeep = new ArrayList<>();
 	
-			List<Version> tmp = new LinkedList<>();
+			List<Version> tmp = new ArrayList<>();
 			for (Version version : versions) {
 				if (VersionType.MINOR.equals(version.getVersionType())) {
 					tmp.add(version);
@@ -164,7 +163,7 @@ public class VersionCleanerActionConfig {
 					if (majorToKeep.contains(version)) {
 							minorToKeep.addAll(versionToKeep(tmp, VersionType.MINOR, numberOfDayMinor, numberByDayMinor, numberOfVersionMinor));
 					}
-					tmp = new LinkedList<>();
+					tmp = new ArrayList<>();
 				}
 			}
 			
