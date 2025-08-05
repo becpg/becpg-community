@@ -43,7 +43,6 @@
 			  <entry key="fr.becpg.repo.search.PaginatedSearchCache.multiLevel" value="300" />
 			  <entry key="fr.becpg.repo.entity.datalist.MultiLevelDataListService" value="50" />
 			  <entry key="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl" value="5000" />
-			  <entry key="fr.becpg.repo.product.formulation.SecurityFormulationHandler" value="20" />
 			  <entry key="fr.becpg.repo.license.BeCPGLicenseManager" value="20" />
 			  <entry key="fr.becpg.repo.license.BeCPGLicenseManager.sessions" value="200" />
 			  <entry key="fr.becpg.repo.license.BeCPGLicenseManager.writeLicenses" value="200" />
