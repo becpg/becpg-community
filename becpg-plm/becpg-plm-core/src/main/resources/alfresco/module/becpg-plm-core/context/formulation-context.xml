@@ -156,6 +156,7 @@
 					<property name="associationService" ref="associationService"/>
 					<property name="fileFolderService" ref="fileFolderService"/>
 					<property name="systemConfigurationService" ref="systemConfigurationService"/>
+					<property name="beCPGCacheService" ref="beCPGCacheService"/>
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.CompositionQtyCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
