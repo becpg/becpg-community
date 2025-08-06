@@ -66,11 +66,38 @@
 	</bean>
 
 	<!-- cached dictionary -->
+	
+	  <bean id="dictionaryService" class="fr.becpg.repo.entity.impl.CachedDictionaryServiceImpl" depends-on="dictionaryBootstrap">
+        <property name="dictionaryDAO">
+            <ref bean="dictionaryDAO" />
+        </property>
+        <property name="beCPGCacheService" ref="beCPGCacheService" />
+        <property name="registry" ref="asynchronouslyRefreshedCacheRegistry" />
+        <property name="messageLookup">
+            <bean class="org.springframework.aop.framework.ProxyFactoryBean" >
+                <!-- Lazy init to avoid circular dependencies -->
+                <property name="targetSource">
+                    <bean class="org.alfresco.config.NonBlockingLazyInitTargetSource">
+                        <property name="targetBeanName">
+                            <idref bean="messageService" />
+                        </property>
+                        <property name="targetClass">
+                            <value>org.alfresco.repo.i18n.MessageService</value>
+                        </property>
+                    </bean>
+                </property>
+                <property name="proxyInterfaces">
+                    <list>
+                        <value>org.alfresco.service.cmr.i18n.MessageLookup</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
 
 	<bean id="entityDictionaryService" class="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl" parent="dictionaryService"
 		depends-on="bcpg.dictionaryBootstrap">
-		<property name="beCPGCacheService" ref="beCPGCacheService" />
-		<property name="registry" ref="asynchronouslyRefreshedCacheRegistry" />
+
 		<property name="repositoryEntityDefReader" ref="repositoryEntityDefReader" />
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="messageService" ref="messageService" />
