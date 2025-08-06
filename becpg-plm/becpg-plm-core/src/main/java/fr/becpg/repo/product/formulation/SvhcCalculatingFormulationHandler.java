@@ -5,7 +5,6 @@ package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -57,7 +56,7 @@ public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormula
 			logger.debug("Substances of Very High Concerns calculating visitor");
 
 			if (formulatedProduct.getSvhcList() == null) {
-				formulatedProduct.setSvhcList(new LinkedList<>());
+				formulatedProduct.setSvhcList(new ArrayList<>());
 			}
 
 			boolean hasCompoEl = formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))

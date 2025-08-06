@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -167,7 +166,7 @@ public class SurveyServiceImpl implements SurveyService {
 
 			JSONArray values = new JSONArray(strData);
 			for (SurveyListDataItem survey : getSurveys(entityNodeRef, dataListName)) {
-				List<NodeRef> choices = new LinkedList<>();
+				List<NodeRef> choices = new ArrayList<>();
 				survey.setComment(null);
 
 				for (int i = 0; i < values.length(); i++) {
@@ -222,7 +221,7 @@ public class SurveyServiceImpl implements SurveyService {
 					SurveyListDataItem s = (SurveyListDataItem) alfrescoRepository.findOne(el);
 					s.setParentNodeRef(dataListNodeRef);
 					return s;
-				}).collect(Collectors.toCollection(LinkedList::new));
+				}).toList();
 			}
 
 		}

@@ -332,7 +332,8 @@
 					formId="supplier" itemId="bcpg:supplier"></step>
 				<step id="step2" labelId="becpg.wizard.supplier.surveyList.label"
 					titleId="becpg.wizard.supplier.surveyList.title" type="survey"
-					listId="surveyList" itemId="survey:surveyList"></step>
+					listId="surveyList" itemId="survey:surveyList" 
+					nextStepWebScript="becpg/remote/formulate?nodeRef={nodeRef}&amp;format=json"></step>
 				<step id="step3" labelId="becpg.wizard.supplier.certification.label"
 					titleId="becpg.wizard.supplier.certification.title" type="entityDataList"
 					listId="certification" itemId="bcpg:certification"></step>
@@ -365,10 +366,12 @@
 					formId="supplier" itemId="bcpg:supplier"></step>
 				<step id="step2" label="Sample survey 1"
 					title="Sample survey 1" type="survey"
-					listId="surveyList" itemId="survey:surveyList"></step>
+					listId="surveyList" itemId="survey:surveyList"
+					nextStepWebScript="becpg/remote/formulate?nodeRef={nodeRef}&amp;format=json"></step>
 				<step id="step3" label="Sample survey 2"
 					title="Sample survey 2" type="survey"
-					listId="surveyList@1" itemId="survey:surveyList"></step>
+					listId="surveyList@1" itemId="survey:surveyList"
+					nextStepWebScript="becpg/remote/formulate?nodeRef={nodeRef}&amp;format=json"></step>
 			</wizard>
 		</wizards>
 	</config>
