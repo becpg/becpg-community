@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -889,7 +888,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		ClassMapping classMapping = importContext.getClassMappings().get(importContext.getType());
 		
 		// check COLUMNS respects the mapping and the class attributes
-		List<AbstractAttributeMapping> columnsAttributeMapping = new LinkedList<>();
+		List<AbstractAttributeMapping> columnsAttributeMapping = new ArrayList<>();
 		List<String> unknownColumns = new ArrayList<>();
 		boolean isMLPropertyDef = false;
 		for (String column : columns) {

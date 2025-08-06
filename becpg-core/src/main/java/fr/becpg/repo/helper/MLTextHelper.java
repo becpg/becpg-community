@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -413,7 +412,7 @@ public class MLTextHelper {
 		for (String key : RepoConsts.SUPPORTED_UI_LOCALES.split(",")) {
 			Locale locale = parseLocale(key);
 			if (isSupportedLocale(locale)) {
-				List<Object> parsedVariable = new LinkedList<>();
+				List<Object> parsedVariable = new ArrayList<>();
 				if (variables != null) {
 					for (Object tmp : variables) {
 						if (tmp instanceof MLText mlText) {

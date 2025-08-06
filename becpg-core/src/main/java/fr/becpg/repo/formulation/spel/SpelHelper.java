@@ -17,7 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.formulation.spel;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,7 +46,7 @@ public class SpelHelper {
 
 	}
 
-	private static List<SpelShortcut> shortCuts = new LinkedList<>();
+	private static List<SpelShortcut> shortCuts = new ArrayList<>();
 
 
 	/**
