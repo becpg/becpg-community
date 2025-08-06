@@ -962,24 +962,24 @@ public class ECOServiceImpl implements ECOService {
 
 					List<String> wUsedStatesList = getWUsedStates(ecoData);
 					WUsedFilter filter = new WUsedFilter() {
-											@Override
-											public WUsedFilterKind getFilterKind() {
-												return WUsedFilterKind.STANDARD;
-											}
-					
-											@Override
-											public void filter(MultiLevelListData wUsedData) {
-												for (Iterator<Entry<NodeRef, MultiLevelListData>> iterator = wUsedData.getTree().entrySet().iterator(); iterator
-														.hasNext();) {
-													Entry<NodeRef, MultiLevelListData> entry = iterator.next();
-													NodeRef nodeRef = entry.getValue().getEntityNodeRef();
-													String productState = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE);
-													if ((productState == null) || !wUsedStatesList.contains(productState)) {
-														iterator.remove();
-													}
-												}
-											}
-										};
+						@Override
+						public WUsedFilterKind getFilterKind() {
+							return WUsedFilterKind.STANDARD;
+						}
+
+						@Override
+						public void filter(MultiLevelListData wUsedData) {
+							for (Iterator<Entry<NodeRef, MultiLevelListData>> iterator = wUsedData.getTree().entrySet().iterator(); iterator
+									.hasNext();) {
+								Entry<NodeRef, MultiLevelListData> entry = iterator.next();
+								NodeRef nodeRef = entry.getValue().getEntityNodeRef();
+								String productState = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE);
+								if ((productState == null) || !wUsedStatesList.contains(productState)) {
+									iterator.remove();
+								}
+							}
+						}
+					};
 
 					for (QName associationQName : associationQNames) {
 						MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(replacements, WUsedOperator.AND, filter, associationQName,
@@ -1342,20 +1342,23 @@ public class ECOServiceImpl implements ECOService {
 			final Date finalEffectiveDate = effectiveDate;
 
 			if (hasWUsed) {
-				Iterator<T> it = items.iterator();
-				while (it.hasNext()) {
-					T item = it.next();
-					if (sourceItems.contains(item.getComponent())
-							&& ((replacement.getTargetItem() == null) || !itemToWUsedData.containsKey(item))) {
-						if (finalIsFuture) {
-							item.setEndEffectivity(finalEffectiveDate);
-						} else {
-							it.remove();
-						}
-					}
-				}
+				items.forEach(item -> {
+			        if (sourceItems.contains(item.getComponent())
+			            && ((replacement.getTargetItem() == null) || !itemToWUsedData.containsKey(item))
+			            && finalIsFuture) {
+			            item.setEndEffectivity(finalEffectiveDate);
+			        }
+			    });
+			    
+			    if (!finalIsFuture) {
+			        items.removeIf(item -> 
+			            sourceItems.contains(item.getComponent())
+			            && ((replacement.getTargetItem() == null) || !itemToWUsedData.containsKey(item))
+			        );
+			    }
 			}
 		}
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1414,14 +1417,12 @@ public class ECOServiceImpl implements ECOService {
 	private NodeRef getProductToImpact(ChangeOrderData ecoData, ChangeUnitDataItem changeUnitDataItem, boolean isSimulation) {
 		NodeRef productToImpact = changeUnitDataItem.getSourceItem();
 		// Create a new revision if apply else use
-		if ((productToImpact != null) && !isSimulation) {
-			/*
-			 * Create initial version if needed
-			 */
-			if (!changeUnitDataItem.getRevision().equals(RevisionType.NoRevision)) {
-				Date effectiveDateToUse = ChangeOrderType.ImpactWUsed.equals(ecoData.getEcoType()) ? ecoData.getEffectiveDate() : null;
-				entityVersionService.createInitialVersion(productToImpact, effectiveDateToUse);
-			}
+		/*
+		 * Create initial version if needed
+		 */
+		if (((productToImpact != null) && !isSimulation) && !changeUnitDataItem.getRevision().equals(RevisionType.NoRevision)) {
+			Date effectiveDateToUse = ChangeOrderType.ImpactWUsed.equals(ecoData.getEcoType()) ? ecoData.getEffectiveDate() : null;
+			entityVersionService.createInitialVersion(productToImpact, effectiveDateToUse);
 		}
 		return productToImpact;
 	}

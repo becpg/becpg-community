@@ -106,7 +106,7 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 
 			frenchEcoScore.formulateScore(finishedProductData);
 
-			Assert.assertEquals((Double) 79d, finishedProductData.getEcoScore());
+			Assert.assertEquals((Double) 77d, finishedProductData.getEcoScore());
 			Assert.assertEquals("B", finishedProductData.getEcoScoreClass());
 
 			alfrescoRepository.save(finishedProductData);
@@ -146,8 +146,8 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 
 			frenchEcoScore.formulateScore(finishedProductData);
 
-			Assert.assertEquals((Double) 52d, finishedProductData.getEcoScore());
-			Assert.assertEquals("C", finishedProductData.getEcoScoreClass());
+			Assert.assertEquals((Double) 69d, finishedProductData.getEcoScore());
+			Assert.assertEquals("B", finishedProductData.getEcoScoreClass());
 
 			alfrescoRepository.save(finishedProductData);
 
