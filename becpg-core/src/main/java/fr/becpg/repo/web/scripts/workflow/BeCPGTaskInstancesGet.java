@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -95,8 +95,8 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 
 		// get list of properties to include in the response
 		List<String> tmp = getProperties(req);
-		List<String> properties = new LinkedList<>();
-		List<AttributeExtractorField> extraProperties = new LinkedList<>();
+		List<String> properties = new ArrayList<>();
+		List<AttributeExtractorField> extraProperties = new ArrayList<>();
 
 		for (String string : tmp) {
 			String prop = string;
