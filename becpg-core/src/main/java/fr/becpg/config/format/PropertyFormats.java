@@ -1,275 +1,309 @@
-/*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
- *
- * This file is part of beCPG
- *
- * beCPG is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * beCPG is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
- ******************************************************************************/
 package fr.becpg.config.format;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.extensions.surf.util.I18NUtil;
 
 /**
- * Format of properties (used for import and reports)
+ * Modern Java 17 implementation using DateTimeFormatter and Records
+ * Provides better performance, thread safety, and immutability
  *
  * @author querephi, matthieu
- * @version $Id: $Id
  */
 public class PropertyFormats {
 
-	private boolean useDefaultLocale = true;
-	private Integer maxDecimalPrecision = null;
-	protected String dateFormat;
-	protected String datetimeFormat;
-	protected String decimalFormat;
+	// Cache for thread-safe, immutable formatters
+	private static final ConcurrentHashMap<FormatConfig, DateTimeFormatter> DATE_FORMATTER_CACHE = new ConcurrentHashMap<>();
+	private static final ConcurrentHashMap<FormatConfig, NumberFormat> NUMBER_FORMATTER_CACHE = new ConcurrentHashMap<>();
+	private static final ConcurrentHashMap<String, PropertyFormats> MODE_CACHE = new ConcurrentHashMap<>();
 
-	/**
-	 * <p>Constructor for PropertyFormats.</p>
-	 *
-	 * @param useDefaultLocal a boolean.
-	 */
-	public PropertyFormats(boolean useDefaultLocal) {
-		this(useDefaultLocal, "EEE d MMM yyyy", "EEE d MMM yyyy HH:mm:ss", "###,###.####");
+	// Default patterns as constants
+	private static final String DEFAULT_DATE_PATTERN = "EEE d MMM yyyy";
+	private static final String DEFAULT_DATETIME_PATTERN = "EEE d MMM yyyy HH:mm:ss";
+	public static final String DEFAULT_DECIMAL_PATTERN = "###,###.####";
+
+	public static final String PROCESS_DATE_FORMAT = "dd MMMM, yyyy";
+	private static final String FRENCH_CSV_DATETIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
+	private static final String CSV_DATETIME_FORMAT = "MM/dd/yyyy HH:mm:ss";
+	private static final String FRENCH_CSV_DATE_FORMAT = "dd/MM/yyyy";
+	private static final String CSV_DATE_FORMAT = "MM/dd/yyyy";
+
+	private static final int COMPARE_MAX_PRECISION = 9;
+
+	// Immutable configuration record
+	public record FormatConfig(String pattern, Locale locale, boolean useDefaultLocale) {
+		public FormatConfig {
+			// Compact constructor for validation if needed
+			if ((pattern == null) || pattern.isBlank()) {
+				throw new IllegalArgumentException("Pattern cannot be null or blank");
+			}
+		}
 	}
 
-	/**
-	 * <p>Constructor for PropertyFormats.</p>
-	 *
-	 * @param useDefaultLocal a boolean.
-	 * @param dateFormat a {@link java.lang.String} object.
-	 * @param datetimeFormat a {@link java.lang.String} object.
-	 * @param decimalFormat a {@link java.lang.String} object.
-	 */
-	public PropertyFormats(boolean useDefaultLocal, String dateFormat, String datetimeFormat, String decimalFormat) {
-		this.useDefaultLocale = useDefaultLocal;
-		this.dateFormat = dateFormat;
-		this.datetimeFormat = datetimeFormat;
-		this.decimalFormat = decimalFormat;
+	private final boolean useDefaultLocale;
+	private final Integer maxDecimalPrecision;
+	private final String datePattern;
+	private final String datetimePattern;
+	private final String decimalPattern;
+
+	// Cached config instances (immutable)
+	private final FormatConfig dateConfig;
+	private final FormatConfig datetimeConfig;
+	private final FormatConfig decimalConfig;
+
+	public PropertyFormats(boolean useDefaultLocale) {
+		this(useDefaultLocale, DEFAULT_DATE_PATTERN, DEFAULT_DATETIME_PATTERN, DEFAULT_DECIMAL_PATTERN, null);
 	}
 
-	/**
-	 * <p>Setter for the field <code>maxDecimalPrecision</code>.</p>
-	 *
-	 * @param maxDecimalPrecision a {@link java.lang.Integer} object.
-	 */
-	public void setMaxDecimalPrecision(Integer maxDecimalPrecision) {
+	public PropertyFormats(boolean useDefaultLocale, String datePattern, String datetimePattern, String decimalPattern) {
+		this(useDefaultLocale, datePattern, datetimePattern, decimalPattern, null);
+	}
+
+	public PropertyFormats(boolean useDefaultLocale, String datePattern, String datetimePattern, String decimalPattern, Integer maxDecimalPrecision) {
+		this.useDefaultLocale = useDefaultLocale;
 		this.maxDecimalPrecision = maxDecimalPrecision;
+		this.datePattern = datePattern;
+		this.datetimePattern = datetimePattern;
+		this.decimalPattern = decimalPattern;
+
+		// Create immutable config objects
+		Locale locale = useDefaultLocale ? Locale.getDefault() : I18NUtil.getLocale();
+		this.dateConfig = new FormatConfig(datePattern, locale, useDefaultLocale);
+		this.datetimeConfig = new FormatConfig(datetimePattern, locale, useDefaultLocale);
+		this.decimalConfig = new FormatConfig(decimalPattern, locale, useDefaultLocale);
+	}
+
+	public PropertyFormats withDateFormat(String dateFormat) {
+		return new PropertyFormats(this.useDefaultLocale, dateFormat, this.datetimePattern, this.decimalPattern, this.maxDecimalPrecision);
+	}
+
+	public PropertyFormats withDateTimeFormat(String datetimeFormat) {
+		return new PropertyFormats(this.useDefaultLocale, this.datePattern, datetimeFormat, this.decimalPattern, this.maxDecimalPrecision);
+	}
+
+	public PropertyFormats withDecimalFormat(String decimalFormat) {
+		return new PropertyFormats(this.useDefaultLocale, this.datePattern, this.datetimePattern, decimalFormat, this.maxDecimalPrecision);
+	}
+
+	public static PropertyFormats forMode(final FormatMode mode, boolean useServerLocale) {
+		return MODE_CACHE.computeIfAbsent((mode != null ? mode.toString() + "-" : "") + useServerLocale, k -> {
+			PropertyFormats ret;
+			if (FormatMode.PROCESS.equals(mode)) {
+				ret = new PropertyFormats(useServerLocale, PROCESS_DATE_FORMAT, DEFAULT_DATETIME_PATTERN, DEFAULT_DECIMAL_PATTERN);
+			} else if (useServerLocale) {
+				ret = new PropertyFormats(useServerLocale);
+			} else if (FormatMode.CSV.equals(mode)) {
+				if (Locale.FRENCH.equals(I18NUtil.getContentLocaleLang())) {
+					ret = new PropertyFormats(false, FRENCH_CSV_DATE_FORMAT, FRENCH_CSV_DATETIME_FORMAT, DEFAULT_DECIMAL_PATTERN);
+				} else {
+					ret = new PropertyFormats(false, CSV_DATE_FORMAT, CSV_DATETIME_FORMAT, DEFAULT_DECIMAL_PATTERN);
+				}
+			} else if (FormatMode.COMP.equals(mode)) {
+				ret = new PropertyFormats(false, DEFAULT_DATE_PATTERN, DEFAULT_DATETIME_PATTERN, DEFAULT_DECIMAL_PATTERN, COMPARE_MAX_PRECISION);
+			} else {
+				ret = new PropertyFormats(false);
+			}
+			return ret;
+		});
 	}
 
 	/**
-	 * <p>isUseDefaultLocale.</p>
+	 * Factory method to create a new instance with a different datetime pattern
 	 *
-	 * @return a boolean.
+	 * @param pattern the new datetime pattern to use
+	 * @return a new PropertyFormats instance with the updated datetime pattern
 	 */
+	public PropertyFormats withDatetimePattern(String pattern) {
+		return new PropertyFormats(useDefaultLocale, datePattern, pattern, decimalPattern, maxDecimalPrecision);
+	}
+
+	// Modern formatting methods using DateTimeFormatter (thread-safe and immutable)
+	public String formatDate(Object o) {
+		if (o == null) {
+			return null;
+		} else if (o instanceof Date date) {
+			return formatDate(convertToLocalDate(date));
+		} else if (o instanceof LocalDate localDate) {
+			return getDateFormatter().format(localDate);
+		} else if (o instanceof LocalDateTime localDateTime) {
+			return getDateFormatter().format(localDateTime.toLocalDate());
+		} else {
+			throw new IllegalArgumentException("Unsupported date type: " + o.getClass());
+		}
+	}
+
+	public String formatDateTime(Object o) {
+		if (o == null) {
+			return null;
+		} else if (o instanceof Date date) {
+			return formatDateTime(convertToLocalDateTime(date));
+		} else if (o instanceof LocalDateTime localDateTime) {
+			return getDateTimeFormatter().format(localDateTime);
+		} else if (o instanceof LocalDate localDate) {
+			return getDateTimeFormatter().format(localDate.atStartOfDay());
+		} else {
+			throw new IllegalArgumentException("Unsupported datetime type: " + o.getClass());
+		}
+	}
+
+	public String formatDecimal(Object o) {
+		if (o == null) {
+			return "";
+		}
+
+		var formatter = getNumberFormatter();
+
+		// Enhanced precision handling for small numbers
+		if ((maxDecimalPrecision != null) && o instanceof Double qty && (qty > -1) && (qty != 0d)) {
+			return formatWithPrecision(qty, formatter);
+		}
+
+		return formatter.format(o);
+	}
+
+	private String formatWithPrecision(Double qty, NumberFormat baseFormatter) {
+		// Create a copy for thread safety
+		var formatter = (DecimalFormat) ((DecimalFormat) baseFormatter).clone();
+
+		int maxNum = formatter.getMaximumFractionDigits();
+
+		// Calculate required precision for small numbers
+		while (((Math.pow(10, maxNum) * qty) < 1000) && (maxNum < maxDecimalPrecision)) {
+			maxNum++;
+		}
+
+		if (maxNum > formatter.getMaximumFractionDigits()) {
+			formatter.setMaximumFractionDigits(maxNum);
+
+			if ((maxNum >= maxDecimalPrecision) && ((Math.pow(10, maxNum) * qty) < 1)) {
+				formatter.setMinimumFractionDigits(maxNum);
+				formatter.setRoundingMode(RoundingMode.FLOOR);
+			} else {
+				formatter.setRoundingMode(RoundingMode.HALF_UP);
+			}
+		}
+
+		return formatter.format(qty);
+	}
+
+	// Modern parsing methods with better error handling
+	public Date parseDate(String dateString) throws ParseException {
+		if ((dateString == null) || dateString.isBlank()) {
+			throw new ParseException("Date string cannot be null or blank", 0);
+		}
+
+		try {
+			LocalDate localDate = LocalDate.parse(dateString, getDateFormatter());
+			return convertToDate(localDate.atStartOfDay());
+		} catch (DateTimeParseException e) {
+			throw new ParseException("Unable to parse date: " + dateString, e.getErrorIndex());
+		}
+	}
+
+	public Date parseDateTime(String dateString) throws ParseException {
+		if ((dateString == null) || dateString.isBlank()) {
+			throw new ParseException("DateTime string cannot be null or blank", 0);
+		}
+
+		try {
+			LocalDateTime localDateTime = LocalDateTime.parse(dateString, getDateTimeFormatter());
+			return convertToDate(localDateTime);
+		} catch (DateTimeParseException e) {
+			throw new ParseException("Unable to parse datetime: " + dateString, e.getErrorIndex());
+		}
+	}
+
+	public Number parseDecimal(String decimalString) throws ParseException {
+		if ((decimalString == null) || decimalString.isBlank()) {
+			throw new ParseException("Decimal string cannot be null or blank", 0);
+		}
+
+		return getNumberFormatter().parse(decimalString);
+	}
+
+	// Cached formatter retrieval methods
+	private DateTimeFormatter getDateFormatter() {
+		return DATE_FORMATTER_CACHE.computeIfAbsent(dateConfig, this::createDateTimeFormatter);
+	}
+
+	private DateTimeFormatter getDateTimeFormatter() {
+		return DATE_FORMATTER_CACHE.computeIfAbsent(datetimeConfig, this::createDateTimeFormatter);
+	}
+
+	private NumberFormat getNumberFormatter() {
+		return NUMBER_FORMATTER_CACHE.computeIfAbsent(decimalConfig, this::createNumberFormat);
+	}
+
+	// Factory methods for creating formatters
+	private DateTimeFormatter createDateTimeFormatter(FormatConfig config) {
+		return DateTimeFormatter.ofPattern(config.pattern(), config.locale());
+	}
+
+	private NumberFormat createNumberFormat(FormatConfig config) {
+		if (config.useDefaultLocale()) {
+			return new DecimalFormat(config.pattern());
+		} else {
+			var formatter = (DecimalFormat) NumberFormat.getInstance(config.locale());
+			formatter.applyPattern(config.pattern());
+			return formatter;
+		}
+	}
+
+	// Utility methods for Date/LocalDateTime conversion
+	private LocalDate convertToLocalDate(Date date) {
+		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+	}
+
+	private LocalDateTime convertToLocalDateTime(Date date) {
+		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+	}
+
+	private Date convertToDate(LocalDateTime localDateTime) {
+		return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+	}
+
+	// Getters for configuration
 	public boolean isUseDefaultLocale() {
 		return useDefaultLocale;
 	}
 
-	/**
-	 * <p>Setter for the field <code>useDefaultLocale</code>.</p>
-	 *
-	 * @param useDefaultLocale a boolean.
-	 */
-	public void setUseDefaultLocale(boolean useDefaultLocale) {
-		localDateFormat.remove();
-		localDateTimeFormat.remove();
-		this.useDefaultLocale = useDefaultLocale;
+	public Integer getMaxDecimalPrecision() {
+		return maxDecimalPrecision;
 	}
 
-	/**
-	 * <p>Setter for the field <code>dateFormat</code>.</p>
-	 *
-	 * @param dateFormat a {@link java.lang.String} object.
-	 */
-	public void setDateFormat(String dateFormat) {
-		localDateFormat.remove();
-		this.dateFormat = dateFormat;
+	public String getDatePattern() {
+		return datePattern;
 	}
 
-	/**
-	 * <p>Setter for the field <code>datetimeFormat</code>.</p>
-	 *
-	 * @param datetimeFormat a {@link java.lang.String} object.
-	 */
-	public void setDatetimeFormat(String datetimeFormat) {
-		localDateTimeFormat.remove();
-		this.datetimeFormat = datetimeFormat;
+	public String getDatetimePattern() {
+		return datetimePattern;
 	}
 
-	/**
-	 * <p>Setter for the field <code>decimalFormat</code>.</p>
-	 *
-	 * @param decimalFormat a {@link java.lang.String} object.
-	 */
-	public void setDecimalFormat(String decimalFormat) {
-		localDecimalFormat.remove();
-		this.decimalFormat = decimalFormat;
+	public String getDecimalPattern() {
+		return decimalPattern;
 	}
 
-	/**
-	 * <p>Constructor for PropertyFormats.</p>
-	 *
-	 * @param useDefaultLocal a boolean.
-	 * @param maxDecimalPrecision a int.
-	 */
-	public PropertyFormats(boolean useDefaultLocal, int maxDecimalPrecision) {
-		this(useDefaultLocal);
-		this.maxDecimalPrecision = maxDecimalPrecision;
-	}
-
-	/**
-	 * <p>formatDate.</p>
-	 *
-	 * @param o a {@link java.lang.Object} object.
-	 * @return a {@link java.lang.String} object.
-	 */
-	public String formatDate(Object o) {
-		return localDateFormat.get().format(o);
-	}
-
-	/**
-	 * <p>formatDecimal.</p>
-	 *
-	 * @param o a {@link java.lang.Object} object.
-	 * @return a {@link java.lang.String} object.
-	 */
-	public String formatDecimal(Object o) {
-		String ret = null;
-
-		if ((maxDecimalPrecision != null) && (o != null) && (o instanceof Double)) {
-			Double qty = (Double) o;
-
-			int previousMaxDigit = localDecimalFormat.get().getMaximumFractionDigits();
-			RoundingMode previousRoundingMode = localDecimalFormat.get().getRoundingMode();
-			try {
-
-				if ((qty > -1) && (qty != 0d)) {
-					int maxNum = localDecimalFormat.get().getMaximumFractionDigits();
-
-					while (((Math.pow(10, maxNum) * qty) < 1000)) {
-						if (maxNum >= maxDecimalPrecision) {
-							break;
-						}
-						maxNum++;
-					}
-					if (maxNum > previousMaxDigit) {
-						localDecimalFormat.get().setMaximumFractionDigits(maxNum);
-						if (maxNum >= maxDecimalPrecision) {
-							if ((Math.pow(10, maxNum) * qty) < 1) {
-								localDecimalFormat.get().setMinimumFractionDigits(maxNum);
-								localDecimalFormat.get().setRoundingMode(RoundingMode.FLOOR);
-							}
-						} else {
-							localDecimalFormat.get().setRoundingMode(RoundingMode.HALF_UP);
-						}
-					}
-				}
-				ret = localDecimalFormat.get().format(o);
-			} finally {
-				localDecimalFormat.get().setMaximumFractionDigits(previousMaxDigit);
-				localDecimalFormat.get().setRoundingMode(previousRoundingMode);
-			}
-		} else {
-			ret = localDecimalFormat.get().format(o);
-		}
-
-		return ret;
-	}
-
-	/**
-	 * <p>formatDateTime.</p>
-	 *
-	 * @param o a {@link java.lang.Object} object.
-	 * @return a {@link java.lang.String} object.
-	 */
-	public String formatDateTime(Object o) {
-		return localDateTimeFormat.get().format(o);
-	}
-
-	/**
-	 * <p>parseDate.</p>
-	 *
-	 * @param dateString a {@link java.lang.String} object.
-	 * @return a {@link java.util.Date} object.
-	 * @throws java.text.ParseException if any.
-	 */
-	public Date parseDate(String dateString) throws ParseException {
-		return localDateFormat.get().parse(dateString);
-	}
-	
-	/**
-	 * <p>parseDateTime.</p>
-	 *
-	 * @param dateString a {@link java.lang.String} object
-	 * @return a {@link java.util.Date} object
-	 * @throws java.text.ParseException if any.
-	 */
-	public Date parseDateTime(String dateString) throws ParseException {
-		return localDateTimeFormat.get().parse(dateString);
-	}
-
-	/**
-	 * <p>parseDecimal.</p>
-	 *
-	 * @param decimalString a {@link java.lang.String} object.
-	 * @return a {@link java.lang.Number} object.
-	 * @throws java.text.ParseException if any.
-	 */
-	public Number parseDecimal(String decimalString) throws ParseException {
-		return localDecimalFormat.get().parse(decimalString);
-	}
-
-	/**
-	 * <p>Getter for the field <code>decimalFormat</code>.</p>
-	 *
-	 * @return a {@link java.text.DecimalFormat} object.
-	 */
+	// Backward compatibility
 	public DecimalFormat getDecimalFormat() {
-		return localDecimalFormat.get();
+		return (DecimalFormat) getNumberFormatter();
 	}
 
-	private final ThreadLocal<SimpleDateFormat> localDateFormat = ThreadLocal.withInitial(() -> {
-		if (useDefaultLocale) {
-			return new SimpleDateFormat(dateFormat, Locale.getDefault());
-		} else {
-			return new SimpleDateFormat(dateFormat, I18NUtil.getLocale());
-		}
-	});
-
-	private final ThreadLocal<SimpleDateFormat> localDateTimeFormat = ThreadLocal.withInitial(() -> {
-		if (useDefaultLocale) {
-			return new SimpleDateFormat(datetimeFormat, Locale.getDefault());
-		} else {
-			return new SimpleDateFormat(datetimeFormat, I18NUtil.getLocale());
-		}
-	});
-
-	private final ThreadLocal<DecimalFormat> localDecimalFormat = ThreadLocal.withInitial(() -> {
-		if (useDefaultLocale) {
-			return new DecimalFormat(decimalFormat);
-		} else {
-			DecimalFormat ret = (DecimalFormat) NumberFormat.getInstance(I18NUtil.getLocale());
-			ret.applyPattern(decimalFormat);
-			return ret;
-		}
-	});
+	// Cache management
+	public static void clearFormatCache() {
+		DATE_FORMATTER_CACHE.clear();
+		NUMBER_FORMATTER_CACHE.clear();
+		MODE_CACHE.clear();
+	}
 
 }

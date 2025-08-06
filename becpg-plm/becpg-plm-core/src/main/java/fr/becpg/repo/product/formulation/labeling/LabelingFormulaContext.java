@@ -1500,7 +1500,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			logger.trace(" Render Group list ");
 		}
 
-		List<LabelingComponent> components = new LinkedList<>(lblCompositeContext.getIngList().values());
+		List<LabelingComponent> components = new ArrayList<>(lblCompositeContext.getIngList().values());
 
 		sort(components);
 
@@ -2213,7 +2213,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	private List<HtmlTableStruct> flatCompositeLabeling(CompositeLabeling parent, BigDecimal ratio, Integer level) {
-		List<HtmlTableStruct> ret = new LinkedList<>();
+		List<HtmlTableStruct> ret = new ArrayList<>();
 
 		for (Map.Entry<IngTypeItem, List<LabelingComponent>> kv : getSortedIngListByType(parent).entrySet()) {
 
@@ -2590,7 +2590,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		if ((showRule != null) && showRule.matchLocale(I18NUtil.getLocale())) {
 
-			List<PlaceOfActivityTypeCode> filters = new LinkedList<>();
+			List<PlaceOfActivityTypeCode> filters = new ArrayList<>();
 
 			if ((showRule.format != null) && !showRule.format.isEmpty()) {
 				for (String splitted : showRule.format.split(",")) {
@@ -3060,7 +3060,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			List<LabelingComponent> subSortedList = tmp.get(ingType);
 
 			if (subSortedList == null) {
-				subSortedList = new LinkedList<>();
+				subSortedList = new ArrayList<>();
 				tmp.put(ingType, subSortedList);
 			}
 			subSortedList.add(lblComponent);

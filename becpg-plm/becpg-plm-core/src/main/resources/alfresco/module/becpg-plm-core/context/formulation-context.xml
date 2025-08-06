@@ -262,10 +262,10 @@
 					</property>
 				</bean>
                 <bean class="fr.becpg.repo.product.formulation.SurveyListFormulationHandler">
-                    <property name="namespaceService" ref="namespaceService" />
-                    <property name="alfrescoRepository" ref="alfrescoRepository" />
-                    <property name="associationService" ref="associationService" />
-                    <property name="nodeService" ref="nodeService" />
+                	<constructor-arg><ref bean="namespaceService"/></constructor-arg>
+  					<constructor-arg><ref bean="alfrescoRepository"/></constructor-arg>
+  					<constructor-arg><ref bean="beCPGCacheService"/></constructor-arg>
+  					<constructor-arg><ref bean="repositoryEntityDefReader"/></constructor-arg>
                 </bean>
                  <bean class="fr.becpg.repo.product.formulation.DocumentFormulationHandler">
                     <property name="fileFolderService" ref="fileFolderService" />

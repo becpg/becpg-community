@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fr.becpg.config.format.FormatMode;
-import fr.becpg.config.format.PropertyFormatService;
+import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.repo.formulation.spel.SpelFormulaContext;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ing.IngItem;
@@ -303,7 +303,7 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 
 	private String formatNumber(Double value) {
 		if(value!=null) {
-			return PropertyFormatService.instance().getPropertyFormats(FormatMode.JSON, true).formatDecimal(value);
+			return PropertyFormats.forMode(FormatMode.JSON, true).formatDecimal(value);
 		}
 		return "N/A";
 	}
