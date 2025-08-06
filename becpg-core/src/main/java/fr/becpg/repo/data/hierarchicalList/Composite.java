@@ -17,8 +17,8 @@
  ******************************************************************************/
 package fr.becpg.repo.data.hierarchicalList;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -31,7 +31,7 @@ public class Composite<T extends CompositeDataItem<T>> {
 
 	private T data;
 
-	private List<Composite<T>> children = new LinkedList<>();
+	private List<Composite<T>> children = new ArrayList<>();
 
 	/**
 	 * <p>Getter for the field <code>data</code>.</p>

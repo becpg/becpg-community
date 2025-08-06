@@ -9,6 +9,13 @@
     vertical-align: top;
 }
 
+.form-container .decision-tree-control .form-field {
+	margin: 0;
+}
+
+.form-container .decision-tree-control  .decision-tree-comments {
+    margin-top: 1em;
+}
 
 .form-container .decision-tree-control  .decision-tree-comments label {
     clear: both;

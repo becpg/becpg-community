@@ -19,7 +19,6 @@ package fr.becpg.repo.autocomplete;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -100,7 +99,7 @@ public class CertificationAutoCompletePlugin extends TargetAssocAutoCompletePlug
 			
 			if(entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), PLMModel.TYPE_PRODUCT)) {
 				
-				List<NodeRef> ret = new LinkedList<>();
+				List<NodeRef> ret = new ArrayList<>();
 				
 				for(NodeRef plant : associationService.getTargetAssocs(entityNodeRef, PLMModel.ASSOC_PLANTS)) {
 					

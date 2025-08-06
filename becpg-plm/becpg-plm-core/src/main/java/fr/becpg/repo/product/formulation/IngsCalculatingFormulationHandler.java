@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -144,7 +144,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 						}
 					}
 				} else {
-					formulatedProduct.setIngList(new LinkedList<>());
+					formulatedProduct.setIngList(new ArrayList<>());
 				}
 
 				// IngList
@@ -153,7 +153,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 			if (!reqCtrlMap.isEmpty()) {
 				if (formulatedProduct.getReqCtrlList() == null) {
-					formulatedProduct.setReqCtrlList(new LinkedList<>());
+					formulatedProduct.setReqCtrlList(new ArrayList<>());
 				}
 
 				formulatedProduct.getReqCtrlList().addAll(reqCtrlMap.values());
