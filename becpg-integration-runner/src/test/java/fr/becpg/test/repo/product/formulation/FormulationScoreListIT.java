@@ -43,7 +43,7 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 	private static final Log logger = LogFactory.getLog(FormulationScoreListIT.class);
 
 	private static final double DELTA = .00001;
-	
+
 	@Autowired
 	protected ProductService productService;
 
@@ -56,18 +56,19 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 	@Test
 	public void testGreenScoreCalculation() {
 		ProductData greenScoreProductData = inWriteTx(
-				() -> new GreenScoreSpecificationTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
-						.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withSpecification(true)
-						.build().createTestProduct());
+				() -> new GreenScoreSpecificationTestProduct.Builder().withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService)
+						.withDestFolder(getTestFolderNodeRef()).withSpecification(true).build().createTestProduct());
 
 		inWriteTx(() -> {
 			productService.formulate(greenScoreProductData);
 			return null;
 		});
-		
-		verifyGreenScoreList(greenScoreProductData);
-		
-		Assert.assertNotNull(greenScoreProductData);
+		inReadTx(() -> {
+			verifyGreenScoreList(greenScoreProductData);
+
+			Assert.assertNotNull(greenScoreProductData);
+			return null;
+		});
 	}
 
 	private void verifyGreenScoreList(ProductData formulatedProduct) {
@@ -76,32 +77,31 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 		for (ScoreListDataItem scoreListDataItem : formulatedProduct.getScoreList()) {
 			if (scoreListDataItem.getScoreCriterion()
 					.equals(CharactTestHelper.getOrCreateScoreCriterion(nodeService, GreenScoreSpecificationTestProduct.FORMULATION))) {
-				assertEquals("Score range should be C","C", scoreListDataItem.getRange());
+				assertEquals("Score range should be C", "C", scoreListDataItem.getRange());
 				checks++;
-			} 
+			}
 			if (scoreListDataItem.getScoreCriterion()
 					.equals(CharactTestHelper.getOrCreateScoreCriterion(nodeService, GreenScoreSpecificationTestProduct.RESOURCE_CONSUMPTION))) {
-				assertEquals("Score range should be A","A", scoreListDataItem.getRange());
+				assertEquals("Score range should be A", "A", scoreListDataItem.getRange());
 				checks++;
-			} 
-			
+			}
+
 		}
 
 		assertEquals("Verify checks done", 2, checks);
-		
+
 	}
 
 	@Test
 	public void testFormulationSimpleScore() {
 		logger.info("Starting testFormulationScore");
 
-		FinishedProductData product = inWriteTx(() -> new StandardChocolateEclairTestProduct.Builder()
-				.withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService)
-				.withDestFolder(getTestFolderNodeRef()).withCompo(true).withSurvey(true).withScoreList(true)
-				.build().createTestProduct());
+		FinishedProductData product = inWriteTx(
+				() -> new StandardChocolateEclairTestProduct.Builder().withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService)
+						.withDestFolder(getTestFolderNodeRef()).withCompo(true).withSurvey(true).withScoreList(true).build().createTestProduct());
 
 		inWriteTx(() -> {
-			
+
 			productService.formulate(product);
 			verifyScoreList(product);
 			return null;
@@ -114,42 +114,42 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 	  - Name: Produit fini 1
 	  - Unit: kg
 	  - Quantity: 1
-
+	
 	  Score List (manually provided):
 	    - Score Item 1:
 		  - Question: SurveyQ1
 	      - Question Type: A
-
+	
 	    - Score Item 2:
 	      - Question: SurveyQ2
 	      - Question Type: C
 	      - Question Score: 80
-
+	
 	  Survey List:
 	    - Question 1:
 	      - Question: Q1
 	      - Question Type: A
 	      - Question Score: 20
-
+	
 	    - Question 2:
 	      - Question: Q2
 	      - Question Type: A
 	      - Question Score : 40
-
+	
 	    - Question 3:
 	      - Question: Q3
 	      - Question Type: B
 	      - Question Score: 50d
-
+	
 	  - Expected Score List:
 	     - Score Item 1:
 	     	- Question Type: PASTRY_QUALITY
 	     	- Question Score: ~16.6 (100 * Q1 / Q1MAX)
-
+	
 	     - Score Item 2:
 	     	- Question Type: FILLING_QUALITY
 	     	- Question Score: ~23.07 (mean of responses of type B)
-
+	
 	     - Score Item 3:
 	     	- Question Type: CCP_COMPLIANCE
 	     	- Question Score: ~33.33 (mean of responses of type B)
@@ -175,7 +175,7 @@ public class FormulationScoreListIT extends PLMBaseTestCase {
 				assertEquals("The mean of the type FILLING_QUALITY is incorrect", 100d * 30 / (30 + 100), scoreListDataItem.getScore(), DELTA);
 				checks++;
 			}
-			
+
 		}
 
 		// Ensure checks for type PASTRY_QUALITY, and FILLING_QUALITY are performed

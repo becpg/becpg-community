@@ -32,7 +32,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
 import com.networknt.schema.SpecVersion;
@@ -42,6 +41,7 @@ import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteParams;
+import fr.becpg.repo.helper.JsonHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
@@ -126,11 +126,9 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 				remoteEntityService.getEntity(sfNodeRef, new FileOutputStream(tempFile),new RemoteParams(RemoteEntityFormat.json));
 				remoteEntityService.getEntity(sfNodeRef, new FileOutputStream(tempFile2), new RemoteParams(RemoteEntityFormat.json_schema));
 				
-				  ObjectMapper mapper = new ObjectMapper();
-				
 				 JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012);
 				    JsonSchema jsonSchema = factory.getSchema(new FileInputStream(tempFile2));
-				    JsonNode jsonNode = mapper.readTree(tempFile);
+				    JsonNode jsonNode = JsonHelper.MAPPER.readTree(tempFile);
 				    Set<ValidationMessage> errors = jsonSchema.validate(jsonNode);
 				    
 				 assertTrue(errors.isEmpty());
