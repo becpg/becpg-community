@@ -141,6 +141,8 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 			JSONObject attributes = addProperty(entity, RemoteEntityService.ELEM_ATTRIBUTES, TYPE_OBJECT, "Entity attributes", null);
 
+			addProperty(attributes, "alfresco:type", TYPE_STRING, entityType.toPrefixString(namespaceService), "Alfresco type");
+			
 			Map<QName, AssociationDefinition> assocs = new HashMap<>(typeDef.getAssociations());
 
 			Map<QName, PropertyDefinition> properties = new HashMap<>(typeDef.getProperties());
