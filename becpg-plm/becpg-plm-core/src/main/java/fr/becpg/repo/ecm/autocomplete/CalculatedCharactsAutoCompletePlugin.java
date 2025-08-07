@@ -1,7 +1,7 @@
 package fr.becpg.repo.ecm.autocomplete;
 
 import java.io.Serializable;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -55,7 +55,7 @@ public class CalculatedCharactsAutoCompletePlugin extends TargetAssocAutoComplet
 			logger.debug("Suggesting calculated characteristics for query: '" + query + "'");
 		}
 		
-		List<NodeRef> results = new LinkedList<>();
+		List<NodeRef> results = new ArrayList<>();
 
 		// Find all template products
 		List<NodeRef> templateProducts = findTemplateProducts();

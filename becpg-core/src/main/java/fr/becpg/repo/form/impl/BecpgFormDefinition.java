@@ -2,7 +2,7 @@ package fr.becpg.repo.form.impl;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,8 +32,8 @@ public class BecpgFormDefinition {
 	
 	private JSONObject mergeDef = new JSONObject();
 	
-	private List<String> forcedFields = new LinkedList<>();
-	private List<String> fields = new LinkedList<>();
+	private List<String> forcedFields = new ArrayList<>();
+	private List<String> fields = new ArrayList<>();
 
 	private Map<String, JSONObject> tabs = new LinkedHashMap<>();
 	private Map<String, JSONObject> sets = new LinkedHashMap<>();
@@ -574,7 +574,7 @@ public class BecpgFormDefinition {
 			parentId = PROP_ROOT;
 		}
 
-		List<JSONObject> tmp = new LinkedList<>();
+		List<JSONObject> tmp = new ArrayList<>();
 		if (tree.containsKey(parentId)) {
 			tmp = tree.get(parentId);
 		} else {
@@ -612,7 +612,7 @@ public class BecpgFormDefinition {
 			parentId = PROP_ROOT;
 		}
 
-		List<JSONObject> tmp = new LinkedList<>();
+		List<JSONObject> tmp = new ArrayList<>();
 		if (tree.containsKey(parentId)) {
 			tmp = tree.get(parentId);
 		} else {

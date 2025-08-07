@@ -21,7 +21,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -174,7 +173,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 		if (results == null) {
 
-			results = new LinkedList<>();
+			results = new ArrayList<>();
 
 			if (dataListFilter.isGuessContainer() && (dataListFilter.getEntityNodeRef() != null)) {
 				NodeRef listsContainerNodeRef = entityListDAO.getListContainer(dataListFilter.getEntityNodeRef());
