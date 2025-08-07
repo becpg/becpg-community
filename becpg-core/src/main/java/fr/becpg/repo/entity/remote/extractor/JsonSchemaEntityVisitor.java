@@ -151,8 +151,10 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 			}
 
 			for (QName propQname : params.getFilteredProperties()) {
-				if (entityDictionaryService.getPropDef(propQname) instanceof PropertyDefinition) {
-					properties.put(propQname, (PropertyDefinition) entityDictionaryService.getPropDef(propQname));
+				if (entityDictionaryService.getPropDef(propQname) instanceof PropertyDefinition propDef) {
+					properties.put(propQname, propDef);
+				} else if (entityDictionaryService.getPropDef(propQname) instanceof AssociationDefinition assocDef) {
+					assocs.put(propQname, assocDef);
 				}
 			}
 
