@@ -508,6 +508,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 				@Override
 				public void beforeProcess() throws Throwable {
+					checkPausedCommand();
 					pushAndSetBatchAuthentication(batchStep);
 					batchStep.getProcessWorker().beforeProcess();
 				}
@@ -522,7 +523,6 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 						auditScope.disable();
 						return;
 					}
-					checkPausedCommand();
 					batchStep.getProcessWorker().process(entry);
 					batchInfo.setCurrentItem(batchInfo.getCurrentItem() + 1);
 				}

@@ -32,9 +32,12 @@ public class ToxHelper {
 	}
 	
 	public static String formatValue(Double value) {
-		MathContext mc = new MathContext(6, RoundingMode.HALF_UP);
-		BigDecimal bdValue = new BigDecimal(value, mc).stripTrailingZeros();
-		return bdValue.toPlainString();
+	    if (value == null) {
+	        return null;
+	    }
+	    MathContext mc = new MathContext(6, RoundingMode.HALF_UP);
+	    BigDecimal bdValue = BigDecimal.valueOf(value).round(mc).stripTrailingZeros();
+	    return bdValue.toPlainString();
 	}
 	
 	public static String removeToxValue(String values, String toxName) {
@@ -52,7 +55,7 @@ public class ToxHelper {
 	
 	public static String appendToxValue(String values, String toxName, Double newValue) {
 		if (newValue == null) {
-			return null;
+			return values;
 		}
 		StringBuilder newValuesBuilder = new StringBuilder();
 		boolean valueFound = false;

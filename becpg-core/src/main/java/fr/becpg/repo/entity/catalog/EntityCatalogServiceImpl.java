@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -398,7 +397,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 						if (logger.isDebugEnabled()) {
 							logger.debug("Formulating catalog \"" + catalog.getString(EntityCatalogService.PROP_LABEL) + "\"");
 						}
-						List<String> langs = new LinkedList<>(getLocales(locales, catalog));
+						List<String> langs = new ArrayList<>(getLocales(locales, catalog));
 
 						langs.sort((o1, o2) -> {
 							if (o1.equals(defaultLocale)) {
