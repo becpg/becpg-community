@@ -17,7 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.olap.data;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -32,8 +32,8 @@ import org.json.JSONObject;
  */
 public class OlapChartData {
 	
-	List<OlapChartMetadata> metadatas = new LinkedList<>();
-	List<List<Object>> resultsets = new LinkedList<>();
+	List<OlapChartMetadata> metadatas = new ArrayList<>();
+	List<List<Object>> resultsets = new ArrayList<>();
 	
 
 	/**

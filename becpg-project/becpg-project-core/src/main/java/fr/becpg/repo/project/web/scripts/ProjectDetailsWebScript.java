@@ -5,12 +5,11 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -30,7 +29,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.config.format.FormatMode;
-import fr.becpg.config.format.PropertyFormatService;
+import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
@@ -63,9 +62,6 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 
 	private NodeService nodeService;
 	
-	private PropertyFormatService propertyFormatService;
-	
-
 	/**
 	 * <p>Setter for the field <code>nodeService</code>.</p>
 	 *
@@ -103,15 +99,7 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 	}
 
 	
-	
-	/**
-	 * <p>Setter for the field <code>propertyFormatService</code>.</p>
-	 *
-	 * @param propertyFormatService a {@link fr.becpg.config.format.PropertyFormatService} object.
-	 */
-	public void setPropertyFormatService(PropertyFormatService propertyFormatService) {
-		this.propertyFormatService = propertyFormatService;
-	}
+
 
 	/** {@inheritDoc} */
 	@Override
@@ -279,12 +267,12 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 							ActivityListDataItem ret = (ActivityListDataItem) alfrescoRepository.findOne(el);
 							ret.setParentNodeRef(dataListNodeRef);
 							return ret;
-						}).collect(Collectors.toList());
+						}).toList();
 
 			}
 		}
 
-		return new LinkedList<>();
+		return new ArrayList<>();
 	}
 
 	private boolean isAuthenticatedUser(List<NodeRef> listNodeRef) {
@@ -380,7 +368,7 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 
 	private String formatDate(Serializable date) {
 		if (date != null) {
-			return propertyFormatService.getPropertyFormats(FormatMode.JSON, false).formatDate(date);
+			return PropertyFormats.forMode(FormatMode.JSON, false).formatDate(date);
 		}
 		return null;
 	}

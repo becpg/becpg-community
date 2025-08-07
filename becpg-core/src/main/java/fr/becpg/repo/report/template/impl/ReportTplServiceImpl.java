@@ -24,7 +24,7 @@ import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -329,7 +329,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 			queryBuilder.inDB();
 		}
 
-		List<NodeRef> ret = new LinkedList<>();
+		List<NodeRef> ret = new ArrayList<>();
 		for (NodeRef rTplNodeRef : queryBuilder.list()) {
 
 			QName classType = (QName) nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_CLASS_NAME);
