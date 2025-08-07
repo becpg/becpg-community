@@ -22,7 +22,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -256,7 +255,7 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 
 	private AutoCompletePage suggestFromProp(List<NodeRef> dataListNodeRefs, NodeRef itemId, QName datalistType, Set<QName> propertyQNames,
 			String query, String queryFilter, String parent, Integer pageNum, Integer pageSize) {
-		List<NodeRef> ret = new LinkedList<>();
+		List<NodeRef> ret = new ArrayList<>();
 		for (NodeRef dataListNodeRef : dataListNodeRefs) {
 			BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery().ofType(datalistType).parent(dataListNodeRef);
 

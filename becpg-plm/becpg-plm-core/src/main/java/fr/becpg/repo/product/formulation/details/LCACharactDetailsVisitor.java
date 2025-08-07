@@ -17,7 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation.details;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.alfresco.service.namespace.QName;
@@ -49,7 +49,7 @@ public class LCACharactDetailsVisitor extends AbstractCostCharactDetailsVisitor<
 		} else if (product instanceof SupplierData) {
 			return ((SupplierData) product).getLcaList();
 		}
-		return new LinkedList<>();
+		return new ArrayList<>();
 	}
 
 	/** {@inheritDoc} */
