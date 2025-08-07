@@ -5415,6 +5415,7 @@
 					</field>
 					<field id="bcpg:code" mandatory="false" read-only="false" set="2-col-product-criteria" />
 					<field id="bcpg:erpCode" mandatory="false" read-only="false" set="2-col-product-criteria" />
+					<field id="bcpg:eanCode" mandatory="false" read-only="false" set="2-col-product-criteria" />
 
 					<field id="cm:modified" mandatory="false" read-only="false" set="1-col-product-criteria">
 						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
@@ -5772,13 +5773,20 @@
 					<show id="pjt:projectScore" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:clientHierarchy1">
+					<set id="mainInfo" appearance="bordered-panel" label-id="becpg.forms.set.designation.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="location" appearance="bordered-panel" label-id="becpg.forms.set.location.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					
+					<field id="cm:name" set="mainInfo" />
+					<field id="cm:title" set="mainInfo" />
+					<field id="bcpg:clientHierarchy1" set="mainInfo" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/client_Hierarchy
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:clientHierarchy2">
+					<field id="bcpg:clientHierarchy2" set="mainInfo" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/client_Hierarchy
 							</control-param>
@@ -5786,22 +5794,34 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="cm:description">
+					<field id="cm:description" set="mainInfo">
 						<control>
 							<control-param name="activateLinks">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1" />
-					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2" />
-					<field id="pjt:projectScore" mandatory="false" read-only="false" />
-					<field id="bcpg:code" read-only="true" />
+					<field id="bcpg:clientState" set="mainInfo" />
+					<field id="bcpg:code" set="mainInfo" read-only="true" />
+					<field id="bcpg:erpCode" set="mainInfo" />
+					<field id="bcpg:clientTel" set="mainInfo" />
+					<field id="bcpg:clientEmail" set="mainInfo" />
+					<field id="bcpg:clientFax" set="mainInfo" />
+					<field id="pjt:projectScore" mandatory="false" read-only="false" set="mainInfo" />
+					
+					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1" set="location" />
+					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2" set="location" />
+					<field id="bcpg:locationAddress3" set="location" />
+					<field id="bcpg:locationCity" set="location" />
+					<field id="bcpg:locationZip" set="location" />
+					<field id="bcpg:locationState" set="location" />
+					<field id="bcpg:locationCountry" set="location" />
+					<field id="pjt:projectScore" set="location" />
+					
 				</appearance>
 			</form>
 			<form id="search">
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="bcpg:clientHierarchy1" />
-					<show id="bcpg:clientHierarchy2" />
 					<show id="bcpg:clientState" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" />
@@ -5815,41 +5835,32 @@
 					<show id="survey:advSearchSurveyAnswer4" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="cm:name">
+					<set id="2-col-product-criteria" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="cm:name" set="2-col-product-criteria" >
 						<control>
 							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:code">
+					<field id="bcpg:code" set="2-col-product-criteria" >
 						<control>
 							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:erpCode">
+					<field id="bcpg:erpCode" set="2-col-product-criteria" >
 						<control>
 							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:clientHierarchy1">
+					<field id="bcpg:clientHierarchy1" set="2-col-product-criteria" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/client_Hierarchy
+							<control-param name="ds">becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists/client_Hierarchy
 							</control-param>
 							<control-param name="multiple">true</control-param>
 							<control-param name="forceEditable">true</control-param>
 							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:clientHierarchy2">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/client_Hierarchy
-							</control-param>
-							<control-param name="parent">bcpg_clientHierarchy1
-							</control-param>
-							<control-param name="forceEditable">true</control-param>
-							<control-param name="isSearch">true</control-param>
-						</control>
-					</field>
-					<field id="bcpg:clientState">
+					<field id="bcpg:clientState" set="2-col-product-criteria" >
 						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
 							<control-param name="isSearch">true</control-param>
 							<control-param name="forceEditable">true</control-param>

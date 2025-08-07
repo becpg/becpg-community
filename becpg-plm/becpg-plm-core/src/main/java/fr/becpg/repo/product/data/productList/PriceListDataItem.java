@@ -5,7 +5,6 @@ package fr.becpg.repo.product.data.productList;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -44,11 +43,11 @@ public class PriceListDataItem extends AbstractEffectiveDataItem {
 
 	private NodeRef cost;
 
-	private List<NodeRef> suppliers = new LinkedList<>();
+	private List<NodeRef> suppliers = new ArrayList<>();
 	
 	private List<NodeRef> plants = new ArrayList<>();
 
-	private List<NodeRef> geoOrigins = new LinkedList<>();
+	private List<NodeRef> geoOrigins = new ArrayList<>();
 
 	/**
 	 * <p>Getter for the field <code>geoOrigins</code>.</p>
