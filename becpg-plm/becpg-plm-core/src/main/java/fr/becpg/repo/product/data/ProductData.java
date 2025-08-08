@@ -430,7 +430,7 @@ public class ProductData extends AbstractScorableEntity
 	
 	
 	/**
-	 * {@inheritDoc}
+	 * <p>getGlopData.</p>
 	 *
 	 * @return a {@link fr.becpg.repo.glop.model.GlopData} object
 	 */
@@ -439,7 +439,7 @@ public class ProductData extends AbstractScorableEntity
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * <p>setGlopData.</p>
 	 *
 	 * @param glopData a {@link fr.becpg.repo.glop.model.GlopData} object
 	 */
