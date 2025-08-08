@@ -34,7 +34,7 @@ function main() {
 		}
 	}
 
-	if (urlDeliverable.content) {
+	if (urlDeliverable && urlDeliverable.content) {
 		var document = search.findNode(urlDeliverable.content);
 		
 		if (document.properties["sign:status"] != "Signed") {
