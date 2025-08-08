@@ -2,8 +2,9 @@ package fr.becpg.repo.report.search.impl;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
+
 import java.util.LinkedList;
+
 import java.util.List;
 import java.util.Map;
 
@@ -114,7 +115,8 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
 		List<AttributeExtractorStructure> metadataFields;
 		String[] parameters;
-		Map<NodeRef, Map<String, Object>> cache = new HashMap<>();
+		Map<NodeRef, Map<String, Object>> cache;
+		private final int cacheMaxEntries;
 		QName itemType;
 		QName mainType;
 		AttributeExtractorStructure keyColumn;
@@ -128,6 +130,15 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 			this.metadataFields = metadataFields;
 			this.itemType = itemType;
 			this.mainType = mainType;
+			// Configure a bounded LRU cache to limit memory growth during large exports
+			this.cacheMaxEntries = Integer.getInteger("becpg.excel.cache.maxEntries", 10000);
+			this.cache = new java.util.LinkedHashMap<NodeRef, Map<String, Object>>(16, 0.75f, true) {
+				private static final long serialVersionUID = 1L;
+				@Override
+				protected boolean removeEldestEntry(java.util.Map.Entry<NodeRef, Map<String, Object>> eldest) {
+					return size() > ExcelSheetExportContext.this.cacheMaxEntries;
+				}
+			};
 		}
 
 		public List<AttributeExtractorStructure> getMetadataFields() {
@@ -140,6 +151,12 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
 		public Map<NodeRef, Map<String, Object>> getCache() {
 			return cache;
+		}
+
+		public void clearCache() {
+			if (cache != null) {
+				cache.clear();
+			}
 		}
 
 		public QName getItemType() {
