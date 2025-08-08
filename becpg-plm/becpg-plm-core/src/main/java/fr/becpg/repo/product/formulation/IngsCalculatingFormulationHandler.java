@@ -478,15 +478,15 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	/**
 	 * Add the ingredients of the part in the ingredient list.
 	 *
+	 * @param formulatedProduct
+	 * @param componentProductData
 	 * @param compoListDataItem
-	 *            the compo list data item
-	 * @param ingMap
-	 *            the ing map
+	 * @param compositeIngList
+	 * @param ingList
+	 * @param retainNodes
 	 * @param totalQtyIngMap
-	 *            the total qty ing map
-	 * @param totalQtyVolMap
-	 * @param isRawMaterial
-	 * @throws FormulateException
+	 * @param parentIngListDataItem
+	 * @param isGeneric
 	 */
 	private void visitILOfPart(ProductData formulatedProduct, CompoListDataItem compoListDataItem, ProductData componentProductData,
 			List<IngListDataItem> retainNodes, Map<String, IngListDataItem> totalQtyIngMap, Map<NodeRef, RequirementListDataItem> reqCtrlMap,
@@ -543,15 +543,15 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	/**
 	 * Add the ingredients of the part in the ingredient list.
 	 *
+	 * @param formulatedProduct
+	 * @param componentProductData
 	 * @param compoListDataItem
-	 *            the compo list data item
-	 * @param ingMap
-	 *            the ing map
+	 * @param compositeIngList
+	 * @param ingList
+	 * @param retainNodes
 	 * @param totalQtyIngMap
-	 *            the total qty ing map
-	 * @param totalQtyVolMap
-	 * @param isRawMaterial
-	 * @throws FormulateException
+	 * @param parentIngListDataItem
+	 * @param isGeneric
 	 */
 	private void calculateILOfPart(ProductData formulatedProduct, ProductData componentProductData, CompoListDataItem compoListDataItem,
 			Composite<IngListDataItem> compositeIngList, List<IngListDataItem> ingList, List<IngListDataItem> retainNodes,

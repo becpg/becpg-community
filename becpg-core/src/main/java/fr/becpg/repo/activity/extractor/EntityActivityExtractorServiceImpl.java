@@ -303,7 +303,7 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 	/**
 	 * <p>checkProperty.</p>
 	 *
-	 * @param property a {@link java.lang.Object} object.
+	 * @param propertyArray a {@link java.lang.Object} object.
 	 * @param propertyDef a {@link org.alfresco.service.cmr.dictionary.PropertyDefinition} object.
 	 * @return a {@link org.json.JSONArray} object.
 	 */

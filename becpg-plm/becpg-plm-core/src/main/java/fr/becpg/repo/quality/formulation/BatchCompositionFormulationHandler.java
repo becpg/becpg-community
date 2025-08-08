@@ -134,7 +134,6 @@ public class BatchCompositionFormulationHandler extends AbstractCompositionQtyCa
 	 * Copy missing item from template
 	 *
 	 * @param formulatedProduct
-	 * @param simpleListDataList
 	 */
 	private void copyTemplateDynamicCharactLists(BatchData formulatedProduct) {
 		if ((formulatedProduct.getEntityTpl() != null) && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
