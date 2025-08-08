@@ -10,7 +10,7 @@ function main() {
 		}
 	}
 
-	if (urlDeliverable.content) {
+	if (urlDeliverable && urlDeliverable.content) {
 		var document = search.findNode(docDeliverable.content);
 		
 		var recipients = document.assocs["sign:recipients"];
