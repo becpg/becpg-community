@@ -949,17 +949,17 @@ public class BeCPGAIMSFilter implements Filter
     }
 
     /**
-     * Redirect to the aims-login page that is not filtered so we can add the fragments to the redirect URL as a query
-     * parameter. This will redirect to /share/aims-login?{original query params if present&}redirectUrl={the
-     * originalURL that was called, including the query params}.
-     *
-     * We are keeping the original query params in the URI due to the OAuth2AuthorizationRequest reading at least the
-     * action param.
-     *
-     * @param request
-     * @param response
-     * @throws IOException
-     */
+	 * Redirect to the aims-login page that is not filtered so we can add the fragments to the redirect URL as a query
+	 * parameter. This will redirect to /share/aims-login?{original query params if present}redirectUrl={the
+	 * originalURL that was called, including the query params}.
+	 *
+	 * We are keeping the original query params in the URI due to the OAuth2AuthorizationRequest reading at least the
+	 * action param.
+	 *
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
     private void sendRedirectForPreLogin(HttpServletRequest request, HttpServletResponse response) throws IOException
 {
     String originalQueryString = request.getQueryString();

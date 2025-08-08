@@ -102,11 +102,8 @@ public class LinkedValueAutoCompletePlugin extends TargetAssocAutoCompletePlugin
 	 *
 	 * @param path
 	 *            the path
-	 * @param parent
-	 *            the parent
 	 * @param query
 	 *            the query
-	 * @param b
 	 * @return the map
 	 */
 	private AutoCompletePage suggestLinkedValue(String path, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props,

@@ -349,11 +349,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	/**
 	 * Visit part.
 	 *
-	 * @param part
-	 *            the part
 	 * @param qtyUsed
-	 * @param isRawMaterial
-	 * @param totalQtyPercMap
 	 * @param allergenMap
 	 *            the allergen map
 	 */
