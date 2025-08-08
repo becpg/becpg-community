@@ -433,7 +433,7 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 	 * @Param root boolean, create the folder parent at true, and don't do it at
 	 *        false.
 	 */
-	private void createFolderStruc(NodeRef folderNodeRef1, NodeRef folderNodeRef2, List<StructCompareResultDataItem> structListFiles,
+		private void createFolderStruc(NodeRef folderNodeRef1, NodeRef folderNodeRef2, List<StructCompareResultDataItem> structListFiles,
 			List<StructCompareResultDataItem> structCompareList, int depthLevel, boolean root, boolean setFolderOperator) {
 
 		StructCompareOperator operator = setFolderOperator ? StructCompareOperator.Modified : StructCompareOperator.Equal;

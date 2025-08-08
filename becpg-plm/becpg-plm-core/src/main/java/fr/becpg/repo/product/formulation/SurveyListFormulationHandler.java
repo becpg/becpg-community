@@ -61,12 +61,14 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 	 * <p>
 	 * Constructor.
 	 * </p>
+	 *
 	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService}
 	 *                    object.
 	 * @param alfrescoRepository a
 	 *                           {@link fr.becpg.repo.repository.AlfrescoRepository}
 	 *                           object.
 	 * @param beCPGCacheService a {@link fr.becpg.repo.cache.BeCPGCacheService} object.
+	 * @param repositoryEntityDefReader a {@link fr.becpg.repo.repository.RepositoryEntityDefReader} object
 	 */
 	public SurveyListFormulationHandler(NamespaceService namespaceService, AlfrescoRepository<BeCPGDataObject> alfrescoRepository,
 			BeCPGCacheService beCPGCacheService, RepositoryEntityDefReader<ProductData> repositoryEntityDefReader ) {
@@ -119,6 +121,12 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 		return true;
 	}
 
+	/**
+	 * <p>accept.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a boolean
+	 */
 	protected boolean accept(ProductData formulatedProduct) {
 		
 		  boolean hasSurveyList = (formulatedProduct.getSurveyList() != null) && ((formulatedProduct.getSurveyList() instanceof ArrayList)
