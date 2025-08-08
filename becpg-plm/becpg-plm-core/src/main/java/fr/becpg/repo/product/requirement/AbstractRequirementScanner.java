@@ -88,7 +88,7 @@ public abstract class AbstractRequirementScanner<T> implements RequirementScanne
 	/**
 	 * <p>extractRegulatoryId.</p>
 	 *
-	 * @param regulatoryEntityItem a {@link fr.becpg.repo.product.data.RegulatoryEntityItem} object
+	 * @param regulatoryEntityItem a {@link fr.becpg.repo.regulatory.RegulatoryEntityItem} object
 	 * @param specification a {@link fr.becpg.repo.product.data.ProductSpecificationData} object
 	 * @return a {@link java.lang.String} object
 	 */

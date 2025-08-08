@@ -75,26 +75,54 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 	private final Map<String, String> overrideKeyCache = new ConcurrentHashMap<>();
 
 	// Setters
+	/**
+	 * <p>Setter for the field <code>messageService</code>.</p>
+	 *
+	 * @param messageService a {@link org.alfresco.repo.i18n.MessageService} object
+	 */
 	public void setMessageService(MessageService messageService) {
 		this.messageService = messageService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>repositoryEntityDefReader</code>.</p>
+	 *
+	 * @param repositoryEntityDefReader a {@link fr.becpg.repo.repository.RepositoryEntityDefReader} object
+	 */
 	public void setRepositoryEntityDefReader(RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader) {
 		this.repositoryEntityDefReader = repositoryEntityDefReader;
 	}
 
+	/**
+	 * <p>Setter for the field <code>registry</code>.</p>
+	 *
+	 * @param registry a {@link org.alfresco.util.cache.AsynchronouslyRefreshedCacheRegistry} object
+	 * @since 23.4.2.28
+	 */
 	public void setRegistry(AsynchronouslyRefreshedCacheRegistry registry) {
 		this.registry = registry;
 	}
 
+	/**
+	 * <p>Setter for the field <code>beCPGCacheService</code>.</p>
+	 *
+	 * @param beCPGCacheService a {@link fr.becpg.repo.cache.BeCPGCacheService} object
+	 * @since 23.4.2.28
+	 */
 	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
 		this.beCPGCacheService = beCPGCacheService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void setDictionaryDAO(DictionaryDAO dictionaryDAO) {
 		super.setDictionaryDAO(dictionaryDAO);
@@ -102,47 +130,56 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 	}
 
 	// Repository entity methods - delegated to reader
+	/** {@inheritDoc} */
 	@Override
 	public QName getDefaultPivotAssoc(QName dataListItemType) {
 		return repositoryEntityDefReader.getDefaultPivoAssocName(dataListItemType);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isMultiLevelDataList(QName dataListItemType) {
 		return repositoryEntityDefReader.isMultiLevelDataList(dataListItemType);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isMultiLevelLeaf(QName entityType) {
 		return repositoryEntityDefReader.isMultiLevelLeaf(entityType);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public QName getMultiLevelSecondaryPivot(QName dataListItemType) {
 		return repositoryEntityDefReader.getMultiLevelSecondaryPivot(dataListItemType);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public QName getMultiLevelGroupProperty(QName dataListItemType) {
 		return repositoryEntityDefReader.getMultiLevelGroupProperty(dataListItemType);
 	}
 
 	// Mapping registration methods
+	/** {@inheritDoc} */
 	@Override
 	public void registerPropDefMapping(QName orig, QName dest) {
 		propDefMapping.put(orig, dest);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void registerExtraAssocsDefMapping(QName orig, QName dest) {
 		extraAssocsDefMapping.computeIfAbsent(orig, k -> ConcurrentHashMap.newKeySet()).add(dest);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<AssociationDefinition> getPivotAssocDefs(QName sourceType) {
 		return getPivotAssocDefs(sourceType, false);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<AssociationDefinition> getPivotAssocDefs(QName sourceType, boolean exactMatch) {
 		// Use ArrayList with initial capacity to avoid resizing
@@ -175,12 +212,14 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 		return ret;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public QName getTargetType(QName assocName) {
 		AssociationDefinition assocDef = getAssociation(assocName);
 		return assocDef != null ? assocDef.getTargetClass().getName() : null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ClassAttributeDefinition findMatchingPropDef(QName itemType, QName newItemType, QName fieldQname) {
 		// Check mapping first
@@ -204,6 +243,7 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 		return getPropDef(fieldQname);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ClassAttributeDefinition getPropDef(final QName fieldQname) {
 		String cacheKey = buildCacheKey(fieldQname.toString(), PROP_DEF_CACHE_SUFFIX);
@@ -217,16 +257,19 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 		});
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isAssoc(QName assocName) {
 		return getAssociation(assocName) != null;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getSubTypes(QName typeQname) {
 		return getSubTypes(typeQname, true);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getSubTypes(QName superType, boolean follow) {
 		String cacheKey = buildCacheKey(superType.toString(), SUB_TYPES_CACHE_SUFFIX, String.valueOf(follow));
@@ -237,6 +280,7 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 		});
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getSubAspects(QName superAspect, boolean follow) {
 		String cacheKey = buildCacheKey(superAspect.toString(), SUB_ASPECTS_CACHE_SUFFIX, String.valueOf(follow));
@@ -247,6 +291,7 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 		});
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toPrefixString(QName propertyQName) {
 		return prefixStringCache.computeIfAbsent(propertyQName, qname -> {
@@ -256,6 +301,7 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 		});
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isSubClass(QName className, QName ofClassName) {
 		if (className == null || ofClassName == null) {
@@ -271,6 +317,7 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 		return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(), cacheKey, () -> computeIsSubClass(className, ofClassName));
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onRefreshableCacheEvent(RefreshableCacheEvent refreshableCacheEvent) {
 		if (COMPILED_MODELS_CACHE.equals(refreshableCacheEvent.getCacheId())) {
@@ -283,16 +330,19 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getCacheId() {
 		return EntityDictionaryServiceImpl.class.getName();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		registry.register(this);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getTitle(ClassAttributeDefinition attributeDefinition, QName nodeType) {
 		if (nodeType != null) {
@@ -305,6 +355,7 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 		return attributeDefinition.getTitle(this);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String getDescription(ClassAttributeDefinition attributeDefinition, QName nodeType) {
 		if (nodeType != null) {
@@ -317,6 +368,7 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 		return attributeDefinition.getDescription(this);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public QName getAssocIndexQName(QName assocQName) {
 		String cacheKey = buildCacheKey(assocQName.toString(), ASSOC_INDEX_CACHE_SUFFIX);
@@ -328,6 +380,7 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 		});
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public ClassDefinition getClass(QName name) {
 		if (name == null) {

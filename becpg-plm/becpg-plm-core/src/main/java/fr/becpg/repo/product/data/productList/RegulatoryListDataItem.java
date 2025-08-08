@@ -159,7 +159,7 @@ public class RegulatoryListDataItem  extends BeCPGDataObject implements Regulato
 	/**
 	 * <p>Getter for the field <code>regulatoryResult</code>.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.product.data.constraints.RegulatoryResult} object
+	 * @return a {@link fr.becpg.repo.regulatory.RegulatoryResult} object
 	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:regulatoryResult")

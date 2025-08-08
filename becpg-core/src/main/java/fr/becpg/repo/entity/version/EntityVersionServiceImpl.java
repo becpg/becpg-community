@@ -671,7 +671,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	}
 
 	/**
-	 * @param tmpNodeRef
+	 * @param entityNodeRef
 	 * @return
 	 */
 	private List<NodeRef> getAllChildVersionBranches(NodeRef entityNodeRef) {

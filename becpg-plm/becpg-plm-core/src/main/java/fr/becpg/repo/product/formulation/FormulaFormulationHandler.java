@@ -498,7 +498,6 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	 * Copy missing item from template
 	 *
 	 * @param formulatedProduct
-	 * @param simpleListDataList
 	 */
 	private void copyTemplateDynamicCharactLists(ProductData formulatedProduct) {
 		if ((formulatedProduct.getEntityTpl() != null) && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {

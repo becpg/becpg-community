@@ -565,8 +565,8 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	/**
 	 * Helper method used to determine whether the property is tied to categories.
 	 *
-	 * @param formJSON the list of the properties provided to the form
-	 * @param prop propertyname
+	 * @param criteriaMap the list of the properties provided to the form
+	 * @param prop property name
 	 * @return true if it is tied to categories, false otherwise
 	 */
 	private boolean isCategoryProperty(Map<String, String> criteriaMap, String prop) {
@@ -574,7 +574,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 				|| criteriaMap.containsKey(prop + "_isCategory");
 	}
 
-	/**
+		/**
 	 * Helper method used to construct lucene query fragment for a default category property.
 	 *
 	 * @param cats the selected categories (array of string noderef)

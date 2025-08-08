@@ -115,7 +115,7 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 	/**
 	 * <p>Getter for the field <code>regulatoryType</code>.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementType} object
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementType} object
 	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:regulatoryType")
@@ -453,7 +453,7 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 	/**
 	 * <p>withRegulatoryType.</p>
 	 *
-	 * @param regulatoryType a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 * @param regulatoryType a {@link fr.becpg.repo.regulatory.RequirementType} object.
 	 * @return a {@link fr.becpg.repo.product.data.productList.LabelClaimListDataItem} object.
 	 */
 	public LabelClaimListDataItem withRegulatoryType(RequirementType regulatoryType) {

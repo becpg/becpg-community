@@ -129,13 +129,10 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 	/**
 	 * <p>visitRecurCost.</p>
 	 *
+	 * @param context a
 	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
-	 * @param ret a {@link fr.becpg.repo.product.data.CharactDetails} object.
 	 * @param currLevel a {@link java.lang.Integer} object.
-	 * @param maxLevel a {@link java.lang.Integer} object.
-	 * @param subQuantity a {@link java.lang.Double} object.
-	 * @param netQty a {@link java.lang.Double} object.
-	 * @param unitProvider a SimpleCharactUnitProvider object.
+	 * @param ratio a
 	 * @return a {@link fr.becpg.repo.product.data.CharactDetails} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */

@@ -171,7 +171,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 	 * 'resultIndicator': 'PERMITTED', 'threshold': '-- No Threshold',
 	 * 'ingredientPercent': '1.9', 'citation': '21 CFR 172.620 Carrageenan',
 	 * 'comments': 'labeling restriction', 'expressedAs': '--', 'citationLink':
-	 * 'doc=21cfr172.620.pdf&pg=1' }] }, }, }}
+	 * 'doc=21cfr172.620.pdf' }] }, }, }}
 	 *
 	 * @throws JSONException
 	 * @throws RestClientException
@@ -453,8 +453,8 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 	 *
 	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param reqCtrlMessage a {@link org.alfresco.service.cmr.repository.MLText} object
-	 * @param reqType a {@link fr.becpg.repo.product.data.constraints.RequirementType} object
-	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 * @param reqType a {@link fr.becpg.repo.regulatory.RequirementType} object
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementListDataItem} object
 	 */
 	protected RequirementListDataItem createReqCtrl(NodeRef ing, MLText reqCtrlMessage, RequirementType reqType) {
 		RequirementListDataItem reqCtrlItem = new RequirementListDataItem();

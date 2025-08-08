@@ -99,7 +99,6 @@ public class JsonActivityVisitor implements RemoteActivityVisitor {
 	}
 
 	/**
-	 * @param generator
 	 * @param feedEntry
 	 * @throws IOException
 	 */

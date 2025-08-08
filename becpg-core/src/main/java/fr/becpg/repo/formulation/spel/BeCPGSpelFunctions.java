@@ -212,8 +212,8 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * Helper {@code @beCPG.propMLConstraint($value, $qname, $locale)}
 		 *
-		 * @param item
-		 * @param qname
+		 * @param value
+		 * @param propQName
 		 * @param locale
 		 * @return
 		 */

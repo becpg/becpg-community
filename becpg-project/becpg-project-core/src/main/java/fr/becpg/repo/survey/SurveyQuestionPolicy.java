@@ -15,6 +15,11 @@ import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.survey.data.SurveyQuestion;
 
+/**
+ * <p>SurveyQuestionPolicy class.</p>
+ *
+ * @author matthieu
+ */
 public class SurveyQuestionPolicy extends AbstractBeCPGPolicy
 		implements OnCreateNodePolicy, OnUpdatePropertiesPolicy, BeforeDeleteNodePolicy {
 
@@ -22,6 +27,7 @@ public class SurveyQuestionPolicy extends AbstractBeCPGPolicy
 
 	private BeCPGCacheService beCPGCacheService;
 
+	/** {@inheritDoc} */
 	@Override
 	public void doInit() {
 		policyComponent.bindClassBehaviour(OnCreateNodePolicy.QNAME, SurveyModel.TYPE_SURVEY_QUESTION,
@@ -44,16 +50,19 @@ public class SurveyQuestionPolicy extends AbstractBeCPGPolicy
 		this.beCPGCacheService = beCPGCacheService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onCreateNode(ChildAssociationRef childAssocRef) {
 		beCPGCacheService.clearCache(CACHE_KEY);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		beCPGCacheService.clearCache(CACHE_KEY);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void beforeDeleteNode(NodeRef nodeRef) {
 		beCPGCacheService.clearCache(CACHE_KEY);

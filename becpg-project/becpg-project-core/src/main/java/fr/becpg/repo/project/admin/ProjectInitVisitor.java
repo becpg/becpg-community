@@ -144,7 +144,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 	/**
 	 * Create the entity templates
 	 *
-	 * @param productTplsNodeRef
+	 * @param systemNodeRef
 	 */
 	private void visitEntityTpls(NodeRef systemNodeRef) {
 

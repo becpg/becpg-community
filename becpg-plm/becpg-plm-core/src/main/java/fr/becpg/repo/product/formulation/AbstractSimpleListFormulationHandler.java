@@ -575,13 +575,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
 	 * @param partProduct a {@link fr.becpg.repo.product.data.ProductData} object.
 	 * @param simpleListDataList a {@link java.util.List} object.
-	 * @param weightUsed a {@link java.lang.Double} object.
-	 * @param volUsed a {@link java.lang.Double} object.
-	 * @param netQtyInLorKg a {@link java.lang.Double} object.
-	 * @param netWeight a {@link java.lang.Double} object.
 	 * @param mandatoryCharacts a {@link java.util.Map} object.
 	 * @param totalQtiesValue a {@link java.util.Map} object.
-	 * @param isGenericRawMaterial a boolean.
 	 * @param variant a {@link fr.becpg.repo.variant.model.VariantData} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */
