@@ -622,12 +622,10 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	}
 
 	/**
-	 * Helper method used to construct lucene query fragment for a custom category property.
+	 * Helper method used to construct lucene query fragment for tag property.
 	 *
-	 * @param propName property name
-	 * @param cats the selected categories (array of string noderef)
-	 * @param useSubCats boolean that indicates if should search also in subcategories
-	 * @return lucene query with custom category property
+	 * @param cats the selected categories (array of string NodeRef)
+	 * @return lucene query with custom tag property
 	 */
 	private String processDefaultTagProperty(String[] cats) {
 		StringBuilder catQuery = new StringBuilder();
