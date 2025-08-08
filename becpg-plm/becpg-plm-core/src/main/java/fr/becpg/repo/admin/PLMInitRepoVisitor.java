@@ -1071,8 +1071,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	/**
 	 * Create system charact file
 	 *
-	 * @param systemNodeRef
-	 * @return
+	 * @param parentNodeRef the parent node under which the system characteristics are created
+	 * @param path the relative path for the system characteristics container
+	 * @return the created system characteristics node
 	 */
 	private NodeRef visitSystemCharactsEntity(NodeRef parentNodeRef, String path) {
 

@@ -478,15 +478,13 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	/**
 	 * Add the ingredients of the part in the ingredient list.
 	 *
-	 * @param formulatedProduct
-	 * @param componentProductData
-	 * @param compoListDataItem
-	 * @param compositeIngList
-	 * @param ingList
-	 * @param retainNodes
-	 * @param totalQtyIngMap
-	 * @param parentIngListDataItem
-	 * @param isGeneric
+	 * @param formulatedProduct product being formulated
+	 * @param compoListDataItem the component list item in the formulation
+	 * @param componentProductData the component product whose ingredients are added
+	 * @param retainNodes list of ingredient items to retain
+	 * @param totalQtyIngMap map accumulating total quantities per ingredient key
+	 * @param reqCtrlMap map of requirement controls by node
+	 * @param visited set tracking already visited nodeRefs to avoid cycles
 	 */
 	private void visitILOfPart(ProductData formulatedProduct, CompoListDataItem compoListDataItem, ProductData componentProductData,
 			List<IngListDataItem> retainNodes, Map<String, IngListDataItem> totalQtyIngMap, Map<NodeRef, RequirementListDataItem> reqCtrlMap,
