@@ -503,7 +503,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
 	/**
 	 * Creates product specifications for the test product.
-	 * 
+	 *
 	 * @return List of product specifications
 	 */
 	protected List<ProductSpecificationData> createProductSpecifications() {

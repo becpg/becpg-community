@@ -108,14 +108,13 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	/**
 	 * check the ingredients of the part according to the specification
 	 *
+	 * @param productNodeRef
+	 * @param declType
+	 * @param componentProductData
+	 * @param forbiddenIngredientsList
 	 * @param specification
-	 *
-	 * @param compoListDataItem
-	 *            the compo list data item
-	 * @param ingMap
-	 *            the ing map
-	 * @param totalQtyIngMap
-	 *            the total qty ing map
+	 * @param sources
+	 * @param visited
 	 */
 	private void checkILOfPart(NodeRef productNodeRef, DeclarationType declType, ProductData componentProductData,
 			List<ForbiddenIngListDataItem> forbiddenIngredientsList, ProductSpecificationData specification, Map<String, List<NodeRef>> sources,

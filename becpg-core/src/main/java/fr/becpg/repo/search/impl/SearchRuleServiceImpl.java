@@ -239,7 +239,7 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 	 * <p>filterByPath.</p>
 	 *
 	 * @param ret a {@link java.util.List} object
-	 * @param nodePath a {@link org.alfresco.service.cmr.repository.Path} object
+	 * @param filter a {@link org.alfresco.service.cmr.repository.Path} object
 	 * @return a {@link java.util.List} object
 	 */
 	@Deprecated
