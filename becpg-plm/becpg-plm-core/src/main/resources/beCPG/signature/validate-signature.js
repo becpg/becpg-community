@@ -10,7 +10,7 @@ function main() {
 		}
 	}
 
-	if (urlDeliverable) {
+	if (docDeliverable && docDeliverable.content) {
 		var document = search.findNode(docDeliverable.content);
 		document.properties["sign:validationDate"] = new Date();
 		document.save();
