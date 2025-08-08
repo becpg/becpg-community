@@ -352,15 +352,14 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 	}
 
 	/**
+	 * Compare sub-documents recursively.
 	 *
-	 * @param depthLevel
-	 * @param entity1
-	 * @param entity2
-	 * @param structCompareResults
-	 * @param structComparisonListTMP
-	 * @param comparison
-	 * @return false if at least one descendent file has a operator different
-	 *         than equal, true otherwize .
+	 * @param depthLevel current depth level in the tree
+	 * @param entity1 first entity NodeRef (can be null)
+	 * @param entity2 second entity NodeRef (can be null)
+	 * @param structComparisonListTMP accumulator list to append results
+	 * @param comparison comparison label/id
+	 * @return false if at least one descendant file has an operator different than Equal, true otherwise.
 	 */
 	private boolean compareSubDocuments(int depthLevel, NodeRef entity1, NodeRef entity2, List<StructCompareResultDataItem> structComparisonListTMP,
 			String comparison) {
@@ -424,14 +423,13 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 	 * Create a StructCompareResultDataItem which represent a folder. Then Merge
 	 * 'structCompareList with the folder representation and structListFiles.
 	 *
-	 * @param folderNodeRef1
-	 * @param folderNodeRef2
-	 * @param strucListFiles
-	 * @param structCompareList
-	 * @param comparison
-	 * @param depthLevel
-	 * @Param root boolean, create the folder parent at true, and don't do it at
-	 *        false.
+	 * @param folderNodeRef1 the folder node from the first tree (can be null)
+	 * @param folderNodeRef2 the folder node from the second tree (can be null)
+	 * @param structListFiles list of file comparisons within the folder
+	 * @param structCompareList the list to merge into
+	 * @param depthLevel current depth level
+	 * @param root when true, create the folder parent entry
+	 * @param setFolderOperator when true, set folder operator as Modified, otherwise Equal
 	 */
 		private void createFolderStruc(NodeRef folderNodeRef1, NodeRef folderNodeRef2, List<StructCompareResultDataItem> structListFiles,
 			List<StructCompareResultDataItem> structCompareList, int depthLevel, boolean root, boolean setFolderOperator) {
