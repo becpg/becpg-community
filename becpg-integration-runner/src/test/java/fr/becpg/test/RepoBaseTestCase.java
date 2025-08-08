@@ -356,7 +356,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		}
 		
 		if(j == 60) {
-			Assert.fail("Batch is taking too long! Progress: " + (double) (batch.getCurrentItem() / batch.getTotalItems()) + "%");
+			Assert.fail("Batch is taking too long! Progress: " + (batch.getCurrentItem() + "/" + batch.getTotalItems()));
 		}
 		
 	}
