@@ -621,6 +621,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		batchInfo.enableNotifyByMail("entitiesTemplate.formulate", String.format(ASYNC_ACTION_URL_PREFIX, tplNodeRef.toString()));
 		batchInfo.setRunAsSystem(true);
 		batchInfo.setPriority(BatchPriority.LOW);
+		batchInfo.setWorkerThreads(1);
 		
 		BatchProcessWorkProvider<NodeRef> workProvider = createWorkProcessWorkProvider(tplNodeRef, false);
 
