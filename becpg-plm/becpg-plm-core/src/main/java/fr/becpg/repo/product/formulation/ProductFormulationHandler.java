@@ -20,7 +20,7 @@ package fr.becpg.repo.product.formulation;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.alfresco.service.cmr.lock.LockService;
@@ -128,7 +128,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		if (productData.getReqCtrlList() != null) {
 			productData.getReqCtrlList().removeIf(r -> r.getNodeRef() == null);
 		} else {
-			productData.setReqCtrlList(new LinkedList<>());
+			productData.setReqCtrlList(new ArrayList<>());
 		}
 
 		if ((productData.hasCompoListEl(new VariantFilters<>())) || (productData.hasPackagingListEl(new VariantFilters<>()))

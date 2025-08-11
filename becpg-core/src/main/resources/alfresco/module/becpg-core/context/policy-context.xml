@@ -146,5 +146,11 @@
 	<bean id="documentAspectPolicy" class="fr.becpg.repo.entity.policy.DocumentAspectPolicy" parent="abstractBeCPGPolicy">
 	  <property name="associationService" ref="associationService"/>
     </bean>
+    
+    <!-- SurveyQuestion -->
+	
+	<bean id="surveyQuestionPolicy" class="fr.becpg.repo.survey.SurveyQuestionPolicy" parent="abstractBeCPGPolicy">
+	  <property name="beCPGCacheService" ref="beCPGCacheService"/>
+    </bean>
 
 </beans>

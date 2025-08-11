@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -234,7 +234,7 @@ public class ProjectListExtractor extends SimpleExtractor {
 
 		if (results == null) {
 
-			results = new LinkedList<>();
+			results = new ArrayList<>();
 			// pjt:project
 			if (dataListFilter.isDefaultSort()) {
 				Map<String, Boolean> sortMap = new LinkedHashMap<>();
@@ -362,7 +362,7 @@ public class ProjectListExtractor extends SimpleExtractor {
 	private List<NodeRef> getProjectResults(DataListFilter dataListFilter, BeCPGQueryBuilder beCPGQueryBuilder, DataListPagination pagination) {
 
 		List<NodeRef> results = null;
-		List<NodeRef> unionResults = new LinkedList<>();
+		List<NodeRef> unionResults = new ArrayList<>();
 		QName dataType = ProjectModel.TYPE_PROJECT;
 		beCPGQueryBuilder.ofType(ProjectModel.TYPE_PROJECT);
 

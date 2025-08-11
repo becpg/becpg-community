@@ -29,7 +29,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.config.format.FormatMode;
-import fr.becpg.config.format.PropertyFormatService;
+import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.activity.EntityActivityExtractorService;
 import fr.becpg.repo.activity.EntityActivityService;
@@ -54,18 +54,15 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 
 	@Autowired
 	private SecurityService securityService;
-	
+
 	@Autowired
 	private NodeService nodeService;
-	
+
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
 
 	@Autowired
 	private PermissionService permissionService;
-	
-	@Autowired
-	private PropertyFormatService propertyFormatService;
 
 	@Autowired
 	private NamespaceService namespaceService;
@@ -75,14 +72,15 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
-	
+
 	private static final String ACTIVITYEVENT_UPDATE = "Update";
-	
+
 	private static final Log logger = LogFactory.getLog(EntityActivityExtractorServiceImpl.class);
-	
+
 	/** {@inheritDoc} */
 	@Override
-	public Map<String, Object> extractAuditActivityData(JSONObject auditActivityData, List<AttributeExtractorStructure> metadataFields, FormatMode mode) {
+	public Map<String, Object> extractAuditActivityData(JSONObject auditActivityData, List<AttributeExtractorStructure> metadataFields,
+			FormatMode mode) {
 
 		Map<String, Object> ret = new HashMap<>(metadataFields.size());
 
@@ -91,25 +89,26 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 
 			if (auditActivityData.has(metadataField.getFieldName())) {
 				Serializable value = (Serializable) auditActivityData.get(metadataField.getFieldName());
-				
+
 				if (attributeDef instanceof PropertyDefinition propDef) {
-					
+
 					String displayName = null;
-					
+
 					if (DataTypeDefinition.DATETIME.equals(propDef.getDataType().getName())) {
 						Date date = ISO8601DateFormat.parse(value.toString());
-						displayName = attributeExtractorService.getStringValue((PropertyDefinition) attributeDef, date, propertyFormatService.getPropertyFormats(mode, false));
+						displayName = attributeExtractorService.getStringValue((PropertyDefinition) attributeDef, date,
+								PropertyFormats.forMode(mode, false));
 						value = date;
-						
+
 					} else {
-						displayName = attributeExtractorService.getStringValue((PropertyDefinition) attributeDef, value.toString(), propertyFormatService.getPropertyFormats(mode, false));
+						displayName = attributeExtractorService.getStringValue((PropertyDefinition) attributeDef, value.toString(),
+								PropertyFormats.forMode(mode, false));
 					}
-					
+
 					QName type = propDef.getDataType().getName().getPrefixedQName(namespaceService);
-					
+
 					String metadata = entityDictionaryService.toPrefixString(type).split(":")[1];
-					
-					
+
 					if (FormatMode.CSV.equals(mode)) {
 						ret.put(metadataField.getFieldName(), displayName);
 					} else if (FormatMode.XLSX.equals(mode)) {
@@ -128,11 +127,12 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 				}
 			}
 		}
-		
+
 		ret.put(ActivityAuditPlugin.PROP_BCPG_AL_USER_ID, extractPerson((String) auditActivityData.get(ActivityAuditPlugin.PROP_BCPG_AL_USER_ID)));
 
-		JSONObject postLookup = entityActivityService.postActivityLookUp(ActivityType.valueOf((String) auditActivityData.get("prop_bcpg_alType")), (String) auditActivityData.get("prop_bcpg_alData"));
-		
+		JSONObject postLookup = entityActivityService.postActivityLookUp(ActivityType.valueOf((String) auditActivityData.get("prop_bcpg_alType")),
+				(String) auditActivityData.get("prop_bcpg_alData"));
+
 		if (postLookup != null) {
 			try {
 				formatPostLookup(postLookup);
@@ -144,7 +144,7 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 
 		return ret;
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public void formatPostLookup(JSONObject postLookup) {
@@ -168,9 +168,8 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 			entityType = nodeService.getType(entityNodeRef);
 		}
 
-		if (((entityType != null)
-				&& (postLookup.has(EntityActivityService.PROP_DATALIST_TYPE) && (securityService.computeAccessMode(entityNodeRef,
-						entityType, postLookup.getString(EntityActivityService.PROP_DATALIST_TYPE)) == SecurityService.NONE_ACCESS)))
+		if (((entityType != null) && (postLookup.has(EntityActivityService.PROP_DATALIST_TYPE) && (securityService.computeAccessMode(entityNodeRef,
+				entityType, postLookup.getString(EntityActivityService.PROP_DATALIST_TYPE)) == SecurityService.NONE_ACCESS)))
 				|| ((charactNodeRef != null) && (permissionService.hasPermission(charactNodeRef, "Read") != AccessStatus.ALLOWED))) {
 
 			// Entity Title
@@ -241,8 +240,7 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 					}
 
 					if (!postProperty.has(EntityActivityService.BEFORE) || !postProperty.has(EntityActivityService.AFTER)
-							|| areStringsDifferent(postProperty.get(EntityActivityService.BEFORE),
-									postProperty.get(EntityActivityService.AFTER))) {
+							|| areStringsDifferent(postProperty.get(EntityActivityService.BEFORE), postProperty.get(EntityActivityService.AFTER))) {
 						postActivityProperties.put(postProperty);
 					}
 
@@ -268,7 +266,7 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 		}
 		return field.getFieldDef();
 	}
-	
+
 	private boolean areStringsDifferent(Object object, Object object2) {
 
 		if ((object == null) && (object2 == null)) {
@@ -301,7 +299,7 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 			}
 		}
 	}
-	
+
 	/**
 	 * <p>checkProperty.</p>
 	 *
@@ -316,24 +314,24 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 		}
 		return postproperty;
 	}
-	
+
 	private Object toDisplayValue(Object prop, PropertyDefinition propertyDef) {
 		try {
 			String stringVal = prop.toString();
-			if (stringVal != null && (((propertyDef == null) && stringVal.contains("workspace"))
-					|| ((propertyDef != null) && DataTypeDefinition.NODE_REF.equals(propertyDef.getDataType().getName())
-							&& !stringVal.isBlank() && !"null".equals(stringVal)  && !"[\"\"]".equals(stringVal)))) {
+			if ((stringVal != null) && (((propertyDef == null) && stringVal.contains("workspace"))
+					|| ((propertyDef != null) && DataTypeDefinition.NODE_REF.equals(propertyDef.getDataType().getName()) && !stringVal.isBlank()
+							&& !"null".equals(stringVal) && !"[\"\"]".equals(stringVal)))) {
 				NodeRef nodeRef = null;
 				String name = null;
 				if (stringVal.startsWith("(") && stringVal.endsWith(")")) {
 					String nodeRefString = stringVal.substring(stringVal.indexOf("(") + 1, stringVal.indexOf(","));
 					nodeRef = new NodeRef(nodeRefString);
 					name = stringVal.substring(stringVal.indexOf(",") + 1, stringVal.indexOf(")"));
-					
+
 				} else {
-					
+
 					int lastForwardSlash = stringVal.lastIndexOf('/');
-					
+
 					// case of malformed activities
 					if (lastForwardSlash == -1) {
 						try {
@@ -347,13 +345,15 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 						nodeRef = new NodeRef(stringVal);
 					}
 				}
-				if (nodeRef != null && nodeService.exists(nodeRef)) {
+				if ((nodeRef != null) && nodeService.exists(nodeRef)) {
 					if (permissionService.hasPermission(nodeRef, PermissionService.READ) == AccessStatus.ALLOWED) {
 						if (propertyDef != null) {
 							if (propertyDef.isMultiValued()) {
-								return attributeExtractorService.getStringValue(propertyDef, new ArrayList<>(List.of(nodeRef)), attributeExtractorService.getPropertyFormats(FormatMode.JSON, true));
+								return attributeExtractorService.getStringValue(propertyDef, new ArrayList<>(List.of(nodeRef)),
+										attributeExtractorService.getPropertyFormats(FormatMode.JSON, true));
 							}
-							return attributeExtractorService.getStringValue(propertyDef, nodeRef, attributeExtractorService.getPropertyFormats(FormatMode.JSON, true));
+							return attributeExtractorService.getStringValue(propertyDef, nodeRef,
+									attributeExtractorService.getPropertyFormats(FormatMode.JSON, true));
 						} else {
 							return attributeExtractorService.extractPropName(nodeRef);
 						}
@@ -365,18 +365,16 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 						return name;
 					}
 				}
-			} else {
-				if ((prop instanceof String stringProp) && (propertyDef != null) && (DataTypeDefinition.DATE.equals(propertyDef.getDataType().getName())
-						|| DataTypeDefinition.DATETIME.equals(propertyDef.getDataType().getName()))) {
-					return extractDate(stringProp);
-				}
+			} else if ((prop instanceof String stringProp) && (propertyDef != null)
+					&& (DataTypeDefinition.DATE.equals(propertyDef.getDataType().getName())
+							|| DataTypeDefinition.DATETIME.equals(propertyDef.getDataType().getName()))) {
+				return extractDate(stringProp);
 			}
 		} catch (JSONException | MalformedNodeRefException e) {
 			logger.error(e, e);
 		}
 		return prop;
 	}
-	
 
 	private Object extractDate(String prop) {
 		try {
