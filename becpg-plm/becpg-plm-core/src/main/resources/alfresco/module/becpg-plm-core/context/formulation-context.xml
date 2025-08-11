@@ -169,7 +169,6 @@
 					<property name="execOrder" value="Pre" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.CompositionCalculatingFormulationHandler">
-					<property name="nodeService" ref="nodeService" />
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.ProcessCalculatingFormulationHandler">
