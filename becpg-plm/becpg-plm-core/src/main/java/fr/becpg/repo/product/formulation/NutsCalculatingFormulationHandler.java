@@ -4,7 +4,7 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -80,7 +80,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 			logger.debug("Nuts calculating visitor");
 
 			if (formulatedProduct.getNutList() == null) {
-				formulatedProduct.setNutList(new LinkedList<>());
+				formulatedProduct.setNutList(new ArrayList<>());
 			}
 
 			formulateSimpleList(formulatedProduct, formulatedProduct.getNutList(), new DefaultSimpleListQtyProvider(formulatedProduct) {

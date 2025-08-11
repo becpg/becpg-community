@@ -18,7 +18,7 @@
 package fr.becpg.repo.product.data;
 
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -75,7 +75,7 @@ public class CharactDetails {
 	public void addKeyValue(NodeRef charactNodeRef, CharactDetailsValue value) {
 		List<CharactDetailsValue> tmp = data.get(charactNodeRef);
 		if(tmp == null){
-			tmp = new LinkedList<>();
+			tmp = new ArrayList<>();
 		}
 		boolean match = false;
 		for(CharactDetailsValue existingValue : tmp){

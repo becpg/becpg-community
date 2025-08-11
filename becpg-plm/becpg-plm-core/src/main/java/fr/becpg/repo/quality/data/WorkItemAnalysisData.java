@@ -17,7 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.quality.data;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import fr.becpg.repo.quality.data.dataList.ControlListDataItem;
@@ -40,7 +40,7 @@ public class WorkItemAnalysisData extends BeCPGDataObject {
 	 * 
 	 */
 	private static final long serialVersionUID = -7826247093687640349L;
-	List<ControlListDataItem> controlList = new LinkedList<>();
+	List<ControlListDataItem> controlList = new ArrayList<>();
 
 	/**
 	 * <p>Getter for the field <code>controlList</code>.</p>
