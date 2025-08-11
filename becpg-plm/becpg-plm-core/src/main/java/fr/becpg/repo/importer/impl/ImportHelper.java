@@ -426,7 +426,7 @@ public class ImportHelper {
 		if (value != null) {
 			if (currentValue != null) {
 				for (Locale loc : value.getLocales()) {
-					if (!(I18NUtil.getContentLocaleLang().equals(loc) && "".equals(value.get(loc)) && !"".equals(currentValue))) {
+					if (!(I18NUtil.getContentLocaleLang().equals(loc) && "".equals(value.get(loc)) && !currentValue.isEmpty())) {
 						if (ImportHelper.NULL_VALUE.equals(value.get(loc))) {
 							currentValue.remove(loc);
 						} else {

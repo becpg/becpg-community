@@ -10,13 +10,13 @@ function main() {
 		}
 	}
 
-	var document = search.findNode(docDeliverable.content);
-
-	document.properties["sign:validationDate"] = new Date();
-	document.save();
-
-	var projectNode = search.findNode(project.nodeRef);
+	if (docDeliverable && docDeliverable.content) {
+		var document = search.findNode(docDeliverable.content);
+		document.properties["sign:validationDate"] = new Date();
+		document.save();
+	}
 	
+	var projectNode = search.findNode(project.nodeRef);
 	projectNode.remove();
 }
 
