@@ -245,6 +245,8 @@
             if (toUnit == "mm" || toUnit == "g" || toUnit == "mL") {
                 val = val * 1000;
             }
+            
+           val = Math.round(val * 1e15) / 1e15;
         }
         return val;
     };
