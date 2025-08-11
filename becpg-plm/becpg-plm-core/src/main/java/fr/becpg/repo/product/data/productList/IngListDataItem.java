@@ -17,7 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.product.data.productList;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -74,13 +74,13 @@ public class IngListDataItem extends AbstractManualDataItem
 
 	private Double volumeQtyPerc = null;
 
-	private List<NodeRef> geoOrigin = new LinkedList<>();
+	private List<NodeRef> geoOrigin = new ArrayList<>();
 
-	private List<NodeRef> geoTransfo = new LinkedList<>();
+	private List<NodeRef> geoTransfo = new ArrayList<>();
 
-	private List<NodeRef> bioOrigin = new LinkedList<>();
+	private List<NodeRef> bioOrigin = new ArrayList<>();
 
-	private List<NodeRef> claims = new LinkedList<>();
+	private List<NodeRef> claims = new ArrayList<>();
 
 	private Boolean isGMO = false;
 
@@ -802,10 +802,10 @@ public class IngListDataItem extends AbstractManualDataItem
 		this.qtyPercWithYield = i.qtyPercWithYield;
 		this.qtyPercWithSecondaryYield = i.qtyPercWithSecondaryYield;
 		this.volumeQtyPerc = i.volumeQtyPerc;
-		this.geoOrigin = this.geoOrigin != null ? new LinkedList<>(i.geoOrigin) : null;
-		this.geoTransfo = this.geoTransfo != null ? new LinkedList<>(i.geoTransfo) : null;
-		this.bioOrigin = this.bioOrigin != null ? new LinkedList<>(i.bioOrigin) : null;
-		this.claims = this.claims != null ? new LinkedList<>(i.claims) : null;
+		this.geoOrigin = this.geoOrigin != null ? new ArrayList<>(i.geoOrigin) : null;
+		this.geoTransfo = this.geoTransfo != null ? new ArrayList<>(i.geoTransfo) : null;
+		this.bioOrigin = this.bioOrigin != null ? new ArrayList<>(i.bioOrigin) : null;
+		this.claims = this.claims != null ? new ArrayList<>(i.claims) : null;
 		this.isGMO = i.isGMO;
 		this.isIonized = i.isIonized;
 		this.ing = i.ing;

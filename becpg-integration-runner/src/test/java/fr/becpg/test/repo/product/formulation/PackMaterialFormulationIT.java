@@ -1,10 +1,7 @@
 package fr.becpg.test.repo.product.formulation;
 
-import static fr.becpg.repo.survey.helper.SurveyableEntityHelper.SURVEY_LIST_NAMES;
-
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -26,6 +23,7 @@ import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.survey.data.SurveyQuestion;
+import fr.becpg.repo.survey.helper.SurveyableEntityHelper;
 import fr.becpg.test.PLMBaseTestCase;
 
 public class PackMaterialFormulationIT extends PLMBaseTestCase {
@@ -104,9 +102,9 @@ public class PackMaterialFormulationIT extends PLMBaseTestCase {
 			var surveyQuestion = new SurveyQuestion();
 			surveyQuestion.setName("Survey Question 0");
 			surveyQuestion.setLabel("Yes or No ?");
-			surveyQuestion.setFsLinkedCharactRefs(Collections.singletonList(packMaterial0NodeRef));
-			surveyQuestion.setFsLinkedTypes(Collections.singletonList(PLMModel.TYPE_PACKAGINGMATERIAL.toString()));
-			surveyQuestion.setFsSurveyListName(SURVEY_LIST_NAMES.get(1));
+			surveyQuestion.setFsLinkedCharactRefs(List.of(packMaterial0NodeRef));
+			surveyQuestion.setFsLinkedTypes(List.of(PLMModel.TYPE_PACKAGINGMATERIAL.toString()));
+			surveyQuestion.setFsSurveyListName(SurveyableEntityHelper.surveyListsNames().get(1));
 
 			surveyQuestionRepository.create(getTestFolderNodeRef(), surveyQuestion);
 
@@ -120,9 +118,9 @@ public class PackMaterialFormulationIT extends PLMBaseTestCase {
 			var surveyQuestion = new SurveyQuestion();
 			surveyQuestion.setName("Survey Question 1");
 			surveyQuestion.setLabel("Hot or Cold ?");
-			surveyQuestion.setFsLinkedCharactRefs(Collections.singletonList(packMaterial1NodeRef));
-			surveyQuestion.setFsLinkedTypes(Collections.singletonList(PLMModel.TYPE_PACKAGINGMATERIAL.toString()));
-			surveyQuestion.setFsSurveyListName(SURVEY_LIST_NAMES.get(1));
+			surveyQuestion.setFsLinkedCharactRefs(List.of(packMaterial1NodeRef));
+			surveyQuestion.setFsLinkedTypes(List.of(PLMModel.TYPE_PACKAGINGMATERIAL.toString()));
+			surveyQuestion.setFsSurveyListName(SurveyableEntityHelper.surveyListsNames().get(1));
 
 			surveyQuestionRepository.create(getTestFolderNodeRef(), surveyQuestion);
 
@@ -136,9 +134,9 @@ public class PackMaterialFormulationIT extends PLMBaseTestCase {
 			var surveyQuestion = new SurveyQuestion();
 			surveyQuestion.setName("Survey Question 22");
 			surveyQuestion.setLabel("High or Low ?");
-			surveyQuestion.setFsLinkedCharactRefs(Collections.singletonList(packMaterial2NodeRef));
-			surveyQuestion.setFsLinkedTypes(Collections.singletonList(PLMModel.TYPE_PACKAGINGMATERIAL.toString()));
-			surveyQuestion.setFsSurveyListName(SURVEY_LIST_NAMES.get(1));
+			surveyQuestion.setFsLinkedCharactRefs(List.of(packMaterial2NodeRef));
+			surveyQuestion.setFsLinkedTypes(List.of(PLMModel.TYPE_PACKAGINGMATERIAL.toString()));
+			surveyQuestion.setFsSurveyListName(SurveyableEntityHelper.surveyListsNames().get(1));
 			surveyQuestionRepository.create(getTestFolderNodeRef(), surveyQuestion);
 
 			return null;

@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -1164,7 +1163,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 		@SuppressWarnings({ "unchecked" })
 		private <T extends RepositoryEntity> List<T> clone(Collection<T> data) {
-			List<T> clonedList = new LinkedList<>();
+			List<T> clonedList = new ArrayList<>();
 			Map<NodeRef, T> origDataItemMap = new HashMap<>();
 
 			for (T originalData : data) {

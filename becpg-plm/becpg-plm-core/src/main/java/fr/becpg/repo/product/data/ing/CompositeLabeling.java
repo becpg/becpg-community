@@ -6,7 +6,7 @@ package fr.becpg.repo.product.data.ing;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -113,7 +113,7 @@ public class CompositeLabeling extends LabelingComponent {
 	 */
 	@SuppressWarnings("unchecked")
 	protected <T extends CompositeLabeling> List<T> clone(List<T> list) {
-		List<T> ret = new LinkedList<>();
+		List<T> ret = new ArrayList<>();
 		if (list != null) {
 			for (T toAdd : list) {
 				ret.add((T) toAdd.createCopy());

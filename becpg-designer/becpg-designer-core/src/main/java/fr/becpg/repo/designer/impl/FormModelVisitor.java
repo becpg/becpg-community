@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -80,7 +80,7 @@ public class FormModelVisitor {
 	 * @throws javax.xml.parsers.FactoryConfigurationError if any.
 	 */
 	public List<FormControl> visitControls(InputStream is) throws SAXException, IOException, ParserConfigurationException, FactoryConfigurationError {
-		List<FormControl> ret = new LinkedList<>();
+		List<FormControl> ret = new ArrayList<>();
 
 		Document doc = DOMUtils.parse(is);
 

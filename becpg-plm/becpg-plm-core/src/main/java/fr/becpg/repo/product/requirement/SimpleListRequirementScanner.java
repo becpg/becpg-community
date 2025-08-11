@@ -1,7 +1,7 @@
 package fr.becpg.repo.product.requirement;
 
 import java.text.NumberFormat;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +36,7 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 	/** {@inheritDoc} */
 	@Override
 	public List<RequirementListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
-		List<RequirementListDataItem> ret = new LinkedList<>();
+		List<RequirementListDataItem> ret = new ArrayList<>();
 
 		List<T> dataListVisited = getDataListVisited(formulatedProduct);
 

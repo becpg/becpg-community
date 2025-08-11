@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -522,7 +521,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	@Override
 	public List<EntityVersion> getAllVersions(NodeRef entityNodeRef) {
 
-		List<EntityVersion> entityVersions = new LinkedList<>();
+		List<EntityVersion> entityVersions = new ArrayList<>();
 		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_WORKING_COPY)
 				&& !nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 			VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
@@ -563,7 +562,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	public List<NodeRef> buildVersionHistory(NodeRef versionHistoryRef, NodeRef nodeRef) {
 
 		List<ChildAssociationRef> versionAssocs = getVersionAssocs(versionHistoryRef, true);
-		List<NodeRef> versionRefs = new LinkedList<>();
+		List<NodeRef> versionRefs = new ArrayList<>();
 
 		for (ChildAssociationRef versionAssoc : versionAssocs) {
 
@@ -598,7 +597,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	/** {@inheritDoc} */
 	@Override
 	public List<EntityVersion> getAllVersionAndBranches(NodeRef entityNodeRef) {
-		List<EntityVersion> ret = new LinkedList<>();
+		List<EntityVersion> ret = new ArrayList<>();
 		for (NodeRef branchNodeRef : getAllVersionBranches(entityNodeRef)) {
 			List<EntityVersion> entityVersions = getAllVersions(branchNodeRef);
 
@@ -641,7 +640,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		// Look for primary parent
 		NodeRef tmp;
 
-		List<NodeRef> ret = new LinkedList<>();
+		List<NodeRef> ret = new ArrayList<>();
 		if (primaryParentNodeRef != null) {
 			int maxDeep = 0;
 			do {
@@ -677,7 +676,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	 */
 	private List<NodeRef> getAllChildVersionBranches(NodeRef entityNodeRef) {
 
-		List<NodeRef> ret = new LinkedList<>();
+		List<NodeRef> ret = new ArrayList<>();
 		// Look for childs
 		for (NodeRef associationRef : associationService.getSourcesAssocs(entityNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY)) {
 			if (!VersionHelper.isVersion(associationRef)
