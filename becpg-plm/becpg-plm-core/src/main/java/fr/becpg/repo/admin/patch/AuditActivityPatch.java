@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.io.Serializable;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
@@ -38,218 +40,229 @@ import fr.becpg.repo.helper.AssociationService;
  */
 public class AuditActivityPatch extends AbstractBeCPGPatch {
 
-	private static final Log logger = LogFactory.getLog(AuditActivityPatch.class);
-	private static final String MSG_SUCCESS = "Success of AuditActivityPtach";
+    private static final Log logger = LogFactory.getLog(AuditActivityPatch.class);
+    private static final String MSG_SUCCESS = "Success of AuditActivityPtach";
 
-	private RuleService ruleService;
-	private LockService lockService;
-	private BeCPGAuditService beCPGAuditService;
-	private EntityService entityService;
-	private AssociationService associationService;
-	private BehaviourFilter policyBehaviourFilter;
-	
-	/**
-	 * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
-	 *
-	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object
-	 */
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
-	}
-	
-	/**
-	 * <p>Setter for the field <code>associationService</code>.</p>
-	 *
-	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
-	 */
-	public void setAssociationService(AssociationService associationService) {
-		this.associationService = associationService;
-	}
-	
-	/**
-	 * <p>Setter for the field <code>entityService</code>.</p>
-	 *
-	 * @param entityService a {@link fr.becpg.repo.entity.EntityService} object
-	 */
-	public void setEntityService(EntityService entityService) {
-		this.entityService = entityService;
-	}
-	
-	/**
-	 * <p>Setter for the field <code>beCPGAuditService</code>.</p>
-	 *
-	 * @param beCPGAuditService a {@link fr.becpg.repo.audit.service.BeCPGAuditService} object
-	 */
-	public void setBeCPGAuditService(BeCPGAuditService beCPGAuditService) {
-		this.beCPGAuditService = beCPGAuditService;
-	}
+    private static final int BATCH_THREADS = Integer.getInteger(
+            "becpg.patch.auditActivity.threads", 6);
+    private static final int BATCH_SIZE = Integer.getInteger(
+            "becpg.patch.auditActivity.batchSize", 35);
 
-	
-	/**
-	 * <p>Getter for the field <code>ruleService</code>.</p>
-	 *
-	 * @return a {@link org.alfresco.service.cmr.rule.RuleService} object.
-	 */
-	public RuleService getRuleService() {
-		return ruleService;
-	}
+    private RuleService ruleService;
+    private LockService lockService;
+    private BeCPGAuditService beCPGAuditService;
+    private EntityService entityService;
+    private AssociationService associationService;
+    private BehaviourFilter policyBehaviourFilter;
+    
+    /**
+     * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
+     *
+     * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object
+     */
+    public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+        this.policyBehaviourFilter = policyBehaviourFilter;
+    }
+    
+    /**
+     * <p>Setter for the field <code>associationService</code>.</p>
+     *
+     * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+     */
+    public void setAssociationService(AssociationService associationService) {
+        this.associationService = associationService;
+    }
+    
+    /**
+     * <p>Setter for the field <code>entityService</code>.</p>
+     *
+     * @param entityService a {@link fr.becpg.repo.entity.EntityService} object
+     */
+    public void setEntityService(EntityService entityService) {
+        this.entityService = entityService;
+    }
+    
+    /**
+     * <p>Setter for the field <code>beCPGAuditService</code>.</p>
+     *
+     * @param beCPGAuditService a {@link fr.becpg.repo.audit.service.BeCPGAuditService} object
+     */
+    public void setBeCPGAuditService(BeCPGAuditService beCPGAuditService) {
+        this.beCPGAuditService = beCPGAuditService;
+    }
 
-	/**
-	 * <p>Setter for the field <code>ruleService</code>.</p>
-	 *
-	 * @param ruleService a {@link org.alfresco.service.cmr.rule.RuleService} object.
-	 */
-	public void setRuleService(RuleService ruleService) {
-		this.ruleService = ruleService;
-	}
+    
+    /**
+     * <p>Getter for the field <code>ruleService</code>.</p>
+     *
+     * @return a {@link org.alfresco.service.cmr.rule.RuleService} object.
+     */
+    public RuleService getRuleService() {
+        return ruleService;
+    }
 
-	/**
-	 * <p>Setter for the field <code>lockService</code>.</p>
-	 *
-	 * @param lockService a {@link org.alfresco.service.cmr.lock.LockService} object
-	 */
-	public void setLockService(LockService lockService) {
-		this.lockService = lockService;
-	}
+    /**
+     * <p>Setter for the field <code>ruleService</code>.</p>
+     *
+     * @param ruleService a {@link org.alfresco.service.cmr.rule.RuleService} object.
+     */
+    public void setRuleService(RuleService ruleService) {
+        this.ruleService = ruleService;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	protected String applyInternal() throws Exception {
+    /**
+     * <p>Setter for the field <code>lockService</code>.</p>
+     *
+     * @param lockService a {@link org.alfresco.service.cmr.lock.LockService} object
+     */
+    public void setLockService(LockService lockService) {
+        this.lockService = lockService;
+    }
 
-		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+    /** {@inheritDoc} */
+    @Override
+    protected String applyInternal() throws Exception {
 
-		applyPatch();
+        AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
-		return MSG_SUCCESS;
-	}
+        applyPatch();
 
-	private void applyPatch() {
-		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
-			final List<NodeRef> result = new ArrayList<>();
+        return MSG_SUCCESS;
+    }
 
-			final long maxNodeId = getNodeDAO().getMaxNodeId();
+    private void applyPatch() {
+        if (logger.isInfoEnabled()) {
+            logger.info("AuditActivityPatch config: threads=" + BATCH_THREADS + ", batchSize=" + BATCH_SIZE);
+        }
+        BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
+            final List<NodeRef> result = new ArrayList<>();
 
-			long minSearchNodeId = 0;
-			long maxSearchNodeId = INC;
+            final long maxNodeId = getNodeDAO().getMaxNodeId();
+            final long inc = BATCH_THREADS * BATCH_SIZE * 1L;
 
-			final Pair<Long, QName> val = getQnameDAO().getQName(BeCPGModel.TYPE_ACTIVITY_LIST);
+            long minSearchNodeId = 0;
+            long maxSearchNodeId = inc;
 
-			@Override
-			public int getTotalEstimatedWorkSize() {
-				return result.size();
-			}
-			
-			@Override
-			public long getTotalEstimatedWorkSizeLong() {
-				return getTotalEstimatedWorkSize();
-			}
+            final Pair<Long, QName> val = getQnameDAO().getQName(BeCPGModel.TYPE_ACTIVITY_LIST);
 
-			@Override
-			public Collection<NodeRef> getNextWork() {
-				if (val != null) {
-					Long typeQNameId = val.getFirst();
+            @Override
+            public int getTotalEstimatedWorkSize() {
+                return result.size();
+            }
+            
+            @Override
+            public long getTotalEstimatedWorkSizeLong() {
+                return getTotalEstimatedWorkSize();
+            }
 
-					result.clear();
+            @Override
+            public Collection<NodeRef> getNextWork() {
+                if (val != null) {
+                    Long typeQNameId = val.getFirst();
 
-					while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
+                    result.clear();
 
-						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
+                    while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
 
-						for (Long nodeid : nodeids) {
-							NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
-							if (!status.isDeleted()) {
-								result.add(status.getNodeRef());
-							}
-						}
-						minSearchNodeId = minSearchNodeId + INC;
-						maxSearchNodeId = maxSearchNodeId + INC;
-					}
-				}
+                        List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
 
-				return result;
-			}
-		};
+                        for (Long nodeid : nodeids) {
+                            NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
+                            if (!status.isDeleted()) {
+                                result.add(status.getNodeRef());
+                            }
+                        }
+                        minSearchNodeId = minSearchNodeId + inc;
+                        maxSearchNodeId = maxSearchNodeId + inc;
+                    }
+                }
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>(AuditActivityPatch.class.getSimpleName(), transactionService.getRetryingTransactionHelper(),
-				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 500);
+                return result;
+            }
+        };
 
-		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
+        BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>(AuditActivityPatch.class.getSimpleName(), transactionService.getRetryingTransactionHelper(),
+                workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 500);
 
-			@Override
-			public String getIdentifier(NodeRef entry) {
-				return entry.toString();
-			}
+        BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
 
-			@Override
-			public void process(NodeRef activityNodeRef) throws Throwable {
-				
-				try {
-					ruleService.disableRules();
-					IntegrityChecker.setWarnInTransaction();
-					policyBehaviourFilter.disableBehaviour();
-					
-					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-					
-					if (nodeService.exists(activityNodeRef)) {
-						if (lockService.isLocked(activityNodeRef)) {
-							lockService.unlock(activityNodeRef);
-						}
-						
-						String created = ISO8601DateFormat.format((Date) nodeService.getProperty(activityNodeRef, ContentModel.PROP_CREATED));
-						String userId = (String) nodeService.getProperty(activityNodeRef, BeCPGModel.PROP_ACTIVITYLIST_USERID);
-						String activityListType = nodeService.getProperty(activityNodeRef, BeCPGModel.PROP_ACTIVITYLIST_TYPE).toString();
-						String activityListData = (String) nodeService.getProperty(activityNodeRef, BeCPGModel.PROP_ACTIVITYLIST_DATA);
-						
-						for (NodeRef entityNodeRef : associationService.getSourcesAssocs(activityNodeRef, ProjectModel.ASSOC_PROJECT_CUR_COMMENTS)) {
-							JSONObject activityJson = new JSONObject();
-							
-							activityJson.put("prop_cm_created", created);
-							activityJson.put("prop_bcpg_alUserId", userId);
-							activityJson.put("prop_bcpg_alType", activityListType);
-							activityJson.put("prop_bcpg_alData", activityListData);
-							
-							nodeService.setProperty(entityNodeRef, ProjectModel.PROP_PROJECT_CUR_COMMENT, activityJson.toString());
-						}
-						
-						NodeRef entityNodeRef = entityService.getEntityNodeRef(activityNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
-						
-						try (AuditScope auditScope = beCPGAuditService.startAudit(AuditType.ACTIVITY)) {
-							if (entityNodeRef != null) {
-								auditScope.putAttribute("entityNodeRef", entityNodeRef.toString());
-							}
-							
-							auditScope.putAttribute("prop_cm_created", created);
-							auditScope.putAttribute("prop_bcpg_alUserId", userId);
-							auditScope.putAttribute("prop_bcpg_alType", activityListType);
-							auditScope.putAttribute("prop_bcpg_alData", activityListData);
-						}
-						
-						nodeService.addAspect(activityNodeRef, ContentModel.ASPECT_TEMPORARY, null);
-						nodeService.deleteNode(activityNodeRef);
-						
-					} else {
-						logger.warn("activityNodeRef doesn't exist : " + activityNodeRef + " or is not in workspace store");
-					}
-					
-				} finally {
-					ruleService.enableRules();
-					policyBehaviourFilter.enableBehaviour();
-				}
-			}
+            @Override
+            public String getIdentifier(NodeRef entry) {
+                return entry.toString();
+            }
 
-			@Override
-			public void beforeProcess() throws Throwable {
-				
-			}
+            @Override
+            public void process(NodeRef activityNodeRef) throws Throwable {
+                
+                try {
+                    ruleService.disableRules();
+                    IntegrityChecker.setWarnInTransaction();
+                    policyBehaviourFilter.disableBehaviour();
+                    
+                    AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+                    
+                    if (nodeService.exists(activityNodeRef)) {
+                        if (lockService.isLocked(activityNodeRef)) {
+                            lockService.unlock(activityNodeRef);
+                        }
+                        
+                        Map<QName, Serializable> props = nodeService.getProperties(activityNodeRef);
+                        String created = ISO8601DateFormat.format((Date) props.get(ContentModel.PROP_CREATED));
+                        String userId = (String) props.get(BeCPGModel.PROP_ACTIVITYLIST_USERID);
+                        Serializable typeProp = props.get(BeCPGModel.PROP_ACTIVITYLIST_TYPE);
+                        String activityListType = (typeProp != null) ? typeProp.toString() : null;
+                        String activityListData = (String) props.get(BeCPGModel.PROP_ACTIVITYLIST_DATA);
+                        
+                        for (NodeRef entityNodeRef : associationService.getSourcesAssocs(activityNodeRef, ProjectModel.ASSOC_PROJECT_CUR_COMMENTS)) {
+                            JSONObject activityJson = new JSONObject();
+                            
+                            activityJson.put("prop_cm_created", created);
+                            activityJson.put("prop_bcpg_alUserId", userId);
+                            activityJson.put("prop_bcpg_alType", activityListType);
+                            activityJson.put("prop_bcpg_alData", activityListData);
+                            
+                            nodeService.setProperty(entityNodeRef, ProjectModel.PROP_PROJECT_CUR_COMMENT, activityJson.toString());
+                        }
+                        
+                        NodeRef entityNodeRef = entityService.getEntityNodeRef(activityNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+                        
+                        try (AuditScope auditScope = beCPGAuditService.startAudit(AuditType.ACTIVITY)) {
+                            if (entityNodeRef != null) {
+                                auditScope.putAttribute("entityNodeRef", entityNodeRef.toString());
+                            }
+                            
+                            auditScope.putAttribute("prop_cm_created", created);
+                            auditScope.putAttribute("prop_bcpg_alUserId", userId);
+                            auditScope.putAttribute("prop_bcpg_alType", activityListType);
+                            auditScope.putAttribute("prop_bcpg_alData", activityListData);
+                        }
+                        
+                        nodeService.addAspect(activityNodeRef, ContentModel.ASPECT_TEMPORARY, null);
+                        nodeService.deleteNode(activityNodeRef);
+                        
+                    } else {
+                        logger.warn("activityNodeRef doesn't exist : " + activityNodeRef + " or is not in workspace store");
+                    }
+                    
+                } finally {
+                    ruleService.enableRules();
+                    policyBehaviourFilter.enableBehaviour();
+                }
+            }
 
-			@Override
-			public void afterProcess() throws Throwable {
-				
-			}
-		};
-		
-		batchProcessor.processLong(worker, true);
-	
-	}
-	
+            @Override
+            public void beforeProcess() throws Throwable {
+                
+            }
+
+            @Override
+            public void afterProcess() throws Throwable {
+                
+            }
+        };
+        
+        batchProcessor.processLong(worker, true);
+    
+    }
+    
 }
