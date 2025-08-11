@@ -58,9 +58,9 @@ public class AuditActivityPatch extends AbstractBeCPGPatch {
 	
 
     private static final int BATCH_THREADS = Integer.getInteger(
-            "becpg.patch.auditActivity.threads", 6);
+            "becpg.patch.auditActivity.threads", 4);
     private static final int BATCH_SIZE = Integer.getInteger(
-            "becpg.patch.auditActivity.batchSize", 35);
+            "becpg.patch.auditActivity.batchSize", 50);
 
 	
 	/**
