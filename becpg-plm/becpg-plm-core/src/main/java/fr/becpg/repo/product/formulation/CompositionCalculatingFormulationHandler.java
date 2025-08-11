@@ -21,9 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -37,7 +35,6 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
-import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.variant.filters.VariantFilters;
@@ -53,18 +50,8 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 
 	private static final Log logger = LogFactory.getLog(CompositionCalculatingFormulationHandler.class);
 
-	private NodeService nodeService;
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
-
-	/**
-	 * <p>Setter for the field <code>nodeService</code>.</p>
-	 *
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
-	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
 
 	/**
 	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
@@ -94,8 +81,6 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 
 
 		Composite<CompoListDataItem> compositeAll = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
-		Composite<CompoListDataItem> compositeDefaultVariant = CompositeHelper
-				.getHierarchicalCompoList(formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())));
 
 		// Variants
 		List<VariantData> variants = formulatedProduct.getVariants();
@@ -108,7 +93,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 
 				variantData.reset();
 
-				if (variantData.getIsDefaultVariant()) {
+				if (Boolean.TRUE.equals(variantData.getIsDefaultVariant())) {
 					formulatedProduct.setDefaultVariantData(variantData);
 				}
 			}
@@ -123,8 +108,6 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 
 		visitVariantData(variants, compositeAll, formulatedProduct, formulatedProduct.getProductLossPerc());
 
-		// Yield
-		visitYieldChildren(formulatedProduct, compositeDefaultVariant);
 
 		Double qtyUsed = formulatedProduct.getDefaultVariantData().getRecipeQtyUsed();
 
@@ -145,20 +128,18 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			formulatedProduct.setYield(null);
 		}
 
-		// Volume
-		Double volumeUsed = calculateVolumeFromChildren(compositeDefaultVariant);
-		formulatedProduct.setRecipeVolumeUsed(volumeUsed);
+        // Product-level volume metrics from default variant aggregates
+        Double volumeUsed = formulatedProduct.getDefaultVariantData().getRecipeVolumeUsed();
+        formulatedProduct.setRecipeVolumeUsed(volumeUsed);
 
-		
-
-		Double netVolume = FormulationHelper.getNetVolume(formulatedProduct,null,null);
-		if ((netVolume != null) && (volumeUsed!=null) && (volumeUsed != 0d)) {
-			formulatedProduct.setYieldVolume((100 * netVolume) / volumeUsed);
-		}
+        Double netVolume = FormulationHelper.getNetVolume(formulatedProduct, null, null);
+        if ((netVolume != null) && (volumeUsed != null) && (volumeUsed != 0d)) {
+            formulatedProduct.setYieldVolume((100 * netVolume) / volumeUsed);
+        }
 
 		// generic raw material
-		if (formulatedProduct instanceof RawMaterialData) {
-			calculateAttributesOfGenericRawMaterial((RawMaterialData) formulatedProduct, compositeAll);
+		if (formulatedProduct instanceof RawMaterialData rawMaterialData) {
+			calculateAttributesOfGenericRawMaterial(rawMaterialData, compositeAll);
 		} else {
 			Double vol = netVolume != null ? netVolume : volumeUsed;
 			Double weight = netWeight != null ? netWeight : qtyUsed;
@@ -223,87 +204,6 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 
 	}
 	
-	@Deprecated
-	// TODO use variant Data instead
-	private Double calculateVolumeFromChildren(Composite<CompoListDataItem> composite) throws FormulateException {
-
-		Double volume = 0d;
-
-		for (Composite<CompoListDataItem> component : composite.getChildren()) {
-
-			Double value;
-
-			if (!component.isLeaf()) {
-				// calculate children
-				value = calculateVolumeFromChildren(component);
-				component.getData().setVolume(value);
-
-			} else {
-				CompoListDataItem compoListDataItem = component.getData();
-				ProductData componentProduct = alfrescoRepository.findOne(compoListDataItem.getProduct());
-				
-				value = FormulationHelper.getNetVolume(compoListDataItem, componentProduct);
-				compoListDataItem.setVolume(value);
-			}
-			volume += ((value != null) && !value.isNaN() && !value.isInfinite() ? value : 0d);
-		}
-		return volume;
-	}
-
-	private void visitYieldChildren(ProductData formulatedProduct, Composite<CompoListDataItem> composite) throws FormulateException {
-
-		for (Composite<CompoListDataItem> component : composite.getChildren()) {
-
-			// calculate children
-			if (!component.isLeaf()) {
-
-				// take in account percentage
-				if (ProductUnit.Perc.equals(component.getData().getCompoListUnit())) {
-
-					visitYieldChildren(formulatedProduct, component);
-					component.getData().setYieldPerc(null);
-				} else {
-					visitYieldChildren(formulatedProduct, component);
-
-					// Yield
-					component.getData().setYieldPerc(calculateYield(component));
-				}
-			}
-		}
-	}
-
-	private Double calculateYield(Composite<CompoListDataItem> composite) throws FormulateException {
-
-		Double yieldPerc = 100d;
-
-		// qty Used in the sub formula
-		Double qtyUsed = 0d;
-		for (Composite<CompoListDataItem> component : composite.getChildren()) {
-
-			Double qty = component.getData().getQty();
-			if (qty != null) {
-				// water can be taken in account on Raw Material
-				if (component.isLeaf()) {
-					qtyUsed += (qty * FormulationHelper.getYield(component.getData())) / 100;
-				} else {
-					qtyUsed += qty;
-				}
-			}
-		}
-
-		// qty after process
-		if ((composite.getData().getQty() != null) && (qtyUsed != 0)) {
-			yieldPerc = (composite.getData().getQty() / qtyUsed) * 100;
-		}
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("component: " + nodeService.getProperty(composite.getData().getProduct(), ContentModel.PROP_NAME) + " qtyAfterProcess: "
-					+ composite.getData().getQty() + " - qtyUsed: " + qtyUsed + " yieldPerc: " + yieldPerc);
-		}
-
-		return yieldPerc;
-	}
-
 	private void calculateAttributesOfGenericRawMaterial(RawMaterialData rawMaterialData, Composite<CompoListDataItem> composite) {
 		List<NodeRef> supplierNodeRefs = new ArrayList<>();
 		List<NodeRef> plantNodeRefs = new ArrayList<>();
@@ -316,8 +216,8 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 					&& !component.getData().getQtySubFormula().isInfinite() && (component.getData().getQtySubFormula() > 0)) {
 				ProductData productData = alfrescoRepository.findOne(component.getData().getProduct());
 
-				if (productData instanceof RawMaterialData) {
-					for (NodeRef supplierNodeRef : ((RawMaterialData) productData).getSuppliers()) {
+				if (productData instanceof RawMaterialData componentRawMaterialData) {
+					for (NodeRef supplierNodeRef : componentRawMaterialData.getSuppliers()) {
 						if (!supplierNodeRefs.contains(supplierNodeRef)) {
 							supplierNodeRefs.add(supplierNodeRef);
 						}
@@ -328,13 +228,13 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 						}
 					}
 
-					for (NodeRef originGeoNodeRef : ((RawMaterialData) productData).getGeoOrigins()) {
+					for (NodeRef originGeoNodeRef : componentRawMaterialData.getGeoOrigins()) {
 						if (!geoOriginsNodeRefs.contains(originGeoNodeRef)) {
 							geoOriginsNodeRefs.add(originGeoNodeRef);
 						}
 					}
 
-					for (NodeRef supplierPlantNodeRef : ((RawMaterialData) productData).getSupplierPlants()) {
+					for (NodeRef supplierPlantNodeRef : componentRawMaterialData.getSupplierPlants()) {
 						if (!supplierPlantNodeRefs.contains(supplierPlantNodeRef)) {
 							supplierPlantNodeRefs.add(supplierPlantNodeRef);
 						}
