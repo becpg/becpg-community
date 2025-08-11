@@ -91,13 +91,15 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 			extractProps(comparisonMap, dataListType, charactName, pivotKey, BeCPGModel.PROP_DEPTH_LEVEL, value, nbEntities, comparisonPosition,
 					swap);
 
-			value = item.getCompoListUnit().toString();
-			extractProps(comparisonMap, dataListType, charactName, pivotKey, PLMModel.PROP_COMPOLIST_UNIT, value, nbEntities, comparisonPosition,
-					swap);
 
-			value = Double.toString(item.getQtySubFormula());
-			extractProps(comparisonMap, dataListType, charactName, pivotKey, PLMModel.PROP_COMPOLIST_QTY_SUB_FORMULA, value, nbEntities,
-					comparisonPosition, swap);
+			value = item.getCompoListUnit() == null ? "" : item.getCompoListUnit().toString();
+			extractProps(comparisonMap, dataListType, charactName, pivotKey, PLMModel.PROP_COMPOLIST_UNIT,
+					value, nbEntities, comparisonPosition, swap);
+
+			Double qtySubFormula = item.getQtySubFormula();
+			value = qtySubFormula == null ? "" : Double.toString(qtySubFormula);
+			extractProps(comparisonMap, dataListType, charactName, pivotKey, PLMModel.PROP_COMPOLIST_QTY_SUB_FORMULA,
+					value, nbEntities, comparisonPosition, swap);
 
 			// Extract props from datalist items
 			for (CompoListDataItem compoItem : product.getCompoList()) {
