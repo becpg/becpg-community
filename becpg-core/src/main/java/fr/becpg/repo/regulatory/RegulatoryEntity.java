@@ -44,14 +44,14 @@ public interface RegulatoryEntity {
 	/**
 	 * <p>getRegulatoryResult.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.product.data.constraints.RegulatoryResult} object
+	 * @return a {@link fr.becpg.repo.regulatory.RegulatoryResult} object
 	 */
 	public RegulatoryResult getRegulatoryResult();
 
 	/**
 	 * <p>setRegulatoryResult.</p>
 	 *
-	 * @param regulatoryResult a {@link fr.becpg.repo.product.data.constraints.RegulatoryResult} object
+	 * @param regulatoryResult a {@link fr.becpg.repo.regulatory.RegulatoryResult} object
 	 */
 	public void setRegulatoryResult(RegulatoryResult regulatoryResult);
 	

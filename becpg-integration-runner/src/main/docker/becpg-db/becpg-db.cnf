@@ -9,7 +9,19 @@ lower_case_table_names=1
 character-set-server=utf8mb4
 collation-server=utf8mb4_general_ci
 
-# Connection Settings
-max_connections = 275
+# Memory settings for SMALL profile – 16 Go RAM totale – DB: 3.2 Go
 
+innodb_buffer_pool_size = 2G
+innodb_buffer_pool_instances = 2
+innodb_log_file_size = 512M
+innodb_log_buffer_size = 128M
+innodb_flush_log_at_trx_commit = 2
+max_connections = 30
+table_open_cache = 4000
+tmp_table_size = 64M
+max_heap_table_size = 64M
+thread_cache_size = 50
+join_buffer_size = 2M
+sort_buffer_size = 2M
+read_rnd_buffer_size = 1M
 

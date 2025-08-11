@@ -380,7 +380,7 @@ public class StartProcessWebscript extends AbstractWebScript {
 	 * 
 	 * note : returns true if the group is empty or doesn't exist
 	 * 
-	 * @param group
+	 * @param permissionGroup
 	 * @return
 	 */
 	private boolean hasCurrentUserPermission(String permissionGroup) {
