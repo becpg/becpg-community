@@ -1,9 +1,8 @@
 package fr.becpg.repo.helper.impl;
 
 import java.io.Serializable;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -18,12 +17,18 @@ import org.alfresco.service.namespace.QName;
  * @author matthieu
  * @version $Id: $Id
  */
-public class ChildAssocCacheEntry implements Serializable {
+public final class ChildAssocCacheEntry implements Serializable {
 
 	
 	private static final long serialVersionUID = -5994096437225498709L;
-	private List<NodeRef> items = new LinkedList<>();
-	private Map<QName,List<NodeRef>> itemsByType = new HashMap<>();
+	private List<NodeRef> items ;
+	private Map<QName,List<NodeRef>> itemsByType;
+	
+	
+	   public ChildAssocCacheEntry(int expectedSize) {
+	        this.items = new ArrayList<>(expectedSize);
+	        this.itemsByType = new HashMap<>(4);
+	    }
 	
 	/**
 	 * <p>add.</p>
@@ -32,7 +37,7 @@ public class ChildAssocCacheEntry implements Serializable {
 	 * @param type a {@link org.alfresco.service.namespace.QName} object
 	 */
 	public void add(NodeRef item, QName type) {
-		 itemsByType.computeIfAbsent(type, k ->  new LinkedList<NodeRef>()).add(item);
+		 itemsByType.computeIfAbsent(type, k ->  new ArrayList<NodeRef>()).add(item);
 		 items.add(item);
 	}
 	
@@ -65,9 +70,9 @@ public class ChildAssocCacheEntry implements Serializable {
 	 */
 	public List<NodeRef> get(QName type){
 		if(type == null) {
-			return Collections.unmodifiableList(items);
+			return List.copyOf(items);
 		}
-		return Collections.unmodifiableList(itemsByType.computeIfAbsent(type, k ->  new LinkedList<NodeRef>()));
+		return List.copyOf(itemsByType.computeIfAbsent(type, k ->  new ArrayList<NodeRef>()));
 		
 	}
 
