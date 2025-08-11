@@ -66,6 +66,7 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(SecurityFormulationHandler.class);
 
+	/** Constant <code>VIEW_DOCUMENTS="View-documents"</code> */
 	public static final String VIEW_DOCUMENTS= "View-documents";
 	
 	private static final String CACHE_KEY = SecurityFormulationHandler.class.getName();
@@ -90,6 +91,11 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 	
 	private BeCPGCacheService beCPGCacheService;
 	
+	/**
+	 * <p>Setter for the field <code>beCPGCacheService</code>.</p>
+	 *
+	 * @param beCPGCacheService a {@link fr.becpg.repo.cache.BeCPGCacheService} object
+	 */
 	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
 		this.beCPGCacheService = beCPGCacheService;
 	}

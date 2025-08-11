@@ -1015,7 +1015,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	/**
 	 * Create the entity templates
 	 *
-	 * @param productTplsNodeRef
+	 * @param systemNodeRef
 	 */
 	private void visitEntityTpls(NodeRef systemNodeRef) {
 
@@ -1071,9 +1071,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	/**
 	 * Create system charact file
 	 *
-	 * @param systemNodeRef
-	 * @param pathCharacts
-	 * @return
+	 * @param parentNodeRef the parent node under which the system characteristics are created
+	 * @param path the relative path for the system characteristics container
+	 * @return the created system characteristics node
 	 */
 	private NodeRef visitSystemCharactsEntity(NodeRef parentNodeRef, String path) {
 
@@ -1505,7 +1505,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	/**
 	 * Create the reports templates
 	 *
-	 * @param productReportTplsNodeRef
+	 * @param systemNodeRef
 	 */
 	private void visitReports(NodeRef systemNodeRef) {
 		try {
@@ -1888,8 +1888,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	/**
 	 * Create system groups.
 	 *
-	 * @param locale
-	 *            the locale
 	 */
 	private void createSystemGroups() {
 
