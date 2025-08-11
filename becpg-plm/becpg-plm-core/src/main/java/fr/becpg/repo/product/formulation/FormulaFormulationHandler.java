@@ -527,33 +527,65 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	 * @param targetList a {@link java.util.List} object.
 	 */
 	protected void copyTemplateDynamicCharactList(List<DynamicCharactListItem> sourceList, List<DynamicCharactListItem> targetList) {
+	    if (sourceList == null || targetList == null) {
+	        return;
+	    }
+	    
+	    for (DynamicCharactListItem sourceItem : sourceList) {
+	        if (sourceItem.getTitle() == null) {
+	            continue;
+	        }
+	        
+	        // Find existing item by name or title+column combination
+	        Optional<DynamicCharactListItem> existingItem = findExistingItem(sourceItem, targetList);
+	        
+	        if (existingItem.isPresent() && sourceItem.isSynchronisable()) {
+	            handleDuplicateTitles(sourceItem, targetList, existingItem.get());
+	            updateItem(existingItem.get(), sourceItem);
+	        } else {
+	            addNewItem(sourceItem, targetList);
+	        }
+	    }
+	    
+	    sortTargetList(targetList);
+	}
 
-		if ((sourceList != null) && (targetList != null)) {
-			for (DynamicCharactListItem sourceItem : sourceList) {
-				if (sourceItem.getTitle() != null) {
+	private Optional<DynamicCharactListItem> findExistingItem(DynamicCharactListItem sourceItem, List<DynamicCharactListItem> targetList) {
+	    // First try to find by name
+	    Optional<DynamicCharactListItem> byName = targetList.stream()
+	        .filter(item -> sourceItem.getName().equals(item.getName()))
+	        .findFirst();
+	    
+	    if (byName.isPresent()) {
+	        return byName;
+	    }
+	    
+	    // Then try to find by title and column combination
+	    return targetList.stream()
+	        .filter(item -> sourceItem.getTitle().equals(item.getTitle()) && 
+	                       sourceItem.isColumn().equals(item.isColumn()))
+	        .findFirst();
+	}
 
-					Optional<DynamicCharactListItem> existingItem = targetList.stream().filter(item -> sourceItem.getTitle().equals(item.getTitle()) 
-							&&( sourceItem.isColumn().equals(item.isColumn())) )
-							.findFirst();
+	private void handleDuplicateTitles(DynamicCharactListItem sourceItem, List<DynamicCharactListItem> targetList, DynamicCharactListItem existingItem) {
+	    // Mark duplicates when finding by name
+	    targetList.stream()
+	        .filter(item -> item != existingItem)
+	        .filter(item -> sourceItem.getTitle().equals(item.getTitle()) && 
+	                       sourceItem.isColumn().equals(item.isColumn()))
+	        .forEach(item -> item.setTitle(item.getTitle() + " - duplicate"));
+	}
 
-					if (!existingItem.isPresent()) {
-						existingItem = targetList.stream().filter(item -> sourceItem.getName().equals(item.getName())).findFirst();
-					}
+	private void addNewItem(DynamicCharactListItem sourceItem, List<DynamicCharactListItem> targetList) {
+	    sourceItem.setNodeRef(null);
+	    sourceItem.setParentNodeRef(null);
+	    sourceItem.setTransient(!sourceItem.isSynchronisable());
+	    targetList.add(sourceItem);
+	}
 
-					if (existingItem.isPresent() && sourceItem.isSynchronisable()) {
-						updateItem(existingItem.get(), sourceItem);
-					} else {
-						sourceItem.setNodeRef(null);
-						sourceItem.setParentNodeRef(null);
-						sourceItem.setTransient(!sourceItem.isSynchronisable());
-						targetList.add(sourceItem);
-					}
-				}
-			}
-
-			targetList.sort(Comparator.comparing(DynamicCharactListItem::getSort, Comparator.nullsFirst(Comparator.naturalOrder())));
-		}
-
+	private void sortTargetList(List<DynamicCharactListItem> targetList) {
+	    targetList.sort(Comparator.comparing(DynamicCharactListItem::getSort, 
+	                    Comparator.nullsFirst(Comparator.naturalOrder())));
 	}
 
 	private void updateItem(DynamicCharactListItem targetItem, DynamicCharactListItem sourceItem) {

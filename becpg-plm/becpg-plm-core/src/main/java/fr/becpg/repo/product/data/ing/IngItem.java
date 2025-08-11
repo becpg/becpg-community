@@ -5,7 +5,7 @@ package fr.becpg.repo.product.data.ing;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -52,7 +52,7 @@ public class IngItem extends CompositeLabeling {
 
 	private Set<NodeRef> pluralParents = new HashSet<>();
 
-	private List<NodeRef> allergenList = new LinkedList<>();
+	private List<NodeRef> allergenList = new ArrayList<>();
 
 	/**
 	 * <p>Constructor for IngItem.</p>

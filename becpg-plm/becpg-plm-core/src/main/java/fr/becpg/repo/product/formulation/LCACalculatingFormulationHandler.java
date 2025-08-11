@@ -3,7 +3,7 @@
  */
 package fr.becpg.repo.product.formulation;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -106,7 +106,7 @@ public class LCACalculatingFormulationHandler extends AbstractCostCalculatingFor
 	/** {@inheritDoc} */
 	@Override
 	protected void setDataListVisited(ProductData formulatedProduct) {
-		formulatedProduct.setLcaList(new LinkedList<>());
+		formulatedProduct.setLcaList(new ArrayList<>());
 	}
 
 	/** {@inheritDoc} */

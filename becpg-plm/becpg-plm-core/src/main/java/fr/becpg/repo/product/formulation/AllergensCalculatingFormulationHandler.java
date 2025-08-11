@@ -6,7 +6,6 @@ package fr.becpg.repo.product.formulation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -116,7 +115,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			logger.debug("Start AllergensCalculatingVisitor");
 
 			if (formulatedProduct.getAllergenList() == null) {
-				formulatedProduct.setAllergenList(new LinkedList<>());
+				formulatedProduct.setAllergenList(new ArrayList<>());
 			}
 
 			List<AllergenListDataItem> retainNodes = new ArrayList<>();

@@ -44,11 +44,13 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.autocomplete.AutoCompleteEntry;
 import fr.becpg.repo.autocomplete.AutoCompletePage;
+import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
+import fr.becpg.repo.product.formulation.SecurityFormulationHandler;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.security.SecurityService;
@@ -93,6 +95,9 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
+	
+	@Autowired
+	private BeCPGCacheService beCPGCacheService;
 
 	private void createUsers() {
 
@@ -718,6 +723,7 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 			NodeRef folderNodeRef = nodeService.getChildByName(entityTpl.getNodeRef(), ContentModel.ASSOC_CONTAINS, "Brief");
 			permissionService.setInheritParentPermissions(folderNodeRef, false);
 			permissionService.setPermission(folderNodeRef, "TEST_AUTHORITY", PermissionService.READ, true);
+			beCPGCacheService.clearCache(SecurityFormulationHandler.class.getName());
 			return null;
 		});
 
@@ -736,6 +742,7 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 			NodeRef tplFolderNodeRef = nodeService.getChildByName(entityTpl.getNodeRef(), ContentModel.ASSOC_CONTAINS, "Brief");
 			permissionService.setInheritParentPermissions(tplFolderNodeRef, true);
 			permissionService.clearPermission(tplFolderNodeRef, "TEST_AUTHORITY");
+			beCPGCacheService.clearCache(SecurityFormulationHandler.class.getName());
 			productService.formulate(productNodeRef);
 			NodeRef folderNodeRef = nodeService.getChildByName(productNodeRef, ContentModel.ASSOC_CONTAINS, "Brief");
 			assertFalse(permissionService.getInheritParentPermissions(folderNodeRef));
