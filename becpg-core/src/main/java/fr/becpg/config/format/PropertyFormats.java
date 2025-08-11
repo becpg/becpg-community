@@ -31,8 +31,10 @@ public class PropertyFormats {
 	// Default patterns as constants
 	private static final String DEFAULT_DATE_PATTERN = "EEE d MMM yyyy";
 	private static final String DEFAULT_DATETIME_PATTERN = "EEE d MMM yyyy HH:mm:ss";
+	/** Constant <code>DEFAULT_DECIMAL_PATTERN="###,###.####"</code> */
 	public static final String DEFAULT_DECIMAL_PATTERN = "###,###.####";
 
+	/** Constant <code>PROCESS_DATE_FORMAT="dd MMMM, yyyy"</code> */
 	public static final String PROCESS_DATE_FORMAT = "dd MMMM, yyyy";
 	private static final String FRENCH_CSV_DATETIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
 	private static final String CSV_DATETIME_FORMAT = "MM/dd/yyyy HH:mm:ss";
@@ -62,14 +64,36 @@ public class PropertyFormats {
 	private final FormatConfig datetimeConfig;
 	private final FormatConfig decimalConfig;
 
+	/**
+	 * <p>Constructor for PropertyFormats.</p>
+	 *
+	 * @param useDefaultLocale a boolean
+	 */
 	public PropertyFormats(boolean useDefaultLocale) {
 		this(useDefaultLocale, DEFAULT_DATE_PATTERN, DEFAULT_DATETIME_PATTERN, DEFAULT_DECIMAL_PATTERN, null);
 	}
 
+	/**
+	 * <p>Constructor for PropertyFormats.</p>
+	 *
+	 * @param useDefaultLocale a boolean
+	 * @param datePattern a {@link java.lang.String} object
+	 * @param datetimePattern a {@link java.lang.String} object
+	 * @param decimalPattern a {@link java.lang.String} object
+	 */
 	public PropertyFormats(boolean useDefaultLocale, String datePattern, String datetimePattern, String decimalPattern) {
 		this(useDefaultLocale, datePattern, datetimePattern, decimalPattern, null);
 	}
 
+	/**
+	 * <p>Constructor for PropertyFormats.</p>
+	 *
+	 * @param useDefaultLocale a boolean
+	 * @param datePattern a {@link java.lang.String} object
+	 * @param datetimePattern a {@link java.lang.String} object
+	 * @param decimalPattern a {@link java.lang.String} object
+	 * @param maxDecimalPrecision a {@link java.lang.Integer} object
+	 */
 	public PropertyFormats(boolean useDefaultLocale, String datePattern, String datetimePattern, String decimalPattern, Integer maxDecimalPrecision) {
 		this.useDefaultLocale = useDefaultLocale;
 		this.maxDecimalPrecision = maxDecimalPrecision;
@@ -84,18 +108,43 @@ public class PropertyFormats {
 		this.decimalConfig = new FormatConfig(decimalPattern, locale, useDefaultLocale);
 	}
 
+	/**
+	 * <p>withDateFormat.</p>
+	 *
+	 * @param dateFormat a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.config.format.PropertyFormats} object
+	 */
 	public PropertyFormats withDateFormat(String dateFormat) {
 		return new PropertyFormats(this.useDefaultLocale, dateFormat, this.datetimePattern, this.decimalPattern, this.maxDecimalPrecision);
 	}
 
+	/**
+	 * <p>withDateTimeFormat.</p>
+	 *
+	 * @param datetimeFormat a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.config.format.PropertyFormats} object
+	 */
 	public PropertyFormats withDateTimeFormat(String datetimeFormat) {
 		return new PropertyFormats(this.useDefaultLocale, this.datePattern, datetimeFormat, this.decimalPattern, this.maxDecimalPrecision);
 	}
 
+	/**
+	 * <p>withDecimalFormat.</p>
+	 *
+	 * @param decimalFormat a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.config.format.PropertyFormats} object
+	 */
 	public PropertyFormats withDecimalFormat(String decimalFormat) {
 		return new PropertyFormats(this.useDefaultLocale, this.datePattern, this.datetimePattern, decimalFormat, this.maxDecimalPrecision);
 	}
 
+	/**
+	 * <p>forMode.</p>
+	 *
+	 * @param mode a {@link fr.becpg.config.format.FormatMode} object
+	 * @param useServerLocale a boolean
+	 * @return a {@link fr.becpg.config.format.PropertyFormats} object
+	 */
 	public static PropertyFormats forMode(final FormatMode mode, boolean useServerLocale) {
 		return MODE_CACHE.computeIfAbsent((mode != null ? mode.toString() + "-" : "") + useServerLocale, k -> {
 			PropertyFormats ret;
@@ -129,6 +178,12 @@ public class PropertyFormats {
 	}
 
 	// Modern formatting methods using DateTimeFormatter (thread-safe and immutable)
+	/**
+	 * <p>formatDate.</p>
+	 *
+	 * @param o a {@link java.lang.Object} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public String formatDate(Object o) {
 		if (o == null) {
 			return null;
@@ -143,6 +198,12 @@ public class PropertyFormats {
 		}
 	}
 
+	/**
+	 * <p>formatDateTime.</p>
+	 *
+	 * @param o a {@link java.lang.Object} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public String formatDateTime(Object o) {
 		if (o == null) {
 			return null;
@@ -157,6 +218,12 @@ public class PropertyFormats {
 		}
 	}
 
+	/**
+	 * <p>formatDecimal.</p>
+	 *
+	 * @param o a {@link java.lang.Object} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public String formatDecimal(Object o) {
 		if (o == null) {
 			return "";
@@ -198,6 +265,13 @@ public class PropertyFormats {
 	}
 
 	// Modern parsing methods with better error handling
+	/**
+	 * <p>parseDate.</p>
+	 *
+	 * @param dateString a {@link java.lang.String} object
+	 * @return a {@link java.util.Date} object
+	 * @throws java.text.ParseException if any.
+	 */
 	public Date parseDate(String dateString) throws ParseException {
 		if ((dateString == null) || dateString.isBlank()) {
 			throw new ParseException("Date string cannot be null or blank", 0);
@@ -211,6 +285,13 @@ public class PropertyFormats {
 		}
 	}
 
+	/**
+	 * <p>parseDateTime.</p>
+	 *
+	 * @param dateString a {@link java.lang.String} object
+	 * @return a {@link java.util.Date} object
+	 * @throws java.text.ParseException if any.
+	 */
 	public Date parseDateTime(String dateString) throws ParseException {
 		if ((dateString == null) || dateString.isBlank()) {
 			throw new ParseException("DateTime string cannot be null or blank", 0);
@@ -224,6 +305,13 @@ public class PropertyFormats {
 		}
 	}
 
+	/**
+	 * <p>parseDecimal.</p>
+	 *
+	 * @param decimalString a {@link java.lang.String} object
+	 * @return a {@link java.lang.Number} object
+	 * @throws java.text.ParseException if any.
+	 */
 	public Number parseDecimal(String decimalString) throws ParseException {
 		if ((decimalString == null) || decimalString.isBlank()) {
 			throw new ParseException("Decimal string cannot be null or blank", 0);
@@ -274,32 +362,65 @@ public class PropertyFormats {
 	}
 
 	// Getters for configuration
+	/**
+	 * <p>isUseDefaultLocale.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isUseDefaultLocale() {
 		return useDefaultLocale;
 	}
 
+	/**
+	 * <p>Getter for the field <code>maxDecimalPrecision</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object
+	 */
 	public Integer getMaxDecimalPrecision() {
 		return maxDecimalPrecision;
 	}
 
+	/**
+	 * <p>Getter for the field <code>datePattern</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getDatePattern() {
 		return datePattern;
 	}
 
+	/**
+	 * <p>Getter for the field <code>datetimePattern</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getDatetimePattern() {
 		return datetimePattern;
 	}
 
+	/**
+	 * <p>Getter for the field <code>decimalPattern</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getDecimalPattern() {
 		return decimalPattern;
 	}
 
 	// Backward compatibility
+	/**
+	 * <p>getDecimalFormat.</p>
+	 *
+	 * @return a {@link java.text.DecimalFormat} object
+	 */
 	public DecimalFormat getDecimalFormat() {
 		return (DecimalFormat) getNumberFormatter();
 	}
 
 	// Cache management
+	/**
+	 * <p>clearFormatCache.</p>
+	 */
 	public static void clearFormatCache() {
 		DATE_FORMATTER_CACHE.clear();
 		NUMBER_FORMATTER_CACHE.clear();

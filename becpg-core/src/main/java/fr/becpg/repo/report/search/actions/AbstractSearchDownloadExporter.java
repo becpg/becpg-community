@@ -44,7 +44,6 @@ public abstract class AbstractSearchDownloadExporter extends AbstractDownloadExp
 		
 		this.templateNodeRef = templateNodeRef;
 
-
 	}
 
 	/** {@inheritDoc} */

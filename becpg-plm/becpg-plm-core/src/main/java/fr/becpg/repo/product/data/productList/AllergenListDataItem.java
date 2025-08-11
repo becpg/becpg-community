@@ -118,7 +118,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 	/**
 	 * <p>Getter for the field <code>regulatoryType</code>.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementType} object
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementType} object
 	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:regulatoryType")
