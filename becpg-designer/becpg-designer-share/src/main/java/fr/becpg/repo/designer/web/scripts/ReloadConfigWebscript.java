@@ -51,7 +51,13 @@ public class ReloadConfigWebscript  extends DeclarativeWebScript {
 	}
 
 	
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object
+	 * @param status a {@link org.springframework.extensions.webscripts.Status} object
+	 * @return a {@link java.util.Map} object
+	 */
 	protected Map<String, Object> executeImpl(WebScriptRequest req,
 	         Status status) {
 	      Map<String, Object> model = new HashMap<>();

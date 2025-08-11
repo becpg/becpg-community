@@ -34,7 +34,7 @@ public enum RequirementType {
 	 * <p>fromString.</p>
 	 *
 	 * @param type a {@link java.lang.String} object.
-	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementType} object.
 	 */
 	public static RequirementType fromString(String type) {
 		try {

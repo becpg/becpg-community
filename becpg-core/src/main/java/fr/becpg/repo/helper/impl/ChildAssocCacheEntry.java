@@ -25,6 +25,11 @@ public final class ChildAssocCacheEntry implements Serializable {
 	private Map<QName,List<NodeRef>> itemsByType;
 	
 	
+	   /**
+	    * <p>Constructor for ChildAssocCacheEntry.</p>
+	    *
+	    * @param expectedSize a int
+	    */
 	   public ChildAssocCacheEntry(int expectedSize) {
 	        this.items = new ArrayList<>(expectedSize);
 	        this.itemsByType = new HashMap<>(4);

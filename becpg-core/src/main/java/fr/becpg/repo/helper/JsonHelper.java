@@ -26,6 +26,7 @@ public final class JsonHelper {
 	}
 	
 	
+    /** Constant <code>MAPPER</code> */
     public static final ObjectMapper MAPPER = new ObjectMapper();
 	
 	/**

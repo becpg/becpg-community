@@ -56,7 +56,7 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 	 *
 	 *
 	 * Groupe 1
-	 *  Nature & Progrès	20 / NATURE_ET_PROGRES
+	 *  Nature et Progrès	20 / NATURE_ET_PROGRES
 		Bio Cohérence	20 / BIO_COHERANCE
 		Demeter	20    / DEMETER_LABEL
 	

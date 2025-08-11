@@ -53,6 +53,11 @@ public class SurveyableEntityHelper {
 		return SURVEY_LIST_BASE_NAME.equals(surveyListName);
 	}
 	
+	/**
+	 * <p>surveyListsNames.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	public static List<String>  surveyListsNames() {
 		return SURVEY_LIST_NAMES;
 	}

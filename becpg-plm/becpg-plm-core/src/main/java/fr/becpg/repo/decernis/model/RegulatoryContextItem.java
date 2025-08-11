@@ -24,7 +24,7 @@ public class RegulatoryContextItem {
 	/**
 	 * <p>Getter for the field <code>item</code>.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.product.data.RegulatoryEntity} object
+	 * @return a {@link fr.becpg.repo.regulatory.RegulatoryEntity} object
 	 */
 	public RegulatoryEntity getItem() {
 		return item;
@@ -33,7 +33,7 @@ public class RegulatoryContextItem {
 	/**
 	 * <p>Setter for the field <code>item</code>.</p>
 	 *
-	 * @param item a {@link fr.becpg.repo.product.data.RegulatoryEntity} object
+	 * @param item a {@link fr.becpg.repo.regulatory.RegulatoryEntity} object
 	 */
 	public void setItem(RegulatoryEntity item) {
 		this.item = item;

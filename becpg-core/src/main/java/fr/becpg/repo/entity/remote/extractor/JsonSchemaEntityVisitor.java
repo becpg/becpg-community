@@ -122,7 +122,6 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 	}
 
-	/** {@inheritDoc} */
 	public void visit(QName entityType, OutputStream result) throws IOException {
 		JSONObject root = new JSONObject();
 
@@ -141,6 +140,8 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 			JSONObject attributes = addProperty(entity, RemoteEntityService.ELEM_ATTRIBUTES, TYPE_OBJECT, "Entity attributes", null);
 
+			addProperty(attributes, "alfresco:type", TYPE_STRING, entityType.toPrefixString(namespaceService), "Alfresco type");
+			
 			Map<QName, AssociationDefinition> assocs = new HashMap<>(typeDef.getAssociations());
 
 			Map<QName, PropertyDefinition> properties = new HashMap<>(typeDef.getProperties());
@@ -151,8 +152,10 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 			}
 
 			for (QName propQname : params.getFilteredProperties()) {
-				if (entityDictionaryService.getPropDef(propQname) instanceof PropertyDefinition) {
-					properties.put(propQname, (PropertyDefinition) entityDictionaryService.getPropDef(propQname));
+				if (entityDictionaryService.getPropDef(propQname) instanceof PropertyDefinition propDef) {
+					properties.put(propQname, propDef);
+				} else if (entityDictionaryService.getPropDef(propQname) instanceof AssociationDefinition assocDef) {
+					assocs.put(propQname, assocDef);
 				}
 			}
 

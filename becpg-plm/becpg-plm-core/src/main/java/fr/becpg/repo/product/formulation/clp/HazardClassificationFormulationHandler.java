@@ -132,7 +132,7 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * <p>getInstanceClass.</p>
 	 *
 	 * @return a {@link java.lang.Class} object
 	 */

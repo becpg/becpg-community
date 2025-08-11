@@ -101,7 +101,7 @@ public class RequirementListDataItem extends BeCPGDataObject {
 	/**
 	 * <p>Getter for the field <code>reqType</code>.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementType} object.
 	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:rclReqType")
@@ -112,7 +112,7 @@ public class RequirementListDataItem extends BeCPGDataObject {
 	/**
 	 * <p>Setter for the field <code>reqType</code>.</p>
 	 *
-	 * @param reqType a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 * @param reqType a {@link fr.becpg.repo.regulatory.RequirementType} object.
 	 */
 	public void setReqType(RequirementType reqType) {
 		this.reqType = reqType;
@@ -260,7 +260,7 @@ public class RequirementListDataItem extends BeCPGDataObject {
 	/**
 	 * <p>Getter for the field <code>reqDataType</code>.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementDataType} object.
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementDataType} object.
 	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:rclDataType")
@@ -271,7 +271,7 @@ public class RequirementListDataItem extends BeCPGDataObject {
 	/**
 	 * <p>Setter for the field <code>reqDataType</code>.</p>
 	 *
-	 * @param reqDataType a {@link fr.becpg.repo.product.data.constraints.RequirementDataType} object.
+	 * @param reqDataType a {@link fr.becpg.repo.regulatory.RequirementDataType} object.
 	 */
 	public void setReqDataType(RequirementDataType reqDataType) {
 		this.reqDataType = reqDataType != null ? reqDataType : RequirementDataType.Nutrient;
@@ -307,7 +307,7 @@ public class RequirementListDataItem extends BeCPGDataObject {
 	/**
 	 * <p>build.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementListDataItem} object
 	 */
 	public static RequirementListDataItem build() {
 		return new RequirementListDataItem();
@@ -317,7 +317,7 @@ public class RequirementListDataItem extends BeCPGDataObject {
 	/**
 	 * <p>forbidden.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementListDataItem} object
 	 */
 	public static  RequirementListDataItem forbidden() {
 		return build().ofType(RequirementType.Forbidden);
@@ -326,7 +326,7 @@ public class RequirementListDataItem extends BeCPGDataObject {
 	/**
 	 * <p>tolerated.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementListDataItem} object
 	 */
 	public static  RequirementListDataItem tolerated() {
 		return build().ofType(RequirementType.Tolerated);
@@ -335,7 +335,7 @@ public class RequirementListDataItem extends BeCPGDataObject {
 	/**
 	 * <p>info.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementListDataItem} object
 	 */
 	public static  RequirementListDataItem info() {
 		return build().ofType(RequirementType.Info);
@@ -344,8 +344,8 @@ public class RequirementListDataItem extends BeCPGDataObject {
 	/**
 	 * <p>ofType.</p>
 	 *
-	 * @param reqType a {@link fr.becpg.repo.product.data.constraints.RequirementType} object
-	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 * @param reqType a {@link fr.becpg.repo.regulatory.RequirementType} object
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementListDataItem} object
 	 */
 	public RequirementListDataItem ofType(RequirementType reqType) {
 		this.reqType = reqType;
@@ -357,7 +357,7 @@ public class RequirementListDataItem extends BeCPGDataObject {
 	 * <p>withMessage.</p>
 	 *
 	 * @param reqMlMessage a {@link org.alfresco.service.cmr.repository.MLText} object
-	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementListDataItem} object
 	 */
 	public RequirementListDataItem withMessage(MLText reqMlMessage) {
 		this.reqMlMessage = reqMlMessage;
@@ -368,7 +368,7 @@ public class RequirementListDataItem extends BeCPGDataObject {
 	 * <p>withCharact.</p>
 	 *
 	 * @param charact a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementListDataItem} object
 	 */
 	public RequirementListDataItem withCharact(NodeRef charact) {
 		this.charact = charact;
@@ -379,7 +379,7 @@ public class RequirementListDataItem extends BeCPGDataObject {
 	 * <p>withRegulatoryCode.</p>
 	 *
 	 * @param regulatoryCode a {@link java.lang.String} object
-	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementListDataItem} object
 	 */
 	public RequirementListDataItem withRegulatoryCode(String regulatoryCode) {
 		this.regulatoryCode = regulatoryCode;
@@ -390,7 +390,7 @@ public class RequirementListDataItem extends BeCPGDataObject {
 	 * <p>withFormulationChainId.</p>
 	 *
 	 * @param formulationChainId a {@link java.lang.String} object
-	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementListDataItem} object
 	 */
 	public RequirementListDataItem withFormulationChainId(String formulationChainId) {
 		this.formulationChainId = formulationChainId;
@@ -401,7 +401,7 @@ public class RequirementListDataItem extends BeCPGDataObject {
 	 * <p>withSources.</p>
 	 *
 	 * @param sources a {@link java.util.List} object
-	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementListDataItem} object
 	 */
 	public RequirementListDataItem withSources(List<NodeRef> sources) {
 		if (sources != null) {
@@ -417,7 +417,7 @@ public class RequirementListDataItem extends BeCPGDataObject {
 	 * <p>withReqMaxQty.</p>
 	 *
 	 * @param reqMaxQty a {@link java.lang.Double} object
-	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementListDataItem} object
 	 */
 	public RequirementListDataItem withReqMaxQty(Double reqMaxQty) {
 		this.reqMaxQty = reqMaxQty;
@@ -427,8 +427,8 @@ public class RequirementListDataItem extends BeCPGDataObject {
 	/**
 	 * <p>ofDataType.</p>
 	 *
-	 * @param reqDataType a {@link fr.becpg.repo.product.data.constraints.RequirementDataType} object
-	 * @return a {@link fr.becpg.repo.product.data.productList.ReqCtrlListDataItem} object
+	 * @param reqDataType a {@link fr.becpg.repo.regulatory.RequirementDataType} object
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementListDataItem} object
 	 */
 	public RequirementListDataItem ofDataType(RequirementDataType reqDataType) {
 		this.reqDataType = reqDataType != null ? reqDataType : RequirementDataType.Nutrient;

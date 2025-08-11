@@ -60,10 +60,9 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 	protected EntitySystemService entitySystemService;
 	protected ContentHelper contentHelper;
 	
-	/** Constant <code>BATCH_THREADS=4</code> */
-	protected static final int BATCH_THREADS = 4;
-	/** Constant <code>BATCH_SIZE=50</code> */
-	protected static final int BATCH_SIZE = 50;
+	/** Batch processing configuration, overridable via -D system properties */
+	protected static final int BATCH_THREADS = Integer.getInteger("becpg.patch.threads", 4);
+	protected static final int BATCH_SIZE = Integer.getInteger("becpg.patch.batchSize", 50);
 	/** Constant <code>INC=BATCH_THREADS * BATCH_SIZE * 1L</code> */
 	protected static final long INC = BATCH_THREADS * BATCH_SIZE * 1L;
 	
