@@ -1925,6 +1925,8 @@
 					<show id="bcpg:ingToxMaxOcularIrritation" force="true" />
 					<show id="bcpg:ingToxMaxPhototoxic" force="true" />
 					<show id="bcpg:ingToxData" force="true" />
+					<show id="bcpg:ingToxSystemicValues" force="true" />
+					<show id="bcpg:ingToxMaxValues" force="true" />
 					<show id="bcpg:parentEntityRef" force="true" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:isDeleted" />
@@ -2556,6 +2558,8 @@
 					<show id="bcpg:ingAllergensQtyPerc" />
 					<show id="bcpg:isSubstanceOfVeryHighConcern" force="true" />
 					<show id="bcpg:svhcReasonsForInclusion" force="true" />
+					<show id="bcpg:ingToxSystemicValues" force="true" />
+					<show id="bcpg:ingToxMaxValues" force="true" />
 					<show id="bcpg:parentEntityRef" force="true" />
 					<show id="sec:readGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
