@@ -39,17 +39,14 @@ public class IngToxPolicy extends AbstractBeCPGPolicy implements OnUpdatePropert
 	public void doInit() {
 		policyComponent.bindClassBehaviour(OnUpdatePropertiesPolicy.QNAME, PLMModel.TYPE_ING, new JavaBehaviour(this, "onUpdateProperties"));
 		policyComponent.bindClassBehaviour(OnUpdatePropertiesPolicy.QNAME, PLMModel.TYPE_TOX, new JavaBehaviour(this, "onUpdateProperties"));
-		policyComponent.bindClassBehaviour(BeforeDeleteNodePolicy.QNAME, PLMModel.TYPE_ING, new JavaBehaviour(this, "beforeDeleteNode"));
 		policyComponent.bindClassBehaviour(BeforeDeleteNodePolicy.QNAME, PLMModel.TYPE_TOX, new JavaBehaviour(this, "beforeDeleteNode"));
 	}
 	
 	@Override
 	public void beforeDeleteNode(NodeRef nodeRef) {
 		QName type = nodeService.getType(nodeRef);
-		if (PLMModel.TYPE_ING.equals(type)) {
-			toxicologyService.deleteToxIngBeforeIngDelete(nodeRef);
-		} else if (PLMModel.TYPE_TOX.equals(type)) {
-			toxicologyService.deleteToxIngBeforeToxDelete(nodeRef);
+		if (PLMModel.TYPE_TOX.equals(type)) {
+			toxicologyService.removeToxFromIngredients(nodeRef);
 		}
 	}
 	
@@ -74,14 +71,14 @@ public class IngToxPolicy extends AbstractBeCPGPolicy implements OnUpdatePropert
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		if (ING_UPDATED_KEY.equals(key)) {
 			for (NodeRef ingNodeRef : pendingNodes) {
-				toxicologyService.updateToxIngAfterIngUpdate(ingNodeRef);
+				toxicologyService.updateIngredient(ingNodeRef);
 				nodeService.setProperty(ingNodeRef, PLMModel.PROP_ING_TOX_DATA, false);
 			}
 			return true;
 		} else if (TOX_UPDATED_KEY.equals(key)) {
 			for (NodeRef toxNodeRef : pendingNodes) {
 				if (nodeService.exists(toxNodeRef)) {
-					toxicologyService.updateToxIngAfterToxUpdate(toxNodeRef);
+					toxicologyService.updateIngredientsFromTox(toxNodeRef);
 				}
 			}
 			return true;
