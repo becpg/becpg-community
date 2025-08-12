@@ -82,7 +82,7 @@ public class BeCPGUserAccountService {
 	 * @param userAccount a {@link fr.becpg.repo.authentication.BeCPGUserAccount} object
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
-	public NodeRef getOrCreateUser(BeCPGUserAccount userAccount) {
+	public NodeRef getOrCreateUser(BeCPGUserAccount userAccount, boolean createOnly) {
 		return AuthenticationUtil.runAsSystem(() -> {
 			userAccount.setUserName(createTenantAware(userAccount.getUserName()));
 			NodeRef personNodeRef = null;
@@ -94,6 +94,9 @@ public class BeCPGUserAccountService {
 			propMap.putAll(userAccount.getExtraProps());
 
 			if (personService.personExists(userAccount.getUserName())) {
+				if (createOnly) {
+					throw new IllegalStateException("User already exists: " + userAccount.getUserName());
+				}
 				personNodeRef = updateUser(userAccount, propMap);
 			} else {
 				userAccount.setUserName(userAccount.getUserName().toLowerCase());
