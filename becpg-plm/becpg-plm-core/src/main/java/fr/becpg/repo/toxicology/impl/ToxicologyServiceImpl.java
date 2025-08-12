@@ -3,6 +3,7 @@ package fr.becpg.repo.toxicology.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.node.MLPropertyInterceptor;
@@ -15,8 +16,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.github.davidmoten.guavamini.Objects;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -119,13 +118,13 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 			previousMaxValues = newMaxValues;
 		}
 		
-		if (!Objects.equal(oldSystemicValues, previousSystemicValues)) {
+		if (!Objects.equals(oldSystemicValues, previousSystemicValues)) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Updating systemic values from: " + oldSystemicValues + " to: " + previousSystemicValues);
 			}
 			nodeService.setProperty(ingNodeRef, PLMModel.PROP_ING_TOX_SYSTEMIC_VALUES, previousSystemicValues);
 		}
-		if (!Objects.equal(oldMaxValues, previousMaxValues)) {
+		if (!Objects.equals(oldMaxValues, previousMaxValues)) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Updating max values from: " + oldMaxValues + " to: " + previousMaxValues);
 			}
@@ -239,7 +238,7 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 					String currentSystemicValues = (String) nodeService.getProperty(ingNodeRef, PLMModel.PROP_ING_TOX_SYSTEMIC_VALUES);
 					if (currentSystemicValues != null) {
 						String newSystemicValues = ToxHelper.removeToxValue(currentSystemicValues, toxName);
-						if (!Objects.equal(newSystemicValues, currentSystemicValues)) {
+						if (!Objects.equals(newSystemicValues, currentSystemicValues)) {
 							logger.debug("Updating systemic values from: " + currentSystemicValues + " to: " + newSystemicValues);
 							nodeService.setProperty(ingNodeRef, PLMModel.PROP_ING_TOX_SYSTEMIC_VALUES, newSystemicValues);
 						}
@@ -248,7 +247,7 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 					String currentMaxValues = (String) nodeService.getProperty(ingNodeRef, PLMModel.PROP_ING_TOX_MAX_VALUES);
 					if (currentMaxValues != null) {
 						String newMaxValues = ToxHelper.removeToxValue(currentMaxValues, toxName);
-						if (!Objects.equal(newMaxValues, currentMaxValues)) {
+						if (!Objects.equals(newMaxValues, currentMaxValues)) {
 							logger.debug("Updating max values from: " + currentMaxValues + " to: " + newMaxValues);
 							nodeService.setProperty(ingNodeRef, PLMModel.PROP_ING_TOX_MAX_VALUES, newMaxValues);
 						}
@@ -376,13 +375,13 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 				newMaxValues = ToxHelper.appendToxValue(currentMaxValues, toxName, maxValue);
 			}
 		}
-		if (!Objects.equal(currentSystemicValues, newSystemicValues)) {
+		if (!Objects.equals(currentSystemicValues, newSystemicValues)) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Updating systemic values from: " + currentSystemicValues + " to: " + newSystemicValues);
 			}
 			nodeService.setProperty(ingNodeRef, PLMModel.PROP_ING_TOX_SYSTEMIC_VALUES, newSystemicValues);
 		}
-		if (!Objects.equal(currentMaxValues, newMaxValues)) {
+		if (!Objects.equals(currentMaxValues, newMaxValues)) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Updating max values from: " + currentMaxValues + " to: " + newMaxValues);
 			}
