@@ -24,7 +24,7 @@ public class BatchInfo implements Serializable {
 	/** Constant <code>BATCH_THREAD=3</code> */
 	public static final int BATCH_THREAD = 3;
 	/** Constant <code>BATCH_SIZE=15</code> */
-	public static final int BATCH_SIZE = 15;
+	public static final int BATCH_SIZE = 1;
 
 	/**
 	 * Will serve as uniq batchId
