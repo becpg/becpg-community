@@ -6,10 +6,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.download.DownloadStatusUpdateService;
@@ -49,6 +49,9 @@ public class ExcelSearchDownloadExporter extends AbstractSearchDownloadExporter 
 
 	Map<String, ExcelSheetExportContext> context = new HashMap<>();
 
+	private int nodesSinceLastCacheClear = 0;
+	private final int cacheClearEvery;
+
 	/**
 	 * <p>Constructor for ExcelSearchDownloadExporter.</p>
 	 *
@@ -67,6 +70,7 @@ public class ExcelSearchDownloadExporter extends AbstractSearchDownloadExporter 
 		super(transactionHelper, updateService, downloadStorage, downloadNodeRef, templateNodeRef, nbOfLines);
 		this.contentService = contentService;
 		this.excelReportSearchRenderer = excelReportSearchRenderer;
+		this.cacheClearEvery = 1000;
 	}
 
 	/** {@inheritDoc} */
@@ -89,24 +93,52 @@ public class ExcelSearchDownloadExporter extends AbstractSearchDownloadExporter 
 	@Override
 	public void startNode(NodeRef entityNodeRef) {
 
-		incFilesAddedCount();
-		QName mainType = null;
+	    incFilesAddedCount();
+	    AtomicReference<QName> mainTypeRef = new AtomicReference<>();
 
-		for (XSSFSheet sheet : sheets) {
+	    for (XSSFSheet sheet : sheets) {
+	        QName type = transactionHelper.doInTransaction(() -> {
 
-			ExcelSheetExportContext excelSheetExportContext = context.get(sheet.getSheetName());
-			if (excelSheetExportContext == null) {
-				excelSheetExportContext = excelReportSearchRenderer.readHeader(sheet, mainType);
-				context.put(sheet.getSheetName(), excelSheetExportContext);
-			}
+	            ExcelSheetExportContext excelSheetExportContext = context.get(sheet.getSheetName());
+	            if (excelSheetExportContext == null) {
+	                excelSheetExportContext = excelReportSearchRenderer.readHeader(sheet, mainTypeRef.get());
+	                context.put(sheet.getSheetName(), excelSheetExportContext);
+	            }
 
-			mainType = excelReportSearchRenderer.fillSheet(sheet, Arrays.asList(entityNodeRef), excelSheetExportContext);
+	            QName t = excelReportSearchRenderer.fillSheet(
+	                sheet,
+	                List.of(entityNodeRef),
+	                excelSheetExportContext
+	            );
 
-			sheet.setForceFormulaRecalculation(true);
-			updateStatus();
-		}
+	            sheet.setForceFormulaRecalculation(true);
+	            return t;
 
+	        }, true, true);
+
+	        if (mainTypeRef.get() == null && type != null) {
+	            mainTypeRef.set(type);
+	        }
+
+	        updateStatus();
+	    }
+
+	    // Periodically clear per-sheet caches to limit memory growth
+	    nodesSinceLastCacheClear++;
+	    if (nodesSinceLastCacheClear >= cacheClearEvery) {
+	      for (ExcelSheetExportContext ctx : context.values()) {
+	        if (ctx != null) {
+	          ctx.clearCache();
+	        }
+	      }
+	      nodesSinceLastCacheClear = 0;
+	      if (logger.isDebugEnabled()) {
+	        logger.debug("Cleared Excel sheet caches after processing batch of " + cacheClearEvery + " nodes");
+	      }
+	    }
 	}
+
+
 
 	/** {@inheritDoc} */
 	@Override
@@ -115,6 +147,7 @@ public class ExcelSearchDownloadExporter extends AbstractSearchDownloadExporter 
 			try (OutputStream outputStream = new FileOutputStream(tempFile)) {
 				workbook.setForceFormulaRecalculation(true);
 				workbook.write(outputStream);
+				workbook.close();
 			} catch (FileNotFoundException e) {
 				logger.error("Failed to create excel file", e);
 			} catch (ContentIOException | IOException e) {

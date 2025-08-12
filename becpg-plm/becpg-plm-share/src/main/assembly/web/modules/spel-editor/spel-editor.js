@@ -284,6 +284,7 @@
                         			             '@beCPG.propMLValue($nodeRef, $qname, $locale)',
                         			             '@beCPG.propMLValue($entity, $qname, $locale)',
                         			             '@beCPG.propMLValue($mltext, $locale)',
+                                                 '@beCPG.propMLConstraint($value, $qname, $locale)',
                         			             '@beCPG.updateMLText($mlText,$locale,$value)',
                         			             '@beCPG.copy($fromNodeRef,propQnames,listQNames)',
                         			             '@beCPG.runScript($scriptNodeRef)',
