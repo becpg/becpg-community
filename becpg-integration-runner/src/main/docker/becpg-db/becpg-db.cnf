@@ -17,62 +17,65 @@ collation-server=utf8mb4_general_ci
 # Buffer Pool Configuration
 innodb_buffer_pool_size = 1536M           
 innodb_buffer_pool_instances = 2          
-
-# Redo Log Configuration (MySQL 8.0.30+)
-innodb_redo_log_capacity = 384M           
-           
+innodb_redo_log_capacity = 384M              
 
 # Log Buffer
 innodb_log_buffer_size = 64M              
 
 # Connection Settings
-max_connections = 30                      
-thread_cache_size = 30                   
+max_connections = 100
+thread_cache_size = 50
+connect_timeout = 10
+interactive_timeout = 3600
+wait_timeout = 3600        
 
 # Query Optimization Buffers (per connection - keep small)
-join_buffer_size = 1M                     
-sort_buffer_size = 1M                     
-read_rnd_buffer_size = 512K            
+join_buffer_size = 2M
+sort_buffer_size = 2M
+read_rnd_buffer_size = 1M
+read_buffer_size = 1M         
 
 # Memory Tables
-tmp_table_size = 32M                     
-max_heap_table_size = 32M                 
+tmp_table_size = 128M
+max_heap_table_size = 128M         
 
 # Table Cache
-table_open_cache = 2000                   
+table_open_cache = 4000
+table_definition_cache = 2000
 
 # Transaction & Locking
 transaction_isolation = READ-COMMITTED
-innodb_lock_wait_timeout = 20
+innodb_lock_wait_timeout = 50
 innodb_deadlock_detect = ON
 innodb_rollback_on_timeout = ON
 
 # InnoDB Performance Settings
-innodb_flush_log_at_trx_commit = 2        
-innodb_thread_concurrency = 0          
-innodb_read_io_threads = 2               
-innodb_write_io_threads = 2               
+innodb_flush_log_at_trx_commit = 2
+innodb_flush_neighbors = 0
+innodb_thread_concurrency = 0
+innodb_read_io_threads = 4
+innodb_write_io_threads = 4
+innodb_io_capacity = 200
+innodb_io_capacity_max = 400        
+innodb_file_per_table = ON
 
 # Network & Performance
 skip_name_resolve = 1
 performance_schema = ON
 
 # Memory-conscious optimizations
-innodb_stats_on_metadata = OFF            
-innodb_adaptive_hash_index = ON          
-innodb_change_buffering = all            
-
-# Reduced memory footprint settings
-query_cache_size = 0                      
-innodb_file_per_table = ON              
-innodb_open_files = 400                 
+innodb_stats_on_metadata = OFF
+innodb_adaptive_hash_index = ON
+innodb_change_buffering = all
+innodb_open_files = 800         
 
 # Monitoring (lightweight)
 slow_query_log = 1
 long_query_time = 2.0                    
-log_queries_not_using_indexes = 0        
+log_queries_not_using_indexes = 1      
 
 # Additional memory savings
-innodb_buffer_pool_dump_at_shutdown = OFF 
-innodb_buffer_pool_load_at_startup = OFF
-table_definition_cache = 400            
+innodb_buffer_pool_dump_at_shutdown = ON
+innodb_buffer_pool_load_at_startup = ON
+innodb_flush_method = O_DIRECT
+innodb_doublewrite = ON      
