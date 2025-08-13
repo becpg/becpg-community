@@ -43,7 +43,7 @@ public class SignatureProjectIT extends RepoBaseTestCase {
 	@Test
 	public void testSingleDocumentSignature() throws IOException {
 		
-		NodeRef userOne = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_ONE);
+		NodeRef userOne = inWriteTx(() -> BeCPGTestHelper.createUser(BeCPGTestHelper.USER_ONE));
 		
 		NodeRef documentNodeRef = inWriteTx(() -> createNodeWithContent(getTestFolderNodeRef(), "sample_1.pdf", "beCPG/signature/sample_1.pdf"));
 		
@@ -96,8 +96,8 @@ public class SignatureProjectIT extends RepoBaseTestCase {
 	@Test
 	public void testMultipleDocumentsSignature() throws IOException {
 		
-		NodeRef userOne = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_ONE);
-		NodeRef userTwo = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_TWO);
+		NodeRef userOne = inWriteTx(() -> BeCPGTestHelper.createUser(BeCPGTestHelper.USER_ONE));
+		NodeRef userTwo = inWriteTx(() -> BeCPGTestHelper.createUser(BeCPGTestHelper.USER_TWO));
 		
 		NodeRef document1NodeRef = inWriteTx(() -> createNodeWithContent(getTestFolderNodeRef(), "sample_1.pdf", "beCPG/signature/sample_1.pdf"));
 		NodeRef document2NodeRef = inWriteTx(() -> createNodeWithContent(getTestFolderNodeRef(), "sample_2.pdf", "beCPG/signature/sample_2.pdf"));
@@ -172,7 +172,7 @@ public class SignatureProjectIT extends RepoBaseTestCase {
 	@Test
 	public void testReportSignature() throws IOException {
 		
-		NodeRef userOne = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_ONE);
+		NodeRef userOne = inWriteTx(() -> BeCPGTestHelper.createUser(BeCPGTestHelper.USER_ONE));
 		
 		NodeRef projectNodeRef = inWriteTx(() -> {
 			ProjectData projectData = new ProjectData(null, "JUnit SignatureService Project test", null, null, new Date(), null, null, null, 2,
