@@ -2463,7 +2463,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		beCPGUserAccount.setPassword(password);
 		beCPGUserAccount.setDisable(!enableAccount);
 		beCPGUserAccount.setSynchronizeWithIDS(isIdsUser);
-		NodeRef nodeRef = beCPGUserAccountService.getOrCreateUser(beCPGUserAccount);
+		NodeRef nodeRef = beCPGUserAccountService.getOrCreateUser(beCPGUserAccount, true);
 		return new ScriptNode(nodeRef, serviceRegistry);
 	}
 
