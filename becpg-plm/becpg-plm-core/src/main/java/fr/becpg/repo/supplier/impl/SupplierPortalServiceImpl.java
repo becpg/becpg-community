@@ -564,7 +564,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 			userAccount.getExtraProps().putAll(extraProps);
 
-			return beCPGUserAccountService.getOrCreateUser(userAccount);
+			return beCPGUserAccountService.getOrCreateUser(userAccount, true);
 
 		}
 
