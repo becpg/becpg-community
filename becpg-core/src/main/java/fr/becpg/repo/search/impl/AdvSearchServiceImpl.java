@@ -180,7 +180,9 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		if (!isRepo) {
 			beCPGQueryBuilder.inSite(siteId, containerId);
 		} else {
-			beCPGQueryBuilder.excludePath(RepoConsts.ENTITIES_HISTORY_XPATH + "//*");
+			if(ContentModel.TYPE_CONTENT.equals(datatype)){
+				beCPGQueryBuilder.excludePath(RepoConsts.ENTITIES_HISTORY_XPATH + "//*");
+			}
 		}
 
 		if (datatype != null) {

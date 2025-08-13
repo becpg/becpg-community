@@ -1105,7 +1105,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 			watch.stop();
 			if (watch.getTotalTimeSeconds() > 1) {
-				logger.warn("Slow query [" + runnedQuery + "] executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + resultSize);
+				logger.warn("Slow query [" + runnedQuery + "] executed in  " + watch.getTotalTimeSeconds() + " seconds - total size results " + resultSize);
 
 			}
 
@@ -1114,7 +1114,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 				logger.debug("[" + Thread.currentThread().getStackTrace()[tmpIndex].getClassName() + " "
 						+ Thread.currentThread().getStackTrace()[tmpIndex].getLineNumber() + "] " + runnedQuery + " executed in  "
-						+ watch.getTotalTimeSeconds() + " seconds - size results " + resultSize);
+						+ watch.getTotalTimeSeconds() + " seconds -  total size results " + resultSize);
 			}
 		}
 
@@ -1595,6 +1595,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		// execute queries transactionally, when possible, and fall back to
 		// eventual consistency; or
 		sp.setQueryConsistency(queryConsistancy);
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("Use maxResults :" + maxResults);
+		}
 
 		if (maxResults == RepoConsts.MAX_RESULTS_UNLIMITED) {
 			sp.setLimitBy(LimitBy.UNLIMITED);
