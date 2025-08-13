@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -1161,7 +1160,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 
 		// sort
-		List<Map.Entry<NodeRef, Double>> sortedRawMaterials = new LinkedList<>(rawMaterials.entrySet());
+		List<Map.Entry<NodeRef, Double>> sortedRawMaterials = new ArrayList<>(rawMaterials.entrySet());
 		Collections.sort(sortedRawMaterials, (r1, r2) -> r2.getValue().compareTo(r1.getValue()));
 
 		// render
