@@ -303,9 +303,9 @@
 										if (response.json) {
 
 											var html = "";
-											if (response.json.scores !== undefined) {
+                                            var scores = response.json.scores;
+											if (scores !== undefined && scores.details !==undefined) {
 
-												var scores = response.json.scores;
 												var intScore = parseInt(scores.global);
 												var spriteIndex = (intScore / 5 >> 0);
 												var scoreTitle = instance.msg("tooltip.components.validation") + ": "
@@ -395,6 +395,15 @@
 													}
 													html += "</div></div></div>";
 												}
+											} else {
+												var buttonClass = "score-100" ;
+
+												if (!Dom.hasClass(instance.widgets.showNotificationsButton, "score")) {
+													instance.widgets.showNotificationsButton.removeClass("loading");
+													instance.widgets.showNotificationsButton.addClass("score");
+													instance.widgets.showNotificationsButton.addClass(buttonClass);
+												}
+
 											}
 											if(Dom.get(instance.id + "-scoresDiv")!=null){
 												Dom.get(instance.id + "-scoresDiv").innerHTML = html;

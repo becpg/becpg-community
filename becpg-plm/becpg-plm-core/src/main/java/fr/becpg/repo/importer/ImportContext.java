@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -65,13 +64,13 @@ public class ImportContext {
 
 	private PropertyFormats propertyFormats;
 
-	private List<AbstractAttributeMapping> columns = new LinkedList<>();
+	private List<AbstractAttributeMapping> columns = new ArrayList<>();
 
 	private Map<QName, ClassMapping> classMappings = new HashMap<>();
 
 	private Map<String, NodeRef> cacheNodes = new HashMap<>();
 
-	private List<String> log = new LinkedList<>();
+	private List<String> log = new ArrayList<>();
 	
 	private String errorsLogs = "";
 
@@ -450,15 +449,11 @@ public class ImportContext {
 	 * <p>Constructor for ImportContext.</p>
 	 */
 	public ImportContext() {
-		propertyFormats = new PropertyFormats(true, MAX_IMPORT_PRECISION);
-
 		String dateFormat = (Locale.getDefault().equals(Locale.FRENCH) || Locale.getDefault().equals(Locale.FRANCE)) ? FORMAT_DATE_FRENCH
 				: FORMAT_DATE_ENGLISH;
-		propertyFormats.setDateFormat(dateFormat);
-		
 		String datetimeFormat = (Locale.getDefault().equals(Locale.FRENCH) || Locale.getDefault().equals(Locale.FRANCE)) ? FORMAT_DATETIME_FRENCH
 				: FORMAT_DATETIME_ENGLISH;
-		propertyFormats.setDatetimeFormat(datetimeFormat);
+		propertyFormats = new PropertyFormats(true,dateFormat, datetimeFormat, PropertyFormats.DEFAULT_DECIMAL_PATTERN,  MAX_IMPORT_PRECISION);
 
 	}
 

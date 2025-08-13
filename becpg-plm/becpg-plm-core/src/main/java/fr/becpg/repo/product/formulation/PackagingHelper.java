@@ -2,7 +2,7 @@ package fr.becpg.repo.product.formulation;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -262,7 +262,7 @@ public class PackagingHelper implements InitializingBean {
 	}
 
 	private List<PackagingListDataItem> flatPackagingList(ProductData productData, Double subQty) {
-		List<PackagingListDataItem> ret = new LinkedList<>();
+		List<PackagingListDataItem> ret = new ArrayList<>();
 		for (PackagingListDataItem dataItem : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			if (dataItem.getProduct() != null) {
 

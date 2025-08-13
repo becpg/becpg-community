@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -111,7 +110,7 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 		}
 		
 		if (formulatedProduct.getRegulatoryList() == null) {
-			formulatedProduct.setRegulatoryList(new LinkedList<>());
+			formulatedProduct.setRegulatoryList(new ArrayList<>());
 		}
 		
 		updateProductFromRegulatoryList(formulatedProduct);

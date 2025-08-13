@@ -50,10 +50,13 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 
 	private static final String SEPARATOR = "\\-";
 
-	private final ThreadLocal<SimpleDateFormat> formatter = ThreadLocal.withInitial(() -> {
-		return new SimpleDateFormat("yyyy" + SEPARATOR + "MM" + SEPARATOR + "dd");
-	});
+	private static final int MAX_ENTITY_NODE_REF_CALLS = RepoConsts.MAX_RESULTS_1000;
+	private static final int MAX_RET_SIZE = RepoConsts.MAX_RESULTS_256;
+	
+	private final ThreadLocal<SimpleDateFormat> formatter = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy" + SEPARATOR + "MM" + SEPARATOR + "dd"));
 
+	
+	
 	/**
 	 * <p>cleanupThreadLocal.</p>
 	 */
@@ -169,9 +172,9 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 
 			}
 			boolean isNotIndexedType = isNotIndexedType(filter.getNodeType());
-			boolean shouldFilterByPath = filter.getNodePath() != null && isNotIndexedType(filter.getNodeType());
+			boolean shouldFilterByPath = (filter.getNodePath() != null) && isNotIndexedType(filter.getNodeType());
 
-			if (filter.getNodePath() != null && !shouldFilterByPath) {
+			if ((filter.getNodePath() != null) && !shouldFilterByPath) {
 				queryBuilder.inSubPath(filter.getNodePath().toPrefixString(namespaceService));
 			}
 
@@ -184,31 +187,29 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 			}
 
 			List<NodeRef> ret = advSearchService.queryAdvSearch(filter.getNodeType(), queryBuilder, filter.getNodeCriteria(),
-					filter.getMaxResults() != null ? filter.getMaxResults() : RepoConsts.MAX_RESULTS_5000);
+					getMaxResults(filter.getMaxResults(), shouldFilterByPath));
 
 			if ((filter.getEntityCriteria() != null) && (filter.getEntityType() != null)) {
 				ret = filterByEntityCriteria(ret, filter);
 			}
 
 			if (shouldFilterByPath) {
-				logger.info("Filter by path for type : " + filter.getNodeType());
-				ret = filterByPath(ret, filter.getNodePath());
+				
+				ret = filterByPath(ret, filter);
 			}
 
 			//Versions history filter
 			Map<NodeRef, Map<String, NodeRef>> itemVersions = new HashMap<>();
-			if (from != null && to != null) {
-
-				if (!VersionFilterType.NONE.equals(filter.getVersionFilterType()) && filter.getDateField().isMatch(ContentModel.PROP_MODIFIED)) {
-					Iterator<NodeRef> iter = ret.iterator();
-					while (iter.hasNext()) {
-						NodeRef item = iter.next();
-						Map<String, NodeRef> temp = getOnlyAssociatedVersions(item, filter.getVersionFilterType(), from, to);
-						if (!temp.isEmpty()) {
-							itemVersions.put(item, temp);
-						} else {
-							iter.remove();
-						}
+			if (((from != null) && (to != null))
+					&& (!VersionFilterType.NONE.equals(filter.getVersionFilterType()) && filter.getDateField().isMatch(ContentModel.PROP_MODIFIED))) {
+				Iterator<NodeRef> iter = ret.iterator();
+				while (iter.hasNext()) {
+					NodeRef item = iter.next();
+					Map<String, NodeRef> temp = getOnlyAssociatedVersions(item, filter.getVersionFilterType(), from, to);
+					if (!temp.isEmpty()) {
+						itemVersions.put(item, temp);
+					} else {
+						iter.remove();
 					}
 				}
 			}
@@ -227,6 +228,13 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 		return searchRuleResult;
 	}
 
+	private int getMaxResults(Integer maxResults, boolean shouldFilterByPath) {
+		if ((maxResults != null) && !shouldFilterByPath) {
+			return maxResults;
+		}
+		return RepoConsts.MAX_RESULTS_5000;
+	}
+
 	/**
 	 * <p>filterByPath.</p>
 	 *
@@ -234,11 +242,20 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 	 * @param nodePath a {@link org.alfresco.service.cmr.repository.Path} object
 	 * @return a {@link java.util.List} object
 	 */
-	public List<NodeRef> filterByPath(List<NodeRef> ret, Path nodePath) {
+	@Deprecated
+	private List<NodeRef> filterByPath(List<NodeRef> ret, SearchRuleFilter filter) {
+		
+		logger.info("Filter by path for type : " + filter.getNodeType());
+		
+		if (ret.size() > MAX_RET_SIZE) {
+			logger.warn("filterByPath is not optimized for size > " + MAX_RET_SIZE + " consider filtering on initial query");
+			logger.info(" - filter: " + filter.toString());
+		}
+		
 		List<NodeRef> filtered = new ArrayList<>();
 		for (NodeRef node : ret) {
 			Path refPath = nodeService.getPath(node);
-			if (isPathContained(refPath, nodePath)) {
+			if (isPathContained(refPath, filter.getNodePath())) {
 				filtered.add(node);
 			}
 		}
@@ -247,13 +264,13 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 
 	/**
 	 * Checks if a path contains another path
-	 * 
+	 *
 	 * @param containerPath The path to check
 	 * @param containedPath The path that might be contained
 	 * @return true if containerPath contains containedPath
 	 */
 	private boolean isPathContained(Path containerPath, Path containedPath) {
-		if (containerPath == null || containedPath == null) {
+		if ((containerPath == null) || (containedPath == null)) {
 			return false;
 		}
 
@@ -266,25 +283,21 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 	}
 
 	private boolean isNotIndexedType(QName nodeType) {
-		return nodeType != null && BeCPGQueryBuilder.isExcludedFromIndex(nodeType);
+		return (nodeType != null) && BeCPGQueryBuilder.isExcludedFromIndex(nodeType);
 	}
 
 	private int getDateFilterDelayUnit(DateFilterDelayUnit dateFilterDelayUnit) {
-		switch (dateFilterDelayUnit) {
-		case HOUR:
-			return Calendar.HOUR;
-		case MINUTE:
-			return Calendar.MINUTE;
-		default:
-			return Calendar.DATE;
-		}
+		return switch (dateFilterDelayUnit) {
+		case HOUR -> Calendar.HOUR;
+		case MINUTE -> Calendar.MINUTE;
+		default -> Calendar.DATE;
+		};
 
 	}
 
 	@Deprecated
 	private List<NodeRef> filterByEntityCriteria(List<NodeRef> nodes, SearchRuleFilter filter) {
-		final int MAX_ENTITY_NODE_REF_CALLS = RepoConsts.MAX_RESULTS_1000;
-		final int MAX_RET_SIZE = RepoConsts.MAX_RESULTS_256;
+	
 
 		// Log initial state
 		if (logger.isDebugEnabled()) {
@@ -303,13 +316,13 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 		int entityNodeRefCallCount = 0;
 
 		List<NodeRef> entities = null;
-		if (filter.getEntityCriteria() != null && !filter.getEntityCriteria().isEmpty()) {
+		if ((filter.getEntityCriteria() != null) && !filter.getEntityCriteria().isEmpty()) {
 			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(filter.getEntityType()).excludeDefaults();
 			entities = advSearchService.queryAdvSearch(filter.getEntityType(), queryBuilder, filter.getEntityCriteria(), RepoConsts.MAX_RESULTS_5000);
 		}
 
 		for (NodeRef nodeRef : nodes) {
-			if (entityNodeRefCallCount >= MAX_ENTITY_NODE_REF_CALLS || result.size() >= MAX_RET_SIZE) {
+			if ((entityNodeRefCallCount >= MAX_ENTITY_NODE_REF_CALLS) || (result.size() >= MAX_RET_SIZE)) {
 				logger.warn("Maximum number of getEntityNodeRef calls (" + MAX_ENTITY_NODE_REF_CALLS + ") reached. Processing stopped.");
 				break;
 			}
@@ -318,7 +331,7 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 			entityNodeRefCallCount++;
 
 			boolean shouldInclude = entities != null ? entities.contains(entityRef)
-					: (entityRef != null && matchEntityType(entityRef, filter.getEntityType()));
+					: ((entityRef != null) && matchEntityType(entityRef, filter.getEntityType()));
 
 			if (shouldInclude) {
 				result.add(nodeRef);
@@ -336,14 +349,14 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 	private Map<String, NodeRef> getOnlyAssociatedVersions(NodeRef item, VersionFilterType versionType, Date from, Date to) {
 		Map<String, NodeRef> ret = new HashMap<>();
 		final VersionHistory versionHistory;
-		if (from != null && to != null && (versionHistory = versionService.getVersionHistory(item)) != null) {
+		if ((from != null) && (to != null) && ((versionHistory = versionService.getVersionHistory(item)) != null)) {
 			versionHistory.getAllVersions().forEach(version -> {
 				Date createDate = version.getFrozenModifiedDate();
 				// if versionType is MINOR, versionLabel must not match an integer
 				// if versionType is MAJOR, versionLabel must match an integer
 				// versionType = MINOR XOR versionLabel matches INT
-				final boolean versionsMatch = versionType != null
-						&& (versionType == VersionFilterType.MINOR != (Double.parseDouble(version.getVersionLabel()) % 1 == 0));
+				final boolean versionsMatch = (versionType != null)
+						&& ((versionType == VersionFilterType.MINOR) != ((Double.parseDouble(version.getVersionLabel()) % 1) == 0));
 				if (versionsMatch && !RepoConsts.INITIAL_VERSION.equals(version.getVersionLabel())
 						&& (from.equals(to) ? formatter.get().format(createDate).equals(formatter.get().format(from))
 								: (createDate.after(from) && createDate.before(to)))) {

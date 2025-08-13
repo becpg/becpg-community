@@ -17,7 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -88,7 +88,7 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 
 			int sort = 0;
 
-			List<ResourceParamListItem> toAdd = new LinkedList<>();
+			List<ResourceParamListItem> toAdd = new ArrayList<>();
 			// Keep local param
 			for (ResourceParamListItem param : formulatedProduct.getResourceParamList()) {
 				if (param.getResource() == null) {
