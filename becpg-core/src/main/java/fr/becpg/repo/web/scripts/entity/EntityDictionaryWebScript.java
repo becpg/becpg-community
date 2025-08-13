@@ -115,7 +115,7 @@ public class EntityDictionaryWebScript extends AbstractWebScript {
 			
 			List<AssociationDefinition> assocDefs = entityDictionaryService.getPivotAssocDefs(dataType);
 			if(assocDefs == null ){
-				assocDefs = new java.util.LinkedList<>();
+				assocDefs = new java.util.ArrayList<>();
 			}
 			
 			QName parentQname = entityDictionaryService.getClass(dataType).getParentName();
