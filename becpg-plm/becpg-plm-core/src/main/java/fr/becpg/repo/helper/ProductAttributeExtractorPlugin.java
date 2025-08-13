@@ -20,6 +20,7 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 package fr.becpg.repo.helper;
 
 import java.util.ArrayList;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +72,12 @@ public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
 	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getMatchingTypes() {
-		return entityDictionaryService.getSubTypes(PLMModel.TYPE_PRODUCT);
+		
+		Collection<QName> subTypes = new ArrayList<>(entityDictionaryService.getSubTypes(PLMModel.TYPE_PRODUCT));
+		subTypes.addAll(entityDictionaryService.getSubTypes(PLMModel.TYPE_SUPPLIER));
+		subTypes.addAll(entityDictionaryService.getSubTypes(PLMModel.TYPE_CLIENT));
+		
+		return subTypes;
 	}
 
 	/** {@inheritDoc} */
@@ -101,8 +107,21 @@ public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
 		String typeCss = typeParts.length > 1 ? typeParts[1] : "";
 		
 		// Add base type and state
-		Object productState = nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE);
-		ret.append(typeCss).append(" ").append(typeCss).append("-").append(productState != null ? productState.toString() : "");
+		
+		// Get Product state
+		String state = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE);
+		
+		// Get Client state if Product state empty
+		if (state == null || state.isBlank()) {
+			state = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_CLIENT_STATE);
+		}
+		
+		// Get SUpplier state if Product and Client states empty
+		if (state == null || state.isBlank()) {
+			state = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_SUPPLIER_STATE);
+		}
+		
+		ret.append(typeCss).append(" ").append(typeCss).append("-").append(state == null || state.isBlank() ? "" : state);
 		
 		// Add nutrient class if applicable
 		if (nodeService.hasAspect(nodeRef, PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE)) {
