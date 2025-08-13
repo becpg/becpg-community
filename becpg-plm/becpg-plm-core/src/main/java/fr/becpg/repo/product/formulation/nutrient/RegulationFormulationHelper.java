@@ -2,7 +2,7 @@ package fr.becpg.repo.product.formulation.nutrient;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -665,7 +665,7 @@ public class RegulationFormulationHelper {
 
 	private static List<String> getAvailableRegulations() {
 
-		List<String> ret = new LinkedList<>();
+		List<String> ret = new ArrayList<>();
 		if (MLTextHelper.isSupportedLocale(Locale.US) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_PR"))) {
 			ret.add("US");
 		}

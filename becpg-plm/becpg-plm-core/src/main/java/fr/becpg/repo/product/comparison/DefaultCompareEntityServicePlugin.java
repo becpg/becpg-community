@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.config.format.FormatMode;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
@@ -78,8 +79,6 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 	private static final Log logger = LogFactory.getLog(DefaultCompareEntityServicePlugin.class);
 
 	private static final String COMPARISON_SEPARATOR = " - ";
-
-	private static final int COMPARE_MAX_PRECISION = 9;
 
 	@Autowired
 	protected AlfrescoRepository<BeCPGDataObject> alfrescoRepository;
@@ -231,7 +230,7 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		Set<FileInfo> filesTreated1 = new HashSet<>();
 		Set<FileInfo> filesTreated2 = new HashSet<>();
 
-		List<StructCompareResultDataItem> structComparisonList = new LinkedList<>();
+		List<StructCompareResultDataItem> structComparisonList = new ArrayList<>();
 
 		Map<QName, String> properties1;
 		Map<QName, String> properties2;
@@ -469,7 +468,7 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		List<QName> pivotProperties = getPivotForComparison(dataListType);
 
 		// look for characteristics that are in both entity
-		List<CharacteristicToCompare> characteristicsToCmp = new LinkedList<>();
+		List<CharacteristicToCompare> characteristicsToCmp = new ArrayList<>();
 
 		if (!pivotProperties.isEmpty()) {
 
@@ -758,7 +757,7 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 			CompositeComparableItem compositeItem2 = new CompositeComparableItem(0, null, null);
 			loadComparableItems(compositeItem2, listData2);
 
-			List<StructCompareResultDataItem> structComparisonList = new LinkedList<>();
+			List<StructCompareResultDataItem> structComparisonList = new ArrayList<>();
 			structCompareCompositeDataLists(datalistType, pivotProperty, structComparisonList, compositeItem1, compositeItem2);
 
 			String comparison = nodeService.getProperty(entity1NodeRef, ContentModel.PROP_NAME) + COMPARISON_SEPARATOR
@@ -934,7 +933,7 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		 * Compare properties
 		 */
 
-		PropertyFormats propertyFormats = new PropertyFormats(false, COMPARE_MAX_PRECISION);
+		PropertyFormats propertyFormats = PropertyFormats.forMode(FormatMode.COMP, false);
 		Map<QName, Serializable> properties1 = nodeRef1 == null ? new TreeMap<>() : nodeService.getProperties(nodeRef1);
 		Map<QName, Serializable> properties2 = nodeRef2 == null ? new TreeMap<>() : nodeService.getProperties(nodeRef2);
 		for (Map.Entry<QName, Serializable> entry : properties1.entrySet()) {

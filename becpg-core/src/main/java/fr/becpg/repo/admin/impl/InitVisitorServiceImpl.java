@@ -19,7 +19,6 @@ package fr.becpg.repo.admin.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -52,7 +51,7 @@ public class InitVisitorServiceImpl implements InitVisitorService {
 
 		 List<SiteInfo> ret = new ArrayList<>();
 		
-		List<InitVisitor> sortedInitVisitor = new LinkedList<>(Arrays.asList(initVisitors));
+		List<InitVisitor> sortedInitVisitor = new ArrayList<>(Arrays.asList(initVisitors));
 
 		sortedInitVisitor.sort((o1, o2) -> o1.initOrder().compareTo(o2.initOrder()));
 

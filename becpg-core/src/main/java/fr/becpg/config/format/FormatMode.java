@@ -7,5 +7,5 @@ package fr.becpg.config.format;
  * @version $Id: $Id
  */
 public enum FormatMode {
-	SEARCH,JSON,XLSX,CSV, REPORT, PROCESS
+	SEARCH,JSON,XLSX,CSV, REPORT, PROCESS, COMP
 }
