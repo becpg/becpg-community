@@ -11,6 +11,8 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authority.UnknownAuthorityException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.AccessPermission;
+import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.MutableAuthenticationService;
@@ -42,6 +44,9 @@ public class AuthorityHelper implements InitializingBean {
 	
 	@Autowired
 	private AuthorityService authorityService;
+	
+	@Autowired
+	private PermissionService permissionService;
 	
 	@Autowired
 	private NodeService nodeService;
@@ -263,6 +268,34 @@ public class AuthorityHelper implements InitializingBean {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * <p>groupHasPermission.</p>
+	 *
+	 * @param folderNodeRef
+	 * @param groupName a {@link java.lang.String} object
+	 * @param permission a {@link java.lang.String} object
+	 * @return a boolean
+	 */
+	public static boolean groupHasPermission(NodeRef folderNodeRef, String groupName, String permission) {
+	    // Prefix group name if not already prefixed
+	    if (!groupName.startsWith(PermissionService.GROUP_PREFIX)) {
+	        groupName = PermissionService.GROUP_PREFIX + groupName;
+	    }
+
+	    // Get all explicit permissions on this node
+	    Set<AccessPermission> perms = instance.permissionService.getAllSetPermissions(folderNodeRef);
+
+	    for (AccessPermission ap : perms) {
+	        if (ap.getAuthority().equals(groupName) &&
+	            ap.getPermission().equalsIgnoreCase(permission) &&
+	            ap.getAccessStatus() == AccessStatus.ALLOWED) {
+	            return true;
+	        }
+	    }
+
+	    return false;
 	}
 	
 }
