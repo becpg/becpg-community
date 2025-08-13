@@ -1,6 +1,6 @@
 package fr.becpg.repo.search.impl;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -50,7 +50,7 @@ public class PaginatedSearchCacheImpl  implements PaginatedSearchCache {
 		}
 		
 		private List<NodeRef> extract(MultiLevelListData data) {
-			List<NodeRef> ret = new LinkedList<>();
+			List<NodeRef> ret = new ArrayList<>();
 			
 			for (Entry<NodeRef, MultiLevelListData> entry : data.getTree().entrySet()) {
 				NodeRef nodeRef = entry.getKey();

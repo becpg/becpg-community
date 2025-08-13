@@ -284,7 +284,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 						final var downloadNode = exportSearchService.createReport(nodeType, reportTplNodeRef, items,
 								reportTplService.getReportFormat(reportTplNodeRef));
 						final var batchId = "notificationReportDownload" + (i++);
-						final var batchInfo = new BatchInfo(batchId, "becpg.batch." + batchId);
+						final var batchInfo = new BatchInfo(batchId, "becpg.batch." + reportTplNodeRef.getId() + "-" + batchId);
 						final var batchStep = new BatchStep<NodeRef>();
 						batchStep.setWorkProvider(new EntityListBatchProcessWorkProvider<>(List.of(downloadNode)));
 						batchStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<NodeRef>() {

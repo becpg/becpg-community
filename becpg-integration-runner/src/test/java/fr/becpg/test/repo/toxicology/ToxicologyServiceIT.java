@@ -144,39 +144,108 @@ public class ToxicologyServiceIT extends PLMBaseTestCase {
 	}
 	
 	@Test
-	public void testToxIngTableCreation() {
+	public void testIngredientUpdate() {
 		inWriteTx(() -> {
 			nodeService.setProperty(glycerinNodeRef, PLMModel.PROP_ING_TOX_DATA, true);
 			return null;
 		});
 		waitForSolr();
 		inWriteTx(() -> {
-			NodeRef toxIngNodeRef1 = BeCPGQueryBuilder.createQuery().andPropEquals(PLMModel.PROP_TOX_ING_ING, glycerinNodeRef.toString()).andPropEquals(PLMModel.PROP_TOX_ING_TOX, adultROHairNodeRef.toString()).singleValue();
-			assertNotNull(toxIngNodeRef1);
-			assertEquals(30303.0303030303, (Double) nodeService.getProperty(toxIngNodeRef1, PLMModel.PROP_TOX_ING_SYSTEMIC_VALUE), 0.001);
-			assertEquals(80, (Double) nodeService.getProperty(toxIngNodeRef1, PLMModel.PROP_TOX_ING_MAX_VALUE), 0.001);
-			nodeService.deleteNode(toxIngNodeRef1);
-			
-			NodeRef toxIngNodeRef2 = BeCPGQueryBuilder.createQuery().andPropEquals(PLMModel.PROP_TOX_ING_ING, glycerinNodeRef.toString()).andPropEquals(PLMModel.PROP_TOX_ING_TOX, adultROBodyNodeRef.toString()).singleValue();
-			assertNotNull(toxIngNodeRef2);
-			assertEquals(15151.51515151515, (Double) nodeService.getProperty(toxIngNodeRef2, PLMModel.PROP_TOX_ING_SYSTEMIC_VALUE), 0.001);
-			assertEquals(80, (Double) nodeService.getProperty(toxIngNodeRef2, PLMModel.PROP_TOX_ING_MAX_VALUE), 0.001);
-			nodeService.deleteNode(toxIngNodeRef2);
-			
-			NodeRef toxIngNodeRef3 = BeCPGQueryBuilder.createQuery().andPropEquals(PLMModel.PROP_TOX_ING_ING, glycerinNodeRef.toString()).andPropEquals(PLMModel.PROP_TOX_ING_TOX, adultROFaceNodeRef.toString()).singleValue();
-			assertNotNull(toxIngNodeRef3);
-			assertEquals(23809.52380952381, (Double) nodeService.getProperty(toxIngNodeRef3, PLMModel.PROP_TOX_ING_SYSTEMIC_VALUE), 0.001);
-			assertEquals(50, (Double) nodeService.getProperty(toxIngNodeRef3, PLMModel.PROP_TOX_ING_MAX_VALUE), 0.001);
-			nodeService.deleteNode(toxIngNodeRef3);
-			
+			String systemicValues = (String) nodeService.getProperty(glycerinNodeRef, PLMModel.PROP_ING_TOX_SYSTEMIC_VALUES);
+			String maxValues = (String) nodeService.getProperty(glycerinNodeRef, PLMModel.PROP_ING_TOX_MAX_VALUES);
+			assertTrue(systemicValues.contains("- Adult RO Hair - test: 30303"));
+			assertTrue(maxValues.contains("- Adult RO Hair - test: 80"));
+			assertTrue(systemicValues.contains("- Adult RO Body - test: 15151"));
+			assertTrue(maxValues.contains("- Adult RO Body - test: 80"));
+			assertTrue(systemicValues.contains("- Adult RO Face - test: 23809"));
+			assertTrue(maxValues.contains("- Adult RO Face - test: 50"));
 			assertEquals(false, nodeService.getProperty(glycerinNodeRef, PLMModel.PROP_ING_TOX_DATA));
-			
-			List<NodeRef> otherToxItems = BeCPGQueryBuilder.createQuery().andPropEquals(PLMModel.PROP_TOX_ING_ING, glycerinNodeRef.toString()).list();
-			
-			for (NodeRef otherToxItem : otherToxItems) {
-				nodeService.deleteNode(otherToxItem);
-			}
-			
+			return null;
+		});
+		
+		inWriteTx(() -> {
+			nodeService.deleteNode(adultROFaceNodeRef);
+			return null;
+		});
+		
+		waitForSolr();
+		inWriteTx(() -> {
+			String systemicValues = (String) nodeService.getProperty(glycerinNodeRef, PLMModel.PROP_ING_TOX_SYSTEMIC_VALUES);
+			String maxValues = (String) nodeService.getProperty(glycerinNodeRef, PLMModel.PROP_ING_TOX_MAX_VALUES);
+			assertTrue(systemicValues.contains("- Adult RO Hair - test: 30303"));
+			assertTrue(maxValues.contains("- Adult RO Hair - test: 80"));
+			assertTrue(systemicValues.contains("- Adult RO Body - test: 15151"));
+			assertTrue(maxValues.contains("- Adult RO Body - test: 80"));
+			assertFalse(systemicValues.contains("- Adult RO Face - test"));
+			assertFalse(maxValues.contains("- Adult RO Face - test"));
+			return null;
+		});
+	}
+	
+	@Test
+	public void testToxDeletion() {
+		inWriteTx(() -> {
+			nodeService.setProperty(glycerinNodeRef, PLMModel.PROP_ING_TOX_DATA, true);
+			return null;
+		});
+		waitForSolr();
+		inWriteTx(() -> {
+			nodeService.deleteNode(adultROFaceNodeRef);
+			nodeService.setProperty(adultROHairNodeRef, BeCPGModel.PROP_IS_DELETED, true);
+			return null;
+		});
+		
+		waitForSolr();
+		inWriteTx(() -> {
+			String systemicValues = (String) nodeService.getProperty(glycerinNodeRef, PLMModel.PROP_ING_TOX_SYSTEMIC_VALUES);
+			String maxValues = (String) nodeService.getProperty(glycerinNodeRef, PLMModel.PROP_ING_TOX_MAX_VALUES);
+			assertFalse(systemicValues.contains("- Adult RO Hair - test"));
+			assertFalse(maxValues.contains("- Adult RO Hair - test"));
+			assertTrue(systemicValues.contains("- Adult RO Body - test: 15151"));
+			assertTrue(maxValues.contains("- Adult RO Body - test: 80"));
+			assertFalse(systemicValues.contains("- Adult RO Face - test"));
+			assertFalse(maxValues.contains("- Adult RO Face - test"));
+			return null;
+		});
+	}
+	
+	@Test
+	public void testToxCalculateFlag() {
+		inWriteTx(() -> {
+			nodeService.setProperty(glycerinNodeRef, PLMModel.PROP_ING_TOX_DATA, true);
+			nodeService.setProperty(adultROFaceNodeRef, PLMModel.PROP_TOX_CALCULATE_SYSTEMIC, false);
+			return null;
+		});
+		
+		waitForSolr();
+		inWriteTx(() -> {
+			String systemicValues = (String) nodeService.getProperty(glycerinNodeRef, PLMModel.PROP_ING_TOX_SYSTEMIC_VALUES);
+			String maxValues = (String) nodeService.getProperty(glycerinNodeRef, PLMModel.PROP_ING_TOX_MAX_VALUES);
+			assertTrue(systemicValues.contains("- Adult RO Hair - test: 30303"));
+			assertTrue(maxValues.contains("- Adult RO Hair - test: 80"));
+			assertTrue(systemicValues.contains("- Adult RO Body - test: 15151"));
+			assertTrue(maxValues.contains("- Adult RO Body - test: 80"));
+			assertFalse(systemicValues.contains("- Adult RO Face - test"));
+			assertTrue(maxValues.contains("- Adult RO Face - test: 50"));
+			return null;
+		});
+		
+		inWriteTx(() -> {
+			nodeService.setProperty(adultROFaceNodeRef, PLMModel.PROP_TOX_CALCULATE_SYSTEMIC, true);
+			nodeService.setProperty(adultROFaceNodeRef, PLMModel.PROP_TOX_CALCULATE_MAX, false);
+			return null;
+		});
+		
+		waitForSolr();
+		inWriteTx(() -> {
+			String systemicValues = (String) nodeService.getProperty(glycerinNodeRef, PLMModel.PROP_ING_TOX_SYSTEMIC_VALUES);
+			String maxValues = (String) nodeService.getProperty(glycerinNodeRef, PLMModel.PROP_ING_TOX_MAX_VALUES);
+			assertTrue(systemicValues.contains("- Adult RO Hair - test: 30303"));
+			assertTrue(maxValues.contains("- Adult RO Hair - test: 80"));
+			assertTrue(systemicValues.contains("- Adult RO Body - test: 15151"));
+			assertTrue(maxValues.contains("- Adult RO Body - test: 80"));
+			assertTrue(systemicValues.contains("- Adult RO Face - test: 23809"));
+			assertFalse(maxValues.contains("- Adult RO Face - test"));
 			return null;
 		});
 	}

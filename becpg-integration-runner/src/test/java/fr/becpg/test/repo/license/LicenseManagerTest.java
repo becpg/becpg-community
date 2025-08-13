@@ -13,8 +13,7 @@ import java.util.ArrayList;
 import org.json.simple.JSONObject;
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import fr.becpg.repo.helper.JsonHelper;
 import fr.becpg.repo.license.BeCPGLicense;
 import fr.becpg.repo.license.BeCPGLicenseManager;
 
@@ -33,7 +32,7 @@ public class LicenseManagerTest {
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 			JSONObject licenseJson = new JSONObject();
-			ObjectMapper mapper = new ObjectMapper();
+			
 			String line = reader.readLine();
 			File targetDir = new File(targetPath);
 			targetDir.mkdirs();
@@ -68,7 +67,7 @@ public class LicenseManagerTest {
 				licenseJson.put("LicenseSupplierConcurrent", parsedLicenses.get(5));
 				licenseJson.put("LicenseKey", licenseKey);
 
-				String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(licenseJson);
+				String json = JsonHelper.MAPPER.copy().writerWithDefaultPrettyPrinter().writeValueAsString(licenseJson);
 
 				try (FileWriter licenseFile = new FileWriter(targetPath + licenseName + ".json")) {
 					licenseFile.write(json);

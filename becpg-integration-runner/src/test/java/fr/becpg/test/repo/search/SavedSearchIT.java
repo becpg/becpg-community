@@ -16,7 +16,7 @@ public class SavedSearchIT extends RepoBaseTestCase {
 	@Autowired
 	private SavedSearchService savedSearchService;
 
-	private static final String SEARCH_TYPE = "product-list_bcpg:product";
+	private static final String SEARCH_TYPE = "product-list-bcpg:product";
 	private static final String SITE_ID = "simulation";
 	private static final String JSON_CONTENT = "{\"key\":\"value\"}";
 	private static final String NAME_PREFIX = "TestSearch_";
@@ -24,27 +24,30 @@ public class SavedSearchIT extends RepoBaseTestCase {
 	@Test
 	public void testCreateRetrieveListSavedSearch() {
 
+		String name = NAME_PREFIX + System.currentTimeMillis();
+
 		inWriteTx(() -> {
-			
-			AuthenticationUtil.runAsSystem(() ->{
-				SavedSearch globalSavedSearch = createSavedSearch(NAME_PREFIX + System.currentTimeMillis(), SEARCH_TYPE, SITE_ID, true);
+
+			AuthenticationUtil.runAsSystem(() -> {
+				SavedSearch globalSavedSearch = createSavedSearch(name, SEARCH_TYPE, SITE_ID, true);
 				NodeRef savedNodeRef = savedSearchService.createOrUpdate(globalSavedSearch, JSON_CONTENT);
-	
+
 				assertNotNull(savedNodeRef);
 				globalSavedSearch.setNodeRef(savedNodeRef);
-	
+
 				String retrievedContent = savedSearchService.getSavedSearchContent(globalSavedSearch);
 				assertNotNull(retrievedContent);
 				assertEquals(JSON_CONTENT, retrievedContent);
 				return globalSavedSearch;
 			});
-			
-			SavedSearch nonGlobalSavedSearch = createSavedSearch(NAME_PREFIX + System.currentTimeMillis(), SEARCH_TYPE, null, false);
+
+			SavedSearch nonGlobalSavedSearch = createSavedSearch(name, SEARCH_TYPE, null, false);
 			savedSearchService.createOrUpdate(nonGlobalSavedSearch, JSON_CONTENT);
 
 			SavedSearch searchFilter = new SavedSearch();
 			searchFilter.setSearchType(SEARCH_TYPE);
-			List<SavedSearch> savedSearches = savedSearchService.findSavedSearch(searchFilter);
+			List<SavedSearch> savedSearches = savedSearchService.findSavedSearch(searchFilter).stream().filter(s -> s.getName().equals(name))
+					.toList();
 
 			assertEquals(1, savedSearches.size());
 

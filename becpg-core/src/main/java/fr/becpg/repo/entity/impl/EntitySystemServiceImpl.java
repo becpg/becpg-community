@@ -19,7 +19,7 @@ package fr.becpg.repo.entity.impl;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -166,7 +166,7 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 	@Override
 	public List<NodeRef> getSystemEntities() {
 
-		List<NodeRef> tplsNodeRef = new LinkedList<>();
+		List<NodeRef> tplsNodeRef = new ArrayList<>();
 
 		for (NodeRef tpl : BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_SYSTEM_ENTITY).inDB().list()) {
 			if (!nodeService.hasAspect(tpl, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
