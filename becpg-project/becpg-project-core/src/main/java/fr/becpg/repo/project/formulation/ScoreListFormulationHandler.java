@@ -358,10 +358,12 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 			}
 		}
 
-		surveyableEntity.setScore(totalWeight > 0 ? totalScore / totalWeight : null);
+		surveyableEntity.setScore(totalWeight > 0 ? Math.min(totalScore / totalWeight, 100) : null);
 
 		if (totalWeight == 0) {
 			logger.debug(String.format("Total weight of project %s is zero.", surveyableEntity.getNodeRef()));
+		} else if (totalScore / totalWeight > 100) {
+			logger.debug(String.format("Score of project %s exceeds 100.", surveyableEntity.getNodeRef()));
 		}
 	}
 
