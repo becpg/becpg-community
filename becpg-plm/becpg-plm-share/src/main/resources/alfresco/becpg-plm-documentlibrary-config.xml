@@ -128,9 +128,65 @@
 			<indicator id="entity-archived" index="10">
 				<evaluator>evaluator.becpg.doclib.indicator.entity.archived</evaluator>
 			</indicator>
-			
 			<indicator id="entity-stopped" index="10">
 				<evaluator>evaluator.becpg.doclib.indicator.entity.stopped</evaluator>
+			</indicator>
+			
+			<indicator id="supplier-simulation" index="11">
+				<evaluator>evaluator.becpg.doclib.indicator.supplier.simulation</evaluator>
+			</indicator>
+			<indicator id="supplier-tovalidate" index="11">
+				<evaluator>evaluator.becpg.doclib.indicator.supplier.tovalidate</evaluator>
+			</indicator>
+			<indicator id="supplier-valid" index="11">
+				<evaluator>evaluator.becpg.doclib.indicator.supplier.valid</evaluator>
+			</indicator>
+			<indicator id="supplier-refused" index="11">
+				<evaluator>evaluator.becpg.doclib.indicator.supplier.refused</evaluator>
+			</indicator>
+			<indicator id="supplier-archived" index="11">
+				<evaluator>evaluator.becpg.doclib.indicator.supplier.archived</evaluator>
+			</indicator>
+			<indicator id="supplier-stopped" index="11">
+				<evaluator>evaluator.becpg.doclib.indicator.supplier.stopped</evaluator>
+			</indicator>
+			
+			<indicator id="client-simulation" index="12">
+				<evaluator>evaluator.becpg.doclib.indicator.client.simulation</evaluator>
+			</indicator>
+			<indicator id="client-tovalidate" index="12">
+				<evaluator>evaluator.becpg.doclib.indicator.client.tovalidate</evaluator>
+			</indicator>
+			<indicator id="client-valid" index="12">
+				<evaluator>evaluator.becpg.doclib.indicator.client.valid</evaluator>
+			</indicator>
+			<indicator id="client-refused" index="12">
+				<evaluator>evaluator.becpg.doclib.indicator.client.refused</evaluator>
+			</indicator>
+			<indicator id="client-archived" index="12">
+				<evaluator>evaluator.becpg.doclib.indicator.client.archived</evaluator>
+			</indicator>
+			<indicator id="client-stopped" index="12">
+				<evaluator>evaluator.becpg.doclib.indicator.client.stopped</evaluator>
+			</indicator>
+			
+			<indicator id="productCollection-simulation" index="13">
+				<evaluator>evaluator.becpg.doclib.indicator.productCollection.simulation</evaluator>
+			</indicator>
+			<indicator id="productCollection-tovalidate" index="13">
+				<evaluator>evaluator.becpg.doclib.indicator.productCollection.tovalidate</evaluator>
+			</indicator>
+			<indicator id="productCollection-valid" index="13">
+				<evaluator>evaluator.becpg.doclib.indicator.productCollection.valid</evaluator>
+			</indicator>
+			<indicator id="productCollection-refused" index="13">
+				<evaluator>evaluator.becpg.doclib.indicator.productCollection.refused</evaluator>
+			</indicator>
+			<indicator id="productCollection-archived" index="13">
+				<evaluator>evaluator.becpg.doclib.indicator.productCollection.archived</evaluator>
+			</indicator>
+			<indicator id="productCollection-stopped" index="13">
+				<evaluator>evaluator.becpg.doclib.indicator.productCollection.stopped</evaluator>
 			</indicator>
 			
 			<indicator id="ecm-automatic"  index="15">
