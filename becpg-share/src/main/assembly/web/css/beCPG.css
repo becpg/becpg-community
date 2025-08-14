@@ -687,7 +687,21 @@ span.semiFinishedProduct-Refused,
 span.semiFinishedProduct-Simulation,
 span.semiFinishedProduct-Valid,
 span.semiFinishedProduct-ToValidate,
-span.semiFinishedProduct-Stopped {
+span.semiFinishedProduct-Stopped,
+span.semiFinishedProduct-Stopped,
+span.supplier-Archived,
+span.supplier-Refused,
+span.supplier-Simulation,
+span.supplier-Valid,
+span.supplier-ToValidate,
+span.supplier-Stopped,
+span.client-Archived,
+span.client-Refused,
+span.client-Simulation,
+span.client-Valid,
+span.client-ToValidate,
+span.client-Stopped
+{
     padding-left: 25px;
     background-size: auto;
     background-repeat: no-repeat;
@@ -720,6 +734,13 @@ span.semiFinishedProduct-ToValidate {
 span.logisticUnit-ToValidate {
     background-image: url("../../components/images/states/tovalidate-10.png") , var(--icon-logisticUnit-16) !important
 }
+span.supplier-ToValidate {
+    background-image: url("../../components/images/states/tovalidate-10.png") , url("../../components/images/filetypes/generic-supplier-16.png") !important
+}
+span.client-ToValidate {
+    background-image: url("../../components/images/states/tovalidate-10.png") , url("../../components/images/filetypes/generic-client-16.png") !important
+}
+
 span.finishedProduct-Valid {
     background-image: url("../../components/images/states/valid-10.png") , var(--icon-finishedProduct-16) !important
 }
@@ -744,6 +765,13 @@ span.logisticUnit-Valid {
 span.resourceProduct-Valid {
     background-image: url("../../components/images/states/valid-10.png") , var(--icon-resourceProduct-16) !important
 }
+span.supplier-Valid {
+    background-image: url("../../components/images/states/valid-10.png") , url("../../components/images/filetypes/generic-supplier-16.png") !important
+}
+span.client-Valid  {
+    background-image: url("../../components/images/states/valid-10.png") , url("../../components/images/filetypes/generic-client-16.png") !important
+}
+
 span.finishedProduct-Simulation {
     background-image: url("../../components/images/states/simulation-10.png") , var(--icon-finishedProduct-16) !important
 }
@@ -768,6 +796,13 @@ span.logisticUnit-Simulation {
 span.resourceProduct-Simulation {
     background-image: url("../../components/images/states/simulation-10.png") , var(--icon-resourceProduct-16) !important
 }
+span.supplier-Simulation {
+    background-image: url("../../components/images/states/simulation-10.png") , url("../../components/images/filetypes/generic-supplier-16.png") !important
+}
+span.client-Simulation  {
+    background-image: url("../../components/images/states/simulation-10.png") , url("../../components/images/filetypes/generic-client-16.png") !important
+}
+
 span.finishedProduct-Archived {
     background-image: url("../../components/images/states/archived-10.png") , var(--icon-finishedProduct-16) !important
 }
@@ -792,6 +827,13 @@ span.logisticUnit-Archived {
 span.resourceProduct-Archived {
     background-image: url("../../components/images/states/archived-10.png") , var(--icon-resourceProduct-16) !important
 }
+span.supplier-Archived {
+    background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-supplier-16.png") !important
+}
+span.client-Archived  {
+    background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-client-16.png") !important
+}
+
 span.finishedProduct-Refused {
     background-image: url("../../components/images/states/refused-10.png") , var(--icon-finishedProduct-16) !important
 }
@@ -815,6 +857,12 @@ span.logisticUnit-Refused {
 }
 span.resourceProduct-Refused {
     background-image: url("../../components/images/states/refused-10.png") , var(--icon-resourceProduct-16) !important
+}
+span.supplier-Refused  {
+    background-image: url("../../components/images/states/refused-10.png") , url("../../components/images/filetypes/generic-supplier-16.png") !important
+}
+span.client-Refused   {
+    background-image: url("../../components/images/states/refused-10.png") , url("../../components/images/filetypes/generic-client-16.png") !important
 }
 
 span.finishedProduct-Stopped {
@@ -841,8 +889,12 @@ span.logisticUnit-Stopped {
 span.resourceProduct-Stopped {
     background-image: url("../../components/images/states/stopped-10.png") , var(--icon-resourceProduct-16) !important
 }
-
-
+span.supplier-Stopped  {
+    background-image: url("../../components/images/states/refused-10.png") , url("../../components/images/filetypes/generic-supplier-16.png") !important
+}
+span.client-Stopped   {
+    background-image: url("../../components/images/states/refused-10.png") , url("../../components/images/filetypes/generic-client-16.png") !important
+}
 
 /** Characts **/
 
