@@ -1,142 +1,90 @@
-
 <html>
-   <head>
-      <style type="text/css"><!--
-     body
-      {
-         font-family: Arial, sans-serif;
-         font-size: 14px;
-         color: #4c4c4c;
-      }
-     button 
-     {
-        background-color: white ;
-         border-radius: 5px;
-         border : solid 1px #ff642d;
-         color:#ff642d;
-         padding: 10px 22px;
-         text-align: center;
-         text-decoration: none;
-         font-size: 13px;
-         cursor : pointer;
-         margin-bottom: 5px;
-      }
-      button:hover {
-         background-color : #ff642d;
-         border : solid 1px #ff642d;
-         color: white;
-      }
-      button:focus {
-         outline:none;
-      }
-
-   
-      @media (min-width: 660px) {
-         td .flex {
-            display:flex;
-         }
-         .img {
-            padding-right:20px;
-         }
-         .table {
-            width:70%;
-         }
-      }
-      @media (max-width: 660px) {
-         td .flex {
-            text-align:center;
-         }
-         td .title {
-            margin-top : 5px;
-            margin-bottom : 0px;
-         }
-       .img {
-            padding-right:0;
-            margin-top:3px;
-         }
-         .table {
-            width:100%;
-         }
-      }
-      
-       
-      --></style>
-   </head>
-   
-   <body bgcolor="#dddddd">
-      <table width="100%" cellpadding="20" cellspacing="0" border="0" bgcolor="#dddddd">
-         <tr>
-            <td width="100%" align="center">
-               <table class="table" cellpadding="0" cellspacing="0" bgcolor="white" style="background-color: white; border: 1px solid #cccccc; border-radius: 15px;">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Compte beCPG</title>
+  </head>
+  <body bgcolor="#dddddd" style="margin:0; padding:0; font-family: Arial, sans-serif; font-size: 14px; color: #4c4c4c;">
+    <table width="100%" cellpadding="20" cellspacing="0" border="0" bgcolor="#dddddd">
+      <tr>
+        <td align="center">
+          <table width="600" cellpadding="0" cellspacing="0" border="0" bgcolor="white" style="border: 1px solid #cccccc; border-radius: 15px;">
+            <tr>
+              <td style="padding: 20px;">
+                <!-- Header -->
+                <table width="100%" cellpadding="0" cellspacing="0" border="0">
                   <tr>
-                     <td width="100%">
-                        <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                           <tr>
-                              <td style="padding: 10px 30px 0px;">
-                                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                                    <tr>
-                                       <td>
-                                          <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                                             <tr>
-                                                <td class ="flex">
-                                                   <img class="img" src="${shareUrl}/res/components/site-finder/images/project-email-logo.png" alt="" height="64" border="0" />
-                                                  <p class="title" style="font-size: 20px; color: #004254; font-weight: bold;">Compte beCPG</p>
-   
-                                                </td>
-                                             </tr>
-                                          </table>
-                                          <div style="font-size: 14px; margin: 12px 0px 24px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
-                                             <p style="color:#004254; margin-bottom:0px; font-size:18px;font-weight:bold">Bonjour ${person.properties["cm:firstName"]!""},</p>
-                                             
-                                             <p style="margin-top:0px">
-															<br /><a href="${shareUrl}""><button ><b>Accéder à votre compte</b></button></a>
-															<br /><b>Compte : </b>${username}
-															<br /><b>Mot de passe : </b>${password}</p>
-															
-															<p>Je vous conseille d'utiliser le navigateur Firefox ou Chrome.<br />															
-															</p>
-															
-                                      						<p>					
-															Consultez notre documentation en ligne pour utiliser beCPG:<br />
-															- <a href="https://docs.becpg.fr/fr/tutorial/tutorial.html">Tutoriel création d'un produit et d'une recette</a><br />
-															- <a href="https://docs.becpg.fr/fr/utilization/navigation-becpg.html">La documentation pour utiliser beCPG</a> <br />
-															- <a href="https://docs.becpg.fr/fr/utilization/project-management.html">La documentation pour la Gestion de Projet</a>
-															</p>								
-
-                                            <p>Cordialement,<br />
-                                             beCPG</p>
-                                          </div>
-                                       </td> 
-                                    </tr>
-                                 </table>
-                              </td>
-                           </tr>
-                           <tr>
-                              <td>
-                                 <div style="border-top: 1px solid #aaaaaa;">&nbsp;</div>
-                              </td>
-                           </tr>
-                           <tr>
-                              <td style="padding: 0px 30px; font-size: 13px;">
-                                 Pour en savoir plus sur beCPG, vister <a style="text-decoration:none; color:#EF6236" href="https://www.becpg.net">https://www.becpg.net</a>
-                              </td>
-                           </tr>
-                           <tr>
-                              <td>
-                                 <div style="border-bottom: 1px solid #aaaaaa;">&nbsp;</div>
-                              </td>
-                           </tr>
-                           <tr>
-                              <td style="padding: 10px 30px;">
-                                 <img style="padding :10px 0px" src="${mailLogoUrl}" />
-                              </td>
-                           </tr>
-                        </table>
-                     </td>
+                    <td valign="top" width="80">
+                      <img src="${shareUrl}/res/components/site-finder/images/project-email-logo.png" alt="" height="64" style="display: block;" />
+                    </td>
+                    <td valign="middle" style="padding-left: 10px;">
+                      <p style="font-size: 20px; color: #004254; font-weight: bold; margin: 0;">Compte beCPG</p>
+                    </td>
                   </tr>
-               </table>
-            </td>
-         </tr>
-      </table>
-   </body>
+                </table>
+
+                <!-- Divider -->
+                <div style="border-top: 1px solid #aaaaaa; margin: 20px 0;"></div>
+
+                <!-- Greeting -->
+                <p style="color:#004254; font-size:18px; font-weight:bold; margin: 0 0 10px 0;">
+                  Bonjour ${person.properties["cm:firstName"]!""},
+                </p>
+
+                <!-- Button CTA -->
+                <table cellpadding="0" cellspacing="0" border="0" style="margin: 20px 0;">
+                  <tr>
+                    <td align="center" bgcolor="#ffffff" style="border: 1px solid #ff642d; border-radius: 5px;">
+                      <a href="${shareUrl}" style="display: inline-block; padding: 10px 22px; font-size: 13px; font-weight: bold; color: #ff642d; text-decoration: none;">
+                        Accéder à votre compte
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+
+                <!-- Account Info -->
+                <p style="margin: 10px 0;"><b>Compte :</b> ${username}</p>
+                <p style="margin: 10px 0;"><b>Mot de passe :</b> ${password}</p>
+
+                <!-- Browser advice -->
+                <p style="margin: 10px 0;">
+                  Nous vous conseillons d’utiliser le navigateur Firefox ou Chrome.
+                </p>
+
+                <!-- Documentation Links -->
+                <p style="margin: 10px 0;">
+                  Consultez notre documentation en ligne pour commencer à utiliser beCPG :
+                </p>
+                <ul style="padding-left: 20px; margin: 10px 0;">
+                  <li><a href="https://docs.becpg.fr/fr/tutorial/tutorial.html">Le tutoriel pour créer un produit et sa composition</a></li>
+                  <li><a href="https://docs.becpg.fr/fr/utilization/navigation-becpg.html">La documentation pour utiliser beCPG</a></li>
+                  <li><a href="https://docs.becpg.fr/fr/utilization/project-management.html">La documentation pour la gestion de projet</a></li>
+                </ul>
+
+                <!-- Closing -->
+                <p style="margin: 10px 0;">
+                  Cordialement,<br />
+                  beCPG
+                </p>
+
+                <!-- Divider -->
+                <div style="border-top: 1px solid #aaaaaa; margin: 20px 0;"></div>
+
+                <!-- Website link -->
+                <p style="font-size: 13px; margin: 10px 0;">
+                  Pour en savoir plus sur beCPG, visitez 
+                  <a style="text-decoration: none; color: #EF6236;" href="https://www.becpg.net">https://www.becpg.net</a>
+                </p>
+
+                <!-- Bottom divider -->
+                <div style="border-bottom: 1px solid #aaaaaa; margin: 20px 0;"></div>
+
+                <!-- Footer Logo -->
+                <img src="${mailLogoUrl}" alt="Logo beCPG" style="display: block; padding: 10px 0;" />
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
 </html>

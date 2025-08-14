@@ -331,7 +331,7 @@ public class UserImporterServiceImpl implements UserImporterService {
 				}
 			}
 
-			 beCPGUserAccountService.getOrCreateUser(userAccount);
+			 beCPGUserAccountService.getOrCreateUser(userAccount, false);
 
 			if (headers.containsKey(ATTR_MEMBERSHIPS)) {
 				AuthenticationUtil.runAsSystem(() -> {
