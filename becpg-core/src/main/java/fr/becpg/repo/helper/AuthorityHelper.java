@@ -279,21 +279,23 @@ public class AuthorityHelper implements InitializingBean {
 	 * @return a boolean
 	 */
 	public static boolean groupHasPermission(NodeRef folderNodeRef, String groupName, String permission) {
-	    // Prefix group name if not already prefixed
-	    if (!groupName.startsWith(PermissionService.GROUP_PREFIX)) {
-	        groupName = PermissionService.GROUP_PREFIX + groupName;
-	    }
-
-	    // Get all explicit permissions on this node
-	    Set<AccessPermission> perms = instance.permissionService.getAllSetPermissions(folderNodeRef);
-
-	    for (AccessPermission ap : perms) {
-	        if (ap.getAuthority().equals(groupName) &&
-	            ap.getPermission().equalsIgnoreCase(permission) &&
-	            ap.getAccessStatus() == AccessStatus.ALLOWED) {
-	            return true;
-	        }
-	    }
+		if (groupName != null && folderNodeRef != null) {
+		    // Prefix group name if not already prefixed
+		     if(!groupName.startsWith(PermissionService.GROUP_PREFIX)) {
+		        groupName = PermissionService.GROUP_PREFIX + groupName;
+		    }
+	
+		    // Get all explicit permissions on this node
+		    Set<AccessPermission> perms = instance.permissionService.getAllSetPermissions(folderNodeRef);
+	
+		    for (AccessPermission ap : perms) {
+		        if (ap.getAuthority().equals(groupName) &&
+		            ap.getPermission().equalsIgnoreCase(permission) &&
+		            ap.getAccessStatus() == AccessStatus.ALLOWED) {
+		            return true;
+		        }
+		    }
+		}
 
 	    return false;
 	}
