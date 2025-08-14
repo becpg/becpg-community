@@ -22,9 +22,9 @@ public class SurveyableEntityHelper {
 
 	private static final byte NB_OF_SURVEY_LISTS = 4;
 	
-	private static final String SURVEY_LIST_BASE_NAME = SurveyModel.TYPE_SURVEY_LIST.getLocalName();
+	/** Constant <code>SURVEY_LIST_BASE_NAME</code> */
+	public static final String SURVEY_LIST_BASE_NAME = SurveyModel.TYPE_SURVEY_LIST.getLocalName();
 	
-	/** Constant <code>SURVEY_LIST_NAMES</code> */
 	private static final List<String> SURVEY_LIST_NAMES;
 	
 	static {
