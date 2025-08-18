@@ -48,7 +48,7 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 	private static final Log logger = LogFactory.getLog(SurveyListFormulationHandler.class);
 
 	private static final String CACHE_KEY = SurveyQuestion.class.getName();
-
+	
 	private final NamespaceService namespaceService;
 
 	private final AlfrescoRepository<BeCPGDataObject> alfrescoRepository;
@@ -128,20 +128,21 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 	 * @return a boolean
 	 */
 	protected boolean accept(ProductData formulatedProduct) {
-		
-		  boolean hasSurveyList = (formulatedProduct.getSurveyList() != null) && ((formulatedProduct.getSurveyList() instanceof ArrayList)
-					|| alfrescoRepository.hasDataList(formulatedProduct, SurveyModel.TYPE_SURVEY_LIST));
-		
-		return !(formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (formulatedProduct instanceof ProductSpecificationData)) 
-				&& hasSurveyList;
+
+		boolean hasSurveyList = (formulatedProduct.getSurveyList() != null)
+				&& ((formulatedProduct.getSurveyList() instanceof ArrayList)
+						|| alfrescoRepository.hasDataList(formulatedProduct, SurveyModel.TYPE_SURVEY_LIST));
+
+		return !(formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
+				|| (formulatedProduct instanceof ProductSpecificationData)) && hasSurveyList;
 	}
 
 	/**
 	 * Extracts the list of character node references from the PackMaterialList.
 	 */
 	private List<NodeRef> getPackMaterialListCharactNodeRefs(ProductData formulatedProduct) {
-		return CollectionUtils.emptyIfNull(formulatedProduct.getPackMaterialList()).stream().map(PackMaterialListDataItem::getCharactNodeRef)
-				.distinct().toList();
+		return CollectionUtils.emptyIfNull(formulatedProduct.getPackMaterialList()).stream()
+				.map(PackMaterialListDataItem::getCharactNodeRef).distinct().toList();
 	}
 
 	/**
@@ -154,8 +155,9 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 	/**
 	 * Builds a map of criteria to their associated node references.
 	 */
-	private Map<Criterion, List<? extends Serializable>> buildCriteriaNodeRefs(List<NodeRef> packMaterialListCharactNodeRefs,
-			NodeRef hierarchyNodeRef, QName productTypeQName, List<NodeRef> subsidiaryRefs, List<NodeRef> plants) {
+	private Map<Criterion, List<? extends Serializable>> buildCriteriaNodeRefs(
+			List<NodeRef> packMaterialListCharactNodeRefs, NodeRef hierarchyNodeRef, QName productTypeQName,
+			List<NodeRef> subsidiaryRefs, List<NodeRef> plants) {
 		final Map<String, QName> qNameCache = new HashMap<>();
 		return Map.of(
 				new Criterion("PackMaterialListDataItem",
@@ -168,7 +170,9 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 				hierarchyNodeRef != null ? Collections.singletonList(hierarchyNodeRef) : Collections.emptyList(),
 				new Criterion("Type",
 						surveyQuestion -> CollectionUtils.isEmpty(surveyQuestion.getFsLinkedTypes()) || surveyQuestion.getFsLinkedTypes().stream()
-								.map(typeName -> qNameCache.computeIfAbsent(typeName, q -> QName.resolveToQName(namespaceService,typeName)))
+								.filter(typeName -> typeName != null && !typeName.isEmpty())
+								.map(typeName -> qNameCache.computeIfAbsent(typeName,
+										q -> QName.resolveToQName(namespaceService, typeName)))
 								.anyMatch(productTypeQName::equals)),
 				Collections.singletonList(productTypeQName.toPrefixString()),
 				new Criterion("SubsidiaryRefs",
@@ -183,11 +187,16 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 	 * Iterates over the criteria and, for each association found, checks if the corresponding
 	 * survey question meets all the criteria. If so, the question is added to the surveyQuestions set.
 	 */
-	private void processSurveyQuestionAssociations(Map<Criterion, List<? extends Serializable>> criteriaNodeRefs, Set<SurveyQuestion> surveyQuestions) {
-		final Set<NodeRef> surveyQuestionNodeRefs = surveyQuestions.stream().map(SurveyQuestion::getNodeRef).collect(Collectors.toSet());
+	private void processSurveyQuestionAssociations(Map<Criterion, List<? extends Serializable>> criteriaNodeRefs,
+			Set<SurveyQuestion> surveyQuestions) {
+		final Set<NodeRef> surveyQuestionNodeRefs = surveyQuestions.stream().map(SurveyQuestion::getNodeRef)
+				.collect(Collectors.toSet());
 		final List<SurveyQuestion> allSurveyQuestions = beCPGCacheService.getFromCache(CACHE_KEY, CACHE_KEY,
-				() -> BeCPGQueryBuilder.createQuery().ofType(SurveyModel.TYPE_SURVEY_QUESTION).isNotNull(SurveyModel.PROP_SURVEY_FS_SURVEY_LIST_NAME)
-						.inDB().list().stream().map(alfrescoRepository::findOne).map(SurveyQuestion.class::cast).toList());
+				() -> BeCPGQueryBuilder.createQuery().ofType(SurveyModel.TYPE_SURVEY_QUESTION)
+						.andPropQuery(SurveyModel.PROP_SURVEY_FS_SURVEY_LIST_NAME,
+								SurveyableEntityHelper.SURVEY_LIST_BASE_NAME)
+						.inDB().list().stream().map(alfrescoRepository::findOne).map(SurveyQuestion.class::cast)
+						.filter(surveyQuestion -> surveyQuestion.getParent() == null).toList());
 		for (final Entry<Criterion, List<? extends Serializable>> entry : criteriaNodeRefs.entrySet()) {
 			final Criterion criterion = entry.getKey();
 			allSurveyQuestions.stream().filter(criterion.filter())
@@ -216,7 +225,8 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 			final NodeRef surveyQuestionNodeRef = surveyQuestion.getNodeRef();
 			final String fsSurveyListName = surveyQuestion.getFsSurveyListName();
 			if (namesSurveyLists.containsKey(fsSurveyListName)) {
-				final List<SurveyListDataItem> surveyLists = namesSurveyLists.computeIfAbsent(fsSurveyListName, unused -> {
+				final List<SurveyListDataItem> surveyLists = namesSurveyLists.computeIfAbsent(fsSurveyListName,
+						unused -> {
 					final List<SurveyListDataItem> empty = new ArrayList<>();
 					if (SurveyableEntityHelper.isDefault(fsSurveyListName)) {
 						formulatedProduct.setSurveyList(empty);
@@ -226,7 +236,8 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 				boolean alreadyPresent = surveyLists.stream().map(SurveyListDataItem::getQuestion)
 						.anyMatch(nodeRef -> nodeRef.equals(surveyQuestionNodeRef));
 				if (!alreadyPresent) {
-					logger.debug(String.format("Creating SurveyList with SurveyQuestion %s into %s", surveyQuestionNodeRef, fsSurveyListName));
+					logger.debug(String.format("Creating SurveyList with SurveyQuestion %s into %s",
+							surveyQuestionNodeRef, fsSurveyListName));
 					final SurveyListDataItem surveyListDataItem = new SurveyListDataItem(surveyQuestionNodeRef, true);
 					surveyListDataItem.setSort(surveyQuestion.getSort());
 					surveyLists.add(surveyListDataItem);
@@ -238,8 +249,8 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 		if (!SurveyableEntityHelper.isTransient(formulatedProduct)) {
 			final NodeRef dataListContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(formulatedProduct);
 			namesSurveyLists.entrySet().stream().filter(entry -> !SurveyableEntityHelper.isDefault(entry.getKey()))
-					.forEach(entry -> alfrescoRepository.saveDataList(dataListContainerNodeRef, SurveyModel.TYPE_SURVEY_LIST, entry.getKey(),
-							entry.getValue()));
+					.forEach(entry -> alfrescoRepository.saveDataList(dataListContainerNodeRef,
+							SurveyModel.TYPE_SURVEY_LIST, entry.getKey(), entry.getValue()));
 		}
 	}
 
@@ -249,5 +260,4 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 	private record Criterion(String displayedName, Predicate<SurveyQuestion> filter) {
 	}
 
-	
 }
