@@ -30,7 +30,6 @@
 	</#if>
 </#if>
 
-
 <div class="form-field">
    <#if form.mode == "view">
       <div class="viewmode-field">
@@ -94,7 +93,7 @@
 				
 				YAHOO.util.Event.addListener("${fieldHtmlId}", "change", function() {
 						if (localStorage != null) {
-						 var selEl = YAHOO.util.Dom.get("${fieldHtmlId}");
+						 	var selEl = YAHOO.util.Dom.get("${fieldHtmlId}");
 							localStorage.setItem('${field.name}', selEl.value);
 							for(var e=0;e<selEl.options.length;e++){
 							  selEl.options[e].defaultSelected=(selEl.selectedIndex==e);
@@ -107,14 +106,35 @@
 					  var selEl = YAHOO.util.Dom.get("${fieldHtmlId}");
 						selEl.value = localStorage.getItem('${field.name}');
 						for(var e=0;e<selEl.options.length;e++){
-						 selEl.options[e].defaultSelected=(selEl.selectedIndex==e);
+						 	selEl.options[e].defaultSelected=(selEl.selectedIndex==e);
 						}
 					}
 				 });
 				
 			 }
 			</script>
-	       </#if>  
+	       </#if>
+	       <#if field.control.params.visibleFieldsValues??>
+		       	<script type="text/javascript">
+			       	(() => {
+			       		const visibleFieldsValues = ${field.control.params.visibleFieldsValues};
+			       		function toggleVisibility() {
+							const value = YAHOO.util.Dom.get("${fieldHtmlId}")?.value;
+							for (let [field, values] of Object.entries(visibleFieldsValues)) {
+								field = YAHOO.util.Dom.get("${args.htmlid?js_string?html}_" + field).parentElement;
+								if (!values.includes(value)) {
+									field.style = "display: none";	
+									field.value = undefined;
+								} else {
+									field.style = undefined;
+								}
+							}
+			       		}
+			       		YAHOO.util.Event.onAvailable("${fieldHtmlId}", toggleVisibility);
+			       		YAHOO.util.Event.addListener("${fieldHtmlId}", "change", toggleVisibility);
+			       	})();
+				</script>
+			</#if>
       <#else>
          <div id="${fieldHtmlId}" class="missing-options">${msg("form.control.selectone.missing-options")}</div>
       </#if>

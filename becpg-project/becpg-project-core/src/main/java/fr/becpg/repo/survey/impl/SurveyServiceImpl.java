@@ -1,5 +1,7 @@
 package fr.becpg.repo.survey.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,7 +45,7 @@ import fr.becpg.repo.survey.data.SurveyQuestion;
 @Service("surveyService")
 public class SurveyServiceImpl implements SurveyService {
 
-	private static Log logger = LogFactory.getLog(SurveyServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(SurveyServiceImpl.class);
 
 	public enum CommentType {
 		none, text, textarea, file
@@ -74,7 +76,7 @@ public class SurveyServiceImpl implements SurveyService {
 	 */
 	/** {@inheritDoc} */
 	@Override
-	public JSONObject getSurveyData(NodeRef entityNodeRef, String dataListName,Boolean disabled) throws JSONException {
+	public JSONObject getSurveyData(NodeRef entityNodeRef, String dataListName, Boolean disabled) throws JSONException {
 		JSONObject ret = new JSONObject();
 		L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
 
@@ -168,13 +170,39 @@ public class SurveyServiceImpl implements SurveyService {
 			for (SurveyListDataItem survey : getSurveys(entityNodeRef, dataListName)) {
 				List<NodeRef> choices = new ArrayList<>();
 				survey.setComment(null);
-
+				survey.setNumberComment(null);
+				survey.setDateComment(null);
 				for (int i = 0; i < values.length(); i++) {
 
 					JSONObject value = values.getJSONObject(i);
 					if (value.has("qid") && (value.getString("qid")).equals(survey.getQuestion().getId())) {
 						if (value.has("comment")) {
-							survey.setComment(value.getString("comment"));
+							final String comment = value.getString("comment");
+							survey.setComment(comment);
+							if (survey.getChoices() != null && !survey.getChoices().isEmpty()) {
+								final SurveyQuestion choice = (SurveyQuestion) alfrescoRepository.findOne(survey.getChoices().get(0));
+								switch (choice.getResponseCommentType()) {
+								case "number":
+								case "int":
+								case "percentage":
+									try {
+										survey.setNumberComment(Double.parseDouble(comment));
+									} catch (NumberFormatException e) {
+										logger.error("Cannot convert %s into number".formatted(comment));
+									}
+									break;
+								case "date":
+								case "dateTime":
+									final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd"
+											+ ("dateTime".equals(choice.getResponseCommentType()) ? "'T'HH:mm:ss"
+													: ""));
+									try {
+										survey.setDateComment(format.parse(comment));
+									} catch (ParseException e) {
+										logger.error("Cannot convert %s into date".formatted(comment));
+									}
+								}
+							}
 						}
 
 						if (value.has("listOptions")) {
@@ -239,7 +267,7 @@ public class SurveyServiceImpl implements SurveyService {
 			definition.put("sort", surveyQuestion.getSort());
 			definition.put("label", surveyQuestion.getLabel());
 			definition.put("start", questions.isEmpty() || Boolean.TRUE.equals(surveyQuestion.getIsVisible()));
-			
+
 			// Add requirements information if available for this question
 			String questionId = surveyQuestion.getNodeRef().getId();
 			if (questionRequirements.containsKey(questionId)) {
@@ -300,13 +328,13 @@ public class SurveyServiceImpl implements SurveyService {
 						choice.put("checkboxes", true);
 					}
 
-					if (CommentType.text.toString().equals(surveyQuestion.getResponseCommentType())
-							|| CommentType.textarea.toString().equals(surveyQuestion.getResponseCommentType())) {
+					if (!CommentType.none.name().equals(surveyQuestion.getResponseCommentType())) {
 						choice.put("comment", true);
 						choice.put("commentLabel", getLabelOrHidden(surveyQuestion.getResponseCommentLabel()));
 						if (CommentType.textarea.toString().equals(surveyQuestion.getResponseCommentType())) {
 							choice.put("textarea", true);
 						}
+						choice.put("commentType", surveyQuestion.getResponseCommentType());
 					}
 
 					appendCids(choice, surveyQuestion, definitions, questions, questionRequirements);
@@ -323,13 +351,13 @@ public class SurveyServiceImpl implements SurveyService {
 						choice.put("label", defChoice.getLabel());
 						appendCids(choice, defChoice, definitions, questions, questionRequirements);
 
-						if (CommentType.text.toString().equals(defChoice.getResponseCommentType())
-								|| CommentType.textarea.toString().equals(defChoice.getResponseCommentType())) {
+						if (!CommentType.none.name().equals(defChoice.getResponseCommentType())) {
 							choice.put("comment", true);
 							choice.put("commentLabel", getLabelOrHidden(defChoice.getResponseCommentLabel()));
 							if (CommentType.textarea.toString().equals(defChoice.getResponseCommentType())) {
 								choice.put("textarea", true);
 							}
+							choice.put("commentType", defChoice.getResponseCommentType());
 						}
 
 						choices.put(choice);
@@ -337,8 +365,7 @@ public class SurveyServiceImpl implements SurveyService {
 
 				}
 
-			} else if (CommentType.text.toString().equals(surveyQuestion.getResponseCommentType())
-					|| CommentType.textarea.toString().equals(surveyQuestion.getResponseCommentType())) {
+			} else if (!CommentType.none.name().equals(surveyQuestion.getResponseCommentType())) {
 				JSONObject choice = new JSONObject();
 				choice.put("id", "sub-" + surveyQuestion.getNodeRef().getId().substring(4));
 				choice.put("label", "hidden");
@@ -347,6 +374,7 @@ public class SurveyServiceImpl implements SurveyService {
 				if (CommentType.textarea.toString().equals(surveyQuestion.getResponseCommentType())) {
 					choice.put("textarea", true);
 				}
+				choice.put("commentType", surveyQuestion.getResponseCommentType());
 
 				appendCids(choice, surveyQuestion, definitions, questions, questionRequirements);
 
@@ -363,7 +391,8 @@ public class SurveyServiceImpl implements SurveyService {
 		return responseCommentLabel == null ? null : responseCommentLabel.isBlank() ? "hidden" : responseCommentLabel;
 	}
 
-	private void appendCids(JSONObject choice, SurveyQuestion surveyQuestion, JSONArray definitions, Set<SurveyQuestion> questions, Map<String, List<RequirementListDataItem>> questionRequirements) {
+	private void appendCids(JSONObject choice, SurveyQuestion surveyQuestion, JSONArray definitions,
+			Set<SurveyQuestion> questions, Map<String, List<RequirementListDataItem>> questionRequirements) {
 		if (surveyQuestion.getNextQuestions() != null) {
 			JSONArray cids = new JSONArray();
 			for (SurveyQuestion question : surveyQuestion.getNextQuestions()) {
