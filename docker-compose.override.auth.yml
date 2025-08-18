@@ -71,7 +71,7 @@ services:
      - "8086:8080"
 
   http:
-    image: becpg/becpg-http:23.4.2
+    image: becpg/becpg-http:25.2.0
     mem_limit: 256m
     restart: unless-stopped
     ports:
@@ -89,7 +89,7 @@ services:
       retries: 5
       
   becpg-auth:
-    image: becpg/becpg-ids:23.4.2
+    image: becpg/becpg-ids:25.2.0
     command: ["start-dev", "--import-realm","--proxy-headers=forwarded"]
     environment:
       KC_DB: mysql
