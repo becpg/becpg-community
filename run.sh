@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 echo -e "\e[38;2;0;255;189m888                 \e[38;2;0;92;102m.d8888b.  8888888b.   .d8888b. \e[38;2;0;255;189m" 
 echo -e "888                \e[38;2;0;92;102md88P  Y88b 888   Y88b d88P  Y88b\e[38;2;0;255;189m" 
 echo -e "888                \e[38;2;0;92;102m888    888 888    888 888    888\e[38;2;0;255;189m" 
@@ -15,7 +14,7 @@ set -e
 
 export COMPOSE_FILE_PATH=${PWD}/becpg-integration-runner/target/docker-compose.yml
 export MVN_EXEC="${PWD}/mvnw"
-export BECPG_VERSION_PROFILE=becpg_23_4_2
+export BECPG_VERSION_PROFILE=becpg_25_2_0
 
 if [ -f .env ]; then
   . .env
@@ -171,7 +170,7 @@ install_hotswap(){
 }
 
 tail() {
-    docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml logs -f --tail=100 becpg-share becpg
+    docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml logs -f --tail=5000
 }
 
 test() {
