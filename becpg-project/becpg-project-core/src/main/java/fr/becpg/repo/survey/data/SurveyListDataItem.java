@@ -1,6 +1,7 @@
 package fr.becpg.repo.survey.data;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,6 +35,10 @@ public class SurveyListDataItem extends BeCPGDataObject implements RegulatoryEnt
 	private static final long serialVersionUID = -6180023906108178900L;
 
 	private String comment;
+	
+	private Double numberComment;
+	
+	private Date dateComment;
 
 	private NodeRef question;
 
@@ -44,7 +49,7 @@ public class SurveyListDataItem extends BeCPGDataObject implements RegulatoryEnt
 	private Boolean generated;
 
 	private List<String> reportKinds;
-
+	
 	private List<NodeRef> regulatoryCountriesRef = new ArrayList<>();
 	private List<NodeRef> regulatoryUsagesRef = new ArrayList<>();
 	private RequirementType regulatoryType;
@@ -106,6 +111,47 @@ public class SurveyListDataItem extends BeCPGDataObject implements RegulatoryEnt
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
+	
+	
+	/**
+	 * <p>Getter for the field <code>commentNumber</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "survey:slNumberComment")
+	public Double getNumberComment() {
+		return numberComment;
+	}
+
+	/**
+	 * <p>Setter for the field <code>numberComment</code>.</p>
+	 *
+	 * @param comment a {@link java.lang.Double} object
+	 */
+	public void setNumberComment(Double numberComment) {
+		this.numberComment = numberComment;
+	}
+
+	/**
+	 * <p>Getter for the field <code>dateComment</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "survey:slDateComment")
+	public Date getDateComment() {
+		return dateComment;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>dateComment</code>.</p>
+	 *
+	 * @param comment a {@link java.util.Date} object
+	 */
+	public void setDateComment(Date dateComment) {
+		this.dateComment = dateComment;
+	}
 
 	/**
 	 * <p>Getter for the field <code>question</code>.</p>
@@ -147,7 +193,7 @@ public class SurveyListDataItem extends BeCPGDataObject implements RegulatoryEnt
 	public void setChoices(List<NodeRef> choices) {
 		this.choices = choices;
 	}
-
+	
 	
 	/**
 	 * <p>Getter for the field <code>regulatoryCountriesRef</code>.</p>
@@ -251,7 +297,7 @@ public class SurveyListDataItem extends BeCPGDataObject implements RegulatoryEnt
 	/**
 	 * <p>Setter for the field <code>reportKinds</code>.</p>
 	 *
-	 * @param reportKinds a {@link java.util.List} object
+	 * @param choices a {@link java.util.List} object
 	 */
 	public void setReportKinds(List<String> reportKinds) {
 		this.reportKinds = reportKinds;
@@ -262,8 +308,8 @@ public class SurveyListDataItem extends BeCPGDataObject implements RegulatoryEnt
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(choices, comment, generated, question, regulatoryCountriesRef, regulatoryMessage, regulatoryType,
-				regulatoryUsagesRef, reportKinds, sort);
+		result = prime * result + Objects.hash(choices, comment, dateComment, generated, numberComment, question,
+				regulatoryCountriesRef, regulatoryMessage, regulatoryType, regulatoryUsagesRef, reportKinds, sort);
 		return result;
 	}
 
@@ -277,17 +323,22 @@ public class SurveyListDataItem extends BeCPGDataObject implements RegulatoryEnt
 		if (getClass() != obj.getClass())
 			return false;
 		SurveyListDataItem other = (SurveyListDataItem) obj;
-		return Objects.equals(choices, other.choices) && Objects.equals(comment, other.comment) && Objects.equals(generated, other.generated)
-				&& Objects.equals(question, other.question) && Objects.equals(regulatoryCountriesRef, other.regulatoryCountriesRef)
+		return Objects.equals(choices, other.choices) && Objects.equals(comment, other.comment)
+				&& Objects.equals(dateComment, other.dateComment) && Objects.equals(generated, other.generated)
+				&& Objects.equals(numberComment, other.numberComment) && Objects.equals(question, other.question)
+				&& Objects.equals(regulatoryCountriesRef, other.regulatoryCountriesRef)
 				&& Objects.equals(regulatoryMessage, other.regulatoryMessage) && regulatoryType == other.regulatoryType
-				&& Objects.equals(regulatoryUsagesRef, other.regulatoryUsagesRef) && Objects.equals(reportKinds, other.reportKinds)
-				&& Objects.equals(sort, other.sort);
+				&& Objects.equals(regulatoryUsagesRef, other.regulatoryUsagesRef)
+				&& Objects.equals(reportKinds, other.reportKinds) && Objects.equals(sort, other.sort);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "SurveyListDataItem [comment=" + comment + ", question=" + question + ", choices=" + choices + ", sort="
-				+ sort + ", generated=" + generated + ", reportKinds=" + reportKinds + "]";
+		return "SurveyListDataItem [comment=" + comment + ", numberComment=" + numberComment + ", dateComment="
+				+ dateComment + ", question=" + question + ", choices=" + choices + ", sort=" + sort + ", generated="
+				+ generated + ", reportKinds=" + reportKinds + ", regulatoryCountriesRef=" + regulatoryCountriesRef
+				+ ", regulatoryUsagesRef=" + regulatoryUsagesRef + ", regulatoryType=" + regulatoryType
+				+ ", regulatoryMessage=" + regulatoryMessage + "]";
 	}
 }
