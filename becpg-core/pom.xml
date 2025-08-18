@@ -3,10 +3,10 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>23.4.2</version>
+		<version>25.2.0</version>
 		<relativePath>../</relativePath>
 	</parent>
-    <version>23.4.2.30-SNAPSHOT</version>
+    <version>25.2.0.0-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>    
 	<artifactId>becpg-core</artifactId>
 	<packaging>jar</packaging>
@@ -115,9 +115,4 @@
 		</plugins>
 	</build>
 
-
-
-  <scm>
-    <tag>23.4.2.29</tag>
-  </scm>
 </project>
