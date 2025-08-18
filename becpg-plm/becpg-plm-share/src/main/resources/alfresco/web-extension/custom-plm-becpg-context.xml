@@ -309,6 +309,155 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 		</property>
 	</bean>
 	
+	<!-- bcpg:supplierState -->
+	<bean id="evaluator.becpg.doclib.indicator.supplier.simulation" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:supplierState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Simulation" />
+			</bean>
+		</property>
+	</bean>
+	<bean id="evaluator.becpg.doclib.indicator.supplier.tovalidate" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:supplierState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="ToValidate" />
+			</bean>
+		</property>
+	</bean>
+	<bean id="evaluator.becpg.doclib.indicator.supplier.valid" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:supplierState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Valid" />
+			</bean>
+		</property>
+	</bean>
+	<bean id="evaluator.becpg.doclib.indicator.supplier.refused" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:supplierState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Refused" />
+			</bean>
+		</property>
+	</bean>
+	<bean id="evaluator.becpg.doclib.indicator.supplier.archived" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:supplierState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Archived" />
+			</bean>
+		</property>
+	</bean>	
+	<bean id="evaluator.becpg.doclib.indicator.supplier.stopped" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:supplierState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Stopped" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- bcpg:clientState -->
+	<bean id="evaluator.becpg.doclib.indicator.client.simulation" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:clientState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Simulation" />
+			</bean>
+		</property>
+	</bean>
+	<bean id="evaluator.becpg.doclib.indicator.client.tovalidate" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:clientState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="ToValidate" />
+			</bean>
+		</property>
+	</bean>
+	<bean id="evaluator.becpg.doclib.indicator.client.valid" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:clientState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Valid" />
+			</bean>
+		</property>
+	</bean>
+	<bean id="evaluator.becpg.doclib.indicator.client.refused" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:clientState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Refused" />
+			</bean>
+		</property>
+	</bean>
+	<bean id="evaluator.becpg.doclib.indicator.client.archived" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:clientState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Archived" />
+			</bean>
+		</property>
+	</bean>	
+	<bean id="evaluator.becpg.doclib.indicator.client.stopped" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:clientState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Stopped" />
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- bcpg:productCollectionState -->
+	<bean id="evaluator.becpg.doclib.indicator.productCollection.simulation" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:productCollectionState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Simulation" />
+			</bean>
+		</property>
+	</bean>
+	<bean id="evaluator.becpg.doclib.indicator.productCollection.tovalidate" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:productCollectionState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="ToValidate" />
+			</bean>
+		</property>
+	</bean>
+	<bean id="evaluator.becpg.doclib.indicator.productCollection.valid" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:productCollectionState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Valid" />
+			</bean>
+		</property>
+	</bean>
+	<bean id="evaluator.becpg.doclib.indicator.productCollection.refused" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:productCollectionState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Refused" />
+			</bean>
+		</property>
+	</bean>
+	<bean id="evaluator.becpg.doclib.indicator.productCollection.archived" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:productCollectionState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Archived" />
+			</bean>
+		</property>
+	</bean>	
+	<bean id="evaluator.becpg.doclib.indicator.productCollection.stopped" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.bcpg:productCollectionState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Stopped" />
+			</bean>
+		</property>
+	</bean>
 	
 	<bean id="evaluator.doclib.action.inlineEditMimetype" parent="evaluator.doclib.action.isMimetype">
       <property name="mimetypes">
