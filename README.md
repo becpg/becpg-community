@@ -1,84 +1,138 @@
-# beCPG Developers README
+# beCPG PLM – Open Source Product Lifecycle Management
 
-## About beCPG PLM
+[![License: LGPL v3](https://img.shields.io/badge/License-LGPL_v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
+[![Java](https://img.shields.io/badge/Java-17+-orange.svg)](https://www.oracle.com/java/)
+[![Maven](https://img.shields.io/badge/Maven-3+-red.svg)](https://maven.apache.org/)
+[![GitHub issues](https://img.shields.io/github/issues/becpg/becpg-community)](https://github.com/becpg/becpg-community/issues)
+[![GitHub stars](https://img.shields.io/github/stars/becpg/becpg-community)](https://github.com/becpg/becpg-community/stargazers)
+[![Documentation](https://img.shields.io/badge/docs-docs.becpg.net-brightgreen)](https://docs.becpg.fr)
+[![Website](https://img.shields.io/badge/website-becpg.net-blue)](http://www.becpg.net)
 
-beCPG is an open-source Product Lifecycle Management (PLM) software that oversees the entire lifecycle of a product, from conception and design to manufacture, service, and disposal. It facilitates collaboration on products and projects with customers and suppliers.
+---
 
-beCPG is tailored for Consumer Packaged Goods (CPG) industries, such as Food & Beverage and Cosmetics. What sets us apart is our comprehensive and user-friendly software, offered at a competitive price.
+## 🚀 What is beCPG?
 
-In summary, beCPG offers the following features:
-- Product repository to manage finished products, recipes, raw materials, and packaging with technical and regulatory data.
-- Formulation for automatic calculation of allergens, ingredients, nutrient facts, costs, labeling, etc.
-- Product specification generator for clients, R&D, and production.
-- Project management for handling new product development from ideas to market launch.
-- Customer complaints management.
+**beCPG** is an **open-source PLM (Product Lifecycle Management)** platform built specifically for the **Food, Beverage, and Cosmetics industries**.
+It helps companies **launch products faster, reduce compliance risk, and lower IT costs** by centralizing product data, formulation, quality, and regulatory workflows.
 
-## beCPG Community
+👉 [**Request a Live Demo**](https://www.becpg.net/community/) | [**Contact Us**](https://www.becpg.net/contact/)
 
-The beCPG community provides the main modules of beCPG as open source under the LGPLv3 license. This allows users to freely utilize the software.
+---
 
-Software documentation is available at [docs.becpg.fr](https://docs.becpg.fr).
+## 🌟 Who Uses beCPG?
 
-The community version is a stable snapshot of the community trunk, occasionally updated with new features. Release dates for community versions are not fixed. The enterprise version includes specific features and packaging, with stable and qualified branches.
+beCPG is trusted by **innovative SMEs and global manufacturers** in the **Consumer Packaged Goods (CPG)** sector:
 
-beCPG is composed of three Alfresco modules:
+* **R\&D teams** use it for formulation, labeling, and innovation tracking.
+* **Regulatory & QA** teams manage compliance, complaints, and audits.
+* **Marketing & Project teams** plan and launch new products faster.
+* **IT teams** integrate it with ERP, CRM, and e-commerce systems.
 
-### beCPG Designer
+👥 [**See Customer References**](https://www.becpg.net/who-are-we/customers-references/)
 
-beCPG Designer is a model designer module for Alfresco Share. It allows the creation, testing, and publishing of models and forms directly from Alfresco Share without manual XML file editing. It supports hot deployments and enables model and form creation for workflows. 
+---
 
-### beCPG PLM
+## 📸 Screenshots
 
-beCPG PLM (Product Lifecycle Management) manages the entire product lifecycle, providing benefits such as improved time-to-market, decreased new product introduction costs, and adherence to standards and regulatory compliance. Key capabilities include product portfolio management, formula and recipe management, report generation (e.g., product specifications, user manuals), and new product development and introduction (NPD, NPI) with beCPG Project Manager.
+### Product Repository
 
-### beCPG Project Manager
+![Product Management](docs/screenshots/product.webp)
+*Centralized repository for formulations, packaging, and regulatory data*
 
-beCPG Project Manager is a project management module for Alfresco Share. It displays projects and tasks completion, expected deliverables, and offers Gantt views for project schedule and forecast.
+### Project Dashboard
 
-## Build Project
+![Project Management](docs/screenshots/project.webp)
+*Track new product launches with workflows and Gantt views*
 
-Ensure you are using Apache Maven version 3 or newer to build the project. If Maven is not installed, you can find it at [https://maven.apache.org/](https://maven.apache.org/).
+---
 
-To build the projects, use the following command:
+## 💡 Business Benefits
 
-```shell
-$ mvn clean package -DskipTests=true 
+* ⏱ **Accelerate Time-to-Market** – Automate formulation, labeling, and approval workflows.
+* ✅ **Stay Compliant** – Manage allergens, nutritional values, and regulations across countries.
+* 💰 **Reduce Costs** – Open-source licensing, flexible deployment, and low TCO.
+* 🌍 **Scale Easily** – Cloud-ready, API-first, and ERP connectors available.
+* 🤝 **Choose Your Path** – Start with the free Community Edition, scale with Enterprise Edition support.
+
+---
+
+## ⚙️ Core Features
+
+* **Product Repository (PDM/PIM)** – finished goods, raw materials, packaging, and specs
+* **Formulation & Labeling** – allergens, nutritional values, costs, regulatory checks
+* **BOM & Document Management** – versioning, variants, packaging, and artwork
+* **Change Management & Traceability** – change orders, impact analysis, batch ops
+* **Project & Workflow Management** – NPD tracking with boards and Gantt views
+* **Quality Management (QMS)** – complaints, audits, control plans
+* **Reporting & BI** – product sheets, KPIs, OLAP analysis
+* **Integration** – REST API, ERP/CRM connectors (SAP, Odoo, Oracle, etc.)
+* **Architecture** – Docker/Kubernetes, microservices-ready, scalable
+
+---
+
+## 🆚 Community vs Enterprise Editions
+
+| Edition                     | Best For                         | Benefits                                                                |
+| --------------------------- | -------------------------------- | ----------------------------------------------------------------------- |
+| **Community Edition (CE)**  | Innovators, startups, developers | Free & open-source, customizable, try before scaling                    |
+| **Enterprise Edition (EE)** | Mid-to-large companies           | Enterprise support, faster deployment, advanced compliance & connectors |
+
+👉 [Download CE](https://sourceforge.net/projects/becpg-community/) | [Compare Editions](https://www.becpg.net/)
+
+---
+
+## 🔍 Why Choose beCPG Over Other PLMs?
+
+| Feature                     | beCPG  | SAP PLM    | PTC Windchill | Siemens Teamcenter |
+| --------------------------- | ------ | ---------- | ------------- | ------------------ |
+| **Open Source**             | ✅      | ❌          | ❌             | ❌                  |
+| **CPG Focus**               | ✅      | ⚠️ Partial | ⚠️ Partial    | ⚠️ Partial         |
+| **Formulation Engine**      | ✅      | ❌          | ❌             | ❌                  |
+| **Regulatory Compliance**   | ✅      | ✅          | ✅             | ✅                  |
+| **Deployment Complexity**   | 🟢 Low | 🔴 High    | 🔴 High       | 🔴 High            |
+| **Total Cost of Ownership** | 🟢 Low | 🔴 High    | 🔴 High       | 🔴 High            |
+
+---
+
+## 📚 Getting Started
+
+1. 📖 [Read Documentation](https://docs.becpg.fr)
+2. 🎮 [Try the Live Demo](https://www.becpg.net/community/)
+3. ⬇️ [Download Community Edition](https://sourceforge.net/projects/becpg-community/)
+4. 🚀 Quick Setup with Docker:
+
+   ```bash
+   cp docker-compose.override.yml.sample docker-compose.override.yml
+   ./run.sh build_start
+   ```
+
+---
+
+<details>
+<summary>👨‍💻 Developer Guide (expand)</summary>
+
+### Requirements
+
+* Java 17+
+* Maven 3+
+* Docker
+
+### Build from Source
+
+```bash
+./run.sh build_start
 ```
 
-The resulting AMP files can be located in the 'target' directories.
+### Running Tests
 
-## Starting beCPG in Docker
-
-Before you begin, make sure to install the necessary requirements:
-
-1. Copy the sample `docker-compose.override.yml.sample` file to `docker-compose.override.yml`.
-2. Execute the following commands:
-
-```shell
-$ ./run.sh build_start
+```bash
+./run.sh test
+mvn test -Dtest=MyTest.java -Dsurefire.failIfNoSpecifiedTests=false
 ```
 
-For further guidance, refer to Alfresco Maven SDK 4.0 documentation.
+### Manual AMP Deployment
 
-## Running Tests
-
-To execute all integration tests, use:
-
-```shell
-$ ./run.sh test
-```
-
-If you wish to run a specific test, employ the following command:
-
-```shell
-$ mvn test -Dtest=MyTest.java -Dsurefire.failIfNoSpecifiedTests=false
-```
-
-Keep in mind that integration tests require the beCPG server to be launched first using the `./run.sh build_start` command.
-
-## Manual AMP Deployment
-
-### Install becpg-designer
+#### Install becpg-designer
 
 Install core AMPS
 
@@ -94,7 +148,7 @@ $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-share/target/becpg-share-
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-designer/becpg-designer-share/target/becpg-designer-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
 ```
 
-### Install becpg-project
+#### Install becpg-project
 
 Install core AMPS
 
@@ -110,8 +164,7 @@ $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-share/target/becpg-share-
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-project/becpg-project-share/target/becpg-project-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
 ```
 
-### Install becpg-plm
-
+#### Install becpg-plm
 
 Install core AMPS
 
@@ -131,3 +184,29 @@ $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-project/becpg-project-sha
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-plm/becpg-plm-share/target/becpg-plm-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
 ```
 
+</details>
+
+---
+
+## 🤝 Community & Contributing
+
+* [Contributing Guidelines](CONTRIBUTING.md)
+* [Code of Conduct](CODE_OF_CONDUCT.md)
+* [Security Policy](SECURITY.md)
+
+---
+
+## 📩 Contact
+
+Interested in trying **beCPG PLM**?
+
+* 🌐 [Website](https://www.becpg.net)
+* 📖 [Documentation](https://docs.becpg.fr)
+* 🎮 [Live Demo](https://www.becpg.net/community/)
+* ✉️ [Contact Us](https://www.becpg.net/contact/)
+
+---
+
+⚡ **beCPG – Accelerate innovation, stay compliant, and reduce PLM costs for CPG companies.**
+
+---
