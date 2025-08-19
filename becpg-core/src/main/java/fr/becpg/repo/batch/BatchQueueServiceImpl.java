@@ -151,11 +151,18 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	/** {@inheritDoc} */
 	@Override
 	public String getRunningBatchInfo() {
-		if (runningCommand.get() != null) {
-			return buildJsonBatchInfo(runningCommand.get().batchInfo).toString();
-		}
-		return null;
-	}
+    BatchCommand<?> current = runningCommand.get();
+    if (current != null) {
+      BatchInfo info = current.getBatchInfo();
+      // If the batch has already completed but cleanup hasn't cleared runningCommand yet,
+      // report no running batch to avoid transient race conditions in tests/clients.
+      if (Boolean.TRUE.equals(info.getIsCompleted())) {
+        return null;
+      }
+      return buildJsonBatchInfo(info).toString();
+    }
+    return null;
+  }
 	
 	private JSONObject buildJsonBatchInfo(BatchInfo batchInfo) throws JSONException {
 		JSONObject json = new JSONObject();
