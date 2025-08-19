@@ -15,7 +15,7 @@
 **beCPG** is an **open-source PLM (Product Lifecycle Management)** platform built specifically for the **Food, Beverage, and Cosmetics industries**.
 It helps companies **launch products faster, reduce compliance risk, and lower IT costs** by centralizing product data, formulation, quality, and regulatory workflows.
 
-👉 [**Request a Live Demo**](https://www.becpg.net/community/) | [**Contact Us**](https://www.becpg.net/contact/)
+👉 [**Request a Live Demo**](https://www.becpg.net/community/) | [**Contact Us**](https://www.becpg.net/contact-us/)
 
 ---
 
@@ -203,7 +203,7 @@ Interested in trying **beCPG PLM**?
 * 🌐 [Website](https://www.becpg.net)
 * 📖 [Documentation](https://docs.becpg.fr)
 * 🎮 [Live Demo](https://www.becpg.net/community/)
-* ✉️ [Contact Us](https://www.becpg.net/contact/)
+* ✉️ [Contact Us](https://www.becpg.net/contact-us/)
 
 ---
 
