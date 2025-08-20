@@ -24,6 +24,7 @@ public class DefaultExtractorContext {
 	Map<String, Boolean> cache = new HashMap<>(4);
 
 	Set<NodeRef> extractedNodes = new HashSet<>();
+	Set<NodeRef> extractedImages = new HashSet<>();
 
 	EntityReportData reportData = new EntityReportData();
 
@@ -73,6 +74,11 @@ public class DefaultExtractorContext {
 	 */
 	public Set<NodeRef> getExtractedNodes() {
 		return extractedNodes;
+	}
+
+	
+	public Set<NodeRef> getExtractedImages() {
+		return extractedImages;
 	}
 
 	/**
