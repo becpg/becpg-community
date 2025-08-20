@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -452,7 +453,11 @@ public class SurveyServiceImpl implements SurveyService {
 					.anyMatch(question -> question.getNextQuestions().contains(parent));
 			final boolean inChoices = inNextQuestions
 					&& surveyListDataItems.stream().map(SurveyListDataItem::getChoices).flatMap(List::stream)
-							.map(choice -> nodeRefSurveyQuestions.get(choice).getNextQuestions()).flatMap(List::stream)
+							.map(choice -> nodeRefSurveyQuestions.get(choice))
+							.filter(Objects::nonNull)
+							.map(SurveyQuestion::getNextQuestions)
+							.filter(Objects::nonNull)
+							.flatMap(List::stream)
 							.anyMatch(parent::equals);
 			if (!inNextQuestions || inChoices || Boolean.TRUE.equals(parent.getIsVisible())) {
 				visibleSurveyListDataItems.add(surveyListDataItem);
