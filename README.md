@@ -83,14 +83,21 @@ beCPG is trusted by **innovative SMEs and global manufacturers** in the **Consum
 
 ## 🔍 Why Choose beCPG Over Other PLMs?
 
-| Feature                     | beCPG  | SAP PLM    | PTC Windchill | Siemens Teamcenter |
-| --------------------------- | ------ | ---------- | ------------- | ------------------ |
-| **Open Source**             | ✅      | ❌          | ❌             | ❌                  |
-| **CPG Focus**               | ✅      | ⚠️ Partial | ⚠️ Partial    | ⚠️ Partial         |
-| **Formulation Engine**      | ✅      | ❌          | ❌             | ❌                  |
-| **Regulatory Compliance**   | ✅      | ✅          | ✅             | ✅                  |
-| **Deployment Complexity**   | 🟢 Low | 🔴 High    | 🔴 High       | 🔴 High            |
-| **Total Cost of Ownership** | 🟢 Low | 🔴 High    | 🔴 High       | 🔴 High            |
+| Feature                      | beCPG       | Trace One (Devex) | Aptean (Lascom CPG) | Centric Software | Infor PLM   | 
+| ---------------------------- | ----------- | ----------------- | ------------------- | ---------------- | ----------- | 
+| **Open Source**              | ✅ Yes       | ❌ No              | ❌ No                | ❌ No             | ❌ No        |      
+| **CPG-Specific Features**    | ✅ Yes       | ⚠️ Partial        | ⚠️ Partial          | ⚠️ Partial       | ⚠️ Partial  |   
+| **Formulation Engine**       | ✅ Included  | ⚠️ Partial        | ✅ Included          | ⚠️ Partial       | ⚠️ Partial  |
+| **Regulatory Compliance**    | ✅ Available | ✅ Available       | ✅ Available         | ✅ Available      | ✅ Available |  
+| **Deployment Complexity¹**   | 🟢 Lower    | 🔴 Higher         | 🔴 Higher           | 🔴 Higher        | 🔴 Higher   |
+| **Total Cost of Ownership¹** | 🟢 Lower    | 🔴 Higher         | 🔴 Higher           | 🔴 Higher        | 🔴 Higher   |  
+
+
+¹ Based on publicly available information and customer feedback.
+
+⚠️ Disclaimer :
+This comparison is provided for informational purposes, based on publicly available sources and user feedback.
+All trademarks and product names are the property of their respective owners.
 
 ---
 
