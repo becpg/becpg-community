@@ -518,6 +518,8 @@
                                                         // enabled so clear the
                                                         // current query
                                                         me.widgets.oAC._clearSelection();
+                                                        // Notify dependents when selection is cleared
+                                                        YAHOO.Bubbling.fire("mandatoryControlValueUpdated", me.widgets.oAC.getInputEl());
                                                     }
                                                 }
                                             }
@@ -534,6 +536,8 @@
                                                         inputRemoved.value = inputOrig.value;
                                                     }
                                                     inputAdded.value = "";
+                                                    // Notify dependents when input becomes empty
+                                                    YAHOO.Bubbling.fire("mandatoryControlValueUpdated", me.widgets.oAC.getInputEl());
                                                 }
                                             }
 
@@ -610,19 +614,37 @@
 
                                 Dom.removeClass(me.widgets.oAC.getInputEl(), "hidden");
 
-                            }
-                            else if ((me.options.mode == "view" || me.options.readOnly) || !me.options.multipleSelectMode && !me.isAssoc)
-                            {
-                                Dom.removeClass(me.fieldHtmlId + "-values", "hidden");
-                            }
+                            },
+                        
+                        checkParentField : function(layer, args){
+                            if (this.options.parentFieldHtmlId != null && args != null && args[1].id == this.options.parentFieldHtmlId){
+                                if (this.widgets && this.widgets.oAC){
+                                    this.widgets.oAC._clearSelection();
+                                }
+                                // Also clear underlying hidden fields to avoid stale submissions
+                                var inputOrig = Dom.get(this.controlId + "-orig"),
+                                    inputAdded = Dom.get(this.controlId + "-added"),
+                                    inputRemoved = Dom.get(this.controlId + "-removed"),
+                                    basket = Dom.get(this.controlId + "-basket");
 
+                                if (this.options.multipleSelectMode){
+                                    if (basket){ basket.innerHTML = ""; }
+                                    if (inputAdded){ inputAdded.value = ""; }
+                                    if (inputRemoved){ inputRemoved.value = ""; }
+                                } else {
+                                    if (this.isAssoc){
+                                        if (inputOrig && inputOrig.value !== "" && inputRemoved){
+                                            inputRemoved.value = inputOrig.value;
+                                        }
+                                    }
+                                    if (inputAdded){ inputAdded.value = ""; }
+                                }
+
+                                // Notify any deeper dependents of this change
+                                var inputEl = (this.widgets && this.widgets.oAC) ? this.widgets.oAC.getInputEl() : Dom.get(this.fieldHtmlId);
+                                YAHOO.Bubbling.fire("mandatoryControlValueUpdated", inputEl);
+                            }
                         },
-
-						checkParentField : function(layer, args){
-						    if (this.options.parentFieldHtmlId != null && args!=null && args[1].id == this.options.parentFieldHtmlId){
-								 this.widgets.oAC._clearSelection();
-                               }
-						},
 
                         /**
                          * @param basket
@@ -631,7 +653,6 @@
                          */
                         addToBasket : function AutoCompletePicker_addToBasket(basket, itemTitle, itemValue)
                         {
-
                             var displayVal = "<span id='ac-m-selected-" + this.fieldHtmlId + "-" + itemValue + "' class='ac-m-selected'>";
                             if(this.options.isParentMode && basket!=null && basket.innerHTML != ''){
                                 displayVal += "<span  class='ac-parent-sep' >&nbsp;</span>";
