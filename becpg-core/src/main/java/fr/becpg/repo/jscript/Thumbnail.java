@@ -167,27 +167,33 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 
 		if (entityReportService.shouldGenerateReport(sourceNodeRef, null)) {
 
-			RetryingTransactionHelper txnHelper = serviceRegistry.getRetryingTransactionHelper();
-			txnHelper.setForceWritable(true);
-			boolean requiresNew = false;
-			if (AlfrescoTransactionSupport.getTransactionReadState() != TxnReadState.TXN_READ_WRITE) {
-				// We can be in a read-only transaction, so force a new
-				// transaction
-				requiresNew = true;
+			// Check if we're already in a writable transaction to avoid lock conflicts
+			TxnReadState currentTxnState = AlfrescoTransactionSupport.getTransactionReadState();
+			if (currentTxnState == TxnReadState.TXN_READ_WRITE) {
+				// Already in writable transaction, execute directly to avoid lock conflicts
+				AuthenticationUtil.runAs(() -> {
+					logger.debug("getReportNode: Entity report is not up to date for " + finalNodeRef);
+					NodeRef reportNodeRef = entityReportService.getSelectedReport(finalNodeRef);
+					if (reportNodeRef != null) {
+						cleanThumbnails(reportNodeRef);
+					}
+					entityReportService.generateReports(finalNodeRef);
+					return reportNodeRef;
+				}, AuthenticationUtil.getSystemUserName());
+			} else {
+				// Only create new transaction if we're in read-only mode
+				RetryingTransactionHelper txnHelper = serviceRegistry.getRetryingTransactionHelper();
+				txnHelper.setForceWritable(true);
+				txnHelper.doInTransaction(() -> AuthenticationUtil.runAs(() -> {
+					logger.debug("getReportNode: Entity report is not up to date for " + finalNodeRef);
+					NodeRef reportNodeRef = entityReportService.getSelectedReport(finalNodeRef);
+					if (reportNodeRef != null) {
+						cleanThumbnails(reportNodeRef);
+					}
+					entityReportService.generateReports(finalNodeRef);
+					return reportNodeRef;
+				}, AuthenticationUtil.getSystemUserName()), false, true);
 			}
-			txnHelper.doInTransaction(() -> AuthenticationUtil.runAs(() -> {
-
-				logger.debug("getReportNode: Entity report is not up to date for " + finalNodeRef);
-				NodeRef reportNodeRef = entityReportService.getSelectedReport(finalNodeRef);
-				if (reportNodeRef != null) {
-					cleanThumbnails(reportNodeRef);
-				}
-				entityReportService.generateReports(finalNodeRef);
-
-				return reportNodeRef;
-
-			}, AuthenticationUtil.getSystemUserName()), false, requiresNew);
-
 		}
 
 		NodeRef reportNodeRef = entityReportService.getSelectedReport(sourceNode.getNodeRef());
@@ -214,25 +220,28 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 		NodeRef entityNodeRef = entityReportService.getEntityNodeRef(reportNodeRef);
 		if ((entityNodeRef != null) && entityReportService.shouldGenerateReport(entityNodeRef, reportNodeRef)) {
 
-			RetryingTransactionHelper txnHelper = serviceRegistry.getRetryingTransactionHelper();
-			txnHelper.setForceWritable(true);
-			boolean requiresNew = false;
-			if (AlfrescoTransactionSupport.getTransactionReadState() != TxnReadState.TXN_READ_WRITE) {
-				// We can be in a read-only transaction, so force a new
-				// transaction
-				requiresNew = true;
+			// Check if we're already in a writable transaction to avoid lock conflicts
+			TxnReadState currentTxnState = AlfrescoTransactionSupport.getTransactionReadState();
+			if (currentTxnState == TxnReadState.TXN_READ_WRITE) {
+				// Already in writable transaction, execute directly to avoid lock conflicts
+				NodeRef result = AuthenticationUtil.runAs(() -> {
+					logger.debug("refreshReport: Entity report is not up to date for " + entityNodeRef);
+					entityReportService.generateReport(entityNodeRef, finalNodeRef);
+					cleanThumbnails(finalNodeRef);
+					return finalNodeRef;
+				}, AuthenticationUtil.getSystemUserName());
+				return new ScriptNode(result, serviceRegistry, getScope());
+			} else {
+				// Only create new transaction if we're in read-only mode
+				RetryingTransactionHelper txnHelper = serviceRegistry.getRetryingTransactionHelper();
+				txnHelper.setForceWritable(true);
+				return new ScriptNode(txnHelper.doInTransaction(() -> AuthenticationUtil.runAs(() -> {
+					logger.debug("refreshReport: Entity report is not up to date for " + entityNodeRef);
+					entityReportService.generateReport(entityNodeRef, finalNodeRef);
+					cleanThumbnails(finalNodeRef);
+					return finalNodeRef;
+				}, AuthenticationUtil.getSystemUserName()), false, true), serviceRegistry, getScope());
 			}
-			return new ScriptNode(txnHelper.doInTransaction(() -> AuthenticationUtil.runAs(() -> {
-
-				logger.debug("refreshReport: Entity report is not up to date for " + entityNodeRef);
-
-				entityReportService.generateReport(entityNodeRef, finalNodeRef);
-				cleanThumbnails(finalNodeRef);
-
-				return finalNodeRef;
-
-			}, AuthenticationUtil.getSystemUserName()), false, requiresNew), serviceRegistry, getScope());
-
 		}
 
 		return reportNode;
