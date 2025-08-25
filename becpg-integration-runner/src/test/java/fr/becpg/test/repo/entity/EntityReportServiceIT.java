@@ -533,6 +533,7 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 			assertNotNull("Entity type should not be null", entityType);
 			
 			// Validate path structure
+
 			assertTrue("Document ID should contain Supplier documents path", docId.contains("/cm:Supplier_x0020_documents/"));
 			assertEquals("Entity nodeRef should match test product", entityNodeRef.toString(), entityNodeRefAttr);
 			assertEquals("Entity type should be finishedProduct", "finishedProduct", entityType);
