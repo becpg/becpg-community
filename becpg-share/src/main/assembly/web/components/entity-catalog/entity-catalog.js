@@ -304,201 +304,223 @@
             });
         },
 
-
         addProtectedFields: function(formId, fields) {
-            if (!fields || fields.length === 0) {
-                return;
-            }
-
-            // Store the protected fields in the component instance
-            this.protectedFields = fields;
-
-            // Initialize tracking objects
-            this.modifiedProtectedFields = {};
-            this.modifiedCount = 0;
-
-            // Get form element
+            if (!fields || fields.length === 0) return;
+          
+            var instance = this;
             var form = YAHOO.util.Dom.get(formId + "-form");
-            if (!form) {
-                return;
-            }
-
-            // Store form info
+            if (!form) return;
+          
+            // --- State ---
+            this.protectedFields = fields.slice();
+            this.reauthRequired = false;       // any protected field changed since last successful reauth
+            this.reauthCompleted = false;      // true only after successful reauth for current edit set
+            this._reauthToken = null;          // token from popup
             this.submitButtonId = formId + "-form-submit-button";
             this.reauthButtonId = this.submitButtonId + "-form-reauth-button";
-
-            // Make sure we use component methods for better maintainability
-            var instance = this;
-
-            /**
-             * Updates the submit button state based on modified fields
-             */
-            this.createReauthButton = function() {
-
-                var reauthButton = YAHOO.util.Dom.get(instance.reauthButtonId);
-                if (reauthButton) {
-                    return;
-                }
-
-                var submitButton = YAHOO.util.Dom.get(instance.submitButtonId);
-                if (!submitButton) {
-                    return;
-                }
-
-                var spanOuter = document.createElement("span");
-                spanOuter.className = "yui-button yui-push-button";
-                spanOuter.id = instance.reauthButtonId;
-
-                var spanInner = document.createElement("span");
-                spanInner.className = "first-child";
-
-                var button = document.createElement("button");
-                button.type = "button";
-                button.tabIndex = 0;
-                button.id = instance.reauthButtonId + "-button";
-                button.innerText = instance.msg("button.reauth.save");
-
-                button.onclick = function() {
-                    // Show reauthentication popup
-                    instance.openReauthPopup(function(token) {
-                        if (token) {
-                            submitButton.click();
-                        } else {
-                            Alfresco.util.PopupManager.displayMessage({
-                                text: instance.msg("message.reauth.failed")
-                            });
-                        }
-                    });
-                };
-
-                spanInner.appendChild(button);
-                spanOuter.appendChild(spanInner);
-
-                // Insert the reauth button next to the original button
+          
+            // Create (once) a reauth button next to submit
+            function ensureReauthButton() {
+              if (YAHOO.util.Dom.get(instance.reauthButtonId)) return;
+              
+              var submitButton = YAHOO.util.Dom.get(instance.submitButtonId);
+              if (!submitButton) return;
+          
+              var spanOuter = document.createElement("span");
+              spanOuter.className = "yui-button yui-push-button";
+              spanOuter.id = instance.reauthButtonId;
+          
+              var spanInner = document.createElement("span");
+              spanInner.className = "first-child";
+          
+              var btn = document.createElement("button");
+              btn.type = "button";
+              btn.tabIndex = 0;
+              btn.id = instance.reauthButtonId + "-button";
+              btn.textContent = instance.msg("button.reauth.save");
+          
+              btn.onclick = function() {
+                if (btn.disabled) return;
+          
+                btn.disabled = true;
+                btn.textContent = instance.msg("button.reauth.authenticating");
+                instance.openReauthPopup(function(result) {
+                  if (result && result.token) {
+                    instance._reauthToken = result.token;
+                    instance.reauthCompleted = true;
+                    instance.reauthRequired = false;
+                    // Ensure the token is included with the form
+                    var hidden = form.querySelector('input[name="reauthToken"]');
+                    if (!hidden) {
+                      hidden = document.createElement("input");
+                      hidden.type = "hidden";
+                      hidden.name = "reauthToken";
+                      form.appendChild(hidden);
+                    }
+                    hidden.value = instance._reauthToken;
+                    updateButtons();
+                    // Use requestSubmit if available so submit handlers run
+                    var currentSubmitButton = YAHOO.util.Dom.get(instance.submitButtonId);
+                    if (form.requestSubmit) {
+                      form.requestSubmit(currentSubmitButton);
+                    } else {
+                      currentSubmitButton && currentSubmitButton.click();
+                    }
+                  } else {
+                    btn.disabled = false;
+                    btn.textContent = instance.msg("button.reauth.save");
+                    Alfresco.util.PopupManager.displayMessage({ text: instance.msg("message.reauth.failed") });
+                  }
+                });
+              };
+          
+              spanInner.appendChild(btn);
+              spanOuter.appendChild(spanInner);
+              if (submitButton.parentNode && submitButton.parentNode.parentNode) {
                 submitButton.parentNode.parentNode.insertBefore(spanOuter, submitButton.nextSibling);
-                // If protected fields are modified, show reauth button
-                submitButton.parentNode.style.display = 'none';
-            };
-
-            /**
-             * Add field validations to detect changes in protected fields
-             */
-            this.setupFieldValidations = function() {
-
-
-                // Setup validations for each protected field
-                this.protectedFields.forEach(function(field) {
-                    // Common field ID patterns
-                    var fieldPatterns = [
-                        formId + "_prop_" + field.replace(":", "_") + "-entry",
-                        formId + "_assoc_" + field.replace(":", "_") + "-cntrl",
-                        formId + "_prop_" + field.replace(":", "_")
-
-                    ];
-
-                    // Check each possible field ID
-                    for (var i = 0; i < fieldPatterns.length; i++) {
-                        var fieldId = fieldPatterns[i];
-                        var element = YAHOO.util.Dom.get(fieldId);
-                        if (element) {
-                            // Add direct change event handler
-                            YAHOO.util.Event.addListener(element, "change", function() {
-                                instance.createReauthButton();
-                            });
-                        }
-                    }
-                });
-
-                return true;
-            };
-
-            // Initialize the component
+              }
+            }
+          
+            // Centralized toggle logic
+            function updateButtons() {
+              var submitButton = YAHOO.util.Dom.get(instance.submitButtonId);
+              var reauthBtnWrapper = YAHOO.util.Dom.get(instance.reauthButtonId);
+              ensureReauthButton();
+              reauthBtnWrapper = YAHOO.util.Dom.get(instance.reauthButtonId);
+          
+              if (!submitButton || !reauthBtnWrapper) return;
+          
+              // If protected fields changed and reauth not completed -> show reauth, disable submit
+              if (instance.reauthRequired && !instance.reauthCompleted) {
+                YAHOO.util.Dom.addClass(submitButton, "disabled");
+                submitButton.disabled = true;
+                reauthBtnWrapper.style.display = "";
+              } else {
+                // Normal mode
+                submitButton.disabled = false;
+                YAHOO.util.Dom.removeClass(submitButton, "disabled");
+                reauthBtnWrapper.style.display = "none";
+              }
+            }
+          
+            // Mark that protected fields were edited
+            function onProtectedFieldChange() {
+              instance.reauthRequired = true;
+              instance.reauthCompleted = false;
+              instance._reauthToken = null;
+              var hidden = form.querySelector('input[name="reauthToken"]');
+              if (hidden) hidden.value = "";
+              updateButtons();
+            }
+          
+            // Attach change listeners to each protected field (multiple ID patterns)
+            function setupFieldValidations() {
+              var ids = [];
+              instance.protectedFields.forEach(function(field) {
+                var base = field.replace(":", "_");
+                ids.push(formId + "_prop_" + base + "-entry");
+                ids.push(formId + "_assoc_" + base + "-cntrl");
+                ids.push(formId + "_prop_" + base);
+              });
+              // De-duplicate and attach if present
+              var seen = {};
+              for (var i = 0; i < ids.length; i++) {
+                var fid = ids[i];
+                if (seen[fid]) continue; seen[fid] = true;
+                var el = YAHOO.util.Dom.get(fid);
+                if (!el) continue;
+                YAHOO.util.Event.addListener(el, "change", onProtectedFieldChange);
+                // Also detect text input as user types
+                if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
+                  YAHOO.util.Event.addListener(el, "input", onProtectedFieldChange);
+                }
+              }
+            }
+          
+            // Block form submission if reauth required
+            YAHOO.util.Event.addListener(form, "submit", function(e) {
+              if (instance.reauthRequired && !instance.reauthCompleted) {
+                if (e && e.preventDefault) e.preventDefault();
+                Alfresco.util.PopupManager.displayMessage({ text: instance.msg("message.reauth.required") });
+                return false;
+              }
+              return true;
+            });
+          
+            // Initialize once submit button is available
             YAHOO.util.Event.onAvailable(this.submitButtonId, function() {
-                instance.setupFieldValidations();
-
+              ensureReauthButton();
+              setupFieldValidations();
+              updateButtons();
             }, this);
-
-
-        },
-
-        openReauthPopup: function(callback) {
-            var redirectUri = window.location.origin + "/share/page/reauth-callback";
-            var aimsLoginUrl = Alfresco.constants.URL_CONTEXT + "page/aims-login?prompt=true&redirectUrl=" + encodeURIComponent(redirectUri);
-
-            // Clear any existing message listeners to prevent duplicates
+          },
+          
+          openReauthPopup: function(callback) {
+            var instance = this;
+            var origin = window.location.origin;
+            var redirectUri = origin + "/share/page/reauth-callback";
+          
+            // CSRF-style state
+            var state = String(Math.random()).slice(2) + String(Date.now());
+            var aimsLoginUrl = Alfresco.constants.URL_CONTEXT +
+              "page/aims-login?prompt=true&state=" + encodeURIComponent(state) +
+              "&redirectUrl=" + encodeURIComponent(redirectUri);
+          
             if (this._reauthMessageHandler) {
-                window.removeEventListener("message", this._reauthMessageHandler);
+              window.removeEventListener("message", this._reauthMessageHandler);
             }
-
-            var popup = window.open(aimsLoginUrl, "ReauthPopup", "width=600,height=500,menubar=no,location=no,resizable=yes,scrollbars=yes,status=no");
-
-            if (!popup || popup.closed || typeof popup.closed === 'undefined') {
-                Alfresco.util.PopupManager.displayMessage({
-                    text: me.msg("alert.popup.blocked")
-                });
-                callback(null);
-                return;
+          
+            var popup = window.open(
+              aimsLoginUrl,
+              "ReauthPopup",
+              "width=600,height=500,menubar=no,location=no,resizable=yes,scrollbars=yes,status=no"
+            );
+          
+            if (!popup || popup.closed || typeof popup.closed === "undefined") {
+              Alfresco.util.PopupManager.displayMessage({ text: instance.msg("alert.popup.blocked") });
+              callback(null);
+              return;
             }
-
+          
             var messageReceived = false;
-            var popupCheckInterval;
-            var self = this;
-
-            // Check if popup is closed by user
-            popupCheckInterval = setInterval(function() {
-                if (popup.closed) {
-                    clearInterval(popupCheckInterval);
-                    if (!messageReceived) {
-                        // If we get here, the popup was closed without sending a message
-                        window.removeEventListener("message", self._reauthMessageHandler);
-                        callback(null);
-                    }
+            var interval = setInterval(function() {
+              if (popup.closed) {
+                clearInterval(interval);
+                if (!messageReceived) {
+                  window.removeEventListener("message", instance._reauthMessageHandler);
+                  callback(null);
                 }
+              }
             }, 500);
-
-            // Handle the message from the popup
+          
             this._reauthMessageHandler = function(event) {
-                // Ignore messages from other origins
-                if (event.origin !== window.location.origin) {
-                    return;
-                }
-
-                // Only process messages with our specific source
-                if (!event.data || typeof event.data !== 'object' || event.data.source !== 'beCPG-reauth') {
-                    return; // Not our message
-                }
-
-                messageReceived = true;
-                clearInterval(popupCheckInterval);
-
-                // Only process our specific success code
-                if (event.data.code === 'REAUTH_SUCCESS') {
-                    // Success - pass the code to the callback
-                    callback(event.data.code);
-                } else {
-                    // No valid code in the message - authentication likely failed
-                    callback(null);
-                }
-
-                // Clean up
-                window.removeEventListener("message", self._reauthMessageHandler);
-
-                // Close the popup if it's still open
-                if (popup && !popup.closed) {
-                    popup.close();
-                }
+              // Only accept expected origin and source
+              if (event.origin !== origin || event.source !== popup) return;
+          
+              var data = event.data;
+              if (!data || typeof data !== "object" || data.source !== "beCPG-reauth") return;
+          
+              // Validate state to prevent confused deputy / CSRF
+              if (data.state !== state) return;
+          
+              messageReceived = true;
+              clearInterval(interval);
+          
+              // Expect { code: 'REAUTH_SUCCESS', token: '<short-lived-token>' }
+              if (data.code === "REAUTH_SUCCESS" && data.token) {
+                callback({ token: data.token });
+              } else {
+                callback(null);
+              }
+          
+              window.removeEventListener("message", instance._reauthMessageHandler);
+              try { if (popup && !popup.closed) popup.close(); } catch (e) {}
             };
-
-            // Add the event listener
+          
             window.addEventListener("message", this._reauthMessageHandler);
-
-            // Set focus to the popup
-            try {
-                popup.focus();
-            } catch (e) {
-                // Ignore focus errors
-            }
-        },
+          
+            try { popup.focus(); } catch (e) {}
+          },
         /**
          * Colorizes input fields using a color palette per catalog in json
          * json : catalogs
