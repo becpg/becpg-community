@@ -392,13 +392,12 @@
           
               // If protected fields changed and reauth not completed -> show reauth, disable submit
               if (instance.reauthRequired && !instance.reauthCompleted) {
-                YAHOO.util.Dom.addClass(submitButton, "disabled");
-                submitButton.disabled = true;
+                // Reauth mode - hide original submit button and show reauth button
+                submitButton.style.display = "none";
                 reauthBtnWrapper.style.display = "";
               } else {
-                // Normal mode
-                submitButton.disabled = false;
-                YAHOO.util.Dom.removeClass(submitButton, "disabled");
+                // Normal mode - show original submit button and hide reauth button
+                submitButton.style.display = "";
                 reauthBtnWrapper.style.display = "none";
               }
             }
