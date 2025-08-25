@@ -147,8 +147,18 @@
                             
                             if (me.options.mode != "view" && !this.options.readOnly)
                             {
-                            	
-                                var oDS = null, bToggler = null, previewTooltips = [], previewTooltipsData = {}, initialValue = "";
+                                me._initAutoComplete();
+                            }
+                        },
+
+                        /**
+                         * Initialize the AutoComplete component
+                         * @method _initAutoComplete
+                         */
+                        _initAutoComplete : function AutoCompletePicker_initAutoComplete()
+                        {
+                            var me = this, previewTooltip = null, q = "";
+                            var oDS = null, bToggler = null, previewTooltips = [], previewTooltipsData = {}, initialValue = "";
 
                                 // Use an XHRDataSource
                                 if (this.options.isLocalProxy)
@@ -222,8 +232,6 @@
                                     });
 
                                 }
-
-							
 
 
                                 // The webservice needs additional parameters
