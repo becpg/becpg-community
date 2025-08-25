@@ -132,7 +132,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 	private static final Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
 
-	private static final List<String> SEMICOLON_SEPARATED_PROPERTIES = List.of("extraImagePaths");
+	private static final List<String> SEMICOLON_SEPARATED_PROPERTIES = List.of("extraImagePaths","extraDocumentPaths");
 
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
