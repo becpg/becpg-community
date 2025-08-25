@@ -150,7 +150,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 	/** {@inheritDoc} */
 	@Override
-	public String getRunningBatchInfo() {
+	public synchronized String getRunningBatchInfo() {
     BatchCommand<?> current = runningCommand.get();
     if (current != null) {
       BatchInfo info = current.getBatchInfo();
@@ -309,22 +309,31 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		@Override
 		public void run() {
 			
-			if (runningCommand.get() != null) {
-				if (runningCommand.get().getBatchInfo().getPriority() < this.getBatchInfo().getPriority()) {
-					pausedCommands.push(this);
-					if (logger.isInfoEnabled()) {
-						logger.info("Batch '" + this.getBatchId() + "' is waiting for '" + runningCommand.get().getBatchId() + "' to finish");
+			boolean shouldWait = false;
+			
+			synchronized(BatchQueueServiceImpl.this) {
+				BatchCommand<?> currentRunningCommand = runningCommand.get();
+				if (currentRunningCommand != null) {
+					if (currentRunningCommand.getBatchInfo().getPriority() < this.getBatchInfo().getPriority()) {
+						pausedCommands.push(this);
+						if (logger.isInfoEnabled()) {
+							logger.info("Batch '" + this.getBatchId() + "' is waiting for '" + currentRunningCommand.getBatchId() + "' to finish");
+						}
+						shouldWait = true;
+					} else {
+						pausedCommands.push(currentRunningCommand);
+						if (logger.isInfoEnabled()) {
+							logger.info("Batch '" + currentRunningCommand.getBatchId() + "' is paused because '" + this.getBatchId() + "' started");
+						}
+						runningCommand.set(this);
 					}
-					checkPausedCommand();
 				} else {
-					pausedCommands.push(runningCommand.get());
-					if (logger.isInfoEnabled()) {
-						logger.info("Batch '" + runningCommand.get().getBatchId() + "' is paused because '" + this.getBatchId() + "' started");
-					}
 					runningCommand.set(this);
 				}
-			} else {
-				runningCommand.set(this);
+			}
+			
+			if (shouldWait) {
+				checkPausedCommand();
 			}
 			
 			try (AuditScope scope = beCPGAuditService.startAudit(AuditType.BATCH)) {
@@ -446,19 +455,21 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				batchInfo.setIsCompleted(true);
 
 			} finally {
-				if (cancelledBatches.contains(batchId)) {
-					cancelledBatches.remove(batchId);
-				}
-				if (pausedCommands.contains(this)) {
-					pausedCommands.remove(this);
-				}
-				if (runningCommand.get() == this) {
-					runningCommand.set(null);
-				}
-				if (!pausedCommands.isEmpty()) {
-					runningCommand.set(pausedCommands.pop());
-					if (logger.isInfoEnabled()) {
-						logger.info("Resume batch: " + ((BatchCommand<?>) runningCommand.get()).getBatchId());
+				synchronized(BatchQueueServiceImpl.this) {
+					if (cancelledBatches.contains(batchId)) {
+						cancelledBatches.remove(batchId);
+					}
+					if (pausedCommands.contains(this)) {
+						pausedCommands.remove(this);
+					}
+					if (runningCommand.get() == this) {
+						runningCommand.set(null);
+					}
+					if (!pausedCommands.isEmpty()) {
+						runningCommand.set(pausedCommands.pop());
+						if (logger.isInfoEnabled()) {
+							logger.info("Resume batch: " + ((BatchCommand<?>) runningCommand.get()).getBatchId());
+						}
 					}
 				}
 			}
@@ -543,17 +554,24 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 			};
 		}
-
+		
 		private void checkPausedCommand() {
-			while (pausedCommands.contains(this) && !cancelledBatches.contains(this.getBatchId())) {
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					Thread.currentThread().interrupt();
-					logger.error("error while pausing command", e);
-				}
-			}
+		    while (true) {
+		        synchronized(BatchQueueServiceImpl.this) {
+		            if (!pausedCommands.contains(this) || cancelledBatches.contains(this.getBatchId())) {
+		                break;
+		            }
+		        }
+		        try {
+		            Thread.sleep(500);
+		        } catch (InterruptedException e) {
+		            Thread.currentThread().interrupt();
+		            logger.error("error while pausing command", e);
+		            break;
+		        }
+		    }
 		}
+		
 		/*
 		 * Is important to keep only batchId in equals method
 		 */
