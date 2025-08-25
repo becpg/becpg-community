@@ -56,10 +56,10 @@ public class SupplierSecurityPlugin implements SecurityServicePlugin {
 		return AuthorityHelper.isCurrentUserExternal() && entityDictionaryService.isSubClass(nodeType, BeCPGModel.TYPE_ENTITY_V2);
 	}
 
-	//TODO Cache
+
 	/** {@inheritDoc} */
 	@Override
-	public int computeAccessMode(NodeRef entityNodeRef, int accesMode) {
+	public int getMaxAccessMode(NodeRef entityNodeRef) {
 	    if (entityNodeRef != null) {
 	        NodeRef supplierNodeRef = supplierPortalService.getSupplierNodeRef(entityNodeRef);
 	        if ((supplierNodeRef != null) && supplierPortalService.isCurrentUserInSupplierGroup(supplierNodeRef)) {
@@ -67,7 +67,7 @@ public class SupplierSecurityPlugin implements SecurityServicePlugin {
 	            
 	            List<String> contentWorkflowIds =  workflowPackageComponent.getWorkflowIdsForContent(entityNodeRef);
 	            if (contentWorkflowIds.isEmpty()) {
-	                return Math.min(accesMode, SecurityService.READ_ACCESS);
+	                return SecurityService.READ_ACCESS;
 	            }
 	            
 	            List<WorkflowTask> assignedTasks = workflowService.getAssignedTasks(
@@ -77,7 +77,7 @@ public class SupplierSecurityPlugin implements SecurityServicePlugin {
 	                .anyMatch(task -> contentWorkflowIds.contains(task.getPath().getInstance().getId()));
 	                
 	            if (hasMatchingTask) {
-	                return Math.min(accesMode, SecurityService.WRITE_ACCESS);
+	                return SecurityService.WRITE_ACCESS;
 	            }
 	            
 	            // Check pooled tasks
@@ -86,14 +86,14 @@ public class SupplierSecurityPlugin implements SecurityServicePlugin {
 	                .anyMatch(task -> contentWorkflowIds.contains(task.getPath().getInstance().getId()));
 	                
 	            if (hasMatchingTask) {
-	                return Math.min(accesMode, SecurityService.WRITE_ACCESS);
+	                return SecurityService.WRITE_ACCESS;
 	            }
 	            
-	            return Math.min(accesMode, SecurityService.READ_ACCESS);
+	            return SecurityService.READ_ACCESS;
 	        }
 	    }
 	    
-	    return accesMode;
+	    return SecurityService.WRITE_ACCESS;
 	}
 
 
