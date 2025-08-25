@@ -133,6 +133,10 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected static final String TAG_IMAGES = "images";
 	/** Constant <code>TAG_IMAGE="image"</code> */
 	protected static final String TAG_IMAGE = "image";
+	/** Constant <code>TAG_DOCUMENTS="documents"</code> */
+	protected static final String TAG_DOCUMENTS = "documents";
+	/** Constant <code>TAG_DOCUMENT="document"</code> */
+	protected static final String TAG_DOCUMENT = "document";
 	/** Constant <code>ATTR_ENTITY_NODEREF="entityNodeRef"</code> */
 	protected static final String ATTR_ENTITY_NODEREF = "entityNodeRef";
 	/** Constant <code>ATTR_ENTITY_TYPE="entityType"</code> */
@@ -204,6 +208,15 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	private String extraImagePaths() {
 		return systemConfigurationService.confValue("beCPG.product.report.extraImagePaths");
+	}
+
+	/**
+	 * <p>extraDocumentPaths.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
+	protected String extraDocumentPaths() {
+		return systemConfigurationService.confValue("beCPG.product.report.extraDocumentPaths");
 	}
 
 	/**
@@ -338,6 +351,10 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		Element imgsElt = entityElt.addElement(TAG_IMAGES);
 		extractEntityImages(entityNodeRef, imgsElt, context, null);
 
+		// load documents
+		Element docsElt = entityElt.addElement(TAG_DOCUMENTS);
+		extractEntityDocuments(entityNodeRef, docsElt, context, null);
+
 		// extract site info
 		extractSiteInfo(entityNodeRef, entityElt);
 
@@ -412,6 +429,78 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			}
 		}
 
+	}
+
+	/**
+	 * <p>extractEntityDocuments.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param docsElt a {@link org.dom4j.Element} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object.
+	 * @param extratAttributes a {@link java.util.Map} object
+	 */
+	protected void extractEntityDocuments(NodeRef entityNodeRef, Element docsElt, DefaultExtractorContext context,
+			Map<String, String> extratAttributes) {
+
+		if (context.isNotEmptyPrefs("extraDocumentPaths", extraDocumentPaths())) {
+			String entityPath = nodeService.getPath(entityNodeRef).toPrefixString(namespaceService);
+			String[] paths = context.getPrefValue("extraDocumentPaths", extraDocumentPaths()).split(";");
+			for (String path : paths) {
+				List<NodeRef> docNodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(entityNodeRef,
+						expressionService.extractExpr(entityNodeRef, path));
+				for (NodeRef docNodeRef : docNodeRefs) {
+					if (nodeService.exists(docNodeRef) && !ContentModel.TYPE_FOLDER.equals(nodeService.getType(docNodeRef))) {
+						String nodePath = nodeService.getPath(docNodeRef).toPrefixString(namespaceService).replace(entityPath, "");
+						extractDocument(entityNodeRef, docNodeRef, nodePath, docsElt, context, extratAttributes);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * <p>extractDocument.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param docNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param docId a {@link java.lang.String} object.
+	 * @param docsElt a {@link org.dom4j.Element} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object.
+	 * @param extratAttributes a {@link java.util.Map} object
+	 */
+	protected void extractDocument(NodeRef entityNodeRef, NodeRef docNodeRef, String docId, Element docsElt, DefaultExtractorContext context,
+			Map<String, String> extratAttributes) {
+
+		if (ApplicationModel.TYPE_FILELINK.equals(nodeService.getType(docNodeRef))) {
+			docNodeRef = (NodeRef) nodeService.getProperty(docNodeRef, ContentModel.PROP_LINK_DESTINATION);
+		}
+
+		if (docNodeRef != null && nodeService.exists(docNodeRef)) {
+			Element docElt = docsElt.addElement(TAG_DOCUMENT);
+			
+			if (entityNodeRef != null) {
+				docElt.addAttribute(ATTR_ENTITY_NODEREF, entityNodeRef.toString());
+				docElt.addAttribute(ATTR_ENTITY_TYPE, nodeService.getType(entityNodeRef).getLocalName());
+				docElt.addAttribute(ATTR_ENTITY_NAME,
+						XMLTextHelper.writeAttribute((String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME)));
+				if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_CODE)) {
+					docElt.addAttribute(ATTR_ENTITY_CODE,
+							XMLTextHelper.writeAttribute((String) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE)));
+				}
+			}
+			
+			// Document path/id
+			docElt.addAttribute("id", docId);
+			
+			// Use loadNodeAttributes to extract all document metadata
+			loadNodeAttributes(docNodeRef, docElt, false, context);
+			
+			if (extratAttributes != null) {
+				for (Map.Entry<String, String> extratAttribute : extratAttributes.entrySet()) {
+					docElt.addAttribute(extratAttribute.getKey(), extratAttribute.getValue());
+				}
+			}
+		}
 	}
 
 	/**
