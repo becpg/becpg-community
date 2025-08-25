@@ -207,6 +207,9 @@
     		case "mm":
     			val=    val / 1000;	
     			break;
+                case "micro_m":
+                    val = val / 1000000;
+                    break;
     		case "cL":	
     		case "cm":
     			val=   val / 100; 
@@ -223,12 +226,6 @@
     		case "mg":	
     		case "micro":		
     			val=   val / 1000000; 
-    			break;
-    		case "micro_m":
-                val = val / 1000000;
-                break;
-    		case "µg":		
-    			val=   val / 1000000000; 
     			break;	
     		case "micro_g":
                 val = val / 1000000000;
@@ -257,6 +254,8 @@
     		if(toUnit =="mm" || toUnit =="g" || toUnit =="mL"){
     			val = val *1000;
     		}
+            
+           val = Math.round(val * 1e15) / 1e15;
     	}
     	return val;
     };
