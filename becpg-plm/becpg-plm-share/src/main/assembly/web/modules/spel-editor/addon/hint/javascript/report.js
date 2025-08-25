@@ -33,6 +33,7 @@ var hints = {
     },
     "maxCompoListLevelToExtract": "",
     "extraImagePaths": "",
+    "extraDocumentPaths": "",
     "nutLocalesToExtract": "",
     "mlTextFields": "",
     "mlTextLocales": "",
