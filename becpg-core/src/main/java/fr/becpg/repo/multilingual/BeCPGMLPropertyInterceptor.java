@@ -330,6 +330,17 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
         {
             throw new IllegalArgumentException("NodeRef may not be null for calls to NodeService.  Check client code.");
         }
+        
+        // Check if node exists first to reduce likelihood of stale node exceptions
+        if (!nodeService.exists(nodeRef))
+        {
+            if (logger.isDebugEnabled())
+            {
+                logger.debug("NodeRef does not exist: " + nodeRef);
+            }
+            return null;
+        }
+        
         if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_MULTILINGUAL_EMPTY_TRANSLATION))
         {
             return multilingualContentService.getPivotTranslation(nodeRef);
