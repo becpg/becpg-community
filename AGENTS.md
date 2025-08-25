@@ -63,6 +63,23 @@ This is a **Java 17** enterprise project with emphasis on:
 - Use `Objects.equals()` for null-safe comparisons
 - Use `String.join()` instead of manual concatenation
 
+### 5. JavaScript Standards
+- **Use ECMAScript 5 (ES5)** syntax only - no modern ES6+ features
+- Follow traditional JavaScript patterns compatible with legacy browsers
+- Use `function` declarations instead of arrow functions
+- Use `var` for variable declarations (not `let` or `const`)
+- Avoid template literals, destructuring, and other ES6+ features
+- Maintain compatibility with existing YUI-based components
+
+### 6. UI JavaScript Framework
+- **Use YUI 2 (Yahoo! User Interface Library 2)** for all UI JavaScript components
+- Leverage YUI 2 widgets and utilities:
+  - `YAHOO.util.Dom` for DOM manipulation
+  - `YAHOO.util.Event` for event handling
+  - `YAHOO.Bubbling` for custom event messaging
+- Follow YUI 2 patterns and conventions for component development
+- Extend existing YUI-based components rather than creating vanilla JavaScript alternatives
+
 ## Git Commit Message Format
 
 Follow this **strict format** for all commits:
