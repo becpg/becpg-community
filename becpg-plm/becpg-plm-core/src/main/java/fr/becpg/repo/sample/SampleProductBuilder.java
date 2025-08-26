@@ -1,9 +1,16 @@
 package fr.becpg.repo.sample;
 
+import java.io.Serializable;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.namespace.QName;
+import org.alfresco.util.Pair;
 
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -63,6 +70,28 @@ public abstract class SampleProductBuilder {
 		protected abstract T self();
 
 		public abstract SampleProductBuilder build();
+	}
+
+	Map<Pair<QName, String>, NodeRef> characts = new HashMap<>();
+
+	/**
+	 * <p>getOrCreateCharact.</p>
+	 *
+	 * @param name a {@link java.lang.String} object
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	public NodeRef getOrCreateCharact(String name, QName type) {
+
+		return characts.computeIfAbsent(new Pair<>(type, name), p -> {
+			Map<QName, Serializable> prop = Map.of(ContentModel.PROP_NAME, name);
+
+			return nodeService
+					.createNode(destFolder, ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) prop.get(ContentModel.PROP_NAME)), type, prop)
+					.getChildRef();
+
+		});
 	}
 
 
