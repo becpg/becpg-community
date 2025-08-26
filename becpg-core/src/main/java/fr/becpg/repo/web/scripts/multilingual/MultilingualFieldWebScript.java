@@ -78,6 +78,22 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 
 	private static final String PARAM_DEST_FIELD = "destField";
 
+	private static final String DEEPL_API_URL = "https://api.deepl.com/v2/translate";
+	private static final String GOOGLE_TRANSLATE_API_URL = "https://www.googleapis.com/language/translate/v2";
+	private static final String DEEPL_AUTH_KEY = "auth_key";
+	private static final String DEEPL_TEXT = "text";
+	private static final String DEEPL_SOURCE_LANG = "source_lang";
+	private static final String DEEPL_TARGET_LANG = "target_lang";
+	private static final String GOOGLE_KEY = "key";
+	private static final String GOOGLE_SOURCE = "source";
+	private static final String GOOGLE_QUERY = "q";
+	private static final String JSON_DATA = "data";
+	private static final String JSON_TRANSLATIONS = "translations";
+	private static final String JSON_TEXT = "text";
+	private static final String JSON_TRANSLATED_TEXT = "translatedText";
+	private static final String NO_SUGGESTION_MSG = "No suggestion available";
+	private static final String NO_API_KEY_MSG = "No google translate API key provided";
+
 	private String googleApiKey;
 
 	private String deepLAPIKey;
@@ -303,23 +319,23 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 			logger.debug("Try to translate : " + defaultValue + " in " + target + " using deepL");
 
 			try {
-				String url = "https://api.deepl.com/v2/translate";
+				String url = DEEPL_API_URL;
 				HttpHeaders headers = new HttpHeaders();
 				headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 				MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-				map.add("auth_key", deepLAPIKey);
-				map.add("text", defaultValue);
-				map.add("source_lang", language);
-				map.add("target_lang", target.split("_")[0]);
+				map.add(DEEPL_AUTH_KEY, deepLAPIKey);
+				map.add(DEEPL_TEXT, defaultValue);
+				map.add(DEEPL_SOURCE_LANG, language);
+				map.add(DEEPL_TARGET_LANG, target.split("_")[0]);
 
 				HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
 				ResponseEntity<String> response = RestTemplateHelper.getRestTemplate().postForEntity(url, request, String.class);
 
 				JSONObject jsonObject = new JSONObject(response.getBody());
-				JSONArray translations = jsonObject.getJSONArray("translations");
+				JSONArray translations = jsonObject.getJSONArray(JSON_TRANSLATIONS);
 
 				if (translations.length() > 0) {
-					return StringEscapeUtils.unescapeHtml4(translations.getJSONObject(0).getString("text"));
+					return StringEscapeUtils.unescapeHtml4(translations.getJSONObject(0).getString(JSON_TEXT));
 				}
 			} catch (JSONException e) {
 				logger.error("Fail to parse JSON", e);
@@ -330,22 +346,22 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 			logger.debug("Try to translate : " + defaultValue + " in " + target + " using google");
 
 			Map<String, String> vars = new HashMap<>();
-			vars.put("key", googleApiKey);
+			vars.put(GOOGLE_KEY, googleApiKey);
 			vars.put(PARAM_TARGET, target.split("_")[0]);
-			vars.put("source", language);
-			vars.put("q", defaultValue);
+			vars.put(GOOGLE_SOURCE, language);
+			vars.put(GOOGLE_QUERY, defaultValue);
 
-			String url = "https://www.googleapis.com/language/translate/v2?key={key}&source={source}&{" + PARAM_TARGET + "}={" + PARAM_TARGET + "}&q={q}";
+			String url = GOOGLE_TRANSLATE_API_URL + "?key={" + GOOGLE_KEY + "}&source={" + GOOGLE_SOURCE + "}&target={" + PARAM_TARGET + "}&q={" + GOOGLE_QUERY + "}";
 
 
 			String ret = RestTemplateHelper.getRestTemplate().getForObject(url, String.class, vars);
 
 			try {
 				JSONObject jsonObject = new JSONObject(ret);
-				if (jsonObject.has("data") && jsonObject.getJSONObject("data").has("translations")) {
-					JSONArray translations = jsonObject.getJSONObject("data").getJSONArray("translations");
+				if (jsonObject.has(JSON_DATA) && jsonObject.getJSONObject(JSON_DATA).has(JSON_TRANSLATIONS)) {
+					JSONArray translations = jsonObject.getJSONObject(JSON_DATA).getJSONArray(JSON_TRANSLATIONS);
 					if (translations.length() > 0) {
-						return StringEscapeUtils.unescapeHtml4(translations.getJSONObject(0).getString("translatedText"));
+						return StringEscapeUtils.unescapeHtml4(translations.getJSONObject(0).getString(JSON_TRANSLATED_TEXT));
 					}
 				}
 
@@ -355,9 +371,9 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 			}
 
 		} else {
-			logger.warn("No google translate API key provided");
+			logger.warn(NO_API_KEY_MSG);
 		}
-		return "No suggestion available";
+		return NO_SUGGESTION_MSG;
 	}
 
 }
