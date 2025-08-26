@@ -98,7 +98,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 	private EntityCatalogObserver[] observers;
 
 	@Autowired
-	private BehaviourFilter behaviourFilter;
+	private BehaviourFilter policyBehaviourFilter;
 
 	/**
 	 * <p>
@@ -175,16 +175,16 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 										logger.debug("Audited field " + changedField + " has changed, update date: " + catalogModifiedDate);
 									}
 
-									boolean auditableEnabled = (behaviourFilter != null)
-											&& behaviourFilter.isEnabled(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+									boolean auditableEnabled = (policyBehaviourFilter != null)
+											&& policyBehaviourFilter.isEnabled(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
 									try {
 										if (auditableEnabled) {
-											behaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+											policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
 										}
 										nodeService.setProperty(entityNodeRef, catalogModifiedDate, new Date());
 									} finally {
 										if (auditableEnabled) {
-											behaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+											policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
 										}
 									}
 								}
