@@ -1,18 +1,16 @@
 package fr.becpg.repo.sample;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Locale;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.NamespaceService;
-import org.alfresco.service.namespace.QName;
-import org.alfresco.util.Pair;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -659,6 +657,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
 	}
 
+<<<<<<< 23.4.1
 	Map<Pair<QName, String>, NodeRef> characts = new HashMap<>();
 
 	/**
@@ -681,6 +680,8 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		});
 	}
 	
+=======
+>>>>>>> 29af08d Fix #25868 - [Bug] Fix local semi-finished products allocation in manufacturing orders
 	private List<SurveyListDataItem> createEclairQMSSurveyList() {
 	    // Question 1: Choux Pastry Quality Check
 	    final SurveyQuestion question1 = getOrCreateSurveyQuestion(
