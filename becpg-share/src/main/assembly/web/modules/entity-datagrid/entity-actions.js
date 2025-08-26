@@ -293,6 +293,12 @@
                                     var recordFound = me._findNextItemByParameter(response.json.persistedObject, "nodeRef");
                                     if (recordFound != null) {
                                         me.onActionEdit(recordFound);
+                                    } else {
+                                        // No more items to edit - disable bulk edit mode
+                                        me.onActionEditBulkEdit = false;
+                                        Alfresco.util.PopupManager.displayMessage({
+                                            text: me.msg("message.bulk-edit.completed")
+                                        });
                                     }
                                 }
 
