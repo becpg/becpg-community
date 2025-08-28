@@ -520,7 +520,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	}
 
 	boolean isMultiValueProperty(String propValue, String modePropValue) {
-		return (modePropValue != null) && (propValue.indexOf(",") != -1);
+		return (propValue.indexOf(",") != -1);
 	}
 
 	/**
