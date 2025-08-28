@@ -32,6 +32,7 @@ import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.io.FileUtils;
+import org.apache.hc.core5.http.ParseException;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.entity.EntityService;
@@ -230,7 +231,7 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 		return templateId + "-" + name;
 	}
 
-	private void sendTplFile(ReportSession reportSession, String templateId, NodeRef tplNodeRef) throws ReportException, IOException {
+	private void sendTplFile(ReportSession reportSession, String templateId, NodeRef tplNodeRef) throws ReportException, IOException, ParseException {
 
 		Date dateModified = (Date) nodeService.getProperty(tplNodeRef, ContentModel.PROP_MODIFIED);
 		// Timestamp or -1
