@@ -37,7 +37,7 @@
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-report</artifactId>
-			<version>4.17.0.0</version>
+			<version>4.20.0.1</version>
 			<classifier>client</classifier>
 			<type>jar</type>
 			<exclusions>
@@ -92,12 +92,6 @@
                 <artifactId>jakarta.servlet-api</artifactId>
                 <scope>provided</scope>
           </dependency>
-
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<scope>provided</scope>
-		</dependency>
 
 		<dependency>
 		    <groupId>org.apache.lucene</groupId>
