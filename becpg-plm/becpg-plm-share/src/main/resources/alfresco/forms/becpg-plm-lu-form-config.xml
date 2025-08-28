@@ -145,6 +145,7 @@
           <show force="true" id="gs1:innerPackHeight"/>
           <show force="true" id="gs1:innerPackWidth"/>
           <show force="true" id="gs1:innerPackDepth"/>
+          <show force="true" id="gs1:innerPackDataCarrierTypeCode"/>
           <show force="true" id="gs1:secondaryPackagingTypeCode"/>
           <show force="false" id="pack:palletProductsPerBox"/>
           <show force="true" id="gs1:isTradeItemPackedIrregularly"/>
@@ -601,6 +602,7 @@
               <control-param name="unit">mm</control-param>
             </control>
           </field>
+          <field help-id="becpg.forms.help.gs1.dataCarrierTypeCode" id="gs1:innerPackDataCarrierTypeCode" mandatory="false" read-only="false" set="innerPack"/>
           <set appearance="bordered-panel" id="secondaryPackaging" label-id="becpg.forms.set.secondaryPackaging.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field help-id="becpg.forms.help.gs1.packagingTypeCode" id="gs1:secondaryPackagingTypeCode" mandatory="false" read-only="false" set="secondaryPackaging"/>
           <field id="pack:palletProductsPerBox" mandatory="false" read-only="false" set="secondaryPackaging"/>
@@ -1554,6 +1556,7 @@
           <show force="true" id="gs1:innerPackHeight"/>
           <show force="true" id="gs1:innerPackWidth"/>
           <show force="true" id="gs1:innerPackDepth"/>
+          <show force="true" id="gs1:innerPackDataCarrierTypeCode"/>
           <show force="true" id="gs1:secondaryPackagingTypeCode"/>
           <show force="false" id="pack:palletProductsPerBox"/>
           <show force="true" id="gs1:isTradeItemPackedIrregularly"/>
@@ -1997,6 +2000,7 @@
               <control-param name="unit">mm</control-param>
             </control>
           </field>
+          <field help-id="becpg.forms.help.gs1.dataCarrierTypeCode" id="gs1:innerPackDataCarrierTypeCode" mandatory="false" read-only="false" set="innerPack"/>
           <set appearance="bordered-panel" id="secondaryPackaging" label-id="becpg.forms.set.secondaryPackaging.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field help-id="becpg.forms.help.gs1.packagingTypeCode" id="gs1:secondaryPackagingTypeCode" mandatory="false" read-only="false" set="secondaryPackaging"/>
           <field id="pack:palletProductsPerBox" mandatory="false" read-only="false" set="secondaryPackaging"/>
