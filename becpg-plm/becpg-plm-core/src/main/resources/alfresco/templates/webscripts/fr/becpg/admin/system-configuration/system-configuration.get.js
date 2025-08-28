@@ -32,7 +32,8 @@ function main() {
         "beCPG.remote.maxResults.limit",
         "beCPG.security.supplierPermission",
         "beCPG.solr.enableIndexForTypes",
-        "beCPG.classify.rights.check"
+        "beCPG.classify.rights.check",
+        "beCPG.entity.documents.recursive.depth"
     ].forEach(function(p) {
         addAttribute(p, "system");
     });
