@@ -143,9 +143,6 @@
 		  
 		  <show force="false" id="gs1:sustainabilityFeatureCode"/>
 		  <show force="false" id="gs1:sustainabilityStatement"/>
-		  <show force="false" id="gs1:doesTradeItemContainPesticide"/>
-		  
-		  <show force="false" id="gs1:cbfDate"/>
 		  
           <show force="true" id="bcpg:unitPrice"/>
           <show force="true" id="bcpg:unitTotalCost"/>
@@ -667,10 +664,6 @@
 		  <set appearance="bordered-panel" id="sustainability" label-id="becpg.forms.set.sustainability.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
 		  <field id="gs1:sustainabilityFeatureCode" mandatory="false" read-only="false" set="sustainability"/>
 		  <field id="gs1:sustainabilityStatement" mandatory="false" read-only="false" set="sustainability"/>
-		  <field id="gs1:doesTradeItemContainPesticide" mandatory="false" read-only="false" set="sustainability"/>
-		  
-		  <set appearance="bordered-panel" id="cbf" label-id="becpg.forms.set.cbf.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
-		  <field id="gs1:cbfDate" mandatory="false" read-only="false" set="cbf"/>
 
           <set appearance="bordered-panel" id="profitability" label-id="becpg.forms.set.rentability.label" parent="mainTab" template="/org/alfresco/components/form/3-column-set.ftl"/>
           <field help-id="becpg.forms.help.unitPrice" id="bcpg:unitPrice" mandatory="false" read-only="false" set="profitability"/>
@@ -2442,8 +2435,6 @@
           <show force="true" id="bcpg:dropPackagingOfComponents"/>
           <show force="true" id="gs1:sustainabilityFeatureCode"/>
 		  <show force="true" id="gs1:sustainabilityStatement"/>
-		  <show force="true" id="gs1:doesTradeItemContainPesticide"/>
-		  <show force="true" id="gs1:cbfDate"/>
           <show force="true" id="gs1:innerPackTypeCode"/>
           <show force="true" id="gs1:productPerInnerPack"/>
           <show force="true" id="gs1:innerPackPerBox"/>
@@ -2819,9 +2810,6 @@
           <set appearance="bordered-panel" id="sustainability" label-id="becpg.forms.set.sustainability.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
 		  <field id="gs1:sustainabilityFeatureCode" mandatory="false" read-only="false" set="sustainability"/>
 		  <field id="gs1:sustainabilityStatement" mandatory="false" read-only="false" set="sustainability"/>
-		  <field id="gs1:doesTradeItemContainPesticide" mandatory="false" read-only="false" set="sustainability"/>
-		  <set appearance="bordered-panel" id="cbf" label-id="becpg.forms.set.cbf.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="gs1:cbfDate" mandatory="false" read-only="false" set="cbf"/>
           <set appearance="bordered-panel" id="profitability" label-id="becpg.forms.set.rentability.label" parent="mainTab" template="/org/alfresco/components/form/3-column-set.ftl"/>
           <field help-id="becpg.forms.help.unitPrice" id="bcpg:unitPrice" mandatory="false" read-only="false" set="profitability"/>
           <field id="bcpg:unitTotalCost" mandatory="false" read-only="true" set="profitability"/>
@@ -3373,8 +3361,6 @@
           <show force="false" id="bcpg:dropPackagingOfComponents"/>
           <show force="false" id="gs1:sustainabilityFeatureCode"/>
 		  <show force="false" id="gs1:sustainabilityStatement"/>
-		  <show force="false" id="gs1:doesTradeItemContainPesticide"/>
-		  <show force="false" id="gs1:cbfDate"/>
           <show force="false" id="gs1:innerPackTypeCode"/>
           <show force="false" id="gs1:productPerInnerPack"/>
           <show force="false" id="gs1:innerPackPerBox"/>
