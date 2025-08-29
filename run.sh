@@ -174,7 +174,7 @@ tail() {
 }
 
 test() {
-    $MVN_EXEC verify $EXTRA_ENV
+    $MVN_EXEC verify -B -ntp $EXTRA_ENV
 }
 
 reindex() {
