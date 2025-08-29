@@ -49,6 +49,7 @@ public class SurveyQuestion extends BeCPGDataObject {
 	private String responseCommentType;
 	private String responseCommentLabel;
 	private List<SurveyQuestion> nextQuestions;
+	private Boolean generationEnabled;
 
 	private Integer sort;
 	
@@ -59,6 +60,16 @@ public class SurveyQuestion extends BeCPGDataObject {
 	private String fsSurveyListName;
 	private List<NodeRef> subsidiaryRefs;
 	private List<NodeRef> plants;
+	
+	public void setGenerationEnabled(Boolean generationEnabled) {
+		this.generationEnabled = generationEnabled;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "survey:generationEnabled")
+	public Boolean getGenerationEnabled() {
+		return generationEnabled;
+	}
 	
 	/**
 	 * <p>Getter for the field <code>sort</code>.</p>
@@ -497,7 +508,7 @@ public class SurveyQuestion extends BeCPGDataObject {
 		result = prime * result + Objects.hash(fsLinkedCharactRefs, fsLinkedHierarchy, fsLinkedTypes, fsSurveyListName,
 				isMandatory, isVisible, label, nextQuestions, parent, plants, questionLowerNote, questionNote,
 				questionScore, questionUpperNote, questionUrl, responseCommentLabel, responseCommentType, responseType,
-				sort, subsidiaryRefs, scoreCriterion);
+				sort, subsidiaryRefs, scoreCriterion, generationEnabled);
 		return result;
 	}
 
@@ -527,7 +538,7 @@ public class SurveyQuestion extends BeCPGDataObject {
 				&& Objects.equals(responseCommentType, other.responseCommentType)
 				&& Objects.equals(responseType, other.responseType) && Objects.equals(sort, other.sort)
 				&& Objects.equals(subsidiaryRefs, other.subsidiaryRefs)
-				&& Objects.equals(scoreCriterion, other.scoreCriterion);
+				&& Objects.equals(scoreCriterion, other.scoreCriterion) && Objects.equals(generationEnabled, other.generationEnabled);
 	}
 
 	/** {@inheritDoc} */
