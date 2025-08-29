@@ -212,6 +212,30 @@
         </property>
     </bean>
 	
+	
+	   <bean id="patch.bcpg.project.surveyQuestionGeneratePatch" class="fr.becpg.repo.project.admin.patch.SurveyQuestionGeneratePatch" parent="beCPGBasePatch" >
+        <property name="id"><value>patch.bcpg.project.surveyQuestionGeneratePatch</value></property>
+        <property name="description"><value>patch.bcpg.project.surveyQuestionGeneratePatch.description</value></property>
+        <property name="fixesFromSchema" value="0"/>
+        <property name="fixesToSchema" value="20100" />
+        <property name="targetSchema" value="20101"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+        <property name="ruleService" ref="ruleService"/>
+         <property name="patchDAO">
+            <ref bean="patchDAO"/>
+        </property>
+        <property name="nodeDAO">
+            <ref bean="nodeDAO"/>
+        </property>
+        <property name="qnameDAO">
+            <ref bean="qnameDAO"/>
+        </property>
+          <property name="policyBehaviourFilter">
+            <ref bean="policyBehaviourFilter"/>
+        </property>
+    </bean>
+	
 
 	
 	
