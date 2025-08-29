@@ -195,6 +195,7 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 				() -> BeCPGQueryBuilder.createQuery().ofType(SurveyModel.TYPE_SURVEY_QUESTION)
 						.andPropQuery(SurveyModel.PROP_SURVEY_FS_SURVEY_LIST_NAME,
 								SurveyableEntityHelper.SURVEY_LIST_BASE_NAME)
+						.andPropEquals(SurveyModel.PROP_SURVEY_GENERATION_ENABLED, "true")
 						.inDB().list().stream().map(alfrescoRepository::findOne).map(SurveyQuestion.class::cast)
 						.filter(surveyQuestion -> surveyQuestion.getParent() == null).toList());
 		for (final Entry<Criterion, List<? extends Serializable>> entry : criteriaNodeRefs.entrySet()) {
