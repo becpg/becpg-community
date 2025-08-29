@@ -13,8 +13,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.Nullable;
 
@@ -74,6 +77,10 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	
 	@Autowired
 	private BeCPGAuditService beCPGAuditService;
+	
+	private ReentrantLock runCommandLock = new ReentrantLock();
+	
+	private ReentrantLock endCommandLock = new ReentrantLock();
 	
 	private BatchMonitor lastRunningBatch;
 	
@@ -150,7 +157,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 	/** {@inheritDoc} */
 	@Override
-	public synchronized String getRunningBatchInfo() {
+	public String getRunningBatchInfo() {
     BatchCommand<?> current = runningCommand.get();
     if (current != null) {
       BatchInfo info = current.getBatchInfo();
@@ -281,9 +288,11 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		
 		return false;
 	}
-
+	
 	public class BatchCommand<T> implements Runnable {
 
+		private CountDownLatch pauseLatch;
+		
 		private String batchId;
 		private BatchInfo batchInfo;
 		private List<BatchStep<T>> batchSteps;
@@ -309,19 +318,18 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		@Override
 		public void run() {
 			
-			boolean shouldWait = false;
+			runCommandLock.lock();
 			
-			synchronized(BatchQueueServiceImpl.this) {
+			try {
 				BatchCommand<?> currentRunningCommand = runningCommand.get();
 				if (currentRunningCommand != null) {
 					if (currentRunningCommand.getBatchInfo().getPriority() < this.getBatchInfo().getPriority()) {
-						pausedCommands.push(this);
+						pauseCommand(this);
 						if (logger.isInfoEnabled()) {
 							logger.info("Batch '" + this.getBatchId() + "' is waiting for '" + currentRunningCommand.getBatchId() + "' to finish");
 						}
-						shouldWait = true;
 					} else {
-						pausedCommands.push(currentRunningCommand);
+						pauseCommand(currentRunningCommand);
 						if (logger.isInfoEnabled()) {
 							logger.info("Batch '" + currentRunningCommand.getBatchId() + "' is paused because '" + this.getBatchId() + "' started");
 						}
@@ -330,10 +338,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				} else {
 					runningCommand.set(this);
 				}
-			}
-			
-			if (shouldWait) {
-				checkPausedCommand();
+			} finally {
+				runCommandLock.unlock();
 			}
 			
 			try (AuditScope scope = beCPGAuditService.startAudit(AuditType.BATCH)) {
@@ -452,10 +458,9 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 					}, false, true), batchInfo.getBatchUser());
 				}
 
-				batchInfo.setIsCompleted(true);
-
 			} finally {
-				synchronized(BatchQueueServiceImpl.this) {
+				endCommandLock.lock();
+				try {
 					if (cancelledBatches.contains(batchId)) {
 						cancelledBatches.remove(batchId);
 					}
@@ -466,15 +471,27 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 						runningCommand.set(null);
 					}
 					if (!pausedCommands.isEmpty()) {
-						runningCommand.set(pausedCommands.pop());
-						if (logger.isInfoEnabled()) {
-							logger.info("Resume batch: " + ((BatchCommand<?>) runningCommand.get()).getBatchId());
+						BatchCommand<?> nextCommand = pausedCommands.pop();
+						if (nextCommand != null && nextCommand.pauseLatch != null) {
+							nextCommand.pauseLatch.countDown();
+							runningCommand.set(nextCommand);
+							if (logger.isInfoEnabled()) {
+								logger.info("Resume batch: " + nextCommand.getBatchId());
+							}
 						}
 					}
+					this.pauseLatch = null;
+				} finally {
+					endCommandLock.unlock();
 				}
 			}
 		}
 
+		private void pauseCommand(BatchCommand<?> command) {
+			command.pauseLatch = new CountDownLatch(1);
+			pausedCommands.push(command);
+		}
+		
 		private void pushAndSetBatchAuthentication(BatchStep<T> batchStep) {
 			AuthenticationUtil.pushAuthentication();
 			
@@ -556,20 +573,18 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		}
 		
 		private void checkPausedCommand() {
-		    while (true) {
-		        synchronized(BatchQueueServiceImpl.this) {
-		            if (!pausedCommands.contains(this) || cancelledBatches.contains(this.getBatchId())) {
-		                break;
-		            }
-		        }
-		        try {
-		            Thread.sleep(500);
-		        } catch (InterruptedException e) {
-		            Thread.currentThread().interrupt();
-		            logger.error("error while pausing command", e);
-		            break;
-		        }
-		    }
+			CountDownLatch currentPauseLatch = this.pauseLatch;
+			if (currentPauseLatch != null) {
+				try {
+	                while (!currentPauseLatch.await(500, TimeUnit.MILLISECONDS)) {
+	                    if (cancelledBatches.contains(this.getBatchId())) {
+	                        break;
+	                    }
+	                }
+	            } catch (InterruptedException e) {
+	                Thread.currentThread().interrupt();
+	            }
+			}
 		}
 		
 		/*
@@ -597,7 +612,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				return false;
 			}
 			
-			return Objects.equals(batchId, other.batchId) && Objects.equals(batchInfo.getEntityDescription(), other.batchInfo.getEntityDescription());
+			return Objects.equals(batchId, other.batchId);
 		}
 
 		private BatchQueueServiceImpl getEnclosingInstance() {
