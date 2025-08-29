@@ -3726,7 +3726,6 @@
 					<show id="bcpg:locationZip" />
 					<show id="bcpg:locationState" />
 					<show id="bcpg:locationCountry" />
-					<show id="gs1:plantHealthMark" force="true" />
 					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
@@ -3743,7 +3742,6 @@
 						</control>
 					</field>
 					<field id="bcpg:plantTel" set="2-col" />
-					<field id="gs1:plantHealthMark" set="2-col" />
 					<field id="bcpg:plantPackerCode" set="2-col" />
 					<field id="bcpg:plantApprovalNumbers" set="2-col" />
 					<field id="bcpg:plantCertifications" mandatory="false" read-only="false" set="2-col">
@@ -3790,7 +3788,6 @@
 					<show id="bcpg:locationZip" />
 					<show id="bcpg:locationState" />
 					<show id="bcpg:locationCountry" />
-					<show id="gs1:plantHealthMark" force="true" />
 					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
@@ -3810,7 +3807,6 @@
 						</control>
 					</field>
 					<field id="bcpg:plantTel" set="2-col" />
-					<field id="gs1:plantHealthMark" set="2-col" />
 					<field id="bcpg:plantPackerCode" set="2-col" />
 					<field id="bcpg:plantApprovalNumbers" set="2-col" />
 					<field id="sec:readGroups" set="2-col" />
@@ -3865,7 +3861,6 @@
 					<show id="bcpg:locationZip" />
 					<show id="bcpg:locationState" />
 					<show id="bcpg:locationCountry" />
-					<show id="gs1:plantHealthMark" force="true" />
 					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
@@ -3881,7 +3876,6 @@
 						</control>
 					</field>
 					<field id="bcpg:plantTel" set="2-col" />
-					<field id="gs1:plantHealthMark" set="2-col" />
 					<field id="bcpg:plantPackerCode" set="2-col" />
 					<field id="bcpg:plantApprovalNumbers" set="2-col" />
 					<field id="bcpg:plantCertifications" mandatory="false" read-only="false" set="2-col">
@@ -3930,7 +3924,6 @@
 					<show id="bcpg:locationZip" />
 					<show id="bcpg:locationState" />
 					<show id="bcpg:locationCountry" />
-					<show id="gs1:plantHealthMark" force="true" />
 					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
@@ -3951,7 +3944,6 @@
 						</control>
 					</field>
 					<field id="bcpg:plantTel" set="2-col" />
-					<field id="gs1:plantHealthMark" set="2-col" />
 					<field id="bcpg:plantPackerCode" set="2-col" />
 					<field id="bcpg:plantApprovalNumbers" set="2-col" />
 					<field id="sec:readGroups" set="2-col" />
@@ -3993,7 +3985,6 @@
 					<show id="cm:name" />
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
-					<show id="gs1:plantHealthMark" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:plantCertifications" mandatory="false" read-only="false">
@@ -4001,7 +3992,6 @@
 							<control-param name="ds">becpg/autocomplete/certification</control-param>
 						</control>
 					</field>
-					<field id="gs1:plantHealthMark" />
 				</appearance>
 			</form>
 
@@ -4018,7 +4008,6 @@
 					<show id="bcpg:locationZip" />
 					<show id="bcpg:locationState" />
 					<show id="bcpg:locationCountry" />
-					<show id="gs1:plantHealthMark" force="true" />
 					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
@@ -4029,7 +4018,6 @@
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1" />
 					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2" />
-					<field id="gs1:plantHealthMark" />
 				</appearance>
 			</form>
 			<form id="datagrid-systemEntity">
@@ -4045,7 +4033,6 @@
 					<show id="bcpg:locationZip" />
 					<show id="bcpg:locationState" />
 					<show id="bcpg:locationCountry" />
-					<show id="gs1:plantHealthMark" force="true" />
 					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
@@ -4062,7 +4049,6 @@
 					<field id="bcpg:isDeleted">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
-					<field id="gs1:plantHealthMark" />
 				</appearance>
 			</form>
 		</forms>
