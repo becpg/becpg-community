@@ -156,6 +156,10 @@
 				<property name="survey:responseCommentLabel">
 					<type>d:mltext</type>
 				</property>
+				<property name="survey:generationEnabled">
+					<type>d:boolean</type>
+					<default>false</default>
+				</property>
 			</properties>
 			<associations>
 				<association name="survey:nextQuestion">
@@ -201,7 +205,7 @@
 				</property>
 				<property name="survey:fsSurveyListName">
 					<type>d:text</type>
-					<default>surveyList</default>
+					<default></default>
 					<constraints>
 						<constraint ref="survey:surveyListNames" />
 					</constraints>
