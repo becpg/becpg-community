@@ -38,6 +38,8 @@ public final class SurveyModel {
 	/** Constant <code>PROP_SURVEY_FS_SURVEY_LIST_NAME</code> */
 	public static final QName PROP_SURVEY_FS_SURVEY_LIST_NAME = QName.createQName(SURVEY_URI, "fsSurveyListName");
 	
+	public static final QName PROP_SURVEY_GENERATION_ENABLED = QName.createQName(SURVEY_URI, "generationEnabled");
+	
 	/** Constant <code>TYPE_SURVEY_LIST</code> */
 	public static final QName TYPE_SURVEY_LIST = QName.createQName(SURVEY_URI, "surveyList");
 	
