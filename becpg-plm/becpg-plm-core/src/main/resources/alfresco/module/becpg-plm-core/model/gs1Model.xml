@@ -2872,6 +2872,37 @@
 						<constraint ref="gs1:sustainabilityFeatureCodes" />
 					</constraints>
 				</property>
+				<property name="gs1:sustainabilityStatement">
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="gs1:doesTradeItemContainPesticide">
+					<type>d:boolean</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				
+				<property name="gs1:plantHealthMark">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				
+				<property name="gs1:cbfDate">
+					<type>d:date</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
 			</properties>
 			<associations>
 
@@ -3119,18 +3150,6 @@
 					<constraints>
 						<constraint ref="gs1:feedTypeCodes" />
 					</constraints>
-				</property>
-			</properties>
-		</aspect>
-		
-		<aspect name="gs1:plantAspect">
-			<properties>
-				<property name="gs1:plantHealthMark">
-					<type>d:text</type>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					</index>
 				</property>
 			</properties>
 		</aspect>
