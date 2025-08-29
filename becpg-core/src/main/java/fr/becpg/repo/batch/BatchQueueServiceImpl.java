@@ -579,7 +579,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				return false;
 			}
 			
-			return Objects.equals(batchId, other.batchId) && Objects.equals(batchInfo.getEntityDescription(), other.batchInfo.getEntityDescription());
+			return Objects.equals(batchId, other.batchId);
 		}
 
 		private BatchQueueServiceImpl getEnclosingInstance() {
