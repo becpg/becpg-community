@@ -399,8 +399,8 @@ public class EntityServiceImpl implements EntityService {
 
 	/** {@inheritDoc} */
 	@Override
-	public Map<NodeRef, NodeRef> getDocumentsByType(NodeRef entityNodeRef) {
-		Map<NodeRef, NodeRef> docByType = new HashMap<>();
+	public Map<NodeRef, List<NodeRef>> getDocumentsByType(NodeRef entityNodeRef) {
+		Map<NodeRef, List<NodeRef>> docByType = new HashMap<>();
 		int maxDepth = getDocumentsRecursiveDepth();
 		
 		// Process files in the root entity folder
@@ -435,13 +435,18 @@ public class EntityServiceImpl implements EntityService {
 	 * @param folderNodeRef the folder to process
 	 * @param docByType the map to populate with documents by type
 	 */
-	private void processDocumentsInFolder(NodeRef folderNodeRef, Map<NodeRef, NodeRef> docByType) {
+	private void processDocumentsInFolder(NodeRef folderNodeRef, Map<NodeRef, List<NodeRef>> docByType) {
 		for (FileInfo fileInfo : fileFolderService.listFiles(folderNodeRef)) {
 			NodeRef fileNodeRef = fileInfo.getNodeRef();
 			if (nodeService.hasAspect(fileNodeRef, BeCPGModel.ASPECT_DOCUMENT_ASPECT)) {
 				NodeRef docType = associationService.getTargetAssoc(fileNodeRef, BeCPGModel.ASSOC_DOCUMENT_TYPE_REF);
 				if (docType != null) {
-					docByType.put(docType, fileNodeRef);
+					List<NodeRef> docList = docByType.get(docType);
+					if (docList == null) {
+						docList = new ArrayList<>();
+						docByType.put(docType, docList);
+					}
+					docList.add(fileNodeRef);
 				}
 			}
 		}
@@ -455,7 +460,7 @@ public class EntityServiceImpl implements EntityService {
 	 * @param currentDepth the current recursion depth
 	 * @param maxDepth the maximum depth to recurse
 	 */
-	private void processFoldersRecursively(NodeRef parentNodeRef, Map<NodeRef, NodeRef> docByType, int currentDepth, int maxDepth) {
+	private void processFoldersRecursively(NodeRef parentNodeRef, Map<NodeRef, List<NodeRef>> docByType, int currentDepth, int maxDepth) {
 		if (currentDepth >= maxDepth) {
 			return;
 		}
