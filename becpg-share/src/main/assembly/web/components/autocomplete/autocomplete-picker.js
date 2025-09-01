@@ -509,25 +509,39 @@
                                 me.widgets.oAC.textboxBlurEvent
                                         .subscribe(function()
                                         {
-
+                                            var inputEl = me.widgets.oAC.getInputEl();
+                                            
+                                            // Handle case when field is cleared with delete/backspace
+                                            if ((!inputEl.value || inputEl.value === '') && me.widgets.oAC._nKeyCode) {
+                                                me.widgets.oAC._clearSelection();
+                                                // Clear any dependent fields
+                                                if (me.options.parentFieldHtmlId) {
+                                                    var parentInput = Dom.get(me.options.parentFieldHtmlId);
+                                                    if (parentInput && (!parentInput.value || parentInput.value === '')) {
+                                                        // Clear dependent fields when parent is empty
+                                                        me.widgets.oAC._clearSelection();
+                                                        var inputAdded = Dom.get(me.controlId + '-added');
+                                                        var inputRemoved = Dom.get(me.controlId + '-removed');
+                                                        if (inputAdded) inputAdded.value = '';
+                                                        if (inputRemoved) inputRemoved.value = '';
+                                                        YAHOO.Bubbling.fire("mandatoryControlValueUpdated", inputEl);
+                                                    }
+                                                }
+                                            }
+                                            
                                             if (me.openOnce && (!me.widgets.oAC._bOverContainer || (me.widgets.oAC._nKeyCode == 9)))
                                             {
-                                                // Current query needs to be
-                                                // validated as a selection
+                                                // Current query needs to be validated as a selection
                                                 if (!me.widgets.oAC._bItemSelected)
                                                 {
                                                     var elMatchListItem = me.widgets.oAC._textMatchesOption();
-                                                    // Container is closed or
-                                                    // current query doesn't
-                                                    // match any result
+                                                    // Container is closed or current query doesn't match any result
                                                     if (!me.widgets.oAC._bContainerOpen || (me.widgets.oAC._bContainerOpen && (elMatchListItem === null)))
                                                     {
-                                                        // Force selection is
-                                                        // enabled so clear the
-                                                        // current query
+                                                        // Force selection is enabled so clear the current query
                                                         me.widgets.oAC._clearSelection();
                                                         // Notify dependents when selection is cleared
-                                                        YAHOO.Bubbling.fire("mandatoryControlValueUpdated", me.widgets.oAC.getInputEl());
+                                                        YAHOO.Bubbling.fire("mandatoryControlValueUpdated", inputEl);
                                                     }
                                                 }
                                             }
