@@ -37,16 +37,20 @@ import fr.becpg.repo.formulation.spel.SpelHelper;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RepoService;
+import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
+import fr.becpg.repo.product.data.ScorableEntity;
 import fr.becpg.repo.product.data.document.DocumentTypeItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.repository.model.StateableEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.survey.data.SurveyListDataItem;
+import fr.becpg.repo.survey.data.SurveyableEntity;
 import fr.becpg.repo.survey.helper.SurveyableEntityHelper;
 
 /**
@@ -72,7 +76,7 @@ import fr.becpg.repo.survey.helper.SurveyableEntityHelper;
  *
  * @author matthieu
  */
-public class DocumentFormulationHandler extends FormulationBaseHandler<ProductData> {
+public class DocumentFormulationHandler extends FormulationBaseHandler<RepositoryEntity> {
 
 	private static final Log logger = LogFactory.getLog(DocumentFormulationHandler.class);
 
@@ -233,79 +237,85 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 	 * </p>
 	 */
 	@Override
-	public boolean process(ProductData productData) {
+	public boolean process(RepositoryEntity repositoryEntity) {
 
-		if (productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (productData instanceof ProductSpecificationData) || (productData.getNodeRef() == null)) {
+		if (repositoryEntity.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (repositoryEntity instanceof ProductSpecificationData)
+				|| (repositoryEntity.getNodeRef() == null)) {
 			return true;
 		}
 
-		logger.debug("DocumentFormulationHandler::process() <- " + productData.getNodeRef());
+		logger.debug("DocumentFormulationHandler::process() <- " + repositoryEntity.getNodeRef());
 
 		// Map to track documents by their document type
-		Map<NodeRef, NodeRef> docByType = entityService.getDocumentsByType(productData.getNodeRef());
+		Map<NodeRef, List<NodeRef>> docByType = entityService.getDocumentsByType(repositoryEntity.getNodeRef());
 
 		// Process all document types to generate documents if needed
 		for (NodeRef docTypeNodeRef : BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_DOCUMENT_TYPE).inDB().list()) {
 			DocumentTypeItem docTypeItem = (DocumentTypeItem) alfrescoRepository.findOne(docTypeNodeRef);
 
-			if ((docTypeItem.isSynchronisedDocumentType() && isDocTypeMatchProduct(productData, docTypeItem))
+			if ((docTypeItem.isSynchronisedDocumentType() && isDocTypeMatchProduct(repositoryEntity, docTypeItem))
 					&& !docByType.containsKey(docTypeNodeRef)) {
 				// Create new document if it doesn't exist yet
-				NodeRef docNodeRef = createDocument(productData, docTypeItem);
+				NodeRef docNodeRef = createDocument(repositoryEntity, docTypeItem);
 				if (docNodeRef != null) {
-					docByType.put(docTypeNodeRef, docNodeRef);
+					List<NodeRef> docList = new ArrayList<>();
+					docList.add(docNodeRef);
+					docByType.put(docTypeNodeRef, docList);
 				}
 			}
 		}
 
 		ExpressionParser parser = formulaService.getSpelParser();
-		StandardEvaluationContext context = formulaService.createEntitySpelContext(productData);
+		StandardEvaluationContext context = formulaService.createEntitySpelContext(repositoryEntity);
 
 		// Process all documents to update their state and mandatory status
-		for (Map.Entry<NodeRef, NodeRef> entry : docByType.entrySet()) {
+		for (Map.Entry<NodeRef, List<NodeRef>> entry : docByType.entrySet()) {
 			NodeRef docTypeNodeRef = entry.getKey();
-			NodeRef docNodeRef = entry.getValue();
+			List<NodeRef> docNodeRefs = entry.getValue();
 
 			DocumentTypeItem docTypeItem = (DocumentTypeItem) alfrescoRepository.findOne(docTypeNodeRef);
 
-
 			boolean isMandatory = false;
+			for (NodeRef docNodeRef : docNodeRefs) {
+				String documentState = (String) nodeService.getProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_STATE);
 
-			String documentState = (String) nodeService.getProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_STATE);
+				//We do not delete but set mandatory to false
+				if (docTypeItem.isSynchronisedDocumentType() && !isDocTypeMatchProduct(repositoryEntity, docTypeItem)) {
 
-			//We do not delete but set mandatory to false
-			if (docTypeItem.isSynchronisedDocumentType() && !isDocTypeMatchProduct(productData, docTypeItem)) {
+					if (SystemState.Simulation.toString().equals(documentState)) {
+						nodeService.deleteNode(docNodeRef);
+						break;
+					}
 
-				if (SystemState.Simulation.toString().equals(documentState)) {
-					nodeService.deleteNode(docNodeRef);
-					break;
+				} else {
+					// Update document mandatory status
+					isMandatory = calculateDocumentIsMandatory(repositoryEntity, docTypeItem, parser, context);
 				}
 
-			} else {
-				// Update document mandatory status
-				isMandatory = calculateDocumentIsMandatory(productData, docTypeItem, parser, context);
+				nodeService.setProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_IS_MANDATORY, isMandatory);
+
+				
+				if(repositoryEntity instanceof ScorableEntity scorableEntity) {
+					if (isMandatory && SystemState.Simulation.toString().equals(documentState)) {
+						scorableEntity.getReqCtrlList()
+								.add(RequirementListDataItem.forbidden()
+										.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DOCUMENT_MANDATORY,
+												mlNodeService.getProperty(docTypeItem.getNodeRef(), BeCPGModel.PROP_CHARACT_NAME)))
+										.withCharact(docTypeItem.getNodeRef()).ofDataType(RequirementDataType.Completion));
+					}
+				}
+
+				// Update document category
+				nodeService.setProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_CATEGORY, docTypeItem.getCategory());
+
+				// Add entity reference
+				associationService.update(docNodeRef, BeCPGModel.ASSOC_DOCUMENT_ENTITY_REF, repositoryEntity.getNodeRef());
+
+				// Update document state and effectivity dates
+				if(repositoryEntity instanceof StateableEntity stateableEntity) {
+					updateDocumentState(stateableEntity, docNodeRef);
+				}
 			}
-
-			nodeService.setProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_IS_MANDATORY, isMandatory);
-
-
-			if (isMandatory && SystemState.Simulation.toString().equals(documentState)) {
-				productData.getReqCtrlList()
-						.add(RequirementListDataItem.forbidden()
-								.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DOCUMENT_MANDATORY,
-										mlNodeService.getProperty(docTypeItem.getNodeRef(), BeCPGModel.PROP_CHARACT_NAME)))
-								.withCharact(docTypeItem.getNodeRef()).ofDataType(RequirementDataType.Completion));
-			}
-
-			
-			// Update document category
-			nodeService.setProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_CATEGORY, docTypeItem.getCategory());
-
-			// Add entity reference
-			associationService.update(docNodeRef, BeCPGModel.ASSOC_DOCUMENT_ENTITY_REF, productData.getNodeRef());
-
-			// Update document state and effectivity dates
-			updateDocumentState(productData, docNodeRef);
 		}
 
 		return true;
@@ -323,7 +333,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 	 * @param docTypeItem the document type configuration
 	 * @return the NodeRef of the created document, or null if creation failed
 	 */
-	private NodeRef createDocument(ProductData productData, DocumentTypeItem docTypeItem) {
+	private NodeRef createDocument(RepositoryEntity productData, DocumentTypeItem docTypeItem) {
 
 		// Determine the destination path
 		String destPath = (docTypeItem.getDestPath() != null) && !docTypeItem.getDestPath().trim().isEmpty() ? docTypeItem.getDestPath()
@@ -341,9 +351,13 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 		// Generate document name using the template format
 		String documentName = generateDocumentName(productData, docTypeItem);
 
-		// Create the document file
-		FileInfo fileInfo = fileFolderService.create(destFolder, documentName, ContentModel.TYPE_CONTENT);
-		NodeRef docNodeRef = fileInfo.getNodeRef();
+		NodeRef docNodeRef = nodeService.getChildByName(destFolder, ContentModel.ASSOC_CONTAINS, documentName);
+
+		if (docNodeRef == null) {
+			// Create the document file
+			FileInfo fileInfo = fileFolderService.create(destFolder, documentName, ContentModel.TYPE_CONTENT);
+			docNodeRef = fileInfo.getNodeRef();
+		}
 
 		try {
 			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
@@ -379,7 +393,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 	 * @param docTypeItem the document type containing the name format template
 	 * @return the generated document name
 	 */
-	private String generateDocumentName(ProductData productData, DocumentTypeItem docTypeItem) {
+	private String generateDocumentName(RepositoryEntity productData, DocumentTypeItem docTypeItem) {
 		String nameFormat = docTypeItem.getNameFormat();
 		String documentName = docTypeItem.getCharactName();
 
@@ -409,17 +423,17 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 	 * @param productData the product data containing the state to synchronize with
 	 * @param docNodeRef the node reference of the document to update
 	 */
-	private void updateDocumentState(ProductData productData, NodeRef docNodeRef) {
+	private void updateDocumentState(StateableEntity stateableEntity, NodeRef docNodeRef) {
 
 		// Get current document state
 		String documentState = (String) nodeService.getProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_STATE);
 
 		if (SystemState.ToValidate.toString().equals(documentState)) {
-			if (SystemState.Valid.equals(productData.getState())) {
+			if (SystemState.Valid.toString().equals(stateableEntity.getEntityState())) {
 				nodeService.setProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_STATE, SystemState.Valid.toString());
-			} else if (SystemState.Stopped.equals(productData.getState())) {
+			} else if (SystemState.Stopped.toString().equals(stateableEntity.getEntityState())) {
 				nodeService.setProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_STATE, SystemState.Stopped.toString());
-			} else if (SystemState.Archived.equals(productData.getState())) {
+			} else if (SystemState.Archived.toString().equals(stateableEntity.getEntityState())) {
 				nodeService.setProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_STATE, SystemState.Archived.toString());
 			}
 		}
@@ -438,7 +452,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 	 * @param context the evaluation context for formula evaluation
 	 * @return true if the document is mandatory, false otherwise
 	 */
-	private boolean calculateDocumentIsMandatory(ProductData productData, DocumentTypeItem docTypeItem, ExpressionParser parser,
+	private boolean calculateDocumentIsMandatory(RepositoryEntity repositoryEntity, DocumentTypeItem docTypeItem, ExpressionParser parser,
 			StandardEvaluationContext context) {
 
 		// Check if explicitly mandatory
@@ -463,23 +477,27 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 						if (ret instanceof Boolean mandatory) {
 							return mandatory;
 						} else {
-							productData.getReqCtrlList()
+							if(repositoryEntity instanceof ScorableEntity scorableEntity) {
+								scorableEntity.getReqCtrlList()
 									.add(RequirementListDataItem.tolerated()
 											.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DOCUMENT_FORMULATION_ERROR,
 													mlNodeService.getProperty(docTypeItem.getNodeRef(), BeCPGModel.PROP_CHARACT_NAME),
 													I18NUtil.getMessage("message.formulate.formula.incorrect.type.boolean", Locale.getDefault())))
 											.withCharact(docTypeItem.getNodeRef()).ofDataType(RequirementDataType.Formulation));
+							}
 						}
 					}
 				}
 			} catch (Exception e) {
 				logger.error("Error evaluating document mandatory formula: " + formulaText, e);
 
-				productData.getReqCtrlList()
+				if(repositoryEntity instanceof ScorableEntity scorableEntity) {
+					scorableEntity.getReqCtrlList()
 						.add(RequirementListDataItem.tolerated()
 								.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DOCUMENT_FORMULATION_ERROR,
 										mlNodeService.getProperty(docTypeItem.getNodeRef(), BeCPGModel.PROP_CHARACT_NAME), e.getLocalizedMessage()))
 								.withCharact(docTypeItem.getNodeRef()).ofDataType(RequirementDataType.Formulation));
+				}
 
 			}
 		}
@@ -504,11 +522,11 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 	 * @param docTypeItem the document type configuration
 	 * @return true if the document type matches the product, false otherwise
 	 */
-	private boolean isDocTypeMatchProduct(ProductData productData, DocumentTypeItem docTypeItem) {
+	private boolean isDocTypeMatchProduct(RepositoryEntity repositoryEntity, DocumentTypeItem docTypeItem) {
 		// Check product type match
 		List<String> linkedTypes = docTypeItem.getLinkedTypes();
 		if (CollectionUtils.isNotEmpty(linkedTypes)) {
-			QName productTypeQName = nodeService.getType(productData.getNodeRef());
+			QName productTypeQName = nodeService.getType(repositoryEntity.getNodeRef());
 			boolean typeMatch = false;
 
 			for (String typeName : linkedTypes) {
@@ -524,29 +542,31 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 			}
 		}
 
-		// Check hierarchy match
-		List<NodeRef> linkedHierarchy = docTypeItem.getLinkedHierarchy();
-		if (CollectionUtils.isNotEmpty(linkedHierarchy)) {
-			NodeRef hierarchy1 = productData.getHierarchy1();
-			NodeRef hierarchy2 = productData.getHierarchy2();
-
-			boolean hierarchyMatch = false;
-			for (NodeRef hierarchyRef : linkedHierarchy) {
-				if (hierarchyRef.equals(hierarchy1) || hierarchyRef.equals(hierarchy2)) {
-					hierarchyMatch = true;
-					break;
+		if(repositoryEntity instanceof HierarchicalEntity hierarchicalEntity) {
+			// Check hierarchy match
+			List<NodeRef> linkedHierarchy = docTypeItem.getLinkedHierarchy();
+			if (CollectionUtils.isNotEmpty(linkedHierarchy)) {
+				NodeRef hierarchy1 = hierarchicalEntity.getHierarchy1();
+				NodeRef hierarchy2 = hierarchicalEntity.getHierarchy2();
+	
+				boolean hierarchyMatch = false;
+				for (NodeRef hierarchyRef : linkedHierarchy) {
+					if (hierarchyRef.equals(hierarchy1) || hierarchyRef.equals(hierarchy2)) {
+						hierarchyMatch = true;
+						break;
+					}
 				}
-			}
-
-			if (!hierarchyMatch) {
-				return false;
+	
+				if (!hierarchyMatch) {
+					return false;
+				}
 			}
 		}
 
 		// Check charact refs match
 		List<NodeRef> linkedCharactRefs = docTypeItem.getLinkedCharactRefs();
 		if (CollectionUtils.isNotEmpty(linkedCharactRefs)) {
-			List<NodeRef> productCharacts = getProductCharacts(productData);
+			List<NodeRef> productCharacts = getProductCharacts(repositoryEntity);
 
 			boolean charactMatch = false;
 			for (NodeRef charactRef : linkedCharactRefs) {
@@ -562,24 +582,29 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 
 		// Check subsidiary match
-		List<NodeRef> subsidiaryRefs = docTypeItem.getSubsidiaryRefs();
-		if (CollectionUtils.isNotEmpty(subsidiaryRefs)) {
-			List<NodeRef> productSubsidiaries = productData.getSubsidiaryRefs();
-
-			if (CollectionUtils.isEmpty(productSubsidiaries) || Collections.disjoint(subsidiaryRefs, productSubsidiaries)) {
-				return false;
+		if(repositoryEntity instanceof ProductData productData) {
+			List<NodeRef> subsidiaryRefs = docTypeItem.getSubsidiaryRefs();
+			if (CollectionUtils.isNotEmpty(subsidiaryRefs)) {
+				List<NodeRef> productSubsidiaries = productData.getSubsidiaryRefs();
+	
+				if (CollectionUtils.isEmpty(productSubsidiaries) || Collections.disjoint(subsidiaryRefs, productSubsidiaries)) {
+					return false;
+				}
 			}
 		}
 
 		// Check plants match
-		List<NodeRef> plants = docTypeItem.getPlants();
-		if (CollectionUtils.isNotEmpty(plants)) {
-			List<NodeRef> productPlants = productData.getPlants();
-
-			if (CollectionUtils.isEmpty(productPlants) || Collections.disjoint(plants, productPlants)) {
-				return false;
+		if(repositoryEntity instanceof ProductData productData) {
+			List<NodeRef> plants = docTypeItem.getPlants();
+			if (CollectionUtils.isNotEmpty(plants)) {
+				List<NodeRef> productPlants = productData.getPlants();
+	
+				if (CollectionUtils.isEmpty(productPlants) || Collections.disjoint(plants, productPlants)) {
+					return false;
+				}
 			}
 		}
+		
 
 		return true;
 	}
@@ -592,46 +617,32 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<ProductDa
 	 * @param productData the product data containing characteristics
 	 * @return list of node references for all product characteristics
 	 */
-	private List<NodeRef> getProductCharacts(ProductData productData) {
+	private List<NodeRef> getProductCharacts(RepositoryEntity repositoryEntity) {
 		List<NodeRef> productCharacts = new ArrayList<>();
 
 		// Get claims
-		List<NodeRef> claims = CollectionUtils.isEmpty(productData.getLabelClaimList()) ? 
-				List.of() : 
-				productData.getLabelClaimList().stream()
-					.filter(p -> LabelClaimListDataItem.VALUE_CERTIFIED.equals(p.getLabelClaimValue()))
-					.map(LabelClaimListDataItem::getLabelClaim)
-					.toList();
-		if (CollectionUtils.isNotEmpty(claims)) {
-			productCharacts.addAll(claims);
+		if(repositoryEntity instanceof ProductData productData) {
+			List<NodeRef> claims = CollectionUtils.isEmpty(productData.getLabelClaimList()) ? List.of()
+					: productData.getLabelClaimList().stream().filter(p -> LabelClaimListDataItem.VALUE_CERTIFIED.equals(p.getLabelClaimValue()))
+							.map(LabelClaimListDataItem::getLabelClaim).toList();
+			if (CollectionUtils.isNotEmpty(claims)) {
+				productCharacts.addAll(claims);
+			}
 		}
 
-		//		// Get certifications
-		//		List<NodeRef> certifications = associationService.getTargetAssocs(productData.getNodeRef(), PLMModel.ASSOC_SUBSIDIARY_CERTIFICATIONS);
-		//		if (CollectionUtils.isNotEmpty(certifications)) {
-		//			productCharacts.addAll(certifications);
-		//		}
-
-		// Get surveys with defensive null checks
-		Map<String, List<SurveyListDataItem>> surveyMap = SurveyableEntityHelper.getNamesSurveyLists(alfrescoRepository, productData);
-		final List<SurveyListDataItem> surveyList = surveyMap == null ? 
-				List.of() : 
-				surveyMap.values().stream()
-					.filter(Objects::nonNull)
-					.flatMap(List::stream)
-					.filter(Objects::nonNull)
-					.toList();
-
-		List<NodeRef> surveys = surveyList.isEmpty() ? 
-				List.of() : 
-				surveyList.stream()
-					.map(SurveyListDataItem::getChoices)
-					.filter(Objects::nonNull)
-					.flatMap(List::stream)
-					.filter(Objects::nonNull)
-					.toList();
-		if (CollectionUtils.isNotEmpty(surveys)) {
-			productCharacts.addAll(surveys);
+	
+		if(repositoryEntity instanceof SurveyableEntity surveyableEntity) {
+			// Get surveys with defensive null checks
+			Map<String, List<SurveyListDataItem>> surveyMap = SurveyableEntityHelper.getNamesSurveyLists(alfrescoRepository, surveyableEntity);
+			final List<SurveyListDataItem> surveyList = surveyMap == null ? List.of()
+					: surveyMap.values().stream().filter(Objects::nonNull).flatMap(List::stream).filter(Objects::nonNull).toList();
+	
+			List<NodeRef> surveys = surveyList.isEmpty() ? List.of()
+					: surveyList.stream().map(SurveyListDataItem::getChoices).filter(Objects::nonNull).flatMap(List::stream).filter(Objects::nonNull)
+							.toList();
+			if (CollectionUtils.isNotEmpty(surveys)) {
+				productCharacts.addAll(surveys);
+			}
 		}
 
 		return productCharacts;
