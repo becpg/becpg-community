@@ -270,6 +270,29 @@ public class AuthorityHelper implements InitializingBean {
 		return false;
 	}
 	
+	public static void enableAccount(String userName) {
+		if (instance.personService.personExists(userName)) {
+			if (instance.authorityService.isAdminAuthority(AuthenticationUtil.getFullyAuthenticatedUser())) {
+				if (!instance.authenticationService.isAuthenticationMutable(userName)) {
+					instance.nodeService.removeAspect(instance.personService.getPerson(userName), ContentModel.ASPECT_PERSON_DISABLED);
+					return;
+				}
+				instance.authenticationService.setAuthenticationEnabled(userName, true);
+			}
+		}
+	}
+	
+	public static void disableAccount(String userName) {
+		if (instance.personService.personExists(userName)) {
+			NodeRef personNodeRef = instance.personService.getPerson(userName);
+			if (instance.authenticationService.isAuthenticationMutable(userName)) {
+				instance.authenticationService.setAuthenticationEnabled(userName, false);
+			} else {
+				instance.nodeService.addAspect(personNodeRef, ContentModel.ASPECT_PERSON_DISABLED, null);
+			}
+		}
+	}
+	
 	/**
 	 * <p>groupHasPermission.</p>
 	 *

@@ -52,6 +52,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -598,19 +599,25 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		if ((supplierEmail != null) && !supplierEmail.isBlank()) {
 			NodeRef oldSupplierAccount = contactListAccounts.stream()
 					.filter(a -> !supplierEmail.equals(nodeService.getProperty(a, ContentModel.PROP_EMAIL))).findFirst().orElse(null);
-			NodeRef newSupplierAccount = createExternalUser(supplierEmail, supplierFirstName, supplierLastName, true, null);
-			if (nodeService.hasAspect(newSupplierAccount, ContentModel.ASPECT_PERSON_DISABLED)) {
-				nodeService.removeAspect(newSupplierAccount, ContentModel.ASPECT_PERSON_DISABLED);
+			NodeRef supplierAccount = null;
+			if (personService.personExists(supplierEmail)) {
+				supplierAccount = personService.getPerson(supplierEmail);
+			} else {
+				supplierAccount = createExternalUser(supplierEmail, supplierFirstName, supplierLastName, true, null);
+			}
+			String supplierUserName = (String) nodeService.getProperty(supplierAccount, ContentModel.PROP_USERNAME);
+			if (!AuthorityHelper.isAccountEnabled(supplierUserName)) {
+				AuthorityHelper.enableAccount(supplierUserName);
 			}
 			if (oldSupplierAccount != null) {
 				nodeService.setProperty(oldSupplierAccount, ProjectModel.PROP_QNAME_DELEGATION_STATE, true);
 				nodeService.setProperty(oldSupplierAccount, ProjectModel.PROP_QNAME_REASSIGN_TASK, true);
-				nodeService.setProperty(oldSupplierAccount, ProjectModel.PROP_QNAME_REASSIGN_RESOURCE, newSupplierAccount);
+				nodeService.setProperty(oldSupplierAccount, ProjectModel.PROP_QNAME_REASSIGN_RESOURCE, supplierAccount);
 				supplierAccounts.remove(oldSupplierAccount);
 			}
 			contactListAccounts.clear();
-			contactListAccounts.add(newSupplierAccount);
-			supplierAccounts.add(newSupplierAccount);
+			contactListAccounts.add(supplierAccount);
+			supplierAccounts.add(supplierAccount);
 		} else {
 			supplierAccounts.removeAll(contactListAccounts);
 			contactListAccounts.clear();
@@ -630,9 +637,10 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 				nodeService.removeAssociation(sourceAssoc, userNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
 			}
 		}
+		String supplierUserName = (String) nodeService.getProperty(userNodeRef, ContentModel.PROP_USERNAME);
 		if (associationService.getSourcesAssocs(userNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS).isEmpty()
-				&& !nodeService.hasAspect(userNodeRef, ContentModel.ASPECT_PERSON_DISABLED)) {
-			nodeService.addAspect(userNodeRef, ContentModel.ASPECT_PERSON_DISABLED, null);
+				&& AuthorityHelper.isAccountEnabled(supplierUserName)) {
+			AuthorityHelper.disableAccount(supplierUserName);
 		}
 	}
 

@@ -58,10 +58,7 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessPermission;
-import org.alfresco.service.cmr.security.AuthorityService;
-import org.alfresco.service.cmr.security.MutableAuthenticationService;
 import org.alfresco.service.cmr.security.PermissionService;
-import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionHistory;
@@ -194,10 +191,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	private BehaviourFilter policyBehaviourFilter;
 
-	private AuthorityService authorityService;
-
-	private PersonService personService;
-
 	private RemoteUserMapper remoteUserMapper;
 
 	private EntityActivityService entityActivityService;
@@ -229,35 +222,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 */
 	public void setRemoteUserMapper(RemoteUserMapper remoteUserMapper) {
 		this.remoteUserMapper = remoteUserMapper;
-	}
-
-	/**
-	 * <p>Setter for the field <code>personService</code>.</p>
-	 *
-	 * @param personService a {@link org.alfresco.service.cmr.security.PersonService} object
-	 */
-	public void setPersonService(PersonService personService) {
-		this.personService = personService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>authorityService</code>.</p>
-	 *
-	 * @param authorityService a {@link org.alfresco.service.cmr.security.AuthorityService} object
-	 */
-	public void setAuthorityService(AuthorityService authorityService) {
-		this.authorityService = authorityService;
-	}
-
-	private MutableAuthenticationService authenticationService;
-
-	/**
-	 * <p>Setter for the field <code>authenticationService</code>.</p>
-	 *
-	 * @param authenticationService a {@link org.alfresco.service.cmr.security.MutableAuthenticationService} object
-	 */
-	public void setAuthenticationService(MutableAuthenticationService authenticationService) {
-		this.authenticationService = authenticationService;
 	}
 
 	private boolean useBrowserLocale;
@@ -2371,13 +2335,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @param userName a {@link java.lang.String} object
 	 */
 	public void enableAccount(String userName) {
-		if (this.authorityService.isAdminAuthority(AuthenticationUtil.getFullyAuthenticatedUser())) {
-			if (!authenticationService.isAuthenticationMutable(userName)) {
-				nodeService.removeAspect(personService.getPerson(userName), ContentModel.ASPECT_PERSON_DISABLED);
-				return;
-			}
-			this.authenticationService.setAuthenticationEnabled(userName, true);
-		}
+		AuthorityHelper.enableAccount(userName);
 	}
 
 	/**
@@ -2386,13 +2344,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @param userName a {@link java.lang.String} object
 	 */
 	public void disableAccount(String userName) {
-		if (this.authorityService.isAdminAuthority(AuthenticationUtil.getFullyAuthenticatedUser())) {
-			if (!authenticationService.isAuthenticationMutable(userName)) {
-				nodeService.addAspect(personService.getPerson(userName), ContentModel.ASPECT_PERSON_DISABLED, null);
-				return;
-			}
-			this.authenticationService.setAuthenticationEnabled(userName, false);
-		}
+		AuthorityHelper.disableAccount(userName);
 	}
 
 	/**
