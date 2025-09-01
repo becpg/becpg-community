@@ -13,12 +13,13 @@ function widgets()
       assignTo: "docListToolbar",
       options: {
          siteId: (page.url.templateArgs.site != null) ? page.url.templateArgs.site : "",
-    	 rootNode : page.url.args.nodeRef!=null ?page.url.args.nodeRef : "null",
-    	 disableSiteMode : true,
+    	   rootNode : page.url.args.nodeRef!=null ?page.url.args.nodeRef : "null",
+    	   disableSiteMode : true,
          hideNavBar: false,
-		 entityMode: true, 
+		   entityMode: true, 
          repositoryBrowsing: false,
          useTitle: false,
+         formulateEnabled: true,
          createContentByTemplateEnabled: model.createContentByTemplateEnabled,
          createContentActions: model.createContent
       }
@@ -29,7 +30,7 @@ function widgets()
       name : "beCPG.custom.DocumentList",
       options : {      
          disableSiteMode : true,		
- 		 entityMode: true, 
+ 		   entityMode: true, 
          siteId : (page.url.templateArgs.site != null) ? page.url.templateArgs.site : "",
          containerId : template.properties.container != null ? template.properties.container : "documentLibrary",
          rootNode : page.url.args.nodeRef!=null ?page.url.args.nodeRef : "null",
