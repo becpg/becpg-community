@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
@@ -33,6 +34,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.survey.SurveyModel;
 import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyQuestion;
+import fr.becpg.repo.survey.data.SurveyableEntity;
 import fr.becpg.repo.survey.helper.SurveyableEntityHelper;
 
 /**
@@ -43,7 +45,7 @@ import fr.becpg.repo.survey.helper.SurveyableEntityHelper;
  * @author Alexandre Masanes
  * @version $Id: $Id
  */
-public class SurveyListFormulationHandler extends FormulationBaseHandler<ProductData> {
+public class SurveyListFormulationHandler extends FormulationBaseHandler<SurveyableEntity> {
 
 	private static final Log logger = LogFactory.getLog(SurveyListFormulationHandler.class);
 
@@ -61,12 +63,14 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 	 * <p>
 	 * Constructor.
 	 * </p>
+	 *
 	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService}
 	 *                    object.
 	 * @param alfrescoRepository a
 	 *                           {@link fr.becpg.repo.repository.AlfrescoRepository}
 	 *                           object.
 	 * @param beCPGCacheService a {@link fr.becpg.repo.cache.BeCPGCacheService} object.
+	 * @param repositoryEntityDefReader a {@link fr.becpg.repo.repository.RepositoryEntityDefReader} object
 	 */
 	public SurveyListFormulationHandler(NamespaceService namespaceService, AlfrescoRepository<BeCPGDataObject> alfrescoRepository,
 			BeCPGCacheService beCPGCacheService, RepositoryEntityDefReader<ProductData> repositoryEntityDefReader ) {
@@ -80,7 +84,7 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean process(ProductData formulatedProduct) {
+	public boolean process(SurveyableEntity formulatedProduct) {
 		if (accept(formulatedProduct)) {
 
 			final Map<String,List<SurveyListDataItem>> namesSurveyLists = SurveyableEntityHelper.getNamesSurveyLists(alfrescoRepository,
@@ -94,8 +98,8 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 			final List<NodeRef> packMaterialListCharactNodeRefs = getPackMaterialListCharactNodeRefs(formulatedProduct);
 			final NodeRef hierarchyNodeRef = getHierarchyNodeRef(formulatedProduct);
 			final QName productTypeQName = repositoryEntityDefReader.getType(formulatedProduct.getClass());
-			final List<NodeRef> subsidiaryRefs = formulatedProduct.getSubsidiaryRefs();
-			final List<NodeRef> plants = formulatedProduct.getPlants();
+			final List<NodeRef> subsidiaryRefs = formulatedProduct instanceof ProductData productData ? productData.getSubsidiaryRefs() : List.of();
+			final List<NodeRef> plants = formulatedProduct instanceof ProductData productData ? productData.getPlants() : List.of();
 			final Set<SurveyQuestion> surveyQuestions = new HashSet<>();
 
 			logger.debug("Starting SurveyQuestionFormulationHandler::process for " + formulatedProduct.getNodeRef());
@@ -119,29 +123,44 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 		return true;
 	}
 
-	protected boolean accept(ProductData formulatedProduct) {
+	/**
+	 * <p>accept.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a boolean
+	 */
+	protected boolean accept(SurveyableEntity formulatedProduct) {
 
 		boolean hasSurveyList = (formulatedProduct.getSurveyList() != null)
 				&& ((formulatedProduct.getSurveyList() instanceof ArrayList)
 						|| alfrescoRepository.hasDataList(formulatedProduct, SurveyModel.TYPE_SURVEY_LIST));
 
-		return !(formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
-				|| (formulatedProduct instanceof ProductSpecificationData)) && hasSurveyList;
+		if (formulatedProduct instanceof BeCPGDataObject beCPGDataObject) {
+			return !(beCPGDataObject.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
+					|| (beCPGDataObject instanceof ProductSpecificationData)) && hasSurveyList;
+		}
+		return false;
 	}
 
 	/**
 	 * Extracts the list of character node references from the PackMaterialList.
 	 */
-	private List<NodeRef> getPackMaterialListCharactNodeRefs(ProductData formulatedProduct) {
-		return CollectionUtils.emptyIfNull(formulatedProduct.getPackMaterialList()).stream()
-				.map(PackMaterialListDataItem::getCharactNodeRef).distinct().toList();
+	private List<NodeRef> getPackMaterialListCharactNodeRefs(SurveyableEntity formulatedProduct) {
+		if (formulatedProduct instanceof ProductData productData) {
+			return CollectionUtils.emptyIfNull(productData.getPackMaterialList()).stream()
+					.map(PackMaterialListDataItem::getCharactNodeRef).distinct().toList();
+		}
+		return List.of();
 	}
 
 	/**
 	 * Chooses the hierarchy node reference using hierarchy2 if present, otherwise hierarchy1.
 	 */
-	private NodeRef getHierarchyNodeRef(ProductData formulatedProduct) {
-		return ObjectUtils.defaultIfNull(formulatedProduct.getHierarchy2(), formulatedProduct.getHierarchy1());
+	private NodeRef getHierarchyNodeRef(SurveyableEntity formulatedProduct) {
+		if (formulatedProduct instanceof HierarchicalEntity productData) {
+			return ObjectUtils.defaultIfNull(productData.getHierarchy2(), productData.getHierarchy1());
+		}
+		return null;
 	}
 
 	/**
@@ -212,7 +231,7 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 	 * If not in a transient context, the data is saved to the repository.
 	 * @param namesSurveyLists
 	 */
-	private void updateSurveyLists(ProductData formulatedProduct, Set<SurveyQuestion> surveyQuestions,
+	private void updateSurveyLists(SurveyableEntity formulatedProduct, Set<SurveyQuestion> surveyQuestions,
 			Map<String, List<SurveyListDataItem>> namesSurveyLists) {
 		for (final SurveyQuestion surveyQuestion : surveyQuestions) {
 			final NodeRef surveyQuestionNodeRef = surveyQuestion.getNodeRef();
@@ -240,7 +259,7 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Product
 
 		// If we are not in a test (transient) context, save the survey lists.
 		if (!SurveyableEntityHelper.isTransient(formulatedProduct)) {
-			final NodeRef dataListContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(formulatedProduct);
+			final NodeRef dataListContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer((BeCPGDataObject) formulatedProduct);
 			namesSurveyLists.entrySet().stream().filter(entry -> !SurveyableEntityHelper.isDefault(entry.getKey()))
 					.forEach(entry -> alfrescoRepository.saveDataList(dataListContainerNodeRef,
 							SurveyModel.TYPE_SURVEY_LIST, entry.getKey(), entry.getValue()));
