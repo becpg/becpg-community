@@ -119,6 +119,12 @@
                     <property name="formulaService" ref="formulaService" />
                     <property name="surveyService" ref="surveyService" />
                 </bean>
+                <bean class="fr.becpg.repo.product.formulation.SurveyListFormulationHandler">
+                	<constructor-arg><ref bean="namespaceService"/></constructor-arg>
+  					<constructor-arg><ref bean="alfrescoRepository"/></constructor-arg>
+  					<constructor-arg><ref bean="beCPGCacheService"/></constructor-arg>
+  					<constructor-arg><ref bean="repositoryEntityDefReader"/></constructor-arg>
+                </bean>
 				<bean class="fr.becpg.repo.project.formulation.TaskOverdueFormulationHandler">
 					<property name="beCPGMailService" ref="beCPGMailService" />
 					<property name="workflowService" ref="WorkflowService" />
