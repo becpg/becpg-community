@@ -38,7 +38,7 @@ function main()
    AlfrescoUtil.param("showAiSuggestion", "true"); //beCPG
    AlfrescoUtil.param("showDownload", "true");
    AlfrescoUtil.param("showPath", "true");
-   AlfrescoUtil.param("bcPath", null); //beCPG
+   AlfrescoUtil.param("bcTask", null); //beCPG
    AlfrescoUtil.param("libraryRoot", null);
    AlfrescoUtil.param("pagecontext", null);
    AlfrescoUtil.param("showItemModifier", "true");
