@@ -1,15 +1,20 @@
 package fr.becpg.repo.supplier;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.node.NodeServicePolicies.OnDeleteAssociationPolicy;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.util.transaction.TransactionSupportUtil;
 
 import fr.becpg.model.PLMGroup;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
@@ -25,6 +30,12 @@ public class SupplierPortalPolicy extends AbstractBeCPGPolicy implements OnDelet
 	public static final String FORCE_REFERENCING_MANAGER = "forceReferencingManager";
 
 	private AssociationService associationService;
+	
+	private EntityService entityService;
+	
+	public void setEntityService(EntityService entityService) {
+		this.entityService = entityService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>associationService</code>.</p>
@@ -49,10 +60,21 @@ public class SupplierPortalPolicy extends AbstractBeCPGPolicy implements OnDelet
 		if ((forceReferencingManager == null || !forceReferencingManager.booleanValue()) && !AuthorityHelper.hasAdminAuthority()
 				&& !AuthenticationUtil.isRunAsUserTheSystemUser()
 				&& !AuthorityHelper.hasGroupAuthority(AuthenticationUtil.getRunAsUser(), PLMGroup.ReferencingMgr.toString())) {
-			throw new IllegalStateException("You need to be Referencing Manager to perform this operation");
+			throw new IllegalStateException("You need to be Referencing Manager to delete an association of type 'bcpg:supplierAccountRefAspect'");
 		}
-		if (associationService.getSourcesAssocs(nodeAssocRef.getTargetRef(), PLMModel.ASSOC_SUPPLIER_ACCOUNTS).isEmpty()) {
-			nodeService.addAspect(nodeAssocRef.getTargetRef(), ContentModel.ASPECT_PERSON_DISABLED, null);
+		NodeRef supplierAccountNodeRef = nodeAssocRef.getTargetRef();
+		List<NodeRef> sourcesAssocs = associationService.getSourcesAssocs(supplierAccountNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
+		if (nodeService.getType(nodeAssocRef.getSourceRef()).equals(PLMModel.TYPE_CONTACTLIST)) {
+			NodeRef supplierNodeRef = entityService.getEntityNodeRef(nodeAssocRef.getSourceRef(), PLMModel.TYPE_CONTACTLIST);
+			if (supplierNodeRef != null) {
+				sourcesAssocs = new ArrayList<>(sourcesAssocs);
+				sourcesAssocs.remove(supplierNodeRef);
+			}
+		}
+		
+		if (sourcesAssocs.isEmpty()) {
+			String supplierUserName = (String) nodeService.getProperty(supplierAccountNodeRef, ContentModel.PROP_USERNAME);
+			AuthorityHelper.disableAccount(supplierUserName);
 		}
 	}
 
