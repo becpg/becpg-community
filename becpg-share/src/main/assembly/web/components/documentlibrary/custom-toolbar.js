@@ -244,8 +244,16 @@
 								this.widgets.bulkEdit = Alfresco.util.createYUIButton(this, "bulkEdit-button", this.onBulkEdit, {
 									disabled : false
 								});
+
+
 								this.dynamicControls.push(this.widgets.bulkEdit);
 
+								if(this.options.formulateEnabled){
+									this.widgets.formulate = Alfresco.util.createYUIButton(this, "formulate-button", this.onFormulate, {
+										disabled : false
+									});
+									this.dynamicControls.push(this.widgets.formulate);
+								}
 								// Selected Items menu button
 								this.widgets.selectedItems = Alfresco.util.createYUIButton(this, "selectedItems-button", this.onSelectedItems, {
 									type : "menu",
@@ -309,6 +317,49 @@
 							window.location.href = $siteURL("bulk-edit?nodeRef="+this.doclistMetadata.parent.nodeRef);
 							
 						},
+
+					onFormulate : function CustomDLTB_onFormulate(sType, aArgs, p_obj) {
+				
+							var formulateButton = YAHOO.util.Selector.query('div.formulate');
+							Dom.addClass(formulateButton, "loading");
+
+							Alfresco.util.Ajax.request({
+								method: Alfresco.util.Ajax.GET,
+								responseContentType: Alfresco.util.Ajax.JSON,
+								url: Alfresco.constants.PROXY_URI + "becpg/remote/formulate?nodeRef=" + this.doclistMetadata.parent.nodeRef + "&format=json",
+								successCallback: {
+									fn: function(response) {
+										Alfresco.util.PopupManager.displayMessage({
+											text: this.msg("message.formulate.success")
+										});
+
+										YAHOO.Bubbling.fire("refreshDataGrids", { 
+											clearCache: true,
+											cacheTimeStamp: (new Date()).getTime() 
+										});
+										Dom.removeClass(formulateButton, "loading");
+									},
+									scope: this
+								},
+								failureCallback: {
+									fn: function(response) {
+										if (response.json && response.json.message) {
+											Alfresco.util.PopupManager.displayPrompt({
+												title: this.msg("message.formulate.failure"),
+												text: response.json.message
+											});
+										} else {
+											Alfresco.util.PopupManager.displayMessage({
+												text: this.msg("message.formulate.failure")
+											});
+										}
+										Dom.removeClass(formulateButton, "loading");
+									},
+									scope: this
+								}
+							});
+					
+					},
 						/**
 						 * Document List Metadata event handler NOTE: This is a
 						 * temporary fix to enable access to the View Details
