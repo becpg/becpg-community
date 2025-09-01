@@ -57,6 +57,7 @@
 	<bean id="supplierPortalPolicy" class="fr.becpg.repo.supplier.SupplierPortalPolicy"
 		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
 		<property name="associationService" ref="associationService"/>
+		<property name="entityService" ref="entityService"/>
 	</bean>
 	
 	<bean id="dynamicCharactListPolicy" class="fr.becpg.repo.product.policy.DynamicCharactListPolicy"
