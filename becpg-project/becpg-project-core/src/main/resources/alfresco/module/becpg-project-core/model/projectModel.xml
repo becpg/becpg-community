@@ -439,7 +439,7 @@
 			<parent>pjt:projectListItem</parent>
 			<properties>
 				<property name="pjt:tlTaskName">
-					<type>d:text</type>
+					<type>d:mltext</type>
 					<mandatory>true</mandatory>
 					<index enabled="true">
 						<tokenised>both</tokenised>
@@ -739,7 +739,7 @@
 			<parent>pjt:projectListItem</parent>
 			<properties>
 				<property name="pjt:dlDescription">
-					<type>d:text</type>
+					<type>d:mltext</type>
 					<mandatory>true</mandatory>
 					<index enabled="true">
 						<tokenised>both</tokenised>
