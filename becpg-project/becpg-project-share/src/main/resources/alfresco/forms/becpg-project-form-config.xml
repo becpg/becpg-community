@@ -1285,7 +1285,9 @@
 
 					<set id="mainInfo" appearance="bordered-panel"
 						label-id="becpg.forms.set.designation.label" />
-					<field id="pjt:tlTaskName" set="mainInfo" />
+					<field id="pjt:tlTaskName" set="mainInfo" >
+					    <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+                    </field>
 					<field id="pjt:tlTaskDescription" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
 							<control-param name="rows">10</control-param>
@@ -1456,7 +1458,9 @@
 
 					<set id="mainInfo" appearance="bordered-panel"
 						label-id="becpg.forms.set.designation.label" />
-					<field id="pjt:tlTaskName" set="mainInfo" />
+					<field id="pjt:tlTaskName" set="mainInfo" >
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+                    </field>
 					<field id="pjt:tlTaskDescription" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
 							<control-param name="rows">10</control-param>
@@ -1652,7 +1656,9 @@
 
 					<set id="mainInfo" appearance="bordered-panel"
 						label-id="becpg.forms.set.designation.label" />
-					<field id="pjt:tlTaskName" set="mainInfo" />
+					<field id="pjt:tlTaskName" set="mainInfo" >
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+                    </field>
 					<field id="pjt:tlTaskDescription" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
 							<control-param name="rows">10</control-param>
@@ -1928,6 +1934,10 @@
 					<show id="pjt:completionPercent" />
 				</field-visibility>
 				<appearance>
+				    <field id="pjt:dlDescription">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+                    </field>
+				
 					<field id="pjt:dlTask">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -1993,6 +2003,9 @@
 					<show id="pjt:completionPercent" />
 				</field-visibility>
 				<appearance>
+				     <field id="pjt:dlDescription">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+                    </field>
 					<field id="pjt:dlTask">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
