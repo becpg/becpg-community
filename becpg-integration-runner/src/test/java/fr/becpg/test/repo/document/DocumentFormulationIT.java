@@ -206,8 +206,9 @@ public class DocumentFormulationIT extends PLMBaseTestCase {
 			NodeRef supplier3NodeRef = testProduct.getSugarSupplier3NodeRef(); // Supplier with HALAL claim (60%, TRUE)
 
 			// 1. TEST RAW MATERIAL DOCUMENTS (CHOCOLATE NODE)
-			Map<NodeRef, NodeRef> chocolateDocumentMap = entityService.getDocumentsByType(chocolateNodeRef);
-			List<NodeRef> chocolateDocuments = new ArrayList<>(chocolateDocumentMap.values());
+			Map<NodeRef, List<NodeRef>> chocolateDocumentMap = entityService.getDocumentsByType(chocolateNodeRef);
+			List<NodeRef> chocolateDocuments = new ArrayList<>();
+			chocolateDocumentMap.values().forEach(chocolateDocuments::addAll);
 			assertFalse("Chocolate node should have related documents", chocolateDocuments.isEmpty());
 
 			// Check for specific documents by name
@@ -245,8 +246,9 @@ public class DocumentFormulationIT extends PLMBaseTestCase {
 
 			// 2. TEST SUPPLIER CERTIFICATION DOCUMENTS FOR SUPPLIERS WITH CLAIMS
 			// 2.1 Supplier 1 with EU_ORGANIC claim (100% applicable, 100% claimed, CERTIFIED)
-			Map<NodeRef, NodeRef> supplier1DocumentMap = entityService.getDocumentsByType(supplier1NodeRef);
-			List<NodeRef> supplier1Documents = new ArrayList<>(supplier1DocumentMap.values());
+			Map<NodeRef, List<NodeRef>> supplier1DocumentMap = entityService.getDocumentsByType(supplier1NodeRef);
+			List<NodeRef> supplier1Documents = new ArrayList<>();
+			supplier1DocumentMap.values().forEach(supplier1Documents::addAll);
 			assertFalse("Supplier 1 should have related documents", supplier1Documents.isEmpty());
 
 			boolean hasOrganicDoc = false;
@@ -262,8 +264,9 @@ public class DocumentFormulationIT extends PLMBaseTestCase {
 			assertTrue("Supplier 1 should have Organic Certification document", hasOrganicDoc);
 
 			// 2.2 Supplier 2 with KOSHER claim (75% applicable, 50% claimed, FALSE)
-			Map<NodeRef, NodeRef> supplier2DocumentMap = entityService.getDocumentsByType(supplier2NodeRef);
-			List<NodeRef> supplier2Documents = new ArrayList<>(supplier2DocumentMap.values());
+			Map<NodeRef, List<NodeRef>> supplier2DocumentMap = entityService.getDocumentsByType(supplier2NodeRef);
+			List<NodeRef> supplier2Documents = new ArrayList<>();
+			supplier2DocumentMap.values().forEach(supplier2Documents::addAll);
 
 			boolean hasKosherDoc = false;
 			for (NodeRef docRef : supplier2Documents) {
@@ -279,8 +282,9 @@ public class DocumentFormulationIT extends PLMBaseTestCase {
 			logger.info("Kosher document present for Supplier 2: " + hasKosherDoc);
 
 			// 2.3 Supplier 3 with HALAL claim (60% applicable, 40% claimed, TRUE)
-			Map<NodeRef, NodeRef> supplier3DocumentMap = entityService.getDocumentsByType(supplier3NodeRef);
-			List<NodeRef> supplier3Documents = new ArrayList<>(supplier3DocumentMap.values());
+			Map<NodeRef, List<NodeRef>> supplier3DocumentMap = entityService.getDocumentsByType(supplier3NodeRef);
+			List<NodeRef> supplier3Documents = new ArrayList<>();
+			supplier3DocumentMap.values().forEach(supplier3Documents::addAll);
 
 			boolean hasHalalDoc = false;
 			for (NodeRef docRef : supplier3Documents) {
@@ -295,13 +299,14 @@ public class DocumentFormulationIT extends PLMBaseTestCase {
 		});
 
 		// Test content update
-		Map<NodeRef, NodeRef> productDocumentMap = inWriteTx(() -> {
+		Map<NodeRef, List<NodeRef>> productDocumentMap = inWriteTx(() -> {
 
 			// 4. TEST DOCUMENT STATE SYNCHRONIZATION
 			// Change the product state and verify that document states are synchronized
 
-			Map<NodeRef, NodeRef> tmp = entityService.getDocumentsByType(testProduct.getProduct().getNodeRef());
-			List<NodeRef> productDocuments = new ArrayList<>(tmp.values());
+			Map<NodeRef, List<NodeRef>> tmp = entityService.getDocumentsByType(testProduct.getProduct().getNodeRef());
+			List<NodeRef> productDocuments = new ArrayList<>();
+			tmp.values().forEach(productDocuments::addAll);
 			assertFalse("Product should have related documents", productDocuments.isEmpty());
 
 			// Update the content to trigger onContentUpdate policy
@@ -319,7 +324,8 @@ public class DocumentFormulationIT extends PLMBaseTestCase {
 		});
 
 		inWriteTx(() -> {
-			List<NodeRef> productDocuments = new ArrayList<>(productDocumentMap.values());
+			List<NodeRef> productDocuments = new ArrayList<>();
+			productDocumentMap.values().forEach(productDocuments::addAll);
 			testProduct.getProduct().setState(SystemState.Valid);
 			formulationService.formulate(testProduct.getProduct()); // Re-formulate to synchronize document states
 
@@ -365,8 +371,10 @@ public class DocumentFormulationIT extends PLMBaseTestCase {
 
 			// Get the updated QMS document
 			qmsDocument = null;
-			Map<NodeRef, NodeRef> updatedDocumentMap = entityService.getDocumentsByType(testProduct.getProduct().getNodeRef());
-			for (NodeRef docRef : updatedDocumentMap.values()) {
+			Map<NodeRef, List<NodeRef>> updatedDocumentMap = entityService.getDocumentsByType(testProduct.getProduct().getNodeRef());
+			List<NodeRef> updatedDocumentList = new ArrayList<>();
+			updatedDocumentMap.values().forEach(updatedDocumentList::addAll);
+			for (NodeRef docRef : updatedDocumentList) {
 				String docName = (String) nodeService.getProperty(docRef, ContentModel.PROP_NAME);
 				if ((docName != null) && docName.contains("QMS Survey analysis results.xlsx")) {
 					qmsDocument = docRef;
