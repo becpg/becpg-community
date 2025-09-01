@@ -382,7 +382,7 @@
                      * Allow to store pageSize in prefs
                      */
                     storePageSizeInPrefs: false,
-                    
+
                     readOnly: false
                 },
 
@@ -1045,13 +1045,19 @@
                 },
 
                 onFilterFormClear: function EntityDataGrid_onFilterFormClear() {
-                    Bubbling.fire(this.scopeId + "changeFilter",
-                        {
-                            filterOwner: this.id,
-                            filterId: "all"
-                        });
-
+                    this.onChangeFilter(null, [null, { filterOwner: this.id, filterId: "all" }]);
+                  
                     this.formsFilterRuntime.reset();
+                    var hiddenFields = YAHOO.util.Selector.query('input[type=hidden]', this.formsFilterRuntime.form);
+                    for (var j = 0; j < hiddenFields.length; j++) {
+                        if (hiddenFields[j].getAttribute("data-default") !== null) {
+                            hiddenFields[j].value = hiddenFields[j].getAttribute("data-default");
+                        } else {
+                            hiddenFields[j].value = "";
+                        }
+                    }
+
+
                     this.widgets.filterForm.getMenu().hide();
                 },
 
@@ -1601,9 +1607,9 @@
                     this.widgets.dataTable.doBeforeSortColumn = function DataGrid_doBeforeSortColumn(oColumn,
                         sSortDir) {
 
-                        if (!me.options.localSort 
-                            && oColumn.key.indexOf("assoc_")!=0 
-                            && oColumn.key.indexOf("prop_bcpg_dynamicCharactColumn")!=0 ) {
+                        if (!me.options.localSort
+                            && oColumn.key.indexOf("assoc_") != 0
+                            && oColumn.key.indexOf("prop_bcpg_dynamicCharactColumn") != 0) {
                             if (oColumn.key.indexOf("prop_") == 0) {
                                 me.currentSort = oColumn.key;
                                 me.currentSortDir = sSortDir;
@@ -1618,7 +1624,7 @@
                         } else {
 
                             me.currentSort = null;
-                            
+
                             // Change when dynamic sort
 
                             var oSortedBy = this.get("sortedBy") || {};
