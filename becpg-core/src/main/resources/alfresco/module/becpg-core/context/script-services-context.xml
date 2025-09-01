@@ -82,9 +82,6 @@
 		<property name="beCPGMailService" ref="beCPGMailService" />
 		<property name="beCPGTicketService" ref="beCPGTicketService" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
-		<property name="personService" ref="personService" />
-		<property name="authorityService" ref="authorityService" />
-		<property name="authenticationService" ref="authenticationService" />
 		<property name="remoteUserMapper" ref="RemoteUserMapper" />
 		<property name="entityActivityService" ref="entityActivityService" />
 		<property name="beCPGUserAccountService" ref="beCPGUserAccountService" />
