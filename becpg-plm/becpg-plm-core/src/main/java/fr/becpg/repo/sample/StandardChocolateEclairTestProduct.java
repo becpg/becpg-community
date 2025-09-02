@@ -657,31 +657,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
 	}
 
-<<<<<<< 23.4.1
-	Map<Pair<QName, String>, NodeRef> characts = new HashMap<>();
 
-	/**
-	 * <p>getOrCreateCharact.</p>
-	 *
-	 * @param name a {@link java.lang.String} object
-	 * @param type a {@link org.alfresco.service.namespace.QName} object
-	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 */
-	public NodeRef getOrCreateCharact(String name, QName type) {
-
-		return characts.computeIfAbsent(new Pair<>(type, name), p -> {
-			Map<QName, Serializable> prop = Map.of(ContentModel.PROP_NAME, name);
-
-			return nodeService
-					.createNode(destFolder, ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) prop.get(ContentModel.PROP_NAME)), type, prop)
-					.getChildRef();
-
-		});
-	}
-	
-=======
->>>>>>> 29af08d Fix #25868 - [Bug] Fix local semi-finished products allocation in manufacturing orders
 	private List<SurveyListDataItem> createEclairQMSSurveyList() {
 	    // Question 1: Choux Pastry Quality Check
 	    final SurveyQuestion question1 = getOrCreateSurveyQuestion(
