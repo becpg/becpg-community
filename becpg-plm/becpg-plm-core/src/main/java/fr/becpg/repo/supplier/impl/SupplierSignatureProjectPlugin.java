@@ -31,6 +31,7 @@ import fr.becpg.artworks.signature.model.SignatureModel;
 import fr.becpg.artworks.signature.model.SignatureStatus;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.version.VersionHelper;
 import fr.becpg.repo.helper.AssociationService;
@@ -123,11 +124,17 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 		
 		List<NodeRef> suppliers = associationService.getTargetAssocs(project.getNodeRef(), PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
 
+		List<NodeRef> oldSignedReports = associationService.getTargetAssocs(project.getNodeRef(), ReportModel.ASSOC_REPORTS);
+		for (NodeRef oldSignedReport : oldSignedReports) {
+			deleteReport(oldSignedReport);
+			logger.info("Delete old report from project: " + nodeService.getProperty(oldSignedReport, ContentModel.PROP_NAME));
+		}
+		
 		for (NodeRef reportNodeRef : reports) {
-
 			if (reportNodeRef != null) {
 				NodeRef reportCopy = copyReport(supplierDocumentsFolder, reportNodeRef);
 				associationService.update(reportCopy, SignatureModel.ASSOC_RECIPIENTS, suppliers);
+				nodeService.createAssociation(project.getNodeRef(), reportCopy, ReportModel.ASSOC_REPORTS);
 			}
 		}
 		return supplierDocumentsFolder;
@@ -228,15 +235,6 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 	private NodeRef copyReport(NodeRef parentFolder, NodeRef reportNodeRef) {
 		String reportName = extractReportName(reportNodeRef);
 		
-		NodeRef existingReportCopy = nodeService.getChildByName(parentFolder, ContentModel.ASSOC_CONTAINS, reportName);
-		
-		if (existingReportCopy != null) {
-			for (NodeRef deliverable : associationService.getSourcesAssocs(existingReportCopy, ProjectModel.ASSOC_DL_CONTENT)) {
-				associationService.update(deliverable, ProjectModel.ASSOC_DL_CONTENT, List.of());
-			}
-			nodeService.deleteNode(existingReportCopy);
-		}
-		
 		reportName = repoService.getAvailableName(parentFolder, reportName, false, true);
 		
 		Map<QName, Serializable> props = new HashMap<>();
@@ -257,6 +255,13 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 		writer.putContent(reader);
 		
 		return reportCopy;
+	}
+
+	private void deleteReport(NodeRef existingReportCopy) {
+		for (NodeRef deliverable : associationService.getSourcesAssocs(existingReportCopy, ProjectModel.ASSOC_DL_CONTENT)) {
+			associationService.update(deliverable, ProjectModel.ASSOC_DL_CONTENT, List.of());
+		}
+		nodeService.deleteNode(existingReportCopy);
 	}
 
 	private String extractReportName(NodeRef reportNodeRef) {
