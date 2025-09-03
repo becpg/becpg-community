@@ -164,8 +164,12 @@
 						},
 						failureCallback: {
 							fn: function(response) {
+								var message = this.msg("message.createSupplier.failure");
+								if (response.json && response.json.message) {
+									message = response.json.message;
+								}
 								Alfresco.util.PopupManager.displayMessage({
-									text: this.msg("message.createSupplier.failure"),
+									text: message,
 									displayTime: 5
 								});
 							},

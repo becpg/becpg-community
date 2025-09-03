@@ -71,6 +71,7 @@ public class AutoNumServiceImpl implements AutoNumService {
     @Autowired
     private BehaviourFilter policyBehaviourFilter;
 
+    /** {@inheritDoc} */
     @Override
     public String getAutoNumValue(QName className, QName propertyName) {
         validateInputs(className, propertyName);
@@ -86,6 +87,7 @@ public class AutoNumServiceImpl implements AutoNumService {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean setAutoNumValue(QName className, QName propertyName, Long counter) {
         validateInputs(className, propertyName);
@@ -109,6 +111,7 @@ public class AutoNumServiceImpl implements AutoNumService {
             .orElse(false);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void deleteAutoNumValue(QName className, QName propertyName) {
         validateInputs(className, propertyName);
@@ -128,6 +131,7 @@ public class AutoNumServiceImpl implements AutoNumService {
         });
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getAutoNumMatchPattern(QName type, QName propertyName) {
         validateInputs(type, propertyName);
@@ -136,6 +140,7 @@ public class AutoNumServiceImpl implements AutoNumService {
         return createMatchPattern(prefix);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getPrefixedCode(QName type, QName propertyName, Long autoNumValue) {
         validateInputs(type, propertyName);
@@ -148,6 +153,7 @@ public class AutoNumServiceImpl implements AutoNumService {
         return formatCode(prefix, autoNumValue);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getOrCreateCode(NodeRef nodeRef, QName codeQName) {
         if (nodeRef == null || codeQName == null) {
@@ -166,11 +172,13 @@ public class AutoNumServiceImpl implements AutoNumService {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getOrCreateBeCPGCode(NodeRef nodeRef) {
         return getOrCreateCode(nodeRef, BeCPGModel.PROP_CODE);
     }
 
+    /** {@inheritDoc} */
     @Override
     public NodeRef getAutoNumNodeRef(QName className, QName propertyName) {
         return findAutoNumNodeRef(className, propertyName).orElse(null);

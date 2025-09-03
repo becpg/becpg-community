@@ -191,7 +191,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	 *
 	 * @param entityNodeRef
 	 * @param dataListsElt
-	 * @param images
 	 * @param isExtractedProduct
 	 *            extracted product (more info)
 	 */

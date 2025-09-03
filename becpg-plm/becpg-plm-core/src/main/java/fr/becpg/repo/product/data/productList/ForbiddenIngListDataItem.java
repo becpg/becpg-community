@@ -121,7 +121,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	/**
 	 * <p>Getter for the field <code>reqType</code>.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementType} object.
 	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:filReqType")
@@ -132,7 +132,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	/**
 	 * <p>Setter for the field <code>reqType</code>.</p>
 	 *
-	 * @param reqType a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 * @param reqType a {@link fr.becpg.repo.regulatory.RequirementType} object.
 	 */
 	public void setReqType(RequirementType reqType) {
 		this.reqType = reqType;
@@ -182,7 +182,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	/**
 	 * <p>getRegulatoryType.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementType} object
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementType} object
 	 */
 	public RequirementType getRegulatoryType() {
 		return getReqType();
@@ -450,7 +450,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	 * <p>Constructor for ForbiddenIngListDataItem.</p>
 	 *
 	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param reqType a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 * @param reqType a {@link fr.becpg.repo.regulatory.RequirementType} object.
 	 * @param reqMessage a {@link java.lang.String} object.
 	 * @param qtyPercMaxi a {@link java.lang.Double} object.
 	 * @param isGMO a {@link java.lang.Boolean} object.
@@ -476,7 +476,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject implements Regulat
 	 * <p>Constructor for ForbiddenIngListDataItem.</p>
 	 *
 	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param reqType a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 * @param reqType a {@link fr.becpg.repo.regulatory.RequirementType} object.
 	 * @param reqMessage a {@link org.alfresco.service.cmr.repository.MLText} object.
 	 * @param qtyPercMaxi a {@link java.lang.Double} object.
 	 * @param isGMO a {@link java.lang.Boolean} object.
