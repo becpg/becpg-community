@@ -25,6 +25,7 @@ package fr.becpg.repo.product.data.constraints;
  */
 public enum PackagingLevel {
 	Primary,
+	Inner,
 	Secondary,
 	Tertiary
 
