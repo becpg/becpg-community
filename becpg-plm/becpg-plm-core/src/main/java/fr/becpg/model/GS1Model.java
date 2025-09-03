@@ -46,6 +46,9 @@ public interface GS1Model {
 	/** Constant <code>ASPECT_PACK_SORTING</code> */
 	QName ASPECT_PACK_SORTING = QName.createQName(GS1_URI, "packSortingAspect");
 
+	/** Constant <code>ASPECT_INNERPACK_ASPECT</code> */
+	QName ASPECT_INNERPACK_ASPECT = QName.createQName(GS1_URI, "innerPackAspect");
+
 	/** Constant <code>PROP_WEIGHT</code> */
 	QName PROP_WEIGHT = QName.createQName(GS1_URI, "weight");
 	/** Constant <code>PROP_SECONDARY_WEIGHT</code> */
@@ -56,6 +59,17 @@ public interface GS1Model {
 
 	/** Constant <code>PROP_INNERPACK_NET_WEIGHT</code> */
 	QName PROP_INNERPACK_NET_WEIGHT = QName.createQName(GS1_URI, "innerPackNetWeight");
+
+	QName  PROP_INNERPACK_WIDTH = QName.createQName(GS1_URI, "innerPackWidth");
+	QName  PROP_INNERPACK_HEIGHT = QName.createQName(GS1_URI, "innerPackHeight");
+	QName  PROP_INNERPACK_DEPTH = QName.createQName(GS1_URI, "innerPackDepth");
+	QName PROP_INNERPACK_PER_BOX = QName.createQName(GS1_URI, "innerPackPerBox");
+
+
+	/** Constant <code>PROP_PRODUCT_PER_INNER_PACK</code> */
+	QName PROP_PRODUCT_PER_INNER_PACK = QName.createQName(GS1_URI, "productPerInnerPack");
+
+
 	/** Constant <code>PROP_TERTIARY_WEIGHT</code> */
 	QName PROP_TERTIARY_WEIGHT = QName.createQName(GS1_URI, "tertiaryWeight");
 	/** Constant <code>PROP_SECONDARY_NET_WEIGHT</code> */
@@ -86,9 +100,6 @@ public interface GS1Model {
 
 	/** Constant <code>PROP_SECONDARY_HEIGHT</code> */
 	QName PROP_SECONDARY_HEIGHT = QName.createQName(GS1_URI, "secondaryHeight");
-
-	/** Constant <code>PROP_PRODUCT_PER_INNER_PACK</code> */
-	QName PROP_PRODUCT_PER_INNER_PACK = QName.createQName(GS1_URI, "productPerInnerPack");
 
 	/** Constant <code>PROP_TERTIARY_WIDTH</code> */
 	QName PROP_TERTIARY_WIDTH = QName.createQName(GS1_URI, "tertiaryWidth");

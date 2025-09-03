@@ -619,6 +619,7 @@
 				<list>
 					<value></value>
 					<value>Primary</value>
+					<value>Inner</value>
 					<value>Secondary</value>
 					<value>Tertiary</value>
 				</list>
