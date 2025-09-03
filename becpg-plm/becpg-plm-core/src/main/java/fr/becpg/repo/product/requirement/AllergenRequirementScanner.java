@@ -38,39 +38,42 @@ public class AllergenRequirementScanner extends AbstractRequirementScanner<Aller
 				ProductSpecificationData specification = entry.getKey();
 
 				requirements.forEach(specDataItem -> {
-					formulatedProduct.getAllergenList().forEach(listDataItem -> {
-						if (listDataItem.getAllergen() != null && listDataItem.getAllergen().equals(specDataItem.getAllergen())
-								&& ((Boolean.TRUE.equals(listDataItem.getInVoluntary()) || Boolean.TRUE.equals(listDataItem.getVoluntary())))) {
+					// Check regulatory usage filtering first
+					if (checkRegulatoryUsageMatch(specDataItem, formulatedProduct)) {
+						formulatedProduct.getAllergenList().forEach(listDataItem -> {
+							if (listDataItem.getAllergen() != null && listDataItem.getAllergen().equals(specDataItem.getAllergen())
+									&& ((Boolean.TRUE.equals(listDataItem.getInVoluntary()) || Boolean.TRUE.equals(listDataItem.getVoluntary())))) {
 
-							boolean isAllergenAllowed = false;
-							if ((Boolean.TRUE.equals(specDataItem.getVoluntary()) && Boolean.TRUE.equals(listDataItem.getVoluntary()))
-									|| (Boolean.TRUE.equals(specDataItem.getInVoluntary()) && Boolean.TRUE.equals(listDataItem.getInVoluntary()))) {
-								isAllergenAllowed = true;
-							}
-
-							if (!isAllergenAllowed || Boolean.TRUE.equals(addInfoReqCtrl)) {
-								MLText message = MLTextHelper.getI18NMessage(MESSAGE_FORBIDDEN_ALLERGEN, extractName(listDataItem.getAllergen()));
-								
-								RequirementType reqType= isAllergenAllowed ? RequirementType.Info : RequirementType.Forbidden;
-								
-								if (!isAllergenAllowed && specDataItem.getRegulatoryType() != null) {
-									reqType = specDataItem.getRegulatoryType();
+								boolean isAllergenAllowed = false;
+								if ((Boolean.TRUE.equals(specDataItem.getVoluntary()) && Boolean.TRUE.equals(listDataItem.getVoluntary()))
+										|| (Boolean.TRUE.equals(specDataItem.getInVoluntary()) && Boolean.TRUE.equals(listDataItem.getInVoluntary()))) {
+									isAllergenAllowed = true;
 								}
-								if (specDataItem.getRegulatoryMessage() != null) {
-									message = specDataItem.getRegulatoryMessage();
-								}
-								
-								RequirementListDataItem rclDataItem = RequirementListDataItem.build()
-										.ofType(reqType).withMessage(message)
-										.withCharact(listDataItem.getAllergen()).ofDataType(RequirementDataType.Specification)
-										.withSources(Stream.of(listDataItem.getVoluntarySources(), listDataItem.getInVoluntarySources())
-												.flatMap(List::stream).distinct().toList())
-										.withRegulatoryCode(extractRegulatoryId(specDataItem, specification));
 
-								ret.add(rclDataItem);
+								if (!isAllergenAllowed || Boolean.TRUE.equals(addInfoReqCtrl)) {
+									MLText message = MLTextHelper.getI18NMessage(MESSAGE_FORBIDDEN_ALLERGEN, extractName(listDataItem.getAllergen()));
+									
+									RequirementType reqType= isAllergenAllowed ? RequirementType.Info : RequirementType.Forbidden;
+									
+									if (!isAllergenAllowed && specDataItem.getRegulatoryType() != null) {
+										reqType = specDataItem.getRegulatoryType();
+									}
+									if (specDataItem.getRegulatoryMessage() != null) {
+										message = specDataItem.getRegulatoryMessage();
+									}
+									
+									RequirementListDataItem rclDataItem = RequirementListDataItem.build()
+											.ofType(reqType).withMessage(message)
+											.withCharact(listDataItem.getAllergen()).ofDataType(RequirementDataType.Specification)
+											.withSources(Stream.of(listDataItem.getVoluntarySources(), listDataItem.getInVoluntarySources())
+													.flatMap(List::stream).distinct().toList())
+											.withRegulatoryCode(extractRegulatoryId(specDataItem, specification));
+
+									ret.add(rclDataItem);
+								}
 							}
-						}
-					});
+						});
+					}
 				});
 			}
 		}

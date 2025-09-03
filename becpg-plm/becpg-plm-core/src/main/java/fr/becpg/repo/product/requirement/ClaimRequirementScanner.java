@@ -47,7 +47,8 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 				requirements.forEach(extracedSpecDataItem -> specLabelClaimsVisitedMap.put(extracedSpecDataItem, false));
 
 				specLabelClaimsVisitedMap.keySet().forEach(specDataItem -> getDataListVisited(formulatedProduct).forEach(listDataItem -> {
-					if (listDataItem.getLabelClaim().equals(specDataItem.getLabelClaim())) {
+					// Check regulatory usage filtering first
+					if (checkRegulatoryUsageMatch(specDataItem, formulatedProduct) && listDataItem.getLabelClaim().equals(specDataItem.getLabelClaim())) {
 						if (logger.isDebugEnabled()) {
 							logger.debug(extractName(specDataItem.getLabelClaim()) + " has been visited");
 						}
@@ -100,7 +101,7 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 				// check that all the labelClaim in specs have been visited in
 				// product
 				specLabelClaimsVisitedMap.keySet().forEach(specDataItem -> {
-					if (Boolean.FALSE.equals(specLabelClaimsVisitedMap.get(specDataItem))) {
+					if (Boolean.FALSE.equals(specLabelClaimsVisitedMap.get(specDataItem)) && checkRegulatoryUsageMatch(specDataItem, formulatedProduct)) {
 						if (logger.isDebugEnabled()) {
 							logger.debug(extractName(specDataItem.getLabelClaim()) + " was not found, raising rclDataItem for spec");
 						}
