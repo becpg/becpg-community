@@ -1235,15 +1235,15 @@ public class ECOServiceImpl implements ECOService {
 			}
 		});
 		
-		for (ReplacementListDataItem replacement : ecoData.getReplacementList()) {
-			checkForItemsToDelete(ecoData, items, itemToWUsedData, replacement);
-		}
-		
 		Date ecoEffectiveDate = ecoData.getEffectiveDate();
 		
 		Set<T> newItems = new HashSet<>();
 		
 		Set<T> toRemoveItems = new HashSet<>();
+		
+		for (ReplacementListDataItem replacement : ecoData.getReplacementList()) {
+			checkForItemsToDelete(ecoData, items, itemToWUsedData, replacement, toRemoveItems);
+		}
 		
 		for (T item : items) {
 			if (itemToWUsedData.containsKey(item)) {
@@ -1284,15 +1284,26 @@ public class ECOServiceImpl implements ECOService {
 								target = itemReplacement.getTargetItem();
 							}
 							
-							T newItem = copyOrUpdateItem(item, itemReplacement, target, wUsedData, copyItem);
+							T newItem = copyOrUpdateItem(item, itemReplacement, target, wUsedData, copyItem, target != null);
 							
-							newItems.add(newItem);
+							if (newItem != null) {
+								newItems.add(newItem);
+							}
 							
 							if (impactEffectivity) {
 								item.setEndEffectivity(effectiveDate);
 								newItem.setStartEffectivity(effectiveDate);
-							} else {
-								toRemoveItems.add(item);
+							} else if (!toRemoveItems.contains(item)) {
+								boolean isItemContained = false;
+								for (T toRemoveItem : toRemoveItems) {
+									if (toRemoveItem.getNodeRef().equals(item.getNodeRef())) {
+										isItemContained = true;
+									}
+								}
+								
+								if (!isItemContained) {
+									toRemoveItems.add(item);
+								}
 							}
 						}
 					}
@@ -1300,12 +1311,13 @@ public class ECOServiceImpl implements ECOService {
 			}
 		}
 		
-		items.removeAll(toRemoveItems);
+		List<T> removalList = new ArrayList<>(toRemoveItems);
+		items.removeAll(removalList);
 		items.addAll(newItems);
 		
 	}
 
-	private <T extends CompositionDataItem> void checkForItemsToDelete(ChangeOrderData ecoData, List<T> items, Map<T, WUsedListDataItem> itemToWUsedData, ReplacementListDataItem replacement) {
+	private <T extends CompositionDataItem> void checkForItemsToDelete(ChangeOrderData ecoData, List<T> items, Map<T, WUsedListDataItem> itemToWUsedData, ReplacementListDataItem replacement, Set<T> toRemoveItems) {
 		List<NodeRef> sourceItems = getSourceItems(ecoData, replacement);
 		
 		if (sourceItems.size() > 1 || replacement.getTargetItem() == null) {
@@ -1337,36 +1349,55 @@ public class ECOServiceImpl implements ECOService {
 			final boolean finalIsFuture = isFuture;
 			final Date finalEffectiveDate = effectiveDate;
 			
+			List<CompositionDataItem> toRemove = new ArrayList<>();
+			
 			if (hasWUsed) {
 				items.forEach(item -> {
 					if (sourceItems.contains(item.getComponent()) && (replacement.getTargetItem() == null || !itemToWUsedData.keySet().contains(item))) {
 						if (finalIsFuture) {
 							item.setEndEffectivity(finalEffectiveDate);
 						} else {
-							items.remove(item);
+							toRemoveItems.add(item);
 						}
 					}
 				});
 			}
 		}
 	}
+	
+	private Double getQtySum(List<NodeRef> sources, WUsedListDataItem wUsed) {
+        double qty = 0;
+        ProductData wUsedEntity = (ProductData) alfrescoRepository.findOne(wUsed.getSourceItems().get(0));
+        
+        for (NodeRef source : sources) {
+        	for (CompositionDataItem compoItem : wUsedEntity.getCompoList()) {
+        		if (compoItem.getComponent().equals(source)) {
+        			qty += getQty(compoItem);
+        		}
+        	}
+        }
+        return qty;
+    }
+
+    private <T extends CompositionDataItem> Double getQty(T item) {
+        if (item instanceof CompoListDataItem compoListDataItem) {
+            return compoListDataItem.getQtySubFormula();
+        } else {
+            return item.getQty();
+        }
+    }
 
 	@SuppressWarnings("unchecked")
-	private <T extends CompositionDataItem> T copyOrUpdateItem(T item, ReplacementListDataItem replacement, NodeRef target, WUsedListDataItem wUsedData, boolean createNew) {
+	private <T extends CompositionDataItem> T copyOrUpdateItem(T item, ReplacementListDataItem replacement, NodeRef target, WUsedListDataItem wUsedData, boolean createNew, boolean shouldReturn) {
 		
 		Double newQuantity = wUsedData.getQty();
 		
 		if (newQuantity == null) {
-			if (item instanceof CompoListDataItem) {
-				if ((((CompoListDataItem) item).getQtySubFormula() != null) && (replacement.getQtyPerc() != null)) {
-					newQuantity = (replacement.getQtyPerc() / 100d) * ((CompoListDataItem) item).getQtySubFormula();
-				}
-			} else {
-				if ((item.getQty() != null) && (replacement.getQtyPerc() != null)) {
-					newQuantity = (replacement.getQtyPerc() / 100d) * item.getQty();
-				}
-			}
-		}
+            Double itemQty = getQtySum(replacement.getSourceItems(), wUsedData);
+            if (itemQty != null && (replacement.getQtyPerc() != null)) {
+                newQuantity = (replacement.getQtyPerc() / 100d) * itemQty;
+            }
+        }
 		
 		Double newLoss = wUsedData.getLoss();
 		
@@ -1383,7 +1414,11 @@ public class ECOServiceImpl implements ECOService {
 		
 		updateComponent(newItem, target, newQuantity, newLoss);
 		
-		return newItem;
+		if (shouldReturn) {
+			return newItem;
+		}
+		
+		return null;
 	}
 
 	private boolean isFuture(Date effectiveDate) {
