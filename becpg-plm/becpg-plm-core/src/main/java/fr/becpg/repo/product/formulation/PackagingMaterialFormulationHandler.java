@@ -5,7 +5,6 @@ import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -157,6 +156,8 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 			tare = variantPackagingData.getTareSecondary();
 		} else if (PackagingLevel.Tertiary.equals(packLevel)) {
 			tare = variantPackagingData.getTareTertiary();
+		} else if (PackagingLevel.Inner.equals(packLevel)) {
+			tare = variantPackagingData.getTareInner();
 		} else {
 			tare = FormulationHelper.getTareInKg(formulatedProduct);
 		}
