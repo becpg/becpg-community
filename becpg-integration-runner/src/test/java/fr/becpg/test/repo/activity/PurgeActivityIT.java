@@ -31,12 +31,14 @@ import org.springframework.context.annotation.Lazy;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.activity.EntityActivityCleaner;
 import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.audit.plugin.DatabaseAuditPlugin;
 import fr.becpg.repo.audit.plugin.impl.ActivityAuditPlugin;
 import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
@@ -77,6 +79,9 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 	@Autowired
 	private ActivityAuditPlugin activityAuditPlugin;
 
+	@Autowired
+	private EntityActivityCleaner entityActivityCleaner;
+	
 	private static final int MAX_PAGE = 50;
 
 	private static final Map<String, Boolean> SORT_MAP;
@@ -237,7 +242,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 		List<ActivityListDataItem> firstPageBeforeClean = activities.subList(0, MAX_PAGE);
 
 		// clean activities
-		BatchInfo batch = entityActivityService.cleanActivities();
+		BatchInfo batch = entityActivityCleaner.cleanActivities(BatchPriority.HIGH);
 		waitForBatchEnd(batch);
 
 		activities = getActivities(finishedProductNodeRef, SORT_MAP);
@@ -289,7 +294,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 		// activities number before clean
 		assertEquals("number activities = 201", 201, getActivities(finishedProductNodeRef, null).size());
 
-		BatchInfo batch = entityActivityService.cleanActivities();
+		BatchInfo batch = entityActivityCleaner.cleanActivities(BatchPriority.HIGH);
 		waitForBatchEnd(batch);
 
 		List<ActivityListDataItem> activities = getActivities(finishedProductNodeRef, SORT_MAP);
@@ -377,7 +382,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 		// Make sure that we have all content activities
 		assertEquals("Content activities number = 2", 2, Collections.frequency(activityTypesBeforeClean, ActivityType.Content));
 
-		BatchInfo batch = entityActivityService.cleanActivities();
+		BatchInfo batch =  entityActivityCleaner.cleanActivities(BatchPriority.HIGH);
 		waitForBatchEnd(batch);
 
 		List<ActivityType> activityTypesAfterClean = new ArrayList<>();
@@ -474,7 +479,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 		logger.info("Activities number before clean : " + getActivities(finishedProductNodeRef, null).size());
 
 		// clean activities
-		BatchInfo batch = entityActivityService.cleanActivities();
+		BatchInfo batch =  entityActivityCleaner.cleanActivities(BatchPriority.HIGH);
 		waitForBatchEnd(batch);
 
 		List<ActivityListDataItem> activityNodeRefs = getActivities(finishedProductNodeRef, SORT_MAP);
@@ -552,7 +557,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 
 		assertEquals("Check generated Activity", MAX_PAGE + 3, getActivities(productNodeRef, null).size());
 
-		BatchInfo batch = entityActivityService.cleanActivities();
+		BatchInfo batch =  entityActivityCleaner.cleanActivities(BatchPriority.HIGH);
 		waitForBatchEnd(batch);
 
 		assertEquals("Check generated Activity", MAX_PAGE + 3, getActivities(productNodeRef, null).size());
@@ -585,7 +590,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 
 		waitForSolr();
 		// Clean Activities
-		batch = entityActivityService.cleanActivities();
+		batch = entityActivityCleaner.cleanActivities(BatchPriority.HIGH);
 		waitForBatchEnd(batch);
 
 		int activitiesAfterClean = getActivities(productNodeRef, null).size();

@@ -352,7 +352,6 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	}
 
 	/**
-	 * @param locale
 	 * Calculates the percentage reduction based on the reference value and the base value (either prepared or unprepared).
 	 */
 	private Double calculateReduction(Double refValue, Double baseValue) {

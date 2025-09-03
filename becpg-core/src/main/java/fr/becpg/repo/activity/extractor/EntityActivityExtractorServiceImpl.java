@@ -214,9 +214,9 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 								}
 							}
 
-							postProperty.put(EntityActivityService.BEFORE, checkProperty((JSONArray) beforeProperty, propertyDef));
+							postProperty.put(EntityActivityService.BEFORE, checkProperty((JSONArray) beforeProperty, propertyDef, entityNodeRef));
 						} else {
-							postProperty.put(EntityActivityService.BEFORE, toDisplayValue(beforeProperty, propertyDef));
+							postProperty.put(EntityActivityService.BEFORE, toDisplayValue(beforeProperty, propertyDef, entityNodeRef));
 						}
 					}
 
@@ -233,9 +233,9 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 								}
 							}
 
-							postProperty.put(EntityActivityService.AFTER, checkProperty((JSONArray) afterProperty, propertyDef));
+							postProperty.put(EntityActivityService.AFTER, checkProperty((JSONArray) afterProperty, propertyDef, entityNodeRef));
 						} else {
-							postProperty.put(EntityActivityService.AFTER, toDisplayValue(afterProperty, propertyDef));
+							postProperty.put(EntityActivityService.AFTER, toDisplayValue(afterProperty, propertyDef, entityNodeRef));
 						}
 					}
 
@@ -303,19 +303,19 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 	/**
 	 * <p>checkProperty.</p>
 	 *
-	 * @param property a {@link java.lang.Object} object.
+	 * @param propertyArray a {@link java.lang.Object} object.
 	 * @param propertyDef a {@link org.alfresco.service.cmr.dictionary.PropertyDefinition} object.
 	 * @return a {@link org.json.JSONArray} object.
 	 */
-	private JSONArray checkProperty(JSONArray propertyArray, PropertyDefinition propertyDef) {
+	private JSONArray checkProperty(JSONArray propertyArray, PropertyDefinition propertyDef, NodeRef entityNodeRef) {
 		JSONArray postproperty = new JSONArray();
 		for (int i = 0; i < propertyArray.length(); i++) {
-			postproperty.put(toDisplayValue(propertyArray.get(i), propertyDef));
+			postproperty.put(toDisplayValue(propertyArray.get(i), propertyDef, entityNodeRef));
 		}
 		return postproperty;
 	}
 
-	private Object toDisplayValue(Object prop, PropertyDefinition propertyDef) {
+	private Object toDisplayValue(Object prop, PropertyDefinition propertyDef, NodeRef entityNodeRef) {
 		try {
 			String stringVal = prop.toString();
 			if ((stringVal != null) && (((propertyDef == null) && stringVal.contains("workspace"))
@@ -339,7 +339,16 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 							nodeRef = new NodeRef(jsonNodeRef.getJSONObject("storeRef").getString("protocol") + "://"
 									+ jsonNodeRef.getJSONObject("storeRef").getString("identifier") + "/" + jsonNodeRef.getString("id"));
 						} catch (JSONException e) {
-							logger.warn("Cannot parse NodeRef: " + stringVal);
+							if (logger.isDebugEnabled()) {
+								logger.debug("Failed to parse NodeRef from JSON format for property: " + 
+									(propertyDef != null ? propertyDef.getName() : "unknown") + 
+									" on entity: " + (entityNodeRef != null ? entityNodeRef : "unknown"), e);
+							}
+							logger.warn("Cannot parse NodeRef from malformed activity data: '" + 
+								(stringVal == null ? "null" : stringVal.isEmpty() ? "empty" : stringVal) + 
+								"' for property: " + (propertyDef != null ? propertyDef.getName() : "unknown") +
+								" on entity: " + (entityNodeRef != null ? entityNodeRef : "unknown") +
+								" (expected JSON format or valid NodeRef string)");
 						}
 					} else {
 						nodeRef = new NodeRef(stringVal);

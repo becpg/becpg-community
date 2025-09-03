@@ -388,12 +388,17 @@ public class SecurityServiceImpl implements SecurityService {
 	}
 
 	private int computePluginAccessMode(NodeRef nodeRef, QName nodeType, int accesMode) {
-		for (SecurityServicePlugin plugin : securityPlugins) {
-			if (plugin.accept(nodeType)) {
-				accesMode = plugin.computeAccessMode(nodeRef, accesMode);
-			}
-		}
-		return accesMode;
+		return Math.min(beCPGCacheService.getFromTransactionCache(SecurityService.class.getName() + ".computePluginAccessMode",
+				buildPluginAccessModeCacheKey(nodeRef, nodeType), () -> {
+					int maxAllowedAccessMode = WRITE_ACCESS;
+					for (SecurityServicePlugin plugin : securityPlugins) {
+						if (plugin.accept(nodeType)) {
+							int pluginMaxAccess = plugin.getMaxAccessMode(nodeRef);
+							maxAllowedAccessMode = Math.min(maxAllowedAccessMode, pluginMaxAccess);
+						}
+					}
+					return maxAllowedAccessMode;
+				}), accesMode);
 	}
 
 	private String buildCacheKey(NodeRef nodeRef, List<NodeRef> groups) {
@@ -403,6 +408,13 @@ public class SecurityServiceImpl implements SecurityService {
 		String groupPart = (groups != null) ? groups.stream().filter(Objects::nonNull).sorted(Comparator.comparing(NodeRef::getId))
 				.map(NodeRef::getId).collect(Collectors.joining("_")) : "no_groups";
 		return nodePart + "_" + groupPart + "_" + currentUser;
+	}
+
+	private String buildPluginAccessModeCacheKey(NodeRef nodeRef, QName nodeType) {
+		String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
+		String nodePart = (nodeRef != null) ? nodeRef.getId() : "null";
+		String nodeTypePart = (nodeType != null) ? nodeType.toString() : "null";
+		return nodePart + "_" + nodeTypePart + "_" + currentUser;
 	}
 
 	private String computeNodeTypePropKey(QName nodeType, String propName) {

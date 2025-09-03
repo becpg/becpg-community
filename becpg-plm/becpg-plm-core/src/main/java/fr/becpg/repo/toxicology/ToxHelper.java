@@ -31,6 +31,12 @@ public class ToxHelper {
 		return ingListDataItem.getMaxi() != null ? ingListDataItem.getMaxi() : ingListDataItem.getQtyPerc();
 	}
 	
+	/**
+	 * <p>formatValue.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public static String formatValue(Double value) {
 	    if (value == null) {
 	        return null;
@@ -40,6 +46,13 @@ public class ToxHelper {
 	    return bdValue.toPlainString();
 	}
 	
+	/**
+	 * <p>removeToxValue.</p>
+	 *
+	 * @param values a {@link java.lang.String} object
+	 * @param toxName a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public static String removeToxValue(String values, String toxName) {
 		if (values != null) {
 			StringBuilder newValuesBuilder = new StringBuilder();
@@ -53,6 +66,14 @@ public class ToxHelper {
 		return null;
 	}
 	
+	/**
+	 * <p>appendToxValue.</p>
+	 *
+	 * @param values a {@link java.lang.String} object
+	 * @param toxName a {@link java.lang.String} object
+	 * @param newValue a {@link java.lang.Double} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public static String appendToxValue(String values, String toxName, Double newValue) {
 		if (newValue == null) {
 			return values;
@@ -84,6 +105,13 @@ public class ToxHelper {
 		}
 	}
 	
+	/**
+	 * <p>extractToxValue.</p>
+	 *
+	 * @param values a {@link java.lang.String} object
+	 * @param toxName a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public static Double extractToxValue(String values, String toxName) {
 		if (values != null) {
 			for (String value : values.split(LINE_SEPARATOR)) {

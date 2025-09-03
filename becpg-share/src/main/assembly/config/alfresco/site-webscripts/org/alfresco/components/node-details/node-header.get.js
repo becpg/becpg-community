@@ -38,6 +38,7 @@ function main()
    AlfrescoUtil.param("showAiSuggestion", "true"); //beCPG
    AlfrescoUtil.param("showDownload", "true");
    AlfrescoUtil.param("showPath", "true");
+   AlfrescoUtil.param("bcTask", null); //beCPG
    AlfrescoUtil.param("libraryRoot", null);
    AlfrescoUtil.param("pagecontext", null);
    AlfrescoUtil.param("showItemModifier", "true");
@@ -119,6 +120,7 @@ function main()
             showComments : (model.showComments == "true"),
             showDownload : (model.showDownload == "true"),
             showPath : (model.showPath == "true"),
+            taskFrom : model.bcTask,
             displayName : (model.item.displayName != null) ? model.item.displayName : model.item.fileName,
             likes : likes,
             isFavourite : (model.item.isFavourite || false),
