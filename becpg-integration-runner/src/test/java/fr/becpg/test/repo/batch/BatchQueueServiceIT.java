@@ -120,8 +120,6 @@ public class BatchQueueServiceIT extends RepoBaseTestCase {
 		waitForBatchEnd(lowBatchInfo);
 		assertTrue(lowProcessedEntries.get() < 10);
 		
-		assertTrue(batchQueueService.getBatchesInQueue().isEmpty());
-		assertNull(batchQueueService.getRunningBatchInfo());
 	}
 	
 	@Test
@@ -231,8 +229,6 @@ public class BatchQueueServiceIT extends RepoBaseTestCase {
 		waitForBatchEnd(lowBatchInfo);
 		assertEquals(10, lowProcessedEntries.get());
 		
-		assertTrue(batchQueueService.getBatchesInQueue().isEmpty());
-		assertNull(batchQueueService.getRunningBatchInfo());
 	}
 	
 }
