@@ -17,7 +17,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.Nullable;
 
@@ -77,10 +76,6 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	
 	@Autowired
 	private BeCPGAuditService beCPGAuditService;
-	
-	private ReentrantLock runCommandLock = new ReentrantLock();
-	
-	private ReentrantLock endCommandLock = new ReentrantLock();
 	
 	private BatchMonitor lastRunningBatch;
 	
@@ -318,9 +313,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		@Override
 		public void run() {
 			
-			runCommandLock.lock();
-			
-			try {
+			synchronized(runningCommand) {
 				BatchCommand<?> currentRunningCommand = runningCommand.get();
 				if (currentRunningCommand != null) {
 					if (currentRunningCommand.getBatchInfo().getPriority() < this.getBatchInfo().getPriority()) {
@@ -338,8 +331,6 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				} else {
 					runningCommand.set(this);
 				}
-			} finally {
-				runCommandLock.unlock();
 			}
 			
 			try (AuditScope scope = beCPGAuditService.startAudit(AuditType.BATCH)) {
@@ -459,13 +450,15 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				}
 
 			} finally {
-				endCommandLock.lock();
-				try {
+				synchronized(runningCommand) {
 					if (cancelledBatches.contains(batchId)) {
 						cancelledBatches.remove(batchId);
 					}
 					if (pausedCommands.contains(this)) {
 						pausedCommands.remove(this);
+					}
+					if (pauseLatch != null) {
+						pauseLatch.countDown();
 					}
 					if (runningCommand.get() == this) {
 						runningCommand.set(null);
@@ -480,9 +473,6 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 							}
 						}
 					}
-					this.pauseLatch = null;
-				} finally {
-					endCommandLock.unlock();
 				}
 			}
 		}
