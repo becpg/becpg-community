@@ -550,15 +550,23 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 		@Override
 		public int compare(WorkflowTask o1, WorkflowTask o2) {
 
-			NodeRef n1 = o1.getPath().getInstance().getInitiator();
-			NodeRef n2 = o2.getPath().getInstance().getInitiator();
+			NodeRef n1 = null, n2 = null;
+			
+			// Add null checks for WorkflowPath to prevent NullPointerException
+			if (o1.getPath() != null && o1.getPath().getInstance() != null) {
+				n1 = o1.getPath().getInstance().getInitiator();
+			}
+			if (o2.getPath() != null && o2.getPath().getInstance() != null) {
+				n2 = o2.getPath().getInstance().getInitiator();
+			}
+			
 			String s1 = null, s2 = null;
 
 			if (n1 != null) {
 				s1 = nodeService.getProperty(n1, ContentModel.PROP_FIRSTNAME) + " " + nodeService.getProperty(n1, ContentModel.PROP_LASTNAME);
 			}
 			if (n2 != null) {
-				s2 = nodeService.getProperty(n2, ContentModel.PROP_FIRSTNAME) + " " + nodeService.getProperty(n1, ContentModel.PROP_LASTNAME);
+				s2 = nodeService.getProperty(n2, ContentModel.PROP_FIRSTNAME) + " " + nodeService.getProperty(n2, ContentModel.PROP_LASTNAME);
 			}
 
 			s1 = s1 == null ? "" : s1;

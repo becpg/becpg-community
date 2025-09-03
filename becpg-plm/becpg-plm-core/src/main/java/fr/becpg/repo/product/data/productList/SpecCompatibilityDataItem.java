@@ -55,7 +55,7 @@ public class SpecCompatibilityDataItem extends BeCPGDataObject {
 	/**
 	 * <p>Getter for the field <code>reqType</code>.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementType} object.
 	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:psclReqType")
@@ -66,7 +66,7 @@ public class SpecCompatibilityDataItem extends BeCPGDataObject {
 	/**
 	 * <p>Setter for the field <code>reqType</code>.</p>
 	 *
-	 * @param reqType a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 * @param reqType a {@link fr.becpg.repo.regulatory.RequirementType} object.
 	 */
 	public void setReqType(RequirementType reqType) {
 		this.reqType = reqType;
@@ -118,7 +118,7 @@ public class SpecCompatibilityDataItem extends BeCPGDataObject {
 	/**
 	 * <p>Constructor for SpecCompatibilityDataItem.</p>
 	 *
-	 * @param reqType a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 * @param reqType a {@link fr.becpg.repo.regulatory.RequirementType} object.
 	 * @param reqDetails a {@link java.lang.String} object.
 	 * @param sourceItem a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */

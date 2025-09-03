@@ -132,7 +132,7 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * <p>getInstanceClass.</p>
 	 *
 	 * @return a {@link java.lang.Class} object
 	 */
@@ -303,6 +303,10 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 			for (IngListDataItem ing : formulatedProduct.getIngList()) {
 
 				Double quantityPercentage = ing.getQtyPerc();
+				
+				if (quantityPercentage == null || quantityPercentage == 0) {
+					continue;
+				}
 
 				IngItem ingItem = (IngItem) alfrescoRepository.findOne(ing.getIng());
 

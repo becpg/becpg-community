@@ -19,6 +19,7 @@ package fr.becpg.repo.repository;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -104,4 +105,10 @@ public interface RepositoryEntity extends Serializable {
 	 * @return a long.
 	 */
 	long getDbHashCode();
+	/**
+	 * <p>Getter for the field <code>aspects</code>.</p>
+	 *
+	 * @return a {@link java.util.Set} object.
+	 */
+	Set<QName> getAspects();
 }

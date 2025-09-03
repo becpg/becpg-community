@@ -53,7 +53,7 @@ public interface RegulatoryEntityItem {
 	/**
 	 * <p>getRegulatoryType.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementType} object
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementType} object
 	 */
 	public RequirementType getRegulatoryType();
 	
@@ -67,7 +67,7 @@ public interface RegulatoryEntityItem {
 	/**
 	 * <p>setRegulatoryType.</p>
 	 *
-	 * @param type a {@link fr.becpg.repo.product.data.constraints.RequirementType} object
+	 * @param type a {@link fr.becpg.repo.regulatory.RequirementType} object
 	 */
 	public void setRegulatoryType(RequirementType type);
 	
