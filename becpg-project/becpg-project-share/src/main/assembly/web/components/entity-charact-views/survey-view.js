@@ -111,6 +111,15 @@
             },
 
             onBeforeFormRuntimeInit: function WizardMgr_onBeforeFormRuntimeInit(layer, args) {
+				
+				if (this.formsFilterRuntime == null && args[1].eventGroup == this.id + "-filterForm-form") {
+                    var me = this;
+                    this.formsFilterRuntime = args[1].runtime;
+                    this.formsFilterRuntime.validations = [];
+                    this.formsFilterRuntime.ajaxSubmit = true;
+                    this.formsFilterRuntime._submitInvoked = function() { me.onFilterFormSubmit(); return false; };
+                }
+                    
                 var runtime = args[1].runtime;
                 // Only attach to our survey form (by htmlid or eventGroup)
                 if (args[1].eventGroup && args[1].eventGroup.indexOf("survey-form") !== -1) {
