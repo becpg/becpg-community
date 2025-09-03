@@ -663,7 +663,19 @@ public class ECOIT extends AbstractFinishedProductTest {
 	public void testTwoToOne() throws Exception {
 
 		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
+		
+		FinishedProductData initialProductData = (FinishedProductData) alfrescoRepository.findOne(finishedProduct1NodeRef);
+		
+	    CompoListDataItem source1 = initialProductData.getCompoList().stream()
+	        .filter(i -> i.getComponent().equals(rawMaterial3NodeRef))
+	        .findFirst()
+	        .orElse(null);
 
+	    CompoListDataItem source2 = initialProductData.getCompoList().stream()
+	        .filter(i -> i.getComponent().equals(rawMaterial4NodeRef))
+	        .findFirst()
+	        .orElse(null);
+	    
 		final NodeRef ecoNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			/*
@@ -718,6 +730,17 @@ public class ECOIT extends AbstractFinishedProductTest {
 			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(finishedProduct1NodeRef);
 
 			assertEquals(5, productData.getCompoList().size());
+			
+			CompoListDataItem mergedItem = productData.getCompoList().stream()
+		        .filter(i -> i.getComponent().equals(rawMaterial5NodeRef))
+		        .findFirst()
+		        .orElseThrow(() -> new AssertionError("Merged item (rawMaterial5NodeRef) not found in compoList"));
+			
+		    Double expectedQty = 0.;
+		    if (source1 != null) expectedQty += source1.getQty();
+		    if (source2 != null) expectedQty += source2.getQty();
+		    
+		    assertEquals(expectedQty, mergedItem.getQty());
 
 			return null;
 
