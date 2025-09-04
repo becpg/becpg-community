@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -14,6 +13,7 @@ import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
@@ -97,6 +97,9 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 	@Autowired
 	private EntityCatalogObserver[] observers;
 
+	@Autowired
+	private BehaviourFilter policyBehaviourFilter;
+
 	/**
 	 * <p>
 	 * getCatalogsDef.
@@ -172,7 +175,18 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 										logger.debug("Audited field " + changedField + " has changed, update date: " + catalogModifiedDate);
 									}
 
-									nodeService.setProperty(entityNodeRef, catalogModifiedDate, new Date());
+									boolean auditableEnabled = (policyBehaviourFilter != null)
+											&& policyBehaviourFilter.isEnabled(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+									try {
+										if (auditableEnabled) {
+											policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+										}
+										nodeService.setProperty(entityNodeRef, catalogModifiedDate, new Date());
+									} finally {
+										if (auditableEnabled) {
+											policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+										}
+									}
 								}
 								for (EntityCatalogObserver observer : observers) {
 									if (observer.acceptCatalogEvents(type, entityNodeRef, listNodeRefs)) {
@@ -371,7 +385,6 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 	}
 
 	/**
-	 * {@inheritDoc}
 	 *
 	 * <p>
 	 * formulateCatalog.
@@ -398,7 +411,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 						if (logger.isDebugEnabled()) {
 							logger.debug("Formulating catalog \"" + catalog.getString(EntityCatalogService.PROP_LABEL) + "\"");
 						}
-						List<String> langs = new LinkedList<>(getLocales(locales, catalog));
+						List<String> langs = new ArrayList<>(getLocales(locales, catalog));
 
 						langs.sort((o1, o2) -> {
 							if (o1.equals(defaultLocale)) {

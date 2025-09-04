@@ -2,7 +2,7 @@ package fr.becpg.repo.product.formulation;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -105,7 +105,15 @@ public class PackagingHelper implements InitializingBean {
 				variantPackagingData.setTertiaryWidth((Double) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_TERTIARY_WIDTH));
 				variantPackagingData.setTertiaryDepth((Double) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_TERTIARY_DEPTH));
 			}
-			
+			if (productData.getAspects().contains(GS1Model.ASPECT_INNERPACK_ASPECT)) {
+				if (variantPackagingData.isManualInner()) {
+					variantPackagingData.setProductPerInnerPack((Integer) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_PRODUCT_PER_INNER_PACK));
+					variantPackagingData.setInnerPackPerBox((Integer) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_INNERPACK_PER_BOX));
+					variantPackagingData.setInnerWidth((Double) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_INNERPACK_WIDTH));
+					variantPackagingData.setInnerHeight((Double) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_INNERPACK_HEIGHT));
+					variantPackagingData.setInnerDepth((Double) nodeService.getProperty(productData.getNodeRef(), GS1Model.PROP_INNERPACK_DEPTH));
+				}
+			}
 			if(variantPackagingData.isManualPalletInformations()) {
 				variantPackagingData
 				.setProductPerBoxes((Integer) nodeService.getProperty(productData.getNodeRef(), PackModel.PROP_PALLET_PRODUCTS_PER_BOX));
@@ -190,6 +198,15 @@ public class PackagingHelper implements InitializingBean {
 					}
 				
 					variantPackagingData.addTareTertiary(tare);
+				} else if (PackagingLevel.Inner.equals(dataItem.getPkgLevel())) {
+
+					if (Boolean.TRUE.equals(dataItem.getIsMaster())) {
+						variantPackagingData.setManualInner(false);
+						variantPackagingData.setInnerWidth((Double) nodeService.getProperty(dataItem.getProduct(), GS1Model.PROP_INNERPACK_WIDTH));
+						variantPackagingData.setInnerHeight((Double) nodeService.getProperty(dataItem.getProduct(), GS1Model.PROP_INNERPACK_HEIGHT));
+						variantPackagingData.setInnerDepth((Double) nodeService.getProperty(dataItem.getProduct(), GS1Model.PROP_INNERPACK_DEPTH));
+					}
+					variantPackagingData.addTareInner(tare);
 				}
 			}
 		}
@@ -217,6 +234,20 @@ public class PackagingHelper implements InitializingBean {
 			}
 
 		}
+		
+		// Extract productPerInnerPack from Inner packaging lines with ProductUnit.PP
+		if (PackagingLevel.Inner.equals(dataItem.getPkgLevel()) && ProductUnit.PP.equals(dataItem.getPackagingListUnit())) {
+			logger.debug("load inner packaging aspect ");
+			for (VariantPackagingData variantPackagingData : packagingData.getVariantPackagingData(currentVariants)) {
+				variantPackagingData.setManualInner(false);
+
+				// product per inner pack
+				if (dataItem.getQty() != null) {
+					logger.debug("setProductPerInnerPack " + dataItem.getQty().intValue());
+					variantPackagingData.setProductPerInnerPack(dataItem.getQty().intValue());
+				}
+			}
+		}
 	}
 
 
@@ -234,6 +265,8 @@ public class PackagingHelper implements InitializingBean {
 				.setPlatformTermsAndConditionsCode((String) nodeService.getProperty(product, GS1Model.PROP_PLATFORMTERMSANSCONDITION_CODE));
 
 	}
+
+	
 
 	// manage 2 level depth
 	private void loadPackagingKit(PackagingListDataItem dataItem, PackagingData packagingData,  List<NodeRef> currentVariants, double subQty) {
@@ -262,7 +295,7 @@ public class PackagingHelper implements InitializingBean {
 	}
 
 	private List<PackagingListDataItem> flatPackagingList(ProductData productData, Double subQty) {
-		List<PackagingListDataItem> ret = new LinkedList<>();
+		List<PackagingListDataItem> ret = new ArrayList<>();
 		for (PackagingListDataItem dataItem : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			if (dataItem.getProduct() != null) {
 

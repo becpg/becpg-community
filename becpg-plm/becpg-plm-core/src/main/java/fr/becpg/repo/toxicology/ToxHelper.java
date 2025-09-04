@@ -31,12 +31,28 @@ public class ToxHelper {
 		return ingListDataItem.getMaxi() != null ? ingListDataItem.getMaxi() : ingListDataItem.getQtyPerc();
 	}
 	
+	/**
+	 * <p>formatValue.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public static String formatValue(Double value) {
-		MathContext mc = new MathContext(6, RoundingMode.HALF_UP);
-		BigDecimal bdValue = new BigDecimal(value, mc).stripTrailingZeros();
-		return bdValue.toPlainString();
+	    if (value == null) {
+	        return null;
+	    }
+	    MathContext mc = new MathContext(6, RoundingMode.HALF_UP);
+	    BigDecimal bdValue = BigDecimal.valueOf(value).round(mc).stripTrailingZeros();
+	    return bdValue.toPlainString();
 	}
 	
+	/**
+	 * <p>removeToxValue.</p>
+	 *
+	 * @param values a {@link java.lang.String} object
+	 * @param toxName a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public static String removeToxValue(String values, String toxName) {
 		if (values != null) {
 			StringBuilder newValuesBuilder = new StringBuilder();
@@ -50,9 +66,17 @@ public class ToxHelper {
 		return null;
 	}
 	
+	/**
+	 * <p>appendToxValue.</p>
+	 *
+	 * @param values a {@link java.lang.String} object
+	 * @param toxName a {@link java.lang.String} object
+	 * @param newValue a {@link java.lang.Double} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public static String appendToxValue(String values, String toxName, Double newValue) {
 		if (newValue == null) {
-			return null;
+			return values;
 		}
 		StringBuilder newValuesBuilder = new StringBuilder();
 		boolean valueFound = false;
@@ -81,6 +105,13 @@ public class ToxHelper {
 		}
 	}
 	
+	/**
+	 * <p>extractToxValue.</p>
+	 *
+	 * @param values a {@link java.lang.String} object
+	 * @param toxName a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	public static Double extractToxValue(String values, String toxName) {
 		if (values != null) {
 			for (String value : values.split(LINE_SEPARATOR)) {

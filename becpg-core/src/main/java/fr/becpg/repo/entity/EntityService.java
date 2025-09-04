@@ -214,6 +214,6 @@ public interface EntityService {
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @return a {@link java.util.Map} object
 	 */
-	Map<NodeRef, NodeRef> getDocumentsByType(NodeRef entityNodeRef);
+	Map<NodeRef, List<NodeRef>> getDocumentsByType(NodeRef entityNodeRef);
 
 }

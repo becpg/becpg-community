@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -102,12 +101,12 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 			}
 
 			// sort
-			List<Map.Entry<NodeRef, Double>> sortedRawMaterials = new LinkedList<>(rawMaterials.entrySet());
+			List<Map.Entry<NodeRef, Double>> sortedRawMaterials = new ArrayList<>(rawMaterials.entrySet());
 			Collections.sort(sortedRawMaterials, (r1, r2) -> r2.getValue().compareTo(r1.getValue()));
 
 			if ((batchData.getAllocationList() != null) && alfrescoRepository.hasDataList(batchData, QualityModel.TYPE_BATCH_ALLOCATION_LIST)) {
 
-				List<AllocationListDataItem> toRetain = new LinkedList<>();
+				List<AllocationListDataItem> toRetain = new ArrayList<>();
 
 				boolean canApply = true;
 				int sort = 0;

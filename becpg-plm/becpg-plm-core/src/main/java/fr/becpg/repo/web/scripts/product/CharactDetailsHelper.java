@@ -22,7 +22,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -90,10 +89,10 @@ public class CharactDetailsHelper {
 		metadata.put("colName", getYAxisLabel());
 		metadatas.put(metadata);
 
-		List<CharactDetailsValue> compEls = new LinkedList<>();
+		List<CharactDetailsValue> compEls = new ArrayList<>();
 
 		Map<String, String> additionalValues = createAdditionalValuesMap();
-		List<Object> totals = new LinkedList<>();
+		List<Object> totals = new ArrayList<>();
 		Map<String, String> colUnits = new HashMap<>();
 		for (Map.Entry<NodeRef, List<CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
 			String propName = attributeExtractorService.extractPropName(entry.getKey());
@@ -120,7 +119,7 @@ public class CharactDetailsHelper {
 		writeMetadata(colUnits, metadatas, indexMap);
 		// Entity nut 1, nut2, nut3
 
-		List<List<Object>> resultsets = new LinkedList<>();
+		List<List<Object>> resultsets = new ArrayList<>();
 		
 		String totalKey = "entity.datalist.item.details.totals";
 		if (charactDetails.getTotalOperation().equals("MIN")) {
@@ -368,7 +367,7 @@ public class CharactDetailsHelper {
 			cell.setCellStyle(style);
 
 			Map<String, String> additionalValues = createAdditionalValuesMap();
-			List<CharactDetailsValue> compEls = new LinkedList<>();
+			List<CharactDetailsValue> compEls = new ArrayList<>();
 
 			for (Map.Entry<NodeRef, List<CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
 				for (CharactDetailsValue value : entry.getValue()) {

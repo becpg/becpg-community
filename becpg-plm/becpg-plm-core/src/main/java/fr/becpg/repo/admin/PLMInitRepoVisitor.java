@@ -94,6 +94,7 @@ import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -582,9 +583,12 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				
 				// Contributor on Project Folder
 				for (SystemGroup authority : new SystemGroup[] { SystemGroup.LicenseWriteConcurrent, SystemGroup.LicenseWriteNamed }) {
-
-					permissionService.setPermission(projectFolderNodeRef, PermissionService.GROUP_PREFIX + authority.toString(),
-							PermissionService.CONTRIBUTOR, true);
+					
+					String licenceAuthority = PermissionService.GROUP_PREFIX + authority.toString();
+					
+					if (!AuthorityHelper.groupHasPermission(projectFolderNodeRef, licenceAuthority, PermissionService.CONTRIBUTOR)) {
+						permissionService.setPermission(projectFolderNodeRef, licenceAuthority, PermissionService.CONTRIBUTOR, true);
+					}
 				}
 			}
 
@@ -822,7 +826,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			createNotification(notificationFolder, properties, null, adminGroupNodeRef, null);
 		}
 	}
-
 	private void createArchivedProductsNotification(NodeRef notificationFolder) {
 		if (nodeService.getChildByName(notificationFolder, ContentModel.ASSOC_CONTAINS, RepoConsts.ARCHIVED_PRODUCTS_NOTIFICATION) == null) {
 			Map<QName, Serializable> properties = new HashMap<>();
@@ -1015,7 +1018,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	/**
 	 * Create the entity templates
 	 *
-	 * @param productTplsNodeRef
+	 * @param systemNodeRef
 	 */
 	private void visitEntityTpls(NodeRef systemNodeRef) {
 
@@ -1071,9 +1074,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	/**
 	 * Create system charact file
 	 *
-	 * @param systemNodeRef
-	 * @param pathCharacts
-	 * @return
+	 * @param parentNodeRef the parent node under which the system characteristics are created
+	 * @param path the relative path for the system characteristics container
+	 * @return the created system characteristics node
 	 */
 	private NodeRef visitSystemCharactsEntity(NodeRef parentNodeRef, String path) {
 
@@ -1505,7 +1508,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	/**
 	 * Create the reports templates
 	 *
-	 * @param productReportTplsNodeRef
+	 * @param systemNodeRef
 	 */
 	private void visitReports(NodeRef systemNodeRef) {
 		try {
@@ -1888,8 +1891,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	/**
 	 * Create system groups.
 	 *
-	 * @param locale
-	 *            the locale
 	 */
 	private void createSystemGroups() {
 

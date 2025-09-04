@@ -1,50 +1,70 @@
-# Git commits messages
+# Git Commit Messages Convention
 
-1. **Optional First Part:**
-   - If a ticket is associated with the commit, indicate the status and reference of the ticket.
-   - Use "InProgress" for tickets not yet resolved and "Fix" for resolved tickets.
+## 1. **Optional First Part: Ticket Reference**
 
-   Example:
-   ```
-   InProgress/Fix #0000
-   ```
+* If the commit relates to a ticket, indicate its status and reference.
+* Use:
 
-2. **Required Second Part:**
-   - Use one of the following tags to categorize the type of commit:
-     - [Feature] - For new features or enhancements
-     - [Bug] - For bug fixes
-     - [Setup] - For changes related to project packaging
-     - [Cleanup] - For code cleanup
-     - [Migration] - For migration of a component
-     - [Security] - For addressing security issues
-     - [Merge] - For merge between branches
+  * `InProgress` → for tickets not yet resolved
+  * `Fix` → for resolved tickets
 
-   Example:
-   ```
-   [Feature] - Add new functionality
-   ```
+**Format:**
 
-3. **Required Third Part:**
-   - Provide a brief English description of the commit.
+```plaintext
+InProgress/Fix #0000
+```
 
-   Example:
-   ```
-   [Feature] - Add new functionality
-   ```
+---
 
-Example commit messages following the convention:
+## 2. **Required Second Part: Commit Type**
+
+Choose one of the following tags to categorize your commit:
+
+* `[Feature]` → new features or enhancements
+* `[Bug]` → bug fixes
+* `[Setup]` → project setup or packaging changes
+* `[Cleanup]` → code cleanup and refactoring
+* `[Migration]` → component or database migrations
+* `[Security]` → fixes related to vulnerabilities
+* `[Merge]` → merges between branches
+
+**Format:**
+
+```plaintext
+[Tag] - Short description
+```
+
+---
+
+## 3. **Required Third Part: Description**
+
+* Write a **short, clear description in English**.
+* **Commit messages must be one line only.**
+
+---
+
+## ✅ Examples
 
 ```plaintext
 InProgress #6174 - [Bug] Fix project dashlet task name
 [Bug] - Css disabled button fix
-Fix #1234 - [Feature] Add security readandwrite option
-[Cleanup] - Remove unused code variable
-[Setup] - Add project and plm to hot class reloading
+Fix #1234 - [Feature] Add security read/write option
+[Cleanup] - Remove unused variable
+[Setup] - Add hot class reloading for project and PLM
 [Merge] - Merge develop into master
 [Feature] - Implement new login page
-InProgress/Fix #6174 - [Issue] Wait message display when form field is invalid
+InProgress #6174 - [Issue] Display wait message when form field is invalid
 [Migration] - Update database schema for version 2.0
-[Security] - Fix security vulnerability in authentication module
+[Security] - Fix vulnerability in authentication module
 ```
 
-You can use this template when writing your commit messages. Additionally, you mentioned a local Git configuration for commit message validation. To implement this, you need to create a `commit-msg` script in the `.git/hooks` directory of your project. Make sure to make it executable. If you need further assistance with this, let me know!
+---
+
+## 🔧 Validation with Git Hook
+
+To enforce this convention, you can create a `commit-msg` script in your repository’s `.git/hooks/` directory.
+Make it executable (`chmod +x .git/hooks/commit-msg`) and add rules to check that:
+
+* The message fits the format
+* It is only **one line long**
+

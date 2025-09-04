@@ -344,4 +344,135 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 		});
 
 	}
+
+	/**
+	 * Test regulatory usage filtering in forbidden ingredients
+	 * 
+	 * @throws Exception the exception
+	 */
+	@Test
+	public void testRegulatoryUsageFiltering() throws Exception {
+
+		logger.info("testRegulatoryUsageFiltering");
+
+		// Create regulatory usage nodes
+		NodeRef shampoUsageNodeRef = inWriteTx(() -> {
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, "Shampoo");
+			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "Shampoo"),
+					PLMModel.TYPE_REGULATORY_USAGE, properties).getChildRef();
+		});
+
+		NodeRef bodyCreamUsageNodeRef = inWriteTx(() -> {
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, "Body Cream");
+			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "Body Cream"),
+					PLMModel.TYPE_REGULATORY_USAGE, properties).getChildRef();
+		});
+
+		NodeRef finishedProductNodeRef = inWriteTx(() -> {
+
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName(toTestName("Shampoo Product"));
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setQty(1d);
+			finishedProduct.setDensity(1d);
+
+			// Set regulatory usage to Shampoo
+			List<NodeRef> regulatoryUsages = new ArrayList<>();
+			regulatoryUsages.add(shampoUsageNodeRef);
+			finishedProduct.setRegulatoryUsagesRef(regulatoryUsages);
+
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(CompoListDataItem.build().withQtyUsed(0.5d).withUnit(ProductUnit.kg)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(0.5d).withUnit(ProductUnit.kg)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef));
+			finishedProduct.withCompoList(compoList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+
+		});
+
+		inWriteTx(() -> {
+			// Create specification with regulatory usage filtering
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, "RegulatoryUsageFiltering - Spec");
+			NodeRef productSpecificationNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+
+			ProductSpecificationData productSpecification = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef);
+
+			List<ForbiddenIngListDataItem> forbiddenIngList = new ArrayList<>();
+
+			// Rule 1: Forbidden for Shampoo usage only (should apply)
+			List<NodeRef> ings1 = new ArrayList<>();
+			ings1.add(ing1);
+			List<NodeRef> regulatoryUsages1 = new ArrayList<>();
+			regulatoryUsages1.add(shampoUsageNodeRef);
+			
+			ForbiddenIngListDataItem forbiddenRule1 = new ForbiddenIngListDataItem(null, RequirementType.Forbidden, 
+					"Ingredient forbidden for shampoo", null, null, null, ings1, new ArrayList<>(), new ArrayList<>());
+			forbiddenRule1.setRegulatoryUsagesRef(regulatoryUsages1);
+			forbiddenIngList.add(forbiddenRule1);
+
+			// Rule 2: Forbidden for Body Cream usage only (should NOT apply)
+			List<NodeRef> ings2 = new ArrayList<>();
+			ings2.add(ing2);
+			List<NodeRef> regulatoryUsages2 = new ArrayList<>();
+			regulatoryUsages2.add(bodyCreamUsageNodeRef);
+			
+			ForbiddenIngListDataItem forbiddenRule2 = new ForbiddenIngListDataItem(null, RequirementType.Forbidden, 
+					"Ingredient forbidden for body cream", null, null, null, ings2, new ArrayList<>(), new ArrayList<>());
+			forbiddenRule2.setRegulatoryUsagesRef(regulatoryUsages2);
+			forbiddenIngList.add(forbiddenRule2);
+
+			productSpecification.setForbiddenIngList(forbiddenIngList);
+			alfrescoRepository.save(productSpecification);
+
+			// Associate specification with product
+			nodeService.createAssociation(finishedProductNodeRef, productSpecificationNodeRef, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+
+			/*-- Formulate product --*/
+			logger.info("/*-- Formulate product --*/");
+			productService.formulate(finishedProductNodeRef);
+
+			/*-- Verify formulation --*/
+			logger.info("/*-- Verify formulation --*/");
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+
+			int checks = 0;
+			logger.info("/*-- Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItems --*/");
+
+			for (RequirementListDataItem reqCtrlList : formulatedProduct.getReqCtrlList()) {
+				logger.info("/*-- Verify reqCtrlList : " + reqCtrlList.getReqMessage() + " --*/");
+
+				if (reqCtrlList.getReqMessage().equals("Ingredient forbidden for shampoo")) {
+					// Should be present because product has shampoo usage
+					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
+					assertEquals(RequirementDataType.Specification, reqCtrlList.getReqDataType());
+					checks++;
+				} else if (reqCtrlList.getReqMessage().equals("Ingredient forbidden for body cream")) {
+					// Should NOT be present because product doesn't have body cream usage
+					fail("Rule for body cream should not apply to shampoo product");
+				} else if (!RequirementDataType.Specification.equals(reqCtrlList.getReqDataType())) {
+					// Ignore non-specification requirements (like validation requirements)
+					logger.info("Ignoring non-specification requirement: " + reqCtrlList.getReqMessage());
+				} else {
+					logger.error("Unexpected rclDataItem: " + reqCtrlList.getReqMessage());
+					fail("Unexpected requirement: " + reqCtrlList.getReqMessage());
+				}
+			}
+
+			logger.info("/*-- Done checking, checks=" + checks + " (should be 1) --*/");
+			assertEquals("Expected 1 forbidden ingredient requirement to match regulatory usage", 1, checks);
+
+			return null;
+
+		});
+
+	}
 }

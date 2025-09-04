@@ -1,31 +1,31 @@
 #!/bin/sh
+# Git hook: .git/hooks/commit-msg
+# Enforces commit message convention (one-line, optional ticket, tag, description)
 
-# Git commit-msg hook
+COMMIT_MSG_FILE=$1
+COMMIT_MSG=$(head -n1 "$COMMIT_MSG_FILE")  # Only check first line
 
-commit_msg_file="$1"
+# Regex for validation:
+# - Optional "InProgress|Fix #1234 - "
+# - Then [Tag]
+# - Then " - Short description"
+PATTERN='^((InProgress|Fix) #[0-9]+ - )?\[(Feature|Bug|Setup|Cleanup|Migration|Security|Merge|Issue)\] - .+$'
 
-# First Part [Optional]:
-
-ticket_ref=$(grep -E -o "^\s*(InProgress|Fix)\s+#[0-9]+" "$commit_msg_file")
-if [ -n "$ticket_ref" ]; then
-  echo "Ticket reference found: $ticket_ref"
-else
-  echo "No ticket reference found."
-fi
-
-# Second Part [Required]:
-
-valid_commit_types="[Feature]|[Bug]|[Setup]|[Cleanup]|[Migration]|[Security]|[Release]"
-commit_type=$(head -n 2 "$commit_msg_file" | grep -E -o "$valid_commit_types")
-if [ -z "$commit_type" ]; then
-  echo "Invalid commit type. Expected one of: [Feature], [Bug], [Setup], [Cleanup], [Migration], [Security]"
+# Check if commit message is multiple lines
+if [ "$(wc -l < "$COMMIT_MSG_FILE")" -gt 1 ]; then
+  echo "❌ Commit message must be ONE line only."
   exit 1
 fi
 
-# Third Part [Required]:
-
-description_line=$(head -n 8 "$commit_msg_file" | tail -n 1)
-if [ -z "$description_line" ]; then
-  echo "Description is missing."
+# Validate commit message format
+if ! echo "$COMMIT_MSG" | grep -Eq "$PATTERN"; then
+  echo "❌ Invalid commit message format!"
+  echo "👉 Expected format:"
+  echo "   InProgress/Fix #1234 - [Tag] - Description"
+  echo "   or"
+  echo "   [Tag] - Description"
   exit 1
 fi
+
+echo "✅ Commit message format OK"
+exit 0

@@ -118,7 +118,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 	/**
 	 * <p>Getter for the field <code>regulatoryType</code>.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementType} object
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementType} object
 	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:regulatoryType")
@@ -404,6 +404,191 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 	}
 
 	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 */
+	public static AllergenListDataItem build() {
+		return new AllergenListDataItem();
+	}
+
+	/**
+	 * <p>withNodeRef.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 */
+	public AllergenListDataItem withNodeRef(NodeRef nodeRef) {
+		setNodeRef(nodeRef);
+		return this;
+	}
+
+	/**
+	 * <p>withQtyPerc.</p>
+	 *
+	 * @param qtyPerc a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 */
+	public AllergenListDataItem withQtyPerc(Double qtyPerc) {
+		setQtyPerc(qtyPerc);
+		return this;
+	}
+
+	/**
+	 * <p>withVoluntary.</p>
+	 *
+	 * @param voluntary a {@link java.lang.Boolean} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 */
+	public AllergenListDataItem withVoluntary(Boolean voluntary) {
+		setVoluntary(voluntary);
+		return this;
+	}
+
+	/**
+	 * <p>withInVoluntary.</p>
+	 *
+	 * @param inVoluntary a {@link java.lang.Boolean} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 */
+	public AllergenListDataItem withInVoluntary(Boolean inVoluntary) {
+		setInVoluntary(inVoluntary);
+		return this;
+	}
+
+	/**
+	 * <p>withOnSite.</p>
+	 *
+	 * @param onSite a {@link java.lang.Boolean} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 */
+	public AllergenListDataItem withOnSite(Boolean onSite) {
+		setOnSite(onSite);
+		return this;
+	}
+
+	/**
+	 * <p>withOnLine.</p>
+	 *
+	 * @param onLine a {@link java.lang.Boolean} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 */
+	public AllergenListDataItem withOnLine(Boolean onLine) {
+		setOnLine(onLine);
+		return this;
+	}
+
+	/**
+	 * <p>withIsCleaned.</p>
+	 *
+	 * @param isCleaned a {@link java.lang.Boolean} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 */
+	public AllergenListDataItem withIsCleaned(Boolean isCleaned) {
+		setIsCleaned(isCleaned);
+		return this;
+	}
+
+	/**
+	 * <p>withAllergenValue.</p>
+	 *
+	 * @param allergenValue a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 */
+	public AllergenListDataItem withAllergenValue(String allergenValue) {
+		setAllergenValue(allergenValue);
+		return this;
+	}
+
+	/**
+	 * <p>withVoluntarySources.</p>
+	 *
+	 * @param voluntarySources a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 */
+	public AllergenListDataItem withVoluntarySources(List<NodeRef> voluntarySources) {
+		setVoluntarySources(voluntarySources);
+		return this;
+	}
+
+	/**
+	 * <p>withInVoluntarySources.</p>
+	 *
+	 * @param inVoluntarySources a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 */
+	public AllergenListDataItem withInVoluntarySources(List<NodeRef> inVoluntarySources) {
+		setInVoluntarySources(inVoluntarySources);
+		return this;
+	}
+
+	/**
+	 * <p>withAllergen.</p>
+	 *
+	 * @param allergen a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 */
+	public AllergenListDataItem withAllergen(NodeRef allergen) {
+		setAllergen(allergen);
+		return this;
+	}
+
+	/**
+	 * <p>withIsManual.</p>
+	 *
+	 * @param isManual a {@link java.lang.Boolean} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 */
+	public AllergenListDataItem withIsManual(Boolean isManual) {
+		setIsManual(isManual);
+		return this;
+	}
+
+	/**
+	 * <p>withRegulatoryCountriesRef.</p>
+	 *
+	 * @param regulatoryCountriesRef a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 */
+	public AllergenListDataItem withRegulatoryCountriesRef(List<NodeRef> regulatoryCountriesRef) {
+		setRegulatoryCountriesRef(regulatoryCountriesRef);
+		return this;
+	}
+
+	/**
+	 * <p>withRegulatoryUsagesRef.</p>
+	 *
+	 * @param regulatoryUsagesRef a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 */
+	public AllergenListDataItem withRegulatoryUsagesRef(List<NodeRef> regulatoryUsagesRef) {
+		setRegulatoryUsagesRef(regulatoryUsagesRef);
+		return this;
+	}
+
+	/**
+	 * <p>withRegulatoryType.</p>
+	 *
+	 * @param regulatoryType a {@link fr.becpg.repo.regulatory.RequirementType} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 */
+	public AllergenListDataItem withRegulatoryType(RequirementType regulatoryType) {
+		setRegulatoryType(regulatoryType);
+		return this;
+	}
+
+	/**
+	 * <p>withRegulatoryMessage.</p>
+	 *
+	 * @param regulatoryMessage a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 */
+	public AllergenListDataItem withRegulatoryMessage(MLText regulatoryMessage) {
+		setRegulatoryMessage(regulatoryMessage);
+		return this;
+	}
+
+	/**
 	 * <p>Constructor for AllergenListDataItem.</p>
 	 *
 	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
@@ -415,6 +600,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 	 * @param allergen a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param isManual a {@link java.lang.Boolean} object.
 	 */
+	@Deprecated
 	public AllergenListDataItem(NodeRef nodeRef, Double qtyPerc, Boolean voluntary, Boolean inVoluntary, List<NodeRef> voluntarySources,
 			List<NodeRef> inVoluntarySources, NodeRef allergen, Boolean isManual) {
 		super();

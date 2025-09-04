@@ -159,6 +159,8 @@
 	border-radius: 20px;
 	min-height: 600px;
 	min-width: 380px;
+	width: 800px;
+	height: 700px;
 	z-index: 1110;
 	position: relative;
 	resize: both;
@@ -171,7 +173,7 @@
 }
 
 #watson-container.transition.expanded #watson-chatbot-container {
-	height: 600px
+	height: 700px
 }
 
 #watson-container.transition.expanded #watson-chatbot-container #watson-chatbot-chat-activate-bar,
@@ -216,7 +218,9 @@
 #watson-container.transition.expanded #watson-chatbot-container.llm-wrapper
 	{
 	min-width: 475px;
-	min-height: 700px
+	min-height: 700px;
+	width: 800px;
+	height: 700px
 }
 
 #watson-container.transition.expanded #watson-chatbot-container.llm-wrapper #watson-chatbot-chat-frame

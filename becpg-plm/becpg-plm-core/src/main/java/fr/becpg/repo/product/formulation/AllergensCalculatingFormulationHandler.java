@@ -6,7 +6,6 @@ package fr.becpg.repo.product.formulation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -116,7 +115,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			logger.debug("Start AllergensCalculatingVisitor");
 
 			if (formulatedProduct.getAllergenList() == null) {
-				formulatedProduct.setAllergenList(new LinkedList<>());
+				formulatedProduct.setAllergenList(new ArrayList<>());
 			}
 
 			List<AllergenListDataItem> retainNodes = new ArrayList<>();
@@ -350,13 +349,13 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	/**
 	 * Visit part.
 	 *
-	 * @param part
-	 *            the part
-	 * @param qtyUsed
-	 * @param isRawMaterial
-	 * @param totalQtyPercMap
-	 * @param allergenMap
-	 *            the allergen map
+	 * @param variantDataItem the variant context for the visit
+	 * @param partProduct the part product being visited
+	 * @param formulatedProduct the target formulated product being updated
+	 * @param retainNodes the list used to retain processed allergen items
+	 * @param qtyUsed the quantity of the part used
+	 * @param netQty the net quantity context
+	 * @param errors a map collecting requirement errors keyed by id
 	 */
 	private List<RequirementListDataItem> visitPart(VariantDataItem variantDataItem, ProductData partProduct, ProductData formulatedProduct,
 			List<AllergenListDataItem> retainNodes, Double qtyUsed, Double netQty, Map<String, RequirementListDataItem> errors) {
