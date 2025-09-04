@@ -126,8 +126,8 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 
 		List<NodeRef> oldSignedReports = associationService.getTargetAssocs(project.getNodeRef(), ReportModel.ASSOC_REPORTS);
 		for (NodeRef oldSignedReport : oldSignedReports) {
-			deleteReport(oldSignedReport);
 			logger.info("Delete old report from project: " + nodeService.getProperty(oldSignedReport, ContentModel.PROP_NAME));
+			deleteReport(oldSignedReport);
 		}
 		
 		for (NodeRef reportNodeRef : reports) {
