@@ -205,7 +205,7 @@
 
 					<field id="bcpg:documentState" set="documentType">
 						<control
-							template="/org/alfresco/components/form/controls/selectone.ftl">
+							template="/org/alfresco/components/form/controls/selectmany.ftl">
 							<control-param name="insertBlank">true</control-param>
 							<control-param name="isSearch">true</control-param>
 						</control>

@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -64,7 +63,7 @@ public abstract class RuleParser {
 	protected ShowRule showAllGeo = null;
 	protected ShowRule showAllBio = null;
 
-	protected List<LabelingDecorator> labelingDecorators = new LinkedList<>();
+	protected List<LabelingDecorator> labelingDecorators = new ArrayList<>();
 
 	{
 		labelingDecorators.add(new CapitalizeDecorator());
@@ -317,7 +316,7 @@ public abstract class RuleParser {
 				} else {
 					for (NodeRef component : components) {
 						
-						List<FootNoteRule> tmp = new LinkedList<>();
+						List<FootNoteRule> tmp = new ArrayList<>();
 						if (nodeFootNoteRules.containsKey(component)) {
 							tmp = nodeFootNoteRules.get(component);
 						}
@@ -350,7 +349,7 @@ public abstract class RuleParser {
 
 				if ((components != null) && !components.isEmpty()) {
 					for (NodeRef component : components) {
-						List<DeclarationFilterRule> tmp = new LinkedList<>();
+						List<DeclarationFilterRule> tmp = new ArrayList<>();
 						if (nodeDeclarationFilters.containsKey(component)) {
 							tmp = nodeDeclarationFilters.get(component);
 						}
@@ -429,7 +428,7 @@ public abstract class RuleParser {
 			if (aggregateRules.containsKey(component)) {
 				aggregateRules.get(component).add(aggregateRule);
 			} else {
-				aggregateRules.put(component, new LinkedList<>(Collections.singletonList(aggregateRule)));
+				aggregateRules.put(component, new ArrayList<>(Collections.singletonList(aggregateRule)));
 			}
 
 		}

@@ -52,7 +52,6 @@ public abstract class AbstractCompositionQtyCalculatingFormulationHandler<T> ext
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
-
 	/**
 	 * <p>visitQtyChildren.</p>
 	 *
@@ -61,11 +60,14 @@ public abstract class AbstractCompositionQtyCalculatingFormulationHandler<T> ext
 	 * @param composite a {@link fr.becpg.repo.data.hierarchicalList.Composite} object
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */
-	protected void visitQtyChildren(ProductData formulatedProduct, Double parentQty, Composite<CompoListDataItem> composite) throws FormulateException {
+	protected void visitQtyChildren(ProductData formulatedProduct, Double parentQty, Composite<CompoListDataItem> composite)
+			throws FormulateException {
 
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
 
-			BigDecimal qtyInKg = calculateQtyInKg(component.getData());
+			ProductData componentProductData = alfrescoRepository.findOne(component.getData().getProduct());
+
+			BigDecimal qtyInKg = calculateQtyInKg(component.getData(), componentProductData);
 			if (logger.isDebugEnabled()) {
 				logger.debug("qtySubFormula: " + qtyInKg + " parentQty: " + parentQty);
 			}
@@ -77,7 +79,7 @@ public abstract class AbstractCompositionQtyCalculatingFormulationHandler<T> ext
 
 			// Take in account yield that is defined on component
 
-			if (component.isLeaf() && formulatedProduct!=null) {
+			if (component.isLeaf() && (formulatedProduct != null)) {
 				if ((formulatedProduct.getManualYield() != null) && (formulatedProduct.getManualYield() != 0d)) {
 					qtyInKg = qtyInKg.multiply(BigDecimal.valueOf(100)).divide(BigDecimal.valueOf(formulatedProduct.getManualYield()), 10,
 							RoundingMode.HALF_UP);
@@ -87,6 +89,12 @@ public abstract class AbstractCompositionQtyCalculatingFormulationHandler<T> ext
 				}
 			}
 			component.getData().setQty(qtyInKg.doubleValue());
+
+			// Set per-line volume for leaves
+			if (component.isLeaf()) {
+				Double vol = FormulationHelper.getNetVolume(component.getData(), componentProductData);
+				component.getData().setVolume(vol);
+			}
 
 			// calculate children
 			if (!component.isLeaf()) {
@@ -113,10 +121,40 @@ public abstract class AbstractCompositionQtyCalculatingFormulationHandler<T> ext
 				} else {
 					visitQtyChildren(formulatedProduct, component.getData().getQty(), component);
 				}
+
+				// After children quantities are computed, compute parent volume and yield
+				// Parent volume = sum of children volumes
+				Double parentVolume = 0d;
+				for (Composite<CompoListDataItem> child : component.getChildren()) {
+					Double cv = child.getData().getVolume();
+					parentVolume += ((cv != null) && !cv.isNaN() && !cv.isInfinite()) ? cv : 0d;
+				}
+				component.getData().setVolume(parentVolume);
+
+				// Yield: set null for % units; otherwise compute based on children
+				if (ProductUnit.Perc.equals(component.getData().getCompoListUnit())) {
+					component.getData().setYieldPerc(null);
+				} else {
+					Double yieldPerc = 100d;
+					double qtyUsed = 0d;
+					for (Composite<CompoListDataItem> child : component.getChildren()) {
+						Double cQty = child.getData().getQty();
+						if (cQty != null) {
+							if (child.isLeaf()) {
+								qtyUsed += (cQty * FormulationHelper.getYield(child.getData())) / 100;
+							} else {
+								qtyUsed += cQty;
+							}
+						}
+					}
+					if ((component.getData().getQty() != null) && (qtyUsed != 0)) {
+						yieldPerc = (component.getData().getQty() / qtyUsed) * 100;
+					}
+					component.getData().setYieldPerc(yieldPerc);
+				}
 			}
 		}
 	}
-
 
 	/**
 	 * <p>calculateQtyInKg.</p>
@@ -124,12 +162,10 @@ public abstract class AbstractCompositionQtyCalculatingFormulationHandler<T> ext
 	 * @param compoListDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
 	 * @return a {@link java.math.BigDecimal} object
 	 */
-	protected BigDecimal calculateQtyInKg(CompoListDataItem compoListDataItem) {
+	protected BigDecimal calculateQtyInKg(CompoListDataItem compoListDataItem, ProductData componentProductData) {
 		Double qty = compoListDataItem.getQtySubFormula();
 		ProductUnit compoListUnit = compoListDataItem.getCompoListUnit();
 
-		ProductData componentProductData = alfrescoRepository.findOne(compoListDataItem.getProduct());
-		
-		return FormulationHelper.compoListUnitToKg(qty,compoListDataItem,componentProductData,  compoListUnit);
+		return FormulationHelper.compoListUnitToKg(qty, compoListDataItem, componentProductData, compoListUnit);
 	}
 }

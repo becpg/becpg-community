@@ -14,21 +14,21 @@ public interface ToxicologyService {
 	 *
 	 * @param ingNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
-	void updateToxIngAfterIngUpdate(NodeRef ingNodeRef);
+	void updateIngredient(NodeRef ingNodeRef);
 	
 	/**
 	 * <p>updateToxIngAfterToxUpdate.</p>
 	 *
 	 * @param toxNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
-	void updateToxIngAfterToxUpdate(NodeRef toxNodeRef);
+	void updateIngredientsFromTox(NodeRef toxNodeRef);
 	
 	/**
 	 * <p>deleteToxIngBeforeToxDelete.</p>
 	 *
 	 * @param toxNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
-	void deleteToxIngBeforeToxDelete(NodeRef toxNodeRef);
+	void removeToxFromIngredients(NodeRef toxNodeRef);
 
 	/**
 	 * <p>getMaxValue.</p>

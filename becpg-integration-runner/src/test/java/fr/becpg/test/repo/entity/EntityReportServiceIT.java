@@ -3,17 +3,27 @@
  */
 package fr.becpg.test.repo.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.Node;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import fr.becpg.repo.report.entity.EntityReportData;
+import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
@@ -37,8 +47,17 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class EntityReportServiceIT extends PLMBaseTestCase {
 
-	
 	private static final Log logger = LogFactory.getLog(EntityReportServiceIT.class);
+	
+	// Test constants
+	private static final String TEST_PRODUCT_NAME = "PF";
+	private static final String TEST_PRODUCT_RENAMED = "PF renamed";
+	private static final String TEST_REPORT_NAME = "report PF 2";
+	private static final String TEST_DOCUMENT_PRODUCT_NAME = "PF Document Test";
+	private static final String SUPPLIER_DOCS_FOLDER = "Supplier documents";
+	private static final String ARTWORK_FOLDER = "Artwork";
+	private static final int EXPECTED_SYSTEM_TEMPLATES = 5;
+	private static final int EXPECTED_REPORTS_COUNT = 5;
 
 	@Autowired
 	private ReportTplService reportTplService;
@@ -46,6 +65,8 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 	private AssociationService associationService;
 	@Autowired
 	private EntityReportService entityReportService;
+	@Autowired
+	private DefaultEntityReportExtractor defaultEntityReportExtractor;
 
 	/** The PF node ref. */
 	private NodeRef pfNodeRef;
@@ -58,7 +79,7 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 	private void initReports() {
 
 		// Add report tpl
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			for (NodeRef n : reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "*")) {
 				nodeService.deleteNode(n);
@@ -80,104 +101,112 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 			reportTplInformation.setSystemTpl(true);
 			
 
-			reportTplService.createTplRptDesign(productReportTplFolder, "report PF 2", "beCPG/birt/document/product/default/ProductReport.rptdesign",
+			reportTplService.createTplRptDesign(productReportTplFolder, TEST_REPORT_NAME, "beCPG/birt/document/product/default/ProductReport.rptdesign",
 					reportTplInformation, true);
 
 			return null;
 
-		}, false, true);
+		});
 	}
 
 	/**
-	 * Test report on product
-	 *
-	 * @throws InterruptedException
-	 *             the interrupted exception
+	 * Tests the generation of product reports with allergen data.
+	 * 
+	 * This test verifies:
+	 * - Creation of a finished product with allergen list data
+	 * - Generation of reports using the default report template
+	 * - Validation of report content and structure
+	 * - Proper handling of allergen voluntary/involuntary flags
+	 * 
+	 * @throws Exception if report generation fails
 	 */
 	@Test
-	public void testProductReport() {
+	public void testProductReport() throws Exception {
 
 		logger.debug("testIsReportUpToDate()");
 
 		initReports();
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inReadTx(() -> {
 			List<NodeRef> ret = reportTplService.getSystemReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT);
 			for (NodeRef ref : ret) {
 				logger.info(nodeService.getProperty(ref, ContentModel.PROP_NAME));
 			}
-			assertEquals("check system templates", 5,
+			assertEquals("Expected " + EXPECTED_SYSTEM_TEMPLATES + " system report templates for finished products", 
+					EXPECTED_SYSTEM_TEMPLATES,
 					reportTplService.getSystemReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT).size());
 			return null;
-		}, false, true);
+		});
 		// create product
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			// create PF
 			FinishedProductData pfData = new FinishedProductData();
-			pfData.setName("PF");
+			pfData.setName(TEST_PRODUCT_NAME);
 			List<AllergenListDataItem> allergenList = new ArrayList<>();
-			allergenList.add(new AllergenListDataItem(null, null, true, true, null, null, allergens.get(0), false));
-			allergenList.add(new AllergenListDataItem(null, null, false, true, null, null, allergens.get(1), false));
-			allergenList.add(new AllergenListDataItem(null, null, true, false, null, null, allergens.get(2), false));
-			allergenList.add(new AllergenListDataItem(null, null, false, false, null, null, allergens.get(3), false));
+			allergenList.add(AllergenListDataItem.build().withVoluntary(true).withInVoluntary(true).withAllergen(allergens.get(0)).withIsManual(false));
+			allergenList.add(AllergenListDataItem.build().withVoluntary(false).withInVoluntary(true).withAllergen(allergens.get(1)).withIsManual(false));
+			allergenList.add(AllergenListDataItem.build().withVoluntary(true).withInVoluntary(false).withAllergen(allergens.get(2)).withIsManual(false));
+			allergenList.add(AllergenListDataItem.build().withVoluntary(false).withInVoluntary(false).withAllergen(allergens.get(3)).withIsManual(false));
 			pfData.setAllergenList(allergenList);
 
 			pfNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), pfData).getNodeRef();
 
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			createdDate = new Date();
 			entityReportService.generateReports(pfNodeRef);
 
 			return null;
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			// check report Tpl
 			List<NodeRef> reportTplNodeRefs = reportTplService.getSystemReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT);
-			assertEquals("check system templates", 5, reportTplNodeRefs.size());
+			assertEquals("Expected " + EXPECTED_SYSTEM_TEMPLATES + " system report templates for finished products", 
+					EXPECTED_SYSTEM_TEMPLATES, reportTplNodeRefs.size());
 
 			for (NodeRef reportTplNodeRef : reportTplNodeRefs) {
 				String name = (String) nodeService.getProperty(reportTplNodeRef, ContentModel.PROP_NAME);
 				logger.debug("Report name: " + name);
 				if (Boolean.TRUE.equals(nodeService.getProperty(reportTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT))) {
 					defaultReportTplNodeRef = reportTplNodeRef;
-				} else if (name.contains("report PF 2")) {
+				} else if (name.contains(TEST_REPORT_NAME)) {
 					otherReportTplNodeRef = reportTplNodeRef;
 				}
 			}
-			assertNotNull(defaultReportTplNodeRef);
-			assertNotNull(otherReportTplNodeRef);
+			assertNotNull("Default report template should be found", defaultReportTplNodeRef);
+			assertNotNull("Custom report template '" + TEST_REPORT_NAME + "' should be found", otherReportTplNodeRef);
 
 			// check reports in generated, its name
 			Date generatedDate = (Date) nodeService.getProperty(pfNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
 			createdDate.before(generatedDate);
 			List<NodeRef> reportNodeRefs = associationService.getTargetAssocs(pfNodeRef, ReportModel.ASSOC_REPORTS);
-			assertEquals(5, reportNodeRefs.size());
+			assertEquals("Expected " + EXPECTED_REPORTS_COUNT + " generated reports for product", 
+					EXPECTED_REPORTS_COUNT, reportNodeRefs.size());
 
 			checkReportNames(defaultReportTplNodeRef, otherReportTplNodeRef, reportNodeRefs);
 
 			// rename PF
-			nodeService.setProperty(pfNodeRef, ContentModel.PROP_NAME, "PF renamed");
+			nodeService.setProperty(pfNodeRef, ContentModel.PROP_NAME, TEST_PRODUCT_RENAMED);
 			entityReportService.generateReports(pfNodeRef);
 
 			// check reports in generated, its name
 			Date generatedDate2 = (Date) nodeService.getProperty(pfNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
 			generatedDate.before(generatedDate2);
 			List<NodeRef> reportNodeRefs2 = associationService.getTargetAssocs(pfNodeRef, ReportModel.ASSOC_REPORTS);
-			assertEquals(5, reportNodeRefs2.size());
+			assertEquals(EXPECTED_REPORTS_COUNT, reportNodeRefs2.size());
 
 			checkReportNames(defaultReportTplNodeRef, otherReportTplNodeRef, reportNodeRefs2);
 			return null;
-		}, false, true);
+		});
 
 		// Test datalist modified
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			FinishedProductData pfData = (FinishedProductData) alfrescoRepository.findOne(pfNodeRef);
 			NodeRef nodeRef = pfData.getAllergenList().get(0).getNodeRef();
@@ -186,12 +215,12 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 			nodeService.setProperty(nodeRef, PLMModel.PROP_ALLERGENLIST_VOLUNTARY, true);
 
 			return null;
-		}, false, true);
+		});
 
 		assertFalse(entityReportService.shouldGenerateReport(pfNodeRef, null));
 
 		// Test datalist modified
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			FinishedProductData pfData = (FinishedProductData) alfrescoRepository.findOne(pfNodeRef);
 			NodeRef nodeRef = pfData.getAllergenList().get(0).getNodeRef();
 			// change something
@@ -199,23 +228,23 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inReadTx(() -> {
 			assertTrue(entityReportService.shouldGenerateReport(pfNodeRef, null));
 			return null;
 
-		}, false, true);
+		});
 		// Delete report tpl -> report should be deleted
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			logger.info("Delete report Tpl");
 			nodeService.setProperty(otherReportTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DISABLED, true);
 			return null;
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			entityReportService.generateReports(pfNodeRef);
 
@@ -240,7 +269,7 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -259,20 +288,24 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 			String reportName = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
 			logger.debug("Test report name:" + reportName + " compare with :" + defaultReportName);
 
-			if (reportName.equals(defaultReportName)) {
-				checks++;
-			} else if (reportName.equals(otherReportName)) {
+			if (reportName.equals(defaultReportName) || reportName.equals(otherReportName)) {
 				checks++;
 			}
 		}
-		assertEquals(2, checks);
+		assertEquals("Expected to find both default and custom report names in generated reports", 2, checks);
 	}
 
 	/**
-	 * Test get product system report templates.
-	 *
-	 * @throws InterruptedException
-	 *             the interrupted exception
+	 * Tests retrieval and validation of system report templates for finished products.
+	 * 
+	 * This test verifies:
+	 * - System report templates are properly loaded and accessible
+	 * - Expected number of templates are available
+	 * - Default and custom report templates can be identified
+	 * - Report generation works with both default and custom templates
+	 * - Generated reports contain proper metadata and associations
+	 * 
+	 * @throws Exception if template retrieval or report generation fails
 	 */
 	@Test
 	public void testGetProductSystemReportTemplates() {
@@ -282,16 +315,16 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 		String userReportTpl = "user tpl "+(new Date().getTime());
 		String userReportTpl2 = "user tpl 2"+(new Date().getTime());
 		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			for(NodeRef tmpRef : reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user*")) {
 				nodeService.setProperty(tmpRef, ReportModel.PROP_REPORT_TPL_IS_DISABLED, true);
 			}
 			return null;
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			NodeRef systemFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
 					TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
@@ -304,10 +337,10 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 			FinishedProductData pfData = new FinishedProductData();
 			pfData.setName("PF");
 			List<AllergenListDataItem> allergenList = new ArrayList<>();
-			allergenList.add(new AllergenListDataItem(null, null, true, true, null, null, allergens.get(0), false));
-			allergenList.add(new AllergenListDataItem(null, null, false, true, null, null, allergens.get(1), false));
-			allergenList.add(new AllergenListDataItem(null, null, true, false, null, null, allergens.get(2), false));
-			allergenList.add(new AllergenListDataItem(null, null, false, false, null, null, allergens.get(3), false));
+			allergenList.add(AllergenListDataItem.build().withVoluntary(true).withInVoluntary(true).withAllergen(allergens.get(0)).withIsManual(false));
+			allergenList.add(AllergenListDataItem.build().withVoluntary(false).withInVoluntary(true).withAllergen(allergens.get(1)).withIsManual(false));
+			allergenList.add(AllergenListDataItem.build().withVoluntary(true).withInVoluntary(false).withAllergen(allergens.get(2)).withIsManual(false));
+			allergenList.add(AllergenListDataItem.build().withVoluntary(false).withInVoluntary(false).withAllergen(allergens.get(3)).withIsManual(false));
 			pfData.setAllergenList(allergenList);
 
 			pfNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), pfData).getNodeRef();
@@ -330,12 +363,12 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 
 		waitForSolr();
 
 
-		final NodeRef userTpl2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef userTpl2NodeRef = inWriteTx(() -> {
 
 			assertEquals("check user templates", 1,
 					reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, userReportTpl).size());
@@ -351,11 +384,11 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 			return reportTplService.createTplRptDesign(productReportTplFolder, userReportTpl2,
 					"beCPG/birt/document/product/default/ProductReport.rptdesign",reportTplInformation, true);
 
-		}, false, true);
+		});
 
 		waitForSolr();
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inReadTx(() -> {
 
 			assertEquals("check user templates",2,
 					reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "u*").size());
@@ -371,9 +404,161 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 		
 		
 
+	}
+
+	/**
+	 * Tests document extraction functionality in entity reports.
+	 * 
+	 * This test validates the document extraction feature (DEV-893) which allows
+	 * reports to include documents from specified folder paths within the product structure.
+	 * 
+	 * Test scenarios:
+	 * - Creates a product with documents in "Supplier documents" folder
+	 * - Validates document extraction with single folder path configuration
+	 * - Tests document extraction with multiple folder paths (Supplier documents + Artwork)
+	 * - Verifies extracted document metadata and content structure
+	 * - Ensures proper XML structure for document elements in reports
+	 * 
+	 * @see DEV-893 Document extraction in reports feature
+	 */
+	@Test
+	public void testDocumentExtractionInReports() {
+		logger.debug("testDocumentExtractionInReports()");
+
+		final NodeRef testProductNodeRef = inWriteTx(() -> {
+			// Create product with documents
+			FinishedProductData pfData = new FinishedProductData();
+			pfData.setName(TEST_DOCUMENT_PRODUCT_NAME);
+			return alfrescoRepository.create(getTestFolderNodeRef(), pfData).getNodeRef();
+		});
+
+		inWriteTx(() -> {
+			// Create Supplier documents folder structure
+			NodeRef supplierDocsFolder = repoService.getOrCreateFolderByPath(testProductNodeRef, SUPPLIER_DOCS_FOLDER, SUPPLIER_DOCS_FOLDER);
+			
+			// Create test documents with proper metadata
+			createTestDocument(supplierDocsFolder, "test-spec.pdf", "Product Specification", "Technical specification document");
+			createTestDocument(supplierDocsFolder, "certificate.pdf", "Quality Certificate", "Quality assurance certificate");
+			createTestDocument(supplierDocsFolder, "msds.pdf", "Material Safety Data Sheet", "Safety information document");
+
+			return null;
+		});
+
+		inReadTx(() -> {
+			// Test document extraction with configuration
+			Map<String, String> preferences = new HashMap<>();
+			preferences.put("extraDocumentPaths", "cm:Supplier_x0020_documents/*");
+			
+			EntityReportData reportData = defaultEntityReportExtractor.extract(testProductNodeRef, preferences);
+			
+			// Validate report data structure
+			assertNotNull("Report data should not be null", reportData);
+			Document xmlDoc = (Document) reportData.getXmlDataSource().getDocument();
+			assertNotNull("XML document should not be null", xmlDoc);
+			
+			// Validate documents section exists
+			Element documentsElt = (Element) xmlDoc.selectSingleNode("//documents");
+			assertNotNull("Documents section should exist in report XML", documentsElt);
+			
+			List<Node> docNodes = documentsElt.selectNodes("document");
+			assertEquals("Should extract 3 documents from Supplier documents folder", 3, docNodes.size());
+			
+			// Validate document attributes and content
+			validateDocumentElements(docNodes, testProductNodeRef);
+			
+			return null;
+		});
+
+		// Test with multiple folder paths
+		inWriteTx(() -> {
+			// Create additional folder structure
+			NodeRef artworkFolder = repoService.getOrCreateFolderByPath(testProductNodeRef, ARTWORK_FOLDER, ARTWORK_FOLDER);
+			createTestDocument(artworkFolder, "label.pdf", "Product Label", "Product labeling artwork");
+			return null;
+		});
+
+		inReadTx(() -> {
+			// Test multiple paths configuration
+			Map<String, String> preferences = new HashMap<>();
+			preferences.put("extraDocumentPaths", SUPPLIER_DOCS_FOLDER + ";" + ARTWORK_FOLDER);
+			
+			EntityReportData reportData = defaultEntityReportExtractor.extract(testProductNodeRef, preferences);
+			Document xmlDoc = (Document) reportData.getXmlDataSource().getDocument();
+			
+			List<Node> docNodes = ((Element) xmlDoc.selectSingleNode("//documents")).selectNodes("document");
+			assertEquals("Should extract 4 documents from both folders", 4, docNodes.size());
+			
+			return null;
+		});
+	}
+
+	/**
+	 * Helper method to create test documents with consistent structure
+	 */
+	private void createTestDocument(NodeRef parentFolder, String fileName, String title, String description) {
+		Map<QName, Serializable> docProps = new HashMap<>();
+		docProps.put(ContentModel.PROP_NAME, fileName);
+		docProps.put(ContentModel.PROP_TITLE, title);
+		docProps.put(ContentModel.PROP_DESCRIPTION, description);
+		
+		nodeService.createNode(parentFolder, ContentModel.ASSOC_CONTAINS, 
+			QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, fileName), 
+			ContentModel.TYPE_CONTENT, docProps);
+	}
+
+	/**
+	 * Helper method to validate document XML elements
+	 */
+	private void validateDocumentElements(List<Node> docNodes, NodeRef entityNodeRef) {
+		boolean foundSpec = false;
+		boolean foundCert = false;
+		boolean foundMsds = false;
+		
+		for (Node docNode : docNodes) {
+			Element docElt = (Element) docNode;
+			String docName = docElt.attributeValue("name");
+			String docTitle = docElt.attributeValue("title");
+			String docId = docElt.attributeValue("id");
+			String entityNodeRefAttr = docElt.attributeValue("entityNodeRef");
+			String entityType = docElt.attributeValue("entityType");
+			
+			// Validate required attributes
+			assertNotNull("Document name should not be null", docName);
+			assertNotNull("Document ID should not be null", docId);
+			assertNotNull("Entity nodeRef should not be null", entityNodeRefAttr);
+			assertNotNull("Entity type should not be null", entityType);
+			
+			// Validate path structure
+
+			assertTrue("Document ID should contain Supplier documents path", docId.contains("/cm:Supplier_x0020_documents/"));
+			assertEquals("Entity nodeRef should match test product", entityNodeRef.toString(), entityNodeRefAttr);
+			assertEquals("Entity type should be finishedProduct", "finishedProduct", entityType);
+			
+			// Validate specific documents
+			switch (docName) {
+				case "test-spec.pdf":
+					foundSpec = true;
+					assertEquals("Product Specification", docTitle);
+					break;
+				case "certificate.pdf":
+					foundCert = true;
+					assertEquals("Quality Certificate", docTitle);
+					break;
+				case "msds.pdf":
+					foundMsds = true;
+					assertEquals("Material Safety Data Sheet", docTitle);
+					break;
+			     default:
+			      break;
+			}
+		}
+		
+		assertTrue("Should find specification document", foundSpec);
+		assertTrue("Should find certificate document", foundCert);
+		assertTrue("Should find MSDS document", foundMsds);
 	}
 }

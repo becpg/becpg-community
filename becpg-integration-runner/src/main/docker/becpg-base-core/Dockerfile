@@ -60,4 +60,5 @@ RUN rm -rf $TOMCAT_DIR/amps/* && \
     find /licenses -type d -exec chmod 0755 {} \; && \
     find /licenses -type f -exec chmod 0644 {} \;
 
-ENV JAVA_OPTS="-Ddir.root=/usr/local/tomcat/data -XX:+ExitOnOutOfMemoryError -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+ParallelRefProcEnabled -Xss512k -XX:+UseStringDeduplication"
+ENV JAVA_OPTS="-Ddir.root=/usr/local/tomcat/data -XX:+ExitOnOutOfMemoryError  -XX:+AlwaysPreTouch -XX:+UseG1GC -XX:+DisableExplicitGC -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+ParallelRefProcEnabled -Xss512k -XX:+UseStringDeduplication"
+

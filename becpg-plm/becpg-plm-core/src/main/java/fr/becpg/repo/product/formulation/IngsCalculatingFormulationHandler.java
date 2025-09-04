@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -144,7 +144,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 						}
 					}
 				} else {
-					formulatedProduct.setIngList(new LinkedList<>());
+					formulatedProduct.setIngList(new ArrayList<>());
 				}
 
 				// IngList
@@ -153,7 +153,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 			if (!reqCtrlMap.isEmpty()) {
 				if (formulatedProduct.getReqCtrlList() == null) {
-					formulatedProduct.setReqCtrlList(new LinkedList<>());
+					formulatedProduct.setReqCtrlList(new ArrayList<>());
 				}
 
 				formulatedProduct.getReqCtrlList().addAll(reqCtrlMap.values());
@@ -478,15 +478,13 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	/**
 	 * Add the ingredients of the part in the ingredient list.
 	 *
-	 * @param compoListDataItem
-	 *            the compo list data item
-	 * @param ingMap
-	 *            the ing map
-	 * @param totalQtyIngMap
-	 *            the total qty ing map
-	 * @param totalQtyVolMap
-	 * @param isRawMaterial
-	 * @throws FormulateException
+	 * @param formulatedProduct product being formulated
+	 * @param compoListDataItem the component list item in the formulation
+	 * @param componentProductData the component product whose ingredients are added
+	 * @param retainNodes list of ingredient items to retain
+	 * @param totalQtyIngMap map accumulating total quantities per ingredient key
+	 * @param reqCtrlMap map of requirement controls by node
+	 * @param visited set tracking already visited nodeRefs to avoid cycles
 	 */
 	private void visitILOfPart(ProductData formulatedProduct, CompoListDataItem compoListDataItem, ProductData componentProductData,
 			List<IngListDataItem> retainNodes, Map<String, IngListDataItem> totalQtyIngMap, Map<NodeRef, RequirementListDataItem> reqCtrlMap,
@@ -543,15 +541,15 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	/**
 	 * Add the ingredients of the part in the ingredient list.
 	 *
+	 * @param formulatedProduct
+	 * @param componentProductData
 	 * @param compoListDataItem
-	 *            the compo list data item
-	 * @param ingMap
-	 *            the ing map
+	 * @param compositeIngList
+	 * @param ingList
+	 * @param retainNodes
 	 * @param totalQtyIngMap
-	 *            the total qty ing map
-	 * @param totalQtyVolMap
-	 * @param isRawMaterial
-	 * @throws FormulateException
+	 * @param parentIngListDataItem
+	 * @param isGeneric
 	 */
 	private void calculateILOfPart(ProductData formulatedProduct, ProductData componentProductData, CompoListDataItem compoListDataItem,
 			Composite<IngListDataItem> compositeIngList, List<IngListDataItem> ingList, List<IngListDataItem> retainNodes,

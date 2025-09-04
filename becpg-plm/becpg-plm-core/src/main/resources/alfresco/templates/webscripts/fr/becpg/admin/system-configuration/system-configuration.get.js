@@ -32,7 +32,8 @@ function main() {
         "beCPG.remote.maxResults.limit",
         "beCPG.security.supplierPermission",
         "beCPG.solr.enableIndexForTypes",
-        "beCPG.classify.rights.check"
+        "beCPG.classify.rights.check",
+        "beCPG.entity.documents.recursive.depth"
     ].forEach(function(p) {
         addAttribute(p, "system");
     });
@@ -42,6 +43,7 @@ function main() {
         "beCPG.project.name.format",
         "beCPG.comparison.name.format",
         "beCPG.product.name.format",
+        "beCPG.report.title.format",
         "beCPG.quality.sampleId.format",
         "beCPG.sendToSupplier.entityName.format",
         "beCPG.sendToSupplier.projectName.format",
@@ -73,12 +75,14 @@ function main() {
         "beCPG.product.report.assocsToExtractWithImage",
         "beCPG.product.report.assocsToExtractWithDataList",
         "beCPG.product.report.assocsToExtractInDataList",
+        "beCPG.product.report.entityDatalistsToExtract",
         "beCPG.product.report.multilineProperties",
         "beCPG.product.report.priceBreaks",
         "beCPG.product.report.extractRawMaterial",
         "beCPG.product.report.multiLevel",
         "beCPG.product.report.nonEffectiveComponent",
         "beCPG.product.report.extraImagePaths",
+        "beCPG.product.report.extraDocumentPaths",
         "beCPG.product.report.nutList.localesToExtract",
         "beCPG.entity.report.mltext.fields",
         "beCPG.entity.report.mltext.locales",

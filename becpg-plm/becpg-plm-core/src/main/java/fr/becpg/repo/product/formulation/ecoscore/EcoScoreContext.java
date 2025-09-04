@@ -214,7 +214,7 @@ public class EcoScoreContext {
 	 * <p>parse.</p>
 	 *
 	 * @param nutriScoreDetails a {@link java.lang.String} object
-	 * @return a {@link fr.becpg.repo.product.formulation.score.EcoScoreContext} object
+	 * @return a {@link fr.becpg.repo.product.formulation.ecoscore.EcoScoreContext} object
 	 */
 	public static EcoScoreContext parse(String nutriScoreDetails) {
 

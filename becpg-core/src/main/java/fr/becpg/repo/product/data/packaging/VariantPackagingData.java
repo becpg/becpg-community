@@ -15,9 +15,12 @@ public class VariantPackagingData implements Serializable {
 	private static final long serialVersionUID = -3460131741476715569L;
 	
 	private BigDecimal tarePrimary = BigDecimal.valueOf(0d);
+	private BigDecimal tareInner = BigDecimal.valueOf(0d);
 	private BigDecimal tareSecondary = BigDecimal.valueOf(0d);
 	private BigDecimal tareTertiary = BigDecimal.valueOf(0d);
 	private Integer productPerBoxes;
+	private Integer productPerInnerPack;
+	private Integer innerPackPerBox;
 	private Integer boxesPerPallet;
 
 	private Integer palletLayers;
@@ -39,6 +42,10 @@ public class VariantPackagingData implements Serializable {
 	private Double width;
 	private Double depth;
 
+	private Double innerHeight;
+	private Double innerWidth;
+	private Double innerDepth;
+
 	private Double secondaryHeight;
 	private Double secondaryWidth;
 	private Double secondaryDepth;
@@ -47,12 +54,14 @@ public class VariantPackagingData implements Serializable {
 	private Double tertiaryDepth;
 	
 	private Double volume;
+	private Double innerVolume;
 	private Double secondaryVolume;
 	private Double tertiaryVolume;
 
 	private boolean isManualPrimary = true;
 	private boolean isManualTertiary = true;
 	private boolean isManualSecondary = true;
+	private boolean isManualInner = true;
 	private boolean isManualPalletInformations = true;
 
 	/**
@@ -71,6 +80,24 @@ public class VariantPackagingData implements Serializable {
 	 */
 	public void setTarePrimary(BigDecimal tarePrimary) {
 		this.tarePrimary = tarePrimary;
+	}
+
+	/**
+	 * <p>Getter for the field <code>tareInner</code>.</p>
+	 *
+	 * @return a {@link java.math.BigDecimal} object.
+	 */
+	public BigDecimal getTareInner() {
+		return tareInner;
+	}
+
+	/**
+	 * <p>Setter for the field <code>tareInner</code>.</p>
+	 *
+	 * @param tareInner a {@link java.math.BigDecimal} object.
+	 */
+	public void setTareInner(BigDecimal tareInner) {
+		this.tareInner = tareInner;
 	}
 
 	/**
@@ -125,6 +152,24 @@ public class VariantPackagingData implements Serializable {
 	 */
 	public void setProductPerBoxes(Integer productPerBoxes) {
 		this.productPerBoxes = productPerBoxes;
+	}
+
+	/**
+	 * <p>Getter for the field <code>productPerInnerPack</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
+	public Integer getProductPerInnerPack() {
+		return productPerInnerPack;
+	}
+
+	/**
+	 * <p>Setter for the field <code>productPerInnerPack</code>.</p>
+	 *
+	 * @param productPerInnerPack a {@link java.lang.Integer} object.
+	 */
+	public void setProductPerInnerPack(Integer productPerInnerPack) {
+		this.productPerInnerPack = productPerInnerPack;
 	}
 
 	/**
@@ -275,6 +320,60 @@ public class VariantPackagingData implements Serializable {
 	}
 
 	/**
+	 * <p>Getter for the field <code>innerHeight</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
+	public Double getInnerHeight() {
+		return innerHeight;
+	}
+
+	/**
+	 * <p>Setter for the field <code>innerHeight</code>.</p>
+	 *
+	 * @param innerHeight a {@link java.lang.Double} object.
+	 */
+	public void setInnerHeight(Double innerHeight) {
+		this.innerHeight = innerHeight;
+	}
+
+	/**
+	 * <p>Getter for the field <code>innerWidth</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
+	public Double getInnerWidth() {
+		return innerWidth;
+	}
+
+	/**
+	 * <p>Setter for the field <code>innerWidth</code>.</p>
+	 *
+	 * @param innerWidth a {@link java.lang.Double} object.
+	 */
+	public void setInnerWidth(Double innerWidth) {
+		this.innerWidth = innerWidth;
+	}
+
+	/**
+	 * <p>Getter for the field <code>innerDepth</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
+	public Double getInnerDepth() {
+		return innerDepth;
+	}
+
+	/**
+	 * <p>Setter for the field <code>innerDepth</code>.</p>
+	 *
+	 * @param innerDepth a {@link java.lang.Double} object.
+	 */
+	public void setInnerDepth(Double innerDepth) {
+		this.innerDepth = innerDepth;
+	}
+
+	/**
 	 * <p>Getter for the field <code>secondaryHeight</code>.</p>
 	 *
 	 * @return a {@link java.lang.Double} object.
@@ -380,6 +479,24 @@ public class VariantPackagingData implements Serializable {
 	 */
 	public void setVolume(Double volume) {
 		this.volume = volume;
+	}
+	
+	/**
+	 * <p>Getter for the field <code>innerVolume</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
+	public Double getInnerVolume() {
+		return innerVolume;
+	}
+
+	/**
+	 * <p>Setter for the field <code>innerVolume</code>.</p>
+	 *
+	 * @param innerVolume a {@link java.lang.Double} object.
+	 */
+	public void setInnerVolume(Double innerVolume) {
+		this.innerVolume = innerVolume;
 	}
 	
 	/**
@@ -537,6 +654,24 @@ public class VariantPackagingData implements Serializable {
 	}
 
 	/**
+	 * <p>isManualInner.</p>
+	 *
+	 * @return a boolean.
+	 */
+	public boolean isManualInner() {
+		return isManualInner;
+	}
+
+	/**
+	 * <p>setManualInner.</p>
+	 *
+	 * @param isManualInner a boolean.
+	 */
+	public void setManualInner(boolean isManualInner) {
+		this.isManualInner = isManualInner;
+	}
+
+	/**
 	 * <p>isManualSecondary.</p>
 	 *
 	 * @return a boolean.
@@ -572,6 +707,16 @@ public class VariantPackagingData implements Serializable {
 	 */
 	public void setPlatformTermsAndConditionsCode(String platformTermsAndConditionsCode) {
 		this.platformTermsAndConditionsCode = platformTermsAndConditionsCode;
+	}
+	
+	
+
+	public Integer getInnerPackPerBox() {
+		return innerPackPerBox;
+	}
+
+	public void setInnerPackPerBox(Integer innerPackPerBox) {
+		this.innerPackPerBox = innerPackPerBox;
 	}
 
 	/**
@@ -612,6 +757,20 @@ public class VariantPackagingData implements Serializable {
 			setTareSecondary(getTareSecondary().add(value));
 		} else {
 			setTareSecondary(value);
+		}
+
+	}
+	
+	/**
+	 * <p>addTareInner.</p>
+	 *
+	 * @param value a {@link java.math.BigDecimal} object.
+	 */
+	public void addTareInner(BigDecimal value) {
+		if (getTareInner() != null) {
+			setTareInner(getTareInner().add(value));
+		} else {
+			setTareInner(value);
 		}
 
 	}
@@ -693,25 +852,25 @@ public class VariantPackagingData implements Serializable {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "VariantPackagingData [tarePrimary=" + tarePrimary + ", tareSecondary=" + tareSecondary + ", tareTertiary=" + tareTertiary
-				+ ", productPerBoxes=" + productPerBoxes + ", boxesPerPallet=" + boxesPerPallet + ", palletLayers=" + palletLayers
+		return "VariantPackagingData [tarePrimary=" + tarePrimary + ", tareInner=" + tareInner + ", tareSecondary=" + tareSecondary + ", tareTertiary=" + tareTertiary
+				+ ", productPerBoxes=" + productPerBoxes + ", productPerInnerPack=" + productPerInnerPack + ", boxesPerPallet=" + boxesPerPallet + ", palletLayers=" + palletLayers
 				+ ", palletBoxesPerLayer=" + palletBoxesPerLayer + ", palletHeight=" + palletHeight + ", palletNumberOnGround=" + palletNumberOnGround
 				+ ", palletBoxesPerLastLayer=" + palletBoxesPerLastLayer + ", palletStackingMaxWeight=" + palletStackingMaxWeight
 				+ ", palletTypeCode=" + palletTypeCode + ", platformTermsAndConditionsCode=" + platformTermsAndConditionsCode + ", packagingTypeCode="
 				+ packagingTypeCode + ", packagingTermsAndConditionsCode=" + packagingTermsAndConditionsCode + ", secondaryPackagingTypeCode="
-				+ secondaryPackagingTypeCode + ", height=" + height + ", width=" + width + ", depth=" + depth + ", secondaryHeight=" + secondaryHeight
-				+ ", secondaryWidth=" + secondaryWidth + ", secondaryDepth=" + secondaryDepth + ", tertiaryPackagingTypeCode=" + tertiaryPackagingTypeCode 
+				+ secondaryPackagingTypeCode + ", height=" + height + ", width=" + width + ", depth=" + depth + ", innerHeight=" + innerHeight + ", innerWidth=" + innerWidth + ", innerDepth=" + innerDepth
+				+ ", secondaryHeight=" + secondaryHeight + ", secondaryWidth=" + secondaryWidth + ", secondaryDepth=" + secondaryDepth + ", tertiaryPackagingTypeCode=" + tertiaryPackagingTypeCode 
 				+ ", tertiaryWidth=" + tertiaryWidth + ", tertiaryDepth=" + tertiaryDepth + ", isManualPrimary=" + isManualPrimary + ", isManualTertiary=" 
-				+ isManualTertiary + ", isManualSecondary=" + isManualSecondary + ", isManualPalletInformations=" + isManualPalletInformations + "]";
+				+ isManualTertiary + ", isManualInner=" + isManualInner + ", isManualSecondary=" + isManualSecondary + ", isManualPalletInformations=" + isManualPalletInformations + "]";
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
-		return Objects.hash(boxesPerPallet, depth, height, isManualPalletInformations, isManualPrimary, isManualSecondary, isManualTertiary,
+		return Objects.hash(boxesPerPallet, depth, height, innerDepth, innerHeight, innerWidth, isManualInner, isManualPalletInformations, isManualPrimary, isManualSecondary, isManualTertiary,
 				packagingTermsAndConditionsCode, packagingTypeCode, palletBoxesPerLastLayer, palletBoxesPerLayer, palletHeight, palletLayers,
-				palletNumberOnGround, palletStackingMaxWeight, palletTypeCode, platformTermsAndConditionsCode, productPerBoxes, secondaryDepth,
-				secondaryHeight, secondaryPackagingTypeCode, secondaryWidth, tarePrimary, tareSecondary, tareTertiary, tertiaryPackagingTypeCode,
+				palletNumberOnGround, palletStackingMaxWeight, palletTypeCode, platformTermsAndConditionsCode, productPerBoxes, productPerInnerPack, secondaryDepth,
+				secondaryHeight, secondaryPackagingTypeCode, secondaryWidth, tareInner, tarePrimary, tareSecondary, tareTertiary, tertiaryPackagingTypeCode,
 				tertiaryDepth, tertiaryWidth, width);
 	}
 
@@ -726,7 +885,8 @@ public class VariantPackagingData implements Serializable {
 			return false;
 		VariantPackagingData other = (VariantPackagingData) obj;
 		return Objects.equals(boxesPerPallet, other.boxesPerPallet) && Objects.equals(depth, other.depth) && Objects.equals(height, other.height)
-				&& isManualPalletInformations == other.isManualPalletInformations && isManualPrimary == other.isManualPrimary
+				&& Objects.equals(innerDepth, other.innerDepth) && Objects.equals(innerHeight, other.innerHeight) && Objects.equals(innerWidth, other.innerWidth)
+				&& isManualInner == other.isManualInner && isManualPalletInformations == other.isManualPalletInformations && isManualPrimary == other.isManualPrimary
 				&& isManualSecondary == other.isManualSecondary && isManualTertiary == other.isManualTertiary
 				&& Objects.equals(packagingTermsAndConditionsCode, other.packagingTermsAndConditionsCode)
 				&& Objects.equals(packagingTypeCode, other.packagingTypeCode)
@@ -735,11 +895,12 @@ public class VariantPackagingData implements Serializable {
 				&& Objects.equals(palletLayers, other.palletLayers) && Objects.equals(palletNumberOnGround, other.palletNumberOnGround)
 				&& Objects.equals(palletStackingMaxWeight, other.palletStackingMaxWeight) && Objects.equals(palletTypeCode, other.palletTypeCode)
 				&& Objects.equals(platformTermsAndConditionsCode, other.platformTermsAndConditionsCode)
-				&& Objects.equals(productPerBoxes, other.productPerBoxes) && Objects.equals(secondaryDepth, other.secondaryDepth)
+				&& Objects.equals(productPerBoxes, other.productPerBoxes) && Objects.equals(productPerInnerPack, other.productPerInnerPack)
+				&& Objects.equals(secondaryDepth, other.secondaryDepth)
 				&& Objects.equals(secondaryHeight, other.secondaryHeight)
 				&& Objects.equals(secondaryPackagingTypeCode, other.secondaryPackagingTypeCode)
 				&& Objects.equals(tertiaryPackagingTypeCode, other.tertiaryPackagingTypeCode)
-				&& Objects.equals(secondaryWidth, other.secondaryWidth) && Objects.equals(tarePrimary, other.tarePrimary)
+				&& Objects.equals(secondaryWidth, other.secondaryWidth) && Objects.equals(tareInner, other.tareInner) && Objects.equals(tarePrimary, other.tarePrimary)
 				&& Objects.equals(tareSecondary, other.tareSecondary) && Objects.equals(tareTertiary, other.tareTertiary)
 				&& Objects.equals(tertiaryDepth, other.tertiaryDepth) && Objects.equals(tertiaryWidth, other.tertiaryWidth)
 				&& Objects.equals(width, other.width);

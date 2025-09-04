@@ -164,6 +164,7 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 	 * @return a {@link java.util.Set} object.
 	 */
 	@InternalField
+	@Override
 	public Set<QName> getAspects() {
 		return aspects;
 	}

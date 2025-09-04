@@ -17,7 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.quality.data;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import fr.becpg.repo.quality.data.dataList.SamplingDefListDataItem;
@@ -41,7 +41,7 @@ public class ControlPlanData extends BeCPGDataObject {
 	 * 
 	 */
 	private static final long serialVersionUID = -1365842750141431401L;
-	List<SamplingDefListDataItem> samplingDefList = new LinkedList<>();
+	List<SamplingDefListDataItem> samplingDefList = new ArrayList<>();
 
 
 	/**
