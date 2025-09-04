@@ -14,6 +14,11 @@ import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
  */
 public class PhysicoRequirementScanner extends SimpleListRequirementScanner<PhysicoChemListDataItem> {
 
+	/** Constant <code>MESSAGE_PHYSICO_NOT_IN_RANGE="message.formulate.physicoChem.notInRang"{trunked}</code> */
+	public static final String MESSAGE_PHYSICO_NOT_IN_RANGE = "message.formulate.physicoChem.notInRangeValue";
+	
+	/** Constant <code>MESSAGE_PHYSICO_NOT_IN_RANGE_INFO="message.formulate.info.physicoChem.notI"{trunked}</code> */
+	public static final String MESSAGE_PHYSICO_NOT_IN_RANGE_INFO = "message.formulate.info.physicoChem.notInRangeValue";
 
 	/** {@inheritDoc} */
 	@Override
@@ -26,14 +31,6 @@ public class PhysicoRequirementScanner extends SimpleListRequirementScanner<Phys
 	protected String getSpecInfoMessageKey(PhysicoChemListDataItem specDataItem) {
 		return MESSAGE_PHYSICO_NOT_IN_RANGE_INFO;
 	}
-	
-
-	/** Constant <code>MESSAGE_PHYSICO_NOT_IN_RANGE="message.formulate.physicoChem.notInRang"{trunked}</code> */
-	public static final String MESSAGE_PHYSICO_NOT_IN_RANGE = "message.formulate.physicoChem.notInRangeValue";
-	
-	/** Constant <code>MESSAGE_PHYSICO_NOT_IN_RANGE_INFO="message.formulate.info.physicoChem.notI"{trunked}</code> */
-	public static final String MESSAGE_PHYSICO_NOT_IN_RANGE_INFO = "message.formulate.info.physicoChem.notInRangeValue";
-	
 
 	/** {@inheritDoc} */
 	protected List<PhysicoChemListDataItem> getDataListVisited(ProductData partProduct) {
@@ -45,7 +42,4 @@ public class PhysicoRequirementScanner extends SimpleListRequirementScanner<Phys
 	protected Double getValue(PhysicoChemListDataItem specDataItem, PhysicoChemListDataItem listDataItem) {
 		return listDataItem.getValue();
 	}
-
-
-	
 }

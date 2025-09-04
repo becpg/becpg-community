@@ -68,6 +68,7 @@ import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * Entity Service implementation
@@ -115,6 +116,9 @@ public class EntityServiceImpl implements EntityService {
 
 	@Autowired
 	private AssociationService associationService;
+
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
 
 	private static final Set<QName> IGNORE_PARENT_ASSOC_TYPES = new HashSet<>(7);
 	static {
@@ -395,31 +399,79 @@ public class EntityServiceImpl implements EntityService {
 
 	/** {@inheritDoc} */
 	@Override
-	public Map<NodeRef, NodeRef> getDocumentsByType(NodeRef entityNodeRef) {
-		Map<NodeRef, NodeRef> docByType = new HashMap<>();
-		for (FileInfo folder : fileFolderService.listFolders(entityNodeRef)) {
-			for (FileInfo fileInfo : fileFolderService.listFiles(folder.getNodeRef())) {
-				NodeRef fileNodeRef = fileInfo.getNodeRef();
-				if (nodeService.hasAspect(fileNodeRef, BeCPGModel.ASPECT_DOCUMENT_ASPECT)) {
-					NodeRef docType = associationService.getTargetAssoc(fileNodeRef, BeCPGModel.ASSOC_DOCUMENT_TYPE_REF);
-					if (docType != null) {
-						docByType.put(docType, fileNodeRef);
-					}
-				}
+	public Map<NodeRef, List<NodeRef>> getDocumentsByType(NodeRef entityNodeRef) {
+		Map<NodeRef, List<NodeRef>> docByType = new HashMap<>();
+		int maxDepth = getDocumentsRecursiveDepth();
+		
+		// Process files in the root entity folder
+		processDocumentsInFolder(entityNodeRef, docByType);
+		
+		// Process folders recursively up to configured depth
+		processFoldersRecursively(entityNodeRef, docByType, 0, maxDepth);
+
+		return docByType;
+	}
+	
+	/**
+	 * Get the configured recursive depth for document search
+	 * 
+	 * @return the maximum depth to search recursively
+	 */
+	private int getDocumentsRecursiveDepth() {
+		String depthStr = systemConfigurationService.confValue("beCPG.entity.documents.recursive.depth");
+		if (depthStr != null && !depthStr.trim().isEmpty()) {
+			try {
+				return Integer.parseInt(depthStr.trim());
+			} catch (NumberFormatException e) {
+				logger.warn("Invalid value for beCPG.entity.documents.recursive.depth: " + depthStr + ", using default value 1");
 			}
 		}
-
-		for (FileInfo fileInfo : fileFolderService.listFiles(entityNodeRef)) {
+		return 1; // Default to current behavior (1 level deep)
+	}
+	
+	/**
+	 * Process documents in a specific folder
+	 * 
+	 * @param folderNodeRef the folder to process
+	 * @param docByType the map to populate with documents by type
+	 */
+	private void processDocumentsInFolder(NodeRef folderNodeRef, Map<NodeRef, List<NodeRef>> docByType) {
+		for (FileInfo fileInfo : fileFolderService.listFiles(folderNodeRef)) {
 			NodeRef fileNodeRef = fileInfo.getNodeRef();
 			if (nodeService.hasAspect(fileNodeRef, BeCPGModel.ASPECT_DOCUMENT_ASPECT)) {
 				NodeRef docType = associationService.getTargetAssoc(fileNodeRef, BeCPGModel.ASSOC_DOCUMENT_TYPE_REF);
 				if (docType != null) {
-					docByType.put(docType, fileNodeRef);
+					List<NodeRef> docList = docByType.get(docType);
+					if (docList == null) {
+						docList = new ArrayList<>();
+						docByType.put(docType, docList);
+					}
+					docList.add(fileNodeRef);
 				}
 			}
 		}
-
-		return docByType;
+	}
+	
+	/**
+	 * Process folders recursively up to the specified depth
+	 * 
+	 * @param parentNodeRef the parent folder
+	 * @param docByType the map to populate with documents by type
+	 * @param currentDepth the current recursion depth
+	 * @param maxDepth the maximum depth to recurse
+	 */
+	private void processFoldersRecursively(NodeRef parentNodeRef, Map<NodeRef, List<NodeRef>> docByType, int currentDepth, int maxDepth) {
+		if (currentDepth >= maxDepth) {
+			return;
+		}
+		
+		for (FileInfo folder : fileFolderService.listFolders(parentNodeRef)) {
+			// Process documents in this folder
+			processDocumentsInFolder(folder.getNodeRef(), docByType);
+			
+			// Recurse into subfolders if we haven't reached max depth
+			processFoldersRecursively(folder.getNodeRef(), docByType, currentDepth + 1, maxDepth);
+		}
 	}
 
 	/** {@inheritDoc} */

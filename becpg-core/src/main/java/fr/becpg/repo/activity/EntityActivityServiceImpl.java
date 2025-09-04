@@ -4,9 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,9 +15,6 @@ import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.DataListModel;
-import org.alfresco.repo.batch.BatchProcessWorkProvider;
-import org.alfresco.repo.batch.BatchProcessor;
-import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 import org.alfresco.repo.dictionary.constraint.ListOfValuesConstraint;
 import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.policy.BehaviourFilter;
@@ -38,7 +32,6 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.service.transaction.TransactionService;
 import org.alfresco.util.ISO8601DateFormat;
 import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
@@ -64,15 +57,12 @@ import fr.becpg.repo.audit.plugin.impl.ActivityAuditPlugin;
 import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchPriority;
-import fr.becpg.repo.batch.BatchQueueService;
-import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.LargeTextHelper;
-import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * <p>EntityActivityServiceImpl class.</p>
@@ -87,7 +77,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	private static Log logger = LogFactory.getLog(EntityActivityServiceImpl.class);
 
-	private static final int MAX_PAGE = 50;
 
 	/** Constant <code>ML_TEXT_SIZE_LIMIT=200</code> */
 	public static final int ML_TEXT_SIZE_LIMIT = 200;
@@ -99,6 +88,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		SORT_MAP = new LinkedHashMap<>();
 		SORT_MAP.put("@cm:created", true);
 	}
+	
+	@Autowired
+	private EntityActivityCleaner entityActivityCleaner;
 
 	@Autowired
 	private EntityListDAO entityListDAO;
@@ -131,19 +123,14 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	private EntityActivityPlugin[] entityActivityPlugins;
 
 	@Autowired
-	private BehaviourFilter policyBehaviourFilter;
-
-	@Autowired
-	private TransactionService transactionService;
-
-	@Autowired
 	NamespaceService namespaceService;
 
 	@Autowired
 	public DictionaryService dictionaryService;
 
+
 	@Autowired
-	private BatchQueueService batchQueueService;
+	private BehaviourFilter policyBehaviourFilter;
 
 	@Autowired
 	private ActivityService activityService;
@@ -1015,149 +1002,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see fr.becpg.repo.activity.EntityActivityService#cleanActivities() This methods will lunched by a scheduled job which will allow system to merge activities System will merge activities of type
-	 * formulation,report and datalist of the same user.
-	 *
-	 */
-
-	/** {@inheritDoc} */
-	@Override
-	public BatchInfo cleanActivities() {
-
-		BatchInfo batchInfo = new BatchInfo("cleanActivities", "becpg.batch.activity.cleanActivities");
-		batchInfo.setRunAsSystem(true);
-		batchInfo.setPriority(BatchPriority.VERY_LOW);
-
-		BatchProcessWorkProvider<NodeRef> workProvider = createActivityProcessWorkProvider();
-
-		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
-
-			@Override
-			public void process(NodeRef entityNodeRef) throws Throwable {
-
-				try {
-
-					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-
-					if (logger.isDebugEnabled()) {
-						logger.debug("group activities of entity : " + entityNodeRef);
-					}
-
-					NodeRef activityListNodeRef = getActivityList(entityNodeRef);
-					if (activityListNodeRef != null) {
-
-						Set<String> users = new HashSet<>();
-						Date cronDate = new Date();
-
-						// Get Activity list ordered by the date of creation
-						AuditQuery auditQuery = AuditQuery.createQuery()
-								.asc(false)
-								.dbAsc(false)
-								.sortBy(ActivityAuditPlugin.PROP_CM_CREATED)
-								.filter(ActivityAuditPlugin.ENTITY_NODEREF, entityNodeRef.toString())
-								.maxResults(RepoConsts.MAX_RESULTS_1000000);
-						
-						List<ActivityListDataItem> sortedActivityList = new ArrayList<>();
-						
-						List<JSONObject> results = beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditQuery);
-
-						for (JSONObject result : results) {
-							sortedActivityList.add(AuditActivityHelper.parseActivity(result));
-						}
-
-						int nbrActivity = sortedActivityList.size();
-						// Keep the first 50 activities
-						sortedActivityList = sortedActivityList.subList(nbrActivity > MAX_PAGE ? MAX_PAGE : 0, nbrActivity > MAX_PAGE ? nbrActivity : 0);
-
-						nbrActivity = sortedActivityList.size();
-
-						if (logger.isDebugEnabled()) {
-							logger.debug("nbrActivity: " + nbrActivity);
-						}
-
-						// Clean activities which are not in the first page.
-						if (nbrActivity > 0) {
-							Map<ActivityType, List<ActivityListDataItem>> activitiesByType = new EnumMap<>(ActivityType.class);
-							int activityInPage = 0;
-							boolean hasFormulation = false;
-							boolean hasReport = false;
-							Set<String> contentSet = new HashSet<>();
-
-							for (ActivityListDataItem activity : sortedActivityList) {
-								if (activityInPage == MAX_PAGE) {
-									hasFormulation = false;
-									hasReport = false;
-									activityInPage = 0;
-								}
-
-								Date created = activity.getCreatedDate();
-								if (cronDate.after(created)) {
-									cronDate = created;
-								}
-
-								ActivityType activityType = activity.getActivityType();
-
-								if ((activityType.equals(ActivityType.Formulation) && hasFormulation)
-										|| (activityType.equals(ActivityType.Report) && hasReport)) {
-									deleteAuditActivity(activity);
-									nbrActivity--;
-								} else if (activityType.equals(ActivityType.Content)) {
-									String contentNodeRef = extractContentNode(activity.getActivityData());
-									if (contentNodeRef != null) {
-										if (!contentSet.contains(contentNodeRef)) {
-											contentSet.add(contentNodeRef);
-										} else {
-											deleteAuditActivity(activity);
-											nbrActivity--;
-										}
-									}
-								}
-								// Arrange activities by type
-								else {
-									if (!activitiesByType.containsKey(activityType)) {
-										activitiesByType.put(activityType, new ArrayList<>());
-									}
-									hasFormulation = activityType.equals(ActivityType.Formulation) ? true : hasFormulation;
-									hasReport = activityType.equals(ActivityType.Report) ? true : hasReport;
-									activitiesByType.get(activityType).add(activity);
-									users.add(activity.getUserId());
-								}
-							}
-
-							List<ActivityListDataItem> dlActivities = activitiesByType.get(ActivityType.Datalist);
-							if (dlActivities != null) {
-								// Group list by day/week/month/year
-								int[] groupTime = { Calendar.DAY_OF_YEAR, Calendar.WEEK_OF_YEAR, Calendar.MONTH, Calendar.YEAR };
-								for (int i = 0; (i < groupTime.length) && (nbrActivity > MAX_PAGE); i++) {
-									dlActivities = group(dlActivities, users, groupTime[i], cronDate);
-									nbrActivity += (dlActivities.size() - activitiesByType.get(ActivityType.Datalist).size());
-								}
-							}
-						}
-					}
-
-				} finally {
-					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-				}
-
-			}
-		};
-
-		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
-
-		return batchInfo;
-	}
-
-	private String extractContentNode(String alData) {
-		JSONObject data = new JSONObject(alData);
-		if (data.has("contentNodeRef")) {
-			return data.getString("contentNodeRef");
-		}
-		return null;
-	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -1190,89 +1034,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	}
 
-	// Group activities
-	private List<ActivityListDataItem> group(List<ActivityListDataItem> activities, Set<String> users, int timePeriod, Date cronDate) {
-		// Ignore the last day/week/month/year
-		Calendar maxLimit = Calendar.getInstance();
-		maxLimit.setTime(new Date());
-		maxLimit.set(Calendar.HOUR_OF_DAY, 23);
-		Calendar minLimit = Calendar.getInstance();
-		minLimit.setTime(new Date());
-		minLimit.set(Calendar.HOUR_OF_DAY, 0);
-
-		switch (timePeriod) {
-		case Calendar.DAY_OF_YEAR:
-			break;
-		case Calendar.WEEK_OF_YEAR:
-			maxLimit.set(Calendar.DAY_OF_WEEK, maxLimit.getFirstDayOfWeek());
-			minLimit.set(Calendar.DAY_OF_WEEK, minLimit.getFirstDayOfWeek());
-			minLimit.add(timePeriod, -1);
-			break;
-		case Calendar.MONTH:
-			maxLimit.set(Calendar.DAY_OF_MONTH, 1);
-			minLimit.set(Calendar.DAY_OF_MONTH, 1);
-			minLimit.add(timePeriod, -1);
-			break;
-		case Calendar.YEAR:
-			maxLimit.add(timePeriod, -1);
-			minLimit.add(timePeriod, -2);
-			break;
-		default:
-			break;
-		}
-
-		// Repeat till the oldest activity
-		while (maxLimit.getTime().after(cronDate)) {
-
-			for (String userId : users) {
-
-				if (activities != null) {
-					Map<NodeRef, List<String>> activitiesByEntity = new HashMap<>();
-					List<ActivityListDataItem> removedNodes = new ArrayList<>();
-
-					for (ActivityListDataItem activity : activities) {
-
-						Date createdDate = activity.getCreatedDate();
-
-						NodeRef activityParentNodeRef = activity.getParentNodeRef();
-						String strData = activity.getActivityData();
-						JSONTokener tokener = new JSONTokener(strData);
-						String datalistClassName = null;
-						try {
-							JSONObject data = new JSONObject(tokener);
-							datalistClassName = (String) data.get(PROP_CLASSNAME);
-						} catch (JSONException e) {
-							logger.error("Problem occurred while parsing data activity!! ", e);
-						}
-
-						if (createdDate.after(minLimit.getTime()) && createdDate.before(maxLimit.getTime()) && activity.getUserId().equals(userId)) {
-							// group same data-list activity
-							if (activitiesByEntity.containsKey(activityParentNodeRef)
-									&& activitiesByEntity.get(activityParentNodeRef).contains(datalistClassName)) {
-								removedNodes.add(activity);
-								
-								deleteAuditActivity(activity);
-							} else {
-
-								if (!activitiesByEntity.containsKey(activityParentNodeRef)) {
-									activitiesByEntity.put(activityParentNodeRef, new ArrayList<>());
-								}
-								activitiesByEntity.get(activityParentNodeRef).add(datalistClassName);
-							}
-						}
-					}
-					activities.removeAll(removedNodes);
-				}
-			}
-
-			// Move to previous period
-			maxLimit.add(timePeriod, -1);
-			minLimit.add(timePeriod, -1);
-		}
-
-		return activities;
-	}
-
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef getEntityNodeRefForActivity(NodeRef nodeRef, QName itemType) {
@@ -1283,16 +1044,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		return null;
 	}
 
-	private BatchProcessWorkProvider<NodeRef> createActivityProcessWorkProvider() {
-		List<NodeRef> entityNodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ENTITY_V2).excludeVersions().inDB().ftsLanguage()
-					.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED);
-			return queryBuilder.list();
-		}, true, true);
-
-		return new EntityListBatchProcessWorkProvider<>(entityNodeRefs);
-
-	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -1360,6 +1111,11 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		} finally {
 			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 		}
+	}
+
+	@Override
+	public BatchInfo cleanActivities() {
+		return entityActivityCleaner.cleanActivities(BatchPriority.VERY_LOW);
 	}
 
 }

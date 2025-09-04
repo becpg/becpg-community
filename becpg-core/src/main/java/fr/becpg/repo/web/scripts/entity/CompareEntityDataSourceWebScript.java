@@ -20,8 +20,8 @@ package fr.becpg.repo.web.scripts.entity;
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -115,7 +115,7 @@ public class CompareEntityDataSourceWebScript extends AbstractWebScript {
 	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
-		List<NodeRef> entityNodeRefs = new LinkedList<>();
+		List<NodeRef> entityNodeRefs = new ArrayList<>();
 
 		NodeRef entityNodeRef = null;
 		

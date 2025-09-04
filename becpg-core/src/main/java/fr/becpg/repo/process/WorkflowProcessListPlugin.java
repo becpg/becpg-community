@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.config.format.FormatMode;
-import fr.becpg.config.format.PropertyFormatService;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.repo.web.scripts.process.EntityProcessListPlugin;
 
@@ -44,8 +43,6 @@ public class WorkflowProcessListPlugin implements EntityProcessListPlugin {
 	@Autowired
 	@Qualifier("WorkflowService")
 	private WorkflowService workflowService;
-	@Autowired
-	private PropertyFormatService propertyFormatService;
 
 	/** {@inheritDoc} */
 	@Override
@@ -54,7 +51,7 @@ public class WorkflowProcessListPlugin implements EntityProcessListPlugin {
 		WorkflowModelBuilder modelBuilder = new WorkflowModelBuilder(namespaceService, nodeService, authenticationService, personService,
 				workflowService, dictionaryService);
 
-		PropertyFormats formater = propertyFormatService.getPropertyFormats(FormatMode.PROCESS, true);
+		PropertyFormats formater = PropertyFormats.forMode(FormatMode.PROCESS, true);
 
 		// list all active and closed workflows for nodeRef
 		List<WorkflowInstance> workflows = workflowService.getWorkflowsForContent(nodeRef, true);

@@ -102,6 +102,8 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 			res.setContentEncoding("UTF-8");
 			ret.write(res.getWriter());
 
+		} catch (IllegalStateException e) {
+			throw new WebScriptException(e.getMessage(), e);
 		} catch (JSONException e) {
 			throw new WebScriptException("Unable to serialize JSON", e);
 		}

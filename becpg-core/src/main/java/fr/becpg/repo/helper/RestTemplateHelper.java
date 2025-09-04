@@ -35,7 +35,7 @@ public final class RestTemplateHelper {
     private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
     private static final int CONNECTION_TTL_SECONDS = 5;
     private static final Timeout CONNECTION_TIMEOUT = Timeout.of(5, TimeUnit.SECONDS);
-    private static final Timeout SOCKET_TIMEOUT = Timeout.of(30, TimeUnit.SECONDS);
+    private static final Timeout SOCKET_TIMEOUT = Timeout.of(2, TimeUnit.MINUTES);
     
     private static final RestTemplate restTemplate;
 
