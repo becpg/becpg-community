@@ -74,7 +74,7 @@
                  * @method onReady
                  */
                 onReady: function DecisionTree_onReady() {
-
+                    var me = this;
 
                     var htmlForm = "";
                     var afterFormInitStack = [];
@@ -219,11 +219,11 @@
 
                             if (showComment && commentChoice != null) {
                                 htmlForm += '<div id="' + this.id + '-comment_' + question.id + '" class="decision-tree-comments hidden" ></div>';
-                                var self = this;
+                              
                                 var questionId = question.id;
                                 var _commentChoice = commentChoice;
                                 afterFormInit = function() {
-                                    self.insertComment(questionId, _commentChoice);
+                                    me.insertComment(questionId, _commentChoice);
                                 };
                             }
 
@@ -244,8 +244,6 @@
                     ctrlBody.innerHTML = htmlForm;
                     for (var i = 0; i < afterFormInitStack.length; ++i) afterFormInitStack[i]();
 
-
-                    var me = this;
 
                     var fnOnSelectChoice = function DT__fnOnSelectChoice(layer, args) {
                         var owner = Bubbling.getOwnerByTagName(args[1].input, "input");
@@ -319,7 +317,7 @@
                                 }
                             }
 
-                            if (foundIndex > 0) {
+                            if (foundIndex >= 0) {
                                 this.validations.splice(foundIndex, 1);
                             }
                         };
