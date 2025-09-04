@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2025 beCPG.
  * 
  * This file is part of beCPG
  * 
@@ -244,7 +244,7 @@
 
                             YAHOO.util.Event.onAvailable(formId, function() {
 
-                                if (this.id.indexOf("wizard-mgr") < 1) {
+                                if (instance.id.indexOf("wizard-mgr") < 1) {
                                     var form = YAHOO.util.Dom.get(formId);
 
                                     if (form !== undefined && form != null) {
@@ -254,14 +254,14 @@
                                         YAHOO.util.Dom.addClass(catalogsDiv, "inline-block");
                                         YAHOO.util.Dom.addClass(catalogsDiv, "catalogs");
                                         YAHOO.util.Dom.insertAfter(catalogsDiv, pageContent);
-                                        YAHOO.util.Dom.removeClass(this.id + "-entity-catalog", "hidden");
+                                        YAHOO.util.Dom.removeClass(instance.id + "-entity-catalog", "hidden");
 
-                                        this.addProtectedFields(insertId, protectedFields);
+                                        instance.addProtectedFields(insertId, protectedFields);
                                     }
 
 
                                 }
-                                this.colorizeMissingFields(response.json, insertId);
+                                instance.colorizeMissingFields(response.json, insertId);
 
                             }, this);
 
@@ -272,17 +272,17 @@
                                 })
 
                                 Alfresco.util.PopupManager.displayPrompt({
-                                    title: this.msg("label.non-unique-properties"),
+                                    title: instance.msg("label.non-unique-properties"),
                                     text: uniqueAlerts.join(", ")
                                 });
                             }
 
                         } else {
-                            catalogsDiv.innerHTML = "<span class=\"no-missing-prop\">" + this.msg("label.no_missing_prop") + "</span>";
+                            catalogsDiv.innerHTML = "<span class=\"no-missing-prop\">" + instance.msg("label.no_missing_prop") + "</span>";
                         }
                         YAHOO.util.Dom.removeClass(formulateButton, "loading");
                     },
-                    scope: this
+                    scope: instance
                 },
                 failureCallback: {
                     fn: function(response) {
@@ -456,9 +456,21 @@
                 // Capture the context for the validation function
                 var self = this;
 
+                // Create a hidden input field for the validation to work with
+                var validationFieldId = formId + "-protected-fields-validation";
+                var form = YAHOO.util.Dom.get(formId);
+                if (form && !YAHOO.util.Dom.get(validationFieldId)) {
+                    var hiddenField = document.createElement("input");
+                    hiddenField.type = "hidden";
+                    hiddenField.id = validationFieldId;
+                    hiddenField.name = "-";
+                    hiddenField.value = "true";
+                    form.appendChild(hiddenField);
+                }
+
                 // Add validation using the form runtime
                 this.formRuntime.addValidation(
-                    formId + "-protected-fields-validation",
+                    validationFieldId,
                     function(__field, __args, __event, __form) {
                         return !self.hasProtectedFieldChanges || self.allowSubmission;
                     },
