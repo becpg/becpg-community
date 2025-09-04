@@ -1510,8 +1510,10 @@
 					</field>
 					<field id="survey:advSearchResponseCommentType1" set="survey">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
 							<control-param name="visibleFieldsValues">{
-									prop_survey_advSearchSlDisabledComment1: ["none"],
+									prop_survey_advSearchSlDisabledComment1: ["", "none"],
 									prop_survey_advSearchSlComment1: ["text", "textarea"],
 									prop_survey_advSearchSlNumberComment1: ["number", "int", "percentage"],
 									prop_survey_advSearchSlDateComment1: ["date", "dateTime"]
@@ -1556,8 +1558,10 @@
 					</field>
 					<field id="survey:advSearchResponseCommentType2" set="survey">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
 							<control-param name="visibleFieldsValues">{
-									prop_survey_advSearchSlDisabledComment2: ["none"],
+									prop_survey_advSearchSlDisabledComment2: ["", "none"],
 									prop_survey_advSearchSlComment2: ["text", "textarea"],
 									prop_survey_advSearchSlNumberComment2: ["number", "int", "percentage"],
 									prop_survey_advSearchSlDateComment2: ["date", "dateTime"]
@@ -1602,8 +1606,10 @@
 					</field>
 					<field id="survey:advSearchResponseCommentType3" set="survey">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
 							<control-param name="visibleFieldsValues">{
-									prop_survey_advSearchSlDisabledComment3: ["none"],
+									prop_survey_advSearchSlDisabledComment3: ["", "none"],
 									prop_survey_advSearchSlComment3: ["text", "textarea"],
 									prop_survey_advSearchSlNumberComment3: ["number", "int", "percentage"],
 									prop_survey_advSearchSlDateComment3: ["date", "dateTime"]
@@ -1648,8 +1654,10 @@
 					</field>
 					<field id="survey:advSearchResponseCommentType4" set="survey">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
 							<control-param name="visibleFieldsValues">{
-									prop_survey_advSearchSlDisabledComment4: ["none"],
+									prop_survey_advSearchSlDisabledComment4: ["", "none"],
 									prop_survey_advSearchSlComment4: ["text", "textarea"],
 									prop_survey_advSearchSlNumberComment4: ["number", "int", "percentage"],
 									prop_survey_advSearchSlDateComment4: ["date", "dateTime"]
