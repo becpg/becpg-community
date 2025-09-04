@@ -217,8 +217,8 @@
         <property name="id"><value>patch.bcpg.project.surveyQuestionGeneratePatch</value></property>
         <property name="description"><value>patch.bcpg.project.surveyQuestionGeneratePatch.description</value></property>
         <property name="fixesFromSchema" value="0"/>
-        <property name="fixesToSchema" value="20100" />
-        <property name="targetSchema" value="20101"/>
+        <property name="fixesToSchema" value="19300" />
+        <property name="targetSchema" value="19301"/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
         <property name="ruleService" ref="ruleService"/>
