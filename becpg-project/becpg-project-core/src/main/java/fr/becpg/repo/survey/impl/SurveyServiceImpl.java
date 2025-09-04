@@ -1,7 +1,5 @@
 package fr.becpg.repo.survey.impl;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,6 +14,7 @@ import java.util.stream.Collectors;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.StoreRef;
+import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -26,11 +25,11 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.regulatory.RequirementAwareEntity;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
-import fr.becpg.repo.regulatory.RequirementListDataItem;
-import fr.becpg.repo.regulatory.RequirementAwareEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.survey.SurveyModel;
 import fr.becpg.repo.survey.SurveyService;
@@ -161,78 +160,67 @@ public class SurveyServiceImpl implements SurveyService {
 		return result;
 	}
 	
-	/** {@inheritDoc} */
-	@Override
 	public void saveSurveyData(NodeRef entityNodeRef, String dataListName, JSONObject data) throws JSONException {
-		if (data.has("data")) {
-			String strData = data.getString("data");
+	    if (!data.has("data")) {
+	        return;
+	    }
+	    
+	    JSONArray values = new JSONArray(data.getString("data"));
+	    Map<String, JSONObject> valueByQid = new HashMap<>();
+	    for (int i = 0; i < values.length(); i++) {
+	        JSONObject v = values.getJSONObject(i);
+	        if (v.has("qid")) {
+	            valueByQid.put(v.getString("qid"), v);
+	        }
+	    }
 
-			JSONArray values = new JSONArray(strData);
-			for (SurveyListDataItem survey : getSurveys(entityNodeRef, dataListName)) {
-				List<NodeRef> choices = new ArrayList<>();
-				survey.setComment(null);
-				survey.setNumberComment(null);
-				survey.setDateComment(null);
-				for (int i = 0; i < values.length(); i++) {
+	    for (SurveyListDataItem survey : getSurveys(entityNodeRef, dataListName)) {
+	        // Reset survey
+	        survey.setComment(null);
+	        survey.setNumberComment(null);
+	        survey.setDateComment(null);
+	        survey.setChoices(new ArrayList<>());
 
-					JSONObject value = values.getJSONObject(i);
-					if (value.has("qid") && (value.getString("qid")).equals(survey.getQuestion().getId())) {
-						if (value.has("comment")) {
-							final String comment = value.getString("comment");
-							survey.setComment(comment);
-							if (survey.getChoices() != null && !survey.getChoices().isEmpty()) {
-								final SurveyQuestion choice = (SurveyQuestion) alfrescoRepository.findOne(survey.getChoices().get(0));
-								switch (choice.getResponseCommentType()) {
-								case "number":
-								case "int":
-								case "percentage":
-									try {
-										survey.setNumberComment(Double.parseDouble(comment));
-									} catch (NumberFormatException e) {
-										logger.error("Cannot convert %s into number".formatted(comment));
-									}
-									break;
-								case "date":
-								case "dateTime":
-									final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd"
-											+ ("dateTime".equals(choice.getResponseCommentType()) ? "'T'HH:mm:ss"
-													: ""));
-									try {
-										survey.setDateComment(format.parse(comment));
-									} catch (ParseException e) {
-										logger.error("Cannot convert %s into date".formatted(comment));
-									}
-								}
-							}
-						}
+	        JSONObject value = valueByQid.get(survey.getQuestion().getId());
+	        if (value != null) {
+	            // Handle comment
+	            String comment = value.optString("comment", null);
+	            if (comment != null) {
+	                survey.setComment(comment);
 
-						if (value.has("listOptions")) {
+	                if (survey.getChoices() != null && !survey.getChoices().isEmpty()) {
+	                    SurveyQuestion choice = (SurveyQuestion) alfrescoRepository.findOne(survey.getChoices().get(0));
+	                    String type = choice.getResponseCommentType();
+	                    try {
+	                        switch (type) {
+	                            case "number", "int", "percentage":
+	                                survey.setNumberComment(Double.parseDouble(comment));
+	                                break;
+	                            case "date", "dateTime":
+	                            	 survey.setDateComment(ISO8601DateFormat.parse(comment));
+	                                break;
+	                            default:
+	                                break;
+	                        }
+	                    } catch (Exception e) {
+	                        logger.error("Cannot convert '"+comment+"' into '"+type+"' for survey "+survey.getName(), e);
+	                    }
+	                }
+	            }
 
-							for (String cid : value.getString("listOptions").split(",")) {
-								choices.add(createNodeRef(cid));
-							}
-						} else if (value.has("cid")) {
-							for (String cid : value.getString("cid").split(",")) {
-								choices.add(createNodeRef(cid));
-							}
-						}
+	            // Handle choices
+	            String options = value.optString("listOptions", value.optString("cid", null));
+	            if (options != null) {
+	                for (String cid : options.split(",")) {
+	                    survey.getChoices().add(createNodeRef(cid.trim()));
+	                }
+	            }
+	        }
 
-						break;
-					}
-
-				}
-
-				survey.setChoices(choices);
-				if (logger.isDebugEnabled()) {
-					logger.debug("Save: " + survey.toString());
-				}
-
-				alfrescoRepository.save(survey);
-
-			}
-		}
-
+	        alfrescoRepository.save(survey);
+	    }
 	}
+
 
 	private NodeRef createNodeRef(String id) {
 		return new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, id);
@@ -453,7 +441,7 @@ public class SurveyServiceImpl implements SurveyService {
 					.anyMatch(question -> question.getNextQuestions().contains(parent));
 			final boolean inChoices = inNextQuestions
 					&& surveyListDataItems.stream().map(SurveyListDataItem::getChoices).flatMap(List::stream)
-							.map(choice -> nodeRefSurveyQuestions.get(choice))
+							.map(nodeRefSurveyQuestions::get)
 							.filter(Objects::nonNull)
 							.map(SurveyQuestion::getNextQuestions)
 							.filter(Objects::nonNull)
