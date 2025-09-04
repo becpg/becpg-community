@@ -28,6 +28,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -258,7 +259,7 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Surveya
 		}
 
 		// If we are not in a test (transient) context, save the survey lists.
-		if (!SurveyableEntityHelper.isTransient(formulatedProduct)) {
+		if (!SurveyableEntityHelper.isTransient(formulatedProduct) && !L2CacheSupport.isCacheOnlyEnable()) {
 			final NodeRef dataListContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer((BeCPGDataObject) formulatedProduct);
 			namesSurveyLists.entrySet().stream().filter(entry -> !SurveyableEntityHelper.isDefault(entry.getKey()))
 					.forEach(entry -> alfrescoRepository.saveDataList(dataListContainerNodeRef,
