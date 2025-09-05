@@ -122,8 +122,8 @@
 							const value = YAHOO.util.Dom.get("${fieldHtmlId}")?.value;
 							for (let [field, values] of Object.entries(visibleFieldsValues)) {
 								field = YAHOO.util.Dom.get("${args.htmlid?js_string?html}_" + field).parentElement;
-								if (!values.includes(value)) {
-									field.style = "display: none";	
+								if (!values.includes(value<#if field.control.params.isSearch??>.slice(1)</#if>)) {
+									field.style = "display: none";
 									field.value = undefined;
 								} else {
 									field.style = undefined;
