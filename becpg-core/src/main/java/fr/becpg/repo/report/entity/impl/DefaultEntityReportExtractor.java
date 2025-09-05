@@ -353,7 +353,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 		// load documents
 		Element docsElt = entityElt.addElement(TAG_DOCUMENTS);
-		extractEntityDocuments(entityNodeRef, docsElt, context, null);
+		extractEntityDocuments(entityNodeRef, docsElt, context);
 
 		// extract site info
 		extractSiteInfo(entityNodeRef, entityElt);
@@ -439,8 +439,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object.
 	 * @param extratAttributes a {@link java.util.Map} object
 	 */
-	protected void extractEntityDocuments(NodeRef entityNodeRef, Element docsElt, DefaultExtractorContext context,
-			Map<String, String> extratAttributes) {
+	protected void extractEntityDocuments(NodeRef entityNodeRef, Element docsElt, DefaultExtractorContext context) {
 
 		if (context.isNotEmptyPrefs("extraDocumentPaths", extraDocumentPaths())) {
 			String entityPath = nodeService.getPath(entityNodeRef).toPrefixString(namespaceService);
@@ -451,7 +450,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				for (NodeRef docNodeRef : docNodeRefs) {
 					if (nodeService.exists(docNodeRef) && !ContentModel.TYPE_FOLDER.equals(nodeService.getType(docNodeRef))) {
 						String nodePath = nodeService.getPath(docNodeRef).toPrefixString(namespaceService).replace(entityPath, "");
-						extractDocument(entityNodeRef, docNodeRef, nodePath, docsElt, context, extratAttributes);
+						extractDocument(entityNodeRef, docNodeRef, nodePath, docsElt, context);
 					}
 				}
 			}
@@ -468,8 +467,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object.
 	 * @param extratAttributes a {@link java.util.Map} object
 	 */
-	protected void extractDocument(NodeRef entityNodeRef, NodeRef docNodeRef, String docId, Element docsElt, DefaultExtractorContext context,
-			Map<String, String> extratAttributes) {
+	protected void extractDocument(NodeRef entityNodeRef, NodeRef docNodeRef, String docId, Element docsElt, DefaultExtractorContext context) {
 
 		if (ApplicationModel.TYPE_FILELINK.equals(nodeService.getType(docNodeRef))) {
 			docNodeRef = (NodeRef) nodeService.getProperty(docNodeRef, ContentModel.PROP_LINK_DESTINATION);
@@ -494,12 +492,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			
 			// Use loadNodeAttributes to extract all document metadata
 			loadNodeAttributes(docNodeRef, docElt, false, context);
-			
-			if (extratAttributes != null) {
-				for (Map.Entry<String, String> extratAttribute : extratAttributes.entrySet()) {
-					docElt.addAttribute(extratAttribute.getKey(), extratAttribute.getValue());
-				}
-			}
+
+		
 		}
 	}
 
