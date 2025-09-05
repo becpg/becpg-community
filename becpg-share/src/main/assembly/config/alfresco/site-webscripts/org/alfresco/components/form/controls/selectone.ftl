@@ -125,7 +125,7 @@
 								const fieldParent = field.parentElement;
 								if (!values.includes(value<#if field.control.params.isSearch??>.slice(1)</#if>)) {
 									fieldParent.style = "display: none";
-									field.value = undefined;
+									field.value = "";
 								} else {
 									fieldParent.style = undefined;
 								}
