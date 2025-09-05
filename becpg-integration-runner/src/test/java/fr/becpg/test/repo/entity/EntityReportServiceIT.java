@@ -484,7 +484,7 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 		inReadTx(() -> {
 			// Test multiple paths configuration
 			Map<String, String> preferences = new HashMap<>();
-			preferences.put("extraDocumentPaths", SUPPLIER_DOCS_FOLDER + ";" + ARTWORK_FOLDER);
+			preferences.put("extraDocumentPaths", "cm:Supplier_x0020_documents/*;cm:Artwork/*" );
 			
 			EntityReportData reportData = defaultEntityReportExtractor.extract(testProductNodeRef, preferences);
 			Document xmlDoc = (Document) reportData.getXmlDataSource().getDocument();

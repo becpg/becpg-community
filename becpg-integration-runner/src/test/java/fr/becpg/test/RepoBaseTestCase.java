@@ -65,6 +65,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.InitVisitorService;
 import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntitySystemService;
@@ -218,6 +219,9 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	@Autowired
 	protected BeCPGAuditService beCPGAuditService;
 	
+	@Autowired
+	protected BatchQueueService batchQueueService;
+	
 
 	@Autowired
 	@Qualifier("qnameDAO")
@@ -356,7 +360,8 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		}
 		
 		if(j == 60) {
-			Assert.fail("Batch is taking too long! Progress: " + (batch.getCurrentItem() + "/" + batch.getTotalItems()));
+			Assert.fail("Batch is taking too long! Progress: " + (batch.getCurrentItem() + "/" + batch.getTotalItems()) + ", running batch: "
+					+ batchQueueService.getRunningBatchInfo());
 		}
 		
 	}
