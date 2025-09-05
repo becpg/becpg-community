@@ -1140,7 +1140,7 @@
 						</control>
 					</field>
 					<set appearance="bordered-panel" id="survey" label-id="becpg.forms.set.survey-criteria.label"
-						template="/org/alfresco/components/form/4-column-set.ftl" />
+						template="/org/alfresco/components/form/2-stackable-column-set.ftl" />
 					<field id="survey:advSearchSurveyQuestion1" mandatory="false" read-only="false" set="survey">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/survey</control-param>
@@ -5606,7 +5606,7 @@
 						</control>
 					</field>
 					<set appearance="bordered-panel" id="survey" label-id="becpg.forms.set.survey-criteria.label"
-						template="/org/alfresco/components/form/4-column-set.ftl" />
+						template="/org/alfresco/components/form/2-stackable-column-set.ftl" />
 					<field id="survey:advSearchSurveyQuestion1" mandatory="false" read-only="false" set="survey">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/survey</control-param>
@@ -6191,7 +6191,7 @@
 						</control>
 					</field>
 					<set appearance="bordered-panel" id="survey" label-id="becpg.forms.set.survey-criteria.label"
-						template="/org/alfresco/components/form/4-column-set.ftl" />
+						template="/org/alfresco/components/form/2-stackable-column-set.ftl" />
 					<field id="survey:advSearchSurveyQuestion1" mandatory="false" read-only="false" set="survey">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/survey</control-param>
