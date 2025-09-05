@@ -111,7 +111,7 @@ build() {
   	 $MVN_EXEC package $EXTRA_ENV -DskipTests=true  -Dmaven.build.cache.enabled=true -Djacoco.skip=true -Dcheckstyle.skip=true  -Dbecpg.dockerbuild.name="enterprise-test"
      COMPOSE_FILE="./distribution/target/docker-compose-build-fast.yml"
 
-      DOCKER_BUILDKIT=0 docker compose -f $COMPOSE_FILE build 
+     docker compose -f $COMPOSE_FILE build 
    	 cd ..
    else
    	 $MVN_EXEC package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
