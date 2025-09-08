@@ -289,14 +289,20 @@
           <show force="false" id="gs1:contact"/>
           <show force="false" id="gs1:additionalTradeItemIdentification"/>
           <show force="false" id="gs1:isAllergenRelevantDataProvided"/>
+          
+          <!--merge -->
           <show force="false" id="bcpg:autoMergeDate"/>
           <show force="false" id="bcpg:autoMergeTo"/>
           <show force="false" id="bcpg:autoMergeVersionType"/>
           <show force="false" id="bcpg:autoMergeComments"/>
           <show force="false" id="bcpg:autoMergeImpactWUsed"/>
+          
+          <!--template -->
           <show id="bcpg:entityTplEnabled" force="false" />
           <show id="bcpg:entityTplIsDefault" force="false" />
           <show id="bcpg:entityTplScript" force="false" />
+          
+          <!--regulatory -->
 		  <show id="bcpg:regulatoryCountries" />
 		  <show id="bcpg:regulatoryUsageRef" />
 		  <show id="bcpg:regulatoryMode" />
@@ -304,6 +310,15 @@
 		  <show id="bcpg:regulatoryResult" />
 		  <show id="bcpg:regulatoryFormulatedDate" />
 		  <show id="bcpg:regulatoryValidationDate" />
+		  
+		  <!--workflow validation -->
+		  <show id="bcpgwf:pvValidationDate" for-mode="view" />
+		  <show id="bcpgwf:pvRDApprovalActor" for-mode="view" />
+		  <show id="bcpgwf:pvPackagingApprovalActor" for-mode="view" />
+		  <show id="bcpgwf:pvQualityApprovalActor" for-mode="view" />
+		  <show id="bcpgwf:pvProductionApprovalActor" for-mode="view" />
+		  <show id="bcpgwf:pvCallerActor" for-mode="view" />
+		  <show id="bcpgwf:pvCaller2Actor" for-mode="view" />
         </field-visibility>
         <appearance>
           <set id="mainTab" label-id="becpg.forms.set.characteristics.label"/>
@@ -1150,6 +1165,21 @@
             <control template="/org/alfresco/components/form/controls/textarea.ftl"/>
           </field>
           <field id="bcpg:autoMergeImpactWUsed" mandatory="false" read-only="false" set="branch"/>
+          
+          <set id="productValidationTab" label-id="becpg.forms.set.validation.label"/>
+          <set id="productValidation" appearance="bordered-panel" label-id="becpg.forms.set.validation.label" parent="productValidationTab"
+			template="/org/alfresco/components/form/2-column-set.ftl" />
+		  <field id="bcpgwf:pvValidationDate" set="productValidation">
+            <control template="/org/alfresco/components/form/controls/date.ftl">
+              <control-param name="showTime">false</control-param>
+            </control>
+          </field>
+          <field id="bcpgwf:pvRDApprovalActor" set="productValidation" />
+          <field id="bcpgwf:pvPackagingApprovalActor" set="productValidation" />
+          <field id="bcpgwf:pvQualityApprovalActor" set="productValidation" />
+          <field id="bcpgwf:pvProductionApprovalActor" set="productValidation" />
+          <field id="bcpgwf:pvCallerActor" set="productValidation" />
+          <field id="bcpgwf:pvCaller2Actor" set="productValidation" />
         </appearance>
         <edit-form template="/org/alfresco/components/form/tab-edit-form.ftl"/>
         <view-form template="/org/alfresco/components/form/tab-edit-form.ftl"/>
@@ -1572,28 +1602,24 @@
 		  <show id="survey:advSearchSurveyAnswer1" force="true" />
 		  <show id="survey:advSearchResponseCommentType1" force="true" />
 		  <show id="survey:advSearchSlDisabledComment1" force="true" />
-		  <show id="survey:advSearchSlComment1" force="true" />
 		  <show id="survey:advSearchSlNumberComment1" force="true" />
 		  <show id="survey:advSearchSlDateComment1" force="true" />
 		  <show id="survey:advSearchSurveyQuestion2" force="true" />
 		  <show id="survey:advSearchSurveyAnswer2" force="true" />
 		  <show id="survey:advSearchResponseCommentType2" force="true" />
 		  <show id="survey:advSearchSlDisabledComment2" force="true" />
-		  <show id="survey:advSearchSlComment2" force="true" />
 		  <show id="survey:advSearchSlNumberComment2" force="true" />
 		  <show id="survey:advSearchSlDateComment2" force="true" />
 		  <show id="survey:advSearchSurveyQuestion3" force="true" />
 		  <show id="survey:advSearchSurveyAnswer3" force="true" />
 		  <show id="survey:advSearchResponseCommentType3" force="true" />
 		  <show id="survey:advSearchSlDisabledComment3" force="true" />
-		  <show id="survey:advSearchSlComment3" force="true" />
 		  <show id="survey:advSearchSlNumberComment3" force="true" />
 		  <show id="survey:advSearchSlDateComment3" force="true" />
 		  <show id="survey:advSearchSurveyQuestion4" force="true" />
 		  <show id="survey:advSearchSurveyAnswer4" force="true" />
 		  <show id="survey:advSearchResponseCommentType4" force="true" />
 		  <show id="survey:advSearchSlDisabledComment4" force="true" />
-		  <show id="survey:advSearchSlComment4" force="true" />
 		  <show id="survey:advSearchSlNumberComment4" force="true" />
 		  <show id="survey:advSearchSlDateComment4" force="true" />
         </field-visibility>
@@ -1976,19 +2002,13 @@
 							<control-param name="insertBlank">true</control-param>
 							<control-param name="options">number|data.survey_responseCommentTypes.number,dateTime|data.survey_responseCommentTypes.dateTime</control-param>
 							<control-param name="visibleFieldsValues">{
-									prop_survey_advSearchSlDisabledComment1: ["", "none"],
-									prop_survey_advSearchSlComment1: ["text", "textarea"],
-									prop_survey_advSearchSlNumberComment1: ["number", "int", "percentage"],
-									prop_survey_advSearchSlDateComment1: ["date", "dateTime"]
+									prop_survey_advSearchSlDisabledComment1: [""],
+									prop_survey_advSearchSlNumberComment1: ["number"],
+									prop_survey_advSearchSlDateComment1: ["dateTime"]
 							}</control-param>
 						</control>
 					</field>
 					<field id="survey:advSearchSlDisabledComment1" mandatory="false" read-only="true" set="survey">
-						<control>
-							<control-param name="stacked">true</control-param>
-						</control>
-					</field>
-					<field id="survey:advSearchSlComment1" mandatory="false" read-only="false" set="survey">
 						<control>
 							<control-param name="stacked">true</control-param>
 						</control>
@@ -2024,19 +2044,13 @@
 							<control-param name="insertBlank">true</control-param>
 							<control-param name="options">number|data.survey_responseCommentTypes.number,dateTime|data.survey_responseCommentTypes.dateTime</control-param>
 							<control-param name="visibleFieldsValues">{
-									prop_survey_advSearchSlDisabledComment2: ["", "none"],
-									prop_survey_advSearchSlComment2: ["text", "textarea"],
-									prop_survey_advSearchSlNumberComment2: ["number", "int", "percentage"],
-									prop_survey_advSearchSlDateComment2: ["date", "dateTime"]
+									prop_survey_advSearchSlDisabledComment2: [""],
+									prop_survey_advSearchSlNumberComment2: ["number"],
+									prop_survey_advSearchSlDateComment2: ["dateTime"]
 							}</control-param>
 						</control>
 					</field>
 					<field id="survey:advSearchSlDisabledComment2" mandatory="false" read-only="true" set="survey">
-						<control>
-							<control-param name="stacked">true</control-param>
-						</control>
-					</field>
-					<field id="survey:advSearchSlComment2" mandatory="false" read-only="false" set="survey">
 						<control>
 							<control-param name="stacked">true</control-param>
 						</control>
@@ -2072,19 +2086,13 @@
 							<control-param name="insertBlank">true</control-param>
 							<control-param name="options">number|data.survey_responseCommentTypes.number,dateTime|data.survey_responseCommentTypes.dateTime</control-param>
 							<control-param name="visibleFieldsValues">{
-									prop_survey_advSearchSlDisabledComment3: ["", "none"],
-									prop_survey_advSearchSlComment3: ["text", "textarea"],
-									prop_survey_advSearchSlNumberComment3: ["number", "int", "percentage"],
-									prop_survey_advSearchSlDateComment3: ["date", "dateTime"]
+									prop_survey_advSearchSlDisabledComment3: [""],
+									prop_survey_advSearchSlNumberComment3: ["number"],
+									prop_survey_advSearchSlDateComment3: ["dateTime"]
 							}</control-param>
 						</control>
 					</field>
 					<field id="survey:advSearchSlDisabledComment3" mandatory="false" read-only="true" set="survey">
-						<control>
-							<control-param name="stacked">true</control-param>
-						</control>
-					</field>
-					<field id="survey:advSearchSlComment3" mandatory="false" read-only="false" set="survey">
 						<control>
 							<control-param name="stacked">true</control-param>
 						</control>
@@ -2120,19 +2128,13 @@
 							<control-param name="insertBlank">true</control-param>
 							<control-param name="options">number|data.survey_responseCommentTypes.number,dateTime|data.survey_responseCommentTypes.dateTime</control-param>
 							<control-param name="visibleFieldsValues">{
-									prop_survey_advSearchSlDisabledComment4: ["", "none"],
-									prop_survey_advSearchSlComment4: ["text", "textarea"],
-									prop_survey_advSearchSlNumberComment4: ["number", "int", "percentage"],
-									prop_survey_advSearchSlDateComment4: ["date", "dateTime"]
+									prop_survey_advSearchSlDisabledComment4: [""],
+									prop_survey_advSearchSlNumberComment4: ["number"],
+									prop_survey_advSearchSlDateComment4: ["dateTime"]
 							}</control-param>
 						</control>
 					</field>
 					<field id="survey:advSearchSlDisabledComment4" mandatory="false" read-only="true" set="survey">
-						<control>
-							<control-param name="stacked">true</control-param>
-						</control>
-					</field>
-					<field id="survey:advSearchSlComment4" mandatory="false" read-only="false" set="survey">
 						<control>
 							<control-param name="stacked">true</control-param>
 						</control>
