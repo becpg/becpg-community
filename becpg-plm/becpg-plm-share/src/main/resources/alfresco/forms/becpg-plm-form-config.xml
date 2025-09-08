@@ -1155,7 +1155,7 @@
 					<field id="survey:advSearchResponseCommentType1" set="survey">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
-							<control-param name="options">number|listconstraint.survey_responseCommentTypes.number,dateTime|listconstraint.survey_responseCommentTypes.dateTime</control-param>
+							<control-param name="options">number|data.survey_responseCommentTypes.number,dateTime|data.survey_responseCommentTypes.dateTime</control-param>
 							<control-param name="visibleFieldsValues">{
 									prop_survey_advSearchSlDisabledComment1: [""],
 									prop_survey_advSearchSlNumberComment1: ["number"],
@@ -1197,7 +1197,7 @@
 					<field id="survey:advSearchResponseCommentType2" set="survey">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
-							<control-param name="options">number|listconstraint.survey_responseCommentTypes.number,dateTime|listconstraint.survey_responseCommentTypes.dateTime</control-param>
+							<control-param name="options">number|data.survey_responseCommentTypes.number,dateTime|data.survey_responseCommentTypes.dateTime</control-param>
 							<control-param name="visibleFieldsValues">{
 									prop_survey_advSearchSlDisabledComment2: [""],
 									prop_survey_advSearchSlNumberComment2: ["number"],
@@ -1239,7 +1239,7 @@
 					<field id="survey:advSearchResponseCommentType3" set="survey">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
-							<control-param name="options">number|listconstraint.survey_responseCommentTypes.number,dateTime|listconstraint.survey_responseCommentTypes.dateTime</control-param>
+							<control-param name="options">number|data.survey_responseCommentTypes.number,dateTime|data.survey_responseCommentTypes.dateTime</control-param>
 							<control-param name="visibleFieldsValues">{
 									prop_survey_advSearchSlDisabledComment3: [""],
 									prop_survey_advSearchSlNumberComment3: ["number"],
@@ -1281,7 +1281,7 @@
 					<field id="survey:advSearchResponseCommentType4" set="survey">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
-							<control-param name="options">number|listconstraint.survey_responseCommentTypes.number,dateTime|listconstraint.survey_responseCommentTypes.dateTime</control-param>
+							<control-param name="options">number|data.survey_responseCommentTypes.number,dateTime|data.survey_responseCommentTypes.dateTime</control-param>
 							<control-param name="visibleFieldsValues">{
 									prop_survey_advSearchSlDisabledComment4: [""],
 									prop_survey_advSearchSlNumberComment4: ["number"],
@@ -5593,7 +5593,7 @@
 					<field id="survey:advSearchResponseCommentType1" set="survey">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
-							<control-param name="options">number|listconstraint.survey_responseCommentTypes.number,dateTime|listconstraint.survey_responseCommentTypes.dateTime</control-param>
+							<control-param name="options">number|data.survey_responseCommentTypes.number,dateTime|data.survey_responseCommentTypes.dateTime</control-param>
 							<control-param name="visibleFieldsValues">{
 									prop_survey_advSearchSlDisabledComment1: [""],
 									prop_survey_advSearchSlNumberComment1: ["number"],
@@ -5635,7 +5635,7 @@
 					<field id="survey:advSearchResponseCommentType2" set="survey">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
-							<control-param name="options">number|listconstraint.survey_responseCommentTypes.number,dateTime|listconstraint.survey_responseCommentTypes.dateTime</control-param>
+							<control-param name="options">number|data.survey_responseCommentTypes.number,dateTime|data.survey_responseCommentTypes.dateTime</control-param>
 							<control-param name="visibleFieldsValues">{
 									prop_survey_advSearchSlDisabledComment2: [""],
 									prop_survey_advSearchSlNumberComment2: ["number"],
@@ -5677,7 +5677,7 @@
 					<field id="survey:advSearchResponseCommentType3" set="survey">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
-							<control-param name="options">number|listconstraint.survey_responseCommentTypes.number,dateTime|listconstraint.survey_responseCommentTypes.dateTime</control-param>
+							<control-param name="options">number|data.survey_responseCommentTypes.number,dateTime|data.survey_responseCommentTypes.dateTime</control-param>
 							<control-param name="visibleFieldsValues">{
 									prop_survey_advSearchSlDisabledComment3: [""],
 									prop_survey_advSearchSlNumberComment3: ["number"],
@@ -5719,7 +5719,7 @@
 					<field id="survey:advSearchResponseCommentType4" set="survey">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
-							<control-param name="options">number|listconstraint.survey_responseCommentTypes.number,dateTime|listconstraint.survey_responseCommentTypes.dateTime</control-param>
+							<control-param name="options">number|data.survey_responseCommentTypes.number,dateTime|data.survey_responseCommentTypes.dateTime</control-param>
 							<control-param name="visibleFieldsValues">{
 									prop_survey_advSearchSlDisabledComment4: [""],
 									prop_survey_advSearchSlNumberComment4: ["number"],
@@ -6150,7 +6150,7 @@
 					<field id="survey:advSearchResponseCommentType1" set="survey">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
-							<control-param name="options">number|listconstraint.survey_responseCommentTypes.number,dateTime|listconstraint.survey_responseCommentTypes.dateTime</control-param>
+							<control-param name="options">number|data.survey_responseCommentTypes.number,dateTime|data.survey_responseCommentTypes.dateTime</control-param>
 							<control-param name="visibleFieldsValues">{
 									prop_survey_advSearchSlDisabledComment1: [""],
 									prop_survey_advSearchSlNumberComment1: ["number"],
@@ -6192,7 +6192,7 @@
 					<field id="survey:advSearchResponseCommentType2" set="survey">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
-							<control-param name="options">number|listconstraint.survey_responseCommentTypes.number,dateTime|listconstraint.survey_responseCommentTypes.dateTime</control-param>
+							<control-param name="options">number|data.survey_responseCommentTypes.number,dateTime|data.survey_responseCommentTypes.dateTime</control-param>
 							<control-param name="visibleFieldsValues">{
 									prop_survey_advSearchSlDisabledComment2: [""],
 									prop_survey_advSearchSlNumberComment2: ["number"],
@@ -6234,7 +6234,7 @@
 					<field id="survey:advSearchResponseCommentType3" set="survey">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
-							<control-param name="options">number|listconstraint.survey_responseCommentTypes.number,dateTime|listconstraint.survey_responseCommentTypes.dateTime</control-param>
+							<control-param name="options">number|data.survey_responseCommentTypes.number,dateTime|data.survey_responseCommentTypes.dateTime</control-param>
 							<control-param name="visibleFieldsValues">{
 									prop_survey_advSearchSlDisabledComment3: [""],
 									prop_survey_advSearchSlNumberComment3: ["number"],
@@ -6276,7 +6276,7 @@
 					<field id="survey:advSearchResponseCommentType4" set="survey">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
-							<control-param name="options">number|listconstraint.survey_responseCommentTypes.number,dateTime|listconstraint.survey_responseCommentTypes.dateTime</control-param>
+							<control-param name="options">number|data.survey_responseCommentTypes.number,dateTime|data.survey_responseCommentTypes.dateTime</control-param>
 							<control-param name="visibleFieldsValues">{
 									prop_survey_advSearchSlDisabledComment4: [""],
 									prop_survey_advSearchSlNumberComment4: ["number"],
