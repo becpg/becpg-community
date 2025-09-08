@@ -11710,6 +11710,9 @@
 					<show id="cm:name" />
 					<show id="bcpg:isGlobalSavedSearch" />
 				</field-visibility>
+				<appearance>
+				  <field id="bcpg:isGlobalSavedSearch" read-only="true"/>
+				</appearance>
 			</form>
 		</forms>
 	</config>
