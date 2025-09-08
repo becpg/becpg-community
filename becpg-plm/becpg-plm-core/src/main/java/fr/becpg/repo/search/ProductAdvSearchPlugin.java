@@ -323,6 +323,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			ret.add(CRITERIA_NOTRESPECTED_SPECIFICATIONS);
 			ret.add(CRITERIA_RESPECTED_SPECIFICATIONS);
 			ret.addAll(searchConfig.getKeysToExclude());
+			ret.addAll(AdvSearchService.IGNORED_FIELDS);
 		}
 		return ret;
 	}
