@@ -247,6 +247,15 @@
           <show id="bcpg:entityTplEnabled" force="false" />
           <show id="bcpg:entityTplIsDefault" force="false" />
           <show id="bcpg:entityTplScript" force="false" />
+          
+          <!--workflow validation -->
+          <show id="bcpgwf:pvValidationDate" for-mode="view" />
+		  <show id="bcpgwf:pvRDApprovalActor" for-mode="view" />
+		  <show id="bcpgwf:pvPackagingApprovalActor" for-mode="view" />
+		  <show id="bcpgwf:pvQualityApprovalActor" for-mode="view" />
+		  <show id="bcpgwf:pvProductionApprovalActor" for-mode="view" />
+		  <show id="bcpgwf:pvCallerActor" for-mode="view" />
+		  <show id="bcpgwf:pvCaller2Actor" for-mode="view" />
 					
         </field-visibility>
         <appearance>
@@ -895,6 +904,21 @@
               <control-param name="startLocation">{doclib}</control-param>
             </control>
           </field>
+          
+          <set id="productValidationTab" label-id="becpg.forms.set.validation.label"/>
+          <set id="productValidation" appearance="bordered-panel" label-id="becpg.forms.set.validation.label" parent="productValidationTab"
+			template="/org/alfresco/components/form/2-column-set.ftl" />
+		  <field id="bcpgwf:pvValidationDate" set="productValidation">
+            <control template="/org/alfresco/components/form/controls/date.ftl">
+              <control-param name="showTime">false</control-param>
+            </control>
+          </field>
+          <field id="bcpgwf:pvRDApprovalActor" set="productValidation" />
+          <field id="bcpgwf:pvPackagingApprovalActor" set="productValidation" />
+          <field id="bcpgwf:pvQualityApprovalActor" set="productValidation" />
+          <field id="bcpgwf:pvProductionApprovalActor" set="productValidation" />
+          <field id="bcpgwf:pvCallerActor" set="productValidation" />
+          <field id="bcpgwf:pvCaller2Actor" set="productValidation" />
         </appearance>
         <edit-form template="/org/alfresco/components/form/tab-edit-form.ftl"/>
         <view-form template="/org/alfresco/components/form/tab-edit-form.ftl"/>
