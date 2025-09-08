@@ -605,6 +605,15 @@
 					<show id="bcpg:entityTplEnabled" force="false" />
 					<show id="bcpg:entityTplIsDefault" force="false" />
 					<show id="bcpg:entityTplScript" force="false" />
+					
+					<!--workflow validation -->
+					<show id="bcpgwf:pvValidationDate" for-mode="view" />
+					<show id="bcpgwf:pvRDApprovalActor" for-mode="view" />
+					<show id="bcpgwf:pvPackagingApprovalActor" for-mode="view" />
+					<show id="bcpgwf:pvQualityApprovalActor" for-mode="view" />
+					<show id="bcpgwf:pvProductionApprovalActor" for-mode="view" />
+					<show id="bcpgwf:pvCallerActor" for-mode="view" />
+					<show id="bcpgwf:pvCaller2Actor" for-mode="view" />
 
 				</field-visibility>
 				<appearance>
@@ -617,6 +626,8 @@
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="securityRule" appearance="bordered-panel" label-id="becpg.forms.set.securityRule.label" />
 					<set id="categories" appearance="bordered-panel" label-id="becpg.forms.set.category.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="productValidation" appearance="bordered-panel" label-id="becpg.forms.set.validation.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					
@@ -746,6 +757,19 @@
 					<field id="cm:created" set="audit" />
 					<field id="cm:modifier" set="audit" />
 					<field id="cm:modified" set="audit" />
+					
+					<!-- productValidation -->
+					<field id="bcpgwf:pvValidationDate" set="productValidation">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpgwf:pvRDApprovalActor" set="productValidation" />
+					<field id="bcpgwf:pvPackagingApprovalActor" set="productValidation" />
+					<field id="bcpgwf:pvQualityApprovalActor" set="productValidation" />
+					<field id="bcpgwf:pvProductionApprovalActor" set="productValidation" />
+					<field id="bcpgwf:pvCallerActor" set="productValidation" />
+					<field id="bcpgwf:pvCaller2Actor" set="productValidation" />
 
 				</appearance>
 			</form>
@@ -5984,6 +6008,15 @@
 					<!-- local security rule -->
 					<show id="sec:securityRef" />	
 					
+					<!--workflow validation -->
+					<show id="bcpgwf:pvValidationDate" for-mode="view" />
+					<show id="bcpgwf:pvRDApprovalActor" for-mode="view" />
+					<show id="bcpgwf:pvPackagingApprovalActor" for-mode="view" />
+					<show id="bcpgwf:pvQualityApprovalActor" for-mode="view" />
+					<show id="bcpgwf:pvProductionApprovalActor" for-mode="view" />
+					<show id="bcpgwf:pvCallerActor" for-mode="view" />
+					<show id="bcpgwf:pvCaller2Actor" for-mode="view" />
+					
 					<!-- audit -->
 					<show id="cm:creator" for-mode="view" />
 					<show id="cm:created" for-mode="view" />
@@ -6038,6 +6071,20 @@
 							</control-param>
 						</control>
 					</field>
+					
+					<set id="productValidation" appearance="bordered-panel" label-id="becpg.forms.set.validation.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpgwf:pvValidationDate" set="productValidation">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpgwf:pvRDApprovalActor" set="productValidation" />
+					<field id="bcpgwf:pvPackagingApprovalActor" set="productValidation" />
+					<field id="bcpgwf:pvQualityApprovalActor" set="productValidation" />
+					<field id="bcpgwf:pvProductionApprovalActor" set="productValidation" />
+					<field id="bcpgwf:pvCallerActor" set="productValidation" />
+					<field id="bcpgwf:pvCaller2Actor" set="productValidation" />
 
 						<!-- audit -->
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label" template="/org/alfresco/components/form/2-column-set.ftl" />
