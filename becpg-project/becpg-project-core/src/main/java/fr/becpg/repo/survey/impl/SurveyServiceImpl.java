@@ -197,6 +197,7 @@ public class SurveyServiceImpl implements SurveyService {
 	    }
 
 	    for (SurveyListDataItem survey : getSurveys(entityNodeRef, dataListName)) {
+	    	final List<NodeRef> choices = survey.getChoices();
 	        // Reset survey
 	        survey.setComment(null);
 	        survey.setNumberComment(null);
@@ -210,8 +211,8 @@ public class SurveyServiceImpl implements SurveyService {
 	            if (comment != null) {
 	                survey.setComment(comment);
 
-	                if (survey.getChoices() != null && !survey.getChoices().isEmpty()) {
-	                    SurveyQuestion choice = (SurveyQuestion) alfrescoRepository.findOne(survey.getChoices().get(0));
+	                if (choices != null && !choices.isEmpty()) {
+	                    SurveyQuestion choice = (SurveyQuestion) alfrescoRepository.findOne(choices.get(0));
 	                    String type = choice.getResponseCommentType();
 	                    try {
 	                        switch (type) {
