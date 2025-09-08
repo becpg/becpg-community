@@ -3,7 +3,6 @@ package fr.becpg.repo.product.formulation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -20,7 +19,6 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
@@ -29,12 +27,14 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
+import fr.becpg.repo.product.data.labelclaim.LabelClaimItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 
 /**
@@ -59,13 +59,11 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 	/** Constant <code>MESSAGE_NULL_PERC="message.formulate.allergen.error.nullQt"{trunked}</code> */
 	public static final String MESSAGE_CERTIFIED_ERROR = "message.formulate.labelClaim.certifiedError";
 	
-	private NodeService nodeService;
-
 	private NodeService mlNodeService;
 
 	private SpelFormulaService formulaService;
 
-	private AlfrescoRepository<ProductData> alfrescoRepository;
+	private AlfrescoRepository<BeCPGDataObject> alfrescoRepository;
 
 	/**
 	 * <p>Setter for the field <code>mlNodeService</code>.</p>
@@ -74,15 +72,6 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 	 */
 	public void setMlNodeService(NodeService mlNodeService) {
 		this.mlNodeService = mlNodeService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>nodeService</code>.</p>
-	 *
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
-	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
 	}
 
 	/**
@@ -99,7 +88,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 	 *
 	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
 	 */
-	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
+	public void setAlfrescoRepository(AlfrescoRepository<BeCPGDataObject> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
@@ -149,9 +138,11 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 				productData.getLabelClaimList().forEach(labelClaimItem -> {
 
-					labelClaimItem.setType((String) nodeService.getProperty(labelClaimItem.getLabelClaim(), PLMModel.PROP_LABEL_CLAIM_TYPE));
+					LabelClaimItem labelClaim = (LabelClaimItem) alfrescoRepository.findOne(labelClaimItem.getLabelClaim());
+					
+					labelClaimItem.setType(labelClaim.getLabelClaimType());
 
-					Boolean isManual = (Boolean) nodeService.getProperty(labelClaimItem.getLabelClaim(), BeCPGModel.PROP_IS_MANUAL_LISTITEM);
+					Boolean isManual = labelClaim.getIsManualListItem();
 
 					if ((isManual != null) && isManual) {
 						labelClaimItem.setIsManual(true);
@@ -159,8 +150,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 					if ((labelClaimItem.getIsManual() == null) || !Boolean.TRUE.equals(labelClaimItem.getIsManual())) {
 
-						Boolean isPropagateUp = (Boolean) nodeService.getProperty(labelClaimItem.getLabelClaim(),
-								PLMModel.PROP_IS_CHARACT_PROPAGATE_UP);
+						Boolean isPropagateUp = labelClaim.getIsCharactPropagateUp();
 
 						if (Boolean.TRUE.equals(isPropagateUp)) {
 							toRemove.add(labelClaimItem);
@@ -179,12 +169,12 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 					NodeRef part = compoItem.getComponent();
 
-					Double qty = compoItem instanceof CompoListDataItem ? ((CompoListDataItem) compoItem).getQtySubFormula() : compoItem.getQty();
+					Double qty = compoItem instanceof CompoListDataItem compoListDataItem ? compoListDataItem.getQtySubFormula() : compoItem.getQty();
 
 					if ((qty != null) && (qty > 0)) {
-						ProductData partProduct = alfrescoRepository.findOne(part);
+						ProductData partProduct = (ProductData) alfrescoRepository.findOne(part);
 
-						Double qtyUsed = compoItem instanceof CompoListDataItem ? FormulationHelper.getQtyInKg((CompoListDataItem) compoItem) : 0d;
+						Double qtyUsed = compoItem instanceof CompoListDataItem compoListDataItem ? FormulationHelper.getQtyInKg(compoListDataItem) : 0d;
 
 						if (!partProduct.isLocalSemiFinished() && partProduct.getLabelClaimList() != null) {
 							for (LabelClaimListDataItem labelClaim : partProduct.getLabelClaimList()) {
@@ -211,9 +201,11 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		
 		if (productData.getLabelClaimList() != null) {
 
-			productData.getLabelClaimList().forEach(labelClaimListDataItem -> {
+			productData.getLabelClaimList().forEach(labelClaimListDataItem -> {			
+				LabelClaimItem labelClaim = (LabelClaimItem) alfrescoRepository.findOne(labelClaimListDataItem.getLabelClaim());
+
 				if (!Boolean.TRUE.equals(labelClaimListDataItem.getIsManual())) {
-					Double regulatoryThreshold = getLabelClaimRegulatoryThreshold(labelClaimListDataItem.getLabelClaim());
+					Double regulatoryThreshold = getLabelClaimRegulatoryThreshold(labelClaim);
 					Double percentage = null;
 					
 					if (labelClaimListDataItem.getPercentClaim() != null) {
@@ -247,8 +239,8 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		return true;
 	}
 	
-	private Double getLabelClaimRegulatoryThreshold(NodeRef labelClaim) {
-		return (Double) nodeService.getProperty(labelClaim, PLMModel.PROP_CLAIM_REGULATORY_THRESHOLD);
+	private Double getLabelClaimRegulatoryThreshold(LabelClaimItem labelClaim) {
+		return labelClaim.getLabelClaimRegulatoryThreshold();
 	}
 
 	private Set<ProductSpecificationData> extractSpecifications(List<ProductSpecificationData> specifications) {
@@ -319,9 +311,10 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 		LabelClaimListDataItem labelClaimItem = productData.getLabelClaimList().stream()
 				.filter(n -> ((n.getLabelClaim() != null) && n.getLabelClaim().equals(subLabelClaimItem.getLabelClaim()))).findFirst().orElse(null);
-
-		if ((labelClaimItem == null)
-				&& Boolean.TRUE.equals(nodeService.getProperty(subLabelClaimItem.getLabelClaim(), PLMModel.PROP_IS_CHARACT_PROPAGATE_UP))) {
+		
+		LabelClaimItem labelClaim = (LabelClaimItem) alfrescoRepository.findOne(subLabelClaimItem.getLabelClaim());
+		
+		if ((labelClaimItem == null) && Boolean.TRUE.equals(labelClaim.getIsCharactPropagateUp())) {
 
 			labelClaimItem = subLabelClaimItem.copy();
 			labelClaimItem.setName(null);
@@ -515,8 +508,9 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		return product.getLabelClaimList().stream().filter(lcl -> lclCharact.equals(lcl.getLabelClaim())).collect(Collectors.toList());
 	}
 
-	private String extractName(NodeRef labelClaim) {
-		return (String) nodeService.getProperty(labelClaim, BeCPGModel.PROP_CHARACT_NAME);
+	private String extractName(NodeRef labelClaimNodeRef) {
+		LabelClaimItem labelClaim = (LabelClaimItem) alfrescoRepository.findOne(labelClaimNodeRef);
+		return labelClaim.getCharactName();
 	}
 
 	private void computeClaimList(ProductData productData, ExpressionParser parser, StandardEvaluationContext context) {
@@ -526,8 +520,10 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 				labelClaimListDataItem.setErrorLog(null);
 				if (((labelClaimListDataItem.getIsManual() == null) || !labelClaimListDataItem.getIsManual())
 						&& (labelClaimListDataItem.getLabelClaim() != null)) {
+					
+					LabelClaimItem labelClaim = (LabelClaimItem) alfrescoRepository.findOne(labelClaimListDataItem.getLabelClaim());
 
-					String formulaText = (String) nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), PLMModel.PROP_LABEL_CLAIM_FORMULA);
+					String formulaText = labelClaim.getLabelClaimFormula();
 					if ((formulaText != null) && (formulaText.length() > 0)) {
 						try {
 							labelClaimListDataItem.setIsFormulated(true);
