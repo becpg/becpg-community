@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2025 beCPG.
  * 
  * This file is part of beCPG
  * 
@@ -30,6 +30,10 @@
      */
     beCPG.component.EntityCatalog = function(htmlId) {
         beCPG.component.EntityCatalog.superclass.constructor.call(this, "beCPG.component.EntityCatalog", htmlId, ["button", "container"]);
+
+        this.isLoaded = false;
+        
+        YAHOO.Bubbling.on("afterFormRuntimeInit", this.onAfterFormRuntimeInit, this);
         return this;
     };
 
@@ -70,7 +74,7 @@
          */
         onReady: function EntityCatalog_onReady() {
             var instance = this;
-
+            
             var catalogsDiv = YAHOO.util.Dom.get(this.id + "-entity-catalog");
 
             catalogsDiv.innerHTML = '<span class="wait">' + Alfresco.util.encodeHTML(this.msg("label.loading")) + '</span>';
@@ -235,8 +239,6 @@
 
                             catalogsDiv.innerHTML = html;
 
-
-
                             var insertId = this.id.replace("wizard-mgr", "%%%").replace("_cat", "")
                                 .replace("-mgr", "").replace("%%%", "wizard-mgr");
 
@@ -263,6 +265,8 @@
                                 }
                                 instance.colorizeMissingFields(response.json, insertId);
 
+                                instance.isLoaded = true;
+                                
                             }, this);
 
 
@@ -297,6 +301,8 @@
                                 text: this.msg("message.formulate.failure")
                             });
                         }
+                        instance.isLoaded = false;
+
                         YAHOO.util.Dom.removeClass(formulateButton, "loading");
                     },
                     scope: this
@@ -304,19 +310,17 @@
                 execScripts: true
             });
         },
-
-
         addProtectedFields: function(formId, fields) {
             if (!fields || fields.length === 0) {
                 return;
             }
 
-            // Store the protected fields in the component instance
             this.protectedFields = fields;
-
-            // Initialize tracking objects
             this.modifiedProtectedFields = {};
             this.modifiedCount = 0;
+            this.reauthButtonCreated = false;
+            this.hasProtectedFieldChanges = false;
+            this.formRuntime = null;
 
             // Get form element
             var form = YAHOO.util.Dom.get(formId + "-form");
@@ -328,16 +332,40 @@
             this.submitButtonId = formId + "-form-submit-button";
             this.reauthButtonId = this.submitButtonId + "-form-reauth-button";
 
-            // Make sure we use component methods for better maintainability
             var instance = this;
+
+
+            // Intercept Enter key press to activate reauth button when protected fields are modified
+            this.handleFormKeydown = function(event) {
+                if (event.keyCode === 13 && instance.hasProtectedFieldChanges) {
+                    event.preventDefault();
+                    // Trigger the reauth button click instead of form submission
+                    var reauthButton = YAHOO.util.Dom.get(instance.reauthButtonId + "-button");
+                    if (reauthButton) {
+                        reauthButton.click();
+                    }
+                    return false;
+                }
+            };
+
+            // Add keydown event listener to the form to intercept Enter key
+            YAHOO.util.Event.addListener(form, "keydown", this.handleFormKeydown);
 
             /**
              * Updates the submit button state based on modified fields
              */
             this.createReauthButton = function() {
+                // Check if reauth button is already created
+                if (instance.reauthButtonCreated) {
+                    return;
+                }
+
+                // Set flag that protected fields have been modified
+                instance.hasProtectedFieldChanges = true;
 
                 var reauthButton = YAHOO.util.Dom.get(instance.reauthButtonId);
                 if (reauthButton) {
+                    instance.reauthButtonCreated = true;
                     return;
                 }
 
@@ -363,7 +391,11 @@
                     // Show reauthentication popup
                     instance.openReauthPopup(function(token) {
                         if (token) {
+                            // Allow submission temporarily
+                            instance.allowSubmission = true;
                             submitButton.click();
+                            // Reset the flag after submission
+                            instance.allowSubmission = false;
                         } else {
                             Alfresco.util.PopupManager.displayMessage({
                                 text: instance.msg("message.reauth.failed")
@@ -379,13 +411,15 @@
                 submitButton.parentNode.parentNode.insertBefore(spanOuter, submitButton.nextSibling);
                 // If protected fields are modified, show reauth button
                 submitButton.parentNode.style.display = 'none';
+
+                // Mark as created
+                instance.reauthButtonCreated = true;
             };
 
             /**
              * Add field validations to detect changes in protected fields
              */
             this.setupFieldValidations = function() {
-
 
                 // Setup validations for each protected field
                 this.protectedFields.forEach(function(field) {
@@ -394,7 +428,6 @@
                         formId + "_prop_" + field.replace(":", "_") + "-entry",
                         formId + "_assoc_" + field.replace(":", "_") + "-cntrl",
                         formId + "_prop_" + field.replace(":", "_")
-
                     ];
 
                     // Check each possible field ID
@@ -416,10 +449,44 @@
             // Initialize the component
             YAHOO.util.Event.onAvailable(this.submitButtonId, function() {
                 instance.setupFieldValidations();
-
             }, this);
 
+        },
 
+        onAfterFormRuntimeInit: function(__layer, args) {
+            var insertId = this.id.replace("wizard-mgr", "%%%").replace("_cat", "")
+                               .replace("-mgr", "").replace("%%%", "wizard-mgr");
+            var formId = insertId + "-form";
+            if (this.formRuntime == null && formId.indexOf(args[1].runtime.formId) > -1) {
+                this.formRuntime = args[1].runtime;
+
+                // Capture the context for the validation function
+                var self = this;
+
+                // Create a hidden input field for the validation to work with
+                var validationFieldId = formId + "-protected-fields-validation";
+                var form = YAHOO.util.Dom.get(formId);
+                if (form && !YAHOO.util.Dom.get(validationFieldId)) {
+                    var hiddenField = document.createElement("input");
+                    hiddenField.type = "hidden";
+                    hiddenField.id = validationFieldId;
+                    hiddenField.name = "-";
+                    hiddenField.value = "true";
+                    form.appendChild(hiddenField);
+                }
+
+                // Add validation using the form runtime
+                this.formRuntime.addValidation(
+                    validationFieldId,
+                    function(__field, __args, __event, __form) {
+                       return (!self.hasProtectedFieldChanges && self.isLoaded) || self.allowSubmission;
+                    },
+                    null, // args
+                    null, // when (only validate on submit)
+                    this.msg("message.reauth.required"), // message
+                    { validationType: "mandatory" } // config
+                );
+            }
         },
 
         openReauthPopup: function(callback) {
@@ -435,7 +502,7 @@
 
             if (!popup || popup.closed || typeof popup.closed === 'undefined') {
                 Alfresco.util.PopupManager.displayMessage({
-                    text: me.msg("alert.popup.blocked")
+                    text: this.msg("alert.popup.blocked")
                 });
                 callback(null);
                 return;
