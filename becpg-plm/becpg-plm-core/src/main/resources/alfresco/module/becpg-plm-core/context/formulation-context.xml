@@ -224,7 +224,6 @@
 				<bean class="fr.becpg.repo.product.formulation.LabelClaimFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="formulaService" ref="formulaService" />
-					<property name="nodeService" ref="nodeService" />
 					<property name="mlNodeService" ref="mlAwareNodeService" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.PackagingMaterialFormulationHandler">

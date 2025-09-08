@@ -77,6 +77,7 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.audit.helper.StopWatchSupport;
+import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityFormatService;
@@ -990,7 +991,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 								
 								triggerRules(internalBranchToNodeRef);
 								
-								generateReportsAsync(internalBranchToNodeRef);
+								generateReportsAsync(internalBranchToNodeRef, BatchPriority.LOW.toString());
 								
 								StopWatchSupport.addCheckpoint("after internalCreateVersion");
 								
@@ -1040,8 +1041,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		
 	}
 
-	private void generateReportsAsync(final NodeRef internalBranchToNodeRef) {
-		nodeService.addAspect(internalBranchToNodeRef, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT, null);
+	private void generateReportsAsync(final NodeRef internalBranchToNodeRef, String priority) {
+		nodeService.addAspect(internalBranchToNodeRef, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT, Map.of(BeCPGModel.PROP_PENDING_ENTITY_REPORT_PRIORITY, priority));
 	}
 
 	private NodeRef convertNodeAndWhereUsed(NodeRef notConvertedNode) {
@@ -1413,7 +1414,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	@Override
 	public NodeRef createVersion(final NodeRef entityNodeRef, Map<String, Serializable> versionProperties, Date effectiveDate) {
 		NodeRef versionNodeRef = internalCreateVersion(entityNodeRef, versionProperties, effectiveDate, null, false);
-		generateReportsAsync(entityNodeRef);
+		generateReportsAsync(entityNodeRef, BatchPriority.HIGH.toString());
 		return versionNodeRef;
 	}
 	
