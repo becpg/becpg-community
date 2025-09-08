@@ -63,19 +63,6 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 public class AdvSearchServiceImpl implements AdvSearchService {
 
 	private static final Log logger = LogFactory.getLog(AdvSearchServiceImpl.class);
-
-	private static final List<String> IGNORED_FIELDS = List.of(
-			"prop_survey_advSearchResponseCommentType1", 
-			"prop_survey_advSearchResponseCommentType2", 
-			"prop_survey_advSearchResponseCommentType3", 
-			"prop_survey_advSearchResponseCommentType4", 
-			"prop_survey_advSearchResponseCommentType5", 
-			"prop_survey_advSearchResponseCommentType6", 
-			"prop_survey_advSearchResponseCommentType7", 
-			"prop_survey_advSearchResponseCommentType8", 
-			"prop_survey_advSearchResponseCommentType9", 
-			"prop_survey_advSearchResponseCommentType10"
-	);
 	
 	@Autowired
 	private NamespaceService namespaceService;
