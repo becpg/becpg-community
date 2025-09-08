@@ -148,7 +148,7 @@ public class ReportTplWebScript extends AbstractWebScript {
 		if (refs != null) {
 			if (ACTION_REFRESH.equals(action)) {
 				for (NodeRef ref : refs) {
-					nodeService.addAspect(ref, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT, null);
+					nodeService.addAspect(ref, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT, Map.of(BeCPGModel.PROP_PENDING_ENTITY_REPORT_PRIORITY, BatchPriority.VERY_LOW.toString()));
 				}
 			} else if (ACTION_UPDATE_PERMISSIONS.equals(action)) {
 				String entityDescription = nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE) + " - " + nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
