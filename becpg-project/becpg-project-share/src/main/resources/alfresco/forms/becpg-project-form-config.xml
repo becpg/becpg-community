@@ -880,6 +880,7 @@
 					<field id="survey:advSearchResponseCommentType1" set="survey">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
+							<control-param name="options">number|data.survey_responseCommentTypes.number,dateTime|data.survey_responseCommentTypes.dateTime</control-param>
 							<control-param name="visibleFieldsValues">{
 									prop_survey_advSearchSlDisabledComment1: ["", "none"],
 									prop_survey_advSearchSlComment1: ["text", "textarea"],
@@ -927,6 +928,7 @@
 					<field id="survey:advSearchResponseCommentType2" set="survey">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
+							<control-param name="options">number|data.survey_responseCommentTypes.number,dateTime|data.survey_responseCommentTypes.dateTime</control-param>
 							<control-param name="visibleFieldsValues">{
 									prop_survey_advSearchSlDisabledComment2: ["", "none"],
 									prop_survey_advSearchSlComment2: ["text", "textarea"],
@@ -974,6 +976,7 @@
 					<field id="survey:advSearchResponseCommentType3" set="survey">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
+							<control-param name="options">number|data.survey_responseCommentTypes.number,dateTime|data.survey_responseCommentTypes.dateTime</control-param>
 							<control-param name="visibleFieldsValues">{
 									prop_survey_advSearchSlDisabledComment3: ["", "none"],
 									prop_survey_advSearchSlComment3: ["text", "textarea"],
@@ -1021,6 +1024,7 @@
 					<field id="survey:advSearchResponseCommentType4" set="survey">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
+							<control-param name="options">number|data.survey_responseCommentTypes.number,dateTime|data.survey_responseCommentTypes.dateTime</control-param>
 							<control-param name="visibleFieldsValues">{
 									prop_survey_advSearchSlDisabledComment4: ["", "none"],
 									prop_survey_advSearchSlComment4: ["text", "textarea"],
