@@ -51,6 +51,7 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
+import fr.becpg.repo.product.data.allergen.AllergenItem;
 import fr.becpg.repo.product.data.constraints.AllergenType;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
@@ -468,21 +469,21 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private void extractAllergens(LabelingFormulaContext labelingFormulaContext, ProductData productData) {
 		if (productData.getAllergenList() != null) {
 			for (AllergenListDataItem allergenListDataItem : productData.getAllergenList()) {
-				NodeRef allergen = allergenListDataItem.getAllergen();
+				AllergenItem allergen = (AllergenItem) alfrescoRepository.findOne(allergenListDataItem.getAllergen());
 				if (Boolean.TRUE.equals(allergenListDataItem.getVoluntary())) {
-					if (AllergenType.Major.toString().equals(nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_TYPE))) {
-						appendAllergen(labelingFormulaContext.getAllergens(), allergen, allergenListDataItem.getQtyPerc());
+					if (AllergenType.Major.toString().equals(allergen.getAllergenType())) {
+						appendAllergen(labelingFormulaContext.getAllergens(), allergen.getNodeRef(), allergenListDataItem.getQtyPerc());
 					}
 				} else if (Boolean.TRUE.equals(allergenListDataItem.getInVoluntary())
-						&& AllergenType.Major.toString().equals(nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_TYPE))) {
-					appendAllergen(labelingFormulaContext.getInVolAllergens(), allergen, allergenListDataItem.getQtyPerc());
+						&& AllergenType.Major.toString().equals(allergen.getAllergenType())) {
+					appendAllergen(labelingFormulaContext.getInVolAllergens(), allergen.getNodeRef(), allergenListDataItem.getQtyPerc());
 					for (NodeRef inVoluntarySource : allergenListDataItem.getInVoluntarySources()) {
 						QName inVoluntarySourceType = nodeService.getType(inVoluntarySource);
 
 						if (PLMModel.TYPE_RAWMATERIAL.equals(inVoluntarySourceType)) {
-							appendAllergen(labelingFormulaContext.getInVolAllergensRawMaterial(), allergen, allergenListDataItem.getQtyPerc());
+							appendAllergen(labelingFormulaContext.getInVolAllergensRawMaterial(), allergen.getNodeRef(), allergenListDataItem.getQtyPerc());
 						} else if (PLMModel.TYPE_RESOURCEPRODUCT.equals(inVoluntarySourceType)) {
-							appendAllergen(labelingFormulaContext.getInVolAllergensProcess(), allergen, allergenListDataItem.getQtyPerc());
+							appendAllergen(labelingFormulaContext.getInVolAllergensProcess(), allergen.getNodeRef(), allergenListDataItem.getQtyPerc());
 						}
 					}
 				}
@@ -1887,9 +1888,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private void fillAllergensAndGeos(CompositeLabeling compositeLabeling, ProductData productData) {
 
 		for (AllergenListDataItem allergenListDataItem : productData.getAllergenList()) {
-
+			
+			AllergenItem allergen = (AllergenItem) alfrescoRepository.findOne(allergenListDataItem.getAllergen());
+			
 			if (Boolean.TRUE.equals(allergenListDataItem.getVoluntary()) && AllergenType.Major.toString()
-					.equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
+					.equals(allergen.getAllergenType())) {
 				compositeLabeling.getAllergens().add(allergenListDataItem.getAllergen());
 			}
 		}
@@ -2314,8 +2317,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 										&& (allergenListDataItem.getVoluntarySources().contains(ingNodeRef)
 												|| (DeclarationType.DoNotDetails.equals(ingDeclarationType)
 														&& allergenMatchSubIngs(allergenListDataItem.getVoluntarySources(), ingListItem)))) {
+									AllergenItem allergen = (AllergenItem) alfrescoRepository.findOne(allergenListDataItem.getAllergen());
 									if (AllergenType.Major.toString()
-											.equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
+											.equals(allergen.getAllergenType())) {
 										ingLabelItem.getAllergens().add(allergenListDataItem.getAllergen());
 									}
 								}
