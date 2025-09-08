@@ -245,7 +245,6 @@
 					<show force="false" id="bcpg:autoMergeImpactWUsed" />
 					
           <!--template -->
-
 					<show id="bcpg:entityTplEnabled" force="false" />
 					<show id="bcpg:entityTplIsDefault" force="false" />
 					<show id="bcpg:entityTplScript" force="false" />
@@ -971,7 +970,6 @@
 					<set id="template" appearance="bordered-panel" label-id="becpg.forms.set.template.label" parent="templateTab" />
 						
           <!--template -->
-
 					<field id="bcpg:entityTplEnabled" set="template" />
 					<field id="bcpg:entityTplIsDefault" set="template" />
 					<field id="bcpg:entityTplScript" set="template" mandatory="false" read-only="false">
