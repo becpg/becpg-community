@@ -117,6 +117,7 @@ build() {
       docker compose -f $COMPOSE_FILE build becpg-test-share
       docker compose -f $COMPOSE_FILE build becpg-enterprise-test-core
       docker compose -f $COMPOSE_FILE build becpg-enterprise-test-share
+
    	 cd ..
    else
    	 $MVN_EXEC package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
