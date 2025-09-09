@@ -117,7 +117,7 @@
                 <bean class="fr.becpg.repo.product.formulation.SurveyListFormulationHandler">
                 	<constructor-arg><ref bean="namespaceService"/></constructor-arg>
   					<constructor-arg><ref bean="alfrescoRepository"/></constructor-arg>
-  					<constructor-arg><ref bean="beCPGCacheService"/></constructor-arg>
+  					<constructor-arg><ref bean="surveyService"/></constructor-arg>
   					<constructor-arg><ref bean="repositoryEntityDefReader"/></constructor-arg>
                 </bean>
 				<bean class="fr.becpg.repo.project.formulation.TaskOverdueFormulationHandler">
