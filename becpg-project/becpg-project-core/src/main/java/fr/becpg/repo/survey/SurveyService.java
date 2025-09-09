@@ -7,6 +7,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import fr.becpg.repo.survey.data.SurveyListDataItem;
+import fr.becpg.repo.survey.data.SurveyQuestion;
+import fr.becpg.repo.survey.data.SurveyQuestionCache;
 
 /**
  * <p>SurveyService interface.</p>
@@ -15,6 +17,8 @@ import fr.becpg.repo.survey.data.SurveyListDataItem;
  * @version $Id: $Id
  */
 public interface SurveyService {
+	
+	public static final String CACHE_KEY = SurveyQuestion.class.getName();
 
 	/**
 	 * <p>getSurveyData.</p>
@@ -45,4 +49,6 @@ public interface SurveyService {
 	 * @return a {@link java.util.List} object
 	 */
 	List<SurveyListDataItem> getVisibles(List<SurveyListDataItem> surveyListDataItems);	
+	
+	SurveyQuestionCache getSurveyQuestionCache();
 }
