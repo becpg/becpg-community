@@ -25,7 +25,7 @@ public class SurveyableEntityHelper {
 	/** Constant <code>SURVEY_LIST_BASE_NAME</code> */
 	public static final String SURVEY_LIST_BASE_NAME = SurveyModel.TYPE_SURVEY_LIST.getLocalName();
 	
-	private static final List<String> SURVEY_LIST_NAMES;
+	public static final List<String> SURVEY_LIST_NAMES;
 	
 	static {
 	    SURVEY_LIST_NAMES = IntStream.range(0, SurveyableEntityHelper.NB_OF_SURVEY_LISTS)
