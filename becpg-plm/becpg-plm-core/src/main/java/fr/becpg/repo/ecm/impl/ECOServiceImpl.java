@@ -1289,24 +1289,18 @@ public class ECOServiceImpl implements ECOService {
 
 							T newItem = copyOrUpdateItem(item, itemReplacement, target, wUsedData, copyItem, target != null);
 
-							if (newItem != null) {
-								newItems.add(newItem);
-							}
-
 							if (impactEffectivity) {
-								item.setEndEffectivity(effectiveDate);
-								newItem.setStartEffectivity(effectiveDate);
-							} else if (!toRemoveItems.contains(item)) {
-								boolean isItemContained = false;
-								for (T toRemoveItem : toRemoveItems) {
-									if (toRemoveItem.getNodeRef().equals(item.getNodeRef())) {
-										isItemContained = true;
-									}
-								}
-								
-								if (!isItemContained) {
-									toRemoveItems.add(item);
-								}
+							    item.setEndEffectivity(effectiveDate);
+
+							    if (newItem != null) {
+							        newItem.setStartEffectivity(effectiveDate);
+							        newItems.add(newItem);
+							    }
+							} else {
+							    if (newItem != null) {
+							        newItems.add(newItem);
+							    }
+							    toRemoveItems.add(item);
 							}
 						}
 					}
@@ -1353,12 +1347,10 @@ public class ECOServiceImpl implements ECOService {
 			final boolean finalIsFuture = isFuture;
 			final Date finalEffectiveDate = effectiveDate;
 
-			List<CompositionDataItem> toRemove = new ArrayList<>();
-			
 			if (hasWUsed) {
 				items.forEach(item -> {
 					if (sourceItems.contains(item.getComponent()) 
-						&& (replacement.getTargetItem() == null || !itemToWUsedData.keySet().contains(item))) {
+						&& (replacement.getTargetItem() == null || !itemToWUsedData.containsKey(item))) {
 						if (finalIsFuture) {
 							item.setEndEffectivity(finalEffectiveDate);
 						} else {

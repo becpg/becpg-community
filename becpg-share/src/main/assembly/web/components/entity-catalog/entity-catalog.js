@@ -31,6 +31,8 @@
     beCPG.component.EntityCatalog = function(htmlId) {
         beCPG.component.EntityCatalog.superclass.constructor.call(this, "beCPG.component.EntityCatalog", htmlId, ["button", "container"]);
 
+        this.isLoaded = false;
+        
         YAHOO.Bubbling.on("afterFormRuntimeInit", this.onAfterFormRuntimeInit, this);
         return this;
     };
@@ -72,7 +74,7 @@
          */
         onReady: function EntityCatalog_onReady() {
             var instance = this;
-
+            
             var catalogsDiv = YAHOO.util.Dom.get(this.id + "-entity-catalog");
 
             catalogsDiv.innerHTML = '<span class="wait">' + Alfresco.util.encodeHTML(this.msg("label.loading")) + '</span>';
@@ -263,6 +265,8 @@
                                 }
                                 instance.colorizeMissingFields(response.json, insertId);
 
+                                instance.isLoaded = true;
+                                
                             }, this);
 
 
@@ -296,6 +300,8 @@
                                 text: this.msg("message.formulate.failure")
                             });
                         }
+                        instance.isLoaded = false;
+
                         YAHOO.util.Dom.removeClass(formulateButton, "loading");
                     },
                     scope: this
@@ -472,7 +478,7 @@
                 this.formRuntime.addValidation(
                     validationFieldId,
                     function(__field, __args, __event, __form) {
-                        return !self.hasProtectedFieldChanges || self.allowSubmission;
+                       return (!self.hasProtectedFieldChanges && self.isLoaded) || self.allowSubmission;
                     },
                     null, // args
                     null, // when (only validate on submit)

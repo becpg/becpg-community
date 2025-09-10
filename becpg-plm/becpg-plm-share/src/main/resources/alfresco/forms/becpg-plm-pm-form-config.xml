@@ -63,23 +63,41 @@
 					<show force="true" id="gs1:sortingInstructions" />
 					<show force="true" id="gs1:consumerUsageInstructions" />
 
+					<!--securityRef -->
 					<show force="false" id="sec:securityRef" />
+					
+					<!--categories -->
 					<show force="false" id="cm:taggable" />
 					<show force="false" id="cm:categories" />
+					
+					<!--audit -->
 					<show for-mode="view" force="false" id="cm:creator" />
 					<show for-mode="view" force="false" id="cm:created" />
 					<show for-mode="view" force="false" id="cm:modifier" />
 					<show for-mode="view" force="false" id="cm:modified" />
+					
+					<show id="pjt:projectScore" force="true" />
+					
+					<!--merge -->
 					<show force="false" id="bcpg:autoMergeDate" />
 					<show force="false" id="bcpg:autoMergeTo" />
 					<show force="false" id="bcpg:autoMergeVersionType" />
 					<show force="false" id="bcpg:autoMergeComments" />
 					<show force="false" id="bcpg:autoMergeImpactWUsed" />
+					
+					<!--template -->
 					<show id="bcpg:entityTplEnabled" force="false" />
 					<show id="bcpg:entityTplIsDefault" force="false" />
 					<show id="bcpg:entityTplScript" force="false" />
 
-					<show id="pjt:projectScore" force="true" />
+					<!--workflow validation -->
+					<show id="bcpgwf:pvValidationDate" for-mode="view" />
+					<show id="bcpgwf:pvRDApprovalActor" for-mode="view" />
+					<show id="bcpgwf:pvPackagingApprovalActor" for-mode="view" />
+					<show id="bcpgwf:pvQualityApprovalActor" for-mode="view" />
+					<show id="bcpgwf:pvProductionApprovalActor" for-mode="view" />
+					<show id="bcpgwf:pvCallerActor" for-mode="view" />
+					<show id="bcpgwf:pvCaller2Actor" for-mode="view" />
 				</field-visibility>
 				<appearance>
 					<set id="template" appearance="bordered-panel" label-id="becpg.forms.set.template.label" />
@@ -291,6 +309,19 @@
 							<control-param name="compactMode">true</control-param>
 						</control>
 					</field>
+					<set id="productValidation" appearance="bordered-panel" label-id="becpg.forms.set.validation.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpgwf:pvValidationDate" set="productValidation">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpgwf:pvRDApprovalActor" set="productValidation" />
+					<field id="bcpgwf:pvPackagingApprovalActor" set="productValidation" />
+					<field id="bcpgwf:pvQualityApprovalActor" set="productValidation" />
+					<field id="bcpgwf:pvProductionApprovalActor" set="productValidation" />
+					<field id="bcpgwf:pvCallerActor" set="productValidation" />
+					<field id="bcpgwf:pvCaller2Actor" set="productValidation" />
 					<set appearance="bordered-panel" id="audit" label-id="becpg.forms.set.audit.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="cm:creator" mandatory="false" read-only="false" set="audit" />
 					<field id="cm:created" mandatory="false" read-only="false" set="audit" />
@@ -310,6 +341,7 @@
 					</field>
 					<field id="bcpg:autoMergeImpactWUsed" mandatory="false" read-only="false" set="branch" />
 					<field id="pjt:projectScore" mandatory="false" read-only="true" set="mainInfo" />
+					
 				</appearance>
 			</form>
 			<form id="doclib-simple-metadata">

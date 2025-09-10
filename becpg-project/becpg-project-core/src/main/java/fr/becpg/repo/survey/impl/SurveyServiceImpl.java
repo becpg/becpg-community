@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -24,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.regulatory.RequirementAwareEntity;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
@@ -35,6 +36,8 @@ import fr.becpg.repo.survey.SurveyModel;
 import fr.becpg.repo.survey.SurveyService;
 import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyQuestion;
+import fr.becpg.repo.survey.data.SurveyQuestionCache;
+import fr.becpg.repo.survey.helper.SurveyableEntityHelper;
 
 /**
  * <p>SurveyServiceImpl class.</p>
@@ -60,6 +63,9 @@ public class SurveyServiceImpl implements SurveyService {
 
 	@Autowired
 	private EntityListDAO entityListDAO;
+	
+	@Autowired
+	private BeCPGCacheService beCPGCacheService;
 
 	/*
 	 * data :
@@ -122,6 +128,22 @@ public class SurveyServiceImpl implements SurveyService {
 		}), false, true, true);
 
 		return ret;
+	}
+	
+	@Override
+	public SurveyQuestionCache getSurveyQuestionCache() {
+		return beCPGCacheService.getFromCache(CACHE_KEY, CACHE_KEY, () -> {
+			List<SurveyQuestion> allSurveyQuestions = BeCPGQueryBuilder.createQuery().ofType(SurveyModel.TYPE_SURVEY_QUESTION)
+					.inDB().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list().stream()
+					.map(alfrescoRepository::findOne).map(SurveyQuestion.class::cast).toList();
+			List<SurveyQuestion> generatedSurveyQuestions = allSurveyQuestions.stream()
+					.filter(q -> Boolean.TRUE.equals(q.getGenerationEnabled()))
+					.filter(q -> q.getFsSurveyListName() != null && q.getFsSurveyListName().startsWith(SurveyableEntityHelper.SURVEY_LIST_BASE_NAME))
+					.filter(q -> q.getParent() == null).toList();
+			Map<NodeRef, SurveyQuestion> surveyQuestionByNodeRef = allSurveyQuestions.stream().collect(Collectors.toMap(q -> q.getNodeRef(), q -> q));
+			Map<SurveyQuestion, List<NodeRef>> surveyQuestionsByParent = allSurveyQuestions.stream().collect(Collectors.toMap(q -> q, this::getDefinitionChoices));
+			return new SurveyQuestionCache(surveyQuestionByNodeRef, surveyQuestionsByParent, generatedSurveyQuestions);
+		});
 	}
 
 	/** {@inheritDoc} */
@@ -425,34 +447,31 @@ public class SurveyServiceImpl implements SurveyService {
 	/** {@inheritDoc} */
 	@Override
 	public List<SurveyListDataItem> getVisibles(List<SurveyListDataItem> surveyListDataItems) {
-		final List<SurveyListDataItem> visibleSurveyListDataItems = new ArrayList<>(surveyListDataItems.size());
-		final Map<NodeRef, SurveyQuestion> nodeRefSurveyQuestions = surveyListDataItems.stream()
-				.map(SurveyListDataItem::getQuestion).distinct().map(alfrescoRepository::findOne)
-				.map(SurveyQuestion.class::cast)
-				.collect(Collectors.toMap(SurveyQuestion::getNodeRef, Function.identity()));
-		for (final SurveyListDataItem surveyListDataItem : surveyListDataItems) {
-			final SurveyQuestion surveyQuestion = nodeRefSurveyQuestions.get(surveyListDataItem.getQuestion());
-			final SurveyQuestion parent = surveyQuestion.getParent() != null ? surveyQuestion.getParent()
-					: surveyQuestion;
-			final boolean inNextQuestions = new ArrayList<>(nodeRefSurveyQuestions.values()).stream()
-					.map(this::getDefinitionChoices).flatMap(List::stream)
-					.map(nodeRef -> nodeRefSurveyQuestions.computeIfAbsent(nodeRef,
-							unused -> (SurveyQuestion) alfrescoRepository.findOne(nodeRef)))
-					.map(SurveyQuestion.class::cast).filter(question -> question.getNextQuestions() != null)
-					.anyMatch(question -> question.getNextQuestions().contains(parent));
-			final boolean inChoices = inNextQuestions
-					&& surveyListDataItems.stream().map(SurveyListDataItem::getChoices).flatMap(List::stream)
-							.map(nodeRefSurveyQuestions::get)
-							.filter(Objects::nonNull)
-							.map(SurveyQuestion::getNextQuestions)
-							.filter(Objects::nonNull)
-							.flatMap(List::stream)
-							.anyMatch(parent::equals);
-			if (!inNextQuestions || inChoices || Boolean.TRUE.equals(parent.getIsVisible())) {
-				visibleSurveyListDataItems.add(surveyListDataItem);
-			}
+		return surveyListDataItems.stream().filter(q -> isVisible(q, surveyListDataItems)).toList();
+	}
+
+	private boolean isVisible(SurveyListDataItem surveyListDataItem, List<SurveyListDataItem> surveyListDataItems) {
+		Map<NodeRef, SurveyQuestion> surveyQuestionByNodeRef = getSurveyQuestionCache().getSurveyQuestionByNodeRef();
+		SurveyQuestion surveyQuestion = surveyQuestionByNodeRef.get(surveyListDataItem.getQuestion());
+		SurveyQuestion parentQuestion = surveyQuestion.getParent() != null ? surveyQuestion.getParent() : surveyQuestion;
+		if (Boolean.TRUE.equals(parentQuestion.getIsVisible())) {
+			return true;
 		}
-		return visibleSurveyListDataItems;
+		boolean inNextQuestions = new ArrayList<>(surveyQuestionByNodeRef.values()).stream()
+				.map(sQuestion -> getSurveyQuestionCache().getSurveyQuestionsByParent().get(sQuestion)).flatMap(List::stream)
+				.map(surveyQuestionByNodeRef::get)
+				.filter(sAnswer -> sAnswer.getNextQuestions() != null)
+				.anyMatch(q -> q.getNextQuestions().contains(parentQuestion));
+		if (!inNextQuestions) {
+			return true;
+		}
+		return surveyListDataItems.stream().map(SurveyListDataItem::getChoices).flatMap(List::stream)
+				.map(surveyQuestionByNodeRef::get)
+				.filter(Objects::nonNull)
+				.map(SurveyQuestion::getNextQuestions)
+				.filter(Objects::nonNull)
+				.flatMap(List::stream)
+				.anyMatch(parentQuestion::equals);
 	}
 
 }

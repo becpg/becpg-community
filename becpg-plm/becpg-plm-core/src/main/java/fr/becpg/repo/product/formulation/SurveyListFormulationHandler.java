@@ -21,7 +21,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.ProductData;
@@ -31,8 +30,8 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
-import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.survey.SurveyModel;
+import fr.becpg.repo.survey.SurveyService;
 import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyQuestion;
 import fr.becpg.repo.survey.data.SurveyableEntity;
@@ -50,15 +49,13 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Surveya
 
 	private static final Log logger = LogFactory.getLog(SurveyListFormulationHandler.class);
 
-	private static final String CACHE_KEY = SurveyQuestion.class.getName();
-	
 	private final NamespaceService namespaceService;
 
 	private final AlfrescoRepository<BeCPGDataObject> alfrescoRepository;
 	
 	private final RepositoryEntityDefReader<ProductData> repositoryEntityDefReader;
 
-	private final BeCPGCacheService beCPGCacheService;
+	private final SurveyService surveyService;
 
 	/**
 	 * <p>
@@ -74,13 +71,12 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Surveya
 	 * @param repositoryEntityDefReader a {@link fr.becpg.repo.repository.RepositoryEntityDefReader} object
 	 */
 	public SurveyListFormulationHandler(NamespaceService namespaceService, AlfrescoRepository<BeCPGDataObject> alfrescoRepository,
-			BeCPGCacheService beCPGCacheService, RepositoryEntityDefReader<ProductData> repositoryEntityDefReader ) {
+			SurveyService surveyService, RepositoryEntityDefReader<ProductData> repositoryEntityDefReader ) {
 		super();
 		this.namespaceService = namespaceService;
 		this.alfrescoRepository = alfrescoRepository;
-		this.beCPGCacheService = beCPGCacheService;
 		this.repositoryEntityDefReader = repositoryEntityDefReader;
-		beCPGCacheService.storeInCache(CACHE_KEY, CACHE_KEY, null);
+		this.surveyService = surveyService;
 	}
 
 	/** {@inheritDoc} */
@@ -203,16 +199,10 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Surveya
 			Set<SurveyQuestion> surveyQuestions) {
 		final Set<NodeRef> surveyQuestionNodeRefs = surveyQuestions.stream().map(SurveyQuestion::getNodeRef)
 				.collect(Collectors.toSet());
-		final List<SurveyQuestion> allSurveyQuestions = beCPGCacheService.getFromCache(CACHE_KEY, CACHE_KEY,
-				() -> BeCPGQueryBuilder.createQuery().ofType(SurveyModel.TYPE_SURVEY_QUESTION)
-						.andPropQuery(SurveyModel.PROP_SURVEY_FS_SURVEY_LIST_NAME,
-								SurveyableEntityHelper.SURVEY_LIST_BASE_NAME)
-						.andPropEquals(SurveyModel.PROP_SURVEY_GENERATION_ENABLED, "true")
-						.inDB().list().stream().map(alfrescoRepository::findOne).map(SurveyQuestion.class::cast)
-						.filter(surveyQuestion -> surveyQuestion.getParent() == null).toList());
+		final List<SurveyQuestion> generatedSurveyQuestions = surveyService.getSurveyQuestionCache().getGeneratedSurveyQuestions();
 		for (final Entry<Criterion, List<? extends Serializable>> entry : criteriaNodeRefs.entrySet()) {
 			final Criterion criterion = entry.getKey();
-			allSurveyQuestions.stream().filter(criterion.filter())
+			generatedSurveyQuestions.stream().filter(criterion.filter())
 					.filter(surveyQuestion -> !surveyQuestionNodeRefs.contains(surveyQuestion.getNodeRef())).map(SurveyQuestion.class::cast)
 					.forEach(surveyQuestion -> {
 						// Check that the survey question passes the type filter and all other criteria.
