@@ -370,9 +370,15 @@
                }
             }
             // ALF-18501 - Redirect on successful moves of documents within the details view.
+            var pathName = window.location.pathname || "";
+            var searchQuery = window.location.search || "";
+            var isDocumentDetails = pathName.lastIndexOf("document-details") === (pathName.length - "document-details".length);
+            var isEntityDataLists = pathName.lastIndexOf("entity-data-lists") === (pathName.length - "entity-data-lists".length);
+            var isViewDocuments = /(?:^|[?&])list=View-documents(?:&|$)/.test(searchQuery);
+
             if (this.options.mode == "move" && (
-                window.location.pathname.lastIndexOf("document-details") === (window.location.pathname.length - "document-details".length) 
-                || window.location.pathname.lastIndexOf("entity-data-lists") === (window.location.pathname.length - "entity-data-lists".length)))
+                isDocumentDetails ||
+                (isEntityDataLists && !isViewDocuments)))
             {
                // By reloading the page, the node-header will detect that the node is located in a different
                // site and cause a redirect. The down-side to this is that it causes two page loads but this
