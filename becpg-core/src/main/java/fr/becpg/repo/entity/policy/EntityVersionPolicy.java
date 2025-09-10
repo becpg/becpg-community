@@ -19,6 +19,7 @@ package fr.becpg.repo.entity.policy;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
@@ -40,6 +41,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
@@ -210,7 +212,7 @@ public class EntityVersionPolicy extends AbstractBeCPGPolicy
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		for (NodeRef pendingNode : pendingNodes) {
-			nodeService.addAspect(pendingNode, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT, null);
+			nodeService.addAspect(pendingNode, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT, Map.of(BeCPGModel.PROP_PENDING_ENTITY_REPORT_PRIORITY, BatchPriority.HIGH.toString()));
 		}
 		return true;
 	}

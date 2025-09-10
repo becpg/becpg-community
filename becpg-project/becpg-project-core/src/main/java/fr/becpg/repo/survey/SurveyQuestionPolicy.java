@@ -1,19 +1,14 @@
 package fr.becpg.repo.survey;
 
-import java.io.Serializable;
-import java.util.Map;
-
 import org.alfresco.repo.node.NodeServicePolicies.BeforeDeleteNodePolicy;
 import org.alfresco.repo.node.NodeServicePolicies.OnCreateNodePolicy;
-import org.alfresco.repo.node.NodeServicePolicies.OnUpdatePropertiesPolicy;
+import org.alfresco.repo.node.NodeServicePolicies.OnUpdateNodePolicy;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
-import fr.becpg.repo.survey.data.SurveyQuestion;
 
 /**
  * <p>SurveyQuestionPolicy class.</p>
@@ -21,9 +16,7 @@ import fr.becpg.repo.survey.data.SurveyQuestion;
  * @author matthieu
  */
 public class SurveyQuestionPolicy extends AbstractBeCPGPolicy
-		implements OnCreateNodePolicy, OnUpdatePropertiesPolicy, BeforeDeleteNodePolicy {
-
-	private static final String CACHE_KEY = SurveyQuestion.class.getName();
+		implements OnCreateNodePolicy, OnUpdateNodePolicy, BeforeDeleteNodePolicy {
 
 	private BeCPGCacheService beCPGCacheService;
 
@@ -32,8 +25,8 @@ public class SurveyQuestionPolicy extends AbstractBeCPGPolicy
 	public void doInit() {
 		policyComponent.bindClassBehaviour(OnCreateNodePolicy.QNAME, SurveyModel.TYPE_SURVEY_QUESTION,
 				new JavaBehaviour(this, "onCreateNode"));
-		policyComponent.bindClassBehaviour(OnUpdatePropertiesPolicy.QNAME, SurveyModel.TYPE_SURVEY_QUESTION,
-				new JavaBehaviour(this, "onUpdateProperties"));
+		policyComponent.bindClassBehaviour(OnUpdateNodePolicy.QNAME, SurveyModel.TYPE_SURVEY_QUESTION,
+				new JavaBehaviour(this, "onUpdateNode"));
 		policyComponent.bindClassBehaviour(BeforeDeleteNodePolicy.QNAME, SurveyModel.TYPE_SURVEY_QUESTION,
 				new JavaBehaviour(this, "beforeDeleteNode"));
 	}
@@ -53,19 +46,18 @@ public class SurveyQuestionPolicy extends AbstractBeCPGPolicy
 	/** {@inheritDoc} */
 	@Override
 	public void onCreateNode(ChildAssociationRef childAssocRef) {
-		beCPGCacheService.clearCache(CACHE_KEY);
+		beCPGCacheService.clearCache(SurveyService.CACHE_KEY);
 	}
 
-	/** {@inheritDoc} */
 	@Override
-	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
-		beCPGCacheService.clearCache(CACHE_KEY);
+	public void onUpdateNode(NodeRef nodeRef) {
+		beCPGCacheService.clearCache(SurveyService.CACHE_KEY);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void beforeDeleteNode(NodeRef nodeRef) {
-		beCPGCacheService.clearCache(CACHE_KEY);
+		beCPGCacheService.clearCache(SurveyService.CACHE_KEY);
 	}
 
 }
