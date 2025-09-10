@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -126,7 +127,7 @@ public class SurveyServiceImpl implements SurveyService {
 	public SurveyQuestionCache getSurveyQuestionCache() {
 		return beCPGCacheService.getFromCache(CACHE_KEY, CACHE_KEY, () -> {
 			List<SurveyQuestion> allSurveyQuestions = BeCPGQueryBuilder.createQuery().ofType(SurveyModel.TYPE_SURVEY_QUESTION)
-					.inDB().list().stream()
+					.inDB().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list().stream()
 					.map(alfrescoRepository::findOne).map(SurveyQuestion.class::cast).toList();
 			List<SurveyQuestion> generatedSurveyQuestions = allSurveyQuestions.stream()
 					.filter(q -> Boolean.TRUE.equals(q.getGenerationEnabled()))
