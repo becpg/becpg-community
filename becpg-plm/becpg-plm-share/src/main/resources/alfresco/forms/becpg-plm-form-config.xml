@@ -9278,6 +9278,33 @@
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
+			
+			<form id="security" >
+			     <field-visibility>
+                    <show id="bcpg:depthLevel" />
+                    <show id="bcpg:ingListIng" />
+                    <show id="bcpg:ingListVolumeQtyPerc" />
+                    <show id="bcpg:ingListQtyPerc" />
+                    <show id="bcpg:ingListQtyPercWithYield" />
+                    <show id="bcpg:ingListQtyPercWithSecondaryYield" />
+                    <show id="bcpg:ingListQtyPerc1" />
+                    <show id="bcpg:ingListQtyPerc2" />
+                    <show id="bcpg:ingListQtyPerc3" />
+                    <show id="bcpg:ingListQtyPerc4" />
+                    <show id="bcpg:ingListQtyPerc5" />
+                    <show id="bcpg:ingListIsGMO" />
+                    <show id="bcpg:ingListIsIonized" />
+                    <show id="bcpg:ingListIsProcessingAid" />
+                    <show id="bcpg:ingListIsSupport" />
+                    <show id="bcpg:ingListGeoOrigin" />
+                    <show id="bcpg:ingListGeoTransfo" />
+                    <show id="bcpg:ingListBioOrigin" />
+                    <show id="bcpg:ingListClaims" />
+                    <show id="bcpg:ingListComments" />
+                    <show id="bcpg:linkedSearchAssociation" />
+			     </field-visibility>
+			</form>
+			
 			<form id="customListDatagrid">
 				<field-visibility>
 					<show id="bcpg:variantIds" force="true" />
