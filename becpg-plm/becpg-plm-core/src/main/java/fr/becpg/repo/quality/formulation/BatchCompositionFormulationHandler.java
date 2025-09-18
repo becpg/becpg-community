@@ -19,6 +19,9 @@ package fr.becpg.repo.quality.formulation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
@@ -89,15 +92,19 @@ public class BatchCompositionFormulationHandler extends AbstractCompositionQtyCa
 					ratio = batchQty / productNetWeight;
 				}
 				
-				for (CompoListDataItem compoListItem : productData
-						.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
-
+				List<CompoListDataItem> originalCompoList = productData
+						.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()));
+				 
+				Map<CompoListDataItem, CompoListDataItem> originalToClonedMap = new HashMap<>();
+				
+				for (CompoListDataItem compoListItem : originalCompoList) {
 					CompoListDataItem toAdd = new CompoListDataItem(compoListItem);
 					toAdd.setName(null);
 					toAdd.setParentNodeRef(null);
 					toAdd.setNodeRef(null);
 					toAdd.setVariants(new ArrayList<>());
 					toAdd.setStockType(StockType.Product);
+				
 					if(productData.getProductLossPerc()!=null) {
 						if(toAdd.getLossPerc()!=null) {
 							toAdd.setLossPerc(FormulationHelper.calculateLossPerc(productData.getProductLossPerc(), toAdd.getLossPerc()));
@@ -109,7 +116,17 @@ public class BatchCompositionFormulationHandler extends AbstractCompositionQtyCa
 					if ((toAdd.getQtySubFormula() != null) && !ProductUnit.Perc.equals(compoListItem.getCompoListUnit())) {
 						toAdd.setQtySubFormula(toAdd.getQtySubFormula() * ratio);
 					}
+					
+					originalToClonedMap.put(compoListItem, toAdd);
 					batchData.getCompoList().add(toAdd);
+				}
+				
+				for (CompoListDataItem clonedItem : originalToClonedMap.values()) {
+					CompoListDataItem originalParent = clonedItem.getParent();
+					if (originalParent != null) {
+						CompoListDataItem clonedParent = originalToClonedMap.get(originalParent);
+						clonedItem.setParent(clonedParent);
+					}
 				}
 
 			}
@@ -134,7 +151,6 @@ public class BatchCompositionFormulationHandler extends AbstractCompositionQtyCa
 	 * Copy missing item from template
 	 *
 	 * @param formulatedProduct
-	 * @param simpleListDataList
 	 */
 	private void copyTemplateDynamicCharactLists(BatchData formulatedProduct) {
 		if ((formulatedProduct.getEntityTpl() != null) && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {

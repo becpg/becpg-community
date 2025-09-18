@@ -11,7 +11,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -52,6 +51,7 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
+import fr.becpg.repo.product.data.allergen.AllergenItem;
 import fr.becpg.repo.product.data.constraints.AllergenType;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
@@ -469,21 +469,21 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private void extractAllergens(LabelingFormulaContext labelingFormulaContext, ProductData productData) {
 		if (productData.getAllergenList() != null) {
 			for (AllergenListDataItem allergenListDataItem : productData.getAllergenList()) {
-				NodeRef allergen = allergenListDataItem.getAllergen();
+				AllergenItem allergen = (AllergenItem) alfrescoRepository.findOne(allergenListDataItem.getAllergen());
 				if (Boolean.TRUE.equals(allergenListDataItem.getVoluntary())) {
-					if (AllergenType.Major.toString().equals(nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_TYPE))) {
-						appendAllergen(labelingFormulaContext.getAllergens(), allergen, allergenListDataItem.getQtyPerc());
+					if (AllergenType.Major.toString().equals(allergen.getAllergenType())) {
+						appendAllergen(labelingFormulaContext.getAllergens(), allergen.getNodeRef(), allergenListDataItem.getQtyPerc());
 					}
 				} else if (Boolean.TRUE.equals(allergenListDataItem.getInVoluntary())
-						&& AllergenType.Major.toString().equals(nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_TYPE))) {
-					appendAllergen(labelingFormulaContext.getInVolAllergens(), allergen, allergenListDataItem.getQtyPerc());
+						&& AllergenType.Major.toString().equals(allergen.getAllergenType())) {
+					appendAllergen(labelingFormulaContext.getInVolAllergens(), allergen.getNodeRef(), allergenListDataItem.getQtyPerc());
 					for (NodeRef inVoluntarySource : allergenListDataItem.getInVoluntarySources()) {
 						QName inVoluntarySourceType = nodeService.getType(inVoluntarySource);
 
 						if (PLMModel.TYPE_RAWMATERIAL.equals(inVoluntarySourceType)) {
-							appendAllergen(labelingFormulaContext.getInVolAllergensRawMaterial(), allergen, allergenListDataItem.getQtyPerc());
+							appendAllergen(labelingFormulaContext.getInVolAllergensRawMaterial(), allergen.getNodeRef(), allergenListDataItem.getQtyPerc());
 						} else if (PLMModel.TYPE_RESOURCEPRODUCT.equals(inVoluntarySourceType)) {
-							appendAllergen(labelingFormulaContext.getInVolAllergensProcess(), allergen, allergenListDataItem.getQtyPerc());
+							appendAllergen(labelingFormulaContext.getInVolAllergensProcess(), allergen.getNodeRef(), allergenListDataItem.getQtyPerc());
 						}
 					}
 				}
@@ -937,7 +937,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 				List<LabelingRuleListDataItem> tmp = ret.get(group);
 				if (tmp == null) {
-					tmp = new LinkedList<>();
+					tmp = new ArrayList<>();
 				}
 				tmp.add(labelingRule);
 				ret.put(group, tmp);
@@ -946,7 +946,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			String group = LabelingRuleListDataItem.DEFAULT_LABELING_GROUP;
 			List<LabelingRuleListDataItem> tmp = ret.get(group);
 			if (tmp == null) {
-				tmp = new LinkedList<>();
+				tmp = new ArrayList<>();
 			}
 			tmp.add(labelingRule);
 			ret.put(group, tmp);
@@ -974,7 +974,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							}
 						}
 					} else {
-						formulatedProduct.getLabelingListView().setLabelingRuleList(new LinkedList<>());
+						formulatedProduct.getLabelingListView().setLabelingRuleList(new ArrayList<>());
 					}
 
 					if (!contains) {
@@ -1308,7 +1308,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	// Move Group at top
 	private List<CompositeLabeling> reorderCompositeLabeling(LabelingFormulaContext context, CompositeLabeling current, boolean isFirst) {
-		List<CompositeLabeling> ret = new LinkedList<>();
+		List<CompositeLabeling> ret = new ArrayList<>();
 
 		for (Iterator<Map.Entry<NodeRef, CompositeLabeling>> iterator = current.getIngList().entrySet().iterator(); iterator.hasNext();) {
 			CompositeLabeling component = iterator.next().getValue();
@@ -1397,7 +1397,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		List<IngLabelingListDataItem> ret = new ArrayList<>();
 
 		if (labelingFormulaContext.isLabelingByLanguage()) {
-			List<Locale> langs = new LinkedList<>();
+			List<Locale> langs = new ArrayList<>();
 			for (Locale orderedLocale : labelingFormulaContext.availableLocales) {
 				if (label.containsKey(orderedLocale)) {
 					langs.add(orderedLocale);
@@ -1888,9 +1888,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private void fillAllergensAndGeos(CompositeLabeling compositeLabeling, ProductData productData) {
 
 		for (AllergenListDataItem allergenListDataItem : productData.getAllergenList()) {
-
+			
+			AllergenItem allergen = (AllergenItem) alfrescoRepository.findOne(allergenListDataItem.getAllergen());
+			
 			if (Boolean.TRUE.equals(allergenListDataItem.getVoluntary()) && AllergenType.Major.toString()
-					.equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
+					.equals(allergen.getAllergenType())) {
 				compositeLabeling.getAllergens().add(allergenListDataItem.getAllergen());
 			}
 		}
@@ -2315,8 +2317,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 										&& (allergenListDataItem.getVoluntarySources().contains(ingNodeRef)
 												|| (DeclarationType.DoNotDetails.equals(ingDeclarationType)
 														&& allergenMatchSubIngs(allergenListDataItem.getVoluntarySources(), ingListItem)))) {
+									AllergenItem allergen = (AllergenItem) alfrescoRepository.findOne(allergenListDataItem.getAllergen());
 									if (AllergenType.Major.toString()
-											.equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
+											.equals(allergen.getAllergenType())) {
 										ingLabelItem.getAllergens().add(allergenListDataItem.getAllergen());
 									}
 								}

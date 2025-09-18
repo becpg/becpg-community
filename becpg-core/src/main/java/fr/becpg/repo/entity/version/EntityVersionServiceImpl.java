@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -78,6 +77,7 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.audit.helper.StopWatchSupport;
+import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityFormatService;
@@ -522,7 +522,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	@Override
 	public List<EntityVersion> getAllVersions(NodeRef entityNodeRef) {
 
-		List<EntityVersion> entityVersions = new LinkedList<>();
+		List<EntityVersion> entityVersions = new ArrayList<>();
 		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_WORKING_COPY)
 				&& !nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 			VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
@@ -563,7 +563,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	public List<NodeRef> buildVersionHistory(NodeRef versionHistoryRef, NodeRef nodeRef) {
 
 		List<ChildAssociationRef> versionAssocs = getVersionAssocs(versionHistoryRef, true);
-		List<NodeRef> versionRefs = new LinkedList<>();
+		List<NodeRef> versionRefs = new ArrayList<>();
 
 		for (ChildAssociationRef versionAssoc : versionAssocs) {
 
@@ -598,7 +598,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	/** {@inheritDoc} */
 	@Override
 	public List<EntityVersion> getAllVersionAndBranches(NodeRef entityNodeRef) {
-		List<EntityVersion> ret = new LinkedList<>();
+		List<EntityVersion> ret = new ArrayList<>();
 		for (NodeRef branchNodeRef : getAllVersionBranches(entityNodeRef)) {
 			List<EntityVersion> entityVersions = getAllVersions(branchNodeRef);
 
@@ -641,7 +641,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		// Look for primary parent
 		NodeRef tmp;
 
-		List<NodeRef> ret = new LinkedList<>();
+		List<NodeRef> ret = new ArrayList<>();
 		if (primaryParentNodeRef != null) {
 			int maxDeep = 0;
 			do {
@@ -672,12 +672,12 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	}
 
 	/**
-	 * @param tmpNodeRef
+	 * @param entityNodeRef
 	 * @return
 	 */
 	private List<NodeRef> getAllChildVersionBranches(NodeRef entityNodeRef) {
 
-		List<NodeRef> ret = new LinkedList<>();
+		List<NodeRef> ret = new ArrayList<>();
 		// Look for childs
 		for (NodeRef associationRef : associationService.getSourcesAssocs(entityNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY)) {
 			if (!VersionHelper.isVersion(associationRef)
@@ -991,7 +991,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 								
 								triggerRules(internalBranchToNodeRef);
 								
-								generateReportsAsync(internalBranchToNodeRef);
+								generateReportsAsync(internalBranchToNodeRef, BatchPriority.LOW.toString());
 								
 								StopWatchSupport.addCheckpoint("after internalCreateVersion");
 								
@@ -1041,8 +1041,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		
 	}
 
-	private void generateReportsAsync(final NodeRef internalBranchToNodeRef) {
-		nodeService.addAspect(internalBranchToNodeRef, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT, null);
+	private void generateReportsAsync(final NodeRef internalBranchToNodeRef, String priority) {
+		nodeService.addAspect(internalBranchToNodeRef, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT, Map.of(BeCPGModel.PROP_PENDING_ENTITY_REPORT_PRIORITY, priority));
 	}
 
 	private NodeRef convertNodeAndWhereUsed(NodeRef notConvertedNode) {
@@ -1414,7 +1414,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	@Override
 	public NodeRef createVersion(final NodeRef entityNodeRef, Map<String, Serializable> versionProperties, Date effectiveDate) {
 		NodeRef versionNodeRef = internalCreateVersion(entityNodeRef, versionProperties, effectiveDate, null, false);
-		generateReportsAsync(entityNodeRef);
+		generateReportsAsync(entityNodeRef, BatchPriority.HIGH.toString());
 		return versionNodeRef;
 	}
 	

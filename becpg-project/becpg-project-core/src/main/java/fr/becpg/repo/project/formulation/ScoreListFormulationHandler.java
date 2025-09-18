@@ -131,10 +131,6 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 
 		if (accept(surveyableEntity)) {
 
-			if (surveyableEntity.getSurveyList() == null) {
-				surveyableEntity.setSurveyList(new ArrayList<>());
-			}
-
 			formulateSurveylist(surveyableEntity);
 
 			calculateScore(surveyableEntity);
@@ -170,8 +166,7 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 		final List<SurveyListDataItem> surveyList = SurveyableEntityHelper.getNamesSurveyLists(alfrescoRepository, surveyableEntity).values().stream()
 				.filter(Objects::nonNull).flatMap(List::stream).toList();
 
-		// If surveyList is empty, we do nothing
-		if (CollectionUtils.isNotEmpty(surveyList)) {
+		if (!surveyList.isEmpty()) {
 			
 			List<ScoreListDataItem> scoreList = surveyableEntity.getScoreList();
 
@@ -353,15 +348,16 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 			if ((sl.getWeight() != null) && (sl.getScore() != null)) {
 				totalScore += sl.getWeight() * sl.getScore();
 				totalWeight += sl.getWeight();
-
 				logger.debug(String.format("Component Score: %s, Weight: %s", sl.getScore(), sl.getWeight()));
 			}
 		}
 
-		surveyableEntity.setScore(totalWeight > 0 ? totalScore / totalWeight : null);
+		surveyableEntity.setScore(totalWeight > 0 ? Math.min(totalScore / totalWeight, 100) : null);
 
 		if (totalWeight == 0) {
 			logger.debug(String.format("Total weight of project %s is zero.", surveyableEntity.getNodeRef()));
+		} else if (totalScore / totalWeight > 100) {
+			logger.debug(String.format("Score of project %s exceeds 100.", surveyableEntity.getNodeRef()));
 		}
 	}
 
@@ -373,8 +369,9 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 	 */
 	protected boolean accept(SurveyableEntity surveyableEntity) {
 		
-		boolean hasScoreList = surveyableEntity.getScoreList() != null
-				&& (( surveyableEntity.getScoreList() instanceof ArrayList) || alfrescoRepository.hasDataList(surveyableEntity, ProjectModel.TYPE_SCORE_LIST));
+	   boolean hasScoreList = (surveyableEntity.getScoreList() != null) && ((surveyableEntity.getScoreList() instanceof ArrayList)
+				|| alfrescoRepository.hasDataList(surveyableEntity, ProjectModel.TYPE_SCORE_LIST));
+
 		
 		return !isTemplateEntity(surveyableEntity) && hasScoreList;
 	}

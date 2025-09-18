@@ -279,11 +279,10 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 							RepoConsts.PATH_EXCHANGE, RepoConsts.PATH_EXPORT, RepoConsts.PATH_NOTIFICATIONS);
 					final var exchangeExportNotificationsNodeRef = repoService
 							.getFolderByPath(exchangeExportNotificationsPath);
-					var i = 0;
 					for (final var reportTplNodeRef : notification.getReportTpls()) {
 						final var downloadNode = exportSearchService.createReport(nodeType, reportTplNodeRef, items,
 								reportTplService.getReportFormat(reportTplNodeRef));
-						final var batchId = "notificationReportDownload" + (i++);
+						final var batchId = "notificationReportDownload-" +  notification.getNodeRef() + "-" + reportTplNodeRef.getId();
 						final var batchInfo = new BatchInfo(batchId, "becpg.batch." + batchId);
 						final var batchStep = new BatchStep<NodeRef>();
 						batchStep.setWorkProvider(new EntityListBatchProcessWorkProvider<>(List.of(downloadNode)));

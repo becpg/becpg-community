@@ -29,15 +29,13 @@ import fr.becpg.report.client.ReportFormat;
 public class ReportSearchDownloadExporter extends AbstractSearchDownloadExporter {
 
 	private static Log logger = LogFactory.getLog(ReportSearchDownloadExporter.class);
-	
+
 	private ReportServerSearchRenderer reportServerSearchRenderer;
 
-	
 	ReportServerSearchContext exportSearchCtx;
-	
+
 	ReportFormat format;
-	
-	
+
 	/**
 	 * <p>Constructor for ReportSearchDownloadExporter.</p>
 	 *
@@ -51,25 +49,22 @@ public class ReportSearchDownloadExporter extends AbstractSearchDownloadExporter
 	 * @param format a {@link fr.becpg.report.client.ReportFormat} object
 	 */
 	public ReportSearchDownloadExporter(RetryingTransactionHelper transactionHelper, DownloadStatusUpdateService updateService,
-			DownloadStorage downloadStorage, ReportServerSearchRenderer reportServerSearchRenderer,
-			NodeRef downloadNodeRef, NodeRef templateNodeRef, Long nbOfLines, ReportFormat format) {
+			DownloadStorage downloadStorage, ReportServerSearchRenderer reportServerSearchRenderer, NodeRef downloadNodeRef, NodeRef templateNodeRef,
+			Long nbOfLines, ReportFormat format) {
 
-		
 		super(transactionHelper, updateService, downloadStorage, downloadNodeRef, templateNodeRef, nbOfLines);
 
 		this.reportServerSearchRenderer = reportServerSearchRenderer;
-		
+
 		this.format = format;
-	
-		
-		
+
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void start(final ExporterContext context) {
-	
-		 try {
+
+		try {
 			exportSearchCtx = reportServerSearchRenderer.createContext(templateNodeRef);
 		} catch (MappingException e) {
 			logger.error("Failed to read report mapping", e);
@@ -79,9 +74,12 @@ public class ReportSearchDownloadExporter extends AbstractSearchDownloadExporter
 	/** {@inheritDoc} */
 	@Override
 	public void startNode(NodeRef entityNodeRef) {
+		transactionHelper.doInTransaction(() -> {
 			reportServerSearchRenderer.exportNode(exportSearchCtx, entityNodeRef, incFilesAddedCount());
+			return true;
+		}, true, true);
 
-			updateStatus();
+		updateStatus();
 	}
 
 	/** {@inheritDoc} */

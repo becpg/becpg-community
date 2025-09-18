@@ -169,7 +169,6 @@
 					<property name="execOrder" value="Pre" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.CompositionCalculatingFormulationHandler">
-					<property name="nodeService" ref="nodeService" />
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.ProcessCalculatingFormulationHandler">
@@ -225,7 +224,6 @@
 				<bean class="fr.becpg.repo.product.formulation.LabelClaimFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="formulaService" ref="formulaService" />
-					<property name="nodeService" ref="nodeService" />
 					<property name="mlNodeService" ref="mlAwareNodeService" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.PackagingMaterialFormulationHandler">
@@ -262,10 +260,10 @@
 					</property>
 				</bean>
                 <bean class="fr.becpg.repo.product.formulation.SurveyListFormulationHandler">
-                    <property name="namespaceService" ref="namespaceService" />
-                    <property name="alfrescoRepository" ref="alfrescoRepository" />
-                    <property name="associationService" ref="associationService" />
-                    <property name="nodeService" ref="nodeService" />
+                	<constructor-arg><ref bean="namespaceService"/></constructor-arg>
+  					<constructor-arg><ref bean="alfrescoRepository"/></constructor-arg>
+  					<constructor-arg><ref bean="surveyService"/></constructor-arg>
+  					<constructor-arg><ref bean="repositoryEntityDefReader"/></constructor-arg>
                 </bean>
                  <bean class="fr.becpg.repo.product.formulation.DocumentFormulationHandler">
                     <property name="fileFolderService" ref="fileFolderService" />
@@ -340,7 +338,19 @@
 	<bean id="supplierFormulationChain" class="fr.becpg.repo.formulation.FormulationChain" init-method="init">
 		<property name="handlers">
 			<list>
-			    
+			    <bean class="fr.becpg.repo.product.formulation.DocumentFormulationHandler">
+                    <property name="fileFolderService" ref="fileFolderService" />
+                    <property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
+                    <property name="nodeService" ref="nodeService" />
+                    <property name="mlNodeService" ref="mlAwareNodeService" />
+                    <property name="namespaceService" ref="namespaceService" />
+                    <property name="alfrescoRepository" ref="alfrescoRepository" />
+                    <property name="associationService" ref="associationService" />
+                    <property name="entityService" ref="entityService" />
+                    <property name="repoService" ref="repoService" />
+                    <property name="expressionService" ref="expressionService" />
+                    <property name="formulaService" ref="formulaService" />
+                </bean>
 				<bean class="fr.becpg.repo.project.formulation.ScoreListFormulationHandler">
 				    <property name="alfrescoRepository" ref="alfrescoRepository" />
 			        <property name="nodeService" ref="nodeService" />
@@ -370,6 +380,19 @@
 	<bean id="clientFormulationChain" class="fr.becpg.repo.formulation.FormulationChain" init-method="init">
 		<property name="handlers">
 			<list>
+			     <bean class="fr.becpg.repo.product.formulation.DocumentFormulationHandler">
+                    <property name="fileFolderService" ref="fileFolderService" />
+                    <property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
+                    <property name="nodeService" ref="nodeService" />
+                    <property name="mlNodeService" ref="mlAwareNodeService" />
+                    <property name="namespaceService" ref="namespaceService" />
+                    <property name="alfrescoRepository" ref="alfrescoRepository" />
+                    <property name="associationService" ref="associationService" />
+                    <property name="entityService" ref="entityService" />
+                    <property name="repoService" ref="repoService" />
+                    <property name="expressionService" ref="expressionService" />
+                    <property name="formulaService" ref="formulaService" />
+                </bean>
 				<bean class="fr.becpg.repo.project.formulation.ScoreListFormulationHandler">
                     <property name="alfrescoRepository" ref="alfrescoRepository" />
                     <property name="nodeService" ref="nodeService" />

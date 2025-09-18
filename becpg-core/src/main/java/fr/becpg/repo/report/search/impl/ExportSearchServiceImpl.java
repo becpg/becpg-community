@@ -4,7 +4,7 @@
 package fr.becpg.repo.report.search.impl;
 
 import java.io.OutputStream;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
 
 import org.alfresco.repo.download.DownloadStorage;
@@ -85,7 +85,7 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 			NodeRef downloadNode1 = downloadStorage.createDownloadNode(false);
 
 			// Add requested nodes
-			for (NodeRef node : new LinkedHashSet<>(searchResults)) {
+			for (NodeRef node : new HashSet<>(searchResults)) {
 				if (nodeService.exists(node)) {
 					downloadStorage.addNodeToDownload(downloadNode1, node);
 				}

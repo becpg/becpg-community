@@ -6,7 +6,6 @@ package fr.becpg.repo.product.formulation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,6 +28,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
+import fr.becpg.repo.product.data.allergen.AllergenItem;
 import fr.becpg.repo.product.data.constraints.AllergenType;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.ing.IngItem;
@@ -116,7 +116,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			logger.debug("Start AllergensCalculatingVisitor");
 
 			if (formulatedProduct.getAllergenList() == null) {
-				formulatedProduct.setAllergenList(new LinkedList<>());
+				formulatedProduct.setAllergenList(new ArrayList<>());
 			}
 
 			List<AllergenListDataItem> retainNodes = new ArrayList<>();
@@ -228,6 +228,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 					for (NodeRef allergenNodeRef : ingItem.getAllergenList()) {
 						AllergenListDataItem allergen = findAllergen(formulatedProduct, allergenNodeRef);
 
+						AllergenItem allergenItem = (AllergenItem) alfrescoRepository.findOne(allergenNodeRef);
+						
 						if (allergen == null) {
 							allergen = new AllergenListDataItem();
 							allergen.setAllergen(allergenNodeRef);
@@ -241,7 +243,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 						if (!ingItem.getAllergensQtyMap().isEmpty()
 								&& !formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-							String code = (String) nodeService.getProperty(allergenNodeRef, PLMModel.PROP_ALLERGEN_CODE);
+							String code = allergenItem.getAllergenCode();
 							Double allergenRate = null;
 							if (ingItem.getAllergensQtyMap().containsKey(code)) {
 								allergenRate = ingItem.getAllergensQtyMap().get(code);
@@ -268,7 +270,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 			formulatedProduct.getAllergenList().forEach(allergenListDataItem -> {
 				if (!Boolean.TRUE.equals(allergenListDataItem.getIsManual())) {
-					Double regulatoryThreshold = getRegulatoryThreshold(formulatedProduct, allergenListDataItem.getAllergen());
+					AllergenItem allergen = (AllergenItem) alfrescoRepository.findOne(allergenListDataItem.getAllergen());
+					Double regulatoryThreshold = getRegulatoryThreshold(formulatedProduct, allergen);
 					if (regulatoryThreshold != null && allergenListDataItem.getQtyPerc() != null) {
 						if (regulatoryThreshold > allergenListDataItem.getQtyPerc()) {
 							allergenListDataItem.setVoluntary(false);
@@ -278,7 +281,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 					}
 
 					if (!Boolean.TRUE.equals(allergenListDataItem.getVoluntary())) {
-						Double inVolRegulatoryThreshold = getInVolRegulatoryThreshold(allergenListDataItem.getAllergen());
+						Double inVolRegulatoryThreshold = getInVolRegulatoryThreshold(allergen);
 						if (inVolRegulatoryThreshold != null && allergenListDataItem.getQtyPerc() != null) {
 							if (inVolRegulatoryThreshold > allergenListDataItem.getQtyPerc()) {
 								allergenListDataItem.setInVoluntary(false);
@@ -308,7 +311,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		return null;
 	}
 
-	private Double getRegulatoryThreshold(ProductData formulatedProduct, NodeRef allergen) {
+	private Double getRegulatoryThreshold(ProductData formulatedProduct, AllergenItem allergen) {
 		Double ret = null;
 
 		for (Map.Entry<ProductSpecificationData, List<AllergenListDataItem>> entry : allergenRequirementScanner
@@ -326,11 +329,11 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 		}
 
-		return ret != null ? ret : (Double) nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_REGULATORY_THRESHOLD);
+		return ret != null ? ret : allergen.getAllergenRegulatoryThreshold();
 	}
 
-	private Double getInVolRegulatoryThreshold(NodeRef allergen) {
-		return (Double) nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_INVOL_REGULATORY_THRESHOLD);
+	private Double getInVolRegulatoryThreshold(AllergenItem allergen) {
+		return allergen.getAllergenInVoluntaryRegulatoryThreshold();
 	}
 
 	private boolean accept(ProductData formulatedProduct) {
@@ -350,13 +353,13 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	/**
 	 * Visit part.
 	 *
-	 * @param part
-	 *            the part
-	 * @param qtyUsed
-	 * @param isRawMaterial
-	 * @param totalQtyPercMap
-	 * @param allergenMap
-	 *            the allergen map
+	 * @param variantDataItem the variant context for the visit
+	 * @param partProduct the part product being visited
+	 * @param formulatedProduct the target formulated product being updated
+	 * @param retainNodes the list used to retain processed allergen items
+	 * @param qtyUsed the quantity of the part used
+	 * @param netQty the net quantity context
+	 * @param errors a map collecting requirement errors keyed by id
 	 */
 	private List<RequirementListDataItem> visitPart(VariantDataItem variantDataItem, ProductData partProduct, ProductData formulatedProduct,
 			List<AllergenListDataItem> retainNodes, Double qtyUsed, Double netQty, Map<String, RequirementListDataItem> errors) {
@@ -369,6 +372,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			NodeRef allergenNodeRef = allergenListDataItem.getAllergen();
 			if (allergenNodeRef != null) {
 
+				AllergenItem allergen = (AllergenItem) alfrescoRepository.findOne(allergenNodeRef);
+				
 				AllergenListDataItem newAllergenListDataItem = formulatedProduct.getAllergenList().stream()
 						.filter(a -> allergenNodeRef.equals(a.getAllergen())).findFirst().orElse(null);
 
@@ -485,7 +490,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 						}
 					} else {
 
-						String message = I18NUtil.getMessage(MESSAGE_NULL_PERC, extractName(allergenNodeRef));
+						String message = I18NUtil.getMessage(MESSAGE_NULL_PERC, extractName(allergen));
 						RequirementListDataItem error = errors.get(message);
 
 						if ((allergenListDataItem.getQtyPerc() != null) && (qtyUsed != null)
@@ -497,7 +502,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 							}
 
 							if (logger.isDebugEnabled()) {
-								logger.debug("Add " + extractName(allergenNodeRef) + "[" + partProduct.getName() + "] - "
+								logger.debug("Add " + extractName(allergen) + "[" + partProduct.getName() + "] - "
 										+ allergenListDataItem.getQtyPerc() + "% * " + qtyUsed + " / " + netQty + "(=" + value + " ) kg to "
 										+ newAllergenListDataItem.getQtyPerc());
 							}
@@ -505,9 +510,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 							newAllergenListDataItem.addQtyPerc(variantDataItem, value);
 
 						} else {
-
-							Double regulatoryThreshold = (Double) nodeService.getProperty(allergenListDataItem.getAllergen(),
-									PLMModel.PROP_ALLERGEN_REGULATORY_THRESHOLD);
+							
+							Double regulatoryThreshold = allergen.getAllergenRegulatoryThreshold();
 
 							if (error != null) {
 								if ((allergenListDataItem.getQtyPerc() == null) || (qtyUsed == null)) {
@@ -594,12 +598,16 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 		MutableInt sort = new MutableInt(1);
 		allergenList.stream().sorted((a1, a2) -> {
+			
+			
+			
+			AllergenItem allergen1 = (AllergenItem) alfrescoRepository.findOne(a1.getAllergen());
+			AllergenItem allergen2 = (AllergenItem) alfrescoRepository.findOne(a2.getAllergen());
+			String type1 = allergen1.getAllergenType();
+			String type2 = allergen2.getAllergenType();
 
-			String type1 = (String) nodeService.getProperty(a1.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
-			String type2 = (String) nodeService.getProperty(a2.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
-
-			String allergenName1 = extractName(a1.getAllergen());
-			String allergenName2 = extractName(a2.getAllergen());
+			String allergenName1 = extractName(allergen1);
+			String allergenName2 = extractName(allergen2);
 
 			if (type1 == null && type2 == null) {
 				return allergenName1.compareTo(allergenName2);
@@ -623,8 +631,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 	}
 
-	private String extractName(NodeRef charactRef) {
-		return (String) nodeService.getProperty(charactRef, BeCPGModel.PROP_CHARACT_NAME);
+	private String extractName(AllergenItem allergen) {
+		return allergen.getCharactName();
 	}
 
 }

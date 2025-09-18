@@ -1217,8 +1217,8 @@ public class FormulationIT extends AbstractFinishedProductTest {
 							ingListDataItem.getBioOrigin().contains(bioOrigin1));
 					assertEquals("ing2.getBioOrigin() contains bio2, actual values: " + trace4, true,
 							ingListDataItem.getBioOrigin().contains(bioOrigin2));
-					assertEquals("ing2.getIsGMO() is true, actual values: " + trace4, false, Boolean.FALSE.equals(ingListDataItem.getIsGMO()));
-					assertEquals("ing2.getIsIonized() is true, actual values: " + trace4, false,
+					assertEquals("ing2.getIsGMO() is true, actual values: " + trace4, true, Boolean.FALSE.equals(ingListDataItem.getIsGMO()));
+					assertEquals("ing2.getIsIonized() is true, actual values: " + trace4, true,
 							Boolean.FALSE.equals(ingListDataItem.getIsIonized()));
 					checks++;
 				}

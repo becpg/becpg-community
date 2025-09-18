@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.config.format.FormatMode;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
@@ -78,8 +79,6 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 	private static final Log logger = LogFactory.getLog(DefaultCompareEntityServicePlugin.class);
 
 	private static final String COMPARISON_SEPARATOR = " - ";
-
-	private static final int COMPARE_MAX_PRECISION = 9;
 
 	@Autowired
 	protected AlfrescoRepository<BeCPGDataObject> alfrescoRepository;
@@ -231,7 +230,7 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		Set<FileInfo> filesTreated1 = new HashSet<>();
 		Set<FileInfo> filesTreated2 = new HashSet<>();
 
-		List<StructCompareResultDataItem> structComparisonList = new LinkedList<>();
+		List<StructCompareResultDataItem> structComparisonList = new ArrayList<>();
 
 		Map<QName, String> properties1;
 		Map<QName, String> properties2;
@@ -353,15 +352,14 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 	}
 
 	/**
+	 * Compare sub-documents recursively.
 	 *
-	 * @param depthLevel
-	 * @param entity1
-	 * @param entity2
-	 * @param structCompareResults
-	 * @param structComparisonListTMP
-	 * @param comparison
-	 * @return false if at least one descendent file has a operator different
-	 *         than equal, true otherwize .
+	 * @param depthLevel current depth level in the tree
+	 * @param entity1 first entity NodeRef (can be null)
+	 * @param entity2 second entity NodeRef (can be null)
+	 * @param structComparisonListTMP accumulator list to append results
+	 * @param comparison comparison label/id
+	 * @return false if at least one descendant file has an operator different than Equal, true otherwise.
 	 */
 	private boolean compareSubDocuments(int depthLevel, NodeRef entity1, NodeRef entity2, List<StructCompareResultDataItem> structComparisonListTMP,
 			String comparison) {
@@ -425,16 +423,15 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 	 * Create a StructCompareResultDataItem which represent a folder. Then Merge
 	 * 'structCompareList with the folder representation and structListFiles.
 	 *
-	 * @param folderNodeRef1
-	 * @param folderNodeRef2
-	 * @param strucListFiles
-	 * @param structCompareList
-	 * @param comparison
-	 * @param depthLevel
-	 * @Param root boolean, create the folder parent at true, and don't do it at
-	 *        false.
+	 * @param folderNodeRef1 the folder node from the first tree (can be null)
+	 * @param folderNodeRef2 the folder node from the second tree (can be null)
+	 * @param structListFiles list of file comparisons within the folder
+	 * @param structCompareList the list to merge into
+	 * @param depthLevel current depth level
+	 * @param root when true, create the folder parent entry
+	 * @param setFolderOperator when true, set folder operator as Modified, otherwise Equal
 	 */
-	private void createFolderStruc(NodeRef folderNodeRef1, NodeRef folderNodeRef2, List<StructCompareResultDataItem> structListFiles,
+		private void createFolderStruc(NodeRef folderNodeRef1, NodeRef folderNodeRef2, List<StructCompareResultDataItem> structListFiles,
 			List<StructCompareResultDataItem> structCompareList, int depthLevel, boolean root, boolean setFolderOperator) {
 
 		StructCompareOperator operator = setFolderOperator ? StructCompareOperator.Modified : StructCompareOperator.Equal;
@@ -469,7 +466,7 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		List<QName> pivotProperties = getPivotForComparison(dataListType);
 
 		// look for characteristics that are in both entity
-		List<CharacteristicToCompare> characteristicsToCmp = new LinkedList<>();
+		List<CharacteristicToCompare> characteristicsToCmp = new ArrayList<>();
 
 		if (!pivotProperties.isEmpty()) {
 
@@ -758,7 +755,7 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 			CompositeComparableItem compositeItem2 = new CompositeComparableItem(0, null, null);
 			loadComparableItems(compositeItem2, listData2);
 
-			List<StructCompareResultDataItem> structComparisonList = new LinkedList<>();
+			List<StructCompareResultDataItem> structComparisonList = new ArrayList<>();
 			structCompareCompositeDataLists(datalistType, pivotProperty, structComparisonList, compositeItem1, compositeItem2);
 
 			String comparison = nodeService.getProperty(entity1NodeRef, ContentModel.PROP_NAME) + COMPARISON_SEPARATOR
@@ -934,7 +931,7 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		 * Compare properties
 		 */
 
-		PropertyFormats propertyFormats = new PropertyFormats(false, COMPARE_MAX_PRECISION);
+		PropertyFormats propertyFormats = PropertyFormats.forMode(FormatMode.COMP, false);
 		Map<QName, Serializable> properties1 = nodeRef1 == null ? new TreeMap<>() : nodeService.getProperties(nodeRef1);
 		Map<QName, Serializable> properties2 = nodeRef2 == null ? new TreeMap<>() : nodeService.getProperties(nodeRef2);
 		for (Map.Entry<QName, Serializable> entry : properties1.entrySet()) {

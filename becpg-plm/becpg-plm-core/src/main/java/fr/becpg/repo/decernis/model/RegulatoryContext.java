@@ -1,7 +1,6 @@
 package fr.becpg.repo.decernis.model;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import fr.becpg.model.PLMModel;
@@ -21,8 +20,8 @@ public class RegulatoryContext {
 	private ProductData product;
 	
 	private List<RegulatoryContextItem> contextItems = new ArrayList<>();
-	private List<RequirementListDataItem> requirements = new LinkedList<>();
-	private List<IngRegulatoryListDataItem> ingRegulatoryList = new LinkedList<>();
+	private List<RequirementListDataItem> requirements = new ArrayList<>();
+	private List<IngRegulatoryListDataItem> ingRegulatoryList = new ArrayList<>();
 	
 	
 	/**

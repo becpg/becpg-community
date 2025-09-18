@@ -6,7 +6,6 @@ package fr.becpg.repo.web.scripts.entity.datalist;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -320,7 +319,7 @@ public class EntityDataListWebScript extends AbstractEntityDataListWebScript {
 				dataListFilter.setCriteriaMap(JsonHelper.extractCriteria(jsonObject));
 			}
 
-			List<AttributeExtractorField> metadataFields = new LinkedList<>();
+			List<AttributeExtractorField> metadataFields = new ArrayList<>();
 
 			if ((json != null) && json.has(PARAM_FIELDS)) {
 				JSONArray jsonFields = (JSONArray) json.get(PARAM_FIELDS);

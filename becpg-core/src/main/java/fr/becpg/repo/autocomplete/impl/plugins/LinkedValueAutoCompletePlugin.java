@@ -3,7 +3,6 @@ package fr.becpg.repo.autocomplete.impl.plugins;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -103,11 +102,8 @@ public class LinkedValueAutoCompletePlugin extends TargetAssocAutoCompletePlugin
 	 *
 	 * @param path
 	 *            the path
-	 * @param parent
-	 *            the parent
 	 * @param query
 	 *            the query
-	 * @param b
 	 * @return the map
 	 */
 	private AutoCompletePage suggestLinkedValue(String path, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props,
@@ -158,7 +154,7 @@ public class LinkedValueAutoCompletePlugin extends TargetAssocAutoCompletePlugin
 		} else if ((extras != null) && extras.containsKey(AutoCompleteService.EXTRA_PARAM_DEPTH_LEVEL)) {
 			String depthLevel = extras.get(AutoCompleteService.EXTRA_PARAM_DEPTH_LEVEL);
 			if (extras.containsKey(AutoCompleteService.EXTRA_PARAM_PATHS)) {
-				ret = new LinkedList<>();
+				ret = new ArrayList<>();
 				for (String subPath : extras.get(AutoCompleteService.EXTRA_PARAM_PATHS).split(",")) {
 					ret.addAll(hierarchyService.getAllHierarchiesByDepthLevel(path + "/" + subPath, query, depthLevel));
 				}
@@ -167,7 +163,7 @@ public class LinkedValueAutoCompletePlugin extends TargetAssocAutoCompletePlugin
 			}
 		} else {
 			if (extras!=null && extras.containsKey(AutoCompleteService.EXTRA_PARAM_PATHS)) {
-				ret = new LinkedList<>();
+				ret = new ArrayList<>();
 				for (String subPath : extras.get(AutoCompleteService.EXTRA_PARAM_PATHS).split(",")) {
 					ret.addAll(hierarchyService.getAllHierarchiesByPath(path + "/" + subPath, query));
 				}
