@@ -611,6 +611,10 @@
             });
 
             var hiddenColumnsInPopup = ["bcpg_startEffectivity", "bcpg_endEffectivity", "bcpg_depthLevel"];
+            
+            if(this.options.columnFormId == "product-list"){
+                hiddenColumnsInPopup = []; 
+            }
 
             var itemType = this.options.itemType != null ? this.options.itemType : this.datalistMeta.itemType;
             var containerEl = Dom.get(this.id + '-columns-list').parentNode, html = "";
