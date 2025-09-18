@@ -23,7 +23,7 @@
 
         // Preferences service
         this.services.preferences = new Alfresco.service.Preferences();
-
+        YAHOO.Bubbling.on("changeFilter",   this.onExternalFilterChange, this);
 
         return this;
     };
@@ -65,7 +65,7 @@
             onReady: function PTL_onReady() {
                 var me = this;
 
-               this.widgets.filter = new YAHOO.widget.Button({
+                this.widgets.filter = new YAHOO.widget.Button({
                     type: "split",
                     label: this.msg("picker.saved-search.choose"),
                     name: "savedSearchPickerButton",
@@ -88,8 +88,6 @@
                 this.widgets.type.value = this.options.selectedType;
 
                 this.loadFilterMenu();
-
-
 
                 this.widgets.showThumbnailsButton = Alfresco.util.createYUIButton(this, "show-thumbnails", this.onShowThumbnails, {
                     type: "checkbox",
@@ -285,7 +283,8 @@
                     } else {
                         filterObj.filterData = "";
                     }
-
+                    
+                    filterObj.skipLabel = true;
 
                     dt.options.filter = filterObj;
 
@@ -304,6 +303,24 @@
                 this.reloadDataTable();
             },
 
+            /**
+             * Handles filter changes from other components
+             * @param {String} type The event type
+             * @param {Object} args Event arguments containing filter information
+             */
+            onExternalFilterChange: function(type, args) {
+                if (!args[1] || !args[1].filterId) {
+                    return;
+                }
+
+                var filterId = args[1].filterId;
+              
+                if(filterId =="filterform" && !args[1].skipLabel ){
+                    this.widgets.filter.set("label",  this.msg("filter.filterform" ));
+                }
+          
+            },
+
             onTypeChange: function PTL_onTypeChange(p_sType, p_aArgs) {
                 var menuItem = p_aArgs[1];
                 if (menuItem) {
@@ -318,6 +335,10 @@
 
                     this.options.selectedType = this.widgets.type.value;
                     this.options.selectedFilter = "all";
+                    
+                    // Update the filter label in the UI
+                    this.widgets.filter.set("label", this.msg("filter.all") + " " + Alfresco.constants.MENU_ARROW_SYMBOL);
+                    this.widgets.filter.value = "all";
 
                     this.loadFilterMenu();
                     this.loadExportMenu();
@@ -351,27 +372,55 @@
                 var menuItem = p_aArgs[1];
                 if (menuItem) {
                     var values = menuItem.value.split("#");
-
-                    var url = Alfresco.constants.PROXY_URI + "becpg/report/exportsearch/" + values[0].replace("://", "/") + "/" + encodeURIComponent(values[1]);
-
                     var dataType = "bcpg:product";
-
+            
                     if (this.options.selectedType != null) {
-                        dataType = this.options.selectedType.indexOf("_") > 0 ? this.options.selectedType.replace("_", ":") : "bcpg:" + this.options.selectedType;
+                        dataType = this.options.selectedType.indexOf("_") > 0 
+                            ? this.options.selectedType.replace("_", ":") 
+                            : "bcpg:" + this.options.selectedType;
                         if (this.options.selectedType == "document") {
                             dataType = "cm:content";
                         }
                     }
-
-                    // Add search data webscript arguments
-                    url += "?term=&query=" + encodeURIComponent('{datatype:"' + dataType + '"}');
-
-                    if (this.options.siteId.length !== 0) {
-                        url += "&site=" + this.options.siteId + "&repo=false";
+            
+                    var dt = Alfresco.util.ComponentManager.find({name: "beCPG.module.EntityDataGrid"})[0];
+                    var requestParams = {
+                        filter: dt.currentFilter,
+                        extraParams: dt.options.extraParams || {}
+                    };
+            
+                    // Build URL with proper parameters to match doSearch
+                    var url = Alfresco.constants.PROXY_URI + "becpg/report/exportsearch/" + 
+                             values[0].replace("://", "/") + "/" + encodeURIComponent(values[1]);
+                    
+                    // Add query parameters to match doSearch
+                    var queryParams = {
+                        query: JSON.stringify({datatype: dataType}),
+                        term: "",
+                        filter: requestParams.filter ? requestParams.filter.filterId : "",
+                        filterData: requestParams.filter ? requestParams.filter.filterData : "",
+                        filterParams: dt._createFilterURLParameters(dt.currentFilter, dt.options.filterParameters),
+                        extraParams: requestParams.extraParams ? JSON.stringify(requestParams.extraParams) : ""
+                    };
+            
+                    // Add site/repo parameters
+                    if (this.options.siteId && this.options.siteId.length !== 0) {
+                        queryParams.site = this.options.siteId;
+                        queryParams.repo = "false";
                     } else {
-                        url += "&site=&repo=true";
+                        queryParams.site = "";
+                        queryParams.repo = "true";
                     }
-
+            
+                    // Build query string
+                    var queryString = Object.keys(queryParams)
+                        .map(function(key) {
+                            return key + "=" + encodeURIComponent(queryParams[key] || "");
+                        })
+                        .join("&");
+            
+                    url += "?" + queryString;
+                    
                     beCPG.util.launchAsyncDownload(values[1], values[2], url);
                 }
             },
