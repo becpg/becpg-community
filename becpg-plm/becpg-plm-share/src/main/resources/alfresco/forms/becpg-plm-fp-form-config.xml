@@ -3450,6 +3450,7 @@
           <show force="false" id="bcpg:entityTplRef"/>
           <show force="false" id="bcpg:parentEntityRef"/>
           <show force="false" id="pjt:projectScore"/>
+          <show force="false" id="bcpg:entityScore"/>
           <show force="false" id="gs1:tradeItemMarketingMessage"/>
           <show force="false" id="gs1:tradeItemFeatureBenefit"/>
           <show force="false" id="gs1:specialItemCode"/>
@@ -3654,6 +3655,7 @@
       	</field-visibility>
       	<appearance>
       	  <field id="cm:name" read-only="true"></field>
+      	  <field id="bcpg:entityScore"  read-only="true"/>
       	</appearance>
       </form>
     </forms>
