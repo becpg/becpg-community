@@ -13,7 +13,7 @@ public enum RequirementDataType {
 	 * <p>fromString.</p>
 	 *
 	 * @param dataType a {@link java.lang.String} object.
-	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementDataType} object.
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementDataType} object.
 	 */
 	public static RequirementDataType fromString(String dataType) {
 		try {

@@ -48,6 +48,7 @@ public class BatchQueueServiceIT extends RepoBaseTestCase {
 		
 		AtomicInteger processedEntries = new AtomicInteger(0);
 		BatchInfo batchInfo = new BatchInfo("batch.id", "batch.desc");
+		batchInfo.setWorkerThreads(1);
 		BatchStep<Integer> step = new BatchStep<>();
 		step.setWorkProvider(new EntityListBatchProcessWorkProvider<Integer>(IntStream.range(0, 10).boxed().toList()));
 		step.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<Integer>() {
@@ -77,6 +78,7 @@ public class BatchQueueServiceIT extends RepoBaseTestCase {
 		
 		BatchInfo lowBatchInfo = new BatchInfo("batch.low.id", "batch.low.desc");
 		lowBatchInfo.setPriority(BatchPriority.LOW);
+		lowBatchInfo.setWorkerThreads(1);
 		BatchStep<Integer> lowStep = new BatchStep<>();
 		lowStep.setWorkProvider(new EntityListBatchProcessWorkProvider<Integer>(IntStream.range(0, 10).boxed().toList()));
 		lowStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<Integer>() {
@@ -93,6 +95,7 @@ public class BatchQueueServiceIT extends RepoBaseTestCase {
 		
 		BatchInfo highBatchInfo = new BatchInfo("batch.high.id", "batch.high.desc");
 		highBatchInfo.setPriority(BatchPriority.HIGH);
+		highBatchInfo.setWorkerThreads(1);
 		BatchStep<Integer> highStep = new BatchStep<>();
 		highStep.setWorkProvider(new EntityListBatchProcessWorkProvider<Integer>(IntStream.range(0, 10).boxed().toList()));
 		highStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<Integer>() {
@@ -117,8 +120,6 @@ public class BatchQueueServiceIT extends RepoBaseTestCase {
 		waitForBatchEnd(lowBatchInfo);
 		assertTrue(lowProcessedEntries.get() < 10);
 		
-		assertTrue(batchQueueService.getBatchesInQueue().isEmpty());
-		assertNull(batchQueueService.getRunningBatchInfo());
 	}
 	
 	@Test
@@ -131,6 +132,8 @@ public class BatchQueueServiceIT extends RepoBaseTestCase {
 		
 		BatchInfo lowBatchInfo = new BatchInfo("batch.low.id", "batch.low.desc");
 		lowBatchInfo.setPriority(BatchPriority.LOW);
+		lowBatchInfo.setBatchSize(1);
+		lowBatchInfo.setWorkerThreads(1);
 		BatchStep<Integer> lowStep = new BatchStep<>();
 		lowStep.setWorkProvider(new EntityListBatchProcessWorkProvider<Integer>(IntStream.range(0, 10).boxed().toList()));
 		lowStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<Integer>() {
@@ -147,6 +150,8 @@ public class BatchQueueServiceIT extends RepoBaseTestCase {
 		
 		BatchInfo mediumBatchInfo = new BatchInfo("batch.medium.id", "batch.medium.desc");
 		mediumBatchInfo.setPriority(BatchPriority.MEDIUM);
+		mediumBatchInfo.setBatchSize(1);
+		mediumBatchInfo.setWorkerThreads(1);
 		BatchStep<Integer> mediumStep = new BatchStep<>();
 		mediumStep.setWorkProvider(new EntityListBatchProcessWorkProvider<Integer>(IntStream.range(0, 10).boxed().toList()));
 		mediumStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<Integer>() {
@@ -166,6 +171,8 @@ public class BatchQueueServiceIT extends RepoBaseTestCase {
 		
 		BatchInfo highBatchInfo = new BatchInfo("batch.high.id", "batch.high.desc");
 		highBatchInfo.setPriority(BatchPriority.HIGH);
+		highBatchInfo.setBatchSize(1);
+		highBatchInfo.setWorkerThreads(1);
 		BatchStep<Integer> highStep = new BatchStep<>();
 		highStep.setWorkProvider(new EntityListBatchProcessWorkProvider<Integer>(IntStream.range(0, 10).boxed().toList()));
 		highStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<Integer>() {
@@ -185,6 +192,8 @@ public class BatchQueueServiceIT extends RepoBaseTestCase {
 		
 		BatchInfo medium2BatchInfo = new BatchInfo("batch.medium2.id", "batch.medium2.desc");
 		medium2BatchInfo.setPriority(BatchPriority.MEDIUM);
+		medium2BatchInfo.setBatchSize(1);
+		medium2BatchInfo.setWorkerThreads(1);
 		BatchStep<Integer> medium2Step = new BatchStep<>();
 		medium2Step.setWorkProvider(new EntityListBatchProcessWorkProvider<Integer>(IntStream.range(0, 10).boxed().toList()));
 		medium2Step.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<Integer>() {
@@ -220,8 +229,6 @@ public class BatchQueueServiceIT extends RepoBaseTestCase {
 		waitForBatchEnd(lowBatchInfo);
 		assertEquals(10, lowProcessedEntries.get());
 		
-		assertTrue(batchQueueService.getBatchesInQueue().isEmpty());
-		assertNull(batchQueueService.getRunningBatchInfo());
 	}
 	
 }

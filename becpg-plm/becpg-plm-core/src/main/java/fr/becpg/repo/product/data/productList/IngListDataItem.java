@@ -17,7 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.product.data.productList;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -74,13 +74,13 @@ public class IngListDataItem extends AbstractManualDataItem
 
 	private Double volumeQtyPerc = null;
 
-	private List<NodeRef> geoOrigin = new LinkedList<>();
+	private List<NodeRef> geoOrigin = new ArrayList<>();
 
-	private List<NodeRef> geoTransfo = new LinkedList<>();
+	private List<NodeRef> geoTransfo = new ArrayList<>();
 
-	private List<NodeRef> bioOrigin = new LinkedList<>();
+	private List<NodeRef> bioOrigin = new ArrayList<>();
 
-	private List<NodeRef> claims = new LinkedList<>();
+	private List<NodeRef> claims = new ArrayList<>();
 
 	private Boolean isGMO = false;
 
@@ -665,6 +665,13 @@ public class IngListDataItem extends AbstractManualDataItem
 		return this;
 	}
 	
+	/**
+	 * <p>withGeoOrigin.</p>
+	 *
+	 * @param geoOrigin a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @since 23.4.2.22
+	 */
 	public IngListDataItem withGeoOrigin(List<NodeRef> geoOrigin) {
 		this.geoOrigin = geoOrigin;
 		return this;
@@ -675,48 +682,105 @@ public class IngListDataItem extends AbstractManualDataItem
 	 *
 	 * @param geoTransfo a {@link java.util.List} of {@link org.alfresco.service.cmr.repository.NodeRef} objects
 	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object for method chaining
+	 * @since 23.4.2.22
 	 */
 	public IngListDataItem withGeoTransfo(List<NodeRef> geoTransfo) {
 		this.geoTransfo = geoTransfo;
 		return this;
 	}
 	
+	/**
+	 * <p>withBioOrigin.</p>
+	 *
+	 * @param bioOrigin a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @since 23.4.2.22
+	 */
 	public IngListDataItem withBioOrigin(List<NodeRef> bioOrigin) {
 		this.bioOrigin = bioOrigin;
 		return this;
 	}
 	
+	/**
+	 * <p>withIsGMO.</p>
+	 *
+	 * @param isGMO a {@link java.lang.Boolean} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @since 23.4.2.22
+	 */
 	public IngListDataItem withIsGMO(Boolean isGMO) {
 		this.isGMO = isGMO;
 		return this;
 	}
 	
+	/**
+	 * <p>withIsIonized.</p>
+	 *
+	 * @param isIonized a {@link java.lang.Boolean} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @since 23.4.2.22
+	 */
 	public IngListDataItem withIsIonized(Boolean isIonized) {
 		this.isIonized = isIonized;
 		return this;
 	}
 	
+	/**
+	 * <p>withIsProcessingAid.</p>
+	 *
+	 * @param isProcessingAid a {@link java.lang.Boolean} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @since 23.4.2.22
+	 */
 	public IngListDataItem withIsProcessingAid(Boolean isProcessingAid) {
 		this.isProcessingAid = isProcessingAid;
 		return this;
 	}
 	
+	/**
+	 * <p>withIsManual.</p>
+	 *
+	 * @param isManual a {@link java.lang.Boolean} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @since 23.4.2.22
+	 */
 	public IngListDataItem withIsManual(Boolean isManual) {
 		setIsManual(isManual);
 		return this;
 	}
 	
+	/**
+	 * <p>withMini.</p>
+	 *
+	 * @param mini a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @since 23.4.2.22
+	 */
 	public IngListDataItem withMini(Double mini) {
 		this.mini = mini;
 		return this;
 	}
 	
+	/**
+	 * <p>withMaxi.</p>
+	 *
+	 * @param maxi a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @since 23.4.2.22
+	 */
 	public IngListDataItem withMaxi(Double maxi) {
 		this.maxi = maxi;
 		return this;
 	}
 	
 
+	/**
+	 * <p>withParent.</p>
+	 *
+	 * @param parent a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @since 23.4.2.22
+	 */
 	public IngListDataItem withParent(IngListDataItem parent) {
 		this.parent = parent;
 		return this;
@@ -738,10 +802,10 @@ public class IngListDataItem extends AbstractManualDataItem
 		this.qtyPercWithYield = i.qtyPercWithYield;
 		this.qtyPercWithSecondaryYield = i.qtyPercWithSecondaryYield;
 		this.volumeQtyPerc = i.volumeQtyPerc;
-		this.geoOrigin = this.geoOrigin != null ? new LinkedList<>(i.geoOrigin) : null;
-		this.geoTransfo = this.geoTransfo != null ? new LinkedList<>(i.geoTransfo) : null;
-		this.bioOrigin = this.bioOrigin != null ? new LinkedList<>(i.bioOrigin) : null;
-		this.claims = this.claims != null ? new LinkedList<>(i.claims) : null;
+		this.geoOrigin = this.geoOrigin != null ? new ArrayList<>(i.geoOrigin) : null;
+		this.geoTransfo = this.geoTransfo != null ? new ArrayList<>(i.geoTransfo) : null;
+		this.bioOrigin = this.bioOrigin != null ? new ArrayList<>(i.bioOrigin) : null;
+		this.claims = this.claims != null ? new ArrayList<>(i.claims) : null;
 		this.isGMO = i.isGMO;
 		this.isIonized = i.isIonized;
 		this.ing = i.ing;

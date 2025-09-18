@@ -131,19 +131,31 @@
 	   	 
 	   	 "survey1": [ 
 		   {"attribute": "survey:slQuestion" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyQuestion1_added"},
-		   {"attribute": "survey:slChoices" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyAnswer1_added"}
+		   {"attribute": "survey:slChoices" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyAnswer1_added"},
+			{ "attribute": "survey:slComment", "htmlId": "prop_survey_advSearchSlComment1" },
+			{ "attribute": "survey:slNumberComment", "htmlId": "prop_survey_advSearchSlNumberComment1-range" },
+			{ "attribute": "survey:slDateComment", "htmlId": "prop_survey_advSearchSlDateComment1-date-range" }	 
 		 ],
 		 "survey2": [ 
 		   {"attribute": "survey:slQuestion" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyQuestion2_added"},
-		   {"attribute": "survey:slChoices" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyAnswer2_added"}
+		   {"attribute": "survey:slChoices" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyAnswer2_added"},
+			{ "attribute": "survey:slComment", "htmlId": "prop_survey_advSearchSlComment2" },
+			{ "attribute": "survey:slNumberComment", "htmlId": "prop_survey_advSearchSlNumberComment2-range" },
+			{ "attribute": "survey:slDateComment", "htmlId": "prop_survey_advSearchSlDateComment2-date-range" }
 		 ],
 		 "survey3": [ 
 		   {"attribute": "survey:slQuestion" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyQuestion3_added"},
-		   {"attribute": "survey:slChoices" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyAnswer3_added"}
+		   {"attribute": "survey:slChoices" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyAnswer3_added"},
+			{ "attribute": "survey:slComment", "htmlId": "prop_survey_advSearchSlComment3" },
+			{ "attribute": "survey:slNumberComment", "htmlId": "prop_survey_advSearchSlNumberComment3-range" },
+			{ "attribute": "survey:slDateComment", "htmlId": "prop_survey_advSearchSlDateComment3-date-range" }
 		 ],
 		 "survey4": [ 
 		   {"attribute": "survey:slQuestion" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyQuestion4_added"},
-		   {"attribute": "survey:slChoices" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyAnswer4_added"}
+		   {"attribute": "survey:slChoices" , "listType": "survey:surveyList", "htmlId":"assoc_survey_advSearchSurveyAnswer4_added"},
+			{ "attribute": "survey:slComment", "htmlId": "prop_survey_advSearchSlComment4" },
+			{ "attribute": "survey:slNumberComment", "htmlId": "prop_survey_advSearchSlNumberComment4-range" },
+			{ "attribute": "survey:slDateComment", "htmlId": "prop_survey_advSearchSlDateComment4-date-range" }
 		 ]
 	}
 }

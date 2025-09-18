@@ -457,25 +457,32 @@
 								var displayName = oRecord.getData("displayName");
 
 								var metadata = oRecord.getData("metadata");
+								
+								const entityStateProps = [
+										"prop_bcpg_productState",
+								 		"prop_bcpg_supplierState",
+								        "prop_bcpg_clientState",
+								        "prop_bcpg_documentState"
+								];
+								
+								const effectivityProps = [
+										"prop_cm_from",
+								 		"prop_cm_to"
+								];
 
 								var desc = '<span class="itemname ' + (metadata ? (' ' + metadata) : '') + '"><a href="' + url
 										+ '" class="theme-color-1">' + $html(displayName);
 										
 										
 								var itemData = oRecord.getData("itemData");
+								
 								if (itemData != null) {
 								    var stateToDisplay = null;
-								    var props = [
-								        "prop_bcpg_productState",
-								        "prop_bcpg_supplierState",
-								        "prop_bcpg_clientState",
-								        "prop_bcpg_documentState"
-								    ];
 								
-								    for (var i = 0; i < props.length; i++) {
-								        var prop = props[i];
-								        if (itemData[prop] != null && itemData[prop].value != null) {
-								            stateToDisplay = itemData[prop];
+								    for (var i = 0; i < entityStateProps.length; i++) {
+								        var entityStateProp = entityStateProps[i];
+								        if (itemData[entityStateProp] != null && itemData[entityStateProp].value != null) {
+								            stateToDisplay = itemData[entityStateProp];
 								            break;
 								        }
 								    }
@@ -573,9 +580,8 @@
 								}
 								var itemType = oRecord.getData("itemType"), itemData = oRecord.getData("itemData");
 								if (itemData != null) {
-
 									for (key in itemData) {
-										if(key != "prop_bcpg_productState" && key !="prop_bcpg_nutrientProfilingClass"){
+										if(key != null && entityStateProps.indexOf(key) == -1 && effectivityProps.indexOf(key) == -1 && key !="prop_bcpg_nutrientProfilingClass"){
 											
 											var item = itemData[key];
 											var propName = key + (item.type == 'subtype' ? "_added" : "");
@@ -604,7 +610,20 @@
 											}
 										}
 									}
-
+								
+								    for (var i = 0; i < effectivityProps.length; i++) {
+								        var effectivityProp = effectivityProps[i];
+								        var effectivityItem = itemData[effectivityProp];
+								        if (effectivityItem != null && effectivityItem.value != null) {
+											
+								            desc += '<div class="details">' + $html(effectivityItem.label) + ': ';
+											
+											desc += '<span id="' + me.id + '|' + $html(effectivityProp) + '|' + $html(effectivityItem.value) + '|' + $html(itemType)
+													+ '" class="searchByProp" ><a class="search-prop" href="#">' + $html(effectivityItem.displayValue)
+													+ '</a></span>';
+											desc += '</div>';
+								        }
+								    }
 								}
 
 								elCell.innerHTML = desc;

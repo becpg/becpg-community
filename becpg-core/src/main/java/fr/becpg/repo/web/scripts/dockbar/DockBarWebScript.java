@@ -19,13 +19,11 @@ package fr.becpg.repo.web.scripts.dockbar;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.ServiceRegistry;
@@ -52,6 +50,7 @@ import fr.becpg.repo.helper.extractors.ContentDataExtractor;
 import fr.becpg.repo.helper.impl.AttributeExtractorField;
 import fr.becpg.repo.web.scripts.BrowserCacheHelper;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * return product history
@@ -141,7 +140,7 @@ public class DockBarWebScript extends AbstractWebScript {
 				logger.debug("Getting :" + nodeRefs + " from history for " + username);
 			}
 
-			LinkedList<NodeRef> elements = new LinkedList<>();
+			List<NodeRef> elements = new ArrayList<>();
 			Map<NodeRef, String> items = new HashMap<>();
 			
 			if (nodeRefs != null && !nodeRefs.isEmpty()) {

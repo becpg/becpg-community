@@ -6,7 +6,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -233,7 +232,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 	private void visitParents(ProjectData projectData, Set<TaskWrapper> tasks, boolean calculateState) {
 
 		// tasks whose critical cost has been calculated
-		List<TaskWrapper> completed = new LinkedList<>();
+		List<TaskWrapper> completed = new ArrayList<>();
 		// tasks whose critical cost needs to be calculated
 		Set<TaskWrapper> remaining = new HashSet<>(tasks);
 
@@ -514,7 +513,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 	private boolean visit(ProjectData projectData, Set<TaskWrapper> allTasks, boolean calculateState) {
 		// tasks whose critical cost has been calculated
-		List<TaskWrapper> completed = new LinkedList<>();
+		List<TaskWrapper> completed = new ArrayList<>();
 		// tasks whose critical cost needs to be calculated
 		Set<TaskWrapper> remaining = new HashSet<>(allTasks);
 		int projectDuration = 0;

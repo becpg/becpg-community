@@ -81,7 +81,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 								&& ((compoListDataItem.getQtySubFormula() != null) && (compoListDataItem.getQtySubFormula() > 0))) {
 							ProductData componentProductData = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
 							checkILOfPart(compoListDataItem.getProduct(), compoListDataItem.getDeclType(), componentProductData, requirements,
-									specification, sources, visited);
+									specification, sources, visited, productData);
 						}
 					}
 				}
@@ -108,18 +108,18 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	/**
 	 * check the ingredients of the part according to the specification
 	 *
+	 * @param productNodeRef
+	 * @param declType
+	 * @param componentProductData
+	 * @param forbiddenIngredientsList
 	 * @param specification
-	 *
-	 * @param compoListDataItem
-	 *            the compo list data item
-	 * @param ingMap
-	 *            the ing map
-	 * @param totalQtyIngMap
-	 *            the total qty ing map
+	 * @param sources
+	 * @param visited
+	 * @param productData
 	 */
 	private void checkILOfPart(NodeRef productNodeRef, DeclarationType declType, ProductData componentProductData,
 			List<ForbiddenIngListDataItem> forbiddenIngredientsList, ProductSpecificationData specification, Map<String, List<NodeRef>> sources,
-			Set<NodeRef> visited) {
+			Set<NodeRef> visited, ProductData productData) {
 
 		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(mlNodeService.getType(productNodeRef)) && !visited.contains(productNodeRef)) {
 
@@ -131,7 +131,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 				componentProductData.getIngList().forEach(ingListDataItem -> {
 
-					if (!RequirementType.Authorized.equals(fil.getReqType()) && !isQtyCheck(fil) && checkRuleMatchIng(ingListDataItem, fil)) {
+					if (!RequirementType.Authorized.equals(fil.getReqType()) && !isQtyCheck(fil) && checkRuleMatchIng(ingListDataItem, fil, productData)) {
 						// Look for raw material
 
 						if (componentProductData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
@@ -141,7 +141,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 								if ((compoListDataItem.getQtySubFormula() != null) && (compoListDataItem.getQtySubFormula() > 0)) {
 									checkILOfPart(compoListDataItem.getProduct(), declType,
 											(ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct()), forbiddenIngredientsList,
-											specification, sources, visited);
+											specification, sources, visited, productData);
 								}
 							}
 
@@ -167,7 +167,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 		Double totalQtyPerc = calculateQtyPerc(fil, productData);
 
 		for (IngListDataItem ingListDataItem : productData.getIngList()) {
-			if (checkRuleMatchIng(ingListDataItem, fil)) {
+			if (checkRuleMatchIng(ingListDataItem, fil, productData)) {
 
 				RequirementListDataItem reqCtrl = createForbiddenReq(specification, fil, ingListDataItem, sources);
 
@@ -217,7 +217,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 			boolean autorized = false;
 
 			for (ForbiddenIngListDataItem fil : requirements) {
-				if (RequirementType.Authorized.equals(fil.getReqType()) && checkRuleMatchIng(ingListDataItem, fil)) {
+				if (RequirementType.Authorized.equals(fil.getReqType()) && checkRuleMatchIng(ingListDataItem, fil, productData)) {
 					autorized = true;
 					if ((fil.getReqMessage() != null) && (fil.getReqMessage().getDefaultValue() != null)
 							&& (!fil.getReqMessage().getDefaultValue().isEmpty())) {
@@ -345,7 +345,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 				: new ArrayList<>();
 	}
 
-	private boolean checkRuleMatchIng(IngListDataItem ingListDataItem, ForbiddenIngListDataItem fil) {
+	private boolean checkRuleMatchIng(IngListDataItem ingListDataItem, ForbiddenIngListDataItem fil, ProductData productData) {
 
 		if ((fil.getIsGMO() != null) && !fil.getIsGMO().isEmpty() && (!fil.getIsGMO().equals(ingListDataItem.getIsGMO().toString())
 				|| (Boolean.FALSE.equals(Boolean.valueOf(fil.getIsGMO())) && Boolean.FALSE.equals(ingListDataItem.getIsGMO())))) {
@@ -420,6 +420,20 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 				return false; // check next rule
 			}
 
+		}
+
+		// Regulatory usage filtering
+		if (!fil.getRegulatoryUsagesRef().isEmpty()) {
+			boolean hasRegulatoryUsage = false;
+			for (NodeRef n : productData.getRegulatoryUsagesRef()) {
+				if (fil.getRegulatoryUsagesRef().contains(n)) {
+					hasRegulatoryUsage = true;
+				}
+			}
+
+			if (!hasRegulatoryUsage) {
+				return false; // check next rule
+			}
 		}
 
 		return true;

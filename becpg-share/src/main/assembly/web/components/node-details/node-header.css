@@ -138,6 +138,7 @@
 
 .node-header .node-bcpath ul.bcpath {
      display: block;
+     overflow: hidden;
 }
 
 
@@ -159,5 +160,10 @@
     color: #333;
     background-position: 100% -48px;
     cursor: pointer;
+}
+
+.node-header .node-bcpath {
+    clear: both;
+    width: 100%;
 }
  

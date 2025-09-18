@@ -73,7 +73,7 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 	/**
 	 * <p>Getter for the field <code>reqType</code>.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementType} object.
 	 */
 	@AlfProp
 	@AlfQname(qname = "ecm:culReqType")
@@ -84,7 +84,7 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 	/**
 	 * <p>Setter for the field <code>reqType</code>.</p>
 	 *
-	 * @param reqType a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 * @param reqType a {@link fr.becpg.repo.regulatory.RequirementType} object.
 	 */
 	public void setReqType(RequirementType reqType) {
 		this.reqType = reqType;
@@ -202,7 +202,7 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 	 * <p>Constructor for ChangeUnitDataItem.</p>
 	 *
 	 * @param revision a {@link fr.becpg.repo.ecm.data.RevisionType} object.
-	 * @param reqType a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
+	 * @param reqType a {@link fr.becpg.repo.regulatory.RequirementType} object.
 	 * @param reqDetails a {@link java.lang.String} object.
 	 * @param treated a {@link java.lang.Boolean} object.
 	 * @param sourceItem a {@link org.alfresco.service.cmr.repository.NodeRef} object.

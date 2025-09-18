@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -38,6 +37,7 @@ import org.alfresco.query.CannedQueryFactory;
 import org.alfresco.query.CannedQueryResults;
 import org.alfresco.query.PagingRequest;
 import org.alfresco.query.PagingResults;
+import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.model.filefolder.GetChildrenCannedQueryFactory;
 import org.alfresco.repo.node.getchildren.GetChildrenCannedQuery;
 import org.alfresco.repo.rule.RuleModel;
@@ -57,7 +57,6 @@ import org.alfresco.service.cmr.search.SearchParameters;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.repo.model.Repository;
 import org.alfresco.util.ISO9075;
 import org.alfresco.util.Pair;
 import org.alfresco.util.registry.NamedObjectRegistry;
@@ -1105,7 +1104,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 			watch.stop();
 			if (watch.getTotalTimeSeconds() > 1) {
-				logger.warn("Slow query [" + runnedQuery + "] executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + resultSize);
+				logger.warn("Slow query [" + runnedQuery + "] executed in  " + watch.getTotalTimeSeconds() + " seconds - total size results " + resultSize);
 
 			}
 
@@ -1114,7 +1113,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 				logger.debug("[" + Thread.currentThread().getStackTrace()[tmpIndex].getClassName() + " "
 						+ Thread.currentThread().getStackTrace()[tmpIndex].getLineNumber() + "] " + runnedQuery + " executed in  "
-						+ watch.getTotalTimeSeconds() + " seconds - size results " + resultSize);
+						+ watch.getTotalTimeSeconds() + " seconds -  total size results " + resultSize);
 			}
 		}
 
@@ -1595,6 +1594,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		// execute queries transactionally, when possible, and fall back to
 		// eventual consistency; or
 		sp.setQueryConsistency(queryConsistancy);
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("Use maxResults :" + maxResults);
+		}
 
 		if (maxResults == RepoConsts.MAX_RESULTS_UNLIMITED) {
 			sp.setLimitBy(LimitBy.UNLIMITED);
@@ -1766,7 +1769,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		PagingResults<NodeRef> pageOfNodeInfos = null;
 
-		List<Pair<QName, Boolean>> tmp = new LinkedList<>();
+		List<Pair<QName, Boolean>> tmp = new ArrayList<>();
 
 		for (Map.Entry<String, Boolean> entry : sortProps.entrySet()) {
 			if (entry.getKey().indexOf(QName.NAMESPACE_BEGIN) != -1) {

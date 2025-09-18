@@ -70,13 +70,14 @@
                   </#if>
                </#if>
                <div class="node-info">
+               <!-- Breadcrumbs Path -->
+               <div id="${id}-bcpath" class="node-bcpath hidden"></div>
                <#if showPath == "true">
                   <!-- Path-->
                   <div class="node-path">
                      <@renderPaths paths />
                   </div>
-                  <!-- Breadcrumbs Path -->
-                  <div id="${id}-bcpath" class="hidden"></div>
+                  
                </#if>
                <#if showOnlyLocation == "false">
                   <!-- Icon -->

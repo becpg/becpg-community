@@ -88,7 +88,7 @@ public abstract class AbstractRequirementScanner<T> implements RequirementScanne
 	/**
 	 * <p>extractRegulatoryId.</p>
 	 *
-	 * @param regulatoryEntityItem a {@link fr.becpg.repo.product.data.RegulatoryEntityItem} object
+	 * @param regulatoryEntityItem a {@link fr.becpg.repo.regulatory.RegulatoryEntityItem} object
 	 * @param specification a {@link fr.becpg.repo.product.data.ProductSpecificationData} object
 	 * @return a {@link java.lang.String} object
 	 */
@@ -113,6 +113,50 @@ public abstract class AbstractRequirementScanner<T> implements RequirementScanne
 			return specification.getRegulatoryCode();
 		}
 		return specification.getName();
+	}
+	
+
+	/**
+	 * Check if the requirement matches the product's regulatory usage and regulatory country
+	 *
+	 * @param requirementItem the requirement item (must implement RegulatoryEntityItem)
+	 * @param productData the product data
+	 * @return true if the requirement should apply to this product
+	 */
+	protected boolean checkRegulatoryUsageMatch(T requirementItem, ProductData productData) {
+		if (!(requirementItem instanceof RegulatoryEntityItem regulatoryItem)) {
+			return true; // If not a regulatory entity, no filtering applies
+		}
+
+		// Check regulatory usage filtering
+		if (!regulatoryItem.getRegulatoryUsagesRef().isEmpty()) {
+			boolean hasMatchingUsage = false;
+			for (NodeRef productUsage : productData.getRegulatoryUsagesRef()) {
+				if (regulatoryItem.getRegulatoryUsagesRef().contains(productUsage)) {
+					hasMatchingUsage = true;
+					break;
+				}
+			}
+			if (!hasMatchingUsage) {
+				return false;
+			}
+		}
+
+		// Check regulatory country filtering
+		if (!regulatoryItem.getRegulatoryCountriesRef().isEmpty()) {
+			boolean hasMatchingCountry = false;
+			for (NodeRef productCountry : productData.getRegulatoryCountriesRef()) {
+				if (regulatoryItem.getRegulatoryCountriesRef().contains(productCountry)) {
+					hasMatchingCountry = true;
+					break;
+				}
+			}
+			if (!hasMatchingCountry) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**

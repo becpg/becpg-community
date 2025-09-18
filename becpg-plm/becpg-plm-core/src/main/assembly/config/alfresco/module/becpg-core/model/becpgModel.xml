@@ -619,6 +619,7 @@
 				<list>
 					<value></value>
 					<value>Primary</value>
+					<value>Inner</value>
 					<value>Secondary</value>
 					<value>Tertiary</value>
 				</list>
@@ -6645,6 +6646,13 @@
 		</aspect>
 		
 		<aspect name="bcpg:pendingEntityReportAspect">
+			<properties>
+				<property name="bcpg:pendingEntityReportPriority">
+					<type>d:text</type>
+					<default>MEDIUM</default>
+					<index enabled="false"></index>
+				</property>
+			</properties>
 		</aspect>
 
 		<aspect name="bcpg:regulatoryAspect">
@@ -6752,6 +6760,16 @@
 
 		<aspect name="bcpg:ingToxAspect">
 			<properties>
+				<property name="bcpg:ingToxSystemicValues">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingToxMaxValues">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:ingToxData">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>

@@ -63,7 +63,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 public class AdvSearchServiceImpl implements AdvSearchService {
 
 	private static final Log logger = LogFactory.getLog(AdvSearchServiceImpl.class);
-
+	
 	@Autowired
 	private NamespaceService namespaceService;
 
@@ -130,7 +130,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			maxResults = RepoConsts.MAX_RESULTS_1000;
 		}
 
-		Set<String> ignoredFields = new HashSet<>();
+		Set<String> ignoredFields = new HashSet<>(IGNORED_FIELDS);
 
 		if (advSearchPlugins != null) {
 			for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
@@ -213,7 +213,9 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		if (!isRepo) {
 			beCPGQueryBuilder.inSite(siteId, containerId);
 		} else {
-			beCPGQueryBuilder.excludePath(RepoConsts.ENTITIES_HISTORY_XPATH + "//*");
+			if(ContentModel.TYPE_CONTENT.equals(datatype)){
+				beCPGQueryBuilder.excludePath(RepoConsts.ENTITIES_HISTORY_XPATH + "//*");
+			}
 		}
 
 		if (datatype != null) {
@@ -518,7 +520,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	}
 
 	boolean isMultiValueProperty(String propValue, String modePropValue) {
-		return (modePropValue != null) && (propValue.indexOf(",") != -1);
+		return (propValue.indexOf(",") != -1);
 	}
 
 	/**
@@ -565,8 +567,8 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	/**
 	 * Helper method used to determine whether the property is tied to categories.
 	 *
-	 * @param formJSON the list of the properties provided to the form
-	 * @param prop propertyname
+	 * @param criteriaMap the list of the properties provided to the form
+	 * @param prop property name
 	 * @return true if it is tied to categories, false otherwise
 	 */
 	private boolean isCategoryProperty(Map<String, String> criteriaMap, String prop) {
@@ -574,7 +576,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 				|| criteriaMap.containsKey(prop + "_isCategory");
 	}
 
-	/**
+		/**
 	 * Helper method used to construct lucene query fragment for a default category property.
 	 *
 	 * @param cats the selected categories (array of string noderef)
@@ -622,12 +624,10 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	}
 
 	/**
-	 * Helper method used to construct lucene query fragment for a custom category property.
+	 * Helper method used to construct lucene query fragment for tag property.
 	 *
-	 * @param propName property name
-	 * @param cats the selected categories (array of string noderef)
-	 * @param useSubCats boolean that indicates if should search also in subcategories
-	 * @return lucene query with custom category property
+	 * @param cats the selected categories (array of string NodeRef)
+	 * @return lucene query with custom tag property
 	 */
 	private String processDefaultTagProperty(String[] cats) {
 		StringBuilder catQuery = new StringBuilder();

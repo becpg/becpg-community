@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
@@ -76,7 +76,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 
 	private String[] extractRow(Row row, List<AbstractAttributeMapping> columns) {
 		
-		List<String> line = new LinkedList<>();
+		List<String> line = new ArrayList<>();
 		for (int i = 0; i < row.getLastCellNum(); i++) {
 			Cell cell = row.getCell(i);
 			if (cell == null) {

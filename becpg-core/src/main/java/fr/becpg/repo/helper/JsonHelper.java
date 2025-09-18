@@ -10,18 +10,24 @@ import org.alfresco.util.ISO8601DateFormat;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * <p>JsonHelper class.</p>
  *
  * @author matthieu
  * @version $Id: $Id
  */
-public class JsonHelper {
+public final class JsonHelper {
 	
 	
 	private JsonHelper() {
 		//Singleton
 	}
+	
+	
+    /** Constant <code>MAPPER</code> */
+    public static final ObjectMapper MAPPER = new ObjectMapper();
 	
 	/**
 	 * <p>extractCriteria.</p>
