@@ -17,6 +17,9 @@
  ******************************************************************************/
 package fr.becpg.repo.jscript;
 
+import java.util.Objects;
+import java.util.function.Supplier;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
@@ -37,28 +40,22 @@ import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.report.entity.EntityReportService;
 
 /**
- * <p>Thumbnail class.</p>
+ * Helper JScript extension that retrieves or creates thumbnails/reports for entities.
+ *
+ * Acts as a thin orchestration layer over {@link EntityService} and {@link EntityReportService}
+ * with Alfresco transaction guard logic to avoid lock conflicts.
  *
  * @author matthieu,gaspard
- * @version $Id: $Id
  */
 public final class Thumbnail extends BaseScopableProcessorExtension {
 
 	private static final Log logger = LogFactory.getLog(Thumbnail.class);
 
 	private NodeService nodeService;
-
 	private EntityService entityService;
-
 	private EntityReportService entityReportService;
-
 	private ServiceRegistry serviceRegistry;
 
-	/**
-	 * <p>Setter for the field <code>nodeService</code>.</p>
-	 *
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
-	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -99,27 +96,21 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 	public ScriptNode getThumbnailNode(ScriptNode sourceNode) {
 
 		QName type = nodeService.getType(sourceNode.getNodeRef());
-		// Try to find a logo for the specific type
-
 		NodeRef img = null;
-
 		if (entityService.hasAssociatedImages(type)) {
-
 			try {
 				img = entityService.getEntityDefaultImage(sourceNode.getNodeRef());
-
 			} catch (BeCPGException e) {
-				logger.debug(e, e);
+				// debug only - absence of image is not fatal
+				logger.debug("getThumbnailNode: error while retrieving default image", e);
 			}
 
 			if (img == null) {
 				img = entityService.getEntityDefaultIcon(sourceNode.getNodeRef(), "thumb");
 			}
-
 		}
 
 		return img != null ? new ScriptNode(img, serviceRegistry, getScope()) : sourceNode;
-
 	}
 
 	/**
@@ -129,24 +120,24 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 	 * @return a {@link org.alfresco.repo.jscript.ScriptNode} object.
 	 */
 	public ScriptNode getOrCreateImageNode(ScriptNode sourceNode) {
-		QName type = nodeService.getType(sourceNode.getNodeRef());
-		// Try to find a logo for the specific type
 
+		QName type = nodeService.getType(sourceNode.getNodeRef());
 		NodeRef img = null;
+
 		try {
 			if (entityService.hasAssociatedImages(type)) {
 				img = entityService.getEntityDefaultImage(sourceNode.getNodeRef());
 			}
 		} catch (BeCPGException e) {
-			logger.debug(e, e);
+			logger.debug("getOrCreateImageNode: error while getting default image", e);
 		}
 
 		if (img == null) {
 			img = entityService.createDefaultImage(sourceNode.getNodeRef());
+
 		}
 
 		return img != null ? new ScriptNode(img, serviceRegistry, getScope()) : sourceNode;
-
 	}
 
 	/**
@@ -157,111 +148,97 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 	 */
 	public ScriptNode getReportNode(ScriptNode sourceNode) {
 
-		NodeRef sourceNodeRef = sourceNode.getNodeRef();
+		NodeRef sourceNodeRef = unwrapVirtualNodeIfNeeded(sourceNode.getNodeRef());
 
-		if ((sourceNodeRef != null) && nodeService.hasAspect(sourceNodeRef, VirtualContentModel.ASPECT_VIRTUAL_DOCUMENT)) {
-			sourceNodeRef = new NodeRef((String) nodeService.getProperty(sourceNodeRef, VirtualContentModel.PROP_ACTUAL_NODE_REF));
-		}
-
-		final NodeRef finalNodeRef = sourceNodeRef;
+		NodeRef reportNodeRef = null;
 
 		if (entityReportService.shouldGenerateReport(sourceNodeRef, null)) {
-
-			// Check if we're already in a writable transaction to avoid lock conflicts
-			TxnReadState currentTxnState = AlfrescoTransactionSupport.getTransactionReadState();
-			if (currentTxnState == TxnReadState.TXN_READ_WRITE) {
-				// Already in writable transaction, execute directly to avoid lock conflicts
-				AuthenticationUtil.runAs(() -> {
-					logger.debug("getReportNode: Entity report is not up to date for " + finalNodeRef);
-					NodeRef reportNodeRef = entityReportService.getSelectedReport(finalNodeRef);
-					if (reportNodeRef != null) {
-						cleanThumbnails(reportNodeRef);
-					}
-					entityReportService.generateReports(finalNodeRef);
-					return reportNodeRef;
-				}, AuthenticationUtil.getSystemUserName());
-			} else {
-				// Only create new transaction if we're in read-only mode
-				RetryingTransactionHelper txnHelper = serviceRegistry.getRetryingTransactionHelper();
-				txnHelper.setForceWritable(true);
-				txnHelper.doInTransaction(() -> AuthenticationUtil.runAs(() -> {
-					logger.debug("getReportNode: Entity report is not up to date for " + finalNodeRef);
-					NodeRef reportNodeRef = entityReportService.getSelectedReport(finalNodeRef);
-					if (reportNodeRef != null) {
-						cleanThumbnails(reportNodeRef);
-					}
-					entityReportService.generateReports(finalNodeRef);
-					return reportNodeRef;
-				}, AuthenticationUtil.getSystemUserName()), false, true);
-			}
+			// attempt to generate report in a writable context avoiding unnecessary nested writable transactions
+			reportNodeRef = executeWithWritableTransaction(() -> {
+				logger.debug("getReportNode: Entity report is not up to date for " + sourceNodeRef);
+				NodeRef rnr = entityReportService.getSelectedReport(sourceNodeRef);
+				if (rnr != null) {
+					cleanThumbnails(rnr);
+				}
+				entityReportService.generateReports(sourceNodeRef);
+				return entityReportService.getSelectedReport(sourceNodeRef);
+			});
 		}
 
-		NodeRef reportNodeRef = entityReportService.getSelectedReport(sourceNode.getNodeRef());
+		if (reportNodeRef == null) {
+			reportNodeRef = entityReportService.getSelectedReport(sourceNode.getNodeRef());
+		}
 
 		return reportNodeRef != null ? new ScriptNode(reportNodeRef, serviceRegistry, getScope()) : sourceNode;
-
 	}
 
 	/**
-	 * <p>refreshReport.</p>
-	 *
-	 * @param reportNode a {@link org.alfresco.repo.jscript.ScriptNode} object.
-	 * @return a {@link org.alfresco.repo.jscript.ScriptNode} object.
+	 * Force a refresh of an existing report node. Returns the refreshed report script node.
 	 */
 	public ScriptNode refreshReport(ScriptNode reportNode) {
-		NodeRef reportNodeRef = reportNode.getNodeRef();
 
-		if ((reportNodeRef != null) && nodeService.hasAspect(reportNodeRef, VirtualContentModel.ASPECT_VIRTUAL_DOCUMENT)) {
-			reportNodeRef = new NodeRef((String) nodeService.getProperty(reportNodeRef, VirtualContentModel.PROP_ACTUAL_NODE_REF));
-		}
-
-		final NodeRef finalNodeRef = reportNodeRef;
+		NodeRef reportNodeRef = unwrapVirtualNodeIfNeeded(reportNode.getNodeRef());
+		final NodeRef finalReportNodeRef = reportNodeRef;
 
 		NodeRef entityNodeRef = entityReportService.getEntityNodeRef(reportNodeRef);
 		if ((entityNodeRef != null) && entityReportService.shouldGenerateReport(entityNodeRef, reportNodeRef)) {
-
-			// Check if we're already in a writable transaction to avoid lock conflicts
-			TxnReadState currentTxnState = AlfrescoTransactionSupport.getTransactionReadState();
-			if (currentTxnState == TxnReadState.TXN_READ_WRITE) {
-				// Already in writable transaction, execute directly to avoid lock conflicts
-				NodeRef result = AuthenticationUtil.runAs(() -> {
-					logger.debug("refreshReport: Entity report is not up to date for " + entityNodeRef);
-					entityReportService.generateReport(entityNodeRef, finalNodeRef);
-					cleanThumbnails(finalNodeRef);
-					return finalNodeRef;
-				}, AuthenticationUtil.getSystemUserName());
-				return new ScriptNode(result, serviceRegistry, getScope());
-			} else {
-				// Only create new transaction if we're in read-only mode
-				RetryingTransactionHelper txnHelper = serviceRegistry.getRetryingTransactionHelper();
-				txnHelper.setForceWritable(true);
-				return new ScriptNode(txnHelper.doInTransaction(() -> AuthenticationUtil.runAs(() -> {
-					logger.debug("refreshReport: Entity report is not up to date for " + entityNodeRef);
-					entityReportService.generateReport(entityNodeRef, finalNodeRef);
-					cleanThumbnails(finalNodeRef);
-					return finalNodeRef;
-				}, AuthenticationUtil.getSystemUserName()), false, true), serviceRegistry, getScope());
-			}
+			executeWithWritableTransaction(() -> {
+				logger.debug("refreshReport: Entity report is not up to date for " + entityNodeRef);
+				entityReportService.generateReport(entityNodeRef, finalReportNodeRef);
+				cleanThumbnails(finalReportNodeRef);
+				return finalReportNodeRef;
+			});
 		}
 
-		return reportNode;
-
+		return new ScriptNode(reportNodeRef, serviceRegistry, getScope());
 	}
 
 	@SuppressWarnings("deprecation")
 	private void cleanThumbnails(NodeRef reportNodeRef) {
-
-		// Ensure thumbnail is regenerated before preview
-		NodeRef thumbNodeRef = serviceRegistry.getThumbnailService().getThumbnailByName(reportNodeRef, ContentModel.PROP_CONTENT, "webpreview");
-		if (thumbNodeRef != null) {
-			nodeService.deleteNode(thumbNodeRef);
+		if (reportNodeRef == null) {
+			return;
 		}
+		// Ensure thumbnail is regenerated before preview - handle multiple thumbnail types in one place
+		String[] thumbnailNames = { "webpreview", "pdf" };
+		for (String name : thumbnailNames) {
+			NodeRef thumbNodeRef = serviceRegistry.getThumbnailService().getThumbnailByName(reportNodeRef, ContentModel.PROP_CONTENT, name);
+			if (thumbNodeRef != null) {
+				nodeService.deleteNode(thumbNodeRef);
+				logger.debug("cleanThumbnails: deleted thumbnail " + name + " for " + reportNodeRef);
+			}
 
-		thumbNodeRef = serviceRegistry.getThumbnailService().getThumbnailByName(reportNodeRef, ContentModel.PROP_CONTENT, "pdf");
-		if (thumbNodeRef != null) {
-			nodeService.deleteNode(thumbNodeRef);
 		}
+	}
 
+	/**
+	 * Helper to execute a supplier in a writable transaction and as system user. It avoids creating a new transaction if the current one is already writable.
+	 *
+	 * Returns the supplier result or null on failure.
+	 */
+	private <T> T executeWithWritableTransaction(Supplier<T> supplier) {
+		Objects.requireNonNull(supplier, "supplier must not be null");
+		// If already in a writable transaction we execute directly under system user
+		TxnReadState currentTxnState = AlfrescoTransactionSupport.getTransactionReadState();
+		if (currentTxnState == TxnReadState.TXN_READ_WRITE) {
+			return AuthenticationUtil.runAs(() -> supplier.get(), AuthenticationUtil.getSystemUserName());
+		} else {
+			// create a new forced-writable transaction
+			RetryingTransactionHelper txnHelper = serviceRegistry.getRetryingTransactionHelper();
+			txnHelper.setForceWritable(true);
+			return txnHelper.doInTransaction(() -> AuthenticationUtil.runAs(() -> supplier.get(), AuthenticationUtil.getSystemUserName()), false, // readOnly
+					true // commit (force commit)
+			);
+		}
+	}
+
+	private NodeRef unwrapVirtualNodeIfNeeded(NodeRef nodeRef) {
+		if (nodeRef == null) {
+			return null;
+		}
+		if (nodeService.hasAspect(nodeRef, VirtualContentModel.ASPECT_VIRTUAL_DOCUMENT)) {
+			return new NodeRef((String) nodeService.getProperty(nodeRef, VirtualContentModel.PROP_ACTUAL_NODE_REF));
+		}
+		return nodeRef;
 	}
 
 }
