@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2021 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.web.scripts.search;
@@ -31,6 +31,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.helper.JsonHelper;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -80,6 +81,18 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 
 	/** Constant <code>PARAM_MAX_RESULTS="maxResults"</code> */
 	protected static final String PARAM_MAX_RESULTS = "maxResults";
+
+	/** Constant <code>PARAM_FILTER="filter"</code> */
+	protected static final String PARAM_FILTER = "filter";
+
+	/** Constant <code>PARAM_FILTER_DATA="filterData"</code> */
+	protected static final String PARAM_FILTER_DATA = "filterData";
+
+	/** Constant <code>PARAM_FILTER_PARAMS="filterParams"</code> */
+	protected static final String PARAM_FILTER_PARAMS = "filterParams";
+
+	/** Constant <code>PARAM_EXTRA_PARAMS="extraParams"</code> */
+	protected static final String PARAM_EXTRA_PARAMS = "extraParams";
 
 	/** Services **/
 
@@ -144,25 +157,17 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 		String containerId = req.getParameter(PARAM_CONTAINER);
 		String repo = req.getParameter(PARAM_REPOSITORY);
 		String itemType = req.getParameter(PARAM_ITEMTYPE);
-		BeCPGQueryBuilder queryBuilder = null;
 
-		String nodeRef = req.getParameter(PARAM_NODEREF);
-		if (nodeRef != null && !nodeRef.isEmpty()) {
-			queryBuilder = BeCPGQueryBuilder.createQuery().inPath(getPath(nodeRef)).excludeSearch().excludeType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-			if (itemType != null && !itemType.isEmpty()) {
-				queryBuilder.ofType(QName.createQName(itemType, namespaceService));
-			}
-		}
+		String filterId = req.getParameter(PARAM_FILTER);
+		String filterData = req.getParameter(PARAM_FILTER_DATA);
+		String filterParams = req.getParameter(PARAM_FILTER_PARAMS);
+		String extraParams = req.getParameter(PARAM_EXTRA_PARAMS);
 
 		QName datatype = null;
 		Map<String, String> criteriaMap = null;
-
-		boolean isRepo = false;
-		if (repo != null && repo.equals("true")) {
-			isRepo = true;
-		}
-
-		if (query != null && !query.isEmpty()) {
+		DataListFilter dataListFilter = null;
+		
+		if ((query != null) && !query.isEmpty()) {
 
 			JSONObject jsonObject = new JSONObject(query);
 			criteriaMap = JsonHelper.extractCriteria(jsonObject);
@@ -170,12 +175,51 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 
 		}
 
+
+
+		BeCPGQueryBuilder queryBuilder = null;
+
+		String nodeRef = req.getParameter(PARAM_NODEREF);
+		if ((nodeRef != null) && !nodeRef.isEmpty()) {
+			queryBuilder = BeCPGQueryBuilder.createQuery().inPath(getPath(nodeRef)).excludeSearch().excludeType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+			if ((itemType != null) && !itemType.isEmpty()) {
+				queryBuilder.ofType(QName.createQName(itemType, namespaceService));
+			}
+		}
+
+	
+
+		boolean isRepo = false;
+		if ((repo != null) && repo.equals("true")) {
+			isRepo = true;
+		}
+
+
+		if ((filterId != null) && !filterId.isEmpty()) {
+
+			dataListFilter = new DataListFilter();
+			dataListFilter.setFilterId(filterId);
+			dataListFilter.setFilterData(filterData);
+			dataListFilter.setFilterParams(filterParams);
+			dataListFilter.setExtraParams(extraParams);
+			dataListFilter.setSiteId(siteId);
+			dataListFilter.setContainerId(containerId);
+			dataListFilter.setRepo(isRepo);
+			dataListFilter.setDataType(datatype);
+			
+			if (filterId!=null && filterId.equals(DataListFilter.FORM_FILTER) && (filterData != null)) {
+				JSONObject jsonObject = new JSONObject(filterData);
+				criteriaMap = JsonHelper.extractCriteria(jsonObject);
+			}
+			queryBuilder = dataListFilter.getSearchQuery();
+		}
+		
+
 		if (queryBuilder == null) {
 			queryBuilder = advSearchService.createSearchQuery(datatype, term, tag, isRepo, siteId, containerId);
 		}
 
 		queryBuilder.andOperator().addSort(sortMap);
-		
 
 		return advSearchService.queryAdvSearch(datatype, queryBuilder, criteriaMap, maxResults != null ? maxResults : RepoConsts.MAX_RESULTS_256);
 

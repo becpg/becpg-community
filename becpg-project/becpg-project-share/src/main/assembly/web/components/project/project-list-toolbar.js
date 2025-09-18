@@ -143,28 +143,54 @@
                      Dom.removeClass(Selector.query(".hidden", this.id + "-body", true), "hidden");
                   },
 
-                  onReportingMenuClick : function PTL_onReportingMenuClick(p_sType, p_aArgs) {
-                     var menuItem = p_aArgs[1];
-                     if (menuItem) {
+                   onReportingMenuClick: function PTL_onReportingMenuClick(p_sType, p_aArgs) {
+                       var menuItem = p_aArgs[1];
+                       if (menuItem) {
 
-                        var values = menuItem.value.split("#");
-                        
-                        var url = Alfresco.constants.PROXY_URI + "becpg/report/exportsearch/" + values[0].replace(
-                              "://", "/") + "/" + encodeURIComponent(values[1]);
+                           var values = menuItem.value.split("#");
 
-                        // add search data webscript arguments
-                        url += "?term=&query=" + encodeURIComponent('{datatype:"pjt:project"}');
+                           var dt = Alfresco.util.ComponentManager.find({ name: "beCPG.module.EntityDataGrid" })[0];
+                           var requestParams = {
+                               filter: dt.currentFilter,
+                               extraParams: dt.options.extraParams || {}
+                           };
 
-                        if (this.options.siteId.length !== 0) {
-                           url += "&site=" + this.options.siteId + "&repo=false";
-                        } else {
-                           url += "&site=&repo=true";
-                        }
+                           // Build URL with proper parameters to match doSearch
+                           var url = Alfresco.constants.PROXY_URI + "becpg/report/exportsearch/" +
+                               values[0].replace("://", "/") + "/" + encodeURIComponent(values[1]);
 
-                         beCPG.util.launchAsyncDownload(values[1],values[2], url);  
+                           // Add query parameters to match doSearch
+                           var queryParams = {
+                               query: JSON.stringify({ datatype: "pjt:project" }),
+                               term: "",
+                               filter: requestParams.filter ? requestParams.filter.filterId : "",
+                               filterData: requestParams.filter ? requestParams.filter.filterData : "",
+                               filterParams: dt._createFilterURLParameters(dt.currentFilter, dt.options.filterParameters),
+                               extraParams: requestParams.extraParams ? JSON.stringify(requestParams.extraParams) : ""
+                           };
 
-                     }
-                  },
+                           // Add site/repo parameters
+                           if (this.options.siteId && this.options.siteId.length !== 0) {
+                               queryParams.site = this.options.siteId;
+                               queryParams.repo = "false";
+                           } else {
+                               queryParams.site = "";
+                               queryParams.repo = "true";
+                           }
+
+                           // Build query string
+                           var queryString = Object.keys(queryParams)
+                               .map(function(key) {
+                                   return key + "=" + encodeURIComponent(queryParams[key] || "");
+                               })
+                               .join("&");
+
+                           url += "?" + queryString;
+
+                           beCPG.util.launchAsyncDownload(values[1], values[2], url);
+
+                       }
+                   },
 
                   /**
                    * Show/Hide detailed list buttongroup click handler
