@@ -1706,6 +1706,57 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["bcpg:entityScore"],
+        renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+            var score = 0,
+                scoreValue = data.value,
+                nodeRef = oRecord.getData("nodeRef"),
+                scoreData = null
+                html ='';
+
+                if (scoreValue) {
+                    try {
+                        scoreData = JSON.parse(scoreValue);
+                        if (scoreData && typeof scoreData.global === 'number') {
+                            score = Math.round(scoreData.global);
+                        }
+                    } catch (e) {
+                        // error parsing
+                    }
+                }
+
+
+            if ( scoreData) {
+                // Créer un ID unique pour le conteneur
+                var containerId = 'product-notifications-' + nodeRef.replace(/[:/]/g, '-') + '-' + i;
+                
+                html += '<div id="' + containerId + '" class="flat-button product-notifications-container" ' +
+                    'data-node-ref="' + nodeRef + '" ' +
+                    'data-list="' + (scope.datalistMeta ? scope.datalistMeta.name : '') + '"></div>';
+
+                setTimeout(function() {
+                    var container = document.getElementById(containerId);
+                    if (container && !container._productNotificationsInit) {
+                        container._productNotificationsInit = true; 
+                        
+                        var productNotifications = new beCPG.component.ProductNotifications(containerId);
+                        productNotifications.setOptions({
+                            entityNodeRef: nodeRef,
+                            list: scope.datalistMeta ? scope.datalistMeta.name : '',
+                            containerDiv: container,
+                            scores: scoreData 
+                        });
+                        
+                        //productNotifications.setMessages(scope.msg);
+                    }
+                }, 10);
+            }
+
+            return html;
+        }
+    });
+
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["bcpg:regulatoryUsageRef"],
         renderer: function(oRecord, data, label, scope) {
 
