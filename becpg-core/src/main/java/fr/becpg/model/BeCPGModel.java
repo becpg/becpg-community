@@ -341,6 +341,7 @@ public final class BeCPGModel {
 	
 	/** Constant <code>ASPECT_PENDING_ENTITY_REPORT_ASPECT</code> */
 	public static final QName ASPECT_PENDING_ENTITY_REPORT_ASPECT = QName.createQName(BECPG_URI, "pendingEntityReportAspect");
+	public static final QName PROP_PENDING_ENTITY_REPORT_PRIORITY = QName.createQName(BECPG_URI, "pendingEntityReportPriority");
 	
 	
 	/** Constant <code>TYPE_SAVED_SEARCH</code> */

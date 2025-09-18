@@ -141,6 +141,9 @@
 		  <show force="false" id="gs1:alcoholBeverageDistilledFromCode"/>
 		  <show force="false" id="gs1:alcoholBeverageProductionMethodTypeCode"/>
 		  
+		  <show force="false" id="gs1:sustainabilityFeatureCode"/>
+		  <show force="false" id="gs1:sustainabilityStatement"/>
+		  
           <show force="true" id="bcpg:unitPrice"/>
           <show force="true" id="bcpg:unitTotalCost"/>
           <show force="true" id="bcpg:priceCurrency"/>
@@ -186,7 +189,6 @@
           <show force="false" id="pack:tareUnit"/>
           <show force="false" id="gs1:weight"/>
           <show force="false" id="bcpg:dropPackagingOfComponents"/>
-          <show force="false" id="gs1:sustainabilityFeatureCode"/>
           <show force="false" id="gs1:innerPackTypeCode"/>
           <show force="false" id="gs1:productPerInnerPack"/>
           <show force="false" id="gs1:innerPackPerBox"/>
@@ -195,6 +197,7 @@
           <show force="false" id="gs1:innerPackHeight"/>
           <show force="false" id="gs1:innerPackWidth"/>
           <show force="false" id="gs1:innerPackDepth"/>
+          <show force="false" id="gs1:innerPackDataCarrierTypeCode"/>
           <show force="false" id="gs1:secondaryPackagingTypeCode"/>
           <show force="false" id="pack:palletProductsPerBox"/>
           <show force="false" id="gs1:isTradeItemPackedIrregularly"/>
@@ -286,14 +289,20 @@
           <show force="false" id="gs1:contact"/>
           <show force="false" id="gs1:additionalTradeItemIdentification"/>
           <show force="false" id="gs1:isAllergenRelevantDataProvided"/>
+          
+          <!--merge -->
           <show force="false" id="bcpg:autoMergeDate"/>
           <show force="false" id="bcpg:autoMergeTo"/>
           <show force="false" id="bcpg:autoMergeVersionType"/>
           <show force="false" id="bcpg:autoMergeComments"/>
           <show force="false" id="bcpg:autoMergeImpactWUsed"/>
+          
+          <!--template -->
           <show id="bcpg:entityTplEnabled" force="false" />
           <show id="bcpg:entityTplIsDefault" force="false" />
           <show id="bcpg:entityTplScript" force="false" />
+          
+          <!--regulatory -->
 		  <show id="bcpg:regulatoryCountries" />
 		  <show id="bcpg:regulatoryUsageRef" />
 		  <show id="bcpg:regulatoryMode" />
@@ -301,6 +310,15 @@
 		  <show id="bcpg:regulatoryResult" />
 		  <show id="bcpg:regulatoryFormulatedDate" />
 		  <show id="bcpg:regulatoryValidationDate" />
+		  
+		  <!--workflow validation -->
+		  <show id="bcpgwf:pvValidationDate" for-mode="view" />
+		  <show id="bcpgwf:pvRDApprovalActor" for-mode="view" />
+		  <show id="bcpgwf:pvPackagingApprovalActor" for-mode="view" />
+		  <show id="bcpgwf:pvQualityApprovalActor" for-mode="view" />
+		  <show id="bcpgwf:pvProductionApprovalActor" for-mode="view" />
+		  <show id="bcpgwf:pvCallerActor" for-mode="view" />
+		  <show id="bcpgwf:pvCaller2Actor" for-mode="view" />
         </field-visibility>
         <appearance>
           <set id="mainTab" label-id="becpg.forms.set.characteristics.label"/>
@@ -657,6 +675,10 @@
 		  <field id="gs1:alcoholBeverageContainerRef" mandatory="false" read-only="false" set="alcohol" >
 		  	 <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl"></control>
 		  </field>
+		  
+		  <set appearance="bordered-panel" id="sustainability" label-id="becpg.forms.set.sustainability.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
+		  <field id="gs1:sustainabilityFeatureCode" mandatory="false" read-only="false" set="sustainability"/>
+		  <field id="gs1:sustainabilityStatement" mandatory="false" read-only="false" set="sustainability"/>
 
           <set appearance="bordered-panel" id="profitability" label-id="becpg.forms.set.rentability.label" parent="mainTab" template="/org/alfresco/components/form/3-column-set.ftl"/>
           <field help-id="becpg.forms.help.unitPrice" id="bcpg:unitPrice" mandatory="false" read-only="false" set="profitability"/>
@@ -789,8 +811,16 @@
           </field>
           <set id="conditioningTab" label-id="becpg.forms.set.conditioning.label"/>
           <set appearance="bordered-panel" id="primaryPackaging" label-id="becpg.forms.set.primaryPackaging.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field help-id="becpg.forms.help.gs1.packagingTypeCode" id="gs1:packagingTypeCode" mandatory="false" read-only="false" set="primaryPackaging"/>
-          <field help-id="becpg.forms.help.gs1.packagingFunctionCode" id="gs1:packagingFunctionCode" mandatory="false" read-only="false" set="primaryPackaging"/>
+          <field help-id="becpg.forms.help.gs1.packagingTypeCode" id="gs1:packagingTypeCode" mandatory="false" read-only="false" set="primaryPackaging">
+          	<control template="/org/alfresco/components/form/controls/selectone.ftl">
+          	  <control-param name="dropdown">true</control-param>
+            </control>
+          </field>
+          <field help-id="becpg.forms.help.gs1.packagingFunctionCode" id="gs1:packagingFunctionCode" mandatory="false" read-only="false" set="primaryPackaging">
+          	<control template="/org/alfresco/components/form/controls/selectone.ftl">
+          	  <control-param name="dropdown">true</control-param>
+            </control>
+          </field>
           <field help-id="becpg.forms.help.gs1.height" id="gs1:height" mandatory="false" read-only="false" set="primaryPackaging">
             <control template="/org/alfresco/components/form/controls/number-unit.ftl">
               <control-param name="unit">mm</control-param>
@@ -830,9 +860,12 @@
             </control>
           </field>
           <field id="bcpg:dropPackagingOfComponents" help-id="becpg.forms.help.dropPackagingOfComponents" mandatory="false" read-only="false" set="primaryPackaging"/>
-          <field id="gs1:sustainabilityFeatureCode" mandatory="false" read-only="false" set="primaryPackaging"/>
           <set appearance="bordered-panel" id="innerPack" label-id="becpg.forms.set.innerPack.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="gs1:innerPackTypeCode" mandatory="false" read-only="false" set="innerPack"/>
+          <field id="gs1:innerPackTypeCode" mandatory="false" read-only="false" set="innerPack">
+          	<control template="/org/alfresco/components/form/controls/selectone.ftl">
+          	  <control-param name="dropdown">true</control-param>
+            </control>
+          </field>
           <field id="gs1:productPerInnerPack" mandatory="false" read-only="false" set="innerPack"/>
           <field id="gs1:innerPackPerBox" mandatory="false" read-only="false" set="innerPack"/>
           <field id="gs1:innerPackNetWeight" mandatory="false" read-only="false" set="innerPack">
@@ -860,8 +893,13 @@
               <control-param name="unit">mm</control-param>
             </control>
           </field>
+          <field help-id="becpg.forms.help.gs1.dataCarrierTypeCode" id="gs1:innerPackDataCarrierTypeCode" mandatory="false" read-only="false" set="innerPack"/>
           <set appearance="bordered-panel" id="secondaryPackaging" label-id="becpg.forms.set.secondaryPackaging.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field help-id="becpg.forms.help.gs1.packagingTypeCode" id="gs1:secondaryPackagingTypeCode" mandatory="false" read-only="false" set="secondaryPackaging"/>
+          <field help-id="becpg.forms.help.gs1.packagingTypeCode" id="gs1:secondaryPackagingTypeCode" mandatory="false" read-only="false" set="secondaryPackaging">
+          	<control template="/org/alfresco/components/form/controls/selectone.ftl">
+          	  <control-param name="dropdown">true</control-param>
+            </control>
+          </field>
           <field id="pack:palletProductsPerBox" mandatory="false" read-only="false" set="secondaryPackaging"/>
           <field help-id="becpg.forms.help.gs1.isTradeItemPackedIrregularly" id="gs1:isTradeItemPackedIrregularly" mandatory="false" read-only="false" set="secondaryPackaging">
             <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
@@ -914,7 +952,11 @@
           <field help-id="becpg.forms.help.gs1.dataCarrierTypeCode" id="gs1:secondaryDataCarrierTypeCode" mandatory="false" read-only="false" set="secondaryPackaging"/>
           
           <set appearance="bordered-panel" id="tertiaryPackaging" label-id="becpg.forms.set.tertiaryPackaging.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field help-id="becpg.forms.help.gs1.packagingTypeCode" id="gs1:tertiaryPackagingTypeCode" mandatory="false" read-only="false" set="tertiaryPackaging"/>
+          <field help-id="becpg.forms.help.gs1.packagingTypeCode" id="gs1:tertiaryPackagingTypeCode" mandatory="false" read-only="false" set="tertiaryPackaging">
+          	<control template="/org/alfresco/components/form/controls/selectone.ftl">
+          	  <control-param name="dropdown">true</control-param>
+            </control>
+          </field>
           <field help-id="becpg.forms.help.gs1.palletTypeCode" id="gs1:palletTypeCode" mandatory="false" read-only="false" set="tertiaryPackaging"/>
           <field id="pack:palletLayers" mandatory="false" read-only="false" set="tertiaryPackaging"/>
           <field id="pack:palletBoxesPerLayer" mandatory="false" read-only="false" set="tertiaryPackaging"/>
@@ -1143,6 +1185,21 @@
             <control template="/org/alfresco/components/form/controls/textarea.ftl"/>
           </field>
           <field id="bcpg:autoMergeImpactWUsed" mandatory="false" read-only="false" set="branch"/>
+          
+          <set id="productValidationTab" label-id="becpg.forms.set.validation.label"/>
+          <set id="productValidation" appearance="bordered-panel" label-id="becpg.forms.set.validation.label" parent="productValidationTab"
+			template="/org/alfresco/components/form/2-column-set.ftl" />
+		  <field id="bcpgwf:pvValidationDate" set="productValidation">
+            <control template="/org/alfresco/components/form/controls/date.ftl">
+              <control-param name="showTime">false</control-param>
+            </control>
+          </field>
+          <field id="bcpgwf:pvRDApprovalActor" set="productValidation" />
+          <field id="bcpgwf:pvPackagingApprovalActor" set="productValidation" />
+          <field id="bcpgwf:pvQualityApprovalActor" set="productValidation" />
+          <field id="bcpgwf:pvProductionApprovalActor" set="productValidation" />
+          <field id="bcpgwf:pvCallerActor" set="productValidation" />
+          <field id="bcpgwf:pvCaller2Actor" set="productValidation" />
         </appearance>
         <edit-form template="/org/alfresco/components/form/tab-edit-form.ftl"/>
         <view-form template="/org/alfresco/components/form/tab-edit-form.ftl"/>
@@ -1563,12 +1620,28 @@
           <show force="true" id="bcpg:advSvhcNot"/>
           <show id="survey:advSearchSurveyQuestion1" force="true" />
 		  <show id="survey:advSearchSurveyAnswer1" force="true" />
+		  <show id="survey:advSearchResponseCommentType1" force="true" />
+		  <show id="survey:advSearchSlDisabledComment1" force="true" />
+		  <show id="survey:advSearchSlNumberComment1" force="true" />
+		  <show id="survey:advSearchSlDateComment1" force="true" />
 		  <show id="survey:advSearchSurveyQuestion2" force="true" />
 		  <show id="survey:advSearchSurveyAnswer2" force="true" />
+		  <show id="survey:advSearchResponseCommentType2" force="true" />
+		  <show id="survey:advSearchSlDisabledComment2" force="true" />
+		  <show id="survey:advSearchSlNumberComment2" force="true" />
+		  <show id="survey:advSearchSlDateComment2" force="true" />
 		  <show id="survey:advSearchSurveyQuestion3" force="true" />
 		  <show id="survey:advSearchSurveyAnswer3" force="true" />
+		  <show id="survey:advSearchResponseCommentType3" force="true" />
+		  <show id="survey:advSearchSlDisabledComment3" force="true" />
+		  <show id="survey:advSearchSlNumberComment3" force="true" />
+		  <show id="survey:advSearchSlDateComment3" force="true" />
 		  <show id="survey:advSearchSurveyQuestion4" force="true" />
 		  <show id="survey:advSearchSurveyAnswer4" force="true" />
+		  <show id="survey:advSearchResponseCommentType4" force="true" />
+		  <show id="survey:advSearchSlDisabledComment4" force="true" />
+		  <show id="survey:advSearchSlNumberComment4" force="true" />
+		  <show id="survey:advSearchSlDateComment4" force="true" />
         </field-visibility>
         <appearance>
           <set appearance="bordered-panel" id="product-criteria" label-id="becpg.forms.set.product-criteria.label"/>
@@ -1927,67 +2000,176 @@
               <control-param name="isSearch">true</control-param>
             </control>
           </field>
-          <set appearance="bordered-panel" id="survey" label-id="becpg.forms.set.survey-criteria.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="survey:advSearchSurveyQuestion1" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-		  	  <control-param name="ds">becpg/autocomplete/survey</control-param>
-		  	  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyAnswer1" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-			  <control-param name="ds">becpg/autocomplete/survey</control-param>
-			  <control-param name="parentAssoc">survey_advSearchSurveyQuestion1</control-param>
-			  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyQuestion2" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-		  	  <control-param name="ds">becpg/autocomplete/survey</control-param>
-		  	  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyAnswer2" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-			  <control-param name="ds">becpg/autocomplete/survey</control-param>
-			  <control-param name="parentAssoc">survey_advSearchSurveyQuestion2</control-param>
-			  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyQuestion3" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-		  	  <control-param name="ds">becpg/autocomplete/survey</control-param>
-		  	  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyAnswer3" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-			  <control-param name="ds">becpg/autocomplete/survey</control-param>
-			  <control-param name="parentAssoc">survey_advSearchSurveyQuestion3</control-param>
-			  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyQuestion4" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-		  	  <control-param name="ds">becpg/autocomplete/survey</control-param>
-		  	  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
-		  <field id="survey:advSearchSurveyAnswer4" mandatory="false" read-only="false" set="survey">
-		  	<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-			  <control-param name="ds">becpg/autocomplete/survey</control-param>
-			  <control-param name="parentAssoc">survey_advSearchSurveyQuestion4</control-param>
-			  <control-param name="forceEditable">true</control-param>
-              <control-param name="isSearch">true</control-param>
-		  	</control>
-		  </field>
+          <set appearance="bordered-panel" id="survey" label-id="becpg.forms.set.survey-criteria.label"
+						template="/org/alfresco/components/form/2-stackable-column-set.ftl" />
+					<field id="survey:advSearchSurveyQuestion1" mandatory="false" read-only="false" set="survey">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/survey</control-param>
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchSurveyAnswer1" mandatory="false" read-only="false" set="survey">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/survey</control-param>
+							<control-param name="parentAssoc">survey_advSearchSurveyQuestion1</control-param>
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchResponseCommentType1" set="survey">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="insertBlank">true</control-param>
+							<control-param name="options">number|data.survey_responseCommentTypes.number,dateTime|data.survey_responseCommentTypes.dateTime</control-param>
+							<control-param name="visibleFieldsValues">{
+									prop_survey_advSearchSlDisabledComment1: [""],
+									prop_survey_advSearchSlNumberComment1: ["number"],
+									prop_survey_advSearchSlDateComment1: ["dateTime"]
+							}</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchSlDisabledComment1" mandatory="false" read-only="true" set="survey">
+						<control>
+							<control-param name="stacked">true</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchSlNumberComment1" mandatory="false" read-only="false" set="survey">
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+            				<control-param name="forceEditable">true</control-param>
+            				<control-param name="stacked">true</control-param>
+            			</control>
+					</field>
+					<field id="survey:advSearchSlDateComment1" mandatory="false" read-only="false" set="survey">
+						<control template="/org/alfresco/components/form/controls/daterange.ftl">
+							<control-param name="stacked">true</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchSurveyQuestion2" mandatory="false" read-only="false" set="survey">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/survey</control-param>
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchSurveyAnswer2" mandatory="false" read-only="false" set="survey">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/survey</control-param>
+							<control-param name="parentAssoc">survey_advSearchSurveyQuestion2</control-param>
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchResponseCommentType2" set="survey">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="insertBlank">true</control-param>
+							<control-param name="options">number|data.survey_responseCommentTypes.number,dateTime|data.survey_responseCommentTypes.dateTime</control-param>
+							<control-param name="visibleFieldsValues">{
+									prop_survey_advSearchSlDisabledComment2: [""],
+									prop_survey_advSearchSlNumberComment2: ["number"],
+									prop_survey_advSearchSlDateComment2: ["dateTime"]
+							}</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchSlDisabledComment2" mandatory="false" read-only="true" set="survey">
+						<control>
+							<control-param name="stacked">true</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchSlNumberComment2" mandatory="false" read-only="false" set="survey">
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+            				<control-param name="forceEditable">true</control-param>
+            				<control-param name="stacked">true</control-param>
+            			</control>
+					</field>
+					<field id="survey:advSearchSlDateComment2" mandatory="false" read-only="false" set="survey">
+						<control template="/org/alfresco/components/form/controls/daterange.ftl">
+							<control-param name="stacked">true</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchSurveyQuestion3" mandatory="false" read-only="false" set="survey">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/survey</control-param>
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchSurveyAnswer3" mandatory="false" read-only="false" set="survey">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/survey</control-param>
+							<control-param name="parentAssoc">survey_advSearchSurveyQuestion3</control-param>
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchResponseCommentType3" set="survey">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="insertBlank">true</control-param>
+							<control-param name="options">number|data.survey_responseCommentTypes.number,dateTime|data.survey_responseCommentTypes.dateTime</control-param>
+							<control-param name="visibleFieldsValues">{
+									prop_survey_advSearchSlDisabledComment3: [""],
+									prop_survey_advSearchSlNumberComment3: ["number"],
+									prop_survey_advSearchSlDateComment3: ["dateTime"]
+							}</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchSlDisabledComment3" mandatory="false" read-only="true" set="survey">
+						<control>
+							<control-param name="stacked">true</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchSlNumberComment3" mandatory="false" read-only="false" set="survey">
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+            				<control-param name="forceEditable">true</control-param>
+            				<control-param name="stacked">true</control-param>
+            			</control>
+					</field>
+					<field id="survey:advSearchSlDateComment3" mandatory="false" read-only="false" set="survey">
+						<control template="/org/alfresco/components/form/controls/daterange.ftl">
+							<control-param name="stacked">true</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchSurveyQuestion4" mandatory="false" read-only="false" set="survey">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/survey</control-param>
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchSurveyAnswer4" mandatory="false" read-only="false" set="survey">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/survey</control-param>
+							<control-param name="parentAssoc">survey_advSearchSurveyQuestion4</control-param>
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchResponseCommentType4" set="survey">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="insertBlank">true</control-param>
+							<control-param name="options">number|data.survey_responseCommentTypes.number,dateTime|data.survey_responseCommentTypes.dateTime</control-param>
+							<control-param name="visibleFieldsValues">{
+									prop_survey_advSearchSlDisabledComment4: [""],
+									prop_survey_advSearchSlNumberComment4: ["number"],
+									prop_survey_advSearchSlDateComment4: ["dateTime"]
+							}</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchSlDisabledComment4" mandatory="false" read-only="true" set="survey">
+						<control>
+							<control-param name="stacked">true</control-param>
+						</control>
+					</field>
+					<field id="survey:advSearchSlNumberComment4" mandatory="false" read-only="false" set="survey">
+						<control template="/org/alfresco/components/form/controls/numberrange.ftl">
+            				<control-param name="forceEditable">true</control-param>
+            				<control-param name="stacked">true</control-param>
+            			</control>
+					</field>
+					<field id="survey:advSearchSlDateComment4" mandatory="false" read-only="false" set="survey">
+						<control template="/org/alfresco/components/form/controls/daterange.ftl">
+							<control-param name="stacked">true</control-param>
+						</control>
+					</field>
         </appearance>
       </form>
       <form id="create">
@@ -2427,6 +2609,7 @@
           <show force="true" id="gs1:weight"/>
           <show force="true" id="bcpg:dropPackagingOfComponents"/>
           <show force="true" id="gs1:sustainabilityFeatureCode"/>
+		  <show force="true" id="gs1:sustainabilityStatement"/>
           <show force="true" id="gs1:innerPackTypeCode"/>
           <show force="true" id="gs1:productPerInnerPack"/>
           <show force="true" id="gs1:innerPackPerBox"/>
@@ -2435,6 +2618,7 @@
           <show force="true" id="gs1:innerPackHeight"/>
           <show force="true" id="gs1:innerPackWidth"/>
           <show force="true" id="gs1:innerPackDepth"/>
+          <show force="true" id="gs1:innerPackDataCarrierTypeCode"/>
           <show force="true" id="gs1:secondaryPackagingTypeCode"/>
           <show force="true" id="pack:palletProductsPerBox"/>
           <show force="true" id="gs1:isTradeItemPackedIrregularly"/>
@@ -2798,6 +2982,9 @@
             </control>
           </field>
           <field id="bcpg:meatType" mandatory="false" read-only="false" set="consumer"/>
+          <set appearance="bordered-panel" id="sustainability" label-id="becpg.forms.set.sustainability.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
+		  <field id="gs1:sustainabilityFeatureCode" mandatory="false" read-only="false" set="sustainability"/>
+		  <field id="gs1:sustainabilityStatement" mandatory="false" read-only="false" set="sustainability"/>
           <set appearance="bordered-panel" id="profitability" label-id="becpg.forms.set.rentability.label" parent="mainTab" template="/org/alfresco/components/form/3-column-set.ftl"/>
           <field help-id="becpg.forms.help.unitPrice" id="bcpg:unitPrice" mandatory="false" read-only="false" set="profitability"/>
           <field id="bcpg:unitTotalCost" mandatory="false" read-only="true" set="profitability"/>
@@ -2944,7 +3131,6 @@
             </control>
           </field>
           <field id="bcpg:dropPackagingOfComponents" help-id="becpg.forms.help.dropPackagingOfComponents" mandatory="false" read-only="false" set="primaryPackaging"/>
-          <field id="gs1:sustainabilityFeatureCode" mandatory="false" read-only="false" set="primaryPackaging"/>
           <set appearance="bordered-panel" id="innerPack" label-id="becpg.forms.set.innerPack.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="gs1:innerPackTypeCode" mandatory="false" read-only="false" set="innerPack"/>
           <field id="gs1:productPerInnerPack" mandatory="false" read-only="false" set="innerPack"/>
@@ -2974,6 +3160,7 @@
               <control-param name="unit">mm</control-param>
             </control>
           </field>
+          <field help-id="becpg.forms.help.gs1.dataCarrierTypeCode" id="gs1:innerPackDataCarrierTypeCode" mandatory="false" read-only="false" set="innerPack"/>
           <set appearance="bordered-panel" id="secondaryPackaging" label-id="becpg.forms.set.secondaryPackaging.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field help-id="becpg.forms.help.gs1.packagingTypeCode" id="gs1:secondaryPackagingTypeCode" mandatory="false" read-only="false" set="secondaryPackaging"/>
           <field id="pack:palletProductsPerBox" mandatory="false" read-only="false" set="secondaryPackaging"/>
@@ -3348,6 +3535,7 @@
           <show force="false" id="gs1:weight"/>
           <show force="false" id="bcpg:dropPackagingOfComponents"/>
           <show force="false" id="gs1:sustainabilityFeatureCode"/>
+		  <show force="false" id="gs1:sustainabilityStatement"/>
           <show force="false" id="gs1:innerPackTypeCode"/>
           <show force="false" id="gs1:productPerInnerPack"/>
           <show force="false" id="gs1:innerPackPerBox"/>
@@ -3356,6 +3544,7 @@
           <show force="false" id="gs1:innerPackHeight"/>
           <show force="false" id="gs1:innerPackWidth"/>
           <show force="false" id="gs1:innerPackDepth"/>
+          <show force="false" id="gs1:innerPackDataCarrierTypeCode"/>
           <show force="false" id="gs1:secondaryPackagingTypeCode"/>
           <show force="false" id="pack:palletProductsPerBox"/>
           <show force="false" id="gs1:isTradeItemPackedIrregularly"/>

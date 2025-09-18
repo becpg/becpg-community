@@ -5,6 +5,8 @@ import java.util.List;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
+import fr.becpg.repo.security.SecurityService;
+
 /**
  * <p>SecurityServicePlugin interface.</p>
  *
@@ -31,12 +33,16 @@ public interface SecurityServicePlugin {
 	boolean accept(QName nodeType);
 
 	/**
-	 * <p>computeAccessMode.</p>
+	 * <p>getMaxAccessMode.</p>
+	 * Returns the maximum access mode this plugin allows for the given node.
+	 * This method should return the plugin's own access restriction without 
+	 * considering the input access mode.
 	 *
 	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @param accesMode a int
-	 * @return a int
+	 * @return a int representing the maximum allowed access mode
 	 */
-	int computeAccessMode(NodeRef nodeRef, int accesMode);
+	default int getMaxAccessMode(NodeRef nodeRef) {
+		return SecurityService.WRITE_ACCESS;
+	}
 
 }

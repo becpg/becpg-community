@@ -27,6 +27,7 @@
     var nextAllowed = true;
     var button;
     var firstStepTab = null;
+    var validationInProgress = false;
     
     function setNextAllowed(val) {
 		if (button == null) {
@@ -112,7 +113,7 @@
                                         return true;
                                     }
                                     
-                                    if (!nextAllowed) return false;
+                                    if (!nextAllowed || validationInProgress) return false;
 
                                     var isValid = false;
 
@@ -120,8 +121,10 @@
                                     if (step != null) {
                                         if (step.type == "form" || step.type == "survey") {
                                             if (step.form != null) {
+                                                validationInProgress = true;
                                             	Dom.get(me.id + "-step-" + step.id + "-form-submit").click();
                                                 isValid = me.options.readOnly || step.readOnly || step.form.validate(Alfresco.forms.Form.NOTIFICATION_LEVEL_CONTAINER);
+                                                validationInProgress = false;
                                             } else {
 												me.loadStep(me.options.wizardStruct[newIndex]);
 												isValid = true;
@@ -450,7 +453,11 @@
 	                                        successCallback:
 	                                        {
 	                                            fn: function(response) {
-	                                                Dom.get(self.id + "-step-" + step.id).innerHTML = response.serverResponse.responseText;
+													const stepDOM = Dom.get(self.id + "-step-" + step.id);
+													stepDOM.innerHTML = response.serverResponse.responseText;
+													if (step.type == "form" && (readOnly || validated)) {
+	                                                	stepDOM.classList.add("properties-view");
+	                                                }
 	                                                step.loaded = true;
 	                                                if (step.type == "entityDataList") {
 	                                                    self.loadDataList(step, datalists);

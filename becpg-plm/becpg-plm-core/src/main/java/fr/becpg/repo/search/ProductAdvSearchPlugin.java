@@ -264,6 +264,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 				PropertyDefinition propertyDef = entityDictionaryService.getProperty(attributeQName);
 				if (propertyDef != null) {
+					
+					criteriaValue = cleanValueForDB(criteriaValue);
 
 					AssociationCriteriaFilter criteriaFilter = new AssociationCriteriaFilter(attributeQName, criteriaValue,
 							(propFilter.getHtmlId() != null) && propFilter.getHtmlId().contains("-range") ? AssociationCriteriaFilterMode.RANGE
@@ -277,6 +279,13 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 		}
 		return criteriaFilters;
+	}
+
+	private String cleanValueForDB(String criteriaValue) {
+		if (criteriaValue != null && criteriaValue.startsWith("=")) {
+			return criteriaValue.substring(1);
+		}
+		return criteriaValue;
 	}
 
 	private void merge(List<EntitySourceAssoc> sources, List<EntitySourceAssoc> targets) {
@@ -314,6 +323,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			ret.add(CRITERIA_NOTRESPECTED_SPECIFICATIONS);
 			ret.add(CRITERIA_RESPECTED_SPECIFICATIONS);
 			ret.addAll(searchConfig.getKeysToExclude());
+			ret.addAll(AdvSearchService.IGNORED_FIELDS);
 		}
 		return ret;
 	}

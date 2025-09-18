@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.StoreRef;
+import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -23,17 +23,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.regulatory.RequirementAwareEntity;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
-import fr.becpg.repo.regulatory.RequirementListDataItem;
-import fr.becpg.repo.regulatory.RequirementAwareEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.survey.SurveyModel;
 import fr.becpg.repo.survey.SurveyService;
 import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyQuestion;
+import fr.becpg.repo.survey.data.SurveyQuestionCache;
+import fr.becpg.repo.survey.helper.SurveyableEntityHelper;
 
 /**
  * <p>SurveyServiceImpl class.</p>
@@ -44,7 +48,7 @@ import fr.becpg.repo.survey.data.SurveyQuestion;
 @Service("surveyService")
 public class SurveyServiceImpl implements SurveyService {
 
-	private static Log logger = LogFactory.getLog(SurveyServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(SurveyServiceImpl.class);
 
 	public enum CommentType {
 		none, text, textarea, file
@@ -59,6 +63,9 @@ public class SurveyServiceImpl implements SurveyService {
 
 	@Autowired
 	private EntityListDAO entityListDAO;
+	
+	@Autowired
+	private BeCPGCacheService beCPGCacheService;
 
 	/*
 	 * data :
@@ -75,7 +82,7 @@ public class SurveyServiceImpl implements SurveyService {
 	 */
 	/** {@inheritDoc} */
 	@Override
-	public JSONObject getSurveyData(NodeRef entityNodeRef, String dataListName,Boolean disabled) throws JSONException {
+	public JSONObject getSurveyData(NodeRef entityNodeRef, String dataListName, Boolean disabled) throws JSONException {
 		JSONObject ret = new JSONObject();
 		L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
 
@@ -122,6 +129,22 @@ public class SurveyServiceImpl implements SurveyService {
 
 		return ret;
 	}
+	
+	@Override
+	public SurveyQuestionCache getSurveyQuestionCache() {
+		return beCPGCacheService.getFromCache(CACHE_KEY, CACHE_KEY, () -> {
+			List<SurveyQuestion> allSurveyQuestions = BeCPGQueryBuilder.createQuery().ofType(SurveyModel.TYPE_SURVEY_QUESTION)
+					.inDB().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list().stream()
+					.map(alfrescoRepository::findOne).map(SurveyQuestion.class::cast).toList();
+			List<SurveyQuestion> generatedSurveyQuestions = allSurveyQuestions.stream()
+					.filter(q -> Boolean.TRUE.equals(q.getGenerationEnabled()))
+					.filter(q -> q.getFsSurveyListName() != null && q.getFsSurveyListName().startsWith(SurveyableEntityHelper.SURVEY_LIST_BASE_NAME))
+					.filter(q -> q.getParent() == null).toList();
+			Map<NodeRef, SurveyQuestion> surveyQuestionByNodeRef = allSurveyQuestions.stream().collect(Collectors.toMap(q -> q.getNodeRef(), q -> q));
+			Map<SurveyQuestion, List<NodeRef>> surveyQuestionsByParent = allSurveyQuestions.stream().collect(Collectors.toMap(q -> q, this::getDefinitionChoices));
+			return new SurveyQuestionCache(surveyQuestionByNodeRef, surveyQuestionsByParent, generatedSurveyQuestions);
+		});
+	}
 
 	/** {@inheritDoc} */
 	/**
@@ -159,52 +182,68 @@ public class SurveyServiceImpl implements SurveyService {
 		return result;
 	}
 	
-	/** {@inheritDoc} */
-	@Override
 	public void saveSurveyData(NodeRef entityNodeRef, String dataListName, JSONObject data) throws JSONException {
-		if (data.has("data")) {
-			String strData = data.getString("data");
+	    if (!data.has("data")) {
+	        return;
+	    }
+	    
+	    JSONArray values = new JSONArray(data.getString("data"));
+	    Map<String, JSONObject> valueByQid = new HashMap<>();
+	    for (int i = 0; i < values.length(); i++) {
+	        JSONObject v = values.getJSONObject(i);
+	        if (v.has("qid")) {
+	            valueByQid.put(v.getString("qid"), v);
+	        }
+	    }
 
-			JSONArray values = new JSONArray(strData);
-			for (SurveyListDataItem survey : getSurveys(entityNodeRef, dataListName)) {
-				List<NodeRef> choices = new LinkedList<>();
-				survey.setComment(null);
+	    for (SurveyListDataItem survey : getSurveys(entityNodeRef, dataListName)) {
+	    	final List<NodeRef> choices = survey.getChoices();
+	        // Reset survey
+	        survey.setComment(null);
+	        survey.setNumberComment(null);
+	        survey.setDateComment(null);
+	        survey.setChoices(new ArrayList<>());
 
-				for (int i = 0; i < values.length(); i++) {
+	        JSONObject value = valueByQid.get(survey.getQuestion().getId());
+	        if (value != null) {
+	            // Handle comment
+	            String comment = value.optString("comment", null);
+	            if (comment != null) {
+	                survey.setComment(comment);
 
-					JSONObject value = values.getJSONObject(i);
-					if (value.has("qid") && (value.getString("qid")).equals(survey.getQuestion().getId())) {
-						if (value.has("comment")) {
-							survey.setComment(value.getString("comment"));
-						}
+	                if (choices != null && !choices.isEmpty()) {
+	                    SurveyQuestion choice = (SurveyQuestion) alfrescoRepository.findOne(choices.get(0));
+	                    String type = choice.getResponseCommentType();
+	                    try {
+	                        switch (type) {
+	                            case "number", "int", "percentage":
+	                                survey.setNumberComment(Double.parseDouble(comment));
+	                                break;
+	                            case "date", "dateTime":
+	                            	 survey.setDateComment(ISO8601DateFormat.parse(comment));
+	                                break;
+	                            default:
+	                                break;
+	                        }
+	                    } catch (Exception e) {
+	                        logger.error("Cannot convert '"+comment+"' into '"+type+"' for survey "+survey.getName(), e);
+	                    }
+	                }
+	            }
 
-						if (value.has("listOptions")) {
+	            // Handle choices
+	            String options = value.optString("listOptions", value.optString("cid", null));
+	            if (options != null) {
+	                for (String cid : options.split(",")) {
+	                    survey.getChoices().add(createNodeRef(cid.trim()));
+	                }
+	            }
+	        }
 
-							for (String cid : value.getString("listOptions").split(",")) {
-								choices.add(createNodeRef(cid));
-							}
-						} else if (value.has("cid")) {
-							for (String cid : value.getString("cid").split(",")) {
-								choices.add(createNodeRef(cid));
-							}
-						}
-
-						break;
-					}
-
-				}
-
-				survey.setChoices(choices);
-				if (logger.isDebugEnabled()) {
-					logger.debug("Save: " + survey.toString());
-				}
-
-				alfrescoRepository.save(survey);
-
-			}
-		}
-
+	        alfrescoRepository.save(survey);
+	    }
 	}
+
 
 	private NodeRef createNodeRef(String id) {
 		return new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, id);
@@ -222,7 +261,7 @@ public class SurveyServiceImpl implements SurveyService {
 					SurveyListDataItem s = (SurveyListDataItem) alfrescoRepository.findOne(el);
 					s.setParentNodeRef(dataListNodeRef);
 					return s;
-				}).collect(Collectors.toCollection(LinkedList::new));
+				}).toList();
 			}
 
 		}
@@ -240,7 +279,7 @@ public class SurveyServiceImpl implements SurveyService {
 			definition.put("sort", surveyQuestion.getSort());
 			definition.put("label", surveyQuestion.getLabel());
 			definition.put("start", questions.isEmpty() || Boolean.TRUE.equals(surveyQuestion.getIsVisible()));
-			
+
 			// Add requirements information if available for this question
 			String questionId = surveyQuestion.getNodeRef().getId();
 			if (questionRequirements.containsKey(questionId)) {
@@ -301,13 +340,13 @@ public class SurveyServiceImpl implements SurveyService {
 						choice.put("checkboxes", true);
 					}
 
-					if (CommentType.text.toString().equals(surveyQuestion.getResponseCommentType())
-							|| CommentType.textarea.toString().equals(surveyQuestion.getResponseCommentType())) {
+					if (!CommentType.none.name().equals(surveyQuestion.getResponseCommentType())) {
 						choice.put("comment", true);
 						choice.put("commentLabel", getLabelOrHidden(surveyQuestion.getResponseCommentLabel()));
 						if (CommentType.textarea.toString().equals(surveyQuestion.getResponseCommentType())) {
 							choice.put("textarea", true);
 						}
+						choice.put("commentType", surveyQuestion.getResponseCommentType());
 					}
 
 					appendCids(choice, surveyQuestion, definitions, questions, questionRequirements);
@@ -324,13 +363,13 @@ public class SurveyServiceImpl implements SurveyService {
 						choice.put("label", defChoice.getLabel());
 						appendCids(choice, defChoice, definitions, questions, questionRequirements);
 
-						if (CommentType.text.toString().equals(defChoice.getResponseCommentType())
-								|| CommentType.textarea.toString().equals(defChoice.getResponseCommentType())) {
+						if (!CommentType.none.name().equals(defChoice.getResponseCommentType())) {
 							choice.put("comment", true);
 							choice.put("commentLabel", getLabelOrHidden(defChoice.getResponseCommentLabel()));
 							if (CommentType.textarea.toString().equals(defChoice.getResponseCommentType())) {
 								choice.put("textarea", true);
 							}
+							choice.put("commentType", defChoice.getResponseCommentType());
 						}
 
 						choices.put(choice);
@@ -338,8 +377,7 @@ public class SurveyServiceImpl implements SurveyService {
 
 				}
 
-			} else if (CommentType.text.toString().equals(surveyQuestion.getResponseCommentType())
-					|| CommentType.textarea.toString().equals(surveyQuestion.getResponseCommentType())) {
+			} else if (!CommentType.none.name().equals(surveyQuestion.getResponseCommentType())) {
 				JSONObject choice = new JSONObject();
 				choice.put("id", "sub-" + surveyQuestion.getNodeRef().getId().substring(4));
 				choice.put("label", "hidden");
@@ -348,6 +386,7 @@ public class SurveyServiceImpl implements SurveyService {
 				if (CommentType.textarea.toString().equals(surveyQuestion.getResponseCommentType())) {
 					choice.put("textarea", true);
 				}
+				choice.put("commentType", surveyQuestion.getResponseCommentType());
 
 				appendCids(choice, surveyQuestion, definitions, questions, questionRequirements);
 
@@ -364,7 +403,8 @@ public class SurveyServiceImpl implements SurveyService {
 		return responseCommentLabel == null ? null : responseCommentLabel.isBlank() ? "hidden" : responseCommentLabel;
 	}
 
-	private void appendCids(JSONObject choice, SurveyQuestion surveyQuestion, JSONArray definitions, Set<SurveyQuestion> questions, Map<String, List<RequirementListDataItem>> questionRequirements) {
+	private void appendCids(JSONObject choice, SurveyQuestion surveyQuestion, JSONArray definitions,
+			Set<SurveyQuestion> questions, Map<String, List<RequirementListDataItem>> questionRequirements) {
 		if (surveyQuestion.getNextQuestions() != null) {
 			JSONArray cids = new JSONArray();
 			for (SurveyQuestion question : surveyQuestion.getNextQuestions()) {
@@ -407,29 +447,31 @@ public class SurveyServiceImpl implements SurveyService {
 	/** {@inheritDoc} */
 	@Override
 	public List<SurveyListDataItem> getVisibles(List<SurveyListDataItem> surveyListDataItems) {
-		final List<SurveyListDataItem> visibleSurveyListDataItems = new ArrayList<>(surveyListDataItems.size());
-		final Map<NodeRef, SurveyQuestion> nodeRefSurveyQuestions = surveyListDataItems.stream()
-				.map(SurveyListDataItem::getQuestion).map(alfrescoRepository::findOne).map(SurveyQuestion.class::cast)
-				.collect(Collectors.toMap(SurveyQuestion::getNodeRef, Function.identity()));
-		for (final SurveyListDataItem surveyListDataItem : surveyListDataItems) {
-			final SurveyQuestion surveyQuestion = nodeRefSurveyQuestions.get(surveyListDataItem.getQuestion());
-			final SurveyQuestion parent = surveyQuestion.getParent() != null ? surveyQuestion.getParent()
-					: surveyQuestion;
-			final boolean inNextQuestions = new ArrayList<>(nodeRefSurveyQuestions.values()).stream()
-					.map(this::getDefinitionChoices).flatMap(List::stream)
-					.map(nodeRef -> nodeRefSurveyQuestions.computeIfAbsent(nodeRef,
-							unused -> (SurveyQuestion) alfrescoRepository.findOne(nodeRef)))
-					.map(SurveyQuestion.class::cast).filter(question -> question.getNextQuestions() != null)
-					.anyMatch(question -> question.getNextQuestions().contains(parent));
-			final boolean inChoices = inNextQuestions
-					&& surveyListDataItems.stream().map(SurveyListDataItem::getChoices).flatMap(List::stream)
-							.map(choice -> nodeRefSurveyQuestions.get(choice).getNextQuestions()).flatMap(List::stream)
-							.anyMatch(parent::equals);
-			if (!inNextQuestions || inChoices || Boolean.TRUE.equals(parent.getIsVisible())) {
-				visibleSurveyListDataItems.add(surveyListDataItem);
-			}
+		return surveyListDataItems.stream().filter(q -> isVisible(q, surveyListDataItems)).toList();
+	}
+
+	private boolean isVisible(SurveyListDataItem surveyListDataItem, List<SurveyListDataItem> surveyListDataItems) {
+		Map<NodeRef, SurveyQuestion> surveyQuestionByNodeRef = getSurveyQuestionCache().getSurveyQuestionByNodeRef();
+		SurveyQuestion surveyQuestion = surveyQuestionByNodeRef.get(surveyListDataItem.getQuestion());
+		SurveyQuestion parentQuestion = surveyQuestion.getParent() != null ? surveyQuestion.getParent() : surveyQuestion;
+		if (Boolean.TRUE.equals(parentQuestion.getIsVisible())) {
+			return true;
 		}
-		return visibleSurveyListDataItems;
+		boolean inNextQuestions = new ArrayList<>(surveyQuestionByNodeRef.values()).stream()
+				.map(sQuestion -> getSurveyQuestionCache().getSurveyQuestionsByParent().get(sQuestion)).flatMap(List::stream)
+				.map(surveyQuestionByNodeRef::get)
+				.filter(sAnswer -> sAnswer.getNextQuestions() != null)
+				.anyMatch(q -> q.getNextQuestions().contains(parentQuestion));
+		if (!inNextQuestions) {
+			return true;
+		}
+		return surveyListDataItems.stream().map(SurveyListDataItem::getChoices).flatMap(List::stream)
+				.map(surveyQuestionByNodeRef::get)
+				.filter(Objects::nonNull)
+				.map(SurveyQuestion::getNextQuestions)
+				.filter(Objects::nonNull)
+				.flatMap(List::stream)
+				.anyMatch(parentQuestion::equals);
 	}
 
 }

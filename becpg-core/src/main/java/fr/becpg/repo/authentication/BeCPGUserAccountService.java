@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.authentication.provider.IdentityServiceAccountProvider;
+import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
 
 /**
@@ -82,7 +83,7 @@ public class BeCPGUserAccountService {
 	 * @param userAccount a {@link fr.becpg.repo.authentication.BeCPGUserAccount} object
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
-	public NodeRef getOrCreateUser(BeCPGUserAccount userAccount) {
+	public NodeRef getOrCreateUser(BeCPGUserAccount userAccount, boolean createOnly) {
 		return AuthenticationUtil.runAsSystem(() -> {
 			userAccount.setUserName(createTenantAware(userAccount.getUserName()));
 			NodeRef personNodeRef = null;
@@ -94,6 +95,9 @@ public class BeCPGUserAccountService {
 			propMap.putAll(userAccount.getExtraProps());
 
 			if (personService.personExists(userAccount.getUserName())) {
+				if (createOnly) {
+					throw new IllegalStateException("User already exists: " + userAccount.getUserName());
+				}
 				personNodeRef = updateUser(userAccount, propMap);
 			} else {
 				userAccount.setUserName(userAccount.getUserName().toLowerCase());
@@ -111,19 +115,9 @@ public class BeCPGUserAccountService {
 				generatePassword((String) nodeService.getProperty(personNodeRef, ContentModel.PROP_USERNAME), shouldNotify);
 			}
 			if (Boolean.TRUE.equals(userAccount.getDisable())) {
-				if (authenticationService.isAuthenticationMutable(userAccount.getUserName())) {
-					this.authenticationService.setAuthenticationEnabled(userAccount.getUserName(), false);
-				} else {
-					nodeService.addAspect(personNodeRef, ContentModel.ASPECT_PERSON_DISABLED, null);
-				}
+				AuthorityHelper.disableAccount(userAccount.getUserName());
 			} else if (Boolean.FALSE.equals(userAccount.getDisable())) {
-				if (authenticationService.isAuthenticationMutable(userAccount.getUserName())) {
-					this.authenticationService.setAuthenticationEnabled(userAccount.getUserName(), true);
-				} else {
-					if (nodeService.hasAspect(personNodeRef, ContentModel.ASPECT_PERSON_DISABLED)) {
-						nodeService.removeAspect(personNodeRef, ContentModel.ASPECT_PERSON_DISABLED);
-					}
-				}
+				AuthorityHelper.enableAccount(userAccount.getUserName());
 			}
 
 			return personNodeRef;

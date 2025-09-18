@@ -4,6 +4,17 @@
    padding-left: 22px; 
 }
 
+
+.toolbar .formulate span.first-child
+{
+   background: transparent url(./actions/entity-refresh-reports-16.png) no-repeat 12px 4px;
+   padding-left: 22px; 
+}
+
+.toolbar .formulate.loading span.first-child {
+	background: transparent url(../entity-data-lists/images/loading.gif) no-repeat 12px 4px;
+}
+
 .quick-share-url-container 
 {
     max-height: 5em;

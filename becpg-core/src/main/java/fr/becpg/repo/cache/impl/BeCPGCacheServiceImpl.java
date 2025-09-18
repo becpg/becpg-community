@@ -17,11 +17,10 @@
  ******************************************************************************/
 package fr.becpg.repo.cache.impl;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 import org.alfresco.repo.cache.DefaultSimpleCache;
@@ -51,7 +50,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 	private static final Log logger = LogFactory.getLog(BeCPGCacheServiceImpl.class);
 
-	Map<String, Integer> cacheSizes = new HashMap<>(10);
+	Map<String, Integer> cacheSizes = new ConcurrentHashMap<>();
 
 	private boolean isDebugEnable = false;
 
@@ -59,7 +58,9 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 	private AsynchronouslyRefreshedCacheRegistry registry;
 
-	private Map<String, SimpleCache<String, ?>> caches = Collections.synchronizedMap(new HashMap<>(10, 2.f));
+	private static final int INITIAL_CACHE_MAP_SIZE = 16;
+
+	private Map<String, SimpleCache<String, ?>> caches = new ConcurrentHashMap<>(INITIAL_CACHE_MAP_SIZE);
 
 	/** {@inheritDoc} */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -88,8 +89,6 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 	public void setDisableAllCache(boolean disableAllCache) {
 		this.disableAllCache = disableAllCache;
 	}
-
-	
 
 	/**
 	 * <p>Setter for the field <code>cacheSizes</code>.</p>
@@ -129,7 +128,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 	/** {@inheritDoc} */
 	@Override
 	public <T> T getFromCache(String cacheName, String cacheKey) {
-		return getFromCache(cacheName, cacheKey, () ->  null, false);
+		return getFromCache(cacheName, cacheKey, () -> null, false);
 	}
 
 	/** {@inheritDoc} */
@@ -139,9 +138,9 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		cacheKey = computeCacheKey(cacheKey);
 		@SuppressWarnings("unchecked")
 		SimpleCache<String, T> cache = (SimpleCache<String, T>) caches.get(cacheName);
-		
-		if(cache == null) {
-			logger.error(caches.keySet().toString()+ " doesn't contains: "+ cacheName);
+
+		if (cache == null) {
+			logger.error(caches.keySet().toString() + " doesn't contains: " + cacheName);
 			return null;
 		}
 		T ret = null;
@@ -221,7 +220,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 	public <T> T getFromTransactionCache(String cacheName, String itemKey, Supplier<T> valueSupplier) {
 		// Apply same key computation as regular cache methods
 		itemKey = computeCacheKey(itemKey);
-		
+
 		// Skip computation if cache is disabled
 		if (disableAllCache) {
 			return valueSupplier.get();
@@ -229,10 +228,10 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 		// Create a composite transaction resource key
 		final String txResourceKey = BeCPGCacheService.class.getName() + "." + cacheName;
-		
+
 		// Get the cache map from the transaction
 		Map<String, Object> resourceMap = TransactionalResourceHelper.getMap(txResourceKey);
-		
+
 		// Check if our item exists in the cache
 		T value = null;
 		try {
@@ -242,7 +241,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		} catch (Exception e) {
 			logger.error("Cannot get " + itemKey + " from transaction cache " + cacheName, e);
 		}
-		
+
 		if (value == null) {
 			if (isDebugEnable) {
 				logger.debug("Transaction cache miss " + itemKey + " in " + cacheName);
@@ -250,7 +249,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 			// Not in cache, calculate and store it
 			value = valueSupplier.get();
-			
+
 			if (value != null) {
 				resourceMap.put(itemKey, value);
 			} else if (isDebugEnable) {
@@ -259,25 +258,21 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		} else if (isDebugEnable) {
 			logger.debug("Transaction cache hit " + itemKey + " in " + cacheName);
 		}
-		
+
 		return value;
 	}
-	
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public void clearCache(String cacheName) {
 		registry.broadcastEvent(new BeCPGRefreshableCacheEvent(getCacheId(), cacheName), false);
 	}
 
-
-
 	/** {@inheritDoc} */
 	@Override
 	public void clearAllCaches() {
 		registry.broadcastEvent(new BeCPGRefreshableCacheEvent(getCacheId(), "all"), true);
 	}
-
 
 	private String computeCacheKey(String cacheKey) {
 

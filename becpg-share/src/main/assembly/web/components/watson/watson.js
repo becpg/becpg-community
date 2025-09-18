@@ -18,8 +18,8 @@
             ticket: null,
             minWidth: 380,
             minHeight: 600,
-            maxWidth: 800,
-            maxHeight: 800
+            defaultWidth: 800,
+            defaultHeight: 700
         },
 
         isIFrameLoaded: false,
@@ -96,9 +96,9 @@
                 newWidth = this.resizeData.startWidth - deltaX,
                 newHeight = this.resizeData.startHeight - deltaY;
 
-            // Apply min/max constraints
-            newWidth = Math.max(this.options.minWidth, Math.min(this.options.maxWidth, newWidth));
-            newHeight = Math.max(this.options.minHeight, Math.min(this.options.maxHeight, newHeight));
+            // Apply minimum constraints only (no maximum limits)
+            newWidth = Math.max(this.options.minWidth, newWidth);
+            newHeight = Math.max(this.options.minHeight, newHeight);
 
             // Calculate position adjustments to keep the bottom-right corner fixed
             var deltaWidth = newWidth - this.resizeData.startWidth,
@@ -148,11 +148,11 @@
                 var chatContainer = Dom.get("watson-chatbot-container");
                 var chatFrame = Dom.get("watson-chatbot-chat-frame");
 
-                // Reset explicit dimensions
-                chatContainer.style.width = '';
-                chatContainer.style.height = '';
+                // Set to default dimensions
+                chatContainer.style.width = me.options.defaultWidth + 'px';
+                chatContainer.style.height = me.options.defaultHeight + 'px';
                 if (chatFrame) {
-                    chatFrame.style.height = '';
+                    chatFrame.style.height = (me.options.defaultHeight - 130) + 'px';
                 }
             };
 

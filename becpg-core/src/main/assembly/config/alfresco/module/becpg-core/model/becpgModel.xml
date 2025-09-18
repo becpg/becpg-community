@@ -1473,6 +1473,13 @@
 		</aspect>
 		
 		<aspect name="bcpg:pendingEntityReportAspect">
+			<properties>
+				<property name="bcpg:pendingEntityReportPriority">
+					<type>d:text</type>
+					<default>MEDIUM</default>
+					<index enabled="false"></index>
+				</property>
+			</properties>
 		</aspect>
 
 		<aspect name="bcpg:httpLinkAspect">
