@@ -199,6 +199,7 @@
                                         });
                                     }
                                     if (data.filter) {
+                                        data.filter.skipLabel = true;
                                         YAHOO.Bubbling.fire("changeFilter", data.filter);
                                     }
                                 }
