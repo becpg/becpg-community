@@ -480,14 +480,63 @@
          * @return {String} Escaped string
          * @private
          */
-        _escapeHtml: function(str) {
-            if (!str) return "";
-            return str.toString()
-                     .replace(/&/g, "&amp;")
-                     .replace(/</g, "&lt;")
-                     .replace(/>/g, "&gt;")
-                     .replace(/"/g, "&quot;")
-                     .replace(/'/g, "&#x27;");
+
+        _escapeHtml: function(html) {
+            if (!html) return '';
+                
+                // Create a temporary div
+                var div = document.createElement('div');
+                div.innerHTML = html;
+                
+                // Allow these tags
+                var allowedTags = {
+                    'b': {},
+                    'i': {},
+                    'u': {},
+                    'em': {},
+                    'strong': {},
+                    'br': {},
+                    'p': {},
+                    'ul': {},
+                    'ol': {},
+                    'li': {},
+                    'a': ['href', 'title', 'target']
+                };
+                
+                // Remove scripts and other potentially dangerous elements
+                var scripts = div.getElementsByTagName('script');
+                while (scripts[0]) {
+                    scripts[0].parentNode.removeChild(scripts[0]);
+                }
+                
+                // Process all elements
+                var all = div.getElementsByTagName('*');
+                for (var i = 0; i < all.length; i++) {
+                    var el = all[i];
+                    var tagName = el.nodeName.toLowerCase();
+                    
+                    // If tag is not allowed, replace with its contents
+                    if (!allowedTags[tagName]) {
+                        var parent = el.parentNode;
+                        while (el.firstChild) {
+                            parent.insertBefore(el.firstChild, el);
+                        }
+                        parent.removeChild(el);
+                        i--; // Adjust index after removal
+                        continue;
+                    }
+                    
+                    // Remove disallowed attributes
+                    var attrs = el.attributes;
+                    for (var j = attrs.length - 1; j >= 0; j--) {
+                        var attrName = attrs[j].name.toLowerCase();
+                        if (allowedTags[tagName].indexOf(attrName) === -1) {
+                            el.removeAttribute(attrName);
+                        }
+                    }
+                }
+                
+                return div.innerHTML;
         },
 
         /**
