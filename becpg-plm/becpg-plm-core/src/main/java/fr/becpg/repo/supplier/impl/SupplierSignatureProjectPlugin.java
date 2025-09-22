@@ -1,5 +1,6 @@
 package fr.becpg.repo.supplier.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,6 +98,8 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 
 		Map<NodeRef, List<DeliverableListDataItem>> deliverableByDocuments = signatureProjectHelper.getDeliverableByDocuments(project);
 
+		List<DeliverableListDataItem> toRemove = new ArrayList<>();
+
 		for (ChildAssociationRef existingDocumentAssoc : nodeService.getChildAssocs(supplierDocumentsFolder, ContentModel.ASSOC_CONTAINS,
 				RegexQNamePattern.MATCH_ALL)) {
 			NodeRef existingDocument = existingDocumentAssoc.getChildRef();
@@ -106,13 +109,13 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 						&& deliverableByDocuments.containsKey(existingDocument))) {
 					for (DeliverableListDataItem deliverable : deliverableByDocuments.get(existingDocument)) {
 						if (deliverable.getNodeRef() != null) {
-							nodeService.deleteNode(deliverable.getNodeRef());
+							toRemove.add(deliverable);
 						}
 					}
+				
 					nodeService.deleteNode(existingDocument);
-				}
-
-				if (SignatureStatus.Prepared.toString().equals(nodeService.getProperty(existingDocument, SignatureModel.PROP_STATUS))) {
+					deliverableByDocuments.remove(existingDocument);
+				} else if (SignatureStatus.Prepared.toString().equals(nodeService.getProperty(existingDocument, SignatureModel.PROP_STATUS))) {
 					List<NodeRef> recipients = associationService.getTargetAssocs(existingDocument, SignatureModel.ASSOC_RECIPIENTS);
 					existingDocument = signatureService.cancelDocument(existingDocument);
 					nodeService.setProperty(existingDocument, SignatureModel.PROP_STATUS, SignatureStatus.Initialized);
@@ -120,6 +123,8 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 				}
 			}
 		}
+
+		project.getDeliverableList().removeAll(toRemove);
 
 		List<NodeRef> reports = entityReportService.getOrRefreshReportsOfKind(entityNodeRef, SUPPLIER_REPORT_KIND);
 

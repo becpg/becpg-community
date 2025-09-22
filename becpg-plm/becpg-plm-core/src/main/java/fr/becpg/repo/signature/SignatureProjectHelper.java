@@ -63,7 +63,7 @@ public class SignatureProjectHelper {
 	private RepoService repoService;
 
 
-	private String extractReportName(NodeRef reportNodeRef) {
+	public String extractReportName(NodeRef reportNodeRef) {
 		String reportName = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
 
 		int lastDotIndex = reportName.lastIndexOf(".");
