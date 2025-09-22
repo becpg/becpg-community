@@ -23,10 +23,11 @@ function main() {
     if (task.resources != null && !task.resources.isEmpty()) {
         var urlDeliverable = findUrlDeliverable()
         if (urlDeliverable != null) {
-            var document = search.findNode(del.content);
+            var document = search.findNode(urlDeliverable.content);
             if (document != null) {
+                var recipient = search.findNode(task.resources.get(0));
                 var recipients = [];
-                recipients.push(search.findNode(task.resources.get(0)));
+                recipients.push(recipient);
 
                 bSign.prepareForSignature(document, recipients);
 
