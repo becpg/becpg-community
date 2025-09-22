@@ -103,7 +103,6 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 			res.setContentEncoding("UTF-8");
 			ret.write(res.getWriter());
 
-
 		} catch (UserAlreadyExistsException e) {
 			throw new WebScriptException(e.getMessage(), e);
 		} catch (JSONException e) {
