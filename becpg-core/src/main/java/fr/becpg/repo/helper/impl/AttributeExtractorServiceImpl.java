@@ -814,7 +814,11 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				} else if (field.isEntityField() && !extracted.isEmpty()) {
 					ret.put(field.getFieldName(), extracted.get(0));
 				} else {
-					ret.put(field.getFieldName(), extracted);
+					if (extracted.isEmpty() && field.getFieldDef() instanceof AssociationDefinition && !((AssociationDefinition)field.getFieldDef()).isTargetMany()) {
+						ret.put(field.getFieldName(), null);
+					} else {
+						ret.put(field.getFieldName(), extracted);
+					}
 				}
 			} else if (!field.isFormulaField()) {
 				ret.put(field.getFieldName(), extractNodeData(nodeRef, properties, field.getLocale(), getFieldDef(itemType, field), mode, order++));
