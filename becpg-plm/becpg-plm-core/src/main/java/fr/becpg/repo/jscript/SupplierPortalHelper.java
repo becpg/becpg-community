@@ -323,13 +323,17 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	 */
 	public ScriptNode validateProjectEntity(final ScriptNode entityNode) {
 
-		if (entityNode != null) {
+		if (entityNode != null && entityNode.getNodeRef() != null) {
 
 			NodeRef entityNodeRef = entityNode.getNodeRef();
 
 			if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_AUTO_MERGE_ASPECT)
 					&& (nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_AUTO_MERGE_DATE) == null)) {
 				entityNodeRef = entityVersionService.mergeBranch(entityNodeRef, null);
+			}
+
+			if (entityNodeRef == null) {
+				entityNodeRef = entityNode.getNodeRef();
 			}
 
 			QName type = nodeService.getType(entityNodeRef);
@@ -347,7 +351,6 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 			}
 
 			return new ScriptNode(entityNodeRef, serviceRegistry, getScope());
-
 		}
 
 		return entityNode;
