@@ -112,6 +112,7 @@
 			<itemType name="bcpg:rawMaterial"  />
 			<itemType name="bcpg:packagingMaterial"  />
 			<itemType name="bcpg:packagingKit"  />
+			<itemType name="bcpg:logisticUnit"  />
 			<itemType name="bcpg:resourceProduct"  />
 		</filterTypes>
 		<aspectSubstitutions>
