@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -273,14 +272,12 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 						ingListDataItem.setQtyPerc4(totalQty4 / totalQtyUsedWithYield);
 					}
 				}
-				
+
 				if (totalQty5 != null) {
 					ingListDataItem.setQtyPerc5(totalQty5 / totalQtyUsedWithYield);
 				} else {
 					ingListDataItem.setQtyPerc5(null);
 				}
-				
-				
 
 				if (totalVol != null) {
 					ingListDataItem.setVolumeQtyPerc(totalVol / totalVolumeUsed);
@@ -309,7 +306,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 					if (hasEvaporationData(ingListDataItem)) {
 						Double evaporateRate = getEvaporateRate(ingListDataItem);
-						evaporatedDataItems.add(new EvaporatedDataItem(ingListDataItem.getIng(), evaporateRate,null,null));
+						evaporatedDataItems.add(new EvaporatedDataItem(ingListDataItem.getIng(), evaporateRate, null, null));
 					} else {
 						qtyPercWithYield /= primaryYieldFactor;
 					}
@@ -327,7 +324,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 						double secondaryYieldFactor = formulatedProduct.getSecondaryYield() / 100d;
 						if (hasEvaporationData(ingListDataItem)) {
 							Double evaporateRate = getEvaporateRate(ingListDataItem);
-							evaporatedDataItems.add(new EvaporatedDataItem(ingListDataItem.getIng(), evaporateRate,null,null));
+							evaporatedDataItems.add(new EvaporatedDataItem(ingListDataItem.getIng(), evaporateRate, null, null));
 						} else {
 							qtyPercWithSecondaryYield /= secondaryYieldFactor;
 						}
@@ -411,14 +408,27 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					}
 				}
 
-				// 4. Adjust quantities by the yield factor
-				for (EvaporatedDataItem evaporatedDataItem : evaporatedDataItems) {
-					IngListDataItem ingListDataItem = formulatedProduct.getIngList().stream()
-							.filter(i -> i.getIng().equals(evaporatedDataItem.getProductNodeRef())).findFirst().orElse(null);
-					if (ingListDataItem != null) {
-						Double adjustedQty = getQtyPercWithYield.apply(ingListDataItem) / yieldFactor;
-						setQtyPercWithYield.accept(ingListDataItem, adjustedQty);
+				// 4. Adjust quantities by the yield factor (only if yieldFactor is not zero to avoid division by zero)
+				if (Math.abs(yieldFactor) > 0.000001) {
+					for (EvaporatedDataItem evaporatedDataItem : evaporatedDataItems) {
+						if ((evaporatedDataItem == null) || (evaporatedDataItem.getProductNodeRef() == null)) {
+							continue;
+						}
+
+						IngListDataItem ingListDataItem = formulatedProduct.getIngList().stream()
+								.filter(i -> (i != null) && (i.getIng() != null) && i.getIng().equals(evaporatedDataItem.getProductNodeRef()))
+								.findFirst().orElse(null);
+
+						if (ingListDataItem != null) {
+							Double currentQty = getQtyPercWithYield.apply(ingListDataItem);
+							if (currentQty != null) {
+								double adjustedQty = currentQty / yieldFactor;
+								setQtyPercWithYield.accept(ingListDataItem, adjustedQty);
+							}
+						}
 					}
+				} else if (logger.isWarnEnabled()) {
+					logger.warn("Cannot adjust quantities: yieldFactor is zero");
 				}
 			}
 		}
@@ -728,7 +738,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 							isFound = false;
 							break;
 						}
-						if(parentIngListDataItem!=null && p!=null) {
+						if ((parentIngListDataItem != null) && (p != null)) {
 							parentIngListDataItem = parentIngListDataItem.getParent();
 							p = p.getParent();
 						}
