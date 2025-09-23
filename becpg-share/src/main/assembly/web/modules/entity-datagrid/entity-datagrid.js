@@ -984,6 +984,7 @@
                                     itemId: this._getItemType(),
                                     formId: this.options.filterFormId != null ? this.options.filterFormId : "filter",
                                     siteId: this.options.siteId,
+                                    dataListsName: listName,
                                     list: listName
                                 });
 
