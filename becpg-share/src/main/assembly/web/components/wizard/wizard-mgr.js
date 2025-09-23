@@ -311,7 +311,7 @@
                     }
                 });
             } else {
-                callback(!readOnly);
+                callback(readOnly);
             }
         },
 
