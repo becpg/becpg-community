@@ -358,6 +358,12 @@
 			        <property name="formulaService" ref="formulaService" />
 			        <property name="surveyService" ref="surveyService" />
 				</bean>
+				<bean class="fr.becpg.repo.product.formulation.SurveyListFormulationHandler">
+                    <constructor-arg><ref bean="namespaceService"/></constructor-arg>
+                    <constructor-arg><ref bean="alfrescoRepository"/></constructor-arg>
+                    <constructor-arg><ref bean="surveyService"/></constructor-arg>
+                    <constructor-arg><ref bean="repositoryEntityDefReader"/></constructor-arg>
+                </bean>
 				<bean class="fr.becpg.repo.entity.catalog.formulation.EntityCatalogFormulationHandler">
                     <property name="entityCatalogService" ref="entityCatalogService" />
                 </bean>
@@ -399,6 +405,12 @@
                     <property name="mlNodeService" ref="mlAwareNodeService" />
                     <property name="formulaService" ref="formulaService" />
                     <property name="surveyService" ref="surveyService" />
+                </bean>
+                <bean class="fr.becpg.repo.product.formulation.SurveyListFormulationHandler">
+                    <constructor-arg><ref bean="namespaceService"/></constructor-arg>
+                    <constructor-arg><ref bean="alfrescoRepository"/></constructor-arg>
+                    <constructor-arg><ref bean="surveyService"/></constructor-arg>
+                    <constructor-arg><ref bean="repositoryEntityDefReader"/></constructor-arg>
                 </bean>
                 <bean class="fr.becpg.repo.entity.catalog.formulation.EntityCatalogFormulationHandler">
                     <property name="entityCatalogService" ref="entityCatalogService" />

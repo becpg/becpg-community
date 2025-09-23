@@ -18,7 +18,7 @@
 <alfresco-config>
 
 
-	<config evaluator="node-type" condition="survey:surveyList" replace="true">
+	<config evaluator="node-type" condition="survey:surveyList" >
 		<forms>
 			<form>
 				<field-visibility>
@@ -82,7 +82,7 @@
 			</form>
 		</forms>
 	</config>
-	<config evaluator="model-type" condition="survey:surveyList" replace="true">
+	<config evaluator="model-type" condition="survey:surveyList">
 		<forms>
 			<form>
 				<field-visibility>
@@ -113,6 +113,7 @@
 					<field id="survey:slQuestion">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/survey</control-param>
+							<control-param name="urlParamsToPass">dataListsName</control-param>
 						</control>
 					</field>
 					<field id="survey:slChoices">
