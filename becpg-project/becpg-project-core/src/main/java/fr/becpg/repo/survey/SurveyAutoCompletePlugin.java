@@ -59,8 +59,8 @@ public class SurveyAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 		@SuppressWarnings("unchecked")
 		Map<String, String> extras = (HashMap<String, String>) props.get(AutoCompleteService.EXTRA_PARAM);
 		if (extras != null) {
-			if (extras.get("itemId") != null) {
-				itemId = new NodeRef(extras.get("itemId"));
+			if (extras.get(AutoCompleteService.EXTRA_PARAM_ITEMID) != null) {
+				itemId = new NodeRef(extras.get(AutoCompleteService.EXTRA_PARAM_ITEMID));
 			}
 			dataListsName = extras.get("dataListsName");
 		}
