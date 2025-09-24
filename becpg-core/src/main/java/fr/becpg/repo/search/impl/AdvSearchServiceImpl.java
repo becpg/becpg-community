@@ -63,7 +63,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 public class AdvSearchServiceImpl implements AdvSearchService {
 
 	private static final Log logger = LogFactory.getLog(AdvSearchServiceImpl.class);
-
+	
 	@Autowired
 	private NamespaceService namespaceService;
 
@@ -130,7 +130,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			maxResults = RepoConsts.MAX_RESULTS_1000;
 		}
 
-		Set<String> ignoredFields = new HashSet<>();
+		Set<String> ignoredFields = new HashSet<>(IGNORED_FIELDS);
 
 		if (advSearchPlugins != null) {
 			for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
@@ -520,7 +520,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	}
 
 	boolean isMultiValueProperty(String propValue, String modePropValue) {
-		return (modePropValue != null) && (propValue.indexOf(",") != -1);
+		return (propValue.indexOf(",") != -1);
 	}
 
 	/**
