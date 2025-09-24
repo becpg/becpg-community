@@ -146,11 +146,11 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 		@SuppressWarnings("unchecked")
 		Map<String, String> extras = (HashMap<String, String>) props.get(AutoCompleteService.EXTRA_PARAM);
 		if (extras != null) {
-			if (extras.get("itemId") != null) {
-				itemId = new NodeRef(extras.get("itemId"));
+			if (extras.get(AutoCompleteService.EXTRA_PARAM_ITEMID) != null) {
+				itemId = new NodeRef(extras.get(AutoCompleteService.EXTRA_PARAM_ITEMID));
 			}
-			if (extras.get("dataListsName") != null) {
-				listName = extras.get("dataListsName");
+			if (extras.get(AutoCompleteService.EXTRA_PARAM_LIST) != null) {
+				listName = extras.get(AutoCompleteService.EXTRA_PARAM_LIST);
 			}
 			
 			if (extras.get("showFullPath") != null) {
