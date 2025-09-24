@@ -10775,6 +10775,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
+					<field id="bcpg:filIngLevel" read-only="true" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:regulatoryCountries">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
