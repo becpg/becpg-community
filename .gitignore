@@ -41,3 +41,4 @@ build/
 /.env
 .aider*
 /becpg.code-workspace
+/becpg-share/
