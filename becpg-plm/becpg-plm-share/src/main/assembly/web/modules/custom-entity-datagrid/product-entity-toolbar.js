@@ -336,7 +336,7 @@
 
 								var templateUrl = YAHOO.lang
 									.substitute(
-										Alfresco.constants.URL_SERVICECONTEXT + "components/form?formId=full-screen&showCaption=false&entityNodeRef={entityNodeRef}&itemKind={itemKind}&itemId={itemId}&destination={destination}&mode={mode}&submitType={submitType}&showCancelButton=true&dataListsName={dataListsName}",
+										Alfresco.constants.URL_SERVICECONTEXT + "components/form?formId=full-screen&showCaption=false&entityNodeRef={entityNodeRef}&itemKind={itemKind}&itemId={itemId}&destination={destination}&mode={mode}&submitType={submitType}&showCancelButton=true&list={list}",
 										{
 											itemKind: "type",
 											itemId: this.datalistMeta.itemType,
@@ -344,7 +344,7 @@
 											mode: "create",
 											submitType: "json",
 											entityNodeRef: this.options.entityNodeRef,
-											dataListsName: encodeURIComponent(this.datalistMeta.name != null ? this.datalistMeta.name
+											list: encodeURIComponent(this.datalistMeta.name != null ? this.datalistMeta.name
 												: this.options.list)
 										});
 
