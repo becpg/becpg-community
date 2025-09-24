@@ -39,7 +39,7 @@
 							<control-param name="parentAssoc">survey_slQuestion</control-param>
 						</control>
 					</field>
-
+					<field id="survey:slComment" read-only="true"/>
 				</appearance>
 			</form>
 			
@@ -88,7 +88,6 @@
 				<field-visibility>
 					<show id="survey:slQuestion" />
 					<show id="survey:slChoices" />
-					<show id="survey:slComment" />
 				</field-visibility>
 				<appearance>
 					<field id="survey:slQuestion">
@@ -172,6 +171,7 @@
 					<show id="dataList_bcpg:reqCtrlList" />
 				</field-visibility>
 				<appearance>
+					<field id="survey:slComment" read-only="true" />
 					<field id="dataList_bcpg:reqCtrlList" label-id="hidden" />
 				</appearance>
 			</form>
