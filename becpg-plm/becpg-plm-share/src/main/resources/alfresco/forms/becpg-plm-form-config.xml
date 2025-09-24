@@ -10785,6 +10785,15 @@
 					</field>
 				</appearance>
 			</form>
+			
+			<form id="datagridWUsed">
+				<field-visibility>
+					<show id="bcpg:filIngLevel" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:filIngLevel" read-only="true" />
+				</appearance>
+			</form>
 		</forms>
 	</config>
 	<!-- bcpg:forbiddenIngList type (existing nodes) -->
