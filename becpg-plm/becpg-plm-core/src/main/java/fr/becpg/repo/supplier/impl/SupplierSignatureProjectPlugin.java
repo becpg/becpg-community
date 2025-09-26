@@ -107,20 +107,24 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 
 				if ((nodeService.hasAspect(existingDocument, ReportModel.ASPECT_REPORT_TEMPLATES)
 						&& deliverableByDocuments.containsKey(existingDocument))) {
+					
+					signatureService.cancelDocument(existingDocument);
+					
 					for (DeliverableListDataItem deliverable : deliverableByDocuments.get(existingDocument)) {
 						if (deliverable.getNodeRef() != null) {
 							toRemove.add(deliverable);
 						}
 					}
-				
 					nodeService.deleteNode(existingDocument);
 					deliverableByDocuments.remove(existingDocument);
-				} else if (SignatureStatus.Prepared.toString().equals(nodeService.getProperty(existingDocument, SignatureModel.PROP_STATUS))) {
+				}  else if (SignatureStatus.Prepared.toString().equals(nodeService.getProperty(existingDocument, SignatureModel.PROP_STATUS))) {
 					List<NodeRef> recipients = associationService.getTargetAssocs(existingDocument, SignatureModel.ASSOC_RECIPIENTS);
 					existingDocument = signatureService.cancelDocument(existingDocument);
 					nodeService.setProperty(existingDocument, SignatureModel.PROP_STATUS, SignatureStatus.Initialized);
 					associationService.update(existingDocument, SignatureModel.ASSOC_RECIPIENTS, recipients);
 				}
+				
+				
 			}
 		}
 
