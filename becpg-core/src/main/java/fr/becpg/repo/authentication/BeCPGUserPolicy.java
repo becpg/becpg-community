@@ -9,6 +9,8 @@ import org.alfresco.repo.node.NodeServicePolicies.BeforeDeleteNodePolicy;
 import org.alfresco.repo.node.NodeServicePolicies.OnUpdatePropertiesPolicy;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.security.authentication.identityservice.IdentityServiceException;
+import org.alfresco.repo.security.authority.AuthorityServicePolicies.OnAuthorityAddedToGroup;
+import org.alfresco.repo.security.authority.AuthorityServicePolicies.OnAuthorityRemovedFromGroup;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.transaction.TransactionSupportUtil;
@@ -17,6 +19,8 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.authentication.provider.IdentityServiceAccountProvider;
+import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
@@ -24,7 +28,7 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  *
  * @author matthieu
  */
-public class BeCPGUserPolicy extends AbstractBeCPGPolicy implements OnUpdatePropertiesPolicy, BeforeDeleteNodePolicy {
+public class BeCPGUserPolicy extends AbstractBeCPGPolicy implements OnUpdatePropertiesPolicy, BeforeDeleteNodePolicy, OnAuthorityAddedToGroup, OnAuthorityRemovedFromGroup {
 
 	private static final String KEY_GENERATE_PASSWORD = "generatePassword";
 
@@ -34,9 +38,13 @@ public class BeCPGUserPolicy extends AbstractBeCPGPolicy implements OnUpdateProp
 	
 	private IdentityServiceAccountProvider identityServiceAccountProvider;
 	
-
+	private BeCPGCacheService beCPGCacheService;
+	
 	private static final Log logger = LogFactory.getLog(BeCPGUserPolicy.class);
-
+	
+	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
+		this.beCPGCacheService = beCPGCacheService;
+	}
 	
 	/**
 	 * <p>Setter for the field <code>identityServiceAccountProvider</code>.</p>
@@ -61,6 +69,8 @@ public class BeCPGUserPolicy extends AbstractBeCPGPolicy implements OnUpdateProp
 	public void doInit() {
 		policyComponent.bindClassBehaviour(OnUpdatePropertiesPolicy.QNAME, ContentModel.TYPE_PERSON, new JavaBehaviour(this, "onUpdateProperties"));
 		policyComponent.bindClassBehaviour(BeforeDeleteNodePolicy.QNAME, ContentModel.TYPE_PERSON, new JavaBehaviour(this, "beforeDeleteNode"));
+		policyComponent.bindClassBehaviour(OnAuthorityAddedToGroup.QNAME, ContentModel.TYPE_AUTHORITY, new JavaBehaviour(this, "onAuthorityAddedToGroup"));
+		policyComponent.bindClassBehaviour(OnAuthorityRemovedFromGroup.QNAME, ContentModel.TYPE_AUTHORITY, new JavaBehaviour(this, "onAuthorityRemovedFromGroup"));
 	}
 
 	/** {@inheritDoc} */
@@ -132,5 +142,15 @@ public class BeCPGUserPolicy extends AbstractBeCPGPolicy implements OnUpdateProp
 			}
 		}
 		return true;
+	}
+	
+	@Override
+	public void onAuthorityAddedToGroup(String parentGroup, String childAuthority) {
+		beCPGCacheService.clearCache(AuthorityHelper.CACHE_KEY);
+	}
+	
+	@Override
+	public void onAuthorityRemovedFromGroup(String parentGroup, String childAuthority) {
+		beCPGCacheService.clearCache(AuthorityHelper.CACHE_KEY);
 	}
 }
