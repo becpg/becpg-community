@@ -3,7 +3,6 @@
  */
 package fr.becpg.test.repo.publication;
 
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -93,7 +92,7 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 	}
 
 	@Test
-	public void testChannelPolicy() throws FileNotFoundException {
+	public void testChannelPolicy(){
 
 		final NodeRef channel1NodeRef = createPublicationChannelNode(CHANNEL_ID1);
 		final NodeRef channel2NodeRef = createPublicationChannelNode(CHANNEL_ID2);
@@ -326,7 +325,7 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 	 */
 
 	@Test
-	public void testChannelQuery() throws FileNotFoundException {
+	public void testChannelQuery() {
 
 		final NodeRef channelNodeRef = inWriteTx(() -> {
 
