@@ -814,11 +814,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				} else if (field.isEntityField() && !extracted.isEmpty()) {
 					ret.put(field.getFieldName(), extracted.get(0));
 				} else {
-					if (extracted.isEmpty() && field.getFieldDef() instanceof AssociationDefinition && !((AssociationDefinition)field.getFieldDef()).isTargetMany()) {
-						ret.put(field.getFieldName(), null);
-					} else {
-						ret.put(field.getFieldName(), extracted);
-					}
+					ret.put(field.getFieldName(), extracted);
 				}
 			} else if (!field.isFormulaField()) {
 				ret.put(field.getFieldName(), extractNodeData(nodeRef, properties, field.getLocale(), getFieldDef(itemType, field), mode, order++));
@@ -947,15 +943,18 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 					StringBuilder nodeRefs = new StringBuilder();
 					for (NodeRef assocNodeRef : assocRefs) {
-
-						if (!displayName.isEmpty()) {
-							displayName += RepoConsts.LABEL_SEPARATOR;
-							nodeRefs.append(RepoConsts.LABEL_SEPARATOR);
+						if(nodeService.exists(assocNodeRef)) {
+							if (!displayName.isEmpty()) {
+								displayName += RepoConsts.LABEL_SEPARATOR;
+								nodeRefs.append(RepoConsts.LABEL_SEPARATOR);
+							}
+	
+							type = nodeService.getType(assocNodeRef);
+							displayName += extractPropName(type, assocNodeRef);
+							nodeRefs.append(assocNodeRef.toString());
+						} else {
+							logger.error("Cache issue assocNodeRef doesn't exist for:"+attribute.getName() );
 						}
-
-						type = nodeService.getType(assocNodeRef);
-						displayName += extractPropName(type, assocNodeRef);
-						nodeRefs.append(assocNodeRef.toString());
 					}
 					tmp.put("order", order);
 					tmp.put("label", entityDictionaryService.getTitle(attribute, nodeService.getType(nodeRef)));
@@ -967,11 +966,15 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				} else if (FormatMode.CSV.equals(mode) || FormatMode.XLSX.equals(mode)) {
 					StringBuilder ret = new StringBuilder();
 					for (NodeRef assocNodeRef : assocRefs) {
-						type = nodeService.getType(assocNodeRef);
-						if (ret.length() > 0) {
-							ret.append(RepoConsts.LABEL_SEPARATOR);
+						if(nodeService.exists(assocNodeRef)) {
+							type = nodeService.getType(assocNodeRef);
+							if (ret.length() > 0) {
+								ret.append(RepoConsts.LABEL_SEPARATOR);
+							}
+							ret.append(extractPropName(type, assocNodeRef));
+						} else {
+						   logger.error("Cache issue assocNodeRef doesn't exist for:"+attribute.getName() );
 						}
-						ret.append(extractPropName(type, assocNodeRef));
 					}
 					return ret.toString();
 
