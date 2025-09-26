@@ -139,21 +139,55 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 
 			// Spel method
 			dynamicCharactListItems.add(DynamicCharactListItem.build()
-				.withTitle(" beCPG findOne")
+				.withTitle("beCPG findOne")
 				.withFormula("@beCPG.findOne(nodeRef).qty"));
 
 			dynamicCharactListItems.add(DynamicCharactListItem.build()
-				.withTitle(" beCPG propValue")
+				.withTitle("beCPG propValue")
 				.withFormula("@beCPG.propValue(nodeRef,'bcpg:bestBeforeDate')\n"));
 
 			dynamicCharactListItems.add(DynamicCharactListItem.build()
-				.withTitle(" beCPG SUM ")
+				.withTitle("beCPG SUM ")
 				.withFormula("@beCPG.sum(compoListView.compoList.?[parent == null],\"entity.costList[0].value + dataListItem.qty\")"));
 
 			dynamicCharactListItems.add(DynamicCharactListItem.build()
-				.withTitle(" beCPG SUM++ ")
+				.withTitle("beCPG SUM++ ")
 				.withFormula("@beCPG.sum(compoListView.compoList.?[parent == null],\"@beCPG.propValue(dataListItem.nodeRef,'bcpg:compoListQtyPercForSF')\")"));
 
+			// Multilingual SpEL functions tests using 
+			dynamicCharactListItems.add(DynamicCharactListItem.build()
+				.withTitle("beCPG updateMLText en")
+				.withFormula("@beCPG.updateMLText(servingSizeByCountry,'en','10')"));
+
+			dynamicCharactListItems.add(DynamicCharactListItem.build()
+				.withTitle("beCPG updateMLText fr_CA")
+				.withFormula("@beCPG.setValue(#this, 'bcpg:servingSizeText',@beCPG.updateMLText(@beCPG.propMLValue(#this, 'bcpg:servingSizeText', null),'fr_CA','Pour 1/5 de meule (32g)'))"));
+
+			dynamicCharactListItems.add(DynamicCharactListItem.build()
+				.withTitle("beCPG setMLValue fr")
+				.withFormula("@beCPG.setMLValue(#this, 'bcpg:servingSizeText','fr', 'Taille de portion mise à jour')"));
+
+			dynamicCharactListItems.add(DynamicCharactListItem.build()
+				.withTitle("beCPG setMLValue en")
+				.withFormula("@beCPG.setMLValue('bcpg:servingSizeText', 'en', 'Updated serving size text')"));
+
+			dynamicCharactListItems.add(DynamicCharactListItem.build()
+				.withTitle("beCPG propMLValue fr_CA")
+				.withFormula("@beCPG.propMLValue(#this,'bcpg:servingSizeText','fr_CA')"));
+
+				dynamicCharactListItems.add(DynamicCharactListItem.build()
+				.withTitle("beCPG propMLValue fr")
+				.withFormula("@beCPG.propMLValue(#this,'bcpg:servingSizeText','fr')"));
+
+				dynamicCharactListItems.add(DynamicCharactListItem.build()
+				.withTitle("beCPG propMLValue en")
+				.withFormula("@beCPG.propMLValue(#this,'bcpg:servingSizeText','en')"));
+
+			dynamicCharactListItems.add(DynamicCharactListItem.build()
+				.withTitle("beCPG propMLValue servingSizeByCountry en")
+				.withFormula("@beCPG.propMLValue(servingSizeByCountry,'en')"));
+
+		
 			// Static fonction
 			dynamicCharactListItems.add(DynamicCharactListItem.build()
 				.withTitle("Autonum V1 ")
@@ -174,6 +208,7 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			dynamicCharactListItems.add(DynamicCharactListItem.build()
 				.withTitle("MTLine3")
 				.withFormula("#abc - #b;\n\n"));
+
 
 			// DynamicColumn
 
@@ -312,6 +347,31 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			if ("MTLine1".equals(dynamicCharactListItem.getTitle())) {
 				if (dynamicCharactListItem.getValue() instanceof Integer) {
 					assertEquals(((Integer) dynamicCharactListItem.getValue()).intValue(),45);
+				}
+			}
+
+			// Check multilingual SpEL functions
+			if ("beCPG propMLValue fr_CA".equals(dynamicCharactListItem.getTitle())) {
+				if (dynamicCharactListItem.getValue() instanceof String) {
+					assertEquals("Pour 1/5 de meule (32g)", dynamicCharactListItem.getValue());
+				}
+			}
+
+			if ("beCPG propMLValue fr".equals(dynamicCharactListItem.getTitle())) {
+				if (dynamicCharactListItem.getValue() instanceof String) {
+					assertEquals("Taille de portion mise à jour", dynamicCharactListItem.getValue());
+				}
+			}
+
+			if ("beCPG propMLValue en".equals(dynamicCharactListItem.getTitle())) {
+				if (dynamicCharactListItem.getValue() instanceof String) {
+					assertEquals("Updated serving size text", dynamicCharactListItem.getValue());
+				}
+			}
+
+			if ("beCPG propMLValue servingSizeByCountry en".equals(dynamicCharactListItem.getTitle())) {
+				if (dynamicCharactListItem.getValue() instanceof String) {
+					assertEquals("10", dynamicCharactListItem.getValue());
 				}
 			}
 
