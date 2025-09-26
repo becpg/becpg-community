@@ -283,7 +283,7 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 
 			}
 
-			if ((queryFilter != null) && (queryFilter.length() > 0)) {
+			if ((queryFilter != null) && (!queryFilter.isBlank())) {
 				String[] splitted = queryFilter.split("\\|");
 				beCPGQueryBuilder.andPropEquals(QName.createQName(splitted[0], namespaceService), splitted[1]);
 			}

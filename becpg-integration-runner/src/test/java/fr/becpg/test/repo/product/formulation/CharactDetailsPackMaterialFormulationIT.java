@@ -3,6 +3,7 @@
  */
 package fr.becpg.test.repo.product.formulation;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,8 +14,6 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.ibm.icu.text.DecimalFormat;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PackModel;
