@@ -305,6 +305,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getTargetAssocs(NodeRef nodeRef, QName qName) {
+
 		//always return a new List ensuring cache immutability
 		//TO should be better using unmodifiable set
 		return new LinkedList<>(getFromCache(assocsCache, new AssociationCacheRegion(nodeRef, qName), () -> {
@@ -369,7 +370,6 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	@Override
 	public ChildAssocCacheEntry getChildAssocsByType(final NodeRef nodeRef, final QName qName) {
 		return getFromCache(childsAssocsCache, new AssociationCacheRegion(nodeRef, qName), () -> {
-
 			List<ChildAssociationRef> allAssocs = nodeService.getChildAssocs(nodeRef, qName, RegexQNamePattern.MATCH_ALL, true);
 
 			ChildAssocCacheEntry childAssocCacheEntry = new ChildAssocCacheEntry(allAssocs.size());
