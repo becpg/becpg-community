@@ -446,9 +446,26 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 						.orElse(null);
 
 				if (ingListDataItem != null) {
+					// Skip ingredients with Omit declaration
+					if (DeclarationType.Omit.equals(ingListDataItem.getDeclType())) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Skipping evaporation for omitted ingredient: " + ingListDataItem.getName());
+						}
+						continue;
+					}
+
 					Double rate = evaporatedDataItem.getRate() != null ? evaporatedDataItem.getRate() : 100d;
+					// If evaporation rate is 0%, consider it as null (no evaporation)
+					if (rate == 0d) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Skipping evaporation for ingredient with 0% rate: " + ingListDataItem.getName());
+						}
+						continue;
+					}
+
 					Double qtyPercWithYield = getQtyPercWithYield.apply(ingListDataItem);
 
+					// Only apply evaporation if ingredient has a percentage
 					if ((qtyPercWithYield != null) && (evaporatingQty > 0d)) {
 						Double maxEvapQty = (qtyPercWithYield * rate) / 100d;
 
