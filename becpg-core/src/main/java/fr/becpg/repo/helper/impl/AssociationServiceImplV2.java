@@ -364,7 +364,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		return getFromCache(childsAssocsCache, new AssociationCacheRegion(nodeRef, qName), () -> {
 			List<ChildAssociationRef> allAssocs = nodeService.getChildAssocs(nodeRef, qName, RegexQNamePattern.MATCH_ALL, true);
 
-			ChildAssocCacheEntry childAssocCacheEntry = new ChildAssocCacheEntry(allAssocs.size());
+			ChildAssocCacheEntry childAssocCacheEntry = new ChildAssocCacheEntry();
 
 			for (ChildAssociationRef assocRef : allAssocs) {
 				NodeRef childRef = assocRef.getChildRef();
