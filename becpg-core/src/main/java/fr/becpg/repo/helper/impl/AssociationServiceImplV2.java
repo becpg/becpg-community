@@ -27,7 +27,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -305,20 +304,13 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getTargetAssocs(NodeRef nodeRef, QName qName) {
+		Set<NodeRef> cachedSet = getFromCache(assocsCache, new AssociationCacheRegion(nodeRef, qName),
+				() -> nodeService.getTargetAssocs(nodeRef, qName).stream().map(AssociationRef::getTargetRef).collect(Collectors.toSet()));
 
-		//always return a new List ensuring cache immutability
-		//TO should be better using unmodifiable set
-		return new LinkedList<>(getFromCache(assocsCache, new AssociationCacheRegion(nodeRef, qName), () -> {
-			List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, qName);
-			Set<NodeRef> listItems = new HashSet<>();
-			for (AssociationRef assocRef : assocRefs) {
-				listItems.add(assocRef.getTargetRef());
-			}
-			return listItems;
-		}));
+		return new ArrayList<>(cachedSet);
 
 	}
-
+	
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef getTargetAssoc(NodeRef nodeRef, QName qName) {
@@ -395,7 +387,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 	private List<NodeRef> dbChildAssocSearch(final NodeRef nodeRef, final QName childType, Map<String, Boolean> sortProps) {
 
-		List<NodeRef> ret = new LinkedList<>();
+		List<NodeRef> ret = new ArrayList<>();
 		QName sortFieldQName = null;
 		String sortDirection = null;
 		String createSortDirection = "ASC";
