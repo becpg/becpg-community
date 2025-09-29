@@ -25,7 +25,7 @@ public final class BeCPGModel {
 	
 	// beCPG site role
 	public static final String SITE_BRANCH_MANAGER = "SiteBranchManager";
-	public static final String SITE_BRANCH_ONLY_MANAGER = "SiteBranchOnlyManage";
+	public static final String SITE_BRANCH_ONLY_MANAGER = "SiteBranchOnlyManager";
 
 	// entityListsAspect
 	/** Constant <code>ASPECT_ENTITYLISTS</code> */
