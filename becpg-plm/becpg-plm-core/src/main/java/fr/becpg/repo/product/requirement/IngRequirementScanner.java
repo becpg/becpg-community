@@ -131,10 +131,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 				componentProductData.getIngList().forEach(ingListDataItem -> {
 
-
-					if (!RequirementType.Authorized.equals(fil.getReqType()) && !isQtyCheck(fil)
-							&& checkRuleMatchIng(ingListDataItem, fil, productData)) {
-
+					if (!RequirementType.Authorized.equals(fil.getReqType()) && !isQtyCheck(fil) && checkRuleMatchIng(ingListDataItem, fil)) {
 						// Look for raw material
 
 						if (componentProductData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
@@ -349,7 +346,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	}
 
 
-	private boolean checkRuleMatchIng(IngListDataItem ingListDataItem, ForbiddenIngListDataItem fil, ProductData productData) {
+	private boolean checkRuleMatchIng(IngListDataItem ingListDataItem, ForbiddenIngListDataItem fil) {
 	
 		if (!matchBooleanFilter(fil.getIsGMO(), ingListDataItem.getIsGMO())) {
 		    return false; // check next rule

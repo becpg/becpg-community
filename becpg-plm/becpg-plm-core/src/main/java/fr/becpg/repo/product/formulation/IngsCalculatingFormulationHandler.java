@@ -40,14 +40,14 @@ import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
+import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.labeling.EvaporatedDataItem;
 import fr.becpg.repo.product.helper.IngListHelper;
-import fr.becpg.repo.regulatory.RequirementDataType;
-import fr.becpg.repo.regulatory.RequirementListDataItem;
-import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.variant.filters.VariantFilters;
@@ -114,7 +114,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 		if (!(formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (formulatedProduct instanceof ProductSpecificationData))) {
 
-			Map<NodeRef, RequirementListDataItem> reqCtrlMap = new HashMap<>();
+			Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap = new HashMap<>();
 
 			if (accept(formulatedProduct)) {
 
@@ -172,7 +172,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	/**
 	 * Calculate the ingredient list of a product.
 	 */
-	private void calculateIL(ProductData formulatedProduct, Map<NodeRef, RequirementListDataItem> reqCtrlMap) {
+	private void calculateIL(ProductData formulatedProduct, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) {
 
 		List<CompoListDataItem> compoList = formulatedProduct
 				.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()));
@@ -486,12 +486,12 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		return ret;
 	}
 
-	private void addReqCtrl(Map<NodeRef, RequirementListDataItem> reqCtrlMap, NodeRef reqNodeRef, RequirementType requirementType, MLText message,
+	private void addReqCtrl(Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap, NodeRef reqNodeRef, RequirementType requirementType, MLText message,
 			NodeRef sourceNodeRef, RequirementDataType requirementDataType) {
 
-		RequirementListDataItem reqCtrl = reqCtrlMap.get(reqNodeRef);
+		ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(reqNodeRef);
 		if (reqCtrl == null) {
-			reqCtrl = RequirementListDataItem.build().ofType(requirementType).withMessage(message).ofDataType(requirementDataType);
+			reqCtrl = ReqCtrlListDataItem.build().ofType(requirementType).withMessage(message).ofDataType(requirementDataType);
 
 			reqCtrlMap.put(reqNodeRef, reqCtrl);
 		} else {
@@ -514,7 +514,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * @param visited set tracking already visited nodeRefs to avoid cycles
 	 */
 	private void visitILOfPart(ProductData formulatedProduct, CompoListDataItem compoListDataItem, ProductData componentProductData,
-			List<IngListDataItem> retainNodes, Map<String, IngListDataItem> totalQtyIngMap, Map<NodeRef, RequirementListDataItem> reqCtrlMap,
+			List<IngListDataItem> retainNodes, Map<String, IngListDataItem> totalQtyIngMap, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap,
 			Set<NodeRef> visited) {
 
 		if (!visited.contains(componentProductData.getNodeRef())) {
