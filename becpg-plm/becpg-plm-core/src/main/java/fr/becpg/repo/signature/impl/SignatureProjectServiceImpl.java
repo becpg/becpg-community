@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.artworks.signature.SignatureService;
 import fr.becpg.artworks.signature.model.SignatureModel;
 import fr.becpg.artworks.signature.model.SignatureStatus;
-import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.RepoService;
@@ -58,21 +58,16 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 	private static final Log logger = LogFactory.getLog(SignatureProjectServiceImpl.class);
 	
 	// Constants
-	////TODO @Valentin 
-//		private static final String TASK_SIGNATURE_NAME_KEY = "signatureWorkflow.task-signature.name";
-//		private static final String TASK_REJECT_NAME_KEY = "signatureWorkflow.task-reject.name";
-//		private static final String TASK_REJECT_DESCRIPTION_KEY = "signatureWorkflow.task-reject.description";
-//		private static final String TASK_CHECKIN_NAME_KEY = "signatureWorkflow.task-checkin.name";
-//		private static final String DOCUMENTS_PATH = "/app:company_home/app:dictionary/app:scripts";
-//		private static final String PREPARE_SCRIPT = "cm:prepare-signature.js";
-//		private static final String VALIDATE_SCRIPT = "cm:validate-signature.js";
-//		private static final String REJECT_SCRIPT = "cm:reject-signature.js";
-//		private static final String SIGN_SCRIPT = "cm:sign-document.js";
-//		private static final String VALIDATE_PROJECT_SCRIPT = "cm:validateProjectEntity.js";
-//		private static final int NOTIFICATION_FREQUENCY = 7;
-//		private static final int INITIAL_NOTIFICATION = -1;
-//		private static final String TASK_REJECT_NAME = "plm.supplier.portal.task.closing.name";
-//		private static final String TASK_REJECT_DELIVERABLE_NAME = "plm.supplier.portal.task.closing.name";
+	private static final String TASK_SIGNATURE_NAME_KEY = "signatureWorkflow.task-signature.name";
+	private static final String TASK_REJECT_NAME_KEY = "signatureWorkflow.task-reject.name";
+	private static final String TASK_REJECT_DESCRIPTION_KEY = "signatureWorkflow.task-reject.description";
+	private static final String TASK_CHECKIN_NAME_KEY = "signatureWorkflow.task-checkin.name";
+	private static final String PREPARE_SCRIPT = "cm:prepare-signature.js";
+	private static final String VALIDATE_SCRIPT = "cm:validate-signature.js";
+	private static final String REJECT_SCRIPT = "cm:reject-signature.js";
+	private static final String SIGN_SCRIPT = "cm:sign-document.js";
+	private static final int NOTIFICATION_FREQUENCY = 7;
+	private static final int INITIAL_NOTIFICATION = -1;
 
 	@Autowired
 	private NodeService nodeService;
@@ -133,7 +128,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 	public NodeRef createEntitySignatureTasks(NodeRef projectNodeRef, NodeRef previousTask, String projectType) {
 		ProjectData project = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 		if (!project.getEntities().isEmpty()) {
-			TaskListDataItem firstTask = (TaskListDataItem) alfrescoRepository.findOne(findFirstTask(previousTask));
+			TaskListDataItem firstTask = (TaskListDataItem) alfrescoRepository.findOne(ProjectHelper.findAncestorTask(previousTask, associationService));
 			NodeRef entityNodeRef = project.getEntities().get(0);
 			NodeRef entitySignatureFolder = null;
 			SignatureProjectPlugin signatureProjectPlugin = findSignatureProjectPlugin(projectType);
@@ -193,16 +188,6 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 				task.setTaskState(TaskState.Completed);
 			}
 		}
-	}
-
-	//TODO @Valentin user ProjectHelper
-	@Deprecated
-	private NodeRef findFirstTask(NodeRef task) {
-		NodeRef previousTask = associationService.getTargetAssoc(task, ProjectModel.ASSOC_TL_PREV_TASKS);
-		if (previousTask != null) {
-			return findFirstTask(previousTask);
-		}
-		return task;
 	}
 
 	/** {@inheritDoc} */
@@ -281,7 +266,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 	private void createValidatingTask(ProjectData project, List<NodeRef> documents, NodeRef lastTask, TaskListDataItem rejectTask) {
 		TaskListDataItem validatingTask = projectService.insertNewTask(project, List.of(lastTask));
 		validatingTask.setRefusedTask(rejectTask);
-		validatingTask.setTaskName(I18NUtil.getMessage("signatureWorkflow.task-checkin.name"));
+		validatingTask.setTaskName(I18NUtil.getMessage(TASK_CHECKIN_NAME_KEY));
 		validatingTask.setResources(new ArrayList<>());
 		NodeRef currentUser = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
 		validatingTask.getResources().add(currentUser);
@@ -292,8 +277,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 			String validateDeliverableName = SignatureProjectHelper.generateValidateDeliverableName(docName, resourceFirstName, resourceLastName);
 			project.getDeliverableList()
 					.add(ProjectHelper.createDeliverable(validateDeliverableName, docName, DeliverableScriptOrder.Post, validatingTask,
-							BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(),
-									"/app:company_home/app:dictionary/app:scripts/cm:validate-signature.js")));
+							BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), RepoConsts.SCRIPTS_FULL_PATH + RepoConsts.PATH_SEPARATOR + VALIDATE_SCRIPT)));
 			String validateDocDeliverableName = SignatureProjectHelper.generateValidateDocDeliverableName(docName, resourceFirstName,
 					resourceLastName);
 			DeliverableListDataItem signViewDeliverable = ProjectHelper.createDeliverable(validateDocDeliverableName, docName, null, validatingTask,
@@ -305,8 +289,8 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 
 	private TaskListDataItem createRejectTask(ProjectData project, List<NodeRef> documents) {
 		TaskListDataItem rejectTask = projectService.insertNewTask(project, null);
-		rejectTask.setTaskName(I18NUtil.getMessage("signatureWorkflow.task-reject.name"));
-		rejectTask.setDescription(I18NUtil.getMessage("signatureWorkflow.task-reject.description"));
+		rejectTask.setTaskName(I18NUtil.getMessage(TASK_REJECT_NAME_KEY));
+		rejectTask.setDescription(I18NUtil.getMessage(TASK_REJECT_DESCRIPTION_KEY));
 		rejectTask.setState(TaskState.Cancelled.toString());
 		rejectTask.setResources(new ArrayList<>());
 		NodeRef currentUser = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
@@ -319,7 +303,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 			project.getDeliverableList()
 					.add(ProjectHelper.createDeliverable(rejectDeliverableName, docName, DeliverableScriptOrder.Pre, rejectTask,
 							BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(),
-									"/app:company_home/app:dictionary/app:scripts/cm:reject-signature.js")));
+									RepoConsts.SCRIPTS_FULL_PATH + RepoConsts.PATH_SEPARATOR + REJECT_SCRIPT)));
 			String rejectDocDeliverableName = SignatureProjectHelper.generateRejectDocDeliverableName(docName, resourceFirstName, resourceLastName);
 			project.getDeliverableList().add(ProjectHelper.createDeliverable(rejectDocDeliverableName, docName, null, rejectTask, document));
 		}
@@ -333,7 +317,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 			final NodeRef finalPreviousTask = previousTask;
 			String resourceFirstName = (String) nodeService.getProperty(recipient, ContentModel.PROP_FIRSTNAME);
 			String resourceLastName = (String) nodeService.getProperty(recipient, ContentModel.PROP_LASTNAME);
-			String taskName = I18NUtil.getMessage("signatureWorkflow.task-signature.name");
+			String taskName = I18NUtil.getMessage(TASK_SIGNATURE_NAME_KEY);
 			TaskListDataItem newTask = project.getTaskList().stream()
 					.filter(task -> (task.getResources() != null) && task.getResources().contains(recipient))
 					.filter(task -> (task.getTaskName() != null) && task.getTaskName().equals(taskName)).findFirst()
@@ -354,9 +338,9 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 			if (!newTask.getResources().contains(recipient)) {
 				newTask.getResources().add(recipient);
 			}
-			newTask.setTaskName(I18NUtil.getMessage("signatureWorkflow.task-signature.name"));
-			newTask.setNotificationFrequency(7);
-			newTask.setInitialNotification(-1);
+			newTask.setTaskName(I18NUtil.getMessage(TASK_SIGNATURE_NAME_KEY));
+			newTask.setNotificationFrequency(NOTIFICATION_FREQUENCY);
+			newTask.setInitialNotification(INITIAL_NOTIFICATION);
 			newTask.setNotificationAuthorities(List.of(recipient));
 			for (NodeRef document : documents) {
 				String docName = (String) nodeService.getProperty(document, ContentModel.PROP_NAME);
@@ -365,7 +349,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 					project.getDeliverableList()
 							.add(ProjectHelper.createDeliverable(prepareDeliverableName, docName, DeliverableScriptOrder.Pre, newTask,
 									BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(),
-											"/app:company_home/app:dictionary/app:scripts/cm:prepare-signature.js")));
+											RepoConsts.SCRIPTS_FULL_PATH + RepoConsts.PATH_SEPARATOR + PREPARE_SCRIPT)));
 				} else {
 					project.getDeliverableList().stream().filter(del -> del.getName().equals(prepareDeliverableName))
 							.forEach(d -> d.setState(DeliverableState.Planned));
@@ -385,7 +369,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 					project.getDeliverableList()
 							.add(ProjectHelper.createDeliverable(signDeliverableName, docName, DeliverableScriptOrder.Post, newTask,
 									BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(),
-											"/app:company_home/app:dictionary/app:scripts/cm:sign-document.js")));
+											RepoConsts.SCRIPTS_FULL_PATH + RepoConsts.PATH_SEPARATOR + SIGN_SCRIPT)));
 				} else {
 					project.getDeliverableList().stream().filter(del -> del.getName().equals(signDeliverableName))
 							.forEach(d -> d.setState(DeliverableState.Planned));
