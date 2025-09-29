@@ -14,6 +14,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.SystemGroup;
+
 /**
  * <p>AddSitePermissionPatch class.</p>
  *
@@ -24,6 +27,8 @@ public class AddSitePermissionPatch extends AbstractBeCPGPatch {
 
 	private static final Log logger = LogFactory.getLog(AddSitePermissionPatch.class);
 	private static final String MSG_SUCCESS = "patch.bcpg.addSitePermissionPatch.result";
+
+	private static final String ARCHIVED_SITE_ID = "archived";
 
 	private SiteService siteService;
 
@@ -108,6 +113,11 @@ public class AddSitePermissionPatch extends AbstractBeCPGPatch {
 				// Return nothing
 				return null;
 			}, AuthenticationUtil.getSystemUserName());
+		}
+		
+		for (SystemGroup authority : new SystemGroup[] { SystemGroup.LicenseWriteConcurrent, SystemGroup.LicenseWriteNamed }) {
+			siteService.setMembership(ARCHIVED_SITE_ID, PermissionService.GROUP_PREFIX + authority.toString(),
+					BeCPGModel.SITE_BRANCH_MANAGER);
 		}
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
