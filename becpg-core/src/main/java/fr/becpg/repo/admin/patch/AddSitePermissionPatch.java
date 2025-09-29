@@ -110,15 +110,18 @@ public class AddSitePermissionPatch extends AbstractBeCPGPatch {
 					permissionService.setPermission(site.getNodeRef(), permissionGroup, permission, true);
 				}
 
+				if (site.getShortName().equals(ARCHIVED_SITE_ID)) {
+					for (SystemGroup authority : new SystemGroup[] { SystemGroup.LicenseWriteConcurrent, SystemGroup.LicenseWriteNamed }) {
+						siteService.setMembership(site.getShortName(), PermissionService.GROUP_PREFIX + authority.toString(),
+								BeCPGModel.SITE_BRANCH_MANAGER);
+					}
+				}
+				
 				// Return nothing
 				return null;
 			}, AuthenticationUtil.getSystemUserName());
 		}
 		
-		for (SystemGroup authority : new SystemGroup[] { SystemGroup.LicenseWriteConcurrent, SystemGroup.LicenseWriteNamed }) {
-			siteService.setMembership(ARCHIVED_SITE_ID, PermissionService.GROUP_PREFIX + authority.toString(),
-					BeCPGModel.SITE_BRANCH_MANAGER);
-		}
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
