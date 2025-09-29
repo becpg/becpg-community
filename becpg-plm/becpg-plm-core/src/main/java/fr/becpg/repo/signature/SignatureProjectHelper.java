@@ -42,8 +42,9 @@ public class SignatureProjectHelper {
 	private static final String DELIVERABLE_SUFFIX_SIGN = " - sign";
 	private static final String DELIVERABLE_SUFFIX_VALIDATE = " - validate";
 	private static final String DELIVERABLE_SUFFIX_REJECT = " - reject";
-	private static final String DELIVERABLE_SUFFIX_VALIDATE_DOC = " - validate - doc";
-	private static final String DELIVERABLE_SUFFIX_REJECT_DOC = " - reject - doc";
+	private static final String DELIVERABLE_SUFFIX_DOC = " - doc";
+	private static final String DELIVERABLE_SUFFIX_VALIDATE_DOC = DELIVERABLE_SUFFIX_VALIDATE + DELIVERABLE_SUFFIX_DOC;
+	private static final String DELIVERABLE_SUFFIX_REJECT_DOC = DELIVERABLE_SUFFIX_REJECT + DELIVERABLE_SUFFIX_DOC;
 
 	private static final int MAX_RECURSION_DEPTH = 4;
 
@@ -327,5 +328,25 @@ public class SignatureProjectHelper {
 	 */
 	public static String generateRejectDocDeliverableName(String docName, String resourceFirstName, String resourceLastName) {
 		return generateDeliverableName(docName, resourceFirstName, resourceLastName, DELIVERABLE_SUFFIX_REJECT_DOC);
+	}
+	
+	public static DeliverableListDataItem findUrlDeliverable(ProjectData project, DeliverableListDataItem signDeliverable) {
+		String urlDeliverableName = signDeliverable.getName().replace(DELIVERABLE_SUFFIX_SIGN, "").replace(DELIVERABLE_SUFFIX_PREPARE, "")
+				+ DELIVERABLE_SUFFIX_URL;
+		for (DeliverableListDataItem deliverable : project.getDeliverableList()) {
+			if (deliverable.getContent() != null && urlDeliverableName.equals(deliverable.getName())) {
+				return deliverable;
+			}
+		}
+		return null;
+	}
+	
+	public static DeliverableListDataItem findDocDeliverable(ProjectData project, DeliverableListDataItem taskDeliverable) {
+		for (DeliverableListDataItem deliverable : project.getDeliverableList()) {
+			if (deliverable.getContent() != null && deliverable.getName().startsWith(taskDeliverable.getName()) && deliverable.getName().endsWith(DELIVERABLE_SUFFIX_DOC)) {
+				return deliverable;
+			}
+		}
+		return null;
 	}
 }

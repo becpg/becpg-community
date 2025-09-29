@@ -35,6 +35,7 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.ProjectRepoConsts;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
@@ -197,6 +198,15 @@ public class ProjectHelper {
 			}
 		}
 		return taskList;
+	}
+	
+	public static boolean isPreviousTask(ProjectData project, NodeRef taskNodeRef) {
+		for (TaskListDataItem otherTask : project.getTaskList()) {
+			if (otherTask.getPrevTasks().contains(taskNodeRef)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -592,6 +602,13 @@ public class ProjectHelper {
 		}
 	}
 	
+	public static NodeRef findAncestorTask(NodeRef task, AssociationService associationService) {
+		NodeRef previousTask = associationService.getTargetAssoc(task, ProjectModel.ASSOC_TL_PREV_TASKS);
+		if (previousTask != null) {
+			return findAncestorTask(previousTask, associationService);
+		}
+		return task;
+	}
 	
 
 	/**
