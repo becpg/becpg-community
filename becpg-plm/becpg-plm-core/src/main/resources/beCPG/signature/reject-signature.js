@@ -1,16 +1,8 @@
 function main() {
 	
-	var docDeliverable = null;
-	
-	for (var i = 0; i < project.deliverableList.size(); i++) {
-		var del = project.deliverableList.get(i);
-		if (del.name.endsWith(" - doc") && del.name.startsWith(deliverable.name)) {
-			docDeliverable = del;
-			break;
-		}
-	}
+	var docDeliverable = bSignProject.findDocDeliverable(project, deliverable);
 
-	if (docDeliverable && docDeliverable.content) {
+	if (docDeliverable) {
 		var document = search.findNode(docDeliverable.content);
 		
 		var recipients = document.assocs["sign:recipients"];
