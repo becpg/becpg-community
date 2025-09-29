@@ -20,27 +20,9 @@ function extractRecipients(entity) {
     return recipients;
 }
 
-//Todo @Valentin should be an helper because - sign can change and it's really internal
-function findUrlDeliverable() {
-
-    var keyName = deliverable.name.replace(" - sign", "");
-
-    for (var i = 0; i < project.deliverableList.size(); i++) {
-        var del = project.deliverableList.get(i);
-        if (del.name == keyName + " - url") {
-            if (del.content) {
-                return del;
-            }
-            return null;
-        }
-    }
-
-    return null;
-}
-
 function main() {
 
-    var urlDeliverable = findUrlDeliverable();
+    var urlDeliverable = bSignProject.findUrlDeliverable(project, deliverable);
 
     if (urlDeliverable) {
         var document = search.findNode(urlDeliverable.content);

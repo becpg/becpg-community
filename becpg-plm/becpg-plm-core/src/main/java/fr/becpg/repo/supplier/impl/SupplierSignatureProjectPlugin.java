@@ -24,6 +24,7 @@ import fr.becpg.artworks.signature.model.SignatureModel;
 import fr.becpg.artworks.signature.model.SignatureStatus;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.version.VersionHelper;
 import fr.becpg.repo.helper.AssociationService;
@@ -83,6 +84,10 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 	private static final String SUPPLIER_REFERENCING_PROJECT_TYPE = "supplierReferencing";
 
 	private static final String SUPPLIER_REPORT_KIND = "SupplierSheet";
+
+	private static final String CLOSING_TASK_NAME_KEY = "plm.supplier.portal.task.closing.name";
+
+	private static final String VALIDATE_PROJECT_SCRIPT = "cm:validateProjectEntity.js";
 
 	/** {@inheritDoc} */
 	@Override
@@ -169,16 +174,13 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 	public void createOrUpdateClosingTask(ProjectData project, List<NodeRef> lastTasks, TaskListDataItem firstTask) {
 
 		// do not create closing task if there are other tasks after
-		//TODO @Valentin user ProjectHelper
-		for (NodeRef lastTask : lastTasks) {	
-			for (TaskListDataItem otherTask : project.getTaskList()) {
-				if (otherTask.getPrevTasks().contains(lastTask)) {
-					return;
-				}
+		for (NodeRef lastTask : lastTasks) {
+			if (ProjectHelper.isPreviousTask(project, lastTask)) {
+				return;
 			}
 		}
 
-		String taskName = I18NUtil.getMessage("plm.supplier.portal.task.closing.name");
+		String taskName = I18NUtil.getMessage(CLOSING_TASK_NAME_KEY);
 
 		TaskListDataItem closingTask = project.getTaskList().stream().filter(task -> task.getTaskName().equals(taskName)).findFirst()
 				.orElseGet(() -> projectService.insertNewTask(project, lastTasks));
@@ -198,9 +200,9 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 
 		if (project.getDeliverableList().stream().noneMatch(del -> del.getName().equals(closingTaskDeliverableName))) {
 			project.getDeliverableList()
-					.add(ProjectHelper.createDeliverable(closingTaskDeliverableName, I18NUtil.getMessage("plm.supplier.portal.task.closing.name"),
+					.add(ProjectHelper.createDeliverable(closingTaskDeliverableName, I18NUtil.getMessage(CLOSING_TASK_NAME_KEY),
 							DeliverableScriptOrder.Post, closingTask, BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(),
-									"/app:company_home/app:dictionary/app:scripts/cm:validateProjectEntity.js")));
+									RepoConsts.SCRIPTS_FULL_PATH + RepoConsts.PATH_SEPARATOR + VALIDATE_PROJECT_SCRIPT)));
 		}
 
 	}
