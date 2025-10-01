@@ -216,15 +216,18 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 				if (supplierNodeRef != null) {
 
 					List<NodeRef> accountNodeRefs = associationService.getTargetAssocs(project.getNodeRef(), PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
-					if ((accountNodeRefs != null) && ((task.getResources() == null) || task.getResources().isEmpty())) {
-						if (task.getResources() == null) {
-							task.setResources(new ArrayList<>());
+					
+					if (accountNodeRefs != null && !accountNodeRefs.isEmpty()) {
+						if ((task.getResources() == null) || task.getResources().isEmpty()) {
+							if (task.getResources() == null) {
+								task.setResources(new ArrayList<>());
+							}
+							task.getResources().addAll(accountNodeRefs);
 						}
-						task.getResources().addAll(accountNodeRefs);
-
 					} else {
-						logger.info("No account provided for supplier");
+						logger.warn("No supplier account provided for project");
 					}
+					
 
 					List<NodeRef> ret = AuthenticationUtil.runAs(() -> {
 
