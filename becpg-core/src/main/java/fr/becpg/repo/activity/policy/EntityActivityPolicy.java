@@ -272,6 +272,19 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 											}
 										}
 									}
+									for (Entry<Locale, String> beforeEntry : beforeMlText.entrySet()) {
+										if (!afterMlText.containsKey(beforeEntry.getKey())) {
+											String beforeValue = beforeEntry.getValue();
+											String afterValue = "";
+											if (!(beforeValue != null ? beforeValue : "").equals(afterValue)) {
+												isDifferent = true;
+												if (!entityActivityService.isMatchingStateProperty(beforeType)) {
+													Pair<Serializable, Serializable> beforeAfterProperties = new Pair<>(before.get(beforeType), after.get(beforeType));
+													updatedProperties.put(beforeType, beforeAfterProperties);
+												}
+											}
+										}
+									}
 								} else {
 									isDifferent = true;
 									if (!entityActivityService.isMatchingStateProperty(beforeType)) {
