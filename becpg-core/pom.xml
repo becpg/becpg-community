@@ -55,6 +55,12 @@
 			<scope>provided</scope>
 		</dependency>
 		
+		<dependency>
+            <groupId>org.alfresco</groupId>
+            <artifactId>alfresco-trashcan-cleaner</artifactId>
+			<scope>provided</scope>
+        </dependency>
+		
 		
 		<!-- PdfBox -->
 		<dependency>
