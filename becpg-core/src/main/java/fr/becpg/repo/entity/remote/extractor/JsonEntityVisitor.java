@@ -231,8 +231,16 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 		QName propName = RemoteHelper.getPropName(nodeType, entityDictionaryService);
 		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
+		
+		PropertyDefinition namePropertyDefinition = entityDictionaryService.getProperty(propName);
 
-		visitPropValue(propName, entity, properties.get(propName), context);
+		if (DataTypeDefinition.MLTEXT.equals(namePropertyDefinition.getDataType().getName())
+				&& (mlNodeService.getProperty(nodeRef, namePropertyDefinition.getName()) instanceof MLText mlValues)
+				&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_MLTEXT, Boolean.TRUE))) {
+			visitMltextAttributes(entityDictionaryService.toPrefixString(propName), entity, mlValues);
+		} else {
+			visitPropValue(propName, entity, properties.get(propName), context);
+		}
 
 		if (!JsonVisitNodeType.CHILD_ASSOC.equals(type)) {
 
