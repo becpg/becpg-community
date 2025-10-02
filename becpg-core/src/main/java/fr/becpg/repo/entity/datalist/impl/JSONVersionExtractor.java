@@ -256,40 +256,28 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		String displayValue = null;
 		QName type = null;
 		if (nodeService.exists(nodeRef)) {
+			ret.put(VALUE, nodeRef.toString());
 			type = nodeService.getType(nodeRef);
+			displayValue = attributeExtractorService.extractPropName(type, nodeRef);
 		}
 		
-		if (object.has(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService))) {
-			if (object.get(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService)) instanceof JSONObject) {
-				JSONObject json = (JSONObject) object.get(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService));
-				if (json.has(I18NUtil.getLocale().toLanguageTag())) {
-					displayValue = json.getString(I18NUtil.getLocale().toLanguageTag());
-				} else if (json.has(Locale.getDefault().toLanguageTag())) {
-					displayValue = json.getString(Locale.getDefault().toLanguageTag());
-				} else if (json.has(Locale.ENGLISH.toLanguageTag())) {
-					displayValue = json.getString(Locale.ENGLISH.toLanguageTag());
+		if (displayValue == null) {
+			if (object.has(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService))) {
+				if (object.get(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService)) instanceof JSONObject json) {
+					if (json.has(I18NUtil.getLocale().toLanguageTag())) {
+						displayValue = json.getString(I18NUtil.getLocale().toLanguageTag());
+					} else if (json.has(Locale.getDefault().toLanguageTag())) {
+						displayValue = json.getString(Locale.getDefault().toLanguageTag());
+					} else if (json.has(Locale.ENGLISH.toLanguageTag())) {
+						displayValue = json.getString(Locale.ENGLISH.toLanguageTag());
+					}
 				}
-			}
-			if (displayValue == null) {
-				displayValue = object.getString(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService));
-			}
-		} else if (object.has(ContentModel.PROP_NAME.toPrefixString(namespaceService))) {
-			if (type != null) {
-				String entityName = object.getString(ContentModel.PROP_NAME.toPrefixString(namespaceService));
-				if (entityName != null && !entityName.matches(UUID_STRING)) {
-					displayValue = attributeExtractorService.extractPropName(type, object);
+				if (displayValue == null) {
+					displayValue = object.getString(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService));
 				}
-			}
-			if (displayValue == null) {
+			} else if (object.has(ContentModel.PROP_NAME.toPrefixString(namespaceService))) {
 				displayValue = object.getString(ContentModel.PROP_NAME.toPrefixString(namespaceService));
 			}
-		}
-		
-		if (type != null) {
-			if (displayValue == null || displayValue.matches(UUID_STRING)) {
-				displayValue = attributeExtractorService.extractPropName(type, nodeRef);
-			}
-			ret.put(VALUE, nodeRef.toString());
 		}
 		
 		if (displayValue == null) {
