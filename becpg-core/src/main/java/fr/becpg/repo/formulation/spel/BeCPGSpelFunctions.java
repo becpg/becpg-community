@@ -126,6 +126,16 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public BeCPGSpelFunctionsWrapper(RepositoryEntity entity) {
 			this.entity = entity;
 		}
+		
+		/**
+		 * Helper {@code @beCPG.entity()}
+		 *
+		 * @return l'entité courante sur laquelle le wrapper a été créé
+		 */
+		public RepositoryEntity entity() {
+		    return entity;
+		}
+		
 
 		/**
 		 * Helper {@code @beCPG.findOne($nodeRef)}
@@ -360,7 +370,6 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @param assocNodeRef
 		 */
 		public void setAssoc(NodeRef nodeRef, String qname, NodeRef assocNodeRef) {
-
 			associationService.update(nodeRef, getQName(qname), assocNodeRef);
 		}
 
@@ -383,7 +392,6 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public NodeRef assocValue(NodeRef nodeRef, String qname) {
 			if (nodeRef != null) {
-
 				return associationService.getTargetAssoc(nodeRef, getQName(qname));
 			}
 			return null;
