@@ -130,7 +130,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		/**
 		 * Helper {@code @beCPG.entity()}
 		 *
-		 * @return l'entité courante sur laquelle le wrapper a été créé
+		 * @return current entity
 		 */
 		public RepositoryEntity entity() {
 		    return entity;
