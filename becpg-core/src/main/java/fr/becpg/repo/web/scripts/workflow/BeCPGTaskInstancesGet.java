@@ -7,11 +7,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.web.scripts.workflow.TaskInstancesGet;
@@ -38,6 +35,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.BeCPGQueryHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorField;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * <p>BeCPGTaskInstancesGet class.</p>
