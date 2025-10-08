@@ -76,7 +76,7 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
 	private static final Pattern commentNotificationPattern = Pattern.compile("@[a-zA-Z0-9]([^\\s]+)");
 
 	private static final Log logger = LogFactory.getLog(CommentActivityListener.class);
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -91,14 +91,13 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
 		if (ActivityType.Comment.equals(activityListDataItem.getActivityType())) {
 
 			NodeRef commentNodeRef = new NodeRef(activityData.getString("commentNodeRef"));
-			
+
 			ContentReader reader = contentService.getReader(commentNodeRef, ContentModel.PROP_CONTENT);
 
 			if (reader != null) {
 				String comment = reader.getContentString();
 				sendCommentNotification(comment, entityNodeRef, commentNodeRef);
 			}
-
 
 		} else if (ActivityType.Version.equals(activityListDataItem.getActivityType())) {
 
@@ -119,7 +118,7 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
 	private void sendCommentNotification(String comment, NodeRef entityNodeRef, NodeRef commentNodeRef) {
 
 		if (comment != null && !comment.isBlank()) {
-			
+
 			comment = escapeHtml(comment);
 
 			String itemName = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
@@ -129,7 +128,7 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
 			ArrayList<String> usernames = new ArrayList<>();
 
 			String commentText = comment;
-			
+
 			while (matcher.find()) {
 				String match = matcher.group();
 				String username = match.substring(1);
@@ -138,30 +137,33 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
 
 				commentText = commentText.replace(match + " ", "");
 			}
-			
+
 			for (String username : usernames) {
 
 				if (commentNodeRef != null && personService.personExists(username)) {
-					
+
 					String workflowInstanceId = (String) nodeService.getProperty(commentNodeRef, ContentModel.PROP_DESCRIPTION);
 					if (workflowInstanceId == null || workflowInstanceId.isBlank()) {
 						NodeRef packageRef = packageMgr.create(null);
-						
+
 						Map<QName, Serializable> params = new HashMap<>();
-						
+
 						params.put(WorkflowModel.ASSOC_PACKAGE, packageRef);
 						params.put(WorkflowModel.PROP_WORKFLOW_DESCRIPTION, commentText);
 						params.put(WorkflowModel.ASSOC_ASSIGNEE, (Serializable) Arrays.asList(personService.getPerson(username)));
 						params.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2);
 						params.put(WorkflowModel.PROP_SEND_EMAIL_NOTIFICATIONS, true);
-						
-						nodeService.addChild(packageRef, entityNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(itemName)));
-						
+
+						nodeService.addChild(packageRef, entityNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS,
+								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(itemName)));
+
 						WorkflowDefinition workflowDefinition = workflowService.getDefinitionByName("activiti$activitiAdhoc");
 						WorkflowPath workflowPath = workflowService.startWorkflow(workflowDefinition.getId(), params);
-						
-						if (workflowPath != null) {
+
+						if (workflowPath != null && workflowPath.getInstance() != null) {
 							nodeService.setProperty(commentNodeRef, ContentModel.PROP_DESCRIPTION, workflowPath.getInstance().getId());
+						} else {
+							logger.warn("Workflow started for comment " + commentNodeRef + " but returned a null workflowPath or instance.");
 						}
 					} else {
 						WorkflowTaskQuery tasksQuery = new WorkflowTaskQuery();
@@ -169,7 +171,7 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
 						tasksQuery.setActive(null);
 						tasksQuery.setProcessId(workflowInstanceId);
 						List<WorkflowTask> tasks = workflowService.queryTasks(tasksQuery, true);
-						
+
 						if (tasks != null) {
 							for (WorkflowTask task : tasks) {
 								if ("wf:adhocTask".equals(task.getName())) {
@@ -182,20 +184,20 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
 						}
 					}
 				}
-				
+
 			}
 		}
 	}
-	
+
 	private String escapeHtml(String htmlContent) {
 		HtmlCleaner cleaner = new HtmlCleaner(htmlContent);
-		
+
 		try {
 			cleaner.clean();
 		} catch (IOException e) {
 			logger.error("Could not parse HTML comment", e);
 		}
-		
+
 		return escapeHtml(cleaner.getBodyNode(), null);
 	}
 
@@ -204,7 +206,7 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
 		if (contentBuilder == null) {
 			contentBuilder = new StringBuilder();
 		}
-		
+
 		for (Object child : node.getChildren()) {
 			if (child instanceof ContentToken) {
 				contentBuilder.append(StringEscapeUtils.unescapeHtml4(((ContentToken) child).getContent()));
@@ -212,7 +214,7 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
 				escapeHtml((TagNode) child, contentBuilder);
 			}
 		}
-		
+
 		return contentBuilder.toString();
 	}
 
