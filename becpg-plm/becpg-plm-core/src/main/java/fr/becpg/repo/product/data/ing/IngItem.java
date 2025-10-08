@@ -41,8 +41,8 @@ public class IngItem extends CompositeLabeling {
 	private String ingCEECode;
 
 	private String ingCASCode;
-
-	private String ingRID;
+	
+	private String regulatoryCode;
 
 	private String ingAllergensQtyPerc;
 
@@ -148,23 +148,18 @@ public class IngItem extends CompositeLabeling {
 	}
 
 	/**
-	 * <p>Getter for the field <code>ingRID</code>.</p>
+	 * <p>Getter for the field <code>regulatoryCode</code>.</p>
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
 	@AlfProp
-	@AlfQname(qname = "bcpg:ingRID")
-	public String getingRID() {
-		return ingRID;
+	@AlfQname(qname = "bcpg:regulatoryCode")
+	public String getRegulatoryCode() {
+		return regulatoryCode;
 	}
 
-	/**
-	 * <p>Setter for the field <code>ingRID</code>.</p>
-	 *
-	 * @param ingRID a {@link java.lang.String} object.
-	 */
-	public void setingRID(String ingRID) {
-		this.ingRID = ingRID;
+	public void setRegulatoryCode(String regulatoryCode) {
+		this.regulatoryCode = regulatoryCode;
 	}
 
 	/**
@@ -295,7 +290,7 @@ public class IngItem extends CompositeLabeling {
 		result = prime * result + ((charactName == null) ? 0 : charactName.hashCode());
 		result = prime * result + ((ingCASCode == null) ? 0 : ingCASCode.hashCode());
 		result = prime * result + ((ingCEECode == null) ? 0 : ingCEECode.hashCode());
-		result = prime * result + ((ingRID == null) ? 0 : ingRID.hashCode());
+		result = prime * result + ((regulatoryCode == null) ? 0 : regulatoryCode.hashCode());
 		result = prime * result + ((ingType == null) ? 0 : ingType.hashCode());
 		result = prime * result + ((isSubstanceOfVeryHighConcern == null) ? 0 : isSubstanceOfVeryHighConcern.hashCode());
 		result = prime * result + ((ingAllergensQtyPerc == null) ? 0 : ingAllergensQtyPerc.hashCode());
@@ -328,10 +323,10 @@ public class IngItem extends CompositeLabeling {
 				return false;
 		} else if (!ingCEECode.equals(other.ingCEECode))
 			return false;
-		if (ingRID == null) {
-			if (other.ingRID != null)
+		if (regulatoryCode == null) {
+			if (other.regulatoryCode != null)
 				return false;
-		} else if (!ingRID.equals(other.ingRID))
+		} else if (!regulatoryCode.equals(other.regulatoryCode))
 			return false;
 		if (ingAllergensQtyPerc == null) {
 			if (other.ingAllergensQtyPerc != null)
