@@ -233,6 +233,21 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 
 	private Map<String, Object> buildbeCPGModel(WorkflowModelBuilder modelBuilder, WorkflowTask task, List<String> properties,
 			List<AttributeExtractorField> extraProperties) {
+
+		if (task.getPath() == null) {
+			if (LOGGER.isWarnEnabled()) {
+				LOGGER.warn("Task path is null for task: " + task.getId() + ", title: " + task.getTitle());
+				LOGGER.warn("Task properties: " + task.getProperties());
+			}
+			Map<String, Object> model = new HashMap<>();
+			model.put("id", task.getId());
+			model.put("name", task.getName());
+			model.put("title", task.getTitle());
+			model.put("description", task.getDescription());
+			model.put("error", "Task path is null, providing partial data.");
+			return model;
+		}
+		
 		Map<String, Object> ret = modelBuilder.buildSimple(task, properties);
 
 		if (!extraProperties.isEmpty()) {
