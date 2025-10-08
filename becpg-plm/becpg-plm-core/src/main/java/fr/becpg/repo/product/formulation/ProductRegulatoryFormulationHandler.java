@@ -11,7 +11,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.decernis.DecernisService;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
@@ -20,6 +19,7 @@ import fr.becpg.repo.regulatory.RegulatoryResult;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
+import fr.becpg.repo.regulatory.plugins.DecernisRegulatoryPlugin;
 
 /**
  * <p>ProductRegulatoryFormulationHandler class.</p>
@@ -101,7 +101,7 @@ public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<
 				String countryCode = (String) nodeService.getProperty(country, PLMModel.PROP_REGULATORY_CODE);
 				for (NodeRef usage : regulatoryListItem.getRegulatoryUsagesRef()) {
 					String usageCode = (String) nodeService.getProperty(usage, PLMModel.PROP_REGULATORY_CODE);
-					if (!usageCode.endsWith(DecernisService.MODULE_SUFFIX)) {
+					if (!usageCode.endsWith(DecernisRegulatoryPlugin.MODULE_SUFFIX)) {
 						regulatoryIds.add(countryCode + " - " + usageCode);
 					}
 				}
