@@ -322,6 +322,34 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		}
 		return false;
 	}
+	
+	@Override
+	public boolean postComplianceCheckActivity(NodeRef entityNodeRef) {
+		try {
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+
+			NodeRef activityListNodeRef = getActivityList(entityNodeRef);
+
+			// No list no activity
+			if (activityListNodeRef != null) {
+				ActivityListDataItem activityListDataItem = new ActivityListDataItem();
+				JSONObject data = new JSONObject();
+				data.put(PROP_TITLE, nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+				data.put(PROP_ENTITY_NODEREF, entityNodeRef);
+				activityListDataItem.setActivityType(ActivityType.ComplianceCheck);
+				activityListDataItem.setActivityData(data.toString());
+				activityListDataItem.setParentNodeRef(activityListNodeRef);
+
+				recordAuditActivity(entityNodeRef, activityListDataItem);
+				notifyListeners(entityNodeRef, activityListDataItem);
+			}
+		} catch (JSONException e) {
+			logger.error(e, e);
+		} finally {
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+		}
+		return false;
+	}
 
 	/** {@inheritDoc} */
 	@Override
