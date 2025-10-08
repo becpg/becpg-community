@@ -163,12 +163,12 @@
                                                                <#assign personModifier = item.properties["cm:modifier"]>
                                                                <#if item.assocs["pjt:tlResources"]??>
                                                                <#list item.assocs["pjt:tlResources"] as person>
-                                                               <#assign firstName = person.properties["cm:firstName"]>
-                                                               <#assign lastName = person.properties["cm:lastName"]>
-                                                               <#assign userNameRessouces = person.properties["cm:userName"]>
-                                                               <#if personModifier == userNameRessouces>
-                                                               <p style="margin:0px;font-size:12px;color:grey"><b>${firstName} ${lastName}</b></p>
-                                                               </#if>
+                                                                  <#assign firstName = person.properties["cm:firstName"]!"">
+                                                                  <#assign lastName = person.properties["cm:lastName"]!"">
+                                                                  <#assign userNameRessouces = person.properties["cm:userName"]>
+                                                                  <#if personModifier == userNameRessouces>
+                                                                     <p style="margin:0px;font-size:12px;color:grey"><b>${firstName} ${lastName}</b></p>
+                                                                  </#if>
                                                                </#list>
                                                                <p style="margin:0px; font-style:italic">"${item.properties["pjt:tlTaskComment"]}"</p>
                                                                </#if>
