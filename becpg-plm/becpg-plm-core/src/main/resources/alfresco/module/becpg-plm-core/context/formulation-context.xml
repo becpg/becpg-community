@@ -335,6 +335,36 @@
 		<property name="contextClass" value="fr.becpg.repo.product.data.ProductData" />
 	</bean>
 	
+	<bean id="regulatoryFormulationChain" class="fr.becpg.repo.formulation.FormulationChain" init-method="init">
+		<property name="handlers">
+			<list>
+				<bean class="fr.becpg.repo.product.formulation.CompletionReqCtrlCalculatingFormulationHandler">
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.MergeReqCtrlFormulationHandler">
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="systemConfigurationService" ref="systemConfigurationService" />
+					<property name="formulationExecutor" ref="formulationExecutor" />
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.ProductRegulatoryFormulationHandler">
+					<property name="nodeService" ref="nodeService" />
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.ScoreCalculatingFormulationHandler">
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="scorePlugins">
+						<list>
+							<ref bean="ecoScore"/>
+							<ref bean="nutriScore"/>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+		<property name="formulationService" ref="formulationService" />
+		<property name="contextClass" value="fr.becpg.repo.product.data.ProductData" />
+		<property name="chainId" value="regulatory" />
+	</bean>
+	
 	
 	<bean id="supplierFormulationChain" class="fr.becpg.repo.formulation.FormulationChain" init-method="init">
 		<property name="handlers">
@@ -502,11 +532,6 @@
                 <bean class="fr.becpg.repo.product.requirement.SurveyListRequirementScanner">
                    <property name="mlNodeService" ref="mlAwareNodeService" />
                 </bean>
-				<bean class="fr.becpg.repo.product.requirement.DecernisRequirementsScanner">
-					<property name="decernisService" ref="decernisService" />
-					<property name="alfrescoRepository" ref="alfrescoRepository" />
-					<property name="nodeService" ref="nodeService" />
-				</bean>
                 <bean class="fr.becpg.repo.product.requirement.HazardClassificationRequirementScanner">
                     <property name="mlNodeService" ref="mlAwareNodeService" />
                 </bean>
