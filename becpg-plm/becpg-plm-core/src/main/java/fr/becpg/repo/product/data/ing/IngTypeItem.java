@@ -58,6 +58,8 @@ public class IngTypeItem extends LabelingComponent{
 		
 	private NodeRef origNodeRef;
 	
+	private String regulatoryCode;
+	
 	
 	/**
 	 * <p>Constructor for IngTypeItem.</p>
@@ -78,6 +80,7 @@ public class IngTypeItem extends LabelingComponent{
 		this.lvCode = ingTypeItem.lvCode;
 		this.isDoNotDeclare = ingTypeItem.isDoNotDeclare;
 		this.isLastGroup = ingTypeItem.isLastGroup;
+		this.regulatoryCode = ingTypeItem.regulatoryCode;
 	}
 
 	
@@ -92,6 +95,15 @@ public class IngTypeItem extends LabelingComponent{
 		return isDoNotDeclare;
 	}
 	
+	@AlfProp
+	@AlfQname(qname = "bcpg:regulatoryCode")
+	public String getRegulatoryCode() {
+		return regulatoryCode;
+	}
+	
+	public void setRegulatoryCode(String regulatoryCode) {
+		this.regulatoryCode = regulatoryCode;
+	}
 
 
 	/**
@@ -251,7 +263,7 @@ public class IngTypeItem extends LabelingComponent{
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(decThreshold, isDoNotDeclare, isLastGroup, lvCode, lvValue, origNodeRef);
+		result = prime * result + Objects.hash(decThreshold, isDoNotDeclare, isLastGroup, lvCode, lvValue, origNodeRef, regulatoryCode);
 		return result;
 	}
 
@@ -267,7 +279,7 @@ public class IngTypeItem extends LabelingComponent{
 		IngTypeItem other = (IngTypeItem) obj;
 		return Objects.equals(decThreshold, other.decThreshold) && Objects.equals(isDoNotDeclare, other.isDoNotDeclare)
 				&& Objects.equals(isLastGroup, other.isLastGroup) && Objects.equals(lvCode, other.lvCode) && Objects.equals(lvValue, other.lvValue)
-				&& Objects.equals(origNodeRef, other.origNodeRef);
+				&& Objects.equals(origNodeRef, other.origNodeRef) && Objects.equals(regulatoryCode, other.regulatoryCode);
 	}
 
 

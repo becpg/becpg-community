@@ -35,16 +35,22 @@ public final class RestTemplateHelper {
     private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
     private static final int CONNECTION_TTL_SECONDS = 5;
     private static final Timeout CONNECTION_TIMEOUT = Timeout.of(5, TimeUnit.SECONDS);
-    private static final Timeout SOCKET_TIMEOUT = Timeout.of(2, TimeUnit.MINUTES);
+    private static final Timeout DEFAULT_SOCKET_TIMEOUT = Timeout.of(30, TimeUnit.SECONDS);
+    private static final Timeout LONG_SOCKET_TIMEOUT = Timeout.of(3, TimeUnit.MINUTES);
     
-    private static final RestTemplate restTemplate;
+    private static final RestTemplate defaultRestTemplate;
+    private static final RestTemplate longTimeOutRestTemplate;
 
     static {
-        
-        HttpClientProvider httpClientProvider = new HttpClientProvider();
+        HttpClientProvider httpClientProvider = new HttpClientProvider(DEFAULT_SOCKET_TIMEOUT);
         CloseableHttpClient httpClient = httpClientProvider.createHttpClient();
         ClientHttpRequestFactory httpRequestFactory = new CustomClientHttpRequestFactory(httpClient);
-        restTemplate = new RestTemplate(httpRequestFactory);
+        defaultRestTemplate = new RestTemplate(httpRequestFactory);
+        
+        HttpClientProvider httpClientProviderLongTimeout = new HttpClientProvider(LONG_SOCKET_TIMEOUT);
+        CloseableHttpClient httpClientLongTimeout = httpClientProviderLongTimeout.createHttpClient();
+        ClientHttpRequestFactory httpRequestFactoryLongTimeout = new CustomClientHttpRequestFactory(httpClientLongTimeout);
+        longTimeOutRestTemplate = new RestTemplate(httpRequestFactoryLongTimeout);
     }
 
     /**
@@ -53,7 +59,11 @@ public final class RestTemplateHelper {
      * @return a {@link org.springframework.web.client.RestTemplate} object
      */
     public static RestTemplate getRestTemplate() {
-        return restTemplate;
+        return defaultRestTemplate;
+    }
+    
+    public static RestTemplate getRestTemplateLongTimeout() {
+    	return longTimeOutRestTemplate;
     }
 
     private RestTemplateHelper() {
@@ -61,6 +71,13 @@ public final class RestTemplateHelper {
     }
 
     private static class HttpClientProvider {
+    	
+    	private Timeout socketTimeout;
+    	
+    	HttpClientProvider(Timeout socketTimeout) {
+    		this.socketTimeout = socketTimeout;
+    	}
+    	
         private CloseableHttpClient createHttpClient() {
                 HttpClientBuilder clientBuilder = HttpClients.custom();
                 applyConfiguration(clientBuilder);
@@ -70,7 +87,7 @@ public final class RestTemplateHelper {
         private void applyConfiguration(HttpClientBuilder builder) {
             ConnectionConfig connectionConfig = ConnectionConfig.custom()
                 .setConnectTimeout(CONNECTION_TIMEOUT)
-                .setSocketTimeout(SOCKET_TIMEOUT)
+                .setSocketTimeout(socketTimeout)
                 .setTimeToLive(CONNECTION_TTL_SECONDS, TimeUnit.SECONDS)
                 .build();
 
