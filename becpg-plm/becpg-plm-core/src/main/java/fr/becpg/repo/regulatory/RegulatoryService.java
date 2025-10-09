@@ -122,10 +122,15 @@ public class RegulatoryService {
 			ProductData productData = (ProductData) alfrescoRepository.findOne(nodeRef);
 			updateProductFromRegulatoryList(productData);
 			updateProductFromLinkedSearches(productData);
-			if (!isApplicable(productData)) {
-				logger.debug("product is not applicable for compliance check");
+			if (!isProductCompatible(productData)) {
 				result.setStatus(Status.NOT_APPLICABLE);
-				return true;
+				logger.debug("Product is not compatible for compliance check");
+				return false;
+			}
+			if (isSameRequirementChecksum(productData)) {
+				result.setStatus(Status.UP_TO_DATE);
+				logger.debug("Regulatory checksum is same: " + productData.getRequirementChecksum());
+				return false;
 			}
 			RegulatoryContext context = createContext(productData);
 			result.setContext(context);
@@ -557,18 +562,6 @@ public class RegulatoryService {
 			linkedSearches.add(regulatoryCountry);
 		}
 		return linkedSearches;
-	}
-
-	private boolean isApplicable(ProductData formulatedProduct) {
-		if (!isProductCompatible(formulatedProduct)) {
-			logger.debug("Product is not compatible for compliance check");
-			return false;
-		}
-		if (!isSameRequirementChecksum(formulatedProduct)) {
-			logger.debug("Regulatory checksum doesn't match: " + formulatedProduct.getRequirementChecksum());
-			return true;
-		}
-		return false;
 	}
 
 	private boolean isSameRequirementChecksum(ProductData product) {

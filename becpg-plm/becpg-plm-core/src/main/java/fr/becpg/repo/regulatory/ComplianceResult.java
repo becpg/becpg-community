@@ -43,6 +43,7 @@ public class ComplianceResult {
 		PENDING,
 		FINISHED,
 		NOT_APPLICABLE,
+		UP_TO_DATE,
 	}
 	
 }
