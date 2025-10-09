@@ -482,10 +482,19 @@ public class RegulatoryService {
 				String rid = ingItem.getRegulatoryCode();
 				if (rid == null || rid.isEmpty()) {
 					rid = getPlugin().fetchIngredientId(ingListDataItem);
+					if (logger.isDebugEnabled()) {
+						logger.debug("Try to fetch ingredient ID: " + ingItem.getCharactName());
+					}
 					if (rid != null) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Found ingredient ID: " + ingItem.getCharactName() + ", ID: " + rid);
+						}
 						ingItem.setRegulatoryCode(rid);
 						alfrescoRepository.save(ingItem);
 					} else {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Could not fetch ingredient ID: " + ingItem.getCharactName());
+						}
 						RequirementListDataItem noCodeRequirement = createReqCtrl(ingListDataItem,
 								MLTextHelper.getI18NMessage(MESSAGE_NO_CODE_CHARACT), RequirementType.Tolerated);
 						context.getRequirements().add(noCodeRequirement);

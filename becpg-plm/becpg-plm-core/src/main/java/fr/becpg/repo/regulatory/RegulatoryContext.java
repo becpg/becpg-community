@@ -1,9 +1,9 @@
 package fr.becpg.repo.regulatory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
@@ -20,15 +20,15 @@ public class RegulatoryContext {
 
 	private ProductData product;
 	
-	List<RegulatoryBatch> regulatoryBatches = new ArrayList<>();
-	
-	private Map<String, NodeRef> countryMap = new HashMap<>();
-	private Map<String, String> usageMap = new HashMap<>();
-	
-	private List<RequirementListDataItem> requirements = new ArrayList<>();
-	
-	private List<IngRegulatoryListDataItem> ingRegulatoryListDataItems = new ArrayList<>();
-	
+	List<RegulatoryBatch> regulatoryBatches = new CopyOnWriteArrayList<>();
+
+	private Map<String, NodeRef> countryMap = new ConcurrentHashMap<>();
+	private Map<String, String> usageMap = new ConcurrentHashMap<>();
+
+	private List<RequirementListDataItem> requirements = new CopyOnWriteArrayList<>();
+
+	private List<IngRegulatoryListDataItem> ingRegulatoryListDataItems = new CopyOnWriteArrayList<>();
+
 	public List<IngRegulatoryListDataItem> getIngRegulatoryListDataItems() {
 		return ingRegulatoryListDataItems;
 	}
