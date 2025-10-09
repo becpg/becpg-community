@@ -64,11 +64,11 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 	/** Constant <code>SUPPLIER_ECOVADIS_CERTIFICATION="Supplier Ecovadis Certification Score"</code> */
 	public static final String SUPPLIER_ECOVADIS_CERTIFICATION = "Supplier Ecovadis Certification Score";
 
-	private boolean isWithCompo = true;
-	private boolean isWithScore = false;
-	private boolean isWithPhysico = true;
-	private boolean isWithSpecification = false;
-	private boolean isWithToxicology = false;
+	protected boolean isWithCompo = true;
+	protected boolean isWithScore = false;
+	protected boolean isWithPhysico = true;
+	protected boolean isWithSpecification = false;
+	protected boolean isWithToxicology = false;
 
 	/**
 	 * <p>Constructor for StandardSoapTestProduct.</p>
@@ -147,7 +147,7 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 
 	/** {@inheritDoc} */
 	@Override
-	public FinishedProductData createTestProduct() {
+	public ProductData createTestProduct() {
 
 		// Create the soap finished product
 		FinishedProductData soapProduct = FinishedProductData.build().withName(uniqueName("🧼 Standard Natural Olive Soap 🫒💧"))
@@ -202,7 +202,7 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 		return soapProduct;
 	}
 
-	private List<ToxListDataItem> createToxList() {
+	protected List<ToxListDataItem> createToxList() {
 		List<ToxListDataItem> toxList = new ArrayList<>();
 		ToxListDataItem toxListDataItem = new ToxListDataItem();
 		toxListDataItem.setTox(CharactTestHelper.getOrCreateTox(nodeService, "Adult RO Face", 140.0, true, true,
@@ -242,7 +242,7 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 	 *
 	 * @param soapProduct a {@link fr.becpg.repo.product.data.FinishedProductData} object
 	 */
-	protected void createPhysicoChems(FinishedProductData soapProduct) {
+	protected void createPhysicoChems(ProductData soapProduct) {
 		// Add physico-chemical properties
 		addPhysicoChemProperty(soapProduct, "Boiling point", HazardClassificationFormulaContext.BOILING_POINT, 78.0); // Boiling point
 		addPhysicoChemProperty(soapProduct, "Flash point", HazardClassificationFormulaContext.FLASH_POINT, 23.0); // Flash point

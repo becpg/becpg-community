@@ -12,6 +12,7 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
+import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.repository.annotation.AlfCacheable;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -160,6 +161,11 @@ public class RawMaterialData extends ProductData {
 	 */
 	public RawMaterialData withScoreList(List<ScoreListDataItem> scoreList) {
 		setScoreList(scoreList);
+		return this;
+	}
+	
+	public RawMaterialData withRegulatoryList(List<RegulatoryListDataItem> regulatoryList) {
+		setRegulatoryList(regulatoryList);
 		return this;
 	}
 
