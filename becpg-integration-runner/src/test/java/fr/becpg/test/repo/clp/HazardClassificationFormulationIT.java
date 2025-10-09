@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import fr.becpg.model.GHSModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulationService;
-import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.HazardClassificationListDataItem;
 import fr.becpg.repo.product.formulation.clp.HazardClassificationFormulaContext;
@@ -136,7 +135,7 @@ public class HazardClassificationFormulationIT extends PLMBaseTestCase {
 	@Test
 	public void testFlammableLiquidClassification() {
 		assertHasHazard(inWriteTx(() -> {
-			FinishedProductData product = createTestProduct((builder, p) -> {
+			ProductData product = createTestProduct((builder, p) -> {
 				// Set physical properties for flammable liquid testing
 				((StandardSoapTestProduct) builder).addPhysicoChemProperty(p, "Flash Point", HazardClassificationFormulaContext.FLASH_POINT, 21.0);
 				((StandardSoapTestProduct) builder).addPhysicoChemProperty(p, "Boiling Point", HazardClassificationFormulaContext.BOILING_POINT,
@@ -153,7 +152,7 @@ public class HazardClassificationFormulationIT extends PLMBaseTestCase {
 	@Test
 	public void testCorrosiveClassification() {
 		assertHasHazard(inWriteTx(() -> {
-			FinishedProductData product = createTestProduct((builder, p) -> {
+			ProductData product = createTestProduct((builder, p) -> {
 				// Set physical properties for flammable liquid testing
 				((StandardSoapTestProduct) builder).addIngredient(p, "Corrosive A", 6.0, "H314", null, null, null); // >5% H314
 			});
@@ -165,7 +164,7 @@ public class HazardClassificationFormulationIT extends PLMBaseTestCase {
 	@Test
 	public void testSkinIrritantClassification() {
 		assertHasHazard(inWriteTx(() -> {
-			FinishedProductData product = createTestProduct((builder, p) -> {
+			ProductData product = createTestProduct((builder, p) -> {
 				((StandardSoapTestProduct) builder).addIngredient(p, "Irritant A", 3.0, "H314", null, null, null); // H314 1-5%
 			});
 			return formulationService.formulate(product);
@@ -177,7 +176,7 @@ public class HazardClassificationFormulationIT extends PLMBaseTestCase {
 	@Test
 	public void testSkinSensitizationClassification() {
 		assertHasHazard(inWriteTx(() -> {
-			FinishedProductData product = createTestProduct((builder, p) -> {
+			ProductData product = createTestProduct((builder, p) -> {
 				((StandardSoapTestProduct) builder).addIngredient(p, "Sensitizer A", 1.0, "H317", null, null, true); // Super sensitizing
 			});
 			return formulationService.formulate(product);
@@ -191,7 +190,7 @@ public class HazardClassificationFormulationIT extends PLMBaseTestCase {
 	@Test
 	public void testAquaticToxicityClassification() {
 		assertHasHazard(inWriteTx(() -> {
-			FinishedProductData product = createTestProduct((builder, p) -> {
+			ProductData product = createTestProduct((builder, p) -> {
 				((StandardSoapTestProduct) builder).addIngredient(p, "Aquatic A", 30.0, "H410", null, 1.0, null); // With M-factor
 			});
 			return formulationService.formulate(product);
@@ -205,7 +204,7 @@ public class HazardClassificationFormulationIT extends PLMBaseTestCase {
 	public void testAcuteToxicityClassification() {
 
 		assertHasHazard(inWriteTx(() -> {
-			FinishedProductData product = createTestProduct((builder, p) -> {
+			ProductData product = createTestProduct((builder, p) -> {
 				((StandardSoapTestProduct) builder).addIngredient(p, "Toxic A", 50.0, "H302", 500.0, null, null); // Acute oral toxicity
 			});
 			// Should be classified as H302 based on ATE calculation
@@ -214,11 +213,11 @@ public class HazardClassificationFormulationIT extends PLMBaseTestCase {
 		}), "H302", "GHS07", "Warning");
 	}
 
-	private FinishedProductData createTestProduct(SampleProductBuilder.ProductBuilder builder) {
+	private ProductData createTestProduct(SampleProductBuilder.ProductBuilder builder) {
 		StandardSoapTestProduct testProduct = new StandardSoapTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
 				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(false).withPhysico(false).build();
 
-		FinishedProductData product = testProduct.createTestProduct();
+		ProductData product = testProduct.createTestProduct();
 
 		if (builder != null) {
 			builder.build(testProduct, product);
