@@ -298,7 +298,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 				Locale locale = null;
 				if (personService.personExists(person)) {
 					String localeString = (String) nodeService.getProperty(personService.getPerson(person), BeCPGModel.PROP_USER_LOCALE);
-					locale = localeString == null ? I18NUtil.getLocale() : MLTextHelper.parseLocale(localeString);
+					locale = localeString == null || localeString.isBlank() ? I18NUtil.getLocale() : MLTextHelper.parseLocale(localeString);
 				}
 				String localizedSubject = MessageHelper.getMessage(subjectKey, locale, subjectParams);
 				
