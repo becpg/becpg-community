@@ -62,8 +62,20 @@ import fr.becpg.repo.system.SystemConfigurationService;
 @Service
 public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
+	private static final String FUNCTION = "function";
+
+	private static final String COUNTRY = "country";
+
+	private static final String USAGE_ON_LIST = "usageOnList";
+
+	private static final String COMMENTS = "comments";
+
+	private static final String TABULAR_REPORT = "tabularReport";
+
+	private static final String DID = "did";
+
 	public static final String DECERNIS_CHAIN_ID = "decernis";
-	 
+
 	public static final String MODULE_SUFFIX = " module";
 
 	private static final String MESSAGE_DECERNIS_ERROR = "message.decernis.error";
@@ -80,7 +92,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
 	private static final String RECIPE_ANALAYSIS_REPORT = "recipeAnalaysisReport";
 
-	private static final String PARAM_COUNTRY = "country";
+	private static final String PARAM_COUNTRY = COUNTRY;
 
 	private static final String PARAM_NAME = "name";
 
@@ -95,7 +107,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 	private static final String COSMETICS = "COSMETICS";
 	private static final String STANDARDS_OF_IDENTITY_FOOD = "STANDARDS_OF_IDENTITY_FOOD";
 	private static final String FOOD_ADDITIVES = "FOOD_ADDITIVES";
-	
+
 	public static final String MESSAGE_PROHIBITED_ING = "message.decernis.ingredient.prohibited";
 	public static final String MESSAGE_NOTLISTED_ING = "message.decernis.ingredient.notListed";
 	public static final String MESSAGE_PERMITTED_ING = "message.decernis.ingredient.permitted";
@@ -124,25 +136,25 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		moduleToIDMap.put(COSMETICS, 9);
 		moduleToIDMap.put(FORMULATION_CHECK, 100);
 	}
-	
+
 	private Map<String, List<String>> functionsMap = new ConcurrentHashMap<>();
 
 	public String analysisUrl() {
 		return systemConfigurationService.confValue("beCPG.decernis.analysisUrl");
 	}
-	
+
 	private String serverUrl() {
 		return systemConfigurationService.confValue("beCPG.decernis.serverUrl");
 	}
-	
+
 	private String companyName() {
 		return systemConfigurationService.confValue("beCPG.decernis.companyName");
 	}
-	
+
 	public boolean addInfoReqCtrl() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.specification.addInfoReqCtrl"));
 	}
-	
+
 	public DecernisRegulatoryPlugin(SystemConfigurationService systemConfigurationService, @Qualifier("nodeService") NodeService nodeService,
 			AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		super();
@@ -152,14 +164,14 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 	}
 
 	private SystemConfigurationService systemConfigurationService;
-	
+
 	private NodeService nodeService;
-	
+
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	@Override
 	public void checkRecipe(RegulatoryContext context, RegulatoryBatch regulatoryBatch) {
-		
+
 		if (logger.isDebugEnabled()) {
 			logger.debug("Launch decernis in mode :" + context.getRegulatoryMode());
 		}
@@ -177,17 +189,17 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 				for (String country : regulatoryBatch.countryBatches().countries()) {
 					for (String usage : regulatoryBatch.usageBatches().usages()) {
 						RequirementListDataItem req = RequirementListDataItem.forbidden()
-								.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR,
-										"Error while creating Decernis recipe: " + DecernisHelper.cleanError(e.getMessage())))
+								.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e)))
 								.ofDataType(RequirementDataType.Formulation).withFormulationChainId(RegulatoryService.REGULATORY_KEY)
 								.withRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
-						
+
 						context.getRequirements().add(req);
 					}
 				}
 			}
 			if (recipeAnalysisResults != null) {
-				List<RequirementListDataItem> parseRecipeAnalysisResults = parseRecipeAnalysisResults(context, regulatoryBatch, recipeAnalysisResults);
+				List<RequirementListDataItem> parseRecipeAnalysisResults = parseRecipeAnalysisResults(context, regulatoryBatch,
+						recipeAnalysisResults);
 				context.getRequirements().addAll(parseRecipeAnalysisResults);
 			}
 			checkUsagesID(context);
@@ -208,15 +220,13 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 			}
 		}
 	}
-	
+
 	private void updateUsageID(NodeRef usageRef, String usageCode, Integer moduleId) {
 		if (nodeService.getProperty(usageRef, PLMModel.PROP_REGULATORY_ID) instanceof String) {
 			return;
 		}
 		String url = serverUrl() + "/usages/structurized" + "?module_id=" + moduleId + "&phrase=" + usageCode;
-		if (logger.isTraceEnabled()) {
-			logger.trace("GET url: " + url);
-		}
+		traceGetRequest(url);
 		ResponseEntity<String> response = RestTemplateHelper.getRestTemplateLongTimeout().exchange(url, HttpMethod.GET, createEntity(null),
 				String.class, new HashMap<>());
 		if (HttpStatus.OK.equals(response.getStatusCode()) && response.getBody() != null) {
@@ -238,7 +248,13 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 			}
 		}
 	}
-	
+
+	private void traceGetRequest(String url) {
+		if (logger.isTraceEnabled()) {
+			logger.trace("GET url: " + url);
+		}
+	}
+
 	private void createRecipe(RegulatoryContext context) {
 		try {
 			JSONObject recipePayload = createRecipePayload(context);
@@ -252,8 +268,9 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 						logger.trace("PUT url: " + url + " body: " + recipePayload);
 					}
 					logger.debug("Update decernis recipe : " + recipeId);
-					ResponseEntity<String> responseEntity = RestTemplateHelper.getRestTemplateLongTimeout().exchange(url, HttpMethod.PUT, request, String.class);
-					
+					ResponseEntity<String> responseEntity = RestTemplateHelper.getRestTemplateLongTimeout().exchange(url, HttpMethod.PUT, request,
+							String.class);
+
 					if (!responseEntity.getStatusCode().is2xxSuccessful()) {
 						logger.debug("Error while updating recipe : " + recipeId + ", response is: " + responseEntity);
 						recipeId = postRecipe(recipePayload, request, url);
@@ -264,10 +281,10 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 				updateRecipeId(context, recipeId);
 			}
 		} catch (HttpStatusCodeException e) {
-			logger.error("Error while creating Decernis recipe: " + DecernisHelper.cleanError(e.getMessage()), e);
+			logger.error(generateError(e), e);
 			RequirementListDataItem req = RequirementListDataItem.forbidden()
-					.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, "Error while creating Decernis recipe: " + DecernisHelper.cleanError(e.getMessage())))
-					.ofDataType(RequirementDataType.Specification).withFormulationChainId(DECERNIS_CHAIN_ID);
+					.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e))).ofDataType(RequirementDataType.Specification)
+					.withFormulationChainId(DECERNIS_CHAIN_ID);
 			context.getRequirements().add(req);
 		}
 	}
@@ -278,20 +295,24 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 			regulatoryListItem.setRegulatoryRecipeId(recipeId);
 		}
 	}
-	
+
 	private String postRecipe(JSONObject recipePayload, HttpEntity<String> request, String url) {
-		if (logger.isTraceEnabled()) {
-			logger.trace("POST url: " + url + " body: " + recipePayload);
-		}
+		tracePostRequest(recipePayload, url);
 		JSONObject jsonObject = new JSONObject(RestTemplateHelper.getRestTemplateLongTimeout().postForObject(url, request, String.class));
 		String recipeId = null;
 		if (jsonObject.has("id")) {
 			recipeId = jsonObject.get("id").toString();
 		}
-		logger.debug("Create decernis recipe : "+recipeId);
+		logger.debug("Create decernis recipe : " + recipeId);
 		return recipeId;
 	}
-	
+
+	private void tracePostRequest(JSONObject recipePayload, String url) {
+		if (logger.isTraceEnabled()) {
+			logger.trace("POST url: " + url + " body: " + recipePayload);
+		}
+	}
+
 	private JSONObject createRecipePayload(RegulatoryContext context) throws JSONException {
 
 		JSONObject ret = new JSONObject();
@@ -322,14 +343,13 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 					function = ingType.getRegulatoryCode();
 				}
 				try {
-					if ((rid != null) && !rid.isEmpty() && !rid.equals(NOT_APPLICABLE)
-							&& ((ingName != null) && !ingName.isEmpty())) {
+					if ((rid != null) && !rid.isEmpty() && !rid.equals(NOT_APPLICABLE) && ((ingName != null) && !ingName.isEmpty())) {
 						JSONObject ingredient = new JSONObject();
 						ingredient.put("name", ingName);
 						ingredient.put("percentage", ingQtyPerc == null ? 0d : ingQtyPerc);
 						ingredient.put("ingredient_did", rid);
 						if (function != null) {
-							ingredient.put("function", function);
+							ingredient.put(FUNCTION, function);
 						}
 						ingredient.put("spec_parameters", JSONObject.NULL);
 						ingredient.put("upper_limit", JSONObject.NULL);
@@ -356,11 +376,11 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		String legalName = mlTextLegalName != null ? mlTextLegalName.getClosestValue(I18NUtil.getContentLocale()) : null;
 		return legalName != null && !legalName.isBlank() ? legalName : ingItem.getCharactName();
 	}
-	
+
 	private String cleanToken(String token) {
 		return token != null ? token.replace("Bearer ", "").strip() : "";
 	}
-	
+
 	@Override
 	public void checkIngredients(RegulatoryContext context, RegulatoryBatch checkContext) {
 		JSONObject ingredientAnalysisResults = null;
@@ -369,15 +389,19 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		} catch (HttpStatusCodeException e) {
 			logger.error("Error during Decernis ingredients analysis: " + DecernisHelper.cleanError(e.getMessage()), e);
 			RequirementListDataItem req = RequirementListDataItem.forbidden()
-					.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR,
-							"Error while creating Decernis recipe: " + DecernisHelper.cleanError(e.getMessage())))
-					.ofDataType(RequirementDataType.Formulation).withFormulationChainId(RegulatoryService.REGULATORY_KEY);
+					.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e))).ofDataType(RequirementDataType.Formulation)
+					.withFormulationChainId(RegulatoryService.REGULATORY_KEY);
 			context.getRequirements().add(req);
 		}
 		if (ingredientAnalysisResults != null) {
-			List<IngRegulatoryListDataItem> parseIngredientAnalysisResults = parseIngredientAnalysisResults(context, checkContext, ingredientAnalysisResults);
+			List<IngRegulatoryListDataItem> parseIngredientAnalysisResults = parseIngredientAnalysisResults(context, checkContext,
+					ingredientAnalysisResults);
 			context.getIngRegulatoryListDataItems().addAll(parseIngredientAnalysisResults);
 		}
+	}
+
+	private String generateError(HttpStatusCodeException e) {
+		return "Error while creating Decernis recipe: " + DecernisHelper.cleanError(e.getMessage());
 	}
 
 	@Override
@@ -405,7 +429,8 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		if (logger.isTraceEnabled()) {
 			logger.trace("GET url: " + url + " params: " + params);
 		}
-		ResponseEntity<String> response = RestTemplateHelper.getRestTemplateLongTimeout().exchange(url, HttpMethod.GET, createEntity(null), String.class, params);
+		ResponseEntity<String> response = RestTemplateHelper.getRestTemplateLongTimeout().exchange(url, HttpMethod.GET, createEntity(null),
+				String.class, params);
 
 		if ((response != null) && HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
 
@@ -414,7 +439,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 			if (jsonObject.has(PARAM_COUNT) && (jsonObject.getInt(PARAM_COUNT) >= 1) && jsonObject.has(PARAM_RESULTS)) {
 				JSONObject result = findIngredient(ingListDataItem.getIng(), ingName, jsonObject, params);
 				if (result != null) {
-					ingredientId = result.get("did").toString();
+					ingredientId = result.get(DID).toString();
 					if (logger.isDebugEnabled()) {
 						logger.debug("RID of ingredient " + params.get(PARAM_QUERY) + ": " + ingredientId);
 					}
@@ -499,7 +524,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		}
 		return usageBatches;
 	}
-	
+
 	private JSONObject postV5RecipeAnalysis(RegulatoryContext context, RegulatoryBatch checkContext) throws JSONException {
 
 		String recipeAnalysisResult = "";
@@ -522,13 +547,13 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
 		JSONArray ingredients = new JSONArray();
 		recipe.put("ingredients", ingredients);
-		
+
 		String moduleCode = moduleToCodeMap.get(checkContext.usageBatches().module());
 
 		for (IngListDataItem ingListDataItem : context.getProduct().getIngList()) {
-			
+
 			IngItem ingItem = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
-			
+
 			String function = null;
 			IngTypeItem ingType = ingItem.getIngType();
 			if (ingType != null) {
@@ -560,7 +585,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 				ingredient.put("idValue", rid);
 				ingredient.put("percentage", ingQtyPerc == null ? 0d : ingQtyPerc);
 				if (function != null) {
-					ingredient.put("function", function);
+					ingredient.put(FUNCTION, function);
 				}
 				ingredients.put(ingredient);
 			}
@@ -595,13 +620,11 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
 			scopeDetail.put("usage", usagesArray);
 
-			String url = analysisUrl() + "/recipe-analysis/transaction";
+			String url = analysisUrl() + "/recipe-analysis/transaction?report=tabular";
 
 			HttpEntity<String> entity = createEntity(payload.toString());
-			
-			if (logger.isTraceEnabled()) {
-				logger.trace("POST url: " + url + " body: " + payload);
-			}
+
+			tracePostRequest(payload, url);
 			recipeAnalysisResult = RestTemplateHelper.getRestTemplateLongTimeout().postForObject(url, entity, String.class, new HashMap<>());
 
 			return new JSONObject(recipeAnalysisResult);
@@ -609,29 +632,29 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
 		return null;
 	}
-	
+
 	private JSONObject postV5IngredientAnalysis(RegulatoryContext context, RegulatoryBatch checkContext) throws JSONException {
-		
+
 		String ingredientAnalysisResult = "";
-		
+
 		JSONObject payload = new JSONObject();
-		
+
 		JSONObject transaction = new JSONObject();
 		payload.put("transaction", transaction);
-		
+
 		JSONObject ingredientList = new JSONObject();
 		transaction.put("ingredientList", ingredientList);
-		
+
 		String code = (String) nodeService.getProperty(context.getProduct().getNodeRef(), BeCPGModel.PROP_CODE);
 		code += Calendar.getInstance().getTimeInMillis();
-		
+
 		String name = code + " " + context.getProduct().getName();
-		
+
 		ingredientList.put(PARAM_NAME, name);
-		
+
 		JSONArray ingredients = new JSONArray();
 		ingredientList.put("list", ingredients);
-		
+
 		for (IngListDataItem ingListDataItem : context.getProduct().getIngList()) {
 			IngItem ingItem = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
 			String rid = ingItem.getRegulatoryCode();
@@ -645,164 +668,157 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 				ingredients.put(ingredient);
 			}
 		}
-		
+
 		if (!ingredients.isEmpty()) {
 			JSONObject scope = new JSONObject();
 			transaction.put("scope", scope);
-			
+
 			scope.put(PARAM_NAME, name);
-			
+
 			JSONArray country = new JSONArray();
 			scope.put(PARAM_COUNTRY, country);
 			checkContext.countryBatches().countries().forEach(country::put);
-			
+
 			JSONArray topics = new JSONArray();
 			scope.put("topic", topics);
-			
+
 			JSONObject topic = new JSONObject();
 			topics.put(topic);
-			
+
 			topic.put(PARAM_NAME, moduleToCodeMap.get(checkContext.usageBatches().module()));
 			JSONObject scopeDetail = new JSONObject();
 			topic.put("scopeDetail", scopeDetail);
-			
+
 			JSONArray usages = new JSONArray();
 			for (String usage : checkContext.usageBatches().usages()) {
 				if (!usage.endsWith(MODULE_SUFFIX)) {
 					usages.put(usage);
 				}
 			}
-			
+
 			scopeDetail.put("usage", usages);
-			
-			String url = analysisUrl() + "/ingredient-analysis/transaction";
-			
+
+			String url = analysisUrl() + "/ingredient-analysis/transaction?report=tabular";
+
 			HttpEntity<String> entity = createEntity(payload.toString());
-			
-			if (logger.isTraceEnabled()) {
-				logger.trace("POST url: " + url + " body: " + payload);
-			}
+
+			tracePostRequest(payload, url);
 			ingredientAnalysisResult = RestTemplateHelper.getRestTemplateLongTimeout().postForObject(url, entity, String.class, new HashMap<>());
-			
+
 			return new JSONObject(ingredientAnalysisResult);
 		}
-		
+
 		return null;
 	}
 
 	private List<IngRegulatoryListDataItem> parseIngredientAnalysisResults(RegulatoryContext productContext, RegulatoryBatch checkContext,
 			JSONObject analysisResults) {
-		
+
 		List<IngRegulatoryListDataItem> ingRegulatoryListDataItems = new ArrayList<>();
-		
+
 		for (String country : checkContext.countryBatches().countries()) {
-			
+
 			if (analysisResults.has("ingredientAnalysisReport")) {
-				
+
 				JSONObject ingredientAnalaysisReport = analysisResults.getJSONObject("ingredientAnalysisReport");
-				
+
 				if (logger.isTraceEnabled()) {
 					logger.trace(ingredientAnalaysisReport.toString(3));
 				}
-				
-				if (ingredientAnalaysisReport.has("tabularReport")) {
-					
-					JSONArray tabularReports = ingredientAnalaysisReport.getJSONArray("tabularReport");
+
+				if (ingredientAnalaysisReport.has(TABULAR_REPORT)) {
+
+					JSONArray tabularReports = ingredientAnalaysisReport.getJSONArray(TABULAR_REPORT);
 					Map<String, List<JSONObject>> countryReports = findReportsForCountry(tabularReports, country);
-					
+
 					for (Entry<String, List<JSONObject>> entry : countryReports.entrySet()) {
 						String decernisID = entry.getKey();
 						List<JSONObject> countryDidReports = entry.getValue();
 						IngListDataItem ingItem = findIngredientItemV5(productContext.getProduct().getIngList(), decernisID, null,
 								countryDidReports.get(0).getString("customerName"));
-						IngRegulatoryListDataItem ingRegulatoryListDataItem = createIngRegulatoryListDataItem(ingItem.getIng(),
-								productContext.getCountryNodeRef(country));
+						if (ingItem != null) {
+							IngRegulatoryListDataItem ingRegulatoryListDataItem = createIngRegulatoryListDataItem(ingItem.getIng(),
+									productContext.getCountryNodeRef(country));
 
-						String usage = String.join(";;",
-								countryDidReports.stream()
-										.filter(j -> j.getJSONObject("comments").get("usageOnList") != null
-												&& !j.getJSONObject("comments").get("usageOnList").toString().isBlank()
-												&& !j.getJSONObject("comments").get("usageOnList").toString().equals("null"))
-										.map(j -> j.getJSONObject("comments").getString("usageOnList"))
-										.distinct()
-										.toList());
-						ingRegulatoryListDataItem.setUsages(new MLText(usage));
+							String usage = String.join(";;",
+									countryDidReports.stream()
+											.filter(j -> j.getJSONObject(COMMENTS).get(USAGE_ON_LIST) != null
+													&& !j.getJSONObject(COMMENTS).get(USAGE_ON_LIST).toString().isBlank()
+													&& !j.getJSONObject(COMMENTS).get(USAGE_ON_LIST).toString().equals("null"))
+											.map(j -> j.getJSONObject(COMMENTS).getString(USAGE_ON_LIST)).distinct().toList());
+							ingRegulatoryListDataItem.setUsages(new MLText(usage));
 
-						String citation = String.join(";;",
-								countryDidReports.stream()
-										.filter(j -> j.getJSONObject("comments").get("usageOnList") != null
-												&& !j.getJSONObject("comments").get("usageOnList").toString().isBlank()
-												&& !j.getJSONObject("comments").get("usageOnList").toString().equals("null"))
-										.filter(j -> j.get(CITATION) != null && !j.get(CITATION).toString().isBlank()
-												&& !j.get(CITATION).toString().equals("null"))
-										.map(j -> j.getJSONObject("comments").getString("usageOnList") + " :: " + j.getString(CITATION))
-										.distinct()
-										.toList());
-						ingRegulatoryListDataItem.setCitation(new MLText(citation));
+							String citation = String.join(";;",
+									countryDidReports.stream()
+											.filter(j -> j.getJSONObject(COMMENTS).get(USAGE_ON_LIST) != null
+													&& !j.getJSONObject(COMMENTS).get(USAGE_ON_LIST).toString().isBlank()
+													&& !j.getJSONObject(COMMENTS).get(USAGE_ON_LIST).toString().equals("null"))
+											.filter(j -> j.get(CITATION) != null && !j.get(CITATION).toString().isBlank()
+													&& !j.get(CITATION).toString().equals("null"))
+											.map(j -> j.getJSONObject(COMMENTS).getString(USAGE_ON_LIST) + " :: " + j.getString(CITATION)).distinct()
+											.toList());
+							ingRegulatoryListDataItem.setCitation(new MLText(citation));
 
-						String restrictionLevel = String.join(";;",
-								countryDidReports.stream()
-										.filter(j -> j.getJSONObject("comments").get("usageOnList") != null
-												&& !j.getJSONObject("comments").get("usageOnList").toString().isBlank()
-												&& !j.getJSONObject("comments").get("usageOnList").toString().equals("null"))
-										.filter(j -> j.get(THRESHOLD) != null && !j.get(THRESHOLD).toString().isBlank()
-												&& !j.get(THRESHOLD).toString().equals("null"))
-										.map(j -> j.getJSONObject("comments").getString("usageOnList") + " :: " + j.getString(THRESHOLD))
-										.distinct()
-										.toList());
-						ingRegulatoryListDataItem.setRestrictionLevels(new MLText(restrictionLevel));
-						
-						String precautions = String.join(";;",
-								countryDidReports.stream()
-								.filter(j -> j.getJSONObject("comments").get("comments") != null
-								&& !j.getJSONObject("comments").get("comments").toString().isBlank()
-								&& !j.getJSONObject("comments").get("comments").toString().equals("null"))
-								.map(j -> j.getJSONObject("comments").getString("comments"))
-								.distinct()
-								.toList());
-						ingRegulatoryListDataItem.setPrecautions(new MLText(precautions));
+							String restrictionLevel = String.join(";;",
+									countryDidReports.stream()
+											.filter(j -> j.getJSONObject(COMMENTS).get(USAGE_ON_LIST) != null
+													&& !j.getJSONObject(COMMENTS).get(USAGE_ON_LIST).toString().isBlank()
+													&& !j.getJSONObject(COMMENTS).get(USAGE_ON_LIST).toString().equals("null"))
+											.filter(j -> j.get(THRESHOLD) != null && !j.get(THRESHOLD).toString().isBlank()
+													&& !j.get(THRESHOLD).toString().equals("null"))
+											.map(j -> j.getJSONObject(COMMENTS).getString(USAGE_ON_LIST) + " :: " + j.getString(THRESHOLD)).distinct()
+											.toList());
+							ingRegulatoryListDataItem.setRestrictionLevels(new MLText(restrictionLevel));
 
-						String resultIndicator = String.join(";;",
-								countryDidReports.stream()
-										.filter(j -> j.getJSONObject("comments").get("usageOnList") != null
-												&& !j.getJSONObject("comments").get("usageOnList").toString().isBlank()
-												&& !j.getJSONObject("comments").get("usageOnList").toString().equals("null"))
-										.filter(j -> j.get(RESULT_INDICATOR) != null && !j.get(RESULT_INDICATOR).toString().isBlank()
-												&& !j.get(RESULT_INDICATOR).toString().equals("null"))
-										.map(j -> j.getJSONObject("comments").getString("usageOnList") + " :: " + j.getString(RESULT_INDICATOR))
-										.distinct()
-										.toList());
-						ingRegulatoryListDataItem.setResultIndicator(new MLText(resultIndicator));
+							String precautions = String.join(";;",
+									countryDidReports.stream()
+											.filter(j -> j.getJSONObject(COMMENTS).get(COMMENTS) != null
+													&& !j.getJSONObject(COMMENTS).get(COMMENTS).toString().isBlank()
+													&& !j.getJSONObject(COMMENTS).get(COMMENTS).toString().equals("null"))
+											.map(j -> j.getJSONObject(COMMENTS).getString(COMMENTS)).distinct().toList());
+							ingRegulatoryListDataItem.setPrecautions(new MLText(precautions));
 
-						ingRegulatoryListDataItems.add(ingRegulatoryListDataItem);
+							String resultIndicator = String.join(";;",
+									countryDidReports.stream()
+											.filter(j -> j.getJSONObject(COMMENTS).get(USAGE_ON_LIST) != null
+													&& !j.getJSONObject(COMMENTS).get(USAGE_ON_LIST).toString().isBlank()
+													&& !j.getJSONObject(COMMENTS).get(USAGE_ON_LIST).toString().equals("null"))
+											.filter(j -> j.get(RESULT_INDICATOR) != null && !j.get(RESULT_INDICATOR).toString().isBlank()
+													&& !j.get(RESULT_INDICATOR).toString().equals("null"))
+											.map(j -> j.getJSONObject(COMMENTS).getString(USAGE_ON_LIST) + " :: " + j.getString(RESULT_INDICATOR))
+											.distinct().toList());
+							ingRegulatoryListDataItem.setResultIndicator(new MLText(resultIndicator));
+
+							ingRegulatoryListDataItems.add(ingRegulatoryListDataItem);
+						}
 					}
 				}
 			}
 		}
 		return ingRegulatoryListDataItems;
 	}
-	
+
 	protected IngRegulatoryListDataItem createIngRegulatoryListDataItem(NodeRef ing, NodeRef country) {
 
 		IngRegulatoryListDataItem ingRegulatoryListDataItem = new IngRegulatoryListDataItem();
 		ingRegulatoryListDataItem.setIng(ing);
 		ingRegulatoryListDataItem.setRegulatoryCountries(Arrays.asList(country));
-		
+
 		return ingRegulatoryListDataItem;
 	}
-	
+
 	private Map<String, List<JSONObject>> findReportsForCountry(JSONArray tabularReports, String country) {
 		Map<String, List<JSONObject>> map = new HashMap<>();
 		for (int i = 0; i < tabularReports.length(); i++) {
 			JSONObject tabularReport = tabularReports.getJSONObject(i);
-			if (tabularReport.has("country") && tabularReport.getString("country").equals(country)) {
+			if (tabularReport.has(COUNTRY) && tabularReport.getString(COUNTRY).equals(country)) {
 				List<JSONObject> list = map.computeIfAbsent(tabularReport.get("decernisId").toString(), k -> new ArrayList<>());
 				list.add(tabularReport);
 			}
 		}
 		return map;
 	}
-	
+
 	private String findFunction(String moduleCode, String ingTypeValue) {
 		if (!functionsMap.containsKey(moduleCode)) {
 			List<String> functions = fetchFunctions(moduleCode);
@@ -820,7 +836,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 				+ functionsMap.get(moduleCode));
 		return null;
 	}
-	
+
 	private List<String> fetchFunctions(String moduleCode) {
 
 		List<String> functions = new ArrayList<>();
@@ -830,11 +846,9 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setBearerAuth(DecernisHelper.getToken().trim());
 
-		if (logger.isTraceEnabled()) {
-			logger.trace("GET url: " + url);
-		}
-		ResponseEntity<String> response = RestTemplateHelper.getRestTemplateLongTimeout().exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class,
-				new HashMap<>());
+		traceGetRequest(url);
+		ResponseEntity<String> response = RestTemplateHelper.getRestTemplateLongTimeout().exchange(url, HttpMethod.GET, new HttpEntity<>(headers),
+				String.class, new HashMap<>());
 
 		if (HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
 			JSONObject responseBody = new JSONObject(response.getBody());
@@ -848,7 +862,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		}
 		return functions;
 	}
-	
+
 	protected HttpEntity<String> createEntity(String body) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
@@ -857,8 +871,9 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
 		return new HttpEntity<>(body, headers);
 	}
-	
-	private List<RequirementListDataItem> parseRecipeAnalysisResults(RegulatoryContext context, RegulatoryBatch checkContext, JSONObject analysisResults) {
+
+	private List<RequirementListDataItem> parseRecipeAnalysisResults(RegulatoryContext context, RegulatoryBatch checkContext,
+			JSONObject analysisResults) {
 		List<RequirementListDataItem> requirements = new ArrayList<>();
 		for (String country : checkContext.countryBatches().countries()) {
 
@@ -876,48 +891,48 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
 					for (int i = 0; i < recipeReport.length(); i++) {
 						JSONObject report = recipeReport.getJSONObject(i);
-						if (report.has("country") && report.getString("country").equals(country)) {
+						if (report.has(COUNTRY) && report.getString(COUNTRY).equals(country)) {
 
-							JSONArray tabularReports = report.getJSONArray("tabularReport");
+							JSONArray tabularReports = report.getJSONArray(TABULAR_REPORT);
 
 							for (int j = 0; j < tabularReports.length(); j++) {
 								JSONObject tabularReport = tabularReports.getJSONObject(j);
-								
+
 								for (String usage : checkContext.usageBatches().usages()) {
-									
-									String decernisID = tabularReport.getString("did");
-									String function = tabularReport.getString("function");
+
+									String decernisID = tabularReport.getString(DID);
+									String function = tabularReport.getString(FUNCTION);
 									String ingredientName = tabularReport.getString(PARAM_NAME);
-									
-									IngListDataItem ingItem = findIngredientItemV5(context.getProduct().getIngList(), decernisID,
-											function, ingredientName);
-									
+
+									IngListDataItem ingItem = findIngredientItemV5(context.getProduct().getIngList(), decernisID, function,
+											ingredientName);
+
 									if (ingItem != null) {
-										
+
 										if (tabularReport.getString(RESULT_INDICATOR).toLowerCase().startsWith("prohibited")
 												|| tabularReport.getString(RESULT_INDICATOR).toLowerCase().startsWith("over limit")) {
-											String threshold = (tabularReport.has(THRESHOLD)
-													&& !tabularReport.getString(THRESHOLD).equals("None")
+											String threshold = (tabularReport.has(THRESHOLD) && !tabularReport.getString(THRESHOLD).equals("None")
 													? "(" + tabularReport.getString(THRESHOLD) + ")"
-															: "");
-											
+													: "");
+
 											MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, threshold);
 											RequirementListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage,
 													RequirementType.Forbidden);
 											reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
 											reqCtrlItem.setReqMaxQty(0d);
-											if (!threshold.isBlank() && ingItem != null && ingItem.getQtyPerc() != null && ingItem.getQtyPerc() != 0d) {
+											if (!threshold.isBlank() && ingItem != null && ingItem.getQtyPerc() != null
+													&& ingItem.getQtyPerc() != 0d) {
 												Double thresholdValue = DecernisHelper.extractThresholdValue(threshold);
 												if (thresholdValue != null) {
 													reqCtrlItem.setReqMaxQty((thresholdValue / ingItem.getQtyPerc()) * 100d);
 												}
 											}
-											
+
 											requirements.add(reqCtrlItem);
 											if (logger.isDebugEnabled()) {
-												logger.debug("Adding prohibited ing :" + tabularReport.getString("did"));
+												logger.debug("Adding prohibited ing :" + tabularReport.getString(DID));
 											}
-											
+
 										} else if (tabularReport.getString(RESULT_INDICATOR).toLowerCase().startsWith("not listed")) {
 											MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING);
 											RequirementListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage,
@@ -925,26 +940,24 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 											reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
 											requirements.add(reqCtrlItem);
 											if (logger.isDebugEnabled()) {
-												logger.debug("Adding not listed ing :" + tabularReport.getString("did"));
+												logger.debug("Adding not listed ing :" + tabularReport.getString(DID));
 											}
 										} else if (Boolean.TRUE.equals(addInfoReqCtrl())) {
-											
-											String threshold = (tabularReport.has(THRESHOLD)
-													&& !tabularReport.getString(THRESHOLD).equals("None") ? tabularReport.getString(THRESHOLD)
-															: "");
-											
+
+											String threshold = (tabularReport.has(THRESHOLD) && !tabularReport.getString(THRESHOLD).equals("None")
+													? tabularReport.getString(THRESHOLD)
+													: "");
+
 											MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PERMITTED_ING,
 													tabularReport.getString(RESULT_INDICATOR), threshold);
-											RequirementListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage,
-													RequirementType.Info);
-											
+											RequirementListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Info);
+
 											reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
 											requirements.add(reqCtrlItem);
 											if (logger.isDebugEnabled()) {
-												logger.debug(
-														"Adding " + reqMessage.getDefaultValue() + " ing :" + tabularReport.getString("did"));
+												logger.debug("Adding " + reqMessage.getDefaultValue() + " ing :" + tabularReport.getString(DID));
 											}
-											
+
 										}
 									}
 								}
@@ -957,16 +970,14 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		}
 		return requirements;
 	}
-	
+
 	private IngListDataItem findIngredientItemV5(List<IngListDataItem> ingList, String decernisID, String function, String ingredientName) {
 		for (IngListDataItem ing : ingList) {
 			IngItem ingItem = (IngItem) alfrescoRepository.findOne(ing.getIng());
 			if (decernisID.equals(ingItem.getRegulatoryCode())) {
 				IngTypeItem ingType = ingItem.getIngType();
-				if (ingType != null && function != null
-						&& (function.equalsIgnoreCase(ingType.getLvValue())
-								|| function.equalsIgnoreCase(ingType.getLvCode())
-								|| function.equalsIgnoreCase(ingType.getRegulatoryCode()))) {
+				if (ingType != null && function != null && (function.equalsIgnoreCase(ingType.getLvValue())
+						|| function.equalsIgnoreCase(ingType.getLvCode()) || function.equalsIgnoreCase(ingType.getRegulatoryCode()))) {
 					return ing;
 				}
 			}
@@ -981,7 +992,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		}
 		return null;
 	}
-	
+
 	protected RequirementListDataItem createReqCtrl(NodeRef ing, MLText reqCtrlMessage, RequirementType reqType) {
 		RequirementListDataItem reqCtrlItem = new RequirementListDataItem();
 		reqCtrlItem.setReqType(reqType);
@@ -992,7 +1003,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		reqCtrlItem.setFormulationChainId(RegulatoryService.REGULATORY_KEY);
 		return reqCtrlItem;
 	}
-	
+
 	private boolean buildQuery(IngListDataItem ingListDataItem, Map<String, String> params) {
 		Iterator<Map.Entry<QName, String>> iterator = ingNumbers.entrySet().iterator();
 		while (iterator.hasNext()) {
@@ -1010,7 +1021,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
 		return false;
 	}
-	
+
 	private JSONObject findIngredient(NodeRef ing, String ingName, JSONObject jsonObject, Map<String, String> params) {
 		JSONArray results = jsonObject.getJSONArray(PARAM_RESULTS);
 		JSONObject result = null;
@@ -1023,12 +1034,12 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		if (result == null) {
 			result = getRidByIngName(results, ingName);
 		}
-		if (result == null && results.toList().stream().map(o -> ((Map<?, ?>) o).get("did")).distinct().count() == 1) {
+		if (result == null && results.toList().stream().map(o -> ((Map<?, ?>) o).get(DID)).distinct().count() == 1) {
 			result = results.getJSONObject(0);
 		}
 		return result;
 	}
-	
+
 	private JSONObject findIngByNumber(NodeRef ing, JSONArray results, String type) {
 		for (Entry<QName, String> entry : ingNumbers.entrySet()) {
 			QName numberProp = entry.getKey();
@@ -1058,7 +1069,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		}
 		return null;
 	}
-	
+
 	private JSONObject getRidByIngName(JSONArray results, String ingName) throws JSONException {
 		for (int i = 0; i < results.length(); i++) {
 			JSONObject result = results.getJSONObject(i);
