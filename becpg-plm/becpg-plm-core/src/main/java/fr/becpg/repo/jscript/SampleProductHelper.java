@@ -25,6 +25,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.sample.GreenScoreSpecificationTestProduct;
+import fr.becpg.repo.sample.StandardBodyMilkTestProduct;
 import fr.becpg.repo.sample.StandardChocolateEclairTestProduct;
 import fr.becpg.repo.sample.StandardSoapTestProduct;
 
@@ -90,6 +91,11 @@ public final class SampleProductHelper extends BaseScopableProcessorExtension {
 	 */
 	public fr.becpg.repo.sample.StandardSoapTestProduct.Builder greenScoreProductBuilder(final ScriptNode destFolder) {
 		return new GreenScoreSpecificationTestProduct.Builder().withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService)
+				.withDestFolder(destFolder.getNodeRef());
+	}
+	
+	public fr.becpg.repo.sample.StandardSoapTestProduct.Builder bodyMilkProductBuilder(final ScriptNode destFolder) {
+		return new StandardBodyMilkTestProduct.Builder().withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService)
 				.withDestFolder(destFolder.getNodeRef());
 	}
 
