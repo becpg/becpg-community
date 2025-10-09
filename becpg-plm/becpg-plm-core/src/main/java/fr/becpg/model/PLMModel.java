@@ -875,6 +875,20 @@ public interface PLMModel {
 
 	/** Constant <code>TYPE_ING_REGULATORY_LIST</code> */
 	QName TYPE_ING_REGULATORY_LIST = QName.createQName(BeCPGModel.BECPG_URI, "ingRegulatoryList");
+	/** Constant <code>ASSOC_IRL_ING</code> */
+	QName ASSOC_IRL_ING = QName.createQName(BeCPGModel.BECPG_URI, "irlIng");
+	/** Constant <code>PROP_IRL_CITATION</code> */
+	QName PROP_IRL_CITATION = QName.createQName(BeCPGModel.BECPG_URI, "irlCitation");
+	/** Constant <code>PROP_IRL_RESTRICTION_LEVELS</code> */
+	QName PROP_IRL_RESTRICTION_LEVELS = QName.createQName(BeCPGModel.BECPG_URI, "irlRestrictionLevels");
+	/** Constant <code>PROP_IRL_PRECAUTIONS</code> */
+	QName PROP_IRL_PRECAUTIONS = QName.createQName(BeCPGModel.BECPG_URI, "irlPrecautions");
+	/** Constant <code>PROP_IRL_RESULT_INDICATOR</code> */
+	QName PROP_IRL_RESULT_INDICATOR = QName.createQName(BeCPGModel.BECPG_URI, "irlResultIndicator");
+	/** Constant <code>PROP_IRL_USAGES</code> */
+	QName PROP_IRL_USAGES = QName.createQName(BeCPGModel.BECPG_URI, "irlUsages");
+	/** Constant <code>PROP_IRL_SOURCES</code> */
+	QName PROP_IRL_SOURCES = QName.createQName(BeCPGModel.BECPG_URI, "irlSources");
 
 	//Chemical code
 	/** Constant <code>PROP_CAS_NUMBER</code> */
