@@ -213,7 +213,10 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 					// items we need. This will
 					// drastically improve performance over paging after
 					// building the model
-					results.add(buildbeCPGModel(modelBuilder, task, properties, extraProperties));
+					 Map<String, Object> ret = buildbeCPGModel(modelBuilder, task, properties, extraProperties)
+					if(ret!=null) {
+						results.add(ret);
+					}
 				}
 			}
 		}
@@ -239,13 +242,7 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 				LOGGER.warn("Task path is null for task: " + task.getId() + ", title: " + task.getTitle());
 				LOGGER.warn("Task properties: " + task.getProperties());
 			}
-			Map<String, Object> model = new HashMap<>();
-			model.put("id", task.getId());
-			model.put("name", task.getName());
-			model.put("title", task.getTitle());
-			model.put("description", task.getDescription());
-			model.put("error", "Task path is null, providing partial data.");
-			return model;
+			return null;
 		}
 		
 		Map<String, Object> ret = modelBuilder.buildSimple(task, properties);
