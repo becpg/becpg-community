@@ -12,7 +12,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.Pair;
 
-import fr.becpg.repo.product.data.FinishedProductData;
+import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
@@ -26,7 +26,7 @@ public abstract class SampleProductBuilder {
 
     @FunctionalInterface
 	public interface ProductBuilder {
-        void build(SampleProductBuilder builder, FinishedProductData product);
+        void build(SampleProductBuilder builder, ProductData product);
     }
 	
 	
@@ -99,9 +99,9 @@ public abstract class SampleProductBuilder {
 	/**
 	 * <p>createTestProduct.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.product.data.FinishedProductData} object
+	 * @return a {@link fr.becpg.repo.product.data.ProductData} object
 	 */
-	public abstract FinishedProductData createTestProduct();
+	public abstract ProductData createTestProduct();
 	
 	/**
 	 * <p>uniqueName.</p>
