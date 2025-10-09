@@ -1,4 +1,4 @@
-package fr.becpg.repo.decernis.helper;
+package fr.becpg.repo.regulatory.plugins;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
