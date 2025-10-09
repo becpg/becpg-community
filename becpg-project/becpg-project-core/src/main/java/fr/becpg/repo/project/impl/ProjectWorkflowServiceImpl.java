@@ -275,7 +275,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 	/** {@inheritDoc} */
 	@Override
 	public boolean isWorkflowActive(TaskListDataItem task) {
-	    if (task == null ||task.getWorkflowInstance().isBlank()) {
+	    if (task == null || task.getWorkflowInstance() == null || task.getWorkflowInstance().isBlank()) {
 	        return false;
 	    }
 
