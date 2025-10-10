@@ -183,8 +183,9 @@ public final class RestTemplateHelper {
                 String[] ips = Arrays.stream(addresses)
                     .map(InetAddress::getHostAddress)
                     .toArray(String[]::new);
-                
-                logger.info("DNS Resolution for host {}: {}", host, Arrays.toString(ips));
+                if (logger.isInfoEnabled()) {
+                	logger.info("DNS Resolution for host {}: {}", host, Arrays.toString(ips));
+                }
             } catch (UnknownHostException e) {
                 logger.error("DNS Resolution failed for host {}: {}", host, e.getMessage());
             }
