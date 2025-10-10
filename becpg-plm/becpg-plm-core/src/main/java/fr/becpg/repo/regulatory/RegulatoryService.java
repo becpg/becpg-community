@@ -28,6 +28,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.ibm.icu.util.Calendar;
+
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
@@ -63,6 +65,8 @@ import fr.becpg.util.MutexFactory;
 @Service
 public class RegulatoryService {
 
+	public static final String UNKNOWN = "unknown";
+	
 	public static final String REGULATORY_KEY = "regulatory";
 
 	private static final Log logger = LogFactory.getLog(RegulatoryService.class);
@@ -127,9 +131,9 @@ public class RegulatoryService {
 				logger.debug("Product is not compatible for compliance check");
 				return false;
 			}
-			if (isSameRequirementChecksum(productData)) {
+			if (isUpToDate(productData)) {
 				result.setStatus(Status.UP_TO_DATE);
-				logger.debug("Regulatory checksum is same: " + productData.getRequirementChecksum());
+				logger.debug("Product compliance is up to date");
 				return false;
 			}
 			RegulatoryContext context = createContext(productData);
@@ -494,16 +498,19 @@ public class RegulatoryService {
 						if (logger.isDebugEnabled()) {
 							logger.debug("Found ingredient ID: " + ingItem.getCharactName() + ", ID: " + rid);
 						}
-						ingItem.setRegulatoryCode(rid);
-						alfrescoRepository.save(ingItem);
 					} else {
 						if (logger.isDebugEnabled()) {
-							logger.debug("Could not fetch ingredient ID: " + ingItem.getCharactName());
+							logger.debug("Could not find ingredient ID: " + ingItem.getCharactName());
 						}
-						RequirementListDataItem noCodeRequirement = createReqCtrl(ingListDataItem,
-								MLTextHelper.getI18NMessage(MESSAGE_NO_CODE_CHARACT), RequirementType.Tolerated);
-						context.getRequirements().add(noCodeRequirement);
+						rid = UNKNOWN;
 					}
+					ingItem.setRegulatoryCode(rid);
+					alfrescoRepository.save(ingItem);
+				}
+				if (UNKNOWN.equals(rid)) {
+					RequirementListDataItem noCodeRequirement = createReqCtrl(ingListDataItem,
+							MLTextHelper.getI18NMessage(MESSAGE_NO_CODE_CHARACT), RequirementType.Tolerated);
+					context.getRequirements().add(noCodeRequirement);
 				}
 			}
 		}
@@ -564,12 +571,15 @@ public class RegulatoryService {
 		return linkedSearches;
 	}
 
-	private boolean isSameRequirementChecksum(ProductData product) {
-
+	private boolean isUpToDate(ProductData product) {
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DAY_OF_YEAR, -1);
+		if (product.getRegulatoryFormulatedDate() == null || product.getRegulatoryFormulatedDate().before(cal.getTime())) {
+			return false;
+		}
 		if (!CheckSumHelper.isSameChecksum(REGULATORY_KEY, product.getRequirementChecksum(), createProductCheckum(product))) {
 			return false;
 		}
-
 		for (RegulatoryListDataItem regulatoryListDataItem : product.getRegulatoryList()) {
 			Set<String> countries = regulatoryListDataItem.getRegulatoryCountriesRef().stream().map(this::extractCode).collect(Collectors.toSet());
 			Set<String> usages = regulatoryListDataItem.getRegulatoryUsagesRef().stream().map(this::extractCode).collect(Collectors.toSet());
