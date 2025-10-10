@@ -18,6 +18,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.activity.EntityActivityService;
+import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -61,6 +62,9 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 	
 	@Autowired
 	private MutexFactory mutexFactory;
+	
+	@Autowired
+	private BatchQueueService batchQueueService;
 	
 	private MockWebServer mockWebServer;
 	
