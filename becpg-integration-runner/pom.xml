@@ -379,7 +379,7 @@
 					<plugin>
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
-						<version>0.8.8</version>
+						<version>0.8.13</version>
 						<configuration>
 							<append>true</append>
 
@@ -413,6 +413,7 @@
 									<destFile>
 										${project.build.directory}/jacoco.exec</destFile>
 									<port>10001</port>
+									<retryCount>1</retryCount>
 									<reset>true</reset>
 									<append>true</append>
 								</configuration>
