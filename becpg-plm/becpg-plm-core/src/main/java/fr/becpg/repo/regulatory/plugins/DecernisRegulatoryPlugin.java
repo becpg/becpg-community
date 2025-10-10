@@ -343,7 +343,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 					function = ingType.getRegulatoryCode();
 				}
 				try {
-					if ((rid != null) && !rid.isEmpty() && !rid.equals(NOT_APPLICABLE) && ((ingName != null) && !ingName.isEmpty())) {
+					if (isRIDValid(rid) && ingName != null && !ingName.isEmpty()) {
 						JSONObject ingredient = new JSONObject();
 						ingredient.put("name", ingName);
 						ingredient.put("percentage", ingQtyPerc == null ? 0d : ingQtyPerc);
@@ -369,6 +369,10 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 			return ret;
 		}
 		return null;
+	}
+
+	private boolean isRIDValid(String rid) {
+		return rid != null && !rid.isEmpty() && !rid.equals(NOT_APPLICABLE) && !rid.equals(RegulatoryService.UNKNOWN);
 	}
 
 	private String extractIngName(IngItem ingItem) {
@@ -575,7 +579,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 				}
 			}
 			String rid = ingItem.getRegulatoryCode();
-			if (rid != null && !rid.isBlank() && !NOT_APPLICABLE.equals(rid)) {
+			if (isRIDValid(rid)) {
 				String ingName = extractIngName(ingItem);
 				Double ingQtyPerc = DecernisHelper.truncateDoubleValue(ingListDataItem.getQtyPerc());
 				JSONObject ingredient = new JSONObject();
@@ -658,7 +662,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		for (IngListDataItem ingListDataItem : context.getProduct().getIngList()) {
 			IngItem ingItem = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
 			String rid = ingItem.getRegulatoryCode();
-			if (rid != null && !rid.isBlank() && !NOT_APPLICABLE.equals(rid)) {
+			if (isRIDValid(rid)) {
 				String ingName = extractIngName(ingItem);
 				JSONObject ingredient = new JSONObject();
 				ingredient.put("customerId", ingName);
@@ -1009,7 +1013,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		while (iterator.hasNext()) {
 			Map.Entry<QName, String> ingNumber = iterator.next();
 			String number = (String) nodeService.getProperty(ingListDataItem.getIng(), ingNumber.getKey());
-			if ((number != null) && !number.isEmpty() && !number.equals(NOT_APPLICABLE) && !number.contains(",")) {
+			if (isRIDValid(number) && !number.contains(",")) {
 				if (number.contains("/")) {
 					number = number.split("/")[0].trim();
 				}
