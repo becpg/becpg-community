@@ -30,17 +30,19 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.config.format.FormatMode;
 import fr.becpg.config.format.PropertyFormats;
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.activity.data.ActivityType;
-import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.activity.helper.AuditActivityHelper;
+import fr.becpg.repo.audit.model.AuditQuery;
+import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.plugin.impl.ActivityAuditPlugin;
+import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
-import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * <p>ProjectDetailsWebScript class.</p>
@@ -58,9 +60,13 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 
 	private ContentService contentService;
 
-	private EntityListDAO entityListDAO;
-
 	private NodeService nodeService;
+	
+	private BeCPGAuditService beCPGAuditService;
+	
+	public void setBeCPGAuditService(BeCPGAuditService beCPGAuditService) {
+		this.beCPGAuditService = beCPGAuditService;
+	}
 	
 	/**
 	 * <p>Setter for the field <code>nodeService</code>.</p>
@@ -78,15 +84,6 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 	 */
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
-	}
-
-	/**
-	 * <p>Setter for the field <code>entityListDAO</code>.</p>
-	 *
-	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
-	 */
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
 	}
 
 	/**
@@ -254,25 +251,17 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 	}
 
 	private List<ActivityListDataItem> loadActivityDataList(NodeRef entityNodeRef) {
-
-		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
-
-		if (listContainerNodeRef != null) {
-			NodeRef dataListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
-
-			if (dataListNodeRef != null) {
-
-				return BeCPGQueryBuilder.createQuery().parent(dataListNodeRef).ofType(BeCPGModel.TYPE_ACTIVITY_LIST)
-						.addSort(ContentModel.PROP_CREATED, true).list().stream().map(el -> {
-							ActivityListDataItem ret = (ActivityListDataItem) alfrescoRepository.findOne(el);
-							ret.setParentNodeRef(dataListNodeRef);
-							return ret;
-						}).toList();
-
-			}
+		AuditQuery auditQuery = AuditQuery.createQuery()
+                .asc(false)
+                .dbAsc(false)
+                .sortBy(ActivityAuditPlugin.PROP_CM_CREATED)
+                .filter(ActivityAuditPlugin.ENTITY_NODEREF, entityNodeRef.toString());
+        List<ActivityListDataItem> sortedActivityList = new ArrayList<>();
+        List<JSONObject> results = beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditQuery);
+        for (JSONObject result : results) {
+			sortedActivityList.add(AuditActivityHelper.parseActivity(result));
 		}
-
-		return new ArrayList<>();
+        return sortedActivityList;
 	}
 
 	private boolean isAuthenticatedUser(List<NodeRef> listNodeRef) {
@@ -312,8 +301,8 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 		Map<String, Integer> temp = new HashMap<>();
 
 		for (ActivityListDataItem activityListDataItem : activityLists) {
-
-			Date activityDate = (Date) nodeService.getProperty(activityListDataItem.getNodeRef(), ContentModel.PROP_CREATED);
+			
+			Date activityDate = activityListDataItem.getCreatedDate();
 
 			String activityDateStr = formatDate(activityDate);
 
@@ -344,7 +333,7 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 					JSONObject commentObj = new JSONObject();
 					commentObj.put("commentCreator", activityComment.getUserId());
 					commentObj.put("commentCreationDate",
-							formatDate(nodeService.getProperty(activityComment.getNodeRef(), ContentModel.PROP_CREATED)));
+							formatDate(activityComment.getCreatedDate()));
 					JSONObject activityDataObj = activityComment.getJSONData();
 
 					NodeRef commentRef = new NodeRef((String) activityDataObj.get("commentNodeRef"));
