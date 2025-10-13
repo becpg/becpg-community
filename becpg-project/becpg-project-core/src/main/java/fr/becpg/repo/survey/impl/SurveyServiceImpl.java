@@ -453,7 +453,7 @@ public class SurveyServiceImpl implements SurveyService {
 	private boolean isVisible(SurveyListDataItem surveyListDataItem, List<SurveyListDataItem> surveyListDataItems) {
 		Map<NodeRef, SurveyQuestion> surveyQuestionByNodeRef = getSurveyQuestionCache().getSurveyQuestionByNodeRef();
 		SurveyQuestion surveyQuestion = surveyQuestionByNodeRef.get(surveyListDataItem.getQuestion());
-		SurveyQuestion parentQuestion = surveyQuestion.getParent() != null ? surveyQuestion.getParent() : surveyQuestion;
+		SurveyQuestion parentQuestion = extractParentQuestion(surveyQuestion);
 		if (Boolean.TRUE.equals(parentQuestion.getIsVisible())) {
 			return true;
 		}
@@ -472,6 +472,19 @@ public class SurveyServiceImpl implements SurveyService {
 				.filter(Objects::nonNull)
 				.flatMap(List::stream)
 				.anyMatch(parentQuestion::equals);
+	}
+
+	private SurveyQuestion extractParentQuestion(SurveyQuestion surveyQuestion){
+		if (surveyQuestion.getParent() != null) {
+			RepositoryEntity surveyQuestionItem = alfrescoRepository.findOne(surveyQuestion.getParent());
+			if (surveyQuestionItem instanceof SurveyQuestion parentSurveyQuestion) {
+				return parentSurveyQuestion;
+			} else {
+				logger.warn("survey question parent is not of type survey:surveyQuestion: " + surveyQuestion.getParent() 
+				+ "for surveyQuestion: " + surveyQuestion.getNodeRef());
+			}
+		}
+		return surveyQuestion;
 	}
 
 }
