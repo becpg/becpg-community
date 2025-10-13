@@ -262,7 +262,11 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 			}
 		}
 
-		var formConfig = getFormConfig(itemType, formId, mode, prefixedSiteId, prefixedEntityType);
+		var formConfig = getFormConfig(itemType + "|" + list, formId, mode, prefixedSiteId, prefixedEntityType);
+		
+		if (formConfig == null) {
+			formConfig = getFormConfig(itemType, formId, mode, prefixedSiteId, prefixedEntityType);
+		}
 
 		if (formConfig != null) {
 			
