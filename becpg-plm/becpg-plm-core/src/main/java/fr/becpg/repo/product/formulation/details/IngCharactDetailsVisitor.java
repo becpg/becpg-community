@@ -37,6 +37,26 @@ public class IngCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 	                                       CharactDetailsValue currentCharactDetailsValue) {
 	    IngListDataItem ingListDataItem = (IngListDataItem) simpleCharact;
 
+	    // Add proportion at final product level (Qty %)
+	    if (ingListDataItem.getQtyPerc() != null) {
+	        CharactDetailAdditionalValue proportionQtyValue = new CharactDetailAdditionalValue(
+	            I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListProportionQtyPerc.title"),
+	            FormulationHelper.calculateValue(0d, qtyUsed, ingListDataItem.getQtyPerc(), netQty),
+	            unit
+	        );
+	        currentCharactDetailsValue.getAdditionalValues().add(proportionQtyValue);
+	    }
+
+	    // Add proportion with yield at final product level (Qty with yield %)
+	    if (ingListDataItem.getQtyPercWithYield() != null) {
+	        CharactDetailAdditionalValue proportionQtyWithYieldValue = new CharactDetailAdditionalValue(
+	            I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListProportionQtyPercWithYield.title"),
+	            FormulationHelper.calculateValue(0d, qtyUsed, ingListDataItem.getQtyPercWithYield(), netQty),
+	            unit
+	        );
+	        currentCharactDetailsValue.getAdditionalValues().add(proportionQtyWithYieldValue);
+	    }
+
 	    // Array of percentage values
 	    Double[] qtyPercValues = {
 	        ingListDataItem.getQtyPerc1(),
