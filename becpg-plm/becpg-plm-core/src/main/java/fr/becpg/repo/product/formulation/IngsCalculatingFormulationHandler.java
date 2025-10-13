@@ -345,6 +345,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				applyEvaporation(formulatedProduct, evaporatedDataItems);
 				applySecondaryEvaporation(formulatedProduct, evaporatedDataItems);
 			}
+
+			// Normalize percentages to account for omitted ingredients
+			normalizePercentagesForOmittedIngredients(formulatedProduct);
 		}
 
 		// sort collection
@@ -354,13 +357,11 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	}
 
 	private boolean hasEvaporationData(IngListDataItem ingListDataItem) {
-		return nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)
-				|| (nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) != null);
+		return EvaporatingFormulationHelper.hasEvaporationData(ingListDataItem.getIng(), nodeService);
 	}
 
 	private Double getEvaporateRate(IngListDataItem ingListDataItem) {
-		Double evaporateRate = (Double) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE);
-		return evaporateRate != null ? evaporateRate : 100d;
+		return EvaporatingFormulationHelper.getEvaporateRate(ingListDataItem.getIng(), nodeService);
 	}
 
 	private void applyEvaporation(ProductData formulatedProduct, Set<EvaporatedDataItem> evaporatedDataItems) {
@@ -381,43 +382,24 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 			if (!evaporatedDataItems.isEmpty() && (evaporatingQty > 0d)) {
 
-				// 1. Evaporate ingredients with 100% rate first
-				Set<EvaporatedDataItem> fullEvaporationItems = evaporatedDataItems.stream()
-						.filter(item -> (item.getRate() != null) && (item.getRate() == 100d)).collect(Collectors.toSet());
+				// Use EvaporatingFormulationHelper for evaporation processing
+				Function<NodeRef, IngListDataItem> matchItem = nodeRef -> formulatedProduct.getIngList().stream()
+						.filter(i -> (i != null) && (i.getIng() != null) && i.getIng().equals(nodeRef))
+						.findFirst().orElse(null);
+				
+				Function<IngListDataItem, String> getItemName = IngListDataItem::getName;
+				
+				EvaporatingFormulationHelper.applyEvaporation(evaporatingQty, evaporatedDataItems,
+						getQtyPercWithYield, setQtyPercWithYield, matchItem, getItemName, null);
 
-				evaporatingQty = processEvaporation(formulatedProduct.getIngList(), evaporatingQty, fullEvaporationItems, null, getQtyPercWithYield,
-						setQtyPercWithYield);
-
-				// 2. Distribute remaining evaporation proportionally
-				Set<EvaporatedDataItem> remainingItems = evaporatedDataItems.stream().filter(item -> !fullEvaporationItems.contains(item))
-						.collect(Collectors.toSet());
-
-				Double totalRate = remainingItems.stream().mapToDouble(EvaporatedDataItem::getRate).sum();
-
-				evaporatingQty = processEvaporation(formulatedProduct.getIngList(), evaporatingQty, remainingItems, totalRate, getQtyPercWithYield,
-						setQtyPercWithYield);
-
-				// 3. If not all has been evaporated, remove from the first item
-				if ((evaporatingQty > 0.000001) && !fullEvaporationItems.isEmpty()) {
-					EvaporatedDataItem evaporatedDataItem = fullEvaporationItems.iterator().next();
-					IngListDataItem ingListDataItem = formulatedProduct.getIngList().stream()
-							.filter(i -> i.getIng().equals(evaporatedDataItem.getProductNodeRef())).findFirst().orElse(null);
-
-					if ((ingListDataItem != null) && (getQtyPercWithYield.apply(ingListDataItem) != null)) {
-						setQtyPercWithYield.accept(ingListDataItem, getQtyPercWithYield.apply(ingListDataItem) - evaporatingQty);
-					}
-				}
-
-				// 4. Adjust quantities by the yield factor (only if yieldFactor is not zero to avoid division by zero)
+				// Adjust quantities by the yield factor (only if yieldFactor is not zero to avoid division by zero)
 				if (Math.abs(yieldFactor) > 0.000001) {
 					for (EvaporatedDataItem evaporatedDataItem : evaporatedDataItems) {
 						if ((evaporatedDataItem == null) || (evaporatedDataItem.getProductNodeRef() == null)) {
 							continue;
 						}
 
-						IngListDataItem ingListDataItem = formulatedProduct.getIngList().stream()
-								.filter(i -> (i != null) && (i.getIng() != null) && i.getIng().equals(evaporatedDataItem.getProductNodeRef()))
-								.findFirst().orElse(null);
+						IngListDataItem ingListDataItem = matchItem.apply(evaporatedDataItem.getProductNodeRef());
 
 						if (ingListDataItem != null) {
 							Double currentQty = getQtyPercWithYield.apply(ingListDataItem);
@@ -434,56 +416,88 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 	}
 
-	private Double processEvaporation(List<IngListDataItem> ingList, Double evaporatingQty, Set<EvaporatedDataItem> items, Double totalRate,
-			Function<IngListDataItem, Double> getQtyPercWithYield, BiConsumer<IngListDataItem, Double> setQtyPercWithYield) {
-		Double ret = evaporatingQty;
 
-		if (evaporatingQty > 0d) {
-			for (EvaporatedDataItem evaporatedDataItem : items) {
-				IngListDataItem ingListDataItem = ingList.stream().filter(i -> i.getIng().equals(evaporatedDataItem.getProductNodeRef())).findFirst()
-						.orElse(null);
+	/**
+	 * Normalizes ingredient percentages after some ingredients have been omitted.
+	 * When ingredients are omitted, the percentages of the remaining ingredients are
+	 * rescaled so that their total sum is 100%.
+	 *
+	 * @param formulatedProduct the product being formulated
+	 */
+	private void normalizePercentagesForOmittedIngredients(ProductData formulatedProduct) {
+		if ((formulatedProduct.getIngList() == null) || formulatedProduct.getIngList().isEmpty()) {
+			return;
+		}
 
-				if (ingListDataItem != null) {
-					// Skip ingredients with Omit declaration
-					if (DeclarationType.Omit.equals(ingListDataItem.getDeclType())) {
-						if (logger.isDebugEnabled()) {
-							logger.debug("Skipping evaporation for omitted ingredient: " + ingListDataItem.getName());
-						}
-						continue;
+		// Calculate the sum of percentages for non-omitted ingredients at level 1
+		double sumOfNonOmittedPerc = 0d;
+		double sumOfNonOmittedVolumePerc = 0d;
+
+		for (IngListDataItem ingListDataItem : formulatedProduct.getIngList()) {
+			if ((ingListDataItem.getDepthLevel() == null) || (ingListDataItem.getDepthLevel() == 1)) {
+				if (!DeclarationType.Omit.equals(ingListDataItem.getDeclType())) {
+					if (ingListDataItem.getQtyPerc() != null) {
+						sumOfNonOmittedPerc += ingListDataItem.getQtyPerc();
 					}
-
-					Double rate = evaporatedDataItem.getRate() != null ? evaporatedDataItem.getRate() : 100d;
-					// If evaporation rate is 0%, consider it as null (no evaporation)
-					if (rate == 0d) {
-						if (logger.isDebugEnabled()) {
-							logger.debug("Skipping evaporation for ingredient with 0% rate: " + ingListDataItem.getName());
-						}
-						continue;
-					}
-
-					Double qtyPercWithYield = getQtyPercWithYield.apply(ingListDataItem);
-
-					// Only apply evaporation if ingredient has a percentage
-					if ((qtyPercWithYield != null) && (evaporatingQty > 0d)) {
-						Double maxEvapQty = (qtyPercWithYield * rate) / 100d;
-
-						Double proportionalEvap = ((totalRate == null) || (totalRate == 0d)) ? evaporatingQty : evaporatingQty * (rate / totalRate);
-
-						Double evaporatedQty = Math.min(maxEvapQty, proportionalEvap);
-
-						setQtyPercWithYield.accept(ingListDataItem, qtyPercWithYield - evaporatedQty);
-
-						if (logger.isDebugEnabled()) {
-							logger.debug("Apply evaporation qty " + evaporatedQty + " on " + ingListDataItem.getName() + " after "
-									+ getQtyPercWithYield.apply(ingListDataItem));
-						}
-
-						ret -= evaporatedQty;
+					if (ingListDataItem.getVolumeQtyPerc() != null) {
+						sumOfNonOmittedVolumePerc += ingListDataItem.getVolumeQtyPerc();
 					}
 				}
 			}
 		}
-		return ret;
+
+		// If the sum is not 100, normalize the percentages
+		if ((Math.abs(sumOfNonOmittedPerc) > 0.00001) && (Math.abs(sumOfNonOmittedPerc - 100.0) > 0.00001)) {
+			double normalizationFactor = 100.0 / sumOfNonOmittedPerc;
+			if (logger.isDebugEnabled()) {
+				logger.debug("Normalizing percentages for omitted ingredients. Sum of non-omitted: " + sumOfNonOmittedPerc
+						+ ", Normalization factor: " + normalizationFactor);
+			}
+
+			for (IngListDataItem ingListDataItem : formulatedProduct.getIngList()) {
+				if (!DeclarationType.Omit.equals(ingListDataItem.getDeclType())) {
+					// Normalize all relevant percentage fields
+					if (ingListDataItem.getQtyPerc() != null) {
+						ingListDataItem.setQtyPerc(ingListDataItem.getQtyPerc() * normalizationFactor);
+					}
+					if (ingListDataItem.getQtyPerc1() != null) {
+						ingListDataItem.setQtyPerc1(ingListDataItem.getQtyPerc1() * normalizationFactor);
+					}
+					if (ingListDataItem.getQtyPerc2() != null) {
+						ingListDataItem.setQtyPerc2(ingListDataItem.getQtyPerc2() * normalizationFactor);
+					}
+					if (!formulatedProduct.isGeneric() && ingListDataItem.getQtyPerc3() != null) {
+						ingListDataItem.setQtyPerc3(ingListDataItem.getQtyPerc3() * normalizationFactor);
+					}
+					if (!formulatedProduct.isGeneric() && ingListDataItem.getQtyPerc4() != null) {
+						ingListDataItem.setQtyPerc4(ingListDataItem.getQtyPerc4() * normalizationFactor);
+					}
+					if (ingListDataItem.getQtyPerc5() != null) {
+						ingListDataItem.setQtyPerc5(ingListDataItem.getQtyPerc5() * normalizationFactor);
+					}
+					if (ingListDataItem.getMini() != null) {
+						ingListDataItem.setMini(ingListDataItem.getMini() * normalizationFactor);
+					}
+					if (ingListDataItem.getMaxi() != null) {
+						ingListDataItem.setMaxi(ingListDataItem.getMaxi() * normalizationFactor);
+					}
+				}
+			}
+		}
+
+		// Separately normalize volume percentages
+		if ((Math.abs(sumOfNonOmittedVolumePerc) > 0.00001) && (Math.abs(sumOfNonOmittedVolumePerc - 100.0) > 0.00001)) {
+			double volumeNormalizationFactor = 100.0 / sumOfNonOmittedVolumePerc;
+			if (logger.isDebugEnabled()) {
+				logger.debug("Normalizing volume percentages. Sum of non-omitted: " + sumOfNonOmittedVolumePerc
+						+ ", Normalization factor: " + volumeNormalizationFactor);
+			}
+			for (IngListDataItem ingListDataItem : formulatedProduct.getIngList()) {
+				if (!DeclarationType.Omit.equals(ingListDataItem.getDeclType()) && ingListDataItem.getVolumeQtyPerc() != null) {
+					ingListDataItem.setVolumeQtyPerc(ingListDataItem.getVolumeQtyPerc() * volumeNormalizationFactor);
+				}
+			}
+		}
 	}
 
 	private void addReqCtrl(Map<NodeRef, RequirementListDataItem> reqCtrlMap, NodeRef reqNodeRef, RequirementType requirementType, MLText message,
