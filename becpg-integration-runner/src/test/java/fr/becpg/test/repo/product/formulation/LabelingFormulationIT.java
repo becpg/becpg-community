@@ -1189,6 +1189,54 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 	}
 
 	@Test
+	public void testDisableAllergenDetection() {
+
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			logger.debug("/*-- Create finished product --*/");
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Test Allergen Detection");
+			finishedProduct.setLegalName("Legal Test");
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setQty(2d);
+			finishedProduct.setDensity(1d);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef));
+
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		// Test with allergen detection enabled (default)
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Langue").withFormula("fr")
+				.withLabelingRuleType(LabelingRuleType.Locale));
+
+		checkILL(finishedProductNodeRef, labelingRuleList, "legal Raw material 1 (<b>allergen1</b>) 50%, legal Raw material 2 (<b>allergen1</b>) 50%",
+				Locale.FRENCH);
+
+		// Test with allergen detection disabled
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("DisableAllergenDetection")
+				.withFormula("disableAllergenDetection = true").withLabelingRuleType(LabelingRuleType.Prefs));
+
+		checkILL(finishedProductNodeRef, labelingRuleList, "legal Raw material 1 (allergen1) 50%, legal Raw material 2 (allergen1) 50%",
+				Locale.FRENCH);
+
+		// Test re-enabling allergen detection
+		labelingRuleList.clear();
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Langue").withFormula("fr")
+				.withLabelingRuleType(LabelingRuleType.Locale));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("EnableAllergenDetection")
+				.withFormula("disableAllergenDetection = false").withLabelingRuleType(LabelingRuleType.Prefs));
+
+		checkILL(finishedProductNodeRef, labelingRuleList, "legal Raw material 1 (<b>allergen1</b>) 50%, legal Raw material 2 (<b>allergen1</b>) 50%",
+				Locale.FRENCH);
+	}
+
+	@Test
 	public void testSPELFormula() {
 
 		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
