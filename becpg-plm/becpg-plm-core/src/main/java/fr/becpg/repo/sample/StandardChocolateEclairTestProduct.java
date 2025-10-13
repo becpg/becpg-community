@@ -977,7 +977,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
 	private SurveyQuestion getOrCreateSurveyAnswer(SurveyQuestion parentQuestion, String label, Double score) {
 		final SurveyQuestion answer = (SurveyQuestion) alfrescoRepository.findOne(CharactTestHelper.getOrCreateSurveyQuestion(nodeService, label));
-		answer.setParent(parentQuestion);
+		answer.setParent(parentQuestion.getNodeRef());
 		answer.setLabel(label);
 		answer.setQuestionScore(score);
 
