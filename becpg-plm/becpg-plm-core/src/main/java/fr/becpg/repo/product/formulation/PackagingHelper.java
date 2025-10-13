@@ -202,9 +202,9 @@ public class PackagingHelper implements InitializingBean {
 
 					if (Boolean.TRUE.equals(dataItem.getIsMaster())) {
 						variantPackagingData.setManualInner(false);
-						variantPackagingData.setInnerWidth((Double) nodeService.getProperty(dataItem.getProduct(), GS1Model.PROP_INNERPACK_WIDTH));
-						variantPackagingData.setInnerHeight((Double) nodeService.getProperty(dataItem.getProduct(), GS1Model.PROP_INNERPACK_HEIGHT));
-						variantPackagingData.setInnerDepth((Double) nodeService.getProperty(dataItem.getProduct(), GS1Model.PROP_INNERPACK_DEPTH));
+						variantPackagingData.setInnerWidth((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_WIDTH));
+						variantPackagingData.setInnerHeight((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_HEIGHT));
+						variantPackagingData.setInnerDepth((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_LENGTH));
 					}
 					variantPackagingData.addTareInner(tare);
 				}
