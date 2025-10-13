@@ -1043,4 +1043,19 @@ public class FormulationHelper {
 		return Math.min(itemMaxEvapQty, proportionalEvap);
 	}
 
+	/**
+	 * Calculates the percentage to distribute per ingredient when ingredients are omitted.
+	 * The omitted percentage is distributed equally among the remaining non-omitted ingredients.
+	 *
+	 * @param totalOmittedPercentage the total percentage of omitted ingredients
+	 * @param countNonOmittedItems the number of non-omitted ingredients
+	 * @return the percentage to add to each non-omitted ingredient, or 0.0 if invalid input
+	 */
+	public static Double calculateDistributedOmittedPercentage(Double totalOmittedPercentage, int countNonOmittedItems) {
+		if ((totalOmittedPercentage == null) || (countNonOmittedItems <= 0) || (Math.abs(totalOmittedPercentage) <= 0.00001)) {
+			return 0d;
+		}
+		return totalOmittedPercentage / countNonOmittedItems;
+	}
+
 }
