@@ -470,6 +470,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	private String disableAllergensForLocales = "";
 
+	/**
+	 * Use to completely disable allergen detection - Can be set via SPEL
+	 */
+	private boolean disableAllergenDetection = false;
+
 	private Integer maxPrecision = 4;
 
 	private Double qtyPrecisionThreshold = 1d / Math.pow(10, (double) maxPrecision + (double) 2);
@@ -516,6 +521,29 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	public void setDisableAllergensForLocales(String disableAllergensForLocales) {
 		this.disableAllergensForLocales = disableAllergensForLocales;
+	}
+
+	/**
+	 * <p>
+	 * Getter for the field <code>disableAllergenDetection</code>.
+	 * </p>
+	 *
+	 * @return a boolean.
+	 */
+	public boolean isDisableAllergenDetection() {
+		return disableAllergenDetection;
+	}
+
+	/**
+	 * <p>
+	 * Setter for the field <code>disableAllergenDetection</code>.
+	 * </p>
+	 *
+	 * @param disableAllergenDetection
+	 *            a boolean.
+	 */
+	public void setDisableAllergenDetection(boolean disableAllergenDetection) {
+		this.disableAllergenDetection = disableAllergenDetection;
 	}
 
 	/**
@@ -1321,7 +1349,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private static final String ING_TYPE_PREFIX = "ingType-";
 
 	private String createAllergenAwareLabel(String ingLegalName, Set<NodeRef> allergens, boolean boldOnly) {
-		if (isAllergensDisableForLocale()) {
+		if (disableAllergenDetection || isAllergensDisableForLocale()) {
 			return ingLegalName;
 		}
 
