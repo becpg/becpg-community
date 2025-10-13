@@ -439,9 +439,14 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		Double ret = evaporatingQty;
 
 		if (evaporatingQty > 0d) {
+			// Step 1: Calculate available water for each ingredient based on rate and quantity
+			Map<EvaporatedDataItem, IngData> evaporationDataMap = new HashMap<>();
+			double totalAvailableWater = 0d;
+			
 			for (EvaporatedDataItem evaporatedDataItem : items) {
-				IngListDataItem ingListDataItem = ingList.stream().filter(i -> i.getIng().equals(evaporatedDataItem.getProductNodeRef())).findFirst()
-						.orElse(null);
+				IngListDataItem ingListDataItem = ingList.stream()
+						.filter(i -> i.getIng().equals(evaporatedDataItem.getProductNodeRef()))
+						.findFirst().orElse(null);
 
 				if (ingListDataItem != null) {
 					// Skip ingredients with Omit declaration
@@ -463,27 +468,55 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 					Double qtyPercWithYield = getQtyPercWithYield.apply(ingListDataItem);
 
-					// Only apply evaporation if ingredient has a percentage
-					if ((qtyPercWithYield != null) && (evaporatingQty > 0d)) {
+					if ((qtyPercWithYield != null) && (qtyPercWithYield > 0d)) {
 						Double maxEvapQty = (qtyPercWithYield * rate) / 100d;
-
-						Double proportionalEvap = ((totalRate == null) || (totalRate == 0d)) ? evaporatingQty : evaporatingQty * (rate / totalRate);
-
-						Double evaporatedQty = Math.min(maxEvapQty, proportionalEvap);
-
-						setQtyPercWithYield.accept(ingListDataItem, qtyPercWithYield - evaporatedQty);
-
-						if (logger.isDebugEnabled()) {
-							logger.debug("Apply evaporation qty " + evaporatedQty + " on " + ingListDataItem.getName() + " after "
-									+ getQtyPercWithYield.apply(ingListDataItem));
-						}
-
-						ret -= evaporatedQty;
+						evaporationDataMap.put(evaporatedDataItem, new IngData(ingListDataItem, rate, maxEvapQty, qtyPercWithYield));
+						totalAvailableWater += maxEvapQty;
 					}
+				}
+			}
+
+			// Step 2: Distribute evaporation based on available water rather than just rates
+			if (!evaporationDataMap.isEmpty() && (totalAvailableWater > 0d)) {
+				for (Map.Entry<EvaporatedDataItem, IngData> entry : evaporationDataMap.entrySet()) {
+					IngData ingData = entry.getValue();
+					
+					// Use FormulationHelper to calculate proportional evaporation
+					Double evaporatedQty = FormulationHelper.calculateProportionalEvaporation(
+							evaporatingQty, ingData.rate, ingData.maxEvapQty, totalRate, totalAvailableWater);
+
+					setQtyPercWithYield.accept(ingData.ingListDataItem, ingData.qtyPercWithYield - evaporatedQty);
+
+					if (logger.isDebugEnabled()) {
+						logger.debug("Apply evaporation qty " + evaporatedQty + " (max: " + ingData.maxEvapQty 
+								+ ") on " + ingData.ingListDataItem.getName() + " - remaining: "
+								+ getQtyPercWithYield.apply(ingData.ingListDataItem));
+					}
+
+					ret -= evaporatedQty;
 				}
 			}
 		}
 		return ret;
+	}
+
+	/**
+	 * Helper class to store ingredient evaporation data
+	 */
+	private static class IngData
+	{
+		final IngListDataItem ingListDataItem;
+		final Double rate;
+		final Double maxEvapQty;
+		final Double qtyPercWithYield;
+
+		IngData(IngListDataItem ingListDataItem, Double rate, Double maxEvapQty, Double qtyPercWithYield)
+		{
+			this.ingListDataItem = ingListDataItem;
+			this.rate = rate;
+			this.maxEvapQty = maxEvapQty;
+			this.qtyPercWithYield = qtyPercWithYield;
+		}
 	}
 
 	private void addReqCtrl(Map<NodeRef, RequirementListDataItem> reqCtrlMap, NodeRef reqNodeRef, RequirementType requirementType, MLText message,
