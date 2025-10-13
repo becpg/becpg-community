@@ -231,6 +231,8 @@ public interface EntityActivityService {
 	boolean postChangeOrderActivity(NodeRef entityNodeRef, NodeRef changeOrderNodeRef);
 	
 	boolean postComplianceCheckActivity(NodeRef entityNodeRef);
+	
+	boolean postDataListDeleteFromTemplateActivity(NodeRef entityNodeRef, NodeRef templateNodeRef, String listType);
 
 	/**
 	 * <p>postDataListCopyActivity.</p>
