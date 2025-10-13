@@ -1990,56 +1990,35 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			AtomicReference<Double> evaporatingQty = new AtomicReference<>(parent.getEvaporatedQty());
 			AtomicReference<Double> evaporatingVolume = new AtomicReference<>(parent.getEvaporatedVolume());
 
-			items.forEach(evaporatedDataItem -> {
+			// Step 1: Calculate available water for each ingredient based on rate and quantity
+			Map<EvaporatedDataItem, LabelingEvapData> evaporationDataMap = new HashMap<>();
+			double totalAvailableWaterQty = 0d;
+			double totalAvailableWaterVol = 0d;
+
+			for (EvaporatedDataItem evaporatedDataItem : items) {
 				CompositeLabeling productLabelItem = parent.get(evaporatedDataItem.getProductNodeRef());
 				if (productLabelItem != null) {
 					Double rate = evaporatedDataItem.getRate() != null ? evaporatedDataItem.getRate() : 100d;
 
-					if ((productLabelItem.getQtyWithYield() != null) && (parent.getEvaporatedQty() != null) && (parent.getEvaporatedQty() > 0d)) {
-						Double maxEvapQty = (productLabelItem.getQtyWithYield() * rate) / 100d;
-
+					Double maxEvapQty = null;
+					if ((productLabelItem.getQtyWithYield() != null) && (productLabelItem.getQtyWithYield() > 0d)) {
+						maxEvapQty = (productLabelItem.getQtyWithYield() * rate) / 100d;
 						if (isDoNotPropagateYield && (evaporatedDataItem.getMaxEvaporableQty() != null)) {
 							maxEvapQty = Math.min(maxEvapQty, evaporatedDataItem.getMaxEvaporableQty());
 						}
-
-						Double proportionalEvap = (totalRate == null) || (totalRate == 0d) ? parent.getEvaporatedQty()
-								: parent.getEvaporatedQty() * (rate / totalRate); // Consider total rate for remaining items
-						Double evaporatedQty = Math.min(maxEvapQty, proportionalEvap);
-
-						productLabelItem.setQtyWithYield(productLabelItem.getQtyWithYield() - evaporatedQty);
-
-						if (logger.isDebugEnabled()) {
-							logger.debug("Apply evaporation qty " + evaporatedQty + " on " + getName(productLabelItem) + " after "
-									+ productLabelItem.getQtyWithYield());
-						}
-
-						evaporatingQty.set(evaporatingQty.get() - evaporatedQty);
+						totalAvailableWaterQty += maxEvapQty;
 					}
 
-					if ((productLabelItem.getVolumeWithYield() != null) && (parent.getEvaporatedVolume() != null)
-							&& (parent.getEvaporatedVolume() > 0d)) {
-						Double maxEvapQty = (productLabelItem.getVolumeWithYield() * rate) / 100d;
-
+					Double maxEvapVol = null;
+					if ((productLabelItem.getVolumeWithYield() != null) && (productLabelItem.getVolumeWithYield() > 0d)) {
+						maxEvapVol = (productLabelItem.getVolumeWithYield() * rate) / 100d;
 						if (isDoNotPropagateYield && (evaporatedDataItem.getMaxEvaporableVolume() != null)) {
-							maxEvapQty = Math.min(maxEvapQty, evaporatedDataItem.getMaxEvaporableVolume());
+							maxEvapVol = Math.min(maxEvapVol, evaporatedDataItem.getMaxEvaporableVolume());
 						}
-
-						Double proportionalEvap = (totalRate == null) || (totalRate == 0d) ? parent.getEvaporatedVolume()
-								: parent.getEvaporatedVolume() * (rate / totalRate); // Consider total rate for remaining items
-						Double evaporatedVol = Math.min(maxEvapQty, proportionalEvap);
-
-						productLabelItem.setVolumeWithYield(productLabelItem.getVolume() - evaporatedVol);
-
-						if (logger.isDebugEnabled()) {
-							logger.debug("Apply evaporation volume " + evaporatedVol + " on " + getName(productLabelItem) + " after "
-									+ productLabelItem.getVolumeWithYield());
-						}
-
-						productLabelItem.setVolumeWithYield(productLabelItem.getVolumeWithYield() - evaporatedVol);
-
-						evaporatingVolume.set(evaporatingVolume.get() - evaporatedVol);
+						totalAvailableWaterVol += maxEvapVol;
 					}
 
+					evaporationDataMap.put(evaporatedDataItem, new LabelingEvapData(productLabelItem, rate, maxEvapQty, maxEvapVol));
 				} else {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Take in account evaporation in Do Not declare");
@@ -2051,10 +2030,78 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						evaporatingVolume.set(evaporatingVolume.get() - evaporatedDataItem.getMaxEvaporableVolume());
 					}
 				}
-			});
+			}
+
+			// Step 2: Distribute evaporation based on available water rather than just rates
+			if (!evaporationDataMap.isEmpty()) {
+				// Process quantity evaporation
+				if ((parent.getEvaporatedQty() != null) && (parent.getEvaporatedQty() > 0d) && (totalAvailableWaterQty > 0d)) {
+					for (Map.Entry<EvaporatedDataItem, LabelingEvapData> entry : evaporationDataMap.entrySet()) {
+						LabelingEvapData evapData = entry.getValue();
+
+						if ((evapData.maxEvapQty != null) && (evapData.maxEvapQty > 0d)) {
+							// Use FormulationHelper to calculate proportional evaporation
+							Double evaporatedQty = FormulationHelper.calculateProportionalEvaporation(
+									parent.getEvaporatedQty(), evapData.rate, evapData.maxEvapQty, totalRate, totalAvailableWaterQty);
+
+							evapData.productLabelItem.setQtyWithYield(evapData.productLabelItem.getQtyWithYield() - evaporatedQty);
+
+							if (logger.isDebugEnabled()) {
+								logger.debug("Apply evaporation qty " + evaporatedQty + " (max: " + evapData.maxEvapQty 
+										+ ") on " + getName(evapData.productLabelItem) 
+										+ " - remaining: " + evapData.productLabelItem.getQtyWithYield());
+							}
+
+							evaporatingQty.set(evaporatingQty.get() - evaporatedQty);
+						}
+					}
+				}
+
+				// Process volume evaporation
+				if ((parent.getEvaporatedVolume() != null) && (parent.getEvaporatedVolume() > 0d) && (totalAvailableWaterVol > 0d)) {
+					for (Map.Entry<EvaporatedDataItem, LabelingEvapData> entry : evaporationDataMap.entrySet()) {
+						LabelingEvapData evapData = entry.getValue();
+
+						if ((evapData.maxEvapVol != null) && (evapData.maxEvapVol > 0d)) {
+							// Use FormulationHelper to calculate proportional evaporation
+							Double evaporatedVol = FormulationHelper.calculateProportionalEvaporation(
+									parent.getEvaporatedVolume(), evapData.rate, evapData.maxEvapVol, totalRate, totalAvailableWaterVol);
+
+							evapData.productLabelItem.setVolumeWithYield(evapData.productLabelItem.getVolumeWithYield() - evaporatedVol);
+
+							if (logger.isDebugEnabled()) {
+								logger.debug("Apply evaporation volume " + evaporatedVol + " (max: " + evapData.maxEvapVol 
+										+ ") on " + getName(evapData.productLabelItem) 
+										+ " - remaining: " + evapData.productLabelItem.getVolumeWithYield());
+							}
+
+							evaporatingVolume.set(evaporatingVolume.get() - evaporatedVol);
+						}
+					}
+				}
+			}
 
 			parent.setEvaporatedQty(evaporatingQty.get());
 			parent.setEvaporatedVolume(evaporatingVolume.get());
+		}
+	}
+
+	/**
+	 * Helper class to store labeling evaporation data
+	 */
+	private static class LabelingEvapData
+	{
+		final CompositeLabeling productLabelItem;
+		final Double rate;
+		final Double maxEvapQty;
+		final Double maxEvapVol;
+
+		LabelingEvapData(CompositeLabeling productLabelItem, Double rate, Double maxEvapQty, Double maxEvapVol)
+		{
+			this.productLabelItem = productLabelItem;
+			this.rate = rate;
+			this.maxEvapQty = maxEvapQty;
+			this.maxEvapVol = maxEvapVol;
 		}
 	}
 

@@ -254,4 +254,61 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 
 	}
 
+	/**
+	 * Test for issue #21401 - Water evaporation distribution based on available water
+	 * 
+	 * This test reproduces the scenario where:
+	 * - Ingredients have different evaporation rates
+	 * - Some ingredients have less water available than what the proportional rate would require
+	 * - The fix ensures evaporation is distributed based on available water, not just rates
+	 */
+	@Test
+	public void testEvaporationWithLimitedAvailableWater() {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+
+			StandardChocolateEclairTestProduct testProduct = new StandardChocolateEclairTestProduct.Builder()
+					.withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(false)
+					.withLabeling(false).withIngredients(false).build();
+			testProduct.initCompoProduct();
+
+			FinishedProductData product = testProduct.createTestProduct();
+			product.setName("Test #21401 - Limited Available Water");
+			product.withQty(80d);
+
+			// Scenario: 20% evaporation rate on all ingredients
+			// But flour has very little water (9% of product) compared to egg (20%)
+			// Old algorithm would try to apply same proportion to both
+			// New algorithm distributes based on available water
+			nodeService.setProperty(testProduct.getFlourNodeRef(), PLMModel.PROP_EVAPORATED_RATE, 13.5d);
+			nodeService.setProperty(testProduct.getEggNodeRef(), PLMModel.PROP_EVAPORATED_RATE, 88d);
+
+			product.withCompoList(List.of(
+					CompoListDataItem.build().withQtyUsed(9d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+							.withProduct(testProduct.getFlourNodeRef()), // 9% - low water content
+					CompoListDataItem.build().withQtyUsed(20d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+							.withProduct(testProduct.getEggNodeRef()), // 20% - higher water content
+					CompoListDataItem.build().withQtyUsed(50d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+							.withProduct(testProduct.getSugarNodeRef()), // 50% - no evaporation
+					CompoListDataItem.build().withQtyUsed(38.46d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+							.withProduct(testProduct.getWaterNodeRef()))); // 38.46% - water
+
+			return alfrescoRepository.save(product).getNodeRef();
+		});
+
+		Assert.assertNotNull(finishedProductNodeRef);
+
+		// With the fix, evaporation should be properly distributed:
+		// - Flour has limited water available (9% * 13.5% = 1.215% max evap)
+		// - Egg has more water available (20% * 88% = 17.6% max evap)
+		// - Total evaporation needed: 20%
+		// - The algorithm should use all available water without going negative
+		checkILL(finishedProductNodeRef, new ArrayList<>(List.of(
+				LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render),
+				LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.#%} ({2})").withLabelingRuleType(LabelingRuleType.Format),
+				LabelingRuleListDataItem.build().withName("Param1").withFormula("ingsLabelingWithYield=true")
+						.withLabelingRuleType(LabelingRuleType.Prefs))),
+				"sucre 62,5%, farine 10,9%, oeuf 3%", Locale.FRENCH);
+
+	}
+
 }
