@@ -24,7 +24,6 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
@@ -127,16 +126,11 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Surveya
 	 * @return a boolean
 	 */
 	protected boolean accept(SurveyableEntity formulatedProduct) {
-
-		boolean hasSurveyList = (formulatedProduct.getSurveyList() != null)
-				&& ((formulatedProduct.getSurveyList() instanceof ArrayList)
-						|| alfrescoRepository.hasDataList(formulatedProduct, SurveyModel.TYPE_SURVEY_LIST));
-
-		if (formulatedProduct instanceof BeCPGDataObject beCPGDataObject) {
-			return !(beCPGDataObject.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
-					|| (beCPGDataObject instanceof ProductSpecificationData)) && hasSurveyList;
+		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+			return false;
 		}
-		return false;
+		return formulatedProduct.getSurveyList() instanceof List 
+				|| alfrescoRepository.hasDataList(formulatedProduct, SurveyModel.TYPE_SURVEY_LIST);
 	}
 
 	/**
