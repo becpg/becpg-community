@@ -345,6 +345,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				applyEvaporation(formulatedProduct, evaporatedDataItems);
 				applySecondaryEvaporation(formulatedProduct, evaporatedDataItems);
 			}
+
+			// Normalize percentages to account for omitted ingredients
+			normalizePercentagesForOmittedIngredients(formulatedProduct);
 		}
 
 		// sort collection
@@ -516,6 +519,86 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			this.rate = rate;
 			this.maxEvapQty = maxEvapQty;
 			this.qtyPercWithYield = qtyPercWithYield;
+		}
+	}
+
+	/**
+	 * Distributes omitted ingredient percentages to remaining ingredients.
+	 * When ingredients are omitted, their percentages are distributed equally among remaining ingredients.
+	 * This follows the same logic as LabelingFormulationHandler.
+	 *
+	 * @param formulatedProduct the product being formulated
+	 */
+	private void normalizePercentagesForOmittedIngredients(ProductData formulatedProduct) {
+		if ((formulatedProduct.getIngList() == null) || formulatedProduct.getIngList().isEmpty()) {
+			return;
+		}
+
+		// Calculate the total percentage of omitted ingredients at depth level 1
+		Double omittedQtyPerc = 0d;
+		Double omittedVolumeQtyPerc = 0d;
+		int countNonOmitted = 0;
+
+		for (IngListDataItem ingListDataItem : formulatedProduct.getIngList()) {
+			if ((ingListDataItem.getDepthLevel() == null) || (ingListDataItem.getDepthLevel() == 1)) {
+				if (DeclarationType.Omit.equals(ingListDataItem.getDeclType())) {
+					if (ingListDataItem.getQtyPerc() != null) {
+						omittedQtyPerc += ingListDataItem.getQtyPerc();
+						if (logger.isDebugEnabled()) {
+							logger.debug("Omitted ingredient: " + ingListDataItem.getName() + " with qtyPerc: " + ingListDataItem.getQtyPerc());
+						}
+					}
+					if (ingListDataItem.getVolumeQtyPerc() != null) {
+						omittedVolumeQtyPerc += ingListDataItem.getVolumeQtyPerc();
+					}
+				} else {
+					countNonOmitted++;
+				}
+			}
+		}
+
+		// Use FormulationHelper to calculate distribution
+		Double distributedQtyPerc = FormulationHelper.calculateDistributedOmittedPercentage(omittedQtyPerc, countNonOmitted);
+		Double distributedVolumeQtyPerc = FormulationHelper.calculateDistributedOmittedPercentage(omittedVolumeQtyPerc, countNonOmitted);
+
+		// Distribute omitted percentages equally among non-omitted ingredients
+		if ((distributedQtyPerc != null) && (Math.abs(distributedQtyPerc) > 0.00001)) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Distributing omitted percentage: total=" + omittedQtyPerc + ", distributed per ingredient=" + distributedQtyPerc
+						+ ", count=" + countNonOmitted);
+			}
+
+			for (IngListDataItem ingListDataItem : formulatedProduct.getIngList()) {
+				if (!DeclarationType.Omit.equals(ingListDataItem.getDeclType())) {
+					if (ingListDataItem.getQtyPerc() != null) {
+						ingListDataItem.setQtyPerc(ingListDataItem.getQtyPerc() + distributedQtyPerc);
+					}
+					if (ingListDataItem.getQtyPerc1() != null) {
+						ingListDataItem.setQtyPerc1(ingListDataItem.getQtyPerc1() + distributedQtyPerc);
+					}
+					if (ingListDataItem.getQtyPerc2() != null) {
+						ingListDataItem.setQtyPerc2(ingListDataItem.getQtyPerc2() + distributedQtyPerc);
+					}
+					if (!formulatedProduct.isGeneric() && (ingListDataItem.getQtyPerc3() != null)) {
+						ingListDataItem.setQtyPerc3(ingListDataItem.getQtyPerc3() + distributedQtyPerc);
+					}
+					if (!formulatedProduct.isGeneric() && (ingListDataItem.getQtyPerc4() != null)) {
+						ingListDataItem.setQtyPerc4(ingListDataItem.getQtyPerc4() + distributedQtyPerc);
+					}
+					if (ingListDataItem.getQtyPerc5() != null) {
+						ingListDataItem.setQtyPerc5(ingListDataItem.getQtyPerc5() + distributedQtyPerc);
+					}
+					if (ingListDataItem.getMini() != null) {
+						ingListDataItem.setMini(ingListDataItem.getMini() + distributedQtyPerc);
+					}
+					if (ingListDataItem.getMaxi() != null) {
+						ingListDataItem.setMaxi(ingListDataItem.getMaxi() + distributedQtyPerc);
+					}
+					if ((ingListDataItem.getVolumeQtyPerc() != null) && (distributedVolumeQtyPerc != null) && (Math.abs(distributedVolumeQtyPerc) > 0.00001)) {
+						ingListDataItem.setVolumeQtyPerc(ingListDataItem.getVolumeQtyPerc() + distributedVolumeQtyPerc);
+					}
+				}
+			}
 		}
 	}
 
