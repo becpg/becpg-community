@@ -65,5 +65,7 @@ public enum ActivityType {
 	/**
 	 * Represents removal of aspects.
 	 */
-	AspectsRemoval
+	AspectsRemoval,
+	
+	ComplianceCheck
 }
