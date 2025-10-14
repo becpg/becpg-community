@@ -500,6 +500,7 @@
                     'ul': {},
                     'ol': {},
                     'li': {},
+                    'span': ['style'],
                     'a': ['href', 'title', 'target']
                 };
                 
@@ -815,21 +816,25 @@
             if (choice.list && !choice.checkboxes) {
                 if (!choice.hasValidation) {
                     choice.hasValidation = true;
+                    var selectId = this.id + '-select_' + question.id + '_' + choice.id;
                     this.formRuntime.addValidation(
-                        this.id + '-select_' + question.id + '_' + choice.id,
+                        selectId,
                         Alfresco.forms.validation.mandatory,
                         null,
                         "keyup"
                     );
+                    this.formRuntime.validateField(null, selectId);
                 }
             } else if (choice.label !== "hidden" && !choice.checkboxes && !choice.hasValidation) {
                 choice.hasValidation = true;
+                var radioId = this.id + '-choice_' + question.id + '_' + choice.id;
                 this.formRuntime.addValidation(
-                    this.id + '-choice_' + question.id + '_' + choice.id,
+                    radioId,
                     Alfresco.forms.validation.mandatory,
                     null,
                     "keyup"
                 );
+                this.formRuntime.validateField(null, radioId);
             }
 
             // Handle comment validation
@@ -840,12 +845,14 @@
 
                 if (needsCommentValidation && !choice.hasCommentValidation) {
                     choice.hasCommentValidation = true;
+                    var commentId = this.id + "-comment_" + question.id + "-input";
                     this.formRuntime.addValidation(
-                        this.id + "-comment_" + question.id + "-input",
+                        commentId,
                         Alfresco.forms.validation.mandatory,
                         null,
                         "keyup"
                     );
+                    this.formRuntime.validateField(null, commentId);
                 } else if (!needsCommentValidation && choice.hasCommentValidation) {
                     choice.hasCommentValidation = false;
                     this.formRuntime.removeValidation(this.id + "-comment_" + question.id + "-input");
