@@ -482,6 +482,9 @@
          
           <action id="datalist-import-from" type="javascript" label="actions.datalist.import-from">
             <param name="function">onActionImportDataListFrom</param>
+            <permissions>
+				 <permission allow="true">Write</permission>
+			</permissions>
             <evaluator>evaluator.doclib.action.editableByCurrentUser</evaluator>
             <evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
             <evaluator negate="true">evaluator.becpg.doclib.action.isArchivedEntity</evaluator>
