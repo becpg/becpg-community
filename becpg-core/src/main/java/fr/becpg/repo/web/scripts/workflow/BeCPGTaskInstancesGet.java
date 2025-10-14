@@ -99,7 +99,7 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 		for (String string : tmp) {
 			String prop = string;
 			if (prop.startsWith("extra_")) {
-				extraProperties.add(new AttributeExtractorField(prop.replace("extra_", "").replace("_", ":"),null));
+				extraProperties.add(new AttributeExtractorField(prop.replace("extra_", "").replace("_", ":"), null));
 			} else {
 				properties.add(prop);
 			}
@@ -125,7 +125,7 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 			taskQuery.setActive(null);
 			taskQuery.setProcessId(workflowInstanceId);
 			taskQuery.setTaskState(state);
-			taskQuery.setOrderBy(new OrderBy[] { OrderBy.TaskCreated_Asc});
+			taskQuery.setOrderBy(new OrderBy[] { OrderBy.TaskCreated_Asc });
 
 			if (authority != null) {
 				taskQuery.setActorId(authority);
@@ -145,12 +145,10 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 				if (pooledTasksOnly != null) {
 					if (pooledTasksOnly.booleanValue()) {
 						// only return pooled tasks the user can claim
-						allTasks = new ArrayList<>(pooledTasks.size());
-						allTasks.addAll(pooledTasks);
+						allTasks = new ArrayList<>(pooledTasks);
 					} else {
 						// only return tasks assigned to the user
-						allTasks = new ArrayList<>(tasks.size());
-						allTasks.addAll(tasks);
+						allTasks = new ArrayList<>(tasks);
 					}
 				} else {
 					// include both assigned and unassigned tasks
@@ -165,7 +163,7 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 
 				boolean orderAsc = (dir == null) || dir.equalsIgnoreCase("asc");
 
-				Comparator<WorkflowTask> taskComparator =  new WorkflowDateComparator(WorkflowModel.PROP_START_DATE, false);
+				Comparator<WorkflowTask> taskComparator = new WorkflowDateComparator(WorkflowModel.PROP_START_DATE, false);
 				if (sortProp != null) {
 					if (QNAME_INITIATOR.equals(sortProp)) {
 						taskComparator = new WorkflowInitiatorComparator(orderAsc);
@@ -211,8 +209,8 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 					// items we need. This will
 					// drastically improve performance over paging after
 					// building the model
-					 Map<String, Object> ret = buildbeCPGModel(modelBuilder, task, properties, extraProperties)
-					if(ret!=null) {
+					Map<String, Object> ret = buildbeCPGModel(modelBuilder, task, properties, extraProperties);
+					if (ret != null) {
 						results.add(ret);
 					}
 				}
@@ -241,8 +239,9 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 				LOGGER.warn("Task properties: " + task.getProperties());
 			}
 			return null;
+
 		}
-		
+
 		Map<String, Object> ret = modelBuilder.buildSimple(task, properties);
 
 		if (!extraProperties.isEmpty()) {
@@ -440,7 +439,7 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 					}
 				} else if (key.equals(PARAM_SEARCH)) {
 					String value = (String) task.getProperties().get(WorkflowModel.PROP_DESCRIPTION);
-					if ((value != null) && !BeCPGQueryHelper.isQueryMatch( (String) filterValue, value)) {
+					if ((value != null) && !BeCPGQueryHelper.isQueryMatch((String) filterValue, value)) {
 						result = false;
 						break;
 					}
@@ -451,26 +450,26 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 		return result;
 	}
 
-//	/**
-//	 * Comparator to sort workflow tasks by due date in ascending order.
-//	 */
-//	class WorkflowTaskDueAscComparator implements Comparator<WorkflowTask> {
-//		@Override
-//		public int compare(WorkflowTask o1, WorkflowTask o2) {
-//			Date date1 = (Date) o1.getProperties().get(WorkflowModel.PROP_DUE_DATE);
-//			Date date2 = (Date) o2.getProperties().get(WorkflowModel.PROP_DUE_DATE);
-//
-//			long time1 = date1 == null ? Long.MAX_VALUE : date1.getTime();
-//			long time2 = date2 == null ? Long.MAX_VALUE : date2.getTime();
-//
-//			long result = time1 - time2;
-//
-//			return (result > 0) ? 1 : (result < 0 ? -1 : 0);
-//		}
-//
-//	}
+	//	/**
+	//	 * Comparator to sort workflow tasks by due date in ascending order.
+	//	 */
+	//	class WorkflowTaskDueAscComparator implements Comparator<WorkflowTask> {
+	//		@Override
+	//		public int compare(WorkflowTask o1, WorkflowTask o2) {
+	//			Date date1 = (Date) o1.getProperties().get(WorkflowModel.PROP_DUE_DATE);
+	//			Date date2 = (Date) o2.getProperties().get(WorkflowModel.PROP_DUE_DATE);
+	//
+	//			long time1 = date1 == null ? Long.MAX_VALUE : date1.getTime();
+	//			long time2 = date2 == null ? Long.MAX_VALUE : date2.getTime();
+	//
+	//			long result = time1 - time2;
+	//
+	//			return (result > 0) ? 1 : (result < 0 ? -1 : 0);
+	//		}
+	//
+	//	}
 
-	private class WorkflowDateComparator implements Comparator<WorkflowTask> {
+	private static class WorkflowDateComparator implements Comparator<WorkflowTask> {
 
 		private QName property;
 		private boolean orderAsc;
@@ -496,7 +495,7 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 		}
 	}
 
-	private class WorkflowNumberComparator implements Comparator<WorkflowTask> {
+	private static class WorkflowNumberComparator implements Comparator<WorkflowTask> {
 
 		private QName property;
 		private boolean orderAsc;
@@ -522,7 +521,7 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 		}
 	}
 
-	private class WorkflowStringComparator implements Comparator<WorkflowTask> {
+	private static class WorkflowStringComparator implements Comparator<WorkflowTask> {
 
 		private QName property;
 		private boolean orderAsc;
@@ -561,15 +560,15 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 		public int compare(WorkflowTask o1, WorkflowTask o2) {
 
 			NodeRef n1 = null, n2 = null;
-			
+
 			// Add null checks for WorkflowPath to prevent NullPointerException
-			if (o1.getPath() != null && o1.getPath().getInstance() != null) {
+			if ((o1.getPath() != null) && (o1.getPath().getInstance() != null)) {
 				n1 = o1.getPath().getInstance().getInitiator();
 			}
-			if (o2.getPath() != null && o2.getPath().getInstance() != null) {
+			if ((o2.getPath() != null) && (o2.getPath().getInstance() != null)) {
 				n2 = o2.getPath().getInstance().getInitiator();
 			}
-			
+
 			String s1 = null, s2 = null;
 
 			if (n1 != null) {
