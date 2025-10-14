@@ -629,7 +629,8 @@ public class ImportEntityJsonVisitor {
 					}
 
 					if (ad.isTargetMandatory() && tmp.isEmpty()) {
-						throw new BeCPGException("Mandatory association not found");
+						throw new BeCPGException("Mandatory association not found: " + propQName.toPrefixString(namespaceService)
+								+ " for node " + context.getCurrentNodeRef());
 					}
 
 					assocs.put(propQName, tmp);
