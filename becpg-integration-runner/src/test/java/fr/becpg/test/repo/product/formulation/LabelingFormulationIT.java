@@ -54,10 +54,12 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
@@ -1193,6 +1195,29 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 			logger.debug("/*-- Create finished product --*/");
+			
+			// Create custom raw materials with UPPERCASE allergen names in legal names to trigger ALLERGEN_DETECTION_PATTERN
+			RawMaterialData rawMat1 = new RawMaterialData();
+			rawMat1.setName("Raw material allergen test 1");
+			MLText legalName1 = new MLText("legal Raw material with ALLERG");
+			legalName1.addValue(Locale.FRENCH, "legal Raw material with ALLERG");
+			rawMat1.setLegalName(legalName1);
+			rawMat1.setDensity(1d);
+			List<AllergenListDataItem> allergenList = new ArrayList<>();
+			allergenList.add(AllergenListDataItem.build().withAllergen(allergen1).withVoluntary(true).withQtyPerc(100d));
+			rawMat1.setAllergenList(allergenList);
+			
+			NodeRef rawMat1Ref = alfrescoRepository.create(getTestFolderNodeRef(), rawMat1).getNodeRef();
+			
+			RawMaterialData rawMat2 = new RawMaterialData();
+			rawMat2.setName("Raw material allergen test 2");
+			MLText legalName2 = new MLText("legal Raw material with ALLERG");
+			legalName2.addValue(Locale.FRENCH, "legal Raw material with ALLERG");
+			rawMat2.setLegalName(legalName2);
+			rawMat2.setDensity(1d);
+			rawMat2.setAllergenList(allergenList);
+			NodeRef rawMat2Ref = alfrescoRepository.create(getTestFolderNodeRef(), rawMat2).getNodeRef();
+			
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Test Allergen Detection");
 			finishedProduct.setLegalName("Legal Test");
@@ -1202,39 +1227,48 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			List<CompoListDataItem> compoList = new ArrayList<>();
 
 			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
-					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+					.withDeclarationType(DeclarationType.DoNotDetails).withProduct(rawMat1Ref));
 			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
-					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef));
+					.withDeclarationType(DeclarationType.DoNotDetails).withProduct(rawMat2Ref));
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 		});
 
-		// Test with allergen detection enabled (default)
+		// Test with allergen detection enabled (default) - UPPERCASE words get wrapped in bold tags
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()")
+				.withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.#%}")
+				.withLabelingRuleType(LabelingRuleType.Format));
 		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Langue").withFormula("fr")
 				.withLabelingRuleType(LabelingRuleType.Locale));
 
-		checkILL(finishedProductNodeRef, labelingRuleList, "legal Raw material 1 (<b>allergen1</b>) 50%, legal Raw material 2 (<b>allergen1</b>) 50%",
+		checkILL(finishedProductNodeRef, labelingRuleList, "legal Raw material with <b>ALLERG</b> 100%",
 				Locale.FRENCH);
 
-		// Test with allergen detection disabled
+		// Test with allergen detection disabled - UPPERCASE words stay as-is (no bold wrapping)
 		labelingRuleList.add(LabelingRuleListDataItem.build().withName("DisableAllergenDetection")
 				.withFormula("disableAllergenDetection = true").withLabelingRuleType(LabelingRuleType.Prefs));
 
-		checkILL(finishedProductNodeRef, labelingRuleList, "legal Raw material 1 (allergen1) 50%, legal Raw material 2 (allergen1) 50%",
+		checkILL(finishedProductNodeRef, labelingRuleList, "legal Raw material with ALLERG (<b>allergen1</b>) 100%",
 				Locale.FRENCH);
 
-		// Test re-enabling allergen detection
+		// Test re-enabling allergen detection - UPPERCASE words get wrapped in bold tags again
 		labelingRuleList.clear();
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()")
+				.withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.#%}")
+				.withLabelingRuleType(LabelingRuleType.Format));
 		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Langue").withFormula("fr")
 				.withLabelingRuleType(LabelingRuleType.Locale));
 		labelingRuleList.add(LabelingRuleListDataItem.build().withName("EnableAllergenDetection")
 				.withFormula("disableAllergenDetection = false").withLabelingRuleType(LabelingRuleType.Prefs));
 
-		checkILL(finishedProductNodeRef, labelingRuleList, "legal Raw material 1 (<b>allergen1</b>) 50%, legal Raw material 2 (<b>allergen1</b>) 50%",
+		checkILL(finishedProductNodeRef, labelingRuleList, "legal Raw material with <b>ALLERG</b> 100%",
 				Locale.FRENCH);
 	}
+
 
 	@Test
 	public void testSPELFormula() {
