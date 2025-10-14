@@ -1349,22 +1349,25 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private static final String ING_TYPE_PREFIX = "ingType-";
 
 	private String createAllergenAwareLabel(String ingLegalName, Set<NodeRef> allergens, boolean boldOnly) {
-		if (disableAllergenDetection || isAllergensDisableForLocale()) {
+		if (isAllergensDisableForLocale()) {
 			return ingLegalName;
 		}
 
 		Set<String> detectedAllergens = getDetectedAllergens();
 
 		Matcher ma = ALLERGEN_DETECTION_PATTERN.matcher(ingLegalName);
-		if (ma.find() && (ma.group(1) != null)) {
-			String allergenName = ma.group(1);
-			for (String toEscape : ESCAPED_ALLERGEN_TAGS) {
-				allergenName = allergenName.replace(toEscape, "");
-			}
+		if (!disableAllergenDetection) {
+			if (ma.find() && (ma.group(1) != null)) {
+				String allergenName = ma.group(1);
+				for (String toEscape : ESCAPED_ALLERGEN_TAGS) {
+					allergenName = allergenName.replace(toEscape, "");
+				}
 
-			detectedAllergens.add(allergenName);
-			return ma.replaceFirst(allergenReplacementPattern.replace("$1", allergenName));
+				detectedAllergens.add(allergenName);
+				return ma.replaceFirst(allergenReplacementPattern.replace("$1", allergenName));
+			}
 		}
+	
 
 		StringBuilder ret = new StringBuilder();
 		for (NodeRef allergen : allergens) {
@@ -1373,7 +1376,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				if (getAllergens().containsKey(allergen)) {
 					String allergenName = getCharactName(allergen);
 					if ((allergenName != null) && !allergenName.isEmpty()) {
-						if (ret.length() > 0) {
+						if (!ret.isEmpty()) {
 							ret.append(getLocaleSeparator(allergensSeparator));
 						} else {
 							ma = Pattern.compile("\\b(" + Pattern.quote(allergenName) + "(s?))\\b", Pattern.CASE_INSENSITIVE).matcher(ingLegalName);
@@ -1389,6 +1392,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 										ma = Pattern.compile("\\b(" + Pattern.quote(subAllergenName) + "(s?))\\b", Pattern.CASE_INSENSITIVE)
 												.matcher(ingLegalName);
 										if (ma.find() && (ma.group(1) != null)) {
+
 											detectedAllergens.add(ma.group(1));
 											ingLegalName = ma.replaceAll(allergenReplacementPattern);
 											shouldAppend = false;
@@ -1408,7 +1412,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return applyRoundingMode(new MessageFormat(allergenDetailsFormat), null).format(new Object[] { ingLegalName, null, ret.toString(), null });
 	}
 
-	Set<Locale> disableAllergensForLocalesCache = null;
+	private Set<Locale> disableAllergensForLocalesCache = null;
 
 	private boolean isAllergensDisableForLocale() {
 
