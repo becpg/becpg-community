@@ -13312,7 +13312,7 @@ row["roundedGDAPerc"] + "%";
                                                     </structure>
                                                 </list-property>
                                                 <property name="contentType">html</property>
-                                                <text-property name="content"><![CDATA[<U><VALUE-OF >reportContext.getMessage("contains", reportContext.getLocale())</VALUE-OF></U> <VALUE-OF >row["allergenListVoluntary"]!=""?row["allergenListVoluntary"]:reportContext.getMessage("noAllergen", reportContext.getLocale())</VALUE-OF>]]></text-property>
+                                                <text-property name="content"><![CDATA[<span style="text-decoration: underline;"><VALUE-OF >reportContext.getMessage("contains", reportContext.getLocale())</VALUE-OF></span> <VALUE-OF >row["allergenListVoluntary"]!=""?row["allergenListVoluntary"]:reportContext.getMessage("noAllergen", reportContext.getLocale())</VALUE-OF>]]></text-property>
                                             </text>
                                             <text id="3220">
                                                 <property name="marginTop">10pt</property>
@@ -13345,7 +13345,7 @@ row["roundedGDAPerc"] + "%";
                                                     </structure>
                                                 </list-property>
                                                 <property name="contentType">html</property>
-                                                <text-property name="content"><![CDATA[<U><VALUE-OF >reportContext.getMessage("canContain", reportContext.getLocale())</VALUE-OF></U> <VALUE-OF >row["allergenListInVoluntary"]</VALUE-OF>]]></text-property>
+                                                <text-property name="content"><![CDATA[<span style="text-decoration: underline;"><VALUE-OF >reportContext.getMessage("canContain", reportContext.getLocale())</VALUE-OF></span> <VALUE-OF >row["allergenListInVoluntary"]</VALUE-OF>]]></text-property>
                                             </text>
                                         </cell>
                                     </row>
