@@ -1,22 +1,17 @@
 package fr.becpg.repo.product.comparison;
 
-import java.util.Locale;
 import java.util.Map;
 
-import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.Pair;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.comparison.CompareResultDataItem;
-import fr.becpg.repo.helper.LargeTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 
@@ -44,9 +39,6 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 		} else if (dataListType.equals(MPMModel.TYPE_PROCESSLIST)) {
 			addProcessListProps(comparisonMap, dataListType, charactName, pivotKey, entity1NodeRef, nbEntities, comparisonPosition, totalQty, null, false, 0, 1);
 			addProcessListProps(comparisonMap, dataListType, charactName, pivotKey, entity2NodeRef, nbEntities, comparisonPosition, totalQty, null, true, 1, 1);
-		} else if (dataListType.equals(PLMModel.TYPE_INGLABELINGLIST)) {
-			addIngLabelingListProps(comparisonMap, dataListType, charactName, pivotKey, entity1NodeRef, nbEntities, comparisonPosition, false);
-			addIngLabelingListProps(comparisonMap, dataListType, charactName, pivotKey, entity2NodeRef, nbEntities, comparisonPosition, true);
 		}
 	}
 
@@ -226,68 +218,6 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 				}
 			}
 		}
-	}
-
-	private void addIngLabelingListProps(Map<String, CompareResultDataItem> comparisonMap, QName dataListType, String charactName,
-			String pivotKey, NodeRef entityNodeRef, int nbEntities, int comparisonPosition, boolean swap)
-	{
-		if (entityNodeRef != null) {
-			IngLabelingListDataItem item = (IngLabelingListDataItem) alfrescoRepository.findOne(entityNodeRef);
-
-			MLText value = item.getValue();
-			String valueStr = extractMLTextForComparison(value);
-			extractPropsWithTextDiff(comparisonMap, dataListType, charactName, pivotKey, PLMModel.PROP_ILL_VALUE,
-					valueStr, nbEntities, comparisonPosition, swap);
-
-			MLText manualValue = item.getManualValue();
-			String manualValueStr = extractMLTextForComparison(manualValue);
-			extractPropsWithTextDiff(comparisonMap, dataListType, charactName, pivotKey, PLMModel.PROP_ILL_MANUAL_VALUE,
-					manualValueStr, nbEntities, comparisonPosition, swap);
-
-			String logValue = item.getLogValue();
-			extractProps(comparisonMap, dataListType, charactName, pivotKey, PLMModel.PROP_ILL_LOG_VALUE,
-					logValue == null ? "" : logValue, nbEntities, comparisonPosition, swap);
-		}
-	}
-
-	private String extractMLTextForComparison(MLText mlText)
-	{
-		if (mlText == null) {
-			return "";
-		}
-
-		StringBuilder result = new StringBuilder();
-		for (Locale locale : mlText.getLocales()) {
-			String text = mlText.get(locale);
-			if (text != null && !text.isEmpty()) {
-				if (result.length() > 0) {
-					result.append(" | ");
-				}
-				result.append("[").append(locale.toString()).append("] ").append(text);
-			}
-		}
-		return result.toString();
-	}
-
-	private void extractPropsWithTextDiff(Map<String, CompareResultDataItem> comparisonMap, QName dataListType, String charactName,
-			String pivotKey, QName property, String value, int nbEntities, int comparisonPosition, boolean swap)
-	{
-		String existingValue = getCurrentValue(comparisonMap, dataListType, pivotKey, property, swap ? 0 : comparisonPosition);
-
-		boolean isDiff = isDifferent(comparisonMap, dataListType, pivotKey, property, value);
-
-		if (isDiff && (existingValue != null) && !existingValue.isEmpty() && (value != null) && !value.isEmpty()) {
-			if ((existingValue.length() > LargeTextHelper.TEXT_SIZE_LIMIT) || (value.length() > LargeTextHelper.TEXT_SIZE_LIMIT)) {
-				Pair<String, String> diffs = LargeTextHelper.createTextDiffs(existingValue, value);
-				String diffValue = swap ? diffs.getSecond() : diffs.getFirst();
-				if (!diffValue.replace(" ", "").isEmpty()) {
-					value = LargeTextHelper.elipse(diffValue);
-				}
-			}
-		}
-
-		addComparisonDataItem(comparisonMap, dataListType, charactName, pivotKey, property,
-				(!swap ? value : null), (!swap ? null : value), nbEntities, comparisonPosition, isDiff);
 	}
 	
 	private void extractProps(Map<String, CompareResultDataItem> comparisonMap, QName dataListType, String charactName, 
