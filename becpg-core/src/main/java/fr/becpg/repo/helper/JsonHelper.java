@@ -10,6 +10,7 @@ import org.alfresco.util.ISO8601DateFormat;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -85,5 +86,8 @@ public final class JsonHelper {
 		return value;
 	}
 	
+	public static String serialize(Object object) throws JsonProcessingException {
+		return MAPPER.writeValueAsString(object);
+	}
 	
 }
