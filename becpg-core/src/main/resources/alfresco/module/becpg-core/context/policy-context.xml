@@ -109,6 +109,7 @@
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="mlNodeService" ref="mlAwareNodeService"/>
 		<property name="entityDictionaryService" ref="entityDictionaryService"/>
+		<property name="fileFolderService" ref="fileFolderService"/>
 	</bean>
 	<bean id="auditEntityListItemPolicy" class="fr.becpg.repo.entity.datalist.policy.AuditEntityListItemPolicy" parent="abstractBeCPGPolicy">
 		<property name="authenticationService" ref="authenticationService" />
