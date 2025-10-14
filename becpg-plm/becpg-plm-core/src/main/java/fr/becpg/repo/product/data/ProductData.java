@@ -22,7 +22,6 @@ import org.json.JSONException;
 import fr.becpg.api.BeCPGPublicApi;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
-import fr.becpg.repo.decernis.DecernisMode;
 import fr.becpg.repo.glop.model.GlopData;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
@@ -57,6 +56,7 @@ import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.StockListDataItem;
 import fr.becpg.repo.regulatory.RegulatoryEntity;
+import fr.becpg.repo.regulatory.RegulatoryMode;
 import fr.becpg.repo.regulatory.RegulatoryResult;
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
@@ -224,7 +224,7 @@ public class ProductData extends AbstractScorableEntity
 	private List<String> regulatoryCountries = new ArrayList<>();
 	private List<String> regulatoryUsages = new ArrayList<>();
 	private Date regulatoryFormulatedDate;
-	private DecernisMode regulatoryMode = DecernisMode.BECPG_ONLY;
+	private RegulatoryMode regulatoryMode = RegulatoryMode.BECPG_ONLY;
 	private String regulatoryRecipeId;
 	private RegulatoryResult regulatoryResult;
 	private String regulatoryUrl;
@@ -2628,20 +2628,20 @@ public class ProductData extends AbstractScorableEntity
 	/**
 	 * <p>Getter for the field <code>regulatoryMode</code>.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.decernis.DecernisMode} object
+	 * @return a {@link fr.becpg.repo.regulatory.RegulatoryMode} object
 	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:regulatoryMode")
-	public DecernisMode getRegulatoryMode() {
+	public RegulatoryMode getRegulatoryMode() {
 		return regulatoryMode;
 	}
 
 	/**
 	 * <p>Setter for the field <code>regulatoryMode</code>.</p>
 	 *
-	 * @param regulatoryMode a {@link fr.becpg.repo.decernis.DecernisMode} object
+	 * @param regulatoryMode a {@link fr.becpg.repo.regulatory.RegulatoryMode} object
 	 */
-	public void setRegulatoryMode(DecernisMode regulatoryMode) {
+	public void setRegulatoryMode(RegulatoryMode regulatoryMode) {
 		this.regulatoryMode = regulatoryMode;
 	}
 

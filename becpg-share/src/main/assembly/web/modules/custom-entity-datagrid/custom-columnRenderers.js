@@ -110,6 +110,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 					title = '<span class="entity ecm-changeOrder"><a  href="' +  beCPG.util.entityURL(oRecord.getData("siteId"),data.entityNodeRef) + 
 						'">'+Alfresco.util.encodeHTML(data.title)+'</a></span>';
 					title  = scope.msg("entity.activity."+activityType.toLowerCase(), title);
+				} else if(activityType == "ComplianceCheck"){
+					title  = scope.msg("entity.activity."+activityType.toLowerCase(), title);
 				} else if(activityType == "Comment"){
 					title  = scope.msg("entity.activity.comment."+data.activityEvent.toLowerCase(), title);
 				} else if(activityType == "Content"){
