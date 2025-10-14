@@ -10,6 +10,9 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
+import org.alfresco.service.cmr.model.FileExistsException;
+import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.model.FileNotFoundException;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -45,6 +48,12 @@ public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeSer
 	private EntityDictionaryService entityDictionaryService;
 
 	private NodeService mlNodeService;
+	
+	private FileFolderService fileFolderService;
+	
+	public void setFileFolderService(FileFolderService fileFolderService) {
+		this.fileFolderService = fileFolderService;
+	}
 
 	/**
 	 * Sets the namespace service.
@@ -115,9 +124,15 @@ public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeSer
 
 						nodeService.moveNode(dataListNodeRef, nodeService.getPrimaryParent(dataListNodeRef).getParentRef(),
 								ContentModel.ASSOC_CONTAINS, dataListTypeQName);
-						nodeService.setProperty(dataListNodeRef, ContentModel.PROP_NAME,
-								createName(dataListNodeRef, dataListTypeQName.getLocalName()));
-
+						
+						String name = createName(dataListNodeRef, dataListTypeQName.getLocalName());
+						
+						try {
+							fileFolderService.rename(dataListNodeRef, name);
+						} catch (FileExistsException | FileNotFoundException e) {
+							logger.error("Error while renaming nodeRef: " + dataListNodeRef + " with name: " + name, e);
+						}
+						
 						ClassDefinition classDef = entityDictionaryService.getClass(dataListTypeQName);
 
 						MLText title = (MLText) mlNodeService.getProperty(dataListNodeRef, ContentModel.PROP_TITLE);
@@ -144,7 +159,7 @@ public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeSer
 		}
 	}
 
-	private Serializable createName(NodeRef dataListNodeRef, String localName) {
+	private String createName(NodeRef dataListNodeRef, String localName) {
 		int count = 0;
 		if (localName.contains("@")) {
 			count = Integer.parseInt(localName.split("@")[1]);
