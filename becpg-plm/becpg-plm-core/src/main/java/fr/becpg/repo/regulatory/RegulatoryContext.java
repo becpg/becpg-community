@@ -8,6 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 
 /**
@@ -20,7 +21,9 @@ public class RegulatoryContext {
 
 	private ProductData product;
 	
-	List<RegulatoryBatch> regulatoryBatches = new CopyOnWriteArrayList<>();
+	private List<IngListDataItem> ingList = new CopyOnWriteArrayList<>();
+	
+	private List<RegulatoryBatch> regulatoryBatches = new CopyOnWriteArrayList<>();
 
 	private Map<String, NodeRef> countryMap = new ConcurrentHashMap<>();
 	private Map<String, String> usageMap = new ConcurrentHashMap<>();
@@ -29,6 +32,10 @@ public class RegulatoryContext {
 
 	private List<IngRegulatoryListDataItem> ingRegulatoryListDataItems = new CopyOnWriteArrayList<>();
 
+	public List<IngListDataItem> getIngList() {
+		return ingList;
+	}
+	
 	public List<IngRegulatoryListDataItem> getIngRegulatoryListDataItems() {
 		return ingRegulatoryListDataItems;
 	}
