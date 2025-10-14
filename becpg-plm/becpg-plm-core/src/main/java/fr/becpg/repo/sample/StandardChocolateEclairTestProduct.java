@@ -644,6 +644,10 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
 		RawMaterialData milk = RawMaterialData.build().withName(MILK_NAME).withQty(20d).withUnit(ProductUnit.kg);
 
+		if (isWithIngredients) {
+			milk.withIngList(List.of(IngListDataItem.build().withQtyPerc(100d).withIngredient(ingMilkNodeRef)));
+		}
+		
 		if (isWithStocks) {
 			addStocks(milk, 1000d, new ArrayList<>());
 		}

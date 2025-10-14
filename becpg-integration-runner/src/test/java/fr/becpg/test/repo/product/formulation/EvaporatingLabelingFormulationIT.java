@@ -27,7 +27,7 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 
 			StandardChocolateEclairTestProduct testProduct = new StandardChocolateEclairTestProduct.Builder()
 					.withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(true)
-					.withLabeling(true).withIngredients(false).build();
+					.withLabeling(true).withIngredients(true).build();
 
 			return testProduct.createTestProduct().getNodeRef();
 		});
@@ -104,6 +104,22 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 						.withLabelingRuleType(LabelingRuleType.Prefs))),
 				"eau 50%, oeuf 28,1%, farine 12,5%, sucre 9,4%", Locale.FRENCH);
 
+		// Verify ingredient list quantities match labeling
+		inReadTx(() -> {
+			FinishedProductData formulatedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+			
+			Assert.assertNotNull("Ingredient list should not be null", formulatedProduct.getIngList());
+			Assert.assertEquals("Should have 4 ingredients", 4, formulatedProduct.getIngList().size());
+			
+			// Expected: eau 50%, oeuf 28.1%, farine 12.5%, sucre 9.4%
+			Assert.assertEquals("Water qtyPercWithYield should be 50%", 50.0, formulatedProduct.getIngList().get(0).getQtyPercWithYield(), 0.1);
+			Assert.assertEquals("Egg qtyPercWithYield should be 28.1%", 28.1, formulatedProduct.getIngList().get(1).getQtyPercWithYield(), 0.1);
+			Assert.assertEquals("Flour qtyPercWithYield should be 12.5%", 12.5, formulatedProduct.getIngList().get(2).getQtyPercWithYield(), 0.1);
+			Assert.assertEquals("Sugar qtyPercWithYield should be 9.4%", 9.4, formulatedProduct.getIngList().get(3).getQtyPercWithYield(), 0.1);
+			
+			return null;
+		});
+
 	}
 	
 	
@@ -113,7 +129,7 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 
 			StandardChocolateEclairTestProduct testProduct = new StandardChocolateEclairTestProduct.Builder()
 					.withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(false)
-					.withLabeling(false).withIngredients(false).build();
+					.withLabeling(false).withIngredients(true).build();
 			testProduct.initCompoProduct();
 
 			FinishedProductData biscuit = testProduct.createTestProduct();
@@ -141,6 +157,21 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 						.withLabelingRuleType(LabelingRuleType.Prefs))),
 				"farine 50%, eau 37,5%, sucre 12,5%", Locale.FRENCH);
 
+		// Verify ingredient list quantities match labeling
+		inReadTx(() -> {
+			FinishedProductData formulatedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+			
+			Assert.assertNotNull("Ingredient list should not be null", formulatedProduct.getIngList());
+			Assert.assertEquals("Should have 3 ingredients", 3, formulatedProduct.getIngList().size());
+			
+			// Expected: farine 50%, eau 37.5%, sucre 12.5%
+			Assert.assertEquals("Water qtyPercWithYield should be 37.5%", 37.5, formulatedProduct.getIngList().get(0).getQtyPercWithYield(), 0.1);
+			Assert.assertEquals("Flour qtyPercWithYield should be 50%", 50.0, formulatedProduct.getIngList().get(1).getQtyPercWithYield(), 0.1);
+			Assert.assertEquals("Sugar qtyPercWithYield should be 12.5%", 12.5, formulatedProduct.getIngList().get(2).getQtyPercWithYield(), 0.1);
+			
+			return null;
+		});
+
 	}
 
 	
@@ -150,7 +181,7 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 
 			StandardChocolateEclairTestProduct testProduct = new StandardChocolateEclairTestProduct.Builder()
 					.withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(false)
-					.withLabeling(false).withIngredients(false).build();
+					.withLabeling(false).withIngredients(true).build();
 			testProduct.initCompoProduct();
 
 			FinishedProductData biscuit = testProduct.createTestProduct();
@@ -178,6 +209,20 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 						.withLabelingRuleType(LabelingRuleType.Prefs))),
 				"sucre 62,5%, farine 50%", Locale.FRENCH);
 
+		// Verify ingredient list quantities match labeling
+		inReadTx(() -> {
+			FinishedProductData formulatedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+			
+			Assert.assertNotNull("Ingredient list should not be null", formulatedProduct.getIngList());
+			Assert.assertEquals("Should have 3 ingredients", 3, formulatedProduct.getIngList().size());
+			
+			// Expected: sucre 62.5%, farine 50%
+			Assert.assertEquals("Sugar qtyPercWithYield should be 62.5%", 62.5, formulatedProduct.getIngList().get(0).getQtyPercWithYield(), 0.1);
+			Assert.assertEquals("Flour qtyPercWithYield should be 50%", 50.0, formulatedProduct.getIngList().get(1).getQtyPercWithYield(), 0.1);
+			
+			return null;
+		});
+
 	}
 
 	@Test
@@ -186,11 +231,11 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 
 			StandardChocolateEclairTestProduct testProduct = new StandardChocolateEclairTestProduct.Builder()
 					.withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(false)
-					.withLabeling(false).withIngredients(false).build();
+					.withLabeling(false).withIngredients(true).build();
 			testProduct.initCompoProduct();
 
 			FinishedProductData biscuit = testProduct.createTestProduct();
-			biscuit.setName("testMonoLevelWithoutEvap2 - BisCuiCui 🐦");
+			biscuit.setName("testMonoLevelWithoutEvap3 - BisCuiCui 🐦");
 			biscuit.withQty(80d);
 			
 
@@ -212,6 +257,20 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 						.withLabelingRuleType(LabelingRuleType.Prefs))),
 				"farine 62,5%, sucre 62,5%", Locale.FRENCH);
 
+		// Verify ingredient list quantities match labeling
+		inReadTx(() -> {
+			FinishedProductData formulatedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+			
+			Assert.assertNotNull("Ingredient list should not be null", formulatedProduct.getIngList());
+			Assert.assertEquals("Should have 2 ingredients", 2, formulatedProduct.getIngList().size());
+			
+			// Expected: farine 62.5%, sucre 62.5%
+			Assert.assertEquals("Flour qtyPercWithYield should be 62.5%", 62.5, formulatedProduct.getIngList().get(0).getQtyPercWithYield(), 0.1);
+			Assert.assertEquals("Sugar qtyPercWithYield should be 62.5%", 62.5, formulatedProduct.getIngList().get(1).getQtyPercWithYield(), 0.1);
+			
+			return null;
+		});
+
 	}
 	
 	
@@ -221,7 +280,7 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 
 			StandardChocolateEclairTestProduct testProduct = new StandardChocolateEclairTestProduct.Builder()
 					.withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(false)
-					.withLabeling(false).withIngredients(false).build();
+					.withLabeling(false).withIngredients(true).build();
 			testProduct.initCompoProduct();
 
 			FinishedProductData biscuit = testProduct.createTestProduct();
@@ -252,6 +311,20 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 						.withLabelingRuleType(LabelingRuleType.Prefs))),
 				"lait 54,2%, oeuf 45,8%", Locale.FRENCH);
 
+		// Verify ingredient list quantities match labeling
+		inReadTx(() -> {
+			FinishedProductData formulatedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+			
+			Assert.assertNotNull("Ingredient list should not be null", formulatedProduct.getIngList());
+			Assert.assertEquals("Should have 3 ingredients", 3, formulatedProduct.getIngList().size());
+			
+			// Expected: lait 54.2%, oeuf 45.8%
+			Assert.assertEquals("Milk qtyPercWithYield should be 54.2%", 54.2, formulatedProduct.getIngList().get(0).getQtyPercWithYield(), 0.1);
+			Assert.assertEquals("Egg qtyPercWithYield should be 45.8%", 45.8, formulatedProduct.getIngList().get(1).getQtyPercWithYield(), 0.1);
+			
+			return null;
+		});
+
 	}
 
 	/**
@@ -268,7 +341,7 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 
 			StandardChocolateEclairTestProduct testProduct = new StandardChocolateEclairTestProduct.Builder()
 					.withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(false)
-					.withLabeling(false).withIngredients(false).build();
+					.withLabeling(false).withIngredients(true).build();
 			testProduct.initCompoProduct();
 
 			FinishedProductData product = testProduct.createTestProduct();
@@ -308,6 +381,26 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 				LabelingRuleListDataItem.build().withName("Param1").withFormula("ingsLabelingWithYield=true")
 						.withLabelingRuleType(LabelingRuleType.Prefs))),
 				"sucre 62,5%, farine 10,9%, oeuf 3%", Locale.FRENCH);
+
+		// Verify ingredient list quantities match labeling
+		inReadTx(() -> {
+			FinishedProductData formulatedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+			
+			Assert.assertNotNull("Ingredient list should not be null", formulatedProduct.getIngList());
+			Assert.assertEquals("Should have 3 ingredients after evaporation (water removed)", 3, formulatedProduct.getIngList().size());
+			
+			// Expected values match labeling: sucre 62.5%, farine 10.9%, oeuf 3%
+			// Check sugar (no evaporation)
+			Assert.assertEquals("Sugar qtyPercWithYield should be 62.5%", 62.5, formulatedProduct.getIngList().get(0).getQtyPercWithYield(), 0.1);
+			
+			// Check flour (13.5% evaporation rate)
+			Assert.assertEquals("Flour qtyPercWithYield should be 10.9%", 10.9, formulatedProduct.getIngList().get(1).getQtyPercWithYield(), 0.1);
+			
+			// Check egg (88% evaporation rate)
+			Assert.assertEquals("Egg qtyPercWithYield should be 3%", 3.0, formulatedProduct.getIngList().get(2).getQtyPercWithYield(), 0.1);
+			
+			return null;
+		});
 
 	}
 

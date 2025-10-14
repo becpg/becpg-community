@@ -1052,7 +1052,7 @@ public class FormulationHelper {
 	 * @return the percentage to add to each non-omitted ingredient, or 0.0 if invalid input
 	 */
 	public static Double calculateDistributedOmittedPercentage(Double totalOmittedPercentage, int countNonOmittedItems) {
-		if ((totalOmittedPercentage == null) || (countNonOmittedItems <= 0) || (Math.abs(totalOmittedPercentage) <= 0.00001)) {
+		if ((totalOmittedPercentage == null) || (countNonOmittedItems <= 0)) {
 			return 0d;
 		}
 		return totalOmittedPercentage / countNonOmittedItems;
