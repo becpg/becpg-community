@@ -51,6 +51,7 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
+import fr.becpg.repo.product.data.allergen.AllergenItem;
 import fr.becpg.repo.product.data.constraints.AllergenType;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
@@ -66,6 +67,7 @@ import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.spel.LabelingFormulaFilterContext;
+import fr.becpg.repo.product.formulation.EvaporatingFormulationHelper;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.helper.IngListHelper;
 import fr.becpg.repo.regulatory.RequirementDataType;
@@ -468,21 +470,21 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private void extractAllergens(LabelingFormulaContext labelingFormulaContext, ProductData productData) {
 		if (productData.getAllergenList() != null) {
 			for (AllergenListDataItem allergenListDataItem : productData.getAllergenList()) {
-				NodeRef allergen = allergenListDataItem.getAllergen();
+				AllergenItem allergen = (AllergenItem) alfrescoRepository.findOne(allergenListDataItem.getAllergen());
 				if (Boolean.TRUE.equals(allergenListDataItem.getVoluntary())) {
-					if (AllergenType.Major.toString().equals(nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_TYPE))) {
-						appendAllergen(labelingFormulaContext.getAllergens(), allergen, allergenListDataItem.getQtyPerc());
+					if (AllergenType.Major.toString().equals(allergen.getAllergenType())) {
+						appendAllergen(labelingFormulaContext.getAllergens(), allergen.getNodeRef(), allergenListDataItem.getQtyPerc());
 					}
 				} else if (Boolean.TRUE.equals(allergenListDataItem.getInVoluntary())
-						&& AllergenType.Major.toString().equals(nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_TYPE))) {
-					appendAllergen(labelingFormulaContext.getInVolAllergens(), allergen, allergenListDataItem.getQtyPerc());
+						&& AllergenType.Major.toString().equals(allergen.getAllergenType())) {
+					appendAllergen(labelingFormulaContext.getInVolAllergens(), allergen.getNodeRef(), allergenListDataItem.getQtyPerc());
 					for (NodeRef inVoluntarySource : allergenListDataItem.getInVoluntarySources()) {
 						QName inVoluntarySourceType = nodeService.getType(inVoluntarySource);
 
 						if (PLMModel.TYPE_RAWMATERIAL.equals(inVoluntarySourceType)) {
-							appendAllergen(labelingFormulaContext.getInVolAllergensRawMaterial(), allergen, allergenListDataItem.getQtyPerc());
+							appendAllergen(labelingFormulaContext.getInVolAllergensRawMaterial(), allergen.getNodeRef(), allergenListDataItem.getQtyPerc());
 						} else if (PLMModel.TYPE_RESOURCEPRODUCT.equals(inVoluntarySourceType)) {
-							appendAllergen(labelingFormulaContext.getInVolAllergensProcess(), allergen, allergenListDataItem.getQtyPerc());
+							appendAllergen(labelingFormulaContext.getInVolAllergensProcess(), allergen.getNodeRef(), allergenListDataItem.getQtyPerc());
 						}
 					}
 				}
@@ -1548,22 +1550,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						declarationType = DeclarationType.DoNotDetails;
 					}
 
-					Double evaporateRate = (Double) nodeService.getProperty(productNodeRef, PLMModel.PROP_EVAPORATED_RATE);
+					Double evaporateRate = EvaporatingFormulationHelper.getEvaporateRate(productNodeRef, nodeService);
 
-					if (evaporateRate == null) {
-						evaporateRate = 100d;
-					}
-
-					Double maxEvaporableQty = 0d;
-					if (qtyWithYield != null) {
-						maxEvaporableQty = (qtyWithYield * (evaporateRate / 100d));
-					}
-
-					Double maxEvaporableVolume = 0d;
-
-					if (volumeWithYield != null) {
-						maxEvaporableVolume = (volumeWithYield * (evaporateRate / 100d));
-					}
+					Double maxEvaporableQty = EvaporatingFormulationHelper.calculateMaxEvaporableQty(qtyWithYield, evaporateRate);
+					Double maxEvaporableVolume = EvaporatingFormulationHelper.calculateMaxEvaporableVolume(volumeWithYield, evaporateRate);
 
 					if (logger.isTraceEnabled()) {
 						logger.trace("Detected evaporated components (" + productData.getName() + " - " + productNodeRef + "), rate: " + evaporateRate
@@ -1813,8 +1803,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private boolean hasEvaporationData(NodeRef productNodeRef) {
-		return nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)
-				|| (nodeService.getProperty(productNodeRef, PLMModel.PROP_EVAPORATED_RATE) != null);
+		return EvaporatingFormulationHelper.hasEvaporationData(productNodeRef, nodeService);
 	}
 
 	private void appendQtiesToLabeling(CompositeLabeling compositeLabeling, Double qty, Double qtyWithYield, Double volume, Double volumeWithYield,
@@ -1887,9 +1876,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private void fillAllergensAndGeos(CompositeLabeling compositeLabeling, ProductData productData) {
 
 		for (AllergenListDataItem allergenListDataItem : productData.getAllergenList()) {
-
+			
+			AllergenItem allergen = (AllergenItem) alfrescoRepository.findOne(allergenListDataItem.getAllergen());
+			
 			if (Boolean.TRUE.equals(allergenListDataItem.getVoluntary()) && AllergenType.Major.toString()
-					.equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
+					.equals(allergen.getAllergenType())) {
 				compositeLabeling.getAllergens().add(allergenListDataItem.getAllergen());
 			}
 		}
@@ -1987,56 +1978,35 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			AtomicReference<Double> evaporatingQty = new AtomicReference<>(parent.getEvaporatedQty());
 			AtomicReference<Double> evaporatingVolume = new AtomicReference<>(parent.getEvaporatedVolume());
 
-			items.forEach(evaporatedDataItem -> {
+			// Step 1: Calculate available water for each ingredient based on rate and quantity
+			Map<EvaporatedDataItem, LabelingEvapData> evaporationDataMap = new HashMap<>();
+			double totalAvailableWaterQty = 0d;
+			double totalAvailableWaterVol = 0d;
+
+			for (EvaporatedDataItem evaporatedDataItem : items) {
 				CompositeLabeling productLabelItem = parent.get(evaporatedDataItem.getProductNodeRef());
 				if (productLabelItem != null) {
 					Double rate = evaporatedDataItem.getRate() != null ? evaporatedDataItem.getRate() : 100d;
 
-					if ((productLabelItem.getQtyWithYield() != null) && (parent.getEvaporatedQty() != null) && (parent.getEvaporatedQty() > 0d)) {
-						Double maxEvapQty = (productLabelItem.getQtyWithYield() * rate) / 100d;
-
+					Double maxEvapQty = null;
+					if ((productLabelItem.getQtyWithYield() != null) && (productLabelItem.getQtyWithYield() > 0d)) {
+						maxEvapQty = (productLabelItem.getQtyWithYield() * rate) / 100d;
 						if (isDoNotPropagateYield && (evaporatedDataItem.getMaxEvaporableQty() != null)) {
 							maxEvapQty = Math.min(maxEvapQty, evaporatedDataItem.getMaxEvaporableQty());
 						}
-
-						Double proportionalEvap = (totalRate == null) || (totalRate == 0d) ? parent.getEvaporatedQty()
-								: parent.getEvaporatedQty() * (rate / totalRate); // Consider total rate for remaining items
-						Double evaporatedQty = Math.min(maxEvapQty, proportionalEvap);
-
-						productLabelItem.setQtyWithYield(productLabelItem.getQtyWithYield() - evaporatedQty);
-
-						if (logger.isDebugEnabled()) {
-							logger.debug("Apply evaporation qty " + evaporatedQty + " on " + getName(productLabelItem) + " after "
-									+ productLabelItem.getQtyWithYield());
-						}
-
-						evaporatingQty.set(evaporatingQty.get() - evaporatedQty);
+						totalAvailableWaterQty += maxEvapQty;
 					}
 
-					if ((productLabelItem.getVolumeWithYield() != null) && (parent.getEvaporatedVolume() != null)
-							&& (parent.getEvaporatedVolume() > 0d)) {
-						Double maxEvapQty = (productLabelItem.getVolumeWithYield() * rate) / 100d;
-
+					Double maxEvapVol = null;
+					if ((productLabelItem.getVolumeWithYield() != null) && (productLabelItem.getVolumeWithYield() > 0d)) {
+						maxEvapVol = (productLabelItem.getVolumeWithYield() * rate) / 100d;
 						if (isDoNotPropagateYield && (evaporatedDataItem.getMaxEvaporableVolume() != null)) {
-							maxEvapQty = Math.min(maxEvapQty, evaporatedDataItem.getMaxEvaporableVolume());
+							maxEvapVol = Math.min(maxEvapVol, evaporatedDataItem.getMaxEvaporableVolume());
 						}
-
-						Double proportionalEvap = (totalRate == null) || (totalRate == 0d) ? parent.getEvaporatedVolume()
-								: parent.getEvaporatedVolume() * (rate / totalRate); // Consider total rate for remaining items
-						Double evaporatedVol = Math.min(maxEvapQty, proportionalEvap);
-
-						productLabelItem.setVolumeWithYield(productLabelItem.getVolume() - evaporatedVol);
-
-						if (logger.isDebugEnabled()) {
-							logger.debug("Apply evaporation volume " + evaporatedVol + " on " + getName(productLabelItem) + " after "
-									+ productLabelItem.getVolumeWithYield());
-						}
-
-						productLabelItem.setVolumeWithYield(productLabelItem.getVolumeWithYield() - evaporatedVol);
-
-						evaporatingVolume.set(evaporatingVolume.get() - evaporatedVol);
+						totalAvailableWaterVol += maxEvapVol;
 					}
 
+					evaporationDataMap.put(evaporatedDataItem, new LabelingEvapData(productLabelItem, rate, maxEvapQty, maxEvapVol));
 				} else {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Take in account evaporation in Do Not declare");
@@ -2048,12 +2018,83 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						evaporatingVolume.set(evaporatingVolume.get() - evaporatedDataItem.getMaxEvaporableVolume());
 					}
 				}
-			});
+			}
+
+			// Step 2: Distribute evaporation based on available water rather than just rates
+			if (!evaporationDataMap.isEmpty()) {
+				// Process quantity evaporation
+				if ((parent.getEvaporatedQty() != null) && (parent.getEvaporatedQty() > 0d) && (totalAvailableWaterQty > 0d)) {
+					Double evaporatingQtyAtStart = evaporatingQty.get();
+					for (Map.Entry<EvaporatedDataItem, LabelingEvapData> entry : evaporationDataMap.entrySet()) {
+						LabelingEvapData evapData = entry.getValue();
+
+						if ((evapData.maxEvapQty != null) && (evapData.maxEvapQty > 0d)) {
+							// Use FormulationHelper to calculate proportional evaporation
+							Double evaporatedQty = FormulationHelper.calculateProportionalEvaporation(
+									evaporatingQtyAtStart, evapData.rate, evapData.maxEvapQty, totalRate, totalAvailableWaterQty);
+
+							evapData.productLabelItem.setQtyWithYield(evapData.productLabelItem.getQtyWithYield() - evaporatedQty);
+
+							if (logger.isDebugEnabled()) {
+								logger.debug("Apply evaporation qty " + evaporatedQty + " (max: " + evapData.maxEvapQty 
+										+ ") on " + getName(evapData.productLabelItem) 
+										+ " - remaining: " + evapData.productLabelItem.getQtyWithYield());
+							}
+
+							evaporatingQty.set(evaporatingQty.get() - evaporatedQty);
+						}
+					}
+				}
+
+				// Process volume evaporation
+				if ((parent.getEvaporatedVolume() != null) && (parent.getEvaporatedVolume() > 0d) && (totalAvailableWaterVol > 0d)) {
+					Double evaporatingVolumeAtStart = evaporatingVolume.get();
+					for (Map.Entry<EvaporatedDataItem, LabelingEvapData> entry : evaporationDataMap.entrySet()) {
+						LabelingEvapData evapData = entry.getValue();
+
+						if ((evapData.maxEvapVol != null) && (evapData.maxEvapVol > 0d)) {
+							// Use FormulationHelper to calculate proportional evaporation
+							Double evaporatedVol = FormulationHelper.calculateProportionalEvaporation(
+									evaporatingVolumeAtStart, evapData.rate, evapData.maxEvapVol, totalRate, totalAvailableWaterVol);
+
+							evapData.productLabelItem.setVolumeWithYield(evapData.productLabelItem.getVolumeWithYield() - evaporatedVol);
+
+							if (logger.isDebugEnabled()) {
+								logger.debug("Apply evaporation volume " + evaporatedVol + " (max: " + evapData.maxEvapVol 
+										+ ") on " + getName(evapData.productLabelItem) 
+										+ " - remaining: " + evapData.productLabelItem.getVolumeWithYield());
+							}
+
+							evaporatingVolume.set(evaporatingVolume.get() - evaporatedVol);
+						}
+					}
+				}
+			}
 
 			parent.setEvaporatedQty(evaporatingQty.get());
 			parent.setEvaporatedVolume(evaporatingVolume.get());
 		}
 	}
+
+	/**
+	 * Helper class to store labeling evaporation data
+	 */
+	private static class LabelingEvapData
+	{
+		final CompositeLabeling productLabelItem;
+		final Double rate;
+		final Double maxEvapQty;
+		final Double maxEvapVol;
+
+		LabelingEvapData(CompositeLabeling productLabelItem, Double rate, Double maxEvapQty, Double maxEvapVol)
+		{
+			this.productLabelItem = productLabelItem;
+			this.rate = rate;
+			this.maxEvapQty = maxEvapQty;
+			this.maxEvapVol = maxEvapVol;
+		}
+	}
+
 
 	private void applyReconstitution(LabelingFormulaContext context, CompositeLabeling parent) {
 
@@ -2278,21 +2319,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					if (hasEvaporationData(ingNodeRef) && calculatedYield != null && calculatedYield != 100d) {
 
-						Double evaporateRate = (Double) nodeService.getProperty(ingNodeRef, PLMModel.PROP_EVAPORATED_RATE);
-						Double maxEvaporableQty = 0d;
-						Double maxEvaporableVolume = 0d;
-
-						if (evaporateRate == null) {
-							evaporateRate = 100d;
-						}
-
-						if (qtyWithYield != null) {
-							maxEvaporableQty = (qtyWithYield * (evaporateRate / 100d));
-						}
-
-						if (volumeWithYield != null) {
-							maxEvaporableVolume = (volumeWithYield * (evaporateRate / 100d));
-						}
+						Double evaporateRate = EvaporatingFormulationHelper.getEvaporateRate(ingNodeRef, nodeService);
+						Double maxEvaporableQty = EvaporatingFormulationHelper.calculateMaxEvaporableQty(qtyWithYield, evaporateRate);
+						Double maxEvaporableVolume = EvaporatingFormulationHelper.calculateMaxEvaporableVolume(volumeWithYield, evaporateRate);
 
 						if (logger.isTraceEnabled()) {
 							logger.trace("Detected evaporated ings (" + ingLabelItem.getLegalName(I18NUtil.getContentLocaleLang()) + "), rate: "
@@ -2314,8 +2343,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 										&& (allergenListDataItem.getVoluntarySources().contains(ingNodeRef)
 												|| (DeclarationType.DoNotDetails.equals(ingDeclarationType)
 														&& allergenMatchSubIngs(allergenListDataItem.getVoluntarySources(), ingListItem)))) {
+									AllergenItem allergen = (AllergenItem) alfrescoRepository.findOne(allergenListDataItem.getAllergen());
 									if (AllergenType.Major.toString()
-											.equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
+											.equals(allergen.getAllergenType())) {
 										ingLabelItem.getAllergens().add(allergenListDataItem.getAllergen());
 									}
 								}
