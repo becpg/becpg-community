@@ -337,7 +337,7 @@ public class RegulatoryService {
 		productData.getReqCtrlList().addAll(context.getRequirements());
 		formulationService.formulate(productData, REGULATORY_KEY);
 		if (!hasError(context.getRequirements())) {
-			updateChecksums(context);
+			updateChecksums(context, productData);
 			productData.setRegulatoryFormulatedDate(new Date());
 		} else {
 			productData.setRequirementChecksum(null);
@@ -353,10 +353,10 @@ public class RegulatoryService {
 		return false;
 	}
 
-	private void updateChecksums(RegulatoryContext context) {
+	private void updateChecksums(RegulatoryContext context, ProductData productData) {
 		String checkSum = createContextCheckum(context);
-		context.getProduct().setRequirementChecksum(CheckSumHelper.updateChecksum(REGULATORY_KEY, context.getProduct().getRequirementChecksum(), checkSum));
-		for (RegulatoryListDataItem regulatoryListDataItem : context.getProduct().getRegulatoryList()) {
+		productData.setRequirementChecksum(CheckSumHelper.updateChecksum(REGULATORY_KEY, productData.getRequirementChecksum(), checkSum));
+		for (RegulatoryListDataItem regulatoryListDataItem : productData.getRegulatoryList()) {
 			Set<String> itemCountries = regulatoryListDataItem.getRegulatoryCountriesRef().stream().map(this::extractCode)
 					.collect(Collectors.toSet());
 			Set<String> itemUsages = regulatoryListDataItem.getRegulatoryUsagesRef().stream().map(this::extractCode).collect(Collectors.toSet());
