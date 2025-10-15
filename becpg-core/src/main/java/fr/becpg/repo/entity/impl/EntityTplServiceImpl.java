@@ -59,6 +59,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.batch.BatchQueueService;
@@ -146,6 +147,9 @@ public class EntityTplServiceImpl implements EntityTplService {
 	
 	@Autowired
 	private AssociationService associationService;
+	
+	@Autowired
+	private EntityActivityService entityActivityService;
 
 	static {
 		isIgnoredAspect.add(ContentModel.ASPECT_VERSIONABLE);
@@ -779,8 +783,10 @@ public class EntityTplServiceImpl implements EntityTplService {
 					NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, entityListName);
 
 					if (listNodeRef != null) {
+						String listType = (String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
 						nodeService.addAspect(listNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 						nodeService.deleteNode(listNodeRef);
+						entityActivityService.postDataListDeleteFromTemplateActivity(entityNodeRef, entityTplNodeRef, listType);
 					}
 
 				} finally {

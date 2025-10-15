@@ -327,7 +327,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		JSONArray ingredients = new JSONArray();
 		ret.put("ingredients", ingredients);
 
-		for (IngListDataItem ingListDataItem : context.getProduct().getIngList()) {
+		for (IngListDataItem ingListDataItem : context.getIngList()) {
 
 			if (ingListDataItem.getIng() != null) {
 
@@ -491,7 +491,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 			countries.remove(EUROPEAN_UNION);
 			countryBatches.add(new CountryBatch(List.of(EUROPEAN_UNION)));
 		}
-		int ingListSize = context.getProduct().getIngList().size();
+		int ingListSize = context.getIngList().size();
 		int maxCountries = 20;
 		if (ingListSize >= 130) {
 			maxCountries = 3;
@@ -554,7 +554,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
 		String moduleCode = moduleToCodeMap.get(checkContext.usageBatches().module());
 
-		for (IngListDataItem ingListDataItem : context.getProduct().getIngList()) {
+		for (IngListDataItem ingListDataItem : context.getIngList()) {
 
 			IngItem ingItem = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
 
@@ -659,7 +659,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		JSONArray ingredients = new JSONArray();
 		ingredientList.put("list", ingredients);
 
-		for (IngListDataItem ingListDataItem : context.getProduct().getIngList()) {
+		for (IngListDataItem ingListDataItem : context.getIngList()) {
 			IngItem ingItem = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
 			String rid = ingItem.getRegulatoryCode();
 			if (isRIDValid(rid)) {
@@ -738,7 +738,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 					for (Entry<String, List<JSONObject>> entry : countryReports.entrySet()) {
 						String decernisID = entry.getKey();
 						List<JSONObject> countryDidReports = entry.getValue();
-						IngListDataItem ingItem = findIngredientItemV5(productContext.getProduct().getIngList(), decernisID, null,
+						IngListDataItem ingItem = findIngredientItemV5(productContext.getIngList(), decernisID, null,
 								countryDidReports.get(0).getString("customerName"));
 						if (ingItem != null) {
 							IngRegulatoryListDataItem ingRegulatoryListDataItem = createIngRegulatoryListDataItem(ingItem.getIng(),
@@ -908,7 +908,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 									String function = tabularReport.getString(FUNCTION);
 									String ingredientName = tabularReport.getString(PARAM_NAME);
 
-									IngListDataItem ingItem = findIngredientItemV5(context.getProduct().getIngList(), decernisID, function,
+									IngListDataItem ingItem = findIngredientItemV5(context.getIngList(), decernisID, function,
 											ingredientName);
 
 									if (ingItem != null) {
