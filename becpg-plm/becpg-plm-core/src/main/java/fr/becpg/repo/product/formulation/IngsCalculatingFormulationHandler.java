@@ -357,13 +357,11 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	}
 
 	private boolean hasEvaporationData(IngListDataItem ingListDataItem) {
-		return nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)
-				|| (nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE) != null);
+		return EvaporatingFormulationHelper.hasEvaporationData(ingListDataItem.getIng(), nodeService);
 	}
 
 	private Double getEvaporateRate(IngListDataItem ingListDataItem) {
-		Double evaporateRate = (Double) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_EVAPORATED_RATE);
-		return evaporateRate != null ? evaporateRate : 100d;
+		return EvaporatingFormulationHelper.getEvaporateRate(ingListDataItem.getIng(), nodeService);
 	}
 
 	private void applyEvaporation(ProductData formulatedProduct, Set<EvaporatedDataItem> evaporatedDataItems) {
@@ -384,43 +382,24 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 			if (!evaporatedDataItems.isEmpty() && (evaporatingQty > 0d)) {
 
-				// 1. Evaporate ingredients with 100% rate first
-				Set<EvaporatedDataItem> fullEvaporationItems = evaporatedDataItems.stream()
-						.filter(item -> (item.getRate() != null) && (item.getRate() == 100d)).collect(Collectors.toSet());
+				// Use EvaporatingFormulationHelper for evaporation processing
+				Function<NodeRef, IngListDataItem> matchItem = nodeRef -> formulatedProduct.getIngList().stream()
+						.filter(i -> (i != null) && (i.getIng() != null) && i.getIng().equals(nodeRef))
+						.findFirst().orElse(null);
+				
+				Function<IngListDataItem, String> getItemName = IngListDataItem::getName;
+				
+				EvaporatingFormulationHelper.applyEvaporation(evaporatingQty, evaporatedDataItems,
+						getQtyPercWithYield, setQtyPercWithYield, matchItem, getItemName, null);
 
-				evaporatingQty = processEvaporation(formulatedProduct.getIngList(), evaporatingQty, fullEvaporationItems, null, getQtyPercWithYield,
-						setQtyPercWithYield);
-
-				// 2. Distribute remaining evaporation proportionally
-				Set<EvaporatedDataItem> remainingItems = evaporatedDataItems.stream().filter(item -> !fullEvaporationItems.contains(item))
-						.collect(Collectors.toSet());
-
-				Double totalRate = remainingItems.stream().mapToDouble(EvaporatedDataItem::getRate).sum();
-
-				evaporatingQty = processEvaporation(formulatedProduct.getIngList(), evaporatingQty, remainingItems, totalRate, getQtyPercWithYield,
-						setQtyPercWithYield);
-
-				// 3. If not all has been evaporated, remove from the first item
-				if ((evaporatingQty > 0.000001) && !fullEvaporationItems.isEmpty()) {
-					EvaporatedDataItem evaporatedDataItem = fullEvaporationItems.iterator().next();
-					IngListDataItem ingListDataItem = formulatedProduct.getIngList().stream()
-							.filter(i -> i.getIng().equals(evaporatedDataItem.getProductNodeRef())).findFirst().orElse(null);
-
-					if ((ingListDataItem != null) && (getQtyPercWithYield.apply(ingListDataItem) != null)) {
-						setQtyPercWithYield.accept(ingListDataItem, getQtyPercWithYield.apply(ingListDataItem) - evaporatingQty);
-					}
-				}
-
-				// 4. Adjust quantities by the yield factor (only if yieldFactor is not zero to avoid division by zero)
+				// Adjust quantities by the yield factor (only if yieldFactor is not zero to avoid division by zero)
 				if (Math.abs(yieldFactor) > 0.000001) {
 					for (EvaporatedDataItem evaporatedDataItem : evaporatedDataItems) {
 						if ((evaporatedDataItem == null) || (evaporatedDataItem.getProductNodeRef() == null)) {
 							continue;
 						}
 
-						IngListDataItem ingListDataItem = formulatedProduct.getIngList().stream()
-								.filter(i -> (i != null) && (i.getIng() != null) && i.getIng().equals(evaporatedDataItem.getProductNodeRef()))
-								.findFirst().orElse(null);
+						IngListDataItem ingListDataItem = matchItem.apply(evaporatedDataItem.getProductNodeRef());
 
 						if (ingListDataItem != null) {
 							Double currentQty = getQtyPercWithYield.apply(ingListDataItem);
@@ -437,90 +416,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 	}
 
-	private Double processEvaporation(List<IngListDataItem> ingList, Double evaporatingQty, Set<EvaporatedDataItem> items, Double totalRate,
-			Function<IngListDataItem, Double> getQtyPercWithYield, BiConsumer<IngListDataItem, Double> setQtyPercWithYield) {
-		Double ret = evaporatingQty;
-
-		if (evaporatingQty > 0d) {
-			// Step 1: Calculate available water for each ingredient based on rate and quantity
-			Map<EvaporatedDataItem, IngData> evaporationDataMap = new HashMap<>();
-			double totalAvailableWater = 0d;
-			
-			for (EvaporatedDataItem evaporatedDataItem : items) {
-				IngListDataItem ingListDataItem = ingList.stream()
-						.filter(i -> i.getIng().equals(evaporatedDataItem.getProductNodeRef()))
-						.findFirst().orElse(null);
-
-				if (ingListDataItem != null) {
-					// Skip ingredients with Omit declaration
-					if (DeclarationType.Omit.equals(ingListDataItem.getDeclType())) {
-						if (logger.isDebugEnabled()) {
-							logger.debug("Skipping evaporation for omitted ingredient: " + ingListDataItem.getName());
-						}
-						continue;
-					}
-
-					Double rate = evaporatedDataItem.getRate() != null ? evaporatedDataItem.getRate() : 100d;
-					// If evaporation rate is 0%, consider it as null (no evaporation)
-					if (rate == 0d) {
-						if (logger.isDebugEnabled()) {
-							logger.debug("Skipping evaporation for ingredient with 0% rate: " + ingListDataItem.getName());
-						}
-						continue;
-					}
-
-					Double qtyPercWithYield = getQtyPercWithYield.apply(ingListDataItem);
-
-					if ((qtyPercWithYield != null) && (qtyPercWithYield > 0d)) {
-						Double maxEvapQty = (qtyPercWithYield * rate) / 100d;
-						evaporationDataMap.put(evaporatedDataItem, new IngData(ingListDataItem, rate, maxEvapQty, qtyPercWithYield));
-						totalAvailableWater += maxEvapQty;
-					}
-				}
-			}
-
-			// Step 2: Distribute evaporation based on available water rather than just rates
-			if (!evaporationDataMap.isEmpty() && (totalAvailableWater > 0d)) {
-				for (Map.Entry<EvaporatedDataItem, IngData> entry : evaporationDataMap.entrySet()) {
-					IngData ingData = entry.getValue();
-					
-					// Use FormulationHelper to calculate proportional evaporation
-					Double evaporatedQty = FormulationHelper.calculateProportionalEvaporation(
-							evaporatingQty, ingData.rate, ingData.maxEvapQty, totalRate, totalAvailableWater);
-
-					setQtyPercWithYield.accept(ingData.ingListDataItem, ingData.qtyPercWithYield - evaporatedQty);
-
-					if (logger.isDebugEnabled()) {
-						logger.debug("Apply evaporation qty " + evaporatedQty + " (max: " + ingData.maxEvapQty 
-								+ ") on " + ingData.ingListDataItem.getName() + " - remaining: "
-								+ getQtyPercWithYield.apply(ingData.ingListDataItem));
-					}
-
-					ret -= evaporatedQty;
-				}
-			}
-		}
-		return ret;
-	}
-
-	/**
-	 * Helper class to store ingredient evaporation data
-	 */
-	private static class IngData
-	{
-		final IngListDataItem ingListDataItem;
-		final Double rate;
-		final Double maxEvapQty;
-		final Double qtyPercWithYield;
-
-		IngData(IngListDataItem ingListDataItem, Double rate, Double maxEvapQty, Double qtyPercWithYield)
-		{
-			this.ingListDataItem = ingListDataItem;
-			this.rate = rate;
-			this.maxEvapQty = maxEvapQty;
-			this.qtyPercWithYield = qtyPercWithYield;
-		}
-	}
 
 	/**
 	 * Distributes omitted ingredient percentages to remaining ingredients.

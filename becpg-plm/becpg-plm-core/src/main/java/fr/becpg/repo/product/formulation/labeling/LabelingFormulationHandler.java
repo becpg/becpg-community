@@ -67,6 +67,7 @@ import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.spel.LabelingFormulaFilterContext;
+import fr.becpg.repo.product.formulation.EvaporatingFormulationHelper;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.helper.IngListHelper;
 import fr.becpg.repo.regulatory.RequirementDataType;
@@ -1549,22 +1550,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						declarationType = DeclarationType.DoNotDetails;
 					}
 
-					Double evaporateRate = (Double) nodeService.getProperty(productNodeRef, PLMModel.PROP_EVAPORATED_RATE);
+					Double evaporateRate = EvaporatingFormulationHelper.getEvaporateRate(productNodeRef, nodeService);
 
-					if (evaporateRate == null) {
-						evaporateRate = 100d;
-					}
-
-					Double maxEvaporableQty = 0d;
-					if (qtyWithYield != null) {
-						maxEvaporableQty = (qtyWithYield * (evaporateRate / 100d));
-					}
-
-					Double maxEvaporableVolume = 0d;
-
-					if (volumeWithYield != null) {
-						maxEvaporableVolume = (volumeWithYield * (evaporateRate / 100d));
-					}
+					Double maxEvaporableQty = EvaporatingFormulationHelper.calculateMaxEvaporableQty(qtyWithYield, evaporateRate);
+					Double maxEvaporableVolume = EvaporatingFormulationHelper.calculateMaxEvaporableVolume(volumeWithYield, evaporateRate);
 
 					if (logger.isTraceEnabled()) {
 						logger.trace("Detected evaporated components (" + productData.getName() + " - " + productNodeRef + "), rate: " + evaporateRate
@@ -1814,8 +1803,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private boolean hasEvaporationData(NodeRef productNodeRef) {
-		return nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)
-				|| (nodeService.getProperty(productNodeRef, PLMModel.PROP_EVAPORATED_RATE) != null);
+		return EvaporatingFormulationHelper.hasEvaporationData(productNodeRef, nodeService);
 	}
 
 	private void appendQtiesToLabeling(CompositeLabeling compositeLabeling, Double qty, Double qtyWithYield, Double volume, Double volumeWithYield,
@@ -2036,13 +2024,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			if (!evaporationDataMap.isEmpty()) {
 				// Process quantity evaporation
 				if ((parent.getEvaporatedQty() != null) && (parent.getEvaporatedQty() > 0d) && (totalAvailableWaterQty > 0d)) {
+					Double evaporatingQtyAtStart = evaporatingQty.get();
 					for (Map.Entry<EvaporatedDataItem, LabelingEvapData> entry : evaporationDataMap.entrySet()) {
 						LabelingEvapData evapData = entry.getValue();
 
 						if ((evapData.maxEvapQty != null) && (evapData.maxEvapQty > 0d)) {
 							// Use FormulationHelper to calculate proportional evaporation
 							Double evaporatedQty = FormulationHelper.calculateProportionalEvaporation(
-									parent.getEvaporatedQty(), evapData.rate, evapData.maxEvapQty, totalRate, totalAvailableWaterQty);
+									evaporatingQtyAtStart, evapData.rate, evapData.maxEvapQty, totalRate, totalAvailableWaterQty);
 
 							evapData.productLabelItem.setQtyWithYield(evapData.productLabelItem.getQtyWithYield() - evaporatedQty);
 
@@ -2059,13 +2048,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				// Process volume evaporation
 				if ((parent.getEvaporatedVolume() != null) && (parent.getEvaporatedVolume() > 0d) && (totalAvailableWaterVol > 0d)) {
+					Double evaporatingVolumeAtStart = evaporatingVolume.get();
 					for (Map.Entry<EvaporatedDataItem, LabelingEvapData> entry : evaporationDataMap.entrySet()) {
 						LabelingEvapData evapData = entry.getValue();
 
 						if ((evapData.maxEvapVol != null) && (evapData.maxEvapVol > 0d)) {
 							// Use FormulationHelper to calculate proportional evaporation
 							Double evaporatedVol = FormulationHelper.calculateProportionalEvaporation(
-									parent.getEvaporatedVolume(), evapData.rate, evapData.maxEvapVol, totalRate, totalAvailableWaterVol);
+									evaporatingVolumeAtStart, evapData.rate, evapData.maxEvapVol, totalRate, totalAvailableWaterVol);
 
 							evapData.productLabelItem.setVolumeWithYield(evapData.productLabelItem.getVolumeWithYield() - evaporatedVol);
 
@@ -2104,6 +2094,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			this.maxEvapVol = maxEvapVol;
 		}
 	}
+
 
 	private void applyReconstitution(LabelingFormulaContext context, CompositeLabeling parent) {
 
@@ -2328,21 +2319,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					if (hasEvaporationData(ingNodeRef) && calculatedYield != null && calculatedYield != 100d) {
 
-						Double evaporateRate = (Double) nodeService.getProperty(ingNodeRef, PLMModel.PROP_EVAPORATED_RATE);
-						Double maxEvaporableQty = 0d;
-						Double maxEvaporableVolume = 0d;
-
-						if (evaporateRate == null) {
-							evaporateRate = 100d;
-						}
-
-						if (qtyWithYield != null) {
-							maxEvaporableQty = (qtyWithYield * (evaporateRate / 100d));
-						}
-
-						if (volumeWithYield != null) {
-							maxEvaporableVolume = (volumeWithYield * (evaporateRate / 100d));
-						}
+						Double evaporateRate = EvaporatingFormulationHelper.getEvaporateRate(ingNodeRef, nodeService);
+						Double maxEvaporableQty = EvaporatingFormulationHelper.calculateMaxEvaporableQty(qtyWithYield, evaporateRate);
+						Double maxEvaporableVolume = EvaporatingFormulationHelper.calculateMaxEvaporableVolume(volumeWithYield, evaporateRate);
 
 						if (logger.isTraceEnabled()) {
 							logger.trace("Detected evaporated ings (" + ingLabelItem.getLegalName(I18NUtil.getContentLocaleLang()) + "), rate: "
