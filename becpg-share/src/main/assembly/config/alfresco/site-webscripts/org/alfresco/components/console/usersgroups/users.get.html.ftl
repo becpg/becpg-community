@@ -416,47 +416,30 @@
                <!-- update password -->
                <div id="${el}-oldpassword-wrapper">
                   <div class="field-row">
-                        <#if !aimsEnabled>
                      <span class="crud-label">${msg("label.oldpassword")}:</span>
-                        </#if>
                   </div>
                   <div class="field-row">
                         <!-- If AIMS is enabled then make the HTML input element disabled. -->
                         <input class="crud-input" id="${el}-update-old-password" type="password" maxlength="255"
-                           <#if aimsEnabled>
-                             hidden
-                           </#if>
                         />
                   </div>
                </div>
                <div class="field-row">
-                     <#if !aimsEnabled>
                   <span class="crud-label">${msg("label.newpassword")}:</span>
-                     </#if>
                </div>
                <div class="field-row">
                      <!-- If AIMS is enabled then make the HTML input element disabled. -->
                      <input class="crud-input" id="${el}-update-password" type="password" maxlength="100"
-                        <#if aimsEnabled>
-                          hidden
-                        </#if>
                      />
                   <br/>
-                     <#if !aimsEnabled>
                   <span class="small">${msg("label.leaveblank")}</span>
-                     </#if>
                </div>
                <div class="field-row">
-                     <#if !aimsEnabled>
                   <span class="crud-label">${msg("label.verifypassword")}:</span>
-                     </#if>
                </div>
                <div class="field-row">
                      <!-- If AIMS is enabled then make the HTML input element disabled. -->
                      <input class="crud-input" id="${el}-update-verifypassword" type="password" maxlength="100"
-                        <#if aimsEnabled>
-                          hidden
-                        </#if>
                      />
                </div>
                <div class="field-row">
