@@ -500,6 +500,41 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		}
 
 	}
+	
+	@Override
+	public boolean postDataListDeleteFromTemplateActivity(NodeRef entityNodeRef, NodeRef templateNodeRef, String listType) {
+		try {
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+			NodeRef activityListNodeRef = getActivityList(entityNodeRef);
+			// No list no activity
+			if (activityListNodeRef != null) {
+				if (nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
+					logger.debug(NO_ACTIVITY_MESSAGE);
+					return false;
+				}
+
+				ActivityListDataItem activityListDataItem = new ActivityListDataItem();
+				JSONObject data = new JSONObject();
+				data.put(PROP_ENTITY_NODEREF, templateNodeRef);
+				data.put(PROP_CLASSNAME, listType.split(":")[1]);
+				data.put(PROP_TITLE, attributeExtractorService.extractPropName(templateNodeRef));
+				data.put(PROP_ENTITY_TYPE, nodeService.getType(templateNodeRef).toPrefixString(namespaceService).split(":")[1]);
+				activityListDataItem.setActivityType(ActivityType.DatalistDeleteFromTemplate);
+				activityListDataItem.setActivityData(data.toString());
+				activityListDataItem.setParentNodeRef(activityListNodeRef);
+
+				mergeWithLastActivity(activityListDataItem);
+				recordAuditActivity(entityNodeRef, activityListDataItem);
+				notifyListeners(entityNodeRef, activityListDataItem);
+				return true;
+			}
+		} catch (JSONException e) {
+			logger.error(e, e);
+		} finally {
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+		}
+		return false;
+	}
 
 	private void processMLTexts(Map.Entry<QName, Pair<Serializable, Serializable>> entry) {
 		MLText mlTextBefore = null;

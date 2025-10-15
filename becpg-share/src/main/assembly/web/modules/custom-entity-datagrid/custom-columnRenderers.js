@@ -128,6 +128,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 					title  = scope.msg("entity.activity.merge", title, data.branchTitle );
 				} else if(activityType == "Version"){
 					title  = scope.msg("entity.activity.version", title, data.versionLabel, data.versionNodeRef );
+				} else if(activityType == "DatalistDeleteFromTemplate"){
+					title = '<span class="'+data.entityType+'"><a  href="'+beCPG.util.entityURL(oRecord.getData("siteId"),data.entityNodeRef)+'">'
+					+Alfresco.util.encodeHTML(data.title)+"</a></span>";
+					title = scope.msg("entity.activity.datalist.deleteFromTemplate", scope.msg("data.list."+className), title);
 				}
 
 				html += '<div class="entity-activity-details">';
