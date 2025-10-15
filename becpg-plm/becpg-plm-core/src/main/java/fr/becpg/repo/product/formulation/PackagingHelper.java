@@ -239,8 +239,6 @@ public class PackagingHelper implements InitializingBean {
 		if (PackagingLevel.Inner.equals(dataItem.getPkgLevel()) && ProductUnit.PP.equals(dataItem.getPackagingListUnit())) {
 			logger.debug("load inner packaging aspect ");
 			for (VariantPackagingData variantPackagingData : packagingData.getVariantPackagingData(currentVariants)) {
-				variantPackagingData.setManualInner(false);
-
 				// product per inner pack
 				if (dataItem.getQty() != null) {
 					logger.debug("setProductPerInnerPack " + dataItem.getQty().intValue());
