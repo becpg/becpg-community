@@ -157,6 +157,9 @@ public class RegulatoryService {
 
 	private RegulatoryContext createContext(ProductData product) {
 		RegulatoryContext context = new RegulatoryContext();
+		if (product.getIngList() != null) {
+			context.getIngList().addAll(product.getIngList().stream().filter(this::isIngItemValid).toList());
+		}
 		context.setProduct(product);
 		List<RegulatoryBatch> regulatoryBatches = new ArrayList<>();
 		regulatoryBatches.addAll(createRegulatoryBatches(context, product));
@@ -164,9 +167,6 @@ public class RegulatoryService {
 			regulatoryBatches.addAll(createRegulatoryBatches(context, regulatoryListItem));
 		}
 		context.setRegulatoryBatches(regulatoryBatches);
-		if (product.getIngList() != null) {
-			context.getIngList().addAll(product.getIngList().stream().filter(this::isIngItemValid).toList());
-		}
 		return context;
 	}
 
