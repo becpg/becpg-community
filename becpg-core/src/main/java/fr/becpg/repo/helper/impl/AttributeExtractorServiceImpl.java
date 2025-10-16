@@ -411,9 +411,23 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			}
 
 		} else if (dataType.equals(DataTypeDefinition.BOOLEAN.toString())
-				|| (dataType.equals(DataTypeDefinition.ANY.toString()) && (v instanceof Boolean))) {
+				|| (dataType.equals(DataTypeDefinition.ANY.toString()) && (v instanceof Boolean || v instanceof ArrayList))) {
 
-			return TranslateHelper.getTranslatedBoolean((Boolean) v, propertyFormats.isUseDefaultLocale());
+			if (v instanceof Boolean) {
+				return TranslateHelper.getTranslatedBoolean((Boolean) v, propertyFormats.isUseDefaultLocale());
+			} else if (v instanceof List) {
+				StringBuilder sb = new StringBuilder();
+				List<?> values = (List<?>) v;
+				for (Object b : values) {
+					if (b instanceof Boolean) {
+						if (sb.length() > 0) {
+							sb.append(", ");
+						}
+						sb.append(TranslateHelper.getTranslatedBoolean((Boolean) b, propertyFormats.isUseDefaultLocale()));
+					}
+				}
+				return sb.toString();
+			}
 
 		} else if (dataType.equals(DataTypeDefinition.TEXT.toString())) {
 
