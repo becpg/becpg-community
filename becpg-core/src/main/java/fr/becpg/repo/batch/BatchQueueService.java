@@ -37,6 +37,8 @@ public interface BatchQueueService {
 	 */
 	<T> Boolean queueBatch(BatchInfo batchInfo, List<BatchStep<T>> batchSteps);
 	
+	boolean isBatchInQueue(BatchInfo batchInfo);
+	
 	/**
 	 * <p>queueBatch.</p>
 	 *
