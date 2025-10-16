@@ -399,6 +399,11 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		batchInfo.setWorkerThreads(reformulateWorkerThreads != null ? reformulateWorkerThreads : 1);
 		batchInfo.setBatchSize(reformulateBatchSize != null ? reformulateBatchSize : 1);
 		batchInfo.setPriority(BatchPriority.LOW);
+		
+		if (batchQueueService.isBatchInQueue(batchInfo)) {
+			logger.info("reformulateChangedEntities batch is already in queue");
+			return false;
+		}
 
 		// --- Initial Node Query ---
 		@Deprecated //Use Pagination
