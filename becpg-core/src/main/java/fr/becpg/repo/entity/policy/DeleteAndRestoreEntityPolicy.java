@@ -341,10 +341,10 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 		NodeRef entityDeletedContentNodeRef = findEntityDeletedContentNodeRef(entityNodeRef);
 		
 		if (entityDeletedContentNodeRef != null) {
-			logger.debug("Deleting: " + entityNodeRef.getId() + " from archiveStore ");
+			logger.debug("Deleting entity_deleted: " + entityNodeRef.getId() + " from archiveStore ");
 			nodeService.deleteNode(entityDeletedContentNodeRef);
-		} else {
-			logger.error("Cannot find " + entityNodeRef.getId() + " from archiveStore ");
+		} else if(!entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+			logger.error("Cannot find entity_deleted: " + entityNodeRef.getId() + " from archiveStore ");
 		}
 	}
 
