@@ -18,5 +18,7 @@ public interface RegulatoryPlugin {
 	List<CountryBatch> splitCountries(RegulatoryContext context, List<String> countries);
 
 	List<UsageBatch> splitUsages(RegulatoryContext context, List<String> usages);
+
+	Integer getBatchThreads();
 	
 }
