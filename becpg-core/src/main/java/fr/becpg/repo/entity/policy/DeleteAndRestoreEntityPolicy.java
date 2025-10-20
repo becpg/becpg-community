@@ -343,8 +343,8 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 		if (entityDeletedContentNodeRef != null) {
 			logger.debug("Deleting entity_deleted: " + entityNodeRef.getId() + " from archiveStore ");
 			nodeService.deleteNode(entityDeletedContentNodeRef);
-		} else if(!entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
-			logger.error("Cannot find entity_deleted: " + entityNodeRef.getId() + " from archiveStore ");
+		} else {
+			logger.debug("Cannot find entity_deleted: " + entityNodeRef.getId() + " from archiveStore ");
 		}
 	}
 
