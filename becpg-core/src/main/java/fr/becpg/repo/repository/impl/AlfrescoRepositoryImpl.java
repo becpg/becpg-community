@@ -382,7 +382,12 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		}
 
 		if ((a instanceof Number) && (b instanceof Number)) {
-			return new BigDecimal(a.toString()).compareTo(new BigDecimal(b.toString())) == 0;
+			try {
+				return new BigDecimal(a.toString()).compareTo(new BigDecimal(b.toString())) == 0;
+			} catch (NumberFormatException e) {
+				// This may happen for NaN or Infinity
+				return a.equals(b);
+			}
 		}
 
 		if ((a instanceof Boolean) && (b instanceof Boolean)) {
