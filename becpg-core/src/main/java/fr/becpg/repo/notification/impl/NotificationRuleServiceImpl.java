@@ -214,7 +214,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	private boolean isEmptyResult(NotificationRuleListDataItem notification, SearchRuleResult result, SearchRuleFilter filter) {
 		List<NodeRef> items = result.getResults();
 		Map<NodeRef, Map<String, NodeRef>> itemVersions = result.getItemVersions();
-		return !Boolean.TRUE.equals(notification.isEnforced())
+		return !Boolean.TRUE.equals(notification.getEnforced())
 				&& ((items == null) || items.isEmpty() || (!VersionFilterType.NONE.equals(filter.getVersionFilterType()) && itemVersions.isEmpty()));
 	}
 
@@ -280,7 +280,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 									() -> permissionService.hasPermission(node, PermissionService.READ).equals(AccessStatus.ALLOWED), userName)))
 							.map(entities::get).toList();
 
-					if (!userEntities.isEmpty() || notification.isEnforced()) {
+					if (!userEntities.isEmpty() || Boolean.TRUE.equals(notification.getEnforced())) {
 						sendMail(notification, templateArgs, searchFilter, searchResult, downloadNode, userName, userEntities);
 					}
 				}
