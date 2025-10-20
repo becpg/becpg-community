@@ -318,13 +318,13 @@ public class NotificationRuleListDataItem extends BeCPGDataObject {
 	}
 
 	/**
-	 * <p>isEnforced.</p>
+	 * <p>Getter for the field <code>enforced</code>.</p>
 	 *
-	 * @return a boolean.
+	 * @return a {@link java.lang.Boolean} object.
 	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:nrForceNotification")
-	public Boolean isEnforced() {
+	public Boolean getEnforced() {
 		return enforced;
 	}
 
