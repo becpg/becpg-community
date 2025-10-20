@@ -110,7 +110,7 @@ public class RegulatoryService {
 		this.mutexFactory = mutexFactory;
 	}
 
-	private static final int REGULATORY_BATCH_THREADS = 1;
+	private static final int DEFAULT_REGULATORY_BATCH_THREADS = 1;
 
 	private Boolean ingredientAnalysisEnabled() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.decernis.ingredient.analysis.enabled"));
@@ -157,6 +157,9 @@ public class RegulatoryService {
 
 	private RegulatoryContext createContext(ProductData product) {
 		RegulatoryContext context = new RegulatoryContext();
+		if (product.getIngList() != null) {
+			context.getIngList().addAll(product.getIngList().stream().filter(this::isIngItemValid).toList());
+		}
 		context.setProduct(product);
 		List<RegulatoryBatch> regulatoryBatches = new ArrayList<>();
 		regulatoryBatches.addAll(createRegulatoryBatches(context, product));
@@ -164,9 +167,6 @@ public class RegulatoryService {
 			regulatoryBatches.addAll(createRegulatoryBatches(context, regulatoryListItem));
 		}
 		context.setRegulatoryBatches(regulatoryBatches);
-		if (product.getIngList() != null) {
-			context.getIngList().addAll(product.getIngList().stream().filter(this::isIngItemValid).toList());
-		}
 		return context;
 	}
 
@@ -268,7 +268,8 @@ public class RegulatoryService {
 				entityDescription);
 		List<BatchStep<RegulatoryBatch>> steps = new ArrayList<>();
 		regulatoryBatchInfo.setBatchUser(AuthenticationUtil.getFullyAuthenticatedUser());
-		regulatoryBatchInfo.setWorkerThreads(REGULATORY_BATCH_THREADS);
+		Integer batchThreads = getPlugin().getBatchThreads();
+		regulatoryBatchInfo.setWorkerThreads(batchThreads != null ? batchThreads : DEFAULT_REGULATORY_BATCH_THREADS);
 		String batchId = regulatoryBatchInfo.getBatchId();
 		regulatoryBatchInfo.setPriority(BatchPriority.VERY_HIGH);
 		regulatoryBatchInfo.enableNotifyByMail(REGULATORY_KEY, String.format(ASYNC_ACTION_URL_PREFIX, entityNodeRef.toString()));
