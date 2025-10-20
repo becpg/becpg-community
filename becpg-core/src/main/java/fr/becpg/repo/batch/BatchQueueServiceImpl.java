@@ -138,17 +138,32 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		
 		Runnable command = new BatchCommand<>(batchInfo, batchSteps, closingHook);
 		ThreadPoolExecutor threadPoolExecutor = threadExecutorMap.get(Integer.toString(batchInfo.getPriority()));
-		if (!threadPoolExecutor.getQueue().contains(command) && !runningCommands.contains(command)) {
+		if (isBatchInQueue(batchInfo)) {
+			String label = I18NUtil.getMessage(batchInfo.getBatchDescId(), batchInfo.getEntityDescription());
+			logger.warn("Same batch already in queue " + (label != null ? label : batchInfo.getBatchDescId()) + " (" + batchInfo.getBatchId() + ")");
+		} else {
 			if(logger.isInfoEnabled()) {
 				logger.info("Batch " + batchInfo.getBatchId() + " added to execution queue");
 			}
 			threadPoolExecutor.execute(command);
 			return true;
-		} else {
-			String label = I18NUtil.getMessage(batchInfo.getBatchDescId(), batchInfo.getEntityDescription());
-			logger.warn("Same batch already in queue " + (label != null ? label : batchInfo.getBatchDescId()) + " (" + batchInfo.getBatchId() + ")");
 		}
 		
+		return false;
+	}
+	
+	@Override
+	public boolean isBatchInQueue(BatchInfo batchInfo) {
+		String batchId = batchInfo.getBatchId();
+		if (runningCommands.stream().anyMatch(c -> c.getBatchId().equals(batchId))) {
+			logger.debug("Batch is running: " + batchId);
+			return true;
+		}
+		ThreadPoolExecutor threadPoolExecutor = threadExecutorMap.get(Integer.toString(batchInfo.getPriority()));
+		if (threadPoolExecutor.getQueue().stream().map(c -> (BatchCommand<?>) c).anyMatch(c -> c.getBatchId().equals(batchId))) {
+			logger.debug("Batch is in queue: " + batchId);
+			return true;
+		}
 		return false;
 	}
 
@@ -448,6 +463,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 					int secondsBetween = (int) ((endTime.getTime() - startTime.getTime()) / 1000);
 
+					logger.info("batch '" + batchInfo.getBatchId() + "' took " + secondsBetween + " seconds to complete");
+					
 					AuthenticationUtil
 							.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
