@@ -5924,7 +5924,7 @@ else{
                                 <list-property name="visibility">
                                     <structure>
                                         <property name="format">all</property>
-                                        <expression name="valueExpr" type="javascript">row["variantIds"] != "" &amp;&amp; row["variantIds"] != null</expression>
+                                        <expression name="valueExpr" type="javascript">row["variantIds"] != "" &amp;&amp; row["variantIds"] != null &amp;&amp; row["variantIds"] != "default"</expression>
                                     </structure>
                                 </list-property>
                                 <cell id="2908">
