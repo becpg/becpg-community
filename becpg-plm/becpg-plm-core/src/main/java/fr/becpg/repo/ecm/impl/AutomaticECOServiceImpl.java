@@ -345,6 +345,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 		List<NodeRef> nodeRefs = transactionService.getRetryingTransactionHelper()
 				.doInTransaction(() -> BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ENTITY_V2)
+						.excludeVersions()
 						.withAspect(BeCPGModel.ASPECT_AUTO_MERGE_ASPECT).andFTSQuery(ftsQuery).maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(),
 						false, true);
 
@@ -399,14 +400,16 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	    batchInfo.setBatchSize(reformulateBatchSize != null ? reformulateBatchSize : 1);
 	    batchInfo.setPriority(BatchPriority.LOW);
 
-	    // --- Initial Node Query ---
-	    @Deprecated //Use Pagination
-	    List<NodeRef> initialNodeRefs = transactionService.getRetryingTransactionHelper()
-	            .doInTransaction(() -> BeCPGQueryBuilder.createQuery().excludeArchivedEntities().ofType(PLMModel.TYPE_PRODUCT)
-	                    .orBetween(ContentModel.PROP_CREATED, dateRange, "MAX").orBetween(ContentModel.PROP_MODIFIED, dateRange, "MAX")
-	                    .inDBIfPossible().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
-	    addACLProducts(dateRange, initialNodeRefs);
-	    logger.info("Initial modified products to scan: " + initialNodeRefs.size());
+		// --- Initial Node Query ---
+		@Deprecated //Use Pagination
+		List<NodeRef> initialNodeRefs = transactionService.getRetryingTransactionHelper()
+				.doInTransaction(() -> BeCPGQueryBuilder.createQuery()
+						.excludeVersions()
+						.excludeArchivedEntities().ofType(PLMModel.TYPE_PRODUCT)
+						.orBetween(ContentModel.PROP_CREATED, dateRange, "MAX").orBetween(ContentModel.PROP_MODIFIED, dateRange, "MAX")
+						.inDBIfPossible().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
+		addACLProducts(dateRange, initialNodeRefs);
+		logger.info("Initial modified products to scan: " + initialNodeRefs.size());
 
 	    // --- Batch Steps Configuration ---
 	    List<BatchStep<NodeRef>> steps = new ArrayList<>();
@@ -530,7 +533,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
     @Deprecated
 	private void addACLProducts(String dateRange, List<NodeRef> nodeRefs) {
 		List<NodeRef> modifiedACLs = transactionService.getRetryingTransactionHelper()
-				.doInTransaction(() -> BeCPGQueryBuilder.createQuery().excludeArchivedEntities().ofType(SecurityModel.TYPE_ACL_GROUP)
+				.doInTransaction(() -> BeCPGQueryBuilder.createQuery().excludeVersions().excludeArchivedEntities().ofType(SecurityModel.TYPE_ACL_GROUP)
 						.orBetween(ContentModel.PROP_CREATED, dateRange, "MAX").orBetween(ContentModel.PROP_MODIFIED, dateRange, "MAX")
 						.inDBIfPossible().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
 
@@ -541,7 +544,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 				QName nodeType = QName.createQName(nodeTypeString.split(":")[0], nodeTypeString.split(":")[1], namespacePrefixResolver);
 				if (entityDictionaryService.isSubClass(nodeType, PLMModel.TYPE_PRODUCT) && isACLApplied(aclGroupData)) {
 					List<NodeRef> aclProducts = transactionService.getRetryingTransactionHelper()
-							.doInTransaction(() -> BeCPGQueryBuilder.createQuery().excludeArchivedEntities().ofType(nodeType)
+							.doInTransaction(() -> BeCPGQueryBuilder.createQuery().excludeVersions().excludeArchivedEntities().ofType(nodeType)
 									.orBetween(BeCPGModel.PROP_FORMULATED_DATE, "MIN", dateRange).inDBIfPossible()
 									.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
 
