@@ -60,8 +60,7 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 		logger.debug("Tare visitor");
 
 		// no compo => no formulation
-		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
-				|| (formulatedProduct instanceof ProductSpecificationData)
+		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (formulatedProduct instanceof ProductSpecificationData)
 				|| (!formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))
 						&& !formulatedProduct
 								.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())))) {
@@ -82,142 +81,140 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 			tarePrimary = tarePrimary.add(variantPackagingData.getTarePrimary());
 		}
 
-		BigDecimal netWeightPrimary = BigDecimal.valueOf(
-				FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT));
+		BigDecimal netWeightPrimary = BigDecimal.valueOf(FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT));
 
 		BigDecimal weightPrimary = tarePrimary.add(netWeightPrimary);
 
 		formulatedProduct.setWeightPrimary(weightPrimary.doubleValue());
 
+		if (variantPackagingData != null) {
+			if (variantPackagingData.getProductPerInnerPack() != null) {
+				Integer productPerInnerPack = variantPackagingData.getProductPerInnerPack();
 
+				// Calculate net weight inner pack (kg): Net weight * Nb products / inner pack
+				BigDecimal netWeightInnerPack = netWeightPrimary.multiply(BigDecimal.valueOf(productPerInnerPack));
 
-		if (variantPackagingData != null && variantPackagingData.getProductPerInnerPack() != null) {
-			Integer productPerInnerPack = variantPackagingData.getProductPerInnerPack();
-			
-			// Calculate net weight inner pack (kg): Net weight * Nb products / inner pack
-			BigDecimal netWeightInnerPack = netWeightPrimary.multiply(BigDecimal.valueOf(productPerInnerPack));
-			
-			// Calculate gross weight inner pack (kg): (Net weight * Nb products / inner pack) + (tare * Nb products / inner pack) + innerTare
-			BigDecimal tareInnerPack = tarePrimary.multiply(BigDecimal.valueOf(productPerInnerPack))
-					.add(variantPackagingData.getTareInner());
-			BigDecimal weightInnerPack = tareInnerPack.add(netWeightInnerPack);
-			if (formulatedProduct instanceof FinishedProductData || formulatedProduct.getAspects().contains(GS1Model.ASPECT_INNERPACK_ASPECT)) {
-						
+				// Calculate gross weight inner pack (kg): (Net weight * Nb products / inner pack) + (tare * Nb products / inner pack) + innerTare
+				BigDecimal tareInnerPack = tarePrimary.multiply(BigDecimal.valueOf(productPerInnerPack)).add(variantPackagingData.getTareInner());
+				BigDecimal weightInnerPack = tareInnerPack.add(netWeightInnerPack);
+
 				formulatedProduct.getExtraProperties().put(GS1Model.PROP_PRODUCT_PER_INNER_PACK, productPerInnerPack);
 				formulatedProduct.getExtraProperties().put(GS1Model.PROP_INNERPACK_NET_WEIGHT, netWeightInnerPack.doubleValue());
 				formulatedProduct.getExtraProperties().put(GS1Model.PROP_INNERPACK_WEIGHT, weightInnerPack.doubleValue());
 
-				if (!variantPackagingData.isManualInner()) {
-					Double width = variantPackagingData.getInnerWidth();
-					Double depth = variantPackagingData.getInnerDepth();
-					Double height = variantPackagingData.getInnerHeight();
-					
-					formulatedProduct.getExtraProperties().put(GS1Model.PROP_INNERPACK_WIDTH, width);
-					formulatedProduct.getExtraProperties().put(GS1Model.PROP_INNERPACK_DEPTH, depth);
-					formulatedProduct.getExtraProperties().put(GS1Model.PROP_INNERPACK_HEIGHT, height);
+			}
+
+			if ((variantPackagingData.getProductPerBoxes() != null)) {
+
+				BigDecimal tareSecondary = tarePrimary.multiply(BigDecimal.valueOf(variantPackagingData.getProductPerBoxes()))
+						.add(variantPackagingData.getTareSecondary());
+
+				BigDecimal netWeightSecondary = netWeightPrimary.multiply(BigDecimal.valueOf(variantPackagingData.getProductPerBoxes()));
+				BigDecimal weightSecondary = tareSecondary.add(netWeightSecondary);
+				formulatedProduct.setWeightSecondary(weightSecondary.doubleValue());
+				formulatedProduct.setNetWeightSecondary(netWeightSecondary.doubleValue());
+
+				if (variantPackagingData.getBoxesPerPallet() != null) {
+
+					BigDecimal tareTertiary = tareSecondary.multiply(BigDecimal.valueOf(variantPackagingData.getBoxesPerPallet()))
+							.add(variantPackagingData.getTareTertiary());
+
+					BigDecimal netWeightTertiary = netWeightSecondary.multiply(BigDecimal.valueOf(variantPackagingData.getBoxesPerPallet()));
+					BigDecimal weightTertiary = tareTertiary.add(netWeightTertiary);
+					formulatedProduct.setWeightTertiary(weightTertiary.doubleValue());
+					formulatedProduct.setNetWeightTertiary(netWeightTertiary.doubleValue());
 
 				}
 			}
-		}
 
+			if (((formulatedProduct instanceof FinishedProductData) || formulatedProduct.getAspects().contains(GS1Model.ASPECT_INNERPACK_ASPECT))
+					&& !variantPackagingData.isManualInner()) {
+				Double width = variantPackagingData.getInnerWidth();
+				Double depth = variantPackagingData.getInnerDepth();
+				Double height = variantPackagingData.getInnerHeight();
 
-
-		if ((variantPackagingData != null) && (variantPackagingData.getProductPerBoxes() != null)) {
-
-			BigDecimal tareSecondary = tarePrimary.multiply(BigDecimal.valueOf(variantPackagingData.getProductPerBoxes()))
-					.add(variantPackagingData.getTareSecondary());
-
-			BigDecimal netWeightSecondary = netWeightPrimary.multiply(BigDecimal.valueOf(variantPackagingData.getProductPerBoxes()));
-			BigDecimal weightSecondary = tareSecondary.add(netWeightSecondary);
-			formulatedProduct.setWeightSecondary(weightSecondary.doubleValue());
-			formulatedProduct.setNetWeightSecondary(netWeightSecondary.doubleValue());
-
-			if (variantPackagingData.getBoxesPerPallet() != null) {
-
-				BigDecimal tareTertiary = tareSecondary.multiply(BigDecimal.valueOf(variantPackagingData.getBoxesPerPallet()))
-						.add(variantPackagingData.getTareTertiary());
-
-				BigDecimal netWeightTertiary = netWeightSecondary.multiply(BigDecimal.valueOf(variantPackagingData.getBoxesPerPallet()));
-				BigDecimal weightTertiary = tareTertiary.add(netWeightTertiary);
-				formulatedProduct.setWeightTertiary(weightTertiary.doubleValue());
-				formulatedProduct.setNetWeightTertiary(netWeightTertiary.doubleValue());
+				formulatedProduct.getExtraProperties().put(GS1Model.PROP_INNERPACK_WIDTH, width);
+				formulatedProduct.getExtraProperties().put(GS1Model.PROP_INNERPACK_DEPTH, depth);
+				formulatedProduct.getExtraProperties().put(GS1Model.PROP_INNERPACK_HEIGHT, height);
 
 			}
-		}
 
-		if (formulatedProduct instanceof FinishedProductData || formulatedProduct.getAspects().contains(GS1Model.ASPECT_MEASURES_ASPECT)) {
+			if ((formulatedProduct instanceof FinishedProductData) || formulatedProduct.getAspects().contains(GS1Model.ASPECT_MEASURES_ASPECT)) {
 
-			if (variantPackagingData != null) {
 				formulatedProduct.getExtraProperties().put(GS1Model.PROP_WEIGHT, formulatedProduct.getWeightPrimary());
-				
+
 				if (!variantPackagingData.isManualPrimary()) {
 					Double width = variantPackagingData.getWidth();
 					Double depth = variantPackagingData.getDepth();
 					Double height = variantPackagingData.getHeight();
-					
+
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_WIDTH, width);
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_DEPTH, depth);
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_HEIGHT, height);
-					
-					if (width != null && depth != null && height != null) {
-						formulatedProduct.getExtraProperties().put(GS1Model.PROP_VOLUME, width * depth * height / 1000000);
+
+					if ((width != null) && (depth != null) && (height != null)) {
+						formulatedProduct.getExtraProperties().put(GS1Model.PROP_VOLUME, (width * depth * height) / 1000000);
 					}
-					
-					if(variantPackagingData.getPackagingTypeCode()!=null && !variantPackagingData.getPackagingTypeCode().isEmpty()) {
+
+					if ((variantPackagingData.getPackagingTypeCode() != null) && !variantPackagingData.getPackagingTypeCode().isEmpty()) {
 						formulatedProduct.getExtraProperties().put(GS1Model.PROP_PACKAGING_TYPE_CODE, variantPackagingData.getPackagingTypeCode());
 					}
-					if(variantPackagingData.getPackagingTermsAndConditionsCode()!=null && !variantPackagingData.getPackagingTermsAndConditionsCode().isEmpty()) {
-						formulatedProduct.getExtraProperties().put(GS1Model.PROP_PACKAGINGTERMSANSCONDITION_CODE, variantPackagingData.getPackagingTermsAndConditionsCode());
+					if ((variantPackagingData.getPackagingTermsAndConditionsCode() != null)
+							&& !variantPackagingData.getPackagingTermsAndConditionsCode().isEmpty()) {
+						formulatedProduct.getExtraProperties().put(GS1Model.PROP_PACKAGINGTERMSANSCONDITION_CODE,
+								variantPackagingData.getPackagingTermsAndConditionsCode());
 					}
 				}
-				
+
 				formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_WEIGHT, formulatedProduct.getWeightSecondary());
 				formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_NET_WEIGHT, formulatedProduct.getNetWeightSecondary());
-				
+
 				if (!variantPackagingData.isManualSecondary()) {
 					Double secondaryWidth = variantPackagingData.getSecondaryWidth();
 					Double secondaryDepth = variantPackagingData.getSecondaryDepth();
 					Double secondaryHeight = variantPackagingData.getSecondaryHeight();
-					
+
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_WIDTH, secondaryWidth);
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_DEPTH, secondaryDepth);
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_HEIGHT, secondaryHeight);
-					
-					if (secondaryWidth != null && secondaryDepth != null && secondaryHeight != null) {
-						formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_VOLUME, secondaryWidth * secondaryDepth * secondaryHeight / 1000000);
+
+					if ((secondaryWidth != null) && (secondaryDepth != null) && (secondaryHeight != null)) {
+						formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_VOLUME,
+								(secondaryWidth * secondaryDepth * secondaryHeight) / 1000000);
 					}
-					
-					formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_PACKAGING_TYPE_CODE, variantPackagingData.getSecondaryPackagingTypeCode());
+
+					formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_PACKAGING_TYPE_CODE,
+							variantPackagingData.getSecondaryPackagingTypeCode());
 				}
-				
+
 				formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_NET_WEIGHT, formulatedProduct.getNetWeightTertiary());
 				formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_WEIGHT, formulatedProduct.getWeightTertiary());
-				
+
 				Double tertiaryWidth = null;
 				Double tertiaryDepth = null;
-				
+
 				if (!variantPackagingData.isManualTertiary()) {
 					tertiaryWidth = variantPackagingData.getTertiaryWidth();
 					tertiaryDepth = variantPackagingData.getTertiaryDepth();
-					
+
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_WIDTH, tertiaryWidth);
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_DEPTH, tertiaryDepth);
-					formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_PACKAGING_TYPE_CODE, variantPackagingData.getTertiaryPackagingTypeCode());
+					formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_PACKAGING_TYPE_CODE,
+							variantPackagingData.getTertiaryPackagingTypeCode());
 				}
-				
-				if(!variantPackagingData.isManualPalletInformations()) {
-					if( variantPackagingData.getPalletTypeCode()!=null 
-							&& ! variantPackagingData.getPalletTypeCode().isEmpty()) {
+
+				if (!variantPackagingData.isManualPalletInformations()) {
+					if ((variantPackagingData.getPalletTypeCode() != null) && !variantPackagingData.getPalletTypeCode().isEmpty()) {
 						formulatedProduct.getExtraProperties().put(GS1Model.PROP_PALLET_TYPE_CODE, variantPackagingData.getPalletTypeCode());
 					}
-					if( variantPackagingData.getPlatformTermsAndConditionsCode()!=null 
-							&& ! variantPackagingData.getPlatformTermsAndConditionsCode().isEmpty()) {
-						formulatedProduct.getExtraProperties().put(GS1Model.PROP_PLATFORMTERMSANSCONDITION_CODE, variantPackagingData.getPlatformTermsAndConditionsCode());
+					if ((variantPackagingData.getPlatformTermsAndConditionsCode() != null)
+							&& !variantPackagingData.getPlatformTermsAndConditionsCode().isEmpty()) {
+						formulatedProduct.getExtraProperties().put(GS1Model.PROP_PLATFORMTERMSANSCONDITION_CODE,
+								variantPackagingData.getPlatformTermsAndConditionsCode());
 					}
-				
 
-					if (formulatedProduct instanceof FinishedProductData || formulatedProduct.getAspects().contains(PackModel.ASPECT_PALLET)) {
-						
+					if ((formulatedProduct instanceof FinishedProductData) || formulatedProduct.getAspects().contains(PackModel.ASPECT_PALLET)) {
+
 						formulatedProduct.getExtraProperties().put(PackModel.PROP_PALLET_PRODUCTS_PER_BOX, variantPackagingData.getProductPerBoxes());
 
 						formulatedProduct.getExtraProperties().put(PackModel.PROP_PALLET_LAYERS, variantPackagingData.getPalletLayers());
@@ -230,15 +227,17 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 								variantPackagingData.getPalletBoxesPerLastLayer());
 						formulatedProduct.getExtraProperties().put(PackModel.PROP_PALLET_NUMBER_ON_GROUND,
 								variantPackagingData.getPalletNumberOnGround());
-						
+
 						Double palletHeight = variantPackagingData.getPalletHeight();
 						formulatedProduct.getExtraProperties().put(PackModel.PROP_PALLET_HEIGHT, palletHeight);
 
-						if (tertiaryWidth != null && tertiaryDepth != null && palletHeight != null) {
-							formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_VOLUME, tertiaryWidth * tertiaryDepth * palletHeight / 1000000);
+						if ((tertiaryWidth != null) && (tertiaryDepth != null) && (palletHeight != null)) {
+							formulatedProduct.getExtraProperties().put(GS1Model.PROP_TERTIARY_VOLUME,
+									(tertiaryWidth * tertiaryDepth * palletHeight) / 1000000);
 						}
 					}
 				}
+
 			}
 		}
 
@@ -267,10 +266,10 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 
 	private BigDecimal calculateTareOfComposition(ProductData formulatedProduct) {
 		BigDecimal totalTare = BigDecimal.valueOf(0d);
-		if(logger.isDebugEnabled()){
+		if (logger.isDebugEnabled()) {
 			logger.debug("calculateTareOfComposition dropPackagingOfComponents: " + formulatedProduct.getDropPackagingOfComponents());
 		}
-		if(formulatedProduct.getDropPackagingOfComponents() == null || !formulatedProduct.getDropPackagingOfComponents()){
+		if ((formulatedProduct.getDropPackagingOfComponents() == null) || !formulatedProduct.getDropPackagingOfComponents()) {
 			for (CompoListDataItem compoList : formulatedProduct
 					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 				if (compoList.getProduct() != null) {
