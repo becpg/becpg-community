@@ -33,6 +33,9 @@ function main() {
         "beCPG.security.supplierPermission",
         "beCPG.solr.enableIndexForTypes",
         "beCPG.classify.rights.check",
+        "beCPG.decernis.batchThreads",
+        "beCPG.decernis.maxCountriesPerRequest",
+        "beCPG.decernis.maxUsagesPerRequest",
         "beCPG.entity.documents.recursive.depth"
     ].forEach(function(p) {
         addAttribute(p, "system");
