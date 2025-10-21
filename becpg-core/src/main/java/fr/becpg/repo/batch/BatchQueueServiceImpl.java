@@ -448,6 +448,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 					int secondsBetween = (int) ((endTime.getTime() - startTime.getTime()) / 1000);
 
+					logger.info("batch '" + batchInfo.getBatchId() + "' took " + secondsBetween + " seconds to complete");
+					
 					AuthenticationUtil
 							.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
