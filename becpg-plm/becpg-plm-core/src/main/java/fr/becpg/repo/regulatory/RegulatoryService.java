@@ -46,6 +46,7 @@ import fr.becpg.repo.helper.CheckSumHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
@@ -109,7 +110,7 @@ public class RegulatoryService {
 		this.mutexFactory = mutexFactory;
 	}
 
-	private static final int REGULATORY_BATCH_THREADS = 1;
+	private static final int DEFAULT_REGULATORY_BATCH_THREADS = 1;
 
 	private Boolean ingredientAnalysisEnabled() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.decernis.ingredient.analysis.enabled"));
@@ -126,17 +127,17 @@ public class RegulatoryService {
 			ProductData productData = (ProductData) alfrescoRepository.findOne(nodeRef);
 			updateProductFromRegulatoryList(productData);
 			updateProductFromLinkedSearches(productData);
-			if (!isProductCompatible(productData)) {
+			RegulatoryContext context = createContext(productData);
+			if (!isContextCompatible(context)) {
 				result.setStatus(Status.NOT_APPLICABLE);
 				logger.debug("Product is not compatible for compliance check");
 				return false;
 			}
-			if (isUpToDate(productData)) {
+			if (isUpToDate(context)) {
 				result.setStatus(Status.UP_TO_DATE);
 				logger.debug("Product compliance is up to date");
 				return false;
 			}
-			RegulatoryContext context = createContext(productData);
 			result.setContext(context);
 			if (async) {
 				checkComplianceAsync(context, result);
@@ -156,6 +157,9 @@ public class RegulatoryService {
 
 	private RegulatoryContext createContext(ProductData product) {
 		RegulatoryContext context = new RegulatoryContext();
+		if (product.getIngList() != null) {
+			context.getIngList().addAll(product.getIngList().stream().filter(this::isIngItemValid).toList());
+		}
 		context.setProduct(product);
 		List<RegulatoryBatch> regulatoryBatches = new ArrayList<>();
 		regulatoryBatches.addAll(createRegulatoryBatches(context, product));
@@ -164,6 +168,10 @@ public class RegulatoryService {
 		}
 		context.setRegulatoryBatches(regulatoryBatches);
 		return context;
+	}
+
+	private boolean isIngItemValid(IngListDataItem ingListDataItem) {
+		return !DeclarationType.Omit.equals(ingListDataItem.getDeclType());
 	}
 
 	private List<RegulatoryBatch> createRegulatoryBatches(RegulatoryContext context, RegulatoryEntity regulatoryEntity) {
@@ -231,17 +239,13 @@ public class RegulatoryService {
 				for (RegulatoryBatch regulatoryCheckContext : context.getRegulatoryBatches()) {
 					getPlugin().checkRecipe(context, regulatoryCheckContext);
 				}
-				if (!context.getRequirements().isEmpty()) {
-					finalizeRecipeCheck(context.getRequirements(), context.getProduct());
-				}
+				finalizeRecipeCheck(context, context.getProduct());
 				if (isIngRegulatoryListEnabled(context.getProduct())) {
 					List<IngRegulatoryListDataItem> ingRegulatoryListDataItems = new ArrayList<>();
 					for (RegulatoryBatch regulatoryCheckContext : context.getRegulatoryBatches()) {
 						getPlugin().checkIngredients(context, regulatoryCheckContext);
 					}
-					if (!ingRegulatoryListDataItems.isEmpty()) {
-						processRegulatoryList(context.getProduct(), ingRegulatoryListDataItems);
-					}
+					processRegulatoryList(context.getProduct(), ingRegulatoryListDataItems);
 				}
 			} finally {
 				mutex.unlock();
@@ -264,7 +268,8 @@ public class RegulatoryService {
 				entityDescription);
 		List<BatchStep<RegulatoryBatch>> steps = new ArrayList<>();
 		regulatoryBatchInfo.setBatchUser(AuthenticationUtil.getFullyAuthenticatedUser());
-		regulatoryBatchInfo.setWorkerThreads(REGULATORY_BATCH_THREADS);
+		Integer batchThreads = getPlugin().getBatchThreads();
+		regulatoryBatchInfo.setWorkerThreads(batchThreads != null ? batchThreads : DEFAULT_REGULATORY_BATCH_THREADS);
 		String batchId = regulatoryBatchInfo.getBatchId();
 		regulatoryBatchInfo.setPriority(BatchPriority.VERY_HIGH);
 		regulatoryBatchInfo.enableNotifyByMail(REGULATORY_KEY, String.format(ASYNC_ACTION_URL_PREFIX, entityNodeRef.toString()));
@@ -289,14 +294,12 @@ public class RegulatoryService {
 		recipeStep.setBatchStepListener(new BatchStepAdapter() {
 			@Override
 			public void afterStep() {
-				if (!context.getRequirements().isEmpty()) {
-					policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-					ProductData finalProductData = (ProductData) alfrescoRepository.findOne(entityNodeRef);
-					finalizeRecipeCheck(context.getRequirements(), finalProductData);
-					alfrescoRepository.save(finalProductData);
-				}
+				policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				ProductData finalProductData = (ProductData) alfrescoRepository.findOne(entityNodeRef);
+				finalizeRecipeCheck(context, finalProductData);
+				alfrescoRepository.save(finalProductData);
 			}
 		});
 		steps.add(recipeStep);
@@ -311,14 +314,12 @@ public class RegulatoryService {
 			ingredientsStep.setBatchStepListener(new BatchStepAdapter() {
 				@Override
 				public void afterStep() {
-					if (!context.getIngRegulatoryListDataItems().isEmpty()) {
-						policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-						policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-						policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-						ProductData finalProductData = (ProductData) alfrescoRepository.findOne(entityNodeRef);
-						processRegulatoryList(finalProductData, context.getIngRegulatoryListDataItems());
-						alfrescoRepository.save(finalProductData);
-					}
+					policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+					ProductData finalProductData = (ProductData) alfrescoRepository.findOne(entityNodeRef);
+					processRegulatoryList(finalProductData, context.getIngRegulatoryListDataItems());
+					alfrescoRepository.save(finalProductData);
 				}
 
 			});
@@ -330,14 +331,14 @@ public class RegulatoryService {
 		status.setBatchId(batchId);
 	}
 
-	private void finalizeRecipeCheck(List<RequirementListDataItem> requirements, ProductData productData) {
+	private void finalizeRecipeCheck(RegulatoryContext context, ProductData productData) {
 		if (productData.getReqCtrlList() == null) {
 			productData.setReqCtrlList(new ArrayList<>());
 		}
-		productData.getReqCtrlList().addAll(requirements);
+		productData.getReqCtrlList().addAll(context.getRequirements());
 		formulationService.formulate(productData, REGULATORY_KEY);
-		if (!hasError(requirements)) {
-			updateChecksums(productData);
+		if (!hasError(context.getRequirements())) {
+			updateChecksums(context, productData);
 			productData.setRegulatoryFormulatedDate(new Date());
 		} else {
 			productData.setRequirementChecksum(null);
@@ -353,10 +354,10 @@ public class RegulatoryService {
 		return false;
 	}
 
-	private void updateChecksums(ProductData formulatedProduct) {
-		String checkSum = createProductCheckum(formulatedProduct);
-		formulatedProduct.setRequirementChecksum(CheckSumHelper.updateChecksum(REGULATORY_KEY, formulatedProduct.getRequirementChecksum(), checkSum));
-		for (RegulatoryListDataItem regulatoryListDataItem : formulatedProduct.getRegulatoryList()) {
+	private void updateChecksums(RegulatoryContext context, ProductData productData) {
+		String checkSum = createContextCheckum(context);
+		productData.setRequirementChecksum(CheckSumHelper.updateChecksum(REGULATORY_KEY, productData.getRequirementChecksum(), checkSum));
+		for (RegulatoryListDataItem regulatoryListDataItem : productData.getRegulatoryList()) {
 			Set<String> itemCountries = regulatoryListDataItem.getRegulatoryCountriesRef().stream().map(this::extractCode)
 					.collect(Collectors.toSet());
 			Set<String> itemUsages = regulatoryListDataItem.getRegulatoryUsagesRef().stream().map(this::extractCode).collect(Collectors.toSet());
@@ -485,7 +486,7 @@ public class RegulatoryService {
 	}
 
 	private void fetchIngredients(RegulatoryContext context) {
-		for (IngListDataItem ingListDataItem : context.getProduct().getIngList()) {
+		for (IngListDataItem ingListDataItem : context.getIngList()) {
 			if (ingListDataItem.getIng() != null) {
 				IngItem ingItem = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
 				String rid = ingItem.getRegulatoryCode();
@@ -571,16 +572,16 @@ public class RegulatoryService {
 		return linkedSearches;
 	}
 
-	private boolean isUpToDate(ProductData product) {
+	private boolean isUpToDate(RegulatoryContext context) {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DAY_OF_YEAR, -1);
-		if (product.getRegulatoryFormulatedDate() == null || product.getRegulatoryFormulatedDate().before(cal.getTime())) {
+		if (context.getProduct().getRegulatoryFormulatedDate() == null || context.getProduct().getRegulatoryFormulatedDate().before(cal.getTime())) {
 			return false;
 		}
-		if (!CheckSumHelper.isSameChecksum(REGULATORY_KEY, product.getRequirementChecksum(), createProductCheckum(product))) {
+		if (!CheckSumHelper.isSameChecksum(REGULATORY_KEY, context.getProduct().getRequirementChecksum(), createContextCheckum(context))) {
 			return false;
 		}
-		for (RegulatoryListDataItem regulatoryListDataItem : product.getRegulatoryList()) {
+		for (RegulatoryListDataItem regulatoryListDataItem : context.getProduct().getRegulatoryList()) {
 			Set<String> countries = regulatoryListDataItem.getRegulatoryCountriesRef().stream().map(this::extractCode).collect(Collectors.toSet());
 			Set<String> usages = regulatoryListDataItem.getRegulatoryUsagesRef().stream().map(this::extractCode).collect(Collectors.toSet());
 			if (!CheckSumHelper.isSameChecksum(REGULATORY_KEY, regulatoryListDataItem.getRequirementChecksum(),
@@ -591,25 +592,25 @@ public class RegulatoryService {
 		return true;
 	}
 
-	private String createProductCheckum(ProductData formulatedProduct) {
-		Set<String> countries = formulatedProduct.getRegulatoryCountriesRef().stream().map(this::extractCode).collect(Collectors.toSet());
-		Set<String> usages = formulatedProduct.getRegulatoryUsagesRef().stream().map(this::extractCode).collect(Collectors.toSet());
-		if (!formulatedProduct.getRegulatoryUsages().isEmpty() && !formulatedProduct.getRegulatoryCountries().isEmpty()) {
-			countries = formulatedProduct.getRegulatoryCountries().stream().collect(Collectors.toSet());
-			usages = formulatedProduct.getRegulatoryUsages().stream().collect(Collectors.toSet());
+	private String createContextCheckum(RegulatoryContext context) {
+		Set<String> countries = context.getProduct().getRegulatoryCountriesRef().stream().map(this::extractCode).collect(Collectors.toSet());
+		Set<String> usages = context.getProduct().getRegulatoryUsagesRef().stream().map(this::extractCode).collect(Collectors.toSet());
+		if (!context.getProduct().getRegulatoryUsages().isEmpty() && !context.getProduct().getRegulatoryCountries().isEmpty()) {
+			countries = context.getProduct().getRegulatoryCountries().stream().collect(Collectors.toSet());
+			usages = context.getProduct().getRegulatoryUsages().stream().collect(Collectors.toSet());
 		}
 		StringBuilder checksumBuilder = new StringBuilder();
 		checksumBuilder.append(createRequirementChecksum(countries, usages));
-		for (RegulatoryListDataItem regulatoryListDataItem : formulatedProduct.getRegulatoryList()) {
+		for (RegulatoryListDataItem regulatoryListDataItem : context.getProduct().getRegulatoryList()) {
 			Set<String> itemCountries = regulatoryListDataItem.getRegulatoryCountriesRef().stream().map(this::extractCode)
 					.collect(Collectors.toSet());
 			Set<String> itemUsages = regulatoryListDataItem.getRegulatoryUsagesRef().stream().map(this::extractCode).collect(Collectors.toSet());
 			checksumBuilder.append(createRequirementChecksum(itemCountries, itemUsages));
 		}
 
-		if (formulatedProduct.getIngList() != null) {
-			formulatedProduct.getIngList().stream().filter(ing -> ing != null && ing.getNodeRef() != null)
-					.map(ing -> ing.getNodeRef().toString() + ing.getIng() + ing.getValue()).sorted().forEach(checksumBuilder::append);
+		if (context.getIngList() != null) {
+			context.getIngList().stream().map(ing -> ing.getNodeRef().toString() + ing.getIng() + ing.getValue()).sorted()
+					.forEach(checksumBuilder::append);
 		}
 
 		return checksumBuilder.toString();
@@ -626,25 +627,14 @@ public class RegulatoryService {
 		return key.toString();
 	}
 
-	private boolean isProductCompatible(ProductData product) {
-		if (product.getRegulatoryMode() == null || RegulatoryMode.DISABLED.equals(product.getRegulatoryMode())) {
+	private boolean isContextCompatible(RegulatoryContext context) {
+		if (context.getProduct().getRegulatoryMode() == null || RegulatoryMode.DISABLED.equals(context.getProduct().getRegulatoryMode())) {
 			return false;
 		}
-		if (product.getRequirementChecksum() != null) {
-			return true;
+		if (context.getRegulatoryBatches().isEmpty()) {
+			return false;
 		}
-		if (!product.getRegulatoryCountriesRef().isEmpty() && !product.getRegulatoryUsagesRef().isEmpty()) {
-			return true;
-		}
-		if (!product.getRegulatoryCountries().isEmpty() && !product.getRegulatoryUsages().isEmpty()) {
-			return true;
-		}
-		for (RegulatoryListDataItem item : product.getRegulatoryList()) {
-			if (!item.getRegulatoryCountriesRef().isEmpty() && !item.getRegulatoryUsagesRef().isEmpty()) {
-				return true;
-			}
-		}
-		return false;
+		return true;
 	}
 
 	private RequirementListDataItem createReqCtrl(IngListDataItem ingListDataItem, MLText reqCtrlMessage, RequirementType reqType) {
