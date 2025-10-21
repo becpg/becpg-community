@@ -409,19 +409,19 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 					totalItems += batchProcessor.getTotalResultsLong();
 					totalErrors += batchProcessor.getTotalErrorsLong();
 
-					if (batchProcessor.getTotalErrorsLong() > 0 && batchStep.getBatchStepListener() != null) {
-
+					if (batchProcessor.getTotalErrorsLong() > 0) {
 						hasError = true;
-
-						AuthenticationUtil
-								.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-									batchStep.getBatchStepListener().onError(batchProcessor.getLastErrorEntryId(),
-											batchProcessor.getLastError());
-									return null;
-
+						if (batchStep.getBatchStepListener() != null) {
+							AuthenticationUtil
+							.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+								batchStep.getBatchStepListener().onError(batchProcessor.getLastErrorEntryId(),
+										batchProcessor.getLastError());
+								return null;
+								
 							}, false, true), batchInfo.getBatchUser());
-
+						}
 					}
+					
 					if (batchStep.getBatchStepListener() != null) {
 
 						pushAndSetBatchAuthentication(batchStep);
