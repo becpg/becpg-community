@@ -28,7 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestClientException;
 
 import com.google.common.collect.Lists;
 
@@ -150,8 +150,24 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 	private String companyName() {
 		return systemConfigurationService.confValue("beCPG.decernis.companyName");
 	}
+	
+	private Integer maxCountriesPerRequest() {
+		String confValue = systemConfigurationService.confValue("beCPG.decernis.maxCountriesPerRequest");
+		if (confValue != null && !confValue.isBlank()) {
+			return Integer.parseInt(confValue);
+		}
+		return null;
+	}
+	
+	private Integer maxUsagesPerRequest() {
+		String confValue = systemConfigurationService.confValue("beCPG.decernis.maxUsagesPerRequest");
+		if (confValue != null && !confValue.isBlank()) {
+			return Integer.parseInt(confValue);
+		}
+		return null;
+	}
 
-	public boolean addInfoReqCtrl() {
+	private boolean addInfoReqCtrl() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.specification.addInfoReqCtrl"));
 	}
 
@@ -183,8 +199,8 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		if (RegulatoryMode.BOTH.equals(context.getRegulatoryMode()) || RegulatoryMode.BECPG_ONLY.equals(context.getRegulatoryMode())) {
 			JSONObject recipeAnalysisResults = null;
 			try {
-				recipeAnalysisResults = postV5RecipeAnalysis(context, regulatoryBatch);
-			} catch (HttpStatusCodeException e) {
+				recipeAnalysisResults = recipeAnalysis(context, regulatoryBatch);
+			} catch (RestClientException e) {
 				logger.error("Error during Decernis recipe analysis: " + DecernisHelper.cleanError(e.getMessage()), e);
 				for (String country : regulatoryBatch.countryBatches().countries()) {
 					for (String usage : regulatoryBatch.usageBatches().usages()) {
@@ -204,6 +220,34 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 			}
 			checkUsagesID(context);
 		}
+	}
+
+	private JSONObject recipeAnalysis(RegulatoryContext context, RegulatoryBatch regulatoryBatch) {
+		JSONObject recipeAnalysisResults = null;
+		int retries = 2;
+		while (recipeAnalysisResults == null) {
+			try {
+				recipeAnalysisResults = postV5RecipeAnalysis(context, regulatoryBatch);
+			} catch (RestClientException e) {
+				if (retries <= 0) {
+					throw e;
+				}
+				logger.error("Error during Decernis recipe analysis: " + DecernisHelper.cleanError(e.getMessage()) 
+				+ ", try restarting request...");
+				retries--;
+				recipeAnalysisResults = null;
+			}
+		}
+		return recipeAnalysisResults;
+	}
+	
+	@Override
+	public Integer getBatchThreads() {
+		String confValue = systemConfigurationService.confValue("beCPG.decernis.batchThreads");
+		if (confValue != null && !confValue.isBlank()) {
+			return Integer.parseInt(confValue);
+		}
+		return null;
 	}
 
 	private void checkUsagesID(RegulatoryContext context) {
@@ -280,7 +324,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 				}
 				updateRecipeId(context, recipeId);
 			}
-		} catch (HttpStatusCodeException e) {
+		} catch (RestClientException e) {
 			logger.error(generateError(e), e);
 			RequirementListDataItem req = RequirementListDataItem.forbidden()
 					.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e))).ofDataType(RequirementDataType.Specification)
@@ -327,7 +371,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		JSONArray ingredients = new JSONArray();
 		ret.put("ingredients", ingredients);
 
-		for (IngListDataItem ingListDataItem : context.getProduct().getIngList()) {
+		for (IngListDataItem ingListDataItem : context.getIngList()) {
 
 			if (ingListDataItem.getIng() != null) {
 
@@ -356,8 +400,8 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 						ingredients.put(ingredient);
 					}
 
-				} catch (HttpStatusCodeException e) {
-					logger.warn("Cannot retrieve ingredient " + ingName + " error:" + e.getStatusText());
+				} catch (RestClientException e) {
+					logger.warn("Cannot retrieve ingredient " + ingName + " error:" + e.getMessage());
 				} catch (Exception e) {
 					logger.error(e, e);
 					throw new FormulateException("Unexpected decernis error: " + DecernisHelper.cleanError(e.getMessage()), e);
@@ -389,8 +433,8 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 	public void checkIngredients(RegulatoryContext context, RegulatoryBatch checkContext) {
 		JSONObject ingredientAnalysisResults = null;
 		try {
-			ingredientAnalysisResults = postV5IngredientAnalysis(context, checkContext);
-		} catch (HttpStatusCodeException e) {
+			ingredientAnalysisResults = ingredientAnalysis(context, checkContext);
+		} catch (RestClientException e) {
 			logger.error("Error during Decernis ingredients analysis: " + DecernisHelper.cleanError(e.getMessage()), e);
 			RequirementListDataItem req = RequirementListDataItem.forbidden()
 					.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e))).ofDataType(RequirementDataType.Formulation)
@@ -403,8 +447,27 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 			context.getIngRegulatoryListDataItems().addAll(parseIngredientAnalysisResults);
 		}
 	}
+	
+	private JSONObject ingredientAnalysis(RegulatoryContext context, RegulatoryBatch regulatoryBatch) {
+		JSONObject ingredientAnalysisResults = null;
+		int retries = 2;
+		while (ingredientAnalysisResults == null) {
+			try {
+				ingredientAnalysisResults = postV5IngredientAnalysis(context, regulatoryBatch);
+			} catch (RestClientException e) {
+				if (retries <= 0) {
+					throw e;
+				}
+				logger.error("Error during Decernis ingredient analysis: " + DecernisHelper.cleanError(e.getMessage()) 
+				+ ", try restarting request...");
+				retries--;
+				ingredientAnalysisResults = null;
+			}
+		}
+		return ingredientAnalysisResults;
+	}
 
-	private String generateError(HttpStatusCodeException e) {
+	private String generateError(RestClientException e) {
 		return "Error while creating Decernis recipe: " + DecernisHelper.cleanError(e.getMessage());
 	}
 
@@ -491,7 +554,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 			countries.remove(EUROPEAN_UNION);
 			countryBatches.add(new CountryBatch(List.of(EUROPEAN_UNION)));
 		}
-		int ingListSize = context.getProduct().getIngList().size();
+		int ingListSize = context.getIngList().size();
 		int maxCountries = 20;
 		if (ingListSize >= 130) {
 			maxCountries = 3;
@@ -501,6 +564,10 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 			maxCountries = 9;
 		} else if (ingListSize >= 25) {
 			maxCountries = 11;
+		}
+		Integer maxCountriesPerRequest = maxCountriesPerRequest();
+		if (maxCountriesPerRequest != null) {
+			maxCountries = Math.min(maxCountries, maxCountriesPerRequest);
 		}
 		List<List<String>> countriesBatches = Lists.partition(countries, maxCountries);
 		for (List<String> countriesBatch : countriesBatches) {
@@ -519,6 +586,10 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 			moduleUsages.add(usage);
 		}
 		int maxUsages = 20;
+		Integer maxUsagesPerRequest = maxUsagesPerRequest();
+		if (maxUsagesPerRequest != null) {
+			maxUsages = Math.min(maxUsages, maxUsagesPerRequest);
+		}
 		for (Map.Entry<String, List<String>> entry : moduleToUsages.entrySet()) {
 			List<String> allUsages = entry.getValue();
 			List<List<String>> usagesBatches = Lists.partition(new ArrayList<>(allUsages), maxUsages);
@@ -554,7 +625,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
 		String moduleCode = moduleToCodeMap.get(checkContext.usageBatches().module());
 
-		for (IngListDataItem ingListDataItem : context.getProduct().getIngList()) {
+		for (IngListDataItem ingListDataItem : context.getIngList()) {
 
 			IngItem ingItem = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
 
@@ -659,7 +730,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		JSONArray ingredients = new JSONArray();
 		ingredientList.put("list", ingredients);
 
-		for (IngListDataItem ingListDataItem : context.getProduct().getIngList()) {
+		for (IngListDataItem ingListDataItem : context.getIngList()) {
 			IngItem ingItem = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
 			String rid = ingItem.getRegulatoryCode();
 			if (isRIDValid(rid)) {
@@ -738,7 +809,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 					for (Entry<String, List<JSONObject>> entry : countryReports.entrySet()) {
 						String decernisID = entry.getKey();
 						List<JSONObject> countryDidReports = entry.getValue();
-						IngListDataItem ingItem = findIngredientItemV5(productContext.getProduct().getIngList(), decernisID, null,
+						IngListDataItem ingItem = findIngredientItemV5(productContext.getIngList(), decernisID, null,
 								countryDidReports.get(0).getString("customerName"));
 						if (ingItem != null) {
 							IngRegulatoryListDataItem ingRegulatoryListDataItem = createIngRegulatoryListDataItem(ingItem.getIng(),
@@ -908,7 +979,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 									String function = tabularReport.getString(FUNCTION);
 									String ingredientName = tabularReport.getString(PARAM_NAME);
 
-									IngListDataItem ingItem = findIngredientItemV5(context.getProduct().getIngList(), decernisID, function,
+									IngListDataItem ingItem = findIngredientItemV5(context.getIngList(), decernisID, function,
 											ingredientName);
 
 									if (ingItem != null) {
