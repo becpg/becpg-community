@@ -274,7 +274,7 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 			}
 		}
 
-		formConfig = getFormConfig(itemType, formId, mode, prefixedSiteId, prefixedEntityType, list);
+		var formConfig = getFormConfig(itemType, formId, mode, prefixedSiteId, prefixedEntityType, list);
 			
 		if (formConfig != null) {
 			
