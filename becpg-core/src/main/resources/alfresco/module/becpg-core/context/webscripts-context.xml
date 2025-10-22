@@ -372,6 +372,7 @@
 	<bean id="webscript.fr.becpg.users.export-users.get" class="fr.becpg.repo.web.scripts.users.ExportUsersWebScript" parent="webscript">
 		<property name="nodeService" ref="nodeService" />
 		<property name="personService" ref="personService" />
+		<property name="authorityService" ref="authorityService" />
 	</bean>
     
 </beans>
