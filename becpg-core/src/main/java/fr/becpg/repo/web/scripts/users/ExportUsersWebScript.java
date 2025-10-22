@@ -11,6 +11,8 @@ import org.alfresco.query.PagingRequest;
 import org.alfresco.query.PagingResults;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.AuthorityService;
+import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.security.PersonService.PersonInfo;
 import org.alfresco.service.namespace.QName;
@@ -32,7 +34,47 @@ public class ExportUsersWebScript extends AbstractWebScript {
 	private NodeService nodeService;
 
 	private PersonService personService;
+	
+	private AuthorityService authorityService;
 
+	private static final String LAST_NAME = "cm:lastName";
+	private static final String FIRST_NAME = "cm:firstName";
+	private static final String EMAIL = "cm:email";
+	private static final String TELEPHONE = "cm:telephone";
+	private static final String ORGANIZATION = "cm:organization";
+	private static final String USERNAME = "username";
+	private static final String NEW_USERNAME = "new_username";
+	private static final String PASSWORD = "password";
+	private static final String SHOULD_GENERATE_PASSWORD = "should_generate_password";
+	private static final String MEMBERSHIPS = "memberships";
+	private static final String GROUPS = "groups";
+	private static final String NOTIFY = "notify";
+	private static final String IS_IDS_USER = "is_ids_user";
+	private static final String DISABLE = "disable";
+	private static final String DELETE = "delete";
+
+	private static final List<String> CSV_COLUMNS = List.of(
+			LAST_NAME,
+			FIRST_NAME,
+			EMAIL,
+			TELEPHONE,
+			ORGANIZATION,
+			USERNAME,
+			NEW_USERNAME,
+			PASSWORD,
+			SHOULD_GENERATE_PASSWORD,
+			MEMBERSHIPS,
+			GROUPS,
+			NOTIFY,
+			IS_IDS_USER,
+			DISABLE,
+			DELETE
+	);
+	
+	public void setAuthorityService(AuthorityService authorityService) {
+		this.authorityService = authorityService;
+	}
+	
 	/**
 	 * <p>Setter for the field <code>nodeService</code>.</p>
 	 *
@@ -74,28 +116,41 @@ public class ExportUsersWebScript extends AbstractWebScript {
 		res.setHeader("Pragma", "no-cache");
 
 		try (OutputStream out = res.getOutputStream()) {
-			String csvHeader = "\"cm:lastName\";\"cm:firstName\";\"cm:email\";\"cm:telephone\";\"cm:organization\";\"username\";\"new_username\";\"password\";\"should_generate_password\";\"memberships\";\"groups\";\"notify\";\"is_ids_user\";\"disable\";\"delete\"\n";
+			
+			String csvHeader = String.join("", CSV_COLUMNS.stream().map(c -> "\"" + c + "\";").toList()) + "\n";
 			out.write(csvHeader.getBytes(StandardCharsets.UTF_8));
 
 			PagingResults<PersonInfo> people = personService.getPeople(searchTerm, filterProps, null, new PagingRequest(Integer.MAX_VALUE));
 
 			for (PersonInfo userNode : people.getPage()) {
 				NodeRef userRef = userNode.getNodeRef();
-
-				String lastName = getOrEmpty(nodeService.getProperty(userRef, ContentModel.PROP_LASTNAME));
-				String firstName = getOrEmpty(nodeService.getProperty(userRef, ContentModel.PROP_FIRSTNAME));
-				String email = getOrEmpty(nodeService.getProperty(userRef, ContentModel.PROP_EMAIL));
-				String telephone = getOrEmpty(nodeService.getProperty(userRef, ContentModel.PROP_TELEPHONE));
-				String organization = getOrEmpty(nodeService.getProperty(userRef, ContentModel.PROP_ORGANIZATION));
-				String userName = getOrEmpty(nodeService.getProperty(userRef, ContentModel.PROP_USERNAME));
-				String isSsoUser = getOrEmpty(nodeService.getProperty(userRef, BeCPGModel.PROP_IS_SSO_USER));
-				String disabled = getOrEmpty(nodeService.hasAspect(userRef, ContentModel.ASPECT_PERSON_DISABLED));
-
-				String csvRow = String.format("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s%n", lastName, firstName, email, telephone, organization,
-						userName, "", "", "", "", "", "", isSsoUser, disabled, "");
-
+				List<String> csvValues = new ArrayList<>();
+				for (String column : CSV_COLUMNS) {
+					if (LAST_NAME.equals(column)) {
+						csvValues.add(getOrEmpty(userNode.getLastName()));
+					} else if (FIRST_NAME.equals(column)) {
+						csvValues.add(getOrEmpty(userNode.getFirstName()));
+					} else if (EMAIL.equals(column)) {
+						csvValues.add(getOrEmpty(nodeService.getProperty(userRef, ContentModel.PROP_EMAIL)));
+					} else if (TELEPHONE.equals(column)) {
+						csvValues.add(getOrEmpty(nodeService.getProperty(userRef, ContentModel.PROP_TELEPHONE)));
+					} else if (ORGANIZATION.equals(column)) {
+						csvValues.add(getOrEmpty(nodeService.getProperty(userRef, ContentModel.PROP_ORGANIZATION)));
+					} else if (USERNAME.equals(column)) {
+						csvValues.add(getOrEmpty(userNode.getUserName()));
+					} else if (IS_IDS_USER.equals(column)) {
+						csvValues.add(getOrEmpty(nodeService.getProperty(userRef, BeCPGModel.PROP_IS_SSO_USER)));
+					} else if (DISABLE.equals(column)) {
+						csvValues.add(getOrEmpty(nodeService.getProperty(userRef, ContentModel.ASPECT_PERSON_DISABLED)));
+					} else if (GROUPS.equals(column)) {
+						csvValues.add("\"" + getOrEmpty(String.join(",", authorityService.getContainingAuthoritiesInZone(AuthorityType.GROUP,
+								userNode.getUserName(), AuthorityService.ZONE_APP_DEFAULT, null, 1000))) + "\"");
+					} else {
+						csvValues.add("");
+					}
+				}
+				String csvRow = String.join("", csvValues.stream().map(v -> v + ";").toList()) + "\n";
 				out.write(csvRow.getBytes(StandardCharsets.UTF_8));
-
 			}
 			out.flush();
 		}
