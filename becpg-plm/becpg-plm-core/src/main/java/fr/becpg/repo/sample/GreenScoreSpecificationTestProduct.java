@@ -12,7 +12,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.ProjectModel;
-import fr.becpg.repo.product.data.FinishedProductData;
+import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 
@@ -100,7 +100,7 @@ public class GreenScoreSpecificationTestProduct extends StandardSoapTestProduct 
 
 	/** {@inheritDoc} */
 	@Override
-	protected void createPhysicoChems(FinishedProductData soapProduct) {
+	protected void createPhysicoChems(ProductData soapProduct) {
 		super.createPhysicoChems(soapProduct);
 
 		// Add physico-chemical properties

@@ -1,9 +1,7 @@
 package fr.becpg.repo.signature.impl;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +17,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
@@ -26,9 +26,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.artworks.signature.SignatureService;
 import fr.becpg.artworks.signature.model.SignatureModel;
 import fr.becpg.artworks.signature.model.SignatureStatus;
-import fr.becpg.model.ProjectModel;
-import fr.becpg.model.ReportModel;
-import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.RepoService;
@@ -44,6 +42,7 @@ import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.signature.SignatureProjectHelper;
 import fr.becpg.repo.signature.SignatureProjectPlugin;
 import fr.becpg.repo.signature.SignatureProjectService;
 
@@ -56,12 +55,26 @@ import fr.becpg.repo.signature.SignatureProjectService;
 @Service("signatureProjectService")
 public class SignatureProjectServiceImpl implements SignatureProjectService {
 
+	private static final Log logger = LogFactory.getLog(SignatureProjectServiceImpl.class);
+	
+	// Constants
+	private static final String TASK_SIGNATURE_NAME_KEY = "signatureWorkflow.task-signature.name";
+	private static final String TASK_REJECT_NAME_KEY = "signatureWorkflow.task-reject.name";
+	private static final String TASK_REJECT_DESCRIPTION_KEY = "signatureWorkflow.task-reject.description";
+	private static final String TASK_CHECKIN_NAME_KEY = "signatureWorkflow.task-checkin.name";
+	private static final String PREPARE_SCRIPT = "cm:prepare-signature.js";
+	private static final String VALIDATE_SCRIPT = "cm:validate-signature.js";
+	private static final String REJECT_SCRIPT = "cm:reject-signature.js";
+	private static final String SIGN_SCRIPT = "cm:sign-document.js";
+	private static final int NOTIFICATION_FREQUENCY = 7;
+	private static final int INITIAL_NOTIFICATION = -1;
+
 	@Autowired
 	private NodeService nodeService;
 
 	@Autowired
 	private AssociationService associationService;
-	
+
 	@Autowired
 	private ProjectService projectService;
 
@@ -70,7 +83,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 
 	@Autowired
 	private ContentService contentService;
-	
+
 	@Autowired
 	private RepoService repoService;
 
@@ -82,10 +95,10 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 
 	@Autowired
 	private Repository repository;
-	
+
 	@Autowired
-	private EntityService entityService;
-	
+	private SignatureProjectHelper signatureProjectHelper;
+
 	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
 
@@ -95,7 +108,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef prepareSignatureProject(NodeRef projectNodeRef, List<NodeRef> originalDocuments) {
-		originalDocuments = copyReports(originalDocuments);
+		originalDocuments = signatureProjectHelper.copyReports(originalDocuments);
 		List<NodeRef> viewRecipients = associationService.getTargetAssocs(projectNodeRef, SignatureModel.ASSOC_RECIPIENTS);
 		viewRecipients = projectService.extractResources(projectNodeRef, viewRecipients);
 		associationService.update(projectNodeRef, SignatureModel.ASSOC_RECIPIENTS, viewRecipients);
@@ -109,32 +122,40 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 		alfrescoRepository.save(project);
 		return projectNodeRef;
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef createEntitySignatureTasks(NodeRef projectNodeRef, NodeRef previousTask, String projectType) {
 		ProjectData project = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 		if (!project.getEntities().isEmpty()) {
-			TaskListDataItem firstTask = (TaskListDataItem) alfrescoRepository.findOne(findFirstTask(previousTask));
+			TaskListDataItem firstTask = (TaskListDataItem) alfrescoRepository.findOne(ProjectHelper.findAncestorTask(previousTask, associationService));
 			NodeRef entityNodeRef = project.getEntities().get(0);
 			NodeRef entitySignatureFolder = null;
 			SignatureProjectPlugin signatureProjectPlugin = findSignatureProjectPlugin(projectType);
 			if (signatureProjectPlugin != null) {
 				entitySignatureFolder = signatureProjectPlugin.prepareEntitySignatureFolder(project, entityNodeRef);
 			} else {
-				entitySignatureFolder = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath("Documents"));
+				entitySignatureFolder = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS,
+						TranslateHelper.getTranslatedPath("Documents"));
 			}
-			List<NodeRef> documentsToSign = findDocumentsToSign(entitySignatureFolder, false);
-			List<NodeRef> documentsAlreadySigned = findDocumentsToSign(entitySignatureFolder, true);
+			List<NodeRef> documentsToSign = signatureProjectHelper.findDocumentsToSign(entitySignatureFolder, false);
+			List<NodeRef> documentsAlreadySigned = signatureProjectHelper.findDocumentsToSign(entitySignatureFolder, true);
+
+			Map<NodeRef, List<DeliverableListDataItem>> deliverableByDocuments = signatureProjectHelper.getDeliverableByDocuments(project);
 			for (NodeRef doc : documentsAlreadySigned) {
-				project.getDeliverableList().stream().filter(d -> d.getDescription().equals(nodeService.getProperty(doc, ContentModel.PROP_NAME)))
-						.forEach(d -> d.setState(DeliverableState.Completed));
+
+				List<DeliverableListDataItem> associatedDeliverables = deliverableByDocuments.getOrDefault(doc, new ArrayList<>());
+				associatedDeliverables.forEach(d -> d.setState(DeliverableState.Completed));
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("Marked " + associatedDeliverables.size() + " deliverables as completed for document: " + doc);
+				}
 			}
 			List<NodeRef> lastsTasks = new ArrayList<>();
 			for (NodeRef documentToSign : documentsToSign) {
 				associationService.update(documentToSign, ContentModel.ASSOC_ORIGINAL, List.of());
 				List<NodeRef> viewRecipients = associationService.getTargetAssocs(documentToSign, SignatureModel.ASSOC_RECIPIENTS);
-				if (viewRecipients.isEmpty() && signatureProjectPlugin != null) {
+				if (viewRecipients.isEmpty() && (signatureProjectPlugin != null)) {
 					viewRecipients.addAll(signatureProjectPlugin.extractRecipients(documentToSign));
 				}
 				viewRecipients = projectService.extractResources(projectNodeRef, viewRecipients);
@@ -157,33 +178,22 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 		for (TaskListDataItem task : project.getTaskList()) {
 			// Get deliverables associated with this task
 			List<DeliverableListDataItem> relatedDeliverables = project.getDeliverableList().stream()
-				.filter(d -> d.getTasks() != null && d.getTasks().contains(task.getNodeRef()))
-				.toList();
+					.filter(d -> (d.getTasks() != null) && d.getTasks().contains(task.getNodeRef())).toList();
 
 			// Check if all related deliverables are signed
-			boolean allSigned = !relatedDeliverables.isEmpty() && relatedDeliverables.stream()
-				.allMatch(d -> d.getContent() != null &&
-					SignatureStatus.Signed.toString().equals(
-						nodeService.getProperty(d.getContent(), SignatureModel.PROP_STATUS)));
+			boolean allSigned = !relatedDeliverables.isEmpty() && relatedDeliverables.stream().allMatch(d -> (d.getContent() != null)
+					&& SignatureStatus.Signed.toString().equals(nodeService.getProperty(d.getContent(), SignatureModel.PROP_STATUS)));
 
 			if (allSigned) {
 				task.setTaskState(TaskState.Completed);
 			}
 		}
 	}
-	
-	private NodeRef findFirstTask(NodeRef task) {
-		NodeRef previousTask = associationService.getTargetAssoc(task, ProjectModel.ASSOC_TL_PREV_TASKS);
-		if (previousTask != null) {
-			return findFirstTask(previousTask);
-		}
-		return task;
-	}
 
 	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> extractRecipients(NodeRef document) {
-		
+
 		if (signatureProjectPlugins != null) {
 			for (SignatureProjectPlugin signatureProjectPlugin : signatureProjectPlugins) {
 				List<NodeRef> recipients = signatureProjectPlugin.extractRecipients(document);
@@ -192,7 +202,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 				}
 			}
 		}
-		
+
 		return new ArrayList<>();
 	}
 
@@ -218,7 +228,8 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 				associationService.update(document, SignatureModel.ASSOC_RECIPIENTS, viewRecipients);
 				if (externalSignatureFolder != null) {
 					Map<QName, Serializable> properties = new HashMap<>();
-					String documentName = repoService.getAvailableName(externalSignatureFolder, (String) nodeService.getProperty(document, ContentModel.PROP_NAME), false, true);
+					String documentName = repoService.getAvailableName(externalSignatureFolder,
+							(String) nodeService.getProperty(document, ContentModel.PROP_NAME), false, true);
 					properties.put(ContentModel.PROP_NAME, documentName);
 					NodeRef documentCopy = nodeService.createNode(externalSignatureFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS,
 							ContentModel.TYPE_CONTENT, properties).getChildRef();
@@ -251,11 +262,11 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 		}
 		return null;
 	}
-	
+
 	private void createValidatingTask(ProjectData project, List<NodeRef> documents, NodeRef lastTask, TaskListDataItem rejectTask) {
 		TaskListDataItem validatingTask = projectService.insertNewTask(project, List.of(lastTask));
 		validatingTask.setRefusedTask(rejectTask);
-		validatingTask.setTaskName(I18NUtil.getMessage("signatureWorkflow.task-checkin.name"));
+		validatingTask.setTaskName(I18NUtil.getMessage(TASK_CHECKIN_NAME_KEY));
 		validatingTask.setResources(new ArrayList<>());
 		NodeRef currentUser = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
 		validatingTask.getResources().add(currentUser);
@@ -263,21 +274,23 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 		String resourceLastName = (String) nodeService.getProperty(currentUser, ContentModel.PROP_LASTNAME);
 		for (NodeRef document : documents) {
 			String docName = (String) nodeService.getProperty(document, ContentModel.PROP_NAME);
+			String validateDeliverableName = SignatureProjectHelper.generateValidateDeliverableName(docName, resourceFirstName, resourceLastName);
 			project.getDeliverableList()
-					.add(ProjectHelper.createDeliverable(docName + resourceFirstName + resourceLastName + " - validate", docName,
-							DeliverableScriptOrder.Post, validatingTask, BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(),
-									"/app:company_home/app:dictionary/app:scripts/cm:validate-signature.js")));
-			DeliverableListDataItem signViewDeliverable = ProjectHelper
-					.createDeliverable(docName + resourceFirstName + resourceLastName + " - validate - doc", docName, null, validatingTask, document);
+					.add(ProjectHelper.createDeliverable(validateDeliverableName, docName, DeliverableScriptOrder.Post, validatingTask,
+							BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), RepoConsts.SCRIPTS_FULL_PATH + RepoConsts.PATH_SEPARATOR + VALIDATE_SCRIPT)));
+			String validateDocDeliverableName = SignatureProjectHelper.generateValidateDocDeliverableName(docName, resourceFirstName,
+					resourceLastName);
+			DeliverableListDataItem signViewDeliverable = ProjectHelper.createDeliverable(validateDocDeliverableName, docName, null, validatingTask,
+					document);
 			signViewDeliverable.setUrl(signatureService.getDocumentView(document, null, validatingTask.getNodeRef()));
 			project.getDeliverableList().add(signViewDeliverable);
 		}
 	}
-	
+
 	private TaskListDataItem createRejectTask(ProjectData project, List<NodeRef> documents) {
 		TaskListDataItem rejectTask = projectService.insertNewTask(project, null);
-		rejectTask.setTaskName(I18NUtil.getMessage("signatureWorkflow.task-reject.name"));
-		rejectTask.setDescription(I18NUtil.getMessage("signatureWorkflow.task-reject.description"));
+		rejectTask.setTaskName(I18NUtil.getMessage(TASK_REJECT_NAME_KEY));
+		rejectTask.setDescription(I18NUtil.getMessage(TASK_REJECT_DESCRIPTION_KEY));
 		rejectTask.setState(TaskState.Cancelled.toString());
 		rejectTask.setResources(new ArrayList<>());
 		NodeRef currentUser = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
@@ -286,12 +299,13 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 		String resourceLastName = (String) nodeService.getProperty(currentUser, ContentModel.PROP_LASTNAME);
 		for (NodeRef document : documents) {
 			String docName = (String) nodeService.getProperty(document, ContentModel.PROP_NAME);
+			String rejectDeliverableName = SignatureProjectHelper.generateRejectDeliverableName(docName, resourceFirstName, resourceLastName);
 			project.getDeliverableList()
-					.add(ProjectHelper.createDeliverable(docName + resourceFirstName + resourceLastName + " - reject", docName,
-							DeliverableScriptOrder.Pre, rejectTask, BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(),
-									"/app:company_home/app:dictionary/app:scripts/cm:reject-signature.js")));
-			project.getDeliverableList().add(ProjectHelper.createDeliverable(docName + resourceFirstName + resourceLastName + " - reject - doc",
-					docName, null, rejectTask, document));
+					.add(ProjectHelper.createDeliverable(rejectDeliverableName, docName, DeliverableScriptOrder.Pre, rejectTask,
+							BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(),
+									RepoConsts.SCRIPTS_FULL_PATH + RepoConsts.PATH_SEPARATOR + REJECT_SCRIPT)));
+			String rejectDocDeliverableName = SignatureProjectHelper.generateRejectDocDeliverableName(docName, resourceFirstName, resourceLastName);
+			project.getDeliverableList().add(ProjectHelper.createDeliverable(rejectDocDeliverableName, docName, null, rejectTask, document));
 		}
 		project.getTaskList().add(rejectTask);
 		return rejectTask;
@@ -303,11 +317,10 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 			final NodeRef finalPreviousTask = previousTask;
 			String resourceFirstName = (String) nodeService.getProperty(recipient, ContentModel.PROP_FIRSTNAME);
 			String resourceLastName = (String) nodeService.getProperty(recipient, ContentModel.PROP_LASTNAME);
-			String taskName = I18NUtil.getMessage("signatureWorkflow.task-signature.name");
+			String taskName = I18NUtil.getMessage(TASK_SIGNATURE_NAME_KEY);
 			TaskListDataItem newTask = project.getTaskList().stream()
-					.filter(task -> task.getResources() != null && task.getResources().contains(recipient))
-					.filter(task -> task.getTaskName() != null && task.getTaskName().equals(taskName))
-					.findFirst()
+					.filter(task -> (task.getResources() != null) && task.getResources().contains(recipient))
+					.filter(task -> (task.getTaskName() != null) && task.getTaskName().equals(taskName)).findFirst()
 					.orElseGet(() -> projectService.insertNewTask(project, List.of(finalPreviousTask)));
 			newTask.setTaskState(TaskState.Planned);
 			newTask.setRefusedTask(rejectTask);
@@ -325,103 +338,46 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 			if (!newTask.getResources().contains(recipient)) {
 				newTask.getResources().add(recipient);
 			}
-			newTask.setTaskName(I18NUtil.getMessage("signatureWorkflow.task-signature.name"));
-			newTask.setNotificationFrequency(7);
-			newTask.setInitialNotification(-1);
+			newTask.setTaskName(I18NUtil.getMessage(TASK_SIGNATURE_NAME_KEY));
+			newTask.setNotificationFrequency(NOTIFICATION_FREQUENCY);
+			newTask.setInitialNotification(INITIAL_NOTIFICATION);
 			newTask.setNotificationAuthorities(List.of(recipient));
-			for (NodeRef doc : documents) {
-				String docName = (String) nodeService.getProperty(doc, ContentModel.PROP_NAME);
-				String prepareDeliverableName = docName + resourceFirstName + resourceLastName + " - prepare";
+			for (NodeRef document : documents) {
+				String docName = (String) nodeService.getProperty(document, ContentModel.PROP_NAME);
+				String prepareDeliverableName = SignatureProjectHelper.generatePrepareDeliverableName(docName, resourceFirstName, resourceLastName);
 				if (project.getDeliverableList().stream().noneMatch(del -> del.getName().equals(prepareDeliverableName))) {
-					project.getDeliverableList().add(ProjectHelper.createDeliverable(prepareDeliverableName, docName,
-							DeliverableScriptOrder.Pre, newTask, BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(),
-									"/app:company_home/app:dictionary/app:scripts/cm:prepare-signature.js")));
+					project.getDeliverableList()
+							.add(ProjectHelper.createDeliverable(prepareDeliverableName, docName, DeliverableScriptOrder.Pre, newTask,
+									BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(),
+											RepoConsts.SCRIPTS_FULL_PATH + RepoConsts.PATH_SEPARATOR + PREPARE_SCRIPT)));
 				} else {
-					project.getDeliverableList().stream().filter(del -> del.getName().equals(prepareDeliverableName)).forEach(d -> d.setState(DeliverableState.Planned));
+					project.getDeliverableList().stream().filter(del -> del.getName().equals(prepareDeliverableName))
+							.forEach(d -> d.setState(DeliverableState.Planned));
 				}
-				String urlDeliverableName = docName + resourceFirstName + resourceLastName + " - url";
+				String urlDeliverableName = SignatureProjectHelper.generateUrlDeliverableName(docName, resourceFirstName, resourceLastName);
 				if (project.getDeliverableList().stream().noneMatch(del -> del.getName().equals(urlDeliverableName))) {
-					project.getDeliverableList().add(ProjectHelper.createDeliverable(urlDeliverableName, docName, null, newTask, doc));
+					project.getDeliverableList().add(ProjectHelper.createDeliverable(urlDeliverableName, docName, null, newTask, document));
 				} else {
-					project.getDeliverableList().stream().filter(del -> del.getName().equals(urlDeliverableName)).forEach(d -> { d.setState(DeliverableState.Planned); d.setContent(doc); });
+					project.getDeliverableList().stream().filter(del -> del.getName().equals(urlDeliverableName)).forEach(d -> {
+						d.setState(DeliverableState.Planned);
+						d.setContent(document);
+					});
 				}
-				String signDeliverableName = docName + resourceFirstName + resourceLastName + " - sign";
-				
+				String signDeliverableName = SignatureProjectHelper.generateSignDeliverableName(docName, resourceFirstName, resourceLastName);
+
 				if (project.getDeliverableList().stream().noneMatch(del -> del.getName().equals(signDeliverableName))) {
-					project.getDeliverableList().add(ProjectHelper.createDeliverable(signDeliverableName, docName,
-							DeliverableScriptOrder.Post, newTask, BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(),
-									"/app:company_home/app:dictionary/app:scripts/cm:sign-document.js")));
+					project.getDeliverableList()
+							.add(ProjectHelper.createDeliverable(signDeliverableName, docName, DeliverableScriptOrder.Post, newTask,
+									BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(),
+											RepoConsts.SCRIPTS_FULL_PATH + RepoConsts.PATH_SEPARATOR + SIGN_SCRIPT)));
 				} else {
-					project.getDeliverableList().stream().filter(del -> del.getName().equals(signDeliverableName)).forEach(d -> d.setState(DeliverableState.Planned));
+					project.getDeliverableList().stream().filter(del -> del.getName().equals(signDeliverableName))
+							.forEach(d -> d.setState(DeliverableState.Planned));
 				}
 			}
 			previousTask = newTask.getNodeRef();
 		}
 		return previousTask;
 	}
-	
-	private List<NodeRef> copyReports(List<NodeRef> originalDocuments) {
-		List<NodeRef> documents = new ArrayList<>();
-		for (NodeRef originalDocument : originalDocuments) {
-			if (ReportModel.TYPE_REPORT.equals(nodeService.getType(originalDocument))) {
-				NodeRef entity = entityService.getEntityNodeRef(originalDocument, ReportModel.TYPE_REPORT);
-				String signedReportsName = TranslateHelper.getTranslatedPath("SignedReports");
-				NodeRef signedReportsFolder = nodeService.getChildByName(entity, ContentModel.ASSOC_CONTAINS, signedReportsName);
-				if (signedReportsFolder == null) {
-					Map<QName, Serializable> properties = new HashMap<>();
-					properties.put(ContentModel.PROP_NAME, signedReportsName);
-					
-					signedReportsFolder = nodeService.createNode(entity, ContentModel.ASSOC_CONTAINS,
-							ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_FOLDER, properties).getChildRef();
-				}
-				documents.add(copyReport(signedReportsFolder, originalDocument));
-			} else {
-				documents.add(originalDocument);
-			}
-		}
-		return documents;
-	}
-	
-	private NodeRef copyReport(NodeRef parentFolder, NodeRef reportNodeRef) {
-		String reportName = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
-		int lastDotIndex = reportName.lastIndexOf(".");
-		if (lastDotIndex != -1) {
-			String nameWithoutExtension = reportName.substring(0, lastDotIndex);
-			String extension = reportName.substring(lastDotIndex);
-			String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date()).substring(0, 10);
-			reportName = nameWithoutExtension + " - " + date + extension;
-		}
-		reportName = repoService.getAvailableName(parentFolder, reportName, false, true);
-		Map<QName, Serializable> props = new HashMap<>();
-		props.put(ContentModel.PROP_NAME, reportName);
-		NodeRef reportCopy = nodeService
-				.createNode(parentFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_CONTENT, props)
-				.getChildRef();
-		ContentReader reader = contentService.getReader(reportNodeRef, ContentModel.PROP_CONTENT);
-		ContentWriter writer = contentService.getWriter(reportCopy, ContentModel.PROP_CONTENT, true);
-		writer.setEncoding(reader.getEncoding());
-		writer.setMimetype(reader.getMimetype());
-		writer.putContent(reader);
-		return reportCopy;
-	}
 
-	private List<NodeRef> findDocumentsToSign(NodeRef folder, boolean signed) {
-		List<NodeRef> docs = new ArrayList<>();
-		List<NodeRef> children = associationService.getChildAssocs(folder, ContentModel.ASSOC_CONTAINS);
-		for (NodeRef child : children) {
-			QName type = nodeService.getType(child);
-			if (ContentModel.TYPE_CONTENT.equals(type)) {
-				if (nodeService.hasAspect(child, SignatureModel.ASPECT_SIGNATURE)) {
-					String status = (String) nodeService.getProperty(child, SignatureModel.PROP_STATUS);
-					if (signed && SignatureStatus.Signed.toString().equals(status) || !signed && !SignatureStatus.Signed.toString().equals(status)) {
-						docs.add(child);
-					}
-				}
-			} else if (ContentModel.TYPE_FOLDER.equals(type)) {
-				docs.addAll(findDocumentsToSign(child, signed));
-			}
-		}
-		return docs;
-	}
-	
 }

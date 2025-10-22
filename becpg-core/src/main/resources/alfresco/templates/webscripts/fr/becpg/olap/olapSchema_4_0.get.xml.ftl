@@ -854,7 +854,7 @@
 					<SQL dialect="generic">
 						select
 							a.entityNodeRef as scoreNodeRef,
-							a.doc->>"$.pjt_slCriterion" as slCriterion,
+							a.doc->>"$.pjt_slScoreCriterion" as slScoreCriterion,
 							a.doc->>"$.pjt_slWeight" as slWeight,
 							a.doc->>"$.pjt_slScore" as slScore,
 							COALESCE(p.nodeRef, pjt.nodeRef, c.nodeRef, s.nodeRef) as entityNodeRef,
@@ -884,7 +884,7 @@
 		
 		<Dimension  name="designation" caption="${msg("jsolap.criterion.title")}" >
 			<Hierarchy name="criterionByName" caption="${msg("jsolap.criterionByName.title")}" hasAll="true" allMemberCaption="${msg("jsolap.criterion.caption")}">
-				<Level name="slCriterion" caption="${msg("jsolap.criterion.title")}" column="slCriterion"  type="String"    />
+				<Level name="slScoreCriterion" caption="${msg("jsolap.criterion.title")}" column="slScoreCriterion"  type="String"    />
 			</Hierarchy>
 		</Dimension>		
 

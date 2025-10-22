@@ -3,7 +3,10 @@ package fr.becpg.repo.entity.policy;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.alfresco.model.ContentModel;
@@ -29,6 +32,7 @@ import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.Pair;
@@ -75,7 +79,7 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 	private TenantService tenantService;
 	
 
-	private static final String REMOTE_FILE_NAME = "entity_deleted";
+	private static final String ENTITY_DELETED = "entity_deleted";
 
 	/**
 	 * <p>Setter for the field <code>tenantService</code>.</p>
@@ -198,17 +202,13 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 					if (entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), BeCPGModel.TYPE_ENTITY_V2)
 							|| entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 
-						NodeRef rootArchiveRef = nodeService.getStoreArchiveNode(entityNodeRef.getStoreRef());
-
-
-						NodeRef entityDeletedFileNodeRef = nodeService.getChildByName(rootArchiveRef, ContentModel.ASSOC_CONTAINS,
-								REMOTE_FILE_NAME + "_" + entityNodeRef.getId());
+						NodeRef entityDeletedFileNodeRef = findEntityDeletedContentNodeRef(entityNodeRef);
 
 						
 						if (entityDeletedFileNodeRef != null) {
 
 							if (logger.isDebugEnabled()) {
-								logger.debug("Retrieving " + REMOTE_FILE_NAME + "_" + entityNodeRef.getId() + " from archiveStore: "+ entityDeletedFileNodeRef);
+								logger.debug("Retrieving " + ENTITY_DELETED + "_" + entityNodeRef.getId() + " from archiveStore: "+ entityDeletedFileNodeRef);
 							}
 
 							ContentReader reader = contentService.getReader(entityDeletedFileNodeRef, ContentModel.PROP_CONTENT);
@@ -221,12 +221,12 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 									logger.error(e, e);
 								}
 							} else {
-								logger.error("Cannot read content of " + REMOTE_FILE_NAME + "_" + entityNodeRef.getId());
+								logger.error("Cannot read content of " + ENTITY_DELETED + "_" + entityNodeRef.getId());
 							}
 
 							nodeService.deleteNode(entityDeletedFileNodeRef);
 						} else if(!entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)){
-							logger.error("Cannot find " + REMOTE_FILE_NAME + "_" + entityNodeRef.getId() + " from archiveStore ");
+							logger.error("Cannot find " + ENTITY_DELETED + "_" + entityNodeRef.getId() + " from archiveStore ");
 						}
 					}
 
@@ -261,19 +261,25 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 			
 
 			if (logger.isDebugEnabled()) {
-				logger.debug("Creating " + REMOTE_FILE_NAME + " for " + entityNodeRef);
+				logger.debug("Creating " + ENTITY_DELETED + " for " + entityNodeRef);
 			}
 
 			NodeRef rootArchiveRef = nodeService.getStoreArchiveNode(entityNodeRef.getStoreRef());
 
+			String entityDeletedId = entityDeletedContentId(entityNodeRef);
+			String entityDeletedName = entityDeletedContentName(entityNodeRef);
+			
+			Map<QName, Serializable> props = new HashMap<>();
+			props.put(ContentModel.PROP_NODE_UUID, entityDeletedId);
+			
 			NodeRef entityDeletedFileNodeRef = nodeService
 					.createNode(rootArchiveRef, ContentModel.ASSOC_CONTAINS,
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
-									QName.createValidLocalName(REMOTE_FILE_NAME + "_" + entityNodeRef.getId())),
-							ContentModel.TYPE_CONTENT)
+									QName.createValidLocalName(entityDeletedName)),
+							ContentModel.TYPE_CONTENT, props)
 					.getChildRef();
 
-			nodeService.setProperty(entityDeletedFileNodeRef, ContentModel.PROP_NAME, REMOTE_FILE_NAME + "_" + entityNodeRef.getId());
+			nodeService.setProperty(entityDeletedFileNodeRef, ContentModel.PROP_NAME, entityDeletedName);
 			nodeService.setProperty(entityDeletedFileNodeRef, ContentModel.PROP_ARCHIVED_DATE, new Date());
 
 			ContentWriter writer = contentService.getWriter(entityDeletedFileNodeRef, ContentModel.PROP_CONTENT, true);
@@ -314,22 +320,7 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 	/** {@inheritDoc} */
 	@Override
 	public void beforePurgeNode(NodeRef entityNodeRef) {
-		NodeRef rootArchiveRef = nodeService.getRootNode(entityNodeRef.getStoreRef());
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("Retrieving " + REMOTE_FILE_NAME + "_" + entityNodeRef.getId() + " from archiveStore ");
-		}
-
-		NodeRef entityDeletedFileNodeRef = nodeService.getChildByName(rootArchiveRef, ContentModel.ASSOC_CONTAINS,
-				REMOTE_FILE_NAME + "_" + entityNodeRef.getId());
-
-		if (entityDeletedFileNodeRef != null) {
-			logger.debug("Deleting: " + REMOTE_FILE_NAME + "_" + entityNodeRef.getId() + " from archiveStore ");
-			nodeService.deleteNode(entityDeletedFileNodeRef);
-		} else {
-			logger.error("Cannot find " + REMOTE_FILE_NAME + "_" + entityNodeRef.getId() + " from archiveStore ");
-		}
-
+		deleteEntityDeletedContent(entityNodeRef);
 	}
 
 	/** {@inheritDoc} */
@@ -339,6 +330,39 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 			String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 			throw new IllegalStateException(I18NUtil.getMessage("message.element.undeletable", name));
 		}
+	}
+	
+	private void deleteEntityDeletedContent(NodeRef entityNodeRef) {
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("Retrieving " + entityNodeRef.getId() + " from archiveStore ");
+		}
+		
+		NodeRef entityDeletedContentNodeRef = findEntityDeletedContentNodeRef(entityNodeRef);
+		
+		if (entityDeletedContentNodeRef != null) {
+			logger.debug("Deleting entity_deleted: " + entityNodeRef.getId() + " from archiveStore ");
+			nodeService.deleteNode(entityDeletedContentNodeRef);
+		} else {
+			logger.debug("Cannot find entity_deleted: " + entityNodeRef.getId() + " from archiveStore ");
+		}
+	}
+
+	private NodeRef findEntityDeletedContentNodeRef(NodeRef entityNodeRef) {
+		NodeRef entityDeletedNodeRef = new NodeRef(StoreRef.STORE_REF_ARCHIVE_SPACESSTORE, entityDeletedContentId(entityNodeRef));
+		if (nodeService.exists(entityDeletedNodeRef)) {
+			return entityDeletedNodeRef;
+		}
+		NodeRef rootArchiveRef = nodeService.getRootNode(entityNodeRef.getStoreRef());
+		return nodeService.getChildByName(rootArchiveRef, ContentModel.ASSOC_CONTAINS, entityDeletedContentName(entityNodeRef));
+	}
+
+	private String entityDeletedContentId(NodeRef entityNodeRef) {
+		return "X_" + entityNodeRef.getId().substring(2);
+	}
+	
+	private String entityDeletedContentName(NodeRef entityNodeRef) {
+		return ENTITY_DELETED + "_" + entityNodeRef.getId();
 	}
 
 }

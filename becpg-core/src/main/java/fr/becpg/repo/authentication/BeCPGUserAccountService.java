@@ -96,7 +96,7 @@ public class BeCPGUserAccountService {
 
 			if (personService.personExists(userAccount.getUserName())) {
 				if (createOnly) {
-					throw new IllegalStateException("User already exists: " + userAccount.getUserName());
+					throw new UserAlreadyExistsException("User already exists: " + userAccount.getUserName());
 				}
 				personNodeRef = updateUser(userAccount, propMap);
 			} else {
@@ -134,7 +134,7 @@ public class BeCPGUserAccountService {
 	public void synchronizeWithIDS(String username) {
 		if (Boolean.TRUE.equals(identityServiceAccountProvider.isEnabled())) {
 			if (!personService.personExists(username)) {
-				throw new IllegalStateException("user does not exist: " + username);
+				throw new UserAlreadyExistsException("user does not exist: " + username);
 			}
 			NodeRef personNodeRef = personService.getPerson(username);
 			BeCPGUserAccount userAccount = new BeCPGUserAccount();
@@ -173,7 +173,7 @@ public class BeCPGUserAccountService {
 	 */
 	public void generatePassword(String username, boolean notify) {
 		if (!personService.personExists(username)) {
-			throw new IllegalStateException("user does not exist: " + username);
+			throw new UserAlreadyExistsException("user does not exist: " + username);
 		}
 		BasicPasswordGenerator pwdGen = new BasicPasswordGenerator();
 		pwdGen.setPasswordLength(10);

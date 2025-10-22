@@ -275,34 +275,67 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 	/** {@inheritDoc} */
 	@Override
 	public boolean isWorkflowActive(TaskListDataItem task) {
-
-		if ((task != null) && (task.getWorkflowInstance() != null) && !task.getWorkflowInstance().isEmpty()) {
-			String workflowId = task.getWorkflowInstance();
-			WorkflowInstance workflowInstance = workflowService.getWorkflowById(workflowId);
-			if (workflowInstance != null) {
-				if (workflowInstance.isActive()) {
-					return true;
-				} else {
-					task.setWorkflowInstance("");
-					task.setWorkflowTaskInstance("");
-				}
-			} else {
-				logger.warn(
-						"Workflow instance unknown. WorkflowId: " + workflowId + " task " + task.getNodeRef() + " Task name " + task.getTaskName());
-				task.setWorkflowInstance("");
-				task.setWorkflowTaskInstance("");
-			}
+		if (task == null) {
+			return false;
 		}
 
-		return false;
+		String workflowId = task.getWorkflowInstance();
 
+		if ((workflowId == null) || workflowId.isBlank()) {
+			return false;
+		}
+
+		try {
+			WorkflowInstance workflowInstance = workflowService.getWorkflowById(workflowId);
+
+			if (workflowInstance == null) {
+				if (logger.isWarnEnabled()) {
+					logger.warn(String.format("Workflow instance not found - WorkflowId: %s, Task: %s (%s)", workflowId, task.getNodeRef(),
+							task.getTaskName()));
+				}
+				clearWorkflowReferences(task);
+				return false;
+			}
+
+			if (workflowInstance.isActive()) {
+				return true;
+			}
+
+			clearWorkflowReferences(task);
+			return false;
+
+		} catch (Exception e) {
+			if (logger.isErrorEnabled()) {
+				logger.error(String.format("Error retrieving workflow instance: %s for task %s (%s)", workflowId, task.getNodeRef(),
+						task.getTaskName()), e);
+			}
+			handleCorruptedWorkflow(workflowId);
+			clearWorkflowReferences(task);
+			return false;
+		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * Check workflow instance and properties
-	 */
+	private void clearWorkflowReferences(TaskListDataItem task) {
+		task.setWorkflowInstance("");
+		task.setWorkflowTaskInstance("");
+	}
+
+	private void handleCorruptedWorkflow(String workflowId) {
+		if (logger.isInfoEnabled()) {
+			logger.info("Attempting to delete corrupted workflow instance: " + workflowId);
+		}
+		try {
+			workflowService.deleteWorkflow(workflowId);
+			if (logger.isInfoEnabled()) {
+				logger.info("Successfully deleted corrupted workflow instance: " + workflowId);
+			}
+		} catch (Exception deleteException) {
+			if (logger.isErrorEnabled()) {
+				logger.error("Failed to delete corrupted workflow instance: " + workflowId, deleteException);
+			}
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void checkWorkflowInstance(ProjectData projectData, TaskListDataItem taskListDataItem, List<DeliverableListDataItem> nextDeliverables) {

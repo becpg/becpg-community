@@ -119,7 +119,13 @@
 		<property name="mailFrom" value="${mail.from.default}" />
 	</bean>
 
-
+	<bean id="trashcanCleaner" class="fr.becpg.repo.admin.BeCPGTrashcanCleaner">
+        <constructor-arg ref="nodeService" />
+        <constructor-arg ref="transactionService" />
+        <constructor-arg value="${trashcan-cleaner.deleteBatchCount}" />
+        <constructor-arg value="${trashcan-cleaner.keepPeriod}" />
+        <constructor-arg ref="nodeArchiveService" />
+    </bean>
 	
 	<!-- Public API -->
 

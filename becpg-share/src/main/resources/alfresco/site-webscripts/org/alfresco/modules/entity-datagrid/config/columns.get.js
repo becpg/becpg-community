@@ -53,7 +53,7 @@ function getArgument(argName, defValue) {
  *            form
  * @return Object representing the configuration or null
  */
-function getFormConfig(itemId, formId, mode, prefixedSiteId, prefixedEntityType) {
+function getFormConfig(itemId, formId, mode, prefixedSiteId, prefixedEntityType, list) {
 	var formConfig = null;
 	
 	// query for configuration for item
@@ -65,23 +65,35 @@ function getFormConfig(itemId, formId, mode, prefixedSiteId, prefixedEntityType)
 
 		if (formsConfig !== null) {
 			if (formId !== null && formId.length > 0) {
+				
+				var prefixedList = list ? "-" + list : null;
+
 				// look up the specific form
 				if (prefixedEntityType!=null && prefixedEntityType.length > 0 && prefixedSiteId!=null && prefixedSiteId.length > 0 
+				    && prefixedList &&  formsConfig.getForm(formId + prefixedEntityType + prefixedSiteId + prefixedList) !== null) {
+					formId = formId + prefixedEntityType + prefixedSiteId + prefixedList;
+			    } else if (prefixedSiteId!=null && prefixedSiteId.length > 0 && prefixedList && formsConfig.getForm(formId + prefixedSiteId + prefixedList) !== null) {
+					formId = formId + prefixedSiteId + prefixedList;
+				} else if(prefixedEntityType!=null && prefixedEntityType.length > 0 && prefixedList && formsConfig.getForm(formId + prefixedEntityType + prefixedList) !== null) {
+					formId = formId + prefixedEntityType + prefixedList;
+				} else if (prefixedList &&  formsConfig.getForm(formId + prefixedList) !== null) {
+					formId = formId + prefixedList;
+			    } else if (prefixedEntityType!=null && prefixedEntityType.length > 0 && prefixedSiteId!=null && prefixedSiteId.length > 0 
 				    &&  formsConfig.getForm(formId + prefixedEntityType + prefixedSiteId) !== null) {
 					formId = formId + prefixedEntityType + prefixedSiteId;
 			    } else if (prefixedSiteId!=null && prefixedSiteId.length > 0 && formsConfig.getForm(formId + prefixedSiteId) !== null) {
-					formId += prefixedSiteId;
+					formId = formId + prefixedSiteId;
 				} else if(prefixedEntityType!=null && prefixedEntityType.length > 0 && formsConfig.getForm(formId + prefixedEntityType ) !== null) {
-					formId += prefixedEntityType;
+					formId = formId + prefixedEntityType;
 				}
 				
 				formConfig = formsConfig.getForm(formId);
 			}
 
 			if(formId == "export" && formConfig === null) { 
-				formConfig = getFormConfig(itemId, "datagrid", mode, prefixedSiteId, prefixedEntityType);
+				formConfig = getFormConfig(itemId, "datagrid", mode, prefixedSiteId, prefixedEntityType, list);
 			} else if(formId == "exportWUsed" && formConfig === null) { 
-				formConfig = getFormConfig(itemId, "datagridWUsed", mode, prefixedSiteId, prefixedEntityType);
+				formConfig = getFormConfig(itemId, "datagridWUsed", mode, prefixedSiteId, prefixedEntityType, list);
 			}
 
 			if (mode == "bulk-edit" && formConfig === null) {
@@ -232,7 +244,7 @@ function main() {
 	if(entityType && entityType.includes(":")){
 		prefixedEntityType = "-"+entityType.split(":")[1];
 	}
-
+	
 	// pass form ui model to FTL
 	model.columns = getColumns(itemType, list, formId, mode, prefixedSiteId, prefixedEntityType, entityNodeRef);
 
@@ -262,8 +274,8 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 			}
 		}
 
-		var formConfig = getFormConfig(itemType, formId, mode, prefixedSiteId, prefixedEntityType);
-
+		var formConfig = getFormConfig(itemType, formId, mode, prefixedSiteId, prefixedEntityType, list);
+			
 		if (formConfig != null) {
 			
 		

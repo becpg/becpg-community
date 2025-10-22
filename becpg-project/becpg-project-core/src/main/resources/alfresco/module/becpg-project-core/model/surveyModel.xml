@@ -212,10 +212,18 @@
 				<property name="survey:fsLinkedTypes">
 					<type>d:text</type>
 					<multiple>true</multiple>
+					<index enabled="true">
+                        <tokenised>false</tokenised>
+                        <facetable>false</facetable>
+                    </index>
 				</property>
 				<property name="survey:fsSurveyListName">
 					<type>d:text</type>
 					<default></default>
+					<index enabled="true">
+					    <tokenised>false</tokenised>
+					    <facetable>false</facetable>
+					</index>
 					<constraints>
 						<constraint ref="survey:surveyListNames" />
 					</constraints>

@@ -146,11 +146,11 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 		@SuppressWarnings("unchecked")
 		Map<String, String> extras = (HashMap<String, String>) props.get(AutoCompleteService.EXTRA_PARAM);
 		if (extras != null) {
-			if (extras.get("itemId") != null) {
-				itemId = new NodeRef(extras.get("itemId"));
+			if (extras.get(AutoCompleteService.EXTRA_PARAM_ITEMID) != null) {
+				itemId = new NodeRef(extras.get(AutoCompleteService.EXTRA_PARAM_ITEMID));
 			}
-			if (extras.get("dataListsName") != null) {
-				listName = extras.get("dataListsName");
+			if (extras.get(AutoCompleteService.EXTRA_PARAM_LIST) != null) {
+				listName = extras.get(AutoCompleteService.EXTRA_PARAM_LIST);
 			}
 			
 			if (extras.get("showFullPath") != null) {
@@ -283,7 +283,7 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 
 			}
 
-			if ((queryFilter != null) && (queryFilter.length() > 0)) {
+			if ((queryFilter != null) && (!queryFilter.isBlank())) {
 				String[] splitted = queryFilter.split("\\|");
 				beCPGQueryBuilder.andPropEquals(QName.createQName(splitted[0], namespaceService), splitted[1]);
 			}

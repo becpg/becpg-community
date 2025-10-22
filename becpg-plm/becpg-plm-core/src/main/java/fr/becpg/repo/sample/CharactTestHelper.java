@@ -99,10 +99,25 @@ public class CharactTestHelper {
 	 * @return the NodeRef of the Ingredient node
 	 */
 	public static NodeRef getOrCreateIng(NodeService nodeService, String ingName) {
+		return getOrCreateIng(nodeService, ingName, null);
+	}
+	
+	public static NodeRef getOrCreateIng(NodeService nodeService, String ingName, NodeRef ingType) {
 		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(BeCPGModel.PROP_CHARACT_NAME, ingName);
-
+		if (ingType != null) {
+			properties.put(PLMModel.PROP_ING_TYPE_V2, ingType);
+		}
 		return getOrCreateNode(nodeService, "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Ings", ingName, PLMModel.TYPE_ING,
+				properties);
+	}
+	
+	
+	public static NodeRef getOrCreateIngType(NodeService nodeService, String ingTypeValue) {
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(BeCPGModel.PROP_LV_VALUE, ingTypeValue);
+		
+		return getOrCreateNode(nodeService, "/app:company_home/cm:System/cm:Lists/bcpg:entityLists/cm:ingTypeItem", ingTypeValue, PLMModel.TYPE_ING_TYPE_ITEM,
 				properties);
 	}
 
@@ -176,7 +191,10 @@ public class CharactTestHelper {
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	public static NodeRef getOrCreateGeo(NodeService nodeService, String code, String name) {
-		Map<QName, Serializable> properties = new HashMap<>();
+		return getOrCreateGeo(nodeService, code, name, new HashMap<>());
+	}
+	
+	public static NodeRef getOrCreateGeo(NodeService nodeService, String code, String name, Map<QName, Serializable> properties) {
 		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
 		properties.put(PLMModel.PROP_GEO_ORIGIN_ISOCODE,code);
 		return getOrCreateNode(nodeService, "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:GeoOrigins", name, PLMModel.TYPE_GEO_ORIGIN,

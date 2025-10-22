@@ -14,8 +14,8 @@
 		    <#if args.entityNodeRef??>
 		      entityNodeRef : "${args.entityNodeRef}",
 		    </#if>
-		    <#if args.dataListsName??>
-		      currentList : "${args.dataListsName}",
+		    <#if args.list??>
+		      currentList : "${args.list}",
 		    </#if>
 		    <#if field.control.params.syntax??>
 		      syntax: "${field.control.params.syntax}",

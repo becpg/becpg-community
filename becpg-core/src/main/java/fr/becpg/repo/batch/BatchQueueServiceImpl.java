@@ -13,10 +13,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.Nullable;
 
@@ -79,11 +78,13 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	
 	private BatchMonitor lastRunningBatch;
 	
-	private AtomicReference<BatchCommand<?>> runningCommand = new AtomicReference<>();
+	private List<BatchCommand<?>> runningCommands = new CopyOnWriteArrayList<>();
 
 	private Set<String> cancelledBatches = ConcurrentHashMap.newKeySet();
 	
 	private Deque<BatchCommand<?>> pausedCommands = new ConcurrentLinkedDeque<>();
+	
+	private ReentrantLock batchQueueLock = new ReentrantLock();
 	
 	private static final String CANCELLED = "cancelled";
 	private static final String PERCENT_COMPLETED = "percentCompleted";
@@ -137,23 +138,39 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		
 		Runnable command = new BatchCommand<>(batchInfo, batchSteps, closingHook);
 		ThreadPoolExecutor threadPoolExecutor = threadExecutorMap.get(Integer.toString(batchInfo.getPriority()));
-		if (!threadPoolExecutor.getQueue().contains(command) && !command.equals(runningCommand.get())) {
+		if (isBatchInQueue(batchInfo)) {
+			String label = I18NUtil.getMessage(batchInfo.getBatchDescId(), batchInfo.getEntityDescription());
+			logger.warn("Same batch already in queue " + (label != null ? label : batchInfo.getBatchDescId()) + " (" + batchInfo.getBatchId() + ")");
+		} else {
 			if(logger.isInfoEnabled()) {
 				logger.info("Batch " + batchInfo.getBatchId() + " added to execution queue");
 			}
 			threadPoolExecutor.execute(command);
-		} else {
-			String label = I18NUtil.getMessage(batchInfo.getBatchDescId(), batchInfo.getEntityDescription());
-			logger.warn("Same batch already in queue " + (label != null ? label : batchInfo.getBatchDescId()) + " (" + batchInfo.getBatchId() + ")");
+			return true;
 		}
 		
+		return false;
+	}
+	
+	@Override
+	public boolean isBatchInQueue(BatchInfo batchInfo) {
+		String batchId = batchInfo.getBatchId();
+		if (runningCommands.stream().anyMatch(c -> c.getBatchId().equals(batchId))) {
+			logger.debug("Batch is running: " + batchId);
+			return true;
+		}
+		ThreadPoolExecutor threadPoolExecutor = threadExecutorMap.get(Integer.toString(batchInfo.getPriority()));
+		if (threadPoolExecutor.getQueue().stream().map(c -> (BatchCommand<?>) c).anyMatch(c -> c.getBatchId().equals(batchId))) {
+			logger.debug("Batch is in queue: " + batchId);
+			return true;
+		}
 		return false;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public String getRunningBatchInfo() {
-    BatchCommand<?> current = runningCommand.get();
+    BatchCommand<?> current = getRunningCommand();
     if (current != null) {
       BatchInfo info = current.getBatchInfo();
       // If the batch has already completed but cleanup hasn't cleared runningCommand yet,
@@ -214,6 +231,13 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	@Override
 	public BatchMonitor getLastRunningBatch() {
 		return lastRunningBatch;
+	}
+	
+	private BatchCommand<?> getRunningCommand() {
+		if (runningCommands.isEmpty()) {
+			return null;
+		}
+		return runningCommands.get(runningCommands.size() - 1);
 	}
 	
 	/** {@inheritDoc} */
@@ -286,8 +310,6 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	
 	public class BatchCommand<T> implements Runnable {
 
-		private CountDownLatch pauseLatch;
-		
 		private String batchId;
 		private BatchInfo batchInfo;
 		private List<BatchStep<T>> batchSteps;
@@ -313,8 +335,9 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		@Override
 		public void run() {
 			
-			synchronized(runningCommand) {
-				BatchCommand<?> currentRunningCommand = runningCommand.get();
+			batchQueueLock.lock();
+			try {
+				BatchCommand<?> currentRunningCommand = getRunningCommand();
 				if (currentRunningCommand != null) {
 					if (currentRunningCommand.getBatchInfo().getPriority() < this.getBatchInfo().getPriority()) {
 						pauseCommand(this);
@@ -326,11 +349,13 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 						if (logger.isInfoEnabled()) {
 							logger.info("Batch '" + currentRunningCommand.getBatchId() + "' is paused because '" + this.getBatchId() + "' started");
 						}
-						runningCommand.set(this);
+						runningCommands.add(this);
 					}
 				} else {
-					runningCommand.set(this);
+					runningCommands.add(this);
 				}
+			} finally {
+				batchQueueLock.unlock();
 			}
 			
 			try (AuditScope scope = beCPGAuditService.startAudit(AuditType.BATCH)) {
@@ -384,19 +409,19 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 					totalItems += batchProcessor.getTotalResultsLong();
 					totalErrors += batchProcessor.getTotalErrorsLong();
 
-					if (batchProcessor.getTotalErrorsLong() > 0 && batchStep.getBatchStepListener() != null) {
-
+					if (batchProcessor.getTotalErrorsLong() > 0) {
 						hasError = true;
-
-						AuthenticationUtil
-								.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-									batchStep.getBatchStepListener().onError(batchProcessor.getLastErrorEntryId(),
-											batchProcessor.getLastError());
-									return null;
-
+						if (batchStep.getBatchStepListener() != null) {
+							AuthenticationUtil
+							.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+								batchStep.getBatchStepListener().onError(batchProcessor.getLastErrorEntryId(),
+										batchProcessor.getLastError());
+								return null;
+								
 							}, false, true), batchInfo.getBatchUser());
-
+						}
 					}
+					
 					if (batchStep.getBatchStepListener() != null) {
 
 						pushAndSetBatchAuthentication(batchStep);
@@ -438,6 +463,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 					int secondsBetween = (int) ((endTime.getTime() - startTime.getTime()) / 1000);
 
+					logger.info("batch '" + batchInfo.getBatchId() + "' took " + secondsBetween + " seconds to complete");
+					
 					AuthenticationUtil
 							.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -450,35 +477,32 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				}
 
 			} finally {
-				synchronized(runningCommand) {
+				batchQueueLock.lock();
+				try {
 					if (cancelledBatches.contains(batchId)) {
 						cancelledBatches.remove(batchId);
 					}
 					if (pausedCommands.contains(this)) {
 						pausedCommands.remove(this);
 					}
-					if (pauseLatch != null) {
-						pauseLatch.countDown();
-					}
-					if (runningCommand.get() == this) {
-						runningCommand.set(null);
+					if (runningCommands.contains(this)) {
+						runningCommands.remove(this);
 					}
 					if (!pausedCommands.isEmpty()) {
 						BatchCommand<?> nextCommand = pausedCommands.pop();
-						if (nextCommand != null && nextCommand.pauseLatch != null) {
-							nextCommand.pauseLatch.countDown();
-							runningCommand.set(nextCommand);
+						if (nextCommand != null) {
 							if (logger.isInfoEnabled()) {
 								logger.info("Resume batch: " + nextCommand.getBatchId());
 							}
 						}
 					}
+				} finally {
+					batchQueueLock.unlock();
 				}
 			}
 		}
 
 		private void pauseCommand(BatchCommand<?> command) {
-			command.pauseLatch = new CountDownLatch(1);
 			pausedCommands.push(command);
 		}
 		
@@ -563,18 +587,17 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		}
 		
 		private void checkPausedCommand() {
-			CountDownLatch currentPauseLatch = this.pauseLatch;
-			if (currentPauseLatch != null) {
-				try {
-	                while (!currentPauseLatch.await(500, TimeUnit.MILLISECONDS)) {
-	                    if (cancelledBatches.contains(this.getBatchId())) {
-	                        break;
-	                    }
-	                }
-	            } catch (InterruptedException e) {
-	                Thread.currentThread().interrupt();
-	            }
-			}
+			try {
+                while (pausedCommands.contains(this)) {
+                    if (cancelledBatches.contains(this.getBatchId())) {
+                    	pausedCommands.remove(this);
+                        break;
+                    }
+                    Thread.sleep(1000);
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
 		}
 		
 		/*

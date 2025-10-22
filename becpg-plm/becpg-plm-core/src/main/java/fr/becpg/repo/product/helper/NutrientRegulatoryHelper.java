@@ -11,7 +11,7 @@ import fr.becpg.repo.system.SystemConfigurationService;
 /**
  * <p>NutrientRegulatoryHelper class.</p>
  *
- * @author matthieu
+ * @author valentin
  * @version $Id: $Id
  */
 @Component

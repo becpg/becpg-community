@@ -400,21 +400,15 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 		final NodeRef projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
-			
+
 			// create project Tpl
 			ProjectData projectData = new ProjectData(null, "Pjt", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, null, null,
 					null, PlanningMode.Planning, null, null, null, 0, null);
 
 			// create datalists
 			List<TaskListDataItem> taskList = new LinkedList<>();
-			taskList.add(TaskListDataItem.build()
-    .withTaskName("task1")
-    .withIsMilestone(false)
-    .withDuration(2)
-    .withPrevTasks(null)
-    .withResources(assigneesOne)
-    .withTaskLegend(taskLegends.get(0))
-    .withWorkflowName("activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build().withTaskName("task1").withIsMilestone(false).withDuration(2).withPrevTasks(null)
+					.withResources(assigneesOne).withTaskLegend(taskLegends.get(0)).withWorkflowName("activiti$projectAdhoc"));
 			projectData.setTaskList(taskList);
 
 			projectData.setParentNodeRef(getTestFolderNodeRef());
@@ -452,7 +446,8 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			assertNotNull(projectData.getScoreList());
 			assertEquals(5, projectData.getScoreList().size());
 			for (int i1 = 0; i1 < 5; i1++) {
-				assertEquals("Criterion" + i1, nodeService.getProperty(projectData.getScoreList().get(i1).getScoreCriterion(),BeCPGModel.PROP_CHARACT_NAME));
+				assertEquals("Criterion" + i1,
+						nodeService.getProperty(projectData.getScoreList().get(i1).getScoreCriterion(), BeCPGModel.PROP_CHARACT_NAME));
 				assertEquals(i1 * 10, projectData.getScoreList().get(i1).getWeight().intValue());
 			}
 
@@ -494,7 +489,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 		final NodeRef projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
-			
+
 			EntityTestData entityTestData = new EntityTestData();
 			entityTestData.setParentNodeRef(getTestFolderNodeRef());
 			entityTestData.setName("Entity 1");
@@ -505,29 +500,15 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, new Date(),
 					null, null, PlanningMode.Planning, 2, ProjectState.InProgress, null, 0, productNodeRefs);
 
-			
-			
 			projectData.setParentNodeRef(getTestFolderNodeRef());
 
 			// create datalists
 			List<TaskListDataItem> taskList = new LinkedList<>();
 
-			taskList.add(TaskListDataItem.build()
-    .withTaskName("task1")
-    .withIsMilestone(false)
-    .withDuration(2)
-    .withPrevTasks(null)
-    .withResources(assigneesOne)
-    .withTaskLegend(taskLegends.get(0))
-    .withWorkflowName("activiti$projectAdhoc"));
-			taskList.add(TaskListDataItem.build()
-    .withTaskName("task2")
-    .withIsMilestone(false)
-    .withDuration(2)
-    .withPrevTasks(null)
-    .withResources(assigneesOne)
-    .withTaskLegend(taskLegends.get(0))
-    .withWorkflowName("activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build().withTaskName("task1").withIsMilestone(false).withDuration(2).withPrevTasks(null)
+					.withResources(assigneesOne).withTaskLegend(taskLegends.get(0)).withWorkflowName("activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build().withTaskName("task2").withIsMilestone(false).withDuration(2).withPrevTasks(null)
+					.withResources(assigneesOne).withTaskLegend(taskLegends.get(0)).withWorkflowName("activiti$projectAdhoc"));
 
 			projectData.setTaskList(taskList);
 			projectData = (ProjectData) alfrescoRepository.save(projectData);
@@ -835,7 +816,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 			assertEquals(projectData.getTaskList().get(1).getNodeRef(), prevTasks.get(0));
 
 			// delete task
-			logger.info("Delete task:"+projectData.getTaskList().get(1).getNodeRef());
+			logger.info("Delete task:" + projectData.getTaskList().get(1).getNodeRef());
 			nodeService.deleteNode(projectData.getTaskList().get(1).getNodeRef());
 
 			return null;
@@ -844,11 +825,11 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
-			
+
 			List<NodeRef> prevTasks = associationService.getTargetAssocs(projectData.getTaskList().get(1).getNodeRef(),
 					ProjectModel.ASSOC_TL_PREV_TASKS);
-			
-			logger.info("Get target assoc task:"+projectData.getTaskList().get(1).getNodeRef()+" "+prevTasks);
+
+			logger.info("Get target assoc task:" + projectData.getTaskList().get(1).getNodeRef() + " " + prevTasks);
 			assertEquals(1, prevTasks.size());
 			assertEquals(projectData.getTaskList().get(0).getNodeRef(), prevTasks.get(0));
 

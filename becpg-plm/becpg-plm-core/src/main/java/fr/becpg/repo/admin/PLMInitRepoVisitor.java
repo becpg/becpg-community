@@ -567,29 +567,16 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 						siteService.setMembership(siteInfo.getShortName(), PermissionService.GROUP_PREFIX + authority.toString(),
 								SiteModel.SITE_MANAGER);
 					}
+					
+					// Add write licence for archiving 
+					for (SystemGroup authority : new SystemGroup[] { SystemGroup.LicenseWriteConcurrent, SystemGroup.LicenseWriteNamed }) {
+						siteService.setMembership(siteInfo.getShortName(), PermissionService.GROUP_PREFIX + authority.toString(),
+								BeCPGModel.SITE_BRANCH_MANAGER);
+					}
 				}
 
 				ret.add(siteInfo);
 				
-			}
-			
-			if (ARCHIVED_SITE_ID.equals(siteId) && siteInfo != null) {
-				// Create Project folder
-				NodeRef documentLibraryNodeRef = siteService.getContainer(siteId, SiteService.DOCUMENT_LIBRARY);
-				ClassDefinition classDef = dictionaryService.getClass(ProjectModel.TYPE_PROJECT);
-				
-				NodeRef projectFolderNodeRef = repoService.getOrCreateFolderByPath(documentLibraryNodeRef, ProjectModel.TYPE_PROJECT.getLocalName(),
-						classDef.getTitle(dictionaryService));
-				
-				// Contributor on Project Folder
-				for (SystemGroup authority : new SystemGroup[] { SystemGroup.LicenseWriteConcurrent, SystemGroup.LicenseWriteNamed }) {
-					
-					String licenceAuthority = PermissionService.GROUP_PREFIX + authority.toString();
-					
-					if (!AuthorityHelper.groupHasPermission(projectFolderNodeRef, licenceAuthority, PermissionService.CONTRIBUTOR)) {
-						permissionService.setPermission(projectFolderNodeRef, licenceAuthority, PermissionService.CONTRIBUTOR, true);
-					}
-				}
 			}
 
 		}
