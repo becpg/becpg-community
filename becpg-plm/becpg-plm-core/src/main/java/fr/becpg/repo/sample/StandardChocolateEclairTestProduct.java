@@ -312,6 +312,42 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 	}
 
 	/**
+	 * <p>Getter for the field <code>ingMilkNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	public NodeRef getIngMilkNodeRef() {
+		return ingMilkNodeRef;
+	}
+
+	/**
+	 * <p>Getter for the field <code>ingEggNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	public NodeRef getIngEggNodeRef() {
+		return ingEggNodeRef;
+	}
+
+	/**
+	 * <p>Getter for the field <code>ingFlourNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	public NodeRef getIngFlourNodeRef() {
+		return ingFlourNodeRef;
+	}
+
+	/**
+	 * <p>Getter for the field <code>ingWaterNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	public NodeRef getIngWaterNodeRef() {
+		return ingWaterNodeRef;
+	}
+
+	/**
 	 * <p>getNodeService.</p>
 	 *
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeService} object
@@ -644,6 +680,12 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
 		RawMaterialData milk = RawMaterialData.build().withName(MILK_NAME).withQty(20d).withUnit(ProductUnit.kg);
 
+		if (isWithIngredients) {
+			milk.withIngList(List.of(IngListDataItem.build().withQtyPerc(100d).withIngredient(ingMilkNodeRef)));
+		
+
+		}
+		
 		if (isWithStocks) {
 			addStocks(milk, 1000d, new ArrayList<>());
 		}
@@ -777,6 +819,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		}
 
 		eggNodeRef = alfrescoRepository.create(destFolder, egg).getNodeRef();
+		nodeService.setProperty(eggNodeRef, PLMModel.PROP_EVAPORATED_RATE, 10d);
 
 		RawMaterialData chocolate = RawMaterialData.build().withName(CHOCOLATE_NAME).withQty(50d).withUnit(ProductUnit.kg);
 
@@ -869,19 +912,15 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
 		ingWaterNodeRef = CharactTestHelper.getOrCreateIng(nodeService, WATER_NAME);
 
-		nodeService.addAspect(ingWaterNodeRef, PLMModel.ASPECT_WATER, new HashMap<>());
-
 		ingMilkNodeRef = CharactTestHelper.getOrCreateIng(nodeService, MILK_NAME);
-
-		nodeService.setProperty(ingMilkNodeRef, PLMModel.PROP_EVAPORATED_RATE, 90d);
-
 		ingSugarNodeRef = CharactTestHelper.getOrCreateIng(nodeService, SUGAR_NAME);
 		ingFlourNodeRef = CharactTestHelper.getOrCreateIng(nodeService, FLOUR_NAME);
 		ingEggNodeRef = CharactTestHelper.getOrCreateIng(nodeService, EGG_NAME);
-
-		nodeService.setProperty(ingEggNodeRef, PLMModel.PROP_EVAPORATED_RATE, 10d);
-
 		ingChocolateNodeRef = CharactTestHelper.getOrCreateIng(nodeService, CHOCOLATE_NAME);
+
+		nodeService.addAspect(ingWaterNodeRef, PLMModel.ASPECT_WATER, new HashMap<>());
+		nodeService.setProperty(ingMilkNodeRef, PLMModel.PROP_EVAPORATED_RATE, 90d);
+		nodeService.setProperty(ingEggNodeRef, PLMModel.PROP_EVAPORATED_RATE, 10d);
 
 	}
 
@@ -977,7 +1016,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
 	private SurveyQuestion getOrCreateSurveyAnswer(SurveyQuestion parentQuestion, String label, Double score) {
 		final SurveyQuestion answer = (SurveyQuestion) alfrescoRepository.findOne(CharactTestHelper.getOrCreateSurveyQuestion(nodeService, label));
-		answer.setParent(parentQuestion);
+		answer.setParent(parentQuestion.getNodeRef());
 		answer.setLabel(label);
 		answer.setQuestionScore(score);
 

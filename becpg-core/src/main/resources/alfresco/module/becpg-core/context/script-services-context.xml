@@ -128,4 +128,41 @@
 		<property name="jsonConversionComponent" ref="jsonConversionComponent" />
 	</bean>
 	
+	<bean id="peopleScript" parent="baseJavaScriptExtension" class="fr.becpg.repo.security.jscript.BeCPGPeople">
+        <property name="extensionName">
+            <value>people</value>
+        </property>
+        <property name="storeUrl">
+            <value>${spaces.store}</value>
+        </property>
+        <property name="serviceRegistry">
+            <ref bean="ServiceRegistry"/>
+        </property>
+        <property name="authorityDAO">
+            <ref bean="authorityDAO"/>
+        </property>
+        <property name="authorityService">
+            <ref bean="AuthorityService"/>
+        </property>
+        <property name="personService">
+            <ref bean="PersonService"/>
+        </property>
+        <property name="authenticationService">
+            <ref bean="AuthenticationService"/>
+        </property>
+        <property name="contentUsageService">
+            <ref bean="ContentUsageService"/>
+        </property>
+        <property name="tenantService">
+            <ref bean="tenantService"/>
+        </property>
+        <property name="userNameGenerator">
+            <ref bean="userNameGenerator"/>
+        </property>
+        <property name="userRegistrySynchronizer" ref="userRegistrySynchronizer" />
+        <property name="honorHintUseCQ">
+            <value>${people.search.honor.hint.useCQ}</value>
+        </property>
+    </bean>
+	
 </beans>

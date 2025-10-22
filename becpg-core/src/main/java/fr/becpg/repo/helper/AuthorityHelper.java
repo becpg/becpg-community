@@ -24,12 +24,14 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import java.util.Objects;
 
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemGroup;
+import fr.becpg.repo.cache.BeCPGCacheService;
 
 /**
  * <p>AuthorityHelper class.</p>
@@ -41,6 +43,8 @@ import fr.becpg.model.SystemGroup;
 public class AuthorityHelper implements InitializingBean {
 	
 	private static final Log logger = LogFactory.getLog(AuthorityHelper.class);
+	
+	public static final String CACHE_KEY = AuthorityHelper.class.getName();
 	
 	@Autowired
 	private AuthorityService authorityService;
@@ -60,6 +64,9 @@ public class AuthorityHelper implements InitializingBean {
 	@Autowired
 	@Qualifier("AuthenticationService")
 	private MutableAuthenticationService authenticationService;
+	
+	@Autowired
+	private BeCPGCacheService beCPGCacheService;
 	
 	private static AuthorityHelper instance = null;
 	
@@ -161,8 +168,10 @@ public class AuthorityHelper implements InitializingBean {
 				
 				Locale personLocale = null;
 				
-				if (localeString != null) {
+				if (localeString != null && !localeString.isBlank()) {
 					personLocale = MLTextHelper.parseLocale(localeString);
+				} else {
+					personLocale = I18NUtil.getLocale();
 				}
 					
 				if (isFirst) {
@@ -217,12 +226,14 @@ public class AuthorityHelper implements InitializingBean {
 	 * @return a boolean
 	 */
 	public static boolean isExternalUser(String userName) {
-		for (String currAuth : instance.authorityService.getAuthoritiesForUser(userName)) {
-			if ((PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString()).equals(currAuth)) {
-				return true;
+		return instance.beCPGCacheService.getFromCache(AuthorityHelper.CACHE_KEY, userName, () -> {
+			for (String currAuth : instance.authorityService.getAuthoritiesForUser(userName)) {
+				if ((PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString()).equals(currAuth)) {
+					return true;
+				}
 			}
-		}
-		return false;
+			return false;
+		});
 	}
 	
 	/**

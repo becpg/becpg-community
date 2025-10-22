@@ -174,7 +174,7 @@
 		<sonar.language>java</sonar.language>
 		<becpg.artworks.version>25.2.0.1</becpg.artworks.version>
 		<becpg.i18n.version>1.0-136</becpg.i18n.version>
-		<becpg.supporttools.version>25.2.0.1-beCPG-amp</becpg.supporttools.version>
+		<becpg.supporttools.version>25.2.0.2-beCPG-amp</becpg.supporttools.version>
 		
 	</properties>
 	<dependencyManagement>

@@ -216,15 +216,18 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 				if (supplierNodeRef != null) {
 
 					List<NodeRef> accountNodeRefs = associationService.getTargetAssocs(project.getNodeRef(), PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
-					if ((accountNodeRefs != null) && ((task.getResources() == null) || task.getResources().isEmpty())) {
-						if (task.getResources() == null) {
-							task.setResources(new ArrayList<>());
+					
+					if (accountNodeRefs != null && !accountNodeRefs.isEmpty()) {
+						if ((task.getResources() == null) || task.getResources().isEmpty()) {
+							if (task.getResources() == null) {
+								task.setResources(new ArrayList<>());
+							}
+							task.getResources().addAll(accountNodeRefs);
 						}
-						task.getResources().addAll(accountNodeRefs);
-
 					} else {
-						logger.info("No account provided for supplier");
+						logger.warn("No supplier account provided for project");
 					}
+					
 
 					List<NodeRef> ret = AuthenticationUtil.runAs(() -> {
 
@@ -323,13 +326,17 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	 */
 	public ScriptNode validateProjectEntity(final ScriptNode entityNode) {
 
-		if (entityNode != null) {
+		if (entityNode != null && entityNode.getNodeRef() != null) {
 
 			NodeRef entityNodeRef = entityNode.getNodeRef();
 
 			if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_AUTO_MERGE_ASPECT)
 					&& (nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_AUTO_MERGE_DATE) == null)) {
 				entityNodeRef = entityVersionService.mergeBranch(entityNodeRef, null);
+			}
+
+			if (entityNodeRef == null) {
+				entityNodeRef = entityNode.getNodeRef();
 			}
 
 			QName type = nodeService.getType(entityNodeRef);
@@ -347,7 +354,6 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 			}
 
 			return new ScriptNode(entityNodeRef, serviceRegistry, getScope());
-
 		}
 
 		return entityNode;

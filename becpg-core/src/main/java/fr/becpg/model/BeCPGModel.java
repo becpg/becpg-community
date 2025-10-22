@@ -21,6 +21,11 @@ public final class BeCPGModel {
 	public static final String BECPG_PREFIX = "bcpg";
 	/** Constant <code>MODEL</code> */
 	public static final QName MODEL = QName.createQName(BECPG_URI, "bcpgmodel");
+	
+	
+	// beCPG site role
+	public static final String SITE_BRANCH_MANAGER = "SiteBranchManager";
+	public static final String SITE_BRANCH_ONLY_MANAGER = "SiteBranchOnlyManager";
 
 	// entityListsAspect
 	/** Constant <code>ASPECT_ENTITYLISTS</code> */

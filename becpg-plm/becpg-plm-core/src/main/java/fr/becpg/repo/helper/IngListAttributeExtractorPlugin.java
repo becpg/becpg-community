@@ -28,9 +28,11 @@ public class IngListAttributeExtractorPlugin extends CharactAttributeExtractorPl
 	@Override
 	@Nonnull
 	public String extractPropName( QName type,  NodeRef nodeRef, String characNameFormat) {
-		// get properties value, then reset, get resetted value, then reupdate with last value
 		NodeRef ing = associationService.getTargetAssoc(nodeRef, PLMModel.ASSOC_INGLIST_ING);
-		return super.extractPropName(type, ing, characNameFormat);
+		if(ing!=null) {
+			return super.extractPropName(type, ing, characNameFormat);	
+		}
+		return super.extractPropName(type, nodeRef, characNameFormat);
 	}
 
 	/** {@inheritDoc} */
@@ -51,7 +53,10 @@ public class IngListAttributeExtractorPlugin extends CharactAttributeExtractorPl
 	@Nonnull
 	public String extractMetadata(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
 		NodeRef product = associationService.getTargetAssoc(nodeRef, PLMModel.ASSOC_INGLIST_ING);
-		return super.extractMetadata(nodeService.getType(product), product);
+		if(product != null) {
+			return super.extractMetadata(nodeService.getType(product), product);
+		}
+		return super.extractMetadata(nodeService.getType(nodeRef), nodeRef);
 	}
 
 }

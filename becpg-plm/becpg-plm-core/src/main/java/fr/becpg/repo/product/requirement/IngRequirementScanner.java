@@ -131,7 +131,8 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 				componentProductData.getIngList().forEach(ingListDataItem -> {
 
-					if (!RequirementType.Authorized.equals(fil.getReqType()) && !isQtyCheck(fil) && checkRuleMatchIng(ingListDataItem, fil, productData)) {
+					if (!RequirementType.Authorized.equals(fil.getReqType()) && !isQtyCheck(fil)
+							&& checkRuleMatchIng(ingListDataItem, fil, productData)) {
 						// Look for raw material
 
 						if (componentProductData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
@@ -308,9 +309,9 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	}
 
 	private Double getFilQtyPerc(ProductData product, ForbiddenIngListDataItem fil, boolean isMaxi) {
-		String unit = fil.getQtyPercMaxiUnit(); 
+		String unit = fil.getQtyPercMaxiUnit();
 		Double quantity = isMaxi ? fil.getQtyPercMaxi() : fil.getQtyPercMini();
-		if (quantity != null && unit!=null) {
+		if (quantity != null && unit != null) {
 			switch (unit) {
 			case "%":
 				return quantity;
@@ -346,17 +347,13 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	}
 
 	private boolean checkRuleMatchIng(IngListDataItem ingListDataItem, ForbiddenIngListDataItem fil, ProductData productData) {
-
-		if ((fil.getIsGMO() != null) && !fil.getIsGMO().isEmpty() && (!fil.getIsGMO().equals(ingListDataItem.getIsGMO().toString())
-				|| (Boolean.FALSE.equals(Boolean.valueOf(fil.getIsGMO())) && Boolean.FALSE.equals(ingListDataItem.getIsGMO())))) {
-
-			return false; // check next rule
+	
+		if (!matchBooleanFilter(fil.getIsGMO(), ingListDataItem.getIsGMO())) {
+		    return false; // check next rule
 		}
 
-		// Ionized
-		if ((fil.getIsIonized() != null) && !fil.getIsIonized().isEmpty() && (!fil.getIsIonized().equals(ingListDataItem.getIsIonized().toString())
-				|| (Boolean.FALSE.equals(Boolean.valueOf(fil.getIsIonized())) && Boolean.FALSE.equals(ingListDataItem.getIsIonized())))) {
-			return false; // check next rule
+		if (!matchBooleanFilter(fil.getIsIonized(), ingListDataItem.getIsIonized())) {
+		    return false; // check next rule
 		}
 
 		//Check same ing
@@ -437,6 +434,18 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 		}
 
 		return true;
+	}
+	
+	private boolean matchBooleanFilter(String filterValue, Boolean itemValue) {
+	    if (filterValue == null || filterValue.isEmpty()) {
+	        return true;
+	    }
+
+	    Boolean filterBool = Boolean.valueOf(filterValue);
+
+	    Boolean normalizedItem = (itemValue != null ? itemValue : Boolean.FALSE);
+
+	    return filterBool.equals(normalizedItem);
 	}
 
 	/** {@inheritDoc} */

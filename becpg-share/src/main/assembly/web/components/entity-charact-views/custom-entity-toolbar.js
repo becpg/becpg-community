@@ -318,12 +318,14 @@
 						.request({
 							method: Alfresco.util.Ajax.GET,
 							responseContentType: Alfresco.util.Ajax.JSON,
-							url: Alfresco.constants.PROXY_URI + "becpg/remote/formulate?nodeRef=" + this.options.entityNodeRef + "&format=json" + "&chainId=decernis",
+							url: Alfresco.constants.PROXY_URI + "becpg/regulatory/check?nodeRef=" + this.options.entityNodeRef + "&format=json" + "&async=true",
 							successCallback: {
 								fn: function(response) {
-									Alfresco.util.PopupManager.displayMessage({
-										text: this.msg("message.formulate.success")
-									});
+									if (response.json.status) {
+										Alfresco.util.PopupManager.displayMessage({
+											text: this.msg("message.regulatory." + response.json.status.toLowerCase())
+										});
+									}
 
 									YAHOO.Bubbling.fire("refreshDataGrids", {
 										clearCache: true,

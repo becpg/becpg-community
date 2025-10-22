@@ -258,7 +258,7 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 					channelIds.add(channelId);
 				}
 
-				if (PublicationChannelStatus.FAILED.toString().equals(status)) {
+				if (PublicationChannelStatus.FAILED.toString().equals(status) && !PublicationChannelAction.RETRY.toString().equals(action) ) {
 					if (!failedChannelIds.contains(channelId)) {
 						failedChannelIds.add(channelId);
 					}

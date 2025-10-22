@@ -41,7 +41,7 @@ public class SignatureProjectIT extends RepoBaseTestCase {
 	private EntityReportService entityReportService;
 	
 	@Test
-	public void testSingleDocumentSignature() throws IOException {
+	public void testSingleDocumentSignature()  {
 		
 		NodeRef userOne = inWriteTx(() -> BeCPGTestHelper.createUser(BeCPGTestHelper.USER_ONE));
 		
@@ -94,7 +94,7 @@ public class SignatureProjectIT extends RepoBaseTestCase {
 	}
 	
 	@Test
-	public void testMultipleDocumentsSignature() throws IOException {
+	public void testMultipleDocumentsSignature() {
 		
 		NodeRef userOne = inWriteTx(() -> BeCPGTestHelper.createUser(BeCPGTestHelper.USER_ONE));
 		NodeRef userTwo = inWriteTx(() -> BeCPGTestHelper.createUser(BeCPGTestHelper.USER_TWO));
@@ -170,7 +170,7 @@ public class SignatureProjectIT extends RepoBaseTestCase {
 	}
 	
 	@Test
-	public void testReportSignature() throws IOException {
+	public void testReportSignature()  {
 		
 		NodeRef userOne = inWriteTx(() -> BeCPGTestHelper.createUser(BeCPGTestHelper.USER_ONE));
 		

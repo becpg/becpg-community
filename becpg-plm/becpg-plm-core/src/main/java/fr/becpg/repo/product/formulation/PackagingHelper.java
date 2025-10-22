@@ -202,9 +202,9 @@ public class PackagingHelper implements InitializingBean {
 
 					if (Boolean.TRUE.equals(dataItem.getIsMaster())) {
 						variantPackagingData.setManualInner(false);
-						variantPackagingData.setInnerWidth((Double) nodeService.getProperty(dataItem.getProduct(), GS1Model.PROP_INNERPACK_WIDTH));
-						variantPackagingData.setInnerHeight((Double) nodeService.getProperty(dataItem.getProduct(), GS1Model.PROP_INNERPACK_HEIGHT));
-						variantPackagingData.setInnerDepth((Double) nodeService.getProperty(dataItem.getProduct(), GS1Model.PROP_INNERPACK_DEPTH));
+						variantPackagingData.setInnerWidth((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_WIDTH));
+						variantPackagingData.setInnerHeight((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_HEIGHT));
+						variantPackagingData.setInnerDepth((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_LENGTH));
 					}
 					variantPackagingData.addTareInner(tare);
 				}
@@ -239,8 +239,6 @@ public class PackagingHelper implements InitializingBean {
 		if (PackagingLevel.Inner.equals(dataItem.getPkgLevel()) && ProductUnit.PP.equals(dataItem.getPackagingListUnit())) {
 			logger.debug("load inner packaging aspect ");
 			for (VariantPackagingData variantPackagingData : packagingData.getVariantPackagingData(currentVariants)) {
-				variantPackagingData.setManualInner(false);
-
 				// product per inner pack
 				if (dataItem.getQty() != null) {
 					logger.debug("setProductPerInnerPack " + dataItem.getQty().intValue());

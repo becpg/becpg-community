@@ -266,7 +266,7 @@
 						oData = oRecord.getData("itemData")[columnKey];
 
 						if (nestedColumnKey != null && oData) {
-							if (YAHOO.lang.isArray(oData) && oData[0].itemData) {
+							if (YAHOO.lang.isArray(oData) && oData.length > 0 &&  oData[0] && oData[0].itemData) {
 								oData = oData[0].itemData[nestedColumnKey];
 							} else if (oData.itemData) {
 								oData = oData.itemData[nestedColumnKey];

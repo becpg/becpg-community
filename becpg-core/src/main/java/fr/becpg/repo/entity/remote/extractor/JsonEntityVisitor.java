@@ -206,148 +206,168 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	 */
 	protected void visitNode(NodeRef nodeRef, JSONObject entity, JsonVisitNodeType type, QName assocName, RemoteJSONContext context)
 			throws JSONException, RemoteException {
-		cacheList.add(nodeRef);
-		QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
-
-		if (JsonVisitNodeType.ENTITY.equals(type) || JsonVisitNodeType.CONTENT.equals(type) || JsonVisitNodeType.ASSOC.equals(type)
-				|| (JsonVisitNodeType.CHILD_ASSOC.equals(type) && !ContentModel.TYPE_FOLDER.equals(nodeType))) {
-
-			NodeRef parentRef = getPrimaryParentRef(nodeRef);
-			if (parentRef != null) {
-				Path parentPath = nodeService.getPath(parentRef);
-				String path = parentPath.toPrefixString(namespaceService);
-
-				entity.put(RemoteEntityService.ATTR_PATH, path.replace(context.getEntityPath(nodeService, namespaceService), "~"));
-				if (!JsonVisitNodeType.ASSOC.equals(type)) {
-					visitSite(entity, parentPath);
-					entity.put(RemoteEntityService.ATTR_PARENT_ID, parentRef.getId());
-				}
-			} else {
-				logger.warn("Node : " + nodeRef + " has no primary parent");
-			}
-		}
-
-		entity.put(RemoteEntityService.ATTR_TYPE, entityDictionaryService.toPrefixString(nodeType));
-
-		QName propName = RemoteHelper.getPropName(nodeType, entityDictionaryService);
-		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
-
-		visitPropValue(propName, entity, properties.get(propName), context);
-
-		if (!JsonVisitNodeType.CHILD_ASSOC.equals(type)) {
-
-			if ((properties.get(BeCPGModel.PROP_CODE) != null)
-					&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_CODE, Boolean.TRUE))) {
-				visitPropValue(BeCPGModel.PROP_CODE, entity, properties.get(BeCPGModel.PROP_CODE), context);
-			}
-			// erpCode
-			if ((properties.get(BeCPGModel.PROP_ERP_CODE) != null)
-					&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_ERP_CODE, Boolean.TRUE))) {
-				visitPropValue(BeCPGModel.PROP_ERP_CODE, entity, properties.get(BeCPGModel.PROP_ERP_CODE), context);
-			}
-
-			if (properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL) != null
-					&& !((String) properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL)).isBlank()) {
-				entity.put(RemoteEntityService.ATTR_VERSION, properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL));
-			} else if (properties.get(BeCPGModel.PROP_VERSION_LABEL) != null && !((String) properties.get(BeCPGModel.PROP_VERSION_LABEL)).isBlank()) {
-				entity.put(RemoteEntityService.ATTR_VERSION, properties.get(BeCPGModel.PROP_VERSION_LABEL));
-			} else if (properties.get(ContentModel.PROP_VERSION_LABEL) != null
-					&& !((String) properties.get(ContentModel.PROP_VERSION_LABEL)).isBlank()) {
-				entity.put(RemoteEntityService.ATTR_VERSION, properties.get(ContentModel.PROP_VERSION_LABEL));
-			}
-
-			if (Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_IS_INITIAL_VERSION, Boolean.FALSE)) && lockService.isLocked(nodeRef)) {
-
-				String lockInfo = lockService.getAdditionalInfo(nodeRef);
-
-				try {
-					JSONObject jsonInfo = new JSONObject(lockInfo);
-
-					if (jsonInfo.has("lockType") && jsonInfo.get("lockType").equals("versioning")) {
-						String currentVersion = (String) entity.get(RemoteEntityService.ATTR_VERSION);
-
-						if (currentVersion != null) {
-							Collection<Version> nodeRefVersions = versionService.getVersionHistory(nodeRef).getAllVersions();
-							Optional<Double> previousVersion = nodeRefVersions.stream().map(Version::getVersionLabel)
-									.filter(label -> !label.equals(currentVersion)).map(Double::parseDouble)
-									.max(Comparator.comparing(Double::valueOf));
-							previousVersion.ifPresent(version -> entity.put(RemoteEntityService.ATTR_VERSION, version.toString()));
-						}
-					}
-				} catch (JSONException e) {
-					logger.info("lock additional information cannot be parsed");
-				}
-			}
-
-			if ((nodeRef != null) && Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_NODEREF, Boolean.TRUE))) {
-
-				String nodePath = nodeService.getPath(nodeRef).toPrefixString(namespaceService);
-
-				if (Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_UPDATE_ENTITY_NODEREFS, Boolean.FALSE))
-						&& nodePath.contains(context.getEntityPath(nodeService, namespaceService))) {
-
-					NodeRef currentNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, nodeRef.getId());
-
-					NodeRef newNode = null;
-
-					if (context.getCache().containsKey(currentNode)) {
-						newNode = context.getCache().get(currentNode);
-					} else {
-						newNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, GUID.generate());
-						context.getCache().put(currentNode, newNode);
-					}
-
-					entity.put(RemoteEntityService.ATTR_ID, newNode.getId());
-				} else {
-
-					if (Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_REPLACE_HISTORY_NODEREFS, Boolean.FALSE))
-							&& nodeService.getPath(nodeRef).toPrefixString(namespaceService).contains(RepoConsts.ENTITIES_HISTORY_XPATH)) {
-						NodeRef parentNode = getPrimaryParentRef(nodeRef);
-
-						String parentName = (String) nodeService.getProperty(parentNode, ContentModel.PROP_NAME);
-
-						NodeRef originalNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, parentName);
-
-						entity.put(RemoteEntityService.ATTR_ID, originalNode.getId());
-					} else {
-						entity.put(RemoteEntityService.ATTR_ID, nodeRef.getId());
-					}
-				}
-			}
-		} else {
-			if ((nodeRef != null) && Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_NODEREF, Boolean.TRUE))
-					&& !ContentModel.TYPE_FOLDER.equals(nodeType)) {
+		if (cacheList.contains(nodeRef)) {
+			if (Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_NODEREF, Boolean.TRUE))) {
 				entity.put(RemoteEntityService.ATTR_ID, nodeRef.getId());
 			}
+			QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
+			entity.put(RemoteEntityService.ATTR_TYPE, entityDictionaryService.toPrefixString(nodeType));
+			return;
 		}
 
-		JSONObject attributes = new JSONObject();
-		if (JsonVisitNodeType.ENTITY.equals(type) || JsonVisitNodeType.DATALIST.equals(type)
-				|| ((JsonVisitNodeType.ENTITY_LIST.equals(type) || JsonVisitNodeType.CONTENT.equals(type)) && (params.getFilteredProperties() != null)
-						&& !params.getFilteredProperties().isEmpty())
-				|| ((nodeType != null) && params.getFilteredAssocProperties().containsKey(nodeType))
-				|| ((assocName != null) && params.getFilteredAssocProperties().containsKey(assocName))
-				|| JsonVisitNodeType.CHILD_ASSOC.equals(type)) {
+		try {
+			cacheList.add(nodeRef);
+			QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
 
-			// Assoc first
-			visitAssocs(nodeRef, attributes, assocName, context);
-			visitProps(nodeRef, attributes, assocName, properties, context);
+			if (JsonVisitNodeType.ENTITY.equals(type) || JsonVisitNodeType.CONTENT.equals(type) || JsonVisitNodeType.ASSOC.equals(type)
+					|| (JsonVisitNodeType.CHILD_ASSOC.equals(type) && !ContentModel.TYPE_FOLDER.equals(nodeType))) {
 
+				NodeRef parentRef = getPrimaryParentRef(nodeRef);
+				if (parentRef != null) {
+					Path parentPath = nodeService.getPath(parentRef);
+					String path = parentPath.toPrefixString(namespaceService);
+
+					entity.put(RemoteEntityService.ATTR_PATH, path.replace(context.getEntityPath(nodeService, namespaceService), "~"));
+					if (!JsonVisitNodeType.ASSOC.equals(type)) {
+						visitSite(entity, parentPath);
+						entity.put(RemoteEntityService.ATTR_PARENT_ID, parentRef.getId());
+					}
+				} else {
+					logger.warn("Node : " + nodeRef + " has no primary parent");
+				}
+			}
+
+			entity.put(RemoteEntityService.ATTR_TYPE, entityDictionaryService.toPrefixString(nodeType));
+
+			QName propName = RemoteHelper.getPropName(nodeType, entityDictionaryService);
+			Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
+			
+			PropertyDefinition namePropertyDefinition = entityDictionaryService.getProperty(propName);
+
+			if (DataTypeDefinition.MLTEXT.equals(namePropertyDefinition.getDataType().getName())
+					&& (mlNodeService.getProperty(nodeRef, namePropertyDefinition.getName()) instanceof MLText mlValues)
+					&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_MLTEXT, Boolean.TRUE))) {
+				visitMltextAttributes(entityDictionaryService.toPrefixString(propName), entity, mlValues);
+			} else {
+				visitPropValue(propName, entity, properties.get(propName), context);
+			}
+
+			if (!JsonVisitNodeType.CHILD_ASSOC.equals(type)) {
+
+				if ((properties.get(BeCPGModel.PROP_CODE) != null)
+						&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_CODE, Boolean.TRUE))) {
+					visitPropValue(BeCPGModel.PROP_CODE, entity, properties.get(BeCPGModel.PROP_CODE), context);
+				}
+				// erpCode
+				if ((properties.get(BeCPGModel.PROP_ERP_CODE) != null)
+						&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_ERP_CODE, Boolean.TRUE))) {
+					visitPropValue(BeCPGModel.PROP_ERP_CODE, entity, properties.get(BeCPGModel.PROP_ERP_CODE), context);
+				}
+
+				if (properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL) != null
+						&& !((String) properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL)).isBlank()) {
+					entity.put(RemoteEntityService.ATTR_VERSION, properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL));
+				} else if (properties.get(BeCPGModel.PROP_VERSION_LABEL) != null && !((String) properties.get(BeCPGModel.PROP_VERSION_LABEL)).isBlank()) {
+					entity.put(RemoteEntityService.ATTR_VERSION, properties.get(BeCPGModel.PROP_VERSION_LABEL));
+				} else if (properties.get(ContentModel.PROP_VERSION_LABEL) != null
+						&& !((String) properties.get(ContentModel.PROP_VERSION_LABEL)).isBlank()) {
+					entity.put(RemoteEntityService.ATTR_VERSION, properties.get(ContentModel.PROP_VERSION_LABEL));
+				}
+
+				if (Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_IS_INITIAL_VERSION, Boolean.FALSE)) && lockService.isLocked(nodeRef)) {
+
+					String lockInfo = lockService.getAdditionalInfo(nodeRef);
+
+					try {
+						JSONObject jsonInfo = new JSONObject(lockInfo);
+
+						if (jsonInfo.has("lockType") && jsonInfo.get("lockType").equals("versioning")) {
+							String currentVersion = (String) entity.get(RemoteEntityService.ATTR_VERSION);
+
+							if (currentVersion != null) {
+								Collection<Version> nodeRefVersions = versionService.getVersionHistory(nodeRef).getAllVersions();
+								Optional<Double> previousVersion = nodeRefVersions.stream().map(Version::getVersionLabel)
+										.filter(label -> !label.equals(currentVersion)).map(Double::parseDouble)
+										.max(Comparator.comparing(Double::valueOf));
+								previousVersion.ifPresent(version -> entity.put(RemoteEntityService.ATTR_VERSION, version.toString()));
+							}
+						}
+					} catch (JSONException e) {
+						logger.info("lock additional information cannot be parsed");
+					}
+				}
+
+				if ((nodeRef != null) && Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_NODEREF, Boolean.TRUE))) {
+
+					String nodePath = nodeService.getPath(nodeRef).toPrefixString(namespaceService);
+
+					if (Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_UPDATE_ENTITY_NODEREFS, Boolean.FALSE))
+							&& nodePath.contains(context.getEntityPath(nodeService, namespaceService))) {
+
+						NodeRef currentNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, nodeRef.getId());
+
+						NodeRef newNode = null;
+
+						if (context.getCache().containsKey(currentNode)) {
+							newNode = context.getCache().get(currentNode);
+						} else {
+							newNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, GUID.generate());
+							context.getCache().put(currentNode, newNode);
+						}
+
+						entity.put(RemoteEntityService.ATTR_ID, newNode.getId());
+					} else {
+
+						if (Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_REPLACE_HISTORY_NODEREFS, Boolean.FALSE))
+								&& nodeService.getPath(nodeRef).toPrefixString(namespaceService).contains(RepoConsts.ENTITIES_HISTORY_XPATH)) {
+							NodeRef parentNode = getPrimaryParentRef(nodeRef);
+
+							String parentName = (String) nodeService.getProperty(parentNode, ContentModel.PROP_NAME);
+
+							NodeRef originalNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, parentName);
+
+							entity.put(RemoteEntityService.ATTR_ID, originalNode.getId());
+						} else {
+							entity.put(RemoteEntityService.ATTR_ID, nodeRef.getId());
+						}
+					}
+				}
+			} else {
+				if ((nodeRef != null) && Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_NODEREF, Boolean.TRUE))
+						&& !ContentModel.TYPE_FOLDER.equals(nodeType)) {
+					entity.put(RemoteEntityService.ATTR_ID, nodeRef.getId());
+				}
+			}
+
+			JSONObject attributes = new JSONObject();
+			if (JsonVisitNodeType.ENTITY.equals(type) || JsonVisitNodeType.DATALIST.equals(type)
+					|| ((JsonVisitNodeType.ENTITY_LIST.equals(type) || JsonVisitNodeType.CONTENT.equals(type)) && (params.getFilteredProperties() != null)
+							&& !params.getFilteredProperties().isEmpty())
+					|| ((nodeType != null) && params.getFilteredAssocProperties().containsKey(nodeType))
+					|| ((assocName != null) && params.getFilteredAssocProperties().containsKey(assocName))
+					|| JsonVisitNodeType.CHILD_ASSOC.equals(type)) {
+
+				// Assoc first
+				visitAssocs(nodeRef, attributes, assocName, context);
+				visitProps(nodeRef, attributes, assocName, properties, context);
+
+			}
+
+			if (attributes.length() > 0) {
+				entity.put(RemoteEntityService.ELEM_ATTRIBUTES, attributes);
+			}
+
+			if (isAll() && (attributeExtractor != null)) {
+				entity.put("metadata", attributeExtractor.extractMetadata(nodeType, nodeRef));
+			}
+
+			if (JsonVisitNodeType.CONTENT.equals(type) || (ContentModel.TYPE_CONTENT.equals(nodeType)
+					&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_CONTENT, Boolean.FALSE)))) {
+				visitContent(nodeRef, entity);
+			}
+		} finally {
+			cacheList.remove(nodeRef);
 		}
-
-		if (attributes.length() > 0) {
-			entity.put(RemoteEntityService.ELEM_ATTRIBUTES, attributes);
-		}
-
-		if (isAll() && (attributeExtractor != null)) {
-			entity.put("metadata", attributeExtractor.extractMetadata(nodeType, nodeRef));
-		}
-
-		if (JsonVisitNodeType.CONTENT.equals(type) || (ContentModel.TYPE_CONTENT.equals(nodeType)
-				&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_CONTENT, Boolean.FALSE)))) {
-			visitContent(nodeRef, entity);
-		}
-
 	}
 
 	/**

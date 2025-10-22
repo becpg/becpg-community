@@ -126,6 +126,16 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public BeCPGSpelFunctionsWrapper(RepositoryEntity entity) {
 			this.entity = entity;
 		}
+		
+		/**
+		 * Helper {@code @beCPG.entity()}
+		 *
+		 * @return current entity
+		 */
+		public RepositoryEntity entity() {
+		    return entity;
+		}
+		
 
 		/**
 		 * Helper {@code @beCPG.findOne($nodeRef)}
@@ -181,101 +191,6 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
-		 * Helper {@code @beCPG.propMLValue($entity, $qname, $locale)}
-		 *
-		 * @param item
-		 * @param qname
-		 * @param locale
-		 * @return
-		 */
-		public Serializable propMLValue(RepositoryEntity item, String qname, String locale) {
-			Serializable value;
-
-			boolean isMLAware = MLPropertyInterceptor.setMLAware(true);
-			try {
-				value = propValue(item, qname);
-			} finally {
-				MLPropertyInterceptor.setMLAware(isMLAware);
-			}
-
-			if (value instanceof MLText mlText) {
-				if (locale == null) {
-					return value;
-				}
-
-				return MLTextHelper.getClosestValue(mlText, MLTextHelper.parseLocale(locale));
-			}
-
-			return null;
-		}
-
-		/**
-		 * Helper {@code @beCPG.propMLConstraint($value, $qname, $locale)}
-		 *
-		 * @param value
-		 * @param propQName
-		 * @param locale
-		 * @return
-		 */
-		public String propMLConstraint(String value, String propQName, String locale) {
-
-			PropertyDefinition propertyDef = entityDictionaryService.getProperty(QName.createQName(propQName, namespaceService));
-
-			String constraintName = null;
-			DynListConstraint dynListConstraint = null;
-
-			if (!propertyDef.getConstraints().isEmpty()) {
-				for (ConstraintDefinition constraint : propertyDef.getConstraints()) {
-					if (constraint.getConstraint() instanceof DynListConstraint) {
-						dynListConstraint = (DynListConstraint) constraint.getConstraint();
-
-					} else if ("LIST".equals(constraint.getConstraint().getType())) {
-						constraintName = constraint.getRef().toPrefixString(namespaceService).replace(":", "_");
-					}
-
-					if ((constraintName != null) || (dynListConstraint != null)) {
-						break;
-					}
-				}
-			}
-
-			if (dynListConstraint != null) {
-				return dynListConstraint.getDisplayLabel(value, MLTextHelper.parseLocale(locale));
-			}
-
-			return constraintName != null ? TranslateHelper.getConstraint(constraintName, value, MLTextHelper.parseLocale(locale)) : value;
-		}
-
-		/**
-		 * Helper {@code @beCPG.propMLValue($nodeRef, $qname, $locale)}
-		 *
-		 * @param nodeRef
-		 * @param qname
-		 * @param locale
-		 * @return
-		 */
-		public Serializable propMLValue(NodeRef nodeRef, String qname, String locale) {
-			MLText value;
-
-			boolean isMLAware = MLPropertyInterceptor.setMLAware(true);
-			try {
-				value = (MLText) nodeService.getProperty(nodeRef, getQName(qname));
-				if (value != null) {
-					if (locale == null) {
-						return value;
-					}
-
-					return MLTextHelper.getClosestValue(value, MLTextHelper.parseLocale(locale));
-				}
-
-			} finally {
-				MLPropertyInterceptor.setMLAware(isMLAware);
-			}
-
-			return null;
-		}
-
-		/**
 		 * Helper {@code @beCPG.propValue( $qname)}
 		 *
 		 * @param qname
@@ -284,19 +199,6 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public Serializable propValue(String qname) {
 			return propValue(entity, qname);
 
-		}
-
-		/**
-		 * Helper {@code @beCPG.propMLValue($mltext, $locale)}
-		 *
-		 * get mlText locale value
-		 *
-		 * @param mlText
-		 * @param locale
-		 * @return value being set
-		 */
-		public String propMLValue(MLText mlText, String locale) {
-			return MLTextHelper.getClosestValue(mlText, MLTextHelper.parseLocale(locale));
 		}
 
 		/**
@@ -332,6 +234,214 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
+		 * Helper {@code @beCPG.propMLValue($mltext, $locale)}
+		 *
+		 * Get the value of an {@link MLText} for the given locale.
+		 *
+		 * @param mlText the multilingual text
+		 * @param locale the locale string (e.g. "en", "fr_FR")
+		 * @return the localized value, or the closest available value if none exists
+		 */
+		public String propMLValue(MLText mlText, String locale) {
+			return MLTextHelper.getClosestValue(mlText, MLTextHelper.parseLocale(locale));
+		}
+
+		/**
+		 * Helper {@code @beCPG.propMLValue($qname)}
+		 *
+		 * Get the property value as an {@link MLText}.
+		 *
+		 * @param qname property qualified name (string form)
+		 * @return the property value (expected to be MLText) or {@code null} if not found
+		 */
+		public Serializable propMLValue(String qname) {
+			return propMLValue(entity, qname);
+		}
+
+		/**
+		 * Helper {@code @beCPG.propMLValue($qname, $locale)}
+		 *
+		 * Get the localized value of a property.
+		 *
+		 * @param qname property qualified name (string form)
+		 * @param locale the locale string
+		 * @return the localized property value, or {@code null} if none
+		 */
+		public Serializable propMLValue(String qname, String locale) {
+			return propMLValue(entity, qname, locale);
+		}
+
+		/**
+		 * Helper {@code @beCPG.propMLValue($entity, $qname)}
+		 *
+		 * Get the multilingual property value for a given entity.
+		 *
+		 * @param item repository entity
+		 * @param qname property qualified name (string form)
+		 * @return the property value (expected to be MLText), or {@code null} if not found
+		 */
+		public Serializable propMLValue(RepositoryEntity item, String qname) {
+			boolean isMLAware = MLPropertyInterceptor.setMLAware(true);
+			try {
+				return propValue(item, qname);
+			} finally {
+				MLPropertyInterceptor.setMLAware(isMLAware);
+			}
+		}
+
+		/**
+		 * Helper {@code @beCPG.propMLValue($nodeRef, $qname)}
+		 *
+		 * Get the multilingual property value for a given node.
+		 *
+		 * @param nodeRef Alfresco node reference
+		 * @param qname property qualified name (string form)
+		 * @return the property value (expected to be MLText), or {@code null} if not found
+		 */
+		public Serializable propMLValue(NodeRef nodeRef, String qname) {
+			boolean isMLAware = MLPropertyInterceptor.setMLAware(true);
+			try {
+				return propValue(nodeRef, qname);
+			} finally {
+				MLPropertyInterceptor.setMLAware(isMLAware);
+			}
+		}
+
+		/**
+		 * Helper {@code @beCPG.propMLValue($entity, $qname, $locale)}
+		 *
+		 * Get the localized value of a property for the given entity.
+		 *
+		 * @param item repository entity
+		 * @param qname property qualified name (string form)
+		 * @param locale locale string (e.g. "en", "fr_FR")
+		 * @return the localized value, or {@code null} if not found
+		 */
+		public Serializable propMLValue(RepositoryEntity item, String qname, String locale) {
+			Serializable value = propMLValue(item, qname);
+			if (value instanceof MLText mlText) {
+				return (locale == null) ? value : propMLValue(mlText, locale);
+			}
+			return value;
+		}
+
+		/**
+		 * Helper {@code @beCPG.propMLValue($nodeRef, $qname, $locale)}
+		 *
+		 * Get the localized value of a property for the given node.
+		 *
+		 * @param nodeRef Alfresco node reference
+		 * @param qname property qualified name (string form)
+		 * @param locale locale string (e.g. "en", "fr_FR")
+		 * @return the localized value, or {@code null} if not found
+		 */
+		public Serializable propMLValue(NodeRef nodeRef, String qname, String locale) {
+			Serializable value = propMLValue(nodeRef, qname); 
+			if (value instanceof MLText mlText) {
+				return (locale == null) ? value : propMLValue(mlText, locale);
+			}
+			return value;
+		}
+
+		/**
+		 * Helper {@code @beCPG.propMLConstraint($value, $qname, $locale)}
+		 *
+		 * Translate a property constraint value into a localized label if possible.
+		 *
+		 * @param value the raw property value
+		 * @param propQName property qualified name (string form)
+		 * @param locale locale string
+		 * @return the localized display label if found, otherwise the raw value
+		 */
+		public String propMLConstraint(String value, String propQName, String locale) {
+			PropertyDefinition propertyDef = entityDictionaryService.getProperty(QName.createQName(propQName, namespaceService));
+
+			String constraintName = null;
+			DynListConstraint dynListConstraint = null;
+
+			if (!propertyDef.getConstraints().isEmpty()) {
+				for (ConstraintDefinition constraint : propertyDef.getConstraints()) {
+					if (constraint.getConstraint() instanceof DynListConstraint dyn) {
+						dynListConstraint = dyn;
+					} else if ("LIST".equals(constraint.getConstraint().getType())) {
+						constraintName = constraint.getRef().toPrefixString(namespaceService).replace(":", "_");
+					}
+
+					if ((constraintName != null) || (dynListConstraint != null)) {
+						break;
+					}
+				}
+			}
+
+			if (dynListConstraint != null) {
+				return dynListConstraint.getDisplayLabel(value, MLTextHelper.parseLocale(locale));
+			}
+
+			return constraintName != null ? TranslateHelper.getConstraint(constraintName, value, MLTextHelper.parseLocale(locale)) : value;
+		}
+
+		/**
+		 * Helper {@code @beCPG.updateMLText($mltext, $locale, $value)}
+		 *
+		 * Update or remove the localized value inside an {@link MLText}.
+		 *
+		 * @param mlText the multilingual text to update (can be {@code null})
+		 * @param locale the locale string
+		 * @param value the new value (if {@code null} or empty, the locale entry is removed)
+		 * @return the updated MLText
+		 */
+		public MLText updateMLText(MLText mlText, String locale, String value) {
+			if (mlText == null) {
+				mlText = new MLText();
+			}
+
+			if ((locale != null) && !locale.isBlank()) {
+				Locale loc = MLTextHelper.parseLocale(locale);
+
+				if ((value != null) && !value.isEmpty()) {
+					if (MLTextHelper.isSupportedLocale(loc)) {
+						mlText.addValue(loc, value);
+					} else {
+						logger.error("Unsupported locale in updateMLText " + loc);
+					}
+				} else {
+					mlText.removeValue(loc);
+				}
+			} else {
+				logger.error("Null or empty locale in updateMLText ");
+			}
+
+			return mlText;
+		}
+
+		/**
+		 * Set the localized property value for the given entity.
+		 *
+		 * @param item repository entity
+		 * @param qname property qualified name (string form)
+		 * @param locale locale string
+		 * @param value value to set
+		 * @return the value being set
+		 */
+		public String setMLValue(RepositoryEntity item, String qname, String locale, String value) {
+			MLText mlText = updateMLText((MLText) propMLValue(item, qname), locale, value);
+			setValue(item, qname, mlText);
+			return value;
+		}
+
+		/**
+		 * Set the localized property value for the default entity.
+		 *
+		 * @param qname property qualified name (string form)
+		 * @param locale locale string
+		 * @param value value to set
+		 * @return the value being set
+		 */
+		public String setMLValue(String qname, String locale, String value) {
+			return setMLValue(entity, qname, locale, value);
+		}
+
+		/**
 		 * Helper {@code @beCPG.setAssocs($nodeRef, $qname, $assocNodeRefs)}
 		 *
 		 * @param nodeRef
@@ -360,7 +470,6 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @param assocNodeRef
 		 */
 		public void setAssoc(NodeRef nodeRef, String qname, NodeRef assocNodeRef) {
-
 			associationService.update(nodeRef, getQName(qname), assocNodeRef);
 		}
 
@@ -383,7 +492,6 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public NodeRef assocValue(NodeRef nodeRef, String qname) {
 			if (nodeRef != null) {
-
 				return associationService.getTargetAssoc(nodeRef, getQName(qname));
 			}
 			return null;
@@ -534,16 +642,15 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			Set<T> uniques = new HashSet<>();
 			return collection.stream().filter(e -> !uniques.add(e)).collect(Collectors.toSet());
 		}
-		
+
 		/**
 		 * Helper {@code @beCPG.removeDuplicates($collection)}
 		 *
 		 * @return Remove duplicates on the collection
 		 */
 		public <T> List<T> removeDuplicates(Collection<? extends T> collection) {
-		    return new ArrayList<>(new LinkedHashSet<>(collection));
+			return new ArrayList<>(new LinkedHashSet<>(collection));
 		}
-
 
 		/**
 		 * Helper {@code @beCPG.getQName($qname)}
@@ -553,40 +660,6 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public QName getQName(String qName) {
 			return QName.createQName(qName, namespaceService);
-		}
-
-		/**
-		 * Helper {@code @beCPG.updateMLText($mltext, $locale, $value)}
-		 *
-		 * Update mlText locale value
-		 *
-		 * @param mlText
-		 * @param locale
-		 * @param value
-		 * @return value being set
-		 */
-		public MLText updateMLText(MLText mlText, String locale, String value) {
-			if (mlText == null) {
-				mlText = new MLText();
-			}
-
-			if ((locale != null) && !locale.isBlank()) {
-				Locale loc = MLTextHelper.parseLocale(locale);
-
-				if ((value != null) && !value.isEmpty()) {
-					if (MLTextHelper.isSupportedLocale(loc)) {
-						mlText.addValue(loc, value);
-					} else {
-						logger.error("Unsupported locale in updateMLText " + loc);
-					}
-				} else {
-					mlText.removeValue(loc);
-				}
-			} else {
-				logger.error("Null or empty locale in updateMLText ");
-			}
-
-			return mlText;
 		}
 
 		/**
@@ -1168,7 +1241,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 			for (T originalData : data) {
 				NodeRef origNodeRef = originalData.getNodeRef();
-				T clonedItem = originalData instanceof CopiableDataItem ? (T) ((CopiableDataItem) originalData).copy() : originalData;
+				T clonedItem = originalData instanceof CopiableDataItem c ? (T) c.copy() : originalData;
 				clonedItem.setName(originalData.getName());
 				clonedItem.setNodeRef(null);
 				clonedItem.setParentNodeRef(null);
