@@ -641,9 +641,9 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 								if (FormulationHelper.isCharactFormulatedFromVol(nodeService, newSimpleListDataItem)) {
 									formulateInVol = true;
 								} else {
-									formulateInVol = partProduct.isLiquid();
+									formulateInVol = false;
+									forceWeight = true;
 								}
-								forceWeight = !formulateInVol;
 							} else if (newSimpleListDataItem instanceof NutListDataItem) {
 								if ((partProduct.getUnit() != null) && partProduct.getUnit().isVolume() && (partProduct.getServingSizeUnit() != null)
 										&& partProduct.getServingSizeUnit().isWeight()) {
