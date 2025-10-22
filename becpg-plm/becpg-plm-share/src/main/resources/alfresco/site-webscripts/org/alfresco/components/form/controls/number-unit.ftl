@@ -93,7 +93,7 @@
 	 <#elseif currUnit=="mm">
 	  <#if field.value == 0  >
         <#assign currUnit="mm">
-     <#elseif field.value?abs &lt; 0.0001  >
+     <#elseif field.value?abs &lt; 0.1  >
 		<#assign currUnit="micro_m">
 		<#assign currValue=field.value*1000>
 	 <#elseif field.value?abs gte 1000  >

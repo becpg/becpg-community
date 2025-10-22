@@ -10,6 +10,9 @@ import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.api.BeCPGPublicApi;
+import fr.becpg.repo.project.data.ProjectData;
+import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
+import fr.becpg.repo.signature.SignatureProjectHelper;
 import fr.becpg.repo.signature.SignatureProjectService;
 
 /**
@@ -96,5 +99,13 @@ public class SignatureProjectScriptHelper extends BaseScopableProcessorExtension
 		}
 
 		return new ScriptNode[0];
+	}
+	
+	public static DeliverableListDataItem findUrlDeliverable(ProjectData project, DeliverableListDataItem signDeliverable) {
+		return SignatureProjectHelper.findUrlDeliverable(project, signDeliverable);
+	}
+	
+	public static DeliverableListDataItem findDocDeliverable(ProjectData project, DeliverableListDataItem taskDeliverable) {
+		return SignatureProjectHelper.findDocDeliverable(project, taskDeliverable);
 	}
 }

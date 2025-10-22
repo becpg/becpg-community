@@ -105,12 +105,6 @@ if (beCPG.module.EntityDataGridRenderers) {
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: "pjt:slScore",
         renderer: function(oRecord, data, label, scope) {
-
-        /*    var showColor = true;
-            if (oRecord.getData("itemData")["prop_pjt_slScoreRange"] && oRecord.getData("itemData")["prop_pjt_slScoreRange"].value) {
-                showColor = false;
-            }
-            if(showColor){*/
                 var className = "";
                 if (data.value != null) {
                     if (data.value < 0) {
@@ -132,9 +126,6 @@ if (beCPG.module.EntityDataGridRenderers) {
                     }
                 }
                 return '<span class="' + className + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
-           /* } else {
-                return Alfresco.util.encodeHTML(data.displayValue);
-            }*/
         }
     });
 

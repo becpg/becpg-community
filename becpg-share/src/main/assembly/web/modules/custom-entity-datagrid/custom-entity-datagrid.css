@@ -79,6 +79,9 @@
 .datagrid.activityList .grid.yui-dt .yui-dt-data  td,.datagrid.activityList .yui-dt-data td	{
 	border: none !important;
 	cursor : default;
+	overflow-wrap: break-word;
+	white-space: normal;
+	max-width: 300px;
 }
 
 .datagrid.activityList .yui-dt-data  tr,.datagrid.activityList .yui-dt-data tr.yui-dt-highlighted 	{

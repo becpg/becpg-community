@@ -26,6 +26,8 @@ public enum ActivityType {
 	 * Represents datalist copy operations.
 	 */
 	DatalistCopy,
+	
+	DatalistDeleteFromTemplate,
 	/**
 	 * Represents formulation-related activities.
 	 */
@@ -65,5 +67,7 @@ public enum ActivityType {
 	/**
 	 * Represents removal of aspects.
 	 */
-	AspectsRemoval
+	AspectsRemoval,
+	
+	ComplianceCheck
 }

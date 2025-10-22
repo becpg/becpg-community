@@ -13,7 +13,7 @@
 		<version>25.2.0</version>
 		<relativePath>../</relativePath>
 	</parent>
-    <version>25.2.0.13-SNAPSHOT</version>
+    <version>25.2.0.28-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
 			<groupId>fr.becpg</groupId>
@@ -379,7 +379,7 @@
 					<plugin>
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
-						<version>0.8.8</version>
+						<version>0.8.13</version>
 						<configuration>
 							<append>true</append>
 
@@ -413,6 +413,7 @@
 									<destFile>
 										${project.build.directory}/jacoco.exec</destFile>
 									<port>10001</port>
+									<retryCount>1</retryCount>
 									<reset>true</reset>
 									<append>true</append>
 								</configuration>
@@ -455,6 +456,6 @@
 
 
   <scm>
-    <tag>25.2.0.10</tag>
+    <tag>25.2.0.26</tag>
   </scm>
 </project>

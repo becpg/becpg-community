@@ -411,9 +411,23 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			}
 
 		} else if (dataType.equals(DataTypeDefinition.BOOLEAN.toString())
-				|| (dataType.equals(DataTypeDefinition.ANY.toString()) && (v instanceof Boolean))) {
+				|| (dataType.equals(DataTypeDefinition.ANY.toString()) && (v instanceof Boolean || v instanceof ArrayList))) {
 
-			return TranslateHelper.getTranslatedBoolean((Boolean) v, propertyFormats.isUseDefaultLocale());
+			if (v instanceof Boolean) {
+				return TranslateHelper.getTranslatedBoolean((Boolean) v, propertyFormats.isUseDefaultLocale());
+			} else if (v instanceof List) {
+				StringBuilder sb = new StringBuilder();
+				List<?> values = (List<?>) v;
+				for (Object b : values) {
+					if (b instanceof Boolean) {
+						if (sb.length() > 0) {
+							sb.append(", ");
+						}
+						sb.append(TranslateHelper.getTranslatedBoolean((Boolean) b, propertyFormats.isUseDefaultLocale()));
+					}
+				}
+				return sb.toString();
+			}
 
 		} else if (dataType.equals(DataTypeDefinition.TEXT.toString())) {
 
@@ -943,15 +957,18 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 					StringBuilder nodeRefs = new StringBuilder();
 					for (NodeRef assocNodeRef : assocRefs) {
-
-						if (!displayName.isEmpty()) {
-							displayName += RepoConsts.LABEL_SEPARATOR;
-							nodeRefs.append(RepoConsts.LABEL_SEPARATOR);
+						if(nodeService.exists(assocNodeRef)) {
+							if (!displayName.isEmpty()) {
+								displayName += RepoConsts.LABEL_SEPARATOR;
+								nodeRefs.append(RepoConsts.LABEL_SEPARATOR);
+							}
+	
+							type = nodeService.getType(assocNodeRef);
+							displayName += extractPropName(type, assocNodeRef);
+							nodeRefs.append(assocNodeRef.toString());
+						} else {
+							logger.error("Cache issue assocNodeRef doesn't exist for:"+attribute.getName() );
 						}
-
-						type = nodeService.getType(assocNodeRef);
-						displayName += extractPropName(type, assocNodeRef);
-						nodeRefs.append(assocNodeRef.toString());
 					}
 					tmp.put("order", order);
 					tmp.put("label", entityDictionaryService.getTitle(attribute, nodeService.getType(nodeRef)));
@@ -963,11 +980,15 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				} else if (FormatMode.CSV.equals(mode) || FormatMode.XLSX.equals(mode)) {
 					StringBuilder ret = new StringBuilder();
 					for (NodeRef assocNodeRef : assocRefs) {
-						type = nodeService.getType(assocNodeRef);
-						if (ret.length() > 0) {
-							ret.append(RepoConsts.LABEL_SEPARATOR);
+						if(nodeService.exists(assocNodeRef)) {
+							type = nodeService.getType(assocNodeRef);
+							if (ret.length() > 0) {
+								ret.append(RepoConsts.LABEL_SEPARATOR);
+							}
+							ret.append(extractPropName(type, assocNodeRef));
+						} else {
+						   logger.error("Cache issue assocNodeRef doesn't exist for:"+attribute.getName() );
 						}
-						ret.append(extractPropName(type, assocNodeRef));
 					}
 					return ret.toString();
 

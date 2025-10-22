@@ -10775,6 +10775,44 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
+					<field id="bcpg:filIngLevel" read-only="true" />
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:regulatoryCountries">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryUsageRef">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+			
+			<form id="datagridWUsed">
+				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
+					<show id="bcpg:filReqType" />
+					<show id="bcpg:filReqMessage" />
+					<show id="bcpg:filIngs" />
+					<show id="bcpg:filQtyPercMaxi" />
+					<show id="bcpg:filQtyPercMini" />
+					<show id="bcpg:filQtyPercMaxiUnit" />
+					<show id="bcpg:filQtyPercType" />
+					<show id="bcpg:filIngLevel" />
+					<show id="bcpg:filIsGMO" />
+					<show id="bcpg:filIsIonized" />
+					<show id="bcpg:filGeoOrigins" />
+					<show id="bcpg:filRequiredGeoOrigins" />
+					<show id="bcpg:filGeoTransfo" />
+					<show id="bcpg:filBioOrigins" />
+					<show id="bcpg:regulatoryCountries" force="true" />
+					<show id="bcpg:regulatoryUsageRef" force="true" />
+					<show id="entity_bcpg:filIngs_bcpg:ing_asColumn" />
+					<show id="fm:commentCount" force="true" />
+					<show id="bcpg:glopTarget" />
+					<show id="bcpg:glopValue" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
+					<field id="bcpg:filIngLevel" read-only="true" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:regulatoryCountries">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />

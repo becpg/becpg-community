@@ -82,7 +82,7 @@
             var templateUrl = YAHOO.lang
                 .substitute(
                     Alfresco.constants.URL_SERVICECONTEXT
-                    + "components/form?bulkEdit=true&entityNodeRef={entityNodeRef}&entityType={entityType}&itemKind={itemKind}&itemId={itemId}&destination={destination}&mode={mode}&submitType={submitType}&showCancelButton=true&dataListsName={dataListsName}&siteId={siteId}",
+                    + "components/form?bulkEdit=true&entityNodeRef={entityNodeRef}&entityType={entityType}&itemKind={itemKind}&itemId={itemId}&destination={destination}&mode={mode}&submitType={submitType}&showCancelButton=true&list={list}&siteId={siteId}",
                     {
                         itemKind: "type",
                         itemId: itemType,
@@ -91,7 +91,7 @@
                         submitType: "json",
                         entityNodeRef: this.options.entityNodeRef,
                         entityType: this.entity != null ? encodeURIComponent(this.entity.type) : "",
-                        dataListsName: encodeURIComponent(this.datalistMeta.name != null ? this.datalistMeta.name : this.options.list),
+                        list: encodeURIComponent(this.datalistMeta.name != null ? this.datalistMeta.name : this.options.list),
                         siteId: this.options.siteId
                     });
 
@@ -237,7 +237,7 @@
             var templateUrl = YAHOO.lang
                 .substitute(
                     Alfresco.constants.URL_SERVICECONTEXT
-                    + "components/form?bulkEdit=true&entityNodeRef={entityNodeRef}&entityType={entityType}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true&dataListsName={dataListsName}&siteId={siteId}",
+                    + "components/form?bulkEdit=true&entityNodeRef={entityNodeRef}&entityType={entityType}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true&list={list}&siteId={siteId}",
                     {
                         itemKind: "node",
                         itemId: item.nodeRef,
@@ -245,7 +245,7 @@
                         submitType: "json",
                         entityType: this.entity != null ? encodeURIComponent(this.entity.type) : "",
                         entityNodeRef: this.options.entityNodeRef,
-                        dataListsName: encodeURIComponent(this.datalistMeta.name != null ? this.datalistMeta.name : this.options.list),
+                        list: encodeURIComponent(this.datalistMeta.name != null ? this.datalistMeta.name : this.options.list),
                         siteId: this.options.siteId
                     });
 
@@ -629,6 +629,7 @@
                     + (this.entity != null ? "&entityType=" + encodeURIComponent(this.entity.type) : "")
                     + (this.options.entityNodeRef != null ? "&entityNodeRef=" + encodeURIComponent(this.options.entityNodeRef) : "")
                     + (this.options.columnFormId != null ? "&formId=" + this.options.columnFormId : "")
+                    + (this.options.list != null ? "&list=" + this.options.list : "")
                     + ("&noCache=" + timeStamp),
                 successCallback: {
                     fn: function(response) {

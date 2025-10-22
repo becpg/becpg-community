@@ -54,24 +54,26 @@ public class SurveyAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 	public AutoCompletePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
 		NodeRef itemId = null;
-		String dataListsName = null;
+		String listName = null;
 
 		@SuppressWarnings("unchecked")
 		Map<String, String> extras = (HashMap<String, String>) props.get(AutoCompleteService.EXTRA_PARAM);
 		if (extras != null) {
-			if (extras.get("itemId") != null) {
-				itemId = new NodeRef(extras.get("itemId"));
+			if (extras.get(AutoCompleteService.EXTRA_PARAM_ITEMID) != null) {
+				itemId = new NodeRef(extras.get(AutoCompleteService.EXTRA_PARAM_ITEMID));
 			}
-			dataListsName = extras.get("dataListsName");
+			if (extras.get(AutoCompleteService.EXTRA_PARAM_LIST) != null) {
+				listName = extras.get(AutoCompleteService.EXTRA_PARAM_LIST);
+			}
 		}
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(SurveyModel.TYPE_SURVEY_QUESTION).excludeDefaults()
 				.inSearchTemplate("%(bcpg:code survey:questionLabel)").locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
 
-		if (dataListsName != null) {
+		if (listName != null) {
 			queryBuilder.andFTSQuery("ISNULL:" + SurveyModel.PROP_SURVEY_FS_SURVEY_LIST_NAME + " OR ="
 					+ SurveyModel.PROP_SURVEY_FS_SURVEY_LIST_NAME + ":'' OR ="
-					+ SurveyModel.PROP_SURVEY_FS_SURVEY_LIST_NAME + ":" + dataListsName);
+					+ SurveyModel.PROP_SURVEY_FS_SURVEY_LIST_NAME + ":" + listName);
 		}
 		
 		if (!isAllQuery(query)) {

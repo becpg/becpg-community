@@ -30,7 +30,7 @@ public class SurveyQuestion extends BeCPGDataObject {
 	 */
 	private static final long serialVersionUID = -1181753750547793094L;
 
-	private SurveyQuestion parent;
+	private NodeRef parent;
 
 	private String label;
 
@@ -98,7 +98,7 @@ public class SurveyQuestion extends BeCPGDataObject {
 	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:parentLevel")
-	public SurveyQuestion getParent() {
+	public NodeRef getParent() {
 		return parent;
 	}
 
@@ -273,7 +273,7 @@ public class SurveyQuestion extends BeCPGDataObject {
 	 *
 	 * @param parent a {@link fr.becpg.repo.survey.data.SurveyQuestion} object
 	 */
-	public void setParent(SurveyQuestion parent) {
+	public void setParent(NodeRef parent) {
 		this.parent = parent;
 	}
 

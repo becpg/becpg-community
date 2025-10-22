@@ -283,6 +283,7 @@
 
                         } else {
                             catalogsDiv.innerHTML = "<span class=\"no-missing-prop\">" + instance.msg("label.no_missing_prop") + "</span>";
+                            instance.isLoaded = true;
                         }
                         YAHOO.util.Dom.removeClass(formulateButton, "loading");
                     },

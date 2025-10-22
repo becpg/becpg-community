@@ -48,6 +48,7 @@ import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespacePrefixResolver;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -96,6 +97,7 @@ import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
@@ -1362,26 +1364,30 @@ public class ECOServiceImpl implements ECOService {
 		}
 	}
 	
-	private Double getQtySum(List<NodeRef> sources, WUsedListDataItem wUsed) {
+	private Pair<Double, ProductUnit> getQtySum(List<NodeRef> sources, WUsedListDataItem wUsed, NodeRef target) {
         double qty = 0;
+        double densityFactor = 1;
+        ProductUnit targetUnit = ProductUnit.kg;
         ProductData wUsedEntity = (ProductData) alfrescoRepository.findOne(wUsed.getSourceItems().get(0));
         
         for (NodeRef source : sources) {
         	for (CompositionDataItem compoItem : wUsedEntity.getCompoList()) {
         		if (compoItem.getComponent().equals(source)) {
-        			qty += getQty(compoItem);
+        			if (compoItem instanceof CompoListDataItem compoListDataItem) {
+        	            qty += compoListDataItem.getQty();
+        	            
+        	            if (compoItem.getComponent().equals(target)) {
+        	            	densityFactor = compoListDataItem.getQtySubFormula() / compoListDataItem.getQty();
+        	            	targetUnit = compoListDataItem.getCompoListUnit();
+        	            }
+        			} else {
+        	            qty += compoItem.getQty();
+        	        }
         		}
         	}
         }
-        return qty;
-    }
-
-    private <T extends CompositionDataItem> Double getQty(T item) {
-        if (item instanceof CompoListDataItem compoListDataItem) {
-            return compoListDataItem.getQtySubFormula();
-        } else {
-            return item.getQty();
-        }
+        
+        return Pair.of(qty * densityFactor, targetUnit);
     }
 
 	@SuppressWarnings("unchecked")
@@ -1389,11 +1395,13 @@ public class ECOServiceImpl implements ECOService {
 			WUsedListDataItem wUsedData, boolean createNew, boolean shouldReturn) {
 		
 		Double newQuantity = wUsedData.getQty();
-
+		ProductUnit newUnit = null;
+		
 		if (newQuantity == null) {
-            Double itemQty = getQtySum(replacement.getSourceItems(), wUsedData);
+            Pair<Double, ProductUnit> itemQty = getQtySum(replacement.getSourceItems(), wUsedData, target);
             if (itemQty != null && (replacement.getQtyPerc() != null)) {
-                newQuantity = (replacement.getQtyPerc() / 100d) * itemQty;
+                newQuantity = (replacement.getQtyPerc() / 100d) * itemQty.getLeft();
+                newUnit = itemQty.getRight();
             }
         }
 
@@ -1409,8 +1417,8 @@ public class ECOServiceImpl implements ECOService {
 			newItem = (T) item.copy();
 			newItem.setNodeRef(null);
 		}
-
-		updateComponent(newItem, target, newQuantity, newLoss);
+		
+		updateComponent(newItem, target, newQuantity, newLoss, newUnit);
 
 		if (shouldReturn) {
 			return newItem;
@@ -1424,14 +1432,18 @@ public class ECOServiceImpl implements ECOService {
 		return (effectiveDate != null) && (effectiveDate.getTime() > now.getTime());
 	}
 
-	private <T extends CompositionDataItem> void updateComponent(T component, NodeRef target, Double newQuantity, Double newLoss) {
+	private <T extends CompositionDataItem> void updateComponent(T component, NodeRef target, Double newQuantity, Double newLoss, ProductUnit newUnit) {
 		component.setComponent(target);
 		if (component instanceof CompoListDataItem compoListDataItem) {
 			compoListDataItem.setQtySubFormula(newQuantity);
+			
+			if (newUnit != null) {
+				compoListDataItem.setCompoListUnit(newUnit);
+			}
 		} else {
 			component.setQty(newQuantity);
 		}
-
+		
 		if (newLoss != null) {
 			component.setLossPerc(newLoss);
 		}
