@@ -1404,7 +1404,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	private List<Locale> getEntityReportLocales(NodeRef entityNodeRef) {
 		List<Locale> ret = new ArrayList<>();
 		List<String> langs = (List<String>) nodeService.getProperty(entityNodeRef, ReportModel.PROP_REPORT_LOCALES);
-		if (langs != null) {
+		if (langs != null && !langs.isEmpty()) {
 			for (String lang : langs) {
 				ret.add(MLTextHelper.parseLocale(lang));
 			}
