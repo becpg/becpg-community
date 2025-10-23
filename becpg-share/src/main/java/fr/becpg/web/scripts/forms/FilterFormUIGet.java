@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -67,29 +68,14 @@ public class FilterFormUIGet extends FormUIGet {
 				formId = formId + "-wused";
 			}
 		}
-
-		if (formId != null && !formId.isBlank()) {
-			if (entityType != null && !entityType.isBlank() && siteIdParam != null && !siteIdParam.isBlank()
-					&& testFormConfig(itemId, formId + "-" + entityType + "-" + siteIdParam) != null) {
-				formId = formId + "-" + entityType + "-" + siteIdParam;
-
-			} else if (siteIdParam != null && !siteIdParam.isBlank() && testFormConfig(itemId, formId + "-" + siteIdParam) != null) {
-				formId = formId + "-" + siteIdParam;
-			} else if (entityType != null && !entityType.isBlank() && testFormConfig(itemId, formId + "-" + entityType) != null) {
-				formId = formId + "-" + entityType;
-			}
-
-		} else {
-			if (entityType != null && !entityType.isBlank() && siteIdParam != null && !siteIdParam.isBlank()
-					&& testFormConfig(itemId, entityType + "-" + siteIdParam) != null) {
-				formId = entityType + "-" + siteIdParam;
-
-			} else if (siteIdParam != null && !siteIdParam.isBlank() && testFormConfig(itemId, siteIdParam) != null) {
-				formId = siteIdParam;
-			} else if (entityType != null && !entityType.isBlank() && testFormConfig(itemId, entityType) != null) {
-				formId = entityType;
-			}
-		}
+		
+		Map<String, String> params = new HashMap<>();
+		params.put("formId", formId);
+		params.put("entityType", entityType);
+		params.put("siteId", siteIdParam);
+		params.put("list", list);
+		
+		formId = buildFormId(itemId, params);
 
 		// get the form configuration and list of fields that are visible (if any)
 		FormConfigElement formConfig = getFormConfig(itemId, formId);
@@ -153,6 +139,50 @@ public class FilterFormUIGet extends FormUIGet {
 		}
 
 		return model;
+	}
+	
+	private String buildFormId(String itemId, Map<String, String> params) {
+		List<List<String>> expectedCombinations = List.of(
+				List.of("formId", "entityType", "siteId", "list"),
+				List.of("formId", "siteId", "list"),
+				List.of("formId", "entityType", "list"),
+				List.of("entityType", "siteId", "list"),
+				List.of("siteId", "list"),
+				List.of("entityType", "list"),
+				List.of("formId", "list"),
+				List.of("formId", "entityType", "siteId"),
+				List.of("formId", "siteId"),
+				List.of("formId", "entityType"),
+				List.of("entityType", "siteId"),
+				List.of("siteId"),
+				List.of("entityType"),
+				List.of("formId")
+				);
+		for (List<String> combination : expectedCombinations) {
+	        String candidateFormId = buildCandidate(params, combination);
+	        if (candidateFormId != null && testFormConfig(itemId, candidateFormId) != null) {
+	            return candidateFormId;
+	        }
+	    }
+	    return null;
+	}
+	
+	private String buildCandidate(Map<String, String> params, List<String> keys) {
+		List<String> validParts = new ArrayList<>();
+		for (String key : keys) {
+			String value = normalize(params.get(key));
+			if (value == null) {
+				return null;
+			}
+			validParts.add(value);
+		}
+		return String.join("-", validParts);
+	}
+	
+	private String normalize(String value) {
+		if (value == null) return null;
+		value = value.trim();
+		return (value.isEmpty() || "null".equalsIgnoreCase(value)) ? null : value;
 	}
 
 	public class FieldPointer extends Element {
