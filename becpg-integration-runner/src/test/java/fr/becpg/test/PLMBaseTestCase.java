@@ -211,7 +211,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 
 		// labelingPosition
 		NodeRef labelingPositionFolder = entitySystemService.getSystemEntityDataList(listsFolder, PlmRepoConsts.PATH_LABELING_POSITIONS);
-		String[] labelingPositions = { "Côté de la boîte", "Dessus de la boite" };
+		String[] labelingPositions = { "Côté de la boîte", "Dessus de la boîte" };
 		for (String labelingPosition : labelingPositions) {
 			properties = new HashMap<>();
 			properties.put(BeCPGModel.PROP_LV_VALUE, labelingPosition);
