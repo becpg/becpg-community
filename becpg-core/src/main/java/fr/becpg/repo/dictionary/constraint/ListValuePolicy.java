@@ -16,6 +16,7 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.Path;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -138,7 +139,16 @@ public class ListValuePolicy extends AbstractBeCPGPolicy implements OnUpdateProp
 					afterDefaultValue = MLTextHelper.getClosestValue(afterMltext, Locale.getDefault());
 				}
 				if (!Objects.equals(beforeDefaultValue, afterDefaultValue)) {
-					throw new IllegalStateException("You cannot update bcpg:lvValue because bcpg:lvCode is empty");
+					Path nodePath = nodeService.getPath(nodeRef);
+					String pathString = nodePath != null ? nodePath.toPrefixString(namespaceService) : null;
+					StringBuilder messageBuilder = new StringBuilder("You cannot update bcpg:lvValue because bcpg:lvCode is empty");
+					messageBuilder.append(" before=").append(beforeDefaultValue);
+					messageBuilder.append(" after=").append(afterDefaultValue);
+					messageBuilder.append(" nodeRef=").append(nodeRef);
+					if (pathString != null) {
+						messageBuilder.append(" path=").append(pathString);
+					}
+					throw new IllegalStateException(messageBuilder.toString());
 				}
 			}
 		}
