@@ -1377,7 +1377,9 @@ public class ECOServiceImpl implements ECOService {
         	            qty += compoListDataItem.getQty();
         	            
         	            if (compoItem.getComponent().equals(target)) {
-        	            	densityFactor = compoListDataItem.getQtySubFormula() / compoListDataItem.getQty();
+        	            	if (compoListDataItem.getQty() != 0d) {
+        	            		densityFactor = compoListDataItem.getQtySubFormula() / compoListDataItem.getQty();
+        	            	}
         	            	targetUnit = compoListDataItem.getCompoListUnit();
         	            }
         			} else {
