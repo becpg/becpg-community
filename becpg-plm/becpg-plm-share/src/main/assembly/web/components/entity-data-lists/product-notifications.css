@@ -629,3 +629,82 @@ div .div-regulatorycodes ul li span {
 	animation: score 1s steps(19) 1 forwards
 }
 
+.product-notifications-container .progress-button span.first-child,
+.product-notifications-container .progress-button span.first-child button {
+	display: block;
+	width: 100%;
+}
+
+.product-notifications-container .progress-button {
+	position: relative;
+	z-index: 0;
+}
+
+.product-notifications-container .progress-button span.first-child button {
+	background: none;
+	padding: 0;
+	border: 1px solid #d0d0d0;
+	border-radius: 10px;
+	min-width: 96px;
+	box-sizing: border-box;
+	overflow: hidden;
+}
+
+.product-notifications-container .progress-button .yui-button-label {
+	display: block;
+	width: 100%;
+	padding: 4px 6px;
+}
+
+.product-notifications-container .progress-bar-container {
+	position: relative;
+	display: block;
+	width: 100%;
+	height: 18px;
+	border-radius: 9px;
+	background-color: #e6e6e6;
+	overflow: hidden;
+}
+
+.product-notifications-container .progress-bar-fill {
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 100%;
+	background: linear-gradient(90deg, #4caf50, #81c784);
+}
+
+.product-notifications-container .progress-bar-text {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 11px;
+	font-weight: bold;
+	color: #004254;
+}
+
+.product-notifications-container .progress-state-low .progress-bar-fill {
+	background: linear-gradient(90deg, #f44336, #ff7961);
+}
+
+.product-notifications-container .progress-state-medium .progress-bar-fill {
+	background: linear-gradient(90deg, #ffeb3b, #ffd54f);
+}
+
+.product-notifications-container .progress-state-high .progress-bar-fill {
+	background: linear-gradient(90deg, #4caf50, #81c784);
+}
+
+.product-notifications-container .progress-state-medium .progress-bar-text {
+	color: #6d4c41;
+}
+
+.product-notifications-container .progress-state-low .progress-bar-text {
+	color: #b71c1c;
+}
+

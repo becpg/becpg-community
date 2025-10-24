@@ -1,6 +1,6 @@
 <@markup id="css" >
    <#include "../../modules/entity-datagrid/include/entity-datagrid.css.ftl"/>
-   
+    <@link href="${url.context}/res/modules/custom-entity-datagrid/project-entity-datagrid.css" group="entity-datalists" />
     <@link  href="${url.context}/res/components/entity-data-lists/product-notifications.css" group="entity-datalists" />
     <@link href="${url.context}/res/components/product/product-list.css" group="product-list" />
 </@>
@@ -8,6 +8,7 @@
 <@markup id="js">
     <#include "../../modules/entity-datagrid/include/entity-datagrid.js.ftl"/>
     <@script src="${url.context}/res/components/entity-data-lists/product-notifications.js" group="entity-datalists"/>
+    <@script src="${url.context}/res/components/project/columnRenderers.js" group="entity-datalists" />
     <@script src="${url.context}/res/modules/custom-entity-datagrid/product-columnRenderers.js" group="entity-datalists"/>
     <@script src="${url.context}/res/modules/custom-entity-datagrid/product-entity-toolbar.js" group="entity-datalists"/>
 	<@script src="${url.context}/res/components/product/product-list.js" group="product-list" />
