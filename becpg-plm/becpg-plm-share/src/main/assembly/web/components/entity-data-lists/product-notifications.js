@@ -327,11 +327,19 @@
                         renderScoresData : function(scores) {
                             var instance = this;
                             var html = "";
+                            var isGridContext = this.options.containerDiv && Dom.hasClass(this.options.containerDiv, "product-notifications-container");
                             
                             if (scores !== undefined && scores.details !==undefined) {
 
                                 var intScore = parseInt(scores.global);
                                 var spriteIndex = (intScore / 5 >> 0);
+                                var progressPercent = Math.max(0, Math.min(100, Math.floor(scores.global)));
+                                var progressState = "high";
+                                if (progressPercent < 50) {
+                                    progressState = "low";
+                                } else if (progressPercent < 80) {
+                                    progressState = "medium";
+                                }
                                 var scoreTitle = instance.msg("tooltip.components.validation") + ": "
                                         + Math.floor(scores.details.componentsValidation) + "%\n"
                                         + instance.msg("tooltip.mandatory.completion") + ": "
@@ -348,13 +356,28 @@
                                 var buttonClass = "score-" + spriteIndex;
 
                                 var totalForbidden = scores.totalForbidden;
-                                if (!Dom.hasClass(instance.widgets.showNotificationsButton, "score")) {
-                                    instance.widgets.showNotificationsButton.removeClass("loading");
-                                    instance.widgets.showNotificationsButton.addClass("score");
-                                    instance.widgets.showNotificationsButton.addClass(buttonClass);
+                                instance.widgets.showNotificationsButton.removeClass("loading");
+
+                                for (var idx = 1; idx <= 20; idx++) {
+                                    instance.widgets.showNotificationsButton.removeClass("score-" + idx);
                                 }
 
-                                instance.widgets.showNotificationsButton.set("label", Math.floor(scores.global) + "%");
+                                if (isGridContext) {
+                                    instance.widgets.showNotificationsButton.removeClass("score");
+                                    instance.widgets.showNotificationsButton.removeClass("progress-button");
+                                    instance.widgets.showNotificationsButton.addClass("progress-button");
+                                    var progressHtml = '<span class="progress-bar-container progress-state-' + progressState
+                                            + '"><span class="progress-bar-fill" style="width:' + progressPercent
+                                            + '%;"></span><span class="progress-bar-text">' + progressPercent + '%</span></span>';
+                                    instance.widgets.showNotificationsButton.set("label", progressHtml);
+                                } else {
+                                    if (!Dom.hasClass(instance.widgets.showNotificationsButton, "score")) {
+                                        instance.widgets.showNotificationsButton.addClass("score");
+                                    }
+                                    instance.widgets.showNotificationsButton.removeClass("progress-button");
+                                    instance.widgets.showNotificationsButton.addClass(buttonClass);
+                                    instance.widgets.showNotificationsButton.set("label", progressPercent + "%");
+                                }
 
                                 if (totalForbidden !== undefined && totalForbidden !== null && totalForbidden > 0) {
                                     instance.widgets.showNotificationsButton.set("title", instance.msg("tooltip.notifications-button",
@@ -422,10 +445,25 @@
                             } else {
                                 var buttonClass = "score-100" ;
 
-                                if (!Dom.hasClass(instance.widgets.showNotificationsButton, "score")) {
-                                    instance.widgets.showNotificationsButton.removeClass("loading");
-                                    instance.widgets.showNotificationsButton.addClass("score");
+                                instance.widgets.showNotificationsButton.removeClass("loading");
+
+                                for (var defaultIdx = 1; defaultIdx <= 20; defaultIdx++) {
+                                    instance.widgets.showNotificationsButton.removeClass("score-" + defaultIdx);
+                                }
+
+                                if (isGridContext) {
+                                    instance.widgets.showNotificationsButton.removeClass("score");
+                                    instance.widgets.showNotificationsButton.removeClass("progress-button");
+                                    instance.widgets.showNotificationsButton.addClass("progress-button");
+                                    var defaultProgress = '<span class="progress-bar-container progress-state-high"><span class="progress-bar-fill" style="width:100%;"></span><span class="progress-bar-text">100%</span></span>';
+                                    instance.widgets.showNotificationsButton.set("label", defaultProgress);
+                                } else {
+                                    if (!Dom.hasClass(instance.widgets.showNotificationsButton, "score")) {
+                                        instance.widgets.showNotificationsButton.addClass("score");
+                                    }
+                                    instance.widgets.showNotificationsButton.removeClass("progress-button");
                                     instance.widgets.showNotificationsButton.addClass(buttonClass);
+                                    instance.widgets.showNotificationsButton.set("label", "100%");
                                 }
 
                             }
