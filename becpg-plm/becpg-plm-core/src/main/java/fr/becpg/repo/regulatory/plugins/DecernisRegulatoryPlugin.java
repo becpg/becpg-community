@@ -225,8 +225,9 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 	private JSONObject recipeAnalysis(RegulatoryContext context, RegulatoryBatch regulatoryBatch) {
 		JSONObject recipeAnalysisResults = null;
 		int retries = 2;
-		while (recipeAnalysisResults == null) {
+		while (recipeAnalysisResults == null && retries >= 0) {
 			try {
+				retries--;
 				recipeAnalysisResults = postV5RecipeAnalysis(context, regulatoryBatch);
 			} catch (RestClientException e) {
 				if (retries <= 0) {
@@ -234,7 +235,6 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 				}
 				logger.error("Error during Decernis recipe analysis: " + DecernisHelper.cleanError(e.getMessage()) 
 				+ ", try restarting request...");
-				retries--;
 				recipeAnalysisResults = null;
 			}
 		}
@@ -991,7 +991,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 													: "");
 
 											MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, threshold);
-											RequirementListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage,
+											RequirementListDataItem reqCtrlItem = createReqCtrl(ingItem.getNodeRef(), reqMessage,
 													RequirementType.Forbidden);
 											reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
 											reqCtrlItem.setReqMaxQty(0d);
@@ -1010,7 +1010,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
 										} else if (tabularReport.getString(RESULT_INDICATOR).toLowerCase().startsWith("not listed")) {
 											MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING);
-											RequirementListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage,
+											RequirementListDataItem reqCtrlItem = createReqCtrl(ingItem.getNodeRef(), reqMessage,
 													RequirementType.Tolerated);
 											reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
 											requirements.add(reqCtrlItem);
@@ -1025,7 +1025,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
 											MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PERMITTED_ING,
 													tabularReport.getString(RESULT_INDICATOR), threshold);
-											RequirementListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Info);
+											RequirementListDataItem reqCtrlItem = createReqCtrl(ingItem.getNodeRef(), reqMessage, RequirementType.Info);
 
 											reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
 											requirements.add(reqCtrlItem);
