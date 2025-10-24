@@ -86,6 +86,14 @@
 	min-height:0px;
 }
 
+.columns-conf-list .columns-conf-item {
+	margin-bottom: 0.4em;
+}
+
+.columns-conf-list .columns-conf-item:last-child {
+	margin-bottom: 0;
+}
+
 
 .datagrid .item-select .yuimenuitemlabel span {
 	background-position: 2px 50%;
