@@ -1,22 +1,26 @@
 package fr.becpg.repo.sample;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.QName;
 
-// Removed unused import
-
+import fr.becpg.model.NutrientProfileCategory;
+import fr.becpg.model.NutrientProfileVersion;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LogisticUnitData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
+import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
@@ -26,15 +30,18 @@ import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.quality.data.dataList.StockListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.survey.data.SurveyListDataItem;
 import fr.becpg.repo.survey.data.SurveyQuestion;
 import fr.becpg.repo.survey.impl.SurveyServiceImpl.ResponseType;
+import fr.becpg.repo.product.formulation.score.NutriScoreContext;
 
 /**
  * <p>StandardChocolateEclairTestProduct class.</p>
@@ -385,7 +392,9 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 	private boolean isWithSurvey = false;
 	private boolean isWithScoreList = false;
 	private boolean isWithClaim = false;
+
 	private boolean isWithSpecification = false;
+	private boolean isWithNuts = false;
 
 	// Private constructor to enforce usage of the builder
 	private StandardChocolateEclairTestProduct(Builder builder) {
@@ -399,6 +408,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		this.isWithScoreList = builder.isWithScoreList;
 		this.isWithClaim = builder.isWithClaim;
 		this.isWithSpecification = builder.isWithSpecification;
+		this.isWithNuts = builder.isWithNuts;
 	}
 
 	// Static inner Builder class
@@ -413,6 +423,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		private boolean isWithScoreList = false;
 		private boolean isWithClaim = false;
 		private boolean isWithSpecification = false;
+		private boolean isWithNuts = false;
 
 		public Builder withClaim(boolean isWithClaim) {
 			this.isWithClaim = isWithClaim;
@@ -458,6 +469,11 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 			this.isWithSpecification = isWithSpecification;
 			return this;
 		}
+
+		public Builder withNuts(boolean isWithNuts) {
+			this.isWithNuts = isWithNuts;
+			return this;
+		}
 		
 		@Override
 		protected Builder self() {
@@ -474,10 +490,14 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 	@Override
 	public FinishedProductData createTestProduct() {
 		 product = FinishedProductData.build().withName("Éclair au chocolat").withUnit(ProductUnit.kg).withQty(550d)
-				.withDensity(1d);
+			.withDensity(1d);
 
-       	initCertifications();
-		
+		initCertifications();
+
+		if (isWithNuts) {
+			configureNutrientProfile(product);
+		}
+
 		if (isWithClaim) {
 			initClaims();
 			product.withLabelClaimList(createClaimList());
@@ -675,6 +695,10 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 			water.withIngList(List.of(IngListDataItem.build().withQtyPerc(100d).withIngredient(ingWaterNodeRef)));
 		}
 
+		if (isWithNuts) {
+			water.setNutList(createNutList(0d, 0d, 0d, 0d, 0d, null, 0d, 0d, 0d));
+		}
+
 		waterNodeRef = alfrescoRepository.create(destFolder, water).getNodeRef();
 		nodeService.addAspect(waterNodeRef, PLMModel.ASPECT_WATER, new HashMap<>());
 
@@ -684,6 +708,10 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 			milk.withIngList(List.of(IngListDataItem.build().withQtyPerc(100d).withIngredient(ingMilkNodeRef)));
 		
 
+		}
+
+		if (isWithNuts) {
+			milk.setNutList(createNutList(260d, 1.9d, 3.6d, 4.8d, 0.05d, 0.13d, 0d, 0d, 3.4d));
 		}
 		
 		if (isWithStocks) {
@@ -737,9 +765,13 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 			if (isWithClaim) {
 				// HALAL claim for sugarSupplier3 - 60% applicable, 40% claimed, TRUE
 				sugarSupplier3.withLabelClaimList(List.of(LabelClaimListDataItem.build().withPercentApplicable(60d).withPercentClaim(40d)
-						.withLabelClaim(CharactTestHelper.getOrCreateClaim(nodeService, CLAIM_HALAL, CLAIM_HALAL_LABEL)).withIsClaimed(Boolean.TRUE)
+						.withLabelClaim(CharactTestHelper.getOrCreateClaim(nodeService, CLAIM_HALAL, CLAIM_HALAL_LABEL)).withIsClaimed(Boolean.TRUE)));
+			}
 
-				));
+			if (isWithNuts) {
+				sugarSupplier1.setNutList(createNutList(1700d, 0d, 0d, 100d, 0d, 0d, 0d, 0d, 0d));
+				sugarSupplier2.setNutList(createNutList(1700d, 0d, 0d, 100d, 0d, 0d, 0d, 0d, 0d));
+				sugarSupplier3.setNutList(createNutList(1700d, 0d, 0d, 100d, 0d, 0d, 0d, 0d, 0d));
 			}
 
 			if (isWithStocks) {
@@ -774,6 +806,10 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 			if (isWithClaim) {
 				sugarGen2.withLabelClaimList(createClaimList());
 			}
+			if (isWithNuts) {
+				sugarGen1.setNutList(createNutList(1700d, 0d, 0d, 100d, 0d, 0d, 0d, 0d, 0d));
+				sugarGen2.setNutList(createNutList(1700d, 0d, 0d, 100d, 0d, 0d, 0d, 0d, 0d));
+			}
 			
 			sugarPlants2NodeRef = alfrescoRepository.create(destFolder, sugarGen2).getNodeRef();
 
@@ -782,6 +818,11 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 			
 			if (isWithClaim) {
 				sugar.withLabelClaimList(createClaimList());
+			}
+
+			if (isWithNuts) {
+				sugar.setNutList(createNutList(1700d, 0d, 0d, 100d, 0d, 0d, 0d, 0d, 0d));
+				addPhysicoChemProperty(sugar, "Fruit and vegetable content", NutriScoreContext.FRUIT_VEGETABLE_CODE, 0d);
 			}
 		}
 
@@ -800,12 +841,17 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		
 		if (isWithClaim) {
 			flour.withLabelClaimList(List.of(LabelClaimListDataItem.build().withPercentApplicable(100d).withPercentClaim(100d)
-					.withLabelClaim(CharactTestHelper.getOrCreateClaim(nodeService, CLAIM_EU_ORGANIC,CLAIM_EU_ORGANIC_LABEL))
+					.withLabelClaim(CharactTestHelper.getOrCreateClaim(nodeService, CLAIM_EU_ORGANIC, CLAIM_EU_ORGANIC_LABEL))
 					.withIsClaimed(Boolean.TRUE)));
 		}
 
 
 		flourNodeRef = alfrescoRepository.create(destFolder, flour).getNodeRef();
+		if (isWithNuts) {
+			RawMaterialData flourData = (RawMaterialData) alfrescoRepository.findOne(flourNodeRef);
+			flourData.setNutList(createNutList(1480d, 0.3d, 1.5d, 1.0d, 0.004d, 0.01d, 2.7d, 10.5d, 12.0d));
+			alfrescoRepository.save(flourData);
+		}
 
 		RawMaterialData egg = RawMaterialData.build().withName(EGG_NAME).withQty(40d).withUnit(ProductUnit.kg);
 
@@ -820,6 +866,11 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
 		eggNodeRef = alfrescoRepository.create(destFolder, egg).getNodeRef();
 		nodeService.setProperty(eggNodeRef, PLMModel.PROP_EVAPORATED_RATE, 10d);
+		if (isWithNuts) {
+			RawMaterialData eggData = (RawMaterialData) alfrescoRepository.findOne(eggNodeRef);
+			eggData.setNutList(createNutList(600d, 3.3d, 9.5d, 0.4d, 0.12d, 0.3d, 0d, 0d, 12.6d));
+			alfrescoRepository.save(eggData);
+		}
 
 		RawMaterialData chocolate = RawMaterialData.build().withName(CHOCOLATE_NAME).withQty(50d).withUnit(ProductUnit.kg);
 
@@ -839,6 +890,11 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		}
 
 		chocolateNodeRef = alfrescoRepository.create(destFolder, chocolate).getNodeRef();
+		if (isWithNuts) {
+			RawMaterialData chocolateData = (RawMaterialData) alfrescoRepository.findOne(chocolateNodeRef);
+			chocolateData.setNutList(createNutList(2130d, 12.5d, 35d, 45d, 0.02d, 0.05d, 0d, 0d, 5.5d));
+			alfrescoRepository.save(chocolateData);
+		}
 
 		// Creating semi-finished product (Pâte à choux)
 		SemiFinishedProductData pateChoux = SemiFinishedProductData.build().withName(PATE_CHOUX_NAME).withQty(22d).withUnit(ProductUnit.kg)
@@ -866,6 +922,11 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 			pateChoux.setLabelClaimList(createClaimList());
 		}
 
+		if (isWithNuts) {
+			pateChoux.setNutList(createNutList(1020d, 5d, 15d, 12d, 0.15d, 0.4d, 1.0d, 1.4d, 6.0d));
+			addPhysicoChemProperty(pateChoux, "Fruit and vegetable content", NutriScoreContext.FRUIT_VEGETABLE_CODE, 5d);
+		}
+
 		pateChouxNodeRef = alfrescoRepository.create(destFolder, pateChoux).getNodeRef();
 
 		// Creating semi-finished product (Crème pâtissière)
@@ -888,6 +949,11 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 			cremePatissiere.setLabelClaimList(createClaimList());
 		}
 
+		if (isWithNuts) {
+			cremePatissiere.setNutList(createNutList(850d, 4.8d, 12.5d, 18d, 0.18d, 0.45d, 0.8d, 1.2d, 4.2d));
+			addPhysicoChemProperty(cremePatissiere, "Fruit and vegetable content", NutriScoreContext.FRUIT_VEGETABLE_CODE, 0d);
+		}
+
 		cremePatissiereNodeRef = alfrescoRepository.create(destFolder, cremePatissiere).getNodeRef();
 
 		// Creating semi-finished product (Nappage)
@@ -905,7 +971,62 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 			nappage.setLabelClaimList(createClaimList());
 		}
 
+		if (isWithNuts) {
+			nappage.setNutList(createNutList(920d, 6.5d, 20d, 30d, 0.12d, 0.3d, 0.5d, 0.9d, 3.5d));
+			addPhysicoChemProperty(nappage, "Fruit and vegetable content", NutriScoreContext.FRUIT_VEGETABLE_CODE, 0d);
+		}
+
 		nappageNodeRef = alfrescoRepository.create(destFolder, nappage).getNodeRef();
+	}
+
+	private void configureNutrientProfile(FinishedProductData finishedProduct) {
+		finishedProduct.getAspects().add(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE);
+		finishedProduct.setNutrientProfileCategory(NutrientProfileCategory.Others.toString());
+		finishedProduct.setNutrientProfileVersion(NutrientProfileVersion.VERSION_2023.toString());
+		finishedProduct.withNutList(createNutList(1250d, 8d, 16d, 30d, 0.2d, 0.5d, 1.2d, 1.8d, 5.5d));
+		addPhysicoChemProperty(finishedProduct, "Fruit and vegetable content", NutriScoreContext.FRUIT_VEGETABLE_CODE, 0d);
+	}
+
+	private void addPhysicoChemProperty(ProductData product, String name, String code, Double value) {
+		PhysicoChemListDataItem physicoChemList = new PhysicoChemListDataItem();
+
+		NodeRef physicoChem = CharactTestHelper.getOrCreatePhysico(nodeService, name);
+
+		Map<QName, Serializable> props = new HashMap<>();
+		props.put(PLMModel.PROP_PHYSICO_CHEM_CODE, code);
+		props.put(PLMModel.PROP_PHYSICO_CHEM_UNIT, "%");
+		nodeService.addProperties(physicoChem, props);
+
+		if (product.getPhysicoChemList() == null) {
+			product.setPhysicoChemList(new ArrayList<>());
+		}
+
+		physicoChemList.setPhysicoChem(physicoChem);
+		physicoChemList.setValue(value);
+		product.getPhysicoChemList().add(physicoChemList);
+	}
+
+	private List<NutListDataItem> createNutList(Double energyKj, Double satFat, Double totalFat, Double sugar, Double sodium, Double salt,
+			Double nspFiber, Double aoacFiber, Double protein) {
+		List<NutListDataItem> nutList = new ArrayList<>();
+		addNutEntry(nutList, NutriScoreContext.ENERGY_CODE, "kJ", energyKj);
+		addNutEntry(nutList, NutriScoreContext.SATFAT_CODE, "g", satFat);
+		addNutEntry(nutList, NutriScoreContext.FAT_CODE, "g", totalFat);
+		addNutEntry(nutList, NutriScoreContext.SUGAR_CODE, "g", sugar);
+		addNutEntry(nutList, NutriScoreContext.SODIUM_CODE, "g", sodium);
+		addNutEntry(nutList, NutriScoreContext.SALT_CODE, "g", salt);
+		addNutEntry(nutList, NutriScoreContext.NSP_CODE, "g", nspFiber);
+		addNutEntry(nutList, NutriScoreContext.AOAC_CODE, "g", aoacFiber);
+		addNutEntry(nutList, NutriScoreContext.PROTEIN_CODE, "g", protein);
+		return nutList;
+	}
+
+	private void addNutEntry(List<NutListDataItem> nutList, String code, String unit, Double value) {
+		if (value == null) {
+			return;
+		}
+		NodeRef nutRef = CharactTestHelper.getOrCreateNutrient(nodeService, code, unit);
+		nutList.add(NutListDataItem.build().withNut(nutRef).withUnit(unit).withValue(value).withIsManual(true));
 	}
 
 	private void initIngredients() {
