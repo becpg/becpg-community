@@ -51,6 +51,7 @@
 					   <label for="${el}-referenceNutrientLocales-entry">${msg("label.referenceNutrientLocales")}</label>
 					   <input id="${el}-referenceNutrientLocales" type="hidden" name="referenceNutrientLocales" value="">
 					   <select id="${el}-referenceNutrientLocales-entry" name="-" multiple="multiple" size="5" index="0" onchange="javascript:Alfresco.util.updateMultiSelectListValue('${el}-referenceNutrientLocales-entry', '${el}-referenceNutrientLocales', false);">
+					      <option value="" selected="selected"></option>
 					      <#list h.getChildren("language") as language>
 					         <#assign key = language.getAttribute("locale")>
 					         <option value="${key}">${msg("locale.name.${key}")}</option>
