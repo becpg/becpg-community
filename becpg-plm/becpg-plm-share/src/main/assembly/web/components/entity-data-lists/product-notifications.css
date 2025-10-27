@@ -46,8 +46,16 @@
 	width: 28px
 }
 
-.datalist-toolbar .product-notifications table {
-	border-spacing: 10px 10px
+
+.datalist-toolbar .product-notifications table,
+.product-list .product-notifications table {
+    border-collapse: initial !important;
+    border-spacing: 10px 10px;
+}
+
+
+.product-list .product-notifications .alfresco-datatable thead {
+    display: none;
 }
 
 .ctrlSumPreview {
