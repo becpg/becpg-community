@@ -405,7 +405,7 @@ if (beCPG.module.EntityDataGridRenderers) {
     }
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
-        propertyName: ["bcpg:ecoScore", "bcpg:ecoScoreDetails"],
+        propertyName: [ "bcpg:ecoScoreDetails"],
         renderer: function(oRecord, data, label, scope) {
             var itemData = oRecord.getData("itemData");
             return renderEcoScore(scope, itemData);
@@ -413,7 +413,7 @@ if (beCPG.module.EntityDataGridRenderers) {
     });
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
-        propertyName: ["bcpg:nutrientProfilingScore", "bcpg:nutrientProfilingDetails"],
+        propertyName: [ "bcpg:nutrientProfilingDetails"],
         renderer: function(oRecord, data, label, scope) {
             var itemData = oRecord.getData("itemData");
             return renderNutrientScore(scope, itemData);
@@ -1937,9 +1937,9 @@ if (beCPG.module.EntityDataGridRenderers) {
             if ( scoreData) {
                 var containerId = 'product-notifications-' + nodeRef.replace(/[:/]/g, '-') + '-' + i;
                 
-                html += '<div id="' + containerId + '" class="flat-button product-notifications-container" ' +
+                html += '<div class="product-notifications" ><div id="' + containerId + '" class="flat-button product-notifications-container" ' +
                     'data-node-ref="' + nodeRef + '" ' +
-                    'data-list="' + (scope.datalistMeta ? scope.datalistMeta.name : '') + '"></div>';
+                    'data-list="' + (scope.datalistMeta ? scope.datalistMeta.name : '') + '"></div></div>';
 
                 setTimeout(function() {
                     var container = document.getElementById(containerId);

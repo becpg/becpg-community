@@ -124,7 +124,7 @@
                                 YAHOO.Bubbling.on("refreshDataGrids", this.loadPanelData, this);
                             }
 
-                            YAHOO.Bubbling.addDefaultAction(REQFILTER_EVENTCLASS,function(layers, args) {
+                            YAHOO.Bubbling.addDefaultAction(instance.id +REQFILTER_EVENTCLASS,function(layers, args) {
                                     var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
 
                                     
@@ -159,7 +159,7 @@
 
                             }, true );
                             
-                            YAHOO.Bubbling.addDefaultAction(CHARACTDETAILS_EVENTCLASS, function(layer, args) {
+                            YAHOO.Bubbling.addDefaultAction(instance.id +CHARACTDETAILS_EVENTCLASS, function(layer, args) {
                                     var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
                                     if (owner !== null) {
                                         var splitted = owner.className.split("#");
@@ -404,7 +404,7 @@
                                     html += "<div class=\"dataTypeList\"><div class=\"title\">"
                                             + instance.msg("label.constraints.violations")
                                             + "<span class=\"req-all-all rclFilterSelected\"><a class=\"req-filter "
-                                            + REQFILTER_EVENTCLASS + "\" href=\"#\">" + instance.msg("label.constraints.view-all")
+                                            + instance.id +REQFILTER_EVENTCLASS + "\" href=\"#\">" + instance.msg("label.constraints.view-all")
                                             + "</a></span></div>";
 
                                     html += "<div class=\"rclFilterElt\"><div>";
@@ -414,7 +414,7 @@
                                         var dataTypeName = Object.keys(scores.ctrlCount[dataType])[0];
                                         html += "<div class=\"div-" + dataTypeName.toString().toLowerCase()
                                                 + "\"><span class=\"span-" + dataTypeName.toString().toLowerCase()
-                                                + "\"><a class=\"req-filter " + REQFILTER_EVENTCLASS + "\" href=\"#\" >"
+                                                + "\"><a class=\"req-filter " + instance.id + REQFILTER_EVENTCLASS + "\" href=\"#\" >"
                                                 + instance.msg("label.constraints." + dataTypeName.toString().toLowerCase())
                                                 + scoreInfo + "</a></span><ul>";
 
@@ -427,12 +427,12 @@
                                             if(dataTypeName == "RegulatoryCodes"){
                                                 html += '<li><span class="req-' + dataTypeName.toString().toLowerCase() + '-' + type.replace(/ /gi,"@").replace(/-/gi,"$")
                                                 + '" ><a class="req-filter tag '
-                                                + REQFILTER_EVENTCLASS + '" href="#"><span>' + type + 
+                                                + instance.id +REQFILTER_EVENTCLASS + '" href="#"><span>' + type + 
                                                 ' ('+ value + ')</span></a></li>';
                                             } else {
                                                 html += '<li><span class="req-' + dataTypeName.toString().toLowerCase() + '-' + type
                                                         + '" title="' + instance.msg("reqTypes." + type) + '"><a class="req-filter '
-                                                        + REQFILTER_EVENTCLASS + '" href="#"><span class="reqType' + type + '"></span>'
+                                                        + instance.id +REQFILTER_EVENTCLASS + '" href="#"><span class="reqType' + type + '"></span>'
                                                         + value + '</a></li>';
                                             }
 
@@ -524,7 +524,7 @@
                          *            {object|string}
                          */
                         renderCellDetail : function ProductNotifications_renderCellDetail(elCell, oRecord, oColumn, oData) {
-                            var record = oRecord.getData(), desc = "";
+                            var record = oRecord.getData(), desc = "", instance =this;
 
                             if (record.isInfo) {
                                 desc += '<div class="empty"><h3>' + record.title + '</h3>';
@@ -561,7 +561,7 @@
 
                                             var ingNodeRef = new Alfresco.util.NodeRef(product.value);
                                             desc += '<li><span class="' + product.metadata + '" ><span class="bcpg_ingList#' + ingNodeRef.id + '"><a class="charact-details '
-                                                +CHARACTDETAILS_EVENTCLASS+'" href="">'
+                                                +instance.id +CHARACTDETAILS_EVENTCLASS+'" href="">'
                                                 + Alfresco.util.encodeHTML(product.displayValue) + '</a></span></span></li>';
 
                                         } else {
