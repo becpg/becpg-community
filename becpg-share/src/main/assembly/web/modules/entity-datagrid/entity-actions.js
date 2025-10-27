@@ -607,7 +607,7 @@
 
             this.widgets.columnsListPanel = Alfresco.util.createYUIPanel(containerDiv, {
                 draggable: true,
-                width: "33em"
+                width: "62em"
             });
 
             var hiddenColumnsInPopup = ["bcpg_startEffectivity", "bcpg_endEffectivity", "bcpg_depthLevel"];
@@ -617,8 +617,7 @@
             }
 
             var itemType = this.options.itemType != null ? this.options.itemType : this.datalistMeta.itemType;
-            var containerEl = Dom.get(this.id + '-columns-list').parentNode, html = "";
-            var colCount = 0;
+            var containerEl = Dom.get(this.id + '-columns-list').parentNode, columnsHtml = "";
             var siteId = this.options.siteId;
 
             var timeStamp = (new Date().getTime());
@@ -642,8 +641,9 @@
                             var checked = column.checked ? "checked" : "";
 
                             if (propLabel != "hidden" && propLabel && hiddenColumnsInPopup.indexOf(value) < 0) {
-                                html += '<li class=""><input id="propSelected-' + idx + '" type="checkbox" name="propChecked" value="' + value + '" ' + checked + '/>'
-                                    + '<label for="propSelected-' + idx + '" >' + propLabel + '</label></li>';
+                                var encodedPropLabel = Alfresco.util.encodeHTML(propLabel);
+                                columnsHtml += '<li class="columns-conf-item"><input id="propSelected-' + idx + '" type="checkbox" name="propChecked" value="' + value + '" ' + checked + '/>'
+                                    + '<label for="propSelected-' + idx + '" title="' + encodedPropLabel + '" style="display:inline-block; max-width:17em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; vertical-align:middle;">' + encodedPropLabel + '</label></li>';
                             }
 
                             idx++;
@@ -654,8 +654,9 @@
                                     var subValue = value + "_" + nestedColumn.name.replace(":", "_");
 
                                     if (subLabel != "hidden" && subLabel && hiddenColumnsInPopup.indexOf(subValue) < 0) {
-                                        html += '<li class=""><input id="propSelected-' + idx + '" type="checkbox" name="propChecked" value="' + subValue + '" ' + (nestedColumn.checked ? "checked" : "") + '/>'
-                                            + '<label for="propSelected-' + idx + '" >' + subLabel + '</label></li>';
+                                        var encodedSubLabel = Alfresco.util.encodeHTML(subLabel);
+                                        columnsHtml += '<li class="columns-conf-item"><input id="propSelected-' + idx + '" type="checkbox" name="propChecked" value="' + subValue + '" ' + (nestedColumn.checked ? "checked" : "") + '/>'
+                                            + '<label for="propSelected-' + idx + '" title="' + encodedSubLabel + '" style="display:inline-block; max-width:17em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; vertical-align:middle;">' + encodedSubLabel + '</label></li>';
                                     }
                                     idx++;
                                 }
@@ -663,27 +664,48 @@
 
                         }
 
-                        html = "<span>" + this.msg("label.select-columns.title")
-                            + "</span><br/><br/><ul style=\"width:" + ((colCount + 2) * 20) + "em;\">" + html + "</ul>";
+                        var composeInnerHtml = function() {
+                            var htmlContent = "<span>" + me.msg("label.select-columns.title") + "</span>";
+                            htmlContent += '<div class="columns-conf-actions">'
+                                + '<input id="' + me.id + '-columns-select-all" type="button" value="' + me.msg("button.columns-conf.select-all") + '" />'
+                                + '<input id="' + me.id + '-columns-deselect-all" type="button" value="' + me.msg("button.columns-conf.deselect-all") + '" />'
+                                + '</div>';
+                            htmlContent += '<ul class="columns-conf-list" style="column-count:3;-webkit-column-count:3;-moz-column-count:3;column-gap:1.5em;">' + columnsHtml + '</ul>';
+                            return htmlContent;
+                        };
 
-                        containerEl.innerHTML = html;
+                        containerEl.innerHTML = composeInnerHtml();
 
                         var divEl = Dom.get(this.id + '-columns-conf-ft');
 
                         divEl.innerHTML = '<input id="' + this.id + '-bulk-edit-ok" type="button" value="' + this.msg("button.ok") + '" />';
 
-                        this.widgets.okBkButton = Alfresco.util.createYUIButton(this, "bulk-edit-ok", function() {
-
+                        var updateSelection = function() {
                             var prefsValue = {};
-
-
                             var selectedFields = Selector.query('input[type="checkbox"]', containerEl);
-                            for (var i in selectedFields) {
-                                var fieldId = selectedFields[i].value;
-                                prefsValue[fieldId] = { checked: selectedFields[i].checked }
+                            for (var z = 0; z < selectedFields.length; z++) {
+                                var fieldNode = selectedFields[z];
+                                prefsValue[fieldNode.value] = { checked: fieldNode.checked };
                             }
+                            return prefsValue;
+                        };
 
+                        this.widgets.selectAllColumnsButton = Alfresco.util.createYUIButton(this, "columns-select-all", function() {
+                            var checkboxNodes = Selector.query('input[type="checkbox"]', containerEl);
+                            for (var b = 0; b < checkboxNodes.length; b++) {
+                                checkboxNodes[b].checked = true;
+                            }
+                        });
 
+                        this.widgets.deselectAllColumnsButton = Alfresco.util.createYUIButton(this, "columns-deselect-all", function() {
+                            var checkboxNodes = Selector.query('input[type="checkbox"]', containerEl);
+                            for (var c = 0; c < checkboxNodes.length; c++) {
+                                checkboxNodes[c].checked = false;
+                            }
+                        });
+
+                        this.widgets.okBkButton = Alfresco.util.createYUIButton(this, "bulk-edit-ok", function() {
+                            var prefsValue = updateSelection();
                             YAHOO.Bubbling.fire("changeSelectedColumns", {
                                 selectedColumns: prefsValue
                             });
@@ -702,6 +724,7 @@
 
 
                         });
+
                     },
                     scope: this
                 }
