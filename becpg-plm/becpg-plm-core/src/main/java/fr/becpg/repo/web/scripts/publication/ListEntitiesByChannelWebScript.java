@@ -67,7 +67,7 @@ public class ListEntitiesByChannelWebScript extends ListEntitiesWebScript {
 		}
 
 		if (page != null && page > 0 && !RepoConsts.MAX_RESULTS_UNLIMITED.equals(maxResults)) {
-			skipCount = (page - 1) * maxResults;
+			skipCount = (page) * maxResults;
 		}
 
 		NodeRef channelNodeRef = null;
