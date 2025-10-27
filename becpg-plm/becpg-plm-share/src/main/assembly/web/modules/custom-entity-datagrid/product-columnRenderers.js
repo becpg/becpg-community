@@ -209,6 +209,217 @@ if (beCPG.module.EntityDataGridRenderers) {
         }
     });
 
+    function safeParseJSON(value) {
+        if (!value) {
+            return null;
+        }
+        try {
+            return JSON.parse(value);
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function valueOrBlank(value) {
+        return value === null || typeof value === "undefined" ? "" : value;
+    }
+
+    function appendTooltipLine(lines, line) {
+        if (line) {
+            lines.push(line);
+        }
+    }
+
+    function renderEcoScore(scope, itemData) {
+        var detailsProp = itemData["prop_bcpg_ecoScoreDetails"];
+        var details = safeParseJSON(detailsProp ? detailsProp.value : null);
+        var scoreProp = itemData["prop_bcpg_ecoScore"];
+        var classProp = itemData["prop_bcpg_ecoScoreClass"];
+
+        var score = null;
+        if (details && typeof details.ecoScore !== "undefined") {
+            score = details.ecoScore;
+        } else if (scoreProp && typeof scoreProp.value !== "undefined") {
+            score = scoreProp.value;
+        }
+
+        var scoreClass = null;
+        if (details && details.scoreClass) {
+            scoreClass = details.scoreClass;
+        } else if (classProp && classProp.value) {
+            scoreClass = classProp.value;
+        }
+
+        if (!details && (score === null || typeof score === "undefined")) {
+            return "";
+        }
+
+        var tooltip = details ? buildEcoScoreTooltip(scope, details) : buildEcoScoreFallbackTooltip(scope, score, scoreClass);
+        var badgeClass = getEcoScoreBadgeClass(scoreClass);
+
+        var html = '<div class="eco-score-cell"' + (tooltip ? ' title="' + Alfresco.util.encodeHTML(tooltip) + '"' : '') + '>';
+        if (badgeClass) {
+            html += '<span class="ecoscore-class ' + badgeClass + '" aria-hidden="true"></span>';
+        }
+        html += '</div>';
+        return html;
+    }
+
+    function formatScoreValue(value, appendPercent) {
+        if (value === null || typeof value === "undefined" || value === "") {
+            return "";
+        }
+        var num = parseFloat(value);
+        var result = !isNaN(num) ? Math.round(num).toString() : value.toString();
+        if (appendPercent) {
+            result += "%";
+        }
+        return result;
+    }
+
+    function getEcoScoreBadgeClass(scoreClass) {
+        if (!scoreClass) {
+            return "";
+        }
+        var upper = scoreClass.toString().toUpperCase();
+        if (upper === "A" || upper === "B" || upper === "C" || upper === "D" || upper === "E") {
+            return "ecoscore-class-" + upper.toLowerCase();
+        }
+        return "ecoscore-class-error";
+    }
+
+    function buildEcoScoreTooltip(scope, details) {
+        var lines = [];
+        appendTooltipLine(lines, scope.msg("ecoscore.score", valueOrBlank(details.ecoScore)));
+        appendTooltipLine(lines, scope.msg("ecoscore.class", valueOrBlank(details.scoreClass)));
+        appendTooltipLine(lines, scope.msg("ecoscore.acvScore", valueOrBlank(details.acvScore)));
+        appendTooltipLine(lines, scope.msg("ecoscore.claimBonus", valueOrBlank(details.claimBonus)));
+        appendTooltipLine(lines, scope.msg("ecoscore.transportScore", valueOrBlank(details.transportScore)));
+        appendTooltipLine(lines, scope.msg("ecoscore.politicalScore", valueOrBlank(details.politicalScore)));
+        appendTooltipLine(lines, scope.msg("ecoscore.packagingMalus", valueOrBlank(details.packagingMalus)));
+        return lines.join("\n");
+    }
+
+    function buildNutriScoreFallbackTooltip(scope, score, nutrientClass) {
+        var lines = [];
+        if (score !== null && typeof score !== "undefined" && score !== "") {
+            lines.push(scope.msg("nutriscore.score", formatScoreValue(score, false)));
+        }
+        if (nutrientClass) {
+            lines.push(scope.msg("nutriscore.class", nutrientClass));
+        }
+        return lines.join("\n");
+    }
+
+    function buildEcoScoreFallbackTooltip(scope, score, scoreClass) {
+        var lines = [];
+        if (score !== null && typeof score !== "undefined" && score !== "") {
+            lines.push(scope.msg("ecoscore.score", formatScoreValue(score, true)));
+        }
+        if (scoreClass) {
+            lines.push(scope.msg("ecoscore.class", scoreClass));
+        }
+        return lines.join("\n");
+    }
+
+    function renderNutrientScore(scope, itemData) {
+        var detailsProp = itemData["prop_bcpg_nutrientProfilingDetails"];
+        var details = safeParseJSON(detailsProp ? detailsProp.value : null);
+        var scoreProp = itemData["prop_bcpg_nutrientProfilingScore"];
+        var classProp = itemData["prop_bcpg_nutrientProfilingClass"];
+
+        var score = null;
+        if (details && typeof details.nutriScore !== "undefined") {
+            score = details.nutriScore;
+        } else if (scoreProp && typeof scoreProp.value !== "undefined") {
+            score = scoreProp.value;
+        }
+
+        var nutrientClass = details && details.nutrientClass ? details.nutrientClass : null;
+        if (!nutrientClass && classProp && classProp.value) {
+            nutrientClass = classProp.value;
+        }
+
+        if (!details && nutrientClass === null && (score === null || typeof score === "undefined")) {
+            return "";
+        }
+
+        var tooltip = details ? buildNutrientTooltip(scope, details) : buildNutriScoreFallbackTooltip(scope, score, nutrientClass);
+        var html = '<div class="nutrient-score-cell"' + (tooltip ? ' title="' + Alfresco.util.encodeHTML(tooltip) + '"' : '') + '>';
+      
+        html += buildNutrientClassRow(nutrientClass);
+        html += '</div>';
+        return html;
+    }
+
+    function buildNutrientClassRow(selectedClass) {
+        var letters = ["A", "B", "C", "D", "E"];
+        var html = '<span class="nutrient-class">';
+        for (var i = 0; i < letters.length; i++) {
+            var letter = letters[i];
+            var lower = letter.toLowerCase();
+            var classes = "nutrient-class-" + lower;
+            if (selectedClass && selectedClass.toString().toUpperCase() === letter) {
+                classes = "selected " + classes;
+            }
+            html += '<span class="' + classes + '">' + letter + '</span>';
+        }
+        html += '</span>';
+        return html;
+    }
+
+    function buildNutrientTooltip(scope, details) {
+        var lines = [];
+        appendTooltipLine(lines, scope.msg("nutriscore.display.finalScore", valueOrBlank(details.aScore), valueOrBlank(details.cScore), valueOrBlank(details.nutriScore)));
+        appendTooltipLine(lines, scope.msg("nutriscore.display.class", valueOrBlank(details.classLowerValue), valueOrBlank(details.nutriScore), valueOrBlank(details.classUpperValue), valueOrBlank(details.nutrientClass)));
+
+        if (details.parts) {
+            addNutrientPartLine(scope, lines, details, "ENER-KJO", "nutriscore.display.energy");
+            addNutrientPartLine(scope, lines, details, "FAT", "nutriscore.display.totalfat");
+            addNutrientPartLine(scope, lines, details, "FASAT", "nutriscore.display.satfat");
+            addNutrientPartLine(scope, lines, details, "SUGAR", "nutriscore.display.totalsugar");
+            addNutrientPartLine(scope, lines, details, "NA", details.displaySaltScore ? "nutriscore.display.salt" : "nutriscore.display.sodium");
+            addNutrientPartLine(scope, lines, details, "FRUIT_VEGETABLE", "nutriscore.display.percfruitsandveg");
+            addNutrientPartLine(scope, lines, details, "PSACNS", "nutriscore.display.nspfibre");
+            addNutrientPartLine(scope, lines, details, "FIBTG", "nutriscore.display.aoacfibre");
+            if (details.hasProteinScore) {
+                addNutrientPartLine(scope, lines, details, "PRO-", "nutriscore.display.protein");
+            }
+        }
+
+        if (details.nonNutritiveSugars && details.nonNutritiveSugars.length > 0) {
+            appendTooltipLine(lines, scope.msg("nutriscore.display.nns", details.nonNutritiveSugars.join(",")));
+        }
+
+        return lines.join("\n");
+    }
+
+    function addNutrientPartLine(scope, lines, details, partKey, labelKey) {
+        if (!details.parts) {
+            return;
+        }
+        var part = details.parts[partKey];
+        if (part) {
+            appendTooltipLine(lines, scope.msg(labelKey, valueOrBlank(part.lowerValue), valueOrBlank(part.value), valueOrBlank(part.upperValue), valueOrBlank(part.score)));
+        }
+    }
+
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: [ "bcpg:ecoScoreDetails"],
+        renderer: function(oRecord, data, label, scope) {
+            var itemData = oRecord.getData("itemData");
+            return renderEcoScore(scope, itemData);
+        }
+    });
+
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: [ "bcpg:nutrientProfilingDetails"],
+        renderer: function(oRecord, data, label, scope) {
+            var itemData = oRecord.getData("itemData");
+            return renderNutrientScore(scope, itemData);
+        }
+    });
+
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["cm:cmobject_bcpg:allergenListVolSources", "cm:cmobject_bcpg:allergenListInVolSources", "bcpg:irlIng", "bcpg:irlSources"],
         renderer: function(oRecord, data, label, scope) {
@@ -635,6 +846,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                var dt = Alfresco.util.ComponentManager.find({
                 name: "beCPG.module.EntityDataGrid"
             })[0];
+
 
             var url = Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-charact-details/entity-charact-details" + "?entityNodeRef="
                 + dt.options.entityNodeRef + "&itemType="
@@ -1704,6 +1916,60 @@ if (beCPG.module.EntityDataGridRenderers) {
         }
     });
 
+
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["bcpg:entityScore"],
+        renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+            var scoreValue = data.value,
+                nodeRef = oRecord.getData("nodeRef"),
+                scoreData = null
+                html ='';
+
+                if (scoreValue) {
+                    try {
+                        scoreData = JSON.parse(scoreValue);
+                    } catch (e) {
+                        // error parsing
+                    }
+                }
+
+
+            if ( scoreData) {
+                var containerId = 'product-notifications-' + nodeRef.replace(/[:/]/g, '-') + '-' + i;
+                
+                html += '<div class="product-notifications" ><div id="' + containerId + '" class="flat-button product-notifications-container" ' +
+                    'data-node-ref="' + nodeRef + '" ' +
+                    'data-list="' + (scope.datalistMeta ? scope.datalistMeta.name : '') + '"></div></div>';
+
+                setTimeout(function() {
+                    var container = document.getElementById(containerId);
+                    if (container && !container._productNotificationsInit) {
+                        container._productNotificationsInit = true; 
+                        
+                     var toolbar = Alfresco.util.ComponentManager.find({
+                                      name: "beCPG.component.ProductListToolbar"
+                                  })[0];
+                                  
+                        var productNotifications = new beCPG.component.ProductNotifications(containerId);
+                        productNotifications.setOptions({
+                            entityNodeRef: nodeRef,
+                            list: scope.datalistMeta ? scope.datalistMeta.name : '',
+                            containerDiv: container,
+                            scores: scoreData 
+                        });
+                        
+                        if (toolbar && toolbar.msg) {
+                            productNotifications.msg = function(arg1, arg2,arg3, arg4){ 
+                                return toolbar.msg(arg1, arg2, arg3, arg4);
+                              }
+                        }
+                    }
+                }, 10);
+            }
+
+            return html;
+        }
+    });
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["bcpg:regulatoryUsageRef"],
