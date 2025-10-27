@@ -15,6 +15,7 @@ import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.GHSModel;
+import fr.becpg.model.GS1Model;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.model.ToxType;
@@ -29,6 +30,28 @@ import fr.becpg.repo.survey.SurveyModel;
  * Utility class to help create or retrieve specific nodes.
  */
 public class CharactTestHelper {
+
+	private static final Map<String, String> NUTRIENT_CHARACT_NAMES = Map.ofEntries(
+			Map.entry("ENER-KJO", "Energy kJ"),
+			Map.entry("ENER-Kcal", "Energy kcal"),
+			Map.entry("ENER-KCAL", "Energy kcal"),
+			Map.entry("FASAT", "Fatty acids, total saturated"),
+			Map.entry("FAMS", "Fatty acids, total monounsaturated"),
+			Map.entry("FAPU", "Fatty acids, total polyunsaturated"),
+			Map.entry("FAT", "Fat, total"),
+			Map.entry("SUGAR", "Sugars, total"),
+			Map.entry("NA", "Sodium, Na"),
+			Map.entry("NACL", "Salt"),
+			Map.entry("PSACNS", "NSP fiber"),
+			Map.entry("FIBTG", "Fiber, total dietary"),
+			Map.entry("PRO-", "Protein"),
+			Map.entry("CHOCAL", "Carbohydrate, by difference"),
+			Map.entry("K", "Potassium, K"),
+			Map.entry("CA", "Calcium, Ca"),
+			Map.entry("MG", "Magnesium, Mg"),
+			Map.entry("P", "Phosphorus, P"),
+			Map.entry("SATFAT", "Fatty acids, total saturated"),
+			Map.entry("FIBT", "Fiber, total dietary"));
 
 	private CharactTestHelper() {
 		//Do Nothing
@@ -134,6 +157,20 @@ public class CharactTestHelper {
 
 		return getOrCreateNode(nodeService, "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:PhysicoChems", name,
 				PLMModel.TYPE_PHYSICO_CHEM, properties);
+	}
+
+	public static NodeRef getOrCreateNutrient(NodeService nodeService, String code, String unit) {
+		String charactName = NUTRIENT_CHARACT_NAMES.getOrDefault(code, code);
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(BeCPGModel.PROP_CHARACT_NAME, charactName);
+		properties.put(GS1Model.PROP_NUTRIENT_TYPE_CODE, code);
+		properties.put(PLMModel.PROP_NUTUNIT, unit);
+		NodeRef nutrient = getOrCreateNode(nodeService, "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Nuts", charactName,
+				PLMModel.TYPE_NUT, properties);
+		nodeService.setProperty(nutrient, BeCPGModel.PROP_CHARACT_NAME, charactName);
+		nodeService.setProperty(nutrient, GS1Model.PROP_NUTRIENT_TYPE_CODE, code);
+		nodeService.setProperty(nutrient, PLMModel.PROP_NUTUNIT, unit);
+		return nutrient;
 	}
 
 	/**

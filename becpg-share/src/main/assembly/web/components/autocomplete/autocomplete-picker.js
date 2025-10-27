@@ -246,22 +246,7 @@
                                         sQuery = arrQuery[arrQuery.length - 1];
                                     }
 
-                                    var oParentField = null;
-
-                                    if (me.options.parentFieldHtmlId != null)
-                                    {
-                                        var parentElem = null;
-                                        if(me.isAssoc){
-                                        	oParentField = me.getValuesFromId(me.options.parentFieldHtmlId);
-                                        } else {
-                                        	parentElem  =  Dom.get(me.options.parentFieldHtmlId);
-                                        	 if (parentElem != null)
-                                             {
-                                                 oParentField = parentElem.value;
-                                             } 
-                                        }
-                                       
-                                    }
+                                    var oParentField = me.getParentValue();
 
                                     if (oParentField != null)
                                     {
@@ -516,8 +501,8 @@
                                                 me.widgets.oAC._clearSelection();
                                                 // Clear any dependent fields
                                                 if (me.options.parentFieldHtmlId) {
-                                                    var parentInput = Dom.get(me.options.parentFieldHtmlId);
-                                                    if (parentInput && (!parentInput.value || parentInput.value === '')) {
+                                                    var parentValue = me.getParentValue();
+                                                    if (parentValue && (!parentValue || parentValue === '')) {
                                                         // Clear dependent fields when parent is empty
                                                         me.widgets.oAC._clearSelection();
                                                         var inputAdded = Dom.get(me.controlId + '-added');
@@ -638,6 +623,26 @@
 
                             },
                         
+                         getParentValue : function(){
+                            var me = this, oParentField = null;
+
+                            if (me.options.parentFieldHtmlId != null)
+                            {
+                                var parentElem = null;
+                                if(me.isAssoc){
+                                    oParentField = me.getValuesFromId(me.options.parentFieldHtmlId);
+                                } else {
+                                    parentElem  =  Dom.get(me.options.parentFieldHtmlId);
+                                     if (parentElem != null)
+                                     {
+                                         oParentField = parentElem.value;
+                                     } 
+                                }
+                               
+                            }
+                            return oParentField;
+                         }  ,
+                            
                         checkParentField : function(layer, args){
                             if (this.options.parentFieldHtmlId != null && args != null && args[1].id == this.options.parentFieldHtmlId){
                                 if (this.widgets && this.widgets.oAC){
