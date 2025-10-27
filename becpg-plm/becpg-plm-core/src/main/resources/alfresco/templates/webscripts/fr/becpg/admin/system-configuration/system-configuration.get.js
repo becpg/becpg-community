@@ -90,7 +90,8 @@ function main() {
         "beCPG.product.report.nutList.localesToExtract",
         "beCPG.entity.report.mltext.fields",
         "beCPG.entity.report.mltext.locales",
-        "beCPG.product.report.showDeprecatedXml"
+        "beCPG.product.report.showDeprecatedXml",
+        "beCPG.product.compare.extractRawMaterial"
     ].forEach(function(p) {
         addAttribute(p, "report");
     });

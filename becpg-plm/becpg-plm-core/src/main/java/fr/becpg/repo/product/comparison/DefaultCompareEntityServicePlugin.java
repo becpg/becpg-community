@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -117,7 +116,7 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 	private String customPivots;
 
 	@Autowired
-	private SystemConfigurationService systemConfigurationService;
+	protected SystemConfigurationService systemConfigurationService;
 
 	private String customNames() {
 		return systemConfigurationService.confValue("beCPG.comparison.name.format");
@@ -366,7 +365,6 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 
 		List<FileInfo> foldersInfo1 = entity1 == null ? new ArrayList<>(0) : fileFolderService.listFolders(entity1);
 		List<FileInfo> foldersInfo2 = entity2 == null ? new ArrayList<>(0) : fileFolderService.listFolders(entity2);
-		List<FileInfo> foldersTreaded1 = new ArrayList<>();
 		List<FileInfo> foldersTreaded2 = new ArrayList<>();
 		boolean isOperatorFolderIsEqual = false;
 		Pair<List<StructCompareResultDataItem>, Boolean> results = null;
@@ -385,11 +383,10 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 
 					results = compareFiles((depthLevel + 1), folderNodeRef1, folderNodeRef2, null, structComparisonListTMP, comparison, false);
 
-					isOperatorFolderIsEqual = results.getSecond() ? true : isOperatorFolderIsEqual;
+					isOperatorFolderIsEqual = Boolean.TRUE.equals(results.getSecond()) ? true : isOperatorFolderIsEqual;
 					createFolderStruc(folderNodeRef1, folderNodeRef2, results.getFirst(), structComparisonListTMP, depthLevel, true,
 							results.getSecond());
 
-					foldersTreaded1.add(folderInfo1);
 					foldersTreaded2.add(folderInfo2);
 					folderNodeRef1 = null;
 					break;
@@ -399,7 +396,7 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 			if ((folderNodeRef1 != null)) {
 				// Suppression action
 				results = compareFiles((depthLevel + 1), folderNodeRef1, null, null, structComparisonListTMP, comparison, false);
-				isOperatorFolderIsEqual = results.getSecond() ? true : isOperatorFolderIsEqual;
+				isOperatorFolderIsEqual = Boolean.TRUE.equals(results.getSecond()) ? true : isOperatorFolderIsEqual;
 
 				createFolderStruc(folderNodeRef1, null, results.getFirst(), structComparisonListTMP, depthLevel, true, results.getSecond());
 			}
@@ -410,7 +407,7 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 			if (!foldersTreaded2.contains(folderInfo2)) {// Add Action
 				NodeRef folderNodeRef2 = folderInfo2.getNodeRef();
 				results = compareFiles((depthLevel + 1), null, folderNodeRef2, null, structComparisonListTMP, comparison, false);
-				isOperatorFolderIsEqual = results.getSecond() ? true : isOperatorFolderIsEqual;
+				isOperatorFolderIsEqual = Boolean.TRUE.equals(results.getSecond()) ? true : isOperatorFolderIsEqual;
 
 				createFolderStruc(null, folderNodeRef2, results.getFirst(), structComparisonListTMP, depthLevel, true, results.getSecond());
 			}
@@ -561,8 +558,9 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 					String[] dataTypesSplit = customNames().split(",");
 					for (String dataType : dataTypesSplit) {
 						if (dataType.contains(dataListShortName)) {
-							// example of custom names string:
-							// bcpg:compoList|{bcpg:compoListProduct}-{bcpg:instruction},qa:controlList|{qa:clCharacts}-{qa:clDayNumber}-{qa:clUnit}
+							/** example of custom names string:
+							   bcpg:compoList|{bcpg:compoListProduct}-{bcpg:instruction},qa:controlList|{qa:clCharacts}-{qa:clDayNumber}-{qa:clUnit}
+							**/
 							nameFormat = dataType.split(Pattern.quote("|"))[1];
 						}
 					}
@@ -593,8 +591,8 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 					String[] dataTypesSplit = customNames().split(",");
 					for (String dataType : dataTypesSplit) {
 						if (dataType.contains(dataListShortName)) {
-							// example of custom names string:
-							// bcpg:compoList|{bcpg:compoListProduct}-{bcpg:instruction},qa:controlList|{qa:clCharacts}-{qa:clDayNumber}-{qa:clUnit}
+							/**  example of custom names string:
+							 bcpg:compoList|{bcpg:compoListProduct}-{bcpg:instruction},qa:controlList|{qa:clCharacts}-{qa:clDayNumber}-{qa:clUnit} **/
 							nameFormat = dataType.split(Pattern.quote("|"))[1];
 						}
 					}
@@ -652,17 +650,17 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		QName qtyProperty = null;
 		Double qtyForProduct = null;
 
-		if (dataListType.equals(PLMModel.TYPE_COMPOLIST)) {
+		if (PLMModel.TYPE_COMPOLIST.equals(dataListType)) {
 			var compoListItem = (CompoListDataItem) item;
 			levelQuantities = new CurrentLevelQuantities(alfrescoRepository, packagingHelper, productData, compoListItem);
 			qtyProperty = PLMModel.PROP_COMPOLIST_QTY_FOR_PRODUCT;
 			qtyForProduct = levelQuantities.getQtyForProduct() * 1000;
-		} else if (dataListType.equals(PLMModel.TYPE_PACKAGINGLIST)) {
+		} else if (PLMModel.TYPE_PACKAGINGLIST.equals(dataListType)) {
 			var packagingListItem = (PackagingListDataItem) item;
 			levelQuantities = new CurrentLevelQuantities(alfrescoRepository, productData, packagingListItem);
 			qtyProperty = PLMModel.PROP_PACKAGINGLIST_QTY_FOR_PRODUCT;
 			qtyForProduct = levelQuantities.getQtyForProduct();
-		} else if (dataListType.equals(MPMModel.TYPE_PROCESSLIST)) {
+		} else if (MPMModel.TYPE_PROCESSLIST.equals(dataListType)) {
 			var processListItem = (ProcessListDataItem) item;
 			levelQuantities = new CurrentLevelQuantities(nodeService, alfrescoRepository, productData, processListItem);
 			qtyProperty = MPMModel.PROP_PL_QTY_FOR_PRODUCT;
@@ -693,21 +691,21 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 				}
 			}
 
-			if (dataListType.equals(PLMModel.TYPE_COMPOLIST)) {
+			if (PLMModel.TYPE_COMPOLIST.equals(dataListType)) {
 				for (CompoListDataItem compoItem : productData.getCompoList()) {
 					ProductData itemProduct = (ProductData) alfrescoRepository.findOne(compoItem.getProduct());
 					charactName = attributeExtractorService.extractPropName(compoItem.getProduct());
 					calculateDataListQty(itemProduct, compoItem, comparisonMap, charactName, dataListType, charactName, nbEntities,
 							comparisonPosition);
 				}
-			} else if (dataListType.equals(PLMModel.TYPE_PACKAGINGLIST)) {
+			} else if (PLMModel.TYPE_PACKAGINGLIST.equals(dataListType)) {
 				for (PackagingListDataItem packagingItem : productData.getPackagingList()) {
 					ProductData itemProduct = (ProductData) alfrescoRepository.findOne(packagingItem.getProduct());
 					charactName = attributeExtractorService.extractPropName(packagingItem.getProduct());
 					calculateDataListQty(itemProduct, packagingItem, comparisonMap, charactName, dataListType, charactName, nbEntities,
 							comparisonPosition);
 				}
-			} else if (dataListType.equals(MPMModel.TYPE_PROCESSLIST)) {
+			} else if (MPMModel.TYPE_PROCESSLIST.equals(dataListType)) {
 				for (ProcessListDataItem processItem : productData.getProcessList()) {
 					ProductData itemProduct = (ProductData) alfrescoRepository.findOne(processItem.getProduct());
 					charactName = attributeExtractorService.extractPropName(processItem.getProduct());
@@ -718,7 +716,7 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		}
 	}
 
-	private String extractCharactName(NodeRef itemNodeRef, QName pivotAssoc) {
+	protected String extractCharactName(NodeRef itemNodeRef, QName pivotAssoc) {
 		if (itemNodeRef != null) {
 			if (pivotAssoc != null) {
 				NodeRef part = associationService.getTargetAssoc(itemNodeRef, pivotAssoc);
@@ -1055,24 +1053,28 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		String strValue2 = null;
 
 		if (nodeRefs1 != null) {
+			StringBuilder builder1 = new StringBuilder();
 			for (NodeRef nodeRef : nodeRefs1) {
-
-				if (strValue1 == null) {
-					strValue1 = attributeExtractorService.extractPropName(nodeRef);
-				} else {
-					strValue1 += RepoConsts.LABEL_SEPARATOR + attributeExtractorService.extractPropName(nodeRef);
+				if (builder1.length() > 0) {
+					builder1.append(RepoConsts.LABEL_SEPARATOR);
 				}
+				builder1.append(attributeExtractorService.extractPropName(nodeRef));
+			}
+			if (builder1.length() > 0) {
+				strValue1 = builder1.toString();
 			}
 		}
 
 		if (nodeRefs2 != null) {
+			StringBuilder builder2 = new StringBuilder();
 			for (NodeRef nodeRef : nodeRefs2) {
-
-				if (strValue2 == null) {
-					strValue2 = attributeExtractorService.extractPropName(nodeRef);
-				} else {
-					strValue2 += RepoConsts.LABEL_SEPARATOR + attributeExtractorService.extractPropName(nodeRef);
+				if (builder2.length() > 0) {
+					builder2.append(RepoConsts.LABEL_SEPARATOR);
 				}
+				builder2.append(attributeExtractorService.extractPropName(nodeRef));
+			}
+			if (builder2.length() > 0) {
+				strValue2 = builder2.toString();
 			}
 		}
 
@@ -1209,33 +1211,47 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 
 	private String getKeyFromPivots(NodeRef node, List<QName> pivotProperties) {
 		logger.debug("getKeyFromPivots, node = " + node);
-		String res = "";
+		StringBuilder builder = new StringBuilder();
 
 		for (QName pivot : pivotProperties) {
-
+			Object value = null;
 			if (dictionaryService.getProperty(pivot) != null) {
-				res += (res.isEmpty() ? "" : "|") + nodeService.getProperty(node, pivot);
+				value = nodeService.getProperty(node, pivot);
 			} else {
 				NodeRef targetAssoc = associationService.getTargetAssoc(node, pivot);
-				if (targetAssoc != null) {
-					res += (res.isEmpty() ? "" : "|") + targetAssoc;
-				} else {
-					res += (res.isEmpty() ? "" : "|") + "null";
-				}
+				value = (targetAssoc != null) ? extractPivot(targetAssoc,pivot) : "null";
 			}
+
+			if (builder.length() > 0) {
+				builder.append('|');
+			}
+			builder.append(value);
 		}
 
 		if (nodeService.hasAspect(node, BeCPGModel.ASPECT_DEPTH_LEVEL)) {
 			NodeRef parentNodeRef = (NodeRef) nodeService.getProperty(node, BeCPGModel.PROP_PARENT_LEVEL);
 			if (parentNodeRef != null) {
-				res += (res.isEmpty() ? "" : "|") + getKeyFromPivots(parentNodeRef, pivotProperties);
+				String parentKey = getKeyFromPivots(parentNodeRef, pivotProperties);
+				if (builder.length() > 0) {
+					builder.append('|');
+				}
+				builder.append(parentKey);
 			}
 		}
 
+		String res = builder.toString();
 		logger.debug("getKeyFromPivots, res = " + res);
 
 		return res;
 
+	}
+
+	protected Object extractPivot(NodeRef targetAssoc, QName pivot) {
+		if(PLMModel.ASSOC_ILL_GRP.equals(pivot) && targetAssoc!=null) {
+			return attributeExtractorService.extractPropName(targetAssoc);
+		}
+		
+		return targetAssoc;
 	}
 
 	@Override
@@ -1256,7 +1272,8 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 				|| qName.equals(BeCPGModel.PROP_ENTITY_SCORE) || qName.equals(PLMModel.PROP_COMPARE_WITH_DYN_COLUMN)
 				|| qName.getLocalName().contains("ErrorLog") || qName.equals(ContentModel.PROP_IS_INDEXED)
 				|| qName.equals(ContentModel.PROP_IS_CONTENT_INDEXED) || qName.equals(PLMModel.PROP_NUTRIENT_PROFILING_DETAILS)
-				|| qName.equals(PLMModel.PROP_ECO_SCORE_DETAILS)) {
+				|| qName.equals(PLMModel.PROP_ECO_SCORE_DETAILS)
+				|| qName.equals(PLMModel.PROP_ILL_LOG_VALUE)) {
 
 			isComparable = false;
 		}
