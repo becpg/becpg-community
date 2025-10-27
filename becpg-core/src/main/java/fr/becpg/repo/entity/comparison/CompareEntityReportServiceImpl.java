@@ -33,6 +33,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.form.BecpgFormService;
 import fr.becpg.repo.form.impl.BecpgFormDefinition;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.LargeTextHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.report.engine.impl.ReportServerEngine;
 import fr.becpg.repo.report.entity.EntityReportData;
@@ -85,6 +86,8 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 
 	private static final String ATTR_PROPERTIES2 = "properties2";
 
+	private static final String ATTR_TEXT_DIFF = "textDiff";
+
 	private static final String PROPERTY_SEPARATOR = " ; ";
 
 	private static final String PROPERTY_VALUE_SEPARATOR = " : ";
@@ -117,20 +120,20 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 	public void getComparisonReport(NodeRef entity1, List<NodeRef> entities, NodeRef templateNodeRef, OutputStream out) {
 
 		if (templateNodeRef != null) {
-			String reportFormat = (String) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT); 
+			String reportFormat = (String) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
 
 			List<CompareResultDataItem> compareResult = new ArrayList<>();
 			Map<String, List<StructCompareResultDataItem>> structCompareResults = new HashMap<>();
-			
+
 			compareEntityService.compare(entity1, entities, compareResult, structCompareResults);
 
 			// Prepare data source
 			Document document = DocumentHelper.createDocument();
 			Element entitiesCmpElt = document.addElement(TAG_ENTITIES_COMPARISON);
-			
+
 			entitiesCmpElt.add(renderComparisonAsXmlData(entity1, entities, compareResult));
 			entitiesCmpElt.add(renderStructComparisonAsXmlData(nodeService.getType(entity1), structCompareResults));
-			
+
 			if (logger.isDebugEnabled()) {
 				logger.debug("comparison XML " + entitiesCmpElt.asXML());
 			}
@@ -141,10 +144,10 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 				params.put(ReportParams.PARAM_LANG, MLTextHelper.localeKey(I18NUtil.getLocale()));
 				params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
 						associationService.getTargetAssocs(templateNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
-				
+
 				EntityReportData reportData = new EntityReportData();
 				reportData.setXmlDataSource(entitiesCmpElt);
-				
+
 				reportServerEngine.createReport(templateNodeRef, reportData, out, params);
 
 			} catch (Exception e) {
@@ -170,36 +173,36 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 				documentName += "." + extension.toLowerCase();
 			}
 		}
-		
+
 		return documentName;
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public String getXmlReportDataSource(NodeRef entity, List<NodeRef> entities) {
 		List<CompareResultDataItem> compareResult = new ArrayList<>();
 		Map<String, List<StructCompareResultDataItem>> structCompareResults = new HashMap<>();
-		
+
 		compareEntityService.compare(entity, entities, compareResult, structCompareResults);
-		
+
 		// Prepare data source
 		Document document = DocumentHelper.createDocument();
 		Element entitiesCmpElt = document.addElement(TAG_ENTITIES_COMPARISON);
-		
+
 		entitiesCmpElt.add(renderComparisonAsXmlData(entity, entities, compareResult));
 		entitiesCmpElt.add(renderStructComparisonAsXmlData(nodeService.getType(entity), structCompareResults));
-		
+
 		if (logger.isDebugEnabled()) {
 			logger.debug("comparison XML " + entitiesCmpElt.asXML());
 		}
-		
+
 		return entitiesCmpElt.asXML();
 	}
 
 	/**
 	 * Render the comparison as xml data.
 	 */
-	private  Element renderComparisonAsXmlData(NodeRef entity1NodeRef, List<NodeRef> entityNodeRefs, List<CompareResultDataItem> compareResult) {
+	private Element renderComparisonAsXmlData(NodeRef entity1NodeRef, List<NodeRef> entityNodeRefs, List<CompareResultDataItem> compareResult) {
 		Document document = DocumentHelper.createDocument();
 
 		Element cmpRowsElt = document.addElement(TAG_COMPARISON_ROWS);
@@ -210,48 +213,47 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 		int i = 2;
 		for (NodeRef entityNodeRef : entityNodeRefs) {
 			name = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
-			cmpRowsElt.addAttribute(ATTR_ENTITY + i, name); 
+			cmpRowsElt.addAttribute(ATTR_ENTITY + i, name);
 			i++;
 		}
-		
+
 		Map<String, BecpgFormDefinition> defs = new HashMap<>();
-		
+
 		// compareResult
 		for (CompareResultDataItem c : compareResult) {
-			
+
 			BecpgFormDefinition def = null;
-			
+
 			if (c.getEntityList() != null) {
 				String entityListName = c.getEntityList().toPrefixString();
-				
+
 				TypeDefinition typeDef = dictionaryService.getType(c.getEntityList());
 				String entityListTitle = typeDef.getTitle(dictionaryService);
-				
+
 				try {
 					def = getFormDef(defs, c.getProperty(), entityListName, entityListTitle, entity1NodeRef);
-				} catch (FormNotFoundException e) {}
-				
+				} catch (FormNotFoundException e) {
+				}
+
 			}
-			
-			String title =  getClassAttributeTitle(nodeService.getType(entity1NodeRef), def, c.getProperty());
-			if(title!=null && !title.isBlank()) {
+
+			String title = getClassAttributeTitle(nodeService.getType(entity1NodeRef), def, c.getProperty());
+			if (title != null && !title.isBlank()) {
 				Element cmpRowElt = cmpRowsElt.addElement(TAG_COMPARISON_ROW);
-				
+
 				if (c.getEntityList() != null) {
 					TypeDefinition typeDef = dictionaryService.getType(c.getEntityList());
 					String entityListTitle = typeDef.getTitle(dictionaryService);
-					
-				
+
 					cmpRowElt.addAttribute(ATTR_ENTITYLIST, entityListTitle);
 					cmpRowElt.addAttribute(ATTR_ENTITYLIST_QNAME, c.getEntityList().toPrefixString(namespaceService));
 				}
-		
-			
+
 				cmpRowElt.addAttribute(ATTR_CHARACTERISTIC, c.getCharactName());
-				cmpRowElt.addAttribute(ATTR_PROPERTY,title);
+				cmpRowElt.addAttribute(ATTR_PROPERTY, title);
 				cmpRowElt.addAttribute(ATTR_PROPERTY_QNAME, c.getProperty().toPrefixString(namespaceService));
 				cmpRowElt.addAttribute(ATTR_IS_DIFFERENT, Boolean.toString(c.isDifferent()));
-	
+
 				i = 1;
 				for (String value : c.getValues()) {
 					// Escaping text to replace invalid chars in rendered XML output (e.g: 'property="Name "value""')
@@ -261,6 +263,23 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 					}
 					cmpRowElt.addAttribute(ATTR_VALUE + i, value);
 					i++;
+				}
+
+				// Add text diff for large text fields - compare all values against the first value
+				if (c.isDifferent() && c.getValues().length > 1) {
+					String value1 = c.getValues()[0];
+					
+					// Compare each subsequent value against value1
+					for (int diffIndex = 1; diffIndex < c.getValues().length; diffIndex++) {
+						String valueN = c.getValues()[diffIndex];
+						
+						if ((value1 != null) && !value1.isEmpty() && (valueN != null) && !valueN.isEmpty()) {
+							String diffValueN =  LargeTextHelper.htmlDiff(value1, valueN);
+							if ((diffValueN != null) && !diffValueN.replace(" ", "").isEmpty()) {
+								cmpRowElt.addAttribute(ATTR_TEXT_DIFF + diffIndex, StringEscapeUtils.escapeXml11(diffValueN));
+							}
+						}
+					}
 				}
 			}
 		}
@@ -275,7 +294,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 	 * @return a {@link org.dom4j.Element} object.
 	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
 	 */
-	public  Element renderStructComparisonAsXmlData(QName nodeType, Map<String, List<StructCompareResultDataItem>> structCompareResults) {
+	public Element renderStructComparisonAsXmlData(QName nodeType, Map<String, List<StructCompareResultDataItem>> structCompareResults) {
 		Document document = DocumentHelper.createDocument();
 
 		// structCompareResult
@@ -284,11 +303,10 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 		// each comparison
 		for (String comparison : structCompareResults.keySet()) {
 			List<StructCompareResultDataItem> structCompareResult = structCompareResults.get(comparison);
-			
-			
+
 			// each structCompareResultDataItem
 			for (StructCompareResultDataItem c : structCompareResult) {
-				
+
 				String entityListTitle = "";
 				if (c.getEntityList() != null) {
 					TypeDefinition typeDef = dictionaryService.getType(c.getEntityList());
@@ -296,22 +314,22 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 				}
 
 				String depthLevel = ((Integer) c.getDepthLevel()).toString();
-				
+
 				String entity1 = "";
 				String properties1 = "";
 				if (c.getCharacteristic1() != null) {
 					List<AssociationRef> compoAssocRefs = null;
-					if(c.getPivotProperty() != null) {
+					if (c.getPivotProperty() != null) {
 						compoAssocRefs = nodeService.getTargetAssocs(c.getCharacteristic1(), c.getPivotProperty());
 					}
 					// If it's a document
 					NodeRef entityNodeRef = null;
-					if((compoAssocRefs == null )|| (compoAssocRefs.isEmpty())){
+					if ((compoAssocRefs == null) || (compoAssocRefs.isEmpty())) {
 						entityNodeRef = c.getCharacteristic1();
-					} else if(compoAssocRefs!= null) {
+					} else if (compoAssocRefs != null) {
 						entityNodeRef = (compoAssocRefs.get(0)).getTargetRef();
 					}
-					
+
 					entity1 = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
 
 					// props
@@ -319,7 +337,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 						if (!properties1.isEmpty()) {
 							properties1 += PROPERTY_SEPARATOR;
 						}
-						
+
 						String value = c.getProperties1().get(property);
 						properties1 += getClassAttributeTitle(nodeType, null, property) + PROPERTY_VALUE_SEPARATOR + value;
 					}
@@ -328,18 +346,18 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 				String entity2 = "";
 				String properties2 = "";
 				if (c.getCharacteristic2() != null) {
-					List<AssociationRef> compoAssocRefs= null;
-					if(c.getPivotProperty() != null) {//There isn't pivotProperty for documents
+					List<AssociationRef> compoAssocRefs = null;
+					if (c.getPivotProperty() != null) {//There isn't pivotProperty for documents
 						compoAssocRefs = nodeService.getTargetAssocs(c.getCharacteristic2(), c.getPivotProperty());
 					}
 					// If it's a document
 					NodeRef entityNodeRef = null;
-					if((compoAssocRefs == null )|| (compoAssocRefs.isEmpty())){
+					if ((compoAssocRefs == null) || (compoAssocRefs.isEmpty())) {
 						entityNodeRef = c.getCharacteristic2();
-					} else if(compoAssocRefs!= null)  {
+					} else if (compoAssocRefs != null) {
 						entityNodeRef = (compoAssocRefs.get(0)).getTargetRef();
 					}
-					
+
 					entity2 = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
 
 					// props
@@ -347,7 +365,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 						if (!properties2.isEmpty()) {
 							properties2 += PROPERTY_SEPARATOR;
 						}
-						
+
 						String value = c.getProperties2().get(property);
 						properties2 += getClassAttributeTitle(nodeType, null, property) + PROPERTY_VALUE_SEPARATOR + value;
 					}
@@ -373,11 +391,10 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 		return structCmpRowsElt;
 	}
 
-	
 	private String getClassAttributeTitle(QName nodeType, BecpgFormDefinition definition, QName qName) {
 
 		String title = (definition != null) ? definition.getTitle(qName.toPrefixString(namespaceService)) : null;
-		
+
 		if (title == null) {
 			PropertyDefinition propertyDef = dictionaryService.getProperty(qName);
 			if (propertyDef != null) {
@@ -391,26 +408,25 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 		}
 
 		// Escaping text to replace invalid chars in rendered XML output (e.g: 'property="Name "value""')
-		return (title != null && !title.isBlank()) ? StringEscapeUtils.escapeXml11(title) :  null;
+		return (title != null && !title.isBlank()) ? StringEscapeUtils.escapeXml11(title) : null;
 	}
 
-	private BecpgFormDefinition getFormDef(Map<String, BecpgFormDefinition> defs, QName property, 
-		String entityListName, String entityListTitle, NodeRef entityNodeRef) {
-		
+	private BecpgFormDefinition getFormDef(Map<String, BecpgFormDefinition> defs, QName property, String entityListName, String entityListTitle,
+			NodeRef entityNodeRef) {
+
 		List<String> fields = Arrays.asList(property.toPrefixString());
-		
+
 		String itemId = (entityListName != null) ? entityListName : entityListTitle;
 		BecpgFormDefinition def = null;
-		
+
 		if (defs.containsKey(itemId)) {
 			def = defs.get(itemId);
 		} else {
-			def = becpgFormService.getForm("type", itemId,
-				(entityListName != null) ? "datagrid" : "default", null, fields, fields, entityNodeRef);
+			def = becpgFormService.getForm("type", itemId, (entityListName != null) ? "datagrid" : "default", null, fields, fields, entityNodeRef);
 			defs.put(itemId, def);
 		}
-		
+
 		return def;
 	}
-	
+
 }
