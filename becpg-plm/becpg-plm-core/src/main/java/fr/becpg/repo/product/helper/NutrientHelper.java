@@ -196,7 +196,7 @@ public class NutrientHelper {
 			nutriScoreContext.setVersion(productData.getNutrientProfileVersion());
 			boolean containsWaterAspect = productData.getAspects().contains(PLMModel.ASPECT_WATER)
 					|| (productData.getAspects().contains(PLMModel.ASPECT_EVAPORABLE) && productData.getNodeRef() != null
-							&& (Double) nodeService.getProperty(productData.getNodeRef(), PLMModel.PROP_EVAPORATED_RATE)!=null 
+							&& (Double) nodeService.getProperty(productData.getNodeRef(), PLMModel.PROP_EVAPORATED_RATE) != null
 							&& (Double) nodeService.getProperty(productData.getNodeRef(), PLMModel.PROP_EVAPORATED_RATE) == 100d);
 			nutriScoreContext.setWater(containsWaterAspect);
 
@@ -242,8 +242,14 @@ public class NutrientHelper {
 			NutListDataItem nutListItem = findNutrient(productData, nutrientCode, missingCharacts, alfrescoRepository);
 
 			if (nutListItem != null) {
-				Double value = productData.isPrepared() && nutListItem.preparedValue("EU") != null ? nutListItem.preparedValue("EU")
-						: nutListItem.value("EU");
+				Double value = null;
+				if (productData.isUseUnroundedNutrients()) {
+					value = productData.isPrepared() && nutListItem.getPreparedValue() != null ? nutListItem.getPreparedValue()
+							: nutListItem.getValue();
+				} else {
+					value = productData.isPrepared() && nutListItem.preparedValue("EU") != null ? nutListItem.preparedValue("EU")
+							: nutListItem.value("EU");
+				}
 
 				if (value == null) {
 					missingCharacts.put(nutrientCode, nutListItem.getNut());
