@@ -196,6 +196,8 @@ public class ProductData extends AbstractScorableEntity
 	private NodeRef nutrientProfile;
 	private String nutrientProfileCategory;
 	private String nutrientProfileVersion;
+	private Boolean useUnroundedNutrients;
+
 
 	/*
 	 * Eco Score
@@ -2819,6 +2821,16 @@ public class ProductData extends AbstractScorableEntity
 		this.requirementChecksum = requirementChecksum;
 	}
 	
+	
+	
+	public boolean isUseUnroundedNutrients() {
+		return Boolean.TRUE.equals(useUnroundedNutrients);
+	}
+
+	public void setUseUnroundedNutrients(Boolean useUnroundedNutrients) {
+		this.useUnroundedNutrients = useUnroundedNutrients;
+	}
+
 	/*
 	 * Do not remove spel helper
 	 */
