@@ -13,6 +13,7 @@ import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
@@ -233,5 +234,9 @@ public class FinishedProductData extends ProductData {
 		return this;
 	}
 
+	public FinishedProductData withProcessList(List<ProcessListDataItem> processList) {
+		getProcessListView().setProcessList(processList);
+		return this;
+	}
 
 }

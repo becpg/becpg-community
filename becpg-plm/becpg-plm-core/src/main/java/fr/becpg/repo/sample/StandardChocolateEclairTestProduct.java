@@ -22,6 +22,7 @@ import fr.becpg.repo.product.data.LogisticUnitData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
+import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
@@ -31,9 +32,10 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
-import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.quality.data.dataList.StockListDataItem;
@@ -160,6 +162,9 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 	protected NodeRef pateChouxNodeRef;
 	protected NodeRef cremePatissiereNodeRef;
 	protected NodeRef nappageNodeRef;
+
+	protected NodeRef mixingProcessNodeRef;
+	protected NodeRef bakingProcessNodeRef;
 
 	protected NodeRef sugarPlants1NodeRef;
 	protected NodeRef sugarPlants2NodeRef;
@@ -395,6 +400,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
 	private boolean isWithSpecification = false;
 	private boolean isWithNuts = false;
+	private boolean isWithProcess = false;
 
 	// Private constructor to enforce usage of the builder
 	private StandardChocolateEclairTestProduct(Builder builder) {
@@ -409,6 +415,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		this.isWithClaim = builder.isWithClaim;
 		this.isWithSpecification = builder.isWithSpecification;
 		this.isWithNuts = builder.isWithNuts;
+		this.isWithProcess = builder.isWithProcess;
 	}
 
 	// Static inner Builder class
@@ -424,6 +431,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		private boolean isWithClaim = false;
 		private boolean isWithSpecification = false;
 		private boolean isWithNuts = false;
+		private boolean isWithProcess = false;
 
 		public Builder withClaim(boolean isWithClaim) {
 			this.isWithClaim = isWithClaim;
@@ -472,6 +480,11 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
 		public Builder withNuts(boolean isWithNuts) {
 			this.isWithNuts = isWithNuts;
+			return this;
+		}
+
+		public Builder withProcess(boolean isWithProcess) {
+			this.isWithProcess = isWithProcess;
 			return this;
 		}
 		
@@ -538,6 +551,11 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
 		if (isWithScoreList) {
 			product.withScoreList(createScoreList());
+		}
+
+		if (isWithProcess) {
+			initProcessProducts();
+			product.withProcessList(createProcessList());
 		}
 
 		if (isWithSpecification) {
@@ -977,6 +995,30 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		}
 
 		nappageNodeRef = alfrescoRepository.create(destFolder, nappage).getNodeRef();
+	}
+
+	/**
+	 * Initialize process products for testing.
+	 */
+	public void initProcessProducts() {
+		// Create process steps
+		ResourceProductData mixingProcess = ResourceProductData.build().withName("Mixing Process").withUnit(ProductUnit.P).withQty(1d);
+		mixingProcessNodeRef = alfrescoRepository.create(destFolder, mixingProcess).getNodeRef();
+
+		ResourceProductData bakingProcess = ResourceProductData.build().withName("Baking Process").withUnit(ProductUnit.P).withQty(1d);
+		bakingProcessNodeRef = alfrescoRepository.create(destFolder, bakingProcess).getNodeRef();
+	}
+
+	/**
+	 * Create process list for the chocolate éclair.
+	 *
+	 * @return List of process list data items
+	 */
+	private List<ProcessListDataItem> createProcessList() {
+		return List.of(
+			ProcessListDataItem.build().withProduct(mixingProcessNodeRef),
+			ProcessListDataItem.build().withProduct(bakingProcessNodeRef)
+		);
 	}
 
 	private void configureNutrientProfile(FinishedProductData finishedProduct) {
