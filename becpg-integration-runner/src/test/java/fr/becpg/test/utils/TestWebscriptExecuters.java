@@ -61,7 +61,7 @@ public class TestWebscriptExecuters {
 		if (logger.isDebugEnabled()) {
 			logger.debug("");
 			logger.debug("* Response: " + res.getStatus() + " " + res.getContentType() + " " + req.getMethod() + " " + req.getFullUri() + "\n");
-			logger.debug(res.getContentAsString());
+			logger.trace(res.getContentAsString());
 		}
 
 		if ((expectedStatus > 0) && (expectedStatus != res.getStatus())) {
