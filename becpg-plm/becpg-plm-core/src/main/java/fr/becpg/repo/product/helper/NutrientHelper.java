@@ -243,7 +243,7 @@ public class NutrientHelper {
 
 			if (nutListItem != null) {
 				Double value = null;
-				if (productData.isUseUnroundedNutrients()) {
+				if (productData.useUnroundedNutrients()) {
 					value = productData.isPrepared() && nutListItem.getPreparedValue() != null ? nutListItem.getPreparedValue()
 							: nutListItem.getValue();
 				} else {
