@@ -2823,7 +2823,7 @@ public class ProductData extends AbstractScorableEntity
 	
 	
 	
-	public boolean isUseUnroundedNutrients() {
+	public boolean useUnroundedNutrients() {
 		return Boolean.TRUE.equals(useUnroundedNutrients);
 	}
 
