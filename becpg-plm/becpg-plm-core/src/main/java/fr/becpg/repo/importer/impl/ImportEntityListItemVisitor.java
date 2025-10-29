@@ -379,6 +379,11 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 			for (NodeRef variant : variants) {
 				if (nodeService.getProperty(variant, ContentModel.PROP_NAME).equals(name)) {
 					logger.debug("Find variant for name : " + name);
+					Boolean currentIsDefault = (Boolean) nodeService.getProperty(variant, BeCPGModel.PROP_IS_DEFAULT_VARIANT);
+					if (currentIsDefault == null || currentIsDefault != isDefault) {
+						nodeService.setProperty(variant, BeCPGModel.PROP_IS_DEFAULT_VARIANT, isDefault);
+						logger.debug("Updated isDefault for variant " + name + " to " + isDefault);
+					}
 					return variant;
 				}
 			}
