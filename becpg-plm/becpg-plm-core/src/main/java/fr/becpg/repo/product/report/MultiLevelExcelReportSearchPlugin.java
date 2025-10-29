@@ -39,7 +39,8 @@ import fr.becpg.repo.product.formulation.FormulationHelper;
  * @author matthieu
  * @version $Id: $Id
  */
-@Service
+//@Service
+@Deprecated
 public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReportSearchPlugin {
 
 	// Allowed Parameter1 AllLevel MaxLevel2 OnlyLevel2
