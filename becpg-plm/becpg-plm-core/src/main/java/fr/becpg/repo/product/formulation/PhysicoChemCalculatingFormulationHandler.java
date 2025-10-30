@@ -107,7 +107,7 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 
 		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<>();
 
-		ProductData entityTpl = formulatedProduct.getEntityTpl();
+		ProductData entityTpl = getEntityTplByType(componentType);
 
 		if (entityTpl != null) {
 
