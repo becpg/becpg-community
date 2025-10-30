@@ -335,7 +335,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	 */
 	public String getDisplayLabel(String constraintAllowableValue) {
 
-		return getDisplayLabel(constraintAllowableValue, I18NUtil.getLocale());
+		return getDisplayLabel(constraintAllowableValue, I18NUtil.getContentLocale());
 	}
 
 	/**
