@@ -77,6 +77,8 @@
 		<property name="associationService" ref="associationService" />
 		<property name="entityTplService" ref="entityTplService" />
 		<property name="attributeExtractorService" ref="attributeExtractorService" />
+		<property name="beCPGCacheService" ref="beCPGCacheService" />
+		<property name="namespaceService" ref="namespaceService" />
 	</bean>
 
 	<bean id="effectivityAspectPolicy" class="fr.becpg.repo.entity.policy.EffectivityAspectPolicy" init-method="init" parent="abstractBeCPGPolicy">

@@ -133,6 +133,7 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="mlNodeService" ref="mlAwareNodeService" />
 		<property name="systemConfigurationService" ref="systemConfigurationService" />
+		<property name="entityTplService" ref="entityTplService" />
 	</bean>
 
 
