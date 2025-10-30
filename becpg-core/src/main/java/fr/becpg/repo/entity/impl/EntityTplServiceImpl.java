@@ -63,6 +63,7 @@ import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
+import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
@@ -146,6 +147,9 @@ public class EntityTplServiceImpl implements EntityTplService {
 	
 	@Autowired
 	private AssociationService associationService;
+
+	@Autowired
+	private BeCPGCacheService beCPGCacheService;
 
 	static {
 		isIgnoredAspect.add(ContentModel.ASPECT_VERSIONABLE);
@@ -341,22 +345,25 @@ public class EntityTplServiceImpl implements EntityTplService {
 			return null;
 		}
 
-		List<NodeRef> tplsNodeRef = BeCPGQueryBuilder.createQuery().ofType(nodeType).withAspect(BeCPGModel.ASPECT_ENTITY_TPL).inDB().list();
+		String cacheKey = nodeType.toPrefixString(namespaceService);
+		return beCPGCacheService.getFromCache(EntityTplServiceImpl.class.getName(), cacheKey, () -> {
+			List<NodeRef> tplsNodeRef = BeCPGQueryBuilder.createQuery().ofType(nodeType).withAspect(BeCPGModel.ASPECT_ENTITY_TPL).inDB().list();
 
-		for (NodeRef tpl : tplsNodeRef) {
+			for (NodeRef tpl : tplsNodeRef) {
 
-			try {
-				if (!nodeService.hasAspect(tpl, BeCPGModel.ASPECT_COMPOSITE_VERSION)
-						&& Boolean.TRUE.equals(nodeService.getProperty(tpl, BeCPGModel.PROP_ENTITY_TPL_ENABLED))
-						&& Boolean.TRUE.equals(nodeService.getProperty(tpl, BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT))) {
-					return tpl;
+				try {
+					if (!nodeService.hasAspect(tpl, BeCPGModel.ASPECT_COMPOSITE_VERSION)
+							&& Boolean.TRUE.equals(nodeService.getProperty(tpl, BeCPGModel.PROP_ENTITY_TPL_ENABLED))
+							&& Boolean.TRUE.equals(nodeService.getProperty(tpl, BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT))) {
+						return tpl;
+					}
+				} catch (InvalidNodeRefException | InvalidAspectException e) {
+					logger.error(e, e);
 				}
-			} catch (InvalidNodeRefException | InvalidAspectException e) {
-				logger.error(e, e);
-			}
 
-		}
-		return null;
+			}
+			return null;
+		});
 	}
 
 	/** {@inheritDoc} */
