@@ -16,6 +16,7 @@ import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor;
 import fr.becpg.repo.helper.impl.AttributeExtractorField;
+import fr.becpg.repo.product.data.constraints.DeclarationType;
 
 /**
  * <p>
@@ -84,19 +85,23 @@ public class IngListExtractor extends MultiLevelExtractor {
 				if (nodeRef != null) {
 					Integer depthLevel = (Integer) nodeService.getProperty(nodeRef, BeCPGModel.PROP_DEPTH_LEVEL);
 					if ((depthLevel == null) || (depthLevel == 1)) {
-						Double value = (Double) nodeService.getProperty(nodeRef, PLMModel.PROP_INGLIST_QTY_PERC);
+						// Exclude omitted ingredients from total calculation
+						String declTypeStr = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_INGLIST_DECL_TYPE);
+						if (!DeclarationType.Omit.toString().equals(declTypeStr)) {
+							Double value = (Double) nodeService.getProperty(nodeRef, PLMModel.PROP_INGLIST_QTY_PERC);
 
-						if (value != null) {
-							totalQtyPerc += value;
-						}
-						Double yieldValue = (Double) nodeService.getProperty(nodeRef, PLMModel.PROP_INGLIST_QTY_PERCWITHYIELD);
-						if (yieldValue != null) {
-							totalQtyPercWithYield += yieldValue;
-						}
+							if (value != null) {
+								totalQtyPerc += value;
+							}
+							Double yieldValue = (Double) nodeService.getProperty(nodeRef, PLMModel.PROP_INGLIST_QTY_PERCWITHYIELD);
+							if (yieldValue != null) {
+								totalQtyPercWithYield += yieldValue;
+							}
 
-						Double secondaryYieldValue = (Double) nodeService.getProperty(nodeRef, PLMModel.PROP_INGLIST_QTY_PERCWITHSECONDARYYIELD);
-						if (secondaryYieldValue != null) {
-							totalQtyPercWithSecondaryYield += secondaryYieldValue;
+							Double secondaryYieldValue = (Double) nodeService.getProperty(nodeRef, PLMModel.PROP_INGLIST_QTY_PERCWITHSECONDARYYIELD);
+							if (secondaryYieldValue != null) {
+								totalQtyPercWithSecondaryYield += secondaryYieldValue;
+							}
 						}
 					}
 				}
