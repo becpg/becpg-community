@@ -9282,6 +9282,7 @@
 					<show id="bcpg:ingListClaims" />
 					<show id="bcpg:ingListComments" />
 					<show id="bcpg:linkedSearchAssociation" />
+					<show id="bcpg:ingListDeclType" />
 					<show id="dataList_bcpg:reqCtrlList" />
 					<show id="entity_bcpg:ingListIng_bcpg:ing_asColumn" force="true" />
 					<show id="fm:commentCount" force="true" />
@@ -9297,6 +9298,7 @@
 					<field id="bcpg:ingListQtyPercWithSecondaryYield" read-only="true" />
 					<field id="bcpg:depthLevel" label="hidden" />
 					<field id="dataList_bcpg:reqCtrlList" label-id="hidden" />
+					<field id="bcpg:ingListDeclType" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
@@ -9407,6 +9409,7 @@
 					<show id="bcpg:ingListBioOrigin" />
 					<show id="bcpg:ingListClaims" />
 					<show id="bcpg:ingListComments" />
+					<show id="bcpg:ingListDeclType" />  
 					<show id="entity_bcpg:ingListIng_bcpg:ing_asColumn" force="true" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
@@ -9414,6 +9417,7 @@
 					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:variantIds" label="hidden" />
 					<field id="bcpg:depthLevel" label="hidden" />
+					 <field id="bcpg:ingListDeclType" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>

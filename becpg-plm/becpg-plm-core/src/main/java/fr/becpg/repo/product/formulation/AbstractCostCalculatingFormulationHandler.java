@@ -298,7 +298,7 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 		
 		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<>();
 	
-		ProductData entityTpl = formulatedProduct.getEntityTpl();
+		ProductData entityTpl = getEntityTplByType(componentType);
 	
 		if (entityTpl != null) {
 	
