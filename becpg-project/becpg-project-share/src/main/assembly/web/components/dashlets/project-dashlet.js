@@ -275,7 +275,7 @@
                    */
                   getParameters : function ProjectDashlet_getParameters() {
 
-                     var isTask = this.widgets.view.value.indexOf("task") > -1, sort = "bcpg:code";
+                     var isTask = this.widgets.view.value.indexOf("task") > -1, sort = "cm:created|false";
 
                      if (isTask) {
                         if (this.widgets.filter.value == "InProgress") {
