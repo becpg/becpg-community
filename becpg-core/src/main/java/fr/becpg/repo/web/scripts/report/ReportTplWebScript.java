@@ -22,11 +22,11 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
+import fr.becpg.repo.batch.WorkProviderFactory;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -138,8 +138,8 @@ public class ReportTplWebScript extends AbstractWebScript {
 
 		if (Boolean.TRUE.equals(isSystem) && (classType != null)) {
 
-			refs = BeCPGQueryBuilder.createQuery().ofType(classType).withAspect(ReportModel.ASPECT_REPORT_ENTITY).excludeVersions()
-					.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
+			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(classType).withAspect(ReportModel.ASPECT_REPORT_ENTITY).excludeVersions();
+			refs = WorkProviderFactory.fromQueryBuilder(queryBuilder).collect();
 
 		} else {
 			refs = associationService.getSourcesAssocs(nodeRef, ReportModel.ASSOC_REPORT_TEMPLATES);

@@ -335,6 +335,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		@Override
 		public void run() {
 			
+			pushAndSetBatchAuthentication(null);
+			
 			batchQueueLock.lock();
 			try {
 				BatchCommand<?> currentRunningCommand = getRunningCommand();
@@ -437,16 +439,10 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				}
 
 				if (closingHook != null) {
-
-					pushAndSetBatchAuthentication(null);
-
 					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 						closingHook.run();
 						return true;
 					}, false, true);
-
-					AuthenticationUtil.popAuthentication();
-
 				}
 
 				batchInfo.setIsCompleted(true);

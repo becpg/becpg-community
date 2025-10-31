@@ -189,6 +189,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 	
 	private class CleanVersionWorkProvider implements BatchProcessWorkProvider<NodeRef>{
 
+		private static final int BATCH_SIZE = 15;
 		private int maxProcessedNodes;
 		private List<NodeRef> initialList = new ArrayList<>();
 		private Set<NodeRef> toTreat = new LinkedHashSet<>();
@@ -303,7 +304,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			
 			nextWork.clear();
 			for (NodeRef node : toTreat) {
-				if (nextWork.size() >= BatchInfo.BATCH_SIZE) {
+				if (nextWork.size() >= BATCH_SIZE) {
 					break;
 				}
 				nextWork.add(node);
@@ -312,12 +313,12 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			
 			toTreat.removeAll(nextWork);
 			
-			if (nextWork.size() < BatchInfo.BATCH_SIZE) {
+			if (nextWork.size() < BATCH_SIZE) {
 				for (NodeRef initialNode : initialList) {
 					if (nodeService.exists(initialNode)) {
 						if (VersionHelper.isVersion(initialNode)) {
 							if (treated.size() + toTreat.size() < maxProcessedNodes && !toTreat.contains(initialNode) && !treated.contains(initialNode)) {
-								if (nextWork.size() < BatchInfo.BATCH_SIZE) {
+								if (nextWork.size() < BATCH_SIZE) {
 									nextWork.add(initialNode);
 									treated.add(initialNode);
 								} else {
@@ -336,7 +337,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 								if (!toTreat.contains(oldVersionWUsed) && !treated.contains(oldVersionWUsed)) {
 									Date modified = (Date) nodeService.getProperty(oldVersionWUsed, ContentModel.PROP_MODIFIED);
 									if (cal.getTime().compareTo(modified) > 0) {
-										if (nextWork.size() < BatchInfo.BATCH_SIZE) {
+										if (nextWork.size() < BATCH_SIZE) {
 											nextWork.add(oldVersionWUsed);
 											treated.add(oldVersionWUsed);
 										} else {
