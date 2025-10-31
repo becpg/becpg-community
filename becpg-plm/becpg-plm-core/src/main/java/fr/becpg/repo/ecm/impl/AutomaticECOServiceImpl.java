@@ -9,7 +9,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import org.springframework.util.StopWatch;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -39,6 +38,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMModel;
@@ -57,7 +57,8 @@ import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.BatchStep;
-import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
+import fr.becpg.repo.batch.WorkProviderFactory;
+import fr.becpg.repo.batch.WorkProviderFactory.QueryBuilderWorkProvider;
 import fr.becpg.repo.ecm.AutomaticECOService;
 import fr.becpg.repo.ecm.ECOService;
 import fr.becpg.repo.ecm.ECOState;
@@ -345,11 +346,10 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		batchInfo.setBatchSize(autoMergeBatchSize != null ? autoMergeBatchSize : 1);
 		batchInfo.setPriority(BatchPriority.HIGH);
 
-		List<NodeRef> nodeRefs = transactionService.getRetryingTransactionHelper()
-				.doInTransaction(() -> BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ENTITY_V2)
-						.excludeVersions()
-						.withAspect(BeCPGModel.ASPECT_AUTO_MERGE_ASPECT).andFTSQuery(ftsQuery).maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(),
-						false, true);
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ENTITY_V2).excludeVersions()
+				.inDB().ftsLanguage()
+				.withAspect(BeCPGModel.ASPECT_AUTO_MERGE_ASPECT).andFTSQuery(ftsQuery);
+		QueryBuilderWorkProvider workProvider = WorkProviderFactory.fromQueryBuilder(queryBuilder).build();
 
 		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
 
@@ -384,7 +384,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 			}
 		};
 
-		batchQueueService.queueBatch(batchInfo, new EntityListBatchProcessWorkProvider<>(nodeRefs), processWorker, null);
+		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
 
 		return true;
 	}
@@ -409,11 +409,14 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		// --- Initial Node Query ---
 		@Deprecated //Use Pagination
 		List<NodeRef> initialNodeRefs = transactionService.getRetryingTransactionHelper()
-				.doInTransaction(() -> BeCPGQueryBuilder.createQuery()
-						.excludeVersions()
-						.excludeArchivedEntities().ofType(PLMModel.TYPE_PRODUCT)
-						.orBetween(ContentModel.PROP_CREATED, dateRange, "MAX").orBetween(ContentModel.PROP_MODIFIED, dateRange, "MAX")
-						.inDBIfPossible().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
+				.doInTransaction(() -> {
+					BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
+							.excludeVersions()
+							.excludeArchivedEntities().ofType(PLMModel.TYPE_PRODUCT)
+							.orBetween(ContentModel.PROP_CREATED, dateRange, "MAX").orBetween(ContentModel.PROP_MODIFIED, dateRange, "MAX")
+							.inDB().ftsLanguage();
+					return WorkProviderFactory.fromQueryBuilder(queryBuilder).collect();
+				}, false, true);
 		addACLProducts(dateRange, initialNodeRefs);
 		logger.info("Initial modified products to scan: " + initialNodeRefs.size());
 
@@ -537,9 +540,12 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	@Deprecated
 	private void addACLProducts(String dateRange, List<NodeRef> nodeRefs) {
 		List<NodeRef> modifiedACLs = transactionService.getRetryingTransactionHelper()
-				.doInTransaction(() -> BeCPGQueryBuilder.createQuery().excludeVersions().excludeArchivedEntities().ofType(SecurityModel.TYPE_ACL_GROUP)
-						.orBetween(ContentModel.PROP_CREATED, dateRange, "MAX").orBetween(ContentModel.PROP_MODIFIED, dateRange, "MAX")
-						.inDBIfPossible().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
+				.doInTransaction(() -> {
+					BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().excludeVersions().excludeArchivedEntities().ofType(SecurityModel.TYPE_ACL_GROUP)
+							.orBetween(ContentModel.PROP_CREATED, dateRange, "MAX").orBetween(ContentModel.PROP_MODIFIED, dateRange, "MAX")
+							.inDB().ftsLanguage();
+					return WorkProviderFactory.fromQueryBuilder(queryBuilder).collect();
+				}, false, true);
 
 		for (NodeRef modifiedACL : modifiedACLs) {
 			ACLGroupData aclGroupData = (ACLGroupData) alfrescoRepository.findOne(modifiedACL);
@@ -548,9 +554,11 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 				QName nodeType = QName.createQName(nodeTypeString.split(":")[0], nodeTypeString.split(":")[1], namespacePrefixResolver);
 				if (entityDictionaryService.isSubClass(nodeType, PLMModel.TYPE_PRODUCT) && isACLApplied(aclGroupData)) {
 					List<NodeRef> aclProducts = transactionService.getRetryingTransactionHelper()
-							.doInTransaction(() -> BeCPGQueryBuilder.createQuery().excludeVersions().excludeArchivedEntities().ofType(nodeType)
-									.orBetween(BeCPGModel.PROP_FORMULATED_DATE, "MIN", dateRange).inDBIfPossible()
-									.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
+							.doInTransaction(() -> {
+								BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().excludeVersions().excludeArchivedEntities().ofType(nodeType)
+										.orBetween(BeCPGModel.PROP_FORMULATED_DATE, "MIN", dateRange).inDB().ftsLanguage();
+								return WorkProviderFactory.fromQueryBuilder(queryBuilder).collect();
+							}, false, true);
 
 					for (NodeRef aclProduct : aclProducts) {
 						if (!nodeRefs.contains(aclProduct)) {
