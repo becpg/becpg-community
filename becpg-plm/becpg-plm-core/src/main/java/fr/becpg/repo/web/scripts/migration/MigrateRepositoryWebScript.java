@@ -35,6 +35,7 @@ import com.google.common.collect.Lists;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.batch.WorkProviderFactory;
 import fr.becpg.repo.entity.version.VersionCleanerService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
@@ -438,7 +439,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
 					.ofType(PLMModel.TYPE_ING);
 			
-			List<NodeRef> ingNodeRefs = queryBuilder.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
+			List<NodeRef> ingNodeRefs = WorkProviderFactory.fromQueryBuilder(queryBuilder).collect();
 			
 			for(NodeRef ingNodeRef : ingNodeRefs){	
 				
