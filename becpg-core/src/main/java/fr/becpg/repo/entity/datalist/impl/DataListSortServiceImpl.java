@@ -38,6 +38,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.batch.WorkProviderFactory;
 import fr.becpg.repo.entity.datalist.DataListSortService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -91,8 +92,9 @@ public class DataListSortServiceImpl implements DataListSortService {
 			}
 
 			MutableInt newSort = new MutableInt(RepoConsts.SORT_DEFAULT_STEP);
-			BeCPGQueryBuilder.createQuery().parent(listContainer).ofType(dataType).isNotNull(BeCPGModel.PROP_SORT).addSort(BeCPGModel.PROP_SORT, true)
-					.inDB().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list().forEach(listItem -> 
+			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().parent(listContainer).ofType(dataType).isNotNull(BeCPGModel.PROP_SORT).addSort(BeCPGModel.PROP_SORT, true)
+					.inDB();
+			WorkProviderFactory.fromQueryBuilder(queryBuilder).collect().forEach(listItem -> 
 						nodeService.setProperty(listItem, BeCPGModel.PROP_SORT, newSort.getAndAdd(RepoConsts.SORT_DEFAULT_STEP)));
 		}
 

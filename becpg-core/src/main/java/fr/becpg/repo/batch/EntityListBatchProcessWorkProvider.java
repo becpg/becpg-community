@@ -23,6 +23,8 @@ public class EntityListBatchProcessWorkProvider<T> implements BatchProcessWorkPr
 
 	private final Iterator<T> iterator;
 
+	private static final int BATCH_SIZE = 15;
+
 	/**
 	 * <p>Constructor for EntityListBatchProcessWorkProvider.</p>
 	 *
@@ -38,8 +40,8 @@ public class EntityListBatchProcessWorkProvider<T> implements BatchProcessWorkPr
 	/** {@inheritDoc} */
 	@Override
 	public Collection<T> getNextWork() {
-		Collection<T> results = new ArrayList<>(BatchInfo.BATCH_SIZE);
-		while ((results.size() < BatchInfo.BATCH_SIZE) && iterator.hasNext()) {
+		Collection<T> results = new ArrayList<>(BATCH_SIZE);
+		while ((results.size() < BATCH_SIZE) && iterator.hasNext()) {
 			results.add(iterator.next());
 		}
 		return results;

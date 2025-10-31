@@ -88,8 +88,6 @@ import jakarta.annotation.Nonnull;
 @Service("beCPGQueryBuilder")
 public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements InitializingBean {
 
-	private static final int PAGINATED_SEARCH_PAGE_SIZE = 1000;
-
 	private static final Log logger = LogFactory.getLog(BeCPGQueryBuilder.class);
 
 	private static final String DEFAULT_FIELD_NAME = "keywords";
@@ -167,7 +165,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private SearchParameters.Operator operator = null;
 	private Locale locale = Locale.getDefault();
 	private StoreRef store = RepoConsts.SPACES_STORE;
-    private boolean isBulkFetchEnabled = true;
+    private boolean isBulkFetchEnabled = false;
 	
 	private String defaultSearchTemplate() {
 		return systemConfigurationService.confValue("beCPG.defaultSearchTemplate");
@@ -195,6 +193,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		// Make creation private
 
 	}
+	
 	
 	/**
 	 * <p>Setter for the field <code>typesToExcludeFromIndex</code>.</p>
@@ -1098,79 +1097,22 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		String runnedQuery = buildQuery();
 
 		try {
+
 			if (RepoConsts.MAX_RESULTS_UNLIMITED.equals(maxResults) && logger.isDebugEnabled()) {
 				logger.debug("Unlimited results ask");
 			}
-			if (RepoConsts.MAX_RESULTS_UNLIMITED.equals(maxResults) && queryConsistancy == QueryConsistency.TRANSACTIONAL) {
-				int tempPage = 1;
-				List<NodeRef> results = new ArrayList<>();
-				PagingResults<NodeRef> tempRet = null;
-				
-				if (logger.isDebugEnabled()) {
-				    logger.debug("Starting paginated search for unlimited results - pageSize: " + PAGINATED_SEARCH_PAGE_SIZE);
-				}
 
-				do {
-				    if (logger.isDebugEnabled()) {
-				        logger.debug("Fetching page " + tempPage + " with page size: " + PAGINATED_SEARCH_PAGE_SIZE);
-				    }
-				    
-				    tempRet = search(runnedQuery, sortProps, tempPage, PAGINATED_SEARCH_PAGE_SIZE);
-				    
-				    int pageSize = tempRet.getPage().size();
-				    results.addAll(tempRet.getPage());
-				    
-				    if (logger.isDebugEnabled()) {
-				        logger.debug("Page " + tempPage + " retrieved: " + pageSize + " results, hasMoreItems: " + 
-				                     tempRet.hasMoreItems() + ", total accumulated: " + results.size());
-				    }
-				    
-				    tempPage++;
-				} while (tempRet.hasMoreItems());
-
-				if (logger.isDebugEnabled()) {
-				    logger.debug("Paginated search completed - total pages: " + tempPage + ", total results: " + results.size());
-				}
-				
-				ret = new PagingResults<NodeRef>() {
-					@Override
-					public boolean hasMoreItems() {
-						return false;
-					}
-					@Override
-					public Pair<Integer, Integer> getTotalResultCount() {
-						return new Pair<>(results.size(), results.size());
-					}
-					@Override
-					public String getQueryExecutionId() {
-						return null;
-					}
-					@Override
-					public List<NodeRef> getPage() {
-						return results;
-					}
-				};
-			} else {
-				ret = search(runnedQuery, sortProps, page, maxResults);
-			}
-			
+			ret = search(runnedQuery, sortProps, page, maxResults);
 
 		} finally {
 
-			int resultSize = 0;
-		    int totalResultSize = 0;
-		    
-		    if (ret != null) {
-		        List<NodeRef> retPage = ret.getPage();
-		        resultSize = retPage != null ? retPage.size() : 0;
-		        Pair<Integer, Integer> totalCount = ret.getTotalResultCount();
-		        totalResultSize = totalCount != null ? totalCount.getFirst() : 0;
-		    }
+			int totalResultSize = ret != null ? ret.getTotalResultCount().getFirst() : 0;
+			int resultSize = ret != null ? ret.getPage().size() : 0;
 
 			watch.stop();
 			if (watch.getTotalTimeSeconds() > 1) {
-				logger.warn("Slow query [" + runnedQuery + "] executed in  " + watch.getTotalTimeSeconds() + " seconds "
-						+ "- size results " + resultSize + " over total " + totalResultSize);
+				logger.warn("Slow query [" + runnedQuery + "] executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + resultSize + " over total " + totalResultSize);
+
 			}
 
 			if (logger.isDebugEnabled()) {
@@ -1178,7 +1120,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 				logger.debug("[" + Thread.currentThread().getStackTrace()[tmpIndex].getClassName() + " "
 						+ Thread.currentThread().getStackTrace()[tmpIndex].getLineNumber() + "] " + runnedQuery + " executed in  "
-						+ watch.getTotalTimeSeconds() + " seconds -  seconds - size results " + resultSize + " over total " + totalResultSize);
+						+ watch.getTotalTimeSeconds() + " seconds - size results " + resultSize + " over total " + totalResultSize);
 			}
 		}
 
@@ -1628,8 +1570,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		sp.excludeDataInTheCurrentTransaction(true);
 		sp.setExcludeTenantFilter(false);
 		sp.setBulkFetchEnabled(isBulkFetchEnabled);
-		sp.setMaxPermissionChecks(PAGINATED_SEARCH_PAGE_SIZE);
-		
+
 		if (logger.isDebugEnabled() && (language != null)) {
 			logger.debug("Use search language:" + language);
 		}
@@ -1665,6 +1606,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		if (logger.isDebugEnabled()) {
 			logger.debug("Use maxResults :" + maxResults);
 		}
+		
+		if (maxResults == RepoConsts.MAX_RESULTS_UNLIMITED && queryConsistancy == QueryConsistency.TRANSACTIONAL) {
+			logger.warn("Unlimited DB search: please check why this is called as it can lead to performance issues");
+		}
 
 		if (maxResults == RepoConsts.MAX_RESULTS_UNLIMITED) {
 			sp.setLimitBy(LimitBy.UNLIMITED);
@@ -1680,7 +1625,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		if (page > 0 && maxResults != RepoConsts.MAX_RESULTS_UNLIMITED) {
 			skipCount = (page - 1) * maxResults;
 			sp.setSkipCount(skipCount);
-			sp.setMaxPermissionChecks(page * PAGINATED_SEARCH_PAGE_SIZE);
+			sp.setMaxPermissionChecks(page * RepoConsts.MAX_RESULTS_1000);
 		}
 
 		if ((sort != null) && !isCmis()) {
