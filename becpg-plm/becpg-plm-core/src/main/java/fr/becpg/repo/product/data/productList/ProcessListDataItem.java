@@ -412,4 +412,68 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	public void setLossPerc(Double d) {
 	}
 
+	/**
+	 * <p>build.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.product.data.productList.ProcessListDataItem} object
+	 */
+	public static ProcessListDataItem build() {
+		return new ProcessListDataItem();
+	}
+
+	/**
+	 * <p>withProduct.</p>
+	 *
+	 * @param product a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.ProcessListDataItem} object
+	 */
+	public ProcessListDataItem withProduct(NodeRef product) {
+		this.product = product;
+		return this;
+	}
+
+	/**
+	 * <p>withQty.</p>
+	 *
+	 * @param qty a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.ProcessListDataItem} object
+	 */
+	public ProcessListDataItem withQty(Double qty) {
+		this.qty = qty;
+		return this;
+	}
+
+	/**
+	 * <p>withUnit.</p>
+	 *
+	 * @param unit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.ProcessListDataItem} object
+	 */
+	public ProcessListDataItem withUnit(ProductUnit unit) {
+		this.unit = unit;
+		return this;
+	}
+
+	/**
+	 * <p>withResource.</p>
+	 *
+	 * @param resource a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.ProcessListDataItem} object
+	 */
+	public ProcessListDataItem withResource(NodeRef resource) {
+		this.resource = resource;
+		return this;
+	}
+
+	/**
+	 * <p>withStep.</p>
+	 *
+	 * @param step a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.ProcessListDataItem} object
+	 */
+	public ProcessListDataItem withStep(NodeRef step) {
+		this.step = step;
+		return this;
+	}
+
 }

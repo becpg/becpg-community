@@ -104,7 +104,10 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 		try {
 			JSONObject jsonObject = new JSONObject(query);
 
-			QName datatype = QName.createQName(jsonObject.getString("datatype"), namespaceService);
+			QName datatype = null;
+			if (jsonObject.has("datatype") && !jsonObject.getString("datatype").isEmpty()) {
+				datatype = QName.createQName(jsonObject.getString("datatype"), namespaceService);
+			}
 			
 			Integer searchLimit = (Integer) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_TPL_SEARCH_LIMIT);
 			if(searchLimit == null  || searchLimit < 1 ) {

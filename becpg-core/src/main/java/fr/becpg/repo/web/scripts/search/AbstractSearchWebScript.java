@@ -171,7 +171,9 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 
 			JSONObject jsonObject = new JSONObject(query);
 			criteriaMap = JsonHelper.extractCriteria(jsonObject);
-			datatype = QName.createQName(jsonObject.getString("datatype"), namespaceService);
+			if (jsonObject.has("datatype") && !jsonObject.getString("datatype").isEmpty()) {
+				datatype = QName.createQName(jsonObject.getString("datatype"), namespaceService);
+			}
 
 		}
 
