@@ -165,9 +165,7 @@
 		<docker.becpg.version>${becpg.version}</docker.becpg.version>
 		<docker.becpg.tag>${project.version}</docker.becpg.tag>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
-		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-	  	<sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/becpg-integration-runner/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 	    <sonar.junit.reportPaths>${maven.multiModuleProjectDirectory}/becpg-integration-runner/target/surefire-reports/,${maven.multiModuleProjectDirectory}/becpg-integration-runner/target/failsafe-reports/</sonar.junit.reportPaths>
 		<sonar.scm.disabled>true</sonar.scm.disabled>
 		<sonar.scanner.socketTimeout>3600</sonar.scanner.socketTimeout>
