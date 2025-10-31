@@ -9,7 +9,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,6 +34,7 @@ import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.BatchStep;
 import fr.becpg.repo.batch.BatchStepAdapter;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
+import fr.becpg.repo.batch.WorkProviderFactory;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.formulation.FormulationService;
@@ -421,8 +421,9 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 			return ret;
 		}
 
-		return BeCPGQueryBuilder.createQuery().inType(PLMModel.TYPE_FINISHEDPRODUCT).inType(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
-				.inType(PLMModel.TYPE_RAWMATERIAL).excludeDefaults().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().inType(PLMModel.TYPE_FINISHEDPRODUCT).inType(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
+				.inType(PLMModel.TYPE_RAWMATERIAL).excludeDefaults();
+		return WorkProviderFactory.fromQueryBuilder(queryBuilder).collect();
 	}
 
 }

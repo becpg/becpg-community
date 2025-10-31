@@ -22,9 +22,9 @@ public class BatchInfo implements Serializable {
 	private static final long serialVersionUID = 7569652805526586359L;
 	
 	/** Constant <code>BATCH_THREAD=3</code> */
-	public static final int BATCH_THREAD = 3;
+	private static final int DEFAULT_BATCH_THREAD = 3;
 	/** Constant <code>BATCH_SIZE=15</code> */
-	public static final int BATCH_SIZE = 1;
+	private static final int DEFAULT_BATCH_SIZE = 1;
 
 	/**
 	 * Will serve as uniq batchId
@@ -61,9 +61,9 @@ public class BatchInfo implements Serializable {
 	
 	private String entityDescription;
 
-	private int workerThreads = BATCH_THREAD;
+	private int workerThreads = DEFAULT_BATCH_THREAD;
 
-	private int batchSize = BATCH_SIZE;
+	private int batchSize = DEFAULT_BATCH_SIZE;
 	
 	private Boolean isCompleted = Boolean.FALSE;
 	

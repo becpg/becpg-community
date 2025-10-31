@@ -20,11 +20,11 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ToxType;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.BatchStep;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
+import fr.becpg.repo.batch.WorkProviderFactory;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.toxicology.ToxHelper;
@@ -86,8 +86,8 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 			return;
 		}
 		
-		List<NodeRef> toxList = BeCPGQueryBuilder.createQuery().inDB().ofType(PLMModel.TYPE_TOX)
-				.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list()
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().inDB().ofType(PLMModel.TYPE_TOX);
+		List<NodeRef> toxList = WorkProviderFactory.fromQueryBuilder(queryBuilder).build().collect()
 				.stream().filter(n -> !Boolean.TRUE.equals(nodeService.getProperty(n, BeCPGModel.PROP_IS_DELETED))).toList();
 		if (logger.isDebugEnabled()) {
 			logger.debug("Found " + toxList.size() + " active tox nodes to process");
@@ -214,10 +214,10 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 
 	private List<NodeRef> findAllUndeletedIngredients() {
 		logger.debug("Searching for all undeleted ingredients");
-		List<NodeRef> ingredients = BeCPGQueryBuilder.createQuery().inDB()
-				.ofType(PLMModel.TYPE_ING)
-				.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED)
-				.list().stream().filter(n -> !Boolean.TRUE.equals(nodeService.getProperty(n, BeCPGModel.PROP_IS_DELETED))).toList();
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().inDB()
+				.ofType(PLMModel.TYPE_ING);
+		List<NodeRef> ingredients = WorkProviderFactory.fromQueryBuilder(queryBuilder).build().collect().stream()
+				.filter(n -> !Boolean.TRUE.equals(nodeService.getProperty(n, BeCPGModel.PROP_IS_DELETED))).toList();
 		logger.debug("Found " + ingredients.size() + " undeleted ingredients");
 		return ingredients;
 	}

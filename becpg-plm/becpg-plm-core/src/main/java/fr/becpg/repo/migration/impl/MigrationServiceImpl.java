@@ -40,6 +40,7 @@ import org.springframework.stereotype.Service;
 import com.google.common.collect.Lists;
 
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.batch.WorkProviderFactory;
 import fr.becpg.repo.migration.MigrationService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -106,8 +107,8 @@ public class MigrationServiceImpl implements MigrationService {
 	@Override
 	public void addMandatoryAspect(QName type, final QName aspect) {
 
-		List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery().ofType(type).excludeAspect(aspect).maxResults(RepoConsts.MAX_RESULTS_UNLIMITED)
-				.list();
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(type).excludeAspect(aspect);
+		List<NodeRef> nodeRefs = WorkProviderFactory.fromQueryBuilder(queryBuilder).collect();
 
 		logger.info("Found " + nodeRefs.size() + " node of type " + type + " without mandatory aspect " + aspect);
 
@@ -166,7 +167,8 @@ public class MigrationServiceImpl implements MigrationService {
 
 	private void removeAspect(QName type, final QName aspect) {
 
-		List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery().ofType(type).withAspect(aspect).maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(type).withAspect(aspect);
+		List<NodeRef> nodeRefs = WorkProviderFactory.fromQueryBuilder(queryBuilder).collect();
 
 		logger.info("Found " + nodeRefs.size() + " node of type " + type + " with aspect " + aspect + ". Start remove aspects");
 
@@ -230,7 +232,7 @@ public class MigrationServiceImpl implements MigrationService {
 	@Override
 	public void migrateAssociation(QName classQName, final QName sourceAssoc, final QName targetAssoc) {
 
-		List<NodeRef> nodeRefs = getLuceneQueryforClass(classQName).maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
+		List<NodeRef> nodeRefs = WorkProviderFactory.fromQueryBuilder(getLuceneQueryforClass(classQName)).collect();
 
 		logger.info("Found " + nodeRefs.size() + " nodes. migrate association " + sourceAssoc + " in " + targetAssoc);
 
@@ -287,7 +289,7 @@ public class MigrationServiceImpl implements MigrationService {
 
 	private void migrateProperty(QName classQName, final QName sourceProp, final QName targetProp) {
 
-		List<NodeRef> nodeRefs = getLuceneQueryforClass(classQName).maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
+		List<NodeRef> nodeRefs = WorkProviderFactory.fromQueryBuilder(getLuceneQueryforClass(classQName)).collect();
 
 		logger.info("Found " + nodeRefs.size() + " nodes. migrate property " + sourceProp + " in " + targetProp);
 
