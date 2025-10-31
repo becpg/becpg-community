@@ -228,6 +228,8 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 		try {
 			inWriteTx(() -> {
 				ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+				List<IngListDataItem> ingList = product.getIngList();
+				ingList.add(IngListDataItem.build().withQtyPerc(1d).withGeoOrigin(null).withBioOrigin(null).withIsGMO(null).withIsIonized(null).withIsProcessingAid(null).withIngredient(ing1).withIsManual(null));
 				List<RegulatoryListDataItem> regulatoryList = product.getRegulatoryList();
 				RegulatoryListDataItem item1 = new RegulatoryListDataItem();
 				item1.setRegulatoryUsagesRef(new ArrayList<>(List.of(usage1NodeRef)));
@@ -389,7 +391,9 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				assertEquals(1, requirements.size());
 				assertEquals(RequirementType.Tolerated, requirements.get(0).getReqType());
 				assertEquals(RequirementDataType.Specification, requirements.get(0).getReqDataType());
-				assertEquals(ing1, requirements.get(0).getCharact());
+				NodeRef charact = requirements.get(0).getCharact();
+				IngListDataItem ingListDataItem = (IngListDataItem) alfrescoRepository.findOne(charact);
+				assertEquals(ing1, ingListDataItem.getIng());
 				return null;
 			});
 		} finally {
@@ -584,7 +588,9 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				assertEquals(RequirementDataType.Specification, requirements.get(1).getReqDataType());
 				int checks = 0;
 				for (RequirementListDataItem req : requirements) {
-					if (ing3.equals(req.getCharact()) || ing4.equals(req.getCharact())) {
+					NodeRef charact = req.getCharact();
+					IngListDataItem ingListDataItem = (IngListDataItem) alfrescoRepository.findOne(charact);
+					if (ing3.equals(ingListDataItem.getIng()) || ing4.equals(ingListDataItem.getIng())) {
 						checks++;
 					}
 				}
