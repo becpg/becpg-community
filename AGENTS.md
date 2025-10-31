@@ -85,7 +85,7 @@ This is a **Java 17** enterprise project with emphasis on:
 Follow this **strict format** for all commits:
 
 ```
-[Optional: InProgress/Fix #ticket] - [Type] - Description
+[Optional: InProgress/Fix #ticket] - [Type] Description
 ```
 
 ### Commit Types
@@ -100,8 +100,8 @@ Follow this **strict format** for all commits:
 ### Examples
 ```
 InProgress #6174 - [Bug] Fix project dashlet task name
-[Feature] - Implement new authentication system
-[Cleanup] - Remove unused variables from service layer
+[Feature] Implement new authentication system
+[Cleanup] Remove unused variables from service layer
 Fix #1234 - [Security] Patch authentication vulnerability
 ```
 
