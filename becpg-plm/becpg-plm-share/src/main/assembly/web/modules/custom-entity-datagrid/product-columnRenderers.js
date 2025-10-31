@@ -87,7 +87,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
-        propertyName: ["bcpg:ing_bcpg:ingListIng","pjt:scoreCriterion_pjt:slScoreCriterion"],
+        propertyName: ["bcpg:ing_bcpg:ingListIng", "pjt:scoreCriterion_pjt:slScoreCriterion"],
         renderer: function(oRecord, data, label, scope, z, zz, elCell, oColumn) {
             var url = null;
             var toogleGroupButton = null;
@@ -160,17 +160,33 @@ if (beCPG.module.EntityDataGridRenderers) {
         }
 
     });
-    
-    YAHOO.Bubbling.fire("registerDataGridRenderer", {
-           propertyName: [ "boolean_bcpg:allergenListIsCleaned"],
-           renderer: function(oRecord, data, label, scope) {
-               if (data.value) {
-                   return '<span class="green">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
-               }
-               return Alfresco.util.encodeHTML(data.displayValue);
-           }
 
-       });
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["boolean_bcpg:allergenListIsCleaned"],
+        renderer: function(oRecord, data, label, scope) {
+            if (data.value) {
+                return '<span class="green">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+            }
+            return Alfresco.util.encodeHTML(data.displayValue);
+        }
+
+    });
+
+
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["bcpg:ingListDeclType"],
+        renderer: function(oRecord, data, label, scope, z, zz, elCell, oColumn) {
+            if (data.value && data.value == "Omit") {
+                var elTr = scope.widgets.dataTable.getTrEl(elCell);
+                Dom.setStyle(elTr, 'background-color', "#ffebee");
+                Dom.setStyle(elTr, "opacity", "0.8");
+            }
+            return Alfresco.util.encodeHTML(data.displayValue);
+        }
+
+    });
+
+
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["bcpg:lclClaimValue"],
@@ -346,7 +362,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
         var tooltip = details ? buildNutrientTooltip(scope, details) : buildNutriScoreFallbackTooltip(scope, score, nutrientClass);
         var html = '<div class="nutrient-score-cell"' + (tooltip ? ' title="' + Alfresco.util.encodeHTML(tooltip) + '"' : '') + '>';
-      
+
         html += buildNutrientClassRow(nutrientClass);
         html += '</div>';
         return html;
@@ -405,7 +421,7 @@ if (beCPG.module.EntityDataGridRenderers) {
     }
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
-        propertyName: [ "bcpg:ecoScoreDetails"],
+        propertyName: ["bcpg:ecoScoreDetails"],
         renderer: function(oRecord, data, label, scope) {
             var itemData = oRecord.getData("itemData");
             return renderEcoScore(scope, itemData);
@@ -413,7 +429,7 @@ if (beCPG.module.EntityDataGridRenderers) {
     });
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
-        propertyName: [ "bcpg:nutrientProfilingDetails"],
+        propertyName: ["bcpg:nutrientProfilingDetails"],
         renderer: function(oRecord, data, label, scope) {
             var itemData = oRecord.getData("itemData");
             return renderNutrientScore(scope, itemData);
@@ -842,16 +858,16 @@ if (beCPG.module.EntityDataGridRenderers) {
         var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
         if (owner !== null) {
             var splitted = owner.className.split("#");
-         
-               var dt = Alfresco.util.ComponentManager.find({
+
+            var dt = Alfresco.util.ComponentManager.find({
                 name: "beCPG.module.EntityDataGrid"
             })[0];
 
 
             var url = Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-charact-details/entity-charact-details" + "?entityNodeRef="
                 + dt.options.entityNodeRef + "&itemType="
-                + encodeURIComponent(splitted[0].replace("_",":")) + "&dataListName="
-                + encodeURIComponent(dt.datalistMeta.name) + "&dataListItems=workspace://SpacesStore/" +splitted[1];
+                + encodeURIComponent(splitted[0].replace("_", ":")) + "&dataListName="
+                + encodeURIComponent(dt.datalistMeta.name) + "&dataListItems=workspace://SpacesStore/" + splitted[1];
 
             dt._showPanel(url, dt.id, null, "60em");
 
@@ -861,15 +877,15 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
-        propertyName: ["bcpg:allergenListQtyPerc", "bcpg:allergenRegulatoryThreshold", "bcpg:allergenInVoluntaryRegulatoryThreshold","bcpg:svhcListQtyPerc"
+        propertyName: ["bcpg:allergenListQtyPerc", "bcpg:allergenRegulatoryThreshold", "bcpg:allergenInVoluntaryRegulatoryThreshold", "bcpg:svhcListQtyPerc"
             , "bcpg:ingListQtyPerc", "bcpg:ingListQtyPercWithYield", "bcpg:ingListQtyPercWithSecondaryYield"
-            , "bcpg:lclPercentClaim","bcpg:lclPercentApplicable"
+            , "bcpg:lclPercentClaim", "bcpg:lclPercentApplicable"
         ],
         renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
             if (data.value != null) {
                 var forceUnit = oColumn.forceUnit;
-                
-                if(!forceUnit){
+
+                if (!forceUnit) {
                     forceUnit = "none";
                 }
 
@@ -888,7 +904,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                     qty = data.value;
                     unit = " %";
                 }
-                
+
                 if (oRecord.getData("itemType") == "total") {
                     return '<span class="total">' + beCPG.util.sigFigs(qty, 7).toLocaleString(beCPG.util.getJSLocale(), { maximumFractionDigits: 20 }) + unit + "</span>";
                 }
@@ -1923,20 +1939,20 @@ if (beCPG.module.EntityDataGridRenderers) {
             var scoreValue = data.value,
                 nodeRef = oRecord.getData("nodeRef"),
                 scoreData = null
-                html ='';
+            html = '';
 
-                if (scoreValue) {
-                    try {
-                        scoreData = JSON.parse(scoreValue);
-                    } catch (e) {
-                        // error parsing
-                    }
+            if (scoreValue) {
+                try {
+                    scoreData = JSON.parse(scoreValue);
+                } catch (e) {
+                    // error parsing
                 }
+            }
 
 
-            if ( scoreData) {
+            if (scoreData) {
                 var containerId = 'product-notifications-' + nodeRef.replace(/[:/]/g, '-') + '-' + i;
-                
+
                 html += '<div class="product-notifications" ><div id="' + containerId + '" class="flat-button product-notifications-container" ' +
                     'data-node-ref="' + nodeRef + '" ' +
                     'data-list="' + (scope.datalistMeta ? scope.datalistMeta.name : '') + '"></div></div>';
@@ -1944,24 +1960,24 @@ if (beCPG.module.EntityDataGridRenderers) {
                 setTimeout(function() {
                     var container = document.getElementById(containerId);
                     if (container && !container._productNotificationsInit) {
-                        container._productNotificationsInit = true; 
-                        
-                     var toolbar = Alfresco.util.ComponentManager.find({
-                                      name: "beCPG.component.ProductListToolbar"
-                                  })[0];
-                                  
+                        container._productNotificationsInit = true;
+
+                        var toolbar = Alfresco.util.ComponentManager.find({
+                            name: "beCPG.component.ProductListToolbar"
+                        })[0];
+
                         var productNotifications = new beCPG.component.ProductNotifications(containerId);
                         productNotifications.setOptions({
                             entityNodeRef: nodeRef,
                             list: scope.datalistMeta ? scope.datalistMeta.name : '',
                             containerDiv: container,
-                            scores: scoreData 
+                            scores: scoreData
                         });
-                        
+
                         if (toolbar && toolbar.msg) {
-                            productNotifications.msg = function(arg1, arg2,arg3, arg4){ 
+                            productNotifications.msg = function(arg1, arg2, arg3, arg4) {
                                 return toolbar.msg(arg1, arg2, arg3, arg4);
-                              }
+                            }
                         }
                     }
                 }, 10);
@@ -2044,7 +2060,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
             if (percentValue !== null && percentValue > 0 && nutColor != null && nutColor !== undefined) {
 
-                
+
                 var additionalProps = oRecord.getData("itemData")["dt_bcpg_nutListNut"][0].itemData;
                 var nutValue = oRecord.getData("itemData")["prop_bcpg_nutListValue"].displayValue;
                 var gda = additionalProps.prop_bcpg_nutGDA.value;
@@ -2143,23 +2159,23 @@ if (beCPG.module.EntityDataGridRenderers) {
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["bcpg:contactListEmail", "bcpg:supplierAccountRef"],
         renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-			var itemData = oRecord.getData("itemData");
-			var elTr = scope.widgets.dataTable.getTrEl(elCell);
-			var accounts = itemData["assoc_bcpg_supplierAccountRef"];
-			var accountMail = accounts != null && accounts.length > 0 ? accounts[0].metadata : "";
-			var contactMail = itemData["prop_bcpg_contactListEmail"];
-			if (contactMail) {
-				contactMail = contactMail.displayValue.toLowerCase();
-				if (accountMail != contactMail) {
-		            Dom.setStyle(elTr, 'background-color', "rgb(255, 106, 106)");
-				} else {
-					Dom.setStyle(elTr, 'background-color', "");
-				}
-			}
+            var itemData = oRecord.getData("itemData");
+            var elTr = scope.widgets.dataTable.getTrEl(elCell);
+            var accounts = itemData["assoc_bcpg_supplierAccountRef"];
+            var accountMail = accounts != null && accounts.length > 0 ? accounts[0].metadata : "";
+            var contactMail = itemData["prop_bcpg_contactListEmail"];
+            if (contactMail) {
+                contactMail = contactMail.displayValue.toLowerCase();
+                if (accountMail != contactMail) {
+                    Dom.setStyle(elTr, 'background-color', "rgb(255, 106, 106)");
+                } else {
+                    Dom.setStyle(elTr, 'background-color', "");
+                }
+            }
             return Alfresco.util.encodeHTML(data.displayValue);
         }
     });
-    
+
     YAHOO.Bubbling.on("dirtyDataTable", function(event, args) {
         if (args && args.length > 1) {
             var field = args[1].column.field;

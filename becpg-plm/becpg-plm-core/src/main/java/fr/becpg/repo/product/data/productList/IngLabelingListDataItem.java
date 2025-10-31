@@ -13,6 +13,7 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
 
@@ -43,6 +44,7 @@ public class IngLabelingListDataItem extends AbstractManualDataItem implements A
 	 */
 	@AlfSingleAssoc
 	@AlfQname(qname="bcpg:illGrp")
+	@DataListIdentifierAttr
 	public NodeRef getGrp() {
 		return grp;
 	}

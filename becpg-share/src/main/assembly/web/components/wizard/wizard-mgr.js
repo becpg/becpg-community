@@ -104,11 +104,29 @@
             var step = this.options.wizardStruct[priorIndex];
             var nextStep = this.options.wizardStruct[currentIndex];
 
-            if (!step || !nextStep || ((step.type === "form" || step.type === "survey") && currentIndex >= priorIndex)) return;
+            if (!step || !nextStep) {
+                return;
+            }
 
-            if (currentIndex > priorIndex) nextStep.nodeRef = step.nodeRef;
+            var forward = currentIndex > priorIndex;
+            var isFormStep = step.type === "form" || step.type === "survey";
+            var stepReadOnly = false;
 
-            if ((step.type !== "form" && step.type !== "survey") && step.nextStepWebScript) {
+            if (isFormStep) {
+                if (currentIndex === priorIndex) {
+                    return;
+                }
+                stepReadOnly = this.options.readOnly || step.readOnly || !step.form;
+                if (forward && !stepReadOnly) {
+                    return;
+                }
+            }
+
+            if (forward) {
+                nextStep.nodeRef = step.nodeRef;
+            }
+
+            if (forward && step.nextStepWebScript && (!isFormStep || stepReadOnly)) {
                 this.executeWebScript(step, nextStep);
             } else {
                 this.loadStep(nextStep);
