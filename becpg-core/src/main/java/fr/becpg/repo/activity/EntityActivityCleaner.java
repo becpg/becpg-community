@@ -17,7 +17,6 @@ import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
@@ -37,7 +36,7 @@ import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.batch.BatchQueueService;
-import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
+import fr.becpg.repo.batch.WorkProviderFactory;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -55,27 +54,15 @@ public class EntityActivityCleaner {
     private BehaviourFilter policyBehaviourFilter;
 
     @Autowired
-    private TransactionService transactionService;
-
-    @Autowired
     private BatchQueueService batchQueueService;
 
     @Autowired
     private EntityListDAO entityListDAO;
 
-    private BatchProcessWorkProvider<NodeRef> createActivityProcessWorkProvider() {
-        List<NodeRef> entityNodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-            BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
-                    .ofType(BeCPGModel.TYPE_ENTITY_V2)
-                    .excludeVersions()
-                    .inDB()
-                    .ftsLanguage()
-                    .maxResults(RepoConsts.MAX_RESULTS_UNLIMITED);
-            return queryBuilder.list();
-        }, true, true);
-
-        return new EntityListBatchProcessWorkProvider<>(entityNodeRefs);
-    }
+	private BatchProcessWorkProvider<NodeRef> createActivityProcessWorkProvider() {
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ENTITY_V2).excludeVersions().inDB().ftsLanguage();
+		return WorkProviderFactory.fromQueryBuilder(queryBuilder).build();
+	}
 
     /**
      * Scheduled job: merge and clean entity activities.
