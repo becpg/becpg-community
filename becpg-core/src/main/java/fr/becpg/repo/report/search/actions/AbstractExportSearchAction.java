@@ -223,8 +223,10 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 			
 			ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
 
-			Location exportFrom = new Location(downloadRequest.getRequetedNodeRefs());
-			crawlerParameters.setExportFrom(exportFrom);
+			if (downloadRequest.getRequetedNodeRefs().length > 0) {
+				Location exportFrom = new Location(downloadRequest.getRequetedNodeRefs());
+				crawlerParameters.setExportFrom(exportFrom);
+			}
 
 			crawlerParameters.setCrawlSelf(true);
 			crawlerParameters.setCrawlChildNodes(false);
@@ -264,7 +266,9 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 					}
 				}
 				
-				exporterService.exportView(handler, crawlerParameters, null);
+				if (downloadRequest.getRequetedNodeRefs().length > 0) {
+					exporterService.exportView(handler, crawlerParameters, null);
+				}
 				
 				
 				fileCreationComplete(actionedUponNodeRef, extension, tempFile, handler);
