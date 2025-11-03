@@ -263,7 +263,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		columnNameOccurrences.forEach((column, occurrences) -> {
 			if (occurrences > 1) {
 				duplicateDynCharactColumnsMap.put(column, view.getDynamicCharactList().stream()
-						.map(DynamicCharactListItem::getColumnName).collect(Collectors.toList()).lastIndexOf(column));
+						.map(DynamicCharactListItem::getColumnName).toList().lastIndexOf(column));
 			}
 		});
 		return duplicateDynCharactColumnsMap;
