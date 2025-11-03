@@ -4,16 +4,14 @@
 	<artifactId>becpg-integration-runner</artifactId>
 	<name>Alfresco, Share and Solr Tomcat Runner</name>
 	<description>Alfresco, Share and Solr Tomcat Runner</description>
-	<properties>
-		<jacoco.host>localhost</jacoco.host>
-	</properties>
+	
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
 		<version>25.2.0</version>
 		<relativePath>../</relativePath>
 	</parent>
-    <version>25.2.0.30-SNAPSHOT</version>
+    <version>25.2.0.31-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
 			<groupId>fr.becpg</groupId>
@@ -369,91 +367,6 @@
     </plugin>
 		</plugins>
 	</build>
-	<profiles>
-
-		<profile>
-			<id>sonar</id>
-			<build>
-				<plugins>
-
-					<plugin>
-						<groupId>org.jacoco</groupId>
-						<artifactId>jacoco-maven-plugin</artifactId>
-						<version>0.8.13</version>
-						<configuration>
-							<append>true</append>
-
-							<includes>
-								<include>fr/becpg/**</include>
-							</includes>
-						</configuration>
-						<executions>
-
-							<execution>
-								<id>pre-unit-test</id>
-								<goals>
-									<goal>prepare-agent</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>report-test-report</id>
-								<phase>test</phase>
-								<goals>
-									<goal>report-aggregate</goal>
-								</goals>
-							</execution>
-
-							<execution>
-								<phase>post-integration-test</phase>
-								<goals>
-									<goal>dump</goal>
-								</goals>
-								<configuration>
-									<address>${jacoco.host}</address>
-									<destFile>
-										${project.build.directory}/jacoco.exec</destFile>
-									<port>10001</port>
-									<retryCount>1</retryCount>
-									<reset>true</reset>
-									<append>true</append>
-								</configuration>
-							</execution>
-
-							<execution>
-								<id>merge-results</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>merge</goal>
-								</goals>
-								<configuration>
-									<fileSets>
-										<fileSet>
-											<directory>${project.basedir}</directory>
-											<includes>
-												<include>**/*.exec</include>
-											</includes>
-										</fileSet>
-									</fileSets>
-									<destFile>${sonar.jacoco.reportPaths}</destFile>
-								</configuration>
-							</execution>
-
-							<execution>
-								<id>report-integration-test-report</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>report-aggregate</goal>
-								</goals>
-							</execution>
-
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
-
-
 
   <scm>
     <tag>25.2.0.26</tag>

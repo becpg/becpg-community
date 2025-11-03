@@ -8,7 +8,7 @@
 		<constraint-handlers>
 			<!-- mandatoryIf --> 
 			<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.mandatoryIf" event='keyup,change@{"prop":"field_bcpg_code", "condition" :"EMPTY"}' />
-			<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.mandatoryIf" event='keyup,change@{"prop":"field_bcpg_code", "condition" :"NOTEMPTY\"}' />
+			<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.mandatoryIf" event='keyup,change@{"prop":"field_bcpg_code", "condition" :"NOEMPTY"}' />
 			<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.mandatoryIf" event='keyup,change@{"prop":"field_bcpg_code", "condition" :"PF25"}' />
 			<!-- hideIf -->
 			<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='keyup,change@{"prop":"field_bcpg_code", "condition" :""}' />
@@ -86,7 +86,12 @@
 	   		
 	   		for(var i in args) {
 	   			
-	   			var propM = document.getElementsByName(args[i].prop)[0].value;
+	   			var propMElement = document.getElementsByName(args[i].prop)[0];
+				if (!propMElement) {
+					console.warn("mandatoryIf: could not find element with name " + args[i].prop);
+					continue;
+				}
+	   			var propM = propMElement.value;
 
 		   		switch(args[i].condition){
 		   			case "EMPTY":
@@ -95,15 +100,18 @@
 		   						mandatory = false;
 		   				}
 		   				break;
+		   			case "NOTEMPTY":
 		   			case "NOEMPTY": 
 		   				if( propM != null && propM.trim().length != 0) {
 		   					if(field.value.trim().length ==0)
 		   						mandatory = false;
 		   				}
 		   				break;
-		   			case propM: 
-		   				if(field.value.trim().length == 0) {
-				   			mandatory = false;
+		   			default: 
+		   				if( propM == args[i].condition ) {
+				   			if(field.value.trim().length == 0) {
+				   				mandatory = false;
+				   			}
 		   				}
 		   				break;
 		   		}

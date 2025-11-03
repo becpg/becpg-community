@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.test.repo.product.formulation;
 
+import static org.junit.Assert.assertNotEquals;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -117,117 +119,88 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Property  2").withFormula("costList[0].unit"));
 			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Property  3").withFormula("costList[0].value / costList[1].value"));
 			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Property  4").withFormula("profitability"));
-			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Collection Selection  1").withFormula("costList.?[value == 4.0][0].unit"));
-			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Collection Selection  2").withFormula("costList.?[value < 5.0][0].value"));
+			dynamicCharactListItems
+					.add(DynamicCharactListItem.build().withTitle("Collection Selection  1").withFormula("costList.?[value == 4.0][0].unit"));
+			dynamicCharactListItems
+					.add(DynamicCharactListItem.build().withTitle("Collection Selection  2").withFormula("costList.?[value < 5.0][0].value"));
 			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Collection Projection  1").withFormula("costList.![value]"));
 			// Variables
-			dynamicCharactListItems.add(
-				DynamicCharactListItem.build().withTitle("Variable  1").withFormula("compoListView.dynamicCharactList.?[title == 'Property  1' ][0].value"));
-			// Template need Template Context
-			// dynamicCharactListItems.add(DynamicCharactListItem.build()
-			// 	.withTitle("Template 1")
-			// 	.withFormula("Cost1/Cost2 : #{costList[1].value / costList[2].value}% Profitability : #{profitability}")
-			// );
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Variable  1")
+					.withFormula("compoListView.dynamicCharactList.?[title == 'Property  1' ][0].value"));
 			// Elvis
 			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Elvis  1").withFormula("null?:'Unknown'"));
 			// Boolean
 			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Boolean  1").withFormula("costList[1].value > 1"));
 			// Assignment
-			dynamicCharactListItems.add(DynamicCharactListItem.build()
-				.withTitle("Assignement  1")
-				.withFormula("nutList.?[nut.toString() == '" + nut1 + "' ][0].value = 4d"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Assignement  1")
+					.withFormula("nutList.?[nut.toString() == '" + nut1 + "' ][0].value = 4d"));
 
 			// Spel method
-			dynamicCharactListItems.add(DynamicCharactListItem.build()
-				.withTitle("beCPG findOne")
-				.withFormula("@beCPG.findOne(nodeRef).qty"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("beCPG findOne").withFormula("@beCPG.findOne(nodeRef).qty"));
 
-			dynamicCharactListItems.add(DynamicCharactListItem.build()
-				.withTitle("beCPG propValue")
-				.withFormula("@beCPG.propValue(nodeRef,'bcpg:bestBeforeDate')\n"));
+			dynamicCharactListItems.add(
+					DynamicCharactListItem.build().withTitle("beCPG propValue").withFormula("@beCPG.propValue(nodeRef,'bcpg:bestBeforeDate')\n"));
 
-			dynamicCharactListItems.add(DynamicCharactListItem.build()
-				.withTitle("beCPG SUM ")
-				.withFormula("@beCPG.sum(compoListView.compoList.?[parent == null],\"entity.costList[0].value + dataListItem.qty\")"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("beCPG SUM ")
+					.withFormula("@beCPG.sum(compoListView.compoList.?[parent == null],\"entity.costList[0].value + dataListItem.qty\")"));
 
-			dynamicCharactListItems.add(DynamicCharactListItem.build()
-				.withTitle("beCPG SUM++ ")
-				.withFormula("@beCPG.sum(compoListView.compoList.?[parent == null],\"@beCPG.propValue(dataListItem.nodeRef,'bcpg:compoListQtyPercForSF')\")"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("beCPG SUM++ ").withFormula(
+					"@beCPG.sum(compoListView.compoList.?[parent == null],\"@beCPG.propValue(dataListItem.nodeRef,'bcpg:compoListQtyPercForSF')\")"));
 
-			// Multilingual SpEL functions tests using 
-			dynamicCharactListItems.add(DynamicCharactListItem.build()
-				.withTitle("beCPG updateMLText en")
-				.withFormula("@beCPG.updateMLText(servingSizeByCountry,'en','10')"));
+			// Multilingual SpEL functions tests using
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("beCPG updateMLText en")
+					.withFormula("@beCPG.updateMLText(servingSizeByCountry,'en','10')"));
 
-			dynamicCharactListItems.add(DynamicCharactListItem.build()
-				.withTitle("beCPG updateMLText fr_CA")
-				.withFormula("@beCPG.setValue(#this, 'bcpg:servingSizeText',@beCPG.updateMLText(@beCPG.propMLValue(#this, 'bcpg:servingSizeText', null),'fr_CA','Pour 1/5 de meule (32g)'))"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("beCPG updateMLText fr_CA").withFormula(
+					"@beCPG.setValue(#this, 'bcpg:servingSizeText',@beCPG.updateMLText(@beCPG.propMLValue(#this, 'bcpg:servingSizeText', null),'fr_CA','Pour 1/5 de meule (32g)'))"));
 
-			dynamicCharactListItems.add(DynamicCharactListItem.build()
-				.withTitle("beCPG setMLValue fr")
-				.withFormula("@beCPG.setMLValue(#this, 'bcpg:servingSizeText','fr', 'Taille de portion mise à jour')"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("beCPG setMLValue fr")
+					.withFormula("@beCPG.setMLValue(#this, 'bcpg:servingSizeText','fr', 'Taille de portion mise à jour')"));
 
-			dynamicCharactListItems.add(DynamicCharactListItem.build()
-				.withTitle("beCPG setMLValue en")
-				.withFormula("@beCPG.setMLValue('bcpg:servingSizeText', 'en', 'Updated serving size text')"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("beCPG setMLValue en")
+					.withFormula("@beCPG.setMLValue('bcpg:servingSizeText', 'en', 'Updated serving size text')"));
 
-			dynamicCharactListItems.add(DynamicCharactListItem.build()
-				.withTitle("beCPG propMLValue fr_CA")
-				.withFormula("@beCPG.propMLValue(#this,'bcpg:servingSizeText','fr_CA')"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("beCPG propMLValue fr_CA")
+					.withFormula("@beCPG.propMLValue(#this,'bcpg:servingSizeText','fr_CA')"));
 
-				dynamicCharactListItems.add(DynamicCharactListItem.build()
-				.withTitle("beCPG propMLValue fr")
-				.withFormula("@beCPG.propMLValue(#this,'bcpg:servingSizeText','fr')"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("beCPG propMLValue fr")
+					.withFormula("@beCPG.propMLValue(#this,'bcpg:servingSizeText','fr')"));
 
-				dynamicCharactListItems.add(DynamicCharactListItem.build()
-				.withTitle("beCPG propMLValue en")
-				.withFormula("@beCPG.propMLValue(#this,'bcpg:servingSizeText','en')"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("beCPG propMLValue en")
+					.withFormula("@beCPG.propMLValue(#this,'bcpg:servingSizeText','en')"));
 
-			dynamicCharactListItems.add(DynamicCharactListItem.build()
-				.withTitle("beCPG propMLValue servingSizeByCountry en")
-				.withFormula("@beCPG.propMLValue(servingSizeByCountry,'en')"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("beCPG propMLValue servingSizeByCountry en")
+					.withFormula("@beCPG.propMLValue(servingSizeByCountry,'en')"));
 
-		
 			// Static fonction
-			dynamicCharactListItems.add(DynamicCharactListItem.build()
-				.withTitle("Autonum V1 ")
-				.withFormula("T(fr.becpg.repo.helper.AutoNumHelper).getAutoNumValue(\"bcpg:finishedProduct\",\"bcpg:eanCode\")"));
-			
-			dynamicCharactListItems.add(DynamicCharactListItem.build()
-				.withTitle("Autonum V2 ")
-				.withFormula("T(fr.becpg.repo.helper.AutoNumHelper).getOrCreateCode(nodeRef,\"bcpg:eanCode\")"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Autonum V1 ")
+					.withFormula("T(fr.becpg.repo.helper.AutoNumHelper).getAutoNumValue(\"bcpg:finishedProduct\",\"bcpg:eanCode\")"));
+
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Autonum V2 ")
+					.withFormula("T(fr.becpg.repo.helper.AutoNumHelper).getOrCreateCode(nodeRef,\"bcpg:eanCode\")"));
 
 			// Formulate twice
 			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("Formulate twice").withFormula("reformulateCount=1"));
 
 			// Multi Lines
 			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("MTLine1").withFormula("var abc=10+30;\n#abc + 5;"));
-			dynamicCharactListItems.add(DynamicCharactListItem.build()
-				.withTitle("MTLine2")
-				.withFormula("var b = costList[1].value;\n#abc + #b;"));
-			dynamicCharactListItems.add(DynamicCharactListItem.build()
-				.withTitle("MTLine3")
-				.withFormula("#abc - #b;\n\n"));
-
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("MTLine2").withFormula("var b = costList[1].value;\n#abc + #b;"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("MTLine3").withFormula("#abc - #b;\n\n"));
 
 			// DynamicColumn
 
-			DynamicCharactListItem dynCol = DynamicCharactListItem.build()
-				.withTitle("Col Dyn 1")
-				.withFormula("entity.costList[0].value + dataListItem.qty");
+			DynamicCharactListItem dynCol = DynamicCharactListItem.build().withTitle("Col Dyn 1")
+					.withFormula("entity.costList[0].value + dataListItem.qty");
 			dynCol.setColumnName("bcpg_dynamicCharactColumn1");
 			dynamicCharactListItems.add(dynCol);
 
-			dynCol = DynamicCharactListItem.build()
-				.withTitle("Col Dyn 2")
-				.withFormula("dataListItem.parent!=null ? entity.costList[0].value + dataListItem.qty : sum(entity.compoListView.compoList.?[parent == #root.dataListItem],\"entity.costList[0].value + dataListItem.qty\" )");
+			dynCol = DynamicCharactListItem.build().withTitle("Col Dyn 2").withFormula(
+					"dataListItem.parent!=null ? entity.costList[0].value + dataListItem.qty : sum(entity.compoListView.compoList.?[parent == #root.dataListItem],\"entity.costList[0].value + dataListItem.qty\" )");
 
 			dynCol.setColumnName("bcpg_dynamicCharactColumn2");
 			dynamicCharactListItems.add(dynCol);
 
-			dynCol = DynamicCharactListItem.build()
-				.withTitle("Col Dyn 3")
-				.withFormula("entity.costList[0].value + dataListItem.qty");
+			dynCol = DynamicCharactListItem.build().withTitle("Col Dyn 3").withFormula("entity.costList[0].value + dataListItem.qty");
 			dynCol.setColumnName("bcpg_dynamicCharactColumn3");
 			dynCol.setMultiLevelFormula(true);
 			dynamicCharactListItems.add(dynCol);
@@ -246,14 +219,10 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			nodeService.setProperty(labelClaims.get(1), PLMModel.PROP_LABEL_CLAIM_FORMULA,
 					"nutList.?[nut.toString() == '" + nut1 + "'][0].value <= 4");
 
-			labelClaimListDataItems.add(new LabelClaimListDataItem()
-				.withLabelClaim(labelClaims.get(0))
-				.withType("Nutritionnelle")
-				.withIsClaimed(false));
-			labelClaimListDataItems.add(new LabelClaimListDataItem()
-				.withLabelClaim(labelClaims.get(1))
-				.withType("Nutritionnelle")
-				.withIsClaimed(false));
+			labelClaimListDataItems
+					.add(new LabelClaimListDataItem().withLabelClaim(labelClaims.get(0)).withType("Nutritionnelle").withIsClaimed(false));
+			labelClaimListDataItems
+					.add(new LabelClaimListDataItem().withLabelClaim(labelClaims.get(1)).withType("Nutritionnelle").withIsClaimed(false));
 
 			finishedProduct.setLabelClaimList(labelClaimListDataItems);
 
@@ -342,35 +311,28 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			String trace = "Dyn charact :" + dynamicCharactListItem.getTitle() + " value " + dynamicCharactListItem.getValue() + " "
 					+ dynamicCharactListItem.getErrorLog();
 			logger.info(trace);
-			assertFalse("#Error".equals(dynamicCharactListItem.getValue()));
+			assertNotEquals("#Error",dynamicCharactListItem.getValue());
 
-			if ("MTLine1".equals(dynamicCharactListItem.getTitle())) {
-				if (dynamicCharactListItem.getValue() instanceof Integer) {
-					assertEquals(((Integer) dynamicCharactListItem.getValue()).intValue(),45);
-				}
+			if ("MTLine1".equals(dynamicCharactListItem.getTitle()) && (dynamicCharactListItem.getValue() instanceof Integer)) {
+				assertEquals(((Integer) dynamicCharactListItem.getValue()).intValue(), 45);
 			}
 
 			// Check multilingual SpEL functions
-			if ("beCPG propMLValue fr_CA".equals(dynamicCharactListItem.getTitle())) {
-				if (dynamicCharactListItem.getValue() instanceof String) {
+			if ((formulatedProduct.getCompareWithEntities() == null) || formulatedProduct.getCompareWithEntities().isEmpty()) {
+				if ("beCPG propMLValue fr_CA".equals(dynamicCharactListItem.getTitle()) && (dynamicCharactListItem.getValue() instanceof String)) {
 					assertEquals("Pour 1/5 de meule (32g)", dynamicCharactListItem.getValue());
 				}
-			}
 
-			if ("beCPG propMLValue fr".equals(dynamicCharactListItem.getTitle())) {
-				if (dynamicCharactListItem.getValue() instanceof String) {
+				if ("beCPG propMLValue fr".equals(dynamicCharactListItem.getTitle()) && (dynamicCharactListItem.getValue() instanceof String)) {
 					assertEquals("Taille de portion mise à jour", dynamicCharactListItem.getValue());
 				}
-			}
 
-			if ("beCPG propMLValue en".equals(dynamicCharactListItem.getTitle())) {
-				if (dynamicCharactListItem.getValue() instanceof String) {
+				if ("beCPG propMLValue en".equals(dynamicCharactListItem.getTitle()) && (dynamicCharactListItem.getValue() instanceof String)) {
 					assertEquals("Updated serving size text", dynamicCharactListItem.getValue());
 				}
-			}
 
-			if ("beCPG propMLValue servingSizeByCountry en".equals(dynamicCharactListItem.getTitle())) {
-				if (dynamicCharactListItem.getValue() instanceof String) {
+				if ("beCPG propMLValue servingSizeByCountry en".equals(dynamicCharactListItem.getTitle())
+						&& (dynamicCharactListItem.getValue() instanceof String)) {
 					assertEquals("10", dynamicCharactListItem.getValue());
 				}
 			}
@@ -419,20 +381,20 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 		checks = 0;
 		assertNotNull("AllergenList is null", formulatedProduct.getAllergenList());
 		for (AllergenListDataItem allergenListDataItem : formulatedProduct.getAllergenList()) {
-			String voluntarySources = "";
+			StringBuilder voluntarySources = new StringBuilder();
+			StringBuilder inVoluntarySources = new StringBuilder();
 			for (NodeRef part : allergenListDataItem.getVoluntarySources()) {
-				voluntarySources += nodeService.getProperty(part, BeCPGModel.PROP_CHARACT_NAME) + ", ";
+				voluntarySources.append(nodeService.getProperty(part, BeCPGModel.PROP_CHARACT_NAME)).append(", ");
 			}
 
-			String inVoluntarySources = "";
 			for (NodeRef part : allergenListDataItem.getInVoluntarySources()) {
-				inVoluntarySources += nodeService.getProperty(part, BeCPGModel.PROP_CHARACT_NAME) + ", ";
+				inVoluntarySources.append(nodeService.getProperty(part, BeCPGModel.PROP_CHARACT_NAME)).append(", ");
 			}
 
 			String trace = "allergen: " + nodeService.getProperty(allergenListDataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME) + " qty Perc:  "
 					+ allergenListDataItem.getQtyPerc() + " - voluntary: " + allergenListDataItem.getVoluntary() + " - involuntary: "
-					+ allergenListDataItem.getInVoluntary() + " - voluntary sources:" + voluntarySources + " - involuntary sources:"
-					+ inVoluntarySources;
+					+ allergenListDataItem.getInVoluntary() + " - voluntary sources:"
+					+ voluntarySources.append(" - involuntary sources:").append(inVoluntarySources).toString();
 			logger.info(trace);
 
 			// allergen1 - voluntary: true - involuntary: false -
@@ -500,30 +462,31 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 		}
 		assertEquals(4, checks);
 
-		// verify IngList
+		/** verify IngList
 		// 1 * RM1 , ingList : 1 ing1 ; bio1 ; geo1 // 2 ing2 ; bio1 ;
 		// geo1|geo2 //
 		// 2 * RM2 , ingList : 1 ing1 ; bio1 ; geo1 // 3 ing2 ; bio2 ;
 		// geo1|geo2 //
 		// 3 * RM3 , ingList : // // 4 ing3 ; bio1|bio2 ; geo2
-		// 3 * RM4 [OMIT] , ingList : // // 4 ing3 ; bio1|bio2 ; geo2
+		// 3 * RM4 [OMIT] , ingList : // // 4 ing3 ; bio1|bio2 ; geo2 */
 		checks = 0;
 		assertNotNull("IngList is null", formulatedProduct.getIngList());
 		for (IngListDataItem ingListDataItem : formulatedProduct.getIngList()) {
 
-			String geoOriginsText = "";
+			StringBuilder geoOriginsText = new StringBuilder();
+			StringBuilder bioOriginsText = new StringBuilder();
 			for (NodeRef geoOrigin : ingListDataItem.getGeoOrigin()) {
-				geoOriginsText += nodeService.getProperty(geoOrigin, BeCPGModel.PROP_CHARACT_NAME) + ", ";
+				geoOriginsText.append(nodeService.getProperty(geoOrigin, BeCPGModel.PROP_CHARACT_NAME)).append(", ");
 			}
 
-			String bioOriginsText = "";
 			for (NodeRef bioOrigin : ingListDataItem.getBioOrigin()) {
-				bioOriginsText += nodeService.getProperty(bioOrigin, BeCPGModel.PROP_CHARACT_NAME) + ", ";
+				bioOriginsText.append(nodeService.getProperty(bioOrigin, BeCPGModel.PROP_CHARACT_NAME)).append(", ");
 			}
 
 			String trace = "ing: " + nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME) + " - qty: "
-					+ ingListDataItem.getQtyPerc() + " - geo origins: " + geoOriginsText + " - bio origins: " + bioOriginsText + " is gmo: "
-					+ ingListDataItem.getIsGMO() + " is ionized: " + ingListDataItem.getIsIonized();
+					+ ingListDataItem.getQtyPerc() + " - geo origins: "
+					+ geoOriginsText.append(" - bio origins: ").append(bioOriginsText).append(" is gmo: ").append(ingListDataItem.getIsGMO())
+							.append(" is ionized: ").append(ingListDataItem.getIsIonized()).toString();
 			logger.debug(trace);
 
 			df = new DecimalFormat("0.000000");
@@ -642,7 +605,7 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 	}
 
 	@Test
-	public void testFormulationInML() throws Exception {
+	public void testFormulationInML() {
 
 		logger.info("testFormulationInML");
 
