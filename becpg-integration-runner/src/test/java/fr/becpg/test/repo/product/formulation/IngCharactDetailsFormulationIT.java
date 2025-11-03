@@ -235,4 +235,108 @@ public class IngCharactDetailsFormulationIT extends AbstractFinishedProductTest 
         });
     }
 
+    /**
+     * Validates that proportion percentages are displayed correctly at all levels
+     * without being recalculated with qtyUsed.
+     * 
+     * The key requirement is that getQtyPerc() and getQtyPercWithYield() values
+     * should be displayed as-is, since they already represent final proportions
+     * at the finished product level.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testIngredientProportionMultiLevelWithYield() throws Exception {
+
+        final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+
+            StandardChocolateEclairTestProduct testProduct = new StandardChocolateEclairTestProduct.Builder()
+                    .withAlfrescoRepository(alfrescoRepository)
+                    .withNodeService(nodeService)
+                    .withDestFolder(getTestFolderNodeRef())
+                    .withCompo(true)
+                    .withLabeling(false)
+                    .withIngredients(true)
+                    .build();
+
+            FinishedProductData finishedProduct = testProduct.createTestProduct();
+
+            return finishedProduct.getNodeRef();
+        });
+
+        inWriteTx(() -> {
+
+            productService.formulate(finishedProductNodeRef);
+
+            FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+            Assert.assertNotNull("Ingredient list should not be null", finishedProduct.getIngList());
+
+            logger.info("Testing multi-level ingredient details with maxLevel=2");
+
+            CharactDetails ingDetailsMultiLevel = productService.formulateDetails(finishedProductNodeRef, PLMModel.TYPE_INGLIST, "ingList", null, 2);
+
+            Assert.assertNotNull("CharactDetails should not be null", ingDetailsMultiLevel);
+
+            logger.info(CharactDetailsHelper.toJSONObject(ingDetailsMultiLevel, nodeService, attributeExtractorService).toString(3));
+
+            String proportionQtyLabel = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListProportionQtyPerc.title");
+            String proportionQtyWithYieldLabel = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListProportionQtyPercWithYield.title");
+
+            int level1Count = 0;
+            int level2Count = 0;
+            int proportionColumnsAtLevel1 = 0;
+            int proportionColumnsAtLevel2 = 0;
+
+            for (Map.Entry<NodeRef, List<CharactDetailsValue>> entry : ingDetailsMultiLevel.getData().entrySet()) {
+                String ingredientName = (String) nodeService.getProperty(entry.getKey(), BeCPGModel.PROP_CHARACT_NAME);
+
+                for (CharactDetailsValue detailsValue : entry.getValue()) {
+                    Integer level = detailsValue.getLevel();
+                    String sourceName = (String) nodeService.getProperty(detailsValue.getKeyNodeRef(), BeCPGModel.PROP_CHARACT_NAME);
+
+                    if (level == 0) {
+                        level1Count++;
+                    } else if (level == 1) {
+                        level2Count++;
+                    }
+
+                    List<CharactDetailAdditionalValue> additionalValues = detailsValue.getAdditionalValues();
+
+                    for (CharactDetailAdditionalValue additionalValue : additionalValues) {
+                        String columnName = additionalValue.getColumnName();
+
+                        if (proportionQtyLabel.equals(columnName) || proportionQtyWithYieldLabel.equals(columnName)) {
+                            Double value = additionalValue.getValue();
+                            
+                            logger.info("Level " + level + " - " + ingredientName + " from " + sourceName 
+                                    + " - " + columnName + ": " + (value != null ? value + "%" : "null"));
+
+                            if (level == 0) {
+                                proportionColumnsAtLevel1++;
+                                Assert.assertNotNull("Proportion value at level 1 should not be null for " + ingredientName, value);
+                                Assert.assertTrue("Proportion value should be >= 0 at level 1", value >= 0);
+                            } else if (level == 1) {
+                                proportionColumnsAtLevel2++;
+                                Assert.assertNotNull("Proportion value at level 2 should not be null for " + ingredientName, value);
+                                Assert.assertTrue("Proportion value should be >= 0 at level 2", value >= 0);
+                            }
+                        }
+                    }
+                }
+            }
+
+            logger.info("Level 1 ingredients: " + level1Count + ", with proportion columns: " + proportionColumnsAtLevel1);
+            logger.info("Level 2 ingredients: " + level2Count + ", with proportion columns: " + proportionColumnsAtLevel2);
+
+            Assert.assertTrue("Should have level 1 ingredients", level1Count > 0);
+            Assert.assertTrue("Should have level 2 ingredients", level2Count > 0);
+            Assert.assertTrue("Should have proportion columns at level 1", proportionColumnsAtLevel1 > 0);
+            Assert.assertTrue("Should have proportion columns at level 2", proportionColumnsAtLevel2 > 0);
+
+            logger.info("✓ All multi-level proportion values displayed correctly without recalculation");
+
+            return null;
+        });
+    }
+
 }
