@@ -149,8 +149,9 @@ public class ProjectListPolicy extends ProjectPolicy
 
 		if ((beforeState != null) && (afterState != null) && !beforeState.equals(afterState)) {
 
-			
-			projectActivityService.postTaskStateChangeActivity(nodeRef, null, beforeState, afterState, false);
+			if (policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ACTIVITY_LIST)) {
+				projectActivityService.postTaskStateChangeActivity(nodeRef, null, beforeState, afterState, false);
+			}
 
 			queueNode(EntityActivityPolicy.KEY_QUEUE_UPDATED_STATUS, nodeRef);
 
@@ -199,8 +200,9 @@ public class ProjectListPolicy extends ProjectPolicy
 			String beforeState = (String) before.get(ProjectModel.PROP_DL_STATE);
 			String afterState = (String) after.get(ProjectModel.PROP_DL_STATE);
 
-
-			projectActivityService.postDeliverableStateChangeActivity(nodeRef, beforeState, afterState, false);
+			if (policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ACTIVITY_LIST)) {
+				projectActivityService.postDeliverableStateChangeActivity(nodeRef, beforeState, afterState, false);
+			}
 
 			if ((beforeState != null) && (afterState != null) && beforeState.equals(DeliverableState.Completed.toString())
 					&& afterState.equals(DeliverableState.InProgress.toString())) {
