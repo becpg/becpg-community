@@ -204,17 +204,20 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					if ((!DeclarationType.Omit.equals(compoItem.getDeclType()))
 							&& (!(componentProductData instanceof LocalSemiFinishedProductData))) {
 
-						visitILOfPart(formulatedProduct, compoItem, componentProductData, retainNodes, totalQtyIngMap, totalQtyOmittedIngMap,
-								reqCtrlMap, visited);
+						if (!shouldOmit(componentProductData)) {
 
-						Double qty = FormulationHelper.getQtyInKg(compoItem);
-						if (qty != null) {
-							totalQtyUsedWithYield += (qty * FormulationHelper.getYield(compoItem)) / 100d;
-						}
+							visitILOfPart(formulatedProduct, compoItem, componentProductData, retainNodes, totalQtyIngMap, totalQtyOmittedIngMap,
+									reqCtrlMap, visited);
 
-						Double vol = compoItem.getVolume();
-						if (vol != null) {
-							totalVolumeUsed += vol / 100d;
+							Double qty = FormulationHelper.getQtyInKg(compoItem);
+							if (qty != null) {
+								totalQtyUsedWithYield += (qty * FormulationHelper.getYield(compoItem)) / 100d;
+							}
+
+							Double vol = compoItem.getVolume();
+							if (vol != null) {
+								totalVolumeUsed += vol / 100d;
+							}
 						}
 
 					}
@@ -360,6 +363,22 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 	}
 
+	private boolean shouldOmit(ProductData componentProductData) {
+		boolean shouldOmit = false;
+		if (componentProductData.getIngList() != null && !componentProductData.getIngList().isEmpty()) {
+			shouldOmit = true;
+			for (IngListDataItem ingListItem : componentProductData.getIngList()) {
+				DeclarationType ingDeclarationType = ingListItem.getDeclType();
+
+				if (!DeclarationType.Omit.equals(ingDeclarationType)) {
+					shouldOmit = false;
+					break;
+				}
+			}
+		}
+		return shouldOmit;
+	}
+
 	private boolean hasEvaporationData(IngListDataItem ingListDataItem) {
 		return EvaporatingFormulationHelper.hasEvaporationData(ingListDataItem.getIng(), nodeService);
 	}
@@ -459,6 +478,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 				if ((compoListDataItem.getDeclType() == null) || (!compoListDataItem.getDeclType().equals(DeclarationType.DoNotDetails)
 						&& !compoListDataItem.getDeclType().equals(DeclarationType.Omit))) {
+
 					if (logger.isDebugEnabled()) {
 						logger.debug("CompoItem: " + compoListDataItem.getProduct() + " - doesn't have ing ");
 					}
@@ -466,12 +486,14 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					// req not respected
 					addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "missing-inglist"), RequirementType.Tolerated,
 							MLTextHelper.getI18NMessage(MESSAGE_MISSING_INGLIST), componentProductData.getNodeRef(), RequirementDataType.Ingredient);
+
 				}
 
 				return;
 
 			} else if ((compoListDataItem.getDeclType() == null) || (!DeclarationType.DoNotDetails.equals(compoListDataItem.getDeclType())
-					&& !DeclarationType.Omit.equals(compoListDataItem.getDeclType()))) {
+					&& !DeclarationType.Omit.equals(compoListDataItem.getDeclType())) && !shouldOmit(componentProductData)) {
+
 				double total = 0d;
 				for (IngListDataItem ingListDataItem : componentProductData.getIngList()) {
 					if ((ingListDataItem.getQtyPerc() != null) && !DeclarationType.Omit.equals(ingListDataItem.getDeclType())
@@ -517,7 +539,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			boolean isGeneric) {
 
 		// OMIT is not taken in account
-		if (compoListDataItem.getDeclType() == DeclarationType.Omit) {
+		if (compoListDataItem.getDeclType() == DeclarationType.Omit || shouldOmit(componentProductData)) {
 			return;
 		}
 
@@ -538,15 +560,14 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			} else {
 				newIngListDataItem.getClaims().retainAll(ingListDataItem.getClaims());
 			}
-			
-			if (!isOmit) {
-			    if (DeclarationType.Omit.equals(newIngListDataItem.getDeclType())) {
-			        newIngListDataItem.setDeclType(DeclarationType.Detail);
-			    } else {
-			        newIngListDataItem.setDeclType(ingListDataItem.getDeclType());
-			    }
-			}
 
+			if (!isOmit) {
+				if (DeclarationType.Omit.equals(newIngListDataItem.getDeclType())) {
+					newIngListDataItem.setDeclType(DeclarationType.Detail);
+				} else {
+					newIngListDataItem.setDeclType(ingListDataItem.getDeclType());
+				}
+			}
 
 			IngListDataItem totalIng = isOmit ? totalQtyOmittedIngMap.computeIfAbsent(newIngListDataItem.getName(), k -> new IngListDataItem())
 					: totalQtyIngMap.computeIfAbsent(newIngListDataItem.getName(), k -> new IngListDataItem());
@@ -646,9 +667,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			if (Boolean.TRUE.equals(ingListDataItem.getIsIonized()) && !Boolean.TRUE.equals(newIngListDataItem.getIsIonized())) {
 				newIngListDataItem.setIsIonized(true);
 			}
-			
-			
-			
 
 			// recursive
 			if (!component.isLeaf()) {

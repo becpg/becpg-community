@@ -12,7 +12,7 @@
 
     function setNextAllowed(val) {
         if (!button) button = $(".wizard-mgr").find(".actions a[href$='#next']")[0].parentElement;
-        if (!firstStepTab && val) firstStepTab = $("list.first");
+        if (!firstStepTab && val) firstStepTab = $("li.first");
         nextAllowed = val;
         button.classList[val ? "remove" : "add"]("disabled");
     }
@@ -47,6 +47,8 @@
                     loading: me.msg("wizard.loading.msg")
                 },
                 onStepChanging: function(__event, currentIndex, newIndex) {
+
+                    var step = me.options.wizardStruct[currentIndex];
                     if (currentIndex > newIndex && step && (step.type === "form" || step.type === "survey")) {
                         me.showStepChangeConfirmation(function() {
                             me.widgets.wizard.steps("previous");
@@ -57,7 +59,6 @@
                     if (currentIndex > newIndex) return true;
                     if (!nextAllowed || validationInProgress) return false;
 
-                    var step = me.options.wizardStruct[currentIndex];
                     if (!step) return true;
 
                     if (step.type === "form" || step.type === "survey") {
@@ -104,29 +105,17 @@
             var step = this.options.wizardStruct[priorIndex];
             var nextStep = this.options.wizardStruct[currentIndex];
 
-            if (!step || !nextStep) {
-                return;
-            }
+            if (!step || !nextStep) return;
 
             var forward = currentIndex > priorIndex;
             var isFormStep = step.type === "form" || step.type === "survey";
-            var stepReadOnly = false;
+            var stepReadOnly = this.options.readOnly || step.readOnly;
 
-            if (isFormStep) {
-                if (currentIndex === priorIndex) {
-                    return;
-                }
-                stepReadOnly = this.options.readOnly || step.readOnly || !step.form;
-                if (forward && !stepReadOnly) {
-                    return;
-                }
-            }
+            if (isFormStep && forward && !stepReadOnly) return;
 
-            if (forward) {
-                nextStep.nodeRef = step.nodeRef;
-            }
+            if (forward) nextStep.nodeRef = step.nodeRef;
 
-            if (forward && step.nextStepWebScript && (!isFormStep || stepReadOnly)) {
+            if (step.nextStepWebScript && (!isFormStep || stepReadOnly)) {
                 this.executeWebScript(step, nextStep);
             } else {
                 this.loadStep(nextStep);
@@ -329,7 +318,8 @@
                     }
                 });
             } else {
-                callback(readOnly);
+                // Don't fetch for readonly steps - just call callback
+                callback(readOnly, null);
             }
         },
 
@@ -419,6 +409,9 @@
                         fn: function(response) { processDataLists(response.json.datalists); }
                     }
                 });
+            } else {
+                // No datalists and no nodeRef - still need to enable next button
+                setNextAllowed(step.index !== me.options.wizardStruct.length - 1);
             }
         },
 
