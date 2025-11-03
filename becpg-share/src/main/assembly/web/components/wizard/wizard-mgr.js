@@ -8,7 +8,7 @@
         return this;
     };
 
-    var nextAllowed = true, button, firstStepTab, validationInProgress = false;
+    var nextAllowed = true, button, firstStepTab, validationInProgress = false, isNavigatingBack = false;
 
     function setNextAllowed(val) {
         if (!button) button = $(".wizard-mgr").find(".actions a[href$='#next']")[0].parentElement;
@@ -48,12 +48,21 @@
                 },
                 onStepChanging: function(__event, currentIndex, newIndex) {
 
+                    if (isNavigatingBack) {
+                        isNavigatingBack = false;
+                        return true;
+                    }
+
                     var step = me.options.wizardStruct[currentIndex];
                     if (currentIndex > newIndex && step && (step.type === "form" || step.type === "survey")) {
-                        me.showStepChangeConfirmation(function() {
-                            me.widgets.wizard.steps("previous");
-                        });
-                        return false;
+                        var stepReadOnly = me.options.readOnly || step.readOnly;
+                        if (!stepReadOnly) {
+                            me.showStepChangeConfirmation(function() {
+                                isNavigatingBack = true;
+                                me.widgets.wizard.steps("previous");
+                            });
+                            return false;
+                        }
                     }
 
                     if (currentIndex > newIndex) return true;
@@ -69,8 +78,6 @@
                                 step.form.validate(Alfresco.forms.Form.NOTIFICATION_LEVEL_CONTAINER);
                             validationInProgress = false;
                             return isValid;
-                        } else {
-                            me.loadStep(me.options.wizardStruct[newIndex]);
                         }
                     }
                     return true;
