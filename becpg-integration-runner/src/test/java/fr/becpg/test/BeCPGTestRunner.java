@@ -27,6 +27,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -42,10 +45,14 @@ import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpRequestRetryHandler;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.junit.Ignore;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
@@ -147,20 +154,76 @@ public class BeCPGTestRunner extends SpringJUnit4ClassRunner {
 		UsernamePasswordCredentials credentials = new UsernamePasswordCredentials("admin", "becpg");
 		provider.setCredentials(AuthScope.ANY, credentials);
 
-		// Create HTTP Client with credentials
-		CloseableHttpClient httpclient = HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();
+		// Create HTTP Client with credentials, timeouts, retry logic, and connection pooling
+		RequestConfig requestConfig = RequestConfig.custom()
+				.setConnectTimeout(30000)
+				.setSocketTimeout(600000)
+				.setConnectionRequestTimeout(10000)
+				.build();
+		
+		// Connection pooling for better resource management
+		PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+		connectionManager.setMaxTotal(10);
+		connectionManager.setDefaultMaxPerRoute(5);
+		
+		// Retry handler for network instability
+		HttpRequestRetryHandler retryHandler = (exception, executionCount, context) -> {
+			if (executionCount > 3) {
+				return false;
+			}
+			if (exception instanceof java.net.SocketTimeoutException) {
+				logger.warn("Socket timeout on attempt " + executionCount + ", retrying...");
+				return true;
+			}
+			if (exception instanceof ConnectTimeoutException) {
+				logger.warn("Connection timeout on attempt " + executionCount + ", retrying...");
+				return true;
+			}
+			if (exception instanceof java.net.UnknownHostException) {
+				logger.warn("Unknown host on attempt " + executionCount + ", retrying...");
+				return true;
+			}
+			if (exception instanceof java.net.NoRouteToHostException) {
+				logger.warn("No route to host on attempt " + executionCount + ", retrying...");
+				return true;
+			}
+			return false;
+		};
+		
+		CloseableHttpClient httpclient = HttpClientBuilder.create()
+				.setDefaultCredentialsProvider(provider)
+				.setDefaultRequestConfig(requestConfig)
+				.setConnectionManager(connectionManager)
+				.setRetryHandler(retryHandler)
+				.build();
 
 		// Create the GET Request for the Web Script that will run the test
-		String testWebScriptUrl = "/service/testing/test.xml?clazz=" + className.replace("#", "%23");
-		// System.out.println("AlfrescoTestRunner: Invoking Web Script for test
-		// execution: " + testWebScriptUrl);
-		HttpGet get = new HttpGet(getContextRoot(method) + testWebScriptUrl);
+		String encodedClassName = null;
+		try {
+			encodedClassName = URLEncoder.encode(className, StandardCharsets.UTF_8.toString());
+		} catch (UnsupportedEncodingException e) {
+			encodedClassName = className.replace("#", "%23");
+		}
+		String testWebScriptUrl = "/service/testing/test.xml?clazz=" + encodedClassName;
+		String fullUrl = getContextRoot(method) + testWebScriptUrl;
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("Starting remote test execution: " + className + " at " + fullUrl);
+		}
+		
+		HttpGet get = new HttpGet(fullUrl);
 
 		String body = "";
 		
 		try {
 			// Send proxied request and read response
+			long startTime = System.currentTimeMillis();
 			HttpResponse resp = httpclient.execute(get);
+			long duration = System.currentTimeMillis() - startTime;
+			
+			if (logger.isDebugEnabled()) {
+				logger.debug("Remote test completed in " + duration + "ms: " + className);
+			}
 			InputStream is = resp.getEntity().getContent();
 			InputStreamReader ir = new InputStreamReader(is);
 			BufferedReader br = new BufferedReader(ir);
