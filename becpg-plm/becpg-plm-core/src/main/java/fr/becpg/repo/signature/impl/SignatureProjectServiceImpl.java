@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.artworks.signature.SignatureService;
 import fr.becpg.artworks.signature.model.SignatureModel;
 import fr.becpg.artworks.signature.model.SignatureStatus;
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AuthorityHelper;
@@ -108,19 +109,24 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef prepareSignatureProject(NodeRef projectNodeRef, List<NodeRef> originalDocuments) {
-		originalDocuments = signatureProjectHelper.copyReports(originalDocuments);
-		List<NodeRef> viewRecipients = associationService.getTargetAssocs(projectNodeRef, SignatureModel.ASSOC_RECIPIENTS);
-		viewRecipients = projectService.extractResources(projectNodeRef, viewRecipients);
-		associationService.update(projectNodeRef, SignatureModel.ASSOC_RECIPIENTS, viewRecipients);
-		List<NodeRef> preparedDocuments = prepareDocuments(projectNodeRef, originalDocuments, viewRecipients);
-		ProjectData project = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
-		TaskListDataItem rejectTask = createRejectTask(project, preparedDocuments);
-		List<NodeRef> recipients = AuthorityHelper.extractPeople(viewRecipients);
-		NodeRef lastTask = createOrUpdateSignatureTasks(project, preparedDocuments, recipients, rejectTask.getNodeRef(), rejectTask);
-		createValidatingTask(project, originalDocuments, lastTask, rejectTask);
-		project.setDirtyTaskTree(true);
-		alfrescoRepository.save(project);
-		return projectNodeRef;
+		try {
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+			originalDocuments = signatureProjectHelper.copyReports(originalDocuments);
+			List<NodeRef> viewRecipients = associationService.getTargetAssocs(projectNodeRef, SignatureModel.ASSOC_RECIPIENTS);
+			viewRecipients = projectService.extractResources(projectNodeRef, viewRecipients);
+			associationService.update(projectNodeRef, SignatureModel.ASSOC_RECIPIENTS, viewRecipients);
+			List<NodeRef> preparedDocuments = prepareDocuments(projectNodeRef, originalDocuments, viewRecipients);
+			ProjectData project = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+			TaskListDataItem rejectTask = createRejectTask(project, preparedDocuments);
+			List<NodeRef> recipients = AuthorityHelper.extractPeople(viewRecipients);
+			NodeRef lastTask = createOrUpdateSignatureTasks(project, preparedDocuments, recipients, rejectTask.getNodeRef(), rejectTask);
+			createValidatingTask(project, originalDocuments, lastTask, rejectTask);
+			project.setDirtyTaskTree(true);
+			alfrescoRepository.save(project);
+			return projectNodeRef;
+		} finally {
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+		}
 	}
 
 	/** {@inheritDoc} */
