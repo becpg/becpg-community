@@ -6,7 +6,6 @@ import fr.becpg.repo.product.data.CharactDetailAdditionalValue;
 import fr.becpg.repo.product.data.CharactDetailsValue;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
-import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
 /**
@@ -41,7 +40,7 @@ public class IngCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 	    if (ingListDataItem.getQtyPerc() != null) {
 	        CharactDetailAdditionalValue proportionQtyValue = new CharactDetailAdditionalValue(
 	            I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListProportionQtyPerc.title"),
-	            FormulationHelper.calculateValue(0d, qtyUsed, ingListDataItem.getQtyPerc(), netQty),
+	            ingListDataItem.getQtyPerc(),
 	            unit
 	        );
 	        currentCharactDetailsValue.getAdditionalValues().add(proportionQtyValue);
@@ -51,7 +50,7 @@ public class IngCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 	    if (ingListDataItem.getQtyPercWithYield() != null) {
 	        CharactDetailAdditionalValue proportionQtyWithYieldValue = new CharactDetailAdditionalValue(
 	            I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListProportionQtyPercWithYield.title"),
-	            FormulationHelper.calculateValue(0d, qtyUsed, ingListDataItem.getQtyPercWithYield(), netQty),
+	            ingListDataItem.getQtyPercWithYield(),
 	            unit
 	        );
 	        currentCharactDetailsValue.getAdditionalValues().add(proportionQtyWithYieldValue);
@@ -73,7 +72,7 @@ public class IngCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 	            String titleKey = String.format("bcpg_bcpgmodel.property.bcpg_ingListQtyPerc%d.title", i + 1);
 	            CharactDetailAdditionalValue additionalValue = new CharactDetailAdditionalValue(
 	                I18NUtil.getMessage(titleKey),
-	                FormulationHelper.calculateValue(0d, qtyUsed, qtyPerc, netQty),
+	                qtyPerc,
 	                unit
 	            );
 	            currentCharactDetailsValue.getAdditionalValues().add(additionalValue);
