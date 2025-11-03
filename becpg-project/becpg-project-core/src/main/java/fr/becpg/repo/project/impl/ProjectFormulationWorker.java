@@ -27,10 +27,9 @@ import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
-import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.batch.WorkProviderFactory;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -86,7 +85,7 @@ public class ProjectFormulationWorker {
 					.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString())
 					.andBetween(BeCPGModel.PROP_FORMULATED_DATE, "MIN", ISO8601DateFormat.format(cal.getTime()));
 
-			List<NodeRef> ret = queryBuilder.inDB().ftsLanguage().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
+			List<NodeRef> ret = WorkProviderFactory.fromQueryBuilder(queryBuilder.inDB().ftsLanguage()).collect();
 
 			queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
 					.excludeVersions()
@@ -94,16 +93,16 @@ public class ProjectFormulationWorker {
 					.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.OnHold.toString())
 					.andBetween(BeCPGModel.PROP_FORMULATED_DATE, "MIN", ISO8601DateFormat.format(cal.getTime()));
 			
-			ret.addAll(queryBuilder.inDB().ftsLanguage().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list());
+			ret.addAll(WorkProviderFactory.fromQueryBuilder(queryBuilder.inDB().ftsLanguage()).collect());
 			
 			// query
 			queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
-					.excludeVersions()
-					.excludeArchivedEntities()
-					.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.Planned.toString())
-					.andBetween(ProjectModel.PROP_PROJECT_START_DATE, "MIN", ISO8601DateFormat.format(Calendar.getInstance().getTime()));
-
-			ret.addAll(queryBuilder.inDB().ftsLanguage().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list());
+			.excludeVersions()
+			.excludeArchivedEntities()
+			.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.Planned.toString())
+			.andBetween(ProjectModel.PROP_PROJECT_START_DATE, "MIN", ISO8601DateFormat.format(Calendar.getInstance().getTime()));
+			
+			ret.addAll(WorkProviderFactory.fromQueryBuilder(queryBuilder.inDB().ftsLanguage()).collect());
 
 			return ret;
 
