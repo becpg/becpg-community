@@ -336,6 +336,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void checkWorkflowInstance(ProjectData projectData, TaskListDataItem taskListDataItem, List<DeliverableListDataItem> nextDeliverables) {

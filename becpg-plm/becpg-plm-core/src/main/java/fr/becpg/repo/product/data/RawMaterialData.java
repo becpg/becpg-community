@@ -164,6 +164,12 @@ public class RawMaterialData extends ProductData {
 		return this;
 	}
 	
+	/**
+	 * <p>withRegulatoryList.</p>
+	 *
+	 * @param regulatoryList a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.RawMaterialData} object
+	 */
 	public RawMaterialData withRegulatoryList(List<RegulatoryListDataItem> regulatoryList) {
 		setRegulatoryList(regulatoryList);
 		return this;

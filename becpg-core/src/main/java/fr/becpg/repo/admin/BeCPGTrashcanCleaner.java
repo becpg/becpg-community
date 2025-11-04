@@ -79,11 +79,13 @@ public class BeCPGTrashcanCleaner extends TrashcanCleaner
     private NodeArchiveService nodeArchiveService;
 
     /**
+     * <p>Constructor for BeCPGTrashcanCleaner.</p>
      *
-     * @param nodeService
-     * @param transactionService
-     * @param deleteBatchCount
-     * @param keepPeriod
+     * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+     * @param transactionService a {@link org.alfresco.service.transaction.TransactionService} object
+     * @param deleteBatchCount a int
+     * @param keepPeriod a {@link java.lang.String} object
+     * @param nodeArchiveService a {@link org.alfresco.repo.node.archive.NodeArchiveService} object
      */
     public BeCPGTrashcanCleaner(NodeService nodeService, TransactionService transactionService,
             int deleteBatchCount, String keepPeriod, NodeArchiveService nodeArchiveService)
@@ -193,7 +195,7 @@ public class BeCPGTrashcanCleaner extends TrashcanCleaner
      *
      * It returns the number of nodes present on trashcan.
      *
-     * @return
+     * @return a long
      */
     public long getNumberOfNodesInTrashcan()
     {
@@ -209,7 +211,6 @@ public class BeCPGTrashcanCleaner extends TrashcanCleaner
      * The method that will clean the specified <b>archiveStoreUrl</b> to the
      * limits defined by the values set for <b>deleteBatchCount</b> and
      * <b>keepPeriod</b>.
-     *
      */
     public void clean()
     {

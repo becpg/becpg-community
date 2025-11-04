@@ -61,13 +61,17 @@ import fr.becpg.repo.variant.filters.VariantFilters;
 import fr.becpg.util.MutexFactory;
 
 /**
+ * <p>RegulatoryService class.</p>
+ *
  * @author Valentin
  */
 @Service
 public class RegulatoryService {
 
+	/** Constant <code>UNKNOWN="unknown"</code> */
 	public static final String UNKNOWN = "unknown";
 	
+	/** Constant <code>REGULATORY_KEY="regulatory"</code> */
 	public static final String REGULATORY_KEY = "regulatory";
 
 	private static final Log logger = LogFactory.getLog(RegulatoryService.class);
@@ -94,6 +98,19 @@ public class RegulatoryService {
 	
 	private MutexFactory mutexFactory;
 	
+	/**
+	 * <p>Constructor for RegulatoryService.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param regulatoryPlugins a {@link java.util.List} object
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 * @param formulationService a {@link fr.becpg.repo.formulation.FormulationService} object
+	 * @param batchQueueService a {@link fr.becpg.repo.batch.BatchQueueService} object
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object
+	 * @param entityActivityService a {@link fr.becpg.repo.activity.EntityActivityService} object
+	 * @param mutexFactory a {@link fr.becpg.util.MutexFactory} object
+	 */
 	public RegulatoryService(@Qualifier("nodeService") NodeService nodeService, List<RegulatoryPlugin> regulatoryPlugins, AlfrescoRepository<RepositoryEntity> alfrescoRepository,
 			FormulationService<FormulatedEntity> formulationService, BatchQueueService batchQueueService,
 			SystemConfigurationService systemConfigurationService, @Qualifier("policyBehaviourFilter") BehaviourFilter policyBehaviourFilter, EntityActivityService entityActivityService,
@@ -116,6 +133,13 @@ public class RegulatoryService {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.decernis.ingredient.analysis.enabled"));
 	}
 
+	/**
+	 * <p>checkCompliance.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param async a boolean
+	 * @return a {@link fr.becpg.repo.regulatory.ComplianceResult} object
+	 */
 	public ComplianceResult checkCompliance(NodeRef nodeRef, boolean async) {
 		policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 		policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);

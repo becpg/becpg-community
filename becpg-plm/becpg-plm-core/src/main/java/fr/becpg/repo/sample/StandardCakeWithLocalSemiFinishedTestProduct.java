@@ -23,14 +23,14 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 /**
  * Test product builder for creating a cake with local semi-finished products
  * to test hierarchical composition in batch formulation.
- * 
+ *
  * This test product creates:
  * - Raw materials: Flour, Sugar, Butter
  * - Local semi-finished product: Dough (contains Flour + Sugar)
  * - Finished product: Cake (contains Dough as parent + Butter as child of Dough)
- * 
+ *
  * Used specifically for testing Redmine #25868: Local semi-finished products
- * and their children should be properly copied to batch composition with 
+ * and their children should be properly copied to batch composition with
  * correct parent-child hierarchy.
  *
  * @author matthieu

@@ -40,6 +40,11 @@ import fr.becpg.repo.batch.WorkProviderFactory;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>EntityActivityCleaner class.</p>
+ *
+ * @author matthieu
+ */
 @Service
 public class EntityActivityCleaner {
 
@@ -66,6 +71,9 @@ public class EntityActivityCleaner {
 
     /**
      * Scheduled job: merge and clean entity activities.
+     *
+     * @param priority a {@link fr.becpg.repo.batch.BatchPriority} object
+     * @return a {@link fr.becpg.repo.batch.BatchInfo} object
      */
     public BatchInfo cleanActivities(BatchPriority priority) {
 

@@ -158,6 +158,11 @@ public class IngItem extends CompositeLabeling {
 		return regulatoryCode;
 	}
 
+	/**
+	 * <p>Setter for the field <code>regulatoryCode</code>.</p>
+	 *
+	 * @param regulatoryCode a {@link java.lang.String} object
+	 */
 	public void setRegulatoryCode(String regulatoryCode) {
 		this.regulatoryCode = regulatoryCode;
 	}

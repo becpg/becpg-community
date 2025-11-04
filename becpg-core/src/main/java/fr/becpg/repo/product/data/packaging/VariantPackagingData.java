@@ -711,10 +711,20 @@ public class VariantPackagingData implements Serializable {
 	
 	
 
+	/**
+	 * <p>Getter for the field <code>innerPackPerBox</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object
+	 */
 	public Integer getInnerPackPerBox() {
 		return innerPackPerBox;
 	}
 
+	/**
+	 * <p>Setter for the field <code>innerPackPerBox</code>.</p>
+	 *
+	 * @param innerPackPerBox a {@link java.lang.Integer} object
+	 */
 	public void setInnerPackPerBox(Integer innerPackPerBox) {
 		this.innerPackPerBox = innerPackPerBox;
 	}

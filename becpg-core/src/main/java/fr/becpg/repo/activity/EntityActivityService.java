@@ -230,8 +230,22 @@ public interface EntityActivityService {
 	 */
 	boolean postChangeOrderActivity(NodeRef entityNodeRef, NodeRef changeOrderNodeRef);
 	
+	/**
+	 * <p>postComplianceCheckActivity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	boolean postComplianceCheckActivity(NodeRef entityNodeRef);
 	
+	/**
+	 * <p>postDataListDeleteFromTemplateActivity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param templateNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param listType a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	boolean postDataListDeleteFromTemplateActivity(NodeRef entityNodeRef, NodeRef templateNodeRef, String listType);
 
 	/**

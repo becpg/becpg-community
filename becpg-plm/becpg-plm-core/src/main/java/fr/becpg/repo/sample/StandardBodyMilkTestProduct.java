@@ -52,6 +52,7 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected void createPhysicoChems(ProductData milkProduct) {
 		addPhysicoChemProperty(milkProduct, "pH", "pH", 5.5);

@@ -12,6 +12,8 @@ import fr.becpg.repo.regulatory.RegulatoryService;
 import fr.becpg.repo.regulatory.ComplianceResult;
 
 /**
+ * <p>RegulatoryWebScript class.</p>
+ *
  * @author Valentin
  */
 public class RegulatoryWebScript extends AbstractWebScript {
@@ -21,10 +23,16 @@ public class RegulatoryWebScript extends AbstractWebScript {
 
 	private RegulatoryService regulatoryService;
 	
+	/**
+	 * <p>Setter for the field <code>regulatoryService</code>.</p>
+	 *
+	 * @param regulatoryService a {@link fr.becpg.repo.regulatory.RegulatoryService} object
+	 */
 	public void setRegulatoryService(RegulatoryService regulatoryService) {
 		this.regulatoryService = regulatoryService;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 		

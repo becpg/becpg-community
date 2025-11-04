@@ -130,6 +130,7 @@ public class SurveyServiceImpl implements SurveyService {
 		return ret;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public SurveyQuestionCache getSurveyQuestionCache() {
 		return beCPGCacheService.getFromCache(CACHE_KEY, CACHE_KEY, () -> {
@@ -183,6 +184,7 @@ public class SurveyServiceImpl implements SurveyService {
 		return result;
 	}
 	
+	/** {@inheritDoc} */
 	public void saveSurveyData(NodeRef entityNodeRef, String dataListName, JSONObject data) throws JSONException {
 	    if (!data.has("data")) {
 	        return;

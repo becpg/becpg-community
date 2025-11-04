@@ -234,6 +234,12 @@ public class FinishedProductData extends ProductData {
 		return this;
 	}
 
+	/**
+	 * <p>withProcessList.</p>
+	 *
+	 * @param processList a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.FinishedProductData} object
+	 */
 	public FinishedProductData withProcessList(List<ProcessListDataItem> processList) {
 		getProcessListView().setProcessList(processList);
 		return this;

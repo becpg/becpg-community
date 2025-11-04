@@ -716,6 +716,13 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		}
 	}
 
+	/**
+	 * <p>extractCharactName.</p>
+	 *
+	 * @param itemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param pivotAssoc a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.lang.String} object
+	 */
 	protected String extractCharactName(NodeRef itemNodeRef, QName pivotAssoc) {
 		if (itemNodeRef != null) {
 			if (pivotAssoc != null) {
@@ -1246,6 +1253,13 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 
 	}
 
+	/**
+	 * <p>extractPivot.</p>
+	 *
+	 * @param targetAssoc a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param pivot a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.lang.Object} object
+	 */
 	protected Object extractPivot(NodeRef targetAssoc, QName pivot) {
 		if(PLMModel.ASSOC_ILL_GRP.equals(pivot) && targetAssoc!=null) {
 			return attributeExtractorService.extractPropName(targetAssoc);

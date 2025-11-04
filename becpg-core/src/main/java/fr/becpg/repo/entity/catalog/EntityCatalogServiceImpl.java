@@ -385,6 +385,8 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 *
 	 * <p>
 	 * formulateCatalog.

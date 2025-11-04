@@ -88,7 +88,7 @@ public class EvaporatingFormulationHelper {
 
     /**
      * Applies evaporation to a set of items based on yield and evaporation rates.
-     * 
+     *
      * @param <T> the type of items being processed
      * @param evaporatingQty the total quantity to evaporate
      * @param evaporatedDataItems the set of items with evaporation data

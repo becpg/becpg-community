@@ -200,6 +200,13 @@ public class ProjectHelper {
 		return taskList;
 	}
 	
+	/**
+	 * <p>isPreviousTask.</p>
+	 *
+	 * @param project a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param taskNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	public static boolean isPreviousTask(ProjectData project, NodeRef taskNodeRef) {
 		for (TaskListDataItem otherTask : project.getTaskList()) {
 			if (otherTask.getPrevTasks().contains(taskNodeRef)) {
@@ -602,6 +609,13 @@ public class ProjectHelper {
 		}
 	}
 	
+	/**
+	 * <p>findAncestorTask.</p>
+	 *
+	 * @param task a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public static NodeRef findAncestorTask(NodeRef task, AssociationService associationService) {
 		NodeRef previousTask = associationService.getTargetAssoc(task, ProjectModel.ASSOC_TL_PREV_TASKS);
 		if (previousTask != null) {

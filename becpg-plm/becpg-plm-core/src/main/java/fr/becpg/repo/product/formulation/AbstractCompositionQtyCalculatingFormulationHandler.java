@@ -161,6 +161,7 @@ public abstract class AbstractCompositionQtyCalculatingFormulationHandler<T> ext
 	 *
 	 * @param compoListDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
 	 * @return a {@link java.math.BigDecimal} object
+	 * @param componentProductData a {@link fr.becpg.repo.product.data.ProductData} object
 	 */
 	protected BigDecimal calculateQtyInKg(CompoListDataItem compoListDataItem, ProductData componentProductData) {
 		Double qty = compoListDataItem.getQtySubFormula();

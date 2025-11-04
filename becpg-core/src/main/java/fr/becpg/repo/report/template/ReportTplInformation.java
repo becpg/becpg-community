@@ -221,7 +221,7 @@ public class ReportTplInformation {
 	/**
 	 * Creates a new ReportTplInformation instance using the builder pattern.
 	 *
-	 * @return a new {@link ReportTplInformation} object
+	 * @return a new {@link fr.becpg.repo.report.template.ReportTplInformation} object
 	 */
 	public static ReportTplInformation build() {
 		return new ReportTplInformation();
@@ -231,7 +231,7 @@ public class ReportTplInformation {
 	 * Sets the report type using the builder pattern.
 	 *
 	 * @param reportType a {@link fr.becpg.repo.report.template.ReportType} object
-	 * @return this {@link ReportTplInformation} object for method chaining
+	 * @return this {@link fr.becpg.repo.report.template.ReportTplInformation} object for method chaining
 	 */
 	public ReportTplInformation withReportType(ReportType reportType) {
 		setReportType(reportType);
@@ -242,7 +242,7 @@ public class ReportTplInformation {
 	 * Sets the report format using the builder pattern.
 	 *
 	 * @param reportFormat a {@link fr.becpg.report.client.ReportFormat} object
-	 * @return this {@link ReportTplInformation} object for method chaining
+	 * @return this {@link fr.becpg.repo.report.template.ReportTplInformation} object for method chaining
 	 */
 	public ReportTplInformation withReportFormat(ReportFormat reportFormat) {
 		setReportFormat(reportFormat);
@@ -253,7 +253,7 @@ public class ReportTplInformation {
 	 * Sets the node type using the builder pattern.
 	 *
 	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
-	 * @return this {@link ReportTplInformation} object for method chaining
+	 * @return this {@link fr.becpg.repo.report.template.ReportTplInformation} object for method chaining
 	 */
 	public ReportTplInformation withNodeType(QName nodeType) {
 		setNodeType(nodeType);
@@ -264,7 +264,7 @@ public class ReportTplInformation {
 	 * Sets the system template flag using the builder pattern.
 	 *
 	 * @param isSystemTpl a boolean indicating if this is a system template
-	 * @return this {@link ReportTplInformation} object for method chaining
+	 * @return this {@link fr.becpg.repo.report.template.ReportTplInformation} object for method chaining
 	 */
 	public ReportTplInformation withSystemTpl(boolean isSystemTpl) {
 		setSystemTpl(isSystemTpl);
@@ -275,7 +275,7 @@ public class ReportTplInformation {
 	 * Sets the default template flag using the builder pattern.
 	 *
 	 * @param isDefaultTpl a boolean indicating if this is a default template
-	 * @return this {@link ReportTplInformation} object for method chaining
+	 * @return this {@link fr.becpg.repo.report.template.ReportTplInformation} object for method chaining
 	 */
 	public ReportTplInformation withDefaultTpl(boolean isDefaultTpl) {
 		setDefaultTpl(isDefaultTpl);
@@ -286,7 +286,7 @@ public class ReportTplInformation {
 	 * Sets the resources using the builder pattern.
 	 *
 	 * @param resources a {@link java.util.List} of NodeRef objects
-	 * @return this {@link ReportTplInformation} object for method chaining
+	 * @return this {@link fr.becpg.repo.report.template.ReportTplInformation} object for method chaining
 	 */
 	public ReportTplInformation withResources(List<NodeRef> resources) {
 		setResources(resources);
@@ -297,7 +297,7 @@ public class ReportTplInformation {
 	 * Sets the supported locales using the builder pattern.
 	 *
 	 * @param supportedLocale a {@link java.util.List} of locale strings
-	 * @return this {@link ReportTplInformation} object for method chaining
+	 * @return this {@link fr.becpg.repo.report.template.ReportTplInformation} object for method chaining
 	 */
 	public ReportTplInformation withSupportedLocale(List<String> supportedLocale) {
 		setSupportedLocale(supportedLocale);
@@ -308,7 +308,7 @@ public class ReportTplInformation {
 	 * Sets the report kind aspect properties using the builder pattern.
 	 *
 	 * @param reportKindAspectProperties a {@link java.util.Map} of QName to Serializable properties
-	 * @return this {@link ReportTplInformation} object for method chaining
+	 * @return this {@link fr.becpg.repo.report.template.ReportTplInformation} object for method chaining
 	 */
 	public ReportTplInformation withReportKindAspectProperties(Map<QName, Serializable> reportKindAspectProperties) {
 		setReportKindAspectProperties(reportKindAspectProperties);
@@ -319,7 +319,7 @@ public class ReportTplInformation {
 	 * Sets the text parameter using the builder pattern.
 	 *
 	 * @param textParameter a {@link java.lang.String} object
-	 * @return this {@link ReportTplInformation} object for method chaining
+	 * @return this {@link fr.becpg.repo.report.template.ReportTplInformation} object for method chaining
 	 */
 	public ReportTplInformation withTextParameter(String textParameter) {
 		setTextParameter(textParameter);

@@ -106,6 +106,11 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 	protected EntityTplService entityTplService;
 
+	/**
+	 * <p>Setter for the field <code>entityTplService</code>.</p>
+	 *
+	 * @param entityTplService a {@link fr.becpg.repo.entity.EntityTplService} object
+	 */
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
 	}
@@ -1091,6 +1096,12 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		return defaultValue;
 	}
 
+	/**
+	 * <p>getEntityTplByType.</p>
+	 *
+	 * @param componentType a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link fr.becpg.repo.product.data.ProductData} object
+	 */
 	protected ProductData getEntityTplByType(QName componentType) {
 		NodeRef entityTplNodeRef = entityTplService.getEntityTpl(componentType);
 		if (entityTplNodeRef != null) {

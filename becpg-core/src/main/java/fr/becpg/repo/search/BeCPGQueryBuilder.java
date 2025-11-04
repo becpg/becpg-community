@@ -287,6 +287,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return ofType(typeQname);
 	}
 	
+	/**
+	 * <p>bulkFetchEnabled.</p>
+	 *
+	 * @param isBulkFetchEnabled a boolean
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 */
 	public BeCPGQueryBuilder bulkFetchEnabled(boolean isBulkFetchEnabled) {
 		this.isBulkFetchEnabled = isBulkFetchEnabled;
 		return this;

@@ -77,6 +77,11 @@ public class DefaultExtractorContext {
 	}
 
 	
+	/**
+	 * <p>Getter for the field <code>extractedImages</code>.</p>
+	 *
+	 * @return a {@link java.util.Set} object
+	 */
 	public Set<NodeRef> getExtractedImages() {
 		return extractedImages;
 	}

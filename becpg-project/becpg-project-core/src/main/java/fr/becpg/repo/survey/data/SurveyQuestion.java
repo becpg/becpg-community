@@ -61,10 +61,20 @@ public class SurveyQuestion extends BeCPGDataObject {
 	private List<NodeRef> subsidiaryRefs;
 	private List<NodeRef> plants;
 	
+	/**
+	 * <p>Setter for the field <code>generationEnabled</code>.</p>
+	 *
+	 * @param generationEnabled a {@link java.lang.Boolean} object
+	 */
 	public void setGenerationEnabled(Boolean generationEnabled) {
 		this.generationEnabled = generationEnabled;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>generationEnabled</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "survey:generationEnabled")
 	public Boolean getGenerationEnabled() {
