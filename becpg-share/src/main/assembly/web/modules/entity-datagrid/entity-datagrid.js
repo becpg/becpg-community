@@ -1672,6 +1672,9 @@
                     this.widgets.dataTable.subscribe("checkboxClickEvent", function(e) {
                         var id = e.target.value;
                         this.selectedItems[id] = e.target.checked;
+                        if (!e.target.checked) {
+                            this.allPages = false;
+                        }
                         Bubbling.fire(this.scopeId + "selectedItemsChanged");
                     }, this, true);
 
