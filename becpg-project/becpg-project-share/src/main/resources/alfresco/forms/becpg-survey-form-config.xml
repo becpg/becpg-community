@@ -258,9 +258,9 @@
 
 					<field id="survey:questionScore" set="surveyQuestion" />
 
-					<field id="survey:responseType" set="surveyQuestion" />
+					<field id="survey:responseType" set="surveyQuestion" help-id="becpg.forms.help.responseType" />
 
-					<field id="survey:responseCommentType" set="surveyQuestion">
+					<field id="survey:responseCommentType" set="surveyQuestion" help-id="becpg.forms.help.responseCommentType">
 						<constraint-handlers>
 							<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"
 								event='keyup,change@[
@@ -269,7 +269,7 @@
 						</constraint-handlers>
 					</field>
 
-					<field id="survey:responseCommentLabel" set="surveyQuestion" />
+					<field id="survey:responseCommentLabel" set="surveyQuestion" help-id="becpg.forms.help.responseCommentLabel" />
 					<field id="sec:readGroups" set="surveyQuestion" />
 					<field id="bcpg:isDeleted" set="surveyQuestion" />
 
@@ -369,9 +369,9 @@
 
 					<field id="survey:questionScore" set="surveyQuestion" />
 
-					<field id="survey:responseType" set="surveyQuestion" />
+					<field id="survey:responseType" set="surveyQuestion" help-id="becpg.forms.help.responseType" />
 
-					<field id="survey:responseCommentType" set="surveyQuestion">
+					<field id="survey:responseCommentType" set="surveyQuestion" help-id="becpg.forms.help.responseCommentType">
 						<constraint-handlers>
 							<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"
 								event='keyup,change@[
@@ -380,7 +380,7 @@
 						</constraint-handlers>
 					</field>
 
-					<field id="survey:responseCommentLabel" set="surveyQuestion" />
+					<field id="survey:responseCommentLabel" set="surveyQuestion" help-id="becpg.forms.help.responseCommentLabel" />
 
 					<field id="survey:nextQuestion" set="surveyQuestion">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
@@ -474,7 +474,7 @@
 
 					<field id="survey:questionUrl" set="surveyQuestion" />
 
-					<field id="survey:responseCommentLabel" set="surveyQuestion" />
+					<field id="survey:responseCommentLabel" set="surveyQuestion" help-id="becpg.forms.help.responseCommentLabel" />
 					<field id="sec:readGroups" set="surveyQuestion" />
 					<field id="bcpg:isDeleted" set="surveyQuestion" />
 					
@@ -488,9 +488,9 @@
 
 					<field id="survey:questionScore" set="surveyQuestion" />
 
-					<field id="survey:responseType" set="surveyQuestion" />
+					<field id="survey:responseType" set="surveyQuestion" help-id="becpg.forms.help.responseType" />
 
-					<field id="survey:responseCommentType" set="surveyQuestion">
+					<field id="survey:responseCommentType" set="surveyQuestion" help-id="becpg.forms.help.responseCommentType">
 						<constraint-handlers>
 							<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"
 								event='keyup,change@[
@@ -499,7 +499,7 @@
 						</constraint-handlers>
 					</field>
 
-					<field id="survey:responseCommentLabel" set="surveyQuestion" />
+					<field id="survey:responseCommentLabel" set="surveyQuestion" help-id="becpg.forms.help.responseCommentLabel" />
 
 					<field id="survey:nextQuestion" set="surveyQuestion">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -597,9 +597,9 @@
 
 					<field id="survey:questionScore" set="surveyQuestion" />
 
-					<field id="survey:responseType" set="surveyQuestion" />
+					<field id="survey:responseType" set="surveyQuestion" help-id="becpg.forms.help.responseType" />
 
-					<field id="survey:responseCommentType" set="surveyQuestion">
+					<field id="survey:responseCommentType" set="surveyQuestion" help-id="becpg.forms.help.responseCommentType">
 						<constraint-handlers>
 							<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"
 								event='keyup,change@[
@@ -608,7 +608,7 @@
 						</constraint-handlers>
 					</field>
 
-					<field id="survey:responseCommentLabel" set="surveyQuestion" />
+					<field id="survey:responseCommentLabel" set="surveyQuestion" help-id="becpg.forms.help.responseCommentLabel" />
 
 					<field id="survey:nextQuestion" set="surveyQuestion">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
