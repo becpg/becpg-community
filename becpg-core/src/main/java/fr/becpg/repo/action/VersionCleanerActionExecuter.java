@@ -127,8 +127,8 @@ public class VersionCleanerActionExecuter extends ActionExecuterAbstractBase {
 			for (Rule rule : ruleService.getRules(actionedUponNodeRef)) {
 				if (!rule.getRuleDisabled()) {
 
-					if (rule.getAction() instanceof CompositeAction) {
-						for (Action compositeAction : ((CompositeAction) rule.getAction()).getActions()) {
+					if (rule.getAction() instanceof CompositeAction composite) {
+						for (Action compositeAction : (composite).getActions()) {
 							isLastAction =  parseAction(ruleAction, compositeAction, versionConfig,isLastAction);
 						}
 					} else {
