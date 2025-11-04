@@ -114,13 +114,15 @@ public class EntityReportJob extends AbstractScheduledLockedJob implements Job {
 		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
 			@Override
 			public void process(NodeRef entityNodeRef) throws Throwable {
-				NodeRef extractedNode = entityNodeRef;
-				if (VersionHelper.isVersion(entityNodeRef)
-						&& (nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
-					extractedNode = entityVersionService.extractVersion(entityNodeRef);
+				if (nodeService.exists(entityNodeRef)) {
+					NodeRef extractedNode = entityNodeRef;
+					if (VersionHelper.isVersion(entityNodeRef)
+							&& (nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
+						extractedNode = entityVersionService.extractVersion(entityNodeRef);
+					}
+					entityReportService.generateReports(extractedNode, entityNodeRef);
+					nodeService.removeAspect(entityNodeRef, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT);
 				}
-				entityReportService.generateReports(extractedNode, entityNodeRef);
-				nodeService.removeAspect(entityNodeRef, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT);
 			}
 		};
 		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
