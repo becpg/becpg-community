@@ -6,6 +6,7 @@ import fr.becpg.repo.product.data.CharactDetailAdditionalValue;
 import fr.becpg.repo.product.data.CharactDetailsValue;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
 /**
@@ -14,17 +15,11 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  * @author matthieu
  */
 public class IngCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
-
+	
 	/** {@inheritDoc} */
 	@Override
 	protected boolean shouldFormulateInVolume(CharactDetailsVisitorContext context, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
 		return false;
-	}
-	
-	/** {@inheritDoc} */
-	@Override
-	protected boolean shouldForceWeight(CharactDetailsVisitorContext context, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
-		return true;
 	}
 	
 
@@ -36,24 +31,23 @@ public class IngCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 	                                       CharactDetailsValue currentCharactDetailsValue) {
 	    IngListDataItem ingListDataItem = (IngListDataItem) simpleCharact;
 
-	    // Add proportion at final product level (Qty %)
-	    if (ingListDataItem.getQtyPerc() != null) {
-	        CharactDetailAdditionalValue proportionQtyValue = new CharactDetailAdditionalValue(
-	            I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListProportionQtyPerc.title"),
-	            ingListDataItem.getQtyPerc(),
-	            unit
-	        );
-	        currentCharactDetailsValue.getAdditionalValues().add(proportionQtyValue);
-	    }
-
-	    // Add proportion with yield at final product level (Qty with yield %)
+	    // Add qty with yield at final product level (Qty with yield %)
 	    if (ingListDataItem.getQtyPercWithYield() != null) {
-	        CharactDetailAdditionalValue proportionQtyWithYieldValue = new CharactDetailAdditionalValue(
-	            I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListProportionQtyPercWithYield.title"),
-	            ingListDataItem.getQtyPercWithYield(),
+	        CharactDetailAdditionalValue qtyWithYieldValue = new CharactDetailAdditionalValue(
+	            I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListQtyPercWithYield.title"),
+	            FormulationHelper.calculateValue(0d, qtyUsed, ingListDataItem.getQtyPercWithYield(), netQty),
 	            unit
 	        );
-	        currentCharactDetailsValue.getAdditionalValues().add(proportionQtyWithYieldValue);
+	        currentCharactDetailsValue.getAdditionalValues().add(qtyWithYieldValue);
+	    }
+	    
+	    if (ingListDataItem.getQtyPercWithSecondaryYield() != null) {
+	        CharactDetailAdditionalValue qtyWithSecondaryYieldValue = new CharactDetailAdditionalValue(
+	            I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListQtyPercWithSecondaryYield.title"),
+	            FormulationHelper.calculateValue(0d, qtyUsed, ingListDataItem.getQtyPercWithSecondaryYield(), netQty),
+	            unit
+	        );
+	        currentCharactDetailsValue.getAdditionalValues().add(qtyWithSecondaryYieldValue);
 	    }
 
 	    // Array of percentage values
@@ -72,7 +66,7 @@ public class IngCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 	            String titleKey = String.format("bcpg_bcpgmodel.property.bcpg_ingListQtyPerc%d.title", i + 1);
 	            CharactDetailAdditionalValue additionalValue = new CharactDetailAdditionalValue(
 	                I18NUtil.getMessage(titleKey),
-	                qtyPerc,
+	                FormulationHelper.calculateValue(0d, qtyUsed, qtyPerc, netQty),
 	                unit
 	            );
 	            currentCharactDetailsValue.getAdditionalValues().add(additionalValue);

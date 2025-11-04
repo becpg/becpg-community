@@ -3,7 +3,7 @@
  */
 package fr.becpg.test.repo.product.formulation;
 
-import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +13,6 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -38,203 +37,7 @@ public class IngCharactDetailsFormulationIT extends AbstractFinishedProductTest 
     @Autowired
     private AttributeExtractorService attributeExtractorService;
 
-    /**
-     * Test ingredient proportion columns in details view using StandardChocolateEclairTestProduct
-     * 
-     * Validates that:
-     * - Proportion Qty % column is calculated correctly
-     * - Proportion Qty with yield % column is calculated correctly
-     * - Values are properly propagated to final product level
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testIngredientProportionColumns() throws Exception {
-
-        logger.info("testIngredientProportionColumns");
-
-        final NodeRef finishedProductNodeRef = inWriteTx(() -> {
-
-            StandardChocolateEclairTestProduct testProduct = new StandardChocolateEclairTestProduct.Builder()
-                    .withAlfrescoRepository(alfrescoRepository)
-                    .withNodeService(nodeService)
-                    .withDestFolder(getTestFolderNodeRef())
-                    .withCompo(true)
-                    .withLabeling(false)
-                    .withIngredients(true)
-                    .build();
-
-            FinishedProductData finishedProduct = testProduct.createTestProduct();
-
-            return finishedProduct.getNodeRef();
-        });
-
-        inWriteTx(() -> {
-
-            productService.formulate(finishedProductNodeRef);
-
-            FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
-
-            Assert.assertNotNull("Ingredient list should not be null", finishedProduct.getIngList());
-            Assert.assertTrue("Ingredient list should not be empty", !finishedProduct.getIngList().isEmpty());
-
-            logger.info("Product has " + finishedProduct.getIngList().size() + " ingredients");
-
-            CharactDetails ingDetails = productService.formulateDetails(finishedProductNodeRef, PLMModel.TYPE_INGLIST, "ingList", null, null);
-
-            Assert.assertNotNull("CharactDetails should not be null", ingDetails);
-
-            logger.info(CharactDetailsHelper.toJSONObject(ingDetails, nodeService, attributeExtractorService).toString(3));
-
-            Map<NodeRef, List<CharactDetailsValue>> detailsData = ingDetails.getData();
-            Assert.assertNotNull("Details data should not be null", detailsData);
-
-            DecimalFormat df = new DecimalFormat("0.###");
-
-            int checksPerformed = 0;
-            int proportionColumnsFound = 0;
-            String proportionQtyLabel = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListProportionQtyPerc.title");
-            String proportionQtyWithYieldLabel = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListProportionQtyPercWithYield.title");
-
-            for (Map.Entry<NodeRef, List<CharactDetailsValue>> entry : detailsData.entrySet()) {
-                NodeRef ingredientNodeRef = entry.getKey();
-                List<CharactDetailsValue> detailsValues = entry.getValue();
-
-                String ingredientName = (String) nodeService.getProperty(ingredientNodeRef, BeCPGModel.PROP_CHARACT_NAME);
-
-                for (CharactDetailsValue detailsValue : detailsValues) {
-
-                    String sourceName = (String) nodeService.getProperty(detailsValue.getKeyNodeRef(), BeCPGModel.PROP_CHARACT_NAME);
-
-                    logger.debug("Ingredient: " + ingredientName
-                            + " - Source: " + sourceName
-                            + " - Value: " + detailsValue.getValue()
-                            + " - Additional values: " + detailsValue.getAdditionalValues().size());
-
-                    List<CharactDetailAdditionalValue> additionalValues = detailsValue.getAdditionalValues();
-
-                    for (CharactDetailAdditionalValue additionalValue : additionalValues) {
-                        String columnName = additionalValue.getColumnName();
-                        logger.debug("  → Additional column: " + columnName 
-                                + " - Value: " + additionalValue.getValue()
-                                + " - Unit: " + additionalValue.getUnit());
-
-                        if (proportionQtyLabel.equals(columnName)) {
-                            proportionColumnsFound++;
-                            if (additionalValue.getValue() != null) {
-                                logger.info("✓ Found Qty % for " + ingredientName + " from " + sourceName 
-                                        + ": " + df.format(additionalValue.getValue()) + "%");
-                            } else {
-                                logger.info("✓ Found Qty % for " + ingredientName + " from " + sourceName 
-                                        + ": 0% (or negligible)");
-                            }
-                        } else if (proportionQtyWithYieldLabel.equals(columnName)) {
-                            proportionColumnsFound++;
-                            if (additionalValue.getValue() != null) {
-                                logger.info("✓ Found Qty with yield % for " + ingredientName + " from " + sourceName 
-                                        + ": " + df.format(additionalValue.getValue()) + "%");
-                            } else {
-                                logger.info("✓ Found Qty with yield % for " + ingredientName + " from " + sourceName 
-                                        + ": 0% (or negligible)");
-                            }
-                        }
-                    }
-
-                    if (!additionalValues.isEmpty()) {
-                        checksPerformed++;
-                    }
-                }
-            }
-
-            Assert.assertTrue("Should have found proportion columns", proportionColumnsFound > 0);
-            Assert.assertTrue("At least some checks should have been performed", checksPerformed > 0);
-            logger.info("Total checks performed: " + checksPerformed + ", Proportion columns found: " + proportionColumnsFound);
-
-            return null;
-        });
-    }
-
-    /**
-     * Test ingredient proportion columns with explicit yield using StandardChocolateEclairTestProduct
-     * Tests the "Pâte à choux" semi-finished product which has yield defined
-     * 
-     * @throws Exception the exception
-     */
-    @Test
-    public void testIngredientProportionColumnsWithYield() throws Exception {
-
-        logger.info("testIngredientProportionColumnsWithYield");
-
-        final NodeRef finishedProductNodeRef = inWriteTx(() -> {
-
-            StandardChocolateEclairTestProduct testProduct = new StandardChocolateEclairTestProduct.Builder()
-                    .withAlfrescoRepository(alfrescoRepository)
-                    .withNodeService(nodeService)
-                    .withDestFolder(getTestFolderNodeRef())
-                    .withCompo(true)
-                    .withLabeling(false)
-                    .withIngredients(true)
-                    .build();
-
-            FinishedProductData finishedProduct = testProduct.createTestProduct();
-
-            return finishedProduct.getNodeRef();
-        });
-
-        inWriteTx(() -> {
-
-            productService.formulate(finishedProductNodeRef);
-
-            FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
-            Assert.assertNotNull("Ingredient list should not be null", finishedProduct.getIngList());
-
-            logger.info("Ingredient list size: " + finishedProduct.getIngList().size());
-
-            CharactDetails ingDetails = productService.formulateDetails(finishedProductNodeRef, PLMModel.TYPE_INGLIST, "ingList", null, null);
-
-            Assert.assertNotNull("CharactDetails should not be null", ingDetails);
-
-            logger.info(CharactDetailsHelper.toJSONObject(ingDetails, nodeService, attributeExtractorService).toString(3));
-
-            boolean foundProportionQty = false;
-            boolean foundProportionWithYield = false;
-            String proportionQtyLabel = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListProportionQtyPerc.title");
-            String proportionQtyWithYieldLabel = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListProportionQtyPercWithYield.title");
-
-            for (Map.Entry<NodeRef, List<CharactDetailsValue>> entry : ingDetails.getData().entrySet()) {
-                String ingredientName = (String) nodeService.getProperty(entry.getKey(), BeCPGModel.PROP_CHARACT_NAME);
-
-                for (CharactDetailsValue detailsValue : entry.getValue()) {
-                    String sourceName = (String) nodeService.getProperty(detailsValue.getKeyNodeRef(), BeCPGModel.PROP_CHARACT_NAME);
-                    List<CharactDetailAdditionalValue> additionalValues = detailsValue.getAdditionalValues();
-                    
-                    for (CharactDetailAdditionalValue additionalValue : additionalValues) {
-                        String valueStr = additionalValue.getValue() != null 
-                            ? String.valueOf(additionalValue.getValue()) 
-                            : "0 (or negligible)";
-                        logger.info("Additional column for " + ingredientName + " from " + sourceName + ": " 
-                                + additionalValue.getColumnName() 
-                                + " = " + valueStr
-                                + " " + additionalValue.getUnit());
-                        
-                        if (proportionQtyLabel.equals(additionalValue.getColumnName())) {
-                            foundProportionQty = true;
-                        } else if (proportionQtyWithYieldLabel.equals(additionalValue.getColumnName())) {
-                            foundProportionWithYield = true;
-                        }
-                    }
-                }
-            }
-
-            Assert.assertTrue("Should have found Qty % proportion columns", foundProportionQty);
-            Assert.assertTrue("Should have found Qty with yield % proportion columns", foundProportionWithYield);
-            logger.info("✓ Found both proportion columns - Qty %: " + foundProportionQty 
-                    + ", Qty with yield %: " + foundProportionWithYield);
-
-            return null;
-        });
-    }
-
+ 
     /**
      * Validates that proportion percentages are displayed correctly at all levels
      * without being recalculated with qtyUsed.
@@ -271,7 +74,7 @@ public class IngCharactDetailsFormulationIT extends AbstractFinishedProductTest 
             FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
             Assert.assertNotNull("Ingredient list should not be null", finishedProduct.getIngList());
 
-            logger.info("Testing multi-level ingredient details with maxLevel=2");
+            logger.info("Testing multi-level ingredient details with maxLevel=2 for sugar proportions");
 
             CharactDetails ingDetailsMultiLevel = productService.formulateDetails(finishedProductNodeRef, PLMModel.TYPE_INGLIST, "ingList", null, 2);
 
@@ -279,61 +82,81 @@ public class IngCharactDetailsFormulationIT extends AbstractFinishedProductTest 
 
             logger.info(CharactDetailsHelper.toJSONObject(ingDetailsMultiLevel, nodeService, attributeExtractorService).toString(3));
 
-            String proportionQtyLabel = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListProportionQtyPerc.title");
-            String proportionQtyWithYieldLabel = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListProportionQtyPercWithYield.title");
+            // Expected values by level (we have 3 components with 2 levels each = 6 entries)
+            // Level 0: [6.493506493506494, 7.272727272727273, 5.454545454545455]
+            // Level 1: [41.32231404958677, 7.272727272727273, 5.454545454545455]
+            Map<Integer, Double[]> expectedSugarByLevel = new HashMap<>();
+            expectedSugarByLevel.put(0, new Double[]{6.49350649350649, 7.27272727272727, 5.45454545454546});
+            expectedSugarByLevel.put(1, new Double[]{41.3223140495868, 7.27272727272727, 5.45454545454546});
 
-            int level1Count = 0;
-            int level2Count = 0;
-            int proportionColumnsAtLevel1 = 0;
-            int proportionColumnsAtLevel2 = 0;
+            Map<String, Integer> foundSugarEntries = new HashMap<>();
+            boolean sugarFound = false;
+            int totalSugarCount = 0;
 
             for (Map.Entry<NodeRef, List<CharactDetailsValue>> entry : ingDetailsMultiLevel.getData().entrySet()) {
                 String ingredientName = (String) nodeService.getProperty(entry.getKey(), BeCPGModel.PROP_CHARACT_NAME);
 
+                if (!"Sucre".equals(ingredientName)) {
+                    continue;
+                }
+
+                sugarFound = true;
+                logger.info("Found sugar ingredient, checking levels...");
+
                 for (CharactDetailsValue detailsValue : entry.getValue()) {
-                    Integer level = detailsValue.getLevel();
-                    String sourceName = (String) nodeService.getProperty(detailsValue.getKeyNodeRef(), BeCPGModel.PROP_CHARACT_NAME);
-
-                    if (level == 0) {
-                        level1Count++;
-                    } else if (level == 1) {
-                        level2Count++;
+                    if (detailsValue == null) {
+                        continue;
                     }
+                    
+                    Integer level = detailsValue.getLevel();
+                    
+                    // The main value is the qtyPerc (Sucre column)
+                    Double qtyPercValue = detailsValue.getValue();
+                    
+                    logger.info("Sugar at level " + level + ": Qty%=" + (qtyPercValue != null ? qtyPercValue : "null"));
 
+                    // Get the qtyPercWithYield from additional values
+                    Double qtyPercWithYieldValue = null;
                     List<CharactDetailAdditionalValue> additionalValues = detailsValue.getAdditionalValues();
-
-                    for (CharactDetailAdditionalValue additionalValue : additionalValues) {
-                        String columnName = additionalValue.getColumnName();
-
-                        if (proportionQtyLabel.equals(columnName) || proportionQtyWithYieldLabel.equals(columnName)) {
-                            Double value = additionalValue.getValue();
-                            
-                            logger.info("Level " + level + " - " + ingredientName + " from " + sourceName 
-                                    + " - " + columnName + ": " + (value != null ? value + "%" : "null"));
-
-                            if (level == 0) {
-                                proportionColumnsAtLevel1++;
-                                Assert.assertNotNull("Proportion value at level 1 should not be null for " + ingredientName, value);
-                                Assert.assertTrue("Proportion value should be >= 0 at level 1", value >= 0);
-                            } else if (level == 1) {
-                                proportionColumnsAtLevel2++;
-                                Assert.assertNotNull("Proportion value at level 2 should not be null for " + ingredientName, value);
-                                Assert.assertTrue("Proportion value should be >= 0 at level 2", value >= 0);
+                    if (additionalValues != null) {
+                        for (CharactDetailAdditionalValue additionalValue : additionalValues) {
+                            if (additionalValue != null && "Qté ap. rdmt (%)".equals(additionalValue.getColumnName())) {
+                                qtyPercWithYieldValue = additionalValue.getValue();
+                                logger.info("  - Qté ap. rdmt (%): " + (qtyPercWithYieldValue != null ? qtyPercWithYieldValue : "null"));
+                                break;
                             }
+                        }
+                    }
+                    
+                    // Validate values
+                    if (qtyPercValue != null && level != null) {
+                        Assert.assertTrue("Proportion value should be >= 0 for Sucre at level " + level, qtyPercValue >= 0);
+                        
+                        // Check if this value matches one of the expected values for this level
+                        Double[] expectedValuesForLevel = expectedSugarByLevel.get(level);
+                        if (expectedValuesForLevel != null) {
+                            boolean found = false;
+                            for (Double expectedValue : expectedValuesForLevel) {
+                                if (Math.abs(qtyPercValue - expectedValue) < 0.0001) {
+                                    found = true;
+                                    logger.info("✓ Correct sugar proportion at L" + level + ": Qty%=" + qtyPercValue + "%, Qty with yield%=" + qtyPercWithYieldValue + "%");
+                                    String key = "L" + level + "_" + totalSugarCount;
+                                    foundSugarEntries.put(key, 1);
+                                    totalSugarCount++;
+                                    break;
+                                }
+                            }
+                            Assert.assertTrue("Sugar proportion " + qtyPercValue + " at level " + level + " should match one of expected values", found);
                         }
                     }
                 }
             }
 
-            logger.info("Level 1 ingredients: " + level1Count + ", with proportion columns: " + proportionColumnsAtLevel1);
-            logger.info("Level 2 ingredients: " + level2Count + ", with proportion columns: " + proportionColumnsAtLevel2);
+            Assert.assertTrue("Sugar ingredient should be found in multi-level details", sugarFound);
+            Assert.assertEquals("Should have found all 6 expected sugar entries (3 components × 2 levels)", 
+                    6, totalSugarCount);
 
-            Assert.assertTrue("Should have level 1 ingredients", level1Count > 0);
-            Assert.assertTrue("Should have level 2 ingredients", level2Count > 0);
-            Assert.assertTrue("Should have proportion columns at level 1", proportionColumnsAtLevel1 > 0);
-            Assert.assertTrue("Should have proportion columns at level 2", proportionColumnsAtLevel2 > 0);
-
-            logger.info("✓ All multi-level proportion values displayed correctly without recalculation");
+            logger.info("✓ All sugar proportion values validated correctly at all levels");
 
             return null;
         });
