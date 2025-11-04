@@ -186,6 +186,11 @@ grant {
 };
 
 
+ //beCPG Jacoco 
+grant codeBase "file:/usr/local/tomcat/jacoco-runtime.jar" {
+	permission java.security.AllPermission;
+};
+
 
 // The Manager application needs access to the following packages to support the
 // session display functionality. It also requires the custom Tomcat
