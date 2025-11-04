@@ -27,7 +27,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
@@ -42,6 +41,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
@@ -91,25 +91,33 @@ import org.xml.sax.SAXException;
 public class BeCPGTestRunner extends SpringJUnit4ClassRunner {
 	private static final String ACS_ENDPOINT_PROP = "acs.endpoint.path";
 	private static final String ACS_DEFAULT_ENDPOINT = "http://localhost:8080/alfresco";
+	private static final String ACS_USERNAME_PROP = "acs.test.username";
+	private static final String ACS_PASSWORD_PROP = "acs.test.password";
+	private static final String DEFAULT_USERNAME = "admin";
+	private static final String DEFAULT_PASSWORD = "becpg";
 
 	public static final String SUCCESS = "SUCCESS";
 	public static final String FAILURE = "FAILURE";
 
+	private static final int CONNECT_TIMEOUT_MS = 30000;
+	private static final int SOCKET_TIMEOUT_MS = 600000;
+	private static final int CONNECTION_REQUEST_TIMEOUT_MS = 10000;
+	private static final int MAX_RETRY_ATTEMPTS = 3;
+	private static final int MAX_TOTAL_CONNECTIONS = 10;
+	private static final int MAX_CONNECTIONS_PER_ROUTE = 5;
+
 	private static Log logger = LogFactory.getLog(BeCPGTestRunner.class);
-	
+
 	public BeCPGTestRunner(Class<?> klass) throws InitializationError {
 		super(klass);
 	}
 
 	public static String serializableToString(Serializable serializable) throws IOException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ObjectOutputStream oos = new ObjectOutputStream(baos);
-		oos.writeObject(serializable);
-		oos.close();
-
-		String string = Base64.encodeBase64URLSafeString(baos.toByteArray());
-
-		return string;
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			 ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+			oos.writeObject(serializable);
+			return Base64.encodeBase64URLSafeString(baos.toByteArray());
+		}
 	}
 
 	@Override
@@ -132,12 +140,9 @@ public class BeCPGTestRunner extends SpringJUnit4ClassRunner {
 	/**
 	 * Call a remote Alfresco server and have the test run there.
 	 *
-	 * @param method
-	 *            the test method to run
-	 * @param notifier
-	 *            given @{@link RunNotifier} to notify the result of the test
-	 * @param desc
-	 *            given @{@link Description} of the test to run
+	 * @param method the test method to run
+	 * @param notifier given @{@link RunNotifier} to notify the result of the test
+	 * @param desc given @{@link Description} of the test to run
 	 */
 	protected void callProxiedChild(FrameworkMethod method, RunNotifier notifier, Description desc) {
 		notifier.fireTestStarted(desc);
@@ -148,27 +153,61 @@ public class BeCPGTestRunner extends SpringJUnit4ClassRunner {
 			className += "#" + methodName;
 		}
 
-		// Login credentials for Alfresco Repo
-		// TODO: Maybe configure credentials in props...
+		try (CloseableHttpClient httpclient = createHttpClient()) {
+			String fullUrl = buildTestUrl(className, method);
+			HttpGet get = new HttpGet(fullUrl);
+
+			long startTime = System.currentTimeMillis();
+			HttpResponse resp = httpclient.execute(get);
+			long duration = System.currentTimeMillis() - startTime;
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Remote test completed in " + duration + "ms: " + className + " at " + fullUrl);
+			}
+
+			int statusCode = resp.getStatusLine().getStatusCode();
+			if (statusCode != HttpStatus.SC_OK) {
+				String errorMsg = String.format("HTTP request failed with status %d: %s", 
+					statusCode, resp.getStatusLine().getReasonPhrase());
+				notifier.fireTestFailure(new Failure(desc, new IOException(errorMsg)));
+				return;
+			}
+
+			String responseBody = readResponseBody(resp);
+			processTestResponse(responseBody, notifier, desc);
+
+		} catch (IOException e) {
+			logger.error("IOException while executing proxied test: " + className, e);
+			notifier.fireTestFailure(new Failure(desc, e));
+		} catch (Exception e) {
+			logger.error("Unexpected error while executing proxied test: " + className, e);
+			notifier.fireTestFailure(new Failure(desc, e));
+		}
+	}
+
+	/**
+	 * Create configured HTTP client with credentials, timeouts, retry logic, and connection pooling.
+	 */
+	private CloseableHttpClient createHttpClient() {
+		String username = System.getProperty(ACS_USERNAME_PROP, DEFAULT_USERNAME);
+		String password = System.getProperty(ACS_PASSWORD_PROP, DEFAULT_PASSWORD);
+
 		CredentialsProvider provider = new BasicCredentialsProvider();
-		UsernamePasswordCredentials credentials = new UsernamePasswordCredentials("admin", "becpg");
+		UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
 		provider.setCredentials(AuthScope.ANY, credentials);
 
-		// Create HTTP Client with credentials, timeouts, retry logic, and connection pooling
 		RequestConfig requestConfig = RequestConfig.custom()
-				.setConnectTimeout(30000)
-				.setSocketTimeout(600000)
-				.setConnectionRequestTimeout(10000)
+				.setConnectTimeout(CONNECT_TIMEOUT_MS)
+				.setSocketTimeout(SOCKET_TIMEOUT_MS)
+				.setConnectionRequestTimeout(CONNECTION_REQUEST_TIMEOUT_MS)
 				.build();
-		
-		// Connection pooling for better resource management
+
 		PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
-		connectionManager.setMaxTotal(10);
-		connectionManager.setDefaultMaxPerRoute(5);
-		
-		// Retry handler for network instability
+		connectionManager.setMaxTotal(MAX_TOTAL_CONNECTIONS);
+		connectionManager.setDefaultMaxPerRoute(MAX_CONNECTIONS_PER_ROUTE);
+
 		HttpRequestRetryHandler retryHandler = (exception, executionCount, context) -> {
-			if (executionCount > 3) {
+			if (executionCount > MAX_RETRY_ATTEMPTS) {
 				return false;
 			}
 			if (exception instanceof java.net.SocketTimeoutException) {
@@ -189,122 +228,126 @@ public class BeCPGTestRunner extends SpringJUnit4ClassRunner {
 			}
 			return false;
 		};
-		
-		CloseableHttpClient httpclient = HttpClientBuilder.create()
+
+		return HttpClientBuilder.create()
 				.setDefaultCredentialsProvider(provider)
 				.setDefaultRequestConfig(requestConfig)
 				.setConnectionManager(connectionManager)
 				.setRetryHandler(retryHandler)
 				.build();
+	}
 
-		// Create the GET Request for the Web Script that will run the test
-		String encodedClassName = null;
-		try {
-			encodedClassName = URLEncoder.encode(className, StandardCharsets.UTF_8.toString());
-		} catch (UnsupportedEncodingException e) {
-			encodedClassName = className.replace("#", "%23");
-		}
+	/**
+	 * Build the full URL for the test web script.
+	 */
+	private String buildTestUrl(String className, FrameworkMethod method) {
+		String encodedClassName = URLEncoder.encode(className, StandardCharsets.UTF_8);
 		String testWebScriptUrl = "/service/testing/test.xml?clazz=" + encodedClassName;
-		String fullUrl = getContextRoot(method) + testWebScriptUrl;
-		
-		if (logger.isDebugEnabled()) {
-			logger.debug("Starting remote test execution: " + className + " at " + fullUrl);
-		}
-		
-		HttpGet get = new HttpGet(fullUrl);
+		return getContextRoot(method) + testWebScriptUrl;
+	}
 
-		String body = "";
-		
-		try {
-			// Send proxied request and read response
-			long startTime = System.currentTimeMillis();
-			HttpResponse resp = httpclient.execute(get);
-			long duration = System.currentTimeMillis() - startTime;
-			
-			if (logger.isDebugEnabled()) {
-				logger.debug("Remote test completed in " + duration + "ms: " + className);
-			}
-			InputStream is = resp.getEntity().getContent();
-			InputStreamReader ir = new InputStreamReader(is);
-			BufferedReader br = new BufferedReader(ir);
+	/**
+	 * Read the response body from HTTP response.
+	 */
+	private String readResponseBody(HttpResponse resp) throws IOException {
+		StringBuilder body = new StringBuilder();
+		try (InputStream is = resp.getEntity().getContent();
+			 InputStreamReader ir = new InputStreamReader(is, StandardCharsets.UTF_8);
+			 BufferedReader br = new BufferedReader(ir)) {
 			
 			String line;
 			while ((line = br.readLine()) != null) {
-				body += line + "\n";
+				body.append(line).append("\n");
+			}
+		}
+		return body.toString();
+	}
+
+	/**
+	 * Process the XML response from the test execution.
+	 */
+	private void processTestResponse(String responseBody, RunNotifier notifier, Description desc) {
+		if (StringUtils.isBlank(responseBody)) {
+			notifier.fireTestFailure(new Failure(desc, 
+				new IOException("Attempt to proxy test into running Alfresco instance failed, no response received")));
+			return;
+		}
+
+		try {
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			// Disable external entity processing for security
+			dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+			dbFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+			dbFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+			
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(new InputSource(new StringReader(responseBody)));
+
+			Element root = doc.getDocumentElement();
+			NodeList results = root.getElementsByTagName("result");
+			
+			if (results == null || results.getLength() == 0) {
+				notifier.fireTestFailure(new Failure(desc, 
+					new IOException("Unable to process response for proxied test request: " + responseBody)));
+				return;
 			}
 
-			// Process response
-			if (body.length() > 0) {
-				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-				DocumentBuilder dBuilder = null;
-				dBuilder = dbFactory.newDocumentBuilder();
-				Document doc = dBuilder.parse(new InputSource(new StringReader(body)));
-
-				Element root = doc.getDocumentElement();
-				NodeList results = root.getElementsByTagName("result");
-				if ((null != results) && (results.getLength() > 0)) {
-					String result = results.item(0).getFirstChild().getNodeValue();
-					if (SUCCESS.equals(result)) {
-						notifier.fireTestFinished(desc);
-					} else {
-						boolean failureFired = false;
-						NodeList throwableNodes = root.getElementsByTagName("throwable");
-						for (int tid = 0; tid < throwableNodes.getLength(); tid++) {
-							String throwableBody = null;
-							Object object = null;
-							Throwable throwable = null;
-							throwableBody = throwableNodes.item(tid).getFirstChild().getNodeValue();
-							if (null != throwableBody) {
-								try {
-									object = objectFromString(throwableBody);
-								} catch (ClassNotFoundException e) {
-									e.printStackTrace();
-								}
-								if ((null != object) && (object instanceof Throwable)) {
-									throwable = (Throwable) object;
-								}
-							}
-							if (null == throwable) {
-								throwable = new Throwable("Unable to process exception body: " + throwableBody);
-							}
-
-							notifier.fireTestFailure(new Failure(desc, throwable));
-							failureFired = true;
-						}
-						if (!failureFired) {
-							notifier.fireTestFailure(
-									new Failure(desc, new Throwable("There was an error but we can't figure out what it was, sorry!")));
-						}
-					}
-				} else {
-					notifier.fireTestFailure(new Failure(desc, new Throwable("Unable to process response for proxied test request: " + body)));
-				}
+			String result = results.item(0).getFirstChild().getNodeValue();
+			if (SUCCESS.equals(result)) {
+				notifier.fireTestFinished(desc);
 			} else {
-				notifier.fireTestFailure(
-						new Failure(desc, new Throwable("Attempt to proxy test into running Alfresco instance failed, no response received")));
+				handleTestFailure(root, notifier, desc);
 			}
+		} catch (ParserConfigurationException | SAXException e) {
+			logger.error("Cannot parse response body: " + responseBody, e);
+			notifier.fireTestFailure(new Failure(desc, e));
 		} catch (IOException e) {
+			logger.error("Error processing test response", e);
 			notifier.fireTestFailure(new Failure(desc, e));
-		} catch (ParserConfigurationException e) {
-			notifier.fireTestFailure(new Failure(desc, e));
-		} catch (SAXException e) {
-			logger.error("Cannot parse body :"+ body);
-			notifier.fireTestFailure(new Failure(desc, e));
-		} finally {
-			try {
-				httpclient.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 
+	/**
+	 * Handle test failure by extracting and deserializing throwable information.
+	 */
+	private void handleTestFailure(Element root, RunNotifier notifier, Description desc) {
+		boolean failureFired = false;
+		NodeList throwableNodes = root.getElementsByTagName("throwable");
+		
+		for (int tid = 0; tid < throwableNodes.getLength(); tid++) {
+			String throwableBody = throwableNodes.item(tid).getFirstChild().getNodeValue();
+			if (StringUtils.isNotBlank(throwableBody)) {
+				try {
+					Object object = objectFromString(throwableBody);
+					if (object instanceof Throwable) {
+						notifier.fireTestFailure(new Failure(desc, (Throwable) object));
+						failureFired = true;
+					} else {
+						logger.warn("Deserialized object is not a Throwable: " + object.getClass().getName());
+					}
+				} catch (IOException | ClassNotFoundException e) {
+					logger.error("Failed to deserialize throwable from response", e);
+					notifier.fireTestFailure(new Failure(desc, 
+						new IOException("Unable to deserialize exception: " + throwableBody, e)));
+					failureFired = true;
+				}
+			}
+		}
+		
+		if (!failureFired) {
+			notifier.fireTestFailure(new Failure(desc, 
+				new AssertionError("Test failed but no throwable information was available")));
+		}
+	}
+
+	/**
+	 * Deserialize an object from a Base64 encoded string.
+	 */
 	protected static Object objectFromString(String string) throws IOException, ClassNotFoundException {
 		byte[] buffer = Base64.decodeBase64(string);
-		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(buffer));
-		Object object = ois.readObject();
-		ois.close();
-		return object;
+		try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(buffer))) {
+			return ois.readObject();
+		}
 	}
 
 	/**
@@ -323,8 +366,7 @@ public class BeCPGTestRunner extends SpringJUnit4ClassRunner {
 	 * property as an alternative location. If none of them has a value, then
 	 * return the default location.
 	 *
-	 * @param method
-	 *            given @{@link FrameworkMethod} to be executed
+	 * @param method given @{@link FrameworkMethod} to be executed
 	 * @return the ACS endpoint
 	 */
 	protected String getContextRoot(FrameworkMethod method) {
@@ -338,5 +380,4 @@ public class BeCPGTestRunner extends SpringJUnit4ClassRunner {
 		final String platformEndpoint = System.getProperty(ACS_ENDPOINT_PROP);
 		return StringUtils.isNotBlank(platformEndpoint) ? platformEndpoint : ACS_DEFAULT_ENDPOINT;
 	}
-
 }
