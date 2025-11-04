@@ -100,7 +100,7 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	/** {@inheritDoc} */
 	@Override
 	public boolean isRegisteredQName(RepositoryEntity entity, QName qname, boolean allowWrite) {
-		if (qnameCache.containsValue(qname)) {
+		if (qname!=null && qnameCache.containsValue(qname)) {
 			Method[] methods = AopProxyUtils.ultimateTargetClass(entity).getMethods();
 			for (Method method : methods) {
 				if (method != null && ( (method.isAnnotationPresent(AlfQname.class) && readQName(method).isMatch(qname) && !allowWrite)
