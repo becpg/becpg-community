@@ -51,6 +51,8 @@ public class EntityVersionWebScript extends AbstractWebScript {
 	private static final int MAX_DESCRIPTION_LENGTH = 200;
 
 	private static final Log logger = LogFactory.getLog(EntityVersionWebScript.class);
+	
+	private static final QName PROP_PRODUCT_STATE = QName.createQName(BeCPGModel.BECPG_URI, "productState");
 
 	private EntityVersionService entityVersionService;
 
@@ -226,6 +228,8 @@ public class EntityVersionWebScript extends AbstractWebScript {
 					if (referenceLabel == null || referenceLabel.equals(version.getVersionLabel())) {
 						jsonVersion.put("clickableNode", version.getEntityNodeRef());
 					}
+					
+					jsonVersion.put("productState", nodeService.getProperty(version.getEntityNodeRef(), PROP_PRODUCT_STATE));
 
 					jsonVersions.put(jsonVersion);
 				}
@@ -269,7 +273,7 @@ public class EntityVersionWebScript extends AbstractWebScript {
 					jsonBranches.put(jsonBranch);
 
 					jsonBranch.put("creator", getPerson((String) nodeService.getProperty(branchNodeRef, ContentModel.PROP_CREATOR)));
-
+					jsonBranch.put("productState", nodeService.getProperty(branchNodeRef, PROP_PRODUCT_STATE));
 				}
 
 				JSONObject jsonObject = new JSONObject();
