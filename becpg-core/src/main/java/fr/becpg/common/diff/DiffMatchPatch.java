@@ -897,7 +897,7 @@ public class DiffMatchPatch {
 	            String bestEquality2 = equality2.toString();
 	            bestScore = diffCleanupSemanticScore(equality1.toString(), edit.toString()) + 
 	                         diffCleanupSemanticScore(edit.toString(), equality2.toString());
-	            while (edit.length() != 0 && equality2.length() != 0 && edit.charAt(0) == equality2.charAt(0)) {
+	            while (!edit.isEmpty() && !equality2.isEmpty() && edit.charAt(0) == equality2.charAt(0)) {
 	                equality1.append(edit.charAt(0));
 	                edit = new StringBuilder(edit.substring(1)).append(equality2.charAt(0));
 	                equality2.setLength(equality2.length() - 1);

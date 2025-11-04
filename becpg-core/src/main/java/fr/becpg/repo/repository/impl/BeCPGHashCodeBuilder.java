@@ -30,6 +30,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 
@@ -130,6 +132,8 @@ public class BeCPGHashCodeBuilder {
 	private static final int iConstant = 37;
 	private static final int NULL_MULTIPLIER = iConstant + 12;
 	private static final Map<Class<?>, List<Method>> annotatedMethodsCache = new ConcurrentHashMap<>();
+	
+	private static Log logger = LogFactory.getLog(BeCPGHashCodeBuilder.class);
 
 	private long reflectionAppend(RepositoryEntity object, Set<RepositoryEntity> visited) {
 		long total = 17;
@@ -149,7 +153,7 @@ public class BeCPGHashCodeBuilder {
 				total = append(total, fieldValue, visited);
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				// Log error but continue processing
-				e.printStackTrace();
+				logger.warn(e,e);
 			}
 		}
 

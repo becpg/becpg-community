@@ -26,6 +26,6 @@ public enum SystemState {
 		 * @return a {@link fr.becpg.model.SystemState} object.
 		 */
 		public static SystemState getSystemState(String systemState) {	
-		   return (systemState != null && systemState.length()>0) ? SystemState.valueOf(systemState) : SystemState.Simulation;		
+		   return (systemState != null && !systemState.isBlank()) ? SystemState.valueOf(systemState) : SystemState.Simulation;		
 		}
 }
