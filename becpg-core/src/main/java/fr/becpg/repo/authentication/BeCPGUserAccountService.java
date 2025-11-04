@@ -94,7 +94,9 @@ public class BeCPGUserAccountService {
 			propMap.put(ContentModel.PROP_EMAIL, userAccount.getEmail());
 			propMap.putAll(userAccount.getExtraProps());
 
-			if (personService.personExists(userAccount.getUserName())) {
+			boolean userAlreadyExists = personService.personExists(userAccount.getUserName());
+			
+			if (userAlreadyExists) {
 				if (createOnly) {
 					throw new UserAlreadyExistsException("User already exists: " + userAccount.getUserName());
 				}
@@ -105,7 +107,7 @@ public class BeCPGUserAccountService {
 			}
 			
 			if (userAccount.getPassword() != null && !userAccount.getPassword().isBlank()) {
-				updatePassword(userAccount.getUserName(), userAccount.getPassword(), Boolean.TRUE.equals(userAccount.getNotify()));
+				updatePassword(userAccount.getUserName(), userAccount.getPassword(), userAlreadyExists && Boolean.TRUE.equals(userAccount.getNotify()));
 			}
 			
 			updateGroups(userAccount);
