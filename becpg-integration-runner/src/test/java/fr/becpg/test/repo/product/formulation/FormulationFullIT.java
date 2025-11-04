@@ -149,7 +149,7 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 
 			// Multilingual SpEL functions tests using
 			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("beCPG updateMLText en")
-					.withFormula("@beCPG.updateMLText(servingSizeByCountry,'en','10')"));
+					.withFormula("servingSizeByCountry = @beCPG.updateMLText(servingSizeByCountry,'en','10')"));
 
 			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("beCPG updateMLText fr_CA").withFormula(
 					"@beCPG.setValue(#this, 'bcpg:servingSizeText',@beCPG.updateMLText(@beCPG.propMLValue(#this, 'bcpg:servingSizeText', null),'fr_CA','Pour 1/5 de meule (32g)'))"));
