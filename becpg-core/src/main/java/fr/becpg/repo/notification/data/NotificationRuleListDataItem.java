@@ -457,6 +457,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject {
 		this.reportTpls = reportTpls;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -467,6 +468,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject {
 		return result;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -486,6 +488,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject {
 				&& versionFilterType == other.versionFilterType;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "NotificationRuleListDataItem [nodeType=" + nodeType + ", dateField=" + dateField + ", condtions=" + condtions + ", target=" + target

@@ -66,8 +66,8 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Surveya
 	 * @param alfrescoRepository a
 	 *                           {@link fr.becpg.repo.repository.AlfrescoRepository}
 	 *                           object.
-	 * @param beCPGCacheService a {@link fr.becpg.repo.cache.BeCPGCacheService} object.
 	 * @param repositoryEntityDefReader a {@link fr.becpg.repo.repository.RepositoryEntityDefReader} object
+	 * @param surveyService a {@link fr.becpg.repo.survey.SurveyService} object
 	 */
 	public SurveyListFormulationHandler(NamespaceService namespaceService, AlfrescoRepository<BeCPGDataObject> alfrescoRepository,
 			SurveyService surveyService, RepositoryEntityDefReader<ProductData> repositoryEntityDefReader ) {

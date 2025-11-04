@@ -18,6 +18,7 @@ import fr.becpg.repo.survey.data.SurveyQuestionCache;
  */
 public interface SurveyService {
 	
+	/** Constant <code>CACHE_KEY="SurveyQuestion.class.getName()"</code> */
 	public static final String CACHE_KEY = SurveyQuestion.class.getName();
 
 	/**
@@ -50,5 +51,10 @@ public interface SurveyService {
 	 */
 	List<SurveyListDataItem> getVisibles(List<SurveyListDataItem> surveyListDataItems);	
 	
+	/**
+	 * <p>getSurveyQuestionCache.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.survey.data.SurveyQuestionCache} object
+	 */
 	SurveyQuestionCache getSurveyQuestionCache();
 }

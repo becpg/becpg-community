@@ -159,9 +159,9 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 	}
 
 	/**
-	 * <p>Getter for the field <code>aspects</code>.</p>
+	 * {@inheritDoc}
 	 *
-	 * @return a {@link java.util.Set} object.
+	 * <p>Getter for the field <code>aspects</code>.</p>
 	 */
 	@InternalField
 	@Override

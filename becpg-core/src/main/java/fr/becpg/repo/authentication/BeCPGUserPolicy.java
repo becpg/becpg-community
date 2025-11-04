@@ -42,6 +42,11 @@ public class BeCPGUserPolicy extends AbstractBeCPGPolicy implements OnUpdateProp
 	
 	private static final Log logger = LogFactory.getLog(BeCPGUserPolicy.class);
 	
+	/**
+	 * <p>Setter for the field <code>beCPGCacheService</code>.</p>
+	 *
+	 * @param beCPGCacheService a {@link fr.becpg.repo.cache.BeCPGCacheService} object
+	 */
 	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
 		this.beCPGCacheService = beCPGCacheService;
 	}
@@ -144,11 +149,13 @@ public class BeCPGUserPolicy extends AbstractBeCPGPolicy implements OnUpdateProp
 		return true;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void onAuthorityAddedToGroup(String parentGroup, String childAuthority) {
 		beCPGCacheService.clearCache(AuthorityHelper.CACHE_KEY);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void onAuthorityRemovedFromGroup(String parentGroup, String childAuthority) {
 		beCPGCacheService.clearCache(AuthorityHelper.CACHE_KEY);

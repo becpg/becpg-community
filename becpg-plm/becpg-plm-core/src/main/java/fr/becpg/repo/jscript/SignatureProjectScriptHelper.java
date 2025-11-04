@@ -101,10 +101,24 @@ public class SignatureProjectScriptHelper extends BaseScopableProcessorExtension
 		return new ScriptNode[0];
 	}
 	
+	/**
+	 * <p>findUrlDeliverable.</p>
+	 *
+	 * @param project a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param signDeliverable a {@link fr.becpg.repo.project.data.projectList.DeliverableListDataItem} object
+	 * @return a {@link fr.becpg.repo.project.data.projectList.DeliverableListDataItem} object
+	 */
 	public static DeliverableListDataItem findUrlDeliverable(ProjectData project, DeliverableListDataItem signDeliverable) {
 		return SignatureProjectHelper.findUrlDeliverable(project, signDeliverable);
 	}
 	
+	/**
+	 * <p>findDocDeliverable.</p>
+	 *
+	 * @param project a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param taskDeliverable a {@link fr.becpg.repo.project.data.projectList.DeliverableListDataItem} object
+	 * @return a {@link fr.becpg.repo.project.data.projectList.DeliverableListDataItem} object
+	 */
 	public static DeliverableListDataItem findDocDeliverable(ProjectData project, DeliverableListDataItem taskDeliverable) {
 		return SignatureProjectHelper.findDocDeliverable(project, taskDeliverable);
 	}

@@ -71,6 +71,11 @@ public class ExportUsersWebScript extends AbstractWebScript {
 			DELETE
 	);
 	
+	/**
+	 * <p>Setter for the field <code>authorityService</code>.</p>
+	 *
+	 * @param authorityService a {@link org.alfresco.service.cmr.security.AuthorityService} object
+	 */
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
 	}

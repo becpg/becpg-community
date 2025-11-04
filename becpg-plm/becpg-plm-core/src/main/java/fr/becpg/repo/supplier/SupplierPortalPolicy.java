@@ -33,6 +33,11 @@ public class SupplierPortalPolicy extends AbstractBeCPGPolicy implements OnDelet
 	
 	private EntityService entityService;
 	
+	/**
+	 * <p>Setter for the field <code>entityService</code>.</p>
+	 *
+	 * @param entityService a {@link fr.becpg.repo.entity.EntityService} object
+	 */
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
 	}

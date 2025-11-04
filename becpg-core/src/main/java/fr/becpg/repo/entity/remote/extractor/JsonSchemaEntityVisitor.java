@@ -122,6 +122,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 	}
 
+	/** {@inheritDoc} */
 	public void visit(QName entityType, OutputStream result) throws IOException {
 		JSONObject root = new JSONObject();
 

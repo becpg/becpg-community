@@ -86,6 +86,13 @@ public final class JsonHelper {
 		return value;
 	}
 	
+	/**
+	 * <p>serialize.</p>
+	 *
+	 * @param object a {@link java.lang.Object} object
+	 * @return a {@link java.lang.String} object
+	 * @throws com.fasterxml.jackson.core.JsonProcessingException if any.
+	 */
 	public static String serialize(Object object) throws JsonProcessingException {
 		return MAPPER.writeValueAsString(object);
 	}

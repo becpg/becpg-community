@@ -437,7 +437,6 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param docsElt a {@link org.dom4j.Element} object.
 	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object.
-	 * @param extratAttributes a {@link java.util.Map} object
 	 */
 	protected void extractEntityDocuments(NodeRef entityNodeRef, Element docsElt, DefaultExtractorContext context) {
 
@@ -465,7 +464,6 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * @param docId a {@link java.lang.String} object.
 	 * @param docsElt a {@link org.dom4j.Element} object.
 	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object.
-	 * @param extratAttributes a {@link java.util.Map} object
 	 */
 	protected void extractDocument(NodeRef entityNodeRef, NodeRef docNodeRef, String docId, Element docsElt, DefaultExtractorContext context) {
 

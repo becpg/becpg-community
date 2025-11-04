@@ -51,6 +51,11 @@ public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeSer
 	
 	private FileFolderService fileFolderService;
 	
+	/**
+	 * <p>Setter for the field <code>fileFolderService</code>.</p>
+	 *
+	 * @param fileFolderService a {@link org.alfresco.service.cmr.model.FileFolderService} object
+	 */
 	public void setFileFolderService(FileFolderService fileFolderService) {
 		this.fileFolderService = fileFolderService;
 	}

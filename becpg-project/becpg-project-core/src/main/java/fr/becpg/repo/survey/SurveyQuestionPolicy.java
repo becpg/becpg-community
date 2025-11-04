@@ -49,6 +49,7 @@ public class SurveyQuestionPolicy extends AbstractBeCPGPolicy
 		beCPGCacheService.clearCache(SurveyService.CACHE_KEY);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void onUpdateNode(NodeRef nodeRef) {
 		beCPGCacheService.clearCache(SurveyService.CACHE_KEY);

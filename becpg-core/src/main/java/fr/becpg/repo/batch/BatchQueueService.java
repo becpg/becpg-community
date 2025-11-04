@@ -37,6 +37,12 @@ public interface BatchQueueService {
 	 */
 	<T> Boolean queueBatch(BatchInfo batchInfo, List<BatchStep<T>> batchSteps);
 	
+	/**
+	 * <p>isBatchInQueue.</p>
+	 *
+	 * @param batchInfo a {@link fr.becpg.repo.batch.BatchInfo} object
+	 * @return a boolean
+	 */
 	boolean isBatchInQueue(BatchInfo batchInfo);
 	
 	/**

@@ -18,6 +18,11 @@ import org.mozilla.javascript.Scriptable;
 
 import fr.becpg.model.SystemGroup;
 
+/**
+ * <p>BeCPGPeople class.</p>
+ *
+ * @author matthieu
+ */
 public class BeCPGPeople extends People {
 
 	private static final String SUPPLIER_GROUP_PREFIX = "EXTERNAL_SUPPLIER_";
@@ -26,12 +31,14 @@ public class BeCPGPeople extends People {
 
 	private AuthorityService authorityService;
 
+	/** {@inheritDoc} */
 	@Override
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
 		super.setAuthorityService(authorityService);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public Scriptable getPeoplePaging(String filter, ScriptPagingDetails pagingRequest, String sortBy, Boolean sortAsc) {
 		List<PersonInfo> peopleImpl = getPeopleImpl(filter, pagingRequest, sortBy, sortAsc);

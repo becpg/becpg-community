@@ -94,6 +94,12 @@ public final class SampleProductHelper extends BaseScopableProcessorExtension {
 				.withDestFolder(destFolder.getNodeRef());
 	}
 	
+	/**
+	 * <p>bodyMilkProductBuilder.</p>
+	 *
+	 * @param destFolder a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @return a {@link fr.becpg.repo.sample.StandardSoapTestProduct.Builder} object
+	 */
 	public fr.becpg.repo.sample.StandardSoapTestProduct.Builder bodyMilkProductBuilder(final ScriptNode destFolder) {
 		return new StandardBodyMilkTestProduct.Builder().withAlfrescoRepository(alfrescoRepository).withNodeService(nodeService)
 				.withDestFolder(destFolder.getNodeRef());

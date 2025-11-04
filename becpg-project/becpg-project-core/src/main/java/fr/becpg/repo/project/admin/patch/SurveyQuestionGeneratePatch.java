@@ -18,23 +18,41 @@ import fr.becpg.repo.admin.patch.AbstractBeCPGPatch;
 import fr.becpg.repo.survey.SurveyModel;
 import fr.becpg.repo.survey.helper.SurveyableEntityHelper;
 
+/**
+ * <p>SurveyQuestionGeneratePatch class.</p>
+ *
+ * @author matthieu
+ */
 public class SurveyQuestionGeneratePatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>TYPE_SURVEY_QUESTION</code> */
 	protected static final QName TYPE_SURVEY_QUESTION = QName.createQName(SurveyModel.SURVEY_URI, "surveyQuestion");
+	/** Constant <code>PROP_GENERATION_ENABLED</code> */
 	protected static final QName PROP_GENERATION_ENABLED = QName.createQName(SurveyModel.SURVEY_URI, "generationEnabled");
 
 	private BehaviourFilter policyBehaviourFilter;
 
 	private RuleService ruleService;
 
+	/**
+	 * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
+	 *
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object
+	 */
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>ruleService</code>.</p>
+	 *
+	 * @param ruleService a {@link org.alfresco.service.cmr.rule.RuleService} object
+	 */
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
 		BatchProcessor<NodeRef> processor = createBatchTypeProcessor(TYPE_SURVEY_QUESTION, false);

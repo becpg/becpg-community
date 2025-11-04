@@ -62,6 +62,7 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 	
 	/** Batch processing configuration, overridable via -D system properties */
 	protected static final int BATCH_THREADS = Integer.getInteger("becpg.patch.threads", 4);
+	/** Constant <code>BATCH_SIZE=Integer.getInteger(&quot;becpg.patch.batchSize&quot;, 50)</code> */
 	protected static final int BATCH_SIZE = Integer.getInteger("becpg.patch.batchSize", 50);
 	/** Constant <code>INC=BATCH_THREADS * BATCH_SIZE * 1L</code> */
 	protected static final long INC = BATCH_THREADS * BATCH_SIZE * 1L;

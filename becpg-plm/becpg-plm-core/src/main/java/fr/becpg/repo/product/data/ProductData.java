@@ -2670,7 +2670,7 @@ public class ProductData extends AbstractScorableEntity
 	/**
 	 * <p>Getter for the field <code>regulatoryResult</code>.</p>
 	 *
-	 * @return a {@link RegulatoryResult} object
+	 * @return a {@link fr.becpg.repo.regulatory.RegulatoryResult} object
 	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:regulatoryResult")
@@ -2823,10 +2823,20 @@ public class ProductData extends AbstractScorableEntity
 	
 	
 	
+	/**
+	 * <p>useUnroundedNutrients.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean useUnroundedNutrients() {
 		return Boolean.TRUE.equals(useUnroundedNutrients);
 	}
 
+	/**
+	 * <p>Setter for the field <code>useUnroundedNutrients</code>.</p>
+	 *
+	 * @param useUnroundedNutrients a {@link java.lang.Boolean} object
+	 */
 	public void setUseUnroundedNutrients(Boolean useUnroundedNutrients) {
 		this.useUnroundedNutrients = useUnroundedNutrients;
 	}

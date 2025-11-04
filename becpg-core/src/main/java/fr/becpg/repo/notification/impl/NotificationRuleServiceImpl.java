@@ -145,6 +145,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
 
+	/** {@inheritDoc} */
 	@Override
 	public void sendNotifications() {
 		for (NodeRef notificationNodeRef : getAllNotificationRule()) {

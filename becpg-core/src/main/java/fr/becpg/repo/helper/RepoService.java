@@ -74,6 +74,7 @@ public interface RepoService {
 	String getAvailableName(NodeRef folderNodeRef, String name, boolean forceRename);
 
 	/**
+	 * <p>getAvailableName.</p>
 	 *
 	 * @param folderNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param name a {@link java.lang.String} object

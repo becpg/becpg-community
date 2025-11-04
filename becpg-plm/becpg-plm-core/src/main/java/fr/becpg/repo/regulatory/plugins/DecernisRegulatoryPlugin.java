@@ -57,6 +57,8 @@ import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
+ * <p>DecernisRegulatoryPlugin class.</p>
+ *
  * @author Valentin
  */
 @Service
@@ -74,8 +76,10 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
 	private static final String DID = "did";
 
+	/** Constant <code>DECERNIS_CHAIN_ID="decernis"</code> */
 	public static final String DECERNIS_CHAIN_ID = "decernis";
 
+	/** Constant <code>MODULE_SUFFIX=" module"</code> */
 	public static final String MODULE_SUFFIX = " module";
 
 	private static final String MESSAGE_DECERNIS_ERROR = "message.decernis.error";
@@ -84,6 +88,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
 	private static final Log logger = LogFactory.getLog(DecernisRegulatoryPlugin.class);
 
+	/** Constant <code>NOT_APPLICABLE="NA"</code> */
 	public static final String NOT_APPLICABLE = "NA";
 
 	private static final String RESULT_INDICATOR = "resultIndicator";
@@ -96,8 +101,10 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
 	private static final String PARAM_NAME = "name";
 
+	/** Constant <code>THRESHOLD="threshold"</code> */
 	protected static final String THRESHOLD = "threshold";
 
+	/** Constant <code>CITATION="citation"</code> */
 	protected static final String CITATION = "citation";
 
 	private static final Map<String, String> moduleToCodeMap = new HashMap<>();
@@ -108,8 +115,11 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 	private static final String STANDARDS_OF_IDENTITY_FOOD = "STANDARDS_OF_IDENTITY_FOOD";
 	private static final String FOOD_ADDITIVES = "FOOD_ADDITIVES";
 
+	/** Constant <code>MESSAGE_PROHIBITED_ING="message.decernis.ingredient.prohibited"</code> */
 	public static final String MESSAGE_PROHIBITED_ING = "message.decernis.ingredient.prohibited";
+	/** Constant <code>MESSAGE_NOTLISTED_ING="message.decernis.ingredient.notListed"</code> */
 	public static final String MESSAGE_NOTLISTED_ING = "message.decernis.ingredient.notListed";
+	/** Constant <code>MESSAGE_PERMITTED_ING="message.decernis.ingredient.permitted"</code> */
 	public static final String MESSAGE_PERMITTED_ING = "message.decernis.ingredient.permitted";
 
 	private static final String PARAM_COMPANY = "company";
@@ -139,6 +149,11 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
 	private Map<String, List<String>> functionsMap = new ConcurrentHashMap<>();
 
+	/**
+	 * <p>analysisUrl.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String analysisUrl() {
 		return systemConfigurationService.confValue("beCPG.decernis.analysisUrl");
 	}
@@ -171,6 +186,13 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.specification.addInfoReqCtrl"));
 	}
 
+	/**
+	 * <p>Constructor for DecernisRegulatoryPlugin.</p>
+	 *
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 */
 	public DecernisRegulatoryPlugin(SystemConfigurationService systemConfigurationService, @Qualifier("nodeService") NodeService nodeService,
 			AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		super();
@@ -185,6 +207,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
+	/** {@inheritDoc} */
 	@Override
 	public void checkRecipe(RegulatoryContext context, RegulatoryBatch regulatoryBatch) {
 
@@ -241,6 +264,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return recipeAnalysisResults;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public Integer getBatchThreads() {
 		String confValue = systemConfigurationService.confValue("beCPG.decernis.batchThreads");
@@ -429,6 +453,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return token != null ? token.replace("Bearer ", "").strip() : "";
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void checkIngredients(RegulatoryContext context, RegulatoryBatch checkContext) {
 		JSONObject ingredientAnalysisResults = null;
@@ -471,6 +496,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return "Error while creating Decernis recipe: " + DecernisHelper.cleanError(e.getMessage());
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String fetchIngredientId(IngListDataItem ingListDataItem) {
 
@@ -547,6 +573,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return ingredientId;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<CountryBatch> splitCountries(RegulatoryContext context, List<String> countries) {
 		List<CountryBatch> countryBatches = new ArrayList<>();
@@ -576,6 +603,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return countryBatches;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public List<UsageBatch> splitUsages(RegulatoryContext context, List<String> usages) {
 		List<UsageBatch> usageBatches = new ArrayList<>();
@@ -873,6 +901,13 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return ingRegulatoryListDataItems;
 	}
 
+	/**
+	 * <p>createIngRegulatoryListDataItem.</p>
+	 *
+	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param country a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem} object
+	 */
 	protected IngRegulatoryListDataItem createIngRegulatoryListDataItem(NodeRef ing, NodeRef country) {
 
 		IngRegulatoryListDataItem ingRegulatoryListDataItem = new IngRegulatoryListDataItem();
@@ -938,6 +973,12 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return functions;
 	}
 
+	/**
+	 * <p>createEntity.</p>
+	 *
+	 * @param body a {@link java.lang.String} object
+	 * @return a {@link org.springframework.http.HttpEntity} object
+	 */
 	protected HttpEntity<String> createEntity(String body) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
@@ -1068,6 +1109,14 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return null;
 	}
 
+	/**
+	 * <p>createReqCtrl.</p>
+	 *
+	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param reqCtrlMessage a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @param reqType a {@link fr.becpg.repo.regulatory.RequirementType} object
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementListDataItem} object
+	 */
 	protected RequirementListDataItem createReqCtrl(NodeRef ing, MLText reqCtrlMessage, RequirementType reqType) {
 		RequirementListDataItem reqCtrlItem = new RequirementListDataItem();
 		reqCtrlItem.setReqType(reqType);

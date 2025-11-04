@@ -35,7 +35,7 @@ public interface SecurityServicePlugin {
 	/**
 	 * <p>getMaxAccessMode.</p>
 	 * Returns the maximum access mode this plugin allows for the given node.
-	 * This method should return the plugin's own access restriction without 
+	 * This method should return the plugin's own access restriction without
 	 * considering the input access mode.
 	 *
 	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object

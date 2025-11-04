@@ -31,6 +31,11 @@ import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 
+/**
+ * <p>SignatureProjectHelper class.</p>
+ *
+ * @author matthieu
+ */
 @Component
 public class SignatureProjectHelper {
 	
@@ -64,6 +69,12 @@ public class SignatureProjectHelper {
 	private RepoService repoService;
 
 
+	/**
+	 * <p>extractReportName.</p>
+	 *
+	 * @param reportNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public String extractReportName(NodeRef reportNodeRef) {
 		String reportName = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
 
@@ -79,6 +90,13 @@ public class SignatureProjectHelper {
 	}
 	
 
+	/**
+	 * <p>copyReport.</p>
+	 *
+	 * @param parentFolder a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param reportNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef copyReport(NodeRef parentFolder, NodeRef reportNodeRef) {
 		String reportName = extractReportName(reportNodeRef);
 		
@@ -105,6 +123,12 @@ public class SignatureProjectHelper {
 	}
 	
 	
+	/**
+	 * <p>copyReports.</p>
+	 *
+	 * @param originalDocuments a {@link java.util.List} object
+	 * @return a {@link java.util.List} object
+	 */
 	public List<NodeRef> copyReports(List<NodeRef> originalDocuments) {
 		List<NodeRef> documents = new ArrayList<>();
 		for (NodeRef originalDocument : originalDocuments) {
@@ -127,6 +151,13 @@ public class SignatureProjectHelper {
 		return documents;
 	}
 	
+	/**
+	 * <p>findDocumentsToSign.</p>
+	 *
+	 * @param folder a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param signed a boolean
+	 * @return a {@link java.util.List} object
+	 */
 	public List<NodeRef> findDocumentsToSign(NodeRef folder, boolean signed) {
 		return findDocumentsToSign(folder, signed, 0);
 	}
@@ -330,6 +361,13 @@ public class SignatureProjectHelper {
 		return generateDeliverableName(docName, resourceFirstName, resourceLastName, DELIVERABLE_SUFFIX_REJECT_DOC);
 	}
 	
+	/**
+	 * <p>findUrlDeliverable.</p>
+	 *
+	 * @param project a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param signDeliverable a {@link fr.becpg.repo.project.data.projectList.DeliverableListDataItem} object
+	 * @return a {@link fr.becpg.repo.project.data.projectList.DeliverableListDataItem} object
+	 */
 	public static DeliverableListDataItem findUrlDeliverable(ProjectData project, DeliverableListDataItem signDeliverable) {
 		String urlDeliverableName = signDeliverable.getName().replace(DELIVERABLE_SUFFIX_SIGN, "").replace(DELIVERABLE_SUFFIX_PREPARE, "")
 				+ DELIVERABLE_SUFFIX_URL;
@@ -341,6 +379,13 @@ public class SignatureProjectHelper {
 		return null;
 	}
 	
+	/**
+	 * <p>findDocDeliverable.</p>
+	 *
+	 * @param project a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param taskDeliverable a {@link fr.becpg.repo.project.data.projectList.DeliverableListDataItem} object
+	 * @return a {@link fr.becpg.repo.project.data.projectList.DeliverableListDataItem} object
+	 */
 	public static DeliverableListDataItem findDocDeliverable(ProjectData project, DeliverableListDataItem taskDeliverable) {
 		for (DeliverableListDataItem deliverable : project.getDeliverableList()) {
 			if (deliverable.getContent() != null && deliverable.getName().startsWith(taskDeliverable.getName()) && deliverable.getName().endsWith(DELIVERABLE_SUFFIX_DOC)) {

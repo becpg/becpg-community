@@ -22,6 +22,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+/**
+ * <p>TrashcanPatch class.</p>
+ *
+ * @author matthieu
+ */
 public class TrashcanPatch extends AbstractBeCPGPatch {
 
 	private static final Log logger = LogFactory.getLog(TrashcanPatch.class);
@@ -29,6 +34,11 @@ public class TrashcanPatch extends AbstractBeCPGPatch {
 
 	private Duration keepPeriod;
 	
+	/**
+	 * <p>Setter for the field <code>keepPeriod</code>.</p>
+	 *
+	 * @param keepPeriod a {@link java.lang.String} object
+	 */
 	public void setKeepPeriod(String keepPeriod) {
 		this.keepPeriod = Duration.parse(keepPeriod)
 				// add 1 day to avoid undesired deletions as TrashcanCleaner runs every day

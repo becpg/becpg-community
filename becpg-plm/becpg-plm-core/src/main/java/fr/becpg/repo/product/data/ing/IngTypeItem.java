@@ -95,12 +95,22 @@ public class IngTypeItem extends LabelingComponent{
 		return isDoNotDeclare;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>regulatoryCode</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:regulatoryCode")
 	public String getRegulatoryCode() {
 		return regulatoryCode;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>regulatoryCode</code>.</p>
+	 *
+	 * @param regulatoryCode a {@link java.lang.String} object
+	 */
 	public void setRegulatoryCode(String regulatoryCode) {
 		this.regulatoryCode = regulatoryCode;
 	}
