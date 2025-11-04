@@ -147,6 +147,36 @@
 				draggable : true,
 				width : "55em"
 			});
+			
+		var versionsGraphFilter = document.getElementById("versions-graph-filter-name");
+		var versionsGraphFilterSystemState = document.getElementById("versions-graph-filter-system-state");
+		var versionsGraphFilterViewSimple = document.getElementById("versions-graph-filter-view-simple");
+		var versionsGraphFilterViewFull = document.getElementById("versions-graph-filter-view-full");
+		
+		var typingTimer;
+		var doneTypingInterval = 500;
+		const self = this;
+		versionsGraphFilter.addEventListener("keyup", function() {
+			clearTimeout(typingTimer);
+  			typingTimer = setTimeout(function() {
+				self.update(versionsGraphFilter.value, versionsGraphFilterSystemState.value, !versionsGraphFilterViewSimple.checked);	  
+			}, doneTypingInterval);
+		});
+		versionsGraphFilter.addEventListener("keydown", function() {
+			clearTimeout(typingTimer);
+		});
+		
+		versionsGraphFilterSystemState.addEventListener("change", function() {
+			self.update(versionsGraphFilter.value, versionsGraphFilterSystemState.value, !versionsGraphFilterViewSimple.checked);
+		});
+		
+		versionsGraphFilterViewSimple.addEventListener("change", function() {
+			self.update(versionsGraphFilter.value, versionsGraphFilterSystemState.value, !versionsGraphFilterViewSimple.checked);
+		});
+		
+		versionsGraphFilterViewFull.addEventListener("change", function() {
+			self.update(versionsGraphFilter.value, versionsGraphFilterSystemState.value, !versionsGraphFilterViewSimple.checked);
+		});
          
          // Update
          this.update();
@@ -201,6 +231,8 @@
 
 				  });
 		  });
+		  
+		 
          
          // Show panel
          this._showPanel();
@@ -228,7 +260,7 @@
        * 
        * @method onReady
        */
-      update : function VersionsGraph_update() {
+      update : function VersionsGraph_update(name, systemState, fullView) {
 
          var instance = this;
 
@@ -237,6 +269,11 @@
                   dataSource : {
                      url : Alfresco.constants.PROXY_URI + "becpg/api/entity-version?mode=graph&nodeRef=" + this.options.nodeRef,
                      doBeforeParseData : function(oRequest, oFullResponse) {
+						 
+						 oFullResponse = oFullResponse.filter(function(product) {
+							return ((name || "") == "" || product.name.includes(name)) && 
+								((systemState || "") == "" || product.productState == systemState);
+						 });
 
                         instance.graphData = oFullResponse;
 
