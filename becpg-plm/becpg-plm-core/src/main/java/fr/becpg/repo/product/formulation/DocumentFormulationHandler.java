@@ -29,6 +29,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.expressions.ExpressionService;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
@@ -37,6 +38,7 @@ import fr.becpg.repo.formulation.spel.SpelHelper;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RepoService;
+import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
@@ -82,8 +84,6 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 
 	/** Constant <code>MESSAGE_DOCUMENT_FORMULATION_ERROR="message.formulate.document.error"</code> */
 	public static final String MESSAGE_DOCUMENT_FORMULATION_ERROR = "message.formulate.document.error";
-
-	private static final String DEFAULT_SUPPLIER_DOCUMENTS_PATH = "SupplierDocuments";
 
 	private static final String MESSAGE_DOCUMENT_MANDATORY = "message.formulate.document.mandatory";
 
@@ -337,11 +337,16 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 
 		// Determine the destination path
 		String destPath = (docTypeItem.getDestPath() != null) && !docTypeItem.getDestPath().trim().isEmpty() ? docTypeItem.getDestPath()
-				: DEFAULT_SUPPLIER_DOCUMENTS_PATH;
+				: RepoConsts.PATH_SUPPLIER_DOCUMENTS;
+		
 
 		NodeRef destFolder = null;
 		if (!".".equals(destPath)) {
-			destFolder = repoService.getFolderByPath(productData.getNodeRef(), destPath);
+			destFolder = nodeService.getChildByName( productData.getNodeRef(), ContentModel.ASSOC_CONTAINS,
+					TranslateHelper.getTranslatedPath(destPath));
+			if(destFolder == null) {
+				destFolder = repoService.getFolderByPath(productData.getNodeRef(), destPath);
+			}
 		}
 
 		if (destFolder == null) {
