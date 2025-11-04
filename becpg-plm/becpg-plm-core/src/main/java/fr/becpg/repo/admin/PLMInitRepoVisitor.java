@@ -94,7 +94,6 @@ import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -1029,6 +1028,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				subFolders);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
+		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_REPORTS);
+		
 		entityTplService.createOrUpdateList(entityTplNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
 
 		
