@@ -145,7 +145,7 @@
          // Create the panel from the HTML returned in the server reponse
          this.widgets.panel = Alfresco.util.createYUIPanel(dialogDiv, {
 				draggable : true,
-				width : "55em"
+				width : "95em"
 			});
 			
 		var versionsGraphFilter = document.getElementById("versions-graph-filter-name");
@@ -287,7 +287,8 @@
                      columnDefinitions : [ {
                         key : "version",
                         sortable : false,
-                        formatter : this.renderCellVersion
+                        formatter : this.renderCellVersion,
+                        width: '75%'
                      }, {
                         key : "date",
                         sortable : false,
