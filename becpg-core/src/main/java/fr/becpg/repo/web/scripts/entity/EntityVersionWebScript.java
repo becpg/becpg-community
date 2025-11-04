@@ -200,14 +200,23 @@ public class EntityVersionWebScript extends AbstractWebScript {
 					} else {
 						jsonVersion.put("label", version.getVersionLabel());
 					}
-
-					String description = version.getDescription();
-
+					
+					String description = (String) nodeService.getProperty(version.getEntityNodeRef(),
+							ContentModel.PROP_DESCRIPTION);
+					
 					if (description != null && description.length() > MAX_DESCRIPTION_LENGTH) {
 						description = description.substring(0, MAX_DESCRIPTION_LENGTH) + " ...";
 					}
-
+					
 					jsonVersion.put("description", description);
+
+					String versionDescription = version.getDescription();
+
+					if (versionDescription != null && versionDescription.length() > MAX_DESCRIPTION_LENGTH) {
+						versionDescription = versionDescription.substring(0, MAX_DESCRIPTION_LENGTH) + " ...";
+					}
+					
+					jsonVersion.put("versionDescription", versionDescription);
 
 					Date createdDate = version.getFrozenModifiedDate();
 
