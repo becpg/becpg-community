@@ -108,7 +108,7 @@ purge() {
 build() {
    if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
-  	 $MVN_EXEC package $EXTRA_ENV -DskipTests=true  -Dmaven.build.cache.enabled=true  -Dcheckstyle.skip=true  -Dbecpg.dockerbuild.name="enterprise-test"
+  	 $MVN_EXEC package $EXTRA_ENV -DskipTests=true  -Dmaven.build.cache.enabled=true -Djacoco.skip=true -Dcheckstyle.skip=true  -Dbecpg.dockerbuild.name="enterprise-test"
      COMPOSE_FILE="./distribution/target/docker-compose-build-fast.yml"
 
       docker compose -f $COMPOSE_FILE build becpg-base-core
