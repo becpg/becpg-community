@@ -1721,43 +1721,6 @@
 					<field id="cm:modified" set="audit" />
 				</appearance>
 			</form>
-			<form id="product-list">
-				<field-visibility>
-					<show id="cm:name" />
-					<show id="cm:title" />
-					<show id="cm:description" force="true" />
-					<show id="bcpg:code" />
-					<show id="qa:qcSamplesCounter" />
-					<show id="qa:qcNextAnalysisDate" />
-					<show id="qa:qcState" />
-					<show id="qa:qcControlPlans" />
-
-					<!-- batch -->
-					<show id="qa:batchId" />
-					<show id="qa:orderId" />
-					<show id="qa:batchStart" />
-					<show id="qa:batchDuration" />
-					<show id="bcpg:clients" />
-					<show id="bcpg:suppliers" />
-					<show id="qa:batchComment" />
-
-					<!-- Product -->
-					<show id="qa:product" />
-					
-					<!-- local security rule -->
-					<show id="sec:securityRef" />	
-
-					<!-- auditable -->
-					<show id="cm:creator" for-mode="view" />
-					<show id="cm:created" for-mode="view" />
-					<show id="cm:modifier" for-mode="view" />
-					<show id="cm:modified" for-mode="view" />
-
-				</field-visibility>
-				<appearance>
-					<field id="cm:name" read-only="true"></field>
-				</appearance>
-			</form>
 			<form id="reports-parameters">
 				<field-visibility>
 					<show id="rep:reportLocales" force="true" />

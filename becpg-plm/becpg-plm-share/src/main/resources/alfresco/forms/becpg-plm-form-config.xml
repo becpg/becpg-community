@@ -9517,8 +9517,6 @@
 				<field-visibility>
 					<show id="bcpg:ingListIng" />
 
-					<show id="bcpg:ingListIng" />
-
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListQtyPerc1" force="true" />
 					<show id="bcpg:ingListQtyPerc2" force="true" />
@@ -9741,7 +9739,7 @@
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:variantIds" label="hidden" />
-					<field id="bcpg:pclType" read-only="true" />
+					<field id="bcpg:mblType" read-only="true" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
