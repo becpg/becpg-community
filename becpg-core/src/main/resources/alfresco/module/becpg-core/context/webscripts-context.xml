@@ -373,5 +373,9 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="personService" ref="personService" />
 	</bean>
+	
+	<bean id="webscript.fr.becpg.entity.system-states.get" class="fr.becpg.repo.web.scripts.entity.SystemStatesWebScript" parent="webscript">
+		<constructor-arg ref="ServiceRegistry" />
+	</bean>
     
 </beans>

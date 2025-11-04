@@ -433,4 +433,7 @@ public final class BeCPGModel {
 	public static final QName PROP_AI_VALIDATION_HINTS = QName.createQName(BECPG_URI, "aiValidationHints");
 	/** Constant <code>PROP_AI_EXTRA_PROMPT</code> */
 	public static final QName PROP_AI_VALIDATION_DATE = QName.createQName(BECPG_URI, "aiValidationDate");
+	
+	/** Constant <code>CONSTRAINT_BECPG_SYSTEM_STATE</code> */
+	public static final QName CONSTRAINT_BECPG_SYSTEM_STATE = QName.createQName(BECPG_URI, "systemState");
 }

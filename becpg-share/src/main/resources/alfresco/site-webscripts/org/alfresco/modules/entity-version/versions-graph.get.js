@@ -1,0 +1,1 @@
+model.systemStates = JSON.parse(remote.connect("alfresco").get("/becpg/entity/system-states"));
