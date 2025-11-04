@@ -371,6 +371,9 @@
          html += ((doc.description || "").length > 0) ? $html(doc.description, true)
                : '<span class="faded">(' + Alfresco.util.message("label.noComment", beCPG.module
                      .getVersionsGraphInstance().name) + ')</span>';
+         html += ((doc.versionDescription || "").length > 0) ? $html(doc.versionDescription, true)
+               : '<br><span class="faded">(' + Alfresco.util.message("label.noComment", beCPG.module
+                     .getVersionsGraphInstance().name) + ')</span>';
          html += '</div>';
          html += '</div>';
     
