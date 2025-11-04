@@ -15,6 +15,12 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>WorkProviderFactory class.</p>
+ *
+ * @author matthieu
+ * @since 25.2.0.31
+ */
 public class WorkProviderFactory {
 
 	private static final int DEFAULT_PULL_SIZE = 1000;
@@ -24,14 +30,35 @@ public class WorkProviderFactory {
 
 	}
 
+	/**
+	 * <p>fromList.</p>
+	 *
+	 * @param items a {@link java.util.List} object
+	 * @param <T> a T class
+	 * @return a {@link fr.becpg.repo.batch.WorkProviderFactory.DefaultWorkProviderBuilder} object
+	 */
 	public static <T> DefaultWorkProviderBuilder<T> fromList(List<T> items) {
 		return new DefaultWorkProviderBuilder<>(items);
 	}
 
+	/**
+	 * <p>fromSourceAssocs.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 * @param targetRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param assocName a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link fr.becpg.repo.batch.WorkProviderFactory.SourceAssocsWorkProviderBuilder} object
+	 */
 	public static SourceAssocsWorkProviderBuilder fromSourceAssocs(AssociationService associationService, NodeRef targetRef, QName assocName) {
 		return new SourceAssocsWorkProviderBuilder(associationService, targetRef, assocName);
 	}
 
+	/**
+	 * <p>fromQueryBuilder.</p>
+	 *
+	 * @param beCPGQueryBuilder a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 * @return a {@link fr.becpg.repo.batch.WorkProviderFactory.QueryBuilderWorkProviderBuilder} object
+	 */
 	public static QueryBuilderWorkProviderBuilder fromQueryBuilder(BeCPGQueryBuilder beCPGQueryBuilder) {
 		return new QueryBuilderWorkProviderBuilder(beCPGQueryBuilder);
 	}

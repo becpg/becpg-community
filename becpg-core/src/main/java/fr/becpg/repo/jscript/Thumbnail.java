@@ -42,7 +42,7 @@ import fr.becpg.repo.report.entity.EntityReportService;
 /**
  * Helper JScript extension that retrieves or creates thumbnails/reports for entities.
  *
- * Acts as a thin orchestration layer over {@link EntityService} and {@link EntityReportService}
+ * Acts as a thin orchestration layer over {@link fr.becpg.repo.entity.EntityService} and {@link fr.becpg.repo.report.entity.EntityReportService}
  * with Alfresco transaction guard logic to avoid lock conflicts.
  *
  * @author matthieu,gaspard
@@ -56,6 +56,11 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 	private EntityReportService entityReportService;
 	private ServiceRegistry serviceRegistry;
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -174,6 +179,9 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 
 	/**
 	 * Force a refresh of an existing report node. Returns the refreshed report script node.
+	 *
+	 * @param reportNode a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @return a {@link org.alfresco.repo.jscript.ScriptNode} object
 	 */
 	public ScriptNode refreshReport(ScriptNode reportNode) {
 

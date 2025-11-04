@@ -32,34 +32,78 @@ public class RegulatoryContext {
 
 	private List<IngRegulatoryListDataItem> ingRegulatoryListDataItems = new CopyOnWriteArrayList<>();
 
+	/**
+	 * <p>Getter for the field <code>ingList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	public List<IngListDataItem> getIngList() {
 		return ingList;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>ingRegulatoryListDataItems</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	public List<IngRegulatoryListDataItem> getIngRegulatoryListDataItems() {
 		return ingRegulatoryListDataItems;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>regulatoryBatches</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	public List<RegulatoryBatch> getRegulatoryBatches() {
 		return regulatoryBatches;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>regulatoryBatches</code>.</p>
+	 *
+	 * @param regulatoryBatches a {@link java.util.List} object
+	 */
 	public void setRegulatoryBatches(List<RegulatoryBatch> regulatoryBatches) {
 		this.regulatoryBatches = regulatoryBatches;
 	}
 	
+	/**
+	 * <p>addCountry.</p>
+	 *
+	 * @param countryCode a {@link java.lang.String} object
+	 * @param countryNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public void addCountry(String countryCode, NodeRef countryNodeRef) {
 		countryMap.put(countryCode, countryNodeRef);
 	}
 	
+	/**
+	 * <p>addUsage.</p>
+	 *
+	 * @param usageCode a {@link java.lang.String} object
+	 * @param moduleName a {@link java.lang.String} object
+	 */
 	public void addUsage(String usageCode, String moduleName) {
 		usageMap.put(usageCode, moduleName);
 	}
 	
+	/**
+	 * <p>getUsageModule.</p>
+	 *
+	 * @param usageCode a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getUsageModule(String usageCode) {
 		return usageMap.get(usageCode);
 	}
 	
+	/**
+	 * <p>getCountryNodeRef.</p>
+	 *
+	 * @param countryCode a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public NodeRef getCountryNodeRef(String countryCode) {
 		return countryMap.get(countryCode);
 	}

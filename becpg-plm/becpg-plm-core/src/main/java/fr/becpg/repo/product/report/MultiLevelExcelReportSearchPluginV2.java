@@ -43,13 +43,13 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
  * Excel report plugin for multi-level extraction (Composition, Process, Packaging) from finished products and semi-finished products.
- * 
+ *
  * <h2>Architecture</h2>
  * <ul>
  * <li><b>Composition, Process, Packaging (without WUsed)</b>: Uses ProductReportExtractorPlugin logic with CurrentLevelQuantities for precise calculations</li>
  * <li><b>WUsed and other list types</b>: Uses MultiLevelDataListService for generic multi-level exploration</li>
  * </ul>
- * 
+ *
  * <h2>Configuration in Excel Template</h2>
  * <p>First row defines the list type and parameters:</p>
  * <pre>
@@ -58,7 +58,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  * TYPE    mpm:processList        MaxLevel2
  * TYPE    bcpg:packagingList    wUsedAllLevel
  * </pre>
- * 
+ *
  * <h3>Supported Parameters</h3>
  * <ul>
  * <li><b>AllLevel</b>: Export all levels (unlimited depth)</li>
@@ -66,9 +66,9 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  * <li><b>OnlyLevel[N]</b>: Export only level N items</li>
  * <li><b>wUsed[Parameter]</b>: Use "Where Used" mode with MultiLevelDataListService (e.g., wUsedAllLevel, wUsedMaxLevel2)</li>
  * </ul>
- * 
+ *
  * <h2>Available Excel Columns (Second Row)</h2>
- * 
+ *
  * <h3>Common Columns (All Lists)</h3>
  * <ul>
  * <li><b>prop_bcpg_depthLevel</b>: Depth level in the hierarchy (1, 2, 3...)</li>
@@ -76,7 +76,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  * <li><b>prop_cm_name</b>: Item name</li>
  * <li><b>prop_bcpg_code</b>: Item code</li>
  * </ul>
- * 
+ *
  * <h3>Packaging List Columns (bcpg:packagingList)</h3>
  * <ul>
  * <li><b>prop_bcpg_packagingListQty</b>: Packaging quantity</li>
@@ -87,7 +87,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  * <li><b>prop_bcpg_productDropPackagingOfComponents</b>: Flag indicating if packaging should be dropped</li>
  * <li><b>prop_bcpg_packagingListLossPerc</b>: Loss percentage</li>
  * </ul>
- * 
+ *
  * <h3>Composition List Columns (bcpg:compoList)</h3>
  * <ul>
  * <li><b>prop_bcpg_compoListQty</b>: Component quantity</li>
@@ -97,7 +97,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  * <li><b>prop_bcpg_compoListLossPerc</b>: Loss percentage</li>
  * <li><b>prop_bcpg_compoListQtySubFormula</b>: Sub-formula for quantity calculation</li>
  * </ul>
- * 
+ *
  * <h3>Process List Columns (mpm:processList)</h3>
  * <ul>
  * <li><b>prop_mpm_plQty</b>: Process quantity</li>
@@ -107,7 +107,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  * <li><b>prop_mpm_plUnit</b>: Process unit</li>
  * <li><b>prop_mpm_plDuration</b>: Process duration</li>
  * </ul>
- * 
+ *
  * <h3>Entity Properties (Prefixed with entity_)</h3>
  * <p>Access parent product properties using entity_ prefix:</p>
  * <ul>
@@ -115,27 +115,27 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  * <li><b>entity_prop_bcpg_code</b>: Parent product code</li>
  * <li><b>entity_prop_bcpg_erpCode</b>: Parent product ERP code</li>
  * </ul>
- * 
+ *
  * <h3>Dynamic Characteristics (Prefixed with dyn_)</h3>
  * <p>Access dynamic characteristics from composition/packaging/process lists:</p>
  * <ul>
  * <li><b>dyn_[CharacteristicName]</b>: Dynamic characteristic value (spaces replaced by underscores)</li>
  * </ul>
- * 
+ *
  * <h3>WUsed Mode Additional Columns</h3>
  * <p>When using wUsed parameter, additional columns are available:</p>
  * <ul>
  * <li><b>wUsedEntity_[property]</b>: Properties from the entity using this component</li>
  * <li><b>prop_bcpg_parent</b>: Parent entity code</li>
  * </ul>
- * 
+ *
  * <h3>Formula Columns</h3>
  * <p>Custom calculated columns using SpEL expressions:</p>
  * <ul>
  * <li><b>formula|[SpEL Expression]</b>: Evaluated formula (e.g., formula|entity.name + ' - ' + product.name)</li>
  * <li><b>image|[SpEL Expression]</b>: Image URL formula</li>
  * </ul>
- * 
+ *
  * <h2>Example Configuration</h2>
  * <pre>
  * Row 1: TYPE    bcpg:packagingList    MultiLevel
@@ -143,7 +143,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  * Row 3: (Leave empty or add # for comments)
  * Row 4+: Data will be populated here
  * </pre>
- * 
+ *
  * <h2>Behavior</h2>
  * <ul>
  * <li>Automatically recurses into semi-finished products and finished products in composition</li>
@@ -792,6 +792,25 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
     }
 
     // Method from MultiLevelExcelReportSearchPlugin for other list types
+    /**
+     * <p>appendNextLevel.</p>
+     *
+     * @param listData a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object
+     * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+     * @param itemType a {@link org.alfresco.service.namespace.QName} object
+     * @param metadataFields a {@link java.util.List} object
+     * @param cache a {@link java.util.Map} object
+     * @param rownum a int
+     * @param key a {@link java.io.Serializable} object
+     * @param parentQty a {@link java.lang.Double} object
+     * @param parameters an array of {@link java.lang.String} objects
+     * @param entityItems a {@link java.util.Map} object
+     * @param dynamicCharactColumnCache a {@link java.util.Map} object
+     * @param excelCellStyles a {@link fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles} object
+     * @param wUsedEntityType a {@link org.alfresco.service.namespace.QName} object
+     * @param wUsedAssocCache a {@link java.util.Map} object
+     * @return a int
+     */
     protected int appendNextLevel(MultiLevelListData listData, XSSFSheet sheet, QName itemType,
             List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache, int rownum, Serializable key,
             Double parentQty, String[] parameters, Map<String, Object> entityItems, Map<String, List<String>> dynamicCharactColumnCache,

@@ -202,6 +202,11 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 		return soapProduct;
 	}
 
+	/**
+	 * <p>createToxList.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	protected List<ToxListDataItem> createToxList() {
 		List<ToxListDataItem> toxList = new ArrayList<>();
 		ToxListDataItem toxListDataItem = new ToxListDataItem();

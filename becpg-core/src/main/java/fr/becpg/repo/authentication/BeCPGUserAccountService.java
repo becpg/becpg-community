@@ -82,6 +82,7 @@ public class BeCPGUserAccountService {
 	 *
 	 * @param userAccount a {@link fr.becpg.repo.authentication.BeCPGUserAccount} object
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param createOnly a boolean
 	 */
 	public NodeRef getOrCreateUser(BeCPGUserAccount userAccount, boolean createOnly) {
 		return AuthenticationUtil.runAsSystem(() -> {

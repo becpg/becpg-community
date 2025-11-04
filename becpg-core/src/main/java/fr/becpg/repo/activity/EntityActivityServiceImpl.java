@@ -295,6 +295,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		return postGenericActivity(entityNodeRef, changeOrderNodeRef, ActivityType.ChangeOrder);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean postComplianceCheckActivity(NodeRef entityNodeRef) {
 		return postGenericActivity(entityNodeRef, entityNodeRef, ActivityType.ComplianceCheck);
@@ -501,6 +502,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean postDataListDeleteFromTemplateActivity(NodeRef entityNodeRef, NodeRef templateNodeRef, String listType) {
 		try {
@@ -1144,6 +1146,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public BatchInfo cleanActivities() {
 		return entityActivityCleaner.cleanActivities(BatchPriority.VERY_LOW);

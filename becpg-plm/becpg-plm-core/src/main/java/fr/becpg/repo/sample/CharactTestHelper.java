@@ -125,6 +125,14 @@ public class CharactTestHelper {
 		return getOrCreateIng(nodeService, ingName, null);
 	}
 	
+	/**
+	 * <p>getOrCreateIng.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param ingName a {@link java.lang.String} object
+	 * @param ingType a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public static NodeRef getOrCreateIng(NodeService nodeService, String ingName, NodeRef ingType) {
 		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(BeCPGModel.PROP_CHARACT_NAME, ingName);
@@ -136,6 +144,13 @@ public class CharactTestHelper {
 	}
 	
 	
+	/**
+	 * <p>getOrCreateIngType.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param ingTypeValue a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public static NodeRef getOrCreateIngType(NodeService nodeService, String ingTypeValue) {
 		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(BeCPGModel.PROP_LV_VALUE, ingTypeValue);
@@ -159,6 +174,14 @@ public class CharactTestHelper {
 				PLMModel.TYPE_PHYSICO_CHEM, properties);
 	}
 
+	/**
+	 * <p>getOrCreateNutrient.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param code a {@link java.lang.String} object
+	 * @param unit a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public static NodeRef getOrCreateNutrient(NodeService nodeService, String code, String unit) {
 		String charactName = NUTRIENT_CHARACT_NAMES.getOrDefault(code, code);
 		Map<QName, Serializable> properties = new HashMap<>();
@@ -231,6 +254,15 @@ public class CharactTestHelper {
 		return getOrCreateGeo(nodeService, code, name, new HashMap<>());
 	}
 	
+	/**
+	 * <p>getOrCreateGeo.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param code a {@link java.lang.String} object
+	 * @param name a {@link java.lang.String} object
+	 * @param properties a {@link java.util.Map} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public static NodeRef getOrCreateGeo(NodeService nodeService, String code, String name, Map<QName, Serializable> properties) {
 		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
 		properties.put(PLMModel.PROP_GEO_ORIGIN_ISOCODE,code);

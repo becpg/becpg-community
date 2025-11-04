@@ -127,7 +127,7 @@ public class SurveyListDataItem extends BeCPGDataObject implements RegulatoryEnt
 	/**
 	 * <p>Setter for the field <code>numberComment</code>.</p>
 	 *
-	 * @param comment a {@link java.lang.Double} object
+	 * @param numberComment a {@link java.lang.Double} object
 	 */
 	public void setNumberComment(Double numberComment) {
 		this.numberComment = numberComment;
@@ -147,7 +147,7 @@ public class SurveyListDataItem extends BeCPGDataObject implements RegulatoryEnt
 	/**
 	 * <p>Setter for the field <code>dateComment</code>.</p>
 	 *
-	 * @param comment a {@link java.util.Date} object
+	 * @param dateComment a {@link java.util.Date} object
 	 */
 	public void setDateComment(Date dateComment) {
 		this.dateComment = dateComment;
@@ -228,7 +228,7 @@ public class SurveyListDataItem extends BeCPGDataObject implements RegulatoryEnt
 	}
 	
 	
-		/**
+	/**
 	 * <p>Getter for the field <code>regulatoryType</code>.</p>
 	 *
 	 * @return a {@link fr.becpg.repo.regulatory.RequirementType} object
@@ -297,7 +297,7 @@ public class SurveyListDataItem extends BeCPGDataObject implements RegulatoryEnt
 	/**
 	 * <p>Setter for the field <code>reportKinds</code>.</p>
 	 *
-	 * @param choices a {@link java.util.List} object
+	 * @param reportKinds a {@link java.util.List} object
 	 */
 	public void setReportKinds(List<String> reportKinds) {
 		this.reportKinds = reportKinds;

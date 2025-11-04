@@ -44,6 +44,7 @@ public class AuthorityHelper implements InitializingBean {
 	
 	private static final Log logger = LogFactory.getLog(AuthorityHelper.class);
 	
+	/** Constant <code>CACHE_KEY="AuthorityHelper.class.getName()"</code> */
 	public static final String CACHE_KEY = AuthorityHelper.class.getName();
 	
 	@Autowired
@@ -281,6 +282,11 @@ public class AuthorityHelper implements InitializingBean {
 		return false;
 	}
 	
+	/**
+	 * <p>enableAccount.</p>
+	 *
+	 * @param userName a {@link java.lang.String} object
+	 */
 	public static void enableAccount(String userName) {
 		if (instance.personService.personExists(userName)) {
 			if (instance.authorityService.isAdminAuthority(AuthenticationUtil.getFullyAuthenticatedUser())) {
@@ -293,6 +299,11 @@ public class AuthorityHelper implements InitializingBean {
 		}
 	}
 	
+	/**
+	 * <p>disableAccount.</p>
+	 *
+	 * @param userName a {@link java.lang.String} object
+	 */
 	public static void disableAccount(String userName) {
 		if (instance.personService.personExists(userName)) {
 			NodeRef personNodeRef = instance.personService.getPerson(userName);
@@ -307,7 +318,7 @@ public class AuthorityHelper implements InitializingBean {
 	/**
 	 * <p>groupHasPermission.</p>
 	 *
-	 * @param folderNodeRef
+	 * @param folderNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param groupName a {@link java.lang.String} object
 	 * @param permission a {@link java.lang.String} object
 	 * @return a boolean

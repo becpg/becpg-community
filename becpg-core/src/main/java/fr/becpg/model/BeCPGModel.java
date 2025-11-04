@@ -24,7 +24,9 @@ public final class BeCPGModel {
 	
 	
 	// beCPG site role
+	/** Constant <code>SITE_BRANCH_MANAGER="SiteBranchManager"</code> */
 	public static final String SITE_BRANCH_MANAGER = "SiteBranchManager";
+	/** Constant <code>SITE_BRANCH_ONLY_MANAGER="SiteBranchOnlyManager"</code> */
 	public static final String SITE_BRANCH_ONLY_MANAGER = "SiteBranchOnlyManager";
 
 	// entityListsAspect
@@ -341,6 +343,7 @@ public final class BeCPGModel {
 	
 	/** Constant <code>ASPECT_PENDING_ENTITY_REPORT_ASPECT</code> */
 	public static final QName ASPECT_PENDING_ENTITY_REPORT_ASPECT = QName.createQName(BECPG_URI, "pendingEntityReportAspect");
+	/** Constant <code>PROP_PENDING_ENTITY_REPORT_PRIORITY</code> */
 	public static final QName PROP_PENDING_ENTITY_REPORT_PRIORITY = QName.createQName(BECPG_URI, "pendingEntityReportPriority");
 	
 	

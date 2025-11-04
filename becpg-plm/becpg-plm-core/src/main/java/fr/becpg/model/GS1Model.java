@@ -60,9 +60,13 @@ public interface GS1Model {
 	/** Constant <code>PROP_INNERPACK_NET_WEIGHT</code> */
 	QName PROP_INNERPACK_NET_WEIGHT = QName.createQName(GS1_URI, "innerPackNetWeight");
 
+	/** Constant <code>PROP_INNERPACK_WIDTH</code> */
 	QName  PROP_INNERPACK_WIDTH = QName.createQName(GS1_URI, "innerPackWidth");
+	/** Constant <code>PROP_INNERPACK_HEIGHT</code> */
 	QName  PROP_INNERPACK_HEIGHT = QName.createQName(GS1_URI, "innerPackHeight");
+	/** Constant <code>PROP_INNERPACK_DEPTH</code> */
 	QName  PROP_INNERPACK_DEPTH = QName.createQName(GS1_URI, "innerPackDepth");
+	/** Constant <code>PROP_INNERPACK_PER_BOX</code> */
 	QName PROP_INNERPACK_PER_BOX = QName.createQName(GS1_URI, "innerPackPerBox");
 
 

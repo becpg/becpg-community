@@ -152,6 +152,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		return false;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public boolean isBatchInQueue(BatchInfo batchInfo) {
 		String batchId = batchInfo.getBatchId();

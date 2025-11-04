@@ -246,7 +246,7 @@ public class PhysicoChemListDataItem extends VariantAwareDataItem implements Sim
 	
 	
 	
-		/**
+	/**
 	 * <p>Getter for the field <code>regulatoryType</code>.</p>
 	 *
 	 * @return a {@link fr.becpg.repo.regulatory.RequirementType} object

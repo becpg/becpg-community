@@ -1006,10 +1006,10 @@ public class FormulationHelper {
 
 	/**
 	 * Calculate proportional evaporation for an item based on available water.
-	 * 
+	 *
 	 * This method implements improved evaporation distribution that accounts for
 	 * available water in each ingredient rather than just evaporation rates.
-	 * 
+	 *
 	 * @param evaporatingQty Total quantity to evaporate
 	 * @param itemRate Evaporation rate for this item (percentage)
 	 * @param itemMaxEvapQty Maximum evaporable quantity for this item
