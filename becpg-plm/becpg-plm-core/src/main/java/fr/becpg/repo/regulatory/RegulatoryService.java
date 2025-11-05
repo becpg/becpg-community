@@ -634,6 +634,9 @@ public class RegulatoryService {
 		if (context.getRegulatoryBatches().isEmpty()) {
 			return false;
 		}
+		if (context.getIngList().isEmpty()) {
+			return false;
+		}
 		return true;
 	}
 
