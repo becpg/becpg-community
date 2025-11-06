@@ -264,51 +264,55 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 	 * @return a {@link org.alfresco.repo.batch.BatchProcessor} object
 	 */
 	protected BatchProcessor<NodeRef> createBatchTypeProcessor(QName type, boolean includeOnlyTenantNodes) {
+		return createBatchTypeProcessor(type, includeOnlyTenantNodes, BATCH_THREADS);
+	}
+	
+	protected BatchProcessor<NodeRef> createBatchTypeProcessor(QName type, boolean includeOnlyTenantNodes, int batchThreads) {
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			private final long maxNodeId = nodeDAO.getMaxNodeId();
 			private final Pair<Long, QName> typeQNamePair = qnameDAO.getQName(type);
 			private final List<NodeRef> result = new ArrayList<>();
 			private long minSearchNodeId = 0;
 			private long maxSearchNodeId = BATCH_SIZE;
-
+			
 			@Override
 			public Collection<NodeRef> getNextWork() {
 				result.clear();
-
+				
 				if (typeQNamePair == null) {
 					return result;
 				}
-
+				
 				Long typeQNameId = typeQNamePair.getFirst();
-
+				
 				while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
 					List<Long> nodeIds = patchDAO.getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
-
+					
 					result.addAll(nodeIds.stream().map(nodeDAO::getNodeIdStatus)
 							.filter(status -> !status.isDeleted()).map(NodeRef.Status::getNodeRef)
 							.map(n -> formatTenantNodeRef(n, includeOnlyTenantNodes))
 							.filter(Objects::nonNull)
 							.toList());
-
+					
 					minSearchNodeId += BATCH_SIZE;
 					maxSearchNodeId += BATCH_SIZE;
 				}
-
+				
 				return result;
 			}
-
+			
 			@Override
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
 			}
-
+			
 			@Override
 			public long getTotalEstimatedWorkSizeLong() {
 				return getTotalEstimatedWorkSize();
 			}
 		};
-
-		return new BatchProcessor<>(getClass().getSimpleName(), transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREADS, BATCH_SIZE,
+		
+		return new BatchProcessor<>(getClass().getSimpleName(), transactionService.getRetryingTransactionHelper(), workProvider, batchThreads, BATCH_SIZE,
 				applicationEventPublisher, logger, 500);
 	}
 	
