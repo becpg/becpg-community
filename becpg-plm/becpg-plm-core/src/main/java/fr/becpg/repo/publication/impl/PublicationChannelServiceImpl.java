@@ -13,6 +13,7 @@ import org.alfresco.query.PagingRequest;
 import org.alfresco.query.PagingResults;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
@@ -175,32 +176,34 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 	/** {@inheritDoc} */
 	@Override
 	public void notifyAuditedFieldChange(String catalogId, NodeRef entityNodeRef) {
-		NodeRef listContainer = entityListDAO.getListContainer(entityNodeRef);
-		if (listContainer != null) {
-			NodeRef listNodeRef = entityListDAO.getList(listContainer, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST);
-			if (listNodeRef != null) {
-				boolean isEnabledBehaviour = policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE);
-				try {
-
-					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-					for (NodeRef channelListItemNodeRef : entityListDAO.getListItems(listNodeRef, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST)) {
-						NodeRef channelNodeRef = associationService.getTargetAssoc(channelListItemNodeRef,
-								PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL);
-						String channelCatalog = (String) nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_CATALOG_ID);
-						if ((catalogId == null && (channelCatalog == null || channelCatalog.isBlank()))
-								|| (catalogId != null && catalogId.equals(channelCatalog))) {
-							nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE, new Date());
+		AuthenticationUtil.runAsSystem(() -> {
+			NodeRef listContainer = entityListDAO.getListContainer(entityNodeRef);
+			if (listContainer != null) {
+				NodeRef listNodeRef = entityListDAO.getList(listContainer, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST);
+				if (listNodeRef != null) {
+					boolean isEnabledBehaviour = policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE);
+					try {
+						policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+						for (NodeRef channelListItemNodeRef : entityListDAO.getListItems(listNodeRef, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST)) {
+							NodeRef channelNodeRef = associationService.getTargetAssoc(channelListItemNodeRef,
+									PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL);
+							String channelCatalog = (String) nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_CATALOG_ID);
+							if ((catalogId == null && (channelCatalog == null || channelCatalog.isBlank()))
+									|| (catalogId != null && catalogId.equals(channelCatalog))) {
+								nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE, new Date());
+							}
 						}
-					}
-				} finally {
-					if (isEnabledBehaviour) {
-						policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+					} finally {
+						if (isEnabledBehaviour) {
+							policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+						}
 					}
 				}
 			}
-		}
+			return null;
+		});
 	}
-
+	
 	/** {@inheritDoc} */
 	@Override
 	public void onUpdateNode(NodeRef channelListItemNodeRef) {
