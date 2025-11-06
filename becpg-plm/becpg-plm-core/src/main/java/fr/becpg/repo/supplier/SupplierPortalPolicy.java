@@ -14,6 +14,7 @@ import org.alfresco.util.transaction.TransactionSupportUtil;
 
 import fr.becpg.model.PLMGroup;
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AuthorityHelper;
@@ -63,15 +64,14 @@ public class SupplierPortalPolicy extends AbstractBeCPGPolicy implements OnDelet
 			throw new IllegalStateException("You need to be Referencing Manager to delete an association of type 'bcpg:supplierAccountRefAspect'");
 		}
 		NodeRef supplierAccountNodeRef = nodeAssocRef.getTargetRef();
-		List<NodeRef> sourcesAssocs = associationService.getSourcesAssocs(supplierAccountNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
+		List<NodeRef> sourcesAssocs = new ArrayList<>(associationService.getSourcesAssocs(supplierAccountNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS));
 		if (nodeService.getType(nodeAssocRef.getSourceRef()).equals(PLMModel.TYPE_CONTACTLIST)) {
 			NodeRef supplierNodeRef = entityService.getEntityNodeRef(nodeAssocRef.getSourceRef(), PLMModel.TYPE_CONTACTLIST);
 			if (supplierNodeRef != null) {
-				sourcesAssocs = new ArrayList<>(sourcesAssocs);
 				sourcesAssocs.remove(supplierNodeRef);
 			}
 		}
-		
+		sourcesAssocs.removeIf(n -> nodeService.getType(n).equals(ProjectModel.TYPE_PROJECT));
 		if (sourcesAssocs.isEmpty()) {
 			String supplierUserName = (String) nodeService.getProperty(supplierAccountNodeRef, ContentModel.PROP_USERNAME);
 			AuthorityHelper.disableAccount(supplierUserName);
