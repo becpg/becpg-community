@@ -1194,128 +1194,140 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			 * value=workspace://SpacesStore/405f98a1-ebfa-41f0-a3e7-8ac7c7c150ca}]}
 			 *
 			 */
+			
+			for (Map.Entry<String, String> critEntry : criteriaMap.entrySet()) {
+				String critKey = critEntry.getKey();
+				String critValue = critEntry.getValue();
+				boolean found = false;
 
-			for (Map.Entry<String, Object> entry : comp.entrySet()) {
-				String critKey = entry.getKey().replace(PROP_SUFFIX, "").replace(ASSOC_SUFFIX, "").replace(DT_SUFFIX, "").replace("_", ":");
+				for (Map.Entry<String, Object> entry : comp.entrySet()) {
+					String compKey = entry.getKey().replace(PROP_SUFFIX, "").replace(ASSOC_SUFFIX, "").replace(DT_SUFFIX, "").replace("_", ":");
 
-				Object tmp = entry.getValue();
-				if (tmp != null) {
-					Map<String, Object> data = null;
-
-					if (tmp instanceof ArrayList<?>) {
-						if (!((ArrayList<?>) tmp).isEmpty()) {
-							data = (Map<String, Object>) ((ArrayList<?>) tmp).get(0);
-						}
-					} else {
-						data = (Map<String, Object>) tmp;
-					}
-
-					if ((data == null) || data.isEmpty()) {
-						return false;
-					}
-
-					String value = null;
-
-					if (data.containsKey("value") && (data.get("value") != null)) {
-						value = data.get("value").toString().toLowerCase();
-					} else {
-
-						Map.Entry<String, Object> firstEntry = data.entrySet().stream().findFirst().orElse(null);
-
-						if (firstEntry != null) {
-							tmp = firstEntry.getValue();
-
-							critKey += "|"
-									+ firstEntry.getKey().replace(PROP_SUFFIX, "").replace(ASSOC_SUFFIX, "").replace(DT_SUFFIX, "").replace("_", ":");
-
-							if (tmp instanceof ArrayList<?>) {
-								if (!((ArrayList<?>) tmp).isEmpty()) {
-									data = (Map<String, Object>) ((ArrayList<?>) tmp).get(0);
-								}
+					if (critKey.equals(compKey)) {
+						Object tmp = entry.getValue();
+						if (tmp != null) {
+							List<Map<String, Object>> dataList = new ArrayList<>();
+							if (tmp instanceof List) {
+								dataList.addAll((List<Map<String, Object>>) tmp);
 							} else {
-								data = (Map<String, Object>) tmp;
+								dataList.add((Map<String, Object>) tmp);
 							}
 
-							if ((data == null) || data.isEmpty()) {
-								return false;
+							for (Map<String, Object> data : dataList) {
+								if (matchData(data, compKey, Collections.singletonMap(critKey, critValue))) {
+									found = true;
+									break;
+								}
 							}
-
-							if (data.containsKey("value") && (data.get("value") != null)) {
-								value = data.get("value").toString().toLowerCase();
-							}
-
-
 						}
-
-					}
-
-					String compValue = criteriaMap.get(critKey);
-
-					if (value == null) {
-						return compValue == null;
-					}
-
-					String displayValue = data.get("displayValue") != null ? data.get("displayValue").toString().toLowerCase() : "";
-
-					if (compValue != null) {
-						compValue = compValue.toLowerCase();
-						if (compValue.startsWith("\"") && compValue.endsWith("\"")) {
-							compValue = compValue.replace("\"", "");
-						}
-					}
-
-					if ((compValue != null) && compValue.contains("\\ ")) {
-						compValue = compValue.replace("\\ ", " ");
-					}
-
-					if (logger.isTraceEnabled()) {
-						logger.trace("Test Match on: " + critKey);
-						logger.trace("Test Match : " + value + "/" + displayValue + " - " + compValue);
-					}
-					if ((compValue != null) && compValue.contains("*")) {
-
-						compValue = compValue.replace("*", "");
-
-						if (!value.contains(compValue) && !displayValue.contains(compValue)) {
-							return false;
-						}
-					} else if ((compValue != null) && compValue.startsWith("^")) {
-
-						compValue = compValue.replace("^", "");
-
-						if (!value.startsWith(compValue) && !displayValue.startsWith(compValue)) {
-							return false;
-						}
-					} else if ((compValue != null) && compValue.contains("..")) {
-						String[] bounds = compValue.split("\\.\\.");
-
-						if (bounds.length > 1) {
-							String lowerBound = bounds[0];
-							String upperBound = bounds[1];
-
-							if (((value.compareTo(lowerBound) < 0) || (value.compareTo(upperBound) > 0))
-									&& ((displayValue.compareTo(lowerBound) < 0) || (displayValue.compareTo(lowerBound) > 0))) {
-								return false;
-							}
-
-						}
-					} else if ((compValue != null) && data.containsKey("metadata")
-							&& ("datetime".equals(data.get("metadata")) || "date".equals(data.get("metadata")))) {
-						if (!dateMatches(value, compValue)) {
-							return false;
-						}
-					} else if ((compValue != null) && (!value.equals(compValue) && !displayValue.equals(compValue))) {
-						return false;
-
+						break; 
 					}
 				}
+				if (!found) {
+					return false;
+				}
 			}
+
 			return true;
 		} finally {
 			I18NUtil.setLocale(currentLocal);
 			I18NUtil.setContentLocale(currentContentLocal);
 		}
+	}
 
+	private boolean matchData(Map<String, Object> data, String critKey, Map<String, String> criteriaMap) {
+		if ((data == null) || data.isEmpty()) {
+			return false;
+		}
+
+		String value = null;
+
+		if (data.containsKey("value") && (data.get("value") != null)) {
+			value = data.get("value").toString().toLowerCase();
+		} else {
+
+			for (Map.Entry<String, Object> propEntry : data.entrySet()) {
+				String propKey = propEntry.getKey();
+				Object propValue = propEntry.getValue();
+				String newCritKey = critKey + "|" + propKey.replace(PROP_SUFFIX, "").replace(ASSOC_SUFFIX, "").replace(DT_SUFFIX, "").replace("_", ":");
+
+				if (propValue instanceof Map) {
+					if (matchData((Map<String, Object>) propValue, newCritKey, criteriaMap)) {
+						return true;
+					}
+				} else if (propValue instanceof List) {
+					for (Object item : (List<?>) propValue) {
+						if (item instanceof Map) {
+							if (matchData((Map<String, Object>) item, newCritKey, criteriaMap)) {
+								return true;
+							}
+						}
+					}
+				}
+			}
+			return false;
+		}
+
+		String compValue = criteriaMap.get(critKey);
+
+		if (value == null) {
+			return compValue == null;
+		}
+
+		String displayValue = data.get("displayValue") != null ? data.get("displayValue").toString().toLowerCase() : "";
+
+		if (compValue != null) {
+			compValue = compValue.toLowerCase();
+			if (compValue.startsWith("\"") && compValue.endsWith("\"")) {
+				compValue = compValue.replace("\"", "");
+			}
+		}
+
+		if ((compValue != null) && compValue.contains("\\ ")) {
+			compValue = compValue.replace("\\ ", " ");
+		}
+
+		if (logger.isTraceEnabled()) {
+			logger.trace("Test Match on: " + critKey);
+			logger.trace("Test Match : " + value + "/" + displayValue + " - " + compValue);
+		}
+		if ((compValue != null) && compValue.contains("*")) {
+
+			compValue = compValue.replace("*", "");
+
+			if (!value.contains(compValue) && !displayValue.contains(compValue)) {
+				return false;
+			}
+		} else if ((compValue != null) && compValue.startsWith("^")) {
+
+			compValue = compValue.replace("^", "");
+
+			if (!value.startsWith(compValue) && !displayValue.startsWith(compValue)) {
+				return false;
+			}
+		} else if ((compValue != null) && compValue.contains("..")) {
+			String[] bounds = compValue.split("\\.\\.");
+
+			if (bounds.length > 1) {
+				String lowerBound = bounds[0];
+				String upperBound = bounds[1];
+
+				if (((value.compareTo(lowerBound) < 0) || (value.compareTo(upperBound) > 0))
+						&& ((displayValue.compareTo(lowerBound) < 0) || (displayValue.compareTo(lowerBound) > 0))) {
+					return false;
+				}
+
+			}
+		} else if ((compValue != null) && data.containsKey("metadata")
+				&& ("datetime".equals(data.get("metadata")) || "date".equals(data.get("metadata")))) {
+			if (!dateMatches(value, compValue)) {
+				return false;
+			}
+		} else if ((compValue != null) && (!value.equals(compValue) && !displayValue.equals(compValue))) {
+			return false;
+
+		}
+		return true;
 	}
 
 	private boolean dateMatches(String value, String compValue) {
