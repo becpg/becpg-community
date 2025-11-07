@@ -3130,6 +3130,17 @@
 				</property>
 			</properties>
 		</aspect>
+		
+		<aspect name="gs1:websiteAspect">
+			<properties>
+				<property name="gs1:website">
+					<title>Website</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+			</properties>
+		</aspect>
 
 		<!-- Deprecated -->
 		<aspect name="gs1:datesAspect">
