@@ -2,7 +2,7 @@
 <@markup id="css" >
    <#-- CSS Dependencies -->
    <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/data-lists/toolbar.css" group="product-toolbar" />
-    <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/data-lists/toolbar.css" group="product-toolbar" />
+   <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/entity-data-lists/entity-toolbar.css"  group="product-toolbar"/>
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/search/savedsearch-picker.css"  group="product-toolbar"/>
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/product/product-list-toolbar.css" group="product-toolbar" />
 </@>
