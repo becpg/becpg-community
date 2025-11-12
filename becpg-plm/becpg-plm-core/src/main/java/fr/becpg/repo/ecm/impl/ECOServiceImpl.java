@@ -1365,32 +1365,45 @@ public class ECOServiceImpl implements ECOService {
 	}
 	
 	private Pair<Double, ProductUnit> getQtySum(List<NodeRef> sources, WUsedListDataItem wUsed, NodeRef target) {
-        double qty = 0;
-        double densityFactor = 1;
-        ProductUnit targetUnit = ProductUnit.kg;
-        ProductData wUsedEntity = (ProductData) alfrescoRepository.findOne(wUsed.getSourceItems().get(0));
-        
-        for (NodeRef source : sources) {
-        	for (CompositionDataItem compoItem : wUsedEntity.getCompoList()) {
-        		if (compoItem.getComponent().equals(source)) {
-        			if (compoItem instanceof CompoListDataItem compoListDataItem) {
-        	            qty += compoListDataItem.getQty();
-        	            
-        	            if (compoItem.getComponent().equals(target)) {
-        	            	if (compoListDataItem.getQty() != 0d) {
-        	            		densityFactor = compoListDataItem.getQtySubFormula() / compoListDataItem.getQty();
-        	            	}
-        	            	targetUnit = compoListDataItem.getCompoListUnit();
-        	            }
-        			} else {
-        	            qty += compoItem.getQty();
-        	        }
-        		}
-        	}
-        }
-        
-        return Pair.of(qty * densityFactor, targetUnit);
-    }
+	    double qty = 0;
+	    double densityFactor = 1;
+	    ProductUnit targetUnit = ProductUnit.kg;
+	    ProductData wUsedEntity = (ProductData) alfrescoRepository.findOne(wUsed.getSourceItems().get(0));
+
+	    QName impactedDataList = wUsed.getImpactedDataList();
+	    if (impactedDataList != null) {
+	        if (impactedDataList.equals(PLMModel.TYPE_COMPOLIST)) {
+	            for (NodeRef source : sources) {
+	                for (CompositionDataItem compoItem : wUsedEntity.getCompoList()) {
+	                    if (compoItem.getComponent().equals(source)) {
+	                        if (compoItem instanceof CompoListDataItem compoListDataItem) {
+	                            qty += compoListDataItem.getQty();
+
+	                            if (compoItem.getComponent().equals(target)) {
+	                                if (compoListDataItem.getQty() != 0d) {
+	                                    densityFactor = compoListDataItem.getQtySubFormula() / compoListDataItem.getQty();
+	                                }
+	                                targetUnit = compoListDataItem.getCompoListUnit();
+	                            }
+	                        } else {
+	                            qty += compoItem.getQty();
+	                        }
+	                    }
+	                }
+	            }
+	        } else if (impactedDataList.equals(PLMModel.TYPE_PACKAGINGLIST)) {
+	            for (NodeRef source : sources) {
+	                for (CompositionDataItem compoItem : wUsedEntity.getPackagingList()) {
+	                    if (compoItem.getComponent().equals(source)) {
+	                        qty += compoItem.getQty();
+	                    }
+	                }
+	            }
+	        }
+	    }
+
+	    return Pair.of(qty * densityFactor, targetUnit);
+	}
 
 	@SuppressWarnings("unchecked")
 	private <T extends CompositionDataItem> T copyOrUpdateItem(T item, ReplacementListDataItem replacement, NodeRef target, 

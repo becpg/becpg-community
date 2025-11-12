@@ -40,7 +40,7 @@ public class AssociationIndexerService {
 	private static final Log logger = LogFactory.getLog(AssociationIndexerService.class);
 
 	/** Constant <code>BATCH_THREADS=4</code> */
-	protected static final int BATCH_THREADS = 4;
+	protected static final int BATCH_THREADS = 1;
 	/** Constant <code>BATCH_SIZE=50</code> */
 	protected static final int BATCH_SIZE = 50;
 	/** Constant <code>INC=BATCH_THREADS * BATCH_SIZE * 1L</code> */
