@@ -86,7 +86,7 @@
                     {
                         itemKind: "type",
                         itemId: itemType,
-                        destination: destination,
+                        destination: destination!=null ? destination: "",
                         mode: "create",
                         submitType: "json",
                         entityNodeRef: this.options.entityNodeRef,
