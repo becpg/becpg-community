@@ -52,13 +52,13 @@ public class BeCPGPeople extends People {
 
 	private List<PersonInfo> filter(List<PersonInfo> peopleImpl) {
 		String currentUser = AuthenticationUtil.getRunAsUser();
-		Set<String> authoritiesForUser = authorityService.getAuthoritiesForUser(currentUser);
+		Set<String> authoritiesForUser = AuthenticationUtil.runAsSystem(() -> authorityService.getAuthoritiesForUser(currentUser));
 		if (containsSupplierGroup(authoritiesForUser)) {
 			logger.debug("filter people as user is supplier: " + currentUser);
 			List<PersonInfo> filteredPeople = new ArrayList<>();
 			for (String currAuth : authoritiesForUser) {
 				if (currAuth.startsWith(PermissionService.GROUP_PREFIX + SUPPLIER_GROUP_PREFIX)) {
-					Set<String> supplierGroupUsers = authorityService.getContainedAuthorities(AuthorityType.USER, currAuth, false);
+					Set<String> supplierGroupUsers = AuthenticationUtil.runAsSystem(() -> authorityService.getContainedAuthorities(AuthorityType.USER, currAuth, false));
 					List<PersonInfo> subList = peopleImpl.stream().filter(p -> supplierGroupUsers.contains(p.getUserName())).toList();
 					logger.debug("retain '" + supplierGroupUsers + "' from group '" + currAuth + "'");
 					filteredPeople.addAll(subList);
