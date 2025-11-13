@@ -1948,7 +1948,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			Set<EvaporatedDataItem> remainingItems = parent.getEvaporatedDataItems().stream().filter(item -> !fullEvaporationItems.contains(item))
 					.collect(Collectors.toSet());
 
-			Double totalRate = remainingItems.stream().mapToDouble(EvaporatedDataItem::getRate).sum();
+			Double totalRate  = remainingItems.stream()
+				    .filter(i -> i.getRate() != null && i.getRate() > 0)
+				    .mapToDouble(EvaporatedDataItem::getRate)
+				    .sum();
 
 			processEvaporation(parent, remainingItems, totalRate, labelingFormulaContext.isDoNotPropagateYield());
 
@@ -1990,7 +1993,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					Double rate = evaporatedDataItem.getRate() != null ? evaporatedDataItem.getRate() : 100d;
 
 					Double maxEvapQty = null;
-					if ((productLabelItem.getQtyWithYield() != null) && (productLabelItem.getQtyWithYield() > 0d)) {
+					if (rate > 0d && productLabelItem.getQtyWithYield() != null && productLabelItem.getQtyWithYield() > 0d) {
 						maxEvapQty = (productLabelItem.getQtyWithYield() * rate) / 100d;
 						if (isDoNotPropagateYield && (evaporatedDataItem.getMaxEvaporableQty() != null)) {
 							maxEvapQty = Math.min(maxEvapQty, evaporatedDataItem.getMaxEvaporableQty());
@@ -1999,7 +2002,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					}
 
 					Double maxEvapVol = null;
-					if ((productLabelItem.getVolumeWithYield() != null) && (productLabelItem.getVolumeWithYield() > 0d)) {
+					if (rate > 0d && (productLabelItem.getVolumeWithYield() != null) && (productLabelItem.getVolumeWithYield() > 0d)) {
 						maxEvapVol = (productLabelItem.getVolumeWithYield() * rate) / 100d;
 						if (isDoNotPropagateYield && (evaporatedDataItem.getMaxEvaporableVolume() != null)) {
 							maxEvapVol = Math.min(maxEvapVol, evaporatedDataItem.getMaxEvaporableVolume());
@@ -2007,7 +2010,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						totalAvailableWaterVol += maxEvapVol;
 					}
 
-					evaporationDataMap.put(evaporatedDataItem, new LabelingEvapData(productLabelItem, rate, maxEvapQty, maxEvapVol));
+					evaporationDataMap.put(evaporatedDataItem, new LabelingEvapData(productLabelItem, maxEvapQty, maxEvapVol));
 				} else {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Take in account evaporation in Do Not declare");
@@ -2030,9 +2033,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						LabelingEvapData evapData = entry.getValue();
 
 						if ((evapData.maxEvapQty != null) && (evapData.maxEvapQty > 0d)) {
-							// Use FormulationHelper to calculate proportional evaporation
-							Double evaporatedQty = FormulationHelper.calculateProportionalEvaporation(evaporatingQtyAtStart, evapData.rate,
-									evapData.maxEvapQty, totalRate, totalAvailableWaterQty);
+							Double evaporatedQty = FormulationHelper.calculateProportionalEvaporation(evaporatingQtyAtStart,
+									evapData.maxEvapQty, totalAvailableWaterQty);
 
 							evapData.productLabelItem.setQtyWithYield(evapData.productLabelItem.getQtyWithYield() - evaporatedQty);
 
@@ -2054,8 +2056,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 						if ((evapData.maxEvapVol != null) && (evapData.maxEvapVol > 0d)) {
 							// Use FormulationHelper to calculate proportional evaporation
-							Double evaporatedVol = FormulationHelper.calculateProportionalEvaporation(evaporatingVolumeAtStart, evapData.rate,
-									evapData.maxEvapVol, totalRate, totalAvailableWaterVol);
+							Double evaporatedVol = FormulationHelper.calculateProportionalEvaporation(evaporatingVolumeAtStart, 
+									evapData.maxEvapVol, totalAvailableWaterVol);
 
 							evapData.productLabelItem.setVolumeWithYield(evapData.productLabelItem.getVolumeWithYield() - evaporatedVol);
 
@@ -2080,13 +2082,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	 */
 	private static class LabelingEvapData {
 		final CompositeLabeling productLabelItem;
-		final Double rate;
 		final Double maxEvapQty;
 		final Double maxEvapVol;
 
-		LabelingEvapData(CompositeLabeling productLabelItem, Double rate, Double maxEvapQty, Double maxEvapVol) {
+		LabelingEvapData(CompositeLabeling productLabelItem, Double maxEvapQty, Double maxEvapVol) {
 			this.productLabelItem = productLabelItem;
-			this.rate = rate;
 			this.maxEvapQty = maxEvapQty;
 			this.maxEvapVol = maxEvapVol;
 		}
