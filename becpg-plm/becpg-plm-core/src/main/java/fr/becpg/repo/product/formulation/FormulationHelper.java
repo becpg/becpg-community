@@ -1017,45 +1017,23 @@ public class FormulationHelper {
 	 * @param totalAvailableWater Total water available across all items
 	 * @return The quantity to evaporate from this item
 	 */
-	public static Double calculateProportionalEvaporation(Double evaporatingQty, Double itemRate, Double itemMaxEvapQty, 
-			Double totalRate, Double totalAvailableWater) {
-		
-		if ((evaporatingQty == null) || (evaporatingQty <= 0d) || (itemMaxEvapQty == null) || (itemMaxEvapQty <= 0d) 
-				|| (totalAvailableWater == null) || (totalAvailableWater <= 0d)) {
-			return 0d;
-		}
+	public static Double calculateProportionalEvaporation(
+	        Double evaporatingQty,
+	        Double itemMaxEvapQty,
+	        Double totalAvailableWater) {
 
-		// Use minimum of evaporatingQty and totalAvailableWater as distribution base
-		double distributionBase = Math.min(evaporatingQty, totalAvailableWater);
+	    if (evaporatingQty == null || evaporatingQty <= 0d ||
+	        itemMaxEvapQty == null || itemMaxEvapQty <= 0d ||
+	        totalAvailableWater == null || totalAvailableWater <= 0d) {
+	        return 0d;
+	    }
 
-		Double proportionalEvap;
-		if ((totalRate == null) || (totalRate == 0d)) {
-			// For 100% evaporation items, distribute evenly based on available water
-			proportionalEvap = distributionBase * (itemMaxEvapQty / totalAvailableWater);
-		} else {
-			// Calculate initial proportion based on rate
-			Double rateBasedProportion = distributionBase * (itemRate / totalRate);
-			// But limit to available water in this ingredient
-			proportionalEvap = Math.min(rateBasedProportion, itemMaxEvapQty);
-		}
+	    Double distributionBase = Math.min(evaporatingQty, totalAvailableWater);
 
-		// Return minimum of calculated proportion and max available
-		return Math.min(itemMaxEvapQty, proportionalEvap);
-	}
+	   
+	    Double proportionalEvap = distributionBase * (itemMaxEvapQty / totalAvailableWater);
 
-	/**
-	 * Calculates the percentage to distribute per ingredient when ingredients are omitted.
-	 * The omitted percentage is distributed equally among the remaining non-omitted ingredients.
-	 *
-	 * @param totalOmittedPercentage the total percentage of omitted ingredients
-	 * @param countNonOmittedItems the number of non-omitted ingredients
-	 * @return the percentage to add to each non-omitted ingredient, or 0.0 if invalid input
-	 */
-	public static Double calculateDistributedOmittedPercentage(Double totalOmittedPercentage, int countNonOmittedItems) {
-		if ((totalOmittedPercentage == null) || (countNonOmittedItems <= 0)) {
-			return 0d;
-		}
-		return totalOmittedPercentage / countNonOmittedItems;
+	    return Math.min(itemMaxEvapQty, proportionalEvap);
 	}
 
 }

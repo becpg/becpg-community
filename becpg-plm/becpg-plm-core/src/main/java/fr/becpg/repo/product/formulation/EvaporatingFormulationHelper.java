@@ -218,7 +218,7 @@ public class EvaporatingFormulationHelper {
                 // Use FormulationHelper to calculate proportional evaporation
                 // Use evaporatingQtyAtStart (not the accumulating evaporatingQty) for all items in this phase
                 Double evaporatedQty = FormulationHelper.calculateProportionalEvaporation(
-                        evaporatingQtyAtStart, evapData.rate, evapData.maxEvapQty, totalRate, totalAvailableWater);
+                        evaporatingQtyAtStart, evapData.maxEvapQty, totalAvailableWater);
 
                 setQtyWithYield.accept(evapData.item, evapData.qtyWithYield - evaporatedQty);
 
