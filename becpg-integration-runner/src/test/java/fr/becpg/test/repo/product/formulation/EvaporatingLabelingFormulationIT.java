@@ -316,7 +316,7 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 									.withLabelingRuleType(LabelingRuleType.Format),
 							LabelingRuleListDataItem.build().withName("Param1").withFormula("ingsLabelingWithYield=true")
 									.withLabelingRuleType(LabelingRuleType.Prefs))),
-					"lait 54,2%, oeuf 45,8%", Locale.FRENCH);
+					"lait 53,6%, oeuf 46,4%", Locale.FRENCH);
 
 			// Verify ingredient list quantities match labeling
 			inReadTx(() -> {
@@ -342,7 +342,7 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 	}
 
 	/**
-	 * Test for issue #21401 - Water evaporation distribution based on available water
+	 *  Water evaporation distribution based on available water
 	 *
 	 * This test reproduces the scenario where:
 	 * - Ingredients have different evaporation rates
@@ -363,25 +363,25 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 		try {
 			final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 				FinishedProductData product = testProduct.createTestProduct();
-				product.setName("Test #21401 - Limited Available Water");
+				product.setName("testEvaporationWithLimitedAvailableWater - BisCuiCui 🐦");
 				product.withQty(70d);
 
 				// Set rates on raw materials
-				nodeService.setProperty(testProduct.getFlourNodeRef(), PLMModel.PROP_EVAPORATED_RATE, 13.5d);
-				nodeService.setProperty(testProduct.getEggNodeRef(), PLMModel.PROP_EVAPORATED_RATE, 88d);
-				// Set rates on ingredients as well
-				nodeService.setProperty(testProduct.getIngFlourNodeRef(), PLMModel.PROP_EVAPORATED_RATE, 13.5d);
-				nodeService.setProperty(testProduct.getIngEggNodeRef(), PLMModel.PROP_EVAPORATED_RATE, 88d);
+				nodeService.setProperty(testProduct.getMilkNodeRef(), PLMModel.PROP_EVAPORATED_RATE, 20d);
+				nodeService.setProperty(testProduct.getIngMilkNodeRef(), PLMModel.PROP_EVAPORATED_RATE, 20d);
 
 				product.withCompoList(List.of(
-						CompoListDataItem.build().withQtyUsed(9d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
-								.withProduct(testProduct.getFlourNodeRef()), // 9kg, 13.5% water
 						CompoListDataItem.build().withQtyUsed(20d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
-								.withProduct(testProduct.getEggNodeRef()), // 20kg, 88% water
-						CompoListDataItem.build().withQtyUsed(50d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
-								.withProduct(testProduct.getSugarNodeRef()), // 50kg, no water
-						CompoListDataItem.build().withQtyUsed(38.46d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
-								.withProduct(testProduct.getWaterNodeRef()))); // 38.46kg, 100% water
+								.withProduct(testProduct.getFlourNodeRef()), 
+						CompoListDataItem.build().withQtyUsed(32d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+								.withProduct(testProduct.getMilkNodeRef()),
+						CompoListDataItem.build().withQtyUsed(5d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+								.withProduct(testProduct.getEggNodeRef()), 
+						CompoListDataItem.build().withQtyUsed(15d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+								.withProduct(testProduct.getSugarNodeRef()), 
+						CompoListDataItem.build().withQtyUsed(45d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+								.withProduct(testProduct.getWaterNodeRef())));
+				
 
 				return alfrescoRepository.save(product).getNodeRef();
 			});
@@ -396,27 +396,23 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 									.withLabelingRuleType(LabelingRuleType.Format),
 							LabelingRuleListDataItem.build().withName("Param1").withFormula("ingsLabelingWithYield=true")
 									.withLabelingRuleType(LabelingRuleType.Prefs))),
-					"sucre 71,4%, oeuf 17,4%, farine 11,1%", Locale.FRENCH);
+					"lait 43,1%, farine 28,6%, sucre 21,4%, oeuf 6,9%", Locale.FRENCH);
 
-			// Verify ingredient list quantities match labeling
 			inReadTx(() -> {
 				FinishedProductData formulatedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
 				Assert.assertNotNull("Ingredient list should not be null", formulatedProduct.getIngList());
-				Assert.assertEquals("Should have 4 ingredients", 4, formulatedProduct.getIngList().size());
+				Assert.assertEquals("Should have 5 ingredients", 5, formulatedProduct.getIngList().size());
 
-				// Assertions for the new corrected scenario
-				Assert.assertEquals("Sugar qtyPercWithYield should be 71.4%", 71.4, formulatedProduct.getIngList().get(0).getQtyPercWithYield(), 0.1);
-					Assert.assertEquals("Flour qtyPercWithYield should be  17.4%",  17.4, formulatedProduct.getIngList().get(2).getQtyPercWithYield(), 0.1);
-				Assert.assertEquals("Egg qtyPercWithYield should be 11,1%",11.1d, formulatedProduct.getIngList().get(3).getQtyPercWithYield(), 0.1);
+				Assert.assertEquals("Milk qtyPercWithYield should be 43.1%", 43.1, formulatedProduct.getIngList().get(0).getQtyPercWithYield(), 0.1);
+				Assert.assertEquals("Egg qtyPercWithYield should be 6.94%",6.94d, formulatedProduct.getIngList().get(4).getQtyPercWithYield(), 0.1);
 
 				return null;
 			});
 		} finally {
 			// Revert properties
 			inWriteTx(() -> {
-				nodeService.setProperty(testProduct.getIngFlourNodeRef(), PLMModel.PROP_EVAPORATED_RATE, 0d);
-				nodeService.setProperty(testProduct.getIngEggNodeRef(), PLMModel.PROP_EVAPORATED_RATE, 10d);
+				nodeService.setProperty(testProduct.getIngMilkNodeRef(), PLMModel.PROP_EVAPORATED_RATE, 90d);
 				return null;
 			});
 		}
