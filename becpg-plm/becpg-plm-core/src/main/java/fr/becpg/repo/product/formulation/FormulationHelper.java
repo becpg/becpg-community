@@ -506,8 +506,9 @@ public class FormulationHelper {
 			ProductUnit productUnit = formulatedProduct.getUnit();
 			if ((productUnit != null) && productUnit.isVolume()) {
 				return qty / productUnit.getUnitFactor();
+			} else if (formulatedProduct.getRecipeVolumeUsed() != null) {
+				return formulatedProduct.getRecipeVolumeUsed();
 			}
-
 		}
 		return defaultValue;
 	}
