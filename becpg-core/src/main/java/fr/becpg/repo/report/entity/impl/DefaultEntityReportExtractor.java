@@ -1000,10 +1000,35 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					if (DataTypeDefinition.MLTEXT.equals(propertyDef.getDataType().getName())) {
 						mlValues = (MLText) mlNodeService.getProperty(nodeRef, propertyDef.getName());
 
-					} else if (DataTypeDefinition.TEXT.equals(propertyDef.getDataType().getName())) {
-						if (dynListConstraint != null) {
-							mlValues = dynListConstraint.getMLDisplayLabel((String) property.getValue());
-						}
+					} else if (DataTypeDefinition.TEXT.equals(propertyDef.getDataType().getName()) && dynListConstraint != null) {
+						Object propertyValue = property.getValue();
+				        
+				        if (propertyValue instanceof List) {
+				            // Handle List<String>
+							@SuppressWarnings("unchecked")
+							List<String> values = (List<String>) propertyValue;
+				            mlValues = new MLText();
+				            
+				            for (String subValue : values) {
+				                MLText labelForValue = dynListConstraint.getMLDisplayLabel(subValue);
+				                if (labelForValue != null) {
+				                    // Merge into mlValues
+				                    for (Map.Entry<Locale, String> entry : labelForValue.entrySet()) {
+				                        Locale locale = entry.getKey();
+				                        String existingText = mlValues.get(locale);
+				                        
+				                        if (existingText == null) {
+				                            mlValues.put(locale, entry.getValue());
+				                        } else {
+				                            mlValues.put(locale, existingText + ", " + entry.getValue());
+				                        }
+				                    }
+				                }
+				            }
+				        } else if (propertyValue instanceof String) {
+				            // Handle single String
+				            mlValues = dynListConstraint.getMLDisplayLabel((String) propertyValue);
+				        }
 					}
 
 					if (mlValues != null) {
