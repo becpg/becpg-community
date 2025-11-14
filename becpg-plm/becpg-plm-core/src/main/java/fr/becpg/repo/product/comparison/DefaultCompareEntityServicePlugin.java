@@ -30,7 +30,6 @@ import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.config.format.FormatMode;
@@ -112,14 +111,15 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 	@Autowired
 	private FileFolderService fileFolderService;
 
-	@Value("${beCPG.comparison.pivots}")
-	private String customPivots;
-
 	@Autowired
 	protected SystemConfigurationService systemConfigurationService;
 
 	private String customNames() {
 		return systemConfigurationService.confValue("beCPG.comparison.name.format");
+	}
+	
+	private String customPivots() {
+		return systemConfigurationService.confValue("beCPG.comparison.pivots");
 	}
 
 	@Override
@@ -1188,6 +1188,8 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		String shortName = type.getPrefixString();
 		List<QName> res = new ArrayList<>();
 
+		String customPivots = customPivots();
+		
 		if ((customPivots != null) && customPivots.contains(shortName)) {
 
 			String[] pivots = {};
