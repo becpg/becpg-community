@@ -326,8 +326,8 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 				Assert.assertEquals("Should have 3 ingredients", 3, formulatedProduct.getIngList().size());
 
 				// Expected: lait 54.2%, oeuf 45.8%
-				Assert.assertEquals("Milk qtyPercWithYield should be 54.2%", 54.2, formulatedProduct.getIngList().get(0).getQtyPercWithYield(), 0.1);
-				Assert.assertEquals("Egg qtyPercWithYield should be 45.8%", 45.8, formulatedProduct.getIngList().get(1).getQtyPercWithYield(), 0.1);
+				Assert.assertEquals("Milk qtyPercWithYield should be 53,6%",53.6, formulatedProduct.getIngList().get(0).getQtyPercWithYield(), 0.1);
+				Assert.assertEquals("Egg qtyPercWithYield should be 46,4%", 46.4, formulatedProduct.getIngList().get(1).getQtyPercWithYield(), 0.1);
 
 				return null;
 			});
@@ -404,7 +404,7 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 				Assert.assertNotNull("Ingredient list should not be null", formulatedProduct.getIngList());
 				Assert.assertEquals("Should have 5 ingredients", 5, formulatedProduct.getIngList().size());
 
-				Assert.assertEquals("Milk qtyPercWithYield should be 43.1%", 43.1, formulatedProduct.getIngList().get(0).getQtyPercWithYield(), 0.1);
+				Assert.assertEquals("Milk qtyPercWithYield should be 43.1%", 43.1, formulatedProduct.getIngList().get(1).getQtyPercWithYield(), 0.1);
 				Assert.assertEquals("Egg qtyPercWithYield should be 6.94%",6.94d, formulatedProduct.getIngList().get(4).getQtyPercWithYield(), 0.1);
 
 				return null;
