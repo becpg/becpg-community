@@ -242,7 +242,7 @@
                 default:
                     break;
             }
-            if (toUnit == "mm" || toUnit == "g" || toUnit == "mL") {
+            if (toUnit == "mm" || toUnit == "cm" || toUnit == "m" || toUnit == "micro_m" || toUnit == "g" || toUnit == "mL") {
                 val = val * 1000;
             }
             
