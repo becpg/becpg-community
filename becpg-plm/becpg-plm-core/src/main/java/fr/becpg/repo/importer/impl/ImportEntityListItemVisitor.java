@@ -291,18 +291,18 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 			Map<QName, List<NodeRef>> dataListColumnsAssocs) {
 
 		List<FileInfo> nodes = fileFolderService.list(listNodeRef);
-		NodeRef nodeRef = null;
+		NodeRef entityListNodeRef = null;
 		boolean isFound = true;
 
 		for (FileInfo node : nodes) {
 
 			isFound = true;
-			nodeRef = node.getNodeRef();
+			entityListNodeRef = node.getNodeRef();
 
 			// check properties match
 			for (Map.Entry<QName, String> dataListColumnProps : dataListColumnsProps.entrySet()) {
 
-				Serializable s = nodeService.getProperty(nodeRef, dataListColumnProps.getKey());
+				Serializable s = nodeService.getProperty(entityListNodeRef, dataListColumnProps.getKey());
 
 				String value = dataListColumnProps.getValue();
 
@@ -329,19 +329,34 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 			// check associations match
 			for (Map.Entry<QName, List<NodeRef>> dataListColumnAssocs : dataListColumnsAssocs.entrySet()) {
 
-				List<NodeRef> targetRefs1 = dataListColumnAssocs.getValue();
-				List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, dataListColumnAssocs.getKey());
-				List<NodeRef> targetRefs2 = new ArrayList<>();
-				for (AssociationRef assocRef : assocRefs) {
-					targetRefs2.add(assocRef.getTargetRef());
+				List<NodeRef> referenceTargets = dataListColumnAssocs.getValue();
+				List<AssociationRef> listNodeRefAssocs = nodeService.getTargetAssocs(entityListNodeRef, dataListColumnAssocs.getKey());
+				List<NodeRef> listTargetAssocs = new ArrayList<>();
+				for (AssociationRef assocRef : listNodeRefAssocs) {
+					listTargetAssocs.add(assocRef.getTargetRef());
 				}
-
-				if (targetRefs1 == null) {
-					if (targetRefs2 != null) {
+				
+				if (referenceTargets == null) {
+					if (listTargetAssocs != null) {
 						isFound = false;
 						break;
 					}
-				} else if (!targetRefs1.equals(targetRefs2)) {
+				} else if (dataListColumnAssocs.getKey().equals(PLMModel.ASSOC_ILL_GRP)) {
+					if (referenceTargets.size() != listTargetAssocs.size()) {
+						isFound = false;
+						break;
+					}
+					for (NodeRef referenceTarget : referenceTargets) {
+						for (NodeRef listTargetAssoc : listTargetAssocs) {
+							String referenceName = (String) nodeService.getProperty(referenceTarget, ContentModel.PROP_NAME);
+							String listTargetName = (String) nodeService.getProperty(listTargetAssoc, ContentModel.PROP_NAME);
+							if (!referenceName.equals(listTargetName)) {
+								isFound = false;
+								break;
+							}
+						}
+                    }
+				} else if (!referenceTargets.equals(listTargetAssocs)) {
 					isFound = false;
 					break;
 				}
@@ -353,7 +368,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 			}
 		}
 
-		return isFound ? nodeRef : null;
+		return isFound ? entityListNodeRef : null;
 	}
 
 	private NodeRef getOrCreateVariant(ImportContext importContext, String value, boolean shouldCreate) {
