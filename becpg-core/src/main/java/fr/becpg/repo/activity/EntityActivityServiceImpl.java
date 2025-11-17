@@ -63,6 +63,8 @@ import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.LargeTextHelper;
+import fr.becpg.repo.helper.json.JsonData;
+import fr.becpg.repo.helper.json.JsonHelper;
 
 /**
  * <p>EntityActivityServiceImpl class.</p>
@@ -676,12 +678,12 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 		for (ActivityListDataItem lastActivity : sortedActivityList) {
 
-			JSONObject lastActivityData = null;
+			JsonData lastActivityData = null;
 
-			JSONObject newActivityData = null;
+			JsonData newActivityData = null;
 			try {
-				lastActivityData = new JSONObject(lastActivity.getActivityData());
-				newActivityData = new JSONObject(newActivity.getActivityData());
+				lastActivityData = JsonHelper.read(lastActivity.getActivityData());
+				newActivityData = JsonHelper.read(newActivity.getActivityData());
 				if (((lastActivity.getActivityData().equals(newActivity.getActivityData())) || (!newActivityData.has(PROP_TITLE)
 						&& !lastActivityData.has(PROP_TITLE) && newActivity.getActivityType().equals(ActivityType.Datalist)
 						&& lastActivityData.get(PROP_CLASSNAME).equals(newActivityData.get(PROP_CLASSNAME))
@@ -716,16 +718,14 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						}
 					}
 
-					JSONArray lastActivityProperties = lastActivityData.getJSONArray(PROP_PROPERTIES);
-					JSONArray newActivityProperties = newActivityData.getJSONArray(PROP_PROPERTIES);
-					for (int i = 0; i < lastActivityProperties.length(); i++) {
-						JSONObject lastProperty = lastActivityProperties.getJSONObject(i);
+					JsonData lastActivityProperties = lastActivityData.get(PROP_PROPERTIES);
+					JsonData newActivityProperties = newActivityData.get(PROP_PROPERTIES);
+					for (JsonData lastProperty : lastActivityProperties) {
 						boolean isSameProperty = false;
-						for (int j = 0; j < newActivityProperties.length(); j++) {
-							JSONObject newProperty = newActivityProperties.getJSONObject(j);
+						for (JsonData newProperty : newActivityProperties) {
 							if (newProperty.get(PROP_TITLE).equals(lastProperty.get(PROP_TITLE))) {
 								isSameProperty = true;
-								PropertyDefinition property = dictionaryService.getProperty(QName.createQName((String) lastProperty.get(PROP_TITLE)));
+								PropertyDefinition property = dictionaryService.getProperty(QName.createQName(lastProperty.get(PROP_TITLE).getString()));
 
 								if ((property == null) || (property.getDataType() == null)
 										|| (!DataTypeDefinition.TEXT.equals(property.getDataType().getName()))) {

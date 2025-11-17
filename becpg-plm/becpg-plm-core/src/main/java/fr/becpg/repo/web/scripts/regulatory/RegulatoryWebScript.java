@@ -7,8 +7,8 @@ import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
-import fr.becpg.repo.helper.JsonHelper;
 import fr.becpg.repo.regulatory.RegulatoryService;
+import fr.becpg.repo.helper.json.JsonHelper;
 import fr.becpg.repo.regulatory.ComplianceResult;
 
 /**
