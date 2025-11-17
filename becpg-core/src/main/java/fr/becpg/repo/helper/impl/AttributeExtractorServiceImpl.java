@@ -71,10 +71,10 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.ExcelHelper;
 import fr.becpg.repo.helper.JsonFormulaHelper;
-import fr.becpg.repo.helper.JsonHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.helper.json.JsonHelper;
 import fr.becpg.repo.security.SecurityService;
 
 /**

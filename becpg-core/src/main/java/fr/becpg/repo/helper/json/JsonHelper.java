@@ -1,4 +1,4 @@
-package fr.becpg.repo.helper;
+package fr.becpg.repo.helper.json;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -93,8 +93,27 @@ public final class JsonHelper {
 	 * @return a {@link java.lang.String} object
 	 * @throws com.fasterxml.jackson.core.JsonProcessingException if any.
 	 */
-	public static String serialize(Object object) throws JsonProcessingException {
-		return MAPPER.writeValueAsString(object);
+	public static String serialize(Object object) {
+		try {
+			return MAPPER.writeValueAsString(object);
+		} catch (JsonProcessingException e) {
+			throw new JsonException(e);
+		}
+	}
+	
+	/**
+	 * <p>readTree.</p>
+	 *
+	 * @param json a {@link java.lang.String} object
+	 * @return a {@link com.fasterxml.jackson.databind.JsonNode} object
+	 * @throws com.fasterxml.jackson.core.JsonProcessingException if any.
+	 */
+	public static JsonData read(String json) {
+		try {
+			return new JsonData(MAPPER.readTree(json));
+		} catch (JsonProcessingException e) {
+			throw new JsonException(e);
+		}
 	}
 	
 }

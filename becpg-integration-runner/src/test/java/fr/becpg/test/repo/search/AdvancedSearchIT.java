@@ -18,7 +18,7 @@ import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import fr.becpg.repo.helper.JsonHelper;
+import fr.becpg.repo.helper.json.JsonHelper;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
