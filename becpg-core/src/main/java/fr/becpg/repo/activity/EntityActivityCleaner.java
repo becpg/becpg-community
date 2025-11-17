@@ -19,7 +19,6 @@ import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,6 +37,9 @@ import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.WorkProviderFactory;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.helper.json.JsonData;
+import fr.becpg.repo.helper.json.JsonException;
+import fr.becpg.repo.helper.json.JsonHelper;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -258,9 +260,9 @@ public class EntityActivityCleaner {
                         String datalistClassName = null;
 
                         try {
-                            JSONObject data = new JSONObject(activity.getActivityData());
-                            datalistClassName = data.optString(EntityActivityService.PROP_CLASSNAME, null);
-                        } catch (JSONException e) {
+                        	JsonData data = JsonHelper.read(activity.getActivityData());
+                            datalistClassName = data.get(EntityActivityService.PROP_CLASSNAME).getString(null);
+                        } catch (JsonException e) {
                             logger.error("Problem parsing activity data", e);
                         }
 
@@ -298,9 +300,9 @@ public class EntityActivityCleaner {
 
     private String extractContentNode(String alData) {
         try {
-            JSONObject data = new JSONObject(alData);
-            return data.optString("contentNodeRef", null);
-        } catch (JSONException e) {
+        	JsonData data = JsonHelper.read(alData);
+            return data.get("contentNodeRef").getString(null);
+        } catch (JsonException e) {
             logger.warn("Invalid content activity data: " + alData, e);
             return null;
         }

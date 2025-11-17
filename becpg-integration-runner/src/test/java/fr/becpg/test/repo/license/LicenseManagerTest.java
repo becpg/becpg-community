@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import org.json.simple.JSONObject;
 import org.junit.Test;
 
-import fr.becpg.repo.helper.JsonHelper;
+import fr.becpg.repo.helper.json.JsonHelper;
 import fr.becpg.repo.license.BeCPGLicense;
 import fr.becpg.repo.license.BeCPGLicenseManager;
 
