@@ -2242,7 +2242,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			omitQtyPerc = 0d;
 		}
 
-		Double localOmittedQtyPerc = 0d;
 		for (Composite<IngListDataItem> ingListItem : compositeIngList.getChildren()) {
 
 			DeclarationType ingDeclarationType = getDeclarationType(compoListDataItem, ingListItem.getData(), labelingFormulaContext);
@@ -2257,13 +2256,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						logger.trace("Removing ingredient " + ingListItem.getData().getName() + " qtyPerc " + qtyPerc);
 					}
 
-					localOmittedQtyPerc += qtyPerc;
+					omitQtyPerc += qtyPerc;
 				}
 			}
 		}
 
-		// Use FormulationHelper to calculate distribution
-		omitQtyPerc = FormulationHelper.calculateDistributedOmittedPercentage(localOmittedQtyPerc, toAddIngListItem.size());
+		if (!toAddIngListItem.isEmpty()) {
+			omitQtyPerc /= toAddIngListItem.size();
+		}
 
 		for (Composite<IngListDataItem> ingListItem : toAddIngListItem) {
 
