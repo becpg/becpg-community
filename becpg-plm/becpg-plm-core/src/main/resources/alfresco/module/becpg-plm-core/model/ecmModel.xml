@@ -282,11 +282,11 @@
                     </constraints>          
                 </property>             
                 <property name="ecm:culReqDetails">
-                    <type>d:text</type>             
+                    <type>d:mltext</type>             
                     <index enabled="false"/>    
                 </property> 
                 <property name="ecm:culReqError">
-                    <type>d:text</type>             
+                    <type>d:mltext</type>             
                     <index enabled="false"/>    
                 </property>
                 <property name="ecm:culTreated">
