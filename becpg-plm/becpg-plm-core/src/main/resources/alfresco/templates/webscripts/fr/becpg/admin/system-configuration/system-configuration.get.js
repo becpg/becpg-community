@@ -37,7 +37,9 @@ function main() {
         "beCPG.decernis.analysisUrl",
         "beCPG.decernis.maxCountriesPerRequest",
         "beCPG.decernis.maxUsagesPerRequest",
-        "beCPG.entity.documents.recursive.depth"
+        "beCPG.entity.documents.recursive.depth",
+        "beCPG.activity.purge.threshold",
+        "beCPG.activity.purge.retention.months"
     ].forEach(function(p) {
         addAttribute(p, "system");
     });

@@ -47,6 +47,8 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 
+import fr.becpg.repo.system.SystemConfigurationService;
+
 /**
  * This <code>class</code> is a test case of the purge functionality
  *
@@ -82,6 +84,9 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 	@Autowired
 	private EntityActivityCleaner entityActivityCleaner;
 	
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
+	
 	private static final int MAX_PAGE = 50;
 
 	private static final Map<String, Boolean> SORT_MAP;
@@ -91,6 +96,86 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 	}
 
 	private static final NodeRef ENTITY_NODEREF = new NodeRef("workspace://SpacesStore/8b573");
+
+	/**
+	 * @Goals: Test configurable purge threshold and retention.
+	 *
+	 * @Steps:
+	 * 1. Configure threshold=5, retention=1 month.
+	 * 2. Create 3 recent activities (today).
+	 * 3. Create 10 old activities (2 months ago).
+	 * 4. Run clean.
+	 *
+	 * @Results:
+	 * - 3 recent activities kept.
+	 * - 2 newest old activities kept (to satisfy threshold of 5 - 3 = 2).
+	 * - 8 oldest old activities processed -> 1 kept (merged).
+	 * Total expected: 3 + 2 + 1 = 6.
+	 */
+	@Test
+	public void purgeConfigurableRetentionTest() throws InterruptedException {
+		NodeRef finishedProductNodeRef = createFinishedProduct();
+
+		// Configure purge settings
+		// We need to make sure these settings are reverted after test or used only here.
+		// Ideally SystemConfigurationService should allow overrides.
+		// Assuming simple key-value updates work.
+		// Note: In a real environment, we might need to restore original values.
+		String originalThreshold = systemConfigurationService.confValue("beCPG.activity.purge.threshold");
+		String originalRetention = systemConfigurationService.confValue("beCPG.activity.purge.retention.months");
+		
+		try {
+			systemConfigurationService.updateConfValue("beCPG.activity.purge.threshold", "5");
+			systemConfigurationService.updateConfValue("beCPG.activity.purge.retention.months", "1");
+
+			// Create 3 recent activities (Today)
+			for (int i = 0; i < 3; i++) {
+				inWriteTx(() -> {
+					entityActivityService.postEntityActivity(finishedProductNodeRef, ActivityType.Report, ActivityEvent.Update, null);
+					return null;
+				});
+			}
+
+			// Create 10 old activities (2 months ago)
+			Calendar oldCal = Calendar.getInstance();
+			oldCal.add(Calendar.MONTH, -2);
+			
+			for (int i = 0; i < 10; i++) {
+				inWriteTx(() -> {
+					entityActivityService.postEntityActivity(finishedProductNodeRef, ActivityType.Report, ActivityEvent.Update, null);
+					return null;
+				});
+				
+				// Need to fetch the last created activity to change its date
+				List<ActivityListDataItem> activities = getActivities(finishedProductNodeRef, SORT_MAP); // Sorted ASC (oldest first)
+				// The last one added is at the end
+				ActivityListDataItem lastActivity = activities.get(activities.size() - 1);
+				
+				// Shift time slightly for each old activity to ensure stable ordering if needed
+				// But for this test, just making them "old" is enough.
+				// We subtract i minutes to keep them distinct in time if granularity allows, or just same day.
+				// Let's keep them all 2 months ago.
+				changeCreatedNodeDate(lastActivity, oldCal.getTime());
+			}
+			
+			// Verify total before clean
+			assertEquals("Activities before clean", 13, getActivities(finishedProductNodeRef, null).size());
+
+			// Clean
+			BatchInfo batch = entityActivityCleaner.cleanActivities(BatchPriority.HIGH);
+			waitForBatchEnd(batch);
+			
+			// Verify after clean
+			// Expect: 6
+			List<ActivityListDataItem> activitiesAfter = getActivities(finishedProductNodeRef, null);
+			assertEquals("Activities after clean", 6, activitiesAfter.size());
+			
+		} finally {
+			// Restore config
+			if (originalThreshold != null) systemConfigurationService.updateConfValue("beCPG.activity.purge.threshold", originalThreshold);
+			if (originalRetention != null) systemConfigurationService.updateConfValue("beCPG.activity.purge.retention.months", originalRetention);
+		}
+	}
 
 	/**
 	 * @Goals: merge same activities which are one after the other.
