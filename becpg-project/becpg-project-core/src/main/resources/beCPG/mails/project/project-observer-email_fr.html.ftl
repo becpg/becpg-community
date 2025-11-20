@@ -192,7 +192,7 @@
                                             </table>
                                            
                                                 <div style="font-size: 14px; margin: 12px 0px 24px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
-	                                                <#if (args.project.properties["bcpg:modifiedCatalog1"])??>
+	                                                <#if (args.project.properties["bcpg:modifiedCatalog1"])?>
 			                                            <#assign modifiedCatalog1 = args.project.properties["bcpg:modifiedCatalog1"]>
 			                                            <#assign cmModified = args.project.properties["cm:modified"]>
 	                                                <#if modifiedCatalog1?datetime?iso("UTC") = cmModified?datetime?iso("UTC")>
@@ -208,9 +208,11 @@
 													</#if>
                                              	 </p>
                                              	<ul>
-                                             	 <#if (args.taskTitle)??>                                             
-	                                             	<li>Tâche : <b>${args.taskTitle}</b></li>                                       
-	                                             </#if> 
+                                             	 <#if args.task?? && args.task.properties["pjt:tlTaskName"]??>
+													                                             <li>Tâche : <b>${args.task.properties["pjt:tlTaskName"]!""}</b></li>
+													                                            <#elseif (args.taskTitle)??>
+													                                             <li>Tâche : <b>${args.taskTitle}</b></li>
+													                                            </#if> 
 	                                             <#if (args.taskDescription)?? && args.taskDescription != "">                                             
 	                                             	<li>Description : ${args.taskDescription}</li>                                       
 	                                             </#if> 
@@ -269,7 +271,7 @@
 									    	</ul>  	
 									 </#if>     	
                                              	<#elseif args.activityType == 'Comment'>
-                                             		<p> Un commentaire a été  <#if args.activityEvent == 'Create'>créé<#elseif args.activityEvent == 'Update'>mis à jour<#else>supprimé</#if> sur <#if args.deliverableDescription??>le livrable <b>"${args.deliverableDescription}"</b> <#elseif args.taskTitle??>la tâche <b>"${args.taskTitle}"</b> <#else>le projet</#if>: </p>                                             		                                             		         
+                                             		<p> Un commentaire a été  <#if args.activityEvent == 'Create'>créé<#elseif args.activityEvent == 'Update'>mis à jour<#else>supprimé</#if> sur <#if args.deliverableDescription??>le livrable <b>"${args.deliverableDescription}"</b> <#elseif args.task?? && args.task.properties["pjt:tlTaskName"]??>la tâche <b>"${args.task.properties["pjt:tlTaskName"]!""}"</b> <#elseif args.taskTitle??>la tâche <b>"${args.taskTitle}"</b> <#else>le projet</#if>: </p>                                             															                                             															         
                                              			<#if  args.comment?? && args.comment.content??> 
 			                                                       <div class="comment">${args.comment.content}</div>
 		                                             	</#if>

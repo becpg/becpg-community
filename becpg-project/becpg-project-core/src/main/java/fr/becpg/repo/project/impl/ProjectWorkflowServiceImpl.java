@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -43,11 +44,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.AutoNumService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectNotificationEvent;
@@ -253,7 +256,32 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 	private String calculateWorkflowDescription(ProjectData projectData, TaskListDataItem taskListDataItem) {
 
-		return String.format(WORKFLOW_DESCRIPTION, getProjectCode(projectData), projectData.getName(), taskListDataItem.getTaskName());
+		String taskName = taskListDataItem.getTaskName();
+		List<NodeRef> resources = taskListDataItem.getResources();
+		if ((resources != null) && !resources.isEmpty()) {
+			List<NodeRef> userAssignees = getAssignees(resources, false);
+			List<NodeRef> groupAssignees = getAssignees(resources, true);
+			Locale previousContentLocale = I18NUtil.getContentLocale();
+			try {
+				Locale localeToUse = null;
+				if (!userAssignees.isEmpty() && groupAssignees.isEmpty() && (userAssignees.size() == 1)) {
+					localeToUse = MLTextHelper.getUserContentLocale(nodeService, userAssignees.get(0));
+				} else {
+					localeToUse = Locale.getDefault();
+				}
+				if (localeToUse != null) {
+					I18NUtil.setContentLocale(localeToUse);
+					Serializable localizedName = nodeService.getProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_TASK_NAME);
+					if (localizedName instanceof String) {
+						taskName = (String) localizedName;
+					}
+				}
+			} finally {
+				I18NUtil.setContentLocale(previousContentLocale);
+			}
+		}
+
+		return String.format(WORKFLOW_DESCRIPTION, getProjectCode(projectData), projectData.getName(), taskName);
 	}
 
 	private Object getProjectCode(ProjectData projectData) {
