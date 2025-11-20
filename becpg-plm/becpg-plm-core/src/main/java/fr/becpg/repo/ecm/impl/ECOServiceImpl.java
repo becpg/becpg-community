@@ -36,6 +36,7 @@ import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.lock.mem.Lifetime;
 import org.alfresco.repo.node.MLPropertyInterceptor;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.version.VersionBaseModel;
@@ -798,7 +799,10 @@ public class ECOServiceImpl implements ECOService {
 			} catch (Exception e) {
 
 				changeUnitDataItem.setTreated(false);
-				changeUnitDataItem.setErrorMsg(e.getMessage());
+				
+				MLText errorMl = new MLText();
+				errorMl.put(I18NUtil.getLocale(), e.getMessage());
+				changeUnitDataItem.setErrorMsg(errorMl);
 
 				if (errors != null) {
 					errors.add("Change unit in Error: " + changeUnitDataItem.getNodeRef());
@@ -1552,7 +1556,7 @@ public class ECOServiceImpl implements ECOService {
 	private void checkRequirements(ChangeUnitDataItem changeUnitDataItem, ProductData targetData) {
 
 		RequirementType reqType = null;
-		StringBuilder reqDetails = null;
+		MLText reqDetails = new MLText();
 
 		if ((targetData.getCompoListView() != null) && (targetData.getReqCtrlList() != null)) {
 			for (RequirementListDataItem rcl : targetData.getReqCtrlList()) {
@@ -1566,19 +1570,27 @@ public class ECOServiceImpl implements ECOService {
 					reqType = newReqType;
 				}
 
-				if (reqDetails == null) {
-					reqDetails = new StringBuilder();
-					reqDetails.append(rcl.getReqMessage());
-				} else {
-
-					reqDetails.append(RepoConsts.LABEL_SEPARATOR);
-					reqDetails.append(rcl.getReqMessage());
-
+				if (rcl.getReqMlMessage() != null) {
+					for (Entry<Locale, String> entry : rcl.getReqMlMessage().entrySet()) {
+						if (entry.getValue() != null) {
+							String previous = reqDetails.get(entry.getKey());
+							if (previous == null) {
+								reqDetails.put(entry.getKey(), entry.getValue());
+							} else {
+								reqDetails.put(entry.getKey(), previous + RepoConsts.LABEL_SEPARATOR + entry.getValue());
+							}
+						}
+					}
 				}
 			}
 		}
+		
+		for (Entry<Locale, String> entry : reqDetails.entrySet()) {
+			reqDetails.put(entry.getKey(), LargeTextHelper.elipse(entry.getValue()));
+		}
+		
 		changeUnitDataItem.setReqType(reqType);
-		changeUnitDataItem.setReqDetails(reqDetails != null ? LargeTextHelper.elipse(reqDetails.toString()) : null);
+		changeUnitDataItem.setReqDetails(reqDetails.isEmpty() ? null : reqDetails);
 
 	}
 
