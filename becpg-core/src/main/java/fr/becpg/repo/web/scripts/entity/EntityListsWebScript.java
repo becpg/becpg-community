@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -478,6 +477,14 @@ public class EntityListsWebScript extends AbstractWebScript {
 		return result;
 	}
 
+	private NodeRef getOrCreateListContainer(NodeRef nodeRef) {
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
+		if (listContainerNodeRef == null) {
+			listContainerNodeRef = AuthenticationUtil.runAsSystem(() -> entityListDAO.createListContainer(nodeRef));
+		}
+		return listContainerNodeRef;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 *
@@ -527,10 +534,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 
 				NodeRef templateNodeRef = entityTplService.getEntityTpl(aclTypeQname);
 				if (templateNodeRef != null) {
-					listContainerNodeRef = entityListDAO.getListContainer(templateNodeRef);
-					if (listContainerNodeRef == null) {
-						listContainerNodeRef = entityListDAO.createListContainer(templateNodeRef);
-					}
+					listContainerNodeRef = getOrCreateListContainer(templateNodeRef);
 				} else {
 					logger.error("Cannot get templateNodeRef for type : " + aclType);
 				}
@@ -540,10 +544,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 			else if ((nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITYLISTS) && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL))
 					|| BeCPGModel.TYPE_SYSTEM_ENTITY.equals(nodeType)) {
 
-				listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
-				if (listContainerNodeRef == null) {
-					listContainerNodeRef = entityListDAO.createListContainer(nodeRef);
-				}
+				listContainerNodeRef = getOrCreateListContainer(nodeRef);
 
 				// Add types that can be added
 				Set<ClassDefinition> classDefinitions = new HashSet<>();
@@ -570,15 +571,10 @@ public class EntityListsWebScript extends AbstractWebScript {
 					entityTplNodeRef = entityTplService.getEntityTpl(nodeType);
 				}
 
-				// #1763 Do not work on permissions changed or when node is
-
 				if (entityTplNodeRef != null) {
 
 					final NodeRef templateNodeRef = entityTplNodeRef;
-					// Redmine #59 : copy missing datalists as admin, otherwise,
-					// if
-					// a datalist is added in product template, users cannot see
-					// datalists of valid products
+
 					StopWatch watch = null;
 					if (logger.isDebugEnabled()) {
 						watch = new StopWatch();
@@ -588,7 +584,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 
 					try {
 
-						AuthenticationUtil.runAs(() -> {
+						AuthenticationUtil.runAsSystem(() -> {
 							RetryingTransactionCallback<Object> actionCallback = () -> {
 								policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 								policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
@@ -598,7 +594,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 								return null;
 							};
 							return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback);
-						}, AuthenticationUtil.getAdminUserName());
+						});
 
 					} finally {
 						MLPropertyInterceptor.setMLAware(mlAware);
@@ -623,9 +619,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 
 				boolean isExternalUser = AuthorityHelper.isCurrentUserExternal();
 
-				Iterator<NodeRef> it = listsNodeRef.iterator();
-				while (it.hasNext()) {
-					NodeRef temp = it.next();
+				listsNodeRef.removeIf(temp -> {
 					if (permissionService.hasPermission(temp, PermissionService.READ) == AccessStatus.ALLOWED) {
 						String dataListType = (String) nodeService.getProperty(temp, DataListModel.PROP_DATALISTITEMTYPE);
 						int accessMode = securityService.computeAccessMode(nodeRef, nodeType, dataListType);
@@ -639,15 +633,15 @@ public class EntityListsWebScript extends AbstractWebScript {
 							if (logger.isTraceEnabled()) {
 								logger.trace("Don't display dataList:" + dataListType);
 							}
-							it.remove();
+							return true;
 						} else {
 							accessRights.put(temp, (!isExternalUser && (SecurityService.WRITE_ACCESS == accessMode)
 									&& (permissionService.hasPermission(temp, PermissionService.WRITE) == AccessStatus.ALLOWED)));
+							return false;
 						}
-					} else {
-						it.remove();
 					}
-				}
+					return true;
+				});
 			}
 
 			Path path = nodeService.getPath(nodeRef);
