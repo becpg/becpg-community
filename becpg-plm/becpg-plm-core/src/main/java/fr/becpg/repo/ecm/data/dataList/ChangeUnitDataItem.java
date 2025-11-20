@@ -18,9 +18,11 @@
 package fr.becpg.repo.ecm.data.dataList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.MLText;
 
 import fr.becpg.repo.ecm.data.RevisionType;
 import fr.becpg.repo.regulatory.RequirementType;
+import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -43,11 +45,11 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 	private static final long serialVersionUID = 465151815242873452L;
 	private RevisionType revision;
 	private RequirementType reqType;
-	private String reqDetails;
+	private MLText reqDetails;
 	private Boolean treated;
 	private NodeRef sourceItem;
 	private NodeRef targetItem;
-	private String errorMsg;
+	private MLText errorMsg;
 	
 	
 	/**
@@ -93,20 +95,21 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 	/**
 	 * <p>Getter for the field <code>reqDetails</code>.</p>
 	 *
-	 * @return a {@link java.lang.String} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object.
 	 */
 	@AlfProp
+	@AlfMlText
 	@AlfQname(qname = "ecm:culReqDetails")
-	public String getReqDetails() {
+	public MLText getReqDetails() {
 		return reqDetails;
 	}
 
 	/**
 	 * <p>Setter for the field <code>reqDetails</code>.</p>
 	 *
-	 * @param reqDetails a {@link java.lang.String} object.
+	 * @param reqDetails a {@link org.alfresco.service.cmr.repository.MLText} object.
 	 */
-	public void setReqDetails(String reqDetails) {
+	public void setReqDetails(MLText reqDetails) {
 		this.reqDetails = reqDetails;
 	}
 
@@ -174,20 +177,21 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 	/**
 	 * <p>Getter for the field <code>errorMsg</code>.</p>
 	 *
-	 * @return a {@link java.lang.String} object.
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object.
 	 */
 	@AlfProp
+	@AlfMlText
 	@AlfQname(qname = "ecm:culReqError")
-	public String getErrorMsg() {
+	public MLText getErrorMsg() {
 		return errorMsg;
 	}
 
 	/**
 	 * <p>Setter for the field <code>errorMsg</code>.</p>
 	 *
-	 * @param errorMsg a {@link java.lang.String} object.
+	 * @param errorMsg a {@link org.alfresco.service.cmr.repository.MLText} object.
 	 */
-	public void setErrorMsg(String errorMsg) {
+	public void setErrorMsg(MLText errorMsg) {
 		this.errorMsg = errorMsg;
 	}
 
@@ -203,12 +207,12 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 	 *
 	 * @param revision a {@link fr.becpg.repo.ecm.data.RevisionType} object.
 	 * @param reqType a {@link fr.becpg.repo.regulatory.RequirementType} object.
-	 * @param reqDetails a {@link java.lang.String} object.
+	 * @param reqDetails a {@link org.alfresco.service.cmr.repository.MLText} object.
 	 * @param treated a {@link java.lang.Boolean} object.
 	 * @param sourceItem a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param targetItem a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
-	public ChangeUnitDataItem(RevisionType revision, RequirementType reqType, String reqDetails, Boolean treated, NodeRef sourceItem, NodeRef targetItem) {
+	public ChangeUnitDataItem(RevisionType revision, RequirementType reqType, MLText reqDetails, Boolean treated, NodeRef sourceItem, NodeRef targetItem) {
 		super();
 		this.revision = revision;
 		this.reqType = reqType;
