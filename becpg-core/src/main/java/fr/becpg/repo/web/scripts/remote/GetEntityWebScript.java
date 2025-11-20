@@ -63,8 +63,12 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 
 			resp.setStatus(Status.STATUS_OK);
 		} catch (BeCPGException e) {
-			logger.error("Cannot export entity", e);
-			throw new WebScriptException(e.getMessage());
+			if (isBrokenPipe(e)) {
+				logger.debug("Client aborted connection", e);
+			} else {
+				logger.error("Cannot export entity " + entityNodeRef + " for user " + org.alfresco.repo.security.authentication.AuthenticationUtil.getFullyAuthenticatedUser(), e);
+				throw new WebScriptException(e.getMessage());
+			}
 		} catch (AccessDeniedException e) {
 			throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to see this node");
 		} catch (SocketException e1) {
@@ -77,6 +81,24 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 
 		}
 
+	}
+
+	private boolean isBrokenPipe(Throwable t) {
+		while (t != null) {
+			if (t instanceof IOException && "Broken pipe".equalsIgnoreCase(t.getMessage())) {
+				return true;
+			}
+			if (t.getClass().getName().endsWith("ClientAbortException")) {
+				return true;
+			}
+			for (Throwable s : t.getSuppressed()) {
+				if (isBrokenPipe(s)) {
+					return true;
+				}
+			}
+			t = t.getCause();
+		}
+		return false;
 	}
 
 	
