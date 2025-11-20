@@ -23,6 +23,11 @@ else
   echo "Warning: .env file not found, skipping."
 fi
 
+if [ ! -f docker-compose.override.yml ] && [ -f docker-compose.override.yml.sample ]; then
+  echo "docker-compose.override.yml not found, copying from sample..."
+  cp docker-compose.override.yml.sample docker-compose.override.yml
+fi
+
 case "$2" in
   branch)
     BECPG_VERSION_PROFILE=$(echo "$BECPG_VERSION_PROFILE" | sed 's/\//_/g; s/\./-/g')
