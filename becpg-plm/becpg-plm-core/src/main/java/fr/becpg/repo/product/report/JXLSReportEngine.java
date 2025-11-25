@@ -14,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jxls.expression.ExpressionEvaluator;
 import org.jxls.transform.poi.JxlsPoiTemplateFillerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
@@ -42,20 +43,24 @@ public class JXLSReportEngine implements BeCPGReportEngine {
 
 	private static Log logger = LogFactory.getLog(JXLSReportEngine.class);
 
-	@Autowired
-	private NodeService nodeService;
+	private final NodeService nodeService;
+	private final ContentService contentService;
+	private final SpelFormulaService formulaService;
+	private final EntityService entityService;
+	private final AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	@Autowired
-	private ContentService contentService;
-
-	@Autowired
-	private SpelFormulaService formulaService;
-
-	@Autowired
-	private EntityService entityService;
-
-	@Autowired
-	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+	public JXLSReportEngine(@Qualifier("nodeService") NodeService nodeService,
+			@Qualifier("contentService") ContentService contentService,
+			SpelFormulaService formulaService,
+			EntityService entityService,
+			AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
+		this.nodeService = nodeService;
+		this.contentService = contentService;
+		this.formulaService = formulaService;
+		this.entityService = entityService;
+		this.alfrescoRepository = alfrescoRepository;
+	}
 
 	/** {@inheritDoc} */
 	@Override

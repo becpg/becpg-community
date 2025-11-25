@@ -19,18 +19,20 @@ public class NutrientRegulatoryHelper {
 	
 	private static NutrientRegulatoryHelper instance;
 	
-	@Autowired
-	private SystemConfigurationService systemConfigurationService;
+	private final SystemConfigurationService systemConfigurationService;
+	
+	private final NutrientRegulatoryPlugin[] nutrientPlugins;
 	
 	/**
 	 * <p>Constructor for NutrientRegulatoryHelper.</p>
 	 */
-	public NutrientRegulatoryHelper() {
+	@Autowired
+	public NutrientRegulatoryHelper(SystemConfigurationService systemConfigurationService,
+			NutrientRegulatoryPlugin[] nutrientPlugins) {
+		this.systemConfigurationService = systemConfigurationService;
+		this.nutrientPlugins = nutrientPlugins;
 		instance = this;
 	}
-	
-	@Autowired
-	private NutrientRegulatoryPlugin[] nutrientPlugins;
 	
 	/**
 	 * <p>computeScore.</p>

@@ -8,6 +8,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
@@ -31,11 +32,16 @@ public class Nutrient5C2023Helper implements InitializingBean, NutrientRegulator
 	
 	private static Nutrient5C2023Helper INSTANCE = null;
 	
-	@Autowired
-	private NodeService nodeService;
+	private final NodeService nodeService;
+	
+	private final AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	
 	@Autowired
-	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+	public Nutrient5C2023Helper(@Qualifier("nodeService") NodeService nodeService,
+			AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
+		this.nodeService = nodeService;
+		this.alfrescoRepository = alfrescoRepository;
+	}
 	
 	private static final double[] sugarsRange = { 51d, 48d, 44d, 41d, 37d, 34d, 31d, 27d, 24d, 20d, 17d, 14d, 10d, 6.8d, 3.4d };
 	private static final double[] beveragesSugarsRange = { 11d, 10d, 9d, 8d, 7d, 6d, 5d, 3.5d, 2d, 0.5d };
@@ -70,10 +76,6 @@ public class Nutrient5C2023Helper implements InitializingBean, NutrientRegulator
 	
 	private static final List<String> NON_NUTRITIVE_SUGARS = List.of( "E950", "E951", "E952", "E954", "E955", "E957", "E959", "E960a", "E961", "E962", "E969" );
 			
-	private Nutrient5C2023Helper() {
-		
-	}
-	
 	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {

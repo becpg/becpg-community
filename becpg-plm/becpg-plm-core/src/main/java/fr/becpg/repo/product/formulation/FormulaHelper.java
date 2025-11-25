@@ -20,6 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
@@ -66,24 +67,28 @@ public class FormulaHelper {
 	
 	private static FormulaHelper instance;
 	
+	private final AlfrescoRepository<ProductData> alfrescoRepository;
+	
+	private final NamespaceService namespaceService;
+	
+	private final SpelFormulaService formulaService;
+	
+	private final NodeService nodeService;
+	
 	/**
 	 * <p>Constructor for FormulaHelper.</p>
 	 */
-	public FormulaHelper() {
+	@Autowired
+	public FormulaHelper(AlfrescoRepository<ProductData> alfrescoRepository,
+			NamespaceService namespaceService,
+			SpelFormulaService formulaService,
+			@Qualifier("nodeService") NodeService nodeService) {
+		this.alfrescoRepository = alfrescoRepository;
+		this.namespaceService = namespaceService;
+		this.formulaService = formulaService;
+		this.nodeService = nodeService;
 		instance = this;
 	}
-	
-	@Autowired
-	private AlfrescoRepository<ProductData> alfrescoRepository;
-	
-	@Autowired
-	private NamespaceService namespaceService;
-	
-	@Autowired
-	private SpelFormulaService formulaService;
-	
-	@Autowired
-	private NodeService nodeService;
 	
 	/** Constant <code>DYN_COLUMN_SIZE=10</code> */
 	public static final int DYN_COLUMN_SIZE = 10;

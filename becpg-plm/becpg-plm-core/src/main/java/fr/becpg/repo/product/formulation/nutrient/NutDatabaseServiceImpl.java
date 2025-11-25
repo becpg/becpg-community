@@ -29,6 +29,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
@@ -57,38 +58,43 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("nutDatabaseService")
 public class NutDatabaseServiceImpl implements NutDatabaseService {
 
-	@Autowired
-	private FileFolderService fileFolderService;
-
-	@Autowired
-	private ContentService contentService;
-
-	@Autowired
-	private NodeService nodeService;
-
-	@Autowired
-	private AlfrescoRepository<ProductData> alfrescoRepository;
-
-	@Autowired
-	private Repository repositoryHelper;
-
-	@Autowired
-	private DictionaryService dictionaryService;
-
-	@Autowired
-	private NamespaceService namespaceService;
-
-	@Autowired
-	private TransactionService transactionService;
-
-	@Autowired
-	private BehaviourFilter policyBehaviourFilter;
+	private final FileFolderService fileFolderService;
+	private final ContentService contentService;
+	private final NodeService nodeService;
+	private final AlfrescoRepository<ProductData> alfrescoRepository;
+	private final Repository repositoryHelper;
+	private final DictionaryService dictionaryService;
+	private final NamespaceService namespaceService;
+	private final TransactionService transactionService;
+	private final BehaviourFilter policyBehaviourFilter;
 
 	private static final  Log logger = LogFactory.getLog(NutDatabaseServiceImpl.class);
 	
 	private static final String DATABASES_FOLDER = "/app:company_home/cm:System/cm:NutritionalDatabases";
 	
 	private static final String NUT_CSV_DECIMAL_FORMAT = "###,###.####";
+
+	@Autowired
+	public NutDatabaseServiceImpl(@Qualifier("fileFolderService") FileFolderService fileFolderService,
+			@Qualifier("contentService") ContentService contentService,
+			@Qualifier("nodeService") NodeService nodeService,
+			@Qualifier("alfrescoRepository") AlfrescoRepository<ProductData> alfrescoRepository,
+			@Qualifier("repositoryHelper") Repository repositoryHelper,
+			@Qualifier("dictionaryService") DictionaryService dictionaryService,
+			@Qualifier("namespaceService") NamespaceService namespaceService,
+			@Qualifier("transactionService") TransactionService transactionService,
+			@Qualifier("policyBehaviourFilter")
+			BehaviourFilter policyBehaviourFilter) {
+		this.fileFolderService = fileFolderService;
+		this.contentService = contentService;
+		this.nodeService = nodeService;
+		this.alfrescoRepository = alfrescoRepository;
+		this.repositoryHelper = repositoryHelper;
+		this.dictionaryService = dictionaryService;
+		this.namespaceService = namespaceService;
+		this.transactionService = transactionService;
+		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
 
 	/** {@inheritDoc} */
 	@Override

@@ -182,17 +182,19 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
     private static final String KEY_PACKAGING_QTY = "prop_" + PLMModel.PROP_PACKAGINGLIST_QTY.getLocalName();
     private static final String KEY_COMPO_LOSS_PERC = "prop_" + PLMModel.PROP_COMPOLIST_LOSS_PERC.getLocalName();
 
-    @Autowired
-    private PackagingHelper packagingHelper;
+    private final PackagingHelper packagingHelper;
+    private final AlfrescoRepository<BeCPGDataObject> alfrescoRepository;
+    private final MultiLevelDataListService multiLevelDataListService;
+    private final WUsedListService wUsedListService;
 
     @Autowired
-    private AlfrescoRepository<BeCPGDataObject> alfrescoRepository;
-
-    @Autowired
-    private MultiLevelDataListService multiLevelDataListService;
-
-    @Autowired
-    private WUsedListService wUsedListService;
+    public MultiLevelExcelReportSearchPluginV2(PackagingHelper packagingHelper, AlfrescoRepository<BeCPGDataObject> alfrescoRepository,
+            MultiLevelDataListService multiLevelDataListService, WUsedListService wUsedListService) {
+        this.packagingHelper = packagingHelper;
+        this.alfrescoRepository = alfrescoRepository;
+        this.multiLevelDataListService = multiLevelDataListService;
+        this.wUsedListService = wUsedListService;
+    }
 
     /** {@inheritDoc} */
     @Override

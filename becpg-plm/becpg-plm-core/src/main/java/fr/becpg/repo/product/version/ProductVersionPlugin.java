@@ -12,6 +12,7 @@ import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
@@ -32,23 +33,27 @@ import fr.becpg.repo.system.SystemConfigurationService;
 @Service
 public class ProductVersionPlugin implements EntityVersionPlugin {
 
-	@Autowired
-	private NodeService nodeService;
-	
-	@Autowired
-	private EntityDictionaryService entityDictionaryService;
-	
-	@Autowired
-	private NamespaceService namespaceService;
-	
-	@Autowired
-	private LockService lockService;
+	private final NodeService nodeService;
+	private final EntityDictionaryService entityDictionaryService;
+	private final NamespaceService namespaceService;
+	private final LockService lockService;
+	private final AssociationService associationService;
+	private final SystemConfigurationService systemConfigurationService;
 
 	@Autowired
-	private AssociationService associationService;
-	
-	@Autowired
-	private SystemConfigurationService systemConfigurationService;
+	public ProductVersionPlugin(@Qualifier("nodeService") NodeService nodeService,
+			@Qualifier("entityDictionaryService") EntityDictionaryService entityDictionaryService,
+			@Qualifier("namespaceService") NamespaceService namespaceService,
+			@Qualifier("lockService") LockService lockService,
+			@Qualifier("associationService") AssociationService associationService,
+			@Qualifier("systemConfigurationService") SystemConfigurationService systemConfigurationService) {
+		this.nodeService = nodeService;
+		this.entityDictionaryService = entityDictionaryService;
+		this.namespaceService = namespaceService;
+		this.lockService = lockService;
+		this.associationService = associationService;
+		this.systemConfigurationService = systemConfigurationService;
+	}
 	
 	private String propertiesToKeep() {
 		return systemConfigurationService.confValue("beCPG.copyOrBranch.propertiesToReset");
