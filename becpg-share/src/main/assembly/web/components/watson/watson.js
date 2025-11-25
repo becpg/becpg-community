@@ -148,11 +148,11 @@
                 var chatContainer = Dom.get("watson-chatbot-container");
                 var chatFrame = Dom.get("watson-chatbot-chat-frame");
 
-                // Set to default dimensions
-                chatContainer.style.width = me.options.defaultWidth + 'px';
-                chatContainer.style.height = me.options.defaultHeight + 'px';
+                // Clear inline dimensions so CSS takes over
+                chatContainer.style.width = '';
+                chatContainer.style.height = '';
                 if (chatFrame) {
-                    chatFrame.style.height = (me.options.defaultHeight - 130) + 'px';
+                    chatFrame.style.height = '';
                 }
             };
 
@@ -165,7 +165,7 @@
                     var isCurrentlyOpen = Dom.hasClass(chatContainer, 'transition');
 
                     // Toggle visibility classes
-                    me.toggleClass(chatButton, 'transition');
+                    // me.toggleClass(chatButton, 'transition');
                     me.toggleClass(chatContainer, 'transition');
                     me.toggleClass(chatContainer, 'round');
 
