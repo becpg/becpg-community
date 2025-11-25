@@ -406,7 +406,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	 * @return a boolean
 	 */
 	protected boolean shouldFormulateInVolume(CharactDetailsVisitorContext context, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
-		return (partProduct.getUnit() != null) && partProduct.getUnit().isVolume();
+		return partProduct.isLiquid();
 	}
 
 	/**
