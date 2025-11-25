@@ -197,5 +197,47 @@ http://www.springframework.org/schema/context/spring-context-2.5.xsd">
          </list>
       </property>
    </bean>
-	
+   
+   <bean id="evaluator.becpg.doclib.action.hasPermissionToBranch" parent="evaluator.doclib.action.chainedMatchOne">
+      <property name="evaluators">
+         <list>
+           <bean  parent="evaluator.doclib.action.groupMembership">
+		      <property name="groups">
+		         <list>
+		            <value>SiteManager</value>
+		         </list>
+		      </property>
+		   </bean>
+           <bean  parent="evaluator.doclib.action.groupMembership">
+		      <property name="groups">
+		         <list>
+		            <value>SiteCollaborator</value>
+		         </list>
+		      </property>
+		   </bean>
+           <bean  parent="evaluator.doclib.action.groupMembership">
+		      <property name="groups">
+		         <list>
+		            <value>SiteContributor</value>
+		         </list>
+		      </property>
+		   </bean>
+           <bean  parent="evaluator.doclib.action.groupMembership">
+		      <property name="groups">
+		         <list>
+		            <value>SiteBranchManager</value>
+		         </list>
+		      </property>
+		   </bean>
+           <bean  parent="evaluator.doclib.action.groupMembership">
+		      <property name="groups">
+		         <list>
+		            <value>SiteBranchOnlyManager</value>
+		         </list>
+		      </property>
+		   </bean>
+         </list>
+      </property>
+   </bean>
+   
 </beans>

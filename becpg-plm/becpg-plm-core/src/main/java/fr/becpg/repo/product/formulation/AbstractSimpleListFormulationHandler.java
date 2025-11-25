@@ -658,6 +658,10 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 									forceWeight = true;
 								}
 							} else if (newSimpleListDataItem instanceof NutListDataItem) {
+								if (formulateInVol && (partProduct.getServingSizeUnit() != null) && partProduct.getServingSizeUnit().isWeight()
+										&& (formulatedProduct.getServingSizeUnit() != null) && formulatedProduct.getServingSizeUnit().isWeight()) {
+									formulateInVol = false;
+								}
 								if ((partProduct.getUnit() != null) && partProduct.getUnit().isVolume() && (partProduct.getServingSizeUnit() != null)
 										&& partProduct.getServingSizeUnit().isWeight()) {
 									if ((formulatedProduct.getServingSizeUnit() != null) && formulatedProduct.getServingSizeUnit().isWeight()) {
