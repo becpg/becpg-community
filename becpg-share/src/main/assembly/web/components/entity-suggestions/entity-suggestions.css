@@ -1,42 +1,56 @@
 .suggestions-panel iframe {
-	width:100%;
-	height: 100%;
-	border:none;
+	width: 100%;
+	height: 600px;
+	border: none;
 	overflow-y: auto;
-	min-height: 600px;
 }
 
-.suggestions-tab {
+.suggestions-toolbar {
+	text-align: right;
+	padding: 0.5em 0;
+}
+
+.suggestions-tab-icon {
+	width: 16px;
+	height: 16px;
+	margin-right: 4px;
+	vertical-align: middle;
+}
+
+.suggestions-toolbar .yui-button button,
+.suggestions-exit-fullscreen .yui-button button {
+	cursor: pointer;
+	padding-left: 22px;
 	position: relative;
 }
 
-.suggestions-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	margin-bottom: 0.5em;
+.suggestions-toolbar .yui-button button:before {
+	content: "\26F6";
+	position: absolute;
+	left: 6px;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 14px;
 }
 
-.suggestions-header-title {
-	display: inline-flex;
-	align-items: center;
-	font-weight: bold;
+.suggestions-exit-fullscreen .yui-button button:before {
+	content: "\2716";
+	position: absolute;
+	left: 6px;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 12px;
 }
 
-.suggestions-ai-icon {
-	width: 16px;
-	height: 16px;
-	margin-right: 0.4em;
-	background-image: url(../entity-suggestions/images/chef-ai-16.png);
-	background-repeat: no-repeat;
-	background-position: center center;
+.suggestions-exit-fullscreen {
+	display: none;
 }
 
-.suggestions-fullscreen-button {
-	margin-left: 0.5em;
+.suggestions-tab.fullscreen .suggestions-toolbar {
+	display: none;
 }
 
-.suggestions-tab.fullscreen .suggestions-panel {
+.suggestions-tab.fullscreen .suggestions-content {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -44,6 +58,18 @@
 	bottom: 0;
 	z-index: 1000;
 	background: #fff;
+}
+
+.suggestions-tab.fullscreen .suggestions-exit-fullscreen {
+	display: block;
+	position: fixed;
+	top: 10px;
+	right: 10px;
+	z-index: 1001;
+}
+
+.suggestions-tab.fullscreen .suggestions-panel {
+	height: 100%;
 }
 
 .suggestions-tab.fullscreen .suggestions-panel iframe {
