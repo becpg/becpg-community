@@ -140,7 +140,7 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 				fromQuery = "MIN";
 				toQuery = formatDate(filter.getDateFilterDelayUnit(), date);
 				from = new Date(0L);
-				to = new Date();
+				to = date.getTime();
 				break;
 			case From: //[(NOW-DATE) , NOW]
 				if (filter.getDateFilterDelay() != null) {
