@@ -213,6 +213,7 @@
 		<property name="attributeExtractorService" ref="attributeExtractorService"/>
 		<property name="serviceRegistry" ref="ServiceRegistry"/>
 		<property name="versionService" ref="versionService"/>
+		<property name="entityActivityService" ref="entityActivityService"/>
 	</bean>
 
 	
