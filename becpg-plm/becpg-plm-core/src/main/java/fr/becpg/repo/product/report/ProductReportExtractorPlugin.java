@@ -131,8 +131,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private static final String ATTR_ALLERGENLIST_INVOLUNTARY_FROM_PROCESS = "allergenListInVoluntaryFromProcess";
 	private static final String ATTR_ALLERGENLIST_INVOLUNTARY_FROM_RAW_MATERIAL = "allergenListInVoluntaryFromRawMaterial";
 
-	@Autowired
-	private SystemConfigurationService systemConfigurationService;
+	private final SystemConfigurationService systemConfigurationService;
 
 	private Boolean extractInMultiLevel() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.product.report.multiLevel"));
@@ -162,8 +161,14 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		return systemConfigurationService.confValue("beCPG.product.report.nutList.localesToExtract");
 	}
 
+	protected final PackagingHelper packagingHelper;
+
 	@Autowired
-	protected PackagingHelper packagingHelper;
+	public ProductReportExtractorPlugin(SystemConfigurationService systemConfigurationService,
+			PackagingHelper packagingHelper) {
+		this.systemConfigurationService = systemConfigurationService;
+		this.packagingHelper = packagingHelper;
+	}
 
 	static {
 		hiddenNodeAttributes.add(PLMModel.PROP_NUT_FORMULA);

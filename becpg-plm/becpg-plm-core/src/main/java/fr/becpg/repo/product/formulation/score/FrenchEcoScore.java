@@ -11,6 +11,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
@@ -40,12 +41,16 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 
 	private static Log logger = LogFactory.getLog(FrenchEcoScore.class);
 
-	@Autowired
-	private NodeService nodeService;
+	private final NodeService nodeService;
 	
-	@Autowired
-	private EcoScoreService ecoScoreService;
+	private final EcoScoreService ecoScoreService;
 
+	@Autowired
+	public FrenchEcoScore(@Qualifier("nodeService") NodeService nodeService,
+			@Qualifier("ecoScoreService") EcoScoreService ecoScoreService) {
+		this.nodeService = nodeService;
+		this.ecoScoreService = ecoScoreService;
+	}
 
 	/** Constant <code>ECO_SCORE_SOURCE_TYPE="ecoscore"</code> */
 	public static final String ECO_SCORE_SOURCE_TYPE = "ecoscore";
@@ -81,11 +86,6 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 	private static final List<String> GROUP2_CLAIM = Arrays.asList("EU_ORGANIC", "ORGANIC");
 	private static final List<String> GROUP3_CLAIM = Arrays.asList("HAUTE_VALEUR_ENVIRONNEMENTALE", "UTZ_CERTIFIED", "RAINFOREST_ALLIANCE",
 			"FAIR_TRADE_MARK", "BLEU_BLANC_COEUR", "LABEL_ROUGE", "AQUACULTURE_STEWARDSHIP_COUNCIL", "MARINE_STEWARDSHIP_COUNCIL_LABEL");
-
-	private FrenchEcoScore() {
-	
-	}
-
 
 	/** {@inheritDoc} */
 	@Override

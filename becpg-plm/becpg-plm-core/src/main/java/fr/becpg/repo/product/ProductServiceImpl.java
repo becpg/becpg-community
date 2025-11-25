@@ -29,6 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
@@ -59,26 +60,30 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 
 	private static final Log logger = LogFactory.getLog(ProductServiceImpl.class);
 
-	@Autowired
-	private AlfrescoRepository<ProductData> alfrescoRepository;
+	private final AlfrescoRepository<ProductData> alfrescoRepository;
+	private final FormulationService<ProductData> formulationService;
+	private final BehaviourFilter policyBehaviourFilter;
+	private final CharactDetailsVisitorFactory charactDetailsVisitorFactory;
+	private final EntityDictionaryService entityDictionaryService;
+	private final EntityActivityService entityActivityService;
+	private final EntityTplService entityTplService;
 
 	@Autowired
-	private FormulationService<ProductData> formulationService;
-
-	@Autowired
-	private BehaviourFilter policyBehaviourFilter;
-
-	@Autowired
-	private CharactDetailsVisitorFactory charactDetailsVisitorFactory;
-
-	@Autowired
-	private EntityDictionaryService entityDictionaryService;
-
-	@Autowired
-	private EntityActivityService entityActivityService;
-
-	@Autowired
-	private EntityTplService entityTplService;
+	public ProductServiceImpl(AlfrescoRepository<ProductData> alfrescoRepository,
+			FormulationService<ProductData> formulationService,
+			@Qualifier("policyBehaviourFilter") BehaviourFilter policyBehaviourFilter,
+			CharactDetailsVisitorFactory charactDetailsVisitorFactory,
+			EntityDictionaryService entityDictionaryService,
+			EntityActivityService entityActivityService,
+			EntityTplService entityTplService) {
+		this.alfrescoRepository = alfrescoRepository;
+		this.formulationService = formulationService;
+		this.policyBehaviourFilter = policyBehaviourFilter;
+		this.charactDetailsVisitorFactory = charactDetailsVisitorFactory;
+		this.entityDictionaryService = entityDictionaryService;
+		this.entityActivityService = entityActivityService;
+		this.entityTplService = entityTplService;
+	}
 
 	/** {@inheritDoc} */
 	@Override

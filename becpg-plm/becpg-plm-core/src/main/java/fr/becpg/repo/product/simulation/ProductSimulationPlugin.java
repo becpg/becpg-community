@@ -13,6 +13,7 @@ import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
@@ -39,20 +40,24 @@ public class ProductSimulationPlugin implements EntitySimulationPlugin {
 
 	private static Log logger = LogFactory.getLog(ProductSimulationPlugin.class);
 
-	@Autowired
-	private AlfrescoRepository<ProductData> alfrescoRepository;
+	private final AlfrescoRepository<ProductData> alfrescoRepository;
+	private final NodeService nodeService;
+	private final AssociationService associationService;
+	private final EntityVersionService entityVersionService;
+	private final TransactionService transactionService;
 
 	@Autowired
-	private NodeService nodeService;
-
-	@Autowired
-	private AssociationService associationService;
-
-	@Autowired
-	private EntityVersionService entityVersionService;
-
-	@Autowired
-	private TransactionService transactionService;
+	public ProductSimulationPlugin(@Qualifier("alfrescoRepository") AlfrescoRepository<ProductData> alfrescoRepository,
+			@Qualifier("nodeService") NodeService nodeService,
+			@Qualifier("associationService") AssociationService associationService,
+			@Qualifier("entityVersionService") EntityVersionService entityVersionService,
+			@Qualifier("transactionService") TransactionService transactionService) {
+		this.alfrescoRepository = alfrescoRepository;
+		this.nodeService = nodeService;
+		this.associationService = associationService;
+		this.entityVersionService = entityVersionService;
+		this.transactionService = transactionService;
+	}
 
 	/** {@inheritDoc} */
 	@Override

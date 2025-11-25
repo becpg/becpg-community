@@ -33,11 +33,9 @@ import fr.becpg.repo.variant.filters.VariantFilters;
 @Service
 public class SimulationCostHelper implements InitializingBean {
 
-	@Autowired
-	private AlfrescoRepository<ProductData> alfrescoRepository;
+	private final AlfrescoRepository<ProductData> alfrescoRepository;
 
-	@Autowired
-	private SystemConfigurationService systemConfigurationService;
+	private final SystemConfigurationService systemConfigurationService;
 	
 	private boolean keepProductUnit() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.costList.keepProductUnit"));
@@ -45,15 +43,17 @@ public class SimulationCostHelper implements InitializingBean {
 
 	static SimulationCostHelper INSTANCE;
 
+	@Autowired
+	public SimulationCostHelper(AlfrescoRepository<ProductData> alfrescoRepository,
+			SystemConfigurationService systemConfigurationService) {
+		this.alfrescoRepository = alfrescoRepository;
+		this.systemConfigurationService = systemConfigurationService;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		INSTANCE = this;
-
-	}
-
-	private SimulationCostHelper() {
-		// Make creation private
 
 	}
 
