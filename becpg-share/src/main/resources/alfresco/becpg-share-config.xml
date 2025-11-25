@@ -400,6 +400,7 @@
 				<evaluator negate="true">evaluator.doclib.action.notEditable</evaluator>
 				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
 				<evaluator negate="true">evaluator.becpg.doclib.action.isArchivedEntity</evaluator>
+				<evaluator>evaluator.becpg.doclib.action.hasPermissionToBranch</evaluator>
 			</action>
 			
 
