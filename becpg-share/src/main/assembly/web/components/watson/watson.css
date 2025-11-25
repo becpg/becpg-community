@@ -191,6 +191,10 @@
 	transition: opacity .3s ease
 }
 
+#watson-container.transition #watson-chatbot-chat-activate-bar > svg {
+    display: none;
+}
+
 #watson-container.transition.expanded #watson-chatbot-container #watson-chatbot-header
 	{
 	opacity: 0;
