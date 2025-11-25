@@ -67,7 +67,7 @@
 								   	<ul class="yui-nav" >
 								   		<li class="selected" ><a href="#${el}-comments" ><em>${msg("header.comments")}</em></a></li>
 								   		<li ><a href="#${el}-catalogs"><em>${msg("label.tab.completion")}</em></a></li>
-								   		  <#if isAIEnable >  <li ><a href="#${el}-suggestions"><em>${msg("label.tab.suggestions")}</em></a></li> </#if>
+								   		  <#if isAIEnable >  <li ><a href="#${el}-suggestions"><em><img src="${url.context}/res/components/entity-suggestions/images/chef-ai-16.png" class="suggestions-tab-icon" alt="" />${msg("label.tab.suggestions")}</em></a></li> </#if>
 								   	</ul>
 								   	
 								   	<div class="yui-content properties-tab">
@@ -107,8 +107,22 @@
 								   		</div>
 								   		
 								   		 <#if isAIEnable >
-									     	 <div id="tab_${el}-suggestions">
-										   		<div id="${el}_sug">
+									     	 <div id="tab_${el}-suggestions" class="suggestions-tab">
+										   		<div class="suggestions-toolbar">
+										   			<span id="${el}-suggestions-fullscreen" class="yui-button yui-push-button">
+										   				<span class="first-child">
+										   					<button type="button" title="${msg("button.suggestions.fullscreen")}">${msg("button.suggestions.fullscreen")}</button>
+										   				</span>
+										   			</span>
+										   		</div>
+										   		<div id="${el}_sug" class="suggestions-content">
+										   			<div id="${el}-suggestions-exit-fullscreen" class="suggestions-exit-fullscreen">
+										   				<span class="yui-button yui-push-button">
+										   					<span class="first-child">
+										   						<button type="button" title="${msg("button.suggestions.fullscreen.exit")}">${msg("button.suggestions.fullscreen.exit")}</button>
+										   					</span>
+										   				</span>
+										   			</div>
 									   				<div id="${el}_sug-entity-suggestions" class="suggestions-panel"></div> 
 									   		   </div>	
 									   		</div> 
