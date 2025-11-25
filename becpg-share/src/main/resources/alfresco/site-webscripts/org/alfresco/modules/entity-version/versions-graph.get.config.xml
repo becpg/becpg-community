@@ -1,0 +1,48 @@
+<versions-graph>
+   <types>
+      <!-- Default for all entities -->
+      <type name="default" states="Simulation,ToValidate,Valid,Refused,Stopped,Archived" />
+      <!-- Products -->
+      <type name="bcpg:finishedProduct" states="Simulation,ToValidate,Valid,Refused,Stopped,Archived" />
+      <type name="bcpg:semiFinishedProduct" states="Simulation,ToValidate,Valid,Refused,Stopped,Archived" />
+      <type name="bcpg:rawMaterial" states="Simulation,ToValidate,Valid,Refused,Stopped,Archived" />
+      <type name="bcpg:localSemiFinishedProduct" states="Simulation,ToValidate,Valid,Refused,Stopped,Archived" />
+      <type name="bcpg:logisticUnit" states="Simulation,ToValidate,Valid,Refused,Stopped,Archived" />
+      <type name="bcpg:packagingMaterial" states="Simulation,ToValidate,Valid,Refused,Stopped,Archived" />
+      <type name="bcpg:packagingKit" states="Simulation,ToValidate,Valid,Refused,Stopped,Archived" />
+      <type name="bcpg:resourceProduct" states="Simulation,ToValidate,Valid,Refused,Stopped,Archived" />
+      <type name="bcpg:productCollection" states="Simulation,ToValidate,Valid,Refused,Stopped,Archived" />
+      <type name="bcpg:supplier" states="Simulation,ToValidate,Valid,Refused,Stopped,Archived" />
+      <type name="bcpg:client" states="Simulation,ToValidate,Valid,Refused,Stopped,Archived" />
+      <type name="bcpg:productSpecification" states="Simulation,ToValidate,Valid,Refused,Stopped,Archived" />
+      <!-- Projects -->
+      <type name="pjt:project" states="Planned,InProgress,OnHold,Completed,Cancelled" />
+      <!-- Quality -->
+      <type name="qa:nc" states="new,analysis,treatment,response,classification,closing,closed" />
+      <type name="qa:qualityControl" states="Compliant,NonCompliant" />
+      <type name="qa:batch" states="Simulation,Valid" />
+     
+    </types>
+   <states>
+      <state value="Simulation" label="filter.Simulation" />
+      <state value="ToValidate" label="filter.ToValidate" />
+      <state value="Valid" label="filter.Valid" />
+      <state value="Refused" label="filter.Refused" />
+      <state value="Stopped" label="filter.Stopped" />
+      <state value="Archived" label="filter.Archived" />
+      <state value="OnHold" label="filter.OnHold" />
+      <state value="Planned" label="filter.Planned" />
+      <state value="InProgress" label="filter.InProgress" />
+      <state value="Completed" label="filter.Completed" />
+      <state value="Cancelled" label="filter.Cancelled" />
+      <state value="Compliant" label="filter.Compliant" />
+      <state value="NonCompliant" label="filter.NonCompliant" />
+      <state value="new" label="filter.new" />
+      <state value="analysis" label="filter.analysis" />
+      <state value="treatment" label="filter.treatment" />
+      <state value="response" label="filter.response" />
+      <state value="classification" label="filter.classification" />
+      <state value="closing" label="filter.closing" />
+      <state value="closed" label="filter.closed" />
+   </states>
+</versions-graph>
