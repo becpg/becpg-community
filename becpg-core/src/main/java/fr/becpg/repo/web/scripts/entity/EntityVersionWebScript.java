@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.ServiceRegistry;
@@ -31,6 +32,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.entity.version.EntityVersion;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AttributeExtractorService;
@@ -53,6 +55,8 @@ public class EntityVersionWebScript extends AbstractWebScript {
 	private static final Log logger = LogFactory.getLog(EntityVersionWebScript.class);
 
 	private EntityVersionService entityVersionService;
+	
+	private EntityActivityService entityActivityService;
 
 	private NodeService nodeService;
 
@@ -116,6 +120,15 @@ public class EntityVersionWebScript extends AbstractWebScript {
 	 */
 	public void setVersionService(VersionService versionService) {
 		this.versionService = versionService;
+	}
+
+	/**
+	 * <p>Setter for the field <code>entityActivityService</code>.</p>
+	 *
+	 * @param entityActivityService a {@link fr.becpg.repo.activity.EntityActivityService} object
+	 */
+	public void setEntityActivityService(EntityActivityService entityActivityService) {
+		this.entityActivityService = entityActivityService;
 	}
 
 	/**
@@ -199,13 +212,21 @@ public class EntityVersionWebScript extends AbstractWebScript {
 						jsonVersion.put("label", version.getVersionLabel());
 					}
 
-					String description = version.getDescription();
+					String description = (String) nodeService.getProperty(version.getEntityNodeRef(), ContentModel.PROP_DESCRIPTION);
 
 					if (description != null && description.length() > MAX_DESCRIPTION_LENGTH) {
 						description = description.substring(0, MAX_DESCRIPTION_LENGTH) + " ...";
 					}
 
 					jsonVersion.put("description", description);
+
+					String versionDescription = version.getDescription();
+
+					if (versionDescription != null && versionDescription.length() > MAX_DESCRIPTION_LENGTH) {
+						versionDescription = versionDescription.substring(0, MAX_DESCRIPTION_LENGTH) + " ...";
+					}
+
+					jsonVersion.put("versionDescription", versionDescription);
 
 					Date createdDate = version.getFrozenModifiedDate();
 
@@ -226,6 +247,8 @@ public class EntityVersionWebScript extends AbstractWebScript {
 					if (referenceLabel == null || referenceLabel.equals(version.getVersionLabel())) {
 						jsonVersion.put("clickableNode", version.getEntityNodeRef());
 					}
+
+					jsonVersion.put("entityState", getEntityState(version.getEntityNodeRef()));
 
 					jsonVersions.put(jsonVersion);
 				}
@@ -269,7 +292,7 @@ public class EntityVersionWebScript extends AbstractWebScript {
 					jsonBranches.put(jsonBranch);
 
 					jsonBranch.put("creator", getPerson((String) nodeService.getProperty(branchNodeRef, ContentModel.PROP_CREATOR)));
-
+					jsonBranch.put("entityState", getEntityState(branchNodeRef));
 				}
 
 				JSONObject jsonObject = new JSONObject();
@@ -284,6 +307,15 @@ public class EntityVersionWebScript extends AbstractWebScript {
 		} catch (JSONException e) {
 			throw new WebScriptException("Unable to serialize JSON");
 		}
+	}
+
+	private Serializable getEntityState(NodeRef entityNodeRef) {
+		for (Map.Entry<QName, Serializable> entry : nodeService.getProperties(entityNodeRef).entrySet()) {
+			if (entityActivityService.isMatchingStateProperty(entry.getKey())) {
+				return entry.getValue();
+			}
+		}
+		return null;
 	}
 
 	private JSONObject getPerson(String frozenModifier) throws JSONException {
