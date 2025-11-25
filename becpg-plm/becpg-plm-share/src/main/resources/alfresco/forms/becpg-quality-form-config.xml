@@ -54,6 +54,11 @@
 					<show id="bcpg:clientTel" />
 					<show id="bcpg:clientEmail" />
 					<show id="bcpg:clientFax" />
+					<show id="bcpg:httpLink1" force="true" />
+					<show id="bcpg:httpLink2" force="true" />
+					<show id="bcpg:httpLink3" force="true" />
+					<hide id="bcpg:httpLink4" />
+					<hide id="bcpg:httpLink5" />
 					<!-- bcpg:location type -->
 					<show id="bcpg:locationAddress1" />
 					<show id="bcpg:locationAddress2" />
@@ -62,6 +67,7 @@
 					<show id="bcpg:locationCity" />
 					<show id="bcpg:locationState" />
 					<show id="bcpg:locationCountry" />
+					<show id="bcpg:locationCountryRef" />
 
 				</field-visibility>
 				<appearance>
@@ -77,6 +83,11 @@
 					<show id="bcpg:clientTel" />
 					<show id="bcpg:clientEmail" />
 					<show id="bcpg:clientFax" />
+					<show id="bcpg:httpLink1" force="true" />
+					<show id="bcpg:httpLink2" force="true" />
+					<show id="bcpg:httpLink3" force="true" />
+					<hide id="bcpg:httpLink4" />
+					<hide id="bcpg:httpLink5" />
 				<!-- bcpg:location type -->
 					<show id="bcpg:locationAddress1" />
 					<show id="bcpg:locationAddress2" />
@@ -85,6 +96,7 @@
 					<show id="bcpg:locationCity" />
 					<show id="bcpg:locationState" />
 					<show id="bcpg:locationCountry" />
+					<show id="bcpg:locationCountryRef" />
 
 				</field-visibility>
 				<appearance>
