@@ -564,12 +564,18 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			if (!isOmit) {
 				if (DeclarationType.Omit.equals(newIngListDataItem.getDeclType())) {
 					newIngListDataItem.setDeclType(DeclarationType.Detail);
+					IngListDataItem omittedIng = totalQtyOmittedIngMap.remove(newIngListDataItem.getName());
+					if (omittedIng != null) {
+						IngListDataItem target = totalQtyIngMap.computeIfAbsent(newIngListDataItem.getName(), k -> new IngListDataItem());
+						mergeIngListDataItem(target, omittedIng);
+					}
 				} else {
 					newIngListDataItem.setDeclType(ingListDataItem.getDeclType());
 				}
 			}
 
-			IngListDataItem totalIng = isOmit ? totalQtyOmittedIngMap.computeIfAbsent(newIngListDataItem.getName(), k -> new IngListDataItem())
+			IngListDataItem totalIng = DeclarationType.Omit.equals(newIngListDataItem.getDeclType())
+					? totalQtyOmittedIngMap.computeIfAbsent(newIngListDataItem.getName(), k -> new IngListDataItem())
 					: totalQtyIngMap.computeIfAbsent(newIngListDataItem.getName(), k -> new IngListDataItem());
 
 			Double totalQtyIngWithYield = totalIng.getQtyPercWithYield();
@@ -793,6 +799,32 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			return ingItem.getLegalName(Locale.getDefault());
 		}
 		return ingListDataItem.getName();
+	}
+
+	private void mergeIngListDataItem(IngListDataItem target, IngListDataItem source) {
+		target.setQtyPerc(sum(target.getQtyPerc(), source.getQtyPerc()));
+		target.setQtyPerc1(sum(target.getQtyPerc1(), source.getQtyPerc1()));
+		target.setQtyPerc2(sum(target.getQtyPerc2(), source.getQtyPerc2()));
+		target.setQtyPerc3(sum(target.getQtyPerc3(), source.getQtyPerc3()));
+		target.setQtyPerc4(sum(target.getQtyPerc4(), source.getQtyPerc4()));
+		target.setQtyPerc5(sum(target.getQtyPerc5(), source.getQtyPerc5()));
+		target.setMini(sum(target.getMini(), source.getMini()));
+		target.setMaxi(sum(target.getMaxi(), source.getMaxi()));
+		target.setQtyPercWithYield(sum(target.getQtyPercWithYield(), source.getQtyPercWithYield()));
+		target.setVolumeQtyPerc(sum(target.getVolumeQtyPerc(), source.getVolumeQtyPerc()));
+	}
+
+	private Double sum(Double d1, Double d2) {
+		if ((d1 == null) && (d2 == null)) {
+			return null;
+		}
+		if (d1 == null) {
+			return d2;
+		}
+		if (d2 == null) {
+			return d1;
+		}
+		return d1 + d2;
 	}
 
 }
