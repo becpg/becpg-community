@@ -17,7 +17,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -45,13 +44,18 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 
 	// Allowed Parameter1 AllLevel MaxLevel2 OnlyLevel2
 
-	@Autowired
-	MultiLevelDataListService multiLevelDataListService;
+	private final MultiLevelDataListService multiLevelDataListService;
 	
 	// Allowed Parameter1 WUsedAllLevel WUsedMaxLevel2 WUsedOnlyLevel2
 	
+	private final WUsedListService wUsedListService;
+
 	@Autowired
-	private WUsedListService wUsedListService;
+	public MultiLevelExcelReportSearchPlugin(MultiLevelDataListService multiLevelDataListService,
+			WUsedListService wUsedListService) {
+		this.multiLevelDataListService = multiLevelDataListService;
+		this.wUsedListService = wUsedListService;
+	}
 
 	/** {@inheritDoc} */
 	@Override

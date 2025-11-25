@@ -12,6 +12,7 @@ import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
@@ -32,17 +33,24 @@ public class LCADatabaseService {
 
 	private static final String DATABASES_FOLDER = "/app:company_home/cm:System/cm:LCADatabases";
 
-	@Autowired
-	private NodeService nodeService;
+	private final NodeService nodeService;
+	
+	private final FileFolderService fileFolderService;
+	
+	private final Repository repositoryHelper;
+	
+	private final LCADatabasePlugin[] lcaPlugins;
 	
 	@Autowired
-	private FileFolderService fileFolderService;
-	
-	@Autowired
-	private Repository repositoryHelper;
-	
-	@Autowired
-	private LCADatabasePlugin[] lcaPlugins;
+	public LCADatabaseService(@Qualifier("nodeService") NodeService nodeService,
+			@Qualifier("fileFolderService") FileFolderService fileFolderService,
+			@Qualifier("repositoryHelper") Repository repositoryHelper,
+			LCADatabasePlugin[] lcaPlugins) {
+		this.nodeService = nodeService;
+		this.fileFolderService = fileFolderService;
+		this.repositoryHelper = repositoryHelper;
+		this.lcaPlugins = lcaPlugins;
+	}
 	
 	private LCADatabasePlugin getPlugin(NodeRef databaseNodeRef) {
 		String databaseFilename = (String) nodeService.getProperty(databaseNodeRef, ContentModel.PROP_NAME);

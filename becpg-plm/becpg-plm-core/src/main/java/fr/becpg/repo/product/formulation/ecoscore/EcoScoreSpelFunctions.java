@@ -8,6 +8,7 @@ import java.util.Map;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
@@ -27,14 +28,20 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @Service
 public class EcoScoreSpelFunctions implements CustomSpelFunctions {
 
-	@Autowired
-	private NodeService nodeService;
+	private final NodeService nodeService;
+
+	private final EcoScoreService ecoScoreService;
+
+	private final AlfrescoRepository<BeCPGDataObject> alfrescoRepository;
 
 	@Autowired
-	private EcoScoreService ecoScoreService;
-
-	@Autowired
-	private AlfrescoRepository<BeCPGDataObject> alfrescoRepository;
+	public EcoScoreSpelFunctions(@Qualifier("nodeService") NodeService nodeService,
+			EcoScoreService ecoScoreService,
+			AlfrescoRepository<BeCPGDataObject> alfrescoRepository) {
+		this.nodeService = nodeService;
+		this.ecoScoreService = ecoScoreService;
+		this.alfrescoRepository = alfrescoRepository;
+	}
 
 	/** {@inheritDoc} */
 	@Override

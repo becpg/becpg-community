@@ -5,3 +5,47 @@
 	overflow-y: auto;
 	min-height: 600px;
 }
+
+.suggestions-tab {
+	position: relative;
+}
+
+.suggestions-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 0.5em;
+}
+
+.suggestions-header-title {
+	display: inline-flex;
+	align-items: center;
+	font-weight: bold;
+}
+
+.suggestions-ai-icon {
+	width: 16px;
+	height: 16px;
+	margin-right: 0.4em;
+	background-image: url(../entity-suggestions/images/chef-ai-16.png);
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+
+.suggestions-fullscreen-button {
+	margin-left: 0.5em;
+}
+
+.suggestions-tab.fullscreen .suggestions-panel {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 1000;
+	background: #fff;
+}
+
+.suggestions-tab.fullscreen .suggestions-panel iframe {
+	min-height: 100%;
+}
