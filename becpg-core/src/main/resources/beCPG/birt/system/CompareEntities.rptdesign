@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 4.8.0.v201806261756</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.7.0.v201706222054</property>
     <simple-property-list name="includeResource">
         <value>./CompareEntities-messages</value>
         <value>./ProductReport</value>
@@ -56,7 +56,7 @@ function convert ( qty, value, isVolume ) {
     </parameters>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="1347">
-            <property name="FILELIST">src/main/resources/beCPG/birt/system/CompareEntities.xml</property>
+            <property name="FILELIST">src/main/resources/beCPG/birt/system/compDataSource.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -2145,6 +2145,7 @@ if ( row["properties2"] != null ) {
                             <image id="12189">
                                 <property name="height">0.7083333333333334in</property>
                                 <property name="width">0.9375in</property>
+                                <property name="dataSet">imgLogo</property>
                                 <list-property name="visibility">
                                     <structure>
                                         <property name="format">all</property>
@@ -5151,11 +5152,19 @@ color;</expression>
                     <text-property name="displayName">value29</text-property>
                     <expression name="expression" type="javascript">dataSetRow["value29"]</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value30</property>
                     <text-property name="displayName">value30</text-property>
                     <expression name="expression" type="javascript">dataSetRow["value30"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">entityListQName</property>
+                    <text-property name="displayName">entityListQName</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["entityListQName"]</expression>
                     <property name="dataType">string</property>
                 </structure>
             </list-property>
@@ -5745,12 +5754,29 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12192">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value1"] ? (row["value1"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="3465">
                             <property name="fontSize">9pt</property>
                             <property name="paddingTop">2pt</property>
                             <property name="paddingLeft">2pt</property>
                             <property name="paddingBottom">2pt</property>
                             <property name="paddingRight">2pt</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value1</property>
                         </data>
                     </cell>
@@ -5772,12 +5798,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3471">
-                            <property name="fontSize">9pt</property>
-                            <property name="paddingTop">2pt</property>
-                            <property name="paddingLeft">2pt</property>
-                            <property name="paddingBottom">2pt</property>
-                            <property name="paddingRight">2pt</property>
+                        <text-data id="12193">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value2"] ? (row["value2"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12234">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value2</property>
                         </data>
                     </cell>
@@ -5804,12 +5842,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3477">
-                            <property name="fontSize">9pt</property>
-                            <property name="paddingTop">2pt</property>
-                            <property name="paddingLeft">2pt</property>
-                            <property name="paddingBottom">2pt</property>
-                            <property name="paddingRight">2pt</property>
+                        <text-data id="12194">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value3"] ? (row["value3"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12235">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value3</property>
                         </data>
                     </cell>
@@ -5826,12 +5876,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3483">
-                            <property name="fontSize">9pt</property>
-                            <property name="paddingTop">2pt</property>
-                            <property name="paddingLeft">2pt</property>
-                            <property name="paddingBottom">2pt</property>
-                            <property name="paddingRight">2pt</property>
+                        <text-data id="12195">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value4"] ? (row["value4"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12236">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value4</property>
                         </data>
                     </cell>
@@ -5854,7 +5916,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3789">
+                        <text-data id="12196">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value5"] ? (row["value5"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12237">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value5</property>
                         </data>
                     </cell>
@@ -5871,7 +5950,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3790">
+                        <text-data id="12197">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value6"] ? (row["value6"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12238">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value6</property>
                         </data>
                     </cell>
@@ -5894,7 +5990,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3791">
+                        <text-data id="12198">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value7"] ? (row["value7"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12239">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value7</property>
                         </data>
                     </cell>
@@ -5911,7 +6024,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3792">
+                        <text-data id="12199">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value8"] ? (row["value8"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12240">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value8</property>
                         </data>
                     </cell>
@@ -5934,7 +6064,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3793">
+                        <text-data id="12200">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value9"] ? (row["value9"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12241">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value9</property>
                         </data>
                     </cell>
@@ -5951,7 +6098,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3794">
+                        <text-data id="12201">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value10"] ? (row["value10"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12242">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value10</property>
                         </data>
                     </cell>
@@ -5974,7 +6138,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3835">
+                        <text-data id="12202">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value11"] ? (row["value11"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12243">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value11</property>
                         </data>
                     </cell>
@@ -5991,7 +6172,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3836">
+                        <text-data id="12203">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value12"] ? (row["value12"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12244">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value12</property>
                         </data>
                     </cell>
@@ -6014,7 +6212,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3837">
+                        <text-data id="12204">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value13"] ? (row["value13"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12245">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value13</property>
                         </data>
                     </cell>
@@ -6031,7 +6246,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3838">
+                        <text-data id="12205">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value14"] ? (row["value14"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12246">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value14</property>
                         </data>
                     </cell>
@@ -6048,13 +6280,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3839">
-                            <property name="borderLeftColor">#004254</property>
-                            <property name="borderLeftStyle">solid</property>
-                            <property name="borderLeftWidth">thin</property>
-                            <property name="borderRightColor">#004254</property>
-                            <property name="borderRightStyle">solid</property>
-                            <property name="borderRightWidth">thin</property>
+                        <text-data id="12206">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value15"] ? (row["value15"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12247">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value15</property>
                         </data>
                     </cell>
@@ -6071,7 +6314,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3840">
+                        <text-data id="12207">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value16"] ? (row["value16"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12248">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value16</property>
                         </data>
                     </cell>
@@ -6088,7 +6348,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3841">
+                        <text-data id="12208">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value17"] ? (row["value17"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12249">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value17</property>
                         </data>
                     </cell>
@@ -6105,7 +6382,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3842">
+                        <text-data id="12209">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value18"] ? (row["value18"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12250">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value18</property>
                         </data>
                     </cell>
@@ -6122,7 +6416,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3843">
+                        <text-data id="12210">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value19"] ? (row["value19"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12251">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value19</property>
                         </data>
                     </cell>
@@ -6139,7 +6450,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3844">
+                        <text-data id="12211">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value20"] ? (row["value20"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12252">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value20</property>
                         </data>
                     </cell>
@@ -6156,7 +6484,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3882">
+                        <text-data id="12212">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value21"] ? (row["value21"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12253">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value21</property>
                         </data>
                     </cell>
@@ -6173,7 +6518,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3883">
+                        <text-data id="12213">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value22"] ? (row["value22"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12254">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value22</property>
                         </data>
                     </cell>
@@ -6190,7 +6552,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3884">
+                        <text-data id="12214">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value23"] ? (row["value23"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12255">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value23</property>
                         </data>
                     </cell>
@@ -6207,7 +6586,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3885">
+                        <text-data id="12215">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value24"] ? (row["value24"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12256">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value24</property>
                         </data>
                     </cell>
@@ -6224,7 +6620,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3886">
+                        <text-data id="12216">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value25"] ? (row["value25"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12257">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value25</property>
                         </data>
                     </cell>
@@ -6241,7 +6654,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3887">
+                        <text-data id="12217">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value26"] ? (row["value26"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12258">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value26</property>
                         </data>
                     </cell>
@@ -6258,7 +6688,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3888">
+                        <text-data id="12218">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value27"] ? (row["value27"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12259">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value27</property>
                         </data>
                     </cell>
@@ -6275,7 +6722,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3889">
+                        <text-data id="12219">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value28"] ? (row["value28"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12260">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value28</property>
                         </data>
                     </cell>
@@ -6292,7 +6756,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3890">
+                        <text-data id="12220">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value29"] ? (row["value29"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12261">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value29</property>
                         </data>
                     </cell>
@@ -6309,7 +6790,24 @@ color;</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3891">
+                        <text-data id="12221">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value30"] ? (row["value30"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
+                        <data id="12262">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value30</property>
                         </data>
                     </cell>
