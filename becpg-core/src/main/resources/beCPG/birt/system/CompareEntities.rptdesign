@@ -56,7 +56,7 @@ function convert ( qty, value, isVolume ) {
     </parameters>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="1347">
-            <property name="FILELIST">src/main/resources/beCPG/birt/system/compDataSource.xml</property>
+            <property name="FILELIST">src/main/resources/beCPG/birt/system/CompareEntities.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
