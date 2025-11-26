@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 4.8.0.v201806261756</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.7.0.v201706222054</property>
     <simple-property-list name="includeResource">
         <value>./CompareEntities-messages</value>
         <value>./settings</value>
@@ -435,6 +435,11 @@ function formatWeight ( dataSetValue ) {
                     <property name="analysis">dimension</property>
                     <text-property name="heading">value30</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">entityListQName</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">entityListQName</text-property>
+                </structure>
             </list-property>
             <list-property name="filter">
                 <structure>
@@ -793,6 +798,11 @@ function formatWeight ( dataSetValue ) {
                     <structure>
                         <property name="position">65</property>
                         <property name="name">value30</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">66</property>
+                        <property name="name">entityListQName</property>
                         <property name="dataType">string</property>
                     </structure>
                 </list-property>
@@ -1254,8 +1264,15 @@ function formatWeight ( dataSetValue ) {
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">66</property>
+                    <property name="name">entityListQName</property>
+                    <property name="nativeName">entityListQName</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entitiesComparison/comparisonRows/comparisonRow]#:#{entityList;STRING;/@entityList},{characteristic;STRING;/@characteristic},{property;STRING;/@property},{propertyQName;STRING;/@propertyQName},{isDifferent;BOOLEAN;/@isDifferent},{entity1;STRING;../@entity1},{entity2;STRING;../@entity2},{entity3;STRING;../@entity3},{entity4;STRING;../@entity4},{entity5;STRING;../@entity5},{entity6;STRING;../@entity6},{entity7;STRING;../@entity7},{entity8;STRING;../@entity8},{entity9;STRING;../@entity9},{entity10;STRING;../@entity10},{entity11;STRING;../@entity11},{entity12;STRING;../@entity12},{entity13;STRING;../@entity13},{entity14;STRING;../@entity14},{entity15;STRING;../@entity15},{entity16;STRING;../@entity16},{entity17;STRING;../@entity17},{entity18;STRING;../@entity18},{entity19;STRING;../@entity19},{entity20;STRING;../@entity20},{entity21;STRING;../@entity21},{entity22;STRING;../@entity22},{entity23;STRING;../@entity23},{entity24;STRING;../@entity24},{entity25;STRING;../@entity25},{entity26;STRING;../@entity26},{entity27;STRING;../@entity27},{entity28;STRING;../@entity28},{entity29;STRING;../@entity29},{entity30;STRING;../@entity30},{value1;STRING;/@value1},{value2;STRING;/@value2},{value3;STRING;/@value3},{value4;STRING;/@value4},{value5;STRING;/@value5},{value6;STRING;/@value6},{value7;STRING;/@value7},{value8;STRING;/@value8},{value9;STRING;/@value9},{value10;STRING;/@value10},{value11;STRING;/@value11},{value12;STRING;/@value12},{value13;STRING;/@value13},{value14;STRING;/@value14},{value15;STRING;/@value15},{value16;STRING;/@value16},{value17;STRING;/@value17},{value18;STRING;/@value18},{value19;STRING;/@value19},{value20;STRING;/@value20},{value21;STRING;/@value21},{value22;STRING;/@value22},{value23;STRING;/@value23},{value24;STRING;/@value24},{value25;STRING;/@value25},{value26;STRING;/@value26},{value27;STRING;/@value27},{value28;STRING;/@value28},{value29;STRING;/@value29},{value30;STRING;/@value30}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entitiesComparison/comparisonRows/comparisonRow]#:#{entityList;STRING;/@entityList},{characteristic;STRING;/@characteristic},{property;STRING;/@property},{propertyQName;STRING;/@propertyQName},{isDifferent;BOOLEAN;/@isDifferent},{entity1;STRING;../@entity1},{entity2;STRING;../@entity2},{entity3;STRING;../@entity3},{entity4;STRING;../@entity4},{entity5;STRING;../@entity5},{entity6;STRING;../@entity6},{entity7;STRING;../@entity7},{entity8;STRING;../@entity8},{entity9;STRING;../@entity9},{entity10;STRING;../@entity10},{entity11;STRING;../@entity11},{entity12;STRING;../@entity12},{entity13;STRING;../@entity13},{entity14;STRING;../@entity14},{entity15;STRING;../@entity15},{entity16;STRING;../@entity16},{entity17;STRING;../@entity17},{entity18;STRING;../@entity18},{entity19;STRING;../@entity19},{entity20;STRING;../@entity20},{entity21;STRING;../@entity21},{entity22;STRING;../@entity22},{entity23;STRING;../@entity23},{entity24;STRING;../@entity24},{entity25;STRING;../@entity25},{entity26;STRING;../@entity26},{entity27;STRING;../@entity27},{entity28;STRING;../@entity28},{entity29;STRING;../@entity29},{entity30;STRING;../@entity30},{value1;STRING;/@value1},{value2;STRING;/@value2},{value3;STRING;/@value3},{value4;STRING;/@value4},{value5;STRING;/@value5},{value6;STRING;/@value6},{value7;STRING;/@value7},{value8;STRING;/@value8},{value9;STRING;/@value9},{value10;STRING;/@value10},{value11;STRING;/@value11},{value12;STRING;/@value12},{value13;STRING;/@value13},{value14;STRING;/@value14},{value15;STRING;/@value15},{value16;STRING;/@value16},{value17;STRING;/@value17},{value18;STRING;/@value18},{value19;STRING;/@value19},{value20;STRING;/@value20},{value21;STRING;/@value21},{value22;STRING;/@value22},{value23;STRING;/@value23},{value24;STRING;/@value24},{value25;STRING;/@value25},{value26;STRING;/@value26},{value27;STRING;/@value27},{value28;STRING;/@value28},{value29;STRING;/@value29},{value30;STRING;/@value30},{entityListQName;STRING;/@entityListQName}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -3149,6 +3166,278 @@ row["properties2"]
                 </ex-property>
             </list-property>
         </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="rawMaterials" id="12222">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">property</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">property</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">propertyQName</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">propertyQName</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">value1</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">value1</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">value2</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">value2</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">entityList</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">entityList</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">entityListQName</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">entityListQName</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">characteristic</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">characteristic</text-property>
+                </structure>
+            </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">eq</property>
+                    <expression name="expr" type="javascript">row["entityListQName"]</expression>
+                    <simple-property-list name="value1">
+                        <value>"bcpg:rawMaterial"</value>
+                    </simple-property-list>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">property</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">propertyQName</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">value1</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">value2</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">entityList</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">entityListQName</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">characteristic</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">property</property>
+                    <property name="nativeName">property</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">propertyQName</property>
+                    <property name="nativeName">propertyQName</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">value1</property>
+                    <property name="nativeName">value1</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">value2</property>
+                    <property name="nativeName">value2</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">entityList</property>
+                    <property name="nativeName">entityList</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">entityListQName</property>
+                    <property name="nativeName">entityListQName</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">characteristic</property>
+                    <property name="nativeName">characteristic</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entitiesComparison/comparisonRows/comparisonRow]#:#{property;STRING;/@property},{propertyQName;STRING;/@propertyQName},{value1;STRING;/@value1},{value2;STRING;/@value2},{entityList;STRING;/@entityList},{entityListQName;STRING;/@entityListQName},{characteristic;STRING;/@characteristic}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>property</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>property</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>propertyQName</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>propertyQName</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>value1</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>value1</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>value2</design:name>
+              <design:position>4</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>value2</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>entityList</design:name>
+              <design:position>5</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>entityList</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>entityListQName</design:name>
+              <design:position>6</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>entityListQName</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>characteristic</design:name>
+              <design:position>7</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>characteristic</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
     </data-sets>
     <styles>
         <style name="report" id="4">
@@ -4122,7 +4411,6 @@ row["properties2"]
                     <property name="fontSize">10pt</property>
                     <cell id="3492">
                         <label id="1541">
-                            <property name="fontSize">10pt</property>
                             <property name="paddingTop">1pt</property>
                             <property name="paddingLeft">2pt</property>
                             <property name="paddingBottom">2pt</property>
@@ -7392,6 +7680,12 @@ color;</expression>
                     <expression name="expression" type="javascript">dataSetRow["value30"]</expression>
                     <property name="dataType">string</property>
                 </structure>
+                <structure>
+                    <property name="name">entityListQName</property>
+                    <text-property name="displayName">entityListQName</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["entityListQName"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
             </list-property>
             <property name="pageBreakInterval">100000</property>
             <list-property name="sort">
@@ -7404,33 +7698,43 @@ color;</expression>
             <list-property name="filter">
                 <structure>
                     <property name="operator">is-true</property>
-                    <expression name="expr" type="javascript">(row["entityList"] !=  null &amp;&amp; row["entityList"] != "Composition" &amp;&amp; row["entityList"] != "Emballages")</expression>
+                    <expression name="expr" type="javascript">(row["entityList"] !=  null &amp;&amp; row["entityListQName"] != "bcpg:compoList" &amp;&amp; row["entityListQName"] != "bcpg:packagingList")</expression>
                     <property name="updateAggregation">true</property>
                 </structure>
                 <structure>
                     <property name="operator">is-true</property>
-                    <expression name="expr" type="javascript">(row["propertyQName"] == "bcpg:costListValue" || 
-row["propertyQName"] == "bcpg:nutListValue" ||
-row["propertyQName"] == "bcpg:nutListFormulatedValue" ||
-row["propertyQName"] == "bcpg:lclClaimValue" ||
-row["propertyQName"] == "bcpg:pclValue" ||
-row["propertyQName"] == "bcpg:organoListValue" ||
-row["propertyQName"] == "bcpg:allergenListVoluntary" ||
-row["propertyQName"] == "bcpg:allergenListInVoluntary" ||
-row["propertyQName"] == "bcpg:illValue" ||
-row["propertyQName"] == "bcpg:illManualValue" ||
-row["propertyQName"] == "bcpg:mblValue" ||
-row["propertyQName"] == "bcpg:mblMaxi" ||
-row["propertyQName"] == "bcpg:microbioUnit" ||
-row["propertyQName"] == "bcpg:ingListQtyPerc" ||
-row["propertyQName"] == "bcpg:ingListGeoOrigin" ||
-row["propertyQName"] == "bcpg:ingListQtyTransfo" ||
-row["propertyQName"] == "bcpg:ingListBioOrigin" ||
-row["propertyQName"] == "bcpg:lcaListValue" ||
-row["propertyQName"] == "bcpg:toxListValue" ||
-row["propertyQName"] == "mpm:rplParamValue" ||
-row["propertyQName"] == "qa:clState" ||
-row["propertyQName"] == "qa:clValue")</expression>
+                    <expression name="expr" type="javascript">(row["propertyQName"] == "bcpg:costListValue"
+   || row["propertyQName"] == "bcpg:nutListValue"
+   || row["propertyQName"] == "bcpg:nutListFormulatedValue"
+   || row["propertyQName"] == "bcpg:lclClaimValue"
+   || row["propertyQName"] == "bcpg:pclValue"
+   || row["propertyQName"] == "bcpg:organoListValue"
+   || row["propertyQName"] == "bcpg:allergenListVoluntary"
+   || row["propertyQName"] == "bcpg:allergenListInVoluntary"
+   || row["propertyQName"] == "bcpg:illValue"
+   || row["propertyQName"] == "bcpg:illManualValue"
+   || row["propertyQName"] == "bcpg:mblValue"
+   || row["propertyQName"] == "bcpg:mblMaxi"
+   || row["propertyQName"] == "bcpg:microbioUnit"
+   || row["propertyQName"] == "bcpg:ingListQtyPerc"
+   || row["propertyQName"] == "bcpg:ingListGeoOrigin"
+   || row["propertyQName"] == "bcpg:ingListQtyTransfo"
+   || row["propertyQName"] == "bcpg:ingListBioOrigin"
+   || row["propertyQName"] == "bcpg:lcaListValue"
+   || row["propertyQName"] == "bcpg:toxListValue"
+   || row["propertyQName"] == "mpm:rplParamValue"
+   || row["propertyQName"] == "qa:clState"
+   || row["propertyQName"] == "qa:clValue"
+   || row["propertyQName"] == "bcpg:certificationNumber"
+   || row["propertyQName"] == "cm:title"
+   || row["propertyQName"] == "cm:description"
+   || row["propertyQName"] == "bcpg:certificationStandard"
+   || row["propertyQName"] == "gs1:certificationCode"
+   || row["propertyQName"] == "bcpg:certificationAgency"
+   || row["propertyQName"] == "bcpg:certificationNote"
+   || row["propertyQName"] == "bcpg:compoListQtyForProduct"  
+   || row["propertyQName"] == "bcpg:compoListQty"   
+   )</expression>
                     <property name="updateAggregation">true</property>
                 </structure>
             </list-property>
@@ -7990,12 +8294,29 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12192">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value1"] ? (row["value1"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="3465">
                             <property name="fontSize">9pt</property>
                             <property name="paddingTop">2pt</property>
                             <property name="paddingLeft">2pt</property>
                             <property name="paddingBottom">2pt</property>
                             <property name="paddingRight">2pt</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value1</property>
                         </data>
                     </cell>
@@ -8016,12 +8337,29 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12193">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value2"] ? (row["value2"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="3471">
                             <property name="fontSize">9pt</property>
                             <property name="paddingTop">2pt</property>
                             <property name="paddingLeft">2pt</property>
                             <property name="paddingBottom">2pt</property>
                             <property name="paddingRight">2pt</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value2</property>
                         </data>
                     </cell>
@@ -8048,12 +8386,29 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12194">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value3"] ? (row["value3"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="3477">
                             <property name="fontSize">9pt</property>
                             <property name="paddingTop">2pt</property>
                             <property name="paddingLeft">2pt</property>
                             <property name="paddingBottom">2pt</property>
                             <property name="paddingRight">2pt</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value3</property>
                         </data>
                     </cell>
@@ -8070,12 +8425,29 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12195">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value4"] ? (row["value4"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="3483">
                             <property name="fontSize">9pt</property>
                             <property name="paddingTop">2pt</property>
                             <property name="paddingLeft">2pt</property>
                             <property name="paddingBottom">2pt</property>
                             <property name="paddingRight">2pt</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value4</property>
                         </data>
                     </cell>
@@ -8098,7 +8470,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12196">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value5"] ? (row["value5"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4063">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value5</property>
                         </data>
                     </cell>
@@ -8115,7 +8504,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12197">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value6"] ? (row["value6"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4064">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value6</property>
                         </data>
                     </cell>
@@ -8132,7 +8538,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12198">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value7"] ? (row["value7"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4065">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value7</property>
                         </data>
                     </cell>
@@ -8149,7 +8572,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12199">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value8"] ? (row["value8"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4066">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value8</property>
                         </data>
                     </cell>
@@ -8166,7 +8606,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12200">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value9"] ? (row["value9"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4067">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value9</property>
                         </data>
                     </cell>
@@ -8183,7 +8640,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12201">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value10"] ? (row["value10"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4068">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value10</property>
                         </data>
                     </cell>
@@ -8200,7 +8674,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12202">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value11"] ? (row["value11"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4090">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value11</property>
                         </data>
                     </cell>
@@ -8217,7 +8708,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12203">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value12"] ? (row["value12"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4091">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value12</property>
                         </data>
                     </cell>
@@ -8234,7 +8742,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12204">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value13"] ? (row["value13"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4092">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value13</property>
                         </data>
                     </cell>
@@ -8251,7 +8776,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12205">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value14"] ? (row["value14"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4093">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value14</property>
                         </data>
                     </cell>
@@ -8268,7 +8810,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12206">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value15"] ? (row["value15"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4094">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value15</property>
                         </data>
                     </cell>
@@ -8285,7 +8844,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12207">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value16"] ? (row["value16"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4115">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value16</property>
                         </data>
                     </cell>
@@ -8302,7 +8878,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12208">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value17"] ? (row["value17"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4116">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value17</property>
                         </data>
                     </cell>
@@ -8319,7 +8912,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12209">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value18"] ? (row["value18"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4117">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value18</property>
                         </data>
                     </cell>
@@ -8336,7 +8946,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12210">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value19"] ? (row["value19"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4118">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value19</property>
                         </data>
                     </cell>
@@ -8353,7 +8980,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12211">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value20"] ? (row["value20"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4119">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value20</property>
                         </data>
                     </cell>
@@ -8370,7 +9014,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12212">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value21"] ? (row["value21"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4143">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value21</property>
                         </data>
                     </cell>
@@ -8387,7 +9048,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12213">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value22"] ? (row["value22"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4144">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value22</property>
                         </data>
                     </cell>
@@ -8404,7 +9082,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12214">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value23"] ? (row["value23"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4145">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value23</property>
                         </data>
                     </cell>
@@ -8421,7 +9116,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12215">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value24"] ? (row["value24"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4146">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value24</property>
                         </data>
                     </cell>
@@ -8438,7 +9150,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12216">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value25"] ? (row["value25"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4147">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value25</property>
                         </data>
                     </cell>
@@ -8455,7 +9184,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12217">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value26"] ? (row["value26"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4166">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value26</property>
                         </data>
                     </cell>
@@ -8472,7 +9218,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12218">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value27"] ? (row["value27"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4167">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value27</property>
                         </data>
                     </cell>
@@ -8489,7 +9252,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12219">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value28"] ? (row["value28"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4168">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value28</property>
                         </data>
                     </cell>
@@ -8506,7 +9286,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12220">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value29"] ? (row["value29"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4169">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value29</property>
                         </data>
                     </cell>
@@ -8523,7 +9320,24 @@ row["propertyQName"] == "qa:clValue")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
+                        <text-data id="12221">
+                            <property name="color">black</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                </structure>
+                            </list-property>
+                            <expression name="valueExpr">row["value30"] ? (row["value30"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <property name="contentType">html</property>
+                        </text-data>
                         <data id="4170">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">value30</property>
                         </data>
                     </cell>
