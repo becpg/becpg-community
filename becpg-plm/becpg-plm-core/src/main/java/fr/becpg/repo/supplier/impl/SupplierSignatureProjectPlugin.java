@@ -138,7 +138,7 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 		List<NodeRef> reports = entityReportService.getOrRefreshReportsOfKind(entityNodeRef, SUPPLIER_REPORT_KIND);
 
 		if (reports.isEmpty()) {
-			logger.warn("No report with 'Supplier Sheet' type was found for entity: " + entityNodeRef);
+			logger.error("No report with 'Supplier Sheet' type was found for entity: " + entityNodeRef);
 		}
 
 		List<NodeRef> suppliers = associationService.getTargetAssocs(project.getNodeRef(), PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
