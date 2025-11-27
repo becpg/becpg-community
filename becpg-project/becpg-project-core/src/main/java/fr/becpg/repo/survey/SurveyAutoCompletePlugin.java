@@ -68,6 +68,7 @@ public class SurveyAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 		}
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(SurveyModel.TYPE_SURVEY_QUESTION).excludeDefaults()
+				.excludeProp(BeCPGModel.PROP_IS_DELETED, "true")
 				.inSearchTemplate("%(bcpg:code survey:questionLabel)").locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
 
 		if (listName != null) {
