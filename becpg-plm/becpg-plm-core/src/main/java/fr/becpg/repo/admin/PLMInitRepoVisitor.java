@@ -42,6 +42,7 @@ import org.alfresco.repo.action.evaluator.compare.ContentPropertyName;
 import org.alfresco.repo.action.executer.ScriptActionExecuter;
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.repo.site.SiteModel;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ActionCondition;
@@ -938,6 +939,10 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			createRule(nodeRef, "import user", "Every item created will be imported", true, true, List.of(RuleType.INBOUND), compositeAction);
 
+		} else if (Objects.equals(folderName, PlmRepoConsts.PATH_IMPORT_TO_DO)) {
+			if (!nodeService.hasAspect(nodeRef, RuleModel.ASPECT_IGNORE_INHERITED_RULES)) {
+				nodeService.addAspect(nodeRef, RuleModel.ASPECT_IGNORE_INHERITED_RULES, null);
+			}
 		}
 
 		// quality
