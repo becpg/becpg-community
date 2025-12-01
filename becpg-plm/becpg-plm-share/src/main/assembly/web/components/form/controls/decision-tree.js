@@ -162,15 +162,18 @@
          * @private
          */
         _buildQuestionFieldset: function(question) {
-            var htmlForm = '<fieldset id="' + this.id + '-question_' + question.id + '" class="hidden">';
+            var mandatoryClass = question.mandatory ? " mandatory" : "";
+            var htmlForm = '<fieldset id="' + this.id + '-question_' + question.id + '" class="hidden' + mandatoryClass + '">';
             
             // Legend
             var description = this.msg("form.control.decision-tree." + this.options.prefix + "." + question.id + ".description");
             var label = question.label || this.msg("form.control.decision-tree." + this.options.prefix + "." + question.id + ".label");
             var legendTitle = question.id.length < 10 ? question.id.toUpperCase() + ' - ' : "";
             
+            var mandatoryIndicator = question.mandatory ? '<span class="mandatory-indicator">*</span>' : "";
+            
             htmlForm += '<legend title="' + this._escapeHtml(description) + '">' + 
-                       this._escapeHtml(legendTitle + label) + '</legend>';
+                       this._escapeHtml(legendTitle + label) + mandatoryIndicator + '</legend>';
 
             // Requirements
             if (question.requirements && question.requirements.length > 0) {
@@ -275,8 +278,11 @@
                 
                 if (choice.label !== "hidden") {
                     var label = choice.label || this.msg(msgKey);
+                    // Ajout de l'indicateur si la question est obligatoire
+                    var mandatoryIndicator = (question.mandatory && !choice.checkboxes) ? '<span class="mandatory-indicator">*</span>' : "";
+                    
                     htmlForm += '<label for="' + this.id + '-select_' + question.id + '_' + choice.id + '">' + 
-                               this._escapeHtml(label) + '</label>';
+                               this._escapeHtml(label) + mandatoryIndicator + '</label>';
                 }
                 
                 htmlForm += this._buildSelectHTML(question, choice, listOption);
@@ -426,12 +432,10 @@
                 }
             }
 
-            // Main choice selection handler
             var fnOnSelectChoice = function(layer, args) {
                 var owner = Bubbling.getOwnerByTagName(args[1].input, "input");
                 if (owner) {
                     if (owner.type !== "checkbox") {
-                        // Toggle radio button behavior
                         var previousState = owner.previousState;
                         owner.checked = !previousState;
                         owner.previousState = owner.checked;
@@ -604,22 +608,6 @@
                 this.id.indexOf(args[1].runtime.formId.replace("-form", "")) > -1) {
                 
                 this.formRuntime = args[1].runtime;
-
-                // Extend form runtime with validation removal capability
-                if (!this.formRuntime.removeValidation) {
-                    this.formRuntime.removeValidation = function(fieldId) {
-                        var foundIndex = -1;
-                        for (var j = 0; j < this.validations.length; j++) {
-                            if (this.validations[j].fieldId === fieldId) {
-                                foundIndex = j;
-                                break;
-                            }
-                        }
-                        if (foundIndex >= 0) {
-                            this.validations.splice(foundIndex, 1);
-                        }
-                    };
-                }
             }
             this.toggleVisible();
         },
@@ -813,6 +801,7 @@
                 return;
             }
 
+            // Mandatory select (single or multiple, without explicit checkboxes rendering)
             if (choice.list && !choice.checkboxes) {
                 if (!choice.hasValidation) {
                     choice.hasValidation = true;
@@ -820,21 +809,40 @@
                     this.formRuntime.addValidation(
                         selectId,
                         Alfresco.forms.validation.mandatory,
-                        null,
+                        { validationType: "mandatory" },
                         "keyup"
                     );
-                    this.formRuntime.validateField(null, selectId);
                 }
+
+            // Mandatory checkbox group (at least one item selected)
+            } else if (choice.list && choice.checkboxes) {
+                if (!choice.hasValidation) {
+                    choice.hasValidation = true;
+
+                    var groupName = '--group_' + this.id + question.id + '_' + choice.id;
+                    var fieldsetId = this.id + '-question_' + question.id;
+
+                    this.formRuntime.addValidation(
+                        fieldsetId,
+                        Alfresco.forms.validation.decisionTreeCheckboxGroup,
+                        {
+                            groupName: groupName,
+                            validationType: "mandatory"
+                        },
+                        "click"
+                    );
+                }
+
+            // Mandatory radio choice
             } else if (choice.label !== "hidden" && !choice.checkboxes && !choice.hasValidation) {
                 choice.hasValidation = true;
                 var radioId = this.id + '-choice_' + question.id + '_' + choice.id;
                 this.formRuntime.addValidation(
                     radioId,
                     Alfresco.forms.validation.mandatory,
-                    null,
+                    { validationType: "mandatory" },
                     "keyup"
                 );
-                this.formRuntime.validateField(null, radioId);
             }
 
             // Handle comment validation
@@ -852,7 +860,6 @@
                         null,
                         "keyup"
                     );
-                    this.formRuntime.validateField(null, commentId);
                 } else if (!needsCommentValidation && choice.hasCommentValidation) {
                     choice.hasCommentValidation = false;
                     this.formRuntime.removeValidation(this.id + "-comment_" + question.id + "-input");
@@ -885,7 +892,13 @@
             for (var j = 0; j < question.choices.length; j++) {
                 var choice = question.choices[j];
 
-                if (choice.list && !choice.checkboxes && choice.hasValidation) {
+                if (choice.list && choice.checkboxes && choice.hasValidation) {
+                    choice.hasValidation = false;
+                    var fieldsetId = this.id + '-question_' + question.id;
+                    if (this.formRuntime.removeValidation) {
+                        this.formRuntime.removeValidation(fieldsetId);
+                    }
+                } else if (choice.list && !choice.checkboxes && choice.hasValidation) {
                     choice.hasValidation = false;
                     this.formRuntime.removeValidation(this.id + '-select_' + question.id + '_' + choice.id);
                 } else if (choice.label !== "hidden" && choice.hasValidation) {
