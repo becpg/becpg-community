@@ -171,7 +171,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 				lastsTasks.add(lastTask);
 			}
 			closeSignedTasks(project);
-			if (signatureProjectPlugin != null) {
+			if (signatureProjectPlugin != null && !documentsToSign.isEmpty()) {
 				signatureProjectPlugin.createOrUpdateClosingTask(project, lastsTasks, firstTask);
 			}
 			project.setDirtyTaskTree(true);
