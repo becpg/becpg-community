@@ -746,7 +746,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 				entity.put(entityDictionaryService.toPrefixString(propType), node);
 				visitNode((NodeRef) value, node, JsonVisitNodeType.ASSOC, context);
 			} else {
-				throw new IllegalStateException("node does not exist: " + value + ", for prop: " + propType);
+				throw new RemoteException("node does not exist: " + value + ", for prop: " + propType);
 			}
 		} else {
 
