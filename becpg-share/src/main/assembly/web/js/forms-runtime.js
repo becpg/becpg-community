@@ -53,6 +53,34 @@ Alfresco.forms.validation = Alfresco.forms.validation || {};
       return this;
    };
 
+   /**
+    * beCPG - Validation function that ensures at least one checkbox is selected in a decision tree group.
+    *
+    * @method decisionTreeCheckboxGroup
+    * @param field {object} The field element used as validation context (first checkbox of the group)
+    * @param args {object} Validation arguments, expects groupName and optional validationType
+    * @param event {object} The event that triggered the validation
+    * @param form {object} The forms runtime class instance the field is being managed by
+    * @static
+    */
+   Alfresco.forms.validation.decisionTreeCheckboxGroup = function decisionTreeCheckboxGroup(field, args, event, form)
+   {
+      var groupName = (args && args.groupName) ? args.groupName : field.name;
+      var checkboxes = document.getElementsByName(groupName);
+      var hasChecked = false;
+
+      for (var i = 0; i < checkboxes.length; i++)
+      {
+         if (checkboxes[i] && !checkboxes[i].disabled && checkboxes[i].checked)
+         {
+            hasChecked = true;
+            break;
+         }
+      }
+
+      return hasChecked;
+   };
+
    YAHOO.lang.augmentObject(Alfresco.forms.Form,
    {
       NOTIFICATION_LEVEL_NONE: 1,
@@ -645,6 +673,20 @@ Alfresco.forms.validation = Alfresco.forms.validation || {};
                          ", args: " + YAHOO.lang.dump(validationArgs) +
                          ", on event: " + when);
          }
+      },
+      
+      /** beCPG  **/
+      removeValidation : function(fieldId) {
+          var foundIndex = -1;
+          for (var j = 0; j < this.validations.length; j++) {
+              if (this.validations[j].fieldId === fieldId) {
+                  foundIndex = j;
+                  break;
+              }
+          }
+          if (foundIndex >= 0) {
+              this.validations.splice(foundIndex, 1);
+          }
       },
       
       /**
