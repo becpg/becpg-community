@@ -13,7 +13,7 @@
 		<version>25.2.1</version>
 		<relativePath>../</relativePath>
 	</parent>
-    <version>25.2.1.3</version>
+    <version>25.2.1.4-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
 			<groupId>fr.becpg</groupId>
@@ -456,8 +456,4 @@
 			</build>
 		</profile>
 	</profiles>
-
-  <scm>
-    <tag>25.2.1.3</tag>
-  </scm>
 </project>
