@@ -2179,6 +2179,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 										.add(realDiluentQtyWithYield).doubleValue());
 								targetLabelItem.setVolumeWithYield(BigDecimal.valueOf(targetLabelItem.getVolumeWithYield()).add(realVolWithYield)
 										.add(readlDiluentvolumeWithYield).doubleValue());
+								
+								copyAttributes(targetLabelItem, productLabelItem);
+								copyAttributes(targetLabelItem, ingLabelItem);
 
 								if (logger.isTraceEnabled()) {
 									logger.trace("Applying reconstitution:" + getName(productLabelItem) + " with " + getName(ingLabelItem) + " to "
