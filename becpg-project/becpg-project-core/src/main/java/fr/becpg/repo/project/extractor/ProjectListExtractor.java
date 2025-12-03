@@ -86,6 +86,8 @@ public class ProjectListExtractor extends SimpleExtractor {
 
 	private static final String PROP_PROJECT_STATE = "prop_pjt_projectState";
 
+	private static final String PROP_PROJECT_OWNERS = "prop_pjt_projectOwners";
+
 	private static final String PROP_PROJECT_LEGEND = "prop_pjt_projectLegends";
 
 	private static final String PROP_SORT = "sort";
@@ -360,8 +362,6 @@ public class ProjectListExtractor extends SimpleExtractor {
 
 	private List<NodeRef> getProjectResults(DataListFilter dataListFilter, BeCPGQueryBuilder beCPGQueryBuilder, DataListPagination pagination) {
 
-		List<NodeRef> results = null;
-		List<NodeRef> unionResults = new ArrayList<>();
 		QName dataType = ProjectModel.TYPE_PROJECT;
 		beCPGQueryBuilder.ofType(ProjectModel.TYPE_PROJECT);
 
@@ -377,22 +377,8 @@ public class ProjectListExtractor extends SimpleExtractor {
 			String userName = AuthenticationUtil.getFullyAuthenticatedUser();
 
 			NodeRef currentUserNodeRef = personService.getPerson(userName);
-			BeCPGQueryBuilder creatorQuery = dataListFilter.getSearchQuery().excludeDefaults().clone().ofType(ProjectModel.TYPE_PROJECT);
-
-			if (!criteriaMap.containsKey(PROP_PROJECT_STATE)
-					&& ((dataListFilter.getFilterParams() == null) || !dataListFilter.getFilterParams().contains("projectState"))) {
-				creatorQuery.andPropQuery(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString());
-			} else {
-				if (criteriaMap.containsKey(PROP_PROJECT_STATE)) {
-					creatorQuery.andPropQuery(ProjectModel.PROP_PROJECT_STATE, criteriaMap.get(PROP_PROJECT_STATE));
-				} else {
-					creatorQuery.andFTSQuery(dataListFilter.getFilterParams());
-				}
-			}
-
-			creatorQuery.andPropEquals(ProjectModel.PROP_PROJECT_OWNERS, currentUserNodeRef.toString());
-
-			unionResults.addAll(creatorQuery.list());
+			
+			criteriaMap.put(PROP_PROJECT_OWNERS, currentUserNodeRef.toString());
 
 			if (!criteriaMap.containsKey(PROP_PROJECT_STATE)
 					&& ((dataListFilter.getFilterParams() == null) || !dataListFilter.getFilterParams().contains("projectState"))) {
@@ -401,17 +387,7 @@ public class ProjectListExtractor extends SimpleExtractor {
 
 		}
 
-		results = advSearchService.queryAdvSearch(dataType, beCPGQueryBuilder.clone(), criteriaMap, maxResults);
-
-		if (unionResults != null) {
-			for (NodeRef tmp : unionResults) {
-				if ((tmp != null) && !results.contains(tmp)) {
-					results.add(tmp);
-				}
-			}
-		}
-
-		return results;
+		return  advSearchService.queryAdvSearch(dataType, beCPGQueryBuilder.clone(), criteriaMap, maxResults);
 
 	}
 
