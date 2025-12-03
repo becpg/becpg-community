@@ -36,6 +36,10 @@
 		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="associationService" ref="associationService"/>
+		<property name="entityDictionaryService" ref="entityDictionaryService"/>
+		<property name="systemConfigurationService" ref="systemConfigurationService"/>
+		<property name="alfrescoRepository" ref="alfrescoRepository"/>
+		<property name="entityService" ref="entityService"/>
 	</bean>
 	
 	<bean id="labelingRuleListPolicy" class="fr.becpg.repo.product.policy.LabelingRuleListPolicy"
