@@ -1,6 +1,8 @@
 package fr.becpg.repo.system.impl;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.alfresco.service.cmr.attributes.AttributeService;
@@ -56,6 +58,18 @@ public class SystemConfigurationServiceImpl implements SystemConfigurationServic
 	    });
 	    
 	    return nullableString.orElse(null);
+	}
+	
+	@Override
+	public List<String> listValue(String propKey) {
+	    List<String> listValue = beCPGCacheService.getFromCache(CACHE_KEY, propKey + "_asList", () -> {
+	    	String confValue = confValue(propKey);
+	    	if (confValue != null) {
+	    		return Arrays.asList(confValue.split(","));
+	    	}
+	    	return List.of();
+	    });
+	    return listValue;
 	}
 
 	/** {@inheritDoc} */
