@@ -6,6 +6,9 @@ import org.alfresco.repo.admin.SysAdminParams;
 import org.alfresco.service.cmr.quickshare.QuickShareDTO;
 import org.alfresco.service.cmr.quickshare.QuickShareService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.XPathException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +35,8 @@ public class ImageSpelFunctions implements CustomSpelFunctions {
 	@Autowired
 	private SysAdminParams sysAdminParams;
 
+	private static Log logger = LogFactory.getLog(ImageSpelFunctions.class);
+
 	/** {@inheritDoc} */
 	@Override
 	public boolean match(String beanName) {
@@ -49,7 +54,6 @@ public class ImageSpelFunctions implements CustomSpelFunctions {
 		RepositoryEntity entity;
 
 		public ImageSpelFunctionsWrapper(RepositoryEntity entity) {
-			super();
 			this.entity = entity;
 		}
 
@@ -96,9 +100,14 @@ public class ImageSpelFunctions implements CustomSpelFunctions {
 		}
 
 		public String getImagePublicUrlByPath(NodeRef entityNodeRef, String path) {
-			List<NodeRef> imageNodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(entityNodeRef, path);
-			if ((imageNodeRefs != null) && !imageNodeRefs.isEmpty()) {
-				return shareImage(imageNodeRefs.get(0));
+			try {
+				List<NodeRef> imageNodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(entityNodeRef, path);
+				if ((imageNodeRefs != null) && !imageNodeRefs.isEmpty()) {
+					return shareImage(imageNodeRefs.get(0));
+				}
+			} catch (XPathException | BeCPGException e) {
+				logger.debug(e, e);
+				return e.getMessage();
 			}
 			return null;
 		}
@@ -114,10 +123,13 @@ public class ImageSpelFunctions implements CustomSpelFunctions {
 		}
 
 		public byte[] getImageBytesByPath(NodeRef entityNodeRef, String path) {
-			List<NodeRef> imageNodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(entityNodeRef, path);
-			if ((imageNodeRefs != null) && !imageNodeRefs.isEmpty()) {
-
-				return getEntityImageBytes(imageNodeRefs.get(0));
+			try {
+				List<NodeRef> imageNodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(entityNodeRef, path);
+				if ((imageNodeRefs != null) && !imageNodeRefs.isEmpty()) {
+					return entityService.getImage(imageNodeRefs.get(0));
+				}
+			} catch (XPathException | BeCPGException e) {
+				logger.debug(e, e);
 			}
 			return null;
 		}
