@@ -2271,9 +2271,7 @@
 			<form id="datagrid-productSpecification">
 				<field-visibility>
 				    <show id="bcpg:depthLevel" />
-				   
 				    <show id="pjt:slScoreCriterion" />
-                    <show id="pjt:slCriterion" />
                     <show id="pjt:slScreening" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
