@@ -1165,33 +1165,51 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 			vDepId = 1;
 		};
 
+		this.updateTaskTitleMaxWidth = function() {
+			var nodes = YAHOO.util.Selector.query('td.ggTaskTitle span.task-title a.theme-color-1');
+			if (nodes.length === 0) {
+				return;
+			}
+			var tdNode = nodes[0].parentNode.parentNode.parentNode.parentNode;
+			var sizeTd = YAHOO.util.Dom.getRegion(tdNode);
+			for (var i = 0; i < nodes.length; i++) {
+				YAHOO.util.Dom.setStyle(nodes[i], 'max-width', (sizeTd.width - 110) + 'px');
+			}
+		};
+
 		this.scrollToY = function(yPos, vDivEl) {
-			var size = parseInt(YAHOO.util.Dom.getStyle(vDivEl, 'width').replace("px", ""), 10);
+			var me = this;
 			var col1 = YAHOO.util.Dom.get('leftside');
 			var scrollDiv = YAHOO.util.Dom.get('rightside');
+			var computeContainerWidth = function() {
+				return parseInt(YAHOO.util.Dom.getStyle(vDivEl, 'width').replace("px", ""), 10);
+			};
+			var size = computeContainerWidth();
 			var max = (size - 350);
 			var resize = new YAHOO.util.Resize('leftside', {
 				handles: ['r'],
 				minWidth: 350,
 				maxWidth: max
 			});
-			resize.on('resize', function(ev) {
-				var w = ev.width;
-				var sizeDiv = parseInt(YAHOO.util.Dom.getStyle(vDivEl, 'width').replace("px", ""), 10);
-				YAHOO.util.Dom.setStyle(col1, 'height', '');
-				YAHOO.util.Dom.setStyle(scrollDiv, 'width', (sizeDiv - w - 6) + 'px');
 
-				var nodes = YAHOO.util.Selector.query('td.ggTaskTitle span.task-title a.theme-color-1');
-				if (nodes.length > 0) {
-					var tdNode = nodes[0].parentNode.parentNode.parentNode.parentNode;
-					var sizeTd = YAHOO.util.Dom.getRegion(tdNode);
-					for (var i in nodes) {
-						YAHOO.util.Dom.setStyle(nodes[i], 'max-width', (sizeTd.width - 110) + 'px');
-					}
+			var applyLayout = function(newWidth) {
+				var sizeDiv = computeContainerWidth();
+				var effectiveWidth = newWidth || parseInt(YAHOO.util.Dom.getStyle(col1, 'width'), 10);
+				if (isNaN(effectiveWidth) || effectiveWidth <= 0) {
+					effectiveWidth = Math.min(Math.max(350, Math.floor(sizeDiv * 0.4)), sizeDiv - 200);
+					YAHOO.util.Dom.setStyle(col1, 'width', effectiveWidth + 'px');
 				}
+				YAHOO.util.Dom.setStyle(col1, 'height', '');
+				var rightWidth = Math.max(sizeDiv - effectiveWidth - 6, 200);
+				YAHOO.util.Dom.setStyle(scrollDiv, 'width', rightWidth + 'px');
+				me.updateTaskTitleMaxWidth();
+			};
 
+			resize.on('resize', function(ev) {
+				applyLayout(ev.width);
 			});
 
+			applyLayout();
 
 			if (yPos) {
 				scrollDiv.scrollLeft = yPos;
