@@ -171,6 +171,17 @@
    padding-left: 20px;
 }
 
+.datagrid div.multi-level-warning {
+    background-color: #fbe4e6;
+    border-left: 4px solid #d40000;
+    color: #5a0000;
+}
+
+.datagrid div.multi-level-warning span.info {
+    background-image: url("../../components/states/error-16.png");
+    font-weight: bold;
+}
+
 
 
 /* Data Table */
