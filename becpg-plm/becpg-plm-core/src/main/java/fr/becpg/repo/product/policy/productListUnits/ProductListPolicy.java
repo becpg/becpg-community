@@ -18,10 +18,17 @@
 package fr.becpg.repo.product.policy.productListUnits;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.copy.CopyBehaviourCallback;
+import org.alfresco.repo.copy.CopyDetails;
+import org.alfresco.repo.copy.CopyServicePolicies;
+import org.alfresco.repo.copy.DoNothingCopyBehaviourCallback;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -34,13 +41,20 @@ import org.springframework.util.StopWatch;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
+import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.formulation.AbstractCostCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.AbstractSimpleListFormulationHandler;
 import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.repository.model.EffectiveDataItem;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>ProductListPolicy class.</p>
@@ -59,6 +73,30 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 	private EntityListDAO entityListDAO;
 
 	private AssociationService associationService;
+	
+    private EntityDictionaryService entityDictionaryService;     
+	
+	private SystemConfigurationService systemConfigurationService;
+	
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+	
+	private EntityService entityService;
+	
+	public void setEntityService(EntityService entityService) {
+		this.entityService = entityService;
+	}
+	
+	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
+	}
+	
+	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
+		this.entityDictionaryService = entityDictionaryService;
+	}
+	
+	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
+		this.systemConfigurationService = systemConfigurationService;
+	}
 	
 	/**
 	 * <p>Setter for the field <code>associationService</code>.</p>
@@ -114,13 +152,47 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 		super.disableOnCopyBehaviour(PLMModel.TYPE_LABELCLAIMLIST);
 		super.disableOnCopyBehaviour(PackModel.TYPE_LABELING_LIST);
 		super.disableOnCopyBehaviour(PLMModel.TYPE_PRODUCT);
+		
+		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this, "getCopyCallback"));
 
 	}
 
+	private String typesToReset() {
+		return systemConfigurationService.confValue("beCPG.copyOrBranch.typesToReset");
+	}
+	
+	@Override
+	public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails) {
+		List<String> typesToReset = Arrays.asList(typesToReset().split(","));
+		for (String typeToReset : typesToReset) {
+			String[] split = typeToReset.split("@");
+			if (split.length > 1 && split[0].equals(entityDictionaryService.toPrefixString(classRef))) {
+				if (split[1].startsWith(EffectiveFilters.class.getSimpleName())) {
+					NodeRef sourceNodeRef = copyDetails.getSourceNodeRef();
+					String effectiveFilter = split[1].replace(EffectiveFilters.class.getSimpleName() + ".", "");
+					RepositoryEntity sourceData = alfrescoRepository.findOne(sourceNodeRef);
+					if (sourceData instanceof EffectiveDataItem effectiveDataItem) {
+						NodeRef entityNodeRef = entityService.getEntityNodeRef(sourceNodeRef, classRef);
+						Date startEffectivity = (Date) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY);
+						Date endEffectivity = (Date) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_END_EFFECTIVITY);
+						EffectiveFilters<EffectiveDataItem> filter = new EffectiveFilters<>(effectiveFilter);
+						if (!filter.createPredicate(startEffectivity, endEffectivity).test(effectiveDataItem)) {
+							if (logger.isDebugEnabled()) {
+								logger.debug("Do not copy node '" + sourceNodeRef + "' of type '" + entityDictionaryService.toPrefixString(classRef)
+										+ "' as 'beCPG.copyOrBranch.typesToReset' mentions it");
+							}
+							return DoNothingCopyBehaviourCallback.getInstance();
+						}
+					}
+				}
+			}
+		}
+		return super.getCopyCallback(classRef, copyDetails);
+	}
+	
 	/** {@inheritDoc} */
 	@Override
 	public void onCreateAssociation(AssociationRef assocRef) {
-
 		queueAssoc(KEY_PRODUCT_LISTITEMS, assocRef);
 
 	}
