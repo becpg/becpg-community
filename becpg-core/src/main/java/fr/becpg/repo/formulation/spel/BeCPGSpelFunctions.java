@@ -126,16 +126,15 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public BeCPGSpelFunctionsWrapper(RepositoryEntity entity) {
 			this.entity = entity;
 		}
-		
+
 		/**
 		 * Helper {@code @beCPG.entity()}
 		 *
 		 * @return current entity
 		 */
 		public RepositoryEntity entity() {
-		    return entity;
+			return entity;
 		}
-		
 
 		/**
 		 * Helper {@code @beCPG.findOne($nodeRef)}
@@ -336,7 +335,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return the localized value, or {@code null} if not found
 		 */
 		public Serializable propMLValue(NodeRef nodeRef, String qname, String locale) {
-			Serializable value = propMLValue(nodeRef, qname); 
+			Serializable value = propMLValue(nodeRef, qname);
 			if (value instanceof MLText mlText) {
 				return (locale == null) ? value : propMLValue(mlText, locale);
 			}
@@ -894,6 +893,23 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 				return range.stream().collect(Collectors.groupingBy(p -> exp.getValue(formulaService.createItemSpelContext(entity, p))));
 
+			}
+			return null;
+		}
+
+		/**
+		 * Flatten a list of lists into a single list.
+		 * Null lists are ignored.
+		 * 
+		 * * Helper {@code @beCPG.flatten($range)}
+		 *
+		 * @param <T>   the type of elements
+		 * @param list2 the list of lists to flatten
+		 * @return a single flattened list
+		 */
+		public static <T> List<T> flatten(List<? extends Collection<T>> range) {
+			if (range != null) {
+				return range.stream().filter(Objects::nonNull).flatMap(Collection::stream).toList();
 			}
 			return null;
 		}
