@@ -3,7 +3,10 @@
  */
 package fr.becpg.repo.entity.policy;
 
+import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
@@ -12,13 +15,16 @@ import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityTplService;
+import fr.becpg.repo.entity.impl.EntityTplServiceImpl;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
@@ -30,15 +36,22 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  * @version $Id: $Id
  */
 public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
-		implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnAddAspectPolicy, NodeServicePolicies.BeforeDeleteNodePolicy {
+		implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnAddAspectPolicy, NodeServicePolicies.BeforeDeleteNodePolicy,
+			NodeServicePolicies.OnUpdatePropertiesPolicy {
 
 	private static final Log logger = LogFactory.getLog(EntityTplRefAspectPolicy.class);
+
+	private static final String TPL_CACHE_NAME = EntityTplServiceImpl.class.getName();
 
 	private AssociationService associationService;
 
 	private EntityTplService entityTplService;
 	
 	private AttributeExtractorService attributeExtractorService;
+
+	private BeCPGCacheService beCPGCacheService;
+
+	private NamespaceService namespaceService;
 	
 	/**
 	 * <p>Setter for the field <code>attributeExtractorService</code>.</p>
@@ -67,6 +80,14 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 		this.entityTplService = entityTplService;
 	}
 
+	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
+		this.beCPGCacheService = beCPGCacheService;
+	}
+
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public void doInit() {
@@ -77,9 +98,12 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, BeCPGModel.ASPECT_ENTITY_TPL_REF,
 				new JavaBehaviour(this, "onAddAspect"));
-		
+
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, BeCPGModel.ASPECT_ENTITY_TPL,
 				new JavaBehaviour(this, "beforeDeleteNode"));
+
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.ASPECT_ENTITY_TPL,
+				new JavaBehaviour(this, "onUpdateProperties"));
 
 		super.disableOnCopyBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
 
@@ -119,6 +143,8 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 
+		Set<QName> impactedTypes = new HashSet<>();
+
 		for (NodeRef entityNodeRef : pendingNodes) {
 			if (nodeService.exists(entityNodeRef) && !isWorkingCopyOrVersion(entityNodeRef) ) {
 				NodeRef entityTplNodeRef = associationService.getTargetAssoc(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
@@ -134,9 +160,43 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 						associationService.update(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF, entityTplNodeRef);
 					}
 				}
+
+				QName entityType = nodeService.getType(entityNodeRef);
+				if (entityType != null) {
+					impactedTypes.add(entityType);
+				}
 			}
 		}
+		
+		invalidateTplCache(impactedTypes);
 		return true;
+	}
+
+	private void invalidateTplCache(Set<QName> impactedTypes) {
+
+		if ((beCPGCacheService == null) || (impactedTypes == null) || impactedTypes.isEmpty()) {
+			return;
+		}
+
+		for (QName impactedType : impactedTypes) {
+			String cacheKey = namespaceService != null ? impactedType.toPrefixString(namespaceService) : impactedType.toString();
+			beCPGCacheService.removeFromCache(TPL_CACHE_NAME, cacheKey);
+		}
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+		if (!nodeService.exists(nodeRef)) {
+			return;
+		}
+
+		if (isPropChanged(before, after, BeCPGModel.PROP_ENTITY_TPL_ENABLED)
+				|| isPropChanged(before, after, BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT)) {
+			Set<QName> impactedTypes = new HashSet<>(1);
+			impactedTypes.add(nodeService.getType(nodeRef));
+			invalidateTplCache(impactedTypes);
+		}
 	}
 
 	/** {@inheritDoc} */
