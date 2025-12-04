@@ -148,7 +148,6 @@
                 var chatContainer = Dom.get("watson-chatbot-container");
                 var chatFrame = Dom.get("watson-chatbot-chat-frame");
 
-                // Reset explicit dimensions
                 chatContainer.style.width = '';
                 chatContainer.style.height = '';
                 if (chatFrame) {
@@ -165,7 +164,7 @@
                     var isCurrentlyOpen = Dom.hasClass(chatContainer, 'transition');
 
                     // Toggle visibility classes
-                    me.toggleClass(chatButton, 'transition');
+                    // me.toggleClass(chatButton, 'transition');
                     me.toggleClass(chatContainer, 'transition');
                     me.toggleClass(chatContainer, 'round');
 
