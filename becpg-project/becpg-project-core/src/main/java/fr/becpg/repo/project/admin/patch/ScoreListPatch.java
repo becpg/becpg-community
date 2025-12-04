@@ -228,12 +228,12 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 	}
 
 	private void updateScoreLists(Map<String, NodeRef> scoreCriterionNodeRefs, String currentTenant) {
-		BatchProcessor<NodeRef> batchProcessor = createBatchTypeProcessor(ProjectModel.TYPE_SCORE_LIST, true);
+		BatchProcessor<NodeRef> batchProcessor = createBatchTypeProcessor(ProjectModel.TYPE_SCORE_LIST, true, 1);
 		batchProcessor.processLong(createScoreListWorker(scoreCriterionNodeRefs, currentTenant), true);
 	}
 
 	private void updateSurveyQuestion(Map<String, NodeRef> scoreCriterionNodeRefs, String currentTenant) {
-		BatchProcessor<NodeRef> batchProcessor = createBatchTypeProcessor(SurveyModel.TYPE_SURVEY_QUESTION, true);
+		BatchProcessor<NodeRef> batchProcessor = createBatchTypeProcessor(SurveyModel.TYPE_SURVEY_QUESTION, true, 1);
 		batchProcessor.processLong(createSurveyQuestionWorker(scoreCriterionNodeRefs, currentTenant), true);
 	}
 

@@ -34,7 +34,7 @@ public class CopyFromPatch2 extends AbstractBeCPGPatch {
 
 	private static final Log logger = LogFactory.getLog(CopyFromPatch2.class);
 	private static final String MSG_SUCCESS = "patch.bcpg.copyFromPatch2.result";
-
+	private static final int ASSOC_BATCH_SIZE = 50;
 
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
@@ -149,21 +149,48 @@ public class CopyFromPatch2 extends AbstractBeCPGPatch {
 			@Override
 			public void process(NodeRef dataListNodeRef) throws Throwable {
 				ruleService.disableRules();
-				if (nodeService.exists(dataListNodeRef) && nodeService.hasAspect(dataListNodeRef, ContentModel.ASPECT_COPIEDFROM)) {
-					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-					policyBehaviourFilter.disableBehaviour();
+				try {
+					if (nodeService.exists(dataListNodeRef) && nodeService.hasAspect(dataListNodeRef, ContentModel.ASPECT_COPIEDFROM)) {
+						AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
-					// Link the new node to the original, but ensure that we
-					// only keep track of the last copy
-					List<AssociationRef> originalAssocs = nodeService.getTargetAssocs(dataListNodeRef, ContentModel.ASSOC_ORIGINAL);
-					for (AssociationRef originalAssoc : originalAssocs) {
-						nodeService.removeAssociation(originalAssoc.getSourceRef(), originalAssoc.getTargetRef(), ContentModel.ASSOC_ORIGINAL);
+						// Link the new node to the original, but ensure that we
+						// only keep track of the last copy
+						List<AssociationRef> originalAssocs = nodeService.getTargetAssocs(dataListNodeRef, ContentModel.ASSOC_ORIGINAL);
+
+						for (int i = 0; i < originalAssocs.size(); i += ASSOC_BATCH_SIZE) {
+							final int startIndex = i;
+							final int endIndex = Math.min(i + ASSOC_BATCH_SIZE, originalAssocs.size());
+							final List<AssociationRef> assocBatch = originalAssocs.subList(startIndex, endIndex);
+
+							transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+								policyBehaviourFilter.disableBehaviour();
+								try {
+									for (AssociationRef originalAssoc : assocBatch) {
+										nodeService.removeAssociation(originalAssoc.getSourceRef(), originalAssoc.getTargetRef(),
+												ContentModel.ASSOC_ORIGINAL);
+									}
+									logger.debug("Removed " + assocBatch.size() + " associations for node: " + dataListNodeRef);
+								} finally {
+									policyBehaviourFilter.enableBehaviour();
+								}
+								return null;
+							}, false, true);
+						}
+
+						// Remove aspect in a final transaction
+						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+							policyBehaviourFilter.disableBehaviour();
+							try {
+								nodeService.removeAspect(dataListNodeRef, ContentModel.ASPECT_COPIEDFROM);
+							} finally {
+								policyBehaviourFilter.enableBehaviour();
+							}
+							return null;
+						}, false, true);
 					}
-
-					nodeService.removeAspect(dataListNodeRef, ContentModel.ASPECT_COPIEDFROM);
-
+				} finally {
+					ruleService.enableRules();
 				}
-				ruleService.enableRules();
 			}
 
 		};
@@ -173,7 +200,6 @@ public class CopyFromPatch2 extends AbstractBeCPGPatch {
 		batchProcessor.processLong(worker, true);
 
 	}
-
 
 	/**
 	 * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
