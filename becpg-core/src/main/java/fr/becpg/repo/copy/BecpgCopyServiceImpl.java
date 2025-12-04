@@ -120,8 +120,8 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    }
 	    
 
-		private String typesToReset() {
-			return systemConfigurationService.confValue("beCPG.copyOrBranch.typesToReset");
+		private List<String> typesToReset() {
+			return systemConfigurationService.listValue("beCPG.copyOrBranch.typesToReset");
 		}
 
 	    
@@ -1060,16 +1060,13 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	        Collection<CopyServicePolicies.OnCopyNodePolicy> policies = this.onCopyNodeDelegate.getList(sourceClassQName);
 	        ClassDefinition sourceClassDef = dictionaryService.getClass(sourceClassQName);
 	        CopyBehaviourCallback callback = null;
-	        if (sourceClassDef == null || isExcludeTypes(sourceClassQName))
-	        {
-	            if(isExcludeTypes(sourceClassQName)) {
-	            	 CompoundCopyBehaviourCallback compoundCallback = new CompoundCopyBehaviourCallback(sourceClassQName);
-	            	 compoundCallback.addBehaviour(DoNothingCopyBehaviourCallback.getInstance());
-	            	 callback = compoundCallback;
-	            } else {
-	            	 callback = DoNothingCopyBehaviourCallback.getInstance();
-	            }
-	        } else {
+			if (sourceClassDef == null) {
+				callback = DoNothingCopyBehaviourCallback.getInstance();
+			} else if (isTypeToReset(sourceClassQName)) {
+				CompoundCopyBehaviourCallback compoundCallback = new CompoundCopyBehaviourCallback(sourceClassQName);
+				compoundCallback.addBehaviour(DoNothingCopyBehaviourCallback.getInstance());
+				callback = compoundCallback;
+			} else {
 		        if (policies.isEmpty())
 		        {
 		            // Default behaviour
@@ -1146,7 +1143,7 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    }
 	    
 	    
-	    private boolean isExcludeTypes(QName sourceClassQName) {
+	    private boolean isTypeToReset(QName sourceClassQName) {
 	    	return typesToReset().contains(dictionaryService.toPrefixString(sourceClassQName));
 	    }
 	    
