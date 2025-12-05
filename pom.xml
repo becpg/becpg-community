@@ -5,7 +5,7 @@
 	<groupId>fr.becpg</groupId>
 	<artifactId>becpg-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>25.2.1</version>
+	<version>25.3.0</version>
 	<name>beCPG</name>
 	
 	<description>BeCPG Parent Project</description>
@@ -119,19 +119,19 @@
         
         
          <!-- Alfresco 7.2 -->
-		<alfresco.platform.version>25.2.0</alfresco.platform.version>
-		<alfresco.share.docker.version>25.2.0</alfresco.share.docker.version>
+		<alfresco.platform.version>25.3.0</alfresco.platform.version>
+		<alfresco.share.docker.version>25.3.0</alfresco.share.docker.version>
 		
-        <alfresco.share.version>25.2.0.46</alfresco.share.version>
-        <alfresco-repository.version>25.2.0.64</alfresco-repository.version>
-		<alfresco-remote-api.version>25.2.0.64</alfresco-remote-api.version>
-		<alfresco-data-model.version>25.2.0.64</alfresco-data-model.version>
-		<alfresco-core.version>25.2.0.64</alfresco-core.version>
-		<spring-surf.version>10.0</spring-surf.version>
-	    <spring-webscripts.version>10.2</spring-webscripts.version>
-	    <spring-webscripts-share.version>10.2</spring-webscripts-share.version>
+        <alfresco.share.version>25.3.0.56</alfresco.share.version>
+        <alfresco-repository.version>25.3.0.81</alfresco-repository.version>
+		<alfresco-remote-api.version>25.3.0.81</alfresco-remote-api.version>
+		<alfresco-data-model.version>25.3.0.81</alfresco-data-model.version>
+		<alfresco-core.version>25.3.0.81</alfresco-core.version>
+		<spring-surf.version>10.1</spring-surf.version>
+	    <spring-webscripts.version>10.1</spring-webscripts.version>
+	    <spring-webscripts-share.version>10.1</spring-webscripts-share.version>
 
-		<alfresco.aos.version>3.3.0</alfresco.aos.version>
+		<alfresco.aos.version>3.4.0</alfresco.aos.version>
 
 		<mysql.connector.version>9.5.0</mysql.connector.version>
         
@@ -160,7 +160,7 @@
 		<test.acs.endpoint.path />
 
 		<becpg.dockerbuild.name>test</becpg.dockerbuild.name>
-		<becpg.version>25.2.1</becpg.version>
+		<becpg.version>25.3.0</becpg.version>
 		<docker.becpg.url>becpg</docker.becpg.url>
 		<docker.becpg.version>${becpg.version}</docker.becpg.version>
 		<docker.becpg.tag>${project.version}</docker.becpg.tag>

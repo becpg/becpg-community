@@ -49,7 +49,6 @@ import org.alfresco.service.cmr.tagging.TaggingService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO8601DateFormat;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -639,7 +638,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 			if (field.isNested()) {
 				AttributeExtractorField dlField = field.nextToken();
-				if (StringUtils.equalsAny(dlField.getFieldName(), "entity", "product", "wUsedEntity")) {
+				if ("entity".equals(dlField.getFieldName()) || "product".equals(dlField.getFieldName()) || "wUsedEntity".equals(dlField.getFieldName())) {
 					field = field.nextToken();
 					QName fieldQname = QName.createQName(field.getFieldName(), namespaceService);
 					final QName mainType = "wUsedEntity".equals(dlField.getFieldName()) ? entityDictionaryService.getTargetType(entityDictionaryService.getDefaultPivotAssoc(itemType)) : itemType;
@@ -1235,6 +1234,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private boolean matchData(Map<String, Object> data, String critKey, Map<String, String> criteriaMap) {
 		if ((data == null) || data.isEmpty()) {
 			return false;

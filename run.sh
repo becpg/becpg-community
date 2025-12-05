@@ -14,7 +14,7 @@ set -e
 
 export COMPOSE_FILE_PATH=${PWD}/becpg-integration-runner/target/docker-compose.yml
 export MVN_EXEC="${PWD}/mvnw"
-export BECPG_VERSION_PROFILE=becpg_25_2_0
+export BECPG_VERSION_PROFILE=becpg_25_3_0
 
 
 if [ -f .env ]; then
