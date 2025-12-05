@@ -631,12 +631,6 @@ public class RegulatoryService {
 		if (context.getProduct().getRegulatoryMode() == null || RegulatoryMode.DISABLED.equals(context.getProduct().getRegulatoryMode())) {
 			return false;
 		}
-		if (context.getRegulatoryBatches().isEmpty()) {
-			return false;
-		}
-		if (context.getIngList().isEmpty()) {
-			return false;
-		}
 		return true;
 	}
 
