@@ -451,8 +451,9 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 	private JSONObject ingredientAnalysis(RegulatoryContext context, RegulatoryBatch regulatoryBatch) {
 		JSONObject ingredientAnalysisResults = null;
 		int retries = 2;
-		while (ingredientAnalysisResults == null) {
+		while (ingredientAnalysisResults == null && retries >= 0) {
 			try {
+				retries--;
 				ingredientAnalysisResults = postV5IngredientAnalysis(context, regulatoryBatch);
 			} catch (RestClientException e) {
 				if (retries <= 0) {
@@ -460,7 +461,6 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 				}
 				logger.error("Error during Decernis ingredient analysis: " + DecernisHelper.cleanError(e.getMessage()) 
 				+ ", try restarting request...");
-				retries--;
 				ingredientAnalysisResults = null;
 			}
 		}
