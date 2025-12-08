@@ -1354,8 +1354,11 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		String reportName = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
 		Map<QName, Serializable> props = new HashMap<>();
 		props.put(ContentModel.PROP_NAME, reportName);
-		NodeRef reportCopy = nodeService.createNode(parentFolder, ContentModel.ASSOC_CONTAINS,
-				ContentModel.ASSOC_CONTAINS, ReportModel.TYPE_REPORT, props).getChildRef();
+		NodeRef reportCopy = nodeService.getChildByName(parentFolder, ContentModel.ASSOC_CONTAINS, reportName);
+		if (reportCopy == null ) {
+			reportCopy = nodeService.createNode(parentFolder, ContentModel.ASSOC_CONTAINS,
+					ContentModel.ASSOC_CONTAINS, ReportModel.TYPE_REPORT, props).getChildRef();
+		}
 		ContentWriter writer = contentService.getWriter(reportCopy, ContentModel.PROP_CONTENT, true);
 		writer.setEncoding(reader.getEncoding());
 		writer.setMimetype("application/pdf");
