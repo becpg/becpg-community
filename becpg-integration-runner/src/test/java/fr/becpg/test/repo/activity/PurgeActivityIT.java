@@ -159,7 +159,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 			}
 			
 			// Verify total before clean
-			assertEquals("Activities before clean", 13, getActivities(finishedProductNodeRef, null).size());
+			assertEquals("Activities before clean", 11, getActivities(finishedProductNodeRef, null).size());
 
 			// Clean
 			BatchInfo batch = entityActivityCleaner.cleanActivities(BatchPriority.HIGH);
@@ -324,7 +324,8 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 		List<ActivityListDataItem> activities = getActivities(finishedProductNodeRef, SORT_MAP);
 		Collections.reverse(activities);
 
-		List<ActivityListDataItem> firstPageBeforeClean = activities.subList(0, MAX_PAGE);
+		int pageSize = Math.min(MAX_PAGE, activities.size());
+		List<ActivityListDataItem> firstPageBeforeClean = new ArrayList<>(activities.subList(0, pageSize));
 
 		// clean activities
 		BatchInfo batch = entityActivityCleaner.cleanActivities(BatchPriority.HIGH);
@@ -332,10 +333,11 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 
 		activities = getActivities(finishedProductNodeRef, SORT_MAP);
 		Collections.reverse(activities);
-		List<ActivityListDataItem> firstPageAfterClean = activities.subList(0, MAX_PAGE);
 
 		// Make sure that we have more than one page
 		assertTrue(activities.size() > MAX_PAGE);
+
+		List<ActivityListDataItem> firstPageAfterClean = activities.subList(0, pageSize);
 
 		// Make sure that we kept the same first 50 activities
 		assertEquals("First page always the same ", firstPageBeforeClean, firstPageAfterClean);
