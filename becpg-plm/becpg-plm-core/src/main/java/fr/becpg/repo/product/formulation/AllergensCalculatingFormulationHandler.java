@@ -318,7 +318,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 				.extractRequirements(formulatedProduct.getProductSpecifications()).entrySet()) {
 			List<AllergenListDataItem> requirements = entry.getValue();
 
-			AllergenListDataItem temp = requirements.stream().filter(al -> al.getAllergen().equals(allergen)).findFirst().orElse(null);
+			AllergenListDataItem temp = requirements.stream().filter(al -> al.getAllergen().equals(allergen.getNodeRef())).findFirst().orElse(null);
 			if ((temp != null) && (temp.getQtyPerc() != null)) {
 				ret = temp.getQtyPerc();
 			}
