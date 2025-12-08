@@ -8597,7 +8597,7 @@
 					<field id="bcpg:allergenListAllergen" help-id="becpg.forms.help.allergenListAllergen" set="1-col-1">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="bcpg:allergenListQtyPerc" help-id="becpg.forms.help.allergenListQtyPerc" set="1-col-1">
+					<field id="bcpg:allergenListQtyPerc" label-id="becpg.forms.field.allergenListQtyPerc.threshold" help-id="becpg.forms.help.allergenListQtyPerc" set="1-col-1">
 						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">perc</control-param>
 						</control>
