@@ -1055,7 +1055,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// └──[ing2 french - 4.0 ( vol : 4.0) ]
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
-				"epaississant french : ing5 french 54,5% (ing1 french 38,2%, ing4 french 16,4%), epices french : ing6 french 45,5%", Locale.FRENCH);
+				"epaississant french : ing5 french 54,5% (ing1 french 38,2%, ing4 french 16,4%), epices french : ing6 french (<b>allergen1</b>) 45,5%", Locale.FRENCH);
 
 		/** Partial Reconstitution **/
 
@@ -1092,7 +1092,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// ├──[ing1 french - 2.0 ( vol : 2.0) ]
 		// └──[ing2 french - 4.0 ( vol : 4.0) ]
 
-		checkILL(finishedProductNodeRef2, labelingRuleList, "epices french : ing6 french 93,7%, legal Raw material 1 (<b>allergen1</b>) 6,2%",
+		checkILL(finishedProductNodeRef2, labelingRuleList, "epices french : ing6 french (<b>allergen1</b>) 93,7%, legal Raw material 1 (<b>allergen1</b>) 6,2%",
 				Locale.FRENCH);
 
 		/** Test with priority **/
