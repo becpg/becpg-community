@@ -153,8 +153,6 @@
       </style>
    </head>
    
-    <#assign projectModifier = people.getPerson(args.project.properties["cm:modifier"])>
-
    <body bgcolor="#dddddd">
       <table width="100%" cellpadding="20" cellspacing="0" border="0" bgcolor="#dddddd">
          <tr>
@@ -175,9 +173,14 @@
 													</td>
 													<td>
 													<p class="title" style="color: #0f515f; font-weight: bold; margin-bottom:0px;" >${args.project.name}</p>
-												  	<p class="Stitle" style="color: #ff642d; font-weight: bold; margin-top:1px;">был обновлен ${projectModifier.properties["cm:firstName"]!""} ${projectModifier.properties["cm:lastName"]!""}</p>
-                                                	<a title="открыть проект" href="${shareUrl}/page/entity-data-lists?list=taskList&nodeRef=${args.project.nodeRef}"><button ><b> открыть проект</b></button></a>
-												</td>                                              
+													<#if (args.project.properties["cm:modifier"])?? && people.getPerson(args.project.properties["cm:modifier"])??>
+														<#assign projectModifier = people.getPerson(args.project.properties["cm:modifier"] )>
+													  	<p class="Stitle" style="color: #ff642d; font-weight: bold; margin-top:1px;">был обновлен ${projectModifier.properties["cm:firstName"]!""} ${projectModifier.properties["cm:lastName"]!""}</p>
+													<#else>
+														<p class="Stitle" style="color: #ff642d; font-weight: bold; margin-top:1px;">был обновлен</p>
+													</#if>
+														<a title="открыть проект" href="${shareUrl}/page/entity-data-lists?list=taskList&nodeRef=${args.project.nodeRef}"><button ><b> открыть проект</b></button></a>
+													</td>                                              
                                              </tr>
                                           </table>
                                           <div style="font-size: 14px; margin: 12px 0px 24px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
@@ -196,13 +199,15 @@
 													</#if>
                                              	 </p>
                                              	<ul>
-                                             	 <#if (args.taskTitle)??>                                             
-	                                             	<li>Задача : <b>${args.taskTitle}</b></li>                                       
-	                                             </#if> 
-	                                             <#if (args.taskDescription)?? && args.taskDescription != "">                                             
-	                                             	<li>Описание : ${args.taskDescription}</li>                                       
-	                                             </#if> 
-	                                             </ul>         
+                                             	 <#if args.task?? && args.task.properties["pjt:tlTaskName"]??>
+										<li>Задача : <b>${args.task.properties["pjt:tlTaskName"]!""}</b></li>
+									<#elseif (args.taskTitle)??>                                             
+										<li>Задача : <b>${args.taskTitle}</b></li>                                       
+										</#if> 
+										<#if (args.taskDescription)?? && args.taskDescription != "">                                             
+										<li>Описание : ${args.taskDescription}</li>                                       
+										</#if> 
+										</ul>         
                                              		<#if args.taskComment??>
 		                                              <p style="color: #ff642d; font-weight: bold;">Комментарий :</p>
 	                                                        <div class="comment">
@@ -257,7 +262,8 @@
 									  	</ul>  	
 									 </#if>     	
                                              	<#elseif args.activityType == 'Comment'>
-                                             		<p> Комментарий был  <#if args.activityEvent == 'Create'>создает<#elseif args.activityEvent == 'Update'>обновлено<#else>удалено</#if> Конечно <#if args.deliverableDescription??>результат <b>"${args.deliverableDescription}"</b> <#elseif args.taskTitle??>задача <b>"${args.taskTitle}"</b> <#else>проэкт</#if>: </p>                                             		                                             		         
+                                             		<p> Комментарий был  <#if args.activityEvent == 'Create'>создает<#elseif args.activityEvent == 'Update'>обновлено<#else>удалено</#if> Конечно <#if args.deliverableDescription??>результат <b>"${args.deliverableDescription}"</b> <#elseif args.task?? && args.task.properties["pjt:tlTaskName"]??>задача <b>"${args.task.properties["pjt:tlTaskName"]!""}"</b> <#elseif args.taskTitle??>задача <b>"${args.taskTitle}"</b> <#else>проэкт</#if>: </p>                                             												 				          
+                                  		         
                                              			<#if  args.comment?? && args.comment.content??> 
 			                                                       <div class="comment">${args.comment.content}</div>
 		                                             	</#if>
