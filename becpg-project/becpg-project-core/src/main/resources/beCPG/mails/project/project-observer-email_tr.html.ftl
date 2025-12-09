@@ -153,8 +153,6 @@
       </style>
    </head>
    
-    <#assign projectModifier = people.getPerson(args.project.properties["cm:modifier"])>
-
    <body bgcolor="#dddddd">
       <table width="100%" cellpadding="20" cellspacing="0" border="0" bgcolor="#dddddd">
          <tr>
@@ -175,9 +173,14 @@
 													</td>
 													<td>
 													<p class="title" style="color: #0f515f; font-weight: bold; margin-bottom:0px;" >${args.project.name}</p>
-												  	<p class="Stitle" style="color: #ff642d; font-weight: bold; margin-top:1px;">tarafından güncellendi ${projectModifier.properties["cm:firstName"]!""} ${projectModifier.properties["cm:lastName"]!""}</p>
-                                                	<a title="projeyi aç" href="${shareUrl}/page/entity-data-lists?list=taskList&nodeRef=${args.project.nodeRef}"><button ><b> projeyi aç</b></button></a>
-												</td>                                              
+													<#if (args.project.properties["cm:modifier"])?? && people.getPerson(args.project.properties["cm:modifier"])??>
+														<#assign projectModifier = people.getPerson(args.project.properties["cm:modifier"] )>
+													  	<p class="Stitle" style="color: #ff642d; font-weight: bold; margin-top:1px;">tarafından güncellendi ${projectModifier.properties["cm:firstName"]!""} ${projectModifier.properties["cm:lastName"]!""}</p>
+													<#else>
+														<p class="Stitle" style="color: #ff642d; font-weight: bold; margin-top:1px;">güncellendi</p>
+													</#if>
+														<a title="projeyi aç" href="${shareUrl}/page/entity-data-lists?list=taskList&nodeRef=${args.project.nodeRef}"><button ><b> projeyi aç</b></button></a>
+													</td>                                              
                                              </tr>
                                           </table>
                                           <div style="font-size: 14px; margin: 12px 0px 24px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
@@ -189,19 +192,23 @@
                                                </#if>
                                                 </#if>
                                              	<#if args.activityType == 'State'>
-												 <p>Görevin durumu <b>${args.beforeState}</b> de 
+									 <p>Görevin durumu <b>${args.beforeState}</b> de 
 													<#if args.afterState == 'Refusé'><b style="color:#ff642d">${args.afterState}</b>
 														<#elseif (args.afterState == 'En cours' || args.afterState == 'Terminé')><b style="color:#0f515f">${args.afterState}</b>
 																<#else><b>${args.afterState}</b>
 													</#if>
                                              	 </p>
                                              	<ul>
-                                             	 <#if (args.taskTitle)??>                                             
-	                                             	<li>Görev : <b>${args.taskTitle}</b></li>                                       
-	                                             </#if> 
-	                                             <#if (args.taskDescription)?? && args.taskDescription != "">                                             
-	                                             	<li>Açıklama : ${args.taskDescription}</li>                                       
-	                                             </#if> 
+                                             	 <#if args.task?? && args.task.properties["pjt:tlTaskName"]??>
+										<li>Görev : <b>${args.task.properties["pjt:tlTaskName"]!""}</b></li>
+									<#elseif (args.taskTitle)??>                                             
+										<li>Görev : <b>${args.taskTitle}</b></li>                                       
+										</#if> 
+										<#if (args.taskDescription)?? && args.taskDescription != "">                                             
+										<li>Açıklama : ${args.taskDescription}</li>                                       
+										</#if> 
+										</ul>         
+                                   </#if> 
 	                                             </ul>         
                                              		<#if args.taskComment??>
 		                                              <p style="color: #ff642d; font-weight: bold;">Yorum Yap :</p>
@@ -256,8 +263,9 @@
 									      	</#list>
 									  	</ul>  	
 									 </#if>     	
-                                             	<#elseif args.activityType == 'Comment'>
-                                             		<p> Bir yorum yapıldı  <#if args.activityEvent == 'Create'>oluşturur<#elseif args.activityEvent == 'Update'>güncelleme<#else>silindi</#if> elbette <#if args.deliverableDescription??>teslim edilebilir <b>"${args.deliverableDescription}"</b> <#elseif args.taskTitle??>görev <b>"${args.taskTitle}"</b> <#else>proje</#if>: </p>                                             		                                             		         
+                                             										<#elseif args.activityType == 'Comment'>
+											<p> Bir yorum yapıldı  <#if args.activityEvent == 'Create'>oluşturur<#elseif args.activityEvent == 'Update'>güncelleme<#else>silindi</#if> elbette <#if args.deliverableDescription??>teslim edilebilir <b>"${args.deliverableDescription}"</b> <#elseif args.task?? && args.task.properties["pjt:tlTaskName"]??>görev <b>"${args.task.properties["pjt:tlTaskName"]!""}"</b> <#elseif args.taskTitle??>görev <b>"${args.taskTitle}"</b> <#else>proje</#if>: </p>                                             												 				          
+                                  		         
                                              			<#if  args.comment?? && args.comment.content??> 
 			                                                       <div class="comment">${args.comment.content}</div>
 		                                             	</#if>
