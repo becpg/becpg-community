@@ -153,8 +153,6 @@
       </style>
    </head>
    
-    <#assign projectModifier = people.getPerson(args.project.properties["cm:modifier"])>
-
    <body bgcolor="#dddddd">
       <table width="100%" cellpadding="20" cellspacing="0" border="0" bgcolor="#dddddd">
          <tr>
@@ -168,16 +166,21 @@
                                  <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                     <tr>
                                        <td>
-                                          <table class="center" cellpadding="0" cellspacing="0" border="0">
-                                             <tr class="grid">
-												<td >
-                                                   <img class="img" src="${shareUrl}/res/components/images/project-email-logo.png" alt="" height="64" border="0"/>
-													</td>
-													<td>
-													<p class="title" style="color: #0f515f; font-weight: bold; margin-bottom:0px;" >${args.project.name}</p>
-												  	<p class="Stitle" style="color: #ff642d; font-weight: bold; margin-top:1px;">wurde aktualisiert von ${projectModifier.properties["cm:firstName"]!""} ${projectModifier.properties["cm:lastName"]!""}</p>
-                                                	<a title="Öffnen Sie das Projekt" href="${shareUrl}/page/entity-data-lists?list=taskList&nodeRef=${args.project.nodeRef}"><button ><b> Öffnen Sie das Projekt</b></button></a>
-												</td>                                              
+                                       	   						<table class="center" cellpadding="0" cellspacing="0" border="0">
+	   						   <tr class="grid">
+	   							<td >
+	   						   	   <img class="img" src="${shareUrl}/res/components/images/project-email-logo.png" alt="" height="64" border="0"/>
+	   								</td>
+	   								<td>
+	   								<p class="title" style="color: #0f515f; font-weight: bold; margin-bottom:0px;" >${args.project.name}</p>
+	   								<#if (args.project.properties["cm:modifier"])?? && people.getPerson(args.project.properties["cm:modifier"])??>
+	   									<#assign projectModifier = people.getPerson(args.project.properties["cm:modifier"] )>
+	   							  		<p class="Stitle" style="color: #ff642d; font-weight: bold; margin-top:1px;">wurde aktualisiert von ${projectModifier.properties["cm:firstName"]!""} ${projectModifier.properties["cm:lastName"]!""}</p>
+	   								<#else>
+	   									<p class="Stitle" style="color: #ff642d; font-weight: bold; margin-top:1px;">wurde aktualisiert</p>
+	   								</#if>
+	   									<a title="Öffnen Sie das Projekt" href="${shareUrl}/page/entity-data-lists?list=taskList&nodeRef=${args.project.nodeRef}"><button ><b> Öffnen Sie das Projekt</b></button></a>
+	   								</td>                                              
                                              </tr>
                                           </table>
                                           <div style="font-size: 14px; margin: 12px 0px 24px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
@@ -189,21 +192,24 @@
                                                 </#if>
                                                 </#if>
                                              	<#if args.activityType == 'State'>
-												 <p>Der Status der Aufgabe wurde von geändert <b>${args.beforeState}</b> nach 
+                                             	 <p>Der Status der Aufgabe wurde von geändert <b>${args.beforeState}</b> nach 
 													<#if args.afterState == 'Refusé'><b style="color:#ff642d">${args.afterState}</b>
 														<#elseif (args.afterState == 'En cours' || args.afterState == 'Terminé')><b style="color:#0f515f">${args.afterState}</b>
 																<#else><b>${args.afterState}</b>
 													</#if>
                                              	 </p>
                                              	<ul>
-                                             	 <#if (args.taskTitle)??>                                             
-	                                             	<li>Aufgabe : <b>${args.taskTitle}</b></li>                                       
-	                                             </#if> 
-	                                             <#if (args.taskDescription)?? && args.taskDescription != "">                                             
-	                                             	<li>Beschreibung : ${args.taskDescription}</li>                                       
-	                                             </#if> 
-	                                             </ul>         
-													<#if args.taskComment??>
+                                             	 <#if args.task?? && args.task.properties["pjt:tlTaskName"]??>
+	 	 									 	<li>Aufgabe : <b>${args.task.properties["pjt:tlTaskName"]!""}</b></li>
+	 	 									 <#elseif (args.taskTitle)??>
+	 	 									 	<li>Aufgabe : <b>${args.taskTitle}</b></li>
+	 	 									 	</#if> 
+	 	 									 	<#if (args.taskDescription)?? && args.taskDescription != "">                                             
+	 	 									 	<li>Beschreibung : ${args.taskDescription}</li>                                       
+	 	 									 	</#if> 
+                                             	</ul>         
+                             </#if> 
+	                                             <#if args.taskComment??>
 		                                              <p style="color: #ff642d; font-weight: bold;">Kommentar :</p>
 	                                                        <div class="comment">
 	                                                           <p style="margin:0px;font-size:12px;color:grey"><b>${projectModifier.properties["cm:firstName"]!""} ${projectModifier.properties["cm:lastName"]!""}</b></p>
@@ -256,7 +262,7 @@
 									  	</ul>  	
 									 </#if>     	
                                              	<#elseif args.activityType == 'Comment'>
-                                             		<p> Ein Kommentar wurde  <#if args.activityEvent == 'Create'>erstellt<#elseif args.activityEvent == 'Update'>aktualisiert<#else>gelöscht</#if> auf <#if args.deliverableDescription??>das Ergebnis <b>"${args.deliverableDescription}"</b> <#elseif args.taskTitle??>die Aufgabe <b>"${args.taskTitle}"</b> <#else>das Projekt</#if>: </p>                                             		                                             		         
+                                             		<p> Ein Kommentar wurde  <#if args.activityEvent == 'Create'>erstellt<#elseif args.activityEvent == 'Update'>aktualisiert<#else>gelöscht</#if> auf <#if args.deliverableDescription??>das Ergebnis <b>"${args.deliverableDescription}"</b> <#elseif args.task?? && args.task.properties["pjt:tlTaskName"]??>die Aufgabe <b>"${args.task.properties["pjt:tlTaskName"]!""}"</b> <#elseif args.taskTitle??>die Aufgabe <b>"${args.taskTitle}"</b> <#else>das Projekt</#if>: </p>                                             		                                             		         
                                              			<#if  args.comment?? && args.comment.content??> 
 			                                                       <div class="comment">${args.comment.content}</div>
 		                                             	</#if>

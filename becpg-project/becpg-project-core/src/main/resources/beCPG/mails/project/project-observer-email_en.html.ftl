@@ -187,7 +187,7 @@
                                              </tr>
                                           </table>
                                           <div style="font-size: 14px; margin: 12px 0px 24px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
-					                            <#if (args.project.properties["bcpg:modifiedCatalog1"])?>
+					                            <#if (args.project.properties["bcpg:modifiedCatalog1"])??>
 		                                            <#assign modifiedCatalog1 = args.project.properties["bcpg:modifiedCatalog1"]>
 		                                            <#assign cmModified = args.project.properties["cm:modified"]>
                                                 <#if modifiedCatalog1?datetime?iso("UTC") = cmModified?datetime?iso("UTC")>
@@ -203,10 +203,10 @@
                                              	 </p>
                                              	<ul>
                                              	 <#if args.task?? && args.task.properties["pjt:tlTaskName"]??>
-									                                             	<li>Task : <b>${args.task.properties["pjt:tlTaskName"]!""}</b></li>
-									                                            <#elseif (args.taskTitle)??>
-									                                             	<li>Task : <b>${args.taskTitle}</b></li>
-									                                            </#if> 
+									                   <li>Task : <b>${args.task.properties["pjt:tlTaskName"]!""}</b></li>
+									             <#elseif (args.taskTitle)??>
+									                    <li>Task : <b>${args.taskTitle}</b></li>
+									              </#if> 
 	                                             <#if (args.taskDescription)?? && args.taskDescription != "">                                             
 	                                             	<li>Description : ${args.taskDescription}</li>                                       
 	                                             </#if> 
