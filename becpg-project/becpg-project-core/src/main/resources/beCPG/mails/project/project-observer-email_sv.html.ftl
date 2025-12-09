@@ -153,8 +153,6 @@
       </style>
    </head>
    
-    <#assign projectModifier = people.getPerson(args.project.properties["cm:modifier"])>
-
    <body bgcolor="#dddddd">
       <table width="100%" cellpadding="20" cellspacing="0" border="0" bgcolor="#dddddd">
          <tr>
@@ -175,9 +173,14 @@
 													</td>
 													<td>
 													<p class="title" style="color: #0f515f; font-weight: bold; margin-bottom:0px;" >${args.project.name}</p>
-												  	<p class="Stitle" style="color: #ff642d; font-weight: bold; margin-top:1px;">har uppdaterats av ${projectModifier.properties["cm:firstName"]!""} ${projectModifier.properties["cm:lastName"]!""}</p>
-                                                	<a title="öppna projektet" href="${shareUrl}/page/entity-data-lists?list=taskList&nodeRef=${args.project.nodeRef}"><button ><b> öppna projektet</b></button></a>
-												</td>                                              
+													<#if (args.project.properties["cm:modifier"])?? && people.getPerson(args.project.properties["cm:modifier"])??>
+														<#assign projectModifier = people.getPerson(args.project.properties["cm:modifier"] )>
+													  	<p class="Stitle" style="color: #ff642d; font-weight: bold; margin-top:1px;">har uppdaterats av ${projectModifier.properties["cm:firstName"]!""} ${projectModifier.properties["cm:lastName"]!""}</p>
+													<#else>
+														<p class="Stitle" style="color: #ff642d; font-weight: bold; margin-top:1px;">har uppdaterats</p>
+													</#if>
+														<a title="öppna projektet" href="${shareUrl}/page/entity-data-lists?list=taskList&nodeRef=${args.project.nodeRef}"><button ><b> öppna projektet</b></button></a>
+													</td>                                              
                                              </tr>
                                           </table>
                                           <div style="font-size: 14px; margin: 12px 0px 24px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
@@ -196,13 +199,15 @@
 													</#if>
                                              	 </p>
                                              	<ul>
-                                             	 <#if (args.taskTitle)??>                                             
-	                                             	<li>Uppgift : <b>${args.taskTitle}</b></li>                                       
-	                                             </#if> 
-	                                             <#if (args.taskDescription)?? && args.taskDescription != "">                                             
-	                                             	<li>Beskrivning : ${args.taskDescription}</li>                                       
-	                                             </#if> 
-	                                             </ul>         
+                                             	 <#if args.task?? && args.task.properties["pjt:tlTaskName"]??>
+										<li>Uppgift : <b>${args.task.properties["pjt:tlTaskName"]!""}</b></li>
+									<#elseif (args.taskTitle)??>                                             
+										<li>Uppgift : <b>${args.taskTitle}</b></li>                                       
+										</#if> 
+										<#if (args.taskDescription)?? && args.taskDescription != "">                                             
+										<li>Beskrivning : ${args.taskDescription}</li>                                       
+										</#if> 
+										</ul>         
                                              		<#if args.taskComment??>
 		                                              <p style="color: #ff642d; font-weight: bold;">Kommentar :</p>
 	                                                        <div class="comment">
@@ -257,7 +262,7 @@
 									  	</ul>  	
 									 </#if>     	
                                              	<#elseif args.activityType == 'Comment'>
-                                             		<p> En kommentar har varit  <#if args.activityEvent == 'Create'>skapar<#elseif args.activityEvent == 'Update'>uppdaterad<#else>borttagen</#if> på  <#if args.deliverableDescription??>det levererade <b>"${args.deliverableDescription}"</b> <#elseif args.taskTitle??>uppgift <b>"${args.taskTitle}"</b> <#else>projektet</#if>: </p>                                             		                                             		         
+                                             		<p> En kommentar har varit  <#if args.activityEvent == 'Create'>skapar<#elseif args.activityEvent == 'Update'>uppdaterad<#else>borttagen</#if> på  <#if args.deliverableDescription??>det levererade <b>"${args.deliverableDescription}"</b> <#elseif args.task?? && args.task.properties["pjt:tlTaskName"]??>uppgift <b>"${args.task.properties["pjt:tlTaskName"]!""}"</b> <#elseif args.taskTitle??>uppgift <b>"${args.taskTitle}"</b> <#else>projektet</#if>: </p>                                             		                                             		         
                                              			<#if  args.comment?? && args.comment.content??> 
 			                                                       <div class="comment">${args.comment.content}</div>
 		                                             	</#if>
