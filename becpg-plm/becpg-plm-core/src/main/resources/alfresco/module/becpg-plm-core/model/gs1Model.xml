@@ -849,21 +849,6 @@
 			</parameter>
 		</constraint>
 
-		<constraint name="gs1:growingMethodCodes"
-			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
-			<parameter name="path">
-				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
-				</list>
-			</parameter>
-			<parameter name="addEmptyValue">
-				<value>true</value>
-			</parameter>
-			<parameter name="constraintFilter">
-				<value>GrowingMethodCode</value>
-			</parameter>
-		</constraint>
-
 		<constraint name="gs1:sustainabilityFeatureCodes"
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
@@ -2823,17 +2808,6 @@
 					</index>
 					<constraints>
 						<constraint ref="gs1:text500" />
-					</constraints>
-				</property>
-				<property name="gs1:growingMethodCode">
-					<type>d:text</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					</index>
-					<constraints>
-						<constraint ref="gs1:growingMethodCodes" />
 					</constraints>
 				</property>
 
