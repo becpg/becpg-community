@@ -846,13 +846,37 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		filterMap.put("exclude", exclude.toString());
 		return filterMap;
 	}
+	
+	private String sanitize(String input) {
+	    if (input == null) {
+	        return null;
+	    }
+
+	    // escape single quotes
+	    String sanitized = input.replace("'", "''");
+
+	    // remove SQL comment openings
+	    sanitized = sanitized.replaceAll("--", "")
+	                         .replaceAll("/\\*", "")
+	                         .replaceAll("\\*/", "");
+
+	    // block dangerous characters/operators
+	    sanitized = sanitized.replaceAll("[;]", "");         // remove ;
+	    sanitized = sanitized.replaceAll("\\b(OR|AND)\\b", ""); // prevent OR 1=1, AND hacks (case-insensitive)
+
+	    // Optional: block UNION, SELECT, etc. if passed as values
+	    sanitized = sanitized.replaceAll("(?i)\\bUNION\\b", "");
+	    sanitized = sanitized.replaceAll("(?i)\\bSELECT\\b", "");
+
+	    return sanitized;
+	}
 
 	private String wrap(String fieldName, String value) {
-		if ("string_value".equals(fieldName)) {
-			return "'" + value + "'";
-		}
-
-		return value;
+		String sanitized = sanitize(value);
+	    if ("string_value".equals(fieldName)) {
+	        return "'" + sanitized + "'";
+	    }
+	    return sanitized;
 	}
 
 	/** {@inheritDoc} */
