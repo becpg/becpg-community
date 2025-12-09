@@ -1130,7 +1130,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 		});
 
-		checkILL(finishedProductNodeRef3, labelingRuleList, "ing4 french 71,4%, epices french, legal Raw material 1 (<b>allergen1</b>) 10,7%",
+		checkILL(finishedProductNodeRef3, labelingRuleList, "ing4 french (<b>allergen1</b>) 71,4%, epices french (<b>allergen1</b>), legal Raw material 1 (<b>allergen1</b>) 10,7%",
 				Locale.FRENCH);
 
 		// Test allergen rules
