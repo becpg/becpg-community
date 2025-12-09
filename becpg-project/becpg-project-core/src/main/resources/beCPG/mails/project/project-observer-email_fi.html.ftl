@@ -153,8 +153,6 @@
       </style>
    </head>
    
-    <#assign projectModifier = people.getPerson(args.project.properties["cm:modifier"])>
-
    <body bgcolor="#dddddd">
       <table width="100%" cellpadding="20" cellspacing="0" border="0" bgcolor="#dddddd">
          <tr>
@@ -175,9 +173,14 @@
 													</td>
 													<td>
 													<p class="title" style="color: #0f515f; font-weight: bold; margin-bottom:0px;" >${args.project.name}</p>
-												  	<p class="Stitle" style="color: #ff642d; font-weight: bold; margin-top:1px;">on päivittänyt ${projectModifier.properties["cm:firstName"]!""} ${projectModifier.properties["cm:lastName"]!""}</p>
-                                                	<a title="Avaa projekti" href="${shareUrl}/page/entity-data-lists?list=taskList&nodeRef=${args.project.nodeRef}"><button ><b> Avaa projekti</b></button></a>
-												</td>                                              
+													<#if (args.project.properties["cm:modifier"])?? && people.getPerson(args.project.properties["cm:modifier"])??>
+														<#assign projectModifier = people.getPerson(args.project.properties["cm:modifier"] )>
+													  	<p class="Stitle" style="color: #ff642d; font-weight: bold; margin-top:1px;">on päivittänyt ${projectModifier.properties["cm:firstName"]!""} ${projectModifier.properties["cm:lastName"]!""}</p>
+													<#else>
+														<p class="Stitle" style="color: #ff642d; font-weight: bold; margin-top:1px;">on päivitetty</p>
+													</#if>
+														<a title="Avaa projekti" href="${shareUrl}/page/entity-data-lists?list=taskList&nodeRef=${args.project.nodeRef}"><button ><b> Avaa projekti</b></button></a>
+													</td>                                              
                                              </tr>
                                           </table>
                                           <div style="font-size: 14px; margin: 12px 0px 24px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
@@ -189,20 +192,22 @@
                                                 </#if>
                                                 </#if>
                                              	<#if args.activityType == 'State'>
-												 <p>Tehtävän tila muuttui <b>${args.beforeState}</b> klo 
+									 <p>Tehtävän tila muuttui <b>${args.beforeState}</b> klo 
 													<#if args.afterState == 'Refusé'><b style="color:#ff642d">${args.afterState}</b>
 														<#elseif (args.afterState == 'En cours' || args.afterState == 'Terminé')><b style="color:#0f515f">${args.afterState}</b>
 																<#else><b>${args.afterState}</b>
 													</#if>
                                              	 </p>
                                              	<ul>
-                                             	 <#if (args.taskTitle)??>                                             
-	                                             	<li>Tehtävä : <b>${args.taskTitle}</b></li>                                       
-	                                             </#if> 
-	                                             <#if (args.taskDescription)?? && args.taskDescription != "">                                             
-	                                             	<li>Kuvaus : ${args.taskDescription}</li>                                       
-	                                             </#if> 
-	                                             </ul>         
+                                             	 <#if args.task?? && args.task.properties["pjt:tlTaskName"]??>
+										<li>Tehtävä : <b>${args.task.properties["pjt:tlTaskName"]!""}</b></li>
+									<#elseif (args.taskTitle)??>                                             
+										<li>Tehtävä : <b>${args.taskTitle}</b></li>                                       
+										</#if> 
+										<#if (args.taskDescription)?? && args.taskDescription != "">                                             
+										<li>Kuvaus : ${args.taskDescription}</li>                                       
+										</#if> 
+										</ul>         
                                              		<#if args.taskComment??>
 		                                              <p style="color: #ff642d; font-weight: bold;">Kommentti :</p>
 	                                                        <div class="comment">
@@ -257,7 +262,7 @@
 									  	</ul>  	
 									 </#if>     	
                                              	<#elseif args.activityType == 'Comment'>
-                                             		<p> Kommentti on ollut  <#if args.activityEvent == 'Create'>luotu<#elseif args.activityEvent == 'Update'>päivittää<#else>poistettu</#if> varma <#if args.deliverableDescription??>toimitettava <b>"${args.deliverableDescription}"</b> <#elseif args.taskTitle??>tehtävä <b>"${args.taskTitle}"</b> <#else>projekti</#if>: </p>                                             		                                             		         
+                                             		<p> Kommentti on ollut  <#if args.activityEvent == 'Create'>luotu<#elseif args.activityEvent == 'Update'>päivittää<#else>poistettu</#if> varma <#if args.deliverableDescription??>toimitettava <b>"${args.deliverableDescription}"</b> <#elseif args.task?? && args.task.properties["pjt:tlTaskName"]??>tehtävä <b>"${args.task.properties["pjt:tlTaskName"]!""}"</b> <#elseif args.taskTitle??>tehtävä <b>"${args.taskTitle}"</b> <#else>projekti</#if>: </p>                                             		                                             		         
                                              			<#if  args.comment?? && args.comment.content??> 
 			                                                       <div class="comment">${args.comment.content}</div>
 		                                             	</#if>
