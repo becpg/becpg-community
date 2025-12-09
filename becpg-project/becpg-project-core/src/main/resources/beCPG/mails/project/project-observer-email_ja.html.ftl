@@ -179,7 +179,7 @@
                                                         
                                                         <td>
                                                             <p class="title" style="color: #0f515f; font-weight: bold; margin-bottom:0px;" >${args.project.name}</p>
-                                                            <#if (args.project.properties["cm:modifier"])??>
+                                                            <#if (args.project.properties["cm:modifier"])?? && people.getPerson(args.project.properties["cm:modifier"])??>
                                                                 <#assign projectModifier = people.getPerson(args.project.properties["cm:modifier"])>
                                                                 <p class="Stitle" style="color: #ff642d; font-weight: bold; margin-top:1px;">が更新されました。 ${projectModifier.properties["cm:firstName"]!""} ${projectModifier.properties["cm:lastName"]!""}</p>
                                                                 <#else> 
@@ -207,14 +207,16 @@
 												</#if>
                                              	 </p>
                                              	<ul>
-                                             	 <#if (args.taskTitle)??>                                             
-	                                             	<li>仕事 : <b>${args.taskTitle}</b></li>                                       
-	                                             </#if> 
-	                                             <#if (args.taskDescription)?? && args.taskDescription != "">                                             
-	                                             	<li>説明 : ${args.taskDescription}</li>                                       
-	                                             </#if> 
-	                                             </ul>         
-                                             		<#if args.taskComment??>
+                                             	 <#if args.task?? && args.task.properties["pjt:tlTaskName"]??>
+                                             		<li>仕事 : <b>${args.task.properties["pjt:tlTaskName"]!""}</b></li>
+                                             	 <#elseif (args.taskTitle)??>
+                                             		<li>仕事 : <b>${args.taskTitle}</b></li>
+                                             	 </#if>
+                                             	 <#if (args.taskDescription)?? && args.taskDescription != "">
+                                             		<li>説明 : ${args.taskDescription}</li>
+                                             	 </#if>
+                                             	 </ul>
+                                             	 <#if args.taskComment??>
 		                                              <p style="color: #ff642d; font-weight: bold;">コメント :</p>
 	                                                        <div class="comment">
 	                                                           <p style="margin:0px;font-size:12px;color:grey"><b>${projectModifier.properties["cm:firstName"]!""} ${projectModifier.properties["cm:lastName"]!""}</b></p>
@@ -269,7 +271,8 @@
 									    	</ul>  	
 									 </#if>     	
                                              	<#elseif args.activityType == 'Comment'>
-                                             		<p> コメントがありました  <#if args.activityEvent == 'Create'>作成した<#elseif args.activityEvent == 'Update'>更新<#else>削除されました</#if> 承知しました <#if args.deliverableDescription??>成果物 <b>"${args.deliverableDescription}"</b> <#elseif args.taskTitle??>仕事 <b>"${args.taskTitle}"</b> <#else>プロジェクト</#if>: </p>                                             		                                             		         
+                                             		<p> コメントがありました  <#if args.activityEvent == 'Create'>作成した<#elseif args.activityEvent == 'Update'>更新<#else>削除されました</#if> 承知しました <#if args.deliverableDescription??>成果物 <b>"${args.deliverableDescription}"</b> <#elseif args.task?? && args.task.properties["pjt:tlTaskName"]??>仕事 <b>"${args.task.properties["pjt:tlTaskName"]!""}"</b> <#elseif args.taskTitle??>仕事 <b>"${args.taskTitle}"</b> <#else>プロジェクト</#if>: </p>                                             												 				          
+                                  		         
                                              			<#if  args.comment?? && args.comment.content??> 
 			                                                       <div class="comment">${args.comment.content}</div>
 		                                             	</#if>

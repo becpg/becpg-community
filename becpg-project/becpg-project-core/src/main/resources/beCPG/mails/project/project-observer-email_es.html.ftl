@@ -153,8 +153,6 @@
       </style>
    </head>
    
-    <#assign projectModifier = people.getPerson(args.project.properties["cm:modifier"])>
-
    <body bgcolor="#dddddd">
       <table width="100%" cellpadding="20" cellspacing="0" border="0" bgcolor="#dddddd">
          <tr>
@@ -175,9 +173,14 @@
 													</td>
 													<td>
 													<p class="title" style="color: #0f515f; font-weight: bold; margin-bottom:0px;" >${args.project.name}</p>
-												  	<p class="Stitle" style="color: #ff642d; font-weight: bold; margin-top:1px;">ha sido actualizado por ${projectModifier.properties["cm:firstName"]!""} ${projectModifier.properties["cm:lastName"]!""}</p>
-                                                	<a title="Abrir el proyecto" href="${shareUrl}/page/entity-data-lists?list=taskList&nodeRef=${args.project.nodeRef}"><button ><b> Abrir el proyecto</b></button></a>
-												</td>                                              
+													<#if (args.project.properties["cm:modifier"])?? && people.getPerson(args.project.properties["cm:modifier"])??>
+														<#assign projectModifier = people.getPerson(args.project.properties["cm:modifier"] )>
+													  	<p class="Stitle" style="color: #ff642d; font-weight: bold; margin-top:1px;">ha sido actualizado por ${projectModifier.properties["cm:firstName"]!""} ${projectModifier.properties["cm:lastName"]!""}</p>
+													<#else>
+														<p class="Stitle" style="color: #ff642d; font-weight: bold; margin-top:1px;">ha sido actualizado</p>
+													</#if>
+														<a title="Abrir el proyecto" href="${shareUrl}/page/entity-data-lists?list=taskList&nodeRef=${args.project.nodeRef}"><button ><b> Abrir el proyecto</b></button></a>
+													</td>                                              
                                              </tr>
                                           </table>
                                           <div style="font-size: 14px; margin: 12px 0px 24px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
@@ -196,13 +199,15 @@
 													</#if>
                                              	 </p>
                                              	<ul>
-                                             	 <#if (args.taskTitle)??>                                             
-	                                             	<li>Tarea : <b>${args.taskTitle}</b></li>                                       
-	                                             </#if> 
-	                                             <#if (args.taskDescription)?? && args.taskDescription != "">                                             
-	                                             	<li>Descripción : ${args.taskDescription}</li>                                       
-	                                             </#if> 
-	                                             </ul>         
+                                             	 <#if args.task?? && args.task.properties["pjt:tlTaskName"]??>
+												<li>Tarea : <b>${args.task.properties["pjt:tlTaskName"]!""}</b></li>
+											<#elseif (args.taskTitle)??>                                             
+												<li>Tarea : <b>${args.taskTitle}</b></li>                                       
+											</#if> 
+											<#if (args.taskDescription)?? && args.taskDescription != "">                                             
+												<li>Descripción : ${args.taskDescription}</li>                                       
+											</#if> 
+											</ul>         
                                              		<#if args.taskComment??>
 		                                              <p style="color: #ff642d; font-weight: bold;">Comentario :</p>
 	                                                        <div class="comment">
@@ -257,7 +262,8 @@
 									  	</ul>  	
 									 </#if>     	
                                              	<#elseif args.activityType == 'Comment'>
-                                             		<p> Un comentario fue  <#if args.activityEvent == 'Create'>creado<#elseif args.activityEvent == 'Update'>actualizado<#else>borrado</#if> en <#if args.deliverableDescription??>el resultado <b>"${args.deliverableDescription}"</b> <#elseif args.taskTitle??>la tarea <b>"${args.taskTitle}"</b> <#else>el proyecto</#if>: </p>                                             		                                             		         
+                                             		<p> Un comentario fue  <#if args.activityEvent == 'Create'>creado<#elseif args.activityEvent == 'Update'>actualizado<#else>borrado</#if> en <#if args.deliverableDescription??>el resultado <b>"${args.deliverableDescription}"</b> <#elseif args.task?? && args.task.properties["pjt:tlTaskName"]??>la tarea <b>"${args.task.properties["pjt:tlTaskName"]!""}"</b> <#elseif args.taskTitle??>la tarea <b>"${args.taskTitle}"</b> <#else>el proyecto</#if>: </p>                                             												 				          
+                                  		         
                                              			<#if  args.comment?? && args.comment.content??> 
 			                                                       <div class="comment">${args.comment.content}</div>
 		                                             	</#if>
