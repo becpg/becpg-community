@@ -2,12 +2,14 @@ package fr.becpg.repo.entity.catalog.formulation;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import fr.becpg.repo.entity.catalog.CataloguableEntity;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.helper.LargeTextHelper;
 
 /**
  * <p>EntityCatalogFormulationHandler class.</p>
@@ -46,12 +48,55 @@ public class EntityCatalogFormulationHandler extends FormulationBaseHandler<Cata
 		JSONObject scores = new JSONObject();
 
 		try {
-			scores.put(EntityCatalogService.PROP_CATALOGS, entityCatalogService.formulateCatalogs(scorableEntity, scorableEntity.getReportLocales()));
+			scores.put(EntityCatalogService.PROP_CATALOGS,
+					entityCatalogService.formulateCatalogs(scorableEntity, scorableEntity.getReportLocales()));
 		} catch (JSONException e) {
 			logger.error("Cannot create Json Score", e);
 		}
 
-		scorableEntity.setEntityScore(scores.toString());
+		String entityScore = scores.toString();
+		if (entityScore != null && entityScore.length() > LargeTextHelper.TEXT_SIZE_LIMIT) {
+			try {
+				JSONArray catalogs = scores.optJSONArray(EntityCatalogService.PROP_CATALOGS);
+				JSONArray summarizedCatalogs = new JSONArray();
+				if (catalogs != null) {
+					for (int i = 0; i < catalogs.length(); i++) {
+						JSONObject catalog = catalogs.optJSONObject(i);
+						if (catalog != null) {
+							JSONObject summaryCatalog = new JSONObject();
+							Object id = catalog.opt("id");
+							if (id != null) {
+								summaryCatalog.put("id", id);
+							}
+							Object label = catalog.opt("label");
+							if (label != null) {
+								summaryCatalog.put("label", label);
+							}
+							Object score = catalog.opt("score");
+							if (score != null) {
+								summaryCatalog.put("score", score);
+							}
+							summarizedCatalogs.put(summaryCatalog);
+						}
+					}
+				}
+				JSONObject summarizedScores = new JSONObject();
+				summarizedScores.put(EntityCatalogService.PROP_CATALOGS, summarizedCatalogs);
+				entityScore = summarizedScores.toString();
+			} catch (JSONException e) {
+				logger.error("Cannot create summarized Json Score", e);
+				try {
+					JSONObject errorScores = new JSONObject();
+					errorScores.put("error", "entityScore too large");
+					entityScore = errorScores.toString();
+				} catch (JSONException jsonException) {
+					logger.error("Cannot create error Json Score", jsonException);
+					entityScore = null;
+				}
+			}
+		}
+
+		scorableEntity.setEntityScore(entityScore);
 
 		return true;
 	}
