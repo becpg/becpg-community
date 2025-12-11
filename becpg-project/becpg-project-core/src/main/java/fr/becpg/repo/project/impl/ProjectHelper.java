@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -398,7 +399,7 @@ public class ProjectHelper {
 		if (date == null) {
 			return null;
 		} else {
-			Calendar cal = Calendar.getInstance();
+			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 			cal.setTime(date);
 			cal.set(Calendar.HOUR_OF_DAY, 0);
 			cal.set(Calendar.MINUTE, 0);
@@ -431,7 +432,7 @@ public class ProjectHelper {
 			duration = DURATION_DEFAULT;
 		}
 
-		Calendar calendar = Calendar.getInstance();
+		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 		calendar.setTime(startDate);
 		int i = 1;
 		while (i < duration) {
@@ -482,9 +483,9 @@ public class ProjectHelper {
 		}
 
 		int duration = 1;
-		Calendar startDateCal = Calendar.getInstance();
+		Calendar startDateCal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 		startDateCal.setTime(startDate);
-		Calendar endDateCal = Calendar.getInstance();
+		Calendar endDateCal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 		endDateCal.setTime(endDate);
 		while (startDateCal.before(endDateCal)) {
 			if (isWorkingDate(startDateCal)) {
