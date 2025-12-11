@@ -8884,7 +8884,7 @@ dataSetRow["roundedValuePerServing"]
                                 <property name="name">regulUnit</property>
                                 <text-property name="displayName">regulUnit</text-property>
                                 <expression name="expression" type="javascript">if(dataSetRow["regulUnit"] != null &amp;&amp; dataSetRow["regulUnit"] != ""){
-dataSetRow["regulUnit"].replace("µg", "mcg")
+dataSetRow["regulUnit"]
 }
 else{
 dataSetRow["nutListUnit"].replace("/100g", "").replace("/100mL", "").replace("µg", "mcg")
