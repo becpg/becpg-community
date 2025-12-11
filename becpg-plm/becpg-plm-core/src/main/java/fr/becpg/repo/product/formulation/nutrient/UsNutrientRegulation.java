@@ -24,6 +24,15 @@ public class UsNutrientRegulation extends AbstractNutrientRegulation {
 
 	/** {@inheritDoc} */
 	@Override
+	public Double convertValue(Double value, String nutUnit, String regulUnit) {
+		if (regulUnit != null) {
+			regulUnit = regulUnit.replace("mcg", "µg");
+		}
+		return super.convertValue(value, nutUnit, regulUnit);
+	}
+
+	/** {@inheritDoc} */
+	@Override
 	protected Double roundByCode(Double value, String nutrientTypeCode) {
 		if (value == null) {
 			return null;
