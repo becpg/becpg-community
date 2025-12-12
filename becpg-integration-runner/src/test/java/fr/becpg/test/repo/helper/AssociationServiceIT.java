@@ -461,7 +461,7 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 		
 		// Wait a bit to ensure different timestamps
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}
@@ -507,7 +507,7 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 		
 		// Test 3: Filter by cm:created (RANGE mode) - find products created after first product
 		filters.clear();
-		Date afterFirst = new Date(creationDate1.getTime() + 1000); // 500ms after first
+		Date afterFirst = new Date(creationDate1.getTime() + 1000); // 1000ms after first
 		Date muchLater = new Date(creationDate2.getTime() + 10000); // well after second
 		filter = new AssociationCriteriaFilter(ContentModel.PROP_CREATED, 
 				dateFormat.format(afterFirst) + "|" + dateFormat.format(muchLater), AssociationCriteriaFilterMode.RANGE);
@@ -610,7 +610,7 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 		}, false, true);
 		
 		try {
-			Thread.sleep(500);
+			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}
@@ -627,7 +627,7 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 		}, false, true);
 		
 		try {
-			Thread.sleep(500);
+			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}
