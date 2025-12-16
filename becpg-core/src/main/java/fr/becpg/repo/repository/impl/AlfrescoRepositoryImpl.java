@@ -1096,11 +1096,13 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	}
 
 	private void removeProperties(NodeRef nodeRef, Set<QName> qnames) {
-		qnames.remove(ContentModel.PROP_NAME);
-		for (QName qname : qnames) {
-			nodeService.removeProperty(nodeRef, qname);
-		}
-	}
+        qnames.remove(ContentModel.PROP_NAME);
+        for (QName qname : qnames) {
+            if(nodeService.getProperty(nodeRef, qname)!=null) {
+                nodeService.removeProperty(nodeRef, qname);
+            }
+        }
+    }
 
 	/** {@inheritDoc} */
 	@Override
