@@ -5,6 +5,7 @@ package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -79,7 +80,10 @@ public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<
 						Double reqMaxQty = maximumDosageRequirements.get(0).getReqMaxQty() == null ? 0d : maximumDosageRequirements.get(0).getReqMaxQty();
 						if (((RegulatoryListDataItem) regulatoryEntity).getMaximumDosage() == null || reqMaxQty < ((RegulatoryListDataItem) regulatoryEntity).getMaximumDosage()) {
 							((RegulatoryListDataItem) regulatoryEntity).setMaximumDosage(reqMaxQty);
-							((RegulatoryListDataItem) regulatoryEntity).setLimitingIngredients(maximumDosageRequirements.stream().map(r -> r.getCharact()).collect(Collectors.toList()));
+							((RegulatoryListDataItem) regulatoryEntity)
+									.setLimitingIngredients(maximumDosageRequirements.stream().map(r -> r.getCharact())
+											.filter(Objects::nonNull)
+											.toList());
 						}
 					}
 					isProhibited = true;
