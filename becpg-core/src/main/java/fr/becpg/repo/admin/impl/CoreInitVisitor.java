@@ -37,6 +37,7 @@ import org.alfresco.repo.action.executer.AddFeaturesActionExecuter;
 import org.alfresco.repo.action.executer.SpecialiseTypeActionExecuter;
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
+import org.alfresco.repo.site.SiteModel;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ActionCondition;
 import org.alfresco.service.cmr.action.CompositeAction;
@@ -46,6 +47,7 @@ import org.alfresco.service.cmr.rule.RuleType;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteInfo;
+import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -104,6 +106,9 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 	@Autowired
 	private EntityVersionService entityVersionService;
+	
+	@Autowired
+	private SiteService siteService;
 
 	/** {@inheritDoc} */
 	@Override
@@ -200,19 +205,33 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 		createGroups(new String[] { SystemGroup.SystemMgr.toString(), SystemGroup.OlapUser.toString(), SystemGroup.AiUser.toString(),
 				SystemGroup.ExternalUserMgr.toString(), SystemGroup.ExternalUser.toString(), SystemGroup.SecurityRole.toString(),
-				SystemGroup.LanguageMgr.toString(), SystemGroup.SavedSearchMgr.toString() });
+				SystemGroup.LanguageMgr.toString(), SystemGroup.SavedSearchMgr.toString(), SystemGroup.ApiConnector.toString() });
 
 		createGroups(new String[] { SystemGroup.LicenseReadConcurrent.toString(), SystemGroup.LicenseWriteConcurrent.toString(),
 				SystemGroup.LicenseReadNamed.toString(), SystemGroup.LicenseWriteNamed.toString(),
 				SystemGroup.LicenseSupplierConcurrent.toString() });
 
-		Set<String> authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP,
+		Set<String> supplierLicenseSubGroups = authorityService.getContainedAuthorities(AuthorityType.GROUP,
 				PermissionService.GROUP_PREFIX + SystemGroup.LicenseSupplierConcurrent.toString(), true);
-		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString())) {
+		if (!supplierLicenseSubGroups.contains(PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString())) {
 			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.LicenseSupplierConcurrent.toString(),
 					PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString());
 		}
+		
+		Set<String> readConcurrentSubGroups = authorityService.getContainedAuthorities(AuthorityType.GROUP,
+				PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadConcurrent.toString(), true);
+		String apiConnectorAuthorityName = PermissionService.GROUP_PREFIX + SystemGroup.ApiConnector.toString();
+		if (!readConcurrentSubGroups.contains(apiConnectorAuthorityName)) {
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadConcurrent.toString(),
+					apiConnectorAuthorityName);
+		}
 
+		List<SiteInfo> allSites = siteService.listSites(null, null);
+		for (SiteInfo site : allSites) {
+			if (!siteService.isMember(site.getShortName(), apiConnectorAuthorityName)) {
+				siteService.setMembership(site.getShortName(), apiConnectorAuthorityName, SiteModel.SITE_CONSUMER);
+			}
+		}
 	}
 
 	/**
@@ -340,6 +359,8 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 	protected void visitPermissions(NodeRef nodeRef, String folderName) {
 		if (Objects.equals(folderName, RepoConsts.PATH_SYSTEM)) {
 			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr.toString(), PermissionService.COORDINATOR,
+					true);
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.ApiConnector.toString(), PermissionService.CONSUMER,
 					true);
 		}
 

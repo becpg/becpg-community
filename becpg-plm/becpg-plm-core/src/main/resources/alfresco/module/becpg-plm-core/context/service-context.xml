@@ -176,6 +176,22 @@
 		<property name="publicationChannelService" ref="publicationChannelService" />
 	</bean>
 	
+	<bean id="webscript.fr.becpg.publication.channelBatch.put" class="fr.becpg.repo.web.scripts.publication.RemoteChannelBatchWebScript" >
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="associationService" ref="associationService" />
+		<property name="publicationChannelService" ref="publicationChannelService" />
+		<property name="entityListDAO" ref="entityListDAO" />
+	</bean>
+	
+	<bean id="webscript.fr.becpg.publication.channelBatch.post" class="fr.becpg.repo.web.scripts.publication.RemoteChannelBatchWebScript" >
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="associationService" ref="associationService" />
+		<property name="publicationChannelService" ref="publicationChannelService" />
+		<property name="entityListDAO" ref="entityListDAO" />
+	</bean>
+	
 	<!-- Formulation javascript helper -->
 	
 	<bean id="bFormulationScriptHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.FormulationScriptHelper">
