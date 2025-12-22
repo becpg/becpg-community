@@ -54,6 +54,9 @@ public final class JsonHelper {
 
 	}
 	
+	public static JsonData createJsonData() {
+		return new JsonData(MAPPER.createObjectNode());
+	}
 
 	/**
 	 * <p>formatValue.</p>

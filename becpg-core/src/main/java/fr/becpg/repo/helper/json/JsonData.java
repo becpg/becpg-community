@@ -29,6 +29,14 @@ public class JsonData implements Iterable<JsonData> {
 	public boolean getBoolean() {
 		return jsonNode.asBoolean();
 	}
+	
+	public long getLong() {
+		return jsonNode.asLong();
+	}
+	
+	public int getInt() {
+		return jsonNode.asInt();
+	}
 
 	public boolean has(String path) {
 		return jsonNode.has(path);
