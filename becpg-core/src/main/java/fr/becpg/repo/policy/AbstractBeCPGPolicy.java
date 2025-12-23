@@ -43,7 +43,6 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.GUID;
 import org.alfresco.util.PropertyCheck;
-import org.alfresco.util.transaction.TransactionListener;
 import org.alfresco.util.transaction.TransactionListenerAdapter;
 import org.alfresco.util.transaction.TransactionSupportUtil;
 import org.apache.commons.logging.Log;
@@ -51,6 +50,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.util.BeCPGTransactionUtil;
 
 /**
  * <p>Abstract AbstractBeCPGPolicy class.</p>
@@ -71,8 +71,6 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 	protected BeCPGPolicyTransactionListener transactionListener = new BeCPGPolicyTransactionListener("pre");
 	
 	protected BeCPGPolicyTransactionListener postTransactionListener = new BeCPGPolicyTransactionListener("post");
-
-    private static final String RESOURCE_KEY_TXN_PRE_LISTENERS = "AlfrescoTransactionSupport.preListeners";
 
 	/** Constant <code>KEY_REGISTRY="key_registry"</code> */
 	protected static final String KEY_REGISTRY = "key_registry";
@@ -313,21 +311,12 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 		if (pendingNodes == null) {
 			pendingNodes = new LinkedHashSet<>();
 			TransactionSupportUtil.bindResource(key, pendingNodes);
-			bindTransactionListener(transactionListener);
+			BeCPGTransactionUtil.bindLateTransactionListener(transactionListener);
 		}
 		
 		pendingNodes.add(nodeRef);
 	}
 
-	private void bindTransactionListener(TransactionListener transactionListener) {
-		Set<TransactionListener> preListeners = TransactionSupportUtil.getResource(RESOURCE_KEY_TXN_PRE_LISTENERS);
-		if (preListeners == null) {
-			preListeners = new LinkedHashSet<>();
-		}
-		preListeners.add(transactionListener);
-		TransactionSupportUtil.bindResource(RESOURCE_KEY_TXN_PRE_LISTENERS, preListeners);
-	}
-	
 	private void addKeyRegistry(String registry, String key) {
 		Set<String> keys = getKeyRegistry(registry);
 
@@ -377,7 +366,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 			pendingNodes = new LinkedHashSet<>();
 
 			TransactionSupportUtil.bindResource(key, pendingNodes);
-			bindTransactionListener(transactionListener);
+			BeCPGTransactionUtil.bindLateTransactionListener(transactionListener);
 		}
 		pendingNodes.add(associationRef);
 		
@@ -532,7 +521,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 			
 			
 			if(setPostTransactionListener) {
-			   bindTransactionListener(postTransactionListener);
+				BeCPGTransactionUtil.bindLateTransactionListener(postTransactionListener);
 			}
 			
 		}

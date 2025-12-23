@@ -120,7 +120,12 @@ function main() {
         "beCPG.eco.automatic.states",
         "beCPG.eco.automatic.revision.type",
         "beCPG.eco.automatic.record.version.type",
-        "beCPG.eco.automatic.deleteOnApply"
+        "beCPG.eco.automatic.deleteOnApply",
+        "beCPG.formulation.channel.maxProducts",
+        "beCPG.formulation.channel.minHoursSinceModification",
+        "beCPG.formulation.channel.maxSystemLoad",
+        "beCPG.formulation.channel.maxActiveUsers",
+        "beCPG.formulation.channel.excludedTimeSlot"
     ].forEach(function(p) {
         addAttribute(p, "automatic-formulation");
     });
