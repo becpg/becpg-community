@@ -309,6 +309,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		@Override
 		public void run() {
 			
+			pushAndSetBatchAuthentication(null);
+
 			if (runningCommand.get() != null) {
 				if (runningCommand.get().getBatchInfo().getPriority() < this.getBatchInfo().getPriority()) {
 					pausedCommands.push(this);
@@ -406,16 +408,10 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				}
 
 				if (closingHook != null) {
-
-					pushAndSetBatchAuthentication(null);
-
 					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 						closingHook.run();
 						return true;
 					}, false, true);
-
-					AuthenticationUtil.popAuthentication();
-
 				}
 
 				batchInfo.setIsCompleted(true);
