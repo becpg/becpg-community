@@ -37,6 +37,7 @@ import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.formulation.spel.SpelHelper;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
@@ -354,7 +355,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 		}
 
 		// Generate document name using the template format
-		String documentName = generateDocumentName(productData, docTypeItem);
+		String documentName = PropertiesHelper.cleanFolderName(generateDocumentName(productData, docTypeItem));
 
 		NodeRef docNodeRef = nodeService.getChildByName(destFolder, ContentModel.ASSOC_CONTAINS, documentName);
 
