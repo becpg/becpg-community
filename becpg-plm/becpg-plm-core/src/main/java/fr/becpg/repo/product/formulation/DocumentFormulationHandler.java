@@ -347,9 +347,6 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 			
 			destFolder = nodeService.getChildByName( productData.getNodeRef(), ContentModel.ASSOC_CONTAINS, destPath);
 			
-			if(destFolder == null) {
-				destFolder = repoService.getFolderByPath(productData.getNodeRef(), destPath);
-			}
 		}
 
 		if (destFolder == null) {
