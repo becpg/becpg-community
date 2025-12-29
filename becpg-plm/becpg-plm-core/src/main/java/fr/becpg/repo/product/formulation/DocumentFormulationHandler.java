@@ -339,11 +339,14 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 		String destPath = (docTypeItem.getDestPath() != null) && !docTypeItem.getDestPath().trim().isEmpty() ? docTypeItem.getDestPath()
 				: RepoConsts.PATH_SUPPLIER_DOCUMENTS;
 		
-
 		NodeRef destFolder = null;
 		if (!".".equals(destPath)) {
-			destFolder = nodeService.getChildByName( productData.getNodeRef(), ContentModel.ASSOC_CONTAINS,
-					TranslateHelper.getTranslatedPath(destPath));
+			if (TranslateHelper.getTranslatedPath(destPath) != null) {
+				destPath = TranslateHelper.getTranslatedPath(destPath);
+			}
+			
+			destFolder = nodeService.getChildByName( productData.getNodeRef(), ContentModel.ASSOC_CONTAINS, destPath);
+			
 			if(destFolder == null) {
 				destFolder = repoService.getFolderByPath(productData.getNodeRef(), destPath);
 			}
