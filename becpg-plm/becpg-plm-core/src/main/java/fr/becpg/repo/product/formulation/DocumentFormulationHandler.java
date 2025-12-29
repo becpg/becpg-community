@@ -355,7 +355,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 		}
 
 		// Generate document name using the template format
-		String documentName = PropertiesHelper.cleanFolderName(generateDocumentName(productData, docTypeItem));
+		String documentName = PropertiesHelper.cleanName(generateDocumentName(productData, docTypeItem));
 
 		NodeRef docNodeRef = nodeService.getChildByName(destFolder, ContentModel.ASSOC_CONTAINS, documentName);
 
