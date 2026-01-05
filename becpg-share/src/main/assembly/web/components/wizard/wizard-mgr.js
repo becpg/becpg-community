@@ -55,7 +55,7 @@
 
                     var step = me.options.wizardStruct[currentIndex];
                     if (currentIndex > newIndex && step && (step.type === "form" || step.type === "survey")) {
-                        var stepReadOnly = me.options.readOnly || step.readOnly;
+                        var stepReadOnly = me.options.readOnly || step.readOnly || step.valid;
                         if (!stepReadOnly) {
                             me.showStepChangeConfirmation(function() {
                                 isNavigatingBack = true;
@@ -84,9 +84,7 @@
                 },
                 onStepChanged: function(__event, currentIndex, priorIndex) {
                     setNextAllowed(false);
-                    if (firstStepTab && !firstStepTab.hasClass("Valid")) {
-                        firstStepTab.addClass("Valid");
-                    }
+       
                     me.currentIndex = currentIndex;
                     me.handleStepTransition(priorIndex, currentIndex);
                 },
@@ -116,7 +114,7 @@
 
             var forward = currentIndex > priorIndex;
             var isFormStep = step.type === "form" || step.type === "survey";
-            var stepReadOnly = this.options.readOnly || step.readOnly;
+            var stepReadOnly = this.options.readOnly || step.readOnly || step.valid;
 
             if (isFormStep && forward && !stepReadOnly) return;
 
@@ -159,6 +157,8 @@
                     validationInProgress = false;
                     step.finish = true;
                     if (!isValid) return false;
+                } else {
+                    step.finish = true;
                 }
             }
 
@@ -274,7 +274,7 @@
                 step.nodeRef = this.options.wizardStruct[step.nodeRefStepIndex].nodeRef;
             }
 
-            var readOnly = this.options.readOnly || step.readOnly;
+            var readOnly = this.options.readOnly || step.readOnly || step.valid;
             var me = this;
 
             this.checkValidation(step, readOnly, function(validated, datalists) {
@@ -378,9 +378,18 @@
                     fn: function(response) {
                         var stepDOM = Dom.get(me.id + "-step-" + step.id);
                         stepDOM.innerHTML = response.serverResponse.responseText;
+                        
+                        var stepAnchor = me.widgets.wizard.steps("getStepAnchor");
+
+                        if(validated  && !stepAnchor.parent().hasClass("Valid")){
+                             stepAnchor.parent().addClass("Valid");
+                             step.valid = true;
+                        }
+                        
                         if (step.type === "form" && (readOnly || validated)) {
                             stepDOM.classList.add("properties-view");
                         }
+
                         step.loaded = true;
                         if (step.type === "entityDataList") {
                             me.loadDataList(step, datalists);
@@ -398,8 +407,6 @@
             function processDataLists(lists) {
                 var list = lists.find(function(l) { return l.name === step.listId; });
                 if (list) {
-                    var stepAnchor = me.widgets.wizard.steps("getStepAnchor");
-                    stepAnchor.parent().addClass(list.state);
                     YAHOO.Bubbling.fire("simpleView-" + me.id + "-step-" + step.id + "scopedActiveDataListChanged", {
                         list: list.name, dataList: list, entity: null
                     });
