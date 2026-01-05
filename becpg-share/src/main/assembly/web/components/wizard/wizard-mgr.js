@@ -8,11 +8,11 @@
         return this;
     };
 
-    var nextAllowed = true, button, firstStepTab, validationInProgress = false;
+    var nextAllowed = true, button, firstStepTab, validationInProgress = false, isNavigatingBack = false;
 
     function setNextAllowed(val) {
         if (!button) button = $(".wizard-mgr").find(".actions a[href$='#next']")[0].parentElement;
-        if (!firstStepTab && val) firstStepTab = $("list.first");
+        if (!firstStepTab && val) firstStepTab = $("li.first");
         nextAllowed = val;
         button.classList[val ? "remove" : "add"]("disabled");
     }
@@ -47,17 +47,27 @@
                     loading: me.msg("wizard.loading.msg")
                 },
                 onStepChanging: function(__event, currentIndex, newIndex) {
+
+                    if (isNavigatingBack) {
+                        isNavigatingBack = false;
+                        return true;
+                    }
+
+                    var step = me.options.wizardStruct[currentIndex];
                     if (currentIndex > newIndex && step && (step.type === "form" || step.type === "survey")) {
-                        me.showStepChangeConfirmation(function() {
-                            me.widgets.wizard.steps("previous");
-                        });
-                        return false;
+                        var stepReadOnly = me.options.readOnly || step.readOnly || step.valid;
+                        if (!stepReadOnly) {
+                            me.showStepChangeConfirmation(function() {
+                                isNavigatingBack = true;
+                                me.widgets.wizard.steps("previous");
+                            });
+                            return false;
+                        }
                     }
 
                     if (currentIndex > newIndex) return true;
                     if (!nextAllowed || validationInProgress) return false;
 
-                    var step = me.options.wizardStruct[currentIndex];
                     if (!step) return true;
 
                     if (step.type === "form" || step.type === "survey") {
@@ -68,17 +78,13 @@
                                 step.form.validate(Alfresco.forms.Form.NOTIFICATION_LEVEL_CONTAINER);
                             validationInProgress = false;
                             return isValid;
-                        } else {
-                            me.loadStep(me.options.wizardStruct[newIndex]);
                         }
                     }
                     return true;
                 },
                 onStepChanged: function(__event, currentIndex, priorIndex) {
                     setNextAllowed(false);
-                    if (firstStepTab && !firstStepTab.hasClass("Valid")) {
-                        firstStepTab.addClass("Valid");
-                    }
+       
                     me.currentIndex = currentIndex;
                     me.handleStepTransition(priorIndex, currentIndex);
                 },
@@ -104,11 +110,17 @@
             var step = this.options.wizardStruct[priorIndex];
             var nextStep = this.options.wizardStruct[currentIndex];
 
-            if (!step || !nextStep || ((step.type === "form" || step.type === "survey") && currentIndex >= priorIndex)) return;
+            if (!step || !nextStep) return;
 
-            if (currentIndex > priorIndex) nextStep.nodeRef = step.nodeRef;
+            var forward = currentIndex > priorIndex;
+            var isFormStep = step.type === "form" || step.type === "survey";
+            var stepReadOnly = this.options.readOnly || step.readOnly || step.valid;
 
-            if ((step.type !== "form" && step.type !== "survey") && step.nextStepWebScript) {
+            if (isFormStep && forward && !stepReadOnly) return;
+
+            if (forward) nextStep.nodeRef = step.nodeRef;
+
+            if (step.nextStepWebScript && (!isFormStep || stepReadOnly)) {
                 this.executeWebScript(step, nextStep);
             } else {
                 this.loadStep(nextStep);
@@ -145,6 +157,8 @@
                     validationInProgress = false;
                     step.finish = true;
                     if (!isValid) return false;
+                } else {
+                    step.finish = true;
                 }
             }
 
@@ -260,7 +274,7 @@
                 step.nodeRef = this.options.wizardStruct[step.nodeRefStepIndex].nodeRef;
             }
 
-            var readOnly = this.options.readOnly || step.readOnly;
+            var readOnly = this.options.readOnly || step.readOnly || step.valid;
             var me = this;
 
             this.checkValidation(step, readOnly, function(validated, datalists) {
@@ -311,7 +325,8 @@
                     }
                 });
             } else {
-                callback(readOnly);
+                // Don't fetch for readonly steps - just call callback
+                callback(readOnly, null);
             }
         },
 
@@ -363,9 +378,18 @@
                     fn: function(response) {
                         var stepDOM = Dom.get(me.id + "-step-" + step.id);
                         stepDOM.innerHTML = response.serverResponse.responseText;
+                        
+                        var stepAnchor = me.widgets.wizard.steps("getStepAnchor");
+
+                        if(validated  && !stepAnchor.parent().hasClass("Valid")){
+                             stepAnchor.parent().addClass("Valid");
+                             step.valid = true;
+                        }
+                        
                         if (step.type === "form" && (readOnly || validated)) {
                             stepDOM.classList.add("properties-view");
                         }
+
                         step.loaded = true;
                         if (step.type === "entityDataList") {
                             me.loadDataList(step, datalists);
@@ -383,8 +407,6 @@
             function processDataLists(lists) {
                 var list = lists.find(function(l) { return l.name === step.listId; });
                 if (list) {
-                    var stepAnchor = me.widgets.wizard.steps("getStepAnchor");
-                    stepAnchor.parent().addClass(list.state);
                     YAHOO.Bubbling.fire("simpleView-" + me.id + "-step-" + step.id + "scopedActiveDataListChanged", {
                         list: list.name, dataList: list, entity: null
                     });
@@ -401,6 +423,9 @@
                         fn: function(response) { processDataLists(response.json.datalists); }
                     }
                 });
+            } else {
+                // No datalists and no nodeRef - still need to enable next button
+                setNextAllowed(step.index !== me.options.wizardStruct.length - 1);
             }
         },
 
