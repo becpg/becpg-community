@@ -676,7 +676,8 @@ public class RegulationFormulationHelper {
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_MX"))) {
 			ret.add("MX");
 		}
-		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("in_ID"))) {
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("in_ID"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("id_ID"))) {
 			ret.add("ID");
 		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ms_MY"))) {
@@ -717,7 +718,8 @@ public class RegulationFormulationHelper {
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_DZ"))) {
 			ret.add("DZ");
 		}
-		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("iw_IL"))) {
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("iw_IL")) ||
+				MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("he_IL"))) {
 			ret.add("IL");
 		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("tr_TR"))) {
