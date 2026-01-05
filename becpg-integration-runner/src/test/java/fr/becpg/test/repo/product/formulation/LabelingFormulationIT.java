@@ -1139,7 +1139,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Langue").withFormula("fr,en").withLabelingRuleType(LabelingRuleType.Locale));
 
 		checkILL(finishedProductNodeRef3, labelingRuleList, "ing4 french 71,4%, epices french, legal Raw material 1 10,7%", Locale.FRENCH);
-		checkILL(finishedProductNodeRef3, labelingRuleList, "ing4 english 71.4%, epices english, legal Raw material 1 (<b>allergen1</b>) 10.7%",
+		checkILL(finishedProductNodeRef3, labelingRuleList, "ing4 english (<b>allergen1</b>) 71.4%, epices english (<b>allergen1</b>), legal Raw material 1 (<b>allergen1</b>) 10.7%",
 				Locale.ENGLISH);
 
 		labelingRuleList.add(LabelingRuleListDataItem.build().withName("PrefAllergen2").withFormula("disableAllergensForLocales = \"*\"")
