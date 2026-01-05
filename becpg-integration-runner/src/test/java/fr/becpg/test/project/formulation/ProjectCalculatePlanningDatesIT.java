@@ -35,6 +35,7 @@ public class ProjectCalculatePlanningDatesIT extends AbstractProjectTestCase {
 	public void testCalculatePlanningDates() throws ParseException {
 
 		final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		dateFormat.setTimeZone(java.util.TimeZone.getTimeZone("GMT"));
 
 		final NodeRef projectNodeRef = createProject(ProjectState.OnHold, dateFormat.parse("15/11/2012"), null);
 		final Date today = ProjectHelper.removeTime(new Date());
