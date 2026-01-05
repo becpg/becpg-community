@@ -249,6 +249,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 	public void testCalculateNextDate() throws ParseException {
 
 		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		dateFormat.setTimeZone(java.util.TimeZone.getTimeZone("GMT"));
 		Date date = dateFormat.parse("15/11/2012");
 
 		assertEquals(dateFormat.parse("15/11/2012"), ProjectHelper.calculateEndDate(date, 1));
@@ -264,6 +265,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 	public void testCalculateTaskDuration() throws ParseException {
 
 		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		dateFormat.setTimeZone(java.util.TimeZone.getTimeZone("GMT"));
 
 		assertEquals(1, ProjectHelper.calculateTaskDuration(dateFormat.parse("15/11/2012"), dateFormat.parse("15/11/2012")).intValue());
 		assertEquals(2, ProjectHelper.calculateTaskDuration(dateFormat.parse("15/11/2012"), dateFormat.parse("16/11/2012")).intValue());
@@ -342,6 +344,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 	public void testCalculatePrevDate() throws ParseException {
 
 		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		dateFormat.setTimeZone(java.util.TimeZone.getTimeZone("GMT"));
 		Date date = dateFormat.parse("15/11/2012");
 
 		assertEquals(dateFormat.parse("15/11/2012"), ProjectHelper.calculateStartDate(date, 1));
@@ -358,6 +361,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 	public void testCalculateRetroPlanningDates() throws ParseException {
 
 		final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		dateFormat.setTimeZone(java.util.TimeZone.getTimeZone("GMT"));
 
 		final NodeRef projectNodeRef = createProject(ProjectState.OnHold, null, dateFormat.parse("15/11/2012"));
 
