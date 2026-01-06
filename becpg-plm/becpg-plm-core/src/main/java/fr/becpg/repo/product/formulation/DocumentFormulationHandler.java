@@ -343,11 +343,12 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 		NodeRef destFolder = null;
 		if (!".".equals(destPath)) {
 			if (TranslateHelper.getTranslatedPath(destPath) != null) {
-				destPath = TranslateHelper.getTranslatedPath(destPath);
+				destFolder = nodeService.getChildByName(productData.getNodeRef(), ContentModel.ASSOC_CONTAINS,
+						TranslateHelper.getTranslatedPath(destPath));
 			}
-			
-			destFolder = nodeService.getChildByName( productData.getNodeRef(), ContentModel.ASSOC_CONTAINS, destPath);
-			
+			if (destFolder == null) {
+				destFolder = repoService.getFolderByPath(productData.getNodeRef(), destPath);
+			}
 		}
 
 		if (destFolder == null) {
