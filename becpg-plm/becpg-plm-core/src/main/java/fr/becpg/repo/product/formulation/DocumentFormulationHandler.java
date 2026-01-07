@@ -37,6 +37,7 @@ import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.formulation.spel.SpelHelper;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
@@ -339,12 +340,13 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 		String destPath = (docTypeItem.getDestPath() != null) && !docTypeItem.getDestPath().trim().isEmpty() ? docTypeItem.getDestPath()
 				: RepoConsts.PATH_SUPPLIER_DOCUMENTS;
 		
-
 		NodeRef destFolder = null;
 		if (!".".equals(destPath)) {
-			destFolder = nodeService.getChildByName( productData.getNodeRef(), ContentModel.ASSOC_CONTAINS,
-					TranslateHelper.getTranslatedPath(destPath));
-			if(destFolder == null) {
+			if (TranslateHelper.getTranslatedPath(destPath) != null) {
+				destFolder = nodeService.getChildByName(productData.getNodeRef(), ContentModel.ASSOC_CONTAINS,
+						TranslateHelper.getTranslatedPath(destPath));
+			}
+			if (destFolder == null) {
 				destFolder = repoService.getFolderByPath(productData.getNodeRef(), destPath);
 			}
 		}
@@ -354,7 +356,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 		}
 
 		// Generate document name using the template format
-		String documentName = generateDocumentName(productData, docTypeItem);
+		String documentName = PropertiesHelper.cleanName(generateDocumentName(productData, docTypeItem));
 
 		NodeRef docNodeRef = nodeService.getChildByName(destFolder, ContentModel.ASSOC_CONTAINS, documentName);
 
