@@ -1,4 +1,4 @@
-FROM alfresco/alfresco-search-services:2.0.16
+FROM alfresco/alfresco-search-services:2.0.17
 
 ENV DIST_DIR=/opt/alfresco-search-services
 
