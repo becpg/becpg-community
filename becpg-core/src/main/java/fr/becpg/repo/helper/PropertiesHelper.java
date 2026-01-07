@@ -65,6 +65,7 @@ public class PropertiesHelper {
 				.replaceAll(Pattern.quote("*"), " ")
 				.replaceAll("\\.$", "")
 				.replace("/", "-")
+				.replace("\\", "-")
 				.replace("_x0020_", " ").trim(): null;
 	}	
 	
