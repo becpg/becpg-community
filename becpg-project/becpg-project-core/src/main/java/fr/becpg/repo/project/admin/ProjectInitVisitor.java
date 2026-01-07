@@ -84,6 +84,8 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 	private static final String PROJECT_REPORT_FR_RESOURCE = "beCPG/birt/project/ProjectReport_fr.properties";
 	
+	private static final String DEFAULT_PJT_TPL_NAME = "plm.project.default.tpl.name";
+	
 	private static final String ARCHIVE_PJT_TPL_NAME = "plm.project.archive.tpl.name";
 	
 	private static final String ARCHIVE_PJT_TASK_NAME = "plm.project.archive.task.name";
@@ -148,21 +150,32 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 	 */
 	private void visitEntityTpls(NodeRef systemNodeRef) {
 
-		NodeRef entityTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_ENTITY_TEMPLATES);
+		NodeRef entityTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_ENTITY_TEMPLATES); 
+		NodeRef projectTplsNodeRef = visitFolder(entityTplsNodeRef, RepoConsts.PATH_PROJECT_TEMPLATES); 
 
-		createDefaultProjectTpl(entityTplsNodeRef);
+		createDefaultProjectTpl(entityTplsNodeRef, projectTplsNodeRef);
 
-		createArchiveProjectTpl(entityTplsNodeRef);
+		createArchiveProjectTpl(entityTplsNodeRef, projectTplsNodeRef);
 		
 		
 	}
 
-	private void createArchiveProjectTpl(NodeRef entityTplsNodeRef) {
+	private void createArchiveProjectTpl(NodeRef entityTplsNodeRef, NodeRef projectTplsNodeRef) {
 		
-		NodeRef entityTplNodeRef = nodeService.getChildByName(entityTplsNodeRef, ContentModel.ASSOC_CONTAINS,
+		NodeRef projectTplNodeRef = nodeService.getChildByName(projectTplsNodeRef, ContentModel.ASSOC_CONTAINS,
 				I18NUtil.getMessage(ARCHIVE_PJT_TPL_NAME));
+		
+		if (projectTplNodeRef == null) {
+			projectTplNodeRef = nodeService.getChildByName(entityTplsNodeRef, ContentModel.ASSOC_CONTAINS,
+					I18NUtil.getMessage(ARCHIVE_PJT_TPL_NAME));
+			
+			if (projectTplNodeRef!= null) {
+				nodeService.moveNode(projectTplNodeRef, projectTplsNodeRef, ContentModel.ASSOC_CONTAINS,
+						nodeService.getPrimaryParent(projectTplNodeRef).getQName());
+			}
+		}
 
-		if (entityTplNodeRef == null) {
+		if (projectTplNodeRef == null) {
 			NodeRef scriptFolderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), XPATH_DICTIONARY_SCRIPTS);
 
 			List<NodeRef> scriptResources = contentHelper.addFilesResources(scriptFolderNodeRef, "classpath*:beCPG/script/project/*.js");
@@ -171,15 +184,15 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 			dataLists.add(ProjectModel.TYPE_TASK_LIST);
 			dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
 			dataLists.add(BeCPGModel.TYPE_ACTIVITY_LIST);
-			entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT,
+			projectTplNodeRef = entityTplService.createEntityTpl(projectTplsNodeRef, ProjectModel.TYPE_PROJECT,
 					I18NUtil.getMessage(ARCHIVE_PJT_TPL_NAME), true, false, dataLists, null);
 
-			entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
-			entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
+			entityTplService.createView(projectTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
+			entityTplService.createView(projectTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
 
-			ProjectData pjtTpl = alfrescoRepository.findOne(entityTplNodeRef);
+			ProjectData pjtTpl = alfrescoRepository.findOne(projectTplNodeRef);
 
-			TaskListDataItem task = new TaskListDataItem();
+			TaskListDataItem task = new TaskListDataItem(); 
 			task.setTaskName(I18NUtil.getMessage(ARCHIVE_PJT_TASK_NAME));
 			pjtTpl.getTaskList().add(task);
 
@@ -201,22 +214,37 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		
 	}
 
-	private void createDefaultProjectTpl(NodeRef entityTplsNodeRef) {
-		// visit supplier
-		Set<QName> dataLists = new LinkedHashSet<>();
-		dataLists.add(ProjectModel.TYPE_TASK_LIST);
-		dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-		dataLists.add(ProjectModel.TYPE_SCORE_LIST);
-		dataLists.add(BeCPGModel.TYPE_ACTIVITY_LIST);
-		dataLists.add(ProjectModel.TYPE_LOG_TIME_LIST);
-		dataLists.add(ProjectModel.TYPE_BUDGET_LIST);
-		dataLists.add(ProjectModel.TYPE_INVOICE_LIST);
-		dataLists.add(ProjectModel.TYPE_EXPENSE_LIST);
+	private void createDefaultProjectTpl(NodeRef entityTplsNodeRef, NodeRef projectTplsNodeRef) {
+		NodeRef projectTplNodeRef = nodeService.getChildByName(projectTplsNodeRef, ContentModel.ASSOC_CONTAINS,
+				I18NUtil.getMessage(DEFAULT_PJT_TPL_NAME));
+		
+		if (projectTplNodeRef == null) {
+			projectTplNodeRef = nodeService.getChildByName(entityTplsNodeRef, ContentModel.ASSOC_CONTAINS,
+					I18NUtil.getMessage(DEFAULT_PJT_TPL_NAME));
+			
+			if (projectTplNodeRef!= null) {
+				nodeService.moveNode(projectTplNodeRef, projectTplsNodeRef, ContentModel.ASSOC_CONTAINS,
+						nodeService.getPrimaryParent(projectTplNodeRef).getQName());
+			}
+		}
 
-		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT, null, true, true, dataLists, null);
+		if (projectTplNodeRef == null) {
+			Set<QName> dataLists = new LinkedHashSet<>();
+			dataLists.add(ProjectModel.TYPE_TASK_LIST);
+			dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
+			dataLists.add(ProjectModel.TYPE_SCORE_LIST);
+			dataLists.add(BeCPGModel.TYPE_ACTIVITY_LIST);
+			dataLists.add(ProjectModel.TYPE_LOG_TIME_LIST);
+			dataLists.add(ProjectModel.TYPE_BUDGET_LIST);
+			dataLists.add(ProjectModel.TYPE_INVOICE_LIST);
+			dataLists.add(ProjectModel.TYPE_EXPENSE_LIST);
 
-		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
-		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
+			projectTplNodeRef = entityTplService.createEntityTpl(projectTplsNodeRef, ProjectModel.TYPE_PROJECT, 
+					I18NUtil.getMessage(DEFAULT_PJT_TPL_NAME), true, true, dataLists, null);
+
+			entityTplService.createView(projectTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
+			entityTplService.createView(projectTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
+		}
 	}
 
 	/**
