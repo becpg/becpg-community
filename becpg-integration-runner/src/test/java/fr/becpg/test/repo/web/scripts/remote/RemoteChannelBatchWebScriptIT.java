@@ -230,7 +230,7 @@ public class RemoteChannelBatchWebScriptIT extends PLMBaseTestCase {
 		requestBody.put("entity", entity);
 
 		// Execute request
-		String url = "/becpg/remote/channel/batch/ack?channelId=" + channelId + "&entityNodeRef=" + entityNodeRef.toString();
+		String url = "/becpg/remote/channel/batch/ack?channelId=" + channelId + "&nodeRef=" + entityNodeRef.toString();
 		Response response = TestWebscriptExecuters.sendRequest(new PostRequest(url, requestBody.toString(), "application/json"), 200,
 				CONNECTOR_ACCOUNT_TEST, CONNECTOR_PASSWORD);
 
@@ -240,7 +240,7 @@ public class RemoteChannelBatchWebScriptIT extends PLMBaseTestCase {
 		JSONObject jsonResponse = new JSONObject(response.getContentAsString());
 		assertEquals("SUCCESS", jsonResponse.getString("status"));
 		assertEquals(channelId, jsonResponse.getString("channelId"));
-		assertEquals(entityNodeRef.toString(), jsonResponse.getString("entityNodeRef"));
+		assertEquals(entityNodeRef.toString(), jsonResponse.getString("nodeRef"));
 
 		inReadTx(() -> {
 			// Verify channel list item was created/updated
