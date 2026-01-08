@@ -12,13 +12,13 @@ import org.alfresco.service.namespace.QName;
 public interface FormulationPlugin {
 	
 	enum FormulationPluginPriority {
-		HIGHT, NORMAL, LOW, NONE;
+		HIGH, NORMAL, LOW, NONE;
 
 		public boolean isHigherPriority(FormulationPluginPriority compareTo) {
-			if (LOW.equals(compareTo) && (NORMAL.equals(this) || HIGHT.equals(this)))
+			if (LOW.equals(compareTo) && (NORMAL.equals(this) || HIGH.equals(this)))
 				return true;
 
-			if (NORMAL.equals(compareTo) && HIGHT.equals(this))
+			if (NORMAL.equals(compareTo) && HIGH.equals(this))
 				return true;
 
 			return false;
