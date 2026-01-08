@@ -258,6 +258,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 			
 			if (L2CacheSupport.isSilentModeEnable() && repositoryEntity instanceof ReportableEntity && chain != null) {
 				((ReportableEntity) repositoryEntity).addError(message, chainId, Collections.emptyList());
+				repositoryEntity.setFormulatedDate(Calendar.getInstance().getTime());
 				chain.onError(repositoryEntity);
 			} else {
 				if (e instanceof FormulateException) {

@@ -102,6 +102,7 @@ import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.notification.data.RecurringTimeType;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.formulation.job.FormulationChannelService;
 import fr.becpg.repo.report.template.ReportTplInformation;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
@@ -307,7 +308,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		// Lists of characteristics
 		visitSystemCharactsEntity(systemNodeRef, RepoConsts.PATH_CHARACTS);
-
+		
+		NodeRef channelListFolder = entitySystemService.getSystemEntityDataList(systemNodeRef, RepoConsts.PATH_CHARACTS,
+				PlmRepoConsts.PATH_PUBCHANNELS);
+		visitChannelList(channelListFolder);
+		
 		// Dynamic constraints
 		visitSystemListValuesEntity(systemNodeRef, RepoConsts.PATH_LISTS);
 
@@ -414,6 +419,18 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		// Create default sites
 		return visitSites();
 
+	}
+
+	private void visitChannelList(NodeRef channelListFolder) {
+		NodeRef formulateChannel = nodeService.getChildByName(channelListFolder, ContentModel.ASSOC_CONTAINS, FormulationChannelService.FORMULATE_ENTITIES_CHANNEL_ID);
+		if (formulateChannel == null) {
+			Map<QName, Serializable> props = new HashMap<>();
+			props.put(ContentModel.PROP_NAME, FormulationChannelService.FORMULATE_ENTITIES_CHANNEL_ID);
+			props.put(PublicationModel.PROP_PUBCHANNEL_ID, FormulationChannelService.FORMULATE_ENTITIES_CHANNEL_ID);
+			props.put(PublicationModel.PROP_PUBCHANNEL_CONFIG, "{\"query\": \" (+TYPE:\\\"bcpg:product\\\" OR +TYPE:\\\"sec:aclGroup\\\")\"}");
+			nodeService.createNode(channelListFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS,
+					PublicationModel.TYPE_PUBLICATION_CHANNEL, props).getChildRef();
+		}
 	}
 
 	private void fillSystemQualityList(NodeRef qualityListNodeRef) {
