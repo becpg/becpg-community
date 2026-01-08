@@ -13097,32 +13097,23 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:irlUsages">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="isSearch">true</control-param>
-							<control-param name="insertBlank">true</control-param>
-						</control>
-					</field>
-					<field id="bcpg:irlResultIndicator">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="isSearch">true</control-param>
-							<control-param name="insertBlank">true</control-param>
-						</control>
-					</field>
-					<field id="bcpg:irlRestrictionLevels">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="isSearch">true</control-param>
-							<control-param name="insertBlank">true</control-param>
-						</control>
-					</field>
-					<field id="bcpg:irlPrecautions">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="isSearch">true</control-param>
-							<control-param name="insertBlank">true</control-param>
-						</control>
-					</field>
 					<field id="bcpg:regulatoryCountries">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:irlUsages">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+					</field>
+					<field id="bcpg:irlResultIndicator">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+					</field>
+					<field id="bcpg:irlRestrictionLevels">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+					</field>
+					<field id="bcpg:irlCitation">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+					</field>
+					<field id="bcpg:irlPrecautions">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"/>
 					</field>
 					<field id="bcpg:irlSources">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
