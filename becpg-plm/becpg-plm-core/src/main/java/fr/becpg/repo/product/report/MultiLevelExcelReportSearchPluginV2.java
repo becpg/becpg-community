@@ -65,6 +65,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  * <li><b>MaxLevel[N]</b>: Export up to level N (e.g., MaxLevel2 for 2 levels)</li>
  * <li><b>OnlyLevel[N]</b>: Export only level N items</li>
  * <li><b>wUsed[Parameter]</b>: Use "Where Used" mode with MultiLevelDataListService (e.g., wUsedAllLevel, wUsedMaxLevel2)</li>
+ * <li><b>[Parameter]IncludeEmpty</b>: Include rows for entities even when lists are empty (e.g., AllLevelIncludeEmpty, MaxLevel2IncludeEmpty)</li>
  * </ul>
  *
  * <h2>Available Excel Columns (Second Row)</h2>
@@ -144,6 +145,15 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  * Row 4+: Data will be populated here
  * </pre>
  *
+ * <h2>IncludeEmpty Feature</h2>
+ * <p>When the IncludeEmpty parameter is added, the plugin will create a row for entities even when their respective lists are empty:</p>
+ * <ul>
+ * <li><b>AllLevelIncludeEmpty</b>: Export all levels and include rows for entities with empty lists</li>
+ * <li><b>MaxLevel2IncludeEmpty</b>: Export up to level 2 and include rows for entities with empty lists</li>
+ * <li><b>OnlyLevel1IncludeEmpty</b>: Export only level 1 and include rows for entities with empty lists</li>
+ * </ul>
+ * <p>This is useful for ensuring that all entities are represented in the export, even when they don't have specific list items.</p>
+ *
  * <h2>Behavior</h2>
  * <ul>
  * <li>Automatically recurses into semi-finished products and finished products in composition</li>
@@ -152,6 +162,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  * <li>Supports up to 20 levels of depth (prevents infinite loops)</li>
  * <li>Respects effective filters (only exports effective items)</li>
  * <li>Applies formulas and evaluates SpEL expressions</li>
+ * <li>When IncludeEmpty is specified, creates entity rows even when hasPackagingListEl, hasCompoListEl, or hasProcessListEl returns false</li>
  * </ul>
  *
  * @author matthieu
@@ -165,6 +176,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
     private static final String TOKEN_MAX = "Max";
     private static final String TOKEN_ONLY = "Only";
     private static final String TOKEN_ALL = "All";
+    private static final String TOKEN_INCLUDE_EMPTY = "IncludeEmpty";
     private static final String ONLY_LEVEL_PREFIX = "OnlyLevel";
     private static final int MAX_RECURSION_DEPTH = 20;
     private static final int DEPTH_UNLIMITED = -1;
@@ -215,15 +227,20 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
 
         String parameter = (parameters != null) && (parameters.length > 0) ? parameters[0] : null;
         boolean wUsed = false;
+        boolean includeEmpty = false;
         QName pivotAssoc = null;
         String depthLevel;
 
         if (parameter != null) {
             wUsed = parameter.contains(PARAM_PREFIX_WUSED);
+            includeEmpty = parameter.contains(TOKEN_INCLUDE_EMPTY);
             if (wUsed) {
                 parameter = parameter.replace(PARAM_PREFIX_WUSED, "");
                 pivotAssoc = entityDictionaryService.getDefaultPivotAssoc(itemType);
                 mainType = entityDictionaryService.getTargetType(pivotAssoc);
+            }
+            if (includeEmpty) {
+                parameter = parameter.replace(TOKEN_INCLUDE_EMPTY, "");
             }
             depthLevel = parameter.replace(PARAM_SUFFIX_LEVEL, "").replace(TOKEN_MAX, "").replace(TOKEN_ONLY, "");
         } else {
@@ -238,7 +255,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
         if (PLMModel.TYPE_COMPOLIST.equals(itemType) || PLMModel.TYPE_PACKAGINGLIST.equals(itemType) || MPMModel.TYPE_PROCESSLIST.equals(itemType)) {
             if (!wUsed) {
                 rownum = fillSheetWithExtractorLogic(sheet, searchResults, mainType, itemType, rownum, parameters, keyColumn, metadataFields,
-                        cache, excelCellStyles, depthLevelNum);
+                        cache, excelCellStyles, depthLevelNum, includeEmpty);
             } else {
                 // WUsed for these types uses MultiLevelDataListService
                 rownum = fillSheetWithMultiLevelService(sheet, searchResults, mainType, itemType, rownum, parameters, keyColumn, metadataFields,
@@ -253,9 +270,27 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
         return rownum;
     }
 
+    /**
+     * Fills the Excel sheet using extractor logic for Composition, Process, and Packaging lists.
+     * Supports the IncludeEmpty parameter to create rows for entities even when lists are empty.
+     *
+     * @param sheet the Excel sheet to fill
+     * @param searchResults the list of entity node references to process
+     * @param mainType the main entity type
+     * @param itemType the list item type (bcpg:compoList, bcpg:packagingList, mpm:processList)
+     * @param rownum the starting row number
+     * @param parameters the configuration parameters (e.g., "AllLevel", "MaxLevel2", "AllLevelIncludeEmpty")
+     * @param keyColumn the key column for entity identification
+     * @param metadataFields the metadata fields to extract
+     * @param cache the cache for storing extracted data
+     * @param excelCellStyles the Excel cell styles
+     * @param depthLevelNum the maximum depth level to export
+     * @param includeEmpty whether to create rows for entities with empty lists
+     * @return the new row number after processing
+     */
     private int fillSheetWithExtractorLogic(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum,
             String[] parameters, AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields,
-            Map<NodeRef, Map<String, Object>> cache, ExcelCellStyles excelCellStyles, int depthLevelNum) {
+            Map<NodeRef, Map<String, Object>> cache, ExcelCellStyles excelCellStyles, int depthLevelNum, boolean includeEmpty) {
 
         String parameter = (parameters != null) && (parameters.length > 0) ? parameters[0] : null;
         boolean isOnlyLevel = parameter != null && parameter.contains(TOKEN_ONLY);
@@ -273,13 +308,13 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
 
                 if (PLMModel.TYPE_PACKAGINGLIST.equals(itemType)) {
                     rownum = fillPackagingSheet(sheet, entityNodeRef, productData, rownum, key, metadataFields, cache, entityItems,
-                            excelCellStyles, filter, depthLevelNum, isOnlyLevel, parameter);
+                            excelCellStyles, filter, depthLevelNum, isOnlyLevel, parameter, includeEmpty);
                 } else if (PLMModel.TYPE_COMPOLIST.equals(itemType)) {
                     rownum = fillCompositionSheet(sheet, entityNodeRef, productData, rownum, key, metadataFields, cache, entityItems,
-                            excelCellStyles, filter, depthLevelNum, isOnlyLevel, parameter);
+                            excelCellStyles, filter, depthLevelNum, isOnlyLevel, parameter, includeEmpty);
                 } else if (MPMModel.TYPE_PROCESSLIST.equals(itemType)) {
                     rownum = fillProcessSheet(sheet, entityNodeRef, productData, rownum, key, metadataFields, cache, entityItems,
-                            excelCellStyles, filter, depthLevelNum, isOnlyLevel, parameter);
+                            excelCellStyles, filter, depthLevelNum, isOnlyLevel, parameter, includeEmpty);
                 }
             }
         }
@@ -335,7 +370,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
 
     private int fillPackagingSheet(XSSFSheet sheet, NodeRef entityNodeRef, ProductData productData, int rownum, Serializable key,
             List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache, Map<String, Object> entityItems,
-            ExcelCellStyles excelCellStyles, String filter, int depthLevelNum, boolean isOnlyLevel, String parameter) {
+            ExcelCellStyles excelCellStyles, String filter, int depthLevelNum, boolean isOnlyLevel, String parameter, boolean includeEmpty) {
 
         // Check if we should export level 1 (MaxLevel filtering)
         if (depthLevelNum != DEPTH_UNLIMITED && 1 > depthLevelNum) {
@@ -353,6 +388,9 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
                         rownum = fillPackagingRow(sheet, entityNodeRef, new CurrentLevelQuantities(alfrescoRepository, productData, dataItem), dataItem,
                                 metadataFields, cache, rownum, key, entityItems, excelCellStyles, 1, false, false, depthLevelNum, isOnlyLevel, parameter);
             }
+        } else if (includeEmpty) {
+            // Create empty row when includeEmpty is true and list is empty
+            rownum = createEmptyEntityRow(sheet, entityNodeRef, rownum, key, metadataFields, entityItems, excelCellStyles, 1);
         }
 
         // Export packaging from semi-finished products in composition
@@ -376,7 +414,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
 
     private int fillCompositionSheet(XSSFSheet sheet, NodeRef entityNodeRef, ProductData productData, int rownum, Serializable key,
             List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache, Map<String, Object> entityItems,
-            ExcelCellStyles excelCellStyles, String filter, int depthLevelNum, boolean isOnlyLevel, String parameter) {
+            ExcelCellStyles excelCellStyles, String filter, int depthLevelNum, boolean isOnlyLevel, String parameter, boolean includeEmpty) {
 
         // Check if we should export level 1 (MaxLevel filtering)
         if (depthLevelNum != DEPTH_UNLIMITED && 1 > depthLevelNum) {
@@ -396,6 +434,9 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
                             entityItems, excelCellStyles, 1, depthLevelNum, isOnlyLevel, parameter);
                 }
             }
+        } else if (includeEmpty) {
+            // Create empty row when includeEmpty is true and list is empty
+            rownum = createEmptyEntityRow(sheet, entityNodeRef, rownum, key, metadataFields, entityItems, excelCellStyles, 1);
         }
 
         return rownum;
@@ -403,7 +444,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
 
     private int fillProcessSheet(XSSFSheet sheet, NodeRef entityNodeRef, ProductData productData, int rownum, Serializable key,
             List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache, Map<String, Object> entityItems,
-            ExcelCellStyles excelCellStyles, String filter, int depthLevelNum, boolean isOnlyLevel, String parameter) {
+            ExcelCellStyles excelCellStyles, String filter, int depthLevelNum, boolean isOnlyLevel, String parameter, boolean includeEmpty) {
 
         // Check if we should export level 1 (MaxLevel filtering)
         if (depthLevelNum != DEPTH_UNLIMITED && 1 > depthLevelNum) {
@@ -421,6 +462,9 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
                         new CurrentLevelQuantities(nodeService, alfrescoRepository, productData, dataItem), dataItem, metadataFields, cache,
                         entityItems, excelCellStyles, 1, depthLevelNum, isOnlyLevel, parameter);
             }
+        } else if (includeEmpty) {
+            // Create empty row when includeEmpty is true and list is empty
+            rownum = createEmptyEntityRow(sheet, entityNodeRef, rownum, key, metadataFields, entityItems, excelCellStyles, 1);
         }
 
         // Export process from semi-finished products in composition
@@ -787,6 +831,45 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
                 }
             }
         }
+
+        return rownum;
+    }
+
+    /**
+     * Creates an empty row for an entity when the list is empty but includeEmpty is true.
+     *
+     * @param sheet the Excel sheet
+     * @param entityNodeRef the entity node reference
+     * @param rownum the current row number
+     * @param key the entity key
+     * @param metadataFields the metadata fields
+     * @param entityItems the entity properties
+     * @param excelCellStyles the Excel cell styles
+     * @param level the depth level
+     * @return the new row number
+     */
+    private int createEmptyEntityRow(XSSFSheet sheet, NodeRef entityNodeRef, int rownum, Serializable key,
+            List<AttributeExtractorStructure> metadataFields, Map<String, Object> entityItems, ExcelCellStyles excelCellStyles, int level) {
+
+        Row row = sheet.createRow(rownum++);
+
+        int cellNum = 0;
+        Cell cell = row.createCell(cellNum++);
+        cell.setCellValue(HEADER_VALUES);
+
+        if (key != null) {
+            cell = row.createCell(cellNum++);
+            cell.setCellValue(String.valueOf(key));
+        }
+
+        // Create empty item with entity properties and depth level
+        Map<String, Object> emptyItem = new HashMap<>();
+        if (entityItems != null) {
+            emptyItem.putAll(entityItems);
+        }
+        emptyItem.put(KEY_DEPTH_LEVEL, level);
+
+        ExcelHelper.appendExcelField(metadataFields, null, emptyItem, sheet, row, cellNum, rownum, null, excelCellStyles);
 
         return rownum;
     }
