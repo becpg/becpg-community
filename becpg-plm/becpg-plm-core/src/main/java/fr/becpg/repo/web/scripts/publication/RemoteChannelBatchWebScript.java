@@ -20,7 +20,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.Status;
-import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
@@ -46,7 +45,7 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 	private static final String STATUS = "status";
 	private static final String ACTION = "action";
 	private static final String CHANNEL_ID = "channelId";
-	private static final String NODEREF = "nodeRef";
+	private static final String ENTITY_NODEREF = "entityNodeRef";
 	private static final String START = "start";
 	private static final String END = "end";
 
@@ -80,68 +79,76 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 		String channelId = req.getParameter(CHANNEL_ID);
 		if (channelId == null || channelId.isEmpty()) {
-			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Missing required parameter: channelId");
+			sendErrorResponse(res, Status.STATUS_BAD_REQUEST, "Missing required parameter: channelId");
+			return;
 		}
-		
+
 		NodeRef channelNodeRef = publicationChannelService.getChannelById(channelId);
 		if (channelNodeRef == null || !nodeService.exists(channelNodeRef)) {
-			throw new WebScriptException(Status.STATUS_NOT_FOUND, "This channel does not exist, or you have no right to access it");
+			sendErrorResponse(res, Status.STATUS_NOT_FOUND, "This channel does not exist, or you have no right to access it");
+			return;
 		}
-		
+
 		if (!hasChannelPermission(channelNodeRef)) {
-			throw new WebScriptException(Status.STATUS_FORBIDDEN, "You are not allowed to update this channel");
+			sendErrorResponse(res, Status.STATUS_FORBIDDEN, "You are not allowed to update this channel");
+			return;
 		}
-		
+
 		JsonData jsonData;
 		try {
 			jsonData = JsonHelper.read(req.getContent().getContent());
 		} catch (Exception e) {
 			logger.error("Error parsing JSON request body", e);
-			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Invalid JSON in request body");
+			sendErrorResponse(res, Status.STATUS_BAD_REQUEST, "Invalid JSON in request body");
+			return;
 		}
-		
+
 		if (!jsonData.has(ENTITY)) {
-			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "JSON body request must contain 'entity'");
+			sendErrorResponse(res, Status.STATUS_BAD_REQUEST, "JSON body request must contain 'entity'");
+			return;
 		}
-		
+
 		JsonData entityData = jsonData.get(ENTITY);
 		if (!entityData.has(ATTRIBUTES)) {
-			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'entity' must contain 'attributes'");
+			sendErrorResponse(res, Status.STATUS_BAD_REQUEST, "'entity' must contain 'attributes'");
+			return;
 		}
 		JsonData entityAttributes = entityData.get(ATTRIBUTES);
-		
+
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 		String action = templateArgs.get(ACTION);
-		
+
 		JsonData jsonResponse = JsonHelper.createJsonData();
 		
 		if (START.equals(action)) {
-			if (!processBatchStart(channelNodeRef, entityAttributes)) {
+			if (!processBatchStart(res, channelNodeRef, entityAttributes)) {
 				return;
 			}
 		} else if (END.equals(action)) {
-			if (!processBatchEnd(channelNodeRef, entityAttributes)) {
+			if (!processBatchEnd(res, channelNodeRef, entityAttributes)) {
 				return;
 			}
 		} else if (BATCH_ACK_ENDPOINT.equals(req.getServiceMatch().getPath())) {
-			String nodeRefParam = req.getParameter(NODEREF);
-			if (nodeRefParam == null || nodeRefParam.isEmpty()) {
-				throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Missing required parameter: nodeRef");
-			}
-			
-			NodeRef nodeRef = new NodeRef(nodeRefParam);
-			if (!nodeService.exists(nodeRef)) {
-				throw new WebScriptException(Status.STATUS_NOT_FOUND, "This entity does not exist, or you have no right to access it");
-			}
-			
-			if (!processBatchAck(channelId, channelNodeRef, nodeRef, entityAttributes)) {
+			String entity = req.getParameter(ENTITY_NODEREF);
+			if (entity == null || entity.isEmpty()) {
+				sendErrorResponse(res, Status.STATUS_BAD_REQUEST, "Missing required parameter: entityNodeRef");
 				return;
 			}
-			jsonResponse.put(NODEREF, nodeRef.toString());
+			
+			NodeRef entityNodeRef = new NodeRef(entity);
+			if (!nodeService.exists(entityNodeRef)) {
+				sendErrorResponse(res, Status.STATUS_NOT_FOUND, "This entity does not exist, or you have no right to access it");
+				return;
+			}
+			
+			if (!processBatchAck(res, channelNodeRef, entityNodeRef, entityAttributes)) {
+				return;
+			}
+			jsonResponse.put(ENTITY_NODEREF, entityNodeRef.toString());
 		} else {
-			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Unknown 'action' parameter");
+			sendErrorResponse(res, Status.STATUS_BAD_REQUEST, "Unknown 'action' parameter");
 		}
-		
+
 		jsonResponse.put(STATUS, SUCCESS);
 		jsonResponse.put(CHANNEL_ID, channelId);
 		jsonResponse.put(CHANNEL_NODEREF, channelNodeRef.toString());
@@ -166,21 +173,38 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 				.anyMatch(u -> u.equals(currentUser));
 	}
 	
-	private boolean processBatchStart(NodeRef channelNodeRef, JsonData entityAttributes) {
+	private void sendErrorResponse(WebScriptResponse res, int statusCode, String message) {
+		try {
+			JsonData errorResponse = JsonHelper.createJsonData();
+			errorResponse.put(STATUS, "error");
+			errorResponse.put("message", message);
+			
+			res.setStatus(statusCode);
+			res.setContentEncoding("UTF-8");
+			res.setContentType("application/json");
+			res.getWriter().write(errorResponse.toString());
+		} catch (Exception e) {
+			logger.error("Error sending error response", e);
+		}
+	}
+
+	private boolean processBatchStart(WebScriptResponse res, NodeRef channelNodeRef, JsonData entityAttributes) {
 		try {
 			String statusAttr = PublicationModel.PROP_PUBCHANNEL_STATUS.toPrefixString(namespaceService);
 			String batchIdAttr = PublicationModel.PROP_PUBCHANNEL_BATCHID.toPrefixString(namespaceService);
 			
-			checkAttributePresence(entityAttributes, batchIdAttr);
+			if (!checkAttributePresence(res, entityAttributes, batchIdAttr)) {
+				return false;
+			}
 			
-			String batchId = getStringAttribute(entityAttributes, batchIdAttr);
+			String batchId = getStringAttribute(res, entityAttributes, batchIdAttr);
 			if (batchId == null) {
 				return false;
 			}
 			
 			AuthenticationUtil.runAsSystem(() -> {
 				if (entityAttributes.has(statusAttr)) {
-					String status = getStringAttribute(entityAttributes, statusAttr);
+					String status = getStringAttribute(res, entityAttributes, statusAttr);
 					nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_STATUS, status);
 				} else {
 					nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_STATUS, PublicationChannelStatus.STARTED.toString());
@@ -193,27 +217,28 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 			});
 			
 			return true;
-		} catch (WebScriptException e) {
-			throw e;
 		} catch (Exception e) {
 			logger.error("Error processing batch start", e);
-			throw new WebScriptException(Status.STATUS_INTERNAL_SERVER_ERROR, "Error processing batch start: " + e.getMessage());
+			sendErrorResponse(res, Status.STATUS_INTERNAL_SERVER_ERROR, "Error processing batch start: " + e.getMessage());
+			return false;
 		}
 	}
 
-	private boolean processBatchEnd(NodeRef channelNodeRef, JsonData entityAttributes) {
+	private boolean processBatchEnd(WebScriptResponse res, NodeRef channelNodeRef, JsonData entityAttributes) {
 		try {
 			String statusAttr = PublicationModel.PROP_PUBCHANNEL_STATUS.toPrefixString(namespaceService);
 			String failCountAttr = PublicationModel.PROP_PUBCHANNEL_FAILCOUNT.toPrefixString(namespaceService);
 			String readCountAttr = PublicationModel.PROP_PUBCHANNEL_READCOUNT.toPrefixString(namespaceService);
 			
-			checkAttributePresence(entityAttributes, statusAttr);
-			checkAttributePresence(entityAttributes, failCountAttr);
-			checkAttributePresence(entityAttributes, readCountAttr);
+			if (!checkAttributePresence(res, entityAttributes, statusAttr) ||
+				!checkAttributePresence(res, entityAttributes, failCountAttr) ||
+				!checkAttributePresence(res, entityAttributes, readCountAttr)) {
+				return false;
+			}
 			
-			String status = getStringAttribute(entityAttributes, statusAttr);
-			Integer failCount = getIntAttribute(entityAttributes, failCountAttr);
-			Integer readCount = getIntAttribute(entityAttributes, readCountAttr);
+			String status = getStringAttribute(res, entityAttributes, statusAttr);
+			Integer failCount = getIntAttribute(res, entityAttributes, failCountAttr);
+			Integer readCount = getIntAttribute(res, entityAttributes, readCountAttr);
 			
 			if (status == null || failCount == null || readCount == null) {
 				return false;
@@ -226,7 +251,7 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 				
 				String batchEndTimeAttr = PublicationModel.PROP_PUBCHANNEL_BATCHENDTIME.toPrefixString(namespaceService);
 				if (entityAttributes.has(batchEndTimeAttr)) {
-					Date date = parseDateAttribute(entityAttributes, batchEndTimeAttr);
+					Date date = parseDateAttribute(res, entityAttributes, batchEndTimeAttr);
 					if (date != null) {
 						nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHENDTIME, date);
 					}
@@ -236,7 +261,7 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 				
 				String batchDurationAttr = PublicationModel.PROP_PUBCHANNEL_BATCHDURATION.toPrefixString(namespaceService);
 				if (entityAttributes.has(batchDurationAttr)) {
-					Long duration = getLongAttribute(entityAttributes, batchDurationAttr);
+					Long duration = getLongAttribute(res, entityAttributes, batchDurationAttr);
 					if (duration != null) {
 						nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHDURATION, duration);
 					}
@@ -244,7 +269,7 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 				
 				String errorAttr = PublicationModel.PROP_PUBCHANNEL_ERROR.toPrefixString(namespaceService);
 				if (entityAttributes.has(errorAttr)) {
-					String error = getStringAttribute(entityAttributes, errorAttr);
+					String error = getStringAttribute(res, entityAttributes, errorAttr);
 					if (error != null) {
 						nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_ERROR, error);
 					}
@@ -252,7 +277,7 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 				
 				String lastSuccessBatchIdAttr = PublicationModel.PROP_PUBCHANNEL_LASTSUCCESSBATCHID.toPrefixString(namespaceService);
 				if (entityAttributes.has(lastSuccessBatchIdAttr)) {
-					String lastSuccessBatchId = getStringAttribute(entityAttributes, lastSuccessBatchIdAttr);
+					String lastSuccessBatchId = getStringAttribute(res, entityAttributes, lastSuccessBatchIdAttr);
 					if (lastSuccessBatchId != null) {
 						nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_LASTSUCCESSBATCHID, lastSuccessBatchId);
 					}
@@ -260,7 +285,7 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 				
 				String lastDateAttr = PublicationModel.PROP_PUBCHANNEL_LASTDATE.toPrefixString(namespaceService);
 				if (entityAttributes.has(lastDateAttr)) {
-					Date date = parseDateAttribute(entityAttributes, lastDateAttr);
+					Date date = parseDateAttribute(res, entityAttributes, lastDateAttr);
 					if (date != null) {
 						nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_LASTDATE, date);
 					}
@@ -271,33 +296,34 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 			});
 			
 			return true;
-		} catch (WebScriptException e) {
-			throw e;
 		} catch (Exception e) {
 			logger.error("Error processing batch end", e);
-			throw new WebScriptException(Status.STATUS_INTERNAL_SERVER_ERROR, "Error processing batch end: " + e.getMessage());
+			sendErrorResponse(res, Status.STATUS_INTERNAL_SERVER_ERROR, "Error processing batch end: " + e.getMessage());
+			return false;
 		}
 	}
 
-	private boolean processBatchAck(String channelId, NodeRef channelNodeRef, NodeRef nodeRef, JsonData entityAttributes) {
+	private boolean processBatchAck(WebScriptResponse res, NodeRef channelNodeRef, NodeRef entityNodeRef, JsonData entityAttributes) {
 		try {
 			String statusAttr = PublicationModel.PROP_PUBCHANNELLIST_STATUS.toPrefixString(namespaceService);
 			String batchIdAttr = PublicationModel.PROP_PUBCHANNELLIST_BATCHID.toPrefixString(namespaceService);
 			
-			checkAttributePresence(entityAttributes, statusAttr);
-			checkAttributePresence(entityAttributes, batchIdAttr);
+			if (!checkAttributePresence(res, entityAttributes, statusAttr) ||
+				!checkAttributePresence(res, entityAttributes, batchIdAttr)) {
+				return false;
+			}
 			
-			String status = getStringAttribute(entityAttributes, statusAttr);
-			String batchId = getStringAttribute(entityAttributes, batchIdAttr);
+			String status = getStringAttribute(res, entityAttributes, statusAttr);
+			String batchId = getStringAttribute(res, entityAttributes, batchIdAttr);
 			
 			if (status == null || batchId == null) {
 				return false;
 			}
 			
 			AuthenticationUtil.runAsSystem(() -> {
-				NodeRef listContainer = entityListDAO.getListContainer(nodeRef);
+				NodeRef listContainer = entityListDAO.getListContainer(entityNodeRef);
 				if (listContainer == null) {
-					listContainer = entityListDAO.createListContainer(nodeRef);
+					listContainer = entityListDAO.createListContainer(entityNodeRef);
 				}
 				
 				NodeRef listNodeRef = entityListDAO.getList(listContainer, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST);
@@ -318,7 +344,7 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 				
 				String errorAttr = PublicationModel.PROP_PUBCHANNELLIST_ERROR.toPrefixString(namespaceService);
 				if (entityAttributes.has(errorAttr)) {
-					String error = getStringAttribute(entityAttributes, errorAttr);
+					String error = getStringAttribute(res, entityAttributes, errorAttr);
 					if (error != null) {
 						nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ERROR, error);
 					}
@@ -326,7 +352,7 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 				
 				String actionAttr = PublicationModel.PROP_PUBCHANNELLIST_ACTION.toPrefixString(namespaceService);
 				if (entityAttributes.has(actionAttr)) {
-					String action = getStringAttribute(entityAttributes, actionAttr);
+					String action = getStringAttribute(res, entityAttributes, actionAttr);
 					if (action != null) {
 						nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ACTION, action);
 					}
@@ -334,7 +360,7 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 				
 				String publishedDateAttr = PublicationModel.PROP_PUBCHANNELLIST_PUBLISHEDDATE.toPrefixString(namespaceService);
 				if (entityAttributes.has(publishedDateAttr)) {
-					Date date = parseDateAttribute(entityAttributes, publishedDateAttr);
+					Date date = parseDateAttribute(res, entityAttributes, publishedDateAttr);
 					if (date != null) {
 						nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_PUBLISHEDDATE, date);
 					}
@@ -344,57 +370,63 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 			});
 			
 			return true;
-		} catch (WebScriptException e) {
-			throw e;
 		} catch (Exception e) {
 			logger.error("Error processing batch acknowledgment", e);
-			throw new WebScriptException(Status.STATUS_INTERNAL_SERVER_ERROR, "Error processing batch acknowledgment: " + e.getMessage());
+			sendErrorResponse(res, Status.STATUS_INTERNAL_SERVER_ERROR, "Error processing batch acknowledgment: " + e.getMessage());
+			return false;
 		}
 	}
 
-	private void checkAttributePresence(JsonData entityAttributes, String attribute) {
+	private boolean checkAttributePresence(WebScriptResponse res, JsonData entityAttributes, String attribute) {
 		if (!entityAttributes.has(attribute)) {
-			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'attributes' must contain '" + attribute + "'");
+			sendErrorResponse(res, Status.STATUS_BAD_REQUEST, "'attributes' must contain '" + attribute + "'");
+			return false;
 		}
+		return true;
 	}
 	
-	private String getStringAttribute(JsonData entityAttributes, String attribute) {
+	private String getStringAttribute(WebScriptResponse res, JsonData entityAttributes, String attribute) {
 		try {
 			return entityAttributes.get(attribute).getString();
 		} catch (Exception e) {
 			logger.error("Error getting string attribute: " + attribute, e);
-			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Invalid value for attribute '" + attribute + "'");
+			sendErrorResponse(res, Status.STATUS_BAD_REQUEST, "Invalid value for attribute '" + attribute + "'");
+			return null;
 		}
 	}
 	
-	private Integer getIntAttribute(JsonData entityAttributes, String attribute) {
+	private Integer getIntAttribute(WebScriptResponse res, JsonData entityAttributes, String attribute) {
 		try {
 			return entityAttributes.get(attribute).getInt();
 		} catch (Exception e) {
 			logger.error("Error getting integer attribute: " + attribute, e);
-			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Invalid integer value for attribute '" + attribute + "'");
+			sendErrorResponse(res, Status.STATUS_BAD_REQUEST, "Invalid integer value for attribute '" + attribute + "'");
+			return null;
 		}
 	}
 	
-	private Long getLongAttribute(JsonData entityAttributes, String attribute) {
+	private Long getLongAttribute(WebScriptResponse res, JsonData entityAttributes, String attribute) {
 		try {
 			return entityAttributes.get(attribute).getLong();
 		} catch (Exception e) {
 			logger.error("Error getting long attribute: " + attribute, e);
-			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Invalid long value for attribute '" + attribute + "'");
+			sendErrorResponse(res, Status.STATUS_BAD_REQUEST, "Invalid long value for attribute '" + attribute + "'");
+			return null;
 		}
 	}
 	
-	private Date parseDateAttribute(JsonData entityAttributes, String attribute) {
+	private Date parseDateAttribute(WebScriptResponse res, JsonData entityAttributes, String attribute) {
 		try {
 			String dateString = entityAttributes.get(attribute).getString();
 			return ISO8601DateFormat.parse(dateString);
 		} catch (DateTimeParseException e) {
 			logger.error("Error parsing date attribute: " + attribute, e);
-			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Invalid date format for attribute '" + attribute + "'. Expected ISO-8601 format (e.g., 2025-11-25T10:05:39.746Z)");
+			sendErrorResponse(res, Status.STATUS_BAD_REQUEST, "Invalid date format for attribute '" + attribute + "'. Expected ISO-8601 format (e.g., 2025-11-25T10:05:39.746Z)");
+			return null;
 		} catch (Exception e) {
 			logger.error("Error getting date attribute: " + attribute, e);
-			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Invalid value for date attribute '" + attribute + "'");
+			sendErrorResponse(res, Status.STATUS_BAD_REQUEST, "Invalid value for date attribute '" + attribute + "'");
+			return null;
 		}
 	}
 }

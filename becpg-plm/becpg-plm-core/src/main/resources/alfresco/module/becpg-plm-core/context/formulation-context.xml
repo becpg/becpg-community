@@ -558,5 +558,47 @@
 		<property name="formulationService" ref="formulationService" />
 		<property name="contextClass" value="fr.becpg.repo.collection.data.ProductCollectionData" />
 	</bean>
+	
+	<bean id="formulationChannelJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+        <property name="jobClass">
+            <value>fr.becpg.repo.product.formulation.job.FormulationChannelJob</value>
+        </property>
+        <property name="group" value="beCPG"/>
+        <property name="description" value="Run modified where used formulation" />
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="formulationChannelService">
+                    <ref bean="formulationChannelService" />
+                </entry>
+                <entry key="tenantAdminService">
+                    <ref bean="tenantAdminService" />
+                </entry>
+                <entry key="jobLockService">
+	               <ref bean="jobLockService" />
+	           </entry>
+                <entry key="transactionService">
+	               <ref bean="transactionService" />
+	           </entry>
+                
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="formulationChannelJobSchedulerAccessor" class="org.alfresco.schedule.AlfrescoSchedulerAccessorBean">
+		<property name="scheduler" ref="schedulerFactory" />
+		<property name="triggers">
+			<list>
+				<bean id="formulationChannelJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"  >
+			        <property name="jobDetail">
+			            <ref bean="formulationChannelJob"/>
+			        </property>
+			        <property name="cronExpression">
+			            <value>${beCPG.formulation.channel.cron}</value>
+			        </property>
+			    </bean>
+			</list>
+		</property>
+		<property name="enabled" value="${beCPG.formulation.channel.enable}" />
+	</bean>
 
 </beans>
