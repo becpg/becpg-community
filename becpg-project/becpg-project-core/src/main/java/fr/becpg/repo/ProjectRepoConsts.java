@@ -31,6 +31,8 @@ public class ProjectRepoConsts {
 	public static final String PATH_RESOURCE_COSTS = "ResourceCosts";
 	/** Constant <code>PATH_EMAILS_PROJECT="project"</code> */
 	public static final String PATH_EMAILS_PROJECT = "project";
+	/** Constant <code>PATH_PROJECT_TEMPLATES="ProjectTemplates"</code> */
+	public static final String PATH_PROJECT_TEMPLATES = "ProjectTemplates";
 
 	//
 	/** Constant <code>PROJECT_GROUP_PREFIX="PROJECT_"</code> */
