@@ -120,7 +120,7 @@
 
             if (forward) nextStep.nodeRef = step.nodeRef;
 
-            if (step.nextStepWebScript && (!isFormStep || stepReadOnly)) {
+            if (forward && step.nextStepWebScript && (!isFormStep || stepReadOnly)) {
                 this.executeWebScript(step, nextStep);
             } else {
                 this.loadStep(nextStep);
