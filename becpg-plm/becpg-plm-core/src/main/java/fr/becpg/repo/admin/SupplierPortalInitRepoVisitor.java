@@ -22,6 +22,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMGroup;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.impl.AbstractInitVisitorImpl;
 import fr.becpg.repo.entity.EntityTplService;
@@ -82,7 +83,7 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		NodeRef entityTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_ENTITY_TEMPLATES);
 		
-		NodeRef projectTplsNodeRef = visitFolder(entityTplsNodeRef, RepoConsts.PATH_PROJECT_TEMPLATES); 
+		NodeRef projectTplsNodeRef = visitFolder(entityTplsNodeRef, ProjectRepoConsts.PATH_PROJECT_TEMPLATES); 
 
 		SiteInfo siteInfo = siteService.getSite(SupplierPortalHelper.SUPPLIER_SITE_ID);
 		NodeRef documentLibraryNodeRef = null;

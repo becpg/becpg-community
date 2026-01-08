@@ -104,8 +104,6 @@ public class PlmRepoConsts {
 	public static final String PATH_LABEL_TYPES = "LabelTypes";
 	/** Constant <code>PATH_PRODUCT_TEMPLATES="ProductTemplates"</code> */
 	public static final String PATH_PRODUCT_TEMPLATES = "ProductTemplates";
-	/** Constant <code>PATH_PROJECT_TEMPLATES="ProjectTemplates"</code> */
-	public static final String PATH_PROJECT_TEMPLATES = "ProjectTemplates";
 	/** Constant <code>PATH_QUALITY_TEMPLATES="QualityTemplates"</code> */
 	public static final String PATH_QUALITY_TEMPLATES = "QualityTemplates";
 	/** Constant <code>PATH_PRODUCTS="Products"</code> */

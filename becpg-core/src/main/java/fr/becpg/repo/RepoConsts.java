@@ -37,8 +37,6 @@ public class RepoConsts
 	public static final String PATH_LINKED_LISTS 	= "LinkedLists";
 	/** Constant <code>PATH_ENTITY_TEMPLATES="EntityTemplates"</code> */
 	public static final String PATH_ENTITY_TEMPLATES = "EntityTemplates";
-	/** Constant <code>PATH_PROJECT_TEMPLATES="ProjectTemplates"</code> */
-	public static final String PATH_PROJECT_TEMPLATES = "ProjectTemplates";
 	
 	//Notification
 	/** Constant <code>PATH_NOTIFICATIONS="Notifications"</code> */
