@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -86,6 +87,7 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.PlmRepoConsts;
+import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.action.executer.ImporterActionExecuter;
 import fr.becpg.repo.action.executer.UserImporterActionExecuter;
@@ -102,6 +104,10 @@ import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.notification.data.RecurringTimeType;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.project.data.ProjectData;
+import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
+import fr.becpg.repo.project.data.projectList.DeliverableScriptOrder;
+import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.report.template.ReportTplInformation;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
@@ -243,6 +249,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_SERVING = "beCPG/birt/document/product/default/images/trafficLights_Serving.png";
 
 	private static final String CLASSIFY_RULE_TITLE = "classifyEntityRule";
+	
+	private static final String ARCHIVE_PJT_TPL_NAME = "plm.project.archive.tpl.name";
+	private static final String ARCHIVE_PJT_TASK_NAME = "plm.project.archive.task.name";
+	private static final String ARCHIVE_PJT_DELIVERABLE_NAME = "plm.project.archive.deliverable.name";
+	private static final String XPATH_DICTIONARY_SCRIPTS = "./app:dictionary/app:scripts";
 
 	@Autowired
 	private SiteService siteService;
@@ -270,6 +281,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	@Autowired
 	protected AlfrescoRepository<ProductData> alfrescoRepository;
+	
+	@Autowired
+	private AlfrescoRepository<ProjectData> alfrescoRepositoryProject;
 
 	@Autowired
 	@Qualifier("mlAwareNodeService")
@@ -286,6 +300,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	@Value("${becpg.olap.enabled}")
 	private Boolean isOlapEnabled;
+	
 
 	/**
 	 * {@inheritDoc}
@@ -325,7 +340,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		NodeRef exchangeNodeRef = visitFolder(companyHome, RepoConsts.PATH_EXCHANGE);
 		NodeRef importNodeRef = visitFolder(exchangeNodeRef, PlmRepoConsts.PATH_IMPORT);
 		visitFolder(importNodeRef, PlmRepoConsts.PATH_IMPORT_TO_TREAT);
-		visitFolder(importNodeRef, PlmRepoConsts.PATH_IMPORT_TO_DO);
+		visitFolder(importNodeRef, PlmRepoConsts.PATH_IMPORT_TO_DO); 
 		visitFolder(importNodeRef, PlmRepoConsts.PATH_IMPORT_SUCCEEDED);
 		visitFolder(importNodeRef, PlmRepoConsts.PATH_IMPORT_FAILED);
 		visitFolder(importNodeRef, PlmRepoConsts.PATH_IMPORT_LOG);
@@ -349,6 +364,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		visitFolder(qualityNodeRef, PlmRepoConsts.PATH_NC);
 		// QualityControls
 		visitFolder(qualityNodeRef, PlmRepoConsts.PATH_QUALITY_CONTROLS);
+		
+		// Projects
+		visitProjects(systemNodeRef);
 
 		// ECO
 		folderNodeRef = visitFolder(systemNodeRef, PlmRepoConsts.PATH_ECO);
@@ -1879,6 +1897,69 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		} catch (IOException e) {
 			logger.error(e, e);
 		}
+	}
+	
+	private void visitProjects(NodeRef systemNodeRef) {
+
+		NodeRef entityTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_ENTITY_TEMPLATES); 
+		NodeRef projectTplsNodeRef = visitFolder(entityTplsNodeRef, ProjectRepoConsts.PATH_PROJECT_TEMPLATES); 
+
+		createArchiveProjectTpl(entityTplsNodeRef, projectTplsNodeRef);
+		
+	}
+	
+	private void createArchiveProjectTpl(NodeRef entityTplsNodeRef, NodeRef projectTplsNodeRef) {
+		
+		NodeRef projectTplNodeRef = nodeService.getChildByName(projectTplsNodeRef, ContentModel.ASSOC_CONTAINS,
+				I18NUtil.getMessage(ARCHIVE_PJT_TPL_NAME));
+		
+		if (projectTplNodeRef == null) {
+			projectTplNodeRef = nodeService.getChildByName(entityTplsNodeRef, ContentModel.ASSOC_CONTAINS,
+					I18NUtil.getMessage(ARCHIVE_PJT_TPL_NAME));
+			
+			if (projectTplNodeRef!= null) {
+				nodeService.moveNode(projectTplNodeRef, projectTplsNodeRef, ContentModel.ASSOC_CONTAINS,
+						nodeService.getPrimaryParent(projectTplNodeRef).getQName());
+			}
+		}
+
+		if (projectTplNodeRef == null) {
+			NodeRef scriptFolderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), XPATH_DICTIONARY_SCRIPTS);
+
+			List<NodeRef> scriptResources = contentHelper.addFilesResources(scriptFolderNodeRef, "classpath*:beCPG/script/project/*.js");
+			
+			Set<QName> dataLists = new LinkedHashSet<>();
+			dataLists.add(ProjectModel.TYPE_TASK_LIST);
+			dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
+			dataLists.add(BeCPGModel.TYPE_ACTIVITY_LIST);
+			projectTplNodeRef = entityTplService.createEntityTpl(projectTplsNodeRef, ProjectModel.TYPE_PROJECT,
+					I18NUtil.getMessage(ARCHIVE_PJT_TPL_NAME), true, false, dataLists, null);
+
+			entityTplService.createView(projectTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
+			entityTplService.createView(projectTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
+
+			ProjectData pjtTpl = alfrescoRepositoryProject.findOne(projectTplNodeRef);
+
+			TaskListDataItem task = new TaskListDataItem(); 
+			task.setTaskName(I18NUtil.getMessage(ARCHIVE_PJT_TASK_NAME));
+			pjtTpl.getTaskList().add(task);
+
+			alfrescoRepositoryProject.save(pjtTpl);
+
+			DeliverableListDataItem archiveScript = new DeliverableListDataItem();
+			archiveScript.setDescription(I18NUtil.getMessage(ARCHIVE_PJT_DELIVERABLE_NAME));
+			archiveScript.setTasks(Collections.singletonList(task.getNodeRef()));
+			archiveScript.setScriptOrder(DeliverableScriptOrder.Pre);
+
+			for (NodeRef scriptNodeRef : scriptResources) {
+				archiveScript.setContent(scriptNodeRef);
+			}
+
+			pjtTpl.getDeliverableList().add(archiveScript);
+
+			alfrescoRepositoryProject.save(pjtTpl);
+		}
+		
 	}
 
 	/**
