@@ -1,10 +1,8 @@
 package fr.becpg.repo.web.scripts.publication;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +12,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
-import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,7 +23,6 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.model.PublicationModel;
 import fr.becpg.model.SystemGroup;
-import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.json.JsonData;
@@ -54,11 +50,6 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 	private NodeService nodeService;
 	private AssociationService associationService;
 	private PublicationChannelService publicationChannelService;
-	private EntityListDAO entityListDAO;
-	
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
-	}
 
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
@@ -295,24 +286,8 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 			}
 			
 			AuthenticationUtil.runAsSystem(() -> {
-				NodeRef listContainer = entityListDAO.getListContainer(nodeRef);
-				if (listContainer == null) {
-					listContainer = entityListDAO.createListContainer(nodeRef);
-				}
-				
-				NodeRef listNodeRef = entityListDAO.getList(listContainer, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST);
-				if (listNodeRef == null) {
-					listNodeRef = entityListDAO.createList(listContainer, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST);
-				}
-				
-				NodeRef channelListNodeRef = entityListDAO.getListItem(listNodeRef, PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL, channelNodeRef);
-				if (channelListNodeRef == null) {
-					Map<QName, Serializable> props = new HashMap<>();
-					Map<QName, List<NodeRef>> assocs = new HashMap<>();
-					assocs.put(PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL, List.of(channelNodeRef));
-					channelListNodeRef = entityListDAO.createListItem(listNodeRef, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST, props, assocs);
-				}
-				
+				NodeRef channelListNodeRef = publicationChannelService.getOrCreateChannelListNodeRef(nodeRef, channelId);
+						
 				nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_STATUS, status);
 				nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_BATCHID, batchId);
 				
