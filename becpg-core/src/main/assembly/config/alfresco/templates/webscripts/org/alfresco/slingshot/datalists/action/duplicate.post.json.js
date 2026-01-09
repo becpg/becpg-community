@@ -172,9 +172,13 @@ function runAction(p_params)
 	
 	                    if(shouldMultiplySortByTen){
 	                      for(var childIndex in dataList.children){
-	                        dataList.children[childIndex].properties["bcpg:sort"] = dataList.children[childIndex].properties["bcpg:sort"]*10;
-	                        dataList.children[childIndex].save();
+	                    	  var sortVal = dataList.children[childIndex].properties["bcpg:sort"];
+	                    	  if(sortVal != null){
+		                        dataList.children[childIndex].properties["bcpg:sort"] = sortVal*10;
+		                        dataList.children[childIndex].save();
+	                    	  }
 	                      }
+	                      oldSort = oldSort * 10;
 	                    }
 	
 	                    itemNode.properties["bcpg:sort"] =  ++oldSort;
