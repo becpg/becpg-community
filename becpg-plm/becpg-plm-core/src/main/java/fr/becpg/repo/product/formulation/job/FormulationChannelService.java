@@ -205,6 +205,7 @@ public class FormulationChannelService {
 		
 		Set<NodeRef> impactedProducts = new HashSet<>();
 		List<NodeRef> toFormulateProducts = new ArrayList<>();
+		List<NodeRef> toPublishProducts = new ArrayList<>();
 		for (NodeRef channelProduct : channelProducts) {
 			Date referenceDate = extractReferenceDate(channelProduct);
 			if (SecurityModel.TYPE_ACL_GROUP.equals(nodeService.getType(channelProduct))) {
@@ -216,7 +217,9 @@ public class FormulationChannelService {
 				}
 				impactedProducts.addAll(getWhereUsedProducts(channelProduct, referenceDate));
 			} else {
-				publishEntityChannel(channelProduct);
+				if (!toPublishProducts.contains(channelProduct)) {
+					toPublishProducts.add(channelProduct);
+				}
 			}
 		}
 		logger.info("Impacted products to mark: " + impactedProducts.size());
@@ -244,15 +247,22 @@ public class FormulationChannelService {
 			}
 		});
 		
+		List<NodeRef> totalNodesToProcess = new ArrayList<>();
+		totalNodesToProcess.addAll(toFormulateProducts);
+		totalNodesToProcess.addAll(toPublishProducts);
+		
 		BatchStep<NodeRef> formulateStep = new BatchStep<>();
-		if (toFormulateProducts.size() < maxProductsToFormulate()) {
+		if (totalNodesToProcess.size() < maxProductsToFormulate()) {
 			Iterator<NodeRef> it = impactedProducts.iterator();
-			while (it.hasNext() && toFormulateProducts.size() < maxProductsToFormulate()) {
-				toFormulateProducts.add(it.next());
+			while (it.hasNext() && totalNodesToProcess.size() < maxProductsToFormulate()) {
+				NodeRef next = it.next();
+				toFormulateProducts.add(next);
+				totalNodesToProcess.add(next);
 			}
 		}
 		logger.info("Products to formulate: " + toFormulateProducts.size());
-		toFormulateProducts.sort((node1, node2) -> {
+		logger.info("Products to publish: " + toPublishProducts.size());
+		totalNodesToProcess.sort((node1, node2) -> {
 			if (!nodeService.exists(node1)) {
 				return 1;
 			}
@@ -263,8 +273,9 @@ public class FormulationChannelService {
 			int priority2 = getTypePriority(nodeService.getType(node2));
 			return Integer.compare(priority1, priority2);
 		});
-		formulateStep.setWorkProvider(WorkProviderFactory.fromList(toFormulateProducts).build());
-		formulateStep.setProcessWorker(new ReformulateChangedEntitiesProcessWorker());
+		
+		formulateStep.setWorkProvider(WorkProviderFactory.fromList(totalNodesToProcess).build());
+		formulateStep.setProcessWorker(new ReformulateChangedEntitiesProcessWorker(toPublishProducts));
 		steps.add(formulateStep);
 
 		batchQueueService.queueBatch(batchInfo, steps);
@@ -513,22 +524,33 @@ public class FormulationChannelService {
 	
 	private class ReformulateChangedEntitiesProcessWorker extends BatchProcessor.BatchProcessWorkerAdaptor<NodeRef> {
 
+		private List<NodeRef> toPublishProducts;
+
+		public ReformulateChangedEntitiesProcessWorker(List<NodeRef> toPublishProducts) {
+			this.toPublishProducts = toPublishProducts;
+		}
+
 		@Override
-		public void process(NodeRef toReformulate) throws Throwable {
+		public void process(NodeRef toProcess) throws Throwable {
 			// First check: Does the node still exist?
-			if (!nodeService.exists(toReformulate)) {
+			if (!nodeService.exists(toProcess)) {
 				return;
 			}
-
+			
+			if (toPublishProducts.contains(toProcess)) {
+				publishEntityChannel(toProcess);
+				return;
+			}
+			
 			// Get the entity data
-			RepositoryEntity entity = alfrescoRepository.findOne(toReformulate);
+			RepositoryEntity entity = alfrescoRepository.findOne(toProcess);
 			if (!(entity instanceof FormulatedEntity)) {
 				return;
 			}
 
 			// If the check passes, proceed with formulation
 			if (logger.isDebugEnabled()) {
-				logger.debug("Reformulating product: " + nodeService.getProperty(toReformulate, ContentModel.PROP_NAME) + " (" + toReformulate + ")");
+				logger.debug("Reformulating product: " + nodeService.getProperty(toProcess, ContentModel.PROP_NAME) + " (" + toProcess + ")");
 			}
 
 			try {
@@ -542,24 +564,24 @@ public class FormulationChannelService {
 				if (logger.isDebugEnabled()) {
 					stopWatch = new StopWatch("formulation");
 					stopWatch.start("formulate");
-					nodeName = nodeService.getProperty(toReformulate, ContentModel.PROP_NAME).toString();
+					nodeName = nodeService.getProperty(toProcess, ContentModel.PROP_NAME).toString();
 				}
 				
 				// Using L2CacheSupport is good practice.
-				L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> formulationService.formulate(toReformulate)), false, true,
+				L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> formulationService.formulate(toProcess)), false, true,
 						true);
 				
 				// Log execution time only in debug mode
 				if (logger.isDebugEnabled() && stopWatch != null) {
 					stopWatch.stop();
-					logger.debug("Formulation time for " + nodeName + " (" + toReformulate + "): " + stopWatch.getTotalTimeMillis() + " ms");
+					logger.debug("Formulation time for " + nodeName + " (" + toProcess + "): " + stopWatch.getTotalTimeMillis() + " ms");
 				}
 
 				BeCPGTransactionUtil.bindLateTransactionListener(new TransactionListenerAdapter() {
 					@Override
 					public void afterCommit() {
 						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-							publishEntityChannel(toReformulate);
+							publishEntityChannel(toProcess);
 							return null;
 						}, false, true);
 					}
@@ -567,10 +589,10 @@ public class FormulationChannelService {
 				
 			} catch (Throwable e) {
 				if (RetryingTransactionHelper.extractRetryCause(e) != null) {
-					logger.debug("Retrying the formulation for " + toReformulate + " due to exception: " + e.getMessage());
+					logger.debug("Retrying the formulation for " + toProcess + " due to exception: " + e.getMessage());
 					throw e; // Re-throw to trigger retry
 				}
-				logger.error("Cannot reformulate node: " + toReformulate, e);
+				logger.error("Cannot reformulate node: " + toProcess, e);
 			} finally {
 				policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
