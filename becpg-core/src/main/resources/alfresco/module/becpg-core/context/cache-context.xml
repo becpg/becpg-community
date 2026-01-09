@@ -57,6 +57,7 @@
 			  <entry key="fr.becpg.repo.publication.impl.PublicationChannelServiceImpl" value="20" />
 			  <entry key="fr.becpg.repo.survey.data.SurveyQuestion" value="1000" />
 			  <entry key="fr.becpg.repo.helper.AuthorityHelper" value="100" />
+			  <entry key="fr.becpg.repo.batch.BatchQueueServiceImpl" value="100" />
 			</map>
 		</property>
 	</bean>

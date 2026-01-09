@@ -33,6 +33,10 @@ public class BatchQueueServiceWebScript extends AbstractWebScript {
 	private static final String CANCEL_ACTION = "cancel";
 
 	private static final String REMOVE_ACTION = "remove";
+	
+	private static final String RETRY_ACTION = "retry";
+	
+	private static final String ERRORS_ACTION = "errors";
 
 	private BatchQueueService batchQueueService;
 
@@ -69,6 +73,9 @@ public class BatchQueueServiceWebScript extends AbstractWebScript {
 				if (lastRunningBatch != null) {
 					ret.put("last", lastRunningBatch);
 				}
+				
+				String errorBatches = batchQueueService.getBatchesInError();
+				ret.put("errors", errorBatches);
 
 			} else if (CANCEL_ACTION.equals(action)) {
 				String batchId = req.getServiceMatch().getTemplateVars().get(BatchInfo.BATCH_ID);
@@ -80,6 +87,12 @@ public class BatchQueueServiceWebScript extends AbstractWebScript {
 				if (batchId != null) {
 					batchQueueService.removeBatchFromQueue(batchId);
 				}
+			} else if (RETRY_ACTION.equals(action)) {
+				String batchId = req.getServiceMatch().getTemplateVars().get("batchId");
+				batchQueueService.retryBatchInError(batchId);
+			} else if (ERRORS_ACTION.equals(action)) {
+				String batchId = req.getServiceMatch().getTemplateVars().get("batchId");
+				ret.put(batchId, new JSONArray(batchQueueService.viewErrors(batchId)));
 			}
 
 			resp.setContentType("application/json");
