@@ -2187,6 +2187,40 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 	}
 
+	/**
+	 * Test that a single component with DoNotDetailsAtEnd rule produces correct labeling.
+	 * Bug: When there is only one component in the composition and it is set to DoNotDetailsAtEnd,
+	 * the labeling was empty because the main ingList was empty and only ingListAtEnd contained elements.
+	 */
+	@Test
+	public void testSingleComponentDoNotDetailsAtEnd() {
+
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Test Single Component DoNotDetailsAtEnd " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct.setLegalName("Test Single Component");
+			finishedProduct.setQty(1d);
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setDensity(1d);
+
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+
+			finishedProduct.getCompoListView().setCompoList(compoList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("DoNotDetailsAtEnd").withLabelingRuleType(LabelingRuleType.DoNotDetailsAtEnd)
+				.withComponents(Collections.singletonList(rawMaterial1NodeRef)).withReplacements(null));
+
+		checkILL(finishedProductNodeRef, labelingRuleList, "legal Raw material 1 (<b>allergen1</b>)", Locale.FRENCH);
+	}
+
 	private void checkError(final NodeRef productNodeRef, final List<LabelingRuleListDataItem> labelingRuleList, final String errorMessage) {
 		inWriteTx(() -> {
 
