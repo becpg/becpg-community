@@ -364,7 +364,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				logger.debug("\n" + compositeLabeling.toString());
 			}
 
-			if (!compositeLabeling.getIngList().isEmpty()) {
+			if (!compositeLabeling.getIngList().isEmpty() || !compositeLabeling.getIngListAtEnd().isEmpty()) {
 
 				CompositeLabeling mergeCompositeLabeling = mergeCompositeLabeling(compositeLabeling, labelingFormulaContext);
 
