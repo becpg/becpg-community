@@ -7050,6 +7050,19 @@
                     </index>
                 </property>
             </properties>
+         </aspect>h
+         
+         <aspect name="bcpg:batchErrorAspect">
+            <properties>
+                <property name="bcpg:batchErrorIds">
+                    <type>d:text</type>
+                    <multiple>true</multiple>
+                   <index enabled="true">
+                        <tokenised>false</tokenised>
+                        <facetable>false</facetable>
+                    </index>
+                </property>
+            </properties>
          </aspect>
 
 	</aspects>
