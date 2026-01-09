@@ -1,5 +1,7 @@
 package fr.becpg.repo.batch;
 
+import java.util.function.Consumer;
+
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 
@@ -11,9 +13,9 @@ import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
  */
 public class BatchStep<T> {
 
-	private BatchProcessWorkProvider<T> workProvider;
+	protected BatchProcessWorkProvider<T> workProvider;
 	
-	private BatchProcessWorker<T> processWorker;
+	protected BatchProcessWorker<T> processWorker;
 	
 	private BatchStepListener batchStepListener;
 	
@@ -22,6 +24,8 @@ public class BatchStep<T> {
 	private Boolean runAsSystem;
 	
 	private String batchUser;
+	
+	private Consumer<T> batchStepErrorHandler;
 	
 	/**
 	 * <p>Getter for the field <code>batchUser</code>.</p>
@@ -129,6 +133,14 @@ public class BatchStep<T> {
 	 */
 	public void setBatchStepListener(BatchStepListener batchStepListener) {
 		this.batchStepListener = batchStepListener;
+	}
+
+	public void setBatchStepErrorHandler(Consumer<T> batchStepErrorHandler) {
+		this.batchStepErrorHandler = batchStepErrorHandler;
+	}
+	
+	public Consumer<T> getBatchStepErrorHandler() {
+		return batchStepErrorHandler;
 	}
 	
 }

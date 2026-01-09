@@ -54,8 +54,12 @@ public final class JsonHelper {
 
 	}
 	
-	public static JsonData createJsonData() {
+	public static JsonData createJsonObject() {
 		return new JsonData(MAPPER.createObjectNode());
+	}
+	
+	public static JsonData createJsonArray() {
+		return new JsonData(MAPPER.createArrayNode());
 	}
 
 	/**

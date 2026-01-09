@@ -93,5 +93,11 @@ public interface BatchQueueService {
 	 */
 	String getRunningBatchInfo();
 
+	String getBatchesInError();
+
+	void retryBatchInError(String batchId);
+
+	String viewErrors(String batchId);
+
 	
 }

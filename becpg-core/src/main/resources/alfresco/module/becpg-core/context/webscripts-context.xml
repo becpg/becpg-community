@@ -102,6 +102,10 @@
 		<property name="batchQueueService" ref="batchQueueService" />
 	</bean>
 	
+	<bean id="webscript.fr.becpg.admin.batchQueue.post" class="fr.becpg.repo.web.scripts.admin.BatchQueueServiceWebScript" parent="webscript">
+		<property name="batchQueueService" ref="batchQueueService" />
+	</bean>
+	
    <!-- System Configuration -->
 	<bean id="webscript.fr.becpg.admin.systemConfiguration.post" class="fr.becpg.repo.web.scripts.admin.SystemConfigurationWebScript" parent="webscript">
 		<property name="systemConfigurationService" ref="systemConfigurationService" />

@@ -57,6 +57,14 @@ public class JsonData implements Iterable<JsonData> {
 			throw new UnsupportedOperationException("put() only works on ObjectNode");
 		}
 	}
+	
+	public void put(String field, int value) {
+		if (jsonNode instanceof ObjectNode objectNode) {
+			objectNode.put(field, value);
+		} else {
+			throw new UnsupportedOperationException("put() only works on ObjectNode");
+		}
+	}
 
 	public void put(JsonData value) {
 		if (jsonNode instanceof ArrayNode arrayNode) {
