@@ -186,7 +186,7 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 			ArrayList<AllergenListDataItem> allergenList = new ArrayList<>();
 			voluntary.add(rawMaterial5NodeRef);
 			inVoluntary.add(rawMaterial2NodeRef);
-			allergenList.add(new AllergenListDataItem(null, null, false, false, voluntary, inVoluntary, allergen1, false));
+			allergenList.add(AllergenListDataItem.build().withVoluntary(false).withInVoluntary(false).withVoluntarySources(voluntary).withInVoluntarySources(inVoluntary).withAllergen(allergen1).withIsManual(false));
 			productSpecification1.setAllergenList(allergenList);
 
 			alfrescoRepository.save(productSpecification1);
@@ -469,6 +469,103 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 
 			logger.info("/*-- Done checking, checks=" + checks + " (should be 1) --*/");
 			assertEquals("Expected 1 forbidden ingredient requirement to match regulatory usage", 1, checks);
+
+			return null;
+
+		});
+
+	}
+
+	/**
+	 * Test that multiple qty threshold rules for the same ingredient generate separate alerts
+	 * Regression test for #31659
+	 *
+	 * @throws Exception the exception
+	 */
+	@Test
+	public void testMultipleQtyThresholdsForSameIngredient() throws Exception {
+
+		logger.info("testMultipleQtyThresholdsForSameIngredient");
+
+		NodeRef finishedProductNodeRef = inWriteTx(() -> {
+
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName(toTestName("Product with multiple thresholds"));
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setQty(1d);
+			finishedProduct.setDensity(1d);
+
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(CompoListDataItem.build().withQtyUsed(0.5d).withUnit(ProductUnit.kg)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(0.5d).withUnit(ProductUnit.kg)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef));
+			finishedProduct.withCompoList(compoList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+
+		});
+
+		inWriteTx(() -> {
+			// Create specification with two qty threshold rules for the same ingredient
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, "MultipleQtyThresholds - Spec");
+			NodeRef productSpecificationNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
+
+			ProductSpecificationData productSpecification = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef);
+
+			List<ForbiddenIngListDataItem> forbiddenIngList = new ArrayList<>();
+
+			// Rule 1: ing1 forbidden if > 10%
+			List<NodeRef> ings1 = new ArrayList<>();
+			ings1.add(ing1);
+			ForbiddenIngListDataItem rule1 = ForbiddenIngListDataItem.build()
+					.withIngs(ings1)
+					.withQtyPercMaxi(0.1d);
+			rule1.setReqType(RequirementType.Forbidden);
+			forbiddenIngList.add(rule1);
+
+			// Rule 2: ing1 forbidden if > 20% (different threshold, same ingredient)
+			List<NodeRef> ings2 = new ArrayList<>();
+			ings2.add(ing1);
+			ForbiddenIngListDataItem rule2 = ForbiddenIngListDataItem.build()
+					.withIngs(ings2)
+					.withQtyPercMaxi(0.2d);
+			rule2.setReqType(RequirementType.Forbidden);
+			forbiddenIngList.add(rule2);
+
+			productSpecification.setForbiddenIngList(forbiddenIngList);
+			alfrescoRepository.save(productSpecification);
+
+			// Associate specification with product
+			nodeService.createAssociation(finishedProductNodeRef, productSpecificationNodeRef, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+
+			/*-- Formulate product --*/
+			logger.info("/*-- Formulate product --*/");
+			productService.formulate(finishedProductNodeRef);
+
+			/*-- Verify formulation --*/
+			logger.info("/*-- Verify formulation --*/");
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+
+			int qtyThresholdAlerts = 0;
+			logger.info("/*-- Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItems --*/");
+
+			for (RequirementListDataItem reqCtrlList : formulatedProduct.getReqCtrlList()) {
+				logger.info("/*-- Verify reqCtrlList : " + reqCtrlList.getReqMessage() + " --*/");
+
+				if (RequirementDataType.Specification.equals(reqCtrlList.getReqDataType()) 
+						&& reqCtrlList.getReqMessage() != null 
+						&& reqCtrlList.getReqMessage().contains("max:")) {
+					qtyThresholdAlerts++;
+					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
+				}
+			}
+
+			logger.info("/*-- Done checking, qtyThresholdAlerts=" + qtyThresholdAlerts + " (should be 2) --*/");
+			assertEquals("Expected 2 separate alerts for different qty thresholds on same ingredient", 2, qtyThresholdAlerts);
 
 			return null;
 
