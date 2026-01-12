@@ -847,10 +847,14 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
 							String precautions = String.join(";;",
 									countryDidReports.stream()
+											.filter(j -> j.getJSONObject(COMMENTS).get(USAGE_ON_LIST) != null
+													&& !j.getJSONObject(COMMENTS).get(USAGE_ON_LIST).toString().isBlank()
+													&& !j.getJSONObject(COMMENTS).get(USAGE_ON_LIST).toString().equals("null"))
 											.filter(j -> j.getJSONObject(COMMENTS).get(COMMENTS) != null
 													&& !j.getJSONObject(COMMENTS).get(COMMENTS).toString().isBlank()
 													&& !j.getJSONObject(COMMENTS).get(COMMENTS).toString().equals("null"))
-											.map(j -> j.getJSONObject(COMMENTS).getString(COMMENTS)).distinct().toList());
+											.map(j -> j.getJSONObject(COMMENTS).getString(USAGE_ON_LIST) + " :: " + j.getJSONObject(COMMENTS).getString(COMMENTS))
+											.distinct().toList());
 							ingRegulatoryListDataItem.setPrecautions(new MLText(precautions));
 
 							String resultIndicator = String.join(";;",
