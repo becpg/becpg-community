@@ -38,10 +38,15 @@ function main() {
         "beCPG.decernis.maxCountriesPerRequest",
         "beCPG.decernis.maxUsagesPerRequest",
         "beCPG.entity.documents.recursive.depth",
+    ].forEach(function(p) {
+        addAttribute(p, "system");
+    });
+
+    [
         "beCPG.activity.purge.threshold",
         "beCPG.activity.purge.retention.months"
     ].forEach(function(p) {
-        addAttribute(p, "system");
+        addAttribute(p, "activity");
     });
 
     [
