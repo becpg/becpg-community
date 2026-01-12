@@ -58,21 +58,24 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 									isCharactAllowed = false;
 								}
 
-								if (minMaxSpecValueDataItem.getMini() != null) {
+								Double specMini = getMini(specDataItem, listDataItem);
+								Double specMaxi = getMaxi(specDataItem, listDataItem);
+
+								if (specMini != null) {
 									if ((getValue(specDataItem, listDataItem) == null)
-											|| (getValue(specDataItem, listDataItem) < minMaxSpecValueDataItem.getMini())) {
+											|| (getValue(specDataItem, listDataItem) < specMini)) {
 										isCharactAllowed = false;
 									}
 								}
 
 								Double reqCtrlMaxQty = null;
 
-								if (minMaxSpecValueDataItem.getMaxi() != null) {
+								if (specMaxi != null) {
 									if ((getValue(specDataItem, listDataItem) == null)
-											|| (getValue(specDataItem, listDataItem) > minMaxSpecValueDataItem.getMaxi())) {
+											|| (getValue(specDataItem, listDataItem) > specMaxi)) {
 										isCharactAllowed = false;
 										if ((getValue(specDataItem, listDataItem) != null) && (getValue(specDataItem, listDataItem) != 0)) {
-											reqCtrlMaxQty = (minMaxSpecValueDataItem.getMaxi() / getValue(specDataItem, listDataItem)) * 100d;
+											reqCtrlMaxQty = (specMaxi / getValue(specDataItem, listDataItem)) * 100d;
 										}
 									}
 								}
@@ -86,10 +89,10 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 													mlNodeService.getProperty(listDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME),
 													(getValue(specDataItem, listDataItem) != null ? getValue(specDataItem, listDataItem)
 															: MLTextHelper.getI18NMessage(MESSAGE_UNDEFINED_VALUE)),
-													MLTextHelper.createMLTextI18N(l -> (minMaxSpecValueDataItem.getMini() != null
-															? NumberFormat.getInstance(l).format(minMaxSpecValueDataItem.getMini()) + "<= "
-															: "")), MLTextHelper.createMLTextI18N(l -> (minMaxSpecValueDataItem.getMaxi() != null
-															? " <=" + NumberFormat.getInstance(l).format(minMaxSpecValueDataItem.getMaxi())
+													MLTextHelper.createMLTextI18N(l -> (specMini != null
+															? NumberFormat.getInstance(l).format(specMini) + "<= "
+															: "")), MLTextHelper.createMLTextI18N(l -> (specMaxi != null
+															? " <=" + NumberFormat.getInstance(l).format(specMaxi)
 															: "")));
 
 									String regulatoryId = null;
@@ -152,6 +155,36 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 	 * @param specDataItem a T object
 	 */
 	protected abstract String getSpecInfoMessageKey(T specDataItem);
+
+	/**
+	 * Gets the minimum value from the specification item for comparison.
+	 * Subclasses can override this to provide different min values based on requirement type.
+	 *
+	 * @param specDataItem the specification data item
+	 * @param listDataItem the product list data item
+	 * @return the minimum value to use for comparison
+	 */
+	protected Double getMini(T specDataItem, T listDataItem) {
+		if (specDataItem instanceof MinMaxValueDataItem minMaxItem) {
+			return minMaxItem.getMini();
+		}
+		return null;
+	}
+
+	/**
+	 * Gets the maximum value from the specification item for comparison.
+	 * Subclasses can override this to provide different max values based on requirement type.
+	 *
+	 * @param specDataItem the specification data item
+	 * @param listDataItem the product list data item
+	 * @return the maximum value to use for comparison
+	 */
+	protected Double getMaxi(T specDataItem, T listDataItem) {
+		if (specDataItem instanceof MinMaxValueDataItem minMaxItem) {
+			return minMaxItem.getMaxi();
+		}
+		return null;
+	}
 
 	/** {@inheritDoc} */
 	@Override
