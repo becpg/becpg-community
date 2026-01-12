@@ -121,7 +121,6 @@ margin-top:3px;
 															</tr>
 														</#list>
 													<#elseif node.properties[dateField]??>
-													
 														<tr> 
 															<td class="becpg_rowBorderTop"> ${item.displayPath} </td>
 															<td class="becpg_rowBorderTopLeftRight">
