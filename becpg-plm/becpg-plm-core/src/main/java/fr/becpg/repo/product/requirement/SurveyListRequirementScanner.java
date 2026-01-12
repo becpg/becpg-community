@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.MLText;
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.collections4.CollectionUtils;
 
 import fr.becpg.repo.helper.MLTextHelper;
@@ -13,6 +14,7 @@ import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
+import fr.becpg.repo.survey.SurveyModel;
 import fr.becpg.repo.survey.data.SurveyListDataItem;
 
 /**
@@ -147,5 +149,11 @@ public class SurveyListRequirementScanner extends AbstractRequirementScanner<Sur
     @Override
     protected List<SurveyListDataItem> getDataListVisited(ProductData partProduct) {
         return partProduct.getSurveyList() != null ? partProduct.getSurveyList() : new ArrayList<>();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected MLText extractName(NodeRef charactRef) {
+        return (MLText) mlNodeService.getProperty(charactRef, SurveyModel.PROP_SURVEY_QUESTION_LABEL);
     }
 }
