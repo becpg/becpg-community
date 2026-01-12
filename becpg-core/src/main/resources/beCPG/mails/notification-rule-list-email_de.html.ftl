@@ -134,6 +134,11 @@ margin-top:3px;
                                                		
 												</#list>
                                              </table>
+                                             <#if exportNodeRef??>
+	                                             <p>
+	                                                 <a href="${shareUrl}/proxy/alfresco/slingshot/node/content/${exportNodeRef?replace('://','/')}/">Bericht herunterladen</a>
+	                                             </p>
+                                             </#if>
                                              <#else>
                                              <p><b> Kein Element gefunden<b></p>
                                              </#if>
