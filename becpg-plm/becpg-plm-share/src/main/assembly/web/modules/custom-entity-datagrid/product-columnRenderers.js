@@ -2030,7 +2030,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                 var displayedData = "";
                 for (var i in parts) {
                     var part = parts[i];
-                    if (label != "bcpg:irlUsages" && label != "bcpg:irlPrecautions") {
+                    if (label != "bcpg:irlUsages") {
                         var subParts = part.split(" :: ");
                         part = "<b>" + Alfresco.util.encodeHTML(subParts[0]) + "</b>" + " : " + Alfresco.util.encodeHTML(subParts[1]);
                     }
