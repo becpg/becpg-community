@@ -532,7 +532,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		if (hasAccess) {
 
 			BasicPasswordGenerator pwdGen = new BasicPasswordGenerator();
-			pwdGen.setPasswordLength(10);
+			pwdGen.setPasswordLength(14);
 
 			if ((email == null) || email.isBlank()) {
 				throw new IllegalStateException(I18NUtil.getMessage("message.supplier.missing-email"));
