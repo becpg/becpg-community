@@ -104,7 +104,7 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 		String action = templateArgs.get(ACTION);
 		
-		JsonData jsonResponse = JsonHelper.createJsonData();
+		JsonData jsonResponse = JsonHelper.createJsonObject();
 		
 		if (START.equals(action)) {
 			if (!processBatchStart(channelNodeRef, entityAttributes)) {

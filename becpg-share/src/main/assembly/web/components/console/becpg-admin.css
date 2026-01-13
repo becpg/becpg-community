@@ -21,6 +21,18 @@
    padding: 8px;
 }
 
+.retryIcon
+{
+   background: transparent url(retry-icon-16.png) no-repeat center center;
+   padding: 8px;
+}
+
+.viewIcon
+{
+   background: transparent url(view-icon-16.png) no-repeat center center;
+   padding: 8px;
+}
+
 .becpg-admin-console .section .action
 {
    margin: 10px;
@@ -43,9 +55,8 @@
 
 
 ul.batches {
-    height: 25em;
     line-height: 2em;
-    padding-top: 20px;
+    padding-top: 10px;
     overflow: auto;
     overflow-x: hidden;
 }
@@ -112,3 +123,111 @@ ul.users {
 	right: 25%;
 	top: 55%;
 }
+
+/* Batch List */
+.batch-section {
+	padding: 10px;
+}
+.batch-header {
+	font-weight: bold;
+	font-size: 16px;
+	padding: 10px;
+}
+.batches {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    min-height: 60px;
+}
+
+.batches-current {
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+.batches-queue {
+	height: 15em;
+    overflow-y: auto;
+}
+
+.batches-errors {
+	height: 15em;
+    overflow-y: auto;
+}
+
+/* Empty State */
+.batch-empty {
+    padding: 24px 16px;
+    text-align: center;
+    color: #999;
+    font-style: italic;
+    font-size: 13px;
+}
+
+/* Batch Item */
+.batch-item {
+    padding: 16px;
+    border-bottom: 1px solid #e8e8e8;
+    transition: background-color 0.2s ease;
+    background: #ffffff;
+}
+
+/* Batch Item Header */
+.batch-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    gap: 12px;
+}
+
+.batch-title {
+    flex: 1;
+    font-size: 13px;
+    color: #333;
+    line-height: 1.4;
+    word-break: break-word;
+    font-family: Poppins Bold Arial, sans-serif;
+}
+
+
+/* Progress Container */
+.batch-progress-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Progress Bar */
+.batch-progress-bar {
+    flex: 1;
+    height: 10px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.batch-progress-fill {
+    height: 100%;
+    background-color: #5cb85c;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+/* Progress Text */
+.batch-progress-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    min-width: 45px;
+    text-align: right;
+}
+
+.batch-panel {
+	caret-color: transparent;
+}
+
+
+/*}*/
