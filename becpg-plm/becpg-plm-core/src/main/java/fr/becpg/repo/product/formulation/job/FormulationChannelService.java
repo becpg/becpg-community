@@ -185,7 +185,7 @@ public class FormulationChannelService {
 			return null;
 		}
 		
-		BatchInfo batchInfo = new BatchInfo(REFORMULATE_BATCH_ID, "becpg.batch.automaticECO.reformulateChangedEntities");
+		BatchInfo batchInfo = new BatchInfo(REFORMULATE_BATCH_ID, "becpg.batch.formulation.channel.formulateEntities");
 		batchInfo.setRunAsSystem(true);
 		batchInfo.setWorkerThreads(reformulateWorkerThreads != null ? reformulateWorkerThreads : 1);
 		batchInfo.setBatchSize(reformulateBatchSize != null ? reformulateBatchSize : 1);
@@ -226,17 +226,18 @@ public class FormulationChannelService {
 		
 		List<BatchStep<NodeRef>> steps = new ArrayList<>();
 		
-		BatchStep<NodeRef> markingStep = new BatchStep<>();
-		markingStep.setWorkProvider(new EntityListBatchProcessWorkProvider<>(new ArrayList<>(impactedProducts)));
-		steps.add(markingStep);
-		markingStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<>() {
+		BatchStep<NodeRef> impactedProductsStep = new BatchStep<>();
+		impactedProductsStep.setStepDescId("becpg.batch.formulation.channel.formulateEntities.impactedProducts");
+		impactedProductsStep.setWorkProvider(new EntityListBatchProcessWorkProvider<>(new ArrayList<>(impactedProducts)));
+		steps.add(impactedProductsStep);
+		impactedProductsStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<>() {
 			@Override
 			public void process(NodeRef entityNodeRef) throws Throwable {
 				NodeRef channelListItem = publicationChannelService.getOrCreateChannelListNodeRef(entityNodeRef, FORMULATE_ENTITIES_CHANNEL_ID);
 				nodeService.setProperty(channelListItem, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE, new Date());
 			}
 		});
-		markingStep.setBatchStepListener(new BatchStepAdapter() {
+		impactedProductsStep.setBatchStepListener(new BatchStepAdapter() {
 			@Override
 			public void afterStep() {
 				if (!batchInfo.isCancelled()) {
@@ -252,6 +253,7 @@ public class FormulationChannelService {
 		totalNodesToProcess.addAll(toPublishProducts);
 		
 		BatchStep<NodeRef> formulateStep = new BatchStep<>();
+		formulateStep.setStepDescId("becpg.batch.formulation.channel.formulateEntities.formulation");
 		if (totalNodesToProcess.size() < maxProductsToFormulate()) {
 			Iterator<NodeRef> it = impactedProducts.iterator();
 			while (it.hasNext() && totalNodesToProcess.size() < maxProductsToFormulate()) {
