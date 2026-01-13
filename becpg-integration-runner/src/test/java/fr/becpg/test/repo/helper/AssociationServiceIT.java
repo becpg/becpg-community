@@ -11,11 +11,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.QName;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -41,7 +43,14 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class AssociationServiceIT extends PLMBaseTestCase {
 
-	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+	private SimpleDateFormat dateFormat;
+
+	@Before
+	public void setUp() throws Exception {
+		super.setUp();
+	    dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+	    dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+	}
 
 	@Autowired
 	private AssociationService associationService;
