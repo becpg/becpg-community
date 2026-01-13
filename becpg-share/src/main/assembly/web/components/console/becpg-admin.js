@@ -536,7 +536,7 @@
 				    var self = this;
 				    
 				    Alfresco.util.Ajax.request({
-				        url: Alfresco.constants.PROXY_URI + "/becpg/batch/retry/" + batchId,
+				        url: Alfresco.constants.PROXY_URI + "/becpg/batch/retry/" + encodeURIComponent(batchId),
 				        method: Alfresco.util.Ajax.POST,
 				        responseContentType: Alfresco.util.Ajax.JSON,
 				        failureCallback: {
@@ -551,7 +551,7 @@
 				
 				handleViewErrorsBatch: function(batchId, button) {
 				    var self = this;
-					var url = Alfresco.constants.PROXY_URI + "/becpg/batch/errors/" + batchId;
+					var url = Alfresco.constants.PROXY_URI + "/becpg/batch/errors/" + encodeURIComponent(batchId);
 					window.open(url, "_blank");
 				}
 			});
