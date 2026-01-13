@@ -367,6 +367,9 @@
 				<entry key="batchQueueService">
 					<ref bean="batchQueueService" />
 				</entry>
+				<entry key="beCPGCacheService">
+					<ref bean="beCPGCacheService" />
+				</entry>
 			</map>
 		</property>
 	</bean>

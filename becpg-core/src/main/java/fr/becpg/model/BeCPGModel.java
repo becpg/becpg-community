@@ -436,4 +436,8 @@ public final class BeCPGModel {
 	public static final QName PROP_AI_VALIDATION_HINTS = QName.createQName(BECPG_URI, "aiValidationHints");
 	/** Constant <code>PROP_AI_EXTRA_PROMPT</code> */
 	public static final QName PROP_AI_VALIDATION_DATE = QName.createQName(BECPG_URI, "aiValidationDate");
+	
+	public static final QName ASPECT_BATCH_ERROR = QName.createQName(BECPG_URI, "batchErrorAspect");
+	public static final QName PROP_BATCH_ERROR_IDS = QName.createQName(BECPG_URI, "batchErrorIds");
+
 }
