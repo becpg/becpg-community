@@ -4997,6 +4997,13 @@
 						<facetable>true</facetable>
 					</index>
 				</property>
+				<property name="bcpg:productSecondaryYield">
+					<type>d:double</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
 				<property name="bcpg:productState">
 					<type>d:text</type>
 					<default>Simulation</default>
