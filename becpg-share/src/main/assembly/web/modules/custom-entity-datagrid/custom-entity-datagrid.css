@@ -43,6 +43,11 @@
 	background-image:  url("../entity-datagrid/images/unlock-16.png");
 }
 
+.datagrid-bar .onActionFormulateWUsed, .datagrid .onActionFormulateWUsed a
+{
+   background-image: url(../../components/documentlibrary/actions/entity-refresh-reports-16.png);
+}
+
 .form-container  .bulk-edit label {
     display: inline;
 }
