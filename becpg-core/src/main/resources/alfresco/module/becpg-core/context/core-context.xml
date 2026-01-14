@@ -147,6 +147,7 @@
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
 		<property name="ratingService" ref="ratingService" />
 		<property name="beCPGLicenseManager" ref="becpgLicenseManager" />
+		<property name="authorityService" ref="authorityService" />
 	</bean>
 
 	<bean id="simpleExtractor" class="fr.becpg.repo.entity.datalist.impl.SimpleExtractor" parent="abstractDataListExtractor">
