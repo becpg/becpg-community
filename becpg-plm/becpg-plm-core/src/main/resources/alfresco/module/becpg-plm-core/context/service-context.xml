@@ -136,6 +136,15 @@
 		<property name="attributeExtractorService" ref="attributeExtractorService"/>
 	</bean>
 
+	<bean id="webscript.fr.becpg.product.formulateWUsed.post" class="fr.becpg.repo.web.scripts.product.FormulateWUsedWebScript" parent="webscript">
+		<property name="nodeService" ref="NodeService" />
+		<property name="entityDictionaryService" ref="entityDictionaryService"/>
+		<property name="associationService" ref="associationService"/>
+		<property name="batchQueueService" ref="batchQueueService"/>
+		<property name="formulationService" ref="formulationService"/>
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
+	</bean>
+
  
 	<!-- Search -->
 	<bean id="webscript.fr.becpg.search.search.get" class="fr.becpg.repo.web.scripts.search.SearchWebScript" parent="webscript">

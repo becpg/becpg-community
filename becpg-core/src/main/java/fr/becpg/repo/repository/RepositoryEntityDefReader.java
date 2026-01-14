@@ -161,6 +161,8 @@ public interface RepositoryEntityDefReader<T> {
 	 */
 	boolean isRegisteredQName(RepositoryEntity entity, QName qname, boolean allowWrite);
 	
+	List<QName> getDefaultPivotAssocs();
+	
 	
 	
 }
