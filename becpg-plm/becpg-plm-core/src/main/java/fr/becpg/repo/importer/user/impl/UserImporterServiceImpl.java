@@ -24,6 +24,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -44,6 +45,12 @@ import org.alfresco.service.namespace.NamespacePrefixResolver;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import fr.becpg.common.csv.CSVReader;
 import fr.becpg.repo.authentication.BeCPGUserAccount;
@@ -244,12 +251,111 @@ public class UserImporterServiceImpl implements UserImporterService {
 
 	}
 
-	private void processXLSXUpload(InputStream input) {
-		logger.info("Not wet implemented");
+	private void processXLSXUpload(InputStream input) throws IOException, ImporterException {
+		try (Workbook workbook = new XSSFWorkbook(input)) {
+			Sheet sheet = workbook.getSheetAt(0); // Get the first sheet
+			
+			if (sheet == null || sheet.getPhysicalNumberOfRows() == 0) {
+				throw new ImporterException("Empty or invalid XLSX file");
+			}
+			
+			Iterator<Row> rowIterator = sheet.iterator();
+			boolean isFirst = true;
+			Map<String, Integer> headers = new HashMap<>();
+			
+			while (rowIterator.hasNext()) {
+				Row row = rowIterator.next();
+				
+				if (isFirst) {
+					headers = processXLSXHeaders(row);
+					isFirst = false;
+				} else {
+					String[] rowData = extractRowData(row, headers.size());
+					if (rowData.length == headers.size()) {
+						processRow(headers, rowData);
+					}
+				}
+			}
+		}
+	}
+
+	private Map<String, Integer> processXLSXHeaders(Row headerRow) throws ImporterException {
+		Map<String, Integer> headers = new HashMap<>();
+		
+		for (int i = 0; i < headerRow.getLastCellNum(); i++) {
+			Cell cell = headerRow.getCell(i);
+			if (cell != null) {
+				String headerValue = getCellValueAsString(cell).trim();
+				if (!headerValue.isEmpty()) {
+					logger.debug("Adding header: " + headerValue);
+					headers.put(headerValue, i);
+				}
+			}
+		}
+		
+		verifyHeaders(headers);
+		return headers;
+	}
+
+	private String[] extractRowData(Row row, int expectedColumns) {
+		String[] data = new String[expectedColumns];
+		
+		for (int i = 0; i < expectedColumns; i++) {
+			Cell cell = row.getCell(i);
+			data[i] = (cell != null) ? getCellValueAsString(cell).trim() : "";
+		}
+		
+		return data;
+	}
+
+	private String getCellValueAsString(Cell cell) {
+		if (cell == null) {
+			return "";
+		}
+		
+		switch (cell.getCellType()) {
+			case STRING:
+				return cell.getStringCellValue();
+				
+			case NUMERIC:
+				if (DateUtil.isCellDateFormatted(cell)) {
+					return cell.getDateCellValue().toString();
+				} else {
+					// Format numeric values to avoid scientific notation
+					double numericValue = cell.getNumericCellValue();
+					if (numericValue == Math.floor(numericValue)) {
+						return String.valueOf((long) numericValue);
+					}
+					return String.valueOf(numericValue);
+				}
+				
+			case BOOLEAN:
+				return String.valueOf(cell.getBooleanCellValue());
+				
+			case FORMULA:
+				try {
+					return cell.getStringCellValue();
+				} catch (IllegalStateException e) {
+					// If formula result is numeric
+					try {
+						double numericValue = cell.getNumericCellValue();
+						if (numericValue == Math.floor(numericValue)) {
+							return String.valueOf((long) numericValue);
+						}
+						return String.valueOf(numericValue);
+					} catch (IllegalStateException e2) {
+						return "";
+					}
+				}
+				
+			case BLANK:
+			default:
+				return "";
+		}
 	}
 
 	private void processXLSUpload(InputStream input) {
-		logger.info("Not wet implemented");
+		logger.info("Not yet implemented");
 	}
 
 	private void processCSVUpload(InputStream input, Charset charset) throws IOException, ImporterException {
