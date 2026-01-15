@@ -21,6 +21,7 @@ import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +78,8 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 
 	private final Map<String, QName> qnameCache = new ConcurrentHashMap<>();
 
+	private final List<QName> defaultPivotAssocs = new ArrayList<>();
+
 	/** {@inheritDoc} */
 	@Override
 	@SuppressWarnings("unchecked")
@@ -117,7 +120,26 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	@SuppressWarnings("unchecked")
 	private void registerEntity(Class<T> clazz) {
 		logger.debug("Register entity : " + clazz.getName());
-		domainMapping.put(getType((Class<? extends RepositoryEntity>) clazz), clazz);
+		QName entityQName = getType((Class<? extends RepositoryEntity>) clazz);
+		domainMapping.put(entityQName, clazz);
+		BeanWrapper beanWrapper = new BeanWrapperImpl(clazz);
+	    for (PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
+	        Method readMethod = pd.getReadMethod();
+	        if (readMethod != null) {
+	        	DataListIdentifierAttr idAttr = readMethod.getAnnotation(DataListIdentifierAttr.class);
+	        	AlfQname alfQname = readMethod.getAnnotation(AlfQname.class);
+	        	if (idAttr != null && alfQname != null && idAttr.isDefaultPivotAssoc()) {
+        			QName pivotAssocQName = QName.createQName(alfQname.qname(), namespaceService);
+        			defaultPivotAssocs.add(pivotAssocQName);
+        			logger.debug("Registered default pivot assoc: " + pivotAssocQName);
+	        	}
+	        }
+	    }
+	}
+	
+	@Override
+	public List<QName> getDefaultPivotAssocs() {
+		return defaultPivotAssocs;
 	}
 
 	/** {@inheritDoc} */

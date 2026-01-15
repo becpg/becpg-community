@@ -244,7 +244,6 @@
    background-image: url(../images/down-arrow-16.png);
 }
 
-
 .datalist-toolbar .onActionShowDetails
 {
    background-image: url(../images/show-details-16.png);
@@ -275,4 +274,7 @@
 	background-image: url(../../components/images/add-row-16.png);
 }
 
-
+.datalist-toolbar .onActionFormulateWUsed
+{
+   background: url(../documentlibrary/actions/entity-refresh-reports-16.png) no-repeat 8px 4px;
+}

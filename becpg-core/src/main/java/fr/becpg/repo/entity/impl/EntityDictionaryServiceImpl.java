@@ -73,6 +73,7 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 	// Cache for frequently computed strings to avoid repeated computations
 	private final Map<QName, String> prefixStringCache = new ConcurrentHashMap<>();
 	private final Map<String, String> overrideKeyCache = new ConcurrentHashMap<>();
+	private final Map<QName, List<QName>> defaultPivotAssocsFromTargetTypeCache = new ConcurrentHashMap<>();
 
 	// Setters
 	/**
@@ -210,6 +211,21 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 		}
 
 		return ret;
+	}
+	
+	@Override
+	public List<QName> getDefaultPivotAssocsFromTargetType(QName targetType) {
+		return defaultPivotAssocsFromTargetTypeCache.computeIfAbsent(targetType, k -> {
+			List<QName> assocs = new ArrayList<>();
+			List<QName> defaultPivotAssocs = repositoryEntityDefReader.getDefaultPivotAssocs();
+			for (QName defaultPivotAssoc : defaultPivotAssocs) {
+				AssociationDefinition defaultPivotAssocDef = getAssociation(defaultPivotAssoc);
+				if (targetType.equals(defaultPivotAssocDef.getTargetClass().getName())) {
+					assocs.add(defaultPivotAssocDef.getName());
+				}
+			}
+			return assocs;
+		});
 	}
 
 	/** {@inheritDoc} */
