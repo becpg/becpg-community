@@ -55,6 +55,8 @@ import org.json.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.owasp.encoder.Encode;
 import org.springframework.context.ApplicationContext;
+import org.springframework.extensions.config.Config;
+import org.springframework.extensions.config.ConfigService;
 import org.springframework.extensions.surf.FrameworkUtil;
 import org.springframework.extensions.surf.RequestContext;
 import org.springframework.extensions.surf.ServletUtil;
@@ -166,6 +168,8 @@ public class BeCPGAIMSFilter implements Filter
     private ConnectorService connectorService;
     @SuppressWarnings("unused")
     private SlingshotLoginController loginController;
+    
+    private ConfigService configService;
 
     private boolean enabled = false;
 
@@ -240,10 +244,17 @@ public class BeCPGAIMSFilter implements Filter
             // OIDC Specific Setup
             clientRegistrationRepository = context.getBean(ClientRegistrationRepository.class);
             oauth2ClientService = context.getBean(OAuth2AuthorizedClientService.class);
+            configService = (ConfigService) context.getBean("web.config");
             this.requestCache = new HttpSessionRequestCache();
+            
+            Config reauthConfig = this.configService.getConfig("AIMS");
+            String specificReauthIdcId = reauthConfig.getConfigElement("specificReauthIdcId").getValue();
+            
+            
             this.authorizationRequestResolver = new BeCPGCustomAuthorizationRequestResolver(clientRegistrationRepository,
                                                                                        DEFAULT_AUTHORIZATION_REQUEST_BASE_URI,
-                                                                                       config);
+                                                                                       config,
+                                                                                       specificReauthIdcId);
             this.authorizationRequestRepository = new HttpSessionOAuth2AuthorizationRequestRepository();
             this.throwableAnalyzer = new SecurityUtils.DefaultThrowableAnalyzer();
             this.shareContext = config.getShareContext();
