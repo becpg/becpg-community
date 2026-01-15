@@ -52,6 +52,7 @@ if [[ $OAUTH2_ENABLED == "false" ]]; then
     OAUTH2_REALM="becpg"
     OAUTH2_RESOURCE="becpg-openid"
     OAUTH2_SERVER_URL="http://becpg-auth:8080/auth"
+    REAUTH_IDC_ID=""
 fi
 
 
@@ -68,6 +69,7 @@ sed -i -e 's|OAUTH2_SERVER_URL|'"$OAUTH2_SERVER_URL"'|g' /usr/local/tomcat/share
 sed -i -e 's/OAUTH2_RESOURCE/'"$OAUTH2_RESOURCE"'/g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
 sed -i -e 's/OAUTH2_REALM/'"$OAUTH2_REALM"'/g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
 sed -i -e 's/OAUTH2_ENABLED/'"$OAUTH2_ENABLED"'/g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
+sed -i -e 's/REAUTH_IDC_ID/'"$REAUTH_IDC_ID"'/g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
 
 
 echo "NEW -csrf.filter.referer is '$CSRF_FILTER_REFERER'"
