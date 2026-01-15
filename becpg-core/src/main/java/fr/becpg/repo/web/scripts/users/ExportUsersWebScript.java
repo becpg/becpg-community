@@ -2,7 +2,6 @@ package fr.becpg.repo.web.scripts.users;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,12 +16,17 @@ import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.security.PersonService.PersonInfo;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ParameterCheck;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.AttachmentHelper;
+import fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles;
 
 /**
  * <p>ExportUsersWebScript class.</p>
@@ -53,7 +57,7 @@ public class ExportUsersWebScript extends AbstractWebScript {
 	private static final String DISABLE = "disable";
 	private static final String DELETE = "delete";
 
-	private static final List<String> CSV_COLUMNS = List.of(
+	private static final List<String> XLSX_COLUMNS = List.of(
 			LAST_NAME,
 			FIRST_NAME,
 			EMAIL,
@@ -114,49 +118,70 @@ public class ExportUsersWebScript extends AbstractWebScript {
 			filterProps.add(ContentModel.PROP_USERNAME);
 		}
 
-		res.setContentType("text/csv");
+		res.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 		res.setContentEncoding("UTF-8");
-		AttachmentHelper.setAttachment(req, res, "exported_users.csv");
+		AttachmentHelper.setAttachment(req, res, "exported_users.xlsx");
 		res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
 		res.setHeader("Pragma", "no-cache");
 
-		try (OutputStream out = res.getOutputStream()) {
+		try (XSSFWorkbook workbook = new XSSFWorkbook(); OutputStream out = res.getOutputStream()) {
 			
-			String csvHeader = String.join("", CSV_COLUMNS.stream().map(c -> "\"" + c + "\";").toList()) + "\n";
-			out.write(csvHeader.getBytes(StandardCharsets.UTF_8));
+			Sheet sheet = workbook.createSheet("Users");
+			
+			ExcelCellStyles excelCellStyles = new ExcelCellStyles(workbook);
+
+			// Create header row
+			Row headerRow = sheet.createRow(0);
+			for (int i = 0; i < XLSX_COLUMNS.size(); i++) {
+				Cell cell = headerRow.createCell(i);
+				cell.setCellValue(XLSX_COLUMNS.get(i));
+				cell.setCellStyle(excelCellStyles.getHeaderStyle());
+			}
 
 			PagingResults<PersonInfo> people = personService.getPeople(searchTerm, filterProps, null, new PagingRequest(Integer.MAX_VALUE));
 
+			int rowNum = 1;
 			for (PersonInfo userNode : people.getPage()) {
 				NodeRef userRef = userNode.getNodeRef();
-				List<String> csvValues = new ArrayList<>();
-				for (String column : CSV_COLUMNS) {
+				Row row = sheet.createRow(rowNum++);
+				
+				for (int i = 0; i < XLSX_COLUMNS.size(); i++) {
+					String column = XLSX_COLUMNS.get(i);
+					Cell cell = row.createCell(i);
+					cell.setCellStyle(excelCellStyles.getTextCellStyle());
+					
+					String value = "";
 					if (LAST_NAME.equals(column)) {
-						csvValues.add(getOrEmpty(userNode.getLastName()));
+						value = getOrEmpty(userNode.getLastName());
 					} else if (FIRST_NAME.equals(column)) {
-						csvValues.add(getOrEmpty(userNode.getFirstName()));
+						value = getOrEmpty(userNode.getFirstName());
 					} else if (EMAIL.equals(column)) {
-						csvValues.add(getOrEmpty(nodeService.getProperty(userRef, ContentModel.PROP_EMAIL)));
+						value = getOrEmpty(nodeService.getProperty(userRef, ContentModel.PROP_EMAIL));
 					} else if (TELEPHONE.equals(column)) {
-						csvValues.add(getOrEmpty(nodeService.getProperty(userRef, ContentModel.PROP_TELEPHONE)));
+						value = getOrEmpty(nodeService.getProperty(userRef, ContentModel.PROP_TELEPHONE));
 					} else if (ORGANIZATION.equals(column)) {
-						csvValues.add(getOrEmpty(nodeService.getProperty(userRef, ContentModel.PROP_ORGANIZATION)));
+						value = getOrEmpty(nodeService.getProperty(userRef, ContentModel.PROP_ORGANIZATION));
 					} else if (USERNAME.equals(column)) {
-						csvValues.add(getOrEmpty(userNode.getUserName()));
+						value = getOrEmpty(userNode.getUserName());
 					} else if (IS_IDS_USER.equals(column)) {
-						csvValues.add(getOrEmpty(nodeService.getProperty(userRef, BeCPGModel.PROP_IS_SSO_USER)));
+						value = getOrEmpty(nodeService.getProperty(userRef, BeCPGModel.PROP_IS_SSO_USER));
 					} else if (DISABLE.equals(column)) {
-						csvValues.add(getOrEmpty(nodeService.getProperty(userRef, ContentModel.ASPECT_PERSON_DISABLED)));
+						value = getOrEmpty(nodeService.getProperty(userRef, ContentModel.ASPECT_PERSON_DISABLED));
 					} else if (GROUPS.equals(column)) {
-						csvValues.add("\"" + getOrEmpty(String.join(",", authorityService.getContainingAuthoritiesInZone(AuthorityType.GROUP,
-								userNode.getUserName(), AuthorityService.ZONE_APP_DEFAULT, null, 1000))) + "\"");
-					} else {
-						csvValues.add("");
+						value = getOrEmpty(String.join(",", authorityService.getContainingAuthoritiesInZone(AuthorityType.GROUP,
+								userNode.getUserName(), AuthorityService.ZONE_APP_DEFAULT, null, 1000)));
 					}
+					
+					cell.setCellValue(value);
 				}
-				String csvRow = String.join("", csvValues.stream().map(v -> v + ";").toList()) + "\n";
-				out.write(csvRow.getBytes(StandardCharsets.UTF_8));
 			}
+			
+			// Auto-size columns
+			for (int i = 0; i < XLSX_COLUMNS.size(); i++) {
+				sheet.autoSizeColumn(i);
+			}
+			
+			workbook.write(out);
 			out.flush();
 		}
 	}
@@ -164,5 +189,5 @@ public class ExportUsersWebScript extends AbstractWebScript {
 	private String getOrEmpty(Object prop) {
 		return prop == null ? "" : prop.toString();
 	}
-
+	
 }
