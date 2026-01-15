@@ -35,7 +35,7 @@ public interface ImportService {
 	 * @param titleLog a {@link java.lang.String} object.
 	 * @param fileLog a {@link java.lang.String} object.
 	 */
-	void moveImportedFile(NodeRef nodeRef, boolean hasFailed, String titleLog, String fileLog);
+	void moveImportedFile(NodeRef nodeRef, boolean hasFailed, String titleLog, String fileLog, boolean newTransaction);
 
 	
 	/**
