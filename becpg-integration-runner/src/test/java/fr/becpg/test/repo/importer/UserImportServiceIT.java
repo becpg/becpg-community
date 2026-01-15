@@ -84,6 +84,62 @@ public class UserImportServiceIT extends PLMBaseTestCase {
 
 		return nodeRef;
 	}
+	
+	private NodeRef createXLSX() throws IOException {
+
+		ResultSet resultSet = searchService.query(
+				new StoreRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore"),
+				SearchService.LANGUAGE_LUCENE,
+				COMPANY_HOME_PATH_QUERY
+		);
+
+		NodeRef destNodeRef = resultSet.getNodeRef(0);
+
+		Date now = new Date();
+		String qname = QName.createValidLocalName("importuserxlsx-" + now.getTime() + ".xlsx");
+
+		ChildAssociationRef assocRef = nodeService.createNode(
+				destNodeRef,
+				ContentModel.ASSOC_CONTAINS,
+				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, qname),
+				ContentModel.TYPE_CONTENT
+		);
+
+		NodeRef nodeRef = assocRef.getChildRef();
+		nodeService.setProperty(nodeRef, ContentModel.PROP_NAME, qname);
+
+		ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
+		ClassPathResource resource = new ClassPathResource("beCPG/import/User.xlsx");
+
+		writer.setMimetype(
+			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+		);
+		writer.putContent(resource.getInputStream());
+
+		return nodeRef;
+	}
+
+	@Test
+	public void testImportUserXLSX() {
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef userRef = personService.getPerson("matthieu");
+			if (userRef != null) {
+				personService.deletePerson(userRef);
+			}
+			return null;
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef xlsx = createXLSX();
+			userImporterService.importUser(xlsx);
+			return null;
+		}, false, true);
+
+		// Optional assertion
+		NodeRef importedUser = personService.getPerson("matthieu");
+		assertNotNull(importedUser);
+	}
 
 	@Test
 	public void testImportUserCSV() {
