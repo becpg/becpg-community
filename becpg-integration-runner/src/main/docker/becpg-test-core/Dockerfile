@@ -25,7 +25,7 @@ RUN  mkdir -p /usr/java/jbr_jcef-17.0.10-linux-x64-b1207.14/lib/hotswap/ && \
 #Jacoco Agent
 RUN curl -sL https://repo1.maven.org/maven2/org/jacoco/org.jacoco.agent/0.8.11/org.jacoco.agent-0.8.11-runtime.jar -o $TOMCAT_DIR/jacoco-runtime.jar
 
-FROM becpg-base-test-core
+FROM ${docker.becpg.url}/becpg-base-test-core:${docker.becpg.tag}
 
 
 ENV JAVA_HOME=/usr/java/default
