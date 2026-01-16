@@ -217,7 +217,7 @@ public class AnnotationMappingLoader implements MappingLoader {
 
 						// Node key
 						if (annotation instanceof Key) {
-							classMapping.getNodeColumnKeys().add(columnQname);
+							addNodeColumnKey(classMapping, columnQname);
 
 							if (ImportType.EntityListItem.equals(importContext.getImportType())) {
 
@@ -227,7 +227,7 @@ public class AnnotationMappingLoader implements MappingLoader {
 										? importContext.getClassMappings().get(entityType)
 										: new ClassMapping();
 								entityClassMapping.setType(entityType);
-								entityClassMapping.getNodeColumnKeys().add(targetKey != null ? targetKey : columnQname);
+								addNodeColumnKey(entityClassMapping, targetKey != null ? targetKey : columnQname);
 								importContext.getClassMappings().put(entityType, entityClassMapping);
 
 							}
@@ -247,7 +247,7 @@ public class AnnotationMappingLoader implements MappingLoader {
 							classMapping.getColumns().add(attributeMapping);
 
 							if (targetClassMapping != null) {
-								targetClassMapping.getNodeColumnKeys().add(targetKey != null ? targetKey : columnQname);
+								addNodeColumnKey(targetClassMapping, targetKey != null ? targetKey : columnQname);
 								if ((annotation instanceof Assoc) && StringUtils.isNotEmpty(((Assoc) annotation).getPath())) {
 									targetClassMapping.getPaths().put(QName.createQName(annotation.getId(), namespaceService),
 											((Assoc) annotation).getPath());
@@ -333,6 +333,18 @@ public class AnnotationMappingLoader implements MappingLoader {
 			}
 		}
 		return ret;
+	}
+
+	/**
+	 * Adds a node column key to the mapping if it is not already present.
+	 *
+	 * @param classMapping the class mapping to update
+	 * @param nodeColumnKey the node column key to register
+	 */
+	private void addNodeColumnKey(ClassMapping classMapping, QName nodeColumnKey) {
+		if (!classMapping.getNodeColumnKeys().contains(nodeColumnKey)) {
+			classMapping.getNodeColumnKeys().add(nodeColumnKey);
+		}
 	}
 
 	/** {@inheritDoc} */
