@@ -778,7 +778,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			branchToNodeRef = associationService.getTargetAssoc(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO);
 		}
 		
-		if (permissionService.hasPermission(branchToNodeRef, BeCPGPermissions.MERGE_ENTITY) != AccessStatus.ALLOWED) {
+		if (permissionService.hasPermission(branchToNodeRef, "Write") != AccessStatus.ALLOWED
+				&& permissionService.hasPermission(branchToNodeRef, BeCPGPermissions.MERGE_ENTITY) != AccessStatus.ALLOWED) {
 			throw new IllegalStateException("No right to merge entity " + branchToNodeRef);
 		}
 
