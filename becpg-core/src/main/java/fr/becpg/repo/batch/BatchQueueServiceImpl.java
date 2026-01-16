@@ -27,9 +27,11 @@ import org.alfresco.repo.batch.BatchMonitorEvent;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
+import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorkerAdaptor;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.transaction.TransactionService;
@@ -578,25 +580,16 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 				@Override
 				public void process(T entry) throws Throwable {
-					try {
-						if (cancelledBatches.contains(batchId)) {
-							if (logger.isDebugEnabled()) {
-								logger.debug("Skip entry '" + entry + "' as batch : '" + batchId + "' was cancelled");
-							}
-							BatchCommand.this.getBatchInfo().setCancelled(true);
-							auditScope.disable();
-							return;
+					if (cancelledBatches.contains(batchId)) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Skip entry '" + entry + "' as batch : '" + batchId + "' was cancelled");
 						}
-						batchStep.getProcessWorker().process(entry);
-						batchInfo.setCurrentItem(batchInfo.getCurrentItem() + 1);
-					} catch (Throwable e) {
-						if (batchStep.getBatchStepErrorHandler() != null) {
-							logger.error("Error processing entry '" + entry + "' for batch : '" + batchId, e);
-							batchStep.getBatchStepErrorHandler().accept(entry);
-						} else {
-							throw e;
-						}
+						BatchCommand.this.getBatchInfo().setCancelled(true);
+						auditScope.disable();
+						return;
 					}
+					batchStep.getProcessWorker().process(entry);
+					batchInfo.setCurrentItem(batchInfo.getCurrentItem() + 1);
 				}
 
 
@@ -724,42 +717,90 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	}
 	
 	@Override
-	public void retryBatchInError(String batchId) {
+	public BatchInfo retryBatchInError(String batchId) {
 		List<NodeRef> allErrors = new ArrayList<>();
 		allErrors.addAll(BeCPGQueryBuilder.createQuery().andPropEquals(BeCPGModel.PROP_BATCH_ERROR_IDS, batchId).list());
 		allErrors.addAll(BeCPGQueryBuilder.createQuery().inStore(RepoConsts.VERSION_STORE).andPropEquals(BeCPGModel.PROP_BATCH_ERROR_IDS, batchId).list());
-		removeBatchErrors(batchId, allErrors);
+		return removeBatchErrors(batchId, allErrors);
 	}
-
+	
 	@SuppressWarnings("unchecked")
-	private void removeBatchErrors(String batchId, List<NodeRef> nodeRefs) {
+	private BatchInfo removeBatchErrors(String batchId, List<NodeRef> nodeRefs) {
 		BatchInfo batchInfo = new BatchInfo("becpg.batch.retry." + batchId, "becpg.batch.retry", I18NUtil.getMessage(batchId.split("\\|")[1]));
 		batchInfo.setRunAsSystem(true);
-		BatchProcessWorkProvider<NodeRef> workProvider = new EntityListBatchProcessWorkProvider<>(new ArrayList<>(nodeRefs));
-		BatchStep<NodeRef> batchStep = new NodeRefErrorHandlingBatchStep(nodeService, beCPGCacheService, batchInfo) {
+		BatchStep<NodeRef> batchStep = createBatchStepWithErrorHandling(batchInfo, nodeRefs, new BatchProcessor.BatchProcessWorkerAdaptor<>() {
 			@Override
-			public void processEntry(NodeRef nodeRef) throws Throwable {
-				List<String> batchErrorIds = (List<String>) nodeService.getProperty(nodeRef, BeCPGModel.PROP_BATCH_ERROR_IDS);
+			public void process(NodeRef entry) throws Throwable {
+				List<String> batchErrorIds = (List<String>) nodeService.getProperty(entry, BeCPGModel.PROP_BATCH_ERROR_IDS);
 				if (batchErrorIds != null) {
 					List<String> newBatchErrorIds = batchErrorIds.stream().filter(id -> !id.equals(batchId)).toList();
 					if (newBatchErrorIds.size() != batchErrorIds.size()) {
-						nodeService.setProperty(nodeRef, BeCPGModel.PROP_BATCH_ERROR_IDS, (Serializable) newBatchErrorIds);
+						nodeService.setProperty(entry, BeCPGModel.PROP_BATCH_ERROR_IDS, (Serializable) newBatchErrorIds);
 					}
 				}
 			}
-		};
-		batchStep.setWorkProvider(workProvider);
+		});
 		queueBatch(batchInfo, List.of(batchStep), () -> beCPGCacheService.clearCache(BatchQueueServiceImpl.class.getName()));
+		return batchInfo;
+	}
+	
+	@Override
+	public BatchStep<NodeRef> createBatchStepWithErrorHandling(BatchInfo batchInfo, List<NodeRef> list, BatchProcessWorker<NodeRef> processor) {
+		return new BatchStepWithErrorHandling(batchInfo, list, processor);
+	}
+
+	private class BatchStepWithErrorHandling extends BatchStep<NodeRef> {
+
+		private BatchStepWithErrorHandling(BatchInfo batchInfo, List<NodeRef> list, BatchProcessWorker<NodeRef> processor) {
+			String batchFullId = batchInfo.getBatchId() + "|" + batchInfo.getBatchDescId();
+			workProvider = new EntityListBatchProcessWorkProvider<>(list);
+			processWorker = createErrorHandlingProcessWorker(batchInfo, batchFullId, processor);
+		}
+
+		@SuppressWarnings("unchecked")
+		private BatchProcessWorkerAdaptor<NodeRef> createErrorHandlingProcessWorker(BatchInfo batchInfo, String batchFullId, BatchProcessWorker<NodeRef> processor) {
+			return new BatchProcessor.BatchProcessWorkerAdaptor<>() {
+				@Override
+				public void process(NodeRef entry) throws Throwable {
+					List<String> batchErrorIds = (List<String>) nodeService.getProperty(entry, BeCPGModel.PROP_BATCH_ERROR_IDS);
+					if (batchErrorIds == null || !batchErrorIds.contains(batchFullId)) {
+						try {
+							processor.process(entry);
+						} catch (Throwable e) {
+							if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+								logger.debug("Retrying the formulation for " + entry + " due to exception: " + e.getMessage());
+								throw e; // Re-throw to trigger retry
+							}
+							logger.error("Error processing entry '" + entry + "' for batch : '" + batchInfo.getBatchId(), e);
+							if (batchErrorIds == null) {
+								batchErrorIds = new ArrayList<>();
+							}
+							if (!batchErrorIds.contains(batchFullId)) {
+								batchErrorIds.add(batchFullId);
+								nodeService.setProperty(entry, BeCPGModel.PROP_BATCH_ERROR_IDS, (Serializable) batchErrorIds);
+								beCPGCacheService.clearCache(BatchQueueServiceImpl.class.getName());
+							}
+						}
+					} else {
+						if (logger.isDebugEnabled()) {
+							logger.debug("skip entry '" + entry + "' from batch '" + batchInfo.getBatchId() + "' as it is marked as failed");
+						}
+					}
+				}
+			};
+		}
 	}
 
 	@Override
 	public String viewErrors(String batchId) {
 		Map<String, Set<NodeRef>> batchErrorsMap = getBatchErrorsMap();
 		JsonData array = JsonHelper.createJsonArray();
-		for (NodeRef errorNodeRef : batchErrorsMap.get(batchId)) {
-			JsonData json = JsonHelper.createJsonObject();
-			json.put("nodeRef" , errorNodeRef.toString());
-			array.put(json);
+		if (batchErrorsMap.containsKey(batchId)) {
+			for (NodeRef errorNodeRef : batchErrorsMap.get(batchId)) {
+				JsonData json = JsonHelper.createJsonObject();
+				json.put("nodeRef" , errorNodeRef.toString());
+				array.put(json);
+			}
 		}
 		return array.toString();
 	}
