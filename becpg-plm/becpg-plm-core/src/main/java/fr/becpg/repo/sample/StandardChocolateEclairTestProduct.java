@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Locale;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 
@@ -16,12 +13,6 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LogisticUnitData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
-<<<<<<< 23.4.1
-=======
-import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.ResourceProductData;
->>>>>>> 743d2b5 Fix #27967 - [Feature] Add composition/packaging multilevel in export search
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
@@ -30,19 +21,8 @@ import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
-<<<<<<< 23.4.1
-=======
-import fr.becpg.repo.product.data.productList.NutListDataItem;
-import fr.becpg.repo.product.data.productList.PackagingListDataItem;
-import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
->>>>>>> 743d2b5 Fix #27967 - [Feature] Add composition/packaging multilevel in export search
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
-<<<<<<< 23.4.1
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
-=======
-import fr.becpg.repo.product.data.productList.ProcessListDataItem;
-import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
->>>>>>> 743d2b5 Fix #27967 - [Feature] Add composition/packaging multilevel in export search
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.quality.data.dataList.StockListDataItem;
 import fr.becpg.repo.survey.data.SurveyListDataItem;
@@ -108,9 +88,6 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 	protected NodeRef pateChouxNodeRef;
 	protected NodeRef cremePatissiereNodeRef;
 	protected NodeRef nappageNodeRef;
-
-	protected NodeRef mixingProcessNodeRef;
-	protected NodeRef bakingProcessNodeRef;
 
 	protected NodeRef sugarPlants1NodeRef;
 	protected NodeRef sugarPlants2NodeRef;
@@ -284,12 +261,6 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 	private boolean isWithSurvey = false;
 	private boolean isWithScoreList = false;
 
-	private boolean isWithClaim = false;
-
-	private boolean isWithSpecification = false;
-	private boolean isWithNuts = false;
-	private boolean isWithProcess = false;
-
 	// Private constructor to enforce usage of the builder
 	private StandardChocolateEclairTestProduct(Builder builder) {
 		super(builder);
@@ -300,11 +271,6 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		this.isWithIngredients = builder.isWithIngredients;
 		this.isWithSurvey = builder.isWithSurvey;
 		this.isWithScoreList = builder.isWithScoreList;
-
-		this.isWithClaim = builder.isWithClaim;
-		this.isWithSpecification = builder.isWithSpecification;
-		this.isWithNuts = builder.isWithNuts;
-		this.isWithProcess = builder.isWithProcess;
 	}
 
 	// Static inner Builder class
@@ -316,17 +282,8 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		private boolean isWithIngredients = false;
 		private boolean isWithSurvey = false;
 		private boolean isWithScoreList = false;
-
-		private boolean isWithClaim = false;
-		private boolean isWithSpecification = false;
-		private boolean isWithNuts = false;
-		private boolean isWithProcess = false;
-
-		public Builder withClaim(boolean isWithClaim) {
-			this.isWithClaim = isWithClaim;
-			return this;
-		}
-
+		
+		
 		public Builder withSurvey(boolean isWithSurvey) {
 			this.isWithSurvey = isWithSurvey;
 			return this;
@@ -363,17 +320,6 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 			return this;
 		}
 
-
-		public Builder withNuts(boolean isWithNuts) {
-			this.isWithNuts = isWithNuts;
-			return this;
-		}
-
-		public Builder withProcess(boolean isWithProcess) {
-			this.isWithProcess = isWithProcess;
-			return this;
-		}
-		
 		@Override
 		protected Builder self() {
 			return this;
@@ -419,27 +365,6 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 									.withLabelingRuleType(LabelingRuleType.Prefs)));
 
 		}
-
-
-		if (isWithSurvey) {
-			product.withSurveyList(new ArrayList<>(createEclairQMSSurveyList()));
-		}
-
-		if (isWithScoreList) {
-			product.withScoreList(createScoreList());
-		}
-
-		if (isWithProcess) {
-			initProcessProducts();
-			product.withProcessList(createProcessList());
-		}
-
-		if (isWithSpecification) {
-			product.setProductSpecifications(createProductSpecifications());
-		}
-
-		alfrescoRepository.create(destFolder, product);
-
 		
 		if(isWithSurvey) {
 			finishedProduct.withSurveyList(createEclairQMSSurveyList());
@@ -678,81 +603,6 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 								.withProduct(chocolateNodeRef)));
 
 		nappageNodeRef = alfrescoRepository.create(destFolder, nappage).getNodeRef();
-	}
-
-
-	/**
-	 * Initialize process products for testing.
-	 */
-	public void initProcessProducts() {
-		// Create process steps
-		ResourceProductData mixingProcess = ResourceProductData.build().withName("Mixing Process").withUnit(ProductUnit.P).withQty(1d);
-		mixingProcessNodeRef = alfrescoRepository.create(destFolder, mixingProcess).getNodeRef();
-
-		ResourceProductData bakingProcess = ResourceProductData.build().withName("Baking Process").withUnit(ProductUnit.P).withQty(1d);
-		bakingProcessNodeRef = alfrescoRepository.create(destFolder, bakingProcess).getNodeRef();
-	}
-
-	/**
-	 * Create process list for the chocolate éclair.
-	 *
-	 * @return List of process list data items
-	 */
-	private List<ProcessListDataItem> createProcessList() {
-		return List.of(
-			ProcessListDataItem.build().withProduct(mixingProcessNodeRef),
-			ProcessListDataItem.build().withProduct(bakingProcessNodeRef)
-		);
-	}
-
-	private void configureNutrientProfile(FinishedProductData finishedProduct) {
-		finishedProduct.getAspects().add(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE);
-		finishedProduct.setNutrientProfileCategory(NutrientProfileCategory.Others.toString());
-		finishedProduct.setNutrientProfileVersion(NutrientProfileVersion.VERSION_2023.toString());
-		finishedProduct.withNutList(createNutList(1250d, 8d, 16d, 30d, 0.2d, 0.5d, 1.2d, 1.8d, 5.5d));
-		addPhysicoChemProperty(finishedProduct, "Fruit and vegetable content", NutriScoreContext.FRUIT_VEGETABLE_CODE, 0d);
-	}
-
-	private void addPhysicoChemProperty(ProductData product, String name, String code, Double value) {
-		PhysicoChemListDataItem physicoChemList = new PhysicoChemListDataItem();
-
-		NodeRef physicoChem = CharactTestHelper.getOrCreatePhysico(nodeService, name);
-
-		Map<QName, Serializable> props = new HashMap<>();
-		props.put(PLMModel.PROP_PHYSICO_CHEM_CODE, code);
-		props.put(PLMModel.PROP_PHYSICO_CHEM_UNIT, "%");
-		nodeService.addProperties(physicoChem, props);
-
-		if (product.getPhysicoChemList() == null) {
-			product.setPhysicoChemList(new ArrayList<>());
-		}
-
-		physicoChemList.setPhysicoChem(physicoChem);
-		physicoChemList.setValue(value);
-		product.getPhysicoChemList().add(physicoChemList);
-	}
-
-	private List<NutListDataItem> createNutList(Double energyKj, Double satFat, Double totalFat, Double sugar, Double sodium, Double salt,
-			Double nspFiber, Double aoacFiber, Double protein) {
-		List<NutListDataItem> nutList = new ArrayList<>();
-		addNutEntry(nutList, NutriScoreContext.ENERGY_CODE, "kJ", energyKj);
-		addNutEntry(nutList, NutriScoreContext.SATFAT_CODE, "g", satFat);
-		addNutEntry(nutList, NutriScoreContext.FAT_CODE, "g", totalFat);
-		addNutEntry(nutList, NutriScoreContext.SUGAR_CODE, "g", sugar);
-		addNutEntry(nutList, NutriScoreContext.SODIUM_CODE, "g", sodium);
-		addNutEntry(nutList, NutriScoreContext.SALT_CODE, "g", salt);
-		addNutEntry(nutList, NutriScoreContext.NSP_CODE, "g", nspFiber);
-		addNutEntry(nutList, NutriScoreContext.AOAC_CODE, "g", aoacFiber);
-		addNutEntry(nutList, NutriScoreContext.PROTEIN_CODE, "g", protein);
-		return nutList;
-	}
-
-	private void addNutEntry(List<NutListDataItem> nutList, String code, String unit, Double value) {
-		if (value == null) {
-			return;
-		}
-		NodeRef nutRef = CharactTestHelper.getOrCreateNutrient(nodeService, code, unit);
-		nutList.add(NutListDataItem.build().withNut(nutRef).withUnit(unit).withValue(value).withIsManual(true));
 	}
 
 	private void initIngredients() {
