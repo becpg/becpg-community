@@ -355,7 +355,7 @@ public class MultiLevelExcelReportSearchPluginIT extends PLMBaseTestCase {
 				.withCompo(true)
 				.withLabeling(true)
 				.withIngredients(false)
-				.withProcess(true)
+				//.withProcess(true) Not backported
 				.build();
 
 		FinishedProductData product = testProduct.createTestProduct();
