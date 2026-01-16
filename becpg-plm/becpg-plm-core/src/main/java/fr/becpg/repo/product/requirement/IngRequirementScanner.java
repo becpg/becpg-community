@@ -447,22 +447,9 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 			}
 
 		}
+		
+		return checkRegulatoryUsageMatch(fil, productData);
 
-		// Regulatory usage filtering
-		if (!fil.getRegulatoryUsagesRef().isEmpty()) {
-			boolean hasRegulatoryUsage = false;
-			for (NodeRef n : productData.getRegulatoryUsagesRef()) {
-				if (fil.getRegulatoryUsagesRef().contains(n)) {
-					hasRegulatoryUsage = true;
-				}
-			}
-
-			if (!hasRegulatoryUsage) {
-				return false; // check next rule
-			}
-		}
-
-		return true;
 	}
 	
 	private boolean matchBooleanFilter(String filterValue, Boolean itemValue) {
