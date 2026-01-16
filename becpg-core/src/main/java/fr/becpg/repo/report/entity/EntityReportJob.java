@@ -3,7 +3,7 @@ package fr.becpg.repo.report.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.alfresco.repo.batch.BatchProcessWorkProvider;
+import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.schedule.AbstractScheduledLockedJob;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -21,9 +21,6 @@ import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.BatchStep;
-import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
-import fr.becpg.repo.batch.NodeRefErrorHandlingBatchStep;
-import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.entity.version.VersionHelper;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -48,8 +45,6 @@ public class EntityReportJob extends AbstractScheduledLockedJob implements Job {
 		super();
 	}
 	
-	private BeCPGCacheService beCPGCacheService;
-
 	/** {@inheritDoc} */
 	@Override
 	public void executeJob(JobExecutionContext context) throws JobExecutionException {
@@ -58,7 +53,6 @@ public class EntityReportJob extends AbstractScheduledLockedJob implements Job {
 		EntityVersionService entityVersionService = (EntityVersionService) jobData.get("entityVersionService");
 		EntityReportService entityReportService = (EntityReportService) jobData.get("entityReportService");
 		BatchQueueService batchQueueService = (BatchQueueService) jobData.get("batchQueueService");
-		beCPGCacheService = (BeCPGCacheService) jobData.get("beCPGCacheService");
 		int total = generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, BatchPriority.VERY_HIGH, MAX_RESULTS);
 		if (total < MAX_RESULTS) {
 			total += generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, BatchPriority.HIGH, MAX_RESULTS - total);
@@ -70,55 +64,49 @@ public class EntityReportJob extends AbstractScheduledLockedJob implements Job {
 			total += generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, BatchPriority.LOW, MAX_RESULTS - total);
 		}
 		if (total < MAX_RESULTS) {
-			total += generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, BatchPriority.VERY_LOW, MAX_RESULTS - total);
+			generatePendingReports(nodeService, entityVersionService, entityReportService, batchQueueService, BatchPriority.VERY_LOW, MAX_RESULTS - total);
 		}
 	}
 	
-	private int generatePendingReports(NodeService nodeService, EntityVersionService entityVersionService, EntityReportService entityReportService, BatchQueueService batchQueueService, BatchPriority priority, int maxResults) {
+	private int generatePendingReports(NodeService nodeService, EntityVersionService entityVersionService, EntityReportService entityReportService,
+			BatchQueueService batchQueueService, BatchPriority priority, int maxResults) {
 		String batchId = "generatePendingReports-" + priority;
 		String batchDescId = "becpg.batch.entity.generatePendingReports." + priority;
 		String batchFullId = batchId + "|" + batchDescId;
 		AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getSystemUserName());
 		List<NodeRef> pendingNodes = new ArrayList<>();
 		if (priority != null) {
-			pendingNodes.addAll(BeCPGQueryBuilder.createQuery()
-					.withAspect(BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT)
-					.andPropEquals(BeCPGModel.PROP_PENDING_ENTITY_REPORT_PRIORITY, priority.toString())
-					.maxResults(maxResults)
-					.excludeProp(BeCPGModel.PROP_BATCH_ERROR_IDS, batchFullId)
-					.inDBIfPossible().list());
-			
+			pendingNodes.addAll(BeCPGQueryBuilder.createQuery().withAspect(BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT)
+					.andPropEquals(BeCPGModel.PROP_PENDING_ENTITY_REPORT_PRIORITY, priority.toString()).maxResults(maxResults)
+					.excludeProp(BeCPGModel.PROP_BATCH_ERROR_IDS, batchFullId).inDBIfPossible().list());
+
 			if (pendingNodes.size() < maxResults) {
-				List<NodeRef> versionPendingNodes = BeCPGQueryBuilder.createQuery()
-						.withAspect(BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT)
+				List<NodeRef> versionPendingNodes = BeCPGQueryBuilder.createQuery().withAspect(BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT)
 						.andPropEquals(BeCPGModel.PROP_PENDING_ENTITY_REPORT_PRIORITY, priority.toString())
-						.maxResults(maxResults - pendingNodes.size())
-						.excludeProp(BeCPGModel.PROP_BATCH_ERROR_IDS, batchFullId)
-						.inStore(RepoConsts.VERSION_STORE)
-						.inDBIfPossible().list();
+						.maxResults(maxResults - pendingNodes.size()).excludeProp(BeCPGModel.PROP_BATCH_ERROR_IDS, batchFullId)
+						.inStore(RepoConsts.VERSION_STORE).inDBIfPossible().list();
 				pendingNodes.addAll(versionPendingNodes);
 			}
 		}
-		
+
 		BatchInfo batchInfo = new BatchInfo(batchId, batchDescId);
 		batchInfo.setRunAsSystem(true);
 		batchInfo.setPriority(priority == null ? BatchPriority.MEDIUM : priority);
-		BatchProcessWorkProvider<NodeRef> workProvider = new EntityListBatchProcessWorkProvider<>(new ArrayList<>(pendingNodes));
-		BatchStep<NodeRef> batchStep = new NodeRefErrorHandlingBatchStep(nodeService, beCPGCacheService, batchInfo) {
-			@Override
-			public void processEntry(NodeRef entityNodeRef) throws Throwable {
-				if (nodeService.exists(entityNodeRef)) {
-					NodeRef extractedNode = entityNodeRef;
-					if (VersionHelper.isVersion(entityNodeRef)
-							&& (nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
-						extractedNode = entityVersionService.extractVersion(entityNodeRef);
+		BatchStep<NodeRef> batchStep = batchQueueService.createBatchStepWithErrorHandling(batchInfo, pendingNodes,
+				new BatchProcessor.BatchProcessWorkerAdaptor<>() {
+					@Override
+					public void process(NodeRef nodeRef) throws Throwable {
+						if (nodeService.exists(nodeRef)) {
+							NodeRef extractedNode = nodeRef;
+							if (VersionHelper.isVersion(nodeRef) && (nodeService.getProperty(nodeRef, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
+								extractedNode = entityVersionService.extractVersion(nodeRef);
+							}
+							entityReportService.generateReports(extractedNode, nodeRef);
+							nodeService.removeAspect(nodeRef, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT);
+						}
 					}
-					entityReportService.generateReports(extractedNode, entityNodeRef);
-					nodeService.removeAspect(entityNodeRef, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT);
-				}
-			}
-		};
-		batchStep.setWorkProvider(workProvider);
+
+				});
 		batchQueueService.queueBatch(batchInfo, List.of(batchStep));
 		return pendingNodes.size();
 	}
