@@ -777,8 +777,13 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		if (branchToNodeRef == null) {
 			branchToNodeRef = associationService.getTargetAssoc(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO);
 		}
+		
+		if (permissionService.hasPermission(branchToNodeRef, "Write") != AccessStatus.ALLOWED
+				&& permissionService.hasPermission(branchToNodeRef, BeCPGPermissions.MERGE_ENTITY) != AccessStatus.ALLOWED) {
+			throw new IllegalStateException("No right to merge entity " + branchToNodeRef);
+		}
 
-		if ((permissionService.hasPermission(branchToNodeRef, BeCPGPermissions.MERGE_ENTITY) == AccessStatus.ALLOWED) && (branchToNodeRef != null) && (!branchToNodeRef.equals(branchNodeRef))) {
+		if ((branchToNodeRef != null) && (!branchToNodeRef.equals(branchNodeRef))) {
 
 			boolean mlAware = 	MLPropertyInterceptor.setMLAware(true);
 			try(ActionStateContext state = BeCPGStateHelper.onMergeEntity(branchToNodeRef, versionType) ){
@@ -1021,8 +1026,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				logger.info("Cannot AUTO merge "+ branchNodeRef+ " ASSOC_AUTO_MERGE_TO is empty ");
 			} else if(branchToNodeRef.equals(branchNodeRef)) {
 				logger.info("Cannot merge "+ branchNodeRef+ " to itself");
-			} else {
-				logger.info("Cannot merge "+ branchNodeRef+ " you don't have permission");
 			}
 		}
 		return branchToNodeRef;
