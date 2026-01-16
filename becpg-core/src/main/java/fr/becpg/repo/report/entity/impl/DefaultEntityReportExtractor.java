@@ -1181,12 +1181,50 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 			for (Version version : versionHistory.getAllVersions()) {
 				Element versionElt = versionsElt.addElement(TAG_VERSION);
-				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_LABEL.getLocalName(), version.getVersionLabel());
+				
+				// Handle manual version label (like VersionWebscript does)
+				Serializable manualVersionLabel = nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_MANUAL_VERSION_LABEL);
+				if (manualVersionLabel instanceof String && !((String) manualVersionLabel).isBlank()) {
+					versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_LABEL.getLocalName(), (String) manualVersionLabel);
+				} else {
+					versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_LABEL.getLocalName(), version.getVersionLabel());
+				}
+				
+				String versionDescription = version.getDescription();
 				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_DESCRIPTION.getLocalName(),
-						XMLTextHelper.writeAttribute(version.getDescription()));
-				versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(),
-						XMLTextHelper.writeAttribute(attributeExtractorService.getPersonDisplayName(version.getFrozenModifier())));
-				versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), ISO8601DateFormat.format(version.getFrozenModifiedDate()));
+						XMLTextHelper.writeAttribute(versionDescription));
+
+				// Handle version 1.0 specially - use entity's original creator and created date
+				if (RepoConsts.INITIAL_VERSION.equals(version.getVersionLabel())) {
+					versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(),
+							XMLTextHelper.writeAttribute(attributeExtractorService.getPersonDisplayName(
+									(String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATOR))));
+					versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), 
+							ISO8601DateFormat.format((Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED)));
+				} else {
+					// Use creator from version node (like VersionWebscript does)
+					versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(),
+							XMLTextHelper.writeAttribute(attributeExtractorService.getPersonDisplayName(
+									(String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATOR))));
+					versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), ISO8601DateFormat.format(version.getFrozenModifiedDate()));
+				}
+
+				// Add entity name and description following VersionWebscript pattern
+				NodeRef frozenNodeRef = version.getFrozenStateNodeRef();
+				if (frozenNodeRef != null && nodeService.exists(frozenNodeRef)) {
+					// Get name from frozen state and remove version suffix (like VersionWebscript does)
+					String entityName = (String) nodeService.getProperty(frozenNodeRef, ContentModel.PROP_NAME);
+					if (entityName != null && entityName.endsWith(RepoConsts.VERSION_NAME_DELIMITER + version.getVersionLabel())) {
+						entityName = entityName.replace(RepoConsts.VERSION_NAME_DELIMITER + version.getVersionLabel(), "");
+					}
+					
+					// Get description from the current entity node (like VersionWebscript does)
+					String entityDescription = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_DESCRIPTION);
+					versionElt.addAttribute(ContentModel.PROP_NAME.getLocalName(),
+							XMLTextHelper.writeAttribute(entityName));
+					versionElt.addAttribute(ContentModel.PROP_DESCRIPTION.getLocalName(),
+							XMLTextHelper.writeAttribute(entityDescription));
+				}
 
 			}
 		}
