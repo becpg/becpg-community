@@ -23,6 +23,9 @@ import org.apache.commons.lang3.mutable.MutableInt;
  */
 public interface EntityVersionService {
 
+	String LOCK_TYPE_PARAM = "lockType";
+	String LOCK_TYPE_VERSIONING = "versioning";
+
 	/**
 	 * <p>cancelCheckOut.</p>
 	 *
