@@ -7,7 +7,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.constraints.NutRequirementType;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 
 /**
@@ -91,33 +90,7 @@ public class NutsRequirementScanner extends SimpleListRequirementScanner<NutList
 		return key;
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	protected Double getMini(NutListDataItem specDataItem, NutListDataItem listDataItem) {
-		if (isLabeledRequirementType(specDataItem.getRequirementType())) {
-			String countryKey = extractCountryKey(specDataItem);
-			return listDataItem.mini(countryKey);
-		}
-		return specDataItem.getMini();
-	}
 
-	/** {@inheritDoc} */
-	@Override
-	protected Double getMaxi(NutListDataItem specDataItem, NutListDataItem listDataItem) {
-		if (isLabeledRequirementType(specDataItem.getRequirementType())) {
-			String countryKey = extractCountryKey(specDataItem);
-			return listDataItem.maxi(countryKey);
-		}
-		return specDataItem.getMaxi();
-	}
-
-	private boolean isLabeledRequirementType(NutRequirementType requirementType) {
-		return requirementType == NutRequirementType.LabeledValue
-				|| requirementType == NutRequirementType.LabeledAsPrepared
-				|| requirementType == NutRequirementType.LabeledGdaPerc
-				|| requirementType == NutRequirementType.LabeledServing
-				|| requirementType == NutRequirementType.LabeledAsPreparedServing;
-	}
 
 	/** {@inheritDoc} */
 	@Override
