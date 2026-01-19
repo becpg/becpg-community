@@ -72,6 +72,7 @@ import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteParams;
 import fr.becpg.repo.entity.remote.RemoteServiceRegisty;
 import fr.becpg.repo.entity.remote.extractor.RemoteJSONContext.JsonVisitNodeType;
+import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.JsonHelper;
@@ -137,10 +138,10 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		try (OutputStreamWriter out = new OutputStreamWriter(result, StandardCharsets.UTF_8)) {
 			JSONObject ret = new JSONObject();
 			JSONObject pagination = new JSONObject();
-			
+
 			pagination.put("hasMoreItems", pagingResult.hasMoreItems());
 			pagination.put("count", pagingResult.getTotalResultCount().getFirst());
-			
+
 			JSONArray jsonEntities = new JSONArray();
 
 			for (NodeRef nodeRef : pagingResult.getPage()) {
@@ -212,15 +213,119 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		if (JsonVisitNodeType.ENTITY.equals(type) || JsonVisitNodeType.CONTENT.equals(type) || JsonVisitNodeType.ASSOC.equals(type)
 				|| (JsonVisitNodeType.CHILD_ASSOC.equals(type) && !ContentModel.TYPE_FOLDER.equals(nodeType))) {
 
-			NodeRef parentRef = getPrimaryParentRef(nodeRef);
-			if (parentRef != null) {
-				Path parentPath = nodeService.getPath(parentRef);
-				String path = parentPath.toPrefixString(namespaceService);
+				NodeRef parentRef = getPrimaryParentRef(nodeRef);
+				if (parentRef != null) {
+					Path parentPath = nodeService.getPath(parentRef);
+					String path = parentPath.toPrefixString(namespaceService);
 
-				entity.put(RemoteEntityService.ATTR_PATH, path.replace(context.getEntityPath(nodeService, namespaceService), "~"));
-				if (!JsonVisitNodeType.ASSOC.equals(type)) {
-					visitSite(entity, parentPath);
-					entity.put(RemoteEntityService.ATTR_PARENT_ID, parentRef.getId());
+					entity.put(RemoteEntityService.ATTR_PATH, path.replace(context.getEntityPath(nodeService, namespaceService), "~"));
+					if (!JsonVisitNodeType.ASSOC.equals(type)) {
+						visitSite(entity, parentPath);
+						entity.put(RemoteEntityService.ATTR_PARENT_ID, parentRef.getId());
+					}
+				} else {
+					logger.warn("Node : " + nodeRef + " has no primary parent");
+				}
+			}
+
+			entity.put(RemoteEntityService.ATTR_TYPE, entityDictionaryService.toPrefixString(nodeType));
+
+			QName propName = RemoteHelper.getPropName(nodeType, entityDictionaryService);
+			Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
+
+			PropertyDefinition namePropertyDefinition = entityDictionaryService.getProperty(propName);
+
+			if (DataTypeDefinition.MLTEXT.equals(namePropertyDefinition.getDataType().getName())
+					&& (mlNodeService.getProperty(nodeRef, namePropertyDefinition.getName()) instanceof MLText mlValues)
+					&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_MLTEXT, Boolean.TRUE))) {
+				visitMltextAttributes(entityDictionaryService.toPrefixString(propName), entity, mlValues);
+			}
+			visitPropValue(propName, entity, properties.get(propName), context);
+
+			if (!JsonVisitNodeType.CHILD_ASSOC.equals(type)) {
+
+				if ((properties.get(BeCPGModel.PROP_CODE) != null)
+						&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_CODE, Boolean.TRUE))) {
+					visitPropValue(BeCPGModel.PROP_CODE, entity, properties.get(BeCPGModel.PROP_CODE), context);
+				}
+				// erpCode
+				if ((properties.get(BeCPGModel.PROP_ERP_CODE) != null)
+						&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_ERP_CODE, Boolean.TRUE))) {
+					visitPropValue(BeCPGModel.PROP_ERP_CODE, entity, properties.get(BeCPGModel.PROP_ERP_CODE), context);
+				}
+
+				if (properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL) != null
+						&& !((String) properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL)).isBlank()) {
+					entity.put(RemoteEntityService.ATTR_VERSION, properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL));
+				} else if (properties.get(BeCPGModel.PROP_VERSION_LABEL) != null
+						&& !((String) properties.get(BeCPGModel.PROP_VERSION_LABEL)).isBlank()) {
+					entity.put(RemoteEntityService.ATTR_VERSION, properties.get(BeCPGModel.PROP_VERSION_LABEL));
+				} else if (properties.get(ContentModel.PROP_VERSION_LABEL) != null
+						&& !((String) properties.get(ContentModel.PROP_VERSION_LABEL)).isBlank()) {
+					entity.put(RemoteEntityService.ATTR_VERSION, properties.get(ContentModel.PROP_VERSION_LABEL));
+				}
+
+				if (Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_IS_INITIAL_VERSION, Boolean.FALSE))
+						&& lockService.isLocked(nodeRef)) {
+
+					String lockInfo = lockService.getAdditionalInfo(nodeRef);
+					if (lockInfo != null) {
+						try {
+							JSONObject jsonInfo = new JSONObject(lockInfo);
+							if (jsonInfo.has(EntityVersionService.LOCK_TYPE_PARAM) && EntityVersionService.LOCK_TYPE_VERSIONING.equals(jsonInfo.get(EntityVersionService.LOCK_TYPE_PARAM))) {
+								String currentVersion = (String) entity.get(RemoteEntityService.ATTR_VERSION);
+
+								if (currentVersion != null) {
+									Collection<Version> nodeRefVersions = versionService.getVersionHistory(nodeRef).getAllVersions();
+									Optional<Double> previousVersion = nodeRefVersions.stream().map(Version::getVersionLabel)
+											.filter(label -> !label.equals(currentVersion)).map(Double::parseDouble)
+											.max(Comparator.comparing(Double::valueOf));
+									previousVersion.ifPresent(version -> entity.put(RemoteEntityService.ATTR_VERSION, version.toString()));
+								}
+							}
+
+						} catch (JSONException e) {
+							logger.info("lock additional information cannot be parsed");
+						}
+					} else {
+						logger.warn("Node "+nodeRef+" is locked and has no additional informations");
+					}
+				}
+
+				if ((nodeRef != null) && Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_NODEREF, Boolean.TRUE))) {
+
+					String nodePath = nodeService.getPath(nodeRef).toPrefixString(namespaceService);
+
+					if (Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_UPDATE_ENTITY_NODEREFS, Boolean.FALSE))
+							&& nodePath.contains(context.getEntityPath(nodeService, namespaceService))) {
+
+						NodeRef currentNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, nodeRef.getId());
+
+						NodeRef newNode = null;
+
+						if (context.getCache().containsKey(currentNode)) {
+							newNode = context.getCache().get(currentNode);
+						} else {
+							newNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, GUID.generate());
+							context.getCache().put(currentNode, newNode);
+						}
+
+						entity.put(RemoteEntityService.ATTR_ID, newNode.getId());
+					} else {
+
+						if (Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_REPLACE_HISTORY_NODEREFS, Boolean.FALSE))
+								&& nodeService.getPath(nodeRef).toPrefixString(namespaceService).contains(RepoConsts.ENTITIES_HISTORY_XPATH)) {
+							NodeRef parentNode = getPrimaryParentRef(nodeRef);
+
+							String parentName = (String) nodeService.getProperty(parentNode, ContentModel.PROP_NAME);
+
+							NodeRef originalNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, parentName);
+
+							entity.put(RemoteEntityService.ATTR_ID, originalNode.getId());
+						} else {
+							entity.put(RemoteEntityService.ATTR_ID, nodeRef.getId());
+						}
+					}
 				}
 			} else {
 				logger.warn("Node : " + nodeRef + " has no primary parent");
@@ -287,7 +392,15 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 				}
 			}
 
-			if ((nodeRef != null) && Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_NODEREF, Boolean.TRUE))) {
+
+			JSONObject attributes = new JSONObject();
+			if (JsonVisitNodeType.ENTITY.equals(type) || JsonVisitNodeType.DATALIST.equals(type)
+					|| ((JsonVisitNodeType.ENTITY_LIST.equals(type) || JsonVisitNodeType.CONTENT.equals(type))
+							&& (params.getFilteredProperties() != null) && !params.getFilteredProperties().isEmpty())
+					|| ((nodeType != null) && params.getFilteredAssocProperties().containsKey(nodeType))
+					|| ((assocName != null) && params.getFilteredAssocProperties().containsKey(assocName))
+					|| JsonVisitNodeType.CHILD_ASSOC.equals(type)) {
+
 
 				String nodePath = nodeService.getPath(nodeRef).toPrefixString(namespaceService);
 
@@ -388,26 +501,27 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 					if (!(dataListName).startsWith(RepoConsts.WUSED_PREFIX) && !dataListName.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX)) {
 						if ((BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(dataListTypeQName)
 								|| entityDictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM))) {
-							
+
 							Map<QName, List<NodeRef>> listItemsByType = entityListDAO.getListItemsByType(listNodeRef);
-							
+
 							for (Entry<QName, List<NodeRef>> entry : listItemsByType.entrySet()) {
 								QName listItemType = entry.getKey();
 								List<NodeRef> listItems = entry.getValue();
 								String listName = dataListName;
 								String listType = dataListType;
 								boolean shouldExtract = true;
-								
+
 								if (!listItemType.equals(dataListTypeQName)) {
-									shouldExtract = Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_NESTED_DATALIST_TYPE, Boolean.TRUE));
+									shouldExtract = Boolean.TRUE
+											.equals(params.extractParams(RemoteParams.PARAM_APPEND_NESTED_DATALIST_TYPE, Boolean.TRUE));
 									listName = dataListName + "@" + listItemType.toPrefixString(namespaceService);
 									listType = dataListType + "@" + listItemType.toPrefixString(namespaceService);
 								}
-								
+
 								shouldExtract = shouldExtract && params.shouldExtractList(listName);
-								
+
 								if (shouldExtract && (listItems != null) && !listItems.isEmpty()) {
-									
+
 									JSONArray list = new JSONArray();
 
 									if (!entityLists.has(listType)) {
@@ -418,12 +532,12 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 									for (NodeRef listItem : listItems) {
 										JSONObject jsonAssocNode = new JSONObject();
 										list.put(jsonAssocNode);
-										
+
 										visitNode(listItem, jsonAssocNode, JsonVisitNodeType.DATALIST, context);
 									}
 								}
 							}
-							
+
 						} else {
 							logger.warn(
 									"Existing " + dataListName + " (" + dataListTypeQName + ") list doesn't inheritate from 'bcpg:entityListItem'.");
