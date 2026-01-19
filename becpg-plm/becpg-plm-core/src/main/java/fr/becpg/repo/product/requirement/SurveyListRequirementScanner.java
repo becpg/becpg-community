@@ -53,7 +53,7 @@ public class SurveyListRequirementScanner extends AbstractRequirementScanner<Sur
                             boolean isAnswerCorrect = checkCorrectAnswer(listDataItem, specDataItem);
                             
                             if (!isAnswerCorrect || Boolean.TRUE.equals(addInfoReqCtrl)) {
-                                MLText message;
+                                MLText message = null;
                                 
                                 // Determine if choice is missing or incorrect
                                 if (CollectionUtils.isEmpty(listDataItem.getChoices())) {
@@ -66,12 +66,11 @@ public class SurveyListRequirementScanner extends AbstractRequirementScanner<Sur
                                 
                                 RequirementType reqType = isAnswerCorrect ? RequirementType.Info : RequirementType.Forbidden;
                                 
-                                // Check if specDataItem can be cast to RegulatoryEntityItem
                                 if (!isAnswerCorrect ) {
-                                    if (specDataItem.getRegulatoryType() != null) {
+                                    if (specDataItem.getRegulatoryType() != null ) {
                                         reqType = specDataItem.getRegulatoryType();
                                     }
-                                    if (specDataItem.getRegulatoryMessage() != null) {
+                                    if (specDataItem.getRegulatoryMessage() != null && !MLTextHelper.isEmpty(specDataItem.getRegulatoryMessage())) {
                                         message = specDataItem.getRegulatoryMessage();
                                     }
                                 }

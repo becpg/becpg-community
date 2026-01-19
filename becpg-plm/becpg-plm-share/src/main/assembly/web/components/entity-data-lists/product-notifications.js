@@ -541,14 +541,15 @@
                                     desc += '   <div class="icon" ><span class="reqType' + reqType + '" title="'
                                             + Alfresco.util.encodeHTML(this.msg("data.reqtype." + reqType.toLowerCase())) + '">&nbsp;</span></div>';
                                 }
-                                if (regulatoryCode) {
+                                var displayMsg = oRecord.getData("itemData")["prop_bcpg_rclReqMessage"].displayValue;
+                                if (regulatoryCode && displayMsg) {
                                     desc += '      <div class="rclReq-regulatoryCode">'
                                         + Alfresco.util.encodeHTML(regulatoryCode) + '</div>';
                                     desc += '      <div class="rclReq-title">'
-                                        + Alfresco.util.encodeHTML(oRecord.getData("itemData")["prop_bcpg_rclReqMessage"].displayValue.replace(regulatoryCode,"")) + '</div>';
+                                        + Alfresco.util.encodeHTML(displayMsg.replace(regulatoryCode,"")) + '</div>';
                                 } else {
                                 desc += '      <div class="rclReq-title">'
-                                        + Alfresco.util.encodeHTML(oRecord.getData("itemData")["prop_bcpg_rclReqMessage"].displayValue) + '</div>';
+                                        + Alfresco.util.encodeHTML(displayMsg) + '</div>';
                                 }
                                 desc += '      <div class="rclReq-content"><ul>';
 
