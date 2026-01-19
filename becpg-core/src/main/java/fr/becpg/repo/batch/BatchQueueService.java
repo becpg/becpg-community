@@ -5,6 +5,7 @@ import java.util.List;
 import org.alfresco.repo.batch.BatchMonitor;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
+import org.alfresco.service.cmr.repository.NodeRef;
 
 /**
  * <p>BatchQueueService interface.</p>
@@ -95,9 +96,9 @@ public interface BatchQueueService {
 
 	String getBatchesInError();
 
-	void retryBatchInError(String batchId);
+	BatchInfo retryBatchInError(String batchId);
 
 	String viewErrors(String batchId);
 
-	
+	BatchStep<NodeRef> createBatchStepWithErrorHandling(BatchInfo batchInfo, List<NodeRef> list, BatchProcessWorker<NodeRef> consumer);
 }

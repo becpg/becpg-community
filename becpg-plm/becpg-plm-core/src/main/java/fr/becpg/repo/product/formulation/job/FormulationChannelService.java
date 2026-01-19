@@ -252,14 +252,14 @@ public class FormulationChannelService {
 		totalNodesToProcess.addAll(toFormulateProducts);
 		totalNodesToProcess.addAll(toPublishProducts);
 		
-		BatchStep<NodeRef> formulateStep = new BatchStep<>();
-		formulateStep.setStepDescId("becpg.batch.formulation.channel.formulateEntities.formulation");
 		if (totalNodesToProcess.size() < maxProductsToFormulate()) {
 			Iterator<NodeRef> it = impactedProducts.iterator();
 			while (it.hasNext() && totalNodesToProcess.size() < maxProductsToFormulate()) {
 				NodeRef next = it.next();
-				toFormulateProducts.add(next);
-				totalNodesToProcess.add(next);
+				if (!toFormulateProducts.contains(next)) {
+					toFormulateProducts.add(next);
+					totalNodesToProcess.add(next);
+				}
 			}
 		}
 		logger.info("Products to formulate: " + toFormulateProducts.size());
@@ -276,8 +276,9 @@ public class FormulationChannelService {
 			return Integer.compare(priority1, priority2);
 		});
 		
-		formulateStep.setWorkProvider(WorkProviderFactory.fromList(totalNodesToProcess).build());
-		formulateStep.setProcessWorker(new ReformulateChangedEntitiesProcessWorker(toPublishProducts));
+		ReformulateChangedEntitiesProcessWorker processWorker = new ReformulateChangedEntitiesProcessWorker(toPublishProducts);
+		BatchStep<NodeRef> formulateStep = batchQueueService.createBatchStepWithErrorHandling(batchInfo, totalNodesToProcess, processWorker);
+		formulateStep.setStepDescId("becpg.batch.formulation.channel.formulateEntities.formulation");
 		steps.add(formulateStep);
 
 		batchQueueService.queueBatch(batchInfo, steps);
@@ -377,13 +378,14 @@ public class FormulationChannelService {
 				MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(Arrays.asList(channelProduct), WUsedOperator.AND, associationQName,
 						RepoConsts.MAX_DEPTH_LEVEL);
 				
+				List<NodeRef> allWhereUsed = wUsedData.getAllChilds();
 				if (logger.isTraceEnabled()) {
 					logger.trace("WUsed to apply:" + wUsedData.toString());
-					logger.trace("Leaf size :" + wUsedData.getAllLeafs().size());
+					logger.trace("WUsed size :" + allWhereUsed.size());
 					
 				}
 				
-				List<NodeRef> wUsedList = new ArrayList<>(wUsedData.getAllLeafs());
+				List<NodeRef> wUsedList = new ArrayList<>(allWhereUsed);
 				wUsedList.removeIf(w -> {
 					Date formulatedDate = (Date) nodeService.getProperty(w, BeCPGModel.PROP_FORMULATED_DATE);
 					return formulatedDate != null && formulatedDate.after(referenceDate);
@@ -570,8 +572,7 @@ public class FormulationChannelService {
 				}
 				
 				// Using L2CacheSupport is good practice.
-				L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> formulationService.formulate(toProcess)), false, true,
-						true);
+				L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> formulationService.formulate(toProcess)), false, true);
 				
 				// Log execution time only in debug mode
 				if (logger.isDebugEnabled() && stopWatch != null) {
@@ -589,12 +590,6 @@ public class FormulationChannelService {
 					}
 				});
 				
-			} catch (Throwable e) {
-				if (RetryingTransactionHelper.extractRetryCause(e) != null) {
-					logger.debug("Retrying the formulation for " + toProcess + " due to exception: " + e.getMessage());
-					throw e; // Re-throw to trigger retry
-				}
-				logger.error("Cannot reformulate node: " + toProcess, e);
 			} finally {
 				policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
