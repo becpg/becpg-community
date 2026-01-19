@@ -320,7 +320,7 @@ public class ECOServiceImpl implements ECOService {
 
 					JSONObject lockInfo = new JSONObject();
 
-					lockInfo.put("lockType", "versioning");
+					lockInfo.put(EntityVersionService.LOCK_TYPE_PARAM, EntityVersionService.LOCK_TYPE_VERSIONING);
 					lockInfo.put("sourceNodeRef", ecoData.getNodeRef());
 					lockInfo.put("sourceInfo", batchInfo.toJson());
 
