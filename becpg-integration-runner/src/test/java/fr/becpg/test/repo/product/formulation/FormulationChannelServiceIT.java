@@ -24,6 +24,8 @@ import fr.becpg.model.PublicationModel;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.product.data.SemiFinishedProductData;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.formulation.job.FormulationChannelService;
 import fr.becpg.test.PLMBaseTestCase;
@@ -71,6 +73,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 			List<CompoListDataItem> compoList = new ArrayList<>();
 			CompoListDataItem compoItem = new CompoListDataItem();
 			compoItem.setQtySubFormula(1d);
+			compoItem.setCompoListUnit(ProductUnit.kg);
 			compoItem.setProduct(rawMaterialNodeRef);
 			compoList.add(compoItem);
 			finishedProduct.getCompoListView().setCompoList(compoList);
@@ -107,6 +110,130 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		waitForBatchEnd(batchInfo);
 		assertIsPublished(finishedProductNodeRef);
 		assertIsPublished(rawMaterialNodeRef);
+	}
+	
+	@Test
+	public void testMultiLevelWhereUsedFormulation() throws InterruptedException {
+		
+		NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("FP 2 formulate test");
+			finishedProduct.setParentNodeRef(getTestFolderNodeRef());
+			return alfrescoRepository.save(finishedProduct).getNodeRef();
+		});
+		
+		NodeRef semiFinishedProductNodeRef = inWriteTx(() -> {
+			SemiFinishedProductData semiFinishedProduct = new SemiFinishedProductData();
+			semiFinishedProduct.setName("SF 2 formulate test");
+			semiFinishedProduct.setParentNodeRef(getTestFolderNodeRef());
+			return alfrescoRepository.save(semiFinishedProduct).getNodeRef();
+		});
+		
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("RM 2 formulate test");
+			rawMaterial.setParentNodeRef(getTestFolderNodeRef());
+			return alfrescoRepository.save(rawMaterial).getNodeRef();
+		});
+		
+		inWriteTx(() -> {
+			SemiFinishedProductData semiFinishedProduct = (SemiFinishedProductData) alfrescoRepository.findOne(semiFinishedProductNodeRef);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			CompoListDataItem compoItem = new CompoListDataItem();
+			compoItem.setQtySubFormula(1d);
+			compoItem.setCompoListUnit(ProductUnit.kg);
+			compoItem.setProduct(rawMaterialNodeRef);
+			compoList.add(compoItem);
+			semiFinishedProduct.getCompoListView().setCompoList(compoList);
+			return alfrescoRepository.save(semiFinishedProduct);
+		});
+		
+		inWriteTx(() -> {
+			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			CompoListDataItem compoItem = new CompoListDataItem();
+			compoItem.setQtySubFormula(1d);
+			compoItem.setCompoListUnit(ProductUnit.kg);
+			compoItem.setProduct(semiFinishedProductNodeRef);
+			compoList.add(compoItem);
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			return alfrescoRepository.save(finishedProduct);
+		});
+		
+		doReturn(new PagingResults<NodeRef>() {
+			@Override
+			public List<NodeRef> getPage() {
+				return List.of(rawMaterialNodeRef, semiFinishedProductNodeRef, finishedProductNodeRef);
+			}
+			@Override
+			public boolean hasMoreItems() {
+				return false;
+			}
+			@Override
+			public Pair<Integer, Integer> getTotalResultCount() {
+				return null;
+			}
+			@Override
+			public String getQueryExecutionId() {
+				return null;
+			}
+		})
+		.when(publicationChannelService).getEntitiesByChannel(any(), any());
+		
+		BatchInfo batchInfo = inWriteTx(() -> {
+			return formulationChannelService.reformulateEntities();
+		});
+		
+		waitForBatchEnd(batchInfo);
+		
+		assertIsPublished(rawMaterialNodeRef);
+		assertIsPublished(semiFinishedProductNodeRef);
+		assertIsPublished(finishedProductNodeRef);
+		
+		inWriteTx(() -> {
+			productService.formulate(semiFinishedProductNodeRef);
+			productService.formulate(finishedProductNodeRef);
+			return null;
+		});
+		
+		inWriteTx(() -> {
+			nodeService.setProperty(rawMaterialNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, new Date());
+			return null;
+		});
+		
+		assertIsNotPublished(rawMaterialNodeRef);
+		assertIsNotPublished(semiFinishedProductNodeRef);
+		assertIsNotPublished(finishedProductNodeRef);
+
+		doReturn(new PagingResults<NodeRef>() {
+			@Override
+			public List<NodeRef> getPage() {
+				return List.of(rawMaterialNodeRef);
+			}
+			@Override
+			public boolean hasMoreItems() {
+				return false;
+			}
+			@Override
+			public Pair<Integer, Integer> getTotalResultCount() {
+				return null;
+			}
+			@Override
+			public String getQueryExecutionId() {
+				return null;
+			}
+		})
+		.when(publicationChannelService).getEntitiesByChannel(any(), any());
+		batchInfo = inWriteTx(() -> {
+			return formulationChannelService.reformulateEntities();
+		});
+		
+		waitForBatchEnd(batchInfo);
+		
+		assertIsPublished(rawMaterialNodeRef);
+		assertIsPublished(semiFinishedProductNodeRef);
+		assertIsPublished(finishedProductNodeRef);
+
 	}
 	
 	@Test
