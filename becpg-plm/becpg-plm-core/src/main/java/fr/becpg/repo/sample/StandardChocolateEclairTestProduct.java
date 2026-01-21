@@ -598,25 +598,25 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
         NodeRef fillingQuestionRef = CharactTestHelper.getOrCreateSurveyQuestion(nodeService, SURVEY_FILLING_QUESTION);
         
         // Get references to the answers
-        NodeRef pastryPerfectRef = CharactTestHelper.getOrCreateSurveyQuestion(nodeService, ANSWER_PASTRY_PERFECT);
-        NodeRef fillingPerfectRef = CharactTestHelper.getOrCreateSurveyQuestion(nodeService, ANSWER_FILLING_PERFECT);
+        NodeRef pastryMinorRef = CharactTestHelper.getOrCreateSurveyQuestion(nodeService, ANSWER_PASTRY_MINOR_DEFECTS);
+        NodeRef fillingMinorRef = CharactTestHelper.getOrCreateSurveyQuestion(nodeService, ANSWER_FILLING_MINOR_ISSUES);
         
         // Setup specification survey requirements
-        // 1. Pastry quality - require perfect (product uses minor defects, should generate a Forbidden requirement)
+        // 1. Pastry quality - forbid minor defects (product uses minor defects, should generate a Forbidden requirement)
         SurveyListDataItem specQ1 = new SurveyListDataItem(pastryQuestionRef, true);
-        specQ1.setChoices(List.of(pastryPerfectRef));
+        specQ1.setChoices(List.of(pastryMinorRef));
         specQ1.setRegulatoryType(RequirementType.Forbidden);
         MLText pastryMessage = new MLText();
-        pastryMessage.addValue(Locale.ENGLISH, "Pastry quality must be perfect for this specification");
+        pastryMessage.addValue(Locale.ENGLISH, "Minor pastry defects are forbidden for this specification");
         specQ1.setRegulatoryMessage(pastryMessage);
         specSurveyList.add(specQ1);
         
-        // 2. Filling quality - require perfect (product uses minor issues, should generate a Forbidden requirement)
+        // 2. Filling quality - forbid minor issues (product uses minor issues, should generate a Forbidden requirement)
         SurveyListDataItem specQ2 = new SurveyListDataItem(fillingQuestionRef, true);
-        specQ2.setChoices(List.of(fillingPerfectRef));
+        specQ2.setChoices(List.of(fillingMinorRef));
         specQ2.setRegulatoryType(RequirementType.Forbidden);
         MLText fillingMessage = new MLText();
-        fillingMessage.addValue(Locale.ENGLISH, "Filling quality must be perfect for this specification");
+        fillingMessage.addValue(Locale.ENGLISH, "Minor filling issues are forbidden for this specification");
         specQ2.setRegulatoryMessage(fillingMessage);
         specSurveyList.add(specQ2);
         

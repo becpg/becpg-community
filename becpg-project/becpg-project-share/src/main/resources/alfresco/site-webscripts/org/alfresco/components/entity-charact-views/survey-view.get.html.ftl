@@ -1,12 +1,15 @@
 <@markup id="css" >
    <#include "../../modules/entity-datagrid/include/entity-datagrid.css.ftl"/>
+   <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/entity-data-lists/product-notifications.css" group="entity-datalists" />
    <link rel="stylesheet" type="text/css" href="${url.context}/res/components/entity-charact-views/survey-view.css" />
 </@>
 
 <@markup id="js">
     <#include "../../modules/entity-datagrid/include/entity-datagrid.js.ftl"/>
-    <@script src="${url.context}/res/components/entity-charact-views/survey-view.js" group="entity-datalists"/>
-    
+   <@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/product-notifications.js" group="entity-datalists"/>
+   <@script src="${url.context}/res/modules/custom-entity-datagrid/product-entity-toolbar.js" group="entity-datalists"/>
+   <@script src="${url.context}/res/components/entity-charact-views/survey-view.js" group="entity-datalists"/>
+   
 	<@script src="${url.context}/res/components/entity-charact-views/survey-view-toolbar.js" group="entity-datalists"/>
 	<@script src="${url.context}/res/components/entity-charact-views/custom-entity-toolbar.js" group="entity-datalists"/>
 	
