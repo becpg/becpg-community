@@ -170,7 +170,7 @@
             var label = question.label || this.msg("form.control.decision-tree." + this.options.prefix + "." + question.id + ".label");
             var legendTitle = question.id.length < 10 ? question.id.toUpperCase() + ' - ' : "";
             
-            var mandatoryIndicator = question.mandatory ? '<span class="mandatory-indicator">*</span>' : "";
+            var mandatoryIndicator = question.mandatory ? '<span id="' + this.id + '-mandatory_' + question.id + '" class="mandatory-indicator" title="' + this._escapeHtml(this.msg("form.field.incomplete")) + '">*</span>' : "";
             
             htmlForm += '<legend title="' + this._escapeHtml(description) + '">' + 
                        this._escapeHtml(legendTitle + label) + mandatoryIndicator + '</legend>';
@@ -279,7 +279,7 @@
                 if (choice.label !== "hidden") {
                     var label = choice.label || this.msg(msgKey);
                     // Ajout de l'indicateur si la question est obligatoire
-                    var mandatoryIndicator = (question.mandatory && !choice.checkboxes) ? '<span class="mandatory-indicator">*</span>' : "";
+                    var mandatoryIndicator = (question.mandatory && !choice.checkboxes) ? '<span id="' + this.id + '-mandatory_' + question.id + '_' + choice.id + '" class="mandatory-indicator" title="' + this._escapeHtml(this.msg("form.field.incomplete")) + '">*</span>' : "";
                     
                     htmlForm += '<label for="' + this.id + '-select_' + question.id + '_' + choice.id + '">' + 
                                this._escapeHtml(label) + mandatoryIndicator + '</label>';
