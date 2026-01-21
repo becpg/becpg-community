@@ -16,7 +16,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -148,11 +147,14 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Surveya
 	 * Chooses the hierarchy node reference using hierarchy2 if present, otherwise hierarchy1.
 	 */
 	private NodeRef getHierarchyNodeRef(SurveyableEntity formulatedProduct) {
-		if (formulatedProduct instanceof HierarchicalEntity productData) {
-			return ObjectUtils.defaultIfNull(productData.getHierarchy2(), productData.getHierarchy1());
-		}
-		return null;
+	    if (formulatedProduct instanceof HierarchicalEntity productData) {
+	        return productData.getHierarchy2() != null
+	                ? productData.getHierarchy2()
+	                : productData.getHierarchy1();
+	    }
+	    return null;
 	}
+
 
 	/**
 	 * Builds a map of criteria to their associated node references.
