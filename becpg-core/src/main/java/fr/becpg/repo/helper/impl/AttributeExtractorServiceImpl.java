@@ -931,6 +931,12 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				}
 				tmp.put("displayValue", displayName);
 				tmp.put("value", JsonHelper.formatValue(value));
+				if (DataTypeDefinition.MLTEXT.equals(((PropertyDefinition) attribute).getDataType().getName())) {
+					boolean mlTextHasValue = false;
+					MLText mltext = value instanceof MLText ? (MLText) value : (MLText) mlNodeService.getProperty(nodeRef, attribute.getName());
+					mlTextHasValue = (mltext != null) && !MLTextHelper.isEmpty(mltext);
+					tmp.put("mltextHasValue", mlTextHasValue);
+				}
 
 				return tmp;
 			}

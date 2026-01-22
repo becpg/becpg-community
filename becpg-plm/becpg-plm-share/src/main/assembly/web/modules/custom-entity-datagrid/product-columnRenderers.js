@@ -1829,8 +1829,21 @@ if (beCPG.module.EntityDataGridRenderers) {
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["bcpg:lclComments"],
         renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-            if (data.value != null && data.value.length > 0) {
-                return data.displayValue;
+            if (data.mltextHasValue === true) {
+                var displayValue = data.displayValue;
+                if (displayValue == null || displayValue === "") {
+                    displayValue = "<i>" + scope.msg("label.information.available") + "</i>";
+                }
+
+                var htmlId = "id-" + oRecord._sId;
+                var nodeRef = oRecord._oData.nodeRef;
+                var html = displayValue;
+                html += '<span class="labeling-action-container">';
+                html += '<span id="' + htmlId + "#" + nodeRef + "#" + label + "#true" + '" class="onShowTranslation">'
+                    + '<a href="#" title="' + scope.msg("label.show.translation.title") + '" class="labeling-action show-translation"></a>'
+                    + '</span>';
+                html += "</span>";
+                return html;
             }
             return "";
         }
