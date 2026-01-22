@@ -1791,12 +1791,6 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
-                <!-- deprecated -->
-				<property name="bcpg:isNutPropagateUp">
-					<type>d:boolean</type>
-					<mandatory>false</mandatory>
-					<index enabled="false" />
-				</property>
 			</properties>
 		</type>
 
@@ -3715,7 +3709,7 @@
 					<target>
 						<class>bcpg:certification</class>
 						<mandatory>false</mandatory>
-						<many>false</many>
+						<many>true</many>
 					</target>
 				</association>
 				<association name="bcpg:lclMissingLabelClaims">
@@ -3871,8 +3865,7 @@
 					<type>d:double</type>
 					<index enabled="false" />
 				</property>
-                <!-- Deprecated -->
-				<property name="bcpg:isLabelClaimPropagateUp">
+				<property name="bcpg:isCertificationPropagateUp">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
