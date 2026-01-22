@@ -42,6 +42,84 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 		initParts();
 	}
 
+	@Test
+	public void testCertificationPropagationUp() {
+
+		NodeRef productNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			// Create a label claim with propagation of certifications
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, "labelClaimCertProp");
+			properties.put(ContentModel.PROP_NAME, "labelClaimCertProp");
+			NodeRef labelClaimNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					PLMModel.TYPE_LABEL_CLAIM, properties).getChildRef();
+			nodeService.setProperty(labelClaimNodeRef, QName.createQName(BeCPGModel.BECPG_URI, "isCharactPropagateUp"), Boolean.FALSE);
+			nodeService.setProperty(labelClaimNodeRef, QName.createQName(BeCPGModel.BECPG_URI, "isCertificationPropagateUp"), Boolean.TRUE);
+
+			// Create certifications
+			properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, "Cert1");
+			NodeRef certification = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					PLMModel.TYPE_CERTIFICATION, properties).getChildRef();
+			properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, "CertPack");
+			NodeRef certificationPack = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					PLMModel.TYPE_CERTIFICATION, properties).getChildRef();
+
+			// Attach label claim with certification to a child (raw material 12)
+			ProductData rm12 = (ProductData) alfrescoRepository.findOne(rawMaterial12NodeRef);
+			rm12.getLabelClaimList().add(LabelClaimListDataItem.build().withLabelClaim(labelClaimNodeRef).withLabelClaimValue(LabelClaimListDataItem.VALUE_TRUE));
+			rm12.getLabelClaimList().get(rm12.getLabelClaimList().size() - 1).setCertifications(new ArrayList<>());
+			rm12.getLabelClaimList().get(rm12.getLabelClaimList().size() - 1).getCertifications().add(certification);
+			alfrescoRepository.save(rm12);
+
+			// Attach same claim with certification to a semi-finished child (localSF12)
+			ProductData sf12 = (ProductData) alfrescoRepository.findOne(localSF12NodeRef);
+			sf12.getLabelClaimList().add(LabelClaimListDataItem.build().withLabelClaim(labelClaimNodeRef).withLabelClaimValue(LabelClaimListDataItem.VALUE_TRUE));
+			sf12.getLabelClaimList().get(sf12.getLabelClaimList().size() - 1).setCertifications(new ArrayList<>());
+			sf12.getLabelClaimList().get(sf12.getLabelClaimList().size() - 1).getCertifications().add(certification);
+			alfrescoRepository.save(sf12);
+
+			// Attach claim with certification to a packaging child (packagingMaterial1)
+			ProductData packaging1 = (ProductData) alfrescoRepository.findOne(packagingMaterial1NodeRef);
+			packaging1.getLabelClaimList().add(LabelClaimListDataItem.build().withLabelClaim(labelClaimNodeRef).withLabelClaimValue(LabelClaimListDataItem.VALUE_TRUE));
+			packaging1.getLabelClaimList().get(packaging1.getLabelClaimList().size() - 1).setCertifications(new ArrayList<>());
+			packaging1.getLabelClaimList().get(packaging1.getLabelClaimList().size() - 1).getCertifications().add(certificationPack);
+			alfrescoRepository.save(packaging1);
+
+			// Build main product
+			NodeRef product = createTestProduct(null);
+			ProductData productData = (ProductData) alfrescoRepository.findOne(product);
+			productData.setLabelClaimList(new ArrayList<LabelClaimListDataItem>());
+			productData.getLabelClaimList()
+					.add(LabelClaimListDataItem.build().withLabelClaim(labelClaimNodeRef).withLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY));
+			alfrescoRepository.save(productData);
+			return product;
+		}, false, true);
+
+		// Formulate
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			productService.formulate(productNodeRef);
+			return null;
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			ProductData formulated = (ProductData) alfrescoRepository.findOne(productNodeRef);
+			LabelClaimListDataItem propagated = formulated.getLabelClaimList().stream()
+					.filter(i -> {
+						Serializable name = nodeService.getProperty(i.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME);
+						return name != null && "labelClaimCertProp".equals(name.toString());
+					})
+					.findFirst().orElse(null);
+			assertNotNull("Label claim should be propagated", propagated);
+			assertNotNull("Certifications should be set", propagated.getCertifications());
+			assertFalse("Certifications should not be empty", propagated.getCertifications().isEmpty());
+			return null;
+		}, false, true);
+	}
+
 	private NodeRef createTestProduct(final List<LabelingRuleListDataItem> labelingRuleList) {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 

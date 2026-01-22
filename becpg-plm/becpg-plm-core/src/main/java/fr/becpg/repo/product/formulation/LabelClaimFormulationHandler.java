@@ -120,6 +120,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		if ((productData.getLabelClaimList() != null) && !productData.getLabelClaimList().isEmpty()) {
 
 			productData.getLabelClaimList().forEach(labelClaimItem -> labelClaimItem.getMissingLabelClaims().clear());
+			
 
 			List<CompositionDataItem> compoItems = new ArrayList<>();
 
@@ -161,6 +162,10 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						}
 						labelClaimItem.setPercentApplicable(null);
 						labelClaimItem.setPercentClaim(null);
+						
+					     if ( Boolean.TRUE.equals(labelClaim.getIsCertificationPropagateUp())) {
+							labelClaimItem.setCertifications(new ArrayList<>());
+						 }
 					}
 
 				});
@@ -322,8 +327,9 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 			labelClaimItem.setParentNodeRef(null);
 			labelClaimItem.setLabelClaimValue(null);
 			labelClaimItem.setSort(null);
+			labelClaimItem.setCertifications(new ArrayList<>());
 			productData.getLabelClaimList().add(labelClaimItem);
-		}
+		} 
 
 		if (labelClaimItem != null) {
 
@@ -469,6 +475,18 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 				}
 
+			}
+			if (Boolean.TRUE.equals(labelClaim.getIsCertificationPropagateUp())) {
+				List<NodeRef> currentCerts = labelClaimItem.getCertifications();
+				if (currentCerts == null) {
+					currentCerts = new ArrayList<>();
+					labelClaimItem.setCertifications(currentCerts);
+				}
+				for (NodeRef cert : subLabelClaimItem.getCertifications()) {
+					if ((cert != null) && !currentCerts.contains(cert)) {
+						currentCerts.add(cert);
+					}
+				}
 			}
 			toRemove.remove(labelClaimItem);
 
