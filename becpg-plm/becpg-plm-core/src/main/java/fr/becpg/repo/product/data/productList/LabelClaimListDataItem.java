@@ -78,6 +78,7 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 	private List<NodeRef> missingLabelClaims = new ArrayList<>();
 	private List<NodeRef> regulatoryCountriesRef = new ArrayList<>();
 	private List<NodeRef> regulatoryUsagesRef = new ArrayList<>();
+	private List<NodeRef> certifications = new ArrayList<>();
 
 	
 	/**
@@ -110,6 +111,26 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 	/** {@inheritDoc} */
 	public void setRegulatoryUsagesRef(List<NodeRef> regulatoryUsages) {
 		this.regulatoryUsagesRef = regulatoryUsages;
+	}
+
+	/**
+	 * <p>Getter for the field <code>certifications</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	@AlfMultiAssoc
+	@AlfQname(qname="bcpg:lclCertification")
+	public List<NodeRef> getCertifications() {
+		return certifications;
+	}
+
+	/**
+	 * <p>Setter for the field <code>certifications</code>.</p>
+	 *
+	 * @param certifications a {@link java.util.List} object.
+	 */
+	public void setCertifications(List<NodeRef> certifications) {
+		this.certifications = certifications;
 	}
 	
 	/**
@@ -503,6 +524,7 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 		this.regulatoryUsagesRef = new ArrayList<>(labelClaimItem.regulatoryUsagesRef);
 		this.regulatoryMessage = labelClaimItem.regulatoryMessage;
 		this.regulatoryType = labelClaimItem.regulatoryType;
+		this.certifications = new ArrayList<>(labelClaimItem.certifications);
 	
 	}
 	
@@ -518,7 +540,7 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(isFormulated, labelClaim, type);
+		result = prime * result + Objects.hash(certifications, isFormulated, labelClaim, type);
 		return result;
 	}
 	/** {@inheritDoc} */
@@ -531,7 +553,8 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements Si
 		if (getClass() != obj.getClass())
 			return false;
 		LabelClaimListDataItem other = (LabelClaimListDataItem) obj;
-		return Objects.equals(isFormulated, other.isFormulated) && Objects.equals(labelClaim, other.labelClaim) && Objects.equals(type, other.type);
+		return Objects.equals(certifications, other.certifications) && Objects.equals(isFormulated, other.isFormulated)
+				&& Objects.equals(labelClaim, other.labelClaim) && Objects.equals(type, other.type);
 	}
 	
 	/** {@inheritDoc} */

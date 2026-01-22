@@ -33,7 +33,7 @@ public class LabelClaimItem extends BeCPGDataObject {
 	
 	private Double labelClaimRegulatoryThreshold;
 	
-	private Boolean isLabelClaimPropagateUp;
+	private Boolean isCertificationPropagateUp;
 	
 	private Boolean isCharactPropagateUp;
 	
@@ -139,24 +139,26 @@ public class LabelClaimItem extends BeCPGDataObject {
 		this.labelClaimRegulatoryThreshold = labelClaimRegulatoryThreshold;
 	}
 
+	
+
 	/**
-	 * <p>Getter for the field <code>isLabelClaimPropagateUp</code>.</p>
+	 * <p>Getter for the field <code>isCertificationPropagateUp</code>.</p>
 	 *
 	 * @return a {@link java.lang.Boolean} object
 	 */
 	@AlfProp
-	@AlfQname(qname = "bcpg:isLabelClaimPropagateUp")
-	public Boolean getIsLabelClaimPropagateUp() {
-		return isLabelClaimPropagateUp;
+	@AlfQname(qname = "bcpg:isCertificationPropagateUp")
+	public Boolean getIsCertificationPropagateUp() {
+		return isCertificationPropagateUp;
 	}
 
 	/**
-	 * <p>Setter for the field <code>isLabelClaimPropagateUp</code>.</p>
+	 * <p>Setter for the field <code>isCertificationPropagateUp</code>.</p>
 	 *
-	 * @param isLabelClaimPropagateUp a {@link java.lang.Boolean} object
+	 * @param isCertificationPropagateUp a {@link java.lang.Boolean} object
 	 */
-	public void setIsLabelClaimPropagateUp(Boolean isLabelClaimPropagateUp) {
-		this.isLabelClaimPropagateUp = isLabelClaimPropagateUp;
+	public void setIsCertificationPropagateUp(Boolean isCertificationPropagateUp) {
+		this.isCertificationPropagateUp = isCertificationPropagateUp;
 	}
 
 	/**
@@ -204,8 +206,8 @@ public class LabelClaimItem extends BeCPGDataObject {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(charactName, isCharactPropagateUp, isLabelClaimPropagateUp, isManualListItem, labelClaimCode,
-				labelClaimFormula, labelClaimRegulatoryThreshold, labelClaimType);
+		result = prime * result + Objects.hash(charactName, isCertificationPropagateUp, isCharactPropagateUp,
+				isManualListItem, labelClaimCode, labelClaimFormula, labelClaimRegulatoryThreshold, labelClaimType);
 		return result;
 	}
 
@@ -219,8 +221,9 @@ public class LabelClaimItem extends BeCPGDataObject {
 		if (getClass() != obj.getClass())
 			return false;
 		LabelClaimItem other = (LabelClaimItem) obj;
-		return Objects.equals(charactName, other.charactName) && Objects.equals(isCharactPropagateUp, other.isCharactPropagateUp)
-				&& Objects.equals(isLabelClaimPropagateUp, other.isLabelClaimPropagateUp) && Objects.equals(isManualListItem, other.isManualListItem)
+		return Objects.equals(charactName, other.charactName) && Objects.equals(isCertificationPropagateUp, other.isCertificationPropagateUp)
+				&& Objects.equals(isCharactPropagateUp, other.isCharactPropagateUp)
+			    && Objects.equals(isManualListItem, other.isManualListItem)
 				&& Objects.equals(labelClaimCode, other.labelClaimCode) && Objects.equals(labelClaimFormula, other.labelClaimFormula)
 				&& Objects.equals(labelClaimRegulatoryThreshold, other.labelClaimRegulatoryThreshold)
 				&& Objects.equals(labelClaimType, other.labelClaimType);
@@ -231,8 +234,8 @@ public class LabelClaimItem extends BeCPGDataObject {
 	public String toString() {
 		return "LabelClaimItem [charactName=" + charactName + ", labelClaimCode=" + labelClaimCode + ", labelClaimType=" + labelClaimType
 				+ ", labelClaimFormula=" + labelClaimFormula + ", labelClaimRegulatoryThreshold=" + labelClaimRegulatoryThreshold
-				+ ", isLabelClaimPropagateUp=" + isLabelClaimPropagateUp + ", isCharactPropagateUp=" + isCharactPropagateUp + ", isManualListItem="
-				+ isManualListItem + "]";
+				+ ", isCertificationPropagateUp=" + isCertificationPropagateUp
+				+ ", isCharactPropagateUp=" + isCharactPropagateUp + ", isManualListItem=" + isManualListItem + "]";
 	}
 	
 }
