@@ -42,7 +42,11 @@ function main() {
         	model.draft = wizard.attributes["draft"] == "true";
         	model.allSteps = wizard.attributes["allSteps"] == "true";
         	model.readOnly = wizard.attributes["read-only"] == "true";
-            var steps = wizard.childrenMap["step"];
+        	
+        	               // Extract security-related attributes from XML configuration
+        	               model.enforceTask = wizard.attributes["enforceTask"] == "true";
+        	               model.skipSecurityRules = wizard.attributes["skipSecurityRules"] == "true";
+        	            var steps = wizard.childrenMap["step"];
             for(var j = 0, step; j < steps.size(); j++){
                 step = steps.get(j);
                 wizardStruct.push({
@@ -82,7 +86,9 @@ function main() {
          draft : model.draft, 
          allSteps : model.allSteps,
          readOnly: model.readOnly,
-         wizardStruct : wizardStruct
+         wizardStruct : wizardStruct,
+         enforceTask : model.enforceTask,
+         skipSecurityRules : model.skipSecurityRules
       }
    };
    model.widgets = [widget];
