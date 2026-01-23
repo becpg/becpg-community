@@ -667,4 +667,37 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	}
 	
 
+	protected boolean isBrokenPipe(Throwable t) {
+		while (t != null) {
+			if (t instanceof IOException) {
+				String msg = t.getMessage();
+				if (msg != null && (
+					"Broken pipe".equalsIgnoreCase(msg) ||
+					"Connection reset".equalsIgnoreCase(msg) ||
+					msg.contains("ClientAbortException") ||
+					msg.contains("Connection aborted"))) {
+					return true;
+				}
+			}
+			
+			String className = t.getClass().getName();
+			if (className.endsWith("ClientAbortException") ||
+				className.endsWith("ConnectionResetException")) {
+				return true;
+			}
+			
+			for (Throwable s : t.getSuppressed()) {
+				if (isBrokenPipe(s)) {
+					return true;
+				}
+			}
+			
+			t = t.getCause();
+		}
+		return false;
+	}
+
+	
+	
+
 }
