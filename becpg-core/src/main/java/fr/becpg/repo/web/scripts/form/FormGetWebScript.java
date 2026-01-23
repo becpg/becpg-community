@@ -35,6 +35,7 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.form.BecpgFormService;
 import fr.becpg.repo.form.impl.BecpgFormDefinition;
+import fr.becpg.repo.security.filter.SecurityContextHelper;
 
 /**
  * Return or save MLText field
@@ -62,6 +63,8 @@ public class FormGetWebScript extends AbstractWebScript {
 
 	private static final String PARAM_FORCEDFIELDS = "force";
 
+	private static final String PARAM_SKIP_SECURITY_RULES = "skipSecurityRules";
+
 	private BecpgFormService becpgFormService;
 
 	/**
@@ -84,6 +87,7 @@ public class FormGetWebScript extends AbstractWebScript {
 		String entityNodeRef = req.getParameter(PARAM_NODE_REF);
 		List<String> fields = new ArrayList<>();
 		List<String> forcedFields = new ArrayList<>();
+		boolean shouldSkipSecurityRules = false;
 
 		/* Parse the JSON content */
 
@@ -131,6 +135,10 @@ public class FormGetWebScript extends AbstractWebScript {
 					forcedFields.add(tmp.getString(i));
 				}
 			}
+
+			if (json.has(PARAM_SKIP_SECURITY_RULES) && !JSONObject.NULL.equals(json.get(PARAM_SKIP_SECURITY_RULES))) {
+				shouldSkipSecurityRules = json.getBoolean(PARAM_SKIP_SECURITY_RULES);
+			}
 			
 		
 
@@ -145,6 +153,9 @@ public class FormGetWebScript extends AbstractWebScript {
 		}
 
 		try {
+			if (shouldSkipSecurityRules) {
+				SecurityContextHelper.setSkipSecurityRules(true);
+			}
 
 			JSONObject ret = new JSONObject();
 
@@ -168,6 +179,7 @@ public class FormGetWebScript extends AbstractWebScript {
 		} catch (Exception e) {
 			throw new WebScriptException("Unable to serialize JSON", e);
 		} finally {
+			SecurityContextHelper.clear();
 			if (logger.isDebugEnabled() && (watch != null)) {
 				watch.stop();
 				logger.debug("MultilingualFieldWebScript execute in " + watch.getTotalTimeSeconds() + "s");
