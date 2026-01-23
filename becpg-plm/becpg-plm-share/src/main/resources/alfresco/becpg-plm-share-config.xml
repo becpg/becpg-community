@@ -218,7 +218,8 @@
 	
 	<config evaluator="string-compare" condition="wizard">
 		<wizards>
-			<wizard id="supplier-rawMaterial" draft="true" comments="true" >
+			<wizard id="supplier-rawMaterial" draft="true" comments="true" 
+					enforceTask="true" skipSecurityRules="false" checkTaskAssignment="false">
 				<step id="step1" labelId="becpg.wizard.supplier.properties.label"
 					titleId="becpg.wizard.supplier.properties.title" type="form"
 					formId="supplier" itemId="bcpg:rawMaterial"></step>
@@ -247,7 +248,8 @@
 				<step id="step9" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
-			<wizard id="supplier-finishedProduct" draft="true" comments="true">
+			<wizard id="supplier-finishedProduct" draft="true" comments="true"
+					enforceTask="true" skipSecurityRules="false" checkTaskAssignment="false">
 				<step id="step1" labelId="becpg.wizard.supplier.properties.label"
 					titleId="becpg.wizard.supplier.properties.title" type="form"
 					formId="supplier" itemId="bcpg:finishedProduct"></step>
@@ -276,7 +278,8 @@
 				<step id="step9" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
-			<wizard id="supplier-semiFinishedProduct" draft="true" comments="true">
+			<wizard id="supplier-semiFinishedProduct" draft="true" comments="true"
+					enforceTask="true" skipSecurityRules="false" checkTaskAssignment="false">
 				<step id="step1" labelId="becpg.wizard.supplier.properties.label"
 					titleId="becpg.wizard.supplier.properties.title" type="form"
 					formId="supplier" itemId="bcpg:semiFinishedProduct"></step>
@@ -305,7 +308,8 @@
 				<step id="step9" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
-			<wizard id="supplier-packagingMaterial" draft="true" comments="true">
+			<wizard id="supplier-packagingMaterial" draft="true" comments="true"
+					enforceTask="true" skipSecurityRules="false" checkTaskAssignment="false">
 				<step id="step1" labelId="becpg.wizard.supplier.properties.label"
 					titleId="becpg.wizard.supplier.properties.title" type="form"
 					formId="supplier" itemId="bcpg:packagingMaterial"></step>
@@ -322,12 +326,14 @@
 				<step id="step5" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
-			<wizard id="supplier-packagingKit" draft="true">
+			<wizard id="supplier-packagingKit" draft="true"
+					enforceTask="true" skipSecurityRules="false" checkTaskAssignment="false">
 				<step id="step1" labelId="becpg.wizard.supplier.properties.label"
 					titleId="becpg.wizard.supplier.properties.title" type="form"
 					formId="supplier" itemId="bcpg:packagingKit"></step>
 			</wizard>
-			<wizard id="supplier-supplier" draft="true">
+			<wizard id="supplier-supplier" draft="true"
+					enforceTask="true" skipSecurityRules="false" checkTaskAssignment="false">
 				<step id="step1" labelId="becpg.wizard.supplier.properties.label"
 					titleId="becpg.wizard.supplier.properties.title" type="form"
 					formId="supplier" itemId="bcpg:supplier"></step>
@@ -347,13 +353,15 @@
 				<step id="step6" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
-			<wizard id="supplier-content" draft="true">
+			<wizard id="supplier-content" draft="true"
+					enforceTask="true" skipSecurityRules="false" checkTaskAssignment="false">
 				<step id="step1" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
 			
 			<!-- RÉCLAMATION FOURNISSEUR  -->
-			<wizard id="supplier-nc" draft="true" comments="true">
+			<wizard id="supplier-nc" draft="true" comments="true"
+					enforceTask="true" skipSecurityRules="false" checkTaskAssignment="false">
 				<step id="step1" label="Réclamation fournisseur"
 					titleId="becpg.wizard.supplier.properties.title" type="form"
 					formId="supplier" itemId="qa:nc" nextStepWebScript="becpg/project/path?nodeRef={nodeRef}&amp;path=SupplierDocuments" ></step>
@@ -361,7 +369,8 @@
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
 			
-			<wizard id="sample-survey" draft="true">
+			<wizard id="sample-survey" draft="true"
+					enforceTask="false" skipSecurityRules="false" checkTaskAssignment="false">
 				<step id="step1" labelId="becpg.wizard.supplier.properties.label"
 					titleId="becpg.wizard.supplier.properties.title" type="form"
 					formId="supplier" itemId="bcpg:supplier"></step>

@@ -22,6 +22,7 @@ import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.service.ServiceRegistry;
 
 import fr.becpg.repo.security.SecurityService;
+import fr.becpg.repo.security.filter.SecurityContextHelper;
 
 /**
  * <p>BeCPGSecurity class.</p>
@@ -66,6 +67,27 @@ public class BeCPGSecurity extends BaseScopableProcessorExtension{
 		return securityService.computeAccessMode(entityNode.getNodeRef(), services.getNodeService().getType(entityNode.getNodeRef()), dataListType) 
 				== SecurityService.WRITE_ACCESS;
 		
+	}
+	
+	/**
+	 * <p>setSkipSecurityRules.</p>
+	 * Sets the skipSecurityRules flag in SecurityContextHelper for the current request.
+	 * This is used to bypass security rules in specific contexts like wizards.
+	 *
+	 * @param skipSecurityRules a boolean indicating whether to skip security rules.
+	 */
+	public void setSkipSecurityRules(boolean skipSecurityRules) {
+		SecurityContextHelper.setSkipSecurityRules(skipSecurityRules);
+	}
+	
+	/**
+	 * <p>getSkipSecurityRules.</p>
+	 * Gets the current skipSecurityRules flag from SecurityContextHelper.
+	 *
+	 * @return a boolean indicating if security rules should be skipped.
+	 */
+	public boolean getSkipSecurityRules() {
+		return SecurityContextHelper.skipSecurityRules();
 	}
 	
 
