@@ -19,6 +19,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.security.plugins.SecurityServicePlugin;
+import fr.becpg.repo.security.filter.SecurityContextHelper;
 import fr.becpg.repo.supplier.SupplierPortalService;
 
 /**
@@ -63,12 +64,25 @@ public class SupplierSecurityPlugin implements SecurityServicePlugin {
 	    if (entityNodeRef != null) {
 	        NodeRef supplierNodeRef = supplierPortalService.getSupplierNodeRef(entityNodeRef);
 	        if ((supplierNodeRef != null) && supplierPortalService.isCurrentUserInSupplierGroup(supplierNodeRef)) {
-	            String supplierAccount = AuthenticationUtil.getFullyAuthenticatedUser();
 	            
 	            List<String> contentWorkflowIds =  workflowPackageComponent.getWorkflowIdsForContent(entityNodeRef);
 	            if (contentWorkflowIds.isEmpty()) {
 	                return SecurityService.READ_ACCESS;
 	            }
+	            
+	            // Check if task assignment result is cached from EntitySecurityWebScript
+	            Boolean cachedTaskResult = SecurityContextHelper.getUserHasAssignedTask();
+	            if (cachedTaskResult != null) {
+	                // Use cached result to avoid recomputing workflow tasks
+	                if (cachedTaskResult) {
+	                    return SecurityService.WRITE_ACCESS;
+	                } else {
+	                    return SecurityService.READ_ACCESS;
+	                }
+	            }
+	            
+	            // Fallback to original computation if not cached
+	            String supplierAccount = AuthenticationUtil.getFullyAuthenticatedUser();
 	            
 	            List<WorkflowTask> assignedTasks = workflowService.getAssignedTasks(
 	                supplierAccount, WorkflowTaskState.IN_PROGRESS);
