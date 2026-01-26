@@ -248,9 +248,8 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 					&& (mlNodeService.getProperty(nodeRef, namePropertyDefinition.getName()) instanceof MLText mlValues)
 					&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_MLTEXT, Boolean.TRUE))) {
 				visitMltextAttributes(entityDictionaryService.toPrefixString(propName), entity, mlValues);
-			} else {
-				visitPropValue(propName, entity, properties.get(propName), context);
 			}
+			visitPropValue(propName, entity, properties.get(propName), context);
 
 			if (!JsonVisitNodeType.CHILD_ASSOC.equals(type)) {
 
