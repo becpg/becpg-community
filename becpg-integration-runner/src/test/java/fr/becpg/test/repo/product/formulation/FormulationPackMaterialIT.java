@@ -18,6 +18,7 @@
 
 package fr.becpg.test.repo.product.formulation;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -35,7 +36,13 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
+import fr.becpg.model.ReportModel;
+import fr.becpg.repo.PlmRepoConsts;
+import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
@@ -49,14 +56,23 @@ import fr.becpg.repo.product.data.constraints.TareUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.report.template.ReportTplInformation;
+import fr.becpg.repo.report.template.ReportTplService;
+import fr.becpg.repo.report.template.ReportType;
+import fr.becpg.report.client.ReportFormat;
 import fr.becpg.test.PLMBaseTestCase;
 
 public class FormulationPackMaterialIT extends PLMBaseTestCase {
 
 	private static final Log logger = LogFactory.getLog(FormulationPackMaterialIT.class);
+	private static final String PACK_MATERIAL_REPORT_NAME = "PackMaterialListReport";
 
 	@Autowired
 	protected ProductService productService;
+	@Autowired
+	private ReportTplService reportTplService;
+	@Autowired
+	private AssociationService associationService;
 
 	protected NodeRef PF1NodeRef;
 	protected NodeRef SF1NodeRef;
@@ -66,6 +82,7 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 	protected NodeRef packaging1NodeRef;
 	protected NodeRef packaging2NodeRef;
 	protected NodeRef packaging3NodeRef;
+	protected NodeRef packaging4NodeRef;
 	protected NodeRef packMaterial1NodeRef;
 	protected NodeRef packMaterial2NodeRef;
 	protected NodeRef packMaterial3NodeRef;
@@ -82,10 +99,16 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 	@Test
 	public void testFormulationPackMaterial() throws Exception {
 		logger.info("Starting testFormulationPackMaterial");
+		final NodeRef reportTplNodeRef = inWriteTx(this::createPackMaterialReportTemplate);
 		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 			logger.info("Creating finished product");
 			FinishedProductData finishedProduct = createFinishedProduct();
-			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+			NodeRef nodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+			if (!nodeService.hasAspect(nodeRef, ReportModel.ASPECT_REPORT_TEMPLATES)) {
+				nodeService.addAspect(nodeRef, ReportModel.ASPECT_REPORT_TEMPLATES, null);
+			}
+			associationService.update(nodeRef, ReportModel.ASSOC_REPORT_TEMPLATES, reportTplNodeRef);
+			return nodeRef;
 		});
 
 		inWriteTx(() -> {
@@ -95,8 +118,33 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 		});
 	}
 
+	/**
+	 * Validate formulation when packaging materials are defined without packMaterialList entries.
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Test
+	public void testFormulationPackMaterialFromPackagingMaterials() throws Exception {
+		logger.info("Starting testFormulationPackMaterialFromPackagingMaterials");
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			FinishedProductData finishedProduct = createFinishedProductForPackagingMaterials();
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		inWriteTx(() -> {
+			NodeRef listContainerNodeRef = entityListDAO.getListContainer(finishedProductNodeRef);
+			if (entityListDAO.getList(listContainerNodeRef, PackModel.PACK_MATERIAL_LIST_TYPE) == null) {
+				entityListDAO.createList(listContainerNodeRef, PackModel.PACK_MATERIAL_LIST_TYPE);
+			}
+			productService.formulate(finishedProductNodeRef);
+			verifyFormulatedPackMaterialFromPackagingMaterials(finishedProductNodeRef);
+			return null;
+		});
+	}
+
 	protected FinishedProductData createFinishedProduct() {
-		return FinishedProductData.build().withName("Produit fini 1").withUnit(ProductUnit.kg).withQty(1d).withDensity(1d).withCompoList(List.of(
+		return FinishedProductData.build().withName("Strawberry Yogurt 1kg").withUnit(ProductUnit.kg).withQty(1d).withDensity(1d).withCompoList(List.of(
 				CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare).withProduct(PF1NodeRef),
 				// Allu 20 / Carton 40
 				CompoListDataItem.build().withQtyUsed(500d).withUnit(ProductUnit.g).withDeclarationType(DeclarationType.Declare).withProduct(SF1NodeRef),
@@ -122,6 +170,18 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 								.withProduct(packaging3NodeRef))
 							// Fer 60 + 226,796 = 286.796 / Plastique = 80 + 226,796 = 306.796);
 						);
+	}
+
+	/**
+	 * Build a finished product that only uses packaging materials list references.
+	 *
+	 * @return the finished product data
+	 */
+	protected FinishedProductData createFinishedProductForPackagingMaterials() {
+		return FinishedProductData.build().withName("Yogurt Single Cup").withUnit(ProductUnit.P).withQty(1d)
+				.withPackagingList(List.of(
+						PackagingListDataItem.build().withQty(2d).withUnit(ProductUnit.P).withPkgLevel(PackagingLevel.Primary)
+								.withProduct(packaging4NodeRef)));
 	}
 
 	private void verifyFormulatedPackMaterial(NodeRef finishedProductNodeRef) {
@@ -159,6 +219,30 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 		assertEquals("Verify checks done", 6, checks);
 	}
 
+	/**
+	 * Verify computed weights when packaging materials are resolved from pack:pmMaterialRefs.
+	 *
+	 * @param finishedProductNodeRef
+	 *            the finished product node ref
+	 */
+	private void verifyFormulatedPackMaterialFromPackagingMaterials(NodeRef finishedProductNodeRef) {
+		logger.info("Verifying formulated pack materials from packagingMaterials");
+		ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+		int checks = 0;
+		DecimalFormat df = new DecimalFormat("0.###");
+		for (PackMaterialListDataItem packMaterialListDataItem : formulatedProduct.getPackMaterialList()) {
+			if (packMaterialListDataItem.getPmlMaterial().equals(packMaterial1NodeRef)) {
+				assertEquals(df.format(20d), df.format(packMaterialListDataItem.getPmlWeight()));
+				checks++;
+			}
+			if (packMaterialListDataItem.getPmlMaterial().equals(packMaterial6NodeRef)) {
+				assertEquals(df.format(20d), df.format(packMaterialListDataItem.getPmlWeight()));
+				checks++;
+			}
+		}
+		assertEquals("Verify checks done", 2, checks);
+	}
+
 	private void initPart() {
 		logger.info("Initializing test data");
 		inWriteTx(() -> {
@@ -170,12 +254,12 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 	}
 
 	private void createPackMaterials() {
-		packMaterial1NodeRef = createPackMaterialNode("Alluminium");
-		packMaterial2NodeRef = createPackMaterialNode("Carton");
-		packMaterial3NodeRef = createPackMaterialNode("Fer");
-		packMaterial4NodeRef = createPackMaterialNode("Plastique");
-		packMaterial5NodeRef = createPackMaterialNode("Verre");
-		packMaterial6NodeRef = createPackMaterialNode("Papier");
+		packMaterial1NodeRef = createPackMaterialNode("Aluminium");
+		packMaterial2NodeRef = createPackMaterialNode("Cardboard");
+		packMaterial3NodeRef = createPackMaterialNode("Steel");
+		packMaterial4NodeRef = createPackMaterialNode("Plastic");
+		packMaterial5NodeRef = createPackMaterialNode("Glass");
+		packMaterial6NodeRef = createPackMaterialNode("Paper");
 	}
 
 	private NodeRef createPackMaterialNode(String materialName) {
@@ -188,7 +272,7 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 	}
 
 	private void createCompoProducts() {
-		FinishedProductData PF1 = FinishedProductData.build().withName("Finished product 1").withQty(500d).withUnit(ProductUnit.g);
+		FinishedProductData PF1 = FinishedProductData.build().withName("Fruit Preparation").withQty(500d).withUnit(ProductUnit.g);
 
 		PF1.setPackMaterialList(Arrays.asList(
 				PackMaterialListDataItem.build().withMaterial(packMaterial1NodeRef).withWeight(10d).withPerc(5d).withPkgLevel(PackagingLevel.Primary),
@@ -198,7 +282,7 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 
 		/*-- Semi finished product 1 --*/
 
-		SemiFinishedProductData SF1 = SemiFinishedProductData.build().withName("Semi finished 1").withQty(250d).withUnit(ProductUnit.g);
+		SemiFinishedProductData SF1 = SemiFinishedProductData.build().withName("Yogurt Base").withQty(250d).withUnit(ProductUnit.g);
 
 		SF1.setPackMaterialList(
 				List.of(PackMaterialListDataItem.build().withMaterial(packMaterial3NodeRef).withWeight(30d).withPkgLevel(PackagingLevel.Primary),
@@ -209,7 +293,7 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 
 		/*-- Raw material 1 --*/
 
-		RawMaterialData rawMaterial1 = RawMaterialData.build().withName("Raw material 1").withQty(400d).withUnit(ProductUnit.g);
+		RawMaterialData rawMaterial1 = RawMaterialData.build().withName("Strawberry Puree").withQty(400d).withUnit(ProductUnit.g);
 
 		rawMaterial1.setPackMaterialList(
 				List.of(PackMaterialListDataItem.build().withMaterial(packMaterial5NodeRef).withWeight(50d).withPkgLevel(PackagingLevel.Primary)));
@@ -217,12 +301,12 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 		rawMaterial1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
 
 		/*-- Raw material 2 (no packMaterial list) --*/
-		RawMaterialData rawMaterial2 = RawMaterialData.build().withName("Raw material 2");
+		RawMaterialData rawMaterial2 = RawMaterialData.build().withName("Sugar");
 
 		rawMaterial2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial2).getNodeRef();
 		
 		/*-- Raw material 2 (no packMaterial list) --*/
-		RawMaterialData rawMaterial3 = RawMaterialData.build().withName("Raw material 3").withUnit(ProductUnit.P).withNetWeight(0.03);
+		RawMaterialData rawMaterial3 = RawMaterialData.build().withName("Gelatin Sheet").withUnit(ProductUnit.P).withNetWeight(0.03);
 		
 		rawMaterial3.setPackMaterialList(
 				List.of(PackMaterialListDataItem.build().withMaterial(packMaterial6NodeRef).withWeight(12d).withPkgLevel(PackagingLevel.Primary)));
@@ -232,7 +316,7 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 	}
 
 	private void createPackagingMaterials() {
-		PackagingMaterialData packagingMaterial1 = PackagingMaterialData.build().withName("Packaging material 1").withTare(0.015d, TareUnit.kg)
+		PackagingMaterialData packagingMaterial1 = PackagingMaterialData.build().withName("Aluminium Lid").withTare(0.015d, TareUnit.kg)
 				.withPackMaterialList(List.of(PackMaterialListDataItem.build().withMaterial(packMaterial1NodeRef).withWeight(0.015d * 1000)
 						.withRecycledPerc(50d).withPkgLevel(PackagingLevel.Primary)));
 
@@ -240,20 +324,53 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 
 		/*-- Packaging 2 --*/
 
-		PackagingMaterialData packagingMaterial2 = PackagingMaterialData.build().withName("Packaging material 2").withTare(0.5d, TareUnit.oz)
+		PackagingMaterialData packagingMaterial2 = PackagingMaterialData.build().withName("Cardboard Sleeve").withTare(0.5d, TareUnit.oz)
 				.withPackMaterialList(List.of(PackMaterialListDataItem.build().withMaterial(packMaterial2NodeRef).withWeight(14.1748d)
 						.withPkgLevel(PackagingLevel.Primary)));
 		packaging2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial2).getNodeRef();
 
 		/*-- Packaging 3 --*/
 
-		PackagingMaterialData packagingMaterial3 = PackagingMaterialData.build().withName("Packaging material 3").withTare(1d, TareUnit.kg)
+		PackagingMaterialData packagingMaterial3 = PackagingMaterialData.build().withName("Plastic Cup").withTare(1d, TareUnit.kg)
 				.withPackMaterialList(List.of(
 						PackMaterialListDataItem.build().withMaterial(packMaterial3NodeRef).withWeight(500d).withPkgLevel(PackagingLevel.Primary),
 						PackMaterialListDataItem.build().withMaterial(packMaterial4NodeRef).withWeight(500d).withPkgLevel(PackagingLevel.Primary)));
 
 		packaging3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial3).getNodeRef();
 
+		PackagingMaterialData packagingMaterial4 = PackagingMaterialData.build().withName("Paper Label").withTare(0.02d, TareUnit.kg);
+		packaging4NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial4).getNodeRef();
+		associationService.update(packaging4NodeRef, PackModel.ASSOC_PM_MATERIAL, List.of(packMaterial1NodeRef, packMaterial6NodeRef));
+
+	}
+
+	/**
+	 * Create the pack material report template for finished products.
+	 *
+	 * @return the report template node ref
+	 */
+	private NodeRef createPackMaterialReportTemplate() {
+		NodeRef systemFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
+				TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+		NodeRef reportsFolder = repoService.getOrCreateFolderByPath(systemFolder, RepoConsts.PATH_REPORTS,
+				TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
+		NodeRef productReportTplFolder = repoService.getOrCreateFolderByPath(reportsFolder, PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
+				TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
+
+		ReportTplInformation reportTplInformation = new ReportTplInformation();
+		reportTplInformation.setReportType(ReportType.Document);
+		reportTplInformation.setReportFormat(ReportFormat.PDF);
+		reportTplInformation.setNodeType(PLMModel.TYPE_FINISHEDPRODUCT);
+		reportTplInformation.setDefaultTpl(false);
+		reportTplInformation.setSystemTpl(true);
+		reportTplInformation.setTextParameter("{\"prefs\":{\"extractPackagingMaterials\":\"true\"}}");
+
+		try {
+			return reportTplService.createTplRptDesign(productReportTplFolder, PACK_MATERIAL_REPORT_NAME,
+					"beCPG/birt/document/product/default/PackMaterialListReport.rptdesign", reportTplInformation, true);
+		} catch (IOException exception) {
+			throw new IllegalStateException("Unable to create pack material report template", exception);
+		}
 	}
 
 }
