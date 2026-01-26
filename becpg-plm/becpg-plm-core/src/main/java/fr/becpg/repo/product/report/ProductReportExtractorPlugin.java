@@ -1529,6 +1529,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						plmWeight = plmWeight.divide(productTare.multiply(BigDecimal.valueOf(1000d)), MathContext.DECIMAL64);
 					}
 					packMaterialElt.addAttribute(PackModel.PROP_PACK_MATERIAL_LIST_WEIGHT.getLocalName(), toString(plmWeight));
+					if (packMateriDataItem.getPmlPerc() == null && (productTare != null) && (productTare.doubleValue() != 0d)) {
+						BigDecimal perc = BigDecimal.valueOf(packMateriDataItem.getPmlWeight())
+								.divide(productTare, MathContext.DECIMAL64)
+								.multiply(BigDecimal.valueOf(0.1d));
+						packMaterialElt.addAttribute("pmlPerc", toString(perc));
+					}
 				}
 			}
 		} else if ((packagingMaterial.getPackagingMaterials() != null) && !packagingMaterial.getPackagingMaterials().isEmpty()) {
@@ -1537,6 +1543,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				Element packMaterialElt = packMaterialListsElt.addElement(PackModel.PACK_MATERIAL_LIST_TYPE.getLocalName());
 				loadNodeAttributes(packagingMaterialRef, packMaterialElt, false, context);
 				packMaterialElt.addAttribute(PackModel.PROP_PACK_MATERIAL_LIST_WEIGHT.getLocalName(), toString(tareByMaterial));
+				if (tare.doubleValue() != 0d) {
+					BigDecimal perc = tareByMaterial.divide(tare, MathContext.DECIMAL64).multiply(BigDecimal.valueOf(100d));
+					packMaterialElt.addAttribute("pmlPerc", toString(perc));
+				}
 			}
 		}
 	}
