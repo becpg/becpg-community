@@ -19,16 +19,19 @@ package fr.becpg.repo.web.scripts.entity;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.workflow.WorkflowService;
+import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.workflow.WorkflowTask;
 import org.alfresco.service.cmr.workflow.WorkflowTaskState;
 import org.alfresco.repo.workflow.WorkflowPackageComponent;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
@@ -65,6 +68,26 @@ public class EntitySecurityWebScript extends AbstractEntityWebScript {
 		this.entityListDAO = entityListDAO;
 	}
 
+	private NodeRef resolveEntityNodeRef(WebScriptRequest req) {
+		Map<String, String> templateVars = req.getServiceMatch().getTemplateVars();
+		if (templateVars != null) {
+			String storeType = templateVars.get("store_type");
+			String storeId = templateVars.get("store_id");
+			String id = templateVars.get("id");
+			if (storeType != null && storeId != null && id != null) {
+				NodeRef nodeRef = new NodeRef(storeType, storeId, id);
+				if (nodeService.exists(nodeRef)) {
+					if (AccessStatus.ALLOWED.equals(permissionService.hasReadPermission(nodeRef))) {
+						return nodeRef;
+					}
+					throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to see this node");
+				}
+				throw new WebScriptException(Status.STATUS_NOT_FOUND, "Node " + nodeRef + " doesn't exist in repository");
+			}
+		}
+		return findEntity(req);
+	}
+
 	/**
 	 * <p>Setter for the field <code>workflowService</code>.</p>
 	 *
@@ -85,7 +108,7 @@ public class EntitySecurityWebScript extends AbstractEntityWebScript {
 
 	@Override
 	public void executeInternal(WebScriptRequest req, WebScriptResponse resp) throws IOException {
-		NodeRef entityNodeRef = findEntity(req);
+		NodeRef entityNodeRef = resolveEntityNodeRef(req);
 
 		try {
 			if (logger.isDebugEnabled()) {
