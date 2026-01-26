@@ -1,0 +1,2034 @@
+{
+  "entity": {
+    "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+    "parent": "f3199f68-b2e0-4b73-999f-68b2e0cb73ed",
+    "metadata": "finishedProduct finishedProduct-Simulation nutrientClass-E finishedProduct-84b3eb8a-58b7-4a7c-b3eb-8a58b7aa7c9d",
+    "datalists": {
+      "mpm:processList": [
+        {
+          "metadata": "processList",
+          "cm:name": "7161416d-750d-461c-a65d-4f53abdcefee",
+          "attributes": {
+            "cm:creator": "admin",
+            "mpm:plRateResource": 0,
+            "cm:modifier": "admin",
+            "cm:created": "2026-01-26T15:09:11.609Z",
+            "mpm:plYield": 0,
+            "cm:name": "7161416d-750d-461c-a65d-4f53abdcefee",
+            "mpm:plProduct": {
+              "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+              "metadata": "resourceProduct resourceProduct-Simulation resourceProduct-e241ff14-ef1a-49cc-81ff-14ef1a39cc28",
+              "cm:name": "Mixing Process",
+              "id": "8920449b-bf37-4d9d-a044-9bbf37ed9d32",
+              "type": "bcpg:resourceProduct",
+              "bcpg:code": "R4"
+            },
+            "mpm:plQty": 0,
+            "bcpg:sort": 107,
+            "bcpg:startEffectivity": "2026-01-26T15:09:11.717Z",
+            "cm:modified": "2026-01-26T15:09:11.609Z",
+            "mpm:plQtyResource": 0
+          },
+          "id": "05f6d4d0-045b-4c2d-b6d4-d0045b0c2d70",
+          "type": "mpm:processList"
+        },
+        {
+          "metadata": "processList",
+          "cm:name": "f166d2b1-bf67-4883-89c0-88ed5e7ae1a5",
+          "attributes": {
+            "cm:creator": "admin",
+            "mpm:plRateResource": 0,
+            "cm:modifier": "admin",
+            "cm:created": "2026-01-26T15:09:11.616Z",
+            "mpm:plYield": 0,
+            "cm:name": "f166d2b1-bf67-4883-89c0-88ed5e7ae1a5",
+            "mpm:plProduct": {
+              "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+              "metadata": "resourceProduct resourceProduct-Simulation resourceProduct-e241ff14-ef1a-49cc-81ff-14ef1a39cc28",
+              "cm:name": "Baking Process",
+              "id": "4b24cc91-4104-4f83-a4cc-9141043f83fd",
+              "type": "bcpg:resourceProduct",
+              "bcpg:code": "R5"
+            },
+            "mpm:plQty": 0,
+            "bcpg:sort": 108,
+            "bcpg:startEffectivity": "2026-01-26T15:09:11.718Z",
+            "cm:modified": "2026-01-26T15:09:11.616Z",
+            "mpm:plQtyResource": 0
+          },
+          "id": "94db247d-ccbf-48c7-9b24-7dccbf08c742",
+          "type": "mpm:processList"
+        }
+      ],
+      "bcpg:reqCtrlList": [
+        {
+          "metadata": "reqCtrlList",
+          "cm:name": "c11da359-810a-4501-b3e2-35a23ae3ff52",
+          "attributes": {
+            "cm:creator": "admin",
+            "bcpg:rclReqMessage_fr": "Champ obligatoire 'Libellé légal' manquant (catalogue 'EU 1169/2011 (INCO)')",
+            "cm:modifier": "admin",
+            "bcpg:rclReqMessage_it": "Campo obbligatorio ' Nome legale ' mancante (catalogo ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclReqMessage_en_US": "Mandatory field 'Legal name' is missing (catalog 'EU 1169/2011 (INCO)')",
+            "bcpg:rclReqMessage_es": "Falta el campo obligatorio ' Nombre legal ' (catálogo ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclSourcesV2": [],
+            "cm:created": "2026-01-26T15:09:24.813Z",
+            "bcpg:rclReqMessage_ja_JP": "必須フィールド ' 正式名称 'がありません（カタログ ' EU 1169/2011 (INCO) '）",
+            "bcpg:rclReqMessage_ru": "Обязательное поле ' Юридическое название ' отсутствует (каталог ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclReqMessage_fi": "Pakollinen kenttä ' Laillinen nimi ' puuttuu (luettelo ' EU 1169/2011 (INCO) ')",
+            "bcpg:sort": 0,
+            "bcpg:rclReqMessage_sv_SE": "Obligatoriskt fält ' Lagligt namn ' saknas (katalogen ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclReqMessage_en": "Mandatory field 'Legal name' is missing (catalog 'EU 1169/2011 (INCO)')",
+            "bcpg:rclReqMessage_tr": "Zorunlu alan ' Yasal isim ' eksik (katalog ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclReqMessage": "Champ obligatoire 'Libellé légal' manquant (catalogue 'EU 1169/2011 (INCO)')",
+            "cm:name": "c11da359-810a-4501-b3e2-35a23ae3ff52",
+            "bcpg:rclDataType": "Completion",
+            "bcpg:rclReqMessage_de": "Pflichtfeld ' Offizieller Name ' fehlt (Katalog ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclReqMessage_pt_BR": "O campo obrigatório ' Nome legal ' está ausente (catálogo ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclReqType": "Forbidden",
+            "cm:modified": "2026-01-26T15:09:24.813Z"
+          },
+          "id": "43fa1503-8046-474f-ba15-038046f74fa7",
+          "type": "bcpg:reqCtrlList"
+        },
+        {
+          "metadata": "reqCtrlList",
+          "cm:name": "31850a8b-6575-4689-8378-2ff5aa5b346d",
+          "attributes": {
+            "cm:creator": "admin",
+            "bcpg:rclReqMessage_fr": "Champ obligatoire 'DLC (J) ou DDM/DLUO (J)' manquant (catalogue 'EU 1169/2011 (INCO)')",
+            "cm:modifier": "admin",
+            "bcpg:rclReqMessage_it": "Campo obbligatorio ' Usa per data (d) o Scadenza (d) ' mancante (catalogo ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclReqMessage_en_US": "Mandatory field 'Use by date (d) or Best before date (d)' is missing (catalog 'EU 1169/2011 (INCO)')",
+            "bcpg:rclReqMessage_es": "Falta el campo obligatorio ' Fecha de caducidad (D) o echa de consumo preferente (d) ' (catálogo ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclSourcesV2": [],
+            "cm:created": "2026-01-26T15:09:24.818Z",
+            "bcpg:rclReqMessage_ja_JP": "必須フィールド ' 賞味期限 (d) または 賞味期限 (d) 'がありません（カタログ ' EU 1169/2011 (INCO) '）",
+            "bcpg:rclReqMessage_ru": "Обязательное поле ' Использовать по дате (d) или Срок годности (д) ' отсутствует (каталог ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclReqMessage_fi": "Pakollinen kenttä ' Viimeinen käyttöpäivä (d) tai Parasta ennen päivämäärä (p) ' puuttuu (luettelo ' EU 1169/2011 (INCO) ')",
+            "bcpg:sort": 1,
+            "bcpg:rclReqMessage_sv_SE": "Obligatoriskt fält ' Sista användningsdag (d) eller Bäst före datum (d) ' saknas (katalogen ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclReqMessage_en": "Mandatory field 'Use by date (d) or Best before date (d)' is missing (catalog 'EU 1169/2011 (INCO)')",
+            "bcpg:rclReqMessage_tr": "Zorunlu alan ' Tarihe göre kullanın (d) veya Tarihten önceki en iyisi (d) ' eksik (katalog ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclReqMessage": "Champ obligatoire 'DLC (J) ou DDM/DLUO (J)' manquant (catalogue 'EU 1169/2011 (INCO)')",
+            "cm:name": "31850a8b-6575-4689-8378-2ff5aa5b346d",
+            "bcpg:rclDataType": "Completion",
+            "bcpg:rclReqMessage_de": "Pflichtfeld ' Verwendung nach Datum (T) oder Haltbarkeitsdatum (T) ' fehlt (Katalog ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclReqMessage_pt_BR": "O campo obrigatório ' Validade (d) ou Melhor antes da data (d) ' está ausente (catálogo ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclReqType": "Forbidden",
+            "cm:modified": "2026-01-26T15:09:24.818Z"
+          },
+          "id": "8ac2b6b3-2cb5-4dbc-82b6-b32cb5bdbcc8",
+          "type": "bcpg:reqCtrlList"
+        },
+        {
+          "metadata": "reqCtrlList",
+          "cm:name": "a200b7df-c643-428b-8206-d20ee94d2228",
+          "attributes": {
+            "cm:creator": "admin",
+            "bcpg:rclReqMessage_fr": "Champ obligatoire 'Conditions de conservation ou Conseils de préparation et d'utilisation' manquant (catalogue 'EU 1169/2011 (INCO)')",
+            "cm:modifier": "admin",
+            "bcpg:rclReqMessage_it": "Campo obbligatorio ' Condizioni di archiviazione o Suggerimenti per la preparazione ' mancante (catalogo ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclReqMessage_en_US": "Mandatory field 'Storage conditions or Preparation tips' is missing (catalog 'EU 1169/2011 (INCO)')",
+            "bcpg:rclReqMessage_es": "Falta el campo obligatorio ' Condiciones de almacenaje o Consejos de preparación ' (catálogo ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclSourcesV2": [],
+            "cm:created": "2026-01-26T15:09:24.824Z",
+            "bcpg:rclReqMessage_ja_JP": "必須フィールド ' 保管条件 または 準備のヒント 'がありません（カタログ ' EU 1169/2011 (INCO) '）",
+            "bcpg:rclReqMessage_ru": "Обязательное поле ' Условия хранения или Советы по приготовлению ' отсутствует (каталог ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclReqMessage_fi": "Pakollinen kenttä ' Varastointiolosuhteet tai Valmistusohje ' puuttuu (luettelo ' EU 1169/2011 (INCO) ')",
+            "bcpg:sort": 2,
+            "bcpg:rclReqMessage_sv_SE": "Obligatoriskt fält ' Lagringsförhållanden eller Tillredningsanvisning ' saknas (katalogen ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclReqMessage_en": "Mandatory field 'Storage conditions or Preparation tips' is missing (catalog 'EU 1169/2011 (INCO)')",
+            "bcpg:rclReqMessage_tr": "Zorunlu alan ' Depolama koşulları veya Hazırlık ipuçları ' eksik (katalog ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclReqMessage": "Champ obligatoire 'Conditions de conservation ou Conseils de préparation et d'utilisation' manquant (catalogue 'EU 1169/2011 (INCO)')",
+            "cm:name": "a200b7df-c643-428b-8206-d20ee94d2228",
+            "bcpg:rclDataType": "Completion",
+            "bcpg:rclReqMessage_de": "Pflichtfeld ' Lagerbedingungen oder Vorbereitungstipps ' fehlt (Katalog ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclReqMessage_pt_BR": "O campo obrigatório ' Condições de armazenamento ou Dicas de preparação ' está ausente (catálogo ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclReqType": "Forbidden",
+            "cm:modified": "2026-01-26T15:09:24.824Z"
+          },
+          "id": "745785fd-27ae-4641-9785-fd27ae9641a6",
+          "type": "bcpg:reqCtrlList"
+        },
+        {
+          "metadata": "reqCtrlList",
+          "cm:name": "9cfeafc1-7dde-4a2d-ac54-7ca87f5dc3a3",
+          "attributes": {
+            "cm:creator": "admin",
+            "bcpg:rclReqMessage_fr": "Champ obligatoire 'Libellé commercial' manquant (catalogue 'EU 1169/2011 (INCO)')",
+            "cm:modifier": "admin",
+            "bcpg:rclReqMessage_it": "Campo obbligatorio ' Nome depositato ' mancante (catalogo ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclReqMessage_en_US": "Mandatory field 'Trade name' is missing (catalog 'EU 1169/2011 (INCO)')",
+            "bcpg:rclReqMessage_es": "Falta el campo obligatorio ' Nombre comercial ' (catálogo ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclSourcesV2": [],
+            "cm:created": "2026-01-26T15:09:24.829Z",
+            "bcpg:rclReqMessage_ja_JP": "必須フィールド ' 商品名 'がありません（カタログ ' EU 1169/2011 (INCO) '）",
+            "bcpg:rclReqMessage_ru": "Обязательное поле ' Торговое наименование ' отсутствует (каталог ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclReqMessage_fi": "Pakollinen kenttä ' Kauppanimi ' puuttuu (luettelo ' EU 1169/2011 (INCO) ')",
+            "bcpg:sort": 3,
+            "bcpg:rclReqMessage_sv_SE": "Obligatoriskt fält ' Handelsnamn ' saknas (katalogen ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclReqMessage_en": "Mandatory field 'Trade name' is missing (catalog 'EU 1169/2011 (INCO)')",
+            "bcpg:rclReqMessage_tr": "Zorunlu alan ' Ticari unvan ' eksik (katalog ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclReqMessage": "Champ obligatoire 'Libellé commercial' manquant (catalogue 'EU 1169/2011 (INCO)')",
+            "cm:name": "9cfeafc1-7dde-4a2d-ac54-7ca87f5dc3a3",
+            "bcpg:rclDataType": "Completion",
+            "bcpg:rclReqMessage_de": "Pflichtfeld ' Handelsname ' fehlt (Katalog ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclReqMessage_pt_BR": "O campo obrigatório ' Nome comercial ' está ausente (catálogo ' EU 1169/2011 (INCO) ')",
+            "bcpg:rclReqType": "Forbidden",
+            "cm:modified": "2026-01-26T15:09:24.829Z"
+          },
+          "id": "3504ac22-d306-420a-84ac-22d306d20ac6",
+          "type": "bcpg:reqCtrlList"
+        },
+        {
+          "metadata": "reqCtrlList",
+          "cm:name": "ade2202d-9078-4995-bae4-163540805e87",
+          "attributes": {
+            "cm:creator": "admin",
+            "bcpg:rclReqMessage_fr": "Composant non validé",
+            "cm:modifier": "admin",
+            "bcpg:rclReqMessage_it": "Il componente non è stato convalidato",
+            "bcpg:rclReqMessage_en_US": "Component was not validated",
+            "bcpg:rclReqMessage_es": "El componente no fue validado",
+            "bcpg:rclSourcesV2": [
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Eau",
+                "id": "065e9196-8a23-407f-9e91-968a23c07f13",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP13"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre - Fournisseur 1",
+                "id": "37fbcdb1-5cf2-4ca7-bbcd-b15cf2dca7d2",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP15"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre - GEN - Usine 1",
+                "id": "3b6cc3cc-23d8-4a18-acc3-cc23d89a18b3",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP18"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Farine",
+                "id": "43a93537-ad6e-4f42-a935-37ad6e2f42a3",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP21"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre",
+                "id": "54b4721f-9ad8-433a-b472-1f9ad8b33adf",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP20"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "semiFinishedProduct semiFinishedProduct-Simulation semiFinishedProduct-7b987b42-79e6-4b04-987b-4279e66b043f",
+                "cm:name": "Crème pâtissière",
+                "id": "61b44f31-2354-4460-b44f-31235464605b",
+                "type": "bcpg:semiFinishedProduct",
+                "bcpg:code": "SF6"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre - Fournisseur 3",
+                "id": "71105852-6c2a-41cc-9058-526c2a31cc14",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP17"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "semiFinishedProduct semiFinishedProduct-Simulation semiFinishedProduct-7b987b42-79e6-4b04-987b-4279e66b043f",
+                "cm:name": "Pâte à choux",
+                "id": "917b150f-da90-4784-bb15-0fda900784fe",
+                "type": "bcpg:semiFinishedProduct",
+                "bcpg:code": "SF5"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre - Fournisseur 2",
+                "id": "a576557b-8470-4385-b655-7b8470f3850d",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP16"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Oeuf",
+                "id": "b338a047-1567-4c65-b8a0-471567ac65dc",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP22"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Chocolat",
+                "id": "ba887360-a9a1-474e-8873-60a9a1174ef0",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP23"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre - GEN - Usine 2",
+                "id": "c7f54e35-e751-4981-b54e-35e7514981c3",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP19"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Lait",
+                "id": "d7182098-5011-447a-9820-985011f47aba",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP14"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "semiFinishedProduct semiFinishedProduct-Simulation semiFinishedProduct-7b987b42-79e6-4b04-987b-4279e66b043f",
+                "cm:name": "Nappage",
+                "id": "f22f4e43-f76e-4136-af4e-43f76ef1368f",
+                "type": "bcpg:semiFinishedProduct",
+                "bcpg:code": "SF7"
+              }
+            ],
+            "cm:created": "2026-01-26T15:09:24.837Z",
+            "bcpg:rclReqMessage_ja_JP": "コンポーネントが検証されませんでした",
+            "bcpg:rclReqMessage_ru": "Компонент не был проверен",
+            "bcpg:rclReqMessage_fi": "Komponenttia ei validoitu",
+            "bcpg:sort": 4,
+            "bcpg:rclReqMessage_sv_SE": "Komponenten validerades inte",
+            "bcpg:rclReqMessage_en": "Component was not validated",
+            "bcpg:rclReqMessage_tr": "Bileşen doğrulanmadı",
+            "bcpg:rclReqMessage": "Composant non validé",
+            "cm:name": "ade2202d-9078-4995-bae4-163540805e87",
+            "bcpg:rclDataType": "Validation",
+            "bcpg:rclReqMessage_de": "Komponente wurde nicht validiert",
+            "bcpg:rclReqMessage_pt_BR": "O componente não foi validado",
+            "bcpg:rclReqType": "Tolerated",
+            "cm:modified": "2026-01-26T15:09:24.837Z"
+          },
+          "id": "2bea26b9-4480-41c3-aa26-b9448091c3c5",
+          "type": "bcpg:reqCtrlList"
+        },
+        {
+          "metadata": "reqCtrlList",
+          "cm:name": "09f19fee-eac5-4792-b86e-f00f2a4105d6",
+          "attributes": {
+            "cm:creator": "admin",
+            "bcpg:rclReqMessage_fr": "Les allergènes ne sont pas validés",
+            "cm:modifier": "admin",
+            "bcpg:rclReqMessage_it": "Allergeni non validati",
+            "bcpg:rclReqMessage_en_US": "Allergens not validated",
+            "bcpg:rclReqMessage_es": "Alérgenos no validados",
+            "bcpg:rclSourcesV2": [
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Farine",
+                "id": "43a93537-ad6e-4f42-a935-37ad6e2f42a3",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP21"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre",
+                "id": "54b4721f-9ad8-433a-b472-1f9ad8b33adf",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP20"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre - Fournisseur 3",
+                "id": "71105852-6c2a-41cc-9058-526c2a31cc14",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP17"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre - Fournisseur 2",
+                "id": "a576557b-8470-4385-b655-7b8470f3850d",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP16"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Oeuf",
+                "id": "b338a047-1567-4c65-b8a0-471567ac65dc",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP22"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Chocolat",
+                "id": "ba887360-a9a1-474e-8873-60a9a1174ef0",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP23"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre - GEN - Usine 2",
+                "id": "c7f54e35-e751-4981-b54e-35e7514981c3",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP19"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Lait",
+                "id": "d7182098-5011-447a-9820-985011f47aba",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP14"
+              }
+            ],
+            "cm:created": "2026-01-26T15:09:24.844Z",
+            "bcpg:rclReqMessage_ja_JP": "アレルゲンは検証されていません",
+            "bcpg:rclReqMessage_ru": "Аллергены не подтверждены",
+            "bcpg:rclReqMessage_fi": "Allergeeneja ei ole vahvistettu",
+            "bcpg:sort": 5,
+            "bcpg:rclReqMessage_sv_SE": "Allergener har inte validerats",
+            "bcpg:rclReqMessage_en": "Allergens not validated",
+            "bcpg:rclReqMessage_tr": "Alerjenler doğrulanmadı",
+            "bcpg:rclReqMessage": "Les allergènes ne sont pas validés",
+            "cm:name": "09f19fee-eac5-4792-b86e-f00f2a4105d6",
+            "bcpg:rclDataType": "Allergen",
+            "bcpg:rclReqMessage_de": "Allergene nicht validiert",
+            "bcpg:rclReqMessage_pt_BR": "Alérgenos não validados",
+            "bcpg:rclReqType": "Tolerated",
+            "cm:modified": "2026-01-26T15:09:24.844Z"
+          },
+          "id": "a135536c-2a5e-4d0d-b553-6c2a5e8d0df9",
+          "type": "bcpg:reqCtrlList"
+        },
+        {
+          "metadata": "reqCtrlList",
+          "cm:name": "af4861e6-73bd-4e79-a05a-ecc4b77cea60",
+          "attributes": {
+            "cm:creator": "admin",
+            "bcpg:rclReqMessage_fr": "Caractéristique 'Coût MP' non renseignée",
+            "cm:modifier": "admin",
+            "bcpg:rclReqMessage_it": "Caratteristico ' Coût MP ' non definito",
+            "bcpg:rclReqMessage_en_US": "Characteristic 'Coût MP' undefined",
+            "bcpg:rclReqMessage_es": "Característica ' Coût MP ' indefinido",
+            "bcpg:rclSourcesV2": [
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre - Fournisseur 1",
+                "id": "37fbcdb1-5cf2-4ca7-bbcd-b15cf2dca7d2",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP15"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre - GEN - Usine 1",
+                "id": "3b6cc3cc-23d8-4a18-acc3-cc23d89a18b3",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP18"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre - Fournisseur 3",
+                "id": "71105852-6c2a-41cc-9058-526c2a31cc14",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP17"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre - Fournisseur 2",
+                "id": "a576557b-8470-4385-b655-7b8470f3850d",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP16"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre - GEN - Usine 2",
+                "id": "c7f54e35-e751-4981-b54e-35e7514981c3",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP19"
+              }
+            ],
+            "cm:created": "2026-01-26T15:09:24.851Z",
+            "bcpg:rclReqMessage_ja_JP": "キャラクター 'Coût MP' は未定義です。",
+            "bcpg:rclReqMessage_ru": "Характеристика ' Coût MP ' не определена",
+            "bcpg:rclReqMessage_fi": "Ominaista ' Coût MP ' määrittelemätön",
+            "bcpg:sort": 6,
+            "bcpg:rclReqMessage_sv_SE": "Karaktäristisk ' Coût MP ' odefinierad",
+            "bcpg:rclReqMessage_en": "Characteristic 'Coût MP' undefined",
+            "bcpg:rclReqMessage_tr": "Karakteristik ' Coût MP ' tanımsız",
+            "bcpg:rclCharact": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Costs",
+              "metadata": "cost",
+              "bcpg:charactName_fr": "Coût MP",
+              "bcpg:charactName": "Coût MP",
+              "id": "39fc694e-22c1-4028-bc69-4e22c1002848",
+              "type": "bcpg:cost"
+            },
+            "bcpg:rclReqMessage": "Caractéristique 'Coût MP' non renseignée",
+            "cm:name": "af4861e6-73bd-4e79-a05a-ecc4b77cea60",
+            "bcpg:rclDataType": "Cost",
+            "bcpg:rclReqMessage_de": "Eigenschaft 'Coût MP' nicht definiert",
+            "bcpg:rclReqMessage_pt_BR": "Característica ' Coût MP ' indefinida",
+            "bcpg:rclReqType": "Tolerated",
+            "cm:modified": "2026-01-26T15:09:24.851Z"
+          },
+          "id": "228c4a43-c113-4d77-8c4a-43c1137d77b4",
+          "type": "bcpg:reqCtrlList"
+        },
+        {
+          "metadata": "reqCtrlList",
+          "cm:name": "e66f14da-9af5-4a8e-a1bd-30d8ecae9bad",
+          "attributes": {
+            "cm:creator": "admin",
+            "bcpg:rclReqMessage_fr": "Caractéristique 'Nut 0' non renseignée",
+            "cm:modifier": "admin",
+            "bcpg:rclReqMessage_it": "Caratteristico ' Nut 0 ' non definito",
+            "bcpg:rclReqMessage_en_US": "Characteristic 'Nut 0' undefined",
+            "bcpg:rclReqMessage_es": "Característica ' Nut 0 ' indefinido",
+            "bcpg:rclSourcesV2": [
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre - Fournisseur 1",
+                "id": "37fbcdb1-5cf2-4ca7-bbcd-b15cf2dca7d2",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP15"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre - GEN - Usine 1",
+                "id": "3b6cc3cc-23d8-4a18-acc3-cc23d89a18b3",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP18"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre - Fournisseur 3",
+                "id": "71105852-6c2a-41cc-9058-526c2a31cc14",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP17"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre - Fournisseur 2",
+                "id": "a576557b-8470-4385-b655-7b8470f3850d",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP16"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre - GEN - Usine 2",
+                "id": "c7f54e35-e751-4981-b54e-35e7514981c3",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP19"
+              }
+            ],
+            "cm:created": "2026-01-26T15:09:24.858Z",
+            "bcpg:rclReqMessage_ja_JP": "キャラクター 'Nut 0' は未定義です。",
+            "bcpg:rclReqMessage_ru": "Характеристика ' Nut 0 ' не определена",
+            "bcpg:rclReqMessage_fi": "Ominaista ' Nut 0 ' määrittelemätön",
+            "bcpg:sort": 7,
+            "bcpg:rclReqMessage_sv_SE": "Karaktäristisk ' Nut 0 ' odefinierad",
+            "bcpg:rclReqMessage_en": "Characteristic 'Nut 0' undefined",
+            "bcpg:rclReqMessage_tr": "Karakteristik ' Nut 0 ' tanımsız",
+            "bcpg:rclCharact": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Nuts",
+              "metadata": "nut",
+              "bcpg:charactName_fr": "Nut 0",
+              "bcpg:charactName": "Nut 0",
+              "id": "7020efcd-888b-41ae-a0ef-cd888b11ae1a",
+              "type": "bcpg:nut"
+            },
+            "bcpg:rclReqMessage": "Caractéristique 'Nut 0' non renseignée",
+            "cm:name": "e66f14da-9af5-4a8e-a1bd-30d8ecae9bad",
+            "bcpg:rclDataType": "Nutrient",
+            "bcpg:rclReqMessage_de": "Eigenschaft 'Nut 0' nicht definiert",
+            "bcpg:rclReqMessage_pt_BR": "Característica ' Nut 0 ' indefinida",
+            "bcpg:rclReqType": "Tolerated",
+            "cm:modified": "2026-01-26T15:09:24.858Z"
+          },
+          "id": "855cba5f-7f40-4be1-9cba-5f7f401be146",
+          "type": "bcpg:reqCtrlList"
+        },
+        {
+          "metadata": "reqCtrlList",
+          "cm:name": "821791a7-299a-4f20-8d2c-42ee100f1a05",
+          "attributes": {
+            "cm:creator": "admin",
+            "bcpg:rclReqMessage_fr": "Allégation 'EU organic agriculture' non renseignée",
+            "cm:modifier": "admin",
+            "bcpg:rclReqMessage_it": "Richiesta ' EU organic agriculture ' mancante",
+            "bcpg:rclReqMessage_en_US": "Claim 'EU organic agriculture' missing",
+            "bcpg:rclReqMessage_es": "Reclamación ' EU organic agriculture ' faltante",
+            "bcpg:rclSourcesV2": [
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre",
+                "id": "54b4721f-9ad8-433a-b472-1f9ad8b33adf",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP20"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "semiFinishedProduct semiFinishedProduct-Simulation semiFinishedProduct-7b987b42-79e6-4b04-987b-4279e66b043f",
+                "cm:name": "Crème pâtissière",
+                "id": "61b44f31-2354-4460-b44f-31235464605b",
+                "type": "bcpg:semiFinishedProduct",
+                "bcpg:code": "SF6"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "semiFinishedProduct semiFinishedProduct-Simulation semiFinishedProduct-7b987b42-79e6-4b04-987b-4279e66b043f",
+                "cm:name": "Pâte à choux",
+                "id": "917b150f-da90-4784-bb15-0fda900784fe",
+                "type": "bcpg:semiFinishedProduct",
+                "bcpg:code": "SF5"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre - GEN - Usine 2",
+                "id": "c7f54e35-e751-4981-b54e-35e7514981c3",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP19"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "semiFinishedProduct semiFinishedProduct-Simulation semiFinishedProduct-7b987b42-79e6-4b04-987b-4279e66b043f",
+                "cm:name": "Nappage",
+                "id": "f22f4e43-f76e-4136-af4e-43f76ef1368f",
+                "type": "bcpg:semiFinishedProduct",
+                "bcpg:code": "SF7"
+              }
+            ],
+            "cm:created": "2026-01-26T15:09:24.800Z",
+            "bcpg:rclReqMessage_ja_JP": "クレーム ' EU organic agriculture 'がありません",
+            "bcpg:rclReqMessage_ru": "Требование ' EU organic agriculture ' отсутствует",
+            "bcpg:rclReqMessage_fi": "Vaatimus ' EU organic agriculture ' puuttuu",
+            "bcpg:sort": 8,
+            "bcpg:rclReqMessage_sv_SE": "Kravet ' EU organic agriculture ' saknas",
+            "bcpg:rclReqMessage_en": "Claim 'EU organic agriculture' missing",
+            "bcpg:rclReqMessage_tr": "\"EU organic agriculture\" eksik iddiası",
+            "bcpg:rclCharact": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:LabelClaims",
+              "metadata": "labelClaim",
+              "bcpg:charactName_fr": "EU organic agriculture",
+              "bcpg:charactName": "EU organic agriculture",
+              "id": "f02f0a49-6ad4-4548-af0a-496ad485481e",
+              "type": "bcpg:labelClaim"
+            },
+            "bcpg:rclReqMessage": "Allégation 'EU organic agriculture' non renseignée",
+            "cm:name": "821791a7-299a-4f20-8d2c-42ee100f1a05",
+            "bcpg:rclDataType": "Labelclaim",
+            "bcpg:rclReqMessage_de": "Claim ' EU organic agriculture ' fehlt",
+            "bcpg:rclReqMessage_pt_BR": "Alegação ' EU organic agriculture ' ausente",
+            "bcpg:rclReqType": "Info",
+            "cm:modified": "2026-01-26T15:09:24.800Z"
+          },
+          "id": "7dac9d0a-9717-4761-ac9d-0a9717b761a1",
+          "type": "bcpg:reqCtrlList"
+        },
+        {
+          "metadata": "reqCtrlList",
+          "cm:name": "4d3b057a-03e1-4b65-8e7e-1a8dae5854b4",
+          "attributes": {
+            "cm:creator": "admin",
+            "bcpg:rclReqMessage_fr": "Allégation 'Halal' non renseignée",
+            "cm:modifier": "admin",
+            "bcpg:rclReqMessage_it": "Richiesta ' Halal ' mancante",
+            "bcpg:rclReqMessage_en_US": "Claim 'Halal' missing",
+            "bcpg:rclReqMessage_es": "Reclamación ' Halal ' faltante",
+            "bcpg:rclSourcesV2": [
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre - GEN - Usine 1",
+                "id": "3b6cc3cc-23d8-4a18-acc3-cc23d89a18b3",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP18"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre",
+                "id": "54b4721f-9ad8-433a-b472-1f9ad8b33adf",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP20"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "semiFinishedProduct semiFinishedProduct-Simulation semiFinishedProduct-7b987b42-79e6-4b04-987b-4279e66b043f",
+                "cm:name": "Crème pâtissière",
+                "id": "61b44f31-2354-4460-b44f-31235464605b",
+                "type": "bcpg:semiFinishedProduct",
+                "bcpg:code": "SF6"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "semiFinishedProduct semiFinishedProduct-Simulation semiFinishedProduct-7b987b42-79e6-4b04-987b-4279e66b043f",
+                "cm:name": "Pâte à choux",
+                "id": "917b150f-da90-4784-bb15-0fda900784fe",
+                "type": "bcpg:semiFinishedProduct",
+                "bcpg:code": "SF5"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "semiFinishedProduct semiFinishedProduct-Simulation semiFinishedProduct-7b987b42-79e6-4b04-987b-4279e66b043f",
+                "cm:name": "Nappage",
+                "id": "f22f4e43-f76e-4136-af4e-43f76ef1368f",
+                "type": "bcpg:semiFinishedProduct",
+                "bcpg:code": "SF7"
+              }
+            ],
+            "cm:created": "2026-01-26T15:09:24.806Z",
+            "bcpg:rclReqMessage_ja_JP": "クレーム ' Halal 'がありません",
+            "bcpg:rclReqMessage_ru": "Требование ' Halal ' отсутствует",
+            "bcpg:rclReqMessage_fi": "Vaatimus ' Halal ' puuttuu",
+            "bcpg:sort": 9,
+            "bcpg:rclReqMessage_sv_SE": "Kravet ' Halal ' saknas",
+            "bcpg:rclReqMessage_en": "Claim 'Halal' missing",
+            "bcpg:rclReqMessage_tr": "\"Halal\" eksik iddiası",
+            "bcpg:rclCharact": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:LabelClaims",
+              "metadata": "labelClaim",
+              "bcpg:charactName_fr": "Halal",
+              "bcpg:charactName": "Halal",
+              "id": "605a054e-36ab-43f6-9a05-4e36aba3f66a",
+              "type": "bcpg:labelClaim"
+            },
+            "bcpg:rclReqMessage": "Allégation 'Halal' non renseignée",
+            "cm:name": "4d3b057a-03e1-4b65-8e7e-1a8dae5854b4",
+            "bcpg:rclDataType": "Labelclaim",
+            "bcpg:rclReqMessage_de": "Claim ' Halal ' fehlt",
+            "bcpg:rclReqMessage_pt_BR": "Alegação ' Halal ' ausente",
+            "bcpg:rclReqType": "Info",
+            "cm:modified": "2026-01-26T15:09:24.806Z"
+          },
+          "id": "bfbe8335-c812-400c-be83-35c812400c29",
+          "type": "bcpg:reqCtrlList"
+        }
+      ],
+      "bcpg:nutList": [
+        {
+          "metadata": "nut",
+          "cm:name": "1780b8d8-2595-404b-8bde-fbe2025a55a3",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:nutListFormulatedValue": 1250,
+            "cm:created": "2026-01-26T15:09:11.508Z",
+            "bcpg:nutListRoundedValue": "{\"tu\":{\"JP\":1000},\"min\":{},\"max\":{},\"gda\":{},\"v\":{\"BR\":1250,\"EU\":1250,\"RU\":1250,\"AU\":1250,\"JP\":1250,\"CN\":1250,\"MX\":1250,\"ID\":1250,\"US\":1250,\"CA\":1250},\"ul\":{},\"tl\":{\"JP\":1875.1},\"vps\":{},\"vpc\":{\"US\":6880000},\"v2ps\":{},\"v2\":{},\"gdapc\":{}}",
+            "bcpg:nutListNut": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Nuts",
+              "metadata": "nut",
+              "bcpg:charactName_fr": "Energy kJ",
+              "bcpg:charactName": "Energy kJ",
+              "id": "35be5ca5-7213-439f-be5c-a57213339fa9",
+              "type": "bcpg:nut"
+            },
+            "bcpg:sort": 1,
+            "bcpg:nutListUnit": "kJ/100g",
+            "cm:name": "1780b8d8-2595-404b-8bde-fbe2025a55a3",
+            "bcpg:isManualListItem": true,
+            "cm:modified": "2026-01-26T15:09:11.508Z",
+            "bcpg:depthLevel": 1,
+            "bcpg:nutListIsFormulated": false
+          },
+          "id": "a7cdddcf-6d1b-47e6-8ddd-cf6d1ba7e6c5",
+          "type": "bcpg:nutList"
+        },
+        {
+          "metadata": "nut",
+          "cm:name": "a90739a3-9866-4779-8e9f-cdc6f931b11c",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:nutListFormulatedValue": 8,
+            "cm:created": "2026-01-26T15:09:11.512Z",
+            "bcpg:nutListRoundedValue": "{\"tu\":{\"EU\":6.4,\"JP\":6},\"min\":{},\"max\":{},\"gda\":{},\"v\":{\"BR\":8,\"EU\":8,\"RU\":8,\"AU\":8,\"JP\":8,\"CN\":8,\"MX\":8,\"ID\":8,\"US\":8,\"CA\":8},\"ul\":{},\"tl\":{\"EU\":9.6,\"JP\":10},\"vps\":{},\"vpc\":{\"US\":44000},\"v2ps\":{},\"v2\":{},\"gdapc\":{\"US\":220000}}",
+            "bcpg:nutListNut": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Nuts",
+              "metadata": "nut",
+              "bcpg:charactName_fr": "Fatty acids, total saturated",
+              "bcpg:charactName": "Fatty acids, total saturated",
+              "id": "8eed55b0-b265-4359-ad55-b0b265c35969",
+              "type": "bcpg:nut"
+            },
+            "bcpg:sort": 2,
+            "bcpg:nutListUnit": "g/100g",
+            "cm:name": "a90739a3-9866-4779-8e9f-cdc6f931b11c",
+            "bcpg:isManualListItem": true,
+            "cm:modified": "2026-01-26T15:09:11.512Z",
+            "bcpg:depthLevel": 1,
+            "bcpg:nutListIsFormulated": false
+          },
+          "id": "4508a831-6c88-4391-88a8-316c88c391ed",
+          "type": "bcpg:nutList"
+        },
+        {
+          "metadata": "nut",
+          "cm:name": "6eb84d2b-e3fe-4679-8e8b-2c3b7b68093d",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:nutListFormulatedValue": 16,
+            "cm:created": "2026-01-26T15:09:11.516Z",
+            "bcpg:nutListRoundedValue": "{\"tu\":{\"EU\":12,\"JP\":12},\"min\":{},\"max\":{},\"gda\":{},\"v\":{\"BR\":16,\"EU\":16,\"RU\":16,\"AU\":16,\"JP\":16,\"CN\":16,\"MX\":16,\"ID\":16,\"US\":16,\"CA\":16},\"ul\":{},\"tl\":{\"EU\":20,\"JP\":20},\"vps\":{},\"vpc\":{\"US\":88000},\"v2ps\":{},\"v2\":{},\"gdapc\":{\"US\":112821}}",
+            "bcpg:nutListNut": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Nuts",
+              "metadata": "nut",
+              "bcpg:charactName_fr": "Fat, total",
+              "bcpg:charactName": "Fat, total",
+              "id": "18454e5d-d5b6-47f7-854e-5dd5b6b7f74b",
+              "type": "bcpg:nut"
+            },
+            "bcpg:sort": 3,
+            "bcpg:nutListUnit": "g/100g",
+            "cm:name": "6eb84d2b-e3fe-4679-8e8b-2c3b7b68093d",
+            "bcpg:isManualListItem": true,
+            "cm:modified": "2026-01-26T15:09:11.516Z",
+            "bcpg:depthLevel": 1,
+            "bcpg:nutListIsFormulated": false
+          },
+          "id": "0bb0b251-0148-4041-b0b2-5101482041f8",
+          "type": "bcpg:nutList"
+        },
+        {
+          "metadata": "nut",
+          "cm:name": "5e8b1598-e897-4d09-a820-72e3f6521e12",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:nutListFormulatedValue": 30,
+            "cm:created": "2026-01-26T15:09:11.521Z",
+            "bcpg:nutListRoundedValue": "{\"tu\":{\"EU\":24,\"JP\":24},\"min\":{},\"max\":{},\"gda\":{},\"v\":{\"BR\":30,\"EU\":30,\"RU\":30,\"AU\":30,\"JP\":30,\"CN\":30,\"MX\":30,\"ID\":30,\"US\":30,\"CA\":30},\"ul\":{},\"tl\":{\"EU\":36,\"JP\":36},\"vps\":{},\"vpc\":{\"US\":165000},\"v2ps\":{},\"v2\":{},\"gdapc\":{}}",
+            "bcpg:nutListNut": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Nuts",
+              "metadata": "nut",
+              "bcpg:charactName_fr": "Sugars, total",
+              "bcpg:charactName": "Sugars, total",
+              "id": "d9dc45d9-b45f-4427-9c45-d9b45fb42740",
+              "type": "bcpg:nut"
+            },
+            "bcpg:sort": 4,
+            "bcpg:nutListUnit": "g/100g",
+            "cm:name": "5e8b1598-e897-4d09-a820-72e3f6521e12",
+            "bcpg:isManualListItem": true,
+            "cm:modified": "2026-01-26T15:09:11.521Z",
+            "bcpg:depthLevel": 1,
+            "bcpg:nutListIsFormulated": false
+          },
+          "id": "8ff037d8-f3b8-4a4e-b037-d8f3b8ba4e05",
+          "type": "bcpg:nutList"
+        },
+        {
+          "metadata": "nut",
+          "cm:name": "155432ac-e683-43ba-89b5-6a67f4cc91a2",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:nutListFormulatedValue": 0.2,
+            "cm:created": "2026-01-26T15:09:11.525Z",
+            "bcpg:nutListRoundedValue": "{\"tu\":{\"EU\":0.05,\"JP\":0},\"min\":{},\"max\":{},\"gda\":{},\"v\":{\"BR\":200,\"EU\":0.2,\"RU\":0.2,\"AU\":200,\"JP\":0,\"CN\":200,\"MX\":200,\"ID\":200,\"US\":200,\"CA\":200},\"ul\":{},\"tl\":{\"EU\":0.35,\"JP\":0},\"vps\":{},\"vpc\":{\"US\":1100000},\"v2ps\":{},\"v2\":{},\"gdapc\":{\"US\":47826}}",
+            "bcpg:nutListNut": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Nuts",
+              "metadata": "nut",
+              "bcpg:charactName_fr": "Sodium, Na",
+              "bcpg:charactName": "Sodium, Na",
+              "id": "75492a59-f118-49ce-892a-59f118a9ceb7",
+              "type": "bcpg:nut"
+            },
+            "bcpg:sort": 5,
+            "bcpg:nutListUnit": "g/100g",
+            "cm:name": "155432ac-e683-43ba-89b5-6a67f4cc91a2",
+            "bcpg:isManualListItem": true,
+            "cm:modified": "2026-01-26T15:09:11.525Z",
+            "bcpg:depthLevel": 1,
+            "bcpg:nutListIsFormulated": false
+          },
+          "id": "f6c10c40-51d1-4b69-810c-4051d1fb6973",
+          "type": "bcpg:nutList"
+        },
+        {
+          "metadata": "nut",
+          "cm:name": "2b84adfc-7bf0-41cc-8d09-9abaf4f2a9db",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:nutListFormulatedValue": 0.5,
+            "cm:created": "2026-01-26T15:09:11.530Z",
+            "bcpg:nutListRoundedValue": "{\"tu\":{\"EU\":0.12,\"JP\":0.4},\"min\":{},\"max\":{},\"gda\":{},\"v\":{\"BR\":0.5,\"EU\":0.5,\"RU\":0.5,\"AU\":0.5,\"JP\":0.5,\"CN\":0.5,\"MX\":0,\"ID\":0,\"US\":0.5,\"CA\":0.5},\"ul\":{},\"tl\":{\"EU\":0.88,\"JP\":0.6},\"vps\":{},\"vpc\":{\"US\":2750},\"v2ps\":{},\"v2\":{},\"gdapc\":{}}",
+            "bcpg:nutListNut": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Nuts",
+              "metadata": "nut",
+              "bcpg:charactName_fr": "Salt",
+              "bcpg:charactName": "Salt",
+              "id": "60181199-f13a-4d83-9811-99f13a8d8320",
+              "type": "bcpg:nut"
+            },
+            "bcpg:sort": 6,
+            "bcpg:nutListUnit": "g/100g",
+            "cm:name": "2b84adfc-7bf0-41cc-8d09-9abaf4f2a9db",
+            "bcpg:isManualListItem": true,
+            "cm:modified": "2026-01-26T15:09:11.530Z",
+            "bcpg:depthLevel": 1,
+            "bcpg:nutListIsFormulated": false
+          },
+          "id": "da2a373e-0561-4a41-aa37-3e0561da41b1",
+          "type": "bcpg:nutList"
+        },
+        {
+          "metadata": "nut",
+          "cm:name": "f50f29a1-c9d7-44f0-9958-1d2123401025",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:nutListFormulatedValue": 1.2,
+            "cm:created": "2026-01-26T15:09:11.534Z",
+            "bcpg:nutListRoundedValue": "{\"tu\":{\"JP\":0.9},\"min\":{},\"max\":{},\"gda\":{},\"v\":{\"BR\":1.2,\"EU\":1.2,\"RU\":1.2,\"AU\":1.2,\"JP\":1.2,\"CN\":1.2,\"MX\":1.2,\"ID\":1.2,\"US\":1.2,\"CA\":1.2},\"ul\":{},\"tl\":{\"JP\":1.9},\"vps\":{},\"vpc\":{\"US\":6600},\"v2ps\":{},\"v2\":{},\"gdapc\":{}}",
+            "bcpg:nutListNut": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Nuts",
+              "metadata": "nut",
+              "bcpg:charactName_fr": "NSP fiber",
+              "bcpg:charactName": "NSP fiber",
+              "id": "54daed11-cefb-4955-9aed-11cefb695525",
+              "type": "bcpg:nut"
+            },
+            "bcpg:sort": 7,
+            "bcpg:nutListUnit": "g/100g",
+            "cm:name": "f50f29a1-c9d7-44f0-9958-1d2123401025",
+            "bcpg:isManualListItem": true,
+            "cm:modified": "2026-01-26T15:09:11.534Z",
+            "bcpg:depthLevel": 1,
+            "bcpg:nutListIsFormulated": false
+          },
+          "id": "842679e0-4b1b-4120-a679-e04b1b1120bf",
+          "type": "bcpg:nutList"
+        },
+        {
+          "metadata": "nut",
+          "cm:name": "9959a0e9-1f3d-48a5-85f3-acc60ef75de4",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:nutListFormulatedValue": 1.8,
+            "cm:created": "2026-01-26T15:09:11.539Z",
+            "bcpg:nutListRoundedValue": "{\"tu\":{\"EU\":0,\"JP\":1},\"min\":{},\"max\":{},\"gda\":{},\"v\":{\"BR\":1.8,\"EU\":1.8,\"RU\":1.8,\"AU\":1.8,\"JP\":2,\"CN\":1.8,\"MX\":2,\"ID\":2,\"US\":2,\"CA\":2},\"ul\":{},\"tl\":{\"EU\":3.8,\"JP\":3},\"vps\":{},\"vpc\":{\"US\":9900},\"v2ps\":{},\"v2\":{},\"gdapc\":{\"US\":35357}}",
+            "bcpg:nutListNut": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Nuts",
+              "metadata": "nut",
+              "bcpg:charactName_fr": "Fiber, total dietary",
+              "bcpg:charactName": "Fiber, total dietary",
+              "id": "f38cb84d-339f-43be-8cb8-4d339f63be06",
+              "type": "bcpg:nut"
+            },
+            "bcpg:sort": 8,
+            "bcpg:nutListUnit": "g/100g",
+            "cm:name": "9959a0e9-1f3d-48a5-85f3-acc60ef75de4",
+            "bcpg:isManualListItem": true,
+            "cm:modified": "2026-01-26T15:09:11.539Z",
+            "bcpg:depthLevel": 1,
+            "bcpg:nutListIsFormulated": false
+          },
+          "id": "8d8f7e4d-f6d3-43e8-8f7e-4df6d313e873",
+          "type": "bcpg:nutList"
+        },
+        {
+          "metadata": "nut",
+          "cm:name": "706691f4-4ce7-4c1d-af07-941351b852ff",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:nutListFormulatedValue": 5.5,
+            "cm:created": "2026-01-26T15:09:11.543Z",
+            "bcpg:nutListRoundedValue": "{\"tu\":{\"EU\":3.5,\"JP\":4},\"min\":{},\"max\":{},\"gda\":{},\"v\":{\"BR\":5.5,\"EU\":5.5,\"RU\":5.5,\"AU\":6,\"JP\":6,\"CN\":5.5,\"MX\":6,\"ID\":6,\"US\":6,\"CA\":6},\"ul\":{},\"tl\":{\"EU\":7.5,\"JP\":8},\"vps\":{},\"vpc\":{\"US\":30250},\"v2ps\":{},\"v2\":{},\"gdapc\":{\"US\":60500}}",
+            "bcpg:nutListNut": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Nuts",
+              "metadata": "nut",
+              "bcpg:charactName_fr": "Protein",
+              "bcpg:charactName": "Protein",
+              "id": "03ba1db8-af31-41fe-ba1d-b8af3121fea3",
+              "type": "bcpg:nut"
+            },
+            "bcpg:sort": 9,
+            "bcpg:nutListUnit": "g/100g",
+            "cm:name": "706691f4-4ce7-4c1d-af07-941351b852ff",
+            "bcpg:isManualListItem": true,
+            "cm:modified": "2026-01-26T15:09:11.543Z",
+            "bcpg:depthLevel": 1,
+            "bcpg:nutListIsFormulated": false
+          },
+          "id": "a13144c1-6bd6-413e-b144-c16bd6213e78",
+          "type": "bcpg:nutList"
+        }
+      ],
+      "bcpg:labelClaimList": [
+        {
+          "metadata": "labelClaim",
+          "cm:name": "427de01a-6312-42bf-bbf9-5a7defc70b6b",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:lclLabelClaim": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:LabelClaims",
+              "metadata": "labelClaim",
+              "bcpg:charactName_fr": "EU organic agriculture",
+              "bcpg:charactName": "EU organic agriculture",
+              "id": "f02f0a49-6ad4-4548-af0a-496ad485481e",
+              "type": "bcpg:labelClaim"
+            },
+            "bcpg:lclPercentApplicable": 74.0495867768595,
+            "cm:created": "2026-01-26T15:09:11.578Z",
+            "bcpg:lclPercentClaim": 0,
+            "cm:name": "427de01a-6312-42bf-bbf9-5a7defc70b6b",
+            "bcpg:isManualListItem": false,
+            "bcpg:sort": 1,
+            "cm:modified": "2026-01-26T15:09:11.578Z",
+            "bcpg:lclMissingLabelClaims": [
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "semiFinishedProduct semiFinishedProduct-Simulation semiFinishedProduct-7b987b42-79e6-4b04-987b-4279e66b043f",
+                "cm:name": "Nappage",
+                "id": "f22f4e43-f76e-4136-af4e-43f76ef1368f",
+                "type": "bcpg:semiFinishedProduct",
+                "bcpg:code": "SF7"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre",
+                "id": "54b4721f-9ad8-433a-b472-1f9ad8b33adf",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP20"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre - GEN - Usine 2",
+                "id": "c7f54e35-e751-4981-b54e-35e7514981c3",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP19"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "semiFinishedProduct semiFinishedProduct-Simulation semiFinishedProduct-7b987b42-79e6-4b04-987b-4279e66b043f",
+                "cm:name": "Pâte à choux",
+                "id": "917b150f-da90-4784-bb15-0fda900784fe",
+                "type": "bcpg:semiFinishedProduct",
+                "bcpg:code": "SF5"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "semiFinishedProduct semiFinishedProduct-Simulation semiFinishedProduct-7b987b42-79e6-4b04-987b-4279e66b043f",
+                "cm:name": "Crème pâtissière",
+                "id": "61b44f31-2354-4460-b44f-31235464605b",
+                "type": "bcpg:semiFinishedProduct",
+                "bcpg:code": "SF6"
+              }
+            ],
+            "bcpg:lclIsFormulated": false
+          },
+          "id": "98db32a7-6c32-405e-9b32-a76c32805ea9",
+          "type": "bcpg:labelClaimList"
+        },
+        {
+          "metadata": "labelClaim",
+          "cm:name": "13eb44cf-5dba-43e8-896c-1e433fd0ba3e",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "cm:created": "2026-01-26T15:09:11.583Z",
+            "bcpg:lclPercentClaim": 0,
+            "bcpg:sort": 2,
+            "bcpg:lclIsFormulated": false,
+            "bcpg:lclClaimValue": "false",
+            "bcpg:lclLabelClaim": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:LabelClaims",
+              "metadata": "labelClaim",
+              "bcpg:charactName_fr": "Kosher",
+              "bcpg:charactName": "Kosher",
+              "id": "2f6eba40-c412-4479-aeba-40c412f479dc",
+              "type": "bcpg:labelClaim"
+            },
+            "bcpg:lclPercentApplicable": 40.5371900826446,
+            "cm:name": "13eb44cf-5dba-43e8-896c-1e433fd0ba3e",
+            "bcpg:isManualListItem": false,
+            "cm:modified": "2026-01-26T15:09:11.583Z",
+            "bcpg:lclMissingLabelClaims": [
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "semiFinishedProduct semiFinishedProduct-Simulation semiFinishedProduct-7b987b42-79e6-4b04-987b-4279e66b043f",
+                "cm:name": "Nappage",
+                "id": "f22f4e43-f76e-4136-af4e-43f76ef1368f",
+                "type": "bcpg:semiFinishedProduct",
+                "bcpg:code": "SF7"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre",
+                "id": "54b4721f-9ad8-433a-b472-1f9ad8b33adf",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP20"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre - GEN - Usine 2",
+                "id": "c7f54e35-e751-4981-b54e-35e7514981c3",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP19"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "semiFinishedProduct semiFinishedProduct-Simulation semiFinishedProduct-7b987b42-79e6-4b04-987b-4279e66b043f",
+                "cm:name": "Pâte à choux",
+                "id": "917b150f-da90-4784-bb15-0fda900784fe",
+                "type": "bcpg:semiFinishedProduct",
+                "bcpg:code": "SF5"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre - Fournisseur 2",
+                "id": "a576557b-8470-4385-b655-7b8470f3850d",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP16"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "semiFinishedProduct semiFinishedProduct-Simulation semiFinishedProduct-7b987b42-79e6-4b04-987b-4279e66b043f",
+                "cm:name": "Crème pâtissière",
+                "id": "61b44f31-2354-4460-b44f-31235464605b",
+                "type": "bcpg:semiFinishedProduct",
+                "bcpg:code": "SF6"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre - GEN - Usine 1",
+                "id": "3b6cc3cc-23d8-4a18-acc3-cc23d89a18b3",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP18"
+              }
+            ]
+          },
+          "id": "c05c62e9-e688-435a-9c62-e9e688c35a5c",
+          "type": "bcpg:labelClaimList"
+        },
+        {
+          "metadata": "labelClaim",
+          "cm:name": "5de9714b-750e-4baa-a6a9-3750b2319f2e",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:lclLabelClaim": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:LabelClaims",
+              "metadata": "labelClaim",
+              "bcpg:charactName_fr": "Halal",
+              "bcpg:charactName": "Halal",
+              "id": "605a054e-36ab-43f6-9a05-4e36aba3f66a",
+              "type": "bcpg:labelClaim"
+            },
+            "bcpg:lclPercentApplicable": 32.4297520661157,
+            "cm:created": "2026-01-26T15:09:11.587Z",
+            "bcpg:lclPercentClaim": 0,
+            "cm:name": "5de9714b-750e-4baa-a6a9-3750b2319f2e",
+            "bcpg:isManualListItem": false,
+            "bcpg:sort": 3,
+            "cm:modified": "2026-01-26T15:09:11.587Z",
+            "bcpg:lclMissingLabelClaims": [
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "semiFinishedProduct semiFinishedProduct-Simulation semiFinishedProduct-7b987b42-79e6-4b04-987b-4279e66b043f",
+                "cm:name": "Nappage",
+                "id": "f22f4e43-f76e-4136-af4e-43f76ef1368f",
+                "type": "bcpg:semiFinishedProduct",
+                "bcpg:code": "SF7"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre",
+                "id": "54b4721f-9ad8-433a-b472-1f9ad8b33adf",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP20"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "semiFinishedProduct semiFinishedProduct-Simulation semiFinishedProduct-7b987b42-79e6-4b04-987b-4279e66b043f",
+                "cm:name": "Pâte à choux",
+                "id": "917b150f-da90-4784-bb15-0fda900784fe",
+                "type": "bcpg:semiFinishedProduct",
+                "bcpg:code": "SF5"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "semiFinishedProduct semiFinishedProduct-Simulation semiFinishedProduct-7b987b42-79e6-4b04-987b-4279e66b043f",
+                "cm:name": "Crème pâtissière",
+                "id": "61b44f31-2354-4460-b44f-31235464605b",
+                "type": "bcpg:semiFinishedProduct",
+                "bcpg:code": "SF6"
+              },
+              {
+                "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+                "metadata": "rawMaterial rawMaterial-Simulation rawMaterial-4513f39b-a38a-4e1d-93f3-9ba38a9e1d68",
+                "cm:name": "Sucre - GEN - Usine 1",
+                "id": "3b6cc3cc-23d8-4a18-acc3-cc23d89a18b3",
+                "type": "bcpg:rawMaterial",
+                "bcpg:code": "MP18"
+              }
+            ],
+            "bcpg:lclIsFormulated": false
+          },
+          "id": "d5b6548e-0a65-4b86-b654-8e0a651b86de",
+          "type": "bcpg:labelClaimList"
+        }
+      ],
+      "pjt:scoreList": [
+        {
+          "metadata": "scoreCriterion",
+          "cm:name": "eb0e076a-94e4-48e4-829c-c12d4dfd90c1",
+          "attributes": {
+            "pjt:slScoreCriterion": {
+              "path": "/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:ScoreCriteria",
+              "metadata": "scoreCriterion",
+              "bcpg:charactName_fr": "Pastry Quality",
+              "bcpg:charactName": "Pastry Quality",
+              "id": "aa1b796f-d800-4a0c-9b79-6fd8005a0c66",
+              "type": "pjt:scoreCriterion"
+            },
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "cm:created": "2026-01-26T15:09:11.554Z",
+            "pjt:completionPercent": 0,
+            "cm:name": "eb0e076a-94e4-48e4-829c-c12d4dfd90c1",
+            "bcpg:isManualListItem": false,
+            "bcpg:sort": 100,
+            "pjt:slScore": 16.6666666666667,
+            "cm:modified": "2026-01-26T15:09:11.554Z",
+            "bcpg:depthLevel": 1
+          },
+          "id": "c069cfc9-4247-4a74-a9cf-c942478a7483",
+          "type": "pjt:scoreList"
+        },
+        {
+          "metadata": "scoreCriterion",
+          "cm:name": "43a3e47c-3c40-418a-b1fb-ebce9b5f0e92",
+          "attributes": {
+            "pjt:slScoreCriterion": {
+              "path": "/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:ScoreCriteria",
+              "metadata": "scoreCriterion",
+              "bcpg:charactName_fr": "Filling Quality",
+              "bcpg:charactName": "Filling Quality",
+              "id": "e5494872-1a0c-4338-8948-721a0c933869",
+              "type": "pjt:scoreCriterion"
+            },
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "cm:created": "2026-01-26T15:09:11.561Z",
+            "pjt:completionPercent": 0,
+            "cm:name": "43a3e47c-3c40-418a-b1fb-ebce9b5f0e92",
+            "bcpg:isManualListItem": false,
+            "bcpg:sort": 101,
+            "pjt:slScore": 23.0769230769231,
+            "cm:modified": "2026-01-26T15:09:11.561Z",
+            "bcpg:depthLevel": 1
+          },
+          "id": "18596a94-0f62-4817-996a-940f62681797",
+          "type": "pjt:scoreList"
+        },
+        {
+          "metadata": "scoreCriterion",
+          "cm:name": "8015ffc3-33bf-44ed-bc9e-4ba8065a9e1c",
+          "attributes": {
+            "pjt:slScoreCriterion": {
+              "path": "/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:ScoreCriteria",
+              "metadata": "scoreCriterion",
+              "bcpg:charactName_fr": "CCP Compliance",
+              "bcpg:charactName": "CCP Compliance",
+              "id": "b353b22c-3e9f-42dd-93b2-2c3e9f32dd56",
+              "type": "pjt:scoreCriterion"
+            },
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "cm:created": "2026-01-26T15:09:11.566Z",
+            "pjt:completionPercent": 0,
+            "cm:name": "8015ffc3-33bf-44ed-bc9e-4ba8065a9e1c",
+            "bcpg:isManualListItem": false,
+            "bcpg:sort": 102,
+            "pjt:slScore": 33.3333333333333,
+            "cm:modified": "2026-01-26T15:09:11.566Z",
+            "bcpg:depthLevel": 1
+          },
+          "id": "c66d394f-a759-401b-ad39-4fa759001b77",
+          "type": "pjt:scoreList"
+        }
+      ],
+      "bcpg:ingLabelingList@bcpg:labelingRuleList": [
+        {
+          "metadata": "ingLabelingList",
+          "cm:name": "Rendu",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:lrFormula": "render()",
+            "bcpg:lrType": "Render",
+            "cm:created": "2026-01-26T15:09:11.647Z",
+            "bcpg:lrIsActive": true,
+            "cm:name": "Rendu",
+            "bcpg:sort": 103,
+            "bcpg:lrSyncState": "Synchronized",
+            "cm:modified": "2026-01-26T15:09:11.647Z"
+          },
+          "id": "f8bb238c-5034-4c02-bb23-8c5034ec0291",
+          "type": "bcpg:labelingRuleList"
+        },
+        {
+          "metadata": "ingLabelingList",
+          "cm:name": "Rendu as HTML",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:lrFormula": "renderAsHtmlTable()",
+            "bcpg:lrType": "Render",
+            "cm:created": "2026-01-26T15:09:11.650Z",
+            "bcpg:lrIsActive": true,
+            "cm:name": "Rendu as HTML",
+            "bcpg:sort": 104,
+            "bcpg:lrSyncState": "Synchronized",
+            "cm:modified": "2026-01-26T15:09:11.650Z"
+          },
+          "id": "ffcbcb02-2148-448a-8bcb-022148b48a2a",
+          "type": "bcpg:labelingRuleList"
+        },
+        {
+          "metadata": "ingLabelingList",
+          "cm:name": "%",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:lrFormula": "{0} {1,number,0.#%} ({2})",
+            "bcpg:lrType": "Format",
+            "cm:created": "2026-01-26T15:09:11.654Z",
+            "bcpg:lrIsActive": true,
+            "cm:name": "%",
+            "bcpg:sort": 105,
+            "bcpg:lrSyncState": "Synchronized",
+            "cm:modified": "2026-01-26T15:09:11.654Z"
+          },
+          "id": "3684039a-7cb2-4149-8403-9a7cb21149d6",
+          "type": "bcpg:labelingRuleList"
+        },
+        {
+          "metadata": "ingLabelingList",
+          "cm:name": "Param1",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:lrFormula": "ingsLabelingWithYield=true",
+            "bcpg:lrType": "Prefs",
+            "cm:created": "2026-01-26T15:09:11.657Z",
+            "bcpg:lrIsActive": true,
+            "cm:name": "Param1",
+            "bcpg:sort": 106,
+            "bcpg:lrSyncState": "Synchronized",
+            "cm:modified": "2026-01-26T15:09:11.657Z"
+          },
+          "id": "599d4e7b-815d-4b36-9d4e-7b815dab36a0",
+          "type": "bcpg:labelingRuleList"
+        }
+      ],
+      "bcpg:ingLabelingList": [
+        {
+          "metadata": "ingLabelingList",
+          "cm:name": "1be9f1d5-4617-4aaa-b5ca-b6251f8d832e",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:illValue": "Pâte à choux 45,5% (Sucre 41,3%, Lait 4,1%), Crème pâtissière 36,4% (Chocolat 9,1%, Lait 7,3%, Oeuf 7,3%, Sucre 7,3%, Farine 5,5%), Nappage 18,2% (Oeuf 7,3%, Chocolat 5,5%, Sucre 5,5%)",
+            "bcpg:illValue_fr": "Pâte à choux 45,5% (Sucre 41,3%, Lait 4,1%), Crème pâtissière 36,4% (Chocolat 9,1%, Lait 7,3%, Oeuf 7,3%, Sucre 7,3%, Farine 5,5%), Nappage 18,2% (Oeuf 7,3%, Chocolat 5,5%, Sucre 5,5%)",
+            "cm:created": "2026-01-26T15:09:24.943Z",
+            "bcpg:illLogValue": "{\"children\":[{\"vol\":13.22115385,\"qte\":45.45454545,\"cssClass\":\"semiFinishedProduct\",\"decl\":\"Détailler\",\"children\":[{\"vol\":41.322314049999996,\"qte\":41.322314049999996,\"cssClass\":\"ing\",\"decl\":\"Détailler\",\"children\":[],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/dad45024-4246-44f5-9450-244246e4f5a3\",\"name\":\"Sucre\",\"legal\":\"Sucre\"},{\"vol\":4.132231405000001,\"qte\":4.132231405000001,\"cssClass\":\"rawMaterial\",\"decl\":\"Déclarer lib. légal\",\"children\":[],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/d7182098-5011-447a-9820-985011f47aba\",\"name\":\"Lait\",\"legal\":\"Lait\"},{\"vol\":-1.8455655470000002E-14,\"qte\":-1.8455655470000002E-14,\"cssClass\":\"rawMaterial\",\"decl\":\"Déclarer lib. légal\",\"children\":[],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/065e9196-8a23-407f-9e91-968a23c07f13\",\"name\":\"Eau\",\"legal\":\"Eau\"}],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/917b150f-da90-4784-bb15-0fda900784fe\",\"name\":\"Pâte à choux\",\"legal\":\"Pâte à choux\"},{\"vol\":10.57692308,\"qte\":36.36363636,\"cssClass\":\"semiFinishedProduct\",\"decl\":\"Détailler\",\"children\":[{\"vol\":9.09090909,\"qte\":9.09090909,\"cssClass\":\"ing\",\"decl\":\"Détailler\",\"children\":[],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/0b5cf38e-aa15-4517-9cf3-8eaa15f51705\",\"name\":\"Chocolat\",\"legal\":\"Chocolat\"},{\"vol\":7.272727272,\"qte\":7.272727272,\"cssClass\":\"ing\",\"decl\":\"Détailler\",\"children\":[],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/355d3286-2ed5-411a-9d32-862ed5311a14\",\"name\":\"Lait\",\"legal\":\"Lait\"},{\"vol\":7.272727272,\"qte\":7.272727272,\"cssClass\":\"ing\",\"decl\":\"Détailler\",\"children\":[],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/3df1ba7a-798c-4bdb-b1ba-7a798cebdb82\",\"name\":\"Oeuf\",\"legal\":\"Oeuf\"},{\"vol\":7.272727272,\"qte\":7.272727272,\"cssClass\":\"ing\",\"decl\":\"Détailler\",\"children\":[],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/dad45024-4246-44f5-9450-244246e4f5a3\",\"name\":\"Sucre\",\"legal\":\"Sucre\"},{\"vol\":5.454545454000001,\"qte\":5.454545454000001,\"cssClass\":\"ing\",\"decl\":\"Détailler\",\"children\":[],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/deabfaac-da9a-47bb-abfa-acda9ae7bbd7\",\"name\":\"Farine\",\"legal\":\"Farine\"}],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/61b44f31-2354-4460-b44f-31235464605b\",\"name\":\"Crème pâtissière\",\"legal\":\"Crème pâtissière\"},{\"vol\":5.288461538,\"qte\":18.18181818,\"cssClass\":\"semiFinishedProduct\",\"decl\":\"Détailler\",\"children\":[{\"vol\":7.272727272,\"qte\":7.272727272,\"cssClass\":\"ing\",\"decl\":\"Détailler\",\"children\":[],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/3df1ba7a-798c-4bdb-b1ba-7a798cebdb82\",\"name\":\"Oeuf\",\"legal\":\"Oeuf\"},{\"vol\":5.454545454000001,\"qte\":5.454545454000001,\"cssClass\":\"ing\",\"decl\":\"Détailler\",\"children\":[],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/0b5cf38e-aa15-4517-9cf3-8eaa15f51705\",\"name\":\"Chocolat\",\"legal\":\"Chocolat\"},{\"vol\":5.454545454000001,\"qte\":5.454545454000001,\"cssClass\":\"ing\",\"decl\":\"Détailler\",\"children\":[],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/dad45024-4246-44f5-9450-244246e4f5a3\",\"name\":\"Sucre\",\"legal\":\"Sucre\"}],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/f22f4e43-f76e-4136-af4e-43f76ef1368f\",\"name\":\"Nappage\",\"legal\":\"Nappage\"}],\"name\":\"root\",\"legal\":\"root\"}",
+            "cm:name": "1be9f1d5-4617-4aaa-b5ca-b6251f8d832e",
+            "bcpg:isManualListItem": false,
+            "bcpg:illGrp": {
+              "path": "~/bcpg:entityLists/bcpg:ingLabelingList",
+              "metadata": "ingLabelingList",
+              "cm:name": "Rendu",
+              "id": "f8bb238c-5034-4c02-bb23-8c5034ec0291",
+              "type": "bcpg:labelingRuleList"
+            },
+            "bcpg:sort": 0,
+            "cm:modified": "2026-01-26T15:09:24.943Z"
+          },
+          "id": "cf107f44-2c5c-4881-907f-442c5cd88163",
+          "type": "bcpg:ingLabelingList"
+        },
+        {
+          "metadata": "ingLabelingList",
+          "cm:name": "2c20a08c-23c0-4360-b2c0-d338ff94ce8b",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:illValue": "\u003Ctable class=\"labelingTable\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"border: solid 1px; border-collapse:collapse\" rules=\"none\"\u003E\u003Cthead\u003E\u003Ctr\u003E\u003Cth style=\"border: solid 1px; padding: 5px;\" \u003EIngrédient\u003C/th\u003E\u003Cth style=\"border: solid 1px;padding: 5px;\" \u003EOrigine géographique\u003C/th\u003E\u003Cth style=\"border: solid 1px;padding: 5px;\" \u003EOrigine biologique\u003C/th\u003E\u003Cth style=\"border: solid 1px;padding: 5px;text-align:center;\"\u003EQuantité (%)\u003C/th\u003E\u003Cth style=\"border: solid 1px;padding: 5px;text-align:center;\"\u003EQté ap. rdmt (%)\u003C/th\u003E\u003C/tr\u003E\u003C/thead\u003E\u003Ctbody\u003E\u003Ctr\u003E\u003Ctd style=\"border: solid 1px; padding: 5px;\" \u003EPâte à choux 45,5% (Sucre 41,3%, Lait 4,1%)\u003C/td\u003E\u003Ctd style=\"border: solid 1px;padding: 5px;\" \u003E\u003C/td\u003E\u003Ctd style=\"border: solid 1px;padding: 5px;\" \u003E\u003C/td\u003E\u003Ctd style=\"border: solid 1px;padding: 5px;text-align:center;\"\u003E45,5%\u003C/td\u003E\u003Ctd style=\"border: solid 1px;padding: 5px;text-align:center;\"\u003E45,5%\u003C/td\u003E\u003C/tr\u003E\u003Ctr\u003E\u003Ctd style=\"border: solid 1px; padding: 5px;\" \u003ECrème pâtissière 36,4% (Chocolat 9,1%, Lait 7,3%, Oeuf 7,3%, Sucre 7,3%, Farine 5,5%)\u003C/td\u003E\u003Ctd style=\"border: solid 1px;padding: 5px;\" \u003E\u003C/td\u003E\u003Ctd style=\"border: solid 1px;padding: 5px;\" \u003E\u003C/td\u003E\u003Ctd style=\"border: solid 1px;padding: 5px;text-align:center;\"\u003E36,4%\u003C/td\u003E\u003Ctd style=\"border: solid 1px;padding: 5px;text-align:center;\"\u003E36,4%\u003C/td\u003E\u003C/tr\u003E\u003Ctr\u003E\u003Ctd style=\"border: solid 1px; padding: 5px;\" \u003ENappage 18,2% (Oeuf 7,3%, Chocolat 5,5%, Sucre 5,5%)\u003C/td\u003E\u003Ctd style=\"border: solid 1px;padding: 5px;\" \u003E\u003C/td\u003E\u003Ctd style=\"border: solid 1px;padding: 5px;\" \u003E\u003C/td\u003E\u003Ctd style=\"border: solid 1px;padding: 5px;text-align:center;\"\u003E18,2%\u003C/td\u003E\u003Ctd style=\"border: solid 1px;padding: 5px;text-align:center;\"\u003E18,2%\u003C/td\u003E\u003C/tr\u003E\u003C/tbody\u003E\u003C/table\u003E",
+            "bcpg:illValue_fr": "\u003Ctable class=\"labelingTable\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"border: solid 1px; border-collapse:collapse\" rules=\"none\"\u003E\u003Cthead\u003E\u003Ctr\u003E\u003Cth style=\"border: solid 1px; padding: 5px;\" \u003EIngrédient\u003C/th\u003E\u003Cth style=\"border: solid 1px;padding: 5px;\" \u003EOrigine géographique\u003C/th\u003E\u003Cth style=\"border: solid 1px;padding: 5px;\" \u003EOrigine biologique\u003C/th\u003E\u003Cth style=\"border: solid 1px;padding: 5px;text-align:center;\"\u003EQuantité (%)\u003C/th\u003E\u003Cth style=\"border: solid 1px;padding: 5px;text-align:center;\"\u003EQté ap. rdmt (%)\u003C/th\u003E\u003C/tr\u003E\u003C/thead\u003E\u003Ctbody\u003E\u003Ctr\u003E\u003Ctd style=\"border: solid 1px; padding: 5px;\" \u003EPâte à choux 45,5% (Sucre 41,3%, Lait 4,1%)\u003C/td\u003E\u003Ctd style=\"border: solid 1px;padding: 5px;\" \u003E\u003C/td\u003E\u003Ctd style=\"border: solid 1px;padding: 5px;\" \u003E\u003C/td\u003E\u003Ctd style=\"border: solid 1px;padding: 5px;text-align:center;\"\u003E45,5%\u003C/td\u003E\u003Ctd style=\"border: solid 1px;padding: 5px;text-align:center;\"\u003E45,5%\u003C/td\u003E\u003C/tr\u003E\u003Ctr\u003E\u003Ctd style=\"border: solid 1px; padding: 5px;\" \u003ECrème pâtissière 36,4% (Chocolat 9,1%, Lait 7,3%, Oeuf 7,3%, Sucre 7,3%, Farine 5,5%)\u003C/td\u003E\u003Ctd style=\"border: solid 1px;padding: 5px;\" \u003E\u003C/td\u003E\u003Ctd style=\"border: solid 1px;padding: 5px;\" \u003E\u003C/td\u003E\u003Ctd style=\"border: solid 1px;padding: 5px;text-align:center;\"\u003E36,4%\u003C/td\u003E\u003Ctd style=\"border: solid 1px;padding: 5px;text-align:center;\"\u003E36,4%\u003C/td\u003E\u003C/tr\u003E\u003Ctr\u003E\u003Ctd style=\"border: solid 1px; padding: 5px;\" \u003ENappage 18,2% (Oeuf 7,3%, Chocolat 5,5%, Sucre 5,5%)\u003C/td\u003E\u003Ctd style=\"border: solid 1px;padding: 5px;\" \u003E\u003C/td\u003E\u003Ctd style=\"border: solid 1px;padding: 5px;\" \u003E\u003C/td\u003E\u003Ctd style=\"border: solid 1px;padding: 5px;text-align:center;\"\u003E18,2%\u003C/td\u003E\u003Ctd style=\"border: solid 1px;padding: 5px;text-align:center;\"\u003E18,2%\u003C/td\u003E\u003C/tr\u003E\u003C/tbody\u003E\u003C/table\u003E",
+            "cm:created": "2026-01-26T15:09:24.949Z",
+            "bcpg:illLogValue": "{\"children\":[{\"vol\":13.22115385,\"qte\":45.45454545,\"cssClass\":\"semiFinishedProduct\",\"decl\":\"Détailler\",\"children\":[{\"vol\":41.322314049999996,\"qte\":41.322314049999996,\"cssClass\":\"ing\",\"decl\":\"Détailler\",\"children\":[],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/dad45024-4246-44f5-9450-244246e4f5a3\",\"name\":\"Sucre\",\"legal\":\"Sucre\"},{\"vol\":4.132231405000001,\"qte\":4.132231405000001,\"cssClass\":\"rawMaterial\",\"decl\":\"Déclarer lib. légal\",\"children\":[],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/d7182098-5011-447a-9820-985011f47aba\",\"name\":\"Lait\",\"legal\":\"Lait\"},{\"vol\":-1.8455655470000002E-14,\"qte\":-1.8455655470000002E-14,\"cssClass\":\"rawMaterial\",\"decl\":\"Déclarer lib. légal\",\"children\":[],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/065e9196-8a23-407f-9e91-968a23c07f13\",\"name\":\"Eau\",\"legal\":\"Eau\"}],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/917b150f-da90-4784-bb15-0fda900784fe\",\"name\":\"Pâte à choux\",\"legal\":\"Pâte à choux\"},{\"vol\":10.57692308,\"qte\":36.36363636,\"cssClass\":\"semiFinishedProduct\",\"decl\":\"Détailler\",\"children\":[{\"vol\":9.09090909,\"qte\":9.09090909,\"cssClass\":\"ing\",\"decl\":\"Détailler\",\"children\":[],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/0b5cf38e-aa15-4517-9cf3-8eaa15f51705\",\"name\":\"Chocolat\",\"legal\":\"Chocolat\"},{\"vol\":7.272727272,\"qte\":7.272727272,\"cssClass\":\"ing\",\"decl\":\"Détailler\",\"children\":[],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/355d3286-2ed5-411a-9d32-862ed5311a14\",\"name\":\"Lait\",\"legal\":\"Lait\"},{\"vol\":7.272727272,\"qte\":7.272727272,\"cssClass\":\"ing\",\"decl\":\"Détailler\",\"children\":[],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/3df1ba7a-798c-4bdb-b1ba-7a798cebdb82\",\"name\":\"Oeuf\",\"legal\":\"Oeuf\"},{\"vol\":7.272727272,\"qte\":7.272727272,\"cssClass\":\"ing\",\"decl\":\"Détailler\",\"children\":[],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/dad45024-4246-44f5-9450-244246e4f5a3\",\"name\":\"Sucre\",\"legal\":\"Sucre\"},{\"vol\":5.454545454000001,\"qte\":5.454545454000001,\"cssClass\":\"ing\",\"decl\":\"Détailler\",\"children\":[],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/deabfaac-da9a-47bb-abfa-acda9ae7bbd7\",\"name\":\"Farine\",\"legal\":\"Farine\"}],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/61b44f31-2354-4460-b44f-31235464605b\",\"name\":\"Crème pâtissière\",\"legal\":\"Crème pâtissière\"},{\"vol\":5.288461538,\"qte\":18.18181818,\"cssClass\":\"semiFinishedProduct\",\"decl\":\"Détailler\",\"children\":[{\"vol\":7.272727272,\"qte\":7.272727272,\"cssClass\":\"ing\",\"decl\":\"Détailler\",\"children\":[],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/3df1ba7a-798c-4bdb-b1ba-7a798cebdb82\",\"name\":\"Oeuf\",\"legal\":\"Oeuf\"},{\"vol\":5.454545454000001,\"qte\":5.454545454000001,\"cssClass\":\"ing\",\"decl\":\"Détailler\",\"children\":[],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/0b5cf38e-aa15-4517-9cf3-8eaa15f51705\",\"name\":\"Chocolat\",\"legal\":\"Chocolat\"},{\"vol\":5.454545454000001,\"qte\":5.454545454000001,\"cssClass\":\"ing\",\"decl\":\"Détailler\",\"children\":[],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/dad45024-4246-44f5-9450-244246e4f5a3\",\"name\":\"Sucre\",\"legal\":\"Sucre\"}],\"nodeRef\":\"workspace:\\/\\/SpacesStore\\/f22f4e43-f76e-4136-af4e-43f76ef1368f\",\"name\":\"Nappage\",\"legal\":\"Nappage\"}],\"name\":\"root\",\"legal\":\"root\"}",
+            "cm:name": "2c20a08c-23c0-4360-b2c0-d338ff94ce8b",
+            "bcpg:isManualListItem": false,
+            "bcpg:illGrp": {
+              "path": "~/bcpg:entityLists/bcpg:ingLabelingList",
+              "metadata": "ingLabelingList",
+              "cm:name": "Rendu as HTML",
+              "id": "ffcbcb02-2148-448a-8bcb-022148b48a2a",
+              "type": "bcpg:labelingRuleList"
+            },
+            "bcpg:sort": 50,
+            "cm:modified": "2026-01-26T15:09:24.949Z"
+          },
+          "id": "98dc632a-aaca-4425-9c63-2aaaca1425c3",
+          "type": "bcpg:ingLabelingList"
+        }
+      ],
+      "survey:surveyList": [
+        {
+          "metadata": "surveyQuestion",
+          "cm:name": "69185681-6795-40b2-b0b0-a751b5658c6f",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "survey:slChoices": [
+              {
+                "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:SurveyQuestions",
+                "metadata": "questionLabel",
+                "cm:name": "Minor defects - Slight color variation, size within 17-21cm",
+                "id": "7338c13a-4472-4293-b8c1-3a4472f29378",
+                "type": "survey:surveyQuestion",
+                "bcpg:code": "3"
+              }
+            ],
+            "survey:slQuestion": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:SurveyQuestions",
+              "metadata": "questionLabel",
+              "cm:name": "Evaluate the choux pastry characteristics-",
+              "id": "82efc49e-4330-4a82-afc4-9e43303a820b",
+              "type": "survey:surveyQuestion",
+              "bcpg:code": "1"
+            },
+            "cm:created": "2026-01-26T15:09:11.484Z",
+            "cm:name": "69185681-6795-40b2-b0b0-a751b5658c6f",
+            "bcpg:sort": 103,
+            "survey:generated": false,
+            "cm:modified": "2026-01-26T15:09:11.484Z"
+          },
+          "id": "adc12097-c20c-41cc-8120-97c20c11cc0d",
+          "type": "survey:surveyList"
+        },
+        {
+          "metadata": "surveyQuestion",
+          "cm:name": "566d6cc4-e5df-49de-b999-a74f6796c770",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "survey:slChoices": [
+              {
+                "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:SurveyQuestions",
+                "metadata": "questionLabel",
+                "cm:name": "Minor issues - Slight graininess or temperature deviation (4-8°C)",
+                "id": "91431d15-d4ce-4554-831d-15d4ce3554f1",
+                "type": "survey:surveyQuestion",
+                "bcpg:code": "7"
+              }
+            ],
+            "survey:slQuestion": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:SurveyQuestions",
+              "metadata": "questionLabel",
+              "cm:name": "Assess the pastry cream filling-",
+              "id": "5a9a3272-3d6a-44a1-9a32-723d6a74a1f9",
+              "type": "survey:surveyQuestion",
+              "bcpg:code": "5"
+            },
+            "cm:created": "2026-01-26T15:09:11.491Z",
+            "cm:name": "566d6cc4-e5df-49de-b999-a74f6796c770",
+            "bcpg:sort": 104,
+            "survey:generated": false,
+            "cm:modified": "2026-01-26T15:09:11.491Z"
+          },
+          "id": "2edf7495-aa50-4800-9f74-95aa500800aa",
+          "type": "survey:surveyList"
+        },
+        {
+          "metadata": "surveyQuestion",
+          "cm:name": "babdfdb2-8e4a-4bf3-80d4-96967a001b16",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "survey:slChoices": [
+              {
+                "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:SurveyQuestions",
+                "metadata": "questionLabel",
+                "cm:name": "Out of specification - improper viscosity or crystallization",
+                "id": "38def7c1-5c03-4b08-9ef7-c15c03cb08d8",
+                "type": "survey:surveyQuestion",
+                "bcpg:code": "12"
+              }
+            ],
+            "survey:slQuestion": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:SurveyQuestions",
+              "metadata": "questionLabel",
+              "cm:name": "Evaluate the chocolate glaze characteristics-",
+              "id": "09175d4a-5441-4db8-975d-4a54419db82b",
+              "type": "survey:surveyQuestion",
+              "bcpg:code": "9"
+            },
+            "cm:created": "2026-01-26T15:09:11.496Z",
+            "cm:name": "babdfdb2-8e4a-4bf3-80d4-96967a001b16",
+            "bcpg:sort": 105,
+            "survey:generated": false,
+            "cm:modified": "2026-01-26T15:09:11.496Z"
+          },
+          "id": "93c6fce7-8b32-46ff-86fc-e78b32b6ff75",
+          "type": "survey:surveyList"
+        }
+      ],
+      "bcpg:physicoChemList": [
+        {
+          "metadata": "physicoChem",
+          "cm:name": "a6071e02-e4f4-404a-b0f5-5e13a4f4e094",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:pclPhysicoChem": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:PhysicoChems",
+              "metadata": "physicoChem",
+              "bcpg:charactName_fr": "Fruit and vegetable content",
+              "bcpg:charactName": "Fruit and vegetable content",
+              "id": "15aea3c4-c59d-4e73-aea3-c4c59dde739a",
+              "type": "bcpg:physicoChem"
+            },
+            "bcpg:pclValue": 0,
+            "cm:created": "2026-01-26T15:09:11.598Z",
+            "cm:name": "a6071e02-e4f4-404a-b0f5-5e13a4f4e094",
+            "bcpg:isManualListItem": false,
+            "bcpg:sort": 1,
+            "bcpg:pclUnit_fr": "%",
+            "cm:modified": "2026-01-26T15:09:11.598Z",
+            "bcpg:pclUnit": "%",
+            "bcpg:physicoChemIsFormulated": false
+          },
+          "id": "ae65bf0f-86d8-4521-a5bf-0f86d8c52167",
+          "type": "bcpg:physicoChemList"
+        }
+      ],
+      "bcpg:ingList": [
+        {
+          "metadata": "ing",
+          "cm:name": "bc2b7b640a259b671d47f6e0b8be5931",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:ingListIsProcessingAid": false,
+            "bcpg:ingListQtyPerc": 32.4675324675325,
+            "cm:created": "2026-01-26T15:09:24.892Z",
+            "bcpg:ingListIsIonized": false,
+            "bcpg:ingListDeclType": "Detail",
+            "bcpg:sort": 1,
+            "bcpg:ingListIsGMO": false,
+            "bcpg:ingListIng": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Ings",
+              "metadata": "ing",
+              "bcpg:charactName_fr": "Eau",
+              "bcpg:charactName": "Eau",
+              "id": "a1b0ea43-b594-4dac-b0ea-43b594bdacdc",
+              "type": "bcpg:ing"
+            },
+            "cm:name": "bc2b7b640a259b671d47f6e0b8be5931",
+            "bcpg:ingListIsSupport": false,
+            "bcpg:isManualListItem": false,
+            "bcpg:ingListQtyPercWithYield": 0,
+            "cm:modified": "2026-01-26T15:09:24.892Z",
+            "bcpg:depthLevel": 1
+          },
+          "id": "3d0a0e96-8a90-4b7c-8a0e-968a901b7c60",
+          "type": "bcpg:ingList"
+        },
+        {
+          "metadata": "ing",
+          "cm:name": "f88dd5e63e3ed64a998120443999a263",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:ingListIsProcessingAid": false,
+            "bcpg:ingListQtyPerc": 19.2207792207792,
+            "cm:created": "2026-01-26T15:09:24.898Z",
+            "bcpg:ingListIsIonized": false,
+            "bcpg:ingListDeclType": "Detail",
+            "bcpg:sort": 2,
+            "bcpg:ingListIsGMO": false,
+            "bcpg:ingListIng": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Ings",
+              "metadata": "ing",
+              "bcpg:charactName_fr": "Sucre",
+              "bcpg:charactName": "Sucre",
+              "id": "dad45024-4246-44f5-9450-244246e4f5a3",
+              "type": "bcpg:ing"
+            },
+            "cm:name": "f88dd5e63e3ed64a998120443999a263",
+            "bcpg:ingListIsSupport": false,
+            "bcpg:isManualListItem": false,
+            "bcpg:ingListQtyPercWithYield": 54.0495867768595,
+            "cm:modified": "2026-01-26T15:09:24.898Z",
+            "bcpg:depthLevel": 1
+          },
+          "id": "767a59c0-49ff-485d-ba59-c049ff085d73",
+          "type": "bcpg:ingList"
+        },
+        {
+          "metadata": "ing",
+          "cm:name": "975c1042c503710f81882e001e040f50",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:ingListIsProcessingAid": false,
+            "bcpg:ingListQtyPerc": 14.5454545454545,
+            "cm:created": "2026-01-26T15:09:24.905Z",
+            "bcpg:ingListIsIonized": false,
+            "bcpg:ingListDeclType": "Detail",
+            "bcpg:sort": 3,
+            "bcpg:ingListIsGMO": false,
+            "bcpg:ingListIng": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Ings",
+              "metadata": "ing",
+              "bcpg:charactName_fr": "Chocolat",
+              "bcpg:charactName": "Chocolat",
+              "id": "0b5cf38e-aa15-4517-9cf3-8eaa15f51705",
+              "type": "bcpg:ing"
+            },
+            "cm:name": "975c1042c503710f81882e001e040f50",
+            "bcpg:ingListIsSupport": false,
+            "bcpg:isManualListItem": false,
+            "bcpg:ingListQtyPercWithYield": 14.5454545454545,
+            "cm:modified": "2026-01-26T15:09:24.905Z",
+            "bcpg:depthLevel": 1
+          },
+          "id": "68c62730-ddb2-4eca-8627-30ddb25eca56",
+          "type": "bcpg:ingList"
+        },
+        {
+          "metadata": "ing",
+          "cm:name": "894ce0806c6da9ef115e35428c1ad973",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:ingListIsProcessingAid": false,
+            "bcpg:ingListQtyPerc": 14.5454545454545,
+            "cm:created": "2026-01-26T15:09:24.910Z",
+            "bcpg:ingListIsIonized": false,
+            "bcpg:ingListDeclType": "Detail",
+            "bcpg:sort": 4,
+            "bcpg:ingListIsGMO": false,
+            "bcpg:ingListIng": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Ings",
+              "metadata": "ing",
+              "bcpg:charactName_fr": "Oeuf",
+              "bcpg:charactName": "Oeuf",
+              "id": "3df1ba7a-798c-4bdb-b1ba-7a798cebdb82",
+              "type": "bcpg:ing"
+            },
+            "cm:name": "894ce0806c6da9ef115e35428c1ad973",
+            "bcpg:ingListIsSupport": false,
+            "bcpg:isManualListItem": false,
+            "bcpg:ingListQtyPercWithYield": 14.5454545454545,
+            "cm:modified": "2026-01-26T15:09:24.910Z",
+            "bcpg:depthLevel": 1
+          },
+          "id": "df8fbe9f-2a08-4d86-8fbe-9f2a082d8617",
+          "type": "bcpg:ingList"
+        },
+        {
+          "metadata": "ing",
+          "cm:name": "9a139167cefb16b06bd8101c686dd0d6",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:ingListIsProcessingAid": false,
+            "bcpg:ingListQtyPerc": 13.7662337662338,
+            "cm:created": "2026-01-26T15:09:24.917Z",
+            "bcpg:ingListIsIonized": false,
+            "bcpg:ingListDeclType": "Detail",
+            "bcpg:sort": 5,
+            "bcpg:ingListIsGMO": false,
+            "bcpg:ingListIng": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Ings",
+              "metadata": "ing",
+              "bcpg:charactName_fr": "Lait",
+              "bcpg:charactName": "Lait",
+              "id": "355d3286-2ed5-411a-9d32-862ed5311a14",
+              "type": "bcpg:ing"
+            },
+            "cm:name": "9a139167cefb16b06bd8101c686dd0d6",
+            "bcpg:ingListIsSupport": false,
+            "bcpg:isManualListItem": false,
+            "bcpg:ingListQtyPercWithYield": 11.404958677686,
+            "cm:modified": "2026-01-26T15:09:24.917Z",
+            "bcpg:depthLevel": 1
+          },
+          "id": "3123a2ae-293e-4d75-a3a2-ae293e7d7518",
+          "type": "bcpg:ingList"
+        },
+        {
+          "metadata": "ing",
+          "cm:name": "577b3d3831761a58ad755e09a6da0612",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:ingListIsProcessingAid": false,
+            "bcpg:ingListQtyPerc": 5.45454545454545,
+            "cm:created": "2026-01-26T15:09:24.923Z",
+            "bcpg:ingListIsIonized": false,
+            "bcpg:ingListDeclType": "Detail",
+            "bcpg:sort": 6,
+            "bcpg:ingListIsGMO": false,
+            "bcpg:ingListIng": {
+              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Ings",
+              "metadata": "ing",
+              "bcpg:charactName_fr": "Farine",
+              "bcpg:charactName": "Farine",
+              "id": "deabfaac-da9a-47bb-abfa-acda9ae7bbd7",
+              "type": "bcpg:ing"
+            },
+            "cm:name": "577b3d3831761a58ad755e09a6da0612",
+            "bcpg:ingListIsSupport": false,
+            "bcpg:isManualListItem": false,
+            "bcpg:ingListQtyPercWithYield": 5.45454545454545,
+            "cm:modified": "2026-01-26T15:09:24.923Z",
+            "bcpg:depthLevel": 1
+          },
+          "id": "64348464-8314-47d9-b484-64831497d9b0",
+          "type": "bcpg:ingList"
+        }
+      ],
+      "bcpg:compoList": [
+        {
+          "metadata": "compoList",
+          "cm:name": "f1600f60-eee6-4490-8faf-c2e16ce15628",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:compoListLossPerc": 0,
+            "cm:created": "2026-01-26T15:09:11.626Z",
+            "bcpg:compoListQty": 250,
+            "bcpg:sort": 100,
+            "bcpg:compoListDeclType": "Detail",
+            "bcpg:compoListQtySubFormula": 250,
+            "bcpg:compoListProduct": {
+              "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+              "metadata": "semiFinishedProduct semiFinishedProduct-Simulation semiFinishedProduct-7b987b42-79e6-4b04-987b-4279e66b043f",
+              "cm:name": "Pâte à choux",
+              "id": "917b150f-da90-4784-bb15-0fda900784fe",
+              "type": "bcpg:semiFinishedProduct",
+              "bcpg:code": "SF5"
+            },
+            "bcpg:compoListUnit": "kg",
+            "cm:name": "f1600f60-eee6-4490-8faf-c2e16ce15628",
+            "bcpg:startEffectivity": "2026-01-26T15:09:11.719Z",
+            "bcpg:compoListVolume": 1590.90909090909,
+            "cm:modified": "2026-01-26T15:09:11.626Z",
+            "bcpg:depthLevel": 1
+          },
+          "id": "280f90af-ad27-4988-8f90-afad2729888c",
+          "type": "bcpg:compoList"
+        },
+        {
+          "metadata": "compoList",
+          "cm:name": "f146c442-e5d8-4e35-af7e-061bfa15dfcc",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:compoListLossPerc": 0,
+            "cm:created": "2026-01-26T15:09:11.631Z",
+            "bcpg:compoListQty": 200,
+            "bcpg:sort": 101,
+            "bcpg:compoListDeclType": "Detail",
+            "bcpg:compoListQtySubFormula": 200,
+            "bcpg:compoListProduct": {
+              "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+              "metadata": "semiFinishedProduct semiFinishedProduct-Simulation semiFinishedProduct-7b987b42-79e6-4b04-987b-4279e66b043f",
+              "cm:name": "Crème pâtissière",
+              "id": "61b44f31-2354-4460-b44f-31235464605b",
+              "type": "bcpg:semiFinishedProduct",
+              "bcpg:code": "SF6"
+            },
+            "bcpg:compoListUnit": "kg",
+            "cm:name": "f146c442-e5d8-4e35-af7e-061bfa15dfcc",
+            "bcpg:startEffectivity": "2026-01-26T15:09:11.719Z",
+            "bcpg:compoListVolume": 200,
+            "cm:modified": "2026-01-26T15:09:11.631Z",
+            "bcpg:depthLevel": 1
+          },
+          "id": "42282bc0-75eb-42f8-a82b-c075ebd2f808",
+          "type": "bcpg:compoList"
+        },
+        {
+          "metadata": "compoList",
+          "cm:name": "17c200af-d67b-49cc-ab62-a8d2726c1d13",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "bcpg:compoListLossPerc": 0,
+            "cm:created": "2026-01-26T15:09:11.636Z",
+            "bcpg:compoListQty": 100,
+            "bcpg:sort": 102,
+            "bcpg:compoListDeclType": "Detail",
+            "bcpg:compoListQtySubFormula": 100,
+            "bcpg:compoListProduct": {
+              "path": "/app:company_home/cm:Junit_x0020_Tests/cm:fr_becpg_test_repo_entity_RemoteEntityServiceIT_testRemoteJSONEntityRegression",
+              "metadata": "semiFinishedProduct semiFinishedProduct-Simulation semiFinishedProduct-7b987b42-79e6-4b04-987b-4279e66b043f",
+              "cm:name": "Nappage",
+              "id": "f22f4e43-f76e-4136-af4e-43f76ef1368f",
+              "type": "bcpg:semiFinishedProduct",
+              "bcpg:code": "SF7"
+            },
+            "bcpg:compoListUnit": "kg",
+            "cm:name": "17c200af-d67b-49cc-ab62-a8d2726c1d13",
+            "bcpg:startEffectivity": "2026-01-26T15:09:11.720Z",
+            "bcpg:compoListVolume": 100,
+            "cm:modified": "2026-01-26T15:09:11.636Z",
+            "bcpg:depthLevel": 1
+          },
+          "id": "31eb3f74-8aef-4072-ab3f-748aefb072d4",
+          "type": "bcpg:compoList"
+        }
+      ]
+    },
+    "cm:name": "Éclair au chocolat",
+    "attributes": {
+      "cm:creator": "admin",
+      "bcpg:nutrientProfilingDetails": "{\"hasProteinScore\":false,\"aScore\":20,\"nonNutritiveSugars\":[],\"parts\":{\"FASAT\":{\"score\":7,\"upperValue\":8,\"lowerValue\":7,\"value\":8},\"FRUIT_VEGETABLE\":{\"score\":0,\"upperValue\":40,\"lowerValue\":\"-Inf\",\"value\":0},\"NA\":{\"score\":2,\"upperValue\":0.6,\"lowerValue\":0.4,\"value\":0.5},\"PRO-\":{\"value\":5.5},\"ENER-KJO\":{\"score\":3,\"upperValue\":1340,\"lowerValue\":1005,\"value\":1250},\"FAT\":{\"value\":16},\"PSACNS\":{\"score\":1,\"upperValue\":1.4,\"lowerValue\":0.7,\"value\":1.2},\"FIBTG\":{\"score\":0,\"upperValue\":3,\"lowerValue\":\"-Inf\",\"value\":1.8},\"SUGAR\":{\"score\":8,\"upperValue\":31,\"lowerValue\":27,\"value\":30}},\"displaySaltScore\":true,\"category\":\"Others\",\"nutrientClass\":\"E\",\"isWater\":false,\"nutriScore\":19,\"cScore\":1,\"classLowerValue\":\"18.0\",\"classUpperValue\":\"+Inf\"}",
+      "cm:created": "2026-01-26T15:09:11.464Z",
+      "bcpg:productCompoVolumeUsed": 1890.90909090909,
+      "bcpg:netWeight": 550,
+      "bcpg:entityScore": {
+        "ctrlCount": [
+          {
+            "Completion": {
+              "Forbidden": 4
+            }
+          },
+          {
+            "Validation": {
+              "Tolerated": 1
+            }
+          },
+          {
+            "Nutrient": {
+              "Tolerated": 1
+            }
+          },
+          {
+            "Labelclaim": {
+              "Info": 2
+            }
+          },
+          {
+            "Cost": {
+              "Tolerated": 1
+            }
+          },
+          {
+            "Allergen": {
+              "Tolerated": 1
+            }
+          }
+        ],
+        "catalogs": [
+          {
+            "missingFields": [
+              {
+                "displayName_ja_JP": "正式名称",
+                "displayName": "Libellé légal",
+                "displayName_pt_BR": "Nome legal",
+                "displayName_es": "Nombre legal",
+                "displayName_fr": "Libellé légal",
+                "displayName_it": "Nome legale",
+                "displayName_en": "Legal name",
+                "displayName_fi": "Laillinen nimi",
+                "displayName_ru": "Юридическое название",
+                "id": "bcpg:legalName",
+                "displayName_en_US": "Legal name",
+                "displayName_de": "Offizieller Name",
+                "displayName_sv_SE": "Lagligt namn",
+                "displayName_tr": "Yasal isim"
+              },
+              {
+                "displayName_ja_JP": "賞味期限 (d) または 賞味期限 (d)",
+                "displayName": "DLC (J) ou DDM/DLUO (J)",
+                "displayName_pt_BR": "Validade (d) ou Melhor antes da data (d)",
+                "displayName_es": "Fecha de caducidad (D) o echa de consumo preferente (d)",
+                "displayName_fr": "DLC (J) ou DDM/DLUO (J)",
+                "displayName_it": "Usa per data (d) o Scadenza (d)",
+                "displayName_en": "Use by date (d) or Best before date (d)",
+                "displayName_fi": "Viimeinen käyttöpäivä (d) tai Parasta ennen päivämäärä (p)",
+                "displayName_ru": "Использовать по дате (d) или Срок годности (д)",
+                "id": "bcpg:useByDate|bcpg:bestBeforeDate",
+                "displayName_en_US": "Use by date (d) or Best before date (d)",
+                "displayName_de": "Verwendung nach Datum (T) oder Haltbarkeitsdatum (T)",
+                "displayName_sv_SE": "Sista användningsdag (d) eller Bäst före datum (d)",
+                "displayName_tr": "Tarihe göre kullanın (d) veya Tarihten önceki en iyisi (d)"
+              },
+              {
+                "displayName_ja_JP": "保管条件 または 準備のヒント",
+                "displayName": "Conditions de conservation ou Conseils de préparation et d'utilisation",
+                "displayName_pt_BR": "Condições de armazenamento ou Dicas de preparação",
+                "displayName_es": "Condiciones de almacenaje o Consejos de preparación",
+                "displayName_fr": "Conditions de conservation ou Conseils de préparation et d'utilisation",
+                "displayName_it": "Condizioni di archiviazione o Suggerimenti per la preparazione",
+                "displayName_en": "Storage conditions or Preparation tips",
+                "displayName_fi": "Varastointiolosuhteet tai Valmistusohje",
+                "displayName_ru": "Условия хранения или Советы по приготовлению",
+                "id": "bcpg:storageConditionsRef|bcpg:preparationTips",
+                "displayName_en_US": "Storage conditions or Preparation tips",
+                "displayName_de": "Lagerbedingungen oder Vorbereitungstipps",
+                "displayName_sv_SE": "Lagringsförhållanden eller Tillredningsanvisning",
+                "displayName_tr": "Depolama koşulları veya Hazırlık ipuçları"
+              },
+              {
+                "displayName_ja_JP": "商品名",
+                "displayName": "Libellé commercial",
+                "displayName_pt_BR": "Nome comercial",
+                "displayName_es": "Nombre comercial",
+                "displayName_fr": "Libellé commercial",
+                "displayName_it": "Nome depositato",
+                "displayName_en": "Trade name",
+                "displayName_fi": "Kauppanimi",
+                "displayName_ru": "Торговое наименование",
+                "id": "cm:title",
+                "displayName_en_US": "Trade name",
+                "displayName_de": "Handelsname",
+                "displayName_sv_SE": "Handelsnamn",
+                "displayName_tr": "Ticari unvan"
+              }
+            ],
+            "score": 0,
+            "protectedFields": [
+              "bcpg:productState"
+            ],
+            "color": "hsl(0, 60%, 50%)",
+            "label": "EU 1169/2011 (INCO)",
+            "id": "incoFinishedProduct"
+          }
+        ],
+        "totalForbidden": 4,
+        "global": 33.3333333333333,
+        "details": {
+          "componentsValidation": 0,
+          "mandatoryFields": 0,
+          "specifications": 100
+        }
+      },
+      "cm:contains": [
+        {
+          "metadata": "container",
+          "cm:name": "Brief",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "cm:created": "2026-01-26T15:09:15.050Z",
+            "cm:name": "Brief",
+            "cm:modified": "2026-01-26T15:09:15.050Z"
+          },
+          "type": "cm:folder"
+        },
+        {
+          "metadata": "container",
+          "cm:name": "Documents",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "cm:created": "2026-01-26T15:09:15.055Z",
+            "cm:name": "Documents",
+            "cm:modified": "2026-01-26T15:09:15.055Z"
+          },
+          "type": "cm:folder"
+        },
+        {
+          "metadata": "container",
+          "cm:name": "Images",
+          "attributes": {
+            "cm:creator": "admin",
+            "cm:modifier": "admin",
+            "cm:created": "2026-01-26T15:09:15.059Z",
+            "cm:name": "Images",
+            "cm:modified": "2026-01-26T15:09:15.059Z"
+          },
+          "type": "cm:folder"
+        }
+      ],
+      "bcpg:code": "PF3",
+      "bcpg:productState": "Simulation",
+      "pack:tareUnit": "g",
+      "bcpg:nutrientProfileVersion": "2023",
+      "bcpg:entityTplRef": {
+        "path": "/app:company_home/cm:System/cm:EntityTemplates/cm:ProductTemplates",
+        "metadata": "finishedProduct finishedProduct-Simulation finishedProduct-84b3eb8a-58b7-4a7c-b3eb-8a58b7aa7c9d",
+        "cm:name": "Produit fini",
+        "id": "84b3eb8a-58b7-4a7c-b3eb-8a58b7aa7c9d",
+        "type": "bcpg:finishedProduct",
+        "bcpg:code": "PF1"
+      },
+      "gs1:weight": 550,
+      "bcpg:productQty": 550,
+      "bcpg:productDensity": 0.290865384615385,
+      "bcpg:previousUnitTotalCost": 0,
+      "bcpg:productUnit": "kg",
+      "bcpg:productYield": 100,
+      "bcpg:futureUnitTotalCost": 0,
+      "bcpg:startEffectivity": "2026-01-26T15:09:11.716Z",
+      "cm:modified": "2026-01-26T15:09:17.399Z",
+      "cm:modifier": "admin",
+      "bcpg:unitTotalCost": 0,
+      "bcpg:nutrientProfilingScore": 19,
+      "pack:tare": 0,
+      "bcpg:formulatedDate": "2026-01-26T15:09:24.752Z",
+      "bcpg:productCompoQtyUsed": 550,
+      "bcpg:nutrientProfilingClass": "E",
+      "bcpg:nutrientPreparedUnit": "g",
+      "bcpg:regulatoryMode": "BECPG_ONLY",
+      "cm:name": "Éclair au chocolat",
+      "bcpg:regulatoryState": "Simulation",
+      "bcpg:nutrientProfileCategory": "Others"
+    },
+    "id": "6661ef37-31aa-42f5-a1ef-3731aa62f5ab",
+    "type": "bcpg:finishedProduct",
+    "bcpg:code": "PF3"
+  }
+}

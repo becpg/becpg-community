@@ -1,5 +1,7 @@
 package fr.becpg.repo.helper.json;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -119,6 +121,14 @@ public final class JsonHelper {
 		try {
 			return new JsonData(MAPPER.readTree(json));
 		} catch (JsonProcessingException e) {
+			throw new JsonException(e);
+		}
+	}
+	
+	public static JsonData read(File file) {
+		try {
+			return new JsonData(MAPPER.readTree(file));
+		} catch (IOException e) {
 			throw new JsonException(e);
 		}
 	}
