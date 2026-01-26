@@ -130,6 +130,12 @@
         <property name="becpgLicenseManager" ref="becpgLicenseManager"/>
 	</bean>
 
+	<bean id="webscript.fr.becpg.security.entitySecurityCheck.get" class="fr.becpg.repo.web.scripts.entity.EntitySecurityWebScript" parent="abstractEntityWebScript">
+		<property name="workflowService" ref="WorkflowService" />
+		<property name="workflowPackageComponent" ref="workflowPackageImpl" />
+		<property name="entityListDAO" ref="entityListDAO" />
+	</bean>
+
 	<bean id="webscript.fr.becpg.entity.entityDictionary.get" class="fr.becpg.repo.web.scripts.entity.EntityDictionaryWebScript" parent="webscript">
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
 		<property name="namespaceService" ref="NamespaceService" />

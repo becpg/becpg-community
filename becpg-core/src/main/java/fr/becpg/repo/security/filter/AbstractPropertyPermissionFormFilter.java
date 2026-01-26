@@ -61,6 +61,16 @@ public abstract class AbstractPropertyPermissionFormFilter<ItemType> extends Abs
 	 * @param item a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	protected void filterFormFields(NodeRef item, QName nodeType, Form form) {
+		// Check if security rules should be skipped via ThreadLocal
+		boolean skipSecurityRules = SecurityContextHelper.skipSecurityRules();
+		
+		if (skipSecurityRules) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Skipping security rules for form: " + form);
+			}
+			return;
+		}
+		
 		if (form != null && form.getFieldDefinitions() != null) {
 			Iterator<FieldDefinition> it = form.getFieldDefinitions().iterator();
 			while (it.hasNext()) {
