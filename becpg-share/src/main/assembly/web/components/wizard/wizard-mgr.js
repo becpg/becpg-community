@@ -21,7 +21,8 @@
         currentIndex: 0,
         options: {
             siteId: "", nodeRef: "", destination: "", draft: false,
-            allSteps: false, readOnly: false, wizardStruct: []
+            allSteps: false, readOnly: false, wizardStruct: [],
+            enforceTask: false, skipSecurityRules:false
         },
 
         onReady: function() {
@@ -310,18 +311,55 @@
 
         checkValidation: function(step, readOnly, callback) {
             if (!readOnly && step.nodeRef && step.nodeRef.length > 0) {
+                // Build URL with security parameters based on wizard configuration
+                var url = Alfresco.constants.PROXY_URI + "becpg/security/entitylists/check/" + step.nodeRef.replace(":/", "");
+                var params = [];
+                
+                // Add checkTaskAssignment parameter if wizard requires it
+                if (this.options.enforceTask) {
+                    params.push("checkTaskAssignment=true");
+                }
+                
+                // Add skipSecurityRules parameter if wizard requires it
+                if (this.options.skipSecurityRules) {
+                    params.push("skipSecurityRules=true");
+                }
+                
+                // Append parameters to URL if any
+                if (params.length > 0) {
+                    url += "?" + params.join("&");
+                }
+                
+                // Always call the new security check webscript
                 Alfresco.util.Ajax.jsonGet({
-                    url: Alfresco.constants.PROXY_URI + "becpg/entitylists/node/" + step.nodeRef.replace(":/", ""),
+                    url: url,
                     successCallback: {
                         fn: function(response) {
+                            var hasTask = response.json.hasAssignedTask;
                             var datalists = response.json.datalists;
+                            
+                            // If enforceTask is enabled and no task assigned, make read-only
+                            if (this.options.enforceTask && !hasTask) {
+                                callback(true, null);
+                                return;
+                            }
+                            
+                            // Check datalists validation
                             var listName = step.type === "form" ? "View-properties" :
                                 step.type === "documents" ? "View-documents" : step.listId;
                             var validated = datalists.some(function(dl) {
                                 return dl.name === listName && dl.state === "Valid";
                             });
                             callback(validated, datalists);
-                        }
+                        },
+                        scope: this
+                    },
+                    failureCallback: {
+                        fn: function() {
+                            // On error, default to read-only for safety
+                            callback(true, null);
+                        },
+                        scope: this
                     }
                 });
             } else {
@@ -340,13 +378,30 @@
 
             switch (step.type) {
                 case "form":
-                    return YAHOO.lang.substitute(baseUrl + "form?destination={destination}&formId={formId}&itemId={itemId}&itemKind={itemKind}&mode={mode}&submitType=json&showCancelButton=false&showSubmitButton=true", {
+                    var formParams = {
                         mode: readOnly || validated ? "view" : (step.nodeRef && step.nodeRef.length > 0) ? "edit" : "create",
                         itemKind: (step.nodeRef && step.nodeRef.length > 0) ? "node" : "type",
                         itemId: (step.nodeRef && step.nodeRef.length > 0) ? step.nodeRef : step.itemId,
                         destination: this.options.destination,
                         formId: params.formId
-                    });
+                    };
+                    
+                    // Add security parameters to form URL if wizard requires them
+                    var queryParams = [];
+                    if (this.options.skipSecurityRules) {
+                        queryParams.push("skipSecurityRules=true");
+                    }
+                    if (this.options.enforceTask) {
+                        queryParams.push("checkTaskAssignment=true");
+                    }
+                    
+                    var formUrl = baseUrl + "form?destination={destination}&formId={formId}&itemId={itemId}&itemKind={itemKind}&mode={mode}&submitType=json&showCancelButton=false&showSubmitButton=true";
+                    if (queryParams.length > 0) {
+                        formUrl += "&" + queryParams.join("&");
+                    }
+                    
+                    return YAHOO.lang.substitute(formUrl, formParams);
+                    
                 case "entityDataList":
                     return YAHOO.lang.substitute(baseUrl + "entity-charact-views/simple-view?list={list}&nodeRef={nodeRef}&itemType={itemType}&title={title}&formId={formId}&readOnly={readOnly}",
                         YAHOO.lang.merge(params, {
