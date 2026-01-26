@@ -447,7 +447,7 @@
 					</index>
 				</property>
 				<property name="pjt:tlTaskDescription">
-					<type>d:text</type>
+					<type>d:mltext</type>
 					<index enabled="true">
 						<tokenised>both</tokenised>
 						<facetable>false</facetable>
