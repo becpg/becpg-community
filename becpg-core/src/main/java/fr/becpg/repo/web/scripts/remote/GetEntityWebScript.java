@@ -44,8 +44,7 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 	public void executeInternal(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 		NodeRef entityNodeRef = findEntity(req);
 
-		try (OutputStream out = resp.getOutputStream()) {
-			
+		try {
 			if(logger.isDebugEnabled()) {
 				logger.debug("Get entity: " + entityNodeRef);
 				logger.debug(" - with fields: " +  extractFields(req));
@@ -56,51 +55,48 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 			params.setFilteredFields(extractFields(req), namespaceService);
 			params.setFilteredLists(extractLists(req));
 			params.setJsonParams(extractParams(req));
+			
 			resp.setContentType(getContentType(req));
 			resp.setContentEncoding("UTF-8");
 		
-			remoteEntityService.getEntity(entityNodeRef, out, params);
+			try (OutputStream out = resp.getOutputStream()) {
+				remoteEntityService.getEntity(entityNodeRef, out, params);
+				resp.setStatus(Status.STATUS_OK);
+			}
 
-			resp.setStatus(Status.STATUS_OK);
 		} catch (BeCPGException e) {
 			if (isBrokenPipe(e)) {
-				logger.debug("Client aborted connection", e);
+				logger.info("Client aborted connection for entity: " + entityNodeRef);
 			} else {
 				logger.error("Cannot export entity " + entityNodeRef + " for user " + org.alfresco.repo.security.authentication.AuthenticationUtil.getFullyAuthenticatedUser(), e);
-				throw new WebScriptException(e.getMessage());
-			}
-		} catch (AccessDeniedException e) {
-			throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to see this node");
-		} catch (SocketException e1) {
-
-			// the client cut the connection - our mission was accomplished
-			// apart from a little error message
-			if (logger.isInfoEnabled()) {
-				logger.info("Client aborted stream read:\n\tcontent", e1);
-			}
-
-		}
-
-	}
-
-	private boolean isBrokenPipe(Throwable t) {
-		while (t != null) {
-			if (t instanceof IOException && "Broken pipe".equalsIgnoreCase(t.getMessage())) {
-				return true;
-			}
-			if (t.getClass().getName().endsWith("ClientAbortException")) {
-				return true;
-			}
-			for (Throwable s : t.getSuppressed()) {
-				if (isBrokenPipe(s)) {
-					return true;
+				
+				try {
+					resp.reset();
+					throw new WebScriptException(Status.STATUS_INTERNAL_SERVER_ERROR, e.getMessage());
+				} catch (IllegalStateException ex) {
+					logger.warn("Cannot reset response for error, already committed: " + ex.getMessage());
 				}
 			}
-			t = t.getCause();
+		} catch (AccessDeniedException e) {
+			try {
+				resp.reset();
+				throw new WebScriptException(Status.STATUS_FORBIDDEN, "You have no right to see this node");
+			} catch (IllegalStateException ex) {
+				logger.warn("Cannot reset response for access denied, already committed: " + ex.getMessage());
+			}
+		} catch (SocketException e1) {
+			if (logger.isInfoEnabled()) {
+				logger.info("Client aborted stream read for entity: " + entityNodeRef, e1);
+			}
+		} catch (IOException e) {
+			if (isBrokenPipe(e)) {
+				logger.info("Client aborted connection due to network issue for entity: " + entityNodeRef);
+				return;
+			}
+			throw e;
 		}
-		return false;
+
 	}
 
-	
 	
 }
