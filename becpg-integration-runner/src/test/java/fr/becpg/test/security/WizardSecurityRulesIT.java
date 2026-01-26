@@ -23,30 +23,37 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.workflow.WorkflowDefinition;
+import org.alfresco.service.cmr.workflow.WorkflowPath;
 import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.cmr.workflow.WorkflowTask;
+import org.alfresco.service.cmr.workflow.WorkflowTaskQuery;
 import org.alfresco.service.cmr.workflow.WorkflowTaskState;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import fr.becpg.model.ProjectModel;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.form.BecpgFormService;
 import fr.becpg.repo.project.data.ProjectData;
-import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.security.data.ACLGroupData;
 import fr.becpg.repo.security.data.PermissionModel;
@@ -54,6 +61,9 @@ import fr.becpg.repo.security.data.dataList.ACLEntryDataItem;
 import fr.becpg.repo.security.filter.SecurityContextHelper;
 import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
+import fr.becpg.test.utils.TestWebscriptExecuters;
+import fr.becpg.test.utils.TestWebscriptExecuters.GetRequest;
+import fr.becpg.test.utils.TestWebscriptExecuters.Response;
 
 /**
  * Integration test for wizard security rules functionality.
@@ -66,27 +76,14 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 	private static final Log logger = LogFactory.getLog(WizardSecurityRulesIT.class);
 
 	@Autowired
-	private AlfrescoRepository<ProjectData> projectRepository;
-
-	@Autowired
 	private SecurityService securityService;
 
 	@Autowired
-	private PermissionService permissionService;
-
-	@Autowired
-	private AuthorityService authorityService;
-
-	@Autowired
+	@Qualifier("WorkflowService")
 	private WorkflowService workflowService;
 
 	@Autowired
 	private BecpgFormService becpgFormService;
-
-	// Test users
-	private NodeRef userOne;
-	private NodeRef userTwo;
-	private NodeRef userThree;
 
 	// Test project
 	private NodeRef projectNodeRef;
@@ -96,27 +93,44 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 
 	private static final String GROUP_WIZARD_SECURITY_WRITE = "GRP_WIZARD_SECURITY_WRITE";
 
+	@Override
+	@Before
 	public void setUp() throws Exception {
 		super.setUp();
 
-		// Create test users
-		userOne = BeCPGTestHelper.createUser("userOne");
-		userTwo = BeCPGTestHelper.createUser("userTwo");
-		userThree = BeCPGTestHelper.createUser("userThree");
+		inWriteTx(() -> {
+			AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
 
-		// Create test project
-		projectNodeRef = createTestProject();
+			// Create test users
+			BeCPGTestHelper.createUser("userOne");
+			BeCPGTestHelper.createUser("userTwo");
+			BeCPGTestHelper.createUser("userThree");
 
-		permissionService.setPermission(getTestFolderNodeRef(), "userOne", PermissionService.COORDINATOR, true);
-		permissionService.setPermission(getTestFolderNodeRef(), "userTwo", PermissionService.COORDINATOR, true);
-		permissionService.setPermission(getTestFolderNodeRef(), "userThree", PermissionService.COORDINATOR, true);
+			permissionService.setPermission(getTestFolderNodeRef(), "userOne", PermissionService.COORDINATOR, true);
+			permissionService.setPermission(getTestFolderNodeRef(), "userTwo", PermissionService.COORDINATOR, true);
+			permissionService.setPermission(getTestFolderNodeRef(), "userThree", PermissionService.COORDINATOR, true);
 
-		NodeRef aclGroupNodeRef = createProjectSecurityACLGroup();
-		if (!nodeService.hasAspect(projectNodeRef, SecurityModel.ASPECT_SECURITY)) {
-			nodeService.addAspect(projectNodeRef, SecurityModel.ASPECT_SECURITY, null);
-		}
-		nodeService.createAssociation(projectNodeRef, aclGroupNodeRef, SecurityModel.ASSOC_SECURITY_REF);
-		securityService.refreshAcls();
+			String groupName = PermissionService.GROUP_PREFIX + GROUP_WIZARD_SECURITY_WRITE;
+			if (!authorityService.authorityExists(groupName)) {
+				authorityService.createAuthority(AuthorityType.GROUP, GROUP_WIZARD_SECURITY_WRITE);
+			}
+			Set<String> groupUsers = authorityService.getContainedAuthorities(AuthorityType.USER, groupName, false);
+			if (!groupUsers.contains("userOne")) {
+				authorityService.addAuthority(groupName, "userOne");
+			}
+
+			// Create test project
+			projectNodeRef = createTestProject();
+
+			NodeRef aclGroupNodeRef = createProjectSecurityACLGroup();
+			if (!nodeService.hasAspect(projectNodeRef, SecurityModel.ASPECT_SECURITY)) {
+				nodeService.addAspect(projectNodeRef, SecurityModel.ASPECT_SECURITY, null);
+			}
+			nodeService.createAssociation(projectNodeRef, aclGroupNodeRef, SecurityModel.ASSOC_SECURITY_REF);
+			securityService.refreshAcls();
+
+			return null;
+		});
 	}
 
 	private NodeRef createProjectSecurityACLGroup() {
@@ -146,10 +160,10 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 	public void testWizardSecurityWithTaskAssignment() {
 		logger.info("=== Test 1: Wizard security with task assignment ===");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			// Start workflow and assign task to userOne
-			startProjectWorkflow(projectNodeRef);
-			assignTaskToUser(userOne);
+			startProjectWorkflow(projectNodeRef, "userOne");
+			assignTaskToUser("userOne");
 
 			// Test as userOne (has task assignment)
 			authenticationComponent.setCurrentUser("userOne");
@@ -158,7 +172,7 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 			testFormFieldProtection(projectNodeRef, true, false, "userOne should see fields in edit mode");
 
 			return null;
-		}, false, true);
+		});
 	}
 
 	/**
@@ -168,19 +182,19 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 	public void testWizardSecurityWithoutTaskAssignment() {
 		logger.info("=== Test 2: Wizard security without task assignment ===");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			// Start workflow and assign task to userTwo (not userThree)
-			startProjectWorkflow(projectNodeRef);
-			assignTaskToUser(userTwo);
+			startProjectWorkflow(projectNodeRef, "userTwo");
+			assignTaskToUser("userTwo");
 
 			// Test as userThree (no task assignment)
 			authenticationComponent.setCurrentUser("userThree");
 			
 			// Test form with skipSecurityRules (simulating wizard call)
-			testFormFieldProtection(projectNodeRef, true, false, "userThree should see fields in read-only mode");
+			testFormFieldProtection(projectNodeRef, true, false, "userThree should see fields in edit mode");
 
 			return null;
-		}, false, true);
+		});
 	}
 
 	/**
@@ -190,19 +204,19 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 	public void testNormalFormWithTaskAssignment() {
 		logger.info("=== Test 3: Normal form with task assignment ===");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			// Start workflow and assign task to userOne
-			startProjectWorkflow(projectNodeRef);
-			assignTaskToUser(userOne);
+			startProjectWorkflow(projectNodeRef, "userOne");
+			assignTaskToUser("userOne");
 
 			// Test as userOne (has task assignment)
 			authenticationComponent.setCurrentUser("userOne");
 			
 			// Test form without skipSecurityRules (normal form call)
-			testFormFieldProtection(projectNodeRef, false, true, "userOne should see fields in edit mode outside wizard");
+			testFormFieldProtection(projectNodeRef, false, false, "userOne should see fields in edit mode outside wizard");
 
 			return null;
-		}, false, true);
+		});
 	}
 
 	/**
@@ -212,10 +226,10 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 	public void testNormalFormWithoutTaskAssignment() {
 		logger.info("=== Test 4: Normal form without task assignment ===");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			// Start workflow and assign task to userTwo (not userThree)
-			startProjectWorkflow(projectNodeRef);
-			assignTaskToUser(userTwo);
+			startProjectWorkflow(projectNodeRef, "userTwo");
+			assignTaskToUser("userTwo");
 
 			// Test as userThree (no task assignment)
 			authenticationComponent.setCurrentUser("userThree");
@@ -224,7 +238,7 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 			testFormFieldProtection(projectNodeRef, false, true, "userThree should see fields in read-only mode outside wizard");
 
 			return null;
-		}, false, true);
+		});
 	}
 
 	/**
@@ -234,10 +248,10 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 	public void testSecurityContextHelperCleanup() {
 		logger.info("=== Test 5: SecurityContextHelper cleanup ===");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			// Start workflow and assign task to userOne
-			startProjectWorkflow(projectNodeRef);
-			assignTaskToUser(userOne);
+			startProjectWorkflow(projectNodeRef, "userOne");
+			assignTaskToUser("userOne");
 
 			// Test as userOne
 			authenticationComponent.setCurrentUser("userOne");
@@ -254,93 +268,125 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 				SecurityContextHelper.skipSecurityRules());
 
 			return null;
-		}, false, true);
+		});
 	}
 
 	/**
 	 * Test 6: Test EntitySecurityWebScript with skipSecurityRules
 	 */
 	@Test
-	public void testEntitySecurityWebScript() {
+	public void testEntitySecurityWebScript() throws Exception {
 		logger.info("=== Test 6: EntitySecurityWebScript with skipSecurityRules ===");
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			// Start workflow and assign task to userOne
-			startProjectWorkflow(projectNodeRef);
-			assignTaskToUser(userOne);
-
-			// Test as userOne (has task assignment)
-			authenticationComponent.setCurrentUser("userOne");
-			
-			// Test security check webscript
-			testEntitySecurityCheck(projectNodeRef, true, "userOne should have assigned task");
-
+		inWriteTx(() -> {
+			startProjectWorkflow(projectNodeRef, "userOne");
+			assignTaskToUser("userOne");
 			return null;
-		}, false, true);
-	}
+		});
 
-	/**
-	 * Test 7: Test wizard ID extraction and validation
-	 */
-	@Test
-	public void testWizardIdValidation() {
-		logger.info("=== Test 7: Wizard ID validation ===");
+		Response userOneResponse = callEntitySecurityCheck(projectNodeRef, true, true, "userOne", "PWD");
+		JSONObject jsonUserOne = new JSONObject(userOneResponse.getContentAsString());
+		Assert.assertTrue("userOne should have assigned task", jsonUserOne.getBoolean("hasAssignedTask"));
+		userOneResponse.release();
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			// Test wizard ID extraction logic
-			testWizardIdExtraction("/share/page/wizard?id=project-test&nodeRef=workspace://SpacesStore/123", "project-test");
-			testWizardIdExtraction("/share/page/wizard?id=product-security-bypass&param=value", "product-security-bypass");
-			testWizardIdExtraction("/share/page/wizard?id=supplier-123&other=test", "supplier-123");
-			testWizardIdExtraction("/share/page/wizard", null);
-
-			return null;
-		}, false, true);
+		Response userThreeResponse = callEntitySecurityCheck(projectNodeRef, true, true, "userThree", "PWD");
+		JSONObject jsonUserThree = new JSONObject(userThreeResponse.getContentAsString());
+		Assert.assertFalse("userThree should not have assigned task", jsonUserThree.getBoolean("hasAssignedTask"));
+		userThreeResponse.release();
 	}
 
 	/**
 	 * Helper method to create a test project
 	 */
 	private NodeRef createTestProject() {
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			ProjectData project = new ProjectData();
-			project.setName("TestProject");
-			project.setCode("TP001");
-			project.setState("Planned");
-			project.setStartDate(new Date());
+		ProjectData project = new ProjectData();
+		project.setName("TestProject");
+		project.setCode("TP001");
+		project.setState("Planned");
+		project.setStartDate(new Date());
 
-			return alfrescoRepository.create(getTestFolderNodeRef(), project).getNodeRef();
-		});
+		return alfrescoRepository.create(getTestFolderNodeRef(), project).getNodeRef();
 	}
 
 	/**
 	 * Helper method to start project workflow
 	 */
-	private void startProjectWorkflow(NodeRef projectNodeRef) {
-		WorkflowDefinition wfDef = workflowService.getDefinitionByName("activiti$projectWorkflow");
+	private void startProjectWorkflow(NodeRef projectNodeRef, String startedByUser) {
+		authenticationComponent.setCurrentUser(startedByUser);
+
+		WorkflowDefinition wfDef = workflowService.getDefinitionByName("activiti$projectAdhoc");
 		Assert.assertNotNull("Workflow definition should exist", wfDef);
 
-		Map<QName, Serializable> workflowParams = new HashMap<>();
-		workflowParams.put(QName.createQName("http://www.alfresco.org/model/bpm/1.0", "workflowDescription"), "Test project workflow");
-		workflowParams.put(QName.createQName("http://www.alfresco.org/model/bpm/1.0", "bpm_package"), projectNodeRef);
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(WorkflowModel.PROP_DESCRIPTION, "Test project workflow");
+		Serializable workflowPackage = workflowService.createPackage(null);
+		properties.put(WorkflowModel.ASSOC_PACKAGE, workflowPackage);
 
-		workflowInstanceId = workflowService.startWorkflow(wfDef.getId(), workflowParams).getId();
+		ChildAssociationRef parentAssoc = nodeService.getPrimaryParent(projectNodeRef);
+		nodeService.addChild((NodeRef) workflowPackage, projectNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS, parentAssoc.getQName());
+
+		WorkflowPath path = workflowService.startWorkflow(wfDef.getId(), properties);
+		Assert.assertNotNull("Workflow path should not be null", path);
+		workflowInstanceId = path.getInstance().getId();
 		Assert.assertNotNull("Workflow instance should be started", workflowInstanceId);
+
+		WorkflowTask startTask = workflowService.getStartTask(workflowInstanceId);
+		if (startTask != null) {
+			workflowService.endTask(startTask.getId(), null);
+		}
+	}
+
+	/**
+	 * Recursively finds a field definition in a merged form definition.
+	 *
+	 * @param jsonRoot the merged definition root
+	 * @param fieldIds the acceptable field ids
+	 * @return the field definition or null if not found
+	 */
+	private JSONObject findFieldDefinition(Object jsonRoot, List<String> fieldIds) {
+		if (jsonRoot instanceof JSONObject) {
+			JSONObject jsonObject = (JSONObject) jsonRoot;
+			String id = jsonObject.optString("id", null);
+			if (id != null && fieldIds.contains(id)) {
+				return jsonObject;
+			}
+			for (String key : jsonObject.keySet()) {
+				Object child = jsonObject.opt(key);
+				JSONObject found = findFieldDefinition(child, fieldIds);
+				if (found != null) {
+					return found;
+				}
+			}
+			return null;
+		}
+		if (jsonRoot instanceof JSONArray) {
+			JSONArray array = (JSONArray) jsonRoot;
+			for (int i = 0; i < array.length(); i++) {
+				Object child = array.opt(i);
+				JSONObject found = findFieldDefinition(child, fieldIds);
+				if (found != null) {
+					return found;
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
 	 * Helper method to assign task to user
 	 */
-	private void assignTaskToUser(NodeRef userNodeRef) {
-		String userName = (String) nodeService.getProperty(userNodeRef, ContentModel.PROP_USERNAME);
-		
-		List<WorkflowTask> tasks = workflowService.getAssignedTasks(userName, WorkflowTaskState.IN_PROGRESS);
-		Assert.assertTrue("Should have at least one task assigned", !tasks.isEmpty());
+	private void assignTaskToUser(String userName) {
+		WorkflowTaskQuery taskQuery = new WorkflowTaskQuery();
+		taskQuery.setProcessId(workflowInstanceId);
+		taskQuery.setTaskState(WorkflowTaskState.IN_PROGRESS);
 
-		WorkflowTask task = tasks.get(0);
-		Map<QName, Serializable> updateParams = new HashMap<>();
-		updateParams.put(QName.createQName("http://www.alfresco.org/model/bpm/1.0", "owner"), userName);
-		
-		workflowService.updateTask(task.getId(), updateParams, null, null);
+		List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery, false);
+		Assert.assertTrue("Should have at least one task in progress", !workflowTasks.isEmpty());
+
+		WorkflowTask task = workflowTasks.get(0);
+		Map<QName, Serializable> taskProp = new HashMap<>();
+		taskProp.put(ContentModel.PROP_OWNER, userName);
+		workflowService.updateTask(task.getId(), taskProp, null, null);
 	}
 
 	/**
@@ -355,27 +401,19 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 		}
 
 		try {
+			List<String> fields = new ArrayList<>();
+			fields.add("cm:name");
 			fr.becpg.repo.form.impl.BecpgFormDefinition formDef = becpgFormService.getForm("node",
-					entityNodeRef.getId().replace(":/", ""), null, null, null, null, entityNodeRef);
+					entityNodeRef.toString(), null, null, fields, null, entityNodeRef);
 			Assert.assertNotNull("Form definition should not be null", formDef);
 
 			JSONObject mergeDef = formDef.getMergeDef();
 			Assert.assertNotNull("Merge definition should not be null", mergeDef);
 			Assert.assertTrue("Merge definition should contain fields", mergeDef.has("fields"));
 
-			JSONArray fields = mergeDef.getJSONArray("fields");
-			boolean found = false;
-			boolean isProtected = false;
-			for (int i = 0; i < fields.length(); i++) {
-				JSONObject field = fields.getJSONObject(i);
-				if (field.has("id") && "cm:name".equals(field.getString("id"))) {
-					found = true;
-					isProtected = field.has("protectedField") && field.getBoolean("protectedField");
-					break;
-				}
-			}
-
-			Assert.assertTrue("Field cm:name should exist in form definition", found);
+			JSONObject field = findFieldDefinition(mergeDef, List.of("cm:name", "prop_cm_name"));
+			Assert.assertNotNull("Field cm:name should exist in form definition", field);
+			boolean isProtected = field.has("protectedField") && field.getBoolean("protectedField");
 			Assert.assertEquals(message + " - protectedField flag mismatch on cm:name", shouldHaveProtectedFields, isProtected);
 
 		} finally {
@@ -387,78 +425,36 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 	/**
 	 * Helper method to test entity security check
 	 */
-	private void testEntitySecurityCheck(NodeRef entityNodeRef, boolean shouldHaveTask, String message) {
-		// This would test the EntitySecurityWebScript
-		// For now, we'll simulate the logic by checking assigned tasks
-		
-		String currentUser = authenticationComponent.getCurrentUserName();
-		List<WorkflowTask> tasks = workflowService.getAssignedTasks(currentUser, WorkflowTaskState.IN_PROGRESS);
-		
-		boolean hasAssignedTask = !tasks.isEmpty();
-		
-		if (shouldHaveTask) {
-			Assert.assertTrue(message, hasAssignedTask);
-		} else {
-			Assert.assertFalse(message, hasAssignedTask);
-		}
+	private Response callEntitySecurityCheck(NodeRef entityNodeRef, boolean checkTaskAssignment, boolean skipSecurityRules,
+			String username, String password) throws Exception {
+		String storeType = entityNodeRef.getStoreRef().getProtocol();
+		String storeId = entityNodeRef.getStoreRef().getIdentifier();
+		String id = entityNodeRef.getId();
+
+		String uri = "/becpg/security/entitylists/check/" + storeType + "/" + storeId + "/" + id
+				+ "?checkTaskAssignment=" + checkTaskAssignment + "&skipSecurityRules=" + skipSecurityRules;
+
+		GetRequest request = new GetRequest(uri);
+		return TestWebscriptExecuters.sendRequest(request, 200, username, password);
 	}
 
-	/**
-	 * Helper method to test wizard ID extraction
-	 */
-	private void testWizardIdExtraction(String referer, String expectedWizardId) {
-		// Simulate the extraction logic from BeCPGFormUIGet
-		String wizardId = null;
-		if (referer != null) {
-			int wizardIndex = referer.indexOf("/share/page/wizard");
-			if (wizardIndex != -1) {
-				String wizardPart = referer.substring(wizardIndex);
-				int idIndex = wizardPart.indexOf("id=");
-				if (idIndex != -1) {
-					int start = idIndex + 3;
-					int end = wizardPart.indexOf("&", start);
-					if (end == -1) {
-						end = wizardPart.length();
-					}
-					wizardId = wizardPart.substring(start, end);
-				}
-			}
-		}
-
-		Assert.assertEquals("Wizard ID extraction failed for: " + referer, expectedWizardId, wizardId);
-	}
-
-	/**
-	 * Helper method to test wizard configuration validation
-	 */
-	private void testWizardConfiguration(String wizardId, boolean shouldBeAuthorized) {
-		// Simulate the validation logic from BeCPGFormUIGet
-		boolean isAuthorized = wizardId != null && (
-			wizardId.startsWith("product-") ||
-			wizardId.startsWith("supplier-") ||
-			wizardId.startsWith("project-") ||
-			wizardId.contains("security-bypass")
-		);
-
-		if (shouldBeAuthorized) {
-			Assert.assertTrue("Wizard " + wizardId + " should be authorized", isAuthorized);
-		} else {
-			Assert.assertFalse("Wizard " + wizardId + " should not be authorized", isAuthorized);
-		}
-	}
-
+	@Override
+	@After
 	public void tearDown() throws Exception {
 		// Clean up workflow if running
 		if (workflowInstanceId != null) {
 			try {
-				workflowService.cancelWorkflow(workflowInstanceId);
+				inWriteTx(() -> {
+					workflowService.cancelWorkflow(workflowInstanceId);
+					return null;
+				});
 			} catch (Exception e) {
 				logger.warn("Could not cancel workflow: " + e.getMessage());
 			}
 		}
 
 		// Clean up test data
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			if (projectNodeRef != null) {
 				nodeService.deleteNode(projectNodeRef);
 			}
