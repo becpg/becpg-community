@@ -31,6 +31,8 @@ public class RegulatoryContext {
 	private List<RequirementListDataItem> requirements = new CopyOnWriteArrayList<>();
 
 	private List<IngRegulatoryListDataItem> ingRegulatoryListDataItems = new CopyOnWriteArrayList<>();
+	
+	private String regulatoryRecipeId;
 
 	/**
 	 * <p>Getter for the field <code>ingList</code>.</p>
@@ -144,13 +146,12 @@ public class RegulatoryContext {
 		return product.getRegulatoryMode();
 	}
 	
-	/**
-	 * <p>getRegulatoryRecipeId.</p>
-	 *
-	 * @return a {@link java.lang.String} object
-	 */
 	public String getRegulatoryRecipeId() {
-		return product.getRegulatoryRecipeId();
+		return regulatoryRecipeId;
+	}
+	
+	public void setRegulatoryRecipeId(String regulatoryRecipeId) {
+		this.regulatoryRecipeId = regulatoryRecipeId;
 	}
 	
 }
