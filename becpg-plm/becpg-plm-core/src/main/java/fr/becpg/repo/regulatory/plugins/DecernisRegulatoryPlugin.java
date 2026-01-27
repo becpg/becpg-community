@@ -76,9 +76,6 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
 	private static final String DID = "did";
 
-	/** Constant <code>DECERNIS_CHAIN_ID="decernis"</code> */
-	public static final String DECERNIS_CHAIN_ID = "decernis";
-
 	/** Constant <code>MODULE_SUFFIX=" module"</code> */
 	public static final String MODULE_SUFFIX = " module";
 
@@ -148,6 +145,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 	}
 
 	private Map<String, List<String>> functionsMap = new ConcurrentHashMap<>();
+	private Map<String, String> functionsIdMap = new ConcurrentHashMap<>();
 
 	/**
 	 * <p>analysisUrl.</p>
@@ -346,21 +344,14 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 				} else {
 					recipeId = postRecipe(recipePayload, request, url);
 				}
-				updateRecipeId(context, recipeId);
+				context.setRegulatoryRecipeId(recipeId);
 			}
 		} catch (RestClientException e) {
 			logger.error(generateError(e), e);
 			RequirementListDataItem req = RequirementListDataItem.forbidden()
 					.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e))).ofDataType(RequirementDataType.Specification)
-					.withFormulationChainId(DECERNIS_CHAIN_ID);
+					.withFormulationChainId(RegulatoryService.REGULATORY_KEY);
 			context.getRequirements().add(req);
-		}
-	}
-
-	private void updateRecipeId(RegulatoryContext context, String recipeId) {
-		context.getProduct().setRegulatoryRecipeId(recipeId);
-		for (RegulatoryListDataItem regulatoryListItem : context.getProduct().getRegulatoryList()) {
-			regulatoryListItem.setRegulatoryRecipeId(recipeId);
 		}
 	}
 
@@ -408,7 +399,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 				IngTypeItem ingType = ingItem.getIngType();
 				String function = null;
 				if (ingType != null) {
-					function = ingType.getRegulatoryCode();
+					function = fetchFunctionId(ingType.getRegulatoryCode());
 				}
 				try {
 					if (isRIDValid(rid) && ingName != null && !ingName.isEmpty()) {
@@ -435,6 +426,36 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
 		if (ingredients.length() > 0) {
 			return ret;
+		}
+		return null;
+	}
+
+	private String fetchFunctionId(String regulatoryCode) {
+		if (functionsIdMap.containsKey(regulatoryCode)) {
+			return functionsIdMap.get(regulatoryCode);
+		}
+		String url = serverUrl() + "/functions?current_company={company}&phrase={phrase}&module_id=1&limit=1";
+		Map<String, String> params = new HashMap<>();
+		params.put(PARAM_COMPANY, companyName());
+		params.put("phrase", regulatoryCode);
+		if (logger.isTraceEnabled()) {
+			logger.trace("GET url: " + url + " params: " + params);
+		}
+		ResponseEntity<String> response = RestTemplateHelper.getRestTemplateLongTimeout().exchange(url, HttpMethod.GET, createEntity(null),
+				String.class, params);
+		if (HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
+			JSONObject jsonObject = new JSONObject(response.getBody());
+			if (jsonObject.has(PARAM_RESULTS) ) {
+				JSONArray results = jsonObject.getJSONArray(PARAM_RESULTS);
+				if (results.length() > 0) {
+					JSONObject result = results.getJSONObject(0);
+					if (result.has("scope_id")) {
+						String functionId = result.get("scope_id").toString();
+						functionsIdMap.put(regulatoryCode, functionId);
+						return functionId;
+					}
+				}
+			}
 		}
 		return null;
 	}
