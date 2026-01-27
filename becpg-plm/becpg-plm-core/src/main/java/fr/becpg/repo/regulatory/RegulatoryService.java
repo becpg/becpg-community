@@ -367,8 +367,15 @@ public class RegulatoryService {
 		} else {
 			productData.setRequirementChecksum(null);
 		}
+		String regulatoryRecipeId = context.getRegulatoryRecipeId();
+		if (regulatoryRecipeId != null && !regulatoryRecipeId.isBlank()) {
+			productData.setRegulatoryRecipeId(regulatoryRecipeId);
+			for (RegulatoryListDataItem regulatoryListItem : productData.getRegulatoryList()) {
+				regulatoryListItem.setRegulatoryRecipeId(regulatoryRecipeId);
+			}
+		}
 	}
-
+	
 	private boolean hasError(List<RequirementListDataItem> reqList) {
 		for (RequirementListDataItem req : reqList) {
 			if (RequirementType.Forbidden.equals(req.getReqType()) && RequirementDataType.Formulation.equals(req.getReqDataType())) {
