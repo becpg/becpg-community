@@ -412,7 +412,13 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		if (ScriptMode.EACH.equals(notification.getScriptMode())) {
 			executeScriptEach(notification, items, templateArgs);
 		} else if (ScriptMode.ALL.equals(notification.getScriptMode())) {
-			executeScriptAll(notification, items, templateArgs);
+			try {
+				executeScriptAll(notification, items, templateArgs);
+			} catch (Exception e) {
+				logger.error("Error while executing script from notification " + notification.getNodeRef(), e);
+				notification.setErrorLog(e.getMessage());
+				alfrescoRepository.save(notification);
+			}
 		}
 	}
 
