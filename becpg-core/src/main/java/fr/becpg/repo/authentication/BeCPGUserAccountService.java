@@ -8,7 +8,6 @@ import java.util.Set;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.security.authentication.BasicPasswordGenerator;
 import org.alfresco.repo.security.authentication.MutableAuthenticationDao;
 import org.alfresco.repo.security.authentication.identityservice.IdentityServiceException;
 import org.alfresco.repo.security.person.PersonServiceImpl;
@@ -175,13 +174,11 @@ public class BeCPGUserAccountService {
 	 * @param notify a boolean
 	 */
 	public void generatePassword(String username, boolean notify) {
-		if (!personService.personExists(username)) {
-			throw new UserAlreadyExistsException("user does not exist: " + username);
-		}
-		BasicPasswordGenerator pwdGen = new BasicPasswordGenerator();
-		pwdGen.setPasswordLength(10);
-		String newPassword = pwdGen.generatePassword();
-		updatePassword(username, newPassword, notify);
+	    if (!personService.personExists(username)) {
+	        throw new UserAlreadyExistsException("user does not exist: " + username);
+	    }
+	    String newPassword = SecurePasswordGenerator.generatePassword();
+	    updatePassword(username, newPassword, notify);
 	}
 
 	/**
