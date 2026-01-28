@@ -52,6 +52,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
@@ -107,32 +108,58 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 	/** {@inheritDoc} */
 	@Override
 	public void visit(NodeRef entityNodeRef, OutputStream result) throws JSONException, IOException {
+		try (LocaleContext ctx = LocaleContext.fromParams(params)) {
+			JSONObject root = new JSONObject();
+			QName nodeType = nodeService.getType(entityNodeRef).getPrefixedQName(namespaceService);
+			JSONObject entity = createEntity(root, nodeType, entityNodeRef);
 
-		JSONObject root = new JSONObject();
-		QName nodeType = nodeService.getType(entityNodeRef).getPrefixedQName(namespaceService);
-		JSONObject entity = createEntity(root, nodeType, entityNodeRef);
-
-		try (OutputStreamWriter out = new OutputStreamWriter(result, StandardCharsets.UTF_8)) {
-
-			RemoteJSONContext context = new RemoteJSONContext(entityNodeRef);
-			visitNode(entityNodeRef, entity, JsonVisitNodeType.ENTITY, context);
-			visitLists(entityNodeRef, entity, context);
-			root.write(out);
+			try (OutputStreamWriter out = new OutputStreamWriter(result, StandardCharsets.UTF_8)) {
+				RemoteJSONContext context = new RemoteJSONContext(entityNodeRef);
+				visitNode(entityNodeRef, entity, JsonVisitNodeType.ENTITY, context);
+				visitLists(entityNodeRef, entity, context);
+				root.write(out);
+			}
 		}
+	}
+	
+	public static final class LocaleContext implements AutoCloseable {
 
+	    private final Locale previous;
+
+	    private LocaleContext(Locale previous) {
+	        this.previous = previous;
+	    }
+
+	    private static LocaleContext fromParams(RemoteParams params) {
+	        if (params.getJsonParams() != null && params.getJsonParams().has("locale")) {
+	            Locale old = I18NUtil.getLocale();
+	            Locale locale = new Locale(params.getJsonParams().getString("locale"));
+	            I18NUtil.setLocale(locale);
+	            return new LocaleContext(old);
+	        }
+	        return new LocaleContext(null);
+	    }
+
+	    @Override
+	    public void close() {
+	        if (previous != null) {
+	            I18NUtil.setLocale(previous);
+	        }
+	    }
 	}
 
 	/** {@inheritDoc} */
 	public void visit(QName entityType, OutputStream result) throws IOException {
-		JSONObject root = new JSONObject();
+		try (LocaleContext ctx = LocaleContext.fromParams(params)) {
+			JSONObject root = new JSONObject();
 
-		JSONObject entity = createEntity(root, entityType, null);
+			JSONObject entity = createEntity(root, entityType, null);
 
-		try (OutputStreamWriter out = new OutputStreamWriter(result, StandardCharsets.UTF_8)) {
-			visitType(entity, entityType, null, new HashSet<>());
-			root.write(out);
+			try (OutputStreamWriter out = new OutputStreamWriter(result, StandardCharsets.UTF_8)) {
+				visitType(entity, entityType, null, new HashSet<>());
+				root.write(out);
+			}
 		}
-
 	}
 
 	private void visitType(JSONObject entity, QName entityType, QName assocName, Set<QName> visitedTypes) {
