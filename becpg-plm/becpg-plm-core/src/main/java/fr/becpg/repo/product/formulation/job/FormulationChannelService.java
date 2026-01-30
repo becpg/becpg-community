@@ -145,11 +145,9 @@ public class FormulationChannelService {
 		return Integer.parseInt(systemConfigurationService.confValue("beCPG.formulation.channel.maxProducts"));
 	}
 	
-	private Integer maxSystemLoad() {
-		String configValue = systemConfigurationService.confValue("beCPG.formulation.channel.maxSystemLoad");
-	    double threshold = Double.parseDouble(configValue);
-        int cores = Runtime.getRuntime().availableProcessors();
-        return (int) Math.ceil(cores * threshold);
+	private Double maxCpuUsage() {
+		String configValue = systemConfigurationService.confValue("beCPG.formulation.channel.maxCpuUsage");
+	    return Double.parseDouble(configValue) / 100;
 	}
 	
 	private Integer maxActiveUsers() {
@@ -233,6 +231,7 @@ public class FormulationChannelService {
 		impactedProductsStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<>() {
 			@Override
 			public void process(NodeRef entityNodeRef) throws Throwable {
+				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 				NodeRef channelListItem = publicationChannelService.getOrCreateChannelListNodeRef(entityNodeRef, FORMULATE_ENTITIES_CHANNEL_ID);
 				nodeService.setProperty(channelListItem, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE, new Date());
 			}
@@ -298,11 +297,11 @@ public class FormulationChannelService {
 		try {
 			// Check system load average
 			OperatingSystemMXBean os = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
-			double systemLoad = os.getSystemLoadAverage();
+			double cpuUsage = os.getCpuLoad();
 			
-			if (systemLoad > 0 && maxSystemLoad() > 0 && systemLoad >= maxSystemLoad()) {
+			if (cpuUsage > 0 && maxCpuUsage() > 0 && cpuUsage >= maxCpuUsage()) {
 				if (logger.isDebugEnabled()) {
-					logger.debug("System load average too high: " + systemLoad + " >= " + maxSystemLoad());
+					logger.debug("System load average too high: " + cpuUsage + " >= " + maxCpuUsage());
 				}
 				return false;
 			}
@@ -488,8 +487,9 @@ public class FormulationChannelService {
 		}
 	}
 
-	private void publishEntityChannel(NodeRef markedSecurityRule) {
-		NodeRef channelListNodeRef = publicationChannelService.getOrCreateChannelListNodeRef(markedSecurityRule, FORMULATE_ENTITIES_CHANNEL_ID);
+	private void publishEntityChannel(NodeRef entityNodeRef) {
+		policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+		NodeRef channelListNodeRef = publicationChannelService.getOrCreateChannelListNodeRef(entityNodeRef, FORMULATE_ENTITIES_CHANNEL_ID);
 		nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_STATUS, PublicationChannelStatus.COMPLETED);
 		nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_PUBLISHEDDATE, new Date());
 	}

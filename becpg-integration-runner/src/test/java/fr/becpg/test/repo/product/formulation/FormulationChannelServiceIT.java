@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.query.PagingResults;
 import org.alfresco.repo.security.authentication.AbstractAuthenticationService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -224,6 +225,9 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 			}
 		})
 		.when(publicationChannelService).getEntitiesByChannel(any(), any());
+		
+		Date whereUsedModifiedDate = inReadTx(() -> (Date) nodeService.getProperty(semiFinishedProductNodeRef, ContentModel.PROP_MODIFIED));
+		
 		batchInfo = inWriteTx(() -> {
 			return formulationChannelService.reformulateEntities();
 		});
@@ -233,6 +237,8 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		assertIsPublished(rawMaterialNodeRef);
 		assertIsPublished(semiFinishedProductNodeRef);
 		assertIsPublished(finishedProductNodeRef);
+		
+		assertEquals(whereUsedModifiedDate, inReadTx(() -> (Date) nodeService.getProperty(semiFinishedProductNodeRef, ContentModel.PROP_MODIFIED)));
 
 	}
 	
@@ -317,18 +323,18 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		})
 		.when(publicationChannelService).getEntitiesByChannel(any(), any());
 		
-		// Test 1: maxSystemLoad = 0 (very restrictive, system load will likely exceed)
-		doReturn("0").when(systemConfigurationService).confValue("beCPG.formulation.channel.maxSystemLoad");
+		// Test 1: maxCpuUsage = 0 (very restrictive, system load will likely exceed)
+		doReturn("0").when(systemConfigurationService).confValue("beCPG.formulation.channel.maxCpuUsage");
 		doReturn("999").when(systemConfigurationService).confValue("beCPG.formulation.channel.maxActiveUsers");
 		
 		BatchInfo batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
-		// With maxSystemLoad=0, batch will likely not run unless system has negative load (impossible)
+		// With maxCpuUsage=0, batch will likely not run unless system has negative load (impossible)
 		// but depends on actual system conditions
 		
 		waitForBatchEnd(batchInfo);
 		
 		// Test 2: maxActiveUsers = 0 (very restrictive)
-		doReturn("999").when(systemConfigurationService).confValue("beCPG.formulation.channel.maxSystemLoad");
+		doReturn("999").when(systemConfigurationService).confValue("beCPG.formulation.channel.maxCpuUsage");
 		doReturn("0").when(systemConfigurationService).confValue("beCPG.formulation.channel.maxActiveUsers");
 		
 		batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
@@ -337,7 +343,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		assertNull("Batch should NOT run when maxActiveUsers=0 and users are connected", batchInfo);
 		
 		// Test 3: High thresholds - batch should run
-		doReturn("999").when(systemConfigurationService).confValue("beCPG.formulation.channel.maxSystemLoad");
+		doReturn("999").when(systemConfigurationService).confValue("beCPG.formulation.channel.maxCpuUsage");
 		doReturn("999").when(systemConfigurationService).confValue("beCPG.formulation.channel.maxActiveUsers");
 		
 		batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
