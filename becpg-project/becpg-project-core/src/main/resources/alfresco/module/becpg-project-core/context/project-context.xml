@@ -94,6 +94,7 @@
 					<property name="associationService" ref="associationService" />
 					<property name="entityDictionaryService" ref="entityDictionaryService" />
 					<property name="systemConfigurationService" ref="systemConfigurationService" />
+					<property name="calendarService" ref="projectCalendarService" />
 				</bean>
 				<bean class="fr.becpg.repo.project.formulation.TaskFormulationHandler">
 					<property name="projectWorkflowService" ref="projectWorkflowService" />
@@ -105,6 +106,7 @@
 					<property name="systemConfigurationService" ref="systemConfigurationService" />
 					<property name="entityDictionaryService" ref="entityDictionaryService" />
 					<property name="namespaceService" ref="namespaceService" />
+					<property name="calendarService" ref="projectCalendarService" />
 				</bean>
 
 				<bean class="fr.becpg.repo.project.formulation.BudgetFormulationHandler">
@@ -228,6 +230,8 @@
    <!--                 -->
 
 
+   <!-- Services -->
+
    <!-- Worker -->
 	<bean id="projectFormulationWorker" class="fr.becpg.repo.project.impl.ProjectFormulationWorker">
 		<property name="projectService" ref="projectService" />
@@ -284,6 +288,7 @@
 		<property name="serviceRegistry" ref="ServiceRegistry" />
 		<property name="entityService" ref="entityService" />
 		<property name="associationService" ref="associationService" />
+		<property name="calendarService" ref="projectCalendarService" />
 	</bean>
 
 

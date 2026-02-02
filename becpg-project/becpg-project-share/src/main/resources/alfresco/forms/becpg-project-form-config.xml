@@ -66,6 +66,7 @@
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectDueDate" />
 					<show id="pjt:projectPlanningMode" />
+					<show id="pjt:projectCalendar" />
 					<show id="pjt:projectCompletionDate" for-mode="view" />
 					<show id="pjt:completionPercent" for-mode="view" />
 					<show id="pjt:projectOverdue" for-mode="view" />
@@ -158,6 +159,12 @@
 					<field id="pjt:projectStartDate"  help-id="becpg.forms.help.projectStartDate"  set="planning" />
 					<field id="pjt:projectDueDate"  help-id="becpg.forms.help.projectDueDate"  set="planning" />
 					<field id="pjt:projectPlanningMode" help-id="becpg.forms.help.projectPlanningMode"  set="planning" />
+					<field id="pjt:projectCalendar" help-id="becpg.forms.help.projectCalendar" set="planning">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:calendar?classNames=pjt:calendar</control-param>
+							<control-param name="showTooltip">false</control-param>
+						</control>
+					</field>
 					<field id="pjt:projectCompletionDate" set="planning" />
 					<field id="pjt:completionPercent" set="planning" />
 					<field id="pjt:projectOverdue" set="planning" />
@@ -310,6 +317,7 @@
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectDueDate" />
 					<show id="pjt:projectPlanningMode" />
+					<show id="pjt:projectCalendar" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
@@ -376,7 +384,12 @@
 					<field id="pjt:projectStartDate" help-id="becpg.forms.help.projectStartDate" set="planning" />
 					<field id="pjt:projectDueDate" help-id="becpg.forms.help.projectDueDate" set="planning" />
 					<field id="pjt:projectPlanningMode" help-id="becpg.forms.help.projectPlanningMode" set="planning" />
-
+                    <field id="pjt:projectCalendar" help-id="becpg.forms.help.projectCalendar" set="planning">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:calendar?classNames=pjt:calendar</control-param>
+                            <control-param name="showTooltip">false</control-param>
+                        </control>
+                    </field>    
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
 						<control>
@@ -1153,6 +1166,7 @@
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectDueDate" />
 					<show id="pjt:projectPlanningMode" />
+					<show id="pjt:projectCalendar" />
 					<show id="pjt:projectCompletionDate" />
 					<show id="pjt:completionPercent" />
 					<show id="pjt:projectOverdue" />
@@ -1262,6 +1276,7 @@
 					
 					<show id="pjt:tlIsMilestone" />
 					<show id="pjt:tlDuration" />
+					<show id="pjt:tlCalendar" />
 					
 					<show id="pjt:completionPercent" />
 					<show id="pjt:tlManualDate" />
@@ -1300,6 +1315,7 @@
 					
 					<show id="pjt:tlIsMilestone" />
 					<show id="pjt:tlDuration" />
+					<show id="pjt:tlCalendar" />
 					
 					<show id="pjt:completionPercent" />
 					<show id="pjt:tlManualDate" />
@@ -1402,6 +1418,12 @@
 
 					<field id="pjt:tlIsMilestone" help-id="becpg.forms.help.tlIsMilestone" set="planning" />
 					<field id="pjt:tlDuration" help-id="becpg.forms.help.tlDuration" set="planning" />
+					<field id="pjt:tlCalendar" help-id="becpg.forms.help.tlCalendar" set="planning">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:calendar?classNames=pjt:calendar</control-param>
+							<control-param name="showTooltip">false</control-param>
+						</control>
+					</field>
 					
 					<field id="pjt:tlManualDate" help-id="becpg.forms.help.tlManualDate" set="planning" />
 					<field id="pjt:tlStart" set="planning" />
@@ -1473,6 +1495,7 @@
 					
 					<show id="pjt:tlIsMilestone" />
 					<show id="pjt:tlDuration" />
+					<show id="pjt:tlCalendar" />
 					
 					<show id="pjt:completionPercent" />
 					<show id="pjt:tlManualDate" />
@@ -1566,6 +1589,12 @@
 
 					<field id="pjt:tlIsMilestone" set="planning" help-id="becpg.forms.help.tlIsMilestone"/>
 					<field id="pjt:tlDuration" set="planning" help-id="becpg.forms.help.tlDuration" />
+					<field id="pjt:tlCalendar" help-id="becpg.forms.help.tlCalendar" set="planning">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:calendar?classNames=pjt:calendar</control-param>
+							<control-param name="showTooltip">false</control-param>
+						</control>
+					</field>
 					
 					<field id="pjt:tlManualDate" set="planning" help-id="becpg.forms.help.tlManualDate" />
 					<field id="pjt:tlStart" set="planning" />
@@ -1671,6 +1700,7 @@
 					
 					<show id="pjt:tlIsMilestone" />
 					<show id="pjt:tlDuration" />
+					<show id="pjt:tlCalendar" />
 					
 					<show id="pjt:completionPercent" />
 					<show id="pjt:tlManualDate" />
@@ -1757,6 +1787,12 @@
 
 					<field id="pjt:tlIsMilestone" set="planning" />
 					<field id="pjt:tlDuration" set="planning" />
+					<field id="pjt:tlCalendar" set="planning">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:calendar?classNames=pjt:calendar</control-param>
+							<control-param name="showTooltip">false</control-param>
+						</control>
+					</field>
 					
 					<field id="pjt:tlManualDate" set="planning" />
 					<field id="pjt:tlStart" set="planning" />
@@ -1859,6 +1895,7 @@
 					<show id="pjt:tlIsGroup" />
 					<show id="pjt:tlIsMilestone" />
 					<show id="pjt:tlDuration" />
+					<show id="pjt:tlCalendar" />
 					<show id="pjt:tlRealDuration" />
 					<show force="true" id="pjt:tlPrevTasks" />
 					<show force="true" id="pjt:tlResources" />
@@ -3015,5 +3052,71 @@
 			</form>
 		</forms>
 	</config>
+
+	<config evaluator="model-type" condition="pjt:calendar">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="pjt:calPublicHolydaysDates" />
+					<show id="pjt:calHolydayDates" />
+					<show id="pjt:calNonWorkingDays" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:charactName"  />
+					<field id="pjt:calPublicHolydaysDates"  help-id="becpg.forms.help.calPublicHolydaysDates" />
+					<field id="pjt:calHolydayDates"  help-id="becpg.forms.help.calHolydayDates" />
+					<field id="pjt:calNonWorkingDays" >
+                        <control template="/org/alfresco/components/form/controls/checkboxmany.ftl" >
+                            <control-param name="defaultValue">1,7</control-param>
+                        </control>
+                    </field>
+				</appearance>
+			</form>
+			
+			<form id="datagrid">
+                <field-visibility>
+                    <show id="bcpg:charactName" />
+                    <show id="pjt:calPublicHolydaysDates" />
+                    <show id="pjt:calHolydayDates" />
+                    <show id="pjt:calNonWorkingDays" />
+                </field-visibility>
+               
+            </form>
+            
+            <form id="filter">
+                <field-visibility>
+                    <show id="bcpg:charactName" />
+                </field-visibility>  
+            </form>
+			
+		</forms>
+	</config>
+
+	<!-- Calendar forms -->
+	<config condition="pjt:calendar" evaluator="node-type">
+		<forms>
+			<form>
+				<field-visibility>
+                    <show id="bcpg:charactName" />
+                    <show id="pjt:calPublicHolydaysDates" />
+                    <show id="pjt:calHolydayDates" />
+                    <show id="pjt:calNonWorkingDays" />
+                </field-visibility>
+                <appearance>
+                    <field id="bcpg:charactName" />
+                    <field id="pjt:calPublicHolydaysDates"  help-id="becpg.forms.help.calPublicHolydaysDates" />
+                    <field id="pjt:calHolydayDates"  help-id="becpg.forms.help.calHolydayDates" />
+                    <field id="pjt:calNonWorkingDays" >
+                        <control template="/org/alfresco/components/form/controls/checkboxmany.ftl" >
+                            <control-param name="defaultValue">1,7</control-param>
+                        </control>
+                    </field>
+                </appearance>
+			</form>
+			
+		</forms>
+	</config>
+
 
 </alfresco-config>

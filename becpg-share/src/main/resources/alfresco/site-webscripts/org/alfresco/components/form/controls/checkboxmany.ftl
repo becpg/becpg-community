@@ -14,7 +14,9 @@
 
 <#assign fieldValue=field.value>
 
-<#if fieldValue?string == "" && field.control.params.defaultValueContextProperty??>
+<#if fieldValue?string == "" && field.control.params.defaultValue??>
+   <#assign fieldValue = field.control.params.defaultValue>
+<#elseif fieldValue?string == "" && field.control.params.defaultValueContextProperty??>
    <#if context.properties[field.control.params.defaultValueContextProperty]??>
       <#assign fieldValue = context.properties[field.control.params.defaultValueContextProperty]>
    <#elseif args[field.control.params.defaultValueContextProperty]??>

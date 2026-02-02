@@ -7,6 +7,7 @@ import java.util.TimeZone;
 import org.junit.Assert;
 import org.junit.Test;
 
+import fr.becpg.repo.project.impl.DefaultWorkingDayProvider;
 import fr.becpg.repo.project.impl.ProjectHelper;
 
 public class ProjectHelperTest {
@@ -46,11 +47,11 @@ public class ProjectHelperTest {
 		Assert.assertEquals(0, check.get(Calendar.HOUR_OF_DAY));
 		Assert.assertEquals(0, check.get(Calendar.MINUTE));
 		
-		int duration = ProjectHelper.calculateTaskDuration(startDate, endDate);
+		int duration = ProjectHelper.calculateTaskDuration(startDate, endDate, new DefaultWorkingDayProvider());
 		
 		Assert.assertEquals(319, duration);
 		
-		Date nextDate = ProjectHelper.calculateNextDate(startDate, duration+1, true);
+		Date nextDate = ProjectHelper.calculateNextDate(startDate, duration+1, true, new DefaultWorkingDayProvider());
 		
 		Assert.assertNotNull(nextDate);
 		Assert.assertEquals(endDate, nextDate);

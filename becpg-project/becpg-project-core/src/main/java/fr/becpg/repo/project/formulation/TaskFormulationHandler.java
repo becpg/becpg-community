@@ -34,7 +34,9 @@ import fr.becpg.repo.project.data.projectList.DeliverableScriptOrder;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
+import fr.becpg.repo.project.impl.CalendarWorkingDayProvider;
 import fr.becpg.repo.project.impl.ProjectHelper;
+import fr.becpg.repo.project.impl.WorkingDayProvider;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.system.SystemConfigurationService;
 
@@ -66,6 +68,17 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 	private EntityDictionaryService entityDictionaryService;
 	
 	private NamespaceService namespaceService;
+	
+	private fr.becpg.repo.project.CalendarService calendarService;
+	
+	/**
+	 * <p>Setter for the field <code>calendarService</code>.</p>
+	 *
+	 * @param calendarService a {@link fr.becpg.repo.project.CalendarService} object
+	 */
+	public void setCalendarService(fr.becpg.repo.project.CalendarService calendarService) {
+		this.calendarService = calendarService;
+	}
 	
 	/**
 	 * <p>Setter for the field <code>personService</code>.</p>
@@ -306,9 +319,12 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 								}
 
 							}
+							
+							NodeRef calendarRef = calendarService.getCalendar(task.getTask().getNodeRef());
+							WorkingDayProvider provider = new CalendarWorkingDayProvider(calendarService, calendarRef);
 
-							Integer duration = ProjectHelper.calculateTaskDuration(task.getTask().getTargetStart(), task.getTask().getTargetEnd());
-							Integer realDuration = ProjectHelper.calculateTaskDuration(task.getTask().getStart(), task.getTask().getEnd());
+							Integer duration = ProjectHelper.calculateTaskDuration(task.getTask().getTargetStart(), task.getTask().getTargetEnd(),provider);
+							Integer realDuration = ProjectHelper.calculateTaskDuration(task.getTask().getStart(), task.getTask().getEnd(),provider);
 
 							if (duration == null) {
 								logger.warn("Parent task duration is null:" + task.getTask().getTaskName());
@@ -360,6 +376,9 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 	private void calculateStartDate(ProjectData projectData, Set<TaskWrapper> tasks, boolean isTpl) {
 
+		NodeRef calendarRef = calendarService.getCalendar(projectData.getNodeRef());
+		WorkingDayProvider provider = new CalendarWorkingDayProvider(calendarService, calendarRef);
+
 		if (PlanningMode.Planning.equals(projectData.getPlanningMode())) {
 			Date startDate = null;
 			Date targetStartDate = null;
@@ -368,7 +387,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 				startDate = ProjectHelper.getFirstStartDate(tasks);
 				if (startDate == null) {
 					if (projectData.getStartDate() == null) {
-						startDate = ProjectHelper.calculateNextStartDate(projectData.getCreated());
+						startDate = ProjectHelper.calculateNextStartDate(projectData.getCreated(), provider);
 					} else {
 						startDate = projectData.getStartDate();
 					}
@@ -376,10 +395,10 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 				if (projectData.getDueDate() == null) {
 					targetStartDate = startDate;
 				} else {
-					targetStartDate = ProjectHelper.calculateStartDate(projectData.getDueDate(), TaskWrapper.calculateMaxDuration(tasks));
+					targetStartDate = ProjectHelper.calculateStartDate(projectData.getDueDate(), TaskWrapper.calculateMaxDuration(tasks), provider);
 				}
 			} else {
-				startDate = ProjectHelper.calculateNextStartDate(new Date());
+				startDate = ProjectHelper.calculateNextStartDate(new Date(), provider);
 				targetStartDate = startDate;
 			}
 
@@ -393,19 +412,19 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			if (!isTpl) {
 				endDate = ProjectHelper.getLastEndDate(tasks);
 			} else {
-				endDate = ProjectHelper.calculatePrevEndDate(new Date());
+				endDate = ProjectHelper.calculatePrevEndDate(new Date(), provider);
 			}
 
 			if (endDate == null) {
 				endDate = projectData.getDueDate();
 				if (endDate == null) {
-					endDate = ProjectHelper.calculatePrevEndDate(projectData.getCreated());
+					endDate = ProjectHelper.calculatePrevEndDate(projectData.getCreated(), provider);
 				}
 			} else {
 				projectData.setDueDate(endDate);
 			}
 			if (!isTpl) {
-				projectData.setStartDate(ProjectHelper.calculateStartDate(endDate, TaskWrapper.calculateMaxDuration(tasks)));
+				projectData.setStartDate(ProjectHelper.calculateStartDate(endDate, TaskWrapper.calculateMaxDuration(tasks), provider));
 				projectData.setTargetStartDate(projectData.getStartDate());
 			}
 
@@ -440,8 +459,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 							allTaskDone = false;
 						}
 
-						Integer duration = task.getDuration() != null ? task.getDuration()
-								: ProjectHelper.calculateTaskDuration(task.getTask().getStart(), task.getTask().getEnd());
+						Integer duration = task.getDuration();
 						if (duration != null) {
 							totalWork += duration;
 							if (TaskState.Completed.equals(state)) {
@@ -477,10 +495,11 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 				projectData.setCompletionPercent(COMPLETED);
 				projectData.setProjectState(ProjectState.Completed);
 			} else {
-				projectData.setCompletionPercent(totalWork != 0 ? (100 * workDone) / totalWork : 0);
-				// ici realduration est fausse
 
-				projectData.setCompletionDate(ProjectHelper.calculateEndDate(projectData.getStartDate(), projectData.getRealDuration()));
+				NodeRef calendarRef = calendarService.getCalendar(projectData.getNodeRef());
+				WorkingDayProvider provider = new CalendarWorkingDayProvider(calendarService, calendarRef);
+				projectData.setCompletionPercent(totalWork != 0 ? (100 * workDone) / totalWork : 0);
+				projectData.setCompletionDate(ProjectHelper.calculateEndDate(projectData.getStartDate(), projectData.getRealDuration(), provider));
 			}
 		}
 		if (logger.isDebugEnabled()) {
@@ -763,6 +782,9 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			logger.debug("Calculate planning of: " + task.getTask().getTaskName());
 		}
 
+		NodeRef calendarRef =  calendarService.getCalendar(task.getTask().getNodeRef());
+		WorkingDayProvider provider = new CalendarWorkingDayProvider(calendarService, calendarRef);
+
 		if (task.isRoot()) {
 
 			startDate = projectData.getStartDate();
@@ -789,8 +811,8 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 				Date targetEnd = t.getTask().getTargetEnd() != null ? t.getTask().getTargetEnd() : t.getTask().getTargetStart();
 
 				if (TaskState.Cancelled.equals(t.getTask().getTaskState()) && !TaskState.InProgress.equals(t.getTask().getPreviousTaskState())) {
-					endDate = ProjectHelper.calculatePrevEndDate(t.getTask().getStart());
-					targetEnd = ProjectHelper.calculatePrevEndDate(t.getTask().getTargetStart());
+					endDate = ProjectHelper.calculatePrevEndDate(t.getTask().getStart(), provider);
+					targetEnd = ProjectHelper.calculatePrevEndDate(t.getTask().getTargetStart(), provider);
 				}
 
 				if ((startDate == null) || ((endDate != null) && startDate.before(endDate))) {
@@ -807,11 +829,11 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			}
 
 			if (startDate != null) {
-				startDate = ProjectHelper.calculateNextStartDate(startDate);
+				startDate = ProjectHelper.calculateNextStartDate(startDate, provider);
 			}
 
 			if (targetStart != null) {
-				targetStart = ProjectHelper.calculateNextStartDate(targetStart);
+				targetStart = ProjectHelper.calculateNextStartDate(targetStart, provider);
 			}
 
 		}
@@ -821,7 +843,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 				ProjectHelper.setTaskStartDate(task.getTask(), startDate);
 
 				if (((task.getTask().getDuration() != null) || (Boolean.TRUE.equals(task.getTask().getIsMilestone())))) {
-					Date dueDate = ProjectHelper.calculateEndDate(task.getTask().getStart(), task.getTask().getDuration());
+					Date dueDate = ProjectHelper.calculateEndDate(task.getTask().getStart(), task.getTask().getDuration(), provider);
 
 					Date endDate = dueDate;
 					Date now = Calendar.getInstance().getTime();
@@ -829,7 +851,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 					if (TaskState.OnHold.equals(task.getTask().getTaskState())
 							|| (TaskState.InProgress.equals(task.getTask().getTaskState()) && (endDate != null) && endDate.before(now))
 							|| (TaskState.InProgress.equals(task.getTask().getPreviousTaskState()))) {
-						endDate = now;
+						endDate = provider.isWorkingDay(now) ? now : provider.getNextWorkingDay(now);
 					}
 
 					task.getTask().setDue(dueDate != null ? ProjectHelper.removeTime(dueDate) : null);
@@ -842,7 +864,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 				task.getTask().setTargetStart(ProjectHelper.removeTime(targetStart));
 
 				if (((task.getTask().getDuration() != null) || (Boolean.TRUE.equals(task.getTask().getIsMilestone())))) {
-					Date targetEnd = ProjectHelper.calculateEndDate(task.getTask().getTargetStart(), task.getTask().getDuration());
+					Date targetEnd = ProjectHelper.calculateEndDate(task.getTask().getTargetStart(), task.getTask().getDuration(), provider);
 					task.getTask().setTargetEnd(ProjectHelper.removeTime(targetEnd));
 				}
 
@@ -857,11 +879,11 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			task.setMaxDuration(maxDuration);
 		}
 
-		Integer realDuration = task.computeRealDuration();
+		Integer realDuration = task.computeRealDuration(provider);
 		task.getTask().setRealDuration(realDuration);
 
 		if (TaskState.Completed.equals(task.getTask().getTaskState())) {
-			task.setMaxRealDuration(ProjectHelper.calculateTaskDuration(projectData.getStartDate(), task.getTask().getEnd()));
+			task.setMaxRealDuration(ProjectHelper.calculateTaskDuration(projectData.getStartDate(), task.getTask().getEnd(), provider));
 		} else if (realDuration != null) {
 			task.setMaxRealDuration(maxRealDuration + realDuration);
 		}

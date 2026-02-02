@@ -95,6 +95,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private String description;
 	
 	private NodeRef subProject;
+	private NodeRef calendar;
 	
 	/**
 	 * <p>Getter for the field <code>description</code>.</p>
@@ -137,6 +138,25 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		this.subProject = subProject;
 	}	
 	
+	/**
+	 * <p>Getter for the field <code>calendar</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
+	@AlfSingleAssoc
+	@AlfQname(qname = "pjt:tlCalendar")
+	public NodeRef getCalendar() {
+		return calendar;
+	}
+
+	/**
+	 * <p>Setter for the field <code>calendar</code>.</p>
+	 *
+	 * @param calendar a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
+	public void setCalendar(NodeRef calendar) {
+		this.calendar = calendar;
+	}
 
 	/**
 	 * <p>Getter for the field <code>taskName</code>.</p>

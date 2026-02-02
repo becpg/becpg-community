@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -32,6 +31,7 @@ import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.lang.NonNull;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
@@ -55,6 +55,11 @@ import fr.becpg.repo.project.formulation.TaskWrapper;
  * @version $Id: $Id
  */
 public class ProjectHelper {
+	
+	
+	private ProjectHelper() {
+		//Do Nothing
+	}
 
 	private static final int DURATION_DEFAULT = 1;
 	private static final int DURATION_NEXT_DAY = 2;
@@ -74,26 +79,7 @@ public class ProjectHelper {
 				|| ProjectState.Cancelled.equals(projectData.getProjectState()) || ProjectState.OnHold.equals(projectData.getProjectState());
 	}
 
-	/**
-	 * <p>getTask.</p>
-	 *
-	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
-	 * @param taskListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @return a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
-	 */
-	@Deprecated
-	public static TaskListDataItem getTask(ProjectData projectData, NodeRef taskListNodeRef) {
-
-		if ((taskListNodeRef != null) && (projectData.getTaskList() != null)) {
-			for (TaskListDataItem p : projectData.getTaskList()) {
-				if (taskListNodeRef.equals(p.getNodeRef())) {
-					return p;
-				}
-			}
-		}
-		return null;
-	}
-
+	
 	/*
 	 * Return all tasks including subproject tasks exclude groups
 	 */
@@ -127,8 +113,7 @@ public class ProjectHelper {
 	 * @param taskListDataItem a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
 	 * @return a {@link java.util.List} object.
 	 */
-	@Deprecated
-	public static List<TaskListDataItem> getPrevTasks(ProjectData projectData, TaskListDataItem taskListDataItem) {
+	private static List<TaskListDataItem> getPrevTasks(ProjectData projectData, TaskListDataItem taskListDataItem) {
 
 		List<TaskListDataItem> taskList = new ArrayList<>();
 		if (taskListDataItem.getPrevTasks() != null) {
@@ -141,44 +126,7 @@ public class ProjectHelper {
 		return taskList;
 	}
 
-	/**
-	 * <p>getLastTasks.</p>
-	 *
-	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
-	 * @return a {@link java.util.List} object.
-	 */
-	@Deprecated
-	public static List<TaskListDataItem> getLastTasks(ProjectData projectData) {
 
-		List<TaskListDataItem> taskList = new ArrayList<>();
-		if (projectData.getTaskList() != null) {
-			for (TaskListDataItem t : projectData.getTaskList()) {
-				if (getNextTasks(projectData, t.getNodeRef()).isEmpty() && ((t.getIsGroup() == null) || !t.getIsGroup())) {
-					taskList.add(t);
-				}
-			}
-		}
-		return taskList;
-	}
-
-	/**
-	 * <p>getChildrenTasks.</p>
-	 *
-	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
-	 * @param taskListDataItem a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
-	 * @return a {@link java.util.List} object.
-	 */
-	@Deprecated
-	public static List<TaskListDataItem> getChildrenTasks(ProjectData projectData, TaskListDataItem taskListDataItem) {
-
-		List<TaskListDataItem> taskList = new ArrayList<>();
-		for (TaskListDataItem t : projectData.getTaskList()) {
-			if ((t.getParent() != null) && t.getParent().equals(taskListDataItem)) {
-				taskList.add(t);
-			}
-		}
-		return taskList;
-	}
 
 	/**
 	 * <p>getBrethrenTask.</p>
@@ -274,34 +222,7 @@ public class ProjectHelper {
 
 	}
 
-	/**
-	 * <p>getSourceTasks.</p>
-	 *
-	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object.
-	 * @return a {@link java.util.List} object.
-	 */
-	@Deprecated
-	public static List<TaskListDataItem> getSourceTasks(ProjectData projectData) {
-
-		List<TaskListDataItem> taskList = new ArrayList<>();
-		for (TaskListDataItem t : projectData.getTaskList()) {
-			// has parent with prevTask ?
-			boolean hasPrevTaskInParent = false;
-			TaskListDataItem parent = t.getParent();
-			if (parent != null) {
-				if (parent.getPrevTasks().isEmpty()) {
-				} else {
-					break;
-				}
-			}
-			boolean hasChildren = !ProjectHelper.getChildrenTasks(projectData, t).isEmpty();
-			if (!hasChildren && !hasPrevTaskInParent) {
-				taskList.add(t);
-			}
-		}
-		return taskList;
-	}
-
+	
 	/**
 	 * <p>getDeliverables.</p>
 	 *
@@ -399,7 +320,7 @@ public class ProjectHelper {
 		if (date == null) {
 			return null;
 		} else {
-			Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+			Calendar cal = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
 			cal.setTime(date);
 			cal.set(Calendar.HOUR_OF_DAY, 0);
 			cal.set(Calendar.MINUTE, 0);
@@ -417,7 +338,7 @@ public class ProjectHelper {
 	 * @param isPlanned a boolean.
 	 * @return a {@link java.util.Date} object.
 	 */
-	public static Date calculateNextDate(Date startDate, Integer duration, boolean isPlanned) {
+	public static Date calculateNextDate(Date startDate, Integer duration, boolean isPlanned,@NonNull WorkingDayProvider provider) {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("calculateNextDate - startDate: " + startDate);
@@ -432,7 +353,8 @@ public class ProjectHelper {
 			duration = DURATION_DEFAULT;
 		}
 
-		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+
+		Calendar calendar = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
 		calendar.setTime(startDate);
 		int i = 1;
 		while (i < duration) {
@@ -441,7 +363,7 @@ public class ProjectHelper {
 			} else {
 				calendar.add(Calendar.DATE, -1);
 			}
-			if (isWorkingDate(calendar)) {
+			if (isWorkingDate(calendar,provider)) {
 				i++;
 			}
 		}
@@ -456,11 +378,11 @@ public class ProjectHelper {
 	 * <p>isWorkingDate.</p>
 	 *
 	 * @param calendar a {@link java.util.Calendar} object.
+	 * @param provider a {@link fr.becpg.repo.project.impl.WorkingDayProvider} object.
 	 * @return a boolean.
 	 */
-	public static boolean isWorkingDate(Calendar calendar) {
-		// saturday == 7 || sunday == 1
-		return (calendar.get(Calendar.DAY_OF_WEEK) != 7) && (calendar.get(Calendar.DAY_OF_WEEK) != 1);
+	public static boolean isWorkingDate(Calendar calendar, @NonNull WorkingDayProvider provider) {
+		return provider.isWorkingDay(calendar.getTime());
 	}
 
 	/**
@@ -468,9 +390,10 @@ public class ProjectHelper {
 	 *
 	 * @param startDate a {@link java.util.Date} object.
 	 * @param endDate a {@link java.util.Date} object.
+	 * @param provider a {@link fr.becpg.repo.project.impl.WorkingDayProvider} object.
 	 * @return a {@link java.lang.Integer} object.
 	 */
-	public static Integer calculateTaskDuration(Date startDate, Date endDate) {
+	public static Integer calculateTaskDuration(Date startDate, Date endDate,@NonNull WorkingDayProvider provider) {
 
 		if ((startDate == null) || (endDate == null)) {
 			logger.debug("calculateTaskDuration - startDate or endDate is null. startDate: " + startDate + " - endDate: " + endDate);
@@ -482,13 +405,14 @@ public class ProjectHelper {
 			return null;
 		}
 
+
 		int duration = 1;
-		Calendar startDateCal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+		Calendar startDateCal = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
 		startDateCal.setTime(startDate);
-		Calendar endDateCal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+		Calendar endDateCal = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
 		endDateCal.setTime(endDate);
 		while (startDateCal.before(endDateCal)) {
-			if (isWorkingDate(startDateCal)) {
+			if (isWorkingDate(startDateCal,provider)) {
 				duration++;
 			}
 			startDateCal.add(Calendar.DAY_OF_MONTH, 1);
@@ -500,58 +424,58 @@ public class ProjectHelper {
 		return duration;
 	}
 
+	
+	
 	/**
 	 * <p>calculateEndDate.</p>
 	 *
 	 * @param startDate a {@link java.util.Date} object.
 	 * @param duration a {@link java.lang.Integer} object.
+	 * @param provider a {@link fr.becpg.repo.project.impl.WorkingDayProvider} object.
 	 * @return a {@link java.util.Date} object.
 	 */
-	public static Date calculateEndDate(Date startDate, Integer duration) {
-		return calculateNextDate(startDate, duration, true);
+	public static Date calculateEndDate(Date startDate, Integer duration, @NonNull WorkingDayProvider provider) {
+		return calculateNextDate(startDate, duration, true, provider);
 	}
+
 
 	/**
 	 * <p>calculateNextStartDate.</p>
 	 *
 	 * @param endDate a {@link java.util.Date} object.
+	 * @param provider a {@link fr.becpg.repo.project.impl.WorkingDayProvider} object.
 	 * @return a {@link java.util.Date} object.
 	 */
-	public static Date calculateNextStartDate(Date endDate) {
-		return calculateNextDate(endDate, DURATION_NEXT_DAY, true);
+	public static Date calculateNextStartDate(Date endDate,@NonNull WorkingDayProvider provider) {
+		return calculateNextDate(endDate, DURATION_NEXT_DAY, true, provider);
 	}
+
 
 	/**
 	 * <p>calculateStartDate.</p>
 	 *
 	 * @param endDate a {@link java.util.Date} object.
 	 * @param duration a {@link java.lang.Integer} object.
+	 * @param provider a {@link fr.becpg.repo.project.impl.WorkingDayProvider} object.
 	 * @return a {@link java.util.Date} object.
 	 */
-	public static Date calculateStartDate(Date endDate, Integer duration) {
-		return calculateNextDate(endDate, duration, false);
+	public static Date calculateStartDate(Date endDate, Integer duration,@NonNull WorkingDayProvider provider) {
+		return calculateNextDate(endDate, duration, false, provider);
 	}
 
+	
 	/**
 	 * <p>calculatePrevEndDate.</p>
 	 *
 	 * @param startDate a {@link java.util.Date} object.
+	 * @param provider a {@link fr.becpg.repo.project.impl.WorkingDayProvider} object.
 	 * @return a {@link java.util.Date} object.
 	 */
-	public static Date calculatePrevEndDate(Date startDate) {
-		return calculateNextDate(startDate, DURATION_NEXT_DAY, false);
+	public static Date calculatePrevEndDate(Date startDate,@NonNull WorkingDayProvider provider) {
+		return calculateNextDate(startDate, DURATION_NEXT_DAY, false, provider);
 	}
 
-	/**
-	 * <p>calculateDuration.</p>
-	 *
-	 * @param task a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
-	 * @return a {@link java.lang.Integer} object.
-	 */
-	@Deprecated
-	public static Integer calculateDuration(TaskListDataItem task) {
-		return task.getDuration() != null ? task.getDuration() : (Boolean.TRUE.equals(task.getIsMilestone())) ? DURATION_DEFAULT : null;
-	}
+	
 
 	/**
 	 * <p>setTaskState.</p>
@@ -586,10 +510,8 @@ public class ProjectHelper {
 					&& !TaskState.Cancelled.toString().equals(properties.get(ProjectModel.PROP_TL_STATE))) {
 				properties.put(ProjectModel.PROP_TL_STATE, TaskState.Planned);
 			}
-		} else if (ProjectModel.TYPE_DELIVERABLE_LIST.equals(classQName)) {
-			if (properties.containsKey(ProjectModel.PROP_DL_STATE)) {
-				properties.put(ProjectModel.PROP_DL_STATE, DeliverableState.Planned);
-			}
+		} else if (ProjectModel.TYPE_DELIVERABLE_LIST.equals(classQName) ) {
+			properties.computeIfPresent(ProjectModel.PROP_DL_STATE, (k, v) -> DeliverableState.Planned);
 		}
 
 		return properties;
@@ -602,12 +524,7 @@ public class ProjectHelper {
 	 * @return a boolean.
 	 */
 	public static boolean hasPlannedDuration(TaskListDataItem task) {
-
-		if ((task != null) && ((task.getDuration() != null) || (Boolean.TRUE.equals(task.getIsMilestone())))) {
-			return true;
-		} else {
-			return false;
-		}
+		return (task != null) && ((task.getDuration() != null) || (Boolean.TRUE.equals(task.getIsMilestone())));
 	}
 	
 	/**

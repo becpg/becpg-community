@@ -19,6 +19,7 @@ import org.junit.Test;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
+import fr.becpg.repo.project.impl.DefaultWorkingDayProvider;
 import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.test.project.AbstractProjectTestCase;
 
@@ -39,7 +40,7 @@ public class ProjectCalculatePlanningDatesIT extends AbstractProjectTestCase {
 
 		final NodeRef projectNodeRef = createProject(ProjectState.OnHold, dateFormat.parse("15/11/2012"), null);
 		final Date today = ProjectHelper.removeTime(new Date());
-		final Date nextStartDate = ProjectHelper.calculateNextStartDate(today);
+		final Date nextStartDate = ProjectHelper.calculateNextStartDate(today, new DefaultWorkingDayProvider());
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 

@@ -52,6 +52,8 @@ import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.BudgetListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
+import fr.becpg.repo.project.impl.CalendarWorkingDayProvider;
+import fr.becpg.repo.project.impl.DefaultWorkingDayProvider;
 import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -81,6 +83,17 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 	private EntityService entityService;
 	
 	private AssociationService associationService;
+	
+	private fr.becpg.repo.project.CalendarService calendarService;
+
+	/**
+	 * <p>Setter for the field <code>calendarService</code>.</p>
+	 *
+	 * @param calendarService a {@link fr.becpg.repo.project.CalendarService} object
+	 */
+	public void setCalendarService(fr.becpg.repo.project.CalendarService calendarService) {
+		this.calendarService = calendarService;
+	}
 	
 	/**
 	 * <p>Setter for the field <code>associationService</code>.</p>
@@ -364,6 +377,7 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 		return projectService.extractResources(project.getNodeRef(), resourceList).stream().map(e -> new ScriptNode(e, serviceRegistry, getScope())).collect(Collectors.toList()).toArray(new ScriptNode[0]);
 	}
 
+
 	/**
 	 * <p>calculateTaskDuration.</p>
 	 *
@@ -371,8 +385,22 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 	 * @param endDate a {@link java.lang.String} object
 	 * @return a int
 	 */
+	@Deprecated(since = "25.3")
 	public int calculateTaskDuration(String startDate, String endDate) {
-		return ProjectHelper.calculateTaskDuration(parseDate(startDate), parseDate(endDate));
+		return ProjectHelper.calculateTaskDuration(parseDate(startDate), parseDate(endDate), new DefaultWorkingDayProvider());
+	}
+	
+	/**
+	 * <p>calculateTaskDurationFromTask.</p>
+	 *
+	 * @param startDate a {@link java.lang.String} object
+	 * @param endDate a {@link java.lang.String} object
+	 * @param taskNode a {@link org.alfresco.repo.jscript.ScriptNode} object representing the task node
+	 * @return a int
+	 */
+	public int calculateTaskDuration(String startDate, String endDate, ScriptNode taskNode) {
+		NodeRef calendarRef = calendarService.getCalendar(taskNode != null ? taskNode.getNodeRef() : null);
+		return ProjectHelper.calculateTaskDuration(parseDate(startDate), parseDate(endDate), new CalendarWorkingDayProvider(calendarService, calendarRef));
 	}
 
 	private Date parseDate(String dateString) {
