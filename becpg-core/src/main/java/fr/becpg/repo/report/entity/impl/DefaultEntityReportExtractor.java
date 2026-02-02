@@ -33,6 +33,7 @@ import org.alfresco.model.ForumModel;
 import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.version.Version2Model;
+import org.alfresco.repo.version.common.VersionUtil;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
@@ -1177,58 +1178,17 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		if ((versionHistory != null) && (versionHistory.getAllVersions() != null)) {
 
 			for (Version version : versionHistory.getAllVersions()) {
+				NodeRef versionNodeRef = VersionUtil.convertNodeRef(version.getFrozenStateNodeRef());
+				String creator = (String) nodeService.getProperty(versionNodeRef, Version2Model.PROP_QNAME_FROZEN_CREATOR);
+				Date createdDate = (Date) nodeService.getProperty(versionNodeRef, Version2Model.PROP_QNAME_FROZEN_CREATED);
+				
 				Element versionElt = versionsElt.addElement(TAG_VERSION);
-				
-				// Handle manual version label (like VersionWebscript does)
-				Serializable manualVersionLabel = nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_MANUAL_VERSION_LABEL);
-				if (manualVersionLabel instanceof String && !((String) manualVersionLabel).isBlank()) {
-					versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_LABEL.getLocalName(), (String) manualVersionLabel);
-				} else {
-					versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_LABEL.getLocalName(), version.getVersionLabel());
-				}
-				
-				String versionDescription = version.getDescription();
+				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_LABEL.getLocalName(), version.getVersionLabel());
 				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_DESCRIPTION.getLocalName(),
-						XMLTextHelper.writeAttribute(versionDescription));
-
-				// Handle version 1.0 specially - use entity's original creator and created date
-				if (RepoConsts.INITIAL_VERSION.equals(version.getVersionLabel())) {
-					versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(),
-							XMLTextHelper.writeAttribute(attributeExtractorService.getPersonDisplayName(
-									(String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATOR))));
-					versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), 
-							ISO8601DateFormat.format((Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED)));
-				} else {
-					// Use creator from version node (like VersionWebscript does)
-					String versionCreator = version.getFrozenModifier();
-					if (versionCreator != null) {
-						versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(),
-								XMLTextHelper.writeAttribute(attributeExtractorService.getPersonDisplayName(versionCreator)));
-					} else {
-						// Fallback to entity creator if version creator is not available
-						versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(),
-								XMLTextHelper.writeAttribute(attributeExtractorService.getPersonDisplayName(
-										(String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATOR))));
-					}
-					versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), ISO8601DateFormat.format(version.getFrozenModifiedDate()));
-				}
-
-				// Add entity name and description following VersionWebscript pattern
-				NodeRef frozenNodeRef = version.getFrozenStateNodeRef();
-				if (frozenNodeRef != null && nodeService.exists(frozenNodeRef)) {
-					// Get name from frozen state and remove version suffix (like VersionWebscript does)
-					String entityName = (String) nodeService.getProperty(frozenNodeRef, ContentModel.PROP_NAME);
-					if (entityName != null && entityName.endsWith(RepoConsts.VERSION_NAME_DELIMITER + version.getVersionLabel())) {
-						entityName = entityName.replace(RepoConsts.VERSION_NAME_DELIMITER + version.getVersionLabel(), "");
-					}
-					
-					// Get description from the current entity node (like VersionWebscript does)
-					String entityDescription = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_DESCRIPTION);
-					versionElt.addAttribute(ContentModel.PROP_NAME.getLocalName(),
-							XMLTextHelper.writeAttribute(entityName));
-					versionElt.addAttribute(ContentModel.PROP_DESCRIPTION.getLocalName(),
-							XMLTextHelper.writeAttribute(entityDescription));
-				}
+						XMLTextHelper.writeAttribute(version.getDescription()));
+				versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(),
+						XMLTextHelper.writeAttribute(attributeExtractorService.getPersonDisplayName(creator)));
+				versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), ISO8601DateFormat.format(createdDate));
 
 			}
 		}
