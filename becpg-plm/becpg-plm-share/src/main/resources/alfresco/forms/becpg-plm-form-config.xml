@@ -1997,6 +1997,18 @@
 					<field id="bcpg:ingToxMaxOcularIrritation" set="toxTab" />
 					<field id="bcpg:ingToxMaxPhototoxic" set="toxTab" />
 					<field id="bcpg:ingToxData" set="toxTab" />
+					<field id="bcpg:ingToxSystemicValues" set="toxTab" read-only="true">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+                            <control-param name="maxLength">10000</control-param>
+                            <control-param name="rows">6</control-param>
+                        </control>
+                    </field>
+					<field id="bcpg:ingToxMaxValues" set="toxTab" read-only="true">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+                            <control-param name="maxLength">10000</control-param>
+                            <control-param name="rows">6</control-param>
+                        </control>
+                    </field>
 				</appearance>
 			</form>
 			<form id="create">
