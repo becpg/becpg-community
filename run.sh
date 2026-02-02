@@ -191,6 +191,48 @@ reindex() {
     docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d solr
 }
 
+review() {
+  NUM_COMMITS=${1:-1}
+
+  PROMPT_FILE="$(dirname "$0")/review-prompt.md" 
+  RESULT_FILE="$(dirname "$0")/review-result.md" 
+
+  if [ ! -f "$PROMPT_FILE" ]; then
+    echo "Error: review-prompt.md not found in script directory" 
+    exit 1
+  fi
+
+  echo "Running Gemini code review on last $NUM_COMMITS commit(s)..." 
+  echo "Writing results to $RESULT_FILE" 
+
+  # Clear or create the result file
+  > "$RESULT_FILE" 
+
+  # Get the list of commit hashes
+  COMMITS=$(git log -n "$NUM_COMMITS" --format="%H")
+
+  COUNTER=1
+  echo "$COMMITS" | while read -r COMMIT_HASH; do
+    echo "Reviewing commit $COUNTER/$NUM_COMMITS: $COMMIT_HASH" 
+
+    {
+      echo "# Review for Commit $COUNTER/$NUM_COMMITS" 
+      echo "Commit: $COMMIT_HASH" 
+      echo
+      cat "$PROMPT_FILE" 
+      echo
+      echo "Commit diff:" 
+      git show "$COMMIT_HASH" 
+    } | gemini --allowed-tools redmine_request >> "$RESULT_FILE" 
+
+    echo -e "\n---\n" >> "$RESULT_FILE" 
+
+    COUNTER=$((COUNTER + 1))
+  done
+
+  echo "Review complete! Results written to $RESULT_FILE" 
+}
+
 
 case "$1" in
   install)
@@ -238,6 +280,9 @@ case "$1" in
     ;;
   reindex)
     reindex
+    ;;
+  review)
+    review
     ;;
   visualvm)
     jvisualvm --openjmx localhost:9091
