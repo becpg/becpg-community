@@ -133,7 +133,11 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 	    private static LocaleContext fromParams(RemoteParams params) {
 	        if (params.getJsonParams() != null && params.getJsonParams().has("locale")) {
 	            Locale old = I18NUtil.getLocale();
-	            Locale locale = new Locale(params.getJsonParams().getString("locale"));
+	            String key = params.getJsonParams().getString("locale");
+	            Locale locale = new Locale(key);
+	            if (key.contains("_")) {
+	            	locale = new Locale(key.split("_")[0], key.split("_")[1]);
+	    		}
 	            I18NUtil.setLocale(locale);
 	            return new LocaleContext(old);
 	        }
