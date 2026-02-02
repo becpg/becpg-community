@@ -205,9 +205,45 @@
 			</parameter>
 		</constraint>
 
+		<constraint name="pjt:daysOfWeek" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>1</value>
+					<value>2</value>
+					<value>3</value>
+					<value>4</value>
+					<value>5</value>
+					<value>6</value>
+					<value>7</value>
+				</list>
+			</parameter>
+		</constraint>
+
 	</constraints>
 
 	<types>
+
+		<type name="pjt:calendar">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="pjt:calPublicHolydaysDates">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="pjt:calHolydayDates">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="pjt:calNonWorkingDays">
+					<type>d:text</type>
+					<multiple>true</multiple>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="pjt:daysOfWeek" />
+					</constraints>
+				</property>
+			</properties>
+		</type>
 
 		<type name="pjt:project">
 			<parent>bcpg:entityV2</parent>
@@ -392,6 +428,17 @@
 						<class>pjt:taskList</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
+					</target>
+				</association>
+				<association name="pjt:projectCalendar">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pjt:calendar</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
 					</target>
 				</association>
 				<association name="pjt:projectCurrentComments">
@@ -694,6 +741,17 @@
 				</association>
 
 
+				<association name="pjt:tlCalendar">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pjt:calendar</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
 				<association name="pjt:tlObservers">
 					<source>
 						<mandatory>false</mandatory>
