@@ -137,7 +137,7 @@ public class EntityActivityCleaner {
                         boolean hasFormulation = false;
                         boolean hasReport = false;
 
-                        // Pre-size set for efficiency
+                        // Pre-size set for efficiency (used for both content and export deduplication)
                         Set<String> contentSet = new HashSet<>(Math.max(16, sortedActivityList.size()));
 
                         for (ActivityListDataItem activity : sortedActivityList) {
@@ -162,6 +162,11 @@ public class EntityActivityCleaner {
                             } else if (activityType == ActivityType.Content) {
                                 String contentNodeRef = extractContentNode(activity.getActivityData());
                                 if (contentNodeRef != null && !contentSet.add(contentNodeRef)) {
+                                    toDelete = true;
+                                }
+                            } else if (activityType == ActivityType.Export) {
+                                String exportTitle = extractExportTitle(activity.getActivityData());
+                                if (exportTitle != null && !contentSet.add(exportTitle)) {
                                     toDelete = true;
                                 }
                             } else {
@@ -302,6 +307,16 @@ public class EntityActivityCleaner {
             return data.optString("contentNodeRef", null);
         } catch (JSONException e) {
             logger.warn("Invalid content activity data: " + alData, e);
+            return null;
+        }
+    }
+
+    private String extractExportTitle(String alData) {
+        try {
+        	JsonData data = JsonHelper.read(alData);
+            return data.get("title").getString(null);
+        } catch (JsonException e) {
+            logger.warn("Invalid export activity data: " + alData, e);
             return null;
         }
     }
