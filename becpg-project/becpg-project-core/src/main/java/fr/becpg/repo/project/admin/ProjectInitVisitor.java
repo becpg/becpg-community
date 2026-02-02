@@ -189,6 +189,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(ProjectRepoConsts.PATH_SPONSORS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(ProjectRepoConsts.PATH_TIME_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(ProjectRepoConsts.PATH_RESOURCE_COSTS, ProjectModel.TYPE_RESOURCE_COST);
+		entityLists.put(ProjectRepoConsts.PATH_CALENDARS, ProjectModel.TYPE_CALENDAR);
 
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
