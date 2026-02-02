@@ -292,7 +292,7 @@ public class SurveyServiceImpl implements SurveyService {
 					for (RequirementListDataItem req : reqs) {
 						JSONObject reqObj = new JSONObject();
 						reqObj.put("type", req.getReqType() != null ? req.getReqType().toString() : "Info");
-						reqObj.put("message", req.getReqMessage());
+						reqObj.put("message", req.getContentLocaleReqMessage());
 						if (req.getRegulatoryCode() != null) {
 							reqObj.put("code", req.getRegulatoryCode());
 						}
