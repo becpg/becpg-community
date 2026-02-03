@@ -340,7 +340,8 @@
                             
                             // If enforceTask is enabled and no task assigned, make read-only
                             if (this.options.enforceTask && !hasTask) {
-                                callback(true, null);
+                                step.valid = true;
+                                callback(true, datalists);
                                 return;
                             }
                             
