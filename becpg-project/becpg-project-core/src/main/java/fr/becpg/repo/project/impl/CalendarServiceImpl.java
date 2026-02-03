@@ -77,7 +77,7 @@ public class CalendarServiceImpl implements CalendarService {
 				return cal;
 			}
 			// Fallback to project calendar
-			NodeRef projectNodeRef = entityService.getEntityNodeRef(nodeRef, ProjectModel.TYPE_PROJECT);
+			NodeRef projectNodeRef = entityService.getEntityNodeRef(nodeRef, ProjectModel.TYPE_TASK_LIST);
 			if ((projectNodeRef != null) && nodeService.exists(projectNodeRef)) {
 				return associationService.getTargetAssoc(projectNodeRef, ProjectModel.ASSOC_PROJECT_CALENDAR);
 			}

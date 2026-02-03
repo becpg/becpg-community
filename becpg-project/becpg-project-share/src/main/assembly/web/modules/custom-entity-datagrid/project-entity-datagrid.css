@@ -144,3 +144,37 @@
 .datagrid span.score-red::before { background-color: #ff0100; }
 .datagrid span.score-black::before { background-color: #424242; }
 
+
+.datagrid span.pjt-cal-date-tag {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 10px;
+    line-height: 16px;
+    font-size: 11px;
+    border: 1px solid #cfd8dc;
+    background: #eceff1;
+    color: #263238;
+    white-space: nowrap;
+}
+
+.datagrid span.pjt-cal-date-tag-range {
+    background: #e3f2fd;
+    border-color: #90caf9;
+    color: #0d47a1;
+}
+
+.datagrid span.pjt-cal-date-tag-noyear {
+    background: #fff3e0;
+    border-color: #ffcc80;
+    color: #e65100;
+}
+
+.datagrid span.pjt-cal-date-tag-date {
+    background: #e8f5e9;
+    border-color: #a5d6a7;
+    color: #1b5e20;
+}
+
+.datagrid span.pjt-cal-date-sep {
+    color: #90a4ae;
+}
