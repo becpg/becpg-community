@@ -239,4 +239,68 @@ if (beCPG.module.EntityDataGridRenderers) {
     });
 
 
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["pjt:calPublicHolydaysDates", "pjt:calHolydayDates"],
+        renderer: function(oRecord, data, label, scope) {
+
+            var rawValue = "";
+            if (data) {
+                rawValue = data.displayValue != null ? data.displayValue : (data.value != null ? data.value : "");
+            }
+            if (rawValue == null || rawValue === "") {
+                return "";
+            }
+
+            if (typeof rawValue !== "string") {
+                rawValue = "" + rawValue;
+            }
+
+            rawValue = rawValue.replace(/\s+/g, " ");
+
+            var values = rawValue.split(/[;,]/);
+            var tags = [];
+            for (var i = 0; i < values.length; i++) {
+                var v = values[i];
+                if (v != null) {
+                    v = YAHOO.lang.trim(v);
+                }
+                if (v != null && v !== "") {
+                    tags.push(v);
+                }
+            }
+
+            if (tags.length === 0) {
+                return "";
+            }
+
+            var max = 10;
+            var html = "";
+            var dateOnlyPattern = /^\d{2}\/\d{2}$/;
+            var dateWithYearPattern = /^\d{2}\/\d{2}\/\d{4}$/;
+            for (var j = 0; j < tags.length && j < max; j++) {
+                var tag = tags[j];
+                var className = "pjt-cal-date-tag";
+
+                if (tag.indexOf("-") > -1) {
+                    className += " pjt-cal-date-tag-range";
+                } else if (dateOnlyPattern.test(tag)) {
+                    className += " pjt-cal-date-tag-noyear";
+                } else if (dateWithYearPattern.test(tag)) {
+                    className += " pjt-cal-date-tag-date";
+                } else {
+                    className += " pjt-cal-date-tag-date";
+                }
+
+                if (html.length > 0) {
+                    html += " <span class=\"pjt-cal-date-sep\">; </span>";
+                }
+                html += '<span class="' + className + '">' + Alfresco.util.encodeHTML(tag) + "</span>";
+            }
+
+            return html;
+        }
+
+    });
+
+
 }
