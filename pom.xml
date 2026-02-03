@@ -121,7 +121,6 @@
          <!-- Alfresco 7.2 -->
 		<alfresco.platform.version>25.3.0</alfresco.platform.version>
 		<alfresco.share.docker.version>25.3.0</alfresco.share.docker.version>
-		
         <alfresco.share.version>25.3.0.56</alfresco.share.version>
         <alfresco-repository.version>25.3.0.81</alfresco-repository.version>
 		<alfresco-remote-api.version>25.3.0.81</alfresco-remote-api.version>
@@ -161,9 +160,9 @@
 
 		<becpg.dockerbuild.name>test</becpg.dockerbuild.name>
 		<becpg.version>25.3.0</becpg.version>
+		<docker.becpg.tag>${project.version}</docker.becpg.tag>
 		<docker.becpg.url>becpg</docker.becpg.url>
 		<docker.becpg.version>${becpg.version}</docker.becpg.version>
-		<docker.becpg.tag>${project.version}</docker.becpg.tag>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
@@ -289,6 +288,7 @@
 							<nonFilteredFileExtension>ico</nonFilteredFileExtension>
 							<nonFilteredFileExtension>psd</nonFilteredFileExtension>
 							<nonFilteredFileExtension>js</nonFilteredFileExtension>
+							<nonFilteredFileExtension>csv</nonFilteredFileExtension>
 						</nonFilteredFileExtensions>
 					</configuration>
 				</plugin>
@@ -491,6 +491,7 @@
 		<module>becpg-integration-runner</module>
 	</modules>
 	
+	
 	<reporting>
 		<plugins>
 
@@ -498,7 +499,7 @@
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-report-plugin</artifactId>
-            <version>3.5.3</version>
+            <version>3.5.4</version>
             <configuration>
                 <!-- No specific executions required, just the goal for site phase aggregation -->
                 <aggregate>true</aggregate>
