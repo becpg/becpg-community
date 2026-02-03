@@ -180,7 +180,7 @@
 				<executions>
 					<execution>
 						<id>copy-and-filter-docker-resources</id>
-						<phase>validate</phase>
+						<phase>package</phase>
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
@@ -201,7 +201,7 @@
 					</execution>
 					<execution>
 						<id>copy-and-filter-docker-resources-non-filtered</id>
-						<phase>validate</phase>
+						<phase>package</phase>
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
@@ -222,7 +222,7 @@
 					</execution>
 					<execution>
 						<id>copy-forms-config</id>
-						<phase>validate</phase>
+						<phase>package</phase>
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
@@ -259,7 +259,7 @@
 					</execution>
 					<execution>
 						<id>copy-forms-messages</id>
-						<phase>validate</phase>
+						<phase>package</phase>
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
@@ -464,7 +464,4 @@
 		</profile>
 	</profiles>
 
-  <scm>
-    <tag>25.3.0.1</tag>
-  </scm>
 </project>
