@@ -28,7 +28,7 @@ public class CalendarWorkingDayProvider extends DefaultWorkingDayProvider implem
 
     @Override
     public boolean isWorkingDay(Date date) {
-        return calendarNodeRef!=null ? calendarService.isWorkingDay(date, calendarNodeRef) : super.isWorkingDay(date);
+        return calendarNodeRef != null ? calendarService.isWorkingDay(date, calendarNodeRef) : super.isWorkingDay(date);
     }
 
     @Override

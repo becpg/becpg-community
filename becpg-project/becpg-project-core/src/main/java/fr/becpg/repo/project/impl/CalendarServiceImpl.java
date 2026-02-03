@@ -1,6 +1,5 @@
 package fr.becpg.repo.project.impl;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -8,6 +7,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Calendar;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -16,8 +16,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.ibm.icu.util.Calendar;
 
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityService;
@@ -53,8 +51,10 @@ public class CalendarServiceImpl implements CalendarService {
 	}
 
 	private boolean isWorkingDay(LocalDate date, Set<LocalDate> holidays, Set<Integer> nonWorkingDays) {
-		DayOfWeek day = date.getDayOfWeek();
-		int dayOfWeekValue = day.getValue();
+		// Convert LocalDate to Calendar to get Calendar.DAY_OF_WEEK values for consistency
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		int dayOfWeekValue = calendar.get(Calendar.DAY_OF_WEEK);
 		if (nonWorkingDays.contains(dayOfWeekValue)) {
 			return false;
 		}
@@ -120,8 +120,8 @@ public class CalendarServiceImpl implements CalendarService {
 	}
 
 	private void addDefaultDays(Set<Integer> target) {
-		target.add(Calendar.SUNDAY);
-		target.add(Calendar.SATURDAY);
+		target.add(Calendar.SATURDAY); // 7
+		target.add(Calendar.SUNDAY); // 1
 	}
 
 	
