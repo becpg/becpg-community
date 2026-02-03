@@ -64,6 +64,9 @@
                     <value>/System/Lists/bcpg:entityLists/ReportKindList</value>
                 </list>
             </parameter>
+            <parameter name="addEmptyValue">
+                <value>true</value>
+            </parameter>
             <parameter name="constraintType">
 				<value>bcpg:listValue</value>
 			</parameter>
