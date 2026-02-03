@@ -15,6 +15,7 @@ set -e
 export COMPOSE_FILE_PATH=${PWD}/becpg-integration-runner/target/docker-compose.yml
 export MVN_EXEC="${PWD}/mvnw"
 export BECPG_VERSION_PROFILE=becpg_25_3_0
+export EXTRA_ENV="-T 1C -Dmaven.threads.useForkedJvm=false"
 
 
 if [ -f .env ]; then
@@ -44,10 +45,6 @@ start() {
 
 start_test() {
    	 	docker compose -p becpg_test -f $COMPOSE_FILE_PATH up -d --remove-orphans
-}
-
-pull() {
-   	 	docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml pull 
 }
 
 pull() {
@@ -95,7 +92,6 @@ deploy_fast(){
 	docker cp becpg-project/becpg-project-share/src/main/resources/alfresco/. $BECPG_VERSION_PROFILE-becpg-share-1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
 	docker cp becpg-plm/becpg-plm-share/src/main/assembly/web/. $BECPG_VERSION_PROFILE-becpg-share-1:/usr/local/tomcat/webapps/share/
 	docker cp becpg-plm/becpg-plm-share/src/main/resources/alfresco/. $BECPG_VERSION_PROFILE-becpg-share-1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
-	docker cp becpg-plm/becpg-plm-share/src/main/assembly/web/. $BECPG_VERSION_PROFILE-becpg-share-1:/usr/local/tomcat/webapps/share/
 	docker cp becpg-plm/becpg-plm-share/src/main/assembly/config/alfresco/. $BECPG_VERSION_PROFILE-becpg-share-1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
 	if [ -d becpg-enterprise ]; then
 	  docker cp becpg-enterprise/becpg-enterprise-share/src/main/assembly/web/. $BECPG_VERSION_PROFILE-becpg-share-1:/usr/local/tomcat/webapps/share/
@@ -113,7 +109,7 @@ purge() {
 build() {
    if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
-  	 $MVN_EXEC package $EXTRA_ENV -DskipTests=true  -Dmaven.build.cache.enabled=true -Djacoco.skip=true -Dcheckstyle.skip=true  -Dbecpg.dockerbuild.name="enterprise-test"
+  	 $MVN_EXEC package $EXTRA_ENV -DskipTests=true  -Dmaven.build.cache.enabled=true -Djacoco.skip=true -Dcheckstyle.skip=true -Dbecpg.dockerbuild.name="enterprise-test"
      COMPOSE_FILE="./distribution/target/docker-compose-build-fast.yml"
 
       docker compose -f $COMPOSE_FILE build becpg-base-core
@@ -227,7 +223,6 @@ case "$1" in
     deploy_fast
     ;;  
   purge)
-    down
     purge
     ;;
   tail)
@@ -240,8 +235,8 @@ case "$1" in
     reindex
     ;;
 review)
-  ./review/review-wizard.sh
-  ;;
+    ./review/review-wizard.sh
+    ;;
 visualvm)
     jvisualvm --openjmx localhost:9091
     ;;
