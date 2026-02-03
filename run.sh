@@ -187,88 +187,6 @@ reindex() {
     docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d solr
 }
 
-review() {
-    local SCRIPT_DIR
-    SCRIPT_DIR="$(dirname "$0")"
-    local RESULT_FILE="$SCRIPT_DIR/review-result.md"
-    local ERRORS_FILE="$SCRIPT_DIR/review-errors.txt"
-    
-    local MODE="${1:-}"
-    local COMMIT=""
-    local REDMINE_TICKET=""
-    local FIRST_INSTRUCTIONS=""
-    
-    # Validate mode parameter
-    if [[ -z "$MODE" ]]; then
-        echo "Error: Mode must be provided (commit|ticket)" >&2
-        echo "Usage: ./run.sh review <mode> [commit_hash|ticket_number]" >&2
-        return 1
-    fi
-    
-    case "$MODE" in
-        commit)
-            COMMIT="${3:-HEAD}"
-            FIRST_INSTRUCTIONS="1. Review git commit: ${COMMIT}\n 2.Extract Redmine ticket from commit message."
-            ;;
-        ticket)
-            if [[ -z "$3" ]]; then
-                echo "Error: Redmine ticket number must be provided in 'ticket' mode." >&2
-                return 1
-            fi
-            REDMINE_TICKET="$3"
-            FIRST_INSTRUCTIONS="1. Use Redmine ticket: ${REDMINE_TICKET}\n 2.Review all staged changes."
-            ;;
-        *)
-            echo "Error: Invalid mode '$MODE'. Use 'commit' or 'ticket'." >&2
-            return 1
-            ;;
-    esac
-    
-    # Clear output files
-    : > "$RESULT_FILE"
-    : > "$ERRORS_FILE"
-    
-    echo "Reviewing mode: $MODE, Commit: ${COMMIT:-N/A}, Redmine Ticket: ${REDMINE_TICKET:-N/A}"
-    
-    # Build prompt with proper indentation handling
-    local PROMPT
-    read -r -d '' PROMPT <<EOF || true
-You are a senior software engineer performing a code review.
-Your task is to review the code changes introduced in a specific commit
-and ensure they align with the requirements specified in the associated Redmine ticket.
-
-Instructions:
-$FIRST_INSTRUCTIONS
-3. Fetch the ticket details from Redmine.
-4. Review the code changes.
-5. Compare the implementation against the ticket specifications.
-6. Perform a security review of the changes.
-7. Perform a performance review of the changes.
-8. Provide a summary of the review.
-9. If any issues are found, suggest improvements or corrections.
-
-Commit hash: ${COMMIT:-N/A}
-Redmine ticket: ${REDMINE_TICKET:-Extract from commit}
-EOF
-    
-    # Execute review with error handling
-    if ! echo "$PROMPT" | gemini \
-        --allowed-tools redmine_request,run_shell_command,read_file,search_file_content \
-        2>"$ERRORS_FILE" >> "$RESULT_FILE"; then
-        echo "Error: Review failed. Check $ERRORS_FILE for details." >&2
-        return 1
-    fi
-    
-    # Check if errors occurred
-    if [[ -s "$ERRORS_FILE" ]]; then
-        echo "Warning: Review completed with errors. Check $ERRORS_FILE" >&2
-    fi
-    
-    echo "✓ Review complete! Results written to $RESULT_FILE"
-    return 0
-}
-
-
 case "$1" in
   install)
     install
@@ -317,7 +235,7 @@ case "$1" in
     reindex
     ;;
 review)
-  review "$2" "$3"
+  ./review/review-wizard.sh
   ;;
 visualvm)
     jvisualvm --openjmx localhost:9091
