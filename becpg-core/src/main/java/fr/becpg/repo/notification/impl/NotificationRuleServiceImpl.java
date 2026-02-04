@@ -16,6 +16,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.download.DownloadService;
 import org.alfresco.service.cmr.download.DownloadStatus;
@@ -414,7 +415,13 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		} else if (ScriptMode.ALL.equals(notification.getScriptMode())) {
 			try {
 				executeScriptAll(notification, items, templateArgs);
-			} catch (Exception e) {
+			} catch (Throwable e) {
+				if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("Retrying the formulation due to exception " + e.getMessage());
+					}
+	                throw e;
+	            }
 				logger.error("Error while executing script from notification " + notification.getNodeRef(), e);
 				notification.setErrorLog(e.getMessage());
 				alfrescoRepository.save(notification);
