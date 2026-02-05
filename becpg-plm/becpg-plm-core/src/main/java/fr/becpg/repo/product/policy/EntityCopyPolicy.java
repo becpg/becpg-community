@@ -1,14 +1,11 @@
 package fr.becpg.repo.product.policy;
 
-import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.copy.CopyServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,10 +16,8 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.PLMWorkflowModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityService;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.jscript.BeCPGStateHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
-import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>EntityCopyPolicy class.</p>
@@ -34,57 +29,8 @@ public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyService
 
 	private static final Log logger = LogFactory.getLog(EntityCopyPolicy.class);
 
-	private NamespaceService namespaceService;
-	
-	
 	private EntityService entityService;
 	
-	private AssociationService associationService;
-	
-	private DictionaryService dictionaryService;
-	
-	private SystemConfigurationService systemConfigurationService;
-	
-	/**
-	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
-	 *
-	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
-	 */
-	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
-		this.systemConfigurationService = systemConfigurationService;
-	}
-	
-	/**
-	 * <p>Setter for the field <code>dictionaryService</code>.</p>
-	 *
-	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object
-	 */
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
-	}
-	
-	/**
-	 * <p>Setter for the field <code>associationService</code>.</p>
-	 *
-	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
-	 */
-	public void setAssociationService(AssociationService associationService) {
-		this.associationService = associationService;
-	}
-	
-	/**
-	 * <p>Setter for the field <code>namespaceService</code>.</p>
-	 *
-	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
-	 */
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
-
-	private String propertiesToReset() {
-		return systemConfigurationService.confValue("beCPG.copyOrBranch.propertiesToReset");
-	}
-
 	/**
 	 * <p>Setter for the field <code>entityService</code>.</p>
 	 *
@@ -121,20 +67,6 @@ public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyService
 			
 			entityService.changeEntityListStates(destinationRef, EntityListState.ToValidate);
 			
-			if (propertiesToReset() != null) {
-		        for(String propertyToReset : propertiesToReset().split(",")) {
-		        	propertyToReset = extractProperty(propertyToReset, sourceNodeRef, destinationRef);
-		        	if (propertyToReset != null) {
-		        		QName propertyQname = QName.createQName(propertyToReset, namespaceService);	
-		        		if (dictionaryService.getProperty(propertyQname) != null) {
-		        			nodeService.removeProperty(destinationRef, propertyQname);
-		        		} else if (dictionaryService.getAssociation(propertyQname) != null) {
-		        			associationService.update(destinationRef, propertyQname, List.of());
-		        		}
-		        	}
-		        }
-	        }
-			
 			if(nodeService.hasAspect(destinationRef, PLMModel.ASPECT_PRODUCT)) {
 				nodeService.setProperty(destinationRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
 			}
@@ -157,21 +89,6 @@ public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyService
 		}
 		
 
-	}
-
-	private String extractProperty(String propertyToReset, NodeRef sourceNodeRef, NodeRef destinationRef) {
-		String[] split = propertyToReset.split("\\|");
-		if (split.length < 2) {
-			return split[0];
-		}
-		String mode = split[1];
-		if ("branch".equals(mode) && BeCPGStateHelper.isOnBranchEntity(sourceNodeRef)) {
-			return split[0];
-		}
-		if ("copy".equals(mode) && BeCPGStateHelper.isOnCopyEntity(destinationRef)) {
-			return split[0];
-		}
-		return null;
 	}
 
 	/** {@inheritDoc} */
