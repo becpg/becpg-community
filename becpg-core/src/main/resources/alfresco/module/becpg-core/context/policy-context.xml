@@ -156,5 +156,9 @@
 	<bean id="surveyQuestionPolicy" class="fr.becpg.repo.survey.SurveyQuestionPolicy" parent="abstractBeCPGPolicy">
 	  <property name="beCPGCacheService" ref="beCPGCacheService"/>
     </bean>
+    
+    <bean id="becpgCopyPolicy" class="fr.becpg.repo.copy.BeCPGCopyPolicy" parent="abstractBeCPGPolicy">
+	  <property name="copyRestrictionService" ref="copyRestrictionService"/>
+    </bean>
 
 </beans>

@@ -62,14 +62,13 @@ public class SystemConfigurationServiceImpl implements SystemConfigurationServic
 	
 	@Override
 	public List<String> listValue(String propKey) {
-	    List<String> listValue = beCPGCacheService.getFromCache(CACHE_KEY, propKey + "_asList", () -> {
+	    return beCPGCacheService.getFromCache(CACHE_KEY, propKey + "_asList", () -> {
 	    	String confValue = confValue(propKey);
-	    	if (confValue != null) {
+	    	if (confValue != null && !confValue.isBlank()) {
 	    		return Arrays.asList(confValue.split(","));
 	    	}
 	    	return List.of();
 	    });
-	    return listValue;
 	}
 
 	/** {@inheritDoc} */
