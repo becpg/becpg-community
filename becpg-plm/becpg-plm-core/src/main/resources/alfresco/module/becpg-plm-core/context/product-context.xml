@@ -24,11 +24,7 @@
 	<bean id="entityCopyPolicy"
 		class="fr.becpg.repo.product.policy.EntityCopyPolicy"
 		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
-		<property name="namespaceService" ref="namespaceService"/>
 		<property name="entityService" ref="entityService"/>
-		<property name="associationService" ref="associationService"/>
-		<property name="dictionaryService" ref="dictionaryService"/>
-		<property name="systemConfigurationService" ref="systemConfigurationService"/>
 	</bean>
 	
 	<bean id="productListUnits.ProductListPolicy"
@@ -36,10 +32,6 @@
 		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="associationService" ref="associationService"/>
-		<property name="entityDictionaryService" ref="entityDictionaryService"/>
-		<property name="systemConfigurationService" ref="systemConfigurationService"/>
-		<property name="alfrescoRepository" ref="alfrescoRepository"/>
-		<property name="entityService" ref="entityService"/>
 	</bean>
 	
 	<bean id="labelingRuleListPolicy" class="fr.becpg.repo.product.policy.LabelingRuleListPolicy"
