@@ -35,7 +35,7 @@ public class IngCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		if ((rootYield != null) && (rootYield != 0d) && (qtyPerc != null)) {
 			Double qtyPercWithYield = qtyPerc / (rootYield / 100d);
 
-			CharactDetailAdditionalValue qtyWithYieldValue = new CharactDetailAdditionalValue(
+			CharactDetailAdditionalValue qtyWithYieldValue = new CharactDetailAdditionalValue("bcpg:ingListQtyPercWithYield",
 					I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListQtyPercWithYield.title"),
 					FormulationHelper.calculateValue(0d, qtyUsed, qtyPercWithYield, netQty), unit);
 			currentCharactDetailsValue.getAdditionalValues().add(qtyWithYieldValue);
@@ -50,7 +50,7 @@ public class IngCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 				baseValue = qtyPerc / (rootYield / 100d);
 			}
 			Double qtyPercWithSecondaryYield = baseValue / (rootSecondaryYield / 100d);
-			CharactDetailAdditionalValue qtyWithSecondaryYieldValue = new CharactDetailAdditionalValue(
+			CharactDetailAdditionalValue qtyWithSecondaryYieldValue = new CharactDetailAdditionalValue("bcpg:ingListQtyPercWithSecondaryYield",
 					I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListQtyPercWithSecondaryYield.title"),
 					FormulationHelper.calculateValue(0d, qtyUsed, qtyPercWithSecondaryYield, netQty), unit);
 			currentCharactDetailsValue.getAdditionalValues().add(qtyWithSecondaryYieldValue);
@@ -65,7 +65,7 @@ public class IngCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 			Double qtyPercPerValue = qtyPercValues[i];
 			if (qtyPercPerValue != null) {
 				String titleKey = String.format("bcpg_bcpgmodel.property.bcpg_ingListQtyPerc%d.title", i + 1);
-				CharactDetailAdditionalValue additionalValue = new CharactDetailAdditionalValue(I18NUtil.getMessage(titleKey),
+				CharactDetailAdditionalValue additionalValue = new CharactDetailAdditionalValue("bcpg:ingListQtyPerc" + (i + 1), I18NUtil.getMessage(titleKey),
 						FormulationHelper.calculateValue(0d, qtyUsed, qtyPercPerValue, netQty), unit);
 				currentCharactDetailsValue.getAdditionalValues().add(additionalValue);
 			}

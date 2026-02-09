@@ -82,7 +82,7 @@ public class LabelClaimCharactDetailsVisitor extends SimpleCharactDetailsVisitor
 			}
 		}
 		
-		CharactDetailAdditionalValue additionalValue = new CharactDetailAdditionalValue(I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_lclPercentApplicable.title"),
+		CharactDetailAdditionalValue additionalValue = new CharactDetailAdditionalValue("bcpg:lclPercentApplicable", I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_lclPercentApplicable.title"),
 				FormulationHelper.calculateValue(0d, qtyUsed, percentApplicable, netQty), unit);
 		currentCharactDetailsValue.getAdditionalValues().add(additionalValue);
 	}
