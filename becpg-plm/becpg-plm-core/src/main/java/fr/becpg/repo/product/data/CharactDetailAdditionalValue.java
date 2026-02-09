@@ -8,6 +8,7 @@ package fr.becpg.repo.product.data;
  */
 public class CharactDetailAdditionalValue {
 
+	private String columnKey;
 	private String columnName;
 	private Double value;
 	
@@ -20,8 +21,9 @@ public class CharactDetailAdditionalValue {
 	 * @param value a {@link java.lang.Double} object
 	 * @param unit a {@link java.lang.String} object
 	 */
-	public CharactDetailAdditionalValue(String columnName, Double value, String unit) {
+	public CharactDetailAdditionalValue(String columnKey, String columnName, Double value, String unit) {
 		super();
+		this.columnKey = columnKey;
 		this.columnName = columnName;
 		this.value = value;
 		this.unit = unit;
@@ -34,9 +36,14 @@ public class CharactDetailAdditionalValue {
 	 */
 	public CharactDetailAdditionalValue(CharactDetailAdditionalValue charactDetailAdditionalValue) {
 		super();
+		this.columnKey = charactDetailAdditionalValue.columnKey;
 		this.columnName = charactDetailAdditionalValue.columnName;
 		this.value = charactDetailAdditionalValue.value;
 		this.unit = charactDetailAdditionalValue.unit;
+	}
+	
+	public String getColumnKey() {
+		return columnKey;
 	}
 	
 	/**
@@ -78,7 +85,8 @@ public class CharactDetailAdditionalValue {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "CharactDetailAdditionalValue [columnName=" + columnName + ", value=" + value + ", unit=" + unit + "]";
+		return "CharactDetailAdditionalValue [columnKey=" + columnKey + ", columnName=" + columnName + ", value=" + value
+				+ ", unit=" + unit + "]";
 	}
 
 }
