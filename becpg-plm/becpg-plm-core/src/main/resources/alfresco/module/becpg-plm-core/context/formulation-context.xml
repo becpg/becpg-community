@@ -27,63 +27,38 @@
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
+		<property name="securityService" ref="securityService" />
+		<property name="namespaceService" ref="namespaceService" />
 	</bean>
 
-	<bean id="costCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.CostCharactDetailsVisitor">
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="nodeService" ref="nodeService" />
+	<bean id="costCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.CostCharactDetailsVisitor" parent="simpleCharactDetailsVisitor">
 		<property name="packagingHelper" ref="packagingHelper" />
-		<property name="entityDictionaryService" ref="entityDictionaryService" />
 	</bean>
 
-	<bean id="lcaCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.LCACharactDetailsVisitor">
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="nodeService" ref="nodeService" />
+	<bean id="lcaCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.LCACharactDetailsVisitor" parent="simpleCharactDetailsVisitor">
 		<property name="packagingHelper" ref="packagingHelper" />
-		<property name="entityDictionaryService" ref="entityDictionaryService" />
 	</bean>
 
-	<bean id="packagingMaterialCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.PackagingMaterialCharactDetailsVisitor">
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="entityDictionaryService" ref="entityDictionaryService" />
+	<bean id="packagingMaterialCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.PackagingMaterialCharactDetailsVisitor" parent="simpleCharactDetailsVisitor">
 	</bean>
 
-	<bean id="nutCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.NutCharactDetailsVisitor">
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="entityDictionaryService" ref="entityDictionaryService" />
+	<bean id="nutCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.NutCharactDetailsVisitor" parent="simpleCharactDetailsVisitor">
 	</bean>
 
-	<bean id="ingCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.IngCharactDetailsVisitor">
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="entityDictionaryService" ref="entityDictionaryService" />
+	<bean id="ingCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.IngCharactDetailsVisitor" parent="simpleCharactDetailsVisitor">
 	</bean>
 
-	<bean id="physicoChemCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.PhysicoChemCharactDetailsVisitor">
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="entityDictionaryService" ref="entityDictionaryService" />
+	<bean id="physicoChemCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.PhysicoChemCharactDetailsVisitor" parent="simpleCharactDetailsVisitor">
+	</bean>
+		
+	<bean id="labelClaimCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.LabelClaimCharactDetailsVisitor" parent="simpleCharactDetailsVisitor">
 	</bean>
 	
-	<bean id="labelClaimCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.LabelClaimCharactDetailsVisitor">
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="entityDictionaryService" ref="entityDictionaryService" />
-	</bean>
-	
-	<bean id="toxCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.ToxCharactDetailsVisitor">
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="entityDictionaryService" ref="entityDictionaryService" />
+	<bean id="toxCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.ToxCharactDetailsVisitor" parent="simpleCharactDetailsVisitor">
 		<property name="toxicologyService" ref="toxicologyService" />
 	</bean>
 	
-	<bean id="svhcCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.SvhcCharactDetailsVisitor">
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="entityDictionaryService" ref="entityDictionaryService" />
+	<bean id="svhcCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.SvhcCharactDetailsVisitor" parent="simpleCharactDetailsVisitor">
 	</bean>
 	
 	<bean id="charactDetailsVisitorFactory" class="fr.becpg.repo.product.CharactDetailsVisitorFactoryImpl">

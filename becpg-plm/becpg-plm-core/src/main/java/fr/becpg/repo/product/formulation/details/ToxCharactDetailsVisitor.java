@@ -51,10 +51,12 @@ public class ToxCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 							Double ingMaxValue = maxValue * 100 / maxQuantity;
 							CharactDetailsValue charactDetailValue = new CharactDetailsValue(productData.getNodeRef(), ingListDataItem.getIng(), ingListDataItem.getNodeRef(), ingMaxValue, 0, "%");
 							charactDetailValue.setAllowZeroValue(true);
-							CharactDetailAdditionalValue additionalValue = new CharactDetailAdditionalValue(I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListQtyPerc.title"),
+							CharactDetailAdditionalValue additionalValue = new CharactDetailAdditionalValue("bcpg:ingListQtyPerc", I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListQtyPerc.title"),
 									maxQuantity, null);
-							charactDetailValue.getAdditionalValues().add(additionalValue);
-							ret.addKeyValue(toxListDataItem.getTox(), charactDetailValue);
+							if (isColumnReadable(additionalValue.getColumnKey())) {
+								charactDetailValue.getAdditionalValues().add(additionalValue);
+								ret.addKeyValue(toxListDataItem.getTox(), charactDetailValue);
+							}
 						}
 					}
 				}
