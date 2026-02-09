@@ -148,6 +148,8 @@
                             if (me.options.mode != "view" && !this.options.readOnly)
                             {
                                 me._initAutoComplete();
+                            } else if ((me.options.mode == "view" || me.options.readOnly) || !me.options.multipleSelectMode && !me.isAssoc) {
+                                Dom.removeClass(me.fieldHtmlId + "-values", "hidden");
                             }
                         },
 

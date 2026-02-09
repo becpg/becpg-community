@@ -198,9 +198,14 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 					}
 				}
 
-				if (checkHasChange(
+				if ((checkHasChange(
 						new HashSet<>(Arrays.asList(ContentModel.PROP_MODIFIED, ContentModel.PROP_CREATED, BeCPGModel.PROP_FORMULATED_DATE)),
-						diffQnames, null) != null) {
+						diffQnames, null) != null)
+
+						// check if the cm:name changed during an auditable transaction: 
+						// in some cases, the cm:modified is updated twice very quickly and the system might not see it as changed
+						|| (checkHasChange(new HashSet<>(Arrays.asList(ContentModel.PROP_NAME)), diffQnames, null) != null
+								&& policyBehaviourFilter.isEnabled(entityNodeRef, ContentModel.ASPECT_AUDITABLE))) {
 					for (EntityCatalogObserver observer : observers) {
 						if (observer.acceptCatalogEvents(ContentModel.PROP_MODIFIED, entityNodeRef, listNodeRefs)) {
 							observer.notifyAuditedFieldChange(null, entityNodeRef);
