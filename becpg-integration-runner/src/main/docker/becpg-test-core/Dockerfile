@@ -3,15 +3,15 @@ FROM ${docker.becpg.url}/becpg-base-core:${docker.becpg.tag} AS builder
 ENV TOMCAT_DIR=/usr/local/tomcat
 
       
-COPY becpg-core-${project.version}.amp $TOMCAT_DIR/amps/
-COPY becpg-project-core-${project.version}.amp  $TOMCAT_DIR/amps/
-COPY becpg-designer-core-${project.version}.amp  $TOMCAT_DIR/amps/
-COPY becpg-plm-core-${project.version}.amp  $TOMCAT_DIR/amps/
+COPY becpg-core-${docker.becpg.tag}.amp $TOMCAT_DIR/amps/
+COPY becpg-project-core-${docker.becpg.tag}.amp  $TOMCAT_DIR/amps/
+COPY becpg-designer-core-${docker.becpg.tag}.amp  $TOMCAT_DIR/amps/
+COPY becpg-plm-core-${docker.becpg.tag}.amp  $TOMCAT_DIR/amps/
 
-RUN  java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/becpg-core-${project.version}.amp webapps/alfresco -nobackup -force && \
-	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/becpg-project-core-${project.version}.amp webapps/alfresco -nobackup -force && \
-	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/becpg-designer-core-${project.version}.amp webapps/alfresco -nobackup -force && \
-	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/becpg-plm-core-${project.version}.amp webapps/alfresco -nobackup -force 
+RUN  java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/becpg-core-${docker.becpg.tag}.amp webapps/alfresco -nobackup -force && \
+	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/becpg-project-core-${docker.becpg.tag}.amp webapps/alfresco -nobackup -force && \
+	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/becpg-designer-core-${docker.becpg.tag}.amp webapps/alfresco -nobackup -force && \
+	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/becpg-plm-core-${docker.becpg.tag}.amp webapps/alfresco -nobackup -force 
 	 
 FROM ${docker.becpg.url}/becpg-base-core:${docker.becpg.tag}
 
