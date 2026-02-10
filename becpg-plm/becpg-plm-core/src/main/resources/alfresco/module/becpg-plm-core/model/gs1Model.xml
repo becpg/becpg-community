@@ -2930,6 +2930,19 @@
 				</property>
 			</properties>
 		</aspect>
+		<aspect name="gs1:labelClaimListAspect">
+			<properties>
+				<property name="gs1:lclClaimMarkedOnPackage">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true" />
+					<constraints>
+						<constraint ref="bcpg:nullableBoolean" />
+					</constraints>
+				</property>
+			</properties>
+			<associations/>
+		</aspect>
 
 		<aspect name="gs1:referencedTradeItemAspect">
 			<properties>
