@@ -8,10 +8,12 @@ COPY becpg-project-core-*.amp  $TOMCAT_DIR/amps/
 COPY becpg-designer-core-*.amp  $TOMCAT_DIR/amps/
 COPY becpg-plm-core-*.amp  $TOMCAT_DIR/amps/
 
+
 RUN  java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/becpg-core-*.amp webapps/alfresco -nobackup -force && \
 	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/becpg-project-core-*.amp webapps/alfresco -nobackup -force && \
 	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/becpg-designer-core-*.amp webapps/alfresco -nobackup -force && \
 	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/becpg-plm-core-*.amp webapps/alfresco -nobackup -force 
+
 	 
 FROM ${docker.becpg.url}/becpg-base-core:${docker.becpg.tag}
 

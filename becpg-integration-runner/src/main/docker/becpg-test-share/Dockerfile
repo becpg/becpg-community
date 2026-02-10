@@ -7,16 +7,16 @@ ENV TOMCAT_DIR=/usr/local/tomcat
 #COPY share/lessc-context.xml $TOMCAT_DIR/shared/classes/alfresco/web-extension
 #COPY share/share-config-custom.xml $TOMCAT_DIR/shared/classes/alfresco/web-extension
 
-COPY becpg-share-${project.version}.amp $TOMCAT_DIR/amps_share/
-COPY becpg-project-share-${project.version}.amp $TOMCAT_DIR/amps_share/
-COPY becpg-designer-share-${project.version}.amp $TOMCAT_DIR/amps_share/
-COPY becpg-plm-share-${project.version}.amp $TOMCAT_DIR/amps_share/
+COPY becpg-share-${docker.becpg.tag}.amp $TOMCAT_DIR/amps_share/
+COPY becpg-project-share-${docker.becpg.tag}.amp $TOMCAT_DIR/amps_share/
+COPY becpg-designer-share-${docker.becpg.tag}.amp $TOMCAT_DIR/amps_share/
+COPY becpg-plm-share-${docker.becpg.tag}.amp $TOMCAT_DIR/amps_share/
 
 
-RUN  java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install $TOMCAT_DIR/amps_share/becpg-share-${project.version}.amp webapps/share -nobackup -force && \
-	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install $TOMCAT_DIR/amps_share/becpg-project-share-${project.version}.amp webapps/share -nobackup -force && \
-	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install $TOMCAT_DIR/amps_share/becpg-designer-share-${project.version}.amp webapps/share -nobackup -force && \
-	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install $TOMCAT_DIR/amps_share/becpg-plm-share-${project.version}.amp webapps/share -nobackup -force 
+RUN  java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install $TOMCAT_DIR/amps_share/becpg-share-${docker.becpg.tag}.amp webapps/share -nobackup -force && \
+	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install $TOMCAT_DIR/amps_share/becpg-project-share-${docker.becpg.tag}.amp webapps/share -nobackup -force && \
+	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install $TOMCAT_DIR/amps_share/becpg-designer-share-${docker.becpg.tag}.amp webapps/share -nobackup -force && \
+	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install $TOMCAT_DIR/amps_share/becpg-plm-share-${docker.becpg.tag}.amp webapps/share -nobackup -force 
 	 
 
 FROM ${docker.becpg.url}/becpg-base-share:${docker.becpg.tag}
