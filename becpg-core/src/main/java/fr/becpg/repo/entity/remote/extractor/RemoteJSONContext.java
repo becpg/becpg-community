@@ -3,6 +3,8 @@ package fr.becpg.repo.entity.remote.extractor;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -13,6 +15,8 @@ import org.alfresco.service.namespace.NamespaceService;
  * @author matthieu
  */
 public class RemoteJSONContext {
+
+	private static final Log logger = LogFactory.getLog(RemoteJSONContext.class);
 
 	public enum JsonVisitNodeType {
 		ENTITY, ENTITY_LIST, CONTENT, ASSOC, DATALIST, CHILD_ASSOC
@@ -48,7 +52,12 @@ public class RemoteJSONContext {
 
 	String getEntityPath(NodeService nodeService, NamespaceService namespaceService) {
 		if ((entityPath == null) && (entityNodeRef != null)) {
-			entityPath = nodeService.getPath(entityNodeRef).toPrefixString(namespaceService);
+			try {
+				entityPath = nodeService.getPath(entityNodeRef).toPrefixString(namespaceService);
+			} catch (RuntimeException e) {
+				logger.warn("Failed to resolve path for entity node " + entityNodeRef + ": " + e.getMessage());
+				entityPath = "";
+			}
 		}
 		return entityPath;
 	}
