@@ -254,11 +254,22 @@ public class SpelFormulaService {
 	 * @param formula a {@link java.lang.String} object.
 	 */
 	public void applyToList(RepositoryEntity entity, Collection<RepositoryEntity> range, String formula) {
-		Expression exp = getSpelParser().parseExpression(formula);
+		String[] formulas = formula.split(";");
+		Expression[] expressions = new Expression[formulas.length];
+		for (int i = 0; i < formulas.length; i++) {
+			String trimmed = formulas[i].trim();
+			if (!trimmed.isEmpty()) {
+				expressions[i] = getSpelParser().parseExpression(trimmed);
+			}
+		}
 
 		for (RepositoryEntity item : range) {
 			StandardEvaluationContext context = createDataListItemSpelContext(entity, item, false);
-			exp.getValue(context);
+			for (Expression exp : expressions) {
+				if (exp != null) {
+					exp.getValue(context);
+				}
+			}
 		}
 
 	}
