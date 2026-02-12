@@ -233,6 +233,85 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 		/**
+		 * Helper {@code @beCPG.copyProps($target, $sourceNodeRef, $mapping)}
+		 *
+		 * <p>Copies multiple properties from a source node to a target entity in a single
+		 * {@code nodeService.getProperties()} call. This is significantly more efficient
+		 * than multiple individual {@code propValue/setValue} calls on the same source node.</p>
+		 *
+		 * <pre>{@code @beCPG.copyProps(dataListItem, dataListItem.product, "yr:sourceProp1|yr:targetProp1,yr:sourceProp2|yr:targetProp2")}</pre>
+		 *
+		 * <p>When source and target property names are the same, the target can be omitted:</p>
+		 * <pre>{@code @beCPG.copyProps(dataListItem, dataListItem.product, "yr:sameProp1,yr:sameProp2")}</pre>
+		 *
+		 * @param target the target entity to set properties on
+		 * @param sourceNodeRef the source node to read properties from
+		 * @param mapping comma-separated list of source|target property QName pairs
+		 */
+		public void copyProps(RepositoryEntity target, NodeRef sourceNodeRef, String mapping) {
+			if (target == null || sourceNodeRef == null || mapping == null || mapping.isBlank()) {
+				return;
+			}
+			Map<QName, Serializable> sourceProps = nodeService.getProperties(sourceNodeRef);
+			for (String entry : mapping.split(",")) {
+				String trimmed = entry.trim();
+				if (trimmed.isEmpty()) {
+					continue;
+				}
+				String sourceQname;
+				String targetQname;
+				int pipeIndex = trimmed.indexOf('|');
+				if (pipeIndex > 0) {
+					sourceQname = trimmed.substring(0, pipeIndex).trim();
+					targetQname = trimmed.substring(pipeIndex + 1).trim();
+				} else {
+					sourceQname = trimmed;
+					targetQname = trimmed;
+				}
+				Serializable value = sourceProps.get(getQName(sourceQname));
+				target.getExtraProperties().put(getQName(targetQname), value);
+			}
+		}
+
+		/**
+		 * Helper {@code @beCPG.copyAssocs($target, $sourceNodeRef, $mapping)}
+		 *
+		 * <p>Copies multiple associations from a source node to a target entity in a single call.</p>
+		 *
+		 * <pre>{@code @beCPG.copyAssocs(dataListItem, dataListItem.product, "bcpg:sourceAssoc|yr:targetAssoc,bcpg:otherAssoc|yr:otherTarget")}</pre>
+		 *
+		 * <p>When source and target association names are the same, the target can be omitted:</p>
+		 * <pre>{@code @beCPG.copyAssocs(dataListItem, dataListItem.product, "bcpg:sameAssoc1,bcpg:sameAssoc2")}</pre>
+		 *
+		 * @param target the target entity to set associations on
+		 * @param sourceNodeRef the source node to read associations from
+		 * @param mapping comma-separated list of source|target association QName pairs
+		 */
+		public void copyAssocs(RepositoryEntity target, NodeRef sourceNodeRef, String mapping) {
+			if (target == null || sourceNodeRef == null || mapping == null || mapping.isBlank()) {
+				return;
+			}
+			for (String entry : mapping.split(",")) {
+				String trimmed = entry.trim();
+				if (trimmed.isEmpty()) {
+					continue;
+				}
+				String sourceQname;
+				String targetQname;
+				int pipeIndex = trimmed.indexOf('|');
+				if (pipeIndex > 0) {
+					sourceQname = trimmed.substring(0, pipeIndex).trim();
+					targetQname = trimmed.substring(pipeIndex + 1).trim();
+				} else {
+					sourceQname = trimmed;
+					targetQname = trimmed;
+				}
+				List<NodeRef> assocNodeRefs = associationService.getTargetAssocs(sourceNodeRef, getQName(sourceQname));
+				associationService.update(target.getNodeRef(), getQName(targetQname), assocNodeRefs);
+			}
+		}
+
+		/**
 		 * Helper {@code @beCPG.propMLValue($mltext, $locale)}
 		 *
 		 * Get the value of an {@link MLText} for the given locale.
