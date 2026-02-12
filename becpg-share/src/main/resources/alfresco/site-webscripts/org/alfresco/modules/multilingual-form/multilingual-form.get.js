@@ -53,7 +53,7 @@ function main()
 
 
       // Call the repository for the site profile
-      var json = remote.call("/becpg/form/multilingual/field/"+model.field+"?nodeRef=" + model.nodeRef + (args.diffField != null ? "&diffField="+args.diffField: ""));
+      var json = remote.call("/becpg/form/multilingual/field/"+model.field+"?nodeRef=" + encodeURIComponent(model.nodeRef) + (args.diffField != null ? "&diffField="+args.diffField: ""));
       if (json.status == 200)
       {
          // Create javascript objects from the repo response
