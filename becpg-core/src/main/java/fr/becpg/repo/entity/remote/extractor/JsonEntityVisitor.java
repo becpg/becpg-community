@@ -225,13 +225,17 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 				NodeRef parentRef = getPrimaryParentRef(nodeRef);
 				if (parentRef != null) {
-					Path parentPath = nodeService.getPath(parentRef);
-					String path = parentPath.toPrefixString(namespaceService);
+					try {
+						Path parentPath = nodeService.getPath(parentRef);
+						String path = parentPath.toPrefixString(namespaceService);
 
-					entity.put(RemoteEntityService.ATTR_PATH, path.replace(context.getEntityPath(nodeService, namespaceService), "~"));
-					if (!JsonVisitNodeType.ASSOC.equals(type)) {
-						visitSite(entity, parentPath);
-						entity.put(RemoteEntityService.ATTR_PARENT_ID, parentRef.getId());
+						entity.put(RemoteEntityService.ATTR_PATH, path.replace(context.getEntityPath(nodeService, namespaceService), "~"));
+						if (!JsonVisitNodeType.ASSOC.equals(type)) {
+							visitSite(entity, parentPath);
+							entity.put(RemoteEntityService.ATTR_PARENT_ID, parentRef.getId());
+						}
+					} catch (RuntimeException e) {
+						logger.warn("Failed to resolve path for parent node " + parentRef + ": " + e.getMessage());
 					}
 				} else {
 					logger.warn("Node : " + nodeRef + " has no primary parent");
@@ -304,9 +308,14 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 				if ((nodeRef != null) && Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_NODEREF, Boolean.TRUE))) {
 
-					String nodePath = nodeService.getPath(nodeRef).toPrefixString(namespaceService);
+					String nodePath = null;
+					try {
+						nodePath = nodeService.getPath(nodeRef).toPrefixString(namespaceService);
+					} catch (RuntimeException e) {
+						logger.warn("Failed to resolve path for node " + nodeRef + ": " + e.getMessage());
+					}
 
-					if (Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_UPDATE_ENTITY_NODEREFS, Boolean.FALSE))
+					if (nodePath != null && Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_UPDATE_ENTITY_NODEREFS, Boolean.FALSE))
 							&& nodePath.contains(context.getEntityPath(nodeService, namespaceService))) {
 
 						NodeRef currentNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, nodeRef.getId());
@@ -323,8 +332,8 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 						entity.put(RemoteEntityService.ATTR_ID, newNode.getId());
 					} else {
 
-						if (Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_REPLACE_HISTORY_NODEREFS, Boolean.FALSE))
-								&& nodeService.getPath(nodeRef).toPrefixString(namespaceService).contains(RepoConsts.ENTITIES_HISTORY_XPATH)) {
+						if (nodePath != null && Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_REPLACE_HISTORY_NODEREFS, Boolean.FALSE))
+								&& nodePath.contains(RepoConsts.ENTITIES_HISTORY_XPATH)) {
 							NodeRef parentNode = getPrimaryParentRef(nodeRef);
 
 							String parentName = (String) nodeService.getProperty(parentNode, ContentModel.PROP_NAME);
