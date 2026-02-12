@@ -54,6 +54,22 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class MonitorWebScript extends DeclarativeWebScript {
 
+	private static final String SYSTEM_PATH = "/app:company_home/cm:System/";
+
+	private static final String SUCCESS_STATUS = "SUCCESS";
+
+	private static final String AUTHENTICATED_KEY = "authenticated";
+
+	private static final String VOLUMETRY_PARAMETER = "volumetry";
+
+	private static final String DOWN_STATUS = "DOWN";
+
+	private static final String UP_STATUS = "UP";
+
+	private static final String STATUS_KEY = "status";
+
+	private static final String MONITORS_USER_AGENT = "beCPG Monitors";
+
 	private static final String SOLR_STATUS = "solr_status";
 
 	private static final String VOLUMETRY_QUERY = "SELECT "
@@ -126,39 +142,37 @@ public class MonitorWebScript extends DeclarativeWebScript {
 	/** {@inheritDoc} */
 	@Override
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) {
-		
-		return AuthenticationUtil.runAsSystem(() -> {
-			logger.debug("start monitor webscript");
-			
-			Map<String, Object> ret = new HashMap<>();
-			
-			fillMonitoringInformation(ret, true);
-			
-			if ("beCPG Monitors".equals(req.getHeader(HttpHeaders.USER_AGENT))) {
-				ret.put("authenticated", true);
+
+		logger.debug("start monitor webscript");
+
+		Map<String, Object> ret = new HashMap<>();
+
+		if (MONITORS_USER_AGENT.equals(req.getHeader(HttpHeaders.USER_AGENT))) {
+			return AuthenticationUtil.runAsSystem(() -> {
+				fillMonitoringInformation(ret, true);
+				ret.put(AUTHENTICATED_KEY, true);
 				try {
-					List<NodeRef> result = BeCPGQueryBuilder.createQuery().inPath("/app:company_home/cm:System/").ftsLanguage().maxResults(1).list();
+					List<NodeRef> result = BeCPGQueryBuilder.createQuery().inPath(SYSTEM_PATH).ftsLanguage().maxResults(1).list();
 					if (!result.isEmpty()) {
-						ret.put(SOLR_STATUS, "UP");
+						ret.put(SOLR_STATUS, UP_STATUS);
 					} else {
-						ret.put(SOLR_STATUS, "DOWN");
+						ret.put(SOLR_STATUS, DOWN_STATUS);
 					}
 				} catch (Exception e) {
-					ret.put(SOLR_STATUS, "DOWN");
+					ret.put(SOLR_STATUS, DOWN_STATUS);
 				}
-				
-				if ("true".equals(req.getParameter("volumetry"))) {
+
+				if (Boolean.TRUE.toString().equals(req.getParameter(VOLUMETRY_PARAMETER))) {
 					fillVolumetry(ret);
 				}
-			} else {
-				ret.clear();
-			}
-			
-			ret.put("status", "SUCCESS");
-			
-			return ret;
-		});
-		
+				return null;
+			});
+		}
+
+		ret.put(STATUS_KEY, SUCCESS_STATUS);
+
+		return ret;
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -183,7 +197,7 @@ public class MonitorWebScript extends DeclarativeWebScript {
 			logger.error("Error running : " + VOLUMETRY_QUERY, e);
 			throw new BeCPGException(e.getMessage(), e);
 		}
-		ret.put("volumetry", volumetryArray.toString());
+		ret.put(VOLUMETRY_PARAMETER, volumetryArray.toString());
 	}
 
 	private String extractQNameString(QName qname) {
