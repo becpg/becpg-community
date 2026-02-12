@@ -98,6 +98,11 @@ deploy_fast(){
 	  docker cp becpg-enterprise/becpg-enterprise-share/src/main/resources/alfresco/. $BECPG_VERSION_PROFILE-becpg-share-1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
 	fi
 	
+	if [ -d ../becpg-artworks/becpg-artworks-share ]; then
+		docker cp ../becpg-artworks/becpg-artworks-share/src/main/assembly/web/. $BECPG_VERSION_PROFILE-becpg-share-1:/usr/local/tomcat/webapps/share/
+		docker cp ../becpg-artworks/becpg-artworks-share/src/main/resources/alfresco/. $BECPG_VERSION_PROFILE-becpg-share-1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	fi
+	
 	wget --delete-after --http-user=admin --http-password=becpg --header=Accept-Charset:iso-8859-1,utf-8 --header=Accept-Language:en-us --post-data reset=on http://localhost:8180/share/page/index
 
 }
