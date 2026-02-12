@@ -30,6 +30,7 @@ import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,6 +51,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.repo.entity.EntityFormatService;
 import fr.becpg.repo.helper.LargeTextHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RestTemplateHelper;
@@ -99,6 +101,8 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 	private String deepLAPIKey;
 
 	private ServiceRegistry serviceRegistry;
+	
+	private EntityFormatService entityFormatService;
 
 	/**
 	 * <p>Setter for the field <code>serviceRegistry</code>.</p>
@@ -107,6 +111,15 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 	 */
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>entityFormatService</code>.</p>
+	 *
+	 * @param entityFormatService a {@link fr.becpg.repo.entity.EntityFormatService} object.
+	 */
+	public void setEntityFormatService(EntityFormatService entityFormatService) {
+		this.entityFormatService = entityFormatService;
 	}
 
 	/**
@@ -148,6 +161,8 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 		QName fieldQname = null;
 		QName destFieldQname = null;
 		QName diffFieldQName = null;
+		String itemType = null;
+		String itemId = null;
 
 		if (destFieldName != null) {
 			destFieldName = destFieldName.replace("_", ":");
@@ -160,7 +175,19 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 		}
 
 		if ((nodeRef != null) && !nodeRef.isEmpty()) {
-			formNodeRef = new NodeRef(nodeRef);
+			// If nodeRef contains '|', it's a versioned format: nodeRef|type|id
+			if (nodeRef.contains("|")) {
+				String[] parts = nodeRef.split("\\|");
+				if (parts.length >= 3) {
+					formNodeRef = new NodeRef(parts[0]);
+					itemType = parts[1];
+					itemId = parts[2];
+				} else {
+					throw new WebScriptException("Invalid versioned nodeRef format");
+				}
+			} else {
+				formNodeRef = new NodeRef(nodeRef);
+			}
 		}
 
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
@@ -194,19 +221,27 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 				boolean wasMLAware = MLPropertyInterceptor.setMLAware(true);
 				try {
 
-					Serializable value = serviceRegistry.getNodeService().getProperty(formNodeRef, fieldQname);
-					if (value instanceof MLText mltext) {
-						mlText = mltext;
-					} else if (value instanceof String stVal) {
-						mlText = new MLText();
-						mlText.addValue(toSaveUnderLocale,stVal);
+					// If it's a version node, extract data from JSON
+					if ((itemType != null) && (itemId != null)) {
+						mlText = extractMLTextFromVersion(formNodeRef, itemType, itemId, fieldQname, toSaveUnderLocale);
+						if (diffFieldQName != null) {
+							diffMlText = extractMLTextFromVersion(formNodeRef, itemType, itemId, diffFieldQName, toSaveUnderLocale);
+						}
 					} else {
-						mlText = new MLText();
-						mlText.addValue(toSaveUnderLocale, "");
-					}
+						Serializable value = serviceRegistry.getNodeService().getProperty(formNodeRef, fieldQname);
+						if (value instanceof MLText mltext) {
+							mlText = mltext;
+						} else if (value instanceof String stVal) {
+							mlText = new MLText();
+							mlText.addValue(toSaveUnderLocale,stVal);
+						} else {
+							mlText = new MLText();
+							mlText.addValue(toSaveUnderLocale, "");
+						}
 
-					if (diffFieldQName != null) {
-						diffMlText = (MLText) serviceRegistry.getNodeService().getProperty(formNodeRef, diffFieldQName);
+						if (diffFieldQName != null) {
+							diffMlText = (MLText) serviceRegistry.getNodeService().getProperty(formNodeRef, diffFieldQName);
+						}
 					}
 
 				} finally {
@@ -229,29 +264,32 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 
 					JSONObject json = (JSONObject) req.parseContent();
 					if (json != null) {
-						for (Iterator<String> iterator = json.keys(); iterator.hasNext();) {
-							String key = iterator.next();
-							if (!"-".equals(key)) {
-								Locale loc = MLTextHelper.parseLocale(key);
-								if (json.getString(key) != null) {
-									if (!json.getString(key).isBlank()) {
-										mlText.addValue(loc, json.getString(key).trim());
-									} else {
-										mlText.removeValue(loc);
+						// Only update if not a version node (version nodes are read-only)
+						if ((itemType == null) && (itemId == null)) {
+							for (Iterator<String> iterator = json.keys(); iterator.hasNext();) {
+								String key = iterator.next();
+								if (!"-".equals(key)) {
+									Locale loc = MLTextHelper.parseLocale(key);
+									if (json.getString(key) != null) {
+										if (!json.getString(key).isBlank()) {
+											mlText.addValue(loc, json.getString(key).trim());
+										} else {
+											mlText.removeValue(loc);
+										}
 									}
 								}
 							}
-						}
-						if (mlText.isEmpty()) {
-							serviceRegistry.getNodeService().removeProperty(formNodeRef, fieldQname);
-						} else {
-							serviceRegistry.getNodeService().setProperty(formNodeRef, fieldQname, mlText);
+							if (mlText.isEmpty()) {
+								serviceRegistry.getNodeService().removeProperty(formNodeRef, fieldQname);
+							} else {
+								serviceRegistry.getNodeService().setProperty(formNodeRef, fieldQname, mlText);
+							}
 						}
 
 					}
 
 					if (mlText != null) {
-						if (copy) {
+						if (copy && (itemType == null) && (itemId == null)) {
 							serviceRegistry.getNodeService().setProperty(formNodeRef, destFieldQname, mlText);
 						}
 
@@ -374,6 +412,82 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 			logger.warn(NO_API_KEY_MSG);
 		}
 		return NO_SUGGESTION_MSG;
+	}
+	
+	/**
+	 * Extract MLText property from version JSON data.
+	 *
+	 * @param versionNodeRef the version node reference
+	 * @param itemType the item type from versioned nodeRef
+	 * @param itemId the item ID from versioned nodeRef
+	 * @param propertyQName the property QName to extract
+	 * @param defaultLocale the default locale to use if MLText is not found
+	 * @return the extracted MLText or empty MLText if not found
+	 */
+	private MLText extractMLTextFromVersion(NodeRef versionNodeRef, String itemType, String itemId, QName propertyQName, Locale defaultLocale) {
+		MLText mlText = new MLText();
+		
+		try {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Extracting MLText from version node: " + versionNodeRef + " for item: " + itemId + " property: " + propertyQName);
+			}
+
+			String entityData = entityFormatService.getEntityData(versionNodeRef);
+
+			if (entityData == null) {
+				logger.warn("No entity data found for version node: " + versionNodeRef);
+				return mlText;
+			}
+
+			JSONObject entityJson = new JSONObject(entityData);
+			JSONObject entity = entityJson.getJSONObject("entity");
+			JSONObject datalists = entity.getJSONObject("datalists");
+
+			NamespaceService namespaceService = serviceRegistry.getNamespaceService();
+			String propertyName = propertyQName.toPrefixString(namespaceService);
+
+			// Find the datalist containing this item type
+			for (String dataListKey : datalists.keySet()) {
+				if (dataListKey.equals(itemType)) {
+					JSONArray dataListArray = datalists.getJSONArray(dataListKey);
+
+					// Find the item with matching ID
+					for (int i = 0; i < dataListArray.length(); i++) {
+						JSONObject item = dataListArray.getJSONObject(i);
+
+						if (item.has("id") && itemId.equals(item.getString("id"))) {
+							if (logger.isDebugEnabled()) {
+								logger.debug("Found matching item in datalist");
+							}
+
+							JSONObject attributes = item.has("attributes") ? item.getJSONObject("attributes") : item;
+
+							if (attributes.has(propertyName)) {
+								Object value = attributes.get(propertyName);
+								mlText.addValue(defaultLocale, value.toString());
+							}
+
+							for (String key : attributes.keySet()) {
+								if (key.startsWith(propertyName + "_")) {
+									String localePart = key.substring((propertyName + "_").length());
+									mlText.addValue(MLTextHelper.parseLocale(localePart), attributes.getString(key));
+								}
+							}
+							break;
+						}
+					}
+				}
+			}
+
+		} catch (JSONException e) {
+			logger.error("Failed to extract MLText from version JSON", e);
+		}
+		
+		if (mlText.isEmpty()) {
+			mlText.addValue(defaultLocale, "");
+		}
+		
+		return mlText;
 	}
 
 }
