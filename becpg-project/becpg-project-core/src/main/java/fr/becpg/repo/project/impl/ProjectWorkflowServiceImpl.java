@@ -42,6 +42,7 @@ import org.alfresco.service.cmr.workflow.WorkflowTask;
 import org.alfresco.service.cmr.workflow.WorkflowTaskQuery;
 import org.alfresco.service.cmr.workflow.WorkflowTaskState;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -91,6 +92,9 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 	@Autowired
 	private WorkflowNotificationUtils workflowNotificationUtils;
 
+	@Autowired
+	private TransactionService transactionService;
+
 	/**
 	 * Internal class to hold separated assignees (users vs groups)
 	 */
@@ -129,18 +133,23 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 		}
 
 		String workflowId = task.getWorkflowInstance();
-		logger.debug("Cancelling workflow instance: " + workflowId);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Cancelling workflow instance: " + workflowId);
+		}
 
 		try {
 			WorkflowInstance instance = workflowService.cancelWorkflow(workflowId);
 			if ((instance == null) || !instance.isActive()) {
 				clearWorkflowReferences(task);
-				logger.debug("Workflow cancelled successfully: " + workflowId);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Workflow cancelled successfully: " + workflowId);
+				}
 			} else {
 				logger.error("Failed to cancel workflow: " + workflowId + " - instance is still active");
 			}
 		} catch (Exception e) {
 			logger.error("Error cancelling workflow: " + workflowId, e);
+			handleCorruptedWorkflow(workflowId);
 			clearWorkflowReferences(task);
 		}
 	}
@@ -478,13 +487,25 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 	}
 
 	/**
-	 * Handle corrupted workflow by attempting deletion
+	 * Handle corrupted workflow by attempting deletion in a separate transaction.
+	 *
+	 * <p>The deletion runs in a new (requiresNew) transaction so that any failure
+	 * inside the Activiti engine (e.g. NullPointerException on corrupted data)
+	 * does not mark the caller's transaction as rollback-only.</p>
+	 *
+	 * @param workflowId the corrupted workflow instance id
 	 */
 	private void handleCorruptedWorkflow(String workflowId) {
-		logger.info("Attempting to delete corrupted workflow instance: " + workflowId);
+		logger.info("Attempting to delete corrupted workflow instance in a new transaction: " + workflowId);
 		try {
-			workflowService.deleteWorkflow(workflowId);
-			logger.info("Successfully deleted corrupted workflow instance: " + workflowId);
+			AuthenticationUtil.runAsSystem(() -> {
+				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+					workflowService.deleteWorkflow(workflowId);
+					logger.info("Successfully deleted corrupted workflow instance: " + workflowId);
+					return null;
+				}, false, true);
+				return null;
+			});
 		} catch (Exception deleteException) {
 			logger.error("Failed to delete corrupted workflow instance: " + workflowId, deleteException);
 		}
@@ -504,7 +525,12 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 		}
 
 		if ((taskListDataItem.getResources() == null) || taskListDataItem.getResources().isEmpty()) {
-			workflowService.cancelWorkflow(taskListDataItem.getWorkflowInstance());
+			try {
+				workflowService.cancelWorkflow(taskListDataItem.getWorkflowInstance());
+			} catch (Exception e) {
+				logger.error("Error cancelling workflow with no resources: " + taskListDataItem.getWorkflowInstance(), e);
+				handleCorruptedWorkflow(taskListDataItem.getWorkflowInstance());
+			}
 			clearWorkflowReferences(taskListDataItem);
 			return;
 		}
@@ -655,12 +681,17 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 			WorkflowInstance workflowInstance = workflowService.getWorkflowById(workflowInstanceId);
 			if (workflowInstance != null) {
 				workflowService.deleteWorkflow(workflowInstanceId);
-				logger.debug("Workflow deleted successfully: " + workflowInstanceId);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Workflow deleted successfully: " + workflowInstanceId);
+				}
 			} else {
-				logger.debug("Workflow instance not found, nothing to delete: " + workflowInstanceId);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Workflow instance not found, nothing to delete: " + workflowInstanceId);
+				}
 			}
 		} catch (Exception e) {
 			logger.error("Error deleting workflow: " + workflowInstanceId, e);
+			handleCorruptedWorkflow(workflowInstanceId);
 		}
 	}
 }
