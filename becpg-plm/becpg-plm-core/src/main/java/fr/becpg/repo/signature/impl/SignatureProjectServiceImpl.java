@@ -68,6 +68,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 	private static final String REJECT_SCRIPT = "cm:reject-signature.js";
 	private static final String SIGN_SCRIPT = "cm:sign-document.js";
 	private static final int NOTIFICATION_FREQUENCY = 7;
+	private static final int SIGNATURE_TASK_DURATION = 7;
 	private static final int INITIAL_NOTIFICATION = -1;
 
 	@Autowired
@@ -120,7 +121,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 			TaskListDataItem rejectTask = createRejectTask(project, preparedDocuments);
 			List<NodeRef> recipients = AuthorityHelper.extractPeople(viewRecipients);
 			NodeRef lastTask = createOrUpdateSignatureTasks(project, preparedDocuments, recipients, rejectTask.getNodeRef(), rejectTask);
-			createValidatingTask(project, originalDocuments, lastTask, rejectTask);
+			createValidatingTask(project, originalDocuments, lastTask);
 			project.setDirtyTaskTree(true);
 			alfrescoRepository.save(project);
 			return projectNodeRef;
@@ -269,9 +270,8 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 		return null;
 	}
 
-	private void createValidatingTask(ProjectData project, List<NodeRef> documents, NodeRef lastTask, TaskListDataItem rejectTask) {
+	private void createValidatingTask(ProjectData project, List<NodeRef> documents, NodeRef lastTask) {
 		TaskListDataItem validatingTask = projectService.insertNewTask(project, List.of(lastTask));
-		validatingTask.setRefusedTask(rejectTask);
 		validatingTask.setTaskName(I18NUtil.getMessage(TASK_CHECKIN_NAME_KEY));
 		validatingTask.setResources(new ArrayList<>());
 		NodeRef currentUser = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
@@ -330,6 +330,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 					.orElseGet(() -> projectService.insertNewTask(project, List.of(finalPreviousTask)));
 			newTask.setTaskState(TaskState.Planned);
 			newTask.setRefusedTask(rejectTask);
+			newTask.setDuration(SIGNATURE_TASK_DURATION);
 			for (TaskListDataItem otherTask : project.getTaskList()) {
 				if (!otherTask.equals(newTask) && otherTask.getPrevTasks().contains(previousTask)) {
 					otherTask.getPrevTasks().remove(previousTask);
