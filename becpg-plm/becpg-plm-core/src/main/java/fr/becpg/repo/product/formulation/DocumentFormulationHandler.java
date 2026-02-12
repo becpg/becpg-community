@@ -43,6 +43,7 @@ import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
+import fr.becpg.repo.product.data.SupplierData;
 import fr.becpg.repo.product.data.ScorableEntity;
 import fr.becpg.repo.product.data.document.DocumentTypeItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
@@ -628,10 +629,17 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 		List<NodeRef> productCharacts = new ArrayList<>();
 
 		// Get claims
-		if(repositoryEntity instanceof ProductData productData) {
-			List<NodeRef> claims = CollectionUtils.isEmpty(productData.getLabelClaimList()) ? List.of()
-					: productData.getLabelClaimList().stream().filter(p -> LabelClaimListDataItem.VALUE_CERTIFIED.equals(p.getLabelClaimValue()))
-							.map(LabelClaimListDataItem::getLabelClaim).toList();
+		List<LabelClaimListDataItem> labelClaimList = null;
+		if (repositoryEntity instanceof ProductData productData) {
+			labelClaimList = productData.getLabelClaimList();
+		} else if (repositoryEntity instanceof SupplierData supplierData) {
+			labelClaimList = supplierData.getLabelClaimList();
+		}
+
+		if (CollectionUtils.isNotEmpty(labelClaimList)) {
+			List<NodeRef> claims = labelClaimList.stream()
+					.filter(p -> LabelClaimListDataItem.VALUE_CERTIFIED.equals(p.getLabelClaimValue()))
+					.map(LabelClaimListDataItem::getLabelClaim).toList();
 			if (CollectionUtils.isNotEmpty(claims)) {
 				productCharacts.addAll(claims);
 			}

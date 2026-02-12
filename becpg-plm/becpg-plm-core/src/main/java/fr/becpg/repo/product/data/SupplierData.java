@@ -12,6 +12,7 @@ import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.productList.ContactListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.LCAListDataItem;
+import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.PlantListDataItem;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -46,6 +47,8 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	private List<ContactListDataItem> contactList;
 
 	private List<LCAListDataItem> lcaList;
+
+	private List<LabelClaimListDataItem> labelClaimList;
 
 	private SupplierData entityTpl;
 
@@ -245,6 +248,26 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	 */
 	public void setContactList(List<ContactListDataItem> contactList) {
 		this.contactList = contactList;
+	}
+
+	/**
+	 * <p>Getter for the field <code>labelClaimList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@DataList
+	@AlfQname(qname = "bcpg:labelClaimList")
+	public List<LabelClaimListDataItem> getLabelClaimList() {
+		return labelClaimList;
+	}
+
+	/**
+	 * <p>Setter for the field <code>labelClaimList</code>.</p>
+	 *
+	 * @param labelClaimList a {@link java.util.List} object
+	 */
+	public void setLabelClaimList(List<LabelClaimListDataItem> labelClaimList) {
+		this.labelClaimList = labelClaimList;
 	}
 
 	/**
