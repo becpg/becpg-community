@@ -38,7 +38,7 @@
             </#if>
          </#if>
         
-         <span id="${fieldHtmlId}-${field.id?replace("prop_","")}" class="viewmode-value <#if field.dataType == "mltext">viewmode-mltext</#if>"><#if fieldValue == "">${msg("form.control.novalue")}<#else>${fieldValue}</#if></span>
+         <span id="${fieldHtmlId}-${field.id?replace("prop_","")}" class="viewmode-value <#if field.dataType == "mltext">viewmode-mltext</#if>"><#if fieldValue == ""><#if field.dataType != "mltext">${msg("form.control.novalue")}</#if><#else>${fieldValue}</#if></span>
       </div>
    <#else>
    

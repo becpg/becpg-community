@@ -35,7 +35,7 @@
 	      	</span>
 	  	</#if>
       </span>
-      <span class="viewmode-value"><#if field.value == "">${msg("form.control.novalue")}<#else><#if !showHtml>${field.value?html}<#else>${stringUtils.stripUnsafeHTML(field.value)}</#if></#if></span>
+      <span class="viewmode-value"><#if field.value == ""><#if field.dataType != "mltext">${msg("form.control.novalue")}</#if><#else><#if !showHtml>${field.value?html}<#else>${stringUtils.stripUnsafeHTML(field.value)}</#if></#if></span>
    </div>
    <#else>
    
