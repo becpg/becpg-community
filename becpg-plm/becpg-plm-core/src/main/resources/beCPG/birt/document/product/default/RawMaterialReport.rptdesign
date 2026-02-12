@@ -9165,7 +9165,7 @@ dataSetRow["name"]
                                         <expression name="valueExpr" type="javascript">reportContext.getMessage("footer2", reportContext.getLocale()) == null || reportContext.getMessage("footer2", reportContext.getLocale())  == ""</expression>
                                     </structure>
                                 </list-property>
-                                <text-property name="text">© 2024 beCPG</text-property>
+                                <text-property name="text"></text-property>
                             </label>
                             <label id="10554">
                                 <property name="style">color-adress-website</property>
@@ -13347,19 +13347,19 @@ decisionTree
                                 <cell id="12700">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="12709">
-                                        <text-property name="text">Sur ligne </text-property>
+                                        <text-property name="text" key="allergenOnLine"></text-property>
                                     </label>
                                 </cell>
                                 <cell id="12706">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="12710">
-                                        <text-property name="text">Sur site </text-property>
+                                        <text-property name="text" key="allergenOnSite"></text-property>
                                     </label>
                                 </cell>
                                 <cell id="12694">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="12711">
-                                        <text-property name="text">Est maîtrisé</text-property>
+                                        <text-property name="text" key="allergenIsCleaned"></text-property>
                                     </label>
                                 </cell>
                             </row>
