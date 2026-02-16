@@ -1,9 +1,14 @@
 package fr.becpg.repo.authentication;
 
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import javax.sql.DataSource;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
@@ -13,6 +18,7 @@ import org.alfresco.repo.security.authentication.identityservice.IdentityService
 import org.alfresco.repo.security.person.PersonServiceImpl;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
+import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
 import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -21,12 +27,15 @@ import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.MutableAuthenticationService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.transaction.TransactionListenerAdapter;
 import org.alfresco.util.transaction.TransactionSupportUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.authentication.provider.IdentityServiceAccountProvider;
 import fr.becpg.repo.helper.AuthorityHelper;
@@ -75,6 +84,10 @@ public class BeCPGUserAccountService {
 	
 	@Autowired
 	private PreferenceService preferenceService;
+
+	@Autowired
+	@Qualifier("dataSource")
+	private DataSource dataSource;
 
 	/**
 	 * <p>getOrCreateUser.</p>
@@ -291,8 +304,12 @@ public class BeCPGUserAccountService {
 	private void renameUser(BeCPGUserAccount userAccount, NodeRef personNodeRef) {
 		String newUserName = createTenantAware(userAccount.getNewUserName());
 		if (!newUserName.equals(userAccount.getUserName())) {
+			if (personService.personExists(newUserName)) {
+				throw new UserAlreadyExistsException("Cannot rename user to '" + newUserName + "' because it already exists");
+			}
+			String oldUserName = userAccount.getUserName();
 			if (isIdsUser(personNodeRef)) {
-				identityServiceAccountProvider.deleteAccount(userAccount.getUserName());
+				identityServiceAccountProvider.deleteAccount(oldUserName);
 			}
 			userAccount.setUserName(newUserName);
 			if (isIdsUser(personNodeRef)) {
@@ -306,6 +323,52 @@ public class BeCPGUserAccountService {
 			if (homeFolder != null) {
 				nodeService.setProperty(homeFolder, ContentModel.PROP_NAME, newUserName);
 			}
+			AlfrescoTransactionSupport.bindListener(new TransactionListenerAdapter() {
+				// make sure the transaction is committed before updating activiti tasks to avoid inconsistencies
+				@Override
+				public void afterCommit() {
+					updateActivitiTasks(oldUserName, newUserName);
+				}
+			});
+		}
+	}
+
+	private void updateActivitiTasks(String oldUserName, String newUserName) {
+		String[] updateStatements = {
+			"UPDATE act_ru_task SET assignee_ = ? WHERE assignee_ = ?",
+			"UPDATE act_ru_task SET owner_ = ? WHERE owner_ = ?",
+			"UPDATE act_ru_identitylink SET user_id_ = ? WHERE user_id_ = ?",
+			"UPDATE act_hi_taskinst SET assignee_ = ? WHERE assignee_ = ?",
+			"UPDATE act_hi_taskinst SET owner_ = ? WHERE owner_ = ?",
+			"UPDATE act_hi_actinst SET assignee_ = ? WHERE assignee_ = ?",
+			"UPDATE act_hi_identitylink SET user_id_ = ? WHERE user_id_ = ?",
+			"UPDATE act_hi_procinst SET start_user_id_ = ? WHERE start_user_id_ = ?"
+		};
+
+		try (Connection connection = dataSource.getConnection()) {
+			for (String sql : updateStatements) {
+				updateStatement(oldUserName, newUserName, connection, sql);
+			}
+			if (!connection.getAutoCommit()) {
+				connection.commit();
+			}
+		} catch (SQLException e) {
+			logger.error("Failed to obtain or commit database connection for updating Activiti tasks during user rename: " + oldUserName + " -> " + newUserName, e);
+			throw new BeCPGException(e.getMessage(), e);
+		}
+	}
+
+	private void updateStatement(String oldUserName, String newUserName, Connection connection, String sql) {
+		try (PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setString(1, newUserName);
+			statement.setString(2, oldUserName);
+			int updated = statement.executeUpdate();
+			if (logger.isDebugEnabled() && updated > 0) {
+				logger.debug("Activiti patch: " + sql + " — " + updated + " row(s) updated for user rename: " + oldUserName + " -> " + newUserName);
+			}
+		} catch (SQLException e) {
+			logger.error("Failed to update Activiti tasks for user rename: " + oldUserName + " -> " + newUserName + ". SQL: " + sql, e);
+			throw new BeCPGException(e.getMessage(), e);
 		}
 	}
 	
