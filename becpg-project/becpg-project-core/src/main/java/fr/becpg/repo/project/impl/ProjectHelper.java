@@ -358,7 +358,7 @@ public class ProjectHelper {
 		Calendar calendar = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
 		calendar.setTime(startDate);
 		int i = 1;
-		int iterations = 0;
+		int consecutiveNonWorking = 0;
 		while (i < duration) {
 			if (isPlanned) {
 				calendar.add(Calendar.DATE, 1);
@@ -367,11 +367,13 @@ public class ProjectHelper {
 			}
 			if (isWorkingDate(calendar, provider)) {
 				i++;
-			}
-			iterations++;
-			if (iterations > MAX_ITERATIONS) {
-				logger.warn("No working day found within " + MAX_ITERATIONS + " iterations in calculateNextDate");
-				break;
+				consecutiveNonWorking = 0;
+			} else {
+				consecutiveNonWorking++;
+				if (consecutiveNonWorking > MAX_ITERATIONS) {
+					logger.warn("No working day found within " + MAX_ITERATIONS + " consecutive days in calculateNextDate");
+					break;
+				}
 			}
 		}
 
