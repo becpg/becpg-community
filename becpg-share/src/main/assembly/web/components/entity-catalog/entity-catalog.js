@@ -66,6 +66,41 @@
             catalogId: null
         },
 
+        /**
+         * Resolves the actual form field element and id for a catalog field.
+         *
+         * @method resolveFormField
+         * @param formId {String} form id prefix
+         * @param fieldCode {String} field name with namespace (e.g. bcpg:legalName)
+         * @return {Object|null} Object containing fieldId and element, null if not found
+         */
+        resolveFormField: function(formId, fieldCode) {
+            if (!formId || !fieldCode) {
+                return null;
+            }
+
+            var normalizedField = fieldCode.replace(":", "_");
+            var fieldPatterns = [
+                formId + "_assoc_" + normalizedField + "-cntrl",
+                formId + "_prop_" + normalizedField + "-entry",
+                formId + "_prop_" + normalizedField + "-cntrl",
+                formId + "_prop_" + normalizedField
+            ];
+
+            for (var i = 0; i < fieldPatterns.length; i++) {
+                var currentFieldId = fieldPatterns[i];
+                var currentElement = YAHOO.util.Dom.get(currentFieldId);
+                if (currentElement) {
+                    return {
+                        fieldId: currentFieldId,
+                        element: currentElement
+                    };
+                }
+            }
+
+            return null;
+        },
+
 
         /**
          * Fired by YUI when parent element is available for scripting.
@@ -423,23 +458,12 @@
 
                 // Setup validations for each protected field
                 this.protectedFields.forEach(function(field) {
-                    // Common field ID patterns
-                    var fieldPatterns = [
-                        formId + "_prop_" + field.replace(":", "_") + "-entry",
-                        formId + "_assoc_" + field.replace(":", "_") + "-cntrl",
-                        formId + "_prop_" + field.replace(":", "_")
-                    ];
-
-                    // Check each possible field ID
-                    for (var i = 0; i < fieldPatterns.length; i++) {
-                        var fieldId = fieldPatterns[i];
-                        var element = YAHOO.util.Dom.get(fieldId);
-                        if (element) {
-                            // Add direct change event handler
-                            YAHOO.util.Event.addListener(element, "change", function() {
-                                instance.createReauthButton();
-                            });
-                        }
+                    var resolvedField = instance.resolveFormField(formId, field);
+                    if (resolvedField && resolvedField.element) {
+                        // Add direct change event handler
+                        YAHOO.util.Event.addListener(resolvedField.element, "change", function() {
+                            instance.createReauthButton();
+                        });
                     }
                 });
 
@@ -627,21 +651,9 @@
 
                                 for (var subField in fieldArray) {
 
-                                    var curField = fieldArray[subField].replace(":", "_");
-                                    var fieldId = id + "_assoc_" + curField + "-cntrl";
-
-                                    var found = YAHOO.util.Dom.get(fieldId);
-
-                                    if (found === undefined || found == null) {
-                                        fieldId = id + "_prop_" + curField + "-entry";
-                                        found = YAHOO.util.Dom.get(fieldId);
-
-                                    }
-
-                                    if (found === undefined || found == null) {
-                                        fieldId = id + "_prop_" + curField;
-                                        found = YAHOO.util.Dom.get(fieldId);
-                                    }
+                                    var resolvedField = instance.resolveFormField(id, fieldArray[subField]);
+                                    var fieldId = resolvedField ? resolvedField.fieldId : null;
+                                    var found = resolvedField ? resolvedField.element : null;
 
                                     if (found !== undefined && found != null) {
                                         if (found.className.indexOf("multi-assoc") != -1) {

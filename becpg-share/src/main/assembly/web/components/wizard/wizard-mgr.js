@@ -446,6 +446,10 @@
                             stepDOM.classList.add("properties-view");
                         }
 
+                        if (step.type === "documents" && (readOnly || validated)) {
+                            stepDOM.classList.add("documents-read-only");
+                        }
+
                         step.loaded = true;
                         if (step.type === "entityDataList") {
                             me.loadDataList(step, datalists);
