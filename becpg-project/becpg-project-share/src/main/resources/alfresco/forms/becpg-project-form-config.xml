@@ -3061,6 +3061,8 @@
 					<show id="pjt:calPublicHolydaysDates" />
 					<show id="pjt:calHolydayDates" />
 					<show id="pjt:calNonWorkingDays" />
+					<show id="sec:readGroups" force="true"/>
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName"  />
@@ -3080,6 +3082,7 @@
                     <show id="pjt:calPublicHolydaysDates" />
                     <show id="pjt:calHolydayDates" />
                     <show id="pjt:calNonWorkingDays" />
+                    <show id="bcpg:isDeleted" />
                 </field-visibility>
                
             </form>
@@ -3102,6 +3105,8 @@
                     <show id="pjt:calPublicHolydaysDates" />
                     <show id="pjt:calHolydayDates" />
                     <show id="pjt:calNonWorkingDays" />
+                    <show id="sec:readGroups" force="true"/>
+                    <show id="bcpg:isDeleted" />
                 </field-visibility>
                 <appearance>
                     <field id="bcpg:charactName" />

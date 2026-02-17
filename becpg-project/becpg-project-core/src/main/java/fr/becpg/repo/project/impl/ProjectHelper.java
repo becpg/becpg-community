@@ -63,6 +63,7 @@ public class ProjectHelper {
 
 	private static final int DURATION_DEFAULT = 1;
 	private static final int DURATION_NEXT_DAY = 2;
+	private static final int MAX_ITERATIONS = 366;
 
 	private static final Log logger = LogFactory.getLog(ProjectHelper.class);
 
@@ -357,14 +358,20 @@ public class ProjectHelper {
 		Calendar calendar = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
 		calendar.setTime(startDate);
 		int i = 1;
+		int iterations = 0;
 		while (i < duration) {
 			if (isPlanned) {
 				calendar.add(Calendar.DATE, 1);
 			} else {
 				calendar.add(Calendar.DATE, -1);
 			}
-			if (isWorkingDate(calendar,provider)) {
+			if (isWorkingDate(calendar, provider)) {
 				i++;
+			}
+			iterations++;
+			if (iterations > MAX_ITERATIONS) {
+				logger.warn("No working day found within " + MAX_ITERATIONS + " iterations in calculateNextDate");
+				break;
 			}
 		}
 
