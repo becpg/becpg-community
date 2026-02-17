@@ -21,13 +21,10 @@
 	    <action type="action-link" id="onActionShowDetails"  permission="details" label="actions.show-details" />
 	   	<action type="action-link" id="onActionBulkEdit"  permission="edit,allPages" label="actions.bulk-edit" />
 	   	<action type="action-link" id="onActionDelete" permission="delete" label="menu.selected-items.delete" />
-	   	<action type="action-link" id="onActionSimulate" list="compoList" permission="edit" label="actions.selected-items.simulate" />
-	   	<action type="action-link" id="onActionSimulate" list="packagingList" permission="edit" label="actions.selected-items.simulate" />
-	   	<action type="action-link" id="onActionCopyProducts" list="compoList" permission="edit" label="actions.selected-items.copy-product" />
-	   	<action type="action-link" id="onActionCopyProducts" list="packagingList" permission="edit" label="actions.selected-items.copy-product" />
+	   	<action type="action-link" id="onActionSimulate" list="compoList,packagingList" permission="edit" label="actions.selected-items.simulate" />
+	   	<action type="action-link" id="onActionCopyProducts" list="compoList,packagingList" permission="edit" label="actions.selected-items.copy-product" />
 	    <action type="action-link" id="onActionDuplicate" permission="create" label="menu.selected-items.duplicate" />
-	    <action type="action-link" id="onActionDuplicateChilds" list="compoList" permission="create" label="actions.selected-items.duplicate-childs" />
-	    <action type="action-link" id="onActionDuplicateChilds" list="packagingList" permission="create" label="actions.selected-items.duplicate-childs" />
+	    <action type="action-link" id="onActionDuplicateChilds" list="compoList,packagingList" permission="create" label="actions.selected-items.duplicate-childs" />
 	    <action type="action-link" id="onActionGroup" list="compoList" permission="edit,allPages" label="actions.selected-items.group" />
 	  	<action type="action-link" id="onActionUp" permission="sort" label="menu.selected-items.up" />
 	    <action type="action-link" id="onActionDown" permission="sort" label="menu.selected-items.down" />
@@ -38,17 +35,13 @@
       <action type="action-link" id="onActionEdit" permission="edit" label="actions.edit" />
       <action type="action-link" id="onActionDelete" permission="delete" label="actions.delete-row" />
       <action type="action-link" id="onActionDuplicate" permission="create" label="actions.duplicate-row" />
-      <action type="action-link" id="onActionDuplicateChilds" list="compoList" permission="edit" label="actions.duplicate-childs" />
-      <action type="action-link" id="onActionDuplicateChilds" list="packagingList" permission="edit" label="actions.duplicate-childs" />
-      <action type="action-link" id="onActionSimulate" list="compoList" permission="edit" label="actions.simulate" />
-      <action type="action-link" id="onActionSimulate" list="packagingList" permission="edit" label="actions.simulate" />
-      <action type="action-link" id="onActionCopyProducts" list="compoList" permission="edit" label="actions.copy-product" />
-      <action type="action-link" id="onActionCopyProducts" list="packagingList" permission="edit" label="actions.copy-product" />
+	      <action type="action-link" id="onActionDuplicateChilds" list="compoList,packagingList" permission="edit" label="actions.duplicate-childs" />
+	      <action type="action-link" id="onActionSimulate" list="compoList,packagingList" permission="edit" label="actions.simulate" />
+	      <action type="action-link" id="onActionCopyProducts" list="compoList,packagingList" permission="edit" label="actions.copy-product" />
       <action type="action-link" id="onActionShowComments" permission="edit" label="actions.comment" />
       <action type="action-link" id="onAddLabelingAspect" permission="edit" label="actions.add-labelingAspect" />
       <action type="action-link" id="onActionSelectColor"  permission="edit" label="actions.select-color" />
       <action type="action-link" id="onActionUploadContent"  permission="content" label="actions.upload-content" />
       <action type="action-link" id="onActionDeleteContent"  permission="content" label="actions.delete-content" />
-      
    </actionSetDataGrid>
 </formulation-view>
