@@ -28,6 +28,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.common.BeCPGException;
+import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteParams;
 
 /**
@@ -38,7 +39,15 @@ import fr.becpg.repo.entity.remote.RemoteParams;
  */
 public class EntityDictionaryWebScript extends AbstractEntityWebScript {
 
-	
+	/** {@inheritDoc} */
+	@Override
+	protected RemoteEntityFormat getFormat(WebScriptRequest req) {
+		String format = req.getParameter(PARAM_FORMAT);
+		if (format == null || format.isEmpty()) {
+			return RemoteEntityFormat.json_schema;
+		}
+		return super.getFormat(req);
+	}
 
 	/** {@inheritDoc} */
 	@Override
