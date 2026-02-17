@@ -81,6 +81,7 @@
 
             var normalizedField = fieldCode.replace(":", "_");
             var fieldPatterns = [
+                formId + "_prop_" + normalizedField + "-cntrl-date",
                 formId + "_assoc_" + normalizedField + "-cntrl",
                 formId + "_prop_" + normalizedField + "-entry",
                 formId + "_prop_" + normalizedField + "-cntrl",
