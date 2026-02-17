@@ -402,3 +402,15 @@ div.wizard-content {
 .wizard-mgr li.disabled > a {
     cursor: not-allowed;
 }
+
+.documents-read-only .toolbar {
+    display: none;
+}
+
+.documents-read-only .doclist-bar {
+    display: none;
+}
+
+.documents-read-only .action-set {
+    display: none !important;
+}
