@@ -6,6 +6,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.repo.data.hierarchicalList.Composite;
+import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
@@ -40,7 +42,18 @@ public class AllocationHelper {
 	public static Map<NodeRef, Double> extractAllocations(ProductData productData, Map<NodeRef, Double> allocations, Double parentQty,
 			AlfrescoRepository<BeCPGDataObject> alfrescoRepository) {
 
-		for (CompoListDataItem compoList : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+		Composite<CompoListDataItem> composite = CompositeHelper
+				.getHierarchicalCompoList(productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
+		extractAllocations(productData, allocations, parentQty, alfrescoRepository, composite);
+
+		return allocations;
+	}
+
+	private static void extractAllocations(ProductData productData, Map<NodeRef, Double> allocations, Double parentQty,
+			AlfrescoRepository<BeCPGDataObject> alfrescoRepository, Composite<CompoListDataItem> composite) {
+
+		for (Composite<CompoListDataItem> child : composite.getChildren()) {
+			CompoListDataItem compoList = child.getData();
 			NodeRef productNodeRef = compoList.getProduct();
 			if ((productNodeRef != null) && !DeclarationType.Omit.equals(compoList.getDeclType())) {
 				ProductData componentProductData = (ProductData) alfrescoRepository.findOne(productNodeRef);
@@ -61,14 +74,14 @@ public class AllocationHelper {
 						}
 						rmQty += qty;
 						allocations.put(productNodeRef, rmQty);
-					} else if (!componentProductData.isLocalSemiFinished()) {
-						extractAllocations(componentProductData, allocations, qty , alfrescoRepository);
+					} else if (!child.getChildren().isEmpty()) {
+						extractAllocations(componentProductData, allocations, qty, alfrescoRepository, child);
+					} else {
+						extractAllocations(componentProductData, allocations, qty, alfrescoRepository);
 					}
 				}
 			}
 		}
-
-		return allocations;
 	}
 
 	
