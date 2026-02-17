@@ -295,6 +295,30 @@ public class EntityListDAOImpl implements EntityListDAO {
 		return null;
 	}
 
+	/**
+	 * Returns true when a QName should not be used to detect a merge difference.
+	 *
+	 * @param qName the property/association QName
+	 * @param ignoredTypes static ignored QNames
+	 * @return true if the QName is technical or ignored
+	 */
+	private boolean isIgnoredComparisonType(QName qName, Set<QName> ignoredTypes) {
+		return qName.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI) || ignoredTypes.contains(qName)
+				|| qName.getLocalName().startsWith("dynamicCharactColumn");
+	}
+
+	/**
+	 * Returns true when a difference concerns association payload, which is the
+	 * business key for datalist merge.
+	 *
+	 * @param leftValue the left value
+	 * @param rightValue the right value
+	 * @return true when at least one side is a list-based association value
+	 */
+	private boolean isAssociationDifference(Serializable leftValue, Serializable rightValue) {
+		return (leftValue instanceof List<?>) || (rightValue instanceof List<?>);
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public void copyDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef, boolean override) {
@@ -423,6 +447,10 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	@SuppressWarnings("unchecked")
 	private NodeRef findMatchingListItem(NodeRef targetItemNodeRef, NodeRef dataListNodeRef) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("findMatchingListItem - targetItemNodeRef=" + targetItemNodeRef + ", dataListNodeRef=" + dataListNodeRef);
+		}
+
 		Set<QName> isIgnoredTypes = new HashSet<>();
 		isIgnoredTypes.add(ContentModel.PROP_NAME);
 		isIgnoredTypes.add(ContentModel.PROP_CREATED);
@@ -434,6 +462,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 		isIgnoredTypes.add(BeCPGModel.PROP_DEPTH_LEVEL);
 
 		Map<QName, Serializable> targetPropertiesAndAssocs = nodeService.getProperties(targetItemNodeRef);
+		QName targetItemType = nodeService.getType(targetItemNodeRef);
 		for (AssociationRef ref : this.nodeService.getTargetAssocs(targetItemNodeRef, RegexQNamePattern.MATCH_ALL)) {
 			List<NodeRef> nodes = (List<NodeRef>) targetPropertiesAndAssocs.get(ref.getTypeQName());
 			if (nodes == null) {
@@ -444,6 +473,19 @@ public class EntityListDAOImpl implements EntityListDAO {
 		}
 
 		for (NodeRef itemNodeRef : getListItems(dataListNodeRef, null, null)) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("findMatchingListItem - compare against itemNodeRef=" + itemNodeRef);
+			}
+
+			QName itemType = nodeService.getType(itemNodeRef);
+			if ((targetItemType != null) && (itemType != null) && !targetItemType.equals(itemType)) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("findMatchingListItem - skip comparison due to item type mismatch. targetItemType=" + targetItemType
+							+ ", itemType=" + itemType);
+				}
+				continue;
+			}
+
 			Map<QName, Serializable> propertiesAndAssocs = nodeService.getProperties(itemNodeRef);
 			for (AssociationRef ref : this.nodeService.getTargetAssocs(itemNodeRef, RegexQNamePattern.MATCH_ALL)) {
 				List<NodeRef> nodes = (List<NodeRef>) propertiesAndAssocs.get(ref.getTypeQName());
@@ -455,9 +497,17 @@ public class EntityListDAOImpl implements EntityListDAO {
 			}
 			boolean isDifferent = false;
 			MapDifference<QName, Serializable> diff = Maps.difference(targetPropertiesAndAssocs, propertiesAndAssocs);
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("findMatchingListItem - entriesDiffering=" + diff.entriesDiffering().keySet());
+				logger.debug("findMatchingListItem - entriesOnlyOnLeft=" + diff.entriesOnlyOnLeft().keySet());
+				logger.debug("findMatchingListItem - entriesOnlyOnRight=" + diff.entriesOnlyOnRight().keySet());
+			}
+
 			for (QName afterType : diff.entriesDiffering().keySet()) {
-				if (!afterType.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI) && !isIgnoredTypes.contains(afterType)
-						&& (propertiesAndAssocs.get(afterType) != null) && (propertiesAndAssocs.get(afterType) != "")) {
+				if (!isIgnoredComparisonType(afterType, isIgnoredTypes)
+						&& isAssociationDifference(targetPropertiesAndAssocs.get(afterType), propertiesAndAssocs.get(afterType))
+						&& (propertiesAndAssocs.get(afterType) != null) && !"".equals(propertiesAndAssocs.get(afterType))) {
 
 					isDifferent = true;
 
@@ -466,9 +516,46 @@ public class EntityListDAOImpl implements EntityListDAO {
 			}
 
 			if (!isDifferent) {
+				for (QName leftOnlyType : diff.entriesOnlyOnLeft().keySet()) {
+					if (!isIgnoredComparisonType(leftOnlyType, isIgnoredTypes)
+							&& isAssociationDifference(targetPropertiesAndAssocs.get(leftOnlyType), propertiesAndAssocs.get(leftOnlyType))
+							&& (targetPropertiesAndAssocs.get(leftOnlyType) != null)
+							&& !"".equals(targetPropertiesAndAssocs.get(leftOnlyType))) {
+
+						isDifferent = true;
+						break;
+					}
+				}
+			}
+
+			if (!isDifferent) {
+				for (QName rightOnlyType : diff.entriesOnlyOnRight().keySet()) {
+					if (!isIgnoredComparisonType(rightOnlyType, isIgnoredTypes)
+							&& isAssociationDifference(targetPropertiesAndAssocs.get(rightOnlyType), propertiesAndAssocs.get(rightOnlyType))
+							&& (propertiesAndAssocs.get(rightOnlyType) != null)
+							&& !"".equals(propertiesAndAssocs.get(rightOnlyType))) {
+
+						isDifferent = true;
+						break;
+					}
+				}
+			}
+
+			if (!isDifferent) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("findMatchingListItem - match found, returning itemNodeRef=" + itemNodeRef);
+				}
 				return itemNodeRef;
 			}
 
+			if (logger.isDebugEnabled()) {
+				logger.debug("findMatchingListItem - item is different, continue search for targetItemNodeRef=" + targetItemNodeRef);
+			}
+
+		}
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("findMatchingListItem - no match found for targetItemNodeRef=" + targetItemNodeRef);
 		}
 
 		return null;
