@@ -178,7 +178,16 @@
 
     beCPG.util.convertUnit = function convertUnit(val, fromUnit, toUnit) {
         // by Default toUnit is kg or m or L or perc
-        if (val != null && val != "" && val != 0) {
+        if (val != null && val !== "") {
+            if (typeof val === "string") {
+                val = val.replace(/\s/g, "").replace(",", ".");
+            }
+
+            val = Number(val);
+            if (isNaN(val) || val === 0) {
+                return val;
+            }
+
             switch (fromUnit) {
                 case "mo":
                     val = val * 30;
@@ -245,8 +254,8 @@
             if (toUnit == "mm" || toUnit == "cm" || toUnit == "m" || toUnit == "micro_m" || toUnit == "g" || toUnit == "mL") {
                 val = val * 1000;
             }
-            
-           val = Math.round(val * 1e15) / 1e15;
+
+            val = Math.round(val * 1e12) / 1e12;
         }
         return val;
     };
