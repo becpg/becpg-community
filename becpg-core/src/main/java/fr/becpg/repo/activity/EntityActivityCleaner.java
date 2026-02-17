@@ -241,8 +241,9 @@ public class EntityActivityCleaner {
                                 int initialSize = dlActivities.size();
                                 dlActivities = group(dlActivities, users, groupTime[i], cronDate);
                                 activitiesByType.put(ActivityType.Datalist, dlActivities);
-                                nbrActivity = dlActivities.size();
-                                totalDeleted += (initialSize - nbrActivity);
+                                int deletedInPass = initialSize - dlActivities.size();
+                                nbrActivity -= deletedInPass;
+                                totalDeleted += deletedInPass;
                             }
                         }
                     }
