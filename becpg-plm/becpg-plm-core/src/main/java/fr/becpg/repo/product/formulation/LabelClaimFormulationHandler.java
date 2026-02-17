@@ -132,6 +132,10 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 				compoItems.addAll(productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
 			}
 
+			if (productData.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+				compoItems.addAll(productData.getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
+			}
+
 			if (!compoItems.isEmpty()) {
 				Set<LabelClaimListDataItem> toRemove = new HashSet<>();
 
