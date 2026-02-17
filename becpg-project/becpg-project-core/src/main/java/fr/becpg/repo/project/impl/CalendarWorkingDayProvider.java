@@ -4,6 +4,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.project.CalendarService;
 
@@ -11,6 +13,10 @@ import fr.becpg.repo.project.CalendarService;
  * Implementation that uses CalendarService to consider custom holidays and calendars.
  */
 public class CalendarWorkingDayProvider extends DefaultWorkingDayProvider implements WorkingDayProvider  {
+
+    private static final Log logger = LogFactory.getLog(CalendarWorkingDayProvider.class);
+
+    private static final int MAX_ITERATIONS = 366;
 
     private final CalendarService calendarService;
     private final NodeRef calendarNodeRef;
@@ -39,11 +45,17 @@ public class CalendarWorkingDayProvider extends DefaultWorkingDayProvider implem
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.add(Calendar.DAY_OF_MONTH, 1);
-        
+
+        int iterations = 0;
         while (!isWorkingDay(calendar.getTime())) {
             calendar.add(Calendar.DAY_OF_MONTH, 1);
+            iterations++;
+            if (iterations > MAX_ITERATIONS) {
+                logger.warn("No working day found within " + MAX_ITERATIONS + " days for calendar: " + calendarNodeRef);
+                return calendar.getTime();
+            }
         }
-        
+
         return calendar.getTime();
     }
 
