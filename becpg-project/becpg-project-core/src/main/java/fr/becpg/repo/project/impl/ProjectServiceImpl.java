@@ -674,7 +674,7 @@ public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements 
 	/** {@inheritDoc} */
 	@Override
 	public boolean accept(QName nodeType) {
-		return ProjectModel.TYPE_PROJECT.equals(nodeType);
+		return ProjectModel.TYPE_PROJECT.equals(nodeType) || ProjectModel.TYPE_TASK_LIST.equals(nodeType);
 	}
 
 	/** {@inheritDoc} */
