@@ -1676,6 +1676,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		for (DynamicCharactListItem dc : dynamicCharactList) {
 			Element dynamicCharact = dynCharactListElt.addElement(PLMModel.TYPE_DYNAMICCHARACTLIST.getLocalName());
 			dynamicCharact.addAttribute(PLMModel.PROP_DYNAMICCHARACT_TITLE.getLocalName(), dc.getTitle());
+			String cmTitle = (dc.getMlTitle() != null) ? MLTextHelper.getClosestValue(dc.getMlTitle(), I18NUtil.getContentLocale()) : null;
+			dynamicCharact.addAttribute(ContentModel.PROP_TITLE.getLocalName(), cmTitle != null ? cmTitle : dc.getTitle());
 			Object ret = null;
 			if (dc.getValue() != null) {
 				ret = JsonFormulaHelper.cleanCompareJSON(dc.getValue().toString());
