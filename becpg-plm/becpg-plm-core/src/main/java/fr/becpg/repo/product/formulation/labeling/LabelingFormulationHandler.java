@@ -1503,13 +1503,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				Double qtyWithYield = qty;
 
-				if ((qty != null) && !DeclarationType.Group.equals(declarationType)) {
+				if ((qty != null) && !DeclarationType.Group.equals(declarationType) && !labelingFormulaContext.isDoNotPropagateYield()) {
 					qtyWithYield = BigDecimal.valueOf(qty).multiply(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION)
 							.divide(BigDecimal.valueOf(calculatedYield), LabelingFormulaContext.PRECISION).doubleValue();
 				}
 				Double volumeWithYield = volume;
 
-				if ((volume != null) && !DeclarationType.Group.equals(declarationType)) {
+				if ((volume != null) && !DeclarationType.Group.equals(declarationType) && !labelingFormulaContext.isDoNotPropagateYield()) {
 					volumeWithYield = BigDecimal.valueOf(volume).multiply(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION)
 							.divide(BigDecimal.valueOf(calculatedYield), LabelingFormulaContext.PRECISION).doubleValue();
 				}
@@ -1941,7 +1941,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			if (logger.isTraceEnabled()) {
 				logger.trace("- REMAINING evaporation QTY: " + parent.getEvaporatedQty());
 				logger.trace("- REMAINING evaporation VOL: " + parent.getEvaporatedVolume());
-				logger.trace("- Propagate yield: " + labelingFormulaContext.isDoNotPropagateYield());
+				logger.trace("- Propagate yield: " + !labelingFormulaContext.isDoNotPropagateYield());
 			}
 
 			// 2. Distribute remaining evaporation proportionally
