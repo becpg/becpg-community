@@ -254,10 +254,10 @@ public class SpelFormulaService {
 	 * @param formula a {@link java.lang.String} object.
 	 */
 	public void applyToList(RepositoryEntity entity, Collection<RepositoryEntity> range, String formula) {
-		String[] formulas = formula.split(";");
-		Expression[] expressions = new Expression[formulas.length];
-		for (int i = 0; i < formulas.length; i++) {
-			String trimmed = formulas[i].trim();
+		List<String> formulaList = splitFormulas(formula);
+		Expression[] expressions = new Expression[formulaList.size()];
+		for (int i = 0; i < formulaList.size(); i++) {
+			String trimmed = formulaList.get(i).trim();
 			if (!trimmed.isEmpty()) {
 				expressions[i] = getSpelParser().parseExpression(trimmed);
 			}
@@ -284,6 +284,38 @@ public class SpelFormulaService {
 		return createSecurityProxy(alfrescoRepository.findOne(nodeRef));
 	}
 	
+	/**
+	 * Splits a formula string on {@code ;} separators, ignoring semicolons that appear
+	 * inside single-quoted or double-quoted string literals.
+	 *
+	 * @param formula the raw formula string, possibly containing multiple sub-expressions
+	 * @return an ordered list of individual expression strings
+	 */
+	private List<String> splitFormulas(String formula) {
+		List<String> result = new ArrayList<>();
+		StringBuilder current = new StringBuilder();
+		char inQuote = 0;
+		for (int i = 0; i < formula.length(); i++) {
+			char c = formula.charAt(i);
+			if (inQuote != 0) {
+				current.append(c);
+				if (c == inQuote) {
+					inQuote = 0;
+				}
+			} else if (c == '\'' || c == '"') {
+				inQuote = c;
+				current.append(c);
+			} else if (c == ';') {
+				result.add(current.toString());
+				current.setLength(0);
+			} else {
+				current.append(c);
+			}
+		}
+		result.add(current.toString());
+		return result;
+	}
+
 	private class BecpgSpelSecurityTypeLocator extends StandardTypeLocator {
 		
 		private List<String> authorizedTypes = new ArrayList<>();
