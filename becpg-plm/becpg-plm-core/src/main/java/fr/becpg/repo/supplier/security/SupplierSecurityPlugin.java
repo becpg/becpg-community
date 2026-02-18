@@ -28,9 +28,10 @@ import fr.becpg.repo.supplier.SupplierPortalService;
  * Security plugin for supplier portal access control.
  *
  * <p>Determines write/read access for external supplier users based on
- * workflow task assignment. When a supplier project is launched directly
- * on the supplier entity, the workflow package contains the supplier node
- * rather than individual product nodes, so both must be checked.</p>
+ * workflow task assignment. The supplier node is included in the workflow
+ * package at start time, so {@code getWorkflowIdsForContent(supplierNodeRef)}
+ * correctly finds the active workflow when the wizard is opened with the
+ * supplier nodeRef directly.</p>
  *
  * @author matthieu
  */
@@ -100,7 +101,7 @@ public class SupplierSecurityPlugin implements SecurityServicePlugin {
 
 	/**
 	 * Find workflow IDs for the entity, falling back to the supplier node
-	 * when the entity itself is not in any workflow package (direct supplier launch).
+	 * when the entity itself is not in any workflow package.
 	 *
 	 * @param entityNodeRef the entity being accessed
 	 * @param supplierNodeRef the supplier associated with the entity

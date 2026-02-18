@@ -56,6 +56,7 @@ import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.project.ProjectWorkflowService;
+import fr.becpg.repo.project.WorkflowPackageHandler;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectNotificationEvent;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
@@ -94,6 +95,9 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 	@Autowired
 	private TransactionService transactionService;
+
+	@Autowired(required = false)
+	private WorkflowPackageHandler[] workflowPackageHandlers;
 
 	/**
 	 * Internal class to hold separated assignees (users vs groups)
@@ -238,7 +242,10 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 	}
 
 	/**
-	 * Create workflow package with project and entities
+	 * Create workflow package with project and entities.
+	 *
+	 * <p>Registered {@link WorkflowPackageHandler} beans may add extra nodes
+	 * (e.g. the supplier) to the package.</p>
 	 */
 	private NodeRef createWorkflowPackage(ProjectData projectData) {
 		NodeRef wfPackage = workflowService.createPackage(null);
@@ -249,6 +256,12 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 				if (nodeService.exists(entity)) {
 					nodeService.addChild(wfPackage, entity, WorkflowModel.ASSOC_PACKAGE_CONTAINS, ContentModel.ASSOC_CHILDREN);
 				}
+			}
+		}
+
+		if (workflowPackageHandlers != null) {
+			for (WorkflowPackageHandler handler : workflowPackageHandlers) {
+				handler.addToWorkflowPackage(wfPackage, projectData);
 			}
 		}
 
