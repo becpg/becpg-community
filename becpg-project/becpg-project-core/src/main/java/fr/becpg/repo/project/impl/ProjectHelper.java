@@ -358,16 +358,6 @@ public class ProjectHelper {
 		Calendar calendar = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
 		calendar.setTime(startDate);
 
-		int skipIterations = 0;
-		while (!isWorkingDate(calendar, provider)) {
-			calendar.add(Calendar.DATE, isPlanned ? 1 : -1);
-			skipIterations++;
-			if (skipIterations > MAX_ITERATIONS) {
-				logger.warn("No working day found within " + MAX_ITERATIONS + " days from start in calculateNextDate");
-				break;
-			}
-		}
-
 		int i = 1;
 		int consecutiveNonWorking = 0;
 		while (i < duration) {
