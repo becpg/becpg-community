@@ -108,12 +108,12 @@ public class CalendarServiceImpl implements CalendarService {
 		@SuppressWarnings("unchecked")
 		List<String> configuredDays = (List<String>) nodeService.getProperty(calendarNodeRef, ProjectModel.PROP_CAL_NON_WORKING_DAYS);
 
-		if ((configuredDays == null) || configuredDays.isEmpty()) {
+		if (configuredDays == null) {
 			addDefaultDays(nonWorkingDays);
 			return nonWorkingDays;
 		}
 
-		configuredDays.stream().map(String::trim).filter(s -> !s.isEmpty()).map(Integer::valueOf) // parsing ici
+		configuredDays.stream().map(String::trim).filter(s -> !s.isEmpty()).map(Integer::valueOf)
 				.forEach(nonWorkingDays::add);
 
 		return nonWorkingDays;
