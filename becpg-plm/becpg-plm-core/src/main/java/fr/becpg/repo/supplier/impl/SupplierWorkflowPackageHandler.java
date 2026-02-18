@@ -27,20 +27,20 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.project.WorkflowPackageHandler;
 import fr.becpg.repo.project.data.ProjectData;
 
-/**
+/**	
  * Adds the project supplier to the workflow package so that
  * {@code getWorkflowIdsForContent(supplierNodeRef)} correctly finds the active
  * workflow when the supplier portal wizard is opened with the supplier nodeRef.
  *
  * @author matthieu
  */
-@Service
+//@Service
+@Deprecated 
 public class SupplierWorkflowPackageHandler implements WorkflowPackageHandler
 {
 
