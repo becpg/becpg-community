@@ -25,7 +25,6 @@
          <span class="viewmode-label">${field.label?html}:</span>
          <#if field.value == "">
             <span class="viewmode-value">
-            ${msg("form.control.novalue")}
          <#elseif !multiValued>
             <span class="viewmode-value viewmode-value-date" data-date-iso8601="${field.value}" data-show-time="${showTime?string}">
             ${xmldate(field.value)?string(viewFormat)}
