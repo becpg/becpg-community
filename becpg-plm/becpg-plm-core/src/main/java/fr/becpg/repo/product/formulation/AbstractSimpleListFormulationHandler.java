@@ -902,19 +902,19 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 								Matcher varFormulaMatcher = SpelHelper.formulaVarPattern.matcher(formula);
 								if (varFormulaMatcher.matches()) {
-									Expression exp = parser.parseExpression(varFormulaMatcher.group(2));
+									Expression exp = formulaService.parseExpression(varFormulaMatcher.group(2));
 									context.setVariable(varFormulaMatcher.group(1), exp.getValue(context));
 								} else {
-									Expression exp = parser.parseExpression(formula);
+									Expression exp = formulaService.parseExpression(formula);
 									Object ret = exp.getValue(context);
 									if ((ret == null) || (ret instanceof Double) || (ret instanceof Integer)) {
 										formulatedCharactDataItem.setValue((Double) ret);
 
 										if (formula.contains(".value") && (formulatedCharactDataItem instanceof MinMaxValueDataItem)) {
 											try {
-												exp = parser.parseExpression(formula.replace(".value", ".mini"));
+												exp = formulaService.parseExpression(formula.replace(".value", ".mini"));
 												((MinMaxValueDataItem) formulatedCharactDataItem).setMini((Double) exp.getValue(context));
-												exp = parser.parseExpression(formula.replace(".value", ".maxi"));
+												exp = formulaService.parseExpression(formula.replace(".value", ".maxi"));
 												((MinMaxValueDataItem) formulatedCharactDataItem).setMaxi((Double) exp.getValue(context));
 											} catch (Exception e) {
 												((MinMaxValueDataItem) formulatedCharactDataItem).setMaxi(null);
@@ -930,7 +930,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 											for (String forecastColumn : forecastListItem.getForecastColumns()) {
 												try {
 													String forecastAccessor = forecastListItem.getForecastAccessor(forecastColumn);
-													exp = parser.parseExpression(formula.replace(".value", "." + forecastAccessor));
+													exp = formulaService.parseExpression(formula.replace(".value", "." + forecastAccessor));
 													forecastListItem.setForecastValue(forecastColumn, (Double) exp.getValue(context));
 												} catch (Exception e) {
 													forecastListItem.setForecastValue(forecastColumn, null);
@@ -944,7 +944,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 										if (formula.contains(".value") && (formulatedCharactDataItem instanceof VariantAwareDataItem)) {
 											try {
 												for (int i = 1; i <= VariantAwareDataItem.VARIANT_COLUMN_SIZE; i++) {
-													exp = parser.parseExpression(formula.replace(".value(",
+													exp = formulaService.parseExpression(formula.replace(".value(",
 															".variantValue(\"" + VariantAwareDataItem.VARIANT_COLUMN_NAME + i + "\","));
 													if (((VariantAwareDataItem) formulatedCharactDataItem)
 															.getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME + i) != null) {
