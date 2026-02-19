@@ -433,6 +433,7 @@ div .div-regulatorycodes ul li span {
 
 .product-notifications .notifications-list .rclReq-details .rclReq-formula-error
 	{
+	clear: both;
 	font-family: monospace;
 	font-size: 11px;
 	white-space: pre-wrap;

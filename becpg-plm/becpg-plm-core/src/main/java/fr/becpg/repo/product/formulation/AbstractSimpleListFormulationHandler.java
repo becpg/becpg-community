@@ -34,7 +34,6 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
@@ -882,7 +881,6 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 		if (formulatedCharactDataItems != null) {
 
-			ExpressionParser parser = formulaService.getSpelParser();
 			StandardEvaluationContext context = formulaService.createEntitySpelContext(formulatedProduct);
 
 			for (FormulatedCharactDataItem formulatedCharactDataItem : formulatedCharactDataItems) {
