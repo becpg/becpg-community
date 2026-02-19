@@ -77,6 +77,13 @@ down_test() {
     fi
 }
 
+deploy_java(){
+	MODULE=${1:-becpg-plm/becpg-plm-core}
+	echo "Compiling module: $MODULE"
+	$MVN_EXEC compile -pl $MODULE -am $EXTRA_ENV -DskipTests=true -Dmaven.build.cache.enabled=false
+	echo "Done. Classes reloaded via hotswap volume mounts."
+}
+
 deploy_fast(){
 
 	#becpg-amp
@@ -156,25 +163,20 @@ install() {
 }
 
 install_hotswap(){
-	mkdir -p /opt/hotswap/jvm
-	curl -sL  https://cache-redirector.jetbrains.com/intellij-jbr/jbr_jcef-21.0.4-linux-x64-b607.1.tar.gz \
-	      -o /opt/hotswap/jbr_jcef-21.0.4-linux-x64-b607.1.tar.gz && \
-	     mkdir -p /usr/java && tar -xvf /opt/hotswap/jbr_jcef-21.0.4-linux-x64-b607.1.tar.gz -C /opt/hotswap/jvm && \
-	     rm /opt/hotswap/jbr_jcef-21.0.4-linux-x64-b607.1.tar.gz 
-	    
-	mkdir -p /opt/hotswap/jvm/jbr_jcef-21.0.4-linux-x64-b607.1/lib/hotswap/ && \
-	     curl -sL https://github.com/HotswapProjects/HotswapAgent/releases/download/RELEASE-2.0.1/hotswap-agent-2.0.1.jar -o  \
-	     /opt/hotswap/jvm/jbr_jcef-21.0.4-linux-x64-b607.1/lib/hotswap/hotswap-agent.jar
-    ln -sfn /opt/hotswap/jvm/jbr_jcef-21.0.4-linux-x64-b607.1 /opt/hotswap/jvm/latest
-	     
-	echo -e "Append to docker-compose.override.yml : -XX:+AllowEnhancedClassRedefinition -XX:HotswapAgent=fatjar\n\
-	volumes:\n\
-	  - becpg_data:/usr/local/tomcat/data\n\
-	  - ../../becpg-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-core/target/classes\n\
-	  - ../../becpg-plm/becpg-plm-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-plm-core/target/classes\n\
-	  - ../../becpg-project/becpg-project-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-project-core/target/classes\n\
-	  - ../../becpg-integration-runner/target/test-classes:/usr/local/tomcat/hotswap-agent/becpg-integration-runner/target/test-classes\n\
-	  - /opt/hotswap/jvm/latest:/etc/alternatives/jre"
+	sudo mkdir -p /opt/hotswap
+	HOTSWAP_JAR=/opt/hotswap/hotswap-agent.jar
+	JBR_JAR=$(find /opt/hotswap/jvm -name "hotswap-agent.jar" 2>/dev/null | head -1)
+	if [ -n "$JBR_JAR" ]; then
+		sudo ln -sf "$JBR_JAR" "$HOTSWAP_JAR"
+		echo "HotswapAgent linked from $JBR_JAR to $HOTSWAP_JAR"
+	else
+		sudo curl -sL https://github.com/HotswapProjects/HotswapAgent/releases/download/RELEASE-2.0.1/hotswap-agent-2.0.1.jar \
+		     -o "$HOTSWAP_JAR"
+		echo "HotswapAgent downloaded to $HOTSWAP_JAR"
+	fi
+	echo -e "\nHotswap is pre-configured in docker-compose.override.yml."
+	echo -e "Run './run.sh build_start' to start with hotswap enabled."
+	echo -e "Then use './run.sh deploy_java [module]' to recompile and reload classes."
 }
 
 tail() {
@@ -224,6 +226,9 @@ case "$1" in
   stop)
     down
     ;;
+  deploy_java)
+    deploy_java $2
+    ;;
   deploy_fast)
     deploy_fast
     ;;  
@@ -246,5 +251,5 @@ visualvm)
     jvisualvm --openjmx localhost:9091
     ;;
   *)
-    echo "Usage: $0 {install|build_start|build_test|start|stop|purge|tail|test|deploy_fast|visualvm|reindex}"
+    echo "Usage: $0 {install|install_hotswap|build_start|build_test|start|stop|purge|tail|test|deploy_fast|deploy_java [module]|visualvm|reindex}"
 esac
