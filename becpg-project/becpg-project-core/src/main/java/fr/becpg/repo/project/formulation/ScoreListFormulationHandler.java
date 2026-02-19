@@ -244,10 +244,10 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 					Matcher varFormulaMatcher = SpelHelper.formulaVarPattern.matcher(formula);
 	
 					if (varFormulaMatcher.matches()) {
-						Expression exp = parser.parseExpression(varFormulaMatcher.group(2));
+						Expression exp = formulaService.parseExpression(varFormulaMatcher.group(2));
 						context.setVariable(varFormulaMatcher.group(1), exp.getValue(context));
 					} else {
-						Expression exp = parser.parseExpression(formula);
+						Expression exp = formulaService.parseExpression(formula);
 						Object result = exp.getValue(context);
 	
 						if ((result == null) || expectedType.isInstance(result)) {
