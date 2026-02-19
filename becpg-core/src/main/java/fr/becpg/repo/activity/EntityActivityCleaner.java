@@ -3,11 +3,9 @@ package fr.becpg.repo.activity;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
@@ -51,7 +49,6 @@ public class EntityActivityCleaner {
 
     private static final Log logger = LogFactory.getLog(EntityActivityCleaner.class);
 
-    private static final int MAX_PAGE = 50;
 
     @Autowired
     private BeCPGAuditService beCPGAuditService;
@@ -175,7 +172,7 @@ public class EntityActivityCleaner {
                     }
 
                     if (nbrActivity > 0) {
-                        Map<ActivityType, List<ActivityListDataItem>> activitiesByType = new EnumMap<>(ActivityType.class);
+                        List<ActivityListDataItem> dlActivities = new ArrayList<>();
                         boolean hasFormulation = false;
                         boolean hasReport = false;
 
@@ -210,12 +207,11 @@ public class EntityActivityCleaner {
                                     toDelete = true;
                                 }
                             } else {
-                                activitiesByType.computeIfAbsent(activityType, k -> new ArrayList<>()).add(activity);
-
-                                if (activityType == ActivityType.Formulation) {
+                                if (activityType == ActivityType.Datalist) {
+                                    dlActivities.add(activity);
+                                } else if (activityType == ActivityType.Formulation) {
                                     hasFormulation = true;
-                                }
-                                if (activityType == ActivityType.Report) {
+                                } else if (activityType == ActivityType.Report) {
                                     hasReport = true;
                                 }
                                 users.add(activity.getUserId());
@@ -228,14 +224,12 @@ public class EntityActivityCleaner {
                             }
                         }
 
-                        List<ActivityListDataItem> dlActivities = activitiesByType.get(ActivityType.Datalist);
-                        if (dlActivities != null) {
-                            // Group list by day/week/month/year
+                        if (!dlActivities.isEmpty()) {
+                            // Group datalist activities by day/week/month/year until below threshold
                             int[] groupTime = { Calendar.DAY_OF_YEAR, Calendar.WEEK_OF_YEAR, Calendar.MONTH, Calendar.YEAR };
-                            for (int i = 0; (i < groupTime.length) && (nbrActivity > MAX_PAGE); i++) {
+                            for (int i = 0; (i < groupTime.length) && (nbrActivity > threshold); i++) {
                                 int initialSize = dlActivities.size();
                                 dlActivities = group(dlActivities, users, groupTime[i], cronDate);
-                                activitiesByType.put(ActivityType.Datalist, dlActivities);
                                 int deletedInPass = initialSize - dlActivities.size();
                                 nbrActivity -= deletedInPass;
                                 totalDeleted += deletedInPass;
@@ -292,10 +286,6 @@ public class EntityActivityCleaner {
 
         while (maxLimit.getTime().after(cronDate)) {
             for (String userId : users) {
-                if (activities == null) {
-                    continue;
-                }
-
                 Set<String> seenInPeriod = new HashSet<>();
                 Iterator<ActivityListDataItem> iter = activities.iterator();
 
