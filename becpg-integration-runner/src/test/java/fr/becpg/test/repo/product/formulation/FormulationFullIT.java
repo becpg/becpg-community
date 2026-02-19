@@ -605,6 +605,64 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 	}
 
 	@Test
+	public void testSpelHelpers() {
+
+		logger.info("testSpelHelpers");
+
+		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName(toTestName("Produit SpEL helpers"));
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setQty(2d);
+
+			nodeService.setProperty(rawMaterial1NodeRef, org.alfresco.model.ContentModel.PROP_DESCRIPTION, "desc-rm1");
+
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+			finishedProduct.getCompoListView().setCompoList(compoList);
+
+			List<DynamicCharactListItem> dynamicCharactListItems = new ArrayList<>();
+
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("copyProps single")
+					.withFormula("@beCPG.copyProps(#this, compoList[0].product, \"cm:description|bcpg:legalName\")"));
+
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("applyFormulaToList with \\;")
+					.withFormula("@beCPG.applyFormulaToList(compoList, '@beCPG.setValue(dataListItem,\"bcpg:compoListQtyUsed\",1d)\\;@beCPG.setValue(dataListItem,\"bcpg:compoListQtySubFormula\",dataListItem.qtyUsed)')"));
+
+			finishedProduct.getCompoListView().setDynamicCharactList(dynamicCharactListItems);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			productService.formulate(finishedProductNodeRef);
+
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+
+			for (DynamicCharactListItem item : formulatedProduct.getCompoListView().getDynamicCharactList()) {
+				logger.info("SpEL helper [" + item.getTitle() + "] => " + item.getValue() + " err=" + item.getErrorLog());
+				assertNotEquals("#Error", item.getValue());
+				assertNull("Unexpected error in formula [" + item.getTitle() + "]: " + item.getErrorLog(), item.getErrorLog());
+			}
+
+			assertEquals("desc-rm1", formulatedProduct.getLegalName());
+
+			for (CompoListDataItem compoListDataItem : formulatedProduct.getCompoListView().getCompoList()) {
+				assertNotNull("qtySubFormula should be set by applyFormulaToList", compoListDataItem.getQtySubFormula());
+			}
+
+			return null;
+
+		}, false, true);
+	}
+
+	@Test
 	public void testFormulationInML() {
 
 		logger.info("testFormulationInML");

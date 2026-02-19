@@ -285,34 +285,19 @@ public class SpelFormulaService {
 	}
 	
 	/**
-	 * Splits a formula string on {@code ;} separators, ignoring semicolons that appear
-	 * inside single-quoted or double-quoted string literals.
+	 * Splits a formula string on {@code \;} separators (backslash followed by semicolon).
+	 * Using {@code \;} avoids conflicts with SpEL's own use of {@code ;} as an expression terminator
+	 * inside string literals.
 	 *
-	 * @param formula the raw formula string, possibly containing multiple sub-expressions
+	 * @param formula the raw formula string, possibly containing multiple sub-expressions separated by {@code \;}
 	 * @return an ordered list of individual expression strings
 	 */
 	private List<String> splitFormulas(String formula) {
 		List<String> result = new ArrayList<>();
-		StringBuilder current = new StringBuilder();
-		char inQuote = 0;
-		for (int i = 0; i < formula.length(); i++) {
-			char c = formula.charAt(i);
-			if (inQuote != 0) {
-				current.append(c);
-				if (c == inQuote) {
-					inQuote = 0;
-				}
-			} else if (c == '\'' || c == '"') {
-				inQuote = c;
-				current.append(c);
-			} else if (c == ';') {
-				result.add(current.toString());
-				current.setLength(0);
-			} else {
-				current.append(c);
-			}
+		String[] parts = formula.split("\\\\;");
+		for (String part : parts) {
+			result.add(part);
 		}
-		result.add(current.toString());
 		return result;
 	}
 
