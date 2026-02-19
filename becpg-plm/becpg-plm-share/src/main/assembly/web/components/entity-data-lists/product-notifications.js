@@ -547,8 +547,11 @@
                                         + Alfresco.util.encodeHTML(regulatoryCode) + '</div>';
                                     desc += '      <div class="rclReq-title">'
                                         + Alfresco.util.encodeHTML(displayMsg.replace(regulatoryCode,"")) + '</div>';
+                                } else if (reqType === 'Formulation' && displayMsg) {
+                                    desc += '      <div class="rclReq-title rclReq-formula-error" title="' + Alfresco.util.encodeHTML(displayMsg) + '">'
+                                        + Alfresco.util.encodeHTML(displayMsg) + '</div>';
                                 } else {
-                                desc += '      <div class="rclReq-title">'
+                                    desc += '      <div class="rclReq-title">'
                                         + Alfresco.util.encodeHTML(displayMsg) + '</div>';
                                 }
                                 desc += '      <div class="rclReq-content"><ul>';
