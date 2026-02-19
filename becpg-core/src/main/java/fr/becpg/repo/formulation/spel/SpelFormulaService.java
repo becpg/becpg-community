@@ -294,7 +294,7 @@ public class SpelFormulaService {
 	 */
 	private List<String> splitFormulas(String formula) {
 		List<String> result = new ArrayList<>();
-		String[] parts = formula.split("\\\\;");
+		String[] parts = formula.split("\u001F");
 		for (String part : parts) {
 			result.add(part);
 		}
