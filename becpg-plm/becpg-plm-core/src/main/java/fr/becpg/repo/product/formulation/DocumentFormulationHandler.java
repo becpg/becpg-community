@@ -23,7 +23,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
@@ -267,7 +266,6 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 			}
 		}
 
-		ExpressionParser parser = formulaService.getSpelParser();
 		StandardEvaluationContext context = formulaService.createEntitySpelContext(repositoryEntity);
 
 		// Process all documents to update their state and mandatory status
@@ -291,7 +289,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 
 				} else {
 					// Update document mandatory status
-					isMandatory = calculateDocumentIsMandatory(repositoryEntity, docTypeItem, parser, context);
+					isMandatory = calculateDocumentIsMandatory(repositoryEntity, docTypeItem, context);
 				}
 
 				nodeService.setProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_IS_MANDATORY, isMandatory);
@@ -460,7 +458,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 	 * @param context the evaluation context for formula evaluation
 	 * @return true if the document is mandatory, false otherwise
 	 */
-	private boolean calculateDocumentIsMandatory(RepositoryEntity repositoryEntity, DocumentTypeItem docTypeItem, ExpressionParser parser,
+	private boolean calculateDocumentIsMandatory(RepositoryEntity repositoryEntity, DocumentTypeItem docTypeItem,
 			StandardEvaluationContext context) {
 
 		// Check if explicitly mandatory

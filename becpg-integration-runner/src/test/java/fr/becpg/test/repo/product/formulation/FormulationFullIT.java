@@ -34,6 +34,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.FinishedProductData;
+import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
@@ -611,6 +612,11 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 
 		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
+			RawMaterialData rm = new RawMaterialData();
+			rm.setName(toTestName("RM SpEL helpers"));
+			rm.setUnit(ProductUnit.kg);
+			NodeRef rmNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rm).getNodeRef();
+
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName(toTestName("Produit SpEL helpers"));
 			finishedProduct.setUnit(ProductUnit.kg);
@@ -618,15 +624,15 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
 			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
-					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
+					.withDeclarationType(DeclarationType.Detail).withProduct(rmNodeRef));
 			compoList.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d)
-					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+					.withDeclarationType(DeclarationType.Detail).withProduct(rmNodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			List<DynamicCharactListItem> dynamicCharactListItems = new ArrayList<>();
 
 			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("applyFormulaToList with \\;")
-					.withFormula("@beCPG.applyFormulaToList(compoList, 'dataListItem.qtyUsed\\;dataListItem.lossPerc')"));
+					.withFormula("@beCPG.applyFormulaToList(compoList, 'dataListItem.qtySubFormula\\;dataListItem.lossPerc')"));
 
 			finishedProduct.getCompoListView().setDynamicCharactList(dynamicCharactListItems);
 

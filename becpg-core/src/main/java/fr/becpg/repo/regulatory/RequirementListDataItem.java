@@ -53,6 +53,8 @@ public class RequirementListDataItem extends BeCPGDataObject {
 	private RequirementDataType reqDataType = RequirementDataType.Nutrient;
 	private String regulatoryCode;
 
+	private String errorLog;
+
 	// Do not put in hashCode and equals
 	private String formulationChainId;
 	// Do not put in hashCode and equals
@@ -383,6 +385,37 @@ public class RequirementListDataItem extends BeCPGDataObject {
 	 */
 	public RequirementListDataItem withRegulatoryCode(String regulatoryCode) {
 		this.regulatoryCode = regulatoryCode;
+		return this;
+	}
+
+	/**
+	 * <p>Getter for the field <code>errorLog</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:rclErrorLog")
+	public String getErrorLog() {
+		return errorLog;
+	}
+
+	/**
+	 * <p>Setter for the field <code>errorLog</code>.</p>
+	 *
+	 * @param errorLog a {@link java.lang.String} object.
+	 */
+	public void setErrorLog(String errorLog) {
+		this.errorLog = errorLog;
+	}
+
+	/**
+	 * <p>withErrorLog.</p>
+	 *
+	 * @param errorLog a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementListDataItem} object
+	 */
+	public RequirementListDataItem withErrorLog(String errorLog) {
+		this.errorLog = errorLog;
 		return this;
 	}
 

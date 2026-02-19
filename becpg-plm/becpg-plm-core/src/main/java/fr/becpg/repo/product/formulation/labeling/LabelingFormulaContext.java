@@ -52,7 +52,6 @@ import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StringUtils;
@@ -3252,7 +3251,6 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		if ((formulaFilter.getFormula() != null) && !formulaFilter.getFormula().isEmpty()) {
 			if (!MeatType.isMeatType(formulaFilter.getFormula())) {
 				try {
-					ExpressionParser parser = formulaService.getSpelParser();
 
 					StandardEvaluationContext dataContext = formulaService.createCustomSpelContext(entity, formulaFilterContext, false);
 

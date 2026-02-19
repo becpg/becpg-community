@@ -36,7 +36,6 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.config.format.FormatMode;
@@ -932,8 +931,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public <T> Collection<T> filter(Collection<T> range, String formula) {
 			if (range != null) {
-				ExpressionParser parser = formulaService.getSpelParser();
-				Expression exp = parser.parseExpression(formula);
+				Expression exp = formulaService.parseExpression(formula);
 
 				return range.stream().filter(p -> exp.getValue(formulaService.createItemSpelContext(entity, p), Boolean.class)).toList();
 			}
@@ -950,8 +948,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		@SuppressWarnings("unchecked")
 		public <T> Collection<T> replaceByFormula(Collection<T> range, String formula) {
 			if (range != null) {
-				ExpressionParser parser = formulaService.getSpelParser();
-				Expression exp = parser.parseExpression(formula);
+				Expression exp = formulaService.parseExpression(formula);
 
 				return (Collection<T>) range.stream().map(p -> exp.getValue(formulaService.createItemSpelContext(entity, p))).toList();
 			}
@@ -967,8 +964,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public <T> Map<Object, List<T>> groupingByFormula(Collection<T> range, String groupingFormula) {
 			if (range != null) {
-				ExpressionParser parser = formulaService.getSpelParser();
-				Expression exp = parser.parseExpression(groupingFormula);
+				Expression exp = formulaService.parseExpression(groupingFormula);
 
 				return range.stream().collect(Collectors.groupingBy(p -> exp.getValue(formulaService.createItemSpelContext(entity, p))));
 

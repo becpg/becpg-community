@@ -32,7 +32,6 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
@@ -241,7 +240,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			labelingFormulaContext.setIngsLabelingWithYield(ingsCalculatingWithYield());
 
-			ExpressionParser parser = formulaService.getSpelParser();
 			StandardEvaluationContext dataContext = formulaService.createCustomSpelContext(formulatedProduct, labelingFormulaContext);
 
 			List<LabelingRuleListDataItem> labelingRuleLists = labelingRuleListsGroup.getValue();

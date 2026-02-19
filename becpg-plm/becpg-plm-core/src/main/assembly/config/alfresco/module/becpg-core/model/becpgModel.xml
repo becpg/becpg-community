@@ -3540,6 +3540,11 @@
 					<multiple>true</multiple>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:rclErrorLog">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:rclCharact">
