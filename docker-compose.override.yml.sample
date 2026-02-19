@@ -11,6 +11,11 @@ services:
                       -Dcom.sun.management.jmxremote.local.only=false
                       -Djava.rmi.server.hostname=127.0.0.1
                       -Dtomcat.util.scan.StandardJarScanFilter.jarsToSkip=*
+                      --add-opens java.base/jdk.internal.loader=ALL-UNNAMED
+                      --add-opens java.base/java.lang=ALL-UNNAMED
+                      --add-opens java.base/java.io=ALL-UNNAMED
+                      --add-opens java.base/java.util=ALL-UNNAMED
+                      --add-opens java.base/java.net=ALL-UNNAMED
                       -javaagent:/opt/hotswap/hotswap-agent.jar"
     volumes:
       - becpg_data:/usr/local/tomcat/data
