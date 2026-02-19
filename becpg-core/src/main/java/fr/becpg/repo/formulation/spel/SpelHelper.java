@@ -78,7 +78,7 @@ public class SpelHelper {
 			 formula = matcher.replaceAll(shortCut.replacement);
 		}
 		
-		return formula.replace("&lt;", "<").replace("&gt;", ">").replace("\n", "").trim();
+		return formula.replace("&lt;", "<").replace("&gt;", ">").replace("\n", "").replace("\\;", "\u001F").trim();
 	}
 
 	/**
