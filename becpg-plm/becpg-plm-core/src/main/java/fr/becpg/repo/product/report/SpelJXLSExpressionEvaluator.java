@@ -95,11 +95,11 @@ public class SpelJXLSExpressionEvaluator implements ExpressionEvaluator {
 				Matcher varFormulaMatcher = SpelHelper.formulaVarPattern.matcher(formula);
 				if (varFormulaMatcher.matches()) {
 					logger.debug("Variable formula : " + varFormulaMatcher.group(2) + " (" + varFormulaMatcher.group(1) + ")");
-					Expression exp = parser.parseExpression(varFormulaMatcher.group(2));
+					Expression exp = formulaService.parseExpression(varFormulaMatcher.group(2));
 					context.setVariable(varFormulaMatcher.group(1), exp.getValue(context));
 				} else {
 					logger.debug("Parse formula : " + formula);
-					Expression exp = parser.parseExpression(formula);
+					Expression exp = formulaService.parseExpression(formula);
 					return exp.getValue(context);
 				}
 			}

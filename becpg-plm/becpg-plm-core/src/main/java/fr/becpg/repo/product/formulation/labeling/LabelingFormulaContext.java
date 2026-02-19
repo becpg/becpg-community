@@ -3256,7 +3256,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 					StandardEvaluationContext dataContext = formulaService.createCustomSpelContext(entity, formulaFilterContext, false);
 
-					Expression exp = parser.parseExpression(SpelHelper.formatFormula(formulaFilter.getFormula()));
+					Expression exp = formulaService.parseExpression(SpelHelper.formatFormula(formulaFilter.getFormula()));
 
 					Boolean ret = exp.getValue(dataContext, Boolean.class);
 

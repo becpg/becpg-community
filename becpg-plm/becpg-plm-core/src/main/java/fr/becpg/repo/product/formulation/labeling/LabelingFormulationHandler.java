@@ -271,7 +271,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					LabelingRuleType type = labelingRuleListDataItem.getLabelingRuleType();
 					if (LabelingRuleType.Prefs.equals(type)) {
 						try {
-							Expression exp = parser.parseExpression(SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()));
+							Expression exp = formulaService.parseExpression(SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()));
 							exp.getValue(dataContext, String.class);
 
 						} catch (Exception e) {
@@ -412,10 +412,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 										if (varFormulaMatcher.matches()) {
 											logger.debug(
 													"Variable formula : " + varFormulaMatcher.group(2) + " (" + varFormulaMatcher.group(1) + ")");
-											Expression exp = parser.parseExpression(varFormulaMatcher.group(2));
+											Expression exp = formulaService.parseExpression(varFormulaMatcher.group(2));
 											dataContext.setVariable(varFormulaMatcher.group(1), exp.getValue(dataContext));
 										} else {
-											Expression exp = parser.parseExpression(formula);
+											Expression exp = formulaService.parseExpression(formula);
 											ret = exp.getValue(dataContext, String.class);
 										}
 									}
