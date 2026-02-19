@@ -1079,9 +1079,8 @@ if (beCPG.module.EntityDataGridRenderers) {
                     return '<span style="color:' + color + ';">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
                 }
 
-                var shortError = error.length > 50 ? error.substring(0, 50) + '...' : error;
                 return '<span class="dyna' + data.value.replace("#", "") + '" title="' + Alfresco.util.encodeHTML(error) + '">'
-                    + Alfresco.util.encodeHTML(shortError) + '</span>';
+                    + Alfresco.util.encodeHTML(error.substring(0, 7)) + '</span>';
             }
             return Alfresco.util.encodeHTML(data.displayValue);
         }
