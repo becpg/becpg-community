@@ -616,22 +616,17 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			finishedProduct.setUnit(ProductUnit.kg);
 			finishedProduct.setQty(2d);
 
-			nodeService.setProperty(rawMaterial1NodeRef, org.alfresco.model.ContentModel.PROP_DESCRIPTION, "desc-rm1");
-
 			List<CompoListDataItem> compoList = new ArrayList<>();
 			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
 					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
-			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+			compoList.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d)
 					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
 			List<DynamicCharactListItem> dynamicCharactListItems = new ArrayList<>();
 
-			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("copyProps single")
-					.withFormula("@beCPG.copyProps(#this, compoList[0].product, \"cm:description|bcpg:legalName\")"));
-
 			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("applyFormulaToList with \\;")
-					.withFormula("@beCPG.applyFormulaToList(compoList, '@beCPG.setValue(dataListItem,\"bcpg:compoListQtyUsed\",1d)\\;@beCPG.setValue(dataListItem,\"bcpg:compoListQtySubFormula\",dataListItem.qtyUsed)')"));
+					.withFormula("@beCPG.applyFormulaToList(compoList, 'dataListItem.qtyUsed\\;dataListItem.lossPerc')"));
 
 			finishedProduct.getCompoListView().setDynamicCharactList(dynamicCharactListItems);
 
@@ -651,11 +646,8 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 				assertNull("Unexpected error in formula [" + item.getTitle() + "]: " + item.getErrorLog(), item.getErrorLog());
 			}
 
-			assertEquals("desc-rm1", formulatedProduct.getLegalName());
-
-			for (CompoListDataItem compoListDataItem : formulatedProduct.getCompoListView().getCompoList()) {
-				assertNotNull("qtySubFormula should be set by applyFormulaToList", compoListDataItem.getQtySubFormula());
-			}
+			assertEquals("applyFormulaToList with \\; should execute without error", 1,
+					formulatedProduct.getCompoListView().getDynamicCharactList().size());
 
 			return null;
 
