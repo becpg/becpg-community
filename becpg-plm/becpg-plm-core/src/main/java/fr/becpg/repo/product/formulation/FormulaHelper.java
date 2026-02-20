@@ -198,7 +198,7 @@ public class FormulaHelper {
 
 								String formula = SpelHelper.formatFormula(dynamicCharactListItem.getFormula());
 								logger.debug("Column formula : " + formula + " (" + dynamicCharactListItem.getTitle() + ")");
-								Expression exp = instance.formulaService.getSpelParser().parseExpression(formula);
+								Expression exp = instance.formulaService.parseExpression(formula);
 
 								if (nullDynColumnNames.contains(columnName)) {
 									nullDynColumnNames.remove(columnName);
@@ -264,11 +264,11 @@ public class FormulaHelper {
 									if (varFormulaMatcher.matches()) {
 										logger.debug("Variable formula : [" + dynamicCharactListItem.getTitle() + "] - " + varFormulaMatcher.group(2)
 												+ " (" + varFormulaMatcher.group(1) + ")");
-										Expression exp = instance.formulaService.getSpelParser().parseExpression(varFormulaMatcher.group(2));
+										Expression exp = instance.formulaService.parseExpression(varFormulaMatcher.group(2));
 										context.setVariable(varFormulaMatcher.group(1), exp.getValue(context));
 									} else {
 										logger.debug("Formula :  [" + dynamicCharactListItem.getTitle() + "] - " + formula);
-										Expression exp = instance.formulaService.getSpelParser().parseExpression(formula);
+										Expression exp = instance.formulaService.parseExpression(formula);
 										dynamicCharactListItem.setValue(exp.getValue(context));
 									}
 								}

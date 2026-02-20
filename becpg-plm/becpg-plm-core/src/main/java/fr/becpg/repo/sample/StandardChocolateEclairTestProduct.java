@@ -1055,7 +1055,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		addNutEntry(nutList, NutriScoreContext.SATFAT_CODE, "g", satFat);
 		addNutEntry(nutList, NutriScoreContext.FAT_CODE, "g", totalFat);
 		addNutEntry(nutList, NutriScoreContext.SUGAR_CODE, "g", sugar);
-		addNutEntry(nutList, NutriScoreContext.SODIUM_CODE, "g", sodium);
+		addNutEntry(nutList, NutriScoreContext.SODIUM_CODE, "mg", sodium);
 		addNutEntry(nutList, NutriScoreContext.SALT_CODE, "g", salt);
 		addNutEntry(nutList, NutriScoreContext.NSP_CODE, "g", nspFiber);
 		addNutEntry(nutList, NutriScoreContext.AOAC_CODE, "g", aoacFiber);
