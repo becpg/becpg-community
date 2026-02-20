@@ -11,7 +11,7 @@ ENV SUPPORT_TOOLS_VERSION=${becpg.supporttools.version}
 ENV I18_VERSION=${becpg.i18n.version}
    
 ## JDBC - MYSQL
-RUN curl --silent --location \
+RUN dnf update -y && curl --silent --location \
       https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/${MYSQL_CONNECTOR}/mysql-connector-j-${MYSQL_CONNECTOR}.jar \
 	-o $TOMCAT_DIR/lib/mysql-connector-j-${MYSQL_CONNECTOR}.jar && \
 	rm $TOMCAT_DIR/lib/postgres*
