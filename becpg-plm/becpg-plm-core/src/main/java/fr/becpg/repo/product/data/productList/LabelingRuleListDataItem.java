@@ -398,6 +398,7 @@ public class LabelingRuleListDataItem extends BeCPGDataObject implements Synchro
 		this.components = target.components;
 		this.replacements = target.replacements;
 		this.locales = target.locales;
+		this.mlTitle = target.mlTitle;
 	}
 
 	/** {@inheritDoc} */
