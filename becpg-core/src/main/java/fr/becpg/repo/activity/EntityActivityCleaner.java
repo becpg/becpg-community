@@ -3,9 +3,12 @@ package fr.becpg.repo.activity;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
@@ -49,6 +52,7 @@ public class EntityActivityCleaner {
 
     private static final Log logger = LogFactory.getLog(EntityActivityCleaner.class);
 
+    private static final int MAX_PAGE = 50;
 
     @Autowired
     private BeCPGAuditService beCPGAuditService;
@@ -172,14 +176,22 @@ public class EntityActivityCleaner {
                     }
 
                     if (nbrActivity > 0) {
-                        List<ActivityListDataItem> dlActivities = new ArrayList<>();
+                        Map<ActivityType, List<ActivityListDataItem>> activitiesByType = new EnumMap<>(ActivityType.class);
+                        int activityInPage = 0;
                         boolean hasFormulation = false;
                         boolean hasReport = false;
 
-                        // Content/Export deduplication: key = nodeRef/title + day to allow re-uploads on different days
+                        // Pre-size set for efficiency (used for both content and export deduplication)
                         Set<String> contentSet = new HashSet<>(Math.max(16, sortedActivityList.size()));
 
                         for (ActivityListDataItem activity : sortedActivityList) {
+                            if (activityInPage == MAX_PAGE) {
+                                hasFormulation = false;
+                                hasReport = false;
+                                activityInPage = 0;
+                            }
+                            activityInPage++;
+
                             Date created = activity.getCreatedDate();
                             if (created.before(cronDate)) {
                                 cronDate = created;
@@ -189,17 +201,13 @@ public class EntityActivityCleaner {
 
                             boolean toDelete = false;
 
-                            if (activityType == ActivityType.Formulation && hasFormulation) {
-                                toDelete = true;
-                            } else if (activityType == ActivityType.Report && hasReport) {
+                            if ((activityType == ActivityType.Formulation && hasFormulation)
+                                    || (activityType == ActivityType.Report && hasReport)) {
                                 toDelete = true;
                             } else if (activityType == ActivityType.Content) {
                                 String contentNodeRef = extractContentNode(activity.getActivityData());
-                                if (contentNodeRef != null) {
-                                    String dayKey = contentNodeRef + "|" + toDayKey(created);
-                                    if (!contentSet.add(dayKey)) {
-                                        toDelete = true;
-                                    }
+                                if (contentNodeRef != null && !contentSet.add(contentNodeRef)) {
+                                    toDelete = true;
                                 }
                             } else if (activityType == ActivityType.Export) {
                                 String exportTitle = extractExportTitle(activity.getActivityData());
@@ -207,11 +215,12 @@ public class EntityActivityCleaner {
                                     toDelete = true;
                                 }
                             } else {
-                                if (activityType == ActivityType.Datalist) {
-                                    dlActivities.add(activity);
-                                } else if (activityType == ActivityType.Formulation) {
+                                activitiesByType.computeIfAbsent(activityType, k -> new ArrayList<>()).add(activity);
+
+                                if (activityType == ActivityType.Formulation) {
                                     hasFormulation = true;
-                                } else if (activityType == ActivityType.Report) {
+                                }
+                                if (activityType == ActivityType.Report) {
                                     hasReport = true;
                                 }
                                 users.add(activity.getUserId());
@@ -224,15 +233,16 @@ public class EntityActivityCleaner {
                             }
                         }
 
-                        if (!dlActivities.isEmpty()) {
-                            // Group datalist activities by day/week/month/year until below threshold
+                        List<ActivityListDataItem> dlActivities = activitiesByType.get(ActivityType.Datalist);
+                        if (dlActivities != null) {
+                            // Group list by day/week/month/year
                             int[] groupTime = { Calendar.DAY_OF_YEAR, Calendar.WEEK_OF_YEAR, Calendar.MONTH, Calendar.YEAR };
-                            for (int i = 0; (i < groupTime.length) && (nbrActivity > threshold); i++) {
+                            for (int i = 0; (i < groupTime.length) && (nbrActivity > MAX_PAGE); i++) {
                                 int initialSize = dlActivities.size();
                                 dlActivities = group(dlActivities, users, groupTime[i], cronDate);
-                                int deletedInPass = initialSize - dlActivities.size();
-                                nbrActivity -= deletedInPass;
-                                totalDeleted += deletedInPass;
+                                activitiesByType.put(ActivityType.Datalist, dlActivities);
+                                nbrActivity = dlActivities.size();
+                                totalDeleted += (initialSize - nbrActivity);
                             }
                         }
                     }
@@ -286,7 +296,11 @@ public class EntityActivityCleaner {
 
         while (maxLimit.getTime().after(cronDate)) {
             for (String userId : users) {
-                Set<String> seenInPeriod = new HashSet<>();
+                if (activities == null) {
+                    continue;
+                }
+
+                Map<NodeRef, Set<String>> activitiesByEntity = new HashMap<>(activities.size());
                 Iterator<ActivityListDataItem> iter = activities.iterator();
 
                 while (iter.hasNext()) {
@@ -297,6 +311,7 @@ public class EntityActivityCleaner {
                     boolean sameUser = userId.equals(activity.getUserId());
 
                     if (insidePeriod && sameUser) {
+                        NodeRef parentRef = activity.getParentNodeRef();
                         String datalistClassName = null;
 
                         try {
@@ -307,7 +322,8 @@ public class EntityActivityCleaner {
                         }
 
                         if (datalistClassName != null) {
-                            if (!seenInPeriod.add(datalistClassName)) {
+                            Set<String> classNames = activitiesByEntity.computeIfAbsent(parentRef, k -> new HashSet<>());
+                            if (!classNames.add(datalistClassName)) {
                                 iter.remove();
                                 deleteAuditActivity(activity);
                             }
@@ -335,12 +351,6 @@ public class EntityActivityCleaner {
 
     private void deleteAuditActivity(ActivityListDataItem lastActivity) {
         beCPGAuditService.deleteAuditEntries(AuditType.ACTIVITY, lastActivity.getId(), lastActivity.getId() + 1);
-    }
-
-    private String toDayKey(Date date) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        return cal.get(Calendar.YEAR) + "-" + cal.get(Calendar.DAY_OF_YEAR);
     }
 
     private String extractContentNode(String alData) {
