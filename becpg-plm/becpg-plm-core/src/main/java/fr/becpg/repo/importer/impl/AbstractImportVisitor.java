@@ -1362,6 +1362,13 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				if ((classMapping != null) && StringUtils.isNotEmpty(assocPath)) {
 					parentRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
 							AbstractBeCPGQueryBuilder.encodePath(assocPath));
+				} else if (PLMModel.ASSOC_ILL_GRP.equals(assoc)) {
+					// there is no explicit path, so we assume the group mode is NOT 'Model'. Therefore, we need to add the entity path to avoid retrieving the group from another entity
+					NodeRef listContainer = entityListDAO.getListContainer(importContext.getEntityNodeRef());
+					parentRef = entityListDAO.getList(listContainer, PLMModel.TYPE_INGLABELINGLIST);
+					if (logger.isDebugEnabled()) {
+						logger.debug("Find parent ref for assoc bcpg:illGrp: " + parentRef);
+					}
 				}
 
 				nodeRef = findNodeByKeyOrCode(importContext, propDef, type, properties, parentRef, false);
