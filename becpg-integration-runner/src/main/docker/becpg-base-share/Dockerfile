@@ -24,7 +24,8 @@ COPY tomcat/server.xml $TOMCAT_DIR/conf/server.xml
 COPY tomcat/share.xml $TOMCAT_DIR/conf/Catalina/localhost/
 COPY becpg/classes $TOMCAT_DIR/shared/classes
 
-RUN chmod +x /usr/local/tomcat/shared/classes/alfresco/substituter.sh
+RUN dnf update -y && dnf clean all && \
+    chmod +x /usr/local/tomcat/shared/classes/alfresco/substituter.sh
 RUN mkdir -p ${TOMCAT_DIR}/data
 
 RUN rm -rf  $TOMCAT_DIR/amps_share/*
