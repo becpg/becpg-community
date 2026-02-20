@@ -41,7 +41,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import fr.becpg.model.BeCPGModel;
@@ -197,13 +196,13 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			StandardEvaluationContext context = formulaService.createEntitySpelContext(productData);
 
 			for (AbstractProductDataView view : productData.getViews()) {
-				computeFormula(productData, formulaService.getSpelParser(), context, view);
+				computeFormula(productData, context, view);
 			}
 		}
 		return true;
 	}
 
-	private void computeFormula(ProductData productData, ExpressionParser parser, EvaluationContext context, AbstractProductDataView view) {
+	private void computeFormula(ProductData productData, EvaluationContext context, AbstractProductDataView view) {
 
 		if (view.getDynamicCharactList() != null) {
 
@@ -225,7 +224,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 								String formula = SpelHelper.formatFormula(dynamicCharactListItem.getFormula());
 								logger.debug("Column formula : " + formula + " (" + dynamicCharactListItem.getTitle() + ")");
-								Expression exp = parser.parseExpression(formula);
+								Expression exp = formulaService.parseExpression(formula);
 
 								if (nullDynColumnNames.contains(columnName)) {
 									nullDynColumnNames.remove(columnName);
@@ -290,11 +289,11 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 									if (varFormulaMatcher.matches()) {
 										logger.debug("Variable formula : [" + dynamicCharactListItem.getTitle() + "] - " + varFormulaMatcher.group(2)
 												+ " (" + varFormulaMatcher.group(1) + ")");
-										Expression exp = parser.parseExpression(varFormulaMatcher.group(2));
+										Expression exp = formulaService.parseExpression(varFormulaMatcher.group(2));
 										context.setVariable(varFormulaMatcher.group(1), exp.getValue(context));
 									} else {
 										logger.debug("Formula :  [" + dynamicCharactListItem.getTitle() + "] - " + formula);
-										Expression exp = parser.parseExpression(formula);
+										Expression exp = formulaService.parseExpression(formula);
 										dynamicCharactListItem.setValue(exp.getValue(context));
 									}
 								}
@@ -329,6 +328,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 								.add(RequirementListDataItem.info()
 										.withMessage(MLTextHelper.getI18NMessage("message.formulate.formula.error", dynamicCharactListItem.getTitle(),
 												e.getLocalizedMessage()))
+										.withErrorLog(e.getLocalizedMessage())
 										.withSources(Arrays.asList(productData.getNodeRef())).ofDataType(RequirementDataType.Formulation));
 
 

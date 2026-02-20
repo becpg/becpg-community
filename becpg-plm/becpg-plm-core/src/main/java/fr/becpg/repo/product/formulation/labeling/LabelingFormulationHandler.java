@@ -32,7 +32,6 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
@@ -241,7 +240,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			labelingFormulaContext.setIngsLabelingWithYield(ingsCalculatingWithYield());
 
-			ExpressionParser parser = formulaService.getSpelParser();
 			StandardEvaluationContext dataContext = formulaService.createCustomSpelContext(formulatedProduct, labelingFormulaContext);
 
 			List<LabelingRuleListDataItem> labelingRuleLists = labelingRuleListsGroup.getValue();
@@ -271,7 +269,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					LabelingRuleType type = labelingRuleListDataItem.getLabelingRuleType();
 					if (LabelingRuleType.Prefs.equals(type)) {
 						try {
-							Expression exp = parser.parseExpression(SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()));
+							Expression exp = formulaService.parseExpression(SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()));
 							exp.getValue(dataContext, String.class);
 
 						} catch (Exception e) {
@@ -412,10 +410,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 										if (varFormulaMatcher.matches()) {
 											logger.debug(
 													"Variable formula : " + varFormulaMatcher.group(2) + " (" + varFormulaMatcher.group(1) + ")");
-											Expression exp = parser.parseExpression(varFormulaMatcher.group(2));
+											Expression exp = formulaService.parseExpression(varFormulaMatcher.group(2));
 											dataContext.setVariable(varFormulaMatcher.group(1), exp.getValue(dataContext));
 										} else {
-											Expression exp = parser.parseExpression(formula);
+											Expression exp = formulaService.parseExpression(formula);
 											ret = exp.getValue(dataContext, String.class);
 										}
 									}
@@ -1503,13 +1501,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				Double qtyWithYield = qty;
 
-				if ((qty != null) && !DeclarationType.Group.equals(declarationType) && !labelingFormulaContext.isDoNotPropagateYield()) {
+				if ((qty != null) && !DeclarationType.Group.equals(declarationType)) {
 					qtyWithYield = BigDecimal.valueOf(qty).multiply(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION)
 							.divide(BigDecimal.valueOf(calculatedYield), LabelingFormulaContext.PRECISION).doubleValue();
 				}
 				Double volumeWithYield = volume;
 
-				if ((volume != null) && !DeclarationType.Group.equals(declarationType) && !labelingFormulaContext.isDoNotPropagateYield()) {
+				if ((volume != null) && !DeclarationType.Group.equals(declarationType)) {
 					volumeWithYield = BigDecimal.valueOf(volume).multiply(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION)
 							.divide(BigDecimal.valueOf(calculatedYield), LabelingFormulaContext.PRECISION).doubleValue();
 				}

@@ -197,6 +197,26 @@ public class CharactTestHelper {
 	}
 
 	/**
+	 * <p>getOrCreatePhysicoChem.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param code a {@link java.lang.String} object
+	 * @param unit a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	public static NodeRef getOrCreatePhysicoChem(NodeService nodeService, String code, String unit) {
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(BeCPGModel.PROP_CHARACT_NAME, code);
+		properties.put(PLMModel.PROP_PHYSICO_CHEM_CODE, code);
+		properties.put(PLMModel.PROP_PHYSICO_CHEM_UNIT, unit);
+		NodeRef physicoChem = getOrCreateNode(nodeService, "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:PhysicoChems", code,
+				PLMModel.TYPE_PHYSICO_CHEM, properties);
+		nodeService.setProperty(physicoChem, PLMModel.PROP_PHYSICO_CHEM_CODE, code);
+		nodeService.setProperty(physicoChem, PLMModel.PROP_PHYSICO_CHEM_UNIT, unit);
+		return physicoChem;
+	}
+
+	/**
 	 * <p>getOrCreateScoreCriterion.</p>
 	 *
 	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object

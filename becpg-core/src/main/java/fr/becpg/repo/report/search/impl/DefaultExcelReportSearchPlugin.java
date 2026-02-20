@@ -23,7 +23,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.config.format.FormatMode;
@@ -331,12 +330,11 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 			return values.get(formula);
 		}
 
-		ExpressionParser parser = spelFormulaService.getSpelParser();
 
 		EvaluationContext context = spelFormulaService.createCustomSpelContext(new SimpleRepositoryEntity(entityNodeRef),
 				new FormulaContext(spelFormulaService, itemNodeRef, values), false);
 
-		Expression exp = parser.parseExpression(SpelHelper.formatFormula(formula));
+		Expression exp = spelFormulaService.parseExpression(SpelHelper.formatFormula(formula));
 
 		return exp.getValue(context);
 
