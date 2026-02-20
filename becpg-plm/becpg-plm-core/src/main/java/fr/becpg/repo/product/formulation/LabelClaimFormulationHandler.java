@@ -14,7 +14,6 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
@@ -114,7 +113,6 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 			}
 		}
 
-		ExpressionParser parser = formulaService.getSpelParser();
 		StandardEvaluationContext context = formulaService.createEntitySpelContext(productData);
 
 		if ((productData.getLabelClaimList() != null) && !productData.getLabelClaimList().isEmpty()) {
@@ -204,7 +202,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 				}
 			}
 
-			computeClaimList(productData, parser, context);
+			computeClaimList(productData, context);
 
 		}
 		
@@ -535,7 +533,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		return labelClaim.getCharactName();
 	}
 
-	private void computeClaimList(ProductData productData, ExpressionParser parser, StandardEvaluationContext context) {
+	private void computeClaimList(ProductData productData, StandardEvaluationContext context) {
 		if (productData.getLabelClaimList() != null) {
 			for (LabelClaimListDataItem labelClaimListDataItem : productData.getLabelClaimList()) {
 				labelClaimListDataItem.setIsFormulated(false);
@@ -555,10 +553,10 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 								Matcher varFormulaMatcher = SpelHelper.formulaVarPattern.matcher(formula);
 								if (varFormulaMatcher.matches()) {
-									Expression exp = parser.parseExpression(varFormulaMatcher.group(2));
+									Expression exp = formulaService.parseExpression(varFormulaMatcher.group(2));
 									context.setVariable(varFormulaMatcher.group(1), exp.getValue(context));
 								} else {
-									Expression exp = parser.parseExpression(formula);
+									Expression exp = formulaService.parseExpression(formula);
 									Object ret = exp.getValue(context);
 									if (ret instanceof Boolean) {
 										labelClaimListDataItem.setIsClaimed((Boolean) ret);

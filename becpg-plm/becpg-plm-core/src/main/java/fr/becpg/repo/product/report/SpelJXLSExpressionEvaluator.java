@@ -8,7 +8,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jxls.expression.ExpressionEvaluator;
 import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
@@ -87,7 +86,6 @@ public class SpelJXLSExpressionEvaluator implements ExpressionEvaluator {
 			} else {
 				context = formulaService.createSpelContext(data);
 			}
-			ExpressionParser parser = formulaService.getSpelParser();
 
 			String[] formulas = SpelHelper.formatMTFormulas(expression);
 			for (String formula : formulas) {
@@ -95,11 +93,11 @@ public class SpelJXLSExpressionEvaluator implements ExpressionEvaluator {
 				Matcher varFormulaMatcher = SpelHelper.formulaVarPattern.matcher(formula);
 				if (varFormulaMatcher.matches()) {
 					logger.debug("Variable formula : " + varFormulaMatcher.group(2) + " (" + varFormulaMatcher.group(1) + ")");
-					Expression exp = parser.parseExpression(varFormulaMatcher.group(2));
+					Expression exp = formulaService.parseExpression(varFormulaMatcher.group(2));
 					context.setVariable(varFormulaMatcher.group(1), exp.getValue(context));
 				} else {
 					logger.debug("Parse formula : " + formula);
-					Expression exp = parser.parseExpression(formula);
+					Expression exp = formulaService.parseExpression(formula);
 					return exp.getValue(context);
 				}
 			}

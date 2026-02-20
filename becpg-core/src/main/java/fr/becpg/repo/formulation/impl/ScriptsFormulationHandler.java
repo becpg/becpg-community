@@ -17,7 +17,6 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import fr.becpg.model.BeCPGModel;
@@ -134,7 +133,6 @@ public class ScriptsFormulationHandler extends FormulationBaseHandler<Formulated
 
 				try {
 					if (scriptName.endsWith(".spel")) {
-						ExpressionParser parser = formulaService.getSpelParser();
 						StandardEvaluationContext context = formulaService.createEntitySpelContext(entity);
 						ContentReader reader = contentService.getReader(scriptNode, ContentModel.PROP_CONTENT);
 
@@ -142,11 +140,11 @@ public class ScriptsFormulationHandler extends FormulationBaseHandler<Formulated
 						for (String formula : formulas) {
 							Matcher varFormulaMatcher = SpelHelper.formulaVarPattern.matcher(formula);
 							if (varFormulaMatcher.matches()) {
-								Expression exp = parser.parseExpression(varFormulaMatcher.group(2));
+								Expression exp = formulaService.parseExpression(varFormulaMatcher.group(2));
 								context.setVariable(varFormulaMatcher.group(1), exp.getValue(context));
 							} else {
 
-								Expression expression = parser.parseExpression(formula);
+								Expression expression = formulaService.parseExpression(formula);
 								Object result = expression.getValue(context);
 								if (logger.isDebugEnabled()) {
 									logger.debug("Formula: " + formula);
