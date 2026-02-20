@@ -47,6 +47,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
+import fr.becpg.model.SystemState;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.activity.helper.AuditActivityHelper;
@@ -1694,6 +1696,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("FP1");
 			finishedProduct.setQty(2d);
+			finishedProduct.setState(SystemState.Valid);
 			List<CompoListDataItem> compoList = new ArrayList<>();
 
 			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
@@ -1717,7 +1720,9 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
-			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+			NodeRef nodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+			nodeService.setProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Valid.toString());
+			return nodeRef;
 
 		});
 
@@ -1733,7 +1738,9 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
-			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+			NodeRef nodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+			nodeService.setProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Valid.toString());
+			return nodeRef;
 
 		});
 
