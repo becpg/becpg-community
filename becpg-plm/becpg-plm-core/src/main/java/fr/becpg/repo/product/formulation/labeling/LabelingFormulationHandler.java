@@ -1501,13 +1501,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				Double qtyWithYield = qty;
 
-				if ((qty != null) && !DeclarationType.Group.equals(declarationType) && !labelingFormulaContext.isDoNotPropagateYield()) {
+				if ((qty != null) && !DeclarationType.Group.equals(declarationType)) {
 					qtyWithYield = BigDecimal.valueOf(qty).multiply(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION)
 							.divide(BigDecimal.valueOf(calculatedYield), LabelingFormulaContext.PRECISION).doubleValue();
 				}
 				Double volumeWithYield = volume;
 
-				if ((volume != null) && !DeclarationType.Group.equals(declarationType) && !labelingFormulaContext.isDoNotPropagateYield()) {
+				if ((volume != null) && !DeclarationType.Group.equals(declarationType)) {
 					volumeWithYield = BigDecimal.valueOf(volume).multiply(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION)
 							.divide(BigDecimal.valueOf(calculatedYield), LabelingFormulaContext.PRECISION).doubleValue();
 				}
