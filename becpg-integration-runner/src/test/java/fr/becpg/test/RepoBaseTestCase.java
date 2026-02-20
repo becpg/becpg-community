@@ -381,7 +381,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	public void waitForBatchEnd(BatchInfo batch) throws InterruptedException {
 		int j = 0;
 		
-		while(Boolean.TRUE.equals(batchQueueService.isBatchInQueue(batch)) && (j < 60)) {
+		while(!Boolean.TRUE.equals(batch.getIsCompleted()) && (j < 60)) {
 			logger.info("Wait for batch: "+ batch.getBatchId() + ", progress: " + (batch.getCurrentItem() + "/" + batch.getTotalItems()));
 			Thread.sleep(5000);
 			j++;

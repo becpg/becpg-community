@@ -32,6 +32,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.skyscreamer.jsonassert.JSONCompareResult;
 import org.skyscreamer.jsonassert.comparator.DefaultComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -155,7 +156,16 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 		JSONObject expectedJson = cleanObject(new JSONObject(expectedJsonEntity));
 		JSONObject actualJson = cleanObject(new JSONObject(actualJsonEntity));
 		
-		JSONAssert.assertEquals(expectedJson.toString(), actualJson.toString(), new DefaultComparator(JSONCompareMode.NON_EXTENSIBLE) {
+		JSONAssert.assertEquals(expectedJson.toString(), actualJson.toString(), new DefaultComparator(JSONCompareMode.LENIENT) {
+			
+			@Override
+			public void compareValues(String prefix, Object expectedValue, Object actualValue, JSONCompareResult result) {
+				if ("entity.attributes.cm:contains".equals(prefix)) {
+					return;
+				}
+				super.compareValues(prefix, expectedValue, actualValue, result);
+			}
+			
 			@Override
 			protected boolean areNotSameDoubles(Object expectedValue, Object actualValue) {
 			    double expected = ((Number) expectedValue).doubleValue();

@@ -179,6 +179,10 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 			logger.debug("Batch is running: " + batchId);
 			return true;
 		}
+		if (pausedCommands.stream().anyMatch(c -> c.getBatchId().equals(batchId))) {
+			logger.debug("Batch is paused: " + batchId);
+			return true;
+		}
 		ThreadPoolExecutor threadPoolExecutor = threadExecutorMap.get(Integer.toString(batchInfo.getPriority()));
 		if (threadPoolExecutor.getQueue().stream().map(c -> (BatchCommand<?>) c).anyMatch(c -> c.getBatchId().equals(batchId))) {
 			logger.debug("Batch is in queue: " + batchId);
