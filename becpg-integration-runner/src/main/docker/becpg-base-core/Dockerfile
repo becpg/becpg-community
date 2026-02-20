@@ -14,7 +14,8 @@ ARG USERID=33000
 
 USER root
 
-RUN curl --silent --location \
+RUN dnf update -y && dnf clean all && \
+    curl --silent --location \
       https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/${MYSQL_CONNECTOR}/mysql-connector-j-${MYSQL_CONNECTOR}.jar \
       -o $TOMCAT_DIR/lib/mysql-connector-j-${MYSQL_CONNECTOR}.jar && \
     rm $TOMCAT_DIR/lib/postgres* && \
