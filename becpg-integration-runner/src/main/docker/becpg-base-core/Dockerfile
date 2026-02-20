@@ -10,6 +10,8 @@ ENV MYSQL_CONNECTOR=${mysql.connector.version}
 ENV SUPPORT_TOOLS_VERSION=${becpg.supporttools.version}
 ENV I18_VERSION=${becpg.i18n.version}
 
+   
+## JDBC - MYSQL
 RUN dnf update -y && dnf clean all && \
     curl --silent --location \
       https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/${MYSQL_CONNECTOR}/mysql-connector-j-${MYSQL_CONNECTOR}.jar \
