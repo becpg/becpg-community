@@ -61,7 +61,8 @@ public class NutriScoreIT extends PLMBaseTestCase {
 	}
 
 	@Before
-	public void setUp() {
+	public void setUp() throws Exception {
+		super.setUp();
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			systemConfigurationService.updateConfValue("beCPG.formulation.score.nutriscore.regulatoryClass", "fr.becpg.repo.product.helper.Nutrient5C2021Helper");
 			return null;
@@ -69,7 +70,8 @@ public class NutriScoreIT extends PLMBaseTestCase {
 	}
 
 	@After
-	public void tearDown() {
+	public void tearDown() throws Exception {
+		super.tearDown();
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			systemConfigurationService.resetConfValue("beCPG.formulation.score.nutriscore.regulatoryClass");
 			return null;
@@ -104,6 +106,7 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			physicoChemList.add(new PhysicoChemListDataItem(null, 0d, null, null, null, percFruitsAndVetgsNode));
 
 			FinishedProductData finishedProductData = new FinishedProductData();
+			finishedProductData.setParentNodeRef(getTestFolderNodeRef());
 			finishedProductData.getAspects().add(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE);
 			finishedProductData.setName("Test1");
 			finishedProductData.setNutList(nutList);
@@ -156,6 +159,7 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			physicoChemList.add(new PhysicoChemListDataItem(null, 0d, null, null, null, percFruitsAndVetgsNode));
 
 			FinishedProductData finishedProductData = new FinishedProductData();
+			finishedProductData.setParentNodeRef(getTestFolderNodeRef());
 			finishedProductData.getAspects().add(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE);
 			finishedProductData.setName("Test2");
 			finishedProductData.setNutList(nutList);
@@ -209,6 +213,7 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			physicoChemList.add(new PhysicoChemListDataItem(null, 0d, null, null, null, percFruitsAndVetgsNode));
 
 			FinishedProductData finishedProductData = new FinishedProductData();
+			finishedProductData.setParentNodeRef(getTestFolderNodeRef());
 			finishedProductData.getAspects().add(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE);
 			finishedProductData.setName("Test3");
 			finishedProductData.setNutList(nutList);
