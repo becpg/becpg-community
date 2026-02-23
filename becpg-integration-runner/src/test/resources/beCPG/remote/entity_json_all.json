@@ -867,7 +867,7 @@
               "type": "bcpg:nut"
             },
             "bcpg:sort": 5,
-            "bcpg:nutListUnit": "g/100g",
+            "bcpg:nutListUnit": "mg/100g",
             "cm:name": "155432ac-e683-43ba-89b5-6a67f4cc91a2",
             "bcpg:isManualListItem": true,
             "cm:modified": "2026-01-26T15:09:11.525Z",
