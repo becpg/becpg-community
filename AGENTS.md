@@ -239,6 +239,26 @@ public Result performBusinessOperation(Input input) {
 
 ## Unit Testing and Quality Assurance
 
+### Running Tests and Hotdeploy
+
+When making code changes, use the following commands to efficiently test your modifications:
+
+1. **Compile and Hotdeploy**: To quickly compile and reload classes without restarting the server:
+   ```bash
+   ./run.sh deploy_java [module_name]
+   # Example: ./run.sh deploy_java becpg-core
+   ```
+
+2. **Run Integration Tests**: To run a specific integration test:
+   ```bash
+   ./mvnw test -pl becpg-integration-runner -Dtest=[TestClassName]
+   # Example: ./mvnw test -pl becpg-integration-runner -Dtest=NutriScoreIT
+   ```
+   Or to run all tests:
+   ```bash
+   ./run.sh test
+   ```
+
 ### Testing Standards
 1. **Prefer Integration Tests over Unit Tests**: In beCPG, majority are IT tests that require Spring context. Only use unit tests for simple cases that don't need Spring context loaded.
 
