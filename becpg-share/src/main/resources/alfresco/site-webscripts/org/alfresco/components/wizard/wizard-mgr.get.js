@@ -71,7 +71,11 @@ function main() {
         var nodeDetails = AlfrescoUtil.getNodeDetails(nodeRef, null);
         if (nodeDetails && nodeDetails.item && nodeDetails.item.node) {
             var node = nodeDetails.item.node;
-            model.readOnly = node.isLocked || !(node.permissions && node.permissions.user && node.permissions.user["Write"]);
+            if (model.skipSecurityRules) {
+                model.readOnly = node.isLocked;
+            } else {
+                model.readOnly = node.isLocked || !(node.permissions && node.permissions.user && node.permissions.user["Write"]);
+            }
         }
     }
     
