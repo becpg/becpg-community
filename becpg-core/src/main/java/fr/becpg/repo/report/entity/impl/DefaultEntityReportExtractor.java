@@ -406,9 +406,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				if (name.startsWith(REPORT_LOGO_ID) || name.startsWith(I18NUtil.getMessage("report.logo.fileName.prefix", Locale.getDefault()))) {
 					imgId = REPORT_LOGO_ID;
 				}
-				if (!context.getExtractedImages().contains(imgNodeRef)) {
-					context.getExtractedImages().add(imgNodeRef);
-					extractImage(entityNodeRef, imgNodeRef, imgId, imgsElt, context, extratAttributes);
+				if (extractImageInternal(entityNodeRef, imgNodeRef, imgId, imgsElt, context, extratAttributes)) {
 					cnt++;
 				}
 			}
@@ -421,11 +419,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				List<NodeRef> imgNodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(entityNodeRef,
 						expressionService.extractExpr(entityNodeRef, path));
 				for (NodeRef imgNodeRef : imgNodeRefs) {
-					if (!context.getExtractedImages().contains(imgNodeRef)) {
-						context.getExtractedImages().add(imgNodeRef);
-						String nodePath = nodeService.getPath(imgNodeRef).toPrefixString(namespaceService).replace(entityPath, "");
-						extractImage(entityNodeRef, imgNodeRef, nodePath, imgsElt, context, extratAttributes);
-					}
+					String nodePath = nodeService.getPath(imgNodeRef).toPrefixString(namespaceService).replace(entityPath, "");
+					extractImageInternal(entityNodeRef, imgNodeRef, nodePath, imgsElt, context, extratAttributes);
 				}
 			}
 		}
@@ -508,44 +503,52 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 */
 	protected void extractImage(NodeRef entityNodeRef, NodeRef imgNodeRef, String imgId, Element imgsElt, DefaultExtractorContext context,
 			Map<String, String> extratAttributes) {
+		extractImageInternal(entityNodeRef, imgNodeRef, imgId, imgsElt, context, extratAttributes);
+	}
+
+	private boolean extractImageInternal(NodeRef entityNodeRef, NodeRef imgNodeRef, String imgId, Element imgsElt, DefaultExtractorContext context,
+			Map<String, String> extratAttributes) {
 
 		if (ApplicationModel.TYPE_FILELINK.equals(nodeService.getType(imgNodeRef))) {
 			imgNodeRef = (NodeRef) nodeService.getProperty(imgNodeRef, ContentModel.PROP_LINK_DESTINATION);
 		}
 		
 		if (imgNodeRef != null && contentService.getReader(imgNodeRef, ContentModel.PROP_CONTENT) != null) {
-			if (!context.getExtractedImages().contains(imgNodeRef)) {
-				context.getExtractedImages().add(imgNodeRef);
-				EntityImageInfo imgInfo = new EntityImageInfo(imgId, imgNodeRef);
-				imgInfo.setName((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_NAME));
-				imgInfo.setTitle((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
-				imgInfo.setDescription((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_DESCRIPTION));
-
-				Element imgElt = imgsElt.addElement(TAG_IMAGE);
-				if (entityNodeRef != null) {
-					imgElt.addAttribute(ATTR_ENTITY_NODEREF, entityNodeRef.toString());
-					imgElt.addAttribute(ATTR_ENTITY_TYPE, nodeService.getType(entityNodeRef).getLocalName());
-					imgElt.addAttribute(ATTR_ENTITY_NAME,
-							XMLTextHelper.writeAttribute((String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME)));
-					if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_CODE)) {
-						imgElt.addAttribute(ATTR_ENTITY_CODE,
-								XMLTextHelper.writeAttribute((String) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE)));
-					}
-				}
-				imgElt.addAttribute(ATTR_IMAGE_ID, imgId);
-				imgElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), XMLTextHelper.writeAttribute(imgInfo.getName()));
-				imgElt.addAttribute(ContentModel.PROP_TITLE.getLocalName(), XMLTextHelper.writeAttribute(imgInfo.getTitle()));
-
-				if (extratAttributes != null) {
-					for (Map.Entry<String, String> extratAttribute : extratAttributes.entrySet()) {
-						imgElt.addAttribute(extratAttribute.getKey(), extratAttribute.getValue());
-					}
-				}
-
-				addCDATA(imgElt, ContentModel.PROP_DESCRIPTION, imgInfo.getDescription(), null);
-				context.getReportData().getImages().add(imgInfo);
+			if (context.getExtractedImages().contains(imgNodeRef)) {
+				return false;
 			}
+			context.getExtractedImages().add(imgNodeRef);
+			EntityImageInfo imgInfo = new EntityImageInfo(imgId, imgNodeRef);
+			imgInfo.setName((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_NAME));
+			imgInfo.setTitle((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
+			imgInfo.setDescription((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_DESCRIPTION));
+
+			Element imgElt = imgsElt.addElement(TAG_IMAGE);
+			if (entityNodeRef != null) {
+				imgElt.addAttribute(ATTR_ENTITY_NODEREF, entityNodeRef.toString());
+				imgElt.addAttribute(ATTR_ENTITY_TYPE, nodeService.getType(entityNodeRef).getLocalName());
+				imgElt.addAttribute(ATTR_ENTITY_NAME,
+						XMLTextHelper.writeAttribute((String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME)));
+				if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_CODE)) {
+					imgElt.addAttribute(ATTR_ENTITY_CODE,
+							XMLTextHelper.writeAttribute((String) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE)));
+				}
+			}
+			imgElt.addAttribute(ATTR_IMAGE_ID, imgId);
+			imgElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), XMLTextHelper.writeAttribute(imgInfo.getName()));
+			imgElt.addAttribute(ContentModel.PROP_TITLE.getLocalName(), XMLTextHelper.writeAttribute(imgInfo.getTitle()));
+
+			if (extratAttributes != null) {
+				for (Map.Entry<String, String> extratAttribute : extratAttributes.entrySet()) {
+					imgElt.addAttribute(extratAttribute.getKey(), extratAttribute.getValue());
+				}
+			}
+
+			addCDATA(imgElt, ContentModel.PROP_DESCRIPTION, imgInfo.getDescription(), null);
+			context.getReportData().getImages().add(imgInfo);
+			return true;
 		}
+		return false;
 	}
 
 	/**
@@ -561,6 +564,10 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			imgNodeRef = (NodeRef) nodeService.getProperty(imgNodeRef, ContentModel.PROP_LINK_DESTINATION);
 		}
 		if (imgNodeRef != null && contentService.getReader(imgNodeRef, ContentModel.PROP_CONTENT) != null) {
+			if (context.getExtractedImages().contains(imgNodeRef)) {
+				return;
+			}
+			context.getExtractedImages().add(imgNodeRef);
 			EntityImageInfo imgInfo = new EntityImageInfo(imgId, imgNodeRef);
 			imgInfo.setName((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_NAME));
 			imgInfo.setTitle((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
