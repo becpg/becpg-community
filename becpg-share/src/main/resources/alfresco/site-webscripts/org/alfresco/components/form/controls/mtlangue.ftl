@@ -14,7 +14,7 @@
       <div class="viewmode-field">
          <span class="viewmode-label">${field.label?html}:</span>
          <#if fieldValue?string == "">
-            <span class="viewmode-value">${msg("form.control.novalue")}</span></span>
+            <span class="viewmode-value"></span></span>
          <#else>
            <span class="viewmode-value">
 			   <#list values as value>
