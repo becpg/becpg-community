@@ -207,7 +207,7 @@ public class EntityActivityCleaner {
                             } else if (activityType == ActivityType.Content) {
                                 String contentNodeRef = extractContentNode(activity.getActivityData());
                                 if (contentNodeRef != null) {
-                                    String dayKey = contentNodeRef + "|" + toDayKey(created);
+                                    String dayKey = contentNodeRef + "|" + EntityActivityCleaner.this.toDayKey(created);
                                     if (!contentSet.add(dayKey)) {
                                         toDelete = true;
                                     }
@@ -215,7 +215,23 @@ public class EntityActivityCleaner {
                             } else if (activityType == ActivityType.Export) {
                                 String exportTitle = extractExportTitle(activity.getActivityData());
                                 if (exportTitle != null) {
-                                    String dayKey = exportTitle + "|" + toDayKey(created);
+                                    String dayKey = exportTitle + "|" + EntityActivityCleaner.this.toDayKey(created);
+                                    if (!contentSet.add(dayKey)) {
+                                        toDelete = true;
+                                    }
+                                }
+                            } else if (activityType == ActivityType.Datalist) {
+                                String datalistClassName = null;
+
+                                try {
+                                	JsonData data = JsonHelper.read(activity.getActivityData());
+                                    datalistClassName = data.get(EntityActivityService.PROP_CLASSNAME).getString(null);
+                                } catch (JsonException e) {
+                                    logger.error("Problem parsing activity data", e);
+                                }
+
+                                if (datalistClassName != null) {
+                                    String dayKey = datalistClassName + "|" + EntityActivityCleaner.this.toDayKey(created);
                                     if (!contentSet.add(dayKey)) {
                                         toDelete = true;
                                     }
@@ -357,6 +373,12 @@ public class EntityActivityCleaner {
 
     private void deleteAuditActivity(ActivityListDataItem lastActivity) {
         beCPGAuditService.deleteAuditEntries(AuditType.ACTIVITY, lastActivity.getId(), lastActivity.getId() + 1);
+    }
+
+    private String toDayKey(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal.get(Calendar.YEAR) + "-" + cal.get(Calendar.DAY_OF_YEAR);
     }
 
     private String extractContentNode(String alData) {
