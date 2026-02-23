@@ -206,13 +206,19 @@ public class EntityActivityCleaner {
                                 toDelete = true;
                             } else if (activityType == ActivityType.Content) {
                                 String contentNodeRef = extractContentNode(activity.getActivityData());
-                                if (contentNodeRef != null && !contentSet.add(contentNodeRef)) {
-                                    toDelete = true;
+                                if (contentNodeRef != null) {
+                                    String dayKey = contentNodeRef + "|" + toDayKey(created);
+                                    if (!contentSet.add(dayKey)) {
+                                        toDelete = true;
+                                    }
                                 }
                             } else if (activityType == ActivityType.Export) {
                                 String exportTitle = extractExportTitle(activity.getActivityData());
-                                if (exportTitle != null && !contentSet.add(exportTitle)) {
-                                    toDelete = true;
+                                if (exportTitle != null) {
+                                    String dayKey = exportTitle + "|" + toDayKey(created);
+                                    if (!contentSet.add(dayKey)) {
+                                        toDelete = true;
+                                    }
                                 }
                             } else {
                                 activitiesByType.computeIfAbsent(activityType, k -> new ArrayList<>()).add(activity);

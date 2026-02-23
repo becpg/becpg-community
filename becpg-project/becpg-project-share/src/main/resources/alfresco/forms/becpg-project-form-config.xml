@@ -3070,7 +3070,6 @@
 					<field id="pjt:calHolydayDates"  help-id="becpg.forms.help.calHolydayDates" />
 					<field id="pjt:calNonWorkingDays" >
                         <control template="/org/alfresco/components/form/controls/checkboxmany.ftl" >
-                            <control-param name="defaultValue">1,7</control-param>
                         </control>
                     </field>
 				</appearance>
@@ -3115,7 +3114,6 @@
                     <field id="pjt:calHolydayDates"  help-id="becpg.forms.help.calHolydayDates" />
                     <field id="pjt:calNonWorkingDays" >
                         <control template="/org/alfresco/components/form/controls/checkboxmany.ftl" >
-                            <control-param name="defaultValue">1,7</control-param>
                         </control>
                     </field>
                 </appearance>
