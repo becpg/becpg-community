@@ -163,7 +163,7 @@
 	            <span class="incomplete-warning"><img class="icon16" src="${url.context}/res/components/form/images/warning-16.png" title="${msg("form.field.incomplete")}" /><span>
 	         </#if>
 	         <span class="viewmode-label">${currLabel?html}:</span>
-	         <span class="viewmode-value"><#if currValue?is_number>${currValue?string("${format}")}<#elseif field.value == "">${msg("form.control.novalue")}<#else>${currValue?html}</#if></span>
+	         <span class="viewmode-value"><#if currValue?is_number>${currValue?string("${format}")}<#elseif field.value != "">${currValue?html}</#if></span>
 	      </div>
 	   <#else>
 	      <label id="${fieldHtmlId}-label"  for="${fieldHtmlId}">${currLabel?html}:<#if field.mandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>
