@@ -140,7 +140,7 @@ public class CalendarServiceImpl implements CalendarService {
 				if (part.contains("-")) {
 					parseDateRange(holidays, part);
 				} else if (part.length() == 5) { // Format MM/dd 
-					holidays.add(LocalDate.parse(part, SHORT_FORMATTER).withYear(targetYear));
+					holidays.add(java.time.MonthDay.parse(part, SHORT_FORMATTER).atYear(targetYear));
 				} else { // Format yyyy/MM/dd
 					holidays.add(LocalDate.parse(part, FORMATTER));
 				}
