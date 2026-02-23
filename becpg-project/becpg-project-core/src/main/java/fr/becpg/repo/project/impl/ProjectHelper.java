@@ -419,17 +419,9 @@ public class ProjectHelper {
 		int duration = 1;
 		Calendar startDateCal = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
 		startDateCal.setTime(startDate);
-		startDateCal.set(Calendar.HOUR_OF_DAY, 0);
-		startDateCal.set(Calendar.MINUTE, 0);
-		startDateCal.set(Calendar.SECOND, 0);
-		startDateCal.set(Calendar.MILLISECOND, 0);
 		
 		Calendar endDateCal = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
 		endDateCal.setTime(endDate);
-		endDateCal.set(Calendar.HOUR_OF_DAY, 0);
-		endDateCal.set(Calendar.MINUTE, 0);
-		endDateCal.set(Calendar.SECOND, 0);
-		endDateCal.set(Calendar.MILLISECOND, 0);
 		
 		while (startDateCal.before(endDateCal)) {
 			if (isWorkingDate(startDateCal,provider)) {
