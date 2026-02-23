@@ -63,7 +63,7 @@
          <span class="viewmode-value">${valueToShow?html}</span>
       </div>
    <#else>
-       <label>${field.label?html}:<#if field.mandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>
+       <label for="${fieldHtmlId}">${field.label?html}:<#if field.mandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>
        <input id="${fieldHtmlId}" type="hidden" name="${field.name}" <#if !field.control.params.isSearch??> value="${fieldValue?string}" </#if> />
        
        <#if field.control.params.options?? && field.control.params.options != "">
