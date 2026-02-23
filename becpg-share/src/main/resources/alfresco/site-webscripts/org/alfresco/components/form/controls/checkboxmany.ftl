@@ -39,7 +39,7 @@
          </#if>
          <span class="viewmode-label">${field.label?html}:</span>
          <#if fieldValue?string == "">
-            <#assign valueToShow=msg("form.control.novalue")>
+            <#assign valueToShow="">
          <#else>
             <#if field.control.params.options?? && field.control.params.options != "" &&
                  field.control.params.options?index_of(labelSeparator) != -1>
