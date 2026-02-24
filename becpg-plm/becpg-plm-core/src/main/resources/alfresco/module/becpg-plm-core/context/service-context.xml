@@ -237,6 +237,7 @@
 		<property name="entityDictionaryService" ref="entityDictionaryService"/>
 		<property name="namespaceService" ref="namespaceService"/>
 		<property name="entityService" ref="entityService"/>
+		<property name="commentService" ref="commentService"/>
 	</bean>
 	
 	<bean id="webscript.fr.becpg.regulatory.regulatoryCheck.get" class="fr.becpg.repo.web.scripts.regulatory.RegulatoryWebScript" parent="webscript">

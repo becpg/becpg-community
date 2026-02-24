@@ -28,6 +28,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.query.PagingRequest;
+import org.alfresco.query.PagingResults;
+import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -94,6 +97,12 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	private NamespaceService namespaceService;
 
 	private EntityService entityService;
+	
+	private CommentService commentService;
+	
+	public void setCommentService(CommentService commentService) {
+		this.commentService = commentService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>entityService</code>.</p>
@@ -169,7 +178,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 
 	/**
 	 * <p>Setter for the field <code>supplierPortalService</code>.</p>
-	 *
+	 *taskListNodeRef
 	 * @param supplierPortalService a {@link fr.becpg.repo.supplier.SupplierPortalService} object
 	 */
 	public void setSupplierPortalService(SupplierPortalService supplierPortalService) {
@@ -256,14 +265,17 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 										PermissionService.GROUP_PREFIX + supplierGroup);
 							}
 
+							PagingResults<NodeRef> comments = resources.isEmpty() ? null : commentService.listComments(entityNodeRef, new PagingRequest(5000, null));
+
 							for (NodeRef resourceRef : resources) {
+								String resourceUserName = (String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME);
 								permissionService.setPermission(task.getNodeRef(),
-										(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME), PermissionService.CONTRIBUTOR,
+										resourceUserName, PermissionService.CONTRIBUTOR,
 										true);
 
 								for (DeliverableListDataItem deliverable : ProjectHelper.getDeliverables(project, task.getNodeRef())) {
 									permissionService.setPermission(deliverable.getNodeRef(),
-											(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME), PermissionService.CONTRIBUTOR,
+											resourceUserName, PermissionService.CONTRIBUTOR,
 											true);
 									if ((deliverable.getContent() != null)
 											&& ((deliverable.getScriptOrder() == null)
@@ -281,6 +293,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 									}
 
 								}
+								projectService.disableCommentsEditionForResource(comments.getPage(), resourceUserName);
 							}
 						} else {
 							logger.warn("No one is assign to task");
