@@ -440,4 +440,7 @@ public final class BeCPGModel {
 	public static final QName ASPECT_BATCH_ERROR = QName.createQName(BECPG_URI, "batchErrorAspect");
 	public static final QName PROP_BATCH_ERROR_IDS = QName.createQName(BECPG_URI, "batchErrorIds");
 
+	public static final QName ASPECT_RESTRICTED_ACCESS = QName.createQName(BECPG_URI, "restrictedAccessAspect");
+	public static final QName PROP_RESTRICTED_ACCESS = QName.createQName(BECPG_URI, "restrictedAccess");
+	
 }

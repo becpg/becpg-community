@@ -3,12 +3,15 @@ package fr.becpg.repo.security.policy;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
+import org.alfresco.repo.node.NodeServicePolicies.OnAddAspectPolicy;
 import org.alfresco.repo.node.NodeServicePolicies.OnCreateNodePolicy;
 import org.alfresco.repo.node.NodeServicePolicies.OnDeleteNodePolicy;
+import org.alfresco.repo.node.NodeServicePolicies.OnRemoveAspectPolicy;
 import org.alfresco.repo.node.NodeServicePolicies.OnUpdatePropertiesPolicy;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -21,6 +24,7 @@ import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SecurityModel;
+import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.security.SecurityService;
@@ -33,7 +37,7 @@ import fr.becpg.repo.security.SecurityService;
  */
 public class PermissionPolicy extends AbstractBeCPGPolicy
 		implements NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnCreateAssociationPolicy,
-		OnCreateNodePolicy, OnDeleteNodePolicy, OnUpdatePropertiesPolicy {
+		OnCreateNodePolicy, OnDeleteNodePolicy, OnUpdatePropertiesPolicy, OnAddAspectPolicy, OnRemoveAspectPolicy {
 	
 	private static final String KEY_UPDATE_READ_PERMISSIONS = "KEY_UPDATE_READ_PERMISSIONS";
 
@@ -88,6 +92,13 @@ public class PermissionPolicy extends AbstractBeCPGPolicy
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, SecurityModel.TYPE_ACL_ENTRY,
 				new JavaBehaviour(this, "onUpdateProperties"));
 		
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.ASPECT_RESTRICTED_ACCESS,
+				new JavaBehaviour(this, "onUpdateRestrictedAccess"));
+		
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, BeCPGModel.ASPECT_RESTRICTED_ACCESS,
+				new JavaBehaviour(this, "onAddAspect"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnRemoveAspectPolicy.QNAME, BeCPGModel.ASPECT_RESTRICTED_ACCESS,
+				new JavaBehaviour(this, "onRemoveAspect"));
 	}
 
 	/** {@inheritDoc} */
@@ -116,7 +127,6 @@ public class PermissionPolicy extends AbstractBeCPGPolicy
 		}
 		return true;
 	}
-	
 
 	private void updatePermissions(NodeRef nodeRef, String permission) {
 		if (nodeService.exists(nodeRef)) {
@@ -162,7 +172,7 @@ public class PermissionPolicy extends AbstractBeCPGPolicy
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		securityService.refreshAcls();
 	}
-
+	
 	/** {@inheritDoc} */
 	@Override
 	public void onDeleteNode(ChildAssociationRef childAssocRef, boolean isNodeArchived) {
@@ -175,4 +185,30 @@ public class PermissionPolicy extends AbstractBeCPGPolicy
 		securityService.refreshAcls();
 	}
 
+	@Override
+	public void onAddAspect(NodeRef nodeRef, QName aspectTypeQName) {
+		if (aspectTypeQName.equals(BeCPGModel.ASPECT_RESTRICTED_ACCESS) && Boolean.TRUE.equals(nodeService.getProperty(nodeRef, BeCPGModel.PROP_RESTRICTED_ACCESS))) {
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString(), PermissionService.READ, false);
+		}
+	}
+	
+	@Override
+    public void onRemoveAspect(NodeRef nodeRef, QName aspectTypeQName) {
+		if (aspectTypeQName.equals(BeCPGModel.ASPECT_RESTRICTED_ACCESS)) {
+			permissionService.deletePermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString(), PermissionService.READ);
+		}
+    }
+
+	public void onUpdateRestrictedAccess(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+		Boolean beforeRestrictedAccess = (Boolean) before.get(BeCPGModel.PROP_RESTRICTED_ACCESS);
+		Boolean afterRestrictedAccess = (Boolean) after.get(BeCPGModel.PROP_RESTRICTED_ACCESS);
+		if (Objects.equals(beforeRestrictedAccess, afterRestrictedAccess)) {
+			return;
+		}
+		if (Boolean.TRUE.equals(afterRestrictedAccess)) {
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString(), PermissionService.READ, false);
+		} else {
+			permissionService.deletePermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString(), PermissionService.READ);
+		}
+	}
 }

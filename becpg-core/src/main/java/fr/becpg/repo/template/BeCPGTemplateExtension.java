@@ -40,4 +40,8 @@ public class BeCPGTemplateExtension extends BaseTemplateProcessorExtension {
 		}
 		return true;
 	}
+	
+	public boolean isCurrentUserExternal() {
+		return AuthorityHelper.isCurrentUserExternal();
+	}
 }

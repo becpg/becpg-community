@@ -11,10 +11,16 @@ function updateComment(node)
    {
       title = json.get("title");
    }
+   var restricted = "";
+   if (json.has("restricted"))
+   {
+      restricted = json.get("restricted");
+   }
    var content = json.get("content");
    
    // update the topic title
    node.properties.title = title;
+   node.properties["bcpg:restrictedAccess"] = restricted;
    node.mimetype = "text/html";
    node.content = content;
    node.save();
