@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.model.ForumModel;
 import org.alfresco.repo.cache.SimpleCache;
 import org.alfresco.repo.download.DownloadModel;
 import org.alfresco.repo.ownable.impl.OwnableServiceImpl;
@@ -124,11 +125,16 @@ public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 	public String getOwner(NodeRef nodeRef) {
 		
 		// case of ExternalUser
-		String currentUser = AuthenticationUtil.getRunAsUser();
-		if (currentUser != null && AuthorityHelper.isExternalUser(currentUser) && nodeService.hasAspect(nodeRef, ContentModel.ASPECT_AUDITABLE)) {
-			String creator = DefaultTypeConverter.INSTANCE.convert(String.class, nodeService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
-			if (AuthorityHelper.isExternalUser(creator)) {
-				return currentUser;
+		String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
+		if (currentUser != null && AuthorityHelper.isExternalUser(currentUser)) {
+			if (nodeService.getType(nodeRef).equals(ForumModel.TYPE_POST)) {
+				return OwnableService.NO_OWNER;
+			}
+			if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_AUDITABLE)) {
+				String creator = DefaultTypeConverter.INSTANCE.convert(String.class, nodeService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
+				if (AuthorityHelper.isExternalUser(creator)) {
+					return currentUser;
+				}
 			}
 		}
 		
@@ -147,14 +153,15 @@ public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 				if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_AUDITABLE)) {
 					userName = DefaultTypeConverter.INSTANCE.convert(String.class, nodeService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
 				}
-
-				if (disableOwner && !URI_TO_EXCLUDES.contains(type.getNamespaceURI())
-						&& !entityDictionaryService.isSubClass(type, ContentModel.TYPE_PERSON)) {
-
-					if (!((userName != null) && AuthorityHelper.isExternalUser(userName))) {
+				if (disableOwner) {
+					if (!URI_TO_EXCLUDES.contains(type.getNamespaceURI())
+							&& !entityDictionaryService.isSubClass(type, ContentModel.TYPE_PERSON)) {
+						if (userName == null || !AuthorityHelper.isExternalUser(userName)) {
+							userName = OwnableService.NO_OWNER;
+						}
+					} else if (userName != null && AuthorityHelper.isExternalUser(userName) && type.equals(ForumModel.TYPE_POST)) {
 						userName = OwnableService.NO_OWNER;
 					}
-
 				}
 			}
 			localCacheOwner(nodeRef, userName);

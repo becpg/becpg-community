@@ -105,6 +105,7 @@ function main() {
 			    	 nodeRef :  (page.url.args.nodeRef != null) ? page.url.args.nodeRef : "",
 			         siteId : (page.url.templateArgs.site != null) ? page.url.templateArgs.site : "",
 			         maxItems : 10,
+					 externalUser: user.capabilities["isbeCPGExternalUser"] !=null && user.capabilities["isbeCPGExternalUser"] == true,
 			         editorConfig : {
 			            menu: {},
 			            toolbar: "bold italic underline | bullist numlist | forecolor backcolor | undo redo removeformat",

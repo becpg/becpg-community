@@ -179,4 +179,15 @@ public interface ProjectService {
 	 */
 	TaskListDataItem insertNewTask(ProjectData project, List<NodeRef> previousTasks);
 
+	/**
+	 * Updates permissions on comments so that all existing authorities
+	 * are set to Consumer and parent permission inheritance is disabled.
+	 * Skips the update if permissions are already correctly set.
+	 * If setAllConsumer is false, it clears all direct permissions and re-enables parent permission inheritance.
+	 *
+	 * @param comments the list of comment NodeRefs to update permissions for
+	 * @param resourceUserName the resource user name to update comments permissions for
+	 */
+	void disableCommentsEditionForResource(List<NodeRef> comments, String resourceUserName);
+
 }

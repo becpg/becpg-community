@@ -94,6 +94,8 @@
           * @type object
           */
          activity: null,
+		 
+		 externalUser: null,
 
          /**
           * Config parameters to pass into the editor.
@@ -269,7 +271,7 @@
        */
       setupAddCommentForm: function CommentsList_setupAddCommentForm()
       {
-         Dom.get(this.id + '-add-form-container').innerHTML = this.formMarkup(this.id + '-add', Alfresco.constants.USERNAME, null);
+         Dom.get(this.id + '-add-form-container').innerHTML = this.formMarkup(this.id + '-add', Alfresco.constants.USERNAME, null, this.options.externalUser);
          this.widgets.addCommentEditor = this.setupCommentForm(this.id + '-add', this.options.nodeRef, false).editor;
       },
 
@@ -405,6 +407,10 @@
          {
             fn: function(config, obj)
             {
+               var restrictedAccessCheckbox = Dom.get(rowId + "-restricted-access");
+			   if (restrictedAccessCheckbox) {
+	               config.dataObj.restricted = restrictedAccessCheckbox ? restrictedAccessCheckbox.checked : false;
+			   }
                if (this.options.activity)
                {
                   config.dataObj.itemTitle = this.options.activity.itemTitle;
@@ -478,12 +484,14 @@
       {
          // todo: Move this to use js templating when we have it
          var data = oRecord.getData(),
-            html = '',
-            rowId = this.id + '-' + oRecord.getId(),
-            permissions = data.permissions;
+             html = '',
+             rowId = this.id + '-' + oRecord.getId(),
+             permissions = data.permissions,
+             restrictedAccess = data.node && data.node.properties ? data.node.properties["bcpg:restrictedAccess"] : data.restricted,
+             isRestricted = restrictedAccess === true || restrictedAccess === "true";
 
          // Display comment
-         html += '<div id="' + rowId + '-comment-container" class="comment-details">';
+         html += '<div id="' + rowId + '-comment-container" class="comment-details' + (isRestricted ? ' comment-restricted' : '') + '">';
          html += '   <div class="icon">' + $userAvatar(data.author.username) + '</div>';
          html += '   <div class="details">';
          html += '      <span class="info">';
@@ -528,8 +536,9 @@
        * @param rowId {string} Uniqiue dom id
        * @param userName {string} The username whose avatar should be displayed
        * @param comment {string} The actual comment
+       * @param externalUser {boolean} Flag indicating if the user is an external user
        */
-      formMarkup: function CommentsList_formMarkup(rowId, userName, comment)
+      formMarkup: function CommentsList_formMarkup(rowId, userName, comment, externalUser)
       {
          // todo: Move this to use js templating when we have it
          var html = '';
@@ -542,11 +551,15 @@
             html += '      <input type="hidden" name="site" value="' + encodeURIComponent(this.options.siteId) + '" />';
          }
          html += '      <textarea name="content" id="' + rowId + '-content" style="width: 100%">' + (comment || '') + '</textarea>';
+         if (!externalUser) {
+			 html += '      <div class="comment-restricted-option" title="' + this.msg("label.restrictedaccess.description") + '">';
+	         html += '         <label for="' + rowId + '-restricted-access"><input type="checkbox" name="restricted" style="position: static; opacity: 1;" id="' + rowId + '-restricted-access" value="true" />' + this.msg("label.restrictedaccess") + '</label>';
+	         html += '      </div>';
+		 }
          html += '      <div id="' + rowId + '-help" class="help-text hidden">' + this.msg("link.help") + '</div>';
          html += '      <div class="buttons">';
          html += '         <input type="submit" id="' + rowId + '-submit" value=""/>';
          html += '         <input type="reset"  id="' + rowId + '-cancel" value="" />';
-         html += '         <a href="#" name=".onHelpLinkClick" title="' + this.msg("link.showHelp") + '" class="' + this.id + ' help-link" style="float:right;">&nbsp;&nbsp;&nbsp;</a>';
          html += '      </div>';
          html += '   </form>';
          html += '   <div class="clear"></div>';
@@ -675,7 +688,14 @@
          Dom.removeClass(formContainer, "hidden");
 
          // Create form markup inside the absolute positioned div
-         this.widgets.editFormWrapper.innerHTML = this.formMarkup(rowId, comment.author.username, comment.content);
+         this.widgets.editFormWrapper.innerHTML = this.formMarkup(rowId, comment.author.username, comment.content, this.options.externalUser);
+
+         var restrictedAccessCheckbox = Dom.get(rowId + "-restricted-access"),
+            restrictedAccess = comment.node && comment.node.properties ? comment.node.properties["bcpg:restrictedAccess"] : comment.restricted;
+         if (restrictedAccessCheckbox)
+         {
+            restrictedAccessCheckbox.checked = restrictedAccess === true || restrictedAccess === "true";
+         }
 
          // Initialize form with editor
          this.widgets.editCommentEditor = this.setupCommentForm(rowId, comment.nodeRef, true).editor;
