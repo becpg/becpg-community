@@ -17,6 +17,8 @@
    This template renders a comment.
 -->
 <#macro commentJSON item parent>
+<#assign isExternalUser=bTemplate.isCurrentUserExternal()>                                         
+<#assign isExternalUserAndNotCreator=isExternalUser && person.properties["cm:userName"] != item.node.properties["cm:creator"]>                                         
 <#escape x as jsonUtils.encodeJSONString(x)>
 {
    "url": "api/comment/node/${item.node.nodeRef?replace('://','/')}",
@@ -24,6 +26,8 @@
    "name": "${item.node.properties.name!''}",
    "title": "${item.node.properties.title!''}",
    "content": "${stringUtils.stripUnsafeHTML(item.node.content)}",
+   "restricted": ${(item.node.properties["bcpg:restrictedAccess"]!false)?string},
+   "isExternalUser": ${isExternalUser?string},
    <#if item.author??>
    <@renderPerson person=item.author fieldName="author" />
    <#else>
@@ -43,8 +47,8 @@
       "edit": false,
       "delete": false
    <#else>
-      "edit": ${(item.canEditComment && (!bTemplate.isCurrentUserExternal() || person.properties["cm:userName"] == item.node.properties["cm:creator"]))?string},
-      "delete": ${item.node.hasPermission("Delete")?string}
+      "edit": ${(item.canEditComment && !isExternalUserAndNotCreator)?string},
+      "delete": ${(item.node.hasPermission("Delete") && !isExternalUserAndNotCreator)?string}
    </#if>
    }
 }

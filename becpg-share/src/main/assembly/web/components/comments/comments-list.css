@@ -22,6 +22,16 @@
    width: 70%;
 }
 
+.comment-restricted-option {
+	margin-top: 0.5em;
+}
+
+.comment-restricted-option label {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
 .comments-list .icon
 {
    float: left;
@@ -34,7 +44,7 @@
 .comments-list .details
 {
    float: right;
-   width: 83%;
+   width: 75%;
 }
 
 .comments-list .details .info
@@ -134,11 +144,17 @@ div.comment-content
    padding: 0.5em 1em 0.25em;
 }
 
+.comments-list .comment-details.comment-restricted
+{
+   border-left: 2px solid #d32f2f;
+   box-sizing: border-box;
+}
+
 .comments-list .comment-form
 {
    padding: 1em;
    margin-bottom: 1em;
-   height: 19em;
+   height: 20em;
 }
 
 .comments-list .comment-form h2
