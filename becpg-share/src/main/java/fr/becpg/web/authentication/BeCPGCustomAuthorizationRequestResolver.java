@@ -30,7 +30,7 @@ public class BeCPGCustomAuthorizationRequestResolver implements OAuth2Authorizat
      * @param repo a {@link org.springframework.security.oauth2.client.registration.ClientRegistrationRepository} object
      * @param authorizationRequestBaseUri a {@link java.lang.String} object
      * @param aimsConfig a {@link org.alfresco.web.site.servlet.config.AIMSConfig} object
-     * @param kcIdpHint a {@link java.lang.String} object
+     * @param specificReauthIdcId a {@link java.lang.String} object
      */
     public BeCPGCustomAuthorizationRequestResolver(ClientRegistrationRepository repo, String authorizationRequestBaseUri,
                                               AIMSConfig aimsConfig, String specificReauthIdcId)

@@ -49,6 +49,22 @@ import fr.becpg.repo.system.SystemConfigurationService;
 public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServicePlugin {
 
 	@Autowired
+	/**
+	 * <p>Constructor for ProductCompareEntityServicePlugin.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 * @param packagingHelper a {@link fr.becpg.repo.product.formulation.PackagingHelper} object
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 * @param attributeExtractorService a {@link fr.becpg.repo.helper.AttributeExtractorService} object
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object
+	 * @param multiLevelDataListService a {@link fr.becpg.repo.entity.datalist.MultiLevelDataListService} object
+	 * @param fileFolderService a {@link org.alfresco.service.cmr.model.FileFolderService} object
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 */
 	public ProductCompareEntityServicePlugin(
 			@Qualifier("alfrescoRepository") AlfrescoRepository<BeCPGDataObject> alfrescoRepository,
 			@Qualifier("packagingHelper") PackagingHelper packagingHelper,

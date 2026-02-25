@@ -60,6 +60,7 @@ public class SystemConfigurationServiceImpl implements SystemConfigurationServic
 	    return nullableString.orElse(null);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public List<String> listValue(String propKey) {
 	    return beCPGCacheService.getFromCache(CACHE_KEY, propKey + "_asList", () -> {

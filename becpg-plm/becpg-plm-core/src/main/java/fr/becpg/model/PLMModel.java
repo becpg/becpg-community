@@ -463,6 +463,7 @@ public interface PLMModel {
 	QName PROP_LCA_PONDERATION = QName.createQName(BeCPGModel.BECPG_URI, "lcaPonderation");
 	/** Constant <code>PROP_LCA_CODE</code> */
 	QName PROP_LCA_CODE = QName.createQName(BeCPGModel.BECPG_URI, "lcaCode");
+	/** Constant <code>PROP_LCA_LIST_MAXI</code> */
 	QName PROP_LCA_LIST_MAXI = QName.createQName(BeCPGModel.BECPG_URI, "lcaListMaxi");
 
 	// ing

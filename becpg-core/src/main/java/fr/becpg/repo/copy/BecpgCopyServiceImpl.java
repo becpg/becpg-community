@@ -117,6 +117,11 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	        super();
 	    }
 	    
+	    /**
+	     * <p>Setter for the field <code>copyRestrictionService</code>.</p>
+	     *
+	     * @param copyRestrictionService a {@link fr.becpg.repo.copy.CopyRestrictionService} object
+	     */
 	    public void setCopyRestrictionService(CopyRestrictionService copyRestrictionService) {
 			this.copyRestrictionService = copyRestrictionService;
 		}

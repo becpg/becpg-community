@@ -146,10 +146,20 @@ public class RegulatoryContext {
 		return product.getRegulatoryMode();
 	}
 	
+	/**
+	 * <p>Getter for the field <code>regulatoryRecipeId</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getRegulatoryRecipeId() {
 		return regulatoryRecipeId;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>regulatoryRecipeId</code>.</p>
+	 *
+	 * @param regulatoryRecipeId a {@link java.lang.String} object
+	 */
 	public void setRegulatoryRecipeId(String regulatoryRecipeId) {
 		this.regulatoryRecipeId = regulatoryRecipeId;
 	}

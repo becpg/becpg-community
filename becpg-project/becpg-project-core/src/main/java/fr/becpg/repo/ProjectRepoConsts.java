@@ -44,6 +44,7 @@ public class ProjectRepoConsts {
 	/** Constant <code>PATH_SCORE_CRITERION_TYPES="ScoreCriterionTypes"</code> */
 	public static final String PATH_SCORE_CRITERION_TYPES = "ScoreCriterionTypes";
 	
+	/** Constant <code>PROJECT_TIMEZONE</code> */
 	public static final TimeZone PROJECT_TIMEZONE = TimeZone.getTimeZone("GMT");
 	
 }

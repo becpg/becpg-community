@@ -50,6 +50,15 @@ public class JXLSReportEngine implements BeCPGReportEngine {
 	private final AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	@Autowired
+	/**
+	 * <p>Constructor for JXLSReportEngine.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object
+	 * @param formulaService a {@link fr.becpg.repo.formulation.spel.SpelFormulaService} object
+	 * @param entityService a {@link fr.becpg.repo.entity.EntityService} object
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 */
 	public JXLSReportEngine(@Qualifier("nodeService") NodeService nodeService,
 			@Qualifier("contentService") ContentService contentService,
 			SpelFormulaService formulaService,

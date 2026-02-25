@@ -3,6 +3,8 @@ package fr.becpg.repo.regulatory;
 /**
  * <p>RegulatoryBatch class.</p>
  *
+ * @param countryBatches countryBatches
+ * @param usageBatches usageBatches
  * @author matthieu
  */
 /**

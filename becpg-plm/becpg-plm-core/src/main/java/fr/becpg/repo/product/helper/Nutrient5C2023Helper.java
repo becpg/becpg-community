@@ -37,6 +37,12 @@ public class Nutrient5C2023Helper implements InitializingBean, NutrientRegulator
 	private final AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	
 	@Autowired
+	/**
+	 * <p>Constructor for Nutrient5C2023Helper.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 */
 	public Nutrient5C2023Helper(@Qualifier("nodeService") NodeService nodeService,
 			AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.nodeService = nodeService;

@@ -25,6 +25,9 @@ public class NutrientRegulatoryHelper {
 	
 	/**
 	 * <p>Constructor for NutrientRegulatoryHelper.</p>
+	 *
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 * @param nutrientPlugins an array of {@link fr.becpg.repo.product.helper.NutrientRegulatoryPlugin} objects
 	 */
 	@Autowired
 	public NutrientRegulatoryHelper(SystemConfigurationService systemConfigurationService,

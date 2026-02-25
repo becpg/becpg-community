@@ -137,6 +137,7 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	    }
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public List<QName> getDefaultPivotAssocs() {
 		return defaultPivotAssocs;

@@ -11,6 +11,8 @@ import fr.becpg.repo.project.CalendarService;
 
 /**
  * Implementation that uses CalendarService to consider custom holidays and calendars.
+ *
+ * @author matthieu
  */
 public class CalendarWorkingDayProvider extends DefaultWorkingDayProvider implements WorkingDayProvider  {
 
@@ -32,11 +34,13 @@ public class CalendarWorkingDayProvider extends DefaultWorkingDayProvider implem
         this.calendarNodeRef = calendarNodeRef;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isWorkingDay(Date date) {
         return calendarNodeRef != null ? calendarService.isWorkingDay(date, calendarNodeRef) : super.isWorkingDay(date);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Date getNextWorkingDay(Date date) {
         if (date == null) {

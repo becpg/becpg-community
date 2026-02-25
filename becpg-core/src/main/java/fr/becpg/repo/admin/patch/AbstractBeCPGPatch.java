@@ -267,6 +267,14 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 		return createBatchTypeProcessor(type, includeOnlyTenantNodes, BATCH_THREADS);
 	}
 	
+	/**
+	 * <p>createBatchTypeProcessor.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @param includeOnlyTenantNodes a boolean
+	 * @param batchThreads a int
+	 * @return a {@link org.alfresco.repo.batch.BatchProcessor} object
+	 */
 	protected BatchProcessor<NodeRef> createBatchTypeProcessor(QName type, boolean includeOnlyTenantNodes, int batchThreads) {
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			private final long maxNodeId = nodeDAO.getMaxNodeId();

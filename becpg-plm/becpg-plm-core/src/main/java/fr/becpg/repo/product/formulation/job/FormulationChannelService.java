@@ -70,11 +70,17 @@ import fr.becpg.repo.security.data.dataList.ACLEntryDataItem;
 import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.util.BeCPGTransactionUtil;
 
+/**
+ * <p>FormulationChannelService class.</p>
+ *
+ * @author matthieu
+ */
 @Service("formulationChannelService")
 public class FormulationChannelService {
 
 	private static final Log logger = LogFactory.getLog(FormulationChannelService.class);
 
+	/** Constant <code>FORMULATE_ENTITIES_CHANNEL_ID="formulate-entities"</code> */
 	public static final String FORMULATE_ENTITIES_CHANNEL_ID = "formulate-entities";
 	
 	private static final String REFORMULATE_BATCH_ID = "reformulateChangedEntities";
@@ -107,6 +113,24 @@ public class FormulationChannelService {
 
 	private Integer reformulateBatchSize;
 	
+	/**
+	 * <p>Constructor for FormulationChannelService.</p>
+	 *
+	 * @param batchQueueService a {@link fr.becpg.repo.batch.BatchQueueService} object
+	 * @param publicationChannelService a {@link fr.becpg.repo.publication.PublicationChannelService} object
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 * @param transactionService a {@link org.alfresco.service.transaction.TransactionService} object
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object
+	 * @param wUsedListService a {@link fr.becpg.repo.entity.datalist.WUsedListService} object
+	 * @param formulationService a {@link fr.becpg.repo.formulation.FormulationService} object
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object
+	 * @param namespacePrefixResolver a {@link org.alfresco.service.namespace.NamespacePrefixResolver} object
+	 * @param authenticationService a {@link org.alfresco.repo.security.authentication.AbstractAuthenticationService} object
+	 * @param reformulateWorkerThreads a {@link java.lang.Integer} object
+	 * @param reformulateBatchSize a {@link java.lang.Integer} object
+	 */
 	public FormulationChannelService(BatchQueueService batchQueueService, PublicationChannelService publicationChannelService,
 			SystemConfigurationService systemConfigurationService, TransactionService transactionService,
 			@Qualifier("nodeService") NodeService nodeService, AlfrescoRepository<RepositoryEntity> alfrescoRepository,
@@ -171,6 +195,11 @@ public class FormulationChannelService {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.security.enforceACL"));
 	}
 	
+	/**
+	 * <p>formulateEntities.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.batch.BatchInfo} object
+	 */
 	public BatchInfo formulateEntities() {
 		if (Boolean.TRUE.equals(isEnabled())) {
 			return reformulateEntities();
@@ -178,6 +207,11 @@ public class FormulationChannelService {
 		return null;
 	}
 	
+	/**
+	 * <p>reformulateEntities.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.batch.BatchInfo} object
+	 */
 	public BatchInfo reformulateEntities() {
 		
 		// Check if system conditions allow batch to run

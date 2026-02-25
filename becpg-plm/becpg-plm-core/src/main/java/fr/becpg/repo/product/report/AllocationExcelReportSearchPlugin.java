@@ -45,6 +45,11 @@ public class AllocationExcelReportSearchPlugin extends DynamicCharactExcelReport
 	private final AlfrescoRepository<BeCPGDataObject> alfrescoRepository;
 
 	@Autowired
+	/**
+	 * <p>Constructor for AllocationExcelReportSearchPlugin.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 */
 	public AllocationExcelReportSearchPlugin(AlfrescoRepository<BeCPGDataObject> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
