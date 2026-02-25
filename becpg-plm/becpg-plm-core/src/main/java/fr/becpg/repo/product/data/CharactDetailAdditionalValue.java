@@ -20,6 +20,7 @@ public class CharactDetailAdditionalValue {
 	 * @param columnName a {@link java.lang.String} object
 	 * @param value a {@link java.lang.Double} object
 	 * @param unit a {@link java.lang.String} object
+	 * @param columnKey a {@link java.lang.String} object
 	 */
 	public CharactDetailAdditionalValue(String columnKey, String columnName, Double value, String unit) {
 		super();
@@ -42,6 +43,11 @@ public class CharactDetailAdditionalValue {
 		this.unit = charactDetailAdditionalValue.unit;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>columnKey</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getColumnKey() {
 		return columnKey;
 	}

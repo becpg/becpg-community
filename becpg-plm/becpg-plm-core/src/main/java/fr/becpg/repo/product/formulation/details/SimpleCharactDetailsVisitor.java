@@ -76,10 +76,20 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	
 	protected NamespaceService namespaceService;
 	
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>securityService</code>.</p>
+	 *
+	 * @param securityService a {@link fr.becpg.repo.security.SecurityService} object
+	 */
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}
@@ -408,14 +418,30 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		currentCharactDetailsValue.getAdditionalValues().removeIf(add -> !isColumnReadable(add.getColumnKey()));
 	}
 
+	/**
+	 * <p>getMaxiPropName.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	protected String getMaxiPropName() {
 		return null;
 	}
 
+	/**
+	 * <p>getMiniPropName.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	protected String getMiniPropName() {
 		return null;
 	}
 
+	/**
+	 * <p>isColumnReadable.</p>
+	 *
+	 * @param columnKey a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	protected boolean isColumnReadable(String columnKey) {
 		return columnKey != null && securityService.computeAccessMode(null, dataListType, columnKey) != SecurityService.NONE_ACCESS;
 	}

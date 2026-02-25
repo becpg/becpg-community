@@ -37,6 +37,13 @@ public interface PublicationChannelService {
 	  */
 	 PagingResults<NodeRef> getEntitiesByChannel(NodeRef channelNodeRef, PagingRequest request);
 
+	 /**
+	  * <p>getOrCreateChannelListNodeRef.</p>
+	  *
+	  * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	  * @param channelId a {@link java.lang.String} object
+	  * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	  */
 	 NodeRef getOrCreateChannelListNodeRef(NodeRef entityNodeRef, String channelId);
 	 
 }

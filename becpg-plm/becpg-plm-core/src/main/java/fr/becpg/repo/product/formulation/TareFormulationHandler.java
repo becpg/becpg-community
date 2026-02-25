@@ -53,6 +53,11 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 	protected final AlfrescoRepository<ProductData> alfrescoRepository;
 
 	@Autowired
+	/**
+	 * <p>Constructor for TareFormulationHandler.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 */
 	public TareFormulationHandler(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}

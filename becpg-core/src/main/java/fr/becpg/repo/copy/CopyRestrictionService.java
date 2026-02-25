@@ -18,6 +18,11 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.jscript.BeCPGStateHelper;
 import fr.becpg.repo.system.SystemConfigurationService;
 
+/**
+ * <p>CopyRestrictionService class.</p>
+ *
+ * @author matthieu
+ */
 @Service
 public class CopyRestrictionService {
 
@@ -58,6 +63,14 @@ public class CopyRestrictionService {
 		return systemConfigurationService.listValue("beCPG.copyOrBranch.propertiesToReset");
 	}
 
+	/**
+	 * <p>shouldCopyNodeRef.</p>
+	 *
+	 * @param classRef a {@link org.alfresco.service.namespace.QName} object
+	 * @param sourceNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param targetNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	public boolean shouldCopyNodeRef(QName classRef, NodeRef sourceNodeRef, NodeRef targetNodeRef) {
 		String nodeRefType = entityDictionaryService.toPrefixString(classRef);
 		for (String typeToReset : typesToReset()) {
@@ -89,6 +102,13 @@ public class CopyRestrictionService {
 		return true;
 	}
 
+	/**
+	 * <p>handlePropertiesToReset.</p>
+	 *
+	 * @param classRef a {@link org.alfresco.service.namespace.QName} object
+	 * @param sourceNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param targetNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	public void handlePropertiesToReset(QName classRef, NodeRef sourceNodeRef, NodeRef targetNodeRef) {
 		CopyContext context = new CopyContext(classRef, sourceNodeRef, targetNodeRef);
 		for (String propertyToReset : propertiesToReset()) {

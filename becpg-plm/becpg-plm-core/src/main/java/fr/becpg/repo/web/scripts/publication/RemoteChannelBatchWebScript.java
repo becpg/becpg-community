@@ -30,6 +30,11 @@ import fr.becpg.repo.helper.json.JsonHelper;
 import fr.becpg.repo.publication.PublicationChannelService;
 import fr.becpg.repo.publication.PublicationChannelService.PublicationChannelStatus;
 
+/**
+ * <p>RemoteChannelBatchWebScript class.</p>
+ *
+ * @author matthieu
+ */
 public class RemoteChannelBatchWebScript extends AbstractWebScript {
 
 	private static final Log logger = LogFactory.getLog(RemoteChannelBatchWebScript.class);
@@ -51,22 +56,43 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 	private AssociationService associationService;
 	private PublicationChannelService publicationChannelService;
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>publicationChannelService</code>.</p>
+	 *
+	 * @param publicationChannelService a {@link fr.becpg.repo.publication.PublicationChannelService} object
+	 */
 	public void setPublicationChannelService(PublicationChannelService publicationChannelService) {
 		this.publicationChannelService = publicationChannelService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 		String channelId = req.getParameter(CHANNEL_ID);

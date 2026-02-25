@@ -200,6 +200,14 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
     private final WUsedListService wUsedListService;
 
     @Autowired
+    /**
+     * <p>Constructor for MultiLevelExcelReportSearchPluginV2.</p>
+     *
+     * @param packagingHelper a {@link fr.becpg.repo.product.formulation.PackagingHelper} object
+     * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+     * @param multiLevelDataListService a {@link fr.becpg.repo.entity.datalist.MultiLevelDataListService} object
+     * @param wUsedListService a {@link fr.becpg.repo.entity.datalist.WUsedListService} object
+     */
     public MultiLevelExcelReportSearchPluginV2(PackagingHelper packagingHelper, AlfrescoRepository<BeCPGDataObject> alfrescoRepository,
             MultiLevelDataListService multiLevelDataListService, WUsedListService wUsedListService) {
         this.packagingHelper = packagingHelper;

@@ -15,10 +15,16 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
 
+/**
+ * <p>FormulationChannelJob class.</p>
+ *
+ * @author matthieu
+ */
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
 public class FormulationChannelJob extends AbstractScheduledLockedJob implements Job {
 
+	/** {@inheritDoc} */
 	@Override
 	public void executeJob(JobExecutionContext context) throws JobExecutionException {
 

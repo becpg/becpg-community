@@ -654,6 +654,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public String getBatchesInError() {
 		Map<String, Set<NodeRef>> batchNodesMap = getBatchErrorsMap();
@@ -720,6 +721,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	    }
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public BatchInfo retryBatchInError(String batchId) {
 		List<NodeRef> allErrors = new ArrayList<>();
@@ -748,6 +750,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		return batchInfo;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public BatchStep<NodeRef> createBatchStepWithErrorHandling(BatchInfo batchInfo, List<NodeRef> list, BatchProcessWorker<NodeRef> processor) {
 		return new BatchStepWithErrorHandling(batchInfo, list, processor);
@@ -795,6 +798,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String viewErrors(String batchId) {
 		Map<String, Set<NodeRef>> batchErrorsMap = getBatchErrorsMap();

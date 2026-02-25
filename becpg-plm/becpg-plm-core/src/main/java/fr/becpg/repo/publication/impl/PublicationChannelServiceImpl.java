@@ -216,6 +216,7 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 		});
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getOrCreateChannelListNodeRef(NodeRef entityNodeRef, String channelId) {
 		NodeRef channelNodeRef = getChannelById(channelId);
