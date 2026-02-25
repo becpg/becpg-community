@@ -5,12 +5,8 @@ import java.util.List;
 /**
  * <p>CountryBatch class.</p>
  *
+ * @param countries countries
  * @author matthieu
- */
-/**
- * <p>countries.</p>
- *
- * @return a {@link java.util.List} object
  */
 public record CountryBatch(List<String> countries) {
 

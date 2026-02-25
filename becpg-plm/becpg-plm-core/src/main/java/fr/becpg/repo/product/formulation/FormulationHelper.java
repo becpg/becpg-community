@@ -1012,9 +1012,7 @@ public class FormulationHelper {
 	 * available water in each ingredient rather than just evaporation rates.
 	 *
 	 * @param evaporatingQty Total quantity to evaporate
-	 * @param itemRate Evaporation rate for this item (percentage)
 	 * @param itemMaxEvapQty Maximum evaporable quantity for this item
-	 * @param totalRate Sum of all evaporation rates (null for 100% evaporation items)
 	 * @param totalAvailableWater Total water available across all items
 	 * @return The quantity to evaporate from this item
 	 */
