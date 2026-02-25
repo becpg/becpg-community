@@ -150,6 +150,11 @@ public class FormulationChannelService {
 	    return Double.parseDouble(configValue) / 100;
 	}
 	
+	private Boolean force() {
+		String configValue = systemConfigurationService.confValue("beCPG.formulation.channel.force");
+		return Boolean.parseBoolean(configValue);
+	}
+	
 	private Integer maxActiveUsers() {
 		return Integer.parseInt(systemConfigurationService.confValue("beCPG.formulation.channel.maxActiveUsers"));
 	}
@@ -294,6 +299,12 @@ public class FormulationChannelService {
 	 * @return true if batch should run, false otherwise
 	 */
 	private boolean shouldRunBatch() {
+		if (Boolean.TRUE.equals(force())) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Batch execution forced by configuration");
+			}
+			return true;
+		}
 		try {
 			// Check system load average
 			OperatingSystemMXBean os = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();

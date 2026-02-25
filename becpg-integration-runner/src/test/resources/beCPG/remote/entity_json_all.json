@@ -1520,35 +1520,6 @@
           "type": "survey:surveyList"
         }
       ],
-      "bcpg:physicoChemList": [
-        {
-          "metadata": "physicoChem",
-          "cm:name": "a6071e02-e4f4-404a-b0f5-5e13a4f4e094",
-          "attributes": {
-            "cm:creator": "admin",
-            "cm:modifier": "admin",
-            "bcpg:pclPhysicoChem": {
-              "path": "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:PhysicoChems",
-              "metadata": "physicoChem",
-              "bcpg:charactName_fr": "Fruit and vegetable content",
-              "bcpg:charactName": "Fruit and vegetable content",
-              "id": "15aea3c4-c59d-4e73-aea3-c4c59dde739a",
-              "type": "bcpg:physicoChem"
-            },
-            "bcpg:pclValue": 0,
-            "cm:created": "2026-01-26T15:09:11.598Z",
-            "cm:name": "a6071e02-e4f4-404a-b0f5-5e13a4f4e094",
-            "bcpg:isManualListItem": false,
-            "bcpg:sort": 1,
-            "bcpg:pclUnit_fr": "%",
-            "cm:modified": "2026-01-26T15:09:11.598Z",
-            "bcpg:pclUnit": "%",
-            "bcpg:physicoChemIsFormulated": false
-          },
-          "id": "ae65bf0f-86d8-4521-a5bf-0f86d8c52167",
-          "type": "bcpg:physicoChemList"
-        }
-      ],
       "bcpg:ingList": [
         {
           "metadata": "ing",
