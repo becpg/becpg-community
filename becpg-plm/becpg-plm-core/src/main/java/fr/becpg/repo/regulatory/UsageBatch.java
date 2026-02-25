@@ -5,6 +5,8 @@ import java.util.List;
 /**
  * <p>UsageBatch class.</p>
  *
+ * @param module module
+ * @param usages usages
  * @author matthieu
  */
 /**

@@ -41,6 +41,16 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 	private final SystemConfigurationService systemConfigurationService;
 
 	@Autowired
+	/**
+	 * <p>Constructor for ProductVersionPlugin.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 * @param lockService a {@link org.alfresco.service.cmr.lock.LockService} object
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 */
 	public ProductVersionPlugin(@Qualifier("nodeService") NodeService nodeService,
 			@Qualifier("entityDictionaryService") EntityDictionaryService entityDictionaryService,
 			@Qualifier("namespaceService") NamespaceService namespaceService,

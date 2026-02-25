@@ -36,6 +36,11 @@ public class ProcessListEntityTplPlugin implements EntityTplPlugin {
 	private final NodeService nodeService;
 
 	@Autowired
+	/**
+	 * <p>Constructor for ProcessListEntityTplPlugin.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public ProcessListEntityTplPlugin(@Qualifier("nodeService") NodeService nodeService) {
 		this.nodeService = nodeService;
 	}

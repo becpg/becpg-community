@@ -50,6 +50,11 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.impl.EntitySourceAssoc;
 import fr.becpg.repo.repository.L2CacheSupport;
 
+/**
+ * <p>FormulateWUsedWebScript class.</p>
+ *
+ * @author matthieu
+ */
 public class FormulateWUsedWebScript extends AbstractWebScript {
 
 	private static final Log logger = LogFactory.getLog(FormulateWUsedWebScript.class);
@@ -68,22 +73,47 @@ public class FormulateWUsedWebScript extends AbstractWebScript {
 	
 	private BehaviourFilter policyBehaviourFilter;
 	
+	/**
+	 * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
+	 *
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object
+	 */
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
+	/**
+	 * <p>Setter for the field <code>formulationService</code>.</p>
+	 *
+	 * @param formulationService a {@link fr.becpg.repo.formulation.FormulationService} object
+	 */
 	public void setFormulationService(FormulationService<FormulatedEntity> formulationService) {
 		this.formulationService = formulationService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>batchQueueService</code>.</p>
+	 *
+	 * @param batchQueueService a {@link fr.becpg.repo.batch.BatchQueueService} object
+	 */
 	public void setBatchQueueService(BatchQueueService batchQueueService) {
 		this.batchQueueService = batchQueueService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>associationService</code>.</p>
+	 *
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
 	
+	/**
+	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
+	 *
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object
+	 */
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}

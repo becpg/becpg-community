@@ -42,6 +42,14 @@ public class LCADatabaseService {
 	private final LCADatabasePlugin[] lcaPlugins;
 	
 	@Autowired
+	/**
+	 * <p>Constructor for LCADatabaseService.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param fileFolderService a {@link org.alfresco.service.cmr.model.FileFolderService} object
+	 * @param repositoryHelper a {@link org.alfresco.repo.model.Repository} object
+	 * @param lcaPlugins an array of {@link fr.becpg.repo.product.formulation.lca.LCADatabasePlugin} objects
+	 */
 	public LCADatabaseService(@Qualifier("nodeService") NodeService nodeService,
 			@Qualifier("fileFolderService") FileFolderService fileFolderService,
 			@Qualifier("repositoryHelper") Repository repositoryHelper,

@@ -77,6 +77,11 @@ public class FormulaHelper {
 	
 	/**
 	 * <p>Constructor for FormulaHelper.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 * @param formulaService a {@link fr.becpg.repo.formulation.spel.SpelFormulaService} object
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
 	 */
 	@Autowired
 	public FormulaHelper(AlfrescoRepository<ProductData> alfrescoRepository,

@@ -16,6 +16,11 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.EffectiveDataItem;
 
+/**
+ * <p>EffectiveFilterCopyRestrictionPlugin class.</p>
+ *
+ * @author matthieu
+ */
 @Component
 public class EffectiveFilterCopyRestrictionPlugin implements CopyRestrictionPlugin {
 
@@ -31,6 +36,7 @@ public class EffectiveFilterCopyRestrictionPlugin implements CopyRestrictionPlug
 	@Autowired
 	private EntityService entityService;
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean shouldCopy(QName sourceClassQName, NodeRef sourceNodeRef, NodeRef targetNodeRef, String typeToReset) {
 		if (typeToReset.contains("@")) {

@@ -11,6 +11,12 @@ import java.util.List;
  */
 public interface SystemConfigurationService {
 
+	/**
+	 * <p>listValue.</p>
+	 *
+	 * @param propKey a {@link java.lang.String} object
+	 * @return a {@link java.util.List} object
+	 */
 	List<String> listValue(String propKey);
 
 	/**
