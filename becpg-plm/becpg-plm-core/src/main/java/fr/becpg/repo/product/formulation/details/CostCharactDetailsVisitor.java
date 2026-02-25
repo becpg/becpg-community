@@ -72,6 +72,7 @@ public class CostCharactDetailsVisitor extends AbstractCostCharactDetailsVisitor
 		return PLMModel.PROP_COSTCURRENCY;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	protected String getMaxiPropName() {
 		return PLMModel.PROP_COSTLIST_MAXI.toPrefixString(namespaceService);

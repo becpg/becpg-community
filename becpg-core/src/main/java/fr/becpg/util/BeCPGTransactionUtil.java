@@ -6,10 +6,20 @@ import java.util.Set;
 import org.alfresco.util.transaction.TransactionListener;
 import org.alfresco.util.transaction.TransactionSupportUtil;
 
+/**
+ * <p>BeCPGTransactionUtil class.</p>
+ *
+ * @author matthieu
+ */
 public class BeCPGTransactionUtil {
 
     private static final String RESOURCE_KEY_TXN_PRE_LISTENERS = "AlfrescoTransactionSupport.preListeners";
 	
+	/**
+	 * <p>bindLateTransactionListener.</p>
+	 *
+	 * @param transactionListener a {@link org.alfresco.util.transaction.TransactionListener} object
+	 */
 	public static void bindLateTransactionListener(TransactionListener transactionListener) {
 		Set<TransactionListener> preListeners = TransactionSupportUtil.getResource(RESOURCE_KEY_TXN_PRE_LISTENERS);
 		if (preListeners == null) {

@@ -51,6 +51,12 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 	private final WUsedListService wUsedListService;
 
 	@Autowired
+	/**
+	 * <p>Constructor for MultiLevelExcelReportSearchPlugin.</p>
+	 *
+	 * @param multiLevelDataListService a {@link fr.becpg.repo.entity.datalist.MultiLevelDataListService} object
+	 * @param wUsedListService a {@link fr.becpg.repo.entity.datalist.WUsedListService} object
+	 */
 	public MultiLevelExcelReportSearchPlugin(MultiLevelDataListService multiLevelDataListService,
 			WUsedListService wUsedListService) {
 		this.multiLevelDataListService = multiLevelDataListService;

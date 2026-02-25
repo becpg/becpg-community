@@ -30,11 +30,13 @@ public class PhysicoChemCharactDetailsVisitor extends SimpleCharactDetailsVisito
 		return super.shouldForceWeight(context, partProduct, simpleCharact);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	protected String getMiniPropName() {
 		return PLMModel.PROP_PHYSICOCHEMLIST_MINI.toPrefixString(namespaceService);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	protected String getMaxiPropName() {
 		return PLMModel.PROP_PHYSICOCHEMLIST_MAXI.toPrefixString(namespaceService);

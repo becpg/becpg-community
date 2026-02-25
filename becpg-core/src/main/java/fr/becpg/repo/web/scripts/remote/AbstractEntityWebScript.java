@@ -667,6 +667,12 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	}
 	
 
+	/**
+	 * <p>isBrokenPipe.</p>
+	 *
+	 * @param t a {@link java.lang.Throwable} object
+	 * @return a boolean
+	 */
 	protected boolean isBrokenPipe(Throwable t) {
 		while (t != null) {
 			if (t instanceof IOException) {

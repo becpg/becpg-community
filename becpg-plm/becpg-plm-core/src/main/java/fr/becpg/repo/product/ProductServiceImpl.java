@@ -69,6 +69,17 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 	private final EntityTplService entityTplService;
 
 	@Autowired
+	/**
+	 * <p>Constructor for ProductServiceImpl.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 * @param formulationService a {@link fr.becpg.repo.formulation.FormulationService} object
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object
+	 * @param charactDetailsVisitorFactory a {@link fr.becpg.repo.product.CharactDetailsVisitorFactory} object
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object
+	 * @param entityActivityService a {@link fr.becpg.repo.activity.EntityActivityService} object
+	 * @param entityTplService a {@link fr.becpg.repo.entity.EntityTplService} object
+	 */
 	public ProductServiceImpl(AlfrescoRepository<ProductData> alfrescoRepository,
 			FormulationService<ProductData> formulationService,
 			@Qualifier("policyBehaviourFilter") BehaviourFilter policyBehaviourFilter,

@@ -40,6 +40,16 @@ public class DataListSimulationPlugin implements EntitySimulationPlugin {
 	private final RepoService repoService;
 
 	@Autowired
+	/**
+	 * <p>Constructor for DataListSimulationPlugin.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 * @param entityVersionService a {@link fr.becpg.repo.entity.version.EntityVersionService} object
+	 * @param entityService a {@link fr.becpg.repo.entity.EntityService} object
+	 * @param repoService a {@link fr.becpg.repo.helper.RepoService} object
+	 */
 	public DataListSimulationPlugin(@Qualifier("alfrescoRepository") AlfrescoRepository<ProductData> alfrescoRepository,
 			@Qualifier("nodeService") NodeService nodeService,
 			@Qualifier("associationService") AssociationService associationService,

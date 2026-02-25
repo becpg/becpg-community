@@ -54,6 +54,12 @@ public class BatchReportExtractorPlugin extends ProductReportExtractorPlugin {
 	protected static final List<QName> DATALIST_SPECIFIC_EXTRACTOR = Arrays.asList(PLMModel.TYPE_COMPOLIST, PLMModel.TYPE_REQCTRLLIST);
 
 	@Autowired
+	/**
+	 * <p>Constructor for BatchReportExtractorPlugin.</p>
+	 *
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 * @param packagingHelper a {@link fr.becpg.repo.product.formulation.PackagingHelper} object
+	 */
 	public BatchReportExtractorPlugin(SystemConfigurationService systemConfigurationService,
 			PackagingHelper packagingHelper) {
 		super(systemConfigurationService, packagingHelper);

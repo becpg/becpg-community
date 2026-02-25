@@ -213,6 +213,7 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 		return ret;
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public List<QName> getDefaultPivotAssocsFromTargetType(QName targetType) {
 		return defaultPivotAssocsFromTargetTypeCache.computeIfAbsent(targetType, k -> {

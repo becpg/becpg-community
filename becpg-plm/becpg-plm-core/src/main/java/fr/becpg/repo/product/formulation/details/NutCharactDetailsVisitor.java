@@ -125,11 +125,13 @@ public class NutCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		}
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	protected String getMiniPropName() {
 		return PLMModel.PROP_NUTLIST_MINI.toPrefixString(namespaceService);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	protected String getMaxiPropName() {
 		return PLMModel.PROP_NUTLIST_MAXI.toPrefixString(namespaceService);

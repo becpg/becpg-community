@@ -121,6 +121,11 @@ public class UserImporterServiceImpl implements UserImporterService {
 	
 	private TransactionService transactionService;
 	
+	/**
+	 * <p>Setter for the field <code>transactionService</code>.</p>
+	 *
+	 * @param transactionService a {@link org.alfresco.service.transaction.TransactionService} object
+	 */
 	public void setTransactionService(TransactionService transactionService) {
 		this.transactionService = transactionService;
 	}

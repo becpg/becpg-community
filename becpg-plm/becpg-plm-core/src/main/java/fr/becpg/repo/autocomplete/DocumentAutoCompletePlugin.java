@@ -15,6 +15,11 @@ import org.springframework.stereotype.Service;
 import fr.becpg.repo.autocomplete.impl.extractors.NodeRefAutoCompleteExtractor;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+/**
+ * <p>DocumentAutoCompletePlugin class.</p>
+ *
+ * @author matthieu
+ */
 @Service
 public class DocumentAutoCompletePlugin implements AutoCompletePlugin {
 
@@ -23,10 +28,16 @@ public class DocumentAutoCompletePlugin implements AutoCompletePlugin {
 	@Autowired
 	private NodeService nodeService;
 	
+	/**
+	 * <p>getHandleSourceTypes.</p>
+	 *
+	 * @return an array of {@link java.lang.String} objects
+	 */
 	public String[] getHandleSourceTypes() {
 		return new String[] { "document" };
 	}
 
+	/** {@inheritDoc} */
 	@SuppressWarnings("unchecked")
 	@Override
 	public AutoCompletePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {

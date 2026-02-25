@@ -6,7 +6,7 @@ package fr.becpg.repo.security.filter;
 /**
  * Helper class to manage security context via ThreadLocal
  * Used to skip security rules in specific contexts like wizards
- * 
+ *
  * @author matthieu
  */
 public class SecurityContextHelper {

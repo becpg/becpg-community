@@ -52,6 +52,15 @@ public class ProductExcelDataListOutputPlugin implements ExcelDataListOutputPlug
 	private final NamespaceService namespaceService;
 
 	@Autowired
+	/**
+	 * <p>Constructor for ProductExcelDataListOutputPlugin.</p>
+	 *
+	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param attributeExtractorService a {@link fr.becpg.repo.helper.AttributeExtractorService} object
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 */
 	public ProductExcelDataListOutputPlugin(@Qualifier("dictionaryService") DictionaryService dictionaryService,
 			@Qualifier("entityListDAO") EntityListDAO entityListDAO,
 			@Qualifier("nodeService") NodeService nodeService,
