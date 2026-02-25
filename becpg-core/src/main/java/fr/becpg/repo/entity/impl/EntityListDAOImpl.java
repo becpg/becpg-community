@@ -34,6 +34,9 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
 import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
+import org.alfresco.service.cmr.model.FileExistsException;
+import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.model.FileNotFoundException;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.MLText;
@@ -92,6 +95,9 @@ public class EntityListDAOImpl implements EntityListDAO {
 	
 	@Autowired
 	private RepoService repoService;
+	
+	@Autowired
+	private FileFolderService fileFolderService;
 
 	@Autowired
 	@Qualifier("policyComponent")
@@ -381,7 +387,12 @@ public class EntityListDAOImpl implements EntityListDAO {
 				logger.debug("copy datalist " + listQName);
 				NodeRef newDLNodeRef = copyService.copy(dataListNodeRef, targetListContainerNodeRef, ContentModel.ASSOC_CONTAINS,
 						DataListModel.TYPE_DATALIST, true);
-				nodeService.setProperty(newDLNodeRef, ContentModel.PROP_NAME, name);
+				try {
+					fileFolderService.rename(newDLNodeRef, name);
+				} catch (FileExistsException | FileNotFoundException e) {
+					logger.error("Failed to rename datalist to " + name + " after copy, fallback to default name property setter", e);
+					nodeService.setProperty(newDLNodeRef, ContentModel.PROP_NAME, name);
+				}
 			}
 		}
 
