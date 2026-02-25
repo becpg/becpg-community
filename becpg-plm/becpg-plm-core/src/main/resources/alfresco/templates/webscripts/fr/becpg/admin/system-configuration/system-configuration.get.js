@@ -130,6 +130,7 @@ function main() {
         "beCPG.formulation.channel.minHoursSinceModification",
         "beCPG.formulation.channel.maxCpuUsage",
         "beCPG.formulation.channel.maxActiveUsers",
+        "beCPG.formulation.channel.force",
         "beCPG.formulation.channel.excludedTimeSlot"
     ].forEach(function(p) {
         addAttribute(p, "automatic-formulation");

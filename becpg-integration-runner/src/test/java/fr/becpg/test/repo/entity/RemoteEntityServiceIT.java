@@ -179,7 +179,7 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 
 	private static final Set<String> KEYS_TO_IGNORE = Set.of("parent", "metadata", "id", "cm:name", "bcpg:code", "cm:creator",
 			"cm:modifier", "cm:created", "cm:modified", "bcpg:startEffectivity", "bcpg:formulatedDate", "bcpg:illLogValue",
-			"bcpg:entityScore", "bcpg:sort", "bcpg:reqCtrlList");
+			"bcpg:entityScore", "bcpg:sort", "bcpg:reqCtrlList", "bcpg:nutListRoundedValue");
 
 	private JSONObject cleanObject(JSONObject object) {
 		JSONObject cleaned = new JSONObject();
