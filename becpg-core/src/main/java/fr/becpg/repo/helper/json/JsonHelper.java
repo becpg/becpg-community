@@ -56,10 +56,20 @@ public final class JsonHelper {
 
 	}
 	
+	/**
+	 * <p>createJsonObject.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.helper.json.JsonData} object
+	 */
 	public static JsonData createJsonObject() {
 		return new JsonData(MAPPER.createObjectNode());
 	}
 	
+	/**
+	 * <p>createJsonArray.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.helper.json.JsonData} object
+	 */
 	public static JsonData createJsonArray() {
 		return new JsonData(MAPPER.createArrayNode());
 	}
@@ -100,7 +110,6 @@ public final class JsonHelper {
 	 *
 	 * @param object a {@link java.lang.Object} object
 	 * @return a {@link java.lang.String} object
-	 * @throws com.fasterxml.jackson.core.JsonProcessingException if any.
 	 */
 	public static String serialize(Object object) {
 		try {
@@ -115,7 +124,6 @@ public final class JsonHelper {
 	 *
 	 * @param json a {@link java.lang.String} object
 	 * @return a {@link com.fasterxml.jackson.databind.JsonNode} object
-	 * @throws com.fasterxml.jackson.core.JsonProcessingException if any.
 	 */
 	public static JsonData read(String json) {
 		try {
@@ -125,6 +133,12 @@ public final class JsonHelper {
 		}
 	}
 	
+	/**
+	 * <p>read.</p>
+	 *
+	 * @param file a {@link java.io.File} object
+	 * @return a {@link fr.becpg.repo.helper.json.JsonData} object
+	 */
 	public static JsonData read(File file) {
 		try {
 			return new JsonData(MAPPER.readTree(file));

@@ -164,6 +164,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	protected final PackagingHelper packagingHelper;
 
 	@Autowired
+	/**
+	 * <p>Constructor for ProductReportExtractorPlugin.</p>
+	 *
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 * @param packagingHelper a {@link fr.becpg.repo.product.formulation.PackagingHelper} object
+	 */
 	public ProductReportExtractorPlugin(SystemConfigurationService systemConfigurationService,
 			PackagingHelper packagingHelper) {
 		this.systemConfigurationService = systemConfigurationService;

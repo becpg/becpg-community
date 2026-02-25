@@ -72,6 +72,7 @@ public class IngCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean applyYield() {
 		return false;

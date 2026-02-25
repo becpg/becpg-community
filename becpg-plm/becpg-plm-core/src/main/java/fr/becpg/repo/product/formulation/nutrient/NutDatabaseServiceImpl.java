@@ -75,6 +75,19 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 	private static final String NUT_CSV_DECIMAL_FORMAT = "###,###.####";
 
 	@Autowired
+	/**
+	 * <p>Constructor for NutDatabaseServiceImpl.</p>
+	 *
+	 * @param fileFolderService a {@link org.alfresco.service.cmr.model.FileFolderService} object
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 * @param repositoryHelper a {@link org.alfresco.repo.model.Repository} object
+	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 * @param transactionService a {@link org.alfresco.service.transaction.TransactionService} object
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object
+	 */
 	public NutDatabaseServiceImpl(@Qualifier("fileFolderService") FileFolderService fileFolderService,
 			@Qualifier("contentService") ContentService contentService,
 			@Qualifier("nodeService") NodeService nodeService,

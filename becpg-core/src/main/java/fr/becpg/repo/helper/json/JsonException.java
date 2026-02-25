@@ -1,5 +1,10 @@
 package fr.becpg.repo.helper.json;
 
+/**
+ * <p>JsonException class.</p>
+ *
+ * @author matthieu
+ */
 public class JsonException extends RuntimeException {
 	
 	/**

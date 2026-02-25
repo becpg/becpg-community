@@ -5,6 +5,8 @@ import java.util.Date;
 /**
  * Interface for providing working day calculations.
  * Allows different implementations (default weekend-only or calendar-based).
+ *
+ * @author matthieu
  */
 public interface WorkingDayProvider {
 

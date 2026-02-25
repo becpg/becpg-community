@@ -38,6 +38,7 @@ public class EffectiveFilters<T extends EffectiveDataItem> implements DataListFi
 	/** Constant <code>ALL="ALL"</code> */
 	public final static String ALL = "ALL";
 
+	/** Constant <code>EFFECTIVE_OR_FUTURE="EFFECTIVE_OR_FUTURE"</code> */
 	public final static String EFFECTIVE_OR_FUTURE = "EFFECTIVE_OR_FUTURE";
 	
 	private String effectiveState = EFFECTIVE;
@@ -77,6 +78,13 @@ public class EffectiveFilters<T extends EffectiveDataItem> implements DataListFi
 		return createPredicate(productStartEffectivity, productEndEffectivity);
 	}
 
+	/**
+	 * <p>createPredicate.</p>
+	 *
+	 * @param productStartEffectivity a {@link java.util.Date} object
+	 * @param productEndEffectivity a {@link java.util.Date} object
+	 * @return a {@link java.util.function.Predicate} object
+	 */
 	public Predicate<T> createPredicate(Date productStartEffectivity, Date productEndEffectivity) {
 		final Date now = currentDate!=null ? currentDate : new Date();
 		final Date startEffectivity = (productStartEffectivity != null) && (productStartEffectivity.getTime() > now.getTime())

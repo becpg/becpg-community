@@ -32,7 +32,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.project.WorkflowPackageHandler;
 import fr.becpg.repo.project.data.ProjectData;
 
-/**	
+/**
  * Adds the project supplier to the workflow package so that
  * {@code getWorkflowIdsForContent(supplierNodeRef)} correctly finds the active
  * workflow when the supplier portal wizard is opened with the supplier nodeRef.
@@ -40,7 +40,7 @@ import fr.becpg.repo.project.data.ProjectData;
  * @author matthieu
  */
 //@Service
-@Deprecated 
+@Deprecated
 public class SupplierWorkflowPackageHandler implements WorkflowPackageHandler
 {
 

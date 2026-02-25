@@ -338,6 +338,7 @@ public class ProjectHelper {
 	 * @param duration a {@link java.lang.Integer} object.
 	 * @param isPlanned a boolean.
 	 * @return a {@link java.util.Date} object.
+	 * @param provider a {@link fr.becpg.repo.project.impl.WorkingDayProvider} object
 	 */
 	public static Date calculateNextDate(Date startDate, Integer duration, boolean isPlanned,@NonNull WorkingDayProvider provider) {
 
