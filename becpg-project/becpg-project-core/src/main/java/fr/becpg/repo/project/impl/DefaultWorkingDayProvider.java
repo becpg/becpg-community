@@ -11,6 +11,8 @@ import fr.becpg.repo.ProjectRepoConsts;
 /**
  * Default implementation that only considers weekends (Saturday and Sunday) as non-working days.
  * This maintains backward compatibility with the original ProjectHelper logic.
+ *
+ * @author matthieu
  */
 public class DefaultWorkingDayProvider implements WorkingDayProvider {
 
@@ -18,6 +20,7 @@ public class DefaultWorkingDayProvider implements WorkingDayProvider {
 
     private static final int MAX_ITERATIONS = 366;
 
+    /** {@inheritDoc} */
     @Override
     public boolean isWorkingDay(Date date) {
         if (date == null) {
@@ -29,6 +32,7 @@ public class DefaultWorkingDayProvider implements WorkingDayProvider {
         return (dayOfWeek != Calendar.SATURDAY) && (dayOfWeek != Calendar.SUNDAY);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Date getNextWorkingDay(Date date) {
         if (date == null) {

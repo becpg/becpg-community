@@ -48,6 +48,12 @@ public class PackagingHelper implements InitializingBean {
 	protected final AlfrescoRepository<ProductData> alfrescoRepository;
 
 	@Autowired
+	/**
+	 * <p>Constructor for PackagingHelper.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 */
 	public PackagingHelper(@Qualifier("nodeService") NodeService nodeService,
 			@Qualifier("alfrescoRepository") AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.nodeService = nodeService;

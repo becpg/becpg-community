@@ -22,6 +22,11 @@ import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.CalendarService;
 
+/**
+ * <p>CalendarServiceImpl class.</p>
+ *
+ * @author matthieu
+ */
 @Service("projectCalendarService")
 public class CalendarServiceImpl implements CalendarService {
 
@@ -41,6 +46,7 @@ public class CalendarServiceImpl implements CalendarService {
 	@Autowired
 	private AssociationService associationService;
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean isWorkingDay(Date date, NodeRef calendarNodeRef) {
 		if (date == null) {
@@ -61,6 +67,7 @@ public class CalendarServiceImpl implements CalendarService {
 		return !holidays.contains(date);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public NodeRef getCalendar(NodeRef nodeRef) {
 		if ((nodeRef == null) || !nodeService.exists(nodeRef)) {

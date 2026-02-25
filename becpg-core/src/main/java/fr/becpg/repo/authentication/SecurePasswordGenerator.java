@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 /**
  * Utility class that generates a random password using a cryptographically strong
- * random source ({@link SecureRandom}).
+ * random source ({@link java.security.SecureRandom}).
  * <p>
  * The generated password has the following characteristics:
  * </p>
@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
  * <li>Contains at least one digit ({@code 0-9}).</li>
  * <li>Contains at least one special character from: {@code !@#$%^&*()-_=+[]{} }.</li>
  * </ul>
+ *
+ * @author matthieu
  */
 public class SecurePasswordGenerator {
 
@@ -33,6 +35,11 @@ public class SecurePasswordGenerator {
 		
 	}
 
+	/**
+	 * <p>generatePassword.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	public static String generatePassword() {
 	    StringBuilder password = new StringBuilder();
 

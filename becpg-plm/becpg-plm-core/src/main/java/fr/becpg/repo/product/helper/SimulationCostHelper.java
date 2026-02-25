@@ -44,6 +44,12 @@ public class SimulationCostHelper implements InitializingBean {
 	static SimulationCostHelper INSTANCE;
 
 	@Autowired
+	/**
+	 * <p>Constructor for SimulationCostHelper.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 */
 	public SimulationCostHelper(AlfrescoRepository<ProductData> alfrescoRepository,
 			SystemConfigurationService systemConfigurationService) {
 		this.alfrescoRepository = alfrescoRepository;

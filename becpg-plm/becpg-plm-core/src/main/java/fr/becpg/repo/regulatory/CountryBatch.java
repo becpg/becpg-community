@@ -5,6 +5,7 @@ import java.util.List;
 /**
  * <p>CountryBatch class.</p>
  *
+ * @param countries countries
  * @author matthieu
  */
 /**

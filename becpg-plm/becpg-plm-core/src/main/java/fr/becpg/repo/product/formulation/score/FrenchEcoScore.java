@@ -46,6 +46,12 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 	private final EcoScoreService ecoScoreService;
 
 	@Autowired
+	/**
+	 * <p>Constructor for FrenchEcoScore.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param ecoScoreService a {@link fr.becpg.repo.product.formulation.ecoscore.EcoScoreService} object
+	 */
 	public FrenchEcoScore(@Qualifier("nodeService") NodeService nodeService,
 			@Qualifier("ecoScoreService") EcoScoreService ecoScoreService) {
 		this.nodeService = nodeService;

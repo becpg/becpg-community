@@ -47,6 +47,15 @@ public class ProductSimulationPlugin implements EntitySimulationPlugin {
 	private final TransactionService transactionService;
 
 	@Autowired
+	/**
+	 * <p>Constructor for ProductSimulationPlugin.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 * @param entityVersionService a {@link fr.becpg.repo.entity.version.EntityVersionService} object
+	 * @param transactionService a {@link org.alfresco.service.transaction.TransactionService} object
+	 */
 	public ProductSimulationPlugin(@Qualifier("alfrescoRepository") AlfrescoRepository<ProductData> alfrescoRepository,
 			@Qualifier("nodeService") NodeService nodeService,
 			@Qualifier("associationService") AssociationService associationService,

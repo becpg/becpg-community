@@ -426,7 +426,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 	 * - If product is Archived, the document state is set to Archived
 	 * </p>
 	 *
-	 * @param productData the product data containing the state to synchronize with
+	 * @param stateableEntity the product data containing the state to synchronize with
 	 * @param docNodeRef the node reference of the document to update
 	 */
 	private void updateDocumentState(StateableEntity stateableEntity, NodeRef docNodeRef) {
@@ -452,9 +452,8 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 	 * For label claims, they must be claimed (isClaimed=true) to make a document mandatory.
 	 * For other characteristics, they just need to be present in the product.
 	 *
-	 * @param productData the product data containing characteristics
+	 * @param repositoryEntity the product data containing characteristics
 	 * @param docTypeItem the document type to check
-	 * @param parser the expression parser for formula evaluation
 	 * @param context the evaluation context for formula evaluation
 	 * @return true if the document is mandatory, false otherwise
 	 */
@@ -524,7 +523,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 	 * </ul>
 	 * </p>
 	 *
-	 * @param productData the product data to check for a match
+	 * @param repositoryEntity the product data to check for a match
 	 * @param docTypeItem the document type configuration
 	 * @return true if the document type matches the product, false otherwise
 	 */
@@ -620,7 +619,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 	 * Note: This method returns ALL product characteristics, including ALL label claims
 	 * (both claimed and unclaimed), certifications, and survey choices.
 	 *
-	 * @param productData the product data containing characteristics
+	 * @param repositoryEntity the product data containing characteristics
 	 * @return list of node references for all product characteristics
 	 */
 	private List<NodeRef> getProductCharacts(RepositoryEntity repositoryEntity) {

@@ -35,6 +35,13 @@ public class EcoScoreSpelFunctions implements CustomSpelFunctions {
 	private final AlfrescoRepository<BeCPGDataObject> alfrescoRepository;
 
 	@Autowired
+	/**
+	 * <p>Constructor for EcoScoreSpelFunctions.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param ecoScoreService a {@link fr.becpg.repo.product.formulation.ecoscore.EcoScoreService} object
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 */
 	public EcoScoreSpelFunctions(@Qualifier("nodeService") NodeService nodeService,
 			EcoScoreService ecoScoreService,
 			AlfrescoRepository<BeCPGDataObject> alfrescoRepository) {
