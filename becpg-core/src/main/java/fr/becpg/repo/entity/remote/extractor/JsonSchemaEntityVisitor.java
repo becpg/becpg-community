@@ -152,7 +152,13 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 	    }
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * <p>visit.</p>
+	 *
+	 * @param entityType a {@link org.alfresco.service.namespace.QName} object
+	 * @param result a {@link java.io.OutputStream} object
+	 * @throws java.io.IOException if any.
+	 */
 	public void visit(QName entityType, OutputStream result) throws IOException {
 		try (LocaleContext ctx = LocaleContext.fromParams(params)) {
 			JSONObject root = new JSONObject();
