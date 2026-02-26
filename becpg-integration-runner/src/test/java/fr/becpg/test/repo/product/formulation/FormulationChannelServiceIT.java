@@ -47,6 +47,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		systemConfigurationService = Mockito.spy(systemConfigurationService);
 		doReturn("0").when(systemConfigurationService).confValue("beCPG.formulation.channel.minHoursSinceModification");
 		doReturn("").when(systemConfigurationService).confValue("beCPG.formulation.channel.excludedTimeSlot");
+		doReturn("true").when(systemConfigurationService).confValue("beCPG.formulation.channel.force");
 		formulationChannelService = new FormulationChannelService(batchQueueService, publicationChannelService, systemConfigurationService,
 				transactionService, nodeService, alfrescoRepository, entityDictionaryService, wUsedListService, formulationService,
 				policyBehaviourFilter, namespaceService, authenticationService, 1, 1);
@@ -296,6 +297,8 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 	@Test
 	public void testSystemConditionsThresholds() throws InterruptedException {
 		
+		doReturn("false").when(systemConfigurationService).confValue("beCPG.formulation.channel.force");
+
 		NodeRef rawMaterialNodeRef = inWriteTx(() -> {
 			RawMaterialData rawMaterial = new RawMaterialData();
 			rawMaterial.setName("RM threshold test");

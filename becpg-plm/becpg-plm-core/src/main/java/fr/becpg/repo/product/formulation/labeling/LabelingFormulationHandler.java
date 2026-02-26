@@ -201,6 +201,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		Map<String, List<LabelingRuleListDataItem>> labelingRuleListsByGroup = getLabelingRules(formulatedProduct);
 
+		remapRulesFromOtherEntities(formulatedProduct, labelingRuleListsByGroup);
+		
 		List<IngLabelingListDataItem> retainNodes = new ArrayList<>();
 
 		boolean shouldSkip = true;
@@ -463,6 +465,27 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		formulatedProduct.getLabelingListView().getIngLabelingList().retainAll(retainNodes);
 
 		return true;
+	}
+
+	private void remapRulesFromOtherEntities(ProductData formulatedProduct, Map<String, List<LabelingRuleListDataItem>> labelingRuleListsByGroup) {
+		List<LabelingRuleListDataItem> allRules = labelingRuleListsByGroup.values().stream().flatMap(k -> k.stream()).toList();
+		
+		for (IngLabelingListDataItem labelingListItem : formulatedProduct.getLabelingListView().getIngLabelingList()) {
+			NodeRef grp = labelingListItem.getGrp();
+			if (grp != null && allRules.stream().noneMatch(r -> r.getNodeRef() != null && r.getNodeRef().equals(grp))) {
+				LabelingRuleListDataItem ruleToReplace = (LabelingRuleListDataItem) alfrescoRepository.findOne(grp);
+				if (ruleToReplace != null) {
+					LabelingRuleListDataItem ruleToChoose = allRules.stream()
+							.filter(r -> r.getLabelingRuleType() != null && r.getLabelingRuleType().equals(ruleToReplace.getLabelingRuleType()))
+							.filter(r -> r.getName() != null && r.getName().equals(ruleToReplace.getName())).findFirst().orElse(null);
+					if (ruleToChoose != null) {
+						labelingListItem.setGrp(ruleToChoose.getNodeRef());
+					} else {
+						labelingListItem.setGrp(null);
+					}
+				}
+			}
+		}
 	}
 
 	private void extractAllergens(LabelingFormulaContext labelingFormulaContext, ProductData productData) {
