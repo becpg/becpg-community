@@ -12652,82 +12652,95 @@
 
 
     <config evaluator="model-type" condition="gs1:targetMarket">
-        <forms>
-            <form>
-                <field-visibility>
-                    <show id="gs1:targetMarketCode" />
-                    <show id="cm:name" />
-                    <show id="gs1:targetMarketCountries" />
-                    <show id="sec:readGroups" force="true" />
-                    <show id="bcpg:erpCode" force="true" />
-                    <show id="bcpg:isDeleted" />
-                </field-visibility>
-                <appearance>
-                    <field id="gs1:targetMarketCountries">
-                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-                            <control-param name="showLink">false</control-param>
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="gs1:targetMarketCode" />
+					<show id="cm:name" />
+					<show id="gs1:targetMarketCountries" />
+					<show id="bcpg:eanCode" force="true" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+				<appearance>
+					<field id="gs1:targetMarketCountries">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>
+						</control>
+					</field>
+					<field help-id="becpg.forms.help.eanCode" id="bcpg:eanCode" mandatory="false" read-only="false" >
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl">
+                             <control-param name="maxLength">13</control-param>
                         </control>
+                        <constraint-handlers>
+                            <constraint event="keyup,change" type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN"/>
+                        </constraint-handlers>
                     </field>
-                </appearance>
-            </form>
-            <form id="filter">
-                <field-visibility>
-                    <show id="cm:name" />
-                    <show id="gs1:targetMarketCountries" />
-                    <show id="bcpg:erpCode" force="true" />
-                    <show id="bcpg:isDeleted" />
-                </field-visibility>
-                <appearance>
-                    <field id="gs1:targetMarketCountries">
-                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-                            <control-param name="showLink">false</control-param>
+				</appearance>
+			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="gs1:targetMarketCountries" />
+					<show id="bcpg:eanCode" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="gs1:targetMarketCountries">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="gs1:targetMarketCode" />
+					<show id="cm:name" />
+					<show id="gs1:targetMarketCountries" />
+					<show id="bcpg:eanCode" force="true" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:isDeleted">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config evaluator="node-type" condition="gs1:targetMarket">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="gs1:targetMarketCode" />
+					<show id="cm:name" />
+					<show id="gs1:targetMarketCountries" />
+					<show id="bcpg:eanCode" force="true" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+				<appearance>
+					<field id="gs1:targetMarketCountries">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>
+						</control>
+					</field>
+					<field help-id="becpg.forms.help.eanCode" id="bcpg:eanCode" mandatory="false" read-only="false" >
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl">
+                            <control-param name="maxLength">13</control-param>
                         </control>
+                        <constraint-handlers>
+                            <constraint event="keyup,change" type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN"/>
+                        </constraint-handlers>
                     </field>
-                    <field id="bcpg:isDeleted">
-                        <control template="/org/alfresco/components/form/controls/boolean.ftl">
-                            <control-param name="isSearch">true</control-param>
-                        </control>
-                    </field>
-                </appearance>
-            </form>
-            <form id="datagrid">
-                <field-visibility>
-                    <show id="gs1:targetMarketCode" />
-                    <show id="cm:name" />
-                    <show id="gs1:targetMarketCountries" />
-                    <show id="sec:readGroups" force="true" />
-                    <show id="bcpg:erpCode" force="true" />
-                    <show id="bcpg:isDeleted" />
-                </field-visibility>
-                <appearance>
-                    <field id="bcpg:isDeleted">
-                        <control template="/org/alfresco/components/form/controls/boolean.ftl" />
-                    </field>
-                </appearance>
-            </form>
-        </forms>
-    </config>
-    <config evaluator="node-type" condition="gs1:targetMarket">
-        <forms>
-            <form>
-                <field-visibility>
-                    <show id="gs1:targetMarketCode" />
-                    <show id="cm:name" />
-                    <show id="gs1:targetMarketCountries" />
-                    <show id="sec:readGroups" force="true" />
-                    <show id="bcpg:erpCode" force="true" />
-                    <show id="bcpg:isDeleted" />
-                </field-visibility>
-                <appearance>
-                    <field id="gs1:targetMarketCountries">
-                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-                            <control-param name="showLink">false</control-param>
-                        </control>
-                    </field>
-                </appearance>
-            </form>
-        </forms>
-    </config>
+				</appearance>
+			</form>
+		</forms>
+	</config>
 
 
 
