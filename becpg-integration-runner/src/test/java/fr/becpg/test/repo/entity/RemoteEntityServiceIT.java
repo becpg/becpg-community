@@ -25,15 +25,9 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
-import org.skyscreamer.jsonassert.JSONCompareResult;
-import org.skyscreamer.jsonassert.comparator.DefaultComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.w3c.dom.Document;
@@ -50,6 +44,7 @@ import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteParams;
+import fr.becpg.test.utils.JSONCompareHelper;
 import fr.becpg.repo.helper.json.JsonHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
@@ -119,7 +114,7 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 	}
 	
 	@Test
-	public void testRemoteJSONEntityRegression() throws IOException, JSONException {
+	public void testRemoteJSONEntityRegression() throws IOException {
 		NodeRef productNodeRef = inWriteTx(() -> {
 			StandardChocolateEclairTestProduct testProduct = new StandardChocolateEclairTestProduct.Builder()
 					.withAlfrescoRepository(alfrescoRepository)
@@ -153,69 +148,19 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 		String expectedJsonEntity = res.getContentAsString(StandardCharsets.UTF_8);
 		String actualJsonEntity = JsonHelper.read(tempFile).toString();
 		
-		JSONObject expectedJson = cleanObject(new JSONObject(expectedJsonEntity));
-		JSONObject actualJson = cleanObject(new JSONObject(actualJsonEntity));
+		JSONObject expectedJson = new JSONObject(expectedJsonEntity);
+		JSONObject actualJson = new JSONObject(actualJsonEntity);
 		
-		JSONAssert.assertEquals(expectedJson.toString(), actualJson.toString(), new DefaultComparator(JSONCompareMode.LENIENT) {
-			
-			@Override
-			public void compareValues(String prefix, Object expectedValue, Object actualValue, JSONCompareResult result) {
-				if ("entity.attributes.cm:contains".equals(prefix)) {
-					return;
-				}
-				super.compareValues(prefix, expectedValue, actualValue, result);
-			}
-			
-			@Override
-			protected boolean areNotSameDoubles(Object expectedValue, Object actualValue) {
-			    double expected = ((Number) expectedValue).doubleValue();
-			    double actual   = ((Number) actualValue).doubleValue();
-
-			    double epsilon = 1e-6;
-			    return Math.abs(expected - actual) > epsilon;
-			}
-		});
+		JSONCompareHelper comparator = new JSONCompareHelper.Builder()
+				.withAllowNewEntries(true)
+				.withAllowReordering(true)
+				.withIgnoredPath("entity.attributes.cm:contains")
+				.withIgnoredFields(Set.of("parent", "metadata", "id", "cm:name", "bcpg:code", "cm:creator",
+						"cm:modifier", "cm:created", "cm:modified", "bcpg:startEffectivity", "bcpg:formulatedDate", "bcpg:illLogValue",
+						"bcpg:entityScore", "bcpg:sort", "bcpg:reqCtrlList", "bcpg:nutListRoundedValue"))
+				.build();
+		comparator.assertEquals(expectedJson, actualJson);
 	}
-
-	private static final Set<String> KEYS_TO_IGNORE = Set.of("parent", "metadata", "id", "cm:name", "bcpg:code", "cm:creator",
-			"cm:modifier", "cm:created", "cm:modified", "bcpg:startEffectivity", "bcpg:formulatedDate", "bcpg:illLogValue",
-			"bcpg:entityScore", "bcpg:sort", "bcpg:reqCtrlList", "bcpg:nutListRoundedValue");
-
-	private JSONObject cleanObject(JSONObject object) {
-		JSONObject cleaned = new JSONObject();
-		for (String key : object.keySet()) {
-			if (KEYS_TO_IGNORE.contains(key)) {
-				continue;
-			}
-			Object value = object.get(key);
-			cleaned.put(key, cleanValue(value));
-		}
-		return cleaned;
-	}
-	
-	private Object cleanValue(Object value) {
-		if (value instanceof JSONObject jsonObject) {
-			return cleanObject(jsonObject);
-		}
-		if (value instanceof JSONArray jsonArray) {
-			return cleanArray(jsonArray);
-		}
-		return value;
-	}
-	
-	private JSONArray cleanArray(JSONArray array) {
-		JSONArray cleaned = new JSONArray();
-		
-		for (int i = 0; i < array.length(); i++) {
-			Object value = array.get(i);
-			cleaned.put(cleanValue(value));
-		}
-		
-		return cleaned;
-	}
-	
-	
-
 
 	@Test
 	public void testRemoteJSONEntity() throws FileNotFoundException {
