@@ -8,11 +8,6 @@ import java.util.List;
  * @param countries countries
  * @author matthieu
  */
-/**
- * <p>countries.</p>
- *
- * @return a {@link java.util.List} object
- */
 public record CountryBatch(List<String> countries) {
 
 }

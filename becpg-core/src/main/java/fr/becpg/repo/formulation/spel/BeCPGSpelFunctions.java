@@ -979,7 +979,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * * Helper {@code @beCPG.flatten($range)}
 		 *
 		 * @param <T>   the type of elements
-		 * @param list2 the list of lists to flatten
+		 * @param range the list of lists to flatten
 		 * @return a single flattened list
 		 */
 		public static <T> List<T> flatten(List<? extends Collection<T>> range) {
