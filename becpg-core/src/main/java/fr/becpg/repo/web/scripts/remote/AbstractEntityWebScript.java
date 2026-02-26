@@ -268,7 +268,16 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			}
 		}
 		if ((path != null) && (!path.isBlank())) {
-			queryBuilder.inPath(path);
+			if (path.startsWith("/")) {
+				NodeRef parentNode = BeCPGQueryBuilder.createQuery().selectNodeByPath(path);
+				if (parentNode != null) {
+					queryBuilder.parent(parentNode);
+				} else {
+					queryBuilder.inPath(path);
+				}
+			} else {
+				queryBuilder.inPath(path);
+			}
 		}
 		if ((query != null) && (!query.isBlank())) {
 			queryBuilder.andFTSQuery(query);
@@ -340,9 +349,38 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				queryBuilder.maxResults(maxResults);
 			}
 			PagingResults<NodeRef> refs = queryBuilder.inDBIfPossible().pagingResults();
-			if ((refs != null) ) {
+			if ((refs != null)) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Returning " + refs.getTotalResultCount() + " entities");
+				}
+				if (!RepoConsts.MAX_RESULTS_UNLIMITED.equals(maxResults)) {
+					final int finalPage = page != null ? page : 1;
+					final int finalMaxResults = maxResults != null ? maxResults : RepoConsts.MAX_RESULTS_256;
+					return new PagingResults<NodeRef>() {
+						@Override
+						public List<NodeRef> getPage() {
+							return refs.getPage();
+						}
+
+						@Override
+						public boolean hasMoreItems() {
+							return refs.hasMoreItems();
+						}
+
+						@Override
+						public Pair<Integer, Integer> getTotalResultCount() {
+							int count = finalPage * finalMaxResults;
+							if (!hasMoreItems()) {
+								count = (finalPage - 1) * finalMaxResults + getPage().size();
+							}
+							return new Pair<>(count, count);
+						}
+
+						@Override
+						public String getQueryExecutionId() {
+							return refs.getQueryExecutionId();
+						}
+					};
 				}
 				return refs;
 			}
