@@ -5706,7 +5706,6 @@
 			
 			<associations>
 				<association name="bcpg:locationCountryRef">
-					<title>Country reference</title>
 					<source>
 						<mandatory>false</mandatory>
 						<many>true</many>
