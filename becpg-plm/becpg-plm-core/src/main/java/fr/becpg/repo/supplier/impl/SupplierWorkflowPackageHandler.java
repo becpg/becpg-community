@@ -38,9 +38,10 @@ import fr.becpg.repo.project.data.ProjectData;
  * workflow when the supplier portal wizard is opened with the supplier nodeRef.
  *
  * @author matthieu
+ * @deprecated since 25.3.1
  */
 //@Service
-@Deprecated
+@Deprecated(since = "25.3.1")
 public class SupplierWorkflowPackageHandler implements WorkflowPackageHandler
 {
 

@@ -72,12 +72,7 @@ public class SpelFormulaService {
 	 * @return a cached or newly parsed {@link org.springframework.expression.Expression}
 	 */
 	public Expression parseExpression(String formula) {
-		Expression cached = expressionCache.get(formula);
-		if (cached == null) {
-			cached = parser.parseExpression(formula);
-			expressionCache.put(formula, cached);
-		}
-		return cached;
+		return expressionCache.computeIfAbsent(formula, parser::parseExpression);
 	}
 
 
