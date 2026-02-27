@@ -1140,7 +1140,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_CONTACTS, PLMModel.TYPE_CONTACTLIST);
 		entityLists.put(PlmRepoConsts.PATH_REGULATORY_USAGES, PLMModel.TYPE_REGULATORY_USAGE);
 		entityLists.put(PlmRepoConsts.PATH_TOXICITIES, PLMModel.TYPE_TOX);
-		entityLists.put(PlmRepoConsts.PATH_TOX_ING, PLMModel.TYPE_TOX_ING);
 		entityLists.put(PlmRepoConsts.PATH_SURVEY_QUESTIONS, SurveyModel.TYPE_SURVEY_QUESTION);
 		entityLists.put(PlmRepoConsts.PATH_DOCUMENT_TYPE, BeCPGModel.TYPE_DOCUMENT_TYPE);
 		
