@@ -7,6 +7,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.project.CalendarService;
 
 /**
@@ -46,7 +47,7 @@ public class CalendarWorkingDayProvider extends DefaultWorkingDayProvider implem
         if (date == null) {
             return null;
         }
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
         calendar.setTime(date);
         calendar.add(Calendar.DAY_OF_MONTH, 1);
 
