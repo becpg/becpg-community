@@ -722,7 +722,15 @@ public class ECOServiceImpl implements ECOService {
 
 						// Level 2
 						if ((wusedData.getDepthLevel() == 2) || isMergeItem) {
-							applyReplacementList(ecoData, productToFormulateData, isSimulation, isMergeItem);
+							if (ecoData.getReplacementList() != null) {
+								if (isMergeItem && !isSimulation) {
+									merge(ecoData);
+								} else {
+									for (AbstractProductDataView view : productToFormulateData.getViews()) {
+										applyToList(ecoData, productToFormulateData, view.getMainDataList());
+									}
+								}
+							}
 						}
 
 						if (!isMergeItem) {
@@ -758,7 +766,9 @@ public class ECOServiceImpl implements ECOService {
 						// check req
 						checkRequirements(changeUnitDataItem, productToFormulateData);
 
-						alfrescoRepository.save(productToFormulateData);
+						if (!isMergeItem && !isSimulation) {
+							alfrescoRepository.save(productToFormulateData);
+						}
 
 						// Create new version if needed
 						if ((!isSimulation && !isMergeItem) && !changeUnitDataItem.getRevision().equals(RevisionType.NoRevision)) {
@@ -1168,18 +1178,6 @@ public class ECOServiceImpl implements ECOService {
 
 		}
 		return skip;
-	}
-
-	private void applyReplacementList(ChangeOrderData ecoData, ProductData product, boolean isSimulation, boolean isMergedItem) {
-		if (ecoData.getReplacementList() != null) {
-			if (isMergedItem && !isSimulation) {
-				merge(ecoData);
-			} else {
-				for (AbstractProductDataView view : product.getViews()) {
-					applyToList(ecoData, product, view.getMainDataList());
-				}
-			}
-		}
 	}
 
 	private void applyLabelingReplacements(ChangeOrderData ecoData, ProductData product) {
