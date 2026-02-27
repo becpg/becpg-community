@@ -98,11 +98,31 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
 	private static final String PARAM_NAME = "name";
 
-	/** Constant <code>THRESHOLD="threshold"</code> */
-	protected static final String THRESHOLD = "threshold";
+	private static final String PARAM_PHRASE = "phrase";
 
-	/** Constant <code>CITATION="citation"</code> */
-	protected static final String CITATION = "citation";
+	private static final String PARAM_SCOPE_ID = "scope_id";
+
+	private static final String GET_URL = "GET url: ";
+
+	private static final String POST_URL = "POST url: ";
+
+	private static final String PARAM_RESULTS = "results";
+
+	private static final String PARAM_RESULTS_COUNT = "resultsCount";
+
+	private static final String PARAM_COUNT = "count";
+
+	private static final String PARAM_QUERY = "query";
+
+	private static final String PARAM_RESULTS_LIMIT = "limit";
+
+	private static final String PARAM_COMPANY = "company";
+
+	private static final String LIBIDENTS = "libidents";
+
+	private static final String THRESHOLD = "threshold";
+
+	private static final String CITATION = "citation";
 
 	private static final Map<String, String> moduleToCodeMap = new HashMap<>();
 	private static final Map<String, Integer> moduleToIDMap = new HashMap<>();
@@ -118,12 +138,6 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 	public static final String MESSAGE_NOTLISTED_ING = "message.decernis.ingredient.notListed";
 	/** Constant <code>MESSAGE_PERMITTED_ING="message.decernis.ingredient.permitted"</code> */
 	public static final String MESSAGE_PERMITTED_ING = "message.decernis.ingredient.permitted";
-
-	private static final String PARAM_COMPANY = "company";
-	private static final String PARAM_COUNT = "count";
-	private static final String PARAM_RESULTS = "results";
-	private static final String PARAM_QUERY = "query";
-	private static final String LIBIDENTS = "libidents";
 
 	private static final Map<QName, String> ingNumbers = new HashMap<>();
 
@@ -304,8 +318,8 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 					for (int i = 0; i < resultArray.length(); i++) {
 						JSONObject result = resultArray.getJSONObject(i);
 
-						if (result.has("phrase") && result.getString("phrase").equals(usageCode)) {
-							String usageId = Integer.toString(result.getInt("scope_id"));
+						if (result.has(PARAM_PHRASE) && result.getString(PARAM_PHRASE).equals(usageCode)) {
+							String usageId = Integer.toString(result.getInt(PARAM_SCOPE_ID));
 							nodeService.setProperty(usageRef, PLMModel.PROP_REGULATORY_ID, usageId);
 							return;
 						}
@@ -317,7 +331,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
 	private void traceGetRequest(String url) {
 		if (logger.isTraceEnabled()) {
-			logger.trace("GET url: " + url);
+			logger.trace(GET_URL + url);
 		}
 	}
 
@@ -368,7 +382,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
 	private void tracePostRequest(JSONObject recipePayload, String url) {
 		if (logger.isTraceEnabled()) {
-			logger.trace("POST url: " + url + " body: " + recipePayload);
+			logger.trace(POST_URL + url + " body: " + recipePayload);
 		}
 	}
 
@@ -437,9 +451,9 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		String url = serverUrl() + "/functions?current_company={company}&phrase={phrase}&module_id=1&limit=1";
 		Map<String, String> params = new HashMap<>();
 		params.put(PARAM_COMPANY, companyName());
-		params.put("phrase", regulatoryCode);
+		params.put(PARAM_PHRASE, regulatoryCode);
 		if (logger.isTraceEnabled()) {
-			logger.trace("GET url: " + url + " params: " + params);
+			logger.trace(GET_URL + url + " params: " + params);
 		}
 		ResponseEntity<String> response = RestTemplateHelper.getRestTemplateLongTimeout().exchange(url, HttpMethod.GET, createEntity(null),
 				String.class, params);
@@ -449,8 +463,8 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 				JSONArray results = jsonObject.getJSONArray(PARAM_RESULTS);
 				if (results.length() > 0) {
 					JSONObject result = results.getJSONObject(0);
-					if (result.has("scope_id")) {
-						String functionId = result.get("scope_id").toString();
+					if (result.has(PARAM_SCOPE_ID)) {
+						String functionId = result.get(PARAM_SCOPE_ID).toString();
 						functionsIdMap.put(regulatoryCode, functionId);
 						return functionId;
 					}
