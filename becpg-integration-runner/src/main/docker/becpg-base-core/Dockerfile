@@ -3,9 +3,7 @@ FROM ${docker.acs.image}:${alfresco.platform.version}
 ENV TOMCAT_DIR=/usr/local/tomcat \
     NEXUS=https://artifacts.alfresco.com/nexus/content/groups/public \
     AOS_VERSION=${alfresco.aos.version} \
-    MYSQL_CONNECTOR=${mysql.connector.version} \
-    SUPPORT_TOOLS_VERSION=${becpg.supporttools.version} \
-    I18_VERSION=${becpg.i18n.version}
+    MYSQL_CONNECTOR=${mysql.connector.version}
 
 ARG GROUPNAME=Alfresco
 ARG GROUPID=1000
@@ -21,20 +19,10 @@ RUN dnf update -y && dnf clean all && \
     rm $TOMCAT_DIR/lib/postgres* && \
     \
     curl --silent --location \
-      https://storage.googleapis.com/becpg-repo/addons/support-tools-repo-${SUPPORT_TOOLS_VERSION}.amp \
-      -o $TOMCAT_DIR/amps/support-tools-repo-${SUPPORT_TOOLS_VERSION}.amp && \
-    java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install $TOMCAT_DIR/amps/ $TOMCAT_DIR/webapps/alfresco -nobackup -directory && \
-    rm $TOMCAT_DIR/amps/support-tools-repo-${SUPPORT_TOOLS_VERSION}.amp && \
-    \
-    curl --silent --location \
       ${NEXUS}/org/alfresco/aos-module/alfresco-aos-module/${AOS_VERSION}/alfresco-aos-module-${AOS_VERSION}.amp \
       -o $TOMCAT_DIR/amps/alfresco-aos-core-${AOS_VERSION}.amp && \
     java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install $TOMCAT_DIR/amps/ $TOMCAT_DIR/webapps/alfresco -force -nobackup -directory && \
     rm $TOMCAT_DIR/amps/alfresco-aos-core-${AOS_VERSION}.amp && \
-    \
-    curl --silent --location \
-      https://storage.googleapis.com/becpg-repo/addons/alfresco-becpg-i18n-${I18_VERSION}.jar \
-      -o $TOMCAT_DIR/webapps/alfresco/WEB-INF/lib/alfresco-becpg-i18n-${I18_VERSION}.jar && \
     rm -rf /var/cache/apt/* /tmp/* /var/tmp/*
 
 COPY tomcat/server.xml $TOMCAT_DIR/conf/server.xml 
