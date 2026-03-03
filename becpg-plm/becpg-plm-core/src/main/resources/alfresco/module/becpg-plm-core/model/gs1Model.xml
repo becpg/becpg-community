@@ -2860,6 +2860,14 @@
 						<facetable>true</facetable>
 					</index>
 				</property>
+				<property name="gs1:carbonFootprintDate">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
 			</properties>
 			<associations>
 
