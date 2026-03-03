@@ -3886,9 +3886,15 @@
                         </control>
                     </field>
                     <field id="bcpg:plantTel" set="2-col" />
-                    <field id="bcpg:httpLink1" set="2-col" label-id="becpg.forms.field.website1" />
-                    <field id="bcpg:httpLink2" set="2-col" label-id="becpg.forms.field.website2" />
-                    <field id="bcpg:httpLink3" set="2-col" label-id="becpg.forms.field.website3" />
+                    <field id="bcpg:httpLink1" set="2-col" label-id="becpg.forms.field.website1">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink2" set="2-col" label-id="becpg.forms.field.website2">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink3" set="2-col" label-id="becpg.forms.field.website3">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
                     <field id="bcpg:plantPackerCode" set="2-col" />
                     <field id="bcpg:plantApprovalNumbers" set="2-col" />
                     <field id="bcpg:plantCertifications" mandatory="false" read-only="false" set="2-col">
@@ -4044,9 +4050,15 @@
                         </control>
                     </field>
                     <field id="bcpg:plantTel" set="2-col" />
-                    <field id="bcpg:httpLink1" set="2-col" label-id="becpg.forms.field.website1" />
-                    <field id="bcpg:httpLink2" set="2-col" label-id="becpg.forms.field.website2" />
-                    <field id="bcpg:httpLink3" set="2-col" label-id="becpg.forms.field.website3" />
+                    <field id="bcpg:httpLink1" set="2-col" label-id="becpg.forms.field.website1">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink2" set="2-col" label-id="becpg.forms.field.website2">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink3" set="2-col" label-id="becpg.forms.field.website3">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
                     <field id="bcpg:plantPackerCode" set="2-col" />
                     <field id="bcpg:plantApprovalNumbers" set="2-col" />
                     <field id="bcpg:plantCertifications" mandatory="false" read-only="false" set="2-col">
@@ -4208,9 +4220,15 @@
                 </field-visibility>
                 <appearance>
                     <field id="fm:commentCount" label="hidden" read-only="true" />
-                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1" />
-                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2" />
-                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3" />
+                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
                     <field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1" />
                     <field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2" />
                 </appearance>
@@ -4245,9 +4263,15 @@
                 </field-visibility>
                 <appearance>
                     <field id="fm:commentCount" label="hidden" read-only="true" />
-                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1" />
-                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2" />
-                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3" />
+                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
                     <field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1" />
                     <field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2" />
                     <field id="bcpg:isDeleted">
@@ -4298,9 +4322,15 @@
                             </control-param>
                         </control>
                     </field>
-                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1" />
-                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2" />
-                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3" />
+                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
                     <field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1">
                         <control template="/org/alfresco/components/form/controls/textfield.ftl" />
                     </field>
@@ -4373,9 +4403,15 @@
                         </control>
                     </field>
                     
-                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1" />
-                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2" />
-                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3" />
+                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
 
                     <field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1">
                         <control template="/org/alfresco/components/form/controls/textfield.ftl" />
@@ -4446,9 +4482,15 @@
 
                 </field-visibility>
                 <appearance>
-                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1" />
-                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2" />
-                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3" />
+                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
                     <field id="bcpg:isDeleted">
                         <control template="/org/alfresco/components/form/controls/boolean.ftl" />
                     </field>
@@ -4669,9 +4711,15 @@
                             </control-param>
                         </control>
                     </field>
-                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1" />
-                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2" />
-                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3" />
+                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
                     <field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1">
                         <control template="/org/alfresco/components/form/controls/textfield.ftl" />
                     </field>
@@ -4742,9 +4790,15 @@
                             </control-param>
                         </control>
                     </field>
-                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1" />
-                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2" />
-                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3" />
+                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
                     <field id="cm:description">
                         <control>
                             <control-param name="activateLinks">true</control-param>
@@ -4830,9 +4884,15 @@
                     <show id="bcpg:isDeleted" />
                 </field-visibility>
                 <appearance>
-                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1" />
-                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2" />
-                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3" />
+                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
                     <field id="bcpg:isDeleted">
                         <control template="/org/alfresco/components/form/controls/boolean.ftl" />
                     </field>
@@ -5593,9 +5653,15 @@
                         </constraint-handlers>
                     </field>
                     <field id="bcpg:supplierFax" set="mainInfo" />
-                    <field id="bcpg:httpLink1" set="mainInfo" label-id="becpg.forms.field.website1" />
-                    <field id="bcpg:httpLink2" set="mainInfo" label-id="becpg.forms.field.website2" />
-                    <field id="bcpg:httpLink3" set="mainInfo" label-id="becpg.forms.field.website3" />
+                    <field id="bcpg:httpLink1" set="mainInfo" label-id="becpg.forms.field.website1">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink2" set="mainInfo" label-id="becpg.forms.field.website2">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink3" set="mainInfo" label-id="becpg.forms.field.website3">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
                     
                     <!-- bcpg:location type -->
                     <field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1" set="location" />
@@ -5681,9 +5747,15 @@
                         </constraint-handlers>
                     </field>
                     <field id="bcpg:supplierFax" set="mainInfo" />
-                    <field id="bcpg:httpLink1" set="mainInfo" label-id="becpg.forms.field.website1" />
-                    <field id="bcpg:httpLink2" set="mainInfo" label-id="becpg.forms.field.website2" />
-                    <field id="bcpg:httpLink3" set="mainInfo" label-id="becpg.forms.field.website3" />
+                    <field id="bcpg:httpLink1" set="mainInfo" label-id="becpg.forms.field.website1">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink2" set="mainInfo" label-id="becpg.forms.field.website2">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink3" set="mainInfo" label-id="becpg.forms.field.website3">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
                     
                     <!-- bcpg:location type -->
                     <field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1" set="location" />
@@ -5807,9 +5879,15 @@
                         </constraint-handlers>
                     </field>
                     <field id="bcpg:supplierFax" set="mainInfo" />
-                    <field id="bcpg:httpLink1" set="mainInfo" label-id="becpg.forms.field.website1" />
-                    <field id="bcpg:httpLink2" set="mainInfo" label-id="becpg.forms.field.website2" />
-                    <field id="bcpg:httpLink3" set="mainInfo" label-id="becpg.forms.field.website3" />
+                    <field id="bcpg:httpLink1" set="mainInfo" label-id="becpg.forms.field.website1">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink2" set="mainInfo" label-id="becpg.forms.field.website2">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink3" set="mainInfo" label-id="becpg.forms.field.website3">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
                     <field id="pjt:projectScore" set="mainInfo" mandatory="false" read-only="false" />
                     
                     <!-- bcpg:location type -->
@@ -6134,9 +6212,15 @@
                         </control>
                     </field>
                     <field id="bcpg:code" read-only="true" />
-                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1" />
-                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2" />
-                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3" />
+                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
                     <field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1" />
                     <field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2" />
                 </appearance>
@@ -6223,9 +6307,15 @@
                 </field-visibility>
                 <appearance>
                     <field id="cm:name" read-only="true"></field>
-                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1" />
-                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2" />
-                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3" />
+                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
                 </appearance>
             </form>
             
@@ -6343,9 +6433,15 @@
                     <field id="bcpg:clientTel" set="mainInfo" />
                     <field id="bcpg:clientEmail" set="mainInfo" />
                     <field id="bcpg:clientFax" set="mainInfo" />
-                    <field id="bcpg:httpLink1" set="mainInfo" label-id="becpg.forms.field.website1" />
-                    <field id="bcpg:httpLink2" set="mainInfo" label-id="becpg.forms.field.website2" />
-                    <field id="bcpg:httpLink3" set="mainInfo" label-id="becpg.forms.field.website3" />
+                    <field id="bcpg:httpLink1" set="mainInfo" label-id="becpg.forms.field.website1">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink2" set="mainInfo" label-id="becpg.forms.field.website2">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink3" set="mainInfo" label-id="becpg.forms.field.website3">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
                     <field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1" set="mainInfo" />
                     <field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2" set="mainInfo" />
                     <field id="bcpg:locationAddress3" set="mainInfo" />
@@ -6465,9 +6561,15 @@
                     <field id="bcpg:clientTel" set="mainInfo" />
                     <field id="bcpg:clientEmail" set="mainInfo" />
                     <field id="bcpg:clientFax" set="mainInfo" />
-                    <field id="bcpg:httpLink1" set="mainInfo" label-id="becpg.forms.field.website1" />
-                    <field id="bcpg:httpLink2" set="mainInfo" label-id="becpg.forms.field.website2" />
-                    <field id="bcpg:httpLink3" set="mainInfo" label-id="becpg.forms.field.website3" />
+                    <field id="bcpg:httpLink1" set="mainInfo" label-id="becpg.forms.field.website1">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink2" set="mainInfo" label-id="becpg.forms.field.website2">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink3" set="mainInfo" label-id="becpg.forms.field.website3">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
                     <field id="pjt:projectScore" mandatory="false" read-only="false" set="mainInfo" />
                     
                     <field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1" set="location" />
@@ -6756,9 +6858,15 @@
                 </field-visibility>
                 <appearance>
                     <field id="cm:name" read-only="true"></field>
-                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1" />
-                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2" />
-                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3" />
+                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
                 </appearance>
             </form>
         </forms>
@@ -11346,9 +11454,15 @@
                     <field id="bcpg:contactListPhoneOffice" set="2-col" />
                     <field id="bcpg:contactListPhoneMobile" set="2-col" />
                     <field id="bcpg:contactListFax" set="2-col" />
-                    <field id="bcpg:httpLink1" set="2-col" label-id="becpg.forms.field.website1" />
-                    <field id="bcpg:httpLink2" set="2-col" label-id="becpg.forms.field.website2" />
-                    <field id="bcpg:httpLink3" set="2-col" label-id="becpg.forms.field.website3" />
+                    <field id="bcpg:httpLink1" set="2-col" label-id="becpg.forms.field.website1">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink2" set="2-col" label-id="becpg.forms.field.website2">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink3" set="2-col" label-id="becpg.forms.field.website3">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
                     <field id="bcpg:locationCity" set="2-col">
                         <control template="/org/alfresco/components/form/controls/textfield.ftl" />
                     </field>
@@ -11419,9 +11533,15 @@
                     <field id="bcpg:contactListPhoneOffice" set="2-col" />
                     <field id="bcpg:contactListPhoneMobile" set="2-col" />
                     <field id="bcpg:contactListFax" set="2-col" />
-                    <field id="bcpg:httpLink1" set="2-col" label-id="becpg.forms.field.website1" />
-                    <field id="bcpg:httpLink2" set="2-col" label-id="becpg.forms.field.website2" />
-                    <field id="bcpg:httpLink3" set="2-col" label-id="becpg.forms.field.website3" />
+                    <field id="bcpg:httpLink1" set="2-col" label-id="becpg.forms.field.website1">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink2" set="2-col" label-id="becpg.forms.field.website2">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink3" set="2-col" label-id="becpg.forms.field.website3">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
                     <field id="bcpg:locationCity" set="2-col">
                         <control template="/org/alfresco/components/form/controls/textfield.ftl" />
                     </field>
@@ -11491,9 +11611,15 @@
                     <field id="bcpg:contactListPhoneOffice" set="2-col" />
                     <field id="bcpg:contactListPhoneMobile" set="2-col" />
                     <field id="bcpg:contactListFax" set="2-col" />
-                    <field id="bcpg:httpLink1" set="2-col" label-id="becpg.forms.field.website1" />
-                    <field id="bcpg:httpLink2" set="2-col" label-id="becpg.forms.field.website2" />
-                    <field id="bcpg:httpLink3" set="2-col" label-id="becpg.forms.field.website3" />
+                    <field id="bcpg:httpLink1" set="2-col" label-id="becpg.forms.field.website1">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink2" set="2-col" label-id="becpg.forms.field.website2">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink3" set="2-col" label-id="becpg.forms.field.website3">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
                     <field id="bcpg:locationCity" set="2-col" />
                     <field id="bcpg:locationZip" set="2-col" />
                     <field id="bcpg:locationState" set="2-col" />
@@ -11540,9 +11666,15 @@
                     <field id="bcpg:entityDataListState" label="hidden" />
                     <field id="fm:commentCount" label="hidden" read-only="true" />
                     <field id="bcpg:supplierAccountRef" read-only="true" />
-                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1" />
-                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2" />
-                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3" />
+                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
                     <field id="bcpg:isDeleted">
                         <control template="/org/alfresco/components/form/controls/boolean.ftl" />
                     </field>
@@ -11572,9 +11704,15 @@
                 <appearance>
                     <field id="bcpg:entityDataListState" label="hidden" />
                     <field id="fm:commentCount" label="hidden" read-only="true" />
-                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1" />
-                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2" />
-                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3" />
+                    <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink2" label-id="becpg.forms.field.website2">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink3" label-id="becpg.forms.field.website3">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
                 </appearance>
             </form>
         </forms>
@@ -11621,9 +11759,15 @@
                     <field id="bcpg:contactListPhoneOffice" set="2-col" />
                     <field id="bcpg:contactListPhoneMobile" set="2-col" />
                     <field id="bcpg:contactListFax" set="2-col" />
-                    <field id="bcpg:httpLink1" set="2-col" label-id="becpg.forms.field.website1" />
-                    <field id="bcpg:httpLink2" set="2-col" label-id="becpg.forms.field.website2" />
-                    <field id="bcpg:httpLink3" set="2-col" label-id="becpg.forms.field.website3" />
+                    <field id="bcpg:httpLink1" set="2-col" label-id="becpg.forms.field.website1">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink2" set="2-col" label-id="becpg.forms.field.website2">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink3" set="2-col" label-id="becpg.forms.field.website3">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
                     <field id="bcpg:locationCity" set="2-col">
                         <control template="/org/alfresco/components/form/controls/textfield.ftl" />
                     </field>
@@ -11694,9 +11838,15 @@
                     <field id="bcpg:contactListPhoneOffice" set="2-col" />
                     <field id="bcpg:contactListPhoneMobile" set="2-col" />
                     <field id="bcpg:contactListFax" set="2-col" />
-                    <field id="bcpg:httpLink1" set="2-col" label-id="becpg.forms.field.website1" />
-                    <field id="bcpg:httpLink2" set="2-col" label-id="becpg.forms.field.website2" />
-                    <field id="bcpg:httpLink3" set="2-col" label-id="becpg.forms.field.website3" />
+                    <field id="bcpg:httpLink1" set="2-col" label-id="becpg.forms.field.website1">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink2" set="2-col" label-id="becpg.forms.field.website2">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
+                    <field id="bcpg:httpLink3" set="2-col" label-id="becpg.forms.field.website3">
+                    	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
+                    </field>
                     <field id="bcpg:locationCity" set="2-col">
                         <control template="/org/alfresco/components/form/controls/textfield.ftl" />
                     </field>
@@ -12652,82 +12802,95 @@
 
 
     <config evaluator="model-type" condition="gs1:targetMarket">
-        <forms>
-            <form>
-                <field-visibility>
-                    <show id="gs1:targetMarketCode" />
-                    <show id="cm:name" />
-                    <show id="gs1:targetMarketCountries" />
-                    <show id="sec:readGroups" force="true" />
-                    <show id="bcpg:erpCode" force="true" />
-                    <show id="bcpg:isDeleted" />
-                </field-visibility>
-                <appearance>
-                    <field id="gs1:targetMarketCountries">
-                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-                            <control-param name="showLink">false</control-param>
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="gs1:targetMarketCode" />
+					<show id="cm:name" />
+					<show id="gs1:targetMarketCountries" />
+					<show id="bcpg:eanCode" force="true" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+				<appearance>
+					<field id="gs1:targetMarketCountries">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>
+						</control>
+					</field>
+					<field help-id="becpg.forms.help.eanCode" id="bcpg:eanCode" mandatory="false" read-only="false" >
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl">
+                             <control-param name="maxLength">13</control-param>
                         </control>
+                        <constraint-handlers>
+                            <constraint event="keyup,change" type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN"/>
+                        </constraint-handlers>
                     </field>
-                </appearance>
-            </form>
-            <form id="filter">
-                <field-visibility>
-                    <show id="cm:name" />
-                    <show id="gs1:targetMarketCountries" />
-                    <show id="bcpg:erpCode" force="true" />
-                    <show id="bcpg:isDeleted" />
-                </field-visibility>
-                <appearance>
-                    <field id="gs1:targetMarketCountries">
-                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-                            <control-param name="showLink">false</control-param>
+				</appearance>
+			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="gs1:targetMarketCountries" />
+					<show id="bcpg:eanCode" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="gs1:targetMarketCountries">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="gs1:targetMarketCode" />
+					<show id="cm:name" />
+					<show id="gs1:targetMarketCountries" />
+					<show id="bcpg:eanCode" force="true" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:isDeleted">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config evaluator="node-type" condition="gs1:targetMarket">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="gs1:targetMarketCode" />
+					<show id="cm:name" />
+					<show id="gs1:targetMarketCountries" />
+					<show id="bcpg:eanCode" force="true" />
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+				<appearance>
+					<field id="gs1:targetMarketCountries">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showLink">false</control-param>
+						</control>
+					</field>
+					<field help-id="becpg.forms.help.eanCode" id="bcpg:eanCode" mandatory="false" read-only="false" >
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl">
+                            <control-param name="maxLength">13</control-param>
                         </control>
+                        <constraint-handlers>
+                            <constraint event="keyup,change" type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN"/>
+                        </constraint-handlers>
                     </field>
-                    <field id="bcpg:isDeleted">
-                        <control template="/org/alfresco/components/form/controls/boolean.ftl">
-                            <control-param name="isSearch">true</control-param>
-                        </control>
-                    </field>
-                </appearance>
-            </form>
-            <form id="datagrid">
-                <field-visibility>
-                    <show id="gs1:targetMarketCode" />
-                    <show id="cm:name" />
-                    <show id="gs1:targetMarketCountries" />
-                    <show id="sec:readGroups" force="true" />
-                    <show id="bcpg:erpCode" force="true" />
-                    <show id="bcpg:isDeleted" />
-                </field-visibility>
-                <appearance>
-                    <field id="bcpg:isDeleted">
-                        <control template="/org/alfresco/components/form/controls/boolean.ftl" />
-                    </field>
-                </appearance>
-            </form>
-        </forms>
-    </config>
-    <config evaluator="node-type" condition="gs1:targetMarket">
-        <forms>
-            <form>
-                <field-visibility>
-                    <show id="gs1:targetMarketCode" />
-                    <show id="cm:name" />
-                    <show id="gs1:targetMarketCountries" />
-                    <show id="sec:readGroups" force="true" />
-                    <show id="bcpg:erpCode" force="true" />
-                    <show id="bcpg:isDeleted" />
-                </field-visibility>
-                <appearance>
-                    <field id="gs1:targetMarketCountries">
-                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-                            <control-param name="showLink">false</control-param>
-                        </control>
-                    </field>
-                </appearance>
-            </form>
-        </forms>
-    </config>
+				</appearance>
+			</form>
+		</forms>
+	</config>
 
 
 
