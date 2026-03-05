@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.workflow.WorkflowConstants;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.repo.workflow.WorkflowNotificationUtils;
@@ -39,6 +40,7 @@ import org.alfresco.service.cmr.workflow.WorkflowTask;
 import org.alfresco.service.cmr.workflow.WorkflowTaskQuery;
 import org.alfresco.service.cmr.workflow.WorkflowTaskState;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,14 +88,36 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 	/** {@inheritDoc} */
 	@Override
 	public void cancelWorkflow(TaskListDataItem task) {
+		if ((task == null) || StringUtils.isBlank(task.getWorkflowInstance())) {
+			logger.warn("Cannot cancel workflow: task or workflow instance is null/empty");
+			return;
+		}
 
-		logger.debug("Cancel workflow instance: " + task.getWorkflowInstance());
-		WorkflowInstance instance = workflowService.cancelWorkflow(task.getWorkflowInstance());
-		if(instance == null || !instance.isActive()) {
-			task.setWorkflowInstance("");
-			task.setWorkflowTaskInstance("");
-		} else {
-			logger.error("Cannot cancel worflow:"+ task.getWorkflowInstance());
+		String workflowId = task.getWorkflowInstance();
+		if (logger.isDebugEnabled()) {
+			logger.debug("Cancelling workflow instance: " + workflowId);
+		}
+
+		try {
+			WorkflowInstance instance = workflowService.cancelWorkflow(workflowId);
+			if ((instance == null) || !instance.isActive()) {
+				clearWorkflowReferences(task);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Workflow cancelled successfully: " + workflowId);
+				}
+			} else {
+				logger.error("Failed to cancel workflow: " + workflowId + " - instance is still active");
+			}
+		} catch (Exception e) {
+			if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Retrying the formulation due to exception " + e.getMessage());
+				}
+                throw e;
+            }
+			logger.error("Error cancelling workflow: " + workflowId, e);
+			handleCorruptedWorkflow(workflowId);
+			clearWorkflowReferences(task);
 		}
 	}
 
@@ -306,6 +330,12 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 			return false;
 
 		} catch (Exception e) {
+			if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Retrying the formulation due to exception " + e.getMessage());
+				}
+                throw e;
+            }
 			if (logger.isErrorEnabled()) {
 				logger.error(String.format("Error retrieving workflow instance: %s for task %s (%s)", workflowId, task.getNodeRef(),
 						task.getTaskName()), e);
@@ -331,6 +361,12 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 				logger.info("Successfully deleted corrupted workflow instance: " + workflowId);
 			}
 		} catch (Exception deleteException) {
+			if (RetryingTransactionHelper.extractRetryCause(deleteException) != null) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Retrying the formulation due to exception " + deleteException.getMessage());
+				}
+                throw deleteException;
+            }
 			if (logger.isErrorEnabled()) {
 				logger.error("Failed to delete corrupted workflow instance: " + workflowId, deleteException);
 			}
@@ -477,11 +513,33 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 	/** {@inheritDoc} */
 	@Override
 	public void deleteWorkflowById(String workflowInstanceId) {
-		WorkflowInstance workflowInstance = workflowService.getWorkflowById(workflowInstanceId);
-		if (workflowInstance != null) {
-			workflowService.deleteWorkflow(workflowInstanceId);
+		if (StringUtils.isBlank(workflowInstanceId)) {
+			logger.warn("Cannot delete workflow: workflowInstanceId is blank");
+			return;
 		}
 
+		try {
+			WorkflowInstance workflowInstance = workflowService.getWorkflowById(workflowInstanceId);
+			if (workflowInstance != null) {
+				workflowService.deleteWorkflow(workflowInstanceId);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Workflow deleted successfully: " + workflowInstanceId);
+				}
+			} else {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Workflow instance not found, nothing to delete: " + workflowInstanceId);
+				}
+			}
+		} catch (Exception e) {
+			if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Retrying the formulation due to exception " + e.getMessage());
+				}
+                throw e;
+            }
+			logger.error("Error deleting workflow: " + workflowInstanceId, e);
+			handleCorruptedWorkflow(workflowInstanceId);
+		}
 	}
 
 }
