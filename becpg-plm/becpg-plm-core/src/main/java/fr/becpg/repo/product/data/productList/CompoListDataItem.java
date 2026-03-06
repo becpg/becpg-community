@@ -347,7 +347,7 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	@AlfSingleAssoc
-	@DataListIdentifierAttr
+	@DataListIdentifierAttr(targetTypes = "bcpg:rawMaterial,bcpg:semiFinishedProduct,bcpg:localSemiFinishedProduct,bcpg:finishedProduct")
 	@AlfQname(qname = "bcpg:compoListProduct")
 	@InternalField
 	public NodeRef getProduct() {

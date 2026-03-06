@@ -79,6 +79,7 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	private final Map<String, QName> qnameCache = new ConcurrentHashMap<>();
 
 	private final List<QName> defaultPivotAssocs = new ArrayList<>();
+	private final Map<QName, String> dataListAssocToTargetTypes = new HashMap<>();
 
 	/** {@inheritDoc} */
 	@Override
@@ -128,10 +129,13 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	        if (readMethod != null) {
 	        	DataListIdentifierAttr idAttr = readMethod.getAnnotation(DataListIdentifierAttr.class);
 	        	AlfQname alfQname = readMethod.getAnnotation(AlfQname.class);
-	        	if (idAttr != null && alfQname != null && idAttr.isDefaultPivotAssoc()) {
-        			QName pivotAssocQName = QName.createQName(alfQname.qname(), namespaceService);
-        			defaultPivotAssocs.add(pivotAssocQName);
-        			logger.debug("Registered default pivot assoc: " + pivotAssocQName);
+	        	if (idAttr != null && alfQname != null) {
+	        		QName pivotAssocQName = QName.createQName(alfQname.qname(), namespaceService);
+	        		if (idAttr.isDefaultPivotAssoc()) {
+	        			defaultPivotAssocs.add(pivotAssocQName);
+	        			logger.debug("Registered default pivot assoc: " + pivotAssocQName);
+	        		}
+	        		dataListAssocToTargetTypes.put(pivotAssocQName, idAttr.targetTypes());
 	        	}
 	        }
 	    }
@@ -141,6 +145,10 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	@Override
 	public List<QName> getDefaultPivotAssocs() {
 		return defaultPivotAssocs;
+	}
+	
+	public Map<QName, String> getDataListAssocToTargetTypes() {
+		return dataListAssocToTargetTypes;
 	}
 
 	/** {@inheritDoc} */
