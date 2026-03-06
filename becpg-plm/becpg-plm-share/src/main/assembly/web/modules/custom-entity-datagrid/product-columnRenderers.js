@@ -504,6 +504,32 @@ if (beCPG.module.EntityDataGridRenderers) {
     });
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["bp:pubChannelError", "bp:pubChannelListError"],
+        renderer: function(oRecord, data, label, scope, z, zz, elCell, oColumn) {
+            if (!data || !data.value) {
+                return "";
+            }
+
+            if (oColumn.width < 420) {
+                oColumn.width = 420;
+            }
+
+            var encodedValue = Alfresco.util.encodeHTML(data.value);
+            var rowId = (oRecord && oRecord.getData("nodeRef")) ? oRecord.getData("nodeRef") : Alfresco.util.generateDomId();
+            var textareaId = "pub-channel-error-" + rowId.replace(/[^a-zA-Z0-9_-]/g, "_") + "-" + oColumn.key;
+
+            return '<div class="pub-channel-error-renderer">'
+                + '<a href="#" class="inline-action" onclick="var el = document.getElementById(\'' + textareaId + '\'); if(el){el.focus();el.select();} return false;">'
+                + scope.msg("button.select") + '</a>'
+                + '<textarea id="' + textareaId + '" readonly="readonly" '
+                + 'style="width:100%;min-height:120px;resize:vertical;font-family:monospace;white-space:pre;" '
+                + 'title="' + encodedValue + '">' + encodedValue + '</textarea>'
+                + '</div>';
+        }
+
+    });
+
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["qa:clCharacts"],
         renderer: function(oRecord, data, label, scope) {
 
