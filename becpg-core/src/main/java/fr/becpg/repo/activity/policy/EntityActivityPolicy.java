@@ -241,7 +241,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 									|| ((before.get(beforeType) == null) || (after.get(beforeType) == null))) {
 
 								if ((before.get(beforeType) != null) && (after.get(beforeType) != null)
-										&& before.get(beforeType).getClass().equals(MLText.class)) {
+										&& before.get(beforeType).getClass().equals(MLText.class) && after.get(beforeType).getClass().equals(MLText.class)) {
 									MLText beforeMlText = (MLText) before.get(beforeType);
 									MLText afterMlText = (MLText) after.get(beforeType);
 									for (Entry<Locale, String> afterEntry : afterMlText.entrySet()) {
