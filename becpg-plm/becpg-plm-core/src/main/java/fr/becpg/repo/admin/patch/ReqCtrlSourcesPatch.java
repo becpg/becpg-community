@@ -1,5 +1,6 @@
 package fr.becpg.repo.admin.patch;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -124,9 +125,27 @@ public class ReqCtrlSourcesPatch extends AbstractBeCPGPatch {
 
 				if (nodeService.exists(dataListNodeRef)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-					nodeService.setProperty(dataListNodeRef, PLMModel.PROP_RCL_SOURCES_V2,
-							associationService.getTargetAssoc(dataListNodeRef, PLMModel.ASSOC_RCL_SOURCES));
-
+					List<NodeRef> assocs = associationService.getTargetAssocs(dataListNodeRef, PLMModel.ASSOC_RCL_SOURCES);
+					if (assocs != null && !assocs.isEmpty()) {
+						Serializable property = nodeService.getProperty(dataListNodeRef, PLMModel.PROP_RCL_SOURCES_V2);
+						ArrayList<NodeRef> props = new ArrayList<>();
+						if (property instanceof List<?> propList) {
+							for (Object obj : propList) {
+							    if (obj instanceof NodeRef nr) {
+							        props.add(nr);
+							    }
+							}
+						} else if (property instanceof NodeRef nodeRef) {
+							props.add(nodeRef);
+						}
+						for (NodeRef assoc : assocs) {
+							if (!props.contains(assoc)) {
+							    props.add(assoc);
+							}
+							nodeService.removeAssociation(dataListNodeRef, assoc, PLMModel.ASSOC_RCL_SOURCES);
+						}
+						nodeService.setProperty(dataListNodeRef, PLMModel.PROP_RCL_SOURCES_V2, props);
+					}
 				} else {
 					logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
 				}
