@@ -197,7 +197,7 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	@AlfSingleAssoc
-	@DataListIdentifierAttr
+	@DataListIdentifierAttr(targetTypes = "bcpg:packagingMaterial,bcpg:packagingKit")
 	@InternalField
 	@AlfQname(qname = "bcpg:packagingListProduct")
 	public NodeRef getProduct() {
