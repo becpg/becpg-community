@@ -285,6 +285,7 @@
 	</bean>
 	
 	<bean id="webscript.fr.becpg.remote.dictionary.get" class="fr.becpg.repo.web.scripts.remote.EntityDictionaryWebScript" parent="abstractEntityWebScript">
+		<property name="entityDictionaryService" ref="entityDictionaryService" />
 	</bean>
 	
 	<bean id="webscript.fr.becpg.remote.activities.get" class="fr.becpg.repo.web.scripts.remote.GetActivitiesWebScript"  parent="abstractEntityWebScript" >
