@@ -178,7 +178,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 			JSONObject attributes = addProperty(entity, RemoteEntityService.ELEM_ATTRIBUTES, TYPE_OBJECT, "Entity attributes", null);
 
-			addProperty(attributes, "alfresco:type", TYPE_STRING, entityType.toPrefixString(namespaceService), "Alfresco type");
+			addAlfrescoTypeAttributes(entityType, attributes);
 			
 			Map<QName, AssociationDefinition> assocs = new HashMap<>(typeDef.getAssociations());
 
@@ -217,12 +217,10 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 					if (assocDef.isTargetMany()) {
 						JSONObject jsonAssocs = new JSONObject();
-						addProperty(attributes, entityDictionaryService.toPrefixString(assocQname), TYPE_ARRAY,
-								assocDef.getTitle(entityDictionaryService), assocDef.getDescription(entityDictionaryService), jsonAssocs);
+						addAssoc(attributes, assocQname, TYPE_ARRAY, assocDef, jsonAssocs);
 						jsonAssocs.put(PROP_ITEMS, jsonAssocNode);
 					} else {
-						addProperty(attributes, entityDictionaryService.toPrefixString(assocQname), TYPE_OBJECT,
-								assocDef.getTitle(entityDictionaryService), assocDef.getDescription(entityDictionaryService), jsonAssocNode);
+						addAssoc(attributes, assocQname, TYPE_OBJECT, assocDef, jsonAssocNode);
 					}
 
 					visitedTypes.add(entityType);
@@ -268,6 +266,12 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 		}
 	}
 
+	private void addAlfrescoTypeAttributes(QName entityType, JSONObject attributes) {
+		addProperty(attributes, "alfresco:type", TYPE_STRING, entityType.toPrefixString(namespaceService), "Alfresco type");
+		addProperty(attributes, "alfresco:subTypes", TYPE_STRING, String.join(",", entityDictionaryService.getSubTypes(entityType, false).stream().map(q -> q.toPrefixString(namespaceService)).toList()), "Alfresco subTypes");
+		addProperty(attributes, "alfresco:parentType", TYPE_STRING, entityDictionaryService.getClass(entityType).getParentName().toPrefixString(namespaceService), "Alfresco parentType");
+	}
+
 	private JSONObject createEntity(JSONObject root, QName nodeType, NodeRef entityNodeRef) {
 
 		root.put("$schema", "https://json-schema.org/draft/2020-12/schema");
@@ -308,6 +312,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 			throws JSONException, RemoteException {
 		cacheList.add(nodeRef);
 		QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
+		addAlfrescoTypeAttributes(nodeType, entity);
 
 		if (JsonVisitNodeType.ENTITY.equals(type) || JsonVisitNodeType.CONTENT.equals(type) || JsonVisitNodeType.ASSOC.equals(type)
 				|| (JsonVisitNodeType.CHILD_ASSOC.equals(type) && !ContentModel.TYPE_FOLDER.equals(nodeType))) {
@@ -398,17 +403,18 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 							List<ChildAssociationRef> listItemRefs = nodeService.getChildAssocs(listNodeRef);
 							ClassDefinition classDefinition = entityDictionaryService.getClass(dataListTypeQName);
 
-							if ((listItemRefs != null) && !listItemRefs.isEmpty()) {
 								JSONObject list = addProperty(entityLists, dataListType, TYPE_ARRAY,
 										classDefinition.getTitle(entityDictionaryService), classDefinition.getDescription(entityDictionaryService));
-								NodeRef listItem = listItemRefs.get(0).getChildRef();
 								JSONObject jsonAssocNode = new JSONObject();
 								jsonAssocNode.put(PROP_TYPE, TYPE_OBJECT);
-
 								list.put(PROP_ITEMS, jsonAssocNode);
-								visitNode(listItem, jsonAssocNode, JsonVisitNodeType.DATALIST, context);
-							}
-						} else {
+								if ((listItemRefs != null) && !listItemRefs.isEmpty()) {
+									NodeRef listItem = listItemRefs.get(0).getChildRef();
+									visitNode(listItem, jsonAssocNode, JsonVisitNodeType.DATALIST, context);
+								} else {
+									visitType(jsonAssocNode, dataListTypeQName, null, new HashSet<>());
+								}
+							} else {
 							logger.warn(
 									"Existing " + dataListName + " (" + dataListTypeQName + ") list doesn't inheritate from 'bcpg:entityListItem'.");
 						}
@@ -463,9 +469,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 					List<ChildAssociationRef> assocRefs = nodeService.getChildAssocs(nodeRef);
 					if (assocDef.isTargetMany() && !assocRefs.isEmpty()) {
-						addProperty(entity, entityDictionaryService.toPrefixString(nodeType), TYPE_ARRAY, assocDef.getTitle(entityDictionaryService),
-								assocDef.getDescription(entityDictionaryService), jsonAssocs);
-
+						addAssoc(entity, nodeType, TYPE_ARRAY, assocDef, jsonAssocs);
 					}
 
 					if (!assocRefs.isEmpty() && (assocRefs.get(0).getTypeQName().equals(assocDef.getName()))) {
@@ -475,8 +479,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 						if (assocDef.isTargetMany()) {
 							jsonAssocs.put(PROP_ITEMS, jsonAssocNode);
 						} else {
-							addProperty(entity, entityDictionaryService.toPrefixString(nodeType), TYPE_OBJECT,
-									assocDef.getTitle(entityDictionaryService), assocDef.getDescription(entityDictionaryService), jsonAssocNode);
+							addAssoc(entity, nodeType, TYPE_OBJECT, assocDef, jsonAssocNode);
 						}
 
 						visitNode(childRef, jsonAssocNode, JsonVisitNodeType.CHILD_ASSOC, context);
@@ -506,8 +509,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 					List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, assocDef.getName());
 					if (assocDef.isTargetMany() && !assocRefs.isEmpty()) {
-						addProperty(entity, entityDictionaryService.toPrefixString(nodeType), TYPE_ARRAY, assocDef.getTitle(entityDictionaryService),
-								assocDef.getDescription(entityDictionaryService), jsonAssocs);
+						addAssoc(entity, nodeType, TYPE_ARRAY, assocDef, jsonAssocs);
 					}
 					for (AssociationRef assocRef : assocRefs) {
 						NodeRef childRef = assocRef.getTargetRef();
@@ -516,8 +518,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 						if (assocDef.isTargetMany()) {
 							jsonAssocs.put(PROP_ITEMS, jsonAssocNode);
 						} else {
-							addProperty(entity, entityDictionaryService.toPrefixString(nodeType), TYPE_OBJECT,
-									assocDef.getTitle(entityDictionaryService), assocDef.getDescription(entityDictionaryService), jsonAssocNode);
+							addAssoc(entity, nodeType, TYPE_OBJECT, assocDef, jsonAssocNode);
 						}
 
 						visitNode(childRef, jsonAssocNode, JsonVisitNodeType.ASSOC, nodeType, context);
@@ -694,6 +695,13 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 		return QName.createQName(entity.getString(RemoteEntityService.ATTR_TYPE), namespaceService);
 	}
 
+	private JSONObject addAssoc(JSONObject entity, QName nodeType, String type, AssociationDefinition assocDef, JSONObject object) {
+		addProperty(entity, entityDictionaryService.toPrefixString(nodeType), type, assocDef.getTitle(entityDictionaryService),
+				assocDef.getDescription(entityDictionaryService), object);
+		addProperty(object, "assoc:targetTypes", TYPE_STRING, String.join(",", entityDictionaryService.getTargetTypes(nodeType).stream().map(q -> q.toPrefixString(namespaceService)).toList()), "Assoc target types");
+		return object;
+	}
+	
 	private JSONObject addProperty(JSONObject entity, String attr, String type, String title, String description, JSONObject object) {
 		JSONObject properties = new JSONObject();
 		if (entity.has(PROP_PROPERTIES)) {

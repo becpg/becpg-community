@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.SocketException;
 
+import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.namespace.QName;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
@@ -28,6 +29,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.common.BeCPGException;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteParams;
 
@@ -39,6 +41,12 @@ import fr.becpg.repo.entity.remote.RemoteParams;
  */
 public class EntityDictionaryWebScript extends AbstractEntityWebScript {
 
+	private EntityDictionaryService entityDictionaryService;
+	
+	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
+		this.entityDictionaryService = entityDictionaryService;
+	}
+	
 	/** {@inheritDoc} */
 	@Override
 	protected RemoteEntityFormat getFormat(WebScriptRequest req) {
@@ -55,7 +63,13 @@ public class EntityDictionaryWebScript extends AbstractEntityWebScript {
 		String type = req.getParameter(PARAM_TYPE);
 		
 		if (type == null || type.isEmpty()) {
-			throw new WebScriptException(Status.STATUS_NOT_IMPLEMENTED, "Type parameter is mandatory");
+			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Type parameter is mandatory");
+		}
+		
+		QName qName = QName.createQName(type, namespaceService);
+		ClassDefinition classDefinition = entityDictionaryService.getClass(qName);
+		if (classDefinition == null) {
+			throw new WebScriptException(Status.STATUS_NOT_FOUND, "No class definition found for type: " + type);
 		}
 
 		logger.debug("Get dictionary schema:  for type" + type);
@@ -69,7 +83,7 @@ public class EntityDictionaryWebScript extends AbstractEntityWebScript {
 			resp.setContentType(getContentType(req));
 			resp.setContentEncoding("UTF-8");
 
-			remoteEntityService.getEntitySchema(QName.createQName(type, namespaceService), out, params);
+			remoteEntityService.getEntitySchema(qName, out, params);
 
 			resp.setStatus(Status.STATUS_OK);
 		} catch (BeCPGException e) {
