@@ -131,7 +131,6 @@ public class LinkedValueAutoCompletePlugin extends TargetAssocAutoCompletePlugin
 						entityNodeRef = entityListDAO.getList(listContainerNodeRef, dataListQName);
 					}
 				}
-
 				if (entityNodeRef != null) {
 					path = nodeService.getPath(entityNodeRef).toPrefixString(namespaceService);
 				}
@@ -140,36 +139,40 @@ public class LinkedValueAutoCompletePlugin extends TargetAssocAutoCompletePlugin
 
 		query = prepareQuery(query);
 		List<NodeRef> ret = null;
-
-		if (!all) {
-
-			String parent = (String) props.get(AutoCompleteService.PROP_PARENT);
-			if ((parent != null) && !NodeRef.isNodeRef(parent)) {
-				ret = new ArrayList<>();
-			} else {
-				NodeRef parentNodeRef = (parent != null) && NodeRef.isNodeRef(parent) ? new NodeRef(parent) : null;
-				Boolean includeDeleted = props.containsKey(AutoCompleteService.PROP_INCLUDE_DELETED) && (Boolean) props.get(AutoCompleteService.PROP_INCLUDE_DELETED);
-				ret = hierarchyService.getHierarchiesByPath(path, parentNodeRef, query, includeDeleted != null && includeDeleted.booleanValue());
-			}
-		} else if ((extras != null) && extras.containsKey(AutoCompleteService.EXTRA_PARAM_DEPTH_LEVEL)) {
-			String depthLevel = extras.get(AutoCompleteService.EXTRA_PARAM_DEPTH_LEVEL);
-			if (extras.containsKey(AutoCompleteService.EXTRA_PARAM_PATHS)) {
-				ret = new ArrayList<>();
-				for (String subPath : extras.get(AutoCompleteService.EXTRA_PARAM_PATHS).split(",")) {
-					ret.addAll(hierarchyService.getAllHierarchiesByDepthLevel(path + "/" + subPath, query, depthLevel));
+		
+		if (path != null) {
+			if (!all) {
+	
+				String parent = (String) props.get(AutoCompleteService.PROP_PARENT);
+				if ((parent != null) && !NodeRef.isNodeRef(parent)) {
+					ret = new ArrayList<>();
+				} else {
+					NodeRef parentNodeRef = (parent != null) && NodeRef.isNodeRef(parent) ? new NodeRef(parent) : null;
+					Boolean includeDeleted = props.containsKey(AutoCompleteService.PROP_INCLUDE_DELETED) && (Boolean) props.get(AutoCompleteService.PROP_INCLUDE_DELETED);
+					ret = hierarchyService.getHierarchiesByPath(path, parentNodeRef, query, includeDeleted != null && includeDeleted.booleanValue());
+				}
+			} else if ((extras != null) && extras.containsKey(AutoCompleteService.EXTRA_PARAM_DEPTH_LEVEL)) {
+				String depthLevel = extras.get(AutoCompleteService.EXTRA_PARAM_DEPTH_LEVEL);
+				if (extras.containsKey(AutoCompleteService.EXTRA_PARAM_PATHS)) {
+					ret = new ArrayList<>();
+					for (String subPath : extras.get(AutoCompleteService.EXTRA_PARAM_PATHS).split(",")) {
+						ret.addAll(hierarchyService.getAllHierarchiesByDepthLevel(path + "/" + subPath, query, depthLevel));
+					}
+				} else {
+					ret = hierarchyService.getAllHierarchiesByDepthLevel(path, query, depthLevel);
 				}
 			} else {
-				ret = hierarchyService.getAllHierarchiesByDepthLevel(path, query, depthLevel);
+				if (extras!=null && extras.containsKey(AutoCompleteService.EXTRA_PARAM_PATHS)) {
+					ret = new ArrayList<>();
+					for (String subPath : extras.get(AutoCompleteService.EXTRA_PARAM_PATHS).split(",")) {
+						ret.addAll(hierarchyService.getAllHierarchiesByPath(path + "/" + subPath, query));
+					}
+				} else {
+					ret = hierarchyService.getAllHierarchiesByPath(path, query);
+				}
 			}
 		} else {
-			if (extras!=null && extras.containsKey(AutoCompleteService.EXTRA_PARAM_PATHS)) {
-				ret = new ArrayList<>();
-				for (String subPath : extras.get(AutoCompleteService.EXTRA_PARAM_PATHS).split(",")) {
-					ret.addAll(hierarchyService.getAllHierarchiesByPath(path + "/" + subPath, query));
-				}
-			} else {
-				ret = hierarchyService.getAllHierarchiesByPath(path, query);
-			}
+			ret = new ArrayList<>();
 		}
 
 		// avoid cycle: when editing an item, cannot select itself as parent
