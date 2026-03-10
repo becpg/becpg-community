@@ -101,6 +101,10 @@ public class NCWorkflowUtils {
 				if (task.getVariable("bpm_comment") != null) {
 					properties.put(QualityModel.PROP_NC_COMMENT, (String) task.getVariable("bpm_comment"));
 				}
+				
+				if (logger.isDebugEnabled()) {
+					logger.debug("UpdateNC before: " + ncNodeRef + " - " + properties);
+				}
 
 				for (QName aspectQname : new QName[] { QualityModel.ASPECT_BATCH, QualityModel.ASPECT_CLAIM_RESPONSE,
 						QualityModel.ASPECT_CLAIM_TREATEMENT, QualityModel.ASPECT_CLAIM_CLOSING, QualityModel.ASPECT_CLAIM, PLMModel.ASPECT_CLIENTS,
@@ -110,6 +114,10 @@ public class NCWorkflowUtils {
 					for (QName propQname : aspectDef.getProperties().keySet()) {
 						String propName = propQname.toPrefixString(serviceRegistry.getNamespaceService()).replaceFirst(":", "_");
 
+						if (logger.isDebugEnabled()) {
+							logger.debug("UpdateNC with prop: " + ncNodeRef + " - " + propQname + " - " + propName);
+						}
+							
 						Serializable attr = (Serializable) task.getVariable(propName);
 
 						if (attr != null) {
@@ -130,16 +138,20 @@ public class NCWorkflowUtils {
 							@SuppressWarnings("unchecked")
 							List<ActivitiScriptNode> nodes = (ArrayList<ActivitiScriptNode>) task.getVariable(assocName);
 							if (nodes != null) {
+								if (logger.isDebugEnabled()) {
+									logger.debug("UpdateNC with assoc: " + ncNodeRef + " - " + assocQname + " - " + nodes);
+								}
 								associationService.update(ncNodeRef, assocQname, convertList(nodes, serviceRegistry.getNodeService()));
 							}
 						}
 					}
 
 				}
-
+				
 				if (logger.isDebugEnabled()) {
-					logger.debug("UpdateNC: " + ncNodeRef + " - " + properties);
+					logger.debug("UpdateNC after: " + ncNodeRef + " - " + properties);
 				}
+
 				serviceRegistry.getNodeService().addProperties(ncNodeRef, properties);
 
 				// Move documents from pkgNodeRef
