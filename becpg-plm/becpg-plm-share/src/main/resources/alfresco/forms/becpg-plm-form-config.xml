@@ -7680,7 +7680,7 @@
 					<field id="bcpg:packagingListLossPerc" help-id="becpg.forms.help.packagingListLossPerc" set="2-col" />
 					<field id="bcpg:packagingListPkgLevel" set="2-col">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,Primary|data.bcpg_packaginglistpkglevel.primary,Inner|data.bcpg_packaginglistpkglevel.inner,Secondary|data.bcpg_packaginglistpkglevel.secondary,Tertiary|data.bcpg_packaginglistpkglevel.tertiary
+							<control-param name="options">,Primary|data.bcpg_packaginglistpkglevel.primary,Secondary|data.bcpg_packaginglistpkglevel.secondary,Tertiary|data.bcpg_packaginglistpkglevel.tertiary
 							</control-param>
 							<control-param name="isStoreable">true</control-param>
 						</control>
@@ -7727,7 +7727,7 @@
 					<field id="bcpg:packagingListLossPerc" help-id="becpg.forms.help.packagingListLossPerc" />
 					<field id="bcpg:packagingListPkgLevel">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,Primary|data.bcpg_packaginglistpkglevel.primary,Inner|data.bcpg_packaginglistpkglevel.inner,Secondary|data.bcpg_packaginglistpkglevel.secondary,Tertiary|data.bcpg_packaginglistpkglevel.tertiary
+							<control-param name="options">,Primary|data.bcpg_packaginglistpkglevel.primary,Secondary|data.bcpg_packaginglistpkglevel.secondary,Tertiary|data.bcpg_packaginglistpkglevel.tertiary
 							</control-param>
 							<control-param name="isStoreable">true</control-param>
 						</control>
@@ -7875,7 +7875,7 @@
 					<field id="bcpg:packagingListLossPerc" help-id="becpg.forms.help.packagingListLossPerc" set="2-col" />
 					<field id="bcpg:packagingListPkgLevel" set="2-col">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,Primary|data.bcpg_packaginglistpkglevel.primary,Inner|data.bcpg_packaginglistpkglevel.inner,Secondary|data.bcpg_packaginglistpkglevel.secondary,Tertiary|data.bcpg_packaginglistpkglevel.tertiary
+							<control-param name="options">,Primary|data.bcpg_packaginglistpkglevel.primary,Secondary|data.bcpg_packaginglistpkglevel.secondary,Tertiary|data.bcpg_packaginglistpkglevel.tertiary
 							</control-param>
 						</control>
 					</field>
