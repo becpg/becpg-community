@@ -18,6 +18,8 @@ COPY becpg/classes $TOMCAT_DIR/shared/classes
 
 RUN dnf update -y && dnf clean all && \
     chmod +x /usr/local/tomcat/shared/classes/alfresco/substituter.sh
+RUN chown -R ${USERID}:${GROUPID} ${TOMCAT_DIR}/shared/classes/alfresco/web-extension && \
+    chmod -R g+w ${TOMCAT_DIR}/shared/classes/alfresco/web-extension
 RUN mkdir -p ${TOMCAT_DIR}/data
       
 
