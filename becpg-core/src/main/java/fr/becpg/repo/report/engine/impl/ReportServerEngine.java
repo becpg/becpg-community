@@ -196,6 +196,10 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 			
 			reportSession.setFormat(format.toString());
 			reportSession.setLang((String) params.get(ReportParams.PARAM_LANG));
+			String timeZoneParam = (String) params.get(ReportParams.PARAM_TIMEZONE);
+			if ((timeZoneParam != null) && !timeZoneParam.isBlank()) {
+				reportSession.setTimeZone(timeZoneParam);
+			}
 			
 			byte[] datasourceBytes = reportData.getXmlDataSource().asXML().getBytes();
 			
