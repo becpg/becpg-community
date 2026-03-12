@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,9 +19,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.project.CalendarService;
 import fr.becpg.repo.project.data.PlanningMode;
 import fr.becpg.repo.project.data.ProjectState;
+import fr.becpg.repo.project.impl.CalendarWorkingDayProvider;
+import fr.becpg.repo.project.impl.ProjectHelper;
 
 public class CalendarServiceIT extends AbstractProjectTestCase {
 
@@ -180,6 +185,21 @@ public class CalendarServiceIT extends AbstractProjectTestCase {
         
         cal.set(2024, Calendar.FEBRUARY, 5, 0, 0, 0); // Monday
         assertTrue("Monday should be working day with null calendar", calendarService.isWorkingDay(cal.getTime(), null));
+    }
+    
+    @Test
+    public void testEndDateSkipsNonWorkingStartDay() throws ParseException {
+        NodeRef calendarRef = createCalendar("Skip Non Working Start", null, null, null);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+        formatter.setTimeZone(ProjectRepoConsts.PROJECT_TIMEZONE);
+        Date startDate = formatter.parse("2024/02/03"); // Saturday
+        CalendarWorkingDayProvider provider = new CalendarWorkingDayProvider(calendarService, calendarRef);
+        
+        Date endDate = ProjectHelper.calculateEndDate(startDate, 1, provider);
+        assertEquals("Duration of 1 starting on non-working day should end on next working day", formatter.parse("2024/02/05"), endDate);
+
+        Date endDateTwoDays = ProjectHelper.calculateEndDate(startDate, 2, provider);
+        assertEquals("Duration of 2 should advance two working days from first working day", formatter.parse("2024/02/06"), endDateTwoDays);
     }
     
     private NodeRef createCalendar(String name, String publicHolidays, String holidays, List<Integer> nonWorkingDays) {
