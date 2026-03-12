@@ -269,7 +269,7 @@ public class ImportHelper {
 								Locale locale = MLTextHelper.parseLocale(strLocale);
 								if(values.get(z_idx) == null || values.get(z_idx).isBlank()) {
 									mlText.removeValue(locale);
-								} else 	if (MLTextHelper.isSupportedLocale(locale)) {
+								} else 	if (MLTextHelper.isSupportedLocale(locale) && !MLTextHelper.isDeprecatedLocale(locale)) {
 									mlText.addValue(locale, values.get(z_idx));
 								} else {
 									throw new IllegalStateException("Unsupported locale : "+locale);
