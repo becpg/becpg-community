@@ -168,7 +168,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	static {
 		hiddenNodeAttributes.add(PLMModel.PROP_NUT_FORMULA);
 		hiddenNodeAttributes.add(PLMModel.PROP_LABEL_CLAIM_FORMULA);
-
+		hiddenNodeAttributes.add(PLMModel.PROP_REQUIREMENT_CHECKSUM);
+		
+		hiddenDataListItemAttributes.add(PLMModel.PROP_REQUIREMENT_CHECKSUM);
 		hiddenDataListItemAttributes.add(PLMModel.PROP_LCL_FORMULAERROR);
 		hiddenDataListItemAttributes.add(PLMModel.ASSOC_LCL_MISSING_LABELCLAIMS);
 		hiddenDataListItemAttributes.add(PLMModel.PROP_PHYSICOCHEMFORMULA_ERROR);
