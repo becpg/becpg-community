@@ -1022,6 +1022,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		dataLists.add(PLMModel.TYPE_CERTIFICATION);
 		dataLists.add(PLMModel.TYPE_PLANT);
 		dataLists.add(SurveyModel.TYPE_SURVEY_LIST);
+		dataLists.add(ProjectModel.TYPE_SCORE_LIST);
 	
 		subFolders.add(RepoConsts.PATH_SUPPLIER_DOCUMENTS);
 		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, PLMModel.TYPE_SUPPLIER, null, true, true, dataLists,
