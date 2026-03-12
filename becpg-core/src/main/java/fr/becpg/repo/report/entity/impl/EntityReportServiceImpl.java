@@ -970,6 +970,10 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 								params.put(ReportParams.PARAM_LANG, MLTextHelper.localeKey(locale));
 								params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
 										associationService.getTargetAssocs(tplNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
+								String timeZoneParam = (String) reportParameters.getPreferences().get(ReportParams.PARAM_TIMEZONE);
+								if ((timeZoneParam != null) && !timeZoneParam.isBlank()) {
+									params.put(ReportParams.PARAM_TIMEZONE, timeZoneParam);
+								}
 								params.put(BeCPGReportEngine.PARAM_DOCUMENT_NODEREF, documentNodeRef);
 								params.put(BeCPGReportEngine.PARAM_ENTITY_NODEREF, entityNodeRef);
 								
@@ -1097,6 +1101,10 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 					params.put(BeCPGReportEngine.PARAM_ENTITY_NODEREF, entityNodeRef);
 					params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
 							associationService.getTargetAssocs(templateNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
+					String timeZoneParam = (String) reportParameters.getPreferences().get(ReportParams.PARAM_TIMEZONE);
+					if ((timeZoneParam != null) && !timeZoneParam.isBlank()) {
+						params.put(ReportParams.PARAM_TIMEZONE, timeZoneParam);
+					}
 
 					if (engine.isXmlEngine()) {
 
