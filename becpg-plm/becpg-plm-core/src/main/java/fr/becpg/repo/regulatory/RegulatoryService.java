@@ -2,6 +2,7 @@ package fr.becpg.repo.regulatory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -27,8 +28,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-
-import com.ibm.icu.util.Calendar;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
