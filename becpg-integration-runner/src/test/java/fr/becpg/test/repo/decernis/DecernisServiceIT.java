@@ -1,6 +1,8 @@
 package fr.becpg.test.repo.decernis;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,8 +13,11 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -21,6 +26,7 @@ import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
+import fr.becpg.repo.helper.json.JsonHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
@@ -35,6 +41,7 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 import fr.becpg.util.MutexFactory;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
 
 public class DecernisServiceIT extends AbstractFinishedProductTest {
 
@@ -218,6 +225,21 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 		});
 	}
+
+	/**
+	 * Reads a JSON mock response from the classpath.
+	 *
+	 * @param resourcePath the classpath resource path
+	 * @return the normalized JSON response
+	 */
+	private String readJsonResource(String resourcePath) {
+		try {
+			ClassPathResource resource = new ClassPathResource(resourcePath);
+			return JsonHelper.read(resource.getContentAsString(StandardCharsets.UTF_8)).toString();
+		} catch (IOException e) {
+			throw new IllegalStateException("Cannot read resource: " + resourcePath, e);
+		}
+	}
 	
 	@Test
 	public void testProductUpdateFromList()  {
@@ -288,80 +310,8 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 			systemConfigurationService.updateConfValue("beCPG.decernis.serverUrl", mockServerUrl);
 			systemConfigurationService.updateConfValue("beCPG.decernis.analysisUrl", mockAnalysisUrl);
 			systemConfigurationService.updateConfValue("beCPG.decernis.ingredient.analysis.enabled", "false");
-			mockWebAnalysis.enqueue(new MockResponse().setBody("{" +
-				    "\"functions\": [" +
-			        "\"Acidity Regulator/Buffer/Alkalizing Agents\"," +
-			        "\"Anticaking Agent\"," +
-			        "\"Antioxidant\"," +
-			        "\"Flour Treatment Agent\"," +
-			        "\"Bleaching Agent (Not for Flour)\"," +
-			        "\"Bulking Agent\"," +
-			        "\"Carrier/Solvent\"," +
-			        "\"Colorant\"," +
-			        "\"Emulsifier\"," +
-			        "\"Enzyme/Catalyst\"," +
-			        "\"Flavor\"," +
-			        "\"Foam Control Agent\"," +
-			        "\"Gases\"," +
-			        "\"Gelling, Thickening, Stabilizing and Firming Agents\"," +
-			        "\"Chewing Gum Base\"," +
-			        "\"Humectant\"," +
-			        "\"Leavening/Raising Agent\"," +
-			        "\"Release Agent\"," +
-			        "\"Surface Finishing/Glazing Agent\"," +
-			        "\"Preservative\"," +
-			        "\"Processing Aid\"," +
-			        "\"Sequestrant/Chelating Agent\"," +
-			        "\"Sweetener\"," +
-			        "\"Nutrient Supplement\"," +
-			        "\"Food\"," +
-			        "\"Flavor Enhancer\"," +
-			        "\"Fat Replacer\"," +
-			        "\"Carry-Over\"," +
-			        "\"Microorganisms\"" +
-			    "]" +
-			"}"));
-			mockWebAnalysis.enqueue(new MockResponse().setBody("{" +
-				    "\"recipeAnalaysisReport\": {" +
-			        "\"reportDateTime\": \"2023-07-13T08:44:34.206361Z\"," +
-			        "\"recipeName\": \"PF10000122391689237843340 PF test Decernis 2\"," +
-			        "\"recipeSpec\": \"PF10000122391689237843340\"," +
-			        "\"recipeReport\": [{" +
-			            "\"country\": \"Germany\"," +
-			            "\"resultIndicator\": \"REVIEW\"," +
-			            "\"matrixReport\": [{" +
-			                "\"did\": \"6327\"," +
-			                "\"resultIndicator\": \"Not Listed\"," +
-			                "\"name\": \"ing1 french\"," +
-			                "\"spec\": \"ing1 french\"," +
-			                "\"idType\": \"Decernis ID\"," +
-			                "\"idValue\": \"6327\"," +
-			                "\"decernisName\": \"Vitamin A [Retinol]\"" +
-			            "}]," +
-			            "\"tabularReport\": [{" +
-			                "\"name\": \"ing1 french\"," +
-			                "\"spec\": \"ing1 french\"," +
-			                "\"did\": \"6327\"," +
-			                "\"resultIndicator\": \"Not Listed\"," +
-			                "\"percentage\": \"1.0\"," +
-			                "\"usage\": \"Thickening agents\"," +
-			                "\"threshold\": \"SME LOGIC: This nutrient supplement is not listed in this country's regulation, under review by Decernis. Please use the \\\"report a problem\\\" link for further information/questions.\"," +
-			                "\"citation\": \"\"," +
-			                "\"idType\": \"Decernis ID\"," +
-			                "\"idValue\": \"6327\"," +
-			                "\"function\": \"Nutrient Supplement\"," +
-			                "\"otherIdentifiers\": {" +
-			                    "\"CAS\": \"11103-57-4, 1341-18-0, 5979-23-7, 68-26-8\"," +
-			                    "\"INCI name\": \"Retinol\"," +
-			                    "\"E No.\": \"E672\"," +
-			                    "\"EC No.\": \"200-683-7, 234-328-2\"" +
-			                "}," +
-			                "\"decernisName\": \"Vitamin A [Retinol]\"" +
-			            "}]," +
-			            "\"detailReport\": []" +
-			        "}]" +
-			    "}" +
-			"}"));
+			mockWebAnalysis.enqueue(new MockResponse().setBody(readJsonResource("beCPG/decernis/functions.json")));
+			mockWebAnalysis.enqueue(new MockResponse().setBody(readJsonResource("beCPG/decernis/v5-analysis-response.json")));
 			mockWebServer.enqueue(new MockResponse().setBody(""));
 			return null;
 		});
@@ -406,6 +356,90 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 		}
 		
 	}
+
+	@Test
+	public void testV5AnalysisUsesIngTypes() throws Exception {
+		inWriteTx(() -> {
+			systemConfigurationService.updateConfValue("beCPG.decernis.serverUrl", mockServerUrl);
+			systemConfigurationService.updateConfValue("beCPG.decernis.analysisUrl", mockAnalysisUrl);
+			systemConfigurationService.updateConfValue("beCPG.decernis.ingredient.analysis.enabled", "false");
+			mockWebAnalysis.enqueue(new MockResponse().setBody(readJsonResource("beCPG/decernis/functions.json")));
+			mockWebAnalysis.enqueue(new MockResponse().setBody(readJsonResource("beCPG/decernis/v5-analysis-ing-types-response.json")));
+			mockWebServer.enqueue(new MockResponse().setBody(""));
+			return null;
+		});
+		
+		try {
+			NodeRef finishedProductNodeRef = createFinishedProduct("PF Decernis testV5AnalysisUsesIngTypes");
+			
+			inWriteTx(() -> {
+				ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+				
+				List<IngListDataItem> ingList = product.getIngList();
+				ingList.add(IngListDataItem.build()
+						.withQtyPerc(1d)
+						.withGeoOrigin(null)
+						.withBioOrigin(null)
+						.withIsGMO(null)
+						.withIsIonized(null)
+						.withIsProcessingAid(null)
+						.withIngredient(ing1)
+						.withIngTypes(List.of(flavorNodeRef, nutrientNodeRef))
+						.withIsManual(null));
+				
+				List<RegulatoryListDataItem> regulatoryList = product.getRegulatoryList();
+				RegulatoryListDataItem item1 = new RegulatoryListDataItem();
+				item1.setRegulatoryUsagesRef(new ArrayList<>(List.of(usage1NodeRef)));
+				item1.setRegulatoryCountriesRef(new ArrayList<>(List.of(country1NodeRef)));
+				item1.setRegulatoryState(SystemState.Simulation);
+				regulatoryList.add(item1);
+				
+				return alfrescoRepository.save(product);
+			});
+			
+			inWriteTx(() -> {
+				List<RequirementListDataItem> requirements = regulatoryService.checkCompliance(finishedProductNodeRef, false).getContext().getRequirements();
+				assertEquals(1, requirements.size());
+				assertEquals(RequirementType.Tolerated, requirements.get(0).getReqType());
+				assertEquals(RequirementDataType.Specification, requirements.get(0).getReqDataType());
+				NodeRef charact = requirements.get(0).getCharact();
+				IngListDataItem ingListDataItem = (IngListDataItem) alfrescoRepository.findOne(charact);
+				assertEquals(ing1, ingListDataItem.getIng());
+				return null;
+			});
+
+			RecordedRequest functionsRequest = mockWebAnalysis.takeRequest();
+			assertEquals("GET", functionsRequest.getMethod());
+			assertEquals("/scope/function?topic=ADD", functionsRequest.getPath());
+
+			RecordedRequest analysisRequest = mockWebAnalysis.takeRequest();
+			assertEquals("POST", analysisRequest.getMethod());
+			assertEquals("/recipe-analysis/transaction?report=tabular", analysisRequest.getPath());
+
+			JSONObject payload = new JSONObject(analysisRequest.getBody().readUtf8());
+			JSONArray ingredients = payload.getJSONObject("transaction")
+					.getJSONObject("recipe")
+					.getJSONArray("ingredients");
+			assertEquals(2, ingredients.length());
+
+			JSONObject firstIngredient = ingredients.getJSONObject(0);
+			assertEquals("6327", firstIngredient.get("idValue").toString());
+			assertEquals("Flavor", firstIngredient.getString("function"));
+			assertEquals(1d, firstIngredient.getDouble("percentage"));
+
+			JSONObject secondIngredient = ingredients.getJSONObject(1);
+			assertEquals("6327", secondIngredient.get("idValue").toString());
+			assertEquals("Nutrient Supplement", secondIngredient.getString("function"));
+			assertEquals(1d, secondIngredient.getDouble("percentage"));
+		} finally {
+			inWriteTx(() -> {
+				systemConfigurationService.resetConfValue("beCPG.decernis.serverUrl");
+				systemConfigurationService.resetConfValue("beCPG.decernis.analysisUrl");
+				systemConfigurationService.resetConfValue("beCPG.decernis.ingredient.analysis.enabled");
+				return null;
+			});
+		}
+	}
 	
 	@Test
 	public void testV5DoubleFunction()  {
@@ -414,142 +448,8 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 			systemConfigurationService.updateConfValue("beCPG.decernis.serverUrl", mockServerUrl);
 			systemConfigurationService.updateConfValue("beCPG.decernis.analysisUrl", mockAnalysisUrl);
 			systemConfigurationService.updateConfValue("beCPG.decernis.ingredient.analysis.enabled", "false");
-			mockWebAnalysis.enqueue(new MockResponse().setBody("{" +
-				    "\"functions\": [" +
-			        "\"Acidity Regulator/Buffer/Alkalizing Agents\"," +
-			        "\"Anticaking Agent\"," +
-			        "\"Antioxidant\"," +
-			        "\"Flour Treatment Agent\"," +
-			        "\"Bleaching Agent (Not for Flour)\"," +
-			        "\"Bulking Agent\"," +
-			        "\"Carrier/Solvent\"," +
-			        "\"Colorant\"," +
-			        "\"Emulsifier\"," +
-			        "\"Enzyme/Catalyst\"," +
-			        "\"Flavor\"," +
-			        "\"Foam Control Agent\"," +
-			        "\"Gases\"," +
-			        "\"Gelling, Thickening, Stabilizing and Firming Agents\"," +
-			        "\"Chewing Gum Base\"," +
-			        "\"Humectant\"," +
-			        "\"Leavening/Raising Agent\"," +
-			        "\"Release Agent\"," +
-			        "\"Surface Finishing/Glazing Agent\"," +
-			        "\"Preservative\"," +
-			        "\"Processing Aid\"," +
-			        "\"Sequestrant/Chelating Agent\"," +
-			        "\"Sweetener\"," +
-			        "\"Nutrient Supplement\"," +
-			        "\"Food\"," +
-			        "\"Flavor Enhancer\"," +
-			        "\"Fat Replacer\"," +
-			        "\"Carry-Over\"," +
-			        "\"Microorganisms\"" +
-			    "]" +
-			"}"));
-			mockWebAnalysis.enqueue(new MockResponse().setBody("{\"recipeAnalaysisReport\": {" +
-					  "\"reportDateTime\": \"2023-07-17T15:41:49.431966Z\"," +
-					  "\"recipeName\": \"PF10000122981689608493712 PF Decernis testDefaultDoubleFunction\"," +
-					  "\"recipeSpec\": \"PF10000122981689608493712\"," +
-					  "\"recipeReport\": [" +
-					    "{" +
-					      "\"country\": \"France\"," +
-					      "\"resultIndicator\": \"PROHIBITED\"," +
-					      "\"matrixReport\": [" +
-					        "{" +
-					          "\"did\": \"4476\"," +
-					          "\"resultIndicator\": \"Prohibited\"," +
-					          "\"name\": \"ing4 french\"," +
-					          "\"spec\": \"ing4 french\"," +
-					          "\"idType\": \"Decernis ID\"," +
-					          "\"idValue\": \"4476\"," +
-					          "\"decernisName\": \"Calcium disodium EDTA\"" +
-					        "}" +
-					      "]," +
-					      "\"tabularReport\": [" +
-					        "{" +
-					          "\"name\": \"ing3 french\"," +
-					          "\"spec\": \"ing4 french\"," +
-					          "\"did\": \"4476\"," +
-					          "\"resultIndicator\": \"Prohibited\"," +
-					          "\"percentage\": \"2.0\"," +
-					          "\"usage\": \"Margarine and fat spreads\"," +
-					          "\"threshold\": \"<=100 mg/l or mg/kg\"," +
-					          "\"citation\": \"Regulation (EC) No 1333/2008: Food Additives (Consolidated 2022-10-31)(English) - FoodAdditives\"," +
-					          "\"idType\": \"Decernis ID\"," +
-					          "\"idValue\": \"4476\"," +
-					          "\"function\": \"Antioxidant\"," +
-					          "\"hyperlink\": \"https://www.decernis.com/reference/navpdf.jsp?doc=e21ad59e-4080-4c59-841d-8758921400b4&pg=80\"," +
-					          "\"otherIdentifiers\": {" +
-					            "\"CAS\": \"12002-29-8, 1282-71-9, 19067-42-6, 304695-78-1, 39208-14-5, 5297-15-4, 56532-88-8, 61864-74-2, 62-33-9, 662-33-9, 6766-87-6, 69843-95-4, 7732-93-6\"," +
-					            "\"INCI name\": \"Calcium Disodium EDTA\"," +
-					            "\"E No.\": \"E385\"," +
-					            "\"INS No.\": \"385\"," +
-					            "\"EC No.\": \"200-529-9\"" +
-					          "}," +
-					          "\"decernisName\": \"Calcium disodium EDTA\"" +
-					        "}," +
-					        "{" +
-					          "\"name\": \"ing4 french\"," +
-					          "\"spec\": \"ing4 french\"," +
-					          "\"did\": \"4476\"," +
-					          "\"resultIndicator\": \"Prohibited\"," +
-					          "\"percentage\": \"2.0\"," +
-					          "\"usage\": \"Margarine and fat spreads\"," +
-					          "\"threshold\": \"<=5.0%\"," +
-					          "\"citation\": \"Regulation (EC) No 1333/2008: Food Additives (Consolidated 2022-10-31)(English) - FoodAdditives\"," +
-					          "\"idType\": \"Decernis ID\"," +
-					          "\"idValue\": \"4476\"," +
-					          "\"function\": \"Preservative\"," +
-					          "\"hyperlink\": \"https://www.decernis.com/reference/navpdf.jsp?doc=e21ad59e-4080-4c59-841d-8758921400b4&pg=80\"," +
-					          "\"otherIdentifiers\": {" +
-					            "\"CAS\": \"12002-29-8, 1282-71-9, 19067-42-6, 304695-78-1, 39208-14-5, 5297-15-4, 56532-88-8, 61864-74-2, 62-33-9, 662-33-9, 6766-87-6, 69843-95-4, 7732-93-6\"," +
-					            "\"INCI name\": \"Calcium Disodium EDTA\"," +
-					            "\"E No.\": \"E385\"," +
-					            "\"INS No.\": \"385\"," +
-					            "\"EC No.\": \"200-529-9\"" +
-					          "}," +
-					          "\"decernisName\": \"Calcium disodium EDTA\"" +
-					        "}" +
-					      "]," +
-					      "\"detailReport\": [" +
-					        "{" +
-					          "\"country\": \"France - European Union\"," +
-					          "\"function\": \"Antioxidant - Food Additive\"," +
-					          "\"usage\": \"Margarine and fat spreads - 02.2.2 Other fat and oil emulsions including spreads as defined by Regulation (EC) No 1234/2007 and liquid emulsions: only spreadable fats as defined in Article 115 of and Annex XV to Regulation (EC) No 1234/2007, having a fat content of 41 % or less\"," +
-					          "\"resultIndicator\": \"Prohibited\"," +
-					          "\"threshold\": \"<=100 mg/l or mg/kg\"," +
-					          "\"citation\": \"Regulation (EC) No 1333/2008: Food Additives (Consolidated 2022-10-31)(English) - FoodAdditives\"," +
-					          "\"comments\": \"\"," +
-					          "\"expressedAs\": \"\"," +
-					          "\"citationLink\": \"https://www.decernis.com/reference/navpdf.jsp?doc=e21ad59e-4080-4c59-841d-8758921400b4&pg=80\"," +
-					          "\"result_indicator_color\": \"#FF6A6A\"," +
-					          "\"verbose_description\": \"Not allowable per regulation or banned substance list.\"," +
-					          "\"name\": \"ing3 french\"," +
-					          "\"spec\": \"ing3 french\"," +
-					          "\"percentage\": \"2.0\"" +
-					        "}," +
-					        "{" +
-					          "\"country\": \"France - European Union\"," +
-					          "\"function\": \"Preservative - Food Additive\"," +
-					          "\"usage\": \"Margarine and fat spreads - 02.2.2 Other fat and oil emulsions including spreads as defined by Regulation (EC) No 1234/2007 and liquid emulsions: only spreadable fats as defined in Article 115 of and Annex XV to Regulation (EC) No 1234/2007, having a fat content of 41 % or less\"," +
-					          "\"resultIndicator\": \"Prohibited\"," +
-					          "\"threshold\": \"<=5.0%\"," +
-					          "\"citation\": \"Regulation (EC) No 1333/2008: Food Additives (Consolidated 2022-10-31)(English) - FoodAdditives\"," +
-					          "\"comments\": \"\"," +
-					          "\"expressedAs\": \"\"," +
-					          "\"citationLink\": \"https://www.decernis.com/reference/navpdf.jsp?doc=e21ad59e-4080-4c59-841d-8758921400b4&pg=80\"," +
-					          "\"result_indicator_color\": \"#FF6A6A\"," +
-					          "\"verbose_description\": \"Not allowable per regulation or banned substance list.\"," +
-					          "\"name\": \"ing4 french\"," +
-					          "\"spec\": \"ing4 french\"," +
-					          "\"percentage\": \"2.0\"" +
-					        "}" +
-					      "]" +
-					    "}" +
-					  "]" +
-					"}}"
-));
+			mockWebAnalysis.enqueue(new MockResponse().setBody(readJsonResource("beCPG/decernis/functions.json")));
+			mockWebAnalysis.enqueue(new MockResponse().setBody(readJsonResource("beCPG/decernis/v5-double-function-response.json")));
 			mockWebServer.enqueue(new MockResponse().setBody(""));
 			return null;
 		});
