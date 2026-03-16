@@ -9268,6 +9268,7 @@
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
+                    <show id="bcpg:ingListIngTypes" />
 					<show id="bcpg:ingListClaims" />
 					<show id="bcpg:ingListDeclType" />
 					<show id="bcpg:linkedSearchAssociation" force="true" />
@@ -9312,6 +9313,13 @@
 					<field id="bcpg:ingListBioOrigin" set="2-col-1">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+
+                    <field id="bcpg:ingListIngTypes" set="2-col-1">
+                        <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
+                            </control-param>
+                        </control>
+                    </field>
 
 					<field id="bcpg:ingListClaims" set="2-col-1">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -9382,6 +9390,7 @@
 					<show id="bcpg:linkedSearchAssociation" />
 					<show id="bcpg:ingListDeclType" />
 					<show id="dataList_bcpg:reqCtrlList" />
+                    <show id="bcpg:ingListIngTypes" />
 					<show id="entity_bcpg:ingListIng_bcpg:ing_asColumn" force="true" />
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:glopTarget" />
@@ -9396,6 +9405,7 @@
 					<field id="bcpg:ingListQtyPercWithSecondaryYield" read-only="true" />
 					<field id="bcpg:depthLevel" label="hidden" />
 					<field id="dataList_bcpg:reqCtrlList" label-id="hidden" />
+                    <field id="bcpg:ingListIngTypes" />
 					<field id="bcpg:ingListDeclType" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
@@ -9508,6 +9518,7 @@
 					<show id="bcpg:ingListClaims" />
 					<show id="bcpg:ingListComments" />
 					<show id="bcpg:ingListDeclType" />  
+                    <show id="bcpg:ingListIngTypes" />
 					<show id="entity_bcpg:ingListIng_bcpg:ing_asColumn" force="true" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
@@ -9635,6 +9646,7 @@
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
+                    <show id="bcpg:ingListIngTypes" />
 					<show id="bcpg:ingListClaims" />
 
 					<show id="bcpg:ingListComments" />
@@ -9680,6 +9692,13 @@
 					<field id="bcpg:ingListBioOrigin" set="2-col-1">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+
+                    <field id="bcpg:ingListIngTypes" set="2-col-1">
+                        <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
+                            </control-param>
+                        </control>
+                    </field>
 
 					<field id="bcpg:ingListClaims" set="2-col-1">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
