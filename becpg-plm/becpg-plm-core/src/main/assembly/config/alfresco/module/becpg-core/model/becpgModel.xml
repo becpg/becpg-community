@@ -2984,6 +2984,15 @@
 					<type>d:mltext</type>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:ingListIngTypes">
+					<type>d:noderef</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
                 
                 <!-- Deprecated -->
 				<property name="bcpg:ingListIsGMO">

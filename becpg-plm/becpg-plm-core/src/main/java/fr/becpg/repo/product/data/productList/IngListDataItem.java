@@ -82,6 +82,8 @@ public class IngListDataItem extends AbstractManualDataItem
 
 	private List<NodeRef> claims = new ArrayList<>();
 
+	private List<NodeRef> ingTypes = new ArrayList<>();
+
 	private Boolean isGMO = false;
 
 	private Boolean isIonized = false;
@@ -407,6 +409,26 @@ public class IngListDataItem extends AbstractManualDataItem
 	}
 
 	/**
+	 * <p>Getter for the field <code>ingTypes</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:ingListIngTypes")
+	public List<NodeRef> getIngTypes() {
+		return ingTypes;
+	}
+
+	/**
+	 * <p>Setter for the field <code>ingTypes</code>.</p>
+	 *
+	 * @param ingTypes a {@link java.util.List} object
+	 */
+	public void setIngTypes(List<NodeRef> ingTypes) {
+		this.ingTypes = ingTypes;
+	}
+
+	/**
 	 * <p>Getter for the field <code>isGMO</code>.</p>
 	 *
 	 * @return a {@link java.lang.Boolean} object.
@@ -688,6 +710,17 @@ public class IngListDataItem extends AbstractManualDataItem
 		this.geoTransfo = geoTransfo;
 		return this;
 	}
+
+	/**
+	 * <p>withIngTypes.</p>
+	 *
+	 * @param ingTypes a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 */
+	public IngListDataItem withIngTypes(List<NodeRef> ingTypes) {
+		this.ingTypes = ingTypes;
+		return this;
+	}
 	
 	/**
 	 * <p>withBioOrigin.</p>
@@ -806,6 +839,7 @@ public class IngListDataItem extends AbstractManualDataItem
 		this.geoTransfo = this.geoTransfo != null ? new ArrayList<>(i.geoTransfo) : null;
 		this.bioOrigin = this.bioOrigin != null ? new ArrayList<>(i.bioOrigin) : null;
 		this.claims = this.claims != null ? new ArrayList<>(i.claims) : null;
+		this.ingTypes = this.ingTypes != null ? new ArrayList<>(i.ingTypes) : null;
 		this.isGMO = i.isGMO;
 		this.isIonized = i.isIonized;
 		this.ing = i.ing;
@@ -834,7 +868,7 @@ public class IngListDataItem extends AbstractManualDataItem
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(bioOrigin, claims, declType, depthLevel, geoOrigin, geoTransfo, ing, isGMO, isIonized, isProcessingAid,
+		result = prime * result + Objects.hash(bioOrigin, claims, declType, depthLevel, geoOrigin, geoTransfo, ing, ingTypes, isGMO, isIonized, isProcessingAid,
 				isSupport, maxi, mini, parent, qtyPerc, qtyPerc1, qtyPerc2, qtyPerc3, qtyPerc4, qtyPerc5, qtyPercWithSecondaryYield, qtyPercWithYield,
 				volumeQtyPerc);
 		return result;
@@ -852,7 +886,8 @@ public class IngListDataItem extends AbstractManualDataItem
 		IngListDataItem other = (IngListDataItem) obj;
 		return Objects.equals(bioOrigin, other.bioOrigin) && Objects.equals(claims, other.claims) && declType == other.declType
 				&& Objects.equals(depthLevel, other.depthLevel) && Objects.equals(geoOrigin, other.geoOrigin)
-				&& Objects.equals(geoTransfo, other.geoTransfo) && Objects.equals(ing, other.ing) && Objects.equals(isGMO, other.isGMO)
+				&& Objects.equals(geoTransfo, other.geoTransfo) && Objects.equals(ing, other.ing) && Objects.equals(ingTypes, other.ingTypes)
+				&& Objects.equals(isGMO, other.isGMO)
 				&& Objects.equals(isIonized, other.isIonized) && Objects.equals(isProcessingAid, other.isProcessingAid)
 				&& Objects.equals(isSupport, other.isSupport) && Objects.equals(maxi, other.maxi) && Objects.equals(mini, other.mini)
 				&& Objects.equals(parent, other.parent) && Objects.equals(qtyPerc, other.qtyPerc) && Objects.equals(qtyPerc1, other.qtyPerc1)
@@ -869,7 +904,7 @@ public class IngListDataItem extends AbstractManualDataItem
 		return "IngListDataItem [qtyPerc=" + qtyPerc + ", qtyPerc1=" + qtyPerc1 + ", qtyPerc2=" + qtyPerc2 + ", qtyPerc3=" + qtyPerc3 + ", qtyPerc4="
 				+ qtyPerc4 + ", qtyPercWithYield=" + qtyPercWithYield + ", qtyPercWithSecondaryYield=" + qtyPercWithSecondaryYield
 				+ ", volumeQtyPerc=" + volumeQtyPerc + ", geoOrigin=" + geoOrigin + ", geoTransfo=" + geoTransfo + ", bioOrigin=" + bioOrigin
-				+ ", claims=" + claims + ", isGMO=" + isGMO + ", isIonized=" + isIonized + ", ing=" + ing + ", isProcessingAid=" + isProcessingAid
+				+ ", claims=" + claims + ", ingTypes=" + ingTypes + ", isGMO=" + isGMO + ", isIonized=" + isIonized + ", ing=" + ing + ", isProcessingAid=" + isProcessingAid
 				+ ", isSupport=" + isSupport + ", depthLevel=" + depthLevel + ", parent=" + parent + ", mini=" + mini + ", maxi=" + maxi
 				+ ", declType=" + declType + "]";
 	}
