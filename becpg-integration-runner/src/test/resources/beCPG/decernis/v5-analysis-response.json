@@ -1,0 +1,47 @@
+{
+  "recipeAnalaysisReport": {
+    "reportDateTime": "2023-07-13T08:44:34.206361Z",
+    "recipeName": "PF10000122391689237843340 PF test Decernis 2",
+    "recipeSpec": "PF10000122391689237843340",
+    "recipeReport": [
+      {
+        "country": "Germany",
+        "resultIndicator": "REVIEW",
+        "matrixReport": [
+          {
+            "did": "6327",
+            "resultIndicator": "Not Listed",
+            "name": "ing1 french",
+            "spec": "ing1 french",
+            "idType": "Decernis ID",
+            "idValue": "6327",
+            "decernisName": "Vitamin A [Retinol]"
+          }
+        ],
+        "tabularReport": [
+          {
+            "name": "ing1 french",
+            "spec": "ing1 french",
+            "did": "6327",
+            "resultIndicator": "Not Listed",
+            "percentage": "1.0",
+            "usage": "Thickening agents",
+            "threshold": "SME LOGIC: This nutrient supplement is not listed in this country's regulation, under review by Decernis. Please use the \"report a problem\" link for further information/questions.",
+            "citation": "",
+            "idType": "Decernis ID",
+            "idValue": "6327",
+            "function": "Nutrient Supplement",
+            "otherIdentifiers": {
+              "CAS": "11103-57-4, 1341-18-0, 5979-23-7, 68-26-8",
+              "INCI name": "Retinol",
+              "E No.": "E672",
+              "EC No.": "200-683-7, 234-328-2"
+            },
+            "decernisName": "Vitamin A [Retinol]"
+          }
+        ],
+        "detailReport": []
+      }
+    ]
+  }
+}
