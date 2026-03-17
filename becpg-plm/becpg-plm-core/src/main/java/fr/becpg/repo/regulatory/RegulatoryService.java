@@ -385,7 +385,7 @@ public class RegulatoryService {
 	}
 
 	private void updateChecksums(RegulatoryContext context, ProductData productData) {
-		String checkSum = createContextCheckum(context);
+		String checkSum = createContextChecksum(context);
 		productData.setRequirementChecksum(CheckSumHelper.updateChecksum(REGULATORY_KEY, productData.getRequirementChecksum(), checkSum));
 		for (RegulatoryListDataItem regulatoryListDataItem : productData.getRegulatoryList()) {
 			Set<String> itemCountries = regulatoryListDataItem.getRegulatoryCountriesRef().stream().map(this::extractCode)
@@ -608,7 +608,7 @@ public class RegulatoryService {
 		if (context.getProduct().getRegulatoryFormulatedDate() == null || context.getProduct().getRegulatoryFormulatedDate().before(cal.getTime())) {
 			return false;
 		}
-		if (!CheckSumHelper.isSameChecksum(REGULATORY_KEY, context.getProduct().getRequirementChecksum(), createContextCheckum(context))) {
+		if (!CheckSumHelper.isSameChecksum(REGULATORY_KEY, context.getProduct().getRequirementChecksum(), createContextChecksum(context))) {
 			return false;
 		}
 		for (RegulatoryListDataItem regulatoryListDataItem : context.getProduct().getRegulatoryList()) {
@@ -622,7 +622,7 @@ public class RegulatoryService {
 		return true;
 	}
 
-	private String createContextCheckum(RegulatoryContext context) {
+	private String createContextChecksum(RegulatoryContext context) {
 		Set<String> countries = context.getProduct().getRegulatoryCountriesRef().stream().map(this::extractCode).collect(Collectors.toSet());
 		Set<String> usages = context.getProduct().getRegulatoryUsagesRef().stream().map(this::extractCode).collect(Collectors.toSet());
 		if (!context.getProduct().getRegulatoryUsages().isEmpty() && !context.getProduct().getRegulatoryCountries().isEmpty()) {
@@ -639,11 +639,11 @@ public class RegulatoryService {
 		}
 
 		if (context.getIngList() != null) {
-			context.getIngList().stream().map(ing -> ing.getNodeRef().toString() + ing.getIng() + ing.getValue()).sorted()
+			context.getIngList().stream().map(ing -> ing.getNodeRef().getId() + ing.getIng() + ing.getValue()).sorted()
 					.forEach(checksumBuilder::append);
 		}
 
-		return checksumBuilder.toString();
+		return CheckSumHelper.hashChecksum(checksumBuilder.toString());
 	}
 
 	private String createRequirementChecksum(Set<String> countries, Set<String> usages) {
@@ -654,7 +654,7 @@ public class RegulatoryService {
 		if (usages != null) {
 			usages.stream().filter(c -> (c != null) && !c.isEmpty()).sorted().forEach(key::append);
 		}
-		return key.toString();
+		return CheckSumHelper.hashChecksum(key.toString());
 	}
 
 	private boolean isContextCompatible(RegulatoryContext context) {
