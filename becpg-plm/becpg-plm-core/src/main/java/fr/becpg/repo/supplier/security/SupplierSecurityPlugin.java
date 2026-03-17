@@ -1,7 +1,6 @@
 package fr.becpg.repo.supplier.security;
 
 import java.util.List;
-
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.workflow.WorkflowPackageComponent;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -15,6 +14,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.project.data.ProjectData;
+import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
+import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.security.SecurityService;
@@ -43,7 +46,12 @@ public class SupplierSecurityPlugin implements SecurityServicePlugin {
 	private WorkflowPackageComponent workflowPackageComponent;
 
 	@Autowired
+	private AlfrescoRepository<ProjectData> alfrescoRepository;
+
+	@Autowired
 	private EntityDictionaryService entityDictionaryService;
+
+	private static final String SUPPLIER_WIZARD_PREFIX = "/share/page/wizard?id=supplier-";
 
 	/** {@inheritDoc} */
 	@Override
@@ -110,5 +118,90 @@ public class SupplierSecurityPlugin implements SecurityServicePlugin {
 	    return SecurityService.WRITE_ACCESS;
 	}
 
+	/**
+	 * Find workflow IDs for the entity, falling back to the supplier node
+	 * when the entity itself is not in any workflow package.
+	 *
+	 * @param entityNodeRef the entity being accessed
+	 * @param supplierNodeRef the supplier associated with the entity
+	 * @return list of workflow instance IDs
+	 */
+	private List<String> findWorkflowIds(NodeRef entityNodeRef, NodeRef supplierNodeRef) {
+		List<String> workflowIds = workflowPackageComponent.getWorkflowIdsForContent(entityNodeRef);
+		if (!workflowIds.isEmpty()) {
+			return workflowIds;
+		}
+
+		if (!entityNodeRef.equals(supplierNodeRef)) {
+			workflowIds = workflowPackageComponent.getWorkflowIdsForContent(supplierNodeRef);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Fallback to supplier node " + supplierNodeRef + " workflows: " + workflowIds);
+			}
+		}
+
+		return workflowIds;
+	}
+
+	/**
+	 * Check if the current user has an assigned or pooled task matching the given workflow IDs.
+	 *
+	 * @param contentWorkflowIds workflow instance IDs to match against
+	 * @return true if user has a matching task
+	 */
+	private boolean hasMatchingTask(List<String> contentWorkflowIds) {
+		String supplierAccount = AuthenticationUtil.getFullyAuthenticatedUser();
+
+		List<WorkflowTask> assignedTasks = workflowService.getAssignedTasks(supplierAccount, WorkflowTaskState.IN_PROGRESS);
+		boolean matching = assignedTasks.stream()
+				.anyMatch(task -> contentWorkflowIds.contains(task.getPath().getInstance().getId())
+						&& hasSupplierWizardDeliverable(task));
+
+		if (!matching) {
+			List<WorkflowTask> pooledTasks = workflowService.getPooledTasks(supplierAccount);
+			matching = pooledTasks.stream()
+					.anyMatch(task -> contentWorkflowIds.contains(task.getPath().getInstance().getId())
+							&& hasSupplierWizardDeliverable(task));
+		}
+
+		return matching;
+	}
+
+	private boolean hasSupplierWizardDeliverable(WorkflowTask task) {
+		NodeRef projectNodeRef = (NodeRef) task.getProperties().get(BeCPGModel.ASSOC_WORKFLOW_ENTITY);
+		if (projectNodeRef == null) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("No project node found on workflow task " + task.getId());
+			}
+			return false;
+		}
+
+		ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
+		if (projectData == null || projectData.getDeliverableList() == null) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("No deliverables for project " + projectNodeRef + " on task " + task.getId());
+			}
+			return false;
+		}
+
+		NodeRef workflowTaskNodeRef = (NodeRef) task.getProperties().get(ProjectModel.ASSOC_WORKFLOW_TASK);
+
+		for (DeliverableListDataItem deliverable : projectData.getDeliverableList()) {
+			String url = deliverable.getUrl();
+			if ((url != null) && url.startsWith(SUPPLIER_WIZARD_PREFIX)) {
+				if (workflowTaskNodeRef == null) {
+					return true;
+				}
+				List<NodeRef> deliverableTasks = deliverable.getTasks();
+				if ((deliverableTasks != null) && deliverableTasks.contains(workflowTaskNodeRef)) {
+					return true;
+				}
+			}
+		}
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("No supplier wizard deliverable found for task " + task.getId() + " in project " + projectNodeRef);
+		}
+		return false;
+	}
 
 }
