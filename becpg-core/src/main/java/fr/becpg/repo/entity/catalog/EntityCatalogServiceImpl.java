@@ -253,8 +253,8 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 
 		if (catalog.has(EntityCatalogService.PROP_ENTITY_FILTER)) {
 			String filterQuery = catalog.getString(EntityCatalogService.PROP_ENTITY_FILTER);
-			if(filterQuery.equals("wizard") && catalogId == null) {
-				return false;
+			if ("wizard".equals(filterQuery)) {
+				return catalogId != null;
 			}
 			return testCondition(filterQuery, entity);
 		}
