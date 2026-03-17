@@ -51,7 +51,7 @@ public class ProjectHelperTest {
 		
 		Assert.assertEquals(319, duration);
 		
-		Date nextDate = ProjectHelper.calculateNextDate(startDate, duration+1, true, new DefaultWorkingDayProvider());
+		Date nextDate = ProjectHelper.calculateNextDate(startDate, duration, true, new DefaultWorkingDayProvider());
 		
 		Assert.assertNotNull(nextDate);
 		Assert.assertEquals(endDate, nextDate);
