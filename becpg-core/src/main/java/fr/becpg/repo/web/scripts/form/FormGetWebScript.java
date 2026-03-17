@@ -137,11 +137,13 @@ public class FormGetWebScript extends AbstractWebScript {
 			}
 
 			if (json.has(PARAM_SKIP_SECURITY_RULES) && !JSONObject.NULL.equals(json.get(PARAM_SKIP_SECURITY_RULES))) {
-				shouldSkipSecurityRules = json.getBoolean(PARAM_SKIP_SECURITY_RULES);
+				Object skipSecurityRulesValue = json.get(PARAM_SKIP_SECURITY_RULES);
+				if (skipSecurityRulesValue instanceof Boolean) {
+					shouldSkipSecurityRules = ((Boolean) skipSecurityRulesValue).booleanValue();
+				} else if (skipSecurityRulesValue instanceof String) {
+					shouldSkipSecurityRules = Boolean.parseBoolean((String) skipSecurityRulesValue);
+				}
 			}
-			
-		
-
 		} catch (IOException | JSONException io) {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Invalid JSON: " + io.getMessage());
 		}
@@ -153,6 +155,9 @@ public class FormGetWebScript extends AbstractWebScript {
 		}
 
 		try {
+			if (!shouldSkipSecurityRules) {
+                shouldSkipSecurityRules = "true".equals(req.getParameter(PARAM_SKIP_SECURITY_RULES));
+            }
 			if (shouldSkipSecurityRules) {
 				SecurityContextHelper.setSkipSecurityRules(true);
 			}
@@ -163,12 +168,12 @@ public class FormGetWebScript extends AbstractWebScript {
 				becpgFormService.reloadConfig();
 				ret.put("SUCCESS", true);
 			} else {
-				NodeRef nodeRef = ((entityNodeRef != null) && !entityNodeRef.isEmpty() ) ? new NodeRef(entityNodeRef) : null;
+				NodeRef nodeRef = ((entityNodeRef != null) && !entityNodeRef.isEmpty()) ? new NodeRef(entityNodeRef) : null;
 				BecpgFormDefinition def = becpgFormService.getForm(itemKind, itemId, formId, siteId, fields, forcedFields, nodeRef);
 				ret = def.getMergeDef();
 				
-				if(logger.isDebugEnabled()) {
-					logger.debug(itemKind+"/"+itemId+"/"+siteId+"/"+formId+"/"+entityNodeRef);
+				if (logger.isDebugEnabled()) {
+					logger.debug(itemKind + "/" + itemId + "/" + siteId + "/" + formId + "/" + entityNodeRef);
 					logger.debug(ret.toString(3));
 				}
 			}
