@@ -2143,6 +2143,7 @@
                         <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
                             <control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:scoreList&#38;attributeName=pjt:slScoreCriterion&#38;extra.showFullPath=true
                             </control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
                         </control>
                     </field>
 				</appearance>
