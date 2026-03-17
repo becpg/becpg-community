@@ -63,16 +63,20 @@ public class SurveyWebScript extends AbstractEntityDataListWebScript {
 		try {
 
 			JSONObject ret = new JSONObject();
+			final Access access = getAccess(SurveyModel.TYPE_SURVEY_LIST, entityNodeRef, false, null, dataListName, null);
 			final JSONObject jsonReq = (JSONObject) req.parseContent();
 			if (jsonReq != null) {
 
-				surveyService.saveSurveyData(entityNodeRef, dataListName, jsonReq);
+				if (access.canWrite()) {
+					surveyService.saveSurveyData(entityNodeRef, dataListName, jsonReq);
 
-				ret.put("persistedObject", entityNodeRef);
-				ret.put("message", "Success");
+					ret.put("persistedObject", entityNodeRef);
+					ret.put("message", "Success");
+				} else {
+					ret = surveyService.getSurveyData(entityNodeRef, dataListName, true);
+				}
 			} else {
 
-				final Access access = getAccess(SurveyModel.TYPE_SURVEY_LIST, entityNodeRef, false, null, dataListName, null);
 				ret = surveyService.getSurveyData(entityNodeRef, dataListName, !access.canWrite());
 			}
 
