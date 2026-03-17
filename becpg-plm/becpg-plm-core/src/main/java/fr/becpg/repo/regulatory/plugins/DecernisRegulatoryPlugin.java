@@ -45,6 +45,7 @@ import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.regulatory.CountryBatch;
 import fr.becpg.repo.regulatory.RegulatoryBatch;
 import fr.becpg.repo.regulatory.RegulatoryContext;
+import fr.becpg.repo.regulatory.RegulatoryHelper;
 import fr.becpg.repo.regulatory.RegulatoryMode;
 import fr.becpg.repo.regulatory.RegulatoryPlugin;
 import fr.becpg.repo.regulatory.RegulatoryService;
@@ -108,13 +109,9 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
 	private static final String PARAM_RESULTS = "results";
 
-	private static final String PARAM_RESULTS_COUNT = "resultsCount";
-
 	private static final String PARAM_COUNT = "count";
 
 	private static final String PARAM_QUERY = "query";
-
-	private static final String PARAM_RESULTS_LIMIT = "limit";
 
 	private static final String PARAM_COMPANY = "company";
 
@@ -409,32 +406,34 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 				String rid = ingItem.getRegulatoryCode();
 
 				Double ingQtyPerc = DecernisHelper.truncateDoubleValue(ingListDataItem.getQtyPerc());
-
-				IngTypeItem ingType = ingItem.getIngType();
-				String function = null;
-				if (ingType != null) {
-					function = fetchFunctionId(ingType.getRegulatoryCode());
-				}
-				try {
-					if (isRIDValid(rid) && ingName != null && !ingName.isEmpty()) {
-						JSONObject ingredient = new JSONObject();
-						ingredient.put("name", ingName);
-						ingredient.put("percentage", ingQtyPerc == null ? 0d : ingQtyPerc);
-						ingredient.put("ingredient_did", rid);
-						if (function != null) {
-							ingredient.put(FUNCTION, function);
-						}
-						ingredient.put("spec_parameters", JSONObject.NULL);
-						ingredient.put("upper_limit", JSONObject.NULL);
-						ingredients.put(ingredient);
+				
+				for (IngTypeItem ingType : RegulatoryHelper.extractIngTypes(ingListDataItem, alfrescoRepository)) {
+					String function = null;
+					if (ingType != null) {
+						function = fetchFunctionId(ingType.getRegulatoryCode());
 					}
-
-				} catch (RestClientException e) {
-					logger.warn("Cannot retrieve ingredient " + ingName + " error:" + e.getMessage());
-				} catch (Exception e) {
-					logger.error(e, e);
-					throw new FormulateException("Unexpected decernis error: " + DecernisHelper.cleanError(e.getMessage()), e);
+					try {
+						if (isRIDValid(rid) && ingName != null && !ingName.isEmpty()) {
+							JSONObject ingredient = new JSONObject();
+							ingredient.put("name", ingName);
+							ingredient.put("percentage", ingQtyPerc == null ? 0d : ingQtyPerc);
+							ingredient.put("ingredient_did", rid);
+							if (function != null) {
+								ingredient.put(FUNCTION, function);
+							}
+							ingredient.put("spec_parameters", JSONObject.NULL);
+							ingredient.put("upper_limit", JSONObject.NULL);
+							ingredients.put(ingredient);
+						}
+						
+					} catch (RestClientException e) {
+						logger.warn("Cannot retrieve ingredient " + ingName + " error:" + e.getMessage());
+					} catch (Exception e) {
+						logger.error(e, e);
+						throw new FormulateException("Unexpected decernis error: " + DecernisHelper.cleanError(e.getMessage()), e);
+					}
 				}
+				
 			}
 		}
 
@@ -692,41 +691,43 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
 			IngItem ingItem = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
 
-			String function = null;
-			IngTypeItem ingType = ingItem.getIngType();
-			if (ingType != null) {
-				String functionValue = ingType.getRegulatoryCode();
-				if (functionValue != null) {
-					function = findFunction(moduleCode, functionValue);
-				}
-				if (function == null) {
-					functionValue = ingType.getLvCode();
+			for (IngTypeItem ingType : RegulatoryHelper.extractIngTypes(ingListDataItem, alfrescoRepository)) {
+				String function = null;
+				if (ingType != null) {
+					String functionValue = ingType.getRegulatoryCode();
 					if (functionValue != null) {
 						function = findFunction(moduleCode, functionValue);
 					}
-				}
-				if (function == null) {
-					functionValue = ingType.getLvValue();
-					if (functionValue != null) {
-						function = findFunction(moduleCode, functionValue);
+					if (function == null) {
+						functionValue = ingType.getLvCode();
+						if (functionValue != null) {
+							function = findFunction(moduleCode, functionValue);
+						}
+					}
+					if (function == null) {
+						functionValue = ingType.getLvValue();
+						if (functionValue != null) {
+							function = findFunction(moduleCode, functionValue);
+						}
 					}
 				}
-			}
-			String rid = ingItem.getRegulatoryCode();
-			if (isRIDValid(rid)) {
-				String ingName = extractIngName(ingItem);
-				Double ingQtyPerc = DecernisHelper.truncateDoubleValue(ingListDataItem.getQtyPerc());
-				JSONObject ingredient = new JSONObject();
-				ingredient.put(PARAM_NAME, ingName);
-				ingredient.put("spec", ingName);
-				ingredient.put("idType", "Decernis ID");
-				ingredient.put("idValue", rid);
-				ingredient.put("percentage", ingQtyPerc == null ? 0d : ingQtyPerc);
-				if (function != null) {
-					ingredient.put(FUNCTION, function);
+				String rid = ingItem.getRegulatoryCode();
+				if (isRIDValid(rid)) {
+					String ingName = extractIngName(ingItem);
+					Double ingQtyPerc = DecernisHelper.truncateDoubleValue(ingListDataItem.getQtyPerc());
+					JSONObject ingredient = new JSONObject();
+					ingredient.put(PARAM_NAME, ingName);
+					ingredient.put("spec", ingName);
+					ingredient.put("idType", "Decernis ID");
+					ingredient.put("idValue", rid);
+					ingredient.put("percentage", ingQtyPerc == null ? 0d : ingQtyPerc);
+					if (function != null) {
+						ingredient.put(FUNCTION, function);
+					}
+					ingredients.put(ingredient);
 				}
-				ingredients.put(ingredient);
 			}
+			
 		}
 
 		if (!ingredients.isEmpty()) {
@@ -1130,10 +1131,11 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		for (IngListDataItem ing : ingList) {
 			IngItem ingItem = (IngItem) alfrescoRepository.findOne(ing.getIng());
 			if (decernisID.equals(ingItem.getRegulatoryCode())) {
-				IngTypeItem ingType = ingItem.getIngType();
-				if (ingType != null && function != null && (function.equalsIgnoreCase(ingType.getLvValue())
-						|| function.equalsIgnoreCase(ingType.getLvCode()) || function.equalsIgnoreCase(ingType.getRegulatoryCode()))) {
-					return ing;
+				for (IngTypeItem ingType : RegulatoryHelper.extractIngTypes(ing, alfrescoRepository)) {
+					if (ingType != null && function != null && (function.equalsIgnoreCase(ingType.getLvValue())
+							|| function.equalsIgnoreCase(ingType.getLvCode()) || function.equalsIgnoreCase(ingType.getRegulatoryCode()))) {
+						return ing;
+					}
 				}
 			}
 		}
