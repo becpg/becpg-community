@@ -37,6 +37,9 @@ public class MLTextHelper {
 
 	private static  String supportedLocalesText = null;
 
+	private static final Set<String> DEPRECATED_LOCALE_LANGUAGES = Set.of("iw", "in", "ji", "yi");
+
+
 
 	private static final Log logger = LogFactory.getLog(MLTextHelper.class);
 
@@ -262,6 +265,15 @@ public class MLTextHelper {
 		return (contentLocale != null) && getSupportedLocales().contains(contentLocale);
 	}
 
+	/**
+     * Returns true when the locale uses a deprecated or legacy language code that must not be accepted.
+     *
+     * @param locale a {@link java.util.Locale} object.
+     * @return true if the locale language code is deprecated.
+     */
+    public static boolean isDeprecatedLocale(Locale locale) {
+        return (locale != null) && DEPRECATED_LOCALE_LANGUAGES.contains(locale.getLanguage());
+    }
 	
 
 	/**

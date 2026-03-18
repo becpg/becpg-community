@@ -461,7 +461,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["ecm:rlRevisionType", "ecm:culRevision"],
-        renderer: function(oRecord, data, label, scope) {
+        renderer: function(oRecord, data, _label, scope) {
 
             if (data.value != null) {
                 if (oRecord.getData("itemData")["prop_ecm_culReqError"]) {
@@ -482,7 +482,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["qa:slControlPoint", "qa:clControlPoint"],
-        renderer: function(oRecord, data, label, scope) {
+        renderer: function(_oRecord, data, _label, _scope) {
             var url = beCPG.util.entityURL(data.siteId, data.value);
             return '<span class="controlPoint"><a href="' + url + '">' + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';
 
@@ -492,7 +492,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["qa:stockList", "bp:pubChannelListChannel"],
-        renderer: function(oRecord, data, label, scope) {
+        renderer: function(_oRecord, data, _label, scope) {
             var url = scope._buildCellUrl(data);
             if (scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed") > -1) {
                 url = beCPG.util.entityURL(data.siteId, data.value);
@@ -505,36 +505,56 @@ if (beCPG.module.EntityDataGridRenderers) {
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["bp:pubChannelError", "bp:pubChannelListError"],
-        renderer: function(oRecord, data, label, scope, z, zz, elCell, oColumn) {
+        renderer: function(oRecord, data, _label, scope, _z, _zz, _elCell, oColumn) {
             if (!data || !data.value) {
                 return "";
             }
 
-            if (oColumn.width < 420) {
-                oColumn.width = 420;
-            }
-
+            var rowId = (oRecord && oRecord.getData("nodeRef"))
+                ? oRecord.getData("nodeRef")
+                : Alfresco.util.generateDomId();
+            var uid = "pce-" + rowId.replace(/[^a-zA-Z0-9_-]/g, "_") + "-" + oColumn.key;
             var encodedValue = Alfresco.util.encodeHTML(data.value);
-            var rowId = (oRecord && oRecord.getData("nodeRef")) ? oRecord.getData("nodeRef") : Alfresco.util.generateDomId();
-            var textareaId = "pub-channel-error-" + rowId.replace(/[^a-zA-Z0-9_-]/g, "_") + "-" + oColumn.key;
 
-            return '<div class="pub-channel-error-renderer">'
-                + '<a href="#" class="inline-action" onclick="var el = document.getElementById(\'' + textareaId + '\'); if(el){el.focus();el.select();} return false;">'
-                + scope.msg("button.select") + '</a>'
-                + '<textarea id="' + textareaId + '" readonly="readonly" '
-                + 'style="width:100%;min-height:120px;resize:vertical;font-family:monospace;white-space:pre;" '
-                + 'title="' + encodedValue + '">' + encodedValue + '</textarea>'
-                + '</div>';
+            var firstLine = data.value.split("\n")[0].trim();
+            if (firstLine.length > 60) firstLine = firstLine.substring(0, 60) + "…";
+            var encodedFirst = Alfresco.util.encodeHTML(firstLine);
+
+            var toggleScript = "var p=document.getElementById('" + uid + "-panel');" +
+                "p.style.display=(p.style.display==='none'?'block':'none');";
+
+            var copyScript = "(function(btn){" +
+                "var text=document.getElementById('" + uid + "-code').textContent;" +
+                "if(navigator.clipboard){navigator.clipboard.writeText(text);}" +
+                "btn.innerHTML='" + scope.msg("button.copied", "✓ ") + "';" +
+                "setTimeout(function(){btn.innerHTML='" + scope.msg("button.copy") + "';},1800);" +
+                "})(this)";
+
+            return '<div>' +
+                '<span class="theme-color-2 error">' + encodedFirst + '</span>' +
+                ' <a href="#" class="inline-action" onclick="' + toggleScript + ' return false;">' +
+                scope.msg("button.details") +
+                '</a>' +
+                '<div id="' + uid + '-panel" style="display:none;margin-top:4px;">' +
+                '<div class="yui-g info">' +
+                '<pre id="' + uid + '-code" ' +
+                'style="white-space:pre-wrap;word-break:break-all;max-height:150px;overflow-y:auto;font-size:11px;margin:0;">' +
+                encodedValue +
+                '</pre>' +
+                '</div>' +
+                '<a href="#" class="inline-action" onclick="' + copyScript + ' return false;">' +
+                scope.msg("button.copy") +
+                '</a>' +
+                '</div>' +
+                '</div>';
         }
-
     });
+
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["qa:clCharacts"],
-        renderer: function(oRecord, data, label, scope) {
-
+        renderer: function(_oRecord, data, _label, _scope) {
             return '<span class="' + data.metadata + '">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
-
         }
 
     });

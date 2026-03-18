@@ -117,12 +117,11 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 			}
 		}
 		
-
+		// supplier scripts
+		NodeRef scriptFolderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, XPATH_DICTIONARY_SCRIPTS);
+		List<NodeRef> scriptResources = contentHelper.addFilesResources(scriptFolderNodeRef, "classpath*:beCPG/supplier/*.js");
+		
 		if (projectTplNodeRef == null) {
-			NodeRef scriptFolderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, XPATH_DICTIONARY_SCRIPTS);
-
-			List<NodeRef> scriptResources = contentHelper.addFilesResources(scriptFolderNodeRef, "classpath*:beCPG/supplier/*.js");
-
 
 			/*
 			    Référencement -> Pre On créer la branche dans l'espace fournisseur et on assign le wizard
@@ -137,8 +136,6 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 			dataLists.add(ProjectModel.TYPE_TASK_LIST);
 			dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
 			dataLists.add(BeCPGModel.TYPE_ACTIVITY_LIST);
-			
-			
 			
 			projectTplNodeRef = entityTplService.createEntityTpl(projectTplsNodeRef, ProjectModel.TYPE_PROJECT,
 					I18NUtil.getMessage(SUPPLIER_PJT_TPL_NAME), true, false, dataLists, null);

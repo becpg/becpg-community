@@ -185,6 +185,7 @@
           <show force="false" id="gs1:volume"/>
           <show force="false" id="gs1:stackingFactor"/>
           <show force="false" id="gs1:stackingMaxWeight"/>
+          <show force="false" id="gs1:stackingFactorTypeCode"/>
           <show force="false" id="pack:tare"/>
           <show force="false" id="pack:tareUnit"/>
           <show force="false" id="gs1:weight"/>
@@ -211,6 +212,10 @@
           <show force="false" id="gs1:secondaryNetWeight"/>
           <show force="false" id="gs1:secondaryWeight"/>
           <show force="false" id="gs1:secondaryDataCarrierTypeCode"/>
+          <show force="false" id="gs1:secondaryStackingFactor"/>
+          <show force="false" id="gs1:secondaryStackingMaxWeight"/>
+          <show force="false" id="gs1:secondaryStackingFactorTypeCode"/>
+          <show force="false" id="gs1:packagingSustainabilityFeatureCode"/>
           <show force="false" id="gs1:tertiaryPackagingTypeCode"/>
           <show force="false" id="gs1:palletTypeCode"/>
           <show force="false" id="pack:palletLayers"/>
@@ -224,6 +229,7 @@
           <show force="false" id="gs1:tertiaryDataCarrierTypeCode"/>
           <show force="false" id="pack:palletNumberOnGround"/>
           <show force="false" id="pack:palletStackingMaxWeight"/>
+          <show force="false" id="gs1:tertiaryStackingFactorTypeCode"/>
           <show force="false" id="gs1:tertiaryNetWeight"/>
           <show force="false" id="gs1:tertiaryWeight"/>
           <show force="false" id="gs1:isTradeItemMarkedAsRecyclable"/>
@@ -852,6 +858,7 @@
               <control-param name="unit">kg</control-param>
             </control>
           </field>
+          <field id="gs1:stackingFactorTypeCode" mandatory="false" read-only="false" set="primaryPackaging"/>
           <field id="pack:tare" mandatory="false" read-only="true" set="primaryPackaging"/>
           <field id="pack:tareUnit" mandatory="false" read-only="true" set="primaryPackaging"/>
           <field help-id="becpg.forms.help.gs1.weight" id="gs1:weight" mandatory="false" read-only="true" set="primaryPackaging">
@@ -938,6 +945,7 @@
               <control-param name="unit">kg</control-param>
             </control>
           </field>
+          <field id="gs1:secondaryStackingFactorTypeCode" mandatory="false" read-only="false" set="secondaryPackaging"/>
           
           <field id="gs1:secondaryNetWeight" mandatory="false" read-only="true" set="secondaryPackaging">
             <control template="/org/alfresco/components/form/controls/number-unit.ftl">
@@ -950,6 +958,7 @@
             </control>
           </field>
           <field help-id="becpg.forms.help.gs1.dataCarrierTypeCode" id="gs1:secondaryDataCarrierTypeCode" mandatory="false" read-only="false" set="secondaryPackaging"/>
+          <field id="gs1:packagingSustainabilityFeatureCode" mandatory="false" read-only="false" set="secondaryPackaging"/>
           
           <set appearance="bordered-panel" id="tertiaryPackaging" label-id="becpg.forms.set.tertiaryPackaging.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field help-id="becpg.forms.help.gs1.packagingTypeCode" id="gs1:tertiaryPackagingTypeCode" mandatory="false" read-only="false" set="tertiaryPackaging">
@@ -988,6 +997,7 @@
               <control-param name="unit">kg</control-param>
             </control>
           </field>
+          <field id="gs1:tertiaryStackingFactorTypeCode" mandatory="false" read-only="false" set="tertiaryPackaging"/>
           <field id="gs1:tertiaryNetWeight" mandatory="false" read-only="true" set="tertiaryPackaging">
             <control template="/org/alfresco/components/form/controls/number-unit.ftl">
               <control-param name="unit">kg</control-param>
@@ -2604,6 +2614,7 @@
           <show force="true" id="gs1:volume"/>
           <show force="true" id="gs1:stackingFactor"/>
           <show force="true" id="gs1:stackingMaxWeight"/>
+          <show force="true" id="gs1:stackingFactorTypeCode"/>
           <show force="true" id="pack:tare"/>
           <show force="true" id="pack:tareUnit"/>
           <show force="true" id="gs1:weight"/>
@@ -2631,9 +2642,11 @@
           <show force="true" id="gs1:secondaryVolume"/>
           <show force="true" id="gs1:secondaryStackingFactor"/>
           <show force="true" id="gs1:secondaryStackingMaxWeight"/>
+          <show force="true" id="gs1:secondaryStackingFactorTypeCode"/>
           <show force="true" id="gs1:secondaryNetWeight"/>
           <show force="true" id="gs1:secondaryWeight"/>
           <show force="true" id="gs1:secondaryDataCarrierTypeCode"/>
+          <show force="true" id="gs1:packagingSustainabilityFeatureCode"/>
           <show force="true" id="gs1:tertiaryPackagingTypeCode"/>
           <show force="true" id="gs1:palletTypeCode"/>
           <show force="true" id="pack:palletLayers"/>
@@ -2646,6 +2659,7 @@
           <show force="true" id="gs1:tertiaryVolume"/>
           <show force="true" id="pack:palletNumberOnGround"/>
           <show force="true" id="pack:palletStackingMaxWeight"/>
+          <show force="true" id="gs1:tertiaryStackingFactorTypeCode"/>
           <show force="true" id="gs1:tertiaryNetWeight"/>
           <show force="true" id="gs1:tertiaryWeight"/>
           <show force="true" id="gs1:tertiaryDataCarrierTypeCode"/>
@@ -3123,6 +3137,7 @@
               <control-param name="unit">kg</control-param>
             </control>
           </field>
+          <field id="gs1:stackingFactorTypeCode" mandatory="false" read-only="false" set="primaryPackaging"/>
           <field id="pack:tare" mandatory="false" read-only="true" set="primaryPackaging"/>
           <field id="pack:tareUnit" mandatory="false" read-only="true" set="primaryPackaging"/>
           <field help-id="becpg.forms.help.gs1.weight" id="gs1:weight" mandatory="false" read-only="true" set="primaryPackaging">
@@ -3200,17 +3215,20 @@
               <control-param name="unit">kg</control-param>
             </control>
           </field>
+          <field id="gs1:secondaryStackingFactor" mandatory="false" read-only="false" set="secondaryPackaging"/>
           <field id="gs1:secondaryNetWeight" mandatory="false" read-only="true" set="secondaryPackaging">
             <control template="/org/alfresco/components/form/controls/number-unit.ftl">
               <control-param name="unit">kg</control-param>
             </control>
           </field>
+          <field id="gs1:secondaryStackingFactorTypeCode" mandatory="false" read-only="false" set="secondaryPackaging"/>
           <field id="gs1:secondaryWeight" mandatory="false" read-only="true" set="secondaryPackaging">
             <control template="/org/alfresco/components/form/controls/number-unit.ftl">
               <control-param name="unit">kg</control-param>
             </control>
           </field>
           <field help-id="becpg.forms.help.gs1.dataCarrierTypeCode" id="gs1:secondaryDataCarrierTypeCode" mandatory="false" read-only="false" set="secondaryPackaging"/>
+          <field id="gs1:packagingSustainabilityFeatureCode" mandatory="false" read-only="false" set="secondaryPackaging"/>
           
           <set appearance="bordered-panel" id="tertiaryPackaging" label-id="becpg.forms.set.tertiaryPackaging.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field help-id="becpg.forms.help.gs1.packagingTypeCode" id="gs1:tertiaryPackagingTypeCode" mandatory="false" read-only="false" set="tertiaryPackaging"/>
@@ -3245,6 +3263,7 @@
               <control-param name="unit">kg</control-param>
             </control>
           </field>
+          <field id="gs1:tertiaryStackingFactorTypeCode" mandatory="false" read-only="true" set="tertiaryPackaging"/>
           <field id="gs1:tertiaryNetWeight" mandatory="false" read-only="true" set="tertiaryPackaging">
             <control template="/org/alfresco/components/form/controls/number-unit.ftl">
               <control-param name="unit">kg</control-param>
@@ -3531,6 +3550,7 @@
           <show force="false" id="gs1:volume"/>
           <show force="false" id="gs1:stackingFactor"/>
           <show force="false" id="gs1:stackingMaxWeight"/>
+          <show force="false" id="gs1:stackingFactorTypeCode"/>
           <show force="false" id="pack:tare"/>
           <show force="false" id="pack:tareUnit"/>
           <show force="false" id="gs1:weight"/>
@@ -3558,9 +3578,11 @@
           <show force="false" id="gs1:secondaryVolume"/>
           <show force="false" id="gs1:secondaryStackingFactor"/>
           <show force="false" id="gs1:secondaryStackingMaxWeight"/>
+          <show force="false" id="gs1:secondaryStackingFactorTypeCode"/>
           <show force="false" id="gs1:secondaryNetWeight"/>
           <show force="false" id="gs1:secondaryWeight"/>
           <show force="false" id="gs1:secondaryDataCarrierTypeCode"/>
+          <show force="false" id="gs1:packagingSustainabilityFeatureCode"/>
           <show force="false" id="gs1:tertiaryPackagingTypeCode"/>
           <show force="false" id="gs1:palletTypeCode"/>
           <show force="false" id="pack:palletLayers"/>
@@ -3573,6 +3595,7 @@
           <show force="false" id="gs1:tertiaryVolume"/>
           <show force="false" id="pack:palletNumberOnGround"/>
           <show force="false" id="pack:palletStackingMaxWeight"/>
+          <show force="false" id="gs1:tertiaryStackingFactorTypeCode"/>
           <show force="false" id="gs1:tertiaryNetWeight"/>
           <show force="false" id="gs1:tertiaryWeight"/>
           <show force="false" id="gs1:tertiaryDataCarrierTypeCode"/>
