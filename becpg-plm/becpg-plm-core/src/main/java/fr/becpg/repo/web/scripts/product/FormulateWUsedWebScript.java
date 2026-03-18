@@ -114,6 +114,7 @@ public class FormulateWUsedWebScript extends AbstractWebScript {
 			
 			BatchInfo batchInfo = new BatchInfo(String.format("becpg.batch.formulateWUsed-%s", nodeRef), "becpg.batch.formulateWUsed", charactName);
 			BatchStep<NodeRef> step = new BatchStep<>();
+			batchInfo.enableNotifyByMail("wused.formulate", null);
 			step.setWorkProvider(new EntityListBatchProcessWorkProvider<>(new ArrayList<>(toFormulate)));
 			logger.info("toFormulate: " + toFormulate.size() + " from " + nodeRef);
 			step.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<>() {
