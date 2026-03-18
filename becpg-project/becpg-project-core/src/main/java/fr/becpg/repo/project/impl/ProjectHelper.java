@@ -55,8 +55,7 @@ import fr.becpg.repo.project.formulation.TaskWrapper;
  * @version $Id: $Id
  */
 public class ProjectHelper {
-	
-	
+
 	private ProjectHelper() {
 		//Do Nothing
 	}
@@ -80,7 +79,6 @@ public class ProjectHelper {
 				|| ProjectState.Cancelled.equals(projectData.getProjectState()) || ProjectState.OnHold.equals(projectData.getProjectState());
 	}
 
-	
 	/*
 	 * Return all tasks including subproject tasks exclude groups
 	 */
@@ -127,8 +125,6 @@ public class ProjectHelper {
 		return taskList;
 	}
 
-
-
 	/**
 	 * <p>getBrethrenTask.</p>
 	 *
@@ -149,7 +145,7 @@ public class ProjectHelper {
 		}
 		return taskList;
 	}
-	
+
 	/**
 	 * <p>isPreviousTask.</p>
 	 *
@@ -223,7 +219,6 @@ public class ProjectHelper {
 
 	}
 
-	
 	/**
 	 * <p>getDeliverables.</p>
 	 *
@@ -253,9 +248,8 @@ public class ProjectHelper {
 	public static Date getLastEndDate(Set<TaskWrapper> tasks) {
 		Date endDate = null;
 		for (TaskWrapper task : tasks) {
-			if(task.getTask()!=null && task.getTask().getEnd() != null) {
-				if (!task.isCancelled() && !task.isParent()
-						&& ((endDate == null) || task.getTask().getEnd().after(endDate))) {
+			if ((task.getTask() != null) && (task.getTask().getEnd() != null)) {
+				if (!task.isCancelled() && !task.isParent() && ((endDate == null) || task.getTask().getEnd().after(endDate))) {
 					endDate = task.getTask().getEnd();
 				}
 			}
@@ -283,7 +277,7 @@ public class ProjectHelper {
 	 * @param startDate a {@link java.util.Date} object.
 	 */
 	public static void setTaskStartDate(TaskListDataItem t, Date startDate) {
-		if ((t.getIsGroup() || t.isPlanned()  || TaskState.OnHold.equals(t.getTaskState()) || TaskState.Cancelled.equals(t.getTaskState())
+		if ((t.getIsGroup() || t.isPlanned() || TaskState.OnHold.equals(t.getTaskState()) || TaskState.Cancelled.equals(t.getTaskState())
 				|| (TaskState.InProgress.equals(t.getTaskState()) && (t.getStart() == null))) && !TaskManualDate.Start.equals(t.getManualDate())) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("setTaskStartDate: " + t.getTaskName() + ", state: " + t.getTaskState() + ", start: " + startDate + ", is group:"
@@ -300,13 +294,13 @@ public class ProjectHelper {
 	 * @param endDate a {@link java.util.Date} object.
 	 */
 	public static void setTaskEndDate(TaskListDataItem t, Date endDate) {
-		if ((t.getIsGroup() || t.isPlanned() || TaskState.OnHold.equals(t.getTaskState()) || TaskState.Cancelled.equals(t.getTaskState()) || TaskState.InProgress.equals(t.getTaskState()))
-				&& !TaskManualDate.End.equals(t.getManualDate())) {
+		if ((t.getIsGroup() || t.isPlanned() || TaskState.OnHold.equals(t.getTaskState()) || TaskState.Cancelled.equals(t.getTaskState())
+				|| TaskState.InProgress.equals(t.getTaskState())) && !TaskManualDate.End.equals(t.getManualDate())) {
 			if (logger.isDebugEnabled()) {
 				logger.debug(
 						"setTaskEndDate: " + t.getTaskName() + ", state: " + t.getTaskState() + ", end: " + endDate + ", is group:" + t.getIsGroup());
 			}
-			
+
 			t.setEnd(removeTime(endDate));
 		}
 	}
@@ -332,6 +326,29 @@ public class ProjectHelper {
 	}
 
 	/**
+	 * Advances the given date to the nearest working day in the specified direction.
+	 * If the date is already a working day, it is returned unchanged.
+	 *
+	 * @param date     a {@link java.util.Date} object.
+	 * @param isPlanned if true, advances forward; if false, moves backward.
+	 * @param provider a {@link fr.becpg.repo.project.impl.WorkingDayProvider} object.
+	 * @return a {@link java.util.Date} object.
+	 */
+	private static Date findNextWorkingDay(Date date, boolean isPlanned, WorkingDayProvider provider) {
+		Calendar calendar = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
+		calendar.setTime(date);
+		int iterations = 0;
+		while (!isWorkingDate(calendar, provider)) {
+			calendar.add(Calendar.DATE, isPlanned ? 1 : -1);
+			if (++iterations > MAX_ITERATIONS) {
+				logger.warn("No working day found within " + MAX_ITERATIONS + " days");
+				break;
+			}
+		}
+		return calendar.getTime();
+	}
+
+	/**
 	 * <p>calculateNextDate.</p>
 	 *
 	 * @param startDate a {@link java.util.Date} object.
@@ -340,7 +357,7 @@ public class ProjectHelper {
 	 * @return a {@link java.util.Date} object.
 	 * @param provider a {@link fr.becpg.repo.project.impl.WorkingDayProvider} object
 	 */
-	public static Date calculateNextDate(Date startDate, Integer duration, boolean isPlanned,@NonNull WorkingDayProvider provider) {
+	public static Date calculateNextDate(Date startDate, Integer duration, boolean isPlanned, @NonNull WorkingDayProvider provider) {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("calculateNextDate - startDate: " + startDate);
@@ -355,26 +372,11 @@ public class ProjectHelper {
 			duration = DURATION_DEFAULT;
 		}
 
-
 		Calendar calendar = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
 		calendar.setTime(startDate);
-
-		int consecutiveNonWorking = 0;
-		while (!isWorkingDate(calendar, provider)) {
-			if (isPlanned) {
-				calendar.add(Calendar.DATE, 1);
-			} else {
-				calendar.add(Calendar.DATE, -1);
-			}
-			consecutiveNonWorking++;
-			if (consecutiveNonWorking > MAX_ITERATIONS) {
-				logger.warn("No working day found within " + MAX_ITERATIONS + " consecutive days in calculateNextDate (initial skip)");
-				break;
-			}
-		}
+		int iterations = 0;
 
 		int i = 1;
-		consecutiveNonWorking = 0;
 		while (i < duration) {
 			if (isPlanned) {
 				calendar.add(Calendar.DATE, 1);
@@ -383,13 +385,13 @@ public class ProjectHelper {
 			}
 			if (isWorkingDate(calendar, provider)) {
 				i++;
-				consecutiveNonWorking = 0;
 			} else {
-				consecutiveNonWorking++;
-				if (consecutiveNonWorking > MAX_ITERATIONS) {
-					logger.warn("No working day found within " + MAX_ITERATIONS + " consecutive days in calculateNextDate");
-					break;
-				}
+				iterations++;
+			}
+
+			if (iterations > MAX_ITERATIONS) {
+				logger.warn("No working day found within " + MAX_ITERATIONS + " days");
+				return calendar.getTime();
 			}
 		}
 
@@ -418,7 +420,7 @@ public class ProjectHelper {
 	 * @param provider a {@link fr.becpg.repo.project.impl.WorkingDayProvider} object.
 	 * @return a {@link java.lang.Integer} object.
 	 */
-	public static Integer calculateTaskDuration(Date startDate, Date endDate,@NonNull WorkingDayProvider provider) {
+	public static Integer calculateTaskDuration(Date startDate, Date endDate, @NonNull WorkingDayProvider provider) {
 
 		if ((startDate == null) || (endDate == null)) {
 			logger.debug("calculateTaskDuration - startDate or endDate is null. startDate: " + startDate + " - endDate: " + endDate);
@@ -430,19 +432,25 @@ public class ProjectHelper {
 			return null;
 		}
 
-
 		int duration = 1;
 		Calendar startDateCal = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
 		startDateCal.setTime(startDate);
-		
+
 		Calendar endDateCal = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
 		endDateCal.setTime(endDate);
-		
+		int iterations = 0;
 		while (startDateCal.before(endDateCal)) {
-			if (isWorkingDate(startDateCal,provider)) {
+			if (isWorkingDate(startDateCal, provider)) {
 				duration++;
+			} else {
+				iterations++;
 			}
 			startDateCal.add(Calendar.DAY_OF_MONTH, 1);
+			if (iterations > MAX_ITERATIONS) {
+				logger.warn("No working day found within " + MAX_ITERATIONS + " days");
+				return duration;
+			}
+
 		}
 
 		if (logger.isDebugEnabled()) {
@@ -451,10 +459,9 @@ public class ProjectHelper {
 		return duration;
 	}
 
-	
-	
 	/**
 	 * <p>calculateEndDate.</p>
+	 * If startDate falls on a non-working day, advances to the first working day before counting duration.
 	 *
 	 * @param startDate a {@link java.util.Date} object.
 	 * @param duration a {@link java.lang.Integer} object.
@@ -462,9 +469,12 @@ public class ProjectHelper {
 	 * @return a {@link java.util.Date} object.
 	 */
 	public static Date calculateEndDate(Date startDate, Integer duration, @NonNull WorkingDayProvider provider) {
-		return calculateNextDate(startDate, duration, true, provider);
+		if (startDate == null) {
+			return null;
+		}
+		Date effectiveStart = findNextWorkingDay(startDate, true, provider);
+		return calculateNextDate(effectiveStart, duration, true, provider);
 	}
-
 
 	/**
 	 * <p>calculateNextStartDate.</p>
@@ -473,10 +483,9 @@ public class ProjectHelper {
 	 * @param provider a {@link fr.becpg.repo.project.impl.WorkingDayProvider} object.
 	 * @return a {@link java.util.Date} object.
 	 */
-	public static Date calculateNextStartDate(Date endDate,@NonNull WorkingDayProvider provider) {
+	public static Date calculateNextStartDate(Date endDate, @NonNull WorkingDayProvider provider) {
 		return calculateNextDate(endDate, DURATION_NEXT_DAY, true, provider);
 	}
-
 
 	/**
 	 * <p>calculateStartDate.</p>
@@ -486,11 +495,10 @@ public class ProjectHelper {
 	 * @param provider a {@link fr.becpg.repo.project.impl.WorkingDayProvider} object.
 	 * @return a {@link java.util.Date} object.
 	 */
-	public static Date calculateStartDate(Date endDate, Integer duration,@NonNull WorkingDayProvider provider) {
+	public static Date calculateStartDate(Date endDate, Integer duration, @NonNull WorkingDayProvider provider) {
 		return calculateNextDate(endDate, duration, false, provider);
 	}
 
-	
 	/**
 	 * <p>calculatePrevEndDate.</p>
 	 *
@@ -498,11 +506,9 @@ public class ProjectHelper {
 	 * @param provider a {@link fr.becpg.repo.project.impl.WorkingDayProvider} object.
 	 * @return a {@link java.util.Date} object.
 	 */
-	public static Date calculatePrevEndDate(Date startDate,@NonNull WorkingDayProvider provider) {
+	public static Date calculatePrevEndDate(Date startDate, @NonNull WorkingDayProvider provider) {
 		return calculateNextDate(startDate, DURATION_NEXT_DAY, false, provider);
 	}
-
-	
 
 	/**
 	 * <p>setTaskState.</p>
@@ -537,7 +543,7 @@ public class ProjectHelper {
 					&& !TaskState.Cancelled.toString().equals(properties.get(ProjectModel.PROP_TL_STATE))) {
 				properties.put(ProjectModel.PROP_TL_STATE, TaskState.Planned);
 			}
-		} else if (ProjectModel.TYPE_DELIVERABLE_LIST.equals(classQName) ) {
+		} else if (ProjectModel.TYPE_DELIVERABLE_LIST.equals(classQName)) {
 			properties.computeIfPresent(ProjectModel.PROP_DL_STATE, (k, v) -> DeliverableState.Planned);
 		}
 
@@ -553,7 +559,7 @@ public class ProjectHelper {
 	public static boolean hasPlannedDuration(TaskListDataItem task) {
 		return (task != null) && ((task.getDuration() != null) || (Boolean.TRUE.equals(task.getIsMilestone())));
 	}
-	
+
 	/**
 	 * <p>findAncestorTask.</p>
 	 *
@@ -568,7 +574,6 @@ public class ProjectHelper {
 		}
 		return task;
 	}
-	
 
 	/**
 	 * <p>isRoleAuhtority.</p>
@@ -576,7 +581,7 @@ public class ProjectHelper {
 	 * @param authorityName a {@link java.lang.String} object
 	 * @return a boolean
 	 */
-	public static  boolean isRoleAuhtority(String authorityName) {
+	public static boolean isRoleAuhtority(String authorityName) {
 		return (authorityName != null) && authorityName.startsWith(PermissionService.GROUP_PREFIX + ProjectRepoConsts.PROJECT_GROUP_PREFIX);
 	}
 
@@ -590,10 +595,11 @@ public class ProjectHelper {
 	 * @param content a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @return a {@link fr.becpg.repo.project.data.projectList.DeliverableListDataItem} object
 	 */
-	public static DeliverableListDataItem createDeliverable(String name, String description, DeliverableScriptOrder order, TaskListDataItem task, NodeRef content) {
-		
+	public static DeliverableListDataItem createDeliverable(String name, String description, DeliverableScriptOrder order, TaskListDataItem task,
+			NodeRef content) {
+
 		DeliverableListDataItem del = new DeliverableListDataItem();
-		
+
 		del.setName(name);
 		del.setDescription(description);
 		del.setState(DeliverableState.Planned);

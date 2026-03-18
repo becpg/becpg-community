@@ -18,7 +18,7 @@ import fr.becpg.test.project.formulation.ProjectTaskDelegationIT;
 @SuiteClasses(value = { ProjectServiceIT.class, ProjectNotificationIT.class, ProjectCOCIIT.class,
 		ProjectTaskDelegationIT.class, ProjectSubmitTaskIT.class, ProjectStartByStartingTaskIT.class, ProjectRefusedTaskIT.class,
 		ProjectOverdueIT.class, ProjectMultiLevelPlanningIT.class, ProjectCalculatePlanningDatesIT.class, ProjectBudgetTasksIT.class,
-		ProjectBudgetListIT.class })
+		ProjectBudgetListIT.class, CalendarServiceIT.class })
 public class ProjectTestSuite {
 
 }
