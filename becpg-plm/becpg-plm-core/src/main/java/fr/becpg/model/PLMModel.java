@@ -175,6 +175,8 @@ public interface PLMModel {
 	QName PROP_INGLIST_IS_PROCESSING_AID = QName.createQName(BeCPGModel.BECPG_URI, "ingListIsProcessingAid");
 	/** Constant <code>PROP_INGLIST_DECL_TYPE</code> */
 	QName PROP_INGLIST_DECL_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "ingListDeclType");
+	/** Constant <code>PROP_INGLIST_ING_TYPES</code> */
+	QName PROP_INGLIST_ING_TYPES = QName.createQName(BeCPGModel.BECPG_URI, "ingListIngTypes");
 	/** Constant <code>ASSOC_INGLIST_GEO_ORIGIN</code> */
 	QName ASSOC_INGLIST_GEO_ORIGIN = QName.createQName(BeCPGModel.BECPG_URI, "ingListGeoOrigin");
 	/** Constant <code>ASSOC_INGLIST_BIO_ORIGIN</code> */
@@ -874,6 +876,8 @@ public interface PLMModel {
 
 	/** Constant <code>ASSOC_REGULATORY_USAGE_REF</code> */
 	QName ASSOC_REGULATORY_USAGE_REF = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryUsageRef");
+	
+	QName PROP_REQUIREMENT_CHECKSUM = QName.createQName(BeCPGModel.BECPG_URI, "requirementChecksum");
 
 	/** Constant <code>TYPE_ING_REGULATORY_LIST</code> */
 	QName TYPE_ING_REGULATORY_LIST = QName.createQName(BeCPGModel.BECPG_URI, "ingRegulatoryList");
@@ -936,6 +940,7 @@ public interface PLMModel {
 
 	/** Constant <code>TYPE_LABORATORY</code> */
 	QName TYPE_LABORATORY = QName.createQName(BeCPGModel.BECPG_URI, "laboratory");
+	
 	
 
 }

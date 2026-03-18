@@ -863,6 +863,21 @@
 				<value>SustainabilityFeatureCode</value>
 			</parameter>
 		</constraint>
+		
+		<constraint name="gs1:stackingFactorTypeCodes"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+				</list>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>StackingFactorTypeCode</value>
+			</parameter>
+		</constraint>
 
 		<constraint name='gs1:text35' type='LENGTH'>
 			<parameter name='maxLength'>
@@ -2852,6 +2867,17 @@
 						<constraint ref="gs1:sustainabilityFeatureCodes" />
 					</constraints>
 				</property>
+				<property name="gs1:packagingSustainabilityFeatureCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:sustainabilityFeatureCodes" />
+					</constraints>
+				</property>
 				<property name="gs1:sustainabilityStatement">
 					<type>d:mltext</type>
 					<mandatory>false</mandatory>
@@ -2860,6 +2886,32 @@
 						<facetable>true</facetable>
 					</index>
 				</property>
+				
+				<property name="gs1:stackingFactorTypeCode" >
+                    <type>d:text</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true" />
+                    <constraints>
+                        <constraint ref="gs1:stackingFactorTypeCodes" />
+                    </constraints>
+                </property>
+                <property name="gs1:secondaryStackingFactorTypeCode" >
+                    <type>d:text</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true" />
+                    <constraints>
+                        <constraint ref="gs1:stackingFactorTypeCodes" />
+                    </constraints>
+                </property>
+                <property name="gs1:tertiaryStackingFactorTypeCode" >
+                    <type>d:text</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true" />
+                    <constraints>
+                        <constraint ref="gs1:stackingFactorTypeCodes" />
+                    </constraints>
+                </property>
+				
 			</properties>
 			<associations>
 
