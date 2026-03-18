@@ -322,6 +322,7 @@ public class BeCPGUserAccountService {
 			NodeRef homeFolder = (NodeRef) nodeService.getProperty(personNodeRef, ContentModel.PROP_HOMEFOLDER);
 			if (homeFolder != null) {
 				nodeService.setProperty(homeFolder, ContentModel.PROP_NAME, newUserName);
+				nodeService.setProperty(homeFolder, ContentModel.PROP_OWNER, newUserName);
 			}
 			AlfrescoTransactionSupport.bindListener(new TransactionListenerAdapter() {
 				// make sure the transaction is committed before updating activiti tasks to avoid inconsistencies
@@ -332,22 +333,25 @@ public class BeCPGUserAccountService {
 			});
 		}
 	}
+	
+	private static final int MAX_RETRIES = 3;
+	private static final long RETRY_DELAY_MS = 500;
 
 	private void updateActivitiTasks(String oldUserName, String newUserName) {
 		String[] updateStatements = {
-			"UPDATE act_ru_task SET assignee_ = ? WHERE assignee_ = ?",
-			"UPDATE act_ru_task SET owner_ = ? WHERE owner_ = ?",
-			"UPDATE act_ru_identitylink SET user_id_ = ? WHERE user_id_ = ?",
-			"UPDATE act_hi_taskinst SET assignee_ = ? WHERE assignee_ = ?",
-			"UPDATE act_hi_taskinst SET owner_ = ? WHERE owner_ = ?",
-			"UPDATE act_hi_actinst SET assignee_ = ? WHERE assignee_ = ?",
-			"UPDATE act_hi_identitylink SET user_id_ = ? WHERE user_id_ = ?",
-			"UPDATE act_hi_procinst SET start_user_id_ = ? WHERE start_user_id_ = ?"
+			"UPDATE ACT_RU_TASK SET assignee_ = ? WHERE assignee_ = ?",
+			"UPDATE ACT_RU_TASK SET owner_ = ? WHERE owner_ = ?",
+			"UPDATE ACT_RU_IDENTITYLINK SET user_id_ = ? WHERE user_id_ = ?",
+			"UPDATE ACT_HI_TASKINST SET assignee_ = ? WHERE assignee_ = ?",
+			"UPDATE ACT_HI_TASKINST SET owner_ = ? WHERE owner_ = ?",
+			"UPDATE ACT_HI_ACTINST SET assignee_ = ? WHERE assignee_ = ?",
+			"UPDATE ACT_HI_IDENTITYLINK SET user_id_ = ? WHERE user_id_ = ?",
+			"UPDATE ACT_HI_PROCINST SET start_user_id_ = ? WHERE start_user_id_ = ?"
 		};
 
 		try (Connection connection = dataSource.getConnection()) {
 			for (String sql : updateStatements) {
-				updateStatement(oldUserName, newUserName, connection, sql);
+				executeWithRetry(connection, sql, oldUserName, newUserName);
 			}
 			if (!connection.getAutoCommit()) {
 				connection.commit();
@@ -357,8 +361,51 @@ public class BeCPGUserAccountService {
 			throw new BeCPGException(e.getMessage(), e);
 		}
 	}
+	
+	private void executeWithRetry(Connection connection, String sql, String oldUserName, String newUserName) throws SQLException {
+	    int attempt = 0;
+	    SQLException lastException = null;
 
-	private void updateStatement(String oldUserName, String newUserName, Connection connection, String sql) {
+	    // First: retry with original SQL
+	    while (attempt < MAX_RETRIES) {
+	        try {
+	            updateStatement(oldUserName, newUserName, connection, sql);
+	            return; // success
+	        } catch (SQLException e) {
+	            lastException = e;
+	            attempt++;
+	            logger.warn("Retry " + attempt + "/" + MAX_RETRIES + " failed for SQL: " + sql, e);
+
+	            sleep();
+	        }
+	    }
+
+	    // Second: fallback to uppercase table names
+	    String upperSql = toUppercaseTableName(sql);
+	    logger.warn("Retry failed. Trying with lowercase table name: " + upperSql);
+
+	    attempt = 0;
+
+	    while (attempt < MAX_RETRIES) {
+	        try {
+	            updateStatement(oldUserName, newUserName, connection, upperSql);
+	            return; // success
+	        } catch (SQLException e) {
+	            lastException = e;
+	            attempt++;
+	            logger.warn("Uppercase retry " + attempt + "/" + MAX_RETRIES + " failed for SQL: " + upperSql, e);
+
+	            sleep();
+	        }
+	    }
+
+	    // Final failure
+	    if (lastException != null) {
+	        throw lastException;
+	    }
+	}
+
+	private void updateStatement(String oldUserName, String newUserName, Connection connection, String sql) throws SQLException {
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
 			statement.setString(1, newUserName);
 			statement.setString(2, oldUserName);
@@ -366,10 +413,24 @@ public class BeCPGUserAccountService {
 			if (logger.isDebugEnabled() && updated > 0) {
 				logger.debug("Activiti patch: " + sql + " — " + updated + " row(s) updated for user rename: " + oldUserName + " -> " + newUserName);
 			}
-		} catch (SQLException e) {
-			logger.error("Failed to update Activiti tasks for user rename: " + oldUserName + " -> " + newUserName + ". SQL: " + sql, e);
-			throw new BeCPGException(e.getMessage(), e);
 		}
+	}
+	
+	private String toUppercaseTableName(String sql) {
+	    // naive but effective: uppercase word after UPDATE
+	    String[] parts = sql.split(" ");
+	    if (parts.length > 1) {
+	        parts[1] = parts[1].toUpperCase();
+	    }
+	    return String.join(" ", parts);
+	}
+	
+	private void sleep() {
+	    try {
+	        Thread.sleep(RETRY_DELAY_MS);
+	    } catch (InterruptedException ie) {
+	        Thread.currentThread().interrupt();
+	    }
 	}
 	
 	private boolean isIdsUser(NodeRef personNodeRef) {
