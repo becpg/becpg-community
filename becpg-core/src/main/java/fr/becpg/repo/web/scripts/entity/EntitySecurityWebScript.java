@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.cmr.security.AccessStatus;
@@ -229,29 +230,30 @@ public class EntitySecurityWebScript extends AbstractEntityWebScript {
 	 */
 	private JSONArray getEntityDataLists(NodeRef entityNodeRef) {
 		JSONArray datalists = new JSONArray();
-		
+
 		if (entityNodeRef != null && entityListDAO != null) {
 			try {
 				NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 				if (listContainerNodeRef != null) {
 					List<NodeRef> listsNodeRef = entityListDAO.getExistingListsNodeRef(listContainerNodeRef);
-					
+
 					for (NodeRef listNodeRef : listsNodeRef) {
 						JSONObject listObj = new JSONObject();
-						
-						// Get list name from type
-						QName listType = nodeService.getType(listNodeRef);
-						String listName = listType.getLocalName();
+
+						String listName = (String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME);
+						if (listName == null) {
+							QName listType = nodeService.getType(listNodeRef);
+							listName = listType.getLocalName();
+						}
 						listObj.put("name", listName);
-						
-						// Get list state
+
 						String state = "ToValidate";
 						String stateValue = (String) nodeService.getProperty(listNodeRef, BeCPGModel.PROP_ENTITYLIST_STATE);
 						if (stateValue != null) {
 							state = stateValue;
 						}
 						listObj.put("state", state);
-						
+
 						datalists.put(listObj);
 					}
 				}
@@ -259,7 +261,7 @@ public class EntitySecurityWebScript extends AbstractEntityWebScript {
 				logger.error("Error getting datalists for entity: " + entityNodeRef, e);
 			}
 		}
-		
+
 		return datalists;
 	}
 }
