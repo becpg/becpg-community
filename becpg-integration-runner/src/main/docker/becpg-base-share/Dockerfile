@@ -18,6 +18,11 @@ COPY becpg/classes $TOMCAT_DIR/shared/classes
 
 RUN dnf update -y && dnf clean all && \
     chmod +x /usr/local/tomcat/shared/classes/alfresco/substituter.sh
+
+RUN mkdir -p ${TOMCAT_DIR}/shared/classes/alfresco/messages/custom && \
+    chown -R ${USERID}:${GROUPID} ${TOMCAT_DIR}/shared/classes/alfresco/messages && \
+    chmod -R g+w ${TOMCAT_DIR}/shared/classes/alfresco/messages
+
 RUN mkdir -p ${TOMCAT_DIR}/data
       
 
@@ -27,6 +32,7 @@ RUN mkdir -p ${TOMCAT_DIR}/conf/Catalina/localhost && \
          chgrp -R ${GROUPNAME} ${TOMCAT_DIR} && \
          chmod g+rx ${TOMCAT_DIR}/conf && \
          chmod -R g+r ${TOMCAT_DIR}/conf && \
+         chmod -R g+w ${TOMCAT_DIR}/shared/classes/alfresco/web-extension && \
          find ${TOMCAT_DIR}/webapps -type d -exec chmod 0750 {} \; && \
          find ${TOMCAT_DIR}/webapps -type f -exec chmod 0640 {} \; && \
          chmod -R g+r ${TOMCAT_DIR}/webapps && \

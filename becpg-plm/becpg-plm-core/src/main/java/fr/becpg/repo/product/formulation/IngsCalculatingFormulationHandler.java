@@ -4,7 +4,6 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -35,7 +34,6 @@ import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
@@ -50,7 +48,6 @@ import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
-import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
  * The Class IngsCalculatingVisitor.
@@ -164,7 +161,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 	private boolean accept(ProductData formulatedProduct) {
 		return !Boolean.TRUE.equals(formulatedProduct.getIsIngListManual())
-				&& formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))
+				&& formulatedProduct.hasCompoListEl(FormulationFilters.EFFECTIVE_VARIANT_COMPO)
 				&& (alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLIST)
 						|| alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLABELINGLIST));
 	}
@@ -174,8 +171,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 */
 	private void calculateIL(ProductData formulatedProduct, Map<NodeRef, RequirementListDataItem> reqCtrlMap) {
 
-		List<CompoListDataItem> compoList = formulatedProduct
-				.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()));
+		List<CompoListDataItem> compoList = formulatedProduct.getCompoList(FormulationFilters.EFFECTIVE_VARIANT_COMPO);
 
 		Map<String, IngListDataItem> totalQtyIngMap = new HashMap<>();
 		Map<String, IngListDataItem> totalQtyOmittedIngMap = new HashMap<>();

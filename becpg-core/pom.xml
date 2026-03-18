@@ -6,7 +6,7 @@
 		<version>25.3.0</version>
 		<relativePath>../</relativePath>
 	</parent>
-    <version>25.3.0.18-SNAPSHOT</version>
+    <version>25.3.0.20-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>    
 	<artifactId>becpg-core</artifactId>
 	<packaging>jar</packaging>
@@ -37,7 +37,7 @@
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-report</artifactId>
-			<version>4.20.0.1</version>
+			<version>4.20.0.2</version>
 			<classifier>client</classifier>
 			<type>jar</type>
 			<exclusions>

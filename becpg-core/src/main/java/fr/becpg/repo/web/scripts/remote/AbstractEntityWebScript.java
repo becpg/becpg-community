@@ -316,7 +316,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				}
 				@Override
 				public Pair<Integer, Integer> getTotalResultCount() {
-					return new Pair<>(endIndex, endIndex);
+					return new Pair<>(advSearchResultsSize, advSearchResultsSize);
 				}
 				@Override
 				public String getQueryExecutionId() {
