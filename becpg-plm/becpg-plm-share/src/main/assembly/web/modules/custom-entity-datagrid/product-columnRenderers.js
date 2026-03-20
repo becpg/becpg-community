@@ -505,51 +505,75 @@ if (beCPG.module.EntityDataGridRenderers) {
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["bp:pubChannelError", "bp:pubChannelListError"],
-        renderer: function(oRecord, data, _label, scope, _z, _zz, _elCell, oColumn) {
+        renderer: function(oRecord, data, ___label__, scope, _z, _zz, _elCell, oColumn) {
             if (!data || !data.value) {
                 return "";
             }
 
+            var strValue = String(data.value);
+
             var rowId = (oRecord && oRecord.getData("nodeRef"))
                 ? oRecord.getData("nodeRef")
                 : Alfresco.util.generateDomId();
-            var uid = "pce-" + rowId.replace(/[^a-zA-Z0-9_-]/g, "_") + "-" + oColumn.key;
-            var encodedValue = Alfresco.util.encodeHTML(data.value);
 
-            var firstLine = data.value.split("\n")[0].trim();
-            if (firstLine.length > 60) firstLine = firstLine.substring(0, 60) + "…";
+            var uid = "pce-"
+                + rowId.replace(/[^a-zA-Z0-9_-]/g, "_")
+                + "-"
+                + String(oColumn.key).replace(/[^a-zA-Z0-9_-]/g, "_");
+
+            var encodedValue = Alfresco.util.encodeHTML(strValue);
+
+            var firstLine = strValue.split("\n")[0].trim();
+            if (firstLine.length > 40) {
+                firstLine = firstLine.substring(0, 40) + "\u2026";
+            }
             var encodedFirst = Alfresco.util.encodeHTML(firstLine);
 
-            var toggleScript = "var p=document.getElementById('" + uid + "-panel');" +
-                "p.style.display=(p.style.display==='none'?'block':'none');";
+            var panelId = uid + "-panel";
+            var codeId  = uid + "-code";
 
-            var copyScript = "(function(btn){" +
-                "var text=document.getElementById('" + uid + "-code').textContent;" +
-                "if(navigator.clipboard){navigator.clipboard.writeText(text);}" +
-                "btn.innerHTML='" + scope.msg("button.copied", "✓ ") + "';" +
-                "setTimeout(function(){btn.innerHTML='" + scope.msg("button.copy") + "';},1800);" +
-                "})(this)";
+            var copyMessage = Alfresco.util.encodeHTML(
+                scope.msg("message.copy-to-clipboard.success")
+            ).replace(/'/g, "\\'");
+
+            var toggleScript =
+                "var p=document.getElementById('" + panelId + "');" +
+                "if(p.style.display==='none'){" +
+                "p.style.display='block';" +
+                "}else{" +
+                "var el=document.getElementById('" + codeId + "');" +
+                "var illValue=el?el.innerHTML:'';" +
+                "var plainValue=el?el.textContent:'';" +
+                "var listener=function(e){" +
+                "e.clipboardData.setData('text/html',illValue);" +
+                "e.clipboardData.setData('text/plain',plainValue);" +
+                "e.preventDefault();" +
+                "};" +
+                "document.addEventListener('copy',listener);" +
+                "document.execCommand('copy');" +
+                "document.removeEventListener('copy',listener);" +
+                "Alfresco.util.PopupManager.displayMessage({text:'" + copyMessage + "'});" +
+                "YAHOO.Bubbling.fire('scopedActiveDataListChanged');" +
+                "p.style.display='none';" +
+                "}";
 
             return '<div>' +
-                '<span class="theme-color-2 error">' + encodedFirst + '</span>' +
-                ' <a href="#" class="inline-action" onclick="' + toggleScript + ' return false;">' +
-                scope.msg("button.details") +
+                '<a href="#" class="theme-color-2 error"' +
+                ' onclick="' + toggleScript + ' return false;">' +
+                    encodedFirst +
                 '</a>' +
-                '<div id="' + uid + '-panel" style="display:none;margin-top:4px;">' +
-                '<div class="yui-g info">' +
-                '<pre id="' + uid + '-code" ' +
-                'style="white-space:pre-wrap;word-break:break-all;max-height:150px;overflow-y:auto;font-size:11px;margin:0;">' +
-                encodedValue +
-                '</pre>' +
+                '<div id="' + panelId + '" class="pub-channel-panel" style="display:none;">' +
+                    '<div class="yui-g info pub-channel-info">' +
+                        '<pre id="' + codeId + '" class="pub-channel-code"' +
+                        ' onclick="' + toggleScript + ' return false;"' +
+                        ' style="cursor:pointer;">' +
+                            encodedValue +
+                        '</pre>' +
+                    '</div>' +
                 '</div>' +
-                '<a href="#" class="inline-action" onclick="' + copyScript + ' return false;">' +
-                scope.msg("button.copy") +
-                '</a>' +
-                '</div>' +
-                '</div>';
+            '</div>';
         }
     });
-
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["qa:clCharacts"],

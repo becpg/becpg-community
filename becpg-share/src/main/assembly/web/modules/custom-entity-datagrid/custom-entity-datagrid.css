@@ -214,3 +214,21 @@
 	border-bottom: 1px solid #CBCBCB;
 }
 
+
+.datagrid .pub-channel-panel {
+    display: none;
+    margin-top: 4px;
+}
+
+.datagrid .pub-channel-info {
+    margin-bottom: 4px;
+}
+
+.datagrid .pub-channel-code {
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 150px;
+    overflow-y: auto;
+    font-size: 11px;
+    margin: 0;
+}
