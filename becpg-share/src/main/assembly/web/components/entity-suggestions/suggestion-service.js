@@ -76,9 +76,10 @@
 				}
 				
 				// Build the iframe URL for this node
+				var listIdParam = record.listId ? '&listId=' + encodeURIComponent(record.listId) : '';
 				var iframeUrl = Alfresco.constants.URL_CONTEXT + 'proxy/ai/suggestions?ticket=' + 
 				    beCPG.constants.AI_AUTH_TOKEN + '&nodeRef=' + record.nodeRef + 
-					'&locale=' + Alfresco.constants.JS_LOCALE;
+					'&locale=' + Alfresco.constants.JS_LOCALE + listIdParam;
 					
 				// Create overlay if it doesn't exist
 				if (!me.widgets.overlay) {
@@ -94,8 +95,9 @@
 						
 					overlayEl.innerHTML = html;
 					
-					// Store the current nodeRef for future comparison
+					// Store the current nodeRef and listId for future comparison
 					me.currentNodeRef = record.nodeRef;
+					me.currentListId = record.listId || null;
 					
 					me.widgets.overlay = Alfresco.util.createYUIOverlay(overlayEl,
 					{
@@ -119,12 +121,13 @@
 					me.isIFrameLoaded = true;
 				}
 				else {
-					// Check if nodeRef has changed and update iframe src if needed
-					if (me.currentNodeRef !== record.nodeRef) {
+					// Check if nodeRef or listId has changed and update iframe src if needed
+					if (me.currentNodeRef !== record.nodeRef || me.currentListId !== (record.listId || null)) {
 						var iframe = me.widgets.overlay.element.getElementsByTagName("iframe")[0];
 						if (iframe) {
 							iframe.src = iframeUrl;
 							me.currentNodeRef = record.nodeRef;
+							me.currentListId = record.listId || null;
 						}
 					}
 					

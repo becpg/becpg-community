@@ -75,3 +75,18 @@
 .suggestions-tab.fullscreen .suggestions-panel iframe {
 	min-height: 100%;
 }
+
+
+.datalist-toolbar .ai-suggestion a.ai-suggestion-action.enabled,
+.datalist-toolbar .ai-suggestion a.ai-suggestion-action {
+    background-image: url(../entity-suggestions/images/chef-ai-16.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+    display: inline-block;
+    height: 2em;
+    width: 16px;
+    overflow: hidden;
+    text-indent: -9999px;
+    vertical-align: middle;
+}
+ 

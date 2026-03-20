@@ -1,6 +1,7 @@
 <@markup id="css" >
 	<#include "../../modules/entity-datagrid/include/entity-datagrid.css.ftl"/>
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/entity-data-lists/variant-picker.css" group="entity-datalists" />
+	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/entity-suggestions/entity-suggestions.css" group="entity-datalists" />
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/entity-data-lists/product-notifications.css" group="entity-datalists" />
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/entity-data-lists/rapidLink-toolbar.css" group="entity-datalists" />
 	
@@ -14,9 +15,9 @@
 <@markup id="js">
    <#include "../../modules/entity-datagrid/include/entity-datagrid.js.ftl"/>
    
-   <@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/rapidLink-toolbar.js" group="entity-datalists"/>
-   <@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/variant-picker.js" group="entity-datalists"/>
-   <@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/product-notifications.js" group="entity-datalists"/>
+   	<@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/rapidLink-toolbar.js" group="entity-datalists"/>
+	<@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/variant-picker.js" group="entity-datalists"/>
+	<@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/product-notifications.js" group="entity-datalists"/>
  
     
    <@script src="${url.context}/res/modules/entity-charact-details/entity-charact-details.js" group="entity-datalists"/>
