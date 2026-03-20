@@ -397,6 +397,59 @@
 
 
 		YAHOO.Bubbling.fire("registerToolbarButtonAction", {
+			actionName: "ai-suggestion-entity",
+			right: true,
+			evaluate: function(asset, entity) {
+				return beCPG.constants.AI_ENABLED === true && entity != null && asset.name != null;
+			},
+			createWidget: function(containerDiv, instance) {
+
+				var divEl = document.createElement("div");
+				Dom.addClass(divEl, "ai-suggestion");
+				containerDiv.appendChild(divEl);
+
+				var aiSuggestionService = new beCPG.service.AiSuggestion();
+
+				var buildRecord = function() {
+					return {
+						nodeRef: instance.options.entityNodeRef,
+						node: {
+							aspects: instance.entity ? instance.entity.aspects || [] : []
+						},
+						jsNode: {
+							isContainer: false,
+							properties: instance.entity ? instance.entity.properties || {} : {}
+						},
+						listId: instance.datalistMeta && instance.datalistMeta.name ? instance.datalistMeta.name : instance.options.list
+					};
+				};
+
+				var linkEl = document.createElement("a");
+				Dom.addClass(linkEl, "ai-suggestion-action");
+				Dom.addClass(linkEl, "enabled");
+				Dom.setAttribute(linkEl, "title", instance.msg("aisuggestion.show.tip"));
+				Dom.setAttribute(linkEl, "tabindex", "0");
+
+				var initialRecord = buildRecord();
+				if (!aiSuggestionService.isEnabled(initialRecord)) {
+					Dom.addClass(linkEl, "disabled");
+				}
+
+				divEl.appendChild(linkEl);
+
+				YAHOO.util.Event.addListener(linkEl, "click", function(e) {
+					aiSuggestionService.showSuggestions(buildRecord(), e);
+					YAHOO.util.Event.preventDefault(e);
+				}, null, instance);
+
+				return aiSuggestionService;
+
+			}
+		});
+
+
+
+		YAHOO.Bubbling.fire("registerToolbarButtonAction", {
 			actionName: "product-notifications",
 			right: true,
 			evaluate: function(asset, entity) {
@@ -405,9 +458,9 @@
 						|| asset.name === "ingLabelingList" || asset.name === "ingRegulatoryList" || asset.name === "nutList" || asset.name === "labelClaimList"
 						|| asset.name === "costList" || asset.name === "physicoChemList" || asset.name === "ingList" || asset.name === "allergenList"
 						|| asset.name === "priceList" || asset.name === "hazardClassificationList" || asset.name === "svhcList"
-                         || asset.name === "packMaterialList" || asset.name === "lcaList" || asset.name === "regulatoryList" || asset.name === "scoreList"
+		                     || asset.name === "packMaterialList" || asset.name === "lcaList" || asset.name === "regulatoryList" || asset.name === "scoreList"
 						|| asset.name === "View-properties"
-                    || asset.name === "surveyList") && beCPG.util.contains(entity.aspects,"bcpg:entityScoreAspect") ;
+		            || asset.name === "surveyList") && beCPG.util.contains(entity.aspects,"bcpg:entityScoreAspect") ;
 			},
 			createWidget: function(containerDiv, instance) {
 
