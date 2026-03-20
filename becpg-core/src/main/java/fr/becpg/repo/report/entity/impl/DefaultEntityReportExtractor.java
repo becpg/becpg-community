@@ -811,7 +811,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 */
 	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context,
 			List<QName> hiddentAttributes) {
-		loadDataListItemAttributes(dataListItem, nodeElt, context, hiddentAttributes, true);
+		context.doInDataListContext(() -> loadDataListItemAttributes(dataListItem, nodeElt, context, hiddentAttributes, true));
 	}
 
 	/**
