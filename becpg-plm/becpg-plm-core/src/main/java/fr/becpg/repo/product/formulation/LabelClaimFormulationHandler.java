@@ -36,6 +36,7 @@ import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.CompositionDataItem;
+import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
  * <p>LabelClaimFormulationHandler class.</p>
@@ -131,12 +132,12 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 			List<CompositionDataItem> compoItems = new ArrayList<>();
 
-			if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				compoItems.addAll(productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
+			if (productData.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+				compoItems.addAll(productData.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())));
 			}
 
-			if (productData.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				compoItems.addAll(productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
+			if (productData.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+				compoItems.addAll(productData.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())));
 			}
 
 			if (!compoItems.isEmpty()) {
