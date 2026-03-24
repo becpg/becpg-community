@@ -11,14 +11,15 @@ ENV SUPPORT_TOOLS_VERSION=${becpg.supporttools.version}
 ENV I18_VERSION=${becpg.i18n.version}
    
 ## JDBC - MYSQL
-RUN dnf update -y && curl --silent --location \
+RUN dnf update -y && dnf clean all && \
+    curl --silent --location \
       https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/${MYSQL_CONNECTOR}/mysql-connector-j-${MYSQL_CONNECTOR}.jar \
 	-o $TOMCAT_DIR/lib/mysql-connector-j-${MYSQL_CONNECTOR}.jar && \
 	rm $TOMCAT_DIR/lib/postgres*
 
 #Support tools
 RUN curl --silent --location \
-      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/support-tools-repo-${SUPPORT_TOOLS_VERSION}.amp  \
+     https://storage.googleapis.com/becpg-repo/addons/support-tools-repo-${SUPPORT_TOOLS_VERSION}.amp  \
       -o $TOMCAT_DIR/amps/support-tools-repo-${SUPPORT_TOOLS_VERSION}.amp && \
     java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install $TOMCAT_DIR/amps/ $TOMCAT_DIR/webapps/alfresco -nobackup -directory && \
     rm $TOMCAT_DIR/amps/support-tools-repo-${SUPPORT_TOOLS_VERSION}.amp  
@@ -35,7 +36,7 @@ RUN   curl --silent --location \
 # I18N
 RUN set -x && \
     curl --silent --location \
-      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/alfresco-becpg-i18n-${I18_VERSION}.jar  \
+     https://storage.googleapis.com/becpg-repo/addons/alfresco-becpg-i18n-${I18_VERSION}.jar  \
       -o $TOMCAT_DIR/webapps/alfresco/WEB-INF/lib/alfresco-becpg-i18n-${I18_VERSION}.jar
 
       
