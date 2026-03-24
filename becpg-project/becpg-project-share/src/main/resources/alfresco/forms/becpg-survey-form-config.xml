@@ -195,23 +195,25 @@
 			<form>
 				<edit-form template="tab-edit" />
 				<field-visibility>
+					<!--surveyQuestion -->
 					<show id="bcpg:parentLevel" />
 					<show id="survey:questionLabel" />
-					<show id="survey:questionIsMandatory" />
-					<show id="survey:questionIsVisible" />
-
 					<show id="survey:questionNote" />
 					<show id="survey:questionUpperNote" />
 					<show id="survey:questionLowerNote" />
+					<show id="survey:nextQuestion" />
+					
+					<!--surveyOption -->
+					<show id="survey:questionIsMandatory" />
+					<show id="survey:questionIsVisible" />
 					<show id="survey:questionUrl" />
-					<show id="survey:scoreCriterion" force="true" />
-					<show id="survey:questionScore" />
-
 					<show id="survey:responseType" />
 					<show id="survey:responseCommentType" />
 					<show id="survey:responseCommentLabel" />
-					<show id="survey:nextQuestion" />
-
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted" force="true"/>
+					
+					<!--surveyAutogeneration -->
 					<show id="survey:fsSurveyListName" force="true" />
 					<show id="survey:generationEnabled" force="true" />
 					<show id="survey:fsLinkedCharactRefs" force="true" />
@@ -219,13 +221,19 @@
 					<show id="survey:fsLinkedHierarchy" force="true" />
 					<show id="bcpg:subsidiaryRef" force="true" />
 					<show id="bcpg:plants" force="true" />
-					<show id="sec:readGroups" force="true" />
-					<show id="bcpg:isDeleted" force="true"/>
+					
+					<!--surveyCriteria -->
+					<show id="survey:scoreCriterion" force="true" />
+					<show id="survey:questionScore" />
+
 				</field-visibility>
 				<appearance>
 					<set id="surveyQuestion" appearance="bordered-panel" label-id="becpg.forms.set.survey-question.label" />
+					<set id="surveyOption" appearance="bordered-panel" label-id="becpg.forms.set.survey-option.label" />
 					<set id="surveyAutogeneration" appearance="bordered-panel" label-id="becpg.forms.set.survey-autogeneration.label" />
-
+					<set id="surveyCriteria" appearance="bordered-panel" label-id="becpg.forms.set.criteria.label" />
+					
+					<!--surveyQuestion -->
 					<field id="bcpg:parentLevel" set="surveyQuestion">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=survey:surveyQuestion&#38;attributeName=survey:questionLabel
@@ -233,34 +241,22 @@
 							<control-param name="urlParamsToPass">list</control-param>
 						</control>
 					</field>
-
 					<field id="survey:questionLabel" set="surveyQuestion" />
-
-					<field id="survey:questionIsMandatory" set="surveyQuestion" />
-
-					<field id="survey:questionIsVisible" set="surveyQuestion" />
-
 					<field id="survey:questionNote" set="surveyQuestion" />
-
 					<field id="survey:questionUpperNote" set="surveyQuestion" />
-
 					<field id="survey:questionLowerNote" set="surveyQuestion" />
-
-					<field id="survey:questionUrl" set="surveyQuestion" />
-
-					<field id="survey:scoreCriterion" set="surveyQuestion">
+					<field id="survey:nextQuestion" set="surveyQuestion">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:scoreCriterion</control-param>
-							<control-param name="showTooltip">false</control-param>
-							<control-param name="saveTitle">false</control-param>
+							<control-param name="ds">becpg/autocomplete/survey</control-param>
 						</control>
 					</field>
-
-					<field id="survey:questionScore" set="surveyQuestion" />
-
-					<field id="survey:responseType" set="surveyQuestion" help-id="becpg.forms.help.responseType" />
-
-					<field id="survey:responseCommentType" set="surveyQuestion" help-id="becpg.forms.help.responseCommentType">
+					
+					<!--surveyOption -->
+					<field id="survey:questionIsMandatory" set="surveyOption" />
+					<field id="survey:questionIsVisible" set="surveyOption" />
+					<field id="survey:questionUrl" set="surveyOption" />
+					<field id="survey:responseType" set="surveyOption" help-id="becpg.forms.help.responseType" />
+					<field id="survey:responseCommentType" set="surveyOption" help-id="becpg.forms.help.responseCommentType">
 						<constraint-handlers>
 							<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"
 								event='keyup,change@[
@@ -269,15 +265,11 @@
 						</constraint-handlers>
 					</field>
 
-					<field id="survey:responseCommentLabel" set="surveyQuestion" help-id="becpg.forms.help.responseCommentLabel" />
-					<field id="sec:readGroups" set="surveyQuestion" />
-					<field id="bcpg:isDeleted" set="surveyQuestion" />
-
-					<field id="survey:nextQuestion" set="surveyQuestion">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/survey</control-param>
-						</control>
-					</field>
+					<field id="survey:responseCommentLabel" set="surveyOption" help-id="becpg.forms.help.responseCommentLabel" />
+					<field id="sec:readGroups" set="surveyOption" />
+					<field id="bcpg:isDeleted" set="surveyOption" />
+					
+					<!--surveyAutogeneration -->
 					<field id="survey:fsSurveyListName" set="surveyAutogeneration" />
 					<field id="survey:generationEnabled" set="surveyAutogeneration" />
 					<field id="survey:fsLinkedCharactRefs" set="surveyAutogeneration">
@@ -306,111 +298,16 @@
 					</field>
 					<field id="bcpg:subsidiaryRef" set="surveyAutogeneration" />
 					<field id="bcpg:plants" set="surveyAutogeneration" />
-				</appearance>
-			</form>
-			<form id="create">
-				<field-visibility>
-					<show id="bcpg:parentLevel" />
-					<show id="survey:questionLabel" />
-					<show id="survey:questionIsMandatory" />
-					<show id="survey:questionIsVisible" />
-
-					<show id="survey:questionNote" />
-					<show id="survey:questionUpperNote" />
-					<show id="survey:questionLowerNote" />
-					<show id="survey:questionUrl" />
-					<show id="survey:scoreCriterion" force="true" />
-					<show id="survey:questionScore" />
-
-					<show id="survey:responseType" />
-					<show id="survey:responseCommentType" />
-					<show id="survey:responseCommentLabel" />
-					<show id="survey:nextQuestion" />
-
-					<show id="survey:fsSurveyListName" force="true" />
-					<show id="survey:generationEnabled" force="true" />
-					<show id="survey:fsLinkedCharactRefs" force="true" />
-					<show id="survey:fsLinkedTypes" force="true" />
-					<show id="survey:fsLinkedHierarchy" force="true" />
-				</field-visibility>
-				<appearance>
-					<set id="surveyQuestion" appearance="bordered-panel" label-id="becpg.forms.set.survey-question.label" />
-					<set id="surveyAutogeneration" appearance="bordered-panel" label-id="becpg.forms.set.survey-autogeneration.label" />
-
-					<field id="bcpg:parentLevel" set="surveyQuestion">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=survey:surveyQuestion&#38;attributeName=survey:questionLabel
-							</control-param>
-							<control-param name="urlParamsToPass">list</control-param>
-						</control>
-					</field>
-
-					<field id="survey:questionLabel" set="surveyQuestion" />
-
-					<field id="survey:questionIsMandatory" set="surveyQuestion" />
-
-					<field id="survey:questionIsVisible" set="surveyQuestion" />
-
-					<field id="survey:questionNote" set="surveyQuestion" />
-
-					<field id="survey:questionUpperNote" set="surveyQuestion" />
-
-					<field id="survey:questionLowerNote" set="surveyQuestion" />
-
-					<field id="survey:questionUrl" set="surveyQuestion" />
-
-					<field id="survey:scoreCriterion" set="surveyQuestion">
+					
+					<!--surveyCriteria -->
+					<field id="survey:scoreCriterion" set="surveyCriteria">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:scoreCriterion</control-param>
 							<control-param name="showTooltip">false</control-param>
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
-
-					<field id="survey:questionScore" set="surveyQuestion" />
-
-					<field id="survey:responseType" set="surveyQuestion" help-id="becpg.forms.help.responseType" />
-
-					<field id="survey:responseCommentType" set="surveyQuestion" help-id="becpg.forms.help.responseCommentType">
-						<constraint-handlers>
-							<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"
-								event='keyup,change@[
-			                  		{"prop":"prop_survey_responseCommentLabel", "condition" : "none"}
-			                  		]' />
-						</constraint-handlers>
-					</field>
-
-					<field id="survey:responseCommentLabel" set="surveyQuestion" help-id="becpg.forms.help.responseCommentLabel" />
-
-					<field id="survey:nextQuestion" set="surveyQuestion">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-					</field>
-					<field id="survey:fsSurveyListName" set="surveyAutogeneration" />
-					<field id="survey:generationEnabled" set="surveyAutogeneration" />
-					<field id="survey:fsLinkedCharactRefs" set="surveyAutogeneration">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial</control-param>
-							<control-param name="showTooltip">false</control-param>
-							<control-param name="saveTitle">false</control-param>
-						</control>
-					</field>
-					<field id="survey:fsLinkedTypes" set="surveyAutogeneration">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/aclType</control-param>
-							<control-param name="showTooltip">false</control-param>
-							<control-param name="saveTitle">false</control-param>
-						</control>
-					</field>
-					<field id="survey:fsLinkedHierarchy" set="surveyAutogeneration">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">
-								becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists
-							</control-param>
-							<control-param name="extraPaths">prop_survey_fsLinkedTypes</control-param>
-							<control-param name="showTooltip">false</control-param>
-							<control-param name="saveTitle">false</control-param>
-						</control>
-					</field>
+					<field id="survey:questionScore" set="surveyCriteria" />
 				</appearance>
 			</form>
 		</forms>
@@ -421,23 +318,25 @@
 			<form>
 				<edit-form template="tab-edit" />
 				<field-visibility>
+					<!--surveyQuestion -->
 					<show id="bcpg:parentLevel" />
 					<show id="survey:questionLabel" />
-					<show id="survey:questionIsMandatory" />
-					<show id="survey:questionIsVisible" />
-
 					<show id="survey:questionNote" />
 					<show id="survey:questionUpperNote" />
 					<show id="survey:questionLowerNote" />
+					<show id="survey:nextQuestion" />
+					
+					<!--surveyOption -->
+					<show id="survey:questionIsMandatory" />
+					<show id="survey:questionIsVisible" />
 					<show id="survey:questionUrl" />
-					<show id="survey:scoreCriterion" force="true" />
-					<show id="survey:questionScore" />
-
 					<show id="survey:responseType" />
 					<show id="survey:responseCommentType" />
 					<show id="survey:responseCommentLabel" />
-					<show id="survey:nextQuestion" />
-
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted" force="true"/>
+					
+					<!--surveyAutogeneration -->
 					<show id="survey:fsSurveyListName" force="true" />
 					<show id="survey:generationEnabled" force="true" />
 					<show id="survey:fsLinkedCharactRefs" force="true" />
@@ -445,13 +344,18 @@
 					<show id="survey:fsLinkedHierarchy" force="true" />
 					<show id="bcpg:subsidiaryRef" force="true" />
 					<show id="bcpg:plants" force="true" />
-					<show id="sec:readGroups" force="true" />
-					<show id="bcpg:isDeleted" force="true"/>
+					
+					<!--surveyCriteria -->
+					<show id="survey:scoreCriterion" force="true" />
+					<show id="survey:questionScore" />
 				</field-visibility>
 				<appearance>
 					<set id="surveyQuestion" appearance="bordered-panel" label-id="becpg.forms.set.survey-question.label" />
+					<set id="surveyOption" appearance="bordered-panel" label-id="becpg.forms.set.survey-option.label" />
 					<set id="surveyAutogeneration" appearance="bordered-panel" label-id="becpg.forms.set.survey-autogeneration.label" />
-
+					<set id="surveyCriteria" appearance="bordered-panel" label-id="becpg.forms.set.criteria.label" />
+					
+					<!--surveyQuestion -->
 					<field id="bcpg:parentLevel" set="surveyQuestion">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=survey:surveyQuestion&#38;attributeName=survey:questionLabel
@@ -459,38 +363,22 @@
 							<control-param name="urlParamsToPass">list</control-param>
 						</control>
 					</field>
-
 					<field id="survey:questionLabel" set="surveyQuestion" />
-
-					<field id="survey:questionIsMandatory" set="surveyQuestion" />
-
-					<field id="survey:questionIsVisible" set="surveyQuestion" />
-
 					<field id="survey:questionNote" set="surveyQuestion" />
-
 					<field id="survey:questionUpperNote" set="surveyQuestion" />
-
 					<field id="survey:questionLowerNote" set="surveyQuestion" />
-
-					<field id="survey:questionUrl" set="surveyQuestion" />
-
-					<field id="survey:responseCommentLabel" set="surveyQuestion" help-id="becpg.forms.help.responseCommentLabel" />
-					<field id="sec:readGroups" set="surveyQuestion" />
-					<field id="bcpg:isDeleted" set="surveyQuestion" />
-					
-					<field id="survey:scoreCriterion" set="surveyQuestion">
+					<field id="survey:nextQuestion" set="surveyQuestion">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:scoreCriterion</control-param>
-							<control-param name="showTooltip">false</control-param>
-							<control-param name="saveTitle">false</control-param>
+							<control-param name="ds">becpg/autocomplete/survey</control-param>
 						</control>
 					</field>
-
-					<field id="survey:questionScore" set="surveyQuestion" />
-
-					<field id="survey:responseType" set="surveyQuestion" help-id="becpg.forms.help.responseType" />
-
-					<field id="survey:responseCommentType" set="surveyQuestion" help-id="becpg.forms.help.responseCommentType">
+					
+					<!--surveyOption -->
+					<field id="survey:questionIsMandatory" set="surveyOption" />
+					<field id="survey:questionIsVisible" set="surveyOption" />
+					<field id="survey:questionUrl" set="surveyOption" />
+					<field id="survey:responseType" set="surveyOption" help-id="becpg.forms.help.responseType" />
+					<field id="survey:responseCommentType" set="surveyOption" help-id="becpg.forms.help.responseCommentType">
 						<constraint-handlers>
 							<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"
 								event='keyup,change@[
@@ -499,13 +387,11 @@
 						</constraint-handlers>
 					</field>
 
-					<field id="survey:responseCommentLabel" set="surveyQuestion" help-id="becpg.forms.help.responseCommentLabel" />
-
-					<field id="survey:nextQuestion" set="surveyQuestion">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/survey</control-param>
-						</control>
-					</field>
+					<field id="survey:responseCommentLabel" set="surveyOption" help-id="becpg.forms.help.responseCommentLabel" />
+					<field id="sec:readGroups" set="surveyOption" />
+					<field id="bcpg:isDeleted" set="surveyOption" />
+					
+					<!--surveyAutogeneration -->
 					<field id="survey:fsSurveyListName" set="surveyAutogeneration" />
 					<field id="survey:generationEnabled" set="surveyAutogeneration" />
 					<field id="survey:fsLinkedCharactRefs" set="surveyAutogeneration">
@@ -534,37 +420,58 @@
 					</field>
 					<field id="bcpg:subsidiaryRef" set="surveyAutogeneration" />
 					<field id="bcpg:plants" set="surveyAutogeneration" />
+					
+					<!--surveyCriteria -->
+					<field id="survey:scoreCriterion" set="surveyCriteria">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:scoreCriterion</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<field id="survey:questionScore" set="surveyCriteria" />
 				</appearance>
 			</form>
 			<form id="create">
 				<field-visibility>
+					<!--surveyQuestion -->
 					<show id="bcpg:parentLevel" />
 					<show id="survey:questionLabel" />
-					<show id="survey:questionIsMandatory" />
-					<show id="survey:questionIsVisible" />
-
 					<show id="survey:questionNote" />
 					<show id="survey:questionUpperNote" />
 					<show id="survey:questionLowerNote" />
+					<show id="survey:nextQuestion" />
+					
+					<!--surveyOption -->
+					<show id="survey:questionIsMandatory" />
+					<show id="survey:questionIsVisible" />
 					<show id="survey:questionUrl" />
-					<show id="survey:scoreCriterion" force="true" />
-					<show id="survey:questionScore" />
-
 					<show id="survey:responseType" />
 					<show id="survey:responseCommentType" />
 					<show id="survey:responseCommentLabel" />
-					<show id="survey:nextQuestion" />
-
+					<show id="sec:readGroups" force="true" />
+					<show id="bcpg:isDeleted" force="true"/>
+					
+					<!--surveyAutogeneration -->
 					<show id="survey:fsSurveyListName" force="true" />
 					<show id="survey:generationEnabled" force="true" />
 					<show id="survey:fsLinkedCharactRefs" force="true" />
 					<show id="survey:fsLinkedTypes" force="true" />
 					<show id="survey:fsLinkedHierarchy" force="true" />
+					<show id="bcpg:subsidiaryRef" force="true" />
+					<show id="bcpg:plants" force="true" />
+					
+					<!--surveyCriteria -->
+					<show id="survey:scoreCriterion" force="true" />
+					<show id="survey:questionScore" />
 				</field-visibility>
 				<appearance>
 					<set id="surveyQuestion" appearance="bordered-panel" label-id="becpg.forms.set.survey-question.label" />
+					<set id="surveyOption" appearance="bordered-panel" label-id="becpg.forms.set.survey-option.label" />
 					<set id="surveyAutogeneration" appearance="bordered-panel" label-id="becpg.forms.set.survey-autogeneration.label" />
-
+					<set id="surveyCriteria" appearance="bordered-panel" label-id="becpg.forms.set.criteria.label" />
+					
+					<!--surveyQuestion -->
 					<field id="bcpg:parentLevel" set="surveyQuestion">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=survey:surveyQuestion&#38;attributeName=survey:questionLabel
@@ -572,34 +479,22 @@
 							<control-param name="urlParamsToPass">list</control-param>
 						</control>
 					</field>
-
 					<field id="survey:questionLabel" set="surveyQuestion" />
-
-					<field id="survey:questionIsMandatory" set="surveyQuestion" />
-
-					<field id="survey:questionIsVisible" set="surveyQuestion" />
-
 					<field id="survey:questionNote" set="surveyQuestion" />
-
 					<field id="survey:questionUpperNote" set="surveyQuestion" />
-
 					<field id="survey:questionLowerNote" set="surveyQuestion" />
-
-					<field id="survey:questionUrl" set="surveyQuestion" />
-
-					<field id="survey:scoreCriterion" set="surveyQuestion">
+					<field id="survey:nextQuestion" set="surveyQuestion">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:scoreCriterion</control-param>
-							<control-param name="showTooltip">false</control-param>
-							<control-param name="saveTitle">false</control-param>
+							<control-param name="ds">becpg/autocomplete/survey</control-param>
 						</control>
 					</field>
-
-					<field id="survey:questionScore" set="surveyQuestion" />
-
-					<field id="survey:responseType" set="surveyQuestion" help-id="becpg.forms.help.responseType" />
-
-					<field id="survey:responseCommentType" set="surveyQuestion" help-id="becpg.forms.help.responseCommentType">
+					
+					<!--surveyOption -->
+					<field id="survey:questionIsMandatory" set="surveyOption" />
+					<field id="survey:questionIsVisible" set="surveyOption" />
+					<field id="survey:questionUrl" set="surveyOption" />
+					<field id="survey:responseType" set="surveyOption" help-id="becpg.forms.help.responseType" />
+					<field id="survey:responseCommentType" set="surveyOption" help-id="becpg.forms.help.responseCommentType">
 						<constraint-handlers>
 							<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"
 								event='keyup,change@[
@@ -607,12 +502,12 @@
 			                  		]' />
 						</constraint-handlers>
 					</field>
-
-					<field id="survey:responseCommentLabel" set="surveyQuestion" help-id="becpg.forms.help.responseCommentLabel" />
-
-					<field id="survey:nextQuestion" set="surveyQuestion">
-						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-					</field>
+					
+					<field id="survey:responseCommentLabel" set="surveyOption" help-id="becpg.forms.help.responseCommentLabel" />
+					<field id="sec:readGroups" set="surveyOption" />
+					<field id="bcpg:isDeleted" set="surveyOption" />
+					
+					<!--surveyAutogeneration -->
 					<field id="survey:fsSurveyListName" set="surveyAutogeneration" />
 					<field id="survey:generationEnabled" set="surveyAutogeneration" />
 					<field id="survey:fsLinkedCharactRefs" set="surveyAutogeneration">
@@ -639,6 +534,18 @@
 							<control-param name="saveTitle">false</control-param>
 						</control>
 					</field>
+					<field id="bcpg:subsidiaryRef" set="surveyAutogeneration" />
+					<field id="bcpg:plants" set="surveyAutogeneration" />
+					
+					<!--surveyCriteria -->
+					<field id="survey:scoreCriterion" set="surveyCriteria">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:scoreCriterion</control-param>
+							<control-param name="showTooltip">false</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<field id="survey:questionScore" set="surveyCriteria" />
 				</appearance>
 			</form>
 			<form id="filter">
