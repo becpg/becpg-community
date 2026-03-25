@@ -193,8 +193,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 				try (OutputStream out = new FileOutputStream(tempFile)) {
 
-					transactionService.getRetryingTransactionHelper()
-							.doInTransaction(() -> createExcelFile(asynExtractor, asynExtractor.getDataListFilter(), handler, out), false, true);
+					createAsyncExcelFile(asynExtractor, handler, out);
 
 					fileCreationComplete(downloadNodeRef, "xlsx", tempFile, handler);
 
@@ -279,6 +278,256 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 		return ret;
 
+	}
+
+	/**
+	 * Creates an Excel file asynchronously, processing each page of data in its own
+	 * read-only transaction to avoid transactional cache saturation and long-held DB locks.
+	 *
+	 * @param asyncExtractor the paginated extractor wrapper
+	 * @param handler the download exporter for status tracking
+	 * @param outputStream the output stream to write to
+	 * @throws IOException if an I/O error occurs
+	 */
+	private void createAsyncExcelFile(AsyncPaginatedExtractorWrapper asyncExtractor,
+			ExcelDataListDownloadExporter handler, OutputStream outputStream) throws IOException {
+
+		DataListFilter dataListFilter = asyncExtractor.getDataListFilter();
+		ExcelDataListOutputPlugin plugin = getPlugin(dataListFilter);
+
+		List<Map<String, Object>> firstPage = transactionService.getRetryingTransactionHelper()
+				.doInTransaction(() -> plugin.decorate(asyncExtractor.getNextWork()), true, true);
+
+		createExcelFileFromPages(asyncExtractor, dataListFilter, plugin, handler, firstPage, outputStream);
+	}
+
+	private void createExcelFileFromPages(AsyncPaginatedExtractorWrapper asyncExtractor,
+			DataListFilter dataListFilter, ExcelDataListOutputPlugin plugin,
+			ExcelDataListDownloadExporter handler, List<Map<String, Object>> firstPage,
+			OutputStream outputStream) throws IOException {
+
+		try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+
+			ExcelFieldTitleProvider titleProvider = plugin.getExcelFieldTitleProvider(dataListFilter);
+			QName type = dataListFilter.getDataType();
+			String sheetName = resolveSheetName(type);
+
+			XSSFSheet sheet = workbook.createSheet(sheetName);
+			ExcelCellStyles exeCellStyles = new ExcelCellStyles(workbook);
+
+			int rownum = transactionService.getRetryingTransactionHelper()
+					.doInTransaction(() -> writeHeaders(dataListFilter, type, sheet, exeCellStyles), true, true);
+
+			Row labelRow = sheet.createRow(rownum++);
+			Row headerRow = sheet.getRow(rownum - 2);
+			int cellnum = 0;
+
+			Cell cell = headerRow.createCell(cellnum);
+			cell.setCellValue("COLUMNS");
+			cell.setCellStyle(exeCellStyles.getHeaderStyle());
+			cell = labelRow.createCell(cellnum++);
+			cell.setCellValue("#");
+			cell.setCellStyle(exeCellStyles.getHeaderStyle());
+
+			String bcpgCode = transactionService.getRetryingTransactionHelper()
+					.doInTransaction(() -> resolveBcpgCode(dataListFilter, type), true, true);
+
+			if (bcpgCode != null) {
+				cell = headerRow.createCell(cellnum);
+				cell.setCellValue("bcpg:code");
+				cell.setCellStyle(exeCellStyles.getHeaderStyle());
+				cell = labelRow.createCell(cellnum++);
+				cell.setCellValue(I18NUtil.getMessage("message.becpg.export.entity"));
+				cell.setCellStyle(exeCellStyles.getHeaderTextStyle());
+			}
+
+			if (asyncExtractor.getComputedFields() != null) {
+				List<AttributeExtractorStructure> fields = asyncExtractor.getComputedFields().stream()
+						.filter(titleProvider::isAllowed).toList();
+
+				ExcelHelper.appendExcelHeader(fields, null, null, headerRow, labelRow, exeCellStyles, sheet, cellnum,
+						titleProvider, MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null);
+
+				Row row = null;
+				List<Map<String, Object>> items = firstPage;
+
+				while ((items != null) && !items.isEmpty()) {
+					for (Map<String, Object> item : items) {
+						if (handler != null) {
+							handler.incFilesAddedCount();
+						}
+						int c = 0;
+						row = sheet.createRow(rownum++);
+						cell = row.createCell(c++);
+						cell.setCellValue("VALUES");
+						cell.setCellStyle(exeCellStyles.getHeaderStyle());
+
+						if (bcpgCode != null) {
+							cell = row.createCell(c++);
+							cell.setCellValue(bcpgCode);
+						}
+
+						ExcelHelper.appendExcelField(fields, null, item, sheet, row, c, rownum,
+								MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null,
+								exeCellStyles);
+
+						if (handler != null) {
+							handler.updateStatus();
+						}
+					}
+					items = transactionService.getRetryingTransactionHelper()
+							.doInTransaction(() -> plugin.decorate(asyncExtractor.getNextWork()), true, true);
+				}
+
+				if (row != null) {
+					for (int colNum = 0; colNum < row.getLastCellNum(); colNum++) {
+						sheet.autoSizeColumn(colNum);
+					}
+				}
+			}
+
+			workbook.write(outputStream);
+		}
+	}
+
+	private String resolveSheetName(QName type) {
+		String sheetName = "";
+		if (type != null) {
+			TypeDefinition typeDef = entityDictionaryService.getType(type);
+			if (typeDef != null) {
+				sheetName = typeDef.getTitle(entityDictionaryService);
+			} else {
+				AspectDefinition aspectDef = entityDictionaryService.getAspect(type);
+				if (aspectDef != null) {
+					sheetName = aspectDef.getTitle(entityDictionaryService);
+				}
+			}
+		}
+		if ((sheetName == null) || sheetName.isEmpty()) {
+			sheetName = "Values";
+		}
+		return sheetName;
+	}
+
+	private String resolveBcpgCode(DataListFilter dataListFilter, QName type) {
+		if (entityDictionaryService.isSubClass(dataListFilter.getDataType(), BeCPGModel.TYPE_ENTITYLIST_ITEM)
+				&& (dataListFilter.getEntityNodeRef() != null)) {
+			QName entityType = nodeService.getType(dataListFilter.getEntityNodeRef());
+			if (!entityDictionaryService.isSubClass(entityType, BeCPGModel.TYPE_SYSTEM_ENTITY)) {
+				return (String) nodeService.getProperty(dataListFilter.getEntityNodeRef(), BeCPGModel.PROP_CODE);
+			}
+		}
+		return null;
+	}
+
+	private int writeHeaders(DataListFilter dataListFilter, QName type, XSSFSheet sheet, ExcelCellStyles exeCellStyles) {
+		int rownum = 0;
+
+		Row headerRow = sheet.createRow(rownum++);
+		headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
+		Cell cell = headerRow.createCell(0);
+		cell.setCellStyle(exeCellStyles.getHeaderStyle());
+		cell.setCellValue("MAPPING");
+		cell = headerRow.createCell(1);
+		cell.setCellStyle(exeCellStyles.getHeaderStyle());
+		cell.setCellValue("Default");
+
+		if (type != null) {
+			headerRow = sheet.createRow(rownum++);
+			headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
+			cell = headerRow.createCell(0);
+			cell.setCellValue("TYPE");
+			cell.setCellStyle(exeCellStyles.getHeaderStyle());
+			cell = headerRow.createCell(1);
+			cell.setCellStyle(exeCellStyles.getHeaderStyle());
+			cell.setCellValue(type.toPrefixString());
+		}
+
+		String nodePath = null;
+		String bcpgCode = null;
+		QName entityType = null;
+
+		if (dataListFilter.getEntityNodeRef() != null) {
+			entityType = nodeService.getType(dataListFilter.getEntityNodeRef());
+			if (entityDictionaryService.isSubClass(entityType, BeCPGModel.TYPE_SYSTEM_ENTITY)) {
+				nodePath = cleanPath(nodeService.getPath(dataListFilter.getParentNodeRef()).toPrefixString(namespaceService));
+			} else {
+				bcpgCode = (String) nodeService.getProperty(dataListFilter.getEntityNodeRef(), BeCPGModel.PROP_CODE);
+				nodePath = cleanPath(nodeService.getPath(nodeService.getPrimaryParent(dataListFilter.getEntityNodeRef()).getParentRef())
+						.toPrefixString(namespaceService));
+			}
+		} else if (dataListFilter.getParentNodeRef() != null) {
+			nodePath = cleanPath(nodeService.getPath(dataListFilter.getParentNodeRef()).toPrefixString(namespaceService));
+		} else if (dataListFilter.getFilterId().equals(DataListFilter.NODE_PATH_FILTER)) {
+			nodePath = cleanPath(nodeService.getPath(new NodeRef(dataListFilter.getFilterData())).toPrefixString(namespaceService));
+		}
+
+		if (nodePath != null) {
+			headerRow = sheet.createRow(rownum++);
+			headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
+			cell = headerRow.createCell(0);
+			cell.setCellStyle(exeCellStyles.getHeaderStyle());
+			cell.setCellValue("PATH");
+			cell = headerRow.createCell(1);
+			cell.setCellValue(nodePath);
+			cell.setCellStyle(exeCellStyles.getHeaderStyle());
+		}
+
+		if (entityDictionaryService.isSubClass(dataListFilter.getDataType(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+			if ((nodePath != null) && !nodePath.startsWith("/System/")) {
+				headerRow = sheet.createRow(rownum++);
+				headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
+				cell = headerRow.createCell(0);
+				cell.setCellStyle(exeCellStyles.getHeaderStyle());
+				cell.setCellValue("IMPORT_TYPE");
+				cell = headerRow.createCell(1);
+				cell.setCellStyle(exeCellStyles.getHeaderStyle());
+				cell.setCellValue("EntityListItem");
+			}
+
+			if (entityType != null) {
+				headerRow = sheet.createRow(rownum++);
+				headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
+				cell = headerRow.createCell(0);
+				cell.setCellStyle(exeCellStyles.getHeaderStyle());
+				cell.setCellValue("ENTITY_TYPE");
+				cell = headerRow.createCell(1);
+				cell.setCellStyle(exeCellStyles.getHeaderStyle());
+				cell.setCellValue(entityType.toPrefixString(namespaceService));
+			}
+
+			headerRow = sheet.createRow(rownum++);
+			headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
+			cell = headerRow.createCell(0);
+			cell.setCellStyle(exeCellStyles.getHeaderStyle());
+			cell.setCellValue("DELETE_DATALIST");
+			cell = headerRow.createCell(1);
+			cell.setCellStyle(exeCellStyles.getHeaderStyle());
+			cell.setCellValue("false");
+		}
+
+		headerRow = sheet.createRow(rownum++);
+		headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
+		cell = headerRow.createCell(0);
+		cell.setCellStyle(exeCellStyles.getHeaderStyle());
+		cell.setCellValue("STOP_ON_FIRST_ERROR");
+		cell = headerRow.createCell(1);
+		cell.setCellStyle(exeCellStyles.getHeaderStyle());
+		cell.setCellValue("false");
+
+		headerRow = sheet.createRow(rownum++);
+		headerRow.setRowStyle(exeCellStyles.getHeaderStyle());
+
+		sheet.groupRow(0, rownum);
+		sheet.setRowGroupCollapsed(0, true);
+		if (bcpgCode != null) {
+			sheet.groupColumn(0, 1);
+		} else {
+			sheet.groupColumn(0, 0);
+		}
+		sheet.setColumnGroupCollapsed(0, true);
+
+		return rownum;
 	}
 
 	/**
