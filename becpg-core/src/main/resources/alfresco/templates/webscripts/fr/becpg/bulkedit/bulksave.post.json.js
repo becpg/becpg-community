@@ -71,26 +71,14 @@ function main()
     	
     	
     	if(splitted!=null){
-	    	for(var i in splitted){
-	    		var nodeRef = splitted[i];
-	    		if(nodeRef.indexOf("workspace")!=0){
-	    			 nodeRef = "workspace://SpacesStore/"+nodeRef;
-	    		}
-	    		
-    			var node = search.findNode(nodeRef);
-				
-				if (node && node.hasPermission("Write")) {
-		    		for(var j in assocToRemoves){
-		    			var assocToRemove = assocToRemoves[j].replace("_",":");
-		    			var assocs = node.assocs[assocToRemove];
-		    			for(z in assocs){
-		    				node.removeAssociation(assocs[z],assocToRemove);
-		    			}
-		    		}
-		    		persistedObject = formService.saveForm("node", nodeRef.replace(":/",""), repoFormData);
-				}
-				
-	    	}
+    		var assocQNames = [];
+    		for(var j in assocToRemoves){
+    			assocQNames.push(assocToRemoves[j].replace("_",":"));
+    		}
+    		var result = bcpg.bulkSaveForm(splitted, repoFormData, assocQNames);
+    		if(result != null){
+    			persistedObject = result;
+    		}
     	} //new node 
     	else {	
     		persistedObject = formService.saveForm(itemKind, itemId, repoFormData);
@@ -123,7 +111,7 @@ function main()
         return;
     }
     
-    model.persistedObject = persistedObject.toString();
+    model.persistedObject = persistedObject != null ? persistedObject.toString() : "";
     model.message = "Successfully persisted form for item [" + itemKind + "]" + itemId;
 }
 
