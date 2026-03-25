@@ -21,6 +21,8 @@ import org.apache.commons.logging.LogFactory;
 public abstract class AbstractDownloadExporter {
 	private static Log logger = LogFactory.getLog(AbstractDownloadExporter.class);
 
+	private static final int STATUS_UPDATE_FREQUENCY = 50;
+
 	private NodeRef downloadNodeRef;
 	private int sequenceNumber = 1;
 	private long filesAddedCount;
@@ -73,6 +75,10 @@ public abstract class AbstractDownloadExporter {
 	 * <p>updateStatus.</p>
 	 */
 	public void updateStatus() {
+
+		if ((filesAddedCount % STATUS_UPDATE_FREQUENCY) != 0) {
+			return;
+		}
 
 		transactionHelper.doInTransaction(() -> {
 			DownloadStatus status = new DownloadStatus(Status.IN_PROGRESS, filesAddedCount, fileCount, filesAddedCount, fileCount);
