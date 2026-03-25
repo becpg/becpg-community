@@ -554,10 +554,12 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName, Boolean includeVersions, Integer maxResults, Integer offset,
 			boolean checkPermissions) {
 		Map<String, Object> params = new HashMap<>();
-		params.put("qName", qName != null ? qName.getLocalName() : null);
+		params.put("qNameId", qName != null ? qnameDAO.getQName(qName).getFirst() : null);
 		params.put("includeVersions", includeVersions != null && includeVersions.booleanValue());
+		params.put("workspaceSpacesStoreId", nodeDAO.getStore(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE).getFirst());
 		Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(tenantService.getName(nodeRef));
 		params.put("targetId", nodePair.getFirst());
+		params.put("compositeVersionId", qnameDAO.getQName(BeCPGModel.ASPECT_COMPOSITE_VERSION).getFirst());
 
 		Set<String> authorisations = AuthenticationUtil.runAs(() -> permissionService.getAuthorisations(),
 				AuthenticationUtil.getFullyAuthenticatedUser());

@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.entity.version.VersionHelper;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.impl.AssociationCriteriaFilter;
 import fr.becpg.repo.helper.impl.AssociationCriteriaFilter.AssociationCriteriaFilterMode;
@@ -291,11 +292,11 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 	
 	@Test
 	public void testSourceAssocs() {
-		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef rawMaterialNodeRef = inWriteTx(() -> {
 			return BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test source assoc");
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			NodeRef supplierNodeRef = null;
 			NodeRef entityFolder = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "Supplier1");
 			if (entityFolder != null) {
@@ -314,8 +315,20 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 			assertTrue(sourceNodeRefs.contains(rawMaterialNodeRef));
 			sourceNodeRefs = associationService.getSourcesAssocs(supplierNodeRef);
 			assertTrue(sourceNodeRefs.contains(rawMaterialNodeRef));
+			
+			
+			NodeRef branch = entityVersionService.createBranch(rawMaterialNodeRef, nodeService.getPrimaryParent(rawMaterialNodeRef).getParentRef());
+			entityVersionService.mergeBranch(branch, rawMaterialNodeRef, VersionType.MAJOR, "test version source assoc");
+			
+			sourceNodeRefs = associationService.getSourcesAssocs(supplierNodeRef, PLMModel.ASSOC_SUPPLIERS, false);
+			assertTrue(sourceNodeRefs.contains(rawMaterialNodeRef));
+			assertTrue(sourceNodeRefs.stream().noneMatch(n -> VersionHelper.isVersion(n)));
+			sourceNodeRefs = associationService.getSourcesAssocs(supplierNodeRef, PLMModel.ASSOC_SUPPLIERS, true);
+			assertTrue(sourceNodeRefs.contains(rawMaterialNodeRef));
+			assertTrue(sourceNodeRefs.stream().anyMatch(n -> VersionHelper.isVersion(n)));
+			
 			return null;
-		}, false, true);
+		});
 	}
 	
 	@Test
