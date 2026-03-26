@@ -34,6 +34,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.catalog.EntityCatalogObserver;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
+import fr.becpg.repo.publication.ChannelData;
 import fr.becpg.repo.publication.PublicationChannelService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.data.SearchRuleFilter;
@@ -218,6 +219,60 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 
 	/** {@inheritDoc} */
 	@Override
+	public void startChannel(NodeRef channelNodeRef, String batchId) {
+		nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_STATUS, PublicationChannelStatus.STARTED.toString());
+		nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHSTARTTIME, new Date());
+		nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHID, batchId);
+		nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHENDTIME, null);
+		nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHDURATION, null);
+		nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_ERROR, null);
+		nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_ACTION, null);
+		nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_READCOUNT, null);
+		nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_FAILCOUNT, null);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void publishEntityChannel(NodeRef entityNodeRef, String channelId, ChannelData channelData) {
+		boolean isEnabledAudit = policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE);
+		try {
+			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			NodeRef channelListNodeRef = getOrCreateChannelListNodeRef(entityNodeRef, channelId);
+			nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_STATUS, channelData.getStatus());
+			nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_BATCHID, channelData.getBatchId());
+			nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ERROR, channelData.getError());
+			nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ACTION, channelData.getAction());
+			nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_PUBLISHEDDATE, new Date());
+		} finally {
+			if (isEnabledAudit) {
+				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			}
+		}
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void completeChannel(NodeRef channelNodeRef, ChannelData channelData) {
+		nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_STATUS, channelData.getStatus());
+		nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_FAILCOUNT, channelData.getFailCount());
+		nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_READCOUNT, channelData.getReadCount());
+		nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHENDTIME, new Date());
+		Date startTime = (Date) nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHSTARTTIME);
+		nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHDURATION,
+				startTime != null ? Math.max(0L, (new Date().getTime() - startTime.getTime()) / 1000) : null);
+		nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_ERROR, channelData.getError());
+		if (channelData.getLastSuccessBatchId() != null) {
+			nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_LASTSUCCESSBATCHID,
+					channelData.getLastSuccessBatchId());
+		}
+		if (channelData.getLastDate() != null) {
+			nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_LASTDATE, channelData.getLastDate());
+		}
+		nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_ACTION, channelData.getAction());
+	}
+
+	/** {@inheritDoc} */
+	@Override
 	public NodeRef getOrCreateChannelListNodeRef(NodeRef entityNodeRef, String channelId) {
 		NodeRef channelNodeRef = getChannelById(channelId);
 		if (channelNodeRef != null) {
@@ -240,7 +295,7 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 		}
 		return null;
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public void onUpdateNode(NodeRef channelListItemNodeRef) {

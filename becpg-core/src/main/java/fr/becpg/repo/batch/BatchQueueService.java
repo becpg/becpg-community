@@ -1,6 +1,7 @@
 package fr.becpg.repo.batch;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 
 import org.alfresco.repo.batch.BatchMonitor;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
@@ -126,4 +127,7 @@ public interface BatchQueueService {
 	 * @return a {@link fr.becpg.repo.batch.BatchStep} object
 	 */
 	BatchStep<NodeRef> createBatchStepWithErrorHandling(BatchInfo batchInfo, List<NodeRef> list, BatchProcessWorker<NodeRef> consumer);
+
+	BatchStep<NodeRef> createBatchStepWithErrorHandling(BatchInfo batchInfo, List<NodeRef> list, BatchProcessWorker<NodeRef> processor,
+			BiConsumer<NodeRef, Throwable> errorHandler);
 }
