@@ -28,7 +28,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ISO8601DateFormat;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -170,7 +169,6 @@ public class RemoteChannelBatchWebScriptIT extends PLMBaseTestCase {
 		attributes.put("bp:pubChannelStatus", PublicationChannelStatus.COMPLETED.toString());
 		attributes.put("bp:pubChannelFailCount", 2);
 		attributes.put("bp:pubChannelReadCount", 100);
-		attributes.put("bp:pubChannelBatchDuration", 5000L);
 		attributes.put("bp:pubChannelLastSuccessBatchId", "batch-002");
 
 		entity.put("attributes", attributes);
@@ -193,8 +191,8 @@ public class RemoteChannelBatchWebScriptIT extends PLMBaseTestCase {
 			assertEquals(PublicationChannelStatus.COMPLETED.toString(), nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_STATUS));
 			assertEquals(2, nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_FAILCOUNT));
 			assertEquals(100, nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_READCOUNT));
-			assertEquals(5000L, nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHDURATION));
 			assertNotNull(nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHENDTIME));
+			assertNotNull(nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHDURATION));
 			return null;
 		});
 	}
@@ -224,7 +222,6 @@ public class RemoteChannelBatchWebScriptIT extends PLMBaseTestCase {
 
 		attributes.put("bp:pubChannelListStatus", PublicationChannelStatus.COMPLETED.toString());
 		attributes.put("bp:pubChannelListBatchId", "batch-003");
-		attributes.put("bp:pubChannelListPublishedDate", ISO8601DateFormat.format(new Date()));
 
 		entity.put("attributes", attributes);
 		requestBody.put("entity", entity);
@@ -253,6 +250,7 @@ public class RemoteChannelBatchWebScriptIT extends PLMBaseTestCase {
 			
 			assertEquals(PublicationChannelStatus.COMPLETED.toString(), nodeService.getProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_STATUS));
 			assertEquals("batch-003", nodeService.getProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_BATCHID));
+			assertNotNull(nodeService.getProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_PUBLISHEDDATE));
 			return null;
 		});
 	}

@@ -293,6 +293,10 @@
 				    var ulQueue = panelDiv.querySelector(".batches-queue");
 				    var ulErrors = panelDiv.querySelector(".batches-errors");
 
+				    ulCurrent.innerHTML = '<li class="batch-empty">' + this.msg("label.task.loading") + '</li>';
+				    ulQueue.innerHTML = '<li class="batch-empty">' + this.msg("label.task.loading") + '</li>';
+				    ulErrors.innerHTML = '<li class="batch-empty">' + this.msg("label.task.loading") + '</li>';
+
 				    // Start polling for updates
 				    var intervalId = setInterval(function() {
 				        self.updateBatchPanel(ulCurrent, ulQueue, ulErrors, intervalId);
