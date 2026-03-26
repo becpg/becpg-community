@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.model.ContentModel;
@@ -47,6 +48,7 @@ import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchPriority;
+import fr.becpg.repo.batch.BatchQueuePlugin;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.BatchStep;
 import fr.becpg.repo.batch.BatchStepAdapter;
@@ -59,7 +61,9 @@ import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.product.formulation.SecurityFormulationHandler;
+import fr.becpg.repo.publication.ChannelData;
 import fr.becpg.repo.publication.PublicationChannelService;
+import fr.becpg.repo.publication.PublicationChannelService.PublicationChannelAction;
 import fr.becpg.repo.publication.PublicationChannelService.PublicationChannelStatus;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
@@ -76,7 +80,7 @@ import fr.becpg.util.BeCPGTransactionUtil;
  * @author matthieu
  */
 @Service("formulationChannelService")
-public class FormulationChannelService {
+public class FormulationChannelService implements BatchQueuePlugin {
 
 	private static final Log logger = LogFactory.getLog(FormulationChannelService.class);
 
@@ -234,6 +238,17 @@ public class FormulationChannelService {
 		}
 		
 		NodeRef channelNodeRef = publicationChannelService.getChannelById(FORMULATE_ENTITIES_CHANNEL_ID);
+		Integer newBatchId = 1;
+		String lastBatchId = (String) nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHID);
+		if (lastBatchId != null) {
+			try {
+				newBatchId = Integer.parseInt(lastBatchId) + 1;
+			} catch (NumberFormatException e) {
+				logger.warn("Invalid last batch ID format: " + lastBatchId + ". Using default value: 1");
+			}
+		}
+		String batchId = String.valueOf(newBatchId);
+		
 		PagingResults<NodeRef> results = publicationChannelService.getEntitiesByChannel(channelNodeRef, new PagingRequest(maxProductsToFormulate()));
 		List<NodeRef> channelProducts = results.getPage();
 		logger.info("Channel products to scan: " + channelProducts.size());
@@ -280,7 +295,8 @@ public class FormulationChannelService {
 			public void afterStep() {
 				if (!batchInfo.isCancelled()) {
 					for (NodeRef markedSecurityRule : markedSecurityRules) {
-						publishEntityChannel(markedSecurityRule);
+						publicationChannelService.publishEntityChannel(markedSecurityRule, FORMULATE_ENTITIES_CHANNEL_ID,
+								ChannelData.builder().status(PublicationChannelStatus.COMPLETED.toString()).batchId(batchId).build());
 					}
 				}
 			}
@@ -314,14 +330,42 @@ public class FormulationChannelService {
 			return Integer.compare(priority1, priority2);
 		});
 		
-		ReformulateChangedEntitiesProcessWorker processWorker = new ReformulateChangedEntitiesProcessWorker(toPublishProducts);
-		BatchStep<NodeRef> formulateStep = batchQueueService.createBatchStepWithErrorHandling(batchInfo, totalNodesToProcess, processWorker);
+		AtomicReference<Integer> numberOfErrors = new AtomicReference<>(0);
+		
+		ReformulateChangedEntitiesProcessWorker processWorker = new ReformulateChangedEntitiesProcessWorker(toPublishProducts, batchId);
+		BatchStep<NodeRef> formulateStep = batchQueueService.createBatchStepWithErrorHandling(batchInfo, totalNodesToProcess, processWorker,
+				(nodeRef, throwable) -> {
+					publicationChannelService.publishEntityChannel(nodeRef, FORMULATE_ENTITIES_CHANNEL_ID,
+							ChannelData.builder()
+							.status(PublicationChannelStatus.FAILED.toString())
+							.batchId(batchId)
+							.error(getRootCause(throwable).getMessage())
+							.build());
+					numberOfErrors.set(numberOfErrors.get() + 1);
+				});
 		formulateStep.setStepDescId("becpg.batch.formulation.channel.formulateEntities.formulation");
 		steps.add(formulateStep);
-
-		batchQueueService.queueBatch(batchInfo, steps);
+		
+		publicationChannelService.startChannel(channelNodeRef, batchId);
+		batchQueueService.queueBatch(batchInfo, steps, () -> {
+			publicationChannelService.completeChannel(channelNodeRef,
+					ChannelData.builder()
+					.status(numberOfErrors.get() > 0 ? PublicationChannelStatus.FAILED.toString() : PublicationChannelStatus.COMPLETED.toString())
+					.batchId(batchId)
+					.failCount(numberOfErrors.get())
+					.readCount(toFormulateProducts.size())
+					.build());
+		});
 
 		return batchInfo;
+	}
+	
+	private Throwable getRootCause(Throwable throwable) {
+		Throwable rootCause = throwable;
+		while (rootCause.getCause() != null && rootCause.getCause() != rootCause) {
+			rootCause = rootCause.getCause();
+		}
+		return rootCause;
 	}
 	
 	/**
@@ -531,13 +575,6 @@ public class FormulationChannelService {
 			return true;
 		}
 	}
-
-	private void publishEntityChannel(NodeRef entityNodeRef) {
-		policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-		NodeRef channelListNodeRef = publicationChannelService.getOrCreateChannelListNodeRef(entityNodeRef, FORMULATE_ENTITIES_CHANNEL_ID);
-		nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_STATUS, PublicationChannelStatus.COMPLETED);
-		nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_PUBLISHEDDATE, new Date());
-	}
 	
 	private int getTypePriority(QName type) {
 		// Priority 1: Base materials that are usually children
@@ -574,9 +611,11 @@ public class FormulationChannelService {
 	private class ReformulateChangedEntitiesProcessWorker extends BatchProcessor.BatchProcessWorkerAdaptor<NodeRef> {
 
 		private List<NodeRef> toPublishProducts;
+		private String batchId;
 
-		public ReformulateChangedEntitiesProcessWorker(List<NodeRef> toPublishProducts) {
+		public ReformulateChangedEntitiesProcessWorker(List<NodeRef> toPublishProducts, String batchId) {
 			this.toPublishProducts = toPublishProducts;
+			this.batchId = batchId;
 		}
 
 		@Override
@@ -587,7 +626,8 @@ public class FormulationChannelService {
 			}
 			
 			if (toPublishProducts.contains(toProcess)) {
-				publishEntityChannel(toProcess);
+				publicationChannelService.publishEntityChannel(toProcess, FORMULATE_ENTITIES_CHANNEL_ID,
+						ChannelData.builder().status(PublicationChannelStatus.COMPLETED.toString()).batchId(batchId).build());
 				return;
 			}
 			
@@ -629,7 +669,8 @@ public class FormulationChannelService {
 					@Override
 					public void afterCommit() {
 						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-							publishEntityChannel(toProcess);
+							publicationChannelService.publishEntityChannel(toProcess, FORMULATE_ENTITIES_CHANNEL_ID,
+									ChannelData.builder().status(PublicationChannelStatus.COMPLETED.toString()).batchId(batchId).build());
 							return null;
 						}, false, true);
 					}
@@ -640,6 +681,14 @@ public class FormulationChannelService {
 				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
+		}
+	}
+	
+	@Override
+	public void onRetryBatchError(NodeRef entry, String batchId) {
+		if (batchId.equals(REFORMULATE_BATCH_ID)) {
+			NodeRef channelListNodeRef = publicationChannelService.getOrCreateChannelListNodeRef(entry, FORMULATE_ENTITIES_CHANNEL_ID);
+			nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ACTION, PublicationChannelAction.RETRY.toString());
 		}
 	}
 	
