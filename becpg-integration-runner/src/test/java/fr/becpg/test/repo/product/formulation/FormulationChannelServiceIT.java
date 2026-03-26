@@ -2,6 +2,7 @@ package fr.becpg.test.repo.product.formulation;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,6 +30,8 @@ import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.formulation.job.FormulationChannelService;
+import fr.becpg.repo.publication.PublicationChannelService.PublicationChannelAction;
+import fr.becpg.repo.publication.PublicationChannelService.PublicationChannelStatus;
 import fr.becpg.test.PLMBaseTestCase;
 
 public class FormulationChannelServiceIT extends PLMBaseTestCase {
@@ -352,6 +355,171 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
 		assertNotNull("Batch should run with high thresholds", batchInfo);
 		waitForBatchEnd(batchInfo);
+	}
+
+	@Test
+	public void testChannelBatchMetadataOnSuccess() throws InterruptedException {
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("RM batch metadata test");
+			rawMaterial.setParentNodeRef(getTestFolderNodeRef());
+			return alfrescoRepository.save(rawMaterial).getNodeRef();
+		});
+
+		NodeRef channelNodeRef = inReadTx(() -> publicationChannelService.getChannelById(FormulationChannelService.FORMULATE_ENTITIES_CHANNEL_ID));
+		inWriteTx(() -> {
+			nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHID, "41");
+			return null;
+		});
+
+		mockChannelEntities(List.of(rawMaterialNodeRef));
+
+		BatchInfo batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
+		waitForBatchEnd(batchInfo);
+
+		assertChannelStatus(channelNodeRef, PublicationChannelStatus.COMPLETED.toString(), "42", 0, 1);
+		assertChannelListStatus(rawMaterialNodeRef, PublicationChannelStatus.COMPLETED.toString(), "42", null, null);
+	}
+
+	@Test
+	public void testFailedBatchPublishesErrorAndRetryAction() throws InterruptedException {
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("RM batch failure test");
+			rawMaterial.setParentNodeRef(getTestFolderNodeRef());
+			return alfrescoRepository.save(rawMaterial).getNodeRef();
+		});
+
+		formulationService = Mockito.spy(formulationService);
+		doThrow(new RuntimeException("Simulated formulation error")).when(formulationService).formulate(rawMaterialNodeRef);
+		formulationChannelService = new FormulationChannelService(batchQueueService, publicationChannelService, systemConfigurationService,
+				transactionService, nodeService, alfrescoRepository, entityDictionaryService, wUsedListService, formulationService,
+				policyBehaviourFilter, namespaceService, authenticationService, 1, 1);
+
+		NodeRef channelNodeRef = inReadTx(() -> publicationChannelService.getChannelById(FormulationChannelService.FORMULATE_ENTITIES_CHANNEL_ID));
+		inWriteTx(() -> {
+			nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHID, "0");
+			return null;
+		});
+		mockChannelEntities(List.of(rawMaterialNodeRef));
+
+		BatchInfo batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
+		waitForBatchEnd(batchInfo);
+
+		assertChannelStatus(channelNodeRef, PublicationChannelStatus.FAILED.toString(), "1", 1, 1);
+		assertChannelListStatus(rawMaterialNodeRef, PublicationChannelStatus.FAILED.toString(), "1", "Simulated formulation error", null);
+
+		String batchFullId = batchInfo.getBatchId() + "|" + batchInfo.getBatchDescId();
+		BatchInfo retryBatchInfo = inWriteTx(() -> batchQueueService.retryBatchInError(batchFullId));
+		waitForBatchEnd(retryBatchInfo);
+
+		inReadTx(() -> {
+			@SuppressWarnings("unchecked")
+			List<String> errorIds = (List<String>) nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_BATCH_ERROR_IDS);
+			if (errorIds != null) {
+				assertFalse(errorIds.contains(batchFullId));
+			}
+			return null;
+		});
+		assertChannelListStatus(rawMaterialNodeRef, PublicationChannelStatus.FAILED.toString(), "1", "Simulated formulation error",
+				PublicationChannelAction.RETRY.toString());
+	}
+
+	/**
+	 * Mocks the channel entities returned by the publication channel service.
+	 *
+	 * @param nodeRefs the entities returned for the channel
+	 */
+	private void mockChannelEntities(List<NodeRef> nodeRefs) {
+		doReturn(new PagingResults<NodeRef>() {
+			@Override
+			public List<NodeRef> getPage() {
+				return nodeRefs;
+			}
+
+			@Override
+			public boolean hasMoreItems() {
+				return false;
+			}
+
+			@Override
+			public Pair<Integer, Integer> getTotalResultCount() {
+				return null;
+			}
+
+			@Override
+			public String getQueryExecutionId() {
+				return null;
+			}
+		}).when(publicationChannelService).getEntitiesByChannel(any(), any());
+	}
+
+	/**
+	 * Asserts the batch metadata stored on the channel node.
+	 *
+	 * @param channelNodeRef the publication channel node
+	 * @param expectedStatus the expected channel status
+	 * @param expectedBatchId the expected batch identifier
+	 * @param expectedFailCount the expected failure count
+	 * @param expectedReadCount the expected read count
+	 */
+	private void assertChannelStatus(NodeRef channelNodeRef, String expectedStatus, String expectedBatchId, Integer expectedFailCount,
+			Integer expectedReadCount) {
+		inReadTx(() -> {
+			assertEquals(expectedStatus, nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_STATUS));
+			assertEquals(expectedBatchId, nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHID));
+			assertEquals(expectedFailCount, nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_FAILCOUNT));
+			assertEquals(expectedReadCount, nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_READCOUNT));
+			assertNotNull(nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHSTARTTIME));
+			assertNotNull(nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHENDTIME));
+			assertNotNull(nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHDURATION));
+			return null;
+		});
+	}
+
+	/**
+	 * Asserts the publication channel list metadata for an entity.
+	 *
+	 * @param entityNodeRef the published entity
+	 * @param expectedStatus the expected list item status
+	 * @param expectedBatchId the expected list item batch identifier
+	 * @param expectedErrorPart the expected error message fragment, or {@code null}
+	 * @param expectedAction the expected action, or {@code null}
+	 */
+	private void assertChannelListStatus(NodeRef entityNodeRef, String expectedStatus, String expectedBatchId, String expectedErrorPart,
+			String expectedAction) {
+		inReadTx(() -> {
+			NodeRef channelListNodeRef = getChannelListNodeRef(entityNodeRef);
+			assertNotNull(channelListNodeRef);
+			assertEquals(expectedStatus, nodeService.getProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_STATUS));
+			assertEquals(expectedBatchId, nodeService.getProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_BATCHID));
+			assertEquals(expectedAction, nodeService.getProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ACTION));
+			assertNotNull(nodeService.getProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_PUBLISHEDDATE));
+			String error = (String) nodeService.getProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ERROR);
+			if (expectedErrorPart == null) {
+				assertNull(error);
+			} else {
+				assertNotNull(error);
+				assertTrue(error.contains(expectedErrorPart));
+			}
+			return null;
+		});
+	}
+
+	/**
+	 * Returns the publication channel list node for the given entity.
+	 *
+	 * @param entityNodeRef the entity node
+	 * @return the associated publication channel list node
+	 */
+	private NodeRef getChannelListNodeRef(NodeRef entityNodeRef) {
+		NodeRef listContainer = entityListDAO.getListContainer(entityNodeRef);
+		assertNotNull(listContainer);
+		NodeRef listNodeRef = entityListDAO.getList(listContainer, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST);
+		assertNotNull(listNodeRef);
+		NodeRef channelNodeRef = publicationChannelService.getChannelById(FormulationChannelService.FORMULATE_ENTITIES_CHANNEL_ID);
+		assertNotNull(channelNodeRef);
+		return entityListDAO.getListItem(listNodeRef, PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL, channelNodeRef);
 	}
 
 	@SuppressWarnings("unchecked")
