@@ -1312,6 +1312,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
 				dataLists.add(PLMModel.TYPE_SVHCLIST);
+				dataLists.add(PLMModel.TYPE_MICROBIOLIST);
 				dataLists.add(SurveyModel.TYPE_SURVEY_LIST);
 
 				wusedQName = PLMModel.TYPE_COMPOLIST;
