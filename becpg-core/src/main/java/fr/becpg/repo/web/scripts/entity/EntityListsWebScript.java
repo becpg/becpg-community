@@ -35,16 +35,13 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.Path;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.PermissionService;
-import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
@@ -53,7 +50,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.extensions.surf.util.I18NUtil;
-import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
@@ -68,10 +64,10 @@ import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.SiteHelper;
-import fr.becpg.repo.license.BeCPGLicenseManager;
 import fr.becpg.repo.report.jscript.ReportAssociationDecorator;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.security.SecurityService;
+import fr.becpg.repo.web.scripts.entity.datalist.AbstractEntityDataListWebScript;
 
 /**
  * The Class ProductListsWebScript.
@@ -79,7 +75,8 @@ import fr.becpg.repo.security.SecurityService;
  * @author querephi
  * @version $Id: $Id
  */
-public class EntityListsWebScript extends AbstractWebScript {
+//TODO merge with EntitySecurityWebScript to have a common AbstractEntityDataListWebScript and remove duplicate code
+public class EntityListsWebScript extends AbstractEntityDataListWebScript {
 
 	private static final String RESULT_CONTAINER = "container";
 
@@ -94,21 +91,21 @@ public class EntityListsWebScript extends AbstractWebScript {
 	private static final String RESULT_ACL_TYPE_NODE = "aclTypeNode";
 
 	private static final String RESULT_REPORTS = "reports";
-	private static final String KEY_NAME_NAME = "name";
+	static final String KEY_NAME_NAME = "name";
 
-	private static final String KEY_NAME_TITLE = "title";
+    static final String KEY_NAME_TITLE = "title";
 
-	private static final String KEY_NAME_DESCRIPTION = "description";
+	static final String KEY_NAME_DESCRIPTION = "description";
 
-	private static final String KEY_NAME_ENTITY_NAME = "entityName";
+    static final String KEY_NAME_ENTITY_NAME = "entityName";
 
-	private static final String KEY_NAME_NODE_REF = "nodeRef";
+	static final String KEY_NAME_NODE_REF = "nodeRef";
 
-	private static final String KEY_NAME_ITEM_TYPE = "itemType";
+	static final String KEY_NAME_ITEM_TYPE = "itemType";
 
-	private static final String KEY_NAME_STATE = "state";
+    static final String KEY_NAME_STATE = "state";
 
-	private static final String KEY_NAME_PARENT_NODE_REF = "parentNodeRef";
+	static final String KEY_NAME_PARENT_NODE_REF = "parentNodeRef";
 
 	private static final String KEY_NAME_USER_ACCESS = "userAccess";
 
@@ -154,15 +151,11 @@ public class EntityListsWebScript extends AbstractWebScript {
 
 	private static final Log logger = LogFactory.getLog(EntityListsWebScript.class);
 
-	private NodeService nodeService;
-
-	private SecurityService securityService;
+	
 
 	private EntityListDAO entityListDAO;
 
 	private EntityTplService entityTplService;
-
-	private NamespaceService namespaceService;
 
 	private TransactionService transactionService;
 
@@ -176,20 +169,8 @@ public class EntityListsWebScript extends AbstractWebScript {
 
 	private BehaviourFilter policyBehaviourFilter;
 
-	private LockService lockService;
-
 	private ReportAssociationDecorator reportAssociationDecorator;
 
-	private BeCPGLicenseManager becpgLicenseManager;
-
-	/**
-	 * <p>Setter for the field <code>becpgLicenseManager</code>.</p>
-	 *
-	 * @param becpgLicenseManager a {@link fr.becpg.repo.license.BeCPGLicenseManager} object
-	 */
-	public void setBecpgLicenseManager(BeCPGLicenseManager becpgLicenseManager) {
-		this.becpgLicenseManager = becpgLicenseManager;
-	}
 
 	/**
 	 * <p>Setter for the field <code>permissionService</code>.</p>
@@ -198,24 +179,6 @@ public class EntityListsWebScript extends AbstractWebScript {
 	 */
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>nodeService</code>.</p>
-	 *
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
-	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>securityService</code>.</p>
-	 *
-	 * @param securityService a {@link fr.becpg.repo.security.SecurityService} object.
-	 */
-	public void setSecurityService(SecurityService securityService) {
-		this.securityService = securityService;
 	}
 
 	/**
@@ -234,15 +197,6 @@ public class EntityListsWebScript extends AbstractWebScript {
 	 */
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>namespaceService</code>.</p>
-	 *
-	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
-	 */
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
 	}
 
 	/**
@@ -297,23 +251,6 @@ public class EntityListsWebScript extends AbstractWebScript {
 	 */
 	public void setReportAssociationDecorator(ReportAssociationDecorator reportAssociationDecorator) {
 		this.reportAssociationDecorator = reportAssociationDecorator;
-	}
-
-	/**
-	 * <p>Setter for the field <code>lockService</code>.</p>
-	 *
-	 * @param lockService a {@link org.alfresco.service.cmr.lock.LockService} object.
-	 */
-	public void setLockService(LockService lockService) {
-		this.lockService = lockService;
-	}
-
-	private Serializable defaultValue(Serializable val, Serializable def) {
-		if (val != null) {
-			return val;
-		} else {
-			return def;
-		}
 	}
 
 	private JSONArray makeListTypes(Iterable<ClassDefinition> classDefinitions) throws JSONException {

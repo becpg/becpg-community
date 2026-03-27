@@ -18,31 +18,32 @@
 package fr.becpg.repo.web.scripts.entity;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.workflow.WorkflowPackageComponent;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.cmr.workflow.WorkflowTask;
 import org.alfresco.service.cmr.workflow.WorkflowTaskState;
-import org.alfresco.repo.workflow.WorkflowPackageComponent;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
-import fr.becpg.repo.web.scripts.remote.AbstractEntityWebScript;
-import fr.becpg.repo.security.filter.SecurityContextHelper;
-import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.DataListModel;
+import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.security.filter.SecurityContextHelper;
+import fr.becpg.repo.web.scripts.remote.AbstractEntityWebScript;
 
 /**
  * WebScript to check security access for a given entity (tasks + datalists validation)
@@ -124,34 +125,18 @@ public class EntitySecurityWebScript extends AbstractEntityWebScript {
 			}
 
 			boolean hasAssignedTask = false;
-			
+
 			// Check if task assignment should be verified (wizard configuration)
 			String checkTaskParam = req.getParameter("checkTaskAssignment");
 			boolean checkTaskAssignment = checkTaskParam != null && Boolean.parseBoolean(checkTaskParam);
-			
-			// Only check task assignment if explicitly required (performance optimization)
+
 			if (checkTaskAssignment) {
-				// Check if result is already cached
-				Boolean cachedResult = SecurityContextHelper.getUserHasAssignedTask();
-				if (cachedResult != null) {
-					hasAssignedTask = cachedResult;
-					if (logger.isDebugEnabled()) {
-						logger.debug("Using cached task assignment result: " + hasAssignedTask);
-					}
-				} else {
-					// Compute and cache the result
-					hasAssignedTask = checkUserHasAssignedTask(entityNodeRef);
-					SecurityContextHelper.setUserHasAssignedTask(hasAssignedTask);
-					if (logger.isDebugEnabled()) {
-						logger.debug("Computed and cached task assignment result: " + hasAssignedTask);
-					}
-				}
-			} else {
+				hasAssignedTask = checkUserHasAssignedTask(entityNodeRef);
 				if (logger.isDebugEnabled()) {
-					logger.debug("Task assignment check not required, skipping");
+					logger.debug("Computed and cached task assignment result: " + hasAssignedTask);
 				}
 			}
-			
+
 			// Get datalists validation status
 			JSONArray datalists = getEntityDataLists(entityNodeRef);
 
@@ -164,8 +149,7 @@ public class EntitySecurityWebScript extends AbstractEntityWebScript {
 			resp.getWriter().write(jsonResponse.toString());
 
 		} catch (Exception e) {
-			logger.error("Cannot check tasks for entity " + entityNodeRef + " for user " 
-					+ AuthenticationUtil.getFullyAuthenticatedUser(), e);
+			logger.error("Cannot check tasks for entity " + entityNodeRef + " for user " + AuthenticationUtil.getFullyAuthenticatedUser(), e);
 			throw new WebScriptException("Failed to check tasks", e);
 		} finally {
 			// Always clear the thread local
@@ -185,9 +169,9 @@ public class EntitySecurityWebScript extends AbstractEntityWebScript {
 		}
 
 		String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
-		
+
 		List<String> contentWorkflowIds = workflowPackageComponent.getWorkflowIdsForContent(entityNodeRef);
-		
+
 		if (contentWorkflowIds.isEmpty()) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("No workflows found for entity: " + entityNodeRef);
@@ -197,9 +181,8 @@ public class EntitySecurityWebScript extends AbstractEntityWebScript {
 
 		// Check assigned tasks
 		List<WorkflowTask> assignedTasks = workflowService.getAssignedTasks(currentUser, WorkflowTaskState.IN_PROGRESS);
-		
-		boolean hasMatchingTask = assignedTasks.stream()
-				.anyMatch(task -> contentWorkflowIds.contains(task.getPath().getInstance().getId()));
+
+		boolean hasMatchingTask = assignedTasks.stream().anyMatch(task -> contentWorkflowIds.contains(task.getPath().getInstance().getId()));
 
 		if (hasMatchingTask) {
 			if (logger.isDebugEnabled()) {
@@ -210,8 +193,7 @@ public class EntitySecurityWebScript extends AbstractEntityWebScript {
 
 		// Check pooled tasks
 		List<WorkflowTask> pooledTasks = workflowService.getPooledTasks(currentUser);
-		hasMatchingTask = pooledTasks.stream()
-				.anyMatch(task -> contentWorkflowIds.contains(task.getPath().getInstance().getId()));
+		hasMatchingTask = pooledTasks.stream().anyMatch(task -> contentWorkflowIds.contains(task.getPath().getInstance().getId()));
 
 		if (hasMatchingTask) {
 			if (logger.isDebugEnabled()) {
@@ -241,18 +223,24 @@ public class EntitySecurityWebScript extends AbstractEntityWebScript {
 						JSONObject listObj = new JSONObject();
 
 						String listName = (String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME);
-						if (listName == null) {
-							QName listType = nodeService.getType(listNodeRef);
-							listName = listType.getLocalName();
-						}
-						listObj.put("name", listName);
+						
+						listObj.put(EntityListsWebScript.KEY_NAME_NAME, listName);
+
+						listObj.put(EntityListsWebScript.KEY_NAME_NODE_REF, listNodeRef.toString());
+
+						listObj.put(EntityListsWebScript.KEY_NAME_ITEM_TYPE, defaultValue(nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE),""));
+
+						listObj.put(EntityListsWebScript.KEY_NAME_TITLE, defaultValue(nodeService.getProperty(listNodeRef, ContentModel.PROP_TITLE), listName));
+
+						listObj.put(EntityListsWebScript.KEY_NAME_DESCRIPTION, defaultValue(nodeService.getProperty(listNodeRef, ContentModel.PROP_DESCRIPTION), ""));
+
 
 						String state = "ToValidate";
 						String stateValue = (String) nodeService.getProperty(listNodeRef, BeCPGModel.PROP_ENTITYLIST_STATE);
 						if (stateValue != null) {
 							state = stateValue;
 						}
-						listObj.put("state", state);
+						listObj.put(EntityListsWebScript.KEY_NAME_STATE, state);
 
 						datalists.put(listObj);
 					}
@@ -263,5 +251,13 @@ public class EntitySecurityWebScript extends AbstractEntityWebScript {
 		}
 
 		return datalists;
+	}
+	
+	private Serializable defaultValue(Serializable val, Serializable def) {
+		if (val != null) {
+			return val;
+		} else {
+			return def;
+		}
 	}
 }
