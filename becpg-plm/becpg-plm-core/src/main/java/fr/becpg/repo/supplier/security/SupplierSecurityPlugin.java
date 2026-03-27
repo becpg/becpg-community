@@ -1,6 +1,7 @@
 package fr.becpg.repo.supplier.security;
 
 import java.util.List;
+
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.workflow.WorkflowPackageComponent;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -15,14 +16,13 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.entity.EntityDictionaryService;
-import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.security.plugins.SecurityServicePlugin;
-import fr.becpg.repo.security.filter.SecurityContextHelper;
 import fr.becpg.repo.supplier.SupplierPortalService;
 
 /**
@@ -69,53 +69,28 @@ public class SupplierSecurityPlugin implements SecurityServicePlugin {
 	/** {@inheritDoc} */
 	@Override
 	public int getMaxAccessMode(NodeRef entityNodeRef) {
-	    if (entityNodeRef != null) {
-	        NodeRef supplierNodeRef = supplierPortalService.getSupplierNodeRef(entityNodeRef);
-	        if ((supplierNodeRef != null) && supplierPortalService.isCurrentUserInSupplierGroup(supplierNodeRef)) {
-	            
-	            List<String> contentWorkflowIds =  workflowPackageComponent.getWorkflowIdsForContent(entityNodeRef);
-	            if (contentWorkflowIds.isEmpty()) {
-	                return SecurityService.READ_ACCESS;
-	            }
-	            
-	            // Check if task assignment result is cached from EntitySecurityWebScript
-	            Boolean cachedTaskResult = SecurityContextHelper.getUserHasAssignedTask();
-	            if (cachedTaskResult != null) {
-	                // Use cached result to avoid recomputing workflow tasks
-	                if (cachedTaskResult) {
-	                    return SecurityService.WRITE_ACCESS;
-	                } else {
-	                    return SecurityService.READ_ACCESS;
-	                }
-	            }
-	            
-	            // Fallback to original computation if not cached
-	            String supplierAccount = AuthenticationUtil.getFullyAuthenticatedUser();
-	            
-	            List<WorkflowTask> assignedTasks = workflowService.getAssignedTasks(
-	                supplierAccount, WorkflowTaskState.IN_PROGRESS);
-	            
-	            boolean hasMatchingTask = assignedTasks.stream()
-	                .anyMatch(task -> contentWorkflowIds.contains(task.getPath().getInstance().getId()));
-	                
-	            if (hasMatchingTask) {
-	                return SecurityService.WRITE_ACCESS;
-	            }
-	            
-	            // Check pooled tasks
-	            List<WorkflowTask> pooledTasks = workflowService.getPooledTasks(supplierAccount);
-	            hasMatchingTask = pooledTasks.stream()
-	                .anyMatch(task -> contentWorkflowIds.contains(task.getPath().getInstance().getId()));
-	                
-	            if (hasMatchingTask) {
-	                return SecurityService.WRITE_ACCESS;
-	            }
-	            
-	            return SecurityService.READ_ACCESS;
-	        }
-	    }
-	    
-	    return SecurityService.WRITE_ACCESS;
+		if (entityNodeRef == null) {
+			return SecurityService.WRITE_ACCESS;
+		}
+
+		NodeRef supplierNodeRef = supplierPortalService.getSupplierNodeRef(entityNodeRef);
+		if ((supplierNodeRef == null) || !supplierPortalService.isCurrentUserInSupplierGroup(supplierNodeRef)) {
+			return SecurityService.WRITE_ACCESS;
+		}
+
+		List<String> contentWorkflowIds = findWorkflowIds(entityNodeRef, supplierNodeRef);
+		if (contentWorkflowIds.isEmpty()) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("No workflows found for entity " + entityNodeRef + " or supplier " + supplierNodeRef);
+			}
+			return SecurityService.READ_ACCESS;
+		}
+
+		if (hasMatchingTask(contentWorkflowIds)) {
+			return SecurityService.WRITE_ACCESS;
+		}
+
+		return SecurityService.READ_ACCESS;
 	}
 
 	/**
@@ -188,9 +163,6 @@ public class SupplierSecurityPlugin implements SecurityServicePlugin {
 		for (DeliverableListDataItem deliverable : projectData.getDeliverableList()) {
 			String url = deliverable.getUrl();
 			if ((url != null) && url.startsWith(SUPPLIER_WIZARD_PREFIX)) {
-				if (workflowTaskNodeRef == null) {
-					return true;
-				}
 				List<NodeRef> deliverableTasks = deliverable.getTasks();
 				if ((deliverableTasks != null) && deliverableTasks.contains(workflowTaskNodeRef)) {
 					return true;

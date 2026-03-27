@@ -1,6 +1,3 @@
-/*
- * 
- */
 package fr.becpg.repo.security.filter;
 
 /**
@@ -15,13 +12,6 @@ public class SecurityContextHelper {
 		@Override
 		protected Boolean initialValue() {
 			return false;
-		}
-	};
-
-	private static final ThreadLocal<Boolean> userHasAssignedTask = new ThreadLocal<Boolean>() {
-		@Override
-		protected Boolean initialValue() {
-			return null; // null = not computed yet
 		}
 	};
 
@@ -44,41 +34,9 @@ public class SecurityContextHelper {
 	}
 
 	/**
-	 * Set whether user has assigned task (cached result)
-	 *
-	 * @param hasTask true if user has assigned task, false if not, null if not computed
-	 */
-	public static void setUserHasAssignedTask(Boolean hasTask) {
-		userHasAssignedTask.set(hasTask);
-	}
-
-	/**
-	 * Get cached result of whether user has assigned task
-	 *
-	 * @return true if user has assigned task, false if not, null if not computed yet
-	 */
-	public static Boolean getUserHasAssignedTask() {
-		return userHasAssignedTask.get();
-	}
-
-	/**
-	 * Check if user has assigned task (with automatic caching)
-	 *
-	 * @return true if user has assigned task, false if not
-	 */
-	public static boolean checkUserHasAssignedTask() {
-		Boolean cached = userHasAssignedTask.get();
-		if (cached != null) {
-			return cached;
-		}
-		return false; // default if not computed
-	}
-
-	/**
 	 * Clear all thread local values
 	 */
 	public static void clear() {
 		skipSecurityRules.remove();
-		userHasAssignedTask.remove();
 	}
 }
