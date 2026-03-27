@@ -19,6 +19,7 @@
 
     YAHOO.extend(beCPG.component.WizardMgr, Alfresco.component.Base, {
         currentIndex: 0,
+        taskAssigned: null,
         options: {
             siteId: "", nodeRef: "", destination: "", draft: false,
             allSteps: false, readOnly: false, wizardStruct: [],
@@ -55,8 +56,9 @@
                     }
 
                     var step = me.options.wizardStruct[currentIndex];
+                    var stepReadOnly = me.options.readOnly || step.readOnly || step.valid;
+                    
                     if (currentIndex > newIndex && step && (step.type === "form" || step.type === "survey")) {
-                        var stepReadOnly = me.options.readOnly || step.readOnly || step.valid;
                         if (!stepReadOnly) {
                             me.showStepChangeConfirmation(function() {
                                 isNavigatingBack = true;
@@ -74,9 +76,11 @@
                     if (step.type === "form" || step.type === "survey") {
                         if (step.form) {
                             validationInProgress = true;
-                            Dom.get(me.id + "-step-" + step.id + "-form-submit").click();
                             var isValid = me.options.readOnly || step.readOnly ||
-                                step.form.validate(Alfresco.forms.Form.NOTIFICATION_LEVEL_CONTAINER);
+                                 step.form.validate(Alfresco.forms.Form.NOTIFICATION_LEVEL_CONTAINER);
+                            if(isValid && !(stepReadOnly)){
+                                 Dom.get(me.id + "-step-" + step.id + "-form-submit").click();
+                            }
                             validationInProgress = false;
                             return isValid;
                         }
@@ -149,12 +153,15 @@
             var step = this.options.wizardStruct[currentIndex];
             if (!step) return true;
 
+            var stepReadOnly = me.options.readOnly || step.readOnly || step.valid;
             if (step.type === "form" || step.type === "survey") {
                 if (step.form) {
                     validationInProgress = true;
-                    Dom.get(this.id + "-step-" + step.id + "-form-submit").click();
                     var isValid = this.options.readOnly || step.readOnly ||
                         step.form.validate(Alfresco.forms.Form.NOTIFICATION_LEVEL_CONTAINER);
+                     if(isValid && !(stepReadOnly)){
+                       Dom.get(this.id + "-step-" + step.id + "-form-submit").click();
+                     }
                     validationInProgress = false;
                     step.finish = true;
                     if (!isValid) return false;
@@ -314,9 +321,10 @@
                 // Build URL with security parameters based on wizard configuration
                 var url = Alfresco.constants.PROXY_URI + "becpg/security/entitylists/check/" + step.nodeRef.replace(":/", "");
                 var params = [];
+                var me = this;
                 
                 // Add checkTaskAssignment parameter if wizard requires it
-                if (this.options.enforceTask) {
+                if (this.options.enforceTask && me.taskAssigned === null) {
                     params.push("checkTaskAssignment=true");
                 }
                 
@@ -335,11 +343,13 @@
                     url: url,
                     successCallback: {
                         fn: function(response) {
-                            var hasTask = response.json.hasAssignedTask;
+                            if (me.taskAssigned === null) {
+                               me.taskAssigned = !!response.json.hasAssignedTask;
+                            }
                             var datalists = response.json.datalists;
                             
                             // If enforceTask is enabled and no task assigned, make read-only
-                            if (this.options.enforceTask && !hasTask) {
+                            if (this.options.enforceTask && !me.taskAssigned) {
                                 step.valid = true;
                                 callback(true, datalists);
                                 return;
@@ -353,14 +363,14 @@
                             });
                             callback(validated, datalists);
                         },
-                        scope: this
+                        scope: me
                     },
                     failureCallback: {
                         fn: function() {
                             // On error, default to read-only for safety
                             callback(true, null);
                         },
-                        scope: this
+                        scope: me
                     }
                 });
             } else {
