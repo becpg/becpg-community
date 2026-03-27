@@ -62,7 +62,7 @@
          <span id="${fieldHtmlId}-values" class="viewmode-value current-values hidden"></span>
       </div>
    <#else>
-      <label for="${controlId}">${field.label?html}:<#if field.endpointMandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>     
+      <label for="${fieldHtmlId}">${field.label?html}:<#if field.endpointMandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>     
       <div id="${controlId}" class="object-finder">        
 			<div class="yui-ac" style="display:inline-block;" >
 					 <div id="${fieldHtmlId}-autocomplete" class="ac-body" <#if style??>style="${style}"</#if>>
