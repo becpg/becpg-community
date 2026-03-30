@@ -104,6 +104,7 @@ import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
+import fr.becpg.repo.product.helper.WUsedAssociationResolver;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -168,6 +169,9 @@ public class ECOServiceImpl implements ECOService {
 	
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
+
+	@Autowired
+	private WUsedAssociationResolver wUsedAssociationResolver;
 	
 	@Value("${beCPG.eco.impactwused.states}")
 	private String impactWUsedStates;
@@ -1035,17 +1039,7 @@ public class ECOServiceImpl implements ECOService {
 
 	// Keep only common assocs
 	private List<QName> evaluateWUsedAssociations(List<NodeRef> sourceList) {
-		List<QName> assocQNames = null;
-
-		for (NodeRef replacementSourceNodeRef : sourceList) {
-			if (assocQNames == null) {
-				assocQNames = evaluateWUsedAssociations(replacementSourceNodeRef);
-			} else {
-				assocQNames.retainAll(evaluateWUsedAssociations(replacementSourceNodeRef));
-			}
-		}
-
-		return assocQNames;
+		return wUsedAssociationResolver.evaluateWUsedAssociations(sourceList);
 	}
 
 	private int calculateWUsedList(ChangeOrderData ecoData, MultiLevelListData wUsedData, QName dataListQName, WUsedListDataItem parent,
@@ -1590,33 +1584,6 @@ public class ECOServiceImpl implements ECOService {
 		changeUnitDataItem.setReqType(reqType);
 		changeUnitDataItem.setReqDetails(reqDetails.isEmpty() ? null : reqDetails);
 
-	}
-
-	/**
-	 * <p>
-	 * evaluateWUsedAssociations.
-	 * </p>
-	 *
-	 * @param targetAssocNodeRef
-	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @return a {@link java.util.List} object.
-	 */
-	private List<QName> evaluateWUsedAssociations(NodeRef targetAssocNodeRef) {
-		List<QName> wUsedAssociations = new ArrayList<>();
-
-		QName nodeType = nodeService.getType(targetAssocNodeRef);
-
-		if (nodeType.isMatch(PLMModel.TYPE_RAWMATERIAL) || nodeType.isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)
-				|| nodeType.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT) || nodeType.isMatch(PLMModel.TYPE_FINISHEDPRODUCT)
-				|| nodeType.isMatch(PLMModel.TYPE_LOGISTICUNIT)) {
-			wUsedAssociations.add(PLMModel.ASSOC_COMPOLIST_PRODUCT);
-		} else if (nodeType.isMatch(PLMModel.TYPE_PACKAGINGMATERIAL) || nodeType.isMatch(PLMModel.TYPE_PACKAGINGKIT)) {
-			wUsedAssociations.add(PLMModel.ASSOC_PACKAGINGLIST_PRODUCT);
-		} else if (nodeType.isMatch(PLMModel.TYPE_RESOURCEPRODUCT)) {
-			wUsedAssociations.add(MPMModel.ASSOC_PL_RESOURCE);
-		}
-
-		return wUsedAssociations;
 	}
 
 	private QName evaluateListFromAssociation(QName associationName) {
