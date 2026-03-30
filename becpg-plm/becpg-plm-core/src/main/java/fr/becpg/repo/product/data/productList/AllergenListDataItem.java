@@ -53,6 +53,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 	private List<NodeRef> voluntarySources = new ArrayList<>();
 	private List<NodeRef> inVoluntarySources = new ArrayList<>();
 	private NodeRef allergen;
+	private Integer depthLevel;
 	private List<NodeRef> regulatoryCountriesRef = new ArrayList<>();
 	private List<NodeRef> regulatoryUsagesRef = new ArrayList<>();
 	private RequirementType regulatoryType;
@@ -388,12 +389,33 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 	}
 
 	/**
+	 * <p>Getter for the field <code>depthLevel</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
+	@AlfProp
+	@InternalField
+	@AlfQname(qname = "bcpg:depthLevel")
+	public Integer getDepthLevel() {
+		return depthLevel;
+	}
+
+	/**
 	 * <p>Setter for the field <code>allergen</code>.</p>
 	 *
 	 * @param allergen a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	public void setAllergen(NodeRef allergen) {
 		this.allergen = allergen;
+	}
+
+	/**
+	 * <p>Setter for the field <code>depthLevel</code>.</p>
+	 *
+	 * @param depthLevel a {@link java.lang.Integer} object.
+	 */
+	public void setDepthLevel(Integer depthLevel) {
+		this.depthLevel = depthLevel;
 	}
 
 	/**
@@ -632,6 +654,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 		this.voluntarySources = new ArrayList<>(allergenListDataItem.voluntarySources);
 		this.inVoluntarySources = new ArrayList<>(allergenListDataItem.inVoluntarySources);
 		this.allergen = allergenListDataItem.allergen;
+		this.depthLevel = allergenListDataItem.depthLevel;
 		this.regulatoryCountriesRef = new ArrayList<>(allergenListDataItem.regulatoryCountriesRef);
 		this.regulatoryUsagesRef = new ArrayList<>(allergenListDataItem.regulatoryUsagesRef);
 		this.regulatoryMessage = allergenListDataItem.regulatoryMessage;
@@ -650,7 +673,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + Objects.hash(allergen, allergenValue, inVoluntary, inVoluntarySources, isCleaned, onLine, onSite, qtyPerc,
-				voluntary, voluntarySources);
+				voluntary, voluntarySources, depthLevel);
 		return result;
 	}
 
@@ -667,7 +690,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 		return Objects.equals(allergen, other.allergen) && Objects.equals(allergenValue, other.allergenValue)
 				&& Objects.equals(inVoluntary, other.inVoluntary) && Objects.equals(inVoluntarySources, other.inVoluntarySources)
 				&& Objects.equals(isCleaned, other.isCleaned) && Objects.equals(onLine, other.onLine) && Objects.equals(onSite, other.onSite)
-				&& Objects.equals(qtyPerc, other.qtyPerc) && Objects.equals(voluntary, other.voluntary)
+				&& Objects.equals(qtyPerc, other.qtyPerc) && Objects.equals(voluntary, other.voluntary) && Objects.equals(depthLevel, other.depthLevel)
 				&& Objects.equals(voluntarySources, other.voluntarySources);
 	}
 
@@ -676,7 +699,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 	public String toString() {
 		return "AllergenListDataItem [qtyPerc=" + qtyPerc + ", voluntary=" + voluntary + ", inVoluntary=" + inVoluntary + ", allergenValue="
 				+ allergenValue + ", voluntarySources=" + voluntarySources + ", inVoluntarySources=" + inVoluntarySources + ", allergen=" + allergen
-				+ "]";
+				+ ", depthLevel=" + depthLevel + "]";
 	}
 
 }
