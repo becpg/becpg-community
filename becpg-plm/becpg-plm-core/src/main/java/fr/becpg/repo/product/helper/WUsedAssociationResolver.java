@@ -8,6 +8,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.MPMModel;
@@ -30,7 +31,7 @@ public class WUsedAssociationResolver {
      *
      * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
      */
-    public WUsedAssociationResolver(NodeService nodeService) {
+    public WUsedAssociationResolver(@Qualifier("nodeService") NodeService nodeService) {
         this.nodeService = nodeService;
     }
 
