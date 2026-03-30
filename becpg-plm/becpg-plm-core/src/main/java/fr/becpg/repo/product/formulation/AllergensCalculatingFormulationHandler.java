@@ -40,6 +40,7 @@ import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.repo.variant.model.VariantDataItem;
 
 /**
@@ -62,6 +63,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	/** Constant <code>MESSAGE_EMPTY_ALLERGEN="message.formulate.allergen.error.empty"</code> */
 	public static final String MESSAGE_EMPTY_ALLERGEN = "message.formulate.allergen.error.empty";
 
+	public static final String CONF_ALLERGEN_SORT_BY_PARENT = "beCPG.formulation.allergenList.sortByParent";
+
 	private static final Log logger = LogFactory.getLog(AllergensCalculatingFormulationHandler.class);
 
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
@@ -72,6 +75,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 	private AllergenRequirementScanner allergenRequirementScanner;
 
+	private SystemConfigurationService systemConfigurationService;
+
 	/**
 	 * <p>Setter for the field <code>allergenRequirementScanner</code>.</p>
 	 *
@@ -79,6 +84,15 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	 */
 	public void setAllergenRequirementScanner(AllergenRequirementScanner allergenRequirementScanner) {
 		this.allergenRequirementScanner = allergenRequirementScanner;
+	}
+
+	/**
+	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
+	 *
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object.
+	 */
+	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
+		this.systemConfigurationService = systemConfigurationService;
 	}
 
 	/**
@@ -293,7 +307,11 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 				}
 			});
 
-			sort(formulatedProduct.getAllergenList());
+			if (isHierarchicalSortEnabled()) {
+				sortByParent(formulatedProduct.getAllergenList());
+			} else {
+				sort(formulatedProduct.getAllergenList());
+			}
 		}
 
 		return true;
@@ -598,9 +616,6 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 		MutableInt sort = new MutableInt(1);
 		allergenList.stream().sorted((a1, a2) -> {
-			
-			
-			
 			AllergenItem allergen1 = (AllergenItem) alfrescoRepository.findOne(a1.getAllergen());
 			AllergenItem allergen2 = (AllergenItem) alfrescoRepository.findOne(a2.getAllergen());
 			String type1 = allergen1.getAllergenType();
@@ -627,8 +642,184 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 			return type1.compareTo(type2);
 
-		}).forEach(al -> al.setSort(sort.getAndIncrement()));
+		}).forEach(al -> {
+			al.setSort(sort.getAndIncrement());
+			al.setDepthLevel(Integer.valueOf(1));
+		});
 
+	}
+
+	/**
+	 * Sort allergens by parent/child hierarchy using allergen subsets while preserving
+	 * alphabetical order inside each level.
+	 *
+	 * @param allergenList a {@link java.util.List} object.
+	 */
+	protected void sortByParent(List<AllergenListDataItem> allergenList) {
+		Map<NodeRef, AllergenItem> allergenByNodeRef = new HashMap<>();
+		Map<NodeRef, AllergenListDataItem> itemByNodeRef = new HashMap<>();
+
+		for (AllergenListDataItem allergenListDataItem : allergenList) {
+			if (allergenListDataItem.getAllergen() != null) {
+				itemByNodeRef.put(allergenListDataItem.getAllergen(), allergenListDataItem);
+				allergenByNodeRef.put(allergenListDataItem.getAllergen(),
+						(AllergenItem) alfrescoRepository.findOne(allergenListDataItem.getAllergen()));
+			}
+		}
+
+		Map<NodeRef, List<NodeRef>> childrenByParent = new HashMap<>();
+		Set<NodeRef> knownChildren = new HashSet<>();
+
+		for (Map.Entry<NodeRef, AllergenItem> entry : allergenByNodeRef.entrySet()) {
+			NodeRef parentNodeRef = entry.getKey();
+			AllergenItem parentAllergen = entry.getValue();
+			if (parentAllergen != null && parentAllergen.getAllergenSubset() != null) {
+				for (NodeRef childNodeRef : parentAllergen.getAllergenSubset()) {
+					if (itemByNodeRef.containsKey(childNodeRef)) {
+						childrenByParent.computeIfAbsent(parentNodeRef, key -> new ArrayList<>()).add(childNodeRef);
+						knownChildren.add(childNodeRef);
+					}
+				}
+			}
+		}
+
+		List<NodeRef> roots = new ArrayList<>();
+		for (NodeRef allergenNodeRef : itemByNodeRef.keySet()) {
+			if (!knownChildren.contains(allergenNodeRef)) {
+				roots.add(allergenNodeRef);
+			}
+		}
+
+		roots.sort((allergenNodeRef1, allergenNodeRef2) -> compareAllergens(allergenByNodeRef.get(allergenNodeRef1), allergenByNodeRef.get(allergenNodeRef2)));
+
+		List<AllergenListDataItem> orderedItems = new ArrayList<>();
+		Set<NodeRef> visited = new HashSet<>();
+
+		for (NodeRef rootNodeRef : roots) {
+			appendNode(rootNodeRef, Integer.valueOf(1), orderedItems, itemByNodeRef, allergenByNodeRef, childrenByParent, visited,
+					new HashSet<>());
+		}
+
+		List<NodeRef> remainingNodes = new ArrayList<>();
+		for (NodeRef allergenNodeRef : itemByNodeRef.keySet()) {
+			if (!visited.contains(allergenNodeRef)) {
+				remainingNodes.add(allergenNodeRef);
+			}
+		}
+
+		remainingNodes.sort((allergenNodeRef1, allergenNodeRef2) -> compareAllergens(allergenByNodeRef.get(allergenNodeRef1), allergenByNodeRef.get(allergenNodeRef2)));
+		for (NodeRef remainingNode : remainingNodes) {
+			appendNode(remainingNode, Integer.valueOf(1), orderedItems, itemByNodeRef, allergenByNodeRef, childrenByParent, visited,
+					new HashSet<>());
+		}
+
+		allergenList.clear();
+		allergenList.addAll(orderedItems);
+
+		MutableInt sort = new MutableInt(1);
+		for (AllergenListDataItem allergenListDataItem : allergenList) {
+			allergenListDataItem.setSort(sort.getAndIncrement());
+		}
+	}
+
+	/**
+	 * Returns whether allergen hierarchical sorting is enabled in system
+	 * configuration.
+	 *
+	 * @return true when hierarchical sorting is enabled
+	 */
+	protected boolean isHierarchicalSortEnabled() {
+		if (systemConfigurationService == null) {
+			return false;
+		}
+		return Boolean.parseBoolean(systemConfigurationService.confValue(CONF_ALLERGEN_SORT_BY_PARENT));
+	}
+
+	/**
+	 * Appends a parent node and its children recursively while preserving level and
+	 * alphabetical order.
+	 *
+	 * @param allergenNodeRef the allergen node to append
+	 * @param depthLevel current hierarchy level
+	 * @param orderedItems flattened result list
+	 * @param itemByNodeRef allergen item map
+	 * @param allergenByNodeRef allergen metadata map
+	 * @param childrenByParent parent to children map
+	 * @param visited global visited set
+	 * @param recursionStack recursion stack for cycle protection
+	 */
+	private void appendNode(NodeRef allergenNodeRef, Integer depthLevel, List<AllergenListDataItem> orderedItems,
+			Map<NodeRef, AllergenListDataItem> itemByNodeRef, Map<NodeRef, AllergenItem> allergenByNodeRef,
+			Map<NodeRef, List<NodeRef>> childrenByParent, Set<NodeRef> visited, Set<NodeRef> recursionStack) {
+
+		if ((allergenNodeRef == null) || visited.contains(allergenNodeRef) || recursionStack.contains(allergenNodeRef)) {
+			return;
+		}
+
+		AllergenListDataItem allergenListDataItem = itemByNodeRef.get(allergenNodeRef);
+		if (allergenListDataItem == null) {
+			return;
+		}
+
+		recursionStack.add(allergenNodeRef);
+		allergenListDataItem.setDepthLevel(depthLevel);
+		orderedItems.add(allergenListDataItem);
+		visited.add(allergenNodeRef);
+
+		List<NodeRef> children = childrenByParent.get(allergenNodeRef);
+		if (children != null) {
+			children.sort((childNodeRef1, childNodeRef2) -> compareAllergens(allergenByNodeRef.get(childNodeRef1), allergenByNodeRef.get(childNodeRef2)));
+			for (NodeRef childNodeRef : children) {
+				appendNode(childNodeRef, Integer.valueOf(depthLevel.intValue() + 1), orderedItems, itemByNodeRef, allergenByNodeRef,
+						childrenByParent, visited, recursionStack);
+			}
+		}
+
+		recursionStack.remove(allergenNodeRef);
+	}
+
+	/**
+	 * Compare two allergens using major/minor priority and alphabetical fallback.
+	 *
+	 * @param allergen1 first allergen
+	 * @param allergen2 second allergen
+	 * @return comparison result
+	 */
+	private int compareAllergens(AllergenItem allergen1, AllergenItem allergen2) {
+		final int BEFORE = -1;
+		final int AFTER = 1;
+
+		if (allergen1 == null && allergen2 == null) {
+			return 0;
+		} else if (allergen1 == null) {
+			return BEFORE;
+		} else if (allergen2 == null) {
+			return AFTER;
+		}
+
+		String type1 = allergen1.getAllergenType();
+		String type2 = allergen2.getAllergenType();
+
+		String allergenName1 = extractName(allergen1);
+		String allergenName2 = extractName(allergen2);
+
+		if (type1 == null && type2 == null) {
+			return allergenName1.compareTo(allergenName2);
+		} else if (type1 == null) {
+			return BEFORE;
+		} else if (type2 == null) {
+			return AFTER;
+		}
+
+		if (type1.equals(type2)) {
+			return allergenName1.compareTo(allergenName2);
+		} else if (AllergenType.Major.toString().equals(type1) && AllergenType.Minor.toString().equals(type2)) {
+			return BEFORE;
+		} else if (AllergenType.Minor.toString().equals(type1) && AllergenType.Major.toString().equals(type2)) {
+			return AFTER;
+		}
+
+		return type1.compareTo(type2);
 	}
 
 	private String extractName(AllergenItem allergen) {

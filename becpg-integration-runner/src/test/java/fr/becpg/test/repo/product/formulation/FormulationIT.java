@@ -996,6 +996,74 @@ public class FormulationIT extends AbstractFinishedProductTest {
 	}
 
 	/**
+	 * Test allergen hierarchical sort when enabled by system configuration.
+	 */
+	@Test
+	public void testAllergenListSortByParent() {
+
+		logger.info("testAllergenListSortByParent");
+
+		try {
+			inWriteTx(() -> {
+				List<NodeRef> subset = new ArrayList<>();
+				subset.add(allergen1);
+				nodeService.setAssociations(allergen2, PLMModel.ASSOC_ALLERGENSUBSETS, subset);
+				systemConfigurationService.updateConfValue("beCPG.formulation.allergenList.sortByParent", "true");
+				return null;
+			});
+
+			final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+
+				FinishedProductData finishedProduct = new FinishedProductData();
+				finishedProduct.setName("allergen-parent-sort-fp");
+				finishedProduct.setLegalName("allergen-parent-sort-fp");
+				finishedProduct.setUnit(ProductUnit.kg);
+				finishedProduct.setQty(2d);
+				finishedProduct.setDensity(1d);
+
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+						.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
+				compoList.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+						.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+				compoList.add(CompoListDataItem.build().withParent(null).withQty(null).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+						.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial3NodeRef));
+
+				finishedProduct.getCompoListView().setCompoList(compoList);
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+			});
+
+			inWriteTx(() -> {
+				productService.formulate(finishedProductNodeRef);
+
+				ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+				assertNotNull("AllergenList is null", formulatedProduct.getAllergenList());
+				assertEquals("AllergenList size", 4, formulatedProduct.getAllergenList().size());
+
+				List<AllergenListDataItem> allergenList = formulatedProduct.getAllergenList();
+				assertEquals("Expected root allergen2 first", allergen2, allergenList.get(0).getAllergen());
+				assertEquals("Expected child allergen1 after allergen2", allergen1, allergenList.get(1).getAllergen());
+				assertEquals("Expected allergen3 in third position", allergen3, allergenList.get(2).getAllergen());
+				assertEquals("Expected allergen4 in fourth position", allergen4, allergenList.get(3).getAllergen());
+
+				assertEquals("allergen2 depth level", Integer.valueOf(1), allergenList.get(0).getDepthLevel());
+				assertEquals("allergen1 depth level", Integer.valueOf(2), allergenList.get(1).getDepthLevel());
+				assertEquals("allergen3 depth level", Integer.valueOf(1), allergenList.get(2).getDepthLevel());
+				assertEquals("allergen4 depth level", Integer.valueOf(1), allergenList.get(3).getDepthLevel());
+
+				return null;
+			});
+
+		} finally {
+			inWriteTx(() -> {
+				nodeService.setAssociations(allergen2, PLMModel.ASSOC_ALLERGENSUBSETS, new ArrayList<>());
+				systemConfigurationService.resetConfValue("beCPG.formulation.allergenList.sortByParent");
+				return null;
+			});
+		}
+	}
+
+	/**
 	 * Test formulate product, that has loss perc defined
 	 *
 	 * @throws Exception

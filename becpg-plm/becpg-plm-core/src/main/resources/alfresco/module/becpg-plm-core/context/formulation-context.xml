@@ -155,6 +155,7 @@
 				<bean class="fr.becpg.repo.product.formulation.AllergensCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="nodeService" ref="nodeService" />
+					<property name="systemConfigurationService" ref="systemConfigurationService" />
 					<property name="allergenRequirementScanner">
 						<bean class="fr.becpg.repo.product.requirement.AllergenRequirementScanner">
 							<property name="mlNodeService" ref="mlAwareNodeService" />
