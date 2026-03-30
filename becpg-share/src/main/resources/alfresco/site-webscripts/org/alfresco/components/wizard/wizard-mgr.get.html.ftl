@@ -30,6 +30,7 @@
 	<#include "../../modules/entity-datagrid/include/entity-datagrid.js.ftl"/>
 	<@script src="${url.context}/res/components/entity-charact-views/dashlet-resizer.js" />
 	<@script src="${url.context}/res/components/entity-catalog/entity-catalog.js" group="wizard"/>
+    <@script src="${url.context}/res/modules/entity-charact-details/entity-charact-details.js" group="wizard"/>
 
     <@script src="${url.context}/res/js/lib/jquery-1.12.4/jquery-1.12.4.min.js" group="wizard"/>
     <@script src="${url.context}/res/components/wizard/jquery-steps.js" group="wizard"/>
@@ -103,12 +104,12 @@
 	         		 
 			        <#if comments >	 
 			        	 
-							         <div id="${el}-body" class="comments-list">
-							            <div id="${el}-add-comment">
+							         <div id="${el}-body" class="comments-list <#if readOnly>comments-list-readonly</#if>">
+							            <div id="${el}-add-comment" <#if readOnly>style="display:none;"</#if>>
 							               <div id="${el}-add-form-container" class="theme-bg-color-4 hidden"></div>
 							            </div>
 							            <div class="comments-list-actions">
-							               <div class="left">
+							               <div class="left" <#if readOnly>style="display:none;"</#if>>
 							                  <div id="${el}-actions" class="hidden">
 							                     <button id="${el}-add-comment-button">${msg("button.addComment")}</button>
 							                  </div>
