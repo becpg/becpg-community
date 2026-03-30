@@ -738,12 +738,17 @@
                     var me = this;
 
                     // new row button
-                    this.widgets.newRowButton = Alfresco.util.createYUIButton(this, "newRowButton",
-                        this.onActionCreate,
-                        {
-                            disabled: true,
-                            value: "create"
-                        });
+                    if (!(this.options.readOnly == "true" || this.options.readOnly === true) ){
+                        this.widgets.newRowButton = Alfresco.util.createYUIButton(this, "newRowButton",
+                            this.onActionCreate,
+                            {
+                                disabled: true,
+                                value: "create"
+                            });
+                            
+
+                          this.widgets.newRowButton.set("disabled", true);
+                     }
 
                     // Selected Items menu button
                     this.widgets.selectedItems = Alfresco.util.createYUIButton(this, "selectedItems-button",
@@ -790,7 +795,6 @@
                     // Assume no list chosen for now
                     Dom.removeClass(this.id + "-selectListMessage", "hidden");
 
-                    this.widgets.newRowButton.set("disabled", true);
 
 
                     // Filter forms

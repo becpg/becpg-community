@@ -43,10 +43,10 @@ function main() {
         	model.allSteps = wizard.attributes["allSteps"] == "true";
         	model.readOnly = wizard.attributes["read-only"] == "true";
         	
-        	               // Extract security-related attributes from XML configuration
-        	               model.enforceTask = wizard.attributes["enforceTask"] == "true";
-        	               model.skipSecurityRules = wizard.attributes["skipSecurityRules"] == "true";
-        	            var steps = wizard.childrenMap["step"];
+           // Extract security-related attributes from XML configuration
+        	model.enforceTask = wizard.attributes["enforceTask"] == "true";
+        	model.skipSecurityRules = wizard.attributes["skipSecurityRules"] == "true";
+        	var steps = wizard.childrenMap["step"];
             for(var j = 0, step; j < steps.size(); j++){
                 step = steps.get(j);
                 wizardStruct.push({

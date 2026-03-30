@@ -627,7 +627,7 @@
                 
                 // Show first question or questions marked as start
                 if ((i === 0 || question.start === true) && 
-                    (!this.options.disabled || this.options.currentValue.length > 0)) {
+                    (!this.options.disabled || this.options.currentValue.length > 0 || !question.choices)) {
                     visible.push(question.id);
                 }
 
