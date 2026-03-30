@@ -52,7 +52,6 @@ import org.dom4j.Element;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
-import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.ParserContext;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -467,10 +466,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 	private String parseFormula(String formula) throws ImporterException {
 		try {
-			ExpressionParser parser = formulaService.getSpelParser();
 			StandardEvaluationContext context = formulaService.createSpelContext(this);
 
-			return parser.parseExpression(formula, new ParserContext() {
+			return formulaService.parseExpression(formula, new ParserContext() {
 
 				@Override
 				public String getExpressionPrefix() {
