@@ -17,6 +17,11 @@
         button.classList[val ? "remove" : "add"]("disabled");
     }
 
+    function setReadOnlyClass(element, readOnly) {
+        if (!element) return;
+        element.classList[readOnly ? "add" : "remove"]("read-only");
+    }
+
     YAHOO.extend(beCPG.component.WizardMgr, Alfresco.component.Base, {
         currentIndex: 0,
         taskAssigned: null,
@@ -316,6 +321,30 @@
             }
         },
 
+        configureDocumentReadOnlyActions: function(stepDOM) {
+             stepDOM.classList.add("documents-read-only");
+
+            var hideSelectors = [".document-upload-new-version", ".document-delete", ".document-edit-properties"],
+                downloadActions = YAHOO.util.Selector.query(".document-download", stepDOM),
+                i,
+                j,
+                hiddenActions;
+
+            for (i = 0; i < hideSelectors.length; i++) {
+                hiddenActions = YAHOO.util.Selector.query(hideSelectors[i], stepDOM);
+                for (j = 0; j < hiddenActions.length; j++) {
+                    Dom.setStyle(hiddenActions[j], "display", "none");
+                    Dom.setStyle(hiddenActions[j], "visibility", "hidden");
+                }
+            }
+
+            for (i = 0; i < downloadActions.length; i++) {
+                Dom.removeClass(downloadActions[i], "hidden");
+                Dom.setStyle(downloadActions[i], "display", "inline-block");
+                Dom.setStyle(downloadActions[i], "visibility", "visible");
+            }
+        },
+
         checkValidation: function(step, readOnly, callback) {
             if (!readOnly && step.nodeRef && step.nodeRef.length > 0) {
                 // Build URL with security parameters based on wizard configuration
@@ -456,8 +485,12 @@
                             stepDOM.classList.add("properties-view");
                         }
 
+
+                        setReadOnlyClass(stepDOM, readOnly || validated);
+                        setReadOnlyClass(Dom.get(me.id + "-body"), readOnly || validated);
+
                         if (step.type === "documents" && (readOnly || validated)) {
-                            stepDOM.classList.add("documents-read-only");
+                            me.configureDocumentReadOnlyActions(stepDOM);
                         }
 
                         step.loaded = true;
