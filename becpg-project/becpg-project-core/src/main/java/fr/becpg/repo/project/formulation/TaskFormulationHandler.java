@@ -395,7 +395,12 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 				if (projectData.getDueDate() == null) {
 					targetStartDate = startDate;
 				} else {
-					targetStartDate = ProjectHelper.calculateStartDate(projectData.getDueDate(), TaskWrapper.calculateMaxDuration(tasks), provider);
+					if (ProjectState.InProgress.equals(projectData.getProjectState())
+							|| ((projectData.getTargetStartDate() != null) && projectData.getTargetStartDate().equals(projectData.getStartDate()))) {
+						targetStartDate = startDate;
+					} else {
+						targetStartDate = ProjectHelper.calculateStartDate(projectData.getDueDate(), TaskWrapper.calculateMaxDuration(tasks), provider);
+					}
 				}
 			} else {
 				startDate = ProjectHelper.calculateNextStartDate(new Date(), provider);
@@ -793,6 +798,8 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		} else {
 
 			TaskWrapper criticalTask = null;
+			TaskWrapper startTask = null;
+			TaskWrapper targetStartTask = null;
 			for (TaskWrapper t : task.getAncestors()) {
 
 				if ((t.getMaxDuration() != null) && (t.getMaxDuration() > maxDuration)) {
@@ -811,16 +818,19 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 				Date targetEnd = t.getTask().getTargetEnd() != null ? t.getTask().getTargetEnd() : t.getTask().getTargetStart();
 
 				if (TaskState.Cancelled.equals(t.getTask().getTaskState()) && !TaskState.InProgress.equals(t.getTask().getPreviousTaskState())) {
-					endDate = ProjectHelper.calculatePrevEndDate(t.getTask().getStart(), provider);
-					targetEnd = ProjectHelper.calculatePrevEndDate(t.getTask().getTargetStart(), provider);
+					WorkingDayProvider previousProvider = getTaskWorkingDayProvider(t);
+					endDate = ProjectHelper.calculatePrevEndDate(t.getTask().getStart(), previousProvider);
+					targetEnd = ProjectHelper.calculatePrevEndDate(t.getTask().getTargetStart(), previousProvider);
 				}
 
-				if ((startDate == null) || ((endDate != null) && startDate.before(endDate))) {
+				if ((endDate != null) && ((startDate == null) || startDate.before(endDate))) {
 					startDate = endDate;
+					startTask = t;
 				}
 
 				if ((targetStart == null) || ((targetEnd != null) && targetStart.before(targetEnd))) {
 					targetStart = targetEnd;
+					targetStartTask = t;
 				}
 			}
 
@@ -829,11 +839,14 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			}
 
 			if (startDate != null) {
-				startDate = ProjectHelper.calculateNextStartDate(startDate, provider);
+				WorkingDayProvider startProvider = getTaskWorkingDayProvider(startTask != null ? startTask : task);
+				startDate = ProjectHelper.calculateNextStartDate(startDate, startProvider);
 			}
 
 			if (targetStart != null) {
-				targetStart = ProjectHelper.calculateNextStartDate(targetStart, provider);
+				WorkingDayProvider targetStartProvider = getTaskWorkingDayProvider(targetStartTask != null ? targetStartTask : task);
+				targetStart = ProjectHelper.calculateNextStartDate(targetStart, targetStartProvider);
+				targetStart = ProjectHelper.removeTime(targetStart);
 			}
 
 		}
@@ -888,6 +901,11 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			task.setMaxRealDuration(maxRealDuration + realDuration);
 		}
 
+	}
+
+	private WorkingDayProvider getTaskWorkingDayProvider(TaskWrapper task) {
+		NodeRef calendarRef = calendarService.getCalendar(task.getTask().getNodeRef());
+		return new CalendarWorkingDayProvider(calendarService, calendarRef);
 	}
 
 	private boolean visitDeliverables(ProjectData projectData, TaskListDataItem taskListDataItem, List<DeliverableListDataItem> deliverables) {
