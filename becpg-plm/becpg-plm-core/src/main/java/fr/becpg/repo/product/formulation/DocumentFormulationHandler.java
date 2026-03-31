@@ -49,6 +49,7 @@ import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.StateableEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -241,7 +242,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 	public boolean process(RepositoryEntity repositoryEntity) {
 
 		if (repositoryEntity.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (repositoryEntity instanceof ProductSpecificationData)
-				|| (repositoryEntity.getNodeRef() == null)) {
+				|| (repositoryEntity.getNodeRef() == null) || L2CacheSupport.isCacheOnlyEnable()) {
 			return true;
 		}
 

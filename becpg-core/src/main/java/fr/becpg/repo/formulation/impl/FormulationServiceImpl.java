@@ -25,6 +25,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.lock.JobLockService;
+import org.alfresco.repo.lock.LockAcquisitionException;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.MLText;
@@ -52,6 +54,8 @@ import fr.becpg.repo.jscript.BeCPGStateHelper;
 import fr.becpg.repo.jscript.BeCPGStateHelper.ActionStateContext;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
+import fr.becpg.util.MutexFactory;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * <p>
@@ -72,6 +76,8 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 
 	private NodeService nodeService;
 	
+	private MutexFactory mutexFactory;
+
 	private final Map<Class<T>, Map<String, FormulationChain<T>>> formulationChains = new HashMap<>();
 
 	private static final Log logger = LogFactory.getLog(FormulationServiceImpl.class);
@@ -100,6 +106,19 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
+	}
+	
+	/**
+	 * <p>
+	 * Setter for the field <code>mutexFactory</code>.
+	 * </p>
+	 *
+	 * @param mutexFactory
+	 *            a {@link fr.becpg.util.MutexFactory}
+	 *            object.
+	 */
+	public void setMutexFactory(MutexFactory mutexFactory) {
+		this.mutexFactory = mutexFactory;
 	}
 	
 	private BeCPGAuditService beCPGAuditService;
@@ -151,13 +170,32 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 	public T formulate(T repositoryEntity, String chainId) {
 		Locale currentLocal = I18NUtil.getLocale();
 		Locale currentContentLocal = I18NUtil.getContentLocale();
+		ReentrantLock lock = mutexFactory.getMutex("formulate-" + repositoryEntity.getNodeRef().getId());
+		boolean lockAcquired = false;
 		try (ActionStateContext state = BeCPGStateHelper.onFormulateEntity(repositoryEntity.getNodeRef())){
+			if (lock.isHeldByCurrentThread()) {
+				lockAcquired = true;
+			} else {
+				lockAcquired = lock.tryLock();
+			}
+			if (!lockAcquired) {
+				logger.warn("Formulation already in progress for node: " + repositoryEntity.getNodeRef());
+				return repositoryEntity;
+			}
 			I18NUtil.setLocale(Locale.getDefault());
 			I18NUtil.setContentLocale(null);
 			return formulateInternal(repositoryEntity, chainId);
 		} finally {
 			I18NUtil.setLocale(currentLocal);
 			I18NUtil.setContentLocale(currentContentLocal);
+			if (lockAcquired && !lock.isHeldByCurrentThread()) {
+				// Lock could be held by thread if it was already acquired outside, we only unlock if we acquired it and are the last holder (ReentrantLock logic makes it safe to call unlock if held)
+				// Actually tryLock acquires it or we already held it. Since it's reentrant, we must unlock if we acquired it.
+			}
+			if (lockAcquired) {
+				lock.unlock();
+				mutexFactory.removeMutex("formulate-" + repositoryEntity.getNodeRef().getId(), lock);
+			}
 		}
 		
 	}
@@ -167,7 +205,18 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 	public T formulate(NodeRef entityNodeRef, String chainId)  {
 		Locale currentLocal = I18NUtil.getLocale();
 		Locale currentContentLocal = I18NUtil.getContentLocale();
+		ReentrantLock lock = mutexFactory.getMutex("formulate-" + entityNodeRef.getId());
+		boolean lockAcquired = false;
 		try (ActionStateContext state = BeCPGStateHelper.onFormulateEntity(entityNodeRef)){
+			if (lock.isHeldByCurrentThread()) {
+				lockAcquired = true;
+			} else {
+				lockAcquired = lock.tryLock();
+			}
+			if (!lockAcquired) {
+				logger.warn("Formulation already in progress for node: " + entityNodeRef);
+				return alfrescoRepository.findOne(entityNodeRef);
+			}
 		
 			return StopWatchSupport.build().scopeName(entityNodeRef.toString()).logger(logger).run(() -> {
 				I18NUtil.setLocale(Locale.getDefault());
@@ -189,6 +238,10 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 		} finally {
 			I18NUtil.setLocale(currentLocal);
 			I18NUtil.setContentLocale(currentContentLocal);
+			if (lockAcquired) {
+				lock.unlock();
+				mutexFactory.removeMutex("formulate-" + entityNodeRef.getId(), lock);
+			}
 		}
 	}
 
