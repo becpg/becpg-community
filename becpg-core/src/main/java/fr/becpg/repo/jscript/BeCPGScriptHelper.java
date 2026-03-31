@@ -2330,13 +2330,13 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 
 	/**
-	 * <p>floatingLicensesExceeded.</p>
-	 *
-	 * @param sessionId a {@link java.lang.String} object
+	 * <p>isConcurrentUserAllowed.</p>
+	 * 
+	 * Checks if concurrent user access is allowed based on the license.
 	 * @return a boolean
 	 */
-	public boolean floatingLicensesExceeded(String sessionId) {
-		return beCPGLicenseManager.floatingLicensesExceeded(sessionId);
+	public boolean isConcurrentUserAllowed() {
+		return beCPGLicenseManager.isConcurrentUserAllowed();
 	}
 
 	/**
