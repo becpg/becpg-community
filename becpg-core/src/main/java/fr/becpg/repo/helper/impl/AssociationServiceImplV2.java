@@ -1145,14 +1145,14 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			return callback.get();
 		}
 
-		T ret = null;
-		if (!cache.contains(cacheKey)) {
+		T ret = cache.get(cacheKey);
+
+		if (ret == null) {
+
 			ret = callback.get();
-			if (ret != null) {
+			if ((ret != null)) {
 				cache.put(cacheKey, ret);
 			}
-		} else {
-			ret = cache.get(cacheKey);
 		}
 
 		return ret;

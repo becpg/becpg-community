@@ -170,16 +170,18 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 	public T formulate(T repositoryEntity, String chainId) {
 		Locale currentLocal = I18NUtil.getLocale();
 		Locale currentContentLocal = I18NUtil.getContentLocale();
-		ReentrantLock lock = mutexFactory.getMutex("formulate-" + repositoryEntity.getNodeRef().getId());
+		String mutexKey = getMutexKey(repositoryEntity);
+		ReentrantLock lock = mutexFactory.getMutex(mutexKey);
 		boolean lockAcquired = false;
-		try (ActionStateContext state = BeCPGStateHelper.onFormulateEntity(repositoryEntity.getNodeRef())){
+		NodeRef entityNodeRef = repositoryEntity.getNodeRef();
+		try (ActionStateContext state = BeCPGStateHelper.onFormulateEntity(entityNodeRef)){
 			if (lock.isHeldByCurrentThread()) {
 				lockAcquired = true;
 			} else {
 				lockAcquired = lock.tryLock();
 			}
 			if (!lockAcquired) {
-				logger.warn("Formulation already in progress for node: " + repositoryEntity.getNodeRef());
+				logger.warn("Formulation already in progress for node: " + entityNodeRef);
 				return repositoryEntity;
 			}
 			I18NUtil.setLocale(Locale.getDefault());
@@ -194,7 +196,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 			}
 			if (lockAcquired) {
 				lock.unlock();
-				mutexFactory.removeMutex("formulate-" + repositoryEntity.getNodeRef().getId(), lock);
+				mutexFactory.removeMutex(mutexKey, lock);
 			}
 		}
 		
@@ -363,6 +365,23 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 	@Override
 	public void runFormulation(NodeRef entityNodeRef, String chainId) {
 		formulate(entityNodeRef, chainId);
+	}
+
+	/**
+	 * Generates a mutex key for the given repository entity.
+	 * Uses NodeRef ID if available, otherwise falls back to entity name.
+	 *
+	 * @param repositoryEntity the repository entity
+	 * @return a unique mutex key string
+	 */
+	private String getMutexKey(T repositoryEntity) {
+		NodeRef nodeRef = repositoryEntity.getNodeRef();
+		if (nodeRef != null) {
+			return "formulate-" + nodeRef.getId();
+		} else {
+			String name = repositoryEntity.getName();
+			return "formulate-" + (name != null ? name : "unknown");
+		}
 	}
 
 }
