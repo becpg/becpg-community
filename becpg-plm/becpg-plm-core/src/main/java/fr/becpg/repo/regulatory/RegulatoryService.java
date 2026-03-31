@@ -255,7 +255,7 @@ public class RegulatoryService {
 	}
 
 	private boolean checkComplianceSync(RegulatoryContext context) {
-		ReentrantLock mutex = mutexFactory.getMutex("complianceCheck-" + context.getProduct().getNodeRef());
+		ReentrantLock mutex = mutexFactory.getMutex("complianceCheck-" + context.getProduct().getNodeRef().getId());
 		if (mutex.tryLock()) {
 			try {
 				fetchIngredients(context);

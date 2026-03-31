@@ -48,6 +48,7 @@ import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -159,6 +160,10 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData formulatedProduct)  {
+
+		if (L2CacheSupport.isCacheOnlyEnable()) {
+			return true;
+		}
 
 		if (formulatedProduct instanceof ProductSpecificationData) {
 			if (!FormulationService.FAST_FORMULATION_CHAINID.equals(formulatedProduct.getFormulationChainId()) && (SpecCompatibilityModes.Automatic
