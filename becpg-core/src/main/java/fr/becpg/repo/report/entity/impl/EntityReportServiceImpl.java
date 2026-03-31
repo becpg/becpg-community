@@ -250,7 +250,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	}
 	
 	private void generateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo, boolean generateAllReports) {
-		ReentrantLock lock = mutexFactory.getMutex(nodeRefTo.toString());
+		ReentrantLock lock = mutexFactory.getMutex("report-"+nodeRefTo.getId());
 	    boolean lockAcquired = false;
 	    
 	    try {
