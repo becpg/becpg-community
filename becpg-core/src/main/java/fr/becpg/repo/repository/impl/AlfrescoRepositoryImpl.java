@@ -615,9 +615,11 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 		try {
 
-			T cached = getFormCache(id, localCache, cacheType);
-			if (cached != null) {
-				return cached;
+			if (localCache != null) {
+				T ret = (T) localCache.get(id);
+				if (ret != null) {
+					return ret;
+				}
 			}
 
 			QName type = nodeService.getType(id);
@@ -629,6 +631,11 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				} else {
 					throw new IllegalArgumentException("Type is not registered : " + type);
 				}
+			}
+
+			T cached = getFormCache(id, localCache, cacheType, entityClass);
+			if (cached != null) {
+				return cached;
 			}
 
 			final T entity = entityClass.getDeclaredConstructor().newInstance();
@@ -707,7 +714,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	 * cacheAble
 	 */
 	@SuppressWarnings("unchecked")
-	private T getFormCache(NodeRef id, Map<NodeRef, RepositoryEntity> localCache, CacheType cacheType)
+	private T getFormCache(NodeRef id, Map<NodeRef, RepositoryEntity> localCache, CacheType cacheType, Class<T> entityClass)
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		if (localCache != null) {
 			T ret = (T) localCache.get(id);
@@ -718,8 +725,10 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 		if (!L2CacheSupport.isCacheOnlyEnable() && !CacheType.NO_SHARED_CACHE.equals(cacheType)) {
 
-			T entity = charactCache.get(id);
-			if (entity == null) {
+			T entity = null;
+			if (entityClass.isAnnotationPresent(AlfCacheable.class) && entityClass.getAnnotation(AlfCacheable.class).isCharact()) {
+				entity = charactCache.get(id);
+			} else {
 				entity = cache.get(id);
 			}
 
