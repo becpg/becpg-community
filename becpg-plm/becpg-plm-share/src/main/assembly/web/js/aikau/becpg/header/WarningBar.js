@@ -85,32 +85,43 @@ define(["dojo/_base/declare",
       
       createUnauthorizedWarningBar : function alfresco_header_UnauthorizedWarningBar__createBar()
       {
-    	  this.messageBox.innerHTML = this.message("unauthorized.warning.bar.message");
-    	  this.stopRecording.style.display = "none";
-    	  domStyle.set(this.domNode, "display", "block");
-    	  domClass.add(this.warningsNode, "licence-warning");
+     	  this.messageBox.innerHTML = this.message("unauthorized.warning.bar.message");
+     	  this.stopRecording.style.display = "none";
+     	  domStyle.set(this.domNode, "display", "block");
+     	  domClass.add(this.warningsNode, "licence-warning");
+		  this.scheduleLogout();
       },
       
       
       createFloatingLicensesExceededWarningBar : function alfresco_header_FloatingLicensesExceededWarningBar__createBar()
       {
-    	  this.messageBox.innerHTML = this.message("floatingLicensesExceeded.warning.bar.message");
-    	  this.stopRecording.style.display = "none";
-    	  domStyle.set(this.domNode, "display", "block");
-    	  domClass.add(this.warningsNode, "licence-warning");
+      	  this.messageBox.innerHTML = this.message("floatingLicensesExceeded.warning.bar.message");
+      	  this.stopRecording.style.display = "none";
+      	  domStyle.set(this.domNode, "display", "block");
+      	  domClass.add(this.warningsNode, "licence-warning");
+		  this.scheduleLogout();
       },
-      
-      
-      createUnauthorizedWarningBar : function alfresco_header_UnauthorizedWarningBar__createBar()
-      {
-    	  this.messageBox.innerHTML = this.message("unauthorized.warning.bar.message");
-    	  this.stopRecording.style.display = "none";
-    	  domStyle.set(this.domNode, "display", "block");
-    	  domClass.add(this.warningsNode, "licence-warning");
-      },
-      
-      
-      /**
+
+		scheduleLogout : function alfresco_header_WarningBar__scheduleLogout()
+		{
+			window.setTimeout(function() {
+				var iframe = document.createElement("iframe");
+				var form = document.createElement("form");
+				iframe.name = "becpgLicenseLogout";
+				iframe.style.display = "none";
+				document.body.appendChild(iframe);
+				form.method = "POST";
+				form.action = Alfresco.constants.URL_PAGECONTEXT + "dologout";
+				form.target = iframe.name;
+				form.style.display = "none";
+				document.body.appendChild(form);
+				form.submit();
+				window.location.replace(Alfresco.constants.URL_CONTEXT);
+			}, 5000);
+		},
+       
+       
+       /**
        * @instance
        */
       postCreate: function alfresco_header_WarningBar__postCreate() {
