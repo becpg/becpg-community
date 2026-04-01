@@ -1196,7 +1196,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 								}
 							}
 						}
-						break; 
+						break;
 					}
 				}
 				if (!found) {
@@ -1299,7 +1299,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			if (!dateMatches(value, compValue)) {
 				return false;
 			}
-		} else if ((compValue != null) && (!value.equals(compValue) && !displayValue.equals(compValue))) {
+		} else if ((compValue != null) && !value.equals(compValue) && !compValue.contains(value) && !displayValue.equals(compValue)) {
 			return false;
 
 		}
