@@ -835,11 +835,11 @@ public class IngListDataItem extends AbstractManualDataItem
 		this.qtyPercWithYield = i.qtyPercWithYield;
 		this.qtyPercWithSecondaryYield = i.qtyPercWithSecondaryYield;
 		this.volumeQtyPerc = i.volumeQtyPerc;
-		this.geoOrigin = this.geoOrigin != null ? new ArrayList<>(i.geoOrigin) : null;
-		this.geoTransfo = this.geoTransfo != null ? new ArrayList<>(i.geoTransfo) : null;
-		this.bioOrigin = this.bioOrigin != null ? new ArrayList<>(i.bioOrigin) : null;
-		this.claims = this.claims != null ? new ArrayList<>(i.claims) : null;
-		this.ingTypes = this.ingTypes != null ? new ArrayList<>(i.ingTypes) : null;
+		this.geoOrigin = i.geoOrigin != null ? new ArrayList<>(i.geoOrigin) : null;
+		this.geoTransfo = i.geoTransfo != null ? new ArrayList<>(i.geoTransfo) : null;
+		this.bioOrigin = i.bioOrigin != null ? new ArrayList<>(i.bioOrigin) : null;
+		this.claims = i.claims != null ? new ArrayList<>(i.claims) : null;
+		this.ingTypes = i.ingTypes != null ? new ArrayList<>(i.ingTypes) : null;
 		this.isGMO = i.isGMO;
 		this.isIonized = i.isIonized;
 		this.ing = i.ing;
