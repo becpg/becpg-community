@@ -158,7 +158,7 @@
             var step = this.options.wizardStruct[currentIndex];
             if (!step) return true;
 
-            var stepReadOnly = me.options.readOnly || step.readOnly || step.valid;
+            var stepReadOnly = this.options.readOnly || step.readOnly || step.valid;
             if (step.type === "form" || step.type === "survey") {
                 if (step.form) {
                     validationInProgress = true;
