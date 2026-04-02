@@ -19,7 +19,7 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
-public class CopyRestrictionServiceIT extends AbstractFinishedProductTest {
+public class BeCPGCopyPolicyIT extends AbstractFinishedProductTest {
 
 	@Autowired
 	private EntityService entityService;

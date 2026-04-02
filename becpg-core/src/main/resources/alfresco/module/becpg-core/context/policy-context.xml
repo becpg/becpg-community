@@ -157,8 +157,12 @@
 	  <property name="beCPGCacheService" ref="beCPGCacheService"/>
     </bean>
     
-    <bean id="becpgCopyPolicy" class="fr.becpg.repo.copy.BeCPGCopyPolicy" parent="abstractBeCPGPolicy">
-	  <property name="copyRestrictionService" ref="copyRestrictionService"/>
+    <bean id="becpgCopyPolicy" class="fr.becpg.repo.copy.BeCPGCopyPolicy" parent="abstractBeCPGPolicy" autowire="byType">
+	  <property name="systemConfigurationService" ref="systemConfigurationService"/>
+	  <property name="entityDictionaryService" ref="entityDictionaryService"/>
+	  <property name="entityService" ref="entityService"/>
+	  <property name="namespaceService" ref="namespaceService"/>
+	  <property name="associationService" ref="associationService"/>
     </bean>
 
 </beans>
