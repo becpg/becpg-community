@@ -618,7 +618,6 @@
             var result = [];
             var visible = [];
             var me = this;
-            var firstQuestionFound = false;
 
            
 
@@ -627,13 +626,12 @@
                 var question = this.options.data[i];
                 
                 // Show first question or questions marked as start
-                if ((!firstQuestionFound || question.start === true) && 
-                    (!this.options.disabled || this.options.currentValue.length > 0 || !question.choices)) {
-                    visible.push(question.id);
-                }
-
-                if (question.choices) {
-                    firstQuestionFound = true;
+                if (i === 0 || question.start === true) {
+                    if (!question.choices && !question.mandatory) {
+                        visible.push(question.id);
+                    } else if (!this.options.disabled || this.options.currentValue.length > 0) {
+                        visible.push(question.id);
+                    }
                 }
 
                 if (this._isQuestionVisible(visible, question.id) && question.choices) {
