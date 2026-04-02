@@ -101,8 +101,6 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 
 	    private ContentPropertyRestrictionInterceptor contentPropertyRestrictionInterceptor;
 	    
-		private CopyRestrictionService copyRestrictionService;
-		
 	    
 	    /* Policy delegates */
 	    private ClassPolicyDelegate<CopyServicePolicies.OnCopyNodePolicy> onCopyNodeDelegate;
@@ -116,15 +114,6 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    {
 	        super();
 	    }
-	    
-	    /**
-	     * <p>Setter for the field <code>copyRestrictionService</code>.</p>
-	     *
-	     * @param copyRestrictionService a {@link fr.becpg.repo.copy.CopyRestrictionService} object
-	     */
-	    public void setCopyRestrictionService(CopyRestrictionService copyRestrictionService) {
-			this.copyRestrictionService = copyRestrictionService;
-		}
 	    
 	    /**
 	     * <p>Setter for the field <code>contentPropertyRestrictionInterceptor</code>.</p>
@@ -1051,28 +1040,22 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 			if (sourceClassDef == null) {
 				callback = DoNothingCopyBehaviourCallback.getInstance();
 			} else {
-				if (!copyRestrictionService.shouldCopyNodeRef(sourceClassQName, copyDetails.getSourceNodeRef(), copyDetails.getTargetNodeRef())) {
-					CompoundCopyBehaviourCallback compoundCallback = new CompoundCopyBehaviourCallback(sourceClassQName);
-					compoundCallback.addBehaviour(DoNothingCopyBehaviourCallback.getInstance());
-					callback = compoundCallback;
+				List<CopyBehaviourCallback> policyCallbacks = new ArrayList<>();
+				if (policies.isEmpty()) {
+					policyCallbacks.add(DefaultCopyBehaviourCallback.getInstance());
+				} else if (policies.size() == 1) {
+					policyCallbacks.add(policies.iterator().next().getCopyCallback(sourceClassQName, copyDetails));
 				} else {
-					List<CopyBehaviourCallback> policyCallbacks = new ArrayList<>();
-					if (policies.isEmpty()) {
-						policyCallbacks.add(DefaultCopyBehaviourCallback.getInstance());
-					} else if (policies.size() == 1) {
-						policyCallbacks.add(policies.iterator().next().getCopyCallback(sourceClassQName, copyDetails));
-					} else {
-						for (CopyServicePolicies.OnCopyNodePolicy policy : policies) {
-							CopyBehaviourCallback nestedCallback = policy.getCopyCallback(sourceClassQName, copyDetails);
-							policyCallbacks.add(nestedCallback);
-						}
+					for (CopyServicePolicies.OnCopyNodePolicy policy : policies) {
+						CopyBehaviourCallback nestedCallback = policy.getCopyCallback(sourceClassQName, copyDetails);
+						policyCallbacks.add(nestedCallback);
 					}
-					CompoundCopyBehaviourCallback compoundCallback = new CompoundCopyBehaviourCallback(sourceClassQName);
-					for (CopyBehaviourCallback policyCallback : policyCallbacks) {
-						compoundCallback.addBehaviour(policyCallback);
-					}
-					callback = compoundCallback;
 				}
+				CompoundCopyBehaviourCallback compoundCallback = new CompoundCopyBehaviourCallback(sourceClassQName);
+				for (CopyBehaviourCallback policyCallback : policyCallbacks) {
+					compoundCallback.addBehaviour(policyCallback);
+				}
+				callback = compoundCallback;
 				
 			}
 	        // Done
