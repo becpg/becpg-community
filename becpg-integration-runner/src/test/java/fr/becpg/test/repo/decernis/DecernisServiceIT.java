@@ -26,7 +26,6 @@ import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
-import fr.becpg.repo.helper.json.JsonHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
@@ -235,7 +234,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 	private String readJsonResource(String resourcePath) {
 		try {
 			ClassPathResource resource = new ClassPathResource(resourcePath);
-			return JsonHelper.read(resource.getContentAsString(StandardCharsets.UTF_8)).toString();
+			return new JSONObject(resource.getContentAsString(StandardCharsets.UTF_8)).toString();
 		} catch (IOException e) {
 			throw new IllegalStateException("Cannot read resource: " + resourcePath, e);
 		}
