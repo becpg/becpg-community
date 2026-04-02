@@ -33,6 +33,7 @@ import org.alfresco.model.ForumModel;
 import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.version.Version2Model;
+import org.alfresco.repo.version.common.VersionUtil;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
@@ -1054,13 +1055,33 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		if ((versionHistory != null) && (versionHistory.getAllVersions() != null)) {
 
 			for (Version version : versionHistory.getAllVersions()) {
+				NodeRef versionNodeRef = VersionUtil.convertNodeRef(version.getFrozenStateNodeRef());
+				String creator = (String) nodeService.getProperty(versionNodeRef, Version2Model.PROP_QNAME_FROZEN_CREATOR);
+				if (creator == null) {
+					creator = (String) nodeService.getProperty(versionNodeRef, ContentModel.PROP_CREATOR);
+				}
+				if (creator == null) {
+					creator = version.getFrozenModifier();
+				}
+				Date createdDate = (Date) nodeService.getProperty(versionNodeRef, ContentModel.PROP_CREATED);
+				if (createdDate == null) {
+					createdDate = (Date) nodeService.getProperty(versionNodeRef, Version2Model.PROP_QNAME_FROZEN_CREATED);
+				}
+				if (createdDate == null) {
+					createdDate = version.getFrozenModifiedDate();
+				}
+ 				
 				Element versionElt = versionsElt.addElement(TAG_VERSION);
 				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_LABEL.getLocalName(), version.getVersionLabel());
 				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_DESCRIPTION.getLocalName(),
 						XMLTextHelper.writeAttribute(version.getDescription()));
-				versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(),
-						XMLTextHelper.writeAttribute(attributeExtractorService.getPersonDisplayName(version.getFrozenModifier())));
-				versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), ISO8601DateFormat.format(version.getFrozenModifiedDate()));
+				if (creator != null) {
+					versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(),
+							XMLTextHelper.writeAttribute(attributeExtractorService.getPersonDisplayName(creator)));
+				}
+				if (createdDate != null) {
+					versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), ISO8601DateFormat.format(createdDate));
+				}
 
 			}
 		}
