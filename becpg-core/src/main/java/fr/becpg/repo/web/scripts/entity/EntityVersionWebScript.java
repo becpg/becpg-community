@@ -194,7 +194,7 @@ public class EntityVersionWebScript extends AbstractWebScript {
 					NodeRef headVersionNodeRef = null;
 
 					if (versionHistory != null) {
-						Version headVersion = versionService.getVersionHistory(version.getEntityNodeRef()).getHeadVersion();
+						Version headVersion = versionHistory.getHeadVersion();
 						headVersionNodeRef = headVersion.getFrozenStateNodeRef();
 					}
 
