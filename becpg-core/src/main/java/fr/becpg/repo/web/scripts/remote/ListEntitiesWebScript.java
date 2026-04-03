@@ -64,7 +64,7 @@ public class ListEntitiesWebScript extends AbstractEntityWebScript {
 				}
 			}
 
-			PagingResults<NodeRef> entities = findEntities(req, maxResults);
+			PagingResults<NodeRef> entities = findEntities(req, maxResults, true);
 
 			logger.debug("List entities");
 
