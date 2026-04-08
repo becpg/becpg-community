@@ -676,10 +676,6 @@ public class FormulationChannelService implements BatchQueuePlugin {
 					}
 				});
 				
-			} finally {
-				policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
 		}
 	}
