@@ -13,6 +13,7 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.preference.PreferenceService;
@@ -74,6 +75,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
+
+	@Autowired
+	private BehaviourFilter policyBehaviourFilter;
 
 	@Autowired
 	@Qualifier("namespaceService")
@@ -315,6 +319,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 						NodeRef newEntityNodeRef = entityVersionService.mergeBranch(entityNodeRef, newEffectivity);
 
 						if (newEntityNodeRef != null) {
+							policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 							nodeService.removeAspect(newEntityNodeRef, BeCPGModel.ASPECT_AUTO_MERGE_ASPECT);
 						}
 
