@@ -53,7 +53,7 @@ public class ListEntitiesByChannelWebScript extends ListEntitiesWebScript {
 
 	/** {@inheritDoc} */
 	@Override
-	protected PagingResults<NodeRef> findEntities(WebScriptRequest req, Integer maxResults) {
+	protected PagingResults<NodeRef> findEntities(WebScriptRequest req, Integer maxResults, boolean allowAdvancedSearch) {
 
 		String channelId = req.getParameter(PARAM_CHANNELID);
 		String channelNodeRefStr = req.getParameter(PARAM_CHANNELNODEREF);

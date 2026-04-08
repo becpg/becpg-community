@@ -241,18 +241,21 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
 	 * @return a {@link java.util.List} object.
 	 * @param maxResults a {@link java.lang.Integer} object
+	 * @param allowAdvancedSearch a {@link java.lang.Boolean} object
 	 */
-	protected PagingResults<NodeRef> findEntities(WebScriptRequest req, Integer maxResults) {
+	protected PagingResults<NodeRef> findEntities(WebScriptRequest req, Integer maxResults, boolean allowAdvancedSearch) {
 
 		String path = decodeParam(req.getParameter(PARAM_PATH));
 		String query = decodeParam(req.getParameter(PARAM_QUERY));
 		Integer page = intParam(req, PARAM_PAGE);
 		
 		String entityQuery = null;
-		try {
-			entityQuery = extractBodyRequest(req);
-		} catch (IOException e) {
-			logger.error("Error while extracting request body: " + e.getMessage(), e);
+		if (allowAdvancedSearch) {
+			try {
+				entityQuery = extractBodyRequest(req);
+			} catch (IOException e) {
+				logger.error("Error while extracting request body: " + e.getMessage(), e);
+			}
 		}
 		
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
@@ -409,7 +412,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				&& ((req.getParameter(PARAM_QUERY) == null) || req.getParameter(PARAM_QUERY).isEmpty())) {
 			throw new WebScriptException(Status.STATUS_NOT_IMPLEMENTED, "One of nodeRef query or path parameter is mandatory");
 		}
-		PagingResults<NodeRef> ret = findEntities(req, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+		PagingResults<NodeRef> ret = findEntities(req, RepoConsts.MAX_RESULTS_SINGLE_VALUE, false);
 		if ((ret != null) && !ret.getPage().isEmpty()) {
 			return ret.getPage().get(0);
 		}
