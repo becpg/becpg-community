@@ -368,6 +368,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 						NodeRef newEntityNodeRef = entityVersionService.mergeBranch(entityNodeRef, newEffectivity);
 
 						if (newEntityNodeRef != null) {
+							policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 							nodeService.removeAspect(newEntityNodeRef, BeCPGModel.ASPECT_AUTO_MERGE_ASPECT);
 						}
 
@@ -690,10 +691,6 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 					throw e; // Re-throw to trigger retry
 				}
 				logger.error("Cannot reformulate node: " + toReformulate, e);
-			} finally {
-				policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
 		}
 	}
