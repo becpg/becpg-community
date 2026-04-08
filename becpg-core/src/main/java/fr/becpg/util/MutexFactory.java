@@ -106,7 +106,9 @@ public class MutexFactory {
 					lockToken = null;
 				}
 			} finally {
-				super.unlock();
+				if (isHeldByCurrentThread()) {
+					super.unlock();
+				}
 			}
 		}
 	}
