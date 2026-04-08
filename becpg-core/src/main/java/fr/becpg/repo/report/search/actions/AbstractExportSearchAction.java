@@ -223,10 +223,18 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 			
 			ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
 
-			if (downloadRequest.getRequetedNodeRefs().length > 0) {
-				Location exportFrom = new Location(downloadRequest.getRequetedNodeRefs());
-				crawlerParameters.setExportFrom(exportFrom);
+
+			NodeRef[] nodeRefs = downloadRequest.getRequetedNodeRefs();
+			if (nodeRefs == null || nodeRefs.length == 0) {
+				transactionHelper.doInTransaction(() -> {
+					DownloadStatus status = new DownloadStatus(Status.DONE, 0, 0, 0, 0);
+					updateService.update(actionedUponNodeRef, status, 1);
+					return null;
+				}, false, true);
+				return null;
 			}
+			Location exportFrom = new Location(nodeRefs);
+			crawlerParameters.setExportFrom(exportFrom);
 
 			crawlerParameters.setCrawlSelf(true);
 			crawlerParameters.setCrawlChildNodes(false);
