@@ -642,41 +642,38 @@ public class FormulationChannelService implements BatchQueuePlugin {
 				logger.debug("Reformulating product: " + nodeService.getProperty(toProcess, ContentModel.PROP_NAME) + " (" + toProcess + ")");
 			}
 
-			try {
-				policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+			policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
-				// Initialize stopwatch only in debug mode
-				StopWatch stopWatch = null;
-				String nodeName = null;
-				if (logger.isDebugEnabled()) {
-					stopWatch = new StopWatch("formulation");
-					stopWatch.start("formulate");
-					nodeName = nodeService.getProperty(toProcess, ContentModel.PROP_NAME).toString();
-				}
-				
-				// Using L2CacheSupport is good practice.
-				L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> formulationService.formulate(toProcess)), false, true);
-				
-				// Log execution time only in debug mode
-				if (logger.isDebugEnabled() && stopWatch != null) {
-					stopWatch.stop();
-					logger.debug("Formulation time for " + nodeName + " (" + toProcess + "): " + stopWatch.getTotalTimeMillis() + " ms");
-				}
-
-				BeCPGTransactionUtil.bindLateTransactionListener(new TransactionListenerAdapter() {
-					@Override
-					public void afterCommit() {
-						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-							publicationChannelService.publishEntityChannel(toProcess, FORMULATE_ENTITIES_CHANNEL_ID,
-									ChannelData.builder().status(PublicationChannelStatus.COMPLETED.toString()).batchId(batchId).build());
-							return null;
-						}, false, true);
-					}
-				});
-				
+			// Initialize stopwatch only in debug mode
+			StopWatch stopWatch = null;
+			String nodeName = null;
+			if (logger.isDebugEnabled()) {
+				stopWatch = new StopWatch("formulation");
+				stopWatch.start("formulate");
+				nodeName = nodeService.getProperty(toProcess, ContentModel.PROP_NAME).toString();
 			}
+			
+			// Using L2CacheSupport is good practice.
+			L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> formulationService.formulate(toProcess)), false, true);
+			
+			// Log execution time only in debug mode
+			if (logger.isDebugEnabled() && stopWatch != null) {
+				stopWatch.stop();
+				logger.debug("Formulation time for " + nodeName + " (" + toProcess + "): " + stopWatch.getTotalTimeMillis() + " ms");
+			}
+
+			BeCPGTransactionUtil.bindLateTransactionListener(new TransactionListenerAdapter() {
+				@Override
+				public void afterCommit() {
+					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+						publicationChannelService.publishEntityChannel(toProcess, FORMULATE_ENTITIES_CHANNEL_ID,
+								ChannelData.builder().status(PublicationChannelStatus.COMPLETED.toString()).batchId(batchId).build());
+						return null;
+					}, false, true);
+				}
+			});
 		}
 	}
 	
