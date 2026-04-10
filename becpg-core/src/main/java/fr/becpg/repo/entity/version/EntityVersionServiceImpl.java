@@ -533,7 +533,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				NodeRef branchFromNodeRef = getBranchFromNodeRef(entityNodeRef);
 
 				Optional<Version> lowestVersion = versionHistory.getAllVersions().stream()
-						.min(((o1, o2) -> o1.getVersionLabel().compareTo(o2.getVersionLabel())));
+						.min(((o1, o2) -> ((Double) Double.parseDouble(o1.getVersionLabel())).compareTo(Double.parseDouble(o2.getVersionLabel()))));
 
 				for (Version version : versionHistory.getAllVersions()) {
 					NodeRef entityVersionNodeRef = getEntityVersion(versionAssocs, version);
