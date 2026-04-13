@@ -3564,17 +3564,17 @@
                         </control>
                     </field>
                     <field id="bcpg:docTypeDestPath" set="documentTypeAutogeneration" help-id="becpg.forms.help.docTypeDestPath" />
-                     <field id="bcpg:aiValidationCriteria" set="ai" >
+                     <field id="bcpg:aiValidationCriteria" set="ai" help-id="becpg.forms.help.aiValidationCriteria" >
                        <control template="/org/alfresco/components/form/controls/textarea.ftl" >
                             <control-param name="rows">10</control-param>
                         </control>
-                    </field>
-                   <field id="bcpg:aiSuggestedFields" set="ai" >
+                    </field>	
+                   <field id="bcpg:aiSuggestedFields" set="ai" help-id="becpg.forms.help.aiSuggestedFields" >
                         <control template="/org/alfresco/components/form/controls/textarea.ftl" >
                             <control-param name="rows">4</control-param>
                         </control>
                     </field>
-                    <field id="bcpg:aiExtraPrompt" set="ai" >
+                    <field id="bcpg:aiExtraPrompt" set="ai" help-id="becpg.forms.help.aiExtraPrompt" >
                         <control template="/org/alfresco/components/form/controls/textarea.ftl" >
                             <control-param name="rows">4</control-param>
                         </control>
@@ -3719,17 +3719,17 @@
                         </control>
                     </field>
                     <field id="bcpg:docTypeDestPath" set="documentTypeAutogeneration" help-id="becpg.forms.help.docTypeDestPath" />
-                     <field id="bcpg:aiValidationCriteria" set="ai" >
+                     <field id="bcpg:aiValidationCriteria" set="ai" help-id="becpg.forms.help.aiValidationCriteria" >
                        <control template="/org/alfresco/components/form/controls/textarea.ftl" >
                             <control-param name="rows">10</control-param>
                         </control>
                     </field>
-                   <field id="bcpg:aiSuggestedFields" set="ai" >
+                   <field id="bcpg:aiSuggestedFields" set="ai" help-id="becpg.forms.help.aiSuggestedFields" >
                         <control template="/org/alfresco/components/form/controls/textarea.ftl" >
                             <control-param name="rows">4</control-param>
                         </control>
                     </field>
-                    <field id="bcpg:aiExtraPrompt" set="ai" >
+                    <field id="bcpg:aiExtraPrompt" set="ai" help-id="becpg.forms.help.aiExtraPrompt" >
                         <control template="/org/alfresco/components/form/controls/textarea.ftl" >
                             <control-param name="rows">4</control-param>
                         </control>
@@ -3825,17 +3825,17 @@
                     </field>
                     <field id="bcpg:docTypeDestPath" set="documentTypeAutogeneration" help-id="becpg.forms.help.docTypeDestPath" />
                     
-                     <field id="bcpg:aiValidationCriteria" set="ai" >
+                     <field id="bcpg:aiValidationCriteria" set="ai" help-id="becpg.forms.help.aiValidationCriteria" >
                         <control template="/org/alfresco/components/form/controls/textarea.ftl" >
                             <control-param name="rows">10</control-param>
                         </control>
                     </field>
-                    <field id="bcpg:aiSuggestedFields" set="ai" >
+                    <field id="bcpg:aiSuggestedFields" set="ai" help-id="becpg.forms.help.aiSuggestedFields" >
                         <control template="/org/alfresco/components/form/controls/textarea.ftl" >
                             <control-param name="rows">4</control-param>
                         </control>
                     </field>
-                    <field id="bcpg:aiExtraPrompt" set="ai" >
+                    <field id="bcpg:aiExtraPrompt" set="ai" help-id="becpg.forms.help.aiExtraPrompt" >
                         <control template="/org/alfresco/components/form/controls/textarea.ftl" >
                             <control-param name="rows">4</control-param>
                         </control>
