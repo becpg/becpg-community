@@ -140,7 +140,8 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 			JSONObject pagination = new JSONObject();
 
 			pagination.put("hasMoreItems", pagingResult.hasMoreItems());
-			pagination.put("count", pagingResult.getTotalResultCount().getFirst());
+			pagination.put("count", pagingResult.getPage().size());
+			pagination.put("totalItems", pagingResult.getTotalResultCount().getFirst());
 
 			JSONArray jsonEntities = new JSONArray();
 
