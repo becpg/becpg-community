@@ -449,20 +449,21 @@
 		<forms>
 			<form id="ecmDatagrid">
 				<field-visibility>
-					<show id="bcpg:compoListQty" force ="true"/>
-					<show id="bcpg:compoListUnit" force ="true"/>
-					<show id="mpm:plQty" force ="true"/>
-					<show id="mpm:plUnit" force ="true"/>
-					<show id="bcpg:packagingListQty" force ="true"/>
-					<show id="bcpg:packagingListUnit" force ="true"/>
+					<show id="bcpg:compoListQty" force="true"/>
+					<show id="bcpg:compoListUnit" force="true"/>
+					<show id="mpm:plQty" force="true"/>
+					<show id="mpm:plUnit" force="true"/>
+					<show id="bcpg:packagingListQty" force="true"/>
+					<show id="bcpg:packagingListUnit" force="true"/>
+					<show id="bcpg:packagingListPkgLevel" force="true"/>>
 				</field-visibility>
 			</form>
 			<form id="ecmFilter">
 				<field-visibility>
-					<show id="bcpg:compoListQty" force ="true"/>
-					<show id="bcpg:compoListLossPerc" force ="true"/>
-					<show id="mpm:plQty" force ="true"/>
-					<show id="bcpg:packagingListQty" force ="true"/>
+					<show id="bcpg:compoListQty" force="true"/>
+					<show id="bcpg:compoListLossPerc" force="true"/>
+					<show id="mpm:plQty" force="true"/>
+					<show id="bcpg:packagingListQty" force="true"/>
 				</field-visibility>
 			</form>
 		</forms>

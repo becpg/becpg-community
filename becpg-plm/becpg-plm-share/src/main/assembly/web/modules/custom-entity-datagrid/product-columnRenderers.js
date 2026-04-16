@@ -1563,7 +1563,7 @@ if (beCPG.module.EntityDataGridRenderers) {
         renderer: function(oRecord, data, label, scope) {
             var additionalProps = Object.entries(oRecord.getData("itemData")["dt_ecm_wulLink"][0].itemData);
 
-            var ret = "";
+            var ret = [];
 
             var columns = null;
 
@@ -1573,7 +1573,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                     break;
                 }
             }
-
+			
             for (var i = 0; i < additionalProps.length; i++) {
                 var propName = additionalProps[i][0];
                 var propValue = additionalProps[i][1];
@@ -1586,12 +1586,13 @@ if (beCPG.module.EntityDataGridRenderers) {
                                 break;
                             }
                         }
-                        ret += label + ": " + propValue.displayValue + " ";
+						
+                        ret.push(label + ": " + propValue.displayValue);
                     }
                 }
             }
 
-            return ret;
+            return ret.join(", ");
         }
 
     });
