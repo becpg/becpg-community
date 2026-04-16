@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.24" id="1">
     <property name="author">beCPG</property>
-    <property name="createdBy">Eclipse BIRT Designer Version 4.7.0.v201706222054</property>
+    <property name="createdBy">Eclipse BIRT Designer version 4.14.0.v202311210608 révision &lt;@BUILD@></property>
     <list-property name="userProperties">
         <structure>
             <property name="name">Data Cube.OrganoList.x</property>
@@ -13210,20 +13210,23 @@ decisionTree
                             <structure>
                                 <property name="name">allergenListOnLine</property>
                                 <text-property name="displayName">allergenListOnLine</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["allergenListOnLine"]</expression>
-                                <property name="dataType">boolean</property>
+                                <expression name="expression" type="javascript">reportContext.getMessage(dataSetRow["allergenListOnLine"], reportContext.getLocale())</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
                             </structure>
                             <structure>
                                 <property name="name">allergenListOnSite</property>
                                 <text-property name="displayName">allergenListOnSite</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["allergenListOnSite"]</expression>
-                                <property name="dataType">boolean</property>
+                                <expression name="expression" type="javascript">reportContext.getMessage(dataSetRow["allergenListOnSite"], reportContext.getLocale())</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
                             </structure>
                             <structure>
                                 <property name="name">allergenListIsCleaned</property>
                                 <text-property name="displayName">allergenListIsCleaned</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["allergenListIsCleaned"]</expression>
-                                <property name="dataType">boolean</property>
+                                <expression name="expression" type="javascript">reportContext.getMessage(dataSetRow["allergenListIsCleaned"], reportContext.getLocale())</expression>
+                                <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
                             </structure>
                         </list-property>
                         <column id="6716">
@@ -13763,10 +13766,9 @@ decisionTree
                                     <property name="borderTopColor">#000000</property>
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">1px</property>
-                                    <text-data id="12712">
-                                        <expression name="valueExpr">row["allergenListOnLine"] ? "Yes" : "No"</expression>
-                                        <property name="contentType">html</property>
-                                    </text-data>
+                                    <data id="13150">
+                                        <property name="resultSetColumn">allergenListOnLine</property>
+                                    </data>
                                 </cell>
                                 <cell id="12707">
                                     <property name="style">becpg-cell-data</property>
@@ -13782,10 +13784,9 @@ decisionTree
                                     <property name="borderTopColor">#000000</property>
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">1px</property>
-                                    <text-data id="12713">
-                                        <expression name="valueExpr">row["allergenListOnSite"] ? "Yes" : "No"</expression>
-                                        <property name="contentType">html</property>
-                                    </text-data>
+                                    <data id="13151">
+                                        <property name="resultSetColumn">allergenListOnSite</property>
+                                    </data>
                                 </cell>
                                 <cell id="12695">
                                     <property name="style">becpg-cell-data</property>
@@ -13801,10 +13802,9 @@ decisionTree
                                     <property name="borderTopColor">#000000</property>
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">1px</property>
-                                    <text-data id="12714">
-                                        <expression name="valueExpr">row["allergenListIsCleaned"] ? "Yes" : "No"</expression>
-                                        <property name="contentType">html</property>
-                                    </text-data>
+                                    <data id="13152">
+                                        <property name="resultSetColumn">allergenListIsCleaned</property>
+                                    </data>
                                 </cell>
                             </row>
                         </detail>
