@@ -75,6 +75,7 @@ public class EntityReportJob extends AbstractScheduledLockedJob implements Job {
 		
 		BatchInfo batchInfo = new BatchInfo("generatePendingReports", "becpg.batch.entity.generatePendingReports");
 		batchInfo.setRunAsSystem(true);
+		batchInfo.setWorkerThreads(1);
 		BatchProcessWorkProvider<NodeRef> workProvider = new EntityListBatchProcessWorkProvider<>(new ArrayList<>(pendingNodes));
 		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
 			@Override
@@ -89,5 +90,6 @@ public class EntityReportJob extends AbstractScheduledLockedJob implements Job {
 			}
 		};
 		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
+
 	}
 }
