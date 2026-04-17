@@ -2379,9 +2379,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					}
 
 					if (ingListItem.getData().getGeoOrigin() != null) {
-						addGeo(ingLabelItem, ingListItem.getData().getGeoOrigin(),
-								hasGeoTransfo ? PlaceOfActivityTypeCode.EMPTY : PlaceOfActivityTypeCode.LAST_PROCESSING);
-
+						addGeo(ingLabelItem, ingListItem.getData().getGeoOrigin(), PlaceOfActivityTypeCode.EMPTY);
+						if (!hasGeoTransfo) {
+							addGeo(ingLabelItem, ingListItem.getData().getGeoOrigin(), PlaceOfActivityTypeCode.LAST_PROCESSING);
+						}
 					}
 
 					if (ingListItem.getData().getBioOrigin() != null) {
