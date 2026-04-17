@@ -241,6 +241,33 @@ public class ProjectCalculatePlanningDatesIT extends AbstractProjectTestCase {
 	}
 
 	/**
+	 * Verifies that a project without explicit startDate is planned to today (or next working day),
+	 * not to tomorrow. Regression for #33571.
+	 */
+	@Test
+	public void testProjectWithoutStartDateUsesToday() {
+
+		final NodeRef projectNodeRef = createProject(ProjectState.OnHold, null, null, PlanningMode.Planning);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			projectService.formulate(projectNodeRef);
+
+			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+
+			assertNotNull(projectData);
+			assertNotNull(projectData.getStartDate());
+
+			Date expected = ProjectHelper.findNextWorkingDay(ProjectHelper.removeTime(projectData.getCreated()), new DefaultWorkingDayProvider());
+			assertEquals("Project startDate must not be shifted to tomorrow when no explicit startDate is provided", expected,
+					ProjectHelper.removeTime(projectData.getStartDate()));
+			assertEquals(projectData.getStartDate(), projectData.getTargetStartDate());
+
+			return null;
+		}, false, true);
+	}
+
+	/**
 	 * Verifies that task start dates use the previous task calendar and task end dates use the current task calendar.
 	 *
 	 * @throws ParseException if the test dates cannot be parsed.
