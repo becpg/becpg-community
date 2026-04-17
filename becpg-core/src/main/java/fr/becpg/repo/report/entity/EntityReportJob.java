@@ -110,6 +110,7 @@ public class EntityReportJob extends AbstractScheduledLockedJob implements Job {
 		BatchInfo batchInfo = new BatchInfo("generatePendingReports-" + priority, "becpg.batch.entity.generatePendingReports");
 		batchInfo.setRunAsSystem(true);
 		batchInfo.setPriority(priority == null ? BatchPriority.MEDIUM : priority);
+		batchInfo.setWorkerThreads(1);
 		BatchProcessWorkProvider<NodeRef> workProvider = new EntityListBatchProcessWorkProvider<>(new ArrayList<>(pendingNodes));
 		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
 			@Override
@@ -119,6 +120,7 @@ public class EntityReportJob extends AbstractScheduledLockedJob implements Job {
 					if (VersionHelper.isVersion(entityNodeRef)
 							&& (nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
 						extractedNode = entityVersionService.extractVersion(entityNodeRef);
+						batchInfo.setWorkerThreads(1);
 					}
 					entityReportService.generateReports(extractedNode, entityNodeRef);
 					nodeService.removeAspect(entityNodeRef, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT);
