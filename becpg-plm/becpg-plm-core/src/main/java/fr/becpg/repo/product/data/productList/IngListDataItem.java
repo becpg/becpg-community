@@ -106,6 +106,14 @@ public class IngListDataItem extends AbstractManualDataItem
 
 	private DeclarationType declType = DeclarationType.Detail;
 
+	private Double reconstitutionRate;
+
+	private Integer reconstitutionPriority;
+
+	private NodeRef diluentRef;
+
+	private NodeRef targetReconstitutionRef;
+
 	/**
 	 * <p>Getter for the field <code>qtyPerc</code>.</p>
 	 *
@@ -585,6 +593,86 @@ public class IngListDataItem extends AbstractManualDataItem
 
 	
 	
+	/**
+	 * <p>Getter for the field <code>reconstitutionRate</code>.</p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:reconstitutionRate")
+	public Double getReconstitutionRate() {
+		return reconstitutionRate;
+	}
+
+	/**
+	 * <p>Setter for the field <code>reconstitutionRate</code>.</p>
+	 *
+	 * @param reconstitutionRate a {@link java.lang.Double} object.
+	 */
+	public void setReconstitutionRate(Double reconstitutionRate) {
+		this.reconstitutionRate = reconstitutionRate;
+	}
+
+	/**
+	 * <p>Getter for the field <code>reconstitutionPriority</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:reconstitutionPriority")
+	public Integer getReconstitutionPriority() {
+		return reconstitutionPriority;
+	}
+
+	/**
+	 * <p>Setter for the field <code>reconstitutionPriority</code>.</p>
+	 *
+	 * @param reconstitutionPriority a {@link java.lang.Integer} object.
+	 */
+	public void setReconstitutionPriority(Integer reconstitutionPriority) {
+		this.reconstitutionPriority = reconstitutionPriority;
+	}
+
+	/**
+	 * <p>Getter for the field <code>diluentRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
+	@AlfSingleAssoc
+	@AlfQname(qname = "bcpg:diluentRef")
+	public NodeRef getDiluentRef() {
+		return diluentRef;
+	}
+
+	/**
+	 * <p>Setter for the field <code>diluentRef</code>.</p>
+	 *
+	 * @param diluentRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
+	public void setDiluentRef(NodeRef diluentRef) {
+		this.diluentRef = diluentRef;
+	}
+
+	/**
+	 * <p>Getter for the field <code>targetReconstitutionRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
+	@AlfSingleAssoc
+	@AlfQname(qname = "bcpg:targetReconstitutionRef")
+	public NodeRef getTargetReconstitutionRef() {
+		return targetReconstitutionRef;
+	}
+
+	/**
+	 * <p>Setter for the field <code>targetReconstitutionRef</code>.</p>
+	 *
+	 * @param targetReconstitutionRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
+	public void setTargetReconstitutionRef(NodeRef targetReconstitutionRef) {
+		this.targetReconstitutionRef = targetReconstitutionRef;
+	}
+
 	//////////////////////////////
 	
 
@@ -851,6 +939,10 @@ public class IngListDataItem extends AbstractManualDataItem
 		this.maxi = i.maxi;
 		this.declType = i.declType;
 		this.comments = i.comments;
+		this.reconstitutionRate = i.reconstitutionRate;
+		this.reconstitutionPriority = i.reconstitutionPriority;
+		this.diluentRef = i.diluentRef;
+		this.targetReconstitutionRef = i.targetReconstitutionRef;
 	}
 
 	/** {@inheritDoc} */
@@ -870,7 +962,7 @@ public class IngListDataItem extends AbstractManualDataItem
 		int result = super.hashCode();
 		result = prime * result + Objects.hash(bioOrigin, claims, declType, depthLevel, geoOrigin, geoTransfo, ing, ingTypes, isGMO, isIonized, isProcessingAid,
 				isSupport, maxi, mini, parent, qtyPerc, qtyPerc1, qtyPerc2, qtyPerc3, qtyPerc4, qtyPerc5, qtyPercWithSecondaryYield, qtyPercWithYield,
-				volumeQtyPerc);
+				volumeQtyPerc, reconstitutionRate, reconstitutionPriority, diluentRef, targetReconstitutionRef);
 		return result;
 	}
 
@@ -895,7 +987,11 @@ public class IngListDataItem extends AbstractManualDataItem
 				&& Objects.equals(qtyPerc5, other.qtyPerc5)
 				&& Objects.equals(qtyPercWithSecondaryYield, other.qtyPercWithSecondaryYield)
 				&& Objects.equals(comments, other.comments)
-				&& Objects.equals(qtyPercWithYield, other.qtyPercWithYield) && Objects.equals(volumeQtyPerc, other.volumeQtyPerc);
+				&& Objects.equals(qtyPercWithYield, other.qtyPercWithYield) && Objects.equals(volumeQtyPerc, other.volumeQtyPerc)
+				&& Objects.equals(reconstitutionRate, other.reconstitutionRate)
+				&& Objects.equals(reconstitutionPriority, other.reconstitutionPriority)
+				&& Objects.equals(diluentRef, other.diluentRef)
+				&& Objects.equals(targetReconstitutionRef, other.targetReconstitutionRef);
 	}
 
 	/** {@inheritDoc} */
