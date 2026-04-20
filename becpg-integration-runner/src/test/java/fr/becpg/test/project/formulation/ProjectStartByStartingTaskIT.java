@@ -3,8 +3,6 @@
  */
 package fr.becpg.test.project.formulation;
 
-import java.util.Date;
-
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,8 +11,6 @@ import org.junit.Test;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.TaskState;
-import fr.becpg.repo.project.impl.DefaultWorkingDayProvider;
-import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.test.project.AbstractProjectTestCase;
 
 /**
@@ -34,8 +30,7 @@ public class ProjectStartByStartingTaskIT extends AbstractProjectTestCase {
 
 		logger.debug("testStartProjectByStartingTask");
 
-		final NodeRef projectNodeRef = createProject(ProjectState.Planned,
-				ProjectHelper.calculateNextStartDate(new Date(), new DefaultWorkingDayProvider()), null);
+		final NodeRef projectNodeRef = createProject(ProjectState.Planned, null, null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
