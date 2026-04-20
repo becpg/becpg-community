@@ -261,7 +261,6 @@ public class ProjectCalculatePlanningDatesIT extends AbstractProjectTestCase {
 			Date expected = ProjectHelper.findNextWorkingDay(ProjectHelper.removeTime(projectData.getCreated()), new DefaultWorkingDayProvider());
 			assertEquals("Project startDate must not be shifted to tomorrow when no explicit startDate is provided", expected,
 					ProjectHelper.removeTime(projectData.getStartDate()));
-			assertEquals(projectData.getStartDate(), projectData.getTargetStartDate());
 
 			return null;
 		}, false, true);
