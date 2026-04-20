@@ -1,5 +1,65 @@
 # beCPG PLM – Open Source Product Lifecycle Management
 
+<!-- schema.org JSON-LD structured data for SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "beCPG PLM",
+  "description": "Open-source PLM (Product Lifecycle Management) platform built for the Food, Beverage, and Cosmetics industries. Helps companies launch products faster, reduce compliance risk, and lower IT costs.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Cross-platform",
+  "softwareRequirements": "Java 17+, Maven 3+, Docker",
+  "url": "https://www.becpg.net",
+  "sameAs": [
+    "https://github.com/becpg/becpg-community",
+    "https://sourceforge.net/projects/becpg-community/",
+    "https://docs.becpg.fr"
+  ],
+  "screenshot": "https://raw.githubusercontent.com/becpg/becpg-community/refs/heads/develop/docs/screenshots/product.webp",
+  "image": "https://raw.githubusercontent.com/becpg/becpg-community/refs/heads/develop/docs/screenshots/product.webp",
+  "offers": [
+    {
+      "@type": "Offer",
+      "name": "Community Edition",
+      "description": "Free & open-source PLM for innovators, startups, and developers",
+      "price": "0",
+      "priceCurrency": "EUR",
+      "availability": "https://schema.org/InStock"
+    },
+    {
+      "@type": "Offer",
+      "name": "Enterprise Edition",
+      "description": "Enterprise support, faster deployment, advanced compliance & connectors",
+      "availability": "https://schema.org/InStock"
+    }
+  ],
+  "featureList": [
+    "Product Repository (PDM/PIM)",
+    "Formulation & Labeling",
+    "BOM & Document Management",
+    "Change Management & Traceability",
+    "Project & Workflow Management",
+    "Quality Management (QMS)",
+    "Reporting & BI",
+    "REST API & ERP Integration"
+  ],
+  "author": {
+    "@type": "Organization",
+    "name": "beCPG",
+    "url": "https://www.becpg.net"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "beCPG",
+    "url": "https://www.becpg.net"
+  },
+  "license": "https://www.gnu.org/licenses/lgpl-3.0.html",
+  "programmingLanguage": ["Java"],
+  "softwareVersion": "Community Edition"
+}
+</script>
+
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL_v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 [![Java](https://img.shields.io/badge/Java-17+-orange.svg)](https://www.oracle.com/java/)
 [![Maven](https://img.shields.io/badge/Maven-3+-red.svg)](https://maven.apache.org/)
