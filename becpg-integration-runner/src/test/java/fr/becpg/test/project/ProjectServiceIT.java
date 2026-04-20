@@ -549,8 +549,7 @@ public class ProjectServiceIT extends AbstractProjectTestCase {
 	@Test
 	public void testTaskWorkflow() {
 
-		final NodeRef projectNodeRef = createProject(ProjectState.Planned,
-				ProjectHelper.calculateNextStartDate(new Date(), new DefaultWorkingDayProvider()), null);
+		final NodeRef projectNodeRef = createProject(ProjectState.Planned, null, null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
