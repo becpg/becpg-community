@@ -335,6 +335,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					}
 				}
 			}
+			labelingFormulaContext.setProductYield(formulatedProduct.getYield());
+			labelingFormulaContext.setSecondaryYield(formulatedProduct.getSecondaryYield());
 
 			visitCompoList(compositeLabeling, compositeDefaultVariant, labelingFormulaContext, BigDecimal.valueOf(1d), nextYield, true);
 
