@@ -9585,7 +9585,6 @@
                         </control>
                     </field>
 
-
                 </appearance>
             </form>
             <!-- Data Grid view -->
@@ -9747,6 +9746,10 @@
                     <show id="bcpg:ingListIngTypes" />
                     <show id="entity_bcpg:ingListIng_bcpg:ing_asColumn" force="true" />
                     <show id="fm:commentCount" force="true" />
+                    <show id="bcpg:reconstitutionRate" />
+                    <show id="bcpg:reconstitutionPriority" />
+                    <show id="bcpg:diluentRef" />
+                    <show id="bcpg:targetReconstitutionRef" />
                 </field-visibility>
                 <appearance>
                     <field id="bcpg:entityDataListState" label="hidden" />
@@ -9754,6 +9757,16 @@
                     <field id="bcpg:depthLevel" label="hidden" />
                      <field id="bcpg:ingListDeclType" label="hidden" />
                     <field id="fm:commentCount" label="hidden" read-only="true" />
+                    <field id="bcpg:diluentRef">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing</control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:targetReconstitutionRef">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing</control-param>
+                        </control>
+                    </field>
                 </appearance>
             </form>
             <form id="filter">

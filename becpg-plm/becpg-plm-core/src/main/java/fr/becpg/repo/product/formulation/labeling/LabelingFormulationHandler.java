@@ -2359,6 +2359,25 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				}
 
+				Double ingListReconstitutionRate = ingListItem.getData().getReconstitutionRate();
+				if ((ingListReconstitutionRate != null) && (ingListItem.getData().getAspects() != null)
+						&& ingListItem.getData().getAspects().contains(PLMModel.ASPECT_RECONSTITUTABLE)) {
+					NodeRef diluentNodeRef = ingListItem.getData().getDiluentRef();
+					NodeRef targetNodeRef = ingListItem.getData().getTargetReconstitutionRef();
+					if ((diluentNodeRef != null) && (targetNodeRef != null)) {
+						if (logger.isTraceEnabled()) {
+							logger.trace("Found ingList reconstitution rate for " + ingLabelItem.getLegalName(I18NUtil.getContentLocaleLang())
+									+ " (" + ingListReconstitutionRate + ")");
+						}
+						parent.getReconstituableDataItems().add(new ReconstituableDataItem(ingNodeRef, ingListReconstitutionRate,
+								ingListItem.getData().getReconstitutionPriority(), diluentNodeRef, targetNodeRef));
+						labelingFormulaContext.getToApplyThresholdItems().add(diluentNodeRef);
+						labelingFormulaContext.getToApplyThresholdItems().add(targetNodeRef);
+					} else {
+						logger.warn("Diluent or Target ing is null for ingList item: " + ingLabelItem.getLegalName(I18NUtil.getContentLocaleLang()));
+					}
+				}
+
 				if (!DeclarationType.DoNotDeclare.equals(ingDeclarationType)) {
 
 					if (product.getAllergenList() != null) {
