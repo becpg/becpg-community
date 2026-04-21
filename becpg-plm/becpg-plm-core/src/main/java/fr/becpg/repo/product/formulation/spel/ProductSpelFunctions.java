@@ -198,8 +198,7 @@ public class ProductSpelFunctions implements CustomSpelFunctions {
          */
         public String renderAllergens(RepositoryEntity target, String separator) {
             AllergenHelper.AllergenMaps maps = extract(target);
-            return AllergenHelper.renderAllergens(AllergenHelper.sorted(maps.getAllergens()), locale(), false, safe(separator),
-                    mlNodeService, associationService);
+            return AllergenHelper.renderAllergens(AllergenHelper.sorted(maps.getAllergens()), locale(), safe(separator), mlNodeService);
         }
 
         /**
@@ -212,8 +211,7 @@ public class ProductSpelFunctions implements CustomSpelFunctions {
          */
         public String renderAllergensForLocale(RepositoryEntity target, String localeCode, String separator) {
             AllergenHelper.AllergenMaps maps = extract(target);
-            return AllergenHelper.renderAllergens(AllergenHelper.sorted(maps.getAllergens()), parse(localeCode), false, safe(separator),
-                    mlNodeService, associationService);
+            return AllergenHelper.renderAllergens(AllergenHelper.sorted(maps.getAllergens()), parse(localeCode), safe(separator), mlNodeService);
         }
 
         /**
@@ -255,8 +253,8 @@ public class ProductSpelFunctions implements CustomSpelFunctions {
          */
         public String renderInvoluntaryAllergens(RepositoryEntity target, String separator) {
             AllergenHelper.AllergenMaps maps = extract(target);
-            return AllergenHelper.renderAllergens(AllergenHelper.sorted(maps.getInVolAllergens()), locale(), true, safe(separator),
-                    mlNodeService, associationService);
+            return AllergenHelper.renderInvoluntaryAllergens(AllergenHelper.sorted(maps.getInVolAllergens()),
+                    AllergenHelper.sorted(maps.getAllergens()), locale(), safe(separator), mlNodeService, associationService);
         }
 
         /**
@@ -269,8 +267,8 @@ public class ProductSpelFunctions implements CustomSpelFunctions {
          */
         public String renderInvoluntaryAllergensForLocale(RepositoryEntity target, String localeCode, String separator) {
             AllergenHelper.AllergenMaps maps = extract(target);
-            return AllergenHelper.renderAllergens(AllergenHelper.sorted(maps.getInVolAllergens()), parse(localeCode), true, safe(separator),
-                    mlNodeService, associationService);
+            return AllergenHelper.renderInvoluntaryAllergens(AllergenHelper.sorted(maps.getInVolAllergens()),
+                    AllergenHelper.sorted(maps.getAllergens()), parse(localeCode), safe(separator), mlNodeService, associationService);
         }
 
         /**
@@ -312,8 +310,8 @@ public class ProductSpelFunctions implements CustomSpelFunctions {
          */
         public String renderInvoluntaryAllergenInProcess(RepositoryEntity target, String separator) {
             AllergenHelper.AllergenMaps maps = extract(target);
-            return AllergenHelper.renderAllergens(AllergenHelper.sorted(maps.getInVolAllergensProcess()), locale(), true, safe(separator),
-                    mlNodeService, associationService);
+            return AllergenHelper.renderInvoluntaryAllergens(AllergenHelper.sorted(maps.getInVolAllergensProcess()),
+                    AllergenHelper.sorted(maps.getAllergens()), locale(), safe(separator), mlNodeService, associationService);
         }
 
         /**
@@ -326,8 +324,8 @@ public class ProductSpelFunctions implements CustomSpelFunctions {
          */
         public String renderInvoluntaryAllergenInProcessForLocale(RepositoryEntity target, String localeCode, String separator) {
             AllergenHelper.AllergenMaps maps = extract(target);
-            return AllergenHelper.renderAllergens(AllergenHelper.sorted(maps.getInVolAllergensProcess()), parse(localeCode), true, safe(separator),
-                    mlNodeService, associationService);
+            return AllergenHelper.renderInvoluntaryAllergens(AllergenHelper.sorted(maps.getInVolAllergensProcess()),
+                    AllergenHelper.sorted(maps.getAllergens()), parse(localeCode), safe(separator), mlNodeService, associationService);
         }
 
         /**
@@ -369,8 +367,8 @@ public class ProductSpelFunctions implements CustomSpelFunctions {
          */
         public String renderInvoluntaryInRawMaterial(RepositoryEntity target, String separator) {
             AllergenHelper.AllergenMaps maps = extract(target);
-            return AllergenHelper.renderAllergens(AllergenHelper.sorted(maps.getInVolAllergensRawMaterial()), locale(), true, safe(separator),
-                    mlNodeService, associationService);
+            return AllergenHelper.renderInvoluntaryAllergens(AllergenHelper.sorted(maps.getInVolAllergensRawMaterial()),
+                    AllergenHelper.sorted(maps.getAllergens()), locale(), safe(separator), mlNodeService, associationService);
         }
 
         /**
@@ -383,8 +381,8 @@ public class ProductSpelFunctions implements CustomSpelFunctions {
          */
         public String renderInvoluntaryInRawMaterialForLocale(RepositoryEntity target, String localeCode, String separator) {
             AllergenHelper.AllergenMaps maps = extract(target);
-            return AllergenHelper.renderAllergens(AllergenHelper.sorted(maps.getInVolAllergensRawMaterial()), parse(localeCode), true, safe(separator),
-                    mlNodeService, associationService);
+            return AllergenHelper.renderInvoluntaryAllergens(AllergenHelper.sorted(maps.getInVolAllergensRawMaterial()),
+                    AllergenHelper.sorted(maps.getAllergens()), parse(localeCode), safe(separator), mlNodeService, associationService);
         }
 
         /**

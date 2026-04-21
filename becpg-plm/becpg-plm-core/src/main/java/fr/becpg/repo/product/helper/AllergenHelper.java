@@ -157,42 +157,6 @@ public class AllergenHelper {
     }
 
     /**
-     * Returns the parent category localized grouped label
-     * ({@code bcpg:allergenOthersLegalName}) when the given child allergen has a
-     * parent category (reverse {@code bcpg:allergenSubset} association) defining
-     * a non-blank value for the requested locale. Returns {@code null} when no
-     * grouped label applies.
-     *
-     * @param childAllergen      a {@link org.alfresco.service.cmr.repository.NodeRef} object
-     * @param locale             a {@link java.util.Locale} object
-     * @param mlNodeService      the ML-aware node service
-     * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
-     * @return the localized grouped label or {@code null}
-     */
-    public static String findInvoluntaryGroupLabel(NodeRef childAllergen, Locale locale, NodeService mlNodeService,
-            AssociationService associationService) {
-
-        List<NodeRef> parents = associationService.getSourcesAssocs(childAllergen, PLMModel.ASSOC_ALLERGENSUBSETS);
-        if ((parents == null) || parents.isEmpty()) {
-            return null;
-        }
-
-        for (NodeRef parent : parents) {
-            MLText othersLegalName = (MLText) mlNodeService.getProperty(parent, PLMModel.PROP_ALLERGEN_OTHERS_LEGAL_NAME);
-            if (othersLegalName == null) {
-                continue;
-            }
-
-            String localized = MLTextHelper.getClosestValue(othersLegalName, locale);
-            if ((localized != null) && !localized.isBlank()) {
-                return localized;
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * Resolves the localized name of an allergen node. Uses {@code bcpg:legalName}
      * when available and falls back on {@code bcpg:charactName}.
      *
@@ -231,49 +195,126 @@ public class AllergenHelper {
     }
 
     /**
-     * Renders a flat, separator-delimited string of allergen legal names.
-     * When {@code involuntary} is {@code true}, children of a category defining
-     * a non-blank {@code bcpg:allergenOthersLegalName} for the locale are
-     * replaced by the grouped label and deduplicated.
+     * Renders a flat, separator-delimited, de-duplicated string of allergen legal
+     * names for the requested locale. Intended for the voluntary allergen list or
+     * any flat listing that does not need the grouped involuntary substitution.
      *
-     * @param allergens          an ordered {@link java.util.Collection} of allergen nodeRefs
-     * @param locale             a {@link java.util.Locale} object
-     * @param involuntary        {@code true} to enable grouped substitution
-     * @param separator          the separator between allergen names
-     * @param mlNodeService      the ML-aware node service
-     * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+     * @param allergens     an ordered {@link java.util.Collection} of allergen nodeRefs
+     * @param locale        a {@link java.util.Locale} object
+     * @param separator     the separator between allergen names
+     * @param mlNodeService the ML-aware node service
      * @return a rendered {@link java.lang.String} (may be empty, never {@code null})
      */
-    public static String renderAllergens(Collection<NodeRef> allergens, Locale locale, boolean involuntary, String separator,
-            NodeService mlNodeService, AssociationService associationService) {
+    public static String renderAllergens(Collection<NodeRef> allergens, Locale locale, String separator, NodeService mlNodeService) {
 
         if ((allergens == null) || allergens.isEmpty()) {
             return "";
         }
 
-        StringBuilder ret = new StringBuilder();
         Set<String> rendered = new LinkedHashSet<>();
 
         for (NodeRef allergen : allergens) {
-            String name = null;
-            if (involuntary) {
-                name = findInvoluntaryGroupLabel(allergen, locale, mlNodeService, associationService);
+            String name = getAllergenName(allergen, locale, mlNodeService);
+            if ((name != null) && !name.isEmpty()) {
+                rendered.add(name);
             }
-            if (name == null) {
-                name = getAllergenName(allergen, locale, mlNodeService);
-            }
-
-            if ((name == null) || name.isEmpty() || !rendered.add(name)) {
-                continue;
-            }
-
-            if (ret.length() > 0) {
-                ret.append(separator);
-            }
-            ret.append(name);
         }
 
-        return ret.toString();
+        return String.join(separator, rendered);
+    }
+
+    /**
+     * Renders the involuntary / traces allergen list applying the grouping rule
+     * carried by {@code bcpg:allergenInvoluntaryOtherLegalName}.
+     *
+     * <p>For each allergen category (an allergen with a non-empty
+     * {@code bcpg:allergenSubset}) <b>declared as voluntary</b> on the current
+     * product, if at least one of its children is present in
+     * {@code involuntaryAllergens} <b>and</b>
+     * {@code bcpg:allergenInvoluntaryOtherLegalName} provides a non-blank value
+     * for the requested locale, the grouped label is output once and those
+     * children are hidden from the involuntary list. In every other case the
+     * involuntary children are rendered individually via their
+     * {@code bcpg:legalName} (default behaviour).</p>
+     *
+     * <p>The order is stable: grouped labels (in voluntary-set iteration order)
+     * first, then the remaining involuntary children in the order given by
+     * {@code involuntaryAllergens}.</p>
+     *
+     * @param involuntaryAllergens an ordered {@link java.util.Collection} of involuntary allergen nodeRefs
+     * @param voluntaryAllergens   the full voluntary allergen set of the product (used to detect voluntary categories)
+     * @param locale               a {@link java.util.Locale} object
+     * @param separator            the separator between allergen names
+     * @param mlNodeService        the ML-aware node service
+     * @param associationService   a {@link fr.becpg.repo.helper.AssociationService} object
+     * @return a rendered {@link java.lang.String} (may be empty, never {@code null})
+     */
+    public static String renderInvoluntaryAllergens(Collection<NodeRef> involuntaryAllergens, Collection<NodeRef> voluntaryAllergens,
+            Locale locale, String separator, NodeService mlNodeService, AssociationService associationService) {
+
+        if ((involuntaryAllergens == null) || involuntaryAllergens.isEmpty()) {
+            return "";
+        }
+
+        Set<NodeRef> involuntarySet = new LinkedHashSet<>(involuntaryAllergens);
+        Set<NodeRef> consumed = new LinkedHashSet<>();
+        LinkedHashSet<String> rendered = new LinkedHashSet<>();
+
+        if ((voluntaryAllergens != null) && !voluntaryAllergens.isEmpty()) {
+            Set<NodeRef> candidateCategories = new LinkedHashSet<>();
+            for (NodeRef voluntary : voluntaryAllergens) {
+                List<NodeRef> children = associationService.getTargetAssocs(voluntary, PLMModel.ASSOC_ALLERGENSUBSETS);
+                if ((children != null) && !children.isEmpty()) {
+                    candidateCategories.add(voluntary);
+                }
+                List<NodeRef> parents = associationService.getSourcesAssocs(voluntary, PLMModel.ASSOC_ALLERGENSUBSETS);
+                if (parents != null) {
+                    candidateCategories.addAll(parents);
+                }
+            }
+
+            for (NodeRef category : candidateCategories) {
+                List<NodeRef> children = associationService.getTargetAssocs(category, PLMModel.ASSOC_ALLERGENSUBSETS);
+                if ((children == null) || children.isEmpty()) {
+                    continue;
+                }
+
+                Set<NodeRef> involuntaryChildren = new LinkedHashSet<>();
+                for (NodeRef child : children) {
+                    if (involuntarySet.contains(child)) {
+                        involuntaryChildren.add(child);
+                    }
+                }
+                if (involuntaryChildren.isEmpty()) {
+                    continue;
+                }
+
+                MLText othersLegalName = (MLText) mlNodeService.getProperty(category, PLMModel.PROP_ALLERGEN_INVOLUNTARY_OTHER_LEGAL_NAME);
+                if (othersLegalName == null) {
+                    continue;
+                }
+
+                String localized = othersLegalName.containsKey(locale) ? othersLegalName.get(locale) : null;
+                if ((localized == null) || localized.isBlank()) {
+                    continue;
+                }
+
+                rendered.add(localized);
+                consumed.addAll(involuntaryChildren);
+            }
+        }
+
+        for (NodeRef allergen : involuntaryAllergens) {
+            if (consumed.contains(allergen)) {
+                continue;
+            }
+            String name = getAllergenName(allergen, locale, mlNodeService);
+            if ((name != null) && !name.isEmpty()) {
+                rendered.add(name);
+            }
+        }
+
+        return String.join(separator, rendered);
     }
 
 }

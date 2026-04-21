@@ -1553,7 +1553,7 @@
                     <show id="bcpg:allergenRegulatoryThreshold" />
                     <show id="bcpg:allergenInVoluntaryRegulatoryThreshold" />
                     <show id="bcpg:allergenSubset" />
-                    <show id="bcpg:allergenOthersLegalName" />
+                    <show id="bcpg:allergenInvoluntaryOtherLegalName" />
                     <show id="bcpg:erpCode" force="true" />
                     <show id="rep:reportLocales" force="true" />
                     <show id="sec:readGroups" force="true" />
@@ -1587,6 +1587,7 @@
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 
                     </field>
+                    <field id="bcpg:allergenInvoluntaryOtherLegalName" help-id="becpg.forms.help.allergenInvoluntaryOtherLegalName" />
                     <field id="rep:reportLocales">
                         <control template="/org/alfresco/components/form/controls/mtlangue.ftl">
                             <control-param name="insertBlank">true</control-param>
@@ -1610,7 +1611,7 @@
                     <show id="bcpg:allergenRegulatoryThreshold" />
                     <show id="bcpg:allergenInVoluntaryRegulatoryThreshold" />
                     <show id="bcpg:allergenSubset" />
-                    <show id="bcpg:allergenOthersLegalName" />
+                    <show id="bcpg:allergenInvoluntaryOtherLegalName" />
                     <show id="bcpg:erpCode" force="true" />
                     <show id="rep:reportLocales" force="true" />
                     <show id="sec:readGroups" force="true" />
@@ -1644,6 +1645,7 @@
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 
                     </field>
+                    <field id="bcpg:allergenInvoluntaryOtherLegalName" help-id="becpg.forms.help.allergenInvoluntaryOtherLegalName" />
                     <field id="rep:reportLocales">
                         <control template="/org/alfresco/components/form/controls/mtlangue.ftl">
                             <control-param name="insertBlank">true</control-param>
@@ -1687,7 +1689,7 @@
                     <show id="bcpg:allergenType" />
                     <show id="bcpg:allergenCode" />
                     <show id="bcpg:allergenSubset" />
-                    <show id="bcpg:allergenOthersLegalName" />
+                    <show id="bcpg:allergenInvoluntaryOtherLegalName" />
                     <show id="bcpg:allergenRegulatoryThreshold" />
                     <show id="bcpg:allergenInVoluntaryRegulatoryThreshold" />
                     <show id="sec:readGroups" force="true" />

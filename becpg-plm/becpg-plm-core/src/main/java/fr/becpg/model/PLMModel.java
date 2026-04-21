@@ -430,8 +430,8 @@ public interface PLMModel {
 	/** Constant <code>PROP_ALLERGEN_INVOL_REGULATORY_THRESHOLD</code> */
 	QName PROP_ALLERGEN_INVOL_REGULATORY_THRESHOLD = QName.createQName(BeCPGModel.BECPG_URI, "allergenInVoluntaryRegulatoryThreshold");
 
-	/** Constant <code>PROP_ALLERGEN_OTHERS_LEGAL_NAME</code> */
-	QName PROP_ALLERGEN_OTHERS_LEGAL_NAME = QName.createQName(BeCPGModel.BECPG_URI, "allergenOthersLegalName");
+	/** Constant <code>PROP_ALLERGEN_INVOLUNTARY_OTHER_LEGAL_NAME</code> */
+	QName PROP_ALLERGEN_INVOLUNTARY_OTHER_LEGAL_NAME = QName.createQName(BeCPGModel.BECPG_URI, "allergenInvoluntaryOtherLegalName");
 
 	// cost
 	/** Constant <code>TYPE_COST</code> */

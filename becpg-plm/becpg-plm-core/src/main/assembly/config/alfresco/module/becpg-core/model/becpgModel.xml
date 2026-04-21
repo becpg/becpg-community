@@ -1467,7 +1467,7 @@
 					<type>d:double</type>
 					<index enabled="false" />
 				</property>
-				<property name="bcpg:allergenOthersLegalName">
+				<property name="bcpg:allergenInvoluntaryOtherLegalName">
 					<type>d:mltext</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
