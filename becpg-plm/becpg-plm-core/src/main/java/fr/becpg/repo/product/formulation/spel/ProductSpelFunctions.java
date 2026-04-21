@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.formulation.spel.CustomSpelFunctions;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.helper.AllergenHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -202,6 +203,31 @@ public class ProductSpelFunctions implements CustomSpelFunctions {
         }
 
         /**
+         * <p>Renders voluntary allergens of the given product, forcing the locale.</p>
+         *
+         * @param target a {@link fr.becpg.repo.repository.RepositoryEntity} object
+         * @param localeCode the target locale (e.g. {@code "fr"}, {@code "en"}, {@code "fr_CA"})
+         * @param separator a {@link java.lang.String} object
+         * @return a {@link java.lang.String} object
+         */
+        public String renderAllergensForLocale(RepositoryEntity target, String localeCode, String separator) {
+            AllergenHelper.AllergenMaps maps = extract(target);
+            return AllergenHelper.renderAllergens(AllergenHelper.sorted(maps.getAllergens()), parse(localeCode), false, safe(separator),
+                    mlNodeService, associationService);
+        }
+
+        /**
+         * <p>Renders voluntary allergens on the current entity, forcing the locale.</p>
+         *
+         * @param localeCode the target locale (e.g. {@code "fr"}, {@code "en"}, {@code "fr_CA"})
+         * @param separator a {@link java.lang.String} object
+         * @return a {@link java.lang.String} object
+         */
+        public String renderAllergensForLocale(String localeCode, String separator) {
+            return renderAllergensForLocale(entity, localeCode, separator);
+        }
+
+        /**
          * <p>Renders involuntary allergens with grouped category substitution.</p>
          *
          * @return a {@link java.lang.String} object
@@ -231,6 +257,31 @@ public class ProductSpelFunctions implements CustomSpelFunctions {
             AllergenHelper.AllergenMaps maps = extract(target);
             return AllergenHelper.renderAllergens(AllergenHelper.sorted(maps.getInVolAllergens()), locale(), true, safe(separator),
                     mlNodeService, associationService);
+        }
+
+        /**
+         * <p>Renders involuntary allergens of the given product, forcing the locale.</p>
+         *
+         * @param target a {@link fr.becpg.repo.repository.RepositoryEntity} object
+         * @param localeCode the target locale (e.g. {@code "fr"}, {@code "en"}, {@code "fr_CA"})
+         * @param separator a {@link java.lang.String} object
+         * @return a {@link java.lang.String} object
+         */
+        public String renderInvoluntaryAllergensForLocale(RepositoryEntity target, String localeCode, String separator) {
+            AllergenHelper.AllergenMaps maps = extract(target);
+            return AllergenHelper.renderAllergens(AllergenHelper.sorted(maps.getInVolAllergens()), parse(localeCode), true, safe(separator),
+                    mlNodeService, associationService);
+        }
+
+        /**
+         * <p>Renders involuntary allergens on the current entity, forcing the locale.</p>
+         *
+         * @param localeCode the target locale (e.g. {@code "fr"}, {@code "en"}, {@code "fr_CA"})
+         * @param separator a {@link java.lang.String} object
+         * @return a {@link java.lang.String} object
+         */
+        public String renderInvoluntaryAllergensForLocale(String localeCode, String separator) {
+            return renderInvoluntaryAllergensForLocale(entity, localeCode, separator);
         }
 
         /**
@@ -266,6 +317,31 @@ public class ProductSpelFunctions implements CustomSpelFunctions {
         }
 
         /**
+         * <p>Renders involuntary process allergens of the given product, forcing the locale.</p>
+         *
+         * @param target a {@link fr.becpg.repo.repository.RepositoryEntity} object
+         * @param localeCode the target locale (e.g. {@code "fr"}, {@code "en"}, {@code "fr_CA"})
+         * @param separator a {@link java.lang.String} object
+         * @return a {@link java.lang.String} object
+         */
+        public String renderInvoluntaryAllergenInProcessForLocale(RepositoryEntity target, String localeCode, String separator) {
+            AllergenHelper.AllergenMaps maps = extract(target);
+            return AllergenHelper.renderAllergens(AllergenHelper.sorted(maps.getInVolAllergensProcess()), parse(localeCode), true, safe(separator),
+                    mlNodeService, associationService);
+        }
+
+        /**
+         * <p>Renders involuntary process allergens on the current entity, forcing the locale.</p>
+         *
+         * @param localeCode the target locale
+         * @param separator a {@link java.lang.String} object
+         * @return a {@link java.lang.String} object
+         */
+        public String renderInvoluntaryAllergenInProcessForLocale(String localeCode, String separator) {
+            return renderInvoluntaryAllergenInProcessForLocale(entity, localeCode, separator);
+        }
+
+        /**
          * <p>Renders involuntary allergens present in raw material sources.</p>
          *
          * @return a {@link java.lang.String} object
@@ -295,6 +371,31 @@ public class ProductSpelFunctions implements CustomSpelFunctions {
             AllergenHelper.AllergenMaps maps = extract(target);
             return AllergenHelper.renderAllergens(AllergenHelper.sorted(maps.getInVolAllergensRawMaterial()), locale(), true, safe(separator),
                     mlNodeService, associationService);
+        }
+
+        /**
+         * <p>Renders involuntary raw material allergens of the given product, forcing the locale.</p>
+         *
+         * @param target a {@link fr.becpg.repo.repository.RepositoryEntity} object
+         * @param localeCode the target locale (e.g. {@code "fr"}, {@code "en"}, {@code "fr_CA"})
+         * @param separator a {@link java.lang.String} object
+         * @return a {@link java.lang.String} object
+         */
+        public String renderInvoluntaryInRawMaterialForLocale(RepositoryEntity target, String localeCode, String separator) {
+            AllergenHelper.AllergenMaps maps = extract(target);
+            return AllergenHelper.renderAllergens(AllergenHelper.sorted(maps.getInVolAllergensRawMaterial()), parse(localeCode), true, safe(separator),
+                    mlNodeService, associationService);
+        }
+
+        /**
+         * <p>Renders involuntary raw material allergens on the current entity, forcing the locale.</p>
+         *
+         * @param localeCode the target locale
+         * @param separator a {@link java.lang.String} object
+         * @return a {@link java.lang.String} object
+         */
+        public String renderInvoluntaryInRawMaterialForLocale(String localeCode, String separator) {
+            return renderInvoluntaryInRawMaterialForLocale(entity, localeCode, separator);
         }
 
         private AllergenHelper.AllergenMaps extract(RepositoryEntity target) {
@@ -333,6 +434,18 @@ public class ProductSpelFunctions implements CustomSpelFunctions {
         private Locale locale() {
             Locale current = I18NUtil.getLocale();
             return (current != null) ? current : Locale.getDefault();
+        }
+
+        private Locale parse(String localeCode) {
+            if ((localeCode == null) || localeCode.isBlank()) {
+                return locale();
+            }
+            try {
+                return MLTextHelper.parseLocale(localeCode);
+            } catch (RuntimeException e) {
+                logger.warn("Invalid locale code '" + localeCode + "', falling back on current locale: " + e.getMessage());
+                return locale();
+            }
         }
 
         private String safe(String separator) {
