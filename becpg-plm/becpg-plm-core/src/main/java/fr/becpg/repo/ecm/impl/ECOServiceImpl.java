@@ -1061,11 +1061,22 @@ public class ECOServiceImpl implements ECOService {
 				wUsedListDataItem.setParent(parent);
 				wUsedListDataItem.setImpactedDataList(dataListQName);
 				wUsedListDataItem.setIsWUsedImpacted(isWUsedImpacted || applyToAll);
-				wUsedListDataItem.setSourceItems(wUsedData.getTree().get(key).getEntityNodeRefs());
 				wUsedListDataItem.setSort(sort++);
 				wUsedListDataItem.setTargetItem(targetItem);
 
-				ecoData.getWUsedList().add(wUsedListDataItem);
+				List<NodeRef> sourceItems = wUsedData.getTree().get(key).getEntityNodeRefs();
+				wUsedListDataItem.setSourceItems(sourceItems);
+				
+				Boolean isExpired = false;
+				if (sourceItems != null && !sourceItems.isEmpty()) {
+					Date endEffectivity = (Date) nodeService.getProperty(sourceItems.get(0), BeCPGModel.PROP_END_EFFECTIVITY);
+					isExpired = endEffectivity != null && endEffectivity.before(new Date());
+				}
+				
+				if (!isExpired) {
+					ecoData.getWUsedList().add(wUsedListDataItem);
+				}
+				
 				// recursive
 				sort = calculateWUsedList(ecoData, wUsedData.getTree().get(key), dataListQName, wUsedListDataItem, isWUsedImpacted, sort, targetItem,
 						applyToAll);
