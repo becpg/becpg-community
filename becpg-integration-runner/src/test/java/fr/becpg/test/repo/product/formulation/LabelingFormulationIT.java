@@ -1191,6 +1191,76 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 	}
 
 	@Test
+	public void testRenderAllergenOthersLegalName() {
+
+		final NodeRef parentAllergen = inWriteTx(() -> {
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, "Fruits a coque");
+			properties.put(PLMModel.PROP_ALLERGEN_TYPE, "Major");
+			MLText othersLegalName = new MLText();
+			othersLegalName.addValue(Locale.FRENCH, "autres fruits a coque");
+			properties.put(PLMModel.PROP_ALLERGEN_OTHERS_LEGAL_NAME, othersLegalName);
+
+			NodeRef parent = nodeService
+					.createNode(getTestFolderNodeRef(), org.alfresco.model.ContentModel.ASSOC_CONTAINS,
+							QName.createQName(org.alfresco.service.namespace.NamespaceService.CONTENT_MODEL_1_0_URI, "fruitsACoque"),
+							PLMModel.TYPE_ALLERGEN, properties)
+					.getChildRef();
+
+			associationService.update(parent, PLMModel.ASSOC_ALLERGENSUBSETS, Arrays.asList(allergen2));
+			return parent;
+		});
+
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			logger.debug("/*-- Create finished product (allergenOthersLegalName) --*/");
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Produit fini Allergen Others");
+			finishedProduct.setLegalName("Legal Produit fini Allergen Others");
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setQty(4d);
+			finishedProduct.setDensity(1d);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+
+			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial7NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef));
+
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+		labelingRuleList.add(
+				LabelingRuleListDataItem.build().withName("Rendu").withFormula("renderAllergens()").withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Rendu2").withFormula("renderInvoluntaryAllergens()")
+				.withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Rendu4").withFormula("renderInvoluntaryInRawMaterial()")
+				.withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Langue").withFormula("fr,en")
+				.withLabelingRuleType(LabelingRuleType.Locale));
+
+		checkILL(finishedProductNodeRef, labelingRuleList, "allergen1", Locale.FRENCH, "Rendu");
+		checkILL(finishedProductNodeRef, labelingRuleList, "allergen1", Locale.ENGLISH, "Rendu");
+
+		checkILL(finishedProductNodeRef, labelingRuleList, "autres fruits a coque", Locale.FRENCH, "Rendu2");
+		checkILL(finishedProductNodeRef, labelingRuleList, "allergen2", Locale.ENGLISH, "Rendu2");
+
+		checkILL(finishedProductNodeRef, labelingRuleList, "autres fruits a coque", Locale.FRENCH, "Rendu4");
+		checkILL(finishedProductNodeRef, labelingRuleList, "allergen2", Locale.ENGLISH, "Rendu4");
+
+		inWriteTx(() -> {
+			associationService.update(parentAllergen, PLMModel.ASSOC_ALLERGENSUBSETS, Collections.emptyList());
+			return null;
+		});
+
+		checkILL(finishedProductNodeRef, labelingRuleList, "allergen2", Locale.FRENCH, "Rendu2");
+		checkILL(finishedProductNodeRef, labelingRuleList, "allergen2", Locale.ENGLISH, "Rendu2");
+	}
+
+	@Test
 	public void testDisableAllergenDetection() {
 
 		final NodeRef finishedProductNodeRef = inWriteTx(() -> {

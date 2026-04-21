@@ -1460,18 +1460,52 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	private String getCharactName(NodeRef charact) {
 
+		Locale currentLocale = I18NUtil.getLocale();
+
 		MLText legalName = (MLText) mlNodeService.getProperty(charact, BeCPGModel.PROP_LEGAL_NAME);
 
-		String ret = MLTextHelper.getClosestValue(legalName, I18NUtil.getLocale());
+		String ret = MLTextHelper.getClosestValue(legalName, currentLocale);
 
 		if ((ret == null) || ret.isEmpty()) {
 			legalName = (MLText) mlNodeService.getProperty(charact, BeCPGModel.PROP_CHARACT_NAME);
 
-			ret = MLTextHelper.getClosestValue(legalName, I18NUtil.getLocale());
+			ret = MLTextHelper.getClosestValue(legalName, currentLocale);
 		}
 
 		return ret;
 
+	}
+
+	/**
+	 * Returns the parent category localized grouped label ({@code bcpg:allergenOthersLegalName})
+	 * when the given child allergen has a parent category that defines a non-blank value for the
+	 * requested locale. The parent lookup relies on the reverse of the {@code bcpg:allergenSubset}
+	 * association. Returns {@code null} when no such grouped label applies so that the caller
+	 * keeps rendering the standard name.
+	 *
+	 * @param childAllergen a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param locale a {@link java.util.Locale} object
+	 * @return the localized grouped label or {@code null}
+	 */
+	private String findInvoluntaryGroupLabel(NodeRef childAllergen, Locale locale) {
+		List<NodeRef> parents = associationService.getSourcesAssocs(childAllergen, PLMModel.ASSOC_ALLERGENSUBSETS);
+		if ((parents == null) || parents.isEmpty()) {
+			return null;
+		}
+
+		for (NodeRef parent : parents) {
+			MLText othersLegalName = (MLText) mlNodeService.getProperty(parent, PLMModel.PROP_ALLERGEN_OTHERS_LEGAL_NAME);
+			if (othersLegalName == null) {
+				continue;
+			}
+
+			String localized = MLTextHelper.getClosestValue(othersLegalName, locale);
+			if ((localized != null) && !localized.isBlank()) {
+				return localized;
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -1672,7 +1706,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String renderInvoluntaryAllergens() {
-		return renderAllergens(sorted(this.inVolAllergens));
+		return renderAllergens(sorted(this.inVolAllergens), true);
 
 	}
 
@@ -1684,7 +1718,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String renderInvoluntaryAllergenInProcess() {
-		return renderAllergens(sorted(this.inVolAllergensProcess));
+		return renderAllergens(sorted(this.inVolAllergensProcess), true);
 
 	}
 
@@ -1696,7 +1730,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String renderInvoluntaryInRawMaterial() {
-		return renderAllergens(sorted(this.inVolAllergensRawMaterial));
+		return renderAllergens(sorted(this.inVolAllergensRawMaterial), true);
 	}
 
 	private Set<NodeRef> sorted(Map<NodeRef, Double> toSortHashMap) {
@@ -1797,19 +1831,56 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String renderAllergens(Set<NodeRef> allergensList) {
+		return renderAllergens(allergensList, false);
+	}
+
+	/**
+	 * <p>
+	 * renderAllergens.
+	 * </p>
+	 *
+	 * <p>When {@code involuntary} is {@code true}, allergens belonging to a category whose
+	 * parent defines a non-blank {@code bcpg:allergenOthersLegalName} for the current locale
+	 * are replaced by that grouped label and deduplicated (e.g. almond + walnut + pecan are
+	 * collapsed into a single "autres fruits à coque" entry in FR).</p>
+	 *
+	 * @param allergensList
+	 *            a {@link java.util.Set} object.
+	 * @param involuntary
+	 *            {@code true} when rendering an involuntary / traces allergen list
+	 * @return a {@link java.lang.String} object.
+	 */
+	public String renderAllergens(Set<NodeRef> allergensList, boolean involuntary) {
 		StringBuilder ret = new StringBuilder();
 
 		if (logger.isTraceEnabled()) {
 			logger.trace(" Render Allergens list ");
 		}
 
+		Locale currentLocale = I18NUtil.getLocale();
+		Set<String> rendered = new LinkedHashSet<>();
+
 		for (NodeRef allergen : allergensList) {
-			if (!isAllergenDisableForLocale(allergen)) {
-				if (ret.length() > 0) {
-					ret.append(getLocaleSeparator(allergensSeparator));
-				}
-				ret.append(getCharactName(allergen));
+			if (isAllergenDisableForLocale(allergen)) {
+				continue;
 			}
+
+			String name = null;
+			if (involuntary) {
+				name = findInvoluntaryGroupLabel(allergen, currentLocale);
+			}
+			if (name == null) {
+				name = getCharactName(allergen);
+			}
+
+			if ((name == null) || name.isEmpty() || !rendered.add(name)) {
+				continue;
+			}
+
+			if (ret.length() > 0) {
+				ret.append(getLocaleSeparator(allergensSeparator));
+			}
+			ret.append(name);
 		}
 
 		return decorate(ret.toString());
