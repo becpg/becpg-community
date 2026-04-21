@@ -74,6 +74,7 @@ import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.ing.LabelingComponent;
 import fr.becpg.repo.product.data.meat.MeatType;
+import fr.becpg.repo.product.helper.AllergenHelper;
 import fr.becpg.repo.product.data.spel.LabelingFormulaFilterContext;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
@@ -1476,36 +1477,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	}
 
-	/**
-	 * Returns the parent category localized grouped label ({@code bcpg:allergenOthersLegalName})
-	 * when the given child allergen has a parent category that defines a non-blank value for the
-	 * requested locale. The parent lookup relies on the reverse of the {@code bcpg:allergenSubset}
-	 * association. Returns {@code null} when no such grouped label applies so that the caller
-	 * keeps rendering the standard name.
-	 *
-	 * @param childAllergen a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @param locale a {@link java.util.Locale} object
-	 * @return the localized grouped label or {@code null}
-	 */
 	private String findInvoluntaryGroupLabel(NodeRef childAllergen, Locale locale) {
-		List<NodeRef> parents = associationService.getSourcesAssocs(childAllergen, PLMModel.ASSOC_ALLERGENSUBSETS);
-		if ((parents == null) || parents.isEmpty()) {
-			return null;
-		}
-
-		for (NodeRef parent : parents) {
-			MLText othersLegalName = (MLText) mlNodeService.getProperty(parent, PLMModel.PROP_ALLERGEN_OTHERS_LEGAL_NAME);
-			if (othersLegalName == null) {
-				continue;
-			}
-
-			String localized = MLTextHelper.getClosestValue(othersLegalName, locale);
-			if ((localized != null) && !localized.isBlank()) {
-				return localized;
-			}
-		}
-
-		return null;
+		return AllergenHelper.findInvoluntaryGroupLabel(childAllergen, locale, mlNodeService, associationService);
 	}
 
 	/**
