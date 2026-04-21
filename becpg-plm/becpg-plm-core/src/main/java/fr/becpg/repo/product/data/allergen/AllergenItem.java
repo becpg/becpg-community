@@ -7,9 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.repository.annotation.AlfCacheable;
+import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -37,7 +39,9 @@ public class AllergenItem extends BeCPGDataObject {
 	private Double allergenRegulatoryThreshold;
 	
 	private Double allergenInVoluntaryRegulatoryThreshold;
-	
+
+	private MLText allergenOthersLegalName;
+
 	private List<NodeRef> allergenSubset = new ArrayList<>();
 
 	/**
@@ -141,6 +145,33 @@ public class AllergenItem extends BeCPGDataObject {
 	}
 
 	/**
+	 * <p>Getter for the field <code>allergenOthersLegalName</code>.</p>
+	 *
+	 * <p>Localized label substituted to {@code bcpg:legalName} when this allergen is
+	 * a category (has {@code allergenSubset}) and at least one of its children is
+	 * declared as involuntary on the current product. Typical usage is "autres
+	 * fruits à coque" / "autres céréales contenant du gluten" for locales that
+	 * require a grouped rendering.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname = "bcpg:allergenOthersLegalName")
+	public MLText getAllergenOthersLegalName() {
+		return allergenOthersLegalName;
+	}
+
+	/**
+	 * <p>Setter for the field <code>allergenOthersLegalName</code>.</p>
+	 *
+	 * @param allergenOthersLegalName a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
+	public void setAllergenOthersLegalName(MLText allergenOthersLegalName) {
+		this.allergenOthersLegalName = allergenOthersLegalName;
+	}
+
+	/**
 	 * <p>Getter for the field <code>allergenSubset</code>.</p>
 	 *
 	 * @return a {@link java.util.List} object
@@ -165,8 +196,8 @@ public class AllergenItem extends BeCPGDataObject {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(allergenCode, allergenInVoluntaryRegulatoryThreshold, allergenRegulatoryThreshold, allergenSubset,
-				allergenType, charactName);
+		result = prime * result + Objects.hash(allergenCode, allergenInVoluntaryRegulatoryThreshold, allergenOthersLegalName,
+				allergenRegulatoryThreshold, allergenSubset, allergenType, charactName);
 		return result;
 	}
 
@@ -182,6 +213,7 @@ public class AllergenItem extends BeCPGDataObject {
 		AllergenItem other = (AllergenItem) obj;
 		return Objects.equals(allergenCode, other.allergenCode)
 				&& Objects.equals(allergenInVoluntaryRegulatoryThreshold, other.allergenInVoluntaryRegulatoryThreshold)
+				&& Objects.equals(allergenOthersLegalName, other.allergenOthersLegalName)
 				&& Objects.equals(allergenRegulatoryThreshold, other.allergenRegulatoryThreshold)
 				&& Objects.equals(allergenSubset, other.allergenSubset) && Objects.equals(allergenType, other.allergenType)
 				&& Objects.equals(charactName, other.charactName);
@@ -192,7 +224,8 @@ public class AllergenItem extends BeCPGDataObject {
 	public String toString() {
 		return "AllergenItem [charactName=" + charactName + ", allergenCode=" + allergenCode + ", allergenType=" + allergenType
 				+ ", allergenRegulatoryThreshold=" + allergenRegulatoryThreshold + ", allergenInVoluntaryRegulatoryThreshold="
-				+ allergenInVoluntaryRegulatoryThreshold + ", allergenSubset=" + allergenSubset + "]";
+				+ allergenInVoluntaryRegulatoryThreshold + ", allergenOthersLegalName=" + allergenOthersLegalName
+				+ ", allergenSubset=" + allergenSubset + "]";
 	}
 
 }
