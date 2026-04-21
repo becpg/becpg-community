@@ -1467,6 +1467,11 @@
 					<type>d:double</type>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:allergenOthersLegalName">
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:allergenSubset">

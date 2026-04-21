@@ -1553,6 +1553,7 @@
                     <show id="bcpg:allergenRegulatoryThreshold" />
                     <show id="bcpg:allergenInVoluntaryRegulatoryThreshold" />
                     <show id="bcpg:allergenSubset" />
+                    <show id="bcpg:allergenOthersLegalName" />
                     <show id="bcpg:erpCode" force="true" />
                     <show id="rep:reportLocales" force="true" />
                     <show id="sec:readGroups" force="true" />
@@ -1609,6 +1610,7 @@
                     <show id="bcpg:allergenRegulatoryThreshold" />
                     <show id="bcpg:allergenInVoluntaryRegulatoryThreshold" />
                     <show id="bcpg:allergenSubset" />
+                    <show id="bcpg:allergenOthersLegalName" />
                     <show id="bcpg:erpCode" force="true" />
                     <show id="rep:reportLocales" force="true" />
                     <show id="sec:readGroups" force="true" />
@@ -1685,6 +1687,7 @@
                     <show id="bcpg:allergenType" />
                     <show id="bcpg:allergenCode" />
                     <show id="bcpg:allergenSubset" />
+                    <show id="bcpg:allergenOthersLegalName" />
                     <show id="bcpg:allergenRegulatoryThreshold" />
                     <show id="bcpg:allergenInVoluntaryRegulatoryThreshold" />
                     <show id="sec:readGroups" force="true" />
