@@ -9895,6 +9895,11 @@
 
                     <show id="bcpg:ingListComments" />
 
+                    <show id="bcpg:reconstitutionRate" />
+                    <show id="bcpg:reconstitutionPriority" />
+                    <show id="bcpg:diluentRef" />
+                    <show id="bcpg:targetReconstitutionRef" />
+
                     <show id="bcpg:ingListDeclType" />
                     <show id="bcpg:linkedSearchAssociation" force="true" />
                     <show id="bcpg:parentLevel" />
@@ -9980,6 +9985,17 @@
                             <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing?extra.getByAssoc=bcpg:linkedSearchAssociation
                             </control-param>
                             <control-param name="parentAssoc">bcpg_ingListIng</control-param>
+                        </control>
+                    </field>
+                    
+                    <field id="bcpg:diluentRef" set="1-col-2">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing</control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:targetReconstitutionRef" set="1-col-2">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing</control-param>
                         </control>
                     </field>
 

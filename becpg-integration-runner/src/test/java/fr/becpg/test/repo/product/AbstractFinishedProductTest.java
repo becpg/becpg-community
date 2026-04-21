@@ -25,7 +25,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.UUID;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
@@ -1287,17 +1286,6 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 
 		logger.info("checkILL : " + ill + (ruleName != null ? " " + ruleName : ""));
 
-		NodeRef grpNodeRef = null;
-
-		for (LabelingRuleListDataItem rule : labelingRuleList) {
-			if (rule.getLabelingRuleType().equals(LabelingRuleType.Render) && !rule.getFormula().contains("renderAsHtmlTable")) {
-				rule.setNodeRef(new NodeRef("test", "becpg", UUID.randomUUID().toString()));
-				if ((ruleName != null) && ruleName.equals(rule.getName())) {
-					grpNodeRef = rule.getNodeRef();
-				}
-			}
-		}
-
 		ProductData formulatedProduct = inWriteTx(() -> {
 			ProductData ret = (ProductData) alfrescoRepository.findOne(productNodeRef);
 			if (labelingRuleList.stream().noneMatch(item -> "Pref 7".equals(item.getName()))) {
@@ -1307,12 +1295,25 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			ret.getLabelingListView().getLabelingRuleList().clear();
 			ret.getLabelingListView().getLabelingRuleList().addAll(labelingRuleList);
 
+			alfrescoRepository.save(ret);
+
 			productService.formulate(ret);
 
 			alfrescoRepository.save(ret);
 
 			return ret;
 		});
+
+		NodeRef grpNodeRef = null;
+		if (ruleName != null) {
+			for (LabelingRuleListDataItem rule : formulatedProduct.getLabelingListView().getLabelingRuleList()) {
+				if (LabelingRuleType.Render.equals(rule.getLabelingRuleType()) && ruleName.equals(rule.getName())
+						&& (rule.getFormula() == null || !rule.getFormula().contains("renderAsHtmlTable"))) {
+					grpNodeRef = rule.getNodeRef();
+					break;
+				}
+			}
+		}
 
 		Assert.assertTrue(formulatedProduct.getLabelingListView().getLabelingRuleList().size() > 0);
 		// verify IngLabelingList
