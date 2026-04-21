@@ -462,6 +462,33 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private boolean forceKeepOrder = false;
 
 	private Double yield = null;
+	private Double secondaryYield = null;
+	private Double productYield = null;
+
+	private String htmlFlatTableRowFormat = """
+			<tr><td style="border: solid 1px; padding: 5px;" >{0}</td>\
+			<td style="border: solid 1px;padding: 5px;text-align:center;">{1,number,0.###%}</td>\
+			<td style="border: solid 1px;padding: 5px;text-align:center;">{2,number,0.###%}</td>\
+			<td style="border: solid 1px;padding: 5px;text-align:center;">{3,number,0.###%}</td>\
+			<td style="border: solid 1px;padding: 5px;" >{4}</td>\
+			<td style="border: solid 1px;padding: 5px;" >{5}</td>\
+			<td style="border: solid 1px;padding: 5px;" >{6}</td>\
+			<td style="border: solid 1px;padding: 5px;" >{7}</td></tr>""";
+	private String htmlFlatTableHeaderFormat = """
+			<thead><tr><th style="border: solid 1px; padding: 5px;" >{0}</th>\
+			<th style="border: solid 1px;padding: 5px;text-align:center;">{1}</th>\
+			<th style="border: solid 1px;padding: 5px;text-align:center;">{2}</th>\
+			<th style="border: solid 1px;padding: 5px;text-align:center;">{3}</th>\
+			<th style="border: solid 1px;padding: 5px;" >{4}</th>\
+			<th style="border: solid 1px;padding: 5px;" >{5}</th>\
+			<th style="border: solid 1px;padding: 5px;" >{6}</th>\
+			<th style="border: solid 1px;padding: 5px;" >{7}</th></tr></thead>""";
+	private String htmlFlatTableFooterFormat = """
+			<tfoot><tr><th style="border: solid 1px; padding: 5px;" ><b>{0}</b></th>\
+			<th style="border: solid 1px;padding: 5px;text-align:center;"><b>{1,number,0.###%}</b></th>\
+			<th style="border: solid 1px;padding: 5px;text-align:center;"><b>{2,number,0.###%}</b></th>\
+			<th style="border: solid 1px;padding: 5px;text-align:center;"><b>{3,number,0.###%}</b></th>\
+			<td style="border: solid 1px;padding: 5px;" colspan="4"></td></tr></tfoot>""";
 
 	/**
 	 * Use to disable allergen detection in legalName - Comma separated list of
@@ -624,6 +651,17 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	/**
 	 * <p>
+	 * Getter for the field <code>secondaryYield</code>.
+	 * </p>
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
+	public Double getSecondaryYield() {
+		return secondaryYield;
+	}
+
+	/**
+	 * <p>
 	 * Setter for the field <code>yield</code>.
 	 * </p>
 	 *
@@ -633,6 +671,65 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	public void setYield(Double yield) {
 		this.yield = yield;
 		this.ingsLabelingWithYield = true;
+	}
+
+	/**
+	 * Sets the product yield for rendering purposes without enabling the
+	 * <code>ingsLabelingWithYield</code> flag. Used to scale the yield columns
+	 * in flat HTML tables without impacting other labeling formulas.
+	 *
+	 * @param productYield a {@link java.lang.Double} object.
+	 */
+	public void setProductYield(Double productYield) {
+		this.productYield = productYield;
+	}
+
+	/**
+	 * <p>
+	 * Setter for the field <code>secondaryYield</code>.
+	 * </p>
+	 *
+	 * @param secondaryYield
+	 *            a {@link java.lang.Double} object.
+	 */
+	public void setSecondaryYield(Double secondaryYield) {
+		this.secondaryYield = secondaryYield;
+	}
+
+	/**
+	 * <p>
+	 * Setter for the field <code>htmlFlatTableRowFormat</code>.
+	 * </p>
+	 *
+	 * @param htmlFlatTableRowFormat
+	 *            a {@link java.lang.String} object
+	 */
+	public void setHtmlFlatTableRowFormat(String htmlFlatTableRowFormat) {
+		this.htmlFlatTableRowFormat = htmlFlatTableRowFormat;
+	}
+
+	/**
+	 * <p>
+	 * Setter for the field <code>htmlFlatTableHeaderFormat</code>.
+	 * </p>
+	 *
+	 * @param htmlFlatTableHeaderFormat
+	 *            a {@link java.lang.String} object
+	 */
+	public void setHtmlFlatTableHeaderFormat(String htmlFlatTableHeaderFormat) {
+		this.htmlFlatTableHeaderFormat = htmlFlatTableHeaderFormat;
+	}
+
+	/**
+	 * <p>
+	 * Setter for the field <code>htmlFlatTableFooterFormat</code>.
+	 * </p>
+	 *
+	 * @param htmlFlatTableFooterFormat
+	 *            a {@link java.lang.String} object
+	 */
+	public void setHtmlFlatTableFooterFormat(String htmlFlatTableFooterFormat) {
+		this.htmlFlatTableFooterFormat = htmlFlatTableFooterFormat;
 	}
 
 	/**
@@ -1932,10 +2029,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), null, false, false) != null)) {
 
-				Double qtyPerc = roundedDouble(computeQtyPerc(lblCompositeContext, kv.getKey(), DEFAULT_RATIO, false));
-				Double volumePerc = roundedDouble(computeVolumePerc(lblCompositeContext, kv.getKey(), DEFAULT_RATIO, false));
-				Double qtyPercWithYield = roundedDouble(computeQtyPerc(lblCompositeContext, kv.getKey(), DEFAULT_RATIO, true));
-				Double volumePercWithYield = roundedDouble(computeVolumePerc(lblCompositeContext, kv.getKey(), DEFAULT_RATIO, true));
+				Double qtyPerc = roundedDouble(computeQtyPerc(lblCompositeContext, kv.getKey(), DEFAULT_RATIO, false, false));
+				Double volumePerc = roundedDouble(computeVolumePerc(lblCompositeContext, kv.getKey(), DEFAULT_RATIO, false, false));
+				Double qtyPercWithYield = roundedDouble(computeQtyPerc(lblCompositeContext, kv.getKey(), DEFAULT_RATIO, true, false));
+				Double volumePercWithYield = roundedDouble(computeVolumePerc(lblCompositeContext, kv.getKey(), DEFAULT_RATIO, true, false));
 
 				qtyPerc = (useVolume ? volumePerc : qtyPerc);
 				qtyPercWithYield = (useVolume ? volumePercWithYield : qtyPercWithYield);
@@ -1992,11 +2089,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				for (LabelingComponent component : kv.getValue()) {
 
-					Double qtyPerc = roundedDouble(computeQtyPerc(lblCompositeContext, component, DEFAULT_RATIO, false));
-					Double volumePerc = roundedDouble(computeVolumePerc(lblCompositeContext, component, DEFAULT_RATIO, false));
+					Double qtyPerc = roundedDouble(computeQtyPerc(lblCompositeContext, component, DEFAULT_RATIO, false, false));
+					Double volumePerc = roundedDouble(computeVolumePerc(lblCompositeContext, component, DEFAULT_RATIO, false, false));
 
-					Double qtyPercWithYield = roundedDouble(computeQtyPerc(lblCompositeContext, component, DEFAULT_RATIO, true));
-					Double volumePercWithYield = roundedDouble(computeVolumePerc(lblCompositeContext, component, DEFAULT_RATIO, true));
+					Double qtyPercWithYield = roundedDouble(computeQtyPerc(lblCompositeContext, component, DEFAULT_RATIO, true, false));
+					Double volumePercWithYield = roundedDouble(computeVolumePerc(lblCompositeContext, component, DEFAULT_RATIO, true, false));
 
 					String ingName = getLegalIngName(component, null, false, false);
 					String geoOriginsLabel = createGeoOriginsLabel(null, component.getGeoOriginsByPlaceOfActivity(),
@@ -2016,7 +2113,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 						String subLabel = "";
 						if (component instanceof CompositeLabeling) {
-							BigDecimal subRatio = computeQtyPerc(lblCompositeContext, component, DEFAULT_RATIO, false);
+							BigDecimal subRatio = computeQtyPerc(lblCompositeContext, component, DEFAULT_RATIO, false, false);
 
 							if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType()) || computePercByParent) {
 								subRatio = DEFAULT_RATIO;
@@ -2183,15 +2280,28 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private static class HtmlTableStruct {
 		String label;
 		Double qtyPerc;
+		Double qtyPercWithYield;
+		Double qtyPercWithSecondaryYield;
 		String geoOriginsLabel;
+		String otherGeoOriginsLabel;
 		String bioOriginsLabel;
+		String additionalInformation;
 		Integer level;
 
 		public HtmlTableStruct(String label, Double qtyPerc, String geoOriginsLabel, String bioOriginsLabel, Integer level) {
+			this(label, qtyPerc, null, null, geoOriginsLabel, null, bioOriginsLabel, null, level);
+		}
+
+		public HtmlTableStruct(String label, Double qtyPerc, Double qtyPercWithYield, Double qtyPercWithSecondaryYield, String geoOriginsLabel,
+				String otherGeoOriginsLabel, String bioOriginsLabel, String additionalInformation, Integer level) {
 			this.label = label;
 			this.geoOriginsLabel = geoOriginsLabel;
+			this.otherGeoOriginsLabel = otherGeoOriginsLabel;
 			this.bioOriginsLabel = bioOriginsLabel;
+			this.additionalInformation = additionalInformation;
 			this.qtyPerc = qtyPerc;
+			this.qtyPercWithYield = qtyPercWithYield;
+			this.qtyPercWithSecondaryYield = qtyPercWithSecondaryYield;
 			this.level = level;
 		}
 
@@ -2211,8 +2321,29 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String renderAsFlatHtmlTable(String styleCss, boolean showTotal, boolean force100Perc) {
+		return renderAsFlatHtmlTable(styleCss, showTotal, force100Perc, false);
+	}
+
+	/**
+	 * <p>
+	 * renderAsFlatHtmlTable.
+	 * </p>
+	 *
+	 * @param styleCss
+	 *            a {@link java.lang.String} object.
+	 * @param showTotal
+	 *            a boolean.
+	 * @param force100Perc
+	 *            a boolean.
+	 * @param showExtraColumns
+	 *            a boolean.
+	 * @return a {@link java.lang.String} object.
+	 */
+	public String renderAsFlatHtmlTable(String styleCss, boolean showTotal, boolean force100Perc, boolean showExtraColumns) {
 
 		BigDecimal total = BigDecimal.valueOf(0d);
+		BigDecimal totalWithYield = BigDecimal.valueOf(0d);
+		BigDecimal totalWithSecondaryYield = BigDecimal.valueOf(0d);
 
 		StringBuilder tableContent = new StringBuilder();
 		StringBuilder ret = new StringBuilder();
@@ -2226,6 +2357,23 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			List<HtmlTableStruct> flatList = flatCompositeLabeling(lblCompositeContext, DEFAULT_RATIO, 0);
 			if (!flatList.isEmpty()) {
 
+				String rowFormat = showExtraColumns ? htmlFlatTableRowFormat : htmlTableRowFormat;
+				String headerFormat = showExtraColumns ? htmlFlatTableHeaderFormat : htmlTableHeaderFormat;
+				String footerFormat = showExtraColumns ? htmlFlatTableFooterFormat : htmlTableFooterFormat;
+
+				if ((headerFormat != null) && !headerFormat.isBlank()) {
+					tableContent.append(new MessageFormat(headerFormat, getContentLocale()).format(new Object[] {
+							I18NUtil.getMessage("entity.datalist.item.details.label"), I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListQtyPerc.title"),
+							I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListQtyPercWithYield.title"),
+							I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListQtyPercWithSecondaryYield.title"),
+							I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_geoOrigins.title") + " ("
+									+ I18NUtil.getMessage("PlaceOfActivityTypeCode.LAST_PROCESSING") + ")",
+							I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_geoOrigins.title") + " ("
+									+ I18NUtil.getMessage("PlaceOfActivityTypeCode.EMPTY") + ")",
+							I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_bioOrigins.title"),
+							I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_additionalInformation.title") }));
+				}
+
 				boolean first = true;
 				for (HtmlTableStruct tmp : flatList) {
 
@@ -2234,12 +2382,21 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					} else {
 
 						if (tmp.level == 0) {
-							total = total.add(BigDecimal.valueOf(tmp.qtyPerc));
+							if (tmp.qtyPerc != null) {
+								total = total.add(BigDecimal.valueOf(tmp.qtyPerc));
+							}
+							if (tmp.qtyPercWithYield != null) {
+								totalWithYield = totalWithYield.add(BigDecimal.valueOf(tmp.qtyPercWithYield));
+							}
+							if (tmp.qtyPercWithSecondaryYield != null) {
+								totalWithSecondaryYield = totalWithSecondaryYield.add(BigDecimal.valueOf(tmp.qtyPercWithSecondaryYield));
+							}
 						}
 
-						ret.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat, getContentLocale()), tmp.qtyPerc)
-								.format(new Object[] { indent(decorate(tmp.label), tmp.level), tmp.qtyPerc, decorate(tmp.geoOriginsLabel),
-										decorate(tmp.bioOriginsLabel), null, null }));
+						ret.append(applyRoundingMode(new MessageFormat(rowFormat, getContentLocale()), tmp.qtyPerc)
+								.format(new Object[] { indent(decorate(tmp.label), tmp.level), tmp.qtyPerc, tmp.qtyPercWithYield,
+										tmp.qtyPercWithSecondaryYield, decorate(tmp.geoOriginsLabel), decorate(tmp.otherGeoOriginsLabel),
+										decorate(tmp.bioOriginsLabel), decorate(tmp.additionalInformation) }));
 
 					}
 				}
@@ -2249,20 +2406,23 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 					total = BigDecimal.valueOf(1d);
 
-					Double qtyPerc = roundeedValue(null, flatList.get(0).qtyPerc, new MessageFormat(htmlTableRowFormat, getContentLocale()))
+					Double qtyPerc = roundeedValue(null, flatList.get(0).qtyPerc, new MessageFormat(rowFormat, getContentLocale()))
 							+ roundedDouble(diffValue);
 
-					tableContent.append(applyTotalRoundingMode(new MessageFormat(htmlTableRowFormat, getContentLocale()))
-							.format(new Object[] { decorate(flatList.get(0).label), qtyPerc, decorate(flatList.get(0).geoOriginsLabel),
-									decorate(flatList.get(0).bioOriginsLabel), null, null }));
+					tableContent.append(applyTotalRoundingMode(new MessageFormat(rowFormat, getContentLocale()))
+							.format(new Object[] { decorate(flatList.get(0).label), qtyPerc, flatList.get(0).qtyPercWithYield,
+									flatList.get(0).qtyPercWithSecondaryYield, decorate(flatList.get(0).geoOriginsLabel),
+									decorate(flatList.get(0).otherGeoOriginsLabel), decorate(flatList.get(0).bioOriginsLabel),
+									decorate(flatList.get(0).additionalInformation) }));
 
 				}
 				tableContent.append(ret);
-			}
 
-			if (showTotal && (total.doubleValue() > 0)) {
-				tableContent.append(applyTotalRoundingMode(new MessageFormat(htmlTableRowFormat, getContentLocale())).format(
-						new Object[] { "<b>" + I18NUtil.getMessage("entity.datalist.item.details.total") + "</b>", roundedDouble(total), "" }));
+				if (showTotal && (total.doubleValue() > 0)) {
+					tableContent.append(applyTotalRoundingMode(new MessageFormat(footerFormat, getContentLocale()))
+							.format(new Object[] { I18NUtil.getMessage("entity.datalist.item.details.total"), roundedDouble(total),
+									roundedDouble(totalWithYield), roundedDouble(totalWithSecondaryYield) }));
+				}
 			}
 
 			tableContent.append("</table>");
@@ -2294,10 +2454,25 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			for (LabelingComponent component : kv.getValue()) {
 
-				Double qtyPerc = roundedDouble(computeQtyPerc(parent, component, ratio));
-				Double volumePerc = roundedDouble(computeVolumePerc(parent, component, ratio));
+				Double qtyPerc = roundedDouble(computeQtyPerc(parent, component, ratio, false, false));
+				Double volumePerc = roundedDouble(computeVolumePerc(parent, component, ratio, false, false));
 
 				qtyPerc = (useVolume ? volumePerc : qtyPerc);
+
+				Double qtyPercWithYield = qtyPerc;
+				Double qtyPercWithSecondaryYield = qtyPerc;
+
+				if ((qtyPerc != null) && (productYield != null) && (productYield != 0d)) {
+					qtyPercWithYield = BigDecimal.valueOf(qtyPerc).multiply(BigDecimal.valueOf(100d), PRECISION)
+							.divide(BigDecimal.valueOf(productYield), PRECISION).doubleValue();
+
+					Double combinedYield = productYield;
+					if ((secondaryYield != null) && (secondaryYield != 0d)) {
+						combinedYield = productYield * secondaryYield / 100d;
+					}
+					qtyPercWithSecondaryYield = BigDecimal.valueOf(qtyPerc).multiply(BigDecimal.valueOf(100d), PRECISION)
+							.divide(BigDecimal.valueOf(combinedYield), PRECISION).doubleValue();
+				}
 
 				String ingName = getLegalIngName(component, qtyPerc, false, false);
 
@@ -2319,17 +2494,21 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				String geoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOriginsByPlaceOfActivity(),
 						PlaceOfActivityTypeCode.LAST_PROCESSING);
+				String otherGeoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOriginsByPlaceOfActivity(),
+						PlaceOfActivityTypeCode.EMPTY);
 				String bioOriginsLabel = createBioOriginsLabel(component.getNodeRef(), component.getBioOrigins());
+				String additionalInformation = createAdditionalInformationLabel(component.getAdditionalInformation());
 
 				if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
 					if (component instanceof CompositeLabeling) {
-						BigDecimal subRatio = computeQtyPerc(parent, component, ratio, false);
+						BigDecimal subRatio = computeQtyPerc(parent, component, ratio, false, false);
 						if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType()) || computePercByParent) {
 							subRatio = DEFAULT_RATIO;
 						}
 
-						ret.add(new HtmlTableStruct(ingName, qtyPerc, geoOriginsLabel != null ? geoOriginsLabel : "",
-								bioOriginsLabel != null ? bioOriginsLabel : "", level));
+						ret.add(new HtmlTableStruct(ingName, qtyPerc, qtyPercWithYield, qtyPercWithSecondaryYield,
+								geoOriginsLabel != null ? geoOriginsLabel : "", otherGeoOriginsLabel != null ? otherGeoOriginsLabel : "",
+								bioOriginsLabel != null ? bioOriginsLabel : "", additionalInformation, level));
 
 						ret.addAll(flatCompositeLabeling((CompositeLabeling) component, subRatio, level + 1));
 
@@ -2342,10 +2521,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				}
 
 			}
-
 		}
+
 		return ret;
 	}
+
 
 	private boolean isDoNotDetails(IngTypeItem ingTypeItem) {
 		return isDoNotDetails(ingTypeItem.getOrigNodeRef() != null ? ingTypeItem.getOrigNodeRef() : ingTypeItem.getNodeRef())
@@ -2384,8 +2564,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), null, false, false) != null)) {
 
-				Double qtyPerc = roundedDouble(computeQtyPerc(compositeLabeling, kv.getKey(), DEFAULT_RATIO, withYield));
-				Double volumePerc = roundedDouble(computeVolumePerc(compositeLabeling, kv.getKey(), DEFAULT_RATIO, withYield));
+				Double qtyPerc = roundedDouble(computeQtyPerc(compositeLabeling, kv.getKey(), DEFAULT_RATIO, withYield, false));
+				Double volumePerc = roundedDouble(computeVolumePerc(compositeLabeling, kv.getKey(), DEFAULT_RATIO, withYield, false));
 				qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
 				if ((qtyPerc != null) && (qtyPerc > 0d)) {
@@ -2396,8 +2576,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				for (LabelingComponent component : kv.getValue()) {
 
-					Double qtyPerc = roundedDouble(computeQtyPerc(compositeLabeling, component, DEFAULT_RATIO, withYield));
-					Double volumePerc = roundedDouble(computeVolumePerc(compositeLabeling, component, DEFAULT_RATIO, withYield));
+					Double qtyPerc = roundedDouble(computeQtyPerc(compositeLabeling, component, DEFAULT_RATIO, withYield, false));
+					Double volumePerc = roundedDouble(computeVolumePerc(compositeLabeling, component, DEFAULT_RATIO, withYield, false));
 
 					qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
@@ -2434,6 +2614,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				if (ingsLabelingWithYield) {
 					kv.getKey().setQtyWithYield(qtyPerc);
 					kv.getKey().setVolumeWithYield(volumePerc);
+					kv.getKey().setQtyWithSecondaryYield(roundedDouble(computeQtyPerc(compositeLabeling, kv.getKey(), ratio, true, true)));
+					kv.getKey().setVolumeWithSecondaryYield(roundedDouble(computeVolumePerc(compositeLabeling, kv.getKey(), ratio, true, true)));
 				} else {
 					kv.getKey().setQty(qtyPerc);
 					kv.getKey().setVolume(volumePerc);
@@ -2577,7 +2759,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				if (component instanceof CompositeLabeling) {
 
 					MessageFormat formater = getIngTextFormat(component, qtyPerc, ((CompositeLabeling) component).getIngList().size() > 1);
-					BigDecimal subRatio = computeQtyPerc(parent, component, ratio, ingsLabelingWithYield && (component instanceof IngItem));
+					BigDecimal subRatio = computeQtyPerc(parent, component, ratio, ingsLabelingWithYield && (component instanceof IngItem), false);
 
 					if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType()) || computePercByParent) {
 						subRatio = DEFAULT_RATIO;
@@ -2916,6 +3098,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						if (ingsLabelingWithYield) {
 							kv.getKey().setQtyWithYield(qtyPerc);
 							kv.getKey().setVolumeWithYield(volumePerc);
+							kv.getKey().setQtyWithSecondaryYield(roundedDouble(computeQtyPerc((CompositeLabeling) component, kv.getKey(), ratio, true, true)));
+							kv.getKey().setVolumeWithSecondaryYield(roundedDouble(computeVolumePerc((CompositeLabeling) component, kv.getKey(), ratio, true, true)));
 						} else {
 							kv.getKey().setQty(qtyPerc);
 							kv.getKey().setVolume(volumePerc);
@@ -2997,15 +3181,16 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * @return a {@link java.lang.Double} object.
 	 */
 	public BigDecimal computeQtyPerc(CompositeLabeling parent, LabelingComponent component, BigDecimal ratio) {
-		return computeQtyPerc(parent, component, ratio, ingsLabelingWithYield);
+		return computeQtyPerc(parent, component, ratio, ingsLabelingWithYield, useSecondaryYield && (secondaryYield != null));
 	}
 
-	private BigDecimal computeQtyPerc(CompositeLabeling parent, LabelingComponent component, BigDecimal ratio, boolean withYield) {
+	private BigDecimal computeQtyPerc(CompositeLabeling parent, LabelingComponent component, BigDecimal ratio, boolean withYield,
+			boolean withSecondaryYield) {
 
 		if ((ratio == null) || (parent == null)) {
 			return null;
 		}
-		Double qty = component.getQty(withYield);
+		Double qty = component.getQty(withYield, withSecondaryYield);
 
 		if ((parent.getQtyTotal() != null) && (parent.getQtyTotal() != 0d) && (qty != null)) {
 
@@ -3030,15 +3215,16 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * @return a {@link java.lang.Double} object.
 	 */
 	public BigDecimal computeVolumePerc(CompositeLabeling parent, LabelingComponent component, BigDecimal ratio) {
-		return computeVolumePerc(parent, component, ratio, ingsLabelingWithYield);
+		return computeVolumePerc(parent, component, ratio, ingsLabelingWithYield, useSecondaryYield && (secondaryYield != null));
 	}
 
-	private BigDecimal computeVolumePerc(CompositeLabeling parent, LabelingComponent component, BigDecimal ratio, boolean withYield) {
+	private BigDecimal computeVolumePerc(CompositeLabeling parent, LabelingComponent component, BigDecimal ratio, boolean withYield,
+			boolean withSecondaryYield) {
 		if ((ratio == null) || (parent == null)) {
 			return null;
 		}
 
-		Double volume = component.getVolume(withYield);
+		Double volume = component.getVolume(withYield, withSecondaryYield);
 		if ((parent.getVolumeTotal() != null) && (parent.getVolumeTotal() != 0d) && (volume != null)) {
 			return BigDecimal.valueOf(volume).multiply(ratio, PRECISION).divide(BigDecimal.valueOf(parent.getVolumeTotal()), PRECISION);
 		}

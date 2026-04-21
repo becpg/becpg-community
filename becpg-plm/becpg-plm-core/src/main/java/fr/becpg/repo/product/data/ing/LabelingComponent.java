@@ -50,9 +50,13 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 
 	protected Double qtyWithYield = 0d;
 
+	protected Double qtyWithSecondaryYield = 0d;
+
 	protected Double volume = 0d;
 
 	protected Double volumeWithYield = 0d;
+
+	protected Double volumeWithSecondaryYield = 0d;
 
 	protected MLText legalName;
 	
@@ -88,8 +92,10 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		this.additionalInformation = abstractLabelingComponent.additionalInformation;
 		this.qty = abstractLabelingComponent.qty;
 		this.qtyWithYield = abstractLabelingComponent.qtyWithYield;
+		this.qtyWithSecondaryYield = abstractLabelingComponent.qtyWithSecondaryYield;
 		this.volume = abstractLabelingComponent.volume;
 		this.volumeWithYield = abstractLabelingComponent.volumeWithYield;
+		this.volumeWithSecondaryYield = abstractLabelingComponent.volumeWithSecondaryYield;
 		this.legalName = abstractLabelingComponent.legalName;
 		this.isPlural = abstractLabelingComponent.isPlural;
 		this.footNotes = new HashSet<>(abstractLabelingComponent.footNotes);
@@ -230,6 +236,24 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 	}
 
 	/**
+	 * <p>
+	 * Getter for the field <code>qty</code>.
+	 * </p>
+	 *
+	 * @param withYield
+	 *            a boolean
+	 * @param withSecondaryYield
+	 *            a boolean
+	 * @return a {@link java.lang.Double} object
+	 */
+	public Double getQty(boolean withYield, boolean withSecondaryYield) {
+		if (withSecondaryYield) {
+			return qtyWithSecondaryYield;
+		}
+		return withYield ? qtyWithYield : qty;
+	}
+
+	/**
 	 * <p>Setter for the field <code>qty</code>.</p>
 	 *
 	 * @param qty a {@link java.lang.Double} object.
@@ -257,6 +281,29 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 	}
 
 	/**
+	 * <p>
+	 * Getter for the field <code>qtyWithSecondaryYield</code>.
+	 * </p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
+	public Double getQtyWithSecondaryYield() {
+		return qtyWithSecondaryYield;
+	}
+
+	/**
+	 * <p>
+	 * Setter for the field <code>qtyWithSecondaryYield</code>.
+	 * </p>
+	 *
+	 * @param qtyWithSecondaryYield
+	 *            a {@link java.lang.Double} object
+	 */
+	public void setQtyWithSecondaryYield(Double qtyWithSecondaryYield) {
+		this.qtyWithSecondaryYield = qtyWithSecondaryYield;
+	}
+
+	/**
 	 * <p>Getter for the field <code>volume</code>.</p>
 	 *
 	 * @return a {@link java.lang.Double} object.
@@ -273,6 +320,24 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 	 */
 	public Double getVolume(boolean withYield) {
 		return withYield ? qtyWithYield : volume;
+	}
+
+	/**
+	 * <p>
+	 * Getter for the field <code>volume</code>.
+	 * </p>
+	 *
+	 * @param withYield
+	 *            a boolean
+	 * @param withSecondaryYield
+	 *            a boolean
+	 * @return a {@link java.lang.Double} object
+	 */
+	public Double getVolume(boolean withYield, boolean withSecondaryYield) {
+		if (withSecondaryYield) {
+			return volumeWithSecondaryYield;
+		}
+		return withYield ? volumeWithYield : volume;
 	}
 
 	/**
@@ -303,6 +368,29 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 	}
 
 	/**
+	 * <p>
+	 * Getter for the field <code>volumeWithSecondaryYield</code>.
+	 * </p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
+	public Double getVolumeWithSecondaryYield() {
+		return volumeWithSecondaryYield;
+	}
+
+	/**
+	 * <p>
+	 * Setter for the field <code>volumeWithSecondaryYield</code>.
+	 * </p>
+	 *
+	 * @param volumeWithSecondaryYield
+	 *            a {@link java.lang.Double} object
+	 */
+	public void setVolumeWithSecondaryYield(Double volumeWithSecondaryYield) {
+		this.volumeWithSecondaryYield = volumeWithSecondaryYield;
+	}
+
+	/**
 	 * <p>setQties.</p>
 	 *
 	 * @param value a {@link java.lang.Double} object
@@ -310,8 +398,10 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 	public void setQties(Double value) {
 		this.qty = value;
 		this.qtyWithYield = value;
+		this.qtyWithSecondaryYield = value;
 		this.volume = value;
 		this.volumeWithYield = value;
+		this.volumeWithSecondaryYield = value;
 	}
 
 	/**
@@ -399,7 +489,7 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		final int prime = 31;
 		int result = super.hashCode();
 		result = (prime * result) + Objects.hash(footNotes, allergens, bioOrigins, geoOriginsByPlaceOfActivity, isPlural, legalName, pluralLegalName,
-				qty, qtyWithYield, volume, volumeWithYield);
+				qty, qtyWithYield, qtyWithSecondaryYield, volume, volumeWithYield, volumeWithSecondaryYield);
 		return result;
 	}
 
@@ -417,15 +507,17 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 				&& Objects.equals(footNotes, other.footNotes) && Objects.equals(geoOriginsByPlaceOfActivity, other.geoOriginsByPlaceOfActivity)
 				&& (isPlural == other.isPlural) && Objects.equals(legalName, other.legalName)
 				&& Objects.equals(pluralLegalName, other.pluralLegalName) && Objects.equals(qty, other.qty)
-				&& Objects.equals(qtyWithYield, other.qtyWithYield) && Objects.equals(volume, other.volume)
-				&& Objects.equals(volumeWithYield, other.volumeWithYield);
+				&& Objects.equals(qtyWithYield, other.qtyWithYield) && Objects.equals(qtyWithSecondaryYield, other.qtyWithSecondaryYield)
+				&& Objects.equals(volume, other.volume) && Objects.equals(volumeWithYield, other.volumeWithYield)
+				&& Objects.equals(volumeWithSecondaryYield, other.volumeWithSecondaryYield);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "LabelingComponent [qty=" + qty + ", qtyWithYield=" + qtyWithYield + ", volume=" + volume + ", volumeWithYield=" + volumeWithYield
-				+ ", legalName=" + legalName + ", nodeRef=" + nodeRef + ", name=" + name + "]";
+		return "LabelingComponent [qty=" + qty + ", qtyWithYield=" + qtyWithYield + ", qtyWithSecondaryYield=" + qtyWithSecondaryYield + ", volume="
+				+ volume + ", volumeWithYield=" + volumeWithYield + ", volumeWithSecondaryYield=" + volumeWithSecondaryYield + ", legalName="
+				+ legalName + ", nodeRef=" + nodeRef + ", name=" + name + "]";
 	}
 
 }
