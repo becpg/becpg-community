@@ -1477,8 +1477,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	}
 
-	private String findInvoluntaryGroupLabel(NodeRef childAllergen, Locale locale) {
-		return AllergenHelper.findInvoluntaryGroupLabel(childAllergen, locale, mlNodeService, associationService);
+	private Set<NodeRef> voluntaryAllergenSet() {
+		return (this.allergens != null) ? this.allergens.keySet() : Set.of();
 	}
 
 	/**
@@ -1824,39 +1824,39 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String renderAllergens(Set<NodeRef> allergensList, boolean involuntary) {
-		StringBuilder ret = new StringBuilder();
-
 		if (logger.isTraceEnabled()) {
 			logger.trace(" Render Allergens list ");
 		}
 
-		Locale currentLocale = I18NUtil.getLocale();
-		Set<String> rendered = new LinkedHashSet<>();
-
-		for (NodeRef allergen : allergensList) {
-			if (isAllergenDisableForLocale(allergen)) {
-				continue;
-			}
-
-			String name = null;
-			if (involuntary) {
-				name = findInvoluntaryGroupLabel(allergen, currentLocale);
-			}
-			if (name == null) {
-				name = getCharactName(allergen);
-			}
-
-			if ((name == null) || name.isEmpty() || !rendered.add(name)) {
-				continue;
-			}
-
-			if (ret.length() > 0) {
-				ret.append(getLocaleSeparator(allergensSeparator));
-			}
-			ret.append(name);
+		if ((allergensList == null) || allergensList.isEmpty()) {
+			return decorate("");
 		}
 
-		return decorate(ret.toString());
+		Locale currentLocale = I18NUtil.getLocale();
+		String separator = getLocaleSeparator(allergensSeparator);
+
+		List<NodeRef> filtered = new ArrayList<>(allergensList.size());
+		for (NodeRef allergen : allergensList) {
+			if (!isAllergenDisableForLocale(allergen)) {
+				filtered.add(allergen);
+			}
+		}
+
+		String rendered;
+		if (involuntary) {
+			List<NodeRef> voluntary = new ArrayList<>();
+			for (NodeRef allergen : voluntaryAllergenSet()) {
+				if (!isAllergenDisableForLocale(allergen)) {
+					voluntary.add(allergen);
+				}
+			}
+			rendered = AllergenHelper.renderInvoluntaryAllergens(filtered, voluntary, currentLocale, separator, mlNodeService,
+					associationService);
+		} else {
+			rendered = AllergenHelper.renderAllergens(filtered, currentLocale, separator, mlNodeService);
+		}
+
+		return decorate(rendered);
 
 	}
 

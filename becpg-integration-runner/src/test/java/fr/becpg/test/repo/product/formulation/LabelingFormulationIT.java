@@ -1191,7 +1191,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 	}
 
 	@Test
-	public void testRenderAllergenOthersLegalName() {
+	public void testRenderAllergenInvoluntaryOtherLegalName() {
 
 		final NodeRef parentAllergen = inWriteTx(() -> {
 			Map<QName, Serializable> properties = new HashMap<>();
@@ -1199,7 +1199,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			properties.put(PLMModel.PROP_ALLERGEN_TYPE, "Major");
 			MLText othersLegalName = new MLText();
 			othersLegalName.addValue(Locale.FRENCH, "autres fruits a coque");
-			properties.put(PLMModel.PROP_ALLERGEN_OTHERS_LEGAL_NAME, othersLegalName);
+			properties.put(PLMModel.PROP_ALLERGEN_INVOLUNTARY_OTHER_LEGAL_NAME, othersLegalName);
 
 			NodeRef parent = nodeService
 					.createNode(getTestFolderNodeRef(), org.alfresco.model.ContentModel.ASSOC_CONTAINS,
@@ -1207,7 +1207,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 							PLMModel.TYPE_ALLERGEN, properties)
 					.getChildRef();
 
-			associationService.update(parent, PLMModel.ASSOC_ALLERGENSUBSETS, Arrays.asList(allergen2));
+			associationService.update(parent, PLMModel.ASSOC_ALLERGENSUBSETS, Arrays.asList(allergen1, allergen2));
 			return parent;
 		});
 
