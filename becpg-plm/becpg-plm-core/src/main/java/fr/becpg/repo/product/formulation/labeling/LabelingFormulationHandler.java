@@ -28,7 +28,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.expression.Expression;
@@ -68,6 +67,7 @@ import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.spel.LabelingFormulaFilterContext;
 import fr.becpg.repo.product.formulation.EvaporatingFormulationHelper;
 import fr.becpg.repo.product.formulation.FormulationHelper;
+import fr.becpg.repo.product.helper.AllergenHelper;
 import fr.becpg.repo.product.helper.IngListHelper;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
@@ -492,41 +492,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private void extractAllergens(LabelingFormulaContext labelingFormulaContext, ProductData productData) {
-		if (productData.getAllergenList() != null) {
-			for (AllergenListDataItem allergenListDataItem : productData.getAllergenList()) {
-				AllergenItem allergen = (AllergenItem) alfrescoRepository.findOne(allergenListDataItem.getAllergen());
-				if (Boolean.TRUE.equals(allergenListDataItem.getVoluntary())) {
-					if (AllergenType.Major.toString().equals(allergen.getAllergenType())) {
-						appendAllergen(labelingFormulaContext.getAllergens(), allergen.getNodeRef(), allergenListDataItem.getQtyPerc());
-					}
-				} else if (Boolean.TRUE.equals(allergenListDataItem.getInVoluntary())
-						&& AllergenType.Major.toString().equals(allergen.getAllergenType())) {
-					appendAllergen(labelingFormulaContext.getInVolAllergens(), allergen.getNodeRef(), allergenListDataItem.getQtyPerc());
-					for (NodeRef inVoluntarySource : allergenListDataItem.getInVoluntarySources()) {
-						QName inVoluntarySourceType = nodeService.getType(inVoluntarySource);
-
-						if (PLMModel.TYPE_RAWMATERIAL.equals(inVoluntarySourceType)) {
-							appendAllergen(labelingFormulaContext.getInVolAllergensRawMaterial(), allergen.getNodeRef(),
-									allergenListDataItem.getQtyPerc());
-						} else if (PLMModel.TYPE_RESOURCEPRODUCT.equals(inVoluntarySourceType)) {
-							appendAllergen(labelingFormulaContext.getInVolAllergensProcess(), allergen.getNodeRef(),
-									allergenListDataItem.getQtyPerc());
-						}
-					}
-				}
-			}
-		}
-	}
-
-	private void appendAllergen(Map<NodeRef, Double> toAppendTo, NodeRef allergen, Double qtyPerc) {
-		Double qty = qtyPerc;
-
-		if (toAppendTo.containsKey(allergen) && (qty != null) && (toAppendTo.get(allergen) != null)) {
-			qty += toAppendTo.get(allergen);
-		}
-
-		toAppendTo.put(allergen, qty);
-
+		AllergenHelper.AllergenMaps maps = AllergenHelper.extract(productData, alfrescoRepository, nodeService);
+		labelingFormulaContext.getAllergens().putAll(maps.getAllergens());
+		labelingFormulaContext.getInVolAllergens().putAll(maps.getInVolAllergens());
+		labelingFormulaContext.getInVolAllergensProcess().putAll(maps.getInVolAllergensProcess());
+		labelingFormulaContext.getInVolAllergensRawMaterial().putAll(maps.getInVolAllergensRawMaterial());
 	}
 
 	private void applyMeatContentRules(ProductData formulatedProduct, CompositeLabeling parent, LabelingFormulaContext labelingFormulaContext) {
