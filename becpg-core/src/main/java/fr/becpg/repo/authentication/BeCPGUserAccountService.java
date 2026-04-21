@@ -303,17 +303,20 @@ public class BeCPGUserAccountService {
 	
 	private void renameUser(BeCPGUserAccount userAccount, NodeRef personNodeRef) {
 		String newUserName = createTenantAware(userAccount.getNewUserName());
-		if (!newUserName.equals(userAccount.getUserName())) {
-			if (personService.personExists(newUserName)) {
-				throw new UserAlreadyExistsException("Cannot rename user to '" + newUserName + "' because it already exists");
-			}
-			String oldUserName = userAccount.getUserName();
-			if (isIdsUser(personNodeRef)) {
-				identityServiceAccountProvider.deleteAccount(oldUserName);
-			}
-			userAccount.setUserName(newUserName);
-			if (isIdsUser(personNodeRef)) {
-				identityServiceAccountProvider.registerAccount(userAccount);
+		String oldUserName = userAccount.getUserName();
+		if (!newUserName.equals(oldUserName)) {
+			boolean isCaseChanging = oldUserName.equalsIgnoreCase(newUserName);
+			if (!isCaseChanging) {
+				if (personService.personExists(newUserName)) {
+					throw new UserAlreadyExistsException("Cannot rename user to '" + newUserName + "' because it already exists");
+				}
+				if (isIdsUser(personNodeRef)) {
+					identityServiceAccountProvider.deleteAccount(oldUserName);
+				}
+				userAccount.setUserName(newUserName);
+				if (isIdsUser(personNodeRef)) {
+					identityServiceAccountProvider.registerAccount(userAccount);
+				}
 			}
 			TransactionSupportUtil.bindResource(PersonServiceImpl.KEY_ALLOW_UID_UPDATE, Boolean.TRUE);
 			nodeService.setProperty(personNodeRef, ContentModel.PROP_USERNAME, newUserName);
