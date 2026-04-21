@@ -51,6 +51,7 @@ import org.alfresco.service.cmr.repository.Path;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -291,11 +292,14 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 								String currentVersion = (String) entity.get(RemoteEntityService.ATTR_VERSION);
 
 								if (currentVersion != null) {
-									Collection<Version> nodeRefVersions = versionService.getVersionHistory(nodeRef).getAllVersions();
-									Optional<Double> previousVersion = nodeRefVersions.stream().map(Version::getVersionLabel)
-											.filter(label -> !label.equals(currentVersion)).map(Double::parseDouble)
-											.max(Comparator.comparing(Double::valueOf));
-									previousVersion.ifPresent(version -> entity.put(RemoteEntityService.ATTR_VERSION, version.toString()));
+									VersionHistory versionHistory = versionService.getVersionHistory(nodeRef);
+									if (versionHistory != null) {
+										Collection<Version> nodeRefVersions = versionHistory.getAllVersions();
+										Optional<Double> previousVersion = nodeRefVersions.stream().map(Version::getVersionLabel)
+												.filter(label -> !label.equals(currentVersion)).map(Double::parseDouble)
+												.max(Comparator.comparing(Double::valueOf));
+										previousVersion.ifPresent(version -> entity.put(RemoteEntityService.ATTR_VERSION, version.toString()));
+									}
 								}
 							}
 
