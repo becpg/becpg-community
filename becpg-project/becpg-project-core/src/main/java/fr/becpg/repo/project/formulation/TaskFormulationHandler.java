@@ -368,15 +368,20 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 				startDate = ProjectHelper.getFirstStartDate(tasks);
 				if (startDate == null) {
 					if (projectData.getStartDate() == null) {
-						startDate = ProjectHelper.findNextWorkingDay(projectData.getCreated());
+						startDate = ProjectHelper.calculateNextStartDate(projectData.getCreated());
 					} else {
 						startDate = projectData.getStartDate();
 					}
 				}
+				if (projectData.getDueDate() == null) {
+					targetStartDate = startDate;
+				} else {
+					targetStartDate = ProjectHelper.calculateStartDate(projectData.getDueDate(), TaskWrapper.calculateMaxDuration(tasks));
+				}
 			} else {
-				startDate = ProjectHelper.findNextWorkingDay(new Date());
+				startDate = ProjectHelper.calculateNextStartDate(new Date());
+				targetStartDate = startDate;
 			}
-			targetStartDate = startDate;
 
 			projectData.setStartDate(startDate);
 			projectData.setTargetStartDate(targetStartDate);
