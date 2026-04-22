@@ -241,6 +241,36 @@ public class ProjectCalculatePlanningDatesIT extends AbstractProjectTestCase {
 	}
 
 	/**
+	 * Verifies that a project without explicit startDate defaults to the next working day
+	 * (tomorrow for a weekday) so the project stays Planned at creation and does not auto-start.
+	 * Regression for #33571.
+	 */
+	@Test
+	public void testProjectWithoutStartDateUsesNextWorkingDay() {
+
+		final NodeRef projectNodeRef = createProject(ProjectState.Planned, null, null, PlanningMode.Planning);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			projectService.formulate(projectNodeRef);
+
+			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+
+			assertNotNull(projectData);
+			assertNotNull(projectData.getStartDate());
+
+			Date expected = ProjectHelper.calculateNextStartDate(ProjectHelper.removeTime(projectData.getCreated()),
+					new DefaultWorkingDayProvider());
+			assertEquals("Project startDate must default to next working day when no explicit startDate is provided", expected,
+					ProjectHelper.removeTime(projectData.getStartDate()));
+			assertEquals("targetStart on first task must equal project startDate", projectData.getStartDate(),
+					projectData.getTaskList().get(0).getTargetStart());
+
+			return null;
+		}, false, true);
+	}
+
+	/**
 	 * Verifies that task start dates use the previous task calendar and task end dates use the current task calendar.
 	 *
 	 * @throws ParseException if the test dates cannot be parsed.

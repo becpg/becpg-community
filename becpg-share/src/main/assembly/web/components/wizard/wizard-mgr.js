@@ -256,8 +256,6 @@
         },
 
         onFormSubmit: function(response) {
-            if (!response.json.persistedObject) return;
-
             var nextStep = this.options.wizardStruct[this.currentIndex];
             if (!nextStep) return;
 
@@ -268,7 +266,10 @@
 
             var step = this.options.wizardStruct[this.currentIndex - 1];
             if (step) {
-                step.nodeRef = response.json.persistedObject;
+                if (response.json && response.json.persistedObject) {
+                    step.nodeRef = response.json.persistedObject;
+                }
+                if (!step.nodeRef) return;
                 if (step.nextStepWebScript) {
                     this.executeWebScript(step, nextStep);
                 } else {
