@@ -48,7 +48,7 @@ import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespacePrefixResolver;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
-import org.apache.commons.lang3.tuple.Pair;
+import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -103,6 +103,7 @@ import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -1375,46 +1376,71 @@ public class ECOServiceImpl implements ECOService {
 		}
 	}
 	
-	private Pair<Double, ProductUnit> getQtySum(List<NodeRef> sources, WUsedListDataItem wUsed, NodeRef target) {
+	private Double calculateUnitFactor(ProductUnit unit1, ProductUnit unit2) {
+		if (unit1.equals(unit2)) {
+			return 1d;
+		} else if (ProductUnit.kg.equals(unit1) && ProductUnit.g.equals(unit2)) {
+			return 0.001d;
+		} else if (ProductUnit.g.equals(unit1) && ProductUnit.kg.equals(unit2)) {
+			return 1000d;
+		}
+		
+		return null;
+	}
+	
+	private Pair<Double, ProductUnit> getQtySumCompo(List<NodeRef> sources, WUsedListDataItem wUsed, NodeRef target, ProductUnit currentUnit) {
 	    double qty = 0;
 	    double densityFactor = 1;
 	    ProductUnit targetUnit = ProductUnit.kg;
 	    ProductData wUsedEntity = (ProductData) alfrescoRepository.findOne(wUsed.getSourceItems().get(0));
+	    
+        for (NodeRef source : sources) {
+            for (CompositionDataItem compoItem : wUsedEntity.getCompoList()) {
+                if (compoItem.getComponent().equals(source)) {
+                    if (compoItem instanceof CompoListDataItem compoListDataItem) {
+                        qty += compoListDataItem.getQty();
 
-	    QName impactedDataList = wUsed.getImpactedDataList();
-	    if (impactedDataList != null) {
-	        if (impactedDataList.equals(PLMModel.TYPE_COMPOLIST)) {
-	            for (NodeRef source : sources) {
-	                for (CompositionDataItem compoItem : wUsedEntity.getCompoList()) {
-	                    if (compoItem.getComponent().equals(source)) {
-	                        if (compoItem instanceof CompoListDataItem compoListDataItem) {
-	                            qty += compoListDataItem.getQty();
+                        if (compoItem.getComponent().equals(target)) {
+                        	if (compoListDataItem.getQty() != 0d) {
+                        		densityFactor = compoListDataItem.getQtySubFormula() / compoListDataItem.getQty();
+                        	}
+                        	
+                        	targetUnit = compoListDataItem.getCompoListUnit();
+                        }
+                    }
+                }
+            }
+        }
 
-	                            if (compoItem.getComponent().equals(target)) {
-	                                if (compoListDataItem.getQty() != 0d) {
-	                                    densityFactor = compoListDataItem.getQtySubFormula() / compoListDataItem.getQty();
-	                                }
-	                                targetUnit = compoListDataItem.getCompoListUnit();
-	                            }
-	                        } else {
-	                            qty += compoItem.getQty();
-	                        }
-	                    }
-	                }
-	            }
-	        } else if (impactedDataList.equals(PLMModel.TYPE_PACKAGINGLIST)) {
-	            for (NodeRef source : sources) {
-	                for (CompositionDataItem compoItem : wUsedEntity.getPackagingList()) {
-	                    if (compoItem.getComponent().equals(source)) {
-	                        qty += compoItem.getQty();
-	                    }
-	                }
-	            }
-	        }
-	    }
-
-	    return Pair.of(qty * densityFactor, targetUnit);
+	    return new Pair<>(qty * densityFactor, targetUnit);
 	}
+	
+	private Pair<Double, ProductUnit> getQtySumPackaging(List<NodeRef> sources, WUsedListDataItem wUsed, NodeRef target, ProductUnit currentUnit) {
+	    double qty = 0;
+	    
+	    ProductUnit targetUnit = ProductUnit.kg;
+	    
+	    ProductData wUsedEntity = (ProductData) alfrescoRepository.findOne(wUsed.getSourceItems().get(0));
+
+        for (NodeRef source : sources) {
+            for (CompositionDataItem compoItem : wUsedEntity.getPackagingList()) {
+                if (compoItem.getComponent().equals(source)) {
+                	if (compoItem instanceof PackagingListDataItem packagingListDataItem) {
+                		ProductUnit packagingListUnit = packagingListDataItem.getPackagingListUnit();
+                		Double unitFactor = calculateUnitFactor(currentUnit, packagingListUnit);
+                		if (unitFactor != null) {
+                			qty += (packagingListDataItem.getQty() * unitFactor);
+                			
+                			targetUnit = packagingListUnit;
+                		}
+                	}
+                }
+            }
+        }
+
+	    return new Pair<>(qty, targetUnit);
+	}
+
 
 	@SuppressWarnings("unchecked")
 	private <T extends CompositionDataItem> T copyOrUpdateItem(T item, ReplacementListDataItem replacement, NodeRef target, 
@@ -1423,11 +1449,27 @@ public class ECOServiceImpl implements ECOService {
 		Double newQuantity = wUsedData.getQty();
 		ProductUnit newUnit = null;
 		
+		ProductUnit currentUnit = null;
+		if (item instanceof CompoListDataItem compoListDataItem) {
+			currentUnit = compoListDataItem.getCompoListUnit();
+		} else if (item instanceof PackagingListDataItem packagingListDataItem) {
+			currentUnit = packagingListDataItem.getPackagingListUnit();
+		}
+		
 		if (newQuantity == null) {
-            Pair<Double, ProductUnit> itemQty = getQtySum(replacement.getSourceItems(), wUsedData, target);
+            Pair<Double, ProductUnit> itemQty = null;
+            QName impactedDataList = wUsedData.getImpactedDataList();
+            if (impactedDataList != null) {
+            	if (impactedDataList.equals(PLMModel.TYPE_COMPOLIST)) {
+            		itemQty = getQtySumCompo(replacement.getSourceItems(), wUsedData, target, currentUnit);
+            	} else if (impactedDataList.equals(PLMModel.TYPE_PACKAGINGLIST)) {
+            		itemQty = getQtySumPackaging(replacement.getSourceItems(), wUsedData, target, currentUnit);
+            	}
+            }
+            
             if (itemQty != null && (replacement.getQtyPerc() != null)) {
-                newQuantity = (replacement.getQtyPerc() / 100d) * itemQty.getLeft();
-                newUnit = itemQty.getRight();
+                newQuantity = (replacement.getQtyPerc() / 100d) * itemQty.getFirst();
+                newUnit = itemQty.getSecond();
             }
         }
 
