@@ -402,26 +402,6 @@ public class ProjectHelper {
 	}
 
 	/**
-	 * Returns the given date if it is already a working day (Mon-Fri), otherwise
-	 * advances forward to the next working day. Never shifts a date that is
-	 * already a working day.
-	 *
-	 * @param date a {@link java.util.Date} object.
-	 * @return a {@link java.util.Date} object.
-	 */
-	public static Date findNextWorkingDay(Date date) {
-		if (date == null) {
-			return null;
-		}
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		while (!isWorkingDate(calendar)) {
-			calendar.add(Calendar.DATE, 1);
-		}
-		return calendar.getTime();
-	}
-
-	/**
 	 * <p>calculateNextDate.</p>
 	 *
 	 * @param startDate a {@link java.util.Date} object.
