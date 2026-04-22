@@ -32,6 +32,7 @@ import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.dao.ConcurrencyFailureException;
 
 import fr.becpg.config.format.FormatMode;
 import fr.becpg.repo.RepoConsts;
@@ -296,7 +297,11 @@ public class MultiLevelExtractor extends SimpleExtractor {
 						+ "  for " + username);
 			}
 			prefs.put(PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName(), dataListFilter.getMaxDepth());
-			preferenceService.setPreferences(username, prefs);
+			try {
+				preferenceService.setPreferences(username, prefs);
+			} catch (ConcurrencyFailureException e) {
+				logger.warn("Depth preference save skipped due to concurrent lock on user node for '" + username + "': " + e.getMessage());
+			}
 
 			return true;
 		}

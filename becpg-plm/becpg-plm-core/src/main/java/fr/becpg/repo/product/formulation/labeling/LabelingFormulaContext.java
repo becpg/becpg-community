@@ -75,6 +75,7 @@ import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.ing.LabelingComponent;
 import fr.becpg.repo.product.data.meat.MeatType;
 import fr.becpg.repo.product.data.spel.LabelingFormulaFilterContext;
+import fr.becpg.repo.product.helper.AllergenHelper;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -429,6 +430,25 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			<th style="border: solid 1px;padding: 5px;text-align:center;">{1}</th>\
 			<th style="border: solid 1px;padding: 5px;text-align:center;">{4}</th></tr></thead>""";
 	private String htmlTableFooterFormat = """
+			<tfoot><tr><th style="border: solid 1px; padding: 5px;" ><b>{0}</b></th>\
+			<td style="border: solid 1px;padding: 5px;"></td>\
+			<td style="border: solid 1px; padding: 5px;"></td>\
+			<td style="border: solid 1px;padding: 5px;text-align:center;"><b>{1,number,0.#%}</b></td>\
+			<td style="border: solid 1px;padding: 5px;"></td></tr></tfoot>""";
+
+	private String htmlFlatTableRowFormat = """
+			<tr><td style="border: solid 1px; padding: 5px;" >{0}</td>\
+			<td style="border: solid 1px;padding: 5px;" >{2}</td>\
+			<td style="border: solid 1px;padding: 5px;" >{3}</td>\
+			<td style="border: solid 1px;padding: 5px;text-align:center;">{1,number,0.#%}</td>\
+			<td style="border: solid 1px;padding: 5px;text-align:center;">{4,number,0.#%}</td></tr>""";
+	private String htmlFlatTableHeaderFormat = """
+			<thead><tr><th style="border: solid 1px; padding: 5px;" >{0}</th>\
+			<th style="border: solid 1px;padding: 5px;" >{2}</th>\
+			<th style="border: solid 1px;padding: 5px;" >{3}</th>\
+			<th style="border: solid 1px;padding: 5px;text-align:center;">{1}</th>\
+			<th style="border: solid 1px;padding: 5px;text-align:center;">{4}</th></tr></thead>""";
+	private String htmlFlatTableFooterFormat = """
 			<tfoot><tr><th style="border: solid 1px; padding: 5px;" ><b>{0}</b></th>\
 			<td style="border: solid 1px;padding: 5px;"></td>\
 			<td style="border: solid 1px; padding: 5px;"></td>\
@@ -803,6 +823,18 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	public void setHtmlTableFooterFormat(String htmlTableFooterFormat) {
 		this.htmlTableFooterFormat = htmlTableFooterFormat;
+	}
+
+	public void setHtmlFlatTableRowFormat(String htmlFlatTableRowFormat) {
+		this.htmlFlatTableRowFormat = htmlFlatTableRowFormat;
+	}
+
+	public void setHtmlFlatTableHeaderFormat(String htmlFlatTableHeaderFormat) {
+		this.htmlFlatTableHeaderFormat = htmlFlatTableHeaderFormat;
+	}
+
+	public void setHtmlFlatTableFooterFormat(String htmlFlatTableFooterFormat) {
+		this.htmlFlatTableFooterFormat = htmlFlatTableFooterFormat;
 	}
 
 	/**
@@ -1355,18 +1387,15 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		Set<String> detectedAllergens = getDetectedAllergens();
 
 		Matcher ma = ALLERGEN_DETECTION_PATTERN.matcher(ingLegalName);
-		if (!disableAllergenDetection) {
-			if (ma.find() && (ma.group(1) != null)) {
-				String allergenName = ma.group(1);
-				for (String toEscape : ESCAPED_ALLERGEN_TAGS) {
-					allergenName = allergenName.replace(toEscape, "");
-				}
-
-				detectedAllergens.add(allergenName);
-				return ma.replaceFirst(allergenReplacementPattern.replace("$1", allergenName));
+		if (!disableAllergenDetection && (ma.find() && (ma.group(1) != null))) {
+			String allergenName = ma.group(1);
+			for (String toEscape : ESCAPED_ALLERGEN_TAGS) {
+				allergenName = allergenName.replace(toEscape, "");
 			}
+
+			detectedAllergens.add(allergenName);
+			return ma.replaceFirst(allergenReplacementPattern.replace("$1", allergenName));
 		}
-	
 
 		StringBuilder ret = new StringBuilder();
 		for (NodeRef allergen : allergens) {
@@ -1460,18 +1489,24 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	private String getCharactName(NodeRef charact) {
 
+		Locale currentLocale = I18NUtil.getLocale();
+
 		MLText legalName = (MLText) mlNodeService.getProperty(charact, BeCPGModel.PROP_LEGAL_NAME);
 
-		String ret = MLTextHelper.getClosestValue(legalName, I18NUtil.getLocale());
+		String ret = MLTextHelper.getClosestValue(legalName, currentLocale);
 
 		if ((ret == null) || ret.isEmpty()) {
 			legalName = (MLText) mlNodeService.getProperty(charact, BeCPGModel.PROP_CHARACT_NAME);
 
-			ret = MLTextHelper.getClosestValue(legalName, I18NUtil.getLocale());
+			ret = MLTextHelper.getClosestValue(legalName, currentLocale);
 		}
 
 		return ret;
 
+	}
+
+	private Set<NodeRef> voluntaryAllergenSet() {
+		return (this.allergens != null) ? this.allergens.keySet() : Set.of();
 	}
 
 	/**
@@ -1542,7 +1577,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			String ingName = getLegalIngName(component, qtyPerc, false, false);
 
 			if (isGroup(component)) {
-				if (ret.length() > 0) {
+				if (!ret.isEmpty()) {
 					ret.append(getLocaleSeparator(groupDefaultSeparator));
 				}
 				ret.append(applyRoundingMode(new MessageFormat(groupListDefaultFormat), qtyPerc).format(new Object[] { ingName, qtyPerc }));
@@ -1672,7 +1707,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String renderInvoluntaryAllergens() {
-		return renderAllergens(sorted(this.inVolAllergens));
+		return renderAllergens(sorted(this.inVolAllergens), true);
 
 	}
 
@@ -1684,7 +1719,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String renderInvoluntaryAllergenInProcess() {
-		return renderAllergens(sorted(this.inVolAllergensProcess));
+		return renderAllergens(sorted(this.inVolAllergensProcess), true);
 
 	}
 
@@ -1696,7 +1731,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String renderInvoluntaryInRawMaterial() {
-		return renderAllergens(sorted(this.inVolAllergensRawMaterial));
+		return renderAllergens(sorted(this.inVolAllergensRawMaterial), true);
 	}
 
 	private Set<NodeRef> sorted(Map<NodeRef, Double> toSortHashMap) {
@@ -1797,22 +1832,58 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String renderAllergens(Set<NodeRef> allergensList) {
-		StringBuilder ret = new StringBuilder();
+		return renderAllergens(allergensList, false);
+	}
 
+	/**
+	 * <p>
+	 * renderAllergens.
+	 * </p>
+	 *
+	 * <p>When {@code involuntary} is {@code true}, allergens belonging to a category whose
+	 * parent defines a non-blank {@code bcpg:allergenOthersLegalName} for the current locale
+	 * are replaced by that grouped label and deduplicated (e.g. almond + walnut + pecan are
+	 * collapsed into a single "autres fruits à coque" entry in FR).</p>
+	 *
+	 * @param allergensList
+	 *            a {@link java.util.Set} object.
+	 * @param involuntary
+	 *            {@code true} when rendering an involuntary / traces allergen list
+	 * @return a {@link java.lang.String} object.
+	 */
+	public String renderAllergens(Set<NodeRef> allergensList, boolean involuntary) {
 		if (logger.isTraceEnabled()) {
 			logger.trace(" Render Allergens list ");
 		}
 
+		if ((allergensList == null) || allergensList.isEmpty()) {
+			return decorate("");
+		}
+
+		Locale currentLocale = I18NUtil.getLocale();
+		String separator = getLocaleSeparator(allergensSeparator);
+
+		List<NodeRef> filtered = new ArrayList<>(allergensList.size());
 		for (NodeRef allergen : allergensList) {
 			if (!isAllergenDisableForLocale(allergen)) {
-				if (ret.length() > 0) {
-					ret.append(getLocaleSeparator(allergensSeparator));
-				}
-				ret.append(getCharactName(allergen));
+				filtered.add(allergen);
 			}
 		}
 
-		return decorate(ret.toString());
+		String rendered;
+		if (involuntary) {
+			List<NodeRef> voluntary = new ArrayList<>();
+			for (NodeRef allergen : voluntaryAllergenSet()) {
+				if (!isAllergenDisableForLocale(allergen)) {
+					voluntary.add(allergen);
+				}
+			}
+			rendered = AllergenHelper.renderInvoluntaryAllergens(filtered, voluntary, currentLocale, separator, mlNodeService, associationService);
+		} else {
+			rendered = AllergenHelper.renderAllergens(filtered, currentLocale, separator, mlNodeService);
+		}
+
+		return decorate(rendered);
 
 	}
 
@@ -1936,10 +2007,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 						boolean showPerc = showPerc(kv.getKey());
 
-						tableContent.append(getHtmlTableRowFormat(kv.getKey(), qtyPerc, qtyPercWithYield, false).format(new Object[] {
-								decorate(subLabel), showPerc ? formatQty(kv.getKey(), qtyPerc, false) : null,
-								geoOriginsLabel != null ? decorate(geoOriginsLabel) : "", bioOriginsLabel != null ? decorate(bioOriginsLabel) : "",
-								showPerc ? formatQty(kv.getKey(), qtyPercWithYield, false) : null, otherGeoOriginsLabel, additionalInformation }));
+						tableContent.append(getHtmlTableRowFormat(htmlTableRowFormat, kv.getKey(), qtyPerc, qtyPercWithYield, false)
+								.format(new Object[] { decorate(subLabel), showPerc ? formatQty(kv.getKey(), qtyPerc, false) : null,
+										geoOriginsLabel != null ? decorate(geoOriginsLabel) : "",
+										bioOriginsLabel != null ? decorate(bioOriginsLabel) : "",
+										showPerc ? formatQty(kv.getKey(), qtyPercWithYield, false) : null, otherGeoOriginsLabel,
+										additionalInformation }));
 					}
 
 				}
@@ -2006,7 +2079,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 							} else {
 								boolean showPerc = showPerc(component);
 
-								tableContent.append(getHtmlTableRowFormat(component, qtyPerc, qtyPercWithYield, false).format(
+								tableContent.append(getHtmlTableRowFormat(htmlTableRowFormat, component, qtyPerc, qtyPercWithYield, false).format(
 										new Object[] { decorate(subLabel), showPerc && !shouldSkip ? formatQty(component, qtyPerc, false) : null,
 												geoOriginsLabel != null ? decorate(geoOriginsLabel) : "",
 												bioOriginsLabel != null ? decorate(bioOriginsLabel) : "",
@@ -2034,11 +2107,15 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		}
 
-		ret.append(getHtmlTableRowFormat(firstLabelingComponent, firstQtyPerc, firstQtyPercWithYield, force100PercForTable).format(new Object[] {
-				decorate(firstLabel), showPerc(firstLabelingComponent) ? formatQty(firstLabelingComponent, firstQtyPerc, force100PercForTable) : null,
-				decorate(firstGeo), decorate(firstBio),
-				showPerc(firstLabelingComponent) ? formatQty(firstLabelingComponent, firstQtyPercWithYield, false) : null, firstOtherGeo,
-				firstAdditionalInformation }));
+		ret.append(
+				getHtmlTableRowFormat(htmlTableRowFormat, firstLabelingComponent, firstQtyPerc, firstQtyPercWithYield,
+						force100PercForTable)
+								.format(new Object[] { decorate(firstLabel),
+										showPerc(firstLabelingComponent) ? formatQty(firstLabelingComponent, firstQtyPerc, force100PercForTable)
+												: null,
+										decorate(firstGeo), decorate(firstBio),
+										showPerc(firstLabelingComponent) ? formatQty(firstLabelingComponent, firstQtyPercWithYield, false) : null,
+										firstOtherGeo, firstAdditionalInformation }));
 
 		ret.append(tableContent);
 
@@ -2069,9 +2146,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	}
 
-	private MessageFormat getHtmlTableRowFormat(LabelingComponent component, Double qtyPerc, Double qtyPercWithYield, boolean isForce100Perc) {
+	private MessageFormat getHtmlTableRowFormat(String rowFormat, LabelingComponent component, Double qtyPerc, Double qtyPercWithYield,
+			boolean isForce100Perc) {
 
-		MessageFormat messageFormat = new MessageFormat(htmlTableRowFormat, getContentLocale());
+		MessageFormat messageFormat = new MessageFormat(rowFormat, getContentLocale());
 
 		if (messageFormat.getFormats() != null) {
 			boolean isFirst = true;
@@ -2139,15 +2217,24 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private static class HtmlTableStruct {
 		String label;
 		Double qtyPerc;
+		Double qtyPercWithYield;
 		String geoOriginsLabel;
+		String otherGeoOriginsLabel;
 		String bioOriginsLabel;
+		String additionalInformation;
 		Integer level;
+		LabelingComponent component;
 
-		public HtmlTableStruct(String label, Double qtyPerc, String geoOriginsLabel, String bioOriginsLabel, Integer level) {
+		public HtmlTableStruct(LabelingComponent component, String label, Double qtyPerc, Double qtyPercWithYield, String geoOriginsLabel,
+				String otherGeoOriginsLabel, String bioOriginsLabel, String additionalInformation, Integer level) {
+			this.component = component;
 			this.label = label;
 			this.geoOriginsLabel = geoOriginsLabel;
+			this.otherGeoOriginsLabel = otherGeoOriginsLabel;
 			this.bioOriginsLabel = bioOriginsLabel;
+			this.additionalInformation = additionalInformation;
 			this.qtyPerc = qtyPerc;
+			this.qtyPercWithYield = qtyPercWithYield;
 			this.level = level;
 		}
 
@@ -2168,7 +2255,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	public String renderAsFlatHtmlTable(String styleCss, boolean showTotal, boolean force100Perc) {
 
-		BigDecimal total = BigDecimal.valueOf(0d);
+		BigDecimal total = getTotal(lblCompositeContext, false);
+		BigDecimal totalWithYield = getTotal(lblCompositeContext, true);
+
+		if (!ingsLabelingWithYield && (yield != null) && (yield != 0)) {
+			totalWithYield = BigDecimal.valueOf(yield).divide(BigDecimal.valueOf(100d), PRECISION);
+		}
 
 		StringBuilder tableContent = new StringBuilder();
 		StringBuilder ret = new StringBuilder();
@@ -2182,6 +2274,17 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			List<HtmlTableStruct> flatList = flatCompositeLabeling(lblCompositeContext, DEFAULT_RATIO, 0);
 			if (!flatList.isEmpty()) {
 
+				if ((htmlTableHeaderFormat != null) && !htmlTableHeaderFormat.isBlank()) {
+					tableContent.append(new MessageFormat(htmlFlatTableHeaderFormat, getContentLocale())
+							.format(new Object[] { I18NUtil.getMessage("bcpg_bcpgmodel.association.bcpg_ingListIng.title"),
+									I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListQtyPerc.title"),
+									I18NUtil.getMessage("bcpg_bcpgmodel.association.bcpg_ingListGeoOrigin.title"),
+									I18NUtil.getMessage("bcpg_bcpgmodel.association.bcpg_ingListBioOrigin.title"),
+									I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListQtyPercWithYield.title") }));
+				}
+
+				tableContent.append("<tbody>");
+
 				boolean first = true;
 				for (HtmlTableStruct tmp : flatList) {
 
@@ -2189,13 +2292,14 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						first = false;
 					} else {
 
-						if (tmp.level == 0) {
-							total = total.add(BigDecimal.valueOf(tmp.qtyPerc));
-						}
+						Double qtyPercWithYield = tmp.qtyPercWithYield;
+						boolean showPerc = showPerc(tmp.component);
 
-						ret.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat, getContentLocale()), tmp.qtyPerc)
-								.format(new Object[] { indent(decorate(tmp.label), tmp.level), tmp.qtyPerc, decorate(tmp.geoOriginsLabel),
-										decorate(tmp.bioOriginsLabel), null, null }));
+						ret.append(getHtmlTableRowFormat(htmlFlatTableRowFormat, tmp.component, tmp.qtyPerc, qtyPercWithYield, false)
+								.format(new Object[] { indent(decorate(tmp.label), tmp.level),
+										showPerc ? formatQty(tmp.component, tmp.qtyPerc, false) : null, decorate(tmp.geoOriginsLabel),
+										decorate(tmp.bioOriginsLabel), showPerc ? formatQty(tmp.component, qtyPercWithYield, false) : null,
+										tmp.otherGeoOriginsLabel, tmp.additionalInformation }));
 
 					}
 				}
@@ -2203,25 +2307,32 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				if (force100Perc) {
 					BigDecimal diffValue = BigDecimal.valueOf(1d).subtract(total);
 
-					total = BigDecimal.valueOf(1d);
+					total = total.add(diffValue);
 
-					Double qtyPerc = roundeedValue(null, flatList.get(0).qtyPerc, new MessageFormat(htmlTableRowFormat, getContentLocale()))
-							+ roundedDouble(diffValue);
+					Double qtyPerc = roundeedValue(flatList.get(0).component, flatList.get(0).qtyPerc,
+							new MessageFormat(htmlFlatTableRowFormat, getContentLocale())) + roundedDouble(diffValue);
 
-					tableContent.append(applyTotalRoundingMode(new MessageFormat(htmlTableRowFormat, getContentLocale()))
-							.format(new Object[] { decorate(flatList.get(0).label), qtyPerc, decorate(flatList.get(0).geoOriginsLabel),
-									decorate(flatList.get(0).bioOriginsLabel), null, null }));
+					Double qtyPercWithYield = flatList.get(0).qtyPercWithYield;
+
+					tableContent.append(getHtmlTableRowFormat(htmlFlatTableRowFormat, flatList.get(0).component, qtyPerc, qtyPercWithYield,
+							force100Perc)
+									.format(new Object[] { decorate(flatList.get(0).label),
+											formatQty(flatList.get(0).component, qtyPerc, force100Perc),
+											decorate(flatList.get(0).geoOriginsLabel), decorate(flatList.get(0).bioOriginsLabel),
+											formatQty(flatList.get(0).component, qtyPercWithYield, false), flatList.get(0).otherGeoOriginsLabel,
+											flatList.get(0).additionalInformation }));
 
 				}
 				tableContent.append(ret);
+
+				if (showTotal && (total.doubleValue() > 0)) {
+					tableContent.append(applyTotalRoundingMode(new MessageFormat(htmlFlatTableFooterFormat, getContentLocale()))
+							.format(new Object[] { I18NUtil.getMessage("entity.datalist.item.details.total"), roundedDouble(total), null, null,
+									roundedDouble(totalWithYield) }));
+				}
 			}
 
-			if (showTotal && (total.doubleValue() > 0)) {
-				tableContent.append(applyTotalRoundingMode(new MessageFormat(htmlTableRowFormat, getContentLocale())).format(
-						new Object[] { "<b>" + I18NUtil.getMessage("entity.datalist.item.details.total") + "</b>", roundedDouble(total), "" }));
-			}
-
-			tableContent.append("</table>");
+			tableContent.append("</tbody></table>");
 
 			return tableContent.toString().replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]", "").replace(">null<", "><");
 		} finally {
@@ -2255,6 +2366,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
+				Double qtyPercWithYield = roundedDouble(computeQtyPerc(parent, component, ratio, true));
+				Double volumePercWithYield = roundedDouble(computeVolumePerc(parent, component, ratio, true));
+
+				qtyPercWithYield = (useVolume ? volumePercWithYield : qtyPercWithYield);
+
 				String ingName = getLegalIngName(component, qtyPerc, false, false);
 
 				if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), null, false, false) != null)) {
@@ -2275,7 +2391,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				String geoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOriginsByPlaceOfActivity(),
 						PlaceOfActivityTypeCode.LAST_PROCESSING);
+				String otherGeoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOriginsByPlaceOfActivity(),
+						PlaceOfActivityTypeCode.EMPTY);
 				String bioOriginsLabel = createBioOriginsLabel(component.getNodeRef(), component.getBioOrigins());
+				String additionalInformation = createAdditionalInformationLabel(component.getAdditionalInformation());
 
 				if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
 					if (component instanceof CompositeLabeling) {
@@ -2284,8 +2403,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 							subRatio = DEFAULT_RATIO;
 						}
 
-						ret.add(new HtmlTableStruct(ingName, qtyPerc, geoOriginsLabel != null ? geoOriginsLabel : "",
-								bioOriginsLabel != null ? bioOriginsLabel : "", level));
+						ret.add(new HtmlTableStruct(component, ingName, qtyPerc, qtyPercWithYield, geoOriginsLabel != null ? geoOriginsLabel : "",
+								otherGeoOriginsLabel != null ? otherGeoOriginsLabel : "", bioOriginsLabel != null ? bioOriginsLabel : "",
+								additionalInformation, level));
 
 						ret.addAll(flatCompositeLabeling((CompositeLabeling) component, subRatio, level + 1));
 
@@ -2298,8 +2418,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				}
 
 			}
-
 		}
+
 		return ret;
 	}
 

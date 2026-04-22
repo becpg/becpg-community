@@ -92,6 +92,7 @@ public class EntityReportJob extends AbstractScheduledLockedJob implements Job {
 		BatchInfo batchInfo = new BatchInfo(batchId, batchDescId);
 		batchInfo.setRunAsSystem(true);
 		batchInfo.setPriority(priority == null ? BatchPriority.MEDIUM : priority);
+		batchInfo.setWorkerThreads(1);
 		BatchStep<NodeRef> batchStep = batchQueueService.createBatchStepWithErrorHandling(batchInfo, pendingNodes,
 				new BatchProcessor.BatchProcessWorkerAdaptor<>() {
 					@Override

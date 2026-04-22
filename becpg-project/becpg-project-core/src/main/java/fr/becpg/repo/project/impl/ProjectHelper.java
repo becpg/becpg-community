@@ -326,6 +326,18 @@ public class ProjectHelper {
 	}
 
 	/**
+	 * Returns the given date if it is already a working day, otherwise advances forward
+	 * to the next working day. Never shifts a date that is already a working day.
+	 *
+	 * @param date     a {@link java.util.Date} object.
+	 * @param provider a {@link fr.becpg.repo.project.impl.WorkingDayProvider} object.
+	 * @return a {@link java.util.Date} object.
+	 */
+	public static Date findNextWorkingDay(Date date, @NonNull WorkingDayProvider provider) {
+		return findNextWorkingDay(date, true, provider);
+	}
+
+	/**
 	 * Advances the given date to the nearest working day in the specified direction.
 	 * If the date is already a working day, it is returned unchanged.
 	 *

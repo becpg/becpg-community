@@ -18,7 +18,6 @@
 package fr.becpg.repo.web.scripts.dockbar;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,6 +36,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.WebScriptException;
@@ -133,9 +133,8 @@ public class DockBarWebScript extends AbstractWebScript {
 
 			String username = AuthenticationUtil.getFullyAuthenticatedUser();
 
-			Map<String, Serializable> histories = preferenceService.getPreferences(username);
-			
-			String nodeRefs = (String) histories.get(PREF_DOCKBAR_HISTORY);
+			String nodeRefs = (String) preferenceService.getPreference(username, PREF_DOCKBAR_HISTORY);
+			String originalNodeRefs = nodeRefs;
 			if (logger.isDebugEnabled()) {
 				logger.debug("Getting :" + nodeRefs + " from history for " + username);
 			}
@@ -193,12 +192,23 @@ public class DockBarWebScript extends AbstractWebScript {
 						nodeRefs += nodeRef.toString() + DELIMITER + items.get(nodeRef) ;
 					}
 
-					if (logger.isDebugEnabled()) {
-						logger.debug("Setting :" + nodeRefs + " to history");
-					}
+					if (nodeRefs.equals(originalNodeRefs)) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("DockBar history unchanged for '" + username + "', skipping preference write");
+						}
+					} else {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Setting :" + nodeRefs + " to history");
+						}
 
-					histories.put(PREF_DOCKBAR_HISTORY, nodeRefs);
-					preferenceService.setPreferences(username, histories);
+						Map<String, java.io.Serializable> updates = new HashMap<>(1);
+						updates.put(PREF_DOCKBAR_HISTORY, nodeRefs);
+						try {
+							preferenceService.setPreferences(username, updates);
+						} catch (ConcurrencyFailureException e) {
+							logger.warn("DockBar history save skipped due to concurrent lock on user node for '" + username + "': " + e.getMessage());
+						}
+					}
 				}
 			} 
 
