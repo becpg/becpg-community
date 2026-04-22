@@ -101,22 +101,16 @@ public class BeCPGUserAccountService {
 			userAccount.setUserName(createTenantAware(userAccount.getUserName()));
 			NodeRef personNodeRef = null;
 
-			Map<QName, Serializable> propMap = new HashMap<>();
-			propMap.put(ContentModel.PROP_LASTNAME, userAccount.getLastName());
-			propMap.put(ContentModel.PROP_FIRSTNAME, userAccount.getFirstName());
-			propMap.put(ContentModel.PROP_EMAIL, userAccount.getEmail());
-			propMap.putAll(userAccount.getExtraProps());
-
 			boolean userAlreadyExists = personService.personExists(userAccount.getUserName());
 			
 			if (userAlreadyExists) {
 				if (createOnly) {
 					throw new UserAlreadyExistsException("User already exists: " + userAccount.getUserName());
 				}
-				personNodeRef = updateUser(userAccount, propMap);
+				personNodeRef = updateUser(userAccount);
 			} else {
 				userAccount.setUserName(userAccount.getUserName().toLowerCase());
-				personNodeRef = createUser(userAccount, propMap);
+				personNodeRef = createUser(userAccount);
 			}
 			
 			if (userAccount.getPassword() != null && !userAccount.getPassword().isBlank()) {
@@ -217,15 +211,14 @@ public class BeCPGUserAccountService {
 		}
 	}
 
-	private NodeRef createUser(BeCPGUserAccount userAccount, Map<QName, Serializable> propMap) {
+	private NodeRef createUser(BeCPGUserAccount userAccount) {
 		NodeRef personNodeRef;
 		if (logger.isDebugEnabled()) {
 			logger.debug("Create external user: " + userAccount.getUserName() + " pwd: " + userAccount.getPassword());
 		}
+		Map<QName, Serializable> propMap = userAccount.getExtraProps();
 		propMap.put(ContentModel.PROP_USERNAME, userAccount.getUserName());
-		if (propMap.containsKey(ContentModel.PROP_LASTNAME) && propMap.get(ContentModel.PROP_LASTNAME) == null) {
-			propMap.put(ContentModel.PROP_LASTNAME, "");
-		}
+		propMap.computeIfAbsent(ContentModel.PROP_LASTNAME, k -> "");
 		personNodeRef = personService.createPerson(propMap);
 		createAuthentication(userAccount, personNodeRef);
 		setIdsUser(userAccount, userAccount.getUserName(), personNodeRef, false);
@@ -272,7 +265,7 @@ public class BeCPGUserAccountService {
 		}
 	}
 	
-	private NodeRef updateUser(BeCPGUserAccount userAccount, Map<QName, Serializable> propMap) {
+	private NodeRef updateUser(BeCPGUserAccount userAccount) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Update an existing user");
 		}
@@ -283,7 +276,7 @@ public class BeCPGUserAccountService {
 			userAccount.setNewUserName(userAccount.getNewUserName().toLowerCase());
 			renameUser(userAccount, personNodeRef);
 		}
-		nodeService.addProperties(personNodeRef, propMap);
+		nodeService.addProperties(personNodeRef, userAccount.getExtraProps());
 		return personNodeRef;
 	}
 
