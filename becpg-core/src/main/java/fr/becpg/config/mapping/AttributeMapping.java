@@ -39,6 +39,7 @@ import org.alfresco.service.namespace.QName;
 public class AttributeMapping extends AbstractAttributeMapping {
 
 	private QName targetClass;
+	private QName targetKey;
 	private boolean isMLText = false;
 	
 	/**
@@ -57,6 +58,24 @@ public class AttributeMapping extends AbstractAttributeMapping {
 	 */
 	public void setTargetClass(QName targetClass) {
 		this.targetClass = targetClass;
+	}
+
+	/**
+	 * <p>Getter for the field <code>targetKey</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.namespace.QName} object.
+	 */
+	public QName getTargetKey() {
+		return targetKey;
+	}
+
+	/**
+	 * <p>Setter for the field <code>targetKey</code>.</p>
+	 *
+	 * @param targetKey a {@link org.alfresco.service.namespace.QName} object.
+	 */
+	public void setTargetKey(QName targetKey) {
+		this.targetKey = targetKey;
 	}
 
 	
@@ -91,7 +110,7 @@ public class AttributeMapping extends AbstractAttributeMapping {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "AttributeMapping [targetClass=" + targetClass + ", isMLText=" + isMLText + ", id=" + id + "]";
+		return "AttributeMapping [targetClass=" + targetClass + ", targetKey=" + targetKey + ", isMLText=" + isMLText + ", id=" + id + "]";
 	}
 
 	/** {@inheritDoc} */
@@ -99,7 +118,7 @@ public class AttributeMapping extends AbstractAttributeMapping {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(isMLText, targetClass);
+		result = prime * result + Objects.hash(isMLText, targetClass, targetKey);
 		return result;
 	}
 
@@ -113,7 +132,7 @@ public class AttributeMapping extends AbstractAttributeMapping {
 		if (getClass() != obj.getClass())
 			return false;
 		AttributeMapping other = (AttributeMapping) obj;
-		return isMLText == other.isMLText && Objects.equals(targetClass, other.targetClass);
+		return isMLText == other.isMLText && Objects.equals(targetClass, other.targetClass) && Objects.equals(targetKey, other.targetKey);
 	}
 
 	
