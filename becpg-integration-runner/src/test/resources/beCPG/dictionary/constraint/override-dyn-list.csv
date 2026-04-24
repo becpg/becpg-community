@@ -1,0 +1,3 @@
+bcpg:lvType;bcpg:lvCode;bcpg:lvValue;bcpg:lvValue_fr
+TEST_OVERRIDE;shared;Override shared label;Libelle partage override
+TEST_NO_OVERRIDE;shared;Override shared label;Libelle partage override
