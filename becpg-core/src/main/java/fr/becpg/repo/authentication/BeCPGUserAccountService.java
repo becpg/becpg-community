@@ -39,6 +39,7 @@ import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.authentication.provider.IdentityServiceAccountProvider;
 import fr.becpg.repo.helper.AuthorityHelper;
+import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.mail.BeCPGMailService;
 
 /**
@@ -88,6 +89,9 @@ public class BeCPGUserAccountService {
 	@Autowired
 	@Qualifier("dataSource")
 	private DataSource dataSource;
+	
+	@Autowired
+	private RepoService repoService;
 
 	/**
 	 * <p>getOrCreateUser.</p>
@@ -317,6 +321,12 @@ public class BeCPGUserAccountService {
 			preferenceService.clearPreferences(newUserName);
 			NodeRef homeFolder = (NodeRef) nodeService.getProperty(personNodeRef, ContentModel.PROP_HOMEFOLDER);
 			if (homeFolder != null) {
+				NodeRef parentNodeRef = nodeService.getPrimaryParent(homeFolder).getParentRef();
+				NodeRef sameNameHomeFolder = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, newUserName);
+				if (sameNameHomeFolder != null) {
+					String newName = repoService.getAvailableName(parentNodeRef, newUserName, true);
+					nodeService.setProperty(sameNameHomeFolder, ContentModel.PROP_NAME, newName);
+				}
 				nodeService.setProperty(homeFolder, ContentModel.PROP_NAME, newUserName);
 				nodeService.setProperty(homeFolder, ContentModel.PROP_OWNER, newUserName);
 			}
