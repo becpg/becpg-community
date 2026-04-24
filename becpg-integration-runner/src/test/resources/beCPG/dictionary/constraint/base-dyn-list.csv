@@ -1,0 +1,5 @@
+bcpg:lvType;bcpg:lvCode;bcpg:lvValue;bcpg:lvValue_fr
+TEST_OVERRIDE;shared;Base shared label;Libelle partage base
+TEST_OVERRIDE;baseOnly;Base only label;Libelle base seule
+TEST_NO_OVERRIDE;shared;Base shared label;Libelle partage base
+TEST_FALLBACK;baseOnly;Base only label;Libelle base seule
