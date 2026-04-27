@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -220,7 +221,7 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 		} finally {
 			watch.stop();
 			if ((watch.getTotalTimeSeconds() > 1)) {
-				logger.warn("Slow searchRuleFilter [" + filter.toString() + "] executed in  " + watch.getTotalTimeSeconds()
+				logger.warn("Slow searchRuleFilter [" + filter.toString() + "] for user " + AuthenticationUtil.getRunAsUser() + " executed in  " + watch.getTotalTimeSeconds()
 						+ " seconds - size results " + searchRuleResult.getResults().size());
 			}
 		}
