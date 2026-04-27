@@ -85,8 +85,6 @@
 		<property name="entityDictionaryService" ref="cachedDictionaryService" />
 	</bean>
 
-	<bean id="tagCleanupPolicy" class="fr.becpg.repo.entity.policy.TagCleanupPolicy" parent="abstractBeCPGPolicy" />
-
 	<bean id="entityVersionPolicy" class="fr.becpg.repo.entity.policy.EntityVersionPolicy"
 		parent="abstractBeCPGPolicy">
 		<property name="entityVersionService" ref="entityVersionService" />
