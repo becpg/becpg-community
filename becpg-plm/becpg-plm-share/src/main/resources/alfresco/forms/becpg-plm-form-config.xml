@@ -8413,6 +8413,7 @@
                 <field-visibility>
                     <show id="bcpg:entityDataListState" force="true" />
                     <show id="bcpg:variantIds" force="true" />
+                    <show id="bcpg:depthLevel" />
                     <show id="bcpg:allergenListAllergen" />
                     <show id="bcpg:allergenListQtyPerc" />
                     <show id="bcpg:allergenListVoluntary" />
@@ -8432,6 +8433,7 @@
                 <appearance>
                     <field id="bcpg:entityDataListState" label="hidden" />
                     <field id="bcpg:variantIds" label="hidden" />
+                    <field id="bcpg:depthLevel" label="hidden" />
                     <field id="fm:commentCount" label="hidden" read-only="true" />
                     <field id="bcpg:allergenListDecisionTree" read-only="true" />
                     <field id="dataList_bcpg:reqCtrlList" label-id="hidden" />
