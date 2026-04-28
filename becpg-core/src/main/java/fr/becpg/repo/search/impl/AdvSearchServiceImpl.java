@@ -368,8 +368,9 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 								}
 								if ((maxLevel != null) && (maxLevel > 0)) {
 									queryBuilder.andBetween(QName.createQName(propName, namespaceService), "0", propValue);
-
 								}
+							} else if (propName.indexOf("cm:taggable") != -1) {
+								queryBuilder.andFTSQuery(processDefaultTagProperty(propValue.split(",")));
 							} else if (isCategoryProperty(criteriaMap, key)) {
 								// If there's no suffix it means this property holds the value for categories
 								if ((propName.indexOf("usesubcats") == -1) && (propName.indexOf("isCategory") == -1)) {
@@ -383,8 +384,6 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 									String[] cats = propValue.split(",");
 									if (propName.indexOf("cm:categories") != -1) {
 										catQuery = processDefaultCategoryProperty(cats, useSubCats);
-									} else if (propName.indexOf("cm:taggable") != -1) {
-										catQuery = processDefaultTagProperty(cats);
 									}
 
 									if (!catQuery.isBlank()) {
