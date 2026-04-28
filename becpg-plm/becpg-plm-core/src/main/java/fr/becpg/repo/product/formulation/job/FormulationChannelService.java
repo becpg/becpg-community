@@ -9,9 +9,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -257,19 +259,21 @@ public class FormulationChannelService implements BatchQueuePlugin {
 		
 		Set<NodeRef> impactedProducts = new HashSet<>();
 		List<NodeRef> toFormulateProducts = new ArrayList<>();
+		Set<NodeRef> toFormulateProductsSet = new HashSet<>();
 		List<NodeRef> toPublishProducts = new ArrayList<>();
+		Set<NodeRef> toPublishProductsSet = new HashSet<>();
 		for (NodeRef channelProduct : channelProducts) {
 			Date referenceDate = extractReferenceDate(channelProduct);
 			if (SecurityModel.TYPE_ACL_GROUP.equals(nodeService.getType(channelProduct))) {
 				markedSecurityRules.add(channelProduct);
 				impactedProducts.addAll(getSecurityRuleProducts(channelProduct, referenceDate));
 			} else if (needsFormulation(channelProduct)) {
-				if (!toFormulateProducts.contains(channelProduct)) {
+				if (toFormulateProductsSet.add(channelProduct)) {
 					toFormulateProducts.add(channelProduct);
 				}
 				impactedProducts.addAll(getWhereUsedProducts(channelProduct, referenceDate));
 			} else {
-				if (!toPublishProducts.contains(channelProduct)) {
+				if (toPublishProductsSet.add(channelProduct)) {
 					toPublishProducts.add(channelProduct);
 				}
 			}
@@ -305,12 +309,13 @@ public class FormulationChannelService implements BatchQueuePlugin {
 		List<NodeRef> totalNodesToProcess = new ArrayList<>();
 		totalNodesToProcess.addAll(toFormulateProducts);
 		totalNodesToProcess.addAll(toPublishProducts);
+		Set<NodeRef> totalNodesToProcessSet = new HashSet<>(totalNodesToProcess);
 		
 		if (totalNodesToProcess.size() < maxProductsToFormulate()) {
 			Iterator<NodeRef> it = impactedProducts.iterator();
 			while (it.hasNext() && totalNodesToProcess.size() < maxProductsToFormulate()) {
 				NodeRef next = it.next();
-				if (!toFormulateProducts.contains(next)) {
+				if (toFormulateProductsSet.add(next) && totalNodesToProcessSet.add(next)) {
 					toFormulateProducts.add(next);
 					totalNodesToProcess.add(next);
 				}
@@ -318,21 +323,19 @@ public class FormulationChannelService implements BatchQueuePlugin {
 		}
 		logger.info("Products to formulate: " + toFormulateProducts.size());
 		logger.info("Products to publish: " + toPublishProducts.size());
+		Map<NodeRef, Integer> typePriorities = new HashMap<>();
+		for (NodeRef nodeRef : totalNodesToProcess) {
+			typePriorities.put(nodeRef, nodeService.exists(nodeRef) ? getTypePriority(nodeService.getType(nodeRef)) : Integer.MAX_VALUE);
+		}
 		totalNodesToProcess.sort((node1, node2) -> {
-			if (!nodeService.exists(node1)) {
-				return 1;
-			}
-			if (!nodeService.exists(node2)) {
-				return -1;
-			}
-			int priority1 = getTypePriority(nodeService.getType(node1));
-			int priority2 = getTypePriority(nodeService.getType(node2));
+			int priority1 = typePriorities.getOrDefault(node1, Integer.MAX_VALUE);
+			int priority2 = typePriorities.getOrDefault(node2, Integer.MAX_VALUE);
 			return Integer.compare(priority1, priority2);
 		});
 		
 		AtomicReference<Integer> numberOfErrors = new AtomicReference<>(0);
 		
-		ReformulateChangedEntitiesProcessWorker processWorker = new ReformulateChangedEntitiesProcessWorker(toPublishProducts, batchId);
+		ReformulateChangedEntitiesProcessWorker processWorker = new ReformulateChangedEntitiesProcessWorker(toPublishProductsSet, batchId);
 		BatchStep<NodeRef> formulateStep = batchQueueService.createBatchStepWithErrorHandling(batchInfo, totalNodesToProcess, processWorker,
 				(nodeRef, throwable) -> {
 					publicationChannelService.publishEntityChannel(nodeRef, FORMULATE_ENTITIES_CHANNEL_ID,
@@ -610,10 +613,10 @@ public class FormulationChannelService implements BatchQueuePlugin {
 	
 	private class ReformulateChangedEntitiesProcessWorker extends BatchProcessor.BatchProcessWorkerAdaptor<NodeRef> {
 
-		private List<NodeRef> toPublishProducts;
+		private Set<NodeRef> toPublishProducts;
 		private String batchId;
 
-		public ReformulateChangedEntitiesProcessWorker(List<NodeRef> toPublishProducts, String batchId) {
+		public ReformulateChangedEntitiesProcessWorker(Set<NodeRef> toPublishProducts, String batchId) {
 			this.toPublishProducts = toPublishProducts;
 			this.batchId = batchId;
 		}
