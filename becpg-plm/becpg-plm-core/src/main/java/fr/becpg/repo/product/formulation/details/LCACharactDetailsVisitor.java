@@ -63,5 +63,11 @@ public class LCACharactDetailsVisitor extends AbstractCostCharactDetailsVisitor<
 	protected QName getCostUnitPropName() {
 		return PLMModel.PROP_LCAUNIT;
 	}
+	
+	/** {@inheritDoc} */
+	@Override
+	protected String getMaxiPropName() {
+		return PLMModel.PROP_LCA_LIST_MAXI.toPrefixString(namespaceService);
+	}
 
 }

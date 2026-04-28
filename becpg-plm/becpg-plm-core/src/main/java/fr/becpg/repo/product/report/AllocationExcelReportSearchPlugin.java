@@ -42,8 +42,17 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 public class AllocationExcelReportSearchPlugin extends DynamicCharactExcelReportSearchPlugin {
 
 
+	private final AlfrescoRepository<BeCPGDataObject> alfrescoRepository;
+
 	@Autowired
-	AlfrescoRepository<BeCPGDataObject> alfrescoRepository;
+	/**
+	 * <p>Constructor for AllocationExcelReportSearchPlugin.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 */
+	public AllocationExcelReportSearchPlugin(AlfrescoRepository<BeCPGDataObject> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
+	}
 
 	/** {@inheritDoc} */
 	@Override

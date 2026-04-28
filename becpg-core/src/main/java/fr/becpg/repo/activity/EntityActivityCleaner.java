@@ -19,13 +19,11 @@ import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.activity.helper.AuditActivityHelper;
@@ -38,7 +36,11 @@ import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.WorkProviderFactory;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.helper.json.JsonData;
+import fr.becpg.repo.helper.json.JsonException;
+import fr.becpg.repo.helper.json.JsonHelper;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>EntityActivityCleaner class.</p>
@@ -63,6 +65,21 @@ public class EntityActivityCleaner {
 
     @Autowired
     private EntityListDAO entityListDAO;
+    
+    @Autowired
+    private SystemConfigurationService systemConfigurationService;
+
+    private int getConfInt(String key, int defaultValue) {
+		String val = systemConfigurationService.confValue(key);
+		if (val != null && !val.isEmpty()) {
+			try {
+				return Integer.parseInt(val);
+			} catch (NumberFormatException e) {
+				logger.warn("Invalid integer for config " + key + ": " + val);
+			}
+		}
+		return defaultValue;
+	}
 
 	private BatchProcessWorkProvider<NodeRef> createActivityProcessWorkProvider() {
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ENTITY_V2).excludeVersions().inDB().ftsLanguage();
@@ -80,6 +97,10 @@ public class EntityActivityCleaner {
         BatchInfo batchInfo = new BatchInfo("cleanActivities", "becpg.batch.activity.cleanActivities");
         batchInfo.setRunAsSystem(true);
         batchInfo.setPriority(priority);
+        
+        int threshold = getConfInt("beCPG.activity.purge.threshold", 50);
+        int retentionMonths = getConfInt("beCPG.activity.purge.retention.months", 12);
+        int batchSize = getConfInt("beCPG.activity.purge.batchSize", 1000);
 
         BatchProcessWorkProvider<NodeRef> workProvider = createActivityProcessWorkProvider();
 
@@ -87,6 +108,7 @@ public class EntityActivityCleaner {
 
             @Override
             public void process(NodeRef entityNodeRef) throws Throwable {
+                int totalDeleted = 0;
                 try {
                     policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 
@@ -102,30 +124,52 @@ public class EntityActivityCleaner {
                     Set<String> users = new HashSet<>();
                     Date cronDate = new Date();
 
-                    // Get activity list ordered by creation date
-                    AuditQuery auditQuery = AuditQuery.createQuery()
-                            .asc(false)
-                            .dbAsc(false)
+                    if (threshold < 0) {
+                        return;
+                    }
+
+                    // 1. Calculate retention date
+                    Calendar retentionCal = Calendar.getInstance();
+                    retentionCal.setTime(cronDate);
+                    retentionCal.add(Calendar.MONTH, -retentionMonths);
+                    Date retentionDate = retentionCal.getTime();
+
+                    // 2. Count recent activities (Newer than retention date) to determine how many old ones we must keep
+                    // We only need to count up to the threshold to know if we are safe
+                    AuditQuery recentQuery = AuditQuery.createQuery()
+                            .asc(false).dbAsc(false)
                             .sortBy(ActivityAuditPlugin.PROP_CM_CREATED)
                             .filter(ActivityAuditPlugin.ENTITY_NODEREF, entityNodeRef.toString())
-                            .maxResults(RepoConsts.MAX_RESULTS_1000000);
+                            .timeRange(retentionDate, new Date())
+                            .maxResults(threshold);
+
+                    List<JSONObject> recentResults = beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, recentQuery);
+                    int recentCount = recentResults.size();
+                    
+                    // If we have fewer recent activities than threshold, we must keep some old ones
+                    int neededFromOld = Math.max(0, threshold - recentCount);
+
+                    // 3. Fetch old activities to process (Older than retention date)
+                    // We fetch DESC (newest first) so the first 'neededFromOld' items are the ones to preserve
+                    AuditQuery oldQuery = AuditQuery.createQuery()
+                            .asc(false).dbAsc(false)
+                            .sortBy(ActivityAuditPlugin.PROP_CM_CREATED)
+                            .filter(ActivityAuditPlugin.ENTITY_NODEREF, entityNodeRef.toString())
+                            .timeRange(null, retentionDate)
+                            .maxResults(batchSize); 
 
                     List<ActivityListDataItem> sortedActivityList = new ArrayList<>();
-                    List<JSONObject> results = beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditQuery);
-                    for (JSONObject result : results) {
-                        sortedActivityList.add(AuditActivityHelper.parseActivity(result));
+                    List<JSONObject> oldResults = beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, oldQuery);
+                    
+                    for (int i = 0; i < oldResults.size(); i++) {
+                         // Skip the items we need to keep to satisfy the threshold
+                         if (i < neededFromOld) {
+                             continue;
+                         }
+                         sortedActivityList.add(AuditActivityHelper.parseActivity(oldResults.get(i)));
                     }
 
                     int nbrActivity = sortedActivityList.size();
-
-                    // Keep only activities beyond the first 50
-                    if (nbrActivity > MAX_PAGE) {
-                        sortedActivityList = new ArrayList<>(sortedActivityList.subList(MAX_PAGE, nbrActivity));
-                    } else {
-                        sortedActivityList = new ArrayList<>();
-                    }
-
-                    nbrActivity = sortedActivityList.size();
 
                     if (logger.isDebugEnabled()) {
                         logger.debug("nbrActivity: " + nbrActivity);
@@ -137,7 +181,7 @@ public class EntityActivityCleaner {
                         boolean hasFormulation = false;
                         boolean hasReport = false;
 
-                        // Pre-size set for efficiency
+                        // Pre-size set for efficiency (used for both content and export deduplication)
                         Set<String> contentSet = new HashSet<>(Math.max(16, sortedActivityList.size()));
 
                         for (ActivityListDataItem activity : sortedActivityList) {
@@ -146,6 +190,7 @@ public class EntityActivityCleaner {
                                 hasReport = false;
                                 activityInPage = 0;
                             }
+                            activityInPage++;
 
                             Date created = activity.getCreatedDate();
                             if (created.before(cronDate)) {
@@ -161,8 +206,35 @@ public class EntityActivityCleaner {
                                 toDelete = true;
                             } else if (activityType == ActivityType.Content) {
                                 String contentNodeRef = extractContentNode(activity.getActivityData());
-                                if (contentNodeRef != null && !contentSet.add(contentNodeRef)) {
-                                    toDelete = true;
+                                if (contentNodeRef != null) {
+                                    String dayKey = contentNodeRef + "|" + EntityActivityCleaner.this.toDayKey(created);
+                                    if (!contentSet.add(dayKey)) {
+                                        toDelete = true;
+                                    }
+                                }
+                            } else if (activityType == ActivityType.Export) {
+                                String exportTitle = extractExportTitle(activity.getActivityData());
+                                if (exportTitle != null) {
+                                    String dayKey = exportTitle + "|" + EntityActivityCleaner.this.toDayKey(created);
+                                    if (!contentSet.add(dayKey)) {
+                                        toDelete = true;
+                                    }
+                                }
+                            } else if (activityType == ActivityType.Datalist) {
+                                String datalistClassName = null;
+
+                                try {
+                                	JsonData data = JsonHelper.read(activity.getActivityData());
+                                    datalistClassName = data.get(EntityActivityService.PROP_CLASSNAME).getString(null);
+                                } catch (JsonException e) {
+                                    logger.error("Problem parsing activity data", e);
+                                }
+
+                                if (datalistClassName != null) {
+                                    String dayKey = datalistClassName + "|" + EntityActivityCleaner.this.toDayKey(created);
+                                    if (!contentSet.add(dayKey)) {
+                                        toDelete = true;
+                                    }
                                 }
                             } else {
                                 activitiesByType.computeIfAbsent(activityType, k -> new ArrayList<>()).add(activity);
@@ -179,6 +251,7 @@ public class EntityActivityCleaner {
                             if (toDelete) {
                                 deleteAuditActivity(activity);
                                 nbrActivity--;
+                                totalDeleted++;
                             }
                         }
 
@@ -187,11 +260,17 @@ public class EntityActivityCleaner {
                             // Group list by day/week/month/year
                             int[] groupTime = { Calendar.DAY_OF_YEAR, Calendar.WEEK_OF_YEAR, Calendar.MONTH, Calendar.YEAR };
                             for (int i = 0; (i < groupTime.length) && (nbrActivity > MAX_PAGE); i++) {
+                                int initialSize = dlActivities.size();
                                 dlActivities = group(dlActivities, users, groupTime[i], cronDate);
                                 activitiesByType.put(ActivityType.Datalist, dlActivities);
                                 nbrActivity = dlActivities.size();
+                                totalDeleted += (initialSize - nbrActivity);
                             }
                         }
+                    }
+                    
+                    if (totalDeleted > 0 && logger.isDebugEnabled()) {
+                        logger.debug("Deleted " + totalDeleted + " activities for entity " + entityNodeRef);
                     }
 
                 } finally {
@@ -258,9 +337,9 @@ public class EntityActivityCleaner {
                         String datalistClassName = null;
 
                         try {
-                            JSONObject data = new JSONObject(activity.getActivityData());
-                            datalistClassName = data.optString(EntityActivityService.PROP_CLASSNAME, null);
-                        } catch (JSONException e) {
+                        	JsonData data = JsonHelper.read(activity.getActivityData());
+                            datalistClassName = data.get(EntityActivityService.PROP_CLASSNAME).getString(null);
+                        } catch (JsonException e) {
                             logger.error("Problem parsing activity data", e);
                         }
 
@@ -296,12 +375,28 @@ public class EntityActivityCleaner {
         beCPGAuditService.deleteAuditEntries(AuditType.ACTIVITY, lastActivity.getId(), lastActivity.getId() + 1);
     }
 
+    private String toDayKey(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal.get(Calendar.YEAR) + "-" + cal.get(Calendar.DAY_OF_YEAR);
+    }
+
     private String extractContentNode(String alData) {
         try {
-            JSONObject data = new JSONObject(alData);
-            return data.optString("contentNodeRef", null);
-        } catch (JSONException e) {
+        	JsonData data = JsonHelper.read(alData);
+            return data.get("contentNodeRef").getString(null);
+        } catch (JsonException e) {
             logger.warn("Invalid content activity data: " + alData, e);
+            return null;
+        }
+    }
+
+    private String extractExportTitle(String alData) {
+        try {
+        	JsonData data = JsonHelper.read(alData);
+            return data.get("title").getString(null);
+        } catch (JsonException e) {
+            logger.warn("Invalid export activity data: " + alData, e);
             return null;
         }
     }

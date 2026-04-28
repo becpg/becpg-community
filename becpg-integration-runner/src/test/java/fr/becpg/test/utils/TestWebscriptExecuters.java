@@ -42,34 +42,57 @@ public class TestWebscriptExecuters {
 	}
 
 	public static Response sendRequest(Request req, int expectedStatus, String asUser) throws IOException {
-		return getInstance().internalSendRequest(req, expectedStatus, asUser);
+		return getInstance().internalSendRequest(req, expectedStatus, asUser, null);
 	}
 
 	public static Response sendRequest(Request req, int expectedStatus) throws IOException {
-		return getInstance().internalSendRequest(req, expectedStatus, null);
+		return getInstance().internalSendRequest(req, expectedStatus, null, null);
+	}
+	
+	public static Response sendRequest(Request req, int expectedStatus, String username, String password) throws IOException {
+		return getInstance().internalSendRequest(req, expectedStatus, username, password);
 	}
 
-	private Response internalSendRequest(Request req, int expectedStatus, String asUser) throws IOException {
-		if (logger.isDebugEnabled()) {
-			logger.debug("");
-			logger.debug("* Request: " + req.getMethod() + " " + req.getFullUri()
-					+ (req.getBody() == null ? "" : "\n" + new String(req.getBody(), "UTF-8")));
-		}
+	private Response internalSendRequest(
+	        Request req,
+	        int expectedStatus,
+	        String username,
+	        String password) throws IOException {
 
-		Response res = sendRemoteRequest(req, expectedStatus);
+	    // Backup existing credentials
+	    UsernamePasswordCredentials previousCreds =
+	        (UsernamePasswordCredentials) httpClient.getState()
+	            .getCredentials(AuthScope.ANY);
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("");
-			logger.debug("* Response: " + res.getStatus() + " " + res.getContentType() + " " + req.getMethod() + " " + req.getFullUri() + "\n");
-			logger.trace(res.getContentAsString());
-		}
+	    try {
+	        // Override credentials if provided
+	        if (username != null && password != null) {
+	            httpClient.getState().setCredentials(
+	                AuthScope.ANY,
+	                new UsernamePasswordCredentials(username, password)
+	            );
+	        }
 
-		if ((expectedStatus > 0) && (expectedStatus != res.getStatus())) {
-			Assert.fail("Status code " + res.getStatus() + " returned, but expected " + expectedStatus + " for " + req.getFullUri() + " ("
-					+ req.getMethod() + ")\n" + res.getContentAsString());
-		}
+	        if (logger.isDebugEnabled()) {
+	            logger.debug("");
+	            logger.debug("* Request: " + req.getMethod() + " " + req.getFullUri());
+	        }
 
-		return res;
+	        Response res = sendRemoteRequest(req, expectedStatus);
+
+	        if ((expectedStatus > 0) && (expectedStatus != res.getStatus())) {
+	            Assert.fail("Status code " + res.getStatus()
+	                    + " returned, but expected " + expectedStatus);
+	        }
+
+	        return res;
+
+	    } finally {
+	        // Restore previous credentials
+	        if (previousCreds != null) {
+	            httpClient.getState().setCredentials(AuthScope.ANY, previousCreds);
+	        }
+	    }
 	}
 
 	protected Response sendRemoteRequest(Request req, int expectedStatus) throws IOException {

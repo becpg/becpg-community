@@ -23,7 +23,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
@@ -37,17 +36,20 @@ import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.formulation.spel.SpelHelper;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
+import fr.becpg.repo.product.data.SupplierData;
 import fr.becpg.repo.product.data.ScorableEntity;
 import fr.becpg.repo.product.data.document.DocumentTypeItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.StateableEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -240,7 +242,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 	public boolean process(RepositoryEntity repositoryEntity) {
 
 		if (repositoryEntity.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (repositoryEntity instanceof ProductSpecificationData)
-				|| (repositoryEntity.getNodeRef() == null)) {
+				|| (repositoryEntity.getNodeRef() == null) || L2CacheSupport.isCacheOnlyEnable()) {
 			return true;
 		}
 
@@ -265,7 +267,6 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 			}
 		}
 
-		ExpressionParser parser = formulaService.getSpelParser();
 		StandardEvaluationContext context = formulaService.createEntitySpelContext(repositoryEntity);
 
 		// Process all documents to update their state and mandatory status
@@ -289,7 +290,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 
 				} else {
 					// Update document mandatory status
-					isMandatory = calculateDocumentIsMandatory(repositoryEntity, docTypeItem, parser, context);
+					isMandatory = calculateDocumentIsMandatory(repositoryEntity, docTypeItem, context);
 				}
 
 				nodeService.setProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_IS_MANDATORY, isMandatory);
@@ -339,12 +340,13 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 		String destPath = (docTypeItem.getDestPath() != null) && !docTypeItem.getDestPath().trim().isEmpty() ? docTypeItem.getDestPath()
 				: RepoConsts.PATH_SUPPLIER_DOCUMENTS;
 		
-
 		NodeRef destFolder = null;
 		if (!".".equals(destPath)) {
-			destFolder = nodeService.getChildByName( productData.getNodeRef(), ContentModel.ASSOC_CONTAINS,
-					TranslateHelper.getTranslatedPath(destPath));
-			if(destFolder == null) {
+			if (TranslateHelper.getTranslatedPath(destPath) != null) {
+				destFolder = nodeService.getChildByName(productData.getNodeRef(), ContentModel.ASSOC_CONTAINS,
+						TranslateHelper.getTranslatedPath(destPath));
+			}
+			if (destFolder == null) {
 				destFolder = repoService.getFolderByPath(productData.getNodeRef(), destPath);
 			}
 		}
@@ -354,7 +356,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 		}
 
 		// Generate document name using the template format
-		String documentName = generateDocumentName(productData, docTypeItem);
+		String documentName = PropertiesHelper.cleanName(generateDocumentName(productData, docTypeItem));
 
 		NodeRef docNodeRef = nodeService.getChildByName(destFolder, ContentModel.ASSOC_CONTAINS, documentName);
 
@@ -425,7 +427,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 	 * - If product is Archived, the document state is set to Archived
 	 * </p>
 	 *
-	 * @param productData the product data containing the state to synchronize with
+	 * @param stateableEntity the product data containing the state to synchronize with
 	 * @param docNodeRef the node reference of the document to update
 	 */
 	private void updateDocumentState(StateableEntity stateableEntity, NodeRef docNodeRef) {
@@ -451,13 +453,12 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 	 * For label claims, they must be claimed (isClaimed=true) to make a document mandatory.
 	 * For other characteristics, they just need to be present in the product.
 	 *
-	 * @param productData the product data containing characteristics
+	 * @param repositoryEntity the product data containing characteristics
 	 * @param docTypeItem the document type to check
-	 * @param parser the expression parser for formula evaluation
 	 * @param context the evaluation context for formula evaluation
 	 * @return true if the document is mandatory, false otherwise
 	 */
-	private boolean calculateDocumentIsMandatory(RepositoryEntity repositoryEntity, DocumentTypeItem docTypeItem, ExpressionParser parser,
+	private boolean calculateDocumentIsMandatory(RepositoryEntity repositoryEntity, DocumentTypeItem docTypeItem,
 			StandardEvaluationContext context) {
 
 		// Check if explicitly mandatory
@@ -474,10 +475,10 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 
 					Matcher varFormulaMatcher = SpelHelper.formulaVarPattern.matcher(formula);
 					if (varFormulaMatcher.matches()) {
-						Expression exp = parser.parseExpression(varFormulaMatcher.group(2));
+						Expression exp = formulaService.parseExpression(varFormulaMatcher.group(2));
 						context.setVariable(varFormulaMatcher.group(1), exp.getValue(context));
 					} else {
-						Expression exp = parser.parseExpression(formula);
+						Expression exp = formulaService.parseExpression(formula);
 						Object ret = exp.getValue(context);
 						if (ret instanceof Boolean mandatory) {
 							return mandatory;
@@ -523,7 +524,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 	 * </ul>
 	 * </p>
 	 *
-	 * @param productData the product data to check for a match
+	 * @param repositoryEntity the product data to check for a match
 	 * @param docTypeItem the document type configuration
 	 * @return true if the document type matches the product, false otherwise
 	 */
@@ -619,17 +620,24 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 	 * Note: This method returns ALL product characteristics, including ALL label claims
 	 * (both claimed and unclaimed), certifications, and survey choices.
 	 *
-	 * @param productData the product data containing characteristics
+	 * @param repositoryEntity the product data containing characteristics
 	 * @return list of node references for all product characteristics
 	 */
 	private List<NodeRef> getProductCharacts(RepositoryEntity repositoryEntity) {
 		List<NodeRef> productCharacts = new ArrayList<>();
 
 		// Get claims
-		if(repositoryEntity instanceof ProductData productData) {
-			List<NodeRef> claims = CollectionUtils.isEmpty(productData.getLabelClaimList()) ? List.of()
-					: productData.getLabelClaimList().stream().filter(p -> LabelClaimListDataItem.VALUE_CERTIFIED.equals(p.getLabelClaimValue()))
-							.map(LabelClaimListDataItem::getLabelClaim).toList();
+		List<LabelClaimListDataItem> labelClaimList = null;
+		if (repositoryEntity instanceof ProductData productData) {
+			labelClaimList = productData.getLabelClaimList();
+		} else if (repositoryEntity instanceof SupplierData supplierData) {
+			labelClaimList = supplierData.getLabelClaimList();
+		}
+
+		if (CollectionUtils.isNotEmpty(labelClaimList)) {
+			List<NodeRef> claims = labelClaimList.stream()
+					.filter(p -> LabelClaimListDataItem.VALUE_CERTIFIED.equals(p.getLabelClaimValue()))
+					.map(LabelClaimListDataItem::getLabelClaim).toList();
 			if (CollectionUtils.isNotEmpty(claims)) {
 				productCharacts.addAll(claims);
 			}

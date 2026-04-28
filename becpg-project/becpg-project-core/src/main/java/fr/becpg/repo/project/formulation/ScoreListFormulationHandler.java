@@ -34,7 +34,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
@@ -205,19 +204,18 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 	}
 
 	private void computeFormulas(SurveyableEntity surveyableEntity, List<ScoreListDataItem> scoreList) {
-		ExpressionParser parser = formulaService.getSpelParser();
 
 		for (ScoreListDataItem scoreListItem : scoreList) {
 			String error = null;
 			StandardEvaluationContext context = formulaService.createDataListItemSpelContext(surveyableEntity, scoreListItem);
 
 			// Value formula
-			error = processFormulaByType(parser, context, scoreListItem, ProjectModel.PROP_SCORE_CRITERION_FORMULA,
+			error = processFormulaByType(context, scoreListItem, ProjectModel.PROP_SCORE_CRITERION_FORMULA,
 					value -> scoreListItem.setValue((Double) value), Double.class, "message.formulate.formula.incorrect.type.double");
 
 			// Detail formula
 			if (error == null) {
-				error = processFormulaByType(parser, context, scoreListItem, ProjectModel.PROP_SCORE_CRITERION_FORMULA_DETAIL,
+				error = processFormulaByType(context, scoreListItem, ProjectModel.PROP_SCORE_CRITERION_FORMULA_DETAIL,
 						value -> scoreListItem.setDetail((String) value), String.class, "message.formulate.formula.incorrect.type.string");
 			}
 
@@ -229,7 +227,7 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 		}
 	}
 
-	private String processFormulaByType(ExpressionParser parser, StandardEvaluationContext context, ScoreListDataItem scoreListItem,
+	private String processFormulaByType(StandardEvaluationContext context, ScoreListDataItem scoreListItem,
 			QName propertyKey, Consumer<Object> setter, Class<?> expectedType, String errorMessageKey) {
 		if(scoreListItem.getCharactNodeRef()!=null) {
 			String formulaText = (String) nodeService.getProperty(scoreListItem.getCharactNodeRef(), propertyKey);
@@ -244,10 +242,10 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 					Matcher varFormulaMatcher = SpelHelper.formulaVarPattern.matcher(formula);
 	
 					if (varFormulaMatcher.matches()) {
-						Expression exp = parser.parseExpression(varFormulaMatcher.group(2));
+						Expression exp = formulaService.parseExpression(varFormulaMatcher.group(2));
 						context.setVariable(varFormulaMatcher.group(1), exp.getValue(context));
 					} else {
-						Expression exp = parser.parseExpression(formula);
+						Expression exp = formulaService.parseExpression(formula);
 						Object result = exp.getValue(context);
 	
 						if ((result == null) || expectedType.isInstance(result)) {
@@ -306,7 +304,6 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 	}
 
 	private void computeRanges(SurveyableEntity surveyableEntity, List<ScoreListDataItem> scoreList) {
-		ExpressionParser parser = formulaService.getSpelParser();
 
 		for (ScoreListDataItem scoreListItem : scoreList) {
 			if (scoreListItem.getScore() == null) {
@@ -323,7 +320,7 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 			}
 
 			// Range from formula
-			String error = processFormulaByType(parser, formulaService.createDataListItemSpelContext(surveyableEntity, scoreListItem), scoreListItem,
+			String error = processFormulaByType(formulaService.createDataListItemSpelContext(surveyableEntity, scoreListItem), scoreListItem,
 					ProjectModel.PROP_SCORE_CRITERION_RANGE_FORMULA, value -> scoreListItem.setRange((String) value), String.class,
 					"message.formulate.formula.incorrect.type.string");
 

@@ -24,6 +24,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -42,8 +43,15 @@ import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.cmr.site.SiteVisibility;
 import org.alfresco.service.namespace.NamespacePrefixResolver;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import fr.becpg.common.csv.CSVReader;
 import fr.becpg.repo.authentication.BeCPGUserAccount;
@@ -110,6 +118,17 @@ public class UserImporterServiceImpl implements UserImporterService {
 	private SysAdminParams sysAdminParams;
 	
 	private DictionaryService dictionaryService;
+	
+	private TransactionService transactionService;
+	
+	/**
+	 * <p>Setter for the field <code>transactionService</code>.</p>
+	 *
+	 * @param transactionService a {@link org.alfresco.service.transaction.TransactionService} object
+	 */
+	public void setTransactionService(TransactionService transactionService) {
+		this.transactionService = transactionService;
+	}
 	
 	/**
 	 * <p>Setter for the field <code>dictionaryService</code>.</p>
@@ -229,8 +248,7 @@ public class UserImporterServiceImpl implements UserImporterService {
 			if (filename.endsWith(".csv")) {
 				processCSVUpload(input, charset);
 				return;
-			}
-			if (filename.endsWith(".xls")) {
+			} else if (filename.endsWith(".xls")) {
 				processXLSUpload(input);
 				return;
 			}
@@ -244,12 +262,111 @@ public class UserImporterServiceImpl implements UserImporterService {
 
 	}
 
-	private void processXLSXUpload(InputStream input) {
-		logger.info("Not wet implemented");
+	private void processXLSXUpload(InputStream input) throws IOException, ImporterException {
+		try (Workbook workbook = new XSSFWorkbook(input)) {
+			Sheet sheet = workbook.getSheetAt(0); // Get the first sheet
+			
+			if (sheet == null || sheet.getPhysicalNumberOfRows() == 0) {
+				throw new ImporterException("Empty or invalid XLSX file");
+			}
+			
+			Iterator<Row> rowIterator = sheet.iterator();
+			boolean isFirst = true;
+			Map<String, Integer> headers = new HashMap<>();
+			
+			while (rowIterator.hasNext()) {
+				Row row = rowIterator.next();
+				
+				if (isFirst) {
+					headers = processXLSXHeaders(row);
+					isFirst = false;
+				} else {
+					String[] rowData = extractRowData(row, headers.size());
+					if (rowData.length == headers.size()) {
+						processRow(headers, rowData);
+					}
+				}
+			}
+		}
+	}
+
+	private Map<String, Integer> processXLSXHeaders(Row headerRow) throws ImporterException {
+		Map<String, Integer> headers = new HashMap<>();
+		
+		for (int i = 0; i < headerRow.getLastCellNum(); i++) {
+			Cell cell = headerRow.getCell(i);
+			if (cell != null) {
+				String headerValue = getCellValueAsString(cell).trim();
+				if (!headerValue.isEmpty()) {
+					logger.debug("Adding header: " + headerValue);
+					headers.put(headerValue, i);
+				}
+			}
+		}
+		
+		verifyHeaders(headers);
+		return headers;
+	}
+
+	private String[] extractRowData(Row row, int expectedColumns) {
+		String[] data = new String[expectedColumns];
+		
+		for (int i = 0; i < expectedColumns; i++) {
+			Cell cell = row.getCell(i);
+			data[i] = (cell != null) ? getCellValueAsString(cell).trim() : "";
+		}
+		
+		return data;
+	}
+
+	private String getCellValueAsString(Cell cell) {
+		if (cell == null) {
+			return "";
+		}
+		
+		switch (cell.getCellType()) {
+			case STRING:
+				return cell.getStringCellValue();
+				
+			case NUMERIC:
+				if (DateUtil.isCellDateFormatted(cell)) {
+					return cell.getDateCellValue().toString();
+				} else {
+					// Format numeric values to avoid scientific notation
+					double numericValue = cell.getNumericCellValue();
+					if (numericValue == Math.floor(numericValue)) {
+						return String.valueOf((long) numericValue);
+					}
+					return String.valueOf(numericValue);
+				}
+				
+			case BOOLEAN:
+				return String.valueOf(cell.getBooleanCellValue());
+				
+			case FORMULA:
+				try {
+					return cell.getStringCellValue();
+				} catch (IllegalStateException e) {
+					// If formula result is numeric
+					try {
+						double numericValue = cell.getNumericCellValue();
+						if (numericValue == Math.floor(numericValue)) {
+							return String.valueOf((long) numericValue);
+						}
+						return String.valueOf(numericValue);
+					} catch (IllegalStateException e2) {
+						return "";
+					}
+				}
+				
+			case BLANK:
+			default:
+				return "";
+		}
 	}
 
 	private void processXLSUpload(InputStream input) {
-		logger.info("Not wet implemented");
+		logger.info("Not yet implemented");
 	}
 
 	private void processCSVUpload(InputStream input, Charset charset) throws IOException, ImporterException {
@@ -274,128 +391,125 @@ public class UserImporterServiceImpl implements UserImporterService {
 
 	private void processRow(final Map<String, Integer> headers, final String[] splitted) {
 
-		if ((splitted != null) && (headers != null)) {
-
-			String username = splitted[headers.get(ATTR_USERNAME)];
-			
-			if (headers.containsKey(ATTR_DELETE) && Boolean.TRUE.equals(Boolean.parseBoolean(splitted[headers.get(ATTR_DELETE)].toLowerCase()))) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Delete user: " + username);
-				}
-				beCPGUserAccountService.deleteUser(username);
-				return;
-			}
-			
-			BeCPGUserAccount userAccount = new BeCPGUserAccount();
-			userAccount.setUserName(username);
-			if (headers.containsKey(ATTR_PASSWORD)) {
-				userAccount.setPassword(splitted[headers.get(ATTR_PASSWORD)]);
-			}
-			if (headers.containsKey(ATTR_SHOULD_GENERATE_PASSWORD)) {
-				userAccount.setGeneratePassword(Boolean.parseBoolean(splitted[headers.get(ATTR_SHOULD_GENERATE_PASSWORD)].toLowerCase()));
-			}
-			if (headers.containsKey(ATTR_IS_IDS_USER)) {
-				userAccount.setSynchronizeWithIDS(Boolean.parseBoolean(splitted[headers.get(ATTR_IS_IDS_USER)].toLowerCase()));
-			}
-			if (headers.containsKey(ATTR_DISABLE)) {
-				userAccount.setDisable(Boolean.parseBoolean(splitted[headers.get(ATTR_DISABLE)].toLowerCase()));
-			}
-			if (headers.containsKey(ATTR_NEW_USERNAME)) {
-				String newUserName = splitted[headers.get(ATTR_NEW_USERNAME)];
-				userAccount.setNewUserName(newUserName);
-			}
-			userAccount.setNotify(headers.containsKey(ATTR_NOTIFY) && Boolean.parseBoolean(splitted[headers.get(ATTR_NOTIFY)].toLowerCase()));
-
-			for (Map.Entry<String, Integer> entry : headers.entrySet()) {
-				if (isPropQname(entry.getKey()) && !splitted[entry.getValue()].isEmpty()) {
-					QName prop = QName.resolveToQName(namespacePrefixResolver, entry.getKey());
-					String value = splitted[entry.getValue()];
-					if (dictionaryService.getProperty(prop) != null) {
-						logger.debug("Adding : " + prop + " " + value);
-						userAccount.getExtraProps().put(prop, value);
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			if ((splitted != null) && (headers != null)) {
+				
+				String username = splitted[headers.get(ATTR_USERNAME)];
+				
+				if (headers.containsKey(ATTR_DELETE) && Boolean.TRUE.equals(Boolean.parseBoolean(splitted[headers.get(ATTR_DELETE)].toLowerCase()))) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("Delete user: " + username);
 					}
+					beCPGUserAccountService.deleteUser(username);
+					return null;
 				}
-			}
-
-			if (userAccount.getLastName() == null) {
-				userAccount.setLastName("");
-			}
-			if (userAccount.getFirstName() == null) {
-				userAccount.setFirstName("");
-			}
-			
-			if (headers.containsKey(ATTR_GROUPS)) {
-				String[] groups = splitted[headers.get(ATTR_GROUPS)].split(FIELD_SEPARATOR);
-				for (String group : groups) {
-					userAccount.getAuthorities().add(group);
+				
+				BeCPGUserAccount userAccount = new BeCPGUserAccount();
+				userAccount.setUserName(username);
+				if (headers.containsKey(ATTR_PASSWORD)) {
+					userAccount.setPassword(splitted[headers.get(ATTR_PASSWORD)]);
 				}
-			}
-
-			 beCPGUserAccountService.getOrCreateUser(userAccount, false);
-
-			if (headers.containsKey(ATTR_MEMBERSHIPS)) {
-				AuthenticationUtil.runAsSystem(() -> {
-					if ((splitted[headers.get(ATTR_MEMBERSHIPS)] != null) && !splitted[headers.get(ATTR_MEMBERSHIPS)].isEmpty()) {
-
-						String[] memberships = splitted[headers.get(ATTR_MEMBERSHIPS)].split(FIELD_SEPARATOR);
-						for (String membership : memberships) {
-
-							boolean shouldRemove = false;
-							if (membership.startsWith("REMOVE_")) {
-								shouldRemove = true;
-								membership = membership.replace("REMOVE_", "");
-							}
-							
-							String[] sites = membership.split("_");
-							String siteName = formatSiteName(sites[0]);
-							String finalSiteName = cleanSiteName(siteName);
-							
-							String role = SiteModel.SITE_CONSUMER;
-							if (sites.length > 1) {
-								role = formatRole(sites[1]);
-							}
-
-							if (siteService.getSite(finalSiteName) != null) {
-								if (shouldRemove) {
-									siteService.removeMembership(finalSiteName, userAccount.getUserName());
-								} else {
-									if (logger.isDebugEnabled()) {
-										logger.debug("Adding role " + role + " to " + userAccount.getUserName() + " on site " + siteName);
-									}
-									siteService.setMembership(finalSiteName, userAccount.getUserName(), role);
-								}
-							} else if (!shouldRemove) {
-								logger.debug("Site " + siteName + " doesn't exist.");
-
-								SiteInfo siteInfo = siteService.createSite(DEFAULT_PRESET, finalSiteName, siteName, "",
-										SiteVisibility.PUBLIC);
-								try {
-
-									URL url = new URL(sysAdminParams.getShareProtocol()+"://"+sysAdminParams.getShareHost()
-									+":"+sysAdminParams.getSharePort()+"/share/service/modules/enable-site?url=" + siteInfo.getShortName()
-											+ "&preset=" + DEFAULT_PRESET + "&alf_ticket=" + authenticationService.getCurrentTicket());
-									URLConnection con = url.openConnection();
-
-									InputStream in = con.getInputStream();
-									if (in != null) {
-										in.close();
-									}
-
-								} catch (IOException e) {
-									logger.error("Unable to enable site", e);
-								}
-
-								siteService.setMembership(siteInfo.getShortName(), userAccount.getUserName(), role);
-
-							}
-
+				if (headers.containsKey(ATTR_SHOULD_GENERATE_PASSWORD)) {
+					userAccount.setGeneratePassword(Boolean.parseBoolean(splitted[headers.get(ATTR_SHOULD_GENERATE_PASSWORD)].toLowerCase()));
+				}
+				if (headers.containsKey(ATTR_IS_IDS_USER)) {
+					userAccount.setSynchronizeWithIDS(Boolean.parseBoolean(splitted[headers.get(ATTR_IS_IDS_USER)].toLowerCase()));
+				}
+				if (headers.containsKey(ATTR_DISABLE)) {
+					userAccount.setDisable(Boolean.parseBoolean(splitted[headers.get(ATTR_DISABLE)].toLowerCase()));
+				}
+				if (headers.containsKey(ATTR_NEW_USERNAME)) {
+					String newUserName = splitted[headers.get(ATTR_NEW_USERNAME)];
+					userAccount.setNewUserName(newUserName);
+				}
+				userAccount.setNotify(headers.containsKey(ATTR_NOTIFY) && Boolean.parseBoolean(splitted[headers.get(ATTR_NOTIFY)].toLowerCase()));
+				
+				for (Map.Entry<String, Integer> entry : headers.entrySet()) {
+					if (isPropQname(entry.getKey()) && !splitted[entry.getValue()].isEmpty()) {
+						QName prop = QName.resolveToQName(namespacePrefixResolver, entry.getKey());
+						String value = splitted[entry.getValue()];
+						if (dictionaryService.getProperty(prop) != null) {
+							logger.debug("Adding : " + prop + " " + value);
+							userAccount.getExtraProps().put(prop, value);
 						}
 					}
-					return null;
-				});
-
+				}
+				
+				if (headers.containsKey(ATTR_GROUPS)) {
+					String[] groups = splitted[headers.get(ATTR_GROUPS)].split(FIELD_SEPARATOR);
+					for (String group : groups) {
+						userAccount.getAuthorities().add(group);
+					}
+				}
+				
+				beCPGUserAccountService.getOrCreateUser(userAccount, false);
+				
+				if (headers.containsKey(ATTR_MEMBERSHIPS)) {
+					AuthenticationUtil.runAsSystem(() -> {
+						if ((splitted[headers.get(ATTR_MEMBERSHIPS)] != null) && !splitted[headers.get(ATTR_MEMBERSHIPS)].isEmpty()) {
+							
+							String[] memberships = splitted[headers.get(ATTR_MEMBERSHIPS)].split(FIELD_SEPARATOR);
+							for (String membership : memberships) {
+								
+								boolean shouldRemove = false;
+								if (membership.startsWith("REMOVE_")) {
+									shouldRemove = true;
+									membership = membership.replace("REMOVE_", "");
+								}
+								
+								String[] sites = membership.split("_");
+								String siteName = formatSiteName(sites[0]);
+								String finalSiteName = cleanSiteName(siteName);
+								
+								String role = SiteModel.SITE_CONSUMER;
+								if (sites.length > 1) {
+									role = formatRole(sites[1]);
+								}
+								
+								if (siteService.getSite(finalSiteName) != null) {
+									if (shouldRemove) {
+										siteService.removeMembership(finalSiteName, userAccount.getUserName());
+									} else {
+										if (logger.isDebugEnabled()) {
+											logger.debug("Adding role " + role + " to " + userAccount.getUserName() + " on site " + siteName);
+										}
+										siteService.setMembership(finalSiteName, userAccount.getUserName(), role);
+									}
+								} else if (!shouldRemove) {
+									logger.debug("Site " + siteName + " doesn't exist.");
+									
+									SiteInfo siteInfo = siteService.createSite(DEFAULT_PRESET, finalSiteName, siteName, "",
+											SiteVisibility.PUBLIC);
+									try {
+										
+										URL url = new URL(sysAdminParams.getShareProtocol()+"://"+sysAdminParams.getShareHost()
+										+":"+sysAdminParams.getSharePort()+"/share/service/modules/enable-site?url=" + siteInfo.getShortName()
+										+ "&preset=" + DEFAULT_PRESET + "&alf_ticket=" + authenticationService.getCurrentTicket());
+										URLConnection con = url.openConnection();
+										
+										InputStream in = con.getInputStream();
+										if (in != null) {
+											in.close();
+										}
+										
+									} catch (IOException e) {
+										logger.error("Unable to enable site", e);
+									}
+									
+									siteService.setMembership(siteInfo.getShortName(), userAccount.getUserName(), role);
+									
+								}
+								
+							}
+						}
+						return null;
+					});
+					
+				}
 			}
-		}
+			return null;
+		}, false, true);
+
 	}
 
 	private String cleanSiteName(String siteName) {

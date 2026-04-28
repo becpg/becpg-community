@@ -20,6 +20,7 @@ public enum SystemGroup {
     LicenseWriteConcurrent,
     LicenseReadConcurrent,
     LicenseSupplierConcurrent,
-    SavedSearchMgr
+    SavedSearchMgr,
+    ApiConnector
    
 }

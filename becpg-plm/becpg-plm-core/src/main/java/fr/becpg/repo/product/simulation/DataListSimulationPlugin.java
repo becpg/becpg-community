@@ -8,6 +8,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.entity.EntityService;
@@ -31,23 +32,37 @@ public class DataListSimulationPlugin implements EntitySimulationPlugin {
 
 	private static Log logger = LogFactory.getLog(DataListSimulationPlugin.class);
 
-	@Autowired
-	private AlfrescoRepository<ProductData> alfrescoRepository;
+	private final AlfrescoRepository<ProductData> alfrescoRepository;
+	private final NodeService nodeService;
+	private final AssociationService associationService;
+	private final EntityVersionService entityVersionService;
+	private final EntityService entityService;
+	private final RepoService repoService;
 
 	@Autowired
-	private NodeService nodeService;
-
-	@Autowired
-	private AssociationService associationService;
-
-	@Autowired
-	private EntityVersionService entityVersionService;
-	
-	@Autowired
-	private EntityService entityService;
-	
-	@Autowired
-	private RepoService repoService;
+	/**
+	 * <p>Constructor for DataListSimulationPlugin.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 * @param entityVersionService a {@link fr.becpg.repo.entity.version.EntityVersionService} object
+	 * @param entityService a {@link fr.becpg.repo.entity.EntityService} object
+	 * @param repoService a {@link fr.becpg.repo.helper.RepoService} object
+	 */
+	public DataListSimulationPlugin(@Qualifier("alfrescoRepository") AlfrescoRepository<ProductData> alfrescoRepository,
+			@Qualifier("nodeService") NodeService nodeService,
+			@Qualifier("associationService") AssociationService associationService,
+			@Qualifier("entityVersionService") EntityVersionService entityVersionService,
+			@Qualifier("entityService") EntityService entityService,
+			@Qualifier("repoService") RepoService repoService) {
+		this.alfrescoRepository = alfrescoRepository;
+		this.nodeService = nodeService;
+		this.associationService = associationService;
+		this.entityVersionService = entityVersionService;
+		this.entityService = entityService;
+		this.repoService = repoService;
+	}
 
 	/** {@inheritDoc} */
 	@Override

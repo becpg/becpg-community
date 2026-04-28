@@ -36,6 +36,7 @@ import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.lock.mem.Lifetime;
 import org.alfresco.repo.node.MLPropertyInterceptor;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.version.VersionBaseModel;
@@ -104,6 +105,7 @@ import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.helper.WUsedAssociationResolver;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -168,6 +170,9 @@ public class ECOServiceImpl implements ECOService {
 	
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
+
+	@Autowired
+	private WUsedAssociationResolver wUsedAssociationResolver;
 	
 	@Value("${beCPG.eco.impactwused.states}")
 	private String impactWUsedStates;
@@ -320,7 +325,7 @@ public class ECOServiceImpl implements ECOService {
 
 					JSONObject lockInfo = new JSONObject();
 
-					lockInfo.put("lockType", "versioning");
+					lockInfo.put(EntityVersionService.LOCK_TYPE_PARAM, EntityVersionService.LOCK_TYPE_VERSIONING);
 					lockInfo.put("sourceNodeRef", ecoData.getNodeRef());
 					lockInfo.put("sourceInfo", batchInfo.toJson());
 
@@ -722,7 +727,15 @@ public class ECOServiceImpl implements ECOService {
 
 						// Level 2
 						if ((wusedData.getDepthLevel() == 2) || isMergeItem) {
-							applyReplacementList(ecoData, productToFormulateData, isSimulation, isMergeItem);
+							if (ecoData.getReplacementList() != null) {
+								if (isMergeItem && !isSimulation) {
+									merge(ecoData);
+								} else {
+									for (AbstractProductDataView view : productToFormulateData.getViews()) {
+										applyToList(ecoData, productToFormulateData, view.getMainDataList());
+									}
+								}
+							}
 						}
 
 						if (!isMergeItem) {
@@ -758,7 +771,9 @@ public class ECOServiceImpl implements ECOService {
 						// check req
 						checkRequirements(changeUnitDataItem, productToFormulateData);
 
-						alfrescoRepository.save(productToFormulateData);
+						if (!isMergeItem && !isSimulation) {
+							alfrescoRepository.save(productToFormulateData);
+						}
 
 						// Create new version if needed
 						if ((!isSimulation && !isMergeItem) && !changeUnitDataItem.getRevision().equals(RevisionType.NoRevision)) {
@@ -799,7 +814,10 @@ public class ECOServiceImpl implements ECOService {
 			} catch (Exception e) {
 
 				changeUnitDataItem.setTreated(false);
-				changeUnitDataItem.setErrorMsg(e.getMessage());
+				
+				MLText errorMl = new MLText();
+				errorMl.put(I18NUtil.getLocale(), e.getMessage());
+				changeUnitDataItem.setErrorMsg(errorMl);
 
 				if (errors != null) {
 					errors.add("Change unit in Error: " + changeUnitDataItem.getNodeRef());
@@ -1022,17 +1040,7 @@ public class ECOServiceImpl implements ECOService {
 
 	// Keep only common assocs
 	private List<QName> evaluateWUsedAssociations(List<NodeRef> sourceList) {
-		List<QName> assocQNames = null;
-
-		for (NodeRef replacementSourceNodeRef : sourceList) {
-			if (assocQNames == null) {
-				assocQNames = evaluateWUsedAssociations(replacementSourceNodeRef);
-			} else {
-				assocQNames.retainAll(evaluateWUsedAssociations(replacementSourceNodeRef));
-			}
-		}
-
-		return assocQNames;
+		return wUsedAssociationResolver.evaluateWUsedAssociations(sourceList);
 	}
 
 	private int calculateWUsedList(ChangeOrderData ecoData, MultiLevelListData wUsedData, QName dataListQName, WUsedListDataItem parent,
@@ -1176,18 +1184,6 @@ public class ECOServiceImpl implements ECOService {
 
 		}
 		return skip;
-	}
-
-	private void applyReplacementList(ChangeOrderData ecoData, ProductData product, boolean isSimulation, boolean isMergedItem) {
-		if (ecoData.getReplacementList() != null) {
-			if (isMergedItem && !isSimulation) {
-				merge(ecoData);
-			} else {
-				for (AbstractProductDataView view : product.getViews()) {
-					applyToList(ecoData, product, view.getMainDataList());
-				}
-			}
-		}
 	}
 
 	private void applyLabelingReplacements(ChangeOrderData ecoData, ProductData product) {
@@ -1605,7 +1601,7 @@ public class ECOServiceImpl implements ECOService {
 	private void checkRequirements(ChangeUnitDataItem changeUnitDataItem, ProductData targetData) {
 
 		RequirementType reqType = null;
-		StringBuilder reqDetails = null;
+		MLText reqDetails = new MLText();
 
 		if ((targetData.getCompoListView() != null) && (targetData.getReqCtrlList() != null)) {
 			for (RequirementListDataItem rcl : targetData.getReqCtrlList()) {
@@ -1619,47 +1615,28 @@ public class ECOServiceImpl implements ECOService {
 					reqType = newReqType;
 				}
 
-				if (reqDetails == null) {
-					reqDetails = new StringBuilder();
-					reqDetails.append(rcl.getReqMessage());
-				} else {
-
-					reqDetails.append(RepoConsts.LABEL_SEPARATOR);
-					reqDetails.append(rcl.getReqMessage());
-
+				if (rcl.getReqMlMessage() != null) {
+					for (Entry<Locale, String> entry : rcl.getReqMlMessage().entrySet()) {
+						if (entry.getValue() != null) {
+							String previous = reqDetails.get(entry.getKey());
+							if (previous == null) {
+								reqDetails.put(entry.getKey(), entry.getValue());
+							} else {
+								reqDetails.put(entry.getKey(), previous + RepoConsts.LABEL_SEPARATOR + entry.getValue());
+							}
+						}
+					}
 				}
 			}
 		}
-		changeUnitDataItem.setReqType(reqType);
-		changeUnitDataItem.setReqDetails(reqDetails != null ? LargeTextHelper.elipse(reqDetails.toString()) : null);
-
-	}
-
-	/**
-	 * <p>
-	 * evaluateWUsedAssociations.
-	 * </p>
-	 *
-	 * @param targetAssocNodeRef
-	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @return a {@link java.util.List} object.
-	 */
-	private List<QName> evaluateWUsedAssociations(NodeRef targetAssocNodeRef) {
-		List<QName> wUsedAssociations = new ArrayList<>();
-
-		QName nodeType = nodeService.getType(targetAssocNodeRef);
-
-		if (nodeType.isMatch(PLMModel.TYPE_RAWMATERIAL) || nodeType.isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)
-				|| nodeType.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT) || nodeType.isMatch(PLMModel.TYPE_FINISHEDPRODUCT)
-				|| nodeType.isMatch(PLMModel.TYPE_LOGISTICUNIT)) {
-			wUsedAssociations.add(PLMModel.ASSOC_COMPOLIST_PRODUCT);
-		} else if (nodeType.isMatch(PLMModel.TYPE_PACKAGINGMATERIAL) || nodeType.isMatch(PLMModel.TYPE_PACKAGINGKIT)) {
-			wUsedAssociations.add(PLMModel.ASSOC_PACKAGINGLIST_PRODUCT);
-		} else if (nodeType.isMatch(PLMModel.TYPE_RESOURCEPRODUCT)) {
-			wUsedAssociations.add(MPMModel.ASSOC_PL_RESOURCE);
+		
+		for (Entry<Locale, String> entry : reqDetails.entrySet()) {
+			reqDetails.put(entry.getKey(), LargeTextHelper.elipse(entry.getValue()));
 		}
+		
+		changeUnitDataItem.setReqType(reqType);
+		changeUnitDataItem.setReqDetails(reqDetails.isEmpty() ? null : reqDetails);
 
-		return wUsedAssociations;
 	}
 
 	private QName evaluateListFromAssociation(QName associationName) {

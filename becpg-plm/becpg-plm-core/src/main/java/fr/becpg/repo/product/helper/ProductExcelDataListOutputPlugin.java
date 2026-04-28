@@ -18,6 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.stereotype.Service;
 
@@ -44,20 +45,33 @@ import fr.becpg.repo.helper.impl.AttributeExtractorField;
 @Service
 public class ProductExcelDataListOutputPlugin implements ExcelDataListOutputPlugin {
 
-	@Autowired
-	private DictionaryService dictionaryService;
+	private final DictionaryService dictionaryService;
+	protected final EntityListDAO entityListDAO;
+	private final NodeService nodeService;
+	private final AttributeExtractorService attributeExtractorService;
+	private final NamespaceService namespaceService;
 
 	@Autowired
-	protected EntityListDAO entityListDAO;
-
-	@Autowired
-	private NodeService nodeService;
-
-	@Autowired
-	private AttributeExtractorService attributeExtractorService;
-
-	@Autowired
-	private NamespaceService namespaceService;
+	/**
+	 * <p>Constructor for ProductExcelDataListOutputPlugin.</p>
+	 *
+	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param attributeExtractorService a {@link fr.becpg.repo.helper.AttributeExtractorService} object
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 */
+	public ProductExcelDataListOutputPlugin(@Qualifier("dictionaryService") DictionaryService dictionaryService,
+			@Qualifier("entityListDAO") EntityListDAO entityListDAO,
+			@Qualifier("nodeService") NodeService nodeService,
+			@Qualifier("attributeExtractorService") AttributeExtractorService attributeExtractorService,
+			@Qualifier("namespaceService") NamespaceService namespaceService) {
+		this.dictionaryService = dictionaryService;
+		this.entityListDAO = entityListDAO;
+		this.nodeService = nodeService;
+		this.attributeExtractorService = attributeExtractorService;
+		this.namespaceService = namespaceService;
+	}
 
 	/** {@inheritDoc} */
 	@Override

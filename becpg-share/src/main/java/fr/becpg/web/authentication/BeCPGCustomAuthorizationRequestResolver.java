@@ -22,6 +22,23 @@ public class BeCPGCustomAuthorizationRequestResolver implements OAuth2Authorizat
     private OAuth2AuthorizationRequestResolver defaultResolver;
     private AIMSConfig aimsConfig;
     private static final  String AUDIENCE="audience";
+    private String specificReauthIdcId;
+
+    /**
+     * <p>Constructor for BeCPGCustomAuthorizationRequestResolver.</p>
+     *
+     * @param repo a {@link org.springframework.security.oauth2.client.registration.ClientRegistrationRepository} object
+     * @param authorizationRequestBaseUri a {@link java.lang.String} object
+     * @param aimsConfig a {@link org.alfresco.web.site.servlet.config.AIMSConfig} object
+     * @param specificReauthIdcId a {@link java.lang.String} object
+     */
+    public BeCPGCustomAuthorizationRequestResolver(ClientRegistrationRepository repo, String authorizationRequestBaseUri,
+                                              AIMSConfig aimsConfig, String specificReauthIdcId)
+    {
+        defaultResolver = new DefaultOAuth2AuthorizationRequestResolver(repo, authorizationRequestBaseUri);
+        this.aimsConfig = aimsConfig;
+        this.specificReauthIdcId = specificReauthIdcId;
+    }
 
     /**
      * <p>Constructor for BeCPGCustomAuthorizationRequestResolver.</p>
@@ -33,8 +50,7 @@ public class BeCPGCustomAuthorizationRequestResolver implements OAuth2Authorizat
     public BeCPGCustomAuthorizationRequestResolver(ClientRegistrationRepository repo, String authorizationRequestBaseUri,
                                               AIMSConfig aimsConfig)
     {
-        defaultResolver = new DefaultOAuth2AuthorizationRequestResolver(repo, authorizationRequestBaseUri);
-        this.aimsConfig = aimsConfig;
+        this(repo, authorizationRequestBaseUri, aimsConfig, null);
     }
 
     /** {@inheritDoc} */
@@ -73,6 +89,10 @@ public class BeCPGCustomAuthorizationRequestResolver implements OAuth2Authorizat
         //beCPG
         if ("true".equalsIgnoreCase(request.getParameter("prompt"))) {
             extraParams.put("prompt", "login");
+            extraParams.put("max_age", "0");
+            if (this.specificReauthIdcId != null && !this.specificReauthIdcId.isBlank()) {
+                extraParams.put("kc_idp_hint", this.specificReauthIdcId);
+            }
         }
 
         if (this.aimsConfig.getAudience() != null)

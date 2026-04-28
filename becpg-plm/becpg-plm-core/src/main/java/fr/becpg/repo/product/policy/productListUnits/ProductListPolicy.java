@@ -114,13 +114,12 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 		super.disableOnCopyBehaviour(PLMModel.TYPE_LABELCLAIMLIST);
 		super.disableOnCopyBehaviour(PackModel.TYPE_LABELING_LIST);
 		super.disableOnCopyBehaviour(PLMModel.TYPE_PRODUCT);
-
+		
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void onCreateAssociation(AssociationRef assocRef) {
-
 		queueAssoc(KEY_PRODUCT_LISTITEMS, assocRef);
 
 	}

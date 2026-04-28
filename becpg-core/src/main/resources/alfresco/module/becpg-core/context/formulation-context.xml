@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  Copyright (C) 2010-2025 beCPG. 
+  Copyright (C) 2010-2026 beCPG. 
    
   This file is part of beCPG 
    
@@ -26,6 +26,7 @@
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="beCPGAuditService" ref="beCPGAuditService" />
+		<property name="mutexFactory" ref="mutexFactory" />
 	</bean>
 
 </beans>

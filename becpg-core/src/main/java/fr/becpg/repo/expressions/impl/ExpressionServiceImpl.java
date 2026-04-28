@@ -23,7 +23,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
@@ -220,8 +219,7 @@ public class ExpressionServiceImpl implements ExpressionService {
 							logger.debug(String.format(DEBUG_MESG, match.group(1)));
 						}
 
-						ExpressionParser parser = spelFormulaService.getSpelParser();
-						Expression expression = parser.parseExpression(match.group(1));
+						Expression expression = spelFormulaService.parseExpression(match.group(1));
 
 						return (expression.getValue(context));
 

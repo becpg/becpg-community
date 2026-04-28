@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  Copyright (C) 2010-2025 beCPG. 
+  Copyright (C) 2010-2026 beCPG. 
    
   This file is part of beCPG 
    
@@ -90,6 +90,7 @@
 		<property name="namespacePrefixResolver" ref="namespaceService" />
 		<property name="sysAdminParams" ref="sysAdminParams"/>
 		<property name="dictionaryService" ref="dictionaryService"/>
+		<property name="transactionService" ref="transactionService"/>
 	</bean>
 
     <!-- Variant -->
@@ -136,6 +137,15 @@
 		<property name="attributeExtractorService" ref="attributeExtractorService"/>
 	</bean>
 
+	<bean id="webscript.fr.becpg.product.formulateWUsed.post" class="fr.becpg.repo.web.scripts.product.FormulateWUsedWebScript" parent="webscript">
+		<property name="nodeService" ref="NodeService" />
+		<property name="entityDictionaryService" ref="entityDictionaryService"/>
+		<property name="associationService" ref="associationService"/>
+		<property name="batchQueueService" ref="batchQueueService"/>
+		<property name="formulationService" ref="formulationService"/>
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
+	</bean>
+
  
 	<!-- Search -->
 	<bean id="webscript.fr.becpg.search.search.get" class="fr.becpg.repo.web.scripts.search.SearchWebScript" parent="webscript">
@@ -173,6 +183,20 @@
 	</bean>
 	
 	<bean id="webscript.fr.becpg.publication.channelList.get" class="fr.becpg.repo.web.scripts.publication.ListEntitiesByChannelWebScript" parent="webscript.fr.becpg.remote.entities.get">
+		<property name="publicationChannelService" ref="publicationChannelService" />
+	</bean>
+	
+	<bean id="webscript.fr.becpg.publication.channelBatch.put" class="fr.becpg.repo.web.scripts.publication.RemoteChannelBatchWebScript" >
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="associationService" ref="associationService" />
+		<property name="publicationChannelService" ref="publicationChannelService" />
+	</bean>
+	
+	<bean id="webscript.fr.becpg.publication.channelBatch.post" class="fr.becpg.repo.web.scripts.publication.RemoteChannelBatchWebScript" >
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="associationService" ref="associationService" />
 		<property name="publicationChannelService" ref="publicationChannelService" />
 	</bean>
 	

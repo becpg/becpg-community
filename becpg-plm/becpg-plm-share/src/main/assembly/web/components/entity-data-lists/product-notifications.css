@@ -431,6 +431,21 @@ div .div-regulatorycodes ul li span {
 	color: #000
 }
 
+.product-notifications .notifications-list .rclReq-details .rclReq-formula-error
+	{
+	clear: both;
+	font-family: monospace;
+	font-size: 11px;
+	white-space: pre-wrap;
+	word-break: break-all;
+	color: #b71c1c;
+	background-color: #fff3f3;
+	border-left: 3px solid #f44336;
+	padding: 4px 6px;
+	max-height: 80px;
+	overflow-y: auto
+}
+
 .product-notifications .notifications-list .rclReq-details .rclReq-content
 	{
 	clear: both;

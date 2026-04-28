@@ -5,7 +5,10 @@ bin/
 !**/src/main/**/target/
 !**/src/test/**/target/
 *-min.js
+*.tmp
 docker-compose.override.yml
+review-result.md
+review-errors.txt
 
 ### STS ###
 .apt_generated

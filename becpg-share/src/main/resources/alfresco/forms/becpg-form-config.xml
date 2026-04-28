@@ -1,4 +1,4 @@
-<!-- Copyright (C) 2010-2025 beCPG. This file is part of beCPG beCPG is free 
+<!-- Copyright (C) 2010-2026 beCPG. This file is part of beCPG beCPG is free 
 	software: you can redistribute it and/or modify it under the terms of the 
 	GNU Lesser General Public License as published by the Free Software Foundation, 
 	either version 3 of the License, or (at your option) any later version. beCPG 
@@ -545,50 +545,7 @@ PARTICULAR
 			</form>
 		</forms>
 	</config>
-
-	<config evaluator="aspect" condition="bcpg:httpLinkAspect">
-		<forms>
-			<form>
-				<field-visibility>
-					<show id="bcpg:httpLink1" />
-					<show id="bcpg:httpLink2" />
-					<show id="bcpg:httpLink3" />
-					<show id="bcpg:httpLink4" />
-					<show id="bcpg:httpLink5" />
-
-				</field-visibility>
-				<appearance>
-					<field id="bcpg:httpLink1" mandatory="false"
-						read-only="false">
-						<control
-							template="/org/alfresco/components/form/controls/httplink.ftl" />
-					</field>
-					<field id="bcpg:httpLink2" mandatory="false"
-						read-only="false">
-						<control
-							template="/org/alfresco/components/form/controls/httplink.ftl" />
-					</field>
-					<field id="bcpg:httpLink3" mandatory="false"
-						read-only="false">
-						<control
-							template="/org/alfresco/components/form/controls/httplink.ftl" />
-					</field>
-					<field id="bcpg:httpLink4" mandatory="false"
-						read-only="false">
-						<control
-							template="/org/alfresco/components/form/controls/httplink.ftl" />
-					</field>
-					<field id="bcpg:httpLink5" mandatory="false"
-						read-only="false">
-						<control
-							template="/org/alfresco/components/form/controls/httplink.ftl" />
-					</field>
-				</appearance>
-			</form>
-		</forms>
-	</config>
-
-
+	
 	<config evaluator="aspect" condition="bcpg:autoMergeAspect">
 		<forms>
 			<form>

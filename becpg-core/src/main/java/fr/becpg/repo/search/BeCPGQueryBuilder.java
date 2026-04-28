@@ -1066,7 +1066,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		} finally {
 			watch.stop();
 			if ((ret != null) && (watch.getTotalTimeSeconds() > 1)) {
-				logger.warn("Slow query [" + xPath + "] executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + ret.size());
+				logger.warn("Slow query [" + xPath + "] for user " + AuthenticationUtil.getRunAsUser() + " executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + ret.size());
 			}
 		}
 
@@ -1117,7 +1117,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 			watch.stop();
 			if (watch.getTotalTimeSeconds() > 1) {
-				logger.warn("Slow query [" + runnedQuery + "] executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + resultSize + " over total " + totalResultSize);
+				logger.warn("Slow query [" + runnedQuery + "] for user " + AuthenticationUtil.getRunAsUser() + " executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + resultSize + " over total " + totalResultSize);
 
 			}
 
@@ -1325,7 +1325,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		}
 
 		for (Map.Entry<QName, Pair<String, String>> propQueryEntry : propBetweenOrNullQueriesMap.entrySet()) {
-			runnedQuery.append(getMandatoryOrGroup(getCondIsNullOrIsUnsetValue(propQueryEntry.getKey()), getCondContainsValue(propQueryEntry.getKey(),
+			runnedQuery.append(getMandatoryOrGroup(getCondIsNullValue(propQueryEntry.getKey()), getCondContainsValue(propQueryEntry.getKey(),
 					String.format("[%s TO %s]", propQueryEntry.getValue().getFirst(), propQueryEntry.getValue().getSecond()))));
 		}
 
@@ -1812,7 +1812,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 			if (pageOfNodeInfos != null) {
 				if (watch.getTotalTimeSeconds() > 1) {
-					logger.warn("Slow childFileFolders [" + parentNodeRef + "] executed in  " + watch.getTotalTimeSeconds()
+					logger.warn("Slow childFileFolders [" + parentNodeRef + "] for user " + AuthenticationUtil.getRunAsUser() + " executed in  " + watch.getTotalTimeSeconds()
 							+ " seconds - size results " + pageOfNodeInfos.getTotalResultCount());
 				}
 

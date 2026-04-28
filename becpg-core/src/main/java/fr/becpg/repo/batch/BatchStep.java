@@ -11,9 +11,9 @@ import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
  */
 public class BatchStep<T> {
 
-	private BatchProcessWorkProvider<T> workProvider;
+	protected BatchProcessWorkProvider<T> workProvider;
 	
-	private BatchProcessWorker<T> processWorker;
+	protected BatchProcessWorker<T> processWorker;
 	
 	private BatchStepListener batchStepListener;
 	
@@ -130,5 +130,5 @@ public class BatchStep<T> {
 	public void setBatchStepListener(BatchStepListener batchStepListener) {
 		this.batchStepListener = batchStepListener;
 	}
-	
+
 }

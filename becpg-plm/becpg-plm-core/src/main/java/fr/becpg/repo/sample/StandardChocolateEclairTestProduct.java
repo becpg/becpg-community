@@ -98,6 +98,8 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 	public static final String EGG_NAME = "Oeuf";
 	/** Constant <code>CHOCOLATE_NAME="Chocolat"</code> */
 	public static final String CHOCOLATE_NAME = "Chocolat";
+	/** Constant <code>FRUIT_VEG_CONTENT="Fruit and vegetable content"</code> */
+	public static final String FRUIT_VEG_CONTENT = "Fruit and vegetable content";
 	/** Constant <code>PATE_CHOUX_NAME="P&acirc;te &agrave; choux"</code> */
 	public static final String PATE_CHOUX_NAME = "Pâte à choux";
 	/** Constant <code>CREME_PATISSIERE_NAME="Cr&egrave;me p&acirc;tissi&egrave;re"</code> */
@@ -598,25 +600,25 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
         NodeRef fillingQuestionRef = CharactTestHelper.getOrCreateSurveyQuestion(nodeService, SURVEY_FILLING_QUESTION);
         
         // Get references to the answers
-        NodeRef pastryPerfectRef = CharactTestHelper.getOrCreateSurveyQuestion(nodeService, ANSWER_PASTRY_PERFECT);
-        NodeRef fillingPerfectRef = CharactTestHelper.getOrCreateSurveyQuestion(nodeService, ANSWER_FILLING_PERFECT);
+        NodeRef pastryMinorRef = CharactTestHelper.getOrCreateSurveyQuestion(nodeService, ANSWER_PASTRY_MINOR_DEFECTS);
+        NodeRef fillingMinorRef = CharactTestHelper.getOrCreateSurveyQuestion(nodeService, ANSWER_FILLING_MINOR_ISSUES);
         
         // Setup specification survey requirements
-        // 1. Pastry quality - require perfect (product uses minor defects, should generate a Forbidden requirement)
+        // 1. Pastry quality - forbid minor defects (product uses minor defects, should generate a Forbidden requirement)
         SurveyListDataItem specQ1 = new SurveyListDataItem(pastryQuestionRef, true);
-        specQ1.setChoices(List.of(pastryPerfectRef));
+        specQ1.setChoices(List.of(pastryMinorRef));
         specQ1.setRegulatoryType(RequirementType.Forbidden);
         MLText pastryMessage = new MLText();
-        pastryMessage.addValue(Locale.ENGLISH, "Pastry quality must be perfect for this specification");
+        pastryMessage.addValue(Locale.ENGLISH, "Minor pastry defects are forbidden for this specification");
         specQ1.setRegulatoryMessage(pastryMessage);
         specSurveyList.add(specQ1);
         
-        // 2. Filling quality - require perfect (product uses minor issues, should generate a Forbidden requirement)
+        // 2. Filling quality - forbid minor issues (product uses minor issues, should generate a Forbidden requirement)
         SurveyListDataItem specQ2 = new SurveyListDataItem(fillingQuestionRef, true);
-        specQ2.setChoices(List.of(fillingPerfectRef));
+        specQ2.setChoices(List.of(fillingMinorRef));
         specQ2.setRegulatoryType(RequirementType.Forbidden);
         MLText fillingMessage = new MLText();
-        fillingMessage.addValue(Locale.ENGLISH, "Filling quality must be perfect for this specification");
+        fillingMessage.addValue(Locale.ENGLISH, "Minor filling issues are forbidden for this specification");
         specQ2.setRegulatoryMessage(fillingMessage);
         specSurveyList.add(specQ2);
         
@@ -840,7 +842,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
 			if (isWithNuts) {
 				sugar.setNutList(createNutList(1700d, 0d, 0d, 100d, 0d, 0d, 0d, 0d, 0d));
-				addPhysicoChemProperty(sugar, "Fruit and vegetable content", NutriScoreContext.FRUIT_VEGETABLE_CODE, 0d);
+				addPhysicoChemProperty(sugar, FRUIT_VEG_CONTENT, NutriScoreContext.FRUIT_VEGETABLE_CODE, 0d);
 			}
 		}
 
@@ -942,7 +944,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
 		if (isWithNuts) {
 			pateChoux.setNutList(createNutList(1020d, 5d, 15d, 12d, 0.15d, 0.4d, 1.0d, 1.4d, 6.0d));
-			addPhysicoChemProperty(pateChoux, "Fruit and vegetable content", NutriScoreContext.FRUIT_VEGETABLE_CODE, 5d);
+			addPhysicoChemProperty(pateChoux, FRUIT_VEG_CONTENT, NutriScoreContext.FRUIT_VEGETABLE_CODE, 5d);
 		}
 
 		pateChouxNodeRef = alfrescoRepository.create(destFolder, pateChoux).getNodeRef();
@@ -969,7 +971,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
 		if (isWithNuts) {
 			cremePatissiere.setNutList(createNutList(850d, 4.8d, 12.5d, 18d, 0.18d, 0.45d, 0.8d, 1.2d, 4.2d));
-			addPhysicoChemProperty(cremePatissiere, "Fruit and vegetable content", NutriScoreContext.FRUIT_VEGETABLE_CODE, 0d);
+			addPhysicoChemProperty(cremePatissiere, FRUIT_VEG_CONTENT, NutriScoreContext.FRUIT_VEGETABLE_CODE, 0d);
 		}
 
 		cremePatissiereNodeRef = alfrescoRepository.create(destFolder, cremePatissiere).getNodeRef();
@@ -991,7 +993,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
 		if (isWithNuts) {
 			nappage.setNutList(createNutList(920d, 6.5d, 20d, 30d, 0.12d, 0.3d, 0.5d, 0.9d, 3.5d));
-			addPhysicoChemProperty(nappage, "Fruit and vegetable content", NutriScoreContext.FRUIT_VEGETABLE_CODE, 0d);
+			addPhysicoChemProperty(nappage, FRUIT_VEG_CONTENT, NutriScoreContext.FRUIT_VEGETABLE_CODE, 0d);
 		}
 
 		nappageNodeRef = alfrescoRepository.create(destFolder, nappage).getNodeRef();
@@ -1026,7 +1028,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		finishedProduct.setNutrientProfileCategory(NutrientProfileCategory.Others.toString());
 		finishedProduct.setNutrientProfileVersion(NutrientProfileVersion.VERSION_2023.toString());
 		finishedProduct.withNutList(createNutList(1250d, 8d, 16d, 30d, 0.2d, 0.5d, 1.2d, 1.8d, 5.5d));
-		addPhysicoChemProperty(finishedProduct, "Fruit and vegetable content", NutriScoreContext.FRUIT_VEGETABLE_CODE, 0d);
+		addPhysicoChemProperty(finishedProduct, FRUIT_VEG_CONTENT, NutriScoreContext.FRUIT_VEGETABLE_CODE, 0d);
 	}
 
 	private void addPhysicoChemProperty(ProductData product, String name, String code, Double value) {
@@ -1055,7 +1057,7 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		addNutEntry(nutList, NutriScoreContext.SATFAT_CODE, "g", satFat);
 		addNutEntry(nutList, NutriScoreContext.FAT_CODE, "g", totalFat);
 		addNutEntry(nutList, NutriScoreContext.SUGAR_CODE, "g", sugar);
-		addNutEntry(nutList, NutriScoreContext.SODIUM_CODE, "g", sodium);
+		addNutEntry(nutList, NutriScoreContext.SODIUM_CODE, "mg", sodium);
 		addNutEntry(nutList, NutriScoreContext.SALT_CODE, "g", salt);
 		addNutEntry(nutList, NutriScoreContext.NSP_CODE, "g", nspFiber);
 		addNutEntry(nutList, NutriScoreContext.AOAC_CODE, "g", aoacFiber);

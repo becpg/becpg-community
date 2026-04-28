@@ -1,29 +1,25 @@
 package fr.becpg.test.repo.product.score;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.GS1Model;
 import fr.becpg.model.NutrientProfileCategory;
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.importer.impl.ImportHelper;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
+import fr.becpg.repo.product.formulation.score.NutriScoreContext;
+import fr.becpg.repo.sample.CharactTestHelper;
 import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.test.PLMBaseTestCase;
 
@@ -35,24 +31,57 @@ public class NutriScoreIT extends PLMBaseTestCase {
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
 
-	@Test
-	public void testNutriScore() {
-		
+	private NodeRef energyKjNode;
+	private NodeRef satFatNode;
+	private NodeRef totalFatNode;
+	private NodeRef totalSugarNode;
+	private NodeRef sodiumNode;
+	private NodeRef saltNode;
+	private NodeRef percFruitsAndVetgsNode;
+	private NodeRef nspFibreNode;
+	private NodeRef aoacFibreNode;
+	private NodeRef proteinNode;
+
+	@Override
+	protected void doInitRepo(boolean shouldInit) {
+		super.doInitRepo(shouldInit);
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			energyKjNode = CharactTestHelper.getOrCreateNutrient(nodeService, NutriScoreContext.ENERGY_CODE, "kJ");
+			satFatNode = CharactTestHelper.getOrCreateNutrient(nodeService, NutriScoreContext.SATFAT_CODE, "g");
+			totalFatNode = CharactTestHelper.getOrCreateNutrient(nodeService, NutriScoreContext.FAT_CODE, "g");
+			totalSugarNode = CharactTestHelper.getOrCreateNutrient(nodeService, NutriScoreContext.SUGAR_CODE, "g");
+			sodiumNode = CharactTestHelper.getOrCreateNutrient(nodeService, NutriScoreContext.SODIUM_CODE, "mg");
+			saltNode = CharactTestHelper.getOrCreateNutrient(nodeService, NutriScoreContext.SALT_CODE, "g");
+			percFruitsAndVetgsNode = CharactTestHelper.getOrCreatePhysicoChem(nodeService, NutriScoreContext.FRUIT_VEGETABLE_CODE, "%");
+			nspFibreNode = CharactTestHelper.getOrCreateNutrient(nodeService, NutriScoreContext.NSP_CODE, "g");
+			aoacFibreNode = CharactTestHelper.getOrCreateNutrient(nodeService, NutriScoreContext.AOAC_CODE, "g");
+			proteinNode = CharactTestHelper.getOrCreateNutrient(nodeService, NutriScoreContext.PROTEIN_CODE, "g");
+			return null;
+		}, false, true);
+	}
+
+	@Before
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			systemConfigurationService.updateConfValue("beCPG.formulation.score.nutriscore.regulatoryClass", "fr.becpg.repo.product.helper.Nutrient5C2021Helper");
 			return null;
 		}, false, true);
+	}
 
-		NodeRef energyKjNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "ENER-KJO");
-		NodeRef satFatNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FASAT");
-		NodeRef totalFatNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FAT");
-		NodeRef totalSugarNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "SUGAR");
-		NodeRef sodiumNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "NA");
-		NodeRef saltNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "NACL");
-		NodeRef percFruitsAndVetgsNode = findOrCreateNode(PLMModel.TYPE_PHYSICO_CHEM, PLMModel.PROP_PHYSICO_CHEM_CODE, "FRUIT_VEGETABLE");
-		NodeRef nspFibreNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "PSACNS");
-		NodeRef aoacFibreNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FIBTG");
-		NodeRef proteinNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "PRO-");
+	@After
+	@Override
+	public void tearDown() throws Exception {
+		super.tearDown();
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			systemConfigurationService.resetConfValue("beCPG.formulation.score.nutriscore.regulatoryClass");
+			return null;
+		}, false, true);
+	}
+
+	@Test
+	public void testNutriScore() {
 
 		// 2084d, 2.8d, 22.9d, 4.73d, 672d, 0d, 0d, 4.13d, 5.81d, "Others"
 
@@ -79,6 +108,7 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			physicoChemList.add(new PhysicoChemListDataItem(null, 0d, null, null, null, percFruitsAndVetgsNode));
 
 			FinishedProductData finishedProductData = new FinishedProductData();
+			finishedProductData.setParentNodeRef(getTestFolderNodeRef());
 			finishedProductData.getAspects().add(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE);
 			finishedProductData.setName("Test1");
 			finishedProductData.setNutList(nutList);
@@ -131,6 +161,7 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			physicoChemList.add(new PhysicoChemListDataItem(null, 0d, null, null, null, percFruitsAndVetgsNode));
 
 			FinishedProductData finishedProductData = new FinishedProductData();
+			finishedProductData.setParentNodeRef(getTestFolderNodeRef());
 			finishedProductData.getAspects().add(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE);
 			finishedProductData.setName("Test2");
 			finishedProductData.setNutList(nutList);
@@ -184,6 +215,7 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			physicoChemList.add(new PhysicoChemListDataItem(null, 0d, null, null, null, percFruitsAndVetgsNode));
 
 			FinishedProductData finishedProductData = new FinishedProductData();
+			finishedProductData.setParentNodeRef(getTestFolderNodeRef());
 			finishedProductData.getAspects().add(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE);
 			finishedProductData.setName("Test3");
 			finishedProductData.setNutList(nutList);
@@ -207,54 +239,6 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			return null;
 		}, false, true);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			systemConfigurationService.resetConfValue("beCPG.formulation.score.nutriscore.regulatoryClass");
-			return null;
-		}, false, true);
 	}
 
-	@Deprecated //Merge with CharactTestHelper
-	private NodeRef findOrCreateNode(QName type, QName property, String value) {
-		NodeRef node = ImportHelper.findCharact(type, property, value, nodeService);
-
-		if (node == null) {
-			NodeRef companyHomeNodeRef = repositoryHelper.getCompanyHome();
-
-			NodeRef systemNodeRef = repoService.getFolderByPath(companyHomeNodeRef, RepoConsts.PATH_SYSTEM);
-
-			NodeRef charactsNodeRef = repoService.getFolderByPath(systemNodeRef, RepoConsts.PATH_CHARACTS);
-
-			NodeRef entityListNodeRef = repoService.getFolderByPath(charactsNodeRef, "bcpg:entityLists");
-			;
-
-			NodeRef parentRef = null;
-
-			Map<QName, Serializable> properties = new HashMap<>();
-			properties.put(BeCPGModel.PROP_CHARACT_NAME, value);
-			properties.put(property, value);
-			if (type.equals(PLMModel.TYPE_NUT)) {
-				parentRef = repoService.getFolderByPath(entityListNodeRef, "cm:Nuts");
-				if ("NA".equals(value)) {
-					properties.put(PLMModel.PROP_NUTUNIT, "mg");
-				} else {
-					properties.put(PLMModel.PROP_NUTUNIT, "g");
-				}
-
-			} else if (type.equals(PLMModel.TYPE_PHYSICO_CHEM)) {
-				parentRef = repoService.getFolderByPath(entityListNodeRef, "cm:PhysicoChems");
-				properties.put(PLMModel.PROP_PHYSICO_CHEM_UNIT, "%");
-			}
-
-			NodeRef finalParentRef = parentRef;
-
-			node = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				return nodeService.createNode(finalParentRef, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)), type,
-						properties).getChildRef();
-			}, false, true);
-		}
-
-		return node;
-
-	}
 }

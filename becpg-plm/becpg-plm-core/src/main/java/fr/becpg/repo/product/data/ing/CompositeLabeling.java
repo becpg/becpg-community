@@ -39,6 +39,7 @@ public class CompositeLabeling extends LabelingComponent {
 
 	private Double qtyTotal = 0d;
 	private Double qtyTotalWithYield = 0d;
+	private Double qtyTotalWithSecondaryYield = 0d;
 
 	private Double evaporatedQty = 0d;
 	private Double evaporatedVolume = 0d;
@@ -49,6 +50,7 @@ public class CompositeLabeling extends LabelingComponent {
 
 	private Double volumeTotal = 0d;
 	private Double volumeTotalWithYield = 0d;
+	private Double volumeTotalWithSecondaryYield = 0d;
 
 	private IngTypeItem ingType;
 
@@ -83,10 +85,12 @@ public class CompositeLabeling extends LabelingComponent {
 		this.ingListAtEnd = copy(compositeLabeling.ingListAtEnd);
 		this.qtyTotal = compositeLabeling.qtyTotal;
 		this.qtyTotalWithYield = compositeLabeling.qtyTotalWithYield;
+		this.qtyTotalWithSecondaryYield = compositeLabeling.qtyTotalWithSecondaryYield;
 		this.evaporatedQty = compositeLabeling.evaporatedQty;
 		this.evaporatedVolume = compositeLabeling.evaporatedVolume;
 		this.volumeTotal = compositeLabeling.volumeTotal;
 		this.volumeTotalWithYield = compositeLabeling.volumeTotalWithYield;
+		this.volumeTotalWithSecondaryYield = compositeLabeling.volumeTotalWithSecondaryYield;
 		this.declarationType = compositeLabeling.declarationType;
 	}
 
@@ -193,12 +197,89 @@ public class CompositeLabeling extends LabelingComponent {
 	}
 
 	/**
+	 * <p>
+	 * Getter for the field <code>qtyTotal</code>.
+	 * </p>
+	 *
+	 * @param withYield
+	 *            a boolean
+	 * @return a {@link java.lang.Double} object
+	 */
+	public Double getQtyTotal(boolean withYield) {
+		return withYield ? qtyTotalWithYield : qtyTotal;
+	}
+
+	/**
+	 * <p>
+	 * Getter for the field <code>qtyTotal</code>.
+	 * </p>
+	 *
+	 * @param withYield
+	 *            a boolean
+	 * @param withSecondaryYield
+	 *            a boolean
+	 * @return a {@link java.lang.Double} object
+	 */
+	public Double getQtyTotal(boolean withYield, boolean withSecondaryYield) {
+		if (withSecondaryYield) {
+			return qtyTotalWithSecondaryYield;
+		}
+		return withYield ? qtyTotalWithYield : qtyTotal;
+	}
+
+	/**
 	 * <p>Setter for the field <code>qtyTotal</code>.</p>
 	 *
 	 * @param qtyTotal a {@link java.lang.Double} object.
 	 */
 	public void setQtyTotal(Double qtyTotal) {
 		this.qtyTotal = qtyTotal;
+	}
+
+	/**
+	 * <p>
+	 * Getter for the field <code>qtyTotalWithYield</code>.
+	 * </p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
+	public Double getQtyTotalWithYield() {
+		return qtyTotalWithYield;
+	}
+
+	/**
+	 * <p>
+	 * Setter for the field <code>qtyTotalWithYield</code>.
+	 * </p>
+	 *
+	 * @param qtyTotalWithYield
+	 *            a {@link java.lang.Double} object
+	 */
+	public void setQtyTotalWithYield(Double qtyTotalWithYield) {
+		this.qtyTotalWithYield = qtyTotalWithYield;
+	}
+
+	/**
+	 * <p>
+	 * Getter for the field <code>qtyTotalWithSecondaryYield</code>.
+	 * </p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
+	public Double getQtyTotalWithSecondaryYield() {
+		return qtyTotalWithSecondaryYield;
+	}
+
+	/**
+	 * <p>
+	 * Setter for the field <code>qtyTotalWithSecondaryYield</code>.
+	 * </p>
+	 *
+	 * @param qtyTotalWithSecondaryYield
+	 *            a {@link java.lang.Double} object
+	 */
+	public void setQtyTotalWithSecondaryYield(Double qtyTotalWithSecondaryYield) {
+		this.qtyTotalWithSecondaryYield = qtyTotalWithSecondaryYield;
 	}
 
 	/**
@@ -269,12 +350,89 @@ public class CompositeLabeling extends LabelingComponent {
 	}
 
 	/**
+	 * <p>
+	 * Getter for the field <code>volumeTotal</code>.
+	 * </p>
+	 *
+	 * @param withYield
+	 *            a boolean
+	 * @return a {@link java.lang.Double} object
+	 */
+	public Double getVolumeTotal(boolean withYield) {
+		return withYield ? volumeTotalWithYield : volumeTotal;
+	}
+
+	/**
+	 * <p>
+	 * Getter for the field <code>volumeTotal</code>.
+	 * </p>
+	 *
+	 * @param withYield
+	 *            a boolean
+	 * @param withSecondaryYield
+	 *            a boolean
+	 * @return a {@link java.lang.Double} object
+	 */
+	public Double getVolumeTotal(boolean withYield, boolean withSecondaryYield) {
+		if (withSecondaryYield) {
+			return volumeTotalWithSecondaryYield;
+		}
+		return withYield ? volumeTotalWithYield : volumeTotal;
+	}
+
+	/**
 	 * <p>Setter for the field <code>volumeTotal</code>.</p>
 	 *
 	 * @param volumeTotal a {@link java.lang.Double} object.
 	 */
 	public void setVolumeTotal(Double volumeTotal) {
 		this.volumeTotal = volumeTotal;
+	}
+
+	/**
+	 * <p>
+	 * Getter for the field <code>volumeTotalWithYield</code>.
+	 * </p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
+	public Double getVolumeTotalWithYield() {
+		return volumeTotalWithYield;
+	}
+
+	/**
+	 * <p>
+	 * Setter for the field <code>volumeTotalWithYield</code>.
+	 * </p>
+	 *
+	 * @param volumeTotalWithYield
+	 *            a {@link java.lang.Double} object
+	 */
+	public void setVolumeTotalWithYield(Double volumeTotalWithYield) {
+		this.volumeTotalWithYield = volumeTotalWithYield;
+	}
+
+	/**
+	 * <p>
+	 * Getter for the field <code>volumeTotalWithSecondaryYield</code>.
+	 * </p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
+	public Double getVolumeTotalWithSecondaryYield() {
+		return volumeTotalWithSecondaryYield;
+	}
+
+	/**
+	 * <p>
+	 * Setter for the field <code>volumeTotalWithSecondaryYield</code>.
+	 * </p>
+	 *
+	 * @param volumeTotalWithSecondaryYield
+	 *            a {@link java.lang.Double} object
+	 */
+	public void setVolumeTotalWithSecondaryYield(Double volumeTotalWithSecondaryYield) {
+		this.volumeTotalWithSecondaryYield = volumeTotalWithSecondaryYield;
 	}
 
 	/**

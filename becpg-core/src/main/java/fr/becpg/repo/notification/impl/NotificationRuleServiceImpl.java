@@ -7,15 +7,19 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import org.springframework.extensions.surf.util.I18NUtil;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.download.DownloadService;
 import org.alfresco.service.cmr.download.DownloadStatus;
@@ -50,6 +54,7 @@ import fr.becpg.repo.batch.BatchStepAdapter;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
@@ -297,6 +302,8 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			userTemplate.put("versions", searchResult.getItemVersions());
 		}
 
+		userTemplate.put(DATE_FIELD, resolveDateFieldTitle(searchFilter, userName));
+
 		Map<String, Object> model = new HashMap<>();
 		model.put("args", userTemplate);
 		if (downloadNode != null) {
@@ -308,6 +315,24 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 				: RepoConsts.EMAIL_NOTIF_RULE_LIST_TEMPLATE;
 
 		mailService.sendMail(List.of(authorityService.getAuthorityNodeRef(userName)), notification.getSubject(), emailTemplate, model, false);
+	}
+
+	private String resolveDateFieldTitle(SearchRuleFilter filter, String userName) {
+		Locale currentLocale = I18NUtil.getLocale();
+		try {
+			if (personService.personExists(userName)) {
+				NodeRef personNodeRef = personService.getPerson(userName);
+				String localeString = (String) nodeService.getProperty(personNodeRef, BeCPGModel.PROP_USER_LOCALE);
+				if (localeString != null && !localeString.isBlank()) {
+					I18NUtil.setLocale(MLTextHelper.parseLocale(localeString));
+				}
+			}
+			return Objects.toString(
+					dictionaryService.getTitle(dictionaryService.getProperty(filter.getDateField()), filter.getNodeType()),
+					filter.getDateField().toPrefixString());
+		} finally {
+			I18NUtil.setLocale(currentLocale);
+		}
 	}
 
 	private void processReportTemplates(NotificationRuleListDataItem notification, SearchRuleResult searchResult, Consumer<NodeRef> mailSender) {
@@ -412,7 +437,19 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		if (ScriptMode.EACH.equals(notification.getScriptMode())) {
 			executeScriptEach(notification, items, templateArgs);
 		} else if (ScriptMode.ALL.equals(notification.getScriptMode())) {
-			executeScriptAll(notification, items, templateArgs);
+			try {
+				executeScriptAll(notification, items, templateArgs);
+			} catch (Throwable e) {
+				if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("Retrying the formulation due to exception " + e.getMessage());
+					}
+	                throw e;
+	            }
+				logger.error("Error while executing script from notification " + notification.getNodeRef(), e);
+				notification.setErrorLog(e.getMessage());
+				alfrescoRepository.save(notification);
+			}
 		}
 	}
 

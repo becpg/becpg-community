@@ -36,5 +36,22 @@ public interface PublicationChannelService {
 	  * @return a {@link org.alfresco.query.PagingResults} object
 	  */
 	 PagingResults<NodeRef> getEntitiesByChannel(NodeRef channelNodeRef, PagingRequest request);
-	
+
+	 void startChannel(NodeRef channelNodeRef, String batchId);
+
+	 void publishEntityChannel(NodeRef entityNodeRef, String channelId, ChannelData channelData);
+
+	 void completeChannel(NodeRef channelNodeRef, ChannelData channelData);
+
+	 /**
+	  * <p>getOrCreateChannelListNodeRef.</p>
+	  *
+	  * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	  * @param channelId a {@link java.lang.String} object
+	  * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	  */
+	 NodeRef getOrCreateChannelListNodeRef(NodeRef entityNodeRef, String channelId);
+
+	 /** {@inheritDoc} */
+	 
 }

@@ -22,7 +22,9 @@ import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
+import fr.becpg.repo.project.impl.CalendarWorkingDayProvider;
 import fr.becpg.repo.project.impl.ProjectHelper;
+import fr.becpg.repo.project.impl.WorkingDayProvider;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.system.SystemConfigurationService;
 
@@ -55,6 +57,17 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 	private AssociationService associationService;
 	
 	private SystemConfigurationService systemConfigurationService;
+	
+	private fr.becpg.repo.project.CalendarService calendarService;
+	
+	/**
+	 * <p>Setter for the field <code>calendarService</code>.</p>
+	 *
+	 * @param calendarService a {@link fr.becpg.repo.project.CalendarService} object
+	 */
+	public void setCalendarService(fr.becpg.repo.project.CalendarService calendarService) {
+		this.calendarService = calendarService;
+	}
 	
 	/**
 	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
@@ -117,8 +130,10 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 				task.setEnd(subProject.getCompletionDate());
 				task.setDue(subProject.getDueDate());
 				task.setTargetStart(subProject.getTargetStartDate());
-				task.setTargetEnd(ProjectHelper.calculateEndDate(subProject.getTargetStartDate(),subProject.getRealDuration()));
-				task.setDuration(ProjectHelper.calculateTaskDuration(subProject.getStartDate(), subProject.getCompletionDate()));
+				
+				WorkingDayProvider provider = new CalendarWorkingDayProvider(calendarService, calendarService.getCalendar(task.getNodeRef()));
+				task.setTargetEnd(ProjectHelper.calculateEndDate(subProject.getTargetStartDate(), subProject.getRealDuration(), provider));
+				task.setDuration(ProjectHelper.calculateTaskDuration(subProject.getStartDate(), subProject.getCompletionDate(), provider));
 				task.setCompletionPercent(subProject.getCompletionPercent());
 				task.setTaskName(subProject.getName());
 
@@ -170,12 +185,12 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 
 							Serializable value = nodeService.getProperty(task.getSubProject(), propertyQname);
 
-							if ((value instanceof String)) {
+							if ((value instanceof String stringVal)) {
 
 								if (propsToCopyToParentTmp.get(propertyQname) != null) {
-									value = propsToCopyToParentTmp.get(propertyQname) + "\n" + value;
+									stringVal = propsToCopyToParentTmp.get(propertyQname) + "\n" + stringVal;
 								}
-								propsToCopyToParentTmp.put(propertyQname, (String) value);
+								propsToCopyToParentTmp.put(propertyQname, stringVal);
 							} else if (propsToCopyToParentTmp.get(propertyQname) == null) {
 								propsToCopyToParentTmp.put(propertyQname, null);
 							}

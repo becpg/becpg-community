@@ -14,7 +14,6 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
@@ -24,16 +23,18 @@ import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.formulation.spel.SpelHelper;
 import fr.becpg.repo.helper.MLTextHelper;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.labelclaim.LabelClaimItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.filters.DataListFilter;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 
@@ -114,21 +115,28 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 			}
 		}
 
-		ExpressionParser parser = formulaService.getSpelParser();
 		StandardEvaluationContext context = formulaService.createEntitySpelContext(productData);
 
 		if ((productData.getLabelClaimList() != null) && !productData.getLabelClaimList().isEmpty()) {
 
 			productData.getLabelClaimList().forEach(labelClaimItem -> labelClaimItem.getMissingLabelClaims().clear());
+			
 
 			List<CompositionDataItem> compoItems = new ArrayList<>();
+			List<DataListFilter<ProductData, CompoListDataItem>> compoFilters = FormulationFilters.EFFECTIVE_VARIANT_COMPO;
+			List<DataListFilter<ProductData, PackagingListDataItem>> packagingFilters = FormulationFilters.EFFECTIVE_VARIANT_PACKAGING;
+			List<DataListFilter<ProductData, ProcessListDataItem>> processFilters = FormulationFilters.EFFECTIVE_VARIANT_PROCESS;
 
-			if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				compoItems.addAll(productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
+			if (productData.hasCompoListEl(compoFilters)) {
+				compoItems.addAll(productData.getCompoList(compoFilters));
 			}
 
-			if (productData.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				compoItems.addAll(productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
+			if (productData.hasPackagingListEl(packagingFilters)) {
+				compoItems.addAll(productData.getPackagingList(packagingFilters));
+			}
+
+			if (productData.hasProcessListEl(processFilters)) {
+				compoItems.addAll(productData.getProcessList(processFilters));
 			}
 
 			if (!compoItems.isEmpty()) {
@@ -161,6 +169,10 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						}
 						labelClaimItem.setPercentApplicable(null);
 						labelClaimItem.setPercentClaim(null);
+						
+					     if ( Boolean.TRUE.equals(labelClaim.getIsCertificationPropagateUp())) {
+							labelClaimItem.setCertifications(new ArrayList<>());
+						 }
 					}
 
 				});
@@ -195,7 +207,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 				}
 			}
 
-			computeClaimList(productData, parser, context);
+			computeClaimList(productData, context);
 
 		}
 		
@@ -322,8 +334,9 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 			labelClaimItem.setParentNodeRef(null);
 			labelClaimItem.setLabelClaimValue(null);
 			labelClaimItem.setSort(null);
+			labelClaimItem.setCertifications(new ArrayList<>());
 			productData.getLabelClaimList().add(labelClaimItem);
-		}
+		} 
 
 		if (labelClaimItem != null) {
 
@@ -470,6 +483,18 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 				}
 
 			}
+			if (Boolean.TRUE.equals(labelClaim.getIsCertificationPropagateUp())) {
+				List<NodeRef> currentCerts = labelClaimItem.getCertifications();
+				if (currentCerts == null) {
+					currentCerts = new ArrayList<>();
+					labelClaimItem.setCertifications(currentCerts);
+				}
+				for (NodeRef cert : subLabelClaimItem.getCertifications()) {
+					if ((cert != null) && !currentCerts.contains(cert)) {
+						currentCerts.add(cert);
+					}
+				}
+			}
 			toRemove.remove(labelClaimItem);
 
 		}
@@ -513,7 +538,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		return labelClaim.getCharactName();
 	}
 
-	private void computeClaimList(ProductData productData, ExpressionParser parser, StandardEvaluationContext context) {
+	private void computeClaimList(ProductData productData, StandardEvaluationContext context) {
 		if (productData.getLabelClaimList() != null) {
 			for (LabelClaimListDataItem labelClaimListDataItem : productData.getLabelClaimList()) {
 				labelClaimListDataItem.setIsFormulated(false);
@@ -533,10 +558,10 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 								Matcher varFormulaMatcher = SpelHelper.formulaVarPattern.matcher(formula);
 								if (varFormulaMatcher.matches()) {
-									Expression exp = parser.parseExpression(varFormulaMatcher.group(2));
+									Expression exp = formulaService.parseExpression(varFormulaMatcher.group(2));
 									context.setVariable(varFormulaMatcher.group(1), exp.getValue(context));
 								} else {
-									Expression exp = parser.parseExpression(formula);
+									Expression exp = formulaService.parseExpression(formula);
 									Object ret = exp.getValue(context);
 									if (ret instanceof Boolean) {
 										labelClaimListDataItem.setIsClaimed((Boolean) ret);

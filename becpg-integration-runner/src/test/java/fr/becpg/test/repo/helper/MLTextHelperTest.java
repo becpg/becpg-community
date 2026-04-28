@@ -40,7 +40,7 @@ public class MLTextHelperTest {
 		Locale defaultLocale = Locale.getDefault();
 		try {
 			MLTextHelper.setSupportedLocales(
-					"ar, ar_DZ, ar_EG, ar_MA, ar_SA, ar_JO, bg, bn_BD, cs, en, en_US, en_PH, en_AU, en_ZA, da_DK, de, de_AT, el, el_CY, es, fi, fr, fr_CA, hi_IN, hr_HR, hu, it, iw_IL, lt, lv, ja_JP, ko_KR, ms_MY, nl, no, ro, ru, pl, pt, pt_BR, sk, sl_SI, sr_RS, sv_SE, th, tr, ur_PK, vi_VN, zh_CN, mt_MT, et_EE, in_ID, ne_NP)");
+					"ar, ar_DZ, ar_EG, ar_MA, ar_SA, ar_JO, bg, bn_BD, cs, en, en_US, en_PH, en_AU, en_ZA, da_DK, de, de_AT, el, el_CY, es, fi, fr, fr_CA, hi_IN, hr_HR, hu, it, he_IL, lt, lv, ja_JP, ko_KR, ms_MY, nl, no, ro, ru, pl, pt, pt_BR, sk, sl_SI, sr_RS, sv_SE, th, tr, ur_PK, vi_VN, zh_CN, mt_MT, et_EE, id_ID, ne_NP)");
 
 			Locale.setDefault(MLTextHelper.parseLocale("en_GB"));
 			I18NUtil.setLocale(Locale.getDefault());

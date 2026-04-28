@@ -195,21 +195,24 @@
                                                 </#if>
                                                 </#if>
                                              	<#if args.activityType == 'State'>
-												 <p>The status of the task changed from <b>${args.beforeState}</b> to 
-													<#if args.afterState == 'Refusé'><b style="color:#ff642d">${args.afterState}</b>
-														<#elseif (args.afterState == 'En cours' || args.afterState == 'Terminé')><b style="color:#0f515f">${args.afterState}</b>
-																<#else><b>${args.afterState}</b>
-													</#if>
-                                             	 </p>
-                                             	<ul>
-                                             	 <#if (args.taskTitle)??>                                             
-	                                             	<li>Task : <b>${args.taskTitle}</b></li>                                       
-	                                             </#if> 
-	                                             <#if (args.taskDescription)?? && args.taskDescription != "">                                             
-	                                             	<li>Description : ${args.taskDescription}</li>                                       
-	                                             </#if> 
-	                                             </ul>         
-                                             		<#if args.taskComment??>
+										 <p>The status of the task changed from <b>${args.beforeState}</b> to 
+											<#if args.afterState == 'Refusé'><b style="color:#ff642d">${args.afterState}</b>
+												<#elseif (args.afterState == 'En cours' || args.afterState == 'Terminé')><b style="color:#0f515f">${args.afterState}</b>
+														<#else><b>${args.afterState}</b>
+											</#if>
+									         </p>
+										<ul>
+										 <#if args.task?? && args.task.properties["pjt:tlTaskName"]??>                                             
+											<li>Task : <b>${args.task.properties["pjt:tlTaskName"]!""}</b></li>                                       
+										 <#elseif (args.taskTitle)??> 
+											<li>Task : <b>${args.taskTitle}</b></li>                                       
+										 </#if> 
+										 <#if (args.taskDescription)?? && args.taskDescription != "">                                             
+											<li>Description : ${args.taskDescription}</li>                                       
+										 </#if> 
+										 </ul>         
+                                 </#if> 
+	                                             <#if args.taskComment??>
 		                                              <p style="color: #ff642d; font-weight: bold;">Comment :</p>
 	                                                        <div class="comment">
 	                                                           <p style="margin:0px;font-size:12px;color:grey"><b>${projectModifier.properties["cm:firstName"]!""} ${projectModifier.properties["cm:lastName"]!""}</b></p>
@@ -262,8 +265,9 @@
 									      	</#list>
 									  	</ul>  	
 									 </#if>     	
-                                             	<#elseif args.activityType == 'Comment'>
-                                             		<p> A comment has been  <#if args.activityEvent == 'Create'>created<#elseif args.activityEvent == 'Update'>updated<#else>deleted</#if> on <#if args.deliverableDescription??>the deliverable <b>"${args.deliverableDescription}"</b> <#elseif args.taskTitle??>the task <b>"${args.taskTitle}"</b> <#else>the project</#if>: </p>                                             		                                             		         
+                                             										<#elseif args.activityType == 'Comment'>
+											<p> A comment has been  <#if args.activityEvent == 'Create'>created<#elseif args.activityEvent == 'Update'>updated<#else>deleted</#if> on <#if args.deliverableDescription??>the deliverable <b>"${args.deliverableDescription}"</b> <#elseif args.task?? && args.task.properties["pjt:tlTaskName"]??>the task <b>"${args.task.properties["pjt:tlTaskName"]!""}"</b> <#elseif args.taskTitle??>the task <b>"${args.taskTitle}"</b> <#else>the project</#if>: </p>                                              												 				          
+                                  		         
                                              			<#if  args.comment?? && args.comment.content??> 
 			                                                       <div class="comment">${args.comment.content}</div>
 		                                             	</#if>

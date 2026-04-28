@@ -17,7 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation.details;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -31,7 +30,6 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.CharactDetailsValue;
 import fr.becpg.repo.product.data.ClientData;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -46,9 +44,9 @@ import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.FormulatedQties;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.PackagingHelper;
+import fr.becpg.repo.product.formulation.FormulationFilters;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
-import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
  * <p>CostCharactDetailsVisitor class.</p>
@@ -148,20 +146,18 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 		 * Composition
 		 */
 
-		if (formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
-			Composite<CompoListDataItem> composite = CompositeHelper.getHierarchicalCompoList(
-					formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())));
+		if (formulatedProduct.hasCompoListEl(FormulationFilters.EFFECTIVE_VARIANT_COMPO)) {
+			Composite<CompoListDataItem> composite = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(FormulationFilters.EFFECTIVE_VARIANT_COMPO));
 			visitCompoListChildren(context, formulatedProduct, composite, formulatedProduct.getProductLossPerc(), ratio, currLevel, qtyProvider);
 		}
 
-		if (formulatedProduct.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+		if (formulatedProduct.hasPackagingListEl(FormulationFilters.EFFECTIVE_VARIANT_PACKAGING)) {
 
 			/*
 			 * PackagingList
 			 */
 
-			for (PackagingListDataItem packagingListDataItem : formulatedProduct
-					.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+			for (PackagingListDataItem packagingListDataItem : formulatedProduct.getPackagingList(FormulationFilters.EFFECTIVE_VARIANT_PACKAGING)) {
 
 				if ((packagingListDataItem.getProduct() != null)
 						&& ((packagingListDataItem.getIsRecycle() == null) || !packagingListDataItem.getIsRecycle())) {
@@ -187,14 +183,13 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 
 		}
 
-		if (formulatedProduct.hasProcessListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+		if (formulatedProduct.hasProcessListEl(FormulationFilters.EFFECTIVE_VARIANT_PROCESS)) {
 			/*
 			 * ProcessList
 			 */
 			Double netQtyForCost = qtyProvider.getNetQty(null);
 
-			for (ProcessListDataItem processListDataItem : formulatedProduct
-					.getProcessList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+			for (ProcessListDataItem processListDataItem : formulatedProduct.getProcessList(FormulationFilters.EFFECTIVE_VARIANT_PROCESS)) {
 
 				Double qty = qtyProvider.getQty(processListDataItem,null) * ratio;
 

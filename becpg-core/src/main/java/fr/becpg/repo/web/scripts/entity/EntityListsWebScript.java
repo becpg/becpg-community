@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,16 +35,13 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.Path;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.PermissionService;
-import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
@@ -54,7 +50,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.extensions.surf.util.I18NUtil;
-import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
@@ -69,10 +64,10 @@ import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.SiteHelper;
-import fr.becpg.repo.license.BeCPGLicenseManager;
 import fr.becpg.repo.report.jscript.ReportAssociationDecorator;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.security.SecurityService;
+import fr.becpg.repo.web.scripts.entity.datalist.AbstractEntityDataListWebScript;
 
 /**
  * The Class ProductListsWebScript.
@@ -80,7 +75,8 @@ import fr.becpg.repo.security.SecurityService;
  * @author querephi
  * @version $Id: $Id
  */
-public class EntityListsWebScript extends AbstractWebScript {
+//TODO merge with EntitySecurityWebScript to have a common AbstractEntityDataListWebScript and remove duplicate code
+public class EntityListsWebScript extends AbstractEntityDataListWebScript {
 
 	private static final String RESULT_CONTAINER = "container";
 
@@ -95,21 +91,21 @@ public class EntityListsWebScript extends AbstractWebScript {
 	private static final String RESULT_ACL_TYPE_NODE = "aclTypeNode";
 
 	private static final String RESULT_REPORTS = "reports";
-	private static final String KEY_NAME_NAME = "name";
+	static final String KEY_NAME_NAME = "name";
 
-	private static final String KEY_NAME_TITLE = "title";
+    static final String KEY_NAME_TITLE = "title";
 
-	private static final String KEY_NAME_DESCRIPTION = "description";
+	static final String KEY_NAME_DESCRIPTION = "description";
 
-	private static final String KEY_NAME_ENTITY_NAME = "entityName";
+    static final String KEY_NAME_ENTITY_NAME = "entityName";
 
-	private static final String KEY_NAME_NODE_REF = "nodeRef";
+	static final String KEY_NAME_NODE_REF = "nodeRef";
 
-	private static final String KEY_NAME_ITEM_TYPE = "itemType";
+	static final String KEY_NAME_ITEM_TYPE = "itemType";
 
-	private static final String KEY_NAME_STATE = "state";
+    static final String KEY_NAME_STATE = "state";
 
-	private static final String KEY_NAME_PARENT_NODE_REF = "parentNodeRef";
+	static final String KEY_NAME_PARENT_NODE_REF = "parentNodeRef";
 
 	private static final String KEY_NAME_USER_ACCESS = "userAccess";
 
@@ -155,15 +151,11 @@ public class EntityListsWebScript extends AbstractWebScript {
 
 	private static final Log logger = LogFactory.getLog(EntityListsWebScript.class);
 
-	private NodeService nodeService;
-
-	private SecurityService securityService;
+	
 
 	private EntityListDAO entityListDAO;
 
 	private EntityTplService entityTplService;
-
-	private NamespaceService namespaceService;
 
 	private TransactionService transactionService;
 
@@ -177,20 +169,8 @@ public class EntityListsWebScript extends AbstractWebScript {
 
 	private BehaviourFilter policyBehaviourFilter;
 
-	private LockService lockService;
-
 	private ReportAssociationDecorator reportAssociationDecorator;
 
-	private BeCPGLicenseManager becpgLicenseManager;
-
-	/**
-	 * <p>Setter for the field <code>becpgLicenseManager</code>.</p>
-	 *
-	 * @param becpgLicenseManager a {@link fr.becpg.repo.license.BeCPGLicenseManager} object
-	 */
-	public void setBecpgLicenseManager(BeCPGLicenseManager becpgLicenseManager) {
-		this.becpgLicenseManager = becpgLicenseManager;
-	}
 
 	/**
 	 * <p>Setter for the field <code>permissionService</code>.</p>
@@ -199,24 +179,6 @@ public class EntityListsWebScript extends AbstractWebScript {
 	 */
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>nodeService</code>.</p>
-	 *
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
-	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>securityService</code>.</p>
-	 *
-	 * @param securityService a {@link fr.becpg.repo.security.SecurityService} object.
-	 */
-	public void setSecurityService(SecurityService securityService) {
-		this.securityService = securityService;
 	}
 
 	/**
@@ -235,15 +197,6 @@ public class EntityListsWebScript extends AbstractWebScript {
 	 */
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>namespaceService</code>.</p>
-	 *
-	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
-	 */
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
 	}
 
 	/**
@@ -298,23 +251,6 @@ public class EntityListsWebScript extends AbstractWebScript {
 	 */
 	public void setReportAssociationDecorator(ReportAssociationDecorator reportAssociationDecorator) {
 		this.reportAssociationDecorator = reportAssociationDecorator;
-	}
-
-	/**
-	 * <p>Setter for the field <code>lockService</code>.</p>
-	 *
-	 * @param lockService a {@link org.alfresco.service.cmr.lock.LockService} object.
-	 */
-	public void setLockService(LockService lockService) {
-		this.lockService = lockService;
-	}
-
-	private Serializable defaultValue(Serializable val, Serializable def) {
-		if (val != null) {
-			return val;
-		} else {
-			return def;
-		}
 	}
 
 	private JSONArray makeListTypes(Iterable<ClassDefinition> classDefinitions) throws JSONException {
@@ -478,6 +414,14 @@ public class EntityListsWebScript extends AbstractWebScript {
 		return result;
 	}
 
+	private NodeRef getOrCreateListContainer(NodeRef nodeRef) {
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
+		if (listContainerNodeRef == null) {
+			listContainerNodeRef = AuthenticationUtil.runAsSystem(() -> entityListDAO.createListContainer(nodeRef));
+		}
+		return listContainerNodeRef;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 *
@@ -527,10 +471,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 
 				NodeRef templateNodeRef = entityTplService.getEntityTpl(aclTypeQname);
 				if (templateNodeRef != null) {
-					listContainerNodeRef = entityListDAO.getListContainer(templateNodeRef);
-					if (listContainerNodeRef == null) {
-						listContainerNodeRef = entityListDAO.createListContainer(templateNodeRef);
-					}
+					listContainerNodeRef = getOrCreateListContainer(templateNodeRef);
 				} else {
 					logger.error("Cannot get templateNodeRef for type : " + aclType);
 				}
@@ -540,10 +481,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 			else if ((nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITYLISTS) && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL))
 					|| BeCPGModel.TYPE_SYSTEM_ENTITY.equals(nodeType)) {
 
-				listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
-				if (listContainerNodeRef == null) {
-					listContainerNodeRef = entityListDAO.createListContainer(nodeRef);
-				}
+				listContainerNodeRef = getOrCreateListContainer(nodeRef);
 
 				// Add types that can be added
 				Set<ClassDefinition> classDefinitions = new HashSet<>();
@@ -570,15 +508,10 @@ public class EntityListsWebScript extends AbstractWebScript {
 					entityTplNodeRef = entityTplService.getEntityTpl(nodeType);
 				}
 
-				// #1763 Do not work on permissions changed or when node is
-
 				if (entityTplNodeRef != null) {
 
 					final NodeRef templateNodeRef = entityTplNodeRef;
-					// Redmine #59 : copy missing datalists as admin, otherwise,
-					// if
-					// a datalist is added in product template, users cannot see
-					// datalists of valid products
+
 					StopWatch watch = null;
 					if (logger.isDebugEnabled()) {
 						watch = new StopWatch();
@@ -588,7 +521,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 
 					try {
 
-						AuthenticationUtil.runAs(() -> {
+						AuthenticationUtil.runAsSystem(() -> {
 							RetryingTransactionCallback<Object> actionCallback = () -> {
 								policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 								policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
@@ -598,7 +531,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 								return null;
 							};
 							return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback);
-						}, AuthenticationUtil.getAdminUserName());
+						});
 
 					} finally {
 						MLPropertyInterceptor.setMLAware(mlAware);
@@ -623,9 +556,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 
 				boolean isExternalUser = AuthorityHelper.isCurrentUserExternal();
 
-				Iterator<NodeRef> it = listsNodeRef.iterator();
-				while (it.hasNext()) {
-					NodeRef temp = it.next();
+				listsNodeRef.removeIf(temp -> {
 					if (permissionService.hasPermission(temp, PermissionService.READ) == AccessStatus.ALLOWED) {
 						String dataListType = (String) nodeService.getProperty(temp, DataListModel.PROP_DATALISTITEMTYPE);
 						int accessMode = securityService.computeAccessMode(nodeRef, nodeType, dataListType);
@@ -639,15 +570,15 @@ public class EntityListsWebScript extends AbstractWebScript {
 							if (logger.isTraceEnabled()) {
 								logger.trace("Don't display dataList:" + dataListType);
 							}
-							it.remove();
+							return true;
 						} else {
 							accessRights.put(temp, (!isExternalUser && (SecurityService.WRITE_ACCESS == accessMode)
 									&& (permissionService.hasPermission(temp, PermissionService.WRITE) == AccessStatus.ALLOWED)));
+							return false;
 						}
-					} else {
-						it.remove();
 					}
-				}
+					return true;
+				});
 			}
 
 			Path path = nodeService.getPath(nodeRef);

@@ -36,7 +36,6 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.config.format.FormatMode;
@@ -126,16 +125,15 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public BeCPGSpelFunctionsWrapper(RepositoryEntity entity) {
 			this.entity = entity;
 		}
-		
+
 		/**
 		 * Helper {@code @beCPG.entity()}
 		 *
 		 * @return current entity
 		 */
 		public RepositoryEntity entity() {
-		    return entity;
+			return entity;
 		}
-		
 
 		/**
 		 * Helper {@code @beCPG.findOne($nodeRef)}
@@ -231,6 +229,85 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public Serializable setValue(String qname, Serializable value) {
 			return setValue(entity, qname, value);
+		}
+
+		/**
+		 * Helper {@code @beCPG.copyProps($target, $sourceNodeRef, $mapping)}
+		 *
+		 * <p>Copies multiple properties from a source node to a target entity in a single
+		 * {@code nodeService.getProperties()} call. This is significantly more efficient
+		 * than multiple individual {@code propValue/setValue} calls on the same source node.</p>
+		 *
+		 * <pre>{@code @beCPG.copyProps(dataListItem, dataListItem.product, "yr:sourceProp1|yr:targetProp1,yr:sourceProp2|yr:targetProp2")}</pre>
+		 *
+		 * <p>When source and target property names are the same, the target can be omitted:</p>
+		 * <pre>{@code @beCPG.copyProps(dataListItem, dataListItem.product, "yr:sameProp1,yr:sameProp2")}</pre>
+		 *
+		 * @param target the target entity to set properties on
+		 * @param sourceNodeRef the source node to read properties from
+		 * @param mapping comma-separated list of source|target property QName pairs
+		 */
+		public void copyProps(RepositoryEntity target, NodeRef sourceNodeRef, String mapping) {
+			if (target == null || sourceNodeRef == null || mapping == null || mapping.isBlank()) {
+				return;
+			}
+			Map<QName, Serializable> sourceProps = nodeService.getProperties(sourceNodeRef);
+			for (String entry : mapping.split(",")) {
+				String trimmed = entry.trim();
+				if (trimmed.isEmpty()) {
+					continue;
+				}
+				String sourceQname;
+				String targetQname;
+				int pipeIndex = trimmed.indexOf('|');
+				if (pipeIndex > 0) {
+					sourceQname = trimmed.substring(0, pipeIndex).trim();
+					targetQname = trimmed.substring(pipeIndex + 1).trim();
+				} else {
+					sourceQname = trimmed;
+					targetQname = trimmed;
+				}
+				Serializable value = sourceProps.get(getQName(sourceQname));
+				target.getExtraProperties().put(getQName(targetQname), value);
+			}
+		}
+
+		/**
+		 * Helper {@code @beCPG.copyAssocs($target, $sourceNodeRef, $mapping)}
+		 *
+		 * <p>Copies multiple associations from a source node to a target entity in a single call.</p>
+		 *
+		 * <pre>{@code @beCPG.copyAssocs(dataListItem, dataListItem.product, "bcpg:sourceAssoc|yr:targetAssoc,bcpg:otherAssoc|yr:otherTarget")}</pre>
+		 *
+		 * <p>When source and target association names are the same, the target can be omitted:</p>
+		 * <pre>{@code @beCPG.copyAssocs(dataListItem, dataListItem.product, "bcpg:sameAssoc1,bcpg:sameAssoc2")}</pre>
+		 *
+		 * @param target the target entity to set associations on
+		 * @param sourceNodeRef the source node to read associations from
+		 * @param mapping comma-separated list of source|target association QName pairs
+		 */
+		public void copyAssocs(RepositoryEntity target, NodeRef sourceNodeRef, String mapping) {
+			if (target == null || sourceNodeRef == null || mapping == null || mapping.isBlank()) {
+				return;
+			}
+			for (String entry : mapping.split(",")) {
+				String trimmed = entry.trim();
+				if (trimmed.isEmpty()) {
+					continue;
+				}
+				String sourceQname;
+				String targetQname;
+				int pipeIndex = trimmed.indexOf('|');
+				if (pipeIndex > 0) {
+					sourceQname = trimmed.substring(0, pipeIndex).trim();
+					targetQname = trimmed.substring(pipeIndex + 1).trim();
+				} else {
+					sourceQname = trimmed;
+					targetQname = trimmed;
+				}
+				List<NodeRef> assocNodeRefs = associationService.getTargetAssocs(sourceNodeRef, getQName(sourceQname));
+				associationService.update(target.getNodeRef(), getQName(targetQname), assocNodeRefs);
+			}
 		}
 
 		/**
@@ -336,7 +413,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return the localized value, or {@code null} if not found
 		 */
 		public Serializable propMLValue(NodeRef nodeRef, String qname, String locale) {
-			Serializable value = propMLValue(nodeRef, qname); 
+			Serializable value = propMLValue(nodeRef, qname);
 			if (value instanceof MLText mlText) {
 				return (locale == null) ? value : propMLValue(mlText, locale);
 			}
@@ -854,8 +931,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public <T> Collection<T> filter(Collection<T> range, String formula) {
 			if (range != null) {
-				ExpressionParser parser = formulaService.getSpelParser();
-				Expression exp = parser.parseExpression(formula);
+				Expression exp = formulaService.parseExpression(formula);
 
 				return range.stream().filter(p -> exp.getValue(formulaService.createItemSpelContext(entity, p), Boolean.class)).toList();
 			}
@@ -872,8 +948,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		@SuppressWarnings("unchecked")
 		public <T> Collection<T> replaceByFormula(Collection<T> range, String formula) {
 			if (range != null) {
-				ExpressionParser parser = formulaService.getSpelParser();
-				Expression exp = parser.parseExpression(formula);
+				Expression exp = formulaService.parseExpression(formula);
 
 				return (Collection<T>) range.stream().map(p -> exp.getValue(formulaService.createItemSpelContext(entity, p))).toList();
 			}
@@ -889,11 +964,27 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public <T> Map<Object, List<T>> groupingByFormula(Collection<T> range, String groupingFormula) {
 			if (range != null) {
-				ExpressionParser parser = formulaService.getSpelParser();
-				Expression exp = parser.parseExpression(groupingFormula);
+				Expression exp = formulaService.parseExpression(groupingFormula);
 
 				return range.stream().collect(Collectors.groupingBy(p -> exp.getValue(formulaService.createItemSpelContext(entity, p))));
 
+			}
+			return null;
+		}
+
+		/**
+		 * Flatten a list of lists into a single list.
+		 * Null lists are ignored.
+		 * 
+		 * * Helper {@code @beCPG.flatten($range)}
+		 *
+		 * @param <T>   the type of elements
+		 * @param range the list of lists to flatten
+		 * @return a single flattened list
+		 */
+		public static <T> List<T> flatten(List<? extends Collection<T>> range) {
+			if (range != null) {
+				return range.stream().filter(Objects::nonNull).flatMap(Collection::stream).toList();
 			}
 			return null;
 		}

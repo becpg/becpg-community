@@ -188,6 +188,37 @@
 
 		}
 	});
+	
+	YAHOO.Bubbling.fire("registerAction", {
+		actionName: "onActionCompareDocument",
+		fn: function onActionCompareDocument(p_record) {
+			var compareUrl = Alfresco.constants.URL_PAGECONTEXT + 'artworks-viewer?nodeRef=' + p_record.nodeRef + '&compareTo=';
+
+			// Always create a new instance
+			this.modules.documentCompare = new Alfresco.module.SimpleDialog(this.id + "-documentCompare").setOptions({
+				width: "33em",
+				templateUrl: Alfresco.constants.URL_SERVICECONTEXT + "modules/document-compare/document-compare",
+				actionUrl: compareUrl,
+				validateOnSubmit: false,
+				firstFocus: this.id + "-documentCompare-document-field",
+				doBeforeFormSubmit: {
+					fn: function(form) {
+						this.modules.documentCompare.form.setAJAXSubmit(false);
+						this.modules.documentCompare.hide();
+						
+						var document = YAHOO.util.Dom.get(this.id + "-documentCompare-document-added").value;
+						var comparisonType = YAHOO.util.Dom.get(this.id + "-documentCompare-comparison-type").value;
+						
+						window.location.href = compareUrl + document + "&mode=" + comparisonType;
+					},
+					scope: this
+				}
+			});
+
+			this.modules.documentCompare.show();
+		}
+	});
+
 
 })();
 

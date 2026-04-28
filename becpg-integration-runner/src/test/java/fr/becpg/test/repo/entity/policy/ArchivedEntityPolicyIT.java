@@ -53,9 +53,9 @@ public class ArchivedEntityPolicyIT extends PLMBaseTestCase {
 	
 	private void waitForEntityData(NodeRef nodeRef, boolean created) throws InterruptedException {
 		int i = 0;
-		while (i < 50) {
+		while (i < 100) {
 			Thread.sleep(1000);
-			logger.debug("waiting for entity data...");
+			logger.info("waiting for entity data...");
 			i++;
 			if (inWriteTx(() -> {
 				if (created) {

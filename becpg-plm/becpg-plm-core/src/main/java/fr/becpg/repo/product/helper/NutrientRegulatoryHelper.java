@@ -19,18 +19,23 @@ public class NutrientRegulatoryHelper {
 	
 	private static NutrientRegulatoryHelper instance;
 	
-	@Autowired
-	private SystemConfigurationService systemConfigurationService;
+	private final SystemConfigurationService systemConfigurationService;
+	
+	private final NutrientRegulatoryPlugin[] nutrientPlugins;
 	
 	/**
 	 * <p>Constructor for NutrientRegulatoryHelper.</p>
+	 *
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 * @param nutrientPlugins an array of {@link fr.becpg.repo.product.helper.NutrientRegulatoryPlugin} objects
 	 */
-	public NutrientRegulatoryHelper() {
+	@Autowired
+	public NutrientRegulatoryHelper(SystemConfigurationService systemConfigurationService,
+			NutrientRegulatoryPlugin[] nutrientPlugins) {
+		this.systemConfigurationService = systemConfigurationService;
+		this.nutrientPlugins = nutrientPlugins;
 		instance = this;
 	}
-	
-	@Autowired
-	private NutrientRegulatoryPlugin[] nutrientPlugins;
 	
 	/**
 	 * <p>computeScore.</p>

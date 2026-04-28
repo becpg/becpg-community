@@ -37,9 +37,16 @@ function main() {
         "beCPG.decernis.analysisUrl",
         "beCPG.decernis.maxCountriesPerRequest",
         "beCPG.decernis.maxUsagesPerRequest",
-        "beCPG.entity.documents.recursive.depth"
+        "beCPG.entity.documents.recursive.depth",
     ].forEach(function(p) {
         addAttribute(p, "system");
+    });
+
+    [
+        "beCPG.activity.purge.threshold",
+        "beCPG.activity.purge.retention.months"
+    ].forEach(function(p) {
+        addAttribute(p, "activity");
     });
 
     [
@@ -91,7 +98,8 @@ function main() {
         "beCPG.entity.report.mltext.fields",
         "beCPG.entity.report.mltext.locales",
         "beCPG.product.report.showDeprecatedXml",
-        "beCPG.product.compare.extractRawMaterial"
+        "beCPG.product.compare.extractRawMaterial",
+        "beCPG.comparison.pivots"
     ].forEach(function(p) {
         addAttribute(p, "report");
     });
@@ -99,6 +107,7 @@ function main() {
     [
         "beCPG.formulation.reqCtrlList.maxRclSourcesToKeep",
         "beCPG.formulation.reqCtrlList.addChildRclSources",
+        "beCPG.formulation.allergenList.sortByParent",
         "beCPG.formulation.specification.addInfoReqCtrl",
         "beCPG.formulation.nutList.propagateUpEnable",
         "beCPG.formulation.ingsCalculatingWithYield",
@@ -117,7 +126,13 @@ function main() {
         "beCPG.eco.automatic.states",
         "beCPG.eco.automatic.revision.type",
         "beCPG.eco.automatic.record.version.type",
-        "beCPG.eco.automatic.deleteOnApply"
+        "beCPG.eco.automatic.deleteOnApply",
+        "beCPG.formulation.channel.maxProducts",
+        "beCPG.formulation.channel.minHoursSinceModification",
+        "beCPG.formulation.channel.maxCpuUsage",
+        "beCPG.formulation.channel.maxActiveUsers",
+        "beCPG.formulation.channel.force",
+        "beCPG.formulation.channel.excludedTimeSlot"
     ].forEach(function(p) {
         addAttribute(p, "automatic-formulation");
     });

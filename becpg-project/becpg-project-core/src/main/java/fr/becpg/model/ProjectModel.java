@@ -286,5 +286,22 @@ public interface ProjectModel {
 	/** Constant <code>PROP_PROJECT_OWNERS</code> */
 	QName PROP_PROJECT_OWNERS = QName.createQName(PROJECT_URI, "projectOwners");
 	
+	/** Constant <code>TYPE_CALENDAR</code> */
+	QName TYPE_CALENDAR = QName.createQName(PROJECT_URI, "calendar");
+	
+	/** Constant <code>PROP_CAL_PUBLIC_HOLYDAYS_DATES</code> */
+	QName PROP_CAL_PUBLIC_HOLYDAYS_DATES = QName.createQName(PROJECT_URI, "calPublicHolydaysDates");
+	
+	/** Constant <code>PROP_CAL_HOLYDAYS_DATES</code> */
+	QName PROP_CAL_HOLYDAYS_DATES = QName.createQName(PROJECT_URI, "calHolydayDates");
+	
+	/** Constant <code>PROP_CAL_NON_WORKING_DAYS</code> */
+	QName PROP_CAL_NON_WORKING_DAYS = QName.createQName(PROJECT_URI, "calNonWorkingDays");
+	
+	/** Constant <code>ASSOC_PROJECT_CALENDAR</code> */
+	QName ASSOC_PROJECT_CALENDAR = QName.createQName(PROJECT_URI, "projectCalendar");
+	
+	/** Constant <code>ASSOC_TL_CALENDAR</code> */
+	QName ASSOC_TL_CALENDAR = QName.createQName(PROJECT_URI, "tlCalendar");
 
 }

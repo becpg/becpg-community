@@ -71,7 +71,6 @@ import org.springframework.extensions.surf.util.ParameterCheck;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
-import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>BecpgCopyServiceImpl class.</p>
@@ -102,9 +101,6 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 
 	    private ContentPropertyRestrictionInterceptor contentPropertyRestrictionInterceptor;
 	    
-
-		private SystemConfigurationService systemConfigurationService;
-		
 	    
 	    /* Policy delegates */
 	    private ClassPolicyDelegate<CopyServicePolicies.OnCopyNodePolicy> onCopyNodeDelegate;
@@ -119,15 +115,6 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	        super();
 	    }
 	    
-
-		private String typesToReset() {
-			return systemConfigurationService.confValue("beCPG.copyOrBranch.typesToReset");
-		}
-
-	    
-	    
-	    
-	    
 	    /**
 	     * <p>Setter for the field <code>contentPropertyRestrictionInterceptor</code>.</p>
 	     *
@@ -137,16 +124,6 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 			this.contentPropertyRestrictionInterceptor = contentPropertyRestrictionInterceptor;
 			this.contentPropertyRestrictionInterceptor.setGlobalContentPropertyRestrictionWhiteList(BecpgCopyServiceImpl.class.getName());
 			
-		}
-
-
-	    /**
-	     * <p>Setter for the field <code>systemConfigurationService</code>.</p>
-	     *
-	     * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
-	     */
-	    public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
-			this.systemConfigurationService = systemConfigurationService;
 		}
 
 
@@ -1060,37 +1037,27 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	        Collection<CopyServicePolicies.OnCopyNodePolicy> policies = this.onCopyNodeDelegate.getList(sourceClassQName);
 	        ClassDefinition sourceClassDef = dictionaryService.getClass(sourceClassQName);
 	        CopyBehaviourCallback callback = null;
-	        if (sourceClassDef == null || isExcludeTypes(sourceClassQName))
-	        {
-	            if(isExcludeTypes(sourceClassQName)) {
-	            	 CompoundCopyBehaviourCallback compoundCallback = new CompoundCopyBehaviourCallback(sourceClassQName);
-	            	 compoundCallback.addBehaviour(DoNothingCopyBehaviourCallback.getInstance());
-	            	 callback = compoundCallback;
-	            } else {
-	            	 callback = DoNothingCopyBehaviourCallback.getInstance();
-	            }
-	        } else {
-		        if (policies.isEmpty())
-		        {
-		            // Default behaviour
-		            callback = DefaultCopyBehaviourCallback.getInstance();
-		        }
-		        else if (policies.size() == 1)
-		        {
-		            callback = policies.iterator().next().getCopyCallback(sourceClassQName, copyDetails);
-		        }
-		        else
-		        {
-		            // There are multiple
-		            CompoundCopyBehaviourCallback compoundCallback = new CompoundCopyBehaviourCallback(sourceClassQName);
-		            for (CopyServicePolicies.OnCopyNodePolicy policy : policies)
-		            {
-		                CopyBehaviourCallback nestedCallback = policy.getCopyCallback(sourceClassQName, copyDetails);
-		                compoundCallback.addBehaviour(nestedCallback);
-		            }
-		            callback = compoundCallback;
-		        }
-	        }
+			if (sourceClassDef == null) {
+				callback = DoNothingCopyBehaviourCallback.getInstance();
+			} else {
+				List<CopyBehaviourCallback> policyCallbacks = new ArrayList<>();
+				if (policies.isEmpty()) {
+					policyCallbacks.add(DefaultCopyBehaviourCallback.getInstance());
+				} else if (policies.size() == 1) {
+					policyCallbacks.add(policies.iterator().next().getCopyCallback(sourceClassQName, copyDetails));
+				} else {
+					for (CopyServicePolicies.OnCopyNodePolicy policy : policies) {
+						CopyBehaviourCallback nestedCallback = policy.getCopyCallback(sourceClassQName, copyDetails);
+						policyCallbacks.add(nestedCallback);
+					}
+				}
+				CompoundCopyBehaviourCallback compoundCallback = new CompoundCopyBehaviourCallback(sourceClassQName);
+				for (CopyBehaviourCallback policyCallback : policyCallbacks) {
+					compoundCallback.addBehaviour(policyCallback);
+				}
+				callback = compoundCallback;
+				
+			}
 	        // Done
 	        if (logger.isDebugEnabled())
 	        {
@@ -1145,10 +1112,6 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	        }
 	    }
 	    
-	    
-	    private boolean isExcludeTypes(QName sourceClassQName) {
-	    	return typesToReset().contains(dictionaryService.toPrefixString(sourceClassQName));
-	    }
 	    
 	    /**
 	     * Copy properties that do not belong to the source node's type or any of the aspects.

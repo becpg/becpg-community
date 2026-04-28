@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright (C) 2010-2025 beCPG. 
+  Copyright (C) 2010-2026 beCPG. 
    
   This file is part of beCPG 
    
@@ -42,10 +42,12 @@
 		<property name="serviceRegistry" ref="ServiceRegistry" />
 		<property name="googleApiKey" value="${beCPG.translate.googleAPIKey}" />
 		<property name="deepLAPIKey" value="${beCPG.translate.deepLAPIKey}" />
+		<property name="entityFormatService" ref="entityFormatService" />
 	</bean>
 
 	<bean id="webscript.fr.becpg.form.multilingualField.post" class="fr.becpg.repo.web.scripts.multilingual.MultilingualFieldWebScript" parent="webscript">
 		<property name="serviceRegistry" ref="ServiceRegistry" />
+		<property name="entityFormatService" ref="entityFormatService" />
 	</bean>
 	
 	<!-- Saved search -->
@@ -102,6 +104,10 @@
 		<property name="batchQueueService" ref="batchQueueService" />
 	</bean>
 	
+	<bean id="webscript.fr.becpg.admin.batchQueue.post" class="fr.becpg.repo.web.scripts.admin.BatchQueueServiceWebScript" parent="webscript">
+		<property name="batchQueueService" ref="batchQueueService" />
+	</bean>
+	
    <!-- System Configuration -->
 	<bean id="webscript.fr.becpg.admin.systemConfiguration.post" class="fr.becpg.repo.web.scripts.admin.SystemConfigurationWebScript" parent="webscript">
 		<property name="systemConfigurationService" ref="systemConfigurationService" />
@@ -124,6 +130,12 @@
 		<property name="lockService" ref="lockService" />
         <property name="reportAssociationDecorator" ref="reportAssociationDecorator"/>
         <property name="becpgLicenseManager" ref="becpgLicenseManager"/>
+	</bean>
+
+	<bean id="webscript.fr.becpg.security.entitySecurityCheck.get" class="fr.becpg.repo.web.scripts.entity.EntitySecurityWebScript" parent="abstractEntityWebScript">
+		<property name="workflowService" ref="WorkflowService" />
+		<property name="workflowPackageComponent" ref="workflowPackageImpl" />
+		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>
 
 	<bean id="webscript.fr.becpg.entity.entityDictionary.get" class="fr.becpg.repo.web.scripts.entity.EntityDictionaryWebScript" parent="webscript">
@@ -213,6 +225,7 @@
 		<property name="attributeExtractorService" ref="attributeExtractorService"/>
 		<property name="serviceRegistry" ref="ServiceRegistry"/>
 		<property name="versionService" ref="versionService"/>
+		<property name="entityActivityService" ref="entityActivityService"/>
 	</bean>
 
 	
@@ -272,6 +285,7 @@
 	</bean>
 	
 	<bean id="webscript.fr.becpg.remote.dictionary.get" class="fr.becpg.repo.web.scripts.remote.EntityDictionaryWebScript" parent="abstractEntityWebScript">
+		<property name="entityDictionaryService" ref="entityDictionaryService" />
 	</bean>
 	
 	<bean id="webscript.fr.becpg.remote.activities.get" class="fr.becpg.repo.web.scripts.remote.GetActivitiesWebScript"  parent="abstractEntityWebScript" >

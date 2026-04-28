@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  Copyright (C) 2010-2025 beCPG. 
+  Copyright (C) 2010-2026 beCPG. 
    
   This file is part of beCPG 
    
@@ -147,6 +147,7 @@
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
 		<property name="ratingService" ref="ratingService" />
 		<property name="beCPGLicenseManager" ref="becpgLicenseManager" />
+		<property name="authorityService" ref="authorityService" />
 	</bean>
 
 	<bean id="simpleExtractor" class="fr.becpg.repo.entity.datalist.impl.SimpleExtractor" parent="abstractDataListExtractor">
@@ -281,7 +282,6 @@
 	<bean id="copyService" class="fr.becpg.repo.copy.BecpgCopyServiceImpl" parent="abstractBaseCopyService" init-method="init">
 		<property name="cannedQueryRegistry" ref="copyServiceCannedQueryRegistry" />
 		<property name="dictionaryService" ref="cachedDictionaryService" />
-		<property name="systemConfigurationService" ref="systemConfigurationService" />
 		<property name="nodeService" ref="NodeService" />
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="behaviourFilter" ref="policyBehaviourFilter" />

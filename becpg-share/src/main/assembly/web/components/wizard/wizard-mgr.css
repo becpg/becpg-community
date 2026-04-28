@@ -17,13 +17,29 @@
 
 div.wizard-comments {
 	  margin-top: 20px;
-	  width: 21%;
+	  width: 22%;
 	  overflow: hidden;
+}
+
+.comments-list-readonly .comment-actions {
+    display: none !important;
+}
+
+.comments-list.read-only .comment-actions {
+    display: none !important;
+}
+
+.comments-list.read-only > div:first-child {
+    display: none;
+}
+
+.comments-list.read-only .comments-list-actions .left {
+    display: none;
 }
 
 div.wizard-catalog {
 	  margin-top: 20px;
-	  width: 21%;
+	  width: 22%;
 	  overflow: hidden;
 }
 
@@ -401,4 +417,27 @@ div.wizard-content {
 
 .wizard-mgr li.disabled > a {
     cursor: not-allowed;
+}
+
+.documents-read-only .toolbar {
+    display: none;
+}
+.documents-read-only .doclist-bar {
+    display: none;
+}
+
+.documents-read-only .action-set .document-upload-new-version,
+.documents-read-only .action-set .document-delete,
+.documents-read-only .action-set .document-edit-properties {
+    display: none !important;
+}
+
+.documents-read-only .action-set .document-download {
+    display: inline-block !important;
+    visibility: visible !important;
+}
+
+.documents-read-only .action-set .document-download a {
+    display: inline-block !important;
+    visibility: visible !important;
 }

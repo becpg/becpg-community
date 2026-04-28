@@ -32,12 +32,15 @@ import fr.becpg.repo.repository.model.EffectiveDataItem;
 public class EffectiveFilters<T extends EffectiveDataItem> implements DataListFilter<ProductData, T> {
 
 	/** Constant <code>EFFECTIVE="EFFECTIVE"</code> */
-	public final static String EFFECTIVE = "EFFECTIVE";
+	public static final  String EFFECTIVE = "EFFECTIVE";
 	/** Constant <code>FUTUR="FUTUR"</code> */
-	public final static String FUTUR = "FUTUR";
+	public static final  String FUTUR = "FUTUR";
 	/** Constant <code>ALL="ALL"</code> */
-	public final static String ALL = "ALL";
+	public static final  String ALL = "ALL";
 
+	/** Constant <code>EFFECTIVE_OR_FUTURE="EFFECTIVE_OR_FUTURE"</code> */
+	public static final  String EFFECTIVE_OR_FUTURE = "EFFECTIVE_OR_FUTURE";
+	
 	private String effectiveState = EFFECTIVE;
 	
 	private Date currentDate = null;
@@ -70,29 +73,47 @@ public class EffectiveFilters<T extends EffectiveDataItem> implements DataListFi
 	/** {@inheritDoc} */
 	@Override
 	public Predicate<T> createPredicate(final ProductData data) {
+		Date productEndEffectivity = data.getEndEffectivity();
+		Date productStartEffectivity = data.getStartEffectivity();
+		return createPredicate(productStartEffectivity, productEndEffectivity);
+	}
 
+	/**
+	 * <p>createPredicate.</p>
+	 *
+	 * @param productStartEffectivity a {@link java.util.Date} object
+	 * @param productEndEffectivity a {@link java.util.Date} object
+	 * @return a {@link java.util.function.Predicate} object
+	 */
+	public Predicate<T> createPredicate(Date productStartEffectivity, Date productEndEffectivity) {
 		final Date now = currentDate!=null ? currentDate : new Date();
-		final Date startEffectivity = (data.getStartEffectivity() != null) && (data.getStartEffectivity().getTime() > now.getTime())
-				? data.getStartEffectivity() : now;
+		final Date startEffectivity = (productStartEffectivity != null) && (productStartEffectivity.getTime() > now.getTime())
+				? productStartEffectivity : now;
 				
 		return item -> {
-
 			if (FUTUR.equals(effectiveState)) {
-
-				return ((item.getEndEffectivity() == null)
-						|| ((data.getStartEffectivity() != null) && (item.getEndEffectivity().getTime() > data.getStartEffectivity().getTime()))
-						|| (item.getEndEffectivity().getTime() > now.getTime()));
-			} else if (EFFECTIVE.equals(effectiveState)) {
-
-				return ((item.getStartEffectivity() == null) || (item.getStartEffectivity().getTime() <= startEffectivity.getTime()))
-						&& ((item.getEndEffectivity() == null)
-								|| ((data.getEndEffectivity() != null) && (item.getEndEffectivity().getTime() <= data.getEndEffectivity().getTime()))
-								|| (item.getEndEffectivity().getTime() > now.getTime()));
-			} else {
-				return true;
+				return isFuture(productStartEffectivity, now, item);
 			}
-
+			if (EFFECTIVE.equals(effectiveState)) {
+				return isEffective(productEndEffectivity, now, startEffectivity, item);
+			}
+			if (EFFECTIVE_OR_FUTURE.equals(effectiveState)) {
+				return isEffective(productEndEffectivity, now, startEffectivity, item) || isFuture(productStartEffectivity, now, item);
+			}
+			return true;
 		};
+	}
 
+	private boolean isEffective(Date productEndEffectivity, final Date now, final Date startEffectivity, T item) {
+		return ((item.getStartEffectivity() == null) || (item.getStartEffectivity().getTime() <= startEffectivity.getTime()))
+				&& ((item.getEndEffectivity() == null)
+						|| ((productEndEffectivity != null) && (item.getEndEffectivity().getTime() <= productEndEffectivity.getTime()))
+						|| (item.getEndEffectivity().getTime() > now.getTime()));
+	}
+
+	private boolean isFuture(Date productStartEffectivity, final Date now, T item) {
+		return (item.getEndEffectivity() == null)
+				|| ((productStartEffectivity != null) && (item.getEndEffectivity().getTime() > productStartEffectivity.getTime()))
+				|| (item.getEndEffectivity().getTime() > now.getTime());
 	}
 }

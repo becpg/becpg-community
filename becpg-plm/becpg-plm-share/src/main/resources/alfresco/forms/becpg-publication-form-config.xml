@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2010-2025 beCPG. 
+  Copyright (C) 2010-2026 beCPG. 
    
   This file is part of beCPG 
    
@@ -30,6 +30,7 @@
 					<show id="bp:pubChannelConfig" />
 					<show id="bp:pubChannelConfigFile" />
 					<show id="bp:pubChannelAction" />
+					<show id="bp:pubChannelAccounts" />
 				<!-- 	<show id="bp:pubChannelBatchId" />
 					<show id="bp:pubChannelLastSuccessBatchId" />
 					<show id="bp:pubChannelLastDate" />
@@ -75,6 +76,7 @@
 					<show id="bp:pubChannelCatalogId" />
 					<show id="bp:pubChannelConfig" />
 					<show id="bp:pubChannelConfigFile" />
+					<show id="bp:pubChannelAccounts" />
 
 				</field-visibility>
 				<appearance>
@@ -112,6 +114,7 @@
 					<show id="bp:pubChannelFailCount" />
 					<show id="bp:pubChannelError" />
 					<show id="bp:pubChannelAction" />
+					<show id="bp:pubChannelAccounts" />
 
 				</field-visibility>
 				<appearance>

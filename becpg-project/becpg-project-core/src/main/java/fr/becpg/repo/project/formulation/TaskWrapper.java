@@ -192,12 +192,15 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 		return null;
 	}
 
+	
+	
 	/**
 	 * <p>getRealDuration.</p>
 	 *
+	 * @param provider a {@link fr.becpg.repo.project.impl.WorkingDayProvider} object
 	 * @return a {@link java.lang.Integer} object.
 	 */
-	public Integer computeRealDuration() {
+	public Integer computeRealDuration(fr.becpg.repo.project.impl.WorkingDayProvider provider) {
 
 		if (task != null) {
 
@@ -205,14 +208,13 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 					|| TaskState.Refused.equals(task.getTaskState()) || TaskState.OnHold.equals(task.getTaskState())) {
 				Date endDate = ProjectHelper.removeTime(new Date());
 
-				// we wait the overdue of the task to take it in account
 				if ((task.getEnd() != null) && endDate.before(task.getEnd())) {
 					return getDuration();
 				}
-				return ProjectHelper.calculateTaskDuration(task.getStart(), endDate);
+				return ProjectHelper.calculateTaskDuration(task.getStart(), endDate, provider);
 
 			} else if (TaskState.Completed.equals(task.getTaskState())) {
-				return ProjectHelper.calculateTaskDuration(task.getStart(), task.getEnd());
+				return ProjectHelper.calculateTaskDuration(task.getStart(), task.getEnd(), provider);
 			} else if (TaskState.Cancelled.equals(task.getTaskState())) {
 				return 0;
 			}

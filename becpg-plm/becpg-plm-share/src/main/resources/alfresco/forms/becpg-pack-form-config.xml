@@ -1,4 +1,4 @@
-<!-- Copyright (C) 2010-2025 beCPG. This file is part of beCPG beCPG is free 
+<!-- Copyright (C) 2010-2026 beCPG. This file is part of beCPG beCPG is free 
 	software: you can redistribute it and/or modify it under the terms of the 
 	GNU Lesser General Public License as published by the Free Software Foundation, 
 	either version 3 of the License, or (at your option) any later version. beCPG 
@@ -256,6 +256,21 @@
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
+			
+			<form id="datagrid-finishedProduct">
+                <field-visibility>
+                    <show id="pack:pmlLevel" />
+                    <show id="pack:pmlMaterial" />
+                    <show id="pack:pmlPerc" />
+                    <show id="pack:pmlWeight" />
+                    <show id="pack:pmlRecycledPercentage" />
+                    <show id="fm:commentCount" force="true" />
+                </field-visibility>
+                <appearance>
+                    <field id="pack:pmlLevel" read-only="false" />
+                    <field id="fm:commentCount" label="hidden" read-only="true" />
+                </appearance>
+            </form>
 			
 			<form id="customListDatagrid">
                 <field-visibility>
