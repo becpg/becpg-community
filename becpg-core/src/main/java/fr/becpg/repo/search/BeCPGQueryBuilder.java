@@ -93,7 +93,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private static final String DEFAULT_FIELD_NAME = "keywords";
 
 	private static final String CANNED_QUERY_FILEFOLDER_LIST = "fileFolderGetChildrenCannedQueryFactory";
-	
+
 	private static final String ENABLE_INDEX_TYPES_KEY = "beCPG.solr.enableIndexForTypes";
 
 	private static BeCPGQueryBuilder INSTANCE = null;
@@ -124,7 +124,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	@Autowired
 	private NodeService nodeService;
-	
+
 	@Autowired
 	private Repository repository;
 
@@ -135,7 +135,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private QName type = null;
 	private final Set<QName> types = new HashSet<>();
 	private final Set<Pair<QName, Integer>> boostedTypes = new HashSet<>();
-	
+
  	private Set<QName> typesToExcludeFromIndex = new HashSet<>();
 
 	private final Set<QName> aspects = new HashSet<>();
@@ -166,7 +166,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private Locale locale = Locale.getDefault();
 	private StoreRef store = RepoConsts.SPACES_STORE;
     private boolean isBulkFetchEnabled = false;
-	
+
 	private String defaultSearchTemplate() {
 		return systemConfigurationService.confValue("beCPG.defaultSearchTemplate");
 	}
@@ -193,8 +193,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		// Make creation private
 
 	}
-	
-	
+
+
 	/**
 	 * <p>Setter for the field <code>typesToExcludeFromIndex</code>.</p>
 	 *
@@ -215,7 +215,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	                    .contains(nodeType.toPrefixString(INSTANCE.namespaceService)))
 	            .collect(Collectors.toSet());
 	}
-	
+
 	/**
 	 * <p>isExcludedFromIndex.</p>
 	 *
@@ -258,7 +258,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		this.store = store;
 		return this;
 	}
-	
+
 	/**
 	 * <p>
 	 * ofType.
@@ -286,7 +286,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		this.isExactType = true;
 		return ofType(typeQname);
 	}
-	
+
 	/**
 	 * <p>bulkFetchEnabled.</p>
 	 *
@@ -403,7 +403,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		this.page = page;
 		return this;
 	}
-	
+
 	/**
 	 * <p>page.</p>
 	 *
@@ -628,6 +628,20 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	 */
 	public BeCPGQueryBuilder andID(NodeRef nodeRef) {
 		this.ids.add(nodeRef);
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * andIDs.
+	 * </p>
+	 *
+	 * @param nodeRefs
+	 *            a {@link java.util.Set} object.
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
+	 */
+	public BeCPGQueryBuilder andIDs(Set<NodeRef> nodeRefs) {
+		this.ids.addAll(nodeRefs);
 		return this;
 	}
 
@@ -958,7 +972,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		excludeArchivedEntities();
 		return this;
 	}
-	
+
 	/**
 	 * <p>
 	 * excludeSystems.
@@ -1011,7 +1025,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 
-	
+
 	/**
 	 * <p>selectNodeByPath.</p>
 	 *
@@ -1019,10 +1033,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	public NodeRef selectNodeByPath(String xPath) {
-	
+
 		return selectNodeByPath(repository.getRootHome(),xPath);
 	}
-	
+
 	/**
 	 * <p>
 	 * selectNodeByPath.
@@ -1273,8 +1287,20 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		}
 
 		if (!ids.isEmpty()) {
-			for (NodeRef tmpNodeRef : ids) {
-				runnedQuery.append(mandatory(getCondEqualID(tmpNodeRef)));
+			if (ids.size() == 1) {
+				runnedQuery.append(mandatory(getCondEqualID(ids.iterator().next())));
+			} else {
+				runnedQuery.append(mandatory(startGroup()));
+				boolean first = true;
+				for (NodeRef tmpNodeRef : ids) {
+					if (first) {
+						runnedQuery.append(getCondEqualID(tmpNodeRef));
+					} else {
+						runnedQuery.append(or(getCondEqualID(tmpNodeRef)));
+					}
+					first = false;
+				}
+				runnedQuery.append(endGroup());
 			}
 		}
 
@@ -1403,8 +1429,19 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		}
 
 		if (!ids.isEmpty()) {
-			for (NodeRef tmpNodeRef : ids) {
-				whereClause.append(" AND D.cmis:objectId = '").append(tmpNodeRef).append("'");
+			if (ids.size() == 1) {
+				whereClause.append(" AND D.cmis:objectId = '").append(ids.iterator().next()).append("'");
+			} else {
+				whereClause.append(" AND D.cmis:objectId IN (");
+				boolean first = true;
+				for (NodeRef tmpNodeRef : ids) {
+					if (!first) {
+						whereClause.append(", ");
+					}
+					whereClause.append("'").append(tmpNodeRef).append("'");
+					first = false;
+				}
+				whereClause.append(")");
 			}
 		}
 
@@ -1608,11 +1645,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		// execute queries transactionally, when possible, and fall back to
 		// eventual consistency; or
 		sp.setQueryConsistency(queryConsistancy);
-		
+
 		if (logger.isDebugEnabled()) {
 			logger.debug("Use maxResults :" + maxResults);
 		}
-		
+
 		if (maxResults == RepoConsts.MAX_RESULTS_UNLIMITED && queryConsistancy == QueryConsistency.TRANSACTIONAL) {
 			logger.warn("Unlimited DB search: please check why this is called as it can lead to performance issues");
 		}
@@ -1948,5 +1985,5 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	}
 
-	
+
 }
