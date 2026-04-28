@@ -53,11 +53,19 @@ public class AllergenHelper {
 
         private final Map<NodeRef, Double> allergens = new HashMap<>();
 
+        private final Map<NodeRef, Double> allAllergens = new HashMap<>();
+
         private final Map<NodeRef, Double> inVolAllergens = new HashMap<>();
+
+        private final Map<NodeRef, Double> allInVolAllergens = new HashMap<>();
 
         private final Map<NodeRef, Double> inVolAllergensProcess = new HashMap<>();
 
+        private final Map<NodeRef, Double> allInVolAllergensProcess = new HashMap<>();
+
         private final Map<NodeRef, Double> inVolAllergensRawMaterial = new HashMap<>();
+
+        private final Map<NodeRef, Double> allInVolAllergensRawMaterial = new HashMap<>();
 
         /**
          * <p>Getter for the voluntary major allergen map.</p>
@@ -66,6 +74,15 @@ public class AllergenHelper {
          */
         public Map<NodeRef, Double> getAllergens() {
             return allergens;
+        }
+
+        /**
+         * <p>Getter for the full voluntary allergen map.</p>
+         *
+         * @return a {@link java.util.Map} object
+         */
+        public Map<NodeRef, Double> getAllAllergens() {
+            return allAllergens;
         }
 
         /**
@@ -78,6 +95,15 @@ public class AllergenHelper {
         }
 
         /**
+         * <p>Getter for the full involuntary allergen map.</p>
+         *
+         * @return a {@link java.util.Map} object
+         */
+        public Map<NodeRef, Double> getAllInVolAllergens() {
+            return allInVolAllergens;
+        }
+
+        /**
          * <p>Getter for involuntary allergens coming from a process source.</p>
          *
          * @return a {@link java.util.Map} object
@@ -87,12 +113,30 @@ public class AllergenHelper {
         }
 
         /**
+         * <p>Getter for the full involuntary process allergen map.</p>
+         *
+         * @return a {@link java.util.Map} object
+         */
+        public Map<NodeRef, Double> getAllInVolAllergensProcess() {
+            return allInVolAllergensProcess;
+        }
+
+        /**
          * <p>Getter for involuntary allergens coming from a raw material source.</p>
          *
          * @return a {@link java.util.Map} object
          */
         public Map<NodeRef, Double> getInVolAllergensRawMaterial() {
             return inVolAllergensRawMaterial;
+        }
+
+        /**
+         * <p>Getter for the full involuntary raw material allergen map.</p>
+         *
+         * @return a {@link java.util.Map} object
+         */
+        public Map<NodeRef, Double> getAllInVolAllergensRawMaterial() {
+            return allInVolAllergensRawMaterial;
         }
     }
 
@@ -120,23 +164,31 @@ public class AllergenHelper {
             }
 
             AllergenItem allergen = (AllergenItem) alfrescoRepository.findOne(item.getAllergen());
-            if (!AllergenType.Major.toString().equals(allergen.getAllergenType())) {
-                continue;
-            }
-
             if (Boolean.TRUE.equals(item.getVoluntary())) {
-                accumulate(maps.allergens, allergen.getNodeRef(), item.getQtyPerc());
+                accumulate(maps.allAllergens, allergen.getNodeRef(), item.getQtyPerc());
+                if (AllergenType.Major.toString().equals(allergen.getAllergenType())) {
+                    accumulate(maps.allergens, allergen.getNodeRef(), item.getQtyPerc());
+                }
             } else if (Boolean.TRUE.equals(item.getInVoluntary())) {
-                accumulate(maps.inVolAllergens, allergen.getNodeRef(), item.getQtyPerc());
+                accumulate(maps.allInVolAllergens, allergen.getNodeRef(), item.getQtyPerc());
+                if (AllergenType.Major.toString().equals(allergen.getAllergenType())) {
+                    accumulate(maps.inVolAllergens, allergen.getNodeRef(), item.getQtyPerc());
+                }
 
                 if (item.getInVoluntarySources() != null) {
                     for (NodeRef source : item.getInVoluntarySources()) {
                         QName sourceType = nodeService.getType(source);
 
                         if (PLMModel.TYPE_RAWMATERIAL.equals(sourceType)) {
-                            accumulate(maps.inVolAllergensRawMaterial, allergen.getNodeRef(), item.getQtyPerc());
+                            accumulate(maps.allInVolAllergensRawMaterial, allergen.getNodeRef(), item.getQtyPerc());
+                            if (AllergenType.Major.toString().equals(allergen.getAllergenType())) {
+                                accumulate(maps.inVolAllergensRawMaterial, allergen.getNodeRef(), item.getQtyPerc());
+                            }
                         } else if (PLMModel.TYPE_RESOURCEPRODUCT.equals(sourceType)) {
-                            accumulate(maps.inVolAllergensProcess, allergen.getNodeRef(), item.getQtyPerc());
+                            accumulate(maps.allInVolAllergensProcess, allergen.getNodeRef(), item.getQtyPerc());
+                            if (AllergenType.Major.toString().equals(allergen.getAllergenType())) {
+                                accumulate(maps.inVolAllergensProcess, allergen.getNodeRef(), item.getQtyPerc());
+                            }
                         }
                     }
                 }
@@ -252,11 +304,38 @@ public class AllergenHelper {
     public static String renderInvoluntaryAllergens(Collection<NodeRef> involuntaryAllergens, Collection<NodeRef> voluntaryAllergens,
             Locale locale, String separator, NodeService mlNodeService, AssociationService associationService) {
 
-        if ((involuntaryAllergens == null) || involuntaryAllergens.isEmpty()) {
+        return renderInvoluntaryAllergens(involuntaryAllergens, involuntaryAllergens, voluntaryAllergens, locale, separator, mlNodeService,
+                associationService);
+    }
+
+    /**
+     * Renders the involuntary / traces allergen list using a full involuntary set
+     * for grouped substitution detection while keeping the display list unchanged.
+     *
+     * @param involuntaryAllergens        an ordered {@link java.util.Collection} of involuntary allergen nodeRefs to render individually
+     * @param groupingInvoluntaryAllergens the full involuntary allergen set used to detect grouped substitutions
+     * @param voluntaryAllergens          the full voluntary allergen set of the product (used to detect voluntary categories)
+     * @param locale                      a {@link java.util.Locale} object
+     * @param separator                   the separator between allergen names
+     * @param mlNodeService               the ML-aware node service
+     * @param associationService          a {@link fr.becpg.repo.helper.AssociationService} object
+     * @return a rendered {@link java.lang.String} (may be empty, never {@code null})
+     */
+    public static String renderInvoluntaryAllergens(Collection<NodeRef> involuntaryAllergens, Collection<NodeRef> groupingInvoluntaryAllergens,
+            Collection<NodeRef> voluntaryAllergens, Locale locale, String separator, NodeService mlNodeService, AssociationService associationService) {
+
+        if (((involuntaryAllergens == null) || involuntaryAllergens.isEmpty())
+                && ((groupingInvoluntaryAllergens == null) || groupingInvoluntaryAllergens.isEmpty())) {
             return "";
         }
 
-        Set<NodeRef> involuntarySet = new LinkedHashSet<>(involuntaryAllergens);
+        Set<NodeRef> involuntarySet = new LinkedHashSet<>();
+        if (involuntaryAllergens != null) {
+            involuntarySet.addAll(involuntaryAllergens);
+        }
+        if (groupingInvoluntaryAllergens != null) {
+            involuntarySet.addAll(groupingInvoluntaryAllergens);
+        }
         Set<NodeRef> consumed = new LinkedHashSet<>();
         LinkedHashSet<String> rendered = new LinkedHashSet<>();
 
@@ -302,6 +381,10 @@ public class AllergenHelper {
                 rendered.add(localized);
                 consumed.addAll(involuntaryChildren);
             }
+        }
+
+        if (involuntaryAllergens == null) {
+            return String.join(separator, rendered);
         }
 
         for (NodeRef allergen : involuntaryAllergens) {
