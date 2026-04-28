@@ -939,6 +939,23 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList
 				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("%").withFormula("#.#%|HALF_DOWN").withLabelingRuleType(LabelingRuleType.ShowPerc));
+		LabelingRuleListDataItem forcePercentageRule = LabelingRuleListDataItem.build().withName("Force percentage").withFormula("#qty * 2")
+				.withLabelingRuleType(LabelingRuleType.ForcePercentage).withComponents(Collections.singletonList(ing2));
+		forcePercentageRule.setLocales(Collections.singletonList(Locale.FRENCH.toString()));
+		labelingRuleList.add(forcePercentageRule);
+
+		checkILL(finishedProductNodeRef, labelingRuleList,
+				"epaississant french : ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing2 french 33,3%, ing1 french 8,3%", Locale.FRENCH);
+
+		forcePercentageRule.setLocales(Collections.singletonList(Locale.ENGLISH.toString()));
+		checkILL(finishedProductNodeRef, labelingRuleList,
+				"epaississant french : ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing2 french 16,7%, ing1 french 8,3%", Locale.FRENCH);
+
+		labelingRuleList = new ArrayList<>();
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
 		labelingRuleList.add(LabelingRuleListDataItem.build().withName("%").withFormula("#.#%|UP").withLabelingRuleType(LabelingRuleType.ShowPerc));
 
 		checkILL(finishedProductNodeRef, labelingRuleList,

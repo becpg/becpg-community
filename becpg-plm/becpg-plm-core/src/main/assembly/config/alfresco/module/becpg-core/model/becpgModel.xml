@@ -448,6 +448,7 @@
 			<parameter name="allowedValues">
 				<list>
 					<value>ShowPerc</value>
+					<value>ForcePercentage</value>
 					<value>ShowGeo</value>
 					<value>ShowBio</value>
 					<value>Rename</value>
