@@ -174,6 +174,8 @@ public final class BeCPGModel {
 	// version aspect
 	/** Constant <code>ASPECT_COMPOSITE_VERSION</code> */
 	public static final QName ASPECT_COMPOSITE_VERSION = QName.createQName(BECPG_URI, "compositeVersion");
+	/** Constant <code>ASPECT_ENTITY_HISTORY</code> */
+	public static final QName ASPECT_ENTITY_HISTORY = QName.createQName(BECPG_URI, "entityHistoryAspect");
 	/** Constant <code>PROP_VERSION_LABEL</code> */
 	public static final QName PROP_VERSION_LABEL = QName.createQName(BECPG_URI, "versionLabel");
 	/** Constant <code>PROP_MANUAL_VERSION_LABEL</code> */
