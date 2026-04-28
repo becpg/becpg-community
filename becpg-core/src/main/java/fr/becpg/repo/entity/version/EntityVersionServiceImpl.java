@@ -419,10 +419,12 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 						Map<QName, Serializable> props = new HashMap<>();
 						props.put(ContentModel.PROP_NAME, nodeRef.getId());
 						
-						return nodeService
+						NodeRef versionHistoryNodeRef = nodeService
 								.createNode(entitiesHistoryFolder, ContentModel.ASSOC_CONTAINS,
 										QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, nodeRef.getId()), ContentModel.TYPE_FOLDER, props)
 								.getChildRef();
+						addEntityHistoryAspect(versionHistoryNodeRef);
+						return versionHistoryNodeRef;
 						
 					});
 				}
@@ -461,11 +463,15 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					NodeRef n = nodeService
 							.createNode(storeNodeRef, ContentModel.ASSOC_CONTAINS, QNAME_ENTITIES_HISTORY, ContentModel.TYPE_FOLDER, props)
 							.getChildRef();
+					addEntityHistoryAspect(n);
 
 					logger.debug("create folder 'EntitiesHistory' " + n + " - " + nodeService.exists(n));
 
 					return n;
 				});
+			}
+			if (entitiesHistoryNodeRef != null) {
+				addEntityHistoryAspect(entitiesHistoryNodeRef);
 			}
 			return entitiesHistoryNodeRef;
 		}, true);
@@ -1468,6 +1474,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				String jsonData = entityFormatService.generateEntityData(entityNodeRef, EntityFormat.JSON, extraParams);
 				
 				NodeRef versionNode = getEntityVersion(newVersion);
+				addEntityHistoryAspect(versionNode);
 
 				// add child assocs to versions
 				ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
@@ -1694,6 +1701,20 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		});
 	}
 
+	private void addEntityHistoryAspect(NodeRef nodeRef) {
+		if (nodeRef != null && nodeService.exists(nodeRef)) {
+			if (!nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_HISTORY)) {
+				nodeService.addAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_HISTORY, null);
+			}
+			if (!nodeService.hasAspect(nodeRef, ContentModel.ASPECT_INDEX_CONTROL)) {
+				Map<QName, Serializable> aspectProperties = new HashMap<>(2);
+				aspectProperties.put(ContentModel.PROP_IS_INDEXED, Boolean.FALSE);
+				aspectProperties.put(ContentModel.PROP_IS_CONTENT_INDEXED, Boolean.FALSE);
+				nodeService.addAspect(nodeRef, ContentModel.ASPECT_INDEX_CONTROL, aspectProperties);
+			}
+		}
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description, Date effectiveDate) {
@@ -1774,6 +1795,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, versionNodeRef.getId()), dbNodeService.getType(versionNodeRef), props);
 
 			NodeRef extractedVersion = childAssoc.getChildRef();
+			addEntityHistoryAspect(extractedVersion);
 
 			ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
 
@@ -1806,10 +1828,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			nodeService.setProperty(extractedVersion, ContentModel.PROP_VERSION_LABEL, versionLabel);
 
 			// MNT-11911 fix, add ASPECT_INDEX_CONTROL and property that not create indexes for search and not visible files/folders at 'My Documents' dashlet
-			Map<QName, Serializable> aspectProperties = new HashMap<>(2);
-			aspectProperties.put(ContentModel.PROP_IS_INDEXED, Boolean.FALSE);
-			aspectProperties.put(ContentModel.PROP_IS_CONTENT_INDEXED, Boolean.FALSE);
-			nodeService.addAspect(extractedVersion, ContentModel.ASPECT_INDEX_CONTROL, aspectProperties);
+			addEntityHistoryAspect(extractedVersion);
 
 			// add temporary aspect in order to delete the node later with VersionCleanerJob
 			nodeService.addAspect(extractedVersion, ContentModel.ASPECT_TEMPORARY, null);
