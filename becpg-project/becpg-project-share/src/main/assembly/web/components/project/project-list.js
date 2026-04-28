@@ -32,6 +32,7 @@ var g; // gantt var
         this.view = view;
 
         beCPG.component.ProjectList.superclass.constructor.call(this, htmlId);
+        this.options.bulkEditFormId = "bulk-edit";
 
         /**
          * Decoupled event listeners
