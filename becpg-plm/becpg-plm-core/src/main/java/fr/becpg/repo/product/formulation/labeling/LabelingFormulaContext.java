@@ -122,9 +122,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private Map<Locale, Set<String>> detectedAllergensByLocale = new HashMap<>();
 
 	private Map<NodeRef, Double> allergens = new HashMap<>();
+	private Map<NodeRef, Double> allAllergens = new HashMap<>();
 	private Map<NodeRef, Double> inVolAllergens = new HashMap<>();
+	private Map<NodeRef, Double> allInVolAllergens = new HashMap<>();
 	private Map<NodeRef, Double> inVolAllergensProcess = new HashMap<>();
+	private Map<NodeRef, Double> allInVolAllergensProcess = new HashMap<>();
 	private Map<NodeRef, Double> inVolAllergensRawMaterial = new HashMap<>();
+	private Map<NodeRef, Double> allInVolAllergensRawMaterial = new HashMap<>();
 
 	private Set<FootNoteRule> footNotes = new HashSet<>();
 
@@ -218,6 +222,17 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
+	 * <p>
+	 * Getter for the field <code>allAllergens</code>.
+	 * </p>
+	 *
+	 * @return a {@link java.util.Set} object.
+	 */
+	public Map<NodeRef, Double> getAllAllergens() {
+		return allAllergens;
+	}
+
+	/**
 	 * <p>addAllergens.</p>
 	 *
 	 * @param toAdd a {@link java.util.List} object
@@ -237,6 +252,17 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	public Map<NodeRef, Double> getInVolAllergens() {
 		return inVolAllergens;
+	}
+
+	/**
+	 * <p>
+	 * Getter for the field <code>allInVolAllergens</code>.
+	 * </p>
+	 *
+	 * @return a {@link java.util.Set} object.
+	 */
+	public Map<NodeRef, Double> getAllInVolAllergens() {
+		return allInVolAllergens;
 	}
 
 	/**
@@ -262,6 +288,17 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
+	 * <p>
+	 * Getter for the field <code>allInVolAllergensProcess</code>.
+	 * </p>
+	 *
+	 * @return a {@link java.util.Set} object.
+	 */
+	public Map<NodeRef, Double> getAllInVolAllergensProcess() {
+		return allInVolAllergensProcess;
+	}
+
+	/**
 	 * <p>addInVolAllergensProcess.</p>
 	 *
 	 * @param toAdd a {@link java.util.List} object
@@ -281,6 +318,17 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	public Map<NodeRef, Double> getInVolAllergensRawMaterial() {
 		return inVolAllergensRawMaterial;
+	}
+
+	/**
+	 * <p>
+	 * Getter for the field <code>allInVolAllergensRawMaterial</code>.
+	 * </p>
+	 *
+	 * @return a {@link java.util.Set} object.
+	 */
+	public Map<NodeRef, Double> getAllInVolAllergensRawMaterial() {
+		return allInVolAllergensRawMaterial;
 	}
 
 	/**
@@ -1505,8 +1553,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	}
 
-	private Set<NodeRef> voluntaryAllergenSet() {
-		return (this.allergens != null) ? this.allergens.keySet() : Set.of();
+	private Set<NodeRef> allVoluntaryAllergenSet() {
+		return (this.allAllergens != null) ? this.allAllergens.keySet() : Set.of();
 	}
 
 	/**
@@ -1707,7 +1755,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String renderInvoluntaryAllergens() {
-		return renderAllergens(sorted(this.inVolAllergens), true);
+		return renderAllergens(sorted(this.inVolAllergens), sorted(this.allInVolAllergens), true);
 
 	}
 
@@ -1719,7 +1767,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String renderInvoluntaryAllergenInProcess() {
-		return renderAllergens(sorted(this.inVolAllergensProcess), true);
+		return renderAllergens(sorted(this.inVolAllergensProcess), sorted(this.allInVolAllergensProcess), true);
 
 	}
 
@@ -1731,7 +1779,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String renderInvoluntaryInRawMaterial() {
-		return renderAllergens(sorted(this.inVolAllergensRawMaterial), true);
+		return renderAllergens(sorted(this.inVolAllergensRawMaterial), sorted(this.allInVolAllergensRawMaterial), true);
 	}
 
 	private Set<NodeRef> sorted(Map<NodeRef, Double> toSortHashMap) {
@@ -1852,33 +1900,48 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String renderAllergens(Set<NodeRef> allergensList, boolean involuntary) {
+		return renderAllergens(allergensList, allergensList, involuntary);
+	}
+
+	private String renderAllergens(Set<NodeRef> allergensList, Set<NodeRef> groupingAllergensList, boolean involuntary) {
 		if (logger.isTraceEnabled()) {
 			logger.trace(" Render Allergens list ");
 		}
 
-		if ((allergensList == null) || allergensList.isEmpty()) {
+		if (((allergensList == null) || allergensList.isEmpty()) && ((groupingAllergensList == null) || groupingAllergensList.isEmpty())) {
 			return decorate("");
 		}
 
 		Locale currentLocale = I18NUtil.getLocale();
 		String separator = getLocaleSeparator(allergensSeparator);
 
-		List<NodeRef> filtered = new ArrayList<>(allergensList.size());
-		for (NodeRef allergen : allergensList) {
-			if (!isAllergenDisableForLocale(allergen)) {
-				filtered.add(allergen);
+		List<NodeRef> filtered = new ArrayList<>();
+		if (allergensList != null) {
+			for (NodeRef allergen : allergensList) {
+				if (!isAllergenDisableForLocale(allergen)) {
+					filtered.add(allergen);
+				}
 			}
 		}
 
 		String rendered;
 		if (involuntary) {
 			List<NodeRef> voluntary = new ArrayList<>();
-			for (NodeRef allergen : voluntaryAllergenSet()) {
+			for (NodeRef allergen : allVoluntaryAllergenSet()) {
 				if (!isAllergenDisableForLocale(allergen)) {
 					voluntary.add(allergen);
 				}
 			}
-			rendered = AllergenHelper.renderInvoluntaryAllergens(filtered, voluntary, currentLocale, separator, mlNodeService, associationService);
+			List<NodeRef> groupingFiltered = new ArrayList<>();
+			if (groupingAllergensList != null) {
+				for (NodeRef allergen : groupingAllergensList) {
+					if (!isAllergenDisableForLocale(allergen)) {
+						groupingFiltered.add(allergen);
+					}
+				}
+			}
+			rendered = AllergenHelper.renderInvoluntaryAllergens(filtered, groupingFiltered, voluntary, currentLocale, separator, mlNodeService,
+					associationService);
 		} else {
 			rendered = AllergenHelper.renderAllergens(filtered, currentLocale, separator, mlNodeService);
 		}

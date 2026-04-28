@@ -494,9 +494,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private void extractAllergens(LabelingFormulaContext labelingFormulaContext, ProductData productData) {
 		AllergenHelper.AllergenMaps maps = AllergenHelper.extract(productData, alfrescoRepository, nodeService);
 		labelingFormulaContext.getAllergens().putAll(maps.getAllergens());
+		labelingFormulaContext.getAllAllergens().putAll(maps.getAllAllergens());
 		labelingFormulaContext.getInVolAllergens().putAll(maps.getInVolAllergens());
+		labelingFormulaContext.getAllInVolAllergens().putAll(maps.getAllInVolAllergens());
 		labelingFormulaContext.getInVolAllergensProcess().putAll(maps.getInVolAllergensProcess());
+		labelingFormulaContext.getAllInVolAllergensProcess().putAll(maps.getAllInVolAllergensProcess());
 		labelingFormulaContext.getInVolAllergensRawMaterial().putAll(maps.getInVolAllergensRawMaterial());
+		labelingFormulaContext.getAllInVolAllergensRawMaterial().putAll(maps.getAllInVolAllergensRawMaterial());
 	}
 
 	private void applyMeatContentRules(ProductData formulatedProduct, CompositeLabeling parent, LabelingFormulaContext labelingFormulaContext) {
