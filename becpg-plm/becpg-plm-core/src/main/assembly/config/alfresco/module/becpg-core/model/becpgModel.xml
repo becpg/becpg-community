@@ -4457,6 +4457,10 @@
 
 		<aspect name="bcpg:hiddenFolder">
 		</aspect>
+		
+		<aspect name="bcpg:entityHistoryAspect">
+        </aspect>
+		
 
 		<aspect name="bcpg:ingListQtyPercAspect">
 			<properties>
