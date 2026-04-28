@@ -176,7 +176,7 @@
 		<sonar.scanner.socketTimeout>3600</sonar.scanner.socketTimeout>
 		<sonar.language>java</sonar.language>
 		<becpg.artworks.version>25.3.0.7</becpg.artworks.version>
-		<becpg.i18n.version>1.0.143</becpg.i18n.version>
+		<becpg.i18n.version>1.0.144</becpg.i18n.version>
 		<becpg.supporttools.version>25.2.0.2-beCPG-amp</becpg.supporttools.version>
 		
 	</properties>
