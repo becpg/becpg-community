@@ -604,8 +604,9 @@ public class DataListFilter {
 
 			Calendar startCal = Calendar.getInstance();
 
-			String fromQuery = startCal.get(Calendar.YEAR) + "\\-" + (startCal.get(Calendar.MONTH) + 1) + "\\-" + startCal.get(Calendar.DAY_OF_MONTH);
-
+			String fromQuery = startCal.get(Calendar.YEAR) + "-" + String.format("%02d", startCal.get(Calendar.MONTH) + 1) + "-"
+					+ String.format("%02d", startCal.get(Calendar.DAY_OF_MONTH));
+			
 			queryBuilder.andBetweenOrNull(BeCPGModel.PROP_START_EFFECTIVITY, "MIN", fromQuery);
 			queryBuilder.andBetweenOrNull(BeCPGModel.PROP_END_EFFECTIVITY, fromQuery, "MAX");
 
