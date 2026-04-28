@@ -680,6 +680,8 @@
 					<show id="pjt:projectCompletionDate" />
 					<show id="pjt:projectDueDate" />
 
+					<show id="cm:taggable" />
+
 					<!-- Task -->
 					<show id="entity_pjt:projectCurrentTasks_pjt:taskList" />
 
@@ -724,6 +726,15 @@
 					<field id="pjt:projectSponsor" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+
+					<field id="cm:taggable" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/category.ftl">
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
 						</control>
 					</field>
 
