@@ -1332,6 +1332,15 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		checkILL(finishedProductNodeRef, labelingRuleList, "allergen2", Locale.ENGLISH, "Rendu4");
 
 		inWriteTx(() -> {
+			nodeService.setProperty(allergen2, PLMModel.PROP_ALLERGEN_TYPE, "Minor");
+			return null;
+		});
+
+		checkILL(finishedProductNodeRef, labelingRuleList, "autres fruits a coque", Locale.FRENCH, "Rendu2");
+		checkILL(finishedProductNodeRef, labelingRuleList, "autres fruits a coque", Locale.FRENCH, "Rendu4");
+
+		inWriteTx(() -> {
+			nodeService.setProperty(allergen2, PLMModel.PROP_ALLERGEN_TYPE, "Major");
 			associationService.update(parentAllergen, PLMModel.ASSOC_ALLERGENSUBSETS, Collections.emptyList());
 			return null;
 		});
