@@ -90,6 +90,8 @@ public class NutsRequirementScanner extends SimpleListRequirementScanner<NutList
 		return key;
 	}
 
+
+
 	/** {@inheritDoc} */
 	@Override
 	protected boolean shouldMerge(NutListDataItem item, NutListDataItem sl) {

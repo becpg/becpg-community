@@ -1,19 +1,24 @@
 package fr.becpg.repo.authentication;
 
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.sql.DataSource;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.security.authentication.BasicPasswordGenerator;
 import org.alfresco.repo.security.authentication.MutableAuthenticationDao;
 import org.alfresco.repo.security.authentication.identityservice.IdentityServiceException;
 import org.alfresco.repo.security.person.PersonServiceImpl;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
+import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
 import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -22,15 +27,19 @@ import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.MutableAuthenticationService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.transaction.TransactionListenerAdapter;
 import org.alfresco.util.transaction.TransactionSupportUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.authentication.provider.IdentityServiceAccountProvider;
 import fr.becpg.repo.helper.AuthorityHelper;
+import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.mail.BeCPGMailService;
 
 /**
@@ -77,6 +86,13 @@ public class BeCPGUserAccountService {
 	@Autowired
 	private PreferenceService preferenceService;
 
+	@Autowired
+	@Qualifier("dataSource")
+	private DataSource dataSource;
+	
+	@Autowired
+	private RepoService repoService;
+
 	/**
 	 * <p>getOrCreateUser.</p>
 	 *
@@ -89,22 +105,16 @@ public class BeCPGUserAccountService {
 			userAccount.setUserName(createTenantAware(userAccount.getUserName()));
 			NodeRef personNodeRef = null;
 
-			Map<QName, Serializable> propMap = new HashMap<>();
-			propMap.put(ContentModel.PROP_LASTNAME, userAccount.getLastName());
-			propMap.put(ContentModel.PROP_FIRSTNAME, userAccount.getFirstName());
-			propMap.put(ContentModel.PROP_EMAIL, userAccount.getEmail());
-			propMap.putAll(userAccount.getExtraProps());
-
 			boolean userAlreadyExists = personService.personExists(userAccount.getUserName());
 			
 			if (userAlreadyExists) {
 				if (createOnly) {
 					throw new UserAlreadyExistsException("User already exists: " + userAccount.getUserName());
 				}
-				personNodeRef = updateUser(userAccount, propMap);
+				personNodeRef = updateUser(userAccount);
 			} else {
 				userAccount.setUserName(userAccount.getUserName().toLowerCase());
-				personNodeRef = createUser(userAccount, propMap);
+				personNodeRef = createUser(userAccount);
 			}
 			
 			if (userAccount.getPassword() != null && !userAccount.getPassword().isBlank()) {
@@ -175,13 +185,11 @@ public class BeCPGUserAccountService {
 	 * @param notify a boolean
 	 */
 	public void generatePassword(String username, boolean notify) {
-		if (!personService.personExists(username)) {
-			throw new UserAlreadyExistsException("user does not exist: " + username);
-		}
-		BasicPasswordGenerator pwdGen = new BasicPasswordGenerator();
-		pwdGen.setPasswordLength(10);
-		String newPassword = pwdGen.generatePassword();
-		updatePassword(username, newPassword, notify);
+	    if (!personService.personExists(username)) {
+	        throw new UserAlreadyExistsException("user does not exist: " + username);
+	    }
+	    String newPassword = SecurePasswordGenerator.generatePassword();
+	    updatePassword(username, newPassword, notify);
 	}
 
 	/**
@@ -207,15 +215,14 @@ public class BeCPGUserAccountService {
 		}
 	}
 
-	private NodeRef createUser(BeCPGUserAccount userAccount, Map<QName, Serializable> propMap) {
+	private NodeRef createUser(BeCPGUserAccount userAccount) {
 		NodeRef personNodeRef;
 		if (logger.isDebugEnabled()) {
 			logger.debug("Create external user: " + userAccount.getUserName() + " pwd: " + userAccount.getPassword());
 		}
+		Map<QName, Serializable> propMap = userAccount.getExtraProps();
 		propMap.put(ContentModel.PROP_USERNAME, userAccount.getUserName());
-		if (propMap.containsKey(ContentModel.PROP_LASTNAME) && propMap.get(ContentModel.PROP_LASTNAME) == null) {
-			propMap.put(ContentModel.PROP_LASTNAME, "");
-		}
+		propMap.computeIfAbsent(ContentModel.PROP_LASTNAME, k -> "");
 		personNodeRef = personService.createPerson(propMap);
 		createAuthentication(userAccount, personNodeRef);
 		setIdsUser(userAccount, userAccount.getUserName(), personNodeRef, false);
@@ -262,7 +269,7 @@ public class BeCPGUserAccountService {
 		}
 	}
 	
-	private NodeRef updateUser(BeCPGUserAccount userAccount, Map<QName, Serializable> propMap) {
+	private NodeRef updateUser(BeCPGUserAccount userAccount) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Update an existing user");
 		}
@@ -273,7 +280,7 @@ public class BeCPGUserAccountService {
 			userAccount.setNewUserName(userAccount.getNewUserName().toLowerCase());
 			renameUser(userAccount, personNodeRef);
 		}
-		nodeService.addProperties(personNodeRef, propMap);
+		nodeService.addProperties(personNodeRef, userAccount.getExtraProps());
 		return personNodeRef;
 	}
 
@@ -293,13 +300,20 @@ public class BeCPGUserAccountService {
 	
 	private void renameUser(BeCPGUserAccount userAccount, NodeRef personNodeRef) {
 		String newUserName = createTenantAware(userAccount.getNewUserName());
-		if (!newUserName.equals(userAccount.getUserName())) {
-			if (isIdsUser(personNodeRef)) {
-				identityServiceAccountProvider.deleteAccount(userAccount.getUserName());
-			}
-			userAccount.setUserName(newUserName);
-			if (isIdsUser(personNodeRef)) {
-				identityServiceAccountProvider.registerAccount(userAccount);
+		String oldUserName = userAccount.getUserName();
+		if (!newUserName.equals(oldUserName)) {
+			boolean isCaseChanging = oldUserName.equalsIgnoreCase(newUserName);
+			if (!isCaseChanging) {
+				if (personService.personExists(newUserName)) {
+					throw new UserAlreadyExistsException("Cannot rename user to '" + newUserName + "' because it already exists");
+				}
+				if (isIdsUser(personNodeRef)) {
+					identityServiceAccountProvider.deleteAccount(oldUserName);
+				}
+				userAccount.setUserName(newUserName);
+				if (isIdsUser(personNodeRef)) {
+					identityServiceAccountProvider.registerAccount(userAccount);
+				}
 			}
 			TransactionSupportUtil.bindResource(PersonServiceImpl.KEY_ALLOW_UID_UPDATE, Boolean.TRUE);
 			nodeService.setProperty(personNodeRef, ContentModel.PROP_USERNAME, newUserName);
@@ -307,9 +321,122 @@ public class BeCPGUserAccountService {
 			preferenceService.clearPreferences(newUserName);
 			NodeRef homeFolder = (NodeRef) nodeService.getProperty(personNodeRef, ContentModel.PROP_HOMEFOLDER);
 			if (homeFolder != null) {
+				NodeRef parentNodeRef = nodeService.getPrimaryParent(homeFolder).getParentRef();
+				NodeRef sameNameHomeFolder = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, newUserName);
+				if (sameNameHomeFolder != null) {
+					String newName = repoService.getAvailableName(parentNodeRef, newUserName, true);
+					nodeService.setProperty(sameNameHomeFolder, ContentModel.PROP_NAME, newName);
+				}
 				nodeService.setProperty(homeFolder, ContentModel.PROP_NAME, newUserName);
+				nodeService.setProperty(homeFolder, ContentModel.PROP_OWNER, newUserName);
+			}
+			AlfrescoTransactionSupport.bindListener(new TransactionListenerAdapter() {
+				// make sure the transaction is committed before updating activiti tasks to avoid inconsistencies
+				@Override
+				public void afterCommit() {
+					updateActivitiTasks(oldUserName, newUserName);
+				}
+			});
+		}
+	}
+	
+	private static final int MAX_RETRIES = 3;
+	private static final long RETRY_DELAY_MS = 500;
+
+	private void updateActivitiTasks(String oldUserName, String newUserName) {
+		String[] updateStatements = {
+			"UPDATE ACT_RU_TASK SET assignee_ = ? WHERE assignee_ = ?",
+			"UPDATE ACT_RU_TASK SET owner_ = ? WHERE owner_ = ?",
+			"UPDATE ACT_RU_IDENTITYLINK SET user_id_ = ? WHERE user_id_ = ?",
+			"UPDATE ACT_HI_TASKINST SET assignee_ = ? WHERE assignee_ = ?",
+			"UPDATE ACT_HI_TASKINST SET owner_ = ? WHERE owner_ = ?",
+			"UPDATE ACT_HI_ACTINST SET assignee_ = ? WHERE assignee_ = ?",
+			"UPDATE ACT_HI_IDENTITYLINK SET user_id_ = ? WHERE user_id_ = ?",
+			"UPDATE ACT_HI_PROCINST SET start_user_id_ = ? WHERE start_user_id_ = ?"
+		};
+
+		try (Connection connection = dataSource.getConnection()) {
+			for (String sql : updateStatements) {
+				executeWithRetry(connection, sql, oldUserName, newUserName);
+			}
+			if (!connection.getAutoCommit()) {
+				connection.commit();
+			}
+		} catch (SQLException e) {
+			logger.error("Failed to obtain or commit database connection for updating Activiti tasks during user rename: " + oldUserName + " -> " + newUserName, e);
+			throw new BeCPGException(e.getMessage(), e);
+		}
+	}
+	
+	private void executeWithRetry(Connection connection, String sql, String oldUserName, String newUserName) throws SQLException {
+	    int attempt = 0;
+	    SQLException lastException = null;
+
+	    // First: retry with original SQL
+	    while (attempt < MAX_RETRIES) {
+	        try {
+	            updateStatement(oldUserName, newUserName, connection, sql);
+	            return; // success
+	        } catch (SQLException e) {
+	            lastException = e;
+	            attempt++;
+	            logger.warn("Retry " + attempt + "/" + MAX_RETRIES + " failed for SQL: " + sql, e);
+
+	            sleep();
+	        }
+	    }
+
+	    // Second: fallback to uppercase table names
+	    String upperSql = toUppercaseTableName(sql);
+	    logger.warn("Retry failed. Trying with lowercase table name: " + upperSql);
+
+	    attempt = 0;
+
+	    while (attempt < MAX_RETRIES) {
+	        try {
+	            updateStatement(oldUserName, newUserName, connection, upperSql);
+	            return; // success
+	        } catch (SQLException e) {
+	            lastException = e;
+	            attempt++;
+	            logger.warn("Uppercase retry " + attempt + "/" + MAX_RETRIES + " failed for SQL: " + upperSql, e);
+
+	            sleep();
+	        }
+	    }
+
+	    // Final failure
+	    if (lastException != null) {
+	        throw lastException;
+	    }
+	}
+
+	private void updateStatement(String oldUserName, String newUserName, Connection connection, String sql) throws SQLException {
+		try (PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setString(1, newUserName);
+			statement.setString(2, oldUserName);
+			int updated = statement.executeUpdate();
+			if (logger.isDebugEnabled() && updated > 0) {
+				logger.debug("Activiti patch: " + sql + " — " + updated + " row(s) updated for user rename: " + oldUserName + " -> " + newUserName);
 			}
 		}
+	}
+	
+	private String toUppercaseTableName(String sql) {
+	    // naive but effective: uppercase word after UPDATE
+	    String[] parts = sql.split(" ");
+	    if (parts.length > 1) {
+	        parts[1] = parts[1].toUpperCase();
+	    }
+	    return String.join(" ", parts);
+	}
+	
+	private void sleep() {
+	    try {
+	        Thread.sleep(RETRY_DELAY_MS);
+	    } catch (InterruptedException ie) {
+	        Thread.currentThread().interrupt();
+	    }
 	}
 	
 	private boolean isIdsUser(NodeRef personNodeRef) {

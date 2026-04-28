@@ -1154,6 +1154,8 @@ public class ProductData extends AbstractScorableEntity
 	 *
 	 * @return a {@link java.lang.Double} object.
 	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:productSecondaryYield")
 	public Double getSecondaryYield() {
 		return secondaryYield;
 	}

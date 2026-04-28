@@ -37,6 +37,7 @@
          replicationUrlMapping :"{}",
          repositoryBrowsing : false, 
          useTitle : false,
+         actionsSplitAt : 4,
          userIsSiteManager : false,
          associatedToolbar: { _alfValue: "docListToolbar", _alfType: "REFERENCE" },
          commonComponentStyle : "{ \"browse\":{ \"folder\":[ { \"filter\":{ \"name\":\"aspect\", \"match\":[ \"smf:smartFolder\" ] }, \"style\":{ \"css\":\"icon-smart\", \"icons\":{ \"16x16\":{ \"icon\":\"components\/documentlibrary\/images\/smart-folder-16.png\" }, \"32x32\":{ \"icon\":\"components\/documentlibrary\/images\/smart-folder-32.png\" }, \"48x48\":{ \"icon\":\"components\/documentlibrary\/images\/smart-folder-48.png\" }, \"64x64\":{ \"icon\":\"components\/documentlibrary\/images\/smart-folder-64.png\" }, \"256x256\":{ \"icon\":\"components\/documentlibrary\/images\/smart-folder-256.png\" } } } } ] } }",
@@ -78,13 +79,31 @@
                   actionsSel;
    
                record.actionParams = {};
+               var hasDownloadAction = false;
                for (var i = 0, ii = actions.length; i < ii; i++)
                {
                  if(actions[i].id == "document-upload-new-version" || actions[i].id  == "document-delete" || actions[i].id  == "document-download" || actions[i].id  == "document-edit-properties" ) {
-                  	actionHTML += scope.renderAction(actions[i], record);
+	                 if (actions[i].id == "document-download") {
+	                   hasDownloadAction = true;
+	                 }
+	                 actionHTML += scope.renderAction(actions[i], record);
                   }
                }
-   
+
+               if (!hasDownloadAction)
+               {
+                  actionHTML += scope.renderAction({
+                     id: "document-download",
+                     icon: "document-download",
+                     type: "link",
+                     label: "actions.download",
+                     params: {
+                        href: "{downloadUrl}",
+                        target: "_blank"
+                     }
+                  }, record);
+               }
+  
                // Token replacement - action Urls
                actionsEl.innerHTML = YAHOO.lang.substitute(actionHTML, scope.getActionUrls(record));
    

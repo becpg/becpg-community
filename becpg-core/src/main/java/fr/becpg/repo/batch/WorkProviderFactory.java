@@ -199,6 +199,8 @@ public class WorkProviderFactory {
 		protected int totalEstimatedSize = 0;
 
 		protected int pullIndex = 0;
+		
+		protected Integer lastPullSize = null;
 
 		protected BatchWorkProvider(List<T> pendingItems, int pullSize, int pushSize, int maxResults) {
 			super();
@@ -230,17 +232,24 @@ public class WorkProviderFactory {
 			Collection<T> pushedItems = new ArrayList<>();
 			collectPushedItems(pushedItems);
 			if (canPushMoreItems(pushedItems)) {
-				List<T> pulledItems = null;
-				if (transactionService != null) {
-					pulledItems = transactionService.getRetryingTransactionHelper().doInTransaction(this::pullItems, true, true);
-				} else {
-					pulledItems = pullItems();
+				if (canPullMoreItems()) {
+					List<T> pulledItems = null;
+					if (transactionService != null) {
+						pulledItems = transactionService.getRetryingTransactionHelper().doInTransaction(this::pullItems, true, true);
+					} else {
+						pulledItems = pullItems();
+					}
+					lastPullSize = pulledItems.size();
+					totalEstimatedSize += pulledItems.size();
+					pendingItems.addAll(pulledItems);
 				}
-				totalEstimatedSize += pulledItems.size();
-				pendingItems.addAll(pulledItems);
 				collectPushedItems(pushedItems);
 			}
 			return pushedItems;
+		}
+
+		private boolean canPullMoreItems() {
+			return lastPullSize == null || lastPullSize == pullSize;
 		}
 		
 		public List<T> collect() {

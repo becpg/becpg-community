@@ -161,6 +161,18 @@ public interface RepositoryEntityDefReader<T> {
 	 */
 	boolean isRegisteredQName(RepositoryEntity entity, QName qname, boolean allowWrite);
 	
+	/**
+	 * <p>getDefaultPivotAssocs.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	List<QName> getDefaultPivotAssocs();
 	
+	/**
+	 * <p>getDataListAssocToTargetTypes.</p>
+	 *
+	 * @return a {@link java.util.Map} object
+	 */
+	Map<QName, String> getDataListAssocToTargetTypes();
 	
 }

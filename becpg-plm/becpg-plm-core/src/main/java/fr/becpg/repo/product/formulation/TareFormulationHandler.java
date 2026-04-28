@@ -50,8 +50,17 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 
 	private static final Log logger = LogFactory.getLog(TareFormulationHandler.class);
 
+	protected final AlfrescoRepository<ProductData> alfrescoRepository;
+
 	@Autowired
-	protected AlfrescoRepository<ProductData> alfrescoRepository;
+	/**
+	 * <p>Constructor for TareFormulationHandler.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 */
+	public TareFormulationHandler(AlfrescoRepository<ProductData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
+	}
 
 	/** {@inheritDoc} */
 	@Override

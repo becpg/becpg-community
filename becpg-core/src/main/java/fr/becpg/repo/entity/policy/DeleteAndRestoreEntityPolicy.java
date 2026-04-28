@@ -170,6 +170,8 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 		this.policyComponent.bindClassBehaviour(OnRestoreNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this, "onRestoreNode"));
 		this.policyComponent.bindClassBehaviour(BeforeDeleteNodePolicy.QNAME, BeCPGModel.ASPECT_UNDELETABLE_ASPECT, new JavaBehaviour(this, "beforeDeleteNode"));
 
+		// Add policies for cm:folder to handle all folder types
+		this.policyComponent.bindClassBehaviour(BeforePurgeNodePolicy.QNAME, ContentModel.TYPE_FOLDER, new JavaBehaviour(this, "beforePurgeNode"));
 	}
 
 	/** {@inheritDoc} */
@@ -319,8 +321,52 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 
 	/** {@inheritDoc} */
 	@Override
-	public void beforePurgeNode(NodeRef entityNodeRef) {
-		deleteEntityDeletedContent(entityNodeRef);
+	public void beforePurgeNode(NodeRef nodeRef) {
+		AuthenticationUtil.runAsSystem(() -> {
+			
+			if (logger.isDebugEnabled()) {
+				logger.debug("beforePurgeNode called for: " + nodeRef.getId());
+			}
+			
+			// Get the node from archive store
+			Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(nodeRef);
+			
+			if (nodePair != null) {
+				
+				// Get the primary parent-child relationship
+				Pair<Long, ChildAssociationRef> childAssocPair = nodeDAO.getPrimaryParentAssoc(nodePair.getFirst());
+				
+				// Walk the hierarchy to get all child nodes
+				NodeHierarchyWalker walker = new NodeHierarchyWalker(nodeDAO);
+				walker.walkHierarchy(nodePair, childAssocPair);
+				
+				// Process all nodes in the hierarchy (parent first, then children)
+				for (VisitedNode visitedNode : walker.getNodes(true)) {
+					
+					NodeRef visitedNodeRef = visitedNode.nodeRef;
+					QName visitedType = nodeService.getType(visitedNodeRef);
+					
+					// Delete archived content for entities and list items
+					if (entityDictionaryService.isSubClass(visitedType, BeCPGModel.TYPE_ENTITY_V2)
+							|| entityDictionaryService.isSubClass(visitedType, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+						
+						if (logger.isDebugEnabled()) {
+							logger.debug("Purging entity_deleted content for node: " + visitedNodeRef.getId());
+						}
+						
+						deleteEntityDeletedContent(visitedNodeRef);
+					}
+				}
+			} else {
+				// Fallback: try to delete the archived content directly
+				if (logger.isDebugEnabled()) {
+					logger.debug("Node pair not found, attempting direct deletion for: " + nodeRef.getId());
+				}
+				deleteEntityDeletedContent(nodeRef);
+			}
+			
+			return null;
+		});
 	}
 
 	/** {@inheritDoc} */
@@ -335,16 +381,20 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 	private void deleteEntityDeletedContent(NodeRef entityNodeRef) {
 		
 		if (logger.isDebugEnabled()) {
-			logger.debug("Retrieving " + entityNodeRef.getId() + " from archiveStore ");
+			logger.debug("Deleting entity_deleted content for: " + entityNodeRef.getId());
 		}
 		
 		NodeRef entityDeletedContentNodeRef = findEntityDeletedContentNodeRef(entityNodeRef);
 		
 		if (entityDeletedContentNodeRef != null) {
-			logger.debug("Deleting entity_deleted: " + entityNodeRef.getId() + " from archiveStore ");
+			if (logger.isDebugEnabled()) {
+				logger.debug("Found and deleting entity_deleted: " + entityNodeRef.getId() + " from archiveStore");
+			}
 			nodeService.deleteNode(entityDeletedContentNodeRef);
 		} else {
-			logger.debug("Cannot find entity_deleted: " + entityNodeRef.getId() + " from archiveStore ");
+			if (logger.isDebugEnabled()) {
+				logger.debug("No entity_deleted found for: " + entityNodeRef.getId());
+			}
 		}
 	}
 

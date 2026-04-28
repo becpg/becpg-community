@@ -3592,10 +3592,10 @@ else if(dataSetRow["mblValue"] != null &amp;&amp; dataSetRow["mblValue"] != ""){
                 <structure>
                     <property name="name">illValueToShow</property>
                     <expression name="expression">if(row["illManualValue"] != null &amp;&amp; row["illManualValue"] != ""){
-row["illManualValue"]
+	row["illManualValue"].replace(/height\s*:\s*[^;"]+;?/gi, '');
 }
 else{
-row["illValue"]
+	row["illValue"];
 }</expression>
                     <property name="dataType">string</property>
                 </structure>
@@ -8887,7 +8887,7 @@ dataSetRow["roundedValuePerServing"]
 dataSetRow["regulUnit"]
 }
 else{
-dataSetRow["nutListUnit"].replace("/100g", "").replace("/100mL", "")
+dataSetRow["nutListUnit"].replace("/100g", "").replace("/100mL", "").replace("µg", "mcg")
 }</expression>
                                 <property name="dataType">string</property>
                                 <property name="allowExport">true</property>

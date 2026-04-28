@@ -1,5 +1,9 @@
 package fr.becpg.repo.helper;
 
+import java.nio.charset.StandardCharsets;
+import java.util.zip.CRC32C;
+import java.util.zip.Checksum;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
@@ -71,5 +75,23 @@ public class CheckSumHelper {
 			logger.error(e, e);
 		}
 		return false;
+	}
+
+	/**
+	 * Creates a compact checksum for a large textual value using a fast CRC32C hash.
+	 *
+	 * @param value the value to hash
+	 * @return the hashed checksum encoded as a hexadecimal string, or {@code null} if the value is null
+	 */
+	public static String hashChecksum(String value) {
+		if (value == null) {
+			return null;
+		}
+
+		Checksum checksum = new CRC32C();
+		byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
+		checksum.update(bytes, 0, bytes.length);
+
+		return String.format("%08x", checksum.getValue());
 	}
 }

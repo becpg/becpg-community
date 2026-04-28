@@ -14,7 +14,9 @@
 
 <#assign fieldValue=field.value>
 
-<#if fieldValue?string == "" && field.control.params.defaultValueContextProperty??>
+<#if fieldValue?string == "" && field.control.params.defaultValue??>
+   <#assign fieldValue = field.control.params.defaultValue>
+<#elseif fieldValue?string == "" && field.control.params.defaultValueContextProperty??>
    <#if context.properties[field.control.params.defaultValueContextProperty]??>
       <#assign fieldValue = context.properties[field.control.params.defaultValueContextProperty]>
    <#elseif args[field.control.params.defaultValueContextProperty]??>
@@ -37,7 +39,7 @@
          </#if>
          <span class="viewmode-label">${field.label?html}:</span>
          <#if fieldValue?string == "">
-            <#assign valueToShow=msg("form.control.novalue")>
+            <#assign valueToShow="">
          <#else>
             <#if field.control.params.options?? && field.control.params.options != "" &&
                  field.control.params.options?index_of(labelSeparator) != -1>
@@ -61,7 +63,7 @@
          <span class="viewmode-value">${valueToShow?html}</span>
       </div>
    <#else>
-       <label>${field.label?html}:<#if field.mandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>
+       <label for="${fieldHtmlId}">${field.label?html}:<#if field.mandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>
        <input id="${fieldHtmlId}" type="hidden" name="${field.name}" <#if !field.control.params.isSearch??> value="${fieldValue?string}" </#if> />
        
        <#if field.control.params.options?? && field.control.params.options != "">

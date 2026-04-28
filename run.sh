@@ -8,19 +8,25 @@ echo -e "888 \"88b d8P  Y8b  \e[38;2;0;92;102m888        8888888P\"  888  88888\
 echo -e "888  888 88888888  \e[38;2;0;92;102m888    888 888        888    888\e[38;2;0;255;189m" 
 echo -e "888 d88P Y8b.      \e[38;2;0;92;102mY88b  d88P 888        Y88b  d88P\e[38;2;0;255;189m" 
 echo -e "88888P\"   \"Y8888    \e[38;2;0;92;102m\"Y8888P\"  888         \"Y8888P88\e[0m" 
-echo -e " \e[91mCopyright (C) 2010-2025 beCPG.\e[0m"
+echo -e " \e[91mCopyright (C) 2010-2026 beCPG.\e[0m"
 
 set -e
 
 export COMPOSE_FILE_PATH=${PWD}/becpg-integration-runner/target/docker-compose.yml
 export MVN_EXEC="${PWD}/mvnw"
-export BECPG_VERSION_PROFILE=becpg_25_2_0
+export BECPG_VERSION_PROFILE=becpg_25_3_0
+export EXTRA_ENV="-T 1C -Dmaven.threads.useForkedJvm=false"
 
 
 if [ -f .env ]; then
   . .env
 else
   echo "Warning: .env file not found, skipping."
+fi
+
+if [ ! -f docker-compose.override.yml ] && [ -f docker-compose.override.yml.sample ]; then
+  echo "docker-compose.override.yml not found, copying from sample..."
+  cp docker-compose.override.yml.sample docker-compose.override.yml
 fi
 
 case "$2" in
@@ -39,10 +45,6 @@ start() {
 
 start_test() {
    	 	docker compose -p becpg_test -f $COMPOSE_FILE_PATH up -d --remove-orphans
-}
-
-pull() {
-   	 	docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml pull 
 }
 
 pull() {
@@ -75,6 +77,13 @@ down_test() {
     fi
 }
 
+deploy_java(){
+	MODULE=${1:-becpg-plm/becpg-plm-core}
+	echo "Compiling module: $MODULE"
+	$MVN_EXEC compile -pl $MODULE -am $EXTRA_ENV -DskipTests=true -Dmaven.build.cache.enabled=false
+	echo "Done. Classes reloaded via hotswap volume mounts."
+}
+
 deploy_fast(){
 
 	#becpg-amp
@@ -90,11 +99,15 @@ deploy_fast(){
 	docker cp becpg-project/becpg-project-share/src/main/resources/alfresco/. $BECPG_VERSION_PROFILE-becpg-share-1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
 	docker cp becpg-plm/becpg-plm-share/src/main/assembly/web/. $BECPG_VERSION_PROFILE-becpg-share-1:/usr/local/tomcat/webapps/share/
 	docker cp becpg-plm/becpg-plm-share/src/main/resources/alfresco/. $BECPG_VERSION_PROFILE-becpg-share-1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
-	docker cp becpg-plm/becpg-plm-share/src/main/assembly/web/. $BECPG_VERSION_PROFILE-becpg-share-1:/usr/local/tomcat/webapps/share/
 	docker cp becpg-plm/becpg-plm-share/src/main/assembly/config/alfresco/. $BECPG_VERSION_PROFILE-becpg-share-1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
 	if [ -d becpg-enterprise ]; then
 	  docker cp becpg-enterprise/becpg-enterprise-share/src/main/assembly/web/. $BECPG_VERSION_PROFILE-becpg-share-1:/usr/local/tomcat/webapps/share/
 	  docker cp becpg-enterprise/becpg-enterprise-share/src/main/resources/alfresco/. $BECPG_VERSION_PROFILE-becpg-share-1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	fi
+	
+	if [ -d ../becpg-artworks/becpg-artworks-share ]; then
+		docker cp ../becpg-artworks/becpg-artworks-share/src/main/assembly/web/. $BECPG_VERSION_PROFILE-becpg-share-1:/usr/local/tomcat/webapps/share/
+		docker cp ../becpg-artworks/becpg-artworks-share/src/main/resources/alfresco/. $BECPG_VERSION_PROFILE-becpg-share-1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
 	fi
 	
 	wget --delete-after --http-user=admin --http-password=becpg --header=Accept-Charset:iso-8859-1,utf-8 --header=Accept-Language:en-us --post-data reset=on http://localhost:8180/share/page/index
@@ -108,7 +121,7 @@ purge() {
 build() {
    if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
-  	 $MVN_EXEC package $EXTRA_ENV -DskipTests=true  -Dmaven.build.cache.enabled=true -Djacoco.skip=true -Dcheckstyle.skip=true  -Dbecpg.dockerbuild.name="enterprise-test"
+  	 $MVN_EXEC package $EXTRA_ENV -DskipTests=true  -Dmaven.build.cache.enabled=true -Djacoco.skip=true -Dcheckstyle.skip=true -Dbecpg.dockerbuild.name="enterprise-test"
      COMPOSE_FILE="./distribution/target/docker-compose-build-fast.yml"
 
       docker compose -f $COMPOSE_FILE build becpg-base-core
@@ -150,29 +163,24 @@ install() {
 }
 
 install_hotswap(){
-	mkdir -p /opt/hotswap/jvm
-	curl -sL  https://cache-redirector.jetbrains.com/intellij-jbr/jbr_jcef-21.0.4-linux-x64-b607.1.tar.gz \
-	      -o /opt/hotswap/jbr_jcef-21.0.4-linux-x64-b607.1.tar.gz && \
-	     mkdir -p /usr/java && tar -xvf /opt/hotswap/jbr_jcef-21.0.4-linux-x64-b607.1.tar.gz -C /opt/hotswap/jvm && \
-	     rm /opt/hotswap/jbr_jcef-21.0.4-linux-x64-b607.1.tar.gz 
-	    
-	mkdir -p /opt/hotswap/jvm/jbr_jcef-21.0.4-linux-x64-b607.1/lib/hotswap/ && \
-	     curl -sL https://github.com/HotswapProjects/HotswapAgent/releases/download/RELEASE-2.0.1/hotswap-agent-2.0.1.jar -o  \
-	     /opt/hotswap/jvm/jbr_jcef-21.0.4-linux-x64-b607.1/lib/hotswap/hotswap-agent.jar
-    ln -sfn /opt/hotswap/jvm/jbr_jcef-21.0.4-linux-x64-b607.1 /opt/hotswap/jvm/latest
-	     
-	echo -e "Append to docker-compose.override.yml : -XX:+AllowEnhancedClassRedefinition -XX:HotswapAgent=fatjar\n\
-	volumes:\n\
-	  - becpg_data:/usr/local/tomcat/data\n\
-	  - ../../becpg-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-core/target/classes\n\
-	  - ../../becpg-plm/becpg-plm-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-plm-core/target/classes\n\
-	  - ../../becpg-project/becpg-project-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-project-core/target/classes\n\
-	  - ../../becpg-integration-runner/target/test-classes:/usr/local/tomcat/hotswap-agent/becpg-integration-runner/target/test-classes\n\
-	  - /opt/hotswap/jvm/latest:/etc/alternatives/jre"
+	sudo mkdir -p /opt/hotswap
+	HOTSWAP_JAR=/opt/hotswap/hotswap-agent.jar
+	JBR_JAR=$(find /opt/hotswap/jvm -name "hotswap-agent.jar" 2>/dev/null | head -1)
+	if [ -n "$JBR_JAR" ]; then
+		sudo ln -sf "$JBR_JAR" "$HOTSWAP_JAR"
+		echo "HotswapAgent linked from $JBR_JAR to $HOTSWAP_JAR"
+	else
+		sudo curl -sL https://github.com/HotswapProjects/HotswapAgent/releases/download/RELEASE-2.0.1/hotswap-agent-2.0.1.jar \
+		     -o "$HOTSWAP_JAR"
+		echo "HotswapAgent downloaded to $HOTSWAP_JAR"
+	fi
+	echo -e "\nHotswap is pre-configured in docker-compose.override.yml."
+	echo -e "Run './run.sh build_start' to start with hotswap enabled."
+	echo -e "Then use './run.sh deploy_java [module]' to recompile and reload classes."
 }
 
 tail() {
-    docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml logs -f --tail=5000
+    docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml logs -f --tail=5000 becpg
 }
 
 test() {
@@ -183,7 +191,7 @@ reindex() {
     docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml stop solr
     docker compose  -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml rm -v solr
     docker volume rm ${BECPG_VERSION_PROFILE}_solr_data
-	docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d solr
+    docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d solr
 }
 
 
@@ -218,11 +226,13 @@ case "$1" in
   stop)
     down
     ;;
+  deploy_java)
+    deploy_java $2
+    ;;
   deploy_fast)
     deploy_fast
     ;;  
   purge)
-    down
     purge
     ;;
   tail)
@@ -234,9 +244,12 @@ case "$1" in
   reindex)
     reindex
     ;;
-  visualvm)
+review)
+    ./review/review-wizard.sh
+    ;;
+visualvm)
     jvisualvm --openjmx localhost:9091
     ;;
   *)
-    echo "Usage: $0 {install|build_start|build_test|start|stop|purge|tail|test|deploy_fast|visualvm|reindex}"
+    echo "Usage: $0 {install|install_hotswap|build_start|build_test|start|stop|purge|tail|test|deploy_fast|deploy_java [module]|visualvm|reindex}"
 esac

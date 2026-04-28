@@ -73,6 +73,8 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 	// Cache for frequently computed strings to avoid repeated computations
 	private final Map<QName, String> prefixStringCache = new ConcurrentHashMap<>();
 	private final Map<String, String> overrideKeyCache = new ConcurrentHashMap<>();
+	private final Map<QName, List<QName>> defaultPivotAssocsFromTargetTypeCache = new ConcurrentHashMap<>();
+	private final Map<QName, List<QName>> targetTypesFromAssocCache = new ConcurrentHashMap<>();
 
 	// Setters
 	/**
@@ -211,6 +213,49 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 
 		return ret;
 	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public List<QName> getDefaultPivotAssocsFromTargetType(QName targetType) {
+		return defaultPivotAssocsFromTargetTypeCache.computeIfAbsent(targetType, k -> {
+			List<QName> assocs = new ArrayList<>();
+			for (QName defaultPivotAssoc : repositoryEntityDefReader.getDefaultPivotAssocs()) {
+				String defaultPivotTargetTypes = repositoryEntityDefReader.getDataListAssocToTargetTypes().get(defaultPivotAssoc);
+				if (defaultPivotTargetTypes != null && !defaultPivotTargetTypes.isBlank()) {
+					String[] targetTypes = defaultPivotTargetTypes.split(",");
+					for (String targetTypeStr : targetTypes) {
+						if (targetType.toPrefixString(namespaceService).equals(targetTypeStr.trim())) {
+							assocs.add(defaultPivotAssoc);
+							break;
+						}
+					}
+				} else {
+					AssociationDefinition defaultPivotAssocDef = getAssociation(defaultPivotAssoc);
+					if (targetType.equals(defaultPivotAssocDef.getTargetClass().getName())) {
+						assocs.add(defaultPivotAssocDef.getName());
+					}
+				}
+			}
+			return assocs;
+		});
+	}
+	
+	@Override
+    public List<QName> getTargetTypes(QName assocName) {
+		return targetTypesFromAssocCache.computeIfAbsent(assocName, k -> {
+			List<QName> targetTypes = new ArrayList<>();
+			String targetTypesString = repositoryEntityDefReader.getDataListAssocToTargetTypes().get(assocName);
+			if (targetTypesString != null && !targetTypesString.isBlank()) {
+				String[] targetTypeStrs = targetTypesString.split(",");
+				for (String targetTypeStr : targetTypeStrs) {
+					targetTypes.add(QName.createQName(targetTypeStr.trim(), namespaceService));
+				}
+			} else {
+				targetTypes.add(getTargetType(assocName));
+			}
+			return targetTypes;
+		});
+    }
 
 	/** {@inheritDoc} */
 	@Override

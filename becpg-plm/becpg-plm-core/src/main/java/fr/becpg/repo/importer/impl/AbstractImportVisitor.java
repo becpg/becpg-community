@@ -52,7 +52,6 @@ import org.dom4j.Element;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
-import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.ParserContext;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -467,10 +466,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 	private String parseFormula(String formula) throws ImporterException {
 		try {
-			ExpressionParser parser = formulaService.getSpelParser();
 			StandardEvaluationContext context = formulaService.createSpelContext(this);
 
-			return parser.parseExpression(formula, new ParserContext() {
+			return formulaService.parseExpression(formula, new ParserContext() {
 
 				@Override
 				public String getExpressionPrefix() {
@@ -625,9 +623,10 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 					if ((value != null) && !value.isEmpty() && !ImportHelper.NULL_VALUE.equals(value)) {
 						QName targetClass = ((AttributeMapping) attributeMapping).getTargetClass();
+						QName targetKey = ((AttributeMapping) attributeMapping).getTargetKey();
 						logger.debug("importAssociations targetClass" + targetClass);
 						List<NodeRef> targetRefs = findTargetNodesByValue(importContext, assocDef.isTargetMany(),
-								targetClass != null ? targetClass : assocDef.getTargetClass().getName(), value, assocDef.getName());
+								targetClass != null ? targetClass : assocDef.getTargetClass().getName(), value, assocDef.getName(), targetKey);
 
 						// mandatory target not found
 						if (targetRefs.isEmpty()) {
@@ -1188,6 +1187,12 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	 */
 	protected List<NodeRef> findTargetNodesByValue(ImportContext importContext, boolean isTargetMany, QName targetClass, String value, QName assoc)
 			throws ImporterException {
+		return findTargetNodesByValue(importContext, isTargetMany, targetClass, value, assoc, null);
+	}
+
+	protected List<NodeRef> findTargetNodesByValue(ImportContext importContext, boolean isTargetMany, QName targetClass, String value, QName assoc,
+			QName assocKey)
+			throws ImporterException {
 
 		List<NodeRef> targetRefs = new ArrayList<>();
 
@@ -1198,14 +1203,14 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 				for (String v : arrValue) {
 					if (!v.isEmpty()) {
-						NodeRef targetNodeRef = findTargetNodeByValue(importContext, null, targetClass, v, assoc);
+						NodeRef targetNodeRef = findTargetNodeByValue(importContext, null, targetClass, v, assoc, assocKey);
 						if (targetNodeRef != null) {
 							targetRefs.add(targetNodeRef);
 						}
 					}
 				}
 			} else {
-				NodeRef targetNodeRef = findTargetNodeByValue(importContext, null, targetClass, value, assoc);
+				NodeRef targetNodeRef = findTargetNodeByValue(importContext, null, targetClass, value, assoc, assocKey);
 				if (targetNodeRef != null) {
 					targetRefs.add(targetNodeRef);
 				}
@@ -1304,6 +1309,11 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	 */
 	protected NodeRef findTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef, QName type, String value, QName assoc)
 			throws ImporterException {
+		return findTargetNodeByValue(importContext, propDef, type, value, assoc, null);
+	}
+
+	protected NodeRef findTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef, QName type, String value, QName assoc, QName assocKey)
+			throws ImporterException {
 		NodeRef nodeRef = null;
 		NodeRef parentRef = null;
 		String assocPath = null;
@@ -1329,8 +1339,10 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			nodeRef = importContext.getCacheNodes().get(key);
 		} else {
 
-			// nodeColumnKeys, take the first
-			if ((classMapping != null) && (classMapping.getNodeColumnKeys() != null) && !classMapping.getNodeColumnKeys().isEmpty()) {
+			if (assocKey != null) {
+				properties.put(assocKey, value);
+				doQuery = true;
+			} else if ((classMapping != null) && (classMapping.getNodeColumnKeys() != null) && !classMapping.getNodeColumnKeys().isEmpty()) {
 
 				for (QName attribute : classMapping.getNodeColumnKeys()) {
 					properties.put(attribute, value);
@@ -1362,6 +1374,13 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				if ((classMapping != null) && StringUtils.isNotEmpty(assocPath)) {
 					parentRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
 							AbstractBeCPGQueryBuilder.encodePath(assocPath));
+				} else if (PLMModel.ASSOC_ILL_GRP.equals(assoc)) {
+					// there is no explicit path, so we assume the group mode is NOT 'Model'. Therefore, we need to add the entity path to avoid retrieving the group from another entity
+					NodeRef listContainer = entityListDAO.getListContainer(importContext.getEntityNodeRef());
+					parentRef = entityListDAO.getList(listContainer, PLMModel.TYPE_INGLABELINGLIST);
+					if (logger.isDebugEnabled()) {
+						logger.debug("Find parent ref for assoc bcpg:illGrp: " + parentRef);
+					}
 				}
 
 				nodeRef = findNodeByKeyOrCode(importContext, propDef, type, properties, parentRef, false);

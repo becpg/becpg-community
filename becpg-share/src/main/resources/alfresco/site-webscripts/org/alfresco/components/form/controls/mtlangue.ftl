@@ -14,16 +14,18 @@
       <div class="viewmode-field">
          <span class="viewmode-label">${field.label?html}:</span>
          <#if fieldValue?string == "">
-            <span class="viewmode-value">${msg("form.control.novalue")}</span></span>
+            <span class="viewmode-value"></span></span>
          <#else>
            <span class="viewmode-value">
 			   <#list values as value>
-			     <#if value?contains("_") >
-				    <#assign localeshort = value?substring(3,5)?lower_case >
-				 <#else>
-					<#assign localeshort = value?substring(0,2)?lower_case >
-			     </#if>  
-			      <img  title="${msg("locale.name.${value}")}" src="${url.context}/res/components/images/flags/${localeshort}.png" />
+			     <#if value?has_content>
+				     <#if value?contains("_") >
+					    <#assign localeshort = value?substring(3,5)?lower_case >
+					 <#else>
+						<#assign localeshort = value?substring(0,2)?lower_case >
+				     </#if>  
+				      <img  title="${msg("locale.name.${value}")}" src="${url.context}/res/components/images/flags/${localeshort}.png" />
+			     </#if>
 			  </#list>
 			</span>
          </#if>

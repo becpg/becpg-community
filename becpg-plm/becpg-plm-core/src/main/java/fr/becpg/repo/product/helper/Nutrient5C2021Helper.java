@@ -7,6 +7,7 @@ import java.util.List;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.NutrientProfileCategory;
@@ -27,11 +28,22 @@ public class Nutrient5C2021Helper implements InitializingBean, NutrientRegulator
 	
 	private static Nutrient5C2021Helper INSTANCE = null;
 	
-	@Autowired
-	private NodeService nodeService;
+	private final NodeService nodeService;
+	
+	private final AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	
 	@Autowired
-	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+	/**
+	 * <p>Constructor for Nutrient5C2021Helper.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 */
+	public Nutrient5C2021Helper(@Qualifier("nodeService") NodeService nodeService,
+			AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
+		this.nodeService = nodeService;
+		this.alfrescoRepository = alfrescoRepository;
+	}
 	
 	private static final double[] sugarsRange = { 45d, 40d, 36d, 31d, 27d, 22.5d, 18d, 13.5d, 9d, 4.5d };
 	private static final double[] sodiumRange = { 900d, 810d, 720d, 630d, 540d, 450d, 360d, 270d, 180d, 90d };
@@ -61,10 +73,6 @@ public class Nutrient5C2021Helper implements InitializingBean, NutrientRegulator
 	private static final List<Double> CHEESES_RANGES = Arrays.asList(18d, 10d, 2d, -1d);
 	private static final List<Double> FATS_RANGES = CHEESES_RANGES;
 	private static final List<Double> OTHERS_RANGES = CHEESES_RANGES;
-
-	private Nutrient5C2021Helper() {
-		
-	}
 	
 	/** {@inheritDoc} */
 	@Override

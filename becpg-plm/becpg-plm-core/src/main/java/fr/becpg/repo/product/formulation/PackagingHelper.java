@@ -12,6 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.GS1Model;
@@ -42,21 +43,28 @@ public class PackagingHelper implements InitializingBean {
 
 	private static PackagingHelper instance = null;
 
+	private final NodeService nodeService;
+
+	protected final AlfrescoRepository<ProductData> alfrescoRepository;
+
+	@Autowired
+	/**
+	 * <p>Constructor for PackagingHelper.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 */
+	public PackagingHelper(@Qualifier("nodeService") NodeService nodeService,
+			@Qualifier("alfrescoRepository") AlfrescoRepository<ProductData> alfrescoRepository) {
+		this.nodeService = nodeService;
+		this.alfrescoRepository = alfrescoRepository;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() {
 		instance = this;
 	}
-
-	private PackagingHelper() {
-		// Make creation private
-	}
-
-	@Autowired
-	private NodeService nodeService;
-
-	@Autowired
-	protected AlfrescoRepository<ProductData> alfrescoRepository;
 
 	/**
 	 * <p>getDefaultVariantPackagingData.</p>

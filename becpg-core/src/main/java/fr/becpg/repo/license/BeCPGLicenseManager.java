@@ -1,7 +1,8 @@
 package fr.becpg.repo.license;
 
-import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AbstractAuthenticationService;
@@ -264,36 +265,67 @@ public class BeCPGLicenseManager {
 		return null;
 
 	}
+	
+	private final Map<SystemGroup, Set<String>> concurrentUsersAllowedMap = new ConcurrentHashMap<>();
+	
+	public boolean isConcurrentUserAllowed() {
+		if (isSpecialLicenceUser()) {
+			return true;
+		}
+		
+		String currentUser = AuthenticationUtil.getRunAsUser();
+		
+		Set<String> allowedReadUsers = concurrentUsersAllowedMap.computeIfAbsent(SystemGroup.LicenseReadConcurrent, k -> ConcurrentHashMap.newKeySet());
+		if (allowedReadUsers.contains(currentUser)) {
+			return true;
+		}
+		Set<String> allowedWriteUsers = concurrentUsersAllowedMap.computeIfAbsent(SystemGroup.LicenseWriteConcurrent, k -> ConcurrentHashMap.newKeySet());
+		if (allowedWriteUsers.contains(currentUser)) {
+			return true;
+		}
+		Set<String> allowedSupplierUsers = concurrentUsersAllowedMap.computeIfAbsent(SystemGroup.LicenseSupplierConcurrent, k -> ConcurrentHashMap.newKeySet());
+		if (allowedSupplierUsers.contains(currentUser)) {
+			return true;
+		}
+		
+		Set<String> connectedUsers = authenticationService.getUsersWithTickets(true);
+		
+		synchronized (allowedReadUsers) {
+			allowedReadUsers.removeIf(u -> !connectedUsers.contains(u));
+			Set<String> readUsers = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadConcurrent.toString());
+			if (readUsers.contains(currentUser)) {
+				if (allowedReadUsers.size() >= getLicense().allowedConcurrentRead) {
+					return false;
+				}
+				allowedReadUsers.add(currentUser);
+				return true;
+			}
+		}
+		
+		synchronized (allowedWriteUsers) {
+			allowedWriteUsers.removeIf(u -> !connectedUsers.contains(u));
+			Set<String> writeUsers = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteConcurrent.toString());
+			if (writeUsers.contains(currentUser)) {
+				if (allowedWriteUsers.size() >= getLicense().allowedConcurrentWrite) {
+					return false;
+				}
+				allowedWriteUsers.add(currentUser);
+				return true;
+			}
+		}
 
-	/**
-	 * <p>floatingLicensesExceeded.</p>
-	 *
-	 * @param sessionId a {@link java.lang.String} object
-	 * @return a boolean
-	 */
-	public boolean floatingLicensesExceeded(String sessionId) {
-		return beCPGCacheService.getFromCache(BeCPGLicenseManager.class.getName() + ".sessions", sessionId, () -> {
-			Set<String> users = new HashSet<>(authenticationService.getUsersWithTickets(true));
-			Set<String> concurrentReadUsers = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadConcurrent.toString());
-			concurrentReadUsers.removeIf(this::isSpecialLicenseUser);
-			concurrentReadUsers.retainAll(users);
-			if (concurrentReadUsers.contains(AuthenticationUtil.getRunAsUser()) && concurrentReadUsers.size() > getLicense().allowedConcurrentRead) {
+		synchronized (allowedSupplierUsers) {
+			allowedSupplierUsers.removeIf(u -> !connectedUsers.contains(u));
+			Set<String> supplierUsers = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseSupplierConcurrent.toString());
+			if (supplierUsers.contains(currentUser)) {
+				if (allowedSupplierUsers.size() >= getLicense().allowedConcurrentSupplier) {
+					return false;
+				}
+				allowedSupplierUsers.add(currentUser);
 				return true;
 			}
-			Set<String> concurrentWriteUsers = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteConcurrent.toString());
-			concurrentWriteUsers.retainAll(users);
-			concurrentWriteUsers.removeIf(this::isSpecialLicenseUser);
-			if (concurrentWriteUsers.contains(AuthenticationUtil.getRunAsUser()) && concurrentWriteUsers.size() > getLicense().allowedConcurrentWrite) {
-				return true;
-			}
-			Set<String> concurrentSupplierUsers = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseSupplierConcurrent.toString());
-			concurrentSupplierUsers.retainAll(users);
-			concurrentSupplierUsers.removeIf(this::isSpecialLicenseUser);
-			if (concurrentSupplierUsers.contains(AuthenticationUtil.getRunAsUser()) && concurrentSupplierUsers.size() > getLicense().allowedConcurrentSupplier) {
-				return true;
-			}
-			return false;
-		});
+			return true;
+		}
 	}
 
 	/**

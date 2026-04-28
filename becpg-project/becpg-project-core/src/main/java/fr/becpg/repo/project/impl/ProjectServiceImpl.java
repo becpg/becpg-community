@@ -657,10 +657,15 @@ public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements 
 	@Override
 	public boolean checkIsInSecurityGroup(NodeRef nodeRef, List<NodeRef> groups) {
 		if (nodeRef != null) {
+			NodeRef projectNodeRef = nodeRef;
+			if (ProjectModel.TYPE_TASK_LIST.equals(nodeService.getType(nodeRef))) {
+				projectNodeRef = entityListDAO.getEntity(nodeRef);
+			}
+			
 			for (NodeRef groupNodeRef : groups) {
 				String authorityName = authorityDAO.getAuthorityName(groupNodeRef);
 				if (ProjectHelper.isRoleAuhtority(authorityName)) {
-					List<NodeRef> resources = extractResources(nodeRef, Arrays.asList(groupNodeRef));
+					List<NodeRef> resources = extractResources(projectNodeRef, Arrays.asList(groupNodeRef));
 					if (resources.contains(personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser()))) {
 						return true;
 					}
@@ -674,7 +679,7 @@ public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements 
 	/** {@inheritDoc} */
 	@Override
 	public boolean accept(QName nodeType) {
-		return ProjectModel.TYPE_PROJECT.equals(nodeType);
+		return ProjectModel.TYPE_PROJECT.equals(nodeType) || ProjectModel.TYPE_TASK_LIST.equals(nodeType);
 	}
 
 	/** {@inheritDoc} */

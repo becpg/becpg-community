@@ -11,8 +11,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.query.PagingRequest;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -33,6 +36,8 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.formulation.ReportableError;
 import fr.becpg.repo.formulation.ReportableError.ReportableErrorType;
+import fr.becpg.repo.entity.datalist.WUsedListService;
+import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.CurrentLevelQuantities;
@@ -67,6 +72,7 @@ import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.PackagingHelper;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
 import fr.becpg.repo.product.helper.AllocationHelper;
+import fr.becpg.repo.product.helper.WUsedAssociationResolver;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.report.entity.EntityReportParameters;
@@ -130,9 +136,15 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	private static final String ATTR_ALLERGENLIST_INVOLUNTARY_FROM_PROCESS = "allergenListInVoluntaryFromProcess";
 	private static final String ATTR_ALLERGENLIST_INVOLUNTARY_FROM_RAW_MATERIAL = "allergenListInVoluntaryFromRawMaterial";
+	private static final String TAG_WUSEDS = "wUseds";
+	private static final String TAG_WUSED = "wUsed";
+	private static final int DEFAULT_WUSED_MAX_RESULTS = 20;
+	private static final Pattern MAX_LEVEL_PATTERN = Pattern.compile("^MaxLevel(\\d+)$", Pattern.CASE_INSENSITIVE);
+	private static final Pattern ONLY_LEVEL_PATTERN = Pattern.compile("^OnlyLevel(\\d+)$", Pattern.CASE_INSENSITIVE);
 
-	@Autowired
-	private SystemConfigurationService systemConfigurationService;
+	private final SystemConfigurationService systemConfigurationService;
+	private final WUsedListService wUsedListService;
+	private final WUsedAssociationResolver wUsedAssociationResolver;
 
 	private Boolean extractInMultiLevel() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.product.report.multiLevel"));
@@ -154,6 +166,15 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.product.report.extractRawMaterial"));
 	}
 
+	private String extractWUsedConfig() {
+		return systemConfigurationService.confValue("beCPG.product.report.extractWUsed");
+	}
+
+	private Boolean extractWUsed() {
+		String config = extractWUsedConfig();
+		return (config != null) && !config.isBlank() && !"false".equalsIgnoreCase(config) && !"off".equalsIgnoreCase(config);
+	}
+
 	private Boolean showDeprecated() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.product.report.showDeprecatedXml"));
 	}
@@ -162,13 +183,33 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		return systemConfigurationService.confValue("beCPG.product.report.nutList.localesToExtract");
 	}
 
+	protected final PackagingHelper packagingHelper;
+
 	@Autowired
-	protected PackagingHelper packagingHelper;
+	/**
+	 * <p>Constructor for ProductReportExtractorPlugin.</p>
+	 *
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 * @param packagingHelper a {@link fr.becpg.repo.product.formulation.PackagingHelper} object
+	 * @param wUsedListService a {@link fr.becpg.repo.entity.datalist.WUsedListService} object
+	 * @param wUsedAssociationResolver a {@link fr.becpg.repo.product.helper.WUsedAssociationResolver} object
+	 */
+	public ProductReportExtractorPlugin(SystemConfigurationService systemConfigurationService,
+			PackagingHelper packagingHelper,
+			WUsedListService wUsedListService,
+			WUsedAssociationResolver wUsedAssociationResolver) {
+		this.systemConfigurationService = systemConfigurationService;
+		this.packagingHelper = packagingHelper;
+		this.wUsedListService = wUsedListService;
+		this.wUsedAssociationResolver = wUsedAssociationResolver;
+	}
 
 	static {
 		hiddenNodeAttributes.add(PLMModel.PROP_NUT_FORMULA);
 		hiddenNodeAttributes.add(PLMModel.PROP_LABEL_CLAIM_FORMULA);
-
+		hiddenNodeAttributes.add(PLMModel.PROP_REQUIREMENT_CHECKSUM);
+		
+		hiddenDataListItemAttributes.add(PLMModel.PROP_REQUIREMENT_CHECKSUM);
 		hiddenDataListItemAttributes.add(PLMModel.PROP_LCL_FORMULAERROR);
 		hiddenDataListItemAttributes.add(PLMModel.ASSOC_LCL_MISSING_LABELCLAIMS);
 		hiddenDataListItemAttributes.add(PLMModel.PROP_PHYSICOCHEMFORMULA_ERROR);
@@ -353,6 +394,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			if (isExtractedProduct && context.isPrefOn("extractRawMaterial", extractRawMaterial())) {
 
 				extractRawMaterials(productData, dataListsElt, context);
+			}
+
+			if (isExtractedProduct && (context.isPrefOn("extractWUsed", extractWUsed())
+					|| hasExtractWUsedModePreference(context))) {
+
+				extractWUsed(productData, dataListsElt, context);
 			}
 
 			if (shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_INGLABELINGLIST)) {
@@ -1178,6 +1225,147 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
+	private void extractWUsed(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
+		WUsedExtractionMode extractionMode = resolveWUsedExtractionMode(context);
+		if (!extractionMode.isEnabled()) {
+			return;
+		}
+
+		Element wUsedsElt = dataListsElt.addElement(TAG_WUSEDS);
+		List<QName> associations = wUsedAssociationResolver.evaluateWUsedAssociations(productData.getNodeRef());
+		PagingRequest pagingRequest = new PagingRequest(extractionMode.getMaxResults());
+
+		for (QName association : associations) {
+			MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(productData.getNodeRef(), association,
+					extractionMode.getMaxDepthLevel(), pagingRequest);
+			appendWUsedEntries(wUsedsElt, wUsedData, extractionMode, context, association, null);
+		}
+	}
+
+	private void appendWUsedEntries(Element wUsedsElt, MultiLevelListData wUsedData, WUsedExtractionMode extractionMode,
+			DefaultExtractorContext context, QName association, NodeRef parentNodeRef) {
+
+		for (Map.Entry<NodeRef, MultiLevelListData> entry : wUsedData.getTree().entrySet()) {
+			NodeRef dataListItemNodeRef = entry.getKey();
+			MultiLevelListData nextLevelData = entry.getValue();
+			NodeRef sourceEntityNodeRef = nextLevelData.getEntityNodeRef();
+
+			if ((sourceEntityNodeRef != null) && nodeService.exists(sourceEntityNodeRef)
+					&& shouldExtractDepth(extractionMode, nextLevelData.getDepth())) {
+				Element wUsedElt = wUsedsElt.addElement(TAG_WUSED);
+				loadAttributes(sourceEntityNodeRef, wUsedElt, true, null, context);
+				wUsedElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), Integer.toString(nextLevelData.getDepth()));
+				wUsedElt.addAttribute(ATTR_NODEREF, dataListItemNodeRef.toString());
+				if (parentNodeRef != null) {
+					wUsedElt.addAttribute(ATTR_PARENT_NODEREF, parentNodeRef.toString());
+				}
+				if (association != null) {
+					wUsedElt.addAttribute("association", association.toPrefixString(namespaceService));
+				}
+
+				Element wUsedDataListsElt = wUsedElt.addElement(TAG_DATALISTS);
+				loadDataLists(sourceEntityNodeRef, wUsedDataListsElt, context, false, 1);
+			}
+
+			appendWUsedEntries(wUsedsElt, nextLevelData, extractionMode, context, association, dataListItemNodeRef);
+		}
+	}
+
+	private boolean shouldExtractDepth(WUsedExtractionMode extractionMode, int depth) {
+		if (extractionMode.onlyLevel()) {
+			return depth == extractionMode.getMaxDepthLevel();
+		}
+		return true;
+	}
+
+	private WUsedExtractionMode resolveWUsedExtractionMode(DefaultExtractorContext context) {
+		String modeConfig = context.getPrefValue("extractWUsed", extractWUsedConfig());
+		if ("true".equalsIgnoreCase(modeConfig)) {
+			modeConfig = extractWUsedConfig();
+		}
+		return WUsedExtractionMode.parse(modeConfig);
+	}
+
+	private boolean hasExtractWUsedModePreference(DefaultExtractorContext context) {
+		if (!context.getPreferences().containsKey("extractWUsed")) {
+			return false;
+		}
+		return WUsedExtractionMode.parse(context.getPrefValue("extractWUsed", null)).isEnabled();
+	}
+
+	private static final class WUsedExtractionMode {
+
+		private final boolean enabled;
+		private final boolean onlyLevel;
+		private final int maxDepthLevel;
+		private final int maxResults;
+
+		private WUsedExtractionMode(boolean enabled, boolean onlyLevel, int maxDepthLevel, int maxResults) {
+			this.enabled = enabled;
+			this.onlyLevel = onlyLevel;
+			this.maxDepthLevel = maxDepthLevel;
+			this.maxResults = maxResults;
+		}
+
+		private static WUsedExtractionMode parse(String modeConfig) {
+			if ((modeConfig == null) || modeConfig.isBlank() || "false".equalsIgnoreCase(modeConfig)
+					|| "off".equalsIgnoreCase(modeConfig)) {
+				return new WUsedExtractionMode(false, false, -1, DEFAULT_WUSED_MAX_RESULTS);
+			}
+
+			String[] tokens = modeConfig.split("\\|");
+			String mode = tokens[0].trim();
+			int maxResults = parseMaxResults(tokens);
+
+			if ("AllLevel".equalsIgnoreCase(mode)) {
+				return new WUsedExtractionMode(true, false, -1, maxResults);
+			}
+
+			Matcher maxLevelMatcher = MAX_LEVEL_PATTERN.matcher(mode);
+			if (maxLevelMatcher.matches()) {
+				int maxDepthLevel = Integer.parseInt(maxLevelMatcher.group(1));
+				return new WUsedExtractionMode(maxDepthLevel > 0, false, maxDepthLevel, maxResults);
+			}
+
+			Matcher onlyLevelMatcher = ONLY_LEVEL_PATTERN.matcher(mode);
+			if (onlyLevelMatcher.matches()) {
+				int depthLevel = Integer.parseInt(onlyLevelMatcher.group(1));
+				return new WUsedExtractionMode(depthLevel > 0, true, depthLevel, maxResults);
+			}
+
+			return new WUsedExtractionMode(false, false, -1, DEFAULT_WUSED_MAX_RESULTS);
+		}
+
+		private static int parseMaxResults(String[] tokens) {
+			if (tokens.length < 2) {
+				return DEFAULT_WUSED_MAX_RESULTS;
+			}
+
+			try {
+				int maxResults = Integer.parseInt(tokens[1].trim());
+				return maxResults > 0 ? maxResults : DEFAULT_WUSED_MAX_RESULTS;
+			} catch (NumberFormatException e) {
+				return DEFAULT_WUSED_MAX_RESULTS;
+			}
+		}
+
+		private boolean isEnabled() {
+			return enabled;
+		}
+
+		private boolean onlyLevel() {
+			return onlyLevel;
+		}
+
+		private int getMaxDepthLevel() {
+			return maxDepthLevel;
+		}
+
+		private int getMaxResults() {
+			return maxResults;
+		}
+	}
+
 	private void extractPriceBreaks(ProductData productData, Element dataListsElt) {
 
 		Double netWeight = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
@@ -1674,6 +1862,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		for (DynamicCharactListItem dc : dynamicCharactList) {
 			Element dynamicCharact = dynCharactListElt.addElement(PLMModel.TYPE_DYNAMICCHARACTLIST.getLocalName());
 			dynamicCharact.addAttribute(PLMModel.PROP_DYNAMICCHARACT_TITLE.getLocalName(), dc.getTitle());
+			String cmTitle = (dc.getMlTitle() != null) ? MLTextHelper.getClosestValue(dc.getMlTitle(), I18NUtil.getContentLocale()) : null;
+			dynamicCharact.addAttribute(ContentModel.PROP_TITLE.getLocalName(), cmTitle != null ? cmTitle : dc.getTitle());
 			Object ret = null;
 			if (dc.getValue() != null) {
 				ret = JsonFormulaHelper.cleanCompareJSON(dc.getValue().toString());

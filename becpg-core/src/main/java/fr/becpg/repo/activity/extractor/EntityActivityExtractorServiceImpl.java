@@ -40,8 +40,8 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.ExcelHelper;
-import fr.becpg.repo.helper.JsonHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
+import fr.becpg.repo.helper.json.JsonHelper;
 import fr.becpg.repo.security.SecurityService;
 
 /**

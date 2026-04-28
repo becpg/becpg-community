@@ -41,6 +41,61 @@ function getArgument(argName, defValue) {
 	return result;
 }
 
+function getRequestHeader(headerName) {
+	try {
+		if (typeof request !== "undefined" && request !== null && typeof request.getHeader === "function") {
+			return request.getHeader(headerName);
+		}
+	} catch (e) {
+		// ignore
+	}
+
+	try {
+		if (typeof headers !== "undefined" && headers !== null) {
+			return headers[headerName] || headers[headerName.toLowerCase()];
+		}
+	} catch (e2) {
+		// ignore
+	}
+
+	return null;
+}
+
+function extractWizardIdFromReferer(referer) {
+	if (referer !== null) {
+		var wizardIndex = referer.indexOf("/share/page/wizard");
+		if (wizardIndex !== -1) {
+			var wizardPart = referer.substring(wizardIndex);
+			var idIndex = wizardPart.indexOf("id=");
+			if (idIndex !== -1) {
+				var start = idIndex + 3;
+				var end = wizardPart.indexOf("&", start);
+				if (end === -1) {
+					end = wizardPart.length;
+				}
+				return wizardPart.substring(start, end);
+			}
+		}
+	}
+	return null;
+}
+
+function isWizardConfiguredForSkipSecurity(wizardId) {
+	if (wizardId !== null) {
+		var wizardsConfig = config.scoped["wizard"];
+		if (wizardsConfig && wizardsConfig["wizards"] && wizardsConfig["wizards"].childrenMap && wizardsConfig["wizards"].childrenMap["wizard"]) {
+			var wizards = wizardsConfig["wizards"].childrenMap["wizard"];
+			for (var i = 0; i < wizards.size(); i++) {
+				var wizard = wizards.get(i);
+				if (wizard && wizard.attributes && wizard.attributes["id"] == wizardId) {
+					return wizard.attributes["skipSecurityRules"] == "true";
+				}
+			}
+		}
+	}
+	return false;
+}
+
 /**
  * Finds the configuration for the given item id, if there isn't any
  * configuration for the item null is returned.
@@ -173,7 +228,7 @@ function getVisibleFields(mode, formConfig) {
  *            The form configuration object
  * @return Object representing the POST body
  */
-function createPostBody(itemKind, itemId, visibleFields, formConfig, mode, entityNodeRef) {
+function createPostBody(itemKind, itemId, visibleFields, formConfig, mode, entityNodeRef, skipSecurityRules) {
 	var postBody = {};
 
 	postBody.itemKind = itemKind;
@@ -182,6 +237,9 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig, mode, entit
 		postBody.entityNodeRef = entityNodeRef;
 	}
 	postBody.formId = formConfig.id;
+	if (skipSecurityRules === true) {
+		postBody.skipSecurityRules = true;
+	}
 
 	if (visibleFields !== null) {
 		// create list of fields to show and a list of
@@ -227,6 +285,15 @@ function main() {
 	, mode = getArgument("mode"), noCache = getArgument("noCache"), siteId = getArgument("siteId")
 	, entityType = getArgument("entityType"), entityNodeRef = getArgument("entityNodeRef");
 
+	var skipSecurityRules = false;
+	var referer = getRequestHeader("Referer");
+	if (referer !== null && referer.indexOf("/share/page/wizard") !== -1) {
+		var wizardId = extractWizardIdFromReferer(referer);
+		if (wizardId !== null && isWizardConfiguredForSkipSecurity(wizardId)) {
+			skipSecurityRules = true;
+		}
+	}
+
 	
 	cache.maxAge = 3600; // in seconds
 	cache.neverCache=false;
@@ -246,11 +313,11 @@ function main() {
 	}
 	
 	// pass form ui model to FTL
-	model.columns = getColumns(itemType, list, formId, mode, prefixedSiteId, prefixedEntityType, entityNodeRef);
+	model.columns = getColumns(itemType, list, formId, mode, prefixedSiteId, prefixedEntityType, entityNodeRef, null, skipSecurityRules);
 
 }
 
-function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEntityType, entityNodeRef , nestedPrefKey) {
+function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEntityType, entityNodeRef , nestedPrefKey, skipSecurityRules) {
 	
 	var columns = [], defaultColumns = [], ret = [];
 
@@ -283,7 +350,7 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 			var visibleFields = getVisibleFields(mode == "bulk-edit" ? "edit" : "view", formConfig);
 
 			// build the JSON object to send to the server
-			var postBody = createPostBody("type", itemType, visibleFields, formConfig, mode,entityNodeRef);
+			var postBody = createPostBody("type", itemType, visibleFields, formConfig, mode, entityNodeRef, skipSecurityRules);
 
 
 			// make remote call to service
@@ -376,7 +443,7 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 					}
 
 
-					column.columns = getColumns(name + "", "sub-datagrid");
+					column.columns = getColumns(name + "", "sub-datagrid", null, mode, null, null, null, null, skipSecurityRules);
 
 					ret.push(column);
 
@@ -404,11 +471,11 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 					
 					if (splitted[1].includes("@")) {
 						var formSplitted = splitted[1].split("@");
-						column.columns = getColumns(formSplitted[0] + "", "sub-datagrid", formSplitted[1] + "",mode,null,null,null,subPrefKey);
+						column.columns = getColumns(formSplitted[0] + "", "sub-datagrid", formSplitted[1] + "", mode, null, null, null, subPrefKey, skipSecurityRules);
 					} else if (formIdArgs != null && formIdArgs.length > 0) {
-						column.columns = getColumns(splitted[1] + "", "sub-datagrid", "sub-datagrid-" + formIdArgs, mode,null,null,null,subPrefKey);
+						column.columns = getColumns(splitted[1] + "", "sub-datagrid", "sub-datagrid-" + formIdArgs, mode, null, null, null, subPrefKey, skipSecurityRules);
 					} else {
-						column.columns = getColumns(splitted[1] + "", "sub-datagrid",null, mode,null,null,null,subPrefKey);
+						column.columns = getColumns(splitted[1] + "", "sub-datagrid", null, mode, null, null, null, subPrefKey, skipSecurityRules);
 					}
 
 					ret.push(column);

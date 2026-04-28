@@ -96,6 +96,44 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		NodeServicePolicies.OnDeleteChildAssociationPolicy, NodeServicePolicies.OnDeleteNodePolicy, CheckOutCheckInServicePolicies.OnCheckIn,
 		RefreshableCacheListener, NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnRestoreNodePolicy, InitializingBean {
 
+	private static final String EXCLUDE_PROP_MAP = "excludePropMap";
+
+	private static final String CRITERIA_FILTERS = "criteriaFilters";
+
+	private static final String FILTER_VALUES = "filterValues";
+
+	private static final String FIELD_NAME = "fieldName";
+
+	private static final String Q_NAME_ID = "qNameId";
+
+	private static final String TO_RANGE = "toRange";
+
+	private static final String FROM_RANGE = "fromRange";
+
+	private static final String MODE = "mode";
+
+	private static final String ENTITY_FILTER = "entityFilter";
+
+	private static final String INDEX = "index";
+
+	private static final String STORE_REF = "storeRef";
+
+	private static final String TYPE_Q_NAME_IDS = "typeQNameIds";
+
+	private static final String LIST_TYPE_Q_NAME = "listTypeQName";
+
+	private static final String ASPECT_Q_NAME_ID = "aspectQNameId";
+
+	private static final String TYPE_Q_NAME_ID = "typeQNameId";
+
+	private static final String DATA_LIST_ITEM_TYPE = "dataListItemType";
+
+	private static final String IS_ENTITY = "isEntity";
+
+	private static final String OFFSET_PARAM = "offset";
+	
+	private static final String MAXRESULTS_PARAM = "maxResults";
+
 	private static final Log logger = LogFactory.getLog(AssociationServiceImplV2.class);
 
 	private EntityDictionaryService entityDictionaryService;
@@ -516,10 +554,22 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName, Boolean includeVersions, Integer maxResults, Integer offset,
 			boolean checkPermissions) {
 		Map<String, Object> params = new HashMap<>();
-		params.put("qName", qName != null ? qName.getLocalName() : null);
+		if (qName == null) {
+			params.put("qNameId", null);
+		} else {
+			Pair<Long, QName> qNamePair = qnameDAO.getQName(qName);
+			if (qNamePair == null) {
+				return new ArrayList<>();
+			}
+			params.put("qNameId", qNamePair.getFirst());
+		}
 		params.put("includeVersions", includeVersions != null && includeVersions.booleanValue());
+		params.put("workspaceSpacesStoreId", nodeDAO.getStore(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE).getFirst());
 		Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(tenantService.getName(nodeRef));
 		params.put("targetId", nodePair.getFirst());
+		Pair<Long, QName> aspectCompositeVersion = qnameDAO.getQName(BeCPGModel.ASPECT_COMPOSITE_VERSION);
+		Long aspectQNameId = (aspectCompositeVersion != null) ? aspectCompositeVersion.getFirst() : -1;
+		params.put("compositeVersionId", aspectQNameId);
 
 		Set<String> authorisations = AuthenticationUtil.runAs(() -> permissionService.getAuthorisations(),
 				AuthenticationUtil.getFullyAuthenticatedUser());
@@ -528,9 +578,6 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		return queryItems("alfresco.node.select_SourcesAssocs", params, maxResults, offset, checkPermissions, permissionChecker).stream()
 				.map(Node::getNodeRef).map(n -> tenantService.getBaseName(n)).toList();
 	}
-
-	private static final String OFFSET_PARAM = "offset";
-	private static final String MAXRESULTS_PARAM = "maxResults";
 
 	private <T> List<T> queryItems(String template, Map<String, Object> params, Integer maxResults, Integer offset, boolean checkPermissions,
 			Predicate<T> permissionChecker) {
@@ -715,10 +762,10 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 				NodeRef sourceNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, (String) res.get("targetNode"));
 				NodeRef dataListItemNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, (String) res.get("dataListItem"));
 
-				if ((boolean) params.get("isEntity")) {
+				if ((boolean) params.get(IS_ENTITY)) {
 					entityNodeRef = dataListItemNodeRef;
 				} else if (listTypeQname == null) {
-					Pair<Long, QName> entityType = qnameDAO.getQName((Long) res.get("dataListItemType"));
+					Pair<Long, QName> entityType = qnameDAO.getQName((Long) res.get(DATA_LIST_ITEM_TYPE));
 					if (!entityDictionaryService.isSubClass(entityType.getSecond(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 						entityNodeRef = dataListItemNodeRef;
 					}
@@ -750,11 +797,11 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 				return Collections.emptyMap(); // No QName found, return empty map
 			}
 		}
-		queryParams.put("typeQNameId", typeQNameId);
+		queryParams.put(TYPE_Q_NAME_ID, typeQNameId);
 
 		Pair<Long, QName> aspectCompositeVersion = qnameDAO.getQName(BeCPGModel.ASPECT_COMPOSITE_VERSION);
 		Long aspectQNameId = (aspectCompositeVersion != null) ? aspectCompositeVersion.getFirst() : -1;
-		queryParams.put("aspectQNameId", aspectQNameId);
+		queryParams.put(ASPECT_Q_NAME_ID, aspectQNameId);
 
 		if (listTypeQname == null) {
 			AssociationDefinition assocDef = entityDictionaryService.getAssociation(assocTypeQName);
@@ -762,10 +809,10 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 				listTypeQname = assocDef.getSourceClass().getName();
 			}
 		}
-		queryParams.put("listTypeQName", listTypeQname);
+		queryParams.put(LIST_TYPE_Q_NAME, listTypeQname);
 
 		boolean isEntity = (listTypeQname != null) && !entityDictionaryService.isSubClass(listTypeQname, BeCPGModel.TYPE_ENTITYLIST_ITEM);
-		queryParams.put("isEntity", isEntity);
+		queryParams.put(IS_ENTITY, isEntity);
 
 		List<Long> typeQNameIds = new ArrayList<>();
 		if (listTypeQname != null) {
@@ -787,13 +834,13 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 				}
 			}
 		}
-		queryParams.put("typeQNameIds", typeQNameIds);
+		queryParams.put(TYPE_Q_NAME_IDS, typeQNameIds);
 
 		StoreRef storeRef = StoreRef.STORE_REF_WORKSPACE_SPACESSTORE;
 		if (AuthenticationUtil.isMtEnabled()) {
 			storeRef = tenantService.getName(storeRef);
 		}
-		queryParams.put("storeRef", storeRef);
+		queryParams.put(STORE_REF, storeRef);
 
 		return queryParams;
 	}
@@ -801,58 +848,111 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	private Map<String, Object> buildCriteriaFilterMap(List<AssociationCriteriaFilter> criteriaFilters) {
 		Map<String, Object> filterMap = new HashMap<>();
 		List<Map<String, Object>> processedFilters = new ArrayList<>();
-		StringBuilder exclude = new StringBuilder("");
+		List<Map<String, Object>> auditFilters = new ArrayList<>();
 
 		int index = 0;
+		
+		Map<Integer, Map<String, Object>> excludePropMap = new HashMap<>();
+		
 		for (AssociationCriteriaFilter criteriaFilter : criteriaFilters) {
 			if (criteriaFilter.hasValue()) {
 				Map<String, Object> filterEntry = new HashMap<>();
-				filterEntry.put("index", index);
-				filterEntry.put("entityFilter", criteriaFilter.isEntityFilter());
-				filterEntry.put("mode", criteriaFilter.getMode().toString());
-				filterEntry.put("value", criteriaFilter.getValue());
-
+				filterEntry.put(INDEX, index);
+				filterEntry.put(ENTITY_FILTER, criteriaFilter.isEntityFilter());
+				filterEntry.put(MODE, criteriaFilter.getMode().toString());
 				QName criteriaAttribute = criteriaFilter.getAttributeQname();
 				String fieldName = DBQuery.getFieldName(entityDictionaryService, criteriaAttribute, true);
 				if (criteriaFilter.getFromRange() != null) {
-					filterEntry.put("fromRange", wrap(fieldName, criteriaFilter.getFromRange()));
+					filterEntry.put(FROM_RANGE, criteriaFilter.getFromRange());
 				}
 				if (criteriaFilter.getToRange() != null) {
-					filterEntry.put("toRange", wrap(fieldName, criteriaFilter.getToRange()));
+					filterEntry.put(TO_RANGE, criteriaFilter.getToRange());
 				}
 				Pair<Long, QName> qNameIdPair = qnameDAO.getQName(criteriaAttribute);
 				if (qNameIdPair != null) {
 					Long qNameId = qNameIdPair.getFirst();
 					if (qNameId != null && fieldName != null) {
-						filterEntry.put("qNameId", qNameId);
-						filterEntry.put("fieldName", fieldName);
+						filterEntry.put(Q_NAME_ID, qNameId);
+						filterEntry.put(FIELD_NAME, fieldName);
 						if (criteriaFilter.getValue() != null) {
 							String[] values = criteriaFilter.getValue().split(",");
-							String joinedValues = Arrays.stream(values).map(value -> wrap(fieldName, value)).collect(Collectors.joining(","));
-							filterEntry.put("joinedValues", joinedValues);
-							if (AssociationCriteriaFilterMode.NOT_EQUALS.equals(criteriaFilter.getMode())) {
-								exclude.append(" and (p" + index + "." + fieldName + " IS NULL or p" + index + "." + fieldName + " not in ("
-										+ joinedValues + "))");
+							List<Object> filterValues = formatFilterValues(fieldName, values);
+							filterEntry.put(FILTER_VALUES, filterValues);
+							if (AssociationCriteriaFilterMode.NOT_EQUALS.equals(criteriaFilter.getMode()) && !isAuditProperty(fieldName)) {
+								Map<String, Object> exludeFilterMap = new HashMap<>();
+								exludeFilterMap.put(FIELD_NAME, fieldName);
+								exludeFilterMap.put(FILTER_VALUES, filterValues);
+								excludePropMap.put(index, exludeFilterMap);
 							}
 						}
-						processedFilters.add(filterEntry);
+						if (isAuditProperty(fieldName)) {
+							auditFilters.add(filterEntry);
+						} else {
+							processedFilters.add(filterEntry);
+						}
 						index++;
 					}
 				}
 			}
 		}
 
-		filterMap.put("criteriaFilters", processedFilters);
-		filterMap.put("exclude", exclude.toString());
+		filterMap.put(CRITERIA_FILTERS, processedFilters);
+		filterMap.put("auditFilters", auditFilters);
+		filterMap.put(EXCLUDE_PROP_MAP, excludePropMap);
 		return filterMap;
 	}
 
-	private String wrap(String fieldName, String value) {
-		if ("string_value".equals(fieldName)) {
-			return "'" + value + "'";
+	/**
+	 * Formats equality filter values to match the property column type.
+	 *
+	 * @param fieldName the persisted field name
+	 * @param values the raw filter values
+	 * @return the typed filter values
+	 */
+	private List<Object> formatFilterValues(String fieldName, String[] values) {
+		List<Object> filterValues = new ArrayList<>(values.length);
+		for (String value : values) {
+			filterValues.add(formatFilterValue(fieldName, value));
 		}
+		return filterValues;
+	}
 
-		return value;
+	/**
+	 * Formats an equality filter value to match the property column type.
+	 *
+	 * @param fieldName the persisted field name
+	 * @param value the raw filter value
+	 * @return the typed filter value
+	 */
+	private Object formatFilterValue(String fieldName, String value) {
+		String trimmedValue = value.trim();
+		return switch (fieldName) {
+		case "long_value" -> Long.valueOf(trimmedValue);
+		case "float_value", "double_value" -> Double.valueOf(trimmedValue);
+		case "boolean_value" -> parseBooleanFilterValue(trimmedValue);
+		default -> trimmedValue;
+		};
+	}
+
+	/**
+	 * Parses a boolean filter value.
+	 *
+	 * @param value the raw boolean value
+	 * @return the parsed boolean
+	 */
+	private Boolean parseBooleanFilterValue(String value) {
+		if (Boolean.TRUE.toString().equalsIgnoreCase(value)) {
+			return Boolean.TRUE;
+		}
+		if (Boolean.FALSE.toString().equalsIgnoreCase(value)) {
+			return Boolean.FALSE;
+		}
+		throw new BeCPGException("Invalid boolean filter value: " + value);
+	}
+	
+	private boolean isAuditProperty(String fieldName) {
+		return "audit_created".equals(fieldName) || "audit_modified".equals(fieldName) || "audit_creator".equals(fieldName)
+				|| "audit_modifier".equals(fieldName);
 	}
 
 	/** {@inheritDoc} */

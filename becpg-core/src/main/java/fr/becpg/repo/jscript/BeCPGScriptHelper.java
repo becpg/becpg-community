@@ -42,7 +42,13 @@ import org.alfresco.repo.security.authentication.external.RemoteUserMapper;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.repo.version.common.VersionUtil;
+import org.alfresco.repo.forms.FormData;
+import org.alfresco.repo.forms.FormService;
+import org.alfresco.repo.forms.Item;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.ServiceRegistry;
+import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.transaction.TransactionService;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -50,6 +56,7 @@ import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.quickshare.QuickShareDTO;
 import org.alfresco.service.cmr.quickshare.QuickShareService;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -196,6 +203,28 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private EntityActivityService entityActivityService;
 
 	private BeCPGUserAccountService beCPGUserAccountService;
+
+	private FormService formService;
+
+	private TransactionService transactionService;
+
+	/**
+	 * <p>Setter for the field <code>formService</code>.</p>
+	 *
+	 * @param formService a {@link org.alfresco.repo.forms.FormService} object
+	 */
+	public void setFormService(FormService formService) {
+		this.formService = formService;
+	}
+
+	/**
+	 * <p>Setter for the field <code>transactionService</code>.</p>
+	 *
+	 * @param transactionService a {@link org.alfresco.service.transaction.TransactionService} object
+	 */
+	public void setTransactionService(TransactionService transactionService) {
+		this.transactionService = transactionService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>beCPGUserAccountService</code>.</p>
@@ -2301,13 +2330,13 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 
 	/**
-	 * <p>floatingLicensesExceeded.</p>
-	 *
-	 * @param sessionId a {@link java.lang.String} object
+	 * <p>isConcurrentUserAllowed.</p>
+	 * 
+	 * Checks if concurrent user access is allowed based on the license.
 	 * @return a boolean
 	 */
-	public boolean floatingLicensesExceeded(String sessionId) {
-		return beCPGLicenseManager.floatingLicensesExceeded(sessionId);
+	public boolean isConcurrentUserAllowed() {
+		return beCPGLicenseManager.isConcurrentUserAllowed();
 	}
 
 	/**
@@ -2417,6 +2446,103 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		beCPGUserAccount.setSynchronizeWithIDS(isIdsUser);
 		NodeRef nodeRef = beCPGUserAccountService.getOrCreateUser(beCPGUserAccount, true);
 		return new ScriptNode(nodeRef, serviceRegistry);
+	}
+
+	private static final int BULK_SAVE_BATCH_SIZE = 5;
+
+	/**
+	 * Saves form data for multiple nodes in batches, each batch running in its own
+	 * transaction to avoid long-held DB locks during bulk edit operations.
+	 *
+	 * @param nodeRefStrings array of node reference strings to save
+	 * @param formData the form data to apply to each node
+	 * @param assocToRemoveNames array of association QName strings (prefix:local format) to remove before saving
+	 * @return the string representation of the last persisted object
+	 */
+	public String bulkSaveForm(Object nodeRefArray, Object formData, Object assocToRemoveArray) {
+		List<String> nodeRefStrings = toStringList(ScriptValueConverter.unwrapValue(nodeRefArray));
+		if (nodeRefStrings.isEmpty()) {
+			return null;
+		}
+
+		List<String> assocToRemoveNames = toStringList(ScriptValueConverter.unwrapValue(assocToRemoveArray));
+		FormData repoFormData = (FormData) formData;
+		RetryingTransactionHelper txnHelper = transactionService.getRetryingTransactionHelper();
+		String[] lastResult = new String[1];
+
+		for (int batchStart = 0; batchStart < nodeRefStrings.size(); batchStart += BULK_SAVE_BATCH_SIZE) {
+			int start = batchStart;
+			int end = Math.min(batchStart + BULK_SAVE_BATCH_SIZE, nodeRefStrings.size());
+
+			txnHelper.doInTransaction(() -> {
+				for (int i = start; i < end; i++) {
+					String nodeRefStr = nodeRefStrings.get(i);
+					if (!nodeRefStr.startsWith("workspace")) {
+						nodeRefStr = "workspace://SpacesStore/" + nodeRefStr;
+					}
+
+					NodeRef nodeRef = new NodeRef(nodeRefStr);
+					if (!nodeService.exists(nodeRef)) {
+						continue;
+					}
+					if (permissionService.hasPermission(nodeRef, "Write") != AccessStatus.ALLOWED) {
+						continue;
+					}
+
+					removeAssociations(nodeRef, assocToRemoveNames);
+
+					String itemId = nodeRefStr.replace(":/", "");
+					Object result = formService.saveForm(new Item("node", itemId), repoFormData);
+					if (result != null) {
+						lastResult[0] = result.toString();
+					}
+				}
+				return null;
+			}, false, true);
+		}
+
+		return lastResult[0];
+	}
+
+	private List<String> toStringList(Object value) {
+		if (value == null) {
+			return new ArrayList<>();
+		}
+		if (value instanceof String[] stringArray) {
+			return Arrays.asList(stringArray);
+		}
+		if (value instanceof List<?> list) {
+			List<String> result = new ArrayList<>(list.size());
+			for (Object item : list) {
+				if (item != null) {
+					result.add(item.toString());
+				}
+			}
+			return result;
+		}
+		if (value instanceof Object[] objArray) {
+			List<String> result = new ArrayList<>(objArray.length);
+			for (Object item : objArray) {
+				if (item != null) {
+					result.add(item.toString());
+				}
+			}
+			return result;
+		}
+		return new ArrayList<>();
+	}
+
+	private void removeAssociations(NodeRef nodeRef, List<String> assocToRemoveNames) {
+		if (assocToRemoveNames == null) {
+			return;
+		}
+		for (String assocName : assocToRemoveNames) {
+			QName assocQName = QName.createQName(assocName, namespaceService);
+			List<AssociationRef> assocs = nodeService.getTargetAssocs(nodeRef, assocQName);
+			for (AssociationRef assoc : assocs) {
+				nodeService.removeAssociation(nodeRef, assoc.getTargetRef(), assocQName);
+			}
+		}
 	}
 
 }

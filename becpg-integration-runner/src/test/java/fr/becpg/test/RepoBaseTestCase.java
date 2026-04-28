@@ -44,6 +44,7 @@ import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.MutableAuthenticationService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.security.PersonService;
+import org.alfresco.service.namespace.NamespacePrefixResolver;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -67,15 +68,22 @@ import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.entity.EntityTplService;
+import fr.becpg.repo.entity.datalist.WUsedListService;
+import fr.becpg.repo.formulation.FormulatedEntity;
+import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
+import fr.becpg.repo.product.ProductService;
+import fr.becpg.repo.publication.PublicationChannelService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.system.SystemConfigurationService;
 import junit.framework.TestCase;
 
 /**
@@ -203,6 +211,9 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	@Autowired
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+	
+	@Autowired
+	protected ProductService productService;
 
 	@Autowired
 	protected BeCPGCacheService beCPGCacheService;
@@ -222,6 +233,23 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	@Autowired
 	protected BatchQueueService batchQueueService;
 	
+	@Autowired
+	protected SystemConfigurationService systemConfigurationService;
+	
+	@Autowired
+	protected EntityDictionaryService entityDictionaryService;
+	
+	@Autowired
+	protected WUsedListService wUsedListService;
+	
+	@Autowired
+	protected FormulationService<FormulatedEntity> formulationService;
+
+	@Autowired
+	protected NamespacePrefixResolver namespaceService;
+
+	@Autowired
+	protected PublicationChannelService publicationChannelService;
 
 	@Autowired
 	@Qualifier("qnameDAO")

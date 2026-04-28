@@ -26,7 +26,6 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.expression.Expression;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import fr.becpg.common.csv.CSVReader;
@@ -214,7 +213,7 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 
 				if (!matchedHPhrases.contains(hazardCode)) {
 					try {
-						Expression exp = new SpelExpressionParser().parseExpression(formula);
+						Expression exp = formulaService.parseExpression(formula);
 						if (Boolean.TRUE.equals(exp.getValue(context, Boolean.class))) {
 
 							NodeRef hazardStatement = findHazardStatement(hazardCode);
@@ -390,7 +389,7 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 		}
 
 		try {
-			Expression exp = new SpelExpressionParser().parseExpression(formula);
+			Expression exp = formulaService.parseExpression(formula);
 			return exp.getValue(context, String.class);
 		} catch (Exception e) {
 			handleFormulaError(formulatedProduct, formula, e);

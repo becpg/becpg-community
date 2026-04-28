@@ -9,7 +9,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,6 +25,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,12 +44,14 @@ import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteParams;
-import fr.becpg.repo.helper.JsonHelper;
+import fr.becpg.test.utils.JSONCompareHelper;
+import fr.becpg.repo.helper.json.JsonHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.sample.StandardChocolateEclairTestProduct;
 import fr.becpg.test.BeCPGPLMTestHelper;
 import fr.becpg.test.PLMBaseTestCase;
 
@@ -107,7 +112,55 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 			return null;
 		}, false, true);
 	}
-
+	
+	@Test
+	public void testRemoteJSONEntityRegression() throws IOException {
+		NodeRef productNodeRef = inWriteTx(() -> {
+			StandardChocolateEclairTestProduct testProduct = new StandardChocolateEclairTestProduct.Builder()
+					.withAlfrescoRepository(alfrescoRepository)
+					.withNodeService(nodeService)
+					.withDestFolder(getTestFolderNodeRef())
+					.withCompo(true)
+					.withIngredients(true)
+					.withClaim(true)
+					.withLabeling(true)
+					.withSurvey(true)
+					.withStocks(true)
+					.withScoreList(true)
+					.withProcess(true)
+					.withNuts(true).build();
+			return testProduct.createTestProduct().getNodeRef();
+		});
+		
+		inWriteTx(() -> {
+			productService.formulate(productNodeRef);
+			return null;
+		});
+		
+		File tempFile = inWriteTx(() -> {
+			File tempFile1 = File.createTempFile("remoteEntity", "json");
+			remoteEntityService.getEntity(productNodeRef, new FileOutputStream(tempFile1), new RemoteParams(RemoteEntityFormat.json_all));
+			return tempFile1;
+		});
+		
+		ClassPathResource res = new ClassPathResource("beCPG/remote/entity_json_all.json");
+		
+		String expectedJsonEntity = res.getContentAsString(StandardCharsets.UTF_8);
+		String actualJsonEntity = JsonHelper.read(tempFile).toString();
+		
+		JSONObject expectedJson = new JSONObject(expectedJsonEntity);
+		JSONObject actualJson = new JSONObject(actualJsonEntity);
+		
+		JSONCompareHelper comparator = new JSONCompareHelper.Builder()
+				.withAllowNewEntries(true)
+				.withAllowReordering(true)
+				.withIgnoredPath("entity.attributes.cm:contains")
+				.withIgnoredFields(Set.of("parent", "metadata", "id", "cm:name", "bcpg:code", "cm:creator",
+						"cm:modifier", "cm:created", "cm:modified", "bcpg:startEffectivity", "bcpg:formulatedDate", "bcpg:illLogValue",
+						"bcpg:entityScore", "bcpg:sort", "bcpg:reqCtrlList", "bcpg:nutListRoundedValue"))
+				.build();
+		comparator.assertEquals(expectedJson, actualJson);
+	}
 
 	@Test
 	public void testRemoteJSONEntity() throws FileNotFoundException {

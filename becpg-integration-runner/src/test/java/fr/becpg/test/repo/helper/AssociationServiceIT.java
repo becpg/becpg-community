@@ -4,26 +4,32 @@
 package fr.becpg.test.repo.helper;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.QName;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.entity.version.VersionHelper;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.impl.AssociationCriteriaFilter;
-import fr.becpg.repo.helper.impl.EntitySourceAssoc;
 import fr.becpg.repo.helper.impl.AssociationCriteriaFilter.AssociationCriteriaFilterMode;
+import fr.becpg.repo.helper.impl.EntitySourceAssoc;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
@@ -38,6 +44,15 @@ import fr.becpg.test.PLMBaseTestCase;
  * @author querephi
  */
 public class AssociationServiceIT extends PLMBaseTestCase {
+
+	private SimpleDateFormat dateFormat;
+
+	@Before
+	public void setUp() throws Exception {
+		super.setUp();
+	    dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+	    dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+	}
 
 	@Autowired
 	private AssociationService associationService;
@@ -287,11 +302,11 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 	
 	@Test
 	public void testSourceAssocs() {
-		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef rawMaterialNodeRef = inWriteTx(() -> {
 			return BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test source assoc");
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			NodeRef supplierNodeRef = null;
 			NodeRef entityFolder = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "Supplier1");
 			if (entityFolder != null) {
@@ -310,8 +325,20 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 			assertTrue(sourceNodeRefs.contains(rawMaterialNodeRef));
 			sourceNodeRefs = associationService.getSourcesAssocs(supplierNodeRef);
 			assertTrue(sourceNodeRefs.contains(rawMaterialNodeRef));
+			
+			
+			NodeRef branch = entityVersionService.createBranch(rawMaterialNodeRef, nodeService.getPrimaryParent(rawMaterialNodeRef).getParentRef());
+			entityVersionService.mergeBranch(branch, rawMaterialNodeRef, VersionType.MAJOR, "test version source assoc");
+			
+			sourceNodeRefs = associationService.getSourcesAssocs(supplierNodeRef, PLMModel.ASSOC_SUPPLIERS, false);
+			assertTrue(sourceNodeRefs.contains(rawMaterialNodeRef));
+			assertTrue(sourceNodeRefs.stream().noneMatch(n -> VersionHelper.isVersion(n)));
+			sourceNodeRefs = associationService.getSourcesAssocs(supplierNodeRef, PLMModel.ASSOC_SUPPLIERS, true);
+			assertTrue(sourceNodeRefs.contains(rawMaterialNodeRef));
+			assertTrue(sourceNodeRefs.stream().anyMatch(n -> VersionHelper.isVersion(n)));
+			
 			return null;
-		}, false, true);
+		});
 	}
 	
 	@Test
@@ -414,6 +441,513 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 		assertTrue(results.stream().map(n -> n.getEntityNodeRef()).anyMatch(n -> n.equals(fpNodeRef)));
 		assertTrue(results.stream().map(n -> n.getEntityNodeRef()).anyMatch(n -> n.equals(fpNodeRef2)));
 		
+		
+		NodeRef fpNodeRef3 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("FP test 'entity source assoc 3");
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			finishedProduct.setState(SystemState.Valid);
+			compoList.add(CompoListDataItem.build().withQtyUsed(5.5).withUnit(ProductUnit.kg).withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterialNodeRef));
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		}, false, true);
+		
+		filters.clear();
+		filter = new AssociationCriteriaFilter(ContentModel.PROP_NAME, "FP test 'entity source assoc 3", AssociationCriteriaFilterMode.EQUALS);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef), PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals(1, results.size());
+		assertTrue(results.stream().map(n -> n.getEntityNodeRef()).anyMatch(n -> n.equals(fpNodeRef3)));
+	}
+
+	@Test
+	public void testEntitySourceAssocsBooleanFilters() {
+		final NodeRef rawMaterialNodeRef = inWriteTx(() -> BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "RM test boolean filters"));
+
+		NodeRef manualProductNodeRef = inWriteTx(() -> {
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("FP boolean manual true");
+			finishedProduct.getCompoListView().setCompoList(List.of(
+					CompoListDataItem.build().withQtyUsed(5.5).withUnit(ProductUnit.kg).withLossPerc(0d)
+							.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterialNodeRef)));
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		NodeRef automaticProductNodeRef = inWriteTx(() -> {
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("FP boolean manual false");
+			finishedProduct.getCompoListView().setCompoList(List.of(
+					CompoListDataItem.build().withQtyUsed(5.5).withUnit(ProductUnit.kg).withLossPerc(0d)
+							.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterialNodeRef)));
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		inWriteTx(() -> {
+			nodeService.setProperty(getFirstCompoListItemNodeRef(manualProductNodeRef), BeCPGModel.PROP_IS_MANUAL_LISTITEM, Boolean.TRUE);
+			nodeService.setProperty(getFirstCompoListItemNodeRef(automaticProductNodeRef), BeCPGModel.PROP_IS_MANUAL_LISTITEM, Boolean.FALSE);
+			return null;
+		});
+
+		List<AssociationCriteriaFilter> filters = new ArrayList<>();
+		AssociationCriteriaFilter filter = new AssociationCriteriaFilter(BeCPGModel.PROP_IS_MANUAL_LISTITEM, "true",
+				AssociationCriteriaFilterMode.EQUALS);
+		filters.add(filter);
+
+		List<EntitySourceAssoc> results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef),
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("Boolean EQUALS true", 1, results.size());
+		assertTrue(results.stream().map(EntitySourceAssoc::getEntityNodeRef).anyMatch(manualProductNodeRef::equals));
+
+		filters.clear();
+		filter = new AssociationCriteriaFilter(BeCPGModel.PROP_IS_MANUAL_LISTITEM, "false", AssociationCriteriaFilterMode.EQUALS);
+		filters.add(filter);
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef),
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("Boolean EQUALS false", 1, results.size());
+		assertTrue(results.stream().map(EntitySourceAssoc::getEntityNodeRef).anyMatch(automaticProductNodeRef::equals));
+
+		filters.clear();
+		filter = new AssociationCriteriaFilter(BeCPGModel.PROP_IS_MANUAL_LISTITEM, "true", AssociationCriteriaFilterMode.NOT_EQUALS);
+		filters.add(filter);
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef),
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("Boolean NOT_EQUALS true", 1, results.size());
+		assertTrue(results.stream().map(EntitySourceAssoc::getEntityNodeRef).anyMatch(automaticProductNodeRef::equals));
+	}
+
+	@Test
+	public void testEntitySourceAssocsNumericFilters() {
+		final NodeRef rawMaterialNodeRef = inWriteTx(() -> BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "RM test numeric filters"));
+
+		NodeRef lowProductNodeRef = inWriteTx(() -> {
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("FP numeric low");
+			finishedProduct.setBreakEven(100L);
+			finishedProduct.setProjectedQty(1000L);
+			finishedProduct.setQty(10.0);
+			finishedProduct.getCompoListView().setCompoList(List.of(
+					CompoListDataItem.build().withQtyUsed(4.5).withUnit(ProductUnit.kg).withLossPerc(1.5d)
+							.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterialNodeRef)));
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		NodeRef highProductNodeRef = inWriteTx(() -> {
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("FP numeric high");
+			finishedProduct.setBreakEven(200L);
+			finishedProduct.setProjectedQty(2000L);
+			finishedProduct.setQty(20.0);
+			finishedProduct.getCompoListView().setCompoList(List.of(
+					CompoListDataItem.build().withQtyUsed(7.5).withUnit(ProductUnit.kg).withLossPerc(3.5d)
+							.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterialNodeRef)));
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		List<AssociationCriteriaFilter> filters = new ArrayList<>();
+		AssociationCriteriaFilter filter = new AssociationCriteriaFilter(PLMModel.PROP_COMPOLIST_QTY_SUB_FORMULA, "4.5",
+				AssociationCriteriaFilterMode.EQUALS);
+		filters.add(filter);
+
+		List<EntitySourceAssoc> results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef),
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("Double EQUALS qtySubFormula", 1, results.size());
+		assertTrue(results.stream().map(EntitySourceAssoc::getEntityNodeRef).anyMatch(lowProductNodeRef::equals));
+
+		filters.clear();
+		filter = new AssociationCriteriaFilter(PLMModel.PROP_COMPOLIST_LOSS_PERC, "3.5", AssociationCriteriaFilterMode.EQUALS);
+		filters.add(filter);
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef),
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("Double EQUALS lossPerc", 1, results.size());
+		assertTrue(results.stream().map(EntitySourceAssoc::getEntityNodeRef).anyMatch(highProductNodeRef::equals));
+
+		filters.clear();
+		filter = new AssociationCriteriaFilter(PLMModel.PROP_COMPOLIST_QTY_SUB_FORMULA, "5|8", AssociationCriteriaFilterMode.RANGE);
+		filters.add(filter);
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef),
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("Double RANGE qtySubFormula", 1, results.size());
+		assertTrue(results.stream().map(EntitySourceAssoc::getEntityNodeRef).anyMatch(highProductNodeRef::equals));
+
+		filters.clear();
+		filter = new AssociationCriteriaFilter(PLMModel.PROP_BREAK_EVEN, "100", AssociationCriteriaFilterMode.EQUALS);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef),
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("Long EQUALS breakEven", 1, results.size());
+		assertTrue(results.stream().map(EntitySourceAssoc::getEntityNodeRef).anyMatch(lowProductNodeRef::equals));
+
+		filters.clear();
+		filter = new AssociationCriteriaFilter(PLMModel.PROP_PROJECTED_QTY, "1500|2500", AssociationCriteriaFilterMode.RANGE);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef),
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("Long RANGE projectedQty", 1, results.size());
+		assertTrue(results.stream().map(EntitySourceAssoc::getEntityNodeRef).anyMatch(highProductNodeRef::equals));
+
+		filters.clear();
+		filter = new AssociationCriteriaFilter(PLMModel.PROP_PRODUCT_QTY, "20", AssociationCriteriaFilterMode.EQUALS);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef),
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("Integer EQUALS productQty", 1, results.size());
+		assertTrue(results.stream().map(EntitySourceAssoc::getEntityNodeRef).anyMatch(highProductNodeRef::equals));
+	}
+
+	/**
+	 * Returns the first composition list item node for the given entity.
+	 *
+	 * @param entityNodeRef the entity node reference
+	 * @return the first composition list item node reference
+	 */
+	private NodeRef getFirstCompoListItemNodeRef(NodeRef entityNodeRef) {
+		NodeRef compoListNodeRef = entityListDAO.getList(entityListDAO.getListContainer(entityNodeRef), PLMModel.TYPE_COMPOLIST);
+		List<NodeRef> compoListItemNodeRefs = associationService.getChildAssocs(compoListNodeRef, ContentModel.ASSOC_CONTAINS,
+				PLMModel.TYPE_COMPOLIST);
+		assertEquals("Expected one compo list item", 1, compoListItemNodeRefs.size());
+		return compoListItemNodeRefs.get(0);
+	}
+	
+	/**
+	 * Test auditable properties filters with all modes
+	 */
+	@Test
+	public void testAuditablePropertiesFilters() {
+		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			return BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "RM auditable test");
+		}, false, true);
+		
+		// Create products with delay to ensure different creation times
+		NodeRef fpNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("FP Auditable 1");
+			finishedProduct.setState(SystemState.Simulation);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(CompoListDataItem.build().withQtyUsed(3.0).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterialNodeRef));
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		}, false, true);
+		
+		// Wait a bit to ensure different timestamps
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
+		
+		NodeRef fpNodeRef2 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("FP Auditable 2");
+			finishedProduct.setState(SystemState.Valid);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(CompoListDataItem.build().withQtyUsed(4.0).withUnit(ProductUnit.kg)
+					.withLossPerc(0d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterialNodeRef));
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		}, false, true);
+		
+		// Get creation dates for testing
+		Date creationDate1 = inReadTx(() -> (Date) nodeService.getProperty(fpNodeRef1, ContentModel.PROP_CREATED));
+		Date creationDate2 = inReadTx(() -> (Date) nodeService.getProperty(fpNodeRef2, ContentModel.PROP_CREATED));
+		String creator1 = inReadTx(() -> (String) nodeService.getProperty(fpNodeRef1, ContentModel.PROP_CREATOR));
+		String modifier1 = inReadTx(() -> (String) nodeService.getProperty(fpNodeRef1, ContentModel.PROP_MODIFIER));
+		
+		List<AssociationCriteriaFilter> filters = new ArrayList<>();
+		AssociationCriteriaFilter filter;
+		List<EntitySourceAssoc> results;
+		
+		// Test 1: Filter by cm:creator (EQUALS mode)
+		filters.clear();
+		filter = new AssociationCriteriaFilter(ContentModel.PROP_CREATOR, creator1, AssociationCriteriaFilterMode.EQUALS);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef), 
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("Filter by creator EQUALS", 2, results.size());
+		
+		// Test 2: Filter by cm:modifier (NOT_EQUALS mode)
+		filters.clear();
+		filter = new AssociationCriteriaFilter(ContentModel.PROP_MODIFIER, "nonexistent_user", AssociationCriteriaFilterMode.NOT_EQUALS);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef), 
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("Filter by modifier NOT_EQUALS", 2, results.size());
+		
+		// Test 3: Filter by cm:created (RANGE mode) - find products created after first product
+		filters.clear();
+		Date afterFirst = new Date(creationDate1.getTime() + 1000); // 1000ms after first
+		Date muchLater = new Date(creationDate2.getTime() + 10000); // well after second
+		filter = new AssociationCriteriaFilter(ContentModel.PROP_CREATED, 
+				dateFormat.format(afterFirst) + "|" + dateFormat.format(muchLater), AssociationCriteriaFilterMode.RANGE);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef), 
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("Filter by creation date RANGE", 1, results.size());
+		assertTrue(results.stream().map(n -> n.getEntityNodeRef()).anyMatch(n -> n.equals(fpNodeRef2)));
+		
+		// Test 4: Filter by cm:modified (RANGE mode) - all products in wide range
+		filters.clear();
+		Date veryEarly = new Date(creationDate1.getTime() - 10000);
+		Date veryLate = new Date(System.currentTimeMillis() + 10000);
+		filter = new AssociationCriteriaFilter(ContentModel.PROP_MODIFIED, 
+				dateFormat.format(veryEarly) + "|" + dateFormat.format(veryLate), AssociationCriteriaFilterMode.RANGE);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef), 
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("Filter by modified date RANGE wide", 2, results.size());
+		
+		// Test 5: Multiple filters - cm:creator AND cm:name (EQUALS)
+		filters.clear();
+		filter = new AssociationCriteriaFilter(ContentModel.PROP_CREATOR, creator1, AssociationCriteriaFilterMode.EQUALS);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		filter = new AssociationCriteriaFilter(ContentModel.PROP_NAME, "FP Auditable 1", AssociationCriteriaFilterMode.EQUALS);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef), 
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("Multiple filters: creator AND name", 1, results.size());
+		assertTrue(results.stream().map(n -> n.getEntityNodeRef()).anyMatch(n -> n.equals(fpNodeRef1)));
+		
+		// Test 6: Multiple filters - cm:modifier AND product state (EQUALS)
+		filters.clear();
+		filter = new AssociationCriteriaFilter(ContentModel.PROP_MODIFIER, modifier1, AssociationCriteriaFilterMode.EQUALS);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		filter = new AssociationCriteriaFilter(PLMModel.PROP_PRODUCT_STATE, SystemState.Valid.toString(), 
+				AssociationCriteriaFilterMode.EQUALS);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef), 
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("Multiple filters: modifier AND state Valid", 1, results.size());
+		assertTrue(results.stream().map(n -> n.getEntityNodeRef()).anyMatch(n -> n.equals(fpNodeRef2)));
+		
+		// Test 7: Multiple filters with RANGE - quantity range AND creation date range
+		filters.clear();
+		filter = new AssociationCriteriaFilter(PLMModel.PROP_COMPOLIST_QTY_SUB_FORMULA, "2.5|4.5", 
+				AssociationCriteriaFilterMode.RANGE);
+		filters.add(filter);
+		filter = new AssociationCriteriaFilter(ContentModel.PROP_CREATED, 
+				dateFormat.format(veryEarly) + "|" + dateFormat.format(veryLate), AssociationCriteriaFilterMode.RANGE);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef), 
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("Multiple RANGE filters: quantity AND date", 2, results.size());
+		
+		// Test 8: Triple filter - creator, state, and quantity
+		filters.clear();
+		filter = new AssociationCriteriaFilter(ContentModel.PROP_CREATOR, creator1, AssociationCriteriaFilterMode.EQUALS);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		filter = new AssociationCriteriaFilter(PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation.toString(), 
+				AssociationCriteriaFilterMode.EQUALS);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		filter = new AssociationCriteriaFilter(PLMModel.PROP_COMPOLIST_QTY_SUB_FORMULA, "2.0|3.5", 
+				AssociationCriteriaFilterMode.RANGE);
+		filters.add(filter);
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef), 
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("Triple filter: creator, state, quantity", 1, results.size());
+		assertTrue(results.stream().map(n -> n.getEntityNodeRef()).anyMatch(n -> n.equals(fpNodeRef1)));
+	}
+	
+	/**
+	 * Test comprehensive multi-property searches with all filter modes
+	 */
+	@Test
+	public void testMultiPropertySearchAllModes() {
+		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			return BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "RM multi-property test");
+		}, false, true);
+		
+		// Create diverse test products
+		NodeRef fpA = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			FinishedProductData fp = new FinishedProductData();
+			fp.setName("Product Alpha");
+			fp.setState(SystemState.Simulation);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(CompoListDataItem.build().withQtyUsed(10.0).withUnit(ProductUnit.kg)
+					.withLossPerc(5d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterialNodeRef));
+			fp.getCompoListView().setCompoList(compoList);
+			return alfrescoRepository.create(getTestFolderNodeRef(), fp).getNodeRef();
+		}, false, true);
+		
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
+		
+		NodeRef fpB = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			FinishedProductData fp = new FinishedProductData();
+			fp.setName("Product Beta");
+			fp.setState(SystemState.Valid);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(CompoListDataItem.build().withQtyUsed(20.0).withUnit(ProductUnit.kg)
+					.withLossPerc(3d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterialNodeRef));
+			fp.getCompoListView().setCompoList(compoList);
+			return alfrescoRepository.create(getTestFolderNodeRef(), fp).getNodeRef();
+		}, false, true);
+		
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
+		
+		NodeRef fpC = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			FinishedProductData fp = new FinishedProductData();
+			fp.setName("Product Gamma");
+			fp.setState(SystemState.ToValidate);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(CompoListDataItem.build().withQtyUsed(15.0).withUnit(ProductUnit.kg)
+					.withLossPerc(7d).withDeclarationType(DeclarationType.Detail).withProduct(rawMaterialNodeRef));
+			fp.getCompoListView().setCompoList(compoList);
+			return alfrescoRepository.create(getTestFolderNodeRef(), fp).getNodeRef();
+		}, false, true);
+		
+		String creator = inReadTx(() -> (String) nodeService.getProperty(fpA, ContentModel.PROP_CREATOR));
+		Date createdA = inReadTx(() -> (Date) nodeService.getProperty(fpA, ContentModel.PROP_CREATED));
+		Date createdC = inReadTx(() -> (Date) nodeService.getProperty(fpC, ContentModel.PROP_CREATED));
+		
+		List<AssociationCriteriaFilter> filters;
+		AssociationCriteriaFilter filter;
+		List<EntitySourceAssoc> results;
+		
+		// Test 1: EQUALS mode - exact name match
+		filters = new ArrayList<>();
+		filter = new AssociationCriteriaFilter(ContentModel.PROP_NAME, "Product Beta", 
+				AssociationCriteriaFilterMode.EQUALS);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef), 
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("EQUALS mode - name", 1, results.size());
+		assertTrue(results.stream().map(n -> n.getEntityNodeRef()).anyMatch(n -> n.equals(fpB)));
+		
+		// Test 2: NOT_EQUALS mode - exclude specific state
+		filters.clear();
+		filter = new AssociationCriteriaFilter(PLMModel.PROP_PRODUCT_STATE, SystemState.Valid.toString(), 
+				AssociationCriteriaFilterMode.NOT_EQUALS);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef), 
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("NOT_EQUALS mode - state", 2, results.size());
+		assertTrue(results.stream().map(n -> n.getEntityNodeRef()).noneMatch(n -> n.equals(fpB)));
+		
+		// Test 3: RANGE mode - quantity between values
+		filters.clear();
+		filter = new AssociationCriteriaFilter(PLMModel.PROP_COMPOLIST_QTY_SUB_FORMULA, "12|22", 
+				AssociationCriteriaFilterMode.RANGE);
+		filters.add(filter);
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef), 
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("RANGE mode - quantity", 2, results.size());
+		assertTrue(results.stream().map(n -> n.getEntityNodeRef()).anyMatch(n -> n.equals(fpB)));
+		assertTrue(results.stream().map(n -> n.getEntityNodeRef()).anyMatch(n -> n.equals(fpC)));
+		
+		// Test 4: Four filters - name NOT_EQUALS, state EQUALS, quantity RANGE, creator EQUALS
+		filters.clear();
+		filter = new AssociationCriteriaFilter(ContentModel.PROP_NAME, "Product Alpha", 
+				AssociationCriteriaFilterMode.NOT_EQUALS);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		filter = new AssociationCriteriaFilter(PLMModel.PROP_PRODUCT_STATE, SystemState.ToValidate.toString(), 
+				AssociationCriteriaFilterMode.EQUALS);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		filter = new AssociationCriteriaFilter(PLMModel.PROP_COMPOLIST_QTY_SUB_FORMULA, "10|20", 
+				AssociationCriteriaFilterMode.RANGE);
+		filters.add(filter);
+		filter = new AssociationCriteriaFilter(ContentModel.PROP_CREATOR, creator, 
+				AssociationCriteriaFilterMode.EQUALS);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef), 
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("Four filters combined", 1, results.size());
+		assertTrue(results.stream().map(n -> n.getEntityNodeRef()).anyMatch(n -> n.equals(fpC)));
+		
+		// Test 5: Date RANGE and quantity RANGE combined
+		filters.clear();
+		Date beforeA = new Date(createdA.getTime() - 2000);
+		Date afterC = new Date(createdC.getTime() + 2000);
+		filter = new AssociationCriteriaFilter(ContentModel.PROP_CREATED, 
+				dateFormat.format(beforeA) + "|" + dateFormat.format(afterC), AssociationCriteriaFilterMode.RANGE);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		filter = new AssociationCriteriaFilter(PLMModel.PROP_COMPOLIST_QTY_SUB_FORMULA, "14|21", 
+				AssociationCriteriaFilterMode.RANGE);
+		filters.add(filter);
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef), 
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("Date RANGE + Quantity RANGE", 2, results.size());
+		
+		// Test 6: All modes combined - EQUALS, NOT_EQUALS, RANGE
+		filters.clear();
+		filter = new AssociationCriteriaFilter(ContentModel.PROP_CREATOR, creator, 
+				AssociationCriteriaFilterMode.EQUALS);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		filter = new AssociationCriteriaFilter(PLMModel.PROP_PRODUCT_STATE, SystemState.Archived.toString(), 
+				AssociationCriteriaFilterMode.NOT_EQUALS);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		filter = new AssociationCriteriaFilter(PLMModel.PROP_COMPOLIST_QTY_SUB_FORMULA, "8|18", 
+				AssociationCriteriaFilterMode.RANGE);
+		filters.add(filter);
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef), 
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("All modes: EQUALS + NOT_EQUALS + RANGE", 2, results.size());
+		assertTrue(results.stream().map(n -> n.getEntityNodeRef()).anyMatch(n -> n.equals(fpA)));
+		assertTrue(results.stream().map(n -> n.getEntityNodeRef()).anyMatch(n -> n.equals(fpC)));
+		
+		// Test 7: Loss percentage RANGE filter
+		filters.clear();
+		filter = new AssociationCriteriaFilter(PLMModel.PROP_COMPOLIST_LOSS_PERC, "2|6", 
+				AssociationCriteriaFilterMode.RANGE);
+		filters.add(filter);
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef), 
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("Loss percentage RANGE", 2, results.size());
+		assertTrue(results.stream().map(n -> n.getEntityNodeRef()).anyMatch(n -> n.equals(fpA)));
+		assertTrue(results.stream().map(n -> n.getEntityNodeRef()).anyMatch(n -> n.equals(fpB)));
+		
+		// Test 8: Complex scenario - five filters with mixed modes
+		filters.clear();
+		filter = new AssociationCriteriaFilter(ContentModel.PROP_CREATOR, creator, 
+				AssociationCriteriaFilterMode.EQUALS);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		filter = new AssociationCriteriaFilter(ContentModel.PROP_NAME, "Product Delta", 
+				AssociationCriteriaFilterMode.NOT_EQUALS);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		filter = new AssociationCriteriaFilter(PLMModel.PROP_PRODUCT_STATE, SystemState.Archived.toString(), 
+				AssociationCriteriaFilterMode.NOT_EQUALS);
+		filter.setEntityFilter(true);
+		filters.add(filter);
+		filter = new AssociationCriteriaFilter(PLMModel.PROP_COMPOLIST_QTY_SUB_FORMULA, "5|25", 
+				AssociationCriteriaFilterMode.RANGE);
+		filters.add(filter);
+		filter = new AssociationCriteriaFilter(PLMModel.PROP_COMPOLIST_LOSS_PERC, "0|10", 
+				AssociationCriteriaFilterMode.RANGE);
+		filters.add(filter);
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef), 
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("Five filters complex scenario", 3, results.size());
 	}
 
 }

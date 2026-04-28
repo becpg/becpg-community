@@ -1,5 +1,7 @@
 package fr.becpg.repo.system;
 
+import java.util.List;
+
 /**
  * <p>SystemConfigurationService interface.</p>
  *
@@ -9,6 +11,13 @@ package fr.becpg.repo.system;
  */
 public interface SystemConfigurationService {
 
+	/**
+	 * <p>listValue.</p>
+	 *
+	 * @param propKey a {@link java.lang.String} object
+	 * @return a {@link java.util.List} object
+	 */
+	List<String> listValue(String propKey);
 
 	/**
 	 * <p>confValue.</p>

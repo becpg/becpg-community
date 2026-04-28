@@ -5,10 +5,11 @@
 	<groupId>fr.becpg</groupId>
 	<artifactId>becpg-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>25.2.1</version>
+	<version>25.3.0</version>
 	<name>beCPG</name>
 	
 	<description>BeCPG Parent Project</description>
+	<url>https://github.com/becpg/becpg-community</url>
 	<organization>
 		<name>BeCPG</name>
 		<url>http://www.becpg.fr</url>
@@ -34,7 +35,7 @@
 		<license>
 			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>
 			<url>https://www.gnu.org/licenses/lgpl-3.0.en.html</url>
-			<comments>Copyright (C) 2010-2025 beCPG. 
+			<comments>Copyright (C) 2010-2026 beCPG. 
   
 			  beCPG is free software: you can redistribute it and/or modify 
 			  it under the terms of the GNU Lesser General Public License as published by 
@@ -119,21 +120,20 @@
         
         
          <!-- Alfresco 7.2 -->
-		<alfresco.platform.version>25.2.0</alfresco.platform.version>
-		<alfresco.share.docker.version>25.2.0</alfresco.share.docker.version>
-		
-        <alfresco.share.version>25.2.0.46</alfresco.share.version>
-        <alfresco-repository.version>25.2.0.64</alfresco-repository.version>
-		<alfresco-remote-api.version>25.2.0.64</alfresco-remote-api.version>
-		<alfresco-data-model.version>25.2.0.64</alfresco-data-model.version>
-		<alfresco-core.version>25.2.0.64</alfresco-core.version>
-		<spring-surf.version>10.0</spring-surf.version>
-	    <spring-webscripts.version>10.2</spring-webscripts.version>
-	    <spring-webscripts-share.version>10.2</spring-webscripts-share.version>
+		<alfresco.platform.version>25.3.0</alfresco.platform.version>
+		<alfresco.share.docker.version>25.3.0</alfresco.share.docker.version>
+        <alfresco.share.version>25.3.0.56</alfresco.share.version>
+        <alfresco-repository.version>25.3.0.81</alfresco-repository.version>
+		<alfresco-remote-api.version>25.3.0.81</alfresco-remote-api.version>
+		<alfresco-data-model.version>25.3.0.81</alfresco-data-model.version>
+		<alfresco-core.version>25.3.0.81</alfresco-core.version>
+		<spring-surf.version>10.1</spring-surf.version>
+	    <spring-webscripts.version>10.1</spring-webscripts.version>
+	    <spring-webscripts-share.version>10.1</spring-webscripts-share.version>
 
-		<alfresco.aos.version>3.3.0</alfresco.aos.version>
+		<alfresco.aos.version>3.4.0</alfresco.aos.version>
 
-		<mysql.connector.version>9.4.0</mysql.connector.version>
+		<mysql.connector.version>9.5.0</mysql.connector.version>
         
     
         <!-- Docker images -->
@@ -160,11 +160,14 @@
 		<test.acs.endpoint.path />
 
 		<becpg.dockerbuild.name>test</becpg.dockerbuild.name>
-		<becpg.version>25.2.1</becpg.version>
+		<becpg.version>25.3.0</becpg.version>
+		<docker.becpg.tag>${project.version}</docker.becpg.tag>
 		<docker.becpg.url>becpg</docker.becpg.url>
 		<docker.becpg.version>${becpg.version}</docker.becpg.version>
-		<docker.becpg.tag>${project.version}</docker.becpg.tag>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+		<maven.compiler.release>17</maven.compiler.release>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 	  	<sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/becpg-integration-runner/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
@@ -172,8 +175,8 @@
 		<sonar.scm.disabled>true</sonar.scm.disabled>
 		<sonar.scanner.socketTimeout>3600</sonar.scanner.socketTimeout>
 		<sonar.language>java</sonar.language>
-		<becpg.artworks.version>25.2.0.2</becpg.artworks.version>
-		<becpg.i18n.version>1.0-138</becpg.i18n.version>
+		<becpg.artworks.version>25.3.0.7</becpg.artworks.version>
+		<becpg.i18n.version>1.0.144</becpg.i18n.version>
 		<becpg.supporttools.version>25.2.0.2-beCPG-amp</becpg.supporttools.version>
 		
 	</properties>
@@ -216,6 +219,22 @@
 				<version>${alfresco.share.version}</version>
 				<classifier>classes</classifier>
 				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-api</artifactId>
+				<version>2.24.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-core</artifactId>
+				<version>2.24.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-slf4j2-impl</artifactId>
+				<version>2.24.1</version>
 			</dependency>
 
 		</dependencies>
@@ -289,6 +308,7 @@
 							<nonFilteredFileExtension>ico</nonFilteredFileExtension>
 							<nonFilteredFileExtension>psd</nonFilteredFileExtension>
 							<nonFilteredFileExtension>js</nonFilteredFileExtension>
+							<nonFilteredFileExtension>csv</nonFilteredFileExtension>
 						</nonFilteredFileExtensions>
 					</configuration>
 				</plugin>
@@ -337,6 +357,11 @@
 					<version>3.8.1</version>
 				</plugin>
 
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-project-info-reports-plugin</artifactId>
+					<version>3.9.0</version>
+				</plugin>
 
 			</plugins>
 		</pluginManagement>
@@ -477,9 +502,13 @@
 				<artifactId>artifactregistry-maven-wagon</artifactId>
 				<version>2.2.5</version>
 			</extension>
+			<extension>
+				<groupId>org.alfresco.maven.plugin</groupId>
+				<artifactId>alfresco-maven-plugin</artifactId>
+				<version>${alfresco.sdk.version}</version>
+			</extension>
 		</extensions>
 	</build>
-
 	<modules>
 		<module>becpg-core</module>
 		<module>becpg-project/becpg-project-core</module>
@@ -492,6 +521,7 @@
 		<module>becpg-integration-runner</module>
 	</modules>
 	
+	
 	<reporting>
 		<plugins>
 
@@ -499,7 +529,7 @@
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-report-plugin</artifactId>
-            <version>3.5.3</version>
+            <version>3.5.4</version>
             <configuration>
                 <!-- No specific executions required, just the goal for site phase aggregation -->
                 <aggregate>true</aggregate>
@@ -521,6 +551,8 @@
                 <configuration>
                     <show>private</show>
                     <failOnError>false</failOnError>
+                    <source>17</source>
+                    <detectJavaApiLink>false</detectJavaApiLink>
                     <additionalJOptions>
                         <additionalJOption>-Xdoclint:none</additionalJOption>
                     </additionalJOptions>

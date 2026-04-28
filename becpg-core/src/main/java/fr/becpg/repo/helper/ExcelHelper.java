@@ -53,6 +53,7 @@ public class ExcelHelper {
 
 	    private XSSFWorkbook workbook;
 
+	    private CellStyle textCellStyle;
 	    private CellStyle fullDateCellStyle;
 	    private CellStyle shortDateCellStyle;
 	    private CellStyle headerStyle;
@@ -62,17 +63,30 @@ public class ExcelHelper {
 	        this.workbook = workbook;
 	    }
 
+	    private CellStyle createTextStyle() {
+	    	XSSFCellStyle style = workbook.createCellStyle();
+	    	style.setDataFormat(workbook.createDataFormat().getFormat("@"));
+	    	return style;
+	    }
+	    
 	    private CellStyle createDateStyle(boolean full) {
-	        XSSFCellStyle style = workbook.createCellStyle();
-	        style.setDataFormat(full ? (short) 14 : (short) 22);
-	        return style;
+	    	XSSFCellStyle style = workbook.createCellStyle();
+	    	style.setDataFormat(full ? (short) 14 : (short) 22);
+	    	return style;
 	    }
 
-	    public CellStyle getFullDateCellStyle() {
-	        if (fullDateCellStyle == null) {
-	            fullDateCellStyle = createDateStyle(true);
+	    public CellStyle getTextCellStyle() {
+	        if (textCellStyle == null) {
+	        	textCellStyle = createTextStyle();
 	        }
-	        return fullDateCellStyle;
+	        return textCellStyle;
+	    }
+	    
+	    public CellStyle getFullDateCellStyle() {
+	    	if (fullDateCellStyle == null) {
+	    		fullDateCellStyle = createDateStyle(true);
+	    	}
+	    	return fullDateCellStyle;
 	    }
 
 	    public CellStyle getShortDateCellStyle() {
@@ -190,6 +204,7 @@ public class ExcelHelper {
 						} else if (obj instanceof Boolean) {
 							cell.setCellValue(TranslateHelper.getTranslatedBoolean((Boolean)obj, false) );
 						} else if (obj instanceof String) {
+							cell.setCellStyle(excelCellStyles.getTextCellStyle());
 							cell.setCellValue((String) obj);
 						} else if (obj instanceof Double) {
 							cell.setCellValue((double) obj);

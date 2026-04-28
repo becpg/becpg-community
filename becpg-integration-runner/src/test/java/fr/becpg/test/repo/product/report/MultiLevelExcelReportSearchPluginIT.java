@@ -148,7 +148,7 @@ public class MultiLevelExcelReportSearchPluginIT extends PLMBaseTestCase {
 			if (templateName == null) {
 				continue;
 			}
-			if (builder.length() > 0) {
+			if (!builder.isEmpty()) {
 				builder.append(", ");
 			}
 			builder.append(templateName);
@@ -378,6 +378,84 @@ public class MultiLevelExcelReportSearchPluginIT extends PLMBaseTestCase {
 		try (XSSFWorkbook workbook = new XSSFWorkbook(new ByteArrayInputStream(reportData))) {
 			XSSFSheet sheet = workbook.getSheetAt(0);
 			assertTrue("Should have process rows", sheet.getLastRowNum() > 1);
+		}
+	}
+
+	/**
+	 * Test IncludeEmpty parameter with empty lists
+	 */
+	@Test
+	public void testMultiLevelExcelReportIncludeEmpty() throws IOException {
+		initTestReports();
+
+		// Create test product with no composition, packaging, or process lists
+		FinishedProductData product = (FinishedProductData) inWriteTx(() -> {
+			FinishedProductData finishedProduct = FinishedProductData.build()
+					.withName("Empty Product Test")
+					.withQty(100d)
+					.withUnit(ProductUnit.kg);
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct);
+		});
+
+		// Test with IncludeEmpty parameter - should create a row even though lists are empty
+		String query = "{\"datatype\":\"bcpg:finishedProduct\",\"prop_cm_name\":\"" + product.getName() + "\"}";
+		String url = "/becpg/report/exportsearch/" + compositionPackagingReportTpl.toString().replace("://", "/") 
+			+ "/Excel.xlsx?repo=true&term=&query=" + URLEncoder.encode(query, StandardCharsets.UTF_8.toString())
+			+ "&parameter=AllLevelIncludeEmpty";
+
+		Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
+		byte[] reportData = response.getContentAsByteArray();
+
+		assertNotNull("Report data should not be null", reportData);
+		assertTrue("Report data should not be empty", reportData.length > 0);
+
+		// Parse Excel and verify structure - should have at least one data row despite empty lists
+		try (XSSFWorkbook workbook = new XSSFWorkbook(new ByteArrayInputStream(reportData))) {
+			XSSFSheet sheet = workbook.getSheetAt(0);
+			assertNotNull("Sheet should not be null", sheet);
+			
+			// Should have header + at least one data row
+			int rowCount = sheet.getLastRowNum();
+			assertTrue("Should have at least one data row when IncludeEmpty is true (row count: " + rowCount + ")", rowCount >= 1);
+		}
+	}
+
+	/**
+	 * Test MaxLevel2IncludeEmpty parameter
+	 */
+	@Test
+	public void testMultiLevelExcelReportMaxLevel2IncludeEmpty() throws IOException {
+		initTestReports();
+
+		// Create test product with no lists
+		FinishedProductData product = (FinishedProductData) inWriteTx(() -> {
+			FinishedProductData finishedProduct = FinishedProductData.build()
+					.withName("Empty Product Test 2")
+					.withQty(50d)
+					.withUnit(ProductUnit.L);
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct);
+		});
+
+		// Test with MaxLevel2IncludeEmpty parameter
+		String query = "{\"datatype\":\"bcpg:finishedProduct\",\"prop_cm_name\":\"" + product.getName() + "\"}";
+		String url = "/becpg/report/exportsearch/" + compositionPackagingReportTpl.toString().replace("://", "/") 
+			+ "/Excel.xlsx?repo=true&term=&query=" + URLEncoder.encode(query, StandardCharsets.UTF_8.toString())
+			+ "&parameter=MaxLevel2IncludeEmpty";
+
+		Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
+		byte[] reportData = response.getContentAsByteArray();
+
+		assertNotNull("Report data should not be null", reportData);
+		assertTrue("Report data should not be empty", reportData.length > 0);
+
+		// Parse Excel and verify structure
+		try (XSSFWorkbook workbook = new XSSFWorkbook(new ByteArrayInputStream(reportData))) {
+			XSSFSheet sheet = workbook.getSheetAt(0);
+			assertNotNull("Sheet should not be null", sheet);
+			
+			// Should have header + at least one data row
+			int rowCount = sheet.getLastRowNum();
+			assertTrue("Should have at least one data row when MaxLevel2IncludeEmpty is true (row count: " + rowCount + ")", rowCount >= 1);
 		}
 	}
 

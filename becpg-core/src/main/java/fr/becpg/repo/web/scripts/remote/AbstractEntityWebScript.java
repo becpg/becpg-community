@@ -241,18 +241,21 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
 	 * @return a {@link java.util.List} object.
 	 * @param maxResults a {@link java.lang.Integer} object
+	 * @param allowAdvancedSearch a {@link java.lang.Boolean} object
 	 */
-	protected PagingResults<NodeRef> findEntities(WebScriptRequest req, Integer maxResults) {
+	protected PagingResults<NodeRef> findEntities(WebScriptRequest req, Integer maxResults, boolean allowAdvancedSearch) {
 
 		String path = decodeParam(req.getParameter(PARAM_PATH));
 		String query = decodeParam(req.getParameter(PARAM_QUERY));
 		Integer page = intParam(req, PARAM_PAGE);
 		
 		String entityQuery = null;
-		try {
-			entityQuery = extractBodyRequest(req);
-		} catch (IOException e) {
-			logger.error("Error while extracting request body: " + e.getMessage(), e);
+		if (allowAdvancedSearch) {
+			try {
+				entityQuery = extractBodyRequest(req);
+			} catch (IOException e) {
+				logger.error("Error while extracting request body: " + e.getMessage(), e);
+			}
 		}
 		
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
@@ -316,7 +319,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				}
 				@Override
 				public Pair<Integer, Integer> getTotalResultCount() {
-					return new Pair<>(endIndex, endIndex);
+					return new Pair<>(advSearchResultsSize, advSearchResultsSize);
 				}
 				@Override
 				public String getQueryExecutionId() {
@@ -409,7 +412,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				&& ((req.getParameter(PARAM_QUERY) == null) || req.getParameter(PARAM_QUERY).isEmpty())) {
 			throw new WebScriptException(Status.STATUS_NOT_IMPLEMENTED, "One of nodeRef query or path parameter is mandatory");
 		}
-		PagingResults<NodeRef> ret = findEntities(req, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+		PagingResults<NodeRef> ret = findEntities(req, RepoConsts.MAX_RESULTS_SINGLE_VALUE, false);
 		if ((ret != null) && !ret.getPage().isEmpty()) {
 			return ret.getPage().get(0);
 		}
@@ -665,6 +668,45 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		
 		return null;
 	}
+	
+
+	/**
+	 * <p>isBrokenPipe.</p>
+	 *
+	 * @param t a {@link java.lang.Throwable} object
+	 * @return a boolean
+	 */
+	protected boolean isBrokenPipe(Throwable t) {
+		while (t != null) {
+			if (t instanceof IOException) {
+				String msg = t.getMessage();
+				if (msg != null && (
+					"Broken pipe".equalsIgnoreCase(msg) ||
+					"Connection reset".equalsIgnoreCase(msg) ||
+					msg.contains("ClientAbortException") ||
+					msg.contains("Connection aborted"))) {
+					return true;
+				}
+			}
+			
+			String className = t.getClass().getName();
+			if (className.endsWith("ClientAbortException") ||
+				className.endsWith("ConnectionResetException")) {
+				return true;
+			}
+			
+			for (Throwable s : t.getSuppressed()) {
+				if (isBrokenPipe(s)) {
+					return true;
+				}
+			}
+			
+			t = t.getCause();
+		}
+		return false;
+	}
+
+	
 	
 
 }

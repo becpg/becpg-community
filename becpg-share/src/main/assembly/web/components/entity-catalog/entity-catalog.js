@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2025 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  * 
  * This file is part of beCPG
  * 
@@ -32,7 +32,9 @@
         beCPG.component.EntityCatalog.superclass.constructor.call(this, "beCPG.component.EntityCatalog", htmlId, ["button", "container"]);
 
         this.isLoaded = false;
+        this.submitButton = null;
         
+        YAHOO.Bubbling.on("formContentReady", this.onFormContentReady, this);
         YAHOO.Bubbling.on("afterFormRuntimeInit", this.onAfterFormRuntimeInit, this);
         return this;
     };
@@ -64,6 +66,64 @@
             entityNodeRef: "",
 
             catalogId: null
+        },
+
+        /**
+         * Updates the Save button state based on catalog loading.
+         *
+         * @method updateSubmitButtonState
+         */
+        updateSubmitButtonState: function() {
+            if (this.submitButton) {
+                this.submitButton.set("disabled", !this.isLoaded);
+            }
+        },
+
+        /**
+         * Resolves the actual form field element and id for a catalog field.
+         *
+         * @method resolveFormField
+         * @param formId {String} form id prefix
+         * @param fieldCode {String} field name with namespace (e.g. bcpg:legalName)
+         * @return {Object|null} Object containing fieldId and element, null if not found
+         */
+        resolveFormField: function(formId, fieldCode) {
+            if (!formId || !fieldCode) {
+                return null;
+            }
+
+            var normalizedField = fieldCode.replace(":", "_");
+            var fieldPatterns = [
+                formId + "_prop_" + normalizedField + "-cntrl-date",
+                formId + "_assoc_" + normalizedField + "-cntrl",
+                formId + "_prop_" + normalizedField + "-entry",
+                formId + "_prop_" + normalizedField + "-cntrl",
+                formId + "_prop_" + normalizedField
+            ];
+
+            for (var i = 0; i < fieldPatterns.length; i++) {
+                var currentFieldId = fieldPatterns[i];
+                var currentElement = YAHOO.util.Dom.get(currentFieldId);
+                if (currentElement) {
+                    return {
+                        fieldId: currentFieldId,
+                        element: currentElement
+                    };
+                }
+            }
+
+            return null;
+        },
+
+        onFormContentReady: function(__layer, args) {
+            var insertId = this.id.replace("wizard-mgr", "%%%").replace("_cat", "")
+                               .replace("-mgr", "").replace("%%%", "wizard-mgr");
+            var formId = insertId + "-form";
+
+            if (args[1].eventGroup === formId) {
+                this.submitButton = args[1].buttons.submit;
+                this.updateSubmitButtonState();
+            }
         },
 
 
@@ -266,6 +326,7 @@
                                 instance.colorizeMissingFields(response.json, insertId);
 
                                 instance.isLoaded = true;
+                                instance.updateSubmitButtonState();
                                 
                             }, this);
 
@@ -284,6 +345,7 @@
                         } else {
                             catalogsDiv.innerHTML = "<span class=\"no-missing-prop\">" + instance.msg("label.no_missing_prop") + "</span>";
                             instance.isLoaded = true;
+                            instance.updateSubmitButtonState();
                         }
                         YAHOO.util.Dom.removeClass(formulateButton, "loading");
                     },
@@ -302,6 +364,7 @@
                             });
                         }
                         instance.isLoaded = false;
+                        instance.updateSubmitButtonState();
 
                         YAHOO.util.Dom.removeClass(formulateButton, "loading");
                     },
@@ -423,23 +486,12 @@
 
                 // Setup validations for each protected field
                 this.protectedFields.forEach(function(field) {
-                    // Common field ID patterns
-                    var fieldPatterns = [
-                        formId + "_prop_" + field.replace(":", "_") + "-entry",
-                        formId + "_assoc_" + field.replace(":", "_") + "-cntrl",
-                        formId + "_prop_" + field.replace(":", "_")
-                    ];
-
-                    // Check each possible field ID
-                    for (var i = 0; i < fieldPatterns.length; i++) {
-                        var fieldId = fieldPatterns[i];
-                        var element = YAHOO.util.Dom.get(fieldId);
-                        if (element) {
-                            // Add direct change event handler
-                            YAHOO.util.Event.addListener(element, "change", function() {
-                                instance.createReauthButton();
-                            });
-                        }
+                    var resolvedField = instance.resolveFormField(formId, field);
+                    if (resolvedField && resolvedField.element) {
+                        // Add direct change event handler
+                        YAHOO.util.Event.addListener(resolvedField.element, "change", function() {
+                            instance.createReauthButton();
+                        });
                     }
                 });
 
@@ -627,21 +679,9 @@
 
                                 for (var subField in fieldArray) {
 
-                                    var curField = fieldArray[subField].replace(":", "_");
-                                    var fieldId = id + "_assoc_" + curField + "-cntrl";
-
-                                    var found = YAHOO.util.Dom.get(fieldId);
-
-                                    if (found === undefined || found == null) {
-                                        fieldId = id + "_prop_" + curField + "-entry";
-                                        found = YAHOO.util.Dom.get(fieldId);
-
-                                    }
-
-                                    if (found === undefined || found == null) {
-                                        fieldId = id + "_prop_" + curField;
-                                        found = YAHOO.util.Dom.get(fieldId);
-                                    }
+                                    var resolvedField = instance.resolveFormField(id, fieldArray[subField]);
+                                    var fieldId = resolvedField ? resolvedField.fieldId : null;
+                                    var found = resolvedField ? resolvedField.element : null;
 
                                     if (found !== undefined && found != null) {
                                         if (found.className.indexOf("multi-assoc") != -1) {

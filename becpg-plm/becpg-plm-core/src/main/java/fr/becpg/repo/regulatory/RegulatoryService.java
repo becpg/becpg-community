@@ -2,6 +2,7 @@ package fr.becpg.repo.regulatory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -27,8 +28,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-
-import com.ibm.icu.util.Calendar;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -256,7 +255,7 @@ public class RegulatoryService {
 	}
 
 	private boolean checkComplianceSync(RegulatoryContext context) {
-		ReentrantLock mutex = mutexFactory.getMutex("complianceCheck-" + context.getProduct().getNodeRef());
+		ReentrantLock mutex = mutexFactory.getMutex("complianceCheck-" + context.getProduct().getNodeRef().getId());
 		if (mutex.tryLock()) {
 			try {
 				fetchIngredients(context);
@@ -367,8 +366,15 @@ public class RegulatoryService {
 		} else {
 			productData.setRequirementChecksum(null);
 		}
+		String regulatoryRecipeId = context.getRegulatoryRecipeId();
+		if (regulatoryRecipeId != null && !regulatoryRecipeId.isBlank()) {
+			productData.setRegulatoryRecipeId(regulatoryRecipeId);
+			for (RegulatoryListDataItem regulatoryListItem : productData.getRegulatoryList()) {
+				regulatoryListItem.setRegulatoryRecipeId(regulatoryRecipeId);
+			}
+		}
 	}
-
+	
 	private boolean hasError(List<RequirementListDataItem> reqList) {
 		for (RequirementListDataItem req : reqList) {
 			if (RequirementType.Forbidden.equals(req.getReqType()) && RequirementDataType.Formulation.equals(req.getReqDataType())) {
@@ -379,7 +385,7 @@ public class RegulatoryService {
 	}
 
 	private void updateChecksums(RegulatoryContext context, ProductData productData) {
-		String checkSum = createContextCheckum(context);
+		String checkSum = createContextChecksum(context);
 		productData.setRequirementChecksum(CheckSumHelper.updateChecksum(REGULATORY_KEY, productData.getRequirementChecksum(), checkSum));
 		for (RegulatoryListDataItem regulatoryListDataItem : productData.getRegulatoryList()) {
 			Set<String> itemCountries = regulatoryListDataItem.getRegulatoryCountriesRef().stream().map(this::extractCode)
@@ -602,7 +608,7 @@ public class RegulatoryService {
 		if (context.getProduct().getRegulatoryFormulatedDate() == null || context.getProduct().getRegulatoryFormulatedDate().before(cal.getTime())) {
 			return false;
 		}
-		if (!CheckSumHelper.isSameChecksum(REGULATORY_KEY, context.getProduct().getRequirementChecksum(), createContextCheckum(context))) {
+		if (!CheckSumHelper.isSameChecksum(REGULATORY_KEY, context.getProduct().getRequirementChecksum(), createContextChecksum(context))) {
 			return false;
 		}
 		for (RegulatoryListDataItem regulatoryListDataItem : context.getProduct().getRegulatoryList()) {
@@ -616,7 +622,7 @@ public class RegulatoryService {
 		return true;
 	}
 
-	private String createContextCheckum(RegulatoryContext context) {
+	private String createContextChecksum(RegulatoryContext context) {
 		Set<String> countries = context.getProduct().getRegulatoryCountriesRef().stream().map(this::extractCode).collect(Collectors.toSet());
 		Set<String> usages = context.getProduct().getRegulatoryUsagesRef().stream().map(this::extractCode).collect(Collectors.toSet());
 		if (!context.getProduct().getRegulatoryUsages().isEmpty() && !context.getProduct().getRegulatoryCountries().isEmpty()) {
@@ -633,11 +639,11 @@ public class RegulatoryService {
 		}
 
 		if (context.getIngList() != null) {
-			context.getIngList().stream().map(ing -> ing.getNodeRef().toString() + ing.getIng() + ing.getValue()).sorted()
+			context.getIngList().stream().map(ing -> ing.getNodeRef().getId() + ing.getIng() + ing.getValue()).sorted()
 					.forEach(checksumBuilder::append);
 		}
 
-		return checksumBuilder.toString();
+		return CheckSumHelper.hashChecksum(checksumBuilder.toString());
 	}
 
 	private String createRequirementChecksum(Set<String> countries, Set<String> usages) {
@@ -648,17 +654,11 @@ public class RegulatoryService {
 		if (usages != null) {
 			usages.stream().filter(c -> (c != null) && !c.isEmpty()).sorted().forEach(key::append);
 		}
-		return key.toString();
+		return CheckSumHelper.hashChecksum(key.toString());
 	}
 
 	private boolean isContextCompatible(RegulatoryContext context) {
 		if (context.getProduct().getRegulatoryMode() == null || RegulatoryMode.DISABLED.equals(context.getProduct().getRegulatoryMode())) {
-			return false;
-		}
-		if (context.getRegulatoryBatches().isEmpty()) {
-			return false;
-		}
-		if (context.getIngList().isEmpty()) {
 			return false;
 		}
 		return true;

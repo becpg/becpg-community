@@ -18,7 +18,15 @@
       commentEventClass : COMMENT_EVENTCLASS,
       commentProjectEventClass : COMMENT_PROJECTEVENTCLASS,
       showDetailsEventClass :  SHOWDETAILS_EVENTCLASS,
+      _isOpening : false,
       
+      _guardAction : function(fn, args) {
+         if (this._isOpening) return;
+         this._isOpening = true;
+         var me = this;
+         setTimeout(function() { me._isOpening = false; }, 500);
+         fn.apply(this, args);
+      },
 
       onActionShowTask : function PL_onActionShowTask(className) {
 
@@ -639,7 +647,7 @@
          var fnOnShowTaskHandler = function PL__fnOnShowTaskHandler(layer, args) {
             var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
             if (owner !== null) {
-               me.onActionShowTask.call(me, owner.className, owner);
+              me._guardAction(me.onActionShowTask, [owner.className, owner]);
             }
             return true;
          };
@@ -649,7 +657,7 @@
          var fnOnSubmitTaskHandler = function PL__fnOnSubmitTaskHandler(layer, args) {
              var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
              if (owner !== null) {
-                me.onActionSubmitTask.call(me, owner.className, owner);
+               me._guardAction(me.onActionSubmitTask, [owner.className, owner]);
              }
              return true;
           };
@@ -658,7 +666,7 @@
          var fnOnCommentTaskHandler = function PL__fnOnShowTaskHandler(layer, args) {
             var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
             if (owner !== null) {
-               me.onActionCommentTask.call(me, owner.className, owner);
+               me._guardAction(me.onActionCommentTask, [owner.className, owner]);
             }
             return true;
          };
@@ -667,7 +675,7 @@
          var fnOnCommentProjectHandler = function PL__fnOnCommentProjectHandler(layer, args) {
             var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
             if (owner !== null) {
-               me.onActionCommentProject.call(me, owner.className, owner);
+               me._guardAction(me.onActionCommentProject, [owner.className, owner]);
             }
             return true;
          };
@@ -678,7 +686,7 @@
              var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
              if (owner !== null) {
             	 var node = owner.className.replace("node-", "");
-                 me.onActionShowProjectDetails.call(me, {nodeRef:node});
+                 me._guardAction(me.onActionShowProjectDetails, [{nodeRef:node}, owner]);
              }
              return true;
           };

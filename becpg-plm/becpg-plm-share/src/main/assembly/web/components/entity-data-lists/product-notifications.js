@@ -497,7 +497,7 @@
                         getParameters : function ProductNotifications_getParameters() {
 
                             return {
-                                fields : [ "bcpg_rclReqType", "bcpg_rclReqMessage", "bcpg_rclSourcesV2", "bcpg_rclDataType", "bcpg_regulatoryCode" ],
+                                fields : [ "bcpg_rclReqType", "bcpg_rclReqMessage", "bcpg_rclSourcesV2", "bcpg_rclDataType", "bcpg_regulatoryCode", "bcpg_rclErrorLog" ],
                                 page : this.currentPage,
                                 filter : {
                                     filterId : this.filterId,
@@ -541,14 +541,20 @@
                                     desc += '   <div class="icon" ><span class="reqType' + reqType + '" title="'
                                             + Alfresco.util.encodeHTML(this.msg("data.reqtype." + reqType.toLowerCase())) + '">&nbsp;</span></div>';
                                 }
-                                if (regulatoryCode) {
+                                var displayMsg = oRecord.getData("itemData")["prop_bcpg_rclReqMessage"].displayValue;
+                                var errorLog = oRecord.getData("itemData")["prop_bcpg_rclErrorLog"] ? oRecord.getData("itemData")["prop_bcpg_rclErrorLog"].value : null;
+                                if (regulatoryCode && displayMsg) {
                                     desc += '      <div class="rclReq-regulatoryCode">'
                                         + Alfresco.util.encodeHTML(regulatoryCode) + '</div>';
                                     desc += '      <div class="rclReq-title">'
-                                        + Alfresco.util.encodeHTML(oRecord.getData("itemData")["prop_bcpg_rclReqMessage"].displayValue.replace(regulatoryCode,"")) + '</div>';
+                                        + Alfresco.util.encodeHTML(displayMsg.replace(regulatoryCode,"")) + '</div>';
                                 } else {
-                                desc += '      <div class="rclReq-title">'
-                                        + Alfresco.util.encodeHTML(oRecord.getData("itemData")["prop_bcpg_rclReqMessage"].displayValue) + '</div>';
+                                    desc += '      <div class="rclReq-title">'
+                                        + Alfresco.util.encodeHTML(displayMsg) + '</div>';
+                                }
+                                if (errorLog) {
+                                    desc += '      <div class="rclReq-formula-error" title="' + Alfresco.util.encodeHTML(errorLog) + '">'
+                                        + Alfresco.util.encodeHTML(errorLog) + '</div>';
                                 }
                                 desc += '      <div class="rclReq-content"><ul>';
 

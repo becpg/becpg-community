@@ -1,5 +1,7 @@
 package fr.becpg.repo;
 
+import java.util.TimeZone;
+
 /**
  * <p>ProjectRepoConsts class.</p>
  *
@@ -29,8 +31,12 @@ public class ProjectRepoConsts {
 	public static final String PATH_TIME_TYPES = "TimeTypes";
 	/** Constant <code>PATH_RESOURCE_COSTS="ResourceCosts"</code> */
 	public static final String PATH_RESOURCE_COSTS = "ResourceCosts";
+	/** Constant <code>PATH_CALENDARS="Calendars"</code> */
+	public static final String PATH_CALENDARS = "Calendars";
 	/** Constant <code>PATH_EMAILS_PROJECT="project"</code> */
 	public static final String PATH_EMAILS_PROJECT = "project";
+	/** Constant <code>PATH_PROJECT_TEMPLATES="ProjectTemplates"</code> */
+	public static final String PATH_PROJECT_TEMPLATES = "ProjectTemplates";
 
 	//
 	/** Constant <code>PROJECT_GROUP_PREFIX="PROJECT_"</code> */
@@ -38,5 +44,7 @@ public class ProjectRepoConsts {
 	/** Constant <code>PATH_SCORE_CRITERION_TYPES="ScoreCriterionTypes"</code> */
 	public static final String PATH_SCORE_CRITERION_TYPES = "ScoreCriterionTypes";
 	
+	/** Constant <code>PROJECT_TIMEZONE</code> */
+	public static final TimeZone PROJECT_TIMEZONE = TimeZone.getTimeZone("GMT");
 	
 }

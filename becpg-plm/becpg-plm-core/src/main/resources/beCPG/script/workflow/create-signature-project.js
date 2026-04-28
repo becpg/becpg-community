@@ -1,15 +1,8 @@
 <import resource="classpath:/beCPG/rules/helpers.js">
 
 function findDefaultTemplate() {
-	var modelTemplates = search.xpathSearch("/app:company_home/cm:System/cm:EntityTemplates/cm:project");
-			
-	for (var i = 0; i < modelTemplates.length; i++) {
-		var modelTemplate = modelTemplates[i];
-		
-		if (modelTemplate.properties["bcpg:entityTplIsDefault"] == true) {
-			return modelTemplate;
-		}
-	}
+	var modelTemplates = search.query({query:'+TYPE:"pjt:project" AND =@bcpg:entityTplIsDefault:true AND =@bcpg:entityTplEnabled:true', language:'db-afts'});
+	return modelTemplates[0];
 }
 
 function main() {
