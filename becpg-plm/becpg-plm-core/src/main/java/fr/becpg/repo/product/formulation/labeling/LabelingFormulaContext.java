@@ -1291,6 +1291,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	private String createPercAwareLabel(LabelingComponent lblComponent, String ingLegalName, Double qty, boolean useTotalPrecision) {
 		if (qty != null) {
+			qty = getForcedPercentage(lblComponent, qty);
 			QtyFormater qtyFormater = getQtyFormater(lblComponent, qty, useTotalPrecision);
 			if (qtyFormater != null) {
 				ingLegalName = ingLegalName + " " + qtyFormater.format(qty);
@@ -1298,6 +1299,76 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		}
 
 		return ingLegalName;
+	}
+
+	private Double getForcedPercentage(LabelingComponent lblComponent, Double qty) {
+		ForcePercentageRule forcePercentageRule = getSelectedForcePercentageRule(lblComponent);
+		if ((forcePercentageRule == null) || (forcePercentageRule.getFormula() == null) || forcePercentageRule.getFormula().isEmpty()) {
+			return qty;
+		}
+
+		try {
+			StandardEvaluationContext dataContext = formulaService.createCustomSpelContext(entity, this, false);
+			dataContext.setVariable("lblComponent", lblComponent);
+			dataContext.setVariable("qty", qty);
+
+			Expression exp = formulaService.parseExpression(SpelHelper.formatFormula(forcePercentageRule.getFormula()));
+			Number forcedPercentage = exp.getValue(dataContext, Number.class);
+
+			if (forcedPercentage != null) {
+				Double forcedPercentageValue = forcedPercentage.doubleValue();
+				if (forcedPercentageValue > 1d) {
+					return forcedPercentageValue / 100d;
+				}
+				return forcedPercentageValue;
+			}
+		} catch (Exception e) {
+			getEntity().getReqCtrlList()
+					.add(RequirementListDataItem.forbidden()
+							.withMessage(MLTextHelper.getI18NMessage("message.formulate.labelRule.error", forcePercentageRule.getRuleName(),
+									e.getLocalizedMessage()))
+							.ofDataType(RequirementDataType.Labelling));
+			if (logger.isDebugEnabled()) {
+				logger.debug("Cannot evaluate force percentage formula :" + forcePercentageRule.getFormula() + " on " + lblComponent, e);
+			}
+		}
+
+		return qty;
+	}
+
+	private ForcePercentageRule getSelectedForcePercentageRule(LabelingComponent lblComponent) {
+		NodeRef nodeRef = lblComponent.getNodeRef();
+
+		if (forcePercentageRules.containsKey(nodeRef)) {
+			ForcePercentageRule forcePercentageRule = forcePercentageRules.get(nodeRef);
+			if (forcePercentageRule.matchLocale(I18NUtil.getLocale())) {
+				return forcePercentageRule;
+			}
+		}
+
+		if (renameRules.containsKey(nodeRef)) {
+			RenameRule renameRule = renameRules.get(nodeRef);
+			if (renameRule.matchLocale(I18NUtil.getLocale()) && (renameRule.getReplacement() != null)
+					&& forcePercentageRules.containsKey(renameRule.getReplacement())) {
+				ForcePercentageRule forcePercentageRule = forcePercentageRules.get(renameRule.getReplacement());
+				if (forcePercentageRule.matchLocale(I18NUtil.getLocale())) {
+					return forcePercentageRule;
+				}
+			}
+		}
+
+		for (Map.Entry<NodeRef, RenameRule> entry : renameRules.entrySet()) {
+			RenameRule renameRule = entry.getValue();
+			if (Objects.equals(renameRule.getReplacement(), nodeRef) && renameRule.matchLocale(I18NUtil.getLocale())
+					&& forcePercentageRules.containsKey(entry.getKey())) {
+				ForcePercentageRule forcePercentageRule = forcePercentageRules.get(entry.getKey());
+				if (forcePercentageRule.matchLocale(I18NUtil.getLocale())) {
+					return forcePercentageRule;
+				}
+			}
+		}
+
+		return null;
 	}
 
 	private boolean showPerc(LabelingComponent lblComponent) {
