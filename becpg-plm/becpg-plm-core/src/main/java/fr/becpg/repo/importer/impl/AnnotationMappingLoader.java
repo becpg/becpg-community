@@ -244,6 +244,9 @@ public class AnnotationMappingLoader implements MappingLoader {
 							if (targetClassQName != null) {
 								attributeMapping.setTargetClass(targetClassQName);
 							}
+							if (targetKey != null) {
+								attributeMapping.setTargetKey(targetKey);
+							}
 							classMapping.getColumns().add(attributeMapping);
 
 							if (targetClassMapping != null) {

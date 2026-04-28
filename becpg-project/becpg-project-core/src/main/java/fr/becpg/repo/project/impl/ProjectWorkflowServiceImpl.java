@@ -395,7 +395,11 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 	}
 
 	/**
-	 * Calculate localized workflow description
+	 * Build a workflow description compatible with utf8mb3-backed workflow tables.
+	 *
+	 * @param projectData the project owning the workflow
+	 * @param taskListDataItem the task starting or updating the workflow
+	 * @return the localized description without supplementary Unicode characters
 	 */
 	private String calculateWorkflowDescription(ProjectData projectData, TaskListDataItem taskListDataItem) {
 		String taskName = taskListDataItem.getTaskName();
@@ -405,7 +409,11 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 			taskName = getLocalizedTaskName(taskListDataItem, resources);
 		}
 
-		return String.format(WORKFLOW_DESCRIPTION_FORMAT, getProjectCode(projectData), projectData.getName(), taskName);
+		String description = String.format(WORKFLOW_DESCRIPTION_FORMAT, getProjectCode(projectData), projectData.getName(), taskName);
+		return description.codePoints()
+				.filter(Character::isBmpCodePoint)
+				.collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+				.toString();
 	}
 
 	/**
