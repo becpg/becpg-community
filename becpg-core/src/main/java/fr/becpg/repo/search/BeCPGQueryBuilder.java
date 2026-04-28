@@ -1351,7 +1351,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		}
 
 		for (Map.Entry<QName, Pair<String, String>> propQueryEntry : propBetweenOrNullQueriesMap.entrySet()) {
-			runnedQuery.append(getMandatoryOrGroup(getCondIsNullOrIsUnsetValue(propQueryEntry.getKey()), getCondContainsValue(propQueryEntry.getKey(),
+			runnedQuery.append(getMandatoryOrGroup(getCondIsNullValue(propQueryEntry.getKey()), getCondContainsValue(propQueryEntry.getKey(),
 					String.format("[%s TO %s]", propQueryEntry.getValue().getFirst(), propQueryEntry.getValue().getSecond()))));
 		}
 
