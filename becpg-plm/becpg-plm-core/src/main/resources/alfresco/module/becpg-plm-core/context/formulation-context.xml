@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  Copyright (C) 2010-2025 beCPG. 
+  Copyright (C) 2010-2026 beCPG. 
    
   This file is part of beCPG 
    
@@ -27,63 +27,38 @@
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
+		<property name="securityService" ref="securityService" />
+		<property name="namespaceService" ref="namespaceService" />
 	</bean>
 
-	<bean id="costCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.CostCharactDetailsVisitor">
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="nodeService" ref="nodeService" />
+	<bean id="costCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.CostCharactDetailsVisitor" parent="simpleCharactDetailsVisitor">
 		<property name="packagingHelper" ref="packagingHelper" />
-		<property name="entityDictionaryService" ref="entityDictionaryService" />
 	</bean>
 
-	<bean id="lcaCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.LCACharactDetailsVisitor">
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="nodeService" ref="nodeService" />
+	<bean id="lcaCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.LCACharactDetailsVisitor" parent="simpleCharactDetailsVisitor">
 		<property name="packagingHelper" ref="packagingHelper" />
-		<property name="entityDictionaryService" ref="entityDictionaryService" />
 	</bean>
 
-	<bean id="packagingMaterialCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.PackagingMaterialCharactDetailsVisitor">
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="entityDictionaryService" ref="entityDictionaryService" />
+	<bean id="packagingMaterialCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.PackagingMaterialCharactDetailsVisitor" parent="simpleCharactDetailsVisitor">
 	</bean>
 
-	<bean id="nutCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.NutCharactDetailsVisitor">
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="entityDictionaryService" ref="entityDictionaryService" />
+	<bean id="nutCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.NutCharactDetailsVisitor" parent="simpleCharactDetailsVisitor">
 	</bean>
 
-	<bean id="ingCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.IngCharactDetailsVisitor">
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="entityDictionaryService" ref="entityDictionaryService" />
+	<bean id="ingCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.IngCharactDetailsVisitor" parent="simpleCharactDetailsVisitor">
 	</bean>
 
-	<bean id="physicoChemCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.PhysicoChemCharactDetailsVisitor">
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="entityDictionaryService" ref="entityDictionaryService" />
+	<bean id="physicoChemCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.PhysicoChemCharactDetailsVisitor" parent="simpleCharactDetailsVisitor">
+	</bean>
+		
+	<bean id="labelClaimCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.LabelClaimCharactDetailsVisitor" parent="simpleCharactDetailsVisitor">
 	</bean>
 	
-	<bean id="labelClaimCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.LabelClaimCharactDetailsVisitor">
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="entityDictionaryService" ref="entityDictionaryService" />
-	</bean>
-	
-	<bean id="toxCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.ToxCharactDetailsVisitor">
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="entityDictionaryService" ref="entityDictionaryService" />
+	<bean id="toxCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.ToxCharactDetailsVisitor" parent="simpleCharactDetailsVisitor">
 		<property name="toxicologyService" ref="toxicologyService" />
 	</bean>
 	
-	<bean id="svhcCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.SvhcCharactDetailsVisitor">
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="entityDictionaryService" ref="entityDictionaryService" />
+	<bean id="svhcCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.SvhcCharactDetailsVisitor" parent="simpleCharactDetailsVisitor">
 	</bean>
 	
 	<bean id="charactDetailsVisitorFactory" class="fr.becpg.repo.product.CharactDetailsVisitorFactoryImpl">
@@ -180,6 +155,7 @@
 				<bean class="fr.becpg.repo.product.formulation.AllergensCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="nodeService" ref="nodeService" />
+					<property name="systemConfigurationService" ref="systemConfigurationService" />
 					<property name="allergenRequirementScanner">
 						<bean class="fr.becpg.repo.product.requirement.AllergenRequirementScanner">
 							<property name="mlNodeService" ref="mlAwareNodeService" />
@@ -557,6 +533,48 @@
 		</property>
 		<property name="formulationService" ref="formulationService" />
 		<property name="contextClass" value="fr.becpg.repo.collection.data.ProductCollectionData" />
+	</bean>
+	
+	<bean id="formulationChannelJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+        <property name="jobClass">
+            <value>fr.becpg.repo.product.formulation.job.FormulationChannelJob</value>
+        </property>
+        <property name="group" value="beCPG"/>
+        <property name="description" value="Run modified where used formulation" />
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="formulationChannelService">
+                    <ref bean="formulationChannelService" />
+                </entry>
+                <entry key="tenantAdminService">
+                    <ref bean="tenantAdminService" />
+                </entry>
+                <entry key="jobLockService">
+	               <ref bean="jobLockService" />
+	           </entry>
+                <entry key="transactionService">
+	               <ref bean="transactionService" />
+	           </entry>
+                
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="formulationChannelJobSchedulerAccessor" class="org.alfresco.schedule.AlfrescoSchedulerAccessorBean">
+		<property name="scheduler" ref="schedulerFactory" />
+		<property name="triggers">
+			<list>
+				<bean id="formulationChannelJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"  >
+			        <property name="jobDetail">
+			            <ref bean="formulationChannelJob"/>
+			        </property>
+			        <property name="cronExpression">
+			            <value>${beCPG.formulation.channel.cron}</value>
+			        </property>
+			    </bean>
+			</list>
+		</property>
+		<property name="enabled" value="${beCPG.formulation.channel.enable}" />
 	</bean>
 
 </beans>

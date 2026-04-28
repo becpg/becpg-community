@@ -8,21 +8,36 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.comparison.CompareResultDataItem;
 import fr.becpg.repo.entity.comparison.StructCompareResultDataItem;
+import fr.becpg.repo.entity.datalist.MultiLevelDataListService;
+import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
+import fr.becpg.repo.product.formulation.PackagingHelper;
 import fr.becpg.repo.product.helper.AllocationHelper;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>ProductCompareEntityServicePlugin class.</p>
@@ -32,6 +47,41 @@ import fr.becpg.repo.product.helper.AllocationHelper;
  */
 @Service
 public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServicePlugin {
+
+	@Autowired
+	/**
+	 * <p>Constructor for ProductCompareEntityServicePlugin.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 * @param packagingHelper a {@link fr.becpg.repo.product.formulation.PackagingHelper} object
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 * @param attributeExtractorService a {@link fr.becpg.repo.helper.AttributeExtractorService} object
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object
+	 * @param multiLevelDataListService a {@link fr.becpg.repo.entity.datalist.MultiLevelDataListService} object
+	 * @param fileFolderService a {@link org.alfresco.service.cmr.model.FileFolderService} object
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 */
+	public ProductCompareEntityServicePlugin(
+			@Qualifier("alfrescoRepository") AlfrescoRepository<BeCPGDataObject> alfrescoRepository,
+			@Qualifier("packagingHelper") PackagingHelper packagingHelper,
+			@Qualifier("nodeService") NodeService nodeService,
+			@Qualifier("dictionaryService") DictionaryService dictionaryService,
+			@Qualifier("namespaceService") NamespaceService namespaceService,
+			@Qualifier("associationService") AssociationService associationService,
+			@Qualifier("attributeExtractorService") AttributeExtractorService attributeExtractorService,
+			@Qualifier("entityDictionaryService") EntityDictionaryService entityDictionaryService,
+			@Qualifier("entityListDAO") EntityListDAO entityListDAO,
+			@Qualifier("multiLevelDataListService") MultiLevelDataListService multiLevelDataListService,
+			@Qualifier("fileFolderService") FileFolderService fileFolderService,
+			@Qualifier("systemConfigurationService") SystemConfigurationService systemConfigurationService) {
+		super(alfrescoRepository, packagingHelper, nodeService, dictionaryService, namespaceService, associationService,
+				attributeExtractorService, entityDictionaryService, entityListDAO, multiLevelDataListService,
+				fileFolderService, systemConfigurationService);
+	}
 
 	
 

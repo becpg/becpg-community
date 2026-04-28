@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,6 +50,7 @@ import fr.becpg.repo.repository.model.ForecastValueDataItem;
 import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 import fr.becpg.repo.repository.model.UnitAwareDataItem;
+import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
@@ -69,6 +71,28 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	protected EntityDictionaryService entityDictionaryService;
 
 	protected QName dataListType;
+	
+	protected SecurityService securityService;
+	
+	protected NamespaceService namespaceService;
+	
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 */
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>securityService</code>.</p>
+	 *
+	 * @param securityService a {@link fr.becpg.repo.security.SecurityService} object
+	 */
+	public void setSecurityService(SecurityService securityService) {
+		this.securityService = securityService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
@@ -352,12 +376,16 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 			if ((simpleCharact instanceof ForecastValueDataItem forecastValue) && !context.getCharactDetails().isMultiple()) {
 
 				for (String forecastColumn : forecastValue.getForecastColumns()) {
-					logger.debug("ForecastDataItem, " + forecastColumn + "=" + forecastValue.getForecastValue(forecastColumn));
-					// add future and past values
-					if (forecastValue.getForecastValue(forecastColumn) != null) {
-						currentCharactDetailsValue
-						.setForecastValue(forecastColumn, FormulationHelper.calculateValue(0d, qtyUsed, forecastValue.getForecastValue(forecastColumn), netQty));
+					
+					if (isColumnReadable(forecastColumn)) {
+						logger.debug("ForecastDataItem, " + forecastColumn + "=" + forecastValue.getForecastValue(forecastColumn));
+						// add future and past values
+						if (forecastValue.getForecastValue(forecastColumn) != null) {
+							currentCharactDetailsValue
+							.setForecastValue(forecastColumn, FormulationHelper.calculateValue(0d, qtyUsed, forecastValue.getForecastValue(forecastColumn), netQty));
+						}
 					}
+
 				}
 			}
 
@@ -365,24 +393,57 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 				MinMaxValueDataItem minMaxValue = (MinMaxValueDataItem) simpleCharact;
 				minMaxValue.setMaxi(FormulationHelper.flatPercValue(minMaxValue.getMaxi(), unit));
 				minMaxValue.setMini(FormulationHelper.flatPercValue(minMaxValue.getMini(), unit));
-
+				
 				logger.debug("minMaxValue, prev=" + minMaxValue.getMini() + ", maxi=" + minMaxValue.getMaxi());
 				// add future and past values
-				if (minMaxValue.getMini() != null) {
+				if (minMaxValue.getMini() != null && isColumnReadable(getMiniPropName())) {
 					currentCharactDetailsValue.setMini(FormulationHelper.calculateValue(0d, qtyUsed, minMaxValue.getMini(), netQty));
 				}
-
-				if (minMaxValue.getMaxi() != null) {
+				
+				if (minMaxValue.getMaxi() != null && isColumnReadable(getMaxiPropName())) {
 					currentCharactDetailsValue.setMaxi(FormulationHelper.calculateValue(0d, qtyUsed, minMaxValue.getMaxi(), netQty));
 				}
 			}
 			
 			if (!context.getCharactDetails().isMultiple()) {
 				provideAdditionalValues(context.getRootProductData(), formulatedProduct, simpleCharact, unit, qtyUsed, netQty, currentCharactDetailsValue);
+				removeUnreadableAdditionalValues(currentCharactDetailsValue);
 			}
 			
 			context.getCharactDetails().addKeyValue(simpleCharact.getCharactNodeRef(), currentCharactDetailsValue);
 		}
+	}
+
+	private void removeUnreadableAdditionalValues(CharactDetailsValue currentCharactDetailsValue) {
+		currentCharactDetailsValue.getAdditionalValues().removeIf(add -> !isColumnReadable(add.getColumnKey()));
+	}
+
+	/**
+	 * <p>getMaxiPropName.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
+	protected String getMaxiPropName() {
+		return null;
+	}
+
+	/**
+	 * <p>getMiniPropName.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
+	protected String getMiniPropName() {
+		return null;
+	}
+
+	/**
+	 * <p>isColumnReadable.</p>
+	 *
+	 * @param columnKey a {@link java.lang.String} object
+	 * @return a boolean
+	 */
+	protected boolean isColumnReadable(String columnKey) {
+		return columnKey != null && securityService.computeAccessMode(null, dataListType, columnKey) != SecurityService.NONE_ACCESS;
 	}
 
 	/**
@@ -406,7 +467,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	 * @return a boolean
 	 */
 	protected boolean shouldFormulateInVolume(CharactDetailsVisitorContext context, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
-		return (partProduct.getUnit() != null) && partProduct.getUnit().isVolume();
+		return partProduct.isLiquid();
 	}
 
 	/**

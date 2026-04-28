@@ -46,6 +46,7 @@ public abstract class RuleParser {
 	protected final Map<NodeRef, List<AggregateRule>> aggregateRules = new HashMap<>();
 	protected final Map<String, MeatContentRule> meatContentRules = new HashMap<>();
 	protected final Map<NodeRef, RenameRule> renameRules = new HashMap<>();
+	protected final Map<NodeRef, ForcePercentageRule> forcePercentageRules = new HashMap<>();
 
 	protected final Map<NodeRef, ShowRule> showGeoRules = new HashMap<>();
 	protected final Map<NodeRef, ShowRule> showBioRules = new HashMap<>();
@@ -240,6 +241,8 @@ public abstract class RuleParser {
 				formatText(components, formula, locales);
 			} else if (LabelingRuleType.Rename.equals(labeLabelingRuleType)) {
 				rename(components, replacement, label, formula, locales);
+			} else if (LabelingRuleType.ForcePercentage.equals(labeLabelingRuleType)) {
+				forcePercentage(name, components, formula, locales);
 			} else if (LabelingRuleType.Locale.equals(labeLabelingRuleType)) {
 				addLocale(formula, locales);
 			} else if (LabelingRuleType.ShowPerc.equals(labeLabelingRuleType)) {
@@ -383,6 +386,14 @@ public abstract class RuleParser {
 	}
 
 	abstract void updateDefaultFormat(TextFormatRule textFormatRule);
+
+	private void forcePercentage(String name, List<NodeRef> components, String formula, List<String> locales) {
+		if ((components != null) && !components.isEmpty()) {
+			for (NodeRef component : components) {
+				forcePercentageRules.put(component, new ForcePercentageRule(name, formula, locales));
+			}
+		}
+	}
 
 	private void addLocale(String value, List<String> locales) {
 		if (((locales == null) || locales.isEmpty()) && (value != null)) {

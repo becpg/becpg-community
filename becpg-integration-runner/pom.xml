@@ -10,10 +10,10 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>25.2.1</version>
+		<version>25.3.0</version>
 		<relativePath>../</relativePath>
 	</parent>
-    <version>25.2.1.0-SNAPSHOT</version>
+    <version>25.3.0.28-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
 			<groupId>fr.becpg</groupId>
@@ -59,88 +59,6 @@
 			<scope>test</scope>
 		</dependency>
 
-
-		<!-- beCPG AMPs -->
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-plm-core</artifactId>
-			<type>amp</type>
-			<version>${project.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-plm-share</artifactId>
-			<type>amp</type>
-			<version>${project.version}</version>
-			<scope>runtime</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.ws.commons.util</groupId>
-					<artifactId>ws-commons-util</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-project-core</artifactId>
-			<type>amp</type>
-			<version>${project.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-project-share</artifactId>
-			<type>amp</type>
-			<version>${project.version}</version>
-			<scope>runtime</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.ws.commons.util</groupId>
-					<artifactId>ws-commons-util</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-designer-core</artifactId>
-			<type>amp</type>
-			<version>${project.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-designer-share</artifactId>
-			<type>amp</type>
-			<version>${project.version}</version>
-			<scope>runtime</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.ws.commons.util</groupId>
-					<artifactId>ws-commons-util</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-core</artifactId>
-			<type>amp</type>
-			<version>${project.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>fr.becpg</groupId>
-			<artifactId>becpg-share</artifactId>
-			<type>amp</type>
-			<version>${project.version}</version>
-			<scope>runtime</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.ws.commons.util</groupId>
-					<artifactId>ws-commons-util</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 
 		<dependency>
 			<groupId>com.networknt</groupId>
@@ -363,7 +281,7 @@
 			<plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-javadoc-plugin</artifactId>
-              <version>3.6.3</version> 
+              <version>3.11.3</version> 
               <executions>
                 <execution>
                   <id>attach-javadocs</id>
@@ -374,6 +292,98 @@
 		</plugins>
 	</build>
 	<profiles>
+
+		<profile>
+			<id>amps</id>
+			<activation>
+				<property>
+					<name>!skip.amps.dependencies</name>
+				</property>
+			</activation>
+			<dependencies>
+				<!-- beCPG AMPs -->
+				<dependency>
+					<groupId>fr.becpg</groupId>
+					<artifactId>becpg-plm-core</artifactId>
+					<type>amp</type>
+					<version>${project.version}</version>
+					<scope>runtime</scope>
+				</dependency>
+				<dependency>
+					<groupId>fr.becpg</groupId>
+					<artifactId>becpg-plm-share</artifactId>
+					<type>amp</type>
+					<version>${project.version}</version>
+					<scope>runtime</scope>
+					<exclusions>
+						<exclusion>
+							<groupId>org.apache.ws.commons.util</groupId>
+							<artifactId>ws-commons-util</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>fr.becpg</groupId>
+					<artifactId>becpg-project-core</artifactId>
+					<type>amp</type>
+					<version>${project.version}</version>
+					<scope>runtime</scope>
+				</dependency>
+				<dependency>
+					<groupId>fr.becpg</groupId>
+					<artifactId>becpg-project-share</artifactId>
+					<type>amp</type>
+					<version>${project.version}</version>
+					<scope>runtime</scope>
+					<exclusions>
+						<exclusion>
+							<groupId>org.apache.ws.commons.util</groupId>
+							<artifactId>ws-commons-util</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>fr.becpg</groupId>
+					<artifactId>becpg-designer-core</artifactId>
+					<type>amp</type>
+					<version>${project.version}</version>
+					<scope>runtime</scope>
+				</dependency>
+				<dependency>
+					<groupId>fr.becpg</groupId>
+					<artifactId>becpg-designer-share</artifactId>
+					<type>amp</type>
+					<version>${project.version}</version>
+					<scope>runtime</scope>
+					<exclusions>
+						<exclusion>
+							<groupId>org.apache.ws.commons.util</groupId>
+							<artifactId>ws-commons-util</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>fr.becpg</groupId>
+					<artifactId>becpg-core</artifactId>
+					<type>amp</type>
+					<version>${project.version}</version>
+					<scope>runtime</scope>
+				</dependency>
+				<dependency>
+					<groupId>fr.becpg</groupId>
+					<artifactId>becpg-share</artifactId>
+					<type>amp</type>
+					<version>${project.version}</version>
+					<scope>runtime</scope>
+					<exclusions>
+						<exclusion>
+							<groupId>org.apache.ws.commons.util</groupId>
+							<artifactId>ws-commons-util</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+			</dependencies>
+		</profile>
 
 		<profile>
 			<id>sonar</id>
@@ -456,6 +466,4 @@
 			</build>
 		</profile>
 	</profiles>
-
-
 </project>

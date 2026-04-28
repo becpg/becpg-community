@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  Copyright (C) 2010-2025 beCPG. 
+  Copyright (C) 2010-2026 beCPG. 
    
   This file is part of beCPG 
    
@@ -155,6 +155,14 @@
 	
 	<bean id="surveyQuestionPolicy" class="fr.becpg.repo.survey.SurveyQuestionPolicy" parent="abstractBeCPGPolicy">
 	  <property name="beCPGCacheService" ref="beCPGCacheService"/>
+    </bean>
+    
+    <bean id="becpgCopyPolicy" class="fr.becpg.repo.copy.BeCPGCopyPolicy" parent="abstractBeCPGPolicy" autowire="byType">
+	  <property name="systemConfigurationService" ref="systemConfigurationService"/>
+	  <property name="entityDictionaryService" ref="entityDictionaryService"/>
+	  <property name="entityService" ref="entityService"/>
+	  <property name="namespaceService" ref="namespaceService"/>
+	  <property name="associationService" ref="associationService"/>
     </bean>
 
 </beans>

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- 
 
-Copyright (C) 2010-2025 beCPG. 
+Copyright (C) 2010-2026 beCPG. 
  
 This file is part of beCPG 
  
@@ -197,5 +197,31 @@ http://www.springframework.org/schema/context/spring-context-2.5.xsd">
          </list>
       </property>
    </bean>
-	
+   
+   <bean id="evaluator.becpg.doclib.action.hasPermissionEvaluator" class="fr.becpg.web.evaluator.HasPermissionEvaluator" />
+
+   <bean id="evaluator.becpg.doclib.action.hasPermissionToBranch" parent="evaluator.doclib.action.chainedMatchOne">
+      <property name="evaluators">
+         <list>
+           <bean parent="evaluator.becpg.doclib.action.hasPermissionEvaluator">
+		      <property name="permission" value="Write" />
+		   </bean>
+		   <bean  parent="evaluator.doclib.action.groupMembership">
+		      <property name="groups">
+		         <list>
+		            <value>SiteBranchManager</value>
+		         </list>
+		      </property>
+		   </bean>
+           <bean  parent="evaluator.doclib.action.groupMembership">
+		      <property name="groups">
+		         <list>
+		            <value>SiteBranchOnlyManager</value>
+		         </list>
+		      </property>
+		   </bean>
+         </list>
+      </property>
+   </bean>
+   
 </beans>

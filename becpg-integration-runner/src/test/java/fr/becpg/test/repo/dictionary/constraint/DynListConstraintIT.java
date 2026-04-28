@@ -4,7 +4,9 @@
 package fr.becpg.test.repo.dictionary.constraint;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -257,7 +259,69 @@ public class DynListConstraintIT extends PLMBaseTestCase {
 			}
 		});
 	}
+
+	@Test
+	public void testClasspathOverridePathTakesPrecedence() {
+		beCPGCacheService.clearAllCaches();
+
+		DynListConstraint constraint = createClasspathConstraint("TEST_OVERRIDE",
+				Arrays.asList("override:classpath:beCPG/dictionary/constraint/override-dyn-list.csv",
+						"classpath:beCPG/dictionary/constraint/base-dyn-list.csv"));
+
+		// Override returns "shared", so base shouldn't be loaded at all
+		assertEquals("Override shared label", constraint.getDisplayLabel("shared", Locale.ENGLISH));
+		assertTrue(constraint.getAllowedValues(false).contains("shared"));
+		
+		// "baseOnly" is in base CSV, but base CSV shouldn't be loaded
+		assertFalse(constraint.getAllowedValues(false).contains("baseOnly"));
+	}
+
+	@Test
+	public void testClasspathOverrideEmptyFallsBackToBase() {
+		beCPGCacheService.clearAllCaches();
+
+		DynListConstraint constraint = createClasspathConstraint("TEST_FALLBACK",
+				Arrays.asList("override:classpath:beCPG/dictionary/constraint/override-dyn-list.csv",
+						"classpath:beCPG/dictionary/constraint/base-dyn-list.csv"));
+
+		// Override CSV has no matching rows for TEST_FALLBACK, so base CSV is loaded
+		assertTrue(constraint.getAllowedValues(false).contains("baseOnly"));
+		assertEquals("Base only label", constraint.getDisplayLabel("baseOnly", Locale.ENGLISH));
+	}
+
+	@Test
+	public void testClasspathPathsWithoutOverrideKeepOrderBehavior() {
+		beCPGCacheService.clearAllCaches();
+
+		DynListConstraint constraint = createClasspathConstraint("TEST_NO_OVERRIDE",
+				Arrays.asList("classpath:beCPG/dictionary/constraint/override-dyn-list.csv",
+						"classpath:beCPG/dictionary/constraint/base-dyn-list.csv"));
+
+		// Both are normal paths, so both loaded, override CSV doesn't trump base CSV entirely
+		// Override CSV is loaded first (index 0) and puts "shared" -> "Override shared label".
+		// Base CSV is loaded second (index 1) and overwrites "shared" -> "Base shared label".
+		assertEquals("Base shared label", constraint.getDisplayLabel("shared", Locale.ENGLISH));
+	}
 	
+	/**
+	 * Creates a dynamic list constraint backed by test classpath CSV resources.
+	 *
+	 * @param constraintFilter the filter used to select test rows
+	 * @param paths the configured CSV paths
+	 * @return the initialized constraint
+	 */
+	private DynListConstraint createClasspathConstraint(String constraintFilter, java.util.List<String> paths) {
+		DynListConstraint.setServiceRegistry(serviceRegistry);
+		DynListConstraint.setBeCPGCacheService(beCPGCacheService);
+		DynListConstraint.setContentService(contentService);
+
+		DynListConstraint constraint = new DynListConstraint();
+		constraint.setConstraintFilter(constraintFilter);
+		constraint.setPath(paths);
+		constraint.initialize();
+		return constraint;
+	}
+
 	private <T> void setFullyAuthenticatedUser(Supplier<T> supplier, String username) {
 		
 		try {

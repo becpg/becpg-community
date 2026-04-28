@@ -192,4 +192,20 @@ public interface EntityDictionaryService extends DictionaryService {
 	 * @return a {@link org.alfresco.service.namespace.QName} object
 	 */
 	QName getAssocIndexQName(QName assocQName);
+
+	/**
+	 * <p>getDefaultPivotAssocsFromTargetType.</p>
+	 *
+	 * @param targetType a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.util.List} object
+	 */
+	List<QName> getDefaultPivotAssocsFromTargetType(QName targetType);
+	
+	/**
+	 * <p>getTargetTypes.</p>
+	 *
+	 * @param assocName a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.util.List} object
+	 */
+	List<QName> getTargetTypes(QName assocName);
 }

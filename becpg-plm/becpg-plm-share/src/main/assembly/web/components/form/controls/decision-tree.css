@@ -90,6 +90,18 @@
     border-left: 4px solid #f44336; 
 }
 
+.requirement-tolerated { 
+    background-color: #fff3e0; 
+    color: #e65100; 
+    border-left: 4px solid #ff9800; 
+}
+
+.requirement-authorized { 
+    background-color: #f3e5f5; 
+    color: #4a148c; 
+    border-left: 4px solid #9c27b0; 
+}
+
 .requirement-code { 
     font-weight: bold; 
 }

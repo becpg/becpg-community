@@ -74,6 +74,8 @@ public class PublicationModel {
 	public static final QName PROP_PUBCHANNEL_CONFIG = QName.createQName(PUBLICATION_URI, "pubChannelConfig");
 	/** Constant <code>ASSOC_PUBCHANNEL_CONFIGFILE</code> */
 	public static final QName ASSOC_PUBCHANNEL_CONFIGFILE = QName.createQName(PUBLICATION_URI, "pubChannelConfigFile");
+	/** Constant <code>ASSOC_PUBCHANNEL_ACCOUNTS</code> */
+	public static final QName ASSOC_PUBCHANNEL_ACCOUNTS = QName.createQName(PUBLICATION_URI, "pubChannelAccounts");
 
 	/** Constant <code>PROP_PUBCHANNEL_BATCHSTARTTIME</code> */
 	public static final QName PROP_PUBCHANNEL_BATCHSTARTTIME = QName.createQName(PUBLICATION_URI, "pubChannelBatchStartTime");

@@ -983,6 +983,68 @@
 			});
 		},
 		
+		onActionFormulateWUsed: function EntityDataGrid_onActionFormulateWUsed(p_items) {
+			var me = this;
+			var items = YAHOO.lang.isArray(p_items) ? p_items : [p_items];
+			var nodeRefs = [];
+			for (var index in items) {
+				var item = items[index];
+				nodeRefs.push(item.nodeRef.toString());
+			}
+			
+			var charactName = null;
+
+			var names = [];
+			for (var i = 0; i < items.length && names.length < 5; i++) {
+				if (items[i].itemData && items[i].itemData.prop_bcpg_charactName) {
+					names.push(items[i].itemData.prop_bcpg_charactName.value);
+				}
+			}
+
+			if (names.length > 0) {
+				charactName = names.join(", ");
+				if (items.length > 5) {
+					charactName += ", ...";
+				}
+			}
+			
+			if (nodeRefs.length > 50) {
+				Alfresco.util.PopupManager.displayMessage({
+					text: this.msg("message.too.many.items", nodeRefs.length)
+				});
+				return;
+			}
+			Alfresco.util.PopupManager.displayPrompt({
+				title: me.msg("message.formulate-wused.title"),
+				text: me.msg("message.formulate-wused.description", charactName),
+				buttons: [{
+					text: me.msg("button.ok"),
+					handler: function() {
+						this.destroy();
+						Alfresco.util.Ajax.request({
+							url: Alfresco.constants.PROXY_URI + "becpg/product/formulate/wused?&nodeRefs=" + nodeRefs.join(","),
+							method: Alfresco.util.Ajax.POST,
+							successCallback: {
+								fn: function () {
+									Alfresco.util.PopupManager.displayMessage({
+										text: me.msg("message.formulate-wused.success")
+									});
+								},
+								scope: this
+							},
+							failureMessage: me.msg("message.formulate-wused.failure"),
+						});
+					}
+				}, {
+					text: me.msg("button.cancel"),
+					handler: function() {
+						this.destroy();
+					},
+					isDefault: true
+				}]
+			});
+		},
+		
 		_manageAspect: function EntityDataGrid_manageAspect(itemNodeRef, aspect) {
 			var itemUrl = itemNodeRef.replace(":/", ""), me = this;
 

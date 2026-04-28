@@ -12,7 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import fr.becpg.repo.helper.JsonHelper;
+import fr.becpg.repo.helper.json.JsonHelper;
 
 /**
  * <p>NotificationRuleFilter class.</p>

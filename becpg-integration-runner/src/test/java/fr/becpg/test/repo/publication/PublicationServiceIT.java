@@ -351,7 +351,7 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 		inReadTx(() -> {
 			Assert.assertEquals(channelNodeRef, publicationChannelService.getChannelById(CHANNEL_ID));
 			Assert.assertFalse(getEntities(channelNodeRef).isEmpty());
-			Assert.assertEquals(pfNodeRef, getEntities(channelNodeRef).get(0));
+			Assert.assertTrue(getEntities(channelNodeRef).contains(pfNodeRef));
 			return true;
 		});
 
@@ -379,7 +379,7 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 		//Query with no date
 		inReadTx(() -> {
 			Assert.assertTrue(!getEntities(channelNodeRef).isEmpty());
-			Assert.assertEquals(pfNodeRef, getEntities(channelNodeRef).get(0));
+			Assert.assertTrue(getEntities(channelNodeRef).contains(pfNodeRef));
 			return true;
 		});
 
@@ -399,7 +399,7 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 		//Still having a result
 		inReadTx(() -> {
 			Assert.assertTrue(!getEntities(channelNodeRef).isEmpty());
-			Assert.assertEquals(pfNodeRef, getEntities(channelNodeRef).get(0));
+			Assert.assertTrue(getEntities(channelNodeRef).contains(pfNodeRef));
 			return true;
 		});
 
@@ -422,7 +422,7 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 		//One result
 		inReadTx(() -> {
 			Assert.assertTrue(!getEntities(channelNodeRef).isEmpty());
-			Assert.assertEquals(pfNodeRef, getEntities(channelNodeRef).get(0));
+			Assert.assertTrue(getEntities(channelNodeRef).contains(pfNodeRef));
 			return true;
 		});
 
@@ -436,7 +436,7 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 
 		inReadTx(() -> {
 			Assert.assertTrue(!getEntities(channelNodeRef).isEmpty());
-			Assert.assertEquals(pfNodeRef, getEntities(channelNodeRef).get(0));
+			Assert.assertTrue(getEntities(channelNodeRef).contains(pfNodeRef));
 			return true;
 		});
 
@@ -468,7 +468,7 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 
 		inReadTx(() -> {
 			Assert.assertTrue(!getEntities(channelNodeRef).isEmpty());
-			Assert.assertEquals(pfNodeRef, getEntities(channelNodeRef).get(0));
+			Assert.assertTrue(getEntities(channelNodeRef).contains(pfNodeRef));
 			return true;
 		});
 

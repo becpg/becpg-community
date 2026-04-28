@@ -384,6 +384,9 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 			if (parentNodeRef.equals(itemId)) {
 				return true;
 			}
+			if (parentNodeRef.equals(dataListItemNodeRef)) {
+				return true;
+			}
 			return isChildOf(parentNodeRef, itemId);
 		}
 

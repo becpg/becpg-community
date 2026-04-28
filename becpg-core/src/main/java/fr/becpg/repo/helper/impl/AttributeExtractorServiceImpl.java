@@ -49,7 +49,6 @@ import org.alfresco.service.cmr.tagging.TaggingService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO8601DateFormat;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -71,10 +70,10 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.ExcelHelper;
 import fr.becpg.repo.helper.JsonFormulaHelper;
-import fr.becpg.repo.helper.JsonHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.helper.json.JsonHelper;
 import fr.becpg.repo.security.SecurityService;
 
 /**
@@ -639,7 +638,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 			if (field.isNested()) {
 				AttributeExtractorField dlField = field.nextToken();
-				if (StringUtils.equalsAny(dlField.getFieldName(), "entity", "product", "wUsedEntity")) {
+				if ("entity".equals(dlField.getFieldName()) || "product".equals(dlField.getFieldName()) || "wUsedEntity".equals(dlField.getFieldName())) {
 					field = field.nextToken();
 					QName fieldQname = QName.createQName(field.getFieldName(), namespaceService);
 					final QName mainType = "wUsedEntity".equals(dlField.getFieldName()) ? entityDictionaryService.getTargetType(entityDictionaryService.getDefaultPivotAssoc(itemType)) : itemType;
@@ -932,6 +931,12 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				}
 				tmp.put("displayValue", displayName);
 				tmp.put("value", JsonHelper.formatValue(value));
+				if (DataTypeDefinition.MLTEXT.equals(((PropertyDefinition) attribute).getDataType().getName())) {
+					boolean mlTextHasValue = false;
+					MLText mltext = value instanceof MLText ? (MLText) value : (MLText) mlNodeService.getProperty(nodeRef, attribute.getName());
+					mlTextHasValue = (mltext != null) && !MLTextHelper.isEmpty(mltext);
+					tmp.put("mltextHasValue", mlTextHasValue);
+				}
 
 				return tmp;
 			}
@@ -1235,6 +1240,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private boolean matchData(Map<String, Object> data, String critKey, Map<String, String> criteriaMap) {
 		if ((data == null) || data.isEmpty()) {
 			return false;

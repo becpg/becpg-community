@@ -8,7 +8,7 @@
             </span>
          </#if>
          <span class="viewmode-label">${field.label?html}:&nbsp;</span>
-         <span id="${fieldHtmlId}-${field.id?replace("prop_", "")}" class="viewmode-value">${msg("form.control.novalue")}</span>
+         <span id="${fieldHtmlId}-${field.id?replace("prop_", "")}" class="viewmode-value"></span>
            <#if fieldValue?? >
              <script type="text/javascript">
 				//<![CDATA[

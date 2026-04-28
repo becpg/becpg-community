@@ -86,7 +86,7 @@
                     {
                         itemKind: "type",
                         itemId: itemType,
-                        destination: destination,
+                        destination: destination!=null ? destination: "",
                         mode: "create",
                         submitType: "json",
                         entityNodeRef: this.options.entityNodeRef,
@@ -452,7 +452,7 @@
           *           be actioned, or an Array thereof
           */
         onActionDelete: function EntityDataGrid_onActionDelete(p_items) {
-            var me = this, items = YAHOO.lang.isArray(p_items) ? p_items : [p_items];
+            var me = this, items = YAHOO.lang.isArray(p_items) ? p_items : [p_items], hasMultiLevelItems = this._hasMultiLevelItems ? this._hasMultiLevelItems(items) : false;
 
             var fnActionDeleteConfirm = function EntityDataGrid__onActionDelete_confirm(items) {
                 var nodeRefs = [];
@@ -500,23 +500,47 @@
                 });
             };
 
-            Alfresco.util.PopupManager.displayPrompt({
-                title: this.msg("message.confirm.delete.title", items.length),
-                text: this.msg("message.confirm.delete.description", items.length),
+            if (hasMultiLevelItems) {
+                if (this._showMultiLevelDeleteWarning) {
+                    this._showMultiLevelDeleteWarning();
+                }
+            } else if (this._clearMultiLevelDeleteWarning) {
+                this._clearMultiLevelDeleteWarning();
+            }
+
+            var promptTitle = this.msg("message.confirm.delete.title", items.length);
+            var promptText = this.msg("message.confirm.delete.description", items.length);
+            var promptConfig = {
+                title: promptTitle,
+                text: promptText,
                 buttons: [{
                     text: this.msg("button.delete"),
                     handler: function EntityDataGrid__onActionDelete_delete() {
                         this.destroy();
+                        if (me._clearMultiLevelDeleteWarning) {
+                            me._clearMultiLevelDeleteWarning(true);
+                        }
                         fnActionDeleteConfirm.call(me, items);
                     }
                 }, {
                     text: this.msg("button.cancel"),
                     handler: function EntityDataGrid__onActionDelete_cancel() {
                         this.destroy();
+                        if (me._clearMultiLevelDeleteWarning) {
+                            me._clearMultiLevelDeleteWarning(true);
+                        }
                     },
                     isDefault: true
                 }]
-            });
+            };
+
+            if (hasMultiLevelItems) {
+                promptConfig.title = this.msg("message.warn.delete.multilevel.title");
+                promptConfig.text = '<div class="multi-level-warning-text">' + this.msg("message.warn.delete.multilevel.description") + '</div><div>' + promptText + '</div>';
+                promptConfig.noEscape = true;
+            }
+
+            Alfresco.util.PopupManager.displayPrompt(promptConfig);
         },
 
         /**
@@ -732,6 +756,67 @@
 
             this.widgets.columnsListPanel.show();
 
+        },
+
+        _hasMultiLevelItems: function EntityDataGrid__hasMultiLevelItems(items) {
+            if (!items || !items.length) {
+                return false;
+            }
+
+            for (var i = 0; i < items.length; i++) {
+                var currentItem = items[i];
+                if (!currentItem || !currentItem.itemData) {
+                    continue;
+                }
+
+                var multiLevelFlag = currentItem.itemData.isMultiLevel;
+                if (multiLevelFlag === true || multiLevelFlag === 1 || multiLevelFlag === "1") {
+                    return true;
+                }
+
+                if (typeof multiLevelFlag === "string" && multiLevelFlag.toLowerCase() === "true") {
+                    return true;
+                }
+
+                if (typeof multiLevelFlag === "number" && multiLevelFlag > 0) {
+                    return true;
+                }
+            }
+
+            return false;
+        },
+
+        _getMultiLevelWarningNode: function EntityDataGrid__getMultiLevelWarningNode() {
+            if (!this.modules || !this.modules.dataGrid) {
+                return null;
+            }
+            return Dom.get(this.modules.dataGrid.id + "-message");
+        },
+
+        _showMultiLevelDeleteWarning: function EntityDataGrid__showMultiLevelDeleteWarning() {
+            var messageNode = this._getMultiLevelWarningNode();
+            if (!messageNode) {
+                return;
+            }
+
+            messageNode.innerHTML = '<span class="info">' + this.msg("message.warn.delete.multilevel.banner") + "</span>";
+            Dom.removeClass(messageNode, "hidden");
+            Dom.addClass(messageNode, "multi-level-warning");
+        },
+
+        _clearMultiLevelDeleteWarning: function EntityDataGrid__clearMultiLevelDeleteWarning(forceHide) {
+            var messageNode = this._getMultiLevelWarningNode();
+            if (!messageNode) {
+                return;
+            }
+
+            Dom.removeClass(messageNode, "multi-level-warning");
+            Dom.removeClass(messageNode, "warning");
+
+            if (forceHide) {
+                Dom.addClass(messageNode, "hidden");
+                messageNode.innerHTML = "";
+            }
         }
 
     };

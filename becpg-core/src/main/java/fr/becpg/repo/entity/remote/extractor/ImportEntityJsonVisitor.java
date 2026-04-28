@@ -603,32 +603,50 @@ public class ImportEntityJsonVisitor {
 
 			if (!ignoredKeys.contains(propName) && !ignoredAssocs.contains(propName)) {
 				QName propQName = createQName(propName);
-
+			
 				AssociationDefinition ad = entityDictionaryService.getAssociation(propQName);
 				if (ad != null) {
 					List<NodeRef> tmp = new ArrayList<>();
-					if (entity.get(key) != null) {
+					if (entity.has(key)) {
+						Object assocValue = entity.get(key);
+						if ((assocValue != null) && !JSONObject.NULL.equals(assocValue)) {
 
-						if (entity.get(key) instanceof JSONArray) {
+							if (assocValue instanceof JSONArray values) {
 
-							JSONArray values = entity.getJSONArray(key);
-							for (int i = 0; i < values.length(); i++) {
-
-								JSONObject assocEntity = values.getJSONObject(i);
+								for (int i = 0; i < values.length(); i++) {
+									Object value = values.get(i);
+									if (value instanceof JSONObject assocEntity) {
+										appendAssoc(tmp, assocEntity, ad.getTargetClass().getName(), propQName, ad.isChild(), context);
+									} else if (value instanceof String stringValue && NodeRef.isNodeRef(stringValue)) {
+										NodeRef nodeRef = new NodeRef(stringValue);
+										if (nodeService.exists(nodeRef)) {
+											tmp.add(nodeRef);
+										} else if (logger.isWarnEnabled()) {
+											logger.warn("Association target node does not exist for "
+													+ propQName.toPrefixString(namespaceService) + ": " + stringValue);
+										}
+									} else if (logger.isWarnEnabled()) {
+										logger.warn("Unsupported association array value type '" + (value != null ? value.getClass() : null)
+											+ "' for " + propQName.toPrefixString(namespaceService) + ", skipping value");
+									}
+								}
+							} else if (assocValue instanceof JSONObject assocEntity) {
 
 								appendAssoc(tmp, assocEntity, ad.getTargetClass().getName(), propQName, ad.isChild(), context);
-
+							} else if (assocValue instanceof String stringValue && NodeRef.isNodeRef(stringValue)) {
+								NodeRef nodeRef = new NodeRef(stringValue);
+								if (nodeService.exists(nodeRef)) {
+									tmp.add(nodeRef);
+								} else if (logger.isWarnEnabled()) {
+									logger.warn("Association target node does not exist for "
+											+ propQName.toPrefixString(namespaceService) + ": " + stringValue);
+								}
+							} else if (logger.isWarnEnabled()) {
+								logger.warn("Unsupported association value type '" + assocValue.getClass() + "' for "
+										+ propQName.toPrefixString(namespaceService) + ", skipping value");
 							}
-
-						} else {
-
-							JSONObject assocEntity = entity.getJSONObject(key);
-
-							appendAssoc(tmp, assocEntity, ad.getTargetClass().getName(), propQName, ad.isChild(), context);
 						}
-
 					}
-
 					if (ad.isTargetMandatory() && tmp.isEmpty()) {
 						throw new BeCPGException("Mandatory association not found: " + propQName.toPrefixString(namespaceService)
 								+ " for node " + context.getCurrentNodeRef());

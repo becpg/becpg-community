@@ -29,6 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
@@ -59,26 +60,41 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 
 	private static final Log logger = LogFactory.getLog(ProductServiceImpl.class);
 
-	@Autowired
-	private AlfrescoRepository<ProductData> alfrescoRepository;
+	private final AlfrescoRepository<ProductData> alfrescoRepository;
+	private final FormulationService<ProductData> formulationService;
+	private final BehaviourFilter policyBehaviourFilter;
+	private final CharactDetailsVisitorFactory charactDetailsVisitorFactory;
+	private final EntityDictionaryService entityDictionaryService;
+	private final EntityActivityService entityActivityService;
+	private final EntityTplService entityTplService;
 
 	@Autowired
-	private FormulationService<ProductData> formulationService;
-
-	@Autowired
-	private BehaviourFilter policyBehaviourFilter;
-
-	@Autowired
-	private CharactDetailsVisitorFactory charactDetailsVisitorFactory;
-
-	@Autowired
-	private EntityDictionaryService entityDictionaryService;
-
-	@Autowired
-	private EntityActivityService entityActivityService;
-
-	@Autowired
-	private EntityTplService entityTplService;
+	/**
+	 * <p>Constructor for ProductServiceImpl.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 * @param formulationService a {@link fr.becpg.repo.formulation.FormulationService} object
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object
+	 * @param charactDetailsVisitorFactory a {@link fr.becpg.repo.product.CharactDetailsVisitorFactory} object
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object
+	 * @param entityActivityService a {@link fr.becpg.repo.activity.EntityActivityService} object
+	 * @param entityTplService a {@link fr.becpg.repo.entity.EntityTplService} object
+	 */
+	public ProductServiceImpl(AlfrescoRepository<ProductData> alfrescoRepository,
+			FormulationService<ProductData> formulationService,
+			@Qualifier("policyBehaviourFilter") BehaviourFilter policyBehaviourFilter,
+			CharactDetailsVisitorFactory charactDetailsVisitorFactory,
+			EntityDictionaryService entityDictionaryService,
+			EntityActivityService entityActivityService,
+			EntityTplService entityTplService) {
+		this.alfrescoRepository = alfrescoRepository;
+		this.formulationService = formulationService;
+		this.policyBehaviourFilter = policyBehaviourFilter;
+		this.charactDetailsVisitorFactory = charactDetailsVisitorFactory;
+		this.entityDictionaryService = entityDictionaryService;
+		this.entityActivityService = entityActivityService;
+		this.entityTplService = entityTplService;
+	}
 
 	/** {@inheritDoc} */
 	@Override

@@ -555,6 +555,7 @@
         <alwaysRefreshToken>true</alwaysRefreshToken>
         <principalAttribute>preferred_username</principalAttribute>
         <enableBasicAuth>false</enableBasicAuth>
+        <specificReauthIdcId>REAUTH_IDC_ID</specificReauthIdcId>
     </config>
    
 

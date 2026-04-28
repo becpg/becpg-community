@@ -73,6 +73,8 @@ import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.entity.version.EntityVersion;
+import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.expressions.ExpressionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
@@ -180,6 +182,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
 
+	@Autowired
+	private EntityVersionService entityVersionService;
+	
 	private String mlTextFields() {
 		return systemConfigurationService.confValue("beCPG.entity.report.mltext.fields");
 	}
@@ -405,9 +410,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				if (name.startsWith(REPORT_LOGO_ID) || name.startsWith(I18NUtil.getMessage("report.logo.fileName.prefix", Locale.getDefault()))) {
 					imgId = REPORT_LOGO_ID;
 				}
-				if (!context.getExtractedImages().contains(imgNodeRef)) {
-					context.getExtractedImages().add(imgNodeRef);
-					extractImage(entityNodeRef, imgNodeRef, imgId, imgsElt, context, extratAttributes);
+				if (extractImageInternal(entityNodeRef, imgNodeRef, imgId, imgsElt, context, extratAttributes)) {
 					cnt++;
 				}
 			}
@@ -420,11 +423,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				List<NodeRef> imgNodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(entityNodeRef,
 						expressionService.extractExpr(entityNodeRef, path));
 				for (NodeRef imgNodeRef : imgNodeRefs) {
-					if (!context.getExtractedImages().contains(imgNodeRef)) {
-						context.getExtractedImages().add(imgNodeRef);
-						String nodePath = nodeService.getPath(imgNodeRef).toPrefixString(namespaceService).replace(entityPath, "");
-						extractImage(entityNodeRef, imgNodeRef, nodePath, imgsElt, context, extratAttributes);
-					}
+					String nodePath = nodeService.getPath(imgNodeRef).toPrefixString(namespaceService).replace(entityPath, "");
+					extractImageInternal(entityNodeRef, imgNodeRef, nodePath, imgsElt, context, extratAttributes);
 				}
 			}
 		}
@@ -507,14 +507,22 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 */
 	protected void extractImage(NodeRef entityNodeRef, NodeRef imgNodeRef, String imgId, Element imgsElt, DefaultExtractorContext context,
 			Map<String, String> extratAttributes) {
+		extractImageInternal(entityNodeRef, imgNodeRef, imgId, imgsElt, context, extratAttributes);
+	}
+
+	private boolean extractImageInternal(NodeRef entityNodeRef, NodeRef imgNodeRef, String imgId, Element imgsElt, DefaultExtractorContext context,
+			Map<String, String> extratAttributes) {
 
 		if (ApplicationModel.TYPE_FILELINK.equals(nodeService.getType(imgNodeRef))) {
 			imgNodeRef = (NodeRef) nodeService.getProperty(imgNodeRef, ContentModel.PROP_LINK_DESTINATION);
 		}
-
+		
 		if (imgNodeRef != null && contentService.getReader(imgNodeRef, ContentModel.PROP_CONTENT) != null) {
+			if (context.getExtractedImages().contains(imgNodeRef)) {
+				return false;
+			}
+			context.getExtractedImages().add(imgNodeRef);
 			EntityImageInfo imgInfo = new EntityImageInfo(imgId, imgNodeRef);
-
 			imgInfo.setName((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_NAME));
 			imgInfo.setTitle((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
 			imgInfo.setDescription((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_DESCRIPTION));
@@ -542,7 +550,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 			addCDATA(imgElt, ContentModel.PROP_DESCRIPTION, imgInfo.getDescription(), null);
 			context.getReportData().getImages().add(imgInfo);
+			return true;
 		}
+		return false;
 	}
 
 	/**
@@ -558,16 +568,17 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			imgNodeRef = (NodeRef) nodeService.getProperty(imgNodeRef, ContentModel.PROP_LINK_DESTINATION);
 		}
 		if (imgNodeRef != null && contentService.getReader(imgNodeRef, ContentModel.PROP_CONTENT) != null) {
-			if (!context.getExtractedImages().contains(imgNodeRef)) {
-				context.getExtractedImages().add(imgNodeRef);
-				EntityImageInfo imgInfo = new EntityImageInfo(imgId, imgNodeRef);
-				imgInfo.setName((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_NAME));
-				imgInfo.setTitle((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
-				imgInfo.setDescription((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_DESCRIPTION));
-				Element imgElt = imgsElt.addElement(TAG_IMAGE);
-				imgElt.addAttribute(ATTR_IMAGE_ID, imgId);
-				context.getReportData().getImages().add(imgInfo);
+			if (context.getExtractedImages().contains(imgNodeRef)) {
+				return;
 			}
+			context.getExtractedImages().add(imgNodeRef);
+			EntityImageInfo imgInfo = new EntityImageInfo(imgId, imgNodeRef);
+			imgInfo.setName((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_NAME));
+			imgInfo.setTitle((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
+			imgInfo.setDescription((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_DESCRIPTION));
+			Element imgElt = imgsElt.addElement(TAG_IMAGE);
+			imgElt.addAttribute(ATTR_IMAGE_ID, imgId);
+			context.getReportData().getImages().add(imgInfo);
 		}
 	}
 
@@ -800,7 +811,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 */
 	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context,
 			List<QName> hiddentAttributes) {
-		loadDataListItemAttributes(dataListItem, nodeElt, context, hiddentAttributes, true);
+		context.doInDataListContext(() -> loadDataListItemAttributes(dataListItem, nodeElt, context, hiddentAttributes, true));
 	}
 
 	/**
@@ -1000,10 +1011,35 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					if (DataTypeDefinition.MLTEXT.equals(propertyDef.getDataType().getName())) {
 						mlValues = (MLText) mlNodeService.getProperty(nodeRef, propertyDef.getName());
 
-					} else if (DataTypeDefinition.TEXT.equals(propertyDef.getDataType().getName())) {
-						if (dynListConstraint != null) {
-							mlValues = dynListConstraint.getMLDisplayLabel((String) property.getValue());
-						}
+					} else if (DataTypeDefinition.TEXT.equals(propertyDef.getDataType().getName()) && dynListConstraint != null) {
+						Object propertyValue = property.getValue();
+				        
+				        if (propertyValue instanceof List) {
+				            // Handle List<String>
+							@SuppressWarnings("unchecked")
+							List<String> values = (List<String>) propertyValue;
+				            mlValues = new MLText();
+				            
+				            for (String subValue : values) {
+				                MLText labelForValue = dynListConstraint.getMLDisplayLabel(subValue);
+				                if (labelForValue != null) {
+				                    // Merge into mlValues
+				                    for (Map.Entry<Locale, String> entry : labelForValue.entrySet()) {
+				                        Locale locale = entry.getKey();
+				                        String existingText = mlValues.get(locale);
+				                        
+				                        if (existingText == null) {
+				                            mlValues.put(locale, entry.getValue());
+				                        } else {
+				                            mlValues.put(locale, existingText + ", " + entry.getValue());
+				                        }
+				                    }
+				                }
+				            }
+				        } else if (propertyValue instanceof String) {
+				            // Handle single String
+				            mlValues = dynListConstraint.getMLDisplayLabel((String) propertyValue);
+				        }
 					}
 
 					if (mlValues != null) {
@@ -1172,19 +1208,44 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 */
 	protected void loadVersions(NodeRef entityNodeRef, Element entityElt) {
 
-		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
+		List<EntityVersion> versions = entityVersionService.getAllVersions(entityNodeRef);
+		
 		Element versionsElt = entityElt.addElement(TAG_VERSIONS);
 
-		if ((versionHistory != null) && (versionHistory.getAllVersions() != null)) {
+		if ((versions != null) && (!versions.isEmpty())) {
 
-			for (Version version : versionHistory.getAllVersions()) {
+			for (EntityVersion version : versions) {
 				Element versionElt = versionsElt.addElement(TAG_VERSION);
-				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_LABEL.getLocalName(), version.getVersionLabel());
+				
+				String manualVersionLabel = null;
+				NodeRef headVersionNodeRef = null;
+				VersionHistory versionHistory = versionService.getVersionHistory(version.getEntityNodeRef());
+				if (versionHistory != null) {
+					Version headVersion = versionHistory.getHeadVersion();
+					headVersionNodeRef = headVersion.getFrozenStateNodeRef();
+				}
+				boolean isHeadVersion = headVersionNodeRef == null || version.getFrozenStateNodeRef().equals(headVersionNodeRef);
+				if (isHeadVersion) {
+					manualVersionLabel = (String) nodeService.getProperty(version.getEntityNodeRef(), BeCPGModel.PROP_MANUAL_VERSION_LABEL);
+				}
+				if (manualVersionLabel != null && !manualVersionLabel.isBlank()) {
+					versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_LABEL.getLocalName(), manualVersionLabel);
+				} else {
+					versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_LABEL.getLocalName(), version.getVersionLabel());
+				}
+
 				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_DESCRIPTION.getLocalName(),
 						XMLTextHelper.writeAttribute(version.getDescription()));
-				versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(),
-						XMLTextHelper.writeAttribute(attributeExtractorService.getPersonDisplayName(version.getFrozenModifier())));
-				versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), ISO8601DateFormat.format(version.getFrozenModifiedDate()));
+				
+				String creator = (String) nodeService.getProperty(version.getEntityVersionNodeRef(), ContentModel.PROP_CREATOR);
+				if (creator != null) {
+					versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(),
+							XMLTextHelper.writeAttribute(attributeExtractorService.getPersonDisplayName(creator)));
+				}
+				Date createdDate = version.getFrozenModifiedDate();
+				if (createdDate != null) {
+					versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), ISO8601DateFormat.format(createdDate));
+				}
 
 			}
 		}

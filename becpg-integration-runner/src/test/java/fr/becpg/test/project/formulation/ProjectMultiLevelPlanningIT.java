@@ -15,9 +15,11 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.project.data.PlanningMode;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
+import fr.becpg.repo.project.impl.DefaultWorkingDayProvider;
 import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.test.project.AbstractProjectTestCase;
 
@@ -33,9 +35,10 @@ public class ProjectMultiLevelPlanningIT extends AbstractProjectTestCase {
 	@Test
 	public void testCalculatePlanningDates() throws ParseException {
 		final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		dateFormat.setTimeZone(ProjectRepoConsts.PROJECT_TIMEZONE);
 		final NodeRef projectNodeRef = createMultiLevelProject(ProjectState.OnHold, dateFormat.parse("15/11/2012"), null, PlanningMode.Planning);
 		final Date today = ProjectHelper.removeTime(new Date());
-		final Date nextStartDate = ProjectHelper.calculateNextStartDate(today);
+		final Date nextStartDate = ProjectHelper.calculateNextStartDate(today, new DefaultWorkingDayProvider());
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -221,7 +224,7 @@ public class ProjectMultiLevelPlanningIT extends AbstractProjectTestCase {
 			
 				calendar.add(Calendar.DATE, 1);
 			
-			if (ProjectHelper.isWorkingDate(calendar)) {
+			if (ProjectHelper.isWorkingDate(calendar, new DefaultWorkingDayProvider())) {
 				i++;
 			}
 		}
@@ -233,6 +236,7 @@ public class ProjectMultiLevelPlanningIT extends AbstractProjectTestCase {
 	@Test
 	public void testRetroCalculatePlanningDates() throws ParseException {
 		final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		dateFormat.setTimeZone(ProjectRepoConsts.PROJECT_TIMEZONE);
 		final NodeRef projectNodeRef = createMultiLevelProject(ProjectState.OnHold, null, dateFormat.parse("15/11/2012"), PlanningMode.RetroPlanning);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {

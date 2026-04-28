@@ -13,6 +13,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.MPMModel;
@@ -32,8 +33,17 @@ public class ProcessListEntityTplPlugin implements EntityTplPlugin {
 
 	private static final Log logger = LogFactory.getLog(ProcessListEntityTplPlugin.class);
 
+	private final NodeService nodeService;
+
 	@Autowired
-	private NodeService nodeService;
+	/**
+	 * <p>Constructor for ProcessListEntityTplPlugin.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
+	public ProcessListEntityTplPlugin(@Qualifier("nodeService") NodeService nodeService) {
+		this.nodeService = nodeService;
+	}
 
 	/** {@inheritDoc} */
 	@Override

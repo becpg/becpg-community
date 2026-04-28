@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -212,6 +213,25 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 		return (fil.getQtyPercMaxi() != null) || (fil.getQtyPercMini() != null);
 	}
 
+	private String buildQtyInfo(ForbiddenIngListDataItem fil) {
+		StringBuilder sb = new StringBuilder();
+		if (fil.getQtyPercMaxi() != null) {
+			sb.append(" (max: ").append(fil.getQtyPercMaxi());
+			if (fil.getQtyPercMaxiUnit() != null) {
+				sb.append(" ").append(fil.getQtyPercMaxiUnit());
+			}
+			sb.append(")");
+		}
+		if (fil.getQtyPercMini() != null) {
+			sb.append(" (min: ").append(fil.getQtyPercMini());
+			if (fil.getQtyPercMaxiUnit() != null) {
+				sb.append(" ").append(fil.getQtyPercMaxiUnit());
+			}
+			sb.append(")");
+		}
+		return sb.toString();
+	}
+
 	private void processAuthorizedRequirements(ProductData productData, List<ForbiddenIngListDataItem> requirements,
 			ProductSpecificationData specification, List<RequirementListDataItem> reqCtrlMap) {
 		for (IngListDataItem ingListDataItem : productData.getIngList()) {
@@ -250,6 +270,15 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 		if ((curMessage == null) || curMessage.values().stream().noneMatch(mes -> (mes != null) && !mes.isEmpty())) {
 			curMessage = MLTextHelper.getI18NMessage(MESSAGE_FORBIDDEN_ING,
 					mlNodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
+
+			if (isQtyCheck(fil)) {
+				String qtyInfo = buildQtyInfo(fil);
+				MLText appendedMessage = new MLText();
+				for (Map.Entry<Locale, String> entry : curMessage.entrySet()) {
+					appendedMessage.put(entry.getKey(), entry.getValue() + qtyInfo);
+				}
+				curMessage = appendedMessage;
+			}
 		}
 
 		if (logger.isDebugEnabled()) {
@@ -418,22 +447,9 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 			}
 
 		}
+		
+		return checkRegulatoryUsageMatch(fil, productData);
 
-		// Regulatory usage filtering
-		if (!fil.getRegulatoryUsagesRef().isEmpty()) {
-			boolean hasRegulatoryUsage = false;
-			for (NodeRef n : productData.getRegulatoryUsagesRef()) {
-				if (fil.getRegulatoryUsagesRef().contains(n)) {
-					hasRegulatoryUsage = true;
-				}
-			}
-
-			if (!hasRegulatoryUsage) {
-				return false; // check next rule
-			}
-		}
-
-		return true;
 	}
 	
 	private boolean matchBooleanFilter(String filterValue, Boolean itemValue) {

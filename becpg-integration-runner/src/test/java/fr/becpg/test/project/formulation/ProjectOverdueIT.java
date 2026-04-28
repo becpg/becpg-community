@@ -14,6 +14,7 @@ import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
+import fr.becpg.repo.project.impl.DefaultWorkingDayProvider;
 import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.test.project.AbstractProjectTestCase;
 
@@ -47,21 +48,21 @@ public class ProjectOverdueIT extends AbstractProjectTestCase {
 			assertEquals(0, projectData.getOverdue().intValue());
 
 			// set start date to simulate 1 day after start (task in progress)
-			Date startDate = ProjectHelper.calculateNextDate(new Date(), 1, false);
+			Date startDate = ProjectHelper.calculateNextDate(new Date(), 1, false, new DefaultWorkingDayProvider());
 			projectData.setStartDate(startDate);
 			formulationService.formulate(projectData);
 			assertEquals(0, projectData.getOverdue().intValue());
 
 			// set start date to simulate 3 days after start (task in progress)
-			startDate = ProjectHelper.calculateNextDate(new Date(), 3, false);
+			startDate = ProjectHelper.calculateNextDate(new Date(), 3, false, new DefaultWorkingDayProvider());
 			projectData.getTaskList().get(0).setStart(startDate);
 			formulationService.formulate(projectData);
 			assertEquals(1, projectData.getOverdue().intValue());
 
 			// set start date to simulate 3 days after start (task completed in
 			// time)
-			startDate = ProjectHelper.calculateNextDate(new Date(), 3, false);
-			Date endDate = ProjectHelper.calculateEndDate(startDate, 2);
+			startDate = ProjectHelper.calculateNextDate(new Date(), 3, false, new DefaultWorkingDayProvider());
+			Date endDate = ProjectHelper.calculateEndDate(startDate, 2, new DefaultWorkingDayProvider());
 			projectData.getTaskList().get(0).setTaskState(TaskState.Completed);
 			projectData.getTaskList().get(0).setStart(startDate);
 			projectData.getTaskList().get(0).setEnd(endDate);
@@ -71,7 +72,7 @@ public class ProjectOverdueIT extends AbstractProjectTestCase {
 
 			// set start date to simulate 6 days after start (task4 and task5 in
 			// progress)
-			startDate = ProjectHelper.calculateNextDate(new Date(), 6, false);
+			startDate = ProjectHelper.calculateNextDate(new Date(), 6, false, new DefaultWorkingDayProvider());
 			projectData.setStartDate(startDate);
 			for (TaskListDataItem t1 : projectData.getTaskList()) {
 				t1.setTaskState(TaskState.Planned);
@@ -87,7 +88,7 @@ public class ProjectOverdueIT extends AbstractProjectTestCase {
 
 			// set start date to simulate 9 days after start (task4 and task5 in
 			// progress)
-			startDate = ProjectHelper.calculateNextDate(new Date(), 9, false);
+			startDate = ProjectHelper.calculateNextDate(new Date(), 9, false, new DefaultWorkingDayProvider());
 			projectData.getTaskList().get(0).setStart(startDate);
 			for (TaskListDataItem t2 : projectData.getTaskList()) {
 				t2.setTaskState(TaskState.Planned);
@@ -108,7 +109,7 @@ public class ProjectOverdueIT extends AbstractProjectTestCase {
 		    .withIsMilestone(false)
 		    .withDuration(2);
 			task.setStart(new Date());
-			task.setEnd(ProjectHelper.calculateNextDate(new Date(), 5, true));
+			task.setEnd(ProjectHelper.calculateNextDate(new Date(), 5, true, new DefaultWorkingDayProvider()));
 			task.setTaskState(TaskState.Completed);
 			projectData.getTaskList().add(task);
 			alfrescoRepository.save(projectData);

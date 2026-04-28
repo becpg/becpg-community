@@ -30,6 +30,7 @@
      * YUI Library aliases
      */
     var Dom = YAHOO.util.Dom,
+    Event = YAHOO.util.Event,
     formatDate = Alfresco.util.formatDate,
     fromISO8601 = Alfresco.util.fromISO8601;
 
@@ -124,6 +125,31 @@
 									   YAHOO.Bubbling.fire("showSuggestionsPanel");
 								  }
 								});
+                            }
+                            
+                            var fullscreenButtonSpan = Dom.get(this.id + "-suggestions-fullscreen");
+                            var exitFullscreenSpan = Dom.get(this.id + "-suggestions-exit-fullscreen");
+                            
+                            var toggleFullscreen = function(e) {
+                            	var tabEl = Dom.get("tab_" + me.id + "-suggestions");
+                            	if (tabEl != null) {
+                            		if (Dom.hasClass(tabEl, "fullscreen")) {
+                            			Dom.removeClass(tabEl, "fullscreen");
+                            		} else {
+                            			Dom.addClass(tabEl, "fullscreen");
+                            		}
+                            	}
+                            	Event.preventDefault(e);
+                            };
+                            
+                            if (fullscreenButtonSpan != null) {
+                            	var fullscreenButton = fullscreenButtonSpan.getElementsByTagName("button")[0];
+                            	Event.addListener(fullscreenButton, "click", toggleFullscreen);
+                            }
+                            
+                            if (exitFullscreenSpan != null) {
+                            	var exitButton = exitFullscreenSpan.getElementsByTagName("button")[0];
+                            	Event.addListener(exitButton, "click", toggleFullscreen);
                             }
                             
                             // Load the form

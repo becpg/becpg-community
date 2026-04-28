@@ -14,7 +14,7 @@
                <#assign fieldValue=field.value?html>
             </#if>
          </#if>
-         <span class="viewmode-value"><#if fieldValue == "">${msg("form.control.novalue")}<#else>${fieldValue}</#if></span>
+         <span class="viewmode-value"><#if fieldValue != "">${fieldValue}</#if></span>
       </div>
    <#else>
 

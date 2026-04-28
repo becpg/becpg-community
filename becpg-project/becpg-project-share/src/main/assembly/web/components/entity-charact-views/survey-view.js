@@ -50,6 +50,7 @@
         Bubbling.on("viewModeChange", this.onViewModeChange, this);
 
         Bubbling.on("beforeFormRuntimeInit", this.onBeforeFormRuntimeInit, this);
+        Bubbling.on("refreshDataGrids", this.onRefreshDataGrids, this);
 
         return this;
     };
@@ -78,6 +79,13 @@
                     this.loadSurvey();
                 }
 
+            },
+
+            onRefreshDataGrids: function SurveyView_onRefreshDataGrids(layer, args) {
+                var updateOnly = args && args[1] && args[1].updateOnly;
+                if (this.options.viewMode == "survey" && updateOnly !== true) {
+                    this.loadSurvey();
+                }
             },
 
 

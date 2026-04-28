@@ -202,9 +202,11 @@
 													</#if>
                                              	 </p>
                                              	<ul>
-                                             	 <#if (args.taskTitle)??>                                             
-	                                             	<li>Task : <b>${args.taskTitle}</b></li>                                       
-	                                             </#if> 
+                                             	 <#if args.task?? && args.task.properties["pjt:tlTaskName"]??>
+									                   <li>Task : <b>${args.task.properties["pjt:tlTaskName"]!""}</b></li>
+									             <#elseif (args.taskTitle)??>
+									                    <li>Task : <b>${args.taskTitle}</b></li>
+									              </#if> 
 	                                             <#if (args.taskDescription)?? && args.taskDescription != "">                                             
 	                                             	<li>Description : ${args.taskDescription}</li>                                       
 	                                             </#if> 
@@ -262,7 +264,7 @@
 									  	</ul>  	
 									 </#if>     	
                                              	<#elseif args.activityType == 'Comment'>
-                                             		<p> A comment has been  <#if args.activityEvent == 'Create'>created<#elseif args.activityEvent == 'Update'>updated<#else>deleted</#if> on <#if args.deliverableDescription??>the deliverable <b>"${args.deliverableDescription}"</b> <#elseif args.taskTitle??>the task <b>"${args.taskTitle}"</b> <#else>the project</#if>: </p>                                             		                                             		         
+                                             		<p> A comment has been  <#if args.activityEvent == 'Create'>created<#elseif args.activityEvent == 'Update'>updated<#else>deleted</#if> on <#if args.deliverableDescription??>the deliverable <b>"${args.deliverableDescription}"</b> <#elseif args.task?? && args.task.properties["pjt:tlTaskName"]??>the task <b>"${args.task.properties["pjt:tlTaskName"]!""}"</b> <#elseif args.taskTitle??>the task <b>"${args.taskTitle}"</b> <#else>the project</#if>: </p>                                             										                                             										         
                                              			<#if  args.comment?? && args.comment.content??> 
 			                                                       <div class="comment">${args.comment.content}</div>
 		                                             	</#if>

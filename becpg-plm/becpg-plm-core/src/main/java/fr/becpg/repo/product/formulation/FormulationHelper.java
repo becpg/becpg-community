@@ -506,8 +506,9 @@ public class FormulationHelper {
 			ProductUnit productUnit = formulatedProduct.getUnit();
 			if ((productUnit != null) && productUnit.isVolume()) {
 				return qty / productUnit.getUnitFactor();
+			} else if (formulatedProduct.getRecipeVolumeUsed() != null) {
+				return formulatedProduct.getRecipeVolumeUsed();
 			}
-
 		}
 		return defaultValue;
 	}
@@ -1011,37 +1012,27 @@ public class FormulationHelper {
 	 * available water in each ingredient rather than just evaporation rates.
 	 *
 	 * @param evaporatingQty Total quantity to evaporate
-	 * @param itemRate Evaporation rate for this item (percentage)
 	 * @param itemMaxEvapQty Maximum evaporable quantity for this item
-	 * @param totalRate Sum of all evaporation rates (null for 100% evaporation items)
 	 * @param totalAvailableWater Total water available across all items
 	 * @return The quantity to evaporate from this item
 	 */
-	public static Double calculateProportionalEvaporation(Double evaporatingQty, Double itemRate, Double itemMaxEvapQty, 
-			Double totalRate, Double totalAvailableWater) {
-		
-		if ((evaporatingQty == null) || (evaporatingQty <= 0d) || (itemMaxEvapQty == null) || (itemMaxEvapQty <= 0d) 
-				|| (totalAvailableWater == null) || (totalAvailableWater <= 0d)) {
-			return 0d;
-		}
+	public static Double calculateProportionalEvaporation(
+	        Double evaporatingQty,
+	        Double itemMaxEvapQty,
+	        Double totalAvailableWater) {
 
-		// Use minimum of evaporatingQty and totalAvailableWater as distribution base
-		double distributionBase = Math.min(evaporatingQty, totalAvailableWater);
+	    if (evaporatingQty == null || evaporatingQty <= 0d ||
+	        itemMaxEvapQty == null || itemMaxEvapQty <= 0d ||
+	        totalAvailableWater == null || totalAvailableWater <= 0d) {
+	        return 0d;
+	    }
 
-		Double proportionalEvap;
-		if ((totalRate == null) || (totalRate == 0d)) {
-			// For 100% evaporation items, distribute evenly based on available water
-			proportionalEvap = distributionBase * (itemMaxEvapQty / totalAvailableWater);
-		} else {
-			// Calculate initial proportion based on rate
-			Double rateBasedProportion = distributionBase * (itemRate / totalRate);
-			// But limit to available water in this ingredient
-			proportionalEvap = Math.min(rateBasedProportion, itemMaxEvapQty);
-		}
+	    Double distributionBase = Math.min(evaporatingQty, totalAvailableWater);
 
-		// Return minimum of calculated proportion and max available
-		return Math.min(itemMaxEvapQty, proportionalEvap);
+	   
+	    Double proportionalEvap = distributionBase * (itemMaxEvapQty / totalAvailableWater);
+
+	    return Math.min(itemMaxEvapQty, proportionalEvap);
 	}
-
 
 }

@@ -533,7 +533,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				NodeRef branchFromNodeRef = getBranchFromNodeRef(entityNodeRef);
 
 				Optional<Version> lowestVersion = versionHistory.getAllVersions().stream()
-						.min(((o1, o2) -> o1.getVersionLabel().compareTo(o2.getVersionLabel())));
+						.min(((o1, o2) -> ((Double) Double.parseDouble(o1.getVersionLabel())).compareTo(Double.parseDouble(o2.getVersionLabel()))));
 
 				for (Version version : versionHistory.getAllVersions()) {
 					NodeRef entityVersionNodeRef = getEntityVersion(versionAssocs, version);
@@ -778,7 +778,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			branchToNodeRef = associationService.getTargetAssoc(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO);
 		}
 		
-		if (permissionService.hasPermission(branchToNodeRef, BeCPGPermissions.MERGE_ENTITY) != AccessStatus.ALLOWED) {
+		if (permissionService.hasPermission(branchToNodeRef, "Write") != AccessStatus.ALLOWED
+				&& permissionService.hasPermission(branchToNodeRef, BeCPGPermissions.MERGE_ENTITY) != AccessStatus.ALLOWED) {
 			throw new IllegalStateException("No right to merge entity " + branchToNodeRef);
 		}
 
@@ -1313,8 +1314,11 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		Map<QName, Serializable> props = new HashMap<>();
 		props.put(ContentModel.PROP_NAME, reportName);
 
-		NodeRef reportCopy = nodeService.createNode(parentFolder, ContentModel.ASSOC_CONTAINS,
-				ContentModel.ASSOC_CONTAINS, ReportModel.TYPE_REPORT, props).getChildRef();
+		NodeRef reportCopy = nodeService.getChildByName(parentFolder, ContentModel.ASSOC_CONTAINS, reportName);
+		if (reportCopy == null ) {
+			reportCopy = nodeService.createNode(parentFolder, ContentModel.ASSOC_CONTAINS,
+					ContentModel.ASSOC_CONTAINS, ReportModel.TYPE_REPORT, props).getChildRef();
+		}
 
 		ContentReader reader = contentService.getReader(reportNodeRef, ContentModel.PROP_CONTENT);
 		ContentWriter writer = contentService.getWriter(reportCopy, ContentModel.PROP_CONTENT, true);

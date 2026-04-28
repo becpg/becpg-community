@@ -30,7 +30,7 @@ import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.config.format.FormatMode;
@@ -79,47 +79,68 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 
 	private static final String COMPARISON_SEPARATOR = " - ";
 
-	@Autowired
-	protected AlfrescoRepository<BeCPGDataObject> alfrescoRepository;
+	protected final AlfrescoRepository<BeCPGDataObject> alfrescoRepository;
+	protected final PackagingHelper packagingHelper;
+	protected final NodeService nodeService;
+	private final DictionaryService dictionaryService;
+	private final NamespaceService namespaceService;
+	protected final AssociationService associationService;
+	protected final AttributeExtractorService attributeExtractorService;
+	private final EntityDictionaryService entityDictionaryService;
+	private final EntityListDAO entityListDAO;
+	private final MultiLevelDataListService multiLevelDataListService;
+	private final FileFolderService fileFolderService;
+	protected final SystemConfigurationService systemConfigurationService;
 
 	@Autowired
-	protected PackagingHelper packagingHelper;
-
-	@Autowired
-	protected NodeService nodeService;
-
-	@Autowired
-	private DictionaryService dictionaryService;
-
-	@Autowired
-	private NamespaceService namespaceService;
-
-	@Autowired
-	protected AssociationService associationService;
-
-	@Autowired
-	protected AttributeExtractorService attributeExtractorService;
-
-	@Autowired
-	private EntityDictionaryService entityDictionaryService;
-
-	@Autowired
-	private EntityListDAO entityListDAO;
-
-	@Autowired
-	private MultiLevelDataListService multiLevelDataListService;
-
-	@Autowired
-	private FileFolderService fileFolderService;
-
-	@Value("${beCPG.comparison.pivots}")
-	private String customPivots;
-
-	@Autowired
-	protected SystemConfigurationService systemConfigurationService;
+	/**
+	 * <p>Constructor for DefaultCompareEntityServicePlugin.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 * @param packagingHelper a {@link fr.becpg.repo.product.formulation.PackagingHelper} object
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 * @param attributeExtractorService a {@link fr.becpg.repo.helper.AttributeExtractorService} object
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object
+	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object
+	 * @param multiLevelDataListService a {@link fr.becpg.repo.entity.datalist.MultiLevelDataListService} object
+	 * @param fileFolderService a {@link org.alfresco.service.cmr.model.FileFolderService} object
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 */
+	public DefaultCompareEntityServicePlugin(@Qualifier("alfrescoRepository") AlfrescoRepository<BeCPGDataObject> alfrescoRepository,
+			@Qualifier("packagingHelper") PackagingHelper packagingHelper,
+			@Qualifier("nodeService") NodeService nodeService,
+			@Qualifier("dictionaryService") DictionaryService dictionaryService,
+			@Qualifier("namespaceService") NamespaceService namespaceService,
+			@Qualifier("associationService") AssociationService associationService,
+			@Qualifier("attributeExtractorService") AttributeExtractorService attributeExtractorService,
+			@Qualifier("entityDictionaryService") EntityDictionaryService entityDictionaryService,
+			@Qualifier("entityListDAO") EntityListDAO entityListDAO,
+			@Qualifier("multiLevelDataListService") MultiLevelDataListService multiLevelDataListService,
+			@Qualifier("fileFolderService") FileFolderService fileFolderService,
+			@Qualifier("systemConfigurationService") SystemConfigurationService systemConfigurationService) {
+		this.alfrescoRepository = alfrescoRepository;
+		this.packagingHelper = packagingHelper;
+		this.nodeService = nodeService;
+		this.dictionaryService = dictionaryService;
+		this.namespaceService = namespaceService;
+		this.associationService = associationService;
+		this.attributeExtractorService = attributeExtractorService;
+		this.entityDictionaryService = entityDictionaryService;
+		this.entityListDAO = entityListDAO;
+		this.multiLevelDataListService = multiLevelDataListService;
+		this.fileFolderService = fileFolderService;
+		this.systemConfigurationService = systemConfigurationService;
+	}
 
 	private String customNames() {
 		return systemConfigurationService.confValue("beCPG.comparison.name.format");
+	}
+	
+	private String customPivots() {
+		return systemConfigurationService.confValue("beCPG.comparison.pivots");
 	}
 
 	@Override
@@ -1188,6 +1209,8 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		String shortName = type.getPrefixString();
 		List<QName> res = new ArrayList<>();
 
+		String customPivots = customPivots();
+		
 		if ((customPivots != null) && customPivots.contains(shortName)) {
 
 			String[] pivots = {};

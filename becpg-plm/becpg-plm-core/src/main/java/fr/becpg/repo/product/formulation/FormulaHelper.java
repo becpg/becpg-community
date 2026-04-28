@@ -20,6 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
@@ -66,24 +67,33 @@ public class FormulaHelper {
 	
 	private static FormulaHelper instance;
 	
+	private final AlfrescoRepository<ProductData> alfrescoRepository;
+	
+	private final NamespaceService namespaceService;
+	
+	private final SpelFormulaService formulaService;
+	
+	private final NodeService nodeService;
+	
 	/**
 	 * <p>Constructor for FormulaHelper.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 * @param formulaService a {@link fr.becpg.repo.formulation.spel.SpelFormulaService} object
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
 	 */
-	public FormulaHelper() {
+	@Autowired
+	public FormulaHelper(AlfrescoRepository<ProductData> alfrescoRepository,
+			NamespaceService namespaceService,
+			SpelFormulaService formulaService,
+			@Qualifier("nodeService") NodeService nodeService) {
+		this.alfrescoRepository = alfrescoRepository;
+		this.namespaceService = namespaceService;
+		this.formulaService = formulaService;
+		this.nodeService = nodeService;
 		instance = this;
 	}
-	
-	@Autowired
-	private AlfrescoRepository<ProductData> alfrescoRepository;
-	
-	@Autowired
-	private NamespaceService namespaceService;
-	
-	@Autowired
-	private SpelFormulaService formulaService;
-	
-	@Autowired
-	private NodeService nodeService;
 	
 	/** Constant <code>DYN_COLUMN_SIZE=10</code> */
 	public static final int DYN_COLUMN_SIZE = 10;
@@ -193,7 +203,7 @@ public class FormulaHelper {
 
 								String formula = SpelHelper.formatFormula(dynamicCharactListItem.getFormula());
 								logger.debug("Column formula : " + formula + " (" + dynamicCharactListItem.getTitle() + ")");
-								Expression exp = instance.formulaService.getSpelParser().parseExpression(formula);
+								Expression exp = instance.formulaService.parseExpression(formula);
 
 								if (nullDynColumnNames.contains(columnName)) {
 									nullDynColumnNames.remove(columnName);
@@ -259,11 +269,11 @@ public class FormulaHelper {
 									if (varFormulaMatcher.matches()) {
 										logger.debug("Variable formula : [" + dynamicCharactListItem.getTitle() + "] - " + varFormulaMatcher.group(2)
 												+ " (" + varFormulaMatcher.group(1) + ")");
-										Expression exp = instance.formulaService.getSpelParser().parseExpression(varFormulaMatcher.group(2));
+										Expression exp = instance.formulaService.parseExpression(varFormulaMatcher.group(2));
 										context.setVariable(varFormulaMatcher.group(1), exp.getValue(context));
 									} else {
 										logger.debug("Formula :  [" + dynamicCharactListItem.getTitle() + "] - " + formula);
-										Expression exp = instance.formulaService.getSpelParser().parseExpression(formula);
+										Expression exp = instance.formulaService.parseExpression(formula);
 										dynamicCharactListItem.setValue(exp.getValue(context));
 									}
 								}

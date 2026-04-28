@@ -25,12 +25,14 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.MLPropertyInterceptor;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.rating.RatingService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.Path;
 import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.namespace.QName;
@@ -41,6 +43,7 @@ import org.springframework.util.StopWatch;
 import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.EntityListState;
+import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
@@ -78,6 +81,8 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	
 	private BeCPGLicenseManager beCPGLicenseManager;
 	
+	private AuthorityService authorityService;
+	
 	private boolean isDefaultExtractor = false;
 	
 	private int priority = 0;
@@ -86,6 +91,15 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	@Override
 	public boolean isDefaultExtractor() {
 		return isDefaultExtractor;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>authorityService</code>.</p>
+	 *
+	 * @param authorityService a {@link org.alfresco.service.cmr.security.AuthorityService} object
+	 */
+	public void setAuthorityService(AuthorityService authorityService) {
+		this.authorityService = authorityService;
 	}
 	
 	/**
@@ -284,6 +298,13 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			boolean hasRead = hasReadAccess(nodeRef);
 			boolean isLockAvailable = isLockAvailable(itemType);
 			
+			boolean isAdminOrSystemManager = authorityService.hasAdminAuthority()
+					|| AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr).stream()
+							.anyMatch(u -> u.equals(AuthenticationUtil.getFullyAuthenticatedUser()));
+
+			boolean isCharact = entityDictionaryService.isSubClass(itemType, BeCPGModel.TYPE_CHARACT);
+			boolean hasDefaultPivotAssoc = !entityDictionaryService.getDefaultPivotAssocsFromTargetType(itemType).isEmpty();
+			
 			permissions.put(PROP_USERACCESS, userAccess);
 			userAccess.put("delete", accessRight && !isLocked && (permissionService.hasPermission(nodeRef, "Delete") == AccessStatus.ALLOWED));
 			userAccess.put("create", accessRight && hasWrite && !isLocked && (permissionService.hasPermission(nodeRef, "CreateChildren") == AccessStatus.ALLOWED));
@@ -294,6 +315,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			userAccess.put("unlock", hasWrite && isLockAvailable && isLocked);
 			userAccess.put("wused", hasRead);
 			userAccess.put("content", accessRight && hasWrite && !isLocked && hasContentField(metadataFields));
+			userAccess.put("formulate-wused", accessRight && isAdminOrSystemManager && isCharact && hasDefaultPivotAssoc);
 			
 
 			ret.put(PROP_PERMISSIONS, permissions);

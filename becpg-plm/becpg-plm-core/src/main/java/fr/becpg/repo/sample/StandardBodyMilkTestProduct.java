@@ -24,6 +24,13 @@ import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
  */
 public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 
+	private static final String MASKING = "MASKING";
+	private static final String DENATURANT = "DENATURANT";
+	private static final String EMOLLIENT = "EMOLLIENT";
+	private static final String SKIN_CONDITIONING = "SKIN CONDITIONING";
+	private static final String FRAGRANCE_FLAVORING = "FRAGRANCE/FLAVORING";
+	private static final String FLAVOURING = "FLAVOURING";
+
 	/**
 	 * <p>Constructor for StandardBodyMilkTestProduct.</p>
 	 *
@@ -143,9 +150,9 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 
 		// Create ingredients with their types
 		ingredients.add(createIngListItemWithType("AQUA", "SOLVENT", 77.18435));
-		ingredients.add(createIngListItemWithType("GLYCERIN", "DENATURANT", 4.9985));
+		ingredients.add(createIngListItemWithType("GLYCERIN", DENATURANT, 4.9985));
 		ingredients.add(createIngListItemWithType("HELIANTHUS ANNUUS SEED OIL", "EMOLLIENT", 4.05));
-		ingredients.add(createIngListItemWithType("CAPRYLIC/CAPRIC TRIGLYCERIDE", "MASKING", 3.5));
+		ingredients.add(createIngListItemWithType("CAPRYLIC/CAPRIC TRIGLYCERIDE", MASKING, 3.5));
 		ingredients.add(createIngListItemWithType("CETYL PALMITATE", "EMOLLIENT", 2.5));
 		ingredients.add(createIngListItemWithType("BUTYROSPERMUM PARKII BUTTER", "SKIN CONDITIONING", 2.0));
 		ingredients.add(createIngListItemWithType("CETEARYL GLUCOSIDE", "EMULSIFYING", 1.875));
@@ -163,7 +170,7 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 		ingredients.add(createIngListItemWithType("SODIUM BENZOATE", "ANTICORROSIVE", 0.0006));
 		ingredients.add(createIngListItemWithType("POTASSIUM SORBATE", "PRESERVATIVE", 0.0003));
 		ingredients.add(createIngListItemWithType("3-MCPD", null, 0));
-		ingredients.add(createIngListItemWithType("ACETALDEHYDE", "MASKING", 0));
+		ingredients.add(createIngListItemWithType("ACETALDEHYDE", MASKING, 0));
 		ingredients.add(createIngListItemWithType("ACETYLCEDRENE", "FRAGRANCE/FLAVORING", 0));
 		ingredients.add(createIngListItemWithType("AFLATOXIN B2", null, 0));
 		ingredients.add(createIngListItemWithType("AFLATOXINS B1", null, 0));
@@ -174,29 +181,29 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 		ingredients.add(createIngListItemWithType("ANTIMONY", null, 0));
 		ingredients.add(createIngListItemWithType("ARSENIC", null, 0));
 		ingredients.add(createIngListItemWithType("BENZYL ALCOHOL", "FRAGRANCE/FLAVORING", 0));
-		ingredients.add(createIngListItemWithType("BETA-CARYOPHYLLENE", "MASKING", 0));
-		ingredients.add(createIngListItemWithType("BUTYRIC ACID", "MASKING", 0));
+		ingredients.add(createIngListItemWithType("BETA-CARYOPHYLLENE", MASKING, 0));
+		ingredients.add(createIngListItemWithType("BUTYRIC ACID", MASKING, 0));
 		ingredients.add(createIngListItemWithType("Benzo[def]chrysene (Benzo[a]pyrene)", null, 0));
-		ingredients.add(createIngListItemWithType("CAMPHOR", "DENATURANT", 0));
+		ingredients.add(createIngListItemWithType("CAMPHOR", DENATURANT, 0));
 		ingredients.add(createIngListItemWithType("CARVONE", "FLAVOURING", 0));
 		ingredients.add(createIngListItemWithType("CHROMIUM", null, 0));
 		ingredients.add(createIngListItemWithType("CITRAL", "FLAVOURING", 0));
 		ingredients.add(createIngListItemWithType("CITRONELLOL", "FRAGRANCE/FLAVORING", 0));
 		ingredients.add(createIngListItemWithType("CITRUS AURANTIUM PEEL OIL", null, 0));
-		ingredients.add(createIngListItemWithType("CITRUS LIMON PEEL OIL", "MASKING", 0));
+		ingredients.add(createIngListItemWithType("CITRUS LIMON PEEL OIL", MASKING, 0));
 		ingredients.add(createIngListItemWithType("COBALT", null, 0));
 		ingredients.add(createIngListItemWithType("COPPER", null, 0));
 		ingredients.add(createIngListItemWithType("COUMARIN", "FRAGRANCE/FLAVORING", 0));
 		ingredients.add(createIngListItemWithType("Cadmium", "NONE", 0));
 		ingredients.add(createIngListItemWithType("Chrysene", null, 0));
-		ingredients.add(createIngListItemWithType("D-LIMONENE", "MASKING", 0));
+		ingredients.add(createIngListItemWithType("D-LIMONENE", MASKING, 0));
 		ingredients.add(createIngListItemWithType("DIETHYLENE GLYCOL", null, 0));
 		ingredients.add(createIngListItemWithType("DIMETHYL PHENETHYL ACETATE", null, 0));
-		ingredients.add(createIngListItemWithType("DIPROPYLENE GLYCOL", "MASKING", 0));
-		ingredients.add(createIngListItemWithType("EUCALYPTOL", "DENATURANT", 0));
+		ingredients.add(createIngListItemWithType("DIPROPYLENE GLYCOL", MASKING, 0));
+		ingredients.add(createIngListItemWithType("EUCALYPTOL", DENATURANT, 0));
 		ingredients.add(createIngListItemWithType("EUGENIA CARYOPHYLLUS OIL", null, 0));
-		ingredients.add(createIngListItemWithType("EUGENOL", "DENATURANT", 0));
-		ingredients.add(createIngListItemWithType("EUGENYL ACETATE", "MASKING", 0));
+		ingredients.add(createIngListItemWithType("EUGENOL", DENATURANT, 0));
+		ingredients.add(createIngListItemWithType("EUGENYL ACETATE", MASKING, 0));
 		ingredients.add(createIngListItemWithType("Ethylene oxide", null, 0));
 		ingredients.add(createIngListItemWithType("FORMALDEHYDE", null, 0));
 		ingredients.add(createIngListItemWithType("FUROCOUMARINES", null, 0));
@@ -207,31 +214,31 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 		ingredients.add(createIngListItemWithType("HEXANE", null, 0));
 		ingredients.add(createIngListItemWithType("ISOEUGENOL", "FLAVOURING", 0));
 		ingredients.add(createIngListItemWithType("ISOPROPYL ALCOHOL", "FOAM CONTROL", 0));
-		ingredients.add(createIngListItemWithType("JUNIPERUS VIRGINIANA OIL", "MASKING", 0));
+		ingredients.add(createIngListItemWithType("JUNIPERUS VIRGINIANA OIL", MASKING, 0));
 		ingredients.add(createIngListItemWithType("LAVANDULA OIL/EXTRACT", null, 0));
 		ingredients.add(createIngListItemWithType("LINALOOL", "DEODORANT", 0));
-		ingredients.add(createIngListItemWithType("LINALYL ACETATE", "MASKING", 0));
+		ingredients.add(createIngListItemWithType("LINALYL ACETATE", MASKING, 0));
 		ingredients.add(createIngListItemWithType("Lead", "NONE", 0));
 		ingredients.add(createIngListItemWithType("MERCURY", null, 0));
-		ingredients.add(createIngListItemWithType("METHYL ALCOHOL", "DENATURANT", 0));
+		ingredients.add(createIngListItemWithType("METHYL ALCOHOL", DENATURANT, 0));
 		ingredients.add(createIngListItemWithType("METHYL HYDROGENATED ROSINATE", "FILM FORMING", 0));
 		ingredients.add(createIngListItemWithType("METHYLENEDIOXYPHENYL METHYLPROPANAL", "FRAGRANCE/FLAVORING", 0));
 		ingredients.add(createIngListItemWithType("MYRCENE", "FRAGRANCE/FLAVORING", 0));
 		ingredients.add(createIngListItemWithType("NICKEL", null, 0));
-		ingredients.add(createIngListItemWithType("OXACYCLOHEXADECENONE", "MASKING", 0));
-		ingredients.add(createIngListItemWithType("P-CYMENE", "MASKING", 0));
-		ingredients.add(createIngListItemWithType("PERILLALDEHYDE", "MASKING", 0));
-		ingredients.add(createIngListItemWithType("PHENETHYL ALCOHOL", "MASKING", 0));
+		ingredients.add(createIngListItemWithType("OXACYCLOHEXADECENONE", MASKING, 0));
+		ingredients.add(createIngListItemWithType("P-CYMENE", MASKING, 0));
+		ingredients.add(createIngListItemWithType("PERILLALDEHYDE", MASKING, 0));
+		ingredients.add(createIngListItemWithType("PHENETHYL ALCOHOL", MASKING, 0));
 		ingredients.add(createIngListItemWithType("PINENE", "FOAM CONTROL", 0));
-		ingredients.add(createIngListItemWithType("PYRUVIC ACID", "MASKING", 0));
+		ingredients.add(createIngListItemWithType("PYRUVIC ACID", MASKING, 0));
 		ingredients.add(createIngListItemWithType("SAFROLE", null, 0));
 		ingredients.add(createIngListItemWithType("SODIUM CHLORIDE", "BULKING", 0));
-		ingredients.add(createIngListItemWithType("TERPINEOL", "MASKING", 0));
+		ingredients.add(createIngListItemWithType("TERPINEOL", MASKING, 0));
 		ingredients.add(createIngListItemWithType("TERPINOLENE", "FRAGRANCE/FLAVORING", 0));
-		ingredients.add(createIngListItemWithType("TETRAMETHYL ACETYLOCTAHYDRONAPHTHALENES", "MASKING", 0));
-		ingredients.add(createIngListItemWithType("TRIETHYL CITRATE", "MASKING", 0));
+		ingredients.add(createIngListItemWithType("TETRAMETHYL ACETYLOCTAHYDRONAPHTHALENES", MASKING, 0));
+		ingredients.add(createIngListItemWithType("TRIETHYL CITRATE", MASKING, 0));
 		ingredients.add(createIngListItemWithType("Trichloroethylene", "ABRASIVE", 0));
-		ingredients.add(createIngListItemWithType("VANILLIN", "MASKING", 0));
+		ingredients.add(createIngListItemWithType("VANILLIN", MASKING, 0));
 
 		return ingredients;
 	}

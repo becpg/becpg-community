@@ -3,7 +3,10 @@ package fr.becpg.repo.formulation.spel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
@@ -13,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.EvaluationException;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.ParserContext;
 import org.springframework.expression.spel.SpelCompilerMode;
 import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
@@ -48,7 +52,45 @@ public class SpelFormulaService {
 	@Autowired
 	private CustomSpelFunctions[] customSpelFunctions;
 	
-	private ExpressionParser parser;
+	//  https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions-spel-compilation
+	private static final ExpressionParser parser = new BeCPGSpelExpressionParser(
+			new SpelParserConfiguration(SpelCompilerMode.MIXED, SpelFormulaService.class.getClassLoader()));
+
+	private static final int EXPRESSION_CACHE_MAX_SIZE = 500;
+
+	private final Map<String, Expression> expressionCache = Collections.synchronizedMap(
+			new LinkedHashMap<>(EXPRESSION_CACHE_MAX_SIZE, 0.75f, true) {
+				private static final long serialVersionUID = 1634566060749074187L;
+
+				@Override
+				protected boolean removeEldestEntry(Map.Entry<String, Expression> eldest) {
+					return size() > EXPRESSION_CACHE_MAX_SIZE;
+				}
+			});
+
+	/**
+	 * <p>parseExpression.</p>
+	 *
+	 * @param formula a {@link java.lang.String} object
+	 * @return a cached or newly parsed {@link org.springframework.expression.Expression}
+	 */
+	public Expression parseExpression(String formula) {
+		return expressionCache.computeIfAbsent(formula, parser::parseExpression);
+	}
+
+	/**
+	 * <p>parseExpression.</p>
+	 *
+	 * @param formula a {@link java.lang.String} object
+	 * @param parserContext a {@link org.springframework.expression.ParserContext} object
+	 * @return a cached or newly parsed {@link org.springframework.expression.Expression}
+	 */
+	public Expression parseExpression(String formula, ParserContext parserContext) {
+		String cacheKey = String.join("::", "CTX", String.valueOf(parserContext.isTemplate()), parserContext.getExpressionPrefix(),
+				parserContext.getExpressionSuffix(), formula);
+		return expressionCache.computeIfAbsent(cacheKey, key -> parser.parseExpression(formula, parserContext));
+	}
+
 
 	private <T extends RepositoryEntity> void registerCustomFunctions(T entity, StandardEvaluationContext context) {
 
@@ -85,14 +127,6 @@ public class SpelFormulaService {
 	 * @return a {@link org.springframework.expression.ExpressionParser} object
 	 */
 	public ExpressionParser getSpelParser() {
-		
-		//  https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions-spel-compilation
-		if(parser == null) {
-			SpelParserConfiguration config = new SpelParserConfiguration(SpelCompilerMode.MIXED,
-				    this.getClass().getClassLoader());
-			
-			 parser = new BeCPGSpelExpressionParser(config);
-		}
 		return parser;
 	}
 
@@ -104,8 +138,7 @@ public class SpelFormulaService {
 	 */
 	public StandardEvaluationContext createSpelContext(@Nullable Object rootObject) {
 		StandardEvaluationContext context = new StandardEvaluationContext(rootObject);
-		String authorizedTypes = systemConfigurationService.confValue("beCPG.spel.security.authorizedTypes");
-		context.setTypeLocator(new BecpgSpelSecurityTypeLocator(authorizedTypes));
+		context.setTypeLocator(new BecpgSpelSecurityTypeLocator(systemConfigurationService.confValue("beCPG.spel.security.authorizedTypes")));
 		return context;
 	}
 	
@@ -211,7 +244,7 @@ public class SpelFormulaService {
 			logger.debug("Running aggregate fonction [" + formula + "] on range (" + range.size() + ") for operator " + operator);
 		}
 
-		Expression exp = getSpelParser().parseExpression(formula);
+		Expression exp = parseExpression(formula);
 		Double ref = 0d;
 		if(SpelFormulaContext.Operator.MIN.equals(operator)) {
 			ref = Double.POSITIVE_INFINITY;
@@ -254,11 +287,22 @@ public class SpelFormulaService {
 	 * @param formula a {@link java.lang.String} object.
 	 */
 	public void applyToList(RepositoryEntity entity, Collection<RepositoryEntity> range, String formula) {
-		Expression exp = getSpelParser().parseExpression(formula);
+		List<String> formulaList = splitFormulas(SpelHelper.formatFormula(formula));
+		Expression[] expressions = new Expression[formulaList.size()];
+		for (int i = 0; i < formulaList.size(); i++) {
+			String trimmed = formulaList.get(i).trim();
+			if (!trimmed.isEmpty()) {
+				expressions[i] = parseExpression(trimmed);
+			}
+		}
 
 		for (RepositoryEntity item : range) {
 			StandardEvaluationContext context = createDataListItemSpelContext(entity, item, false);
-			exp.getValue(context);
+			for (Expression exp : expressions) {
+				if (exp != null) {
+					exp.getValue(context);
+				}
+			}
 		}
 
 	}
@@ -273,6 +317,18 @@ public class SpelFormulaService {
 		return createSecurityProxy(alfrescoRepository.findOne(nodeRef));
 	}
 	
+	/**
+	 * Splits a formula string on {@code \;} separators (backslash followed by semicolon).
+	 * Using {@code \;} avoids conflicts with SpEL's own use of {@code ;} as an expression terminator
+	 * inside string literals.
+	 *
+	 * @param formula the raw formula string, possibly containing multiple sub-expressions separated by {@code \;}
+	 * @return an ordered list of individual expression strings
+	 */
+	private List<String> splitFormulas(String formula) {
+		return Arrays.asList(formula.split("\u001F"));
+	}
+
 	private class BecpgSpelSecurityTypeLocator extends StandardTypeLocator {
 		
 		private List<String> authorizedTypes = new ArrayList<>();

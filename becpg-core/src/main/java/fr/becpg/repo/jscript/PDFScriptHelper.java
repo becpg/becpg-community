@@ -21,7 +21,7 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.TempFileProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.pdfbox.io.MemoryUsageSetting;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
@@ -79,14 +79,14 @@ public class PDFScriptHelper extends BaseScopableProcessorExtension {
 		logger.debug("Append PDF " + toAppendPDFNode.getName() + " to " + targetPDFNode.getName());
 
 		try (InputStream is = getReader(toAppendPDFNode.getNodeRef()).getContentInputStream();
-				InputStream tis = getReader(targetPDFNode.getNodeRef()).getContentInputStream();
-				PDDocument pdf = PDDocument.load(is);
-				PDDocument pdfTarget = PDDocument.load(tis)) {
+			InputStream tis = getReader(targetPDFNode.getNodeRef()).getContentInputStream();
+			PDDocument pdf = Loader.loadPDF(is.readAllBytes());
+			PDDocument pdfTarget = Loader.loadPDF(tis.readAllBytes())) {
 			// Append the PDFs using PDFMergerUtility
 			PDFMergerUtility merger = new PDFMergerUtility();
 			merger.appendDocument(pdfTarget, pdf);
 			merger.setDestinationFileName(targetPDFNode.getName());
-			merger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
+			merger.mergeDocuments(null);
 
 			// Create a temporary directory for saving the merged PDF
 			Path tempDir = Files.createTempDirectory(TempFileProvider.getTempDir().toPath(), targetPDFNode.getNodeRef().getId());

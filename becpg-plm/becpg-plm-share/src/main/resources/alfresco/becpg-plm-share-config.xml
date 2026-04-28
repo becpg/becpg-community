@@ -1,4 +1,4 @@
-<!-- Copyright (C) 2010-2025 beCPG. This file is part of beCPG beCPG is free 
+<!-- Copyright (C) 2010-2026 beCPG. This file is part of beCPG beCPG is free 
 	software: you can redistribute it and/or modify it under the terms of the 
 	GNU Lesser General Public License as published by the Free Software Foundation, 
 	either version 3 of the License, or (at your option) any later version. beCPG 
@@ -218,36 +218,42 @@
 	
 	<config evaluator="string-compare" condition="wizard">
 		<wizards>
-			<wizard id="supplier-rawMaterial" draft="true" comments="true" >
+			<wizard id="supplier-rawMaterial" draft="true" comments="true" 
+					enforceTask="true" skipSecurityRules="false">
 				<step id="step1" labelId="becpg.wizard.supplier.properties.label"
 					titleId="becpg.wizard.supplier.properties.title" type="form"
 					formId="supplier" itemId="bcpg:rawMaterial"></step>
-				<step id="step2" labelId="becpg.wizard.supplier.ingList.label"
+			    <step id="step2" labelId="becpg.wizard.supplier.surveyList.label"
+                    titleId="becpg.wizard.supplier.surveyList.title" type="survey"
+                    listId="surveyList" itemId="survey:surveyList" 
+                    nextStepWebScript="becpg/remote/formulate?nodeRef={nodeRef}&amp;format=json"></step>
+				<step id="step3" labelId="becpg.wizard.supplier.ingList.label"
 					titleId="becpg.wizard.supplier.ingList.title" type="entityDataList"
 					listId="ingList" itemId="bcpg:ingList" nextStepWebScript="becpg/remote/formulate?nodeRef={nodeRef}&amp;format=json"></step>
-				<step id="step3" labelId="becpg.wizard.supplier.nutList.label"
+				<step id="step4" labelId="becpg.wizard.supplier.nutList.label"
 					titleId="becpg.wizard.supplier.nutList.title" type="entityDataList"
 					listId="nutList" itemId="bcpg:nutList"></step>
-				<step id="step4" labelId="becpg.wizard.supplier.allergenList.label"
+				<step id="step5" labelId="becpg.wizard.supplier.allergenList.label"
 					titleId="becpg.wizard.supplier.allergenList.title" type="entityDataList"
 					listId="allergenList" itemId="bcpg:allergenList"></step>
-				<step id="step5" labelId="becpg.wizard.supplier.physicoChemList.label"
+				<step id="step6" labelId="becpg.wizard.supplier.physicoChemList.label"
 					titleId="becpg.wizard.supplier.physicoChemList.title" type="entityDataList"
 					listId="physicoChemList" itemId="bcpg:physicoChemList"></step>
-				<step id="step6" labelId="becpg.wizard.supplier.labelClaimList.label"
+				<step id="step7" labelId="becpg.wizard.supplier.labelClaimList.label"
 					titleId="becpg.wizard.supplier.labelClaimList.title" type="entityDataList"
 					listId="labelClaimList" itemId="bcpg:labelClaimList"></step>
- 				<step id="step7" labelId="becpg.wizard.supplier.microbioList.label"
+ 				<step id="step8" labelId="becpg.wizard.supplier.microbioList.label"
  					titleId="becpg.wizard.supplier.microbioList.title" type="entityDataList"
  					listId="microbioList" itemId="bcpg:microbioList"></step>
-				<step id="step8" labelId="becpg.wizard.supplier.organoList.label"
+				<step id="step9" labelId="becpg.wizard.supplier.organoList.label"
 					titleId="becpg.wizard.supplier.organoList.title" type="entityDataList"
 					listId="organoList" itemId="bcpg:organoList" 
 					nextStepWebScript="becpg/project/path?nodeRef={nodeRef}&amp;path=SupplierDocuments" ></step>
-				<step id="step9" labelId="becpg.wizard.supplier.documents.label"
+				<step id="step10" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
-			<wizard id="supplier-finishedProduct" draft="true" comments="true">
+			<wizard id="supplier-finishedProduct" draft="true" comments="true"
+					enforceTask="true" skipSecurityRules="false">
 				<step id="step1" labelId="becpg.wizard.supplier.properties.label"
 					titleId="becpg.wizard.supplier.properties.title" type="form"
 					formId="supplier" itemId="bcpg:finishedProduct"></step>
@@ -276,7 +282,8 @@
 				<step id="step9" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
-			<wizard id="supplier-semiFinishedProduct" draft="true" comments="true">
+			<wizard id="supplier-semiFinishedProduct" draft="true" comments="true"
+					enforceTask="true" skipSecurityRules="false">
 				<step id="step1" labelId="becpg.wizard.supplier.properties.label"
 					titleId="becpg.wizard.supplier.properties.title" type="form"
 					formId="supplier" itemId="bcpg:semiFinishedProduct"></step>
@@ -305,7 +312,8 @@
 				<step id="step9" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
-			<wizard id="supplier-packagingMaterial" draft="true" comments="true">
+			<wizard id="supplier-packagingMaterial" draft="true" comments="true"
+					enforceTask="true" skipSecurityRules="false">
 				<step id="step1" labelId="becpg.wizard.supplier.properties.label"
 					titleId="becpg.wizard.supplier.properties.title" type="form"
 					formId="supplier" itemId="bcpg:packagingMaterial"></step>
@@ -322,12 +330,14 @@
 				<step id="step5" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
-			<wizard id="supplier-packagingKit" draft="true">
+			<wizard id="supplier-packagingKit" draft="true"
+					enforceTask="true" skipSecurityRules="false">
 				<step id="step1" labelId="becpg.wizard.supplier.properties.label"
 					titleId="becpg.wizard.supplier.properties.title" type="form"
 					formId="supplier" itemId="bcpg:packagingKit"></step>
 			</wizard>
-			<wizard id="supplier-supplier" draft="true">
+			<wizard id="supplier-supplier" draft="true"
+					enforceTask="true" skipSecurityRules="false">
 				<step id="step1" labelId="becpg.wizard.supplier.properties.label"
 					titleId="becpg.wizard.supplier.properties.title" type="form"
 					formId="supplier" itemId="bcpg:supplier"></step>
@@ -347,13 +357,15 @@
 				<step id="step6" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
-			<wizard id="supplier-content" draft="true">
+			<wizard id="supplier-content" draft="true"
+					enforceTask="true" skipSecurityRules="false">
 				<step id="step1" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
 			
 			<!-- RÉCLAMATION FOURNISSEUR  -->
-			<wizard id="supplier-nc" draft="true" comments="true">
+			<wizard id="supplier-nc" draft="true" comments="true"
+					enforceTask="true" skipSecurityRules="false">
 				<step id="step1" label="Réclamation fournisseur"
 					titleId="becpg.wizard.supplier.properties.title" type="form"
 					formId="supplier" itemId="qa:nc" nextStepWebScript="becpg/project/path?nodeRef={nodeRef}&amp;path=SupplierDocuments" ></step>
@@ -361,7 +373,8 @@
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
 			
-			<wizard id="sample-survey" draft="true">
+			<wizard id="sample-survey" draft="true"
+					enforceTask="false" skipSecurityRules="false">
 				<step id="step1" labelId="becpg.wizard.supplier.properties.label"
 					titleId="becpg.wizard.supplier.properties.title" type="form"
 					formId="supplier" itemId="bcpg:supplier"></step>

@@ -74,6 +74,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 	private static final String CLASSPATH_PREFIX = "classpath:";
 	private static final String REPO_PREFIX = "repo:";
+	private static final String OVERRIDE_PREFIX = "override:";
 
 	private static ServiceRegistry serviceRegistry;
 
@@ -139,8 +140,9 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		this.paths = new ArrayList<>(paths);
 
 		for (String path : paths) {
-			if (!path.startsWith(CLASSPATH_PREFIX) && !path.startsWith(REPO_PREFIX)) {
-				pathRegistry.add("/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath(path));
+			String normalizedPath = getNormalizedPath(path);
+			if (!normalizedPath.startsWith(CLASSPATH_PREFIX) && !normalizedPath.startsWith(REPO_PREFIX)) {
+				pathRegistry.add("/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath(normalizedPath));
 			}
 		}
 	}
@@ -392,15 +394,26 @@ public class DynListConstraint extends ListOfValuesConstraint {
 					}
 
 					AuthenticationUtil.runAsSystem(() -> {
-						for (String path : paths) {
-							if (path.startsWith(CLASSPATH_PREFIX)) {
-								processClasspathResource(path, allowedValues);
-							} else if (path.startsWith(REPO_PREFIX)) {
-								processRepoResource(path, allowedValues);
-							} else {
-								processSystemList(path, allowedValues);
+						List<String> overridePaths = getOverridePaths();
+						List<String> standardPaths = getStandardPaths();
+
+						boolean overrideHasValues = false;
+						if (!overridePaths.isEmpty()) {
+							for (String path : overridePaths) {
+								processPath(path, allowedValues);
+							}
+							int expectedEmptySize = Boolean.TRUE.equals(addEmptyValue) ? 1 : 0;
+							if (allowedValues.size() > expectedEmptySize) {
+								overrideHasValues = true;
 							}
 						}
+
+						if (!overrideHasValues) {
+							for (String path : standardPaths) {
+								processPath(path, allowedValues);
+							}
+						}
+						
 						return null;
 					});
 
@@ -584,6 +597,76 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 			return sort1.compareTo(sort2);
 		});
+	}
+
+	/**
+	 * Returns the configured paths marked as override sources.
+	 *
+	 * @return the list of normalized override paths
+	 */
+	private List<String> getOverridePaths() {
+		List<String> overridePaths = new ArrayList<>();
+		for (String path : paths) {
+			if (isOverridePath(path)) {
+				overridePaths.add(getNormalizedPath(path));
+			}
+		}
+		return overridePaths;
+	}
+
+	/**
+	 * Returns the configured paths not marked as override sources.
+	 *
+	 * @return the list of normalized standard paths
+	 */
+	private List<String> getStandardPaths() {
+		List<String> standardPaths = new ArrayList<>();
+		for (String path : paths) {
+			if (!isOverridePath(path)) {
+				standardPaths.add(getNormalizedPath(path));
+			}
+		}
+		return standardPaths;
+	}
+
+	/**
+	 * Processes a single configured path, regardless of its source type.
+	 *
+	 * @param path the normalized path to process
+	 * @param allowedValues the map receiving parsed entries
+	 */
+	private void processPath(String path, Map<String, DynListEntry> allowedValues) {
+		if (path.startsWith(CLASSPATH_PREFIX)) {
+			processClasspathResource(path, allowedValues);
+		} else if (path.startsWith(REPO_PREFIX)) {
+			processRepoResource(path, allowedValues);
+		} else {
+			processSystemList(path, allowedValues);
+		}
+	}
+
+	/**
+	 * Checks whether a configured path is marked as an override source.
+	 *
+	 * @param path the configured path
+	 * @return {@code true} if the path starts with the override prefix
+	 */
+	private boolean isOverridePath(String path) {
+		return path.startsWith(OVERRIDE_PREFIX);
+	}
+
+	/**
+	 * Removes the optional override prefix from a configured path.
+	 *
+	 * @param path the configured path
+	 * @return the normalized path without the override prefix
+	 */
+	private String getNormalizedPath(String path) {
+		if (isOverridePath(path)) {
+			return path.substring(OVERRIDE_PREFIX.length());
+		}
+
+		return path;
 	}
 
 	private String getKeyFromRecord(CSVRecord csvRecord) {

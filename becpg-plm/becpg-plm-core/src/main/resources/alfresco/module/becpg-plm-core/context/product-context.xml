@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  Copyright (C) 2010-2025 beCPG. 
+  Copyright (C) 2010-2026 beCPG. 
    
   This file is part of beCPG 
    
@@ -24,11 +24,7 @@
 	<bean id="entityCopyPolicy"
 		class="fr.becpg.repo.product.policy.EntityCopyPolicy"
 		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
-		<property name="namespaceService" ref="namespaceService"/>
 		<property name="entityService" ref="entityService"/>
-		<property name="associationService" ref="associationService"/>
-		<property name="dictionaryService" ref="dictionaryService"/>
-		<property name="systemConfigurationService" ref="systemConfigurationService"/>
 	</bean>
 	
 	<bean id="productListUnits.ProductListPolicy"

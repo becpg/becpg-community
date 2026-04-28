@@ -84,6 +84,7 @@ public class ProjectData extends BeCPGDataObject
 	private String creator;
 	private String modifier;
 	private NodeRef projectManager;
+	private NodeRef projectCalendar;
 	private Double budgetedCost = 0d;
 	private Double work = 0d;
 	private Double loggedTime = 0d;
@@ -786,6 +787,26 @@ public class ProjectData extends BeCPGDataObject
 	 */
 	public void setProjectManager(NodeRef projectManager) {
 		this.projectManager = projectManager;
+	}
+
+	/**
+	 * <p>Getter for the field <code>projectCalendar</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
+	@AlfSingleAssoc
+	@AlfQname(qname = "pjt:projectCalendar")
+	public NodeRef getProjectCalendar() {
+		return projectCalendar;
+	}
+
+	/**
+	 * <p>Setter for the field <code>projectCalendar</code>.</p>
+	 *
+	 * @param projectCalendar a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
+	public void setProjectCalendar(NodeRef projectCalendar) {
+		this.projectCalendar = projectCalendar;
 	}
 
 	/**

@@ -35,6 +35,7 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.form.BecpgFormService;
 import fr.becpg.repo.form.impl.BecpgFormDefinition;
+import fr.becpg.repo.security.filter.SecurityContextHelper;
 
 /**
  * Return or save MLText field
@@ -62,6 +63,8 @@ public class FormGetWebScript extends AbstractWebScript {
 
 	private static final String PARAM_FORCEDFIELDS = "force";
 
+	private static final String PARAM_SKIP_SECURITY_RULES = "skipSecurityRules";
+
 	private BecpgFormService becpgFormService;
 
 	/**
@@ -84,6 +87,7 @@ public class FormGetWebScript extends AbstractWebScript {
 		String entityNodeRef = req.getParameter(PARAM_NODE_REF);
 		List<String> fields = new ArrayList<>();
 		List<String> forcedFields = new ArrayList<>();
+		boolean shouldSkipSecurityRules = false;
 
 		/* Parse the JSON content */
 
@@ -131,9 +135,15 @@ public class FormGetWebScript extends AbstractWebScript {
 					forcedFields.add(tmp.getString(i));
 				}
 			}
-			
-		
 
+			if (json.has(PARAM_SKIP_SECURITY_RULES) && !JSONObject.NULL.equals(json.get(PARAM_SKIP_SECURITY_RULES))) {
+				Object skipSecurityRulesValue = json.get(PARAM_SKIP_SECURITY_RULES);
+				if (skipSecurityRulesValue instanceof Boolean) {
+					shouldSkipSecurityRules = ((Boolean) skipSecurityRulesValue).booleanValue();
+				} else if (skipSecurityRulesValue instanceof String) {
+					shouldSkipSecurityRules = Boolean.parseBoolean((String) skipSecurityRulesValue);
+				}
+			}
 		} catch (IOException | JSONException io) {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Invalid JSON: " + io.getMessage());
 		}
@@ -145,6 +155,12 @@ public class FormGetWebScript extends AbstractWebScript {
 		}
 
 		try {
+			if (!shouldSkipSecurityRules) {
+                shouldSkipSecurityRules = "true".equals(req.getParameter(PARAM_SKIP_SECURITY_RULES));
+            }
+			if (shouldSkipSecurityRules) {
+				SecurityContextHelper.setSkipSecurityRules(true);
+			}
 
 			JSONObject ret = new JSONObject();
 
@@ -152,12 +168,12 @@ public class FormGetWebScript extends AbstractWebScript {
 				becpgFormService.reloadConfig();
 				ret.put("SUCCESS", true);
 			} else {
-				NodeRef nodeRef = ((entityNodeRef != null) && !entityNodeRef.isEmpty() ) ? new NodeRef(entityNodeRef) : null;
+				NodeRef nodeRef = ((entityNodeRef != null) && !entityNodeRef.isEmpty()) ? new NodeRef(entityNodeRef) : null;
 				BecpgFormDefinition def = becpgFormService.getForm(itemKind, itemId, formId, siteId, fields, forcedFields, nodeRef);
 				ret = def.getMergeDef();
 				
-				if(logger.isDebugEnabled()) {
-					logger.debug(itemKind+"/"+itemId+"/"+siteId+"/"+formId+"/"+entityNodeRef);
+				if (logger.isDebugEnabled()) {
+					logger.debug(itemKind + "/" + itemId + "/" + siteId + "/" + formId + "/" + entityNodeRef);
 					logger.debug(ret.toString(3));
 				}
 			}
@@ -168,6 +184,7 @@ public class FormGetWebScript extends AbstractWebScript {
 		} catch (Exception e) {
 			throw new WebScriptException("Unable to serialize JSON", e);
 		} finally {
+			SecurityContextHelper.clear();
 			if (logger.isDebugEnabled() && (watch != null)) {
 				watch.stop();
 				logger.debug("MultilingualFieldWebScript execute in " + watch.getTotalTimeSeconds() + "s");

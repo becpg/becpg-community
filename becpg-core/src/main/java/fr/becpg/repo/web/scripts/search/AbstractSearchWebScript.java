@@ -32,7 +32,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
-import fr.becpg.repo.helper.JsonHelper;
+import fr.becpg.repo.helper.json.JsonHelper;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.web.scripts.WebscriptHelper;

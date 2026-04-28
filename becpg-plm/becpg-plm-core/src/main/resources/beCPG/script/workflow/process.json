@@ -52,6 +52,9 @@
 			"itemId": "activiti$claimProcess",
 			"itemKind": "workflow",
 			"permissionGroup": "GROUP_ClaimStart",
+			"formFields": {
+				"assoc_qa_product_added": "js(items.map((n) =>  n.nodeRef ).join(\",\"))"
+			},
 			"condition": "js(items.length == 0 || items.every( (n) =>  n.isSubType(\"bcpg:product\")) )"
 		},
 		{

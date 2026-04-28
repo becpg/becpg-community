@@ -448,6 +448,7 @@
 			<parameter name="allowedValues">
 				<list>
 					<value>ShowPerc</value>
+					<value>ForcePercentage</value>
 					<value>ShowGeo</value>
 					<value>ShowBio</value>
 					<value>Rename</value>
@@ -1467,6 +1468,11 @@
 					<type>d:double</type>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:allergenInvoluntaryOtherLegalName">
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:allergenSubset">
@@ -1788,12 +1794,6 @@
 				</property>
 				<property name="bcpg:nutSort">
 					<type>d:mltext</type>
-					<mandatory>false</mandatory>
-					<index enabled="false" />
-				</property>
-                <!-- deprecated -->
-				<property name="bcpg:isNutPropagateUp">
-					<type>d:boolean</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
@@ -2985,6 +2985,15 @@
 					<type>d:mltext</type>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:ingListIngTypes">
+					<type>d:noderef</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
                 
                 <!-- Deprecated -->
 				<property name="bcpg:ingListIsGMO">
@@ -3546,6 +3555,11 @@
 					<multiple>true</multiple>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:rclErrorLog">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:rclCharact">
@@ -3715,7 +3729,7 @@
 					<target>
 						<class>bcpg:certification</class>
 						<mandatory>false</mandatory>
-						<many>false</many>
+						<many>true</many>
 					</target>
 				</association>
 				<association name="bcpg:lclMissingLabelClaims">
@@ -3871,8 +3885,7 @@
 					<type>d:double</type>
 					<index enabled="false" />
 				</property>
-                <!-- Deprecated -->
-				<property name="bcpg:isLabelClaimPropagateUp">
+				<property name="bcpg:isCertificationPropagateUp">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
@@ -4997,6 +5010,13 @@
 						<facetable>true</facetable>
 					</index>
 				</property>
+				<property name="bcpg:productSecondaryYield">
+					<type>d:double</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
 				<property name="bcpg:productState">
 					<type>d:text</type>
 					<default>Simulation</default>
@@ -5698,6 +5718,20 @@
 					</index>
 				</property>
 			</properties>
+			
+			<associations>
+				<association name="bcpg:locationCountryRef">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:geoOrigin</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
 		</aspect>
 
 		<aspect name="bcpg:linkedSearchAspect">
@@ -7029,6 +7063,19 @@
             <properties>
                 <property name="bcpg:externalAccessGroup">
                     <type>d:text</type>
+                   <index enabled="true">
+                        <tokenised>false</tokenised>
+                        <facetable>false</facetable>
+                    </index>
+                </property>
+            </properties>
+         </aspect>h
+         
+         <aspect name="bcpg:batchErrorAspect">
+            <properties>
+                <property name="bcpg:batchErrorIds">
+                    <type>d:text</type>
+                    <multiple>true</multiple>
                    <index enabled="true">
                         <tokenised>false</tokenised>
                         <facetable>false</facetable>

@@ -26,7 +26,7 @@ function main() {
 				var supplierTask = findSupplierTask(project);
 				
 				if (supplierTask) {
-					var taskDuration = bProject.calculateTaskDuration("NOW", supplierTaskDueDate);
+					var taskDuration = bProject.calculateTaskDuration("NOW", supplierTaskDueDate, supplierTask);
 					supplierTask.properties["pjt:tlDuration"] = taskDuration;
 					supplierTask.save();
 				}
