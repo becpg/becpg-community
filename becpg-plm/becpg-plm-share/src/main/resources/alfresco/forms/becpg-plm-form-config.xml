@@ -9334,9 +9334,9 @@
                         <constraint-handlers>
                             <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"
                                 event='keyup,change@[
-                                {"prop":"prop_bcpg_lrLabel", "condition" : "Format|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare|ShowPerc|ShowGeo|ShowBio"},
+                                {"prop":"prop_bcpg_lrLabel", "condition" : "Format|ForcePercentage|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare|ShowPerc|ShowGeo|ShowBio"},
                                 {"prop":"assoc_bcpg_lrComponents", "condition" : "Render|Locale|Prefs"},
-                                {"prop":"assoc_bcpg_lrReplacements", "condition" : "Format|FootNote|Render|DetailComponents|Declare|DeclareThreshold|DoNotDetailsAtEnd|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare|ShowPerc|ShowGeo|ShowBio"},
+                                {"prop":"assoc_bcpg_lrReplacements", "condition" : "Format|ForcePercentage|FootNote|Render|DetailComponents|Declare|DeclareThreshold|DoNotDetailsAtEnd|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare|ShowPerc|ShowGeo|ShowBio"},
                                 {"prop":"prop_bcpg_lrLocales", "condition" : "Prefs|Group|Detail|DoNotDetails|DetailComponents|DoNotDetailsComponents"}
                                 ]' />
                         </constraint-handlers>
@@ -9438,9 +9438,9 @@
                         <constraint-handlers>
                             <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"
                                 event='keyup,change@[
-                                {"prop":"prop_bcpg_lrLabel", "condition" : "Format|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare|ShowPerc|ShowGeo|ShowBio"},
+                                {"prop":"prop_bcpg_lrLabel", "condition" : "Format|ForcePercentage|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare|ShowPerc|ShowGeo|ShowBio"},
                                 {"prop":"assoc_bcpg_lrComponents", "condition" : "Render|Locale|Prefs"},
-                                {"prop":"assoc_bcpg_lrReplacements", "condition" : "Format|FootNote|Render|DetailComponents|Declare|DeclareThreshold|DoNotDetailsAtEnd|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare|ShowPerc|ShowGeo|ShowBio"},
+                                {"prop":"assoc_bcpg_lrReplacements", "condition" : "Format|ForcePercentage|FootNote|Render|DetailComponents|Declare|DeclareThreshold|DoNotDetailsAtEnd|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare|ShowPerc|ShowGeo|ShowBio"},
                                 {"prop":"prop_bcpg_lrLocales", "condition" : "Prefs|Group|Detail|DoNotDetails|DetailComponents|DoNotDetailsComponents"}
                                 ]' />
                         </constraint-handlers>
