@@ -680,7 +680,7 @@
 					<show id="pjt:projectCompletionDate" />
 					<show id="pjt:projectDueDate" />
 
-					<show id="cm:taggable" />
+					<show id="cm:taggable"  force="true" />
 
 					<!-- Task -->
 					<show id="entity_pjt:projectCurrentTasks_pjt:taskList" />
