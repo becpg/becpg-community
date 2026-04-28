@@ -2274,7 +2274,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			List<HtmlTableStruct> flatList = flatCompositeLabeling(lblCompositeContext, DEFAULT_RATIO, 0);
 			if (!flatList.isEmpty()) {
 
-				if ((htmlTableHeaderFormat != null) && !htmlTableHeaderFormat.isBlank()) {
+				if ((htmlFlatTableHeaderFormat != null) && !htmlFlatTableHeaderFormat.isBlank()) {
 					tableContent.append(new MessageFormat(htmlFlatTableHeaderFormat, getContentLocale())
 							.format(new Object[] { I18NUtil.getMessage("bcpg_bcpgmodel.association.bcpg_ingListIng.title"),
 									I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListQtyPerc.title"),
@@ -2389,11 +2389,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				}
 
-				String geoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOriginsByPlaceOfActivity(),
+				String geoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), List.of(component),
 						PlaceOfActivityTypeCode.LAST_PROCESSING);
-				String otherGeoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOriginsByPlaceOfActivity(),
+				String otherGeoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), List.of(component),
 						PlaceOfActivityTypeCode.EMPTY);
-				String bioOriginsLabel = createBioOriginsLabel(component.getNodeRef(), component.getBioOrigins());
+				String bioOriginsLabel = createBioOriginsLabel(component.getNodeRef(), List.of(component));
 				String additionalInformation = createAdditionalInformationLabel(component.getAdditionalInformation());
 
 				if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
