@@ -33,6 +33,7 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.Path;
 import org.alfresco.service.namespace.NamespaceService;
@@ -49,6 +50,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.search.AdvSearchPlugin;
+import fr.becpg.repo.search.AdvSearchQueryFilter;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -64,7 +66,8 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 public class AdvSearchServiceImpl implements AdvSearchService {
 
 	private static final Log logger = LogFactory.getLog(AdvSearchServiceImpl.class);
-	
+	private static final int MAX_QUERY_FILTER_IDS = 1000;
+
 	@Autowired
 	private NamespaceService namespaceService;
 
@@ -125,7 +128,9 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		SearchConfig searchConfig = getSearchConfig();
 
 		logger.debug("advSearch, dataType=" + datatype + ", \ncriteria=" + criteria + "\nplugins: " + Arrays.asList(advSearchPlugins));
-		if (isSearchFiltered(criteria) || (maxResults > RepoConsts.MAX_RESULTS_1000)) {
+		replaceIndexedAssocs(criteria);
+		boolean searchFiltered = isSearchFiltered(criteria);
+		if (searchFiltered || (maxResults > RepoConsts.MAX_RESULTS_1000)) {
 			maxResults = RepoConsts.MAX_RESULTS_UNLIMITED;
 		} else if (maxResults <= 0) {
 			maxResults = RepoConsts.MAX_RESULTS_1000;
@@ -138,8 +143,12 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 				ignoredFields.addAll(advSearchPlugin.getIgnoredFields(datatype, searchConfig));
 			}
 		}
-		
-		replaceIndexedAssocs(criteria);
+
+		AdvSearchQueryFilter queryFilter = buildQueryFilter(datatype, criteria, searchConfig);
+		boolean queryFilterApplied = applyQueryFilter(beCPGQueryBuilder, queryFilter);
+		if (queryFilterApplied && !queryFilter.requiresPostFiltering() && maxResults == RepoConsts.MAX_RESULTS_UNLIMITED) {
+			maxResults = RepoConsts.MAX_RESULTS_1000;
+		}
 
 		addCriteriaMap(beCPGQueryBuilder, criteria, ignoredFields);
 
@@ -147,13 +156,13 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		watch.start();
 		List<NodeRef> nodes = beCPGQueryBuilder.maxResults(maxResults).ofType(datatype).inDBIfPossible().list();
 		watch.stop();
-		if (watch.getTotalTimeSeconds() > 5 && isSearchFiltered(criteria)) {
+		if (watch.getTotalTimeSeconds() > 5 && searchFiltered) {
 			logger.warn("Slow advSearch query for user " + AuthenticationUtil.getRunAsUser() + ", executed in " + watch.getTotalTimeSeconds() + " seconds. Consider indexing assocs: "
 					+ String.join(", ", criteria.keySet().stream().filter(k -> k.startsWith("assoc_"))
 							.filter(k -> criteria.get(k) != null && !criteria.get(k).isBlank()).toList()));
 		}
 
-		if (advSearchPlugins != null) {
+		if (advSearchPlugins != null && (!queryFilterApplied || queryFilter.requiresPostFiltering())) {
 			watch = null;
 			for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
 				if (logger.isDebugEnabled()) {
@@ -175,17 +184,49 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 	}
 
+	private AdvSearchQueryFilter buildQueryFilter(QName datatype, Map<String, String> criteria, SearchConfig searchConfig) {
+		AdvSearchQueryFilter queryFilter = AdvSearchQueryFilter.empty();
+		if (advSearchPlugins != null) {
+			for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
+				queryFilter.merge(advSearchPlugin.buildQueryFilter(datatype, criteria, searchConfig));
+			}
+		}
+		return queryFilter;
+	}
+
+	private boolean applyQueryFilter(BeCPGQueryBuilder beCPGQueryBuilder, AdvSearchQueryFilter queryFilter) {
+		if (queryFilter.hasIncludeIds()) {
+			if (queryFilter.getIncludeIds().isEmpty()) {
+				beCPGQueryBuilder.andID(new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, "dummy"));
+				return true;
+			}
+			if (queryFilter.getIncludeIds().size() > MAX_QUERY_FILTER_IDS) {
+				return false;
+			}
+			beCPGQueryBuilder.andIDs(queryFilter.getIncludeIds());
+		}
+		if (!queryFilter.getExcludeIds().isEmpty()) {
+			if (queryFilter.getExcludeIds().size() > MAX_QUERY_FILTER_IDS) {
+				return false;
+			}
+			beCPGQueryBuilder.andNotIDs(queryFilter.getExcludeIds());
+		}
+		return queryFilter.hasIncludeIds() || !queryFilter.getExcludeIds().isEmpty();
+	}
+
 	private void replaceIndexedAssocs(Map<String, String> criteria) {
 		if (criteria != null) {
 			Map<String, String> toAdd = new HashMap<>();
 			Set<String> toRemove = new HashSet<>();
 			for (String key : criteria.keySet()) {
 				if (key.startsWith("assoc_")) {
-					QName assocQName = QName.createQName(key.replace("assoc_", "").replace("_added", "").replace("_", ":"), namespaceService);
+					String assocName = key.replace("assoc_", "").replace("_or_added", "").replace("_added", "").replace("_", ":");
+					QName assocQName = QName.createQName(assocName, namespaceService);
 					QName assocIndexQName = entityDictionaryService.getAssocIndexQName(assocQName);
 					if (assocIndexQName != null) {
 						String value = criteria.get(key);
-						String newKey = "prop_" + assocIndexQName.toPrefixString().replace(":", "_") + "_added";
+						String suffix = key.endsWith("_or_added") ? "_or_added" : "_added";
+						String newKey = "prop_" + assocIndexQName.toPrefixString().replace(":", "_") + suffix;
 						toAdd.put(newKey, value);
 						toRemove.add(key);
 					}
@@ -215,7 +256,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			beCPGQueryBuilder.inSite(siteId, containerId);
 		} else {
 			if(ContentModel.TYPE_CONTENT.equals(datatype)){
-				beCPGQueryBuilder.excludePath(RepoConsts.ENTITIES_HISTORY_XPATH + "//*");
+				beCPGQueryBuilder.excludeAspect(BeCPGModel.ASPECT_ENTITY_HISTORY);
 			}
 		}
 
@@ -242,9 +283,9 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		if ((criteriaMap != null) && !criteriaMap.isEmpty()) {
 
 			boolean useSubCats = false;
-			
-			
-			
+
+
+
 			for (Map.Entry<String, String> criterion : criteriaMap.entrySet()) {
 
 				String key = criterion.getKey();
@@ -339,27 +380,27 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 								}
 
 							} else if (propName.endsWith(":added")) {
-								
+
 								List<String> nodes = new ArrayList<>();
 								String[] results = propValue.split(",");
 								for (String result : results) {
 									result = result.replace("\"", "");
 									nodes.add(result);
 								}
-								
+
 								String propNameReplaced = propName.replace(":added", "");
-								
+
 								String nodesString = nodes.toString().replace(", ", "\" OR @" + propNameReplaced + ":\"")
 										.replaceAll(Pattern.quote("["), "\"").replaceAll(Pattern.quote("]"), "\"");
-								
+
 								StringBuilder query = new StringBuilder();
 								query.append("@");
 								query.append(propNameReplaced);
 								query.append(":");
 								query.append(nodesString);
-								
+
 								queryBuilder.andFTSQuery(query.toString());
-								
+
 							} else if (propName.endsWith("depthLevel")) {
 								Integer maxLevel = null;
 								try {
@@ -435,14 +476,14 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	private String cleanFTSQuery(String query) {
 		return query.replace("#", "");
 	}
-	
+
 	private String cleanValue(String propValue) {
 		String cleanQuery = propValue.replace(".", "").replace("#", "").replace("%", "");
-		
+
 		if (cleanQuery.contains("\",\"")) {
 			cleanQuery = cleanQuery.replace("\",\"", "\" OR \"");
 		}
-		
+
 		return escapeValue(cleanQuery);
 	}
 
@@ -539,7 +580,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		if(operand == null || operand.isBlank()) {
 			operand = "OR";
 		}
-		
+
 		for (var i = 0; i < multiValue.length; i++) {
 
 			if (i > 0) {

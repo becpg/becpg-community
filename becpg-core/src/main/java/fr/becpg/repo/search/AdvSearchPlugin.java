@@ -29,6 +29,20 @@ public interface AdvSearchPlugin {
 	List<NodeRef> filter(List<NodeRef> nodes, QName datatype, Map<String, String> criteria, SearchConfig searchConfig);
 
 	/**
+	 * <p>buildQueryFilter.</p>
+	 *
+	 * @param datatype a {@link org.alfresco.service.namespace.QName} object
+	 * @param criteria a {@link java.util.Map} object
+	 * @param searchConfig a {@link fr.becpg.repo.search.impl.SearchConfig} object
+	 * @return a {@link fr.becpg.repo.search.AdvSearchQueryFilter} object
+	 */
+	default AdvSearchQueryFilter buildQueryFilter(QName datatype, Map<String, String> criteria, SearchConfig searchConfig) {
+		AdvSearchQueryFilter queryFilter = AdvSearchQueryFilter.empty();
+		queryFilter.setRequiresPostFiltering(isSearchFiltered(criteria));
+		return queryFilter;
+	}
+
+	/**
 	 * <p>getIgnoredFields.</p>
 	 *
 	 * @param datatype a {@link org.alfresco.service.namespace.QName} object.
