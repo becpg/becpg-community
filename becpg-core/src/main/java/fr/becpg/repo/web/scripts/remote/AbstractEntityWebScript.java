@@ -51,6 +51,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
@@ -132,7 +133,18 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	protected SystemConfigurationService systemConfigurationService;
 	
 	protected AdvSearchService advSearchService;
-	
+
+	protected SecurityService securityService;
+
+	/**
+	 * <p>Setter for the field <code>securityService</code>.</p>
+	 *
+	 * @param securityService a {@link fr.becpg.repo.security.SecurityService} object.
+	 */
+	public void setSecurityService(SecurityService securityService) {
+		this.securityService = securityService;
+	}
+
 	/**
 	 * <p>Setter for the field <code>advSearchService</code>.</p>
 	 *
