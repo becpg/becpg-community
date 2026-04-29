@@ -325,7 +325,8 @@
         configureDocumentReadOnlyActions: function(stepDOM) {
              stepDOM.classList.add("documents-read-only");
 
-            var hideSelectors = [".document-upload-new-version", ".document-delete", ".document-edit-properties"],
+            var hideSelectors = [".document-upload-new-version", ".document-delete", ".document-edit-properties", 
+                                 ".file-upload", ".create-content", ".onActionDelete", ".selected-items", ".onActionAddCommentClick"],
                 downloadActions = YAHOO.util.Selector.query(".document-download", stepDOM),
                 i,
                 j,
@@ -378,6 +379,13 @@
                             }
                             var datalists = response.json.datalists;
                             
+                            var accessMode = response.json.accessMode;
+                            if (accessMode === 1) { // READ_ACCESS
+                                step.valid = true;
+                                callback(true, datalists);
+                                return;
+                            }
+
                             // If enforceTask is enabled and no task assigned, make read-only
                             if (this.options.enforceTask && !me.taskAssigned) {
                                 step.valid = true;
