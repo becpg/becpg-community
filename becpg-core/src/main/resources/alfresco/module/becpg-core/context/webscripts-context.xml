@@ -271,6 +271,7 @@
 		<property name="remoteRateLimiter" ref="remoteRateLimiter" />
 		<property name="systemConfigurationService" ref="systemConfigurationService" />
 		<property name="advSearchService" ref="advSearchService" />
+		<property name="securityService" ref="securityService" />
 	</bean>
 
 
