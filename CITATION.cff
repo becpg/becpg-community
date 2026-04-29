@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use beCPG PLM in your research or project, please cite it as below."
+title: "beCPG PLM – Open Source Product Lifecycle Management"
+abstract: >
+  Open-source PLM platform built for the Food, Beverage, and Cosmetics industries.
+  Helps companies launch products faster, reduce compliance risk, and lower IT costs
+  by centralizing product data, formulation, quality, and regulatory workflows.
+type: software
+license: LGPL-3.0
+url: "https://www.becpg.net"
+repository-code: "https://github.com/becpg/becpg-community"
+keywords:
+  - PLM
+  - product lifecycle management
+  - food industry
+  - cosmetics
+  - formulation
+  - open source
+  - Java
+authors:
+  - name: "beCPG"
+    website: "https://www.becpg.net"
