@@ -369,11 +369,8 @@ public class AllergenHelper {
                 }
 
                 MLText othersLegalName = (MLText) mlNodeService.getProperty(category, PLMModel.PROP_ALLERGEN_INVOLUNTARY_OTHER_LEGAL_NAME);
-                if (othersLegalName == null) {
-                    continue;
-                }
+                String localized = MLTextHelper.getClosestValue(othersLegalName, locale);
 
-                String localized = othersLegalName.containsKey(locale) ? othersLegalName.get(locale) : null;
                 if ((localized == null) || localized.isBlank()) {
                     continue;
                 }

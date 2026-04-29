@@ -108,6 +108,7 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 
 			logger.debug("Processing tasks notifications");
 
+			Date currentDate = ProjectHelper.removeTime(new Date());
 			for (TaskListDataItem task : projectData.getTaskList()) {
 				if (TaskState.InProgress.equals(task.getTaskState())) {
 					Boolean notificationsAreEnabled = ((task.getInitialNotification() != null) && (task.getNotificationAuthorities() != null)
@@ -118,7 +119,6 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 						logger.debug("/*-- \tTask " + task.getTaskName() + "\t --*/");
 
 						Date firstNotificationDate = calculateFirstNotificationDate(task);
-						Date currentDate = ProjectHelper.removeTime(new Date());
 						Date nextNotification = calculateNextNotificationDate(task, firstNotificationDate);
 						if (nextNotification != null) {
 							String workflowTaskId = extractWorkflowTask(task);
