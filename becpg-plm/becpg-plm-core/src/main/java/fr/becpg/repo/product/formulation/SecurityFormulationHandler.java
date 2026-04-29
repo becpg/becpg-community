@@ -369,6 +369,9 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 					logger.debug("permissionModels to be applied: " + copyPermissions + " on node: " + nodeRef);
 				}
 				computePermissions(siteInfo, parentPermissions, specificPermissions, copyPermissions, toAdd, toRemove);
+				if (hasParentPermissions && (!toAdd.isEmpty() || !toRemove.isEmpty())) {
+					permissionService.setInheritParentPermissions(nodeRef, false);
+				}
 				for (Entry<String, String> entry : toAdd.entrySet()) {
 					String authority = entry.getKey();
 					String permission = entry.getValue();
@@ -385,9 +388,6 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 						logger.debug("clearing permission: " + authority + " on node: " + nodeRef);
 					}
 					permissionService.clearPermission(nodeRef, authority);
-				}
-				if (hasParentPermissions) {
-					permissionService.setInheritParentPermissions(nodeRef, false);
 				}
 			} else {
 				for (String authority : specificPermissions.keySet()) {
