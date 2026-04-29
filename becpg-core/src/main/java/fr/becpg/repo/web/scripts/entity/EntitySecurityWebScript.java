@@ -42,6 +42,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.security.filter.SecurityContextHelper;
 import fr.becpg.repo.web.scripts.remote.AbstractEntityWebScript;
 
@@ -140,11 +141,14 @@ public class EntitySecurityWebScript extends AbstractEntityWebScript {
 			// Get datalists validation status
 			JSONArray datalists = getEntityDataLists(entityNodeRef);
 
+			int accessMode = securityService.computeAccessMode(entityNodeRef, nodeService.getType(entityNodeRef), (String) null);
+
 			resp.setContentType("application/json");
 			resp.setContentEncoding("UTF-8");
 
 			JSONObject jsonResponse = new JSONObject();
 			jsonResponse.put("hasAssignedTask", hasAssignedTask);
+			jsonResponse.put("accessMode", accessMode);
 			jsonResponse.put("datalists", datalists);
 			resp.getWriter().write(jsonResponse.toString());
 

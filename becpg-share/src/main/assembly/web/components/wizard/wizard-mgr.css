@@ -21,7 +21,8 @@ div.wizard-comments {
 	  overflow: hidden;
 }
 
-.comments-list-readonly .comment-actions {
+.comments-list-readonly .comment-actions,
+.read-only .comments-list .comment-actions {
     display: none !important;
 }
 
@@ -29,11 +30,13 @@ div.wizard-comments {
     display: none !important;
 }
 
-.comments-list.read-only > div:first-child {
+.comments-list.read-only > div:first-child,
+.read-only .comments-list > div:first-child {
     display: none;
 }
 
-.comments-list.read-only .comments-list-actions .left {
+.comments-list.read-only .comments-list-actions .left,
+.read-only .comments-list .comments-list-actions .left {
     display: none;
 }
 
