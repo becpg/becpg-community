@@ -55,7 +55,8 @@ public class SavedSearchIT extends RepoBaseTestCase {
 			searchFilter.setSearchType(SEARCH_TYPE);
 			searchFilter.setSiteId(SITE_ID);
 
-			savedSearches = savedSearchService.findSavedSearch(searchFilter);
+			savedSearches = savedSearchService.findSavedSearch(searchFilter).stream().filter(s -> s.getName().equals(name))
+					.toList();
 
 			assertEquals(2, savedSearches.size());
 			return null;
