@@ -52,10 +52,11 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class PublicationServiceIT extends PLMBaseTestCase {
 
-	private static final String CHANNEL_ID = "test-channel";
-	private static final String CHANNEL_ID1 = "test-channel-1";
-	private static final String CHANNEL_ID2 = "test-channel-2";
-	private static final String CHANNEL_ID3 = "test-channel-3";
+	private static final String UNIQUE_SUFFIX = "-" + System.currentTimeMillis();
+	private static final String CHANNEL_ID = "test-channel" + UNIQUE_SUFFIX;
+	private static final String CHANNEL_ID1 = "test-channel-1" + UNIQUE_SUFFIX;
+	private static final String CHANNEL_ID2 = "test-channel-2" + UNIQUE_SUFFIX;
+	private static final String CHANNEL_ID3 = "test-channel-3" + UNIQUE_SUFFIX;
 
 	@Autowired
 	private PublicationChannelService publicationChannelService;
