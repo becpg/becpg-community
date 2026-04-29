@@ -8413,7 +8413,7 @@
                 <field-visibility>
                     <show id="bcpg:entityDataListState" force="true" />
                     <show id="bcpg:variantIds" force="true" />
-                    <show id="bcpg:depthLevel" />
+                    <show id="bcpg:depthLevel" force="true"/>
                     <show id="bcpg:allergenListAllergen" />
                     <show id="bcpg:allergenListQtyPerc" />
                     <show id="bcpg:allergenListVoluntary" />

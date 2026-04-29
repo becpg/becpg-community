@@ -85,9 +85,8 @@ if (beCPG.module.EntityDataGridRenderers) {
     });
 
 
-
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
-        propertyName: ["bcpg:ing_bcpg:ingListIng", "pjt:scoreCriterion_pjt:slScoreCriterion"],
+        propertyName: ["bcpg:ing_bcpg:ingListIng", "pjt:scoreCriterion_pjt:slScoreCriterion","bcpg:allergenListAllergen"],
         renderer: function(oRecord, data, label, scope, z, zz, elCell, oColumn) {
             var url = null;
             var toogleGroupButton = null;
