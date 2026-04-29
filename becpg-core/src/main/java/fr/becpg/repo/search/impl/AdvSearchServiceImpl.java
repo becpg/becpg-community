@@ -125,7 +125,9 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		SearchConfig searchConfig = getSearchConfig();
 
 		logger.debug("advSearch, dataType=" + datatype + ", \ncriteria=" + criteria + "\nplugins: " + Arrays.asList(advSearchPlugins));
-		if (isSearchFiltered(criteria) || (maxResults > RepoConsts.MAX_RESULTS_1000)) {
+		replaceIndexedAssocs(criteria);
+		boolean searchFiltered = isSearchFiltered(criteria);
+		if (searchFiltered || (maxResults > RepoConsts.MAX_RESULTS_1000)) {
 			maxResults = RepoConsts.MAX_RESULTS_UNLIMITED;
 		} else if (maxResults <= 0) {
 			maxResults = RepoConsts.MAX_RESULTS_1000;
@@ -138,8 +140,6 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 				ignoredFields.addAll(advSearchPlugin.getIgnoredFields(datatype, searchConfig));
 			}
 		}
-		
-		replaceIndexedAssocs(criteria);
 
 		addCriteriaMap(beCPGQueryBuilder, criteria, ignoredFields);
 
@@ -147,7 +147,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		watch.start();
 		List<NodeRef> nodes = beCPGQueryBuilder.maxResults(maxResults).ofType(datatype).inDBIfPossible().list();
 		watch.stop();
-		if (watch.getTotalTimeSeconds() > 5 && isSearchFiltered(criteria)) {
+		if (watch.getTotalTimeSeconds() > 5 && searchFiltered) {
 			logger.warn("Slow advSearch query for user " + AuthenticationUtil.getRunAsUser() + ", executed in " + watch.getTotalTimeSeconds() + " seconds. Consider indexing assocs: "
 					+ String.join(", ", criteria.keySet().stream().filter(k -> k.startsWith("assoc_"))
 							.filter(k -> criteria.get(k) != null && !criteria.get(k).isBlank()).toList()));
@@ -181,11 +181,13 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			Set<String> toRemove = new HashSet<>();
 			for (String key : criteria.keySet()) {
 				if (key.startsWith("assoc_")) {
-					QName assocQName = QName.createQName(key.replace("assoc_", "").replace("_added", "").replace("_", ":"), namespaceService);
+					String assocName = key.replace("assoc_", "").replace("_or_added", "").replace("_added", "").replace("_", ":");
+					QName assocQName = QName.createQName(assocName, namespaceService);
 					QName assocIndexQName = entityDictionaryService.getAssocIndexQName(assocQName);
 					if (assocIndexQName != null) {
 						String value = criteria.get(key);
-						String newKey = "prop_" + assocIndexQName.toPrefixString().replace(":", "_") + "_added";
+						String suffix = key.endsWith("_or_added") ? "_or_added" : "_added";
+						String newKey = "prop_" + assocIndexQName.toPrefixString().replace(":", "_") + suffix;
 						toAdd.put(newKey, value);
 						toRemove.add(key);
 					}
