@@ -98,7 +98,12 @@ public class VersionExporter extends AbstractExporter {
 			dbNodeService.setProperties(referenceNode, props);
 		} else {
 			// "copy" type and properties
-			dbNodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,  QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), nodeType, props);
+			referenceNode = dbNodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,  QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), nodeType, props)
+					.getChildRef();
+		}
+
+		if (!dbNodeService.hasAspect(referenceNode, BeCPGModel.ASPECT_ENTITY_HISTORY)) {
+			dbNodeService.addAspect(referenceNode, BeCPGModel.ASPECT_ENTITY_HISTORY, null);
 		}
 
 	}
