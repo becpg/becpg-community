@@ -339,45 +339,43 @@ public class AllergenHelper {
         Set<NodeRef> consumed = new LinkedHashSet<>();
         LinkedHashSet<String> rendered = new LinkedHashSet<>();
 
-        if ((voluntaryAllergens != null) && !voluntaryAllergens.isEmpty()) {
-            Set<NodeRef> candidateCategories = new LinkedHashSet<>();
-            for (NodeRef voluntary : voluntaryAllergens) {
-                List<NodeRef> children = associationService.getTargetAssocs(voluntary, PLMModel.ASSOC_ALLERGENSUBSETS);
-                if ((children != null) && !children.isEmpty()) {
-                    candidateCategories.add(voluntary);
-                }
-                List<NodeRef> parents = associationService.getSourcesAssocs(voluntary, PLMModel.ASSOC_ALLERGENSUBSETS);
-                if (parents != null) {
-                    candidateCategories.addAll(parents);
-                }
+        Set<NodeRef> candidateCategories = new LinkedHashSet<>();
+        for (NodeRef involuntary : involuntarySet) {
+            List<NodeRef> children = associationService.getTargetAssocs(involuntary, PLMModel.ASSOC_ALLERGENSUBSETS);
+            if ((children != null) && !children.isEmpty()) {
+                candidateCategories.add(involuntary);
+            }
+            List<NodeRef> parents = associationService.getSourcesAssocs(involuntary, PLMModel.ASSOC_ALLERGENSUBSETS);
+            if (parents != null) {
+                candidateCategories.addAll(parents);
+            }
+        }
+
+        for (NodeRef category : candidateCategories) {
+            List<NodeRef> children = associationService.getTargetAssocs(category, PLMModel.ASSOC_ALLERGENSUBSETS);
+            if ((children == null) || children.isEmpty()) {
+                continue;
             }
 
-            for (NodeRef category : candidateCategories) {
-                List<NodeRef> children = associationService.getTargetAssocs(category, PLMModel.ASSOC_ALLERGENSUBSETS);
-                if ((children == null) || children.isEmpty()) {
-                    continue;
+            Set<NodeRef> involuntaryChildren = new LinkedHashSet<>();
+            for (NodeRef child : children) {
+                if (involuntarySet.contains(child)) {
+                    involuntaryChildren.add(child);
                 }
-
-                Set<NodeRef> involuntaryChildren = new LinkedHashSet<>();
-                for (NodeRef child : children) {
-                    if (involuntarySet.contains(child)) {
-                        involuntaryChildren.add(child);
-                    }
-                }
-                if (involuntaryChildren.isEmpty()) {
-                    continue;
-                }
-
-                MLText othersLegalName = (MLText) mlNodeService.getProperty(category, PLMModel.PROP_ALLERGEN_INVOLUNTARY_OTHER_LEGAL_NAME);
-                String localized = MLTextHelper.getClosestValue(othersLegalName, locale);
-
-                if ((localized == null) || localized.isBlank()) {
-                    continue;
-                }
-
-                rendered.add(localized);
-                consumed.addAll(involuntaryChildren);
             }
+            if (involuntaryChildren.isEmpty()) {
+                continue;
+            }
+
+            MLText othersLegalName = (MLText) mlNodeService.getProperty(category, PLMModel.PROP_ALLERGEN_INVOLUNTARY_OTHER_LEGAL_NAME);
+            String localized = MLTextHelper.getClosestValue(othersLegalName, locale);
+
+            if ((localized == null) || localized.isBlank()) {
+                continue;
+            }
+
+            rendered.add(localized);
+            consumed.addAll(involuntaryChildren);
         }
 
         if (involuntaryAllergens == null) {
