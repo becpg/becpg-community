@@ -130,6 +130,7 @@
 		<property name="workflowService" ref="WorkflowService" />
 		<property name="workflowPackageComponent" ref="workflowPackageImpl" />
 		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="entityService" ref="entityService" />
 	</bean>
 
 	<bean id="webscript.fr.becpg.entity.entityDictionary.get" class="fr.becpg.repo.web.scripts.entity.EntityDictionaryWebScript" parent="webscript">

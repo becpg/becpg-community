@@ -136,11 +136,11 @@
                     htmlForm += '<div id="' + this.id + '-comment_' + question.id + '" class="decision-tree-comments hidden"></div>';
                     
                     // Closure to capture variables for async execution
-                    (function(questionId, choiceRef) {
+                    (function(questionId, choiceRef, isMandatory) {
                         me.afterFormInitStack.push(function() {
-                            me.insertComment(questionId, choiceRef);
+                            me.insertComment(questionId, choiceRef, isMandatory);
                         });
-                    })(question.id, commentChoice);
+                    })(question.id, commentChoice, question.mandatory);
                 }
 
                 if (question.lowerNote) {
@@ -710,7 +710,7 @@
 
                     // Handle comments
                     if (choice.comment) {
-                        this.insertComment(question.id, choice);
+                        this.insertComment(question.id, choice, true);
                         showComment = true;
                         this._updateCommentLabel(question.id, choice);
                     }
@@ -990,8 +990,9 @@
          * Insert comment input field
          * @param {String} questionId Question ID
          * @param {Object} choice Choice configuration
+         * @param {Boolean} mandatory Whether the comment is mandatory
          */
-        insertComment: function(questionId, choice) {
+        insertComment: function(questionId, choice, mandatory) {
             if (!choice) {
                 return;
             }
@@ -1011,7 +1012,7 @@
                 return;
             }
 
-            var htmlForm = this._buildCommentHTML(questionId, choice, inputId, labelId);
+            var htmlForm = this._buildCommentHTML(questionId, choice, inputId, labelId, mandatory);
             container.innerHTML = htmlForm;
         },
 
@@ -1021,18 +1022,20 @@
          * @param {Object} choice Choice configuration
          * @param {String} inputId Input element ID
          * @param {String} labelId Label element ID
+         * @param {Boolean} mandatory Whether the comment is mandatory
          * @return {String} HTML string
          * @private
          */
-        _buildCommentHTML: function(questionId, choice, inputId, labelId) {
+        _buildCommentHTML: function(questionId, choice, inputId, labelId, mandatory) {
             var htmlForm = "";
             var currentValue = this.getCurrentValueComment(questionId);
 
             // Add label if not hidden
             if (choice.label && choice.label !== "hidden") {
                 var labelText = this.msg("form.control.decision-tree." + this.options.prefix + "." + questionId + ".comment");
+                var mandatoryIndicator = mandatory ? '<span id="' + this.id + '-mandatory_' + questionId + '" class="mandatory-indicator" title="' + this._escapeHtml(this.msg("form.field.incomplete")) + '">*</span>' : "";
                 htmlForm += '<label id="' + labelId + '" for="' + inputId + '">' + 
-                           this._escapeHtml(labelText) + ':</label>';
+                           this._escapeHtml(labelText) + mandatoryIndicator + ':</label>';
             }
 
             var baseAttrs = 'data-choice-id="' + this._escapeHtml(choice.id) + '" ' +
@@ -1043,7 +1046,7 @@
             if (this.options.disabled) {
                 htmlForm += '<span ' + baseAttrs + '>' + this._escapeHtml(currentValue) + '</span>';
             } else {
-                htmlForm += this._buildCommentInputHTML(choice, baseAttrs, currentValue);
+                htmlForm += this._buildCommentInputHTML(choice, baseAttrs, currentValue, mandatory);
             }
 
             return htmlForm;
@@ -1054,11 +1057,17 @@
          * @param {Object} choice Choice configuration
          * @param {String} baseAttrs Base HTML attributes
          * @param {String} currentValue Current value
+         * @param {Boolean} mandatory Whether the comment is mandatory
          * @return {String} HTML string
          * @private
          */
-        _buildCommentInputHTML: function(choice, baseAttrs, currentValue) {
+        _buildCommentInputHTML: function(choice, baseAttrs, currentValue, mandatory) {
             var escapedValue = this._escapeHtml(currentValue);
+
+            // Add mandatory class if required
+            if (mandatory) {
+                baseAttrs = baseAttrs.replace('class="' + this.COMMENT_EVENTCLASS + '"', 'class="' + this.COMMENT_EVENTCLASS + ' mandatory"');
+            }
 
             if (choice.commentType === "textarea") {
                 return '<textarea ' + baseAttrs + '>' + escapedValue + '</textarea>';
