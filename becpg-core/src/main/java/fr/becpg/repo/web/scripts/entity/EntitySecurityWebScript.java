@@ -42,7 +42,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.security.SecurityService;
+import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.security.filter.SecurityContextHelper;
 import fr.becpg.repo.web.scripts.remote.AbstractEntityWebScript;
 
@@ -62,6 +62,8 @@ public class EntitySecurityWebScript extends AbstractEntityWebScript {
 
 	private EntityListDAO entityListDAO;
 
+	private EntityService entityService;
+
 	/**
 	 * <p>Setter for the field <code>entityListDAO</code>.</p>
 	 *
@@ -69,6 +71,15 @@ public class EntitySecurityWebScript extends AbstractEntityWebScript {
 	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
+	}
+
+	/**
+	 * <p>Setter for the field <code>entityService</code>.</p>
+	 *
+	 * @param entityService a {@link fr.becpg.repo.entity.EntityService} object.
+	 */
+	public void setEntityService(EntityService entityService) {
+		this.entityService = entityService;
 	}
 
 	private NodeRef resolveEntityNodeRef(WebScriptRequest req) {
@@ -112,7 +123,13 @@ public class EntitySecurityWebScript extends AbstractEntityWebScript {
 	/** {@inheritDoc} */
 	@Override
 	public void executeInternal(WebScriptRequest req, WebScriptResponse resp) throws IOException {
-		NodeRef entityNodeRef = resolveEntityNodeRef(req);
+		NodeRef nodeRef = resolveEntityNodeRef(req);
+		NodeRef entityNodeRef = entityService.getEntityNodeRef(nodeRef, nodeService.getType(nodeRef));
+
+		// Fallback to original nodeRef if entity not found
+		if (entityNodeRef == null) {
+			entityNodeRef = nodeRef;
+		}
 
 		try {
 			if (logger.isDebugEnabled()) {
