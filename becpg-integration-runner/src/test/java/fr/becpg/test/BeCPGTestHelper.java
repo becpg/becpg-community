@@ -97,12 +97,10 @@ public class BeCPGTestHelper {
 			ppOne.put(ContentModel.PROP_LASTNAME, "lastName-"+userName);
 			ppOne.put(ContentModel.PROP_EMAIL, userName+"@email.com");
 			ppOne.put(ContentModel.PROP_JOBTITLE, "jobTitle");
-			ppOne.put(fr.becpg.model.BeCPGModel.PROP_EMAIL_TASK_OBSERVER_DISABLED, true);
 
 			return RepoBaseTestCase.INSTANCE.personService.createPerson(ppOne);
 		} else {
 			NodeRef personRef = RepoBaseTestCase.INSTANCE.personService.getPerson(userName);
-			RepoBaseTestCase.INSTANCE.nodeService.setProperty(personRef, fr.becpg.model.BeCPGModel.PROP_EMAIL_TASK_OBSERVER_DISABLED, true);
 			return personRef;
 		}
 	}

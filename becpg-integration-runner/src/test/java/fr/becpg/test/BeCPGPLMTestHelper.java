@@ -117,16 +117,12 @@ public class BeCPGPLMTestHelper {
 				ppOne.put(ContentModel.PROP_LASTNAME, "lastName");
 				ppOne.put(ContentModel.PROP_EMAIL, "email@email.com");
 				ppOne.put(ContentModel.PROP_JOBTITLE, "jobTitle");
-				ppOne.put(fr.becpg.model.BeCPGModel.PROP_EMAIL_TASK_OBSERVER_DISABLED, true);
 				return PLMBaseTestCase.INSTANCE2.personService.createPerson(ppOne);
 			} else {
-				PLMBaseTestCase.INSTANCE2.nodeService.setProperty(userOne, fr.becpg.model.BeCPGModel.PROP_EMAIL_TASK_OBSERVER_DISABLED, true);
 				return userOne;
 			}
 		} else {
-			NodeRef personRef = PLMBaseTestCase.INSTANCE2.personService.getPerson(userName);
-			PLMBaseTestCase.INSTANCE2.nodeService.setProperty(personRef, fr.becpg.model.BeCPGModel.PROP_EMAIL_TASK_OBSERVER_DISABLED, true);
-			return personRef;
+			return PLMBaseTestCase.INSTANCE2.personService.getPerson(userName);
 		}
 
 	}
