@@ -314,15 +314,18 @@ public class ProjectHelper {
 	public static Date removeTime(Date date) {
 		if (date == null) {
 			return null;
-		} else {
-			Calendar cal = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
-			cal.setTime(date);
-			cal.set(Calendar.HOUR_OF_DAY, 0);
-			cal.set(Calendar.MINUTE, 0);
-			cal.set(Calendar.SECOND, 0);
-			cal.set(Calendar.MILLISECOND, 0);
-			return cal.getTime();
 		}
+
+		Calendar localCal = Calendar.getInstance();
+		localCal.setTime(date);
+
+		Calendar gmtCal = Calendar.getInstance(ProjectRepoConsts.PROJECT_TIMEZONE);
+		gmtCal.clear();
+		gmtCal.set(Calendar.YEAR, localCal.get(Calendar.YEAR));
+		gmtCal.set(Calendar.MONTH, localCal.get(Calendar.MONTH));
+		gmtCal.set(Calendar.DAY_OF_MONTH, localCal.get(Calendar.DAY_OF_MONTH));
+
+		return gmtCal.getTime();
 	}
 
 	/**
