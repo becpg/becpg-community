@@ -339,6 +339,26 @@ public class AllergenHelper {
         Set<NodeRef> consumed = new LinkedHashSet<>();
         LinkedHashSet<String> rendered = new LinkedHashSet<>();
 
+        Set<NodeRef> voluntarySet = new LinkedHashSet<>();
+        if (voluntaryAllergens != null) {
+            voluntarySet.addAll(voluntaryAllergens);
+        }
+
+        // Build set of voluntary categories: a category is voluntary if itself OR any of its children are in voluntarySet
+        Set<NodeRef> voluntaryCategories = new LinkedHashSet<>();
+        for (NodeRef voluntary : voluntarySet) {
+            // Add the voluntary allergen itself if it's a category (has children)
+            List<NodeRef> voluntaryChildren = associationService.getTargetAssocs(voluntary, PLMModel.ASSOC_ALLERGENSUBSETS);
+            if ((voluntaryChildren != null) && !voluntaryChildren.isEmpty()) {
+                voluntaryCategories.add(voluntary);
+            }
+            // Add all parents of the voluntary allergen
+            List<NodeRef> voluntaryParents = associationService.getSourcesAssocs(voluntary, PLMModel.ASSOC_ALLERGENSUBSETS);
+            if (voluntaryParents != null) {
+                voluntaryCategories.addAll(voluntaryParents);
+            }
+        }
+
         Set<NodeRef> candidateCategories = new LinkedHashSet<>();
         for (NodeRef involuntary : involuntarySet) {
             List<NodeRef> children = associationService.getTargetAssocs(involuntary, PLMModel.ASSOC_ALLERGENSUBSETS);
@@ -350,6 +370,9 @@ public class AllergenHelper {
                 candidateCategories.addAll(parents);
             }
         }
+
+        // Only keep categories that are declared as voluntary on the product
+        candidateCategories.retainAll(voluntaryCategories);
 
         for (NodeRef category : candidateCategories) {
             List<NodeRef> children = associationService.getTargetAssocs(category, PLMModel.ASSOC_ALLERGENSUBSETS);
