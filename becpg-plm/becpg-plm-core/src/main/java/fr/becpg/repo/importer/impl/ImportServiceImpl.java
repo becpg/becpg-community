@@ -328,7 +328,7 @@ public class ImportServiceImpl implements ImportService {
 
 		// set log, stackTrace and move file
 		if ((doNotMoveNode == null) || Boolean.FALSE.equals(doNotMoveNode)) {
-			moveImportedFile(importContext.getNodeRef(), hasFailed, log, allLog, true);
+			moveImportedFile(importContext.getNodeRef(), hasFailed, log, allLog);
 		} else {
 			writeLogInFileTitle(importContext.getNodeRef(), log, hasFailed);
 		}
@@ -337,7 +337,7 @@ public class ImportServiceImpl implements ImportService {
 
 	/** {@inheritDoc} */
 	@Override
-	public void moveImportedFile(final NodeRef nodeRef, final boolean hasFailed, final String titleLog, final String fileLog, boolean newTransaction) {
+	public void moveImportedFile(final NodeRef nodeRef, final boolean hasFailed, final String titleLog, final String fileLog) {
 
 		RetryingTransactionCallback<Object> actionCallback = () -> {
 			if (nodeService.exists(nodeRef)) {
@@ -389,7 +389,7 @@ public class ImportServiceImpl implements ImportService {
 
 			return null;
 		};
-		transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, newTransaction);
+		transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
 	}
 
 	/** {@inheritDoc} */

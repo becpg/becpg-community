@@ -113,8 +113,7 @@ public class BeCPGUserAccountService {
 			updateGroups(userAccount);
 
 			if (Boolean.TRUE.equals(userAccount.getGeneratePassword())) {
-				boolean shouldNotify = !Boolean.FALSE.equals(userAccount.getNotify());
-				generatePassword((String) nodeService.getProperty(personNodeRef, ContentModel.PROP_USERNAME), shouldNotify);
+				generatePassword((String) nodeService.getProperty(personNodeRef, ContentModel.PROP_USERNAME));
 			}
 			if (Boolean.TRUE.equals(userAccount.getDisable())) {
 				AuthorityHelper.disableAccount(userAccount.getUserName());
@@ -173,12 +172,12 @@ public class BeCPGUserAccountService {
 	 * @param username a {@link java.lang.String} object
 	 * @param notify a boolean
 	 */
-	public void generatePassword(String username, boolean notify) {
+	public void generatePassword(String username) {
 	    if (!personService.personExists(username)) {
 	        throw new UserAlreadyExistsException("user does not exist: " + username);
 	    }
 	    String newPassword = SecurePasswordGenerator.generatePassword();
-	    updatePassword(username, newPassword, notify);
+	    updatePassword(username, newPassword, true);
 	}
 
 	/**
