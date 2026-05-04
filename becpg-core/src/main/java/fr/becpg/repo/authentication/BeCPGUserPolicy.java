@@ -123,7 +123,7 @@ public class BeCPGUserPolicy extends AbstractBeCPGPolicy implements OnUpdateProp
 		if (KEY_GENERATE_PASSWORD.equals(key)) {
 			for (NodeRef pendingNode : pendingNodes) {
 				if (nodeService.exists(pendingNode)) {
-					beCPGUserAccountService.generatePassword((String) nodeService.getProperty(pendingNode, ContentModel.PROP_USERNAME), true);
+					beCPGUserAccountService.generatePassword((String) nodeService.getProperty(pendingNode, ContentModel.PROP_USERNAME));
 					nodeService.removeProperty(pendingNode, BeCPGModel.PROP_GENERATE_PASSWORD);
 				}
 			}

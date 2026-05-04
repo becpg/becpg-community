@@ -51,6 +51,7 @@ import fr.becpg.repo.authentication.BeCPGUserAccount;
 import fr.becpg.repo.authentication.BeCPGUserAccountService;
 import fr.becpg.repo.authentication.provider.IdentityServiceAccountProvider;
 import fr.becpg.repo.importer.user.UserImporterService;
+import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.test.BeCPGPLMTestHelper;
 import fr.becpg.test.PLMBaseTestCase;
 
@@ -180,6 +181,21 @@ public class UserImportServiceIT extends PLMBaseTestCase {
 	}
 
 	@Test
+	public void testImportUserShouldSendGeneratedPasswordMailRegardlessOfNotify() {
+		BeCPGMailService originalMailService = (BeCPGMailService) ReflectionTestUtils.getField(beCPGUserAccountService,
+				"beCPGMailService");
+		BeCPGMailService mockMailService = Mockito.mock(BeCPGMailService.class);
+		ReflectionTestUtils.setField(beCPGUserAccountService, "beCPGMailService", mockMailService);
+
+		try {
+			assertGeneratedPasswordMailSent(mockMailService, false);
+			assertGeneratedPasswordMailSent(mockMailService, true);
+		} finally {
+			ReflectionTestUtils.setField(beCPGUserAccountService, "beCPGMailService", originalMailService);
+		}
+	}
+
+	@Test
 	public void testImportUserShouldRenameUserNameToLowerCase() {
 		String originalUsername = QName.createValidLocalName(name.getMethodName() + "-User");
 		String lowerCaseUsername = originalUsername.toLowerCase();
@@ -305,6 +321,27 @@ public class UserImportServiceIT extends PLMBaseTestCase {
 				ReflectionTestUtils.setField(beCPGUserAccountService, "identityServiceAccountProvider", originalProvider);
 			}
 		}
+	}
+
+	private void assertGeneratedPasswordMailSent(BeCPGMailService mockMailService, boolean notify) {
+		String suffix = notify ? "generate-password-notify" : "generate-password-no-notify";
+		String username = buildUsername(suffix);
+		trackUserForCleanup(username);
+		createExistingUser(username, "ExistingFirst", "ExistingLast", "existing@test.com");
+
+		String csvContent = createCsvContent(
+				new String[] { "username", "cm:firstName", "cm:lastName", "cm:email", "should_generate_password", "notify" },
+				new String[] { username, "UpdatedFirst", "UpdatedLast", "updated@test.com", "true", String.valueOf(notify) });
+		NodeRef csv = inWriteTx(() -> createCsvImport(buildFileName(suffix, ".csv"), csvContent));
+
+		inWriteTx(() -> {
+			userImporterService.importUser(csv);
+			return null;
+		});
+
+		assertUserProperties(username, "UpdatedFirst", "UpdatedLast", "updated@test.com", false);
+		Mockito.verify(mockMailService).sendMailNewPassword(Mockito.any(NodeRef.class), Mockito.eq(username), Mockito.anyString());
+		Mockito.reset(mockMailService);
 	}
 
 	private NodeRef createExistingUser(String username, String firstName, String lastName, String email) {
