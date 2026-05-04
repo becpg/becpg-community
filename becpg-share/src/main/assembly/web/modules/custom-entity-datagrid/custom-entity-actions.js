@@ -45,7 +45,7 @@
 				nodeRefs.push(items[i].nodeRef);
 			}
 			
-			if (nodeRefs.length > 50) {
+			if (nodeRefs.length > 50 && !(this.allPages && this.queryExecutionId)) {
 				Alfresco.util.PopupManager.displayMessage({
 					text: this.msg("message.too.many.items", nodeRefs.length)
 				});
@@ -96,7 +96,7 @@
 					}
 				}
 				
-				if (nodeRefs.length > 50) {
+				if (nodeRefs.length > 50 && !(me.allPages && me.queryExecutionId)) {
 					Alfresco.util.PopupManager.displayMessage({
 						text: this.msg("message.too.many.items", nodeRefs.length)
 					});
@@ -235,7 +235,7 @@
 					});
 
 			
-			if (nodeRefs.length > 50) {
+			if (nodeRefs.length > 50 && !(me.allPages && me.queryExecutionId)) {
 				Alfresco.util.PopupManager.displayMessage({
 					text: this.msg("message.too.many.items", nodeRefs.length)
 				});
