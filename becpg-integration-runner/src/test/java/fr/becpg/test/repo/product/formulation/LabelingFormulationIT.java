@@ -1429,9 +1429,10 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 	        // No voluntary allergens, renderAllergens() should be empty
 	        checkILL(finishedProductNodeRef, labelingRuleList, "", Locale.FRANCE, "Rendu");
 
-	        // allergen1 and allergen2 are minor, but they should be grouped under "autres fruits a coque"
-	        checkILL(finishedProductNodeRef, labelingRuleList, "autres fruits a coque", Locale.FRANCE, "Rendu2");
-	        checkILL(finishedProductNodeRef, labelingRuleList, "autres fruits a coque", Locale.ENGLISH, "Rendu2");
+	        // allergen1 and allergen2 are Minor type, so they are not included in involuntary allergen list for labeling
+	        // (only Major allergens are displayed on labels)
+	        checkILL(finishedProductNodeRef, labelingRuleList, "", Locale.FRANCE, "Rendu2");
+	        checkILL(finishedProductNodeRef, labelingRuleList, "", Locale.ENGLISH, "Rendu2");
 	}
 
 
