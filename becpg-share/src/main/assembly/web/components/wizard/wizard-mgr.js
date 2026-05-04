@@ -83,8 +83,20 @@
                             validationInProgress = true;
                             var isValid = me.options.readOnly || step.readOnly ||
                                  step.form.validate(Alfresco.forms.Form.NOTIFICATION_LEVEL_CONTAINER);
-                            if(isValid && !(stepReadOnly)){
-                                 Dom.get(me.id + "-step-" + step.id + "-form-submit").click();
+                            if (isValid && !(stepReadOnly)) {
+                                Dom.get(me.id + "-step-" + step.id + "-form-submit").click();
+                            } else if (!isValid) {
+                                var formFields = Dom.get(me.id + "-step-" + step.id + "-form-fields");
+                                var invalidField = Dom.getElementsByClassName("invalid", null, formFields)[0] ||
+                                                   Dom.getElementsByClassName("mandatory", null, formFields)[0];
+                                if (invalidField) {
+                                    invalidField.scrollIntoView({ block: "center" });
+                                    setTimeout(function() {
+                                        if (YAHOO.lang.isFunction(invalidField.focus)) {
+                                            invalidField.focus();
+                                        }
+                                    }, 50);
+                                }
                             }
                             validationInProgress = false;
                             return isValid;
