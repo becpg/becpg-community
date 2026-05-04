@@ -119,7 +119,18 @@
             var me = this;
 
             if (question.choices) {
-                htmlForm += this._buildQuestionFieldset(question);
+                // Check if any choice has a mandatory comment with hidden label
+                var hasMandatoryHiddenComment = false;
+                if (question.mandatory) {
+                    for (var k = 0; k < question.choices.length; k++) {
+                        var ch = question.choices[k];
+                        if (ch.comment && ch.label === "hidden") {
+                            hasMandatoryHiddenComment = true;
+                            break;
+                        }
+                    }
+                }
+                htmlForm += this._buildQuestionFieldset(question, hasMandatoryHiddenComment);
                 
                 var commentChoice = null;
                 for (var j = 0; j < question.choices.length; j++) {
@@ -158,10 +169,11 @@
         /**
          * Build fieldset for question with metadata
          * @param {Object} question Question configuration
+         * @param {Boolean} hasHiddenComment Whether a hidden mandatory comment exists
          * @return {String} HTML string
          * @private
          */
-        _buildQuestionFieldset: function(question) {
+        _buildQuestionFieldset: function(question, hasHiddenComment) {
             var mandatoryClass = question.mandatory ? " mandatory" : "";
             var htmlForm = '<fieldset id="' + this.id + '-question_' + question.id + '" class="hidden' + mandatoryClass + '">';
             
@@ -172,8 +184,12 @@
             
             var mandatoryIndicator = question.mandatory ? '<span class="mandatory-indicator">*</span>' : "";
             
+            // Add separate indicator for hidden comment only if question itself is not already mandatory
+            // (avoids duplicate indicators on the same legend)
+            var hiddenCommentIndicator = (hasHiddenComment && !question.mandatory) ? '<span id="' + this.id + '-mandatory-comment_' + question.id + '" class="mandatory-indicator" title="' + this._escapeHtml(this.msg("form.field.incomplete")) + '">*</span>' : "";
+            
             htmlForm += '<legend title="' + this._escapeHtml(description) + '">' + 
-                       this._escapeHtml(legendTitle + label) + mandatoryIndicator + '</legend>';
+                       this._escapeHtml(legendTitle + label) + mandatoryIndicator + hiddenCommentIndicator + '</legend>';
 
             // Requirements
             if (question.requirements && question.requirements.length > 0) {
@@ -306,6 +322,8 @@
         _buildCheckboxesHTML: function(question, choice, listOption) {
             var htmlForm = "";
             var selectedValues = listOption ? listOption.split(",") : [];
+            var errorMsg = this._escapeHtml(this.msg("form.field.incomplete"));
+            var validationAttrs = question.mandatory ? 'title="' + errorMsg + '" alf-validation-msg="' + errorMsg + '" ' : '';
 
             for (var z = 0; z < choice.list.length; z++) {
                 var item = this._parseListItem(choice.list[z]);
@@ -317,6 +335,7 @@
                            'name="--group_' + this.id + question.id + '_' + choice.id + '" ' +
                            (this.options.disabled ? 'disabled ' : '') +
                            'tabindex="0" class="' + this.QUESTION_EVENTCLASS + '" ' +
+                           validationAttrs +
                            'value="' + this._escapeHtml(item.value) + '" ' +
                            (isSelected ? 'checked="checked" ' : '') + '/>' +
                            '<label for="' + checkboxId + '">' + this._escapeHtml(item.label) + '</label>' +
@@ -335,11 +354,14 @@
          * @private
          */
         _buildSelectHTML: function(question, choice, listOption) {
+            var errorMsg = this._escapeHtml(this.msg("form.field.incomplete"));
+            var validationAttrs = question.mandatory ? 'title="' + errorMsg + '" alf-validation-msg="' + errorMsg + '" ' : '';
             var htmlForm = '<select ' +
                           (choice.multiple ? 'multiple="multiple" ' : '') +
                           (this.options.disabled ? 'disabled ' : '') +
                           'tabindex="0" id="' + this.id + '-select_' + question.id + '_' + choice.id + '" ' +
                           'class="' + this.LIST_EVENTCLASS + '" ' +
+                          validationAttrs +
                           'name="--group_' + this.id + question.id + '_' + choice.id + '">';
 
             var selectedValues = choice.multiple ? (listOption || "").split(",") : [listOption];
@@ -369,11 +391,14 @@
             var msgKey = choice.id === "-" ? "form.control.decision-tree.empty" : 
                         "form.control.decision-tree." + this.options.prefix + "." + question.id + "." + choice.id;
             var label = choice.label || this.msg(msgKey);
+            var errorMsg = this._escapeHtml(this.msg("form.field.incomplete"));
+            var validationAttrs = question.mandatory ? 'title="' + errorMsg + '" alf-validation-msg="' + errorMsg + '" ' : '';
 
             return '<p class="form-field">' +
                    '<input ' + (this.options.disabled ? 'disabled ' : '') +
                    'tabindex="0" id="' + this.id + '-choice_' + question.id + '_' + choice.id + '" ' +
                    'class="' + this.QUESTION_EVENTCLASS + '" ' +
+                   validationAttrs +
                    'name="--group_' + this.id + question.id + '" type="radio" ' +
                    (checked ? 'checked="checked" ' : '') + '/>' +
                    '<label for="' + this.id + '-choice_' + question.id + '_' + choice.id + '">' +
@@ -607,6 +632,11 @@
                 this.id.indexOf(args[1].runtime.formId.replace("-form", "")) > -1) {
                 
                 this.formRuntime = args[1].runtime;
+                var originalValidate = this.formRuntime.validate.bind(this.formRuntime);
+                this.formRuntime.validate = function() {
+                    this._setAllFieldsAsVisited();
+                    return originalValidate.apply(this, arguments);
+                };
             }
             this.toggleVisible();
         },
@@ -682,8 +712,6 @@
 
             for (var j = 0; j < question.choices.length; j++) {
                 var choice = question.choices[j];
-                
-                this._handleValidation(question, choice);
 
                 var choiceData = this._getChoiceData(question, choice);
                 if (choiceData.isSelected) {
@@ -710,11 +738,14 @@
 
                     // Handle comments
                     if (choice.comment) {
-                        this.insertComment(question.id, choice, true);
+                        this.insertComment(question.id, choice, question.mandatory);
                         showComment = true;
                         this._updateCommentLabel(question.id, choice);
                     }
                 }
+
+                // Add validation after comment is inserted (so field exists in DOM)
+                this._handleValidation(question, choice);
             }
 
             this._handleCommentVisibility(question.id, showComment, result);
@@ -1063,10 +1094,12 @@
          */
         _buildCommentInputHTML: function(choice, baseAttrs, currentValue, mandatory) {
             var escapedValue = this._escapeHtml(currentValue);
+            var errorMsg = this._escapeHtml(this.msg("form.field.incomplete"));
 
-            // Add mandatory class if required
+            // Add mandatory class and validation attributes if required
             if (mandatory) {
-                baseAttrs = baseAttrs.replace('class="' + this.COMMENT_EVENTCLASS + '"', 'class="' + this.COMMENT_EVENTCLASS + ' mandatory"');
+                baseAttrs = baseAttrs.replace('class="' + this.COMMENT_EVENTCLASS + '" ', 'class="' + this.COMMENT_EVENTCLASS + ' mandatory" ');
+                baseAttrs += ' title="' + errorMsg + '" alf-validation-msg="' + errorMsg + '"';
             }
 
             if (choice.commentType === "textarea") {

@@ -17,7 +17,7 @@ function main() {
 	}
 	result = JSON.parse(result);
 
-    model.currentValue=result.data.toString();
+    model.currentValue=JSON.stringify(result.data);
 
     //Ensure question are in a correct order
 	var sorted  = result.def.sort(function compare(a, b) {
