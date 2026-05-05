@@ -675,7 +675,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 
 		if (Objects.equals(folderName, RepoConsts.PATH_CODES)) {
-			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/gs1/gs1_codes_11_2024.csv");
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/gs1/gs1_codes.csv");
 		}
 	}
 
