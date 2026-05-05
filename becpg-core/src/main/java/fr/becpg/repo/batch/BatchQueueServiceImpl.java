@@ -302,7 +302,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		@Override
 		public void run() {
 			
-			pushAndSetBatchAuthentication(null);
+			pushAndSetBatchAuthentication();
 
 			if (runningCommand.get() != null) {
 				if (runningCommand.get().getBatchInfo().getPriority() < this.getBatchInfo().getPriority()) {
