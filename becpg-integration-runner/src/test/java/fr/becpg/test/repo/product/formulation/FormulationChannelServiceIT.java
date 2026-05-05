@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -423,6 +424,47 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		});
 		assertChannelListStatus(rawMaterialNodeRef, PublicationChannelStatus.FAILED.toString(), "1", "Simulated formulation error",
 				PublicationChannelAction.RETRY.toString());
+	}
+
+	@Test
+	public void testRetryActionClearsBatchErrorBeforeFormulation() throws InterruptedException {
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("RM retry formulation test");
+			rawMaterial.setParentNodeRef(getTestFolderNodeRef());
+			return alfrescoRepository.save(rawMaterial).getNodeRef();
+		});
+
+		inWriteTx(() -> {
+			NodeRef channelListNodeRef = publicationChannelService.getOrCreateChannelListNodeRef(rawMaterialNodeRef,
+					FormulationChannelService.FORMULATE_ENTITIES_CHANNEL_ID);
+			List<String> batchErrorIds = new ArrayList<>();
+			batchErrorIds.add("reformulateChangedEntities|becpg.batch.formulation.channel.formulateEntities");
+			nodeService.setProperty(rawMaterialNodeRef, BeCPGModel.PROP_BATCH_ERROR_IDS, (Serializable) batchErrorIds);
+			nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ACTION,
+					PublicationChannelAction.RETRY.toString());
+			return null;
+		});
+
+		NodeRef channelNodeRef = inReadTx(() -> publicationChannelService.getChannelById(FormulationChannelService.FORMULATE_ENTITIES_CHANNEL_ID));
+		inWriteTx(() -> {
+			nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHID, "0");
+			return null;
+		});
+		mockChannelEntities(List.of(rawMaterialNodeRef));
+
+		BatchInfo batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
+		waitForBatchEnd(batchInfo);
+
+		assertIsPublished(rawMaterialNodeRef);
+		assertChannelListStatus(rawMaterialNodeRef, PublicationChannelStatus.COMPLETED.toString(), "1", null, null);
+		inReadTx(() -> {
+			@SuppressWarnings("unchecked")
+			List<String> errorIds = (List<String>) nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_BATCH_ERROR_IDS);
+			assertTrue(errorIds == null || !errorIds.contains("reformulateChangedEntities|becpg.batch.formulation.channel.formulateEntities"));
+			assertNotNull(nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_FORMULATED_DATE));
+			return null;
+		});
 	}
 
 	/**
