@@ -1,3 +1,3 @@
 <#list activityLog as log>
-     ${log} <br/>
+     ${log?html} <br/>
 </#list>
