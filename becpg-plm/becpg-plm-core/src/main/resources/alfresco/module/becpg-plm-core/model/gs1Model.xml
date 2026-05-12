@@ -940,7 +940,7 @@
 	<types>
 
 		<type name="gs1:targetMarket">
-			<parent>bcpg:entityListItem</parent>
+			<parent>bcpg:charact</parent>
 			<properties>
 				<property name="gs1:targetMarketCode">
 					<type>d:text</type>
