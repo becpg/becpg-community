@@ -93,8 +93,7 @@ public class UpdateEntityWebScript extends AbstractEntityWebScript {
 		}
 		logger.debug("Update entity: " + entityNodeRef);
 		RemoteEntityFormat format = getFormat(req);
-		NodeRef newNodeRef = remoteEntityService.createOrUpdateEntity(entityNodeRef, req.getContent().getInputStream(), new RemoteParams(format),
-				getEntityProviderCallback(req));
+		NodeRef newNodeRef = remoteEntityService.createOrUpdateEntity(entityNodeRef, req.getContent().getInputStream(), new RemoteParams(format));
 		sendOKStatus(newNodeRef, resp, format);
 
 	}

@@ -54,7 +54,6 @@ import org.springframework.util.StopWatch;
 import org.xml.sax.SAXException;
 
 import fr.becpg.common.BeCPGException;
-import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteParams;
@@ -180,7 +179,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	/** {@inheritDoc} */
 	@Override
-	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, RemoteParams params, EntityProviderCallBack entityProviderCallBack) {
+	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, RemoteParams params) {
 		RemoteEntityFormat format = params.getFormat();
 		if (RemoteEntityFormat.xml.equals(format) || RemoteEntityFormat.json.equals(format)) {
 
@@ -190,7 +189,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 				Map<NodeRef, NodeRef> cache = new HashMap<>();
 
-				rets.add(internalCreateOrUpdateEntity(entityNodeRef, null, in, params, entityProviderCallBack, cache));
+				rets.add(internalCreateOrUpdateEntity(entityNodeRef, null, in, params, cache));
 
 			}, false, false);
 
@@ -207,8 +206,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	/** {@inheritDoc} */
 	@Override
-	public NodeRef internalCreateOrUpdateEntity(NodeRef entityNodeRef, NodeRef destNodeRef, InputStream in, RemoteParams params,
-			EntityProviderCallBack entityProviderCallBack, Map<NodeRef, NodeRef> cache) {
+	public NodeRef internalCreateOrUpdateEntity(NodeRef entityNodeRef, NodeRef destNodeRef, InputStream in, RemoteParams params, Map<NodeRef, NodeRef> cache) {
 
 		RemoteEntityFormat format = params.getFormat();
 
@@ -228,7 +226,6 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 					return jsonEntityVisitor.visit(entityNodeRef, in);
 				} else {
 					ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(remoteServiceRegisty);
-					xmlEntityVisitor.setEntityProviderCallBack(entityProviderCallBack);
 
 					return xmlEntityVisitor.visit(entityNodeRef, destNodeRef, in);
 
