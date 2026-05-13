@@ -218,7 +218,7 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 								try (InputStream in = reader.getContentInputStream()) {
 
 									IntegrityChecker.setWarnInTransaction();
-									remoteEntityService.createOrUpdateEntity(entityNodeRef, in, new RemoteParams(RemoteEntityFormat.xml), null);
+									remoteEntityService.createOrUpdateEntity(entityNodeRef, in, new RemoteParams(RemoteEntityFormat.xml));
 								} catch (IOException e) {
 									logger.error(e, e);
 								}
