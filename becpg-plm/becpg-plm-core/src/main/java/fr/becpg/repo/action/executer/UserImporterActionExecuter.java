@@ -47,7 +47,8 @@ public class UserImporterActionExecuter extends ActionExecuterAbstractBase {
 	/** Constant <code>NAME="import-user"</code> */
 	public static final String NAME = "import-user";
 	/** Constant <code>PARAM_VALUE_EXTENSION=".csv"</code> */
-	public static final String PARAM_VALUE_EXTENSION = ".csv";
+	public static final String PARAM_CSV_EXTENSION = ".csv";
+	public static final String PARAM_XLSX_EXTENSION = ".xlsx";
 	
 	private static final String LOG_STARTING_DATE = "Starting date: ";	
 	private static final String LOG_ENDING_DATE = "Ending date: ";	
