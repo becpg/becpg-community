@@ -1329,6 +1329,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	private void deleteNodeRef(final NodeRef originalNodeRef) {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
+			IntegrityChecker.setWarnInTransaction();
+			
 			dbNodeService.addAspect(originalNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 			
 			List<NodeRef> links = getFileLinks(originalNodeRef);
