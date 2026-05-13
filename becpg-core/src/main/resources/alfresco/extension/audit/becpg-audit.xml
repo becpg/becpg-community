@@ -46,6 +46,14 @@
        <PathMap source="/becpg/audit/report/format" target="/beCPGReportAudit/report/format"/>
        <PathMap source="/becpg/audit/report/name" target="/beCPGReportAudit/report/name"/>
        <PathMap source="/becpg/audit/report/datasourceSize" target="/beCPGReportAudit/report/datasourceSize"/>
+       <PathMap source="/becpg/audit/exportSearch/startedAt" target="/beCPGExportSearchAudit/exportSearch/startedAt"/>
+       <PathMap source="/becpg/audit/exportSearch/completedAt" target="/beCPGExportSearchAudit/exportSearch/completedAt"/>
+       <PathMap source="/becpg/audit/exportSearch/filename" target="/beCPGExportSearchAudit/exportSearch/filename"/>
+       <PathMap source="/becpg/audit/exportSearch/username" target="/beCPGExportSearchAudit/exportSearch/username"/>
+       <PathMap source="/becpg/audit/exportSearch/duration" target="/beCPGExportSearchAudit/exportSearch/duration"/>
+       <PathMap source="/becpg/audit/exportSearch/template" target="/beCPGExportSearchAudit/exportSearch/template"/>
+       <PathMap source="/becpg/audit/exportSearch/resultsSize" target="/beCPGExportSearchAudit/exportSearch/resultsSize"/>
+       <PathMap source="/becpg/audit/exportSearch/async" target="/beCPGExportSearchAudit/exportSearch/async"/>
     </PathMappings>
 
     <Application name="beCPGBatchAudit" key="beCPGBatchAudit">
@@ -158,6 +166,34 @@
         	<AuditPath key="datasourceSize">
 	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGReportAudit/report/datasourceSize"/>
 	        </AuditPath>
+        </AuditPath>
+    </Application>
+    <Application name="beCPGExportSearchAudit" key="beCPGExportSearchAudit">
+        <AuditPath key="exportSearch">
+        	<AuditPath key="startedAt">
+                <RecordValue key="value" dataExtractor="simpleValue" dataSource="/beCPGExportSearchAudit/exportSearch/startedAt"/>
+            </AuditPath>
+        	<AuditPath key="completedAt">
+                <RecordValue key="value" dataExtractor="simpleValue" dataSource="/beCPGExportSearchAudit/exportSearch/completedAt"/>
+            </AuditPath>
+        	<AuditPath key="duration">
+                <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGExportSearchAudit/exportSearch/duration"/>
+            </AuditPath>
+        	<AuditPath key="filename">
+                <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGExportSearchAudit/exportSearch/filename"/>
+            </AuditPath>
+        	<AuditPath key="username">
+                <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGExportSearchAudit/exportSearch/username"/>
+            </AuditPath>
+        	<AuditPath key="template">
+                <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGExportSearchAudit/exportSearch/template"/>
+            </AuditPath>
+        	<AuditPath key="resultsSize">
+                <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGExportSearchAudit/exportSearch/resultsSize"/>
+            </AuditPath>
+        	<AuditPath key="async">
+                <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGExportSearchAudit/exportSearch/async"/>
+            </AuditPath>
         </AuditPath>
     </Application>
 

@@ -43,6 +43,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.xml.sax.SAXException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -738,6 +739,11 @@ public class ImportServiceImpl implements ImportService {
 		ContentReader reader = contentService.getReader(mappingNodeRef, ContentModel.PROP_CONTENT);
 		try (InputStream is = reader.getContentInputStream()) {
 			SAXReader saxReader = new SAXReader();
+			try {
+				saxReader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+			} catch (SAXException e) {
+				logger.error(e.getMessage(), e);
+			}
 			Document doc = saxReader.read(is);
 			mappingElt = doc.getRootElement();
 		} catch (DocumentException e) {

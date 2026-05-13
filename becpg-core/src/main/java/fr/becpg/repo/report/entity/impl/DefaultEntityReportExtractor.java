@@ -910,10 +910,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					&& entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)
 					&& context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_DATALIST_IMAGE, Boolean.FALSE)) {
 				String imgId = String.format(DATALIST_IMG_ID, nodeRef.getId());
-				if (!context.getExtractedImages().contains(nodeRef)) {
-					context.getExtractedImages().add(nodeRef);
-					extractImage(nodeRef, imgId, nodeElt, context);
-				}
+				extractImage(nodeRef, imgId, nodeElt, context);
 			}
 
 			// do not display system properties
@@ -1411,10 +1408,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				List<AssociationRef> avatorAssocs = nodeService.getTargetAssocs(creatorNodeRef, ContentModel.ASSOC_AVATAR);
 				if (!avatorAssocs.isEmpty()) {
 					NodeRef avatarNodeRef = avatorAssocs.get(0).getTargetRef();
-					if (!context.getExtractedImages().contains(avatarNodeRef)) {
-						context.getExtractedImages().add(avatarNodeRef);
-						extractImage(creatorNodeRef, avatarNodeRef, AVATAR_IMG_ID, imgsElt, context, null);
-					}
+					extractImage(creatorNodeRef, avatarNodeRef, AVATAR_IMG_ID, imgsElt, context, null);
 				}
 			}
 		}

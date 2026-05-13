@@ -86,6 +86,7 @@
 		<property name="namespaceService" ref="NamespaceService" />
 		<property name="reportTplService" ref="reportTplService" />
 		<property name="nodeService" ref="nodeService"/>
+		<property name="beCPGAuditService" ref="beCPGAuditService"/>
 	</bean>
 	
 	<bean id="webscript.fr.becpg.report.reportTpls.get" class="fr.becpg.repo.web.scripts.report.ReportTplsWebScript" parent="webscript">

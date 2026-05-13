@@ -450,6 +450,10 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 	@Override
 	public PagingResults<NodeRef> getEntitiesByChannel(NodeRef channelNodeRef, PagingRequest pagingRequest) {
 
+		if (channelNodeRef == null) {
+			return new EmptyPagingResults<>();
+		}
+
 		String action = (String) nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_ACTION);
 		Date lastDate = (Date) nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_LASTDATE);
 		String channelId = (String) nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_ID);

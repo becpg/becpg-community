@@ -243,6 +243,12 @@ public class FormulationChannelService implements BatchQueuePlugin {
 		}
 		
 		NodeRef channelNodeRef = publicationChannelService.getChannelById(FORMULATE_ENTITIES_CHANNEL_ID);
+		if (channelNodeRef == null) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Publication channel not found: " + FORMULATE_ENTITIES_CHANNEL_ID);
+			}
+			return null;
+		}
 		Integer newBatchId = 1;
 		String lastBatchId = (String) nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHID);
 		if (lastBatchId != null) {
