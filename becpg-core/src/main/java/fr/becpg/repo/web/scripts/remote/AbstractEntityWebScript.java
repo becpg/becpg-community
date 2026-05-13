@@ -52,11 +52,9 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.security.SecurityService;
-import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteRateLimiter;
-import fr.becpg.repo.entity.remote.impl.HttpEntityProviderCallback;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.system.SystemConfigurationService;
@@ -98,17 +96,6 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	protected static final String PARAM_LISTS = "lists";
 	/** Constant <code>PARAM_EXCLUDE_SYSTEMS="excludeSystems"</code> */
 	protected static final String PARAM_EXCLUDE_SYSTEMS = "excludeSystems";
-
-	/** http://localhost:8080/alfresco/services/becpg/remote/entity **/
-	protected static final String PARAM_CALLBACK = "callback";
-
-	/**
-	 * Callback auth admin:becpg
-	 */
-	protected static final String PARAM_CALLBACK_USER = "callbackUser";
-
-	/** Constant <code>PARAM_CALLBACK_PASSWORD="callbackPassword"</code> */
-	protected static final String PARAM_CALLBACK_PASSWORD = "callbackPassword";
 
 	/** Constant <code>PARAM_MAX_RESULTS="maxResults"</code> */
 	protected static final String PARAM_MAX_RESULTS = "maxResults";
@@ -455,25 +442,6 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				resp.getWriter().write(entityNodeRef.toString());
 			}
 		}
-	}
-
-	/**
-	 * <p>getEntityProviderCallback.</p>
-	 *
-	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
-	 * @return a {@link fr.becpg.repo.entity.remote.EntityProviderCallBack} object.
-	 */
-	protected EntityProviderCallBack getEntityProviderCallback(WebScriptRequest req) {
-
-		String callBack = req.getParameter(PARAM_CALLBACK);
-		String user = req.getParameter(PARAM_CALLBACK_USER) != null ? req.getParameter(PARAM_CALLBACK_USER) : "admin";
-		String password = req.getParameter(PARAM_CALLBACK_PASSWORD) != null ? req.getParameter(PARAM_CALLBACK_PASSWORD) : "becpg";
-
-		if ((callBack != null) && (!callBack.isBlank())) {
-			return new HttpEntityProviderCallback(callBack, user, password, remoteEntityService);
-		}
-		logger.debug("No callback param provided");
-		return null;
 	}
 
 	/**
