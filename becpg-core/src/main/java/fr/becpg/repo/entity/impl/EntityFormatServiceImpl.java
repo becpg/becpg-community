@@ -170,9 +170,9 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		if (entityJson != null) {
 			ByteArrayInputStream in = new ByteArrayInputStream(entityJson.getBytes());
 			if (EntityFormat.JSON.toString().equals(currentFormat)) {
-				remoteEntityService.createOrUpdateEntity(entityNodeRef, in,  new RemoteParams(RemoteEntityFormat.json), null);
+				remoteEntityService.createOrUpdateEntity(entityNodeRef, in, new RemoteParams(RemoteEntityFormat.json));
 			} else if (EntityFormat.XML.toString().equals(currentFormat)) {
-				remoteEntityService.createOrUpdateEntity(entityNodeRef, in,  new RemoteParams(RemoteEntityFormat.xml), null);
+				remoteEntityService.createOrUpdateEntity(entityNodeRef, in, new RemoteParams(RemoteEntityFormat.xml));
 			}
 		}
 		
@@ -200,7 +200,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 			}
 
 			ByteArrayInputStream in = new ByteArrayInputStream(root.toString().getBytes());
-			remoteEntityService.createOrUpdateEntity(entityNodeRef, in, new RemoteParams(RemoteEntityFormat.json), null);
+			remoteEntityService.createOrUpdateEntity(entityNodeRef, in, new RemoteParams(RemoteEntityFormat.json));
 		} catch (JSONException e) {
 			logger.error("Failed to parse JSON", e);
 		}
