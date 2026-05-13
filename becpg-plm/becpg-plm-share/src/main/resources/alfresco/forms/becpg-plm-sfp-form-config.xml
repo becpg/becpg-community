@@ -81,9 +81,6 @@
 					<show for-mode="view" force="false" id="bcpg:nutrientProfilingDetails" />
 					<show force="false" id="bcpg:nutrientProfileCategory" />
 					<show force="false" id="bcpg:nutrientProfileVersion" />
-					<show force="true" id="ghs:sdsStandardCode" />
-					<show force="true" id="ghs:sdsSheetNumber" />
-					<show force="true" id="ghs:sdsSheetEffectiveDate" />
 					<show force="false" id="ghs:sdsStandardCode" />
 					<show force="false" id="ghs:sdsSheetNumber" />
 					<show force="false" id="ghs:sdsSheetEffectiveDate" />
