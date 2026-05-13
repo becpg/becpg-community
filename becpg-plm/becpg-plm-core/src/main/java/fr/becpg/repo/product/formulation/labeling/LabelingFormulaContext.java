@@ -453,6 +453,18 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	private static final String HTML_BREAK_LINE = "<br/>";
 
+	/**
+	 * Default format for ingredients in labeling text.
+	 * Available indices:
+	 * <ul>
+	 * <li>{0}: Legal name</li>
+	 * <li>{1}: Qty Percentage</li>
+	 * <li>{2}: Detailed sub-ingredients</li>
+	 * <li>{3}: Geographical Origins (LAST_PROCESSING)</li>
+	 * <li>{4}: Bio Origins</li>
+	 * <li>{5}: Additional Information</li>
+	 * </ul>
+	 */
 	private String ingDefaultFormat = "{0} [{3}]";
 	private String groupDefaultFormat = "<b>{0}:</b> {2}";
 	private String groupListDefaultFormat = "<b>{0}</b>";
@@ -465,6 +477,20 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	private String allergenDetailsFormat = "{0} ({2})";
 	private String allergenReplacementPattern = "<b>$1</b>";
+
+	/**
+	 * Default format for HTML table rows in labeling.
+	 * Available indices:
+	 * <ul>
+	 * <li>{0}: Label (Ingredient name)</li>
+	 * <li>{1}: Qty Percentage</li>
+	 * <li>{2}: Geographical Origins (LAST_PROCESSING)</li>
+	 * <li>{3}: Bio Origins</li>
+	 * <li>{4}: Qty Percentage with Yield</li>
+	 * <li>{5}: Other Geographical Origins (EMPTY)</li>
+	 * <li>{6}: Additional Information</li>
+	 * </ul>
+	 */
 	private String htmlTableRowFormat = """
 			<tr><td style="border: solid 1px; padding: 5px;" >{0}</td>\
 			<td style="border: solid 1px;padding: 5px;" >{2}</td>\
@@ -484,6 +510,19 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			<td style="border: solid 1px;padding: 5px;text-align:center;"><b>{1,number,0.#%}</b></td>\
 			<td style="border: solid 1px;padding: 5px;"></td></tr></tfoot>""";
 
+	/**
+	 * Default format for flat HTML table rows in labeling.
+	 * Available indices:
+	 * <ul>
+	 * <li>{0}: Label (Ingredient name)</li>
+	 * <li>{1}: Qty Percentage</li>
+	 * <li>{2}: Geographical Origins (LAST_PROCESSING)</li>
+	 * <li>{3}: Bio Origins</li>
+	 * <li>{4}: Qty Percentage with Yield</li>
+	 * <li>{5}: Other Geographical Origins (EMPTY)</li>
+	 * <li>{6}: Additional Information</li>
+	 * </ul>
+	 */
 	private String htmlFlatTableRowFormat = """
 			<tr><td style="border: solid 1px; padding: 5px;" >{0}</td>\
 			<td style="border: solid 1px;padding: 5px;" >{2}</td>\
