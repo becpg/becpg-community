@@ -36,7 +36,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 					<value>override:/System/Lists/bcpg:entityLists/PackagingTypeCodes</value>
 				</list>
 			</parameter>
@@ -52,7 +52,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="constraintFilter">
@@ -67,7 +67,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 					<value>override:/System/Lists/bcpg:entityLists/PalletTypeCodes</value>
 				</list>
 			</parameter>
@@ -83,7 +83,7 @@
         <constraint name="gs1:platformTermsAndConditionsCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
                     <value>override:/System/Lists/bcpg:entityLists/PlatformTermsAndConditionsCodes</value>
 				</list>
 			</parameter>
@@ -121,7 +121,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="constraintFilter">
@@ -136,7 +136,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="constraintFilter">
@@ -151,7 +151,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="constraintFilter">
@@ -167,7 +167,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="constraintFilter">
@@ -183,7 +183,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
                     <value>override:/System/Lists/bcpg:entityLists/TradeItemTradeChannel</value>
 				</list>
 			</parameter>
@@ -209,7 +209,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="constraintFilter">
@@ -224,7 +224,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="constraintFilter">
@@ -239,7 +239,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
                     <value>override:/System/Lists/bcpg:entityLists/DataCarrierTypeCode</value>
 				</list>
 			</parameter>
@@ -255,7 +255,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
                     <value>override:/System/Lists/bcpg:entityLists/TradeItemUnitDescriptorCode</value>
 				</list>
 			</parameter>
@@ -271,7 +271,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
                     <value>override:/System/Lists/bcpg:entityLists/PackagingRecyclingSchemeCode</value>
 				</list>
 			</parameter>
@@ -287,7 +287,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
                     <value>override:/System/Lists/bcpg:entityLists/PackagingTermsAndConditionsCode</value>
 				</list>
 			</parameter>
@@ -303,7 +303,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
                     <value>override:/System/Lists/bcpg:entityLists/HandlingInstructions</value>
 				</list>
 			</parameter>
@@ -319,7 +319,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
                     <value>override:/System/Lists/bcpg:entityLists/PreparationType</value>
 				</list>
 			</parameter>
@@ -336,7 +336,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -351,7 +351,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -366,7 +366,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -382,7 +382,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -397,7 +397,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -413,7 +413,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -429,7 +429,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -445,7 +445,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -470,7 +470,7 @@
 		<constraint name="gs1:catchMethodCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 		    <parameter name="path">
 		        <list>
-		            <value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+		            <value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
                     <value>override:/System/Lists/bcpg:entityLists/CatchMethodCodes</value>
 		        </list>
 		    </parameter>
@@ -486,7 +486,7 @@
 		<constraint name="gs1:catchAreaCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 		    <parameter name="path">
 		        <list>
-		            <value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+		            <value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
                     <value>override:/System/Lists/bcpg:entityLists/CatchAreaCodes</value>
 		        </list>
 		    </parameter>
@@ -536,7 +536,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -551,7 +551,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -566,7 +566,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -581,7 +581,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -596,7 +596,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -612,7 +612,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -628,7 +628,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -643,7 +643,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -659,7 +659,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -674,7 +674,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -688,7 +688,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -703,7 +703,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -717,7 +717,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -732,7 +732,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -747,7 +747,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -762,7 +762,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -777,7 +777,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -792,7 +792,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -807,7 +807,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -822,7 +822,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -838,7 +838,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -853,7 +853,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
@@ -868,7 +868,7 @@
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes_11_2024.csv</value>
+					<value>repo:/app:company_home/cm:System/cm:Codes/cm:gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="addEmptyValue">
