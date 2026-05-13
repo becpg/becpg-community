@@ -90,7 +90,7 @@
 					var html = '' +
 						'<div class="bd suggestion-container">' +
 						'<iframe src="' + iframeUrl + '" style="width:450px; height:600px;" referrerpolicy="origin" ' + 
-						'sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>' +
+						'sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>' +
 						'</div>';
 						
 					overlayEl.innerHTML = html;
