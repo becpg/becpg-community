@@ -89,7 +89,13 @@ public class OlapServiceImpl implements OlapService {
 	public List<OlapChart> retrieveOlapCharts() {
 		List<OlapChart> olapCharts = new ArrayList<>();
 
-		for (FileInfo fileInfo : fileFolderService.list(getOlapQueriesFolder())) {
+		NodeRef olapQueriesFolder = getOlapQueriesFolder();
+		if (olapQueriesFolder == null) {
+			logger.warn("OLAP queries folder not found, returning empty chart list");
+			return olapCharts;
+		}
+
+		for (FileInfo fileInfo : fileFolderService.list(olapQueriesFolder)) {
 
 			if (fileInfo.getName().endsWith(".saiku")) {
 				try {
