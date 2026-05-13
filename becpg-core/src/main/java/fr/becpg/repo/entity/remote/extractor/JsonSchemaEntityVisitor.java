@@ -269,7 +269,13 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 	private void addAlfrescoTypeAttributes(QName entityType, JSONObject attributes) {
 		addProperty(attributes, "alfresco:type", TYPE_STRING, entityType.toPrefixString(namespaceService), "Alfresco type");
 		addProperty(attributes, "alfresco:subTypes", TYPE_STRING, String.join(",", entityDictionaryService.getSubTypes(entityType, false).stream().map(q -> q.toPrefixString(namespaceService)).toList()), "Alfresco subTypes");
-		addProperty(attributes, "alfresco:parentType", TYPE_STRING, entityDictionaryService.getClass(entityType).getParentName().toPrefixString(namespaceService), "Alfresco parentType");
+		ClassDefinition classDef = entityDictionaryService.getClass(entityType);
+		if (classDef != null) {
+			QName parentName = classDef.getParentName();
+			if (parentName != null) {
+				addProperty(attributes, "alfresco:parentType", TYPE_STRING, parentName.toPrefixString(namespaceService), "Alfresco parentType");
+			}
+		}
 	}
 
 	private JSONObject createEntity(JSONObject root, QName nodeType, NodeRef entityNodeRef) {
