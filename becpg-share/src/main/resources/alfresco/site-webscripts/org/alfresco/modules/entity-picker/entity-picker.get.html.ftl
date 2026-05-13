@@ -19,7 +19,7 @@
 
 //]]></script>
 <div id="${el}-dialog" class="change-type">
-   <div id="${el}-dialogTitle" class="hd">${args.title}</div>
+   <div id="${el}-dialogTitle" class="hd">${args.title?html}</div>
    <div class="bd">
       <form id="${el}-form" action="" method="post" class="form-container">
          <div class="form-fields">
