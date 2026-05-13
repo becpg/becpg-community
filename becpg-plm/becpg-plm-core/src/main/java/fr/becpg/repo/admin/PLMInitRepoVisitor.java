@@ -968,12 +968,25 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			// compare-name == *.csv
 			ActionCondition conditionOnName = actionService.createActionCondition(ComparePropertyValueEvaluator.NAME);
 			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_OPERATION, ComparePropertyValueOperation.ENDS.toString());
-			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, UserImporterActionExecuter.PARAM_VALUE_EXTENSION);
+			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, UserImporterActionExecuter.PARAM_CSV_EXTENSION);
 			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY, ContentModel.PROP_NAME);
 			conditionOnName.setInvertCondition(false);
 			compositeAction.addActionCondition(conditionOnName);
 
-			createRule(nodeRef, "import user", "Every item created will be imported", true, true, List.of(RuleType.INBOUND), compositeAction);
+			createRule(nodeRef, "import user", "Every item created will be imported", false, true, List.of(RuleType.INBOUND), compositeAction);
+
+			compositeAction = actionService.createCompositeAction();
+			action = actionService.createAction(UserImporterActionExecuter.NAME, null);
+			compositeAction.addAction(action);
+
+			conditionOnName = actionService.createActionCondition(ComparePropertyValueEvaluator.NAME);
+			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_OPERATION, ComparePropertyValueOperation.ENDS.toString());
+			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, UserImporterActionExecuter.PARAM_XLSX_EXTENSION);
+			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY, ContentModel.PROP_NAME);
+			conditionOnName.setInvertCondition(false);
+			compositeAction.addActionCondition(conditionOnName);
+			
+			createRule(nodeRef, "import user XLSX", "Every item created will be imported", false, true, List.of(RuleType.INBOUND), compositeAction);
 
 		} else if (Objects.equals(folderName, PlmRepoConsts.PATH_IMPORT_TO_DO)) {
 			if (!nodeService.hasAspect(nodeRef, RuleModel.ASPECT_IGNORE_INHERITED_RULES)) {
