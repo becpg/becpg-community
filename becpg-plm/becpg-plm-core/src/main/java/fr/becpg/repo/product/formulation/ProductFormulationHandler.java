@@ -299,6 +299,9 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	private void checkPackagingItem(List<RequirementListDataItem> reqCtrlListDataItem, PackagingListDataItem p) {
 		NodeRef productNodeRef = p.getProduct();
+		if (productNodeRef == null) {
+			return;
+		}
 		ProductData subComponent = alfrescoRepository.findOne(productNodeRef);
 
 		ProductUnit productUnit = subComponent.getUnit();

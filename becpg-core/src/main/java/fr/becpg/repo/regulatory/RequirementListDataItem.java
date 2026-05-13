@@ -242,6 +242,9 @@ public class RequirementListDataItem extends BeCPGDataObject {
 	 * @param sourceNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	public void addSource(NodeRef sourceNodeRef) {
+		if (sourceNodeRef == null) {
+			return;
+		}
 		if (sources == null) {
 			sources = new ArrayList<>();
 		}
