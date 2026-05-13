@@ -9897,10 +9897,10 @@
 
                     <show id="bcpg:ingListComments" />
 
-                    <show id="bcpg:reconstitutionRate" />
-                    <show id="bcpg:reconstitutionPriority" />
-                    <show id="bcpg:diluentRef" />
-                    <show id="bcpg:targetReconstitutionRef" />
+                    <show id="bcpg:reconstitutionRate" force="false" />
+                    <show id="bcpg:reconstitutionPriority" force="false" />
+                    <show id="bcpg:diluentRef" force="false" />
+                    <show id="bcpg:targetReconstitutionRef" force="false" />
 
                     <show id="bcpg:ingListDeclType" />
                     <show id="bcpg:linkedSearchAssociation" force="true" />
