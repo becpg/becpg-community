@@ -203,12 +203,12 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 									compoProductQty = 1d;
 								}
 
-								if (compoListUnit.isP()) {
+								if (compoListUnit != null && compoListUnit.isP()) {
 									if ((compoProduct.getUnit() != null) && !compoProduct.getUnit().isP()) {
 										compoProductQty = 1d;
 									}
 
-								} else if (compoListUnit.isWeight() || compoListUnit.isVolume()) {
+								} else if (compoListUnit != null && (compoListUnit.isWeight() || compoListUnit.isVolume())) {
 									compoProductQty = FormulationHelper.getNetWeight(compoProduct, 1d);
 									qtyUsed = FormulationHelper.getQtyInKg(compoList);
 								}
@@ -258,6 +258,10 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 
 	private void calculateTareByMaterialItem(PackagingListDataItem dataItem,
 			Map<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> toUpdate, double subQty) {
+
+		if (dataItem.getProduct() == null) {
+			return;
+		}
 
 		if (nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_PACKAGINGKIT)) {
 			if ((dataItem.getQty() != null) && ProductUnit.P.equals(dataItem.getPackagingListUnit())) {
