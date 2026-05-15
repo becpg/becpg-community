@@ -657,6 +657,117 @@
 					<show force="true" id="gs1:consumerUsageInstructions" />
 
 				</field-visibility>
+				<appearance>
+					<field id="cm:name" mandatory="false" read-only="false" />
+					<field id="cm:title" label-id="becpg.forms.field.tradeName" description-id="becpg.forms.field.tradeName" mandatory="false" read-only="false" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field help-id="becpg.forms.help.productHierarchy1" id="bcpg:productHierarchy1" mandatory="false" read-only="false" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
+							</control-param>
+						</control>
+					</field>
+					<field help-id="becpg.forms.help.productHierarchy2" id="bcpg:productHierarchy2" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
+							</control-param>
+							<control-param name="parent">bcpg_productHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field help-id="becpg.forms.help.legalName" id="bcpg:legalName" mandatory="false" read-only="false" />
+					<field id="bcpg:productComments" mandatory="false" read-only="false" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
+					<field id="bcpg:entityTplRef" mandatory="false" read-only="false" >
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingMaterial?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
+							</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productUnit" mandatory="false" read-only="false" >
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
+							<control-param name="options">P|becpg.forms.field.productUnit,m,m2,m3,in,ft,g,kg,mL,cp,fl_oz
+							</control-param>
+						</control>
+					</field>
+					<field help-id="becpg.forms.help.eanCode" id="bcpg:eanCode" mandatory="false" read-only="false" >
+						<constraint-handlers>
+							<constraint event="keyup,change" type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN" />
+						</constraint-handlers>
+					</field>
+					<field id="bcpg:suppliers" mandatory="false" read-only="false" />
+					<field id="bcpg:supplierPlants" mandatory="false" read-only="false" >
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:plant&amp;attributeName=cm:name&amp;filter=parentAsEntity
+							</control-param>
+							<control-param name="parentAssoc">bcpg_suppliers</control-param>
+						</control>
+					</field>
+
+					<field id="pack:length" mandatory="false" read-only="false" >
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<field id="pack:width" mandatory="false" read-only="false" >
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<field id="pack:height" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					
+					<field id="pack:pmThickness" mandatory="false" read-only="false" >
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<field id="pack:pmPaperWeight" mandatory="false" read-only="false" />
+					
+					<field id="pack:pmMaterialRefs" mandatory="false" read-only="false" >
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial
+							</control-param>
+							<control-param name="showLink">false</control-param>
+						</control>
+					</field>
+					
+					<field id="pack:pmCoreDiameter" mandatory="false" read-only="false" >
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+					<field id="pack:pmCoilDiameter" mandatory="false" read-only="false" >
+						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">mm</control-param>
+						</control>
+					</field>
+
+					<field id="gs1:isPackagingMarkedReturnable" mandatory="false" read-only="false" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+
+					<field id="gs1:sortingInstructions" mandatory="false" read-only="false" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
+					<field id="gs1:consumerUsageInstructions" mandatory="false" read-only="false" >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
+
+				</appearance>
 			</form>
 			<form id="product-list">
 				<field-visibility>
