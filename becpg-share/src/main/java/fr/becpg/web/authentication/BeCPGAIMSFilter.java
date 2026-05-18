@@ -749,7 +749,7 @@ public class BeCPGAIMSFilter implements Filter
             redirectUrl = savedRequest.getRedirectUrl();
             this.requestCache.removeRequest(request, response);
         }
-        this.redirectStrategy.sendRedirect(request, response, Encode.forJava(redirectUrl));
+        this.redirectStrategy.sendRedirect(request, response, redirectUrl);
     }
 
     /**
@@ -1009,8 +1009,8 @@ public class BeCPGAIMSFilter implements Filter
         }
 
         // Allow relative URLs (must start with '/' but not '//')
-        // '//' is treated as protocol-relative by browsers and could point to external hosts
-        if (redirectUrl.startsWith("/") && !redirectUrl.startsWith("//"))
+        // '//' or '/\' are treated as protocol-relative by browsers and could point to external hosts
+        if (redirectUrl.startsWith("/") && !redirectUrl.startsWith("//") && !redirectUrl.contains("\\"))
         {
             return true;
         }
