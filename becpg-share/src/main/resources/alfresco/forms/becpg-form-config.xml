@@ -918,10 +918,6 @@ PARTICULAR
 						<control
 							template="/org/alfresco/components/form/controls/authority.ftl" />
 					</field>
-					<field id="bcpg:nrDisabled">
-						<control
-							template="/org/alfresco/components/form/controls/authority.ftl" />
-					</field>
 					
 					<field id="bcpg:nrDisabled">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl">
