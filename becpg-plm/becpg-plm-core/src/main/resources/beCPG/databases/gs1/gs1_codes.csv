@@ -2547,6 +2547,14 @@ urn:gs1:gdd:cl:RennetTypeCode:ANIMAL_RENNET;RennetTypeCode;ANIMAL_RENNET;Animal 
 urn:gs1:gdd:cl:RennetTypeCode:MICROBIAL_RENNET;RennetTypeCode;MICROBIAL_RENNET;Microbial Rennet;Microbial Rennet;Présure microbienne;Mikrobielles Lab;Microbiëel Stremsel;Cuajo microbiano;Microbial Rennet;Caglio microbico;Coalho Microbiano;Mikrobiellt Löpe;Mikrobiologinen Juoksute;NEW;CURRENT;1;;;;;;;;;;;;;
 urn:gs1:gdd:cl:RennetTypeCode:NO_RENNET;RennetTypeCode;NO_RENNET;No Rennet;No Rennet;Sans présure;Ohne Lab;Zonder stremsel;Sin cuajo;No Rennet;Senza caglio;Sem coalho;Utan löpe;Ilman juoksutetta;NEW;CURRENT;1;;;;;;;;;;;;;
 urn:gs1:gdd:cl:RennetTypeCode:VEGETABLE_RENNET;RennetTypeCode;VEGETABLE_RENNET;Vegetable Rennet;Vegetable Rennet;Présure végétale;Pflanzliches Lab;Plantaardig Stremsel;Cuajo vegetal;Vegetable Rennet;Caglio vegetale;Coalho Vegetal;Vegetabiliskt Löpe;Kasviperäinen Juoksute;NEW;CURRENT;1;;;;;;;;;;;;;
+urn:gs1:gdd:cl:SDSStandardCode;SDSStandardCode;;;;;;;;;;;;;NEW;CURRENT;1;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+urn:gs1:gdd:cl:SDSStandardCode:ANSI;SDSStandardCode;ANSI;ANSI;ANSI;ANSI;;;;;;;;;NEW;CURRENT;1;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+urn:gs1:gdd:cl:SDSStandardCode:FITPC;SDSStandardCode;FITPC;Fiche Information Technique Produit Cosmetique - Cosmetic Product Technical Data Sheet;Fiche Information Technique Produit Cosmetique - Cosmetic Product Technical Data Sheet;Fiche Information Technique Produit Cosmétique - Fiche Technique Produit Cosmétique;;;;;;;;;;NEW;CURRENT;1;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+urn:gs1:gdd:cl:SDSStandardCode:GHS;SDSStandardCode;GHS;GHS;GHS;SGH;;;;;;;;;NEW;CURRENT;1;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+urn:gs1:gdd:cl:SDSStandardCode:OSHA;SDSStandardCode;OSHA;OSHA;OSHA;OSHA;;;;;;;;;NEW;CURRENT;1;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+urn:gs1:gdd:cl:SDSStandardCode:OTHER;SDSStandardCode;OTHER;Other;Other;Autre;;;;;;;;;NEW;CURRENT;1;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+urn:gs1:gdd:cl:SDSStandardCode:REACH;SDSStandardCode;REACH;Reach regulation;Reach regulation;Règlement REACH;;;;;;;;;GDSN;;NEW;CURRENT;1;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+urn:gs1:gdd:cl:SDSStandardCode:RETAILER_REQUESTED;SDSStandardCode;RETAILER_REQUESTED;Retailer Requested;Retailer Requested;Détaillant demandé;;;;;;;;;NEW;CURRENT;1;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 urn:gs1:gdd:cl:SeasonParameterCode;SeasonParameterCode;;;;;;;;;;;;;CHANGED;CURRENT;2;;;;;;;;;;;;;
 urn:gs1:gdd:cl:SeasonParameterCode:ALL_YEAR;SeasonParameterCode;ALL_YEAR;All Year;All Year;Toute l'année;;;;;;;;;NEW;CURRENT;1;;;;;;;;;;;;;
 urn:gs1:gdd:cl:SeasonParameterCode:AUTUMN;SeasonParameterCode;AUTUMN;Autumn;Autumn;Automne;;;;;;;;;NEW;CURRENT;1;;;;;;;;;;;;;
