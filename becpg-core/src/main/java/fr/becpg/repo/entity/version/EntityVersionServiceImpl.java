@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -1563,34 +1564,72 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	}
 
-	private void mergeComments(NodeRef branchNodeRef, NodeRef branchToNodeRef) {
-		PagingResults<NodeRef> comments = commentService.listComments(branchNodeRef, new PagingRequest(5000, null));
-		if (comments != null) {
-			for (NodeRef commentNodeRef : comments.getPage()) {
-				NodeRef newComment = null;
+
+	private record CommentData(String title, String content, Date created, String creator, Date modified, NodeRef nodeRef,
+			boolean branchComment) {
+	}
+
+	private void mergeComments(NodeRef branchNodeRef, NodeRef destinationNodeRef) {
+		List<CommentData> allComments = new ArrayList<>();
+		collectCommentData(branchNodeRef, allComments, true);
+		collectCommentData(destinationNodeRef, allComments, false);
+		if (allComments.isEmpty()) {
+			return;
+		}
+		allComments.sort(Comparator.comparing(c -> c.created() != null ? c.created() : new Date(0)));
+		boolean insertedBranchComment = false;
+		for (CommentData commentData : allComments) {
+			if (!insertedBranchComment && !commentData.branchComment()) {
+				// Destination comments before the first branch comment already exist,
+				// so they do not need to be recreated.
+				continue;
+			}
+			NodeRef newComment = null;
+			boolean mlAware = MLPropertyInterceptor.setMLAware(false);
+			try {
+				MLPropertyInterceptor.setMLAware(false);
+				commentService.deleteComment(commentData.nodeRef());
+				newComment = commentService.createComment(destinationNodeRef, commentData.title(), commentData.content(), false);
+				
+				policyBehaviourFilter.disableBehaviour(newComment, ContentModel.ASPECT_AUDITABLE);
+				if (commentData.created() != null) {
+					nodeService.setProperty(newComment, ContentModel.PROP_CREATED, commentData.created());
+				}
+				if (commentData.creator() != null) {
+					nodeService.setProperty(newComment, ContentModel.PROP_CREATOR, commentData.creator());
+				}
+				if (commentData.modified() != null) {
+					nodeService.setProperty(newComment, ContentModel.PROP_MODIFIED, commentData.modified());
+				}
+				if (commentData.branchComment()) {
+					insertedBranchComment = true;
+				}
+			} finally {
+				MLPropertyInterceptor.setMLAware(mlAware);
+				if (newComment != null) {
+					policyBehaviourFilter.enableBehaviour(newComment, ContentModel.ASPECT_AUDITABLE);
+				}
+			}
+		}
+	}
+
+	private void collectCommentData(NodeRef nodeRef, List<CommentData> allComments, boolean branchComment) {
+		PagingResults<NodeRef> sourceComments = commentService.listComments(nodeRef, new PagingRequest(5000, null));
+		if (sourceComments != null && !sourceComments.getPage().isEmpty()) {
+			for (NodeRef commentNodeRef : sourceComments.getPage()) {
 				boolean mlAware = MLPropertyInterceptor.setMLAware(false);
-
 				try {
-
 					MLPropertyInterceptor.setMLAware(false);
 					ContentReader reader = contentService.getReader(commentNodeRef, ContentModel.PROP_CONTENT);
-					String comment = reader.getContentString();
-					newComment = commentService.createComment(branchToNodeRef,
-							(String) nodeService.getProperty(commentNodeRef, ContentModel.PROP_TITLE), comment, false);
-
-					policyBehaviourFilter.disableBehaviour(newComment, ContentModel.ASPECT_AUDITABLE);
-					nodeService.setProperty(newComment, ContentModel.PROP_CREATED,
-							nodeService.getProperty(commentNodeRef, ContentModel.PROP_CREATED));
-					nodeService.setProperty(newComment, ContentModel.PROP_CREATOR,
-							nodeService.getProperty(commentNodeRef, ContentModel.PROP_CREATOR));
-					nodeService.setProperty(newComment, ContentModel.PROP_MODIFIED,
-							nodeService.getProperty(commentNodeRef, ContentModel.PROP_MODIFIED));
-					commentService.deleteComment(commentNodeRef);
+					String content = reader != null ? reader.getContentString() : "";
+					String title = (String) nodeService.getProperty(commentNodeRef, ContentModel.PROP_TITLE);
+					Date created = (Date) nodeService.getProperty(commentNodeRef, ContentModel.PROP_CREATED);
+					String creator = (String) nodeService.getProperty(commentNodeRef, ContentModel.PROP_CREATOR);
+					Date modified = (Date) nodeService.getProperty(commentNodeRef, ContentModel.PROP_MODIFIED);
+					
+					allComments.add(new CommentData(title, content, created, creator, modified, commentNodeRef, branchComment));
 				} finally {
 					MLPropertyInterceptor.setMLAware(mlAware);
-					if (newComment != null) {
-						policyBehaviourFilter.enableBehaviour(newComment, ContentModel.ASPECT_AUDITABLE);
-					}
 				}
 			}
 		}
