@@ -48,7 +48,7 @@ import fr.becpg.repo.web.scripts.remote.AbstractEntityWebScript;
 
 /**
  * WebScript to check security access for a given entity (tasks + datalists validation)
- * 
+ *
  * @author matthieu
  * @version $Id: $Id
  */
@@ -120,6 +120,7 @@ public class EntitySecurityWebScript extends AbstractEntityWebScript {
 		this.workflowPackageComponent = workflowPackageComponent;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void executeInternal(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 		NodeRef nodeRef = resolveEntityNodeRef(req);
