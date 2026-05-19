@@ -323,13 +323,13 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 			return null;
 		});
 
-		Response userOneResponse = callEntitySecurityCheck(projectNodeRef, true, true, "userOne");
+		Response userOneResponse = callEntitySecurityCheck(projectNodeRef, true, true, "userOne", "PWD");
 		JSONObject jsonUserOne = new JSONObject(userOneResponse.getContentAsString());
 		Assert.assertTrue("userOne should have assigned task", jsonUserOne.getBoolean("hasAssignedTask"));
 		Assert.assertEquals("userOne should have WRITE access", SecurityService.WRITE_ACCESS, jsonUserOne.getInt("accessMode"));
 		userOneResponse.release();
 
-		Response userThreeResponse = callEntitySecurityCheck(projectNodeRef, true, true, "userThree");
+		Response userThreeResponse = callEntitySecurityCheck(projectNodeRef, true, true, "userThree", "PWD");
 		JSONObject jsonUserThree = new JSONObject(userThreeResponse.getContentAsString());
 		Assert.assertFalse("userThree should not have assigned task", jsonUserThree.getBoolean("hasAssignedTask"));
 		Assert.assertEquals("userThree should have READ access", SecurityService.READ_ACCESS, jsonUserThree.getInt("accessMode"));
@@ -467,7 +467,7 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 	 * Helper method to test entity security check
 	 */
 	private Response callEntitySecurityCheck(NodeRef entityNodeRef, boolean checkTaskAssignment, boolean skipSecurityRules,
-			String username) throws Exception {
+			String username, String password) throws Exception {
 		String storeType = entityNodeRef.getStoreRef().getProtocol();
 		String storeId = entityNodeRef.getStoreRef().getIdentifier();
 		String id = entityNodeRef.getId();
@@ -476,7 +476,7 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 				+ "?checkTaskAssignment=" + checkTaskAssignment + "&skipSecurityRules=" + skipSecurityRules;
 
 		GetRequest request = new GetRequest(uri);
-		return TestWebscriptExecuters.sendRequest(request, 200, username);
+		return TestWebscriptExecuters.sendRequest(request, 200, username, password);
 	}
 
 	@Override
