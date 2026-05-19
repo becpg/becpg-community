@@ -261,6 +261,18 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 												property -> "wUsedEntity_" + property.getKey()
 														.toPrefixString(namespaceService).replaceFirst(":", "_"),
 												Entry::getValue)));
+						
+						// Also get association properties for wUsedEntity
+						item.putAll(
+								wUsedAssocCache
+										.computeIfAbsent(itemNodeRef,
+												unused -> nodeService
+														.getProperties(entityListDAO.getEntity(itemNodeRef)))
+										.entrySet().stream().filter(property -> property.getValue() != null)
+										.collect(Collectors.toMap(
+												property -> "wUsedEntity_" + property.getKey()
+														.toPrefixString(namespaceService).replaceFirst(":", "_"),
+												Entry::getValue)));
 					}
 
 					String parameter = (parameters != null) && (parameters.length > 0) ? parameters[0] : null;
