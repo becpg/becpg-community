@@ -9,6 +9,8 @@ import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.cmr.workflow.WorkflowTask;
 import org.alfresco.service.cmr.workflow.WorkflowTaskState;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
@@ -26,12 +28,20 @@ import fr.becpg.repo.security.plugins.SecurityServicePlugin;
 import fr.becpg.repo.supplier.SupplierPortalService;
 
 /**
- * <p>SupplierSecurityPlugin class.</p>
+ * Security plugin for supplier portal access control.
+ *
+ * <p>Determines write/read access for external supplier users based on
+ * workflow task assignment. The supplier node is included in the workflow
+ * package at start time, so {@code getWorkflowIdsForContent(supplierNodeRef)}
+ * correctly finds the active workflow when the wizard is opened with the
+ * supplier nodeRef directly.</p>
  *
  * @author matthieu
  */
 @Service
 public class SupplierSecurityPlugin implements SecurityServicePlugin {
+
+	private static final Log logger = LogFactory.getLog(SupplierSecurityPlugin.class);
 
 	@Autowired
 	@Lazy
@@ -40,7 +50,7 @@ public class SupplierSecurityPlugin implements SecurityServicePlugin {
 	@Autowired
 	@Qualifier("WorkflowService")
 	private WorkflowService workflowService;
-	
+
 	@Autowired
 	@Qualifier("workflowPackageImpl")
 	private WorkflowPackageComponent workflowPackageComponent;
@@ -64,7 +74,6 @@ public class SupplierSecurityPlugin implements SecurityServicePlugin {
 	public boolean accept(QName nodeType) {
 		return AuthorityHelper.isCurrentUserExternal() && entityDictionaryService.isSubClass(nodeType, BeCPGModel.TYPE_ENTITY_V2);
 	}
-
 
 	/** {@inheritDoc} */
 	@Override
