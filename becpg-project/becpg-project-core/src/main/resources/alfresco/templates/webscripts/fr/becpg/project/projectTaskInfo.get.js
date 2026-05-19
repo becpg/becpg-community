@@ -50,7 +50,7 @@ function main()
 					var hasContentFromUrl = false;
 					
 					if (url.startsWith("content:")) {
-						var contentRef = url.substring(url.indexOf("content:") + "content:".length);
+						var contentRef = decodeURIComponent(url.substring(url.indexOf("content:") + "content:".length));
 						if (contentRef) {
 							var regex = new RegExp(".+://.+/.+");
 							if (contentRef.match(regex)) {

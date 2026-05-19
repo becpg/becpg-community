@@ -84,7 +84,7 @@
 		<constraint name="ghs:sdsStandardCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes.csv</value>
 				</list>
 			</parameter>
 			<parameter name="constraintFilter">

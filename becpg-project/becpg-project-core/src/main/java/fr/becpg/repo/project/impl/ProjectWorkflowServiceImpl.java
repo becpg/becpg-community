@@ -28,6 +28,7 @@ import java.util.Objects;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.workflow.WorkflowConstants;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.repo.workflow.WorkflowNotificationUtils;
@@ -152,6 +153,12 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 				logger.error("Failed to cancel workflow: " + workflowId + " - instance is still active");
 			}
 		} catch (Exception e) {
+			if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Retrying the formulation due to exception " + e.getMessage());
+				}
+                throw e;
+            }
 			logger.error("Error cancelling workflow: " + workflowId, e);
 			handleCorruptedWorkflow(workflowId);
 			clearWorkflowReferences(task);
@@ -174,6 +181,12 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 			AuthenticationUtil.setFullyAuthenticatedUser(authenticatedUser);
 			executeWorkflowStart(projectData, taskListDataItem);
 		} catch (Exception e) {
+			if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Retrying the formulation due to exception " + e.getMessage());
+				}
+                throw e;
+            }
 			logger.error("Failed to start workflow for task: " + taskListDataItem.getTaskName(), e);
 			throw new WorkflowException("Failed to start workflow", e);
 		} finally {
@@ -382,7 +395,11 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 	}
 
 	/**
-	 * Calculate localized workflow description
+	 * Build a workflow description compatible with utf8mb3-backed workflow tables.
+	 *
+	 * @param projectData the project owning the workflow
+	 * @param taskListDataItem the task starting or updating the workflow
+	 * @return the localized description without supplementary Unicode characters
 	 */
 	private String calculateWorkflowDescription(ProjectData projectData, TaskListDataItem taskListDataItem) {
 		String taskName = taskListDataItem.getTaskName();
@@ -392,7 +409,11 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 			taskName = getLocalizedTaskName(taskListDataItem, resources);
 		}
 
-		return String.format(WORKFLOW_DESCRIPTION_FORMAT, getProjectCode(projectData), projectData.getName(), taskName);
+		String description = String.format(WORKFLOW_DESCRIPTION_FORMAT, getProjectCode(projectData), projectData.getName(), taskName);
+		return description.codePoints()
+				.filter(Character::isBmpCodePoint)
+				.collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+				.toString();
 	}
 
 	/**
@@ -483,6 +504,12 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 			return false;
 
 		} catch (Exception e) {
+			if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Retrying the formulation due to exception " + e.getMessage());
+				}
+                throw e;
+            }
 			logger.error(String.format("Error retrieving workflow instance: %s for task %s (%s)", workflowId, task.getNodeRef(), task.getTaskName()),
 					e);
 			handleCorruptedWorkflow(workflowId);
@@ -520,6 +547,12 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 				return null;
 			});
 		} catch (Exception deleteException) {
+			if (RetryingTransactionHelper.extractRetryCause(deleteException) != null) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Retrying the formulation due to exception " + deleteException.getMessage());
+				}
+                throw deleteException;
+            }
 			logger.error("Failed to delete corrupted workflow instance: " + workflowId, deleteException);
 		}
 	}
@@ -541,6 +574,12 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 			try {
 				workflowService.cancelWorkflow(taskListDataItem.getWorkflowInstance());
 			} catch (Exception e) {
+				if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("Retrying the formulation due to exception " + e.getMessage());
+					}
+	                throw e;
+	            }
 				logger.error("Error cancelling workflow with no resources: " + taskListDataItem.getWorkflowInstance(), e);
 				handleCorruptedWorkflow(taskListDataItem.getWorkflowInstance());
 			}
@@ -703,6 +742,12 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 				}
 			}
 		} catch (Exception e) {
+			if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Retrying the formulation due to exception " + e.getMessage());
+				}
+                throw e;
+            }
 			logger.error("Error deleting workflow: " + workflowInstanceId, e);
 			handleCorruptedWorkflow(workflowInstanceId);
 		}

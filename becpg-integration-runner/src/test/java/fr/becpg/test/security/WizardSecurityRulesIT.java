@@ -31,6 +31,8 @@ import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.workflow.WorkflowDefinition;
 import org.alfresco.service.cmr.workflow.WorkflowPath;
@@ -50,6 +52,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.form.BecpgFormService;
@@ -106,6 +110,14 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 			BeCPGTestHelper.createUser("userTwo");
 			BeCPGTestHelper.createUser("userThree");
 
+			NodeRef userOneRef = personService.getPerson("userOne");
+			NodeRef userTwoRef = personService.getPerson("userTwo");
+			NodeRef userThreeRef = personService.getPerson("userThree");
+
+			nodeService.setProperty(userOneRef, fr.becpg.model.BeCPGModel.PROP_EMAIL_TASK_OBSERVER_DISABLED, true);
+			nodeService.setProperty(userTwoRef, fr.becpg.model.BeCPGModel.PROP_EMAIL_TASK_OBSERVER_DISABLED, true);
+			nodeService.setProperty(userThreeRef, fr.becpg.model.BeCPGModel.PROP_EMAIL_TASK_OBSERVER_DISABLED, true);
+
 			permissionService.setPermission(getTestFolderNodeRef(), "userOne", PermissionService.COORDINATOR, true);
 			permissionService.setPermission(getTestFolderNodeRef(), "userTwo", PermissionService.COORDINATOR, true);
 			permissionService.setPermission(getTestFolderNodeRef(), "userThree", PermissionService.COORDINATOR, true);
@@ -119,8 +131,35 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 				authorityService.addAuthority(groupName, "userOne");
 			}
 
+			// Add users to ExternalUser group to test SupplierSecurityPlugin
+			String externalGroupName = PermissionService.GROUP_PREFIX + "ExternalUser";
+			if (!authorityService.authorityExists(externalGroupName)) {
+				authorityService.createAuthority(AuthorityType.GROUP, "ExternalUser");
+			}
+			Set<String> externalGroupUsers = authorityService.getContainedAuthorities(AuthorityType.USER, externalGroupName, false);
+			if (!externalGroupUsers.contains("userOne")) {
+				authorityService.addAuthority(externalGroupName, "userOne");
+			}
+			if (!externalGroupUsers.contains("userTwo")) {
+				authorityService.addAuthority(externalGroupName, "userTwo");
+			}
+			if (!externalGroupUsers.contains("userThree")) {
+				authorityService.addAuthority(externalGroupName, "userThree");
+			}
+
 			// Create test project
 			projectNodeRef = createTestProject();
+
+			// Create a supplier
+			NodeRef supplierNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(BeCPGModel.BECPG_URI, "testSupplier"), PLMModel.TYPE_SUPPLIER).getChildRef();
+			nodeService.setProperty(supplierNodeRef, BeCPGModel.PROP_CODE, "SUP001");
+
+			// Link project to supplier
+			nodeService.createAssociation(projectNodeRef, supplierNodeRef, PLMModel.ASSOC_SUPPLIERS);
+
+			// Link userThree to supplier
+			nodeService.createAssociation(supplierNodeRef, userThreeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
 
 			NodeRef aclGroupNodeRef = createProjectSecurityACLGroup();
 			if (!nodeService.hasAspect(projectNodeRef, SecurityModel.ASPECT_SECURITY)) {
@@ -287,11 +326,13 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 		Response userOneResponse = callEntitySecurityCheck(projectNodeRef, true, true, "userOne", "PWD");
 		JSONObject jsonUserOne = new JSONObject(userOneResponse.getContentAsString());
 		Assert.assertTrue("userOne should have assigned task", jsonUserOne.getBoolean("hasAssignedTask"));
+		Assert.assertEquals("userOne should have WRITE access", SecurityService.WRITE_ACCESS, jsonUserOne.getInt("accessMode"));
 		userOneResponse.release();
 
 		Response userThreeResponse = callEntitySecurityCheck(projectNodeRef, true, true, "userThree", "PWD");
 		JSONObject jsonUserThree = new JSONObject(userThreeResponse.getContentAsString());
 		Assert.assertFalse("userThree should not have assigned task", jsonUserThree.getBoolean("hasAssignedTask"));
+		Assert.assertEquals("userThree should have READ access", SecurityService.READ_ACCESS, jsonUserThree.getInt("accessMode"));
 		userThreeResponse.release();
 	}
 

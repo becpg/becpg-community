@@ -23,16 +23,18 @@ import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.formulation.spel.SpelHelper;
 import fr.becpg.repo.helper.MLTextHelper;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.labelclaim.LabelClaimItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.filters.DataListFilter;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 
@@ -121,17 +123,20 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 			
 
 			List<CompositionDataItem> compoItems = new ArrayList<>();
+			List<DataListFilter<ProductData, CompoListDataItem>> compoFilters = FormulationFilters.EFFECTIVE_VARIANT_COMPO;
+			List<DataListFilter<ProductData, PackagingListDataItem>> packagingFilters = FormulationFilters.EFFECTIVE_VARIANT_PACKAGING;
+			List<DataListFilter<ProductData, ProcessListDataItem>> processFilters = FormulationFilters.EFFECTIVE_VARIANT_PROCESS;
 
-			if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				compoItems.addAll(productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
+			if (productData.hasCompoListEl(compoFilters)) {
+				compoItems.addAll(productData.getCompoList(compoFilters));
 			}
 
-			if (productData.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				compoItems.addAll(productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
+			if (productData.hasPackagingListEl(packagingFilters)) {
+				compoItems.addAll(productData.getPackagingList(packagingFilters));
 			}
 
-			if (productData.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				compoItems.addAll(productData.getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
+			if (productData.hasProcessListEl(processFilters)) {
+				compoItems.addAll(productData.getProcessList(processFilters));
 			}
 
 			if (!compoItems.isEmpty()) {

@@ -11,6 +11,7 @@ public enum AuditType {
 	BATCH,
 	FORMULATION,
 	ACTIVITY,
-	REPORT
+	REPORT,
+	EXPORT_SEARCH
 
 }

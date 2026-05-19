@@ -51,11 +51,10 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.entity.remote.EntityProviderCallBack;
+import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteRateLimiter;
-import fr.becpg.repo.entity.remote.impl.HttpEntityProviderCallback;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.system.SystemConfigurationService;
@@ -98,17 +97,6 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	/** Constant <code>PARAM_EXCLUDE_SYSTEMS="excludeSystems"</code> */
 	protected static final String PARAM_EXCLUDE_SYSTEMS = "excludeSystems";
 
-	/** http://localhost:8080/alfresco/services/becpg/remote/entity **/
-	protected static final String PARAM_CALLBACK = "callback";
-
-	/**
-	 * Callback auth admin:becpg
-	 */
-	protected static final String PARAM_CALLBACK_USER = "callbackUser";
-
-	/** Constant <code>PARAM_CALLBACK_PASSWORD="callbackPassword"</code> */
-	protected static final String PARAM_CALLBACK_PASSWORD = "callbackPassword";
-
 	/** Constant <code>PARAM_MAX_RESULTS="maxResults"</code> */
 	protected static final String PARAM_MAX_RESULTS = "maxResults";
 	
@@ -132,7 +120,18 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	protected SystemConfigurationService systemConfigurationService;
 	
 	protected AdvSearchService advSearchService;
-	
+
+	protected SecurityService securityService;
+
+	/**
+	 * <p>Setter for the field <code>securityService</code>.</p>
+	 *
+	 * @param securityService a {@link fr.becpg.repo.security.SecurityService} object.
+	 */
+	public void setSecurityService(SecurityService securityService) {
+		this.securityService = securityService;
+	}
+
 	/**
 	 * <p>Setter for the field <code>advSearchService</code>.</p>
 	 *
@@ -241,18 +240,21 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
 	 * @return a {@link java.util.List} object.
 	 * @param maxResults a {@link java.lang.Integer} object
+	 * @param allowAdvancedSearch a {@link java.lang.Boolean} object
 	 */
-	protected PagingResults<NodeRef> findEntities(WebScriptRequest req, Integer maxResults) {
+	protected PagingResults<NodeRef> findEntities(WebScriptRequest req, Integer maxResults, boolean allowAdvancedSearch) {
 
 		String path = decodeParam(req.getParameter(PARAM_PATH));
 		String query = decodeParam(req.getParameter(PARAM_QUERY));
 		Integer page = intParam(req, PARAM_PAGE);
 		
 		String entityQuery = null;
-		try {
-			entityQuery = extractBodyRequest(req);
-		} catch (IOException e) {
-			logger.error("Error while extracting request body: " + e.getMessage(), e);
+		if (allowAdvancedSearch) {
+			try {
+				entityQuery = extractBodyRequest(req);
+			} catch (IOException e) {
+				logger.error("Error while extracting request body: " + e.getMessage(), e);
+			}
 		}
 		
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
@@ -316,7 +318,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				}
 				@Override
 				public Pair<Integer, Integer> getTotalResultCount() {
-					return new Pair<>(endIndex, endIndex);
+					return new Pair<>(advSearchResultsSize, advSearchResultsSize);
 				}
 				@Override
 				public String getQueryExecutionId() {
@@ -409,7 +411,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				&& ((req.getParameter(PARAM_QUERY) == null) || req.getParameter(PARAM_QUERY).isEmpty())) {
 			throw new WebScriptException(Status.STATUS_NOT_IMPLEMENTED, "One of nodeRef query or path parameter is mandatory");
 		}
-		PagingResults<NodeRef> ret = findEntities(req, RepoConsts.MAX_RESULTS_SINGLE_VALUE);
+		PagingResults<NodeRef> ret = findEntities(req, RepoConsts.MAX_RESULTS_SINGLE_VALUE, false);
 		if ((ret != null) && !ret.getPage().isEmpty()) {
 			return ret.getPage().get(0);
 		}
@@ -443,25 +445,6 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				resp.getWriter().write(entityNodeRef.toString());
 			}
 		}
-	}
-
-	/**
-	 * <p>getEntityProviderCallback.</p>
-	 *
-	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
-	 * @return a {@link fr.becpg.repo.entity.remote.EntityProviderCallBack} object.
-	 */
-	protected EntityProviderCallBack getEntityProviderCallback(WebScriptRequest req) {
-
-		String callBack = req.getParameter(PARAM_CALLBACK);
-		String user = req.getParameter(PARAM_CALLBACK_USER) != null ? req.getParameter(PARAM_CALLBACK_USER) : "admin";
-		String password = req.getParameter(PARAM_CALLBACK_PASSWORD) != null ? req.getParameter(PARAM_CALLBACK_PASSWORD) : "becpg";
-
-		if ((callBack != null) && (!callBack.isBlank())) {
-			return new HttpEntityProviderCallback(callBack, user, password, remoteEntityService);
-		}
-		logger.debug("No callback param provided");
-		return null;
 	}
 
 	/**

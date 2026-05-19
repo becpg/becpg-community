@@ -19,12 +19,14 @@ package fr.becpg.repo.action.executer;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.alfresco.repo.action.executer.ActionExecuterAbstractBase;
+import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ParameterDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.util.transaction.TransactionListenerAdapter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -45,7 +47,8 @@ public class UserImporterActionExecuter extends ActionExecuterAbstractBase {
 	/** Constant <code>NAME="import-user"</code> */
 	public static final String NAME = "import-user";
 	/** Constant <code>PARAM_VALUE_EXTENSION=".csv"</code> */
-	public static final String PARAM_VALUE_EXTENSION = ".csv";
+	public static final String PARAM_CSV_EXTENSION = ".csv";
+	public static final String PARAM_XLSX_EXTENSION = ".xlsx";
 	
 	private static final String LOG_STARTING_DATE = "Starting date: ";	
 	private static final String LOG_ENDING_DATE = "Ending date: ";	
@@ -55,17 +58,6 @@ public class UserImporterActionExecuter extends ActionExecuterAbstractBase {
 	private UserImporterService userImporterService;
 	
 	private ImportService importService;
-	
-	private NodeService nodeService;
-
-	/**
-	 * <p>Setter for the field <code>nodeService</code>.</p>
-	 *
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
-	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
 
 	/**
 	 * Sets the import service.
@@ -89,8 +81,10 @@ public class UserImporterActionExecuter extends ActionExecuterAbstractBase {
 	@Override
 	protected void executeImpl(Action action, NodeRef actionedUponNodeRef) {
 		// import file
-		String log = LOG_STARTING_DATE + Calendar.getInstance().getTime();
-		boolean hasFailed = false;
+		StringBuilder logBuilder = new StringBuilder(LOG_STARTING_DATE);
+		logBuilder.append(Calendar.getInstance().getTime());
+		
+		AtomicBoolean hasFailed = new AtomicBoolean(Boolean.FALSE);
 		
 		if (_logger.isDebugEnabled()) {
 			_logger.debug("Executing importusercsv action");
@@ -99,23 +93,25 @@ public class UserImporterActionExecuter extends ActionExecuterAbstractBase {
 		try {
 			userImporterService.importUser(actionedUponNodeRef);
 		} catch (ImporterException e) {
-			hasFailed = true;
+			hasFailed.set(Boolean.TRUE);
 			_logger.error("Cannot import users",e);
 		
-			
-			log += LOG_SEPARATOR;
-			log += LOG_ERROR + e.getMessage();
+			logBuilder.append(LOG_SEPARATOR);
+			logBuilder.append(LOG_ERROR).append(e.getMessage());
 		} 
 		finally{
-			log += LOG_SEPARATOR;
-			log += LOG_ENDING_DATE + Calendar.getInstance().getTime();
+			logBuilder.append(LOG_SEPARATOR);
+			logBuilder.append(LOG_ENDING_DATE).append(Calendar.getInstance().getTime());
 		}
 		
-		if(nodeService.exists(actionedUponNodeRef)){
-   		 
-			_logger.debug("move file in folder. HasFailed: " + hasFailed);             		
-    		importService.moveImportedFile(actionedUponNodeRef, hasFailed, log, null, false);                		
-    	}        
+		AlfrescoTransactionSupport.bindListener(new TransactionListenerAdapter() {
+			@Override
+			public void afterCommit() {
+				_logger.debug("move file in folder. HasFailed: " + hasFailed.get());
+				importService.moveImportedFile(actionedUponNodeRef, hasFailed.get(), logBuilder.toString(), null);
+			}
+		});
+		
 	}
 
 	/** {@inheritDoc} */

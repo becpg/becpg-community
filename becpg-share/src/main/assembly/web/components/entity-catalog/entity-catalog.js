@@ -32,7 +32,9 @@
         beCPG.component.EntityCatalog.superclass.constructor.call(this, "beCPG.component.EntityCatalog", htmlId, ["button", "container"]);
 
         this.isLoaded = false;
+        this.submitButton = null;
         
+        YAHOO.Bubbling.on("formContentReady", this.onFormContentReady, this);
         YAHOO.Bubbling.on("afterFormRuntimeInit", this.onAfterFormRuntimeInit, this);
         return this;
     };
@@ -64,6 +66,17 @@
             entityNodeRef: "",
 
             catalogId: null
+        },
+
+        /**
+         * Updates the Save button state based on catalog loading.
+         *
+         * @method updateSubmitButtonState
+         */
+        updateSubmitButtonState: function() {
+            if (this.submitButton) {
+                this.submitButton.set("disabled", !this.isLoaded);
+            }
         },
 
         /**
@@ -100,6 +113,17 @@
             }
 
             return null;
+        },
+
+        onFormContentReady: function(__layer, args) {
+            var insertId = this.id.replace("wizard-mgr", "%%%").replace("_cat", "")
+                               .replace("-mgr", "").replace("%%%", "wizard-mgr");
+            var formId = insertId + "-form";
+
+            if (args[1].eventGroup === formId) {
+                this.submitButton = args[1].buttons.submit;
+                this.updateSubmitButtonState();
+            }
         },
 
 
@@ -302,6 +326,7 @@
                                 instance.colorizeMissingFields(response.json, insertId);
 
                                 instance.isLoaded = true;
+                                instance.updateSubmitButtonState();
                                 
                             }, this);
 
@@ -320,6 +345,7 @@
                         } else {
                             catalogsDiv.innerHTML = "<span class=\"no-missing-prop\">" + instance.msg("label.no_missing_prop") + "</span>";
                             instance.isLoaded = true;
+                            instance.updateSubmitButtonState();
                         }
                         YAHOO.util.Dom.removeClass(formulateButton, "loading");
                     },
@@ -338,6 +364,7 @@
                             });
                         }
                         instance.isLoaded = false;
+                        instance.updateSubmitButtonState();
 
                         YAHOO.util.Dom.removeClass(formulateButton, "loading");
                     },

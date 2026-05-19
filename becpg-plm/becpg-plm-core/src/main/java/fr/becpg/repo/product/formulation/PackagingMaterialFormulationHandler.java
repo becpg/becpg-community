@@ -3,7 +3,6 @@ package fr.becpg.repo.product.formulation;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +17,6 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
@@ -29,7 +27,6 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
  * <p>
@@ -81,10 +78,9 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 			if (alfrescoRepository.hasDataList(formulatedProduct.getNodeRef(), PackModel.PACK_MATERIAL_LIST_TYPE)) {
 
 				// no compo, no packagingList => no formulation
-				if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (!formulatedProduct
-						.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))
-						&& !formulatedProduct
-								.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())))) {
+				if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
+						|| (!formulatedProduct.hasCompoListEl(FormulationFilters.EFFECTIVE_VARIANT_COMPO)
+								&& !formulatedProduct.hasPackagingListEl(FormulationFilters.EFFECTIVE_VARIANT_PACKAGING))) {
 
 					calculateMaterialWeight(formulatedProduct);
 
@@ -94,10 +90,8 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 				Map<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> toUpdate = calculateMaterialOfComposition(formulatedProduct);
 
 				// PackagingList
-				if (formulatedProduct
-						.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())) != null) {
-					for (PackagingListDataItem packagingItem : formulatedProduct
-							.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+				if (formulatedProduct.getPackagingList(FormulationFilters.EFFECTIVE_VARIANT_PACKAGING) != null) {
+					for (PackagingListDataItem packagingItem : formulatedProduct.getPackagingList(FormulationFilters.EFFECTIVE_VARIANT_PACKAGING)) {
 						calculateTareByMaterialItem(packagingItem, toUpdate, 1);
 					}
 				}
@@ -191,9 +185,8 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 		Map<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> toUpdate = new HashMap<>();
 		if (!Boolean.TRUE.equals(formulatedProduct.getDropPackagingOfComponents())) {
 
-			if (formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())) != null) {
-				for (CompoListDataItem compoList : formulatedProduct
-						.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+			if (formulatedProduct.getCompoList(FormulationFilters.EFFECTIVE_VARIANT_COMPO) != null) {
+				for (CompoListDataItem compoList : formulatedProduct.getCompoList(FormulationFilters.EFFECTIVE_VARIANT_COMPO)) {
 					if (compoList.getProduct() != null) {
 
 						ProductData compoProduct = alfrescoRepository.findOne(compoList.getProduct());
@@ -210,12 +203,12 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 									compoProductQty = 1d;
 								}
 
-								if (compoListUnit.isP()) {
+								if (compoListUnit != null && compoListUnit.isP()) {
 									if ((compoProduct.getUnit() != null) && !compoProduct.getUnit().isP()) {
 										compoProductQty = 1d;
 									}
 
-								} else if (compoListUnit.isWeight() || compoListUnit.isVolume()) {
+								} else if (compoListUnit != null && (compoListUnit.isWeight() || compoListUnit.isVolume())) {
 									compoProductQty = FormulationHelper.getNetWeight(compoProduct, 1d);
 									qtyUsed = FormulationHelper.getQtyInKg(compoList);
 								}
@@ -266,14 +259,17 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 	private void calculateTareByMaterialItem(PackagingListDataItem dataItem,
 			Map<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> toUpdate, double subQty) {
 
+		if (dataItem.getProduct() == null) {
+			return;
+		}
+
 		if (nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_PACKAGINGKIT)) {
 			if ((dataItem.getQty() != null) && ProductUnit.P.equals(dataItem.getPackagingListUnit())) {
 				subQty *= dataItem.getQty();
 			}
 			ProductData packagingKitData = alfrescoRepository.findOne(dataItem.getProduct());
 			if (packagingKitData.hasPackagingListEl()) {
-				for (PackagingListDataItem p : packagingKitData
-						.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+				for (PackagingListDataItem p : packagingKitData.getPackagingList(FormulationFilters.EFFECTIVE_VARIANT_PACKAGING)) {
 					calculateTareByMaterialItem(p, toUpdate, subQty);
 				}
 			}

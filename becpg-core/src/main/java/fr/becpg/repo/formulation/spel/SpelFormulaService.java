@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.EvaluationException;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.ParserContext;
 import org.springframework.expression.spel.SpelCompilerMode;
 import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
@@ -59,6 +60,8 @@ public class SpelFormulaService {
 
 	private final Map<String, Expression> expressionCache = Collections.synchronizedMap(
 			new LinkedHashMap<>(EXPRESSION_CACHE_MAX_SIZE, 0.75f, true) {
+				private static final long serialVersionUID = 1634566060749074187L;
+
 				@Override
 				protected boolean removeEldestEntry(Map.Entry<String, Expression> eldest) {
 					return size() > EXPRESSION_CACHE_MAX_SIZE;
@@ -72,12 +75,20 @@ public class SpelFormulaService {
 	 * @return a cached or newly parsed {@link org.springframework.expression.Expression}
 	 */
 	public Expression parseExpression(String formula) {
-		Expression cached = expressionCache.get(formula);
-		if (cached == null) {
-			cached = parser.parseExpression(formula);
-			expressionCache.put(formula, cached);
-		}
-		return cached;
+		return expressionCache.computeIfAbsent(formula, parser::parseExpression);
+	}
+
+	/**
+	 * <p>parseExpression.</p>
+	 *
+	 * @param formula a {@link java.lang.String} object
+	 * @param parserContext a {@link org.springframework.expression.ParserContext} object
+	 * @return a cached or newly parsed {@link org.springframework.expression.Expression}
+	 */
+	public Expression parseExpression(String formula, ParserContext parserContext) {
+		String cacheKey = String.join("::", "CTX", String.valueOf(parserContext.isTemplate()), parserContext.getExpressionPrefix(),
+				parserContext.getExpressionSuffix(), formula);
+		return expressionCache.computeIfAbsent(cacheKey, key -> parser.parseExpression(formula, parserContext));
 	}
 
 

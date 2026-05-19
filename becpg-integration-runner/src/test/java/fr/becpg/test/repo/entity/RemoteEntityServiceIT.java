@@ -92,7 +92,7 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 
 				nodeService.deleteNode(sfNodeRef);
 
-				NodeRef tmpNodeRef = remoteEntityService.createOrUpdateEntity(sfNodeRef, new FileInputStream(tempFile),new RemoteParams(RemoteEntityFormat.xml),null);
+				NodeRef tmpNodeRef = remoteEntityService.createOrUpdateEntity(sfNodeRef, new FileInputStream(tempFile), new RemoteParams(RemoteEntityFormat.xml));
 
 				remoteEntityService.getEntity(tmpNodeRef, new FileOutputStream(tempFile2), new RemoteParams(RemoteEntityFormat.xml));
 
@@ -208,7 +208,7 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 				ruleService.disableRules();
 				ClassPathResource res = new ClassPathResource("beCPG/remote/entity_fullxml.xml");
 
-				NodeRef tmpNodeRef = remoteEntityService.createOrUpdateEntity(null, res.getInputStream(), new RemoteParams(RemoteEntityFormat.xml), null);
+				NodeRef tmpNodeRef = remoteEntityService.createOrUpdateEntity(null, res.getInputStream(), new RemoteParams(RemoteEntityFormat.xml));
 				Assert.assertNotNull(tmpNodeRef);
 
 			} catch (BeCPGException e) {

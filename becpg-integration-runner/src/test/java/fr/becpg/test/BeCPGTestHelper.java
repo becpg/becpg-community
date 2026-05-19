@@ -100,7 +100,8 @@ public class BeCPGTestHelper {
 
 			return RepoBaseTestCase.INSTANCE.personService.createPerson(ppOne);
 		} else {
-			return RepoBaseTestCase.INSTANCE.personService.getPerson(userName);
+			NodeRef personRef = RepoBaseTestCase.INSTANCE.personService.getPerson(userName);
+			return personRef;
 		}
 	}
 

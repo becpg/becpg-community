@@ -17,8 +17,14 @@
         button.classList[val ? "remove" : "add"]("disabled");
     }
 
+    function setReadOnlyClass(element, readOnly) {
+        if (!element) return;
+        element.classList[readOnly ? "add" : "remove"]("read-only");
+    }
+
     YAHOO.extend(beCPG.component.WizardMgr, Alfresco.component.Base, {
         currentIndex: 0,
+        taskAssigned: null,
         options: {
             siteId: "", nodeRef: "", destination: "", draft: false,
             allSteps: false, readOnly: false, wizardStruct: [],
@@ -55,8 +61,9 @@
                     }
 
                     var step = me.options.wizardStruct[currentIndex];
+                    var stepReadOnly = me.options.readOnly || step.readOnly || step.valid;
+                    
                     if (currentIndex > newIndex && step && (step.type === "form" || step.type === "survey")) {
-                        var stepReadOnly = me.options.readOnly || step.readOnly || step.valid;
                         if (!stepReadOnly) {
                             me.showStepChangeConfirmation(function() {
                                 isNavigatingBack = true;
@@ -74,9 +81,23 @@
                     if (step.type === "form" || step.type === "survey") {
                         if (step.form) {
                             validationInProgress = true;
-                            Dom.get(me.id + "-step-" + step.id + "-form-submit").click();
                             var isValid = me.options.readOnly || step.readOnly ||
-                                step.form.validate(Alfresco.forms.Form.NOTIFICATION_LEVEL_CONTAINER);
+                                 step.form.validate(Alfresco.forms.Form.NOTIFICATION_LEVEL_CONTAINER);
+                            if (isValid && !(stepReadOnly)) {
+                                Dom.get(me.id + "-step-" + step.id + "-form-submit").click();
+                            } else if (!isValid) {
+                                var formFields = Dom.get(me.id + "-step-" + step.id + "-form-fields");
+                                var invalidField = Dom.getElementsByClassName("invalid", null, formFields)[0] ||
+                                                   Dom.getElementsByClassName("mandatory", null, formFields)[0];
+                                if (invalidField) {
+                                    invalidField.scrollIntoView({ block: "center" });
+                                    setTimeout(function() {
+                                        if (YAHOO.lang.isFunction(invalidField.focus)) {
+                                            invalidField.focus();
+                                        }
+                                    }, 50);
+                                }
+                            }
                             validationInProgress = false;
                             return isValid;
                         }
@@ -149,12 +170,15 @@
             var step = this.options.wizardStruct[currentIndex];
             if (!step) return true;
 
+            var stepReadOnly = this.options.readOnly || step.readOnly || step.valid;
             if (step.type === "form" || step.type === "survey") {
                 if (step.form) {
                     validationInProgress = true;
-                    Dom.get(this.id + "-step-" + step.id + "-form-submit").click();
                     var isValid = this.options.readOnly || step.readOnly ||
                         step.form.validate(Alfresco.forms.Form.NOTIFICATION_LEVEL_CONTAINER);
+                     if(isValid && !(stepReadOnly)){
+                       Dom.get(this.id + "-step-" + step.id + "-form-submit").click();
+                     }
                     validationInProgress = false;
                     step.finish = true;
                     if (!isValid) return false;
@@ -244,8 +268,6 @@
         },
 
         onFormSubmit: function(response) {
-            if (!response.json.persistedObject) return;
-
             var nextStep = this.options.wizardStruct[this.currentIndex];
             if (!nextStep) return;
 
@@ -256,7 +278,10 @@
 
             var step = this.options.wizardStruct[this.currentIndex - 1];
             if (step) {
-                step.nodeRef = response.json.persistedObject;
+                if (response.json && response.json.persistedObject) {
+                    step.nodeRef = response.json.persistedObject;
+                }
+                if (!step.nodeRef) return;
                 if (step.nextStepWebScript) {
                     this.executeWebScript(step, nextStep);
                 } else {
@@ -309,14 +334,40 @@
             }
         },
 
+        configureDocumentReadOnlyActions: function(stepDOM) {
+             stepDOM.classList.add("documents-read-only");
+
+            var hideSelectors = [".document-upload-new-version", ".document-delete", ".document-edit-properties", 
+                                 ".file-upload", ".create-content", ".onActionDelete", ".selected-items", ".onActionAddCommentClick"],
+                downloadActions = YAHOO.util.Selector.query(".document-download", stepDOM),
+                i,
+                j,
+                hiddenActions;
+
+            for (i = 0; i < hideSelectors.length; i++) {
+                hiddenActions = YAHOO.util.Selector.query(hideSelectors[i], stepDOM);
+                for (j = 0; j < hiddenActions.length; j++) {
+                    Dom.setStyle(hiddenActions[j], "display", "none");
+                    Dom.setStyle(hiddenActions[j], "visibility", "hidden");
+                }
+            }
+
+            for (i = 0; i < downloadActions.length; i++) {
+                Dom.removeClass(downloadActions[i], "hidden");
+                Dom.setStyle(downloadActions[i], "display", "inline-block");
+                Dom.setStyle(downloadActions[i], "visibility", "visible");
+            }
+        },
+
         checkValidation: function(step, readOnly, callback) {
             if (!readOnly && step.nodeRef && step.nodeRef.length > 0) {
                 // Build URL with security parameters based on wizard configuration
                 var url = Alfresco.constants.PROXY_URI + "becpg/security/entitylists/check/" + step.nodeRef.replace(":/", "");
                 var params = [];
+                var me = this;
                 
                 // Add checkTaskAssignment parameter if wizard requires it
-                if (this.options.enforceTask) {
+                if (this.options.enforceTask && me.taskAssigned === null) {
                     params.push("checkTaskAssignment=true");
                 }
                 
@@ -335,11 +386,20 @@
                     url: url,
                     successCallback: {
                         fn: function(response) {
-                            var hasTask = response.json.hasAssignedTask;
+                            if (me.taskAssigned === null) {
+                               me.taskAssigned = !!response.json.hasAssignedTask;
+                            }
                             var datalists = response.json.datalists;
                             
+                            var accessMode = response.json.accessMode;
+                            if (accessMode === 1) { // READ_ACCESS
+                                step.valid = true;
+                                callback(true, datalists);
+                                return;
+                            }
+
                             // If enforceTask is enabled and no task assigned, make read-only
-                            if (this.options.enforceTask && !hasTask) {
+                            if (this.options.enforceTask && !me.taskAssigned) {
                                 step.valid = true;
                                 callback(true, datalists);
                                 return;
@@ -353,14 +413,14 @@
                             });
                             callback(validated, datalists);
                         },
-                        scope: this
+                        scope: me
                     },
                     failureCallback: {
                         fn: function() {
                             // On error, default to read-only for safety
                             callback(true, null);
                         },
-                        scope: this
+                        scope: me
                     }
                 });
             } else {
@@ -446,8 +506,12 @@
                             stepDOM.classList.add("properties-view");
                         }
 
+
+                        setReadOnlyClass(stepDOM, readOnly || validated);
+                        setReadOnlyClass(Dom.get(me.id + "-body"), readOnly || validated);
+
                         if (step.type === "documents" && (readOnly || validated)) {
-                            stepDOM.classList.add("documents-read-only");
+                            me.configureDocumentReadOnlyActions(stepDOM);
                         }
 
                         step.loaded = true;

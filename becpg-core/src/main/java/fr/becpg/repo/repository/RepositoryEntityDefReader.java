@@ -168,6 +168,11 @@ public interface RepositoryEntityDefReader<T> {
 	 */
 	List<QName> getDefaultPivotAssocs();
 	
-	
+	/**
+	 * <p>getDataListAssocToTargetTypes.</p>
+	 *
+	 * @return a {@link java.util.Map} object
+	 */
+	Map<QName, String> getDataListAssocToTargetTypes();
 	
 }

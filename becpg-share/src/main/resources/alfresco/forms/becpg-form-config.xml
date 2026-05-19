@@ -145,8 +145,18 @@ PARTICULAR
 					<show id="bcpg:externalLinkUrl" />
 					<show id="bcpg:externalLinkTarget" />
 					<show id="bcpg:externalLinkMediaType" />
+					<show id="bcpg:documentTypeRef" force="true" />
 				</field-visibility>
-
+				<appearance>
+					<field id="bcpg:documentTypeRef">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">
+								becpg/autocomplete/targetassoc/associations/bcpg:documentType
+							</control-param>
+						</control>
+					</field>
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -161,8 +171,18 @@ PARTICULAR
 					<show id="bcpg:externalLinkUrl" />
 					<show id="bcpg:externalLinkTarget" />
 					<show id="bcpg:externalLinkMediaType" />
+					<show id="bcpg:documentTypeRef" force="true" />
 				</field-visibility>
-
+				<appearance>
+                    <field id="bcpg:documentTypeRef">
+                        <control
+                            template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">
+                                becpg/autocomplete/targetassoc/associations/bcpg:documentType
+                            </control-param>
+                        </control>
+                    </field>
+                </appearance>
 			</form>
 		</forms>
 	</config>
@@ -867,10 +887,17 @@ PARTICULAR
 			<!-- Filter items form -->
 			<form id="filter">
 				<field-visibility>
+					<show id="bcpg:nrSubject" />
 					<show id="bcpg:nrNodeType" />
 					<show id="bcpg:nrDateField" />
+					<show id="bcpg:nrNotificationAuthorities" />
+					<show id="bcpg:nrDisabled" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:nrSubject">
+						<control
+							template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
 					<field id="bcpg:nrNodeType">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete.ftl">
@@ -885,6 +912,16 @@ PARTICULAR
 							<control-param name="ds">
 								becpg/autocomplete/propertyDateValue</control-param>
 							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:nrNotificationAuthorities">
+						<control
+							template="/org/alfresco/components/form/controls/authority.ftl" />
+					</field>
+					
+					<field id="bcpg:nrDisabled">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl">
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 				</appearance>

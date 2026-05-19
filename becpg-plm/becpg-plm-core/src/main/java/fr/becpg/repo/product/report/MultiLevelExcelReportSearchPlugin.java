@@ -251,16 +251,25 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 					}
 					
 					if (wUsedAssocCache != null) {
+						NodeRef wUsedEntityNodeRef = entityListDAO.getEntity(itemNodeRef);
 						item.putAll(
 								wUsedAssocCache
 										.computeIfAbsent(itemNodeRef,
 												unused -> nodeService
-														.getProperties(entityListDAO.getEntity(itemNodeRef)))
+														.getProperties(wUsedEntityNodeRef))
 										.entrySet().stream().filter(property -> property.getValue() != null)
 										.collect(Collectors.toMap(
 												property -> "wUsedEntity_" + property.getKey()
 														.toPrefixString(namespaceService).replaceFirst(":", "_"),
 												Entry::getValue)));
+
+						Map<String, Object> wUsedExtracted = doExtract(wUsedEntityNodeRef, wUsedEntityType, metadataFields,
+								nodeService.getProperties(wUsedEntityNodeRef), cache);
+						for (Entry<String, Object> wUsedEntry : wUsedExtracted.entrySet()) {
+							if (wUsedEntry.getKey().startsWith("wUsedEntity_") && wUsedEntry.getValue() != null) {
+								item.put(wUsedEntry.getKey(), wUsedEntry.getValue());
+							}
+						}
 					}
 
 					String parameter = (parameters != null) && (parameters.length > 0) ? parameters[0] : null;

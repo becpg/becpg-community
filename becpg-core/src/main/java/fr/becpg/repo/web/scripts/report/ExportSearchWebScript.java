@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -25,6 +26,10 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.audit.model.AuditScope;
+import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.plugin.impl.ExportSearchAuditPlugin;
+import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.helper.AttachmentHelper;
 import fr.becpg.repo.report.helpers.ReportUtils;
 import fr.becpg.repo.report.search.ExportSearchService;
@@ -53,6 +58,12 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 
 	private ReportTplService reportTplService;
 
+	private BeCPGAuditService beCPGAuditService;
+	
+	public void setBeCPGAuditService(BeCPGAuditService beCPGAuditService) {
+		this.beCPGAuditService = beCPGAuditService;
+	}
+	
 	/**
 	 * <p>Setter for the field <code>exportSearchService</code>.</p>
 	 *
@@ -124,34 +135,39 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 
 			ReportFormat reportFormat = reportTplService.getReportFormat(templateNodeRef);
 
-			if ("true".equals(req.getParameter("async"))) {
-
-				NodeRef downloadNodeRef = exportSearchService.createReport(datatype, templateNodeRef, resultNodeRefs, reportFormat);
-
-				JSONObject ret = new JSONObject();
-
-				ret.put("nodeRef", downloadNodeRef);
-
-				res.setContentType("application/json");
-				res.setContentEncoding("UTF-8");
-				res.getWriter().write(ret.toString(3));
-
-			} else {
-
-				String name = (String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME);
-
-				String extension = ReportUtils.getReportExtension(name, reportFormat);
-
-				String mimeType = mimetypeService.getMimetype(extension);
-
-				name = FilenameUtils.removeExtension(name) + FilenameUtils.EXTENSION_SEPARATOR_STR + mimetypeService.getExtension(mimeType);
-
-				logger.debug("Rendering report at format :" + reportFormat.toString() + " mimetype: " + mimeType + " name " + name);
-
-				res.setContentType(mimeType);
-				AttachmentHelper.setAttachment(req, res, name);
-
-				exportSearchService.createReport(datatype, templateNodeRef, resultNodeRefs, reportFormat, res.getOutputStream());
+			String name = (String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME);
+			String extension = ReportUtils.getReportExtension(name, reportFormat);
+			String mimeType = mimetypeService.getMimetype(extension);
+			name = FilenameUtils.removeExtension(name) + FilenameUtils.EXTENSION_SEPARATOR_STR + mimetypeService.getExtension(mimeType);
+			
+			boolean async = "true".equals(req.getParameter("async"));
+			try (AuditScope auditScope = beCPGAuditService.startAudit(AuditType.EXPORT_SEARCH, getClass(), "export search: " + name)) {
+				auditScope.putAttribute(ExportSearchAuditPlugin.FILENAME, name);
+				auditScope.putAttribute(ExportSearchAuditPlugin.USERNAME, AuthenticationUtil.getFullyAuthenticatedUser());
+				auditScope.putAttribute(ExportSearchAuditPlugin.TEMPLATE, templateNodeRef.toString());
+				auditScope.putAttribute(ExportSearchAuditPlugin.RESULTS_SIZE, resultNodeRefs.size());
+				auditScope.putAttribute(ExportSearchAuditPlugin.ASYNC, async);
+				if (async) {
+					NodeRef downloadNodeRef = exportSearchService.createReport(datatype, templateNodeRef, resultNodeRefs, reportFormat);
+					
+					JSONObject ret = new JSONObject();
+					
+					ret.put("nodeRef", downloadNodeRef);
+					
+					res.setContentType("application/json");
+					res.setContentEncoding("UTF-8");
+					res.getWriter().write(ret.toString(3));
+					
+				} else {
+					
+					
+					logger.debug("Rendering report at format :" + reportFormat.toString() + " mimetype: " + mimeType + " name " + name);
+					
+					res.setContentType(mimeType);
+					AttachmentHelper.setAttachment(req, res, name);
+					
+					exportSearchService.createReport(datatype, templateNodeRef, resultNodeRefs, reportFormat, res.getOutputStream());
+				}
 			}
 
 		} catch (SocketException | ContentIOException e1) {

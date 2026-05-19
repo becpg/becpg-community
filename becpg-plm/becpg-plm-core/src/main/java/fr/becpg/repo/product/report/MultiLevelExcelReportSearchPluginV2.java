@@ -269,12 +269,12 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
             } else {
                 // WUsed for these types uses MultiLevelDataListService
                 rownum = fillSheetWithMultiLevelService(sheet, searchResults, mainType, itemType, rownum, parameters, keyColumn, metadataFields,
-                        cache, excelCellStyles, depthLevelNum, pivotAssoc, wUsedAssocCache);
+                        cache, excelCellStyles, depthLevelNum, pivotAssoc, wUsedAssocCache, includeEmpty);
             }
         } else {
             // Other types use MultiLevelDataListService
             rownum = fillSheetWithMultiLevelService(sheet, searchResults, mainType, itemType, rownum, parameters, keyColumn, metadataFields,
-                    cache, excelCellStyles, depthLevelNum, pivotAssoc, wUsedAssocCache);
+                    cache, excelCellStyles, depthLevelNum, pivotAssoc, wUsedAssocCache, includeEmpty);
         }
 
         return rownum;
@@ -335,7 +335,7 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
     private int fillSheetWithMultiLevelService(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum,
             String[] parameters, AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields,
             Map<NodeRef, Map<String, Object>> cache, ExcelCellStyles excelCellStyles, int depthLevelNum, QName pivotAssoc,
-            Map<NodeRef, Map<QName, Serializable>> wUsedAssocCache) {
+            Map<NodeRef, Map<QName, Serializable>> wUsedAssocCache, boolean includeEmpty) {
 
         for (NodeRef entityNodeRef : searchResults) {
             QName entityType = nodeService.getType(entityNodeRef);
@@ -359,8 +359,13 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
                 Map<String, Object> entityItems = getEntityProperties(entityNodeRef, mainType, metadataFields, cache);
                 entityItems.putAll(getDynamicProperties(entityNodeRef, itemType));
 
-                rownum = appendNextLevel(listData, sheet, itemType, metadataFields, cache, rownum, key, null, parameters, entityItems,
-                        new HashMap<>(), excelCellStyles, mainType, wUsedAssocCache);
+                if (!listData.getTree().isEmpty()) {
+                    rownum = appendNextLevel(listData, sheet, itemType, metadataFields, cache, rownum, key, null, parameters, entityItems,
+                            new HashMap<>(), excelCellStyles, mainType, wUsedAssocCache);
+                } else if (includeEmpty) {
+                    // Create empty row when includeEmpty is true and list is empty
+                    rownum = createEmptyEntityRow(sheet, entityNodeRef, rownum, key, metadataFields, entityItems, excelCellStyles, 1);
+                }
             }
         }
 
@@ -948,13 +953,22 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
                     item.put(KEY_PARENT, nodeService.getProperty(listData.getEntityNodeRef(), BeCPGModel.PROP_CODE));
 
                     if (wUsedAssocCache != null) {
+                        NodeRef wUsedEntityNodeRef = entityListDAO.getEntity(itemNodeRef);
                         item.putAll(wUsedAssocCache
-                                .computeIfAbsent(itemNodeRef, unused -> nodeService.getProperties(entityListDAO.getEntity(itemNodeRef)))
+                                .computeIfAbsent(itemNodeRef, unused -> nodeService.getProperties(wUsedEntityNodeRef))
                                 .entrySet().stream().filter(property -> property.getValue() != null)
                                 .collect(Collectors.toMap(
                                         property -> PREFIX_WUSED_ENTITY
                                                 + property.getKey().toPrefixString(namespaceService).replaceFirst(":", "_"),
                                         Entry::getValue)));
+
+                        Map<String, Object> wUsedExtracted = doExtract(wUsedEntityNodeRef, wUsedEntityType, metadataFields,
+                                nodeService.getProperties(wUsedEntityNodeRef), cache);
+                        for (Entry<String, Object> wUsedEntry : wUsedExtracted.entrySet()) {
+                            if (wUsedEntry.getKey().startsWith(PREFIX_WUSED_ENTITY) && wUsedEntry.getValue() != null) {
+                                item.put(wUsedEntry.getKey(), wUsedEntry.getValue());
+                            }
+                        }
                     }
 
                     String parameter = (parameters != null) && (parameters.length > 0) ? parameters[0] : null;

@@ -19,7 +19,6 @@ package fr.becpg.repo.product.formulation.details;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.util.Arrays;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -32,7 +31,6 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.CharactDetailsValue;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
@@ -40,9 +38,9 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
-import fr.becpg.repo.product.formulation.FormulatedQties;
+import fr.becpg.repo.product.formulation.FormulationFilters;
 import fr.becpg.repo.product.formulation.FormulationHelper;
-import fr.becpg.repo.variant.filters.VariantFilters;
+import fr.becpg.repo.product.formulation.FormulatedQties;
 
 /**
  * <p>
@@ -83,10 +81,10 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 		 * PackagingList
 		 */
 
-		if (formulatedProduct.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+		if (formulatedProduct.hasPackagingListEl(FormulationFilters.EFFECTIVE_VARIANT_PACKAGING)) {
 
 			for (PackagingListDataItem packagingListDataItem : formulatedProduct
-					.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+					.getPackagingList(FormulationFilters.EFFECTIVE_VARIANT_PACKAGING)) {
 				visitMaterial(formulatedProduct.getNodeRef(), packagingListDataItem, ret, 0, 1);
 			}
 		}
@@ -104,7 +102,7 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 			}
 			ProductData packagingListDataItemProduct = (ProductData) alfrescoRepository.findOne(packagingListDataItem.getProduct());
 			if (packagingListDataItemProduct.hasPackagingListEl()) {
-				for (PackagingListDataItem p : packagingListDataItemProduct.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+				for (PackagingListDataItem p : packagingListDataItemProduct.getPackagingList(FormulationFilters.EFFECTIVE_VARIANT_PACKAGING)) {
 					visitMaterial(parent, p, charactDetails, currLevel, subQty);
 				}
 			}
@@ -210,10 +208,10 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 	public CharactDetails visitRecurPMaterial(CharactDetailsVisitorContext context, ProductData subProductData, Integer currLevel, Double subWeight,
 			Double subVol, Double netQty)  {
 
-		if (areDetailsApplicable(subProductData) && subProductData.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+		if (areDetailsApplicable(subProductData) && subProductData.hasCompoListEl(FormulationFilters.EFFECTIVE_VARIANT_COMPO)) {
 
 			for (CompoListDataItem compoListDataItem : subProductData
-					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+					.getCompoList(FormulationFilters.EFFECTIVE_VARIANT_COMPO)) {
 
 				Double weightUsed = FormulationHelper.getQtyInKg(compoListDataItem);
 				Double netWeight = FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT);

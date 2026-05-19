@@ -32,4 +32,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface DataListIdentifierAttr  {
 	boolean isDefaultPivotAssoc() default true;
+	String targetTypes() default "";
 }

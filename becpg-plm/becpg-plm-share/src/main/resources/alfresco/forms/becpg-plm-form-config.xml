@@ -1553,6 +1553,7 @@
                     <show id="bcpg:allergenRegulatoryThreshold" />
                     <show id="bcpg:allergenInVoluntaryRegulatoryThreshold" />
                     <show id="bcpg:allergenSubset" />
+                    <show id="bcpg:allergenInvoluntaryOtherLegalName" />
                     <show id="bcpg:erpCode" force="true" />
                     <show id="rep:reportLocales" force="true" />
                     <show id="sec:readGroups" force="true" />
@@ -1586,6 +1587,7 @@
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 
                     </field>
+                    <field id="bcpg:allergenInvoluntaryOtherLegalName" help-id="becpg.forms.help.allergenInvoluntaryOtherLegalName" />
                     <field id="rep:reportLocales">
                         <control template="/org/alfresco/components/form/controls/mtlangue.ftl">
                             <control-param name="insertBlank">true</control-param>
@@ -1609,6 +1611,7 @@
                     <show id="bcpg:allergenRegulatoryThreshold" />
                     <show id="bcpg:allergenInVoluntaryRegulatoryThreshold" />
                     <show id="bcpg:allergenSubset" />
+                    <show id="bcpg:allergenInvoluntaryOtherLegalName" />
                     <show id="bcpg:erpCode" force="true" />
                     <show id="rep:reportLocales" force="true" />
                     <show id="sec:readGroups" force="true" />
@@ -1642,6 +1645,7 @@
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 
                     </field>
+                    <field id="bcpg:allergenInvoluntaryOtherLegalName" help-id="becpg.forms.help.allergenInvoluntaryOtherLegalName" />
                     <field id="rep:reportLocales">
                         <control template="/org/alfresco/components/form/controls/mtlangue.ftl">
                             <control-param name="insertBlank">true</control-param>
@@ -1685,6 +1689,7 @@
                     <show id="bcpg:allergenType" />
                     <show id="bcpg:allergenCode" />
                     <show id="bcpg:allergenSubset" />
+                    <show id="bcpg:allergenInvoluntaryOtherLegalName" />
                     <show id="bcpg:allergenRegulatoryThreshold" />
                     <show id="bcpg:allergenInVoluntaryRegulatoryThreshold" />
                     <show id="sec:readGroups" force="true" />
@@ -3564,17 +3569,17 @@
                         </control>
                     </field>
                     <field id="bcpg:docTypeDestPath" set="documentTypeAutogeneration" help-id="becpg.forms.help.docTypeDestPath" />
-                     <field id="bcpg:aiValidationCriteria" set="ai" >
+                     <field id="bcpg:aiValidationCriteria" set="ai" help-id="becpg.forms.help.aiValidationCriteria" >
                        <control template="/org/alfresco/components/form/controls/textarea.ftl" >
                             <control-param name="rows">10</control-param>
                         </control>
-                    </field>
-                   <field id="bcpg:aiSuggestedFields" set="ai" >
+                    </field>	
+                   <field id="bcpg:aiSuggestedFields" set="ai" help-id="becpg.forms.help.aiSuggestedFields" >
                         <control template="/org/alfresco/components/form/controls/textarea.ftl" >
                             <control-param name="rows">4</control-param>
                         </control>
                     </field>
-                    <field id="bcpg:aiExtraPrompt" set="ai" >
+                    <field id="bcpg:aiExtraPrompt" set="ai" help-id="becpg.forms.help.aiExtraPrompt" >
                         <control template="/org/alfresco/components/form/controls/textarea.ftl" >
                             <control-param name="rows">4</control-param>
                         </control>
@@ -3719,17 +3724,17 @@
                         </control>
                     </field>
                     <field id="bcpg:docTypeDestPath" set="documentTypeAutogeneration" help-id="becpg.forms.help.docTypeDestPath" />
-                     <field id="bcpg:aiValidationCriteria" set="ai" >
+                     <field id="bcpg:aiValidationCriteria" set="ai" help-id="becpg.forms.help.aiValidationCriteria" >
                        <control template="/org/alfresco/components/form/controls/textarea.ftl" >
                             <control-param name="rows">10</control-param>
                         </control>
                     </field>
-                   <field id="bcpg:aiSuggestedFields" set="ai" >
+                   <field id="bcpg:aiSuggestedFields" set="ai" help-id="becpg.forms.help.aiSuggestedFields" >
                         <control template="/org/alfresco/components/form/controls/textarea.ftl" >
                             <control-param name="rows">4</control-param>
                         </control>
                     </field>
-                    <field id="bcpg:aiExtraPrompt" set="ai" >
+                    <field id="bcpg:aiExtraPrompt" set="ai" help-id="becpg.forms.help.aiExtraPrompt" >
                         <control template="/org/alfresco/components/form/controls/textarea.ftl" >
                             <control-param name="rows">4</control-param>
                         </control>
@@ -3825,17 +3830,17 @@
                     </field>
                     <field id="bcpg:docTypeDestPath" set="documentTypeAutogeneration" help-id="becpg.forms.help.docTypeDestPath" />
                     
-                     <field id="bcpg:aiValidationCriteria" set="ai" >
+                     <field id="bcpg:aiValidationCriteria" set="ai" help-id="becpg.forms.help.aiValidationCriteria" >
                         <control template="/org/alfresco/components/form/controls/textarea.ftl" >
                             <control-param name="rows">10</control-param>
                         </control>
                     </field>
-                    <field id="bcpg:aiSuggestedFields" set="ai" >
+                    <field id="bcpg:aiSuggestedFields" set="ai" help-id="becpg.forms.help.aiSuggestedFields" >
                         <control template="/org/alfresco/components/form/controls/textarea.ftl" >
                             <control-param name="rows">4</control-param>
                         </control>
                     </field>
-                    <field id="bcpg:aiExtraPrompt" set="ai" >
+                    <field id="bcpg:aiExtraPrompt" set="ai" help-id="becpg.forms.help.aiExtraPrompt" >
                         <control template="/org/alfresco/components/form/controls/textarea.ftl" >
                             <control-param name="rows">4</control-param>
                         </control>
@@ -8408,6 +8413,7 @@
                 <field-visibility>
                     <show id="bcpg:entityDataListState" force="true" />
                     <show id="bcpg:variantIds" force="true" />
+                    <show id="bcpg:depthLevel" force="true"/>
                     <show id="bcpg:allergenListAllergen" />
                     <show id="bcpg:allergenListQtyPerc" />
                     <show id="bcpg:allergenListVoluntary" />
@@ -8427,6 +8433,7 @@
                 <appearance>
                     <field id="bcpg:entityDataListState" label="hidden" />
                     <field id="bcpg:variantIds" label="hidden" />
+                    <field id="bcpg:depthLevel" label="hidden" />
                     <field id="fm:commentCount" label="hidden" read-only="true" />
                     <field id="bcpg:allergenListDecisionTree" read-only="true" />
                     <field id="dataList_bcpg:reqCtrlList" label-id="hidden" />
@@ -9327,9 +9334,9 @@
                         <constraint-handlers>
                             <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"
                                 event='keyup,change@[
-                                {"prop":"prop_bcpg_lrLabel", "condition" : "Format|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare|ShowPerc|ShowGeo|ShowBio"},
+                                {"prop":"prop_bcpg_lrLabel", "condition" : "Format|ForcePercentage|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare|ShowPerc|ShowGeo|ShowBio"},
                                 {"prop":"assoc_bcpg_lrComponents", "condition" : "Render|Locale|Prefs"},
-                                {"prop":"assoc_bcpg_lrReplacements", "condition" : "Format|FootNote|Render|DetailComponents|Declare|DeclareThreshold|DoNotDetailsAtEnd|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare|ShowPerc|ShowGeo|ShowBio"},
+                                {"prop":"assoc_bcpg_lrReplacements", "condition" : "Format|ForcePercentage|FootNote|Render|DetailComponents|Declare|DeclareThreshold|DoNotDetailsAtEnd|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare|ShowPerc|ShowGeo|ShowBio"},
                                 {"prop":"prop_bcpg_lrLocales", "condition" : "Prefs|Group|Detail|DoNotDetails|DetailComponents|DoNotDetailsComponents"}
                                 ]' />
                         </constraint-handlers>
@@ -9431,9 +9438,9 @@
                         <constraint-handlers>
                             <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"
                                 event='keyup,change@[
-                                {"prop":"prop_bcpg_lrLabel", "condition" : "Format|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare|ShowPerc|ShowGeo|ShowBio"},
+                                {"prop":"prop_bcpg_lrLabel", "condition" : "Format|ForcePercentage|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare|ShowPerc|ShowGeo|ShowBio"},
                                 {"prop":"assoc_bcpg_lrComponents", "condition" : "Render|Locale|Prefs"},
-                                {"prop":"assoc_bcpg_lrReplacements", "condition" : "Format|FootNote|Render|DetailComponents|Declare|DeclareThreshold|DoNotDetailsAtEnd|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare|ShowPerc|ShowGeo|ShowBio"},
+                                {"prop":"assoc_bcpg_lrReplacements", "condition" : "Format|ForcePercentage|FootNote|Render|DetailComponents|Declare|DeclareThreshold|DoNotDetailsAtEnd|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare|ShowPerc|ShowGeo|ShowBio"},
                                 {"prop":"prop_bcpg_lrLocales", "condition" : "Prefs|Group|Detail|DoNotDetails|DetailComponents|DoNotDetailsComponents"}
                                 ]' />
                         </constraint-handlers>
@@ -9494,6 +9501,7 @@
                     <show id="bcpg:ingListGeoOrigin" />
                     <show id="bcpg:ingListGeoTransfo" />
                     <show id="bcpg:ingListBioOrigin" />
+                    <show id="bcpg:ingListIngTypes" />
                     <show id="bcpg:ingListClaims" />
                     <show id="bcpg:ingListDeclType" />
                     <show id="bcpg:linkedSearchAssociation" force="true" />
@@ -9539,6 +9547,13 @@
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
 
+                    <field id="bcpg:ingListIngTypes" set="2-col-1">
+                        <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
+                            </control-param>
+                        </control>
+                    </field>
+
                     <field id="bcpg:ingListClaims" set="2-col-1">
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
                             <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:labelClaim?andProps=bcpg:labelClaimType%7CCertification
@@ -9577,7 +9592,6 @@
                         </control>
                     </field>
 
-
                 </appearance>
             </form>
             <!-- Data Grid view -->
@@ -9608,6 +9622,7 @@
                     <show id="bcpg:linkedSearchAssociation" />
                     <show id="bcpg:ingListDeclType" />
                     <show id="dataList_bcpg:reqCtrlList" />
+                    <show id="bcpg:ingListIngTypes" />
                     <show id="entity_bcpg:ingListIng_bcpg:ing_asColumn" force="true" />
                     <show id="fm:commentCount" force="true" />
                     <show id="bcpg:glopTarget" />
@@ -9622,6 +9637,7 @@
                     <field id="bcpg:ingListQtyPercWithSecondaryYield" read-only="true" />
                     <field id="bcpg:depthLevel" label="hidden" />
                     <field id="dataList_bcpg:reqCtrlList" label-id="hidden" />
+                    <field id="bcpg:ingListIngTypes" />
                     <field id="bcpg:ingListDeclType" label="hidden" />
                     <field id="fm:commentCount" label="hidden" read-only="true" />
                 </appearance>
@@ -9734,8 +9750,13 @@
                     <show id="bcpg:ingListClaims" />
                     <show id="bcpg:ingListComments" />
                     <show id="bcpg:ingListDeclType" />  
+                    <show id="bcpg:ingListIngTypes" />
                     <show id="entity_bcpg:ingListIng_bcpg:ing_asColumn" force="true" />
                     <show id="fm:commentCount" force="true" />
+                    <show id="bcpg:reconstitutionRate" />
+                    <show id="bcpg:reconstitutionPriority" />
+                    <show id="bcpg:diluentRef" />
+                    <show id="bcpg:targetReconstitutionRef" />
                 </field-visibility>
                 <appearance>
                     <field id="bcpg:entityDataListState" label="hidden" />
@@ -9743,6 +9764,16 @@
                     <field id="bcpg:depthLevel" label="hidden" />
                      <field id="bcpg:ingListDeclType" label="hidden" />
                     <field id="fm:commentCount" label="hidden" read-only="true" />
+                    <field id="bcpg:diluentRef">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing</control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:targetReconstitutionRef">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing</control-param>
+                        </control>
+                    </field>
                 </appearance>
             </form>
             <form id="filter">
@@ -9861,9 +9892,15 @@
                     <show id="bcpg:ingListGeoOrigin" />
                     <show id="bcpg:ingListGeoTransfo" />
                     <show id="bcpg:ingListBioOrigin" />
+                    <show id="bcpg:ingListIngTypes" />
                     <show id="bcpg:ingListClaims" />
 
                     <show id="bcpg:ingListComments" />
+
+                    <show id="bcpg:reconstitutionRate" force="false" />
+                    <show id="bcpg:reconstitutionPriority" force="false" />
+                    <show id="bcpg:diluentRef" force="false" />
+                    <show id="bcpg:targetReconstitutionRef" force="false" />
 
                     <show id="bcpg:ingListDeclType" />
                     <show id="bcpg:linkedSearchAssociation" force="true" />
@@ -9907,6 +9944,13 @@
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
 
+                    <field id="bcpg:ingListIngTypes" set="2-col-1">
+                        <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
+                            </control-param>
+                        </control>
+                    </field>
+
                     <field id="bcpg:ingListClaims" set="2-col-1">
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
                             <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:labelClaim?andProps=bcpg:labelClaimType%7CCertification
@@ -9943,6 +9987,17 @@
                             <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing?extra.getByAssoc=bcpg:linkedSearchAssociation
                             </control-param>
                             <control-param name="parentAssoc">bcpg_ingListIng</control-param>
+                        </control>
+                    </field>
+                    
+                    <field id="bcpg:diluentRef" set="1-col-2">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing</control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:targetReconstitutionRef" set="1-col-2">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing</control-param>
                         </control>
                     </field>
 

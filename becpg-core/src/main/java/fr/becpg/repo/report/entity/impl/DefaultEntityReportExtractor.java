@@ -33,7 +33,6 @@ import org.alfresco.model.ForumModel;
 import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.version.Version2Model;
-import org.alfresco.repo.version.common.VersionUtil;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
@@ -74,6 +73,8 @@ import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.entity.version.EntityVersion;
+import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.expressions.ExpressionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
@@ -181,6 +182,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
 
+	@Autowired
+	private EntityVersionService entityVersionService;
+	
 	private String mlTextFields() {
 		return systemConfigurationService.confValue("beCPG.entity.report.mltext.fields");
 	}
@@ -807,7 +811,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 */
 	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context,
 			List<QName> hiddentAttributes) {
-		loadDataListItemAttributes(dataListItem, nodeElt, context, hiddentAttributes, true);
+		context.doInDataListContext(() -> loadDataListItemAttributes(dataListItem, nodeElt, context, hiddentAttributes, true));
 	}
 
 	/**
@@ -906,10 +910,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					&& entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)
 					&& context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_DATALIST_IMAGE, Boolean.FALSE)) {
 				String imgId = String.format(DATALIST_IMG_ID, nodeRef.getId());
-				if (!context.getExtractedImages().contains(nodeRef)) {
-					context.getExtractedImages().add(nodeRef);
-					extractImage(nodeRef, imgId, nodeElt, context);
-				}
+				extractImage(nodeRef, imgId, nodeElt, context);
 			}
 
 			// do not display system properties
@@ -1204,23 +1205,44 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 */
 	protected void loadVersions(NodeRef entityNodeRef, Element entityElt) {
 
-		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
+		List<EntityVersion> versions = entityVersionService.getAllVersions(entityNodeRef);
+		
 		Element versionsElt = entityElt.addElement(TAG_VERSIONS);
 
-		if ((versionHistory != null) && (versionHistory.getAllVersions() != null)) {
+		if ((versions != null) && (!versions.isEmpty())) {
 
-			for (Version version : versionHistory.getAllVersions()) {
-				NodeRef versionNodeRef = VersionUtil.convertNodeRef(version.getFrozenStateNodeRef());
-				String creator = (String) nodeService.getProperty(versionNodeRef, Version2Model.PROP_QNAME_FROZEN_CREATOR);
-				Date createdDate = (Date) nodeService.getProperty(versionNodeRef, Version2Model.PROP_QNAME_FROZEN_CREATED);
-				
+			for (EntityVersion version : versions) {
 				Element versionElt = versionsElt.addElement(TAG_VERSION);
-				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_LABEL.getLocalName(), version.getVersionLabel());
+				
+				String manualVersionLabel = null;
+				NodeRef headVersionNodeRef = null;
+				VersionHistory versionHistory = versionService.getVersionHistory(version.getEntityNodeRef());
+				if (versionHistory != null) {
+					Version headVersion = versionHistory.getHeadVersion();
+					headVersionNodeRef = headVersion.getFrozenStateNodeRef();
+				}
+				boolean isHeadVersion = headVersionNodeRef == null || version.getFrozenStateNodeRef().equals(headVersionNodeRef);
+				if (isHeadVersion) {
+					manualVersionLabel = (String) nodeService.getProperty(version.getEntityNodeRef(), BeCPGModel.PROP_MANUAL_VERSION_LABEL);
+				}
+				if (manualVersionLabel != null && !manualVersionLabel.isBlank()) {
+					versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_LABEL.getLocalName(), manualVersionLabel);
+				} else {
+					versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_LABEL.getLocalName(), version.getVersionLabel());
+				}
+
 				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_DESCRIPTION.getLocalName(),
 						XMLTextHelper.writeAttribute(version.getDescription()));
-				versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(),
-						XMLTextHelper.writeAttribute(attributeExtractorService.getPersonDisplayName(creator)));
-				versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), ISO8601DateFormat.format(createdDate));
+				
+				String creator = (String) nodeService.getProperty(version.getEntityVersionNodeRef(), ContentModel.PROP_CREATOR);
+				if (creator != null) {
+					versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(),
+							XMLTextHelper.writeAttribute(attributeExtractorService.getPersonDisplayName(creator)));
+				}
+				Date createdDate = version.getFrozenModifiedDate();
+				if (createdDate != null) {
+					versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), ISO8601DateFormat.format(createdDate));
+				}
 
 			}
 		}
@@ -1386,10 +1408,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				List<AssociationRef> avatorAssocs = nodeService.getTargetAssocs(creatorNodeRef, ContentModel.ASSOC_AVATAR);
 				if (!avatorAssocs.isEmpty()) {
 					NodeRef avatarNodeRef = avatorAssocs.get(0).getTargetRef();
-					if (!context.getExtractedImages().contains(avatarNodeRef)) {
-						context.getExtractedImages().add(avatarNodeRef);
-						extractImage(creatorNodeRef, avatarNodeRef, AVATAR_IMG_ID, imgsElt, context, null);
-					}
+					extractImage(creatorNodeRef, avatarNodeRef, AVATAR_IMG_ID, imgsElt, context, null);
 				}
 			}
 		}

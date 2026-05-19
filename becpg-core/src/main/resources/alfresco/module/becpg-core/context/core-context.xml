@@ -290,7 +290,6 @@
 		<property name="publicServiceAccessService" ref="publicServiceAccessService" />
 		<property name="internalNodeService" ref="mlAwareNodeService" />
 		<property name="contentPropertyRestrictionInterceptor" ref="contentPropertyRestrictionInterceptor" />
-		<property name="copyRestrictionService" ref="copyRestrictionService" />
 	</bean>
     
     <!-- Ovveride alfresco rule service -->

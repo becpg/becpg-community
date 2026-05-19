@@ -107,6 +107,7 @@ function main() {
     [
         "beCPG.formulation.reqCtrlList.maxRclSourcesToKeep",
         "beCPG.formulation.reqCtrlList.addChildRclSources",
+        "beCPG.formulation.allergenList.sortByParent",
         "beCPG.formulation.specification.addInfoReqCtrl",
         "beCPG.formulation.nutList.propagateUpEnable",
         "beCPG.formulation.ingsCalculatingWithYield",

@@ -91,7 +91,7 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 			if (propertiesToKeep() != null) {
 				for (String propertyToKeep : propertiesToKeep().split(",")) {
 					propertyToKeep = extractProperty(propertyToKeep, origNodeRef);
-					if (propertyToKeep != null) {
+					if (propertyToKeep != null && !propertyToKeep.isBlank()) {
 						QName propertyQname = QName.createQName(propertyToKeep, namespaceService);
 						if (entityDictionaryService.getProperty(propertyQname) != null) {
 							Serializable value = nodeService.getProperty(origNodeRef, propertyQname);

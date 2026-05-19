@@ -554,10 +554,22 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName, Boolean includeVersions, Integer maxResults, Integer offset,
 			boolean checkPermissions) {
 		Map<String, Object> params = new HashMap<>();
-		params.put("qName", qName != null ? qName.getLocalName() : null);
+		if (qName == null) {
+			params.put("qNameId", null);
+		} else {
+			Pair<Long, QName> qNamePair = qnameDAO.getQName(qName);
+			if (qNamePair == null) {
+				return new ArrayList<>();
+			}
+			params.put("qNameId", qNamePair.getFirst());
+		}
 		params.put("includeVersions", includeVersions != null && includeVersions.booleanValue());
+		params.put("workspaceSpacesStoreId", nodeDAO.getStore(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE).getFirst());
 		Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(tenantService.getName(nodeRef));
 		params.put("targetId", nodePair.getFirst());
+		Pair<Long, QName> aspectCompositeVersion = qnameDAO.getQName(BeCPGModel.ASPECT_COMPOSITE_VERSION);
+		Long aspectQNameId = (aspectCompositeVersion != null) ? aspectCompositeVersion.getFirst() : -1;
+		params.put("compositeVersionId", aspectQNameId);
 
 		Set<String> authorisations = AuthenticationUtil.runAs(() -> permissionService.getAuthorisations(),
 				AuthenticationUtil.getFullyAuthenticatedUser());
@@ -864,7 +876,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 						filterEntry.put(FIELD_NAME, fieldName);
 						if (criteriaFilter.getValue() != null) {
 							String[] values = criteriaFilter.getValue().split(",");
-							List<String> filterValues = Arrays.stream(values).toList();
+							List<Object> filterValues = formatFilterValues(fieldName, values);
 							filterEntry.put(FILTER_VALUES, filterValues);
 							if (AssociationCriteriaFilterMode.NOT_EQUALS.equals(criteriaFilter.getMode()) && !isAuditProperty(fieldName)) {
 								Map<String, Object> exludeFilterMap = new HashMap<>();
@@ -888,6 +900,54 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		filterMap.put("auditFilters", auditFilters);
 		filterMap.put(EXCLUDE_PROP_MAP, excludePropMap);
 		return filterMap;
+	}
+
+	/**
+	 * Formats equality filter values to match the property column type.
+	 *
+	 * @param fieldName the persisted field name
+	 * @param values the raw filter values
+	 * @return the typed filter values
+	 */
+	private List<Object> formatFilterValues(String fieldName, String[] values) {
+		List<Object> filterValues = new ArrayList<>(values.length);
+		for (String value : values) {
+			filterValues.add(formatFilterValue(fieldName, value));
+		}
+		return filterValues;
+	}
+
+	/**
+	 * Formats an equality filter value to match the property column type.
+	 *
+	 * @param fieldName the persisted field name
+	 * @param value the raw filter value
+	 * @return the typed filter value
+	 */
+	private Object formatFilterValue(String fieldName, String value) {
+		String trimmedValue = value.trim();
+		return switch (fieldName) {
+		case "long_value" -> Long.valueOf(trimmedValue);
+		case "float_value", "double_value" -> Double.valueOf(trimmedValue);
+		case "boolean_value" -> parseBooleanFilterValue(trimmedValue);
+		default -> trimmedValue;
+		};
+	}
+
+	/**
+	 * Parses a boolean filter value.
+	 *
+	 * @param value the raw boolean value
+	 * @return the parsed boolean
+	 */
+	private Boolean parseBooleanFilterValue(String value) {
+		if (Boolean.TRUE.toString().equalsIgnoreCase(value)) {
+			return Boolean.TRUE;
+		}
+		if (Boolean.FALSE.toString().equalsIgnoreCase(value)) {
+			return Boolean.FALSE;
+		}
+		throw new BeCPGException("Invalid boolean filter value: " + value);
 	}
 	
 	private boolean isAuditProperty(String fieldName) {

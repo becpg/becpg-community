@@ -336,14 +336,6 @@ public class BeCPGAIMSFilter implements Filter
             } else {
                 LOGGER.debug("prompt=true found, user is already unauthenticated. Proceeding to login normally.");
             }
-            // At this point, if explicitReAuthRequested was true, isAuthenticated is now false.
-            // The request is for SHARE_AIMS_LOGIN_PAGE.
-            // The flow will continue, and since isAuthenticated is false,
-            // the aims-login page will be processed as if for an unauthenticated user.
-            // The aims-login.jsp (or handler) is then responsible for generating the
-            // link/redirect to aims-dologin, which will trigger the IdP flow.
-            // Your BeCPGCustomAuthorizationRequestResolver will add "prompt=login" (or similar)
-            // to the actual IdP authorization request.
         }
 
         if (!isAuthenticated && this.enabled && (request.getRequestURI().contains(this.shareContext + SHARE_PAGE) || request.getRequestURI().contains(this.shareContext + SHARE_AIMS_LOGOUT)))
@@ -553,17 +545,10 @@ public class BeCPGAIMSFilter implements Filter
                 Response res = conn.call("/api/people/" + URLEncoder.encode(username, StandardCharsets.UTF_8.toString()) + "?groups=true", c);
                 if (Status.STATUS_OK == res.getStatus().getCode())
                 {
-                    // Assuming we get a successful response then we need to parse the response as JSON and then
-                    // retrieve the group data from it...
-                    //
-                    // Step 1: Get a String of the response...
                     String resStr = res.getResponse();
-
-                    // Step 2: Parse the JSON...
                     JSONParser jp = new JSONParser();
                     Object userData = jp.parse(resStr);
 
-                    // Step 3: Iterate through the JSON object getting all the groups that the user is a member of...
                     StringBuilder groups = new StringBuilder(512);
                     if (userData instanceof JSONObject)
                     {
@@ -584,13 +569,11 @@ public class BeCPGAIMSFilter implements Filter
                         }
                     }
 
-                    // Step 4: Trim off any trailing commas...
                     if (groups.length() != 0)
                     {
                         groups.delete(groups.length() - 1, groups.length());
                     }
 
-                    // Step 5: Store the groups on the session...
                     session.setAttribute(SESSION_ATTRIBUTE_KEY_USER_GROUPS, groups.toString());
                 }
                 else
@@ -630,9 +613,6 @@ public class BeCPGAIMSFilter implements Filter
 
     /**
      * Initialise the user meta data object and set it into the session and request context (_alf_USER_OBJECT)
-     * The user meta data object is used by web scripts that require authentication
-     * This is present in the filter for avoiding Basic Authentication prompt for those web scripts,
-     * when user access them and is logged out (see https://issues.alfresco.com/jira/browse/APPS-117)
      *
      * @param request
      * @throws UserFactoryException
@@ -662,7 +642,6 @@ public class BeCPGAIMSFilter implements Filter
      */
     private String getAlfTicket(HttpSession session, String username, String accessToken) throws ConnectorServiceException
     {
-        // Info
         if (LOGGER.isInfoEnabled())
         {
             LOGGER.info("Retrieving the Alfresco Ticket from Repository.");
@@ -683,7 +662,6 @@ public class BeCPGAIMSFilter implements Filter
         }
         else
         {
-            // Parse the alfTicket
             JSONObject json = new JSONObject(r.getText());
             try
             {
@@ -729,9 +707,6 @@ public class BeCPGAIMSFilter implements Filter
 
     private synchronized void processAuthorizationResponse(HttpServletRequest request, HttpServletResponse response, HttpSession session)
         throws IOException {
-        /**
-         * Construct Authorization Request & Response
-         */
         OAuth2AuthorizationRequest authorizationRequest = this.authorizationRequestRepository
             .removeAuthorizationRequest(request, response);
         MultiValueMap<String, String> params = toMultiMap(request.getParameterMap());
@@ -740,9 +715,6 @@ public class BeCPGAIMSFilter implements Filter
 
         ClientRegistration clientRegistration = this.clientRegistrationRepository.findByRegistrationId(this.clientId);
 
-        /**
-         * Prepare Authentication Request to get Authentication Result
-         */
         OAuth2LoginAuthenticationToken authenticationRequest = new OAuth2LoginAuthenticationToken(clientRegistration,
             new OAuth2AuthorizationExchange(authorizationRequest,authorizationResponse));
         authenticationRequest.setDetails(this.authenticationDetailsSource.buildDetails(request));
@@ -763,9 +735,6 @@ public class BeCPGAIMSFilter implements Filter
             return;
         }
 
-        /**
-         * Add Authentication Result in Security Context and save the User
-         */
         SecurityContextHolder.clearContext();
         SecurityContextHolder.getContext().setAuthentication(authenticationResult);
         Authentication currentAuthentication = SecurityContextHolder.getContext().getAuthentication();
@@ -775,19 +744,10 @@ public class BeCPGAIMSFilter implements Filter
             principalName, authenticationResult.getAccessToken(), authenticationResult.getRefreshToken());
         this.oauth2ClientService.saveAuthorizedClient(authorizedClient, currentAuthentication);
 
-        /**
-         * Save the Security Context in Session
-         */
         String redirectUrl = authorizationRequest.getRedirectUri();
 
-        /**
-         * Retrieve the Cached Page Request before authentication and now after Authentication redirect to the Page.
-         */
         SavedRequest savedRequest = this.requestCache.getRequest(request, response);
 
-        /**
-         * Retrieve the Cached Page Request before authentication and now after Authentication redirect to the Page.
-         */
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
             SecurityContextHolder.getContext());
 
@@ -800,7 +760,7 @@ public class BeCPGAIMSFilter implements Filter
             redirectUrl = savedRequest.getRedirectUrl();
             this.requestCache.removeRequest(request, response);
         }
-        this.redirectStrategy.sendRedirect(request, response, Encode.forJava(redirectUrl));
+        this.redirectStrategy.sendRedirect(request, response, redirectUrl);
     }
 
     /**
@@ -918,7 +878,6 @@ public class BeCPGAIMSFilter implements Filter
         {
             jwt = validateIdToken(clientRegistration, (String) accessTokenResponse.getAdditionalParameters()
                 .get("id_token"));
-            // Decoder for OAuth2 Access Token
             validateAccessToken(clientRegistration, accessTokenResponse.getAccessToken());
         }
         catch (JwtException jwtException)
@@ -960,39 +919,39 @@ public class BeCPGAIMSFilter implements Filter
     }
 
     /**
-	 * Redirect to the aims-login page that is not filtered so we can add the fragments to the redirect URL as a query
-	 * parameter. This will redirect to /share/aims-login?{original query params if present}redirectUrl={the
-	 * originalURL that was called, including the query params}.
-	 *
-	 * We are keeping the original query params in the URI due to the OAuth2AuthorizationRequest reading at least the
-	 * action param.
-	 *
-	 * @param request
-	 * @param response
-	 * @throws IOException
-	 */
+     * Redirect to the aims-login page that is not filtered so we can add the fragments to the redirect URL as a query
+     * parameter. Only the path, query string and fragment of the original URL are preserved; the host is never
+     * taken from user input, preventing Open Redirection attacks.
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     */
     private void sendRedirectForPreLogin(HttpServletRequest request, HttpServletResponse response) throws IOException
-{
-    String originalQueryString = request.getQueryString();
-    String redirectUrl = request.getRequestURL().toString()
-            + (originalQueryString != null ? "?" + originalQueryString : "");
-    
-    // URL encode the redirectUrl to ensure all parameters are preserved
-    String encodedRedirectUrl = URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8.toString());
-    
-    if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Saving original URL for later redirect: " + redirectUrl);
+    {
+        String originalQueryString = request.getQueryString();
+        String redirectUrl = request.getRequestURL().toString()
+                + (originalQueryString != null ? "?" + originalQueryString : "");
+
+        // URL encode the redirectUrl to ensure all parameters are preserved
+        String encodedRedirectUrl = URLEncoder.encode(redirectUrl, StandardCharsets.UTF_8.toString());
+
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Saving original URL for later redirect: " + redirectUrl);
+        }
+
+        String loginUri = UriComponentsBuilder.fromUriString(request.getContextPath() + SHARE_AIMS_LOGIN_PAGE)
+                .queryParam("redirectUrl", encodedRedirectUrl)
+                .build()
+                .toUriString();
+        response.sendRedirect(loginUri);
     }
-    
-    String loginUri = UriComponentsBuilder.fromUriString(request.getContextPath() + SHARE_AIMS_LOGIN_PAGE)
-            .queryParam("redirectUrl", encodedRedirectUrl)
-            .build()
-            .toUriString();
-    response.sendRedirect(loginUri);
-}
+
     /**
-     * After we have sucessfully authenticated with the IdP, the IDP sent the redirect back to the aims-login page. We
-     * need to redirect back to the original URL that was called and include the framents if present
+     * After successful authentication with the IdP, redirect back to the original URL.
+     * The redirect target is validated to prevent Open Redirection attacks: only URLs
+     * on the same host (or relative URLs) are accepted. Any attempt to redirect to an
+     * external domain is blocked and falls back to the application root.
      *
      * @param request
      * @param response
@@ -1008,19 +967,29 @@ public class BeCPGAIMSFilter implements Filter
             this.redirectStrategy.sendRedirect(request, response, "/");
             return;
         }
-        
+
         // Decode the URL that was encoded in sendRedirectForPreLogin
         String originalUrl;
         try {
             originalUrl = java.net.URLDecoder.decode(encodedOriginalUrl, StandardCharsets.UTF_8.toString());
-            
+
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Redirecting to original URL after authentication: " + originalUrl);
             }
         } catch (Exception e) {
-            // If decoding fails, use the encoded URL as a fallback
+            // If decoding fails, fall back to home page rather than using a potentially unsafe value
             LOGGER.error("Failed to decode redirectUrl parameter: " + e.getMessage(), e);
-            originalUrl = encodedOriginalUrl;
+            this.redirectStrategy.sendRedirect(request, response, "/");
+            return;
+        }
+
+        // Security: validate that the redirect URL targets the same host or is relative.
+        // This prevents Open Redirection attacks where an attacker supplies an external URL.
+        if (!isSafeRedirectUrl(request, originalUrl))
+        {
+            LOGGER.warn("Open redirection attempt blocked. Refusing to redirect to external URL: " + originalUrl);
+            this.redirectStrategy.sendRedirect(request, response, "/");
+            return;
         }
 
         String originalFragment = request.getParameter("fragment");
@@ -1028,37 +997,106 @@ public class BeCPGAIMSFilter implements Filter
         this.redirectStrategy.sendRedirect(request, response, redirectUri.toUriString());
     }
 
+    /**
+     * Validates that a redirect URL is safe to use, i.e. it is either:
+     * <ul>
+     *   <li>a relative URL starting with {@code /} (but not {@code //}, which browsers treat as
+     *       protocol-relative and could point to an arbitrary host), or</li>
+     *   <li>an absolute {@code http} or {@code https} URL whose host and port exactly match those
+     *       of the current request.</li>
+     * </ul>
+     * Any other URL (different host, different port, non-http scheme, protocol-relative, etc.)
+     * is considered unsafe and rejected.
+     *
+     * @param request     the current HTTP request, used to determine the expected host and port
+     * @param redirectUrl the URL to validate
+     * @return {@code true} if the URL is safe; {@code false} otherwise
+     */
+    private boolean isSafeRedirectUrl(HttpServletRequest request, String redirectUrl)
+    {
+        if (redirectUrl == null || redirectUrl.isEmpty())
+        {
+            return false;
+        }
+
+        // Allow relative URLs (must start with '/' but not '//')
+        // '//' or '/\' are treated as protocol-relative by browsers and could point to external hosts
+        if (redirectUrl.startsWith("/") && !redirectUrl.startsWith("//") && !redirectUrl.contains("\\"))
+        {
+            return true;
+        }
+
+        // For absolute URLs, verify host and port match the current server
+        try
+        {
+            java.net.URI uri = new java.net.URI(redirectUrl);
+            String scheme = uri.getScheme();
+
+            // Only allow http/https schemes
+            if (scheme == null || (!scheme.equalsIgnoreCase("http") && !scheme.equalsIgnoreCase("https")))
+            {
+                return false;
+            }
+
+            String redirectHost = uri.getHost();
+            if (redirectHost == null)
+            {
+                return false;
+            }
+
+            // Host comparison is case-insensitive per RFC 3986
+            String serverHost = request.getServerName();
+            if (!redirectHost.equalsIgnoreCase(serverHost))
+            {
+                return false;
+            }
+
+            // Compare ports, normalising -1 (absent) to the default for the scheme
+            int normalisedRedirectPort = normalisePort(uri.getPort(), scheme);
+            int normalisedServerPort   = normalisePort(request.getServerPort(), request.getScheme());
+
+            return normalisedRedirectPort == normalisedServerPort;
+        }
+        catch (java.net.URISyntaxException e)
+        {
+            LOGGER.warn("Could not parse redirectUrl as a valid URI – blocking redirect: " + redirectUrl);
+            return false;
+        }
+    }
+
+    /**
+     * Returns the effective port for a given (port, scheme) pair.
+     * When {@code port} is {@code -1} (i.e. not explicitly specified in the URL),
+     * the standard default is used: 443 for {@code https}, 80 for everything else.
+     *
+     * @param port   the raw port value from a URI or servlet request (-1 means "not specified")
+     * @param scheme the URI scheme (e.g. {@code "http"} or {@code "https"})
+     * @return the normalised port number
+     */
+    private int normalisePort(int port, String scheme)
+    {
+        if (port != -1)
+        {
+            return port;
+        }
+        return "https".equalsIgnoreCase(scheme) ? 443 : 80;
+    }
+
     private synchronized void refreshToken(SecurityContext attribute, HttpSession session)
     {
         OAuth2LoginAuthenticationToken oAuth2LoginAuthenticationToken =
             (OAuth2LoginAuthenticationToken) attribute.getAuthentication();
-        /**
-         * do something to get new access token
-         */
         ClientRegistration clientRegistration = oAuth2LoginAuthenticationToken.getClientRegistration();
-        /**
-         * Call Auth server token endpoint to refresh token.
-         */
         OAuth2RefreshTokenGrantRequest refreshTokenGrantRequest =
             new OAuth2RefreshTokenGrantRequest(clientRegistration, oAuth2LoginAuthenticationToken.getAccessToken(),
                                                oAuth2LoginAuthenticationToken.getRefreshToken());
         OAuth2AccessTokenResponse accessTokenResponse =
             this.refreshTokenResponseClient.getTokenResponse(refreshTokenGrantRequest);
-        /**
-         * Convert id_token to OidcToken.
-         */
         OidcIdToken idToken = createOidcToken(clientRegistration, accessTokenResponse);
-        /**
-         * Since I have already implemented a custom OidcUserService, reuse existing
-         * code to get new user.
-         */
         OidcUser oidcUser = this.userService.loadUser(
             new OidcUserRequest(clientRegistration, accessTokenResponse.getAccessToken(), idToken,
                                 accessTokenResponse.getAdditionalParameters()));
 
-        /**
-         * Create new authentication(OAuth2LoginAuthenticationToken).
-         */
         Collection<? extends GrantedAuthority> mappedAuthorities =
             this.authoritiesMapper.mapAuthorities(oidcUser.getAuthorities());
         OAuth2LoginAuthenticationToken authenticationResult = new OAuth2LoginAuthenticationToken(clientRegistration,
@@ -1068,16 +1106,10 @@ public class BeCPGAIMSFilter implements Filter
                                                                                                  accessTokenResponse.getAccessToken(),
                                                                                                  accessTokenResponse.getRefreshToken());
         authenticationResult.setDetails(oAuth2LoginAuthenticationToken.getDetails());
-        /**
-         * Update access_token and refresh_token by saving new authorized client.
-         */
         OAuth2AuthorizedClient updatedAuthorizedClient =
             new OAuth2AuthorizedClient(clientRegistration, oAuth2LoginAuthenticationToken.getName(),
                                        accessTokenResponse.getAccessToken(), accessTokenResponse.getRefreshToken());
         this.oauth2ClientService.saveAuthorizedClient(updatedAuthorizedClient, authenticationResult);
-        /**
-         * Set new authentication in SecurityContextHolder.
-         */
         attribute.setAuthentication(authenticationResult);
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, attribute);
     }
