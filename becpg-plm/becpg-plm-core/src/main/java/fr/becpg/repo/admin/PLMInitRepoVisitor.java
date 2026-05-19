@@ -675,7 +675,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 
 		if (Objects.equals(folderName, RepoConsts.PATH_CODES)) {
-			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/gs1/gs1_codes_11_2024.csv");
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/gs1/gs1_codes.csv");
 		}
 	}
 
@@ -968,12 +968,25 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			// compare-name == *.csv
 			ActionCondition conditionOnName = actionService.createActionCondition(ComparePropertyValueEvaluator.NAME);
 			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_OPERATION, ComparePropertyValueOperation.ENDS.toString());
-			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, UserImporterActionExecuter.PARAM_VALUE_EXTENSION);
+			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, UserImporterActionExecuter.PARAM_CSV_EXTENSION);
 			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY, ContentModel.PROP_NAME);
 			conditionOnName.setInvertCondition(false);
 			compositeAction.addActionCondition(conditionOnName);
 
-			createRule(nodeRef, "import user", "Every item created will be imported", true, true, List.of(RuleType.INBOUND), compositeAction);
+			createRule(nodeRef, "import user", "Every item created will be imported", false, true, List.of(RuleType.INBOUND), compositeAction);
+
+			compositeAction = actionService.createCompositeAction();
+			action = actionService.createAction(UserImporterActionExecuter.NAME, null);
+			compositeAction.addAction(action);
+
+			conditionOnName = actionService.createActionCondition(ComparePropertyValueEvaluator.NAME);
+			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_OPERATION, ComparePropertyValueOperation.ENDS.toString());
+			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE, UserImporterActionExecuter.PARAM_XLSX_EXTENSION);
+			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY, ContentModel.PROP_NAME);
+			conditionOnName.setInvertCondition(false);
+			compositeAction.addActionCondition(conditionOnName);
+			
+			createRule(nodeRef, "import user XLSX", "Every item created will be imported", false, true, List.of(RuleType.INBOUND), compositeAction);
 
 		} else if (Objects.equals(folderName, PlmRepoConsts.PATH_IMPORT_TO_DO)) {
 			if (!nodeService.hasAspect(nodeRef, RuleModel.ASPECT_IGNORE_INHERITED_RULES)) {
@@ -1063,6 +1076,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		dataLists.add(PLMModel.TYPE_CERTIFICATION);
 		dataLists.add(PLMModel.TYPE_PLANT);
 		dataLists.add(SurveyModel.TYPE_SURVEY_LIST);
+		dataLists.add(ProjectModel.TYPE_SCORE_LIST);
 	
 		subFolders.add(RepoConsts.PATH_SUPPLIER_DOCUMENTS);
 		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, PLMModel.TYPE_SUPPLIER, null, true, true, dataLists,
@@ -1140,7 +1154,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_CONTACTS, PLMModel.TYPE_CONTACTLIST);
 		entityLists.put(PlmRepoConsts.PATH_REGULATORY_USAGES, PLMModel.TYPE_REGULATORY_USAGE);
 		entityLists.put(PlmRepoConsts.PATH_TOXICITIES, PLMModel.TYPE_TOX);
-		entityLists.put(PlmRepoConsts.PATH_TOX_ING, PLMModel.TYPE_TOX_ING);
 		entityLists.put(PlmRepoConsts.PATH_SURVEY_QUESTIONS, SurveyModel.TYPE_SURVEY_QUESTION);
 		entityLists.put(PlmRepoConsts.PATH_DOCUMENT_TYPE, BeCPGModel.TYPE_DOCUMENT_TYPE);
 		
@@ -1312,6 +1325,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
 				dataLists.add(PLMModel.TYPE_SVHCLIST);
+				dataLists.add(PLMModel.TYPE_MICROBIOLIST);
 				dataLists.add(SurveyModel.TYPE_SURVEY_LIST);
 
 				wusedQName = PLMModel.TYPE_COMPOLIST;

@@ -136,6 +136,7 @@
 		<property name="workflowService" ref="WorkflowService" />
 		<property name="workflowPackageComponent" ref="workflowPackageImpl" />
 		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="entityService" ref="entityService" />
 	</bean>
 
 	<bean id="webscript.fr.becpg.entity.entityDictionary.get" class="fr.becpg.repo.web.scripts.entity.EntityDictionaryWebScript" parent="webscript">
@@ -278,6 +279,7 @@
 		<property name="remoteRateLimiter" ref="remoteRateLimiter" />
 		<property name="systemConfigurationService" ref="systemConfigurationService" />
 		<property name="advSearchService" ref="advSearchService" />
+		<property name="securityService" ref="securityService" />
 	</bean>
 
 
@@ -285,6 +287,7 @@
 	</bean>
 	
 	<bean id="webscript.fr.becpg.remote.dictionary.get" class="fr.becpg.repo.web.scripts.remote.EntityDictionaryWebScript" parent="abstractEntityWebScript">
+		<property name="entityDictionaryService" ref="entityDictionaryService" />
 	</bean>
 	
 	<bean id="webscript.fr.becpg.remote.activities.get" class="fr.becpg.repo.web.scripts.remote.GetActivitiesWebScript"  parent="abstractEntityWebScript" >

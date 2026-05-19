@@ -89,25 +89,29 @@ public class EntityReportJob extends AbstractScheduledLockedJob implements Job {
 			}
 		}
 
-		BatchInfo batchInfo = new BatchInfo(batchId, batchDescId);
-		batchInfo.setRunAsSystem(true);
-		batchInfo.setPriority(priority == null ? BatchPriority.MEDIUM : priority);
-		BatchStep<NodeRef> batchStep = batchQueueService.createBatchStepWithErrorHandling(batchInfo, pendingNodes,
-				new BatchProcessor.BatchProcessWorkerAdaptor<>() {
-					@Override
-					public void process(NodeRef nodeRef) throws Throwable {
-						if (nodeService.exists(nodeRef)) {
-							NodeRef extractedNode = nodeRef;
-							if (VersionHelper.isVersion(nodeRef) && (nodeService.getProperty(nodeRef, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
-								extractedNode = entityVersionService.extractVersion(nodeRef);
-							}
-							entityReportService.generateReports(extractedNode, nodeRef);
-							nodeService.removeAspect(nodeRef, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT);
+		if (!pendingNodes.isEmpty()) {
+			BatchInfo batchInfo = new BatchInfo(batchId, batchDescId);
+			batchInfo.setRunAsSystem(true);
+			batchInfo.setPriority(priority == null ? BatchPriority.MEDIUM : priority);
+			batchInfo.setWorkerThreads(1);
+			BatchStep<NodeRef> batchStep = batchQueueService.createBatchStepWithErrorHandling(batchInfo, pendingNodes,
+					new BatchProcessor.BatchProcessWorkerAdaptor<>() {
+				@Override
+				public void process(NodeRef nodeRef) throws Throwable {
+					if (nodeService.exists(nodeRef)) {
+						NodeRef extractedNode = nodeRef;
+						if (VersionHelper.isVersion(nodeRef) && (nodeService.getProperty(nodeRef, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
+							extractedNode = entityVersionService.extractVersion(nodeRef);
 						}
+						entityReportService.generateReports(extractedNode, nodeRef);
+						nodeService.removeAspect(nodeRef, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT);
 					}
-
-				});
-		batchQueueService.queueBatch(batchInfo, List.of(batchStep));
+				}
+				
+			});
+			batchQueueService.queueBatch(batchInfo, List.of(batchStep));
+		}
+		
 		return pendingNodes.size();
 	}
 }

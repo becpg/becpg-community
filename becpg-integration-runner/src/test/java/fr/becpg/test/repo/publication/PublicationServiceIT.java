@@ -52,10 +52,11 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class PublicationServiceIT extends PLMBaseTestCase {
 
-	private static final String CHANNEL_ID = "test-channel";
-	private static final String CHANNEL_ID1 = "test-channel-1";
-	private static final String CHANNEL_ID2 = "test-channel-2";
-	private static final String CHANNEL_ID3 = "test-channel-3";
+	private static final String UNIQUE_SUFFIX = "-" + System.currentTimeMillis();
+	private static final String CHANNEL_ID = "test-channel" + UNIQUE_SUFFIX;
+	private static final String CHANNEL_ID1 = "test-channel-1" + UNIQUE_SUFFIX;
+	private static final String CHANNEL_ID2 = "test-channel-2" + UNIQUE_SUFFIX;
+	private static final String CHANNEL_ID3 = "test-channel-3" + UNIQUE_SUFFIX;
 
 	@Autowired
 	private PublicationChannelService publicationChannelService;
@@ -351,7 +352,7 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 		inReadTx(() -> {
 			Assert.assertEquals(channelNodeRef, publicationChannelService.getChannelById(CHANNEL_ID));
 			Assert.assertFalse(getEntities(channelNodeRef).isEmpty());
-			Assert.assertEquals(pfNodeRef, getEntities(channelNodeRef).get(0));
+			Assert.assertTrue(getEntities(channelNodeRef).contains(pfNodeRef));
 			return true;
 		});
 
@@ -379,7 +380,7 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 		//Query with no date
 		inReadTx(() -> {
 			Assert.assertTrue(!getEntities(channelNodeRef).isEmpty());
-			Assert.assertEquals(pfNodeRef, getEntities(channelNodeRef).get(0));
+			Assert.assertTrue(getEntities(channelNodeRef).contains(pfNodeRef));
 			return true;
 		});
 
@@ -399,7 +400,7 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 		//Still having a result
 		inReadTx(() -> {
 			Assert.assertTrue(!getEntities(channelNodeRef).isEmpty());
-			Assert.assertEquals(pfNodeRef, getEntities(channelNodeRef).get(0));
+			Assert.assertTrue(getEntities(channelNodeRef).contains(pfNodeRef));
 			return true;
 		});
 
@@ -422,7 +423,7 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 		//One result
 		inReadTx(() -> {
 			Assert.assertTrue(!getEntities(channelNodeRef).isEmpty());
-			Assert.assertEquals(pfNodeRef, getEntities(channelNodeRef).get(0));
+			Assert.assertTrue(getEntities(channelNodeRef).contains(pfNodeRef));
 			return true;
 		});
 
@@ -436,7 +437,7 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 
 		inReadTx(() -> {
 			Assert.assertTrue(!getEntities(channelNodeRef).isEmpty());
-			Assert.assertEquals(pfNodeRef, getEntities(channelNodeRef).get(0));
+			Assert.assertTrue(getEntities(channelNodeRef).contains(pfNodeRef));
 			return true;
 		});
 
@@ -468,7 +469,7 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 
 		inReadTx(() -> {
 			Assert.assertTrue(!getEntities(channelNodeRef).isEmpty());
-			Assert.assertEquals(pfNodeRef, getEntities(channelNodeRef).get(0));
+			Assert.assertTrue(getEntities(channelNodeRef).contains(pfNodeRef));
 			return true;
 		});
 

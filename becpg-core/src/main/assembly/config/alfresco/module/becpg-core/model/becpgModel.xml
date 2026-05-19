@@ -1076,6 +1076,9 @@
 		<aspect name="bcpg:hiddenFolder">
 		</aspect>
 		
+		<aspect name="bcpg:entityHistoryAspect">
+		</aspect>
+
 		<!-- version with datalists -->
         
 <!--        Deprecated -->

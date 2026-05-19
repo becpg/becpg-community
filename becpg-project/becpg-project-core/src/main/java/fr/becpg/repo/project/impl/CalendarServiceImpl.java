@@ -1,7 +1,6 @@
 package fr.becpg.repo.project.impl;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashSet;
@@ -18,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.CalendarService;
@@ -57,10 +57,9 @@ public class CalendarServiceImpl implements CalendarService {
 	}
 
 	private boolean isWorkingDay(LocalDate date, Set<LocalDate> holidays, Set<Integer> nonWorkingDays) {
-		// Convert LocalDate to Calendar to get Calendar.DAY_OF_WEEK values for consistency
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-		int dayOfWeekValue = calendar.get(Calendar.DAY_OF_WEEK);
+		// DayOfWeek.getValue() returns 1 (Monday) to 7 (Sunday)
+		// java.util.Calendar uses 1 (Sunday) to 7 (Saturday)
+		int dayOfWeekValue = (date.getDayOfWeek().getValue() % 7) + 1;
 		if (nonWorkingDays.contains(dayOfWeekValue)) {
 			return false;
 		}
@@ -112,16 +111,40 @@ public class CalendarServiceImpl implements CalendarService {
 			return nonWorkingDays;
 		}
 
-		@SuppressWarnings("unchecked")
-		List<String> configuredDays = (List<String>) nodeService.getProperty(calendarNodeRef, ProjectModel.PROP_CAL_NON_WORKING_DAYS);
+		Object configuredDays = nodeService.getProperty(calendarNodeRef, ProjectModel.PROP_CAL_NON_WORKING_DAYS);
 
-		if (configuredDays == null) {
+		if (!(configuredDays instanceof List)) {
 			addDefaultDays(nonWorkingDays);
 			return nonWorkingDays;
 		}
 
-		configuredDays.stream().map(String::trim).filter(s -> !s.isEmpty()).map(Integer::valueOf)
-				.forEach(nonWorkingDays::add);
+		@SuppressWarnings("unchecked")
+		List<Object> daysList = (List<Object>) configuredDays;
+
+		if (daysList.isEmpty()) {
+			addDefaultDays(nonWorkingDays);
+			return nonWorkingDays;
+		}
+
+		for (Object day : daysList) {
+			if (day == null) {
+				continue;
+			}
+			try {
+				if (day instanceof Number) {
+					nonWorkingDays.add(((Number) day).intValue());
+				} else {
+					String s = day.toString().trim();
+					if (!s.isEmpty()) {
+						nonWorkingDays.add(Integer.valueOf(s));
+					}
+				}
+			} catch (Exception e) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Failed to parse non-working day: " + day, e);
+				}
+			}
+		}
 
 		return nonWorkingDays;
 	}
@@ -160,7 +183,7 @@ public class CalendarServiceImpl implements CalendarService {
 	}
 
 	private LocalDate asLocalDate(Date date) {
-		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		return date.toInstant().atZone(ProjectRepoConsts.PROJECT_TIMEZONE.toZoneId()).toLocalDate();
 	}
 
 	private void parseDateRange(Set<LocalDate> holidays, String dateRange) {

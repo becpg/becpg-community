@@ -16,10 +16,10 @@
 
         options: {
             ticket: null,
-            minWidth: 380,
+            minWidth: 500,
             minHeight: 600,
-            defaultWidth: 800,
-            defaultHeight: 700
+            defaultWidth: 1000,
+            defaultHeight: 800
         },
 
         isIFrameLoaded: false,
@@ -178,7 +178,7 @@
                         var currentUrl = window.location.href;
 
                         // Load iframe with chat URL including current URL
-                        chatFrame.innerHTML = '<iframe src="' + Alfresco.constants.URL_CONTEXT + 'proxy/ai/watson/chat?ticket=' + me.options.ticket + '&referer=' + encodeURIComponent(currentUrl) + '&locale=' + me.options.locale + '" referrerpolicy="origin" sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>';
+                        chatFrame.innerHTML = '<iframe src="' + Alfresco.constants.URL_CONTEXT + 'proxy/ai/watson/chat?ticket=' + me.options.ticket + '&referer=' + encodeURIComponent(currentUrl) + '&locale=' + me.options.locale + '" referrerpolicy="origin"></iframe>';
                         me.isIFrameLoaded = true;
                     }
                 }

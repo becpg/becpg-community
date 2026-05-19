@@ -61,6 +61,7 @@ public class NutriScoreIT extends PLMBaseTestCase {
 	}
 
 	@Before
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -70,6 +71,7 @@ public class NutriScoreIT extends PLMBaseTestCase {
 	}
 
 	@After
+	@Override
 	public void tearDown() throws Exception {
 		super.tearDown();
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {

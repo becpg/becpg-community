@@ -40,6 +40,7 @@ import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.productList.SpecCompatibilityDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.search.AdvSearchQueryFilter;
 import fr.becpg.repo.search.impl.DataListSearchFilter;
 import fr.becpg.repo.search.impl.DataListSearchFilterField;
 import fr.becpg.repo.search.impl.SearchConfig;
@@ -113,6 +114,201 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		}
 
 		return nodes;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public AdvSearchQueryFilter buildQueryFilter(QName datatype, Map<String, String> criteria, SearchConfig searchConfig) {
+		AdvSearchQueryFilter queryFilter = AdvSearchQueryFilter.empty();
+		if (isSearchFiltered(criteria) && (datatype != null)) {
+			queryFilter.merge(buildAssociationsQueryFilter(searchConfig, datatype, criteria));
+			if (entityDictionaryService.isSubClass(datatype, BeCPGModel.TYPE_ENTITY_V2) && (searchConfig.getDataListSearchFilters() != null)) {
+				for (DataListSearchFilter filter : searchConfig.getDataListSearchFilters()) {
+					queryFilter.merge(buildDataListQueryFilter(criteria, filter));
+				}
+			}
+			if (entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT)) {
+				queryFilter.merge(buildWUsedQueryFilter(criteria, CRITERIA_PACKAGING_LIST_PRODUCT, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT));
+				queryFilter.merge(buildWUsedQueryFilter(criteria, CRITERIA_COMPO_LIST_PRODUCT, PLMModel.ASSOC_COMPOLIST_PRODUCT));
+				queryFilter.merge(buildWUsedQueryFilter(criteria, CRITERIA_PROCESS_LIST_RESSOURCE, MPMModel.ASSOC_PL_RESOURCE));
+				queryFilter.merge(buildCollectionQueryFilter(criteria));
+			}
+			queryFilter.merge(buildSpecificationQueryFilter(criteria));
+		}
+		return queryFilter;
+	}
+
+	private AdvSearchQueryFilter buildAssociationsQueryFilter(SearchConfig searchConfig, QName datatype, Map<String, String> criteria) {
+		AdvSearchQueryFilter queryFilter = AdvSearchQueryFilter.empty();
+		Set<NodeRef> nodesToKeepOr = new HashSet<>();
+		boolean hasOrOperand = false;
+		for (Map.Entry<String, String> criterion : criteria.entrySet()) {
+			String key = criterion.getKey();
+			String propValue = criterion.getValue();
+			if (key.startsWith("assoc_") && (propValue != null) && !propValue.isBlank()) {
+				String assocName = key.substring(6);
+				if (assocName.endsWith("_added") && !getIgnoredFields(datatype, searchConfig).contains(key)) {
+					boolean isOROperand = false;
+					if (assocName.endsWith("_or_added")) {
+						isOROperand = true;
+						hasOrOperand = true;
+						assocName = assocName.substring(0, assocName.length() - 9);
+					} else {
+						assocName = assocName.substring(0, assocName.length() - 6);
+					}
+					Set<NodeRef> nodesToKeep = getAssociationCandidateIds(datatype, assocName, propValue);
+					if (!isOROperand) {
+						queryFilter.retainIncludeIds(nodesToKeep);
+					} else {
+						nodesToKeepOr.addAll(nodesToKeep);
+					}
+				}
+			}
+		}
+		if (hasOrOperand) {
+			queryFilter.retainIncludeIds(nodesToKeepOr);
+		}
+		return queryFilter;
+	}
+
+	private Set<NodeRef> getAssociationCandidateIds(QName datatype, String assocName, String propValue) {
+		QName assocQName = QName.createQName(assocName.replace("_", ":"), namespaceService);
+		Set<NodeRef> nodesToKeep = new HashSet<>();
+		Set<NodeRef> nodeRefs = new HashSet<>();
+		String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
+		for (String strNodeRef : arrValues) {
+			NodeRef nodeRef = new NodeRef(strNodeRef);
+			if (nodeService.exists(nodeRef)) {
+				nodeRefs.add(nodeRef);
+				if (nodeService.getType(nodeRef).equals(ContentModel.TYPE_PERSON)) {
+					for (ChildAssociationRef assoc : nodeService.getParentAssocs(nodeRef, ContentModel.ASSOC_MEMBER, RegexQNamePattern.MATCH_ALL)) {
+						nodeRefs.add(assoc.getParentRef());
+					}
+				}
+			}
+		}
+		if (!nodeRefs.isEmpty()) {
+			List<EntitySourceAssoc> entitySourceAssocs = associationService.getEntitySourceAssocs(new ArrayList<>(nodeRefs), assocQName, datatype, true, null);
+			for (EntitySourceAssoc assocRef : entitySourceAssocs) {
+				nodesToKeep.add(assocRef.getDataListItemNodeRef());
+			}
+		}
+		return nodesToKeep;
+	}
+
+
+	private AdvSearchQueryFilter buildDataListQueryFilter(Map<String, String> criteria, DataListSearchFilter filter) {
+		AdvSearchQueryFilter queryFilter = AdvSearchQueryFilter.empty();
+		List<EntitySourceAssoc> entitySourceAssocs = null;
+		List<EntitySourceAssoc> notEntitySourceAssocs = null;
+
+		for (DataListSearchFilterField assocFilter : filter.getAssocsFilters()) {
+			String propValue = assocFilter.getValue() != null ? assocFilter.getValue() : criteria.get(assocFilter.getHtmlId());
+			if ((propValue != null) && !propValue.isBlank()) {
+				boolean isOrOperator = "or".equals(assocFilter.getOperator()) || "not".equals(assocFilter.getOperator());
+				List<AssociationCriteriaFilter> criteriaFilters = buildCriteriaFilters(criteria, filter);
+				List<EntitySourceAssoc> tmp = associationService.getEntitySourceAssocs(extractNodeRefs(propValue, isOrOperator),
+						assocFilter.getAttributeQname(), assocFilter.getSourceTypeQname(), isOrOperator, criteriaFilters);
+
+				if (tmp == null) {
+					tmp = new ArrayList<>();
+				}
+
+				if ("not".equals(assocFilter.getOperator())) {
+					if (notEntitySourceAssocs == null) {
+						notEntitySourceAssocs = tmp;
+					} else {
+						merge(notEntitySourceAssocs, tmp);
+					}
+				} else if (entitySourceAssocs == null) {
+					entitySourceAssocs = tmp;
+				} else {
+					merge(entitySourceAssocs, tmp);
+				}
+			}
+		}
+
+		if (entitySourceAssocs != null) {
+			queryFilter.retainIncludeIds(entitySourceAssocs.stream().map(EntitySourceAssoc::getEntityNodeRef).collect(Collectors.toSet()));
+		}
+		if (notEntitySourceAssocs != null) {
+			queryFilter.addExcludeIds(notEntitySourceAssocs.stream().map(EntitySourceAssoc::getEntityNodeRef).collect(Collectors.toSet()));
+		}
+		return queryFilter;
+	}
+
+	private AdvSearchQueryFilter buildCollectionQueryFilter(Map<String, String> criteria) {
+		AdvSearchQueryFilter queryFilter = AdvSearchQueryFilter.empty();
+		if (criteria.containsKey(CRITERIA_PRODUCT_COLLECTIONS)) {
+			String propValue = criteria.get(CRITERIA_PRODUCT_COLLECTIONS);
+			if ((propValue != null) && !propValue.isBlank()) {
+				Set<NodeRef> retainNodes = new HashSet<>();
+				for (NodeRef nodeRef : extractNodeRefs(propValue, false)) {
+					ProductCollectionData productCollection = (ProductCollectionData) alfrescoRepository.findOne(nodeRef);
+					for (ProductListDataItem dataItem : productCollection.getProductList()) {
+						if (dataItem.getProduct() != null) {
+							retainNodes.add(dataItem.getProduct());
+						}
+					}
+				}
+				queryFilter.retainIncludeIds(retainNodes);
+			}
+		}
+		return queryFilter;
+	}
+
+	private AdvSearchQueryFilter buildWUsedQueryFilter(Map<String, String> criteria, String criteriaAssocString, QName criteriaAssoc) {
+		AdvSearchQueryFilter queryFilter = AdvSearchQueryFilter.empty();
+		if (criteria.containsKey(criteriaAssocString)) {
+			String propValue = criteria.get(criteriaAssocString);
+			if ((propValue != null) && !propValue.isBlank()) {
+				List<NodeRef> toFilterByNodes = extractNodeRefs(propValue, false);
+				if (!toFilterByNodes.isEmpty()) {
+					MultiLevelListData ret = wUsedListService.getWUsedEntity(toFilterByNodes, WUsedOperator.OR, criteriaAssoc, -1);
+					if (ret != null) {
+						queryFilter.retainIncludeIds(new HashSet<>(ret.getAllChilds()));
+					} else {
+						queryFilter.retainIncludeIds(new HashSet<>());
+					}
+				}
+			}
+		}
+		return queryFilter;
+	}
+
+	private AdvSearchQueryFilter buildSpecificationQueryFilter(Map<String, String> criteria) {
+		AdvSearchQueryFilter queryFilter = AdvSearchQueryFilter.empty();
+		if (criteria.containsKey(CRITERIA_NOTRESPECTED_SPECIFICATIONS)) {
+			String propValue = criteria.get(CRITERIA_NOTRESPECTED_SPECIFICATIONS);
+			if ((propValue != null) && !propValue.isBlank()) {
+				Set<NodeRef> retainNodes = new HashSet<>();
+				for (NodeRef nodeRef : extractNodeRefs(propValue, false)) {
+					ProductSpecificationData productSpecificationData = (ProductSpecificationData) alfrescoRepository.findOne(nodeRef);
+					for (SpecCompatibilityDataItem dataItem : productSpecificationData.getSpecCompatibilityList()) {
+						if (dataItem.getSourceItem() != null) {
+							retainNodes.add(dataItem.getSourceItem());
+						}
+					}
+				}
+				queryFilter.retainIncludeIds(retainNodes);
+			}
+		}
+		if (criteria.containsKey(CRITERIA_RESPECTED_SPECIFICATIONS)) {
+			String propValue = criteria.get(CRITERIA_RESPECTED_SPECIFICATIONS);
+			if ((propValue != null) && !propValue.isBlank()) {
+				Set<NodeRef> excludedNodes = new HashSet<>();
+				for (NodeRef nodeRef : extractNodeRefs(propValue, false)) {
+					ProductSpecificationData productSpecificationData = (ProductSpecificationData) alfrescoRepository.findOne(nodeRef);
+					for (SpecCompatibilityDataItem dataItem : productSpecificationData.getSpecCompatibilityList()) {
+						if (dataItem.getSourceItem() != null) {
+							excludedNodes.add(dataItem.getSourceItem());
+						}
+					}
+				}
+				queryFilter.addExcludeIds(excludedNodes);
+			}
+		}
+		return queryFilter;
 	}
 
 	private void getSearchNodesByCollectionCriteria(List<NodeRef> nodes, Map<String, String> criteria) {

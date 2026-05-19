@@ -17,6 +17,9 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.datalist.data;
 
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -602,13 +605,16 @@ public class DataListFilter {
 
 		if (effectiveFilterOn) {
 
-			Calendar startCal = Calendar.getInstance();
+		    LocalDate today = LocalDate.now();
 
-			String fromQuery = startCal.get(Calendar.YEAR) + "\\-" + (startCal.get(Calendar.MONTH) + 1) + "\\-" + startCal.get(Calendar.DAY_OF_MONTH);
+		    String fromQuery = today.atStartOfDay(ZoneOffset.UTC)
+		            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
 
-			queryBuilder.andBetweenOrNull(BeCPGModel.PROP_START_EFFECTIVITY, "MIN", fromQuery);
-			queryBuilder.andBetweenOrNull(BeCPGModel.PROP_END_EFFECTIVITY, fromQuery, "MAX");
+		    String toQuery = today.atTime(23, 59, 59)
+		            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
 
+		    queryBuilder.andBetweenOrNull(BeCPGModel.PROP_START_EFFECTIVITY, "MIN", toQuery);
+		    queryBuilder.andBetweenOrNull(BeCPGModel.PROP_END_EFFECTIVITY, fromQuery, "MAX");
 		}
 
 		if (filterId != null) {

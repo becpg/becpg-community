@@ -3,7 +3,6 @@ package fr.becpg.repo.project.web.scripts;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,6 +29,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.config.format.FormatMode;
 import fr.becpg.config.format.PropertyFormats;
+import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.activity.data.ActivityType;
@@ -293,8 +293,8 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 	 * @return a int.
 	 */
 	public int getDaysBetween(Date start, Date end) {
-		LocalDate startDate = start.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-		LocalDate endDate = end.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate startDate = start.toInstant().atZone(ProjectRepoConsts.PROJECT_TIMEZONE.toZoneId()).toLocalDate();
+		LocalDate endDate = end.toInstant().atZone(ProjectRepoConsts.PROJECT_TIMEZONE.toZoneId()).toLocalDate();
 
 		return (int) ChronoUnit.DAYS.between(startDate, endDate);
 	}

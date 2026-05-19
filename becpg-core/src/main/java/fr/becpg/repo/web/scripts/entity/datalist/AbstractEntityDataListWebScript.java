@@ -1,5 +1,7 @@
 package fr.becpg.repo.web.scripts.entity.datalist;
 
+import java.io.Serializable;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.lock.LockStatus;
@@ -152,5 +154,14 @@ public abstract class AbstractEntityDataListWebScript extends AbstractWebScript 
 
 		}
 		return true;
+	}
+	
+
+	protected Serializable defaultValue(Serializable val, Serializable def) {
+		if (val != null) {
+			return val;
+		} else {
+			return def;
+		}
 	}
 }

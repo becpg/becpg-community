@@ -32,14 +32,14 @@ import fr.becpg.repo.repository.model.EffectiveDataItem;
 public class EffectiveFilters<T extends EffectiveDataItem> implements DataListFilter<ProductData, T> {
 
 	/** Constant <code>EFFECTIVE="EFFECTIVE"</code> */
-	public final static String EFFECTIVE = "EFFECTIVE";
+	public static final  String EFFECTIVE = "EFFECTIVE";
 	/** Constant <code>FUTUR="FUTUR"</code> */
-	public final static String FUTUR = "FUTUR";
+	public static final  String FUTUR = "FUTUR";
 	/** Constant <code>ALL="ALL"</code> */
-	public final static String ALL = "ALL";
+	public static final  String ALL = "ALL";
 
 	/** Constant <code>EFFECTIVE_OR_FUTURE="EFFECTIVE_OR_FUTURE"</code> */
-	public final static String EFFECTIVE_OR_FUTURE = "EFFECTIVE_OR_FUTURE";
+	public static final  String EFFECTIVE_OR_FUTURE = "EFFECTIVE_OR_FUTURE";
 	
 	private String effectiveState = EFFECTIVE;
 	

@@ -239,14 +239,15 @@ public Result performBusinessOperation(Input input) {
 
 ## Unit Testing and Quality Assurance
 
+Building and running the application is a long and ongoing task; therefore, ensure you have validated and verified everything before launching it.
+
 ### Running Tests and Hotdeploy
 
 When making code changes, use the following commands to efficiently test your modifications:
 
-1. **Compile and Hotdeploy**: To quickly compile and reload classes without restarting the server:
+1. **Compile and restart**: 
    ```bash
-   ./run.sh deploy_java [module_name]
-   # Example: ./run.sh deploy_java becpg-core
+   ./run.sh build_start
    ```
 
 2. **Run Integration Tests**: To run a specific integration test:

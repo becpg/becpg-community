@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -419,10 +420,12 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 						Map<QName, Serializable> props = new HashMap<>();
 						props.put(ContentModel.PROP_NAME, nodeRef.getId());
 						
-						return nodeService
+						NodeRef versionHistoryNodeRef = nodeService
 								.createNode(entitiesHistoryFolder, ContentModel.ASSOC_CONTAINS,
 										QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, nodeRef.getId()), ContentModel.TYPE_FOLDER, props)
 								.getChildRef();
+						addEntityHistoryAspect(versionHistoryNodeRef);
+						return versionHistoryNodeRef;
 						
 					});
 				}
@@ -461,11 +464,15 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					NodeRef n = nodeService
 							.createNode(storeNodeRef, ContentModel.ASSOC_CONTAINS, QNAME_ENTITIES_HISTORY, ContentModel.TYPE_FOLDER, props)
 							.getChildRef();
+					addEntityHistoryAspect(n);
 
 					logger.debug("create folder 'EntitiesHistory' " + n + " - " + nodeService.exists(n));
 
 					return n;
 				});
+			}
+			if (entitiesHistoryNodeRef != null) {
+				addEntityHistoryAspect(entitiesHistoryNodeRef);
 			}
 			return entitiesHistoryNodeRef;
 		}, true);
@@ -533,7 +540,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				NodeRef branchFromNodeRef = getBranchFromNodeRef(entityNodeRef);
 
 				Optional<Version> lowestVersion = versionHistory.getAllVersions().stream()
-						.min(((o1, o2) -> o1.getVersionLabel().compareTo(o2.getVersionLabel())));
+						.min(((o1, o2) -> ((Double) Double.parseDouble(o1.getVersionLabel())).compareTo(Double.parseDouble(o2.getVersionLabel()))));
 
 				for (Version version : versionHistory.getAllVersions()) {
 					NodeRef entityVersionNodeRef = getEntityVersion(versionAssocs, version);
@@ -1333,6 +1340,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	private void deleteNodeRef(final NodeRef originalNodeRef) {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
+			IntegrityChecker.setWarnInTransaction();
+			
 			dbNodeService.addAspect(originalNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 			
 			List<NodeRef> links = getFileLinks(originalNodeRef);
@@ -1468,6 +1477,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				String jsonData = entityFormatService.generateEntityData(entityNodeRef, EntityFormat.JSON, extraParams);
 				
 				NodeRef versionNode = getEntityVersion(newVersion);
+				addEntityHistoryAspect(versionNode);
 
 				// add child assocs to versions
 				ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
@@ -1554,34 +1564,72 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	}
 
-	private void mergeComments(NodeRef branchNodeRef, NodeRef branchToNodeRef) {
-		PagingResults<NodeRef> comments = commentService.listComments(branchNodeRef, new PagingRequest(5000, null));
-		if (comments != null) {
-			for (NodeRef commentNodeRef : comments.getPage()) {
-				NodeRef newComment = null;
+
+	private record CommentData(String title, String content, Date created, String creator, Date modified, NodeRef nodeRef,
+			boolean branchComment) {
+	}
+
+	private void mergeComments(NodeRef branchNodeRef, NodeRef destinationNodeRef) {
+		List<CommentData> allComments = new ArrayList<>();
+		collectCommentData(branchNodeRef, allComments, true);
+		collectCommentData(destinationNodeRef, allComments, false);
+		if (allComments.isEmpty()) {
+			return;
+		}
+		allComments.sort(Comparator.comparing(c -> c.created() != null ? c.created() : new Date(0)));
+		boolean insertedBranchComment = false;
+		for (CommentData commentData : allComments) {
+			if (!insertedBranchComment && !commentData.branchComment()) {
+				// Destination comments before the first branch comment already exist,
+				// so they do not need to be recreated.
+				continue;
+			}
+			NodeRef newComment = null;
+			boolean mlAware = MLPropertyInterceptor.setMLAware(false);
+			try {
+				MLPropertyInterceptor.setMLAware(false);
+				commentService.deleteComment(commentData.nodeRef());
+				newComment = commentService.createComment(destinationNodeRef, commentData.title(), commentData.content(), false);
+				
+				policyBehaviourFilter.disableBehaviour(newComment, ContentModel.ASPECT_AUDITABLE);
+				if (commentData.created() != null) {
+					nodeService.setProperty(newComment, ContentModel.PROP_CREATED, commentData.created());
+				}
+				if (commentData.creator() != null) {
+					nodeService.setProperty(newComment, ContentModel.PROP_CREATOR, commentData.creator());
+				}
+				if (commentData.modified() != null) {
+					nodeService.setProperty(newComment, ContentModel.PROP_MODIFIED, commentData.modified());
+				}
+				if (commentData.branchComment()) {
+					insertedBranchComment = true;
+				}
+			} finally {
+				MLPropertyInterceptor.setMLAware(mlAware);
+				if (newComment != null) {
+					policyBehaviourFilter.enableBehaviour(newComment, ContentModel.ASPECT_AUDITABLE);
+				}
+			}
+		}
+	}
+
+	private void collectCommentData(NodeRef nodeRef, List<CommentData> allComments, boolean branchComment) {
+		PagingResults<NodeRef> sourceComments = commentService.listComments(nodeRef, new PagingRequest(5000, null));
+		if (sourceComments != null && !sourceComments.getPage().isEmpty()) {
+			for (NodeRef commentNodeRef : sourceComments.getPage()) {
 				boolean mlAware = MLPropertyInterceptor.setMLAware(false);
-
 				try {
-
 					MLPropertyInterceptor.setMLAware(false);
 					ContentReader reader = contentService.getReader(commentNodeRef, ContentModel.PROP_CONTENT);
-					String comment = reader.getContentString();
-					newComment = commentService.createComment(branchToNodeRef,
-							(String) nodeService.getProperty(commentNodeRef, ContentModel.PROP_TITLE), comment, false);
-
-					policyBehaviourFilter.disableBehaviour(newComment, ContentModel.ASPECT_AUDITABLE);
-					nodeService.setProperty(newComment, ContentModel.PROP_CREATED,
-							nodeService.getProperty(commentNodeRef, ContentModel.PROP_CREATED));
-					nodeService.setProperty(newComment, ContentModel.PROP_CREATOR,
-							nodeService.getProperty(commentNodeRef, ContentModel.PROP_CREATOR));
-					nodeService.setProperty(newComment, ContentModel.PROP_MODIFIED,
-							nodeService.getProperty(commentNodeRef, ContentModel.PROP_MODIFIED));
-					commentService.deleteComment(commentNodeRef);
+					String content = reader != null ? reader.getContentString() : "";
+					String title = (String) nodeService.getProperty(commentNodeRef, ContentModel.PROP_TITLE);
+					Date created = (Date) nodeService.getProperty(commentNodeRef, ContentModel.PROP_CREATED);
+					String creator = (String) nodeService.getProperty(commentNodeRef, ContentModel.PROP_CREATOR);
+					Date modified = (Date) nodeService.getProperty(commentNodeRef, ContentModel.PROP_MODIFIED);
+					
+					allComments.add(new CommentData(title, content, created, creator, modified, commentNodeRef, branchComment));
 				} finally {
 					MLPropertyInterceptor.setMLAware(mlAware);
-					if (newComment != null) {
-						policyBehaviourFilter.enableBehaviour(newComment, ContentModel.ASPECT_AUDITABLE);
-					}
 				}
 			}
 		}
@@ -1694,6 +1742,20 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		});
 	}
 
+	private void addEntityHistoryAspect(NodeRef nodeRef) {
+		if (nodeRef != null && nodeService.exists(nodeRef)) {
+			if (!nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_HISTORY)) {
+				nodeService.addAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_HISTORY, null);
+			}
+			if (!nodeService.hasAspect(nodeRef, ContentModel.ASPECT_INDEX_CONTROL)) {
+				Map<QName, Serializable> aspectProperties = new HashMap<>(2);
+				aspectProperties.put(ContentModel.PROP_IS_INDEXED, Boolean.FALSE);
+				aspectProperties.put(ContentModel.PROP_IS_CONTENT_INDEXED, Boolean.FALSE);
+				nodeService.addAspect(nodeRef, ContentModel.ASPECT_INDEX_CONTROL, aspectProperties);
+			}
+		}
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description, Date effectiveDate) {
@@ -1774,6 +1836,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, versionNodeRef.getId()), dbNodeService.getType(versionNodeRef), props);
 
 			NodeRef extractedVersion = childAssoc.getChildRef();
+			addEntityHistoryAspect(extractedVersion);
 
 			ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
 
@@ -1806,10 +1869,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			nodeService.setProperty(extractedVersion, ContentModel.PROP_VERSION_LABEL, versionLabel);
 
 			// MNT-11911 fix, add ASPECT_INDEX_CONTROL and property that not create indexes for search and not visible files/folders at 'My Documents' dashlet
-			Map<QName, Serializable> aspectProperties = new HashMap<>(2);
-			aspectProperties.put(ContentModel.PROP_IS_INDEXED, Boolean.FALSE);
-			aspectProperties.put(ContentModel.PROP_IS_CONTENT_INDEXED, Boolean.FALSE);
-			nodeService.addAspect(extractedVersion, ContentModel.ASPECT_INDEX_CONTROL, aspectProperties);
+			addEntityHistoryAspect(extractedVersion);
 
 			// add temporary aspect in order to delete the node later with VersionCleanerJob
 			nodeService.addAspect(extractedVersion, ContentModel.ASPECT_TEMPORARY, null);

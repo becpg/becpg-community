@@ -64,7 +64,6 @@ import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;
-import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteServiceRegisty;
 import fr.becpg.repo.helper.AssociationService;
@@ -84,8 +83,6 @@ public class ImportEntityXmlVisitor {
 
 	private final Pattern nodeRefPattern = Pattern.compile("(workspace://SpacesStore/[a-z0-9A-Z\\-]*)");
 
-	private EntityProviderCallBack entityProviderCallBack;
-
 	private Map<NodeRef, NodeRef> cache = new HashMap<>();
 
 	private final EntityDictionaryService entityDictionaryService;
@@ -101,19 +98,6 @@ public class ImportEntityXmlVisitor {
 	private final AuthorityService authorityService;
 
 	private boolean forceCreateInPath;
-
-	/**
-	 * <p>
-	 * Setter for the field <code>entityProviderCallBack</code>.
-	 * </p>
-	 *
-	 * @param entityProviderCallBack
-	 *            a {@link fr.becpg.repo.entity.remote.EntityProviderCallBack}
-	 *            object.
-	 */
-	public void setEntityProviderCallBack(EntityProviderCallBack entityProviderCallBack) {
-		this.entityProviderCallBack = entityProviderCallBack;
-	}
 
 	/**
 	 * <p>
@@ -341,11 +325,6 @@ public class ImportEntityXmlVisitor {
 							} else {
 								node = createNode(path, nodeType, name, erpCode);
 							}
-							try {
-								retrieveNodeContent(new NodeRef(nodeRef), node);
-							} catch (BeCPGException e) {
-								throw new SAXException("Cannot retrieve node content: " + nodeRef, e);
-							}
 							cache.put(new NodeRef(nodeRef), node);
 
 						} else {
@@ -359,34 +338,15 @@ public class ImportEntityXmlVisitor {
 							NodeRef childNode = createChildAssocNode(curNodeRef.peek(), nodeType, currAssoc.peek(), name, new NodeRef(nodeRef),
 									attributes);
 							curNodeRef.push(childNode);
-							try {
-								retrieveNodeContent(new NodeRef(nodeRef), childNode);
-							} catch (BeCPGException e) {
-								throw new SAXException("Cannot retrieve node content: " + nodeRef, e);
-							}
 							cache.put(new NodeRef(nodeRef), childNode);
 						}
 					} else {
 
 						if (node == null) {
-							if (entityProviderCallBack != null) {
-								logger.debug("Node not found calling provider");
-								try {
-									node = entityProviderCallBack.provideNode(new NodeRef(nodeRef), cache);
-									cache.put(new NodeRef(nodeRef), node);
-								} catch (BeCPGException e) {
-									throw new SAXException("Cannot call entityProviderCallBack for nodeRef: " + nodeRef, e);
-								} finally {
-									if (node == null) {
-										logger.error("Cannot add node to assoc, node not found : " + nodeRef);
-									}
-								}
-							} else {
-								// Case full xml
-								logger.debug("Creating new node from xml :" + nodeType);
-								node = createNode(path, nodeType, name, erpCode);
-								cache.put(new NodeRef(nodeRef), node);
-							}
+							// Case full xml
+							logger.debug("Creating new node from xml :" + nodeType);
+							node = createNode(path, nodeType, name, erpCode);
+							cache.put(new NodeRef(nodeRef), node);
 						}
 
 						if ((node == null) || !nodeService.exists(node)) {
@@ -475,13 +435,6 @@ public class ImportEntityXmlVisitor {
 				logger.warn("Wrong qname " + qName + " ignoring");
 			}
 			return null;
-		}
-
-		private void retrieveNodeContent(NodeRef origNodeRef, NodeRef destNodeRef) throws BeCPGException {
-			if ((entityProviderCallBack != null) && !entityDictionaryService.isSubClass(nodeService.getType(destNodeRef), BeCPGModel.TYPE_ENTITY_V2)
-					&& !entityDictionaryService.isSubClass(nodeService.getType(destNodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
-				entityProviderCallBack.provideContent(origNodeRef, destNodeRef);
-			}
 		}
 
 		@Override
@@ -633,14 +586,6 @@ public class ImportEntityXmlVisitor {
 								logger.debug("found replacement nodeRef for" + value.getValue());
 								replacementNode = cache.get(origNodeRef);
 
-							} else if (entityProviderCallBack != null) {
-								logger.debug("Node not found calling provider");
-								try {
-									replacementNode = entityProviderCallBack.provideNode(origNodeRef, cache);
-									cache.put(origNodeRef, replacementNode);
-								} catch (BeCPGException e) {
-									throw new SAXException("Cannot call entityProviderCallBack for nodeRef: " + origNodeRef, e);
-								}
 							}
 
 							if ((replacementNode == null) || !nodeService.exists(replacementNode)) {

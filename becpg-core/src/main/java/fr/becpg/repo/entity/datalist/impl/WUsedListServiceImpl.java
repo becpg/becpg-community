@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.alfresco.query.PagingRequest;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessStatus;
@@ -66,25 +67,45 @@ public class WUsedListServiceImpl implements WUsedListService {
 	/** {@inheritDoc} */
 	@Override
 	public MultiLevelListData getWUsedEntity(NodeRef entityNodeRef, QName associationName, int maxDepthLevel) {
+		return getWUsedEntity(entityNodeRef, associationName, maxDepthLevel, null);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public MultiLevelListData getWUsedEntity(NodeRef entityNodeRef, QName associationName, int maxDepthLevel, PagingRequest pagingRequest) {
 		return getWUsedEntity(Collections.singletonList(entityNodeRef), WUsedOperator.AND, null, associationName, 0, maxDepthLevel, new HashSet<>(),
-				new HashMap<>());
+				new HashMap<>(), pagingRequest);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator, WUsedFilter filter, QName associationName,
 			int maxDepthLevel) {
-		return getWUsedEntity(entityNodeRefs, operator, filter, associationName, 0, maxDepthLevel, new HashSet<>(), new HashMap<>());
+		return getWUsedEntity(entityNodeRefs, operator, filter, associationName, maxDepthLevel, null);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator, WUsedFilter filter, QName associationName,
+			int maxDepthLevel, PagingRequest pagingRequest) {
+		return getWUsedEntity(entityNodeRefs, operator, filter, associationName, 0, maxDepthLevel, new HashSet<>(), new HashMap<>(), pagingRequest);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator, QName associationName, int maxDepthLevel) {
-		return getWUsedEntity(entityNodeRefs, operator, null, associationName, 0, maxDepthLevel, new HashSet<>(), new HashMap<>());
+		return getWUsedEntity(entityNodeRefs, operator, associationName, maxDepthLevel, null);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator, QName associationName, int maxDepthLevel,
+			PagingRequest pagingRequest) {
+		return getWUsedEntity(entityNodeRefs, operator, null, associationName, 0, maxDepthLevel, new HashSet<>(), new HashMap<>(), pagingRequest);
 	}
 
 	private MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator, WUsedFilter filter, QName associationName,
-			int depthLevel, int maxDepthLevel, Set<NodeRef> parentNodeRefs, Map<NodeRef, Boolean> permCache) {
+			int depthLevel, int maxDepthLevel, Set<NodeRef> parentNodeRefs, Map<NodeRef, Boolean> permCache, PagingRequest pagingRequest) {
 
 		if (maxDepthLevel == -1) {
 			// Avoid infinite loop
@@ -102,8 +123,11 @@ public class WUsedListServiceImpl implements WUsedListService {
 		if ((entityNodeRefs != null) && !entityNodeRefs.isEmpty() && !parentNodeRefs.contains(entityNodeRefs.get(0))) {
 			parentNodeRefs.addAll(entityNodeRefs);
 
-			appendAssocs(ret, associationService.getEntitySourceAssocs(entityNodeRefs, associationName, null, WUsedOperator.OR.equals(operator), null),
-					depthLevel, maxDepthLevel, associationName, filter, parentNodeRefs, permCache, WUsedOperator.OR.equals(operator));
+			appendAssocs(ret,
+					associationService.getEntitySourceAssocs(entityNodeRefs, associationName, null, WUsedOperator.OR.equals(operator), null,
+							pagingRequest),
+					depthLevel, maxDepthLevel, associationName, filter, parentNodeRefs, permCache, WUsedOperator.OR.equals(operator),
+					pagingRequest);
 
 		}
 
@@ -116,7 +140,8 @@ public class WUsedListServiceImpl implements WUsedListService {
 	}
 
 	private void appendAssocs(MultiLevelListData ret, List<EntitySourceAssoc> associationRefs, int depthLevel, int maxDepthLevel, QName associationName,
-			WUsedFilter filter, Set<NodeRef> parentNodeRefs, Map<NodeRef, Boolean> permCache, boolean isOrOperator) {
+			WUsedFilter filter, Set<NodeRef> parentNodeRefs, Map<NodeRef, Boolean> permCache, boolean isOrOperator,
+			PagingRequest pagingRequest) {
 
 		Map<NodeRef, MultiLevelListData> tmp = new HashMap<>();
 
@@ -151,7 +176,7 @@ public class WUsedListServiceImpl implements WUsedListService {
 				// next level
 				if ((maxDepthLevel < 0) || ((depthLevel + 1) < maxDepthLevel)) {
 					multiLevelListData = getWUsedEntity(Collections.singletonList(rootNodeRef), WUsedOperator.AND, filter, associationName,
-							depthLevel + 1, maxDepthLevel, curVisitedNodeRef, permCache);
+							depthLevel + 1, maxDepthLevel, curVisitedNodeRef, permCache, pagingRequest);
 				} else {
 					multiLevelListData = new MultiLevelListData(rootNodeRef, depthLevel + 1);
 				}

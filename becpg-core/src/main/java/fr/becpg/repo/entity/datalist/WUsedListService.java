@@ -19,6 +19,7 @@ package fr.becpg.repo.entity.datalist;
 
 import java.util.List;
 
+import org.alfresco.query.PagingRequest;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
@@ -46,6 +47,17 @@ public interface WUsedListService {
 	 * @return a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object.
 	 */
 	MultiLevelListData getWUsedEntity(NodeRef entityNodeRef, QName associationName, int maxDepthLevel);
+
+	/**
+	 * Calculate the WUsed entities of the item
+	 *
+	 * @param entityNodeRef item associated to datalists
+	 * @param associationName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param maxDepthLevel a int.
+	 * @param pagingRequest a {@link org.alfresco.query.PagingRequest} object.
+	 * @return a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object.
+	 */
+	MultiLevelListData getWUsedEntity(NodeRef entityNodeRef, QName associationName, int maxDepthLevel, PagingRequest pagingRequest);
     
 	/**
 	 * Calculate the WUsed entities of the items
@@ -58,6 +70,20 @@ public interface WUsedListService {
 	 * @return a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object.
 	 */
 	MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator, WUsedFilter filter, QName associationName, int maxDepthLevel);
+
+	/**
+	 * Calculate the WUsed entities of the items
+	 *
+	 * @param entityNodeRefs item associated to datalists
+	 * @param operator a {@link fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator} object.
+	 * @param filter a {@link fr.becpg.repo.entity.datalist.WUsedFilter} object.
+	 * @param associationName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param maxDepthLevel a int.
+	 * @param pagingRequest a {@link org.alfresco.query.PagingRequest} object.
+	 * @return a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object.
+	 */
+	MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator, WUsedFilter filter, QName associationName,
+			int maxDepthLevel, PagingRequest pagingRequest);
 	/**
 	 * Calculate the WUsed entities of the items
 	 *
@@ -68,6 +94,19 @@ public interface WUsedListService {
 	 * @return a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object.
 	 */
 	MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator, QName associationName, int maxDepthLevel);
+
+	/**
+	 * Calculate the WUsed entities of the items
+	 *
+	 * @param entityNodeRefs item associated to datalists
+	 * @param operator a {@link fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator} object.
+	 * @param associationName a {@link org.alfresco.service.namespace.QName} object.
+	 * @param maxDepthLevel a int.
+	 * @param pagingRequest a {@link org.alfresco.query.PagingRequest} object.
+	 * @return a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object.
+	 */
+	MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator, QName associationName, int maxDepthLevel,
+			PagingRequest pagingRequest);
 
     
 }

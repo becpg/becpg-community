@@ -44,6 +44,9 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 	
 	@Autowired
 	private NodeService nodeService;
+	
+	@Autowired
+	private fr.becpg.util.MutexFactory mutexFactory;
 
 	/** {@inheritDoc} */
 	@Override
@@ -81,17 +84,25 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 		
 
 		NodeRef downloadNode = retryingTransactionHelper.doInTransaction(() -> {
-			// Create a download node
-			NodeRef downloadNode1 = downloadStorage.createDownloadNode(false);
-
-			// Add requested nodes
-			for (NodeRef node : new HashSet<>(searchResults)) {
-				if (nodeService.exists(node)) {
-					downloadStorage.addNodeToDownload(downloadNode1, node);
+			
+			java.util.concurrent.locks.ReentrantLock lock = mutexFactory.getMutex("exportSearch-" + org.alfresco.repo.security.authentication.AuthenticationUtil.getRunAsUser());
+			lock.lock();
+			try {
+				// Create a download node
+				NodeRef downloadNode1 = downloadStorage.createDownloadNode(false);
+	
+				// Add requested nodes
+				for (NodeRef node : new HashSet<>(searchResults)) {
+					if (nodeService.exists(node)) {
+						downloadStorage.addNodeToDownload(downloadNode1, node);
+					}
 				}
+	
+				return downloadNode1;
+			} finally {
+				lock.unlock();
+				mutexFactory.removeMutex("exportSearch-" + org.alfresco.repo.security.authentication.AuthenticationUtil.getRunAsUser(), lock);
 			}
-
-			return downloadNode1;
 		}, false, true);
 
 		SearchReportRenderer searchReportRender = getSearchReportRender(templateNodeRef, reportFormat);

@@ -27,10 +27,16 @@ import java.util.List;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.product.data.productList.CompoListDataItem;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.PlmRepoConsts;
@@ -459,4 +465,51 @@ public class MultiLevelExcelReportSearchPluginIT extends PLMBaseTestCase {
 		}
 	}
 
+	/**
+	 * Test wUsedAllLevelIncludeEmpty parameter
+	 */
+	@Test
+	public void testMultiLevelExcelReportWUsedIncludeEmpty() throws IOException {
+		initTestReports();
+
+		// Create a semi-finished product that is NOT used anywhere
+		FinishedProductData sfProduct = (FinishedProductData) inWriteTx(() -> {
+			FinishedProductData product = FinishedProductData.build()
+					.withName("Unused SF")
+					.withQty(100d)
+					.withUnit(ProductUnit.kg);
+			product.setNodeRef(alfrescoRepository.create(getTestFolderNodeRef(), product).getNodeRef());
+			nodeService.setType(product.getNodeRef(), PLMModel.TYPE_SEMIFINISHEDPRODUCT);
+			return product;
+		});
+
+		// Test with wUsedAllLevelIncludeEmpty parameter
+		// We search for this SF and want to see where it's used (nowhere, but IncludeEmpty should still show it)
+		String query = "{\"datatype\":\"bcpg:semiFinishedProduct\",\"prop_cm_name\":\"" + sfProduct.getName() + "\"}";
+		String url = "/becpg/report/exportsearch/" + compositionPackagingReportTpl.toString().replace("://", "/") 
+			+ "/Excel.xlsx?repo=true&term=&query=" + URLEncoder.encode(query, StandardCharsets.UTF_8.toString())
+			+ "&parameter=wUsedAllLevelIncludeEmpty";
+
+		Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
+		byte[] reportData = response.getContentAsByteArray();
+
+		assertNotNull("Report data should not be null", reportData);
+		assertTrue("Report data should not be empty", reportData.length > 0);
+
+		// Parse Excel and verify structure
+		try (XSSFWorkbook workbook = new XSSFWorkbook(new ByteArrayInputStream(reportData))) {
+			XSSFSheet sheet = workbook.getSheetAt(0);
+			assertNotNull("Sheet should not be null", sheet);
+
+			// Count data rows (those starting with VALUES)
+			int dataRowCount = 0;
+			for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+				Row row = sheet.getRow(i);
+				if (row != null && row.getCell(0) != null && "VALUES".equals(row.getCell(0).getStringCellValue())) {
+					dataRowCount++;
+				}
+			}
+			assertTrue("Should have at least one data row when wUsedAllLevelIncludeEmpty is true (data row count: " + dataRowCount + ")", dataRowCount >= 1);
+		}
+	}
 }

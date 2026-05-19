@@ -27,8 +27,8 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.json.JsonData;
 import fr.becpg.repo.helper.json.JsonHelper;
+import fr.becpg.repo.publication.ChannelData;
 import fr.becpg.repo.publication.PublicationChannelService;
-import fr.becpg.repo.publication.PublicationChannelService.PublicationChannelStatus;
 
 /**
  * <p>RemoteChannelBatchWebScript class.</p>
@@ -132,31 +132,84 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 		
 		JsonData jsonResponse = JsonHelper.createJsonObject();
 		
-		if (START.equals(action)) {
-			if (!processBatchStart(channelNodeRef, entityAttributes)) {
-				return;
+		try {
+			if (START.equals(action)) {
+				String batchIdAttr = PublicationModel.PROP_PUBCHANNEL_BATCHID.toPrefixString(namespaceService);
+				checkAttributePresence(entityAttributes, batchIdAttr);
+				String batchId = getStringAttribute(entityAttributes, batchIdAttr);
+				AuthenticationUtil.runAsSystem(() -> {
+					publicationChannelService.startChannel(channelNodeRef, batchId);
+					return null;
+				});
+			} else if (END.equals(action)) {
+				String statusAttr = PublicationModel.PROP_PUBCHANNEL_STATUS.toPrefixString(namespaceService);
+				checkAttributePresence(entityAttributes, statusAttr);
+				String status = getStringAttribute(entityAttributes, statusAttr);
+				
+				String failCountAttr = PublicationModel.PROP_PUBCHANNEL_FAILCOUNT.toPrefixString(namespaceService);
+				checkAttributePresence(entityAttributes, failCountAttr);
+				Integer failCount = getIntAttribute(entityAttributes, failCountAttr);
+
+				String readCountAttr = PublicationModel.PROP_PUBCHANNEL_READCOUNT.toPrefixString(namespaceService);
+				checkAttributePresence(entityAttributes, readCountAttr);
+				Integer readCount = getIntAttribute(entityAttributes, readCountAttr);
+				
+				String errorAttr = PublicationModel.PROP_PUBCHANNEL_ERROR.toPrefixString(namespaceService);
+				String error = entityAttributes.has(errorAttr) ? getStringAttribute(entityAttributes, errorAttr) : null;
+				
+				String lastSuccessBatchIdAttr = PublicationModel.PROP_PUBCHANNEL_LASTSUCCESSBATCHID.toPrefixString(namespaceService);
+				String lastSuccessBatchId = entityAttributes.has(lastSuccessBatchIdAttr)
+						? getStringAttribute(entityAttributes, lastSuccessBatchIdAttr)
+								: null;
+				
+				String lastDateAttr = PublicationModel.PROP_PUBCHANNEL_LASTDATE.toPrefixString(namespaceService);
+				Date lastDate = entityAttributes.has(lastDateAttr) ? parseDateAttribute(entityAttributes, lastDateAttr) : null;
+				
+				ChannelData channelData = ChannelData.builder().status(status).failCount(failCount).readCount(readCount).error(error)
+						.lastSuccessBatchId(lastSuccessBatchId).lastDate(lastDate).build();
+				AuthenticationUtil.runAsSystem(() -> {
+					publicationChannelService.completeChannel(channelNodeRef, channelData);
+					return null;
+				});
+			} else if (BATCH_ACK_ENDPOINT.equals(req.getServiceMatch().getPath())) {
+				String nodeRefParam = req.getParameter(NODEREF);
+				if (nodeRefParam == null || nodeRefParam.isEmpty()) {
+					throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Missing required parameter: nodeRef");
+				}
+				
+				NodeRef nodeRef = new NodeRef(nodeRefParam);
+				if (!nodeService.exists(nodeRef)) {
+					throw new WebScriptException(Status.STATUS_NOT_FOUND, "This entity does not exist, or you have no right to access it");
+				}
+				String statusAttr = PublicationModel.PROP_PUBCHANNELLIST_STATUS.toPrefixString(namespaceService);
+				String batchIdAttr = PublicationModel.PROP_PUBCHANNELLIST_BATCHID.toPrefixString(namespaceService);
+				
+				checkAttributePresence(entityAttributes, statusAttr);
+				checkAttributePresence(entityAttributes, batchIdAttr);
+				
+				String status = getStringAttribute(entityAttributes, statusAttr);
+				String batchId = getStringAttribute(entityAttributes, batchIdAttr);
+
+				String errorAttr = PublicationModel.PROP_PUBCHANNELLIST_ERROR.toPrefixString(namespaceService);
+				String error = entityAttributes.has(errorAttr) ? getStringAttribute(entityAttributes, errorAttr) : null;
+
+				String actionAttr = PublicationModel.PROP_PUBCHANNELLIST_ACTION.toPrefixString(namespaceService);
+				String channelListAction = entityAttributes.has(actionAttr) ? getStringAttribute(entityAttributes, actionAttr) : null;
+
+				ChannelData channelData = ChannelData.builder().status(status).batchId(batchId).error(error).action(channelListAction).build();
+				AuthenticationUtil.runAsSystem(() -> {
+					publicationChannelService.publishEntityChannel(nodeRef, channelId, channelData);
+					return null;
+				});
+				jsonResponse.put(NODEREF, nodeRef.toString());
+			} else {
+				throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Unknown 'action' parameter");
 			}
-		} else if (END.equals(action)) {
-			if (!processBatchEnd(channelNodeRef, entityAttributes)) {
-				return;
-			}
-		} else if (BATCH_ACK_ENDPOINT.equals(req.getServiceMatch().getPath())) {
-			String nodeRefParam = req.getParameter(NODEREF);
-			if (nodeRefParam == null || nodeRefParam.isEmpty()) {
-				throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Missing required parameter: nodeRef");
-			}
-			
-			NodeRef nodeRef = new NodeRef(nodeRefParam);
-			if (!nodeService.exists(nodeRef)) {
-				throw new WebScriptException(Status.STATUS_NOT_FOUND, "This entity does not exist, or you have no right to access it");
-			}
-			
-			if (!processBatchAck(channelId, channelNodeRef, nodeRef, entityAttributes)) {
-				return;
-			}
-			jsonResponse.put(NODEREF, nodeRef.toString());
-		} else {
-			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Unknown 'action' parameter");
+		} catch (WebScriptException e) {
+			throw e;
+		} catch (Exception e) {
+			logger.error("Error processing request", e);
+			throw new WebScriptException(Status.STATUS_INTERNAL_SERVER_ERROR, "Error processing request: " + e.getMessage());
 		}
 		
 		jsonResponse.put(STATUS, SUCCESS);
@@ -183,176 +236,6 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 				.anyMatch(u -> u.equals(currentUser));
 	}
 	
-	private boolean processBatchStart(NodeRef channelNodeRef, JsonData entityAttributes) {
-		try {
-			String statusAttr = PublicationModel.PROP_PUBCHANNEL_STATUS.toPrefixString(namespaceService);
-			String batchIdAttr = PublicationModel.PROP_PUBCHANNEL_BATCHID.toPrefixString(namespaceService);
-			
-			checkAttributePresence(entityAttributes, batchIdAttr);
-			
-			String batchId = getStringAttribute(entityAttributes, batchIdAttr);
-			if (batchId == null) {
-				return false;
-			}
-			
-			AuthenticationUtil.runAsSystem(() -> {
-				if (entityAttributes.has(statusAttr)) {
-					String status = getStringAttribute(entityAttributes, statusAttr);
-					nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_STATUS, status);
-				} else {
-					nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_STATUS, PublicationChannelStatus.STARTED.toString());
-				}
-				nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHSTARTTIME, new Date());
-				nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHENDTIME, null);
-				nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHDURATION, null);
-				nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHID, batchId);
-				return null;
-			});
-			
-			return true;
-		} catch (WebScriptException e) {
-			throw e;
-		} catch (Exception e) {
-			logger.error("Error processing batch start", e);
-			throw new WebScriptException(Status.STATUS_INTERNAL_SERVER_ERROR, "Error processing batch start: " + e.getMessage());
-		}
-	}
-
-	private boolean processBatchEnd(NodeRef channelNodeRef, JsonData entityAttributes) {
-		try {
-			String statusAttr = PublicationModel.PROP_PUBCHANNEL_STATUS.toPrefixString(namespaceService);
-			String failCountAttr = PublicationModel.PROP_PUBCHANNEL_FAILCOUNT.toPrefixString(namespaceService);
-			String readCountAttr = PublicationModel.PROP_PUBCHANNEL_READCOUNT.toPrefixString(namespaceService);
-			
-			checkAttributePresence(entityAttributes, statusAttr);
-			checkAttributePresence(entityAttributes, failCountAttr);
-			checkAttributePresence(entityAttributes, readCountAttr);
-			
-			String status = getStringAttribute(entityAttributes, statusAttr);
-			Integer failCount = getIntAttribute(entityAttributes, failCountAttr);
-			Integer readCount = getIntAttribute(entityAttributes, readCountAttr);
-			
-			if (status == null || failCount == null || readCount == null) {
-				return false;
-			}
-			
-			AuthenticationUtil.runAsSystem(() -> {
-				nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_STATUS, status);
-				nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_FAILCOUNT, failCount);
-				nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_READCOUNT, readCount);
-				
-				String batchEndTimeAttr = PublicationModel.PROP_PUBCHANNEL_BATCHENDTIME.toPrefixString(namespaceService);
-				if (entityAttributes.has(batchEndTimeAttr)) {
-					Date date = parseDateAttribute(entityAttributes, batchEndTimeAttr);
-					if (date != null) {
-						nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHENDTIME, date);
-					}
-				} else {
-					nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHENDTIME, new Date());
-				}
-				
-				String batchDurationAttr = PublicationModel.PROP_PUBCHANNEL_BATCHDURATION.toPrefixString(namespaceService);
-				if (entityAttributes.has(batchDurationAttr)) {
-					Long duration = getLongAttribute(entityAttributes, batchDurationAttr);
-					if (duration != null) {
-						nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_BATCHDURATION, duration);
-					}
-				}
-				
-				String errorAttr = PublicationModel.PROP_PUBCHANNEL_ERROR.toPrefixString(namespaceService);
-				if (entityAttributes.has(errorAttr)) {
-					String error = getStringAttribute(entityAttributes, errorAttr);
-					if (error != null) {
-						nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_ERROR, error);
-					}
-				}
-				
-				String lastSuccessBatchIdAttr = PublicationModel.PROP_PUBCHANNEL_LASTSUCCESSBATCHID.toPrefixString(namespaceService);
-				if (entityAttributes.has(lastSuccessBatchIdAttr)) {
-					String lastSuccessBatchId = getStringAttribute(entityAttributes, lastSuccessBatchIdAttr);
-					if (lastSuccessBatchId != null) {
-						nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_LASTSUCCESSBATCHID, lastSuccessBatchId);
-					}
-				}
-				
-				String lastDateAttr = PublicationModel.PROP_PUBCHANNEL_LASTDATE.toPrefixString(namespaceService);
-				if (entityAttributes.has(lastDateAttr)) {
-					Date date = parseDateAttribute(entityAttributes, lastDateAttr);
-					if (date != null) {
-						nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_LASTDATE, date);
-					}
-				}
-				
-				nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_ACTION, null);
-				return null;
-			});
-			
-			return true;
-		} catch (WebScriptException e) {
-			throw e;
-		} catch (Exception e) {
-			logger.error("Error processing batch end", e);
-			throw new WebScriptException(Status.STATUS_INTERNAL_SERVER_ERROR, "Error processing batch end: " + e.getMessage());
-		}
-	}
-
-	private boolean processBatchAck(String channelId, NodeRef channelNodeRef, NodeRef nodeRef, JsonData entityAttributes) {
-		try {
-			String statusAttr = PublicationModel.PROP_PUBCHANNELLIST_STATUS.toPrefixString(namespaceService);
-			String batchIdAttr = PublicationModel.PROP_PUBCHANNELLIST_BATCHID.toPrefixString(namespaceService);
-			
-			checkAttributePresence(entityAttributes, statusAttr);
-			checkAttributePresence(entityAttributes, batchIdAttr);
-			
-			String status = getStringAttribute(entityAttributes, statusAttr);
-			String batchId = getStringAttribute(entityAttributes, batchIdAttr);
-			
-			if (status == null || batchId == null) {
-				return false;
-			}
-			
-			AuthenticationUtil.runAsSystem(() -> {
-				NodeRef channelListNodeRef = publicationChannelService.getOrCreateChannelListNodeRef(nodeRef, channelId);
-						
-				nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_STATUS, status);
-				nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_BATCHID, batchId);
-				
-				String errorAttr = PublicationModel.PROP_PUBCHANNELLIST_ERROR.toPrefixString(namespaceService);
-				if (entityAttributes.has(errorAttr)) {
-					String error = getStringAttribute(entityAttributes, errorAttr);
-					if (error != null) {
-						nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ERROR, error);
-					}
-				}
-				
-				String actionAttr = PublicationModel.PROP_PUBCHANNELLIST_ACTION.toPrefixString(namespaceService);
-				if (entityAttributes.has(actionAttr)) {
-					String action = getStringAttribute(entityAttributes, actionAttr);
-					if (action != null) {
-						nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ACTION, action);
-					}
-				}
-				
-				String publishedDateAttr = PublicationModel.PROP_PUBCHANNELLIST_PUBLISHEDDATE.toPrefixString(namespaceService);
-				if (entityAttributes.has(publishedDateAttr)) {
-					Date date = parseDateAttribute(entityAttributes, publishedDateAttr);
-					if (date != null) {
-						nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_PUBLISHEDDATE, date);
-					}
-				}
-				
-				return null;
-			});
-			
-			return true;
-		} catch (WebScriptException e) {
-			throw e;
-		} catch (Exception e) {
-			logger.error("Error processing batch acknowledgment", e);
-			throw new WebScriptException(Status.STATUS_INTERNAL_SERVER_ERROR, "Error processing batch acknowledgment: " + e.getMessage());
-		}
-	}
-
 	private void checkAttributePresence(JsonData entityAttributes, String attribute) {
 		if (!entityAttributes.has(attribute)) {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'attributes' must contain '" + attribute + "'");
@@ -374,15 +257,6 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 		} catch (Exception e) {
 			logger.error("Error getting integer attribute: " + attribute, e);
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Invalid integer value for attribute '" + attribute + "'");
-		}
-	}
-	
-	private Long getLongAttribute(JsonData entityAttributes, String attribute) {
-		try {
-			return entityAttributes.get(attribute).getLong();
-		} catch (Exception e) {
-			logger.error("Error getting long attribute: " + attribute, e);
-			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Invalid long value for attribute '" + attribute + "'");
 		}
 	}
 	

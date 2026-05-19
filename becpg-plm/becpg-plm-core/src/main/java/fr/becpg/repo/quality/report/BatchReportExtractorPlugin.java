@@ -35,10 +35,12 @@ import fr.becpg.repo.product.data.CurrentLevelQuantities;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.report.ProductReportExtractorPlugin;
 import fr.becpg.repo.product.formulation.PackagingHelper;
+import fr.becpg.repo.product.helper.WUsedAssociationResolver;
 import fr.becpg.repo.quality.data.BatchData;
 import fr.becpg.repo.report.entity.impl.DefaultExtractorContext;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
@@ -59,10 +61,14 @@ public class BatchReportExtractorPlugin extends ProductReportExtractorPlugin {
 	 *
 	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
 	 * @param packagingHelper a {@link fr.becpg.repo.product.formulation.PackagingHelper} object
+	 * @param wUsedListService a {@link fr.becpg.repo.entity.datalist.WUsedListService} object
+	 * @param wUsedAssociationResolver a {@link fr.becpg.repo.product.helper.WUsedAssociationResolver} object
 	 */
 	public BatchReportExtractorPlugin(SystemConfigurationService systemConfigurationService,
-			PackagingHelper packagingHelper) {
-		super(systemConfigurationService, packagingHelper);
+			PackagingHelper packagingHelper,
+			WUsedListService wUsedListService,
+			WUsedAssociationResolver wUsedAssociationResolver) {
+		super(systemConfigurationService, packagingHelper, wUsedListService, wUsedAssociationResolver);
 	}
 
 	/**

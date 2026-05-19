@@ -126,12 +126,11 @@ public interface RemoteEntityService {
 	 *
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param in a {@link java.io.InputStream} object.
-	 * @param callback a {@link fr.becpg.repo.entity.remote.EntityProviderCallBack} object.
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @throws fr.becpg.common.BeCPGException if any.
 	 * @param params a {@link fr.becpg.repo.entity.remote.RemoteParams} object
 	 */
-	NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, RemoteParams params, EntityProviderCallBack callback);
+	NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, RemoteParams params);
 
 	/**
 	 * create or update entity form corresponding format override properties and
@@ -140,14 +139,12 @@ public interface RemoteEntityService {
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param destNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param in a {@link java.io.InputStream} object.
-	 * @param callback a {@link fr.becpg.repo.entity.remote.EntityProviderCallBack} object.
 	 * @param cache a {@link java.util.Map} object.
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @throws fr.becpg.common.BeCPGException if any.
 	 * @param params a {@link fr.becpg.repo.entity.remote.RemoteParams} object
 	 */
-	NodeRef internalCreateOrUpdateEntity(NodeRef entityNodeRef, NodeRef destNodeRef, InputStream in, RemoteParams params,
-			EntityProviderCallBack callback, Map<NodeRef, NodeRef> cache);
+	NodeRef internalCreateOrUpdateEntity(NodeRef entityNodeRef, NodeRef destNodeRef, InputStream in, RemoteParams params, Map<NodeRef, NodeRef> cache);
 
 	/**
 	 * List entities at format with specific assoc/props
