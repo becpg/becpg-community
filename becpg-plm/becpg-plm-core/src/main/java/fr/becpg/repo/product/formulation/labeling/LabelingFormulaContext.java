@@ -2449,11 +2449,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				}
 
-				String geoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), List.of(component),
+				String geoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOriginsByPlaceOfActivity(),
 						PlaceOfActivityTypeCode.LAST_PROCESSING);
-				String otherGeoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), List.of(component),
+				String otherGeoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOriginsByPlaceOfActivity(),
 						PlaceOfActivityTypeCode.EMPTY);
-				String bioOriginsLabel = createBioOriginsLabel(component.getNodeRef(), List.of(component));
+				String bioOriginsLabel = createBioOriginsLabel(component.getNodeRef(), component.getBioOrigins());
 				String additionalInformation = createAdditionalInformationLabel(component.getAdditionalInformation());
 
 				if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
