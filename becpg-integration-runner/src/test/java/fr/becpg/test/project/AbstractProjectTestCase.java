@@ -115,7 +115,6 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 			}
 		}
 
-
 		// resourceCost
 		NodeRef resourceCostsFolder = entitySystemService.getSystemEntityDataList(listsFolder, ProjectRepoConsts.PATH_RESOURCE_COSTS);
 		if (nodeService.getChildByName(resourceCostsFolder, ContentModel.ASSOC_CONTAINS, "ResourceCost") == null) {
@@ -256,54 +255,18 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 			// create datalists
 			List<TaskListDataItem> taskList = new LinkedList<>();
 
-			taskList.add(TaskListDataItem.build()
-    .withTaskName("task1")
-    .withIsMilestone(false)
-    .withDuration(2)
-    .withPrevTasks(null)
-    .withResources(assigneesOne)
-    .withTaskLegend(taskLegends.get(0))
-    .withWorkflowName("activiti$projectAdhoc"));
-			taskList.add(TaskListDataItem.build()
-    .withTaskName("task2")
-    .withIsMilestone(false)
-    .withDuration(2)
-    .withPrevTasks(null)
-    .withResources(assigneesOne)
-    .withTaskLegend(taskLegends.get(0))
-    .withWorkflowName("activiti$projectAdhoc"));
-			taskList.add(TaskListDataItem.build()
-    .withTaskName("task3")
-    .withIsMilestone(false)
-    .withDuration(2)
-    .withPrevTasks(null)
-    .withResources(assigneesOne)
-    .withTaskLegend(taskLegends.get(1))
-    .withWorkflowName("activiti$projectAdhoc"));
-			taskList.add(TaskListDataItem.build()
-    .withTaskName("task4")
-    .withIsMilestone(false)
-    .withDuration(2)
-    .withPrevTasks(null)
-    .withResources(assigneesTwo)
-    .withTaskLegend(taskLegends.get(1))
-    .withWorkflowName("activiti$projectAdhoc"));
-			taskList.add(TaskListDataItem.build()
-    .withTaskName("task5")
-    .withIsMilestone(false)
-    .withDuration(2)
-    .withPrevTasks(null)
-    .withResources(assigneesTwo)
-    .withTaskLegend(taskLegends.get(1))
-    .withWorkflowName("activiti$projectAdhoc"));
-			taskList.add(TaskListDataItem.build()
-    .withTaskName("task6")
-    .withIsMilestone(false)
-    .withDuration(2)
-    .withPrevTasks(null)
-    .withResources(assigneesTwo)
-    .withTaskLegend(taskLegends.get(2))
-    .withWorkflowName("activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build().withTaskName("task1").withIsMilestone(false).withDuration(2).withPrevTasks(null)
+					.withResources(assigneesOne).withTaskLegend(taskLegends.get(0)).withWorkflowName("activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build().withTaskName("task2").withIsMilestone(false).withDuration(2).withPrevTasks(null)
+					.withResources(assigneesOne).withTaskLegend(taskLegends.get(0)).withWorkflowName("activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build().withTaskName("task3").withIsMilestone(false).withDuration(2).withPrevTasks(null)
+					.withResources(assigneesOne).withTaskLegend(taskLegends.get(1)).withWorkflowName("activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build().withTaskName("task4").withIsMilestone(false).withDuration(2).withPrevTasks(null)
+					.withResources(assigneesTwo).withTaskLegend(taskLegends.get(1)).withWorkflowName("activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build().withTaskName("task5").withIsMilestone(false).withDuration(2).withPrevTasks(null)
+					.withResources(assigneesTwo).withTaskLegend(taskLegends.get(1)).withWorkflowName("activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build().withTaskName("task6").withIsMilestone(false).withDuration(2).withPrevTasks(null)
+					.withResources(assigneesTwo).withTaskLegend(taskLegends.get(2)).withWorkflowName("activiti$projectAdhoc"));
 			projectTplData.setTaskList(taskList);
 
 			// create scoreList
@@ -406,66 +369,29 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 
 			// multi level tasks
 			List<TaskListDataItem> taskList = new LinkedList<>();
-			taskList.add(TaskListDataItem.build()
-    .withTaskName("task1")
-    .withIsMilestone(false)
-    .withDuration(2)
-    .withPrevTasks(null)
-    .withResources(assigneesOne)
-    .withTaskLegend(taskLegends.get(0))
-    .withWorkflowName("activiti$projectAdhoc"));
-			taskList.add(TaskListDataItem.build()
-    .withTaskName("task2")
-    .withIsMilestone(false)
-    .withDuration(2)
-    .withPrevTasks(null)
-    .withResources(assigneesOne)
-    .withTaskLegend(taskLegends.get(0))
-    .withWorkflowName("activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build().withTaskName("task1").withIsMilestone(false).withDuration(2).withPrevTasks(null)
+					.withResources(assigneesOne).withTaskLegend(taskLegends.get(0)).withWorkflowName("activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build().withTaskName("task2").withIsMilestone(false).withDuration(2).withPrevTasks(null)
+					.withResources(assigneesOne).withTaskLegend(taskLegends.get(0)).withWorkflowName("activiti$projectAdhoc"));
 			taskList.get(1).setParent(taskList.get(0));
-			taskList.add(TaskListDataItem.build()
-    .withTaskName("task3")
-    .withIsMilestone(false)
-    .withDuration(2)
-    .withPrevTasks(null)
-    .withResources(assigneesOne)
-    .withTaskLegend(taskLegends.get(1))
-    .withWorkflowName("activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build().withTaskName("task3").withIsMilestone(false).withDuration(2).withPrevTasks(null)
+					.withResources(assigneesOne).withTaskLegend(taskLegends.get(1)).withWorkflowName("activiti$projectAdhoc"));
 			taskList.get(2).setParent(taskList.get(0));
-			taskList.add(TaskListDataItem.build()
-    .withTaskName("task4")
-    .withIsMilestone(false)
-    .withDuration(2)
-    .withPrevTasks(null)
-    .withResources(assigneesTwo)
-    .withTaskLegend(taskLegends.get(1))
-    .withWorkflowName("activiti$projectAdhoc"));
-			taskList.add(TaskListDataItem.build()
-    .withTaskName("task5")
-    .withIsMilestone(false)
-    .withDuration(2)
-    .withPrevTasks(null)
-    .withResources(assigneesTwo)
-    .withTaskLegend(taskLegends.get(1))
-    .withWorkflowName("activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build().withTaskName("task4").withIsMilestone(false).withDuration(2).withPrevTasks(null)
+					.withResources(assigneesTwo).withTaskLegend(taskLegends.get(1)).withWorkflowName("activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build().withTaskName("task5").withIsMilestone(false).withDuration(2).withPrevTasks(null)
+					.withResources(assigneesTwo).withTaskLegend(taskLegends.get(1)).withWorkflowName("activiti$projectAdhoc"));
 			taskList.get(4).setParent(taskList.get(3));
-			taskList.add(TaskListDataItem.build()
-    .withTaskName("task6")
-    .withIsMilestone(false)
-    .withDuration(2)
-    .withPrevTasks(null)
-    .withResources(assigneesTwo)
-    .withTaskLegend(taskLegends.get(2))
-    .withWorkflowName("activiti$projectAdhoc"));
+			taskList.add(TaskListDataItem.build().withTaskName("task6").withIsMilestone(false).withDuration(2).withPrevTasks(null)
+					.withResources(assigneesTwo).withTaskLegend(taskLegends.get(2)).withWorkflowName("activiti$projectAdhoc"));
 			taskList.get(5).setParent(taskList.get(3));
 			projectData.setTaskList(taskList);
 
 			projectData = (ProjectData) alfrescoRepository.save(projectData);
 			// add aspect entityTpl
 
-			List<NodeRef> prevTasks;
+			List<NodeRef> prevTasks = new ArrayList<>();
 
-			prevTasks = new ArrayList<>();
 			prevTasks.add(projectData.getTaskList().get(1).getNodeRef());
 			projectData.getTaskList().get(2).setPrevTasks(prevTasks);
 
