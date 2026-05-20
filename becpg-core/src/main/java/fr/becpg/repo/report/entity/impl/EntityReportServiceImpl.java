@@ -450,8 +450,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 												
 												filterByReportKind(reportData.getXmlDataSource(), tplNodeRef);
 												
-												byte[] datasourceBytes = reportData.getXmlDataSource().asXML().getBytes();
-												auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, datasourceBytes.length);
+												auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, estimateXmlSize(reportData.getXmlDataSource()));
 												
 												if (logger.isTraceEnabled()) {
 													logger.trace("Filtered DataSource XML : \n" + reportData.getXmlDataSource().asXML() + "\n\n");
@@ -1140,8 +1139,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 						filterByReportKind(reportData.getXmlDataSource(), templateNodeRef);
 						
-						byte[] datasourceBytes = reportData.getXmlDataSource().asXML().getBytes();
-						auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, datasourceBytes.length);
+						auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, estimateXmlSize(reportData.getXmlDataSource()));
 
 						if (logger.isTraceEnabled()) {
 							logger.trace("Filtered DataSource XML : \n" + reportData.getXmlDataSource().asXML() + "\n\n");
