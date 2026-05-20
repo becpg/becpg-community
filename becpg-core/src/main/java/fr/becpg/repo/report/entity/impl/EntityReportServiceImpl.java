@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.report.entity.impl;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -600,6 +601,32 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 	}
 
+	private long estimateXmlSize(Element element) {
+		class CountingOutputStream extends OutputStream {
+			private long count = 0;
+			@Override
+			public void write(int b) {
+				count++;
+			}
+			@Override
+			public void write(byte[] b, int off, int len) {
+				count += len;
+			}
+			public long getCount() {
+				return count;
+			}
+		}
+		CountingOutputStream counter = new CountingOutputStream();
+		try {
+			org.dom4j.io.XMLWriter writer = new org.dom4j.io.XMLWriter(counter);
+			writer.write(element);
+			writer.flush();
+		} catch (IOException e) {
+			logger.warn("Could not estimate XML datasource size: " + e.getMessage());
+		}
+		return counter.getCount();
+	}
+
 	private void filterDatalistsByReportKind(String reportKindCode, Element entityEl) {
 		for (Iterator<Element> datalistsIterator = entityEl.elementIterator(); datalistsIterator.hasNext();) {
 			Element dlEl = datalistsIterator.next();
@@ -985,8 +1012,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 									
 									filterByReportKind(reportData.getXmlDataSource(), tplNodeRef);
 									
-									byte[] datasourceBytes = reportData.getXmlDataSource().asXML().getBytes();
-									auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, datasourceBytes.length);
+									auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, estimateXmlSize(reportData.getXmlDataSource()));
 									
 									if (logger.isTraceEnabled()) {
 										logger.trace("Filtered DataSource XML : \n" + reportData.getXmlDataSource().asXML() + "\n\n");
