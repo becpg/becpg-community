@@ -103,7 +103,6 @@ public class IdentityServiceAccountProvider {
 			}
 			return false;
 		}
-		sanitizeAccount(userAccount);
 		try {
 			HttpClientBuilder builder = HttpClientBuilder.create();
 
@@ -116,8 +115,8 @@ public class IdentityServiceAccountProvider {
 				JSONObject userRepresentation = new JSONObject();
 				userRepresentation.put("enabled", true);
 				userRepresentation.put("username", userAccount.getUserName());
-				userRepresentation.put("firstName", userAccount.getFirstName());
-				userRepresentation.put("lastName", userAccount.getLastName());
+				userRepresentation.put("firstName", sanitize(userAccount.getFirstName()));
+				userRepresentation.put("lastName", sanitize(userAccount.getLastName()));
 				userRepresentation.put("email", userAccount.getEmail());
 
 				StringEntity params = new StringEntity(userRepresentation.toString(), "UTF-8");
@@ -187,7 +186,6 @@ public class IdentityServiceAccountProvider {
 		if (userId == null) {
 			throw new IllegalStateException(GET_USER_ID_ERROR + userAccount.getUserName());
 		}
-		sanitizeAccount(userAccount);
 		try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
 			HttpPut request = new HttpPut(authServerUrl + "/admin/realms/" + realm + "/users/" + userId);
 			request.setHeader("Content-Type", "application/json;charset=UTF-8");
@@ -198,10 +196,10 @@ public class IdentityServiceAccountProvider {
 				userRepresentation.put("email", userAccount.getEmail());
 			}
 			if (userAccount.getFirstName() != null && !userAccount.getFirstName().isBlank()) {
-				userRepresentation.put("firstName", userAccount.getFirstName());
+				userRepresentation.put("firstName", sanitize(userAccount.getFirstName()));
 			}
 			if (userAccount.getLastName() != null && !userAccount.getLastName().isBlank()) {
-				userRepresentation.put("lastName", userAccount.getLastName());
+				userRepresentation.put("lastName", sanitize(userAccount.getLastName()));
 			}
 			
 			request.setEntity(new StringEntity(userRepresentation.toString(), "UTF-8"));
@@ -219,11 +217,6 @@ public class IdentityServiceAccountProvider {
 			throw new IdentityServiceException("Error while updating user in IDS", e);
 		}
 		return true;
-	}
-	
-	private void sanitizeAccount(BeCPGUserAccount userAccount) {
-		userAccount.setFirstName(sanitize(userAccount.getFirstName()));
-		userAccount.setLastName(sanitize(userAccount.getLastName()));
 	}
 	
 	private String sanitize(String input) {
