@@ -17,8 +17,10 @@
  ******************************************************************************/
 package fr.becpg.repo.report.entity.impl;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -128,6 +130,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	private static final String PREF_REPORT_SUFFIX = ".view";
 	private static final String REPORT_PARAM_SEPARATOR = "#";
 	private static final String REPORT_LIST_CACHE_KEY = "REPORT_KIND_CACHE_KEY";
+	private static final int MAX_TRACE_XML_LENGTH = 1024 * 1024;
 
 	private static final Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
 
@@ -444,16 +447,15 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 												}
 												
 												if (logger.isTraceEnabled()) {
-													logger.trace("DataSource XML : \n" + reportData.getXmlDataSource().asXML() + "\n\n");
+													logger.trace("DataSource XML : \n" + getTruncatedXml(reportData.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
 												}
 												
 												filterByReportKind(reportData.getXmlDataSource(), tplNodeRef);
 												
-												byte[] datasourceBytes = reportData.getXmlDataSource().asXML().getBytes();
-												auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, datasourceBytes.length);
+												auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, estimateXmlSize(reportData.getXmlDataSource()));
 												
 												if (logger.isTraceEnabled()) {
-													logger.trace("Filtered DataSource XML : \n" + reportData.getXmlDataSource().asXML() + "\n\n");
+													logger.trace("Filtered DataSource XML : \n" + getTruncatedXml(reportData.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
 												}
 												
 											}
@@ -988,11 +990,10 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 									
 									filterByReportKind(reportData.getXmlDataSource(), tplNodeRef);
 									
-									byte[] datasourceBytes = reportData.getXmlDataSource().asXML().getBytes();
-									auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, datasourceBytes.length);
+									auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, estimateXmlSize(reportData.getXmlDataSource()));
 									
 									if (logger.isTraceEnabled()) {
-										logger.trace("Filtered DataSource XML : \n" + reportData.getXmlDataSource().asXML() + "\n\n");
+										logger.trace("Filtered DataSource XML : \n" + getTruncatedXml(reportData.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
 									}
 									
 								}
@@ -1114,11 +1115,10 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 						filterByReportKind(reportData.getXmlDataSource(), templateNodeRef);
 						
-						byte[] datasourceBytes = reportData.getXmlDataSource().asXML().getBytes();
-						auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, datasourceBytes.length);
+						auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, estimateXmlSize(reportData.getXmlDataSource()));
 
 						if (logger.isTraceEnabled()) {
-							logger.trace("Filtered DataSource XML : \n" + reportData.getXmlDataSource().asXML() + "\n\n");
+							logger.trace("Filtered DataSource XML : \n" + getTruncatedXml(reportData.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
 						}
 					}
 
@@ -1749,6 +1749,55 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 		return null;
 
+	}
+
+	private long estimateXmlSize(Element element) {
+		class CountingOutputStream extends OutputStream {
+			private long count = 0;
+			@Override public void write(int b) { count++; }
+			@Override public void write(byte[] b, int off, int len) { count += len; }
+			public long getCount() { return count; }
+		}
+		CountingOutputStream counter = new CountingOutputStream();
+		try {
+			org.dom4j.io.XMLWriter writer = new org.dom4j.io.XMLWriter(counter);
+			writer.write(element);
+			writer.flush();
+		} catch (IOException e) {
+			logger.warn("Could not estimate XML datasource size: " + e.getMessage());
+		}
+		return counter.getCount();
+	}
+
+	private String getTruncatedXml(Element element, int maxLength) {
+		class TruncatingWriter extends Writer {
+			private StringBuilder sb = new StringBuilder();
+			private boolean truncated = false;
+			@Override
+			public void write(char[] cbuf, int off, int len) {
+				if (truncated) return;
+				if (sb.length() + len > maxLength) {
+					sb.append(cbuf, off, maxLength - sb.length());
+					sb.append("...");
+					truncated = true;
+				} else {
+					sb.append(cbuf, off, len);
+				}
+			}
+			@Override public void flush() {}
+			@Override public void close() {}
+			@Override public String toString() { return sb.toString(); }
+		}
+		
+		TruncatingWriter writer = new TruncatingWriter();
+		try {
+			org.dom4j.io.XMLWriter xmlWriter = new org.dom4j.io.XMLWriter(writer);
+			xmlWriter.write(element);
+			xmlWriter.flush();
+		} catch (IOException e) {
+			logger.warn("Could not generate truncated XML: " + e.getMessage());
+		}
+		return writer.toString();
 	}
 
 }
