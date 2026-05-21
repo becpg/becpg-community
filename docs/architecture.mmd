@@ -1,0 +1,150 @@
+---
+title: beCPG Project Architecture (v25.3.0)
+---
+graph TB
+    %% ───────────────────────────────────────────
+    %% Styling
+    %% ───────────────────────────────────────────
+    classDef core fill:#4a90d9,stroke:#2c5f8a,color:#fff
+    classDef plm fill:#e8743b,stroke:#b85a2e,color:#fff
+    classDef project fill:#50b848,stroke:#3a8a35,color:#fff
+    classDef designer fill:#9b59b6,stroke:#7d3f99,color:#fff
+    classDef share fill:#f5c542,stroke:#c99e35,color:#333
+    classDef enterprise fill:#e74c3c,stroke:#c0392b,color:#fff
+    classDef infra fill:#7f8c8d,stroke:#5d6d6e,color:#fff
+    classDef external fill:#bdc3c7,stroke:#95a5a6,color:#333
+
+    %% ───────────────────────────────────────────
+    %% External Platform
+    %% ───────────────────────────────────────────
+    subgraph ALFRESCO["Alfresco Content Services Platform"]
+        direction TB
+        ACS["Alfresco Repository<br/>(NodeService, DictionaryService,<br/>PolicyService, WorkflowService)"]
+        SHARE_PLATFORM["Alfresco Share<br/>(Spring Surf, WebScripts)"]
+        SOLR["Alfresco Search Services<br/>(Solr)"]
+    end
+
+    %% ───────────────────────────────────────────
+    %% Repository Tier (Core Modules)
+    %% ───────────────────────────────────────────
+    subgraph REPO_TIER["Repository Tier — Alfresco AMP Modules"]
+        direction TB
+
+        subgraph CORE["becpg-core"]
+            direction LR
+            CORE_ENTITY["Entity Management<br/><i>EntityService, AutoNumService,<br/>EntityDictionaryService</i>"]
+            CORE_REPO["Repository Layer<br/><i>AlfrescoRepository&lt;T&gt;,<br/>L2 Cache</i>"]
+            CORE_FORMULATION["Formulation Engine<br/><i>FormulationService,<br/>FormulationPlugin</i>"]
+            CORE_SEARCH["Search & Query<br/><i>BeCPGQueryBuilder,<br/>AdvSearchService</i>"]
+            CORE_REPORT["Reporting<br/><i>EntityReportService,<br/>ExportSearchService</i>"]
+            CORE_SECURITY["Security & Audit<br/><i>SecurityService,<br/>BeCPGAuditService</i>"]
+            CORE_SERVICES["Common Services<br/><i>BeCPGCacheService, BatchQueue,<br/>MailService, NotificationRule</i>"]
+        end
+
+        subgraph PROJECT_CORE["becpg-project-core"]
+            direction LR
+            PROJ_MGMT["Project Management<br/><i>ProjectService,<br/>Task & Planning</i>"]
+        end
+
+        subgraph DESIGNER_CORE["becpg-designer-core"]
+            direction LR
+            FORM_DESIGNER["Form Designer<br/><i>DesignerService,<br/>Dynamic Forms</i>"]
+        end
+
+        subgraph PLM_CORE["becpg-plm-core"]
+            direction LR
+            PLM_PRODUCT["Product Lifecycle<br/><i>ProductService,<br/>Formulation</i>"]
+            PLM_ECM["Change Management<br/><i>ECOService,<br/>AutomaticECOService</i>"]
+            PLM_QUALITY["Quality Control<br/><i>QualityControlService,<br/>NonConformityService</i>"]
+            PLM_IMPORT["Import / ETL<br/><i>ImportService,<br/>NutDatabaseService</i>"]
+            PLM_SUPPLIER["Supplier Portal<br/><i>SupplierPortalService</i>"]
+            PLM_REGULATORY["Regulatory & Toxicology<br/><i>ToxicologyService,<br/>RegulatoryCompliance</i>"]
+            PLM_PUBLICATION["Publication<br/><i>PublicationChannelService</i>"]
+        end
+    end
+
+    %% ───────────────────────────────────────────
+    %% Share Tier (UI Modules)
+    %% ───────────────────────────────────────────
+    subgraph SHARE_TIER["Share Tier — Alfresco Share JAR Modules"]
+        direction LR
+        BECPG_SHARE["becpg-share<br/><i>Core UI Components</i>"]
+        PROJECT_SHARE["becpg-project-share<br/><i>Project UI</i>"]
+        DESIGNER_SHARE["becpg-designer-share<br/><i>Designer UI</i>"]
+        PLM_SHARE["becpg-plm-share<br/><i>PLM UI</i>"]
+    end
+
+    %% ───────────────────────────────────────────
+    %% Enterprise Layer
+    %% ───────────────────────────────────────────
+    subgraph ENTERPRISE["becpg-enterprise"]
+        direction LR
+        subgraph PATCHES["alfresco-patch"]
+            REPO_PATCH["alfresco-repository-patch"]
+            API_PATCH["alfresco-remote-api-patch"]
+            CORE_PATCH["alfresco-core-patch"]
+            SURF_PATCH["spring-surf-patch<br/>spring-webscripts-patch"]
+        end
+        ENT_SHARE["becpg-enterprise-share"]
+        DISTRIBUTION["distribution<br/><i>Packaging & Deployment</i>"]
+    end
+
+    %% ───────────────────────────────────────────
+    %% Integration Testing
+    %% ───────────────────────────────────────────
+    RUNNER["becpg-integration-runner<br/><i>WAR — Integration Tests<br/>(bundles all core modules)</i>"]
+
+    %% ───────────────────────────────────────────
+    %% Dependencies — Repository Tier
+    %% ───────────────────────────────────────────
+    PROJECT_CORE -->|depends on| CORE
+    DESIGNER_CORE -->|depends on| CORE
+    PLM_CORE -->|depends on| CORE
+    PLM_CORE -->|depends on| PROJECT_CORE
+    PLM_CORE -->|depends on| DESIGNER_CORE
+
+    %% ───────────────────────────────────────────
+    %% Repository ↔ Alfresco Platform
+    %% ───────────────────────────────────────────
+    CORE -.->|extends| ACS
+    CORE_SEARCH -.->|queries| SOLR
+
+    %% ───────────────────────────────────────────
+    %% Share Tier → Share Platform
+    %% ───────────────────────────────────────────
+    SHARE_TIER -.->|extends| SHARE_PLATFORM
+
+    %% ───────────────────────────────────────────
+    %% Enterprise Patches → Alfresco
+    %% ───────────────────────────────────────────
+    PATCHES -.->|patches| ACS
+    SURF_PATCH -.->|patches| SHARE_PLATFORM
+    ENT_SHARE -.->|extends| SHARE_PLATFORM
+
+    %% ───────────────────────────────────────────
+    %% Distribution aggregates everything
+    %% ───────────────────────────────────────────
+    DISTRIBUTION -->|packages| REPO_TIER
+    DISTRIBUTION -->|packages| SHARE_TIER
+    DISTRIBUTION -->|packages| PATCHES
+    DISTRIBUTION -->|packages| ENT_SHARE
+
+    %% ───────────────────────────────────────────
+    %% Integration Runner
+    %% ───────────────────────────────────────────
+    RUNNER -->|bundles & tests| CORE
+    RUNNER -->|bundles & tests| PROJECT_CORE
+    RUNNER -->|bundles & tests| DESIGNER_CORE
+    RUNNER -->|bundles & tests| PLM_CORE
+
+    %% ───────────────────────────────────────────
+    %% Apply Styles
+    %% ───────────────────────────────────────────
+    class CORE,CORE_ENTITY,CORE_REPO,CORE_FORMULATION,CORE_SEARCH,CORE_REPORT,CORE_SECURITY,CORE_SERVICES core
+    class PLM_CORE,PLM_PRODUCT,PLM_ECM,PLM_QUALITY,PLM_IMPORT,PLM_SUPPLIER,PLM_REGULATORY,PLM_PUBLICATION plm
+    class PROJECT_CORE,PROJ_MGMT project
+    class DESIGNER_CORE,FORM_DESIGNER designer
+    class BECPG_SHARE,PROJECT_SHARE,DESIGNER_SHARE,PLM_SHARE share
+    class ENTERPRISE,PATCHES,REPO_PATCH,API_PATCH,CORE_PATCH,SURF_PATCH,ENT_SHARE,DISTRIBUTION enterprise
+    class RUNNER infra
+    class ACS,SHARE_PLATFORM,SOLR external
