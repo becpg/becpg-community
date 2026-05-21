@@ -320,7 +320,7 @@ public class EntityVersionWebScript extends AbstractWebScript {
 
 	private JSONObject getPerson(String frozenModifier) throws JSONException {
 		JSONObject jsonCreator = new JSONObject();
-		if (frozenModifier != null && personService.personExists(frozenModifier)) {
+		if (frozenModifier != null && !frozenModifier.isBlank() && personService.personExists(frozenModifier)) {
 			NodeRef creatorNodeRef = personService.getPerson(frozenModifier);
 			jsonCreator.put("userName", nodeService.getProperty(creatorNodeRef, ContentModel.PROP_USERNAME));
 			jsonCreator.put("firstName", nodeService.getProperty(creatorNodeRef, ContentModel.PROP_FIRSTNAME));
