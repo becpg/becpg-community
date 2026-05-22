@@ -191,6 +191,7 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="associationService" ref="associationService" />
 		<property name="publicationChannelService" ref="publicationChannelService" />
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 	</bean>
 	
 	<bean id="webscript.fr.becpg.publication.channelBatch.post" class="fr.becpg.repo.web.scripts.publication.RemoteChannelBatchWebScript" >
@@ -198,6 +199,7 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="associationService" ref="associationService" />
 		<property name="publicationChannelService" ref="publicationChannelService" />
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 	</bean>
 	
 	<!-- Formulation javascript helper -->
