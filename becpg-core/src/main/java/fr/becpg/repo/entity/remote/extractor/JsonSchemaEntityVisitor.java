@@ -134,9 +134,9 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 	        if (params.getJsonParams() != null && params.getJsonParams().has("locale")) {
 	            Locale old = I18NUtil.getLocale();
 	            String key = params.getJsonParams().getString("locale");
-	            Locale locale = new Locale(key);
+	            Locale locale = Locale.of(key);
 	            if (key.contains("_")) {
-	            	locale = new Locale(key.split("_")[0], key.split("_")[1]);
+	            	locale = Locale.of(key.split("_")[0], key.split("_")[1]);
 	    		}
 	            I18NUtil.setLocale(locale);
 	            return new LocaleContext(old);
