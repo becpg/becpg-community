@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.hc.client5.http.config.ConnectionConfig;
+import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
@@ -98,8 +99,13 @@ public final class RestTemplateHelper {
                 .setMaxConnPerRoute(MAX_CONNECTIONS_PER_ROUTE)
                 .setDefaultConnectionConfig(connectionConfig);
 
+        RequestConfig requestConfig = RequestConfig.custom()
+            .setConnectionRequestTimeout(CONNECTION_TIMEOUT)
+            .build();
+
         return HttpClients.custom()
             .setConnectionManager(connectionManagerBuilder.build())
+            .setDefaultRequestConfig(requestConfig)
             .setConnectionManagerShared(true)
             .evictExpiredConnections()
             .evictIdleConnections(Timeout.of(CONNECTION_TTL_SECONDS, TimeUnit.SECONDS))
@@ -152,8 +158,6 @@ public final class RestTemplateHelper {
         
         DnsLoggingRequestFactory(CloseableHttpClient httpClient) {
             super(httpClient);
-            setConnectTimeout((int) CONNECTION_TIMEOUT.toMilliseconds());
-            setConnectionRequestTimeout((int) CONNECTION_TIMEOUT.toMilliseconds());
         }
 
         @Override

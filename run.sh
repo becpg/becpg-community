@@ -14,14 +14,12 @@ set -e
 
 export COMPOSE_FILE_PATH=${PWD}/becpg-integration-runner/target/docker-compose.yml
 export MVN_EXEC="${PWD}/mvnw"
-export BECPG_VERSION_PROFILE=becpg_25_3_0
-export EXTRA_ENV="-T 1C -Dmaven.threads.useForkedJvm=false"
+export BECPG_VERSION_PROFILE=becpg_26_1_0
+export EXTRA_ENV="-T 1C -Dmaven.threads.useForkedJvm=false -Dmaven.yuicompressor.skip=true"
 
 
 if [ -f .env ]; then
   . .env
-else
-  echo "Warning: .env file not found, skipping."
 fi
 
 if [ ! -f docker-compose.override.yml ] && [ -f docker-compose.override.yml.sample ]; then
@@ -52,19 +50,17 @@ pull() {
 }
 
 down() {
-	if [ -d becpg-enterprise ]; then
-	    cd becpg-enterprise
-	   	 $MVN_EXEC clean validate $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="enterprise-test"
-	    cd ..
-   	else
-   	 $MVN_EXEC clean validate $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
-    fi 
     if [ -f $COMPOSE_FILE_PATH ]; then
         docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH  -f docker-compose.override.yml down
     fi
-}
+    # Fix root-owned folders created by Docker containers
+    if [ -d becpg-integration-runner/target ]; then
+        docker run --rm -v ${PWD}:/workspace -w /workspace alpine chown -R $(id -u):$(id -g) becpg-integration-runner/target || true
+    fi
+    if [ -d becpg-enterprise/distribution/target ]; then
+        docker run --rm -v ${PWD}:/workspace -w /workspace alpine chown -R $(id -u):$(id -g) becpg-enterprise/distribution/target || true
+    fi
 
-down_test() {
 	if [ -d becpg-enterprise ]; then
 	    cd becpg-enterprise
 	   	 $MVN_EXEC clean validate $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="enterprise-test"
@@ -72,9 +68,27 @@ down_test() {
    	else
    	 $MVN_EXEC clean validate $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
     fi 
+}
+
+down_test() {
     if [ -f $COMPOSE_FILE_PATH ]; then
         docker compose -p becpg_test -f $COMPOSE_FILE_PATH  down -v
     fi
+    # Fix root-owned folders created by Docker containers
+    if [ -d becpg-integration-runner/target ]; then
+        docker run --rm -v ${PWD}:/workspace -w /workspace alpine chown -R $(id -u):$(id -g) becpg-integration-runner/target || true
+    fi
+    if [ -d becpg-enterprise/distribution/target ]; then
+        docker run --rm -v ${PWD}:/workspace -w /workspace alpine chown -R $(id -u):$(id -g) becpg-enterprise/distribution/target || true
+    fi
+
+	if [ -d becpg-enterprise ]; then
+	    cd becpg-enterprise
+	   	 $MVN_EXEC clean validate $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="enterprise-test"
+	    cd ..
+   	else
+   	 $MVN_EXEC clean validate $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
+    fi 
 }
 
 deploy_java(){
@@ -234,6 +248,29 @@ case "$1" in
     ;;  
   purge)
     purge
+    ;;
+  tail)
+    tail
+    ;;
+  test)
+    test
+    ;;
+  test_profile)
+    test_profile
+    ;;
+  reindex)
+    reindex
+    ;;
+review)
+    ./review/review-wizard.sh
+    ;;
+visualvm)
+    jvisualvm --openjmx localhost:9091
+    ;;
+  *)
+    echo "Usage: $0 {install|install_hotswap|build_start|build_test|start|stop|purge|tail|test|deploy_fast|deploy_java [module]|visualvm|reindex}"
+esac
+urge
     ;;
   tail)
     tail

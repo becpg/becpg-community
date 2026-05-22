@@ -1253,7 +1253,7 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 			KerberosSessionSetupPrivilegedAction sessSetupAction = new KerberosSessionSetupPrivilegedAction(krbAccountName, negToken.getMechtoken(),
 					krbEndpointSPN);
 
-			Object result = Subject.doAs(jaasLoginContext.getSubject(), sessSetupAction);
+			Object result = Subject.callAs(jaasLoginContext.getSubject(), sessSetupAction::run);
 
 			if (result != null) {
 				// Access the Kerberos response

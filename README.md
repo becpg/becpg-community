@@ -120,7 +120,7 @@ All trademarks and product names are the property of their respective owners.
 
 ### Requirements
 
-* Java 17+
+* Java 21+
 * Maven 3+
 * Docker
 
