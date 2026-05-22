@@ -558,9 +558,9 @@ public class JSONVersionExtractor extends SimpleExtractor {
 				properties = object.getJSONObject(ATTRIBUTES);
 			}
 			
-			NodeRef versionNodeRef = new NodeRef(dataListFilter.getFilterData());
-			
-			ret.put(PROP_NODE, versionNodeRef.toString() + "|" + object.getString(TYPE) + "|" + object.getString("id"));
+			if (dataListFilter != null && dataListFilter.getFilterData() != null) {
+				ret.put(PROP_NODE, dataListFilter.getFilterData() + "|" + object.getString(TYPE) + "|" + object.getString("id"));
+			}
 			
 			// Skipping condition
 			
