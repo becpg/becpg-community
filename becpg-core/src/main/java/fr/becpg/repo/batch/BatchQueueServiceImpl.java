@@ -69,6 +69,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * @version $Id: $Id
  */
 @Service("batchQueueService")
+@SuppressWarnings("deprecation")
 public class BatchQueueServiceImpl implements BatchQueueService, ApplicationListener<BatchMonitorEvent> {
 
 	private static final Log logger = LogFactory.getLog(BatchQueueServiceImpl.class);

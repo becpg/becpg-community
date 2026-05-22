@@ -39,7 +39,6 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
 
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.batch.WorkProviderFactory;
 import fr.becpg.repo.migration.MigrationService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;

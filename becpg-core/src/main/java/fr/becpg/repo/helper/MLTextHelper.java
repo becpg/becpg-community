@@ -313,9 +313,9 @@ public class MLTextHelper {
 	 */
 	public static Locale parseLocale(String key) {
 		if (key.contains("_")) {
-			return new Locale(key.split("_")[0], key.split("_")[1]);
+			return Locale.of(key.split("_")[0], key.split("_")[1]);
 		}
-		return new Locale(key);
+		return Locale.of(key);
 
 	}
 

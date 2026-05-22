@@ -739,10 +739,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		}
 
 		if (dynListConstraint != null) {
-			return dynListConstraint.getDisplayLabel(value, new Locale(locale));
+			return dynListConstraint.getDisplayLabel(value, Locale.of(locale));
 		}
 
-		return constraintName != null ? TranslateHelper.getConstraint(constraintName, value, new Locale(locale)) : value;
+		return constraintName != null ? TranslateHelper.getConstraint(constraintName, value, Locale.of(locale)) : value;
 	}
 
 	/**

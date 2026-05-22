@@ -40,7 +40,6 @@ import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.productList.SpecCompatibilityDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
-import fr.becpg.repo.search.AdvSearchQueryFilter;
 import fr.becpg.repo.search.impl.DataListSearchFilter;
 import fr.becpg.repo.search.impl.DataListSearchFilterField;
 import fr.becpg.repo.search.impl.SearchConfig;
