@@ -578,9 +578,9 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			ProductData rm2 = (ProductData) alfrescoRepository.findOne(rawMaterial2NodeRef);
 			if (rm2.getAllergenList() != null) {
 				rm2.getAllergenList().clear();
-				rm2.getAllergenList().add(new AllergenListDataItem(null, null, true, true, new ArrayList<>(), new ArrayList<>(), allergen2, false));
-				rm2.getAllergenList().add(new AllergenListDataItem(null, null, false, false, new ArrayList<>(), new ArrayList<>(), allergen3, false));
-				rm2.getAllergenList().add(new AllergenListDataItem(null, null, false, true, new ArrayList<>(), new ArrayList<>(), allergen4, false));
+				rm2.getAllergenList().add(AllergenListDataItem.build().withVoluntary(true).withInVoluntary(true).withVoluntarySources(new ArrayList<>()).withInVoluntarySources(new ArrayList<>()).withAllergen(allergen2).withIsManual(false));
+				rm2.getAllergenList().add(AllergenListDataItem.build().withVoluntary(false).withInVoluntary(false).withVoluntarySources(new ArrayList<>()).withInVoluntarySources(new ArrayList<>()).withAllergen(allergen3).withIsManual(false));
+				rm2.getAllergenList().add(AllergenListDataItem.build().withVoluntary(false).withInVoluntary(true).withVoluntarySources(new ArrayList<>()).withInVoluntarySources(new ArrayList<>()).withAllergen(allergen4).withIsManual(false));
 
 			}
 			alfrescoRepository.save(rm2);
@@ -913,6 +913,13 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 			logger.debug("Checks: " + checks + " (should be 1)");
 			assertEquals(1, checks);
+			assertEquals(2, checkMissingFields);
+
+			return null;
+		}, false, true);
+	}
+}
+, checks);
 			assertEquals(2, checkMissingFields);
 
 			return null;

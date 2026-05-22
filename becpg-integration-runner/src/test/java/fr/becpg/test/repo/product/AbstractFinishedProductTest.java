@@ -726,10 +726,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial3.setNutList(nutList);
 			// allergenList
 			List<AllergenListDataItem> allergenList = new ArrayList<>();
-			allergenList.add(new AllergenListDataItem(null, 15d, false, false, null, null, allergen1, false));
-			allergenList.add(new AllergenListDataItem(null, 15d, false, false, null, null, allergen2, false));
-			allergenList.add(new AllergenListDataItem(null, null, true, true, null, null, allergen3, false));
-			allergenList.add(new AllergenListDataItem(null, null, false, false, null, null, allergen4, false));
+			allergenList.add(AllergenListDataItem.build().withQtyPerc(15d).withVoluntary(false).withInVoluntary(false).withAllergen(allergen1).withIsManual(false));
+			allergenList.add(AllergenListDataItem.build().withQtyPerc(15d).withVoluntary(false).withInVoluntary(false).withAllergen(allergen2).withIsManual(false));
+			allergenList.add(AllergenListDataItem.build().withVoluntary(true).withInVoluntary(true).withAllergen(allergen3).withIsManual(false));
+			allergenList.add(AllergenListDataItem.build().withVoluntary(false).withInVoluntary(false).withAllergen(allergen4).withIsManual(false));
 			rawMaterial3.setAllergenList(allergenList);
 			// ingList : 4 ing3 ; bio1|bio2 ; geo2
 			List<IngListDataItem> ingList = new ArrayList<>();

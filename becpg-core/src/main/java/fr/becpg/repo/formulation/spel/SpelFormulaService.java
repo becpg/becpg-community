@@ -36,6 +36,7 @@ import fr.becpg.repo.system.SystemConfigurationService;
  * @version $Id: $Id
  */
 @Service("formulaService")
+@SuppressWarnings("deprecation")
 public class SpelFormulaService {
 
 	private static final Log logger = LogFactory.getLog(SpelFormulaService.class);

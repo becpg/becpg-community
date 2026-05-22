@@ -291,9 +291,19 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 				AllergenListDataItem allergenListItemData2;
 
 				if (j < 5) {
-					allergenListItemData2 = new AllergenListDataItem(null, null, true, false, allSources, null, allergens.get(j), false);
+					allergenListItemData2 = AllergenListDataItem.build()
+							.withVoluntary(true)
+							.withInVoluntary(false)
+							.withVoluntarySources(allSources)
+							.withAllergen(allergens.get(j))
+							.withIsManual(false);
 				} else {
-					allergenListItemData2 = new AllergenListDataItem(null, null, false, true, null, allSources, allergens.get(j), false);
+					allergenListItemData2 = AllergenListDataItem.build()
+							.withVoluntary(false)
+							.withInVoluntary(true)
+							.withInVoluntarySources(allSources)
+							.withAllergen(allergens.get(j))
+							.withIsManual(false);
 				}
 
 				allergenList.add(allergenListItemData2);

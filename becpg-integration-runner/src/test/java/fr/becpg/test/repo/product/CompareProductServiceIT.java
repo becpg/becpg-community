@@ -247,9 +247,19 @@ public class CompareProductServiceIT extends AbstractCompareProductTest {
 				AllergenListDataItem allergenListItemData2;
 
 				if (j2 < 5) {
-					allergenListItemData2 = new AllergenListDataItem(null, null, true, false, allSources, null, allergens.get(j2), false);
+					allergenListItemData2 = AllergenListDataItem.build()
+							.withVoluntary(true)
+							.withInVoluntary(false)
+							.withVoluntarySources(allSources)
+							.withAllergen(allergens.get(j2))
+							.withIsManual(false);
 				} else {
-					allergenListItemData2 = new AllergenListDataItem(null, null, false, true, null, allSources, allergens.get(j2), false);
+					allergenListItemData2 = AllergenListDataItem.build()
+							.withVoluntary(false)
+							.withInVoluntary(true)
+							.withInVoluntarySources(allSources)
+							.withAllergen(allergens.get(j2))
+							.withIsManual(false);
 				}
 
 				allergenList.add(allergenListItemData2);
