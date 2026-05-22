@@ -88,6 +88,7 @@ import org.xml.sax.SAXException;
  * @author martin.bergljung@alfresco.com (some editing)
  * @since 3.0
  */
+@SuppressWarnings("deprecation")
 public class BeCPGTestRunner extends SpringJUnit4ClassRunner {
 	private static final String ACS_ENDPOINT_PROP = "acs.endpoint.path";
 	private static final String ACS_DEFAULT_ENDPOINT = "http://localhost:8080/alfresco";

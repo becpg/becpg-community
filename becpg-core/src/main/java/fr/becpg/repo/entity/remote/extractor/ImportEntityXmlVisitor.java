@@ -60,7 +60,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;

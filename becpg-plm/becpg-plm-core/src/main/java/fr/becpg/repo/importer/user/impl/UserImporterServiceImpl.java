@@ -20,6 +20,7 @@ package fr.becpg.repo.importer.user.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
@@ -482,9 +483,9 @@ public class UserImporterServiceImpl implements UserImporterService {
 											SiteVisibility.PUBLIC);
 									try {
 										
-										URL url = new URL(sysAdminParams.getShareProtocol()+"://"+sysAdminParams.getShareHost()
+										URL url = URI.create(sysAdminParams.getShareProtocol()+"://"+sysAdminParams.getShareHost()
 										+":"+sysAdminParams.getSharePort()+"/share/service/modules/enable-site?url=" + siteInfo.getShortName()
-										+ "&preset=" + DEFAULT_PRESET + "&alf_ticket=" + authenticationService.getCurrentTicket());
+										+ "&preset=" + DEFAULT_PRESET + "&alf_ticket=" + authenticationService.getCurrentTicket()).toURL();
 										URLConnection con = url.openConnection();
 										
 										InputStream in = con.getInputStream();
