@@ -241,24 +241,23 @@ public Result performBusinessOperation(Input input) {
 
 Building and running the application is a long and ongoing task; therefore, ensure you have validated and verified everything before launching it.
 
-### Running Tests and Hotdeploy
+### Running Tests 
 
-When making code changes, use the following commands to efficiently test your modifications:
+When making code changes, use the following commands to test, first rebuild and relaunch the application (3 to 4 minutes):
 
 1. **Compile and restart**: 
    ```bash
    ./run.sh build_start
    ```
+   
+Then launch the test
 
 2. **Run Integration Tests**: To run a specific integration test:
    ```bash
    ./mvnw test -pl becpg-integration-runner -Dtest=[TestClassName]
    # Example: ./mvnw test -pl becpg-integration-runner -Dtest=NutriScoreIT
    ```
-   Or to run all tests:
-   ```bash
-   ./run.sh test
-   ```
+
 
 ### Testing Standards
 1. **Prefer Integration Tests over Unit Tests**: In beCPG, majority are IT tests that require Spring context. Only use unit tests for simple cases that don't need Spring context loaded.
