@@ -22,6 +22,7 @@ import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
  *
  * @author matthieu
  */
+@SuppressWarnings("unused")
 public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 
 	private static final String MASKING = "MASKING";

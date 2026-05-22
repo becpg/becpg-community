@@ -240,6 +240,7 @@ public class EvaporatingFormulationHelper {
      * 
      * @param <T> the type of item being processed
      */
+    @SuppressWarnings("unused")
     private static class EvapData<T>
     {
         final T item;
