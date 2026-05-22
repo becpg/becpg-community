@@ -55,6 +55,16 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 	private NodeService nodeService;
 	private AssociationService associationService;
 	private PublicationChannelService publicationChannelService;
+	private org.alfresco.repo.policy.BehaviourFilter policyBehaviourFilter;
+
+	/**
+	 * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
+	 *
+	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object
+	 */
+	public void setPolicyBehaviourFilter(org.alfresco.repo.policy.BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
 
 	/**
 	 * <p>Setter for the field <code>namespaceService</code>.</p>
@@ -198,7 +208,11 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 
 				ChannelData channelData = ChannelData.builder().status(status).batchId(batchId).error(error).action(channelListAction).build();
 				AuthenticationUtil.runAsSystem(() -> {
-					publicationChannelService.publishEntityChannel(nodeRef, channelId, channelData);
+					if (nodeService.hasAspect(nodeRef, fr.becpg.model.BeCPGModel.ASPECT_ARCHIVED_ENTITY)) {
+						updateArchivedEntityChannelIds(nodeRef, channelId, channelData);
+					} else {
+						publicationChannelService.publishEntityChannel(nodeRef, channelId, channelData);
+					}
 					return null;
 				});
 				jsonResponse.put(NODEREF, nodeRef.toString());
@@ -270,6 +284,85 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 		} catch (Exception e) {
 			logger.error("Error getting date attribute: " + attribute, e);
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Invalid value for date attribute '" + attribute + "'");
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void updateArchivedEntityChannelIds(NodeRef entityNodeRef, String channelId, ChannelData channelData) {
+		String action = channelData.getAction();
+		String status = channelData.getStatus();
+		
+		List<String> channelIds = (List<String>) nodeService.getProperty(entityNodeRef, PublicationModel.PROP_CHANNELIDS);
+		if (channelIds == null) {
+			channelIds = new java.util.ArrayList<>();
+		} else {
+			channelIds = new java.util.ArrayList<>(channelIds);
+		}
+		
+		List<String> failedChannelIds = (List<String>) nodeService.getProperty(entityNodeRef, PublicationModel.PROP_FAILED_CHANNELIDS);
+		if (failedChannelIds == null) {
+			failedChannelIds = new java.util.ArrayList<>();
+		} else {
+			failedChannelIds = new java.util.ArrayList<>(failedChannelIds);
+		}
+		
+		List<String> publishedChannelIds = (List<String>) nodeService.getProperty(entityNodeRef, PublicationModel.PROP_PUBLISHED_CHANNELIDS);
+		if (publishedChannelIds == null) {
+			publishedChannelIds = new java.util.ArrayList<>();
+		} else {
+			publishedChannelIds = new java.util.ArrayList<>(publishedChannelIds);
+		}
+
+		if (!channelIds.contains(channelId)) {
+			channelIds.add(channelId);
+		}
+
+		if (fr.becpg.repo.publication.PublicationChannelService.PublicationChannelStatus.FAILED.toString().equals(status) 
+				&& !fr.becpg.repo.publication.PublicationChannelService.PublicationChannelAction.RETRY.toString().equals(action)) {
+			if (!failedChannelIds.contains(channelId)) {
+				failedChannelIds.add(channelId);
+			}
+		} else {
+			failedChannelIds.remove(channelId);
+		}
+
+		Date modifiedDate = (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIED);
+		if (modifiedDate == null) {
+			modifiedDate = (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED);
+		}
+		Date publishDate = new Date();
+
+		if (!fr.becpg.repo.publication.PublicationChannelService.PublicationChannelAction.RETRY.toString().equals(action) 
+				&& fr.becpg.repo.publication.PublicationChannelService.PublicationChannelStatus.COMPLETED.toString().equals(status)
+				&& modifiedDate != null && (publishDate.after(modifiedDate) || publishDate.equals(modifiedDate))) {
+			if (!publishedChannelIds.contains(channelId)) {
+				publishedChannelIds.add(channelId);
+			}
+		} else {
+			publishedChannelIds.remove(channelId);
+		}
+
+		if (fr.becpg.repo.publication.PublicationChannelService.PublicationChannelAction.STOP.toString().equals(action)) {
+			if (!publishedChannelIds.contains(channelId)) {
+				publishedChannelIds.add(channelId);
+			}
+		}
+
+		boolean isEnabledAudit = policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE);
+		boolean isEnabledArchivedEntity = policyBehaviourFilter.isEnabled(fr.becpg.model.BeCPGModel.ASPECT_ARCHIVED_ENTITY);
+		try {
+			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			policyBehaviourFilter.disableBehaviour(fr.becpg.model.BeCPGModel.ASPECT_ARCHIVED_ENTITY);
+			nodeService.setProperty(entityNodeRef, PublicationModel.PROP_FAILED_CHANNELIDS, (java.io.Serializable) failedChannelIds);
+			nodeService.setProperty(entityNodeRef, PublicationModel.PROP_PUBLISHED_CHANNELIDS, (java.io.Serializable) publishedChannelIds);
+			nodeService.setProperty(entityNodeRef, PublicationModel.PROP_CHANNELIDS, (java.io.Serializable) channelIds);
+		} finally {
+			if (isEnabledArchivedEntity) {
+				policyBehaviourFilter.enableBehaviour(fr.becpg.model.BeCPGModel.ASPECT_ARCHIVED_ENTITY);
+			}
+			if (isEnabledAudit) {
+				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			}
 		}
 	}
 }

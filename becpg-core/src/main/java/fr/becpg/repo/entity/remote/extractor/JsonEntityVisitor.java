@@ -209,6 +209,29 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	 */
 	protected void visitNode(NodeRef nodeRef, JSONObject entity, JsonVisitNodeType type, QName assocName, RemoteJSONContext context)
 			throws JSONException, RemoteException {
+		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_FORMAT) 
+				&& BeCPGModel.EntityFormat.JSON.toString().equals(String.valueOf(nodeService.getProperty(nodeRef, BeCPGModel.PROP_ENTITY_FORMAT)))) {
+			cacheList.add(nodeRef);
+			ContentReader reader = contentService.getReader(nodeRef, BeCPGModel.PROP_ENTITY_DATA);
+			if (reader != null) {
+				String jsonString = reader.getContentString();
+				if (jsonString != null && !jsonString.isEmpty()) {
+					try {
+						JSONObject root = new JSONObject(jsonString);
+						if (root.has(RemoteEntityService.ELEM_ENTITY)) {
+							JSONObject archivedEntity = root.getJSONObject(RemoteEntityService.ELEM_ENTITY);
+							for (String key : archivedEntity.keySet()) {
+								entity.put(key, archivedEntity.get(key));
+							}
+							return;
+						}
+					} catch (JSONException e) {
+						logger.error("Error parsing pre-stored JSON for node: " + nodeRef, e);
+					}
+				}
+			}
+		}
+
 		if (cacheList.contains(nodeRef)) {
 			if (Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_NODEREF, Boolean.TRUE))) {
 				entity.put(RemoteEntityService.ATTR_ID, nodeRef.getId());
@@ -398,6 +421,10 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	 * @throws org.json.JSONException if any.
 	 */
 	protected void visitLists(NodeRef nodeRef, JSONObject entity, RemoteJSONContext context) throws JSONException {
+		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_FORMAT) 
+				&& BeCPGModel.EntityFormat.JSON.toString().equals(String.valueOf(nodeService.getProperty(nodeRef, BeCPGModel.PROP_ENTITY_FORMAT)))) {
+			return;
+		}
 
 		NodeRef listContainerNodeRef = nodeService.getChildByName(nodeRef, BeCPGModel.ASSOC_ENTITYLISTS, RepoConsts.CONTAINER_DATALISTS);
 
