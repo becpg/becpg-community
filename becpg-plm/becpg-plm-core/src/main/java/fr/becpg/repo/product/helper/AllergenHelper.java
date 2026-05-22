@@ -344,37 +344,30 @@ public class AllergenHelper {
             voluntarySet.addAll(voluntaryAllergens);
         }
 
-        // Build set of voluntary categories: a category is voluntary if itself OR any of its children are in voluntarySet
-        Set<NodeRef> voluntaryCategories = new LinkedHashSet<>();
-        for (NodeRef voluntary : voluntarySet) {
-            // Add the voluntary allergen itself if it's a category (has children)
-            List<NodeRef> voluntaryChildren = associationService.getTargetAssocs(voluntary, PLMModel.ASSOC_ALLERGENSUBSETS);
-            if ((voluntaryChildren != null) && !voluntaryChildren.isEmpty()) {
-                voluntaryCategories.add(voluntary);
-            }
-            // Add all parents of the voluntary allergen
-            List<NodeRef> voluntaryParents = associationService.getSourcesAssocs(voluntary, PLMModel.ASSOC_ALLERGENSUBSETS);
-            if (voluntaryParents != null) {
-                voluntaryCategories.addAll(voluntaryParents);
+        Set<NodeRef> categoriesToEvaluate = new LinkedHashSet<>();
+        Set<NodeRef> allNodes = new LinkedHashSet<>();
+        allNodes.addAll(voluntarySet);
+        allNodes.addAll(involuntarySet);
+
+        for (NodeRef node : allNodes) {
+            List<NodeRef> children = associationService.getTargetAssocs(node, PLMModel.ASSOC_ALLERGENSUBSETS);
+            if (children != null && !children.isEmpty()) {
+                boolean isVoluntaryCategory = voluntarySet.contains(node);
+                if (!isVoluntaryCategory) {
+                    for (NodeRef child : children) {
+                        if (voluntarySet.contains(child)) {
+                            isVoluntaryCategory = true;
+                            break;
+                        }
+                    }
+                }
+                if (isVoluntaryCategory) {
+                    categoriesToEvaluate.add(node);
+                }
             }
         }
 
-        Set<NodeRef> candidateCategories = new LinkedHashSet<>();
-        for (NodeRef involuntary : involuntarySet) {
-            List<NodeRef> children = associationService.getTargetAssocs(involuntary, PLMModel.ASSOC_ALLERGENSUBSETS);
-            if ((children != null) && !children.isEmpty()) {
-                candidateCategories.add(involuntary);
-            }
-            List<NodeRef> parents = associationService.getSourcesAssocs(involuntary, PLMModel.ASSOC_ALLERGENSUBSETS);
-            if (parents != null) {
-                candidateCategories.addAll(parents);
-            }
-        }
-
-        // Only keep categories that are declared as voluntary on the product
-        candidateCategories.retainAll(voluntaryCategories);
-
-        for (NodeRef category : candidateCategories) {
+        for (NodeRef category : categoriesToEvaluate) {
             List<NodeRef> children = associationService.getTargetAssocs(category, PLMModel.ASSOC_ALLERGENSUBSETS);
             if ((children == null) || children.isEmpty()) {
                 continue;
