@@ -1,5 +1,5 @@
 /*******************************************************************************
-private * Copyright (C) 2010-2021 beCPG.
+private * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *

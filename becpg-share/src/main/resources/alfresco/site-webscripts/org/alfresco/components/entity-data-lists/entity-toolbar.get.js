@@ -2,7 +2,7 @@
 <import resource="classpath:/alfresco/site-webscripts/org/alfresco/components/documentlibrary/include/documentlist.lib.js">
 
 /*******************************************************************************
- *  Copyright (C) 2010-2021 beCPG. 
+ *  Copyright (C) 2010-2026 beCPG. 
  *   
  *  This file is part of beCPG 
  *   

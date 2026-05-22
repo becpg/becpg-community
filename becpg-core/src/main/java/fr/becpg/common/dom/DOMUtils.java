@@ -1,7 +1,7 @@
 package fr.becpg.common.dom;
 
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
