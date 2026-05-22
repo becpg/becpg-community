@@ -16,6 +16,7 @@ import org.springframework.lang.NonNull;
  * @author matthieu
  * @version $Id: $Id
  */
+@SuppressWarnings("deprecation")
 public class EntityListBatchProcessWorkProvider<T> implements BatchProcessWorkProvider<T> {
 
 

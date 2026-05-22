@@ -54,6 +54,7 @@ import fr.becpg.repo.project.formulation.TaskWrapper;
  * @author matthieu
  * @version $Id: $Id
  */
+@SuppressWarnings("deprecation")
 public class ProjectHelper {
 
 	private ProjectHelper() {

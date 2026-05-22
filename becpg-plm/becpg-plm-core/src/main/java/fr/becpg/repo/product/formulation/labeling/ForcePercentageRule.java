@@ -7,6 +7,8 @@ import java.util.List;
  */
 class ForcePercentageRule extends AbstractFormulaFilterRule {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * <p>Constructor for ForcePercentageRule.</p>
      *

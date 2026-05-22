@@ -108,6 +108,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * @version $Id: $Id
  */
 @Service("entityVersionService")
+@SuppressWarnings("deprecation")
 public class EntityVersionServiceImpl implements EntityVersionService {
 
 	private static final QName QNAME_ENTITIES_HISTORY = QName.createQName(BeCPGModel.BECPG_URI, RepoConsts.ENTITIES_HISTORY_NAME);
