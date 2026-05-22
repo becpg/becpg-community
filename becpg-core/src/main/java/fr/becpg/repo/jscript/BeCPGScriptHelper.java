@@ -97,6 +97,7 @@ import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.entity.version.EntityVersion;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.entity.version.VersionHelper;
 import fr.becpg.repo.formulation.FormulatedEntity;
@@ -2546,38 +2547,27 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 	
 	/**
-	 * <p>forceDeleteConstraintValue.</p>
+	 * <p>forceDelete.</p>
 	 *
 	 * @param node a {@link org.alfresco.repo.jscript.ScriptNode} object
 	 */
-	public void deleteListValueNode(ScriptNode node) {
+	public void forceDelete(ScriptNode node) {
 		try {
-			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_LIST_VALUE);
-
+			policyBehaviourFilter.disableAllBehaviours();
+			nodeService.addAspect(node.getNodeRef(), ContentModel.ASPECT_TEMPORARY, null);
 			node.remove();
 
 		} finally {
-			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_LIST_VALUE); 
+			policyBehaviourFilter.enableAllBehaviours(); 
 		}
 	}
 	
-	/**
-	 * <p>disableBehaviour.</p>
-	 *
-	 * @param behaviourName {@link java.lang.String} object
-	 */
-	public void disableBehaviour(String behaviourName) {
-		policyBehaviourFilter.disableBehaviour(QName.resolveToQName(namespaceService,behaviourName));
-		
+	public List<EntityVersion> getAllVersionAndBranches(ScriptNode node) {
+		return entityVersionService.getAllVersionAndBranches(node.getNodeRef());
 	}
 	
-	/**
-	 * <p>enableBehaviour.</p>
-	 *
-	 * @param behaviourName {@link java.lang.String} object
-	 */
-	public void enableBehaviour(String behaviourName) {
-		policyBehaviourFilter.enableBehaviour(QName.resolveToQName(namespaceService,behaviourName));
+	public List<EntityVersion> getAllVersions(ScriptNode node) {
+		return entityVersionService.getAllVersions(node.getNodeRef());
 	}
 
 }
