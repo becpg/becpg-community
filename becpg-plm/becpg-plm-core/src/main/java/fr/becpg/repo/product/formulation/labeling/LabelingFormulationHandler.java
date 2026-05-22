@@ -391,7 +391,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									: labelingFormulaContext.getLocales();
 
 							if (locales.isEmpty()) {
-								locales.add(new Locale(Locale.getDefault().getLanguage()));
+								locales.add(Locale.of(Locale.getDefault().getLanguage()));
 							}
 
 							for (Locale locale : locales) {
