@@ -347,7 +347,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 
 	private CSVReader getCSVReaderFromNodeRef(NodeRef file) {
 		ContentReader fileReader = contentService.getReader(file, ContentModel.PROP_CONTENT);
-		return new CSVReader(new InputStreamReader(fileReader.getContentInputStream()), ';');
+		return new CSVReader(new InputStreamReader(fileReader.getContentInputStream(), java.nio.charset.StandardCharsets.UTF_8), ';');
 	}
 
 	private List<IdentifiedValue> getColumn(NodeRef file, int columnIndex) {

@@ -237,6 +237,7 @@ public class BeCPGCreateDownloadArchiveAction extends ActionExecuterAbstractBase
     
 
     /** {@inheritDoc} */
+    @Override
     public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}

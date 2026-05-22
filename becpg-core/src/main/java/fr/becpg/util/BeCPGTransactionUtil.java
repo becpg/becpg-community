@@ -13,6 +13,10 @@ import org.alfresco.util.transaction.TransactionSupportUtil;
  */
 public class BeCPGTransactionUtil {
 
+    private BeCPGTransactionUtil() {
+        // Utility class
+    }
+
     private static final String RESOURCE_KEY_TXN_PRE_LISTENERS = "AlfrescoTransactionSupport.preListeners";
 	
 	/**

@@ -524,8 +524,8 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 			List<AllergenListDataItem> allergens = new ArrayList<>();
 
-			allergens.add(new AllergenListDataItem(null, null, false, true, null, null, allergen1, false));
-			allergens.add(new AllergenListDataItem(null, null, true, false, null, null, allergen2, false));
+			allergens.add(AllergenListDataItem.build().withQtyPerc(null).withVoluntary(false).withInVoluntary(true).withAllergen(allergen1).withIsManual(false));
+			allergens.add(AllergenListDataItem.build().withQtyPerc(null).withVoluntary(true).withInVoluntary(false).withAllergen(allergen2).withIsManual(false));
 
 			productSpecification2.setAllergenList(allergens);
 			alfrescoRepository.save(productSpecification2);
@@ -539,9 +539,9 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			ProductSpecificationData productSpecification3 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef3);
 
 			allergens = new ArrayList<>();
-			allergens.add(new AllergenListDataItem(null, null, true, false, null, null, allergen4, false));
-			allergens.add(new AllergenListDataItem(null, null, true, true, null, null, allergen3, false));
-			allergens.add(new AllergenListDataItem(null, null, false, true, null, null, allergen2, false));
+			allergens.add(AllergenListDataItem.build().withQtyPerc(null).withVoluntary(true).withInVoluntary(false).withAllergen(allergen4).withIsManual(false));
+			allergens.add(AllergenListDataItem.build().withQtyPerc(null).withVoluntary(true).withInVoluntary(true).withAllergen(allergen3).withIsManual(false));
+			allergens.add(AllergenListDataItem.build().withQtyPerc(null).withVoluntary(false).withInVoluntary(true).withAllergen(allergen2).withIsManual(false));
 			productSpecification3.setAllergenList(allergens);
 			alfrescoRepository.save(productSpecification3);
 
@@ -568,10 +568,10 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 			ProductData rm1 = (ProductData) alfrescoRepository.findOne(rawMaterial1NodeRef);
 			if (rm1.getAllergenList() != null) {
 				rm1.getAllergenList().clear();
-				rm1.getAllergenList().add(new AllergenListDataItem(null, null, true, false, new ArrayList<>(), new ArrayList<>(), allergen1, false));
-				rm1.getAllergenList().add(new AllergenListDataItem(null, null, true, false, new ArrayList<>(), new ArrayList<>(), allergen2, false));
-				rm1.getAllergenList().add(new AllergenListDataItem(null, null, true, false, new ArrayList<>(), new ArrayList<>(), allergen3, false));
-				rm1.getAllergenList().add(new AllergenListDataItem(null, null, true, false, new ArrayList<>(), new ArrayList<>(), allergen5, false));
+				rm1.getAllergenList().add(AllergenListDataItem.build().withQtyPerc(null).withVoluntary(true).withInVoluntary(false).withVoluntarySources(new ArrayList<>()).withInVoluntarySources(new ArrayList<>()).withAllergen(allergen1).withIsManual(false));
+				rm1.getAllergenList().add(AllergenListDataItem.build().withQtyPerc(null).withVoluntary(true).withInVoluntary(false).withVoluntarySources(new ArrayList<>()).withInVoluntarySources(new ArrayList<>()).withAllergen(allergen2).withIsManual(false));
+				rm1.getAllergenList().add(AllergenListDataItem.build().withQtyPerc(null).withVoluntary(true).withInVoluntary(false).withVoluntarySources(new ArrayList<>()).withInVoluntarySources(new ArrayList<>()).withAllergen(allergen3).withIsManual(false));
+				rm1.getAllergenList().add(AllergenListDataItem.build().withQtyPerc(null).withVoluntary(true).withInVoluntary(false).withVoluntarySources(new ArrayList<>()).withInVoluntarySources(new ArrayList<>()).withAllergen(allergen5).withIsManual(false));
 			}
 			alfrescoRepository.save(rm1);
 
@@ -913,13 +913,6 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 			logger.debug("Checks: " + checks + " (should be 1)");
 			assertEquals(1, checks);
-			assertEquals(2, checkMissingFields);
-
-			return null;
-		}, false, true);
-	}
-}
-, checks);
 			assertEquals(2, checkMissingFields);
 
 			return null;

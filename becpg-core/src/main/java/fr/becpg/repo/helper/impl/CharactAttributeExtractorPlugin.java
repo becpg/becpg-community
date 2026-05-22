@@ -67,6 +67,7 @@ public class CharactAttributeExtractorPlugin extends AbstractExprNameExtractor {
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public String extractPropName(QName type, NodeRef nodeRef, String characNameFormat) {
 		return characNameFormat != null && !characNameFormat.isBlank() ? extractExpr(nodeRef, characNameFormat)
 				: extractPropName(type, nodeRef);

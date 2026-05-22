@@ -1792,8 +1792,14 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 					sb.append(cbuf, off, len);
 				}
 			}
-			@Override public void flush() {}
-			@Override public void close() {}
+			@Override
+			public void flush() {
+				// No buffering used, so flush is a no-op
+			}
+			@Override
+			public void close() {
+				// No resources to release
+			}
 			@Override public String toString() { return sb.toString(); }
 		}
 		

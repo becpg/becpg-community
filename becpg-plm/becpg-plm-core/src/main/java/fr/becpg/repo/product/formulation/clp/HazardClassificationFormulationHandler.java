@@ -476,7 +476,7 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 
 	private CSVReader getCSVReaderFromNodeRef(NodeRef file) {
 		ContentReader fileReader = contentService.getReader(file, ContentModel.PROP_CONTENT);
-		return new CSVReader(new InputStreamReader(fileReader.getContentInputStream()), ';', '"', 1);
+		return new CSVReader(new InputStreamReader(fileReader.getContentInputStream(), java.nio.charset.StandardCharsets.UTF_8), ';', '"', 1);
 	}
 
 }

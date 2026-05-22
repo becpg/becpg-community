@@ -26,20 +26,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.LongAdder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,7 +39,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -67,7 +58,6 @@ import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
-import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 /**
@@ -1438,7 +1428,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 	@Test
 	public void testRenderAllergenInvoluntaryOtherLegalNameMinorVoluntary() {
 
-		final NodeRef parentAllergen = inWriteTx(() -> {
+		 inWriteTx(() -> {
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "Fruits a coque");
 			properties.put(PLMModel.PROP_ALLERGEN_TYPE, "Major");
@@ -2715,144 +2705,5 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		return ingLegalName + " " + allergenName.replaceFirst("(.*)", "<b>$1</b>");
 	}
 
-	@Deprecated
-	// @Test Ne fonctionne pas qd lancé dans docker TODO
-	public void testMultiThreadFormulation() throws InterruptedException {
-
-		try {
-			BeCPGTestHelper.createUser("labellingUser1");
-			permissionService.setPermission(getTestFolderNodeRef(), "labellingUser1", PermissionService.ALL_PERMISSIONS, true);
-
-			authenticationComponent.setCurrentUser("labellingUser1");
-
-			final NodeRef finishProduct1 = createTestProduct(null);
-			final NodeRef finishProduct2 = createTestProduct(null);
-
-			NodeRef finishedProductNodeRef1 = inWriteTx(() -> {
-
-				MLText legalName = (MLText) mlNodeService.getProperty(finishProduct1, BeCPGModel.PROP_LEGAL_NAME);
-				legalName.addValue(Locale.FRENCH, "legal Finished product 1");
-				legalName.addValue(Locale.FRANCE, "legal Finished product 1");
-				legalName.addValue(Locale.CANADA_FRENCH, "legal Finished product 1 fr_CA");
-
-				legalName = (MLText) mlNodeService.getProperty(finishProduct2, BeCPGModel.PROP_LEGAL_NAME);
-
-				legalName.addValue(Locale.FRENCH, "legal Finished product 1");
-				legalName.addValue(Locale.FRANCE, "legal Finished product 1");
-				legalName.addValue(Locale.CANADA_FRENCH, "legal Finished product 1 fr_CA");
-
-				mlNodeService.setProperty(finishProduct1, BeCPGModel.PROP_LEGAL_NAME, legalName);
-
-				FinishedProductData finishedProduct1 = new FinishedProductData();
-				finishedProduct1.setName("Finished product " + Calendar.getInstance().getTimeInMillis());
-				finishedProduct1.setLegalName("legal Finished product 1");
-				finishedProduct1.setQty(2d);
-				finishedProduct1.setUnit(ProductUnit.kg);
-				finishedProduct1.setDensity(1d);
-				List<CompoListDataItem> compoList1 = new ArrayList<>();
-				compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
-						.withDeclarationType(DeclarationType.Detail).withProduct(localSF11NodeRef));
-				compoList1.add(CompoListDataItem.build().withParent(compoList1.get(0)).withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
-						.withDeclarationType(DeclarationType.DoNotDetails).withProduct(finishProduct1));
-				compoList1.add(CompoListDataItem.build().withParent(compoList1.get(0)).withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d)
-						.withDeclarationType(DeclarationType.DoNotDetails).withProduct(finishProduct2));
-				compoList1.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
-						.withDeclarationType(DeclarationType.Detail).withProduct(localSF12NodeRef));
-				compoList1.add(CompoListDataItem.build().withParent(compoList1.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
-						.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial13NodeRef));
-				compoList1.add(CompoListDataItem.build().withParent(compoList1.get(3)).withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
-						.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial14NodeRef));
-
-				finishedProduct1.getCompoListView().setCompoList(compoList1);
-
-				// Declare
-				List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
-
-				labelingRuleList.add(
-						LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
-				labelingRuleList.add(LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.#%} ({2})")
-						.withLabelingRuleType(LabelingRuleType.Format));
-				labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param1")
-						.withFormula("detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"").withLabelingRuleType(LabelingRuleType.Prefs));
-
-				finishedProduct1.getLabelingListView().setLabelingRuleList(labelingRuleList);
-
-				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
-			});
-
-			final LongAdder adder = new LongAdder();
-
-			Callable<Void> callable = () -> {
-				String threadName = Thread.currentThread().getName();
-
-				adder.increment();
-
-				String currentUser = "admin";
-				I18NUtil.setLocale(Locale.FRENCH);
-
-				if ((adder.intValue() % 2) == 0) {
-					I18NUtil.setLocale(Locale.CANADA_FRENCH);
-					currentUser = "labellingUser1";
-				}
-				authenticationComponent.setCurrentUser(currentUser);
-
-				logger.info("running labeling in thread " + threadName + "for user" + currentUser);
-
-				String ill = "Pâte french 50% (legal Finished product 1 50%), Garniture french 50% (Legal Raw material 13 25% (ing3 french 25%), ing3 french 16,7%, ing4 french 8,3%)";
-
-				inWriteTx(() -> {
-
-					productService.formulate(finishedProductNodeRef1);
-
-					ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef1);
-
-					Assert.assertTrue(formulatedProduct.getLabelingListView().getLabelingRuleList().size() > 0);
-
-					// verify IngLabelingList
-
-					Assert.assertNotNull("IngLabelingList is null", formulatedProduct.getLabelingListView().getIngLabelingList());
-					Assert.assertTrue(formulatedProduct.getLabelingListView().getIngLabelingList().size() > 0);
-
-					for (IngLabelingListDataItem illDataItem : formulatedProduct.getLabelingListView().getIngLabelingList()) {
-						String formulatedIll = illDataItem.getValue().getValue(Locale.FRENCH);
-						Assert.assertEquals("Incorrect label :" + formulatedIll + "\n   - compare to " + ill, ill, formulatedIll);
-						Assert.assertNotNull(illDataItem.getLogValue());
-						logger.info("Finished labeling in thread " + threadName);
-					}
-
-					return null;
-
-				});
-
-				return null;
-			};
-
-			ExecutorService executor = Executors.newFixedThreadPool(20);
-			List<Future<Void>> results = new ArrayList<>();
-
-			for (int i = 0; i < 20; i++) {
-				results.add(executor.submit(callable));
-
-			}
-
-			executor.shutdown();
-			executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-
-			for (Future<Void> future : results) {
-				try {
-
-					future.get();
-				} catch (ExecutionException ex) {
-					logger.error(ex, ex);
-					Assert.fail(ex.getMessage());
-				}
-			}
-
-		} finally {
-			authenticationComponent.setCurrentUser("admin");
-			I18NUtil.setLocale(Locale.getDefault());
-		}
-
-	}
-
+	
 }

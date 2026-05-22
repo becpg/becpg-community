@@ -202,8 +202,7 @@ public class CompareProductServiceIT extends AbstractCompareProductTest {
 				List<NodeRef> volontarySources = new ArrayList<>();
 				volontarySources.add(allergenRawMaterialNodeRef);
 
-				AllergenListDataItem allergenListItemData1 = new AllergenListDataItem(null, null, true, false, volontarySources, null, allergen,
-						false);
+				AllergenListDataItem allergenListItemData1 = AllergenListDataItem.build().withQtyPerc(null).withVoluntary(true).withInVoluntary(false).withVoluntarySources(volontarySources).withAllergen(allergen).withIsManual(false);
 				allergenList.add(allergenListItemData1);
 			}
 			fp1.setAllergenList(allergenList);

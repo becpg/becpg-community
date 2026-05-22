@@ -56,6 +56,8 @@ public class NotificationRuleAutoCompletePlugin implements AutoCompletePlugin {
 				return getAvailableTypeNames(query, pageNum, pageSize);
 			case PROP_DATE_VALUE:
 				return getAvailablePropNames(query, pageNum, pageSize);
+			default:
+				break;
 		}
 		
 		logger.warn("Could not find any values for sourceType " + sourceType);

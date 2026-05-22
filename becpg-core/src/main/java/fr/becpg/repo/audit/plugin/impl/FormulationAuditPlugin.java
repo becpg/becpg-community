@@ -74,13 +74,13 @@ public class FormulationAuditPlugin extends AbstractAuditPlugin implements Datab
 	/** {@inheritDoc} */
 	@Override
 	public void beforeRecordAuditEntry(Map<String, Serializable> auditValues) {
-		
+		// Intentionally empty: no action needed before recording audit entry
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void afterRecordAuditEntry(Map<String, Serializable> auditValues) {
-		
+		// Intentionally empty: no action needed after recording audit entry
 	}
 
 }
