@@ -212,8 +212,10 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 				if (!(formulatedProduct instanceof ResourceProductData)) {
 					for (AllergenListDataItem allergenListDataItem : formulatedProduct.getAllergenList()) {
-						allergenListDataItem.setInVoluntary(false);
-						allergenListDataItem.getInVoluntarySources().clear();
+						if (!Boolean.TRUE.equals(allergenListDataItem.getIsManual())) {
+							allergenListDataItem.setInVoluntary(false);
+							allergenListDataItem.getInVoluntarySources().clear();
+						}
 					}
 				}
 
