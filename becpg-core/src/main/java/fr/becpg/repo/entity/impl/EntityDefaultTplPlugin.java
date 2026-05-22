@@ -41,7 +41,7 @@ public class EntityDefaultTplPlugin implements EntityTplPlugin{
 	@Override
 	public <T extends RepositoryEntity> void synchronizeDataList(RepositoryEntity entity, List<T> dataListItems,
 			List<T> tplDataListItems){
-		
+		// Empty implementation as default template synchronizer does not synchronize datalists
 	}
 
 

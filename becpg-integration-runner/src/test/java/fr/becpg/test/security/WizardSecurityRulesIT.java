@@ -52,6 +52,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import fr.becpg.model.ProjectModel;
 import fr.becpg.model.SecurityModel;
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.form.BecpgFormService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.security.SecurityService;

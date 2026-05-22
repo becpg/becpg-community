@@ -39,7 +39,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * @version $Id: $Id
  * TODO use batch Service
  */
-@Deprecated
+@Deprecated(since = "26.1", forRemoval = false)
 public class PurgeNodesWebscript extends AbstractWebScript {
 
 	private static  final  Log logger = LogFactory.getLog(PurgeNodesWebscript.class);
@@ -177,12 +177,12 @@ public class PurgeNodesWebscript extends AbstractWebScript {
 
 					@Override
 					public void afterProcess() throws Throwable {
-						
+						// Intentionally empty: no post-process required for purge
 					}
 
 					@Override
 					public void beforeProcess() throws Throwable {
-					
+						// Intentionally empty: no pre-process required for purge
 					}
 
 					@Override

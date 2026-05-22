@@ -54,6 +54,7 @@ public class PropertyPermissionTypeFormFilter  extends AbstractPropertyPermissio
 	@Override
 	public void beforeGenerate(TypeDefinition type, List<String> fields,
 			List<String> forcedFields, Form form, Map<String, Object> context) {
+		// Intentionally empty: no pre-generation filtering needed for type definition
 	}
 
 	/* (non-Javadoc)

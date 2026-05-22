@@ -1102,7 +1102,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		}
 	}
 
-	//// Cache managment
+	// Cache managment
 
 	private void removeCachedAssoc(NodeRef nodeRef, QName qName) {
 

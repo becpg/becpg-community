@@ -184,7 +184,7 @@ public interface AttributeExtractorService {
 	 * @param formatData a boolean.
 	 * @return a {@link java.lang.String} object.
 	 */
-	@Deprecated
+	@Deprecated(since = "26.1", forRemoval = false)
 	String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats, boolean formatData);
 	
 	/**

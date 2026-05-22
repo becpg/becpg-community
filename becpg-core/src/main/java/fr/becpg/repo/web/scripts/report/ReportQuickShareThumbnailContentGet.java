@@ -13,7 +13,6 @@ import org.alfresco.repo.web.scripts.quickshare.QuickShareContentGet;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.ContentData;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.thumbnail.ThumbnailService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,14 +43,6 @@ public class ReportQuickShareThumbnailContentGet extends QuickShareContentGet {
 	private ServiceRegistry serviceRegistry;
 	private Thumbnail thumbnail;
 	private EntityDictionaryService entityDictionaryService;
-	private NodeService nodeService;
-
-	/** {@inheritDoc} */
-	@Override
-	public void setNodeService(NodeService nodeService) {
-		super.setNodeService(nodeService);
-		this.nodeService = nodeService;
-	}
 
 	/**
 	 * <p>
@@ -154,7 +145,7 @@ public class ReportQuickShareThumbnailContentGet extends QuickShareContentGet {
 			// (collection)
 			ScriptNode node = new ScriptNode(nodeRef, serviceRegistry, scope);
 
-			if ((nodeRef != null) && entityDictionaryService.isSubClass(nodeService.getType(nodeRef), ReportModel.TYPE_REPORT)) {
+			if ((nodeRef != null) && entityDictionaryService.isSubClass(this.serviceRegistry.getNodeService().getType(nodeRef), ReportModel.TYPE_REPORT)) {
 				
 				node = new ScriptNode(thumbnail.refreshReport(node).getNodeRef(), serviceRegistry, scope);
 			}

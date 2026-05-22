@@ -25,6 +25,10 @@ package fr.becpg.repo.helper;
  */
 public class CompanyHomeHelper {
 
+	private CompanyHomeHelper() {
+		// Utility class
+	}
+
 	static final String USER_SPACE_QNAME_PATH = "/app:company_home/app:user_homes/";
 	
 	

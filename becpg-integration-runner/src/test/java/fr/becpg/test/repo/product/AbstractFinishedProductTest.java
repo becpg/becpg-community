@@ -587,10 +587,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial1.setNutList(nutList);
 			// allergenList
 			List<AllergenListDataItem> allergenList = new ArrayList<>();
-			allergenList.add(new AllergenListDataItem(null, 20d, true, false, null, null, allergen1, false));
-			allergenList.add(new AllergenListDataItem(null, 5d, false, false, null, null, allergen2, false));
-			allergenList.add(new AllergenListDataItem(null, null, false, false, null, null, allergen3, false));
-			allergenList.add(new AllergenListDataItem(null, null, false, false, null, null, allergen4, false));
+			allergenList.add(AllergenListDataItem.build().withQtyPerc(20d).withVoluntary(true).withInVoluntary(false).withAllergen(allergen1).withIsManual(false));
+			allergenList.add(AllergenListDataItem.build().withQtyPerc(5d).withVoluntary(false).withInVoluntary(false).withAllergen(allergen2).withIsManual(false));
+			allergenList.add(AllergenListDataItem.build().withQtyPerc(null).withVoluntary(false).withInVoluntary(false).withAllergen(allergen3).withIsManual(false));
+			allergenList.add(AllergenListDataItem.build().withQtyPerc(null).withVoluntary(false).withInVoluntary(false).withAllergen(allergen4).withIsManual(false));
 			rawMaterial1.setAllergenList(allergenList);
 			// ingList : 1 ing1 ; bio1 ; geo1 // 2 ing2 ; bio1 ; geo1|geo2
 			List<IngListDataItem> ingList = new ArrayList<>();
@@ -660,10 +660,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial2.setNutList(nutList);
 			// allergenList
 			List<AllergenListDataItem> allergenList = new ArrayList<>();
-			allergenList.add(new AllergenListDataItem(null, 10d, true, false, null, null, allergen1, false));
-			allergenList.add(new AllergenListDataItem(null, 50d, false, true, null, null, allergen2, false));
-			allergenList.add(new AllergenListDataItem(null, null, false, false, null, null, allergen3, false));
-			allergenList.add(new AllergenListDataItem(null, null, false, false, null, null, allergen4, false));
+			allergenList.add(AllergenListDataItem.build().withQtyPerc(10d).withVoluntary(true).withInVoluntary(false).withAllergen(allergen1).withIsManual(false));
+			allergenList.add(AllergenListDataItem.build().withQtyPerc(50d).withVoluntary(false).withInVoluntary(true).withAllergen(allergen2).withIsManual(false));
+			allergenList.add(AllergenListDataItem.build().withQtyPerc(null).withVoluntary(false).withInVoluntary(false).withAllergen(allergen3).withIsManual(false));
+			allergenList.add(AllergenListDataItem.build().withQtyPerc(null).withVoluntary(false).withInVoluntary(false).withAllergen(allergen4).withIsManual(false));
 			rawMaterial2.setAllergenList(allergenList);
 			// ingList : 1 ing1 ; bio1 ; geo1 // 3 ing2 ; bio2 ; geo1|geo2
 			List<IngListDataItem> ingList = new ArrayList<>();
@@ -866,10 +866,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial6.setNutList(nutList);
 			// allergenList
 			List<AllergenListDataItem> allergenList = new ArrayList<>();
-			allergenList.add(new AllergenListDataItem(null, 100d, true, false, null, null, allergen1, false));
-			allergenList.add(new AllergenListDataItem(null, 100d, false, true, null, null, allergen2, false));
-			allergenList.add(new AllergenListDataItem(null, null, false, false, null, null, allergen3, false));
-			allergenList.add(new AllergenListDataItem(null, null, false, false, null, null, allergen4, false));
+			allergenList.add(AllergenListDataItem.build().withQtyPerc(100d).withVoluntary(true).withInVoluntary(false).withAllergen(allergen1).withIsManual(false));
+			allergenList.add(AllergenListDataItem.build().withQtyPerc(100d).withVoluntary(false).withInVoluntary(true).withAllergen(allergen2).withIsManual(false));
+			allergenList.add(AllergenListDataItem.build().withQtyPerc(null).withVoluntary(false).withInVoluntary(false).withAllergen(allergen3).withIsManual(false));
+			allergenList.add(AllergenListDataItem.build().withQtyPerc(null).withVoluntary(false).withInVoluntary(false).withAllergen(allergen4).withIsManual(false));
 			rawMaterial6.setAllergenList(allergenList);
 			// ingList : 1 ing1 ; bio1 ; geo1 // 3 ing2 ; bio2 ; geo1|geo2
 			List<IngListDataItem> ingList = new ArrayList<>();

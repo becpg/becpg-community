@@ -197,6 +197,7 @@ public class BeCPGTrashcanCleaner extends TrashcanCleaner
      *
      * @return a long
      */
+    @Override
     public long getNumberOfNodesInTrashcan()
     {
         StoreRef storeRef = new StoreRef(archiveStoreUrl);
@@ -212,6 +213,7 @@ public class BeCPGTrashcanCleaner extends TrashcanCleaner
      * limits defined by the values set for <b>deleteBatchCount</b> and
      * <b>keepPeriod</b>.
      */
+    @Override
     public void clean()
     {
         logger.info("Running TrashcanCleaner");

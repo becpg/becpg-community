@@ -31,6 +31,10 @@ import fr.becpg.model.BeCPGModel;
  */
 public class HierarchyHelper {
 
+	private HierarchyHelper() {
+		// Utility class
+	}
+
 	/** Constant <code>HIERARCHY_SUFFIX="_Hierarchy"</code> */
 	public final static String HIERARCHY_SUFFIX = "_Hierarchy";
 	

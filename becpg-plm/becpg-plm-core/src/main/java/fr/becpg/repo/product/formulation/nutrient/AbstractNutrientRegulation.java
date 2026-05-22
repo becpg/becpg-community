@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.LinkedHashMap;
@@ -114,17 +115,15 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 	private void loadRegulation() {
 		definitions = new LinkedHashMap<>();
 		ClassPathResource resource = new ClassPathResource(path);
-		try (InputStream in = resource.getInputStream()) {
-			try (InputStreamReader inReader = new InputStreamReader(resource.getInputStream())) {
-				try (CSVReader csvReader = new CSVReader(inReader, ';', '"', 1)) {
-					String[] line = null;
-					// nutCode charactName sort depthLevel mandatory optionnal bold gda ul
-					while ((line = csvReader.readNext()) != null) {
-						definitions.put(line[0],
-								new NutrientDefinition(parseInt(line[2]), parseInt(line[3]), "true".equals(line[4]), "true".equals(line[5]),
-										"true".equals(line[6]), parseDouble(line[7]), parseDouble(line[8]), line[9], "true".equals(line[10])));
-					}
-				}
+		try (InputStream in = resource.getInputStream();
+				InputStreamReader inReader = new InputStreamReader(in, StandardCharsets.UTF_8);
+				CSVReader csvReader = new CSVReader(inReader, ';', '"', 1)) {
+			String[] line = null;
+			// nutCode charactName sort depthLevel mandatory optionnal bold gda ul
+			while ((line = csvReader.readNext()) != null) {
+				definitions.put(line[0],
+						new NutrientDefinition(parseInt(line[2]), parseInt(line[3]), "true".equals(line[4]), "true".equals(line[5]),
+								"true".equals(line[6]), parseDouble(line[7]), parseDouble(line[8]), line[9], "true".equals(line[10])));
 			}
 		} catch (IOException e) {
 			logger.error(e, e);

@@ -38,6 +38,10 @@ import org.alfresco.service.namespace.NamespaceService;
  */
 public class SiteHelper {
 
+	private SiteHelper() {
+		// Utility class
+	}
+
 	/** Constant <code>SITES_SPACE_QNAME_PATH="/app:company_home/st:sites/"</code> */
 	public static final String SITES_SPACE_QNAME_PATH = "/app:company_home/st:sites/";
 

@@ -75,10 +75,12 @@ public class EntityHistoryAspectPatch extends AbstractBeCPGPatch {
 
             @Override
             public void afterProcess() throws Throwable {
+                // Intentionally empty: no post-processing required
             }
 
             @Override
             public void beforeProcess() throws Throwable {
+                // Intentionally empty: no pre-processing required
             }
 
             @Override

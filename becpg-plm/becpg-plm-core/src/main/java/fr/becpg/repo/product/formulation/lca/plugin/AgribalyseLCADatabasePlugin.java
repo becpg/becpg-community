@@ -52,7 +52,7 @@ public class AgribalyseLCADatabasePlugin implements LCADatabasePlugin {
 		Map<String, LCAData> lcaData = new LinkedHashMap<>();
 		ContentReader reader = contentService.getReader(databaseNodeRef, ContentModel.PROP_CONTENT);
 		try (InputStream in = reader.getContentInputStream()) {
-			try (InputStreamReader inReader = new InputStreamReader(in)) {
+			try (InputStreamReader inReader = new InputStreamReader(in, java.nio.charset.StandardCharsets.UTF_8)) {
 				try (CSVReader csvReader = new CSVReader(inReader, ';', '"', 0)) {
 					String[] headers = csvReader.readNext();
 		            

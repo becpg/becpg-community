@@ -218,7 +218,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	public static final String PROP_ACCESSRIGHT = "accessRight";
 	/** Constant <code>PROP_SITE="site"</code> */
 	public static final String PROP_SITE = "site";
-	@Deprecated
+	@Deprecated(since = "26.1", forRemoval = false)
 	/** Constant <code>PROP_SITE_ID="siteId"</code> */
 	public static final String PROP_SITE_ID = "siteId";
 	/** Constant <code>PROP_CONTAINER="container"</code> */

@@ -254,8 +254,7 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 				List<NodeRef> voluntarySources = new ArrayList<>();
 				voluntarySources.add(allergenRawMaterialNodeRef);
 
-				AllergenListDataItem allergenListItemData1 = new AllergenListDataItem(null, null, true, false, voluntarySources, null, allergen,
-						false);
+				AllergenListDataItem allergenListItemData1 = AllergenListDataItem.build().withQtyPerc(null).withVoluntary(true).withInVoluntary(false).withVoluntarySources(voluntarySources).withAllergen(allergen).withIsManual(false);
 				allergenList.add(allergenListItemData1);
 			}
 			fp1.setAllergenList(allergenList);

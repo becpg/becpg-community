@@ -61,9 +61,7 @@ public class PropertyPermissionNodeFormFilter extends AbstractPropertyPermission
 	@Override
 	public void beforeGenerate(NodeRef item, List<String> fields,
 			List<String> forcedFields, Form form, Map<String, Object> context) {			
-
-	
-		
+		// Intentionally empty: no pre-generation filtering needed
 	}
 
 	/* (non-Javadoc)

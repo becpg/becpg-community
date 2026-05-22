@@ -39,7 +39,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
  * Deprected since 4.2 see TenantPost
  * @version $Id: $Id
  */
-@Deprecated
+@Deprecated(since = "4.2", forRemoval = false)
 public class AdminTenantWebScript extends AbstractWebScript {
 
 	

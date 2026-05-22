@@ -243,7 +243,7 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 	 * @param filter a {@link org.alfresco.service.cmr.repository.Path} object
 	 * @return a {@link java.util.List} object
 	 */
-	@Deprecated
+	@Deprecated(since = "26.1", forRemoval = false)
 	private List<NodeRef> filterByPath(List<NodeRef> ret, SearchRuleFilter filter) {
 		
 		logger.info("Filter by path for type : " + filter.getNodeType());
@@ -296,7 +296,7 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 
 	}
 
-	@Deprecated
+	@Deprecated(since = "26.1", forRemoval = false)
 	private List<NodeRef> filterByEntityCriteria(List<NodeRef> nodes, SearchRuleFilter filter) {
 	
 
