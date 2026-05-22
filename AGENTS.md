@@ -41,6 +41,7 @@ This is a **Java 17** enterprise project with emphasis on:
 
 ### 2. Code Style Principles
 - **No `var` declarations** - always use explicit types for readability
+- **Avoid fully-qualified class names** (package class declarations like `com.example.Service`) in code. Instead, declare them as `import` statements at the top of the Java file.
 - Use **lambdas** and **method references** for cleaner code
 - Prefer **`for` loops** over complex stream operations
 - Use **try-with-resources** for `AutoCloseable` objects
@@ -154,6 +155,7 @@ Fix #1234 - [Security] Patch authentication vulnerability
 3. **Document any new dependencies** and justify their inclusion
 4. **Test error scenarios** especially for workflow and notification systems
 5. **Consider performance implications** of changes
+6. **Check for and remove unnecessary or duplicated imports** after each coding session
 
 ### When Suggesting Improvements
 1. **Focus on maintainability** over clever solutions
