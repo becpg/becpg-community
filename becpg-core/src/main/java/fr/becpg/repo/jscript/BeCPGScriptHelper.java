@@ -2107,7 +2107,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		Locale locale = Locale.getDefault();
 
 		if (localeString != null && !localeString.isBlank()) {
-			locale = new Locale(localeString);
+			locale = Locale.of(localeString);
 		}
 
 		return hierarchyService.classifyByHierarchy(folderNode, productNode, hierarchyQname, locale);

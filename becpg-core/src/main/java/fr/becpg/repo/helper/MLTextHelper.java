@@ -498,7 +498,7 @@ public class MLTextHelper {
 				return contentLocale;
 			}
 			String language = contentLocale.getLanguage();
-			return new Locale(language);
+			return Locale.of(language);
 		}
 		return null;
 	}
