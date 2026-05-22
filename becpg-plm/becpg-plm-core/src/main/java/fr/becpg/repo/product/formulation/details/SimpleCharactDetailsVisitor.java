@@ -272,6 +272,10 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		for (SimpleCharactDataItem simpleCharact : simpleCharactDataList) {
 			if ((simpleCharact != null) && context.getCharactDetails().hasElement(simpleCharact.getCharactNodeRef())) {
 
+				if (!shouldVisitPartItem(context, partProduct, simpleCharact)) {
+					continue;
+				}
+
 				String unit = provideUnit(context, simpleCharact);
 
 				// calculate charact from qty or vol ?
@@ -355,12 +359,25 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	}
 
 	/**
+	 * Determines if a specific simple character data item should be visited during part traversal.
+	 * Subclasses can override this to implement custom filtering.
+	 *
+	 * @param context a {@link fr.becpg.repo.product.formulation.details.CharactDetailsVisitorContext} object
+	 * @param partProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param simpleCharact a {@link fr.becpg.repo.repository.model.SimpleCharactDataItem} object
+	 * @return boolean
+	 */
+	protected boolean shouldVisitPartItem(CharactDetailsVisitorContext context, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
+		return true;
+	}
+
+	/**
 	 * <p>shouldFormulateInVolume.</p>
 	 *
 	 * @param context a {@link fr.becpg.repo.product.formulation.details.CharactDetailsVisitorContext} object
 	 * @param partProduct a {@link fr.becpg.repo.product.data.ProductData} object
 	 * @param simpleCharact a {@link fr.becpg.repo.repository.model.SimpleCharactDataItem} object
-	 * @return a boolean
+	 * @return a boolean.
 	 */
 	protected boolean shouldFormulateInVolume(CharactDetailsVisitorContext context, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
 		return (partProduct.getUnit() != null) && partProduct.getUnit().isVolume();
