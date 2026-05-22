@@ -322,8 +322,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	private BatchCommand<?> findCommandInQueue(String batchId) {
 		for (ThreadPoolExecutor executor : threadExecutorMap.values()) {
 			for (Runnable batch : executor.getQueue()) {
-				if ((batch instanceof BatchCommand) && batchId.equals(((BatchCommand<?>) batch).getBatchId())) {
-					return (BatchCommand<?>) batch;
+				if (batch instanceof BatchCommand<?> batchCommand && batchId.equals(batchCommand.getBatchId())) {
+					return batchCommand;
 				}
 			}
 		}
