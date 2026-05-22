@@ -31,7 +31,7 @@ public class VietnamNutrientRegulation extends EuropeanNutrientRegulation {
 	/** {@inheritDoc} */
 	@Override
 	protected Locale getDisplayLocale(Locale locale) {
-		return new Locale("en");
+		return Locale.ENGLISH;
 	}
 
 	/** {@inheritDoc} */

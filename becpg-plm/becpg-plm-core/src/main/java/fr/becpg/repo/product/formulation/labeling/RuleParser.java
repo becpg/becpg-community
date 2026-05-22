@@ -493,7 +493,7 @@ public abstract class RuleParser {
 					Set<Locale> availableLocalesTmp = new LinkedHashSet<>(getLocales());
 
 					if (availableLocalesTmp.isEmpty()) {
-						availableLocalesTmp.add(new Locale(Locale.getDefault().getLanguage()));
+						availableLocalesTmp.add(Locale.of(Locale.getDefault().getLanguage()));
 					}
 
 					for (Locale locale : availableLocalesTmp) {

@@ -208,7 +208,7 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 	 */
 	protected Locale getDisplayLocale(Locale locale) {
 		if ("MM".equals(locale.getCountry())) {
-			locale = new Locale("en");
+			locale = Locale.ENGLISH;
 		}
 		return locale;
 	}
