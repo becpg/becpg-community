@@ -1132,3 +1132,40 @@ function getEntity(childNode, itemType) {
 	return bcpg.getEntity(childNode, itemType);
 }
 
+/**
+ * @param {ScriptNode} node
+ */
+function deleteListValueNode(node) {
+	bcpg.deleteListValueNode(node);
+}
+
+/**
+ * @param {ScriptNode} node
+ */
+function deleteListValues(node) {
+	
+	if (node != null) {
+		var listValueNodes = node.getChildren();
+		
+		if (listValueNodes != null) {
+			for (var list in listValueNodes) {
+				bcpg.deleteListValueNode(listValueNodes[list]);
+			}
+		}
+		node.remove();
+	}
+}
+
+/**
+ * @param {string} bevahiourName
+ */
+function disableBehaviour(bevahiourName) {
+	bcpg.disableBehaviour(bevahiourName);
+}
+
+/**
+ * @param {string} bevahiourName
+ */
+function enableBehaviour(bevahiourName) {
+	bcpg.enableBehaviour(bevahiourName);
+}

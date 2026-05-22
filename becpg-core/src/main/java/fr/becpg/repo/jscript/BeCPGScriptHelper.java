@@ -2544,5 +2544,40 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			}
 		}
 	}
+	
+	/**
+	 * <p>forceDeleteConstraintValue.</p>
+	 *
+	 * @param node a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 */
+	public void deleteListValueNode(ScriptNode node) {
+		try {
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_LIST_VALUE);
+
+			node.remove();
+
+		} finally {
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_LIST_VALUE); 
+		}
+	}
+	
+	/**
+	 * <p>disableBehaviour.</p>
+	 *
+	 * @param behaviourName {@link java.lang.String} object
+	 */
+	public void disableBehaviour(String behaviourName) {
+		policyBehaviourFilter.disableBehaviour(QName.resolveToQName(namespaceService,behaviourName));
+		
+	}
+	
+	/**
+	 * <p>enableBehaviour.</p>
+	 *
+	 * @param behaviourName {@link java.lang.String} object
+	 */
+	public void enableBehaviour(String behaviourName) {
+		policyBehaviourFilter.enableBehaviour(QName.resolveToQName(namespaceService,behaviourName));
+	}
 
 }
