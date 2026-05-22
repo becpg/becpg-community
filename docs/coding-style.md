@@ -5,8 +5,8 @@ The goals are **clarity**, **maintainability**, and **consistency** across the c
 
 
 ## 1. Java Version
-- Always use **Java 17**.
-- Leverage Java 17 features:
+- Always use **Java 21**.
+- Leverage Java 21 and Java 17 features:
   - Pattern matching for `instanceof`
   - Switch expressions
   - Text blocks

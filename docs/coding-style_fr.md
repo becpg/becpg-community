@@ -1,4 +1,4 @@
-# Guide de Style de Code (Java 17)
+# Guide de Style de Code (Java 21)
 
 Ce document décrit les **conventions de codage** pour ce projet.
 Les objectifs sont la **clarté**, la **maintenabilité** et la **cohérence** à travers l’ensemble du code.
@@ -217,3 +217,4 @@ Utiliser les options de formatage XML configurées dans votre IDE.
 Suivre les standards de formatage I18n configurés pour un formatage cohérent des fichiers de localisation.
 
 ✦ Tous les contributeurs doivent suivre ce guide lors de l’écriture ou de la revue du code.
+e du code.
