@@ -140,6 +140,13 @@
  * isOnBranchEntity(node) Test we are branching entity
  * 
  * getEntity(childNode, itemType) return first parent entity that is of type itemType
+ * 
+ * forceDelete(node) force node deletion with disableAllBehaviours
+ * 
+ * getAllVersionAndBranches(node) get the version and branches array list
+ * 
+ * getAllVersions(node) get the versions array list
+ * 
  */
 
 const SIMULATION_SITE_ID = "simulation";
@@ -1135,37 +1142,24 @@ function getEntity(childNode, itemType) {
 /**
  * @param {ScriptNode} node
  */
-function deleteListValueNode(node) {
-	bcpg.deleteListValueNode(node);
+function forceDelete(node) {
+	bcpg.forceDelete(node);
 }
 
 /**
  * @param {ScriptNode} node
+ * @returns {List<EntityVersion>} entity version list from node
  */
-function deleteListValues(node) {
-	
-	if (node != null) {
-		var listValueNodes = node.getChildren();
-		
-		if (listValueNodes != null) {
-			for (var list in listValueNodes) {
-				bcpg.deleteListValueNode(listValueNodes[list]);
-			}
-		}
-		node.remove();
-	}
+
+function getAllVersionAndBranches(node) {
+	return bcpg.getAllVersionAndBranches(node);
 }
 
 /**
- * @param {string} bevahiourName
+ * @param {ScriptNode} node
+ * @returns {List<EntityVersion>} entity version list from node
  */
-function disableBehaviour(bevahiourName) {
-	bcpg.disableBehaviour(bevahiourName);
-}
 
-/**
- * @param {string} bevahiourName
- */
-function enableBehaviour(bevahiourName) {
-	bcpg.enableBehaviour(bevahiourName);
+function getAllVersions(node) {
+	return bcpg.getAllVersions(node);
 }
