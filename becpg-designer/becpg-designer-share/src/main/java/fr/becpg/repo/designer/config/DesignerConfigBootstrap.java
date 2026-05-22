@@ -125,7 +125,7 @@ public class DesignerConfigBootstrap implements BeanNameAware, ConfigDeployer {
 			logger.debug("processWildCards: " + sourceString);
 			File dir = new File(sourceString.substring(PREFIX_FILE.length(), sourceString.lastIndexOf(separator)));
 			if (dir != null && dir.exists()) {
-				FileFilter fileFilter = new WildcardFileFilter(sourceString.substring(sourceString.lastIndexOf(separator) + 1));
+				FileFilter fileFilter = WildcardFileFilter.builder().setWildcards(sourceString.substring(sourceString.lastIndexOf(separator) + 1)).get();
 				File[] files = dir.listFiles(fileFilter);
 				if (files != null) {
 					for (File file : files) {

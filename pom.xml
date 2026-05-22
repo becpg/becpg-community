@@ -612,7 +612,6 @@
 		<dependency>
 			<groupId>org.alfresco</groupId>
 			<artifactId>alfresco-repository</artifactId>
-			<version>${alfresco-repository.version}</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>

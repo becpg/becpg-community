@@ -25,8 +25,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.lock.JobLockService;
-import org.alfresco.repo.lock.LockAcquisitionException;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.MLText;
