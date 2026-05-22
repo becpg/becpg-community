@@ -11,6 +11,7 @@ import org.springframework.lang.NonNull;
  * @author matthieu
  * @version $Id: $Id
  */
+@SuppressWarnings("deprecation")
 public interface SourceableDataItem {
 
 	/**

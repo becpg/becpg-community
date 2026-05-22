@@ -68,10 +68,10 @@ public class AlfrescoRepositoryIT extends PLMBaseTestCase {
 			List<NodeRef> allSources = new ArrayList<>();
 			allSources.add(rmNodeRef);
 			List<AllergenListDataItem> allergenList = new ArrayList<>();
-			allergenList.add(new AllergenListDataItem(null, null, true, true, allSources, null, allergens.get(0), false));
-			allergenList.add(new AllergenListDataItem(null, null, false, true, null, allSources, allergens.get(1), false));
-			allergenList.add(new AllergenListDataItem(null, null, true, false, null, allSources, allergens.get(2), false));
-			allergenList.add(new AllergenListDataItem(null, null, false, false, allSources, null, allergens.get(3), false));
+			allergenList.add(AllergenListDataItem.build().withVoluntary(true).withInVoluntary(true).withVoluntarySources(allSources).withAllergen(allergens.get(0)).withIsManual(false));
+			allergenList.add(AllergenListDataItem.build().withVoluntary(false).withInVoluntary(true).withInVoluntarySources(allSources).withAllergen(allergens.get(1)).withIsManual(false));
+			allergenList.add(AllergenListDataItem.build().withVoluntary(true).withInVoluntary(false).withInVoluntarySources(allSources).withAllergen(allergens.get(2)).withIsManual(false));
+			allergenList.add(AllergenListDataItem.build().withVoluntary(false).withInVoluntary(false).withVoluntarySources(allSources).withAllergen(allergens.get(3)).withIsManual(false));
 			sfData.setAllergenList(allergenList);
 
 			NodeRef sfNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), sfData).getNodeRef();

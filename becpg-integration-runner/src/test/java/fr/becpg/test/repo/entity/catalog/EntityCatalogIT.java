@@ -181,10 +181,10 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 			SemiFinishedProductData sfData = new SemiFinishedProductData();
 			sfData.setName("EntityCatalogServiceIT");
 			List<AllergenListDataItem> allergenList = new ArrayList<>();
-			allergenList.add(new AllergenListDataItem(null, null, true, true, null, null, allergens.get(0), true));
-			allergenList.add(new AllergenListDataItem(null, null, false, true, null, null, allergens.get(1), true));
-			allergenList.add(new AllergenListDataItem(null, null, true, false, null, null, allergens.get(2), true));
-			allergenList.add(new AllergenListDataItem(null, null, false, false, null, null, allergens.get(3), true));
+			allergenList.add(AllergenListDataItem.build().withVoluntary(true).withInVoluntary(true).withAllergen(allergens.get(0)).withIsManual(true));
+			allergenList.add(AllergenListDataItem.build().withVoluntary(false).withInVoluntary(true).withAllergen(allergens.get(1)).withIsManual(true));
+			allergenList.add(AllergenListDataItem.build().withVoluntary(true).withInVoluntary(false).withAllergen(allergens.get(2)).withIsManual(true));
+			allergenList.add(AllergenListDataItem.build().withVoluntary(false).withInVoluntary(false).withAllergen(allergens.get(3)).withIsManual(true));
 				
 			List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
 			labelingRuleList.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render)

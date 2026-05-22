@@ -25,7 +25,7 @@ public class MLTextHelperTest {
 		locales.add(Locale.FRANCE);
 
 		Assert.assertEquals(Locale.FRANCE, MLTextHelper.getNearestLocale(Locale.FRANCE, locales));
-		Assert.assertEquals(Locale.FRANCE, MLTextHelper.getNearestLocale(new Locale("fr", "FR", "BZH"), locales));
+		Assert.assertEquals(Locale.FRANCE, MLTextHelper.getNearestLocale(Locale.of("fr", "FR", "BZH"), locales));
 
 		Assert.assertNull(MLTextHelper.getNearestLocale(Locale.ENGLISH, locales));
 

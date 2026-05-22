@@ -76,8 +76,12 @@ public class CompareProductReportWebScriptIT extends AbstractCompareProductTest 
 				List<NodeRef> voluntarySources = new ArrayList<>();
 				voluntarySources.add(allergenRawMaterialNodeRef);
 
-				AllergenListDataItem allergenListItemData1 = new AllergenListDataItem(null, null, true, false, voluntarySources, null, allergen,
-						false);
+				AllergenListDataItem allergenListItemData1 = AllergenListDataItem.build()
+						.withVoluntary(true)
+						.withInVoluntary(false)
+						.withVoluntarySources(voluntarySources)
+						.withAllergen(allergen)
+						.withIsManual(false);
 				allergenList.add(allergenListItemData1);
 			}
 			fp1.setAllergenList(allergenList);
@@ -128,9 +132,19 @@ public class CompareProductReportWebScriptIT extends AbstractCompareProductTest 
 				AllergenListDataItem allergenListItemData2;
 
 				if (j < 5) {
-					allergenListItemData2 = new AllergenListDataItem(null, null, true, false, allSources, null, allergens.get(j), false);
+					allergenListItemData2 = AllergenListDataItem.build()
+							.withVoluntary(true)
+							.withInVoluntary(false)
+							.withVoluntarySources(allSources)
+							.withAllergen(allergens.get(j))
+							.withIsManual(false);
 				} else {
-					allergenListItemData2 = new AllergenListDataItem(null, null, false, true, null, allSources, allergens.get(j), false);
+					allergenListItemData2 = AllergenListDataItem.build()
+							.withVoluntary(false)
+							.withInVoluntary(true)
+							.withInVoluntarySources(allSources)
+							.withAllergen(allergens.get(j))
+							.withIsManual(false);
 				}
 
 				allergenList.add(allergenListItemData2);

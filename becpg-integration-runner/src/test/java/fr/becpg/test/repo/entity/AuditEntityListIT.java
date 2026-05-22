@@ -53,10 +53,10 @@ public class AuditEntityListIT extends PLMBaseTestCase {
 			SemiFinishedProductData sfData = new SemiFinishedProductData();
 			sfData.setName("SF");
 			List<AllergenListDataItem> allergenList = new ArrayList<>();
-			allergenList.add(new AllergenListDataItem(null, null, true, true, null, null, allergens.get(0), false));
-			allergenList.add(new AllergenListDataItem(null, null, false, true, null, null, allergens.get(1), false));
-			allergenList.add(new AllergenListDataItem(null, null, true, false, null, null, allergens.get(2), false));
-			allergenList.add(new AllergenListDataItem(null, null, false, false, null, null, allergens.get(3), false));
+			allergenList.add(AllergenListDataItem.build().withVoluntary(true).withInVoluntary(true).withAllergen(allergens.get(0)).withIsManual(false));
+			allergenList.add(AllergenListDataItem.build().withVoluntary(false).withInVoluntary(true).withAllergen(allergens.get(1)).withIsManual(false));
+			allergenList.add(AllergenListDataItem.build().withVoluntary(true).withInVoluntary(false).withAllergen(allergens.get(2)).withIsManual(false));
+			allergenList.add(AllergenListDataItem.build().withVoluntary(false).withInVoluntary(false).withAllergen(allergens.get(3)).withIsManual(false));
 			sfData.setAllergenList(allergenList);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), sfData).getNodeRef();
