@@ -3,6 +3,7 @@ package fr.becpg.test.repo.product.formulation;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -12,8 +13,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
-import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MLText;
@@ -23,12 +22,9 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Calendar;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -78,6 +74,7 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 		familyNodeRef = getFamilyNodeRef();
 		beCPGCacheService.clearAllCaches();
 		setUpCatalogs(familyNodeRef);
+		beCPGCacheService.clearAllCaches();
 		// create RM and lSF
 		initParts();
 	}
@@ -244,11 +241,10 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 			NodeRef folderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
 					"/app:company_home/cm:System/cm:PropertyCatalogs");
 
-			List<ChildAssociationRef> files = nodeService.getChildAssocs(folderNodeRef, ContentModel.ASSOC_CONTAINS,
-					ContentModel.ASSOC_CONTAINS);
+			List<FileInfo> files = fileFolderService.list(folderNodeRef);
 
-			for (ChildAssociationRef childAssocRef : files) {
-				nodeService.deleteNode(childAssocRef.getChildRef());
+			for (FileInfo fileInfo : files) {
+				nodeService.deleteNode(fileInfo.getNodeRef());
 			}
 
 			String catalogJSONString = "[{\"entityType\":[\"bcpg:finishedProduct\"],\"uniqueFields\":[\"bcpg:erpCode\",\"cm:name\"],\"id\":\"incoFinishedProduct\",\"label\":\"EU 1169/2011 (INCO)\",\"fields\":[\"bcpg:legalName\",\"bcpg:useByDate|bcpg:bestBeforeDate\",\"bcpg:storageConditionsRef|bcpg:preparationTips\",\"cm:title\"],\"entityFilter\":\"hierarchy1!=null && hierarchy1.toString() == '" + family + "' ? true : false\"}]";
