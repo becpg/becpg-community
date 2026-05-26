@@ -197,6 +197,11 @@ tail() {
     docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml logs -f --tail=5000 becpg
 }
 
+test_profile() {
+    export EXTRA_ENV="$EXTRA_ENV -DargLine=-XX:StartFlightRecording=disk=true,dumponexit=true,filename=\${project.build.directory}/recording.jfr,settings=profile"
+    test
+}
+
 test() {
     $MVN_EXEC verify -B -ntp $EXTRA_ENV
 }
