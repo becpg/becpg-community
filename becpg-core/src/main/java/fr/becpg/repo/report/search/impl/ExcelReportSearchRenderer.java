@@ -75,7 +75,8 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
 	/** {@inheritDoc} */
 	@Override
-	public void renderReport(NodeRef tplNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream) {
+	public void renderReport(NodeRef tplNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream,
+			String[] parameters) {
 
 		ContentReader reader = contentService.getReader(tplNodeRef, ContentModel.PROP_CONTENT);
 
@@ -91,7 +92,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 			QName mainType = null;
 			for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
 				XSSFSheet sheet = workbook.getSheetAt(i);
-				mainType = fillSheet(sheet, searchResults, mainType);
+				mainType = fillSheet(sheet, searchResults, mainType, parameters);
 				sheet.setForceFormulaRecalculation(true);
 			}
 		  //Disable for XLSM (break #2259 ?) workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
@@ -190,6 +191,18 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 	 * @return a {@link fr.becpg.repo.report.search.impl.ExcelReportSearchRenderer.ExcelSheetExportContext} object.
 	 */
 	public ExcelSheetExportContext readHeader(XSSFSheet sheet, QName mainType) {
+		return readHeader(sheet, mainType, null);
+	}
+
+	/**
+	 * <p>readHeader.</p>
+	 *
+	 * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object.
+	 * @param mainType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param extraParameters an array of {@link java.lang.String} objects.
+	 * @return a {@link fr.becpg.repo.report.search.impl.ExcelReportSearchRenderer.ExcelSheetExportContext} object.
+	 */
+	public ExcelSheetExportContext readHeader(XSSFSheet sheet, QName mainType, String[] extraParameters) {
 		int rownum = 0;
 		Row headerRow = sheet.getRow(rownum++);
 
@@ -205,6 +218,14 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
 			if (headerRow.getCell(3) != null) {
 				parameters.add(headerRow.getCell(3).getStringCellValue());
+			}
+
+			if (extraParameters != null) {
+				for (String p : extraParameters) {
+					if (p != null && !p.isEmpty()) {
+						parameters.add(p);
+					}
+				}
 			}
 
 			if (logger.isDebugEnabled()) {
@@ -276,8 +297,12 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 	}
 
 	private QName fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType) {
+		return fillSheet(sheet, searchResults, mainType, null);
+	}
 
-		ExcelSheetExportContext excelSheetExportContext = readHeader(sheet, mainType);
+	private QName fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, String[] parameters) {
+
+		ExcelSheetExportContext excelSheetExportContext = readHeader(sheet, mainType, parameters);
 
 		return fillSheet(sheet, searchResults, excelSheetExportContext);
 
@@ -357,11 +382,14 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
 	/** {@inheritDoc} */
 	@Override
-	public void executeAction(NodeRef templateNodeRef, NodeRef downloadNode, ReportFormat reportFormat) {
+	public void executeAction(NodeRef templateNodeRef, NodeRef downloadNode, ReportFormat reportFormat, String[] parameters) {
 		Action action = actionService.createAction(ExcelSearchAction.NAME);
 		action.setExecuteAsynchronously(true);
 		action.setParameterValue(AbstractExportSearchAction.PARAM_TPL_NODEREF, templateNodeRef);
 		action.setParameterValue(AbstractExportSearchAction.PARAM_FORMAT, reportFormat.toString());
+		if (parameters != null) {
+			action.setParameterValue(AbstractExportSearchAction.PARAM_PARAMETERS, parameters);
+		}
 
 		actionService.executeAction(action, downloadNode);
 

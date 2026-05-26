@@ -52,12 +52,19 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 	@Override
 	public void createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat,
 			OutputStream outputStream) {
+		createReport(nodeType, templateNodeRef, searchResults, reportFormat, outputStream, null);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat,
+			OutputStream outputStream, String[] parameters) {
 
 		if (templateNodeRef != null) {
 
 			SearchReportRenderer searchReportRender = getSearchReportRender(templateNodeRef, reportFormat);
 			if (searchReportRender != null) {
-				searchReportRender.renderReport(templateNodeRef, searchResults, reportFormat, outputStream);
+				searchReportRender.renderReport(templateNodeRef, searchResults, reportFormat, outputStream, parameters);
 			} else {
 				logger.error("No search report renderer found for : " + reportFormat.toString() + " " + templateNodeRef);
 			}
@@ -79,6 +86,13 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat) {
+		return createReport(nodeType, templateNodeRef, searchResults, reportFormat, null);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public NodeRef createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat,
+			String[] parameters) {
 
 		ParameterCheck.mandatory("templateNodeRef", templateNodeRef);
 		
@@ -107,7 +121,7 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 
 		SearchReportRenderer searchReportRender = getSearchReportRender(templateNodeRef, reportFormat);
 		if (searchReportRender != null) {
-			searchReportRender.executeAction(templateNodeRef, downloadNode, reportFormat);
+			searchReportRender.executeAction(templateNodeRef, downloadNode, reportFormat, parameters);
 		} else {
 			logger.error("No search report renderer found for : " + reportFormat.toString() + " " + templateNodeRef);
 		}

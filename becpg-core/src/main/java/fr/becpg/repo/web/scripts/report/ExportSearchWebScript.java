@@ -145,6 +145,9 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 			String mimeType = mimetypeService.getMimetype(extension);
 			name = FilenameUtils.removeExtension(name) + FilenameUtils.EXTENSION_SEPARATOR_STR + mimetypeService.getExtension(mimeType);
 			
+			String parameter = req.getParameter("parameter");
+			String[] parameters = (parameter != null) ? new String[] { parameter } : null;
+
 			boolean async = "true".equals(req.getParameter("async"));
 			try (AuditScope auditScope = beCPGAuditService.startAudit(AuditType.EXPORT_SEARCH, getClass(), "export search: " + name)) {
 				auditScope.putAttribute(ExportSearchAuditPlugin.FILENAME, name);
@@ -153,7 +156,7 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 				auditScope.putAttribute(ExportSearchAuditPlugin.RESULTS_SIZE, resultNodeRefs.size());
 				auditScope.putAttribute(ExportSearchAuditPlugin.ASYNC, async);
 				if (async) {
-					NodeRef downloadNodeRef = exportSearchService.createReport(datatype, templateNodeRef, resultNodeRefs, reportFormat);
+					NodeRef downloadNodeRef = exportSearchService.createReport(datatype, templateNodeRef, resultNodeRefs, reportFormat, parameters);
 					
 					JSONObject ret = new JSONObject();
 					
@@ -171,7 +174,7 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 					res.setContentType(mimeType);
 					AttachmentHelper.setAttachment(req, res, name);
 					
-					exportSearchService.createReport(datatype, templateNodeRef, resultNodeRefs, reportFormat, res.getOutputStream());
+					exportSearchService.createReport(datatype, templateNodeRef, resultNodeRefs, reportFormat, res.getOutputStream(), parameters);
 				}
 			}
 

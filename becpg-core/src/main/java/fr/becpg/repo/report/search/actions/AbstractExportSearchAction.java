@@ -64,6 +64,8 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 	public static final String PARAM_TPL_NODEREF = "templateNodeRef";
 	/** Constant <code>PARAM_FORMAT="format"</code> */
 	public static final String PARAM_FORMAT = "format";
+	/** Constant <code>PARAM_PARAMETERS="parameters"</code> */
+	public static final String PARAM_PARAMETERS = "parameters";
 
 	private static final Log logger = LogFactory.getLog(AbstractExportSearchAction.class);
 
@@ -313,6 +315,7 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 	protected void addParameterDefinitions(List<ParameterDefinition> paramList) {
 		paramList.add(new ParameterDefinitionImpl(PARAM_TPL_NODEREF, DataTypeDefinition.NODE_REF, true, "Search template nodeRef"));
 		paramList.add(new ParameterDefinitionImpl(PARAM_FORMAT, DataTypeDefinition.TEXT, false, "Export search format"));
+		paramList.add(new ParameterDefinitionImpl(PARAM_PARAMETERS, DataTypeDefinition.ANY, false, "Extra parameters"));
 	}
 
 	private void fileCreationComplete(final NodeRef actionedUponNodeRef, String format, final File tempFile,

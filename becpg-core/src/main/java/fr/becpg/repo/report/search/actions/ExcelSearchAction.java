@@ -32,8 +32,9 @@ public class ExcelSearchAction extends AbstractExportSearchAction {
 	/** {@inheritDoc} */
 	@Override
 	protected AbstractSearchDownloadExporter createHandler(NodeRef actionedUponNodeRef, NodeRef templateNodeRef, DownloadRequest downloadRequest, ReportFormat format) {
+		String[] parameters = (String[]) getAction().getParameterValue(PARAM_PARAMETERS);
 		return new ExcelSearchDownloadExporter(transactionHelper, updateService, downloadStorage, contentService, excelReportSearchRenderer,
-				actionedUponNodeRef, templateNodeRef, Long.valueOf(downloadRequest.getRequetedNodeRefs().length));
+				actionedUponNodeRef, templateNodeRef, Long.valueOf(downloadRequest.getRequetedNodeRefs().length), parameters);
 	}
 
 
