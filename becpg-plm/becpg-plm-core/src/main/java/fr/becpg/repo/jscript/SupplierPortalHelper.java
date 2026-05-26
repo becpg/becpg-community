@@ -45,6 +45,7 @@ import fr.becpg.api.BeCPGPublicApi;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.version.EntityVersionService;
@@ -95,6 +96,8 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 
 	private EntityService entityService;
 
+	private EntityActivityService entityActivityService;
+
 	/**
 	 * <p>Setter for the field <code>entityService</code>.</p>
 	 *
@@ -102,6 +105,15 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	 */
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
+	}
+
+	/**
+	 * <p>Setter for the field <code>entityActivityService</code>.</p>
+	 *
+	 * @param entityActivityService a {@link fr.becpg.repo.activity.EntityActivityService} object
+	 */
+	public void setEntityActivityService(EntityActivityService entityActivityService) {
+		this.entityActivityService = entityActivityService;
 	}
 
 	/**
@@ -341,10 +353,23 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 
 			QName type = nodeService.getType(entityNodeRef);
 
+			String beforeState = null;
+			QName stateProperty = null;
+
 			if (entityDictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT)) {
-				nodeService.setProperty(entityNodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Valid);
+				stateProperty = PLMModel.PROP_PRODUCT_STATE;
 			} else if (entityDictionaryService.isSubClass(type, PLMModel.TYPE_SUPPLIER)) {
-				nodeService.setProperty(entityNodeRef, PLMModel.PROP_SUPPLIER_STATE, SystemState.Valid);
+				stateProperty = PLMModel.PROP_SUPPLIER_STATE;
+			}
+
+			if (stateProperty != null) {
+				Object currentState = nodeService.getProperty(entityNodeRef, stateProperty);
+				beforeState = currentState != null ? currentState.toString() : "";
+				nodeService.setProperty(entityNodeRef, stateProperty, SystemState.Valid);
+
+				if (entityActivityService != null) {
+					entityActivityService.postStateChangeActivity(entityNodeRef, null, beforeState, SystemState.Valid.toString());
+				}
 			}
 
 			String supplierGroup = (String) nodeService.getProperty(entityNodeRef, PLMModel.PROP_EXTERNAL_ACCESS_GROUP);
