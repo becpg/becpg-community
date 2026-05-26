@@ -28,14 +28,7 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 	private static final String MASKING = "MASKING";
 	/** Constant <code>DENATURANT="DENATURANT"</code> */
 	private static final String DENATURANT = "DENATURANT";
-	/** Constant <code>EMOLLIENT="EMOLLIENT"</code> */
-	private static final String EMOLLIENT = "EMOLLIENT";
-	/** Constant <code>SKIN_CONDITIONING="SKIN CONDITIONING"</code> */
-	private static final String SKIN_CONDITIONING = "SKIN CONDITIONING";
-	/** Constant <code>FRAGRANCE_FLAVORING="FRAGRANCE/FLAVORING"</code> */
-	private static final String FRAGRANCE_FLAVORING = "FRAGRANCE/FLAVORING";
-	/** Constant <code>FLAVOURING="FLAVOURING"</code> */
-	private static final String FLAVOURING = "FLAVOURING";
+
 
 	/**
 	 * <p>Constructor for StandardBodyMilkTestProduct.</p>

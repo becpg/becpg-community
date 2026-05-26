@@ -23,10 +23,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.lock.JobLockService;
-import org.alfresco.repo.lock.LockAcquisitionException;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.MLText;
@@ -55,7 +54,6 @@ import fr.becpg.repo.jscript.BeCPGStateHelper.ActionStateContext;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.util.MutexFactory;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * <p>

@@ -185,7 +185,6 @@ public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 	 * @param node a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @return a boolean
 	 */
-	@SuppressWarnings("deprecation")
 	private boolean localIsRendition(final NodeRef node) {
 		return AuthenticationUtil.runAs(() -> renditionService.isRendition(node), AuthenticationUtil.getSystemUserName());
 	}

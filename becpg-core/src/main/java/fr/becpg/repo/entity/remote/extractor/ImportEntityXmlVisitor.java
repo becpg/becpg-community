@@ -60,7 +60,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;
@@ -477,7 +476,7 @@ public class ImportEntityXmlVisitor {
 					entityNodeRef = curNodeRef.pop();
 				} else if (RemoteEntityService.ELEM_LIST_VALUE.equals(qName)) {
 					if ((currAssocType.isEmpty() || (!currAssocType.peek().equals(RemoteEntityService.NODEREF_TYPE)
-							&& !currAssocType.peek().equals(RemoteEntityService.CATEGORY_TYPE))) && (currValue.length() > 0)) {
+							&& !currAssocType.peek().equals(RemoteEntityService.CATEGORY_TYPE))) && (!currValue.isEmpty())) {
 						if (logger.isTraceEnabled()) {
 							logger.trace("Add " + currValue.toString() + " to multipleValues ");
 						}
@@ -511,7 +510,7 @@ public class ImportEntityXmlVisitor {
 						} else if (multipleValues != null) {
 							nodeService.setProperty(curNodeRef.peek(), currProp, multipleValues);
 							multipleValues = null;
-						} else if (currValue.length() > 0) {
+						} else if (!currValue.isEmpty()) {
 							Matcher nodeRefMatcher = nodeRefPattern.matcher(currValue.toString());
 
 							if (nodeRefMatcher.find() && !ContentModel.PROP_NAME.equals(currProp)
