@@ -47,6 +47,8 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 
 	@Before
 	public void init() {
+		batchQueueService.cancelBatch("reformulateChangedEntities");
+		batchQueueService.removeBatchFromQueue("reformulateChangedEntities");
 		publicationChannelService = Mockito.spy(publicationChannelService);
 		systemConfigurationService = Mockito.spy(systemConfigurationService);
 		doReturn("0").when(systemConfigurationService).confValue("beCPG.formulation.channel.minHoursSinceModification");
@@ -113,6 +115,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 			return formulationChannelService.reformulateEntities();
 		});
 		
+		assertNotNull("Batch should run", batchInfo);
 		waitForBatchEnd(batchInfo);
 		assertIsPublished(finishedProductNodeRef);
 		assertIsPublished(rawMaterialNodeRef);
@@ -190,6 +193,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 			return formulationChannelService.reformulateEntities();
 		});
 		
+		assertNotNull("Batch should run", batchInfo);
 		waitForBatchEnd(batchInfo);
 		
 		assertIsPublished(rawMaterialNodeRef);
@@ -237,6 +241,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 			return formulationChannelService.reformulateEntities();
 		});
 		
+		assertNotNull("Batch should run", batchInfo);
 		waitForBatchEnd(batchInfo);
 		
 		assertIsPublished(rawMaterialNodeRef);
@@ -290,6 +295,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 			return formulationChannelService.reformulateEntities();
 		});
 		
+		assertNotNull("Batch should run", batchInfo);
 		waitForBatchEnd(batchInfo);
 		assertIsPublished(rawMaterialNodeRef);
 		
@@ -338,7 +344,9 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		// With maxCpuUsage=0, batch will likely not run unless system has negative load (impossible)
 		// but depends on actual system conditions
 		
-		waitForBatchEnd(batchInfo);
+		if (batchInfo != null) {
+			waitForBatchEnd(batchInfo);
+		}
 		
 		// Test 2: maxActiveUsers = 0 (very restrictive)
 		doReturn("999").when(systemConfigurationService).confValue("beCPG.formulation.channel.maxCpuUsage");
@@ -376,6 +384,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		mockChannelEntities(List.of(rawMaterialNodeRef));
 
 		BatchInfo batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
+		assertNotNull("Batch should run", batchInfo);
 		waitForBatchEnd(batchInfo);
 
 		assertChannelStatus(channelNodeRef, PublicationChannelStatus.COMPLETED.toString(), "42", 0, 1);
@@ -405,6 +414,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		mockChannelEntities(List.of(rawMaterialNodeRef));
 
 		BatchInfo batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
+		assertNotNull("Batch should run", batchInfo);
 		waitForBatchEnd(batchInfo);
 
 		assertChannelStatus(channelNodeRef, PublicationChannelStatus.FAILED.toString(), "1", 1, 1);
@@ -412,6 +422,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 
 		String batchFullId = batchInfo.getBatchId() + "|" + batchInfo.getBatchDescId();
 		BatchInfo retryBatchInfo = inWriteTx(() -> batchQueueService.retryBatchInError(batchFullId));
+		assertNotNull("Retry batch should run", retryBatchInfo);
 		waitForBatchEnd(retryBatchInfo);
 
 		inReadTx(() -> {
@@ -454,6 +465,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		mockChannelEntities(List.of(rawMaterialNodeRef));
 
 		BatchInfo batchInfo = inWriteTx(() -> formulationChannelService.reformulateEntities());
+		assertNotNull("Batch should run", batchInfo);
 		waitForBatchEnd(batchInfo);
 
 		assertIsPublished(rawMaterialNodeRef);
