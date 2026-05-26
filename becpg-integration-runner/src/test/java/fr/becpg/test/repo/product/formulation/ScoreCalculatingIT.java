@@ -248,7 +248,7 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 					ContentModel.ASSOC_CONTAINS);
 
 			for (ChildAssociationRef childAssocRef : files) {
-				nodeService.deleteNode(childAssocRef.getNodeRef());
+				nodeService.deleteNode(childAssocRef.getChildRef());
 			}
 
 			String catalogJSONString = "[{\"entityType\":[\"bcpg:finishedProduct\"],\"uniqueFields\":[\"bcpg:erpCode\",\"cm:name\"],\"id\":\"incoFinishedProduct\",\"label\":\"EU 1169/2011 (INCO)\",\"fields\":[\"bcpg:legalName\",\"bcpg:useByDate|bcpg:bestBeforeDate\",\"bcpg:storageConditionsRef|bcpg:preparationTips\",\"cm:title\"],\"entityFilter\":\"hierarchy1!=null && hierarchy1.toString() == '" + family + "' ? true : false\"}]";
