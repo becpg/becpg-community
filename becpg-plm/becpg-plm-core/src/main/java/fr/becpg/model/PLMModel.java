@@ -880,6 +880,7 @@ public interface PLMModel {
 	/** Constant <code>ASSOC_REGULATORY_USAGE_REF</code> */
 	QName ASSOC_REGULATORY_USAGE_REF = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryUsageRef");
 	
+	/** Constant <code>PROP_REQUIREMENT_CHECKSUM</code> */
 	QName PROP_REQUIREMENT_CHECKSUM = QName.createQName(BeCPGModel.BECPG_URI, "requirementChecksum");
 
 	/** Constant <code>TYPE_ING_REGULATORY_LIST</code> */

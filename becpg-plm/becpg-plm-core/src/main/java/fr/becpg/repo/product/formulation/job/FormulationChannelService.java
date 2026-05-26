@@ -713,6 +713,7 @@ public class FormulationChannelService implements BatchQueuePlugin {
 		}
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public void onRetryBatchError(NodeRef entry, String batchId) {
 		if (batchId.equals(REFORMULATE_BATCH_ID)) {

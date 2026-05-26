@@ -29,7 +29,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
 /**
  * <p>Custom SPEL helper accessible as {@code @product}.</p>
  *
- * <p>Exposes allergen accessors and renderers on top of {@link AllergenHelper}
+ * <p>Exposes allergen accessors and renderers on top of {@link fr.becpg.repo.product.helper.AllergenHelper}
  * so that labeling rules, Excel report formulas and any other SPEL context can
  * share a single implementation. Rendering honours the current locale
  * ({@link org.springframework.extensions.surf.util.I18NUtil#getLocale()}) and
@@ -38,12 +38,12 @@ import fr.becpg.repo.repository.RepositoryEntity;
  *
  * <p>Usage examples:</p>
  * <pre>
- *   @product.allergens()                              // voluntary allergen nodeRefs on the current entity
- *   @product.involuntaryAllergens(entity)             // involuntary allergen nodeRefs on the given product
- *   @product.renderAllergens()                        // comma-separated voluntary labels
- *   @product.renderInvoluntaryAllergens(" / ")        // custom separator
- *   @product.renderInvoluntaryAllergenInProcess()
- *   @product.renderInvoluntaryInRawMaterial()
+ *   {@literal @}product.allergens()                              // voluntary allergen nodeRefs on the current entity
+ *   {@literal @}product.involuntaryAllergens(entity)             // involuntary allergen nodeRefs on the given product
+ *   {@literal @}product.renderAllergens()                        // comma-separated voluntary labels
+ *   {@literal @}product.renderInvoluntaryAllergens(" / ")        // custom separator
+ *   {@literal @}product.renderInvoluntaryAllergenInProcess()
+ *   {@literal @}product.renderInvoluntaryInRawMaterial()
  * </pre>
  *
  * @author matthieu
