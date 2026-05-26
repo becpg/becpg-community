@@ -532,30 +532,33 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		List<EntityVersion> entityVersions = new ArrayList<>();
 		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_WORKING_COPY)
 				&& !nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
-			VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
-
-			if (versionHistory != null) {
-				List<ChildAssociationRef> versionAssocs = getVersionAssocs(entityNodeRef);
-
-				NodeRef branchFromNodeRef = getBranchFromNodeRef(entityNodeRef);
-
-				Optional<Version> lowestVersion = versionHistory.getAllVersions().stream()
-						.min(((o1, o2) -> ((Double) Double.parseDouble(o1.getVersionLabel())).compareTo(Double.parseDouble(o2.getVersionLabel()))));
-
-				for (Version version : versionHistory.getAllVersions()) {
-					NodeRef entityVersionNodeRef = getEntityVersion(versionAssocs, version);
-					EntityVersion entityVersion = null;
-					if (entityVersionNodeRef != null && !nodeService.hasAspect(entityVersionNodeRef, ContentModel.ASPECT_TEMPORARY)) {
-						entityVersion = new EntityVersion(version, entityNodeRef, entityVersionNodeRef, branchFromNodeRef);
-					} else {
-						entityVersion = new EntityVersion(version, entityNodeRef, getEntityVersion(version), branchFromNodeRef);
+			AuthenticationUtil.runAsSystem(() -> {
+				VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
+				
+				if (versionHistory != null) {
+					List<ChildAssociationRef> versionAssocs = getVersionAssocs(entityNodeRef);
+					
+					NodeRef branchFromNodeRef = getBranchFromNodeRef(entityNodeRef);
+					
+					Optional<Version> lowestVersion = versionHistory.getAllVersions().stream()
+							.min(((o1, o2) -> ((Double) Double.parseDouble(o1.getVersionLabel())).compareTo(Double.parseDouble(o2.getVersionLabel()))));
+					
+					for (Version version : versionHistory.getAllVersions()) {
+						NodeRef entityVersionNodeRef = getEntityVersion(versionAssocs, version);
+						EntityVersion entityVersion = null;
+						if (entityVersionNodeRef != null && !nodeService.hasAspect(entityVersionNodeRef, ContentModel.ASPECT_TEMPORARY)) {
+							entityVersion = new EntityVersion(version, entityNodeRef, entityVersionNodeRef, branchFromNodeRef);
+						} else {
+							entityVersion = new EntityVersion(version, entityNodeRef, getEntityVersion(version), branchFromNodeRef);
+						}
+						if (RepoConsts.INITIAL_VERSION.equals(version.getVersionLabel()) || lowestVersion.isPresent() && version == lowestVersion.get()) {
+							entityVersion.setCreatedDate((Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED));
+						}
+						entityVersions.add(entityVersion);
 					}
-					if (RepoConsts.INITIAL_VERSION.equals(version.getVersionLabel()) || lowestVersion.isPresent() && version == lowestVersion.get()) {
-						entityVersion.setCreatedDate((Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED));
-					}
-					entityVersions.add(entityVersion);
 				}
-			}
+				return null;
+			});
 		}
 
 		return entityVersions;

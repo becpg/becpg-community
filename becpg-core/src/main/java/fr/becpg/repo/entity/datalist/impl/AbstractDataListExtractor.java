@@ -25,7 +25,6 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.MLPropertyInterceptor;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.rating.RatingService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -299,8 +298,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			boolean isLockAvailable = isLockAvailable(itemType);
 			
 			boolean isAdminOrSystemManager = authorityService.hasAdminAuthority()
-					|| AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr).stream()
-							.anyMatch(u -> u.equals(AuthenticationUtil.getFullyAuthenticatedUser()));
+					|| authorityService.getAuthorities().contains(PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr);
 
 			boolean isCharact = entityDictionaryService.isSubClass(itemType, BeCPGModel.TYPE_CHARACT);
 			boolean hasDefaultPivotAssoc = !entityDictionaryService.getDefaultPivotAssocsFromTargetType(itemType).isEmpty();
