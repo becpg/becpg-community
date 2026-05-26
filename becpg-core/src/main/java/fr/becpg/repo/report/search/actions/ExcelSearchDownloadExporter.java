@@ -51,6 +51,7 @@ public class ExcelSearchDownloadExporter extends AbstractSearchDownloadExporter 
 
 	private int nodesSinceLastCacheClear = 0;
 	private final int cacheClearEvery;
+	private String[] parameters;
 
 	/**
 	 * <p>Constructor for ExcelSearchDownloadExporter.</p>
@@ -67,10 +68,30 @@ public class ExcelSearchDownloadExporter extends AbstractSearchDownloadExporter 
 	public ExcelSearchDownloadExporter(RetryingTransactionHelper transactionHelper, DownloadStatusUpdateService updateService,
 			DownloadStorage downloadStorage, ContentService contentService, ExcelReportSearchRenderer excelReportSearchRenderer,
 			NodeRef downloadNodeRef, NodeRef templateNodeRef, Long nbOfLines) {
+		this(transactionHelper, updateService, downloadStorage, contentService, excelReportSearchRenderer, downloadNodeRef, templateNodeRef, nbOfLines, null);
+	}
+
+	/**
+	 * <p>Constructor for ExcelSearchDownloadExporter.</p>
+	 *
+	 * @param transactionHelper a {@link org.alfresco.repo.transaction.RetryingTransactionHelper} object
+	 * @param updateService a {@link org.alfresco.repo.download.DownloadStatusUpdateService} object
+	 * @param downloadStorage a {@link org.alfresco.repo.download.DownloadStorage} object
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object
+	 * @param excelReportSearchRenderer a {@link fr.becpg.repo.report.search.impl.ExcelReportSearchRenderer} object
+	 * @param downloadNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param templateNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param nbOfLines a {@link java.lang.Long} object
+	 * @param parameters an array of {@link java.lang.String} objects.
+	 */
+	public ExcelSearchDownloadExporter(RetryingTransactionHelper transactionHelper, DownloadStatusUpdateService updateService,
+			DownloadStorage downloadStorage, ContentService contentService, ExcelReportSearchRenderer excelReportSearchRenderer,
+			NodeRef downloadNodeRef, NodeRef templateNodeRef, Long nbOfLines, String[] parameters) {
 		super(transactionHelper, updateService, downloadStorage, downloadNodeRef, templateNodeRef, nbOfLines);
 		this.contentService = contentService;
 		this.excelReportSearchRenderer = excelReportSearchRenderer;
 		this.cacheClearEvery = 1000;
+		this.parameters = parameters;
 	}
 
 	/** {@inheritDoc} */
@@ -101,7 +122,7 @@ public class ExcelSearchDownloadExporter extends AbstractSearchDownloadExporter 
 
 	            ExcelSheetExportContext excelSheetExportContext = context.get(sheet.getSheetName());
 	            if (excelSheetExportContext == null) {
-	                excelSheetExportContext = excelReportSearchRenderer.readHeader(sheet, mainTypeRef.get());
+	                excelSheetExportContext = excelReportSearchRenderer.readHeader(sheet, mainTypeRef.get(), parameters);
 	                context.put(sheet.getSheetName(), excelSheetExportContext);
 	            }
 

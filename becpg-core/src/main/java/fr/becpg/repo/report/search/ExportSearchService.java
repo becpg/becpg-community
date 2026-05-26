@@ -45,7 +45,19 @@ public interface ExportSearchService {
 	 */
 	void createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream);
 
-	
+	/**
+	 * Create a report from searchResults with extra parameters
+	 *
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param templateNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param searchResults a {@link java.util.List} object.
+	 * @param reportFormat a {@link fr.becpg.report.client.ReportFormat} object.
+	 * @param outputStream a {@link java.io.OutputStream} object.
+	 * @param parameters an array of {@link java.lang.String} objects.
+	 */
+	void createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream,
+			String[] parameters);
+
 	/**
 	 * Create report asynchronously
 	 *
@@ -56,4 +68,16 @@ public interface ExportSearchService {
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	NodeRef createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat);
+
+	/**
+	 * Create report asynchronously with extra parameters
+	 *
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param templateNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param searchResults a {@link java.util.List} object.
+	 * @param reportFormat a {@link fr.becpg.report.client.ReportFormat} object.
+	 * @param parameters an array of {@link java.lang.String} objects.
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
+	NodeRef createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat, String[] parameters);
 }

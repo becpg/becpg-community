@@ -122,7 +122,8 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 
 	/** {@inheritDoc} */
 	@Override
-	public void renderReport(NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream) {
+	public void renderReport(NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream,
+			String[] parameters) {
 
 		try {
 			ReportServerSearchContext exportSearchCtx = createContext(templateNodeRef);
@@ -431,11 +432,14 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 
 	/** {@inheritDoc} */
 	@Override
-	public void executeAction(NodeRef templateNodeRef, NodeRef downloadNode, ReportFormat reportFormat) {
+	public void executeAction(NodeRef templateNodeRef, NodeRef downloadNode, ReportFormat reportFormat, String[] parameters) {
 		Action action = actionService.createAction(ReportSearchAction.NAME);
 		action.setExecuteAsynchronously(true);
 		action.setParameterValue(AbstractExportSearchAction.PARAM_TPL_NODEREF, templateNodeRef);
 		action.setParameterValue(AbstractExportSearchAction.PARAM_FORMAT, reportFormat.toString());
+		if (parameters != null) {
+			action.setParameterValue(AbstractExportSearchAction.PARAM_PARAMETERS, parameters);
+		}
 		actionService.executeAction(action, downloadNode);
 	}
 
