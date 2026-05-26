@@ -142,13 +142,13 @@ public class AllergenHelper {
 
     /**
      * Builds the four allergen maps (voluntary, involuntary, process, raw material)
-     * for the given product. Only allergens of type {@link AllergenType#Major} are
+     * for the given product. Only allergens of type {@link fr.becpg.repo.product.data.constraints.AllergenType#Major} are
      * collected, matching the existing labeling behaviour.
      *
      * @param productData        the product to extract allergens from
      * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
      * @param nodeService        a {@link org.alfresco.service.cmr.repository.NodeService} object
-     * @return a fully populated {@link AllergenMaps} instance
+     * @return a fully populated {@link fr.becpg.repo.product.helper.AllergenHelper.AllergenMaps} instance
      */
     public static AllergenMaps extract(ProductData productData, AlfrescoRepository<RepositoryEntity> alfrescoRepository, NodeService nodeService) {
 

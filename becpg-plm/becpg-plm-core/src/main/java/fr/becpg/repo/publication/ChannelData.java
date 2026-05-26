@@ -4,6 +4,8 @@ import java.util.Date;
 
 /**
  * Carries remote publication channel batch values between web scripts and the service layer.
+ *
+ * @author matthieu
  */
 public class ChannelData {
 
@@ -110,6 +112,11 @@ public class ChannelData {
 		return action;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>modifiedDate</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object
+	 */
 	public Date getModifiedDate() {
 		return modifiedDate;
 	}
