@@ -39,7 +39,6 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
 
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.batch.WorkProviderFactory;
 import fr.becpg.repo.migration.MigrationService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -332,58 +331,5 @@ public class MigrationServiceImpl implements MigrationService {
 		}
 	}
 	
-//
-//	private Version getVersion(NodeRef versionRef) {
-//		if (versionRef == null) {
-//			return null;
-//		}
-//		Map<String, Serializable> versionProperties = new HashMap<>();
-//
-//		// Get the standard node details and get the meta data
-//		Map<QName, Serializable> nodeProperties = dbNodeService.getProperties(versionRef);
-//
-//		if (logger.isTraceEnabled()) {
-//			logger.trace("getVersion: " + versionRef + " nodeProperties=\n" + nodeProperties.keySet());
-//		}
-//
-//		// TODO consolidate with VersionUtil.convertFrozenToOriginalProps
-//
-//		for (QName key : nodeProperties.keySet()) {
-//			Serializable value = nodeProperties.get(key);
-//
-//			String keyName = key.getLocalName();
-//			int idx = keyName.indexOf(Version2Model.PROP_METADATA_PREFIX);
-//			if (idx == 0) {
-//				// versioned metadata property - additional (optional) metadata,
-//				// set during versioning
-//				versionProperties.put(keyName.substring(Version2Model.PROP_METADATA_PREFIX.length()), value);
-//			} else {
-//				if (key.equals(Version2Model.PROP_QNAME_VERSION_DESCRIPTION)) {
-//					versionProperties.put(Version.PROP_DESCRIPTION, value);
-//				} else if (key.equals(Version2Model.PROP_QNAME_VERSION_LABEL)) {
-//					versionProperties.put(VersionBaseModel.PROP_VERSION_LABEL, value);
-//				} else {
-//					if (keyName.equals(Version.PROP_DESCRIPTION) || keyName.equals(VersionBaseModel.PROP_VERSION_LABEL)) {
-//						// ignore reserved localname (including cm:description,
-//						// cm:versionLabel)
-//					} else {
-//						// all other properties
-//						versionProperties.put(keyName, value);
-//					}
-//				}
-//			}
-//		}
-//
-//		// Create and return the version object
-//		NodeRef newNodeRef = new NodeRef(new StoreRef(VersionBaseModel.STORE_PROTOCOL, Version2Model.STORE_ID), versionRef.getId());
-//		Version result = new VersionImpl(versionProperties, newNodeRef);
-//
-//		if (logger.isTraceEnabled()) {
-//			logger.trace("getVersion: " + versionRef + " versionProperties=\n" + versionProperties.keySet());
-//		}
-//
-//		// done
-//		return result;
-//	}
 
 }

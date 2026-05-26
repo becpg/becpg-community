@@ -60,15 +60,11 @@ public class VersionCleanerActionConfigIT {
 		versions.add(createVersion(VersionType.MINOR, "3.1", 1));
 		versions.add(createVersion(VersionType.MAJOR, "3.0", 1));
 		versions.add(createVersion(VersionType.MAJOR, "2.0", 2));
-		// for(int i=150;i>0;i--){
-		// versions.add(createVersion(VersionType.MINOR, "1."+i,2));
-		// }
 		versions.add(createVersion(VersionType.MAJOR, "1.0", 2));
 
 		return versions;
 	}
 
-	@SuppressWarnings("serial")
 	private Version createVersion(final VersionType versionType, final String label, final int day) {
 
 		return new Version() {
@@ -150,15 +146,6 @@ public class VersionCleanerActionConfigIT {
 		Collection<Version> toDelete = versionConfig.versionsToDelete(versions);
 
 		Assert.assertEquals(0, toDelete.size());
-
-		// versionConfig.setConfig("minor", 2, null, null);
-		//
-		// toDelete = versionConfig.versionsToDelete(versions);
-		//
-		// logger.info("Delete for config :"+versionConfig);
-		// logVersions(toDelete);
-		//
-		// Assert.assertEquals(7,toDelete.size());
 
 		versionConfig.setConfig("all", 3, null, null);
 

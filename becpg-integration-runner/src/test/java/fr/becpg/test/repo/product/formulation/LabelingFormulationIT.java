@@ -1369,7 +1369,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 	@Test
 	public void testRenderAllergenInvoluntaryOtherLegalNameMinor() {
 
-	        final NodeRef parentAllergen = inWriteTx(() -> {
+	        inWriteTx(() -> {
 	                Map<QName, Serializable> properties = new HashMap<>();
 	                properties.put(BeCPGModel.PROP_CHARACT_NAME, "Fruits a coque");
 	                properties.put(PLMModel.PROP_ALLERGEN_TYPE, "Major");

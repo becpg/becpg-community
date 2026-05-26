@@ -53,7 +53,6 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.owasp.encoder.Encode;
 import org.springframework.context.ApplicationContext;
 import org.springframework.extensions.config.Config;
 import org.springframework.extensions.config.ConfigService;
@@ -572,7 +571,7 @@ public class BeCPGAIMSFilter implements Filter
                         }
                     }
 
-                    if (groups.length() != 0)
+                    if (!groups.isEmpty())
                     {
                         groups.delete(groups.length() - 1, groups.length());
                     }
