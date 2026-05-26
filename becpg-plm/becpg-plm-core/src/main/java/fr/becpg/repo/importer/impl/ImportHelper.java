@@ -213,6 +213,9 @@ public class ImportHelper {
 	/** Constant <code>NULL_VALUE="NULL"</code> */
 	public static final String NULL_VALUE = "NULL";
 	
+	/**
+	 * <p>Constructor for ImportHelper.</p>
+	 */
 	private ImportHelper() {
 		//Do Nothing
 	}
@@ -386,6 +389,7 @@ public class ImportHelper {
 		return value;
 	}
 	
+	/** Constant <code>NUMBER_PATTERN</code> */
 	private static final Pattern NUMBER_PATTERN = Pattern.compile("^-?[0-9\\s.,]+$");
 
 	/**

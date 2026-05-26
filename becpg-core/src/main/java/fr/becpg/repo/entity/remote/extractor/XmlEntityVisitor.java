@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -90,6 +90,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 		this.associationService = remoteServiceRegisty.associationService();
 	}
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(XmlEntityVisitor.class);
 
 	/** {@inheritDoc} */
@@ -152,6 +153,13 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
+	/**
+	 * <p>createWriter.</p>
+	 *
+	 * @param result a {@link java.io.OutputStream} object
+	 * @return a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 */
 	private XMLStreamWriter createWriter(OutputStream result) throws XMLStreamException {
 		// Create an output factory
 		XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
@@ -170,6 +178,18 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 		return xmlw;
 	}
 
+	/**
+	 * <p>visitNode.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @param assocs a boolean
+	 * @param props a boolean
+	 * @param content a boolean
+	 * @param siteInfo a boolean
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if any.
+	 */
 	private void visitNode(NodeRef nodeRef, XMLStreamWriter xmlw, boolean assocs, boolean props, boolean content, boolean siteInfo)
 			throws XMLStreamException, RemoteException {
 		cacheList.add(nodeRef);
@@ -223,6 +243,17 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 		extractLevel--;
 	}
 
+	/**
+	 * <p>writeStdAttributes.</p>
+	 *
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param name a {@link java.lang.String} object
+	 * @param isCharact a boolean
+	 * @param appendSite a boolean
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if any.
+	 */
 	private void writeStdAttributes(XMLStreamWriter xmlw, NodeRef nodeRef, String name, boolean isCharact, boolean appendSite)
 			throws XMLStreamException, RemoteException {
 		Path path = null;
@@ -262,6 +293,13 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
+	/**
+	 * <p>visitContent.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 */
 	private void visitContent(NodeRef nodeRef, XMLStreamWriter xmlw) throws XMLStreamException {
 
 		xmlw.writeStartElement(BeCPGModel.BECPG_PREFIX, RemoteEntityService.ELEM_DATA, BeCPGModel.BECPG_URI);
@@ -285,6 +323,14 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 		xmlw.writeEndElement();
 	}
 
+	/**
+	 * <p>visitAssocs.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if any.
+	 */
 	private void visitAssocs(NodeRef nodeRef, XMLStreamWriter xmlw) throws XMLStreamException, RemoteException {
 
 		TypeDefinition typeDef = entityDictionaryService.getType(nodeService.getType(nodeRef));
@@ -387,6 +433,13 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
+	/**
+	 * <p>visitProps.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 */
 	private void visitProps(NodeRef nodeRef, XMLStreamWriter xmlw) throws XMLStreamException {
 
 		Map<QName, Serializable> props = nodeService.getProperties(nodeRef);
@@ -454,6 +507,13 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
+	/**
+	 * <p>visitMltextAttributes.</p>
+	 *
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @param mlValues a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 */
 	private void visitMltextAttributes(XMLStreamWriter xmlw, MLText mlValues) throws XMLStreamException {
 		if (mlValues != null) {
 			for (Map.Entry<Locale, String> mlEntry : mlValues.entrySet()) {
@@ -467,6 +527,13 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 		}
 	}
 
+	/**
+	 * <p>visitSite.</p>
+	 *
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @param path a {@link org.alfresco.service.cmr.repository.Path} object
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 */
 	private void visitSite(XMLStreamWriter xmlw, Path path) throws XMLStreamException {
 
 		String siteId = SiteHelper.extractSiteId(path.toPrefixString(namespaceService));
@@ -489,6 +556,14 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
+	/**
+	 * <p>visitPropValue.</p>
+	 *
+	 * @param value a {@link java.io.Serializable} object
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if any.
+	 */
 	@SuppressWarnings("unchecked")
 	private void visitPropValue(Serializable value, XMLStreamWriter xmlw) throws XMLStreamException, RemoteException {
 		if (value instanceof List) {

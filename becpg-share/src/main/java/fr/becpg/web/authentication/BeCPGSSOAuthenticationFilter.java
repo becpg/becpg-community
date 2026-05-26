@@ -121,30 +121,46 @@ import jakarta.servlet.http.HttpSession;
  */
 @SuppressWarnings("deprecation")
 public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, CallbackHandler, ApplicationContextAware {
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(BeCPGSSOAuthenticationFilter.class);
 
 	// Authentication request/response headers
+	/** Constant <code>AUTH_NTLM="NTLM"</code> */
 	private static final String AUTH_NTLM = "NTLM";
+	/** Constant <code>AUTH_SPNEGO="Negotiate"</code> */
 	private static final String AUTH_SPNEGO = "Negotiate";
+	/** Constant <code>HEADER_WWWAUTHENTICATE="WWW-Authenticate"</code> */
 	private static final String HEADER_WWWAUTHENTICATE = "WWW-Authenticate";
+	/** Constant <code>HEADER_AUTHORIZATION="Authorization"</code> */
 	private static final String HEADER_AUTHORIZATION = "Authorization";
+	/** Constant <code>HEADER_ACCEPT_LANGUAGE="Accept-Language"</code> */
 	private static final String HEADER_ACCEPT_LANGUAGE = "Accept-Language";
 
 	// NTLM authentication session object names
+	/** Constant <code>NTLM_AUTH_DETAILS="_alfwfNTLMDetails"</code> */
 	private static final String NTLM_AUTH_DETAILS = "_alfwfNTLMDetails";
 
 	// Kerberos authentication session object flag (Firefox and Chrome hack for MNT-15561)
+	/** Constant <code>AUTH_BY_KERBEROS="_alfAuthByKerberos"</code> */
 	private static final String AUTH_BY_KERBEROS = "_alfAuthByKerberos";
 
+	/** Constant <code>MIME_HTML_TEXT="text/html"</code> */
 	private static final String MIME_HTML_TEXT = "text/html";
 
+	/** Constant <code>PAGE_SERVLET_PATH="/page"</code> */
 	private static final String PAGE_SERVLET_PATH = "/page";
+	/** Constant <code>LOGIN_PATH_INFORMATION="/dologin"</code> */
 	private static final String LOGIN_PATH_INFORMATION = "/dologin";
+	/** Constant <code>LOGIN_PARAMETER="login"</code> */
 	private static final String LOGIN_PARAMETER = "login";
+	/** Constant <code>ERROR_PARAMETER="error"</code> */
 	private static final String ERROR_PARAMETER = "error";
+	/** Constant <code>UNAUTHENTICATED_ACCESS_PROXY="/proxy/alfresco-noauth"</code> */
 	private static final String UNAUTHENTICATED_ACCESS_PROXY = "/proxy/alfresco-noauth";
 
+	/** Constant <code>AI_ACCESS_PROXY="/proxy/ai"</code> */
 	private static final String AI_ACCESS_PROXY = "/proxy/ai";
+	/** Constant <code>PAGE_VIEW_RESOLVER="pageViewResolver"</code> */
 	private static final String PAGE_VIEW_RESOLVER = "pageViewResolver";
 
 	private ApplicationContext context;
@@ -259,8 +275,9 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 	}
 
 	/**
+	 * <p>initKerberos.</p>
 	 *
-	 * @param configService
+	 * @param configService a {@link org.springframework.extensions.config.ConfigService} object
 	 */
 	private void initKerberos(ConfigService configService) {
 		KerberosConfigElement config = (KerberosConfigElement) configService.getConfig("Kerberos").getConfigElement("kerberos");
@@ -810,6 +827,16 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 		}
 	}
 
+	/**
+	 * <p>challengeOrPassThrough.</p>
+	 *
+	 * @param chain a {@link jakarta.servlet.FilterChain} object
+	 * @param req a {@link jakarta.servlet.http.HttpServletRequest} object
+	 * @param res a {@link jakarta.servlet.http.HttpServletResponse} object
+	 * @param session a {@link jakarta.servlet.http.HttpSession} object
+	 * @throws java.io.IOException if any.
+	 * @throws jakarta.servlet.ServletException if any.
+	 */
 	private void challengeOrPassThrough(FilterChain chain, HttpServletRequest req, HttpServletResponse res, HttpSession session)
 			throws IOException, ServletException {
 		try {
@@ -911,7 +938,6 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 	 * Return the non-proxied headers for an NTLM /touch request
 	 *
 	 * @param conn      Connector
-	 *
 	 * @return the headers required for the request - if any
 	 */
 	private Map<String, String> getConnectionHeaders(Connector conn) {
@@ -932,6 +958,12 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 
 	/**
 	 * Restart the authentication process for NTLM or Kerberos - clear current security details
+	 *
+	 * @param session a {@link jakarta.servlet.http.HttpSession} object
+	 * @param req a {@link jakarta.servlet.http.HttpServletRequest} object
+	 * @param res a {@link jakarta.servlet.http.HttpServletResponse} object
+	 * @param authHdr a {@link java.lang.String} object
+	 * @throws java.io.IOException if any.
 	 */
 	private void restartAuthProcess(HttpSession session, HttpServletRequest req, HttpServletResponse res, String authHdr) throws IOException {
 		if (logger.isDebugEnabled()) {
@@ -964,8 +996,8 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 	 * @param req HttpServletRequest
 	 * @param res HttpServletResponse
 	 * @param session HttpSession
-	 *
 	 * @exception IOException
+	 * @throws java.io.IOException if any.
 	 */
 	private void processType1(Type1NTLMMessage type1Msg, HttpServletRequest req, HttpServletResponse res, HttpSession session) throws IOException {
 		if (logger.isDebugEnabled()) {
@@ -1060,6 +1092,8 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 	 * @param chain FilterChain
 	 * @exception IOException
 	 * @exception ServletException
+	 * @throws java.io.IOException if any.
+	 * @throws jakarta.servlet.ServletException if any.
 	 */
 	private void processType3(Type3NTLMMessage type3Msg, HttpServletRequest req, HttpServletResponse res, HttpSession session, FilterChain chain)
 			throws IOException, ServletException {
@@ -1179,6 +1213,10 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 
 	/**
 	 * Redirect to the root of the website - ignore further SSO auth requests
+	 *
+	 * @param req a {@link jakarta.servlet.http.HttpServletRequest} object
+	 * @param res a {@link jakarta.servlet.http.HttpServletResponse} object
+	 * @throws java.io.IOException if any.
 	 */
 	private void redirectToLoginPage(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		if (logger.isDebugEnabled()) {
@@ -1304,6 +1342,17 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 		return negTokenTarg;
 	}
 
+	/**
+	 * <p>doKerberosDelegateLogin.</p>
+	 *
+	 * @param req a {@link jakarta.servlet.http.HttpServletRequest} object
+	 * @param res a {@link jakarta.servlet.http.HttpServletResponse} object
+	 * @param session a {@link jakarta.servlet.http.HttpSession} object
+	 * @param userName a {@link java.lang.String} object
+	 * @param tokenForEndpoint a {@link java.lang.String} object
+	 * @return a boolean
+	 * @throws java.io.IOException if any.
+	 */
 	private boolean doKerberosDelegateLogin(HttpServletRequest req, HttpServletResponse res, HttpSession session, String userName,
 			String tokenForEndpoint) throws IOException {
 
@@ -1387,7 +1436,7 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 	 * <br> and {@link org.alfresco.web.site.SlingshotPageView#REDIRECT_QUERY}
 	 * <br> parameters to the session.
 	 *
-	 * @param req
+	 * @param req a {@link jakarta.servlet.http.HttpServletRequest} object
 	 */
 	private void setRedirectUrl(HttpServletRequest req) {
 		HttpSession session = req.getSession();
@@ -1401,7 +1450,7 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 	 * Set the external auth Session flag so the UI knows we are using SSO.
 	 * A number of elements in an application may depend on this state e.g. Logout button shown etc.
 	 *
-	 * @param session
+	 * @param session a {@link jakarta.servlet.http.HttpSession} object
 	 */
 	private void setExternalAuthSession(HttpSession session) {
 		session.setAttribute(UserFactory.SESSION_ATTRIBUTE_EXTERNAL_AUTH, Boolean.TRUE);

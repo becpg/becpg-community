@@ -20,7 +20,9 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  */
 public class IngToxPolicy extends AbstractBeCPGPolicy implements OnUpdatePropertiesPolicy, BeforeDeleteNodePolicy {
 
+	/** Constant <code>ING_UPDATED_KEY="IngToxPolicy.ingUpdated"</code> */
 	private static final String ING_UPDATED_KEY = "IngToxPolicy.ingUpdated";
+	/** Constant <code>TOX_UPDATED_KEY="IngToxPolicy.toxUpdated"</code> */
 	private static final String TOX_UPDATED_KEY = "IngToxPolicy.toxUpdated";
 
 	private ToxicologyService toxicologyService;

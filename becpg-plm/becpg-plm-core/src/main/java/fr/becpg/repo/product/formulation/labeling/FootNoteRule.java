@@ -18,6 +18,7 @@ import fr.becpg.repo.helper.MLTextHelper;
  */
 public class FootNoteRule extends AbstractFormulaFilterRule implements Comparable<FootNoteRule>, Serializable {
 
+	/** Constant <code>serialVersionUID=4589879904230809954L</code> */
 	private static final long serialVersionUID = 4589879904230809954L;
 
 	private final String footNoteMarker;

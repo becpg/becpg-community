@@ -26,6 +26,7 @@ import fr.becpg.repo.security.SecurityService;
  */
 public abstract class AbstractPropertyPermissionFormFilter<ItemType> extends AbstractFilter<ItemType, NodeRef> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AbstractPropertyPermissionFormFilter.class);
 
 	private SecurityService securityService;

@@ -20,6 +20,7 @@ import fr.becpg.model.NutrientProfileCategory;
  */
 public class NutriScoreContext {
 	
+	/** Constant <code>NON_NUTRITIVE_SUGARS="nonNutritiveSugars"</code> */
 	private static final String NON_NUTRITIVE_SUGARS = "nonNutritiveSugars";
 
 	/** Constant <code>NUTRIENT_PROFILE_CLASSES</code> */
@@ -27,9 +28,13 @@ public class NutriScoreContext {
 
 	/** Constant <code>VALUE="value"</code> */
 	public static final String VALUE = "value"; 
+	/** Constant <code>IS_WATER="isWater"</code> */
 	private static final String IS_WATER = "isWater";
+	/** Constant <code>HAS_PROTEIN_SCORE="hasProteinScore"</code> */
 	private static final String HAS_PROTEIN_SCORE = "hasProteinScore";
+	/** Constant <code>DISPLAY_SALT_SCORE="displaySaltScore"</code> */
 	private static final String DISPLAY_SALT_SCORE = "displaySaltScore";
+	/** Constant <code>PARTS_STRING="parts"</code> */
 	private static final String PARTS_STRING = "parts";
 	/** Constant <code>SCORE="score"</code> */
 	public static final String SCORE = "score";
@@ -39,12 +44,19 @@ public class NutriScoreContext {
 	public static final String LOWER_VALUE = "lowerValue";
 	/** Constant <code>INCLUDE_LOWER="includeLower"</code> */
 	public static final String INCLUDE_LOWER = "includeLower";
+	/** Constant <code>CATEGORY_STRING="category"</code> */
 	private static final String CATEGORY_STRING = "category";
+	/** Constant <code>CLASS_UPPER_VALUE="classUpperValue"</code> */
 	private static final String CLASS_UPPER_VALUE = "classUpperValue";
+	/** Constant <code>CLASS_LOWER_VALUE="classLowerValue"</code> */
 	private static final String CLASS_LOWER_VALUE = "classLowerValue";
+	/** Constant <code>NUTRIENT_CLASS="nutrientClass"</code> */
 	private static final String NUTRIENT_CLASS = "nutrientClass";
+	/** Constant <code>C_SCORE="cScore"</code> */
 	private static final String C_SCORE = "cScore";
+	/** Constant <code>A_SCORE="aScore"</code> */
 	private static final String A_SCORE = "aScore";
+	/** Constant <code>NUTRI_SCORE="nutriScore"</code> */
 	private static final String NUTRI_SCORE = "nutriScore";
 	/** Constant <code>ENERGY_CODE="ENER-KJO"</code> */
 	public static final String ENERGY_CODE = "ENER-KJO";
@@ -165,6 +177,12 @@ public class NutriScoreContext {
 		return nonNutritiveSugars;
 	}
 	
+	/**
+	 * <p>createPartValue.</p>
+	 *
+	 * @param code a {@link java.lang.String} object
+	 * @param value a {@link java.lang.Double} object
+	 */
 	private void createPartValue(String code, Double value) {
 		JSONObject part = new JSONObject();
 		part.put(VALUE, value);

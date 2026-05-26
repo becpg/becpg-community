@@ -41,13 +41,20 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 public class AutoNumServiceImpl implements AutoNumService {
 
     // Constants
+    /** Constant <code>NAME_TEMPLATE="%s - %s"</code> */
     private static final String NAME_TEMPLATE = "%s - %s";
+    /** Constant <code>DEFAULT_AUTO_NUM</code> */
     private static final Long DEFAULT_AUTO_NUM = 1L;
+    /** Constant <code>PREFIX_MSG_PREFIX="autonum.prefix."</code> */
     private static final String PREFIX_MSG_PREFIX = "autonum.prefix.";
+    /** Constant <code>DEFAULT_PREFIX=""</code> */
     private static final String DEFAULT_PREFIX = "";
+    /** Constant <code>DEFAULT_PATTERN</code> */
     private static final Pattern DEFAULT_PATTERN = Pattern.compile("(^[A-Z]+)(\\d+$)");
+    /** Constant <code>CACHE_KEY_SEPARATOR="-"</code> */
     private static final String CACHE_KEY_SEPARATOR = "-";
     
+    /** Constant <code>logger</code> */
     private static final Log logger = LogFactory.getLog(AutoNumServiceImpl.class);
 
     // Fine-grained locking for better performance
@@ -186,6 +193,12 @@ public class AutoNumServiceImpl implements AutoNumService {
 
     // Private helper methods
     
+    /**
+     * <p>validateInputs.</p>
+     *
+     * @param className a {@link org.alfresco.service.namespace.QName} object
+     * @param propertyName a {@link org.alfresco.service.namespace.QName} object
+     */
     private void validateInputs(QName className, QName propertyName) {
         if (className == null) {
             throw new IllegalArgumentException("className cannot be null");
@@ -195,14 +208,35 @@ public class AutoNumServiceImpl implements AutoNumService {
         }
     }
 
+    /**
+     * <p>createLockKey.</p>
+     *
+     * @param className a {@link org.alfresco.service.namespace.QName} object
+     * @param propertyName a {@link org.alfresco.service.namespace.QName} object
+     * @return a {@link java.lang.String} object
+     */
     private String createLockKey(QName className, QName propertyName) {
         return className.toString() + CACHE_KEY_SEPARATOR + propertyName.toString();
     }
 
+    /**
+     * <p>createCacheKey.</p>
+     *
+     * @param className a {@link org.alfresco.service.namespace.QName} object
+     * @param propertyName a {@link org.alfresco.service.namespace.QName} object
+     * @return a {@link java.lang.String} object
+     */
     private String createCacheKey(QName className, QName propertyName) {
         return className.toString() + CACHE_KEY_SEPARATOR + propertyName.toString();
     }
 
+    /**
+     * <p>generateNextAutoNumValue.</p>
+     *
+     * @param className a {@link org.alfresco.service.namespace.QName} object
+     * @param propertyName a {@link org.alfresco.service.namespace.QName} object
+     * @return a {@link java.lang.String} object
+     */
     private String generateNextAutoNumValue(QName className, QName propertyName) {
         Optional<NodeRef> autoNumNodeRef = findAutoNumNodeRef(className, propertyName);
         
@@ -213,6 +247,12 @@ public class AutoNumServiceImpl implements AutoNumService {
         }
     }
 
+    /**
+     * <p>incrementExistingAutoNum.</p>
+     *
+     * @param autoNumNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @return a {@link java.lang.String} object
+     */
     private String incrementExistingAutoNum(NodeRef autoNumNodeRef) {
         Long currentValue = (Long) nodeService.getProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE);
         String prefix = getPrefix(autoNumNodeRef, DEFAULT_PREFIX);
@@ -223,12 +263,26 @@ public class AutoNumServiceImpl implements AutoNumService {
         return formatCode(prefix, nextValue);
     }
 
+    /**
+     * <p>createNewAutoNum.</p>
+     *
+     * @param className a {@link org.alfresco.service.namespace.QName} object
+     * @param propertyName a {@link org.alfresco.service.namespace.QName} object
+     * @return a {@link java.lang.String} object
+     */
     private String createNewAutoNum(QName className, QName propertyName) {
         String prefix = getDefaultPrefix(className, propertyName);
         createAutoNum(className, propertyName, DEFAULT_AUTO_NUM, prefix);
         return formatCode(prefix, DEFAULT_AUTO_NUM);
     }
 
+    /**
+     * <p>findAutoNumNodeRef.</p>
+     *
+     * @param className a {@link org.alfresco.service.namespace.QName} object
+     * @param propertyName a {@link org.alfresco.service.namespace.QName} object
+     * @return a {@link java.util.Optional} object
+     */
     private Optional<NodeRef> findAutoNumNodeRef(QName className, QName propertyName) {
         String cacheKey = createCacheKey(className, propertyName);
         
@@ -247,6 +301,13 @@ public class AutoNumServiceImpl implements AutoNumService {
         );
     }
 
+    /**
+     * <p>buildPrefixPattern.</p>
+     *
+     * @param type a {@link org.alfresco.service.namespace.QName} object
+     * @param propertyName a {@link org.alfresco.service.namespace.QName} object
+     * @return a {@link java.lang.String} object
+     */
     private String buildPrefixPattern(QName type, QName propertyName) {
         var subTypes = dictionaryService.getSubTypes(type, true);
         
@@ -260,16 +321,36 @@ public class AutoNumServiceImpl implements AutoNumService {
             .orElse(DEFAULT_PREFIX);
     }
 
+    /**
+     * <p>createMatchPattern.</p>
+     *
+     * @param prefix a {@link java.lang.String} object
+     * @return a {@link java.lang.String} object
+     */
     private String createMatchPattern(String prefix) {
         return "(^" + prefix + ")(\\d*$)";
     }
 
+    /**
+     * <p>getAutoNumPrefix.</p>
+     *
+     * @param type a {@link org.alfresco.service.namespace.QName} object
+     * @param propertyName a {@link org.alfresco.service.namespace.QName} object
+     * @return a {@link java.lang.String} object
+     */
     private String getAutoNumPrefix(QName type, QName propertyName) {
         return findAutoNumNodeRef(type, propertyName)
             .map(nodeRef -> getPrefix(nodeRef, DEFAULT_PREFIX))
             .orElse(getDefaultPrefix(type, propertyName));
     }
 
+    /**
+     * <p>processNodeCode.</p>
+     *
+     * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param codeQName a {@link org.alfresco.service.namespace.QName} object
+     * @return a {@link java.lang.String} object
+     */
     private String processNodeCode(NodeRef nodeRef, QName codeQName) {
         String existingCode = (String) nodeService.getProperty(nodeRef, codeQName);
         QName typeQName = nodeService.getType(nodeRef);
@@ -288,6 +369,15 @@ public class AutoNumServiceImpl implements AutoNumService {
         }
     }
 
+    /**
+     * <p>isCodeAlreadyUsed.</p>
+     *
+     * @param typeQName a {@link org.alfresco.service.namespace.QName} object
+     * @param codeQName a {@link org.alfresco.service.namespace.QName} object
+     * @param code a {@link java.lang.String} object
+     * @param excludeNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @return a boolean
+     */
     private boolean isCodeAlreadyUsed(QName typeQName, QName codeQName, String code, NodeRef excludeNodeRef) {
         return BeCPGQueryBuilder.createQuery()
             .ofType(typeQName)
@@ -297,12 +387,27 @@ public class AutoNumServiceImpl implements AutoNumService {
             .singleValue() != null;
     }
 
+    /**
+     * <p>generateAndSetNewCode.</p>
+     *
+     * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param typeQName a {@link org.alfresco.service.namespace.QName} object
+     * @param codeQName a {@link org.alfresco.service.namespace.QName} object
+     * @return a {@link java.lang.String} object
+     */
     private String generateAndSetNewCode(NodeRef nodeRef, QName typeQName, QName codeQName) {
         String newCode = getAutoNumValue(typeQName, codeQName);
         nodeService.setProperty(nodeRef, codeQName, newCode);
         return newCode;
     }
 
+    /**
+     * <p>createOrUpdateAutoNumValue.</p>
+     *
+     * @param className a {@link org.alfresco.service.namespace.QName} object
+     * @param propertyName a {@link org.alfresco.service.namespace.QName} object
+     * @param autoNumCode a {@link java.lang.String} object
+     */
     private void createOrUpdateAutoNumValue(QName className, QName propertyName, String autoNumCode) {
         AutoNumInfo autoNumInfo = parseAutoNumCode(autoNumCode, className, propertyName);
         
@@ -315,6 +420,14 @@ public class AutoNumServiceImpl implements AutoNumService {
         }
     }
 
+    /**
+     * <p>parseAutoNumCode.</p>
+     *
+     * @param autoNumCode a {@link java.lang.String} object
+     * @param className a {@link org.alfresco.service.namespace.QName} object
+     * @param propertyName a {@link org.alfresco.service.namespace.QName} object
+     * @return a {@link fr.becpg.repo.entity.impl.AutoNumServiceImpl.AutoNumInfo} object
+     */
     private AutoNumInfo parseAutoNumCode(String autoNumCode, QName className, QName propertyName) {
         String prefix = getDefaultPrefix(className, propertyName);
         Long value = DEFAULT_AUTO_NUM;
@@ -338,6 +451,12 @@ public class AutoNumServiceImpl implements AutoNumService {
         return new AutoNumInfo(prefix, value);
     }
 
+    /**
+     * <p>updateExistingAutoNumIfNecessary.</p>
+     *
+     * @param autoNumNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param newValue a {@link java.lang.Long} object
+     */
     private void updateExistingAutoNumIfNecessary(NodeRef autoNumNodeRef, Long newValue) {
         Long currentValue = (Long) nodeService.getProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE);
         
@@ -349,6 +468,13 @@ public class AutoNumServiceImpl implements AutoNumService {
         }
     }
 
+    /**
+     * <p>getDefaultPrefix.</p>
+     *
+     * @param className a {@link org.alfresco.service.namespace.QName} object
+     * @param propertyName a {@link org.alfresco.service.namespace.QName} object
+     * @return a {@link java.lang.String} object
+     */
     private String getDefaultPrefix(QName className, QName propertyName) {
         String messageKey = PREFIX_MSG_PREFIX + className.getLocalName() + "." + propertyName.getLocalName();
         String prefix = I18NUtil.getMessage(messageKey);
@@ -356,6 +482,15 @@ public class AutoNumServiceImpl implements AutoNumService {
         return (prefix != null && !prefix.isEmpty()) ? prefix : DEFAULT_PREFIX;
     }
 
+    /**
+     * <p>createAutoNum.</p>
+     *
+     * @param className a {@link org.alfresco.service.namespace.QName} object
+     * @param propertyName a {@link org.alfresco.service.namespace.QName} object
+     * @param autoNumValue a {@link java.lang.Long} object
+     * @param autoNumPrefix a {@link java.lang.String} object
+     * @return a {@link java.lang.Long} object
+     */
     private Long createAutoNum(QName className, QName propertyName, Long autoNumValue, String autoNumPrefix) {
         String cacheKey = createCacheKey(className, propertyName);
         beCPGCacheService.removeFromCache(AutoNumServiceImpl.class.getName(), cacheKey);
@@ -390,6 +525,16 @@ public class AutoNumServiceImpl implements AutoNumService {
         return autoNumValue;
     }
 
+    /**
+     * <p>createAutoNumProperties.</p>
+     *
+     * @param name a {@link java.lang.String} object
+     * @param className a {@link org.alfresco.service.namespace.QName} object
+     * @param propertyName a {@link org.alfresco.service.namespace.QName} object
+     * @param autoNumValue a {@link java.lang.Long} object
+     * @param autoNumPrefix a {@link java.lang.String} object
+     * @return a {@link java.util.Map} object
+     */
     private Map<QName, Serializable> createAutoNumProperties(String name, QName className, 
             QName propertyName, Long autoNumValue, String autoNumPrefix) {
         Map<QName, Serializable> properties = new HashMap<>();
@@ -401,11 +546,25 @@ public class AutoNumServiceImpl implements AutoNumService {
         return properties;
     }
 
+    /**
+     * <p>getPrefix.</p>
+     *
+     * @param autoNumNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param defaultPrefix a {@link java.lang.String} object
+     * @return a {@link java.lang.String} object
+     */
     private String getPrefix(NodeRef autoNumNodeRef, String defaultPrefix) {
         String prefix = (String) nodeService.getProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_PREFIX);
         return (prefix != null) ? prefix : defaultPrefix;
     }
 
+    /**
+     * <p>formatCode.</p>
+     *
+     * @param prefix a {@link java.lang.String} object
+     * @param autoNumValue a {@link java.lang.Long} object
+     * @return a {@link java.lang.String} object
+     */
     private String formatCode(String prefix, Long autoNumValue) {
         return prefix + autoNumValue;
     }

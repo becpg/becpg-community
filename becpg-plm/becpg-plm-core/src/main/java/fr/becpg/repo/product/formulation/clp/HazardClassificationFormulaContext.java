@@ -119,6 +119,12 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 		return computeETA(hSum.getOrDefault(ETA_VO, 0d));
 	}
 
+	/**
+	 * <p>computeETA.</p>
+	 *
+	 * @param ret a {@link java.lang.Double} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double computeETA(Double ret) {
 		if(ret!=0d) {
 			ret = 100/ret;
@@ -249,6 +255,13 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 		return hMax.getOrDefault(toCode(hazardStatement, hazardClassCode), 0d);
 	}
 
+	/**
+	 * <p>toCode.</p>
+	 *
+	 * @param hazardStatement a {@link java.lang.String} object
+	 * @param hazardClassCode a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String toCode(String hazardStatement, String hazardClassCode) {
 		if (hazardClassCode != null) {
 			return hazardClassCode + ":" + hazardStatement;
@@ -301,6 +314,12 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 		return toCode(hazardStatement, hazardClassCode) + " [none]"; // Return empty parenthesis if detail is null or empty
 	}
 
+	/**
+	 * <p>formatNumber.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String formatNumber(Double value) {
 		if(value!=null) {
 			return PropertyFormats.forMode(FormatMode.JSON, true).formatDecimal(value);

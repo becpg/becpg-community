@@ -39,6 +39,7 @@ public class AutomaticECOPolicy extends AbstractBeCPGPolicy implements NodeServi
 
 	private EntityVersionService entityVersionService;
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AutomaticECOPolicy.class);
 	
 	private SystemConfigurationService systemConfigurationService;
@@ -52,10 +53,20 @@ public class AutomaticECOPolicy extends AbstractBeCPGPolicy implements NodeServi
 		this.systemConfigurationService = systemConfigurationService;
 	}
 
+	/**
+	 * <p>isEnable.</p>
+	 *
+	 * @return a boolean
+	 */
 	private boolean isEnable() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.eco.automatic.enable"));
 	}
 	
+	/**
+	 * <p>automaticRecordVersionType.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String automaticRecordVersionType() {
 		return systemConfigurationService.confValue("beCPG.eco.automatic.record.version.type");
 	}

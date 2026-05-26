@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -60,6 +60,7 @@ public class MetaModelVisitor {
 
 	private NamespaceService namespaceService;
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(MetaModelVisitor.class);
 
 	/**
@@ -160,6 +161,16 @@ public class MetaModelVisitor {
 
 	}
 
+	/**
+	 * <p>getPropValue.</p>
+	 *
+	 * @param getterMethod a {@link java.lang.reflect.Method} object
+	 * @param o a {@link java.lang.Object} object
+	 * @return a {@link java.io.Serializable} object
+	 * @throws java.lang.IllegalArgumentException if any.
+	 * @throws java.lang.IllegalAccessException if any.
+	 * @throws java.lang.reflect.InvocationTargetException if any.
+	 */
 	private Serializable getPropValue(Method getterMethod, Object o)
 			throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		Object ret = getterMethod.invoke(o);
@@ -173,6 +184,13 @@ public class MetaModelVisitor {
 		return (Serializable) ret;
 	}
 
+	/**
+	 * <p>getNodeTypeQName.</p>
+	 *
+	 * @param m2Object a {@link java.lang.Object} object
+	 * @param model a {@link java.lang.Object} object
+	 * @return a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private QName getNodeTypeQName(Object m2Object, Object model) {
 
 		String name;
@@ -189,6 +207,12 @@ public class MetaModelVisitor {
 		return QName.createQName(DesignerModel.M2_URI, name);
 	}
 
+	/**
+	 * <p>getNodeTypeQName.</p>
+	 *
+	 * @param field a {@link java.lang.reflect.Field} object
+	 * @return a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private QName getNodeTypeQName(Field field) {
 
 		String name = "string";
@@ -208,14 +232,32 @@ public class MetaModelVisitor {
 		return QName.createQName(DesignerModel.M2_URI, name);
 	}
 
+	/**
+	 * <p>getPropQname.</p>
+	 *
+	 * @param field a {@link java.lang.reflect.Field} object
+	 * @return a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private QName getPropQname(Field field) {
 		return QName.createQName(DesignerModel.M2_URI, field.getName());
 	}
 
+	/**
+	 * <p>getAssocQname.</p>
+	 *
+	 * @param field a {@link java.lang.reflect.Field} object
+	 * @return a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private QName getAssocQname(Field field) {
 		return QName.createQName(DesignerModel.M2_URI, field.getName());
 	}
 
+	/**
+	 * <p>shouldIgnoreField.</p>
+	 *
+	 * @param name a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	private boolean shouldIgnoreField(String name) {
 		return name.equals("analyserResourceBundleName") || name.equals("JiBX_bindingList");
 	}
@@ -241,6 +283,15 @@ public class MetaModelVisitor {
 		m2Model.toXML(out);
 	}
 
+	/**
+	 * <p>visitModel.</p>
+	 *
+	 * @param m2Model a {@link java.lang.Object} object
+	 * @param modelNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @throws java.lang.IllegalArgumentException if any.
+	 * @throws java.lang.IllegalAccessException if any.
+	 * @throws java.lang.reflect.InvocationTargetException if any.
+	 */
 	private void visitModel(Object m2Model, NodeRef modelNodeRef) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		Map<QName, Serializable> props = nodeService.getProperties(modelNodeRef);
 		//Set properties
@@ -299,6 +350,12 @@ public class MetaModelVisitor {
 
 	}
 
+	/**
+	 * <p>getPropValue.</p>
+	 *
+	 * @param entry a {@link java.util.Map.Entry} object
+	 * @return a {@link java.lang.Object} object
+	 */
 	private Object getPropValue(Entry<QName, Serializable> entry) {
 		if (entry.getKey().equals(DesignerModel.PROP_M2_INDEX_MODE)) {
 			return IndexTokenisationMode.valueOf(((String) entry.getValue()).toUpperCase());
@@ -306,6 +363,14 @@ public class MetaModelVisitor {
 		return entry.getValue();
 	}
 
+	/**
+	 * <p>retieveCreateMethod.</p>
+	 *
+	 * @param childRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param qName a {@link org.alfresco.service.namespace.QName} object
+	 * @param clazz a {@link java.lang.Class} object
+	 * @return a {@link java.lang.reflect.Method} object
+	 */
 	private Method retieveCreateMethod(NodeRef childRef, QName qName, Class<?> clazz) {
 
 		String localName = qName.getLocalName();
@@ -320,6 +385,13 @@ public class MetaModelVisitor {
 		return retrieveMethod(clazz, createName);
 	}
 
+	/**
+	 * <p>retieveSetter.</p>
+	 *
+	 * @param prop a {@link org.alfresco.service.namespace.QName} object
+	 * @param clazz a {@link java.lang.Class} object
+	 * @return a {@link java.lang.reflect.Method} object
+	 */
 	private Method retieveSetter(QName prop, Class<?> clazz) {
 		String setterName;
 		if (prop.getLocalName().startsWith("is")) {
@@ -337,6 +409,13 @@ public class MetaModelVisitor {
 		return retrieveMethod(clazz, setterName);
 	}
 
+	/**
+	 * <p>retieveGetter.</p>
+	 *
+	 * @param m2Class a {@link java.lang.Class} object
+	 * @param field a {@link java.lang.reflect.Field} object
+	 * @return a {@link java.lang.reflect.Method} object
+	 */
 	private Method retieveGetter(Class<?> m2Class, Field field) {
 
 		String getterName = "get" + StringUtils.capitalize(field.getName());
@@ -360,6 +439,13 @@ public class MetaModelVisitor {
 
 	}
 
+	/**
+	 * <p>retrieveMethod.</p>
+	 *
+	 * @param clazz a {@link java.lang.Class} object
+	 * @param methodNames a {@link java.lang.String} object
+	 * @return a {@link java.lang.reflect.Method} object
+	 */
 	private Method retrieveMethod(Class<?> clazz, String... methodNames) {
 
 		for (Method method : clazz.getMethods()) {

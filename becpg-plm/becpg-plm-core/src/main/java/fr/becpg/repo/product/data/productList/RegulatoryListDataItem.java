@@ -28,6 +28,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "bcpg:regulatoryList")
 public class RegulatoryListDataItem  extends BeCPGDataObject implements RegulatoryEntity {
 
+	/** Constant <code>serialVersionUID=6048458461427271748L</code> */
 	private static final long serialVersionUID = 6048458461427271748L;
 
 	private List<NodeRef> regulatoryCountriesRef;

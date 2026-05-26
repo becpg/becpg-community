@@ -15,6 +15,7 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
  */
 public class AccentFilter extends TokenFilter {
 	
+	/** Constant <code>substitutions</code> */
 	private static final HashMap<String,String> substitutions = initSubstitutions();
 
 	private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
@@ -52,6 +53,11 @@ public class AccentFilter extends TokenFilter {
 		}
 	}
 	
+	/**
+	 * <p>initSubstitutions.</p>
+	 *
+	 * @return a {@link java.util.HashMap} object
+	 */
 	private static HashMap<String,String> initSubstitutions() {
 		HashMap<String,String> retVal = new HashMap<>(12);
 

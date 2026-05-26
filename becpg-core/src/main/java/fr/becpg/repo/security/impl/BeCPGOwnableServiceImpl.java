@@ -102,6 +102,7 @@ public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 		super.setRenditionService(renditionService);
 	}
 
+	/** Constant <code>URI_TO_EXCLUDES</code> */
 	private static final  Set<String> URI_TO_EXCLUDES = new HashSet<>();
 	static {
 		URI_TO_EXCLUDES.add(DownloadModel.DOWNLOAD_MODEL_1_0_URI);
@@ -163,6 +164,12 @@ public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 		return userName;
 	}
 
+	/**
+	 * <p>localCacheOwner.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param userName a {@link java.lang.String} object
+	 */
 	private void localCacheOwner(NodeRef nodeRef, String userName) {
 		// do not cache owners of nodes that are from stores that ignores
 		// policies
@@ -172,6 +179,12 @@ public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 		}
 	}
 
+	/**
+	 * <p>localIsRendition.</p>
+	 *
+	 * @param node a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	@SuppressWarnings("deprecation")
 	private boolean localIsRendition(final NodeRef node) {
 		return AuthenticationUtil.runAs(() -> renditionService.isRendition(node), AuthenticationUtil.getSystemUserName());

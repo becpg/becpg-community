@@ -29,7 +29,9 @@ import org.springframework.extensions.surf.util.I18NUtil;
  */
 public class TrashcanPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(TrashcanPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.trashcanPatch.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.trashcanPatch.result";
 
 	private Duration keepPeriod;
@@ -136,6 +138,12 @@ public class TrashcanPatch extends AbstractBeCPGPatch {
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 	
+	/**
+	 * <p>olderThanDaysToKeep.</p>
+	 *
+	 * @param node a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private boolean olderThanDaysToKeep(NodeRef node) {
 		Date archivedDate = (Date) nodeService.getProperty(node, ContentModel.PROP_ARCHIVED_DATE);
 		long archivedDateValue = 0;

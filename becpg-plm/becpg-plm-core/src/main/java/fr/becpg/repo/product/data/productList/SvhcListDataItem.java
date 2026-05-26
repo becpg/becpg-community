@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -44,6 +44,7 @@ import fr.becpg.repo.repository.model.SimpleListDataItem;
 @AlfQname(qname = "bcpg:svhcList")
 public class SvhcListDataItem extends AbstractManualDataItem implements SimpleListDataItem, MinMaxValueDataItem, SimpleCharactDataItem, AspectAwareDataItem {
 
+	/** Constant <code>serialVersionUID=-2710240943326822672L</code> */
 	private static final long serialVersionUID = -2710240943326822672L;
 
 	private Double qtyPerc;

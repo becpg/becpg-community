@@ -31,6 +31,7 @@ import fr.becpg.report.client.ReportFormat;
 @Service("exportSearchService")
 public class ExportSearchServiceImpl implements ExportSearchService {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ExportSearchServiceImpl.class);
 
 	@Autowired
@@ -72,6 +73,13 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 		}
 	}
 
+	/**
+	 * <p>getSearchReportRender.</p>
+	 *
+	 * @param templateNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param reportFormat a {@link fr.becpg.report.client.ReportFormat} object
+	 * @return a {@link fr.becpg.repo.report.search.SearchReportRenderer} object
+	 */
 	private SearchReportRenderer getSearchReportRender(NodeRef templateNodeRef, ReportFormat reportFormat) {
 		if (searchReportRenderers != null) {
 			for (SearchReportRenderer searchReportRenderer : searchReportRenderers) {

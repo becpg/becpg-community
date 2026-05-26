@@ -40,12 +40,17 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
 
+	/** Constant <code>NESTED_PROP="nested_"</code> */
 	private static final String NESTED_PROP = "nested_";
+	/** Constant <code>DATALIST_PROP="dataList_"</code> */
 	private static final String DATALIST_PROP = "dataList_";
 
+	/** Constant <code>PROP_KEY="_ + AttributeExtractorService.PROP_SUFF"{trunked}</code> */
 	private static final String PROP_KEY = "_" + AttributeExtractorService.PROP_SUFFIX;
+	/** Constant <code>ASSOC_KEY="_ + AttributeExtractorService.ASSOC_SUF"{trunked}</code> */
 	private static final String ASSOC_KEY = "_" + AttributeExtractorService.ASSOC_SUFFIX;
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(NestedAdvSearchPlugin.class);
 
 	/**
@@ -126,6 +131,12 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 		return nodes;
 	}
 
+	/**
+	 * <p>filterWithNested.</p>
+	 *
+	 * @param nodes a {@link java.util.List} object
+	 * @param nested a {@link java.util.Map} object
+	 */
 	private void filterWithNested(List<NodeRef> nodes, Map<String, Map<String, String>> nested) {
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {

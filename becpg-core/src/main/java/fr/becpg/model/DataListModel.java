@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2010-2011 beCPG. All rights reserved.
+ *  Copyright (C) 2010-2026 beCPG. All rights reserved.
  */
 package fr.becpg.model;
 
@@ -13,6 +13,9 @@ import org.alfresco.service.namespace.QName;
  */
 public final class DataListModel {
 
+	/**
+	 * <p>Constructor for DataListModel.</p>
+	 */
 	private DataListModel() {
 		//Do Nothing
 	}

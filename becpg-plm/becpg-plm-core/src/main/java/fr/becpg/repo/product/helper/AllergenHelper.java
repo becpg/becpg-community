@@ -40,6 +40,9 @@ import fr.becpg.repo.repository.RepositoryEntity;
  */
 public class AllergenHelper {
 
+    /**
+     * <p>Constructor for AllergenHelper.</p>
+     */
     private AllergenHelper() {
         // static helper
     }
@@ -198,6 +201,13 @@ public class AllergenHelper {
         return maps;
     }
 
+    /**
+     * <p>accumulate.</p>
+     *
+     * @param target a {@link java.util.Map} object
+     * @param allergen a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param qtyPerc a {@link java.lang.Double} object
+     */
     private static void accumulate(Map<NodeRef, Double> target, NodeRef allergen, Double qtyPerc) {
         Double qty = qtyPerc;
 

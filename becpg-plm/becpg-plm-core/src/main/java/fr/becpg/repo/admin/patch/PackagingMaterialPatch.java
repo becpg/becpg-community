@@ -24,7 +24,9 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class PackagingMaterialPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(PackagingMaterialPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.packagingMaterialPatch.resul"{trunked}</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.packagingMaterialPatch.result";
 
 	private BehaviourFilter policyBehaviourFilter;

@@ -38,6 +38,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  */
 public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<ProductData> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(PackagingMaterialFormulationHandler.class);
 
 	private NodeService nodeService;
@@ -143,6 +144,14 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 		return true;
 	}
 
+	/**
+	 * <p>calculatePerc.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param packLevel a {@link fr.becpg.repo.product.data.constraints.PackagingLevel} object
+	 * @param weight a {@link java.math.BigDecimal} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double calculatePerc(ProductData formulatedProduct, PackagingLevel packLevel, BigDecimal weight) {
 		BigDecimal tare = null;
 		VariantPackagingData variantPackagingData = formulatedProduct.getDefaultVariantPackagingData();
@@ -162,6 +171,11 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 		return null;
 	}
 
+	/**
+	 * <p>calculateMaterialWeight.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 */
 	private void calculateMaterialWeight(ProductData formulatedProduct) {
 		BigDecimal tare = FormulationHelper.getTareInKg(formulatedProduct);
 
@@ -180,6 +194,12 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 
 	}
 
+	/**
+	 * <p>calculateMaterialOfComposition.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.util.Map} object
+	 */
 	private Map<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> calculateMaterialOfComposition(ProductData formulatedProduct) {
 
 		Map<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> toUpdate = new HashMap<>();
@@ -256,6 +276,13 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 		return toUpdate;
 	}
 
+	/**
+	 * <p>calculateTareByMaterialItem.</p>
+	 *
+	 * @param dataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 * @param toUpdate a {@link java.util.Map} object
+	 * @param subQty a double
+	 */
 	private void calculateTareByMaterialItem(PackagingListDataItem dataItem,
 			Map<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> toUpdate, double subQty) {
 
@@ -279,6 +306,13 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 		}
 	}
 
+	/**
+	 * <p>calculateTareByMaterial.</p>
+	 *
+	 * @param dataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 * @param toUpdate a {@link java.util.Map} object
+	 * @param subQty a double
+	 */
 	private void calculateTareByMaterial(PackagingListDataItem dataItem, Map<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> toUpdate,
 			double subQty) {
 

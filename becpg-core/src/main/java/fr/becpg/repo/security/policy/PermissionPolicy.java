@@ -35,6 +35,7 @@ public class PermissionPolicy extends AbstractBeCPGPolicy
 		implements NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnCreateAssociationPolicy,
 		OnCreateNodePolicy, OnDeleteNodePolicy, OnUpdatePropertiesPolicy {
 	
+	/** Constant <code>KEY_UPDATE_READ_PERMISSIONS="KEY_UPDATE_READ_PERMISSIONS"</code> */
 	private static final String KEY_UPDATE_READ_PERMISSIONS = "KEY_UPDATE_READ_PERMISSIONS";
 
 	private PermissionService permissionService;
@@ -118,6 +119,12 @@ public class PermissionPolicy extends AbstractBeCPGPolicy
 	}
 	
 
+	/**
+	 * <p>updatePermissions.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param permission a {@link java.lang.String} object
+	 */
 	private void updatePermissions(NodeRef nodeRef, String permission) {
 		if (nodeService.exists(nodeRef)) {
 			List<NodeRef> readGroups = associationService.getTargetAssocs(nodeRef, SecurityModel.ASSOC_READ_GROUPS);
@@ -131,6 +138,13 @@ public class PermissionPolicy extends AbstractBeCPGPolicy
 		}
 	}
 
+	/**
+	 * <p>setPermissions.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param groups a {@link java.util.List} object
+	 * @param permission a {@link java.lang.String} object
+	 */
 	private void setPermissions(NodeRef nodeRef, List<NodeRef> groups, String permission) {
 		AuthenticationUtil.runAsSystem(() -> {
 			permissionService.setInheritParentPermissions(nodeRef, false);
@@ -144,6 +158,13 @@ public class PermissionPolicy extends AbstractBeCPGPolicy
 		});
 	}
 	
+	/**
+	 * <p>clearPermissions.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param inherite a boolean
+	 * @return a boolean
+	 */
 	private boolean clearPermissions(NodeRef nodeRef, boolean inherite) {
 		return AuthenticationUtil.runAsSystem(() -> {
 			Set<AccessPermission> acls = permissionService.getAllSetPermissions(nodeRef);

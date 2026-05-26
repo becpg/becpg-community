@@ -32,6 +32,7 @@ import fr.becpg.repo.product.data.meat.MeatType;
  */
 public abstract class RuleParser {
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(RuleParser.class);
 
 	protected final NodeService mlNodeService;
@@ -370,6 +371,14 @@ public abstract class RuleParser {
 	}
 
 	// Exemple <b>{1}</b> : {2}
+	/**
+	 * <p>formatText.</p>
+	 *
+	 * @param components a {@link java.util.List} object
+	 * @param textFormat a {@link java.lang.String} object
+	 * @param locales a {@link java.util.List} object
+	 * @return a boolean
+	 */
 	private boolean formatText(List<NodeRef> components, String textFormat, List<String> locales) {
 		if ((components != null) && !components.isEmpty()) {
 			for (NodeRef component : components) {
@@ -385,8 +394,21 @@ public abstract class RuleParser {
 		return true;
 	}
 
+	/**
+	 * <p>updateDefaultFormat.</p>
+	 *
+	 * @param textFormatRule a {@link fr.becpg.repo.product.formulation.labeling.TextFormatRule} object
+	 */
 	abstract void updateDefaultFormat(TextFormatRule textFormatRule);
 
+	/**
+	 * <p>forcePercentage.</p>
+	 *
+	 * @param name a {@link java.lang.String} object
+	 * @param components a {@link java.util.List} object
+	 * @param formula a {@link java.lang.String} object
+	 * @param locales a {@link java.util.List} object
+	 */
 	private void forcePercentage(String name, List<NodeRef> components, String formula, List<String> locales) {
 		if ((components != null) && !components.isEmpty()) {
 			for (NodeRef component : components) {
@@ -395,6 +417,12 @@ public abstract class RuleParser {
 		}
 	}
 
+	/**
+	 * <p>addLocale.</p>
+	 *
+	 * @param value a {@link java.lang.String} object
+	 * @param locales a {@link java.util.List} object
+	 */
 	private void addLocale(String value, List<String> locales) {
 		if (((locales == null) || locales.isEmpty()) && (value != null)) {
 			locales = Arrays.asList(value.split(","));
@@ -407,6 +435,18 @@ public abstract class RuleParser {
 		}
 	}
 
+	/**
+	 * <p>aggregate.</p>
+	 *
+	 * @param ruleNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param name a {@link java.lang.String} object
+	 * @param components a {@link java.util.List} object
+	 * @param replacement a {@link java.util.List} object
+	 * @param label a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @param formula a {@link java.lang.String} object
+	 * @param labelingRuleType a {@link fr.becpg.repo.product.data.constraints.LabelingRuleType} object
+	 * @param locales a {@link java.util.List} object
+	 */
 	private void aggregate(NodeRef ruleNodeRef, String name, List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula,
 			LabelingRuleType labelingRuleType, List<String> locales) {
 		String[] qtys = (formula != null) && !formula.isEmpty() ? formula.split(",") : null;
@@ -445,6 +485,14 @@ public abstract class RuleParser {
 		}
 	}
 
+	/**
+	 * <p>addMeatContentRule.</p>
+	 *
+	 * @param components a {@link java.util.List} object
+	 * @param replacement a {@link java.util.List} object
+	 * @param formula a {@link java.lang.String} object
+	 * @param locales a {@link java.util.List} object
+	 */
 	private void addMeatContentRule(List<NodeRef> components, List<NodeRef> replacement, String formula, List<String> locales) {
 
 		String meatType = formula.replace("-CT", "").replace("-FAT", "");

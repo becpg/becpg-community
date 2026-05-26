@@ -80,12 +80,15 @@ import fr.becpg.repo.entity.EntityDictionaryService;
  */
 public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements CopyService{
 
+	  /** Constant <code>logger</code> */
 	  private static Log logger = LogFactory.getLog(BecpgCopyServiceImpl.class);
 	    
 	    /* Query names */
+	    /** Constant <code>QUERY_FACTORY_GET_COPIES="getCopiesCannedQueryFactory"</code> */
 	    private static final String QUERY_FACTORY_GET_COPIES = "getCopiesCannedQueryFactory";
 	    
 	    /* I18N labels */
+	    /** Constant <code>COPY_OF_LABEL="copy_service.copy_of_label"</code> */
 	    private static final String COPY_OF_LABEL = "copy_service.copy_of_label";
 	    
 	    /* Services */
@@ -507,7 +510,17 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    }
 
 	    /**
+	     * <p>copyImpl.</p>
+	     *
 	     * @return                  Returns <tt>null</tt> if the node was denied a copy
+	     * @param sourceNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	     * @param targetParentRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	     * @param assocTypeQName a {@link org.alfresco.service.namespace.QName} object
+	     * @param assocQName a {@link org.alfresco.service.namespace.QName} object
+	     * @param copyChildren a boolean
+	     * @param dropName a boolean
+	     * @param copiesByOriginals a {@link java.util.Map} object
+	     * @param copies a {@link java.util.Set} object
 	     */
 	    private NodeRef copyImpl(
 	            NodeRef sourceNodeRef,
@@ -547,8 +560,14 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    
 	    /**
 	     * Recursive copy algorithm
-	     * 
+	     *
 	     * @param dropName      drop the name property when associations don't allow duplicately named children
+	     * @param copyDetails a {@link org.alfresco.repo.copy.CopyDetails} object
+	     * @param copyChildren a boolean
+	     * @param copiesByOriginal a {@link java.util.Map} object
+	     * @param copies a {@link java.util.Set} object
+	     * @param callbacks a {@link java.util.Map} object
+	     * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	     */
 	    private NodeRef recursiveCopy(
 	            CopyDetails copyDetails,
@@ -729,6 +748,12 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	        return copyTarget;
 	    }
 	    
+	    /**
+	     * <p>getDefaultAspects.</p>
+	     *
+	     * @param sourceNodeTypeQName a {@link org.alfresco.service.namespace.QName} object
+	     * @return a {@link java.util.Set} object
+	     */
 	    private Set<QName> getDefaultAspects(QName sourceNodeTypeQName)
 	    {
 	        TypeDefinition sourceNodeTypeDef = dictionaryService.getType(sourceNodeTypeQName);
@@ -746,7 +771,12 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    }
 	    
 	    /**
-	     * Constructs the properties to copy that apply to the type and default aspects 
+	     * Constructs the properties to copy that apply to the type and default aspects
+	     *
+	     * @param copyDetails a {@link org.alfresco.repo.copy.CopyDetails} object
+	     * @param classQNames a {@link java.util.Set} object
+	     * @param callbacks a {@link java.util.Map} object
+	     * @return a {@link java.util.Map} object
 	     */
 	    private Map<QName, Serializable> buildCopyProperties(
 	            CopyDetails copyDetails,
@@ -800,7 +830,7 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    
 	    /**
 	     * Invokes the before copy policy for the node reference provided
-	     * 
+	     *
 	     * @param sourceNodeRef         the source node reference
 	     * @param targetNodeRef         the destination node reference
 	     */
@@ -820,6 +850,13 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	        }
 	    }
 	    
+	    /**
+	     * <p>invokeBeforeCopy.</p>
+	     *
+	     * @param typeQName a {@link org.alfresco.service.namespace.QName} object
+	     * @param sourceNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	     * @param targetNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	     */
 	    private void invokeBeforeCopy(
 	          QName typeQName, 
 	          NodeRef sourceNodeRef, 
@@ -834,10 +871,11 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    
 	    /**
 	     * Invokes the copy complete policy for the node reference provided
-	     * 
+	     *
 	     * @param sourceNodeRef         the source node reference
 	     * @param targetNodeRef         the destination node reference
 	     * @param copiedNodeRefs        the map of copied node references
+	     * @param copyToNewNode a boolean
 	     */
 	    private void invokeCopyComplete(
 	            NodeRef sourceNodeRef, 
@@ -857,6 +895,15 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	        }
 	    }
 
+	    /**
+	     * <p>invokeCopyComplete.</p>
+	     *
+	     * @param typeQName a {@link org.alfresco.service.namespace.QName} object
+	     * @param sourceNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	     * @param targetNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	     * @param copyToNewNode a boolean
+	     * @param copiedNodeRefs a {@link java.util.Map} object
+	     */
 	    private void invokeCopyComplete(
 	            QName typeQName, 
 	            NodeRef sourceNodeRef, 
@@ -874,6 +921,8 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    /**
 	     * Copy any remaining associations that could not be copied or ignored during the copy process.
 	     * See <a href=http://issues.alfresco.com/jira/browse/ALF-958>ALF-958: Target associations aren't copied</a>.
+	     *
+	     * @param copiedNodeRefs a {@link java.util.Map} object
 	     */
 	    private void copyPendingAssociations(Map<NodeRef, NodeRef> copiedNodeRefs)
 	    {
@@ -925,7 +974,7 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 
 	    /**
 	     * Copies the permissions of the source node reference onto the destination node reference
-	     * 
+	     *
 	     * @param sourceNodeRef            the source node reference
 	     * @param destinationNodeRef    the destination node reference
 	     */
@@ -962,12 +1011,19 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	     * Gets the copy details.  This calls the appropriate policies that have been registered
 	     * against the node and aspect types in order to pick-up any type specific copy behaviour.
 	     * <p>
-	     * The full {@link NodeService} is used for property retrieval.  After this, read permission
+	     * The full {@link org.alfresco.service.cmr.repository.NodeService} is used for property retrieval.  After this, read permission
 	     * can be assumed to have passed on the source node - at least w.r.t. properties and aspects.
 	     * <p>
 	     * <b>NOTE:</b> If a target node is not supplied, then one is created in the same store as the
 	     *              target parent node.  This allows behavioural code always know which node will
 	     *              be copied to, even if the node does not exist.
+	     *
+	     * @param sourceNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	     * @param targetParentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	     * @param targetNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	     * @param assocTypeQName a {@link org.alfresco.service.namespace.QName} object
+	     * @param assocQName a {@link org.alfresco.service.namespace.QName} object
+	     * @return a {@link org.alfresco.repo.copy.CopyDetails} object
 	     */
 	    private CopyDetails getCopyDetails(
 	            NodeRef sourceNodeRef,
@@ -1008,7 +1064,10 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    }
 	    
 	    /**
+	     * <p>getCallbacks.</p>
+	     *
 	     * @return         Returns a map of all the copy behaviours keyed by type and aspect qualified names
+	     * @param copyDetails a {@link org.alfresco.repo.copy.CopyDetails} object
 	     */
 	    private Map<QName, CopyBehaviourCallback> getCallbacks(CopyDetails copyDetails)
 	    {
@@ -1030,7 +1089,11 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    }
 	    
 	    /**
+	     * <p>getCallback.</p>
+	     *
 	     * @return             Returns the copy callback for the given criteria
+	     * @param sourceClassQName a {@link org.alfresco.service.namespace.QName} object
+	     * @param copyDetails a {@link org.alfresco.repo.copy.CopyDetails} object
 	     */
 	    private CopyBehaviourCallback getCallback(QName sourceClassQName, CopyDetails copyDetails)
 	    {
@@ -1072,6 +1135,11 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    
 	    /**
 	     * Copies the properties for the node type or aspect onto the destination node.
+	     *
+	     * @param copyDetails a {@link org.alfresco.repo.copy.CopyDetails} object
+	     * @param targetNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	     * @param classQName a {@link org.alfresco.service.namespace.QName} object
+	     * @param callbacks a {@link java.util.Map} object
 	     */
 	    private void copyProperties(
 	            CopyDetails copyDetails, 
@@ -1115,6 +1183,9 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    
 	    /**
 	     * Copy properties that do not belong to the source node's type or any of the aspects.
+	     *
+	     * @param copyDetails a {@link org.alfresco.repo.copy.CopyDetails} object
+	     * @param targetNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	     */
 	    private void copyResidualProperties(
 	            CopyDetails copyDetails,
@@ -1158,6 +1229,11 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    
 	    /**
 	     * Copies aspects from the source to the target node.
+	     *
+	     * @param copyDetails a {@link org.alfresco.repo.copy.CopyDetails} object
+	     * @param targetNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	     * @param aspectsToIgnore a {@link java.util.Set} object
+	     * @param callbacks a {@link java.util.Map} object
 	     */
 	    private void copyAspects(
 	            CopyDetails copyDetails, 
@@ -1188,7 +1264,15 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    }
 	    
 	    /**
+	     * <p>copyChildren.</p>
+	     *
 	     * @param copyChildren              <tt>false</tt> if the client selected not to recurse
+	     * @param copyDetails a {@link org.alfresco.repo.copy.CopyDetails} object
+	     * @param copyTarget a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	     * @param copyTargetIsNew a boolean
+	     * @param copiesByOriginals a {@link java.util.Map} object
+	     * @param copies a {@link java.util.Set} object
+	     * @param callbacks a {@link java.util.Map} object
 	     */
 	    private void copyChildren(
 	            CopyDetails copyDetails,
@@ -1231,9 +1315,19 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	        }
 	    }
 
+	    /** Constant <code>KEY_POST_COPY_ASSOCS="CopyServiceImpl.postCopyAssocs"</code> */
 	    private static final String KEY_POST_COPY_ASSOCS = "CopyServiceImpl.postCopyAssocs";
 	    /**
+	     * <p>copyChildren.</p>
+	     *
 	     * @param copyChildren              <tt>false</tt> if the client selected not to recurse
+	     * @param copyDetails a {@link org.alfresco.repo.copy.CopyDetails} object
+	     * @param classQName a {@link org.alfresco.service.namespace.QName} object
+	     * @param copyTarget a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	     * @param copyTargetIsNew a boolean
+	     * @param copiesByOriginals a {@link java.util.Map} object
+	     * @param copies a {@link java.util.Set} object
+	     * @param callbacks a {@link java.util.Map} object
 	     */
 	    private void copyChildren(
 	            CopyDetails copyDetails,

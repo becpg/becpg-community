@@ -12,8 +12,12 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
  */
 public class AttachmentHelper {
 
+	  /** Constant <code>HEADER_USER_AGENT="User-Agent"</code> */
 	  private static final String HEADER_USER_AGENT     = "User-Agent";
 	 
+	  /**
+	   * <p>Constructor for AttachmentHelper.</p>
+	   */
 	  private AttachmentHelper() {
 		  
 	  }
@@ -58,6 +62,12 @@ public class AttachmentHelper {
 	  
 	  
 	    
+	    /**
+	     * <p>filterNameForQuotedString.</p>
+	     *
+	     * @param s a {@link java.lang.String} object
+	     * @return a {@link java.lang.String} object
+	     */
 	    private static String filterNameForQuotedString(String s)
 	    {
 	        StringBuilder sb = new StringBuilder();
@@ -76,6 +86,12 @@ public class AttachmentHelper {
 	        return sb.toString();
 	    }
 	    
+	    /**
+	     * <p>isValidQuotedStringHeaderParamChar.</p>
+	     *
+	     * @param c a char
+	     * @return a boolean
+	     */
 	    private static boolean isValidQuotedStringHeaderParamChar(char c)
 	    {
 	        // see RFC2616 section 2.2: 

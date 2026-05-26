@@ -27,6 +27,7 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  */
 public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyCompletePolicy, CopyServicePolicies.BeforeCopyPolicy {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityCopyPolicy.class);
 
 	private EntityService entityService;

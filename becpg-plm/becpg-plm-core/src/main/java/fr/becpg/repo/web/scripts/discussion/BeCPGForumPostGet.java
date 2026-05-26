@@ -77,6 +77,12 @@ public class BeCPGForumPostGet extends AbstractDiscussionWebScript {
 		return model;
 	}
 
+	/**
+	 * <p>getSupplierAccount.</p>
+	 *
+	 * @param topic a {@link org.alfresco.service.cmr.discussion.TopicInfo} object
+	 * @return a {@link java.util.Map} object
+	 */
 	private Map<String, String> getSupplierAccount(TopicInfo topic) {
 
 		Map<String, String> ret = new HashMap<>();

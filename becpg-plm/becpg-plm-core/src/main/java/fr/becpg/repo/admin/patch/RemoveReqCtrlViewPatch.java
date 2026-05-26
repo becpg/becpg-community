@@ -31,7 +31,9 @@ import fr.becpg.model.PLMModel;
  */
 public class RemoveReqCtrlViewPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(RemoveReqCtrlViewPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.removeReqCtrlViewPatch.r"{trunked}</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.removeReqCtrlViewPatch.result";
 
 	private NodeDAO nodeDAO;

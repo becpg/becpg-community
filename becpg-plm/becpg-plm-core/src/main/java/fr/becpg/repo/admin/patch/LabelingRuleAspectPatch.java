@@ -31,7 +31,9 @@ import fr.becpg.model.PLMModel;
  */
 public class LabelingRuleAspectPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(LabelingRuleAspectPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.labelingRuleAspectPatch.resu"{trunked}</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.labelingRuleAspectPatch.result";
 
 	private NodeDAO nodeDAO;

@@ -39,8 +39,10 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 		implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnAddAspectPolicy, NodeServicePolicies.BeforeDeleteNodePolicy,
 			NodeServicePolicies.OnUpdatePropertiesPolicy {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityTplRefAspectPolicy.class);
 
+	/** Constant <code>TPL_CACHE_NAME="EntityTplServiceImpl.class.getName()"</code> */
 	private static final String TPL_CACHE_NAME = EntityTplServiceImpl.class.getName();
 
 	private AssociationService associationService;
@@ -182,6 +184,11 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 		return true;
 	}
 
+	/**
+	 * <p>invalidateTplCache.</p>
+	 *
+	 * @param impactedTypes a {@link java.util.Set} object
+	 */
 	private void invalidateTplCache(Set<QName> impactedTypes) {
 
 		if ((beCPGCacheService == null) || (impactedTypes == null) || impactedTypes.isEmpty()) {
@@ -230,6 +237,12 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 		
 	}
 	
+	/**
+	 * <p>decorate.</p>
+	 *
+	 * @param sourceNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String decorate(NodeRef sourceNodeRef) {
 
 		if (nodeService.exists(sourceNodeRef)) {

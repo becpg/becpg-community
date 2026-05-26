@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -44,6 +44,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  */
 public abstract class LabelingComponent extends BeCPGDataObject implements RepositoryEntity{
 
+	/** Constant <code>serialVersionUID=270866664168102414L</code> */
 	private static final long serialVersionUID = 270866664168102414L;
 
 	protected Double qty = 0d;

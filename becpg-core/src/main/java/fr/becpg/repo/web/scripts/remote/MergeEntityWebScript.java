@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -37,12 +37,18 @@ import fr.becpg.repo.entity.version.EntityVersionService;
  */
 public class MergeEntityWebScript extends AbstractEntityWebScript {
 
+	/** Constant <code>PARAM_MAJOR_VERSION="majorVersion"</code> */
 	private static final String PARAM_MAJOR_VERSION = "majorVersion";
+	/** Constant <code>PARAM_DESCRIPTION="description"</code> */
 	private static final String PARAM_DESCRIPTION = "description";
+	/** Constant <code>PARAM_BRANCH_TO_NODEREF="branchToNodeRef"</code> */
 	private static final String PARAM_BRANCH_TO_NODEREF = "branchToNodeRef";
+	/** Constant <code>PARAM_IMPACT_WUSED="impactWused"</code> */
 	private static final String PARAM_IMPACT_WUSED = "impactWused";
+	/** Constant <code>PARAM_RENAME_ON_MERGE="renameOnMerge"</code> */
 	private static final String PARAM_RENAME_ON_MERGE = "renameOnMerge";
 
+	/** Constant <code>VALUE_TRUE="true"</code> */
 	private static final String VALUE_TRUE = "true";
 
 	private EntityVersionService entityVersionService;

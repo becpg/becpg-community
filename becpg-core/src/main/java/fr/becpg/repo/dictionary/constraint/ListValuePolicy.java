@@ -38,6 +38,7 @@ public class ListValuePolicy extends AbstractBeCPGPolicy implements OnUpdateProp
 		NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnUpdateNodePolicy, NodeServicePolicies.OnCreateNodePolicy,
 		NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnCreateAssociationPolicy {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ListValuePolicy.class);
 
 

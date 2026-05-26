@@ -26,7 +26,9 @@ import fr.becpg.repo.entity.EntityTplService;
  */
 public class AddActivityListPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AddActivityListPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.addActivityListPatch.res"{trunked}</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.addActivityListPatch.result";
 
 	private NodeDAO nodeDAO;
@@ -57,6 +59,12 @@ public class AddActivityListPatch extends AbstractBeCPGPatch {
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
+	/**
+	 * <p>doForType.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @param isAspect a boolean
+	 */
 	private void doForType(final QName type, boolean isAspect) {
 		
 		final Pair<Long, QName> val = getQnameDAO().getQName(type);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -56,6 +56,7 @@ public class CalendarDataExtractor extends AbstractNodeDataExtractor  {
 	/** The Constant TYPE_DATALIST. */
 	static final QName PROP_WHAT_EVENT = QName.createQName(MODEL_1_0_URI, "whatEvent");
 	
+	/** Constant <code>PROP_DESCRIPTION_EVENT</code> */
 	static final QName PROP_DESCRIPTION_EVENT = QName.createQName(MODEL_1_0_URI, "descriptionEvent");
 	
 

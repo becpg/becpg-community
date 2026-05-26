@@ -18,6 +18,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
 @AlfQname(qname = "bcpg:logisticUnit")
 public class LogisticUnitData extends ProductData {
 	
+	/** Constant <code>serialVersionUID=-3248594783115350751L</code> */
 	private static final long serialVersionUID = -3248594783115350751L;
 	private Double secondaryWidth;
 	private Double tertiaryWidth;

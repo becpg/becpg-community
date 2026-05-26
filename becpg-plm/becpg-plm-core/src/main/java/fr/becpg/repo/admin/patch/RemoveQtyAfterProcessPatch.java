@@ -31,7 +31,9 @@ import fr.becpg.model.PLMModel;
  */
 public class RemoveQtyAfterProcessPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(RemoveQtyAfterProcessPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.removeQtyAfterProcessPat"{trunked}</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.removeQtyAfterProcessPatch.result";
 
 	private NodeDAO nodeDAO;

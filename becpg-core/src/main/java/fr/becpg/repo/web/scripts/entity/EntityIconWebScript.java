@@ -25,6 +25,7 @@ import fr.becpg.repo.entity.EntityIconService;
  */
 public class EntityIconWebScript extends AbstractWebScript {
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(EntityIconWebScript.class);
 
 	private EntityIconService entityIconService;

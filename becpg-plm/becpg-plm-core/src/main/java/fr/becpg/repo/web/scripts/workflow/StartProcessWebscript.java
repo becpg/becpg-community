@@ -68,20 +68,28 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class StartProcessWebscript extends AbstractWebScript {
 
+	/** Constant <code>IN_GROUP="inGroup"</code> */
 	private static final String IN_GROUP = "inGroup";
 	
+	/** Constant <code>IN_GROUP_OR_EMPTY="inGroupOrEmpty"</code> */
 	private static final String IN_GROUP_OR_EMPTY = "inGroupOrEmpty";
 
+	/** Constant <code>PARAM_NODEREFS="nodeRefs"</code> */
 	private static final String PARAM_NODEREFS = "nodeRefs";
 
+	/** Constant <code>PARAM_DEFS="defs"</code> */
 	private static final String PARAM_DEFS = "defs";
 
+	/** Constant <code>PARAM_SCRIPT="script"</code> */
 	private static final String PARAM_SCRIPT = "script";
 
+	/** Constant <code>CONFIG_PATH="/app:company_home/cm:System/cm:Config/c"{trunked}</code> */
 	private static final String CONFIG_PATH = "/app:company_home/cm:System/cm:Config/cm:process.json";
 
+	/** Constant <code>SCRIPT_PATH="/app:company_home/cm:System/cm:Workflow"{trunked}</code> */
 	private static final String SCRIPT_PATH =  "/app:company_home/cm:System/cm:WorkflowScripts";
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(StartProcessWebscript.class);
 
 	private Repository repository;
@@ -377,11 +385,11 @@ public class StartProcessWebscript extends AbstractWebScript {
 	}
 	
 	/**
-	 * 
+	 *
 	 * note : returns true if the group is empty or doesn't exist
-	 * 
-	 * @param permissionGroup
-	 * @return
+	 *
+	 * @param permissionGroup a {@link java.lang.String} object
+	 * @return a boolean
 	 */
 	private boolean hasCurrentUserPermission(String permissionGroup) {
 		

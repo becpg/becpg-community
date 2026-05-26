@@ -34,6 +34,7 @@ public class JavascriptReportEngine implements BeCPGReportEngine {
 	/** Constant <code>JS_EXTENSION=".js"</code> */
 	public static final String JS_EXTENSION = ".js";
 	
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(JavascriptReportEngine.class);
 
 	@Autowired

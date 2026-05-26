@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -30,9 +30,13 @@ import org.apache.commons.logging.LogFactory;
  */
 public class CompositeHelper {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(CompositeHelper.class);
 
 	
+	/**
+	 * <p>Constructor for CompositeHelper.</p>
+	 */
 	private CompositeHelper() {
 		//Do nothing
 	}
@@ -54,6 +58,13 @@ public class CompositeHelper {
 		return composite;
 	}
 
+	 /**
+	  * <p>loadChildren.</p>
+	  *
+	  * @param composite a {@link fr.becpg.repo.data.hierarchicalList.Composite} object
+	  * @param items a {@link java.util.List} object
+	  * @param <T> a T class
+	  */
 	 private static <T extends CompositeDataItem<T>> void loadChildren(Composite<T> composite, List<T> items ){
 		 for (T item : items){
 			 if((item.getParent() == null && composite.getData() == null) 

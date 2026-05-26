@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -48,6 +48,7 @@ import fr.becpg.repo.variant.model.VariantData;
  */
 public class CompositionCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(CompositionCalculatingFormulationHandler.class);
 
 
@@ -153,6 +154,14 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		return true;
 	}
 
+	/**
+	 * <p>visitVariantData.</p>
+	 *
+	 * @param variants a {@link java.util.List} object
+	 * @param composite a {@link fr.becpg.repo.data.hierarchicalList.Composite} object
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param parentLossRatio a {@link java.lang.Double} object
+	 */
 	private void visitVariantData(List<VariantData> variants, Composite<CompoListDataItem> composite, ProductData formulatedProduct, Double parentLossRatio) {
 
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
@@ -208,6 +217,12 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 
 	}
 	
+	/**
+	 * <p>calculateAttributesOfGenericRawMaterial.</p>
+	 *
+	 * @param rawMaterialData a {@link fr.becpg.repo.product.data.RawMaterialData} object
+	 * @param composite a {@link fr.becpg.repo.data.hierarchicalList.Composite} object
+	 */
 	private void calculateAttributesOfGenericRawMaterial(RawMaterialData rawMaterialData, Composite<CompoListDataItem> composite) {
 		List<NodeRef> supplierNodeRefs = new ArrayList<>();
 		List<NodeRef> plantNodeRefs = new ArrayList<>();

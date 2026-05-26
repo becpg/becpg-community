@@ -35,6 +35,7 @@ import fr.becpg.repo.security.SecurityService;
  */
 public class NutDatabaseImportWebScript extends AbstractWebScript {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(NutDatabaseImportWebScript.class);
 	@Autowired
 	private AlfrescoRepository<ProductData> alfrescoRepository;
@@ -44,11 +45,17 @@ public class NutDatabaseImportWebScript extends AbstractWebScript {
 	private NodeService nodeService;
 
 	// Define static final variables for parameter names
+	/** Constant <code>SUPPLIER_PARAM="supplier"</code> */
 	private static final String SUPPLIER_PARAM = "supplier";
+	/** Constant <code>DEST_PARAM="dest"</code> */
 	private static final String DEST_PARAM = "dest";
+	/** Constant <code>ONLY_NUTS_PARAM="onlyNuts"</code> */
 	private static final String ONLY_NUTS_PARAM = "onlyNuts";
+	/** Constant <code>ENTITIES_PARAM="entities"</code> */
 	private static final String ENTITIES_PARAM = "entities";
+	/** Constant <code>REFERENCE_LOCALES_PARAM="referenceNutrientLocales"</code> */
 	private static final String REFERENCE_LOCALES_PARAM = "referenceNutrientLocales";
+	/** Constant <code>REFERENCE_IMPORT_PARAM="addAsReferenceNutrient"</code> */
 	private static final String REFERENCE_IMPORT_PARAM = "addAsReferenceNutrient";
 
 	/**

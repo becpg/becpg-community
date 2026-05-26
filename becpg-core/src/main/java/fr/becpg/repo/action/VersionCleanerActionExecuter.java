@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2010-2021 beCPG. 
+Copyright (C) 2010-2026 beCPG. 
  
 This file is part of beCPG 
  
@@ -156,6 +156,15 @@ public class VersionCleanerActionExecuter extends ActionExecuterAbstractBase {
 		}
 	}
 
+	/**
+	 * <p>parseAction.</p>
+	 *
+	 * @param ruleAction a {@link org.alfresco.service.cmr.action.Action} object
+	 * @param compositeAction a {@link org.alfresco.service.cmr.action.Action} object
+	 * @param versionConfig a {@link fr.becpg.repo.action.VersionCleanerActionConfig} object
+	 * @param isLastAction a boolean
+	 * @return a boolean
+	 */
 	private boolean parseAction(Action ruleAction, Action compositeAction, VersionCleanerActionConfig versionConfig, boolean isLastAction) {
 		
 		if(logger.isDebugEnabled()) {

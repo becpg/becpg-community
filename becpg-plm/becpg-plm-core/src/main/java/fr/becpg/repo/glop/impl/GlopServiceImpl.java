@@ -52,8 +52,10 @@ import fr.becpg.repo.system.SystemConfigurationService;
 @Service("glopService")
 public class GlopServiceImpl implements GlopService {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(GlopServiceImpl.class);
 	
+	/** Constant <code>STATUS="status"</code> */
 	private static final String STATUS = "status";
 
 	@Autowired
@@ -72,6 +74,11 @@ public class GlopServiceImpl implements GlopService {
 	private BeCPGTicketService beCPGTicketService;
 	
 	
+	/**
+	 * <p>serverUrl.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String serverUrl() {
 		return systemConfigurationService.confValue("beCPG.glop.serverUrl");
 	}
@@ -113,6 +120,17 @@ public class GlopServiceImpl implements GlopService {
 		}
 	}
 	
+	/**
+	 * <p>optimizeInternal.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param glopContext a {@link fr.becpg.repo.glop.model.GlopContext} object
+	 * @return a {@link fr.becpg.repo.glop.model.GlopData} object
+	 * @throws fr.becpg.repo.glop.GlopException if any.
+	 * @throws org.springframework.web.client.RestClientException if any.
+	 * @throws java.net.URISyntaxException if any.
+	 * @throws org.json.JSONException if any.
+	 */
 	private GlopData optimizeInternal(ProductData productData, GlopContext glopContext) throws GlopException, RestClientException, URISyntaxException, JSONException {
 
 		StopWatch stopWatch = null;
@@ -227,6 +245,16 @@ public class GlopServiceImpl implements GlopService {
 		return response;
 	}
 	
+	/**
+	 * <p>buildGlopData.</p>
+	 *
+	 * @param obj a {@link org.json.JSONObject} object
+	 * @param constraints a {@link java.util.List} object
+	 * @param variables a {@link java.util.Set} object
+	 * @param totalQuantity a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.glop.model.GlopData} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private GlopData buildGlopData(JSONObject obj, List<GlopConstraint> constraints, Set<CompoListDataItem> variables, Double totalQuantity) throws JSONException {
 		
 		GlopData ret = new GlopData();
@@ -283,6 +311,13 @@ public class GlopServiceImpl implements GlopService {
 		return ret;
 	}
 
+	/**
+	 * <p>findMatchingVariable.</p>
+	 *
+	 * @param variables a {@link java.util.Set} object
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 */
 	private CompoListDataItem findMatchingVariable(Set<CompoListDataItem> variables, NodeRef nodeRef) {
 		for (CompoListDataItem variable : variables) {
 			if (nodeRef.equals(variable.getCharactNodeRef())) {
@@ -292,6 +327,13 @@ public class GlopServiceImpl implements GlopService {
 		return null;
 	}
 
+	/**
+	 * <p>findMatchingConstraint.</p>
+	 *
+	 * @param constraints a {@link java.util.List} object
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.glop.model.GlopConstraint} object
+	 */
 	private GlopConstraint findMatchingConstraint(List<GlopConstraint> constraints, NodeRef nodeRef) {
 		for (GlopConstraint constraint : constraints) {
 			if (constraint.getData() instanceof SimpleCharactDataItem) {
@@ -303,6 +345,13 @@ public class GlopServiceImpl implements GlopService {
 		return null;
 	}
 
+	/**
+	 * <p>completeResponse.</p>
+	 *
+	 * @param constraintContributionMaps a {@link java.util.Map} object
+	 * @param jsonResponse a {@link org.json.JSONObject} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private void completeResponse(Map<Object, Map<CompoListDataItem, Double>> constraintContributionMaps,
 			JSONObject jsonResponse) throws JSONException {
 		
@@ -332,6 +381,13 @@ public class GlopServiceImpl implements GlopService {
 		}
 	}
 
+	/**
+	 * <p>computeComponentContribution.</p>
+	 *
+	 * @param component a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param constraintItem a {@link java.lang.Object} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double computeComponentContribution(final ProductData component, Object constraintItem) {
 		
 		if (constraintItem instanceof CompoListDataItem) {
@@ -351,6 +407,12 @@ public class GlopServiceImpl implements GlopService {
 		return null;
 	}
 
+	/**
+	 * <p>buildConstraintContributionMaps.</p>
+	 *
+	 * @param constraints a {@link java.util.List} object
+	 * @return a {@link java.util.Map} object
+	 */
 	private Map<Object, Map<CompoListDataItem, Double>> buildConstraintContributionMaps(List<GlopConstraint> constraints) {
 		
 		Map<Object, Map<CompoListDataItem, Double>> constraintContributions = new HashMap<>();
@@ -362,6 +424,18 @@ public class GlopServiceImpl implements GlopService {
 		return constraintContributions;
 	}
 	
+	/**
+	 * <p>buildRequest.</p>
+	 *
+	 * @param variables a {@link java.util.Set} object
+	 * @param constraints a {@link java.util.List} object
+	 * @param constraintContributions a {@link java.util.Map} object
+	 * @param target a {@link fr.becpg.repo.glop.model.GlopTarget} object
+	 * @param targetContributions a {@link java.util.Map} object
+	 * @param applyTolerance a boolean
+	 * @return a {@link org.json.JSONObject} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private JSONObject buildRequest(Set<CompoListDataItem> variables, List<GlopConstraint> constraints,
 			Map<Object, Map<CompoListDataItem, Double>> constraintContributions, GlopTarget target,
 			Map<CompoListDataItem, Double> targetContributions, boolean applyTolerance)
@@ -397,6 +471,15 @@ public class GlopServiceImpl implements GlopService {
 		return ret;
 	}
 
+	/**
+	 * <p>buildJsonVariables.</p>
+	 *
+	 * @param variables a {@link java.util.Set} object
+	 * @param constraints a {@link java.util.List} object
+	 * @param applyTolerance a boolean
+	 * @return a {@link org.json.JSONObject} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private JSONObject buildJsonVariables(Set<CompoListDataItem> variables, List<GlopConstraint> constraints, boolean applyTolerance)
 			throws JSONException {
 		JSONObject jsonVariables = new JSONObject();
@@ -415,6 +498,12 @@ public class GlopServiceImpl implements GlopService {
 		return jsonVariables;
 	}
 
+	/**
+	 * <p>applyTolerance.</p>
+	 *
+	 * @param constraints a {@link java.util.List} object
+	 * @return a boolean
+	 */
 	private boolean applyTolerance(List<GlopConstraint> constraints) {
 
 		boolean hasTolerance = false;
@@ -434,6 +523,14 @@ public class GlopServiceImpl implements GlopService {
 		return hasTolerance;
 	}
 	
+	/**
+	 * <p>serializeConstraint.</p>
+	 *
+	 * @param constraint a {@link fr.becpg.repo.glop.model.GlopConstraint} object
+	 * @param constraintContributions a {@link java.util.Map} object
+	 * @return a {@link org.json.JSONObject} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private JSONObject serializeConstraint(GlopConstraint constraint, Map<Object, Map<CompoListDataItem, Double>> constraintContributions) throws JSONException {
 		
 		JSONObject ret = new JSONObject();
@@ -447,6 +544,14 @@ public class GlopServiceImpl implements GlopService {
 		return ret;
 	}
 
+	/**
+	 * <p>serializeCoefficients.</p>
+	 *
+	 * @param constraint a {@link fr.becpg.repo.glop.model.GlopConstraint} object
+	 * @param constraintContributions a {@link java.util.Map} object
+	 * @return a {@link org.json.JSONObject} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private JSONObject serializeCoefficients(GlopConstraint constraint, Map<Object, Map<CompoListDataItem, Double>> constraintContributions) throws JSONException {
 		JSONObject coefficients = new JSONObject();
 		for (Map.Entry<CompoListDataItem, Double> entry : constraintContributions.get(constraint.getData()).entrySet()) {
@@ -455,6 +560,12 @@ public class GlopServiceImpl implements GlopService {
 		return coefficients;
 	}
 	
+	/**
+	 * <p>serializeValue.</p>
+	 *
+	 * @param value a double
+	 * @return a {@link java.lang.Object} object
+	 */
 	private Object serializeValue(double value) {
 		if (Double.isFinite(value)) {
 			return value;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -51,6 +51,7 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
  */
 public class MultiLevelExtractor extends SimpleExtractor {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(MultiLevelExtractor.class);
 
 	/** Constant <code>PROP_DEPTH="depth"</code> */
@@ -285,6 +286,12 @@ public class MultiLevelExtractor extends SimpleExtractor {
 		return null;
 	}
 
+	/**
+	 * <p>updateDepthUserPref.</p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @return a boolean
+	 */
 	private boolean updateDepthUserPref(DataListFilter dataListFilter) {
 		String username = AuthenticationUtil.getFullyAuthenticatedUser();
 
@@ -309,6 +316,12 @@ public class MultiLevelExtractor extends SimpleExtractor {
 
 	}
 
+	/**
+	 * <p>getDepthUserPref.</p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @return a int
+	 */
 	private int getDepthUserPref(DataListFilter dataListFilter) {
 		String username = AuthenticationUtil.getFullyAuthenticatedUser();
 

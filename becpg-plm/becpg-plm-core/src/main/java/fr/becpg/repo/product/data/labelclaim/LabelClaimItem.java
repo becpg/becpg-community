@@ -21,6 +21,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfCacheable(isCharact = true)
 public class LabelClaimItem extends BeCPGDataObject {
 	
+	/** Constant <code>serialVersionUID=1L</code> */
 	private static final long serialVersionUID = 1L;
 
 	private String charactName;

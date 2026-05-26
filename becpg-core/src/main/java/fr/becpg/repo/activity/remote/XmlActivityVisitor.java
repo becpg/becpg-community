@@ -35,6 +35,7 @@ import fr.becpg.common.BeCPGException;
  */
 public class XmlActivityVisitor implements RemoteActivityVisitor {
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(XmlActivityVisitor.class);
 
 	private SiteService siteService;
@@ -108,9 +109,11 @@ public class XmlActivityVisitor implements RemoteActivityVisitor {
 	}
 
 	/**
-	 * @param xmlw
-	 * @param feedEntry
-	 * @throws XMLStreamException
+	 * <p>writeFeedEntry.</p>
+	 *
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @param feedEntry a {@link org.alfresco.repo.domain.activities.ActivityFeedEntity} object
+	 * @throws javax.xml.stream.XMLStreamException
 	 */
 	private void writeFeedEntry(XMLStreamWriter xmlw, ActivityFeedEntity feedEntry) throws XMLStreamException {
 		try {
@@ -168,6 +171,12 @@ public class XmlActivityVisitor implements RemoteActivityVisitor {
 		}
 	}
 
+	/**
+	 * <p>toString.</p>
+	 *
+	 * @param val a {@link java.lang.Object} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String toString(Object val) {
 		if (val != null) {
 			return val.toString();

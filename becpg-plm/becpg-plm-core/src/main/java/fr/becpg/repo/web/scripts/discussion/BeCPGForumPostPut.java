@@ -90,6 +90,7 @@ public class BeCPGForumPostPut extends ForumPostPut {
 		return model;
 	}
 
+	/** {@inheritDoc} */
 	private void doUpdatePost(PostInfo post, TopicInfo topic, WebScriptRequest req, JSONObject json) {
 		boolean updateTopic = false;
 		// Fetch the details from the JSON

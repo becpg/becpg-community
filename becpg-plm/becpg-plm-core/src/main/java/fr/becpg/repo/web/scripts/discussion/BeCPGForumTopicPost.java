@@ -93,6 +93,12 @@ public class BeCPGForumTopicPost extends ForumTopicPost {
 		return model;
 	}
 
+	/**
+	 * <p>updateTopicPermission.</p>
+	 *
+	 * @param topicNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param userName a {@link java.lang.String} object
+	 */
 	private void updateTopicPermission(NodeRef topicNodeRef, String userName) {
 		NodeRef discussion = nodeService.getPrimaryParent(topicNodeRef).getParentRef();
 		permissionService.setPermission(discussion, userName, PermissionService.READ, true);

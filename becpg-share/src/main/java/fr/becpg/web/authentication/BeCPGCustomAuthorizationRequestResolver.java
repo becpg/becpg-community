@@ -21,6 +21,7 @@ public class BeCPGCustomAuthorizationRequestResolver implements OAuth2Authorizat
 
     private OAuth2AuthorizationRequestResolver defaultResolver;
     private AIMSConfig aimsConfig;
+    /** Constant <code>AUDIENCE="audience"</code> */
     private static final  String AUDIENCE="audience";
     private String specificReauthIdcId;
 
@@ -78,6 +79,13 @@ public class BeCPGCustomAuthorizationRequestResolver implements OAuth2Authorizat
         return oAuth2AuthorizationRequest;
     }
 
+    /**
+     * <p>customizeAuthorizationRequest.</p>
+     *
+     * @param authorizationRequest a {@link org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest} object
+     * @param request a {@link jakarta.servlet.http.HttpServletRequest} object
+     * @return a {@link org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest} object
+     */
     private OAuth2AuthorizationRequest customizeAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest,
                                                                      HttpServletRequest request)
     {

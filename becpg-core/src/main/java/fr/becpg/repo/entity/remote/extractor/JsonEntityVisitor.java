@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -111,6 +111,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		this.entityListDAO = remoteServiceRegisty.entityListDAO();
 	}
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(JsonEntityVisitor.class);
 
 	/** {@inheritDoc} */
@@ -698,6 +699,14 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
+	/**
+	 * <p>visitMltextAttributes.</p>
+	 *
+	 * @param propType a {@link java.lang.String} object
+	 * @param entity a {@link org.json.JSONObject} object
+	 * @param mlValues a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private void visitMltextAttributes(String propType, JSONObject entity, MLText mlValues) throws JSONException {
 		if (mlValues != null) {
 			for (Map.Entry<Locale, String> mlEntry : mlValues.entrySet()) {
@@ -711,6 +720,13 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		}
 	}
 
+	/**
+	 * <p>visitSite.</p>
+	 *
+	 * @param entity a {@link org.json.JSONObject} object
+	 * @param path a {@link org.alfresco.service.cmr.repository.Path} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private void visitSite(JSONObject entity, Path path) throws JSONException {
 
 		String siteId = SiteHelper.extractSiteId(path.toPrefixString(namespaceService));
@@ -732,6 +748,16 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
+	/**
+	 * <p>visitPropValue.</p>
+	 *
+	 * @param propType a {@link org.alfresco.service.namespace.QName} object
+	 * @param entity a {@link org.json.JSONObject} object
+	 * @param value a {@link java.io.Serializable} object
+	 * @param context a {@link fr.becpg.repo.entity.remote.extractor.RemoteJSONContext} object
+	 * @throws org.json.JSONException if any.
+	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if any.
+	 */
 	@SuppressWarnings("unchecked")
 	private void visitPropValue(QName propType, JSONObject entity, Serializable value, RemoteJSONContext context)
 			throws JSONException, RemoteException {

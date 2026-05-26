@@ -33,7 +33,9 @@ import org.springframework.extensions.surf.util.I18NUtil;
  */
 public class IsManualListItemPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(IsManualListItemPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.isManualListItemPatch.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.isManualListItemPatch.result";
 
 	private BehaviourFilter policyBehaviourFilter;
@@ -98,6 +100,9 @@ public class IsManualListItemPatch extends AbstractBeCPGPatch {
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
+	/**
+	 * <p>patchCurrentUSerSize.</p>
+	 */
 	private void patchCurrentUSerSize() {
 
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
@@ -190,6 +195,12 @@ public class IsManualListItemPatch extends AbstractBeCPGPatch {
 
 	}
 
+	/**
+	 * <p>getEnforcedProps.</p>
+	 *
+	 * @param propertyDefs a {@link java.util.Collection} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<PropertyDefinition> getEnforcedProps(Collection<PropertyDefinition> propertyDefs) {
 		List<PropertyDefinition> propDefs = new ArrayList<>();
 		for (PropertyDefinition propDef : propertyDefs) {
@@ -200,6 +211,14 @@ public class IsManualListItemPatch extends AbstractBeCPGPatch {
 		return propDefs;
 	}
 
+	/**
+	 * <p>doForAspect.</p>
+	 *
+	 * @param aspect a {@link org.alfresco.service.namespace.QName} object
+	 * @param mapAspect a {@link java.util.Map} object
+	 * @param mapTypes a {@link java.util.Map} object
+	 * @param isAspect a boolean
+	 */
 	private void doForAspect(final QName aspect, final Map<QName, List<PropertyDefinition>> mapAspect,
 			final Map<QName, List<PropertyDefinition>> mapTypes, final boolean isAspect) {
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
@@ -312,6 +331,12 @@ public class IsManualListItemPatch extends AbstractBeCPGPatch {
 		}
 	}
 
+	/**
+	 * <p>updatePropertyDefs.</p>
+	 *
+	 * @param dataListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param propertyDefs a {@link java.util.Collection} object
+	 */
 	private void updatePropertyDefs(NodeRef dataListNodeRef, Collection<PropertyDefinition> propertyDefs) {
 		for (PropertyDefinition propDef : propertyDefs) {
 			//logger.info("propDef " + propDef.getName());

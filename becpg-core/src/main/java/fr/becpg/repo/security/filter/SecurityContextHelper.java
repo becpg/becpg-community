@@ -11,6 +11,7 @@ package fr.becpg.repo.security.filter;
  */
 public class SecurityContextHelper {
 
+	/** Constant <code>skipSecurityRules</code> */
 	private static final ThreadLocal<Boolean> skipSecurityRules = new ThreadLocal<Boolean>() {
 		@Override
 		protected Boolean initialValue() {

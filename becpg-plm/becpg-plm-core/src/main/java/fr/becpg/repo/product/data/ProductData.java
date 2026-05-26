@@ -86,7 +86,9 @@ import fr.becpg.repo.variant.model.VariantEntity;
 public class ProductData extends AbstractScorableEntity
 		implements EffectiveDataItem, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity, RegulatoryEntity, SurveyableEntity {
 
+	/** Constant <code>serialVersionUID=764534088277737617L</code> */
 	private static final long serialVersionUID = 764534088277737617L;
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ProductData.class);
 
 	private NodeRef hierarchy1;
@@ -2873,6 +2875,14 @@ public class ProductData extends AbstractScorableEntity
 		this.hazardClassificationFormulaContext = hazardClassificationFormulaContext;
 	}
 
+	/**
+	 * <p>filterList.</p>
+	 *
+	 * @param list a {@link java.util.List} object
+	 * @param filters a {@link java.util.List} object
+	 * @param <T> a T class
+	 * @return a {@link java.util.List} object
+	 */
 	private <T> List<T> filterList(List<T> list, List<DataListFilter<ProductData, T>> filters) {
 		if ((filters != null) && !filters.isEmpty()) {
 			Stream<T> stream = list.stream();

@@ -50,6 +50,7 @@ import jakarta.annotation.Nullable;
 public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implements PublicationChannelService, EntityCatalogObserver,
 		NodeServicePolicies.BeforeDeleteNodePolicy, NodeServicePolicies.OnUpdateNodePolicy, NodeServicePolicies.OnCreateNodePolicy {
 
+	/** Constant <code>CACHE_KEY="PublicationChannelServiceImpl.class.get"{trunked}</code> */
 	private static final String CACHE_KEY = PublicationChannelServiceImpl.class.getName();
 
 	private EntityListDAO entityListDAO;
@@ -326,6 +327,11 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 		return true;
 	}
 
+	/**
+	 * <p>updateChannelStates.</p>
+	 *
+	 * @param channelListItemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void updateChannelStates(NodeRef channelListItemNodeRef) {
 
 		if (nodeService.exists(channelListItemNodeRef)) {
@@ -413,6 +419,13 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 	}
 
 	// Helper method to get property or default empty list
+	/**
+	 * <p>getPropertyOrDefault.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param propertyQName a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.util.List} object
+	 */
 	@SuppressWarnings("unchecked")
 	private List<String> getPropertyOrDefault(NodeRef entityNodeRef, QName propertyQName) {
 		List<String> propertyValue = (List<String>) nodeService.getProperty(entityNodeRef, propertyQName);

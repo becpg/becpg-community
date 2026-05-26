@@ -25,8 +25,10 @@ import fr.becpg.model.SystemGroup;
  */
 public class BeCPGPeople extends People {
 
+	/** Constant <code>SUPPLIER_GROUP_PREFIX="EXTERNAL_SUPPLIER_"</code> */
 	private static final String SUPPLIER_GROUP_PREFIX = "EXTERNAL_SUPPLIER_";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(BeCPGPeople.class);
 
 	private AuthorityService authorityService;
@@ -50,6 +52,12 @@ public class BeCPGPeople extends People {
 		return Context.getCurrentContext().newArray(getScope(), peopleRefs);
 	}
 
+	/**
+	 * <p>filter.</p>
+	 *
+	 * @param peopleImpl a {@link java.util.List} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<PersonInfo> filter(List<PersonInfo> peopleImpl) {
 		String currentUser = AuthenticationUtil.getRunAsUser();
 		Set<String> authoritiesForUser = AuthenticationUtil.runAsSystem(() -> authorityService.getAuthoritiesForUser(currentUser));
@@ -70,6 +78,12 @@ public class BeCPGPeople extends People {
 		return peopleImpl;
 	}
 
+	/**
+	 * <p>containsSupplierGroup.</p>
+	 *
+	 * @param authoritiesForUser a {@link java.util.Set} object
+	 * @return a boolean
+	 */
 	private boolean containsSupplierGroup(Set<String> authoritiesForUser) {
 		for (String currAuth : authoritiesForUser) {
 			if ((PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString()).equals(currAuth)

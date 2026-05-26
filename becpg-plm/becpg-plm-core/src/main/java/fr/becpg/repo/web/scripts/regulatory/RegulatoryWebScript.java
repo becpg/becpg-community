@@ -18,7 +18,9 @@ import fr.becpg.repo.regulatory.ComplianceResult;
  */
 public class RegulatoryWebScript extends AbstractWebScript {
 
+	/** Constant <code>PARAM_NODEREF="nodeRef"</code> */
 	private static final String PARAM_NODEREF = "nodeRef";
+	/** Constant <code>PARAM_ASYNC="async"</code> */
 	private static final String PARAM_ASYNC = "async";
 
 	private RegulatoryService regulatoryService;

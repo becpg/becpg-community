@@ -12,6 +12,7 @@ import java.util.Objects;
  */
 public class VariantPackagingData implements Serializable {
 
+	/** Constant <code>serialVersionUID=-3460131741476715569L</code> */
 	private static final long serialVersionUID = -3460131741476715569L;
 	
 	private BigDecimal tarePrimary = BigDecimal.valueOf(0d);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -227,6 +227,12 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 
 	}
 
+	/**
+	 * <p>getPath.</p>
+	 *
+	 * @param nodeRef a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getPath(String nodeRef) {
 		return nodeService.getPath(new NodeRef(nodeRef)).toPrefixString(namespaceService);
 	}

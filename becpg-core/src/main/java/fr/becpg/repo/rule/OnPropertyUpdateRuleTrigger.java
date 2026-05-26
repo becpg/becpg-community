@@ -140,6 +140,16 @@ public class OnPropertyUpdateRuleTrigger extends RuleTriggerAbstractBase impleme
 				new JavaBehaviour(this, "onUpdateProperties"));
 	}
 
+	/**
+	 * <p>havePropertiesBeenModified.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param before a {@link java.util.Map} object
+	 * @param after a {@link java.util.Map} object
+	 * @param newNode a boolean
+	 * @param newContentOnly a boolean
+	 * @return a boolean
+	 */
 	private boolean havePropertiesBeenModified(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after, boolean newNode,
 			boolean newContentOnly) {
 		if (newContentOnly && nodeService.hasAspect(nodeRef, ContentModel.ASPECT_NO_CONTENT)) {
@@ -211,7 +221,7 @@ public class OnPropertyUpdateRuleTrigger extends RuleTriggerAbstractBase impleme
 	/**
 	 * ALF-17483: It's possible that even for a single-valued contentdata property, its definition may have been changed
 	 * and the previous persisted value is multi-valued, so let's be careful about converting to ContentData.
-	 * 
+	 *
 	 * @param object
 	 *            property value to convert
 	 * @return a ContentData if one can be extracted
@@ -292,6 +302,8 @@ public class OnPropertyUpdateRuleTrigger extends RuleTriggerAbstractBase impleme
 	}
 
 	/**
+	 * <p>triggerRules.</p>
+	 *
 	 * @param nodeRef NodeRef
 	 */
 	private void triggerRules(NodeRef nodeRef) {

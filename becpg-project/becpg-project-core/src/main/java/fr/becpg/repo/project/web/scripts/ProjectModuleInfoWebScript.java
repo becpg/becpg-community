@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -46,10 +46,13 @@ import fr.becpg.repo.project.ProjectService;
  */
 public class ProjectModuleInfoWebScript extends AbstractWebScript {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ProjectModuleInfoWebScript.class);
 
+	/** Constant <code>PARAM_SITE="site"</code> */
 	private static final String PARAM_SITE = "site";
 
+	/** Constant <code>PARAM_ENTITY_NODEREF="entityNodeRef"</code> */
 	private static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
 
 	private NodeService nodeService;
@@ -141,6 +144,13 @@ public class ProjectModuleInfoWebScript extends AbstractWebScript {
 		}
 	}
 
+	/**
+	 * <p>contains.</p>
+	 *
+	 * @param siteId a {@link java.lang.String} object
+	 * @param siteIds a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	private boolean contains(String siteId, String siteIds) {
 		for (String tmp : siteIds.split(",")) {
 			if (tmp.equals(siteId)) {

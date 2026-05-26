@@ -40,23 +40,38 @@ import fr.becpg.repo.repository.RepositoryEntityDefReader;
 public class EntityDictionaryServiceImpl extends DictionaryComponent
 		implements DictionaryService, EntityDictionaryService, RefreshableCacheListener, InitializingBean {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityDictionaryServiceImpl.class);
 
 	// Constants for cache keys
+	/** Constant <code>PROP_DEF_CACHE_SUFFIX=".propDef"</code> */
 	private static final String PROP_DEF_CACHE_SUFFIX = ".propDef";
+	/** Constant <code>CLASS_DEF_CACHE_SUFFIX=".classDef"</code> */
 	private static final String CLASS_DEF_CACHE_SUFFIX = ".classDef";
+	/** Constant <code>SUB_TYPES_CACHE_SUFFIX=".getSubTypes."</code> */
 	private static final String SUB_TYPES_CACHE_SUFFIX = ".getSubTypes.";
+	/** Constant <code>SUB_ASPECTS_CACHE_SUFFIX=".getSubAspects."</code> */
 	private static final String SUB_ASPECTS_CACHE_SUFFIX = ".getSubAspects.";
+	/** Constant <code>PREFIX_STRING_CACHE_SUFFIX=".toPrefixString"</code> */
 	private static final String PREFIX_STRING_CACHE_SUFFIX = ".toPrefixString";
+	/** Constant <code>IS_SUB_CLASS_CACHE_SUFFIX=".isSubClass"</code> */
 	private static final String IS_SUB_CLASS_CACHE_SUFFIX = ".isSubClass";
+	/** Constant <code>ASSOC_INDEX_CACHE_SUFFIX=".assocIndex"</code> */
 	private static final String ASSOC_INDEX_CACHE_SUFFIX = ".assocIndex";
+	/** Constant <code>ASSOC_INDEX_PROPERTY_SUFFIX="AssocIndex"</code> */
 	private static final String ASSOC_INDEX_PROPERTY_SUFFIX = "AssocIndex";
 
+	/** Constant <code>CACHE_SEPARATOR="_"</code> */
 	private static final String CACHE_SEPARATOR = "_";
+	/** Constant <code>MODEL_OVERRIDE_PREFIX="model.override."</code> */
 	private static final String MODEL_OVERRIDE_PREFIX = "model.override.";
+	/** Constant <code>TITLE_SUFFIX=".title"</code> */
 	private static final String TITLE_SUFFIX = ".title";
+	/** Constant <code>DESCRIPTION_SUFFIX=".description"</code> */
 	private static final String DESCRIPTION_SUFFIX = ".description";
+	/** Constant <code>COLON_REPLACEMENT="_"</code> */
 	private static final String COLON_REPLACEMENT = "_";
+	/** Constant <code>COMPILED_MODELS_CACHE="compiledModelsCache"</code> */
 	private static final String COMPILED_MODELS_CACHE = "compiledModelsCache";
 
 	private DictionaryDAO dictionaryDAO;
@@ -240,7 +255,7 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 		});
 	}
 	
-	/** {@inheritDoc} */
+    /** {@inheritDoc} */
 	@Override
     public List<QName> getTargetTypes(QName assocName) {
 		return targetTypesFromAssocCache.computeIfAbsent(assocName, k -> {
@@ -443,6 +458,9 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 
 	/**
 	 * Efficiently builds cache keys by concatenating strings
+	 *
+	 * @param parts a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
 	 */
 	private String buildCacheKey(String... parts) {
 		if (parts.length == 1) {
@@ -458,6 +476,10 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 
 	/**
 	 * Computes the actual isSubClass logic separated for better readability
+	 *
+	 * @param className a {@link org.alfresco.service.namespace.QName} object
+	 * @param ofClassName a {@link org.alfresco.service.namespace.QName} object
+	 * @return a boolean
 	 */
 	private boolean computeIsSubClass(QName className, QName ofClassName) {
 		// Validate arguments
@@ -495,6 +517,10 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 
 	/**
 	 * Computes override keys with caching to avoid repeated string operations
+	 *
+	 * @param attributeDefinition a {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition} object
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.lang.String} object
 	 */
 	private String computeOverrideKey(ClassAttributeDefinition attributeDefinition, QName nodeType) {
 		String key = nodeType.toString() + "|" + attributeDefinition.getName().toString();

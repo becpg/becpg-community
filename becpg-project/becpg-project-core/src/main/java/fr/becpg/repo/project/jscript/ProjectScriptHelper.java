@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -66,6 +66,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 
+	/** Constant <code>formatPattern</code> */
 	private static final Pattern formatPattern = Pattern.compile("(\\?format\\((.*)\\))$");
 	
 	private AlfrescoRepository<ProjectData> alfrescoRepository;
@@ -191,6 +192,12 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 
 	}
 
+	/**
+	 * <p>calculateBudgetParentValues.</p>
+	 *
+	 * @param parent a {@link fr.becpg.repo.data.hierarchicalList.Composite} object
+	 * @param props a {@link java.util.List} object
+	 */
 	private void calculateBudgetParentValues(Composite<BudgetListDataItem> parent, List<QName> props) {
 		Map<QName, Double> values = new HashMap<>();
 
@@ -309,6 +316,13 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 	}
 
 
+	/**
+	 * <p>extractDeliverableProp.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param splitted an array of {@link java.lang.String} objects
+	 * @return a {@link java.lang.String} object
+	 */
 	@SuppressWarnings("unchecked")
 	private String extractDeliverableProp(NodeRef nodeRef, String[] splitted) {
 		NodeRef ret = null;
@@ -403,6 +417,12 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 		return ProjectHelper.calculateTaskDuration(parseDate(startDate), parseDate(endDate), new CalendarWorkingDayProvider(calendarService, calendarRef));
 	}
 
+	/**
+	 * <p>parseDate.</p>
+	 *
+	 * @param dateString a {@link java.lang.String} object
+	 * @return a {@link java.util.Date} object
+	 */
 	private Date parseDate(String dateString) {
 		if ("NOW".equals(dateString)) {
 			return new Date();

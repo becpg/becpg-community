@@ -32,7 +32,9 @@ import fr.becpg.repo.project.data.PlanningMode;
  */
 public class PlanningModePatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(PlanningModePatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.planningModePatch.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.planningModePatch.result";
 
 	private NodeDAO nodeDAO;

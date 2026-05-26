@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -96,44 +96,64 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		NodeServicePolicies.OnDeleteChildAssociationPolicy, NodeServicePolicies.OnDeleteNodePolicy, CheckOutCheckInServicePolicies.OnCheckIn,
 		RefreshableCacheListener, NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnRestoreNodePolicy, InitializingBean {
 
+	/** Constant <code>EXCLUDE_PROP_MAP="excludePropMap"</code> */
 	private static final String EXCLUDE_PROP_MAP = "excludePropMap";
 
+	/** Constant <code>CRITERIA_FILTERS="criteriaFilters"</code> */
 	private static final String CRITERIA_FILTERS = "criteriaFilters";
 
+	/** Constant <code>FILTER_VALUES="filterValues"</code> */
 	private static final String FILTER_VALUES = "filterValues";
 
+	/** Constant <code>FIELD_NAME="fieldName"</code> */
 	private static final String FIELD_NAME = "fieldName";
 
+	/** Constant <code>Q_NAME_ID="qNameId"</code> */
 	private static final String Q_NAME_ID = "qNameId";
 
+	/** Constant <code>TO_RANGE="toRange"</code> */
 	private static final String TO_RANGE = "toRange";
 
+	/** Constant <code>FROM_RANGE="fromRange"</code> */
 	private static final String FROM_RANGE = "fromRange";
 
+	/** Constant <code>MODE="mode"</code> */
 	private static final String MODE = "mode";
 
+	/** Constant <code>ENTITY_FILTER="entityFilter"</code> */
 	private static final String ENTITY_FILTER = "entityFilter";
 
+	/** Constant <code>INDEX="index"</code> */
 	private static final String INDEX = "index";
 
+	/** Constant <code>STORE_REF="storeRef"</code> */
 	private static final String STORE_REF = "storeRef";
 
+	/** Constant <code>TYPE_Q_NAME_IDS="typeQNameIds"</code> */
 	private static final String TYPE_Q_NAME_IDS = "typeQNameIds";
 
+	/** Constant <code>LIST_TYPE_Q_NAME="listTypeQName"</code> */
 	private static final String LIST_TYPE_Q_NAME = "listTypeQName";
 
+	/** Constant <code>ASPECT_Q_NAME_ID="aspectQNameId"</code> */
 	private static final String ASPECT_Q_NAME_ID = "aspectQNameId";
 
+	/** Constant <code>TYPE_Q_NAME_ID="typeQNameId"</code> */
 	private static final String TYPE_Q_NAME_ID = "typeQNameId";
 
+	/** Constant <code>DATA_LIST_ITEM_TYPE="dataListItemType"</code> */
 	private static final String DATA_LIST_ITEM_TYPE = "dataListItemType";
 
+	/** Constant <code>IS_ENTITY="isEntity"</code> */
 	private static final String IS_ENTITY = "isEntity";
 
+	/** Constant <code>OFFSET_PARAM="offset"</code> */
 	private static final String OFFSET_PARAM = "offset";
 	
+	/** Constant <code>MAXRESULTS_PARAM="maxResults"</code> */
 	private static final String MAXRESULTS_PARAM = "maxResults";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AssociationServiceImplV2.class);
 
 	private EntityDictionaryService entityDictionaryService;
@@ -176,8 +196,10 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 	private AsynchronouslyRefreshedCacheRegistry registry;
 
+	/** Constant <code>ignoredAssocs</code> */
 	private static Set<QName> ignoredAssocs = new HashSet<>();
 
+	/** Constant <code>ignoredStoreRefs</code> */
 	private static Set<StoreRef> ignoredStoreRefs = new HashSet<>();
 
 	private QNameDAO qnameDAO;
@@ -275,6 +297,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		this.assocsCache = assocsCache;
 	}
 
+	/** Constant <code>UPDATE_ASSOC_COUNT="AssociationServiceImplV2.updateAssocCou"{trunked}</code> */
 	private static final String UPDATE_ASSOC_COUNT = "AssociationServiceImplV2.updateAssocCount";
 
 	/** {@inheritDoc} */
@@ -381,6 +404,15 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		return getChildAssocsImpl(listNodeRef, qName, childTypeQName, sortMap);
 	}
 
+	/**
+	 * <p>getChildAssocsImpl.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param qName a {@link org.alfresco.service.namespace.QName} object
+	 * @param childType a {@link org.alfresco.service.namespace.QName} object
+	 * @param sortProps a {@link java.util.Map} object
+	 * @return a {@link java.util.List} object
+	 */
 	private @Nonnull List<NodeRef> getChildAssocsImpl(final NodeRef nodeRef, final QName qName, final QName childType,
 			final Map<String, Boolean> sortProps) {
 
@@ -418,11 +450,25 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		});
 	}
 
+	/**
+	 * <p>isDefaultSort.</p>
+	 *
+	 * @param sortProps a {@link java.util.Map} object
+	 * @return a boolean
+	 */
 	private boolean isDefaultSort(Map<String, Boolean> sortProps) {
 		return (sortProps != null) && (sortProps.get("@bcpg:sort") != null) && sortProps.get("@bcpg:sort") && (sortProps.get("@cm:created") != null)
 				&& sortProps.get("@cm:created");
 	}
 
+	/**
+	 * <p>dbChildAssocSearch.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param childType a {@link org.alfresco.service.namespace.QName} object
+	 * @param sortProps a {@link java.util.Map} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> dbChildAssocSearch(final NodeRef nodeRef, final QName childType, Map<String, Boolean> sortProps) {
 
 		List<NodeRef> ret = new ArrayList<>();
@@ -579,6 +625,18 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 				.map(Node::getNodeRef).map(n -> tenantService.getBaseName(n)).toList();
 	}
 
+	/**
+	 * <p>queryItems.</p>
+	 *
+	 * @param template a {@link java.lang.String} object
+	 * @param params a {@link java.util.Map} object
+	 * @param maxResults a {@link java.lang.Integer} object
+	 * @param offset a {@link java.lang.Integer} object
+	 * @param checkPermissions a boolean
+	 * @param permissionChecker a {@link java.util.function.Predicate} object
+	 * @param <T> a T class
+	 * @return a {@link java.util.List} object
+	 */
 	private <T> List<T> queryItems(String template, Map<String, Object> params, Integer maxResults, Integer offset, boolean checkPermissions,
 			Predicate<T> permissionChecker) {
 		List<T> foundNodes = new ArrayList<>();
@@ -726,6 +784,17 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		return ret;
 	}
 
+	/**
+	 * <p>internalEntitySourceAssocs.</p>
+	 *
+	 * @param nodeRefs a {@link java.util.List} object
+	 * @param assocTypeQName a {@link org.alfresco.service.namespace.QName} object
+	 * @param listTypeQname a {@link org.alfresco.service.namespace.QName} object
+	 * @param criteriaFilters a {@link java.util.List} object
+	 * @param pagingRequest a {@link org.alfresco.query.PagingRequest} object
+	 * @param checkPermissions a boolean
+	 * @return a {@link java.util.List} object
+	 */
 	private List<EntitySourceAssoc> internalEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocTypeQName, QName listTypeQname,
 			List<AssociationCriteriaFilter> criteriaFilters, PagingRequest pagingRequest, boolean checkPermissions) {
 		List<EntitySourceAssoc> ret = new ArrayList<>();
@@ -776,6 +845,14 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		return ret;
 	}
 
+	/**
+	 * <p>buildQueryParameters.</p>
+	 *
+	 * @param nodeRefs a {@link java.util.List} object
+	 * @param assocTypeQName a {@link org.alfresco.service.namespace.QName} object
+	 * @param listTypeQname a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.util.Map} object
+	 */
 	private Map<String, Object> buildQueryParameters(List<NodeRef> nodeRefs, QName assocTypeQName, QName listTypeQname) {
 		Map<String, Object> queryParams = new HashMap<>();
 		List<Long> nodeIds = new ArrayList<>();
@@ -845,6 +922,12 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		return queryParams;
 	}
 
+	/**
+	 * <p>buildCriteriaFilterMap.</p>
+	 *
+	 * @param criteriaFilters a {@link java.util.List} object
+	 * @return a {@link java.util.Map} object
+	 */
 	private Map<String, Object> buildCriteriaFilterMap(List<AssociationCriteriaFilter> criteriaFilters) {
 		Map<String, Object> filterMap = new HashMap<>();
 		List<Map<String, Object>> processedFilters = new ArrayList<>();
@@ -950,6 +1033,12 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		throw new BeCPGException("Invalid boolean filter value: " + value);
 	}
 	
+	/**
+	 * <p>isAuditProperty.</p>
+	 *
+	 * @param fieldName a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	private boolean isAuditProperty(String fieldName) {
 		return "audit_created".equals(fieldName) || "audit_modified".equals(fieldName) || "audit_creator".equals(fieldName)
 				|| "audit_modifier".equals(fieldName);
@@ -1104,6 +1193,12 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 	//// Cache managment
 
+	/**
+	 * <p>removeCachedAssoc.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param qName a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private void removeCachedAssoc(NodeRef nodeRef, QName qName) {
 
 		AssociationCacheRegion cacheKey = new AssociationCacheRegion(nodeRef, qName);

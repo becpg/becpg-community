@@ -81,6 +81,12 @@ public class FormulationExecutor {
 		return FormulationExecutorState.INPROGRESS;
 	}
 	
+	/**
+	 * <p>retrievePlugin.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.formulation.FormulationPlugin} object
+	 */
 	private FormulationPlugin retrievePlugin(NodeRef entityNodeRef ){
 
 		FormulationPlugin ret = null;

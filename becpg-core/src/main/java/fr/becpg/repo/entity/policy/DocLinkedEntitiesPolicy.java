@@ -38,9 +38,11 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy
 		implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(DocLinkedEntitiesPolicy.class);
 
 	// File extension to use for link nodes
+	/** Constant <code>LINK_NODE_EXTENSION=".url"</code> */
 	private static final String LINK_NODE_EXTENSION = ".url";
 
 	private EntityService entityService;
@@ -97,6 +99,12 @@ public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy
 
 	}
 
+	/**
+	 * <p>createLink.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param destRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void createLink(NodeRef nodeRef, NodeRef destRef) {
 		String currentName = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 
@@ -122,6 +130,12 @@ public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy
 
 	}
 
+	/**
+	 * <p>deleteLink.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param destRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void deleteLink(NodeRef nodeRef, NodeRef destRef) {
 		String currentName = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 		String newName = currentName + LINK_NODE_EXTENSION;
@@ -133,6 +147,13 @@ public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy
 
 	}
 
+	/**
+	 * <p>checkExists.</p>
+	 *
+	 * @param name a {@link java.lang.String} object
+	 * @param destRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private boolean checkExists(String name, NodeRef destRef) {
 		return nodeService.getChildByName(destRef, ContentModel.ASSOC_CONTAINS, name) != null;
 	}

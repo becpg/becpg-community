@@ -62,6 +62,7 @@ public class BeforeDeleteChildAssociationRuleTrigger
      */
     private static Log logger = LogFactory.getLog(BeforeDeleteChildAssociationRuleTrigger.class);
     
+    /** Constant <code>POLICY="beforeDeleteChildAssociation"</code> */
     private static final String POLICY = "beforeDeleteChildAssociation";
 	
 	private boolean isClassBehaviour = false;

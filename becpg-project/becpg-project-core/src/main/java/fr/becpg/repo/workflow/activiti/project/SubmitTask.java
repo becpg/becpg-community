@@ -19,8 +19,10 @@ import fr.becpg.util.ApplicationContextHelper;
  */
 public class SubmitTask extends ScriptTaskListener {
 
+	/** Constant <code>serialVersionUID=8018666006871621151L</code> */
 	private static final long serialVersionUID = 8018666006871621151L;
 
+	/** Constant <code>logger</code> */
 	private final static Log logger = LogFactory.getLog(SubmitTask.class);
 
 	private NodeService nodeService;

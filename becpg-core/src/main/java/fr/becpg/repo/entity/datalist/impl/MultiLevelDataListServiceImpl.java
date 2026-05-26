@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -62,8 +62,10 @@ import fr.becpg.repo.security.SecurityService;
 @Service("multiLevelDataListService")
 public class MultiLevelDataListServiceImpl implements MultiLevelDataListService {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(MultiLevelDataListServiceImpl.class);
 
+	/** Constant <code>CACHE_KEY="MultiLevelDataListService.class.getName"{trunked}</code> */
 	private static final String CACHE_KEY = MultiLevelDataListService.class.getName();
 
 	@Autowired
@@ -119,6 +121,19 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 		}
 	}
 
+	/**
+	 * <p>getMultiLevelListData.</p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param currDepth a int
+	 * @param maxDepthLevel a int
+	 * @param dataListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param parentNodeRefs a {@link java.util.Set} object
+	 * @param useExpandedCache a boolean
+	 * @param resetTree a boolean
+	 * @return a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object
+	 */
 	private MultiLevelListData getMultiLevelListData(DataListFilter dataListFilter, NodeRef entityNodeRef, int currDepth, int maxDepthLevel,
 			NodeRef dataListNodeRef, Set<NodeRef> parentNodeRefs, boolean useExpandedCache, boolean resetTree) {
 
@@ -161,6 +176,20 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 		return ret;
 	}
 
+	/**
+	 * <p>visitMultiLevelListData.</p>
+	 *
+	 * @param ret a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @param listsContainerNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param currDepth a int
+	 * @param maxDepthLevel a int
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
+	 * @param dataType a {@link org.alfresco.service.namespace.QName} object
+	 * @param parentNodeRefs a {@link java.util.Set} object
+	 * @param useExpandedCache a boolean
+	 * @param resetTree a boolean
+	 */
 	private void visitMultiLevelListData(MultiLevelListData ret, DataListFilter dataListFilter, NodeRef listsContainerNodeRef, int currDepth,
 			int maxDepthLevel, QName nodeType, QName dataType, Set<NodeRef> parentNodeRefs, boolean useExpandedCache, boolean resetTree) {
 		int accessMode = securityService.computeAccessMode(dataListFilter.getEntityNodeRef() ,nodeType, dataType.toPrefixString(namespaceService));
@@ -230,6 +259,14 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 		}
 	}
 
+	/**
+	 * <p>getListNodeRef.</p>
+	 *
+	 * @param dataListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @param dataType a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> getListNodeRef(NodeRef dataListNodeRef, DataListFilter dataListFilter, QName dataType) {
 
 		if (dataListFilter.isAllFilter() && entityDictionaryService.isSubClass(dataType, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
@@ -247,6 +284,12 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 		}
 	}
 
+	/**
+	 * <p>getEntityNodeRef.</p>
+	 *
+	 * @param listItemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getEntityNodeRef(NodeRef listItemNodeRef) {
 		QName pivotAssoc = entityDictionaryService.getDefaultPivotAssoc(nodeService.getType(listItemNodeRef));
 		if (pivotAssoc != null) {
@@ -260,6 +303,12 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 	}
 	
 
+	/**
+	 * <p>getIsGroup.</p>
+	 *
+	 * @param listItemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private boolean getIsGroup(NodeRef listItemNodeRef) {
 		QName propQname = entityDictionaryService.getMultiLevelGroupProperty(nodeService.getType(listItemNodeRef));
 		if (propQname != null) {

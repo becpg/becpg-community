@@ -32,6 +32,9 @@ import fr.becpg.repo.repository.model.VariantAwareDataItem;
  */
 public class RegulationFormulationHelper {
 
+	/**
+	 * <p>Constructor for RegulationFormulationHelper.</p>
+	 */
 	private RegulationFormulationHelper() {
 		//Do nothing
 	}
@@ -41,20 +44,34 @@ public class RegulationFormulationHelper {
 
 	/** Constant <code>ATTR_NUT_CODE="nutCode"</code> */
 	public static final String ATTR_NUT_CODE = "nutCode";
+	/** Constant <code>KEY_VALUE="v"</code> */
 	private static final String KEY_VALUE = "v";
+	/** Constant <code>KEY_TOLERANCE_MAX="tu"</code> */
 	private static final String KEY_TOLERANCE_MAX = "tu";
+	/** Constant <code>KEY_TOLERANCE_MIN="tl"</code> */
 	private static final String KEY_TOLERANCE_MIN = "tl";
+	/** Constant <code>KEY_MINI="min"</code> */
 	private static final String KEY_MINI = "min";
+	/** Constant <code>KEY_MAXI="max"</code> */
 	private static final String KEY_MAXI = "max";
+	/** Constant <code>KEY_SECONDARY_VALUE="v2"</code> */
 	private static final String KEY_SECONDARY_VALUE = "v2";
+	/** Constant <code>KEY_SECONDARY_VALUE_PER_SERVING="v2ps"</code> */
 	private static final String KEY_SECONDARY_VALUE_PER_SERVING = "v2ps";
+	/** Constant <code>KEY_VALUE_PER_SERVING="vps"</code> */
 	private static final String KEY_VALUE_PER_SERVING = "vps";
+	/** Constant <code>KEY_GDA_PERC="gda"</code> */
 	private static final String KEY_GDA_PERC = "gda";
+	/** Constant <code>KEY_UL="ul"</code> */
 	private static final String KEY_UL = "ul";
+	/** Constant <code>KEY_VALUE_PER_CONTAINER="vpc"</code> */
 	private static final String KEY_VALUE_PER_CONTAINER = "vpc";
+	/** Constant <code>KEY_GDA_PERC_PER_CONTAINER="gdapc"</code> */
 	private static final String KEY_GDA_PERC_PER_CONTAINER = "gdapc";
+	/** Constant <code>KEY_UNIT="unit"</code> */
 	private static final String KEY_UNIT = "unit";
 
+	/** Constant <code>regulations</code> */
 	private static Map<String, NutrientRegulation> regulations = new HashMap<>();
 
 	static {
@@ -240,6 +257,14 @@ public class RegulationFormulationHelper {
 		return extractValueByKey(roundedValue, KEY_GDA_PERC, key);
 	}
 
+	/**
+	 * <p>extractValueByKey.</p>
+	 *
+	 * @param roundedValue a {@link java.lang.String} object
+	 * @param item a {@link java.lang.String} object
+	 * @param key a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private static Double extractValueByKey(String roundedValue, String item, String key) {
 		if (roundedValue != null) {
 			try {
@@ -422,6 +447,12 @@ public class RegulationFormulationHelper {
 		}
 	}
 
+	/**
+	 * <p>parseDouble.</p>
+	 *
+	 * @param vps a {@link java.lang.Object} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private static Double parseDouble(Object vps) {
 		if (vps instanceof Integer) {
 			return ((Integer) vps).doubleValue();
@@ -440,6 +471,12 @@ public class RegulationFormulationHelper {
 		return (Double) vps;
 	}
 
+	/**
+	 * <p>keyToXml.</p>
+	 *
+	 * @param abrv a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private static String keyToXml(String abrv) {
 		switch (abrv) {
 		case KEY_SECONDARY_VALUE:
@@ -638,6 +675,13 @@ public class RegulationFormulationHelper {
 		n.setRoundedValue(jsonRound.toString());
 	}
 
+	/**
+	 * <p>getServingSize.</p>
+	 *
+	 * @param key a {@link java.lang.String} object
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private static Double getServingSize(String key, ProductData formulatedProduct) {
 		Double servingSize = formulatedProduct.getServingSize();
 		if (formulatedProduct.getServingSizeByCountry() != null) {
@@ -663,6 +707,11 @@ public class RegulationFormulationHelper {
 		return null;
 	}
 
+	/**
+	 * <p>getAvailableRegulations.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	private static List<String> getAvailableRegulations() {
 
 		List<String> ret = new ArrayList<>();
@@ -814,6 +863,15 @@ public class RegulationFormulationHelper {
 		return round(value, nutCode, getLocalKey(locale), nutUnit);
 	}
 
+	/**
+	 * <p>round.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @param nutCode a {@link java.lang.String} object
+	 * @param key a {@link java.lang.String} object
+	 * @param nutUnit a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private static Double round(Double value, String nutCode, String key, String nutUnit) {
 		if (value == null) {
 			return null;
@@ -834,6 +892,15 @@ public class RegulationFormulationHelper {
 		return tolerances(value, nutCode, getLocalKey(locale), nutUnit);
 	}
 
+	/**
+	 * <p>tolerances.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @param nutCode a {@link java.lang.String} object
+	 * @param key a {@link java.lang.String} object
+	 * @param nutUnit a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.util.Pair} object
+	 */
 	private static Pair<Double, Double> tolerances(Double value, String nutCode, String key, String nutUnit) {
 		if (value == null) {
 			return null;
@@ -908,6 +975,12 @@ public class RegulationFormulationHelper {
 		return getRegulation(getLocalKey(locale)).roundGDA(value, nutCode);
 	}
 
+	/**
+	 * <p>getRegulation.</p>
+	 *
+	 * @param key a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.formulation.nutrient.NutrientRegulation} object
+	 */
 	private static NutrientRegulation getRegulation(String key) {
 
 		if (regulations.containsKey(key)) {

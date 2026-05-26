@@ -79,11 +79,15 @@ import fr.becpg.repo.entity.EntityService;
  */
 public class BeCPGCreateDownloadArchiveAction extends ActionExecuterAbstractBase
 {
+    /** Constant <code>log</code> */
     private static final Logger log = LoggerFactory.getLogger(BeCPGCreateDownloadArchiveAction.class);
     
     
+    /** Constant <code>CREATION_ERROR="Unexpected error creating archive file "{trunked}</code> */
     private static final String CREATION_ERROR = "Unexpected error creating archive file for download";
+    /** Constant <code>TEMP_FILE_PREFIX="download"</code> */
     private static final String TEMP_FILE_PREFIX = "download";
+    /** Constant <code>TEMP_FILE_SUFFIX=".zip"</code> */
     private static final String TEMP_FILE_SUFFIX = ".zip"; 
     
     // Dependencies
@@ -310,6 +314,13 @@ public class BeCPGCreateDownloadArchiveAction extends ActionExecuterAbstractBase
     }
 
 
+    /**
+     * <p>maximumContentSizeExceeded.</p>
+     *
+     * @param actionedUponNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param size a long
+     * @param fileCount a long
+     */
     private void maximumContentSizeExceeded(final NodeRef actionedUponNodeRef, final long size, final long fileCount)
     {
         log.debug("Maximum contentent size ({}), exceeded ({})", maximumContentSize, size);
@@ -328,6 +339,13 @@ public class BeCPGCreateDownloadArchiveAction extends ActionExecuterAbstractBase
         }, false, true);
     }
 
+    /**
+     * <p>createDownload.</p>
+     *
+     * @param actionedUponNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param crawlerParameters a {@link org.alfresco.service.cmr.view.ExporterCrawlerParameters} object
+     * @param estimator a {@link fr.becpg.repo.download.BeCPGCreateDownloadArchiveAction.SizeEstimator} object
+     */
     private void createDownload(final NodeRef actionedUponNodeRef, ExporterCrawlerParameters crawlerParameters, SizeEstimator estimator)
     {
         
@@ -353,6 +371,13 @@ public class BeCPGCreateDownloadArchiveAction extends ActionExecuterAbstractBase
     }
 
 
+    /**
+     * <p>archiveCreationComplete.</p>
+     *
+     * @param actionedUponNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param tempFile a {@link java.io.File} object
+     * @param handler a {@link fr.becpg.repo.download.BeCPGZipDownloadExporter} object
+     */
     private void archiveCreationComplete(final NodeRef actionedUponNodeRef, final File tempFile,
                 final BeCPGZipDownloadExporter handler)
     {
@@ -381,6 +406,12 @@ public class BeCPGCreateDownloadArchiveAction extends ActionExecuterAbstractBase
     }
 
 
+    /**
+     * <p>downloadCancelled.</p>
+     *
+     * @param actionedUponNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param handler a {@link fr.becpg.repo.download.BeCPGZipDownloadExporter} object
+     */
     private void downloadCancelled(final NodeRef actionedUponNodeRef, final BeCPGZipDownloadExporter handler)
     {
         //Update the content and set the status to done. 

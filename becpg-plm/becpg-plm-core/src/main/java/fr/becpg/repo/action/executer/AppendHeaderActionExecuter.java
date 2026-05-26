@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2010-2011 beCPG. All rights reserved.
+ *  Copyright (C) 2010-2026 beCPG. All rights reserved.
  */
 
 package fr.becpg.repo.action.executer;
@@ -61,11 +61,14 @@ public class AppendHeaderActionExecuter extends ActionExecuterAbstractBase {
 	/** Constant <code>NAME="append-header"</code> */
 
 	public static final String NAME = "append-header";
+	/** Constant <code>PARAM_MAPPING_FILE="mapping-file"</code> */
 	private static final String PARAM_MAPPING_FILE = "mapping-file";
 	/** Constant <code>XLSX_EXTENSION=".xlsx"</code> */
 	public static final String XLSX_EXTENSION = ".xlsx";
 	
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AppendHeaderActionExecuter.class);
+	/** Constant <code>FULL_PATH_IMPORT_TO_TREAT="/app:company_home/cm:Exchange/cm:Import"{trunked}</code> */
 	private static final String FULL_PATH_IMPORT_TO_TREAT = "/app:company_home/cm:Exchange/cm:Import/cm:ImportToTreat";
 	
 	/** Constant <code>SEPARATOR=';'</code> */
@@ -280,6 +283,14 @@ public class AppendHeaderActionExecuter extends ActionExecuterAbstractBase {
 		}
 	}
 	
+	/**
+	 * <p>changeFormulaRow.</p>
+	 *
+	 * @param wb a {@link org.apache.poi.xssf.usermodel.XSSFWorkbook} object
+	 * @param cell a {@link org.apache.poi.ss.usermodel.Cell} object
+	 * @param rowIdx a int
+	 * @return a {@link java.lang.String} object
+	 */
 	private String changeFormulaRow(XSSFWorkbook wb, Cell cell, int rowIdx) {
 		XSSFEvaluationWorkbook evalWb = XSSFEvaluationWorkbook.create(wb);
 

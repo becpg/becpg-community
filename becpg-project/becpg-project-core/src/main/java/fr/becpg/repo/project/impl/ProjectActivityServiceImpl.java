@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -57,6 +57,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 @Service("projectActivityService")
 public class ProjectActivityServiceImpl implements ProjectActivityService, EntityActivityListener, EntityActivityPlugin {
 
+	/** Constant <code>PROJECT_ACTIVITY_TYPE="fr.becpg.project"</code> */
 	private static final String PROJECT_ACTIVITY_TYPE = "fr.becpg.project";
 
 	/** Constant <code>PROJECT_STATE_ACTIVITY="PROJECT_ACTIVITY_TYPE + .project-state"</code> */
@@ -68,6 +69,7 @@ public class ProjectActivityServiceImpl implements ProjectActivityService, Entit
 	/** Constant <code>COMMENT_CREATED_ACTIVITY="org.alfresco.comments.comment-created"</code> */
 	public static final String COMMENT_CREATED_ACTIVITY = "org.alfresco.comments.comment-created";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ProjectActivityServiceImpl.class);
 
 	@Autowired
@@ -179,6 +181,16 @@ public class ProjectActivityServiceImpl implements ProjectActivityService, Entit
 
 	}
 
+	/**
+	 * <p>postStateChangeActivity.</p>
+	 *
+	 * @param activityType a {@link java.lang.String} object
+	 * @param title a {@link java.lang.String} object
+	 * @param itemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param beforeState a {@link java.lang.String} object
+	 * @param afterState a {@link java.lang.String} object
+	 * @param isItem a boolean
+	 */
 	private void postStateChangeActivity(String activityType, String title, NodeRef itemNodeRef, String beforeState, String afterState,
 			boolean isItem) {
 		if ((itemNodeRef != null) && (beforeState != null) && (afterState != null)) {
@@ -206,10 +218,22 @@ public class ProjectActivityServiceImpl implements ProjectActivityService, Entit
 
 	}
 
+	/**
+	 * <p>getTaskNodeRef.</p>
+	 *
+	 * @param deliverableNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getTaskNodeRef(NodeRef deliverableNodeRef) {
 		return associationService.getTargetAssoc(deliverableNodeRef, ProjectModel.ASSOC_DL_TASK);
 	}
 
+	/**
+	 * <p>getProjectNodeRefFromList.</p>
+	 *
+	 * @param listItemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getProjectNodeRefFromList(NodeRef listItemNodeRef) {
 		return entityListDAO.getEntity(listItemNodeRef);
 	}

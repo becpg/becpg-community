@@ -13,6 +13,7 @@ import fr.becpg.repo.entity.datalist.impl.SimpleExtractor;
  */
 public class IngRegulatoryListExtractor extends SimpleExtractor {
 
+	/** Constant <code>ING_REGULATORY_LIST="ingRegulatoryList"</code> */
 	private static final String ING_REGULATORY_LIST = "ingRegulatoryList";
 
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -37,6 +37,7 @@ import fr.becpg.repo.project.ProjectService;
  */
 public class CompleteProjectTaskWebScript extends AbstractWebScript {
 
+	/** Constant <code>PARAM_NODEREF="nodeRef"</code> */
 	private static final String PARAM_NODEREF = "nodeRef";
 
 	private ProjectService projectService;

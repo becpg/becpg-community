@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -76,21 +76,34 @@ import fr.becpg.repo.helper.json.JsonHelper;
  */
 public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(JsonSchemaEntityVisitor.class);
 
+	/** Constant <code>TYPE_STRING="string"</code> */
 	private static final String TYPE_STRING = "string";
+	/** Constant <code>TYPE_OBJECT="object"</code> */
 	private static final String TYPE_OBJECT = "object";
+	/** Constant <code>TYPE_ARRAY="array"</code> */
 	private static final String TYPE_ARRAY = "array";
+	/** Constant <code>TYPE_NUMBER="number"</code> */
 	private static final String TYPE_NUMBER = "number";
+	/** Constant <code>TYPE_BOOLEAN="boolean"</code> */
 	private static final String TYPE_BOOLEAN = "boolean";
 
+	/** Constant <code>PROP_TITLE="title"</code> */
 	private static final String PROP_TITLE = "title";
+	/** Constant <code>PROP_TYPE="type"</code> */
 	private static final String PROP_TYPE = "type";
+	/** Constant <code>PROP_DESCRIPTION="description"</code> */
 	private static final String PROP_DESCRIPTION = "description";
+	/** Constant <code>PROP_PROPERTIES="properties"</code> */
 	private static final String PROP_PROPERTIES = "properties";
+	/** Constant <code>PROP_ITEMS="items"</code> */
 	private static final String PROP_ITEMS = "items";
 
+	/** Constant <code>PROP_FORMAT="format"</code> */
 	private static final String PROP_FORMAT = "format";
+	/** Constant <code>PROP_REQUIRED="required"</code> */
 	private static final String PROP_REQUIRED = "required";
 
 	private SysAdminParams sysAdminParams;
@@ -170,6 +183,14 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 		}
 	}
 
+	/**
+	 * <p>visitType.</p>
+	 *
+	 * @param entity a {@link org.json.JSONObject} object
+	 * @param entityType a {@link org.alfresco.service.namespace.QName} object
+	 * @param assocName a {@link org.alfresco.service.namespace.QName} object
+	 * @param visitedTypes a {@link java.util.Set} object
+	 */
 	private void visitType(JSONObject entity, QName entityType, QName assocName, Set<QName> visitedTypes) {
 		TypeDefinition typeDef = entityDictionaryService.getType(entityType);
 		if (typeDef != null) {
@@ -264,6 +285,12 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 		}
 	}
 
+	/**
+	 * <p>addAlfrescoTypeAttributes.</p>
+	 *
+	 * @param entityType a {@link org.alfresco.service.namespace.QName} object
+	 * @param attributes a {@link org.json.JSONObject} object
+	 */
 	private void addAlfrescoTypeAttributes(QName entityType, JSONObject attributes) {
 		addProperty(attributes, "alfresco:type", TYPE_STRING, entityType.toPrefixString(namespaceService), "Alfresco type");
 		addProperty(attributes, "alfresco:subTypes", TYPE_STRING, String.join(",", entityDictionaryService.getSubTypes(entityType, false).stream().map(q -> q.toPrefixString(namespaceService)).toList()), "Alfresco subTypes");
@@ -276,6 +303,14 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 		}
 	}
 
+	/**
+	 * <p>createEntity.</p>
+	 *
+	 * @param root a {@link org.json.JSONObject} object
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.json.JSONObject} object
+	 */
 	private JSONObject createEntity(JSONObject root, QName nodeType, NodeRef entityNodeRef) {
 
 		root.put("$schema", "https://json-schema.org/draft/2020-12/schema");
@@ -558,6 +593,16 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 		}
 	}
 
+	/**
+	 * <p>visitProp.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param entity a {@link org.json.JSONObject} object
+	 * @param assocName a {@link org.alfresco.service.namespace.QName} object
+	 * @param context a {@link fr.becpg.repo.entity.remote.extractor.RemoteJSONContext} object
+	 * @param propQName a {@link org.alfresco.service.namespace.QName} object
+	 * @param propValue a {@link java.io.Serializable} object
+	 */
 	private void visitProp(NodeRef nodeRef, JSONObject entity, QName assocName, RemoteJSONContext context, QName propQName, Serializable propValue) {
 		if (!propQName.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
 				&& !propQName.getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
@@ -576,6 +621,17 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 		}
 	}
 
+	/**
+	 * <p>visitPropValue.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param propType a {@link org.alfresco.service.namespace.QName} object
+	 * @param entity a {@link org.json.JSONObject} object
+	 * @param value a {@link java.io.Serializable} object
+	 * @param context a {@link fr.becpg.repo.entity.remote.extractor.RemoteJSONContext} object
+	 * @param propertyDefinition a {@link org.alfresco.service.cmr.dictionary.PropertyDefinition} object
+	 * @throws org.json.JSONException if any.
+	 */
 	@SuppressWarnings("unchecked")
 	private void visitPropValue(NodeRef entityNodeRef, QName propType, JSONObject entity, Serializable value, RemoteJSONContext context,
 			PropertyDefinition propertyDefinition) throws JSONException {
@@ -615,6 +671,15 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 		}
 	}
 
+	/**
+	 * <p>addProperty.</p>
+	 *
+	 * @param entityType a {@link org.alfresco.service.namespace.QName} object
+	 * @param entity a {@link org.json.JSONObject} object
+	 * @param attr a {@link java.lang.String} object
+	 * @param propertyDefinition a {@link org.alfresco.service.cmr.dictionary.PropertyDefinition} object
+	 * @return a {@link org.json.JSONObject} object
+	 */
 	private JSONObject addProperty(QName entityType, JSONObject entity, String attr, PropertyDefinition propertyDefinition) {
 
 		JSONObject properties = new JSONObject();
@@ -695,10 +760,26 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 	}
 	
+	/**
+	 * <p>getJsonEntityType.</p>
+	 *
+	 * @param entity a {@link org.json.JSONObject} object
+	 * @return a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private QName getJsonEntityType(JSONObject entity) {
 		return QName.createQName(entity.getString(RemoteEntityService.ATTR_TYPE), namespaceService);
 	}
 
+	/**
+	 * <p>addAssoc.</p>
+	 *
+	 * @param entity a {@link org.json.JSONObject} object
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
+	 * @param type a {@link java.lang.String} object
+	 * @param assocDef a {@link org.alfresco.service.cmr.dictionary.AssociationDefinition} object
+	 * @param object a {@link org.json.JSONObject} object
+	 * @return a {@link org.json.JSONObject} object
+	 */
 	private JSONObject addAssoc(JSONObject entity, QName nodeType, String type, AssociationDefinition assocDef, JSONObject object) {
 		addProperty(entity, entityDictionaryService.toPrefixString(nodeType), type, assocDef.getTitle(entityDictionaryService),
 				assocDef.getDescription(entityDictionaryService), object);
@@ -706,6 +787,17 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 		return object;
 	}
 	
+	/**
+	 * <p>addProperty.</p>
+	 *
+	 * @param entity a {@link org.json.JSONObject} object
+	 * @param attr a {@link java.lang.String} object
+	 * @param type a {@link java.lang.String} object
+	 * @param title a {@link java.lang.String} object
+	 * @param description a {@link java.lang.String} object
+	 * @param object a {@link org.json.JSONObject} object
+	 * @return a {@link org.json.JSONObject} object
+	 */
 	private JSONObject addProperty(JSONObject entity, String attr, String type, String title, String description, JSONObject object) {
 		JSONObject properties = new JSONObject();
 		if (entity.has(PROP_PROPERTIES)) {
@@ -723,6 +815,16 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 		return object;
 	}
 
+	/**
+	 * <p>addProperty.</p>
+	 *
+	 * @param entity a {@link org.json.JSONObject} object
+	 * @param attr a {@link java.lang.String} object
+	 * @param type a {@link java.lang.String} object
+	 * @param title a {@link java.lang.String} object
+	 * @param description a {@link java.lang.String} object
+	 * @return a {@link org.json.JSONObject} object
+	 */
 	private JSONObject addProperty(JSONObject entity, String attr, String type, String title, String description) {
 		return addProperty(entity, attr, type, title, description, new JSONObject());
 	}

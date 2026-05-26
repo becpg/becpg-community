@@ -99,6 +99,19 @@ public class AllocationExcelReportSearchPlugin extends DynamicCharactExcelReport
 		return rownum;
 	}
 
+	/**
+	 * <p>extractAllocations.</p>
+	 *
+	 * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+	 * @param metadataFields a {@link java.util.List} object
+	 * @param cache a {@link java.util.Map} object
+	 * @param rownum a int
+	 * @param key a {@link java.io.Serializable} object
+	 * @param entityItems a {@link java.util.Map} object
+	 * @param excelCellStyles a {@link fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles} object
+	 * @return a int
+	 */
 	private int extractAllocations(NodeRef productNodeRef, XSSFSheet sheet, List<AttributeExtractorStructure> metadataFields,
 			Map<NodeRef, Map<String, Object>> cache, int rownum, Serializable key, Map<String, Object> entityItems, ExcelCellStyles excelCellStyles) {
 

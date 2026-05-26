@@ -31,9 +31,11 @@ import fr.becpg.repo.mail.BeCPGMailService;
 @Service("simulationService")
 public class EntitySimulationServiceImpl implements EntitySimulationService {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntitySimulationServiceImpl.class);
 
 	// Simulation
+	/** Constant <code>ASYNC_ACTION_URL_PREFIX="page/repository#filter=path|"</code> */
 	private static final String ASYNC_ACTION_URL_PREFIX = "page/repository#filter=path|";
 
 	@Autowired
@@ -182,6 +184,12 @@ public class EntitySimulationServiceImpl implements EntitySimulationService {
 
 	}
 
+	/**
+	 * <p>findPlugin.</p>
+	 *
+	 * @param mode a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.entity.simulation.EntitySimulationPlugin} object
+	 */
 	private EntitySimulationPlugin findPlugin(String mode) {
 		for (EntitySimulationPlugin entitySimulationPlugin : entitySimulationPlugins) {
 			if (entitySimulationPlugin.accept(mode)) {

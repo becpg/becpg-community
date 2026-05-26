@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -31,6 +31,9 @@ import fr.becpg.repo.entity.EntityDictionaryService;
  */
 public class RemoteHelper {
 	
+    /**
+     * <p>Constructor for RemoteHelper.</p>
+     */
     private RemoteHelper() {
     	//DO Nothing
     }

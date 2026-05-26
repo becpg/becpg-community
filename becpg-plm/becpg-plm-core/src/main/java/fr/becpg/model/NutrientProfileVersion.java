@@ -11,6 +11,11 @@ public enum NutrientProfileVersion {
 	VERSION_2017("2017"),
 	VERSION_2023("2023");
 	
+	/**
+	 * <p>Constructor for NutrientProfileVersion.</p>
+	 *
+	 * @param version a {@link java.lang.String} object
+	 */
 	private String version;
 
 	NutrientProfileVersion(String version) {

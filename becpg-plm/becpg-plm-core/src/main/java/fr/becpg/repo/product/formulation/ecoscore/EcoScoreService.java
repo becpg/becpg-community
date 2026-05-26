@@ -24,15 +24,23 @@ import fr.becpg.common.csv.CSVReader;
  */
 @Service
 public class EcoScoreService {
+	/** Constant <code>LOGGER</code> */
 	private static final Log LOGGER = LogFactory.getLog(EcoScoreService.class);
 
+	/** Constant <code>DEFAULT_AGRIBALYSE_PATH="beCPG/databases/ecoscore/agribalyse_3_2"{trunked}</code> */
 	private static final String DEFAULT_AGRIBALYSE_PATH = "beCPG/databases/ecoscore/agribalyse_3_2.csv";
+	/** Constant <code>DEFAULT_COUNTRY_SCORE_PATH="beCPG/databases/ecoscore/country_score_"{trunked}</code> */
 	private static final String DEFAULT_COUNTRY_SCORE_PATH = "beCPG/databases/ecoscore/country_score_2021.csv";
+	/** Constant <code>DEFAULT_COUNTRY_POSITIONS_PATH="beCPG/databases/ecoscore/country_positi"{trunked}</code> */
 	private static final String DEFAULT_COUNTRY_POSITIONS_PATH = "beCPG/databases/ecoscore/country_positions.csv";
+	/** Constant <code>CSV_DELIMITER=';'</code> */
 	private static final char CSV_DELIMITER = ';';
+	/** Constant <code>CSV_QUOTE='&quot;'</code> */
 	private static final char CSV_QUOTE = '"';
+	/** Constant <code>SKIP_LINES=1</code> */
 	private static final int SKIP_LINES = 1;
 
+	/** Constant <code>INVALID_COUNTRY_CODE="Invalid country codes provided: %s"</code> */
 	private static final String INVALID_COUNTRY_CODE = "Invalid country codes provided: %s";
 
 	private Map<String, EnvironmentalFootprintValue> environmentalFootprints;
@@ -68,6 +76,9 @@ public class EcoScoreService {
 		}
 	}
 
+	/**
+	 * <p>loadEnvironmentalFootprints.</p>
+	 */
 	private void loadEnvironmentalFootprints() {
 		environmentalFootprints = new LinkedHashMap<>();
 		try {
@@ -86,6 +97,9 @@ public class EcoScoreService {
 		}
 	}
 
+	/**
+	 * <p>loadCountryScores.</p>
+	 */
 	private void loadCountryScores() {
 		countryScores = new LinkedHashMap<>();
 		try {
@@ -104,6 +118,9 @@ public class EcoScoreService {
 		}
 	}
 
+	/**
+	 * <p>loadCountryPositions.</p>
+	 */
 	private void loadCountryPositions() {
 		countryPositions = new LinkedHashMap<>();
 		try {
@@ -122,12 +139,25 @@ public class EcoScoreService {
 		}
 	}
 
+	/**
+	 * <p>createCsvReader.</p>
+	 *
+	 * @param resource a {@link org.springframework.core.io.ClassPathResource} object
+	 * @return a {@link fr.becpg.common.csv.CSVReader} object
+	 * @throws java.io.IOException if any.
+	 */
 	private CSVReader createCsvReader(ClassPathResource resource) throws IOException {
 		InputStream inputStream = resource.getInputStream();
 		InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
 		return new CSVReader(reader, CSV_DELIMITER, CSV_QUOTE, SKIP_LINES);
 	}
 
+	/**
+	 * <p>parseDouble.</p>
+	 *
+	 * @param value a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double parseDouble(String value) {
 		return Optional.ofNullable(value).map(String::trim).filter(s -> !s.isEmpty()).map(s -> s.replace(",", ".")).map(Double::valueOf).orElse(null);
 	}
@@ -157,6 +187,15 @@ public class EcoScoreService {
 	}
 
 	// Haversine formula to calculate distance between two lat/lon points
+	/**
+	 * <p>haversine.</p>
+	 *
+	 * @param lat1 a double
+	 * @param lon1 a double
+	 * @param lat2 a double
+	 * @param lon2 a double
+	 * @return a double
+	 */
 	private double haversine(double lat1, double lon1, double lat2, double lon2) {
 		final int R = 6371; // Radius of Earth in km
 		double dLat = Math.toRadians(lat2 - lat1);

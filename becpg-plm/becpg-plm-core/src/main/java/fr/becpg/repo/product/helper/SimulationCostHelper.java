@@ -37,10 +37,16 @@ public class SimulationCostHelper implements InitializingBean {
 
 	private final SystemConfigurationService systemConfigurationService;
 	
+	/**
+	 * <p>keepProductUnit.</p>
+	 *
+	 * @return a boolean
+	 */
 	private boolean keepProductUnit() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.costList.keepProductUnit"));
 	}
 
+	/** Constant <code>INSTANCE</code> */
 	static SimulationCostHelper INSTANCE;
 
 	@Autowired
@@ -63,6 +69,7 @@ public class SimulationCostHelper implements InitializingBean {
 
 	}
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(SimulationCostHelper.class);
 
 	// T(fr.becpg.repo.product.helper.SimulationCostHelper).priceListItemByCriteria(ProductData
@@ -235,6 +242,14 @@ public class SimulationCostHelper implements InitializingBean {
 		return getCompoListQty(formulatedProduct, componentData.getNodeRef(), netQty);
 	}
 
+	/**
+	 * <p>getCompoListQty.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param componentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param parentQty a {@link java.lang.Double} object
+	 * @return a double
+	 */
 	private static double getCompoListQty(ProductData productData, NodeRef componentNodeRef, Double parentQty) {
 		double totalQty = 0d;
 		if (productData.hasCompoListEl()) {
@@ -265,6 +280,13 @@ public class SimulationCostHelper implements InitializingBean {
 		return totalQty;
 	}
 
+	/**
+	 * <p>hasSimulatedCostForComponent.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param componentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private static boolean hasSimulatedCostForComponent(ProductData productData, NodeRef componentNodeRef) {
 		for (CostListDataItem simulatedCost : productData.getCostList()) {
 			if ((simulatedCost.getComponentNodeRef() != null) && (simulatedCost.getParent() != null) && simulatedCost.getComponentNodeRef().equals(componentNodeRef)) {
@@ -274,6 +296,14 @@ public class SimulationCostHelper implements InitializingBean {
 		return false;
 	}
 
+	/**
+	 * <p>getPackagingListQty.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param componentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param parentQty a {@link java.lang.Double} object
+	 * @return a double
+	 */
 	private static double getPackagingListQty(ProductData productData, NodeRef componentNodeRef, Double parentQty) {
 		double totalQty = 0d;
 		if (productData.hasPackagingListEl() ) {

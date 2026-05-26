@@ -98,6 +98,13 @@ public class ProjectProcessListPlugin implements EntityProcessListPlugin {
 	}
 
 	  
+	/**
+	 * <p>getPersonModel.</p>
+	 *
+	 * @param person a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param creator a {@link java.lang.String} object
+	 * @return a {@link java.util.Map} object
+	 */
 	private Map<String, Object> getPersonModel(NodeRef person, String creator){
 
 		Map<String, Object> model = new HashMap<>();

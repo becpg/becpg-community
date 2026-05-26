@@ -28,15 +28,22 @@ import fr.becpg.repo.product.data.constraints.DeclarationType;
  */
 public class IngListExtractor extends MultiLevelExtractor {
 
+	/** Constant <code>ING_LIST="ingList"</code> */
 	private static final String ING_LIST = "ingList";
 
+	/** Constant <code>LABEL_ASSOC_KEY="assoc_bcpg_ingListIng"</code> */
 	private static final String LABEL_ASSOC_KEY = "assoc_bcpg_ingListIng";
 
+	/** Constant <code>TOTAL_KEY="prop_bcpg_ingListQtyPerc"</code> */
 	private static final String TOTAL_KEY = "prop_bcpg_ingListQtyPerc";
+	/** Constant <code>TOTAL_WITHYIELD_KEY="prop_bcpg_ingListQtyPercWithYield"</code> */
 	private static final String TOTAL_WITHYIELD_KEY = "prop_bcpg_ingListQtyPercWithYield";
+	/** Constant <code>TOTAL_WITHYIELDSECONDARY_KEY="prop_bcpg_ingListQtyPercWithSecondaryYi"{trunked}</code> */
 	private static final String TOTAL_WITHYIELDSECONDARY_KEY = "prop_bcpg_ingListQtyPercWithSecondaryYield";
 
+	/** Constant <code>TYPE_DOUBLE="double"</code> */
 	private static final String TYPE_DOUBLE = "double";
+	/** Constant <code>TYPE_TOTAL="total"</code> */
 	private static final String TYPE_TOTAL = "total";
 
 	/** {@inheritDoc} */
@@ -134,6 +141,14 @@ public class IngListExtractor extends MultiLevelExtractor {
 
 	}
 
+	/**
+	 * <p>createColumn.</p>
+	 *
+	 * @param metadata a {@link java.lang.String} object
+	 * @param displayValue a {@link java.lang.String} object
+	 * @param value a {@link java.lang.Object} object
+	 * @return a {@link java.lang.Object} object
+	 */
 	private Object createColumn(String metadata, String displayValue, Object value) {
 		HashMap<String, Object> tmp = new HashMap<>(3);
 		tmp.put("metadata", metadata);

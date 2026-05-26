@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -135,6 +135,7 @@ import fr.becpg.repo.system.SystemConfigurationService;
 @BeCPGPublicApi
 public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(BeCPGScriptHelper.class);
 
 	private NodeService nodeService;
@@ -256,6 +257,11 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	private boolean useBrowserLocale;
 
+	/**
+	 * <p>showEntitiesInTree.</p>
+	 *
+	 * @return a boolean
+	 */
 	private boolean showEntitiesInTree() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("becpg.doclibtree.showEntities"));
 	}
@@ -947,6 +953,12 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		return wrapValue(entitySourceAssocs.stream().map(s -> s.getEntityNodeRef()).toList());
 	}
 
+	/**
+	 * <p>createFilters.</p>
+	 *
+	 * @param jsonConfig a {@link org.json.JSONObject} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<AssociationCriteriaFilter> createFilters(JSONObject jsonConfig) {
 		List<AssociationCriteriaFilter> filters = new ArrayList<>();
 		if (jsonConfig.has("filters")) {
@@ -1021,6 +1033,12 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 
 	// TODO Perfs
+	/**
+	 * <p>wrapValue.</p>
+	 *
+	 * @param object a {@link java.lang.Object} object
+	 * @return a {@link java.lang.Object} object
+	 */
 	private Object wrapValue(Object object) {
 		return ScriptValueConverter.wrapValue(Context.getCurrentContext().initSafeStandardObjects(), object);
 	}
@@ -2097,6 +2115,15 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		return classifyByHierarchy(productNode.getNodeRef(), folderNode.getNodeRef(), propHierarchy, locale);
 	}
 
+	/**
+	 * <p>classifyByHierarchy.</p>
+	 *
+	 * @param productNode a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param folderNode a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param propHierarchy a {@link java.lang.String} object
+	 * @param localeString a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	private boolean classifyByHierarchy(NodeRef productNode, NodeRef folderNode, String propHierarchy, String localeString) {
 
 		QName hierarchyQname = null;
@@ -2161,6 +2188,14 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		return classifyByHierarchy(productNode, folderNode, propHierarchy, locale);
 	}
 
+	/**
+	 * <p>classifyPropAndHierarchyExtractAssoc.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param assocName a {@link java.lang.String} object
+	 * @param assocList a {@link java.util.List} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef classifyPropAndHierarchyExtractAssoc(NodeRef nodeRef, String assocName, List<String> assocList) {
 		if (assocList.size() == 1) {
 			return nodeRef;
@@ -2450,6 +2485,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		return new ScriptNode(nodeRef, serviceRegistry);
 	}
 
+	/** Constant <code>BULK_SAVE_BATCH_SIZE=5</code> */
 	private static final int BULK_SAVE_BATCH_SIZE = 5;
 
 	/**
@@ -2506,6 +2542,12 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		return lastResult[0];
 	}
 
+	/**
+	 * <p>toStringList.</p>
+	 *
+	 * @param value a {@link java.lang.Object} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<String> toStringList(Object value) {
 		if (value == null) {
 			return new ArrayList<>();
@@ -2534,6 +2576,12 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		return new ArrayList<>();
 	}
 
+	/**
+	 * <p>removeAssociations.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param assocToRemoveNames a {@link java.util.List} object
+	 */
 	private void removeAssociations(NodeRef nodeRef, List<String> assocToRemoveNames) {
 		if (assocToRemoveNames == null) {
 			return;
@@ -2551,6 +2599,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * <p>forceDelete.</p>
 	 *
 	 * @param node a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @since 25.3.0.34
 	 */
 	public void forceDelete(ScriptNode node) {
 		try {
@@ -2563,10 +2612,24 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		}
 	}
 	
+	/**
+	 * <p>getAllVersionAndBranches.</p>
+	 *
+	 * @param node a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @return a {@link java.util.List} object
+	 * @since 25.3.0.34
+	 */
 	public List<EntityVersion> getAllVersionAndBranches(ScriptNode node) {
 		return entityVersionService.getAllVersionAndBranches(node.getNodeRef());
 	}
 	
+	/**
+	 * <p>getAllVersions.</p>
+	 *
+	 * @param node a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @return a {@link java.util.List} object
+	 * @since 25.3.0.34
+	 */
 	public List<EntityVersion> getAllVersions(ScriptNode node) {
 		return entityVersionService.getAllVersions(node.getNodeRef());
 	}

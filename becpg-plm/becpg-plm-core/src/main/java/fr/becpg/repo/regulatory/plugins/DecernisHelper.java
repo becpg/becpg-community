@@ -21,13 +21,20 @@ import fr.becpg.repo.system.SystemConfigurationRegistry;
  */
 public class DecernisHelper {
 	
+	/** Constant <code>THRESHOLD_PATTERN_1</code> */
 	private static final Pattern THRESHOLD_PATTERN_1 = Pattern.compile("\\(?<=([0-9.]+)\\s*(mg/l|mg/kg)\\)?");
+	/** Constant <code>THRESHOLD_PATTERN_2</code> */
 	private static final Pattern THRESHOLD_PATTERN_2 = Pattern.compile("\\(?<=([0-9.]+)\\s*%\\)?");
 	
+	/** Constant <code>decimalFormat</code> */
 	private static final DecimalFormat decimalFormat = new DecimalFormat("#.########################", new DecimalFormatSymbols(Locale.ENGLISH)); // 24 decimal places
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(DecernisHelper.class);
 
+	/**
+	 * <p>Constructor for DecernisHelper.</p>
+	 */
 	private DecernisHelper() {
 		
 	}

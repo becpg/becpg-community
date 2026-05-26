@@ -37,6 +37,7 @@ import fr.becpg.repo.report.search.impl.ExcelReportSearchRenderer.ExcelSheetExpo
  */
 public class ExcelSearchDownloadExporter extends AbstractSearchDownloadExporter {
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(ExcelSearchDownloadExporter.class);
 
 	private ExcelReportSearchRenderer excelReportSearchRenderer;
@@ -83,6 +84,7 @@ public class ExcelSearchDownloadExporter extends AbstractSearchDownloadExporter 
 	 * @param templateNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param nbOfLines a {@link java.lang.Long} object
 	 * @param parameters an array of {@link java.lang.String} objects.
+	 * @since 25.3.0.34
 	 */
 	public ExcelSearchDownloadExporter(RetryingTransactionHelper transactionHelper, DownloadStatusUpdateService updateService,
 			DownloadStorage downloadStorage, ContentService contentService, ExcelReportSearchRenderer excelReportSearchRenderer,

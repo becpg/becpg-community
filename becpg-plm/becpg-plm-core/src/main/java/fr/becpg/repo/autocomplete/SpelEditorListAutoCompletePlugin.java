@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -49,8 +49,10 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("spelEditorListAutoCompletePlugin")
 public class SpelEditorListAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(SpelEditorListAutoCompletePlugin.class);
 
+	/** Constant <code>SOURCE_TYPE_SPELEDITOR="speleditor"</code> */
 	private static final String SOURCE_TYPE_SPELEDITOR = "speleditor";
 
 	@Autowired
@@ -105,6 +107,16 @@ public class SpelEditorListAutoCompletePlugin extends TargetAssocAutoCompletePlu
 		return suggestTargetAssoc(null, type, query, pageNum, pageSize, null, props);
 	}
 
+	/**
+	 * <p>suggestDynCharact.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param datalistType a {@link org.alfresco.service.namespace.QName} object
+	 * @param propertyQName a {@link org.alfresco.service.namespace.QName} object
+	 * @param pageNum a {@link java.lang.Integer} object
+	 * @param pageSize a {@link java.lang.Integer} object
+	 * @return a {@link fr.becpg.repo.autocomplete.AutoCompletePage} object
+	 */
 	private AutoCompletePage suggestDynCharact(NodeRef entityNodeRef, QName datalistType, QName propertyQName, Integer pageNum,
 			Integer pageSize) {
 

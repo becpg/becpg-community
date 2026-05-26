@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -71,6 +71,7 @@ import fr.becpg.repo.importer.user.UserImporterService;
 public class UserImporterServiceImpl implements UserImporterService {
 
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(UserImporterServiceImpl.class);
 
 	/** Constant <code>USERNAME="username"</code> */
@@ -243,6 +244,15 @@ public class UserImporterServiceImpl implements UserImporterService {
 
 	}
 
+	/**
+	 * <p>proccessUpload.</p>
+	 *
+	 * @param input a {@link java.io.InputStream} object
+	 * @param filename a {@link java.lang.String} object
+	 * @param charset a {@link java.nio.charset.Charset} object
+	 * @throws java.io.IOException if any.
+	 * @throws fr.becpg.repo.importer.ImporterException if any.
+	 */
 	private void proccessUpload(InputStream input, String filename, Charset charset) throws IOException, ImporterException {
 		if ((filename != null) && (filename.length() > 0)) {
 			if (filename.endsWith(".csv")) {
@@ -262,6 +272,13 @@ public class UserImporterServiceImpl implements UserImporterService {
 
 	}
 
+	/**
+	 * <p>processXLSXUpload.</p>
+	 *
+	 * @param input a {@link java.io.InputStream} object
+	 * @throws java.io.IOException if any.
+	 * @throws fr.becpg.repo.importer.ImporterException if any.
+	 */
 	private void processXLSXUpload(InputStream input) throws IOException, ImporterException {
 		try (Workbook workbook = new XSSFWorkbook(input)) {
 			Sheet sheet = workbook.getSheetAt(0); // Get the first sheet
@@ -290,6 +307,13 @@ public class UserImporterServiceImpl implements UserImporterService {
 		}
 	}
 
+	/**
+	 * <p>processXLSXHeaders.</p>
+	 *
+	 * @param headerRow a {@link org.apache.poi.ss.usermodel.Row} object
+	 * @return a {@link java.util.Map} object
+	 * @throws fr.becpg.repo.importer.ImporterException if any.
+	 */
 	private Map<String, Integer> processXLSXHeaders(Row headerRow) throws ImporterException {
 		Map<String, Integer> headers = new HashMap<>();
 		
@@ -308,6 +332,13 @@ public class UserImporterServiceImpl implements UserImporterService {
 		return headers;
 	}
 
+	/**
+	 * <p>extractRowData.</p>
+	 *
+	 * @param row a {@link org.apache.poi.ss.usermodel.Row} object
+	 * @param expectedColumns a int
+	 * @return an array of {@link java.lang.String} objects
+	 */
 	private String[] extractRowData(Row row, int expectedColumns) {
 		String[] data = new String[expectedColumns];
 		
@@ -319,6 +350,12 @@ public class UserImporterServiceImpl implements UserImporterService {
 		return data;
 	}
 
+	/**
+	 * <p>getCellValueAsString.</p>
+	 *
+	 * @param cell a {@link org.apache.poi.ss.usermodel.Cell} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getCellValueAsString(Cell cell) {
 		if (cell == null) {
 			return "";
@@ -365,10 +402,23 @@ public class UserImporterServiceImpl implements UserImporterService {
 		}
 	}
 
+	/**
+	 * <p>processXLSUpload.</p>
+	 *
+	 * @param input a {@link java.io.InputStream} object
+	 */
 	private void processXLSUpload(InputStream input) {
 		logger.info("Not yet implemented");
 	}
 
+	/**
+	 * <p>processCSVUpload.</p>
+	 *
+	 * @param input a {@link java.io.InputStream} object
+	 * @param charset a {@link java.nio.charset.Charset} object
+	 * @throws java.io.IOException if any.
+	 * @throws fr.becpg.repo.importer.ImporterException if any.
+	 */
 	private void processCSVUpload(InputStream input, Charset charset) throws IOException, ImporterException {
 
 		try (InputStreamReader reader = new InputStreamReader(input, charset)) {
@@ -389,6 +439,12 @@ public class UserImporterServiceImpl implements UserImporterService {
 
 	}
 
+	/**
+	 * <p>processRow.</p>
+	 *
+	 * @param headers a {@link java.util.Map} object
+	 * @param splitted an array of {@link java.lang.String} objects
+	 */
 	private void processRow(final Map<String, Integer> headers, final String[] splitted) {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -512,16 +568,35 @@ public class UserImporterServiceImpl implements UserImporterService {
 
 	}
 
+	/**
+	 * <p>cleanSiteName.</p>
+	 *
+	 * @param siteName a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String cleanSiteName(String siteName) {
 		return siteName.toLowerCase().replace("&", "").replaceAll("\\s", "").replaceAll("[àáâãäå]", "a").replace("æ", "ae").replace("ç", "c")
 				.replaceAll("[èéêë]", "e").replaceAll("[ìíîï]", "i").replace("ñ", "n").replaceAll("[òóôõö]", "o").replace("œ", "oe")
 				.replaceAll("[ùúûü]", "u").replaceAll("[ýÿ]", "y");
 	}
 
+	/**
+	 * <p>isPropQname.</p>
+	 *
+	 * @param key a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	private boolean isPropQname(String key) {
 		return !(ATTR_GROUPS.equals(key) || ATTR_MEMBERSHIPS.equals(key) || ATTR_PASSWORD.equals(key) || ATTR_USERNAME.equals(key) || ATTR_NOTIFY.equals(key));
 	}
 
+	/**
+	 * <p>processHeaders.</p>
+	 *
+	 * @param splitted an array of {@link java.lang.String} objects
+	 * @return a {@link java.util.Map} object
+	 * @throws fr.becpg.repo.importer.ImporterException if any.
+	 */
 	private Map<String, Integer> processHeaders(String[] splitted) throws ImporterException {
 		Map<String, Integer> headers = new HashMap<>();
 		for (int i = 0; i < splitted.length; i++) {
@@ -532,12 +607,24 @@ public class UserImporterServiceImpl implements UserImporterService {
 		return headers;
 	}
 
+	/**
+	 * <p>verifyHeaders.</p>
+	 *
+	 * @param headers a {@link java.util.Map} object
+	 * @throws fr.becpg.repo.importer.ImporterException if any.
+	 */
 	private void verifyHeaders(Map<String, Integer> headers) throws ImporterException {
 		if (!headers.containsKey(ATTR_USERNAME) && (headers.size() < 4)) {
 			throw new ImporterException("Invalid headers");
 		}
 	}
 
+	/**
+	 * <p>formatRole.</p>
+	 *
+	 * @param role a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String formatRole(String role) {
 		if (role != null) {
 			if (role.trim().equalsIgnoreCase("Contributor")) {
@@ -552,6 +639,12 @@ public class UserImporterServiceImpl implements UserImporterService {
 		return SiteModel.SITE_CONSUMER;
 	}
 
+	/**
+	 * <p>formatSiteName.</p>
+	 *
+	 * @param siteName a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String formatSiteName(String siteName) {
 		return siteName.replace(" ", "");
 	}

@@ -36,9 +36,13 @@ import fr.becpg.repo.autocomplete.impl.plugins.TargetAssocAutoCompletePlugin;
 @Service("unitAwareCharactAutoCompletePlugin")
 public class UnitAwareCharactAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
+	/** Constant <code>SOURCE_TYPE_NUT="nut"</code> */
 	private static final String SOURCE_TYPE_NUT = "nut";
+	/** Constant <code>SOURCE_TYPE_PHYSICO_CHEM="physicoChem"</code> */
 	private static final String SOURCE_TYPE_PHYSICO_CHEM = "physicoChem";
+	/** Constant <code>SOURCE_TYPE_MICROBIO="microbio"</code> */
 	private static final String SOURCE_TYPE_MICROBIO = "microbio";
+	/** Constant <code>SOURCE_TYPE_CHARACTS="characts"</code> */
 	private static final String SOURCE_TYPE_CHARACTS=  "characts";
 	
 	@Autowired

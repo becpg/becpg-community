@@ -52,8 +52,10 @@ import fr.becpg.repo.repository.RepositoryEntity;
  */
 public class ProjectDetailsWebScript extends AbstractWebScript {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ProjectDetailsWebScript.class);
 
+	/** Constant <code>NODE_REF="nodeRef"</code> */
 	private static final String NODE_REF = "nodeRef";
 
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
@@ -255,6 +257,12 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 
 	}
 
+	/**
+	 * <p>loadActivityDataList.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<ActivityListDataItem> loadActivityDataList(NodeRef entityNodeRef) {
 		AuditQuery auditQuery = AuditQuery.createQuery()
                 .asc(false)
@@ -269,6 +277,12 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
         return sortedActivityList;
 	}
 
+	/**
+	 * <p>isAuthenticatedUser.</p>
+	 *
+	 * @param listNodeRef a {@link java.util.List} object
+	 * @return a boolean
+	 */
 	private boolean isAuthenticatedUser(List<NodeRef> listNodeRef) {
 
 		// TODO utiliser ProjectService extractResources
@@ -299,6 +313,13 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 		return (int) ChronoUnit.DAYS.between(startDate, endDate);
 	}
 
+	/**
+	 * <p>getActivities.</p>
+	 *
+	 * @param pjtNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param activityLists a {@link java.util.List} object
+	 * @return a {@link org.json.JSONArray} object
+	 */
 	private JSONArray getActivities(NodeRef pjtNodeRef, List<ActivityListDataItem> activityLists) {
 
 		JSONArray ret = new JSONArray();
@@ -329,6 +350,13 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 		return ret;
 	}
 
+	/**
+	 * <p>getComments.</p>
+	 *
+	 * @param pjtNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param activityLists a {@link java.util.List} object
+	 * @return a {@link org.json.JSONArray} object
+	 */
 	private JSONArray getComments(NodeRef pjtNodeRef, List<ActivityListDataItem> activityLists) {
 		JSONArray ret = new JSONArray();
 		for (ActivityListDataItem activityComment : activityLists) {
@@ -360,6 +388,12 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 		return ret;
 	}
 
+	/**
+	 * <p>formatDate.</p>
+	 *
+	 * @param date a {@link java.io.Serializable} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String formatDate(Serializable date) {
 		if (date != null) {
 			return PropertyFormats.forMode(FormatMode.JSON, false).formatDate(date);

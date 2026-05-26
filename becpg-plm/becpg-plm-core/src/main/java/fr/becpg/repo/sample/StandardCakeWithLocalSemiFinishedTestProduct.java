@@ -78,6 +78,11 @@ public class StandardCakeWithLocalSemiFinishedTestProduct extends SampleProductB
 	private boolean isWithCompo = true;
 
 	// Private constructor to enforce usage of the builder
+	/**
+	 * <p>Constructor for StandardCakeWithLocalSemiFinishedTestProduct.</p>
+	 *
+	 * @param builder a {@link fr.becpg.repo.sample.StandardCakeWithLocalSemiFinishedTestProduct.Builder} object
+	 */
 	private StandardCakeWithLocalSemiFinishedTestProduct(Builder builder) {
 		super(builder);
 		this.isWithCompo = builder.isWithCompo;

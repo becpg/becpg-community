@@ -33,7 +33,9 @@ import fr.becpg.model.PLMModel;
  */
 public class PluralLegalNamePatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(PluralLegalNamePatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.pluralLegalNamePatch.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.pluralLegalNamePatch.result";
 
 	QName PROP_ING_TYPE_LEGAL_NAME_PLURAL = QName.createQName(BeCPGModel.BECPG_URI, "ingTypePluralLegalName");

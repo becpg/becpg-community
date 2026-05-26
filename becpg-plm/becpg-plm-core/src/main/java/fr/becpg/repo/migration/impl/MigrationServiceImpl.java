@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -53,8 +53,10 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("migrationService")
 public class MigrationServiceImpl implements MigrationService {
 
+	/** Constant <code>BATCH_SIZE=50</code> */
 	private static final int BATCH_SIZE = 50;
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(MigrationServiceImpl.class);
 
 	@Autowired
@@ -165,6 +167,12 @@ public class MigrationServiceImpl implements MigrationService {
 		}, AuthenticationUtil.getSystemUserName());
 	}
 
+	/**
+	 * <p>removeAspect.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @param aspect a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private void removeAspect(QName type, final QName aspect) {
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(type).withAspect(aspect);
@@ -190,6 +198,12 @@ public class MigrationServiceImpl implements MigrationService {
 		}
 	}
 
+	/**
+	 * <p>getLuceneQueryforClass.</p>
+	 *
+	 * @param classQName a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 */
 	private BeCPGQueryBuilder getLuceneQueryforClass(QName classQName) {
 		ClassDefinition classDef = dictionaryService.getClass(classQName);
 
@@ -287,6 +301,13 @@ public class MigrationServiceImpl implements MigrationService {
 
 	}
 
+	/**
+	 * <p>migrateProperty.</p>
+	 *
+	 * @param classQName a {@link org.alfresco.service.namespace.QName} object
+	 * @param sourceProp a {@link org.alfresco.service.namespace.QName} object
+	 * @param targetProp a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private void migrateProperty(QName classQName, final QName sourceProp, final QName targetProp) {
 
 		List<NodeRef> nodeRefs = WorkProviderFactory.fromQueryBuilder(getLuceneQueryforClass(classQName)).collect();

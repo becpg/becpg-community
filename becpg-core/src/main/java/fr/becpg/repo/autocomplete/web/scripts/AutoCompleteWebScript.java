@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -44,28 +44,50 @@ import fr.becpg.repo.autocomplete.AutoCompleteService;
  */
 public class AutoCompleteWebScript extends DeclarativeWebScript {
 
+	/** Constant <code>PARAM_SOURCE_TYPE="sourcetype"</code> */
 	private static final String PARAM_SOURCE_TYPE = "sourcetype";
+	/** Constant <code>PARAM_CLASS_NAME="className"</code> */
 	private static final String PARAM_CLASS_NAME = "className";
+	/** Constant <code>PARAM_CLASS_NAMES="classNames"</code> */
 	private static final String PARAM_CLASS_NAMES = "classNames";
+	/** Constant <code>PARAM_ATTRIBUTE_NAME="attributeName"</code> */
 	private static final String PARAM_ATTRIBUTE_NAME = "attributeName";
+	/** Constant <code>PARAM_FILTER="filter"</code> */
 	private static final String PARAM_FILTER = "filter";
+	/** Constant <code>PARAM_EXCLUDE_CLASS_NAMES="excludeClassNames"</code> */
 	private static final String PARAM_EXCLUDE_CLASS_NAMES = "excludeClassNames";
+	/** Constant <code>PARAM_EXCLUDE_PROPS="excludeProps"</code> */
 	private static final String PARAM_EXCLUDE_PROPS = "excludeProps";
+	/** Constant <code>PROP_EXCLUDE_SOURCES="excludeSources"</code> */
 	private static final String PROP_EXCLUDE_SOURCES = "excludeSources";
+	/** Constant <code>PROP_ITEM_ID="itemId"</code> */
 	private static final String PROP_ITEM_ID = "itemId";
+	/** Constant <code>PROP_FIELD_NAME="fieldName"</code> */
 	private static final String PROP_FIELD_NAME = "fieldName";
+	/** Constant <code>PARAM_AND_PROPS="andProps"</code> */
 	private static final String PARAM_AND_PROPS = "andProps";
+	/** Constant <code>PARAM_PAGE_SIZE="pageSize"</code> */
 	private static final String PARAM_PAGE_SIZE = "pageSize";
+	/** Constant <code>PARAM_PATH="path"</code> */
 	private static final String PARAM_PATH = "path";
+	/** Constant <code>PARAM_PARENT="parent"</code> */
 	private static final String PARAM_PARENT = "parent";
+	/** Constant <code>PARAM_ENTITY_NODEREF="entityNodeRef"</code> */
 	private static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
+	/** Constant <code>PARAM_IS_SEARCH="isSearch"</code> */
 	private static final String PARAM_IS_SEARCH = "isSearch";
+	/** Constant <code>PARAM_QUERY="q"</code> */
 	private static final String PARAM_QUERY = "q";
+	/** Constant <code>PARAM_PRODUCT_TYPE="productType"</code> */
 	private static final String PARAM_PRODUCT_TYPE = "productType";
+	/** Constant <code>MODEL_KEY_NAME_SUGGESTIONS="suggestions"</code> */
 	private static final String MODEL_KEY_NAME_SUGGESTIONS = "suggestions";
+	/** Constant <code>PARAM_PAGE="page"</code> */
 	private static final String PARAM_PAGE = "page";
+	/** Constant <code>MODEL_PAGE_SIZE="pageSize"</code> */
 	private static final String MODEL_PAGE_SIZE = "pageSize";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AutoCompleteWebScript.class);
 
 	private AutoCompleteService autoCompleteService;
@@ -179,6 +201,12 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 		return model;
 	}
 
+	/**
+	 * <p>getExtraParams.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object
+	 * @return a {@link java.util.HashMap} object
+	 */
 	private HashMap<String, String> getExtraParams(WebScriptRequest req) {
 		HashMap<String, String> ret = new HashMap<>();
 

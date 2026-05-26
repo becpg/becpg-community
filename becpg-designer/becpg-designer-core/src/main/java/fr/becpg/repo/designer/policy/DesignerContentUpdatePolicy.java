@@ -28,6 +28,7 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 public class DesignerContentUpdatePolicy extends AbstractBeCPGPolicy implements ContentServicePolicies.OnContentUpdatePolicy,
 		NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.BeforeDeleteNodePolicy, NodeServicePolicies.OnAddAspectPolicy{
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(DesignerContentUpdatePolicy.class);
 
 	private DesignerService designerService;
@@ -125,6 +126,12 @@ public class DesignerContentUpdatePolicy extends AbstractBeCPGPolicy implements 
 	}
 	
 
+	/**
+	 * <p>isWorkingCopy.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private boolean isWorkingCopy(NodeRef nodeRef) {
 		Set<QName> aspects = nodeService.getAspects(nodeRef);
 		return aspects.contains(ContentModel.ASPECT_WORKING_COPY);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -54,6 +54,7 @@ import fr.becpg.repo.web.scripts.remote.AbstractEntityWebScript;
  */
 public class EntitySecurityWebScript extends AbstractEntityWebScript {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntitySecurityWebScript.class);
 
 	private WorkflowService workflowService;
@@ -82,6 +83,12 @@ public class EntitySecurityWebScript extends AbstractEntityWebScript {
 		this.entityService = entityService;
 	}
 
+	/**
+	 * <p>resolveEntityNodeRef.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef resolveEntityNodeRef(WebScriptRequest req) {
 		Map<String, String> templateVars = req.getServiceMatch().getTemplateVars();
 		if (templateVars != null) {
@@ -274,6 +281,13 @@ public class EntitySecurityWebScript extends AbstractEntityWebScript {
 		return datalists;
 	}
 	
+	/**
+	 * <p>defaultValue.</p>
+	 *
+	 * @param val a {@link java.io.Serializable} object
+	 * @param def a {@link java.io.Serializable} object
+	 * @return a {@link java.io.Serializable} object
+	 */
 	private Serializable defaultValue(Serializable val, Serializable def) {
 		if (val != null) {
 			return val;

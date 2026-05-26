@@ -33,7 +33,9 @@ import fr.becpg.repo.product.data.productList.SynchronisableState;
  */
 public class LabelingRulePatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(LabelingRulePatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.labelingRulePatch.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.labelingRulePatch.result";
 
 	private NodeDAO nodeDAO;

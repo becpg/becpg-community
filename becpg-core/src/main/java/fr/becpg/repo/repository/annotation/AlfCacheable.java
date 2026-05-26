@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -34,7 +34,7 @@ public @interface AlfCacheable  {
 	
 	/**
 	 * Indicates whether this field is a character field.
-	 * 
+	 *
 	 * @return true if the field is a character field, false otherwise
 	 */
 	boolean isCharact() default false;

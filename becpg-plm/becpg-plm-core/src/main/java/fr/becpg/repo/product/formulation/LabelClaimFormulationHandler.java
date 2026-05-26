@@ -46,6 +46,7 @@ import fr.becpg.repo.repository.model.CompositionDataItem;
  */
 public class LabelClaimFormulationHandler extends FormulationBaseHandler<ProductData> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(LabelClaimFormulationHandler.class);
 
 	/** Constant <code>MESSAGE_MISSING_CLAIM="message.formulate.labelClaim.missing"</code> */
@@ -258,10 +259,22 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		return true;
 	}
 	
+	/**
+	 * <p>getLabelClaimRegulatoryThreshold.</p>
+	 *
+	 * @param labelClaim a {@link fr.becpg.repo.product.data.labelclaim.LabelClaimItem} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double getLabelClaimRegulatoryThreshold(LabelClaimItem labelClaim) {
 		return labelClaim.getLabelClaimRegulatoryThreshold();
 	}
 
+	/**
+	 * <p>extractSpecifications.</p>
+	 *
+	 * @param specifications a {@link java.util.List} object
+	 * @return a {@link java.util.Set} object
+	 */
 	private Set<ProductSpecificationData> extractSpecifications(List<ProductSpecificationData> specifications) {
 
 		Set<ProductSpecificationData> ret = new HashSet<>();
@@ -274,6 +287,13 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		return ret;
 	}
 
+	/**
+	 * <p>synchronizeTemplate.</p>
+	 *
+	 * @param templateSimpleListDataList a {@link java.util.List} object
+	 * @param simpleListDataList a {@link java.util.List} object
+	 * @param sort a int
+	 */
 	private void synchronizeTemplate(List<LabelClaimListDataItem> templateSimpleListDataList, List<LabelClaimListDataItem> simpleListDataList,
 			int sort) {
 
@@ -325,6 +345,16 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		}
 	}
 
+	/**
+	 * <p>visitPart.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param partProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param qtyUsed a {@link java.lang.Double} object
+	 * @param netQty a {@link java.lang.Double} object
+	 * @param subLabelClaimItem a {@link fr.becpg.repo.product.data.productList.LabelClaimListDataItem} object
+	 * @param toRemove a {@link java.util.Set} object
+	 */
 	private void visitPart(ProductData productData, ProductData partProduct, Double qtyUsed, Double netQty, LabelClaimListDataItem subLabelClaimItem,
 			Set<LabelClaimListDataItem> toRemove) {
 
@@ -508,6 +538,12 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 	}
 
+	/**
+	 * <p>addMissingLabelClaims.</p>
+	 *
+	 * @param partProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param labelClaimItem a {@link fr.becpg.repo.product.data.productList.LabelClaimListDataItem} object
+	 */
 	private void addMissingLabelClaims(ProductData partProduct, LabelClaimListDataItem labelClaimItem) {
 		if (!labelClaimItem.getMissingLabelClaims().contains(partProduct.getNodeRef())) {
 			if (logger.isDebugEnabled()) {
@@ -525,6 +561,13 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		}
 	}
 
+	/**
+	 * <p>addMissingLabelClaimReq.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param partProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param labelClaimItem a {@link fr.becpg.repo.product.data.productList.LabelClaimListDataItem} object
+	 */
 	private void addMissingLabelClaimReq(ProductData productData, ProductData partProduct, LabelClaimListDataItem labelClaimItem) {
 
 		productData.getReqCtrlList()
@@ -536,15 +579,34 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 	}
 
+	/**
+	 * <p>getLclItemFromProduct.</p>
+	 *
+	 * @param product a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param lclCharact a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<LabelClaimListDataItem> getLclItemFromProduct(ProductData product, NodeRef lclCharact) {
 		return product.getLabelClaimList().stream().filter(lcl -> lclCharact.equals(lcl.getLabelClaim())).collect(Collectors.toList());
 	}
 
+	/**
+	 * <p>extractName.</p>
+	 *
+	 * @param labelClaimNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extractName(NodeRef labelClaimNodeRef) {
 		LabelClaimItem labelClaim = (LabelClaimItem) alfrescoRepository.findOne(labelClaimNodeRef);
 		return labelClaim.getCharactName();
 	}
 
+	/**
+	 * <p>computeClaimList.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param context a {@link org.springframework.expression.spel.support.StandardEvaluationContext} object
+	 */
 	private void computeClaimList(ProductData productData, StandardEvaluationContext context) {
 		if (productData.getLabelClaimList() != null) {
 			for (LabelClaimListDataItem labelClaimListDataItem : productData.getLabelClaimList()) {

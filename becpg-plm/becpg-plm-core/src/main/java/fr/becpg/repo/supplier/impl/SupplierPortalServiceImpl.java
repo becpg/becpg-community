@@ -73,8 +73,10 @@ import fr.becpg.repo.system.SystemConfigurationService;
 @Service("supplierPortalService")
 public class SupplierPortalServiceImpl implements SupplierPortalService {
 
+	/** Constant <code>SUPPLIER_GROUP_PREFIX="EXTERNAL_SUPPLIER_"</code> */
 	private static final String SUPPLIER_GROUP_PREFIX = "EXTERNAL_SUPPLIER_";
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(SupplierPortalServiceImpl.class);
 
 	@Autowired
@@ -122,10 +124,20 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
 
+	/**
+	 * <p>projectNameTpl.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String projectNameTpl() {
 		return systemConfigurationService.confValue("beCPG.sendToSupplier.projectName.format");
 	}
 
+	/**
+	 * <p>entityNameTpl.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String entityNameTpl() {
 		return systemConfigurationService.confValue("beCPG.sendToSupplier.entityName.format");
 	}
@@ -233,6 +245,13 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 	}
 
+	/**
+	 * <p>getOrCreateDocumentFolder.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param path a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getOrCreateDocumentFolder(NodeRef entityNodeRef, String path) {
 		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(ContentModel.PROP_NAME, TranslateHelper.getTranslatedPath(path));
@@ -279,6 +298,15 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 	}
 
+	/**
+	 * <p>extractPropText.</p>
+	 *
+	 * @param propQname a {@link java.lang.String} object
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param supplierNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param currentDate a {@link java.util.Date} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extractPropText(String propQname, NodeRef entityNodeRef, NodeRef supplierNodeRef, Date currentDate) {
 		if (propQname != null) {
 			if ((propQname.indexOf("supplier_") == 0) && (supplierNodeRef != null) && !supplierNodeRef.equals(entityNodeRef)) {
@@ -324,6 +352,13 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		return supplierNodeRef;
 	}
 
+	/**
+	 * <p>checkSupplierNodeRef.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param checkAccounts a boolean
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef checkSupplierNodeRef(NodeRef entityNodeRef, boolean checkAccounts) {
 		NodeRef supplierNodeRef = null;
 
@@ -473,6 +508,13 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		return null;
 	}
 
+	/**
+	 * <p>migrateOldSupplierDestFolder.</p>
+	 *
+	 * @param supplierNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param documentLibraryNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param documentsFolderNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void migrateOldSupplierDestFolder(NodeRef supplierNodeRef, NodeRef documentLibraryNodeRef, NodeRef documentsFolderNodeRef) {
 
 		NodeRef destFolder = nodeService.getChildByName(documentLibraryNodeRef, ContentModel.ASSOC_CONTAINS,
@@ -503,6 +545,13 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 	}
 
+	/**
+	 * <p>isChildOf.</p>
+	 *
+	 * @param child a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param targetParent a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private boolean isChildOf(NodeRef child, NodeRef targetParent) {
 
 		ChildAssociationRef currentParent = nodeService.getPrimaryParent(child);

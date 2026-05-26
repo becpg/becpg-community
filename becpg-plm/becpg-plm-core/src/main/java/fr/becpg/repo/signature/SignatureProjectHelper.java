@@ -40,17 +40,27 @@ import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 public class SignatureProjectHelper {
 	
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(SignatureProjectHelper.class);
 
+	/** Constant <code>DELIVERABLE_SUFFIX_PREPARE=" - prepare"</code> */
 	private static final String DELIVERABLE_SUFFIX_PREPARE = " - prepare";
+	/** Constant <code>DELIVERABLE_SUFFIX_URL=" - url"</code> */
 	private static final String DELIVERABLE_SUFFIX_URL = " - url";
+	/** Constant <code>DELIVERABLE_SUFFIX_SIGN=" - sign"</code> */
 	private static final String DELIVERABLE_SUFFIX_SIGN = " - sign";
+	/** Constant <code>DELIVERABLE_SUFFIX_VALIDATE=" - validate"</code> */
 	private static final String DELIVERABLE_SUFFIX_VALIDATE = " - validate";
+	/** Constant <code>DELIVERABLE_SUFFIX_REJECT=" - reject"</code> */
 	private static final String DELIVERABLE_SUFFIX_REJECT = " - reject";
+	/** Constant <code>DELIVERABLE_SUFFIX_DOC=" - doc"</code> */
 	private static final String DELIVERABLE_SUFFIX_DOC = " - doc";
+	/** Constant <code>DELIVERABLE_SUFFIX_VALIDATE_DOC="DELIVERABLE_SUFFIX_VALIDATE + DELIVERAB"{trunked}</code> */
 	private static final String DELIVERABLE_SUFFIX_VALIDATE_DOC = DELIVERABLE_SUFFIX_VALIDATE + DELIVERABLE_SUFFIX_DOC;
+	/** Constant <code>DELIVERABLE_SUFFIX_REJECT_DOC="DELIVERABLE_SUFFIX_REJECT + DELIVERABLE"{trunked}</code> */
 	private static final String DELIVERABLE_SUFFIX_REJECT_DOC = DELIVERABLE_SUFFIX_REJECT + DELIVERABLE_SUFFIX_DOC;
 
+	/** Constant <code>MAX_RECURSION_DEPTH=4</code> */
 	private static final int MAX_RECURSION_DEPTH = 4;
 
 	@Autowired
@@ -162,6 +172,14 @@ public class SignatureProjectHelper {
 		return findDocumentsToSign(folder, signed, 0);
 	}
 
+	/**
+	 * <p>findDocumentsToSign.</p>
+	 *
+	 * @param folder a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param signed a boolean
+	 * @param depth a int
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> findDocumentsToSign(NodeRef folder, boolean signed, int depth) {
 		List<NodeRef> docs = new ArrayList<>();
 

@@ -28,6 +28,7 @@ import fr.becpg.repo.repository.model.AbstractManualDataItem;
 @AlfQname(qname = "ghs:hazardClassificationList")
 public class HazardClassificationListDataItem extends AbstractManualDataItem implements RegulatoryEntityItem {
 
+	/** Constant <code>serialVersionUID=1L</code> */
 	private static final long serialVersionUID = 1L;
 
 	public enum SignalWord {

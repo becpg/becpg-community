@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -138,6 +138,13 @@ public class MultiLevelListData {
 		this.isLeaf = isLeaf;
 	}
 
+	/**
+	 * <p>getSize.</p>
+	 *
+	 * @param multiLevelListData a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object
+	 * @param currSize a int
+	 * @return a int
+	 */
 	private int getSize(MultiLevelListData multiLevelListData, int currSize) {
 		for (Entry<NodeRef, MultiLevelListData> entry : multiLevelListData.getTree().entrySet()) {
 			currSize = getSize(entry.getValue(), currSize+1);

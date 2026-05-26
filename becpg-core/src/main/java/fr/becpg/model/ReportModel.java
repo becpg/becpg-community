@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -27,6 +27,9 @@ import org.alfresco.service.namespace.QName;
  */
 public class ReportModel {
 	
+	/**
+	 * <p>Constructor for ReportModel.</p>
+	 */
 	private ReportModel() {
 		//Do Nothing
 	}

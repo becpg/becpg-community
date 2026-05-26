@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -231,6 +231,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	/** Constant <code>PROP_USERACCESS="userAccess"</code> */
 	public static final String PROP_USERACCESS = "userAccess";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AbstractDataListExtractor.class);
 
 	/**
@@ -373,23 +374,53 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 		}
 	}
 
+	/**
+	 * <p>isLockAvailable.</p>
+	 *
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object
+	 * @return a boolean
+	 */
 	private boolean isLockAvailable(QName itemType) {
 		return !BeCPGModel.TYPE_ACTIVITY_LIST.equals(itemType) && !AuthorityHelper.isCurrentUserExternal();
 	}
 
+	/**
+	 * <p>isLocked.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private boolean isLocked(NodeRef nodeRef) {
 		return nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITYLIST_STATE)
 				&& EntityListState.Valid.toString().equals(nodeService.getProperty(nodeRef, BeCPGModel.PROP_ENTITYLIST_STATE));
 	}
 
+	/**
+	 * <p>hasWriteAccess.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private boolean hasWriteAccess(NodeRef nodeRef) {
 		return (permissionService.hasPermission(nodeRef, "Write") == AccessStatus.ALLOWED) && beCPGLicenseManager.hasWriteLicense();
 	}
 	
+	/**
+	 * <p>hasReadAccess.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private boolean hasReadAccess(NodeRef nodeRef) {
 		return (permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED);
 	}
 
+	/**
+	 * <p>hasContentField.</p>
+	 *
+	 * @param metadataFields a {@link java.util.List} object
+	 * @return a boolean
+	 */
 	private boolean hasContentField(List<AttributeExtractorStructure> metadataFields) {
 		for(AttributeExtractorStructure metadataField : metadataFields) {
 			if(ContentModel.PROP_CONTENT.equals(metadataField.getFieldQname())) {
@@ -496,6 +527,12 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 		return null;
 	}
 
+	/**
+	 * <p>isDetailable.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private boolean isDetailable(NodeRef nodeRef) {
 		return nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
 	}

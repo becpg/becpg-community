@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -29,6 +29,7 @@ import org.springframework.context.ApplicationContextAware;
  */
 public class ApplicationContextHelper implements ApplicationContextAware {
 		
+	/** Constant <code>ctx</code> */
 	private static ApplicationContext ctx = null;
 
 	/**

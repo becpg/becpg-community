@@ -57,12 +57,26 @@ public class CSVDataListOutputWriter implements DataListOutputWriter {
 
 	}
 
+	/**
+	 * <p>writeToCSV.</p>
+	 *
+	 * @param extractedItems a {@link fr.becpg.repo.entity.datalist.PaginatedExtractedItems} object
+	 * @param printer a {@link org.apache.commons.csv.CSVPrinter} object
+	 * @throws java.io.IOException if any.
+	 */
 	private void writeToCSV(PaginatedExtractedItems extractedItems, CSVPrinter printer) throws IOException {
 		for (Map<String, Object> item : extractedItems.getPageItems()) {
 			printer.printRecord(item);
 		}
 	}
 
+	/**
+	 * <p>appendCSVField.</p>
+	 *
+	 * @param csvConfig a {@link org.apache.commons.csv.CSVFormat} object
+	 * @param fields a {@link java.util.List} object
+	 * @param prefix a {@link java.lang.String} object
+	 */
 	private void appendCSVField(CSVFormat csvConfig, List<AttributeExtractorStructure> fields, String prefix) {
 		if (fields != null) {
 			for (AttributeExtractorStructure field : fields) {
@@ -79,6 +93,14 @@ public class CSVDataListOutputWriter implements DataListOutputWriter {
 		}
 	}
 
+	/**
+	 * <p>appendCSVHeader.</p>
+	 *
+	 * @param headers a {@link java.util.Map} object
+	 * @param fields a {@link java.util.List} object
+	 * @param fieldNamePrefix a {@link java.lang.String} object
+	 * @param titlePrefix a {@link java.lang.String} object
+	 */
 	private void appendCSVHeader(Map<String, String> headers, List<AttributeExtractorStructure> fields, String fieldNamePrefix, String titlePrefix) {
 		if (fields != null) {
 			for (AttributeExtractorStructure field : fields) {

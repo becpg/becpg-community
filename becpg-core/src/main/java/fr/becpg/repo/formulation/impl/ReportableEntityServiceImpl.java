@@ -28,6 +28,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @Service("reportableEntityService")
 public class ReportableEntityServiceImpl implements ReportableEntityService {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ReportableEntityServiceImpl.class);
 
 	@Autowired
@@ -56,6 +57,13 @@ public class ReportableEntityServiceImpl implements ReportableEntityService {
 		}
 	}
 
+	/**
+	 * <p>postErrors.</p>
+	 *
+	 * @param entity a {@link fr.becpg.repo.formulation.ReportableEntity} object
+	 * @param formulationChainId a {@link java.lang.String} object
+	 * @param errors a {@link java.util.Set} object
+	 */
 	private void postErrors(ReportableEntity entity, String formulationChainId, Set<ReportableError> errors) {
 		for (ReportableError error : errors) {
 			entity.addError(error.getDisplayMessage(), formulationChainId, error.getSources());
@@ -66,6 +74,11 @@ public class ReportableEntityServiceImpl implements ReportableEntityService {
 		}
 	}
 	
+	/**
+	 * <p>logErrors.</p>
+	 *
+	 * @param errors a {@link java.util.Set} object
+	 */
 	private void logErrors(Set<ReportableError> errors) {
 		for (ReportableError error : errors) {
 			if (error.getType() == ReportableErrorType.WARNING) {

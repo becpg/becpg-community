@@ -55,6 +55,12 @@ public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<
 
 	}
 
+	/**
+	 * <p>computeRegulatoryResults.</p>
+	 *
+	 * @param regulatoryEntity a {@link fr.becpg.repo.regulatory.RegulatoryEntity} object
+	 * @param reqCtrlList a {@link java.util.List} object
+	 */
 	private void computeRegulatoryResults(RegulatoryEntity regulatoryEntity, List<RequirementListDataItem> reqCtrlList) {
 		boolean isProhibited = false;
 		if (regulatoryEntity instanceof RegulatoryListDataItem regListItem) {
@@ -106,6 +112,12 @@ public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<
 		}
 	}
 	
+	/**
+	 * <p>extractRegulatoryIds.</p>
+	 *
+	 * @param regulatoryListItem a {@link fr.becpg.repo.regulatory.RegulatoryEntity} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<String> extractRegulatoryIds(RegulatoryEntity regulatoryListItem) {
 		List<String> regulatoryIds = new ArrayList<>();
 		if (regulatoryListItem.getRegulatoryCountriesRef() != null && regulatoryListItem.getRegulatoryUsagesRef() != null) {
@@ -122,6 +134,12 @@ public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<
 		return regulatoryIds;
 	}
 	
+	/**
+	 * <p>hasError.</p>
+	 *
+	 * @param reqList a {@link java.util.List} object
+	 * @return a boolean
+	 */
 	private boolean hasError(List<RequirementListDataItem> reqList) {
 		for (RequirementListDataItem req : reqList) {
 			if (RequirementType.Forbidden.equals(req.getReqType())
@@ -132,6 +150,12 @@ public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<
 		return false;
 	}
 	
+	/**
+	 * <p>getMaximumDosageRequirements.</p>
+	 *
+	 * @param reqList a {@link java.util.List} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<RequirementListDataItem> getMaximumDosageRequirements(List<RequirementListDataItem> reqList) {
 		double minValue = Double.POSITIVE_INFINITY;
 		for (RequirementListDataItem req : reqList) {

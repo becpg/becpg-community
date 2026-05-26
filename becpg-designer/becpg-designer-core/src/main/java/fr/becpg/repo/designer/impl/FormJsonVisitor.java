@@ -56,6 +56,14 @@ public class FormJsonVisitor {
 
 	}
 
+	/**
+	 * <p>visitConfigEl.</p>
+	 *
+	 * @param configElNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param parent a {@link org.json.JSONObject} object
+	 * @throws org.alfresco.service.cmr.repository.InvalidNodeRefException if any.
+	 * @throws org.json.JSONException if any.
+	 */
 	private void visitConfigEl(NodeRef configElNodeRef, JSONObject parent) throws InvalidNodeRefException, JSONException {
 
 		String formType =(String) nodeService.getProperty(configElNodeRef, DesignerModel.PROP_DSG_ID);
@@ -86,6 +94,13 @@ public class FormJsonVisitor {
 
 	}
 
+	/**
+	 * <p>visitForm.</p>
+	 *
+	 * @param formNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param parent a {@link org.json.JSONObject} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private void visitForm(NodeRef formNodeRef, JSONObject parent) throws JSONException {
 
 		List<ChildAssociationRef> assocs = nodeService.getChildAssocs(formNodeRef);
@@ -144,6 +159,14 @@ public class FormJsonVisitor {
 	//
 	// }
 
+	/**
+	 * <p>visitTab.</p>
+	 *
+	 * @param setNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param form a {@link org.json.JSONObject} object
+	 * @throws org.alfresco.service.cmr.repository.InvalidNodeRefException if any.
+	 * @throws org.json.JSONException if any.
+	 */
 	private void visitTab(NodeRef setNodeRef, JSONObject form) throws InvalidNodeRefException, JSONException {
 
 		JSONObject tab = new JSONObject();
@@ -175,6 +198,15 @@ public class FormJsonVisitor {
 
 	}
 
+	/**
+	 * <p>visitField.</p>
+	 *
+	 * @param fieldNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param tabId a {@link java.lang.String} object
+	 * @return a {@link org.json.JSONObject} object
+	 * @throws org.alfresco.service.cmr.repository.InvalidNodeRefException if any.
+	 * @throws org.json.JSONException if any.
+	 */
 	@SuppressWarnings("unchecked")
 	private JSONObject visitField(NodeRef fieldNodeRef, String tabId) throws InvalidNodeRefException, JSONException {
 		boolean hide = (Boolean) nodeService.getProperty(fieldNodeRef, DesignerModel.PROP_DSG_HIDE);
@@ -235,6 +267,14 @@ public class FormJsonVisitor {
 		return field;
 	}
 
+	/**
+	 * <p>visitSet.</p>
+	 *
+	 * @param setNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param tabId a {@link java.lang.String} object
+	 * @return a {@link org.json.JSONObject} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private JSONObject visitSet(NodeRef setNodeRef, String tabId) throws JSONException {
 
 		JSONObject set = new JSONObject();
@@ -329,6 +369,13 @@ public class FormJsonVisitor {
 		return set;
 	}
 
+	/**
+	 * <p>visitControl.</p>
+	 *
+	 * @param controlRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param field a {@link org.json.JSONObject} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private void visitControl(NodeRef controlRef, JSONObject field) throws JSONException {
 
 		

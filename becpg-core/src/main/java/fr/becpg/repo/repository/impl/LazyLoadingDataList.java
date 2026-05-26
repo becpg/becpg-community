@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -81,6 +81,11 @@ public class LazyLoadingDataList<E extends RepositoryEntity> implements List<E>,
 	}
 
 	
+	/**
+	 * <p>getList.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	private List<E> getList() {
 		if(backedList==null){
 			backedList  = dataProvider.getData();

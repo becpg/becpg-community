@@ -23,6 +23,9 @@ public class LargeTextHelper {
 	/** Constant <code>TEXT_SIZE_LIMIT=50000</code> */
 	public static final int TEXT_SIZE_LIMIT = 50000;
 
+	/**
+	 * <p>Constructor for LargeTextHelper.</p>
+	 */
 	private LargeTextHelper() {
 		//Do Nothing
 	}

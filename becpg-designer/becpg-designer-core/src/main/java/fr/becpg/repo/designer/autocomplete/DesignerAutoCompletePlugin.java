@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -77,15 +77,22 @@ import fr.becpg.repo.designer.DesignerService;
 @Service
 public class DesignerAutoCompletePlugin implements AutoCompletePlugin {
 
+	/** Constant <code>TYPE_PARENT_NAME="parentName"</code> */
 	private static final  String TYPE_PARENT_NAME = "parentName";
+	/** Constant <code>TYPE_MANDATORY_ASPECTS="mandatoryAspects"</code> */
 	private static final  String TYPE_MANDATORY_ASPECTS = "mandatoryAspects";
+	/** Constant <code>TYPE_PROPERTY_TYPE="propertyType"</code> */
 	private static final  String TYPE_PROPERTY_TYPE = "propertyType";
+	/** Constant <code>TYPE_TARGET_CLASS_NAME="targetClassName"</code> */
 	private static final  String TYPE_TARGET_CLASS_NAME = "targetClassName";
+	/** Constant <code>TYPE_CONSTRAINT_REF="constraintRef"</code> */
 	private static final  String TYPE_CONSTRAINT_REF = "constraintRef";
 
+	/** Constant <code>SEPARATOR="|"</code> */
 	private static final  String SEPARATOR = "|";
 
 
+	/** Constant <code>logger</code> */
 	private static final  Log logger = LogFactory.getLog(DesignerAutoCompletePlugin.class);
 	
 	@Autowired
@@ -133,6 +140,15 @@ public class DesignerAutoCompletePlugin implements AutoCompletePlugin {
 		return null;
 	}
 
+	/**
+	 * <p>getAvailableConstraints.</p>
+	 *
+	 * @param modelNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param query a {@link java.lang.String} object
+	 * @param pageNum a {@link java.lang.Integer} object
+	 * @param pageSize a {@link java.lang.Integer} object
+	 * @return a {@link fr.becpg.repo.autocomplete.AutoCompletePage} object
+	 */
 	private AutoCompletePage getAvailableConstraints(NodeRef modelNodeRef, String query, Integer pageNum, Integer pageSize) {
 		List<String> suggestions = new ArrayList<>();
 		
@@ -178,6 +194,15 @@ public class DesignerAutoCompletePlugin implements AutoCompletePlugin {
 
 	}
 
+	/**
+	 * <p>getAvailableDataTypeNames.</p>
+	 *
+	 * @param modelNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param query a {@link java.lang.String} object
+	 * @param pageNum a {@link java.lang.Integer} object
+	 * @param pageSize a {@link java.lang.Integer} object
+	 * @return a {@link fr.becpg.repo.autocomplete.AutoCompletePage} object
+	 */
 	private AutoCompletePage getAvailableDataTypeNames(NodeRef modelNodeRef, String query, Integer pageNum, Integer pageSize) {
 		List<String> uris = getImports(modelNodeRef);
 		
@@ -218,10 +243,26 @@ public class DesignerAutoCompletePlugin implements AutoCompletePlugin {
 		return new AutoCompletePage(suggestions, pageNum, pageSize, new StringValueExtractor("dataType"));
 	}
 
+	/**
+	 * <p>filter.</p>
+	 *
+	 * @param suggestion a {@link java.lang.String} object
+	 * @param query a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	private boolean filter(String suggestion, String query) {
 		return query.contains("*") || suggestion.toLowerCase().contains(query.toLowerCase());
 	}
 
+	/**
+	 * <p>getAvailableEntityTypeNames.</p>
+	 *
+	 * @param modelNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param query a {@link java.lang.String} object
+	 * @param pageNum a {@link java.lang.Integer} object
+	 * @param pageSize a {@link java.lang.Integer} object
+	 * @return a {@link fr.becpg.repo.autocomplete.AutoCompletePage} object
+	 */
 	private AutoCompletePage getAvailableEntityTypeNames(NodeRef modelNodeRef, String query, Integer pageNum, Integer pageSize) {
 
 		List<String> uris = getImports(modelNodeRef);
@@ -264,6 +305,15 @@ public class DesignerAutoCompletePlugin implements AutoCompletePlugin {
 
 	
 
+	/**
+	 * <p>getAvailableEntityAspectNames.</p>
+	 *
+	 * @param modelNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param query a {@link java.lang.String} object
+	 * @param pageNum a {@link java.lang.Integer} object
+	 * @param pageSize a {@link java.lang.Integer} object
+	 * @return a {@link fr.becpg.repo.autocomplete.AutoCompletePage} object
+	 */
 	private AutoCompletePage getAvailableEntityAspectNames(NodeRef modelNodeRef, String query, Integer pageNum, Integer pageSize) {
 
 		List<String> uris = getImports(modelNodeRef);
@@ -303,6 +353,12 @@ public class DesignerAutoCompletePlugin implements AutoCompletePlugin {
 	}
 	
 	
+	/**
+	 * <p>getImports.</p>
+	 *
+	 * @param modelNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<String> getImports(NodeRef modelNodeRef) {
 		List<String> imports = new ArrayList<>();
 		if(modelNodeRef!=null){

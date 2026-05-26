@@ -52,6 +52,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
 @Service
 public class ProductSpelFunctions implements CustomSpelFunctions {
 
+    /** Constant <code>logger</code> */
     private static final Log logger = LogFactory.getLog(ProductSpelFunctions.class);
 
     @Autowired

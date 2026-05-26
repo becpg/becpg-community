@@ -14,8 +14,10 @@ import fr.becpg.repo.system.SystemConfigurationService;
  */
 public class BeCPGIndexFilter extends TypeIndexFilter {
 
+	/** Constant <code>CONF_KEY="beCPG.solr.enableIndexForTypes"</code> */
 	private static final String CONF_KEY = "beCPG.solr.enableIndexForTypes";
 	
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(BeCPGIndexFilter.class);
 	
 	

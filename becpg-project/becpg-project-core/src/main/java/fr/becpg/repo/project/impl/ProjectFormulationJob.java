@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -42,9 +42,12 @@ import org.quartz.PersistJobDataAfterExecution;
 @DisallowConcurrentExecution
 public class ProjectFormulationJob extends AbstractScheduledLockedJob implements Job {
 
+	/** Constant <code>KEY_PROJECT_FORMULATION_WORKER="projectFormulationWorker"</code> */
 	private static final String KEY_PROJECT_FORMULATION_WORKER = "projectFormulationWorker";
+	/** Constant <code>KEY_TENANT_ADMIN_SERVICE="tenantAdminService"</code> */
 	private static final String KEY_TENANT_ADMIN_SERVICE = "tenantAdminService";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ProjectFormulationJob.class);
 
 	/** {@inheritDoc} */

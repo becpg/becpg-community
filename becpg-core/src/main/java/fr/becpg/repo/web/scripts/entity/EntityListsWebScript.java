@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -78,77 +78,114 @@ import fr.becpg.repo.web.scripts.entity.datalist.AbstractEntityDataListWebScript
 //TODO merge with EntitySecurityWebScript to have a common AbstractEntityDataListWebScript and remove duplicate code
 public class EntityListsWebScript extends AbstractEntityDataListWebScript {
 
+	/** Constant <code>RESULT_CONTAINER="container"</code> */
 	private static final String RESULT_CONTAINER = "container";
 
+	/** Constant <code>RESULT_DATALISTS="datalists"</code> */
 	private static final String RESULT_DATALISTS = "datalists";
 
+	/** Constant <code>RESULT_ENTITY="entity"</code> */
 	private static final String RESULT_ENTITY = "entity";
 
+	/** Constant <code>RESULT_LIST_TYPES="listTypes"</code> */
 	private static final String RESULT_LIST_TYPES = "listTypes";
 
+	/** Constant <code>RESULT_ACL_TYPE="aclType"</code> */
 	private static final String RESULT_ACL_TYPE = "aclType";
 
+	/** Constant <code>RESULT_ACL_TYPE_NODE="aclTypeNode"</code> */
 	private static final String RESULT_ACL_TYPE_NODE = "aclTypeNode";
 
+	/** Constant <code>RESULT_REPORTS="reports"</code> */
 	private static final String RESULT_REPORTS = "reports";
+	/** Constant <code>KEY_NAME_NAME="name"</code> */
 	static final String KEY_NAME_NAME = "name";
 
+    /** Constant <code>KEY_NAME_TITLE="title"</code> */
     static final String KEY_NAME_TITLE = "title";
 
+	/** Constant <code>KEY_NAME_DESCRIPTION="description"</code> */
 	static final String KEY_NAME_DESCRIPTION = "description";
 
+    /** Constant <code>KEY_NAME_ENTITY_NAME="entityName"</code> */
     static final String KEY_NAME_ENTITY_NAME = "entityName";
 
+	/** Constant <code>KEY_NAME_NODE_REF="nodeRef"</code> */
 	static final String KEY_NAME_NODE_REF = "nodeRef";
 
+	/** Constant <code>KEY_NAME_ITEM_TYPE="itemType"</code> */
 	static final String KEY_NAME_ITEM_TYPE = "itemType";
 
+    /** Constant <code>KEY_NAME_STATE="state"</code> */
     static final String KEY_NAME_STATE = "state";
 
+	/** Constant <code>KEY_NAME_PARENT_NODE_REF="parentNodeRef"</code> */
 	static final String KEY_NAME_PARENT_NODE_REF = "parentNodeRef";
 
+	/** Constant <code>KEY_NAME_USER_ACCESS="userAccess"</code> */
 	private static final String KEY_NAME_USER_ACCESS = "userAccess";
 
+	/** Constant <code>KEY_NAME_PERMISSIONS="permissions"</code> */
 	private static final String KEY_NAME_PERMISSIONS = "permissions";
 
+	/** Constant <code>KEY_NAME_EDIT="edit"</code> */
 	private static final String KEY_NAME_EDIT = "edit";
 
+	/** Constant <code>KEY_NAME_DELETE="delete"</code> */
 	private static final String KEY_NAME_DELETE = "delete";
 
+	/** Constant <code>KEY_NAME_EDIT_CHILDREN="editChildren"</code> */
 	private static final String KEY_NAME_EDIT_CHILDREN = "editChildren";
 
+	/** Constant <code>KEY_NAME_CREATE="create"</code> */
 	private static final String KEY_NAME_CREATE = "create";
 
+	/** Constant <code>KEY_NAME_USER_SECURITY_ROLES="userSecurityRoles"</code> */
 	private static final String KEY_NAME_USER_SECURITY_ROLES = "userSecurityRoles";
 
+	/** Constant <code>KEY_NAME_CHANGE_STATE="changeState"</code> */
 	private static final String KEY_NAME_CHANGE_STATE = "changeState";
 
+	/** Constant <code>KEY_NAME_ASPECTS="aspects"</code> */
 	private static final String KEY_NAME_ASPECTS = "aspects";
 
+	/** Constant <code>KEY_NAME_TYPE="type"</code> */
 	private static final String KEY_NAME_TYPE = "type";
 
+	/** Constant <code>KEY_NAME_PATH="path"</code> */
 	private static final String KEY_NAME_PATH = "path";
 
+	/** Constant <code>KEY_NAME_IS_DEFAULT_VARIANT="isDefaultVariant"</code> */
 	private static final String KEY_NAME_IS_DEFAULT_VARIANT = "isDefaultVariant";
 
+	/** Constant <code>KEY_NAME_COLOR="color"</code> */
 	private static final String KEY_NAME_COLOR = "color";
 
+	/** Constant <code>KEY_NAME_VARIANT="variants"</code> */
 	private static final String KEY_NAME_VARIANT = "variants";
 
+	/** Constant <code>KEY_NAME_IS_MODEL_VARIANT="isModelVariant"</code> */
 	private static final String KEY_NAME_IS_MODEL_VARIANT = "isModelVariant";
 
+	/** Constant <code>KEY_NAME_VARIANT_PARENT="variantParent"</code> */
 	private static final String KEY_NAME_VARIANT_PARENT = "variantParent";
 
+	/** Constant <code>KEY_NAME_COMPARE_WITH_ENTITIES="compareWithEntities"</code> */
 	private static final String KEY_NAME_COMPARE_WITH_ENTITIES = "compareWithEntities";
 
+	/** Constant <code>PARAM_STORE_TYPE="store_type"</code> */
 	private static final String PARAM_STORE_TYPE = "store_type";
 
+	/** Constant <code>PARAM_STORE_ID="store_id"</code> */
 	private static final String PARAM_STORE_ID = "store_id";
 
+	/** Constant <code>PARAM_ACL_MODE="aclMode"</code> */
 	private static final String PARAM_ACL_MODE = "aclMode";
 
+	/** Constant <code>PARAM_ID="id"</code> */
 	private static final String PARAM_ID = "id";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityListsWebScript.class);
 
 	
@@ -253,6 +290,13 @@ public class EntityListsWebScript extends AbstractEntityDataListWebScript {
 		this.reportAssociationDecorator = reportAssociationDecorator;
 	}
 
+	/**
+	 * <p>makeListTypes.</p>
+	 *
+	 * @param classDefinitions a {@link java.lang.Iterable} object
+	 * @return a {@link org.json.JSONArray} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private JSONArray makeListTypes(Iterable<ClassDefinition> classDefinitions) throws JSONException {
 		JSONArray listTypes = new JSONArray();
 		for (ClassDefinition classDefinition : classDefinitions) {
@@ -276,6 +320,16 @@ public class EntityListsWebScript extends AbstractEntityDataListWebScript {
 		return listTypes;
 	}
 
+	/**
+	 * <p>makeDatalists.</p>
+	 *
+	 * @param lists a {@link java.lang.Iterable} object
+	 * @param entity a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param hasWritePermission a boolean
+	 * @param accessMap a {@link java.util.Map} object
+	 * @return a {@link org.json.JSONArray} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private JSONArray makeDatalists(Iterable<NodeRef> lists, NodeRef entity, boolean hasWritePermission, Map<NodeRef, Boolean> accessMap)
 			throws JSONException {
 		boolean entityIsLocked = lockService.isLocked(entity);
@@ -319,6 +373,15 @@ public class EntityListsWebScript extends AbstractEntityDataListWebScript {
 		return datalist;
 	}
 
+	/**
+	 * <p>makeEntity.</p>
+	 *
+	 * @param entity a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param path a {@link java.lang.String} object
+	 * @return a {@link org.json.JSONObject} object
+	 * @throws org.json.JSONException if any.
+	 * @throws java.lang.IllegalStateException if any.
+	 */
 	private JSONObject makeEntity(NodeRef entity, String path) throws JSONException, IllegalStateException {
 		JSONObject result = new JSONObject();
 
@@ -414,6 +477,12 @@ public class EntityListsWebScript extends AbstractEntityDataListWebScript {
 		return result;
 	}
 
+	/**
+	 * <p>getOrCreateListContainer.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getOrCreateListContainer(NodeRef nodeRef) {
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
 		if (listContainerNodeRef == null) {

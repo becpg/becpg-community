@@ -13,6 +13,7 @@ import jakarta.annotation.PostConstruct;
  */
 @Service("systemConfigurationRegistry")
 public class SystemConfigurationRegistry {
+	   /** Constant <code>instance</code> */
 	   private static SystemConfigurationService instance;
 
 	    private final SystemConfigurationService systemConfigurationService;
@@ -27,6 +28,9 @@ public class SystemConfigurationRegistry {
 	        this.systemConfigurationService = systemConfigurationService;
 	    }
 
+	    /**
+	     * <p>init.</p>
+	     */
 	    @PostConstruct
 	    private void init() {
 	    	instance = this.systemConfigurationService;

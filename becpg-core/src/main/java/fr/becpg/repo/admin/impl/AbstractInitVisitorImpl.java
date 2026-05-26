@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2010-2011 beCPG. All rights reserved.
+ *  Copyright (C) 2010-2026 beCPG. All rights reserved.
  */
 package fr.becpg.repo.admin.impl;
 
@@ -54,6 +54,7 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 	/** Constant <code>logger</code> */
 	protected static final Log logger = LogFactory.getLog(AbstractInitVisitorImpl.class);
 
+	/** Constant <code>LOCALIZATION_PFX_GROUP="becpg.group"</code> */
 	private static final String LOCALIZATION_PFX_GROUP = "becpg.group";
 
 	/**
@@ -251,6 +252,14 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 		ruleService.saveRule(nodeRef, rule);
 	}
 
+	/**
+	 * <p>ruleExists.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param ruleTitle a {@link java.lang.String} object
+	 * @param ruleDescription a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	private boolean ruleExists(NodeRef nodeRef, String ruleTitle, String ruleDescription) {
 		if (ruleService.getRules(nodeRef, false).stream().anyMatch(r -> ruleTitle.equals(r.getTitle()) && ruleDescription.equals(r.getDescription()))) {
 			return true;

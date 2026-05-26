@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -57,8 +57,10 @@ import fr.becpg.repo.repository.L2CacheSupport;
  */
 public class FormulateWUsedWebScript extends AbstractWebScript {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(FormulateWUsedWebScript.class);
 
+	/** Constant <code>PARAM_NODEREFS="nodeRefs"</code> */
 	private static final String PARAM_NODEREFS = "nodeRefs";
 
 	private NodeService nodeService;

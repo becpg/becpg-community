@@ -42,6 +42,7 @@ import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
 @Service("repoService")
 public class RepoServiceImpl implements RepoService {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(RepoServiceImpl.class);
 
 	@Autowired

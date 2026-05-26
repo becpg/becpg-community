@@ -26,6 +26,7 @@ public class AutoNumHelper implements InitializingBean {
 	@Autowired
 	private NamespaceService namespaceService;
 
+	/** Constant <code>instance</code> */
 	private static AutoNumHelper instance = null;
 
 	/** {@inheritDoc} */

@@ -46,6 +46,12 @@ public class CalculatedCharactsAutoCompleteExtractor extends TargetAssocAutoComp
 	
 	
 
+	/**
+	 * <p>getParentOfLabelingListValue.</p>
+	 *
+	 * @param value a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getParentOfLabelingListValue(NodeRef value) {
 
 		String ret = "";

@@ -60,9 +60,12 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	/** The Constant NO_GRP. */
 	public static final String NO_GRP = "-";
 
+	/** Constant <code>MESSAGE_MISSING_INGLIST="message.formulate.missing.ingList"</code> */
 	private static final String MESSAGE_MISSING_INGLIST = "message.formulate.missing.ingList";
+	/** Constant <code>MESSAGE_INCORRECT_INGLIST_TOTAL="message.formulate.incorrect.ingList.tot"{trunked}</code> */
 	private static final String MESSAGE_INCORRECT_INGLIST_TOTAL = "message.formulate.incorrect.ingList.total";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(IngsCalculatingFormulationHandler.class);
 
 	private NodeService nodeService;
@@ -159,6 +162,12 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		return true;
 	}
 
+	/**
+	 * <p>accept.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a boolean
+	 */
 	private boolean accept(ProductData formulatedProduct) {
 		return !Boolean.TRUE.equals(formulatedProduct.getIsIngListManual())
 				&& formulatedProduct.hasCompoListEl(FormulationFilters.EFFECTIVE_VARIANT_COMPO)
@@ -168,6 +177,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 	/**
 	 * Calculate the ingredient list of a product.
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param reqCtrlMap a {@link java.util.Map} object
 	 */
 	private void calculateIL(ProductData formulatedProduct, Map<NodeRef, RequirementListDataItem> reqCtrlMap) {
 
@@ -359,6 +371,12 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 	}
 
+	/**
+	 * <p>shouldOmit.</p>
+	 *
+	 * @param componentProductData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a boolean
+	 */
 	private boolean shouldOmit(ProductData componentProductData) {
 		boolean shouldOmit = false;
 		if (componentProductData.getIngList() != null && !componentProductData.getIngList().isEmpty()) {
@@ -375,24 +393,57 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		return shouldOmit;
 	}
 
+	/**
+	 * <p>hasEvaporationData.</p>
+	 *
+	 * @param ingListDataItem a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @return a boolean
+	 */
 	private boolean hasEvaporationData(IngListDataItem ingListDataItem) {
 		return EvaporatingFormulationHelper.hasEvaporationData(ingListDataItem.getIng(), nodeService);
 	}
 
+	/**
+	 * <p>getEvaporateRate.</p>
+	 *
+	 * @param ingListDataItem a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double getEvaporateRate(IngListDataItem ingListDataItem) {
 		return EvaporatingFormulationHelper.getEvaporateRate(ingListDataItem.getIng(), nodeService);
 	}
 
+	/**
+	 * <p>applyEvaporation.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param evaporatedDataItems a {@link java.util.Set} object
+	 */
 	private void applyEvaporation(ProductData formulatedProduct, Set<EvaporatedDataItem> evaporatedDataItems) {
 		applyEvaporation(formulatedProduct, evaporatedDataItems, formulatedProduct.getYield(), IngListDataItem::getQtyPercWithYield,
 				IngListDataItem::setQtyPercWithYield);
 	}
 
+	/**
+	 * <p>applySecondaryEvaporation.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param evaporatedDataItems a {@link java.util.Set} object
+	 */
 	private void applySecondaryEvaporation(ProductData formulatedProduct, Set<EvaporatedDataItem> evaporatedDataItems) {
 		applyEvaporation(formulatedProduct, evaporatedDataItems, formulatedProduct.getSecondaryYield(), IngListDataItem::getQtyPercWithSecondaryYield,
 				IngListDataItem::setQtyPercWithSecondaryYield);
 	}
 
+	/**
+	 * <p>applyEvaporation.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param evaporatedDataItems a {@link java.util.Set} object
+	 * @param currYield a {@link java.lang.Double} object
+	 * @param getQtyPercWithYield a {@link java.util.function.Function} object
+	 * @param setQtyPercWithYield a {@link java.util.function.BiConsumer} object
+	 */
 	private void applyEvaporation(ProductData formulatedProduct, Set<EvaporatedDataItem> evaporatedDataItems, Double currYield,
 			Function<IngListDataItem, Double> getQtyPercWithYield, BiConsumer<IngListDataItem, Double> setQtyPercWithYield) {
 		if ((currYield != null) && (currYield != 0d)) {
@@ -434,6 +485,16 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 	}
 
+	/**
+	 * <p>addReqCtrl.</p>
+	 *
+	 * @param reqCtrlMap a {@link java.util.Map} object
+	 * @param reqNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param requirementType a {@link fr.becpg.repo.regulatory.RequirementType} object
+	 * @param message a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @param sourceNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param requirementDataType a {@link fr.becpg.repo.regulatory.RequirementDataType} object
+	 */
 	private void addReqCtrl(Map<NodeRef, RequirementListDataItem> reqCtrlMap, NodeRef reqNodeRef, RequirementType requirementType, MLText message,
 			NodeRef sourceNodeRef, RequirementDataType requirementDataType) {
 
@@ -460,6 +521,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * @param totalQtyIngMap map accumulating total quantities per ingredient key
 	 * @param reqCtrlMap map of requirement controls by node
 	 * @param visited set tracking already visited nodeRefs to avoid cycles
+	 * @param totalQtyOmittedIngMap a {@link java.util.Map} object
 	 */
 	private void visitILOfPart(ProductData formulatedProduct, CompoListDataItem compoListDataItem, ProductData componentProductData,
 			List<IngListDataItem> retainNodes, Map<String, IngListDataItem> totalQtyIngMap, Map<String, IngListDataItem> totalQtyOmittedIngMap,
@@ -519,15 +581,16 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	/**
 	 * Add the ingredients of the part in the ingredient list.
 	 *
-	 * @param formulatedProduct
-	 * @param componentProductData
-	 * @param compoListDataItem
-	 * @param compositeIngList
-	 * @param ingList
-	 * @param retainNodes
-	 * @param totalQtyIngMap
-	 * @param parentIngListDataItem
-	 * @param isGeneric
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param componentProductData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param compoListDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 * @param compositeIngList a {@link fr.becpg.repo.data.hierarchicalList.Composite} object
+	 * @param ingList a {@link java.util.List} object
+	 * @param retainNodes a {@link java.util.List} object
+	 * @param totalQtyIngMap a {@link java.util.Map} object
+	 * @param parentIngListDataItem a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @param isGeneric a boolean
+	 * @param totalQtyOmittedIngMap a {@link java.util.Map} object
 	 */
 	private void calculateILOfPart(ProductData formulatedProduct, ProductData componentProductData, CompoListDataItem compoListDataItem,
 			Composite<IngListDataItem> compositeIngList, List<IngListDataItem> ingList, List<IngListDataItem> retainNodes,
@@ -679,6 +742,15 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 	}
 
+	/**
+	 * <p>updateQty.</p>
+	 *
+	 * @param qty a {@link java.lang.Double} object
+	 * @param qtyIng a {@link java.lang.Double} object
+	 * @param getTotalQty a {@link java.util.function.Supplier} object
+	 * @param setTotalQty a {@link java.util.function.Consumer} object
+	 * @param factor a {@link java.lang.Double} object
+	 */
 	private void updateQty(Double qty, Double qtyIng, Supplier<Double> getTotalQty, Consumer<Double> setTotalQty, Double factor) {
 		if (qtyIng != null) {
 			Double totalQty = getTotalQty.get();
@@ -690,6 +762,16 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 	}
 
+	/**
+	 * <p>updateMinMaxQty.</p>
+	 *
+	 * @param qty a {@link java.lang.Double} object
+	 * @param qtyIng a {@link java.lang.Double} object
+	 * @param getTotalQty a {@link java.util.function.Supplier} object
+	 * @param setTotalQty a {@link java.util.function.Consumer} object
+	 * @param isGeneric a boolean
+	 * @param isMax a boolean
+	 */
 	private void updateMinMaxQty(Double qty, Double qtyIng, Supplier<Double> getTotalQty, Consumer<Double> setTotalQty, boolean isGeneric,
 			boolean isMax) {
 		if (qtyIng != null) {
@@ -708,6 +790,13 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 	}
 
+	/**
+	 * <p>findIngListDataItem.</p>
+	 *
+	 * @param ingLists a {@link java.util.List} object
+	 * @param ingList a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 */
 	private IngListDataItem findIngListDataItem(List<IngListDataItem> ingLists, IngListDataItem ingList) {
 
 		if ((ingList != null) && (ingList.getIng() != null)) {
@@ -741,6 +830,14 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		return null;
 	}
 
+	/**
+	 * <p>findOrCreateIngListDataItem.</p>
+	 *
+	 * @param ingList a {@link java.util.List} object
+	 * @param ingListDataItem a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @param parentIngListDataItem a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 */
 	private IngListDataItem findOrCreateIngListDataItem(List<IngListDataItem> ingList, IngListDataItem ingListDataItem,
 			IngListDataItem parentIngListDataItem) {
 		IngListDataItem newIngListDataItem = findIngListDataItem(ingList, ingListDataItem);
@@ -761,6 +858,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	/**
 	 * Sort ingList by qty perc in descending order group by parent
 	 *
+	 * @param ingList a {@link java.util.List} object
 	 */
 	private void sortIL(List<IngListDataItem> ingList) {
 		if (!ingList.isEmpty()) {
@@ -778,16 +876,35 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 	}
 
+	/**
+	 * <p>processItem.</p>
+	 *
+	 * @param item a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @param byParent a {@link java.util.Map} object
+	 * @param sortedList a {@link java.util.List} object
+	 */
 	private void processItem(IngListDataItem item, Map<IngListDataItem, List<IngListDataItem>> byParent, List<IngListDataItem> sortedList) {
 		sortedList.add(item);
 		sorted(byParent.getOrDefault(item, Collections.emptyList())).forEach(child -> processItem(child, byParent, sortedList));
 	}
 
+	/**
+	 * <p>sorted.</p>
+	 *
+	 * @param items a {@link java.util.List} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<IngListDataItem> sorted(List<IngListDataItem> items) {
 		return items.stream().sorted(Comparator.comparing(IngListDataItem::getQtyPerc, Comparator.nullsLast(Comparator.reverseOrder()))
 				.thenComparing(Comparator.comparing(this::getLegalName))).toList();
 	}
 
+	/**
+	 * <p>getLegalName.</p>
+	 *
+	 * @param ingListDataItem a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getLegalName(IngListDataItem ingListDataItem) {
 
 		if (ingListDataItem.getIng() != null) {
@@ -797,6 +914,12 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		return ingListDataItem.getName();
 	}
 
+	/**
+	 * <p>mergeIngListDataItem.</p>
+	 *
+	 * @param target a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @param source a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 */
 	private void mergeIngListDataItem(IngListDataItem target, IngListDataItem source) {
 		target.setQtyPerc(sum(target.getQtyPerc(), source.getQtyPerc()));
 		target.setQtyPerc1(sum(target.getQtyPerc1(), source.getQtyPerc1()));
@@ -810,6 +933,13 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		target.setVolumeQtyPerc(sum(target.getVolumeQtyPerc(), source.getVolumeQtyPerc()));
 	}
 
+	/**
+	 * <p>sum.</p>
+	 *
+	 * @param d1 a {@link java.lang.Double} object
+	 * @param d2 a {@link java.lang.Double} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double sum(Double d1, Double d2) {
 		if ((d1 == null) && (d2 == null)) {
 			return null;

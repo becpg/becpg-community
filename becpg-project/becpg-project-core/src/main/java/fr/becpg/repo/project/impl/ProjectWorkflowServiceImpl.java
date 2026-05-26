@@ -74,10 +74,14 @@ import fr.becpg.repo.project.data.projectList.TaskState;
 public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 	// Constants
+	/** Constant <code>WORKFLOW_DESCRIPTION_FORMAT="%s - %s - %s"</code> */
 	private static final String WORKFLOW_DESCRIPTION_FORMAT = "%s - %s - %s";
+	/** Constant <code>DEFAULT_INITIATOR="System"</code> */
 	private static final String DEFAULT_INITIATOR = "System";
+	/** Constant <code>DEFAULT_PRIORITY_NORMAL=2</code> */
 	private static final int DEFAULT_PRIORITY_NORMAL = 2;
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ProjectWorkflowServiceImpl.class);
 
 	// Services
@@ -196,6 +200,9 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 	/**
 	 * Execute the workflow start process
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param taskListDataItem a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
 	 */
 	private void executeWorkflowStart(ProjectData projectData, TaskListDataItem taskListDataItem) {
 		String workflowDescription = calculateWorkflowDescription(projectData, taskListDataItem);
@@ -224,6 +231,11 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 	/**
 	 * Build workflow properties map
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param taskListDataItem a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+	 * @param workflowDescription a {@link java.lang.String} object
+	 * @return a {@link java.util.Map} object
 	 */
 	private Map<QName, Serializable> buildWorkflowProperties(ProjectData projectData, TaskListDataItem taskListDataItem, String workflowDescription) {
 
@@ -257,8 +269,11 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 	/**
 	 * Create workflow package with project and entities.
 	 *
-	 * <p>Registered {@link WorkflowPackageHandler} beans may add extra nodes
+	 * <p>Registered {@link fr.becpg.repo.project.WorkflowPackageHandler} beans may add extra nodes
 	 * (e.g. the supplier) to the package.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	private NodeRef createWorkflowPackage(ProjectData projectData) {
 		NodeRef wfPackage = workflowService.createPackage(null);
@@ -283,6 +298,9 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 	/**
 	 * Complete start task and set workflow to in progress
+	 *
+	 * @param workflowId a {@link java.lang.String} object
+	 * @param taskListDataItem a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
 	 */
 	private void completeStartTaskAndSetProgress(String workflowId, TaskListDataItem taskListDataItem) {
 		WorkflowTask startTask = workflowService.getStartTask(workflowId);
@@ -311,6 +329,9 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 	/**
 	 * Determine who should initiate the workflow
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @return a {@link java.lang.String} object
 	 */
 	private String determineWorkflowInitiator(ProjectData projectData) {
 		if (projectData.getProjectManager() != null) {
@@ -323,6 +344,10 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 	/**
 	 * Check if notifications should be sent for this task
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param task a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+	 * @return a boolean
 	 */
 	@SuppressWarnings("unchecked")
 	private boolean shouldNotify(ProjectData projectData, TaskListDataItem task) {
@@ -355,6 +380,10 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 	/**
 	 * Check if task was reopened after being refused
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param reopenedTask a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+	 * @return a boolean
 	 */
 	private boolean isReopenedAfterRefuse(ProjectData projectData, TaskListDataItem reopenedTask) {
 		if (projectData.getTaskList() == null) {
@@ -373,6 +402,9 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 	/**
 	 * Split resources into users and groups
+	 *
+	 * @param resources a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.project.impl.ProjectWorkflowServiceImpl.AssigneesSplit} object
 	 */
 	private AssigneesSplit splitAssignees(List<NodeRef> resources) {
 		if ((resources == null) || resources.isEmpty()) {
@@ -418,6 +450,10 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 	/**
 	 * Get localized task name based on assignee locale
+	 *
+	 * @param taskListDataItem a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+	 * @param resources a {@link java.util.List} object
+	 * @return a {@link java.lang.String} object
 	 */
 	private String getLocalizedTaskName(TaskListDataItem taskListDataItem, List<NodeRef> resources) {
 		AssigneesSplit assignees = splitAssignees(resources);
@@ -441,6 +477,9 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 	/**
 	 * Determine locale for task description
+	 *
+	 * @param assignees a {@link fr.becpg.repo.project.impl.ProjectWorkflowServiceImpl.AssigneesSplit} object
+	 * @return a {@link java.util.Locale} object
 	 */
 	private Locale determineLocale(AssigneesSplit assignees) {
 		if (assignees.hasSingleUser()) {
@@ -451,6 +490,9 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 	/**
 	 * Get project code or generate one
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @return a {@link java.lang.String} object
 	 */
 	private String getProjectCode(ProjectData projectData) {
 		return projectData.getCode() != null ? projectData.getCode() : autoNumService.getOrCreateBeCPGCode(projectData.getNodeRef());
@@ -458,6 +500,9 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 	/**
 	 * Get workflow definition ID by name
+	 *
+	 * @param workflowName a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
 	 */
 	private String getWorkflowDefId(String workflowName) {
 		if (StringUtils.isBlank(workflowName)) {
@@ -520,6 +565,8 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 	/**
 	 * Clear workflow references from task
+	 *
+	 * @param task a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
 	 */
 	private void clearWorkflowReferences(TaskListDataItem task) {
 		task.setWorkflowInstance("");
@@ -592,6 +639,9 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 	/**
 	 * Update workflow tasks properties and assignees
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param taskListDataItem a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
 	 */
 	private void updateWorkflowTasks(ProjectData projectData, TaskListDataItem taskListDataItem) {
 		WorkflowTaskQuery taskQuery = new WorkflowTaskQuery();
@@ -618,6 +668,11 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 	/**
 	 * Update a single workflow task
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param taskListDataItem a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+	 * @param workflowTask a {@link org.alfresco.service.cmr.workflow.WorkflowTask} object
+	 * @param workflowDescription a {@link java.lang.String} object
 	 */
 	@SuppressWarnings("unchecked")
 	private void updateSingleWorkflowTask(ProjectData projectData, TaskListDataItem taskListDataItem, WorkflowTask workflowTask,
@@ -696,6 +751,11 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 	/**
 	 * Add property to map only if value has changed
+	 *
+	 * @param properties a {@link java.util.Map} object
+	 * @param propertyQName a {@link org.alfresco.service.namespace.QName} object
+	 * @param newValue a {@link java.io.Serializable} object
+	 * @param currentProperties a {@link java.util.Map} object
 	 */
 	private void addPropertyIfChanged(Map<QName, Serializable> properties, QName propertyQName, Serializable newValue,
 			Map<QName, Serializable> currentProperties) {

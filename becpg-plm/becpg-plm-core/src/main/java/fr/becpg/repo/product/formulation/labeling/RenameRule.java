@@ -10,6 +10,11 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.helper.MLTextHelper;
 
+/**
+ * <p>RenameRule class.</p>
+ *
+ * @author matthieu
+ */
 class RenameRule {
 	MLText mlText;
 	MLText pluralMlText;

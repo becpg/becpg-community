@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -47,6 +47,9 @@ public final class FormulationFilters
     public static final List<DataListFilter<ProductData, ProcessListDataItem>> EFFECTIVE_VARIANT_PROCESS =
             List.of(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>());
 
+    /**
+     * <p>Constructor for FormulationFilters.</p>
+     */
     private FormulationFilters()
     {
     }

@@ -46,12 +46,17 @@ import fr.becpg.repo.helper.AttributeExtractorService;
 public class EntityVersionWebScript extends AbstractWebScript {
 
 	// request parameter names
+	/** Constant <code>PARAM_NODEREF="nodeRef"</code> */
 	private static final String PARAM_NODEREF = "nodeRef";
+	/** Constant <code>DISPLAY_FORMAT="dd MMM yyyy HH:mm:ss 'GMT'Z '('zzz')'"</code> */
 	private static final String DISPLAY_FORMAT = "dd MMM yyyy HH:mm:ss 'GMT'Z '('zzz')'";
+	/** Constant <code>PARAM_MODE="mode"</code> */
 	private static final String PARAM_MODE = "mode";
 
+	/** Constant <code>MAX_DESCRIPTION_LENGTH=200</code> */
 	private static final int MAX_DESCRIPTION_LENGTH = 200;
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityVersionWebScript.class);
 
 	private EntityVersionService entityVersionService;
@@ -309,6 +314,12 @@ public class EntityVersionWebScript extends AbstractWebScript {
 		}
 	}
 
+	/**
+	 * <p>getEntityState.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.io.Serializable} object
+	 */
 	private Serializable getEntityState(NodeRef entityNodeRef) {
 		for (Map.Entry<QName, Serializable> entry : nodeService.getProperties(entityNodeRef).entrySet()) {
 			if (entityActivityService.isMatchingStateProperty(entry.getKey())) {
@@ -318,6 +329,13 @@ public class EntityVersionWebScript extends AbstractWebScript {
 		return null;
 	}
 
+	/**
+	 * <p>getPerson.</p>
+	 *
+	 * @param frozenModifier a {@link java.lang.String} object
+	 * @return a {@link org.json.JSONObject} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private JSONObject getPerson(String frozenModifier) throws JSONException {
 		JSONObject jsonCreator = new JSONObject();
 		if (frozenModifier != null && !frozenModifier.isBlank() && personService.personExists(frozenModifier)) {

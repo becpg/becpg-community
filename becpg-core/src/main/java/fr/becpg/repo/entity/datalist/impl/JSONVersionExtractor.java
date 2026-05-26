@@ -49,45 +49,64 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
  */
 public class JSONVersionExtractor extends SimpleExtractor {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(JSONVersionExtractor.class);
 	
 	/** Constant <code>PROP_ACCESSRIGHT="accessRight"</code> */
 	public static final String PROP_ACCESSRIGHT = "accessRight";
 
+	/** Constant <code>PROP_NODE="nodeRef"</code> */
 	private static final String PROP_NODE = "nodeRef";
 
+	/** Constant <code>PROP_TYPE="itemType"</code> */
 	private static final String PROP_TYPE = "itemType";
 
+	/** Constant <code>PROP_CREATED="createdOn"</code> */
 	private static final String PROP_CREATED = "createdOn";
 
+	/** Constant <code>PROP_CREATOR_DISPLAY="createdBy"</code> */
 	private static final String PROP_CREATOR_DISPLAY = "createdBy";
 
+	/** Constant <code>PROP_MODIFIED="modifiedOn"</code> */
 	private static final String PROP_MODIFIED = "modifiedOn";
 
+	/** Constant <code>PROP_MODIFIER_DISPLAY="modifiedBy"</code> */
 	private static final String PROP_MODIFIER_DISPLAY = "modifiedBy";
 
+	/** Constant <code>PROP_COLOR="color"</code> */
 	private static final String PROP_COLOR = "color";
 
+	/** Constant <code>PROP_PERMISSIONS="permissions"</code> */
 	private static final String PROP_PERMISSIONS = "permissions";
 
+	/** Constant <code>PROP_NODEDATA="itemData"</code> */
 	private static final String PROP_NODEDATA = "itemData";
 
+	/** Constant <code>VALUE="value"</code> */
 	private static final String VALUE = "value";
 	
+	/** Constant <code>DISPLAY_VALUE="displayValue"</code> */
 	private static final String DISPLAY_VALUE = "displayValue";
 	
+	/** Constant <code>METADATA="metadata"</code> */
 	private static final String METADATA = "metadata";
 	
+	/** Constant <code>ATTRIBUTES="attributes"</code> */
 	private static final String ATTRIBUTES = "attributes";
 	
+	/** Constant <code>TYPE="type"</code> */
 	private static final String TYPE = "type";
 	
+	/** Constant <code>VERSION="version"</code> */
 	private static final String VERSION = "version";
 	
+	/** Constant <code>CM_NAME="cm:name"</code> */
 	private static final String CM_NAME = "cm:name";
 
+	/** Constant <code>AL_DATA_PROPS</code> */
 	private static final String[] AL_DATA_PROPS = {"datalistType", "charactType", "entityType", "datalistNodeRef", "entityNodeRef", "className", "title", "charactNodeRef" };
 	
+	/** Constant <code>BCPG_PREFIX="bcpg:"</code> */
 	private static final String BCPG_PREFIX = "bcpg:";
 	
 	/**
@@ -120,6 +139,14 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		this.entityFormatService = entityJsonService;
 	}
 	
+	/**
+	 * <p>filterList.</p>
+	 *
+	 * @param list a {@link org.json.JSONArray} object
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @return a {@link org.json.JSONArray} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private JSONArray filterList(JSONArray list, DataListFilter dataListFilter) throws JSONException {
 		JSONArray ret = new JSONArray();
 
@@ -134,6 +161,14 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		return ret;
 	}
 	
+	/**
+	 * <p>canAddObject.</p>
+	 *
+	 * @param object a {@link org.json.JSONObject} object
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @return a boolean
+	 * @throws org.json.JSONException if any.
+	 */
 	private boolean canAddObject(JSONObject object, DataListFilter dataListFilter) throws JSONException {
 		
 		if (!object.getString(TYPE).equals(dataListFilter.getDataType().toPrefixString())) {
@@ -160,6 +195,14 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		return true;
 	}
 
+	/**
+	 * <p>canAddObject.</p>
+	 *
+	 * @param object a {@link org.json.JSONObject} object
+	 * @param filterData a {@link java.lang.String} object
+	 * @return a boolean
+	 * @throws org.json.JSONException if any.
+	 */
 	private boolean canAddObject(JSONObject object, String filterData) throws JSONException {
 		String filterName = filterData.split(":")[0].replace("\"", "");
 		
@@ -181,6 +224,15 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		return true;
 	}
 
+	/**
+	 * <p>canAddAssoc.</p>
+	 *
+	 * @param object a {@link org.json.JSONObject} object
+	 * @param assoc a {@link java.lang.String} object
+	 * @param value a {@link java.lang.String} object
+	 * @return a boolean
+	 * @throws org.json.JSONException if any.
+	 */
 	private boolean canAddAssoc(JSONObject object, String assoc, String value) throws JSONException {
 		
 		NodeRef nodeRef = new NodeRef(value);
@@ -212,6 +264,14 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		return true;
 	}
 
+	/**
+	 * <p>sortList.</p>
+	 *
+	 * @param list a {@link org.json.JSONArray} object
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @return a {@link org.json.JSONArray} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private JSONArray sortList(JSONArray list, DataListFilter dataListFilter) throws JSONException {
 
 		List<JSONObject> jsonValues = new ArrayList<>();
@@ -249,6 +309,13 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		return sortedJsonArray;
 	}
 	
+	/**
+	 * <p>extractAssociationNodeData.</p>
+	 *
+	 * @param object a {@link org.json.JSONObject} object
+	 * @return a {@link java.util.Map} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private Map<String, Object> extractAssociationNodeData(JSONObject object) throws JSONException {
 		Map<String, Object> ret = new HashMap<>();
 		
@@ -297,6 +364,16 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		return ret;
 	}
 	
+	/**
+	 * <p>extractNodeData.</p>
+	 *
+	 * @param properties a {@link org.json.JSONObject} object
+	 * @param attribute a {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition} object
+	 * @param mode a {@link fr.becpg.config.format.FormatMode} object
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.lang.Object} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private Object extractNodeData(JSONObject properties, ClassAttributeDefinition attribute, FormatMode mode, QName itemType) throws JSONException {
 		if (attribute instanceof PropertyDefinition) {
 			if (attribute.getName().toPrefixString(namespaceService).contains("alData")) {
@@ -310,6 +387,14 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		return null;
 	}
 	
+	/**
+	 * <p>extractAssociationDefinitionNodeData.</p>
+	 *
+	 * @param properties a {@link org.json.JSONObject} object
+	 * @param attribute a {@link org.alfresco.service.cmr.dictionary.AssociationDefinition} object
+	 * @return a {@link java.lang.Object} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private Object extractAssociationDefinitionNodeData(JSONObject properties, AssociationDefinition attribute) throws JSONException {
 		
 		if (attribute.isChild()) {
@@ -336,6 +421,16 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		return ret;
 	}
 
+	/**
+	 * <p>extractPropertyNodeData.</p>
+	 *
+	 * @param properties a {@link org.json.JSONObject} object
+	 * @param attribute a {@link org.alfresco.service.cmr.dictionary.PropertyDefinition} object
+	 * @param mode a {@link fr.becpg.config.format.FormatMode} object
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.util.HashMap} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private HashMap<String, Object> extractPropertyNodeData(JSONObject properties, PropertyDefinition attribute, FormatMode mode, QName itemType) throws JSONException {
 		String displayName = null;
 		Object value = null;
@@ -445,12 +540,24 @@ public class JSONVersionExtractor extends SimpleExtractor {
 
 	}
 	
+    /**
+     * <p>convertStringToList.</p>
+     *
+     * @param inputString a {@link java.lang.String} object
+     * @return a {@link java.util.List} object
+     */
     private static List<String> convertStringToList(String inputString) {
         String cleanString = inputString.replaceAll("[\\[\\]\"]", "");
         String[] stringArray = cleanString.split(",");
         return Arrays.asList(stringArray);
     }
 
+	/**
+	 * <p>extractJsonNodeRefProp.</p>
+	 *
+	 * @param seri a {@link java.io.Serializable} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extractJsonNodeRefProp(Serializable seri) {
 		
 		StringBuilder sb = null;
@@ -486,6 +593,13 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		return sb == null ? seri.toString() : sb.toString();
 	}
 
+	/**
+	 * <p>extractAlData.</p>
+	 *
+	 * @param value a {@link org.json.JSONObject} object
+	 * @return a {@link java.util.HashMap} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private HashMap<String, Object> extractAlData(JSONObject value) throws JSONException {
 		
 		HashMap<String, Object> ret = new HashMap<>();
@@ -499,6 +613,13 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		return ret;
 	}
 
+	/**
+	 * <p>getFieldDef.</p>
+	 *
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object
+	 * @param field a {@link fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure} object
+	 * @return a {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition} object
+	 */
 	private ClassAttributeDefinition getFieldDef(QName itemType, AttributeExtractorStructure field) {
 
 		if (itemType != null && !field.getItemType().equals(itemType)) {
@@ -507,6 +628,16 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		return field.getFieldDef();
 	}
 	
+	/**
+	 * <p>doExtract.</p>
+	 *
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object
+	 * @param metadataFields a {@link java.util.List} object
+	 * @param mode a {@link fr.becpg.config.format.FormatMode} object
+	 * @param properties a {@link org.json.JSONObject} object
+	 * @return a {@link java.util.Map} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private Map<String, Object> doExtract(QName itemType, List<AttributeExtractorStructure> metadataFields,
 			FormatMode mode, JSONObject properties) throws JSONException {
 		Map<String, Object> ret = new HashMap<>();
@@ -524,6 +655,14 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		return ret;
 	}
 
+	/**
+	 * <p>extractNestedField.</p>
+	 *
+	 * @param properties a {@link org.json.JSONObject} object
+	 * @param field a {@link fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure} object
+	 * @return a {@link java.util.List} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private List<Map<String, Object>> extractNestedField(JSONObject properties, AttributeExtractorStructure field) throws JSONException {
 		List<Map<String, Object>> ret = new ArrayList<>();
 		if (field.getFieldDef() instanceof AssociationDefinition) {
@@ -533,6 +672,16 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		return ret;
 	}
 
+	/**
+	 * <p>extractJSON.</p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @param object a {@link org.json.JSONObject} object
+	 * @param metadataFields a {@link java.util.List} object
+	 * @param field a {@link fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure} object
+	 * @return a {@link java.util.Map} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private Map<String, Object> extractJSON(DataListFilter dataListFilter, JSONObject object, List<AttributeExtractorStructure> metadataFields, AttributeExtractorStructure field) throws JSONException {
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
@@ -628,6 +777,12 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		}
 	}
 
+	/**
+	 * <p>extractData.</p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extractData(DataListFilter dataListFilter) {
 		
 		if (dataListFilter.getFilterData() != null) {
@@ -711,6 +866,13 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		return ret;
 	}
 	
+	/**
+	 * <p>extractDataList.</p>
+	 *
+	 * @param datalists a {@link org.json.JSONObject} object
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @return a {@link org.json.JSONArray} object
+	 */
 	private JSONArray extractDataList(JSONObject datalists, DataListFilter dataListFilter) {
 		
 		String dataListType = dataListFilter.getDataType().getPrefixedQName(namespaceService).getPrefixString();

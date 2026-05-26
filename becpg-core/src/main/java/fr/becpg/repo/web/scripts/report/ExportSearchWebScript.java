@@ -46,10 +46,14 @@ import fr.becpg.report.client.ReportFormat;
  */
 public class ExportSearchWebScript extends AbstractSearchWebScript {
 
+	/** Constant <code>PARAM_STORE_TYPE="store_type"</code> */
 	private static final String PARAM_STORE_TYPE = "store_type";
+	/** Constant <code>PARAM_STORE_ID="store_id"</code> */
 	private static final String PARAM_STORE_ID = "store_id";
+	/** Constant <code>PARAM_ID="id"</code> */
 	private static final String PARAM_ID = "id";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ExportSearchWebScript.class);
 
 	private ExportSearchService exportSearchService;

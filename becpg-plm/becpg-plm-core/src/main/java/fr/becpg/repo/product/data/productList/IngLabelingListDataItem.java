@@ -28,6 +28,7 @@ import fr.becpg.repo.repository.model.AspectAwareDataItem;
 public class IngLabelingListDataItem extends AbstractManualDataItem implements AspectAwareDataItem {
 
 	
+	/** Constant <code>serialVersionUID=3043212457177647400L</code> */
 	private static final long serialVersionUID = 3043212457177647400L;
 
 	private NodeRef grp;

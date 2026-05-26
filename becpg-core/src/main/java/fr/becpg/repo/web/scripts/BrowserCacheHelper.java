@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -36,9 +36,13 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
  */
 public abstract class BrowserCacheHelper   {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(BrowserCacheHelper.class);
 	
 	
+	/**
+	 * <p>Constructor for BrowserCacheHelper.</p>
+	 */
 	private  BrowserCacheHelper() {
 		// Empty
 	}

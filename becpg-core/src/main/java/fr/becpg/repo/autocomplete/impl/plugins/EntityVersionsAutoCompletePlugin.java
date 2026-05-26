@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -69,7 +69,9 @@ import fr.becpg.repo.entity.version.EntityVersionService;
 @Service
 public class EntityVersionsAutoCompletePlugin implements AutoCompletePlugin {
 
+	/** Constant <code>SOURCE_TYPE_BRANCHES="branches"</code> */
 	private static final String SOURCE_TYPE_BRANCHES = "branches";
+	/** Constant <code>SOURCE_TYPE_VERSIONS="versions"</code> */
 	private static final String SOURCE_TYPE_VERSIONS = "versions";
 
 	@Autowired

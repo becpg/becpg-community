@@ -35,22 +35,31 @@ import fr.becpg.repo.designer.DesignerService;
 public class CreateModelElementWebScript extends DeclarativeWebScript  {
 	
 
+	/** Constant <code>PARAM_NODEREF="nodeRef"</code> */
 	private static final String PARAM_NODEREF = "nodeRef";
 
+	/** Constant <code>NAME="name"</code> */
 	private static final String NAME = "name";
 
+	/** Constant <code>ASSOC_TYPE="assocType"</code> */
 	private static final String ASSOC_TYPE = "assocType";
 
+	/** Constant <code>TYPE="type"</code> */
 	private static final String TYPE = "type";
 
+	/** Constant <code>MODEL="model"</code> */
 	private static final String MODEL = "model";
 
+	/** Constant <code>PERSISTED_OBJECT="persistedObject"</code> */
 	private static final String PERSISTED_OBJECT = "persistedObject";
 
+	/** Constant <code>REDIRECT="alf_redirect"</code> */
 	private static final String REDIRECT = "alf_redirect";
 
+	/** Constant <code>TREE_NODE="treeNode"</code> */
 	private static final String TREE_NODE = "treeNode";
 	
+	/** Constant <code>PARAM_PALETTE_EL="palette_el_id"</code> */
 	private static final String PARAM_PALETTE_EL = "palette_el_id";
 
 	
@@ -182,6 +191,12 @@ public class CreateModelElementWebScript extends DeclarativeWebScript  {
 	}
 	
 	
+	 /**
+	  * <p>parseQName.</p>
+	  *
+	  * @param s a {@link java.lang.String} object
+	  * @return a {@link org.alfresco.service.namespace.QName} object
+	  */
 	 private QName parseQName(String s) {
 	
 		 String qNamePrefix = s.split(":")[0];
@@ -194,6 +209,12 @@ public class CreateModelElementWebScript extends DeclarativeWebScript  {
 
 
 
+	/**
+	 * <p>parsePostParams.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object
+	 * @return a {@link fr.becpg.repo.designer.web.scripts.CreateModelElementWebScript.JsonParams} object
+	 */
 	private JsonParams parsePostParams(WebScriptRequest req)
 	    {
 			

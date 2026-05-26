@@ -59,6 +59,8 @@ public class ListValueAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 	 * @param query
 	 *            the query
 	 * @return the map
+	 * @param pageNum a {@link java.lang.Integer} object
+	 * @param pageSize a {@link java.lang.Integer} object
 	 */
 	private AutoCompletePage suggestListValue(String path, String query, Integer pageNum, Integer pageSize) {
 

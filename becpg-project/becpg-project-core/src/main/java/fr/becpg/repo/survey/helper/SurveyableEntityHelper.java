@@ -20,11 +20,13 @@ import jakarta.annotation.Nonnull;
  */
 public class SurveyableEntityHelper {
 
+	/** Constant <code>NB_OF_SURVEY_LISTS=4</code> */
 	private static final byte NB_OF_SURVEY_LISTS = 4;
 	
 	/** Constant <code>SURVEY_LIST_BASE_NAME</code> */
 	public static final String SURVEY_LIST_BASE_NAME = SurveyModel.TYPE_SURVEY_LIST.getLocalName();
 	
+	/** Constant <code>SURVEY_LIST_NAMES</code> */
 	private static final List<String> SURVEY_LIST_NAMES;
 	
 	static {
@@ -91,6 +93,9 @@ public class SurveyableEntityHelper {
 		
 	}
 	
+	/**
+	 * <p>Constructor for SurveyableEntityHelper.</p>
+	 */
 	private SurveyableEntityHelper() {
 		throw new UnsupportedOperationException();
 	}

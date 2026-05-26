@@ -14,6 +14,7 @@ import jakarta.websocket.server.ServerEndpointConfig;
  */
 public class AIWSProxyConfigurator extends ServerEndpointConfig.Configurator{
 
+	/** Constant <code>connectorService</code> */
 	private static ConnectorService connectorService;
 
 	/**

@@ -25,7 +25,9 @@ import fr.becpg.repo.helper.AttributeExtractorService;
  */
 public class BeCPGIntegrityChecker extends IntegrityChecker {
 
+	/** Constant <code>MSG_INTEGRITY_MULTIPLICITY="integrity-checker.association-multiplic"{trunked}</code> */
 	private static final String MSG_INTEGRITY_MULTIPLICITY = "integrity-checker.association-multiplicity-error";
+	/** Constant <code>MSG_INTEGRITY_CONSTRAINT="integrity-checker.constraint-error"</code> */
 	private static final String MSG_INTEGRITY_CONSTRAINT = "integrity-checker.constraint-error";
 
 	/** Constant <code>targetNodeRefRegex</code> */
@@ -140,6 +142,12 @@ public class BeCPGIntegrityChecker extends IntegrityChecker {
 	 *
 	 */
 
+	/**
+	 * <p>decorate.</p>
+	 *
+	 * @param message a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String decorate(String message) {
 
 		if (message.contains("The association target multiplicity has been violated")) {

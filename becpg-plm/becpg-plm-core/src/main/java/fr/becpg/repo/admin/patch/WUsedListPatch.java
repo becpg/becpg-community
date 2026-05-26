@@ -25,7 +25,9 @@ import fr.becpg.repo.entity.EntityTplService;
  */
 public class WUsedListPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(WUsedListPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.wusedListPatch.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.wusedListPatch.result";
 
 	private EntityTplService entityTplService;

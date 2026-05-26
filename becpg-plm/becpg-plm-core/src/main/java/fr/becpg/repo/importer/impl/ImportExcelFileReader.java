@@ -74,6 +74,13 @@ public class ImportExcelFileReader implements ImportFileReader {
 		return line;
 	}
 
+	/**
+	 * <p>extractRow.</p>
+	 *
+	 * @param row a {@link org.apache.poi.ss.usermodel.Row} object
+	 * @param columns a {@link java.util.List} object
+	 * @return an array of {@link java.lang.String} objects
+	 */
 	private String[] extractRow(Row row, List<AbstractAttributeMapping> columns) {
 		
 		List<String> line = new ArrayList<>();

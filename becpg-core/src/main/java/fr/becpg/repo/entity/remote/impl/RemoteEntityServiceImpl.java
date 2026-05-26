@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -77,9 +77,12 @@ import fr.becpg.repo.repository.L2CacheSupport;
 @Service("remoteEntityService")
 public class RemoteEntityServiceImpl implements RemoteEntityService {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(RemoteEntityServiceImpl.class);
 
+	/** Constant <code>UNKNOW_FORMAT_ERROR="Unknown format %s"</code> */
 	private static final String UNKNOW_FORMAT_ERROR = "Unknown format %s";
+	/** Constant <code>CREATE_ERROR="Cannot create or update entity: %s at f"{trunked}</code> */
 	private static final String CREATE_ERROR = "Cannot create or update entity: %s at format %s - %s";
 
 	@Autowired

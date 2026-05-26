@@ -31,7 +31,9 @@ import fr.becpg.model.PLMModel;
  */
 public class IngTypeAspectPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(IngTypeAspectPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.ingTypeAspectPatch.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.ingTypeAspectPatch.result";
 
 	private NodeDAO nodeDAO;

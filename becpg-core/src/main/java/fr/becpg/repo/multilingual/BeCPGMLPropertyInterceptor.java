@@ -73,6 +73,7 @@ import fr.becpg.repo.helper.MLTextHelper;
  */
 public class BeCPGMLPropertyInterceptor implements MethodInterceptor
 {
+    /** Constant <code>logger</code> */
     private static Log logger = LogFactory.getLog(BeCPGMLPropertyInterceptor.class);
   
     /** Direct access to the NodeService */
@@ -319,10 +320,11 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
     }
     
     /**
+     * <p>getPivotNodeRef.</p>
+     *
      * @param nodeRef
      *      a potential empty translation
-     * @return
-     *      the pivot translation node or <tt>null</tt>
+     * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
      */
     private NodeRef getPivotNodeRef(NodeRef nodeRef)
     {
@@ -353,6 +355,12 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
     
     /**
      * Ensure that content is spoofed for empty translations.
+     *
+     * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param pivotNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param propertyQName a {@link org.alfresco.service.namespace.QName} object
+     * @param outboundValue a {@link java.io.Serializable} object
+     * @return a {@link java.io.Serializable} object
      */
     private Serializable convertOutboundProperty(
             NodeRef nodeRef,
@@ -473,6 +481,8 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
     }
     
     /**
+     * <p>isCollectionOfMLText.</p>
+     *
      * @param outboundValue Serializable
      * @return boolean
      */
@@ -495,6 +505,15 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
         }
     }
 
+    /**
+     * <p>convertInboundProperties.</p>
+     *
+     * @param currentProperties a {@link java.util.Map} object
+     * @param newProperties a {@link java.util.Map} object
+     * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param pivotNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @return a {@link java.util.Map} object
+     */
     private Map<QName, Serializable> convertInboundProperties(
             Map<QName, Serializable> currentProperties,
             Map<QName, Serializable> newProperties,
@@ -517,10 +536,14 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
     }
     
     /**
-     * 
+     * <p>convertInboundProperty.</p>
+     *
      * @param inboundValue      The value that must be set
      * @param currentValue      The current value of the property or <tt>null</tt> if not known
      * @return                  Returns a potentially converted property that conforms to the model
+     * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param pivotNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param propertyQName a {@link org.alfresco.service.namespace.QName} object
      */
     private Serializable convertInboundProperty(
             NodeRef nodeRef,
@@ -672,6 +695,12 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
         return ret;
     }
 
+    /**
+     * <p>getLocale.</p>
+     *
+     * @param propertyQName a {@link org.alfresco.service.namespace.QName} object
+     * @return a {@link java.util.Locale} object
+     */
     private Locale getLocale( QName propertyQName) {
     	if(propertyQName!=null && MLTextHelper.isDisabledMLTextField(propertyQName.toPrefixString(namespaceService))){
     		return Locale.getDefault();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -56,6 +56,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  */
 public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostListDataItem<T>> extends SimpleCharactDetailsVisitor {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AbstractCostCharactDetailsVisitor.class);
 
 	private PackagingHelper packagingHelper;
@@ -220,6 +221,12 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 		return context.getCharactDetails();
 	}
 
+	/**
+	 * <p>visiteTemplateCosts.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param ret a {@link fr.becpg.repo.product.data.CharactDetails} object
+	 */
 	private void visiteTemplateCosts(ProductData formulatedProduct, CharactDetails ret) {
 
 		if ((formulatedProduct.getEntityTpl() != null) && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
@@ -249,6 +256,14 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 
 	}
 
+	/**
+	 * <p>visitTemplateCostList.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param templateCostLists a {@link java.util.List} object
+	 * @param ret a {@link fr.becpg.repo.product.data.CharactDetails} object
+	 */
 	private void visitTemplateCostList(ProductData formulatedProduct, NodeRef entityNodeRef, List<T> templateCostLists,
 			CharactDetails ret) {
 		NodeRef plantNodeRef = formulatedProduct.getPlants().isEmpty() ? null : formulatedProduct.getPlants().get(0);
@@ -325,6 +340,18 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 
 	}
 
+	/**
+	 * <p>visitCompoListChildren.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.product.formulation.details.CharactDetailsVisitorContext} object
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param composite a {@link fr.becpg.repo.data.hierarchicalList.Composite} object
+	 * @param parentLossRatio a {@link java.lang.Double} object
+	 * @param ratio a {@link java.lang.Double} object
+	 * @param currLevel a {@link java.lang.Integer} object
+	 * @param qtyProvider a {@link fr.becpg.repo.product.formulation.CostListQtyProvider} object
+	 * @throws fr.becpg.repo.formulation.FormulateException if any.
+	 */
 	private void visitCompoListChildren(CharactDetailsVisitorContext context, ProductData productData, Composite<CompoListDataItem> composite, Double parentLossRatio,
 			Double ratio, Integer currLevel, CostListQtyProvider qtyProvider)
 			throws FormulateException {

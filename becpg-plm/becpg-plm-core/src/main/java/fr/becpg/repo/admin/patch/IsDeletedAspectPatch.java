@@ -40,7 +40,9 @@ import fr.becpg.model.PublicationModel;
  */
 public class IsDeletedAspectPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(IsDeletedAspectPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.isDeletedAspectPatch.res"{trunked}</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.isDeletedAspectPatch.result";
 
 	private NodeDAO nodeDAO;
@@ -71,6 +73,11 @@ public class IsDeletedAspectPatch extends AbstractBeCPGPatch {
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
+	/**
+	 * <p>doApply.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private void doApply(final QName type) {
 		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 

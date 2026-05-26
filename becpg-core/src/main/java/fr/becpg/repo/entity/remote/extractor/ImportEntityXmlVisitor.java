@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -111,6 +111,7 @@ public class ImportEntityXmlVisitor {
 		this.cache = cache;
 	}
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ImportEntityXmlVisitor.class);
 
 	/**

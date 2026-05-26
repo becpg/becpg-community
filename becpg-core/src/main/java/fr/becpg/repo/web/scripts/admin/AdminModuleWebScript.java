@@ -33,13 +33,20 @@ import fr.becpg.repo.entity.EntitySystemService;
  */
 public class AdminModuleWebScript extends MonitorWebScript {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AdminModuleWebScript.class);
 
+	/** Constant <code>PARAM_ACTION="action"</code> */
 	private static final String PARAM_ACTION = "action";
+	/** Constant <code>ACTION_INIT_REPO="init-repo"</code> */
 	private static final String ACTION_INIT_REPO = "init-repo";
+	/** Constant <code>ACTION_RELOAD_CACHE="reload-cache"</code> */
 	private static final String ACTION_RELOAD_CACHE = "reload-cache";
+	/** Constant <code>ACTION_RELOAD_MODEL="reload-model"</code> */
 	private static final String ACTION_RELOAD_MODEL = "reload-model";
+	/** Constant <code>ACTION_GET_SYSTEM_ENTITIES="system-entities"</code> */
 	private static final String ACTION_GET_SYSTEM_ENTITIES = "system-entities";
+	/** Constant <code>ACTION_GET_CONNECTED_USERS="show-users"</code> */
 	private static final String ACTION_GET_CONNECTED_USERS = "show-users";
 
 	private InitVisitorService initVisitorService;

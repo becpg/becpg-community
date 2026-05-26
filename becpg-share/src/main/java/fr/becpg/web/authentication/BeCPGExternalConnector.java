@@ -82,6 +82,7 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 public class BeCPGExternalConnector extends RequestCachingConnector {
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(BeCPGExternalConnector.class);
 
 	/**
@@ -124,6 +125,11 @@ public class BeCPGExternalConnector extends RequestCachingConnector {
 		super(descriptor, endpoint);
 	}
 
+	/**
+	 * <p>getUserHeader.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getUserHeader() {
 		String userHeader = descriptor.getStringProperty(CD_USER_HEADER);
 		if ((userHeader != null) && (userHeader.isBlank())) {
@@ -132,6 +138,11 @@ public class BeCPGExternalConnector extends RequestCachingConnector {
 		return userHeader;
 	}
 
+	/**
+	 * <p>getUserIdPattern.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getUserIdPattern() {
 		String userIdPattern = descriptor.getStringProperty(CD_USER_ID_PATTERN);
 		if ((userIdPattern != null) && (userIdPattern.isBlank())) {

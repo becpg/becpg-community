@@ -66,6 +66,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class ImportEntityJsonVisitor {
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(ImportEntityJsonVisitor.class);
 
 	private Set<String> ignoredKeys = new HashSet<>();
@@ -173,6 +174,16 @@ public class ImportEntityJsonVisitor {
 
 	}
 
+	/**
+	 * <p>visit.</p>
+	 *
+	 * @param entity a {@link org.json.JSONObject} object
+	 * @param jsonType a {@link fr.becpg.repo.entity.remote.extractor.RemoteJSONContext.JsonVisitNodeType} object
+	 * @param assocName a {@link org.alfresco.service.namespace.QName} object
+	 * @param context a {@link fr.becpg.repo.entity.remote.extractor.RemoteJSONContext} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private NodeRef visit(JSONObject entity, JsonVisitNodeType jsonType, QName assocName, RemoteJSONContext context) throws JSONException {
 
 		QName type = null;
@@ -409,6 +420,13 @@ public class ImportEntityJsonVisitor {
 		return entityNodeRef;
 	}
 
+	/**
+	 * <p>visitContent.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param fileName a {@link java.lang.String} object
+	 * @param content a {@link java.lang.String} object
+	 */
 	private void visitContent(NodeRef entityNodeRef, String fileName, String content) {
 		String mimetype = mimetypeService.guessMimetype(fileName);
 		ContentWriter writer = contentService.getWriter(entityNodeRef, ContentModel.PROP_CONTENT, true);
@@ -422,6 +440,16 @@ public class ImportEntityJsonVisitor {
 
 	}
 
+	/**
+	 * <p>findNode.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param properties a {@link java.util.Map} object
+	 * @param associations a {@link java.util.Map} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private NodeRef findNode(QName type, NodeRef parentNodeRef, Map<QName, Serializable> properties, Map<QName, List<NodeRef>> associations)
 			throws JSONException {
 		if (properties.isEmpty() && associations.isEmpty()) {
@@ -502,6 +530,14 @@ public class ImportEntityJsonVisitor {
 
 	}
 
+	/**
+	 * <p>visitDataLists.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param datalists a {@link org.json.JSONObject} object
+	 * @param context a {@link fr.becpg.repo.entity.remote.extractor.RemoteJSONContext} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private void visitDataLists(NodeRef entityNodeRef, JSONObject datalists, RemoteJSONContext context) throws JSONException {
 
 		boolean replaceExisting = remoteParams.extractParams(RemoteParams.PARAM_REPLACE_EXISTING_LISTS, false);
@@ -577,6 +613,12 @@ public class ImportEntityJsonVisitor {
 
 	}
 
+	/**
+	 * <p>getListName.</p>
+	 *
+	 * @param qnameStr a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getListName(String qnameStr) {
 		if ((qnameStr != null) && qnameStr.contains("|")) {
 			return qnameStr.split("\\|")[1];
@@ -592,6 +634,14 @@ public class ImportEntityJsonVisitor {
 		return qname.getLocalName();
 	}
 
+	/**
+	 * <p>jsonToAssocs.</p>
+	 *
+	 * @param entity a {@link org.json.JSONObject} object
+	 * @param context a {@link fr.becpg.repo.entity.remote.extractor.RemoteJSONContext} object
+	 * @return a {@link java.util.Map} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private Map<QName, List<NodeRef>> jsonToAssocs(JSONObject entity, RemoteJSONContext context) throws JSONException {
 		Map<QName, List<NodeRef>> assocs = new HashMap<>();
 
@@ -661,6 +711,17 @@ public class ImportEntityJsonVisitor {
 		return assocs;
 	}
 
+	/**
+	 * <p>appendAssoc.</p>
+	 *
+	 * @param nodes a {@link java.util.List} object
+	 * @param assocEntity a {@link org.json.JSONObject} object
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @param propQName a {@link org.alfresco.service.namespace.QName} object
+	 * @param isChild a boolean
+	 * @param context a {@link fr.becpg.repo.entity.remote.extractor.RemoteJSONContext} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private void appendAssoc(List<NodeRef> nodes, JSONObject assocEntity, QName type, QName propQName, boolean isChild, RemoteJSONContext context)
 			throws JSONException {
 		if (!assocEntity.has(RemoteEntityService.ATTR_TYPE)) {
@@ -681,6 +742,14 @@ public class ImportEntityJsonVisitor {
 
 	}
 
+	/**
+	 * <p>jsonToProperties.</p>
+	 *
+	 * @param entity a {@link org.json.JSONObject} object
+	 * @param context a {@link fr.becpg.repo.entity.remote.extractor.RemoteJSONContext} object
+	 * @return a {@link java.util.Map} object
+	 * @throws org.json.JSONException if any.
+	 */
 	@SuppressWarnings("unchecked")
 	private Map<QName, Serializable> jsonToProperties(JSONObject entity, RemoteJSONContext context) throws JSONException {
 		Map<QName, Serializable> nodeProps = new HashMap<>();
@@ -819,6 +888,15 @@ public class ImportEntityJsonVisitor {
 		return nodeProps;
 	}
 
+	/**
+	 * <p>getSerializableValue.</p>
+	 *
+	 * @param value a {@link java.lang.Object} object
+	 * @param dataTypeName a {@link org.alfresco.service.namespace.QName} object
+	 * @param propQName a {@link org.alfresco.service.namespace.QName} object
+	 * @param context a {@link fr.becpg.repo.entity.remote.extractor.RemoteJSONContext} object
+	 * @return a {@link java.io.Serializable} object
+	 */
 	private Serializable getSerializableValue(Object value, QName dataTypeName, QName propQName, RemoteJSONContext context) {
 		if (DataTypeDefinition.NODE_REF.equals(dataTypeName) || DataTypeDefinition.CATEGORY.equals(dataTypeName)) {
 			try {
@@ -846,6 +924,12 @@ public class ImportEntityJsonVisitor {
 		}
 	}
 
+	/**
+	 * <p>findNodeByPath.</p>
+	 *
+	 * @param parentPath a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef findNodeByPath(String parentPath) {
 		NodeRef ret = null;
 

@@ -31,6 +31,7 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 	/** Constant <code>MESSAGE_UNDEFINED_VALUE="message.formulate.undefined.value"</code> */
 	public static final String MESSAGE_UNDEFINED_VALUE = "message.formulate.undefined.value";
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(SimpleListRequirementScanner.class);
 
 

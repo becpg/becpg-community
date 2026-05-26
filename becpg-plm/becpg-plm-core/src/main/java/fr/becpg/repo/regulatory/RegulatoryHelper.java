@@ -15,6 +15,9 @@ import fr.becpg.repo.repository.RepositoryEntity;
  */
 public class RegulatoryHelper {
 
+	/**
+	 * <p>Constructor for RegulatoryHelper.</p>
+	 */
 	private RegulatoryHelper() {
 		// Private constructor to prevent instantiation
 	}

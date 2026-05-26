@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -91,11 +91,13 @@ import fr.becpg.repo.repository.RepositoryEntity;
  */
 public class LabelingFormulaContext extends RuleParser implements SpelFormulaContext<ProductData> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(LabelingFormulaContext.class);
 
 	/** Constant <code>DEFAULT_RATIO</code> */
 	public static final BigDecimal DEFAULT_RATIO = BigDecimal.valueOf(1d);
 
+	/** Constant <code>PRECISION_RATIO=16</code> */
 	private static final int PRECISION_RATIO = 16;
 	/** Constant <code>PRECISION</code> */
 	public static final MathContext PRECISION = new MathContext(PRECISION_RATIO, RoundingMode.HALF_UP);
@@ -104,7 +106,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	public static final Pattern ALLERGEN_DETECTION_PATTERN = Pattern.compile(
 			"(<\\s*up[^>]*>.*?<\\s*/\\s*up>|<\\s*b[^>]*>.*?<\\s*/\\s*b>|<\\s*u[^>]*>.*?<\\s*/\\s*u>|<\\s*i[^>]*>.*?<\\s*/\\s*i>|[A-Z]{4,}|\\p{Lu}{4,})");
 
+	/** Constant <code>UNSUPPORTED_ING_TYPE="Unsupported ing type. Name: %s"</code> */
 	private static final String UNSUPPORTED_ING_TYPE = "Unsupported ing type. Name: %s";
+	/** Constant <code>REMOVING_NULL_QTY="Removing ing with qty of 0: %s"</code> */
 	private static final String REMOVING_NULL_QTY = "Removing ing with qty of 0: %s";
 
 	private CompositeLabeling lblCompositeContext;
@@ -1130,6 +1134,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		this.forceKeepOrder = forceKeepOrder;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	void updateDefaultFormat(TextFormatRule textFormatRule) {
 
@@ -1166,6 +1171,14 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/* formaters */
+	/**
+	 * <p>getIngTextFormat.</p>
+	 *
+	 * @param lblComponent a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param qty a {@link java.lang.Double} object
+	 * @param multiple a boolean
+	 * @return a {@link java.text.MessageFormat} object
+	 */
 	private MessageFormat getIngTextFormat(LabelingComponent lblComponent, Double qty, boolean multiple) {
 
 		if (textFormaters.containsKey(lblComponent.getNodeRef())) {
@@ -1206,6 +1219,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return applyRoundingMode(new MessageFormat(getTextFormatByName("ingDefaultFormat", ingDefaultFormat), getContentLocale()), qty);
 	}
 
+	/**
+	 * <p>getTextFormatByName.</p>
+	 *
+	 * @param formatName a {@link java.lang.String} object
+	 * @param defaultFormat a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getTextFormatByName(String formatName, String defaultFormat) {
 		if (formatsByName.containsKey(formatName)) {
 			TextFormatRule textFormatRule = formatsByName.get(formatName);
@@ -1216,14 +1236,35 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return defaultFormat;
 	}
 
+	/**
+	 * <p>applyRoundingMode.</p>
+	 *
+	 * @param messageFormat a {@link java.text.MessageFormat} object
+	 * @param qty a {@link java.lang.Double} object
+	 * @return a {@link java.text.MessageFormat} object
+	 */
 	private MessageFormat applyRoundingMode(MessageFormat messageFormat, Double qty) {
 		return applyRoundingMode(messageFormat, qty, false);
 	}
 
+	/**
+	 * <p>applyTotalRoundingMode.</p>
+	 *
+	 * @param messageFormat a {@link java.text.MessageFormat} object
+	 * @return a {@link java.text.MessageFormat} object
+	 */
 	private MessageFormat applyTotalRoundingMode(MessageFormat messageFormat) {
 		return applyRoundingMode(messageFormat, qtyPrecisionThreshold, true);
 	}
 
+	/**
+	 * <p>applyRoundingMode.</p>
+	 *
+	 * @param messageFormat a {@link java.text.MessageFormat} object
+	 * @param qty a {@link java.lang.Double} object
+	 * @param useTotalPrecision a boolean
+	 * @return a {@link java.text.MessageFormat} object
+	 */
 	private MessageFormat applyRoundingMode(MessageFormat messageFormat, Double qty, boolean useTotalPrecision) {
 		if (messageFormat.getFormats() != null) {
 			for (Format format : messageFormat.getFormats()) {
@@ -1236,6 +1277,14 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return messageFormat;
 	}
 
+	/**
+	 * <p>applyAutomaticPrecicion.</p>
+	 *
+	 * @param decimalFormat a {@link java.text.DecimalFormat} object
+	 * @param qty a {@link java.lang.Double} object
+	 * @param roundingMode a {@link java.math.RoundingMode} object
+	 * @param useTotalPrecision a boolean
+	 */
 	private void applyAutomaticPrecicion(DecimalFormat decimalFormat, Double qty, RoundingMode roundingMode, boolean useTotalPrecision) {
 
 		RoundingMode maxRoundingMode = RoundingMode.FLOOR;
@@ -1260,6 +1309,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	}
 
+	/**
+	 * <p>getName.</p>
+	 *
+	 * @param lblComponent a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getName(LabelingComponent lblComponent) {
 		if (lblComponent instanceof IngItem ingItem) {
 			return ingItem.getCharactName();
@@ -1290,6 +1345,15 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return ingLegalName;
 	}
 
+	/**
+	 * <p>getLegalIngName.</p>
+	 *
+	 * @param lblComponent a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param qty a {@link java.lang.Double} object
+	 * @param plural a boolean
+	 * @param useTotalPrecision a boolean
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getLegalIngName(LabelingComponent lblComponent, Double qty, boolean plural, boolean useTotalPrecision) {
 
 		if ((lblComponent instanceof IngTypeItem ingItem) && ingItem.doNotDeclare()) {
@@ -1331,6 +1395,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return ingLegalName;
 	}
 
+	/**
+	 * <p>createFootNoteMarkersLabel.</p>
+	 *
+	 * @param ingLegalName a {@link java.lang.String} object
+	 * @param footNotes a {@link java.util.Set} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String createFootNoteMarkersLabel(String ingLegalName, Set<FootNoteRule> footNotes) {
 
 		String footNoteLabel = footNotes.stream().filter(f -> f.matchLocale(I18NUtil.getLocale())).sorted().map(FootNoteRule::getFootNoteMarker)
@@ -1342,6 +1413,15 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return ingLegalName;
 	}
 
+	/**
+	 * <p>createPercAwareLabel.</p>
+	 *
+	 * @param lblComponent a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param ingLegalName a {@link java.lang.String} object
+	 * @param qty a {@link java.lang.Double} object
+	 * @param useTotalPrecision a boolean
+	 * @return a {@link java.lang.String} object
+	 */
 	private String createPercAwareLabel(LabelingComponent lblComponent, String ingLegalName, Double qty, boolean useTotalPrecision) {
 		if (qty != null) {
 			qty = getForcedPercentage(lblComponent, qty);
@@ -1354,6 +1434,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return ingLegalName;
 	}
 
+	/**
+	 * <p>getForcedPercentage.</p>
+	 *
+	 * @param lblComponent a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param qty a {@link java.lang.Double} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double getForcedPercentage(LabelingComponent lblComponent, Double qty) {
 		ForcePercentageRule forcePercentageRule = getSelectedForcePercentageRule(lblComponent);
 		if ((forcePercentageRule == null) || (forcePercentageRule.getFormula() == null) || forcePercentageRule.getFormula().isEmpty()) {
@@ -1389,6 +1476,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return qty;
 	}
 
+	/**
+	 * <p>getSelectedForcePercentageRule.</p>
+	 *
+	 * @param lblComponent a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @return a {@link fr.becpg.repo.product.formulation.labeling.ForcePercentageRule} object
+	 */
 	private ForcePercentageRule getSelectedForcePercentageRule(LabelingComponent lblComponent) {
 		NodeRef nodeRef = lblComponent.getNodeRef();
 
@@ -1424,10 +1517,23 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return null;
 	}
 
+	/**
+	 * <p>showPerc.</p>
+	 *
+	 * @param lblComponent a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @return a boolean
+	 */
 	private boolean showPerc(LabelingComponent lblComponent) {
 		return showPercRules.isEmpty() || (getSelectedRule(lblComponent, null) != null);
 	}
 
+	/**
+	 * <p>getDefaultQtyFormater.</p>
+	 *
+	 * @param decimalFormat a {@link java.text.DecimalFormat} object
+	 * @param qty a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.formulation.labeling.QtyFormater} object
+	 */
 	private QtyFormater getDefaultQtyFormater(DecimalFormat decimalFormat, Double qty) {
 		if (decimalFormat == null) {
 			DecimalFormatSymbols symbols = new DecimalFormatSymbols(getContentLocale());
@@ -1438,6 +1544,14 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return new QtyFormater(decimalFormat, defaultRoundingMode, null);
 	}
 
+	/**
+	 * <p>getQtyFormater.</p>
+	 *
+	 * @param lblComponent a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param qty a {@link java.lang.Double} object
+	 * @param useTotalPrecision a boolean
+	 * @return a {@link fr.becpg.repo.product.formulation.labeling.QtyFormater} object
+	 */
 	private QtyFormater getQtyFormater(LabelingComponent lblComponent, Double qty, boolean useTotalPrecision) {
 		DecimalFormat decimalFormat = null;
 		RoundingMode roundingMode = defaultRoundingMode;
@@ -1484,6 +1598,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return null;
 	}
 
+	/**
+	 * <p>getSelectedRule.</p>
+	 *
+	 * @param lblComponent a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param qty a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.formulation.labeling.ShowRule} object
+	 */
 	private ShowRule getSelectedRule(LabelingComponent lblComponent, Double qty) {
 		NodeRef nodeRef = lblComponent.getNodeRef();
 
@@ -1528,6 +1649,14 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return selectedRule;
 	}
 
+	/**
+	 * <p>isShowRuleMatch.</p>
+	 *
+	 * @param selectedRule a {@link fr.becpg.repo.product.formulation.labeling.ShowRule} object
+	 * @param showRule a {@link fr.becpg.repo.product.formulation.labeling.ShowRule} object
+	 * @param qty a {@link java.lang.Double} object
+	 * @return a boolean
+	 */
 	private boolean isShowRuleMatch(ShowRule selectedRule, ShowRule showRule, Double qty) {
 		if (showRule.matchLocale(I18NUtil.getLocale()) && showRule.matchQty(qty)) {
 			if ((selectedRule == null) || ((selectedRule.getThreshold() == null) && (showRule.getThreshold() != null))
@@ -1540,6 +1669,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return false;
 	}
 
+	/**
+	 * <p>uncapitalize.</p>
+	 *
+	 * @param legalName a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String uncapitalize(String legalName) {
 		if ((legalName == null) || legalName.isEmpty() || Pattern.compile("^([A-Z]{2}|[A-Z][1-9]|[A-Z]\\-|[A-Z]_).*$").matcher(legalName).find()) {
 			return legalName;
@@ -1547,10 +1682,20 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return StringUtils.uncapitalize(legalName);
 	}
 
+	/** Constant <code>ESCAPED_ALLERGEN_TAGS</code> */
 	private static final String[] ESCAPED_ALLERGEN_TAGS = { "<b>", "</b>", "<u>", "</u>", "<i>", "</i>", "<up>", "</up>" };
 
+	/** Constant <code>ING_TYPE_PREFIX="ingType-"</code> */
 	private static final String ING_TYPE_PREFIX = "ingType-";
 
+	/**
+	 * <p>createAllergenAwareLabel.</p>
+	 *
+	 * @param ingLegalName a {@link java.lang.String} object
+	 * @param allergens a {@link java.util.Set} object
+	 * @param boldOnly a boolean
+	 * @return a {@link java.lang.String} object
+	 */
 	private String createAllergenAwareLabel(String ingLegalName, Set<NodeRef> allergens, boolean boldOnly) {
 		if (isAllergensDisableForLocale()) {
 			return ingLegalName;
@@ -1614,6 +1759,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	private Set<Locale> disableAllergensForLocalesCache = null;
 
+	/**
+	 * <p>isAllergensDisableForLocale.</p>
+	 *
+	 * @return a boolean
+	 */
 	private boolean isAllergensDisableForLocale() {
 
 		if (disableAllergensForLocales.isEmpty()) {
@@ -1631,6 +1781,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return disableAllergensForLocalesCache.contains(I18NUtil.getLocale());
 	}
 
+	/**
+	 * <p>isAllergenDisableForLocale.</p>
+	 *
+	 * @param allergen a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	@SuppressWarnings("unchecked")
 	private boolean isAllergenDisableForLocale(NodeRef allergen) {
 		if (mlNodeService.hasAspect(allergen, ReportModel.ASPECT_REPORT_LOCALES)) {
@@ -1642,6 +1798,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return false;
 	}
 
+	/**
+	 * <p>createAllergenAwareLabel.</p>
+	 *
+	 * @param ingLegalName a {@link java.lang.String} object
+	 * @param ingList a {@link java.util.List} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String createAllergenAwareLabel(String ingLegalName, List<LabelingComponent> ingList) {
 		Map<NodeRef, Double> tmp = new HashMap<>();
 		for (LabelingComponent ing : ingList) {
@@ -1659,6 +1822,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return createAllergenAwareLabel(ingLegalName, sorted(tmp), false);
 	}
 
+	/**
+	 * <p>getCharactName.</p>
+	 *
+	 * @param charact a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getCharactName(NodeRef charact) {
 
 		Locale currentLocale = I18NUtil.getLocale();
@@ -1677,6 +1846,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	}
 
+	/**
+	 * <p>allVoluntaryAllergenSet.</p>
+	 *
+	 * @return a {@link java.util.Set} object
+	 */
 	private Set<NodeRef> allVoluntaryAllergenSet() {
 		return (this.allAllergens != null) ? this.allAllergens.keySet() : Set.of();
 	}
@@ -1810,6 +1984,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	}
 
+	/**
+	 * <p>getDetectedAllergens.</p>
+	 *
+	 * @return a {@link java.util.Set} object
+	 */
 	private Set<String> getDetectedAllergens() {
 		return detectedAllergensByLocale.computeIfAbsent(I18NUtil.getLocale(), r -> new LinkedHashSet<>());
 	}
@@ -1906,12 +2085,23 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return renderAllergens(sorted(this.inVolAllergensRawMaterial), sorted(this.allInVolAllergensRawMaterial), true);
 	}
 
+	/**
+	 * <p>sorted.</p>
+	 *
+	 * @param toSortHashMap a {@link java.util.Map} object
+	 * @return a {@link java.util.Set} object
+	 */
 	private Set<NodeRef> sorted(Map<NodeRef, Double> toSortHashMap) {
 		return toSortHashMap.entrySet().stream()
 				.sorted(Comparator.comparing(Map.Entry<NodeRef, Double>::getValue, Comparator.nullsLast(Comparator.naturalOrder())))
 				.map(Map.Entry<NodeRef, Double>::getKey).collect(Collectors.toSet());
 	}
 
+	/**
+	 * <p>sort.</p>
+	 *
+	 * @param toSort a {@link java.util.List} object
+	 */
 	private void sort(List<LabelingComponent> toSort) {
 		Locale currentLocal = I18NUtil.getLocale();
 		try {
@@ -1932,6 +2122,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		}
 	}
 
+	/**
+	 * <p>compareLabelingComponents.</p>
+	 *
+	 * @param a a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param b a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @return a int
+	 */
 	private int compareLabelingComponents(LabelingComponent a, LabelingComponent b) {
 
 		if ((b instanceof CompositeLabeling) && ((CompositeLabeling) b).isGroup()
@@ -1988,6 +2185,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	}
 
+	/**
+	 * <p>compareIngredientNames.</p>
+	 *
+	 * @param a a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param b a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @return a int
+	 */
 	private int compareIngredientNames(LabelingComponent a, LabelingComponent b) {
 		String nameA = getLegalIngName(a);
 		String nameB = getLegalIngName(b);
@@ -2027,6 +2231,14 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return renderAllergens(allergensList, allergensList, involuntary);
 	}
 
+	/**
+	 * <p>renderAllergens.</p>
+	 *
+	 * @param allergensList a {@link java.util.Set} object
+	 * @param groupingAllergensList a {@link java.util.Set} object
+	 * @param involuntary a boolean
+	 * @return a {@link java.lang.String} object
+	 */
 	private String renderAllergens(Set<NodeRef> allergensList, Set<NodeRef> groupingAllergensList, boolean involuntary) {
 		if (logger.isTraceEnabled()) {
 			logger.trace(" Render Allergens list ");
@@ -2316,6 +2528,14 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	}
 
+	/**
+	 * <p>roundeedValue.</p>
+	 *
+	 * @param component a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param qty a {@link java.lang.Double} object
+	 * @param messageFormat a {@link java.text.MessageFormat} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double roundeedValue(LabelingComponent component, Double qty, MessageFormat messageFormat) {
 
 		for (Format format : messageFormat.getFormats()) {
@@ -2333,6 +2553,16 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	}
 
+	/**
+	 * <p>Getter for the field <code>htmlTableRowFormat</code>.</p>
+	 *
+	 * @param rowFormat a {@link java.lang.String} object
+	 * @param component a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param qtyPerc a {@link java.lang.Double} object
+	 * @param qtyPercWithYield a {@link java.lang.Double} object
+	 * @param isForce100Perc a boolean
+	 * @return a {@link java.text.MessageFormat} object
+	 */
 	private MessageFormat getHtmlTableRowFormat(String rowFormat, LabelingComponent component, Double qtyPerc, Double qtyPercWithYield,
 			boolean isForce100Perc) {
 
@@ -2366,6 +2596,14 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return messageFormat;
 	}
 
+	/**
+	 * <p>formatQty.</p>
+	 *
+	 * @param component a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param qtyPerc a {@link java.lang.Double} object
+	 * @param isForce100Perc a boolean
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double formatQty(LabelingComponent component, Double qtyPerc, boolean isForce100Perc) {
 		QtyFormater qtyFormater = getQtyFormater(component, qtyPerc, false);
 
@@ -2528,6 +2766,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	}
 
+	/**
+	 * <p>indent.</p>
+	 *
+	 * @param label a {@link java.lang.String} object
+	 * @param level a {@link java.lang.Integer} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String indent(String label, Integer level) {
 		if ((level != null) && (level > 0)) {
 			StringBuilder indent = new StringBuilder();
@@ -2541,6 +2786,14 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return label;
 	}
 
+	/**
+	 * <p>flatCompositeLabeling.</p>
+	 *
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param ratio a {@link java.math.BigDecimal} object
+	 * @param level a {@link java.lang.Integer} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<HtmlTableStruct> flatCompositeLabeling(CompositeLabeling parent, BigDecimal ratio, Integer level) {
 		List<HtmlTableStruct> ret = new ArrayList<>();
 
@@ -2610,11 +2863,23 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return ret;
 	}
 
+	/**
+	 * <p>isDoNotDetails.</p>
+	 *
+	 * @param ingTypeItem a {@link fr.becpg.repo.product.data.ing.IngTypeItem} object
+	 * @return a boolean
+	 */
 	private boolean isDoNotDetails(IngTypeItem ingTypeItem) {
 		return isDoNotDetails(ingTypeItem.getOrigNodeRef() != null ? ingTypeItem.getOrigNodeRef() : ingTypeItem.getNodeRef())
 				|| ((ingTypeItem.getDecThreshold() != null) && (ingTypeItem.getQty(ingsLabelingWithYield) <= (ingTypeItem.getDecThreshold() / 100)));
 	}
 
+	/**
+	 * <p>isDoNotDetails.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private boolean isDoNotDetails(NodeRef nodeRef) {
 
 		Locale currentLocale = I18NUtil.getLocale();
@@ -2631,6 +2896,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return false;
 	}
 
+	/**
+	 * <p>roundeedValue.</p>
+	 *
+	 * @param qty a {@link java.lang.Double} object
+	 * @param lblComponent a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double roundeedValue(Double qty, LabelingComponent lblComponent) {
 		QtyFormater qtyFormater = getQtyFormater(lblComponent, qty, false);
 		if (qtyFormater != null) {
@@ -2640,6 +2912,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	}
 
+	/**
+	 * <p>getTotal.</p>
+	 *
+	 * @param compositeLabeling a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param withYield a boolean
+	 * @return a {@link java.math.BigDecimal} object
+	 */
 	private BigDecimal getTotal(CompositeLabeling compositeLabeling, boolean withYield) {
 		BigDecimal total = BigDecimal.valueOf(0d);
 
@@ -2675,6 +2954,16 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	}
 
+	/**
+	 * <p>renderCompositeIng.</p>
+	 *
+	 * @param compositeLabeling a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param ratio a {@link java.math.BigDecimal} object
+	 * @param total a {@link java.math.BigDecimal} object
+	 * @param hideGeo a boolean
+	 * @param hideBio a boolean
+	 * @return a {@link java.lang.String} object
+	 */
 	private String renderCompositeIng(CompositeLabeling compositeLabeling, BigDecimal ratio, BigDecimal total, boolean hideGeo, boolean hideBio) {
 		StringBuilder ret = new StringBuilder();
 		boolean appendEOF = false;
@@ -2781,6 +3070,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return ret.toString().trim();
 	}
 
+	/**
+	 * <p>getLocaleSeparator.</p>
+	 *
+	 * @param separator a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getLocaleSeparator(String separator) {
 		if ("ar".equalsIgnoreCase((I18NUtil.getContentLocale().getLanguage()))) {
 			return separator.replace(",", "،");
@@ -2788,6 +3083,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return separator;
 	}
 
+	/**
+	 * <p>getContentLocale.</p>
+	 *
+	 * @return a {@link java.util.Locale} object
+	 */
 	private Locale getContentLocale() {
 		if ("ar".equalsIgnoreCase((I18NUtil.getContentLocale().getLanguage()))) {
 			return Locale.US;
@@ -2795,6 +3095,18 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return I18NUtil.getContentLocale();
 	}
 
+	/**
+	 * <p>renderLabelingComponent.</p>
+	 *
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param subComponents a {@link java.util.List} object
+	 * @param isIngType a boolean
+	 * @param ratio a {@link java.math.BigDecimal} object
+	 * @param total a {@link java.math.BigDecimal} object
+	 * @param hideGeo a boolean
+	 * @param hideBio a boolean
+	 * @return a {@link java.lang.StringBuilder} object
+	 */
 	private StringBuilder renderLabelingComponent(CompositeLabeling parent, List<LabelingComponent> subComponents, boolean isIngType,
 			BigDecimal ratio, BigDecimal total, boolean hideGeo, boolean hideBio) {
 
@@ -2889,6 +3201,14 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return ret;
 	}
 
+	/**
+	 * <p>createGeoOriginsLabel.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param components a {@link java.util.List} object
+	 * @param placeOfActivity a {@link fr.becpg.repo.product.data.constraints.PlaceOfActivityTypeCode} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String createGeoOriginsLabel(NodeRef nodeRef, List<LabelingComponent> components, PlaceOfActivityTypeCode placeOfActivity) {
 
 		if (((showAllGeo != null) && showAllGeo.matchLocale(I18NUtil.getLocale()))
@@ -2918,6 +3238,14 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return null;
 	}
 
+	/**
+	 * <p>createGeoOriginsLabel.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param geoOriginsByPlaceOfActivity a {@link java.util.Map} object
+	 * @param placeOfActivity a {@link fr.becpg.repo.product.data.constraints.PlaceOfActivityTypeCode} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String createGeoOriginsLabel(NodeRef nodeRef, Map<PlaceOfActivityTypeCode, Set<NodeRef>> geoOriginsByPlaceOfActivity,
 			PlaceOfActivityTypeCode placeOfActivity) {
 
@@ -2975,10 +3303,23 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return null;
 	}
 
+	/**
+	 * <p>getPlaceOfActivityName.</p>
+	 *
+	 * @param filter a {@link fr.becpg.repo.product.data.constraints.PlaceOfActivityTypeCode} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getPlaceOfActivityName(PlaceOfActivityTypeCode filter) {
 		return I18NUtil.getMessage("listconstraint.gs1_productActivityTypeCodes." + filter.toString());
 	}
 
+	/**
+	 * <p>createBioOriginsLabel.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param components a {@link java.util.List} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String createBioOriginsLabel(NodeRef nodeRef, List<LabelingComponent> components) {
 
 		if (((showAllBio != null) && showAllBio.matchLocale(I18NUtil.getLocale()))
@@ -3002,6 +3343,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return null;
 	}
 
+	/**
+	 * <p>createBioOriginsLabel.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param bioOrigins a {@link java.util.Set} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String createBioOriginsLabel(NodeRef nodeRef, Set<NodeRef> bioOrigins) {
 
 		if (((showAllBio != null) && showAllBio.matchLocale(I18NUtil.getLocale()))
@@ -3019,6 +3367,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return null;
 	}
 
+	/**
+	 * <p>createAdditionalInformationLabel.</p>
+	 *
+	 * @param components a {@link java.util.List} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String createAdditionalInformationLabel(List<LabelingComponent> components) {
 
 		Set<String> tmp = new HashSet<>();
@@ -3031,6 +3385,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return String.join(getLocaleSeparator(additionalInformationSeparator), tmp);
 	}
 
+	/**
+	 * <p>createAdditionalInformationLabel.</p>
+	 *
+	 * @param additionalInformation a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String createAdditionalInformationLabel(MLText additionalInformation) {
 		if (additionalInformation != null) {
 			return MLTextHelper.getClosestValue(additionalInformation, I18NUtil.getLocale());
@@ -3038,6 +3398,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return null;
 	}
 
+	/**
+	 * <p>shouldSkip.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param qtyPerc a {@link java.lang.Double} object
+	 * @return a boolean
+	 */
 	private boolean shouldSkip(NodeRef nodeRef, Double qtyPerc) {
 
 		boolean shouldSkip = !((qtyPerc == null) || (toApplyThresholdItems.contains(nodeRef) && (qtyPerc > qtyPrecisionThreshold))
@@ -3085,6 +3452,15 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return createJsonLog(mergedLblCompositeContext, null, DEFAULT_RATIO, new HashSet<>()).toString();
 	}
 
+	/**
+	 * <p>createJsonLog.</p>
+	 *
+	 * @param component a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param ratio a {@link java.math.BigDecimal} object
+	 * @param visited a {@link java.util.Set} object
+	 * @return a {@link org.json.simple.JSONObject} object
+	 */
 	@SuppressWarnings("unchecked")
 	private JSONObject createJsonLog(LabelingComponent component, CompositeLabeling parent, BigDecimal ratio, Set<LabelingComponent> visited) {
 
@@ -3215,6 +3591,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return tree;
 	}
 
+	/**
+	 * <p>decorate.</p>
+	 *
+	 * @param input a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String decorate(String input) {
 		if (input != null) {
 
@@ -3263,6 +3645,15 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return computeQtyPerc(parent, component, ratio, ingsLabelingWithYield);
 	}
 
+	/**
+	 * <p>computeQtyPerc.</p>
+	 *
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param component a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param ratio a {@link java.math.BigDecimal} object
+	 * @param withYield a boolean
+	 * @return a {@link java.math.BigDecimal} object
+	 */
 	private BigDecimal computeQtyPerc(CompositeLabeling parent, LabelingComponent component, BigDecimal ratio, boolean withYield) {
 
 		if ((ratio == null) || (parent == null)) {
@@ -3296,6 +3687,15 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return computeVolumePerc(parent, component, ratio, ingsLabelingWithYield);
 	}
 
+	/**
+	 * <p>computeVolumePerc.</p>
+	 *
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param component a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param ratio a {@link java.math.BigDecimal} object
+	 * @param withYield a boolean
+	 * @return a {@link java.math.BigDecimal} object
+	 */
 	private BigDecimal computeVolumePerc(CompositeLabeling parent, LabelingComponent component, BigDecimal ratio, boolean withYield) {
 		if ((ratio == null) || (parent == null)) {
 			return null;
@@ -3308,6 +3708,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return volume != null ? BigDecimal.valueOf(volume) : null;
 	}
 
+	/**
+	 * <p>getSortedIngListByType.</p>
+	 *
+	 * @param compositeLabeling a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @return a {@link java.util.Map} object
+	 */
 	Map<IngTypeItem, List<LabelingComponent>> getSortedIngListByType(CompositeLabeling compositeLabeling) {
 
 		Locale currentLocale = I18NUtil.getLocale();
@@ -3527,6 +3933,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return sortedIngListByType;
 	}
 
+	/**
+	 * <p>getReplacementIngType.</p>
+	 *
+	 * @param aggregateRule a {@link fr.becpg.repo.product.formulation.labeling.AggregateRule} object
+	 * @return a {@link fr.becpg.repo.product.data.ing.IngTypeItem} object
+	 */
 	private IngTypeItem getReplacementIngType(AggregateRule aggregateRule) {
 		IngTypeItem ingType = null;
 

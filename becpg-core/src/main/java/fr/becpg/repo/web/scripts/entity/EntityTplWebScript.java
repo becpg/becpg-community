@@ -25,16 +25,25 @@ import fr.becpg.repo.formulation.FormulateException;
  */
 public class EntityTplWebScript extends AbstractWebScript {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityTplWebScript.class);
 
+	/** Constant <code>ACTION_SYNCHRONIZE_ENTITIES="synchronizeEntities"</code> */
 	private static final String ACTION_SYNCHRONIZE_ENTITIES = "synchronizeEntities";
+	/** Constant <code>ACTION_FORMULATION_ENTITIES="formulateEntities"</code> */
 	private static final String ACTION_FORMULATION_ENTITIES = "formulateEntities";
+	/** Constant <code>ACTION_DATALIST_RECURSIVE_DELETE="datalistRecursiveDelete"</code> */
 	private static final String ACTION_DATALIST_RECURSIVE_DELETE = "datalistRecursiveDelete";
 	
+	/** Constant <code>PARAM_DATALIST="datalist"</code> */
 	private static final String PARAM_DATALIST = "datalist";
+	/** Constant <code>PARAM_ACTION="action"</code> */
 	private static final String PARAM_ACTION = "action";
+	/** Constant <code>PARAM_STORE_TYPE="store_type"</code> */
 	private static final String PARAM_STORE_TYPE = "store_type";
+	/** Constant <code>PARAM_STORE_ID="store_id"</code> */
 	private static final String PARAM_STORE_ID = "store_id";
+	/** Constant <code>PARAM_ID="id"</code> */
 	private static final String PARAM_ID = "id";
 
 	private NodeService nodeService;

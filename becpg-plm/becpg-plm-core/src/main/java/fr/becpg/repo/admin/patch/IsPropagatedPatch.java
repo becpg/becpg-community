@@ -29,13 +29,17 @@ import fr.becpg.model.PLMModel;
  */
 public class IsPropagatedPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(IsPropagatedPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.IsPropagatedPatch.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.IsPropagatedPatch.result";
 
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
 
+	/** Constant <code>PROP_NUT_PROPAGATE</code> */
 	private static final QName PROP_NUT_PROPAGATE = QName.createQName(BeCPGModel.BECPG_URI, "isNutPropagateUp");
+	/** Constant <code>PROP_CLAIM_PROPAGATE</code> */
 	private static final QName PROP_CLAIM_PROPAGATE = QName.createQName(BeCPGModel.BECPG_URI, "isLabelClaimPropagateUp");
 	
 	/** {@inheritDoc} */
@@ -47,6 +51,12 @@ public class IsPropagatedPatch extends AbstractBeCPGPatch {
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
+	/**
+	 * <p>apply.</p>
+	 *
+	 * @param sourceType a {@link org.alfresco.service.namespace.QName} object
+	 * @param prop a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private void apply(QName sourceType, QName prop) {
 		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 

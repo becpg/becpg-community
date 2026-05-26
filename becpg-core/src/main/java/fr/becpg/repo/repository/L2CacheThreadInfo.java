@@ -7,9 +7,15 @@ import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+/**
+ * <p>L2CacheThreadInfo class.</p>
+ *
+ * @author matthieu
+ */
 class L2CacheThreadInfo implements Serializable{
 
 
+	/** Constant <code>serialVersionUID=-7958215882212282888L</code> */
 	private static final long serialVersionUID = -7958215882212282888L;
 	private boolean isCacheOnlyEnable = false;
 	private boolean isThreadLockEnable = false;

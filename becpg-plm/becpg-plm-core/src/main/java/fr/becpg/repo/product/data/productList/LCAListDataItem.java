@@ -26,10 +26,13 @@ import fr.becpg.repo.repository.annotation.InternalField;
 public class LCAListDataItem extends AbstractCostListDataItem<LCAListDataItem> {
 	
 	
+	/** Constant <code>serialVersionUID=4160545876076772520L</code> */
 	private static final long serialVersionUID = 4160545876076772520L;
 
+	/** Constant <code>FORECAST_COLUMN_UNKNOWN="forecastColumn unknown: "</code> */
 	private static final String FORECAST_COLUMN_UNKNOWN = "forecastColumn unknown: ";
 
+	/** Constant <code>FORECAST_CONTEXTS</code> */
 	private static final List<ForecastContext<LCAListDataItem>> FORECAST_CONTEXTS = List.of(
 			new ForecastContext<>("bcpg:lcaListPreviousValue", "previousValue",
 					LCAListDataItem::setPreviousValue, LCAListDataItem::getPreviousValue),
@@ -43,6 +46,12 @@ public class LCAListDataItem extends AbstractCostListDataItem<LCAListDataItem> {
 		return FORECAST_CONTEXTS.stream().map(c -> c.getForecastColumn()).toList();
 	}
 	
+	/**
+	 * <p>getForecastContext.</p>
+	 *
+	 * @param forecastColumn a {@link java.lang.String} object
+	 * @return a ForecastContext object
+	 */
 	private ForecastContext<LCAListDataItem> getForecastContext(String forecastColumn) {
 		for (ForecastContext<LCAListDataItem> context : FORECAST_CONTEXTS) {
 			if (context.getForecastColumn().equals(forecastColumn)) {

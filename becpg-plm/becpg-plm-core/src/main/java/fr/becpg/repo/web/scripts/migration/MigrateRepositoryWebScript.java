@@ -57,39 +57,64 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class MigrateRepositoryWebScript extends AbstractWebScript {	
 	
+	/** Constant <code>PARAM_ACTION="action"</code> */
 	private static final String PARAM_ACTION = "action";
+	/** Constant <code>PARAM_NODEREF="nodeRef"</code> */
 	private static final String PARAM_NODEREF = "nodeRef";
+	/** Constant <code>PARAM_OLD_USERNAME="oldUserName"</code> */
 	private static final String PARAM_OLD_USERNAME = "oldUserName";
+	/** Constant <code>PARAM_NEW_USERNAME="newUserName"</code> */
 	private static final String PARAM_NEW_USERNAME = "newUserName";	
+	/** Constant <code>PARAM_NUMBER="number"</code> */
 	private static final String PARAM_NUMBER = "number";	
+	/** Constant <code>PARAM_PATH="path"</code> */
 	private static final String PARAM_PATH = "path";	
 
 
+	/** Constant <code>ACTION_DELETE_MODEL="deleteModel"</code> */
 	private static final String ACTION_DELETE_MODEL = "deleteModel";
+	/** Constant <code>ACTION_RENAME_USER="renameUser"</code> */
 	private static final String ACTION_RENAME_USER = "renameUser";
+	/** Constant <code>ACTION_DELETE_UNUSED_INGS="deleteUnusedIngs"</code> */
 	private static final String ACTION_DELETE_UNUSED_INGS = "deleteUnusedIngs";
 	
+	/** Constant <code>ACTION_REMOVE_ASPECT="removeAspect"</code> */
 	private static final String ACTION_REMOVE_ASPECT = "removeAspect";
+	/** Constant <code>ACTION_ADD_MANDATORY_ASPECT="addMandatoryAspect"</code> */
 	private static final String ACTION_ADD_MANDATORY_ASPECT = "addMandatoryAspect";
+	/** Constant <code>PARAM_TYPE="type"</code> */
 	private static final String PARAM_TYPE = "type";
+	/** Constant <code>PARAM_ASPECT="aspect"</code> */
 	private static final String PARAM_ASPECT = "aspect";
 	
+	/** Constant <code>ACTION_MIGRATE_ASSOC="migrateAssociation"</code> */
 	private static final String ACTION_MIGRATE_ASSOC = "migrateAssociation";
+	/** Constant <code>PARAM_CLASS_QNAME="classQName"</code> */
 	private static final String PARAM_CLASS_QNAME = "classQName";
+	/** Constant <code>PARAM_SOURCE_ASSOC="sourceAssoc"</code> */
 	private static final String PARAM_SOURCE_ASSOC = "sourceAssoc";
+	/** Constant <code>PARAM_TARGET_ASSOC="targetAssoc"</code> */
 	private static final String PARAM_TARGET_ASSOC = "targetAssoc";
 	
+	/** Constant <code>ACTION_MIGRATE_PROP="migrateProperty"</code> */
 	private static final String ACTION_MIGRATE_PROP = "migrateProperty";
+	/** Constant <code>PARAM_SOURCE_PROP="sourceProp"</code> */
 	private static final String PARAM_SOURCE_PROP = "sourceProp";
+	/** Constant <code>PARAM_TARGET_PROP="targetProp"</code> */
 	private static final String PARAM_TARGET_PROP = "targetProp";
 
+	/** Constant <code>ACTION_ADD_NUT_FACTS_METHODS="addNutFactsMethods"</code> */
 	private static final String ACTION_ADD_NUT_FACTS_METHODS = "addNutFactsMethods";
+	/** Constant <code>ACTION_CREATE_GEN_RAWMATERIAL="createGenRawMaterial"</code> */
 	private static final String ACTION_CREATE_GEN_RAWMATERIAL = "createGenRawMaterial";
 	
+	/** Constant <code>ACTION_CLEAN_VERSIONS="cleanVersions"</code> */
 	private static final String ACTION_CLEAN_VERSIONS = "cleanVersions";
+	/** Constant <code>ACTION_CLEAN_VERSION_STORE="cleanVersionStore"</code> */
 	private static final String ACTION_CLEAN_VERSION_STORE = "cleanVersionStore";
 	
 	
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(MigrateRepositoryWebScript.class);
 
 
@@ -460,6 +485,11 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 
 	}
 
+	/**
+	 * <p>deleteModel.</p>
+	 *
+	 * @param modelNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void deleteModel(NodeRef modelNodeRef) {
 
 		logger.info("deleteModel");
@@ -473,6 +503,12 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 		}
 	}
 
+	/**
+	 * <p>renameUser.</p>
+	 *
+	 * @param oldUsername a {@link java.lang.String} object
+	 * @param newUsername a {@link java.lang.String} object
+	 */
 	private void renameUser(String oldUsername, String newUsername) {
 		logger.info("\"" + oldUsername + "\" --> \"" + newUsername + "\"");
 		try {

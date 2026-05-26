@@ -41,6 +41,7 @@ public class SurveyListRequirementScanner extends AbstractRequirementScanner<Sur
     /** Constant `MESSAGE_SURVEY_INFO_VALUE="message.formulate.survey.info.value"` */
     public static final String MESSAGE_SURVEY_INFO_VALUE = "message.formulate.survey.info.value";
     
+    /** Constant <code>logger</code> */
     private static final Log logger = LogFactory.getLog(SurveyListRequirementScanner.class);
     
     /**
@@ -121,7 +122,7 @@ public class SurveyListRequirementScanner extends AbstractRequirementScanner<Sur
 
     /**
      * Check the survey answer against the specification and return the appropriate requirement result
-     * 
+     *
      * @param actualItem The survey item from the formulatedProduct
      * @param requiredItem The survey item from the specification
      * @return RequirementCheckResult with the appropriate requirement type and message

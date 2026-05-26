@@ -58,6 +58,7 @@ import fr.becpg.report.client.ReportFormat;
  */
 public abstract class AbstractExportSearchAction extends ActionExecuterAbstractBase {
 
+	/** Constant <code>CREATION_ERROR="Unexpected error creating file for down"{trunked}</code> */
 	private static final String CREATION_ERROR = "Unexpected error creating file for download";
 
 	/** Constant <code>PARAM_TPL_NODEREF="templateNodeRef"</code> */
@@ -67,6 +68,7 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 	/** Constant <code>PARAM_PARAMETERS="parameters"</code> */
 	public static final String PARAM_PARAMETERS = "parameters";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AbstractExportSearchAction.class);
 
 	protected NodeService nodeService;
@@ -319,6 +321,14 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 		paramList.add(new ParameterDefinitionImpl(PARAM_PARAMETERS, DataTypeDefinition.ANY, false, "Extra parameters"));
 	}
 
+	/**
+	 * <p>fileCreationComplete.</p>
+	 *
+	 * @param actionedUponNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param format a {@link java.lang.String} object
+	 * @param tempFile a {@link java.io.File} object
+	 * @param handler a {@link fr.becpg.repo.report.search.actions.AbstractSearchDownloadExporter} object
+	 */
 	private void fileCreationComplete(final NodeRef actionedUponNodeRef, String format, final File tempFile,
 			final AbstractSearchDownloadExporter handler) {
 		// Update the content and set the status to done.
@@ -341,6 +351,12 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 
 	}
 
+	/**
+	 * <p>downloadCancelled.</p>
+	 *
+	 * @param actionedUponNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param handler a {@link fr.becpg.repo.report.search.actions.AbstractSearchDownloadExporter} object
+	 */
 	private void downloadCancelled(final NodeRef actionedUponNodeRef, final AbstractSearchDownloadExporter handler) {
 		// Update the content and set the status to done.
 		transactionHelper.doInTransaction(() -> {

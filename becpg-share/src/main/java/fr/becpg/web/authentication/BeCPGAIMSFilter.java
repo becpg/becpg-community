@@ -162,6 +162,7 @@ import jakarta.servlet.http.HttpSession;
  */
 public class BeCPGAIMSFilter implements Filter
 {
+    /** Constant <code>LOGGER</code> */
     private static final Log LOGGER = LogFactory.getLog(BeCPGAIMSFilter.class);
 
     private ApplicationContext context;
@@ -444,12 +445,14 @@ public class BeCPGAIMSFilter implements Filter
         }
     }
 
-    /**
-     * @param request              HTTP Servlet Request
-     * @param response             HTTP Servlet Response
-     * @param session              HTTP Session
-     * @param authenticationResult OAuth2LoginAuthenticationToken
-     */
+	/**
+	 * <p>onSuccess.</p>
+	 *
+	 * @param request              HTTP Servlet Request
+	 * @param response             HTTP Servlet Response
+	 * @param session              HTTP Session
+	 * @param authenticationResult OAuth2LoginAuthenticationToken
+	 */
     @SuppressWarnings("deprecation")
 	private void onSuccess(HttpServletRequest request, HttpServletResponse response, HttpSession session,
                            OAuth2LoginAuthenticationToken authenticationResult)
@@ -588,12 +591,13 @@ public class BeCPGAIMSFilter implements Filter
         }
     }
 
-	/**
+    /**
      * Initialise the request context and request attributes for further use by some web scripts
      * that require authentication
      *
-     * @param request
-     * @throws RequestContextException
+     * @param request a {@link jakarta.servlet.http.HttpServletRequest} object
+     * @throws org.springframework.extensions.surf.exception.RequestContextException
+     * @param response a {@link jakarta.servlet.http.HttpServletResponse} object
      */
     private void initRequestContext(HttpServletRequest request, HttpServletResponse response)
         throws RequestContextException
@@ -611,12 +615,12 @@ public class BeCPGAIMSFilter implements Filter
         ServletUtil.setRequest(request);
     }
 
-    /**
-     * Initialise the user meta data object and set it into the session and request context (_alf_USER_OBJECT)
-     *
-     * @param request
-     * @throws UserFactoryException
-     */
+	/**
+	 * Initialise the user meta data object and set it into the session and request context (_alf_USER_OBJECT)
+	 *
+	 * @param request a {@link jakarta.servlet.http.HttpServletRequest} object
+	 * @throws org.springframework.extensions.surf.exception.UserFactoryException
+	 */
     @SuppressWarnings("deprecation")
 	private void initUser(HttpServletRequest request) throws UserFactoryException
     {
@@ -638,7 +642,7 @@ public class BeCPGAIMSFilter implements Filter
      * @param username username
      * @param accessToken access token
      * @return The alfTicket
-     * @throws ConnectorServiceException
+     * @throws org.springframework.extensions.surf.exception.ConnectorServiceException
      */
     private String getAlfTicket(HttpSession session, String username, String accessToken) throws ConnectorServiceException
     {
@@ -680,6 +684,12 @@ public class BeCPGAIMSFilter implements Filter
         return alfTicket;
     }
 
+    /**
+     * <p>matchesAuthorizationResponse.</p>
+     *
+     * @param request a {@link jakarta.servlet.http.HttpServletRequest} object
+     * @return a boolean
+     */
     private boolean matchesAuthorizationResponse(HttpServletRequest request) {
         MultiValueMap<String, String> params = toMultiMap(request.getParameterMap());
         if (!isAuthorizationResponse(params)) {
@@ -705,6 +715,14 @@ public class BeCPGAIMSFilter implements Filter
         }
     }
 
+    /**
+     * <p>processAuthorizationResponse.</p>
+     *
+     * @param request a {@link jakarta.servlet.http.HttpServletRequest} object
+     * @param response a {@link jakarta.servlet.http.HttpServletResponse} object
+     * @param session a {@link jakarta.servlet.http.HttpSession} object
+     * @throws java.io.IOException if any.
+     */
     private synchronized void processAuthorizationResponse(HttpServletRequest request, HttpServletResponse response, HttpSession session)
         throws IOException {
         OAuth2AuthorizationRequest authorizationRequest = this.authorizationRequestRepository
@@ -869,6 +887,14 @@ public class BeCPGAIMSFilter implements Filter
         }
     }
 
+    /**
+     * <p>createOidcToken.</p>
+     *
+     * @param clientRegistration a {@link org.springframework.security.oauth2.client.registration.ClientRegistration} object
+     * @param accessTokenResponse a {@link org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse} object
+     * @return a {@link org.springframework.security.oauth2.core.oidc.OidcIdToken} object
+     * @throws org.springframework.security.oauth2.core.OAuth2AuthenticationException if any.
+     */
     private OidcIdToken createOidcToken(ClientRegistration clientRegistration,
                                         OAuth2AccessTokenResponse accessTokenResponse)
         throws OAuth2AuthenticationException
@@ -892,6 +918,13 @@ public class BeCPGAIMSFilter implements Filter
         return idToken;
     }
 
+    /**
+     * <p>createHash.</p>
+     *
+     * @param nonce a {@link java.lang.String} object
+     * @return a {@link java.lang.String} object
+     * @throws java.security.NoSuchAlgorithmException if any.
+     */
     static String createHash(String nonce) throws NoSuchAlgorithmException
     {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -901,6 +934,14 @@ public class BeCPGAIMSFilter implements Filter
             .encodeToString(digest);
     }
 
+    /**
+     * <p>sendRedirectForAuthorization.</p>
+     *
+     * @param request a {@link jakarta.servlet.http.HttpServletRequest} object
+     * @param response a {@link jakarta.servlet.http.HttpServletResponse} object
+     * @param authorizationRequest a {@link org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest} object
+     * @throws java.io.IOException if any.
+     */
     private void sendRedirectForAuthorization(HttpServletRequest request, HttpServletResponse response,
                                               OAuth2AuthorizationRequest authorizationRequest) throws IOException
     {
@@ -912,6 +953,12 @@ public class BeCPGAIMSFilter implements Filter
                                                         authorizationRequest.getAuthorizationRequestUri());
     }
 
+    /**
+     * <p>unsuccessfulRedirectForAuthorization.</p>
+     *
+     * @param response a {@link jakarta.servlet.http.HttpServletResponse} object
+     * @throws java.io.IOException if any.
+     */
     private void unsuccessfulRedirectForAuthorization(HttpServletResponse response) throws IOException
     {
         response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(),
@@ -923,9 +970,9 @@ public class BeCPGAIMSFilter implements Filter
      * parameter. Only the path, query string and fragment of the original URL are preserved; the host is never
      * taken from user input, preventing Open Redirection attacks.
      *
-     * @param request
-     * @param response
-     * @throws IOException
+     * @param request a {@link jakarta.servlet.http.HttpServletRequest} object
+     * @param response a {@link jakarta.servlet.http.HttpServletResponse} object
+     * @throws java.io.IOException
      */
     private void sendRedirectForPreLogin(HttpServletRequest request, HttpServletResponse response) throws IOException
     {
@@ -953,9 +1000,9 @@ public class BeCPGAIMSFilter implements Filter
      * on the same host (or relative URLs) are accepted. Any attempt to redirect to an
      * external domain is blocked and falls back to the application root.
      *
-     * @param request
-     * @param response
-     * @throws IOException
+     * @param request a {@link jakarta.servlet.http.HttpServletRequest} object
+     * @param response a {@link jakarta.servlet.http.HttpServletResponse} object
+     * @throws java.io.IOException
      */
     private void sendRedirectToOriginalTarget(HttpServletRequest request, HttpServletResponse response) throws IOException
     {
@@ -1082,6 +1129,12 @@ public class BeCPGAIMSFilter implements Filter
         return "https".equalsIgnoreCase(scheme) ? 443 : 80;
     }
 
+    /**
+     * <p>refreshToken.</p>
+     *
+     * @param attribute a {@link org.springframework.security.core.context.SecurityContext} object
+     * @param session a {@link jakarta.servlet.http.HttpSession} object
+     */
     private synchronized void refreshToken(SecurityContext attribute, HttpSession session)
     {
         OAuth2LoginAuthenticationToken oAuth2LoginAuthenticationToken =
@@ -1114,6 +1167,12 @@ public class BeCPGAIMSFilter implements Filter
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, attribute);
     }
 
+    /**
+     * <p>createCustomValidator.</p>
+     *
+     * @param providerDetails a {@link org.springframework.security.oauth2.client.registration.ClientRegistration.ProviderDetails} object
+     * @return a {@link org.springframework.security.oauth2.core.OAuth2TokenValidator} object
+     */
     private OAuth2TokenValidator<Jwt> createCustomValidator(ProviderDetails providerDetails)
     {
         List<OAuth2TokenValidator<Jwt>> validators = new ArrayList<>();
@@ -1189,6 +1248,14 @@ public class BeCPGAIMSFilter implements Filter
         }
     }
 
+    /**
+     * <p>validateAccessToken.</p>
+     *
+     * @param clientRegistration a {@link org.springframework.security.oauth2.client.registration.ClientRegistration} object
+     * @param oAuth2AccessToken a {@link org.springframework.security.oauth2.core.OAuth2AccessToken} object
+     * @return a {@link org.springframework.security.oauth2.jwt.Jwt} object
+     * @throws org.springframework.security.oauth2.jwt.JwtException if any.
+     */
     private Jwt validateAccessToken(ClientRegistration clientRegistration, OAuth2AccessToken oAuth2AccessToken)
         throws JwtException
     {
@@ -1199,6 +1266,14 @@ public class BeCPGAIMSFilter implements Filter
         return jwtDecoder.decode(oAuth2AccessToken.getTokenValue());
     }
 
+    /**
+     * <p>validateIdToken.</p>
+     *
+     * @param clientRegistration a {@link org.springframework.security.oauth2.client.registration.ClientRegistration} object
+     * @param idToken a {@link java.lang.String} object
+     * @return a {@link org.springframework.security.oauth2.jwt.Jwt} object
+     * @throws org.springframework.security.oauth2.jwt.JwtException if any.
+     */
     @SuppressWarnings("unchecked")
 	private Jwt validateIdToken(ClientRegistration clientRegistration, String idToken) throws JwtException
     {
@@ -1208,6 +1283,12 @@ public class BeCPGAIMSFilter implements Filter
         return jwtDecoder.decode(idToken);
     }
 
+    /**
+     * <p>isAuthTokenExpired.</p>
+     *
+     * @param authTokenExpiration a {@link java.time.Instant} object
+     * @return a boolean
+     */
     private static boolean isAuthTokenExpired(Instant authTokenExpiration)
     {
         return Instant.now()

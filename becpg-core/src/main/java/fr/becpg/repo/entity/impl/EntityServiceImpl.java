@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -79,15 +79,21 @@ import fr.becpg.repo.system.SystemConfigurationService;
 @Service("entityService")
 public class EntityServiceImpl implements EntityService {
 
+	/** Constant <code>MAX_DEPTH_LEVEL</code> */
 	private static final Integer MAX_DEPTH_LEVEL = 6;
 
+	/** Constant <code>ICON_NAME="generic-%s-%s.png"</code> */
 	private static final String ICON_NAME = "generic-%s-%s.png";
+	/** Constant <code>ICON_NAME_TEMPLATE="generic-%s-%s-%s.png"</code> */
 	private static final String ICON_NAME_TEMPLATE = "generic-%s-%s-%s.png";
 
+	/** Constant <code>ENTITY_ICONS_CACHE_KEY="entityIcons"</code> */
 	private static final String ENTITY_ICONS_CACHE_KEY = "entityIcons";
 
+	/** Constant <code>ENTITY_ICONS_PATTERN</code> */
 	private static final Pattern ENTITY_ICONS_PATTERN = Pattern.compile("generic-.*\\.png");
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityServiceImpl.class);
 
 	@Autowired
@@ -120,6 +126,7 @@ public class EntityServiceImpl implements EntityService {
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
 
+	/** Constant <code>IGNORE_PARENT_ASSOC_TYPES</code> */
 	private static final Set<QName> IGNORE_PARENT_ASSOC_TYPES = new HashSet<>(7);
 	static {
 		IGNORE_PARENT_ASSOC_TYPES.add(ContentModel.ASSOC_MEMBER);
@@ -414,7 +421,7 @@ public class EntityServiceImpl implements EntityService {
 	
 	/**
 	 * Get the configured recursive depth for document search
-	 * 
+	 *
 	 * @return the maximum depth to search recursively
 	 */
 	private int getDocumentsRecursiveDepth() {
@@ -431,7 +438,7 @@ public class EntityServiceImpl implements EntityService {
 	
 	/**
 	 * Process documents in a specific folder
-	 * 
+	 *
 	 * @param folderNodeRef the folder to process
 	 * @param docByType the map to populate with documents by type
 	 */
@@ -454,7 +461,7 @@ public class EntityServiceImpl implements EntityService {
 	
 	/**
 	 * Process folders recursively up to the specified depth
-	 * 
+	 *
 	 * @param parentNodeRef the parent folder
 	 * @param docByType the map to populate with documents by type
 	 * @param currentDepth the current recursion depth
@@ -510,8 +517,9 @@ public class EntityServiceImpl implements EntityService {
 	 * Get original name from the working copy name and the cm:workingCopyLabel that
 	 * was used to create it.
 	 *
-	 * @param workingCopyLabel
+	 * @param workingCopyLabel a {@link java.lang.String} object
 	 * @return original name
+	 * @param workingCopyName a {@link java.lang.String} object
 	 */
 	private String getNameFromWorkingCopyName(String workingCopyName, String workingCopyLabel) {
 		String workingCopyLabelRegEx = workingCopyLabel.replaceAll("\\(", "\\\\(");
@@ -536,6 +544,13 @@ public class EntityServiceImpl implements EntityService {
 		copyOrMoveFiles(sourceNodeRef, targetNodeRef, false);
 	}
 
+	/**
+	 * <p>copyOrMoveFiles.</p>
+	 *
+	 * @param sourceNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param targetNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param isCopy a boolean
+	 */
 	private void copyOrMoveFiles(NodeRef sourceNodeRef, NodeRef targetNodeRef, boolean isCopy) {
 
 		if ((targetNodeRef != null) && (sourceNodeRef != null) && !nodeService.hasAspect(sourceNodeRef, VirtualContentModel.ASPECT_VIRTUAL)) {
@@ -567,6 +582,13 @@ public class EntityServiceImpl implements EntityService {
 		}
 	}
 
+	/**
+	 * <p>copyOrMoveFile.</p>
+	 *
+	 * @param file a {@link org.alfresco.service.cmr.model.FileInfo} object
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param isCopy a boolean
+	 */
 	private void copyOrMoveFile(FileInfo file, NodeRef parentNodeRef, boolean isCopy) {
 
 		NodeRef documentNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, file.getName());
@@ -607,6 +629,12 @@ public class EntityServiceImpl implements EntityService {
 		}
 	}
 
+	/**
+	 * <p>deleteNode.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param deleteArchivedNode a boolean
+	 */
 	private void deleteNode(NodeRef nodeRef, boolean deleteArchivedNode) {
 
 		// Test folder exists
@@ -635,6 +663,14 @@ public class EntityServiceImpl implements EntityService {
 		return getEntityNodeRef(nodeRef, itemType, new HashSet<>());
 	}
 
+	/**
+	 * <p>getEntityNodeRef.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object
+	 * @param visitedNodeRefs a {@link java.util.Set} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getEntityNodeRef(NodeRef nodeRef, QName itemType, Set<NodeRef> visitedNodeRefs) {
 		if (nodeService.exists(nodeRef)) {
 

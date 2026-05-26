@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -35,6 +35,7 @@ import fr.becpg.repo.entity.version.EntityVersionService;
  */
 public class BranchEntityWebScript extends AbstractEntityWebScript {
 
+	/** Constant <code>PARAM_DEST_NODEREF="destNodeRef"</code> */
 	private static final String PARAM_DEST_NODEREF = "destNodeRef";
 
 	private EntityVersionService entityVersionService;

@@ -31,6 +31,7 @@ import fr.becpg.repo.survey.data.SurveyableEntity;
 @AlfQname(qname = "bcpg:client")
 public class ClientData extends BeCPGDataObject implements HierarchicalEntity, StateableEntity, SurveyableEntity, CataloguableEntity {
 
+	/** Constant <code>serialVersionUID=5302327031354625757L</code> */
 	private static final long serialVersionUID = 5302327031354625757L;
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;

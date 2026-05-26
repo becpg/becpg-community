@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -72,6 +72,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	/** Constant <code>SUPPLIER_SITE_ID="supplier-portal"</code> */
 	public static final String SUPPLIER_SITE_ID = "supplier-portal";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(SupplierPortalHelper.class);
 
 	private AssociationService associationService;
@@ -111,6 +112,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	 * <p>Setter for the field <code>entityActivityService</code>.</p>
 	 *
 	 * @param entityActivityService a {@link fr.becpg.repo.activity.EntityActivityService} object
+	 * @since 25.3.0.34
 	 */
 	public void setEntityActivityService(EntityActivityService entityActivityService) {
 		this.entityActivityService = entityActivityService;
@@ -319,6 +321,13 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 		return new ScriptNode[0];
 	}
 
+	/**
+	 * <p>getSupplierNodeRef.</p>
+	 *
+	 * @param project a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getSupplierNodeRef(final ProjectData project, NodeRef entityNodeRef) {
 		NodeRef supplierNodeRef = supplierPortalService.getSupplierNodeRef(project.getNodeRef());
 
@@ -457,6 +466,13 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 
 	}
 
+	/**
+	 * <p>isInProjectFolder.</p>
+	 *
+	 * @param documentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param projectNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private boolean isInProjectFolder(NodeRef documentNodeRef, NodeRef projectNodeRef) {
 
 		if (documentNodeRef != null) {

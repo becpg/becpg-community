@@ -31,7 +31,9 @@ import fr.becpg.repo.admin.patch.AbstractBeCPGPatch;
  */
 public class ProjectRulesPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ProjectRulesPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.projet.projectRulesPatch.res"{trunked}</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.projet.projectRulesPatch.result";
 	
 

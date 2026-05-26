@@ -32,9 +32,12 @@ import fr.becpg.report.client.ReportFormat;
  */
 public class EntityReportWebScript extends AbstractEntityWebScript {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityReportWebScript.class);
 
+	/** Constant <code>PARAM_LOCALE="locale"</code> */
 	private static final String PARAM_LOCALE = "locale";
+	/** Constant <code>PARAM_TEMPLATE="tplNodeRef"</code> */
 	private static final String PARAM_TEMPLATE = "tplNodeRef";
 
 	private EntityReportService entityReportService;

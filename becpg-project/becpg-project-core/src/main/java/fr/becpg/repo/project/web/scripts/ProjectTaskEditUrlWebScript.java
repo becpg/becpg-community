@@ -53,6 +53,11 @@ public class ProjectTaskEditUrlWebScript extends AbstractWebScript {
 		httpResponse.sendRedirect(buildShareUrl() + "/page/task-edit?taskId=" + nodeService.getProperty(entityNodeRef, ProjectModel.PROP_TL_WORKFLOW_TASK_INSTANCE));
 	}
 
+	/**
+	 * <p>buildShareUrl.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String buildShareUrl() {
 		StringBuilder url = new StringBuilder();
 		url.append(sysAdminParams.getShareProtocol());

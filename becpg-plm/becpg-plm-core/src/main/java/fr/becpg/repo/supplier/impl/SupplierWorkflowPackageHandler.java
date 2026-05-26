@@ -45,6 +45,7 @@ import fr.becpg.repo.project.data.ProjectData;
 public class SupplierWorkflowPackageHandler implements WorkflowPackageHandler
 {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(SupplierWorkflowPackageHandler.class);
 
 	@Autowired

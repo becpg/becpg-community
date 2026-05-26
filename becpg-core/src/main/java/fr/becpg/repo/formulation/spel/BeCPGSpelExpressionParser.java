@@ -22,8 +22,10 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
  */
 public class BeCPGSpelExpressionParser extends SpelExpressionParser {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(BeCPGSpelExpressionParser.class);
 
+	/** Constant <code>FORBIDDEN_METHODS</code> */
 	private static final Set<String> FORBIDDEN_METHODS = Set.of("getBean", "executeScript", "executeScriptString",
 			"call", "createNewFile", "eval", "exec",
 			"exit", "forName", "gc", "getByName", "getDeclaredConstructor",
@@ -34,6 +36,7 @@ public class BeCPGSpelExpressionParser extends SpelExpressionParser {
 			"newInstance", "openConnection", "read",
 			"readObject", "setAccessible", "start", "write", "writeObject");
 
+	/** Constant <code>FORBIDDEN_FIELDS</code> */
 	private static final Set<String> FORBIDDEN_FIELDS = Set.of(
 			"class", "classLoader", "declaredFields", "declaredMethods", "declaredConstructors", "declaredClasses");
 
@@ -73,6 +76,11 @@ public class BeCPGSpelExpressionParser extends SpelExpressionParser {
 		return expr;
 	}
 
+	/**
+	 * <p>checkAst.</p>
+	 *
+	 * @param node a {@link org.springframework.expression.spel.SpelNode} object
+	 */
 	private void checkAst(SpelNode node) {
 		if (node == null) {
 			return;

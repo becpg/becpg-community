@@ -30,17 +30,28 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  */
 public class ChangeOrderWebScript extends AbstractWebScript {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ChangeOrderWebScript.class);
 
+	/** Constant <code>PARAM_STORE_TYPE="store_type"</code> */
 	private static final String PARAM_STORE_TYPE = "store_type";
+	/** Constant <code>PARAM_STORE_ID="store_id"</code> */
 	private static final String PARAM_STORE_ID = "store_id";
+	/** Constant <code>PARAM_ID="id"</code> */
 	private static final String PARAM_ID = "id";
+	/** Constant <code>PARAM_ACTION="action"</code> */
 	private static final String PARAM_ACTION = "action";
+	/** Constant <code>PARAM_ECO_NAME="name"</code> */
 	private static final String PARAM_ECO_NAME = "name";
+	/** Constant <code>ACTION_CALCULATE_WUSED="calculatewused"</code> */
 	private static final String ACTION_CALCULATE_WUSED = "calculatewused";
+	/** Constant <code>ACTION_DO_SIMULATION="dosimulation"</code> */
 	private static final String ACTION_DO_SIMULATION = "dosimulation";
+	/** Constant <code>ACTION_APPLY="apply"</code> */
 	private static final String ACTION_APPLY = "apply";
+	/** Constant <code>ACTION_GET_INFOS="infos"</code> */
 	private static final String ACTION_GET_INFOS = "infos";
+	/** Constant <code>ACTION_CREATE_AUTOMATIC_ECO="create"</code> */
 	private static final String ACTION_CREATE_AUTOMATIC_ECO = "create";
 
 	private ECOService ecoService;
@@ -148,6 +159,12 @@ public class ChangeOrderWebScript extends AbstractWebScript {
 
 	}
 
+	/**
+	 * <p>writeInfos.</p>
+	 *
+	 * @param ecoNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param res a {@link org.springframework.extensions.webscripts.WebScriptResponse} object
+	 */
 	private void writeInfos(NodeRef ecoNodeRef, WebScriptResponse res) {
 
 		try {
@@ -165,6 +182,13 @@ public class ChangeOrderWebScript extends AbstractWebScript {
 
 	}
 
+	/**
+	 * <p>createJSONObject.</p>
+	 *
+	 * @param ecm a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 * @return a {@link org.json.JSONObject} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private JSONObject createJSONObject(ChangeOrderData ecm) throws JSONException {
 
 		JSONObject ret = new JSONObject();

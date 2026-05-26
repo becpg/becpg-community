@@ -49,6 +49,7 @@ import fr.becpg.repo.supplier.SupplierPortalService;
 @Service
 public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(SupplierSignatureProjectPlugin.class);
 
 	@Autowired
@@ -81,12 +82,16 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 	@Autowired
 	private SignatureProjectHelper signatureProjectHelper;
 
+	/** Constant <code>SUPPLIER_REFERENCING_PROJECT_TYPE="supplierReferencing"</code> */
 	private static final String SUPPLIER_REFERENCING_PROJECT_TYPE = "supplierReferencing";
 
+	/** Constant <code>SUPPLIER_REPORT_KIND="SupplierSheet"</code> */
 	private static final String SUPPLIER_REPORT_KIND = "SupplierSheet";
 
+	/** Constant <code>CLOSING_TASK_NAME_KEY="plm.supplier.portal.task.closing.name"</code> */
 	private static final String CLOSING_TASK_NAME_KEY = "plm.supplier.portal.task.closing.name";
 
+	/** Constant <code>VALIDATE_PROJECT_SCRIPT="cm:validateProjectEntity.js"</code> */
 	private static final String VALIDATE_PROJECT_SCRIPT = "cm:validateProjectEntity.js";
 
 	/** {@inheritDoc} */
@@ -213,6 +218,13 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 		return supplierPortalService.extractSupplierAccountRefs(document);
 	}
 
+	/**
+	 * <p>findSupplierAccount.</p>
+	 *
+	 * @param documents a {@link java.util.List} object
+	 * @param recipients a {@link java.util.List} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef findSupplierAccount(List<NodeRef> documents, List<NodeRef> recipients) {
 		for (NodeRef document : documents) {
 

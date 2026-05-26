@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -33,6 +33,7 @@ import fr.becpg.repo.RepoConsts;
  */
 public class L2CacheSupport {
 
+	/** Constant <code>threadLocalCache</code> */
 	private static final ThreadLocal<L2CacheThreadInfo> threadLocalCache = ThreadLocal.withInitial(L2CacheThreadInfo::new);
 
 	public interface Action {

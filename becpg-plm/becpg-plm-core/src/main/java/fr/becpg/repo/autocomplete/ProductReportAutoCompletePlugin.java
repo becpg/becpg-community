@@ -40,6 +40,7 @@ import fr.becpg.repo.report.template.ReportType;
 @Service("productReportAutoCompletePlugin")
 public class ProductReportAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
+	/** Constant <code>SOURCE_TYPE_PRODUCT_REPORT="productreport"</code> */
 	private static final String SOURCE_TYPE_PRODUCT_REPORT = "productreport";
 
 	@Autowired
@@ -69,8 +70,10 @@ public class ProductReportAutoCompletePlugin extends TargetAssocAutoCompletePlug
 	 * @param query
 	 *            the query
 	 * @return the map
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
+	 * @param pageNum a {@link java.lang.Integer} object
+	 * @param pageSize a {@link java.lang.Integer} object
 	 */
-
 	private AutoCompletePage suggestProductReportTemplates(QName nodeType, String query, Integer pageNum, Integer pageSize) {
 
 		query = prepareQuery(query);

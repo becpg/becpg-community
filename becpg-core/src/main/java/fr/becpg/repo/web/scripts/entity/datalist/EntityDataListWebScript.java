@@ -47,6 +47,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class EntityDataListWebScript extends AbstractEntityDataListWebScript {
 
 	
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityDataListWebScript.class);
 
 	/** The Constant PARAM_FILTER. */
@@ -134,6 +135,7 @@ public class EntityDataListWebScript extends AbstractEntityDataListWebScript {
 	/** Constant <code>PARAM_EFFECTIVE_FILTER_ON="effectiveFilterOn"</code> */
 	protected static final String PARAM_EFFECTIVE_FILTER_ON = "effectiveFilterOn";
 	
+	/** Constant <code>PARAM_READ_ONLY="readOnly"</code> */
 	private static final String PARAM_READ_ONLY = "readOnly";
 
 	private DataListExtractorFactory dataListExtractorFactory;
@@ -151,6 +153,11 @@ public class EntityDataListWebScript extends AbstractEntityDataListWebScript {
 		this.systemConfigurationService = systemConfigurationService;
 	}
 	
+	/**
+	 * <p>effectiveFilterEnabled.</p>
+	 *
+	 * @return a boolean
+	 */
 	private boolean effectiveFilterEnabled() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.datalist.effectiveFilterEnabled"));
 	}

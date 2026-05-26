@@ -60,6 +60,7 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnRestoreNodePolicy,
 		NodeServicePolicies.BeforeArchiveNodePolicy, NodeArchiveServicePolicies.BeforePurgeNodePolicy, NodeServicePolicies.BeforeDeleteNodePolicy {
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(DeleteAndRestoreEntityPolicy.class);
 
 	private RemoteEntityService remoteEntityService;
@@ -79,6 +80,7 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 	private TenantService tenantService;
 	
 
+	/** Constant <code>ENTITY_DELETED="entity_deleted"</code> */
 	private static final String ENTITY_DELETED = "entity_deleted";
 
 	/**
@@ -378,6 +380,11 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 		}
 	}
 	
+	/**
+	 * <p>deleteEntityDeletedContent.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void deleteEntityDeletedContent(NodeRef entityNodeRef) {
 		
 		if (logger.isDebugEnabled()) {
@@ -398,6 +405,12 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 		}
 	}
 
+	/**
+	 * <p>findEntityDeletedContentNodeRef.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef findEntityDeletedContentNodeRef(NodeRef entityNodeRef) {
 		NodeRef entityDeletedNodeRef = new NodeRef(StoreRef.STORE_REF_ARCHIVE_SPACESSTORE, entityDeletedContentId(entityNodeRef));
 		if (nodeService.exists(entityDeletedNodeRef)) {
@@ -407,10 +420,22 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 		return nodeService.getChildByName(rootArchiveRef, ContentModel.ASSOC_CONTAINS, entityDeletedContentName(entityNodeRef));
 	}
 
+	/**
+	 * <p>entityDeletedContentId.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String entityDeletedContentId(NodeRef entityNodeRef) {
 		return "X_" + entityNodeRef.getId().substring(2);
 	}
 	
+	/**
+	 * <p>entityDeletedContentName.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String entityDeletedContentName(NodeRef entityNodeRef) {
 		return ENTITY_DELETED + "_" + entityNodeRef.getId();
 	}

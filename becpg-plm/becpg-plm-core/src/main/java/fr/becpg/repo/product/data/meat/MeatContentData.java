@@ -16,6 +16,7 @@ import org.json.JSONObject;
  */
 public class MeatContentData implements Serializable{
 
+	/** Constant <code>serialVersionUID=194540761026268870L</code> */
 	private static final long serialVersionUID = 194540761026268870L;
 
 	Double qtyPerc = 0d;
@@ -429,6 +430,12 @@ public class MeatContentData implements Serializable{
 		return ret.toString();
 	}
 
+	/**
+	 * <p>toJson.</p>
+	 *
+	 * @return a {@link org.json.JSONObject} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private JSONObject toJson() throws JSONException {
 		JSONObject ret = new JSONObject();
 		ret.put("fatPerc", fatPerc);
@@ -457,6 +464,14 @@ public class MeatContentData implements Serializable{
 		return ret;
 	}
 
+	/**
+	 * <p>parse.</p>
+	 *
+	 * @param meatType a {@link java.lang.String} object
+	 * @param jsonObject a {@link org.json.JSONObject} object
+	 * @return a {@link fr.becpg.repo.product.data.meat.MeatContentData} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private static MeatContentData parse(String meatType, JSONObject jsonObject) throws JSONException {
 		MeatContentData ret = new MeatContentData(meatType);
 		ret.setFatPerc(jsonObject.getDouble("fatPerc"));

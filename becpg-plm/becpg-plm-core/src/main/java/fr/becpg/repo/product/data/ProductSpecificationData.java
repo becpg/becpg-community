@@ -36,6 +36,7 @@ import fr.becpg.repo.repository.annotation.DataList;
 @AlfCacheable
 public class ProductSpecificationData extends ProductData {
 
+	/** Constant <code>serialVersionUID=-3890483893356522048L</code> */
 	private static final long serialVersionUID = -3890483893356522048L;
 	
 	private String specCompatibilityLog;

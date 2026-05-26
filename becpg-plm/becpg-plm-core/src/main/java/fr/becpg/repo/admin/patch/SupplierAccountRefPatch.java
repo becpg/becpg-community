@@ -34,7 +34,9 @@ import fr.becpg.model.PLMModel;
  */
 public class SupplierAccountRefPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(SupplierAccountRefPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.supplierAccountRefPatch."{trunked}</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.supplierAccountRefPatch.result";
 
 	private NodeDAO nodeDAO;

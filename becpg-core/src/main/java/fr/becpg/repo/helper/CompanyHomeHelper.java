@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -25,6 +25,7 @@ package fr.becpg.repo.helper;
  */
 public class CompanyHomeHelper {
 
+	/** Constant <code>USER_SPACE_QNAME_PATH="/app:company_home/app:user_homes/"</code> */
 	static final String USER_SPACE_QNAME_PATH = "/app:company_home/app:user_homes/";
 	
 	

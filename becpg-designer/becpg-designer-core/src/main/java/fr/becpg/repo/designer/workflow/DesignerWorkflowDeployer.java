@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -107,6 +107,7 @@ public class DesignerWorkflowDeployer {
 		this.namespaceService = namespaceService;
 	}
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(DesignerWorkflowDeployer.class);
 
 	/**
@@ -168,6 +169,12 @@ public class DesignerWorkflowDeployer {
 
 	}
 
+	/**
+	 * <p>extractPrefix.</p>
+	 *
+	 * @param bpmn2Parser a {@link fr.becpg.repo.designer.workflow.BPMN2XmlParser} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extractPrefix(BPMN2XmlParser bpmn2Parser) {
 		for (String startTask : bpmn2Parser.getStartTasks()) {
 			String prefix = startTask.split(":")[0];
@@ -186,6 +193,12 @@ public class DesignerWorkflowDeployer {
 		return "toChange";
 	}
 
+	/**
+	 * <p>addNameSpace.</p>
+	 *
+	 * @param qName a {@link java.lang.String} object
+	 * @param modelNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void addNameSpace( String qName, NodeRef modelNodeRef) {
 		UUID uuid = UUID.randomUUID();
 		String prefix = qName.split(":")[0];
@@ -217,6 +230,13 @@ public class DesignerWorkflowDeployer {
 		designerService.createModelElement(modelNodeRef, DesignerModel.TYPE_M2_NAMESPACE, assocQName, props, null);
 	}
 
+	/**
+	 * <p>checkForType.</p>
+	 *
+	 * @param qname a {@link java.lang.String} object
+	 * @param modelNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private boolean checkForType(String qname, NodeRef modelNodeRef) {
 		boolean exist;
 		try {

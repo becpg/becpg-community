@@ -7,6 +7,9 @@ package fr.becpg.repo.formulation;
  */
 public class FormulatedEntityHelper {
 	
+	/**
+	 * <p>Constructor for FormulatedEntityHelper.</p>
+	 */
 	private FormulatedEntityHelper() {
 		
 	}

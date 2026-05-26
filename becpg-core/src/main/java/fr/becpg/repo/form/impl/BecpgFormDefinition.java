@@ -39,19 +39,31 @@ public class BecpgFormDefinition {
 	private Map<String, JSONObject> sets = new LinkedHashMap<>();
 	private Map<String, List<JSONObject>> tree = new LinkedHashMap<>();
 
+	/** Constant <code>PROP_ROOT="root"</code> */
 	private static final String PROP_ROOT = "root";
 
+	/** Constant <code>PROP_FIELDS="fields"</code> */
 	private static final String PROP_FIELDS = "fields";
+	/** Constant <code>PROP_TAB="tab"</code> */
 	private static final String PROP_TAB = "tab";
+	/** Constant <code>PROP_TABS="tabs"</code> */
 	private static final String PROP_TABS = "tabs";
+	/** Constant <code>LOADED="loaded"</code> */
 	private static final String LOADED = "loaded";
 
+	/** Constant <code>PROP_ID="id"</code> */
 	static final String PROP_ID = "id";
+	/** Constant <code>PROP_DATAKEY="dataKey"</code> */
 	static final String PROP_DATAKEY = "dataKey";
+	/** Constant <code>PROP_NAME="name"</code> */
 	static final String PROP_NAME = "name";
+	/** Constant <code>PROP_LABEL="label"</code> */
 	static final String PROP_LABEL = "label";
+	/** Constant <code>PROP_HELP="help"</code> */
 	static final String PROP_HELP = "help";
+	/** Constant <code>PROP_TYPE="type"</code> */
 	static final String PROP_TYPE = "type";
+	/** Constant <code>PROP_MANDATORY="mandatory"</code> */
 	static final String PROP_MANDATORY = "mandatory";
 
 	/**
@@ -89,6 +101,12 @@ public class BecpgFormDefinition {
 
 	}
 
+	/**
+	 * <p>isContainerRepresentation.</p>
+	 *
+	 * @param object a {@link org.json.JSONObject} object
+	 * @return a boolean
+	 */
 	private static boolean isContainerRepresentation(final JSONObject object) {
 		try {
 			return object.getString("fieldType").equals("ContainerRepresentation");
@@ -97,6 +115,14 @@ public class BecpgFormDefinition {
 		}
 	}
 
+	/**
+	 * <p>filterArray.</p>
+	 *
+	 * @param array a {@link org.json.JSONArray} object
+	 * @param tabIds a {@link java.util.Set} object
+	 * @return a {@link org.json.JSONArray} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private static JSONArray filterArray(JSONArray array, Set<String> tabIds) throws JSONException {
 		final int size = array.length();
 		JSONArray result = new JSONArray();
@@ -109,6 +135,14 @@ public class BecpgFormDefinition {
 		return result;
 	}
 
+	/**
+	 * <p>filterTabs.</p>
+	 *
+	 * @param tabs a {@link org.json.JSONArray} object
+	 * @param tabIds a {@link java.util.Set} object
+	 * @return a {@link org.json.JSONArray} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private static JSONArray filterTabs(JSONArray tabs, Set<String> tabIds) throws JSONException {
 		final int size = tabs.length();
 		JSONArray result = new JSONArray();
@@ -121,6 +155,13 @@ public class BecpgFormDefinition {
 		return result;
 	}
 
+	/**
+	 * <p>filter.</p>
+	 *
+	 * @param object a {@link org.json.JSONObject} object
+	 * @param tabIds a {@link java.util.Set} object
+	 * @return a {@link org.json.JSONObject} object
+	 */
 	private static JSONObject filter(JSONObject object, Set<String> tabIds) {
 		try {
 			if (isContainerRepresentation(object)) {
@@ -267,6 +308,13 @@ public class BecpgFormDefinition {
 		return this;
 	}
 
+	/**
+	 * <p>loadData.</p>
+	 *
+	 * @param field a {@link org.json.JSONObject} object
+	 * @param form a {@link org.alfresco.repo.forms.Form} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private void loadData(JSONObject field, Form form) throws JSONException {
 		if (field.has(PROP_DATAKEY)) {
 			String key = field.getString(PROP_DATAKEY);
@@ -280,6 +328,15 @@ public class BecpgFormDefinition {
 		}
 	}
 
+	/**
+	 * <p>loadDef.</p>
+	 *
+	 * @param field a {@link org.json.JSONObject} object
+	 * @param form a {@link org.alfresco.repo.forms.Form} object
+	 * @param resolver a {@link fr.becpg.repo.form.column.decorator.DataGridFormFieldTitleProvider} object
+	 * @return a boolean
+	 * @throws org.json.JSONException if any.
+	 */
 	private boolean loadDef(JSONObject field, Form form, DataGridFormFieldTitleProvider resolver) throws JSONException {
 		String id = field.getString(PROP_ID);
 

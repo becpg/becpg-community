@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -43,21 +43,29 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 public class AdminTenantWebScript extends AbstractWebScript {
 
 	
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AdminTenantWebScript.class);
 
 	// request parameter names
 
+	/** Constant <code>PARAM_ACTION="action"</code> */
 	private static final String PARAM_ACTION = "action";
 
+	/** Constant <code>PARAM_DOMAIN="tenantDomain"</code> */
 	private static final String PARAM_DOMAIN = "tenantDomain";
 
+	/** Constant <code>PARAM_PASSWORD="tenantPassword"</code> */
 	private static final String PARAM_PASSWORD = "tenantPassword";
 
+	/** Constant <code>PARAM_ROOT_CONTENT="rootContentStoreDir"</code> */
 	private static final String PARAM_ROOT_CONTENT = "rootContentStoreDir";
 	
+	/** Constant <code>PARAM_DIRECTORY_DESTINATION="directoryDestination"</code> */
 	private static final String PARAM_DIRECTORY_DESTINATION = "directoryDestination";
 
+	/** Constant <code>ACTION_CREATE="create"</code> */
 	private static final String ACTION_CREATE = "create";
+	/** Constant <code>ACTION_EXPORT="export"</code> */
 	private static final String ACTION_EXPORT = "export";
 
 	private TenantAdminService tenantAdminService;

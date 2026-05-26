@@ -28,6 +28,7 @@ import fr.becpg.repo.repository.model.ControlableListDataItem;
 @AlfQname(qname = "bcpg:organoList")
 public class OrganoListDataItem extends BeCPGDataObject implements ControlableListDataItem {
 
+	/** Constant <code>serialVersionUID=6048458461427271748L</code> */
 	private static final long serialVersionUID = 6048458461427271748L;
 
 	private MLText textCriteria;

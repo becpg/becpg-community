@@ -8,6 +8,9 @@ package fr.becpg.model;
  */
 public class BeCPGPermissions {
 	
+	/**
+	 * <p>Constructor for BeCPGPermissions.</p>
+	 */
 	private BeCPGPermissions() {
 		//DO Nothing
 	}

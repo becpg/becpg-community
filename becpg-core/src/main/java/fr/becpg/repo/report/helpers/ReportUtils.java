@@ -10,6 +10,9 @@ import fr.becpg.report.client.ReportFormat;
  */
 public class ReportUtils {
 	
+	/**
+	 * <p>Constructor for ReportUtils.</p>
+	 */
 	private ReportUtils() {
 		//Do Nothing
 	}

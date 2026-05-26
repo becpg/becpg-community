@@ -41,22 +41,38 @@ public class ExportUsersWebScript extends AbstractWebScript {
 	
 	private AuthorityService authorityService;
 
+	/** Constant <code>LAST_NAME="cm:lastName"</code> */
 	private static final String LAST_NAME = "cm:lastName";
+	/** Constant <code>FIRST_NAME="cm:firstName"</code> */
 	private static final String FIRST_NAME = "cm:firstName";
+	/** Constant <code>EMAIL="cm:email"</code> */
 	private static final String EMAIL = "cm:email";
+	/** Constant <code>TELEPHONE="cm:telephone"</code> */
 	private static final String TELEPHONE = "cm:telephone";
+	/** Constant <code>ORGANIZATION="cm:organization"</code> */
 	private static final String ORGANIZATION = "cm:organization";
+	/** Constant <code>USERNAME="username"</code> */
 	private static final String USERNAME = "username";
+	/** Constant <code>NEW_USERNAME="new_username"</code> */
 	private static final String NEW_USERNAME = "new_username";
+	/** Constant <code>PASSWORD="password"</code> */
 	private static final String PASSWORD = "password";
+	/** Constant <code>SHOULD_GENERATE_PASSWORD="should_generate_password"</code> */
 	private static final String SHOULD_GENERATE_PASSWORD = "should_generate_password";
+	/** Constant <code>MEMBERSHIPS="memberships"</code> */
 	private static final String MEMBERSHIPS = "memberships";
+	/** Constant <code>GROUPS="groups"</code> */
 	private static final String GROUPS = "groups";
+	/** Constant <code>NOTIFY="notify"</code> */
 	private static final String NOTIFY = "notify";
+	/** Constant <code>IS_IDS_USER="is_ids_user"</code> */
 	private static final String IS_IDS_USER = "is_ids_user";
+	/** Constant <code>DISABLE="disable"</code> */
 	private static final String DISABLE = "disable";
+	/** Constant <code>DELETE="delete"</code> */
 	private static final String DELETE = "delete";
 
+	/** Constant <code>XLSX_COLUMNS</code> */
 	private static final List<String> XLSX_COLUMNS = List.of(
 			LAST_NAME,
 			FIRST_NAME,
@@ -186,6 +202,12 @@ public class ExportUsersWebScript extends AbstractWebScript {
 		}
 	}
 
+	/**
+	 * <p>getOrEmpty.</p>
+	 *
+	 * @param prop a {@link java.lang.Object} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getOrEmpty(Object prop) {
 		return prop == null ? "" : prop.toString();
 	}

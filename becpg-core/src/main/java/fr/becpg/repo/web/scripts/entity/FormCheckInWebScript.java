@@ -33,16 +33,25 @@ import fr.becpg.repo.entity.version.EntityVersionService;
  */
 public class FormCheckInWebScript extends DeclarativeWebScript {
 
+	/** Constant <code>PARAM_NODEREF="nodeRef"</code> */
 	private static final String PARAM_NODEREF = "nodeRef";
+	/** Constant <code>PARAM_MAJOR_VERSION="majorVersion"</code> */
 	private static final String PARAM_MAJOR_VERSION = "majorVersion";
+	/** Constant <code>PARAM_DESCRIPTION="description"</code> */
 	private static final String PARAM_DESCRIPTION = "description";
+	/** Constant <code>MODEL_KEY_NAME_NODEREF="noderef"</code> */
 	private static final String MODEL_KEY_NAME_NODEREF = "noderef";
+	/** Constant <code>PARAM_BRANCH_TO_NODEREF="branchToNodeRef"</code> */
 	private static final String PARAM_BRANCH_TO_NODEREF = "branchToNodeRef";
+	/** Constant <code>PARAM_IMPACT_WUSED="impactWused"</code> */
 	private static final String PARAM_IMPACT_WUSED = "impactWused";
+	/** Constant <code>PARAM_RENAME_ON_MERGE="renameOnMerge"</code> */
 	private static final String PARAM_RENAME_ON_MERGE = "renameOnMerge";
 
+	/** Constant <code>VALUE_TRUE="true"</code> */
 	private static final String VALUE_TRUE = "true";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(FormCheckInWebScript.class);
 
 	private CheckOutCheckInService checkOutCheckInService;
