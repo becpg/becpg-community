@@ -20,6 +20,6 @@
 	<description>Admin module - beCPG administration</description>	
 	<url>/becpg/admin/repository/{action}</url>
 	<format default="json">argument</format>
-	<authentication>admin</authentication>
+	<authentication>user</authentication>
 	<transaction allow="readwrite" >required</transaction>
 </webscript>
