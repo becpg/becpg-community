@@ -1,3 +1,6 @@
+# Third-Party Open Source Licenses
+
+```text
 
      (Apache-2.0) ActiveMQ :: Client Jakarta (org.apache.activemq:activemq-client-jakarta:5.18.6 - http://activemq.apache.org/activemq-client-jakarta)
      (Apache-2.0) Apache Commons BeanUtils (commons-beanutils:commons-beanutils:1.11.0 - https://commons.apache.org/proper/commons-beanutils)
@@ -386,3 +389,4 @@ Lists of 339 third-party dependencies.
      (Unknown license) yuicompressor (com.yahoo.platform.yui:yuicompressor:2.4.8-alfresco-patched - no url defined)
      (Unknown license) yui (com.yahoo.platform.yui:yui:2.9.0-alfresco-20141223 - no url defined)
      (UnRar License) Java Unrar (com.github.junrar:junrar:7.5.5 - https://github.com/junrar/junrar)
+```
