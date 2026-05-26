@@ -186,7 +186,14 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 					if ((qty != null) && (qty > 0)) {
 						ProductData partProduct = (ProductData) alfrescoRepository.findOne(part);
 
-						Double qtyUsed = compoItem instanceof CompoListDataItem compoListDataItem ? FormulationHelper.getQtyInKg(compoListDataItem) : 0d;
+						Double qtyUsed;
+						if (compoItem instanceof CompoListDataItem compoListDataItem) {
+						    qtyUsed = FormulationHelper.getQtyInKg(compoListDataItem);
+						} else if (compoItem instanceof PackagingListDataItem packagingListDataItem) {
+						    qtyUsed = FormulationHelper.getQty(packagingListDataItem);
+						} else {
+						    qtyUsed = compoItem.getQty() != null ? compoItem.getQty() : 0d;
+						}
 
 						if (!partProduct.isLocalSemiFinished() && partProduct.getLabelClaimList() != null) {
 							for (LabelClaimListDataItem labelClaim : partProduct.getLabelClaimList()) {
