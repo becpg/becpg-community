@@ -52,7 +52,7 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 	@Override
 	public void createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat,
 			OutputStream outputStream) {
-		createReport(nodeType, templateNodeRef, searchResults, reportFormat, outputStream, null);
+		createReport(nodeType, templateNodeRef, searchResults, reportFormat, outputStream, (String[]) null);
 	}
 
 	/** {@inheritDoc} */
@@ -86,7 +86,7 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat) {
-		return createReport(nodeType, templateNodeRef, searchResults, reportFormat, null);
+		return createReport(nodeType, templateNodeRef, searchResults, reportFormat, (String[]) null);
 	}
 
 	/** {@inheritDoc} */

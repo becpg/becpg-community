@@ -456,6 +456,9 @@ public class SurveyServiceImpl implements SurveyService {
 	private boolean isVisible(SurveyListDataItem surveyListDataItem, List<SurveyListDataItem> surveyListDataItems) {
 		Map<NodeRef, SurveyQuestion> surveyQuestionByNodeRef = getSurveyQuestionCache().getSurveyQuestionByNodeRef();
 		SurveyQuestion surveyQuestion = surveyQuestionByNodeRef.get(surveyListDataItem.getQuestion());
+		if (surveyQuestion == null) {
+			return true;
+		}
 		SurveyQuestion parentQuestion = extractParentQuestion(surveyQuestion);
 		if (Boolean.TRUE.equals(parentQuestion.getIsVisible())) {
 			return true;

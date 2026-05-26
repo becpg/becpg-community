@@ -251,7 +251,7 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 			entityActivityService.postExportActivity(null,
 					(QName) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_TPL_CLASS_NAME), FilenameUtils.removeExtension(tplName) + "." + extension.toLowerCase());
 			
-			AbstractSearchDownloadExporter handler = createHandler(actionedUponNodeRef, templateNodeRef, downloadRequest, reportFormat);
+			AbstractSearchDownloadExporter handler = createHandler(action, actionedUponNodeRef, templateNodeRef, downloadRequest, reportFormat);
 
 			final File tempFile = TempFileProvider.createTempFile(FilenameUtils.removeExtension(tplName), extension);
 			handler.setTempFile(tempFile);
@@ -301,13 +301,14 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 	/**
 	 * <p>createHandler.</p>
 	 *
+	 * @param action a {@link org.alfresco.service.cmr.action.Action} object
 	 * @param actionedUponNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param templateNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param downloadRequest a {@link org.alfresco.service.cmr.download.DownloadRequest} object
 	 * @param format a {@link fr.becpg.report.client.ReportFormat} object
 	 * @return a {@link fr.becpg.repo.report.search.actions.AbstractSearchDownloadExporter} object
 	 */
-	protected abstract AbstractSearchDownloadExporter createHandler(NodeRef actionedUponNodeRef, NodeRef templateNodeRef,
+	protected abstract AbstractSearchDownloadExporter createHandler(Action action, NodeRef actionedUponNodeRef, NodeRef templateNodeRef,
 			DownloadRequest downloadRequest, ReportFormat format);
 
 	/** {@inheritDoc} */

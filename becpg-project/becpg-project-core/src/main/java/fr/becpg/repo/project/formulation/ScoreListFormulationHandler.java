@@ -337,8 +337,8 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 	}
 
 	private void computeFinalEntityScore(SurveyableEntity surveyableEntity, Composite<ScoreListDataItem> composite) {
-		int totalScore = 0;
-		int totalWeight = 0;
+		double totalScore = 0;
+		double totalWeight = 0;
 
 		for (Composite<ScoreListDataItem> component : composite.getChildren()) {
 			ScoreListDataItem sl = component.getData();
@@ -349,7 +349,7 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 			}
 		}
 
-		surveyableEntity.setScore(totalWeight > 0 ? Math.min(totalScore / totalWeight, 100) : null);
+		surveyableEntity.setScore(totalWeight > 0 ? (int) Math.min(totalScore / totalWeight, 100) : null);
 
 		if (totalWeight == 0) {
 			logger.debug(String.format("Total weight of project %s is zero.", surveyableEntity.getNodeRef()));
@@ -438,7 +438,7 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 	private void calculateAndFillScoreList(List<ScoreListDataItem> scoreList, Map<NodeRef, Double> scoresPerCriterion,
 			Map<NodeRef, Double> maxScoresPerCriterion) {
 		scoresPerCriterion.forEach((criterion, score) -> {
-			if(criterion != null) {
+			if(criterion != null && maxScoresPerCriterion.get(criterion) > 0) {
 				double normalizedScore = 100 * (score / maxScoresPerCriterion.get(criterion));
 	
 				scoreList.stream().filter(sl -> criterion.equals(sl.getScoreCriterion())).findFirst()
