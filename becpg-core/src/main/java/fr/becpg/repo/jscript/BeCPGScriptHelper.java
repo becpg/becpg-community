@@ -97,6 +97,7 @@ import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.entity.version.EntityVersion;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.entity.version.VersionHelper;
 import fr.becpg.repo.formulation.FormulatedEntity;
@@ -2544,6 +2545,30 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 				nodeService.removeAssociation(nodeRef, assoc.getTargetRef(), assocQName);
 			}
 		}
+	}
+	
+	/**
+	 * <p>forceDelete.</p>
+	 *
+	 * @param node a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 */
+	public void forceDelete(ScriptNode node) {
+		try {
+			policyBehaviourFilter.disableAllBehaviours();
+			nodeService.addAspect(node.getNodeRef(), ContentModel.ASPECT_TEMPORARY, null);
+			node.remove();
+
+		} finally {
+			policyBehaviourFilter.enableAllBehaviours(); 
+		}
+	}
+	
+	public List<EntityVersion> getAllVersionAndBranches(ScriptNode node) {
+		return entityVersionService.getAllVersionAndBranches(node.getNodeRef());
+	}
+	
+	public List<EntityVersion> getAllVersions(ScriptNode node) {
+		return entityVersionService.getAllVersions(node.getNodeRef());
 	}
 
 }

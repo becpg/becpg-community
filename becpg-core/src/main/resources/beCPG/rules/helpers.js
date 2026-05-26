@@ -140,6 +140,13 @@
  * isOnBranchEntity(node) Test we are branching entity
  * 
  * getEntity(childNode, itemType) return first parent entity that is of type itemType
+ * 
+ * forceDelete(node) force node deletion with disableAllBehaviours
+ * 
+ * getAllVersionAndBranches(node) get the version and branches array list
+ * 
+ * getAllVersions(node) get the versions array list
+ * 
  */
 
 const SIMULATION_SITE_ID = "simulation";
@@ -1132,3 +1139,27 @@ function getEntity(childNode, itemType) {
 	return bcpg.getEntity(childNode, itemType);
 }
 
+/**
+ * @param {ScriptNode} node
+ */
+function forceDelete(node) {
+	bcpg.forceDelete(node);
+}
+
+/**
+ * @param {ScriptNode} node
+ * @returns {List<EntityVersion>} entity version list from node
+ */
+
+function getAllVersionAndBranches(node) {
+	return bcpg.getAllVersionAndBranches(node);
+}
+
+/**
+ * @param {ScriptNode} node
+ * @returns {List<EntityVersion>} entity version list from node
+ */
+
+function getAllVersions(node) {
+	return bcpg.getAllVersions(node);
+}
