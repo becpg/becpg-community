@@ -491,24 +491,21 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * <li>{6}: Additional Information</li>
 	 * </ul>
 	 */
-	private String htmlTableRowFormat = """
-			<tr><td style="border: solid 1px; padding: 5px;" >{0}</td>\
-			<td style="border: solid 1px;padding: 5px;" >{2}</td>\
-			<td style="border: solid 1px;padding: 5px;" >{3}</td>\
-			<td style="border: solid 1px;padding: 5px;text-align:center;">{1,number,0.#%}</td>\
-			<td style="border: solid 1px;padding: 5px;text-align:center;">{4,number,0.#%}</td></tr>""";
-	private String htmlTableHeaderFormat = """
-			<thead><tr><th style="border: solid 1px; padding: 5px;" >{0}</th>\
-			<th style="border: solid 1px;padding: 5px;" >{2}</th>\
-			<th style="border: solid 1px;padding: 5px;" >{3}</th>\
-			<th style="border: solid 1px;padding: 5px;text-align:center;">{1}</th>\
-			<th style="border: solid 1px;padding: 5px;text-align:center;">{4}</th></tr></thead>""";
-	private String htmlTableFooterFormat = """
-			<tfoot><tr><th style="border: solid 1px; padding: 5px;" ><b>{0}</b></th>\
-			<td style="border: solid 1px;padding: 5px;"></td>\
-			<td style="border: solid 1px; padding: 5px;"></td>\
-			<td style="border: solid 1px;padding: 5px;text-align:center;"><b>{1,number,0.#%}</b></td>\
-			<td style="border: solid 1px;padding: 5px;"></td></tr></tfoot>""";
+	private String htmlTableRowFormat = "<tr><td style=\"border: solid 1px; padding: 5px;\" >{0}</td>"
+			+ "<td style=\"border: solid 1px;padding: 5px;\" >{2}</td>"
+			+ "<td style=\"border: solid 1px;padding: 5px;\" >{3}</td>"
+			+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">{1,number,0.#%}</td>"
+			+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">{4,number,0.#%}</td></tr>";
+	private String htmlTableHeaderFormat = "<thead><tr><th style=\"border: solid 1px; padding: 5px;\" >{0}</th>"
+			+ "<th style=\"border: solid 1px;padding: 5px;\" >{2}</th>"
+			+ "<th style=\"border: solid 1px;padding: 5px;\" >{3}</th>"
+			+ "<th style=\"border: solid 1px;padding: 5px;text-align:center;\">{1}</th>"
+			+ "<th style=\"border: solid 1px;padding: 5px;text-align:center;\">{4}</th></tr></thead>";
+	private String htmlTableFooterFormat = "<tfoot><tr><th style=\"border: solid 1px; padding: 5px;\" ><b>{0}</b></th>"
+			+ "<td style=\"border: solid 1px;padding: 5px;\"></td>"
+			+ "<td style=\"border: solid 1px; padding: 5px;\"></td>"
+			+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\"><b>{1,number,0.#%}</b></td>"
+			+ "<td style=\"border: solid 1px;padding: 5px;\"></td></tr></tfoot>";
 
 	/**
 	 * Default format for flat HTML table rows in labeling.
@@ -523,24 +520,21 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * <li>{6}: Additional Information</li>
 	 * </ul>
 	 */
-	private String htmlFlatTableRowFormat = """
-			<tr><td style="border: solid 1px; padding: 5px;" >{0}</td>\
-			<td style="border: solid 1px;padding: 5px;" >{2}</td>\
-			<td style="border: solid 1px;padding: 5px;" >{3}</td>\
-			<td style="border: solid 1px;padding: 5px;text-align:center;">{1,number,0.#%}</td>\
-			<td style="border: solid 1px;padding: 5px;text-align:center;">{4,number,0.#%}</td></tr>""";
-	private String htmlFlatTableHeaderFormat = """
-			<thead><tr><th style="border: solid 1px; padding: 5px;" >{0}</th>\
-			<th style="border: solid 1px;padding: 5px;" >{2}</th>\
-			<th style="border: solid 1px;padding: 5px;" >{3}</th>\
-			<th style="border: solid 1px;padding: 5px;text-align:center;">{1}</th>\
-			<th style="border: solid 1px;padding: 5px;text-align:center;">{4}</th></tr></thead>""";
-	private String htmlFlatTableFooterFormat = """
-			<tfoot><tr><th style="border: solid 1px; padding: 5px;" ><b>{0}</b></th>\
-			<td style="border: solid 1px;padding: 5px;"></td>\
-			<td style="border: solid 1px; padding: 5px;"></td>\
-			<td style="border: solid 1px;padding: 5px;text-align:center;"><b>{1,number,0.#%}</b></td>\
-			<td style="border: solid 1px;padding: 5px;"></td></tr></tfoot>""";
+	private String htmlFlatTableRowFormat = "<tr><td style=\"border: solid 1px; padding: 5px;\" >{0}</td>"
+			+ "<td style=\"border: solid 1px;padding: 5px;\" >{2}</td>"
+			+ "<td style=\"border: solid 1px;padding: 5px;\" >{3}</td>"
+			+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">{1,number,0.#%}</td>"
+			+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">{4,number,0.#%}</td></tr>";
+	private String htmlFlatTableHeaderFormat = "<thead><tr><th style=\"border: solid 1px; padding: 5px;\" >{0}</th>"
+			+ "<th style=\"border: solid 1px;padding: 5px;\" >{2}</th>"
+			+ "<th style=\"border: solid 1px;padding: 5px;\" >{3}</th>"
+			+ "<th style=\"border: solid 1px;padding: 5px;text-align:center;\">{1}</th>"
+			+ "<th style=\"border: solid 1px;padding: 5px;text-align:center;\">{4}</th></tr></thead>";
+	private String htmlFlatTableFooterFormat = "<tfoot><tr><th style=\"border: solid 1px; padding: 5px;\" ><b>{0}</b></th>"
+			+ "<td style=\"border: solid 1px;padding: 5px;\"></td>"
+			+ "<td style=\"border: solid 1px; padding: 5px;\"></td>"
+			+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\"><b>{1,number,0.#%}</b></td>"
+			+ "<td style=\"border: solid 1px;padding: 5px;\"></td></tr></tfoot>";
 
 	private String defaultSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String atEndSeparator = RepoConsts.LABEL_SEPARATOR;
@@ -912,14 +906,29 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		this.htmlTableFooterFormat = htmlTableFooterFormat;
 	}
 
+	/**
+	 * <p>Setter for the field <code>htmlFlatTableRowFormat</code>.</p>
+	 *
+	 * @param htmlFlatTableRowFormat a {@link java.lang.String} object
+	 */
 	public void setHtmlFlatTableRowFormat(String htmlFlatTableRowFormat) {
 		this.htmlFlatTableRowFormat = htmlFlatTableRowFormat;
 	}
 
+	/**
+	 * <p>Setter for the field <code>htmlFlatTableHeaderFormat</code>.</p>
+	 *
+	 * @param htmlFlatTableHeaderFormat a {@link java.lang.String} object
+	 */
 	public void setHtmlFlatTableHeaderFormat(String htmlFlatTableHeaderFormat) {
 		this.htmlFlatTableHeaderFormat = htmlFlatTableHeaderFormat;
 	}
 
+	/**
+	 * <p>Setter for the field <code>htmlFlatTableFooterFormat</code>.</p>
+	 *
+	 * @param htmlFlatTableFooterFormat a {@link java.lang.String} object
+	 */
 	public void setHtmlFlatTableFooterFormat(String htmlFlatTableFooterFormat) {
 		this.htmlFlatTableFooterFormat = htmlFlatTableFooterFormat;
 	}
@@ -1129,6 +1138,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	}
 
+	/**
+	 * <p>Setter for the field <code>additionalInformationSeparator</code>.</p>
+	 *
+	 * @param additionalInformationSeparator a {@link java.lang.String} object
+	 */
 	public void setAdditionalInformationSeparator(String additionalInformationSeparator) {
 		this.additionalInformationSeparator = additionalInformationSeparator;
 	}

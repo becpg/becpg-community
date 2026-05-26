@@ -63,6 +63,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	/** Constant <code>MESSAGE_EMPTY_ALLERGEN="message.formulate.allergen.error.empty"</code> */
 	public static final String MESSAGE_EMPTY_ALLERGEN = "message.formulate.allergen.error.empty";
 
+	/** Constant <code>CONF_ALLERGEN_SORT_BY_PARENT="beCPG.formulation.allergenList.sortByPa"{trunked}</code> */
 	public static final String CONF_ALLERGEN_SORT_BY_PARENT = "beCPG.formulation.allergenList.sortByParent";
 
 	private static final Log logger = LogFactory.getLog(AllergensCalculatingFormulationHandler.class);

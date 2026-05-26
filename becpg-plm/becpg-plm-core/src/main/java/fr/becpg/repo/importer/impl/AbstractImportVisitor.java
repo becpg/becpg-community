@@ -1190,6 +1190,18 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		return findTargetNodesByValue(importContext, isTargetMany, targetClass, value, assoc, null);
 	}
 
+	/**
+	 * <p>findTargetNodesByValue.</p>
+	 *
+	 * @param importContext a {@link fr.becpg.repo.importer.ImportContext} object
+	 * @param isTargetMany a boolean
+	 * @param targetClass a {@link org.alfresco.service.namespace.QName} object
+	 * @param value a {@link java.lang.String} object
+	 * @param assoc a {@link org.alfresco.service.namespace.QName} object
+	 * @param assocKey a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.util.List} object
+	 * @throws fr.becpg.repo.importer.ImporterException if any.
+	 */
 	protected List<NodeRef> findTargetNodesByValue(ImportContext importContext, boolean isTargetMany, QName targetClass, String value, QName assoc,
 			QName assocKey)
 			throws ImporterException {
@@ -1312,6 +1324,18 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		return findTargetNodeByValue(importContext, propDef, type, value, assoc, null);
 	}
 
+	/**
+	 * <p>findTargetNodeByValue.</p>
+	 *
+	 * @param importContext a {@link fr.becpg.repo.importer.ImportContext} object
+	 * @param propDef a {@link org.alfresco.service.cmr.dictionary.PropertyDefinition} object
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @param value a {@link java.lang.String} object
+	 * @param assoc a {@link org.alfresco.service.namespace.QName} object
+	 * @param assocKey a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @throws fr.becpg.repo.importer.ImporterException if any.
+	 */
 	protected NodeRef findTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef, QName type, String value, QName assoc, QName assocKey)
 			throws ImporterException {
 		NodeRef nodeRef = null;

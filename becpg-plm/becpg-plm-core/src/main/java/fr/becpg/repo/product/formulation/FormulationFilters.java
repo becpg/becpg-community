@@ -29,16 +29,21 @@ import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
  * Commonly used filter combinations for formulation processing.
+ *
+ * @author matthieu
  */
 public final class FormulationFilters
 {
 
+    /** Constant <code>EFFECTIVE_VARIANT_COMPO</code> */
     public static final List<DataListFilter<ProductData, CompoListDataItem>> EFFECTIVE_VARIANT_COMPO =
             List.of(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>());
 
+    /** Constant <code>EFFECTIVE_VARIANT_PACKAGING</code> */
     public static final List<DataListFilter<ProductData, PackagingListDataItem>> EFFECTIVE_VARIANT_PACKAGING =
             List.of(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>());
 
+    /** Constant <code>EFFECTIVE_VARIANT_PROCESS</code> */
     public static final List<DataListFilter<ProductData, ProcessListDataItem>> EFFECTIVE_VARIANT_PROCESS =
             List.of(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>());
 
