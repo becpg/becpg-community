@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -56,6 +56,7 @@ import fr.becpg.repo.designer.data.FormControl;
  */
 public class FormModelVisitor {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(FormModelVisitor.class);
 
 	private NodeService nodeService;
@@ -167,6 +168,12 @@ public class FormModelVisitor {
 
 	}
 
+	/**
+	 * <p>visitConfigElXml.</p>
+	 *
+	 * @param configElNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param parent a {@link org.w3c.dom.Element} object
+	 */
 	private void visitConfigElXml(NodeRef configElNodeRef, Element parent) {
 		Element configEl = DOMUtils.createElement(parent, "config");
 
@@ -191,6 +198,12 @@ public class FormModelVisitor {
 	}
 	
 
+	/**
+	 * <p>visitFormXml.</p>
+	 *
+	 * @param formNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param parent a {@link org.w3c.dom.Element} object
+	 */
 	private void visitFormXml(NodeRef formNodeRef, Element parent) {
 		Element formEl = DOMUtils.createElement(parent, "form");
 		Element fieldVisibility = DOMUtils.createElement(formEl, "field-visibility");
@@ -231,6 +244,14 @@ public class FormModelVisitor {
 		}
 	}
 
+	/**
+	 * <p>appendAtt.</p>
+	 *
+	 * @param el a {@link org.w3c.dom.Element} object
+	 * @param attrName a {@link java.lang.String} object
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param qname a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private void appendAtt(Element el, String attrName, NodeRef nodeRef, QName qname) {
 		String attrValue = (String) nodeService.getProperty(nodeRef, qname);
 		if (!StringUtils.isEmpty(attrValue)) {
@@ -239,6 +260,15 @@ public class FormModelVisitor {
 
 	}
 
+	/**
+	 * <p>visitFieldXml.</p>
+	 *
+	 * @param fieldNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param parent a {@link org.w3c.dom.Element} object
+	 * @param fieldVisibility a {@link org.w3c.dom.Element} object
+	 * @param appearance a {@link org.w3c.dom.Element} object
+	 * @param setId a {@link java.lang.String} object
+	 */
 	@SuppressWarnings("unchecked")
 	private void visitFieldXml(NodeRef fieldNodeRef, Element parent, Element fieldVisibility, Element appearance, String setId) {
 		boolean hide = (Boolean) nodeService.getProperty(fieldNodeRef, DesignerModel.PROP_DSG_HIDE);
@@ -292,6 +322,15 @@ public class FormModelVisitor {
 
 	}
 
+	/**
+	 * <p>visitSetXml.</p>
+	 *
+	 * @param setNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param formEl a {@link org.w3c.dom.Element} object
+	 * @param fieldVisibility a {@link org.w3c.dom.Element} object
+	 * @param appearance a {@link org.w3c.dom.Element} object
+	 * @param parentSetId a {@link java.lang.String} object
+	 */
 	private void visitSetXml(NodeRef setNodeRef, Element formEl, Element fieldVisibility, Element appearance, String parentSetId) {
 		Element set = DOMUtils.createElement(appearance, "set");
 		appendAtt(set, "id", setNodeRef, DesignerModel.PROP_DSG_ID);
@@ -320,6 +359,12 @@ public class FormModelVisitor {
 
 	}
 
+	/**
+	 * <p>visitControlXml.</p>
+	 *
+	 * @param controlRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param field a {@link org.w3c.dom.Element} object
+	 */
 	private void visitControlXml(NodeRef controlRef, Element field) {
 		Element control = DOMUtils.createElement(field, "control");
 		appendAtt(control, "template", controlRef, DesignerModel.PROP_DSG_TEMPLATEPATH);
@@ -332,6 +377,12 @@ public class FormModelVisitor {
 		}
 	}
 	
+	/**
+	 * <p>visitParameterXml.</p>
+	 *
+	 * @param parameterRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param control a {@link org.w3c.dom.Element} object
+	 */
 	private void visitParameterXml(NodeRef parameterRef, Element control) {
 		String value = (String) nodeService.getProperty(parameterRef, DesignerModel.PROP_DSG_PARAMETERVALUE);
 		if (!StringUtils.isEmpty(value)) {
@@ -341,6 +392,12 @@ public class FormModelVisitor {
 		}
 	}
 	
+	/**
+	 * <p>visitConstraintXml.</p>
+	 *
+	 * @param controlRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param field a {@link org.w3c.dom.Element} object
+	 */
 	private void visitConstraintXml(NodeRef controlRef, Element field) {
 		Element control = DOMUtils.createElement(field, "constraint-handlers");
 		List<ChildAssociationRef> assocs = nodeService.getChildAssocs(controlRef);
@@ -352,6 +409,12 @@ public class FormModelVisitor {
 		}
 	}
 
+	/**
+	 * <p>visitConstraintAssocXml.</p>
+	 *
+	 * @param parameterRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param constraint a {@link org.w3c.dom.Element} object
+	 */
 	private void visitConstraintAssocXml(NodeRef parameterRef, Element constraint) {
 		
 		Element constraintParam = DOMUtils.createElement(constraint, "constraint");
@@ -434,6 +497,12 @@ public class FormModelVisitor {
 
 	}
 
+	/**
+	 * <p>visitFormElement.</p>
+	 *
+	 * @param configElNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param configEl a {@link org.w3c.dom.Element} object
+	 */
 	private void visitFormElement(NodeRef configElNodeRef, Element configEl) {
 		logger.debug("visitFormElement");
 		NodeList list = configEl.getElementsByTagName("form");
@@ -453,6 +522,14 @@ public class FormModelVisitor {
 	}
 
 
+	/**
+	 * <p>visitFormSets.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param parentEl a {@link org.w3c.dom.Element} object
+	 * @param parent a {@link java.lang.String} object
+	 * @return a int
+	 */
 	private int visitFormSets(NodeRef nodeRef, Element parentEl, String parent) {
 		logger.debug("visitFormSets with parent : " + parent);
 		NodeList list = parentEl.getElementsByTagName("set");
@@ -482,6 +559,14 @@ public class FormModelVisitor {
 		return sortOrder;
 	}
 
+	/**
+	 * <p>visitFormFields.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param parentEl a {@link org.w3c.dom.Element} object
+	 * @param setId a {@link java.lang.String} object
+	 * @param sortOrder a int
+	 */
 	private void visitFormFields(NodeRef nodeRef, Element parentEl, String setId, int sortOrder) {
 		logger.debug("visitFormFields for set : " + setId);
 		NodeList fields = parentEl.getElementsByTagName("field");
@@ -496,6 +581,12 @@ public class FormModelVisitor {
 	
 	
 
+	/**
+	 * <p>visitFormTemplates.</p>
+	 *
+	 * @param formNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param parentEl a {@link org.w3c.dom.Element} object
+	 */
 	private void visitFormTemplates(NodeRef formNodeRef, Element parentEl) {
 		NodeList editForms = parentEl.getElementsByTagName("edit-form");
 		if(editForms!=null && editForms.getLength()>0){
@@ -517,6 +608,17 @@ public class FormModelVisitor {
 		
 	}
 
+	/**
+	 * <p>visitFormFields.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param fields a {@link org.w3c.dom.NodeList} object
+	 * @param shows a {@link org.w3c.dom.NodeList} object
+	 * @param show a boolean
+	 * @param setId a {@link java.lang.String} object
+	 * @param sortOrder a int
+	 * @return a int
+	 */
 	private int visitFormFields(NodeRef nodeRef, NodeList fields, NodeList shows, boolean show, String setId, int sortOrder) {
 
 		for (int i = 0; i < shows.getLength(); i++) {
@@ -546,6 +648,15 @@ public class FormModelVisitor {
 		return sortOrder;
 	}
 
+	/**
+	 * <p>createField.</p>
+	 *
+	 * @param parent a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param elem a {@link org.w3c.dom.Element} object
+	 * @param field a {@link org.w3c.dom.Element} object
+	 * @param show a boolean
+	 * @param sortOrder a int
+	 */
 	private void createField(NodeRef parent, Element elem, Element field, boolean show, int sortOrder) {
 		logger.debug("Create field with id :" + elem.getAttribute("id"));
 		ChildAssociationRef childAssociationRef = nodeService.createNode(parent, DesignerModel.ASSOC_DSG_FIELDS, DesignerModel.ASSOC_DSG_FIELDS, DesignerModel.TYPE_DSG_FORMFIELD);
@@ -580,6 +691,12 @@ public class FormModelVisitor {
 
 	}
 
+	/**
+	 * <p>visitFormControl.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param parentEl a {@link org.w3c.dom.Element} object
+	 */
 	private void visitFormControl(NodeRef parentNodeRef, Element parentEl) {
 		logger.debug("visitFormControl");
 		NodeList list = parentEl.getElementsByTagName("control");
@@ -603,6 +720,12 @@ public class FormModelVisitor {
 		}
 	}
 	
+	/**
+	 * <p>visitFormConstraint.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param parentEl a {@link org.w3c.dom.Element} object
+	 */
 	private void visitFormConstraint(NodeRef parentNodeRef, Element parentEl) {
 		logger.debug("visitFormConstraint");
 		NodeList list = parentEl.getElementsByTagName("constraint-handlers");
@@ -657,6 +780,16 @@ public class FormModelVisitor {
 
 	}
 
+	/**
+	 * <p>createForm.</p>
+	 *
+	 * @param evaluator a {@link java.lang.String} object
+	 * @param condition a {@link java.lang.String} object
+	 * @param formId a {@link java.lang.String} object
+	 * @param from a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param to a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef createForm(String evaluator, String condition, String formId, NodeRef from, NodeRef to) {
 		// Create config elements
 		ChildAssociationRef childAssociationRef = nodeService.createNode(to, DesignerModel.ASSOC_DSG_CONFIG_ELEMENTS, DesignerModel.ASSOC_DSG_CONFIG_ELEMENTS,

@@ -27,15 +27,22 @@ import fr.becpg.repo.search.lucene.analysis.AccentFilter;
  */
 public class BeCPGQueryHelper {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(BeCPGQueryHelper.class);
 
 	/** Constant <code>SUFFIX_ALL="*"</code> */
 	public static final String SUFFIX_ALL = "*";
 
+	/** Constant <code>SUFFIX_SPACE=" "</code> */
 	private static final String SUFFIX_SPACE = " ";
+	/** Constant <code>SUFFIX_DOUBLE_QUOTE="\&quot;"</code> */
 	private static final String SUFFIX_DOUBLE_QUOTE = "\"";
+	/** Constant <code>SUFFIX_SIMPLE_QUOTE="'"</code> */
 	private static final String SUFFIX_SIMPLE_QUOTE = "'";
 	
+	/**
+	 * <p>Constructor for BeCPGQueryHelper.</p>
+	 */
 	private BeCPGQueryHelper() {
 		
 	}
@@ -79,6 +86,13 @@ public class BeCPGQueryHelper {
 		return false;
 	}
 
+	/**
+	 * <p>extractTokens.</p>
+	 *
+	 * @param input a {@link java.lang.String} object
+	 * @param enableStopWords a boolean
+	 * @return a {@link java.util.List} object
+	 */
 	private static List<String> extractTokens(String input, boolean enableStopWords) {
 		
 		InputStreamReader reader = new InputStreamReader(new ByteArrayInputStream(input.getBytes()), StandardCharsets.UTF_8);
@@ -144,6 +158,12 @@ public class BeCPGQueryHelper {
 		return query;
 	}
 
+	/**
+	 * <p>getTextAnalyzer.</p>
+	 *
+	 * @param enableStopWords a boolean
+	 * @return a {@link org.apache.lucene.analysis.Analyzer} object
+	 */
 	private static Analyzer getTextAnalyzer(boolean enableStopWords) {
 		if (Locale.FRENCH.equals(I18NUtil.getLocale())) {
 			if (enableStopWords) {

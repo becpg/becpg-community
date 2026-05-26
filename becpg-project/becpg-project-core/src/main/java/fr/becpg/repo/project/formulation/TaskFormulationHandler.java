@@ -49,9 +49,12 @@ import fr.becpg.repo.system.SystemConfigurationService;
  */
 public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
+	/** Constant <code>COMPLETED=100</code> */
 	private static final int COMPLETED = 100;
+	/** Constant <code>DEFAULT_WORK_HOURS_PER_DAY=8</code> */
 	private static final int DEFAULT_WORK_HOURS_PER_DAY = 8;
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(TaskFormulationHandler.class);
 
 	private ProjectWorkflowService projectWorkflowService;
@@ -119,6 +122,11 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 	AlfrescoRepository<ProjectData> alfrescoRepository;
 
+	/**
+	 * <p>myProjectAttributes.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String myProjectAttributes() {
 		return systemConfigurationService.confValue("project.extractor.myProjectAttributes");
 	}
@@ -225,6 +233,11 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		return true;
 	}
 
+	/**
+	 * <p>calculateCapacity.</p>
+	 *
+	 * @param tl a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+	 */
 	private void calculateCapacity(TaskListDataItem tl) {
 		if ((tl.getWork() != null) && (tl.getDuration() != null) && (tl.getDuration() != 0)) {
 			double hoursPerDay = DEFAULT_WORK_HOURS_PER_DAY;
@@ -235,6 +248,13 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		}
 	}
 
+	/**
+	 * <p>visitParents.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param tasks a {@link java.util.Set} object
+	 * @param calculateState a boolean
+	 */
 	private void visitParents(ProjectData projectData, Set<TaskWrapper> tasks, boolean calculateState) {
 
 		List<TaskWrapper> completed = new ArrayList<>();
@@ -361,6 +381,14 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		}
 	}
 
+	/**
+	 * <p>calculateStartDate.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param tasks a {@link java.util.Set} object
+	 * @param isTpl a boolean
+	 * @param today a {@link java.util.Date} object
+	 */
 	private void calculateStartDate(ProjectData projectData, Set<TaskWrapper> tasks, boolean isTpl, Date today) {
 
 		NodeRef calendarRef = calendarService.getCalendar(projectData.getNodeRef());
@@ -412,6 +440,13 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		}
 	}
 
+	/**
+	 * <p>visitProject.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param tasks a {@link java.util.Set} object
+	 * @param isTpl a boolean
+	 */
 	private void visitProject(ProjectData projectData, Set<TaskWrapper> tasks, boolean isTpl) {
 
 		double work = 0d;
@@ -521,6 +556,14 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		}
 	}
 
+	/**
+	 * <p>visit.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param allTasks a {@link java.util.Set} object
+	 * @param calculateState a boolean
+	 * @return a boolean
+	 */
 	private boolean visit(ProjectData projectData, Set<TaskWrapper> allTasks, boolean calculateState) {
 
 		List<TaskWrapper> completed = new ArrayList<>();
@@ -592,6 +635,14 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		return reformulate;
 	}
 
+	/**
+	 * <p>calculateState.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param task a {@link fr.becpg.repo.project.formulation.TaskWrapper} object
+	 * @param today a {@link java.util.Date} object
+	 * @return a boolean
+	 */
 	private boolean calculateState(ProjectData projectData, TaskWrapper task, Date today) {
 
 		boolean reformulate = false;
@@ -658,6 +709,13 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		return reformulate;
 	}
 
+	/**
+	 * <p>previousDone.</p>
+	 *
+	 * @param task a {@link fr.becpg.repo.project.formulation.TaskWrapper} object
+	 * @param visited a {@link java.util.Set} object
+	 * @return a boolean
+	 */
 	private boolean previousDone(TaskWrapper task, Set<TaskWrapper> visited) {
 		for (TaskWrapper t : task.getAncestors()) {
 			if (visited.contains(t)) {
@@ -675,6 +733,13 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		return true;
 	}
 
+	/**
+	 * <p>assign.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param taskListDataItem a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+	 * @param deliverables a {@link java.util.List} object
+	 */
 	private void assign(ProjectData projectData, TaskListDataItem taskListDataItem, List<DeliverableListDataItem> deliverables) {
 		if ((taskListDataItem.getResources() != null) && !taskListDataItem.getResources().isEmpty()) {
 
@@ -697,6 +762,15 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		}
 	}
 
+	/**
+	 * <p>extractReassignedPeople.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param taskListDataItem a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+	 * @param originalResources a {@link java.util.List} object
+	 * @param updatePermission a boolean
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> extractReassignedPeople(ProjectData projectData, TaskListDataItem taskListDataItem, List<NodeRef> originalResources,
 			boolean updatePermission) {
 
@@ -737,6 +811,14 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		return resources;
 	}
 
+	/**
+	 * <p>calculatePlanning.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param task a {@link fr.becpg.repo.project.formulation.TaskWrapper} object
+	 * @param now a {@link java.util.Date} object
+	 * @param today a {@link java.util.Date} object
+	 */
 	private void calculatePlanning(ProjectData projectData, TaskWrapper task, Date now, Date today) {
 		int maxDuration = 0;
 		int maxRealDuration = 0;
@@ -859,11 +941,25 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		}
 	}
 
+	/**
+	 * <p>getTaskWorkingDayProvider.</p>
+	 *
+	 * @param task a {@link fr.becpg.repo.project.formulation.TaskWrapper} object
+	 * @return a {@link fr.becpg.repo.project.impl.WorkingDayProvider} object
+	 */
 	private WorkingDayProvider getTaskWorkingDayProvider(TaskWrapper task) {
 		NodeRef calendarRef = calendarService.getCalendar(task.getTask().getNodeRef());
 		return new CalendarWorkingDayProvider(calendarService, calendarRef);
 	}
 
+	/**
+	 * <p>visitDeliverables.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param taskListDataItem a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+	 * @param deliverables a {@link java.util.List} object
+	 * @return a boolean
+	 */
 	private boolean visitDeliverables(ProjectData projectData, TaskListDataItem taskListDataItem, List<DeliverableListDataItem> deliverables) {
 
 		TaskState previousState = taskListDataItem.getTaskState();

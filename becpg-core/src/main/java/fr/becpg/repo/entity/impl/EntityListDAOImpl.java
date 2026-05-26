@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -76,6 +76,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @DependsOn("bcpg.dictionaryBootstrap")
 public class EntityListDAOImpl implements EntityListDAO {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityListDAOImpl.class);
 
 	@Autowired
@@ -386,6 +387,14 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	}
 
+	/**
+	 * <p>copyDataListInternal.</p>
+	 *
+	 * @param dataListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param targetListContainerNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param listQNames a {@link java.util.Collection} object
+	 * @param override a boolean
+	 */
 	private void copyDataListInternal(NodeRef dataListNodeRef, NodeRef targetListContainerNodeRef, Collection<QName> listQNames, boolean override) {
 
 		String dataListType = (String) nodeService.getProperty(dataListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
@@ -456,6 +465,13 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	}
 
+	/**
+	 * <p>findMatchingListItem.</p>
+	 *
+	 * @param targetItemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param dataListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	@SuppressWarnings("unchecked")
 	private NodeRef findMatchingListItem(NodeRef targetItemNodeRef, NodeRef dataListNodeRef) {
 		if (logger.isDebugEnabled()) {

@@ -50,8 +50,10 @@ import fr.becpg.repo.system.SystemConfigurationService;
 @Service
 public class EntityActivityCleaner {
 
+    /** Constant <code>logger</code> */
     private static final Log logger = LogFactory.getLog(EntityActivityCleaner.class);
 
+    /** Constant <code>MAX_PAGE=50</code> */
     private static final int MAX_PAGE = 50;
 
     @Autowired
@@ -69,6 +71,13 @@ public class EntityActivityCleaner {
     @Autowired
     private SystemConfigurationService systemConfigurationService;
 
+    /**
+     * <p>getConfInt.</p>
+     *
+     * @param key a {@link java.lang.String} object
+     * @param defaultValue a int
+     * @return a int
+     */
     private int getConfInt(String key, int defaultValue) {
 		String val = systemConfigurationService.confValue(key);
 		if (val != null && !val.isEmpty()) {
@@ -81,6 +90,11 @@ public class EntityActivityCleaner {
 		return defaultValue;
 	}
 
+	/**
+	 * <p>createActivityProcessWorkProvider.</p>
+	 *
+	 * @return a {@link org.alfresco.repo.batch.BatchProcessWorkProvider} object
+	 */
 	private BatchProcessWorkProvider<NodeRef> createActivityProcessWorkProvider() {
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ENTITY_V2).excludeVersions().inDB().ftsLanguage();
 		return WorkProviderFactory.fromQueryBuilder(queryBuilder).build();
@@ -285,6 +299,15 @@ public class EntityActivityCleaner {
     }
 
     // Group activities
+    /**
+     * <p>group.</p>
+     *
+     * @param activities a {@link java.util.List} object
+     * @param users a {@link java.util.Set} object
+     * @param timePeriod a int
+     * @param cronDate a {@link java.util.Date} object
+     * @return a {@link java.util.List} object
+     */
     private List<ActivityListDataItem> group(List<ActivityListDataItem> activities,
                                              Set<String> users, int timePeriod, Date cronDate) {
 
@@ -362,6 +385,12 @@ public class EntityActivityCleaner {
         return activities;
     }
 
+    /**
+     * <p>getActivityList.</p>
+     *
+     * @param projectNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     */
     private NodeRef getActivityList(NodeRef projectNodeRef) {
         NodeRef listNodeRef = null;
         NodeRef listContainerNodeRef = entityListDAO.getListContainer(projectNodeRef);
@@ -371,16 +400,33 @@ public class EntityActivityCleaner {
         return listNodeRef;
     }
 
+    /**
+     * <p>deleteAuditActivity.</p>
+     *
+     * @param lastActivity a {@link fr.becpg.repo.activity.data.ActivityListDataItem} object
+     */
     private void deleteAuditActivity(ActivityListDataItem lastActivity) {
         beCPGAuditService.deleteAuditEntries(AuditType.ACTIVITY, lastActivity.getId(), lastActivity.getId() + 1);
     }
 
+    /**
+     * <p>toDayKey.</p>
+     *
+     * @param date a {@link java.util.Date} object
+     * @return a {@link java.lang.String} object
+     */
     private String toDayKey(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         return cal.get(Calendar.YEAR) + "-" + cal.get(Calendar.DAY_OF_YEAR);
     }
 
+    /**
+     * <p>extractContentNode.</p>
+     *
+     * @param alData a {@link java.lang.String} object
+     * @return a {@link java.lang.String} object
+     */
     private String extractContentNode(String alData) {
         try {
         	JsonData data = JsonHelper.read(alData);
@@ -391,6 +437,12 @@ public class EntityActivityCleaner {
         }
     }
 
+    /**
+     * <p>extractExportTitle.</p>
+     *
+     * @param alData a {@link java.lang.String} object
+     * @return a {@link java.lang.String} object
+     */
     private String extractExportTitle(String alData) {
         try {
         	JsonData data = JsonHelper.read(alData);

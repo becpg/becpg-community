@@ -26,6 +26,7 @@ import fr.becpg.repo.project.impl.ProjectHelper;
  */
 public class TaskWrapper implements Comparable<TaskWrapper> {
 
+	/** Constant <code>DURATION_DEFAULT=1</code> */
 	private static final int DURATION_DEFAULT = 1;
 
 	private TaskListDataItem task;
@@ -341,6 +342,13 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 		return cache.values().stream().collect(Collectors.toSet());
 	}
 
+	/**
+	 * <p>appendAncestors.</p>
+	 *
+	 * @param parent a {@link fr.becpg.repo.project.formulation.TaskWrapper} object
+	 * @param t a {@link fr.becpg.repo.project.formulation.TaskWrapper} object
+	 * @param cache a {@link java.util.Map} object
+	 */
 	private static void appendAncestors(TaskWrapper parent, TaskWrapper t, Map<NodeRef, TaskWrapper> cache) {
 		Set<NodeRef> prevTasks = new HashSet<>(parent.getTask().getPrevTasks());
 
@@ -352,6 +360,13 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 
 	}
 
+	/**
+	 * <p>appendAncestors.</p>
+	 *
+	 * @param ancestors a {@link java.util.Set} object
+	 * @param t a {@link fr.becpg.repo.project.formulation.TaskWrapper} object
+	 * @param cache a {@link java.util.Map} object
+	 */
 	private static void appendAncestors(Set<NodeRef> ancestors, TaskWrapper t, Map<NodeRef, TaskWrapper> cache) {
 
 		ancestors.forEach(ancestorNodeRef -> {
@@ -380,6 +395,11 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 
 	}
 
+	/**
+	 * <p>getLastChilds.</p>
+	 *
+	 * @return a {@link java.util.Set} object
+	 */
 	private Set<NodeRef> getLastChilds() {
 		Set<NodeRef> ret = new HashSet<>();
 		getChilds().forEach(child -> {
@@ -401,6 +421,13 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 		return ret;
 	}
 
+	/**
+	 * <p>getOrCreateTaskWrapper.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param cache a {@link java.util.Map} object
+	 * @return a {@link fr.becpg.repo.project.formulation.TaskWrapper} object
+	 */
 	private static TaskWrapper getOrCreateTaskWrapper(NodeRef nodeRef, Map<NodeRef, TaskWrapper> cache) {
 		return cache.computeIfAbsent(nodeRef, n -> new TaskWrapper());
 

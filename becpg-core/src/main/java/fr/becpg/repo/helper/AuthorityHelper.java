@@ -42,6 +42,7 @@ import fr.becpg.repo.cache.BeCPGCacheService;
 @Service
 public class AuthorityHelper implements InitializingBean {
 	
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AuthorityHelper.class);
 	
 	/** Constant <code>CACHE_KEY="AuthorityHelper.class.getName()"</code> */
@@ -69,8 +70,12 @@ public class AuthorityHelper implements InitializingBean {
 	@Autowired
 	private BeCPGCacheService beCPGCacheService;
 	
+	/** Constant <code>instance</code> */
 	private static AuthorityHelper instance = null;
 	
+	/**
+	 * <p>Constructor for AuthorityHelper.</p>
+	 */
 	private AuthorityHelper() {
 		//Singleton
 	}

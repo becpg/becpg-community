@@ -31,6 +31,7 @@ import fr.becpg.repo.report.entity.EntityReportService;
  */
 public class GetContentWebScript extends AbstractEntityWebScript {
 
+	/** Constant <code>PARAM_SHARE="share"</code> */
 	private static final String PARAM_SHARE = "share";
 
 	private EntityReportService entityReportService;

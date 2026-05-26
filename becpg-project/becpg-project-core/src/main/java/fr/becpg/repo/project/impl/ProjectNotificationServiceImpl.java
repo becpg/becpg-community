@@ -39,6 +39,7 @@ import fr.becpg.repo.project.data.projectList.TaskState;
 @Service("projectNotificationService")
 public class ProjectNotificationServiceImpl implements ProjectNotificationService, EntityCatalogObserver {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ProjectNotificationServiceImpl.class);
 
 	/** Constant <code>MAIL_TEMPLATE="/app:company_home/app:dictionary/app:em"{trunked}</code> */
@@ -69,8 +70,10 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 	/** Constant <code>ARG_TASK_COMMENT="taskComment"</code> */
 	public static final String ARG_TASK_COMMENT = "taskComment";
 
+	/** Constant <code>PREFIX_LOCALIZATION_TASK_NAME="listconstraint.pjt_taskStates."</code> */
 	private static final String PREFIX_LOCALIZATION_TASK_NAME = "listconstraint.pjt_taskStates.";
 
+	/** Constant <code>MAIL_SUBJECT_KEY="project.notification.mail.subject"</code> */
 	private static final String MAIL_SUBJECT_KEY = "project.notification.mail.subject";
 
 	@Autowired
@@ -146,6 +149,15 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 		notifyObservers(projectNodeRef, taskNodeRef, subject, templateArgs, MAIL_TEMPLATE);
 	}
 
+	/**
+	 * <p>notifyObservers.</p>
+	 *
+	 * @param projectNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param taskNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param subject a {@link java.lang.String} object
+	 * @param templateArgs a {@link java.util.Map} object
+	 * @param templateName a {@link java.lang.String} object
+	 */
 	private void notifyObservers(NodeRef projectNodeRef, NodeRef taskNodeRef, String subject, Map<String, Object> templateArgs, String templateName) {
 
 		List<NodeRef> observerNodeRefs = new ArrayList<>();
@@ -186,6 +198,12 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 		}
 	}
 	
+	/**
+	 * <p>emailTaskObserverDisabled.</p>
+	 *
+	 * @param person a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private boolean emailTaskObserverDisabled(NodeRef person) {
 		if (person != null) {
 			Serializable emailTaskObserverDisabled = nodeService.getProperty(person, BeCPGModel.PROP_EMAIL_TASK_OBSERVER_DISABLED);
@@ -220,6 +238,13 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 	}
 	
 
+	/**
+	 * <p>shouldNotify.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param templateArgs a {@link java.util.Map} object
+	 * @return a boolean
+	 */
 	@SuppressWarnings("unchecked")
 	private boolean shouldNotify(NodeRef nodeRef, Map<String, Object> templateArgs) {
 

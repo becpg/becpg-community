@@ -20,6 +20,7 @@ import org.alfresco.service.namespace.QName;
 public final class ChildAssocCacheEntry implements Serializable {
 
 	
+	/** Constant <code>serialVersionUID=-5994096437225498709L</code> */
 	private static final long serialVersionUID = -5994096437225498709L;
 	private List<NodeRef> items ;
 	private Map<QName,List<NodeRef>> itemsByType;

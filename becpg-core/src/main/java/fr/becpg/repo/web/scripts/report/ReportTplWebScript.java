@@ -39,17 +39,27 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class ReportTplWebScript extends AbstractWebScript {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ReportTplWebScript.class);
 
+	/** Constant <code>ACTION_REFRESH="refresh"</code> */
 	private static final String ACTION_REFRESH = "refresh";
+	/** Constant <code>ACTION_DISABLE="disable"</code> */
 	private static final String ACTION_DISABLE = "disable";
+	/** Constant <code>ACTION_ENABLE="enable"</code> */
 	private static final String ACTION_ENABLE = "enable";
+	/** Constant <code>ACTION_DELETE_REPORTS="deleteReports"</code> */
 	private static final String ACTION_DELETE_REPORTS = "deleteReports";
+	/** Constant <code>ACTION_UPDATE_PERMISSIONS="updatePermissions"</code> */
 	private static final String ACTION_UPDATE_PERMISSIONS = "updatePermissions";
 
+	/** Constant <code>PARAM_ACTION="action"</code> */
 	private static final String PARAM_ACTION = "action";
+	/** Constant <code>PARAM_STORE_TYPE="store_type"</code> */
 	private static final String PARAM_STORE_TYPE = "store_type";
+	/** Constant <code>PARAM_STORE_ID="store_id"</code> */
 	private static final String PARAM_STORE_ID = "store_id";
+	/** Constant <code>PARAM_ID="id"</code> */
 	private static final String PARAM_ID = "id";
 
 	private NodeService nodeService;
@@ -130,6 +140,12 @@ public class ReportTplWebScript extends AbstractWebScript {
 		}
 	}
 
+	/**
+	 * <p>updateReports.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param action a {@link java.lang.String} object
+	 */
 	private void updateReports(NodeRef nodeRef, String action) {
 
 		Boolean isSystem = (Boolean) nodeService.getProperty(nodeRef, ReportModel.PROP_REPORT_TPL_IS_SYSTEM);
@@ -175,6 +191,11 @@ public class ReportTplWebScript extends AbstractWebScript {
 		}
 	}
 
+	/**
+	 * <p>deleteReports.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void deleteReports(NodeRef nodeRef) {
 
 		List<NodeRef> assocRefs = associationService.getSourcesAssocs(nodeRef, ReportModel.ASSOC_REPORT_TPL, true);

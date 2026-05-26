@@ -27,19 +27,29 @@ import fr.becpg.model.PublicationModel;
  */
 public class RemoveDeprecatedPubAspectsPatch extends AbstractBeCPGPatch {
 
+    /** Constant <code>ASPECT_MAILING_LIST</code> */
     private static final QName ASPECT_MAILING_LIST = QName.createQName(PublicationModel.PUBLICATION_URI, "MailingListChannelAspect");
+    /** Constant <code>ASPECT_CATALOGABLE</code> */
     private static final QName ASPECT_CATALOGABLE = QName.createQName(PublicationModel.PUBLICATION_URI, "cataloguable");
+    /** Constant <code>ASPECT_PRODUCT_CATALOG</code> */
     private static final QName ASPECT_PRODUCT_CATALOG = QName.createQName(PublicationModel.PUBLICATION_URI, "productCatalogChannelAspect");
     
+    /** Constant <code>TYPE_MAILING_LIST</code> */
     private static final QName TYPE_MAILING_LIST = QName.createQName(PublicationModel.PUBLICATION_URI, "MailingListChannel");
+    /** Constant <code>TYPE_PRODUCT_CATALOG</code> */
     private static final QName TYPE_PRODUCT_CATALOG = QName.createQName(PublicationModel.PUBLICATION_URI, "productCatalog");
     
     
 
+    /** Constant <code>logger</code> */
     private static final Log logger = LogFactory.getLog(RemoveDeprecatedPubAspectsPatch.class);
+    /** Constant <code>MSG_SUCCESS="patch.bcpg.plm.RemoveDeprecatedPubAspec"{trunked}</code> */
     private static final String MSG_SUCCESS = "patch.bcpg.plm.RemoveDeprecatedPubAspectsPatch.result";
+    /** Constant <code>BATCH_SIZE=1000</code> */
     private static final int BATCH_SIZE = 1000;
+    /** Constant <code>BATCH_THREADS=4</code> */
     private static final int BATCH_THREADS = 4;
+    /** Constant <code>INC=1000L</code> */
     private static final long INC = 1000L;
 
 

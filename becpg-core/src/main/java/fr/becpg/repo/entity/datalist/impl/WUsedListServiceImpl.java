@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -51,8 +51,10 @@ import fr.becpg.repo.helper.impl.EntitySourceAssoc;
 @Service("wUsedListService")
 public class WUsedListServiceImpl implements WUsedListService {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(WUsedListServiceImpl.class);
 
+	/** Constant <code>MAX_LEVEL=50</code> */
 	private static final int MAX_LEVEL = 50;
 
 	@Autowired
@@ -104,6 +106,20 @@ public class WUsedListServiceImpl implements WUsedListService {
 		return getWUsedEntity(entityNodeRefs, operator, null, associationName, 0, maxDepthLevel, new HashSet<>(), new HashMap<>(), pagingRequest);
 	}
 
+	/**
+	 * <p>getWUsedEntity.</p>
+	 *
+	 * @param entityNodeRefs a {@link java.util.List} object
+	 * @param operator a WUsedOperator object
+	 * @param filter a {@link fr.becpg.repo.entity.datalist.WUsedFilter} object
+	 * @param associationName a {@link org.alfresco.service.namespace.QName} object
+	 * @param depthLevel a int
+	 * @param maxDepthLevel a int
+	 * @param parentNodeRefs a {@link java.util.Set} object
+	 * @param permCache a {@link java.util.Map} object
+	 * @param pagingRequest a {@link org.alfresco.query.PagingRequest} object
+	 * @return a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object
+	 */
 	private MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator, WUsedFilter filter, QName associationName,
 			int depthLevel, int maxDepthLevel, Set<NodeRef> parentNodeRefs, Map<NodeRef, Boolean> permCache, PagingRequest pagingRequest) {
 
@@ -139,6 +155,20 @@ public class WUsedListServiceImpl implements WUsedListService {
 		return ret;
 	}
 
+	/**
+	 * <p>appendAssocs.</p>
+	 *
+	 * @param ret a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object
+	 * @param associationRefs a {@link java.util.List} object
+	 * @param depthLevel a int
+	 * @param maxDepthLevel a int
+	 * @param associationName a {@link org.alfresco.service.namespace.QName} object
+	 * @param filter a {@link fr.becpg.repo.entity.datalist.WUsedFilter} object
+	 * @param parentNodeRefs a {@link java.util.Set} object
+	 * @param permCache a {@link java.util.Map} object
+	 * @param isOrOperator a boolean
+	 * @param pagingRequest a {@link org.alfresco.query.PagingRequest} object
+	 */
 	private void appendAssocs(MultiLevelListData ret, List<EntitySourceAssoc> associationRefs, int depthLevel, int maxDepthLevel, QName associationName,
 			WUsedFilter filter, Set<NodeRef> parentNodeRefs, Map<NodeRef, Boolean> permCache, boolean isOrOperator,
 			PagingRequest pagingRequest) {

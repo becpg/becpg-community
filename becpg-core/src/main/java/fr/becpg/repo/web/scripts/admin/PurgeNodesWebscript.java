@@ -42,8 +42,10 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Deprecated
 public class PurgeNodesWebscript extends AbstractWebScript {
 
+	/** Constant <code>logger</code> */
 	private static  final  Log logger = LogFactory.getLog(PurgeNodesWebscript.class);
 
+	/** Constant <code>PARAM_FOLDER_NODEREF="folderNodeRef"</code> */
 	private static final  String PARAM_FOLDER_NODEREF = "folderNodeRef";
 
 	private TransactionService transactionService;
@@ -114,7 +116,9 @@ public class PurgeNodesWebscript extends AbstractWebScript {
 
 
 
+	/** Constant <code>BATCH_THREADS=3</code> */
 	private static final int BATCH_THREADS = 3;
+	/** Constant <code>BATCH_SIZE=40</code> */
 	private static final int BATCH_SIZE = 40;
 
 	/** {@inheritDoc} */

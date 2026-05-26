@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -54,10 +54,13 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service
 public class DesignerInitVisitor extends AbstractInitVisitorImpl {
 
+	/** Constant <code>PATH_CONFIGS="configs"</code> */
 	private static final String PATH_CONFIGS = "configs";
 
+	/** Constant <code>XPATH_DICTIONARY="./app:dictionary"</code> */
 	private static final String XPATH_DICTIONARY = "./app:dictionary";
 
+	/** Constant <code>PATH_MODELS="../app:models"</code> */
 	private static final String PATH_MODELS = "../app:models";
 
 	@Autowired
@@ -92,6 +95,12 @@ public class DesignerInitVisitor extends AbstractInitVisitorImpl {
 		}
 	}
 
+	/**
+	 * <p>getModelNodeRef.</p>
+	 *
+	 * @param configNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getModelNodeRef(NodeRef configNodeRef) {
 		return BeCPGQueryBuilder.createQuery().selectNodeByPath(configNodeRef, PATH_MODELS);
 	}
@@ -106,13 +115,14 @@ public class DesignerInitVisitor extends AbstractInitVisitorImpl {
 	}
 
 	/**
-	 * 
-	 * @param nodeRef
-	 * @param ruleName
-	 * @param ruleDescription
-	 * @param aspectModel
-	 * @param mimeType
-	 * @param nameExtension
+	 * <p>addAspectRule.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param ruleName a {@link java.lang.String} object
+	 * @param ruleDescription a {@link java.lang.String} object
+	 * @param aspectModel a {@link org.alfresco.service.namespace.QName} object
+	 * @param mimeType a {@link java.lang.String} object
+	 * @param nameExtension a {@link java.lang.String} object
 	 */
 	private void addAspectRule(NodeRef nodeRef, String ruleName, String ruleDescription, QName aspectModel, String mimeType, String nameExtension) {
 

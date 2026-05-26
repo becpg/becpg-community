@@ -61,6 +61,7 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 
 	private List<RequirementScanner> requirementScanners = new ArrayList<>();
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(ProductSpecificationsFormulationHandler.class);
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
@@ -407,6 +408,12 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 
 	}
 
+	/**
+	 * <p>getProductNodeRefs.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductSpecificationData} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> getProductNodeRefs(ProductSpecificationData formulatedProduct) {
 
 		if ((formulatedProduct.getSpecCompatibilityTpls() != null) && !formulatedProduct.getSpecCompatibilityTpls().isEmpty()) {

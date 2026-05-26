@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -42,20 +42,28 @@ import fr.becpg.repo.search.PaginatedSearchCache;
  */
 public class SimulationWebScript extends AbstractWebScript {
 
+	/** Constant <code>PARAM_ENTITY_NODEREF="entityNodeRef"</code> */
 	private static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
 
+	/** Constant <code>PARAM_DATALISTITEMS="dataListItems"</code> */
 	private static final String PARAM_DATALISTITEMS = "dataListItems";
 
+	/** Constant <code>PARAM_ALLPAGES="allPages"</code> */
 	private static final String PARAM_ALLPAGES = "allPages";
 
+	/** Constant <code>PARAM_QUERY_EXECUTION_ID="queryExecutionId"</code> */
 	private static final String PARAM_QUERY_EXECUTION_ID = "queryExecutionId";
 
+	/** Constant <code>PARAM_NODEREFS="nodeRefs"</code> */
 	private static final String PARAM_NODEREFS = "nodeRefs";
 
+	/** Constant <code>PARAM_MODE="mode"</code> */
 	private static final String PARAM_MODE = "mode";
 
+	/** Constant <code>PARAM_DEST_NODEREF="destNodeRef"</code> */
 	private static final String PARAM_DEST_NODEREF = "destNodeRef";
 
+	/** Constant <code>PARAM_BRANCH="branch"</code> */
 	private static final String PARAM_BRANCH = "branch";
 
 	private NodeService nodeService;

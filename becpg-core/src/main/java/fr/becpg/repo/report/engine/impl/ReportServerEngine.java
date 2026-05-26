@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -103,6 +103,11 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 		this.entityService = entityService;
 	}
 	
+	/**
+	 * <p>reportImageMaxSizeInBytes.</p>
+	 *
+	 * @return a long
+	 */
 	private long reportImageMaxSizeInBytes() {
 		String confValue = systemConfigurationService.confValue("beCPG.report.image.maxSizeInBytes");
 		if (confValue != null && !confValue.isBlank()) {
@@ -111,6 +116,11 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 		return Long.MAX_VALUE;
 	}
 	
+	/**
+	 * <p>reportDatasourceMaxSizeInBytes.</p>
+	 *
+	 * @return a long
+	 */
 	private long reportDatasourceMaxSizeInBytes() {
 		String confValue = systemConfigurationService.confValue("beCPG.report.datasource.maxSizeInBytes");
 		if (confValue != null && !confValue.isBlank()) {
@@ -231,10 +241,27 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 
 	}
 
+	/**
+	 * <p>getAssociatedTplFileId.</p>
+	 *
+	 * @param templateId a {@link java.lang.String} object
+	 * @param name a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getAssociatedTplFileId(String templateId, String name) {
 		return templateId + "-" + name;
 	}
 
+	/**
+	 * <p>sendTplFile.</p>
+	 *
+	 * @param reportSession a ReportSession object
+	 * @param templateId a {@link java.lang.String} object
+	 * @param tplNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @throws fr.becpg.report.client.ReportException if any.
+	 * @throws java.io.IOException if any.
+	 * @throws org.apache.hc.core5.http.ParseException if any.
+	 */
 	private void sendTplFile(ReportSession reportSession, String templateId, NodeRef tplNodeRef) throws ReportException, IOException, ParseException {
 
 		Date dateModified = (Date) nodeService.getProperty(tplNodeRef, ContentModel.PROP_MODIFIED);

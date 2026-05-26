@@ -35,6 +35,7 @@ public interface SearchReportRenderer {
 	 * @param reportFormat a {@link fr.becpg.report.client.ReportFormat} object.
 	 * @param outputStream a {@link java.io.OutputStream} object.
 	 * @param parameters an array of {@link java.lang.String} objects.
+	 * @since 25.3.0.34
 	 */
 	void renderReport(NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream, String[] parameters);
 
@@ -65,6 +66,7 @@ public interface SearchReportRenderer {
 	 * @param downloadNode a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param reportFormat a {@link fr.becpg.report.client.ReportFormat} object.
 	 * @param parameters an array of {@link java.lang.String} objects.
+	 * @since 25.3.0.34
 	 */
 	void executeAction(NodeRef templateNodeRef, NodeRef downloadNode, ReportFormat reportFormat, String[] parameters);
 

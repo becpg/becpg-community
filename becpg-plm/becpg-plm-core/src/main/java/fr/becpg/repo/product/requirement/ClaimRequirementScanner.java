@@ -29,6 +29,7 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 	/** Constant <code>MESSAGE_NOT_CLAIM="message.formulate.labelClaim.notClaimed"</code> */
 	public static final String MESSAGE_NOT_CLAIM = "message.formulate.labelClaim.notClaimed";
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(ClaimRequirementScanner.class);
 
 	/** {@inheritDoc} */
@@ -113,10 +114,23 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 		return ret;
 	}
 
+	/**
+	 * <p>extractClaimValue.</p>
+	 *
+	 * @param labelClaimValue a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
 	private MLText extractClaimValue(String labelClaimValue) {
 		return MLTextHelper.getI18NMessage("message.formulate.labelClaim.value." + labelClaimValue);
 	}
 
+	/**
+	 * <p>addMissingLabelClaim.</p>
+	 *
+	 * @param ret a {@link java.util.List} object
+	 * @param specification a {@link fr.becpg.repo.product.data.ProductSpecificationData} object
+	 * @param labelClaim a {@link fr.becpg.repo.product.data.productList.LabelClaimListDataItem} object
+	 */
 	private void addMissingLabelClaim(List<RequirementListDataItem> ret, ProductSpecificationData specification, LabelClaimListDataItem labelClaim) {
 		MLText message = MLTextHelper.getI18NMessage(LabelClaimFormulationHandler.MESSAGE_MISSING_CLAIM, extractName(labelClaim.getLabelClaim()));
 

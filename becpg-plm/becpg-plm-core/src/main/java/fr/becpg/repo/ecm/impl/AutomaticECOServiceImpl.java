@@ -63,8 +63,10 @@ import fr.becpg.repo.system.SystemConfigurationService;
 @Service("automaticECOService")
 public class AutomaticECOServiceImpl implements AutomaticECOService {
 
+	/** Constant <code>CURRENT_ECO_PREF="fr.becpg.ecm.currentEcmNodeRef"</code> */
 	private static final String CURRENT_ECO_PREF = "fr.becpg.ecm.currentEcmNodeRef";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AutomaticECOServiceImpl.class);
 
 	@Autowired
@@ -83,26 +85,56 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	@Qualifier("namespaceService")
 	private NamespacePrefixResolver namespacePrefixResolver;
 
+	/**
+	 * <p>shouldApplyAutomaticECO.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	private Boolean shouldApplyAutomaticECO() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.eco.automatic.apply"));
 	}
 
+	/**
+	 * <p>withoutRecord.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	private Boolean withoutRecord() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.eco.automatic.withoutRecord"));
 	}
 
+	/**
+	 * <p>automaticRevisionType.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String automaticRevisionType() {
 		return systemConfigurationService.confValue("beCPG.eco.automatic.revision.type");
 	}
 
+	/**
+	 * <p>statesToRegister.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String statesToRegister() {
 		return systemConfigurationService.confValue("beCPG.eco.automatic.states");
 	}
 
+	/**
+	 * <p>deleteOnApply.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	private Boolean deleteOnApply() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.eco.automatic.deleteOnApply"));
 	}
 
+	/**
+	 * <p>isEnable.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	private Boolean isEnable() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.eco.automatic.enable"));
 	}
@@ -192,6 +224,12 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 	}
 
+	/**
+	 * <p>accept.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private boolean accept(NodeRef entityNodeRef) {
 		if (nodeService.exists(entityNodeRef)) {
 
@@ -217,11 +255,23 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		return false;
 	}
 
+	/**
+	 * <p>getAutomaticECONoderef.</p>
+	 *
+	 * @param parentFolderNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getAutomaticECONoderef(NodeRef parentFolderNodeRef) {
 		return BeCPGQueryBuilder.createQuery().parent(parentFolderNodeRef).ofType(ECMModel.TYPE_ECO)
 				.andPropEquals(ECMModel.PROP_ECO_STATE, ECOState.Automatic.toString()).inDB().singleValue();
 	}
 
+	/**
+	 * <p>generateEcoName.</p>
+	 *
+	 * @param name a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String generateEcoName(String name) {
 		if (name != null) {
 			return name + "-" + I18NUtil.getMessage("plm.ecm.current.name", new Date());
@@ -229,6 +279,11 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		return I18NUtil.getMessage("plm.ecm.automatic.name", new Date());
 	}
 
+	/**
+	 * <p>getChangeOrderFolder.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getChangeOrderFolder() {
 		return repoService.getFolderByPath("/" + RepoConsts.PATH_SYSTEM + "/" + PlmRepoConsts.PATH_ECO);
 	}
@@ -279,6 +334,11 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		return false;
 	}
 
+	/**
+	 * <p>autoMergeBranch.</p>
+	 *
+	 * @return a boolean
+	 */
 	private boolean autoMergeBranch() {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DATE, +1);

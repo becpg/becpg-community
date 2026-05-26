@@ -54,6 +54,7 @@ import fr.becpg.repo.search.impl.SearchConfig;
 @Service
 public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ProductAdvSearchPlugin.class);
 
 	@Autowired
@@ -74,12 +75,18 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
+	/** Constant <code>CRITERIA_PACKAGING_LIST_PRODUCT="assoc_bcpg_packagingListProduct_added"</code> */
 	private static final String CRITERIA_PACKAGING_LIST_PRODUCT = "assoc_bcpg_packagingListProduct_added";
+	/** Constant <code>CRITERIA_PROCESS_LIST_RESSOURCE="assoc_mpm_plResource_added"</code> */
 	private static final String CRITERIA_PROCESS_LIST_RESSOURCE = "assoc_mpm_plResource_added";
+	/** Constant <code>CRITERIA_COMPO_LIST_PRODUCT="assoc_bcpg_compoListProduct_added"</code> */
 	private static final String CRITERIA_COMPO_LIST_PRODUCT = "assoc_bcpg_compoListProduct_added";
+	/** Constant <code>CRITERIA_PRODUCT_COLLECTIONS="assoc_bcpg_productCollections_added"</code> */
 	private static final String CRITERIA_PRODUCT_COLLECTIONS = "assoc_bcpg_productCollections_added";
 
+	/** Constant <code>CRITERIA_NOTRESPECTED_SPECIFICATIONS="assoc_bcpg_advNotRespectedProductSpecs_"{trunked}</code> */
 	private static final String CRITERIA_NOTRESPECTED_SPECIFICATIONS = "assoc_bcpg_advNotRespectedProductSpecs_added";
+	/** Constant <code>CRITERIA_RESPECTED_SPECIFICATIONS="assoc_bcpg_advRespectedProductSpecs_add"{trunked}</code> */
 	private static final String CRITERIA_RESPECTED_SPECIFICATIONS = "assoc_bcpg_advRespectedProductSpecs_added";
 
 	/** {@inheritDoc} */
@@ -138,6 +145,14 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return queryFilter;
 	}
 
+	/**
+	 * <p>buildAssociationsQueryFilter.</p>
+	 *
+	 * @param searchConfig a {@link fr.becpg.repo.search.impl.SearchConfig} object
+	 * @param datatype a {@link org.alfresco.service.namespace.QName} object
+	 * @param criteria a {@link java.util.Map} object
+	 * @return a {@link fr.becpg.repo.search.AdvSearchQueryFilter} object
+	 */
 	private AdvSearchQueryFilter buildAssociationsQueryFilter(SearchConfig searchConfig, QName datatype, Map<String, String> criteria) {
 		AdvSearchQueryFilter queryFilter = AdvSearchQueryFilter.empty();
 		Set<NodeRef> nodesToKeepOr = new HashSet<>();
@@ -171,6 +186,14 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return queryFilter;
 	}
 
+	/**
+	 * <p>getAssociationCandidateIds.</p>
+	 *
+	 * @param datatype a {@link org.alfresco.service.namespace.QName} object
+	 * @param assocName a {@link java.lang.String} object
+	 * @param propValue a {@link java.lang.String} object
+	 * @return a {@link java.util.Set} object
+	 */
 	private Set<NodeRef> getAssociationCandidateIds(QName datatype, String assocName, String propValue) {
 		QName assocQName = QName.createQName(assocName.replace("_", ":"), namespaceService);
 		Set<NodeRef> nodesToKeep = new HashSet<>();
@@ -197,6 +220,13 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	}
 
 
+	/**
+	 * <p>buildDataListQueryFilter.</p>
+	 *
+	 * @param criteria a {@link java.util.Map} object
+	 * @param filter a {@link fr.becpg.repo.search.impl.DataListSearchFilter} object
+	 * @return a {@link fr.becpg.repo.search.AdvSearchQueryFilter} object
+	 */
 	private AdvSearchQueryFilter buildDataListQueryFilter(Map<String, String> criteria, DataListSearchFilter filter) {
 		AdvSearchQueryFilter queryFilter = AdvSearchQueryFilter.empty();
 		List<EntitySourceAssoc> entitySourceAssocs = null;
@@ -237,6 +267,12 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return queryFilter;
 	}
 
+	/**
+	 * <p>buildCollectionQueryFilter.</p>
+	 *
+	 * @param criteria a {@link java.util.Map} object
+	 * @return a {@link fr.becpg.repo.search.AdvSearchQueryFilter} object
+	 */
 	private AdvSearchQueryFilter buildCollectionQueryFilter(Map<String, String> criteria) {
 		AdvSearchQueryFilter queryFilter = AdvSearchQueryFilter.empty();
 		if (criteria.containsKey(CRITERIA_PRODUCT_COLLECTIONS)) {
@@ -257,6 +293,14 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return queryFilter;
 	}
 
+	/**
+	 * <p>buildWUsedQueryFilter.</p>
+	 *
+	 * @param criteria a {@link java.util.Map} object
+	 * @param criteriaAssocString a {@link java.lang.String} object
+	 * @param criteriaAssoc a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link fr.becpg.repo.search.AdvSearchQueryFilter} object
+	 */
 	private AdvSearchQueryFilter buildWUsedQueryFilter(Map<String, String> criteria, String criteriaAssocString, QName criteriaAssoc) {
 		AdvSearchQueryFilter queryFilter = AdvSearchQueryFilter.empty();
 		if (criteria.containsKey(criteriaAssocString)) {
@@ -276,6 +320,12 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return queryFilter;
 	}
 
+	/**
+	 * <p>buildSpecificationQueryFilter.</p>
+	 *
+	 * @param criteria a {@link java.util.Map} object
+	 * @return a {@link fr.becpg.repo.search.AdvSearchQueryFilter} object
+	 */
 	private AdvSearchQueryFilter buildSpecificationQueryFilter(Map<String, String> criteria) {
 		AdvSearchQueryFilter queryFilter = AdvSearchQueryFilter.empty();
 		if (criteria.containsKey(CRITERIA_NOTRESPECTED_SPECIFICATIONS)) {
@@ -311,6 +361,12 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return queryFilter;
 	}
 
+	/**
+	 * <p>getSearchNodesByCollectionCriteria.</p>
+	 *
+	 * @param nodes a {@link java.util.List} object
+	 * @param criteria a {@link java.util.Map} object
+	 */
 	private void getSearchNodesByCollectionCriteria(List<NodeRef> nodes, Map<String, String> criteria) {
 
 		StopWatch watch = null;
@@ -344,6 +400,14 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 	}
 
+	/**
+	 * <p>getSearchNodesByListCriteria.</p>
+	 *
+	 * @param nodes a {@link java.util.List} object
+	 * @param criteria a {@link java.util.Map} object
+	 * @param filter a {@link fr.becpg.repo.search.impl.DataListSearchFilter} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> getSearchNodesByListCriteria(List<NodeRef> nodes, Map<String, String> criteria, DataListSearchFilter filter) {
 
 		if (nodes.isEmpty()) {
@@ -434,6 +498,13 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 	}
 
+	/**
+	 * <p>buildCriteriaFilters.</p>
+	 *
+	 * @param criteria a {@link java.util.Map} object
+	 * @param filter a {@link fr.becpg.repo.search.impl.DataListSearchFilter} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<AssociationCriteriaFilter> buildCriteriaFilters(Map<String, String> criteria, DataListSearchFilter filter) {
 		List<AssociationCriteriaFilter> criteriaFilters = new ArrayList<>();
 
@@ -477,6 +548,12 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return criteriaFilters;
 	}
 
+	/**
+	 * <p>cleanValueForDB.</p>
+	 *
+	 * @param criteriaValue a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String cleanValueForDB(String criteriaValue) {
 		if (criteriaValue != null && criteriaValue.startsWith("=")) {
 			return criteriaValue.substring(1);
@@ -484,6 +561,12 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return criteriaValue;
 	}
 
+	/**
+	 * <p>merge.</p>
+	 *
+	 * @param sources a {@link java.util.List} object
+	 * @param targets a {@link java.util.List} object
+	 */
 	private void merge(List<EntitySourceAssoc> sources, List<EntitySourceAssoc> targets) {
 
 		Iterator<EntitySourceAssoc> e = sources.iterator();
@@ -528,9 +611,11 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	 * Take in account criteria on associations (ie :
 	 * assoc_bcpg_supplierAssoc_added)
 	 *
-	 * @param datatype
-	 *
+	 * @param datatype a {@link org.alfresco.service.namespace.QName} object
 	 * @return filtered list of nodes by associations
+	 * @param searchConfig a {@link fr.becpg.repo.search.impl.SearchConfig} object
+	 * @param nodes a {@link java.util.List} object
+	 * @param criteria a {@link java.util.Map} object
 	 */
 	private List<NodeRef> filterByAssociations(SearchConfig searchConfig, List<NodeRef> nodes, QName datatype, Map<String, String> criteria) {
 
@@ -624,6 +709,13 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return nodes;
 	}
 
+	/**
+	 * <p>extractNodeRefs.</p>
+	 *
+	 * @param propValue a {@link java.lang.String} object
+	 * @param isOrOperator a boolean
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> extractNodeRefs(String propValue, boolean isOrOperator) {
 		String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
 		List<NodeRef> ret = new ArrayList<>();
@@ -655,6 +747,13 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return ret;
 	}
 
+	/**
+	 * <p>getSearchNodesBySpecificationCriteria.</p>
+	 *
+	 * @param nodes a {@link java.util.List} object
+	 * @param criteria a {@link java.util.Map} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> getSearchNodesBySpecificationCriteria(List<NodeRef> nodes, Map<String, String> criteria) {
 
 		if (nodes.isEmpty()) {
@@ -734,6 +833,15 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 	}
 
+	/**
+	 * <p>getSearchNodesByWUsedCriteria.</p>
+	 *
+	 * @param nodes a {@link java.util.List} object
+	 * @param criteria a {@link java.util.Map} object
+	 * @param criteriaAssocString a {@link java.lang.String} object
+	 * @param criteriaAssoc a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> getSearchNodesByWUsedCriteria(List<NodeRef> nodes, Map<String, String> criteria, String criteriaAssocString,
 			QName criteriaAssoc) {
 

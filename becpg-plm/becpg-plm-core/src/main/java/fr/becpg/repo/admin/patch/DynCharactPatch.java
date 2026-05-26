@@ -32,7 +32,9 @@ import fr.becpg.repo.product.data.productList.SynchronisableState;
  */
 public class DynCharactPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(DynCharactPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.dynCharactPatch.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.dynCharactPatch.result";
 
 	private NodeDAO nodeDAO;

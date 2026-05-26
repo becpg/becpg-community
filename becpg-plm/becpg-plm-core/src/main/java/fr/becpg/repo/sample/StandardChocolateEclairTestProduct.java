@@ -405,6 +405,11 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 	private boolean isWithProcess = false;
 
 	// Private constructor to enforce usage of the builder
+	/**
+	 * <p>Constructor for StandardChocolateEclairTestProduct.</p>
+	 *
+	 * @param builder a {@link fr.becpg.repo.sample.StandardChocolateEclairTestProduct.Builder} object
+	 */
 	private StandardChocolateEclairTestProduct(Builder builder) {
 		super(builder);
 		this.isWithCompo = builder.isWithCompo;
@@ -582,10 +587,10 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		return List.of(specification);
 	}
 	
-	/**
-     * Creates a product specification with survey requirements that will 
+    /**
+     * Creates a product specification with survey requirements that will
      * create a mix of matching and non-matching requirements when compared to a product
-     * 
+     *
      * @return A product specification with survey requirements
      */
     private ProductSpecificationData createSpecificationWithSurveyRequirements() {
@@ -630,12 +635,18 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
     }
 
 
+	/**
+	 * <p>initClaims.</p>
+	 */
 	private void initClaims() {
 		euOrganicClaim = CharactTestHelper.getOrCreateClaim(nodeService, CLAIM_EU_ORGANIC, CLAIM_EU_ORGANIC_LABEL);
 		kosherClaim = CharactTestHelper.getOrCreateClaim(nodeService, CLAIM_KOSHER, CLAIM_KOSHER_LABEL);
 		halalClaim = CharactTestHelper.getOrCreateClaim(nodeService, CLAIM_HALAL, CLAIM_HALAL_LABEL);
 	}
 
+	/**
+	 * <p>initCertifications.</p>
+	 */
 	private void initCertifications() {
 		iso9001Cert = CharactTestHelper.getOrCreateCertification(nodeService, StandardChocolateEclairTestProduct.CERT_ISO_9001, "ISO 9001 Quality Management System");
 		brcCert = CharactTestHelper.getOrCreateCertification(nodeService, StandardChocolateEclairTestProduct.CERT_BRC, "BRC Global Standard for Food Safety");
@@ -645,6 +656,11 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 	}
 	
 
+	/**
+	 * <p>createClaimList.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	private List<LabelClaimListDataItem> createClaimList() {
 		LabelClaimListDataItem euOrganicItem = LabelClaimListDataItem.build().withLabelClaim(euOrganicClaim);
 
@@ -1023,6 +1039,11 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		);
 	}
 
+	/**
+	 * <p>configureNutrientProfile.</p>
+	 *
+	 * @param finishedProduct a {@link fr.becpg.repo.product.data.FinishedProductData} object
+	 */
 	private void configureNutrientProfile(FinishedProductData finishedProduct) {
 		finishedProduct.getAspects().add(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE);
 		finishedProduct.setNutrientProfileCategory(NutrientProfileCategory.Others.toString());
@@ -1031,6 +1052,14 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		addPhysicoChemProperty(finishedProduct, FRUIT_VEG_CONTENT, NutriScoreContext.FRUIT_VEGETABLE_CODE, 0d);
 	}
 
+	/**
+	 * <p>addPhysicoChemProperty.</p>
+	 *
+	 * @param product a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param name a {@link java.lang.String} object
+	 * @param code a {@link java.lang.String} object
+	 * @param value a {@link java.lang.Double} object
+	 */
 	private void addPhysicoChemProperty(ProductData product, String name, String code, Double value) {
 		PhysicoChemListDataItem physicoChemList = new PhysicoChemListDataItem();
 
@@ -1050,6 +1079,20 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		product.getPhysicoChemList().add(physicoChemList);
 	}
 
+	/**
+	 * <p>createNutList.</p>
+	 *
+	 * @param energyKj a {@link java.lang.Double} object
+	 * @param satFat a {@link java.lang.Double} object
+	 * @param totalFat a {@link java.lang.Double} object
+	 * @param sugar a {@link java.lang.Double} object
+	 * @param sodium a {@link java.lang.Double} object
+	 * @param salt a {@link java.lang.Double} object
+	 * @param nspFiber a {@link java.lang.Double} object
+	 * @param aoacFiber a {@link java.lang.Double} object
+	 * @param protein a {@link java.lang.Double} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NutListDataItem> createNutList(Double energyKj, Double satFat, Double totalFat, Double sugar, Double sodium, Double salt,
 			Double nspFiber, Double aoacFiber, Double protein) {
 		List<NutListDataItem> nutList = new ArrayList<>();
@@ -1065,6 +1108,14 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		return nutList;
 	}
 
+	/**
+	 * <p>addNutEntry.</p>
+	 *
+	 * @param nutList a {@link java.util.List} object
+	 * @param code a {@link java.lang.String} object
+	 * @param unit a {@link java.lang.String} object
+	 * @param value a {@link java.lang.Double} object
+	 */
 	private void addNutEntry(List<NutListDataItem> nutList, String code, String unit, Double value) {
 		if (value == null) {
 			return;
@@ -1073,6 +1124,9 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		nutList.add(NutListDataItem.build().withNut(nutRef).withUnit(unit).withValue(value).withIsManual(true));
 	}
 
+	/**
+	 * <p>initIngredients.</p>
+	 */
 	private void initIngredients() {
 
 		ingWaterNodeRef = CharactTestHelper.getOrCreateIng(nodeService, WATER_NAME);
@@ -1089,6 +1143,13 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
 	}
 
+	/**
+	 * <p>addStocks.</p>
+	 *
+	 * @param rawMaterial a {@link fr.becpg.repo.product.data.RawMaterialData} object
+	 * @param qty a {@link java.lang.Double} object
+	 * @param laboratories a {@link java.util.List} object
+	 */
 	private void addStocks(RawMaterialData rawMaterial, Double qty, List<NodeRef> laboratories) {
 
 		Calendar now = Calendar.getInstance();
@@ -1118,6 +1179,11 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 
 	}
 
+	/**
+	 * <p>createEclairQMSSurveyList.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	private List<SurveyListDataItem> createEclairQMSSurveyList() {
         // Question 1: Choux Pastry Quality Check
         final SurveyQuestion question1 = getOrCreateSurveyQuestion(SURVEY_PASTRY_QUESTION, PASTRY_QUALITY,
@@ -1158,6 +1224,11 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
         return List.of(survey1, survey2, survey3);
     }
 
+	/**
+	 * <p>createScoreList.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	private List<ScoreListDataItem> createScoreList() {
 		return new ArrayList<>(
 				List.of(ScoreListDataItem.build().withScoreCriterion(CharactTestHelper.getOrCreateScoreCriterion(nodeService, PASTRY_QUALITY)),
@@ -1166,6 +1237,15 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 								.withScore(80d)));
 	}
 
+	/**
+	 * <p>getOrCreateSurveyQuestion.</p>
+	 *
+	 * @param label a {@link java.lang.String} object
+	 * @param scoreCriterion a {@link java.lang.String} object
+	 * @param responseType a {@link java.lang.String} object
+	 * @param questionScore a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.survey.data.SurveyQuestion} object
+	 */
 	private SurveyQuestion getOrCreateSurveyQuestion(String label, String scoreCriterion, String responseType, Double questionScore) {
 
 		// Create new question if not found
@@ -1179,6 +1259,14 @@ public class StandardChocolateEclairTestProduct extends SampleProductBuilder {
 		return (SurveyQuestion) alfrescoRepository.save(question);
 	}
 
+	/**
+	 * <p>getOrCreateSurveyAnswer.</p>
+	 *
+	 * @param parentQuestion a {@link fr.becpg.repo.survey.data.SurveyQuestion} object
+	 * @param label a {@link java.lang.String} object
+	 * @param score a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.survey.data.SurveyQuestion} object
+	 */
 	private SurveyQuestion getOrCreateSurveyAnswer(SurveyQuestion parentQuestion, String label, Double score) {
 		final SurveyQuestion answer = (SurveyQuestion) alfrescoRepository.findOne(CharactTestHelper.getOrCreateSurveyQuestion(nodeService, label));
 		answer.setParent(parentQuestion.getNodeRef());

@@ -31,6 +31,7 @@ import fr.becpg.repo.helper.MessageHelper;
  */
 public class ShareFormParser implements FormParser{
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(ShareFormParser.class);
 
 	// <config evaluator="node-type" condition="type">
@@ -103,6 +104,14 @@ public class ShareFormParser implements FormParser{
 	}
 
 
+	/**
+	 * <p>visitFormElement.</p>
+	 *
+	 * @param configEl a {@link org.w3c.dom.Element} object
+	 * @param forms a {@link java.util.Map} object
+	 * @param evaluator a {@link java.lang.String} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private void visitFormElement(Element configEl, Map<String, BecpgFormDefinition> forms, String evaluator) throws JSONException {
 		logger.debug("visitFormElement");
 		NodeList list = configEl.getElementsByTagName("form");
@@ -166,6 +175,14 @@ public class ShareFormParser implements FormParser{
 
 	}
 
+	/**
+	 * <p>visitFormSets.</p>
+	 *
+	 * @param formDef a {@link fr.becpg.repo.form.impl.BecpgFormDefinition} object
+	 * @param parentEl a {@link org.w3c.dom.Element} object
+	 * @param hasTab a boolean
+	 * @throws org.json.JSONException if any.
+	 */
 	private void visitFormSets(BecpgFormDefinition formDef, Element parentEl, boolean hasTab) throws JSONException {
 		NodeList list = parentEl.getElementsByTagName("set");
 		for (int i = 0; i < list.getLength(); i++) {
@@ -254,6 +271,13 @@ public class ShareFormParser implements FormParser{
 		}
 	}
 
+	/**
+	 * <p>visitFormFields.</p>
+	 *
+	 * @param formDef a {@link fr.becpg.repo.form.impl.BecpgFormDefinition} object
+	 * @param parentEl a {@link org.w3c.dom.Element} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private void visitFormFields(BecpgFormDefinition formDef, Element parentEl) throws JSONException {
 		NodeList fields = parentEl.getElementsByTagName("field");
 		NodeList hides = parentEl.getElementsByTagName("hide");
@@ -265,6 +289,15 @@ public class ShareFormParser implements FormParser{
 
 	}
 
+	/**
+	 * <p>visitFormFields.</p>
+	 *
+	 * @param formDef a {@link fr.becpg.repo.form.impl.BecpgFormDefinition} object
+	 * @param fields a {@link org.w3c.dom.NodeList} object
+	 * @param shows a {@link org.w3c.dom.NodeList} object
+	 * @param show a boolean
+	 * @throws org.json.JSONException if any.
+	 */
 	private void visitFormFields(BecpgFormDefinition formDef, NodeList fields, NodeList shows, boolean show) throws JSONException {
 
 		for (int i = 0; i < shows.getLength(); i++) {
@@ -285,6 +318,15 @@ public class ShareFormParser implements FormParser{
 		}
 	}
 
+	/**
+	 * <p>createField.</p>
+	 *
+	 * @param formDef a {@link fr.becpg.repo.form.impl.BecpgFormDefinition} object
+	 * @param elem a {@link org.w3c.dom.Element} object
+	 * @param field a {@link org.w3c.dom.Element} object
+	 * @param show a boolean
+	 * @throws org.json.JSONException if any.
+	 */
 	private void createField(BecpgFormDefinition formDef, Element elem, Element field, boolean show) throws JSONException {
 		logger.debug("Create field with id :" + elem.getAttribute(BecpgFormDefinition.PROP_ID));
 
@@ -333,6 +375,13 @@ public class ShareFormParser implements FormParser{
 
 	}
 
+	/**
+	 * <p>visitFormControl.</p>
+	 *
+	 * @param field a {@link org.json.JSONObject} object
+	 * @param parentEl a {@link org.w3c.dom.Element} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private void visitFormControl(JSONObject field, Element parentEl) throws JSONException {
 		logger.debug("visitFormControl");
 		NodeList list = parentEl.getElementsByTagName("control");
@@ -478,6 +527,13 @@ public class ShareFormParser implements FormParser{
 
 	}
 
+	/**
+	 * <p>visitParam.</p>
+	 *
+	 * @param elem a {@link org.w3c.dom.Element} object
+	 * @param field a {@link org.json.JSONObject} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private void visitParam(Element elem, JSONObject field) throws JSONException {
 		JSONObject jsonParams = new JSONObject();
 		 boolean hasParam = false;

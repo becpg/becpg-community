@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -46,6 +46,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
  */
 public class EntityDictionaryWebScript extends AbstractWebScript {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityDictionaryWebScript.class);
 
 	/** Constant <code>PARAM_ITEMTYPE="itemType"</code> */

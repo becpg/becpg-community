@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -39,11 +39,15 @@ import fr.becpg.repo.product.data.ProductData;
  */
 public class FormulateRecipeWebScript extends AbstractProductWebscript {
 
+	/** Constant <code>PARAM_RECIPE="recipe"</code> */
 	private static final String PARAM_RECIPE = "recipe";
+	/** Constant <code>PARAM_NAME="name"</code> */
 	private static final String PARAM_NAME = "name";
 
+	/** Constant <code>PARAM_METADATA="metadata"</code> */
 	private static final String PARAM_METADATA = "metadata";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(FormulateRecipeWebScript.class);
 
 	/** {@inheritDoc} */

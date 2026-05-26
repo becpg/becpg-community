@@ -69,6 +69,7 @@ import fr.becpg.report.client.ReportParams;
 @Service
 public class ReportServerSearchRenderer implements SearchReportRenderer {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ReportServerSearchRenderer.class);
 
 	@Autowired
@@ -98,20 +99,31 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
 
+	/** Constant <code>FILE_QUERY="ExportSearchQuery.xml"</code> */
 	private static final String FILE_QUERY = "ExportSearchQuery.xml";
 
+	/** Constant <code>QUERY_XPATH_COLUMNS_ATTRIBUTE="/export/query/columns/column[@type='Att"{trunked}</code> */
 	private static final String QUERY_XPATH_COLUMNS_ATTRIBUTE = "/export/query/columns/column[@type='Attribute']";
 
+	/** Constant <code>QUERY_XPATH_COLUMNS_DATALIST="/export/query/columns/column[@type='Cha"{trunked}</code> */
 	private static final String QUERY_XPATH_COLUMNS_DATALIST = "/export/query/columns/column[@type='Characteristic']";
 
+	/** Constant <code>QUERY_XPATH_COLUMNS_FILE="/export/query/columns/column[@type='Fil"{trunked}</code> */
 	private static final String QUERY_XPATH_COLUMNS_FILE = "/export/query/columns/column[@type='File']";
 
+	/** Constant <code>QUERY_ATTR_GET_ID="@id"</code> */
 	private static final String QUERY_ATTR_GET_ID = "@id";
+	/** Constant <code>QUERY_ATTR_GET_ATTRIBUTE="@attribute"</code> */
 	private static final String QUERY_ATTR_GET_ATTRIBUTE = "@attribute";
+	/** Constant <code>QUERY_ATTR_GET_DATALIST_QNAME="@dataListQName"</code> */
 	private static final String QUERY_ATTR_GET_DATALIST_QNAME = "@dataListQName";
+	/** Constant <code>QUERY_ATTR_GET_CHARACT_QNAME="@charactQName"</code> */
 	private static final String QUERY_ATTR_GET_CHARACT_QNAME = "@charactQName";
+	/** Constant <code>QUERY_ATTR_GET_CHARACT_NODE_REF="@charactNodeRef"</code> */
 	private static final String QUERY_ATTR_GET_CHARACT_NODE_REF = "@charactNodeRef";
+	/** Constant <code>QUERY_ATTR_GET_CHARACT_NAME="@charactName"</code> */
 	private static final String QUERY_ATTR_GET_CHARACT_NAME = "@charactName";
+	/** Constant <code>QUERY_ATTR_GET_PATH="@path"</code> */
 	private static final String QUERY_ATTR_GET_PATH = "@path";
 
 	/** Constant <code>VALUE_NULL=""</code> */
@@ -173,8 +185,8 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 	/**
 	 * Generate Xml export data.
 	 *
-	 * @throws InterruptedException
-	 *
+	 * @param exportSearchCtx a {@link fr.becpg.repo.report.search.impl.ReportServerSearchContext} object
+	 * @param nodeRefList a {@link java.util.List} object
 	 */
 	private void loadReportData(ReportServerSearchContext exportSearchCtx, List<NodeRef> nodeRefList) {
 
@@ -293,6 +305,10 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 
 	/**
 	 * Gets the column value.
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param attribute a {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition} object
+	 * @return a {@link java.lang.String} object
 	 */
 	private String getColumnValue(NodeRef nodeRef, ClassAttributeDefinition attribute) {
 
@@ -426,6 +442,13 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 		return exportSearchCtx;
 	}
 
+	/**
+	 * <p>getItemByTypeAndName.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @param name a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getItemByTypeAndName(QName type, String name) {
 		return BeCPGQueryBuilder.createQuery().ofType(type).andPropQuery(ContentModel.PROP_NAME, name).singleValue();
 	}

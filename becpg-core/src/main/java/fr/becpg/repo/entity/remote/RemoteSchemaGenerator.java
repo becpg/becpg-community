@@ -35,6 +35,7 @@ import fr.becpg.model.ReportModel;
 @Service("remoteSchemaGenerator")
 public class RemoteSchemaGenerator {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(RemoteSchemaGenerator.class);
 
 	@Autowired
@@ -74,6 +75,12 @@ public class RemoteSchemaGenerator {
 
 	}
 
+	/**
+	 * <p>createXSD.</p>
+	 *
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 */
 	private void createXSD(XMLStreamWriter xmlw) throws XMLStreamException {
 
 		xmlw.writeStartElement("xs", "schema", "http://www.w3.org/2001/XMLSchema");
@@ -104,6 +111,14 @@ public class RemoteSchemaGenerator {
 
 	}
 
+	/**
+	 * <p>createAspect.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @param cache a {@link java.util.Set} object
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 */
 	private void createAspect(QName type, Set<QName> cache, XMLStreamWriter xmlw) throws XMLStreamException {
 		if (!cache.contains(type)) {
 			cache.add(type);
@@ -131,6 +146,14 @@ public class RemoteSchemaGenerator {
 
 	}
 
+	/**
+	 * <p>createType.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @param cache a {@link java.util.Set} object
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 */
 	private void createType(QName type, Set<QName> cache, XMLStreamWriter xmlw) throws XMLStreamException {
 
 		if (!cache.contains(type)) {
@@ -190,6 +213,15 @@ public class RemoteSchemaGenerator {
 
 	}
 
+	/**
+	 * <p>appendAspects.</p>
+	 *
+	 * @param dataType a {@link org.alfresco.service.namespace.QName} object
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @param first a boolean
+	 * @return a boolean
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 */
 	private boolean appendAspects(QName dataType, XMLStreamWriter xmlw, boolean first) throws XMLStreamException {
 		for (AspectDefinition aspectDefinition : dictionaryService.getClass(dataType).getDefaultAspects(false)) {
 
@@ -211,6 +243,12 @@ public class RemoteSchemaGenerator {
 	}
 	
 	
+	/**
+	 * <p>isEmpty.</p>
+	 *
+	 * @param keySet a {@link java.util.Set} object
+	 * @return a boolean
+	 */
 	boolean isEmpty( Set<QName> keySet){
 		for (QName type : keySet) {
 				if (!type.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
@@ -225,6 +263,16 @@ public class RemoteSchemaGenerator {
 		
 	}
 
+	/**
+	 * <p>appendProperties.</p>
+	 *
+	 * @param dataType a {@link org.alfresco.service.namespace.QName} object
+	 * @param keySet a {@link java.util.Set} object
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @param first a boolean
+	 * @return a boolean
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 */
 	private boolean appendProperties(QName dataType, Set<QName> keySet, XMLStreamWriter xmlw, boolean first) throws XMLStreamException {
 		for (QName type : keySet) {
 
@@ -271,6 +319,16 @@ public class RemoteSchemaGenerator {
 
 	}
 
+	/**
+	 * <p>appendAssocs.</p>
+	 *
+	 * @param dataType a {@link org.alfresco.service.namespace.QName} object
+	 * @param keySet a {@link java.util.Set} object
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @param first a boolean
+	 * @return a boolean
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 */
 	private boolean appendAssocs(QName dataType, Set<QName> keySet, XMLStreamWriter xmlw, boolean first) throws XMLStreamException {
 		for (QName assocQName : keySet) {
 			AssociationDefinition assocDef = dictionaryService.getAssociation(assocQName);
@@ -300,16 +358,40 @@ public class RemoteSchemaGenerator {
 		return first;
 	}
 
+	/**
+	 * <p>appendAssocs.</p>
+	 *
+	 * @param dataType a {@link org.alfresco.service.namespace.QName} object
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @param first a boolean
+	 * @return a boolean
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 */
 	private boolean appendAssocs(QName dataType, XMLStreamWriter xmlw, boolean first) throws XMLStreamException {
 		return appendAssocs(dataType, dictionaryService.getClass(dataType).getAssociations().keySet(), xmlw, first);
 
 	}
 
+	/**
+	 * <p>appendProperties.</p>
+	 *
+	 * @param dataType a {@link org.alfresco.service.namespace.QName} object
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @param first a boolean
+	 * @return a boolean
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 */
 	private boolean appendProperties(QName dataType, XMLStreamWriter xmlw, boolean first) throws XMLStreamException {
 		return appendProperties(dataType, dictionaryService.getClass(dataType).getProperties().keySet(), xmlw, first);
 
 	}
 
+	/**
+	 * <p>createBecpgBase.</p>
+	 *
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 */
 	private void createBecpgBase(XMLStreamWriter xmlw) throws XMLStreamException {
 		xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "complexType");
 		xmlw.writeAttribute("name", "remoteProp");
@@ -364,6 +446,13 @@ public class RemoteSchemaGenerator {
 		xmlw.writeEndElement();
 	}
 
+	/**
+	 * <p>addAttribute.</p>
+	 *
+	 * @param name a {@link java.lang.String} object
+	 * @param xmlw a {@link javax.xml.stream.XMLStreamWriter} object
+	 * @throws javax.xml.stream.XMLStreamException if any.
+	 */
 	private void addAttribute(String name, XMLStreamWriter xmlw) throws XMLStreamException {
 		xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "attribute");
 		xmlw.writeAttribute("type", "xs:string");

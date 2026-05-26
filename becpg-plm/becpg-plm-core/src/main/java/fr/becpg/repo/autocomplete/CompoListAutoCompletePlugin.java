@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -71,8 +71,10 @@ import fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor;
 @Service("compoListAutoCompletePlugin")
 public class CompoListAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(CompoListAutoCompletePlugin.class);
 
+	/** Constant <code>SOURCE_TYPE_COMPOLIST_PARENT_LEVEL="compoListParentLevel"</code> */
 	private static final String SOURCE_TYPE_COMPOLIST_PARENT_LEVEL = "compoListParentLevel";
 
 	@Autowired
@@ -148,6 +150,14 @@ public class CompoListAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 	}
 
 
+	/**
+	 * <p>getSimpleResults.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param query a {@link java.lang.String} object
+	 * @param itemId a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<AutoCompleteEntry> getSimpleResults(NodeRef entityNodeRef, String query, NodeRef itemId) {
 
 		List<AutoCompleteEntry> result = new ArrayList<>();
@@ -206,6 +216,12 @@ public class CompoListAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 		return result;
 	}
 
+	/**
+	 * <p>extractVariantNames.</p>
+	 *
+	 * @param dataListItemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.String} object
+	 */
 	@SuppressWarnings("unchecked")
 	private String extractVariantNames(NodeRef dataListItemNodeRef) {
 
@@ -230,6 +246,15 @@ public class CompoListAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 		return variantNames;
 	}
 
+	/**
+	 * <p>getParentsLevel.</p>
+	 *
+	 * @param mlld a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object
+	 * @param query a {@link java.lang.String} object
+	 * @param itemId a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param parentName a {@link java.lang.String} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<AutoCompleteEntry> getParentsLevel(MultiLevelListData mlld, String query, NodeRef itemId, String parentName) {
 
 		List<AutoCompleteEntry> result = new ArrayList<>();
@@ -299,6 +324,12 @@ public class CompoListAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 		return result;
 	}
 
+	/**
+	 * <p>extractHierarchyFullName.</p>
+	 *
+	 * @param hierarchy a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extractHierarchyFullName(NodeRef hierarchy) {
 		String res = (String) nodeService.getProperty(hierarchy, ContentModel.PROP_NAME);
 		NodeRef parent = (NodeRef) nodeService.getProperty(hierarchy, BeCPGModel.PROP_PARENT_LEVEL);
@@ -309,6 +340,12 @@ public class CompoListAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
 	}
 
+	/**
+	 * <p>getDepthUserPref.</p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @return a int
+	 */
 	private int getDepthUserPref(DataListFilter dataListFilter) {
 		String username = AuthenticationUtil.getFullyAuthenticatedUser();
 		Integer depth = null;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -87,6 +87,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	/** Constant <code>MESSAGE_UNDEFINED_CHARACT="message.formulate.undefined.charact"</code> */
 	protected static final String MESSAGE_UNDEFINED_CHARACT = "message.formulate.undefined.charact";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AbstractSimpleListFormulationHandler.class);
 
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
@@ -370,6 +371,19 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 	}
 
+	/**
+	 * <p>visitCompoListChildren.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param composite a {@link fr.becpg.repo.data.hierarchicalList.Composite} object
+	 * @param simpleListDataList a {@link java.util.List} object
+	 * @param parentLossRatio a {@link java.lang.Double} object
+	 * @param qtyProvider a {@link fr.becpg.repo.product.formulation.SimpleListQtyProvider} object
+	 * @param mandatoryCharacts a {@link java.util.Map} object
+	 * @param variant a {@link fr.becpg.repo.variant.model.VariantData} object
+	 * @param isFormulatedProduct a boolean
+	 * @param toRemove a {@link java.util.List} object
+	 */
 	private void visitCompoListChildren(ProductData formulatedProduct, Composite<CompoListDataItem> composite, List<T> simpleListDataList,
 			Double parentLossRatio, SimpleListQtyProvider qtyProvider, Map<NodeRef, List<NodeRef>> mandatoryCharacts, VariantData variant,
 			boolean isFormulatedProduct, List<T> toRemove) {
@@ -590,6 +604,10 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 * @param totalQtiesValue a {@link java.util.Map} object.
 	 * @param variant a {@link fr.becpg.repo.variant.model.VariantData} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
+	 * @param compositionDataItem a {@link fr.becpg.repo.repository.model.CompositionDataItem} object
+	 * @param qties a {@link fr.becpg.repo.product.formulation.FormulatedQties} object
+	 * @param totalQtyUsed a {@link java.lang.Double} object
+	 * @param toRemove a {@link java.util.List} object
 	 */
 	private void visitPart(ProductData formulatedProduct, CompositionDataItem compositionDataItem, ProductData partProduct,
 			List<T> simpleListDataList, FormulatedQties qties, Map<NodeRef, List<NodeRef>> mandatoryCharacts, Map<NodeRef, Double> totalQtiesValue,

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -40,6 +40,9 @@ public class WebscriptHelper {
 	/** Constant <code>PARAM_FIELDS="metadataFields"</code> */
 	public static final String PARAM_FIELDS = "metadataFields";
 	
+	/**
+	 * <p>Constructor for WebscriptHelper.</p>
+	 */
 	private WebscriptHelper() {
 		super();
 	}

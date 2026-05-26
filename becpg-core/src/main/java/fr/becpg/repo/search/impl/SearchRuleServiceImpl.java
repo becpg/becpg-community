@@ -47,11 +47,15 @@ import fr.becpg.repo.search.data.VersionFilterType;
 @Service("searchRuleService")
 public class SearchRuleServiceImpl implements SearchRuleService {
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(SearchRuleServiceImpl.class);
 
+	/** Constant <code>SEPARATOR="\\-"</code> */
 	private static final String SEPARATOR = "\\-";
 
+	/** Constant <code>MAX_ENTITY_NODE_REF_CALLS=RepoConsts.MAX_RESULTS_1000</code> */
 	private static final int MAX_ENTITY_NODE_REF_CALLS = RepoConsts.MAX_RESULTS_1000;
+	/** Constant <code>MAX_RET_SIZE=RepoConsts.MAX_RESULTS_256</code> */
 	private static final int MAX_RET_SIZE = RepoConsts.MAX_RESULTS_256;
 	
 	private final ThreadLocal<SimpleDateFormat> formatter = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy" + SEPARATOR + "MM" + SEPARATOR + "dd"));
@@ -229,6 +233,13 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 		return searchRuleResult;
 	}
 
+	/**
+	 * <p>getMaxResults.</p>
+	 *
+	 * @param maxResults a {@link java.lang.Integer} object
+	 * @param shouldFilterByPath a boolean
+	 * @return a int
+	 */
 	private int getMaxResults(Integer maxResults, boolean shouldFilterByPath) {
 		if ((maxResults != null) && !shouldFilterByPath) {
 			return maxResults;
@@ -283,10 +294,22 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 		return containerPathStr.startsWith(containedPathStr);
 	}
 
+	/**
+	 * <p>isNotIndexedType.</p>
+	 *
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
+	 * @return a boolean
+	 */
 	private boolean isNotIndexedType(QName nodeType) {
 		return (nodeType != null) && BeCPGQueryBuilder.isExcludedFromIndex(nodeType);
 	}
 
+	/**
+	 * <p>getDateFilterDelayUnit.</p>
+	 *
+	 * @param dateFilterDelayUnit a {@link fr.becpg.repo.search.data.DateFilterDelayUnit} object
+	 * @return a int
+	 */
 	private int getDateFilterDelayUnit(DateFilterDelayUnit dateFilterDelayUnit) {
 		return switch (dateFilterDelayUnit) {
 		case HOUR -> Calendar.HOUR;
@@ -296,6 +319,13 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 
 	}
 
+	/**
+	 * <p>filterByEntityCriteria.</p>
+	 *
+	 * @param nodes a {@link java.util.List} object
+	 * @param filter a {@link fr.becpg.repo.search.data.SearchRuleFilter} object
+	 * @return a {@link java.util.List} object
+	 */
 	@Deprecated
 	private List<NodeRef> filterByEntityCriteria(List<NodeRef> nodes, SearchRuleFilter filter) {
 	
@@ -347,6 +377,15 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 		return result;
 	}
 
+	/**
+	 * <p>getOnlyAssociatedVersions.</p>
+	 *
+	 * @param item a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param versionType a {@link fr.becpg.repo.search.data.VersionFilterType} object
+	 * @param from a {@link java.util.Date} object
+	 * @param to a {@link java.util.Date} object
+	 * @return a {@link java.util.Map} object
+	 */
 	private Map<String, NodeRef> getOnlyAssociatedVersions(NodeRef item, VersionFilterType versionType, Date from, Date to) {
 		Map<String, NodeRef> ret = new HashMap<>();
 		final VersionHistory versionHistory;
@@ -368,6 +407,13 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 		return ret;
 	}
 
+	/**
+	 * <p>formatDate.</p>
+	 *
+	 * @param dateFilterDelayUnit a {@link fr.becpg.repo.search.data.DateFilterDelayUnit} object
+	 * @param date a {@link java.util.Calendar} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String formatDate(DateFilterDelayUnit dateFilterDelayUnit, Calendar date) {
 		if (DateFilterDelayUnit.DATE.equals(dateFilterDelayUnit)) {
 			return date.get(Calendar.YEAR) + "\\-" + (date.get(Calendar.MONTH) + 1) + "\\-" + date.get(Calendar.DAY_OF_MONTH);
@@ -375,6 +421,13 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 		return ISO8601DateFormat.format(date.getTime());
 	}
 
+	/**
+	 * <p>matchEntityType.</p>
+	 *
+	 * @param entityRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param entityType a {@link org.alfresco.service.namespace.QName} object
+	 * @return a boolean
+	 */
 	private boolean matchEntityType(NodeRef entityRef, QName entityType) {
 		return dictionaryService.isSubClass(nodeService.getType(entityRef), entityType);
 	}

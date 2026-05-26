@@ -29,7 +29,9 @@ import fr.becpg.model.PLMModel;
  */
 public class ErrorLogPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ErrorLogPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.errorLogPatch.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.errorLogPatch.result";
 
 
@@ -49,6 +51,12 @@ public class ErrorLogPatch extends AbstractBeCPGPatch {
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
+	/**
+	 * <p>apply.</p>
+	 *
+	 * @param sourceType a {@link org.alfresco.service.namespace.QName} object
+	 * @param prop a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private void apply(QName sourceType, QName prop) {
 		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 

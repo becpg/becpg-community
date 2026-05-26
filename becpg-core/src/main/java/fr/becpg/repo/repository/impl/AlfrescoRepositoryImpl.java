@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -102,6 +102,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	@Qualifier("repositoryNodeService")
 	private NodeService repositoryNodeService;
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AlfrescoRepositoryImpl.class);
 
 	@Autowired
@@ -210,6 +211,11 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		purgeCache(nodeAssocRef.getSourceRef());
 	}
 
+	/**
+	 * <p>purgeCache.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void purgeCache(NodeRef nodeRef) {
 
 		if (nodeService.exists(nodeRef)) {
@@ -376,6 +382,13 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	}
 
+	/**
+	 * <p>normalizedEquals.</p>
+	 *
+	 * @param a a {@link java.lang.Object} object
+	 * @param b a {@link java.lang.Object} object
+	 * @return a boolean
+	 */
 	private boolean normalizedEquals(Object a, Object b) {
 		if ((a == null) || (b == null)) {
 			return a == b;
@@ -397,6 +410,11 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return a.toString().trim().equals(b.toString().trim());
 	}
 
+	/**
+	 * <p>saveAspects.</p>
+	 *
+	 * @param entity a T object
+	 */
 	private void saveAspects(T entity) {
 		if (entity instanceof AspectAwareDataItem aspectAwareDataItem) {
 			if (aspectAwareDataItem.getAspects() != null) {
@@ -419,6 +437,12 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		}
 	}
 
+	/**
+	 * <p>extractProperties.</p>
+	 *
+	 * @param entity a T object
+	 * @return a {@link java.util.Map} object
+	 */
 	private Map<QName, Serializable> extractProperties(T entity) {
 
 		Map<QName, Serializable> properties = repositoryEntityDefReader.getProperties(entity);
@@ -437,12 +461,23 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	}
 
+	/**
+	 * <p>createCollisionSafeHashCode.</p>
+	 *
+	 * @param entity a T object
+	 * @return a long
+	 */
 	private long createCollisionSafeHashCode(T entity) {
 
 		return BeCPGHashCodeBuilder.reflectionHashCode(entity);
 
 	}
 
+	/**
+	 * <p>saveAssociations.</p>
+	 *
+	 * @param entity a T object
+	 */
 	private void saveAssociations(T entity) {
 
 		for (Map.Entry<QName, T> association : repositoryEntityDefReader.getSingleEntityAssociations(entity).entrySet()) {
@@ -458,6 +493,13 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		}
 	}
 
+	/**
+	 * <p>getOrCreateNodeRef.</p>
+	 *
+	 * @param entry a {@link java.util.Map.Entry} object
+	 * @param entity a T object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getOrCreateNodeRef(Map.Entry<QName, T> entry, T entity) {
 		if (entry.getValue() != null) {
 			if (entry.getValue().getNodeRef() == null) {
@@ -471,6 +513,11 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return null;
 	}
 
+	/**
+	 * <p>saveDataLists.</p>
+	 *
+	 * @param entity a T object
+	 */
 	private void saveDataLists(T entity) {
 
 		Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(entity);
@@ -485,6 +532,11 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	}
 
+	/**
+	 * <p>saveDataListViews.</p>
+	 *
+	 * @param entity a T object
+	 */
 	private void saveDataListViews(T entity) {
 		Map<QName, ?> datalistViews = repositoryEntityDefReader.getDataListViews(entity);
 		for (Map.Entry<QName, ?> dataListViewEntry : datalistViews.entrySet()) {
@@ -607,6 +659,14 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return findOne(id, CacheType.STANDARD, L2CacheSupport.getCurrentThreadCache());
 	}
 
+	/**
+	 * <p>findOne.</p>
+	 *
+	 * @param id a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param cacheType a {@link fr.becpg.repo.repository.impl.AlfrescoRepositoryImpl.CacheType} object
+	 * @param localCache a {@link java.util.Map} object
+	 * @return a T object
+	 */
 	@SuppressWarnings("unchecked")
 	private T findOne(NodeRef id, CacheType cacheType, Map<NodeRef, RepositoryEntity> localCache) {
 		if (id == null) {
@@ -689,6 +749,14 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		}
 	}
 
+	/**
+	 * <p>storeInCache.</p>
+	 *
+	 * @param id a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param entity a T object
+	 * @param localCache a {@link java.util.Map} object
+	 * @param cacheType a {@link fr.becpg.repo.repository.impl.AlfrescoRepositoryImpl.CacheType} object
+	 */
 	private void storeInCache(NodeRef id, T entity, Map<NodeRef, RepositoryEntity> localCache, CacheType cacheType) {
 
 		if (localCache != null) {
@@ -712,6 +780,18 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	/*
 	 * There is 3 level of cache: Standalone call we use a HashMap When in L2cacheContext we use a cache that can survive several call (used by cache only) We use also a sharedCache that store
 	 * cacheAble
+	 */
+	/**
+	 * <p>getFormCache.</p>
+	 *
+	 * @param id a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param localCache a {@link java.util.Map} object
+	 * @param cacheType a {@link fr.becpg.repo.repository.impl.AlfrescoRepositoryImpl.CacheType} object
+	 * @param entityClass a {@link java.lang.Class} object
+	 * @return a T object
+	 * @throws java.lang.IllegalAccessException if any.
+	 * @throws java.lang.reflect.InvocationTargetException if any.
+	 * @throws java.lang.NoSuchMethodException if any.
 	 */
 	@SuppressWarnings("unchecked")
 	private T getFormCache(NodeRef id, Map<NodeRef, RepositoryEntity> localCache, CacheType cacheType, Class<T> entityClass)
@@ -790,6 +870,11 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return null;
 	}
 
+	/**
+	 * <p>loadAspects.</p>
+	 *
+	 * @param entity a T object
+	 */
 	private void loadAspects(T entity) {
 		if (entity instanceof AspectAwareDataItem aspectAwareDataItem) {
 			aspectAwareDataItem.setAspects(new HashSet<>(nodeService.getAspects(entity.getNodeRef())));
@@ -797,6 +882,19 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	}
 
+	/**
+	 * <p>loadDataListView.</p>
+	 *
+	 * @param entity a T object
+	 * @param datalistName a {@link java.lang.String} object
+	 * @param returnType a {@link java.lang.Class} object
+	 * @param <R> a R class
+	 * @return a R object
+	 * @throws java.lang.InstantiationException if any.
+	 * @throws java.lang.IllegalAccessException if any.
+	 * @throws java.lang.reflect.InvocationTargetException if any.
+	 * @throws java.lang.NoSuchMethodException if any.
+	 */
 	private <R> R loadDataListView(final T entity, String datalistName, Class<R> returnType)
 			throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
@@ -817,6 +915,15 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return ret;
 	}
 
+	/**
+	 * <p>createDataList.</p>
+	 *
+	 * @param entity a T object
+	 * @param pd a {@link java.beans.PropertyDescriptor} object
+	 * @param datalistName a {@link java.lang.String} object
+	 * @param datalistQname a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<T> createDataList(final T entity, final PropertyDescriptor pd, final String datalistName, final QName datalistQname) {
 		if (logger.isTraceEnabled()) {
 			logger.debug("read dataList : " + pd.getName());
@@ -838,6 +945,19 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return dataList;
 	}
 
+	/**
+	 * <p>loadAssoc.</p>
+	 *
+	 * @param entity a T object
+	 * @param pd a {@link java.beans.PropertyDescriptor} object
+	 * @param readMethod a {@link java.lang.reflect.Method} object
+	 * @param localCache a {@link java.util.Map} object
+	 * @param multiple a boolean
+	 * @param isChildAssoc a boolean
+	 * @throws java.lang.IllegalAccessException if any.
+	 * @throws java.lang.reflect.InvocationTargetException if any.
+	 * @throws java.lang.NoSuchMethodException if any.
+	 */
 	private void loadAssoc(T entity, PropertyDescriptor pd, Method readMethod, Map<NodeRef, RepositoryEntity> localCache, boolean multiple,
 			boolean isChildAssoc) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		if (multiple) {
@@ -887,6 +1007,18 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		}
 	}
 
+	/**
+	 * <p>loadProperties.</p>
+	 *
+	 * @param entity a T object
+	 * @param pd a {@link java.beans.PropertyDescriptor} object
+	 * @param readMethod a {@link java.lang.reflect.Method} object
+	 * @param properties a {@link java.util.Map} object
+	 * @param localCache a {@link java.util.Map} object
+	 * @throws java.lang.IllegalAccessException if any.
+	 * @throws java.lang.reflect.InvocationTargetException if any.
+	 * @throws java.lang.NoSuchMethodException if any.
+	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void loadProperties(T entity, PropertyDescriptor pd, Method readMethod, Map<QName, Serializable> properties,
 			Map<NodeRef, RepositoryEntity> localCache) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -942,6 +1074,14 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return loadDataList(dataListNodeRef, datalistQname, L2CacheSupport.getCurrentThreadCache());
 	}
 
+	/**
+	 * <p>loadDataList.</p>
+	 *
+	 * @param dataListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param datalistQname a {@link org.alfresco.service.namespace.QName} object
+	 * @param localCache a {@link java.util.Map} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<T> loadDataList(NodeRef dataListNodeRef, QName datalistQname, Map<NodeRef, RepositoryEntity> localCache) {
 
 		if (dataListNodeRef != null) {
@@ -1105,6 +1245,12 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return new ArrayList<>();
 	}
 
+	/**
+	 * <p>removeProperties.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param qnames a {@link java.util.Set} object
+	 */
 	private void removeProperties(NodeRef nodeRef, Set<QName> qnames) {
 		qnames.remove(ContentModel.PROP_NAME);
 		for (QName qname : qnames) {

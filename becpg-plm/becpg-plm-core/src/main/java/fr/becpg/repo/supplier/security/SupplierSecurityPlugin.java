@@ -41,6 +41,7 @@ import fr.becpg.repo.supplier.SupplierPortalService;
 @Service
 public class SupplierSecurityPlugin implements SecurityServicePlugin {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(SupplierSecurityPlugin.class);
 
 	@Autowired
@@ -61,6 +62,7 @@ public class SupplierSecurityPlugin implements SecurityServicePlugin {
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
 
+	/** Constant <code>SUPPLIER_WIZARD_PREFIX="/share/page/wizard?id=supplier-"</code> */
 	private static final String SUPPLIER_WIZARD_PREFIX = "/share/page/wizard?id=supplier-";
 
 	/** {@inheritDoc} */
@@ -150,6 +152,12 @@ public class SupplierSecurityPlugin implements SecurityServicePlugin {
 		return matching;
 	}
 
+	/**
+	 * <p>hasSupplierWizardDeliverable.</p>
+	 *
+	 * @param task a {@link org.alfresco.service.cmr.workflow.WorkflowTask} object
+	 * @return a boolean
+	 */
 	private boolean hasSupplierWizardDeliverable(WorkflowTask task) {
 		NodeRef projectNodeRef = (NodeRef) task.getProperties().get(BeCPGModel.ASSOC_WORKFLOW_ENTITY);
 		if (projectNodeRef == null) {

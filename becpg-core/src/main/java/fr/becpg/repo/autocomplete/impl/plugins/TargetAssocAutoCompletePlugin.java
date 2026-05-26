@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -176,6 +176,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @BeCPGPublicApi
 public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(TargetAssocAutoCompletePlugin.class);
 
 	/** Constant <code>PROP_FILTER_BY_ASSOC="filterByAssoc"</code> */
@@ -342,6 +343,13 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 
 	}
 
+	/**
+	 * <p>getByAssoc.</p>
+	 *
+	 * @param assocName a {@link java.lang.String} object
+	 * @param props a {@link java.util.Map} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> getByAssoc(String assocName, Map<String, Serializable> props) {
 		NodeRef entityNodeRef = extractEntityNodeRef(props);
 
@@ -455,6 +463,13 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 		return entityNodeRef;
 	}
 
+	/**
+	 * <p>excludeSources.</p>
+	 *
+	 * @param ret a {@link java.util.List} object
+	 * @param itemId a {@link java.lang.String} object
+	 * @param fieldName a {@link java.lang.String} object
+	 */
 	private void excludeSources(List<NodeRef> ret, String itemId, String fieldName) {
 		if ((itemId != null) && NodeRef.isNodeRef(itemId) && (fieldName != null) && fieldName.startsWith("assoc_")) {
 			QName fieldQName = QName.createQName(fieldName.split("assoc_")[1].replace("_", ":"), namespaceService);
@@ -463,6 +478,14 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 		}
 	}
 
+	/**
+	 * <p>extractAllSources.</p>
+	 *
+	 * @param source a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param fieldQname a {@link org.alfresco.service.namespace.QName} object
+	 * @param allSources a {@link java.util.List} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> extractAllSources(NodeRef source, QName fieldQname, List<NodeRef> allSources) {
 		if (!allSources.contains(source)) {
 			allSources.add(source);
@@ -475,6 +498,16 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 		return allSources;
 	}
 
+	/**
+	 * <p>filterByAssoc.</p>
+	 *
+	 * @param queryBuilder a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 * @param pageSize a {@link java.lang.Integer} object
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param filterByAssoc a {@link java.lang.String} object
+	 * @param targetNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> filterByAssoc(BeCPGQueryBuilder queryBuilder, Integer pageSize, NodeRef entityNodeRef, String filterByAssoc,
 			NodeRef targetNodeRef) {
 
@@ -520,6 +553,13 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 		return ret;
 	}
 
+	/**
+	 * <p>filterByPath.</p>
+	 *
+	 * @param queryBuilder a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 * @param path a {@link java.lang.String} object
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void filterByPath(BeCPGQueryBuilder queryBuilder, String path, NodeRef entityNodeRef) {
 
 		if ((path != null) && !path.isEmpty()) {

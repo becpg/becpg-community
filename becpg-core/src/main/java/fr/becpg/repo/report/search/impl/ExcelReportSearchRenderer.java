@@ -47,8 +47,10 @@ import fr.becpg.report.client.ReportFormat;
 @Service
 public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ExcelReportSearchRenderer.class);
 	
+	/** Constant <code>BACKSLASH="\\\\&quot;"</code> */
 	private static final String BACKSLASH = "\\\\";
 
 	
@@ -296,10 +298,27 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 		return null;
 	}
 
+	/**
+	 * <p>fillSheet.</p>
+	 *
+	 * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+	 * @param searchResults a {@link java.util.List} object
+	 * @param mainType a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private QName fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType) {
 		return fillSheet(sheet, searchResults, mainType, null);
 	}
 
+	/**
+	 * <p>fillSheet.</p>
+	 *
+	 * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+	 * @param searchResults a {@link java.util.List} object
+	 * @param mainType a {@link org.alfresco.service.namespace.QName} object
+	 * @param parameters an array of {@link java.lang.String} objects
+	 * @return a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private QName fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, String[] parameters) {
 
 		ExcelSheetExportContext excelSheetExportContext = readHeader(sheet, mainType, parameters);
@@ -308,6 +327,13 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
 	}
 
+	/**
+	 * <p>extractListStruct.</p>
+	 *
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object
+	 * @param headerRow a {@link org.apache.poi.ss.usermodel.Row} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<AttributeExtractorStructure> extractListStruct(QName itemType, Row headerRow) {
 		List<AttributeExtractorField> metadataFields = new ArrayList<>();
 		String currentNested = "";

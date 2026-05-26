@@ -48,6 +48,7 @@ import fr.becpg.repo.survey.helper.SurveyableEntityHelper;
 @Service("surveyService")
 public class SurveyServiceImpl implements SurveyService {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(SurveyServiceImpl.class);
 
 	public enum CommentType {
@@ -151,7 +152,7 @@ public class SurveyServiceImpl implements SurveyService {
 	/** {@inheritDoc} */
 	/**
 	 * Get requirements for an entity if they exist
-	 * 
+	 *
 	 * @param entityNodeRef the entity node reference
 	 * @return list of requirement control items or empty list
 	 */
@@ -166,7 +167,7 @@ public class SurveyServiceImpl implements SurveyService {
 	
 	/**
 	 * Maps requirements to their associated questions by NodeRef
-	 * 
+	 *
 	 * @param requirements list of requirement items
 	 * @return map of question ID to list of requirements
 	 */
@@ -248,10 +249,23 @@ public class SurveyServiceImpl implements SurveyService {
 	}
 
 
+	/**
+	 * <p>createNodeRef.</p>
+	 *
+	 * @param id a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef createNodeRef(String id) {
 		return new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, id);
 	}
 
+	/**
+	 * <p>getSurveys.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param dataListName a {@link java.lang.String} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<SurveyListDataItem> getSurveys(NodeRef entityNodeRef, String dataListName) {
 
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
@@ -271,6 +285,15 @@ public class SurveyServiceImpl implements SurveyService {
 		return new ArrayList<>();
 	}
 
+	/**
+	 * <p>appendQuestionDefinition.</p>
+	 *
+	 * @param definitions a {@link org.json.JSONArray} object
+	 * @param surveyQuestion a {@link fr.becpg.repo.survey.data.SurveyQuestion} object
+	 * @param questions a {@link java.util.Set} object
+	 * @param questionRequirements a {@link java.util.Map} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private void appendQuestionDefinition(JSONArray definitions, SurveyQuestion surveyQuestion, Set<SurveyQuestion> questions, 
 			Map<String, List<RequirementListDataItem>> questionRequirements) throws JSONException {
 
@@ -402,10 +425,25 @@ public class SurveyServiceImpl implements SurveyService {
 		}
 	}
 
+	/**
+	 * <p>getLabelOrHidden.</p>
+	 *
+	 * @param responseCommentLabel a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getLabelOrHidden(String responseCommentLabel) {
 		return responseCommentLabel == null ? null : responseCommentLabel.isBlank() ? "hidden" : responseCommentLabel;
 	}
 
+	/**
+	 * <p>appendCids.</p>
+	 *
+	 * @param choice a {@link org.json.JSONObject} object
+	 * @param surveyQuestion a {@link fr.becpg.repo.survey.data.SurveyQuestion} object
+	 * @param definitions a {@link org.json.JSONArray} object
+	 * @param questions a {@link java.util.Set} object
+	 * @param questionRequirements a {@link java.util.Map} object
+	 */
 	private void appendCids(JSONObject choice, SurveyQuestion surveyQuestion, JSONArray definitions,
 			Set<SurveyQuestion> questions, Map<String, List<RequirementListDataItem>> questionRequirements) {
 		if (surveyQuestion.getNextQuestions() != null) {
@@ -422,6 +460,12 @@ public class SurveyServiceImpl implements SurveyService {
 
 	}
 
+	/**
+	 * <p>getDefinitionChoices.</p>
+	 *
+	 * @param surveyQuestion a {@link fr.becpg.repo.survey.data.SurveyQuestion} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> getDefinitionChoices(SurveyQuestion surveyQuestion) {
 		BeCPGQueryBuilder query = BeCPGQueryBuilder.createQuery().ofType(SurveyModel.TYPE_SURVEY_QUESTION).andPropEquals(BeCPGModel.PROP_PARENT_LEVEL,
 				surveyQuestion.getNodeRef().toString());
@@ -431,6 +475,12 @@ public class SurveyServiceImpl implements SurveyService {
 		return query.addSort(sortBy).inDB().list();
 	}
 
+	/**
+	 * <p>getOptions.</p>
+	 *
+	 * @param definitionChoices a {@link java.util.List} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getOptions(List<NodeRef> definitionChoices) {
 		StringBuilder options = null;
 		for (NodeRef choice : definitionChoices) {
@@ -453,6 +503,13 @@ public class SurveyServiceImpl implements SurveyService {
 		return surveyListDataItems.stream().filter(q -> isVisible(q, surveyListDataItems)).toList();
 	}
 
+	/**
+	 * <p>isVisible.</p>
+	 *
+	 * @param surveyListDataItem a {@link fr.becpg.repo.survey.data.SurveyListDataItem} object
+	 * @param surveyListDataItems a {@link java.util.List} object
+	 * @return a boolean
+	 */
 	private boolean isVisible(SurveyListDataItem surveyListDataItem, List<SurveyListDataItem> surveyListDataItems) {
 		Map<NodeRef, SurveyQuestion> surveyQuestionByNodeRef = getSurveyQuestionCache().getSurveyQuestionByNodeRef();
 		SurveyQuestion surveyQuestion = surveyQuestionByNodeRef.get(surveyListDataItem.getQuestion());
@@ -480,6 +537,12 @@ public class SurveyServiceImpl implements SurveyService {
 				.anyMatch(parentQuestion::equals);
 	}
 
+	/**
+	 * <p>extractParentQuestion.</p>
+	 *
+	 * @param surveyQuestion a {@link fr.becpg.repo.survey.data.SurveyQuestion} object
+	 * @return a {@link fr.becpg.repo.survey.data.SurveyQuestion} object
+	 */
 	private SurveyQuestion extractParentQuestion(SurveyQuestion surveyQuestion){
 		if (surveyQuestion.getParent() != null) {
 			RepositoryEntity surveyQuestionItem = alfrescoRepository.findOne(surveyQuestion.getParent());

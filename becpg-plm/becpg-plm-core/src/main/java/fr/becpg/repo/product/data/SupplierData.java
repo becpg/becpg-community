@@ -35,6 +35,7 @@ import fr.becpg.repo.survey.data.SurveyableEntity;
 @AlfQname(qname = "bcpg:supplier")
 public class SupplierData extends BeCPGDataObject implements HierarchicalEntity, StateableEntity, SurveyableEntity, CataloguableEntity {
 
+	/** Constant <code>serialVersionUID=-2554133542406623412L</code> */
 	private static final long serialVersionUID = -2554133542406623412L;
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;

@@ -29,6 +29,7 @@ import fr.becpg.repo.repository.model.SimpleListDataItem;
  */
 public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleListFormulationHandler<PhysicoChemListDataItem> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(PhysicoChemCalculatingFormulationHandler.class);
 
 

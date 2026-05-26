@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2010-2021 beCPG. 
+Copyright (C) 2010-2026 beCPG. 
  
 This file is part of beCPG 
  
@@ -46,6 +46,11 @@ public class ProjectAttributeExtractorPlugin extends AbstractExprNameExtractor {
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
 	
+	/**
+	 * <p>projectNameFormat.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String projectNameFormat() {
 		return systemConfigurationService.confValue("beCPG.project.name.format");
 	}

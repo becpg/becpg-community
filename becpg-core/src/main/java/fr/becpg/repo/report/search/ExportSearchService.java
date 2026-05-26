@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -54,6 +54,7 @@ public interface ExportSearchService {
 	 * @param reportFormat a {@link fr.becpg.report.client.ReportFormat} object.
 	 * @param outputStream a {@link java.io.OutputStream} object.
 	 * @param parameters an array of {@link java.lang.String} objects.
+	 * @since 25.3.0.34
 	 */
 	void createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream,
 			String[] parameters);
@@ -78,6 +79,7 @@ public interface ExportSearchService {
 	 * @param reportFormat a {@link fr.becpg.report.client.ReportFormat} object.
 	 * @param parameters an array of {@link java.lang.String} objects.
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @since 25.3.0.34
 	 */
 	NodeRef createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat, String[] parameters);
 }

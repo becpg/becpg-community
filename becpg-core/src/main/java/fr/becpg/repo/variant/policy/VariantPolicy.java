@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -56,6 +56,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyCompletePolicy, EntityVersionPlugin {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(VariantPolicy.class);
 
 	private CopyService copyService;
@@ -206,6 +207,13 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 		return false;
 	}
 
+	/**
+	 * <p>updateVariantIds.</p>
+	 *
+	 * @param key a {@link java.lang.String} object
+	 * @param pendingNodes a {@link java.util.Set} object
+	 * @param unQueueNode a boolean
+	 */
 	private void updateVariantIds(String key, Set<NodeRef> pendingNodes, boolean unQueueNode) {
 
 		logger.debug("Pending nodes of " + key + " : " + pendingNodes);
@@ -235,6 +243,13 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 		}
 	}
 
+	/**
+	 * <p>updateItemVariants.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param entityVariantsMap a {@link java.util.Map} object
+	 * @param itemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void updateItemVariants(NodeRef entityNodeRef, Map<String, NodeRef> entityVariantsMap, NodeRef itemNodeRef) {
 
 		@SuppressWarnings("unchecked")
@@ -253,6 +268,14 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 		}
 	}
 
+	/**
+	 * <p>updateVariant.</p>
+	 *
+	 * @param itemVariant a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param entityVariantsMap a {@link java.util.Map} object
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef updateVariant(NodeRef itemVariant, Map<String, NodeRef> entityVariantsMap, NodeRef entityNodeRef) {
 		
 		if (nodeService.hasAspect(nodeService.getPrimaryParent(itemVariant).getParentRef(), BeCPGModel.ASPECT_ENTITY_TPL)) {
@@ -273,6 +296,15 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 		
 	}
 
+	/**
+	 * <p>createNewVariant.</p>
+	 *
+	 * @param itemVariant a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param entityVariantsMap a {@link java.util.Map} object
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param variantName a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef createNewVariant(NodeRef itemVariant, Map<String, NodeRef> entityVariantsMap, NodeRef entityNodeRef, String variantName) {
 		NodeRef newVariant;
 		if (logger.isDebugEnabled()) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -67,6 +67,7 @@ import fr.becpg.repo.survey.impl.SurveyServiceImpl.ResponseType;
  */
 public class ScoreListFormulationHandler extends FormulationBaseHandler<SurveyableEntity> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ScoreListFormulationHandler.class);
 
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
@@ -203,6 +204,12 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 		computeFinalEntityScore(surveyableEntity, composite);
 	}
 
+	/**
+	 * <p>computeFormulas.</p>
+	 *
+	 * @param surveyableEntity a {@link fr.becpg.repo.survey.data.SurveyableEntity} object
+	 * @param scoreList a {@link java.util.List} object
+	 */
 	private void computeFormulas(SurveyableEntity surveyableEntity, List<ScoreListDataItem> scoreList) {
 
 		for (ScoreListDataItem scoreListItem : scoreList) {
@@ -227,6 +234,17 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 		}
 	}
 
+	/**
+	 * <p>processFormulaByType.</p>
+	 *
+	 * @param context a {@link org.springframework.expression.spel.support.StandardEvaluationContext} object
+	 * @param scoreListItem a {@link fr.becpg.repo.project.data.projectList.ScoreListDataItem} object
+	 * @param propertyKey a {@link org.alfresco.service.namespace.QName} object
+	 * @param setter a {@link java.util.function.Consumer} object
+	 * @param expectedType a {@link java.lang.Class} object
+	 * @param errorMessageKey a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String processFormulaByType(StandardEvaluationContext context, ScoreListDataItem scoreListItem,
 			QName propertyKey, Consumer<Object> setter, Class<?> expectedType, String errorMessageKey) {
 		if(scoreListItem.getCharactNodeRef()!=null) {
@@ -264,6 +282,12 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 		return null;
 	}
 
+	/**
+	 * <p>calculateParentScores.</p>
+	 *
+	 * @param surveyableEntity a {@link fr.becpg.repo.survey.data.SurveyableEntity} object
+	 * @param composite a {@link fr.becpg.repo.data.hierarchicalList.Composite} object
+	 */
 	private void calculateParentScores(SurveyableEntity surveyableEntity, Composite<ScoreListDataItem> composite) {
 		if (composite.isLeaf()) {
 			return;
@@ -286,6 +310,12 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 		}
 	}
 
+	/**
+	 * <p>retrieveEffectiveWeight.</p>
+	 *
+	 * @param scoreListDataItem a {@link fr.becpg.repo.project.data.projectList.ScoreListDataItem} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double retrieveEffectiveWeight(ScoreListDataItem scoreListDataItem) {
 		
 		if (scoreListDataItem.getCharactNodeRef() != null) {
@@ -303,6 +333,12 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 		return 100.0;
 	}
 
+	/**
+	 * <p>computeRanges.</p>
+	 *
+	 * @param surveyableEntity a {@link fr.becpg.repo.survey.data.SurveyableEntity} object
+	 * @param scoreList a {@link java.util.List} object
+	 */
 	private void computeRanges(SurveyableEntity surveyableEntity, List<ScoreListDataItem> scoreList) {
 
 		for (ScoreListDataItem scoreListItem : scoreList) {
@@ -336,6 +372,12 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 		}
 	}
 
+	/**
+	 * <p>computeFinalEntityScore.</p>
+	 *
+	 * @param surveyableEntity a {@link fr.becpg.repo.survey.data.SurveyableEntity} object
+	 * @param composite a {@link fr.becpg.repo.data.hierarchicalList.Composite} object
+	 */
 	private void computeFinalEntityScore(SurveyableEntity surveyableEntity, Composite<ScoreListDataItem> composite) {
 		double totalScore = 0;
 		double totalWeight = 0;
@@ -383,6 +425,13 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 		return surveyableEntity instanceof BeCPGDataObject dataObj && dataObj.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL);
 	}
 
+	/**
+	 * <p>fillScores.</p>
+	 *
+	 * @param surveyList a {@link java.util.List} object
+	 * @param scoresPerCriterion a {@link java.util.Map} object
+	 * @param maxScoresPerCriterion a {@link java.util.Map} object
+	 */
 	private void fillScores(List<SurveyListDataItem> surveyList, Map<NodeRef, Double> scoresPerCriterion,
 			Map<NodeRef, Double> maxScoresPerCriterion) {
 		final List<SurveyListDataItem> visibleSurveyListDataItems = surveyService.getVisibles(surveyList);
@@ -408,6 +457,12 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 		}
 	}
 
+	/**
+	 * <p>calculateMaxScore.</p>
+	 *
+	 * @param question a {@link fr.becpg.repo.survey.data.SurveyQuestion} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double calculateMaxScore(SurveyQuestion question) {
 		if (question.getQuestionScore() != null) {
 			return question.getQuestionScore();
@@ -423,18 +478,40 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 		return ResponseType.list.name().equals(question.getResponseType()) ? scoreStream.max().orElse(0) : scoreStream.sum();
 	}
 
+	/**
+	 * <p>calculateQuestionScore.</p>
+	 *
+	 * @param s a {@link fr.becpg.repo.survey.data.SurveyListDataItem} object
+	 * @return a double
+	 */
 	private double calculateQuestionScore(SurveyListDataItem s) {
 		return CollectionUtils.emptyIfNull(s.getChoices()).stream().map(alfrescoRepository::findOne)
 				.map(SurveyQuestion.class::cast)
 				.map(SurveyQuestion::getQuestionScore).filter(Objects::nonNull).mapToDouble(Double::doubleValue).sum();
 	}
 
+	/**
+	 * <p>updateCriterionScores.</p>
+	 *
+	 * @param criterion a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param questionScore a double
+	 * @param maxScore a double
+	 * @param scoresPerCriterion a {@link java.util.Map} object
+	 * @param maxScoresPerCriterion a {@link java.util.Map} object
+	 */
 	private void updateCriterionScores(NodeRef criterion, double questionScore, double maxScore, Map<NodeRef, Double> scoresPerCriterion,
 			Map<NodeRef, Double> maxScoresPerCriterion) {
 		scoresPerCriterion.merge(criterion, questionScore, Double::sum);
 		maxScoresPerCriterion.merge(criterion, maxScore, Double::sum);
 	}
 
+	/**
+	 * <p>calculateAndFillScoreList.</p>
+	 *
+	 * @param scoreList a {@link java.util.List} object
+	 * @param scoresPerCriterion a {@link java.util.Map} object
+	 * @param maxScoresPerCriterion a {@link java.util.Map} object
+	 */
 	private void calculateAndFillScoreList(List<ScoreListDataItem> scoreList, Map<NodeRef, Double> scoresPerCriterion,
 			Map<NodeRef, Double> maxScoresPerCriterion) {
 		scoresPerCriterion.forEach((criterion, score) -> {

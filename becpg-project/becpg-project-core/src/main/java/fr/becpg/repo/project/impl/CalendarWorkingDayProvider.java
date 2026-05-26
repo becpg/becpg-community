@@ -17,8 +17,10 @@ import fr.becpg.repo.project.CalendarService;
  */
 public class CalendarWorkingDayProvider extends DefaultWorkingDayProvider implements WorkingDayProvider  {
 
+    /** Constant <code>logger</code> */
     private static final Log logger = LogFactory.getLog(CalendarWorkingDayProvider.class);
 
+    /** Constant <code>MAX_ITERATIONS=366</code> */
     private static final int MAX_ITERATIONS = 366;
 
     private final CalendarService calendarService;

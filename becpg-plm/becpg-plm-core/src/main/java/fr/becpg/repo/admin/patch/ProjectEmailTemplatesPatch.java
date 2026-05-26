@@ -31,8 +31,10 @@ import org.springframework.extensions.surf.util.I18NUtil;
  */
 public class ProjectEmailTemplatesPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ProjectEmailTemplatesPatch.class);
 
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.project.projectEmailTemplate"{trunked}</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.project.projectEmailTemplatesPatch";
 
 	/** {@inheritDoc} */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -45,6 +45,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public final class Search extends BaseScopableProcessorExtension{
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(Search.class);
 	
     protected ServiceRegistry services;
@@ -185,9 +186,9 @@ public final class Search extends BaseScopableProcessorExtension{
         return Context.getCurrentContext().newArray(getScope(), results);
 	}
 	
-	/**
+    /**
      * Extract a map of properties and associations from a scriptable object (generally an associative array)
-     * 
+     *
      * @param scriptable    The scriptable object to extract name/value pairs from.
      * @param map           The map to add the converted name/value pairs to.
      */
@@ -210,9 +211,9 @@ public final class Search extends BaseScopableProcessorExtension{
 		}
     }
     
-	/**
+    /**
      * Extract a map of properties and associations from a scriptable object (generally an associative array)
-     * 
+     *
      * @param scriptable    The scriptable object to extract name/value pairs from.
      * @param map           The map to add the converted name/value pairs to.
      */

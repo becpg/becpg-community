@@ -37,6 +37,7 @@ import fr.becpg.repo.variant.model.VariantData;
  */
 public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormulationHandler<SvhcListDataItem> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(SvhcCalculatingFormulationHandler.class);
 
 	/**
@@ -110,7 +111,9 @@ public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormula
 	}
 
 	/**
-	 * @param formulatedProduct
+	 * <p>addMPIngredientsToSvhcList.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
 	 */
 	private void addMPIngredientsToSvhcList(ProductData formulatedProduct) {
 		List<SvhcListDataItem> svhcList = formulatedProduct.getSvhcList();

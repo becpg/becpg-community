@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -35,14 +35,22 @@ import fr.becpg.repo.RepoConsts;
  */
 public class TranslateHelper {
 
+	/** Constant <code>PATH_MSG_PFX="path."</code> */
 	private static final String PATH_MSG_PFX = "path.";
+	/** Constant <code>LIST_CONSTRAINT_MSG_PFX="listconstraint.%s.%s"</code> */
 	private static final String LIST_CONSTRAINT_MSG_PFX = "listconstraint.%s.%s";
 
+	/** Constant <code>MESSAGE_TRUE="data.boolean.true"</code> */
 	private static final String MESSAGE_TRUE = "data.boolean.true";
+	/** Constant <code>MESSAGE_FALSE="data.boolean.false"</code> */
 	private static final String MESSAGE_FALSE = "data.boolean.false";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(TranslateHelper.class);
 
+	/**
+	 * <p>Constructor for TranslateHelper.</p>
+	 */
 	private TranslateHelper() {
 		// Only static method
 	}

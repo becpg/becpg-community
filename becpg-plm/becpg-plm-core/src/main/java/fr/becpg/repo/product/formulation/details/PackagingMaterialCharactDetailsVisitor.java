@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -55,6 +55,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 @Service
 public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(PackagingMaterialCharactDetailsVisitor.class);
 
 	private static class PackagingMaterialVisitorContext extends CharactDetailsVisitorContext {
@@ -70,6 +71,7 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean shouldVisitPartItem(CharactDetailsVisitorContext context, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
 		if (simpleCharact instanceof PackMaterialListDataItem packMaterialListDataItem) {
@@ -137,6 +139,16 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 		return ret;
 	}
 
+	/**
+	 * <p>visitMaterial.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.product.formulation.details.CharactDetailsVisitorContext} object
+	 * @param parent a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param packagingListDataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 * @param charactDetails a {@link fr.becpg.repo.product.data.CharactDetails} object
+	 * @param currLevel a {@link java.lang.Integer} object
+	 * @param subQty a double
+	 */
 	private void visitMaterial(CharactDetailsVisitorContext context, NodeRef parent, PackagingListDataItem packagingListDataItem, CharactDetails charactDetails, Integer currLevel,
 			double subQty)  {
 
@@ -161,6 +173,16 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 
 	}
 
+	/**
+	 * <p>visitMaterialPackaging.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.product.formulation.details.CharactDetailsVisitorContext} object
+	 * @param parent a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param packagingListDataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 * @param charactDetails a {@link fr.becpg.repo.product.data.CharactDetails} object
+	 * @param currLevel a {@link java.lang.Integer} object
+	 * @param subQty a double
+	 */
 	private void visitMaterialPackaging(CharactDetailsVisitorContext context, NodeRef parent, PackagingListDataItem packagingListDataItem, CharactDetails charactDetails, Integer currLevel,
 			double subQty)  {
 		

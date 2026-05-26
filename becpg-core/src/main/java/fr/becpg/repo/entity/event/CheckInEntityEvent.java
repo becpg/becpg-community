@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -28,6 +28,7 @@ import org.springframework.context.ApplicationEvent;
  */
 public class CheckInEntityEvent extends ApplicationEvent {
 
+	/** Constant <code>serialVersionUID=6872600105098661778L</code> */
 	private static final long serialVersionUID = 6872600105098661778L;	
 	private final NodeRef entityNodeRef;
 	

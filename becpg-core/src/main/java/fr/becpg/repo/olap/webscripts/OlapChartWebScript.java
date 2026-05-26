@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -42,8 +42,10 @@ import fr.becpg.repo.olap.data.OlapChartData;
 public class OlapChartWebScript  extends AbstractWebScript
 {
 	
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(OlapChartWebScript.class);
 	
+	/** Constant <code>PARAM_QUERY_ID="olapQueryId"</code> */
 	private static final String PARAM_QUERY_ID = "olapQueryId";
 	
 	private OlapService olapService;

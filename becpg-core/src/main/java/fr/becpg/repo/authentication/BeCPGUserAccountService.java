@@ -51,6 +51,7 @@ import fr.becpg.repo.mail.BeCPGMailService;
 @Service
 public class BeCPGUserAccountService {
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(BeCPGUserAccountService.class);
 
 	/** Constant <code>PATH_SEPARATOR="\\/"</code> */
@@ -202,6 +203,13 @@ public class BeCPGUserAccountService {
 		personService.deletePerson(username);
 	}
 
+	/**
+	 * <p>updatePassword.</p>
+	 *
+	 * @param username a {@link java.lang.String} object
+	 * @param newPassword a {@link java.lang.String} object
+	 * @param notify a boolean
+	 */
 	private void updatePassword(String username, String newPassword, boolean notify) {
 		if (isIdsUser(personService.getPerson(username))) {
 			identityServiceAccountProvider.updatePassword(username, newPassword);
@@ -213,6 +221,12 @@ public class BeCPGUserAccountService {
 		}
 	}
 
+	/**
+	 * <p>createUser.</p>
+	 *
+	 * @param userAccount a {@link fr.becpg.repo.authentication.BeCPGUserAccount} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef createUser(BeCPGUserAccount userAccount) {
 		NodeRef personNodeRef;
 		if (logger.isDebugEnabled()) {
@@ -232,6 +246,11 @@ public class BeCPGUserAccountService {
 		return personNodeRef;
 	}
 
+	/**
+	 * <p>updateGroups.</p>
+	 *
+	 * @param userAccount a {@link fr.becpg.repo.authentication.BeCPGUserAccount} object
+	 */
 	private void updateGroups(BeCPGUserAccount userAccount) {
 		for (String authority : userAccount.getAuthorities()) {
 			if (authority.startsWith("REMOVE_")) {
@@ -267,6 +286,12 @@ public class BeCPGUserAccountService {
 		}
 	}
 	
+	/**
+	 * <p>updateUser.</p>
+	 *
+	 * @param userAccount a {@link fr.becpg.repo.authentication.BeCPGUserAccount} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef updateUser(BeCPGUserAccount userAccount) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Update an existing user");
@@ -282,6 +307,14 @@ public class BeCPGUserAccountService {
 		return personNodeRef;
 	}
 
+	/**
+	 * <p>setIdsUser.</p>
+	 *
+	 * @param userAccount a {@link fr.becpg.repo.authentication.BeCPGUserAccount} object
+	 * @param userName a {@link java.lang.String} object
+	 * @param personNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param shouldSynchronize a boolean
+	 */
 	private void setIdsUser(BeCPGUserAccount userAccount, String userName, NodeRef personNodeRef, boolean shouldSynchronize) {
 		if (Boolean.TRUE.equals(userAccount.getSynchronizeWithIDS()) && Boolean.TRUE.equals(identityServiceAccountProvider.isEnabled())) {
 			try {
@@ -296,6 +329,12 @@ public class BeCPGUserAccountService {
 		}
 	}
 	
+	/**
+	 * <p>renameUser.</p>
+	 *
+	 * @param userAccount a {@link fr.becpg.repo.authentication.BeCPGUserAccount} object
+	 * @param personNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void renameUser(BeCPGUserAccount userAccount, NodeRef personNodeRef) {
 		String newUserName = createTenantAware(userAccount.getNewUserName());
 		String oldUserName = userAccount.getUserName();
@@ -338,9 +377,17 @@ public class BeCPGUserAccountService {
 		}
 	}
 	
+	/** Constant <code>MAX_RETRIES=3</code> */
 	private static final int MAX_RETRIES = 3;
+	/** Constant <code>RETRY_DELAY_MS=500</code> */
 	private static final long RETRY_DELAY_MS = 500;
 
+	/**
+	 * <p>updateActivitiTasks.</p>
+	 *
+	 * @param oldUserName a {@link java.lang.String} object
+	 * @param newUserName a {@link java.lang.String} object
+	 */
 	private void updateActivitiTasks(String oldUserName, String newUserName) {
 		String[] updateStatements = {
 			"UPDATE ACT_RU_TASK SET assignee_ = ? WHERE assignee_ = ?",
@@ -366,6 +413,15 @@ public class BeCPGUserAccountService {
 		}
 	}
 	
+	/**
+	 * <p>executeWithRetry.</p>
+	 *
+	 * @param connection a {@link java.sql.Connection} object
+	 * @param sql a {@link java.lang.String} object
+	 * @param oldUserName a {@link java.lang.String} object
+	 * @param newUserName a {@link java.lang.String} object
+	 * @throws java.sql.SQLException if any.
+	 */
 	private void executeWithRetry(Connection connection, String sql, String oldUserName, String newUserName) throws SQLException {
 	    int attempt = 0;
 	    SQLException lastException = null;
@@ -409,6 +465,15 @@ public class BeCPGUserAccountService {
 	    }
 	}
 
+	/**
+	 * <p>updateStatement.</p>
+	 *
+	 * @param oldUserName a {@link java.lang.String} object
+	 * @param newUserName a {@link java.lang.String} object
+	 * @param connection a {@link java.sql.Connection} object
+	 * @param sql a {@link java.lang.String} object
+	 * @throws java.sql.SQLException if any.
+	 */
 	private void updateStatement(String oldUserName, String newUserName, Connection connection, String sql) throws SQLException {
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
 			statement.setString(1, newUserName);
@@ -420,6 +485,12 @@ public class BeCPGUserAccountService {
 		}
 	}
 	
+	/**
+	 * <p>toUppercaseTableName.</p>
+	 *
+	 * @param sql a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String toUppercaseTableName(String sql) {
 	    // naive but effective: uppercase word after UPDATE
 	    String[] parts = sql.split(" ");
@@ -429,6 +500,9 @@ public class BeCPGUserAccountService {
 	    return String.join(" ", parts);
 	}
 	
+	/**
+	 * <p>sleep.</p>
+	 */
 	private void sleep() {
 	    try {
 	        Thread.sleep(RETRY_DELAY_MS);
@@ -437,10 +511,22 @@ public class BeCPGUserAccountService {
 	    }
 	}
 	
+	/**
+	 * <p>isIdsUser.</p>
+	 *
+	 * @param personNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private boolean isIdsUser(NodeRef personNodeRef) {
 		return Boolean.TRUE.equals(identityServiceAccountProvider.isEnabled()) && Boolean.TRUE.equals(nodeService.getProperty(personNodeRef, BeCPGModel.PROP_IS_SSO_USER));
 	}
 
+	/**
+	 * <p>createAuthentication.</p>
+	 *
+	 * @param userAccount a {@link fr.becpg.repo.authentication.BeCPGUserAccount} object
+	 * @param personNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void createAuthentication(BeCPGUserAccount userAccount, NodeRef personNodeRef) {
 		if (Boolean.TRUE.equals(identityServiceAccountProvider.isEnabled()) && Boolean.TRUE.equals(userAccount.getSynchronizeWithIDS())) {
 			if (logger.isDebugEnabled()) {
@@ -460,6 +546,11 @@ public class BeCPGUserAccountService {
 		}
 	}
 
+	/**
+	 * <p>addAuthorityToIdsZone.</p>
+	 *
+	 * @param authority a {@link java.lang.String} object
+	 */
 	private void addAuthorityToIdsZone(String authority) {
 		Set<String> zones = authorityService.getAuthorityZones(authority);
 		String zoneId = identityServiceAccountProvider.getZoneId();
@@ -471,6 +562,12 @@ public class BeCPGUserAccountService {
 		}
 	}
 
+	/**
+	 * <p>createTenantAware.</p>
+	 *
+	 * @param userName a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String createTenantAware(String userName) {
 
 		if (!TenantService.DEFAULT_DOMAIN.equals(tenantAdminService.getCurrentUserDomain())

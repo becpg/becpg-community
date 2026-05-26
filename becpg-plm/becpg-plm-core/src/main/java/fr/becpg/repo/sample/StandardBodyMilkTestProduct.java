@@ -24,11 +24,17 @@ import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
  */
 public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 
+	/** Constant <code>MASKING="MASKING"</code> */
 	private static final String MASKING = "MASKING";
+	/** Constant <code>DENATURANT="DENATURANT"</code> */
 	private static final String DENATURANT = "DENATURANT";
+	/** Constant <code>EMOLLIENT="EMOLLIENT"</code> */
 	private static final String EMOLLIENT = "EMOLLIENT";
+	/** Constant <code>SKIN_CONDITIONING="SKIN CONDITIONING"</code> */
 	private static final String SKIN_CONDITIONING = "SKIN CONDITIONING";
+	/** Constant <code>FRAGRANCE_FLAVORING="FRAGRANCE/FLAVORING"</code> */
 	private static final String FRAGRANCE_FLAVORING = "FRAGRANCE/FLAVORING";
+	/** Constant <code>FLAVOURING="FLAVOURING"</code> */
 	private static final String FLAVOURING = "FLAVOURING";
 
 	/**
@@ -104,6 +110,11 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 		return bodyMilkProduct;
 	}
 
+	/**
+	 * <p>createRegulatoryList.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	private List<RegulatoryListDataItem> createRegulatoryList() {
 		List<RegulatoryListDataItem> regulatoryList = new ArrayList<>();
 		regulatoryList.add(
@@ -114,6 +125,13 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 		return regulatoryList;
 	}
 
+	/**
+	 * <p>createRegulatoryListItem.</p>
+	 *
+	 * @param countries a {@link java.util.List} object
+	 * @param usages a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.RegulatoryListDataItem} object
+	 */
 	private RegulatoryListDataItem createRegulatoryListItem(List<String> countries, List<String> usages) {
 		RegulatoryListDataItem item = new RegulatoryListDataItem();
 		item.setRegulatoryCountriesRef(countries.stream().map(this::getOrCreateCountryRef).toList());
@@ -121,6 +139,12 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 		return item;
 	}
 
+	/**
+	 * <p>getOrCreateUsageRef.</p>
+	 *
+	 * @param usage a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getOrCreateUsageRef(String usage) {
 		HashMap<QName, Serializable> properties = new HashMap<>();
 		properties.put(BeCPGModel.PROP_CHARACT_NAME, usage);
@@ -130,12 +154,23 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 				"/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:RegulatoryUsages", usage, PLMModel.TYPE_REGULATORY_USAGE, properties);
 	}
 
+	/**
+	 * <p>getOrCreateCountryRef.</p>
+	 *
+	 * @param country a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getOrCreateCountryRef(String country) {
 		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(PLMModel.PROP_REGULATORY_CODE, country);
 		return CharactTestHelper.getOrCreateGeo(nodeService, country, country, properties);
 	}
 
+	/**
+	 * <p>saveEntityAssociations.</p>
+	 *
+	 * @param bodyMilkProduct a {@link fr.becpg.repo.product.data.RawMaterialData} object
+	 */
 	private void saveEntityAssociations(RawMaterialData bodyMilkProduct) {
 		if (bodyMilkProduct.getProductSpecifications() != null) {
 			for (fr.becpg.repo.product.data.ProductSpecificationData productSpecificationData : bodyMilkProduct.getProductSpecifications()) {
@@ -145,6 +180,11 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 		}
 	}
 
+	/**
+	 * <p>createBodyMilkIngredients.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	private List<IngListDataItem> createBodyMilkIngredients() {
 		List<IngListDataItem> ingredients = new ArrayList<>();
 
@@ -243,6 +283,14 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 		return ingredients;
 	}
 
+	/**
+	 * <p>createIngListItemWithType.</p>
+	 *
+	 * @param ingName a {@link java.lang.String} object
+	 * @param ingTypeValue a {@link java.lang.String} object
+	 * @param ingQtyPerc a double
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 */
 	private IngListDataItem createIngListItemWithType(String ingName, String ingTypeValue, double ingQtyPerc) {
 		NodeRef ingType = null;
 		

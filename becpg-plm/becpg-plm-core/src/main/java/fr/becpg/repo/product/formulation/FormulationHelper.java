@@ -59,8 +59,12 @@ public class FormulationHelper {
 	/** Constant <code>MISSING_NUMBER_OF_PRODUCT_PER_BOX="message.formulate.missing.numberOfProdu"{trunked}</code> */
 	public static final String MISSING_NUMBER_OF_PRODUCT_PER_BOX = "message.formulate.missing.numberOfProductPerBox";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(FormulationHelper.class);
 
+	/**
+	 * <p>Constructor for FormulationHelper.</p>
+	 */
 	private FormulationHelper() {
 		// Private
 	}
@@ -155,6 +159,14 @@ public class FormulationHelper {
 		return 100 * (((1 + (lossPerc / 100)) * (1 + (parentLossRatio / 100))) - 1);
 	}
 
+	/**
+	 * <p>getQtyWithLossAndYield.</p>
+	 *
+	 * @param qty a double
+	 * @param lossPerc a double
+	 * @param yieldPerc a double
+	 * @return a {@link java.lang.Double} object
+	 */
 	private static Double getQtyWithLossAndYield(double qty, double lossPerc, double yieldPerc) {
 		return ((1 + (lossPerc / 100)) * qty) / (yieldPerc / 100);
 	}
@@ -453,6 +465,15 @@ public class FormulationHelper {
 
 	}
 
+	/**
+	 * <p>getQtyFromComposition.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param variant a {@link fr.becpg.repo.variant.model.VariantData} object
+	 * @param productUnit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
+	 * @param defaultValue a {@link java.lang.Double} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private static Double getQtyFromComposition(ProductData formulatedProduct, VariantData variant, ProductUnit productUnit, Double defaultValue) {
 		Double qty = defaultValue;
 		if ((productUnit != null) && productUnit.isVolume()) {
@@ -513,6 +534,14 @@ public class FormulationHelper {
 		return defaultValue;
 	}
 
+	/**
+	 * <p>getNetVolume.</p>
+	 *
+	 * @param qty a {@link java.lang.Double} object
+	 * @param compoListDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 * @param subProductData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private static Double getNetVolume(Double qty, CompoListDataItem compoListDataItem, ProductData subProductData) {
 
 		if (qty != null) {
@@ -783,6 +812,15 @@ public class FormulationHelper {
 
 	}
 
+	/**
+	 * <p>getQtyByPackagingLevel.</p>
+	 *
+	 * @param qty a {@link java.lang.Double} object
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param packagingListDataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 * @param subProductData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private static Double getQtyByPackagingLevel(Double qty, ProductData formulatedProduct, PackagingListDataItem packagingListDataItem,
 			ProductData subProductData) {
 

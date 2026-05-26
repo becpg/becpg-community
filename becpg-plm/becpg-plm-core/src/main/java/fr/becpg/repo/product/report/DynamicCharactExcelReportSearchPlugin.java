@@ -88,6 +88,13 @@ public class DynamicCharactExcelReportSearchPlugin extends DefaultExcelReportSea
 		
 	}
 
+	/**
+	 * <p>getDynamicProperties.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param listType a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.util.Map} object
+	 */
 	Map<String, Object> getDynamicProperties(NodeRef entityNodeRef, QName listType) {
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 		List<NodeRef> listNodeRefs = new ArrayList<>();

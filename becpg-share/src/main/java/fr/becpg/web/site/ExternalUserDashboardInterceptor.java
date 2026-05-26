@@ -47,9 +47,11 @@ import org.springframework.web.context.request.WebRequest;
  * @version $Id: $Id
  */
 public class ExternalUserDashboardInterceptor extends AbstractWebFrameworkInterceptor {
+	/** Constant <code>PATTERN_DASHBOARD_PATH</code> */
 	private static final Pattern PATTERN_DASHBOARD_PATH = Pattern.compile(".*/user/([^/]*)/dashboard");
 	
 	//beCPG
+	/** Constant <code>PATTERN_FORBIDDEN_PATH</code> */
 	private static final Pattern PATTERN_FORBIDDEN_PATH = Pattern.compile("(.*/page/customise-user-dashboard)"
 			+ "|(.*/page/start-workflow)"
 			+ "|(.*/page/site/.*)"
@@ -68,6 +70,7 @@ public class ExternalUserDashboardInterceptor extends AbstractWebFrameworkInterc
 			+ "|(.*/page/user/admin/profile)"
 			+ "|(.*/page/context/mine/entity-data-lists)");
 
+	/** Constant <code>IS_BECPG_EXTERNAL_USER="isbeCPGExternalUser"</code> */
 	private static final String IS_BECPG_EXTERNAL_USER = "isbeCPGExternalUser";
 
 	/*
@@ -143,6 +146,12 @@ public class ExternalUserDashboardInterceptor extends AbstractWebFrameworkInterc
 		}
 	}
 
+	/**
+	 * <p>isExternalUser.</p>
+	 *
+	 * @param user a {@link org.springframework.extensions.webscripts.connector.User} object
+	 * @return a boolean
+	 */
 	private boolean isExternalUser(User user) {
 		return user !=null && user.getCapabilities().containsKey(IS_BECPG_EXTERNAL_USER)
 				&& Boolean.TRUE.equals(user.getCapabilities().get(IS_BECPG_EXTERNAL_USER));

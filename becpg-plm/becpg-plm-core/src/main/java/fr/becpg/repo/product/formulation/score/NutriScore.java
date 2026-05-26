@@ -25,6 +25,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @Service("nutriScore")
 public class NutriScore implements ScoreCalculatingPlugin {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(NutriScore.class);
 
 	/** {@inheritDoc} */

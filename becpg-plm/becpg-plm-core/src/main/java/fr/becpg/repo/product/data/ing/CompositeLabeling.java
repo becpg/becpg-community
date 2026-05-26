@@ -31,6 +31,7 @@ public class CompositeLabeling extends LabelingComponent {
 	/** Constant <code>ROOT="root"</code> */
 	public static final String ROOT = "root";
 
+	/** Constant <code>serialVersionUID=7903326038199131582L</code> */
 	private static final long serialVersionUID = 7903326038199131582L;
 
 	private Map<NodeRef, CompositeLabeling> ingList = new LinkedHashMap<>();
@@ -570,6 +571,13 @@ public class CompositeLabeling extends LabelingComponent {
 		return sb.toString();
 	}
 
+	/**
+	 * <p>print.</p>
+	 *
+	 * @param sb a {@link java.lang.StringBuilder} object
+	 * @param prefix a {@link java.lang.String} object
+	 * @param isTail a boolean
+	 */
 	private void print(StringBuilder sb, String prefix, boolean isTail) {
 		sb.append(prefix).append(isTail ? "└──[" : "├──[")
 				.append(getLegalName(I18NUtil.getContentLocaleLang()) == null ? ROOT : getLegalName(I18NUtil.getContentLocaleLang()))

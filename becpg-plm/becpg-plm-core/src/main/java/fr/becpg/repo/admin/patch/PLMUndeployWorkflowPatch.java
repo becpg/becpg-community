@@ -20,8 +20,10 @@ import org.springframework.extensions.surf.util.I18NUtil;
  * @version $Id: $Id
  */
 public class PLMUndeployWorkflowPatch extends AbstractPatch implements ApplicationContextAware {
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.undeployWorkflowPatch"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.undeployWorkflowPatch";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(PLMUndeployWorkflowPatch.class);
 
 	private WorkflowService workflowService;

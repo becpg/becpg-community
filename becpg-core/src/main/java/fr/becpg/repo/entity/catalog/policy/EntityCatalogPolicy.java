@@ -31,6 +31,7 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 public class EntityCatalogPolicy extends AbstractBeCPGPolicy
 		implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnUpdatePropertiesPolicy {
 
+	/** Constant <code>CHANGED_CATALOG_ENTRIES="EntityCatalogPolicy.ChangedCatalogEntri"{trunked}</code> */
 	private static final String CHANGED_CATALOG_ENTRIES = "EntityCatalogPolicy.ChangedCatalogEntries";
 
 	private EntityCatalogService entityCatalogService;

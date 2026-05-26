@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -48,6 +48,7 @@ import fr.becpg.repo.cache.BeCPGCacheService;
  */
 public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBean, RefreshableCacheListener {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(BeCPGCacheServiceImpl.class);
 
 	Map<String, Integer> cacheSizes = new ConcurrentHashMap<>();
@@ -58,6 +59,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 	private AsynchronouslyRefreshedCacheRegistry registry;
 
+	/** Constant <code>INITIAL_CACHE_MAP_SIZE=16</code> */
 	private static final int INITIAL_CACHE_MAP_SIZE = 16;
 
 	private Map<String, SimpleCache<String, ?>> caches = new ConcurrentHashMap<>(INITIAL_CACHE_MAP_SIZE);
@@ -274,6 +276,12 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		registry.broadcastEvent(new BeCPGRefreshableCacheEvent(getCacheId(), "all"), true);
 	}
 
+	/**
+	 * <p>computeCacheKey.</p>
+	 *
+	 * @param cacheKey a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String computeCacheKey(String cacheKey) {
 
 		final String tenantDomain = TenantUtil.getCurrentDomain();

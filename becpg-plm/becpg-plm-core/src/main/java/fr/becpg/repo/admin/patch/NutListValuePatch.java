@@ -35,7 +35,9 @@ import fr.becpg.repo.entity.EntityListDAO;
  */
 public class NutListValuePatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(NutListValuePatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.nutListValuePatch.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.nutListValuePatch.result";
 
 	private NodeDAO nodeDAO;
@@ -57,6 +59,11 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
+	/**
+	 * <p>doApply.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private void doApply(final QName type) {
 		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 

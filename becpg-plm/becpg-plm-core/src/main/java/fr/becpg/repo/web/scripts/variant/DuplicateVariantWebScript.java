@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2017 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -69,6 +69,7 @@ public class DuplicateVariantWebScript extends AbstractWebScript {
 	/** Constant <code>PARAM_NODEREF="nodeRef"</code> */
 	protected static final String PARAM_NODEREF = "nodeRef";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(DuplicateVariantWebScript.class);
 
 	private NodeService nodeService;
@@ -200,6 +201,13 @@ public class DuplicateVariantWebScript extends AbstractWebScript {
 
 	}
 
+	/**
+	 * <p>duplicate.</p>
+	 *
+	 * @param newVariantNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param origList a {@link java.util.List} object
+	 * @param listToCopy a {@link java.util.List} object
+	 */
 	@SuppressWarnings("unchecked")
 	private void duplicate(NodeRef newVariantNodeRef, List<? extends VariantDataItem> origList, List<? extends VariantDataItem> listToCopy) {
 

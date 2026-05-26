@@ -14,6 +14,11 @@ public enum BatchPriority {
 	HIGH(1),
 	VERY_HIGH(0);
 
+	/**
+	 * <p>Constructor for BatchPriority.</p>
+	 *
+	 * @param priority a int
+	 */
 	private int priority;
 
 	BatchPriority(int priority) {

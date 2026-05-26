@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -307,6 +307,14 @@ public class BatchData extends AbstractScorableEntity {
 		this.laboratories = laboratories;
 	}
 
+	/**
+	 * <p>filterList.</p>
+	 *
+	 * @param list a {@link java.util.List} object
+	 * @param filters a {@link java.util.List} object
+	 * @param <T> a T class
+	 * @return a {@link java.util.List} object
+	 */
 	private <T> List<T> filterList(List<T> list, List<DataListFilter<BatchData, T>> filters) {
 		if ((filters != null) && !filters.isEmpty()) {
 			Stream<T> stream = list.stream();

@@ -75,6 +75,15 @@ public class BecpgFormParser implements FormParser {
 
 	}
 
+	/**
+	 * <p>visitFormElement.</p>
+	 *
+	 * @param form a {@link org.json.JSONObject} object
+	 * @param forms a {@link java.util.Map} object
+	 * @param itemKind a {@link java.lang.String} object
+	 * @param formId a {@link java.lang.String} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private void visitFormElement(JSONObject form, Map<String, BecpgFormDefinition> forms, String itemKind, String formId) throws JSONException {
 
 		if ((formId == null) || ("-".equals(formId)) || formId.isEmpty()) {

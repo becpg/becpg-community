@@ -17,6 +17,7 @@ import fr.becpg.repo.system.SystemConfigurationService;
 @Component
 public class NutrientRegulatoryHelper {
 	
+	/** Constant <code>instance</code> */
 	private static NutrientRegulatoryHelper instance;
 	
 	private final SystemConfigurationService systemConfigurationService;
@@ -93,6 +94,12 @@ public class NutrientRegulatoryHelper {
 		return retrieveNutrientPlugin(productData.getNutrientProfileVersion()).buildContext(productData);
 	}
 	
+	/**
+	 * <p>retrieveNutrientPlugin.</p>
+	 *
+	 * @param version a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.helper.NutrientRegulatoryPlugin} object
+	 */
 	private static NutrientRegulatoryPlugin retrieveNutrientPlugin(String version) {
 		
 		for (NutrientRegulatoryPlugin helper : instance.nutrientPlugins) {

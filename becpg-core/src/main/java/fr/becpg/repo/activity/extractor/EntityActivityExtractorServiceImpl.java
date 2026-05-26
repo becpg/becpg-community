@@ -73,8 +73,10 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
 
+	/** Constant <code>ACTIVITYEVENT_UPDATE="Update"</code> */
 	private static final String ACTIVITYEVENT_UPDATE = "Update";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityActivityExtractorServiceImpl.class);
 
 	/** {@inheritDoc} */
@@ -252,6 +254,12 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 		}
 	}
 
+	/**
+	 * <p>extractPerson.</p>
+	 *
+	 * @param person a {@link java.lang.String} object
+	 * @return a {@link java.util.Map} object
+	 */
 	private Map<String, String> extractPerson(String person) {
 		Map<String, String> ret = new HashMap<>(2);
 		ret.put("value", person);
@@ -259,6 +267,13 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 		return ret;
 	}
 
+	/**
+	 * <p>getFieldDef.</p>
+	 *
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object
+	 * @param field a {@link fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure} object
+	 * @return a {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition} object
+	 */
 	private ClassAttributeDefinition getFieldDef(QName itemType, AttributeExtractorStructure field) {
 
 		if (!field.getItemType().equals(itemType)) {
@@ -267,6 +282,13 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 		return field.getFieldDef();
 	}
 
+	/**
+	 * <p>areStringsDifferent.</p>
+	 *
+	 * @param object a {@link java.lang.Object} object
+	 * @param object2 a {@link java.lang.Object} object
+	 * @return a boolean
+	 */
 	private boolean areStringsDifferent(Object object, Object object2) {
 
 		if ((object == null) && (object2 == null)) {
@@ -280,6 +302,13 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 		return !object.toString().equals(object2.toString());
 	}
 
+	/**
+	 * <p>adaptProperty.</p>
+	 *
+	 * @param propToAdapt a {@link org.json.JSONArray} object
+	 * @param propRef a {@link org.json.JSONArray} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private void adaptProperty(JSONArray propToAdapt, JSONArray propRef) throws JSONException {
 
 		if ((propToAdapt.get(0) == JSONObject.NULL) && (propRef.get(0) instanceof JSONArray)) {
@@ -306,6 +335,7 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 	 * @param propertyArray a {@link java.lang.Object} object.
 	 * @param propertyDef a {@link org.alfresco.service.cmr.dictionary.PropertyDefinition} object.
 	 * @return a {@link org.json.JSONArray} object.
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	private JSONArray checkProperty(JSONArray propertyArray, PropertyDefinition propertyDef, NodeRef entityNodeRef) {
 		JSONArray postproperty = new JSONArray();
@@ -315,6 +345,14 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 		return postproperty;
 	}
 
+	/**
+	 * <p>toDisplayValue.</p>
+	 *
+	 * @param prop a {@link java.lang.Object} object
+	 * @param propertyDef a {@link org.alfresco.service.cmr.dictionary.PropertyDefinition} object
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.Object} object
+	 */
 	private Object toDisplayValue(Object prop, PropertyDefinition propertyDef, NodeRef entityNodeRef) {
 		try {
 			String stringVal = prop.toString();
@@ -385,6 +423,12 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 		return prop;
 	}
 
+	/**
+	 * <p>extractDate.</p>
+	 *
+	 * @param prop a {@link java.lang.String} object
+	 * @return a {@link java.lang.Object} object
+	 */
 	private Object extractDate(String prop) {
 		try {
 			return ISO8601DateFormat.parse(prop);

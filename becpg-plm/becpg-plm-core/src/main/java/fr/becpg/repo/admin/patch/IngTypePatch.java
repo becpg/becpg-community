@@ -32,7 +32,9 @@ import fr.becpg.model.PLMModel;
  */
 public class IngTypePatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(IngTypePatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.ingTypePatch.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.ingTypePatch.result";
 
 	private NodeDAO nodeDAO;

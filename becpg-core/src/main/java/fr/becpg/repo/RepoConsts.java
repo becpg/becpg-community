@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2010-2011 beCPG. All rights reserved.
+ *  Copyright (C) 2010-2026 beCPG. All rights reserved.
  */
 package fr.becpg.repo;
 
@@ -16,6 +16,9 @@ public class RepoConsts
 {
 
 
+	/**
+	 * <p>Constructor for RepoConsts.</p>
+	 */
 	private RepoConsts() {
 		//Private constructor
 	}

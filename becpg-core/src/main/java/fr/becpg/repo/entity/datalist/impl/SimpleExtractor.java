@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -66,8 +66,10 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 	protected PaginatedSearchCache paginatedSearchCache;
 
+	/** Constant <code>dataListItemExtractors</code> */
 	private static final Map<QName, DataListItemExtractor> dataListItemExtractors = new HashMap<>();
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(SimpleExtractor.class);
 
 	/**

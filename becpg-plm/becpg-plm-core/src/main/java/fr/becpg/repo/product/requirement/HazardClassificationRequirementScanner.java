@@ -29,6 +29,7 @@ public class HazardClassificationRequirementScanner extends AbstractRequirementS
 	/** Constant <code>MESSAGE_NOT_CLAIM="message.formulate.labelClaim.notClaimed"</code> */
 	public static final String MESSAGE_FORBIDDEN_CLASSIFICATION = "message.formulate.clp.forbidden";
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(HazardClassificationRequirementScanner.class);
 
 	/** {@inheritDoc} */
@@ -110,6 +111,13 @@ public class HazardClassificationRequirementScanner extends AbstractRequirementS
 	    return results;
 	}
 
+	/**
+	 * <p>matchesHazardStatement.</p>
+	 *
+	 * @param spec a {@link fr.becpg.repo.product.data.productList.HazardClassificationListDataItem} object
+	 * @param product a {@link fr.becpg.repo.product.data.productList.HazardClassificationListDataItem} object
+	 * @return a boolean
+	 */
 	private boolean matchesHazardStatement(HazardClassificationListDataItem spec, 
 	        HazardClassificationListDataItem product) {
 	    boolean hasHazardStatement = spec.getHazardStatement() != null;
@@ -131,6 +139,13 @@ public class HazardClassificationRequirementScanner extends AbstractRequirementS
 	    return result;
 	}
 
+	/**
+	 * <p>matchesSignalWord.</p>
+	 *
+	 * @param spec a {@link fr.becpg.repo.product.data.productList.HazardClassificationListDataItem} object
+	 * @param product a {@link fr.becpg.repo.product.data.productList.HazardClassificationListDataItem} object
+	 * @return a boolean
+	 */
 	private boolean matchesSignalWord(HazardClassificationListDataItem spec, 
 	        HazardClassificationListDataItem product) {
 	    boolean noHazardStatement = spec.getHazardStatement() == null;
@@ -153,6 +168,13 @@ public class HazardClassificationRequirementScanner extends AbstractRequirementS
 	    return result;
 	}
 
+	/**
+	 * <p>matchesPictogram.</p>
+	 *
+	 * @param spec a {@link fr.becpg.repo.product.data.productList.HazardClassificationListDataItem} object
+	 * @param product a {@link fr.becpg.repo.product.data.productList.HazardClassificationListDataItem} object
+	 * @return a boolean
+	 */
 	private boolean matchesPictogram(HazardClassificationListDataItem spec, 
 	        HazardClassificationListDataItem product) {
 	    boolean noHazardStatement = spec.getHazardStatement() == null;
@@ -175,6 +197,7 @@ public class HazardClassificationRequirementScanner extends AbstractRequirementS
 	
 	/**
 	 * Determines if the product's signal word level is equal to or higher than the specification's signal word level.
+	 *
 	 * @param specSignalWord The signal word from the specification.
 	 * @param productSignalWord The signal word from the product.
 	 * @return true if the product's signal word level is equal to or higher, false otherwise.
@@ -228,6 +251,11 @@ public class HazardClassificationRequirementScanner extends AbstractRequirementS
 	
 	/**
 	 * Helper method to process and add a requirement control item to the result list.
+	 *
+	 * @param ret a {@link java.util.List} object
+	 * @param specDataItem a {@link fr.becpg.repo.product.data.productList.HazardClassificationListDataItem} object
+	 * @param listDataItem a {@link fr.becpg.repo.product.data.productList.HazardClassificationListDataItem} object
+	 * @param specification a {@link fr.becpg.repo.product.data.ProductSpecificationData} object
 	 */
 	private void processRequirement(List<RequirementListDataItem> ret, 
 	                                HazardClassificationListDataItem specDataItem,

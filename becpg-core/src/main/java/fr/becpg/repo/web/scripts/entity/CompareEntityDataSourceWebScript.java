@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -51,17 +51,25 @@ import fr.becpg.repo.entity.version.EntityVersionService;
  */
 public class CompareEntityDataSourceWebScript extends AbstractWebScript {
 
+	/** Constant <code>MAX_ENTITIES=10</code> */
 	private static final int MAX_ENTITIES = 10;
+	/** Constant <code>PARAM_ENTITY="entity"</code> */
 	private static final String PARAM_ENTITY = "entity";
 
+	/** Constant <code>PARAM_STORE_TYPE="store_type"</code> */
 	private static final String PARAM_STORE_TYPE = "store_type";
+	/** Constant <code>PARAM_STORE_ID="store_id"</code> */
 	private static final String PARAM_STORE_ID = "store_id";
+	/** Constant <code>PARAM_ID="id"</code> */
 	private static final String PARAM_ID = "id";
 
+	/** Constant <code>PARAM_ENTITIES="entities"</code> */
 	private static final String PARAM_ENTITIES = "entities";
 
+	/** Constant <code>PARAM_VERSION_LABEL="versionLabel"</code> */
 	private static final String PARAM_VERSION_LABEL = "versionLabel";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(CompareEntityDataSourceWebScript.class);
 
 	@Autowired

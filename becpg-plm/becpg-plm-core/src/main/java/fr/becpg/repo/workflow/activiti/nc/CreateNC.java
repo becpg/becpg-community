@@ -41,6 +41,7 @@ import fr.becpg.repo.workflow.activiti.nc.NCWorkflowUtils.NCWorkflowUtilsTask;
  */
 public class CreateNC extends BaseJavaDelegate {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(CreateNC.class);
 
 	private NodeService nodeService;

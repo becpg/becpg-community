@@ -226,6 +226,11 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 		return toxList;
 	}
 
+	/**
+	 * <p>saveEntityAssociations.</p>
+	 *
+	 * @param soapProduct a {@link fr.becpg.repo.product.data.FinishedProductData} object
+	 */
 	private void saveEntityAssociations(FinishedProductData soapProduct) {
 
 		if (soapProduct.getProductSpecifications() != null) {
@@ -345,6 +350,11 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 		essentialOilsNodeRef = alfrescoRepository.create(destFolder, essentialOils).getNodeRef();
 	}
 
+	/**
+	 * <p>createSodiumHydroxideIngredients.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	private List<IngListDataItem> createSodiumHydroxideIngredients() {
 		List<IngListDataItem> ingredients = new ArrayList<>();
 
@@ -387,6 +397,11 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 		return ingredients;
 	}
 
+	/**
+	 * <p>createOliveOilIngredients.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	private List<IngListDataItem> createOliveOilIngredients() {
 		List<IngListDataItem> ingredients = new ArrayList<>();
 
@@ -398,6 +413,11 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 		return ingredients;
 	}
 
+	/**
+	 * <p>createEssentialOilsIngredients.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	private List<IngListDataItem> createEssentialOilsIngredients() {
 		List<IngListDataItem> ingredients = new ArrayList<>();
 
@@ -410,6 +430,19 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 		return ingredients;
 	}
 
+	/**
+	 * <p>createIngListItem.</p>
+	 *
+	 * @param ingName a {@link java.lang.String} object
+	 * @param percentage a {@link java.lang.Double} object
+	 * @param casNumber a {@link java.lang.String} object
+	 * @param hazardClass a {@link java.lang.String} object
+	 * @param toxicityOral a {@link java.lang.Double} object
+	 * @param toxicityDermal a {@link java.lang.Double} object
+	 * @param mFactor a {@link java.lang.Double} object
+	 * @param superSensitizing a {@link java.lang.Boolean} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 */
 	private IngListDataItem createIngListItem(String ingName, Double percentage, String casNumber, String hazardClass, Double toxicityOral,
 			Double toxicityDermal, Double mFactor, Boolean superSensitizing) {
 

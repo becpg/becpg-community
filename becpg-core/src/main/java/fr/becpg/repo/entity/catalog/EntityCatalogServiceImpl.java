@@ -142,6 +142,11 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 		});
 	}
 
+	/**
+	 * <p>getCatalogFolderNodeRef.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getCatalogFolderNodeRef() {
 		return BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), RepoConsts.CATALOGS_PATH);
 	}
@@ -221,6 +226,14 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 
 	}
 
+	/**
+	 * <p>checkHasChange.</p>
+	 *
+	 * @param auditedFields a {@link java.util.Set} object
+	 * @param diffQnames a {@link java.util.Set} object
+	 * @param listNodeRefs a {@link java.util.Set} object
+	 * @return a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private QName checkHasChange(Set<QName> auditedFields, Set<QName> diffQnames, Set<NodeRef> listNodeRefs) {
 		QName changedField = null;
 		if ((auditedFields != null) && !auditedFields.isEmpty()) {
@@ -247,6 +260,14 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 		return changedField;
 	}
 
+	/**
+	 * <p>isMatchFilter.</p>
+	 *
+	 * @param catalog a {@link org.json.JSONObject} object
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 * @throws org.json.JSONException if any.
+	 */
 	private boolean isMatchFilter(JSONObject catalog, NodeRef entityNodeRef) throws JSONException {
 		if (catalog.has(EntityCatalogService.PROP_ENTITY_FILTER)) {
 			return isMatchFilter(null, catalog, alfrescoRepository.findOne(entityNodeRef));
@@ -254,6 +275,15 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 		return true;
 	}
 
+	/**
+	 * <p>isMatchFilter.</p>
+	 *
+	 * @param catalogId a {@link java.lang.String} object
+	 * @param catalog a {@link org.json.JSONObject} object
+	 * @param entity a {@link fr.becpg.repo.repository.RepositoryEntity} object
+	 * @return a boolean
+	 * @throws org.json.JSONException if any.
+	 */
 	private boolean isMatchFilter(String catalogId, JSONObject catalog, RepositoryEntity entity) throws JSONException {
 
 		if (catalog.has(EntityCatalogService.PROP_ENTITY_FILTER)) {
@@ -266,6 +296,13 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 		return true;
 	}
 
+	/**
+	 * <p>testCondition.</p>
+	 *
+	 * @param condition a {@link java.lang.String} object
+	 * @param entity a {@link fr.becpg.repo.repository.RepositoryEntity} object
+	 * @return a boolean
+	 */
 	private boolean testCondition(String condition, RepositoryEntity entity) {
 
 		if ((condition != null) && !(condition.startsWith("spel") || condition.startsWith("js"))) {
@@ -495,6 +532,16 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 		return ret;
 	}
 
+	/**
+	 * <p>extractNonUniqueFields.</p>
+	 *
+	 * @param entityType a {@link org.alfresco.service.namespace.QName} object
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param uniqueFields a {@link org.json.JSONArray} object
+	 * @param i18nMessages a {@link org.json.JSONObject} object
+	 * @return a {@link org.json.JSONArray} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private JSONArray extractNonUniqueFields(QName entityType, NodeRef entityNodeRef, JSONArray uniqueFields, JSONObject i18nMessages)
 			throws JSONException {
 		JSONArray res = new JSONArray();
@@ -570,6 +617,12 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 		return res;
 	}
 
+	/**
+	 * <p>toJsonArray.</p>
+	 *
+	 * @param propDuplicates a {@link java.util.List} object
+	 * @return a {@link org.json.JSONArray} object
+	 */
 	private JSONArray toJsonArray(List<NodeRef> propDuplicates) {
 		JSONArray ret = new JSONArray();
 		for (NodeRef tmp : propDuplicates) {
@@ -578,6 +631,15 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 		return ret;
 	}
 
+	/**
+	 * <p>getPropertyDuplicates.</p>
+	 *
+	 * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param typeQName a {@link org.alfresco.service.namespace.QName} object
+	 * @param propQName a {@link org.alfresco.service.namespace.QName} object
+	 * @param value a {@link java.lang.String} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> getPropertyDuplicates(NodeRef productNodeRef, QName typeQName, QName propQName, String value) {
 
 		List<NodeRef> queryResults = new ArrayList<>();
@@ -604,6 +666,19 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 		return queryResults;
 	}
 
+	/**
+	 * <p>extractMissingFields.</p>
+	 *
+	 * @param formulatedEntity a {@link fr.becpg.repo.repository.RepositoryEntity} object
+	 * @param entityType a {@link org.alfresco.service.namespace.QName} object
+	 * @param properties a {@link java.util.Map} object
+	 * @param reqFields a {@link org.json.JSONArray} object
+	 * @param i18nMessages a {@link org.json.JSONObject} object
+	 * @param lang a {@link java.lang.String} object
+	 * @param isFirstLang a boolean
+	 * @return a {@link org.json.JSONArray} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private JSONArray extractMissingFields(RepositoryEntity formulatedEntity, QName entityType, Map<QName, Serializable> properties,
 			JSONArray reqFields, JSONObject i18nMessages, String lang, boolean isFirstLang) throws JSONException {
 		JSONArray ret = new JSONArray();
@@ -748,6 +823,16 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 		return ret;
 	}
 
+	/**
+	 * <p>mlTextIsPresent.</p>
+	 *
+	 * @param fieldQname a {@link org.alfresco.service.namespace.QName} object
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param lang a {@link java.lang.String} object
+	 * @param curLang a {@link java.lang.String} object
+	 * @param properties a {@link java.util.Map} object
+	 * @return a boolean
+	 */
 	private boolean mlTextIsPresent(QName fieldQname, NodeRef entityNodeRef, String lang, String curLang, Map<QName, Serializable> properties) {
 		boolean res = true;
 		MLText mlText = (MLText) mlNodeService.getProperty(entityNodeRef, fieldQname);
@@ -784,12 +869,19 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 	 * @param messageKey
 	 *            a {@link java.lang.String} object.
 	 * @return a {@link java.lang.String} object.
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
 	 */
 	private String getFieldDisplayName(QName nodeType, ClassAttributeDefinition classDef, String messageKey) {
 		String displayName = messageKey != null ? MessageHelper.getMessage(messageKey) : dictionaryService.getTitle(classDef, nodeType);
 		return displayName != null ? displayName : messageKey;
 	}
 
+	/**
+	 * <p>formatQnameString.</p>
+	 *
+	 * @param qNameString a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition} object
+	 */
 	private ClassAttributeDefinition formatQnameString(String qNameString) {
 		ClassAttributeDefinition res = null;
 

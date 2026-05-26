@@ -23,6 +23,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfCacheable(isCharact = true)
 public class DocumentTypeItem extends BeCPGDataObject {
 
+	/** Constant <code>serialVersionUID=4814381673959719201L</code> */
 	private static final long serialVersionUID = 4814381673959719201L;
 
 	private String charactName;

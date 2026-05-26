@@ -24,13 +24,22 @@ import java.util.stream.Collectors;
  */
 public class SecurePasswordGenerator {
 
+	/** Constant <code>RANDOM</code> */
 	private static final SecureRandom RANDOM = new SecureRandom();
+	/** Constant <code>UPPER="ABCDEFGHIJKLMNOPQRSTUVWXYZ"</code> */
 	private static final String UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	/** Constant <code>LOWER="abcdefghijklmnopqrstuvwxyz"</code> */
 	private static final String LOWER = "abcdefghijklmnopqrstuvwxyz";
+	/** Constant <code>DIGIT="0123456789"</code> */
 	private static final String DIGIT = "0123456789";
+	/** Constant <code>SPECIAL="!@#$%^&amp;*()-_=+[]{}"</code> */
 	private static final String SPECIAL = "!@#$%^&*()-_=+[]{}";
+	/** Constant <code>ALL="UPPER + LOWER + DIGIT + SPECIAL"</code> */
 	private static final String ALL = UPPER + LOWER + DIGIT + SPECIAL;
 	
+	/**
+	 * <p>Constructor for SecurePasswordGenerator.</p>
+	 */
 	private SecurePasswordGenerator() {
 		
 	}
@@ -55,10 +64,22 @@ public class SecurePasswordGenerator {
 	    return shuffleString(password.toString());
 	}
 
+	/**
+	 * <p>randomChar.</p>
+	 *
+	 * @param chars a {@link java.lang.String} object
+	 * @return a char
+	 */
 	private static char randomChar(String chars) {
 	    return chars.charAt(RANDOM.nextInt(chars.length()));
 	}
 	
+	/**
+	 * <p>shuffleString.</p>
+	 *
+	 * @param input a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private static String shuffleString(String input) {
 		List<Character> characters = input.chars().mapToObj(c -> (char) c).collect(Collectors.toList());
 		Collections.shuffle(characters);

@@ -84,8 +84,10 @@ import fr.becpg.repo.entity.EntityService;
  */
 public class BeCPGZipDownloadExporter extends BaseExporter
 {
+    /** Constant <code>log</code> */
     private static Logger log = LoggerFactory.getLogger(BeCPGZipDownloadExporter.class);
     
+    /** Constant <code>PATH_SEPARATOR="/"</code> */
     private static final String PATH_SEPARATOR = "/";
 
     protected ZipArchiveOutputStream zipStream;
@@ -191,6 +193,12 @@ public class BeCPGZipDownloadExporter extends BaseExporter
         }
     }
     
+    /**
+     * <p>hasReadPermissionOnReference.</p>
+     *
+     * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @return a boolean
+     */
     private boolean hasReadPermissionOnReference(NodeRef nodeRef) {
     	NodeRef entityVersionNodeRef = entityService.getEntityNodeRef(nodeRef, nodeService.getType(nodeRef));
 		if (entityVersionNodeRef != null) {
@@ -222,6 +230,14 @@ public class BeCPGZipDownloadExporter extends BaseExporter
 		return true;
     }
 
+	/**
+	 * <p>findMatchingSubPath.</p>
+	 *
+	 * @param searchParentRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param originalRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param originalParentRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef findMatchingSubPath(NodeRef searchParentRef, NodeRef originalRef, NodeRef originalParentRef) {
 		
 		if (originalRef.equals(originalParentRef)) {
@@ -245,6 +261,13 @@ public class BeCPGZipDownloadExporter extends BaseExporter
 		return nextMatchingRef;
 	}
 
+	/**
+	 * <p>findMatchingChild.</p>
+	 *
+	 * @param parentRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param subPathToMatch a {@link org.alfresco.service.cmr.repository.Path} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef findMatchingChild(NodeRef parentRef, Path subPathToMatch) {
 		if (parentRef == null || !nodeService.exists(parentRef)) {
 			return null;
@@ -263,6 +286,12 @@ public class BeCPGZipDownloadExporter extends BaseExporter
 		return null;
 	}
 
+    /**
+     * <p>isVersionNodeRef.</p>
+     *
+     * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @return a boolean
+     */
     private boolean isVersionNodeRef(NodeRef nodeRef)
     {
     	return nodeRef.getStoreRef().getProtocol().equals(VersionModel.STORE_PROTOCOL) || nodeRef.getStoreRef().getIdentifier().equals(Version2Model.STORE_ID);
@@ -354,6 +383,11 @@ public class BeCPGZipDownloadExporter extends BaseExporter
         }
     }
 
+    /**
+     * <p>Getter for the field <code>path</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     private String getPath()
     {
         if (path.size() < 1) 
@@ -380,10 +414,10 @@ public class BeCPGZipDownloadExporter extends BaseExporter
 
     /**
      * Copy input stream to output stream
-     * 
+     *
      * @param output  output stream
      * @param in  input stream
-     * @throws IOException
+     * @throws java.io.IOException
      */
     private void copyStream(OutputStream output, InputStream in)
         throws IOException
@@ -407,6 +441,9 @@ public class BeCPGZipDownloadExporter extends BaseExporter
         }
     }
     
+    /**
+     * <p>checkCancelled.</p>
+     */
     private void checkCancelled()
     {
         boolean downloadCancelled = transactionHelper.doInTransaction(new RetryingTransactionCallback<Boolean>()
@@ -425,6 +462,9 @@ public class BeCPGZipDownloadExporter extends BaseExporter
         }
     }
 
+    /**
+     * <p>updateStatus.</p>
+     */
     private void updateStatus()
     {
         transactionHelper.doInTransaction(new RetryingTransactionCallback<Object>()

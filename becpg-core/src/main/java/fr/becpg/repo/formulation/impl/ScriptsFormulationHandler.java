@@ -112,6 +112,7 @@ public class ScriptsFormulationHandler extends FormulationBaseHandler<Formulated
 		ScriptsFormulationHandler.logger = logger;
 	}
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(ScriptsFormulationHandler.class);
 
 	/** {@inheritDoc} */

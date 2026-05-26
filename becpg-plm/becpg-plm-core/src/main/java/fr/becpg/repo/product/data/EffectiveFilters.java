@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -104,6 +104,15 @@ public class EffectiveFilters<T extends EffectiveDataItem> implements DataListFi
 		};
 	}
 
+	/**
+	 * <p>isEffective.</p>
+	 *
+	 * @param productEndEffectivity a {@link java.util.Date} object
+	 * @param now a {@link java.util.Date} object
+	 * @param startEffectivity a {@link java.util.Date} object
+	 * @param item a T object
+	 * @return a boolean
+	 */
 	private boolean isEffective(Date productEndEffectivity, final Date now, final Date startEffectivity, T item) {
 		return ((item.getStartEffectivity() == null) || (item.getStartEffectivity().getTime() <= startEffectivity.getTime()))
 				&& ((item.getEndEffectivity() == null)
@@ -111,6 +120,14 @@ public class EffectiveFilters<T extends EffectiveDataItem> implements DataListFi
 						|| (item.getEndEffectivity().getTime() > now.getTime()));
 	}
 
+	/**
+	 * <p>isFuture.</p>
+	 *
+	 * @param productStartEffectivity a {@link java.util.Date} object
+	 * @param now a {@link java.util.Date} object
+	 * @param item a T object
+	 * @return a boolean
+	 */
 	private boolean isFuture(Date productStartEffectivity, final Date now, T item) {
 		return (item.getEndEffectivity() == null)
 				|| ((productStartEffectivity != null) && (item.getEndEffectivity().getTime() > productStartEffectivity.getTime()))

@@ -22,10 +22,20 @@ public class RemoteRateLimiter {
     private SystemConfigurationService systemConfigurationService;
     
     
+    /**
+     * <p>remoteRateLimiterCapacity.</p>
+     *
+     * @return a {@link java.lang.Integer} object
+     */
     private Integer remoteRateLimiterCapacity() {
 		return Integer.valueOf(systemConfigurationService.confValue("beCPG.remote.rateLimiter.capacity"));
 	}
 
+	/**
+	 * <p>remoteRateLimiterRefillRate.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double remoteRateLimiterRefillRate() {
 		return Double.valueOf(systemConfigurationService.confValue("beCPG.remote.rateLimiter.refillRate"));
 	}
@@ -44,6 +54,9 @@ public class RemoteRateLimiter {
         return false; 
     }
 
+    /**
+     * <p>refillTokens.</p>
+     */
     private void refillTokens() {
         Instant now = Instant.now();
         double timeElapsed = (now.toEpochMilli() - lastRefillTime.toEpochMilli());

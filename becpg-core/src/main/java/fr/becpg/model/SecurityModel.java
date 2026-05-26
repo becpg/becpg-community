@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -31,6 +31,9 @@ public final class SecurityModel {
 	// Namespace
 	//
 	
+	/**
+	 * <p>Constructor for SecurityModel.</p>
+	 */
 	private SecurityModel(){
 		//DO Nothing
 	}

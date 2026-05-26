@@ -67,6 +67,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class BeCPGTrashcanCleaner extends TrashcanCleaner
 {
+    /** Constant <code>logger</code> */
     private static final Log logger = LogFactory.getLog(BeCPGTrashcanCleaner.class);
 
     private final NodeService nodeService;
@@ -99,14 +100,12 @@ public class BeCPGTrashcanCleaner extends TrashcanCleaner
     }
 
     /**
+     * {@inheritDoc}
+     *
      *
      * It deletes the {@link java.util.List List} of
      * {@link org.alfresco.service.cmr.repository.NodeRef NodeRef} received as
      * argument.
-     *
-     * @param nodes
-     *
-     * return The number of deleted nodes
      */
     private int deleteNodes(List<NodeRef> nodes)
     {
@@ -136,7 +135,7 @@ public class BeCPGTrashcanCleaner extends TrashcanCleaner
      * archive store set to be deleted according to configuration for
      * <b>deleteBatchCount</b> and <b>keepPeriod</b>.
      *
-     * @return
+     * @return a {@link java.util.List} object
      */
     private List<NodeRef> getBatchToDelete()
     {
@@ -151,10 +150,10 @@ public class BeCPGTrashcanCleaner extends TrashcanCleaner
      *
      * It will return the first {@link #deleteBatchCount}
      * {@link org.alfresco.service.cmr.repository.ChildAssociationRef}s
-     * of type {@link ContentModel}.ASSOC_CHILDREN
+     * of type {@link org.alfresco.model.ContentModel}.ASSOC_CHILDREN
      * from the archive store set.
      *
-     * @return
+     * @return a {@link java.util.List} object
      */
     private List<ChildAssociationRef> getTrashcanChildAssocs()
     {
@@ -170,13 +169,12 @@ public class BeCPGTrashcanCleaner extends TrashcanCleaner
     }
 
     /**
+     * {@inheritDoc}
+     *
      *
      * It checks if the archived node has been archived since longer than
      * <b>keepPeriod</b>. If <b>keepPeriod</b> is 0 or negative it will return
      * always true.
-     *
-     * @param node
-     * @return
      */
     private boolean olderThanDaysToKeep(NodeRef node)
     {

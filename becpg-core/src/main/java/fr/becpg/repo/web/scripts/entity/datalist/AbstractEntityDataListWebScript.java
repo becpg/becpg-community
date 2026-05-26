@@ -145,6 +145,12 @@ public abstract class AbstractEntityDataListWebScript extends AbstractWebScript 
 	
 
 
+	/**
+	 * <p>isExternalUserAllowed.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private boolean isExternalUserAllowed(NodeRef parentNodeRef) {
 		if (parentNodeRef != null && nodeService.exists(parentNodeRef)
 				&& nodeService.hasAspect(parentNodeRef, BeCPGModel.ASPECT_ENTITYLIST_STATE)

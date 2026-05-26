@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2010-2021 beCPG. All rights reserved.
+ *  Copyright (C) 2010-2026 beCPG. All rights reserved.
  */
 package fr.becpg.repo.dictionary.constraint;
 
@@ -66,22 +66,33 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	/** Constant <code>UNDIFINED_CONSTRAINT_VALUE="-"</code> */
 	public static final String UNDIFINED_CONSTRAINT_VALUE = "-";
 
+	/** Constant <code>ERR_NO_VALUES="d_dictionary.constraint.list_of_values."{trunked}</code> */
 	private static final String ERR_NO_VALUES = "d_dictionary.constraint.list_of_values.no_values";
+	/** Constant <code>ERR_NON_STRING="d_dictionary.constraint.string_length.n"{trunked}</code> */
 	private static final String ERR_NON_STRING = "d_dictionary.constraint.string_length.non_string";
+	/** Constant <code>ERR_INVALID_VALUE="d_dictionary.constraint.list_of_values."{trunked}</code> */
 	private static final String ERR_INVALID_VALUE = "d_dictionary.constraint.list_of_values.invalid_value";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(DynListConstraint.class);
 
+	/** Constant <code>CLASSPATH_PREFIX="classpath:"</code> */
 	private static final String CLASSPATH_PREFIX = "classpath:";
+	/** Constant <code>REPO_PREFIX="repo:"</code> */
 	private static final String REPO_PREFIX = "repo:";
+	/** Constant <code>OVERRIDE_PREFIX="override:"</code> */
 	private static final String OVERRIDE_PREFIX = "override:";
 
+	/** Constant <code>serviceRegistry</code> */
 	private static ServiceRegistry serviceRegistry;
 
+	/** Constant <code>beCPGCacheService</code> */
 	private static BeCPGCacheService beCPGCacheService;
 
+	/** Constant <code>contentService</code> */
 	private static ContentService contentService;
 
+	/** Constant <code>pathRegistry</code> */
 	private static final Set<String> pathRegistry = ConcurrentHashMap.newKeySet();
 
 	private List<String> paths = null;
@@ -383,6 +394,11 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		return getDisplayLabel(constraintAllowableValue);
 	}
 
+	/**
+	 * <p>getDynListEntries.</p>
+	 *
+	 * @return a {@link java.util.Map} object
+	 */
 	private Map<String, DynListEntry> getDynListEntries() {
 		return beCPGCacheService.getFromCache(DynListConstraint.class.getName(), createCacheKey(),
 				() -> serviceRegistry.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -421,6 +437,12 @@ public class DynListConstraint extends ListOfValuesConstraint {
 				}, true, false));
 	}
 
+	/**
+	 * <p>processClasspathResource.</p>
+	 *
+	 * @param path a {@link java.lang.String} object
+	 * @param allowedValues a {@link java.util.Map} object
+	 */
 	private void processClasspathResource(String path, Map<String, DynListEntry> allowedValues) {
 		ClassPathResource resource = new ClassPathResource(path.replace(CLASSPATH_PREFIX, ""));
 		try (InputStream in = resource.getInputStream()) {
@@ -430,6 +452,12 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		}
 	}
 
+	/**
+	 * <p>processRepoResource.</p>
+	 *
+	 * @param path a {@link java.lang.String} object
+	 * @param allowedValues a {@link java.util.Map} object
+	 */
 	private void processRepoResource(String path, Map<String, DynListEntry> allowedValues) {
 		NodeRef result = BeCPGQueryBuilder.createQuery().selectNodeByPath(path.replace(REPO_PREFIX, ""));
 		if (result != null) {
@@ -438,6 +466,12 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		}
 	}
 
+	/**
+	 * <p>processCsvInputStream.</p>
+	 *
+	 * @param allowedValues a {@link java.util.Map} object
+	 * @param in a {@link java.io.InputStream} object
+	 */
 	private void processCsvInputStream(Map<String, DynListEntry> allowedValues, InputStream in) {
 		try (InputStreamReader inReader = new InputStreamReader(in, StandardCharsets.UTF_8);
 				BufferedReader bufferedReader = new BufferedReader(inReader, 8192)) {
@@ -506,6 +540,12 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		}
 	}
 
+	/**
+	 * <p>processSystemList.</p>
+	 *
+	 * @param path a {@link java.lang.String} object
+	 * @param allowedValues a {@link java.util.Map} object
+	 */
 	private void processSystemList(String path, Map<String, DynListEntry> allowedValues) {
 
 		NamespaceService namespaceService = serviceRegistry.getNamespaceService();
@@ -580,6 +620,11 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		}
 	}
 
+	/**
+	 * <p>sortNodeRefs.</p>
+	 *
+	 * @param nodeRefs a {@link java.util.List} object
+	 */
 	private void sortNodeRefs(List<NodeRef> nodeRefs) {
 		nodeRefs.sort((o1, o2) -> {
 			Integer sort1 = (Integer) serviceRegistry.getNodeService().getProperty(o1, BeCPGModel.PROP_SORT);
@@ -669,15 +714,33 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		return path;
 	}
 
+	/**
+	 * <p>getKeyFromRecord.</p>
+	 *
+	 * @param csvRecord a {@link org.apache.commons.csv.CSVRecord} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getKeyFromRecord(CSVRecord csvRecord) {
 		return csvRecord.get((constraintCode != null) ? constraintCode : "bcpg:lvCode");
 	}
 
+	/**
+	 * <p>isValidEntry.</p>
+	 *
+	 * @param key a {@link java.lang.String} object
+	 * @param filterPropValue a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	private boolean isValidEntry(String key, String filterPropValue) {
 		return (key != null) && (filterPropValue != null)
 				&& ((constraintFilter == null) || constraintFilter.equals("*") || filterPropValue.equals(constraintFilter));
 	}
 
+	/**
+	 * <p>createCacheKey.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String createCacheKey() {
 		return getShortName() + (constraintFilter != null ? "_" + constraintFilter : "");
 	}

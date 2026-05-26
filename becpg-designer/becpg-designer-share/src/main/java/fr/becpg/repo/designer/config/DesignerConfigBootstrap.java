@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -41,10 +41,13 @@ import org.springframework.extensions.config.source.UrlConfigSource;
  */
 public class DesignerConfigBootstrap implements BeanNameAware, ConfigDeployer {
 
+	/** Constant <code>PREFIX_FILE="file:"</code> */
 	private static final String PREFIX_FILE = "file:";
 
+	/** Constant <code>WILDCARD="*"</code> */
 	private static final String WILDCARD = "*";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(DesignerConfigBootstrap.class);
 
 	/** The bean name. */
@@ -106,6 +109,12 @@ public class DesignerConfigBootstrap implements BeanNameAware, ConfigDeployer {
 		return deployed;
 	}
 
+	/**
+	 * <p>processWildcards.</p>
+	 *
+	 * @param configs a {@link java.util.List} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<String> processWildcards(List<String> configs) {
 		List<String> ret = new ArrayList<>();
 		for (String config : configs) {
@@ -118,6 +127,12 @@ public class DesignerConfigBootstrap implements BeanNameAware, ConfigDeployer {
 	// file:${dir.root}/designer/*.xml
 	// file:C:\Alfresco\alf_data\*.xml
 
+	/**
+	 * <p>processWidlCards.</p>
+	 *
+	 * @param sourceString a {@link java.lang.String} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<String> processWidlCards(String sourceString) {
 		List<String> ret = new ArrayList<>();
 		if (sourceString != null && sourceString.startsWith(PREFIX_FILE) && sourceString.contains(WILDCARD)) {
@@ -141,6 +156,12 @@ public class DesignerConfigBootstrap implements BeanNameAware, ConfigDeployer {
 		return ret;
 	}
 
+	/**
+	 * <p>guessSeparator.</p>
+	 *
+	 * @param sourceString a {@link java.lang.String} object
+	 * @return a char
+	 */
 	private char guessSeparator(String sourceString) {
 		return sourceString.lastIndexOf('\\') > -1 ? '\\' : '/';
 	}

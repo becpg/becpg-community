@@ -15,6 +15,7 @@ import org.alfresco.service.namespace.QName;
  * @version $Id: $Id
  */
 public class AssociationCacheRegion implements Serializable {
+	/** Constant <code>serialVersionUID=-213050301938804468L</code> */
 	private static final long serialVersionUID = -213050301938804468L;
 
 	/**

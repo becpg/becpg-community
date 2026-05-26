@@ -17,10 +17,15 @@ import org.alfresco.util.Pair;
  */
 public class BehaviourRegistry {
 	
+	/** Constant <code>activityBehaviours</code> */
 	private static final List<ActivityBehaviour> activityBehaviours = new ArrayList<>();
 	
+	/** Constant <code>auditBehaviours</code> */
 	private static final List<AuditBehaviour> auditBehaviours = new ArrayList<>();
 	
+	/**
+	 * <p>Constructor for BehaviourRegistry.</p>
+	 */
 	private BehaviourRegistry() {
 		
 	}

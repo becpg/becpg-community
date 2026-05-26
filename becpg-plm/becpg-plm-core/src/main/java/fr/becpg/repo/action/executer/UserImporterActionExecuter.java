@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -42,6 +42,7 @@ import fr.becpg.repo.importer.user.UserImporterService;
  */
 public class UserImporterActionExecuter extends ActionExecuterAbstractBase {
 	
+	/** Constant <code>_logger</code> */
 	private static final Log _logger = LogFactory.getLog(UserImporterActionExecuter.class);
 
 	/** Constant <code>NAME="import-user"</code> */
@@ -51,9 +52,13 @@ public class UserImporterActionExecuter extends ActionExecuterAbstractBase {
 	/** Constant <code>PARAM_XLSX_EXTENSION=".xlsx"</code> */
 	public static final String PARAM_XLSX_EXTENSION = ".xlsx";
 	
+	/** Constant <code>LOG_STARTING_DATE="Starting date: "</code> */
 	private static final String LOG_STARTING_DATE = "Starting date: ";	
+	/** Constant <code>LOG_ENDING_DATE="Ending date: "</code> */
 	private static final String LOG_ENDING_DATE = "Ending date: ";	
+	/** Constant <code>LOG_ERROR="Error: "</code> */
 	private static final String LOG_ERROR = "Error: ";	
+	/** Constant <code>LOG_SEPARATOR="\n"</code> */
 	private static final String LOG_SEPARATOR = "\n";
 
 	private UserImporterService userImporterService;

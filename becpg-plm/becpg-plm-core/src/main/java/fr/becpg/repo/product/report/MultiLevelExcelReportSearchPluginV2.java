@@ -171,27 +171,49 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @Service
 public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelReportSearchPlugin {
 
+    /** Constant <code>PARAM_SUFFIX_LEVEL="Level"</code> */
     private static final String PARAM_SUFFIX_LEVEL = "Level";
+    /** Constant <code>PARAM_PREFIX_WUSED="wUsed"</code> */
     private static final String PARAM_PREFIX_WUSED = "wUsed";
+    /** Constant <code>TOKEN_MAX="Max"</code> */
     private static final String TOKEN_MAX = "Max";
+    /** Constant <code>TOKEN_ONLY="Only"</code> */
     private static final String TOKEN_ONLY = "Only";
+    /** Constant <code>TOKEN_ALL="All"</code> */
     private static final String TOKEN_ALL = "All";
+    /** Constant <code>TOKEN_INCLUDE_EMPTY="IncludeEmpty"</code> */
     private static final String TOKEN_INCLUDE_EMPTY = "IncludeEmpty";
+    /** Constant <code>ONLY_LEVEL_PREFIX="OnlyLevel"</code> */
     private static final String ONLY_LEVEL_PREFIX = "OnlyLevel";
+    /** Constant <code>MAX_RECURSION_DEPTH=20</code> */
     private static final int MAX_RECURSION_DEPTH = 20;
+    /** Constant <code>DEPTH_UNLIMITED=-1</code> */
     private static final int DEPTH_UNLIMITED = -1;
+    /** Constant <code>PERMISSION_READ="Read"</code> */
     private static final String PERMISSION_READ = "Read";
+    /** Constant <code>HEADER_VALUES="VALUES"</code> */
     private static final String HEADER_VALUES = "VALUES";
+    /** Constant <code>KEY_PACKAGING_QTY_FOR_PRODUCT="prop_bcpg_packagingListQtyForProduct"</code> */
     private static final String KEY_PACKAGING_QTY_FOR_PRODUCT = "prop_bcpg_packagingListQtyForProduct";
+    /** Constant <code>KEY_COMPO_QTY_FOR_PRODUCT="prop_bcpg_compoListQtyForProduct"</code> */
     private static final String KEY_COMPO_QTY_FOR_PRODUCT = "prop_bcpg_compoListQtyForProduct";
+    /** Constant <code>KEY_PROCESS_QTY_FOR_PRODUCT="prop_bcpg_processListQtyForProduct"</code> */
     private static final String KEY_PROCESS_QTY_FOR_PRODUCT = "prop_bcpg_processListQtyForProduct";
+    /** Constant <code>KEY_QTY_FOR_COST="prop_bcpg_qtyForCost"</code> */
     private static final String KEY_QTY_FOR_COST = "prop_bcpg_qtyForCost";
+    /** Constant <code>KEY_DEPTH_LEVEL="prop_bcpg_depthLevel"</code> */
     private static final String KEY_DEPTH_LEVEL = "prop_bcpg_depthLevel";
+    /** Constant <code>KEY_PARENT="prop_bcpg_parent"</code> */
     private static final String KEY_PARENT = "prop_bcpg_parent";
+    /** Constant <code>PREFIX_DYNAMIC_CHAR_COLUMN="prop_bcpg_dynamicCharactColumn"</code> */
     private static final String PREFIX_DYNAMIC_CHAR_COLUMN = "prop_bcpg_dynamicCharactColumn";
+    /** Constant <code>PREFIX_WUSED_ENTITY="wUsedEntity_"</code> */
     private static final String PREFIX_WUSED_ENTITY = "wUsedEntity_";
+    /** Constant <code>KEY_PACKAGING_LOSS_PERC="prop_ + PLMModel.PROP_PACKAGINGLIST_LOS"{trunked}</code> */
     private static final String KEY_PACKAGING_LOSS_PERC = "prop_" + PLMModel.PROP_PACKAGINGLIST_LOSS_PERC.getLocalName();
+    /** Constant <code>KEY_PACKAGING_QTY="prop_ + PLMModel.PROP_PACKAGINGLIST_QTY"{trunked}</code> */
     private static final String KEY_PACKAGING_QTY = "prop_" + PLMModel.PROP_PACKAGINGLIST_QTY.getLocalName();
+    /** Constant <code>KEY_COMPO_LOSS_PERC="prop_ + PLMModel.PROP_COMPOLIST_LOSS_PE"{trunked}</code> */
     private static final String KEY_COMPO_LOSS_PERC = "prop_" + PLMModel.PROP_COMPOLIST_LOSS_PERC.getLocalName();
 
     private final PackagingHelper packagingHelper;
@@ -332,6 +354,25 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
         return rownum;
     }
 
+    /**
+     * <p>fillSheetWithMultiLevelService.</p>
+     *
+     * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+     * @param searchResults a {@link java.util.List} object
+     * @param mainType a {@link org.alfresco.service.namespace.QName} object
+     * @param itemType a {@link org.alfresco.service.namespace.QName} object
+     * @param rownum a int
+     * @param parameters an array of {@link java.lang.String} objects
+     * @param keyColumn a {@link fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure} object
+     * @param metadataFields a {@link java.util.List} object
+     * @param cache a {@link java.util.Map} object
+     * @param excelCellStyles a {@link fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles} object
+     * @param depthLevelNum a int
+     * @param pivotAssoc a {@link org.alfresco.service.namespace.QName} object
+     * @param wUsedAssocCache a {@link java.util.Map} object
+     * @param includeEmpty a boolean
+     * @return a int
+     */
     private int fillSheetWithMultiLevelService(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum,
             String[] parameters, AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields,
             Map<NodeRef, Map<String, Object>> cache, ExcelCellStyles excelCellStyles, int depthLevelNum, QName pivotAssoc,
@@ -372,6 +413,13 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
         return rownum;
     }
 
+    /**
+     * <p>extractKey.</p>
+     *
+     * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param keyColumn a {@link fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure} object
+     * @return a {@link java.io.Serializable} object
+     */
     private Serializable extractKey(NodeRef entityNodeRef, AttributeExtractorStructure keyColumn) {
         Serializable key = keyColumn != null ? nodeService.getProperty(entityNodeRef, keyColumn.getFieldDef().getName()) : null;
         if (key == null) {
@@ -383,6 +431,25 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
         return key;
     }
 
+    /**
+     * <p>fillPackagingSheet.</p>
+     *
+     * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+     * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+     * @param rownum a int
+     * @param key a {@link java.io.Serializable} object
+     * @param metadataFields a {@link java.util.List} object
+     * @param cache a {@link java.util.Map} object
+     * @param entityItems a {@link java.util.Map} object
+     * @param excelCellStyles a {@link fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles} object
+     * @param filter a {@link java.lang.String} object
+     * @param depthLevelNum a int
+     * @param isOnlyLevel a boolean
+     * @param parameter a {@link java.lang.String} object
+     * @param includeEmpty a boolean
+     * @return a int
+     */
     private int fillPackagingSheet(XSSFSheet sheet, NodeRef entityNodeRef, ProductData productData, int rownum, Serializable key,
             List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache, Map<String, Object> entityItems,
             ExcelCellStyles excelCellStyles, String filter, int depthLevelNum, boolean isOnlyLevel, String parameter, boolean includeEmpty) {
@@ -427,6 +494,25 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
         return rownum;
     }
 
+    /**
+     * <p>fillCompositionSheet.</p>
+     *
+     * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+     * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+     * @param rownum a int
+     * @param key a {@link java.io.Serializable} object
+     * @param metadataFields a {@link java.util.List} object
+     * @param cache a {@link java.util.Map} object
+     * @param entityItems a {@link java.util.Map} object
+     * @param excelCellStyles a {@link fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles} object
+     * @param filter a {@link java.lang.String} object
+     * @param depthLevelNum a int
+     * @param isOnlyLevel a boolean
+     * @param parameter a {@link java.lang.String} object
+     * @param includeEmpty a boolean
+     * @return a int
+     */
     private int fillCompositionSheet(XSSFSheet sheet, NodeRef entityNodeRef, ProductData productData, int rownum, Serializable key,
             List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache, Map<String, Object> entityItems,
             ExcelCellStyles excelCellStyles, String filter, int depthLevelNum, boolean isOnlyLevel, String parameter, boolean includeEmpty) {
@@ -457,6 +543,25 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
         return rownum;
     }
 
+    /**
+     * <p>fillProcessSheet.</p>
+     *
+     * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+     * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+     * @param rownum a int
+     * @param key a {@link java.io.Serializable} object
+     * @param metadataFields a {@link java.util.List} object
+     * @param cache a {@link java.util.Map} object
+     * @param entityItems a {@link java.util.Map} object
+     * @param excelCellStyles a {@link fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles} object
+     * @param filter a {@link java.lang.String} object
+     * @param depthLevelNum a int
+     * @param isOnlyLevel a boolean
+     * @param parameter a {@link java.lang.String} object
+     * @param includeEmpty a boolean
+     * @return a int
+     */
     private int fillProcessSheet(XSSFSheet sheet, NodeRef entityNodeRef, ProductData productData, int rownum, Serializable key,
             List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache, Map<String, Object> entityItems,
             ExcelCellStyles excelCellStyles, String filter, int depthLevelNum, boolean isOnlyLevel, String parameter, boolean includeEmpty) {
@@ -499,6 +604,25 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
         return rownum;
     }
 
+    /**
+     * <p>loadPackagingListItemForCompo.</p>
+     *
+     * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+     * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param rownum a int
+     * @param key a {@link java.io.Serializable} object
+     * @param currentLevelQuantities a {@link fr.becpg.repo.product.data.CurrentLevelQuantities} object
+     * @param metadataFields a {@link java.util.List} object
+     * @param cache a {@link java.util.Map} object
+     * @param entityItems a {@link java.util.Map} object
+     * @param excelCellStyles a {@link fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles} object
+     * @param level a int
+     * @param dropPackagingOfComponents a boolean
+     * @param depthLevelNum a int
+     * @param isOnlyLevel a boolean
+     * @param parameter a {@link java.lang.String} object
+     * @return a int
+     */
     private int loadPackagingListItemForCompo(XSSFSheet sheet, NodeRef entityNodeRef, int rownum, Serializable key,
             CurrentLevelQuantities currentLevelQuantities, List<AttributeExtractorStructure> metadataFields,
             Map<NodeRef, Map<String, Object>> cache, Map<String, Object> entityItems, ExcelCellStyles excelCellStyles, int level,
@@ -575,6 +699,27 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
         return rownum;
     }
 
+    /**
+     * <p>fillPackagingRow.</p>
+     *
+     * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+     * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param currentLevelQuantities a {@link fr.becpg.repo.product.data.CurrentLevelQuantities} object
+     * @param dataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+     * @param metadataFields a {@link java.util.List} object
+     * @param cache a {@link java.util.Map} object
+     * @param rownum a int
+     * @param key a {@link java.io.Serializable} object
+     * @param entityItems a {@link java.util.Map} object
+     * @param excelCellStyles a {@link fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles} object
+     * @param level a int
+     * @param dropPackagingOfComponents a boolean
+     * @param isPackagingOfComponent a boolean
+     * @param depthLevelNum a int
+     * @param isOnlyLevel a boolean
+     * @param parameter a {@link java.lang.String} object
+     * @return a int
+     */
     private int fillPackagingRow(XSSFSheet sheet, NodeRef entityNodeRef, CurrentLevelQuantities currentLevelQuantities,
             PackagingListDataItem dataItem, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache,
             int rownum, Serializable key, Map<String, Object> entityItems, ExcelCellStyles excelCellStyles, int level, boolean dropPackagingOfComponents, boolean isPackagingOfComponent, int depthLevelNum, boolean isOnlyLevel, String parameter) {
@@ -651,6 +796,24 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
         return rownum;
     }
 
+    /**
+     * <p>loadCompoListItem.</p>
+     *
+     * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+     * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param rownum a int
+     * @param key a {@link java.io.Serializable} object
+     * @param currentLevelQuantities a {@link fr.becpg.repo.product.data.CurrentLevelQuantities} object
+     * @param metadataFields a {@link java.util.List} object
+     * @param cache a {@link java.util.Map} object
+     * @param entityItems a {@link java.util.Map} object
+     * @param excelCellStyles a {@link fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles} object
+     * @param level a int
+     * @param depthLevelNum a int
+     * @param isOnlyLevel a boolean
+     * @param parameter a {@link java.lang.String} object
+     * @return a int
+     */
     private int loadCompoListItem(XSSFSheet sheet, NodeRef entityNodeRef, int rownum, Serializable key,
             CurrentLevelQuantities currentLevelQuantities, List<AttributeExtractorStructure> metadataFields,
             Map<NodeRef, Map<String, Object>> cache, Map<String, Object> entityItems, ExcelCellStyles excelCellStyles, int level, int depthLevelNum, boolean isOnlyLevel, String parameter) {
@@ -729,6 +892,25 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
         return rownum;
     }
 
+    /**
+     * <p>loadProcessListItem.</p>
+     *
+     * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+     * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param rownum a int
+     * @param key a {@link java.io.Serializable} object
+     * @param currentLevelQuantities a {@link fr.becpg.repo.product.data.CurrentLevelQuantities} object
+     * @param dataItem a {@link fr.becpg.repo.product.data.productList.ProcessListDataItem} object
+     * @param metadataFields a {@link java.util.List} object
+     * @param cache a {@link java.util.Map} object
+     * @param entityItems a {@link java.util.Map} object
+     * @param excelCellStyles a {@link fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles} object
+     * @param level a int
+     * @param depthLevelNum a int
+     * @param isOnlyLevel a boolean
+     * @param parameter a {@link java.lang.String} object
+     * @return a int
+     */
     private int loadProcessListItem(XSSFSheet sheet, NodeRef entityNodeRef, int rownum, Serializable key,
             CurrentLevelQuantities currentLevelQuantities, ProcessListDataItem dataItem, List<AttributeExtractorStructure> metadataFields,
             Map<NodeRef, Map<String, Object>> cache, Map<String, Object> entityItems, ExcelCellStyles excelCellStyles, int level, int depthLevelNum, boolean isOnlyLevel, String parameter) {
@@ -802,6 +984,24 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
         return rownum;
     }
 
+    /**
+     * <p>loadProcessListItemForCompo.</p>
+     *
+     * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+     * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param rownum a int
+     * @param key a {@link java.io.Serializable} object
+     * @param currentLevelQuantities a {@link fr.becpg.repo.product.data.CurrentLevelQuantities} object
+     * @param metadataFields a {@link java.util.List} object
+     * @param cache a {@link java.util.Map} object
+     * @param entityItems a {@link java.util.Map} object
+     * @param excelCellStyles a {@link fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles} object
+     * @param level a int
+     * @param depthLevelNum a int
+     * @param isOnlyLevel a boolean
+     * @param parameter a {@link java.lang.String} object
+     * @return a int
+     */
     private int loadProcessListItemForCompo(XSSFSheet sheet, NodeRef entityNodeRef, int rownum, Serializable key,
             CurrentLevelQuantities currentLevelQuantities, List<AttributeExtractorStructure> metadataFields,
             Map<NodeRef, Map<String, Object>> cache, Map<String, Object> entityItems, ExcelCellStyles excelCellStyles, int level, int depthLevelNum, boolean isOnlyLevel, String parameter) {

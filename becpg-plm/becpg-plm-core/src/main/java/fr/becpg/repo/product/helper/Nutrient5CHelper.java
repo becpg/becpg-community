@@ -12,34 +12,48 @@ import fr.becpg.model.NutrientProfileCategory;
  */
 public class Nutrient5CHelper {
 
+	/** Constant <code>othersACategories</code> */
 	private static final double[][] othersACategories = new double[][] { { 3350d, 3015d, 2680d, 2345d, 2010d, 1675d, 1340d, 1005d, 670d, 335d },
 			{ 10d, 9d, 8d, 7d, 6d, 5d, 4d, 3d, 2d, 1d }, { 45d, 40d, 36d, 31d, 27d, 22.5d, 18d, 13.5d, 9d, 4.5d },
 			{ 900d, 810d, 720d, 630d, 540d, 450d, 360d, 270d, 180d, 90d } };
 
+	/** Constant <code>othersCCategories</code> */
 	private static final double[][] othersCCategories = new double[][] { { -1d, -1d, -1d, -1d, -1d, 80d, -1d, -1d, 60d, 40d },
 			{ 3.5d, 2.8d, 2.1d, 1.4d, 0.7d }, { 4.7d, 3.7d, 2.8d, 1.9d, 0.9d }, { 8.0d, 6.4d, 4.8d, 3.2d, 1.6d } };
 
+	/** Constant <code>cheeseACategories</code> */
 	private static final double[][] cheeseACategories = new double[][] { { 3350d, 3015d, 2680d, 2345d, 2010d, 1675d, 1340d, 1005d, 670d, 335d },
 			{ 10d, 9d, 8d, 7d, 6d, 5d, 4d, 3d, 2d, 1d }, { 45d, 40d, 36d, 31d, 27d, 22.5d, 18d, 13.5d, 9d, 4.5d },
 			{ 900d, 810d, 720d, 630d, 540d, 450d, 360d, 270d, 180d, 90d } };
 
+	/** Constant <code>cheeseCCategories</code> */
 	private static final double[][] cheeseCCategories = new double[][] { { -1d, -1d, -1d, -1d, -1d, 80d, -1d, -1d, 60d, 40d },
 			{ 3.5d, 2.8d, 2.1d, 1.4d, 0.7d }, { 4.7d, 3.7d, 2.8d, 1.9d, 0.9d }, { 8.0d, 6.4d, 4.8d, 3.2d, 1.6d } };
 
+	/** Constant <code>fatsACategories</code> */
 	private static final double[][] fatsACategories = new double[][] { { 3350d, 3015d, 2680d, 2345d, 2010d, 1675d, 1340d, 1005d, 670d, 335d },
 			{ 64d, 58d, 52d, 46d, 40d, 34d, 28d, 22d, 16d, 10d }, { 45d, 40d, 36d, 31d, 27d, 22.5d, 18d, 13.5d, 9d, 4.5d },
 			{ 900d, 810d, 720d, 630d, 540d, 450d, 360d, 270d, 180d, 90d } };
 
+	/** Constant <code>fatsCCategories</code> */
 	private static final double[][] fatsCCategories = new double[][] { { -1d, -1d, -1d, -1d, -1d, 80d, -1d, -1d, 60d, 40d },
 			{ 3.5d, 2.8d, 2.1d, 1.4d, 0.7d }, { 4.7d, 3.7d, 2.8d, 1.9d, 0.9d }, { 8.0d, 6.4d, 4.8d, 3.2d, 1.6d } };
 
+	/** Constant <code>beveragesACategories</code> */
 	private static final double[][] beveragesACategories = new double[][] { { 270d, 240d, 210d, 180d, 150d, 120d, 90d, 60d, 30d, 0d },
 			{ 10d, 9d, 8d, 7d, 6d, 5d, 4d, 3d, 2d, 1d }, { 13.5d, 12d, 10.5d, 9d, 7.5d, 6d, 4.5d, 3d, 1.5d, 0d },
 			{ 900d, 810d, 720d, 630d, 540d, 450d, 360d, 270d, 180d, 90d } };
 
+	/** Constant <code>beveragesCCategories</code> */
 	private static final double[][] beveragesCCategories = new double[][] { { 80d, -1d, -1d, -1d, -1d, -1d, 60d, -1d, 40d, -1d },
 			{ 3.5d, 2.8d, 2.1d, 1.4d, 0.7d }, { 4.7d, 3.7d, 2.8d, 1.9d, 0.9d }, { 8.0d, 6.4d, 4.8d, 3.2d, 1.6d } };
 
+	/**
+	 * <p>getACategory.</p>
+	 *
+	 * @param category a {@link fr.becpg.model.NutrientProfileCategory} object
+	 * @return an array of {@link double} objects
+	 */
 	private static double[][] getACategory(NutrientProfileCategory category) {
 		switch (category) {
 		case Fats:
@@ -54,6 +68,12 @@ public class Nutrient5CHelper {
 
 	}
 
+	/**
+	 * <p>getCCategory.</p>
+	 *
+	 * @param category a {@link fr.becpg.model.NutrientProfileCategory} object
+	 * @return an array of {@link double} objects
+	 */
 	private static double[][] getCCategory(NutrientProfileCategory category) {
 		switch (category) {
 		case Fats:
@@ -235,6 +255,13 @@ public class Nutrient5CHelper {
 	
 	
 	
+	/**
+	 * <p>round.</p>
+	 *
+	 * @param toRound a {@link java.lang.Double} object
+	 * @param val a {@link java.lang.Double} object
+	 * @return a double
+	 */
 	private static double round(Double toRound, Double val) {
 		if(val!=null && val.toString().contains(".")) {
 			return Math.round(toRound*100)/100d;

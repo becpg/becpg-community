@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -44,8 +44,11 @@ import fr.becpg.repo.entity.version.EntityVersionService;
  */
 public class UpdateEntityWebScript extends AbstractEntityWebScript {
 
+	/** Constant <code>PARAM_CREATE_VERSION="createVersion"</code> */
 	private static final String PARAM_CREATE_VERSION = "createVersion";
+	/** Constant <code>PARAM_MAJOR_VERSION="majorVersion"</code> */
 	private static final String PARAM_MAJOR_VERSION = "majorVersion";
+	/** Constant <code>PARAM_DESCRIPTION="versionDescription"</code> */
 	private static final String PARAM_DESCRIPTION = "versionDescription";
 
 	private EntityVersionService entityVersionService;

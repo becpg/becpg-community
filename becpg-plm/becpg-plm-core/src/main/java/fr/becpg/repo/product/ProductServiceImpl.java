@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -58,6 +58,7 @@ import fr.becpg.repo.repository.L2CacheSupport;
 @Service("productService")
 public class ProductServiceImpl implements ProductService, InitializingBean, FormulationPlugin {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ProductServiceImpl.class);
 
 	private final AlfrescoRepository<ProductData> alfrescoRepository;

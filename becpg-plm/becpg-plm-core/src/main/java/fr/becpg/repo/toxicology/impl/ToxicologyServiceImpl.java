@@ -38,6 +38,7 @@ import fr.becpg.repo.toxicology.ToxicologyService;
 @Service("toxicologyService")
 public class ToxicologyServiceImpl implements ToxicologyService {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ToxicologyServiceImpl.class);
 
 	@Autowired
@@ -212,6 +213,11 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 		});
 	}
 
+	/**
+	 * <p>findAllUndeletedIngredients.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> findAllUndeletedIngredients() {
 		logger.debug("Searching for all undeleted ingredients");
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().inDB()
@@ -222,6 +228,12 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 		return ingredients;
 	}
 	
+	/**
+	 * <p>removeToxFromIngList.</p>
+	 *
+	 * @param toxName a {@link java.lang.String} object
+	 * @param ingList a {@link java.util.List} object
+	 */
 	private void removeToxFromIngList(String toxName, List<NodeRef> ingList) {
 		logger.debug("Starting batch removal of tox: " + toxName + " from " + ingList.size() + " ingredients");
 		
@@ -261,6 +273,12 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 		logger.debug("Batch queued for tox removal: " + toxName);
 	}
 
+	/**
+	 * <p>extractToxName.</p>
+	 *
+	 * @param toxNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extractToxName(NodeRef toxNodeRef) {
 		logger.debug("Extracting tox name from: " + toxNodeRef);
 		boolean wasMLAware = MLPropertyInterceptor.setMLAware(true);
@@ -273,6 +291,15 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 		}
 	}
 
+	/**
+	 * <p>computeMaxValue.</p>
+	 *
+	 * @param ingNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param toxNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param toxName a {@link java.lang.String} object
+	 * @param systemicValue a {@link java.lang.Double} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double computeMaxValue(NodeRef ingNodeRef, NodeRef toxNodeRef, String toxName, Double systemicValue) {
 		logger.debug("Computing max value for ingredient: " + ingNodeRef + ", tox: " + toxName + ", systemic value: " + systemicValue);
 		
@@ -299,6 +326,14 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 		return null;
 	}
 
+	/**
+	 * <p>computeSystemicValue.</p>
+	 *
+	 * @param ingNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param toxNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param toxName a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double computeSystemicValue(NodeRef ingNodeRef, NodeRef toxNodeRef, String toxName) {
 		logger.debug("Computing systemic value for ingredient: " + ingNodeRef + ", tox: " + toxName);
 		
@@ -340,6 +375,12 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 		return systemicValue;
 	}
 	
+	/**
+	 * <p>updateIngFromTox.</p>
+	 *
+	 * @param ingNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param toxNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void updateIngFromTox(NodeRef ingNodeRef, NodeRef toxNodeRef) {
 		String currentSystemicValues = (String) nodeService.getProperty(ingNodeRef, PLMModel.PROP_ING_TOX_SYSTEMIC_VALUES);
 		String currentMaxValues = (String) nodeService.getProperty(ingNodeRef, PLMModel.PROP_ING_TOX_MAX_VALUES);
@@ -389,6 +430,13 @@ public class ToxicologyServiceImpl implements ToxicologyService {
 		}
 	}
 	
+	/**
+	 * <p>computeMaxValue.</p>
+	 *
+	 * @param ingNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param toxNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	@SuppressWarnings("unchecked")
 	private Double computeMaxValue(NodeRef ingNodeRef, NodeRef toxNodeRef) {
 		List<String> toxTypes = (List<String>) nodeService.getProperty(toxNodeRef, PLMModel.PROP_TOX_TYPES);

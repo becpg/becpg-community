@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2010-2011 beCPG. All rights reserved.
+ *  Copyright (C) 2010-2026 beCPG. All rights reserved.
  */
 package fr.becpg.repo.importer.impl;
 
@@ -94,6 +94,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	/** Constant <code>CACHE_KEY="cKey%s-%s"</code> */
 	protected static final String CACHE_KEY = "cKey%s-%s";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AbstractImportVisitor.class);
 
 	protected NodeService nodeService;
@@ -363,6 +364,13 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		return nodeRef;
 	}
 
+	/**
+	 * <p>getName.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @param properties a {@link java.util.Map} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getName(QName type, Map<QName, Serializable> properties) {
 		String name = null;
 		QName propName = RemoteHelper.getPropName(type, entityDictionaryService);
@@ -452,6 +460,12 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		return properties;
 	}
 
+	/**
+	 * <p>split.</p>
+	 *
+	 * @param value a {@link java.lang.String} object
+	 * @return an array of {@link java.lang.String} objects
+	 */
 	private String[] split(String value) {
 		String[] ret = null;
 		if (value != null) {
@@ -464,6 +478,13 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 	}
 
+	/**
+	 * <p>parseFormula.</p>
+	 *
+	 * @param formula a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 * @throws fr.becpg.repo.importer.ImporterException if any.
+	 */
 	private String parseFormula(String formula) throws ImporterException {
 		try {
 			StandardEvaluationContext context = formulaService.createSpelContext(this);
@@ -596,6 +617,14 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		return ret.toString();
 	}
 
+	/**
+	 * <p>findCharact.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @param property a {@link org.alfresco.service.namespace.QName} object
+	 * @param name a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef findCharact(QName type, QName property, String name) {
 		return ImportHelper.findCharact(type, property, name, nodeService);
 	}
@@ -798,6 +827,14 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		}
 	}
 
+	/**
+	 * <p>fixFileNameExtension.</p>
+	 *
+	 * @param fileName a {@link java.lang.String} object
+	 * @param value a {@link java.lang.String} object
+	 * @param count a int
+	 * @return a {@link java.lang.String} object
+	 */
 	private String fixFileNameExtension(String fileName, String value, int count) {
 		String[] tokens = value.split("\\.(?=[^\\.]+$)");
 
@@ -809,6 +846,16 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 	}
 
+	/**
+	 * <p>importFileContent.</p>
+	 *
+	 * @param value a {@link java.lang.String} object
+	 * @param targetFolderNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param mappingFileName a {@link java.lang.String} object
+	 * @param mappingId a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @throws fr.becpg.repo.importer.ImporterException if any.
+	 */
 	private NodeRef importFileContent(String value, NodeRef targetFolderNodeRef, String mappingFileName, String mappingId) throws ImporterException {
 		InputStream in = null;
 		try {
@@ -861,6 +908,14 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 	}
 
+	/**
+	 * <p>createFile.</p>
+	 *
+	 * @param targetFolderNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param fileName a {@link java.lang.String} object
+	 * @param localName a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef createFile(NodeRef targetFolderNodeRef, String fileName, String localName) {
 		NodeRef fileNodeRef = nodeService.getChildByName(targetFolderNodeRef, ContentModel.ASSOC_CONTAINS, fileName);
 		if (fileNodeRef == null) {

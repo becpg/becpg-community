@@ -34,7 +34,9 @@ import fr.becpg.model.PLMModel;
  */
 public class IngParentLevelPatchV2 extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(IngParentLevelPatchV2.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.ingParentLevelPatchV2.re"{trunked}</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.ingParentLevelPatchV2.result";
 
 	private NodeDAO nodeDAO;

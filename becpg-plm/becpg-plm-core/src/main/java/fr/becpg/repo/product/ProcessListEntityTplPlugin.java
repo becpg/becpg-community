@@ -31,6 +31,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
 @Service
 public class ProcessListEntityTplPlugin implements EntityTplPlugin {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ProcessListEntityTplPlugin.class);
 
 	private final NodeService nodeService;

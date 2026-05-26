@@ -13,10 +13,16 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
  */
 public class ToxHelper {
 
+	/** Constant <code>INDENTATION_SYMBOL="- "</code> */
 	private static final String INDENTATION_SYMBOL = "- ";
+	/** Constant <code>COLON=": "</code> */
 	private static final String COLON = ": ";
+	/** Constant <code>LINE_SEPARATOR="\n"</code> */
 	private static final String LINE_SEPARATOR = "\n";
 
+	/**
+	 * <p>Constructor for ToxHelper.</p>
+	 */
 	private ToxHelper() {
 		
 	}
@@ -96,6 +102,12 @@ public class ToxHelper {
 		return newValuesBuilder.toString();
 	}
 	
+	/**
+	 * <p>appendNewLine.</p>
+	 *
+	 * @param builder a {@link java.lang.StringBuilder} object
+	 * @param line a {@link java.lang.String} object
+	 */
 	private static void appendNewLine(StringBuilder builder, String... line) {
 		if (!builder.isEmpty()) {
 			builder.append(LINE_SEPARATOR);

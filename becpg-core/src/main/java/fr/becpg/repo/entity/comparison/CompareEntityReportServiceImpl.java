@@ -49,49 +49,73 @@ import fr.becpg.report.client.ReportParams;
 @Service("compareEntityReportService")
 public class CompareEntityReportServiceImpl implements CompareEntityReportService {
 
+	/** Constant <code>TAG_ENTITIES_COMPARISON="entitiesComparison"</code> */
 	private static final String TAG_ENTITIES_COMPARISON = "entitiesComparison";
+	/** Constant <code>TAG_COMPARISON_ROWS="comparisonRows"</code> */
 	private static final String TAG_COMPARISON_ROWS = "comparisonRows";
+	/** Constant <code>TAG_COMPARISON_ROW="comparisonRow"</code> */
 	private static final String TAG_COMPARISON_ROW = "comparisonRow";
 
+	/** Constant <code>ATTR_ENTITY="entity"</code> */
 	private static final String ATTR_ENTITY = "entity";
 
+	/** Constant <code>ATTR_ENTITYLIST="entityList"</code> */
 	private static final String ATTR_ENTITYLIST = "entityList";
+	/** Constant <code>ATTR_ENTITYLIST_QNAME="entityListQName"</code> */
 	private static final String ATTR_ENTITYLIST_QNAME = "entityListQName";
 
+	/** Constant <code>ATTR_CHARACTERISTIC="characteristic"</code> */
 	private static final String ATTR_CHARACTERISTIC = "characteristic";
 
+	/** Constant <code>ATTR_PROPERTY="property"</code> */
 	private static final String ATTR_PROPERTY = "property";
 
+	/** Constant <code>ATTR_PROPERTY_QNAME="propertyQName"</code> */
 	private static final String ATTR_PROPERTY_QNAME = "propertyQName";
 
+	/** Constant <code>ATTR_IS_DIFFERENT="isDifferent"</code> */
 	private static final String ATTR_IS_DIFFERENT = "isDifferent";
 
+	/** Constant <code>ATTR_VALUE="value"</code> */
 	private static final String ATTR_VALUE = "value";
 
+	/** Constant <code>TAG_STRUCT_COMPARISON_ROWS="structComparisonRows"</code> */
 	private static final String TAG_STRUCT_COMPARISON_ROWS = "structComparisonRows";
 
+	/** Constant <code>TAG_STRUCT_COMPARISON_ROW="structComparisonRow"</code> */
 	private static final String TAG_STRUCT_COMPARISON_ROW = "structComparisonRow";
 
+	/** Constant <code>ATTR_COMPARISON="comparison"</code> */
 	private static final String ATTR_COMPARISON = "comparison";
 
+	/** Constant <code>ATTR_DEPTH_LEVEL="depthLevel"</code> */
 	private static final String ATTR_DEPTH_LEVEL = "depthLevel";
 
+	/** Constant <code>ATTR_OPERATOR="operator"</code> */
 	private static final String ATTR_OPERATOR = "operator";
 
+	/** Constant <code>ATTR_ITEM1="item1"</code> */
 	private static final String ATTR_ITEM1 = "item1";
 
+	/** Constant <code>ATTR_ITEM2="item2"</code> */
 	private static final String ATTR_ITEM2 = "item2";
 
+	/** Constant <code>ATTR_PROPERTIES1="properties1"</code> */
 	private static final String ATTR_PROPERTIES1 = "properties1";
 
+	/** Constant <code>ATTR_PROPERTIES2="properties2"</code> */
 	private static final String ATTR_PROPERTIES2 = "properties2";
 
+	/** Constant <code>ATTR_TEXT_DIFF="textDiff"</code> */
 	private static final String ATTR_TEXT_DIFF = "textDiff";
 
+	/** Constant <code>PROPERTY_SEPARATOR=" ; "</code> */
 	private static final String PROPERTY_SEPARATOR = " ; ";
 
+	/** Constant <code>PROPERTY_VALUE_SEPARATOR=" : "</code> */
 	private static final String PROPERTY_VALUE_SEPARATOR = " : ";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(CompareEntityReportServiceImpl.class);
 
 	@Autowired
@@ -201,6 +225,11 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 
 	/**
 	 * Render the comparison as xml data.
+	 *
+	 * @param entity1NodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param entityNodeRefs a {@link java.util.List} object
+	 * @param compareResult a {@link java.util.List} object
+	 * @return a {@link org.dom4j.Element} object
 	 */
 	private Element renderComparisonAsXmlData(NodeRef entity1NodeRef, List<NodeRef> entityNodeRefs, List<CompareResultDataItem> compareResult) {
 		Document document = DocumentHelper.createDocument();
@@ -391,6 +420,14 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 		return structCmpRowsElt;
 	}
 
+	/**
+	 * <p>getClassAttributeTitle.</p>
+	 *
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
+	 * @param definition a {@link fr.becpg.repo.form.impl.BecpgFormDefinition} object
+	 * @param qName a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getClassAttributeTitle(QName nodeType, BecpgFormDefinition definition, QName qName) {
 
 		String title = (definition != null) ? definition.getTitle(qName.toPrefixString(namespaceService)) : null;
@@ -411,6 +448,16 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 		return (title != null && !title.isBlank()) ? StringEscapeUtils.escapeXml11(title) : null;
 	}
 
+	/**
+	 * <p>getFormDef.</p>
+	 *
+	 * @param defs a {@link java.util.Map} object
+	 * @param property a {@link org.alfresco.service.namespace.QName} object
+	 * @param entityListName a {@link java.lang.String} object
+	 * @param entityListTitle a {@link java.lang.String} object
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.form.impl.BecpgFormDefinition} object
+	 */
 	private BecpgFormDefinition getFormDef(Map<String, BecpgFormDefinition> defs, QName property, String entityListName, String entityListTitle,
 			NodeRef entityNodeRef) {
 

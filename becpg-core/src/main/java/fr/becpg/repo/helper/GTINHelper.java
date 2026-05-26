@@ -12,6 +12,9 @@ import org.apache.commons.validator.routines.checkdigit.EAN13CheckDigit;
  */
 public class GTINHelper {
 	
+	/**
+	 * <p>Constructor for GTINHelper.</p>
+	 */
 	private GTINHelper() {
 		//DO NOTHING
 	}

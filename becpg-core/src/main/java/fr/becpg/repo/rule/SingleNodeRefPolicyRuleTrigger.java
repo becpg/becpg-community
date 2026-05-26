@@ -44,6 +44,7 @@ import fr.becpg.model.BeCPGModel;
  * @author matthieu
  */
 public class SingleNodeRefPolicyRuleTrigger extends RuleTriggerAbstractBase {
+	/** Constant <code>ERR_POLICY_NAME_NOT_SET="Unable to register rule trigger since p"{trunked}</code> */
 	private static final String ERR_POLICY_NAME_NOT_SET = "Unable to register rule trigger since policy name has not been set.";
 
 	private String policyNamespace = NamespaceService.ALFRESCO_URI;

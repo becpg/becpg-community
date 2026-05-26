@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -139,50 +139,83 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	/** Constant <code>logger</code> */
 	protected static final Log logger = LogFactory.getLog(PLMInitRepoVisitor.class);
 
+	/** Constant <code>supportedLocale</code> */
 	private static List<String> supportedLocale = Arrays.asList("fr", "en", "es", "en_US", "it", "nl", "sv_SE", "fi", "ru", "pt");
 
+	/** Constant <code>SIMULATION_SITE_ID="simulation"</code> */
 	private static final String SIMULATION_SITE_ID = "simulation";
+	/** Constant <code>VALID_SITE_ID="valid"</code> */
 	private static final String VALID_SITE_ID = "valid";
+	/** Constant <code>ARCHIVED_SITE_ID="archived"</code> */
 	private static final String ARCHIVED_SITE_ID = "archived";
 
+	/** Constant <code>PRODUCT_REPORT_CLIENT_PATH="beCPG/birt/document/product/default/Pro"{trunked}</code> */
 	private static final String PRODUCT_REPORT_CLIENT_PATH = "beCPG/birt/document/product/default/ProductReport.rptdesign";
+	/** Constant <code>PRODUCT_REPORT_CLIENT_NAME="path.productreportclienttemplate"</code> */
 	private static final String PRODUCT_REPORT_CLIENT_NAME = "path.productreportclienttemplate";
+	/** Constant <code>PRODUCT_REPORT_PRODUCTION_PATH="beCPG/birt/document/product/default/Pro"{trunked}</code> */
 	private static final String PRODUCT_REPORT_PRODUCTION_PATH = "beCPG/birt/document/product/default/ProductReport_Prod.rptdesign";
+	/** Constant <code>PRODUCT_REPORT_PRODUCTION_NAME="path.productreportproductiontemplate"</code> */
 	private static final String PRODUCT_REPORT_PRODUCTION_NAME = "path.productreportproductiontemplate";
 
+	/** Constant <code>PRODUCT_REPORT_PACKAGING_PATH="beCPG/birt/document/product/default/Pac"{trunked}</code> */
 	private static final String PRODUCT_REPORT_PACKAGING_PATH = "beCPG/birt/document/product/default/PackagingReport.rptdesign";
+	/** Constant <code>PRODUCT_REPORT_COST_PATH="beCPG/birt/document/product/default/Pro"{trunked}</code> */
 	private static final String PRODUCT_REPORT_COST_PATH = "beCPG/birt/document/product/default/ProductReport_Cost.rptdesign";
+	/** Constant <code>PRODUCT_REPORT_COST_NAME="path.productreportcosttemplate"</code> */
 	private static final String PRODUCT_REPORT_COST_NAME = "path.productreportcosttemplate";
+	/** Constant <code>PRODUCT_REPORT_RD_PATH="beCPG/birt/document/product/default/Pro"{trunked}</code> */
 	private static final String PRODUCT_REPORT_RD_PATH = "beCPG/birt/document/product/default/ProductReport_RD.rptdesign";
+	/** Constant <code>PRODUCT_REPORT_RD_NAME="path.productreportrdtemplate"</code> */
 	private static final String PRODUCT_REPORT_RD_NAME = "path.productreportrdtemplate";
+	/** Constant <code>PRODUCT_REPORT_TECHNICAL_SHEET_NAME="path.productreporttechnicalsheettemplat"{trunked}</code> */
 	private static final String PRODUCT_REPORT_TECHNICAL_SHEET_NAME = "path.productreporttechnicalsheettemplate";
 
+	/** Constant <code>COMPARE_PRODUCTS_REPORT_PATH="beCPG/birt/system/CompareProducts.rptde"{trunked}</code> */
 	private static final String COMPARE_PRODUCTS_REPORT_PATH = "beCPG/birt/system/CompareProducts.rptdesign";
 
+	/** Constant <code>PRODUCT_REPORT_SUPPLIER_PATH="beCPG/birt/document/product/default/Sup"{trunked}</code> */
 	private static final String PRODUCT_REPORT_SUPPLIER_PATH = "beCPG/birt/document/product/default/SupplierReport.rptdesign";
+	/** Constant <code>PRODUCT_REPORT_SUPPLIER_NAME="path.productreportsuppliertemplate"</code> */
 	private static final String PRODUCT_REPORT_SUPPLIER_NAME = "path.productreportsuppliertemplate";
 
+	/** Constant <code>NC_REPORT_PATH="beCPG/birt/document/nonconformity/NCRep"{trunked}</code> */
 	private static final String NC_REPORT_PATH = "beCPG/birt/document/nonconformity/NCReport.rptdesign";
+	/** Constant <code>QUALITY_CONTROL_REPORT_PATH="beCPG/birt/document/qualitycontrol/Qual"{trunked}</code> */
 	private static final String QUALITY_CONTROL_REPORT_PATH = "beCPG/birt/document/qualitycontrol/QualityControlReport.rptdesign";
+	/** Constant <code>QUALITY_CONTROL_AGING_REPORT_PATH="beCPG/birt/document/qualitycontrol/Qual"{trunked}</code> */
 	private static final String QUALITY_CONTROL_AGING_REPORT_PATH = "beCPG/birt/document/qualitycontrol/QualityControlAgingReport.rptdesign";
+	/** Constant <code>QUALITY_CONTROL_AGING_NAME="path.aging"</code> */
 	private static final String QUALITY_CONTROL_AGING_NAME = "path.aging";
 
+	/** Constant <code>QUALITY_REPORT_RESOURCE_BY_LOCALE="beCPG/birt/document/qualitycontrol/Qual"{trunked}</code> */
 	private static final String QUALITY_REPORT_RESOURCE_BY_LOCALE = "beCPG/birt/document/qualitycontrol/QualityControlReport_%s.properties";
+	/** Constant <code>QUALITY_REPORT_RESOURCE="beCPG/birt/document/qualitycontrol/Qual"{trunked}</code> */
 	private static final String QUALITY_REPORT_RESOURCE = "beCPG/birt/document/qualitycontrol/QualityControlReport.properties";
 
+	/** Constant <code>ECO_REPORT_PATH="beCPG/birt/document/ecm/ECOReport.rptde"{trunked}</code> */
 	private static final String ECO_REPORT_PATH = "beCPG/birt/document/ecm/ECOReport.rptdesign";
 
+	/** Constant <code>EXPORT_PRODUCTS_REPORT_RPTFILE_PATH="beCPG/birt/exportsearch/product/%s/Expo"{trunked}</code> */
 	private static final String EXPORT_PRODUCTS_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/product/%s/ExportSearch.rptdesign";
+	/** Constant <code>EXPORT_PRODUCTS_REPORT_XMLFILE_PATH="beCPG/birt/exportsearch/product/%s/Expo"{trunked}</code> */
 	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/product/%s/ExportSearchQuery.xml";
+	/** Constant <code>EXPORT_NC_REPORT_RPTFILE_PATH="beCPG/birt/exportsearch/nonconformity/%"{trunked}</code> */
 	private static final String EXPORT_NC_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/nonconformity/%s/NonConformitySynthesis.rptdesign";
+	/** Constant <code>EXPORT_NC_REPORT_XMLFILE_PATH="beCPG/birt/exportsearch/nonconformity/%"{trunked}</code> */
 	private static final String EXPORT_NC_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/nonconformity/%s/ExportSearchQuery.xml";
 
+	/** Constant <code>NC_REPORT_RESOURCE_BY_LOCALE="beCPG/birt/document/nonconformity/NCRep"{trunked}</code> */
 	private static final String NC_REPORT_RESOURCE_BY_LOCALE = "beCPG/birt/document/nonconformity/NCReport_%s.properties";
+	/** Constant <code>NC_REPORT_RESOURCE="beCPG/birt/document/nonconformity/NCRep"{trunked}</code> */
 	private static final String NC_REPORT_RESOURCE = "beCPG/birt/document/nonconformity/NCReport.properties";
 
+	/** Constant <code>PRODUCT_REPORT_RAWMATERIAL_PATH="beCPG/birt/document/product/default/Raw"{trunked}</code> */
 	private static final String PRODUCT_REPORT_RAWMATERIAL_PATH = "beCPG/birt/document/product/default/RawMaterialReport.rptdesign";
 
+	/** Constant <code>reportKindCodes</code> */
 	private static final Map<String, String> reportKindCodes = new HashMap<>();
+	/** Constant <code>NONE_KIND_REPORT="none"</code> */
 	private static final String NONE_KIND_REPORT = "none";
 
 	static {
@@ -193,68 +226,122 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		reportKindCodes.put(NONE_KIND_REPORT, "None");
 	}
 
+	/** Constant <code>EXPORT_LABELLING_XLSX_PATH="beCPG/birt/exportsearch/product/%s/Expo"{trunked}</code> */
 	private static final String EXPORT_LABELLING_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportLabelling.xlsx";
+	/** Constant <code>EXPORT_CITEO_XLSX_PATH="beCPG/birt/exportsearch/product/%s/Expo"{trunked}</code> */
 	private static final String EXPORT_CITEO_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportCiteo.xlsx";
+	/** Constant <code>EXPORT_CITEO_PRO_XLSX_PATH="beCPG/birt/exportsearch/product/%s/Expo"{trunked}</code> */
 	private static final String EXPORT_CITEO_PRO_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportCiteoPro.xlsx";
+	/** Constant <code>EXPORT_ALLERGENS_XLSX_PATH="beCPG/birt/exportsearch/product/%s/Expo"{trunked}</code> */
 	private static final String EXPORT_ALLERGENS_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportAllergens.xlsx";
+	/** Constant <code>EXPORT_LCA_XLSX_PATH="beCPG/birt/exportsearch/product/%s/Expo"{trunked}</code> */
 	private static final String EXPORT_LCA_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportLCA.xlsx";
+	/** Constant <code>EXPORT_SVHC_XLSX_PATH="beCPG/birt/exportsearch/product/%s/Expo"{trunked}</code> */
 	private static final String EXPORT_SVHC_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportSVHC.xlsx";
+	/** Constant <code>EXPORT_SURVEY_XLSX_PATH="beCPG/birt/exportsearch/product/%s/Expo"{trunked}</code> */
 	private static final String EXPORT_SURVEY_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportSurvey.xlsx";
+	/** Constant <code>EXPORT_NUTRIENTS_XLSX_PATH="beCPG/birt/exportsearch/product/%s/Expo"{trunked}</code> */
 	private static final String EXPORT_NUTRIENTS_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportNutrients.xlsx";
+	/** Constant <code>EXPORT_QUALITY_CONTROLS_XLSX_PATH="beCPG/birt/exportsearch/product/%s/Expo"{trunked}</code> */
 	private static final String EXPORT_QUALITY_CONTROLS_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportQualityControls.xlsx";
+	/** Constant <code>EXPORT_INGLIST_XLSX_PATH="beCPG/birt/exportsearch/product/%s/Expo"{trunked}</code> */
 	private static final String EXPORT_INGLIST_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportIngList.xlsx";
+	/** Constant <code>EXPORT_LABELCLAIMLIST_XLSX_PATH="beCPG/birt/exportsearch/product/%s/Expo"{trunked}</code> */
 	private static final String EXPORT_LABELCLAIMLIST_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportLabelClaimList.xlsx";
+	/** Constant <code>EXPORT_PHYSICOCHEMICALLIST_XLSX_PATH="beCPG/birt/exportsearch/product/%s/Expo"{trunked}</code> */
 	private static final String EXPORT_PHYSICOCHEMICALLIST_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportPhysicoChemicalList.xlsx";
+	/** Constant <code>EXPORT_COMPOSITIONPACKAGING_XLSX_PATH="beCPG/birt/exportsearch/product/%s/Expo"{trunked}</code> */
 	private static final String EXPORT_COMPOSITIONPACKAGING_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportCompositionPackaging.xlsx";
+	/** Constant <code>EXPORT_SCORELIST_XLSX_PATH="beCPG/birt/exportsearch/product/%s/Expo"{trunked}</code> */
 	private static final String EXPORT_SCORELIST_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportScoreList.xlsx";
 	
+	/** Constant <code>EXPORT_SPEC_ALLERGENS_XLSX_PATH="beCPG/birt/exportsearch/spec/%s/ExportS"{trunked}</code> */
 	private static final String EXPORT_SPEC_ALLERGENS_XLSX_PATH = "beCPG/birt/exportsearch/spec/%s/ExportSpecAllergens.xlsx";
+	/** Constant <code>EXPORT_SPEC_NUTRIENTS_XLSX_PATH="beCPG/birt/exportsearch/spec/%s/ExportS"{trunked}</code> */
 	private static final String EXPORT_SPEC_NUTRIENTS_XLSX_PATH = "beCPG/birt/exportsearch/spec/%s/ExportSpecNutrients.xlsx";
+	/** Constant <code>EXPORT_SPEC_PHYSICOCHEMICALLIST_XLSX_PATH="beCPG/birt/exportsearch/spec/%s/ExportS"{trunked}</code> */
 	private static final String EXPORT_SPEC_PHYSICOCHEMICALLIST_XLSX_PATH = "beCPG/birt/exportsearch/spec/%s/ExportSpecPhysicoChemicalList.xlsx";
+	/** Constant <code>EXPORT_SPEC_LABELCLAIMLIST_XLSX_PATH="beCPG/birt/exportsearch/spec/%s/ExportS"{trunked}</code> */
 	private static final String EXPORT_SPEC_LABELCLAIMLIST_XLSX_PATH = "beCPG/birt/exportsearch/spec/%s/ExportSpecLabelClaimList.xlsx";
+	/** Constant <code>EXPORT_FORBIDDENING_XLSX_PATH="beCPG/birt/exportsearch/spec/%s/ExportF"{trunked}</code> */
 	private static final String EXPORT_FORBIDDENING_XLSX_PATH = "beCPG/birt/exportsearch/spec/%s/ExportForbiddenIng.xlsx";
+	/** Constant <code>EXPORT_LABELINGRULELIST_XLSX_PATH="beCPG/birt/exportsearch/spec/%s/ExportL"{trunked}</code> */
 	private static final String EXPORT_LABELINGRULELIST_XLSX_PATH = "beCPG/birt/exportsearch/spec/%s/ExportLabelingRuleList.xlsx";
+	/** Constant <code>EXPORT_SPECCOMPATIBILITYLIST_XLSX_PATH="beCPG/birt/exportsearch/spec/%s/ExportS"{trunked}</code> */
 	private static final String EXPORT_SPECCOMPATIBILITYLIST_XLSX_PATH = "beCPG/birt/exportsearch/spec/%s/ExportSpecCompatibilityList.xlsx";
 	
+	/** Constant <code>EXPORT_SUPPLIERS_XLSX_PATH="beCPG/birt/exportsearch/supplier/%s/Exp"{trunked}</code> */
 	private static final String EXPORT_SUPPLIERS_XLSX_PATH = "beCPG/birt/exportsearch/supplier/%s/ExportSuppliers.xlsx";
+	/** Constant <code>EXPORT_SUPPLIER_SURVEY_XLSX_PATH="beCPG/birt/exportsearch/supplier/%s/Exp"{trunked}</code> */
 	private static final String EXPORT_SUPPLIER_SURVEY_XLSX_PATH = "beCPG/birt/exportsearch/supplier/%s/ExportSupplierSurvey.xlsx";
+	/** Constant <code>EXPORT_SUPPLIER_SCORELIST_XLSX_PATH="beCPG/birt/exportsearch/supplier/%s/Exp"{trunked}</code> */
 	private static final String EXPORT_SUPPLIER_SCORELIST_XLSX_PATH = "beCPG/birt/exportsearch/supplier/%s/ExportSupplierScoreList.xlsx";
 	
+	/** Constant <code>EXPORT_CLIENT_SURVEY_XLSX_PATH="beCPG/birt/exportsearch/client/%s/Expor"{trunked}</code> */
 	private static final String EXPORT_CLIENT_SURVEY_XLSX_PATH = "beCPG/birt/exportsearch/client/%s/ExportClientSurvey.xlsx";
+	/** Constant <code>EXPORT_CLIENT_SCORELIST_XLSX_PATH="beCPG/birt/exportsearch/client/%s/Expor"{trunked}</code> */
 	private static final String EXPORT_CLIENT_SCORELIST_XLSX_PATH = "beCPG/birt/exportsearch/client/%s/ExportClientScoreList.xlsx";
 	
+	/** Constant <code>EXPORT_PROJECT_SURVEY_XLSX_PATH="beCPG/birt/exportsearch/project/%s/Expo"{trunked}</code> */
 	private static final String EXPORT_PROJECT_SURVEY_XLSX_PATH = "beCPG/birt/exportsearch/project/%s/ExportProjectSurvey.xlsx";
+	/** Constant <code>EXPORT_PROJECT_SCORELIST_XLSX_PATH="beCPG/birt/exportsearch/project/%s/Expo"{trunked}</code> */
 	private static final String EXPORT_PROJECT_SCORELIST_XLSX_PATH = "beCPG/birt/exportsearch/project/%s/ExportProjectScoreList.xlsx";
 	
+	/** Constant <code>EXPORT_DOCUMENT_XLSX_PATH="beCPG/birt/exportsearch/document/%s/Exp"{trunked}</code> */
 	private static final String EXPORT_DOCUMENT_XLSX_PATH = "beCPG/birt/exportsearch/document/%s/ExportDocuments.xlsx";
 
+	/** Constant <code>PRODUCT_REPORT_DE_RESOURCE="beCPG/birt/document/product/default/Pro"{trunked}</code> */
 	private static final String PRODUCT_REPORT_DE_RESOURCE = "beCPG/birt/document/product/default/ProductReport_de.properties";
+	/** Constant <code>PRODUCT_REPORT_EN_US_RESOURCE="beCPG/birt/document/product/default/Pro"{trunked}</code> */
 	private static final String PRODUCT_REPORT_EN_US_RESOURCE = "beCPG/birt/document/product/default/ProductReport_en_US.properties";
+	/** Constant <code>PRODUCT_REPORT_EN_RESOURCE="beCPG/birt/document/product/default/Pro"{trunked}</code> */
 	private static final String PRODUCT_REPORT_EN_RESOURCE = "beCPG/birt/document/product/default/ProductReport_en.properties";
+	/** Constant <code>PRODUCT_REPORT_ES_RESOURCE="beCPG/birt/document/product/default/Pro"{trunked}</code> */
 	private static final String PRODUCT_REPORT_ES_RESOURCE = "beCPG/birt/document/product/default/ProductReport_es.properties";
+	/** Constant <code>PRODUCT_REPORT_FI_RESOURCE="beCPG/birt/document/product/default/Pro"{trunked}</code> */
 	private static final String PRODUCT_REPORT_FI_RESOURCE = "beCPG/birt/document/product/default/ProductReport_fi.properties";
+	/** Constant <code>PRODUCT_REPORT_FR_RESOURCE="beCPG/birt/document/product/default/Pro"{trunked}</code> */
 	private static final String PRODUCT_REPORT_FR_RESOURCE = "beCPG/birt/document/product/default/ProductReport_fr.properties";
+	/** Constant <code>PRODUCT_REPORT_IT_RESOURCE="beCPG/birt/document/product/default/Pro"{trunked}</code> */
 	private static final String PRODUCT_REPORT_IT_RESOURCE = "beCPG/birt/document/product/default/ProductReport_it.properties";
+	/** Constant <code>PRODUCT_REPORT_NL_RESOURCE="beCPG/birt/document/product/default/Pro"{trunked}</code> */
 	private static final String PRODUCT_REPORT_NL_RESOURCE = "beCPG/birt/document/product/default/ProductReport_nl.properties";
+	/** Constant <code>PRODUCT_REPORT_PT_RESOURCE="beCPG/birt/document/product/default/Pro"{trunked}</code> */
 	private static final String PRODUCT_REPORT_PT_RESOURCE = "beCPG/birt/document/product/default/ProductReport_pt.properties";
+	/** Constant <code>PRODUCT_REPORT_RU_RESOURCE="beCPG/birt/document/product/default/Pro"{trunked}</code> */
 	private static final String PRODUCT_REPORT_RU_RESOURCE = "beCPG/birt/document/product/default/ProductReport_ru.properties";
+	/** Constant <code>PRODUCT_REPORT_SV_RESOURCE="beCPG/birt/document/product/default/Pro"{trunked}</code> */
 	private static final String PRODUCT_REPORT_SV_RESOURCE = "beCPG/birt/document/product/default/ProductReport_sv.properties";
 
+	/** Constant <code>PRODUCT_REPORT_SETTINGS_RESOURCE="beCPG/birt/document/product/default/set"{trunked}</code> */
 	private static final String PRODUCT_REPORT_SETTINGS_RESOURCE = "beCPG/birt/document/product/default/settings.properties";
+	/** Constant <code>PRODUCT_REPORT_LOGO_RESOURCE="beCPG/birt/document/product/default/log"{trunked}</code> */
 	private static final String PRODUCT_REPORT_LOGO_RESOURCE = "beCPG/birt/document/product/default/logo.png";
+	/** Constant <code>PRODUCT_REPORT_CSS_RESOURCE="beCPG/birt/document/product/default/bec"{trunked}</code> */
 	private static final String PRODUCT_REPORT_CSS_RESOURCE = "beCPG/birt/document/product/default/becpg-report.css";
+	/** Constant <code>PRODUCT_REPORT_IMG_CCCCCC="beCPG/birt/document/product/default/ccc"{trunked}</code> */
 	private static final String PRODUCT_REPORT_IMG_CCCCCC = "beCPG/birt/document/product/default/cccccc-200X30.png";
+	/** Constant <code>PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ENERGY="beCPG/birt/document/product/default/ima"{trunked}</code> */
 	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ENERGY = "beCPG/birt/document/product/default/images/trafficLights_Energy.png";
+	/** Constant <code>PRODUCT_REPORT_IMG_TRAFFICLIGHTS_GREEN="beCPG/birt/document/product/default/ima"{trunked}</code> */
 	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_GREEN = "beCPG/birt/document/product/default/images/trafficLights_Green.png";
+	/** Constant <code>PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ORANGE="beCPG/birt/document/product/default/ima"{trunked}</code> */
 	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_ORANGE = "beCPG/birt/document/product/default/images/trafficLights_Orange.png";
+	/** Constant <code>PRODUCT_REPORT_IMG_TRAFFICLIGHTS_RED="beCPG/birt/document/product/default/ima"{trunked}</code> */
 	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_RED = "beCPG/birt/document/product/default/images/trafficLights_Red.png";
+	/** Constant <code>PRODUCT_REPORT_IMG_TRAFFICLIGHTS_SERVING="beCPG/birt/document/product/default/ima"{trunked}</code> */
 	private static final String PRODUCT_REPORT_IMG_TRAFFICLIGHTS_SERVING = "beCPG/birt/document/product/default/images/trafficLights_Serving.png";
 
+	/** Constant <code>CLASSIFY_RULE_TITLE="classifyEntityRule"</code> */
 	private static final String CLASSIFY_RULE_TITLE = "classifyEntityRule";
 	
+	/** Constant <code>ARCHIVE_PJT_TPL_NAME="plm.project.archive.tpl.name"</code> */
 	private static final String ARCHIVE_PJT_TPL_NAME = "plm.project.archive.tpl.name";
+	/** Constant <code>ARCHIVE_PJT_TASK_NAME="plm.project.archive.task.name"</code> */
 	private static final String ARCHIVE_PJT_TASK_NAME = "plm.project.archive.task.name";
+	/** Constant <code>ARCHIVE_PJT_DELIVERABLE_NAME="plm.project.archive.deliverable.name"</code> */
 	private static final String ARCHIVE_PJT_DELIVERABLE_NAME = "plm.project.archive.deliverable.name";
+	/** Constant <code>XPATH_DICTIONARY_SCRIPTS="./app:dictionary/app:scripts"</code> */
 	private static final String XPATH_DICTIONARY_SCRIPTS = "./app:dictionary/app:scripts";
 
 	@Autowired
@@ -440,6 +527,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	}
 
+	/**
+	 * <p>visitChannelList.</p>
+	 *
+	 * @param channelListFolder a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void visitChannelList(NodeRef channelListFolder) {
 		NodeRef formulateChannel = nodeService.getChildByName(channelListFolder, ContentModel.ASSOC_CONTAINS, FormulationChannelService.FORMULATE_ENTITIES_CHANNEL_ID);
 		if (formulateChannel == null) {
@@ -452,6 +544,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 	}
 
+	/**
+	 * <p>fillSystemQualityList.</p>
+	 *
+	 * @param qualityListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void fillSystemQualityList(NodeRef qualityListNodeRef) {
 
 		NodeRef controTypesFolder = entitySystemService.getSystemEntityDataList(qualityListNodeRef, PlmRepoConsts.PATH_CONTROL_TYPES);
@@ -482,6 +579,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 	}
 
+	/**
+	 * <p>addClassifyRule.</p>
+	 *
+	 * @param companyHome a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void addClassifyRule(NodeRef companyHome) {
 
 		NodeRef scriptsFolderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, "./app:dictionary/app:scripts");
@@ -527,6 +629,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	}
 
+	/**
+	 * <p>visitSites.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	private List<SiteInfo> visitSites() {
 
 		List<SiteInfo> ret = new ArrayList<>();
@@ -679,6 +786,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 	}
 
+	/**
+	 * <p>createNotifications.</p>
+	 *
+	 * @param systemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void createNotifications(NodeRef systemNodeRef) {
 
 		NodeRef folderNodeRef = repoService.getFolderByPath(systemNodeRef, RepoConsts.PATH_CHARACTS);
@@ -697,6 +809,15 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		createArchivedProductsNotification(notificationFolder);
 	}
 
+	/**
+	 * <p>createNotification.</p>
+	 *
+	 * @param notificationFolder a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param properties a {@link java.util.Map} object
+	 * @param mailTemplate a {@link java.lang.String} object
+	 * @param notificationAuthorities a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param target a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void createNotification(NodeRef notificationFolder, Map<QName, Serializable> properties, String mailTemplate,
 			NodeRef notificationAuthorities, NodeRef target) {
 		NodeRef notification = notificationFolder == null ? null
@@ -724,6 +845,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 	}
 
+	/**
+	 * <p>createRequirementsNotification.</p>
+	 *
+	 * @param notificationFolder a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void createRequirementsNotification(NodeRef notificationFolder) {
 		if (nodeService.getChildByName(notificationFolder, ContentModel.ASSOC_CONTAINS, RepoConsts.FORMULATION_ERRORS_NOTIFICATION) == null) {
 			Map<QName, Serializable> properties = new HashMap<>();
@@ -750,6 +876,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 	}
 
+	/**
+	 * <p>createObsoleteDocumentsNotification.</p>
+	 *
+	 * @param notificationFolder a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void createObsoleteDocumentsNotification(NodeRef notificationFolder) {
 		if (nodeService.getChildByName(notificationFolder, ContentModel.ASSOC_CONTAINS, RepoConsts.OBSOLETE_DOCUMENTS_NOTIFICATION) == null) {
 			Map<QName, Serializable> properties = new HashMap<>();
@@ -773,6 +904,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 	}
 
+	/**
+	 * <p>createInProgressProjectsNotification.</p>
+	 *
+	 * @param notificationFolder a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void createInProgressProjectsNotification(NodeRef notificationFolder) {
 		if (nodeService.getChildByName(notificationFolder, ContentModel.ASSOC_CONTAINS, RepoConsts.IN_PROGRESS_PROJECTS_NOTIFICATION) == null) {
 			Map<QName, Serializable> properties = new HashMap<>();
@@ -799,6 +935,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 	}
 
+	/**
+	 * <p>createValidatedProductsNotification.</p>
+	 *
+	 * @param notificationFolder a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void createValidatedProductsNotification(NodeRef notificationFolder) {
 		if (nodeService.getChildByName(notificationFolder, ContentModel.ASSOC_CONTAINS, RepoConsts.VALIDATED_PRODUCTS_NOTIFICATION) == null) {
 			Map<QName, Serializable> properties = new HashMap<>();
@@ -824,6 +965,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 	}
 
+	/**
+	 * <p>createValidatedAndUpdatedProductsNotification.</p>
+	 *
+	 * @param notificationFolder a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void createValidatedAndUpdatedProductsNotification(NodeRef notificationFolder) {
 		if (nodeService.getChildByName(notificationFolder, ContentModel.ASSOC_CONTAINS,
 				RepoConsts.VALIDATED_AND_UPDATED_PRODUCTS_NOTIFICATION) == null) {
@@ -849,6 +995,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			createNotification(notificationFolder, properties, null, adminGroupNodeRef, null);
 		}
 	}
+	/**
+	 * <p>createArchivedProductsNotification.</p>
+	 *
+	 * @param notificationFolder a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void createArchivedProductsNotification(NodeRef notificationFolder) {
 		if (nodeService.getChildByName(notificationFolder, ContentModel.ASSOC_CONTAINS, RepoConsts.ARCHIVED_PRODUCTS_NOTIFICATION) == null) {
 			Map<QName, Serializable> properties = new HashMap<>();
@@ -1058,7 +1209,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	/**
 	 * Create the entity templates
 	 *
-	 * @param systemNodeRef
+	 * @param systemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	private void visitEntityTpls(NodeRef systemNodeRef) {
 
@@ -1164,6 +1315,13 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
 
+	/**
+	 * <p>visitSystemHierachiesEntity.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param path a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef visitSystemHierachiesEntity(NodeRef parentNodeRef, String path) {
 
 		Map<String, QName> entityLists = new LinkedHashMap<>();
@@ -1188,9 +1346,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	/**
 	 * Create dyn List values
 	 *
-	 * @param parentNodeRef
-	 * @param path
-	 * @return
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param path a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	private NodeRef visitSystemListValuesEntity(NodeRef parentNodeRef, String path) {
 
@@ -1247,6 +1405,13 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
 
+	/**
+	 * <p>visitSystemSecurityListValuesEntity.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param path a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef visitSystemSecurityListValuesEntity(NodeRef parentNodeRef, String path) {
 		Map<String, QName> entityLists = new LinkedHashMap<>();
 		entityLists.put(PlmRepoConsts.PATH_PERSONAL_PROTECTIONS, GHSModel.TYPE_PERSONAL_PROTECTION);
@@ -1261,6 +1426,13 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
 
+	/**
+	 * <p>visitSystemQualityListValuesEntity.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param path a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef visitSystemQualityListValuesEntity(NodeRef parentNodeRef, String path) {
 
 		Map<String, QName> entityLists = new LinkedHashMap<>();
@@ -1284,7 +1456,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	/**
 	 * Create product tpls
 	 *
-	 * @param entityTplsNodeRef
+	 * @param entityTplsNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	private void visitProductTpls(NodeRef entityTplsNodeRef) {
 
@@ -1448,6 +1620,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 	}
 
+	/**
+	 * <p>visitQuality.</p>
+	 *
+	 * @param entityTplsNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void visitQuality(NodeRef entityTplsNodeRef) {
 
 		NodeRef qualityTplsNodeRef = visitFolder(entityTplsNodeRef, PlmRepoConsts.PATH_QUALITY_TEMPLATES);
@@ -1532,6 +1709,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
 	}
 
+	/**
+	 * <p>visitReportKindList.</p>
+	 *
+	 * @param reportKindListDefaultValues a {@link java.util.Map} object
+	 */
 	private void visitReportKindList(Map<String, Map<QName, Serializable>> reportKindListDefaultValues) {
 		NodeRef systemFolderNodeRef = repoService.getFolderByPath(RepoConsts.PATH_SYSTEM);
 		NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_LISTS);
@@ -1551,7 +1733,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	/**
 	 * Create the reports templates
 	 *
-	 * @param systemNodeRef
+	 * @param systemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	private void visitReports(NodeRef systemNodeRef) {
 		try {
@@ -1931,6 +2113,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 	}
 	
+	/**
+	 * <p>visitProjects.</p>
+	 *
+	 * @param systemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void visitProjects(NodeRef systemNodeRef) {
 
 		NodeRef entityTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_ENTITY_TEMPLATES); 
@@ -1940,6 +2127,12 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		
 	}
 	
+	/**
+	 * <p>createArchiveProjectTpl.</p>
+	 *
+	 * @param entityTplsNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param projectTplsNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void createArchiveProjectTpl(NodeRef entityTplsNodeRef, NodeRef projectTplsNodeRef) {
 		
 		NodeRef projectTplNodeRef = nodeService.getChildByName(projectTplsNodeRef, ContentModel.ASSOC_CONTAINS,
@@ -1996,7 +2189,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	/**
 	 * Create system groups.
-	 *
 	 */
 	private void createSystemGroups() {
 

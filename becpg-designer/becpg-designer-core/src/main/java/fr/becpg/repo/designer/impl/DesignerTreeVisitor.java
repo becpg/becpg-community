@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -123,6 +123,12 @@ public class DesignerTreeVisitor {
 		return ret;
 	}
 
+	/**
+	 * <p>extractModelTreeNode.</p>
+	 *
+	 * @param modelNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.designer.data.DesignerTree} object
+	 */
 	private DesignerTree extractModelTreeNode(NodeRef modelNodeRef) {
 		DesignerTree tmp = new DesignerTree(modelNodeRef.toString());
 		String type = nodeService.getType(modelNodeRef).toPrefixString(namespaceService);

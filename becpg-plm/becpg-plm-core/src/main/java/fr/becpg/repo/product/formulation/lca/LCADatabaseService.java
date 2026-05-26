@@ -31,6 +31,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("lcaDatabaseService")
 public class LCADatabaseService {
 
+	/** Constant <code>DATABASES_FOLDER="/app:company_home/cm:System/cm:LCADatab"{trunked}</code> */
 	private static final String DATABASES_FOLDER = "/app:company_home/cm:System/cm:LCADatabases";
 
 	private final NodeService nodeService;
@@ -60,6 +61,12 @@ public class LCADatabaseService {
 		this.lcaPlugins = lcaPlugins;
 	}
 	
+	/**
+	 * <p>getPlugin.</p>
+	 *
+	 * @param databaseNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.formulation.lca.LCADatabasePlugin} object
+	 */
 	private LCADatabasePlugin getPlugin(NodeRef databaseNodeRef) {
 		String databaseFilename = (String) nodeService.getProperty(databaseNodeRef, ContentModel.PROP_NAME);
 		for (LCADatabasePlugin lcaDatabasePlugin : lcaPlugins) {
@@ -245,6 +252,13 @@ public class LCADatabaseService {
 		return items;
 	}
 	
+	/**
+	 * <p>createLCAListDataItem.</p>
+	 *
+	 * @param lcaCode a {@link java.lang.String} object
+	 * @param lcaValue a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.LCAListDataItem} object
+	 */
 	private LCAListDataItem createLCAListDataItem(String lcaCode, Double lcaValue) {
 		if (lcaValue != null) {
 			List<NodeRef> lca = BeCPGQueryBuilder.createQuery().inDB().ofType(PLMModel.TYPE_LCA).andPropEquals(PLMModel.PROP_LCA_CODE, lcaCode).list();

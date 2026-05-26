@@ -32,6 +32,7 @@ public abstract class AbstractCostListDataItem<T extends AbstractCostListDataIte
 MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValueDataItem, CompositeDataItem<T> , Synchronisable {
 	
 	
+	/** Constant <code>serialVersionUID=4160545876076772520L</code> */
 	private static final long serialVersionUID = 4160545876076772520L;
 	protected Double value = 0d;	
 	protected String unit;

@@ -35,6 +35,7 @@ public class ImageSpelFunctions implements CustomSpelFunctions {
 	@Autowired
 	private SysAdminParams sysAdminParams;
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(ImageSpelFunctions.class);
 
 	/** {@inheritDoc} */

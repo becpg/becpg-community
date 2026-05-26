@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -49,6 +49,7 @@ import fr.becpg.repo.report.entity.EntityReportService;
  */
 public final class Thumbnail extends BaseScopableProcessorExtension {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(Thumbnail.class);
 
 	private NodeService nodeService;
@@ -201,6 +202,11 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 		return new ScriptNode(reportNodeRef, serviceRegistry, getScope());
 	}
 
+	/**
+	 * <p>cleanThumbnails.</p>
+	 *
+	 * @param reportNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	@SuppressWarnings("deprecation")
 	private void cleanThumbnails(NodeRef reportNodeRef) {
 		if (reportNodeRef == null) {
@@ -222,6 +228,10 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 	 * Helper to execute a supplier in a writable transaction and as system user. It avoids creating a new transaction if the current one is already writable.
 	 *
 	 * Returns the supplier result or null on failure.
+	 *
+	 * @param supplier a {@link java.util.function.Supplier} object
+	 * @param <T> a T class
+	 * @return a T object
 	 */
 	private <T> T executeWithWritableTransaction(Supplier<T> supplier) {
 		Objects.requireNonNull(supplier, "supplier must not be null");
@@ -239,6 +249,12 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 		}
 	}
 
+	/**
+	 * <p>unwrapVirtualNodeIfNeeded.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef unwrapVirtualNodeIfNeeded(NodeRef nodeRef) {
 		if (nodeRef == null) {
 			return null;

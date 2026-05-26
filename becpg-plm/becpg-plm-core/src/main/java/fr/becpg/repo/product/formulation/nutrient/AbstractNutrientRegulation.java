@@ -111,6 +111,9 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 
 	}
 
+	/**
+	 * <p>loadRegulation.</p>
+	 */
 	private void loadRegulation() {
 		definitions = new LinkedHashMap<>();
 		ClassPathResource resource = new ClassPathResource(path);
@@ -131,6 +134,12 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 		}
 	}
 
+	/**
+	 * <p>parseDouble.</p>
+	 *
+	 * @param value a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double parseDouble(String value) {
 		if (value != null && !value.trim().isEmpty()) {
 			return Double.valueOf(value.trim().replace(",", "."));
@@ -139,6 +148,12 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 		return null;
 	}
 
+	/**
+	 * <p>parseInt.</p>
+	 *
+	 * @param value a {@link java.lang.String} object
+	 * @return a {@link java.lang.Integer} object
+	 */
 	private Integer parseInt(String value) {
 		if (value != null && !value.isEmpty()) {
 			return Integer.valueOf(value);

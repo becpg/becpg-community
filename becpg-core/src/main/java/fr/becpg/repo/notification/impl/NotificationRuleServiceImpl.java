@@ -79,17 +79,28 @@ import fr.becpg.repo.search.data.VersionFilterType;
 @Service("notificationRuleService")
 public class NotificationRuleServiceImpl implements NotificationRuleService {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(NotificationRuleServiceImpl.class);
 
+	/** Constant <code>DATE_FIELD="dateField"</code> */
 	private static final String DATE_FIELD = "dateField";
+	/** Constant <code>NODE_TYPE="type"</code> */
 	private static final String NODE_TYPE = "type";
+	/** Constant <code>NODE="node"</code> */
 	private static final String NODE = "node";
+	/** Constant <code>ITEM="item"</code> */
 	private static final String ITEM = "item";
+	/** Constant <code>ITEMS="items"</code> */
 	private static final String ITEMS = "items";
+	/** Constant <code>NOTIFICATION="notification"</code> */
 	private static final String NOTIFICATION = "notification";
+	/** Constant <code>TARGET_PATH="targetPath"</code> */
 	private static final String TARGET_PATH = "targetPath";
+	/** Constant <code>ENTITYV2_SUBTYPE="isEntityV2SubType"</code> */
 	private static final String ENTITYV2_SUBTYPE = "isEntityV2SubType";
+	/** Constant <code>DISPLAY_PATH="displayPath"</code> */
 	private static final String DISPLAY_PATH = "displayPath";
+	/** Constant <code>DISPLAY_NAME="displayName"</code> */
 	private static final String DISPLAY_NAME = "displayName";
 
 	@Autowired
@@ -185,6 +196,12 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	}
 
 	
+	/**
+	 * <p>shouldSkip.</p>
+	 *
+	 * @param notification a {@link fr.becpg.repo.notification.data.NotificationRuleListDataItem} object
+	 * @return a boolean
+	 */
 	private boolean shouldSkip(NotificationRuleListDataItem notification) {
 		boolean skip = (notification.getNodeType() == null) || (notification.getAuthorities() == null) || !isAllowed(notification)
 				|| Boolean.TRUE.equals(notification.getDisabled());
@@ -194,12 +211,23 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		return skip;
 	}
 
+	/**
+	 * <p>initializeNotification.</p>
+	 *
+	 * @param notification a {@link fr.becpg.repo.notification.data.NotificationRuleListDataItem} object
+	 */
 	private void initializeNotification(NotificationRuleListDataItem notification) {
 		notification.setFrequencyStartDate(new Date());
 		notification.setErrorLog(null);
 		alfrescoRepository.save(notification);
 	}
 
+	/**
+	 * <p>buildSearchFilter.</p>
+	 *
+	 * @param notification a {@link fr.becpg.repo.notification.data.NotificationRuleListDataItem} object
+	 * @return a {@link fr.becpg.repo.search.data.SearchRuleFilter} object
+	 */
 	private SearchRuleFilter buildSearchFilter(NotificationRuleListDataItem notification) {
 		SearchRuleFilter filter = new SearchRuleFilter();
 		if ((notification.getCondtions() != null) && !notification.getCondtions().isEmpty()) {
@@ -217,6 +245,14 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		return filter;
 	}
 
+	/**
+	 * <p>isEmptyResult.</p>
+	 *
+	 * @param notification a {@link fr.becpg.repo.notification.data.NotificationRuleListDataItem} object
+	 * @param result a {@link fr.becpg.repo.search.data.SearchRuleResult} object
+	 * @param filter a {@link fr.becpg.repo.search.data.SearchRuleFilter} object
+	 * @return a boolean
+	 */
 	private boolean isEmptyResult(NotificationRuleListDataItem notification, SearchRuleResult result, SearchRuleFilter filter) {
 		List<NodeRef> items = result.getResults();
 		Map<NodeRef, Map<String, NodeRef>> itemVersions = result.getItemVersions();
@@ -224,6 +260,12 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 				&& ((items == null) || items.isEmpty() || (!VersionFilterType.NONE.equals(filter.getVersionFilterType()) && itemVersions.isEmpty()));
 	}
 
+	/**
+	 * <p>logNoObjects.</p>
+	 *
+	 * @param notification a {@link fr.becpg.repo.notification.data.NotificationRuleListDataItem} object
+	 * @param filter a {@link fr.becpg.repo.search.data.SearchRuleFilter} object
+	 */
 	private void logNoObjects(NotificationRuleListDataItem notification, SearchRuleFilter filter) {
 		logger.debug("No objects found for notification: " + notification.getSubject());
 		if (!VersionFilterType.NONE.equals(filter.getVersionFilterType())) {
@@ -231,6 +273,13 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		}
 	}
 
+	/**
+	 * <p>buildTemplateArgs.</p>
+	 *
+	 * @param notification a {@link fr.becpg.repo.notification.data.NotificationRuleListDataItem} object
+	 * @param filter a {@link fr.becpg.repo.search.data.SearchRuleFilter} object
+	 * @return a {@link java.util.Map} object
+	 */
 	private Map<String, Object> buildTemplateArgs(NotificationRuleListDataItem notification, SearchRuleFilter filter) {
 		Map<String, Object> args = new HashMap<>();
 		QName nodeType = filter.getNodeType();
@@ -248,6 +297,13 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		return args;
 	}
 
+	/**
+	 * <p>buildEntities.</p>
+	 *
+	 * @param items a {@link java.util.List} object
+	 * @param notification a {@link fr.becpg.repo.notification.data.NotificationRuleListDataItem} object
+	 * @return a {@link java.util.Map} object
+	 */
 	private Map<NodeRef, Object> buildEntities(List<NodeRef> items, NotificationRuleListDataItem notification) {
 		Map<NodeRef, Object> entities = new HashMap<>();
 		QName nodeType = QName.createQName(notification.getNodeType(), namespaceService);
@@ -271,6 +327,16 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		return entities;
 	}
 
+	/**
+	 * <p>createMailSender.</p>
+	 *
+	 * @param notification a {@link fr.becpg.repo.notification.data.NotificationRuleListDataItem} object
+	 * @param templateArgs a {@link java.util.Map} object
+	 * @param entities a {@link java.util.Map} object
+	 * @param searchFilter a {@link fr.becpg.repo.search.data.SearchRuleFilter} object
+	 * @param searchResult a {@link fr.becpg.repo.search.data.SearchRuleResult} object
+	 * @return a {@link java.util.function.Consumer} object
+	 */
 	private Consumer<NodeRef> createMailSender(NotificationRuleListDataItem notification, Map<String, Object> templateArgs,
 			Map<NodeRef, Object> entities, SearchRuleFilter searchFilter, SearchRuleResult searchResult) {
 		return downloadNode -> {
@@ -294,6 +360,17 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		};
 	}
 
+	/**
+	 * <p>sendMail.</p>
+	 *
+	 * @param notification a {@link fr.becpg.repo.notification.data.NotificationRuleListDataItem} object
+	 * @param templateArgs a {@link java.util.Map} object
+	 * @param searchFilter a {@link fr.becpg.repo.search.data.SearchRuleFilter} object
+	 * @param searchResult a {@link fr.becpg.repo.search.data.SearchRuleResult} object
+	 * @param downloadNode a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param userName a {@link java.lang.String} object
+	 * @param userEntities a {@link java.util.List} object
+	 */
 	private void sendMail(NotificationRuleListDataItem notification, Map<String, Object> templateArgs, SearchRuleFilter searchFilter,
 			SearchRuleResult searchResult, NodeRef downloadNode, String userName, List<Object> userEntities) {
 		Map<String, Object> userTemplate = new HashMap<>(templateArgs);
@@ -317,6 +394,13 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		mailService.sendMail(List.of(authorityService.getAuthorityNodeRef(userName)), notification.getSubject(), emailTemplate, model, false);
 	}
 
+	/**
+	 * <p>resolveDateFieldTitle.</p>
+	 *
+	 * @param filter a {@link fr.becpg.repo.search.data.SearchRuleFilter} object
+	 * @param userName a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String resolveDateFieldTitle(SearchRuleFilter filter, String userName) {
 		Locale currentLocale = I18NUtil.getLocale();
 		try {
@@ -335,6 +419,13 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		}
 	}
 
+	/**
+	 * <p>processReportTemplates.</p>
+	 *
+	 * @param notification a {@link fr.becpg.repo.notification.data.NotificationRuleListDataItem} object
+	 * @param searchResult a {@link fr.becpg.repo.search.data.SearchRuleResult} object
+	 * @param mailSender a {@link java.util.function.Consumer} object
+	 */
 	private void processReportTemplates(NotificationRuleListDataItem notification, SearchRuleResult searchResult, Consumer<NodeRef> mailSender) {
 		final var exportPath = String.join(RepoConsts.PATH_SEPARATOR, RepoConsts.PATH_SYSTEM, RepoConsts.PATH_EXCHANGE, RepoConsts.PATH_EXPORT,
 				RepoConsts.PATH_NOTIFICATIONS);
@@ -369,6 +460,16 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		}
 	}
 
+	/**
+	 * <p>waitAndSaveDownload.</p>
+	 *
+	 * @param downloadNode a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param notification a {@link fr.becpg.repo.notification.data.NotificationRuleListDataItem} object
+	 * @param exportFolder a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param reportTpl a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @throws java.lang.InterruptedException if any.
+	 */
 	private NodeRef waitAndSaveDownload(NodeRef downloadNode, NotificationRuleListDataItem notification, NodeRef exportFolder, NodeRef reportTpl)
 			throws InterruptedException {
 		final long startTime = System.currentTimeMillis();
@@ -412,12 +513,25 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		return exportNode;
 	}
 
+	/**
+	 * <p>executeScriptIfExists.</p>
+	 *
+	 * @param notification a {@link fr.becpg.repo.notification.data.NotificationRuleListDataItem} object
+	 * @param items a {@link java.util.List} object
+	 * @param templateArgs a {@link java.util.Map} object
+	 */
 	private void executeScriptIfExists(NotificationRuleListDataItem notification, List<NodeRef> items, Map<String, Object> templateArgs) {
 		if ((notification.getScript() != null) && nodeService.exists(notification.getScript())) {
 			executeScript(notification, items, templateArgs);
 		}
 	}
 
+	/**
+	 * <p>emailAdminNotificationDisabled.</p>
+	 *
+	 * @param username a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	private boolean emailAdminNotificationDisabled(String username) {
 		NodeRef person = personService.getPerson(username);
 		if (person != null) {
@@ -432,6 +546,13 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		return false;
 	}
 
+	/**
+	 * <p>executeScript.</p>
+	 *
+	 * @param notification a {@link fr.becpg.repo.notification.data.NotificationRuleListDataItem} object
+	 * @param items a {@link java.util.List} object
+	 * @param templateArgs a {@link java.util.Map} object
+	 */
 	private void executeScript(NotificationRuleListDataItem notification, List<NodeRef> items, Map<String, Object> templateArgs) {
 
 		if (ScriptMode.EACH.equals(notification.getScriptMode())) {
@@ -453,6 +574,13 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		}
 	}
 
+	/**
+	 * <p>executeScriptEach.</p>
+	 *
+	 * @param notification a {@link fr.becpg.repo.notification.data.NotificationRuleListDataItem} object
+	 * @param items a {@link java.util.List} object
+	 * @param templateArgs a {@link java.util.Map} object
+	 */
 	private void executeScriptEach(NotificationRuleListDataItem notification, List<NodeRef> items, Map<String, Object> templateArgs) {
 		BatchStep<NodeRef> batchStep = new BatchStep<>();
 		batchStep.setWorkProvider(new EntityListBatchProcessWorkProvider<>(items));
@@ -476,12 +604,26 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 				List.of(batchStep));
 	}
 
+	/**
+	 * <p>executeScriptAll.</p>
+	 *
+	 * @param notification a {@link fr.becpg.repo.notification.data.NotificationRuleListDataItem} object
+	 * @param items a {@link java.util.List} object
+	 * @param templateArgs a {@link java.util.Map} object
+	 */
 	private void executeScriptAll(NotificationRuleListDataItem notification, List<NodeRef> items, Map<String, Object> templateArgs) {
 		Map<String, Object> model = buildBaseModel(notification, templateArgs);
 		model.put(ITEMS, items.stream().map(n -> new ScriptNode(n, serviceRegistry)).toArray());
 		scriptService.executeScript(notification.getScript(), ContentModel.PROP_CONTENT, model);
 	}
 
+	/**
+	 * <p>buildBaseModel.</p>
+	 *
+	 * @param notification a {@link fr.becpg.repo.notification.data.NotificationRuleListDataItem} object
+	 * @param templateArgs a {@link java.util.Map} object
+	 * @return a {@link java.util.Map} object
+	 */
 	private Map<String, Object> buildBaseModel(NotificationRuleListDataItem notification, Map<String, Object> templateArgs) {
 		Map<String, Object> model = new HashMap<>();
 		model.put(NODE_TYPE, templateArgs.get(NODE_TYPE));
@@ -491,6 +633,12 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		return model;
 	}
 
+	/**
+	 * <p>extractAuthoritiesFromGroup.</p>
+	 *
+	 * @param authority a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.util.Set} object
+	 */
 	private Set<String> extractAuthoritiesFromGroup(NodeRef authority) {
 		Set<String> ret = new HashSet<>();
 		if (nodeService.getType(authority).equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
@@ -503,11 +651,22 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		return ret;
 	}
 
+	/**
+	 * <p>getAllNotificationRule.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> getAllNotificationRule() {
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_NOTIFICATIONRULELIST).inDB();
 		return queryBuilder.list();
 	}
 
+	/**
+	 * <p>isAllowed.</p>
+	 *
+	 * @param notification a {@link fr.becpg.repo.notification.data.NotificationRuleListDataItem} object
+	 * @return a boolean
+	 */
 	private boolean isAllowed(NotificationRuleListDataItem notification) {
 
 		LocalDate now = LocalDate.now();

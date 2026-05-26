@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -38,6 +38,7 @@ import fr.becpg.repo.product.ProductService;
 public abstract class AbstractProductWebscript extends AbstractWebScript
 {	
 	
+		/** Constant <code>logger</code> */
 		private static final Log logger = LogFactory.getLog(AbstractProductWebscript.class);
 		
 		//request parameter names

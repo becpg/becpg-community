@@ -113,6 +113,14 @@ public class ProductExcelDataListOutputPlugin implements ExcelDataListOutputPlug
 		return items;
 	}
 
+	/**
+	 * <p>decorate.</p>
+	 *
+	 * @param items a {@link java.util.Map} object
+	 * @param subCache a {@link java.util.Map} object
+	 * @return a {@link java.util.Map} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private Map<String, Object> decorate(Map<String, Object> items, Map<String, JSONArray> subCache) throws JSONException {
 
 		for (Map.Entry<String, Object> item : items.entrySet()) {
@@ -232,6 +240,14 @@ public class ProductExcelDataListOutputPlugin implements ExcelDataListOutputPlug
 		return ret;
 	}
 
+	/**
+	 * <p>extractSubValue.</p>
+	 *
+	 * @param jsonArray a {@link org.json.JSONArray} object
+	 * @param items a {@link java.util.Map} object
+	 * @return a {@link java.io.Serializable} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private Serializable extractSubValue(JSONArray jsonArray, Map<String, Object> items) throws JSONException {
 		for (int j = 0; j < jsonArray.length(); j++) {
 			String path = jsonArray.getJSONObject(j).getString(JsonFormulaHelper.JSON_PATH);
@@ -244,6 +260,12 @@ public class ProductExcelDataListOutputPlugin implements ExcelDataListOutputPlug
 		return "";
 	}
 
+	/**
+	 * <p>isMultiLevel.</p>
+	 *
+	 * @param items a {@link java.util.Map} object
+	 * @return a boolean
+	 */
 	private boolean isMultiLevel(Map<String, Object> items) {
 		return items.containsKey(MultiLevelExtractor.PROP_IS_MULTI_LEVEL) && (Boolean) items.get(MultiLevelExtractor.PROP_IS_MULTI_LEVEL);
 	}

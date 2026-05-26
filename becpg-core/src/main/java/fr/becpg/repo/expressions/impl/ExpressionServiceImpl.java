@@ -47,11 +47,15 @@ public class ExpressionServiceImpl implements ExpressionService {
 
 	private Log logger = LogFactory.getLog(ExpressionServiceImpl.class);
 
+	/** Constant <code>jsPattern</code> */
 	private static final Pattern jsPattern = Pattern.compile("^js\\((.*)\\)$");
+	/** Constant <code>spelPattern</code> */
 	private static final Pattern spelPattern = Pattern.compile("^spel\\((.*)\\)$");
 
+	/** Constant <code>DEBUG_MESG="Eval: %s"</code> */
 	private static final String DEBUG_MESG = "Eval: %s";
 
+	/** Constant <code>HELPER_JS="&lt;import resource=\&quot;classpath:/b"{trunked}</code> */
 	private static final String HELPER_JS = "<import resource=\"classpath:/beCPG/rules/helpers.js\">\n";
 
 	@Autowired
@@ -63,6 +67,7 @@ public class ExpressionServiceImpl implements ExpressionService {
 	@Autowired
 	private SpelFormulaService spelFormulaService;
 	
+	/** Constant <code>ML_PREFIX="ml_"</code> */
 	private static final String ML_PREFIX = "ml_";
 
 	@Autowired
@@ -119,6 +124,14 @@ public class ExpressionServiceImpl implements ExpressionService {
 		
 	}
 
+	/**
+	 * <p>extractPropText.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param docNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param propQname a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private  String extractPropText(NodeRef nodeRef, NodeRef docNodeRef, String propQname) {
 		NodeRef nodeToExtract = nodeRef;
 
@@ -132,6 +145,13 @@ public class ExpressionServiceImpl implements ExpressionService {
 	}
 	
 	
+	/**
+	 * <p>extractPropText.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param propQname a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	@SuppressWarnings("unchecked")
 	private String extractPropText(NodeRef nodeRef, String propQname) {
 		String ret = "";
@@ -187,6 +207,13 @@ public class ExpressionServiceImpl implements ExpressionService {
 		return sb.toString();
 	}
 	
+	/**
+	 * <p>extractPropText.</p>
+	 *
+	 * @param object a {@link org.json.JSONObject} object
+	 * @param propQname a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extractPropText(JSONObject object, String propQname) {
 		return object.has(propQname) ? object.getString(propQname) : "";
 	}

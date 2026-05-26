@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -57,8 +57,10 @@ import fr.becpg.repo.olap.data.OlapContext;
 @Service("olapService")
 public class OlapServiceImpl implements OlapService {
 
+	/** Constant <code>ROW_HEADER="ROW_HEADER_HEADER"</code> */
 	private static final String ROW_HEADER = "ROW_HEADER_HEADER";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(OlapServiceImpl.class);
 
 
@@ -243,6 +245,12 @@ public class OlapServiceImpl implements OlapService {
 		return null;
 	}
 
+	/**
+	 * <p>getOlapChart.</p>
+	 *
+	 * @param olapQueryId a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.olap.data.OlapChart} object
+	 */
 	private OlapChart getOlapChart(String olapQueryId)  {
 		for (OlapChart chart : retrieveOlapCharts()) {
 			if (chart.getQueryId().equals(olapQueryId)) {
@@ -253,22 +261,59 @@ public class OlapServiceImpl implements OlapService {
 		return null;
 	}
 
+	/**
+	 * <p>retrieveDataType.</p>
+	 *
+	 * @param value a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String retrieveDataType(String value) {
 		return OlapUtils.convert(value).getClass().getSimpleName();
 	}
 
+	/**
+	 * <p>buildDataUrl.</p>
+	 *
+	 * @param olapQueryId a {@link java.lang.String} object
+	 * @param context a {@link fr.becpg.repo.olap.data.OlapContext} object
+	 * @return a {@link java.lang.String} object
+	 * @throws org.apache.commons.httpclient.URIException if any.
+	 */
 	private String buildDataUrl(String olapQueryId, OlapContext context) throws URIException {
 		return olapServerUrl + "/rest/saiku/" + URIUtil.encodeWithinPath(context.getCurrentUser(), "UTF-8") + "/query/" + URIUtil.encodeWithinPath(olapQueryId, "UTF-8") + "/result/cheat";
 	}
 
+	/**
+	 * <p>buildCreateQueryUrl.</p>
+	 *
+	 * @param olapQueryId a {@link java.lang.String} object
+	 * @param context a {@link fr.becpg.repo.olap.data.OlapContext} object
+	 * @return a {@link java.lang.String} object
+	 * @throws org.apache.commons.httpclient.URIException if any.
+	 */
 	private String buildCreateQueryUrl(String olapQueryId, OlapContext context) throws URIException {
 		return olapServerUrl + "/rest/saiku/" + URIUtil.encodeWithinPath(context.getCurrentUser(), "UTF-8") + "/query/" + URIUtil.encodeWithinPath(olapQueryId, "UTF-8");
 	}
 
+	/**
+	 * <p>buildRepositoryUrl.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.olap.data.OlapContext} object
+	 * @return a {@link java.lang.String} object
+	 * @throws org.apache.commons.httpclient.URIException if any.
+	 */
 	private String buildRepositoryUrl(OlapContext context) throws URIException {
 		return olapServerUrl + "/rest/saiku/" + URIUtil.encodeWithinPath(context.getCurrentUser(), "UTF-8") + "/repository";
 	}
 
+	/**
+	 * <p>buildQueryUrl.</p>
+	 *
+	 * @param queryName a {@link java.lang.String} object
+	 * @param context a {@link fr.becpg.repo.olap.data.OlapContext} object
+	 * @return a {@link java.lang.String} object
+	 * @throws org.apache.commons.httpclient.URIException if any.
+	 */
 	private String buildQueryUrl(String queryName, OlapContext context) throws URIException {
 		return buildRepositoryUrl(context) + "/" + URIUtil.encodeWithinPath(queryName, "UTF-8");
 	}

@@ -24,6 +24,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
  */
 public class SearchConfig {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(SearchConfig.class);
 
 	private List<DataListSearchFilter> dataListSearchFilters = new ArrayList<>();

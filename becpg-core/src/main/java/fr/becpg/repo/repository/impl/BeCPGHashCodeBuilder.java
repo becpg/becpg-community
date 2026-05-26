@@ -130,11 +130,21 @@ public class BeCPGHashCodeBuilder {
 	 * Constant to use in building the hashCode.
 	 */
 	private static final int iConstant = 37;
+	/** Constant <code>NULL_MULTIPLIER=iConstant + 12</code> */
 	private static final int NULL_MULTIPLIER = iConstant + 12;
+	/** Constant <code>annotatedMethodsCache</code> */
 	private static final Map<Class<?>, List<Method>> annotatedMethodsCache = new ConcurrentHashMap<>();
 	
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(BeCPGHashCodeBuilder.class);
 
+	/**
+	 * <p>reflectionAppend.</p>
+	 *
+	 * @param object a {@link fr.becpg.repo.repository.RepositoryEntity} object
+	 * @param visited a {@link java.util.Set} object
+	 * @return a long
+	 */
 	private long reflectionAppend(RepositoryEntity object, Set<RepositoryEntity> visited) {
 		long total = 17;
 
@@ -168,6 +178,9 @@ public class BeCPGHashCodeBuilder {
 
 	/**
 	 * Extract method caching logic for better readability
+	 *
+	 * @param clazz a {@link java.lang.Class} object
+	 * @return a {@link java.util.List} object
 	 */
 	private List<Method> getCachedMethods(Class<?> clazz) {
 		List<Method> methodList = new ArrayList<>();
@@ -193,6 +206,9 @@ public class BeCPGHashCodeBuilder {
 
 	/**
 	 * Check if method has relevant annotations
+	 *
+	 * @param method a {@link java.lang.reflect.Method} object
+	 * @return a boolean
 	 */
 	private boolean isAnnotatedMethod(Method method) {
 		return method.isAnnotationPresent(AlfProp.class) || 
@@ -202,6 +218,11 @@ public class BeCPGHashCodeBuilder {
 
 	/**
 	 * Optimized aspect handling
+	 *
+	 * @param total a long
+	 * @param aspectAwareDataItem a {@link fr.becpg.repo.repository.model.AspectAwareDataItem} object
+	 * @param visited a {@link java.util.Set} object
+	 * @return a long
 	 */
 	private long appendAspects(long total, AspectAwareDataItem aspectAwareDataItem, Set<RepositoryEntity> visited) {
 		Set<QName> aspects = aspectAwareDataItem.getAspects();
@@ -264,6 +285,12 @@ public class BeCPGHashCodeBuilder {
 
 	/**
 	 * Extract diff details logic for better readability
+	 *
+	 * @param ret a {@link java.lang.StringBuilder} object
+	 * @param fieldValue a {@link java.lang.Object} object
+	 * @param fieldValue2 a {@link java.lang.Object} object
+	 * @param obj1 a {@link fr.becpg.repo.repository.RepositoryEntity} object
+	 * @param obj2 a {@link fr.becpg.repo.repository.RepositoryEntity} object
 	 */
 	private static void appendDiffDetails(StringBuilder ret, Object fieldValue, Object fieldValue2, RepositoryEntity obj1, RepositoryEntity obj2) {
 		if (fieldValue instanceof RepositoryEntity repoEntity && fieldValue2 instanceof RepositoryEntity repoEntity2) {
@@ -284,6 +311,10 @@ public class BeCPGHashCodeBuilder {
 
 	/**
 	 * Extract list diff logic
+	 *
+	 * @param ret a {@link java.lang.StringBuilder} object
+	 * @param list1 a {@link java.util.List} object
+	 * @param list2 a {@link java.util.List} object
 	 */
 	private static void appendListDiff(StringBuilder ret, List<?> list1, List<?> list2) {
 		boolean printList = false;
@@ -307,6 +338,10 @@ public class BeCPGHashCodeBuilder {
 
 	/**
 	 * Extract nodeRef diff logic
+	 *
+	 * @param ret a {@link java.lang.StringBuilder} object
+	 * @param obj1 a {@link fr.becpg.repo.repository.RepositoryEntity} object
+	 * @param obj2 a {@link fr.becpg.repo.repository.RepositoryEntity} object
 	 */
 	private static void appendNodeRefDiff(StringBuilder ret, RepositoryEntity obj1, RepositoryEntity obj2) {
 		if (obj1.getNodeRef() != null && !obj1.getNodeRef().equals(obj2.getNodeRef())) {
@@ -316,6 +351,10 @@ public class BeCPGHashCodeBuilder {
 
 	/**
 	 * Extract aspects diff logic
+	 *
+	 * @param ret a {@link java.lang.StringBuilder} object
+	 * @param obj1 a {@link fr.becpg.repo.repository.RepositoryEntity} object
+	 * @param obj2 a {@link fr.becpg.repo.repository.RepositoryEntity} object
 	 */
 	private static void appendAspectsDiff(StringBuilder ret, RepositoryEntity obj1, RepositoryEntity obj2) {
 		int tmp1 = calculateAspectsHash(obj1);
@@ -334,6 +373,9 @@ public class BeCPGHashCodeBuilder {
 
 	/**
 	 * Calculate aspects hash for diff comparison
+	 *
+	 * @param obj a {@link fr.becpg.repo.repository.RepositoryEntity} object
+	 * @return a int
 	 */
 	private static int calculateAspectsHash(RepositoryEntity obj) {
 		int tmp = 0;
@@ -410,6 +452,7 @@ public class BeCPGHashCodeBuilder {
 	 * @param value
 	 *            the boolean to add to the <code>hashCode</code>
 	 * @return this
+	 * @param total a long
 	 */
 	private long append(long total, boolean value) {
 		return (total * iConstant) + (value ? 0 : 1);
@@ -423,6 +466,7 @@ public class BeCPGHashCodeBuilder {
 	 * @param array
 	 *            the array to add to the <code>hashCode</code>
 	 * @return this
+	 * @param total a long
 	 */
 	private long append(long total, boolean[] array) {
 		if (array == null) {
@@ -442,6 +486,7 @@ public class BeCPGHashCodeBuilder {
 	 * @param value
 	 *            the byte to add to the <code>hashCode</code>
 	 * @return this
+	 * @param total a long
 	 */
 	private long append(long total, byte value) {
 		return (total * iConstant) + value;
@@ -455,6 +500,7 @@ public class BeCPGHashCodeBuilder {
 	 * @param array
 	 *            the array to add to the <code>hashCode</code>
 	 * @return this
+	 * @param total a long
 	 */
 	private long append(long total, byte[] array) {
 		if (array == null) {
@@ -474,6 +520,7 @@ public class BeCPGHashCodeBuilder {
 	 * @param value
 	 *            the char to add to the <code>hashCode</code>
 	 * @return this
+	 * @param total a long
 	 */
 	private long append(long total, char value) {
 		return (total * iConstant) + value;
@@ -487,6 +534,7 @@ public class BeCPGHashCodeBuilder {
 	 * @param array
 	 *            the array to add to the <code>hashCode</code>
 	 * @return this
+	 * @param total a long
 	 */
 	private long append(long total, char[] array) {
 		if (array == null) {
@@ -506,6 +554,7 @@ public class BeCPGHashCodeBuilder {
 	 * @param value
 	 *            the double to add to the <code>hashCode</code>
 	 * @return this
+	 * @param total a long
 	 */
 	private long append(long total, double value) {
 		return append(total, Double.doubleToLongBits(value));
@@ -519,6 +568,7 @@ public class BeCPGHashCodeBuilder {
 	 * @param array
 	 *            the array to add to the <code>hashCode</code>
 	 * @return this
+	 * @param total a long
 	 */
 	private long append(long total, double[] array) {
 		if (array == null) {
@@ -538,6 +588,7 @@ public class BeCPGHashCodeBuilder {
 	 * @param value
 	 *            the float to add to the <code>hashCode</code>
 	 * @return this
+	 * @param total a long
 	 */
 	private long append(long total, float value) {
 		return (total * iConstant) + Float.floatToIntBits(value);
@@ -551,6 +602,7 @@ public class BeCPGHashCodeBuilder {
 	 * @param array
 	 *            the array to add to the <code>hashCode</code>
 	 * @return this
+	 * @param total a long
 	 */
 	private long append(long total, float[] array) {
 		if (array == null) {
@@ -570,6 +622,7 @@ public class BeCPGHashCodeBuilder {
 	 * @param value
 	 *            the int to add to the <code>hashCode</code>
 	 * @return this
+	 * @param total a long
 	 */
 	private long append(long total, int value) {
 		return (total * iConstant) + value;
@@ -583,6 +636,7 @@ public class BeCPGHashCodeBuilder {
 	 * @param array
 	 *            the array to add to the <code>hashCode</code>
 	 * @return this
+	 * @param total a long
 	 */
 	private long append(long total, int[] array) {
 		if (array == null) {
@@ -602,6 +656,7 @@ public class BeCPGHashCodeBuilder {
 	 * @param value
 	 *            the long to add to the <code>hashCode</code>
 	 * @return this
+	 * @param total a long
 	 */
 	private long append(long total, long value) {
 		return (total * iConstant) + ((int) (value ^ (value >> 32)));
@@ -615,6 +670,7 @@ public class BeCPGHashCodeBuilder {
 	 * @param array
 	 *            the array to add to the <code>hashCode</code>
 	 * @return this
+	 * @param total a long
 	 */
 	private long append(long total, long[] array) {
 		if (array == null) {
@@ -634,6 +690,8 @@ public class BeCPGHashCodeBuilder {
 	 * @param object
 	 *            the Object to add to the <code>hashCode</code>
 	 * @return this
+	 * @param total a long
+	 * @param visited a {@link java.util.Set} object
 	 */
 	private long append(long total, Object object, Set<RepositoryEntity> visited) {
 		if (object == null || (object instanceof MLText mlText && mlText.isEmpty())) {
@@ -661,6 +719,11 @@ public class BeCPGHashCodeBuilder {
 
 	/**
 	 * Optimized array handling
+	 *
+	 * @param total a long
+	 * @param object a {@link java.lang.Object} object
+	 * @param visited a {@link java.util.Set} object
+	 * @return a long
 	 */
 	private long appendArray(long total, Object object, Set<RepositoryEntity> visited) {
 		// Handle primitive arrays more efficiently
@@ -715,6 +778,7 @@ public class BeCPGHashCodeBuilder {
 	 * @param value
 	 *            the short to add to the <code>hashCode</code>
 	 * @return this
+	 * @param total a long
 	 */
 	private long append(long total, short value) {
 		return (total * iConstant) + value;
@@ -728,6 +792,7 @@ public class BeCPGHashCodeBuilder {
 	 * @param array
 	 *            the array to add to the <code>hashCode</code>
 	 * @return this
+	 * @param total a long
 	 */
 	private long append(long total, short[] array) {
 		if (array == null) {

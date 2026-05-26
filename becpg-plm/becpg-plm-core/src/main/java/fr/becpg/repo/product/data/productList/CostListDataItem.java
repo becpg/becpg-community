@@ -25,8 +25,10 @@ import fr.becpg.repo.repository.annotation.InternalField;
 @AlfQname(qname = "bcpg:costList")
 public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem> {
 	
+	/** Constant <code>FORECAST_COLUMN_UNKNOWN="forecastColumn unknown: "</code> */
 	private static final String FORECAST_COLUMN_UNKNOWN = "forecastColumn unknown: ";
 
+	/** Constant <code>serialVersionUID=4160545876076772520L</code> */
 	private static final long serialVersionUID = 4160545876076772520L;
 
 	private Double previousValue = 0d;
@@ -40,6 +42,7 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 	private Double futureValuePerProduct3;
 	private Double futureValuePerProduct4;
 		
+	/** Constant <code>FORECAST_CONTEXTS</code> */
 	private static final List<ForecastContext<CostListDataItem>> FORECAST_CONTEXTS = List.of(
 			new ForecastContext<>("bcpg:costListPreviousValue", "previousValue",
 					CostListDataItem::setPreviousValue, CostListDataItem::getPreviousValue),
@@ -59,6 +62,12 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 		return FORECAST_CONTEXTS.stream().map(c -> c.getForecastColumn()).toList();
 	}
 	
+	/**
+	 * <p>getForecastContext.</p>
+	 *
+	 * @param forecastColumn a {@link java.lang.String} object
+	 * @return a ForecastContext object
+	 */
 	private ForecastContext<CostListDataItem> getForecastContext(String forecastColumn) {
 		for (ForecastContext<CostListDataItem> context : FORECAST_CONTEXTS) {
 			if (context.getForecastColumn().equals(forecastColumn)) {

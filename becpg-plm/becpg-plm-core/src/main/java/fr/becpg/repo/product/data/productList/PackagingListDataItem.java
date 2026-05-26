@@ -32,6 +32,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 @MultiLevelDataList(secondaryPivot = "bcpg:compoList")
 public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem implements CompositionDataItem, SimpleCharactDataItem {
 
+	/** Constant <code>serialVersionUID=-8724448903680191263L</code> */
 	private static final long serialVersionUID = -8724448903680191263L;
 
 	private Double qty = 0d;

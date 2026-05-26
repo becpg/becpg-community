@@ -22,27 +22,44 @@ import fr.becpg.repo.helper.json.JsonHelper;
  */
 public class SearchRuleFilter {
 
+	/** Constant <code>PROP_QUERY="query"</code> */
 	private static final String PROP_QUERY = "query";
 
+	/** Constant <code>PROP_IS_FILTER="isFilter"</code> */
 	private static final String PROP_IS_FILTER = "isFilter";
+	/** Constant <code>PROP_EXCLUDE_PUBLISHED_ENTITIES="excludePublishedEntities"</code> */
 	private static final String PROP_EXCLUDE_PUBLISHED_ENTITIES = "excludePublishedEntities";
+	/** Constant <code>ENTITY_FILTER="entityFilter"</code> */
 	private static final String ENTITY_FILTER = "entityFilter";
+	/** Constant <code>ENTITY_TYPE="entityType"</code> */
 	private static final String ENTITY_TYPE = "entityType";
 
+	/** Constant <code>NODE_FILTER="nodeFilter"</code> */
 	private static final String NODE_FILTER = "nodeFilter";
+	/** Constant <code>NODE_TYPE="nodeType"</code> */
 	private static final String NODE_TYPE = "nodeType";
+	/** Constant <code>NODE_PATH="nodePath"</code> */
 	private static final String NODE_PATH = "nodePath";
+	/** Constant <code>CRITERIA="criteria"</code> */
 	private static final String CRITERIA = "criteria";
 
+	/** Constant <code>DATE_FILTER="dateFilter"</code> */
 	private static final String DATE_FILTER = "dateFilter";
+	/** Constant <code>DATE_FIELD="dateField"</code> */
 	private static final String DATE_FIELD = "dateField";
+	/** Constant <code>DATE_FILTER_TYPE="dateFilterType"</code> */
 	private static final String DATE_FILTER_TYPE = "dateFilterType";
+	/** Constant <code>DATE_FILTER_DELAY="dateFilterDelay"</code> */
 	private static final String DATE_FILTER_DELAY = "dateFilterDelay";
+	/** Constant <code>DATE_FILTER_DELAY_UNIT="dateFilterDelayUnit"</code> */
 	private static final String DATE_FILTER_DELAY_UNIT = "dateFilterDelayUnit";
 
+	/** Constant <code>VERSION_FILTER="versionFilter"</code> */
 	private static final String VERSION_FILTER = "versionFilter";
+	/** Constant <code>VERSION_FILTER_TYPE="versionFilterType"</code> */
 	private static final String VERSION_FILTER_TYPE = "versionFilterType";
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(SearchRuleFilter.class);
 
 	private String query = "";

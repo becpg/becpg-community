@@ -30,12 +30,16 @@ import fr.becpg.repo.system.SystemConfigurationService;
  */
 public class BeCPGCopyPolicy extends AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyCompletePolicy {
 
+	/** Constant <code>COPY_SUFFIX="|copy"</code> */
 	private static final String COPY_SUFFIX = "|copy";
 
+	/** Constant <code>BRANCH_SUFFIX="|branch"</code> */
 	private static final String BRANCH_SUFFIX = "|branch";
 
+	/** Constant <code>BRANCH_ONLY_SUFFIX="|branchOnly"</code> */
 	private static final String BRANCH_ONLY_SUFFIX = "|branchOnly";
 
+	/** Constant <code>logger</code> */
 	private static final Logger logger = LoggerFactory.getLogger(BeCPGCopyPolicy.class);
 
 	private BeCPGCopyPlugin[] copyPlugins;
@@ -104,10 +108,20 @@ public class BeCPGCopyPolicy extends AbstractBeCPGPolicy implements CopyServiceP
 		this.associationService = associationService;
 	}
 
+	/**
+	 * <p>typesToReset.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	private List<String> typesToReset() {
 		return systemConfigurationService.listValue("beCPG.copyOrBranch.typesToReset");
 	}
 
+	/**
+	 * <p>propertiesToReset.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	private List<String> propertiesToReset() {
 		return systemConfigurationService.listValue("beCPG.copyOrBranch.propertiesToReset");
 	}
@@ -169,6 +183,13 @@ public class BeCPGCopyPolicy extends AbstractBeCPGPolicy implements CopyServiceP
 		}
 	}
 
+	/**
+	 * <p>shouldCopyFromPlugins.</p>
+	 *
+	 * @param typeToReset a {@link java.lang.String} object
+	 * @param copyDetails a {@link org.alfresco.repo.copy.CopyDetails} object
+	 * @return a boolean
+	 */
 	private boolean shouldCopyFromPlugins(String typeToReset, CopyDetails copyDetails) {
 		if (copyPlugins == null) {
 			return true;
@@ -185,6 +206,14 @@ public class BeCPGCopyPolicy extends AbstractBeCPGPolicy implements CopyServiceP
 		return true;
 	}
 
+	/**
+	 * <p>shouldCopy.</p>
+	 *
+	 * @param typeToReset a {@link java.lang.String} object
+	 * @param nodeRefType a {@link java.lang.String} object
+	 * @param copyDetails a {@link org.alfresco.repo.copy.CopyDetails} object
+	 * @return a boolean
+	 */
 	private boolean shouldCopy(String typeToReset, String nodeRefType, CopyDetails copyDetails) {
 		if (nodeRefType.equals(typeToReset)) {
 			if (logger.isDebugEnabled()) {
@@ -195,6 +224,12 @@ public class BeCPGCopyPolicy extends AbstractBeCPGPolicy implements CopyServiceP
 		return shouldCopyFromPlugins(typeToReset, copyDetails);
 	}
 
+	/**
+	 * <p>handleResetProperty.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.copy.BeCPGCopyPolicy.CopyContext} object
+	 * @param propertyToReset a {@link java.lang.String} object
+	 */
 	private void handleResetProperty(CopyContext context, String propertyToReset) {
 		String propertyName = extractPropertyName(propertyToReset, context);
 		if (propertyName == null) {
@@ -257,6 +292,13 @@ public class BeCPGCopyPolicy extends AbstractBeCPGPolicy implements CopyServiceP
 		}
 	}
 
+	/**
+	 * <p>extractPropertyName.</p>
+	 *
+	 * @param propertyToReset a {@link java.lang.String} object
+	 * @param context a {@link fr.becpg.repo.copy.BeCPGCopyPolicy.CopyContext} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extractPropertyName(String propertyToReset, CopyContext context) {
 		if (propertyToReset.contains("|")) {
 			String[] split = propertyToReset.split("\\|");

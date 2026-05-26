@@ -30,6 +30,7 @@ import fr.becpg.repo.report.entity.EntityReportService;
  */
 public class ReportContentServiceWrapper implements ContentService {
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(ReportContentServiceWrapper.class);
 
 	private ContentService contentService;

@@ -27,8 +27,11 @@ import fr.becpg.repo.helper.AssociationService;
  * @version $Id: $Id
  */
 public class BeCPGForumPostDelete extends ForumPostDelete {
+	/** Constant <code>MSG_NODE_MARKED_REMOVED="forum-post.msg.marked.removed"</code> */
 	private static final String MSG_NODE_MARKED_REMOVED = "forum-post.msg.marked.removed";
+	/** Constant <code>MSG_NODE_DELETED="forum-post.msg.deleted"</code> */
 	private static final String MSG_NODE_DELETED = "forum-post.msg.deleted";
+	/** Constant <code>DELETED_POST_TEXT="[[deleted]]"</code> */
 	private static final String DELETED_POST_TEXT = "[[deleted]]";
 
 	AssociationService associationService;
@@ -78,6 +81,7 @@ public class BeCPGForumPostDelete extends ForumPostDelete {
 		return model;
 	}
 
+	/** {@inheritDoc} */
 	private String doDeleteTopic(TopicInfo topic, SiteInfo site, WebScriptRequest req, JSONObject json, ResourceBundle rb) {
 
 	
@@ -97,6 +101,8 @@ public class BeCPGForumPostDelete extends ForumPostDelete {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * We can't just delete posts with replies attached to them, as that breaks
 	 * the reply threading. For that reason, we mark deleted posts with a
 	 * special text contents. TODO If a post has no replies, then delete it

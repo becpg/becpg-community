@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -132,6 +132,9 @@ public class FormulationChain<T extends FormulatedEntity> {
 		return handlers;
 	}
 
+	/**
+	 * <p>prepareHandlerChain.</p>
+	 */
 	private void prepareHandlerChain() {
 
 		ListIterator<FormulationHandler<T>> handlersIt = handlers.listIterator();

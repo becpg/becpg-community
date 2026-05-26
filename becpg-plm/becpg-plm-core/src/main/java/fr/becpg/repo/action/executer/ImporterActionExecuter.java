@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2010-2011 beCPG. All rights reserved.
+ *  Copyright (C) 2010-2026 beCPG. All rights reserved.
  */
 package fr.becpg.repo.action.executer;
 
@@ -41,8 +41,10 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 	/** Constant <code>XLSX_EXTENSION=".xlsx"</code> */
 	public static final String XLSX_EXTENSION = ".xlsx";
 
+	/** Constant <code>KEY_FILES_TO_IMPORT="keyFilesToImport"</code> */
 	private static final String KEY_FILES_TO_IMPORT = "keyFilesToImport";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ImporterActionExecuter.class);
 
 	private ImportService importService;

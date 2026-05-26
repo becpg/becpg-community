@@ -15,8 +15,10 @@ import fr.becpg.repo.audit.service.StopWatchScope;
  */
 public class StopWatchSupport {
 	
+	/** Constant <code>threadLocalScope</code> */
 	private static final ThreadLocal<StopWatchScope> threadLocalScope = new ThreadLocal<>();
 
+	/** Constant <code>stopWatchlogger</code> */
 	private static final Log stopWatchlogger = LogFactory.getLog(StopWatchSupport.class);
 
 	private Log logger;
@@ -25,6 +27,9 @@ public class StopWatchSupport {
 	
 	private Level level = Level.DEBUG;
 	
+	/**
+	 * <p>Constructor for StopWatchSupport.</p>
+	 */
 	private StopWatchSupport() {
 		
 	}
@@ -103,6 +108,13 @@ public class StopWatchSupport {
 		T run();
 	}
 	
+	/**
+	 * <p>isLoggerEnabled.</p>
+	 *
+	 * @param logger a {@link org.apache.commons.logging.Log} object
+	 * @param level a {@link java.lang.System.Logger.Level} object
+	 * @return a boolean
+	 */
 	private static boolean isLoggerEnabled(Log logger, Level level) {
 		if (level.equals(Level.ERROR)) {
 			return logger.isErrorEnabled();

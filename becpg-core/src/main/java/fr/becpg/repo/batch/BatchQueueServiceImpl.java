@@ -71,6 +71,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("batchQueueService")
 public class BatchQueueServiceImpl implements BatchQueueService, ApplicationListener<BatchMonitorEvent> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(BatchQueueServiceImpl.class);
 
 	@Autowired
@@ -114,9 +115,13 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	@Autowired(required = false)
 	private BatchQueuePlugin[] batchQueuePlugins;
 	
+	/** Constant <code>CANCELLED="cancelled"</code> */
 	private static final String CANCELLED = "cancelled";
+	/** Constant <code>PERCENT_COMPLETED="percentCompleted"</code> */
 	private static final String PERCENT_COMPLETED = "percentCompleted";
+	/** Constant <code>STEPS_MAX="stepsMax"</code> */
 	private static final String STEPS_MAX = "stepsMax";
+	/** Constant <code>STEP_COUNT="stepCount"</code> */
 	private static final String STEP_COUNT = "stepCount";
 
 	/** {@inheritDoc} */
@@ -216,6 +221,13 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
     return null;
   }
 	
+	/**
+	 * <p>buildJsonBatchInfo.</p>
+	 *
+	 * @param batchInfo a {@link fr.becpg.repo.batch.BatchInfo} object
+	 * @return a {@link org.json.JSONObject} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private JSONObject buildJsonBatchInfo(BatchInfo batchInfo) throws JSONException {
 		JSONObject json = new JSONObject();
 			
@@ -266,6 +278,11 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		return lastRunningBatch;
 	}
 	
+	/**
+	 * <p>getRunningCommand.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.batch.BatchQueueServiceImpl.BatchCommand} object
+	 */
 	private BatchCommand<?> getRunningCommand() {
 		if (runningCommands.isEmpty()) {
 			return null;
@@ -319,6 +336,12 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 	}
 
+	/**
+	 * <p>findCommandInQueue.</p>
+	 *
+	 * @param batchId a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.batch.BatchQueueServiceImpl.BatchCommand} object
+	 */
 	private BatchCommand<?> findCommandInQueue(String batchId) {
 		for (ThreadPoolExecutor executor : threadExecutorMap.values()) {
 			for (Runnable batch : executor.getQueue()) {
@@ -682,6 +705,11 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	    return result.toString();
 	}
 
+	/**
+	 * <p>getBatchErrorsMap.</p>
+	 *
+	 * @return a {@link java.util.Map} object
+	 */
 	private Map<String, Set<NodeRef>> getBatchErrorsMap() {
 		return beCPGCacheService.getFromCache(
 	        BatchQueueServiceImpl.class.getName(),
@@ -708,6 +736,12 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	    );
 	}
 
+	/**
+	 * <p>processBatchErrors.</p>
+	 *
+	 * @param nodeRefs a {@link java.util.List} object
+	 * @param batchNodesMap a {@link java.util.Map} object
+	 */
 	@SuppressWarnings("unchecked")
 	private void processBatchErrors(
 	        List<NodeRef> nodeRefs,

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -357,6 +357,13 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 	}
 
+	/**
+	 * <p>extractBodyRequest.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object
+	 * @return a {@link java.lang.String} object
+	 * @throws java.io.IOException if any.
+	 */
 	private String extractBodyRequest(WebScriptRequest req) throws IOException {
 		if (req.getContent() == null) {
 			return null;
@@ -546,6 +553,12 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		return lists;
 	}
 
+	/**
+	 * <p>formatListName.</p>
+	 *
+	 * @param list a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String formatListName(String list) {
 		String[] listName = list.split(":");
 		if (listName.length > 1) {
@@ -557,8 +570,10 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		return listName[0];
 	}
 
+	/** Constant <code>BASE_64_PREFIX="b64-"</code> */
 	private static final String BASE_64_PREFIX = "b64-";
 	
+	/** Constant <code>replacementMaps</code> */
 	private static final Map<String,String> replacementMaps = new HashMap<>();
 	{
 		replacementMaps.put("bcpg:", "§");

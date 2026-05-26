@@ -33,7 +33,9 @@ import fr.becpg.model.PLMModel;
  */
 public class ClaimListValuePatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ClaimListValuePatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.claimListValuePatch.resu"{trunked}</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.claimListValuePatch.result";
 
 	private NodeDAO nodeDAO;

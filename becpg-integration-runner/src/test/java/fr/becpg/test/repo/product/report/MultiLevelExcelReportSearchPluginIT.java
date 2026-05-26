@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -28,15 +28,10 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import fr.becpg.repo.product.data.constraints.ProductUnit;
-import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.product.data.productList.CompoListDataItem;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.PlmRepoConsts;

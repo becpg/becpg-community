@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -30,6 +30,9 @@ import java.util.regex.Pattern;
  */
 public class SpelHelper {
 	
+	/**
+	 * <p>Constructor for SpelHelper.</p>
+	 */
 	private SpelHelper() {
 		super();
 	}
@@ -46,6 +49,7 @@ public class SpelHelper {
 
 	}
 
+	/** Constant <code>shortCuts</code> */
 	private static List<SpelShortcut> shortCuts = new ArrayList<>();
 
 

@@ -30,8 +30,10 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  */
 public class BeCPGUserPolicy extends AbstractBeCPGPolicy implements OnUpdatePropertiesPolicy, BeforeDeleteNodePolicy, OnAuthorityAddedToGroup, OnAuthorityRemovedFromGroup {
 
+	/** Constant <code>KEY_GENERATE_PASSWORD="generatePassword"</code> */
 	private static final String KEY_GENERATE_PASSWORD = "generatePassword";
 
+	/** Constant <code>KEY_UPDATED_USER="updatedUser"</code> */
 	private static final String KEY_UPDATED_USER = "updatedUser";
 	
 	private BeCPGUserAccountService beCPGUserAccountService;
@@ -40,6 +42,7 @@ public class BeCPGUserPolicy extends AbstractBeCPGPolicy implements OnUpdateProp
 	
 	private BeCPGCacheService beCPGCacheService;
 	
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(BeCPGUserPolicy.class);
 	
 	/**
@@ -105,14 +108,37 @@ public class BeCPGUserPolicy extends AbstractBeCPGPolicy implements OnUpdateProp
 		}
 	}
 
+	/**
+	 * <p>hasChanged.</p>
+	 *
+	 * @param before a {@link java.util.Map} object
+	 * @param after a {@link java.util.Map} object
+	 * @param prop a {@link org.alfresco.service.namespace.QName} object
+	 * @return a boolean
+	 */
 	private boolean hasChanged(Map<QName, Serializable> before, Map<QName, Serializable> after, QName prop) {
 		return after.get(prop) != null && !after.get(prop).equals(before.get(prop));
 	}
 
+	/**
+	 * <p>isNewTrueProperty.</p>
+	 *
+	 * @param before a {@link java.util.Map} object
+	 * @param after a {@link java.util.Map} object
+	 * @param prop a {@link org.alfresco.service.namespace.QName} object
+	 * @return a boolean
+	 */
 	private boolean isNewTrueProperty(Map<QName, Serializable> before, Map<QName, Serializable> after, QName prop) {
 		return !isPropertyTrue(before, prop) && isPropertyTrue(after, prop);
 	}
 
+	/**
+	 * <p>isPropertyTrue.</p>
+	 *
+	 * @param props a {@link java.util.Map} object
+	 * @param prop a {@link org.alfresco.service.namespace.QName} object
+	 * @return a boolean
+	 */
 	private boolean isPropertyTrue(Map<QName, Serializable> props, QName prop) {
 		return props.containsKey(prop) && (boolean) props.get(prop);
 	}

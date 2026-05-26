@@ -31,8 +31,10 @@ import fr.becpg.repo.repository.RepositoryEntity;
 @Service("labelingRuleAutoCompletePlugin")
 public class LabelingRuleAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
+    /** Constant <code>SOURCE_TYPE_LABELING="labeling"</code> */
     private static final String SOURCE_TYPE_LABELING = "labeling";
 
+    /** Constant <code>logger</code> */
     private static final Log logger = LogFactory.getLog(LabelingRuleAutoCompletePlugin.class);
 
     @Autowired
@@ -91,6 +93,13 @@ public class LabelingRuleAutoCompletePlugin extends TargetAssocAutoCompletePlugi
         return super.suggest(sourceType, query, pageNum, pageSize, props);
     }
 
+    /**
+     * <p>findAliasInComposition.</p>
+     *
+     * @param component a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @return a {@link java.util.List} object
+     */
     private List<NodeRef> findAliasInComposition(NodeRef component, NodeRef entityNodeRef) {
         logger.debug("Finding alias in composition for component: " + component + ", entityNodeRef: " + entityNodeRef);
         ProductData productData = (ProductData) alfrescoRepository.findOne(entityNodeRef);
@@ -112,6 +121,12 @@ public class LabelingRuleAutoCompletePlugin extends TargetAssocAutoCompletePlugi
         return alias;
     }
 
+    /**
+     * <p>extractIngList.</p>
+     *
+     * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+     * @param ingList a {@link java.util.List} object
+     */
     private void extractIngList(ProductData productData, List<IngListDataItem> ingList) {
         logger.debug("Extracting ingredient list from product data.");
 

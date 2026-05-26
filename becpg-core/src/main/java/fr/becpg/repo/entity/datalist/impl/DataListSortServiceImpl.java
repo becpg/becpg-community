@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -52,6 +52,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("dataListSortService")
 public class DataListSortServiceImpl implements DataListSortService {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(DataListSortServiceImpl.class);
 
 	@Autowired
@@ -518,6 +519,14 @@ public class DataListSortServiceImpl implements DataListSortService {
 		}
 	}
 
+	/**
+	 * <p>insertAfter.</p>
+	 *
+	 * @param list a {@link fr.becpg.repo.entity.datalist.impl.DataListSortServiceImpl.SortableDataList} object
+	 * @param siblingNode a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param pendingNodeRefs a {@link java.util.Set} object
+	 */
 	private void insertAfter(SortableDataList list, NodeRef siblingNode, NodeRef nodeRef, Set<NodeRef> pendingNodeRefs) {
 
 
@@ -571,6 +580,14 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 	}
 
+	/**
+	 * <p>getNextSort.</p>
+	 *
+	 * @param list a {@link fr.becpg.repo.entity.datalist.impl.DataListSortServiceImpl.SortableDataList} object
+	 * @param siblingNode a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.Integer} object
+	 */
 	private Integer getNextSort(SortableDataList list, NodeRef siblingNode, NodeRef nodeRef) {
 
 		Integer sort = null;
@@ -632,6 +649,12 @@ public class DataListSortServiceImpl implements DataListSortService {
 	/*
 	 * Debug function used to get the name of the product stored in the
 	 * compoList
+	 */
+	/**
+	 * <p>tryGetName.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.String} object
 	 */
 	private String tryGetName(NodeRef nodeRef) {
 

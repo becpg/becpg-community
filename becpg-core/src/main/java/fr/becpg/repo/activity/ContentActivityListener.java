@@ -21,6 +21,7 @@ import fr.becpg.repo.activity.data.ActivityType;
 @Service
 public class ContentActivityListener implements EntityActivityListener {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ContentActivityListener.class);
 	
 	@Autowired

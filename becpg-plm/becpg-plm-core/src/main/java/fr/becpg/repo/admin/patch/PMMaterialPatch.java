@@ -35,9 +35,12 @@ import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
  */
 public class PMMaterialPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(PMMaterialPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.pmMaterialPatch.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.pmMaterialPatch.result";
 
+	/** Constant <code>PM_MATERIAL</code> */
 	private static final QName PM_MATERIAL = QName.createQName(PackModel.PACK_URI, "pmMaterial");
 
 	private NodeDAO nodeDAO;

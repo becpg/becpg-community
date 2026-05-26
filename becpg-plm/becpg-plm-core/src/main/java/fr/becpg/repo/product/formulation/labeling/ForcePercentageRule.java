@@ -4,6 +4,8 @@ import java.util.List;
 
 /**
  * <p>ForcePercentageRule class.</p>
+ *
+ * @author matthieu
  */
 class ForcePercentageRule extends AbstractFormulaFilterRule {
 

@@ -11,6 +11,9 @@ import org.alfresco.service.cmr.repository.NodeRef;
  */
 public class VersionHelper {
 
+	/**
+	 * <p>Constructor for VersionHelper.</p>
+	 */
 	private VersionHelper() {
 		
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2014 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -45,7 +45,9 @@ import fr.becpg.repo.helper.AttributeExtractorService;
 @Service
 public class ResourcesSortPlugin implements DataListSortPlugin {
 
+	/** Constant <code>PLUGIN_ID="TaskResources"</code> */
 	private static final String PLUGIN_ID = "TaskResources";
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ResourcesSortPlugin.class); 
 	
 	@Autowired

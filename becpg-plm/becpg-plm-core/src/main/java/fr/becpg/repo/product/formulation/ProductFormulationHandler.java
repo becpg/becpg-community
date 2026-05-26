@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -58,9 +58,13 @@ import fr.becpg.repo.variant.filters.VariantFilters;
  */
 public class ProductFormulationHandler extends FormulationBaseHandler<ProductData> {
 
+	/** Constant <code>MESSAGE_MISSING_UNIT="message.formulate.missing.unit"</code> */
 	private static final String MESSAGE_MISSING_UNIT = "message.formulate.missing.unit";
+	/** Constant <code>MESSAGE_MISSING_DENSITY="message.formulate.missing.density"</code> */
 	private static final String MESSAGE_MISSING_DENSITY = "message.formulate.missing.density";
+	/** Constant <code>MESSAGE_WRONG_UNIT="message.formulate.wrong.unit"</code> */
 	private static final String MESSAGE_WRONG_UNIT = "message.formulate.wrong.unit";
+	/** Constant <code>MESSAGE_MISSING_TARE="message.formulate.missing.tare"</code> */
 	private static final String MESSAGE_MISSING_TARE = "message.formulate.missing.tare";
 
 	/** Constant <code>logger</code> */
@@ -145,6 +149,14 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		return true;
 	}
 
+	/**
+	 * <p>checkShouldFormulateComponents.</p>
+	 *
+	 * @param isRoot a boolean
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a boolean
+	 * @throws fr.becpg.repo.formulation.FormulateException if any.
+	 */
 	private boolean checkShouldFormulateComponents(boolean isRoot, ProductData productData) throws FormulateException {
 		boolean isFormulated = false;
 
@@ -236,6 +248,11 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		return isFormulated;
 	}
 
+	/**
+	 * <p>checkMissingProperties.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 */
 	private void checkMissingProperties(ProductData formulatedProduct) {
 
 		checkFormulatedProduct(formulatedProduct);
@@ -261,6 +278,11 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 	}
 
+	/**
+	 * <p>checkFormulatedProduct.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 */
 	private void checkFormulatedProduct(ProductData formulatedProduct) {
 
 		if (!(formulatedProduct instanceof ResourceProductData)) {
@@ -272,6 +294,13 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 	}
 
+	/**
+	 * <p>checkCompositionItem.</p>
+	 *
+	 * @param reqCtrlListDataItem a {@link java.util.List} object
+	 * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param c a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 */
 	private void checkCompositionItem(List<RequirementListDataItem> reqCtrlListDataItem, NodeRef productNodeRef, CompoListDataItem c) {
 
 		if ((productNodeRef != null) && !PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.isMatch(nodeService.getType(productNodeRef))) {
@@ -297,6 +326,12 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 	}
 
+	/**
+	 * <p>checkPackagingItem.</p>
+	 *
+	 * @param reqCtrlListDataItem a {@link java.util.List} object
+	 * @param p a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 */
 	private void checkPackagingItem(List<RequirementListDataItem> reqCtrlListDataItem, PackagingListDataItem p) {
 		NodeRef productNodeRef = p.getProduct();
 		if (productNodeRef == null) {
@@ -344,6 +379,14 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 	}
 
+	/**
+	 * <p>addMissingReq.</p>
+	 *
+	 * @param reqCtrlListDataItem a {@link java.util.List} object
+	 * @param sourceNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param reqMsg a {@link java.lang.String} object
+	 * @param reqDataType a {@link fr.becpg.repo.regulatory.RequirementDataType} object
+	 */
 	private void addMissingReq(List<RequirementListDataItem> reqCtrlListDataItem, NodeRef sourceNodeRef, String reqMsg, RequirementDataType reqDataType) {
 		reqCtrlListDataItem.add(RequirementListDataItem.forbidden().withMessage(MLTextHelper.getI18NMessage(reqMsg))
 				.withSources(Arrays.asList(sourceNodeRef)).ofDataType(reqDataType));

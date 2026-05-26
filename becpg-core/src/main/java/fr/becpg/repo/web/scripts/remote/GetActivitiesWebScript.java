@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -84,6 +84,7 @@ public class GetActivitiesWebScript extends AbstractEntityWebScript {
 		this.siteService = siteService;
 	}
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(GetActivitiesWebScript.class);
 
 	/** {@inheritDoc} */

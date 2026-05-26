@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -67,6 +67,7 @@ public class DataListFilter {
 	/** Constant <code>PROP_DEPTH_LEVEL="prop_bcpg_depthLevel"</code> */
 	public static final String PROP_DEPTH_LEVEL = "prop_bcpg_depthLevel";
 
+	/** Constant <code>VERSION_FILTER="version"</code> */
 	private static final String VERSION_FILTER = "version";
 
 	private String filterId = ALL_FILTER;
@@ -111,6 +112,7 @@ public class DataListFilter {
 
 	private boolean isDefaultSort = true;
 	
+	/** Constant <code>DEFAULT_SORT</code> */
 	private static final Map<String, Boolean> DEFAULT_SORT = new LinkedHashMap<>();
 	
 	static {
@@ -595,6 +597,11 @@ public class DataListFilter {
 		return queryBuilder;
 	}
 
+	/**
+	 * <p>createFilterQuery.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 */
 	private BeCPGQueryBuilder createFilterQuery() {
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
@@ -704,6 +711,11 @@ public class DataListFilter {
 		return (filterId != null) && filterId.equals(VERSION_FILTER);
 	}
 
+	/**
+	 * <p>getUserName.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getUserName() {
 		return AuthenticationUtil.getFullyAuthenticatedUser();
 	}

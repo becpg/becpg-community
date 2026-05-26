@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -57,6 +57,7 @@ public class EntityVersionPolicy extends AbstractBeCPGPolicy
 		CheckOutCheckInServicePolicies.BeforeCancelCheckOut, NodeServicePolicies.OnRemoveAspectPolicy,
 		NodeArchiveServicePolicies.BeforePurgeNodePolicy, CheckOutCheckInServicePolicies.OnCancelCheckOut, NodeServicePolicies.OnDeleteNodePolicy, VersionServicePolicies.AfterCreateVersionPolicy {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityVersionPolicy.class);
 
 	private EntityVersionService entityVersionService;
@@ -190,6 +191,12 @@ public class EntityVersionPolicy extends AbstractBeCPGPolicy
 		}
 	}
 
+	/**
+	 * <p>getCheckedOut.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getCheckedOut(NodeRef nodeRef) {
 		NodeRef original = null;
 		if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_WORKING_COPY)) {

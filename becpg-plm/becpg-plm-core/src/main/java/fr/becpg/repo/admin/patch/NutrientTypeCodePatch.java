@@ -36,7 +36,9 @@ import fr.becpg.model.PLMModel;
  */
 public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(NutrientTypeCodePatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.nutrientTypeCode.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.nutrientTypeCode.result";
 
 	private NodeDAO nodeDAO;

@@ -43,6 +43,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  */
 public class CreateProduct extends BaseJavaDelegate {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(CreateProduct.class);
 
 	/** The node service. */
@@ -215,6 +216,13 @@ public class CreateProduct extends BaseJavaDelegate {
 
 	}
 
+	/**
+	 * <p>copyDataList.</p>
+	 *
+	 * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param sourceNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param typeCompolist a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private void copyDataList(NodeRef productNodeRef, NodeRef sourceNodeRef, QName typeCompolist) {
 
 		ProductData productData = alfrescoRepository.findOne(productNodeRef);

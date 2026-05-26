@@ -26,6 +26,7 @@ import fr.becpg.repo.regulatory.RequirementDataType;
  */
 public class LCACalculatingFormulationHandler extends AbstractCostCalculatingFormulationHandler<LCAListDataItem> {
 
+	/** Constant <code>MESSAGE_FORMULATE_LCA_LIST_ERROR="message.formulate.lcaList.error"</code> */
 	private static final String MESSAGE_FORMULATE_LCA_LIST_ERROR = "message.formulate.lcaList.error";
 	
 	/** {@inheritDoc} */
@@ -53,6 +54,12 @@ public class LCACalculatingFormulationHandler extends AbstractCostCalculatingFor
 		}
 	}
 
+	/**
+	 * <p>shouldCalculateScore.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a boolean
+	 */
 	private boolean shouldCalculateScore(ProductData formulatedProduct) {
 		return formulatedProduct.getLcaScoreMethod() == null || "Formulation".equals(formulatedProduct.getLcaScoreMethod());
 	}

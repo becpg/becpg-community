@@ -53,8 +53,10 @@ import fr.becpg.repo.audit.service.DatabaseAuditService;
 @Service
 public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 	
+	/** Constant <code>BECPG_AUDIT_PATH="/becpg/audit"</code> */
 	private static final String BECPG_AUDIT_PATH = "/becpg/audit";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(DatabaseAuditServiceImpl.class);
 
 	@Autowired
@@ -127,6 +129,13 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 		auditComponent.deleteAuditEntriesByIdRange(plugin.getAuditApplicationId(), fromId, toId);
 	}
 
+	/**
+	 * <p>internalListAuditEntries.</p>
+	 *
+	 * @param plugin a {@link fr.becpg.repo.audit.plugin.DatabaseAuditPlugin} object
+	 * @param auditFilter a {@link fr.becpg.repo.audit.model.AuditQuery} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<AuditEntry> internalListAuditEntries(DatabaseAuditPlugin plugin, AuditQuery auditFilter) {
 		String whereClause = buildWhereClause(plugin, auditFilter);
 		Query query = buildQuery(whereClause);
@@ -138,6 +147,13 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 		return new ArrayList<>(audit.listAuditEntries(plugin.getAuditApplicationId(), params).getCollection().stream().filter(Objects::nonNull).toList());
 	}
 
+	/**
+	 * <p>buildWhereClause.</p>
+	 *
+	 * @param plugin a {@link fr.becpg.repo.audit.plugin.DatabaseAuditPlugin} object
+	 * @param auditFilter a {@link fr.becpg.repo.audit.model.AuditQuery} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String buildWhereClause(DatabaseAuditPlugin plugin, AuditQuery auditFilter) {
 		StringBuilder whereClauseBuilder = new StringBuilder();
 		List<String> statements = new ArrayList<>();
@@ -171,6 +187,12 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 		return whereClauseBuilder.toString();
 	}
 
+	/**
+	 * <p>buildQuery.</p>
+	 *
+	 * @param whereClause a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.rest.framework.resource.parameters.where.Query} object
+	 */
 	private Query buildQuery(String whereClause) {
 		
 		if (whereClause != null && !whereClause.isBlank()) {
@@ -185,6 +207,14 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 		return null;
 	}
 
+	/**
+	 * <p>recreateAuditMap.</p>
+	 *
+	 * @param plugin a {@link fr.becpg.repo.audit.plugin.DatabaseAuditPlugin} object
+	 * @param auditValues a {@link java.util.Map} object
+	 * @param forDatabase a boolean
+	 * @return a {@link java.util.Map} object
+	 */
 	private Map<String, Serializable> recreateAuditMap(DatabaseAuditPlugin plugin, Map<String, Serializable> auditValues, boolean forDatabase) {
 		Map<String, Serializable> auditMap = new HashMap<>();
 		for (Entry<String, Serializable> entry : auditValues.entrySet()) {

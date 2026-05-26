@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -35,6 +35,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 public class ResourceBundleBootstrapComponent
 {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ResourceBundleBootstrapComponent.class);
 	
 	/**

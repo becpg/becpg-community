@@ -35,6 +35,7 @@ import fr.becpg.repo.repository.model.StateableEntity;
  */
 public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<ScorableEntity> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ScoreCalculatingFormulationHandler.class);
 
 	private AlfrescoRepository<ScorableEntity> alfrescoRepository;
@@ -257,6 +258,12 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<S
 		return true;
 	}
 
+	/**
+	 * <p>getForbiddenCtrlAmount.</p>
+	 *
+	 * @param reqCtrlList a {@link java.util.Map} object
+	 * @return a int
+	 */
 	private int getForbiddenCtrlAmount(Map<String, Map<String, Integer>> reqCtrlList) {
 		int res = 0;
 

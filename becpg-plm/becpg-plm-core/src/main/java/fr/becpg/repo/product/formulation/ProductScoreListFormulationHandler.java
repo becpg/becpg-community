@@ -105,6 +105,13 @@ public class ProductScoreListFormulationHandler extends AbstractSimpleListFormul
 		synchronizeWithRelatedEntities(formulatedProduct, simpleListDataList, toRemove);
 	}
 
+	/**
+	 * <p>synchronizeWithEntityTemplate.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param simpleListDataList a {@link java.util.List} object
+	 * @param toRemove a {@link java.util.List} object
+	 */
 	private void synchronizeWithEntityTemplate(ProductData formulatedProduct, List<ScoreListDataItem> simpleListDataList,
 			List<ScoreListDataItem> toRemove) {
 		List<ScoreListDataItem> templateScoreList = formulatedProduct.getEntityTpl().getScoreList();
@@ -115,6 +122,12 @@ public class ProductScoreListFormulationHandler extends AbstractSimpleListFormul
 		}
 	}
 
+	/**
+	 * <p>updateScoreListSorting.</p>
+	 *
+	 * @param simpleListDataList a {@link java.util.List} object
+	 * @param templateScoreList a {@link java.util.List} object
+	 */
 	private void updateScoreListSorting(List<ScoreListDataItem> simpleListDataList, List<ScoreListDataItem> templateScoreList) {
 		int lastSort = 0;
 		for (ScoreListDataItem sl : simpleListDataList) {
@@ -134,6 +147,13 @@ public class ProductScoreListFormulationHandler extends AbstractSimpleListFormul
 		}
 	}
 
+	/**
+	 * <p>synchronizeWithRelatedEntities.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param simpleListDataList a {@link java.util.List} object
+	 * @param toRemove a {@link java.util.List} object
+	 */
 	private void synchronizeWithRelatedEntities(ProductData formulatedProduct, List<ScoreListDataItem> simpleListDataList,
 			List<ScoreListDataItem> toRemove) {
 
@@ -151,6 +171,14 @@ public class ProductScoreListFormulationHandler extends AbstractSimpleListFormul
 
 	}
 
+	/**
+	 * <p>synchronizeScore.</p>
+	 *
+	 * @param templateScoreListItem a {@link fr.becpg.repo.project.data.projectList.ScoreListDataItem} object
+	 * @param scoreList a {@link java.util.List} object
+	 * @param isTemplateScore a boolean
+	 * @param toRemove a {@link java.util.List} object
+	 */
 	private void synchronizeScore(ScoreListDataItem templateScoreListItem, List<ScoreListDataItem> scoreList, boolean isTemplateScore,
 			List<ScoreListDataItem> toRemove) {
 		boolean[] addScore = { true };

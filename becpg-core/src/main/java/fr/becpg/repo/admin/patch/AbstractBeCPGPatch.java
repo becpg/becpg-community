@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -53,6 +53,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public abstract class AbstractBeCPGPatch extends AbstractPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AbstractBeCPGPatch.class);
 
 	protected Repository repository;

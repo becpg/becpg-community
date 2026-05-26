@@ -30,6 +30,7 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 @Service
 public class JSONDataListOutputWriter implements DataListOutputWriter {
 
+	/** Constant <code>PARAM_QUERY_EXECUTION_ID="queryExecutionId"</code> */
 	private static final String PARAM_QUERY_EXECUTION_ID = "queryExecutionId";
 
 	@Autowired
@@ -93,6 +94,12 @@ public class JSONDataListOutputWriter implements DataListOutputWriter {
 
 	}
 
+	/**
+	 * <p>processResults.</p>
+	 *
+	 * @param extractedItems a {@link fr.becpg.repo.entity.datalist.PaginatedExtractedItems} object
+	 * @return a {@link org.json.JSONArray} object
+	 */
 	private JSONArray processResults(PaginatedExtractedItems extractedItems) {
 
 		JSONArray items = new JSONArray();

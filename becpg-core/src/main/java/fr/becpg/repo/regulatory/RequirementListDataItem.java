@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -44,6 +44,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "bcpg:reqCtrlList")
 public class RequirementListDataItem extends BeCPGDataObject {
 
+	/** Constant <code>serialVersionUID=-3851143080201225383L</code> */
 	private static final long serialVersionUID = -3851143080201225383L;
 	private RequirementType reqType;
 	private MLText reqMlMessage;

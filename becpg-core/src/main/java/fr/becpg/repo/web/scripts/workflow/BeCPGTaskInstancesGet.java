@@ -44,6 +44,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @version $Id: $Id
  */
 public class BeCPGTaskInstancesGet extends TaskInstancesGet {
+	/** Constant <code>LOGGER</code> */
 	private static final Log LOGGER = LogFactory.getLog(BeCPGTaskInstancesGet.class);
 
 	/** Constant <code>PARAM_SEARCH="q"</code> */
@@ -52,6 +53,7 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 	public static final String PARAM_SORT = "sort";
 	/** Constant <code>PARAM_DIR="dir"</code> */
 	public static final String PARAM_DIR = "dir";
+	/** Constant <code>QNAME_INITIATOR</code> */
 	private static final QName QNAME_INITIATOR = QName.createQName("wf", "initiator");
 
 	private AttributeExtractorService attributeExtractorService;
@@ -230,6 +232,15 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 		return model;
 	}
 
+	/**
+	 * <p>buildbeCPGModel.</p>
+	 *
+	 * @param modelBuilder a {@link org.alfresco.repo.web.scripts.workflow.WorkflowModelBuilder} object
+	 * @param task a {@link org.alfresco.service.cmr.workflow.WorkflowTask} object
+	 * @param properties a {@link java.util.List} object
+	 * @param extraProperties a {@link java.util.List} object
+	 * @return a {@link java.util.Map} object
+	 */
 	private Map<String, Object> buildbeCPGModel(WorkflowModelBuilder modelBuilder, WorkflowTask task, List<String> properties,
 			List<AttributeExtractorField> extraProperties) {
 
@@ -265,6 +276,12 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 		return ret;
 	}
 
+	/**
+	 * <p>extractSort.</p>
+	 *
+	 * @param parameter a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private QName extractSort(String parameter) {
 
 		if (parameter != null) {
@@ -290,11 +307,9 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 	}
 
 	/**
-	 * Retrieves the list of property names to include in the response.
+	 * {@inheritDoc}
 	 *
-	 * @param req
-	 *            The WebScript request
-	 * @return List of property names
+	 * Retrieves the list of property names to include in the response.
 	 */
 	private List<String> getProperties(WebScriptRequest req) {
 		String propertiesStr = req.getParameter(PARAM_PROPERTIES);
@@ -305,11 +320,9 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 	}
 
 	/**
-	 * Retrieves the pooledTasks parameter.
+	 * {@inheritDoc}
 	 *
-	 * @param req
-	 *            The WebScript request
-	 * @return null if not present, Boolean object otherwise
+	 * Retrieves the pooledTasks parameter.
 	 */
 	private Boolean getPooledTasks(WebScriptRequest req) {
 		Boolean result = null;
@@ -323,11 +336,9 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 	}
 
 	/**
-	 * Gets the specified {@link WorkflowTaskState}, null if not requested
+	 * {@inheritDoc}
 	 *
-	 * @param req
-	 *            WebScriptRequest
-	 * @return WorkflowTaskState
+	 * Gets the specified {@link WorkflowTaskState}, null if not requested
 	 */
 	private WorkflowTaskState getState(WebScriptRequest req) {
 		String stateName = req.getParameter(PARAM_STATE);
@@ -344,12 +355,10 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 *
 	 * Returns the specified authority. If no authority is specified then
 	 * returns the current Fully Authenticated user.
-	 *
-	 * @param req
-	 *            WebScriptRequest
-	 * @return String
 	 */
 	private String getAuthority(WebScriptRequest req) {
 		String authority = req.getParameter(PARAM_AUTHORITY);
@@ -360,13 +369,9 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 	}
 
 	/**
-	 * Determine if the given task should be included in the response.
+	 * {@inheritDoc}
 	 *
-	 * @param task
-	 *            The task to check
-	 * @param filters
-	 *            The list of filters the task must match to be included
-	 * @return true if the task matches and should therefore be returned
+	 * Determine if the given task should be included in the response.
 	 */
 	private boolean matches(WorkflowTask task, Map<String, Object> filters) {
 		// by default we assume that workflow task should be included

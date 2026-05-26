@@ -85,13 +85,16 @@ import fr.becpg.util.BeCPGTransactionUtil;
 @Service("formulationChannelService")
 public class FormulationChannelService implements BatchQueuePlugin {
 
+	/** Constant <code>REFORMULATE_BATCH_DESC_ID="becpg.batch.formulation.channel.formula"{trunked}</code> */
 	private static final String REFORMULATE_BATCH_DESC_ID = "becpg.batch.formulation.channel.formulateEntities";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(FormulationChannelService.class);
 
 	/** Constant <code>FORMULATE_ENTITIES_CHANNEL_ID="formulate-entities"</code> */
 	public static final String FORMULATE_ENTITIES_CHANNEL_ID = "formulate-entities";
 	
+	/** Constant <code>REFORMULATE_BATCH_ID="reformulateChangedEntities"</code> */
 	private static final String REFORMULATE_BATCH_ID = "reformulateChangedEntities";
 
 	private BatchQueueService batchQueueService;
@@ -166,40 +169,85 @@ public class FormulationChannelService implements BatchQueuePlugin {
 		this.reformulateBatchSize = reformulateBatchSize;
 	}
 
+	/**
+	 * <p>statesToRegister.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String statesToRegister() {
 		return systemConfigurationService.confValue("beCPG.eco.automatic.states");
 	}
 	
+	/**
+	 * <p>minHoursSinceModification.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object
+	 */
 	private Integer minHoursSinceModification() {
 		return Integer.parseInt(systemConfigurationService.confValue("beCPG.formulation.channel.minHoursSinceModification"));
 	}
 	
+	/**
+	 * <p>maxProductsToFormulate.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object
+	 */
 	private Integer maxProductsToFormulate() {
 		return Integer.parseInt(systemConfigurationService.confValue("beCPG.formulation.channel.maxProducts"));
 	}
 	
+	/**
+	 * <p>maxCpuUsage.</p>
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double maxCpuUsage() {
 		String configValue = systemConfigurationService.confValue("beCPG.formulation.channel.maxCpuUsage");
 	    return Double.parseDouble(configValue) / 100;
 	}
 	
+	/**
+	 * <p>force.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	private Boolean force() {
 		String configValue = systemConfigurationService.confValue("beCPG.formulation.channel.force");
 		return Boolean.parseBoolean(configValue);
 	}
 	
+	/**
+	 * <p>maxActiveUsers.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object
+	 */
 	private Integer maxActiveUsers() {
 		return Integer.parseInt(systemConfigurationService.confValue("beCPG.formulation.channel.maxActiveUsers"));
 	}
 	
+	/**
+	 * <p>excludedTimeSlot.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String excludedTimeSlot() {
 		return systemConfigurationService.confValue("beCPG.formulation.channel.excludedTimeSlot");
 	}
 	
+	/**
+	 * <p>isEnabled.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	private Boolean isEnabled() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.channel.enable"));
 	}
 	
+	/**
+	 * <p>enforceACL.</p>
+	 *
+	 * @return a boolean
+	 */
 	private boolean enforceACL() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.security.enforceACL"));
 	}
@@ -396,6 +444,12 @@ public class FormulationChannelService implements BatchQueuePlugin {
 		return batchInfo;
 	}
 	
+	/**
+	 * <p>getRootCause.</p>
+	 *
+	 * @param throwable a {@link java.lang.Throwable} object
+	 * @return a {@link java.lang.Throwable} object
+	 */
 	private Throwable getRootCause(Throwable throwable) {
 		Throwable rootCause = throwable;
 		while (rootCause.getCause() != null && rootCause.getCause() != rootCause) {
@@ -409,7 +463,7 @@ public class FormulationChannelService implements BatchQueuePlugin {
 	 * - System load average threshold
 	 * - Number of connected users threshold
 	 * - Skipped time slot configuration
-	 * 
+	 *
 	 * @return true if batch should run, false otherwise
 	 */
 	private boolean shouldRunBatch() {
@@ -461,7 +515,7 @@ public class FormulationChannelService implements BatchQueuePlugin {
 	/**
 	 * Checks if the current time is within the configured skipped time slot.
 	 * Expected format: "HH:mm-HH:mm" (e.g., "09:00-17:00")
-	 * 
+	 *
 	 * @return true if current time is in skipped slot, false otherwise
 	 */
 	private boolean isInSkippedTimeSlot() {
@@ -495,6 +549,13 @@ public class FormulationChannelService implements BatchQueuePlugin {
 		}
 	}
 
+	/**
+	 * <p>getWhereUsedProducts.</p>
+	 *
+	 * @param channelProduct a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param referenceDate a {@link java.util.Date} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> getWhereUsedProducts(NodeRef channelProduct, Date referenceDate) {
 		try {
 			QName associationQName = evaluateWUsedAssociation(channelProduct);
@@ -528,6 +589,13 @@ public class FormulationChannelService implements BatchQueuePlugin {
 		return List.of();
 	}
 
+	/**
+	 * <p>getSecurityRuleProducts.</p>
+	 *
+	 * @param channelProduct a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param referenceDate a {@link java.util.Date} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> getSecurityRuleProducts(NodeRef channelProduct, Date referenceDate) {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 		String dateRange = dateFormat.format(referenceDate);
@@ -551,6 +619,12 @@ public class FormulationChannelService implements BatchQueuePlugin {
 		return List.of();
 	}
 	
+	/**
+	 * <p>needsFormulation.</p>
+	 *
+	 * @param channelProduct a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	@SuppressWarnings("unchecked")
 	private boolean needsFormulation(NodeRef channelProduct) {
 		
@@ -582,7 +656,7 @@ public class FormulationChannelService implements BatchQueuePlugin {
 	/**
 	 * Checks if enough time has passed since the last modification based on
 	 * the configured numberOfHoursBeforeFormulation.
-	 * 
+	 *
 	 * @param modifiedDate the date of last modification
 	 * @return true if enough time has passed, false otherwise
 	 */
@@ -612,6 +686,12 @@ public class FormulationChannelService implements BatchQueuePlugin {
 		}
 	}
 	
+	/**
+	 * <p>getTypePriority.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @return a int
+	 */
 	private int getTypePriority(QName type) {
 		// Priority 1: Base materials that are usually children
 		if (entityDictionaryService.isSubClass(type, PLMModel.TYPE_RAWMATERIAL)
@@ -636,6 +716,12 @@ public class FormulationChannelService implements BatchQueuePlugin {
 		return 10;
 	}
 	
+	/**
+	 * <p>extractReferenceDate.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.util.Date} object
+	 */
 	private Date extractReferenceDate(NodeRef entityNodeRef) {
 		Date referenceDate = (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIED);
 		if (referenceDate == null) {
@@ -722,6 +808,12 @@ public class FormulationChannelService implements BatchQueuePlugin {
 		}
 	}
 	
+	/**
+	 * <p>isACLApplied.</p>
+	 *
+	 * @param aclGroupData a {@link fr.becpg.repo.security.data.ACLGroupData} object
+	 * @return a boolean
+	 */
 	private boolean isACLApplied(ACLGroupData aclGroupData) {
 		for (ACLEntryDataItem acl : aclGroupData.getAcls()) {
 			String propNameString = acl.getPropName();
@@ -738,6 +830,12 @@ public class FormulationChannelService implements BatchQueuePlugin {
 		return false;
 	}
 	
+	/**
+	 * <p>evaluateWUsedAssociation.</p>
+	 *
+	 * @param targetAssocNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private QName evaluateWUsedAssociation(NodeRef targetAssocNodeRef) {
 
 		QName nodeType = nodeService.getType(targetAssocNodeRef);
@@ -755,6 +853,12 @@ public class FormulationChannelService implements BatchQueuePlugin {
 		return null;
 	}
 	
+	/**
+	 * <p>accept.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private boolean accept(NodeRef entityNodeRef) {
 		if (nodeService.exists(entityNodeRef)) {
 

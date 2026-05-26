@@ -33,6 +33,7 @@ import org.json.simple.JSONObject;
  */
 public class BeCPGDoclistActionGroupResolver implements DoclistActionGroupResolver {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(BeCPGDoclistActionGroupResolver.class);
 
 	/**
@@ -78,7 +79,7 @@ public class BeCPGDoclistActionGroupResolver implements DoclistActionGroupResolv
 
 	/**
 	 * Retrieve a JSONArray of aspects for a node
-	 * 
+	 *
 	 * @param jsonObject
 	 *            JSONObject containing a "node" object as returned from the
 	 *            ApplicationScriptUtils class.

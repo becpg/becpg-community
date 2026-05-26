@@ -75,15 +75,19 @@ import fr.becpg.repo.helper.json.JsonHelper;
 @Service("entityActivityService")
 public class EntityActivityServiceImpl implements EntityActivityService {
 
+	/** Constant <code>NO_ACTIVITY_MESSAGE="No activity on entity template or pendi"{trunked}</code> */
 	private static final String NO_ACTIVITY_MESSAGE = "No activity on entity template or pending delete node";
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(EntityActivityServiceImpl.class);
 
 	/** Constant <code>ML_TEXT_SIZE_LIMIT=200</code> */
 	public static final int ML_TEXT_SIZE_LIMIT = 200;
 
+	/** Constant <code>EXPORT_ACTIVITY="fr.becpg.export"</code> */
 	private static final String EXPORT_ACTIVITY = "fr.becpg.export";
 
+	/** Constant <code>SORT_MAP</code> */
 	private static final Map<String, Boolean> SORT_MAP;
 	static {
 		SORT_MAP = new LinkedHashMap<>();
@@ -303,6 +307,14 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		return postGenericActivity(entityNodeRef, entityNodeRef, ActivityType.ComplianceCheck);
 	}
 
+	/**
+	 * <p>postGenericActivity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param subjectNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param activityType a {@link fr.becpg.repo.activity.data.ActivityType} object
+	 * @return a boolean
+	 */
 	private boolean postGenericActivity(NodeRef entityNodeRef, NodeRef subjectNodeRef, ActivityType activityType) {
 		try {
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
@@ -540,6 +552,11 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		return false;
 	}
 
+	/**
+	 * <p>processMLTexts.</p>
+	 *
+	 * @param entry a {@link java.util.Map.Entry} object
+	 */
 	private void processMLTexts(Map.Entry<QName, Pair<Serializable, Serializable>> entry) {
 		MLText mlTextBefore = null;
 		MLText mlTextAfter = null;
@@ -570,6 +587,13 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		}
 	}
 
+	/**
+	 * <p>processEntry.</p>
+	 *
+	 * @param ent a {@link java.io.Serializable} object
+	 * @param key a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.io.Serializable} object
+	 */
 	private Serializable processEntry(Serializable ent, QName key) {
 		PropertyDefinition propDef = entityDictionaryService.getProperty(key);
 
@@ -584,6 +608,13 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	}
 
+	/**
+	 * <p>processWithConstraints.</p>
+	 *
+	 * @param ent a {@link java.io.Serializable} object
+	 * @param propDef a {@link org.alfresco.service.cmr.dictionary.PropertyDefinition} object
+	 * @return a {@link java.io.Serializable} object
+	 */
 	private Serializable processWithConstraints(Serializable ent, PropertyDefinition propDef) {
 		if ((propDef != null) && (propDef.getConstraints() != null)) {
 			for (ConstraintDefinition constraint : propDef.getConstraints()) {
@@ -603,6 +634,13 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		return ent;
 	}
 
+	/**
+	 * <p>compareMLTexts.</p>
+	 *
+	 * @param mlText a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @param otherMlText a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
 	private MLText compareMLTexts(MLText mlText, MLText otherMlText) {
 		LargeTextHelper.elipse(mlText);
 		MLText newMlText = new MLText();
@@ -629,6 +667,12 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		return newMlText;
 	}
 
+	/**
+	 * <p>recordAuditActivity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param activityListDataItem a {@link fr.becpg.repo.activity.data.ActivityListDataItem} object
+	 */
 	private void recordAuditActivity(NodeRef entityNodeRef, ActivityListDataItem activityListDataItem) {
 
 		Date createdDate = activityListDataItem.getCreatedDate() != null ? activityListDataItem.getCreatedDate() : new Date();
@@ -642,11 +686,21 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		}
 	}
 
+	/**
+	 * <p>deleteAuditActivity.</p>
+	 *
+	 * @param lastActivity a {@link fr.becpg.repo.activity.data.ActivityListDataItem} object
+	 */
 	private void deleteAuditActivity(ActivityListDataItem lastActivity) {
 		beCPGAuditService.deleteAuditEntries(AuditType.ACTIVITY, lastActivity.getId(), lastActivity.getId() + 1);
 	}
 
 	// TODO Slow better to have it async
+	/**
+	 * <p>mergeWithLastActivity.</p>
+	 *
+	 * @param newActivity a {@link fr.becpg.repo.activity.data.ActivityListDataItem} object
+	 */
 	private void mergeWithLastActivity(ActivityListDataItem newActivity) {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.HOUR, -1);
@@ -961,6 +1015,12 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		return false;
 	}
 
+	/**
+	 * <p>extractAspectNames.</p>
+	 *
+	 * @param aspectQNames a {@link java.util.Set} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extractAspectNames(Set<QName> aspectQNames) {
 		return aspectQNames.stream()
 				.map(q -> entityDictionaryService.getAspect(q).getTitle(entityDictionaryService) != null
@@ -969,6 +1029,12 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				.collect(Collectors.joining(", "));
 	}
 
+	/**
+	 * <p>notifyListeners.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param activityListDataItem a {@link fr.becpg.repo.activity.data.ActivityListDataItem} object
+	 */
 	private void notifyListeners(NodeRef entityNodeRef, ActivityListDataItem activityListDataItem) {
 
 		for (EntityActivityListener entityActivityListener : entityActivityListeners) {
@@ -978,6 +1044,12 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	}
 
+	/**
+	 * <p>getMatchingCharactNodeRef.</p>
+	 *
+	 * @param listItemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getMatchingCharactNodeRef(NodeRef listItemNodeRef) {
 		try {
 			QName pivotAssoc = entityDictionaryService.getDefaultPivotAssoc(nodeService.getType(listItemNodeRef));
@@ -996,6 +1068,12 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		return null;
 	}
 
+	/**
+	 * <p>getActivityList.</p>
+	 *
+	 * @param projectNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getActivityList(NodeRef projectNodeRef) {
 		NodeRef listNodeRef = null;
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(projectNodeRef);
@@ -1091,6 +1169,11 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		}
 	}
 
+	/**
+	 * <p>postAlfrescoExportActivity.</p>
+	 *
+	 * @param fileName a {@link java.lang.String} object
+	 */
 	private void postAlfrescoExportActivity(String fileName) {
 		JSONObject data = new JSONObject();
 
@@ -1103,6 +1186,13 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		activityService.postActivity(EXPORT_ACTIVITY, null, "export", data.toString());
 	}
 
+	/**
+	 * <p>postEntityExportActivity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param dataType a {@link org.alfresco.service.namespace.QName} object
+	 * @param fileName a {@link java.lang.String} object
+	 */
 	private void postEntityExportActivity(NodeRef entityNodeRef, QName dataType, String fileName) {
 		try {
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);

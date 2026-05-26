@@ -25,6 +25,7 @@ import fr.becpg.repo.designer.DesignerService;
 public class FormControlsWebScript extends DeclarativeWebScript  {
 	
 
+	/** Constant <code>FORM_CONTROLS="controls"</code> */
 	private static final String FORM_CONTROLS = "controls";
 
 	/** The logger. */

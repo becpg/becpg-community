@@ -32,8 +32,10 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("calculatedCharactsAutoCompletePlugin")
 public class CalculatedCharactsAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
+	/** Constant <code>SOURCE_TYPE_ECO="eco"</code> */
 	private static final String SOURCE_TYPE_ECO = "eco";
 	
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(CalculatedCharactsAutoCompletePlugin.class);
 
 	@Autowired

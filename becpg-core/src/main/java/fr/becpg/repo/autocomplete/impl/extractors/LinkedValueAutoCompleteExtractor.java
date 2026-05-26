@@ -48,6 +48,13 @@ public class LinkedValueAutoCompleteExtractor implements AutoCompleteExtractor<N
 		return suggestions;
 	}
 
+	/**
+	 * <p>extractHierarchyFullName.</p>
+	 *
+	 * @param hierarchy a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param visited a {@link java.util.Set} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extractHierarchyFullName(NodeRef hierarchy, Set<NodeRef> visited) {
 		visited.add(hierarchy);
 
@@ -61,6 +68,12 @@ public class LinkedValueAutoCompleteExtractor implements AutoCompleteExtractor<N
 		return res;
 	}
 
+	/**
+	 * <p>extractHierarchyName.</p>
+	 *
+	 * @param hierarchy a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extractHierarchyName(NodeRef hierarchy) {
 		return (String) nodeService.getProperty(hierarchy, BeCPGModel.PROP_LKV_VALUE);
 	}

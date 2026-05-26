@@ -32,6 +32,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
 @Service
 public class EntityTplProjectPlugin implements EntityTplPlugin {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityTplProjectPlugin.class);
 
 	@Autowired
@@ -118,6 +119,12 @@ public class EntityTplProjectPlugin implements EntityTplPlugin {
 		}
 	}
 
+	/**
+	 * <p>updateDelieverableDocument.</p>
+	 *
+	 * @param projectNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param listItem a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void updateDelieverableDocument(NodeRef projectNodeRef, NodeRef listItem) {
 
 		Deque<String> stack = new ArrayDeque<>();

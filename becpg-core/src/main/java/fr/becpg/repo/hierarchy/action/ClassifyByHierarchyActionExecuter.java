@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2010-2011 beCPG. All rights reserved.
+ *  Copyright (C) 2010-2026 beCPG. All rights reserved.
  */
 package fr.becpg.repo.hierarchy.action;
 
@@ -38,6 +38,7 @@ public class ClassifyByHierarchyActionExecuter extends ActionExecuterAbstractBas
 	public static final String PARAM_PROP_LOCALE = "prop-locale";
 	
 	
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ClassifyByHierarchyActionExecuter.class);
 	
 	private HierarchyService hierarchyService;

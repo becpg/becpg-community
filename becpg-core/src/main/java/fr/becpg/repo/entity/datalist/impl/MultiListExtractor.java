@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
+ * Copyright (C) 2010-2026 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -40,8 +40,10 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class MultiListExtractor extends SimpleExtractor {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(MultiListExtractor.class);
 
+	/** Constant <code>MULTI_LIST_EXTRACTOR_PREFIX="multiList_"</code> */
 	private static final String MULTI_LIST_EXTRACTOR_PREFIX = "multiList_";
 
 	private NamespaceService namespaceService;

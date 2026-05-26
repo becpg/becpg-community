@@ -28,6 +28,7 @@ import fr.becpg.report.client.ReportFormat;
  */
 public class ReportSearchDownloadExporter extends AbstractSearchDownloadExporter {
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(ReportSearchDownloadExporter.class);
 
 	private ReportServerSearchRenderer reportServerSearchRenderer;
@@ -68,6 +69,7 @@ public class ReportSearchDownloadExporter extends AbstractSearchDownloadExporter
 	 * @param nbOfLines a {@link java.lang.Long} object
 	 * @param format a {@link fr.becpg.report.client.ReportFormat} object
 	 * @param parameters an array of {@link java.lang.String} objects.
+	 * @since 25.3.0.34
 	 */
 	public ReportSearchDownloadExporter(RetryingTransactionHelper transactionHelper, DownloadStatusUpdateService updateService,
 			DownloadStorage downloadStorage, ReportServerSearchRenderer reportServerSearchRenderer, NodeRef downloadNodeRef, NodeRef templateNodeRef,

@@ -8,6 +8,9 @@ package fr.becpg.repo.product.formulation.nutrient;
  */
 public final class NutrientCode {
 	
+	/**
+	 * <p>Constructor for NutrientCode.</p>
+	 */
 	private NutrientCode() {
 		//Do Nothing
 	}

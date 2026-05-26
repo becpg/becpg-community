@@ -66,8 +66,10 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("versionCleanerService")
 public class VersionCleanerServiceImpl implements VersionCleanerService {
 
+	/** Constant <code>DEFAULT="default"</code> */
 	private static final String DEFAULT = "default";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(VersionCleanerServiceImpl.class);
 
 	@Autowired
@@ -117,6 +119,13 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		return true;
 	}
 
+	/**
+	 * <p>internalCleanVersion.</p>
+	 *
+	 * @param maxProcessedNodes a int
+	 * @param path a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	private boolean internalCleanVersion(int maxProcessedNodes, String path) {
 		String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
 		
@@ -150,6 +159,12 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		return true;
 	}
 	
+	/**
+	 * <p>getVersionedAssocsChilds.</p>
+	 *
+	 * @param limit a int
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> getVersionedAssocsChilds(int limit) {
 		
 		String sql = """
@@ -355,6 +370,13 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		}
 	}
 
+	/**
+	 * <p>noVersionToConvert.</p>
+	 *
+	 * @param path a {@link java.lang.String} object
+	 * @param maxProcessedNodes a int
+	 * @return a boolean
+	 */
 	private boolean noVersionToConvert(String path, int maxProcessedNodes) {
 		if (!BeCPGQueryBuilder.createQuery().withAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION).excludeAspect(BeCPGModel.ASPECT_ENTITY_FORMAT)
 				.excludeAspect(ContentModel.ASPECT_TEMPORARY).maxResults(1).list().isEmpty()) {
@@ -378,6 +400,13 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		return true;
 	}
 
+	/**
+	 * <p>convertAndDeleteVersions.</p>
+	 *
+	 * @param maxProcessedNodes a int
+	 * @param tenantDomain a {@link java.lang.String} object
+	 * @param path a {@link java.lang.String} object
+	 */
 	private void convertAndDeleteVersions(int maxProcessedNodes, String tenantDomain, String path) {
 		
 		if (noVersionToConvert(path, maxProcessedNodes)) {
@@ -449,6 +478,11 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 
 	}
 	
+	/**
+	 * <p>moveToImportToDoFolder.</p>
+	 *
+	 * @param toMove a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void moveToImportToDoFolder(NodeRef toMove) {
 		NodeRef originalParent = nodeService.getPrimaryParent(toMove).getParentRef();
 		String parentName = (String) nodeService.getProperty(originalParent, ContentModel.PROP_NAME);
@@ -497,6 +531,11 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		
 	}
 
+	/**
+	 * <p>cleanOrphanVersions.</p>
+	 *
+	 * @param tenantDomain a {@link java.lang.String} object
+	 */
 	private void cleanOrphanVersions(String tenantDomain) {
 		
 		BatchInfo batchInfo = new BatchInfo("cleanOrphanVersions." + tenantDomain, "becpg.batch.versionCleaner.cleanOrphanVersions");
@@ -547,6 +586,11 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 	
 	}
 
+	/**
+	 * <p>deleteNode.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void deleteNode(NodeRef nodeRef) {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
@@ -557,6 +601,11 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		}, false, true);
 	}
 	
+	/**
+	 * <p>deleteTemporaryNode.</p>
+	 *
+	 * @param temporaryNode a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void deleteTemporaryNode(NodeRef temporaryNode) {
 
 		String tenantDomain = DEFAULT;
@@ -598,6 +647,11 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 
 	}
 
+	/**
+	 * <p>convertNode.</p>
+	 *
+	 * @param notConvertedNode a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void convertNode(NodeRef notConvertedNode) {
 		
 		String tenantDomain = DEFAULT;

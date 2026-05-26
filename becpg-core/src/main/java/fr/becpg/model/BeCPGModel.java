@@ -11,6 +11,9 @@ import org.alfresco.service.namespace.QName;
  */
 public final class BeCPGModel {
 
+	/**
+	 * <p>Constructor for BeCPGModel.</p>
+	 */
 	private BeCPGModel() {
 		throw new IllegalStateException("Constants class helper only");
 	}

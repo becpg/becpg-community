@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -80,6 +80,7 @@ import freemarker.template.TemplateException;
  */
 public class DesignerServiceImpl implements DesignerService {
 
+	/** Constant <code>BECPG_CONFIG_CUSTOM="becpg-config-custom.xml"</code> */
 	private static String BECPG_CONFIG_CUSTOM = "becpg-config-custom.xml";
 
 	private NodeService nodeService;
@@ -107,6 +108,7 @@ public class DesignerServiceImpl implements DesignerService {
 	// Controls cache
 	private List<FormControl> controls = new ArrayList<>();
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(DesignerServiceImpl.class);
 
 	/**
@@ -438,6 +440,12 @@ public class DesignerServiceImpl implements DesignerService {
 		return new DesignerTree(null);
 	}
 
+	/**
+	 * <p>createModelAspectNode.</p>
+	 *
+	 * @param dictionaryModelNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef createModelAspectNode(NodeRef dictionaryModelNodeRef) {
 		if (ContentModel.TYPE_DICTIONARY_MODEL.equals(nodeService.getType(dictionaryModelNodeRef))) {
 			ContentReader reader = contentService.getReader(dictionaryModelNodeRef, ContentModel.PROP_CONTENT);
@@ -452,6 +460,12 @@ public class DesignerServiceImpl implements DesignerService {
 		return null;
 	}
 
+	/**
+	 * <p>createConfigAspectNode.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef createConfigAspectNode(NodeRef parentNodeRef) {
 		ContentReader reader = contentService.getReader(parentNodeRef, ContentModel.PROP_CONTENT);
 		ChildAssociationRef childAssociationRef = nodeService.createNode(parentNodeRef, DesignerModel.ASSOC_DSG_CONFIG,
@@ -518,6 +532,13 @@ public class DesignerServiceImpl implements DesignerService {
 		return ret;
 	}
 
+	/**
+	 * <p>getModelTemplate.</p>
+	 *
+	 * @param modelTemplate a {@link java.lang.String} object
+	 * @return a {@link java.io.InputStream} object
+	 * @throws java.io.IOException if any.
+	 */
 	private InputStream getModelTemplate(String modelTemplate) throws IOException {
 		if ((modelTemplate != null) && (modelTemplate.length() > 0)) {
 			Resource resource = new ClassPathResource("beCPG/designer/" + modelTemplate + ".xml");
@@ -529,6 +550,12 @@ public class DesignerServiceImpl implements DesignerService {
 		return null;
 	}
 
+	/**
+	 * <p>getControlsTemplate.</p>
+	 *
+	 * @return a {@link java.io.InputStream} object
+	 * @throws java.io.IOException if any.
+	 */
 	private InputStream getControlsTemplate() throws IOException {
 		Resource resource = new ClassPathResource("beCPG/designer/formControls.xml");
 		if (resource.exists()) {
@@ -697,6 +724,18 @@ public class DesignerServiceImpl implements DesignerService {
 		return ret;
 	}
 
+	/**
+	 * <p>findOrCreateModelFile.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param modelName a {@link java.lang.String} object
+	 * @param modelTemplate a {@link java.lang.String} object
+	 * @param templateContext a {@link java.util.Map} object
+	 * @param isConfig a boolean
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @throws java.io.IOException if any.
+	 * @throws freemarker.template.TemplateException if any.
+	 */
 	private NodeRef findOrCreateModelFile(NodeRef parentNodeRef, String modelName, String modelTemplate, Map<String, Object> templateContext,
 			boolean isConfig) throws IOException, TemplateException {
 		NodeRef modelNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, modelName);

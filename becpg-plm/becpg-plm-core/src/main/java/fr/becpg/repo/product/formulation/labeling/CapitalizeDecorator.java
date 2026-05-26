@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
  */
 public class CapitalizeDecorator extends RegexpLabelingDecorator {
 
+	/** Constant <code>CAPITALIZE_PATTERN</code> */
 	private static final Pattern CAPITALIZE_PATTERN = Pattern.compile("(<\\s*ca[^>]*>.*?<\\s*/\\s*ca>)");
 
 	/** {@inheritDoc} */

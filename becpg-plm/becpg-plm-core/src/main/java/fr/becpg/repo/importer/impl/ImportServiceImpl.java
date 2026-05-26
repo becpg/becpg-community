@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2010-2011 beCPG. All rights reserved.
+ *  Copyright (C) 2010-2026 beCPG. All rights reserved.
  */
 package fr.becpg.repo.importer.impl;
 
@@ -82,42 +82,68 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("importService")
 public class ImportServiceImpl implements ImportService {
 
+	/** Constant <code>FULL_PATH_IMPORT_MAPPING="/cm:System/cm:Exchange/cm:Import/cm:Map"{trunked}</code> */
 	private static final String FULL_PATH_IMPORT_MAPPING = "/cm:System/cm:Exchange/cm:Import/cm:Mapping";
+	/** Constant <code>FULL_PATH_IMPORT_FAILED_FOLDER="/app:company_home/cm:Exchange/cm:Import"{trunked}</code> */
 	private static final String FULL_PATH_IMPORT_FAILED_FOLDER = "/app:company_home/cm:Exchange/cm:Import/cm:ImportFailed";
+	/** Constant <code>FULL_PATH_IMPORT_LOG_FOLDER="/app:company_home/cm:Exchange/cm:Import"{trunked}</code> */
 	private static final String FULL_PATH_IMPORT_LOG_FOLDER = "/app:company_home/cm:Exchange/cm:Import/cm:ImportLog";
+	/** Constant <code>FULL_PATH_IMPORT_SUCCEEDED_FOLDER="/app:company_home/cm:Exchange/cm:Import"{trunked}</code> */
 	private static final String FULL_PATH_IMPORT_SUCCEEDED_FOLDER = "/app:company_home/cm:Exchange/cm:Import/cm:ImportSucceeded";
 
+	/** Constant <code>PATH_SITES="st:sites"</code> */
 	private static final String PATH_SITES = "st:sites";
 
+	/** Constant <code>MSG_INFO_IMPORT_BATCH="import_service.info.import_batch"</code> */
 	private static final String MSG_INFO_IMPORT_BATCH = "import_service.info.import_batch";
 
+	/** Constant <code>MSG_ERROR_UNSUPPORTED_PREFIX="import_service.error.err_unsupported_pr"{trunked}</code> */
 	private static final String MSG_ERROR_UNSUPPORTED_PREFIX = "import_service.error.err_unsupported_prefix";
+	/** Constant <code>MSG_ERROR_MAPPING_NOT_FOUND="import_service.error.err_mapping_not_fo"{trunked}</code> */
 	private static final String MSG_ERROR_MAPPING_NOT_FOUND = "import_service.error.err_mapping_not_found";
+	/** Constant <code>MSG_ERROR_READING_MAPPING="import_service.error.err_reading_mappin"{trunked}</code> */
 	private static final String MSG_ERROR_READING_MAPPING = "import_service.error.err_reading_mapping";
+	/** Constant <code>MSG_ERROR_UNDEFINED_LINE="import_service.error.err_undefined_line"</code> */
 	private static final String MSG_ERROR_UNDEFINED_LINE = "import_service.error.err_undefined_line";
 
 	/** Constant <code>SEPARATOR=';'</code> */
 	public static final char SEPARATOR = ';';
 
+	/** Constant <code>COLUMN_PREFIX=0</code> */
 	private static final int COLUMN_PREFIX = 0;
+	/** Constant <code>COLUMN_MAPPING=1</code> */
 	private static final int COLUMN_MAPPING = 1;
+	/** Constant <code>COLUMN_PATH=1</code> */
 	private static final int COLUMN_PATH = 1;
+	/** Constant <code>COLUMN_TYPE=1</code> */
 	private static final int COLUMN_TYPE = 1;
+	/** Constant <code>COLUMN_LIST_TYPE=1</code> */
 	private static final int COLUMN_LIST_TYPE = 1;
+	/** Constant <code>COLUMN_ENTITY_TYPE=1</code> */
 	private static final int COLUMN_ENTITY_TYPE = 1;
+	/** Constant <code>COLUMN_IMPORT_TYPE=1</code> */
 	private static final int COLUMN_IMPORT_TYPE = 1;
+	/** Constant <code>COLUMN_DISABLED_POLICIES=1</code> */
 	private static final int COLUMN_DISABLED_POLICIES = 1;
 	
+	/** Constant <code>LOG_STARTING_DATE="Starting date: "</code> */
 	private static final String LOG_STARTING_DATE = "Starting date: ";
+	/** Constant <code>LOG_ENDING_DATE="Ending date: "</code> */
 	private static final String LOG_ENDING_DATE = "Ending date: ";
+	/** Constant <code>LOG_ERROR="Error: "</code> */
 	private static final String LOG_ERROR = "Error: ";
+	/** Constant <code>ERROR_LOGS_LIMIT=50</code> */
 	private static final int ERROR_LOGS_LIMIT = 50;
+	/** Constant <code>LOG_ERROR_MAX_REACHED="More than  + ERROR_LOGS_LIMIT +  errors"{trunked}</code> */
 	private static final String LOG_ERROR_MAX_REACHED = "More than " + ERROR_LOGS_LIMIT + " errors, stop printing";
+	/** Constant <code>LOG_SEPARATOR="\n"</code> */
 	private static final String LOG_SEPARATOR = "\n";
 
 
+	/** Constant <code>BATCH_SIZE=10</code> */
 	private static final int BATCH_SIZE = 10;
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ImportServiceImpl.class);
 
 	@Autowired
@@ -286,6 +312,13 @@ public class ImportServiceImpl implements ImportService {
 		return batchInfo;
 	}
 	
+	/**
+	 * <p>afterImport.</p>
+	 *
+	 * @param importContext a {@link fr.becpg.repo.importer.ImportContext} object
+	 * @param startlog a {@link java.lang.String} object
+	 * @param doNotMoveNode a {@link java.lang.Boolean} object
+	 */
 	private void afterImport(ImportContext importContext, String startlog, Boolean doNotMoveNode) {
 			
 		String errosLogs = importContext.getErrorLogs();
@@ -413,6 +446,13 @@ public class ImportServiceImpl implements ImportService {
 		}, false, true);
 	}
 
+	/**
+	 * <p>createImportContext.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.importer.ImportContext} object
+	 * @throws java.io.IOException if any.
+	 */
 	private ImportContext createImportContext(final NodeRef nodeRef) throws IOException {
 		ImportContext importContext1 = new ImportContext();
 	
@@ -451,6 +491,12 @@ public class ImportServiceImpl implements ImportService {
 		return importContext1;
 	}
 
+	/**
+	 * <p>cleanPath.</p>
+	 *
+	 * @param pathValue a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String cleanPath(String pathValue) {
 		if (pathValue.startsWith("/")) {
 			return pathValue.substring(1);
@@ -461,12 +507,13 @@ public class ImportServiceImpl implements ImportService {
 	/**
 	 * Import a batch of lines
 	 *
-	 * @param importContext
-	 * @param lastIndex
-	 * @return
-	 * @throws ImporterException 
-	 * @throws MappingException 
-	 * @throws IOException 
+	 * @param importContext a {@link fr.becpg.repo.importer.ImportContext} object
+	 * @param lastIndex a int
+	 * @throws fr.becpg.repo.importer.ImporterException
+	 * @throws fr.becpg.config.mapping.MappingException
+	 * @throws java.io.IOException
+	 * @return a {@link fr.becpg.repo.importer.ImportContext} object
+	 * @throws java.text.ParseException if any.
 	 */
 	private ImportContext importInBatch(ImportContext importContext, final int lastIndex) throws ImporterException, MappingException, IOException, ParseException  {
 
@@ -718,10 +765,9 @@ public class ImportServiceImpl implements ImportService {
 	 * @param name
 	 *            the name
 	 * @return the element
-	 * @throws IOException
-	 * @throws ContentIOException
+	 * @throws java.io.IOException
+	 * @throws fr.becpg.repo.importer.ImporterException if any.
 	 */
-
 	private Element loadMapping(String name) throws ImporterException, IOException {
 
 		Element mappingElt = null;
@@ -755,6 +801,14 @@ public class ImportServiceImpl implements ImportService {
 		return mappingElt;
 	}
 
+	/**
+	 * <p>createLogFile.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param fileName a {@link java.lang.String} object
+	 * @param content a {@link java.lang.String} object
+	 * @throws java.io.IOException if any.
+	 */
 	private void createLogFile(NodeRef parentNodeRef, String fileName, String content) throws IOException {
 
 		Map<QName, Serializable> properties = new HashMap<>();

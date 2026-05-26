@@ -10,6 +10,9 @@ import org.alfresco.service.namespace.QName;
  */
 public final class SurveyModel {
 
+	/**
+	 * <p>Constructor for SurveyModel.</p>
+	 */
 	private SurveyModel() {
 		//Do Nothing
 	}

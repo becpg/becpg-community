@@ -19,6 +19,11 @@ public class ChannelData {
 	private final String action;
 	private final Date modifiedDate;
 
+	/**
+	 * <p>Constructor for ChannelData.</p>
+	 *
+	 * @param builder a {@link fr.becpg.repo.publication.ChannelData.Builder} object
+	 */
 	private ChannelData(Builder builder) {
 		this.status = builder.status;
 		this.batchId = builder.batchId;

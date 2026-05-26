@@ -25,9 +25,12 @@ import fr.becpg.model.SystemGroup;
  */
 public class AddSitePermissionPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AddSitePermissionPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.addSitePermissionPatch.resul"{trunked}</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.addSitePermissionPatch.result";
 
+	/** Constant <code>ARCHIVED_SITE_ID="archived"</code> */
 	private static final String ARCHIVED_SITE_ID = "archived";
 
 	private SiteService siteService;
@@ -159,6 +162,7 @@ public class AddSitePermissionPatch extends AbstractBeCPGPatch {
 		return getSiteGroup(shortName, withGroupPrefix) + '_' + permission;
 	}
 
+	/** Constant <code>SITE_PREFIX="site_"</code> */
 	private static final String SITE_PREFIX = "site_";
 
 }

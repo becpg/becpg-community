@@ -14,6 +14,9 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  */
 public class CostCalculatingHelper {
 
+	/**
+	 * <p>Constructor for CostCalculatingHelper.</p>
+	 */
 	private CostCalculatingHelper() {
 		// None
 	}

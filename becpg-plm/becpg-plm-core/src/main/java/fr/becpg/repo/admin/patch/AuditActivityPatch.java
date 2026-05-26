@@ -40,11 +40,17 @@ import fr.becpg.repo.helper.AssociationService;
  */
 public class AuditActivityPatch extends AbstractBeCPGPatch {
 
+    /** Constant <code>logger</code> */
     private static final Log logger = LogFactory.getLog(AuditActivityPatch.class);
+    /** Constant <code>MSG_SUCCESS="Success of AuditActivityPtach"</code> */
     private static final String MSG_SUCCESS = "Success of AuditActivityPtach";
 
+    /** Constant <code>BATCH_THREADS=Integer.getInteger(
+            &quot;becpg.patch.auditActivity.threads&quot;, 6)</code> */
     private static final int BATCH_THREADS = Integer.getInteger(
             "becpg.patch.auditActivity.threads", 6);
+    /** Constant <code>BATCH_SIZE=Integer.getInteger(
+            &quot;becpg.patch.auditActivity.batchSize&quot;, 35)</code> */
     private static final int BATCH_SIZE = Integer.getInteger(
             "becpg.patch.auditActivity.batchSize", 35);
 
@@ -130,6 +136,9 @@ public class AuditActivityPatch extends AbstractBeCPGPatch {
         return MSG_SUCCESS;
     }
 
+    /**
+     * <p>applyPatch.</p>
+     */
     private void applyPatch() {
         if (logger.isInfoEnabled()) {
             logger.info("AuditActivityPatch config: threads=" + BATCH_THREADS + ", batchSize=" + BATCH_SIZE);

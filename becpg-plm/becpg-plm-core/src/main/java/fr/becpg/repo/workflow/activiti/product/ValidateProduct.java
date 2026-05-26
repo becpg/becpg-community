@@ -32,6 +32,7 @@ import fr.becpg.model.SystemState;
  */
 public class ValidateProduct extends BaseJavaDelegate {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ValidateProduct.class);
 
 	private NodeService nodeService;
