@@ -265,7 +265,7 @@ public class MLTextHelper {
 		return (contentLocale != null) && getSupportedLocales().contains(contentLocale);
 	}
 
-	/**
+    /**
      * Returns true when the locale uses a deprecated or legacy language code that must not be accepted.
      *
      * @param locale a {@link java.util.Locale} object.

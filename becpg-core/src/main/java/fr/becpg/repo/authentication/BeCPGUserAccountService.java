@@ -181,7 +181,6 @@ public class BeCPGUserAccountService {
 	 * <p>generatePassword.</p>
 	 *
 	 * @param username a {@link java.lang.String} object
-	 * @param notify a boolean
 	 */
 	public void generatePassword(String username) {
 	    if (!personService.personExists(username)) {

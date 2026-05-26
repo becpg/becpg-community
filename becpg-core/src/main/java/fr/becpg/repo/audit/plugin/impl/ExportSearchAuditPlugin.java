@@ -12,13 +12,23 @@ import fr.becpg.repo.audit.plugin.AbstractAuditPlugin;
 import fr.becpg.repo.audit.plugin.DatabaseAuditPlugin;
 import fr.becpg.repo.web.scripts.report.ExportSearchWebScript;
 
+/**
+ * <p>ExportSearchAuditPlugin class.</p>
+ *
+ * @author matthieu
+ */
 @Service
 public class ExportSearchAuditPlugin extends AbstractAuditPlugin implements DatabaseAuditPlugin {
 
+	/** Constant <code>FILENAME="filename"</code> */
 	public static final String FILENAME = "filename";
+	/** Constant <code>USERNAME="username"</code> */
 	public static final String USERNAME = "username";
+	/** Constant <code>TEMPLATE="template"</code> */
 	public static final String TEMPLATE = "template";
+	/** Constant <code>RESULTS_SIZE="resultsSize"</code> */
 	public static final String RESULTS_SIZE = "resultsSize";
+	/** Constant <code>ASYNC="async"</code> */
 	public static final String ASYNC = "async";
 	
 	static {

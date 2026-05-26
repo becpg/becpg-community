@@ -240,6 +240,7 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 		});
 	}
 	
+	/** {@inheritDoc} */
 	@Override
     public List<QName> getTargetTypes(QName assocName) {
 		return targetTypesFromAssocCache.computeIfAbsent(assocName, k -> {
