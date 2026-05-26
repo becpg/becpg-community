@@ -42,9 +42,11 @@ import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.report.search.ExportSearchService;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.sample.StandardChocolateEclairTestProduct;
+import fr.becpg.report.client.ReportFormat;
 import fr.becpg.test.PLMBaseTestCase;
 import fr.becpg.test.utils.TestWebscriptExecuters;
 import fr.becpg.test.utils.TestWebscriptExecuters.GetRequest;
@@ -62,6 +64,9 @@ public class MultiLevelExcelReportSearchPluginIT extends PLMBaseTestCase {
 
 	@Autowired
 	private ReportTplService reportTplService;
+
+	@Autowired
+	private ExportSearchService exportSearchService;
 
 	private static final String COMPOSITION_TEMPLATE_FOLDER_PATH = "/app:company_home/cm:System/cm:Reports/cm:ExportSearch/cm:ExportProducts";
 	private static final String COMPOSITION_TEMPLATE_FILE_NAME = "Export des listes composition et emballages.xlsx";
@@ -468,25 +473,23 @@ public class MultiLevelExcelReportSearchPluginIT extends PLMBaseTestCase {
 		initTestReports();
 
 		// Create a semi-finished product that is NOT used anywhere
-		FinishedProductData sfProduct = (FinishedProductData) inWriteTx(() -> {
+		NodeRef sfNodeRef = inWriteTx(() -> {
 			FinishedProductData product = FinishedProductData.build()
 					.withName("Unused SF")
 					.withQty(100d)
 					.withUnit(ProductUnit.kg);
-			product.setNodeRef(alfrescoRepository.create(getTestFolderNodeRef(), product).getNodeRef());
-			nodeService.setType(product.getNodeRef(), PLMModel.TYPE_SEMIFINISHEDPRODUCT);
-			return product;
+			NodeRef created = alfrescoRepository.create(getTestFolderNodeRef(), product).getNodeRef();
+			nodeService.setType(created, PLMModel.TYPE_SEMIFINISHEDPRODUCT);
+			return created;
 		});
 
-		// Test with wUsedAllLevelIncludeEmpty parameter
-		// We search for this SF and want to see where it's used (nowhere, but IncludeEmpty should still show it)
-		String query = "{\"datatype\":\"bcpg:semiFinishedProduct\",\"prop_cm_name\":\"" + sfProduct.getName() + "\"}";
-		String url = "/becpg/report/exportsearch/" + compositionPackagingReportTpl.toString().replace("://", "/") 
-			+ "/Excel.xlsx?repo=true&term=&query=" + URLEncoder.encode(query, StandardCharsets.UTF_8.toString())
-			+ "&parameter=wUsedAllLevelIncludeEmpty";
-
-		Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
-		byte[] reportData = response.getContentAsByteArray();
+		// Use ExportSearchService directly to avoid Solr indexing dependency
+		byte[] reportData = inReadTx(() -> {
+			java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+			exportSearchService.createReport(PLMModel.TYPE_SEMIFINISHEDPRODUCT, compositionPackagingReportTpl,
+					List.of(sfNodeRef), ReportFormat.XLSX, baos, new String[] { "wUsedAllLevelIncludeEmpty" });
+			return baos.toByteArray();
+		});
 
 		assertNotNull("Report data should not be null", reportData);
 		assertTrue("Report data should not be empty", reportData.length > 0);
