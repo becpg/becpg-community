@@ -2331,8 +2331,9 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	/**
 	 * <p>isConcurrentUserAllowed.</p>
-	 * 
+	 *
 	 * Checks if concurrent user access is allowed based on the license.
+	 *
 	 * @return a boolean
 	 */
 	public boolean isConcurrentUserAllowed() {
@@ -2454,10 +2455,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * Saves form data for multiple nodes in batches, each batch running in its own
 	 * transaction to avoid long-held DB locks during bulk edit operations.
 	 *
-	 * @param nodeRefStrings array of node reference strings to save
 	 * @param formData the form data to apply to each node
-	 * @param assocToRemoveNames array of association QName strings (prefix:local format) to remove before saving
 	 * @return the string representation of the last persisted object
+	 * @param nodeRefArray a {@link java.lang.Object} object
+	 * @param assocToRemoveArray a {@link java.lang.Object} object
 	 */
 	public String bulkSaveForm(Object nodeRefArray, Object formData, Object assocToRemoveArray) {
 		List<String> nodeRefStrings = toStringList(ScriptValueConverter.unwrapValue(nodeRefArray));

@@ -157,6 +157,13 @@ public abstract class AbstractEntityDataListWebScript extends AbstractWebScript 
 	}
 	
 
+	/**
+	 * <p>defaultValue.</p>
+	 *
+	 * @param val a {@link java.io.Serializable} object
+	 * @param def a {@link java.io.Serializable} object
+	 * @return a {@link java.io.Serializable} object
+	 */
 	protected Serializable defaultValue(Serializable val, Serializable def) {
 		if (val != null) {
 			return val;

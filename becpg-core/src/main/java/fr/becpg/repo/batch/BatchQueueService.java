@@ -128,6 +128,15 @@ public interface BatchQueueService {
 	 */
 	BatchStep<NodeRef> createBatchStepWithErrorHandling(BatchInfo batchInfo, List<NodeRef> list, BatchProcessWorker<NodeRef> consumer);
 
+	/**
+	 * <p>createBatchStepWithErrorHandling.</p>
+	 *
+	 * @param batchInfo a {@link fr.becpg.repo.batch.BatchInfo} object
+	 * @param list a {@link java.util.List} object
+	 * @param processor a {@link org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker} object
+	 * @param errorHandler a {@link java.util.function.BiConsumer} object
+	 * @return a {@link fr.becpg.repo.batch.BatchStep} object
+	 */
 	BatchStep<NodeRef> createBatchStepWithErrorHandling(BatchInfo batchInfo, List<NodeRef> list, BatchProcessWorker<NodeRef> processor,
 			BiConsumer<NodeRef, Throwable> errorHandler);
 }

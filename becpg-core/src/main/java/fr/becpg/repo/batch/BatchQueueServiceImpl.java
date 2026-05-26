@@ -770,6 +770,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		return createBatchStepWithErrorHandling(batchInfo, list, processor, null);
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public BatchStep<NodeRef> createBatchStepWithErrorHandling(BatchInfo batchInfo, List<NodeRef> list, BatchProcessWorker<NodeRef> processor, BiConsumer<NodeRef, Throwable> errorHandler) {
 		return new BatchStepWithErrorHandling(batchInfo, list, processor, errorHandler);

@@ -147,6 +147,11 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 		return defaultPivotAssocs;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>dataListAssocToTargetTypes</code>.</p>
+	 *
+	 * @return a {@link java.util.Map} object
+	 */
 	public Map<QName, String> getDataListAssocToTargetTypes() {
 		return dataListAssocToTargetTypes;
 	}

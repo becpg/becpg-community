@@ -199,6 +199,7 @@ public class TaskWrapper implements Comparable<TaskWrapper> {
 	 *
 	 * @param provider a {@link fr.becpg.repo.project.impl.WorkingDayProvider} object
 	 * @return a {@link java.lang.Integer} object.
+	 * @param today a {@link java.util.Date} object
 	 */
 	public Integer computeRealDuration(fr.becpg.repo.project.impl.WorkingDayProvider provider, Date today) {
 

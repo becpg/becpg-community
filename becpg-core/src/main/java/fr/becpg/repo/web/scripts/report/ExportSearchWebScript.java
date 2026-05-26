@@ -60,6 +60,11 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 
 	private BeCPGAuditService beCPGAuditService;
 	
+	/**
+	 * <p>Setter for the field <code>beCPGAuditService</code>.</p>
+	 *
+	 * @param beCPGAuditService a {@link fr.becpg.repo.audit.service.BeCPGAuditService} object
+	 */
 	public void setBeCPGAuditService(BeCPGAuditService beCPGAuditService) {
 		this.beCPGAuditService = beCPGAuditService;
 	}

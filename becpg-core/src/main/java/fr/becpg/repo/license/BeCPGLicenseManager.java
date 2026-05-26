@@ -268,6 +268,11 @@ public class BeCPGLicenseManager {
 	
 	private final Map<SystemGroup, Set<String>> concurrentUsersAllowedMap = new ConcurrentHashMap<>();
 	
+	/**
+	 * <p>isConcurrentUserAllowed.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isConcurrentUserAllowed() {
 		if (isSpecialLicenceUser()) {
 			return true;
