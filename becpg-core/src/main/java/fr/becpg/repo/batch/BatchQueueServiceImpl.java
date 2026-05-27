@@ -207,6 +207,16 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 	/** {@inheritDoc} */
 	@Override
+	public boolean isBatchCompleted(BatchInfo batchInfo) {
+		if (!Boolean.TRUE.equals(batchInfo.getIsCompleted())) {
+			return false;
+		}
+		String batchId = batchInfo.getBatchId();
+		return runningCommands.stream().noneMatch(c -> c.getBatchId().equals(batchId));
+	}
+
+	/** {@inheritDoc} */
+	@Override
 	public String getRunningBatchInfo() {
     BatchCommand<?> current = getRunningCommand();
     if (current != null) {

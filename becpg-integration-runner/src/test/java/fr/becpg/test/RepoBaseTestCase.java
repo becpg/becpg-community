@@ -391,7 +391,12 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 			Assert.fail("Batch is taking too long! Progress: " + (batch.getCurrentItem() + "/" + batch.getTotalItems()) + ", running batch: "
 					+ batchQueueService.getRunningBatchInfo());
 		}
-		
+
+		int k = 0;
+		while (!batchQueueService.isBatchCompleted(batch) && k < 10) {
+			Thread.sleep(200);
+			k++;
+		}
 	}
 	
 	protected boolean shouldInit() {
