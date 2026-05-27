@@ -328,7 +328,7 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 
 				visitPart(context, subProductData, compoListProduct, compoListDataItem.getNodeRef(), qties, currLevel);
 				if (shouldVisitNextLevel(currLevel, context.getMaxLevel(), compoListDataItem)) {
-					visitRecur(context, compoListProduct, currLevel + 1, weightUsed, volUsed, netQty);
+					visitRecurPMaterial(context, compoListProduct, currLevel + 1, weightUsed, volUsed, netQty);
 				}
 
 			}
