@@ -65,6 +65,11 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 		this.systemConfigurationService = systemConfigurationService;
 	}
 	
+	/**
+	 * <p>propertiesToKeep.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String propertiesToKeep() {
 		return systemConfigurationService.confValue("beCPG.copyOrBranch.propertiesToReset");
 	}
@@ -122,6 +127,13 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 		
 	}
 
+	/**
+	 * <p>extractProperty.</p>
+	 *
+	 * @param propertyToReset a {@link java.lang.String} object
+	 * @param origNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extractProperty(String propertyToReset, NodeRef origNodeRef) {
 		String[] split = propertyToReset.split("\\|");
 		if (split.length < 2) {

@@ -42,6 +42,7 @@ import fr.becpg.repo.repository.annotation.MultiLevelLeaf;
 @MultiLevelLeaf
 public class PackagingMaterialData extends ProductData {
 
+	/** Constant <code>serialVersionUID=1386599003766479590L</code> */
 	private static final long serialVersionUID = 1386599003766479590L;
 
 	private List<NodeRef> packagingMaterials = new ArrayList<>();

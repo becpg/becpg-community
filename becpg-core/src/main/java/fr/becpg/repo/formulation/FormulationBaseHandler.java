@@ -30,6 +30,7 @@ import org.springframework.util.StopWatch;
 public abstract class FormulationBaseHandler<T> implements FormulationHandler<T> {
  
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(FormulationBaseHandler.class);
 	
     private FormulationHandler<T> nextHandler;

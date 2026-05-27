@@ -36,6 +36,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  */
 public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy, EntityVersionPlugin {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ProjectPolicy.class);
 
 	/** Constant <code>KEY_DELETED_TASK_LIST_ITEM="DeletedTaskListItem"</code> */

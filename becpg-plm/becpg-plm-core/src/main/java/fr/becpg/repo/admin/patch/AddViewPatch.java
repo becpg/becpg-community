@@ -32,7 +32,9 @@ import fr.becpg.repo.entity.EntityTplService;
  */
 public class AddViewPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AddViewPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.addViewPatch.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.addViewPatch.result";
 
 	private NodeDAO nodeDAO;
@@ -61,6 +63,11 @@ public class AddViewPatch extends AbstractBeCPGPatch {
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
+	/**
+	 * <p>doForAspect.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private void doForAspect(final QName type) {
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			final List<NodeRef> result = new ArrayList<>();

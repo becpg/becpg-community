@@ -196,6 +196,13 @@ public class NutrientRoundedValue {
 	}
 
 
+	/**
+	 * <p>applyPerc.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @param perc a {@link java.lang.Double} object
+	 * @return a {@link java.math.BigDecimal} object
+	 */
 	private BigDecimal applyPerc(Double value, Double perc) {
 		return BigDecimal.valueOf(value).multiply(BigDecimal.valueOf(perc)).divide(BigDecimal.valueOf(100d));
 	}

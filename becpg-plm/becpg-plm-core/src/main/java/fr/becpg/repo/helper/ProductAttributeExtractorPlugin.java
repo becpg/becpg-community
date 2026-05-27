@@ -62,6 +62,11 @@ public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
 	@Autowired
 	private AssociationService associationService;
 
+	/**
+	 * <p>productNameFormat.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String productNameFormat() {
 		return systemConfigurationService.confValue("beCPG.product.name.format");
 	}
@@ -148,6 +153,14 @@ public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
 				|| matchWUsedCriteria(nodeRef, criteriaMap, MPMModel.ASSOC_PL_RESOURCE);
 	}
 
+	/**
+	 * <p>matchWUsedCriteria.</p>
+	 *
+	 * @param node a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param criteriaMap a {@link java.util.Map} object
+	 * @param criteriaAssoc a {@link org.alfresco.service.namespace.QName} object
+	 * @return a boolean
+	 */
 	private boolean matchWUsedCriteria(NodeRef node, Map<String, String> criteriaMap, QName criteriaAssoc) {
 
 		String assocString = criteriaAssoc.toPrefixString(namespaceService);
@@ -173,6 +186,12 @@ public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
 		return false;
 	}
 
+	/**
+	 * <p>extractNodeRefs.</p>
+	 *
+	 * @param propValue a {@link java.lang.String} object
+	 * @return a {@link java.util.List} object
+	 */
 	@Nonnull
 	private List<NodeRef> extractNodeRefs(@Nonnull String propValue) {
 		String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);

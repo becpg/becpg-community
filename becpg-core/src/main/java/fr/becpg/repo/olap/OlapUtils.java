@@ -41,9 +41,13 @@ import fr.becpg.repo.olap.data.OlapContext;
  */
 public class OlapUtils {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(OlapUtils.class);
 
 	
+	/**
+	 * <p>Constructor for OlapUtils.</p>
+	 */
 	private OlapUtils() {
 		//DO Nothing
 	}

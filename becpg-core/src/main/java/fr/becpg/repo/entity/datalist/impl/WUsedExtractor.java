@@ -56,6 +56,7 @@ import fr.becpg.repo.search.impl.NestedAdvSearchPlugin;
  */
 public class WUsedExtractor extends MultiLevelExtractor {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(WUsedExtractor.class);
 
 	private WUsedListService wUsedListService;
@@ -154,6 +155,13 @@ public class WUsedExtractor extends MultiLevelExtractor {
 
 	}
 
+	/**
+	 * <p>getWUsedFilter.</p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @param reverseAssociationName a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link fr.becpg.repo.entity.datalist.WUsedFilter} object
+	 */
 	private WUsedFilter getWUsedFilter(final DataListFilter dataListFilter, final QName reverseAssociationName) {
 		return new WUsedFilter() {
 
@@ -246,6 +254,12 @@ public class WUsedExtractor extends MultiLevelExtractor {
 		};
 	}
 
+	/**
+	 * <p>getWUsedOperator.</p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @return a {@link fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator} object
+	 */
 	private WUsedOperator getWUsedOperator(DataListFilter dataListFilter) {
 		if ((dataListFilter.getExtraParams() != null) && (dataListFilter.getExtraParams().length() > 0)) {
 			try {
@@ -261,6 +275,12 @@ public class WUsedExtractor extends MultiLevelExtractor {
 		return WUsedOperator.AND;
 	}
 
+	/**
+	 * <p>getWusedNodeRefs.</p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> getWusedNodeRefs(DataListFilter dataListFilter) {
 
 		List<NodeRef> ret = dataListFilter.getEntityNodeRefs();

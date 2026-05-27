@@ -40,6 +40,7 @@ import fr.becpg.repo.web.scripts.WebscriptHelper;
  */
 public class SearchWebScript extends AbstractSearchWebScript {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(SearchWebScript.class);
 
 	private ServiceRegistry serviceRegistry;
@@ -119,6 +120,13 @@ public class SearchWebScript extends AbstractSearchWebScript {
 
 	}
 
+	/**
+	 * <p>getNumParameter.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object
+	 * @param paramName a {@link java.lang.String} object
+	 * @return a {@link java.lang.Integer} object
+	 */
 	private Integer getNumParameter(WebScriptRequest req, String paramName) {
 		String param = req.getParameter(paramName);
 
@@ -133,6 +141,14 @@ public class SearchWebScript extends AbstractSearchWebScript {
 		return ret;
 	}
 
+	/**
+	 * <p>processResults.</p>
+	 *
+	 * @param results a {@link java.util.List} object
+	 * @param metadataFields a {@link java.util.List} object
+	 * @return a {@link org.json.JSONObject} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private JSONObject processResults(List<NodeRef> results, List<AttributeExtractorField> metadataFields) throws JSONException {
 
 		JSONArray items = new JSONArray();
@@ -150,6 +166,13 @@ public class SearchWebScript extends AbstractSearchWebScript {
 
 	}
 
+	/**
+	 * <p>getExtractor.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param metadataFields a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.helper.extractors.NodeDataExtractor} object
+	 */
 	private NodeDataExtractor getExtractor(NodeRef nodeRef, List<AttributeExtractorField> metadataFields) {
 
 		String path = serviceRegistry.getNodeService().getPath(nodeRef).toPrefixString(namespaceService);

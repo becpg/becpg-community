@@ -30,6 +30,7 @@ public class EmailAliasablePolicy extends AbstractBeCPGPolicy implements
 			CheckOutCheckInServicePolicies.OnCheckIn,
 			CheckOutCheckInServicePolicies.BeforeCancelCheckOut{
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EmailAliasablePolicy.class);
 
 	/**
@@ -88,6 +89,11 @@ public class EmailAliasablePolicy extends AbstractBeCPGPolicy implements
 		setAliasOnNode(workingCopyNodeRef);
 	}
 	
+	/**
+	 * <p>setAliasOnNode.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void setAliasOnNode(NodeRef nodeRef){
 		if(nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_CODE)){
 			nodeService.setProperty(nodeRef, EmailServerModel.PROP_ALIAS, nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE));			

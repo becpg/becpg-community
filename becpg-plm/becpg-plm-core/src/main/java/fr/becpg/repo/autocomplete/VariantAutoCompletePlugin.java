@@ -57,8 +57,10 @@ import fr.becpg.repo.autocomplete.impl.plugins.TargetAssocAutoCompletePlugin;
 @Service("variantAutoCompletePlugin")
 public class VariantAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(VariantAutoCompletePlugin.class);
 
+	/** Constant <code>SOURCE_TYPE_VARIANT_LIST="variantList"</code> */
 	private static final String SOURCE_TYPE_VARIANT_LIST = "variantList";
 	
 	/** {@inheritDoc} */
@@ -100,6 +102,12 @@ public class VariantAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
 	}
 	
+	/**
+	 * <p>getParentEntity.</p>
+	 *
+	 * @param itemRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getParentEntity(NodeRef itemRef){
 		
 		if(dictionaryService.isSubClass(nodeService.getType(itemRef), PLMModel.TYPE_PRODUCT)) {

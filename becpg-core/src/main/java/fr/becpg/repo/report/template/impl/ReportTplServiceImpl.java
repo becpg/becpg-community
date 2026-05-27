@@ -61,6 +61,7 @@ import fr.becpg.report.client.ReportFormat;
 @Service("reportTplService")
 public class ReportTplServiceImpl implements ReportTplService {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ReportTplServiceImpl.class);
 
 	@Autowired
@@ -316,6 +317,16 @@ public class ReportTplServiceImpl implements ReportTplService {
 		return ReportFormat.valueOf(format);
 	}
 
+	/**
+	 * <p>getReportTpls.</p>
+	 *
+	 * @param reportType a {@link fr.becpg.repo.report.template.ReportType} object
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
+	 * @param isSystem a {@link java.lang.Boolean} object
+	 * @param isDefault a {@link java.lang.Boolean} object
+	 * @param tplName a {@link java.lang.String} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> getReportTpls(ReportType reportType, QName nodeType, Boolean isSystem, Boolean isDefault, String tplName) {
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ReportModel.TYPE_REPORT_TPL)

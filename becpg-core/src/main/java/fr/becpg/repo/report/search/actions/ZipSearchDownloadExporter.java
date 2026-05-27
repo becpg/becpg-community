@@ -59,6 +59,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * @version $Id: $Id
  */
 public class ZipSearchDownloadExporter implements Exporter {
+	/** Constant <code>log</code> */
 	private static Logger log = LoggerFactory.getLogger(ZipSearchDownloadExporter.class);
 
 	private ZipArchiveOutputStream zipStream;
@@ -181,6 +182,12 @@ public class ZipSearchDownloadExporter implements Exporter {
 
 	}
 
+	/**
+	 * <p>readFileMapping.</p>
+	 *
+	 * @param templateNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @throws org.dom4j.DocumentException if any.
+	 */
 	private void readFileMapping(NodeRef templateNodeRef) throws DocumentException {
 
 		//
@@ -328,6 +335,13 @@ public class ZipSearchDownloadExporter implements Exporter {
 
 	}
 	
+	/**
+	 * <p>testEntityCondition.</p>
+	 *
+	 * @param condition a {@link java.lang.String} object
+	 * @param entity a {@link fr.becpg.repo.repository.RepositoryEntity} object
+	 * @return a boolean
+	 */
 	private boolean testEntityCondition(String condition, RepositoryEntity entity) {
 
 		if (condition == null || condition.isBlank()) {
@@ -357,6 +371,12 @@ public class ZipSearchDownloadExporter implements Exporter {
 		}
 	}
 
+	/**
+	 * <p>isExportable.</p>
+	 *
+	 * @param fileNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private boolean isExportable(NodeRef fileNodeRef) {
 		if (checkOutCheckInService.isCheckedOut(fileNodeRef)) {
 			String owner = (String) nodeService.getProperty(fileNodeRef, ContentModel.PROP_LOCK_OWNER);
@@ -374,6 +394,14 @@ public class ZipSearchDownloadExporter implements Exporter {
 		return true;
 	}
 
+	/**
+	 * <p>createName.</p>
+	 *
+	 * @param fileMapping a {@link fr.becpg.repo.report.search.actions.ZipSearchDownloadExporter.FileToExtract} object
+	 * @param docNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String createName(FileToExtract fileMapping, NodeRef docNodeRef, NodeRef entityNodeRef) {
 		if ((fileMapping.name != null) && !fileMapping.name.isEmpty()) {
 			return expressionService.extractExpr(entityNodeRef, docNodeRef, fileMapping.name);
@@ -390,7 +418,7 @@ public class ZipSearchDownloadExporter implements Exporter {
 	 *            output stream
 	 * @param in
 	 *            input stream
-	 * @throws IOException
+	 * @throws java.io.IOException
 	 */
 	private void copyStream(OutputStream output, InputStream in) throws IOException {
 		byte[] buffer = new byte[2048 * 10];
@@ -403,6 +431,9 @@ public class ZipSearchDownloadExporter implements Exporter {
 		}
 	}
 
+	/**
+	 * <p>updateStatus.</p>
+	 */
 	private void updateStatus() {
 		transactionHelper.doInTransaction(() -> {
 			DownloadStatus status = new DownloadStatus(Status.IN_PROGRESS, done, size, filesAddedCount, fileCount);

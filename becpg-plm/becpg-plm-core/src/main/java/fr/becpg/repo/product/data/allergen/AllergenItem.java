@@ -28,6 +28,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfCacheable(isCharact = true)
 public class AllergenItem extends BeCPGDataObject {
 	
+	/** Constant <code>serialVersionUID=1907139408734937414L</code> */
 	private static final long serialVersionUID = 1907139408734937414L;
 	
 	private String charactName;

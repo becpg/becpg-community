@@ -34,13 +34,18 @@ import fr.becpg.repo.helper.AssociationService;
  */
 public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(MigrateNutrientProfilePatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.MigrateNutrientProfilePa"{trunked}</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.MigrateNutrientProfilePatch.result";
 	
+	/** Constant <code>TYPE_NUTRIENT_PROFILE</code> */
 	private static final  QName TYPE_NUTRIENT_PROFILE = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfile");
 	
+	/** Constant <code>ASSOC_NUTRIENT_PROFILE_REF</code> */
 	private static final  QName ASSOC_NUTRIENT_PROFILE_REF = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileRef");
 	
+	/** Constant <code>PATH_NUTRIENTPROFILES="NutrientProfiles"</code> */
 	private static final String PATH_NUTRIENTPROFILES = "NutrientProfiles";
 
 	private RuleService ruleService;

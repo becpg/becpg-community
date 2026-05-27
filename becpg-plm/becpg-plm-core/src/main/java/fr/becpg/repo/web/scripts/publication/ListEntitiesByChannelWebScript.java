@@ -37,7 +37,9 @@ import fr.becpg.repo.web.scripts.remote.ListEntitiesWebScript;
  */
 public class ListEntitiesByChannelWebScript extends ListEntitiesWebScript {
 
+	/** Constant <code>PARAM_CHANNELID="channelId"</code> */
 	private static final String PARAM_CHANNELID = "channelId";
+	/** Constant <code>PARAM_CHANNELNODEREF="channelNodeRef"</code> */
 	private static final String PARAM_CHANNELNODEREF = "channelNodeRef";
 
 	PublicationChannelService publicationChannelService;

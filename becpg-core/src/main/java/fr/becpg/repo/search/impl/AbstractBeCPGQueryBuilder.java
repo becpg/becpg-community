@@ -38,22 +38,37 @@ import fr.becpg.repo.RepoConsts;
  */
 public abstract class AbstractBeCPGQueryBuilder {
 
+	/** Constant <code>QUERY_COND_PROP_EQUAL_VALUE="%s:\&quot;%s\&quot;"</code> */
 	private static final String QUERY_COND_PROP_EQUAL_VALUE = "%s:\"%s\"";
+	/** Constant <code>QUERY_COND_PROP_CONTAINS_VALUE="%s:%s"</code> */
 	private static final String QUERY_COND_PROP_CONTAINS_VALUE = "%s:%s";
+	/** Constant <code>QUERY_COND_PROP_ISNULL_VALUE="ISNULL:\&quot;%s\&quot;"</code> */
 	private static final String QUERY_COND_PROP_ISNULL_VALUE = "ISNULL:\"%s\"";
+	/** Constant <code>QUERY_COND_PROP_ISNULL_OR_ISUNSET_VALUE="(ISNULL:\&quot;%s\&quot; OR ISUNSET:\&q"{trunked}</code> */
 	private static final String QUERY_COND_PROP_ISNULL_OR_ISUNSET_VALUE = "(ISNULL:\"%s\" OR ISUNSET:\"%s\")";
 	
+	/** Constant <code>QUERY_COND_PATH="PATH:\&quot;/app:company_home/%s/*\&quo"{trunked}</code> */
 	private static final String QUERY_COND_PATH = "PATH:\"/app:company_home/%s/*\"";
+	/** Constant <code>QUERY_SUB_PATH="PATH:\&quot;/app:company_home/%s//*\&qu"{trunked}</code> */
 	private static final String QUERY_SUB_PATH = "PATH:\"/app:company_home/%s//*\"";
+	/** Constant <code>QUERY_COND_EXACT_PATH="PATH:\&quot;%s\&quot;"</code> */
 	private static final String QUERY_COND_EXACT_PATH = "PATH:\"%s\"";
+	/** Constant <code>QUERY_COND_MEMBERS="PATH:\&quot;/app:company_home/%s/member"{trunked}</code> */
 	private static final String QUERY_COND_MEMBERS = "PATH:\"/app:company_home/%s/member\"";
+	/** Constant <code>QUERY_COND_ID="ID:\&quot;%s\&quot;"</code> */
 	private static final String QUERY_COND_ID = "ID:\"%s\"";
 
+	/** Constant <code>QUERY_COND_PARENT="PARENT:\&quot;%s\&quot;"</code> */
 	private static final String QUERY_COND_PARENT = "PARENT:\"%s\"";
+	/** Constant <code>QUERY_COND_TYPE="TYPE:\&quot;%s\&quot;"</code> */
 	private static final String QUERY_COND_TYPE = "TYPE:\"%s\"";
+	/** Constant <code>QUERY_COND_SITE="SITE:\&quot;%s\&quot;"</code> */
 	private static final String QUERY_COND_SITE = "SITE:\"%s\"";
+	/** Constant <code>QUERY_COND_EXACT_TYPE="EXACTTYPE:\&quot;%s\&quot;"</code> */
 	private static final String QUERY_COND_EXACT_TYPE = "EXACTTYPE:\"%s\"";
+	/** Constant <code>QUERY_COND_ASPECT="ASPECT:\&quot;%s\&quot;"</code> */
 	private static final String QUERY_COND_ASPECT = "ASPECT:\"%s\"";
+	/** Constant <code>QUERY_COND=" %s %s"</code> */
 	private static final String QUERY_COND = " %s %s";
 
 	protected String language = SearchService.LANGUAGE_FTS_ALFRESCO;

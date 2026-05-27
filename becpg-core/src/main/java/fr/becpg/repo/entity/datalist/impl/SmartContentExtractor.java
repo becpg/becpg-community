@@ -42,6 +42,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class SmartContentExtractor extends SimpleExtractor {
 
+	/** Constant <code>ftsPattern</code> */
 	private static final Pattern ftsPattern = Pattern.compile("^fts\\((.*)\\)$");
 
 	private ExpressionService expressionService;

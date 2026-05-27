@@ -53,6 +53,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 		NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.BeforeDeleteNodePolicy, NodeServicePolicies.OnCreateNodePolicy,
 		NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy, ContentServicePolicies.OnContentUpdatePolicy {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityActivityPolicy.class);
 
 	/** Constant <code>KEY_QUEUE_UPDATED="EntityActivity_updated"</code> */
@@ -66,7 +67,9 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 	/** Constant <code>KEY_QUEUE_ADDED_TPL_ASPECT="EntityActivity_AddedTplAspect"</code> */
 	public static final String KEY_QUEUE_ADDED_TPL_ASPECT = "EntityActivity_AddedTplAspect";
 
+	/** Constant <code>DELIMITER="###"</code> */
 	private static final String DELIMITER = "###";
+	/** Constant <code>pattern</code> */
 	private static final Pattern pattern = Pattern.compile(Pattern.quote(DELIMITER));
 
 	static {
@@ -551,6 +554,12 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 		return false;
 	}
 
+	/**
+	 * <p>accept.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @return a boolean
+	 */
 	private boolean accept(QName type) {
 		return (ForumModel.TYPE_POST.equals(type) || ContentModel.TYPE_CONTENT.equals(type)
 				|| entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)
@@ -560,6 +569,13 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 						));
 	}
 
+	/**
+	 * <p>registerActivity.</p>
+	 *
+	 * @param actionedUponNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @param activityEvent a {@link fr.becpg.repo.activity.data.ActivityEvent} object
+	 */
 	private void registerActivity(NodeRef actionedUponNodeRef, QName type, ActivityEvent activityEvent) {
 		NodeRef entityNodeRef = entityActivityService.getEntityNodeRefForActivity(actionedUponNodeRef, type);
 

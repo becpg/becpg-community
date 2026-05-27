@@ -38,12 +38,15 @@ import fr.becpg.repo.authentication.BeCPGUserAccount;
 @Service
 public class IdentityServiceAccountProvider {
 
+	/** Constant <code>PROHIBITED_CHARS</code> */
 	private static final Pattern PROHIBITED_CHARS = Pattern.compile(
         "[<>&\"$%!#?§;*~/\\\\|^=\\[\\]{}()\\p{Cntrl}]"
     );
 
+	/** Constant <code>GET_USER_ID_ERROR="Could not find userId from identity ser"{trunked}</code> */
 	private static final String GET_USER_ID_ERROR = "Could not find userId from identity service for user: ";
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(IdentityServiceAccountProvider.class);
 
 	@Value("${identity-service.create-user.enabled:false}")
@@ -219,6 +222,12 @@ public class IdentityServiceAccountProvider {
 		return true;
 	}
 	
+	/**
+	 * <p>sanitize.</p>
+	 *
+	 * @param input a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String sanitize(String input) {
         if (input == null) {
         	return null;
@@ -264,6 +273,12 @@ public class IdentityServiceAccountProvider {
 	}
 
 
+	/**
+	 * <p>getUserId.</p>
+	 *
+	 * @param username a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getUserId(String username) {
 		if (logger.isDebugEnabled()) {
         	logger.debug("getUserId in IDS for username: " + username);
@@ -298,6 +313,11 @@ public class IdentityServiceAccountProvider {
         }
 	}
 	
+	/**
+	 * <p>getAdminAccessToken.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getAdminAccessToken() {
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
             HttpPost request = new HttpPost(authServerUrl + "/realms/" + realm + "/protocol/openid-connect/token");

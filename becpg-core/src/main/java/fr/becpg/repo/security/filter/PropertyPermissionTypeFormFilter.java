@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 public class PropertyPermissionTypeFormFilter  extends AbstractPropertyPermissionFormFilter<TypeDefinition>{
 
 	
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(PropertyPermissionTypeFormFilter.class);
 	
 	/* (non-Javadoc)

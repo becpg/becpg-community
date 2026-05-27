@@ -36,6 +36,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
  */
 public class CompositionQtyCalculatingFormulationHandler extends AbstractCompositionQtyCalculatingFormulationHandler<ProductData> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(CompositionQtyCalculatingFormulationHandler.class);
 
 

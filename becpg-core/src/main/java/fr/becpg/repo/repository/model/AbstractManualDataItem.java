@@ -32,6 +32,7 @@ import fr.becpg.repo.repository.annotation.InternalField;
 public abstract class AbstractManualDataItem extends BeCPGDataObject implements ManualDataItem, SortableDataItem {
 
 	
+	/** Constant <code>serialVersionUID=4027538577640263821L</code> */
 	private static final long serialVersionUID = 4027538577640263821L;
 	
 	/**

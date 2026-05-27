@@ -47,14 +47,21 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	/** Constant <code>SUPPLIER_PJT_TPL_NAME="plm.supplier.portal.project.tpl.name"</code> */
 	public static final String SUPPLIER_PJT_TPL_NAME = "plm.supplier.portal.project.tpl.name";
+	/** Constant <code>SUPPLIER_TASK_NAME="plm.supplier.portal.task.supplier.name"</code> */
 	private static final String SUPPLIER_TASK_NAME = "plm.supplier.portal.task.supplier.name";
+	/** Constant <code>VALIDATION_TASK_NAME="plm.supplier.portal.task.validation.nam"{trunked}</code> */
 	private static final String VALIDATION_TASK_NAME = "plm.supplier.portal.task.validation.name";
+	/** Constant <code>SUPPLIER_WIZARD_NAME="plm.supplier.portal.deliverable.wizard."{trunked}</code> */
 	private static final String SUPPLIER_WIZARD_NAME = "plm.supplier.portal.deliverable.wizard.name";
+	/** Constant <code>SUPPLIER_PRE_SCRIPT="plm.supplier.portal.deliverable.scripts"{trunked}</code> */
 	private static final String SUPPLIER_PRE_SCRIPT = "plm.supplier.portal.deliverable.scripts.pre.name";
+	/** Constant <code>SIGNATURES_PREPARATION_SCRIPT="plm.supplier.portal.deliverable.scripts"{trunked}</code> */
 	private static final String SIGNATURES_PREPARATION_SCRIPT = "plm.supplier.portal.deliverable.scripts.signature.name";
 
+	/** Constant <code>SUPPLIER_SITE_PRESET="supplier-site-dashboard"</code> */
 	private static final String SUPPLIER_SITE_PRESET = "supplier-site-dashboard";
 
+	/** Constant <code>XPATH_DICTIONARY_SCRIPTS="./app:dictionary/app:scripts"</code> */
 	private static final String XPATH_DICTIONARY_SCRIPTS = "./app:dictionary/app:scripts";
 
 	@Autowired

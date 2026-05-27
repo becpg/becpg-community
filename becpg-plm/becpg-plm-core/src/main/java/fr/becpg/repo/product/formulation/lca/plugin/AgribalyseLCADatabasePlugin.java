@@ -29,6 +29,7 @@ import fr.becpg.repo.product.formulation.lca.LCADatabasePlugin;
 @Service
 public class AgribalyseLCADatabasePlugin implements LCADatabasePlugin {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AgribalyseLCADatabasePlugin.class);
 
 	@Autowired
@@ -81,6 +82,12 @@ public class AgribalyseLCADatabasePlugin implements LCADatabasePlugin {
 		return lcaData;
 	}
 	
+	/**
+	 * <p>parseDouble.</p>
+	 *
+	 * @param value a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double parseDouble(String value) {
 		if ((value != null) && !value.trim().isEmpty()) {
 			return Double.valueOf(value.trim().replace(",", "."));

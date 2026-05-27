@@ -27,6 +27,7 @@ import fr.becpg.repo.search.data.VersionFilterType;
 @AlfQname(qname = "bcpg:notificationRuleList")
 public class NotificationRuleListDataItem extends BeCPGDataObject {
 
+	/** Constant <code>serialVersionUID=996800984821144870L</code> */
 	private static final long serialVersionUID = 996800984821144870L;
 
 	private String nodeType;

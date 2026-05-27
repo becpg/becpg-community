@@ -103,17 +103,27 @@ public class EntityReportParameters {
 	/** Constant <code>PARAM_EXTRACT_DATALIST_IMAGE="extractDatalistImage"</code> */
 	public static final String PARAM_EXTRACT_DATALIST_IMAGE = "extractDatalistImage";
 
+	/** Constant <code>JSON_PARAM_PARAMS="params"</code> */
 	private static final String JSON_PARAM_PARAMS = "params";
+	/** Constant <code>JSON_PARAM_PROP="prop"</code> */
 	private static final String JSON_PARAM_PROP = "prop";
+	/** Constant <code>JSON_PARAM_PREFS="prefs"</code> */
 	private static final String JSON_PARAM_PREFS = "prefs";
+	/** Constant <code>JSON_PROP_ID="id"</code> */
 	private static final String JSON_PROP_ID = "id";
+	/** Constant <code>JSON_PROP_VALUE="value"</code> */
 	private static final String JSON_PROP_VALUE = "value";
+	/** Constant <code>JSON_PROP_NODEREF="nodeRef"</code> */
 	private static final String JSON_PROP_NODEREF = "nodeRef";
+	/** Constant <code>JSON_PARAM_ITERATIONKEY="iterationKey"</code> */
 	private static final String JSON_PARAM_ITERATIONKEY = "iterationKey";
 
+	/** Constant <code>JSON_PARAM_NAMEFORMAT="nameFormat"</code> */
 	private static final String JSON_PARAM_NAMEFORMAT = "nameFormat";
+	/** Constant <code>JSON_PARAM_TITLEFORMAT="titleFormat"</code> */
 	private static final String JSON_PARAM_TITLEFORMAT = "titleFormat";
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(EntityReportParameters.class);
 
 	public static class EntityReportParameter {

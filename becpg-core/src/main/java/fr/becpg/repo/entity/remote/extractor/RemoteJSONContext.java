@@ -16,6 +16,7 @@ import org.alfresco.service.namespace.NamespaceService;
  */
 public class RemoteJSONContext {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(RemoteJSONContext.class);
 
 	public enum JsonVisitNodeType {
@@ -50,6 +51,13 @@ public class RemoteJSONContext {
 		this.entityNodeRef = entityNodeRef;
 	}
 
+	/**
+	 * <p>Getter for the field <code>entityPath</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 * @return a {@link java.lang.String} object
+	 */
 	String getEntityPath(NodeService nodeService, NamespaceService namespaceService) {
 		if ((entityPath == null) && (entityNodeRef != null)) {
 			try {

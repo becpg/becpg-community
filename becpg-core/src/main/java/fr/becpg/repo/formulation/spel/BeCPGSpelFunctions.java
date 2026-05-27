@@ -72,6 +72,7 @@ import fr.becpg.repo.repository.model.CopiableDataItem;
 @Service
 public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(BeCPGSpelFunctions.class);
 
 	@Autowired

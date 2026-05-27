@@ -24,6 +24,7 @@ import fr.becpg.repo.designer.DesignerService;
 public class ExportWebScript extends AbstractWebScript   {
 	
 
+	/** Constant <code>PARAM_NODEREF="nodeRef"</code> */
 	private static final String PARAM_NODEREF = "nodeRef";
 
 

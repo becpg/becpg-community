@@ -83,6 +83,7 @@ import fr.becpg.repo.security.BeCPGAccessDeniedException;
  */
 public class FormulaFormulationHandler extends FormulationBaseHandler<ProductData> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(FormulaFormulationHandler.class);
 
 	/** Constant <code>DYN_COLUMN_SIZE=10</code> */
@@ -202,6 +203,13 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		return true;
 	}
 
+	/**
+	 * <p>computeFormula.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param context a {@link org.springframework.expression.EvaluationContext} object
+	 * @param view a {@link fr.becpg.repo.product.data.AbstractProductDataView} object
+	 */
 	private void computeFormula(ProductData productData, EvaluationContext context, AbstractProductDataView view) {
 
 		if (view.getDynamicCharactList() != null) {
@@ -360,6 +368,13 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	}
 
+	/**
+	 * <p>getQtyPerProduct.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param dataListItem a {@link fr.becpg.repo.repository.model.CompositionDataItem} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double getQtyPerProduct(ProductData productData, CompositionDataItem dataListItem) {
 		if (dataListItem instanceof PackagingListDataItem) {
 			VariantPackagingData variantPackagingData = productData.getDefaultVariantPackagingData();
@@ -384,6 +399,16 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		return dataListItem.getQty();
 	}
 
+	/**
+	 * <p>extractJSONTree.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param dataListItem a {@link fr.becpg.repo.repository.model.CompositionDataItem} object
+	 * @param value a {@link java.lang.Object} object
+	 * @param exp a {@link org.springframework.expression.Expression} object
+	 * @return a {@link org.json.JSONObject} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private JSONObject extractJSONTree(ProductData productData, CompositionDataItem dataListItem, Object value, Expression exp) throws JSONException {
 		JSONObject jsonObject = new JSONObject();
 
@@ -402,6 +427,17 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		return jsonObject;
 	}
 
+	/**
+	 * <p>extractJSONSubList.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param dataListItem a {@link fr.becpg.repo.repository.model.CompositionDataItem} object
+	 * @param exp a {@link org.springframework.expression.Expression} object
+	 * @param path a {@link java.lang.String} object
+	 * @param subList a {@link org.json.JSONArray} object
+	 * @param visited a {@link java.util.Set} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private void extractJSONSubList(ProductData productData, CompositionDataItem dataListItem, Expression exp, String path, JSONArray subList,
 			Set<NodeRef> visited) throws JSONException {
 		ProductData subProductData = alfrescoRepository.findOne(dataListItem.getComponent());
@@ -497,7 +533,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	/**
 	 * Copy missing item from template
 	 *
-	 * @param formulatedProduct
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
 	 */
 	private void copyTemplateDynamicCharactLists(ProductData formulatedProduct) {
 		if ((formulatedProduct.getEntityTpl() != null) && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
@@ -549,6 +585,13 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	    sortTargetList(targetList);
 	}
 
+	/**
+	 * <p>findExistingItem.</p>
+	 *
+	 * @param sourceItem a {@link fr.becpg.repo.product.data.productList.DynamicCharactListItem} object
+	 * @param targetList a {@link java.util.List} object
+	 * @return a {@link java.util.Optional} object
+	 */
 	private Optional<DynamicCharactListItem> findExistingItem(DynamicCharactListItem sourceItem, List<DynamicCharactListItem> targetList) {
 	    // First try to find by name
 	    Optional<DynamicCharactListItem> byName = targetList.stream()
@@ -566,6 +609,13 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	        .findFirst();
 	}
 
+	/**
+	 * <p>handleDuplicateTitles.</p>
+	 *
+	 * @param sourceItem a {@link fr.becpg.repo.product.data.productList.DynamicCharactListItem} object
+	 * @param targetList a {@link java.util.List} object
+	 * @param existingItem a {@link fr.becpg.repo.product.data.productList.DynamicCharactListItem} object
+	 */
 	private void handleDuplicateTitles(DynamicCharactListItem sourceItem, List<DynamicCharactListItem> targetList, DynamicCharactListItem existingItem) {
 	    // Mark duplicates when finding by name
 	    targetList.stream()
@@ -575,6 +625,12 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	        .forEach(item -> item.setTitle(item.getTitle() + " - duplicate"));
 	}
 
+	/**
+	 * <p>addNewItem.</p>
+	 *
+	 * @param sourceItem a {@link fr.becpg.repo.product.data.productList.DynamicCharactListItem} object
+	 * @param targetList a {@link java.util.List} object
+	 */
 	private void addNewItem(DynamicCharactListItem sourceItem, List<DynamicCharactListItem> targetList) {
 	    sourceItem.setNodeRef(null);
 	    sourceItem.setParentNodeRef(null);
@@ -582,11 +638,22 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	    targetList.add(sourceItem);
 	}
 
+	/**
+	 * <p>sortTargetList.</p>
+	 *
+	 * @param targetList a {@link java.util.List} object
+	 */
 	private void sortTargetList(List<DynamicCharactListItem> targetList) {
 	    targetList.sort(Comparator.comparing(DynamicCharactListItem::getSort, 
 	                    Comparator.nullsFirst(Comparator.naturalOrder())));
 	}
 
+	/**
+	 * <p>updateItem.</p>
+	 *
+	 * @param targetItem a {@link fr.becpg.repo.product.data.productList.DynamicCharactListItem} object
+	 * @param sourceItem a {@link fr.becpg.repo.product.data.productList.DynamicCharactListItem} object
+	 */
 	private void updateItem(DynamicCharactListItem targetItem, DynamicCharactListItem sourceItem) {
 
 		targetItem.setTitle(sourceItem.getTitle());

@@ -39,6 +39,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  */
 public abstract class AbstractCompositionQtyCalculatingFormulationHandler<T> extends FormulationBaseHandler<T> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AbstractCompositionQtyCalculatingFormulationHandler.class);
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;

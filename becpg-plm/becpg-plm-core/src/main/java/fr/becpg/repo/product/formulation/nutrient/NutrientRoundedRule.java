@@ -17,15 +17,31 @@ public class NutrientRoundedRule {
 	Double delta = null;
 	Boolean isZero;
 
+	/**
+	 * <p>Constructor for NutrientRoundedRule.</p>
+	 *
+	 * @param isZero a {@link java.lang.Boolean} object
+	 */
 	NutrientRoundedRule(Boolean isZero) {
 		this.isZero = isZero;
 	}
 
+	 /**
+	  * <p>Constructor for NutrientRoundedRule.</p>
+	  *
+	  * @param precision a int
+	  * @param roundingMode a {@link java.math.RoundingMode} object
+	  */
 	 NutrientRoundedRule(int precision, RoundingMode roundingMode) {
 		this.precision = precision;
 		this.roundingMode = roundingMode;
 	}
 
+	/**
+	 * <p>Constructor for NutrientRoundedRule.</p>
+	 *
+	 * @param delta a {@link java.lang.Double} object
+	 */
 	NutrientRoundedRule(Double delta) {
 		this.delta = delta;
 	}

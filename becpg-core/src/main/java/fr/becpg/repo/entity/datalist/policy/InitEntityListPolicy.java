@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2010-2011 beCPG. All rights reserved.
+ *  Copyright (C) 2010-2026 beCPG. All rights reserved.
  */
 package fr.becpg.repo.entity.datalist.policy;
 
@@ -37,8 +37,10 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  */
 public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy {
 
+	/** Constant <code>MAX_SIBLING_LISTS=20</code> */
 	private static final int MAX_SIBLING_LISTS = 20;
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(InitEntityListPolicy.class);
 
 	/** The namespace service. */
@@ -164,6 +166,13 @@ public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeSer
 		}
 	}
 
+	/**
+	 * <p>createName.</p>
+	 *
+	 * @param dataListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param localName a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String createName(NodeRef dataListNodeRef, String localName) {
 		int count = 0;
 		if (localName.contains("@")) {

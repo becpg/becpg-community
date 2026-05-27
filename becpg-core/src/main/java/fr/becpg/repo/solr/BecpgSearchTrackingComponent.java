@@ -21,6 +21,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class BecpgSearchTrackingComponent extends SOLRTrackingComponentImpl {
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(BecpgSearchTrackingComponent.class);
 
 

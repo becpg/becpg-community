@@ -32,7 +32,9 @@ public class ReportAuditPlugin extends AbstractAuditPlugin implements DatabaseAu
 	/** Constant <code>DATASOURCE_SIZE="datasourceSize"</code> */
 	public static final String DATASOURCE_SIZE = "datasourceSize";
 
+	/** Constant <code>REPORT="report"</code> */
 	private static final String REPORT = "report";
+	/** Constant <code>REPORT_AUDIT_ID="beCPGReportAudit"</code> */
 	private static final String REPORT_AUDIT_ID = "beCPGReportAudit";
 	
 	static {

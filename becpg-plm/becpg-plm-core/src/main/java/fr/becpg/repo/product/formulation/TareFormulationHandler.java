@@ -48,6 +48,7 @@ import fr.becpg.repo.variant.filters.VariantFilters;
  */
 public class TareFormulationHandler extends FormulationBaseHandler<ProductData> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(TareFormulationHandler.class);
 
 	protected final AlfrescoRepository<ProductData> alfrescoRepository;
@@ -273,6 +274,12 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 		return true;
 	}
 
+	/**
+	 * <p>calculateTareOfComposition.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.math.BigDecimal} object
+	 */
 	private BigDecimal calculateTareOfComposition(ProductData formulatedProduct) {
 		BigDecimal totalTare = BigDecimal.valueOf(0d);
 		if (logger.isDebugEnabled()) {

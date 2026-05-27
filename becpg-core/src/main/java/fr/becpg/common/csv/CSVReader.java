@@ -164,9 +164,9 @@ public class CSVReader implements AutoCloseable {
 
 	/**
 	 * Reads the next line from the file.
-	 * 
+	 *
 	 * @return the next line from the file without trailing newline
-	 * @throws IOException
+	 * @throws java.io.IOException
 	 *             if bad things happen during the read
 	 */
 	private String getNextLine() throws IOException {
@@ -189,11 +189,11 @@ public class CSVReader implements AutoCloseable {
 
 	/**
 	 * Parses an incoming String and returns an array of elements.
-	 * 
+	 *
 	 * @param nextLine
 	 *            the string to parse
 	 * @return the comma-tokenized list of elements, or null if nextLine is null
-	 * @throws IOException if bad things happen during the read
+	 * @throws java.io.IOException if bad things happen during the read
 	 */
 	private String[] parseLine(String nextLine) throws IOException {
 

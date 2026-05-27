@@ -27,6 +27,9 @@ import org.alfresco.service.namespace.QName;
  */
 public class ReportModel {
 	
+	/**
+	 * <p>Constructor for ReportModel.</p>
+	 */
 	private ReportModel() {
 		//Do Nothing
 	}

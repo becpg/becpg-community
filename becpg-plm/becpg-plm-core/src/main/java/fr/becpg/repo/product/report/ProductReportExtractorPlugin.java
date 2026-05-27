@@ -104,6 +104,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			PLMModel.TYPE_INGLIST, PLMModel.TYPE_FORBIDDENINGLIST, PLMModel.TYPE_LABELINGRULELIST, PLMModel.TYPE_REQCTRLLIST,
 			PLMModel.TYPE_LABELCLAIMLIST, PLMModel.TYPE_ALLERGENLIST);
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ProductReportExtractorPlugin.class);
 
 	/** Constant <code>ATTR_LANGUAGE="language"</code> */
@@ -113,72 +114,143 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	/** Constant <code>ATTR_GROUP="group"</code> */
 	protected static final String ATTR_GROUP = "group";
 
+	/** Constant <code>ATTR_PKG_TARE_LEVEL_1="tarePkgLevel1"</code> */
 	private static final String ATTR_PKG_TARE_LEVEL_1 = "tarePkgLevel1";
+	/** Constant <code>ATTR_PKG_TARE_LEVEL_2="tarePkgLevel2"</code> */
 	private static final String ATTR_PKG_TARE_LEVEL_2 = "tarePkgLevel2";
+	/** Constant <code>ATTR_PKG_TARE_LEVEL_3="tarePkgLevel3"</code> */
 	private static final String ATTR_PKG_TARE_LEVEL_3 = "tarePkgLevel3";
+	/** Constant <code>ATTR_PKG_NET_WEIGHT_LEVEL_1="netWeightPkgLevel1"</code> */
 	private static final String ATTR_PKG_NET_WEIGHT_LEVEL_1 = "netWeightPkgLevel1";
+	/** Constant <code>ATTR_PKG_NET_WEIGHT_LEVEL_2="netWeightPkgLevel2"</code> */
 	private static final String ATTR_PKG_NET_WEIGHT_LEVEL_2 = "netWeightPkgLevel2";
+	/** Constant <code>ATTR_PKG_NET_WEIGHT_LEVEL_3="netWeightPkgLevel3"</code> */
 	private static final String ATTR_PKG_NET_WEIGHT_LEVEL_3 = "netWeightPkgLevel3";
+	/** Constant <code>ATTR_PKG_GROSS_WEIGHT_LEVEL_1="grossWeightPkgLevel1"</code> */
 	private static final String ATTR_PKG_GROSS_WEIGHT_LEVEL_1 = "grossWeightPkgLevel1";
+	/** Constant <code>ATTR_PKG_GROSS_WEIGHT_LEVEL_2="grossWeightPkgLevel2"</code> */
 	private static final String ATTR_PKG_GROSS_WEIGHT_LEVEL_2 = "grossWeightPkgLevel2";
+	/** Constant <code>ATTR_PKG_GROSS_WEIGHT_LEVEL_3="grossWeightPkgLevel3"</code> */
 	private static final String ATTR_PKG_GROSS_WEIGHT_LEVEL_3 = "grossWeightPkgLevel3";
+	/** Constant <code>ATTR_NB_PRODUCTS_LEVEL_3="nbProductsPkgLevel3"</code> */
 	private static final String ATTR_NB_PRODUCTS_LEVEL_3 = "nbProductsPkgLevel3";
+	/** Constant <code>ATTR_NB_PRODUCTS_LEVEL_2="nbProductsPkgLevel2"</code> */
 	private static final String ATTR_NB_PRODUCTS_LEVEL_2 = "nbProductsPkgLevel2";
+	/** Constant <code>ATTR_VARIANT_ID="variantId"</code> */
 	private static final String ATTR_VARIANT_ID = "variantId";
+	/** Constant <code>ATTR_COMPOLIST_QTY_FOR_PRODUCT="compoListQtyForProduct"</code> */
 	private static final String ATTR_COMPOLIST_QTY_FOR_PRODUCT = "compoListQtyForProduct";
+	/** Constant <code>ATTR_PACKAGING_QTY_FOR_PRODUCT="packagingListQtyForProduct"</code> */
 	private static final String ATTR_PACKAGING_QTY_FOR_PRODUCT = "packagingListQtyForProduct";
+	/** Constant <code>ATTR_PROCESS_QTY_FOR_PRODUCT="processListQtyForProduct"</code> */
 	private static final String ATTR_PROCESS_QTY_FOR_PRODUCT = "processListQtyForProduct";
+	/** Constant <code>ATTR_QTY_FOR_COST="qtyForCost"</code> */
 	private static final String ATTR_QTY_FOR_COST = "qtyForCost";
 
+	/** Constant <code>TAG_PACKAGING_LEVEL_MEASURES="packagingLevelMeasures"</code> */
 	private static final String TAG_PACKAGING_LEVEL_MEASURES = "packagingLevelMeasures";
+	/** Constant <code>ATTR_NODEREF="nodeRef"</code> */
 	private static final String ATTR_NODEREF = "nodeRef";
+	/** Constant <code>ATTR_PARENT_NODEREF="parentNodeRef"</code> */
 	private static final String ATTR_PARENT_NODEREF = "parentNodeRef";
 
+	/** Constant <code>ATTR_ALLERGENLIST_INVOLUNTARY_FROM_PROCESS="allergenListInVoluntaryFromProcess"</code> */
 	private static final String ATTR_ALLERGENLIST_INVOLUNTARY_FROM_PROCESS = "allergenListInVoluntaryFromProcess";
+	/** Constant <code>ATTR_ALLERGENLIST_INVOLUNTARY_FROM_RAW_MATERIAL="allergenListInVoluntaryFromRawMaterial"</code> */
 	private static final String ATTR_ALLERGENLIST_INVOLUNTARY_FROM_RAW_MATERIAL = "allergenListInVoluntaryFromRawMaterial";
+	/** Constant <code>TAG_WUSEDS="wUseds"</code> */
 	private static final String TAG_WUSEDS = "wUseds";
+	/** Constant <code>TAG_WUSED="wUsed"</code> */
 	private static final String TAG_WUSED = "wUsed";
+	/** Constant <code>DEFAULT_WUSED_MAX_RESULTS=20</code> */
 	private static final int DEFAULT_WUSED_MAX_RESULTS = 20;
+	/** Constant <code>MAX_LEVEL_PATTERN</code> */
 	private static final Pattern MAX_LEVEL_PATTERN = Pattern.compile("^MaxLevel(\\d+)$", Pattern.CASE_INSENSITIVE);
+	/** Constant <code>ONLY_LEVEL_PATTERN</code> */
 	private static final Pattern ONLY_LEVEL_PATTERN = Pattern.compile("^OnlyLevel(\\d+)$", Pattern.CASE_INSENSITIVE);
 
 	private final SystemConfigurationService systemConfigurationService;
 	private final WUsedListService wUsedListService;
 	private final WUsedAssociationResolver wUsedAssociationResolver;
 
+	/**
+	 * <p>extractInMultiLevel.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	private Boolean extractInMultiLevel() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.product.report.multiLevel"));
 	}
 
+	/**
+	 * <p>extractNonEffectiveComponent.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	private Boolean extractNonEffectiveComponent() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.product.report.nonEffectiveComponent"));
 	}
 
+	/**
+	 * <p>componentDatalistsToExtract.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String componentDatalistsToExtract() {
 		return systemConfigurationService.confValue("beCPG.product.report.componentDatalistsToExtract");
 	}
 
+	/**
+	 * <p>extractPriceBreaks.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	private Boolean extractPriceBreaks() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.product.report.priceBreaks"));
 	}
 
+	/**
+	 * <p>extractRawMaterial.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	private Boolean extractRawMaterial() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.product.report.extractRawMaterial"));
 	}
 
+	/**
+	 * <p>extractWUsedConfig.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extractWUsedConfig() {
 		return systemConfigurationService.confValue("beCPG.product.report.extractWUsed");
 	}
 
+	/**
+	 * <p>extractWUsed.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	private Boolean extractWUsed() {
 		String config = extractWUsedConfig();
 		return (config != null) && !config.isBlank() && !"false".equalsIgnoreCase(config) && !"off".equalsIgnoreCase(config);
 	}
 
+	/**
+	 * <p>showDeprecated.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	private Boolean showDeprecated() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.product.report.showDeprecatedXml"));
 	}
 
+	/**
+	 * <p>nutLocalesToExtract.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String nutLocalesToExtract() {
 		return systemConfigurationService.confValue("beCPG.product.report.nutList.localesToExtract");
 	}
@@ -229,11 +301,14 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	}
 
 	/**
+	 * <p>loadDataLists.</p>
 	 *
-	 * @param entityNodeRef
-	 * @param dataListsElt
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param dataListsElt a {@link org.dom4j.Element} object
 	 * @param isExtractedProduct
 	 *            extracted product (more info)
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 * @param level a int
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, DefaultExtractorContext context, boolean isExtractedProduct, int level) {
@@ -475,6 +550,15 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 
 
+	/**
+	 * <p>shouldExtractList.</p>
+	 *
+	 * @param isExtractedProduct a boolean
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @param dataListQName a {@link org.alfresco.service.namespace.QName} object
+	 * @return a boolean
+	 */
 	private boolean shouldExtractList(boolean isExtractedProduct, DefaultExtractorContext context, QName type, QName dataListQName) {
 		if (isExtractedProduct) {
 			return !(context.isNotEmptyPrefs(EntityReportParameters.PARAM_ENTITY_DATALISTS_TO_EXTRACT, null)
@@ -512,6 +596,14 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		loadDataListItemAttributes(dataListItem, nodeElt, context, hiddentAttributes, false);
 	}
 
+	/**
+	 * <p>loadCompoList.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param dataListsElt a {@link org.dom4j.Element} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 * @param level a int
+	 */
 	private void loadCompoList(ProductData productData, Element dataListsElt, DefaultExtractorContext context, int level) {
 		// compoList
 		String filter = "";
@@ -536,6 +628,14 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	}
 
+	/**
+	 * <p>loadProcessList.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param dataListsElt a {@link org.dom4j.Element} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 * @param isExtractedProduct a boolean
+	 */
 	private void loadProcessList(ProductData productData, Element dataListsElt, DefaultExtractorContext context, boolean isExtractedProduct) {
 		String filter = "";
 		if (!context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_NON_EFFECTIVE_COMPONENT, extractNonEffectiveComponent())) {
@@ -575,6 +675,15 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	}
 
+	/**
+	 * <p>loadPackagingList.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param dataListsElt a {@link org.dom4j.Element} object
+	 * @param defaultVariantNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 * @param isExtractedProduct a boolean
+	 */
 	private void loadPackagingList(ProductData productData, Element dataListsElt, NodeRef defaultVariantNodeRef, DefaultExtractorContext context,
 			boolean isExtractedProduct) {
 		String filter = "";
@@ -675,6 +784,17 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
+	/**
+	 * <p>loadPackagingListItemForCompo.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param packagingListElt a {@link org.dom4j.Element} object
+	 * @param level a int
+	 * @param currentLevelQuantities a {@link fr.becpg.repo.product.data.CurrentLevelQuantities} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 * @param defaultVariantNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param dropPackagingOfComponents a boolean
+	 */
 	private void loadPackagingListItemForCompo(NodeRef entityNodeRef, Element packagingListElt, int level,
 			CurrentLevelQuantities currentLevelQuantities, DefaultExtractorContext context, NodeRef defaultVariantNodeRef,
 			boolean dropPackagingOfComponents) {
@@ -747,6 +867,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	}
 
+	/**
+	 * <p>addInfiniteLoopError.</p>
+	 *
+	 * @param currentLevelQuantities a {@link fr.becpg.repo.product.data.CurrentLevelQuantities} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
 	private void addInfiniteLoopError(CurrentLevelQuantities currentLevelQuantities, DefaultExtractorContext context) {
 		context.setInfiniteLoop(true);
 		String message = I18NUtil.getMessage("message.datasource.infinite-loop");
@@ -756,6 +882,15 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				"Infinite loop during datasource generation due to the following item: " + currentLevelQuantities.getCompoListItem().getNodeRef());
 	}
 
+	/**
+	 * <p>loadProcessListItemForCompo.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param processListElt a {@link org.dom4j.Element} object
+	 * @param level a int
+	 * @param currentLevelQuantities a {@link fr.becpg.repo.product.data.CurrentLevelQuantities} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
 	private void loadProcessListItemForCompo(NodeRef entityNodeRef, Element processListElt, int level, CurrentLevelQuantities currentLevelQuantities,
 			DefaultExtractorContext context) {
 
@@ -825,6 +960,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	}
 
+	/**
+	 * <p>hasCost.</p>
+	 *
+	 * @param componentProductData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param typeOfCost a {@link fr.becpg.repo.product.data.constraints.CostType} object
+	 * @return a boolean
+	 */
 	private boolean hasCost(ProductData componentProductData, CostType typeOfCost) {
 		for (CostListDataItem c : componentProductData.getCostList()) {
 			if (c.getCost() != null) {
@@ -953,6 +1095,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	}
 
+	/**
+	 * <p>loadResourceParams.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ResourceProductData} object
+	 * @param partElt a {@link org.dom4j.Element} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
 	private void loadResourceParams(ResourceProductData productData, Element partElt, DefaultExtractorContext context) {
 		if ((productData.getResourceParamList() != null) && !productData.getResourceParamList().isEmpty()) {
 
@@ -970,6 +1119,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
+	/**
+	 * <p>loadNutLists.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param dataListsElt a {@link org.dom4j.Element} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
 	private void loadNutLists(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
 
 		if ((productData.getNutList() != null) && !productData.getNutList().isEmpty()) {
@@ -1048,6 +1204,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
+	/**
+	 * <p>loadOrganoLists.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param dataListsElt a {@link org.dom4j.Element} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
 	private void loadOrganoLists(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
 		if ((productData.getOrganoList() != null) && !productData.getOrganoList().isEmpty()) {
 			Element organoListsElt = dataListsElt.addElement(PLMModel.TYPE_ORGANOLIST.getLocalName() + "s");
@@ -1060,6 +1223,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
+	/**
+	 * <p>loadLabelCLaimLists.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param dataListsElt a {@link org.dom4j.Element} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
 	private void loadLabelCLaimLists(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
 		if ((productData.getLabelClaimList() != null) && !productData.getLabelClaimList().isEmpty()) {
 			Element lcListsElt = dataListsElt.addElement(PLMModel.TYPE_LABELCLAIMLIST.getLocalName() + "s");
@@ -1078,6 +1248,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
+	/**
+	 * <p>loadAllergenLists.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param dataListsElt a {@link org.dom4j.Element} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
 	private void loadAllergenLists(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
 		if ((productData.getAllergenList() != null) && !productData.getAllergenList().isEmpty()) {
 			Element allergenListsElt = dataListsElt.addElement(PLMModel.TYPE_ALLERGENLIST.getLocalName() + "s");
@@ -1176,6 +1353,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
+	/**
+	 * <p>loadIngLists.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param dataListsElt a {@link org.dom4j.Element} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
 	private void loadIngLists(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
 		if ((productData.getIngList() != null) && !productData.getIngList().isEmpty()) {
 			Element ingListsElt = dataListsElt.addElement(PLMModel.TYPE_INGLIST.getLocalName() + "s");
@@ -1194,6 +1378,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
+	/**
+	 * <p>extractRawMaterials.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param dataListsElt a {@link org.dom4j.Element} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
 	private void extractRawMaterials(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
 
 		Double productNetWeight = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
@@ -1225,6 +1416,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
+	/**
+	 * <p>extractWUsed.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param dataListsElt a {@link org.dom4j.Element} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
 	private void extractWUsed(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
 		WUsedExtractionMode extractionMode = resolveWUsedExtractionMode(context);
 		if (!extractionMode.isEnabled()) {
@@ -1242,6 +1440,16 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
+	/**
+	 * <p>appendWUsedEntries.</p>
+	 *
+	 * @param wUsedsElt a {@link org.dom4j.Element} object
+	 * @param wUsedData a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object
+	 * @param extractionMode a {@link fr.becpg.repo.product.report.ProductReportExtractorPlugin.WUsedExtractionMode} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 * @param association a {@link org.alfresco.service.namespace.QName} object
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void appendWUsedEntries(Element wUsedsElt, MultiLevelListData wUsedData, WUsedExtractionMode extractionMode,
 			DefaultExtractorContext context, QName association, NodeRef parentNodeRef) {
 
@@ -1271,6 +1479,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
+	/**
+	 * <p>shouldExtractDepth.</p>
+	 *
+	 * @param extractionMode a {@link fr.becpg.repo.product.report.ProductReportExtractorPlugin.WUsedExtractionMode} object
+	 * @param depth a int
+	 * @return a boolean
+	 */
 	private boolean shouldExtractDepth(WUsedExtractionMode extractionMode, int depth) {
 		if (extractionMode.onlyLevel()) {
 			return depth == extractionMode.getMaxDepthLevel();
@@ -1278,6 +1493,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		return true;
 	}
 
+	/**
+	 * <p>resolveWUsedExtractionMode.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 * @return a {@link fr.becpg.repo.product.report.ProductReportExtractorPlugin.WUsedExtractionMode} object
+	 */
 	private WUsedExtractionMode resolveWUsedExtractionMode(DefaultExtractorContext context) {
 		String modeConfig = context.getPrefValue("extractWUsed", extractWUsedConfig());
 		if ("true".equalsIgnoreCase(modeConfig)) {
@@ -1286,6 +1507,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		return WUsedExtractionMode.parse(modeConfig);
 	}
 
+	/**
+	 * <p>hasExtractWUsedModePreference.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 * @return a boolean
+	 */
 	private boolean hasExtractWUsedModePreference(DefaultExtractorContext context) {
 		if (!context.getPreferences().containsKey("extractWUsed")) {
 			return false;
@@ -1366,6 +1593,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
+	/**
+	 * <p>extractPriceBreaks.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param dataListsElt a {@link org.dom4j.Element} object
+	 */
 	private void extractPriceBreaks(ProductData productData, Element dataListsElt) {
 
 		Double netWeight = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
@@ -1507,6 +1740,14 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	}
 
+	/**
+	 * <p>extractPriceBreaks.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param parentLossRatio a {@link java.lang.Double} object
+	 * @param parentQty a {@link java.lang.Double} object
+	 * @param priceBreaks a {@link java.util.List} object
+	 */
 	private void extractPriceBreaks(ProductData productData, Double parentLossRatio, Double parentQty, List<PriceBreakReportData> priceBreaks) {
 
 		Double netWeight = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
@@ -1545,6 +1786,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		extractPriceBreaksForPackaging(productData, priceBreaks, parentQty / (netWeight != 0d ? netWeight : 1d));
 	}
 
+	/**
+	 * <p>extractPriceBreaksForPackaging.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param priceBreaks a {@link java.util.List} object
+	 * @param parentQty a {@link java.lang.Double} object
+	 */
 	private void extractPriceBreaksForPackaging(ProductData productData, List<PriceBreakReportData> priceBreaks, Double parentQty) {
 
 		for (PackagingListDataItem packagingListDataItem : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
@@ -1562,6 +1810,15 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	}
 
+	/**
+	 * <p>createPriceBreakReportData.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param componentProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param qty a {@link java.lang.Double} object
+	 * @param qtyForCost a {@link java.lang.Double} object
+	 * @param priceBreaks a {@link java.util.List} object
+	 */
 	private void createPriceBreakReportData(ProductData productData, ProductData componentProduct, Double qty, Double qtyForCost,
 			List<PriceBreakReportData> priceBreaks) {
 		if (componentProduct.getPriceList() != null) {
@@ -1629,6 +1886,18 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
+	/**
+	 * <p>loadPackagingItem.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param currentLevelQuantities a {@link fr.becpg.repo.product.data.CurrentLevelQuantities} object
+	 * @param dataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 * @param packagingListElt a {@link org.dom4j.Element} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 * @param level a int
+	 * @param dropPackagingOfComponents a boolean
+	 * @param isPackagingOfComponent a boolean
+	 */
 	private void loadPackagingItem(NodeRef entityNodeRef, CurrentLevelQuantities currentLevelQuantities, PackagingListDataItem dataItem,
 			Element packagingListElt, DefaultExtractorContext context, int level, boolean dropPackagingOfComponents, boolean isPackagingOfComponent) {
 
@@ -1645,6 +1914,16 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
+	/**
+	 * <p>extractPackagingImages.</p>
+	 *
+	 * @param product a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param imgsElt a {@link org.dom4j.Element} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 * @param dataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 * @param dropPackagingOfComponents a boolean
+	 * @param isPackagingOfComponent a boolean
+	 */
 	private void extractPackagingImages(NodeRef product, Element imgsElt, DefaultExtractorContext context, PackagingListDataItem dataItem,
 			boolean dropPackagingOfComponents, boolean isPackagingOfComponent) {
 
@@ -1662,6 +1941,19 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	}
 
+	/**
+	 * <p>loadPackaging.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param currentLevelQuantities a {@link fr.becpg.repo.product.data.CurrentLevelQuantities} object
+	 * @param dataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 * @param packagingListElt a {@link org.dom4j.Element} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 * @param level a int
+	 * @param dropPackagingOfComponents a boolean
+	 * @param isPackagingOfComponent a boolean
+	 * @return a {@link org.dom4j.Element} object
+	 */
 	private Element loadPackaging(NodeRef entityNodeRef, CurrentLevelQuantities currentLevelQuantities, PackagingListDataItem dataItem,
 			Element packagingListElt, DefaultExtractorContext context, int level, boolean dropPackagingOfComponents, boolean isPackagingOfComponent) {
 
@@ -1718,6 +2010,16 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		return partElt;
 	}
 
+	/**
+	 * <p>loadProcessListItem.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param currentLevelQuantities a {@link fr.becpg.repo.product.data.CurrentLevelQuantities} object
+	 * @param dataItem a {@link fr.becpg.repo.product.data.productList.ProcessListDataItem} object
+	 * @param processListElt a {@link org.dom4j.Element} object
+	 * @param level a int
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
 	private void loadProcessListItem(NodeRef entityNodeRef, CurrentLevelQuantities currentLevelQuantities, ProcessListDataItem dataItem,
 			Element processListElt, int level, DefaultExtractorContext context) {
 
@@ -1751,6 +2053,18 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	}
 
+	/**
+	 * <p>loadPackagingKit.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param currentLevelQuantities a {@link fr.becpg.repo.product.data.CurrentLevelQuantities} object
+	 * @param dataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 * @param packagingListElt a {@link org.dom4j.Element} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 * @param level a int
+	 * @param dropPackagingOfComponents a boolean
+	 * @param isPackagingOfComponent a boolean
+	 */
 	private void loadPackagingKit(NodeRef entityNodeRef, CurrentLevelQuantities currentLevelQuantities, PackagingListDataItem dataItem,
 			Element packagingListElt, DefaultExtractorContext context, int level, boolean dropPackagingOfComponents, boolean isPackagingOfComponent) {
 		loadPackaging(entityNodeRef, currentLevelQuantities, dataItem, packagingListElt, context, level, dropPackagingOfComponents,
@@ -1767,15 +2081,33 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
+	/**
+	 * <p>toString.</p>
+	 *
+	 * @param value a {@link java.lang.Integer} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String toString(Integer value) {
 		return value == null ? VALUE_NULL : Integer.toString(value);
 	}
 
+	/**
+	 * <p>toString.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String toString(Double value) {
 
 		return value == null ? VALUE_NULL : Double.toString(value);
 	}
 
+	/**
+	 * <p>toString.</p>
+	 *
+	 * @param value a {@link java.math.BigDecimal} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String toString(BigDecimal value) {
 
 		return value == null ? VALUE_NULL : toString(value.doubleValue());
@@ -1921,8 +2253,15 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
+	/** Constant <code>SHOULD_EXTRACT_COST_CACHE_KEY="shouldExtractCost"</code> */
 	private static final String SHOULD_EXTRACT_COST_CACHE_KEY = "shouldExtractCost";
 
+	/**
+	 * <p>shouldExtractCost.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 * @return a boolean
+	 */
 	private boolean shouldExtractCost(DefaultExtractorContext context) {
 		if (context.getCache().containsKey(SHOULD_EXTRACT_COST_CACHE_KEY)) {
 			return Boolean.TRUE.equals(context.getCache().get(SHOULD_EXTRACT_COST_CACHE_KEY));
@@ -1934,6 +2273,15 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		return shouldExtractCost;
 	}
 
+	/**
+	 * <p>extractCost.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param partProductNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param dataListItemElt a {@link org.dom4j.Element} object
+	 * @param type a {@link fr.becpg.repo.product.data.constraints.CostType} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
 	private void extractCost(NodeRef entityNodeRef, NodeRef partProductNodeRef, Element dataListItemElt, CostType type,
 			DefaultExtractorContext context) {
 

@@ -49,6 +49,7 @@ import fr.becpg.repo.survey.SurveyModel;
  * @author matthieu
  */
 public class ScoreListPatch extends AbstractBeCPGPatch {
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ScoreListPatch.class);
 
 	/** Constant <code>QUESTION_CRITERION</code> */
@@ -150,11 +151,22 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 		});
 	}
 
+	/**
+	 * <p>findScoreCriteriaFolder.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef findScoreCriteriaFolder() {
 		return BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
 				"/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:ScoreCriteria/.");
 	}
 
+	/**
+	 * <p>processScoreCriteria.</p>
+	 *
+	 * @param scoreCriteriaFolder a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.util.Map} object
+	 */
 	private Map<String, NodeRef> processScoreCriteria(NodeRef scoreCriteriaFolder) {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			ruleService.disableRules();
@@ -174,6 +186,11 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 		}, false, true);
 	}
 
+	/**
+	 * <p>createOrGetCriterionTypesFolder.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef createOrGetCriterionTypesFolder() {
 		NodeRef entityListsFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
 				"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath("/System/ProjectLists/bcpg:entityLists") + "/.");
@@ -191,6 +208,13 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 		return scoreCriterionTypesFolder;
 	}
 
+	/**
+	 * <p>processSingleCriteria.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param criterionTypesNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param scoreCriterionNodeRefs a {@link java.util.Map} object
+	 */
 	private void processSingleCriteria(NodeRef nodeRef, NodeRef criterionTypesNodeRef, Map<String, NodeRef> scoreCriterionNodeRefs) {
 		if (!nodeService.exists(nodeRef) || !nodeService.getType(nodeRef).equals(BeCPGModel.TYPE_LIST_VALUE)) {
 			logger.warn("Node does not exist or is not listValue: " + nodeRef);
@@ -227,16 +251,35 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 		}
 	}
 
+	/**
+	 * <p>updateScoreLists.</p>
+	 *
+	 * @param scoreCriterionNodeRefs a {@link java.util.Map} object
+	 * @param currentTenant a {@link java.lang.String} object
+	 */
 	private void updateScoreLists(Map<String, NodeRef> scoreCriterionNodeRefs, String currentTenant) {
 		BatchProcessor<NodeRef> batchProcessor = createBatchTypeProcessor(ProjectModel.TYPE_SCORE_LIST, true, 1);
 		batchProcessor.processLong(createScoreListWorker(scoreCriterionNodeRefs, currentTenant), true);
 	}
 
+	/**
+	 * <p>updateSurveyQuestion.</p>
+	 *
+	 * @param scoreCriterionNodeRefs a {@link java.util.Map} object
+	 * @param currentTenant a {@link java.lang.String} object
+	 */
 	private void updateSurveyQuestion(Map<String, NodeRef> scoreCriterionNodeRefs, String currentTenant) {
 		BatchProcessor<NodeRef> batchProcessor = createBatchTypeProcessor(SurveyModel.TYPE_SURVEY_QUESTION, true, 1);
 		batchProcessor.processLong(createSurveyQuestionWorker(scoreCriterionNodeRefs, currentTenant), true);
 	}
 
+	/**
+	 * <p>createSurveyQuestionWorker.</p>
+	 *
+	 * @param scoreCriterionNodeRefs a {@link java.util.Map} object
+	 * @param tenantDomain a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker} object
+	 */
 	private BatchProcessWorker<NodeRef> createSurveyQuestionWorker(Map<String, NodeRef> scoreCriterionNodeRefs, String tenantDomain) {
 		return new BatchProcessWorkerAdaptor<>() {
 			@Override
@@ -276,6 +319,13 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 		};
 	}
 
+	/**
+	 * <p>createScoreListWorker.</p>
+	 *
+	 * @param scoreCriterionNodeRefs a {@link java.util.Map} object
+	 * @param tenantDomain a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker} object
+	 */
 	private BatchProcessWorker<NodeRef> createScoreListWorker(Map<String, NodeRef> scoreCriterionNodeRefs, String tenantDomain) {
 		return new BatchProcessWorkerAdaptor<>() {
 			@Override
@@ -319,6 +369,13 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 		};
 	}
 
+	/**
+	 * <p>createScoreCriterion.</p>
+	 *
+	 * @param key a {@link java.lang.String} object
+	 * @param mlText a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef createScoreCriterion(String key, MLText mlText) {
 		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(BeCPGModel.PROP_CHARACT_NAME, mlText);
@@ -329,6 +386,16 @@ public class ScoreListPatch extends AbstractBeCPGPatch {
 
 	}
 
+	/**
+	 * <p>getOrCreateNode.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param path a {@link java.lang.String} object
+	 * @param nodeName a {@link java.lang.String} object
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @param properties a {@link java.util.Map} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getOrCreateNode(NodeService nodeService, String path, String nodeName, QName type, Map<QName, Serializable> properties) {
 		NodeRef folder = BeCPGQueryBuilder.createQuery().selectNodeByPath(path);
 		NodeRef node = nodeService.getChildByName(folder, ContentModel.ASSOC_CONTAINS, nodeName);

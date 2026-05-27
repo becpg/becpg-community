@@ -73,8 +73,10 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
 
 	private PackageManager packageMgr;
 
+	/** Constant <code>commentNotificationPattern</code> */
 	private static final Pattern commentNotificationPattern = Pattern.compile("@[a-zA-Z0-9]([^\\s]+)");
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(CommentActivityListener.class);
 
 	/** {@inheritDoc} */
@@ -115,6 +117,13 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
 		}
 	}
 
+	/**
+	 * <p>sendCommentNotification.</p>
+	 *
+	 * @param comment a {@link java.lang.String} object
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param commentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void sendCommentNotification(String comment, NodeRef entityNodeRef, NodeRef commentNodeRef) {
 
 		if (comment != null && !comment.isBlank()) {
@@ -189,6 +198,12 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
 		}
 	}
 
+	/**
+	 * <p>escapeHtml.</p>
+	 *
+	 * @param htmlContent a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String escapeHtml(String htmlContent) {
 		HtmlCleaner cleaner = new HtmlCleaner(htmlContent);
 
@@ -201,6 +216,13 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
 		return escapeHtml(cleaner.getBodyNode(), null);
 	}
 
+	/**
+	 * <p>escapeHtml.</p>
+	 *
+	 * @param node a {@link org.htmlcleaner.TagNode} object
+	 * @param contentBuilder a {@link java.lang.StringBuilder} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String escapeHtml(TagNode node, StringBuilder contentBuilder) {
 
 		if (contentBuilder == null) {

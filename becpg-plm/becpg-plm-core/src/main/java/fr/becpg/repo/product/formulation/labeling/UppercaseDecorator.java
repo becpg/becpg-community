@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
  */
 public class UppercaseDecorator extends RegexpLabelingDecorator {
 
+	/** Constant <code>UPPERCASE_PATTERN</code> */
 	private static final Pattern UPPERCASE_PATTERN = Pattern.compile("(<\\s*up[^>]*>.*?<\\s*/\\s*up>)");
 
 	/** {@inheritDoc} */

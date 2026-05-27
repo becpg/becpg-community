@@ -36,6 +36,7 @@ import org.springframework.context.ApplicationContextAware;
  */
 public class PLMWorkflowPatch extends AbstractPatch implements ApplicationContextAware
 {
+    /** Constant <code>MSG_DEPLOYED="patch.genericWorkflow.result.deployed"</code> */
     private static final String MSG_DEPLOYED = "patch.genericWorkflow.result.deployed";
     
     private ApplicationContext applicationContext;

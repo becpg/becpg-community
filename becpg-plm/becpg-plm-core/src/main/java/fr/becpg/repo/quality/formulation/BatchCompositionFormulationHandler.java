@@ -150,7 +150,7 @@ public class BatchCompositionFormulationHandler extends AbstractCompositionQtyCa
 	/**
 	 * Copy missing item from template
 	 *
-	 * @param formulatedProduct
+	 * @param formulatedProduct a {@link fr.becpg.repo.quality.data.BatchData} object
 	 */
 	private void copyTemplateDynamicCharactLists(BatchData formulatedProduct) {
 		if ((formulatedProduct.getEntityTpl() != null) && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {

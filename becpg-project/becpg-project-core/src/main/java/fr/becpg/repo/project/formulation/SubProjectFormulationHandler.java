@@ -42,10 +42,20 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 
 	private EntityDictionaryService entityDictionaryService;
 
+	/**
+	 * <p>propsToCopyFromParent.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String propsToCopyFromParent() {
 		return systemConfigurationService.confValue("project.subProject.propsToCopyFromParent");
 	}
 	
+	/**
+	 * <p>propsToCopyToParent.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String propsToCopyToParent() {
 		return systemConfigurationService.confValue("project.subProject.propsToCopyToParent");
 	}

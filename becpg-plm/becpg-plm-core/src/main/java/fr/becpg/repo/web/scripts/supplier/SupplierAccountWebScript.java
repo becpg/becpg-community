@@ -28,11 +28,17 @@ import fr.becpg.repo.supplier.SupplierPortalService;
  */
 public class SupplierAccountWebScript extends AbstractWebScript {
 
+	/** Constant <code>PARAM_ENTITY_NODEREF="nodeRef"</code> */
 	private static final String PARAM_ENTITY_NODEREF = "nodeRef";
+	/** Constant <code>PARAM_EMAIL_ADDRESS="emailAddress"</code> */
 	private static final String PARAM_EMAIL_ADDRESS = "emailAddress";
+	/** Constant <code>PARAM_NOTIFY_SUPPLIER="notifySupplier"</code> */
 	private static final String PARAM_NOTIFY_SUPPLIER = "notifySupplier";
+	/** Constant <code>SUPPLIER_PREFIX="supplier"</code> */
 	private static final String SUPPLIER_PREFIX = "supplier";
+	/** Constant <code>PARAM_FIRST_NAME="firstName"</code> */
 	private static final String PARAM_FIRST_NAME = "firstName";
+	/** Constant <code>PARAM_LAST_NAME="lastName"</code> */
 	private static final String PARAM_LAST_NAME = "lastName";
 
 	NodeService nodeService;

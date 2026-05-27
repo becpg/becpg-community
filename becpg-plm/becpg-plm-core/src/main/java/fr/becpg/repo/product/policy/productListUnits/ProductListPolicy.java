@@ -51,9 +51,12 @@ import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
 public class ProductListPolicy extends AbstractBeCPGPolicy
 		implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnUpdatePropertiesPolicy {
 
+	/** Constant <code>KEY_PRODUCT_LISTITEMS="ProductListPolicy.productListItems"</code> */
 	private static final String KEY_PRODUCT_LISTITEMS = "ProductListPolicy.productListItems";
+	/** Constant <code>KEY_PRODUCTS="ProductListPolicy.products"</code> */
 	private static final String KEY_PRODUCTS = "ProductListPolicy.products";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ProductListPolicy.class);
 
 	private EntityListDAO entityListDAO;
@@ -175,6 +178,11 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 	 *
 	 * Update the productListItem unit when the product unit is modified
 	 */
+	/**
+	 * <p>updateProducts.</p>
+	 *
+	 * @param productNodeRefs a {@link java.util.Set} object
+	 */
 	private void updateProducts(Set<NodeRef> productNodeRefs) {
 
 		if (productNodeRefs != null) {
@@ -268,6 +276,11 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 
 	/*
 	 * Update the productListItem unit when the target assoc is modified
+	 */
+	/**
+	 * <p>updateProductListItems.</p>
+	 *
+	 * @param assocRefs a {@link java.util.Set} object
 	 */
 	private void updateProductListItems(final Set<AssociationRef> assocRefs) {
 
@@ -409,6 +422,12 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 		}
 	}
 
+	/**
+	 * <p>getProductUnit.</p>
+	 *
+	 * @param listNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
+	 */
 	private ProductUnit getProductUnit(NodeRef listNodeRef) {
 
 		NodeRef productNodeRef = entityListDAO.getEntity(listNodeRef);
@@ -419,6 +438,12 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 		return null;
 	}
 
+	/**
+	 * <p>getServingSizeUnit.</p>
+	 *
+	 * @param listNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
+	 */
 	private ProductUnit getServingSizeUnit(NodeRef listNodeRef) {
 
 		NodeRef productNodeRef = entityListDAO.getEntity(listNodeRef);
@@ -429,6 +454,12 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 		return null;
 	}
 	
+	/**
+	 * <p>getNutrientPreparationUnit.</p>
+	 *
+	 * @param listNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
+	 */
 	private ProductUnit getNutrientPreparationUnit(NodeRef listNodeRef) {
 
 		NodeRef productNodeRef = entityListDAO.getEntity(listNodeRef);

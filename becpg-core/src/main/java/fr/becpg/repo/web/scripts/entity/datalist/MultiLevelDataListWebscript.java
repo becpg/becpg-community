@@ -33,9 +33,13 @@ import fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor;
  */
 public class MultiLevelDataListWebscript extends AbstractWebScript {
 
+	/** Constant <code>PARAM_NODEREF="nodeRef"</code> */
 	private static final String PARAM_NODEREF = "nodeRef";
+	/** Constant <code>PARAM_EXPAND="expand"</code> */
 	private static final String PARAM_EXPAND = "expand";
+	/** Constant <code>PARAM_ENTITY_NODEREF="entityNodeRef"</code> */
 	private static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
+	/** Constant <code>PARAM_LIST_TYPE="listType"</code> */
 	private static final String PARAM_LIST_TYPE = "listType";
 
 	private MultiLevelDataListService multiLevelDataListService;
@@ -146,6 +150,13 @@ public class MultiLevelDataListWebscript extends AbstractWebScript {
 		}
 	}
 
+	/**
+	 * <p>getEntityToExpand.</p>
+	 *
+	 * @param mlld a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object
+	 * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getEntityToExpand(MultiLevelListData mlld, NodeRef productNodeRef) {
 
 		NodeRef ret = null;
@@ -168,6 +179,12 @@ public class MultiLevelDataListWebscript extends AbstractWebScript {
 		return ret;
 	}
 
+	/**
+	 * <p>getDepthUserPref.</p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @return a int
+	 */
 	private int getDepthUserPref(DataListFilter dataListFilter) {
 		String username = AuthenticationUtil.getFullyAuthenticatedUser();
 

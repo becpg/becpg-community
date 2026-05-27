@@ -31,6 +31,7 @@ import fr.becpg.repo.variant.filters.VariantFilters;
  */
 public class MeatContentFormulationHandler extends FormulationBaseHandler<ProductData> {
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(MeatContentFormulationHandler.class);
 
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
@@ -162,6 +163,13 @@ public class MeatContentFormulationHandler extends FormulationBaseHandler<Produc
 
 	}
 
+	/**
+	 * <p>getOrCreateMeatData.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param meatType a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.meat.MeatContentData} object
+	 */
 	private MeatContentData getOrCreateMeatData(ProductData formulatedProduct, String meatType) {
 		if (!formulatedProduct.getMeatContents().containsKey(meatType)) {
 			formulatedProduct.getMeatContents().put(meatType, new MeatContentData(meatType));

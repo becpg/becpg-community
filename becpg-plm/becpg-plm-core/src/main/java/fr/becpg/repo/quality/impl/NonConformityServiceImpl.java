@@ -40,6 +40,7 @@ import fr.becpg.repo.quality.NonConformityService;
  */
 public class NonConformityServiceImpl implements NonConformityService {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(NonConformityServiceImpl.class);
 
 	private RepoService repoService;

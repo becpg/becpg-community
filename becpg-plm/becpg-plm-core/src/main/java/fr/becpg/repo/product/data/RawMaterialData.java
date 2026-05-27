@@ -31,6 +31,7 @@ import fr.becpg.repo.repository.annotation.MultiLevelLeaf;
 @AlfCacheable
 public class RawMaterialData extends ProductData {
 
+	/** Constant <code>serialVersionUID=-2176815295417841030L</code> */
 	private static final long serialVersionUID = -2176815295417841030L;
 
 	/**

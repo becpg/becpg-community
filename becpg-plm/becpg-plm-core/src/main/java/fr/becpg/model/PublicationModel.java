@@ -27,6 +27,9 @@ import org.alfresco.service.namespace.QName;
  */
 public class PublicationModel {
 
+	/**
+	 * <p>Constructor for PublicationModel.</p>
+	 */
 	private PublicationModel() {
 		//Constants only
 	}

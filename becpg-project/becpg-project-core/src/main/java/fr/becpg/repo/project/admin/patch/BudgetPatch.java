@@ -34,7 +34,9 @@ import fr.becpg.repo.admin.patch.AbstractBeCPGPatch;
  */
 public class BudgetPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(BudgetPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.projet.budgetPatch.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.projet.budgetPatch.result";
 
 	/** Constant <code>PROP_TL_ACTUAL_INVOICE</code> */

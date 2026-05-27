@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
@@ -53,7 +54,6 @@ import fr.becpg.repo.jscript.BeCPGStateHelper.ActionStateContext;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.util.MutexFactory;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * <p>
@@ -66,8 +66,10 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class FormulationServiceImpl<T extends FormulatedEntity> implements FormulationService<T>, FormulationPlugin {
 
+	/** Constant <code>MESSAGE_FORMULATE_FAILURE_LOOP="message.formulate.failure.loop"</code> */
 	private static final String MESSAGE_FORMULATE_FAILURE_LOOP = "message.formulate.failure.loop";
 
+	/** Constant <code>MESSAGE_FORMULATE_FAILURE="message.formulate.failure"</code> */
 	private static final String MESSAGE_FORMULATE_FAILURE = "message.formulate.failure";
 
 	private AlfrescoRepository<T> alfrescoRepository;
@@ -78,6 +80,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 
 	private final Map<Class<T>, Map<String, FormulationChain<T>>> formulationChains = new HashMap<>();
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(FormulationServiceImpl.class);
 
 
@@ -245,6 +248,13 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 		}
 	}
 
+	/**
+	 * <p>formulateInternal.</p>
+	 *
+	 * @param repositoryEntity a T object
+	 * @param chainId a {@link java.lang.String} object
+	 * @return a T object
+	 */
 	private T formulateInternal(T repositoryEntity, String chainId) {
 		
 		FormulationChain<T> chain = getChain(repositoryEntity.getClass(), chainId);
@@ -341,6 +351,13 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 		return false;
 	}
 
+	/**
+	 * <p>getChain.</p>
+	 *
+	 * @param clazz a {@link java.lang.Class} object
+	 * @param chainId a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.formulation.FormulationChain} object
+	 */
 	private FormulationChain<T> getChain(Class<?> clazz, String chainId) {
 		Map<String, FormulationChain<T>> claims = formulationChains.get(clazz);
 		if (claims != null) {

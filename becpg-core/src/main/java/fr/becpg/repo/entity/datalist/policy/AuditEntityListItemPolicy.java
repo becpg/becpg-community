@@ -53,9 +53,12 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 
 	/** Constant <code>UPDATED_LISTS="AuditEntityListItemPolicy.UpdatedLists"</code> */
 	public static final String UPDATED_LISTS = "AuditEntityListItemPolicy.UpdatedLists";
+	/** Constant <code>IGNORED_LISTS="AuditEntityListItemPolicy.IgnoredLists"</code> */
 	private static final String IGNORED_LISTS = "AuditEntityListItemPolicy.IgnoredLists";
+	/** Constant <code>CATALOG_ONLY="AuditEntityListItemPolicy.CatalogOnly"</code> */
 	private static final String CATALOG_ONLY = "AuditEntityListItemPolicy.CatalogOnly";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AuditEntityListItemPolicy.class);
 	
 	private AuthenticationService authenticationService;
@@ -157,6 +160,12 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 		}
 	}
 
+	/**
+	 * <p>copyComments.</p>
+	 *
+	 * @param sourceNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param destinationRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void copyComments(NodeRef sourceNodeRef, NodeRef destinationRef) {
 		PagingResults<NodeRef> comments = commentService.listComments(sourceNodeRef, new PagingRequest(5000, null));
 		if (comments != null) {
@@ -210,6 +219,11 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 		queueListNodeRef(nodeService.getPrimaryParent(assocRef.getSourceRef()).getParentRef());
 	}
 
+	/**
+	 * <p>queueListNodeRef.</p>
+	 *
+	 * @param listNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void queueListNodeRef(NodeRef listNodeRef) {
 		if (policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ENTITYLIST_ITEM) && policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE)) {
 			queueNode(listNodeRef);
@@ -256,6 +270,13 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 		return true;
 	}
 
+	/**
+	 * <p>updateEntityAuditedFields.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param listNodeRefs a {@link java.util.Set} object
+	 * @param catalogOnly a boolean
+	 */
 	private void updateEntityAuditedFields(NodeRef entityNodeRef, Set<NodeRef> listNodeRefs, boolean catalogOnly) {
 		if ((entityNodeRef != null) && !isVersionNode(entityNodeRef) && isNotLocked(entityNodeRef)) {
 			

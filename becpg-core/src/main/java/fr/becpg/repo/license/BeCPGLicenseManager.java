@@ -37,8 +37,10 @@ import fr.becpg.repo.helper.RepoService;
 @DependsOn
 public class BeCPGLicenseManager {
 
+	/** Constant <code>INVALID_LICENSE_FILE="Invalid license file"</code> */
 	private static final String INVALID_LICENSE_FILE = "Invalid license file";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(BeCPGLicenseManager.class);
 
 	@Autowired
@@ -77,6 +79,11 @@ public class BeCPGLicenseManager {
 		return getLicense().allowedConcurrentRead;
 	}
 
+	/**
+	 * <p>getLicense.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.license.BeCPGLicense} object
+	 */
 	private BeCPGLicense getLicense() {
 		return beCPGCacheService.getFromCache(BeCPGLicenseManager.class.getName(), "license", () -> {
 			BeCPGLicense ret = new BeCPGLicense();
@@ -183,6 +190,11 @@ public class BeCPGLicenseManager {
 	}
 
 
+	/**
+	 * <p>namedLicenseExceeded.</p>
+	 *
+	 * @return a boolean
+	 */
 	private boolean namedLicenseExceeded() {
 		Set<String> namedReadList = AuthorityHelper.extractPeople(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadNamed.toString());
 		namedReadList.removeIf(this::isSpecialLicenseUser);
@@ -234,6 +246,11 @@ public class BeCPGLicenseManager {
 		return java.util.Base64.getEncoder().encodeToString(key.getBytes());
 	}
 
+	/**
+	 * <p>getLicenseFile.</p>
+	 *
+	 * @return a {@link org.json.JSONObject} object
+	 */
 	private JSONObject getLicenseFile() {
 		try {
 
@@ -268,6 +285,11 @@ public class BeCPGLicenseManager {
 	
 	private final Map<SystemGroup, Set<String>> concurrentUsersAllowedMap = new ConcurrentHashMap<>();
 	
+	/**
+	 * <p>isConcurrentUserAllowed.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean isConcurrentUserAllowed() {
 		if (isSpecialLicenceUser()) {
 			return true;

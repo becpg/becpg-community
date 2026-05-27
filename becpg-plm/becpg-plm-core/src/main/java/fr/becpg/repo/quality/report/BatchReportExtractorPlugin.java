@@ -81,6 +81,14 @@ public class BatchReportExtractorPlugin extends ProductReportExtractorPlugin {
 		loadDataLists(entityNodeRef, dataListsElt, context, true);
 	}
 
+	/**
+	 * <p>loadDataLists.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param dataListsElt a {@link org.dom4j.Element} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 * @param isExtractedProduct a boolean
+	 */
 	private void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, DefaultExtractorContext context, boolean isExtractedProduct) {
 		BatchData batchData = (BatchData) alfrescoRepository.findOne(entityNodeRef);
 
@@ -126,6 +134,13 @@ public class BatchReportExtractorPlugin extends ProductReportExtractorPlugin {
 
 	}
 
+	/**
+	 * <p>loadCompoList.</p>
+	 *
+	 * @param batchData a {@link fr.becpg.repo.quality.data.BatchData} object
+	 * @param dataListsElt a {@link org.dom4j.Element} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
 	private void loadCompoList(BatchData batchData, Element dataListsElt, DefaultExtractorContext context) {
 		// compoList
 		if (batchData.hasCompoListEl()) {

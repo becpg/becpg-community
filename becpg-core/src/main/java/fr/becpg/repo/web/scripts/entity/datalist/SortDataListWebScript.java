@@ -42,19 +42,25 @@ import fr.becpg.repo.entity.datalist.DataListSortService;
  */
 public class SortDataListWebScript extends DeclarativeWebScript {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(SortDataListWebScript.class);
 
+	/** Constant <code>PARAM_STORE_TYPE="store_type"</code> */
 	private static final String PARAM_STORE_TYPE = "store_type";
 
+	/** Constant <code>PARAM_STORE_ID="store_id"</code> */
 	private static final String PARAM_STORE_ID = "store_id";
 
 	/** Constant <code>PARAM_ID="id"</code> */
 	protected static final String PARAM_ID = "id";
 
+	/** Constant <code>PARAM_SELECTED_NODEREFS="selectedNodeRefs"</code> */
 	private static final String PARAM_SELECTED_NODEREFS = "selectedNodeRefs";
 
+	/** Constant <code>PARAM_DIR="dir"</code> */
 	private static final String PARAM_DIR = "dir";
 	
+	/** Constant <code>SORT_DIR_UP="up"</code> */
 	private static final String SORT_DIR_UP = "up";
 
 	private DataListSortService dataListSortService;

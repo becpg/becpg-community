@@ -26,6 +26,7 @@ public class CodePolicy extends AbstractBeCPGPolicy implements NodeServicePolici
 
 
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(CodePolicy.class);
 
 	private AutoNumService autoNumService;

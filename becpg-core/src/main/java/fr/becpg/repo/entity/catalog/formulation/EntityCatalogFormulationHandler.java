@@ -18,6 +18,7 @@ import fr.becpg.repo.helper.LargeTextHelper;
  */
 public class EntityCatalogFormulationHandler extends FormulationBaseHandler<CataloguableEntity> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityCatalogFormulationHandler.class);
 
 	/** Constant <code>MESSAGE_NON_VALIDATED_STATE="message.formulate.nonValidatedState"</code> */

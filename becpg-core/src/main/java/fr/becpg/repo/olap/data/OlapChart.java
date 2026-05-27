@@ -54,6 +54,7 @@ public class OlapChart {
 	private String type;
 	private String xml;
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(OlapChart.class);
 
 	/**

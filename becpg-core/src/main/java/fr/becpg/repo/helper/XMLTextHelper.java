@@ -8,6 +8,9 @@ package fr.becpg.repo.helper;
  */
 public class XMLTextHelper {
 
+	/**
+	 * <p>Constructor for XMLTextHelper.</p>
+	 */
 	private XMLTextHelper() {
 		//Singleton
 	}

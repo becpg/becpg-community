@@ -39,7 +39,9 @@ import fr.becpg.repo.report.entity.EntityReportService;
  */
 public class ReportDataSourceWebscript extends AbstractWebScript {
 
+	/** Constant <code>PARAM_NODEREF="nodeRef"</code> */
 	private static final String PARAM_NODEREF = "nodeRef";
+	/** Constant <code>PARAM_LOCALE="locale"</code> */
 	private static final String PARAM_LOCALE = "locale";
 
 	EntityReportService entityReportService;

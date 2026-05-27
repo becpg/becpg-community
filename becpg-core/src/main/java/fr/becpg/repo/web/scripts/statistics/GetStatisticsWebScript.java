@@ -23,11 +23,17 @@ import fr.becpg.repo.audit.service.BeCPGAuditService;
  */
 public class GetStatisticsWebScript extends AbstractWebScript {
 
+	/** Constant <code>PARAM_TYPE="type"</code> */
 	private static final String PARAM_TYPE = "type";
+	/** Constant <code>PARAM_SORT_BY="sortBy"</code> */
 	private static final String PARAM_SORT_BY = "sortBy";
+	/** Constant <code>PARAM_FILTER="filter"</code> */
 	private static final String PARAM_FILTER = "filter";
+	/** Constant <code>PARAM_MAX_RESULTS="maxResults"</code> */
 	private static final String PARAM_MAX_RESULTS = "maxResults";
+	/** Constant <code>PARAM_ASCENDING_ORDER="asc"</code> */
 	private static final String PARAM_ASCENDING_ORDER = "asc";
+	/** Constant <code>PARAM_DB_ASCENDING_ORDER="dbAsc"</code> */
 	private static final String PARAM_DB_ASCENDING_ORDER = "dbAsc";
 	
 	private BeCPGAuditService beCPGAuditService;
@@ -84,6 +90,12 @@ public class GetStatisticsWebScript extends AbstractWebScript {
 		
 	}
 	
+	/**
+	 * <p>getAuditType.</p>
+	 *
+	 * @param reqType a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.audit.model.AuditType} object
+	 */
 	private AuditType getAuditType(String reqType) {
 		AuditType[] auditTypes = AuditType.class.getEnumConstants();
 		for (AuditType auditType : auditTypes) {

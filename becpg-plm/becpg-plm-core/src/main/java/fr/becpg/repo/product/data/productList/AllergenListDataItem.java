@@ -41,6 +41,7 @@ import fr.becpg.repo.variant.model.VariantDataItem;
 public class AllergenListDataItem extends AbstractManualVariantListDataItem
 		implements SimpleCharactDataItem, AspectAwareDataItem, ControlableListDataItem, RegulatoryEntityItem {
 
+	/** Constant <code>serialVersionUID=-6746076643301742367L</code> */
 	private static final long serialVersionUID = -6746076643301742367L;
 	private Double qtyPerc;
 	private Boolean voluntary = null;

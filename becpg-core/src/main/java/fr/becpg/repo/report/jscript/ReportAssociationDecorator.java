@@ -43,11 +43,13 @@ import fr.becpg.repo.report.entity.EntityReportService;
  * @version $Id: $Id
  */
 public class ReportAssociationDecorator extends fr.becpg.repo.jscript.app.BaseAssociationDecorator {
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ReportAssociationDecorator.class);
 
 
 	private EntityReportService entityReportService;
 
+	/** Constant <code>CONTENT_DOWNLOAD_API_URL="becpg/report/node/content/{0}/{1}/{2}/{"{trunked}</code> */
 	private final static String CONTENT_DOWNLOAD_API_URL = "becpg/report/node/content/{0}/{1}/{2}/{3}?entityNodeRef={4}";
 
 	/**

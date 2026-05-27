@@ -16,6 +16,7 @@ import fr.becpg.repo.RepoConsts;
  */
 public class InitRepoNotificationPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.InitRepoNotificationPatc"{trunked}</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.InitRepoNotificationPatch.result";
 
 	/** {@inheritDoc} */

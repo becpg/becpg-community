@@ -33,6 +33,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
  */
 public class PDFScriptHelper extends BaseScopableProcessorExtension {
 
+	/** Constant <code>FILE_MIMETYPE="application/pdf"</code> */
 	private static final String FILE_MIMETYPE = "application/pdf";
 
 	private NodeService nodeService;
@@ -66,6 +67,7 @@ public class PDFScriptHelper extends BaseScopableProcessorExtension {
 		this.dictionaryService = dictionaryService;
 	}
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(PDFScriptHelper.class);
 
 	/**
@@ -110,6 +112,12 @@ public class PDFScriptHelper extends BaseScopableProcessorExtension {
 		return targetPDFNode;
 	}
 
+	/**
+	 * <p>saveMergedPDF.</p>
+	 *
+	 * @param targetPDFNode a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @param mergedPDFFile a {@link java.io.File} object
+	 */
 	private void saveMergedPDF(ScriptNode targetPDFNode, File mergedPDFFile) {
 		ContentReader targetReader = getReader(targetPDFNode.getNodeRef());
 		ContentWriter writer = contentService.getWriter(targetPDFNode.getNodeRef(), ContentModel.PROP_CONTENT, true);
@@ -125,6 +133,12 @@ public class PDFScriptHelper extends BaseScopableProcessorExtension {
 		}
 	}
 
+	/**
+	 * <p>getReader.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.ContentReader} object
+	 */
 	private ContentReader getReader(NodeRef nodeRef) {
 		// first, make sure the node exists
 		if (!nodeService.exists(nodeRef)) {

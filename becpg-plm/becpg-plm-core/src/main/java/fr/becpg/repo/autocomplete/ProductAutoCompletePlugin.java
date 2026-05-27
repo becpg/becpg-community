@@ -76,15 +76,23 @@ import fr.becpg.repo.system.SystemConfigurationService;
 @BeCPGPublicApi
 public class ProductAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
+	/** Constant <code>SOURCE_TYPE_PRODUCT="product"</code> */
 	private static final String SOURCE_TYPE_PRODUCT = "product";
 
+	/** Constant <code>SOURCE_TYPE_COLLECTION_PRODUCT="collectionproduct"</code> */
 	private static final String SOURCE_TYPE_COLLECTION_PRODUCT = "collectionproduct";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ProductAutoCompletePlugin.class);
 
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
 	
+	/**
+	 * <p>productSearchTemplate.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String productSearchTemplate() {
 		return systemConfigurationService.confValue("beCPG.product.searchTemplate");
 	}
@@ -121,6 +129,18 @@ public class ProductAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 		return null;
 	}
 
+	/**
+	 * <p>suggestByDataListAssoc.</p>
+	 *
+	 * @param query a {@link java.lang.String} object
+	 * @param pageNum a {@link java.lang.Integer} object
+	 * @param pageSize a {@link java.lang.Integer} object
+	 * @param arrClassNames an array of {@link java.lang.String} objects
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param listQName a {@link org.alfresco.service.namespace.QName} object
+	 * @param assocQName a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link fr.becpg.repo.autocomplete.AutoCompletePage} object
+	 */
 	private AutoCompletePage suggestByDataListAssoc(String query, Integer pageNum, Integer pageSize, String[] arrClassNames, NodeRef entityNodeRef,
 			QName listQName, QName assocQName) {
 
@@ -152,6 +172,13 @@ public class ProductAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 		return null;
 	}
 
+	/**
+	 * <p>accept.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @param arrClassNames an array of {@link java.lang.String} objects
+	 * @return a boolean
+	 */
 	private boolean accept(QName type, String[] arrClassNames) {
 		if (arrClassNames != null && arrClassNames.length > 0) {
 
@@ -177,6 +204,16 @@ public class ProductAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 		return true;
 	}
 
+	/**
+	 * <p>suggestProducts.</p>
+	 *
+	 * @param query a {@link java.lang.String} object
+	 * @param pageNum a {@link java.lang.Integer} object
+	 * @param pageSize a {@link java.lang.Integer} object
+	 * @param arrClassNames an array of {@link java.lang.String} objects
+	 * @param props a {@link java.util.Map} object
+	 * @return a {@link fr.becpg.repo.autocomplete.AutoCompletePage} object
+	 */
 	private AutoCompletePage suggestProducts(String query, Integer pageNum, Integer pageSize, String[] arrClassNames,
 			Map<String, Serializable> props) {
 		if (logger.isDebugEnabled()) {

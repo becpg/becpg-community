@@ -25,10 +25,13 @@ import fr.becpg.repo.search.data.SavedSearch;
  */
 public class GetSavedSearchWebScript extends AbstractSearchWebScript {
 
+	/** Constant <code>PARAM_SITEID="site"</code> */
 	private static final String PARAM_SITEID = "site";
 
+	/** Constant <code>PARAM_SEARCH_TYPE="type"</code> */
 	private static final String PARAM_SEARCH_TYPE = "type";
 
+	/** Constant <code>PARAM_NODEREF="nodeRef"</code> */
 	private static final String PARAM_NODEREF = "nodeRef";
 
 	private SavedSearchService savedSearchService;

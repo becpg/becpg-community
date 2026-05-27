@@ -127,8 +127,10 @@ import fr.becpg.repo.system.SystemConfigurationService;
 @Service("ecoService")
 public class ECOServiceImpl implements ECOService {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ECOServiceImpl.class);
 	
+	/** Constant <code>ACTION_URL_PREFIX="page/entity-data-lists?list=changeUnitL"{trunked}</code> */
 	private static final String ACTION_URL_PREFIX = "page/entity-data-lists?list=changeUnitList&nodeRef=%s";
 
 	@Autowired
@@ -193,6 +195,16 @@ public class ECOServiceImpl implements ECOService {
 		}
 	}
 
+	/**
+	 * <p>doRunInBatch.</p>
+	 *
+	 * @param ecoNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param state a {@link fr.becpg.repo.ecm.ECOState} object
+	 * @param deleteOnApply a boolean
+	 * @param calculateWUsed a boolean
+	 * @param notifyByMail a boolean
+	 * @return a {@link fr.becpg.repo.batch.BatchInfo} object
+	 */
 	private BatchInfo doRunInBatch(NodeRef ecoNodeRef, final ECOState state, boolean deleteOnApply, boolean calculateWUsed, boolean notifyByMail) {
 
 		final ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
@@ -252,6 +264,12 @@ public class ECOServiceImpl implements ECOService {
 
 	}
 
+	/**
+	 * <p>createCopyPropertiesStep.</p>
+	 *
+	 * @param ecoData a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 * @return a {@link fr.becpg.repo.batch.BatchStep} object
+	 */
 	private BatchStep<Object> createCopyPropertiesStep(ChangeOrderData ecoData) {
 		BatchStep<Object> batchStep = new BatchStep<>();
 
@@ -297,6 +315,14 @@ public class ECOServiceImpl implements ECOService {
 		return batchStep;
 	}
 
+	/**
+	 * <p>createAddChangeOrderAspectStep.</p>
+	 *
+	 * @param batchInfo a {@link fr.becpg.repo.batch.BatchInfo} object
+	 * @param ecoData a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 * @param entries a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.batch.BatchStep} object
+	 */
 	private BatchStep<Object> createAddChangeOrderAspectStep(BatchInfo batchInfo, ChangeOrderData ecoData, List<NodeRef> entries) {
 		BatchStep<Object> batchStep = new BatchStep<>();
 
@@ -345,6 +371,13 @@ public class ECOServiceImpl implements ECOService {
 		return batchStep;
 	}
 
+	/**
+	 * <p>createApplyECOStep.</p>
+	 *
+	 * @param ecoData a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 * @param deleteOnApply a boolean
+	 * @return a {@link fr.becpg.repo.batch.BatchStep} object
+	 */
 	private BatchStep<Object> createApplyECOStep(ChangeOrderData ecoData, boolean deleteOnApply) {
 
 		BatchStep<Object> applyStep = new BatchStep<>();
@@ -401,6 +434,12 @@ public class ECOServiceImpl implements ECOService {
 		return applyStep;
 	}
 
+	/**
+	 * <p>createRemoveChangeOrderAspectStep.</p>
+	 *
+	 * @param entries a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.batch.BatchStep} object
+	 */
 	private BatchStep<Object> createRemoveChangeOrderAspectStep(List<NodeRef> entries) {
 		BatchStep<Object> batchStep = new BatchStep<>();
 
@@ -436,6 +475,12 @@ public class ECOServiceImpl implements ECOService {
 		return batchStep;
 	}
 
+	/**
+	 * <p>createSimulateECOBatchStep.</p>
+	 *
+	 * @param ecoData a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 * @return a {@link fr.becpg.repo.batch.BatchStep} object
+	 */
 	private BatchStep<Object> createSimulateECOBatchStep(final ChangeOrderData ecoData) {
 		BatchStep<Object> batchStep = new BatchStep<>();
 		
@@ -447,6 +492,14 @@ public class ECOServiceImpl implements ECOService {
 		return batchStep;
 	}
 
+	/**
+	 * <p>createSimulationECOBatchAdapter.</p>
+	 *
+	 * @param ecoData a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 * @param batchStep a {@link fr.becpg.repo.batch.BatchStep} object
+	 * @param processWorker a {@link fr.becpg.repo.ecm.impl.ECOServiceImpl.SimulateECOProcessWorker} object
+	 * @return a {@link fr.becpg.repo.batch.BatchStepAdapter} object
+	 */
 	private BatchStepAdapter createSimulationECOBatchAdapter(final ChangeOrderData ecoData, BatchStep<Object> batchStep,
 			SimulateECOProcessWorker processWorker) {
 		return new BatchStepAdapter() {
@@ -487,6 +540,13 @@ public class ECOServiceImpl implements ECOService {
 		};
 	}
 
+	/**
+	 * <p>provideImpactedProducts.</p>
+	 *
+	 * @param composite a {@link fr.becpg.repo.data.hierarchicalList.Composite} object
+	 * @param includeRoot a boolean
+	 * @return a {@link java.util.Set} object
+	 */
 	private Set<NodeRef> provideImpactedProducts(Composite<WUsedListDataItem> composite, boolean includeRoot) {
 		Set<NodeRef> impactedProducts = new HashSet<>();
 
@@ -502,6 +562,12 @@ public class ECOServiceImpl implements ECOService {
 		return impactedProducts;
 	}
 
+	/**
+	 * <p>provideApplyECOEntries.</p>
+	 *
+	 * @param ecoData a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<Composite<WUsedListDataItem>> provideApplyECOEntries(final ChangeOrderData ecoData) {
 		// Clear changeUnitList
 		List<ChangeUnitDataItem> toRemove = new ArrayList<>();
@@ -529,6 +595,12 @@ public class ECOServiceImpl implements ECOService {
 		return findAllImpactedChildrenComposites(composite, ecoData);
 	}
 
+	/**
+	 * <p>provideSimulateECOEntries.</p>
+	 *
+	 * @param ecoData a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 * @return a {@link java.util.List} object
+	 */
 	@SuppressWarnings("unchecked")
 	private List<Object> provideSimulateECOEntries(final ChangeOrderData ecoData) {
 		// Clear changeUnitList
@@ -609,6 +681,13 @@ public class ECOServiceImpl implements ECOService {
 
 	}
 
+	/**
+	 * <p>hasIntersection.</p>
+	 *
+	 * @param firstList a {@link java.util.List} object
+	 * @param secondList a {@link java.util.List} object
+	 * @return a boolean
+	 */
 	private boolean hasIntersection(List<?> firstList, List<?> secondList) {
 
 		for (Object firstItem : firstList) {
@@ -689,6 +768,16 @@ public class ECOServiceImpl implements ECOService {
 		}
 	}
 
+	/**
+	 * <p>applyECO.</p>
+	 *
+	 * @param ecoData a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 * @param component a {@link fr.becpg.repo.data.hierarchicalList.Composite} object
+	 * @param isSimulation a boolean
+	 * @param sort a int
+	 * @param errors a {@link java.util.Set} object
+	 * @return a int
+	 */
 	private int applyECO(ChangeOrderData ecoData, Composite<WUsedListDataItem> component, boolean isSimulation, int sort, Set<String> errors) {
 		WUsedListDataItem wusedData = component.getData();
 		boolean isMergeItem = ChangeOrderType.Merge.equals(ecoData.getEcoType()) && (wusedData.getDepthLevel() == 1);
@@ -836,6 +925,11 @@ public class ECOServiceImpl implements ECOService {
 		return sort;
 	}
 
+	/**
+	 * <p>checkMissingWUsed.</p>
+	 *
+	 * @param composite a {@link fr.becpg.repo.data.hierarchicalList.Composite} object
+	 */
 	private void checkMissingWUsed(Composite<WUsedListDataItem> composite) {
 
 		boolean childChecked = false;
@@ -855,6 +949,14 @@ public class ECOServiceImpl implements ECOService {
 
 	}
 
+	/**
+	 * <p>createCalculateWUsedListBatchStep.</p>
+	 *
+	 * @param ecoData a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 * @param isWUsedImpacted a boolean
+	 * @param applyToAll a boolean
+	 * @return a {@link fr.becpg.repo.batch.BatchStep} object
+	 */
 	private BatchStep<Object> createCalculateWUsedListBatchStep(ChangeOrderData ecoData, boolean isWUsedImpacted, boolean applyToAll) {
 		BatchStep<Object> batchStep = new BatchStep<>();
 
@@ -953,6 +1055,13 @@ public class ECOServiceImpl implements ECOService {
 		return null;
 	}
 
+	/**
+	 * <p>internalCalculateWUsedList.</p>
+	 *
+	 * @param ecoData a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 * @param isWUsedImpacted a boolean
+	 * @param applyToAll a boolean
+	 */
 	private void internalCalculateWUsedList(ChangeOrderData ecoData, boolean isWUsedImpacted, boolean applyToAll) {
 		logger.debug("calculateWUsedList");
 
@@ -1019,6 +1128,12 @@ public class ECOServiceImpl implements ECOService {
 
 	}
 
+	/**
+	 * <p>getWUsedStates.</p>
+	 *
+	 * @param ecoData a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<String> getWUsedStates(ChangeOrderData ecoData) {
 		if (ChangeOrderType.ImpactWUsed.equals(ecoData.getEcoType())) {
 			return Arrays.stream(impactWUsedStates.split(",")).toList();
@@ -1026,6 +1141,13 @@ public class ECOServiceImpl implements ECOService {
 		return List.of(SystemState.Simulation.toString(), SystemState.ToValidate.toString(), SystemState.Valid.toString());
 	}
 
+	/**
+	 * <p>getSourceItems.</p>
+	 *
+	 * @param ecoData a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 * @param replacementListDataItem a {@link fr.becpg.repo.ecm.data.dataList.ReplacementListDataItem} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> getSourceItems(ChangeOrderData ecoData, ReplacementListDataItem replacementListDataItem) {
 		List<NodeRef> ret = new ArrayList<>();
 		if (ChangeOrderType.Merge.equals(ecoData.getEcoType())) {
@@ -1039,10 +1161,29 @@ public class ECOServiceImpl implements ECOService {
 	}
 
 	// Keep only common assocs
+	/**
+	 * <p>evaluateWUsedAssociations.</p>
+	 *
+	 * @param sourceList a {@link java.util.List} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<QName> evaluateWUsedAssociations(List<NodeRef> sourceList) {
 		return wUsedAssociationResolver.evaluateWUsedAssociations(sourceList);
 	}
 
+	/**
+	 * <p>calculateWUsedList.</p>
+	 *
+	 * @param ecoData a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 * @param wUsedData a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object
+	 * @param dataListQName a {@link org.alfresco.service.namespace.QName} object
+	 * @param parent a {@link fr.becpg.repo.ecm.data.dataList.WUsedListDataItem} object
+	 * @param isWUsedImpacted a boolean
+	 * @param sort a int
+	 * @param targetItem a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param applyToAll a boolean
+	 * @return a int
+	 */
 	private int calculateWUsedList(ChangeOrderData ecoData, MultiLevelListData wUsedData, QName dataListQName, WUsedListDataItem parent,
 			boolean isWUsedImpacted, int sort, NodeRef targetItem, boolean applyToAll) {
 
@@ -1095,10 +1236,22 @@ public class ECOServiceImpl implements ECOService {
 		return sort;
 	}
 
+	/**
+	 * <p>maxEcoWUsedSize.</p>
+	 *
+	 * @return a int
+	 */
 	private int maxEcoWUsedSize() {
 		return Integer.parseInt(systemConfigurationService.confValue("beCPG.eco.max.wused.size"));
 	}
 
+	/**
+	 * <p>getOrCreateChangeUnitDataItem.</p>
+	 *
+	 * @param ecoData a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 * @param data a {@link fr.becpg.repo.ecm.data.dataList.WUsedListDataItem} object
+	 * @return a {@link fr.becpg.repo.ecm.data.dataList.ChangeUnitDataItem} object
+	 */
 	private ChangeUnitDataItem getOrCreateChangeUnitDataItem(ChangeOrderData ecoData, WUsedListDataItem data) {
 
 		if ((data.getSourceItems() != null) && !data.getSourceItems().isEmpty()) {
@@ -1142,6 +1295,13 @@ public class ECOServiceImpl implements ECOService {
 
 	}
 
+	/**
+	 * <p>findAllImpactedChildrenComposites.</p>
+	 *
+	 * @param composite a {@link fr.becpg.repo.data.hierarchicalList.Composite} object
+	 * @param ecoData a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<Composite<WUsedListDataItem>> findAllImpactedChildrenComposites(Composite<WUsedListDataItem> composite,
 			final ChangeOrderData ecoData) {
 
@@ -1168,6 +1328,13 @@ public class ECOServiceImpl implements ECOService {
 		
 	}
 
+	/**
+	 * <p>shouldSkipCurrentBranch.</p>
+	 *
+	 * @param ecoData a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 * @param changeUnitDataItem a {@link fr.becpg.repo.ecm.data.dataList.ChangeUnitDataItem} object
+	 * @return a boolean
+	 */
 	private boolean shouldSkipCurrentBranch(ChangeOrderData ecoData, ChangeUnitDataItem changeUnitDataItem) {
 
 		boolean skip = false;
@@ -1186,6 +1353,12 @@ public class ECOServiceImpl implements ECOService {
 		return skip;
 	}
 
+	/**
+	 * <p>applyLabelingReplacements.</p>
+	 *
+	 * @param ecoData a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 * @param product a {@link fr.becpg.repo.product.data.ProductData} object
+	 */
 	private void applyLabelingReplacements(ChangeOrderData ecoData, ProductData product) {
 		if ((product.getLabelingListView() != null) && (product.getLabelingListView().getLabelingRuleList() != null)) {
 			for (LabelingRuleListDataItem labelingRuleListDataItem : product.getLabelingListView().getLabelingRuleList()) {
@@ -1203,6 +1376,11 @@ public class ECOServiceImpl implements ECOService {
 		}
 	}
 
+	/**
+	 * <p>merge.</p>
+	 *
+	 * @param ecoData a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 */
 	private void merge(ChangeOrderData ecoData) {
 		for (ReplacementListDataItem replacementListDataItem : ecoData.getReplacementList()) {
 			if ((replacementListDataItem.getSourceItems() != null) && (replacementListDataItem.getTargetItem() != null)
@@ -1233,6 +1411,14 @@ public class ECOServiceImpl implements ECOService {
 		}
 	}
 
+	/**
+	 * <p>applyToList.</p>
+	 *
+	 * @param ecoData a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param items a {@link java.util.List} object
+	 * @param <T> a T class
+	 */
 	private <T extends CompositionDataItem> void applyToList(ChangeOrderData ecoData, ProductData productData, List<T> items) {
 
 		Map<T, WUsedListDataItem> itemToWUsedData = new HashMap<>();
@@ -1324,6 +1510,16 @@ public class ECOServiceImpl implements ECOService {
 		
 	}
 
+	/**
+	 * <p>checkForItemsToDelete.</p>
+	 *
+	 * @param ecoData a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 * @param items a {@link java.util.List} object
+	 * @param itemToWUsedData a {@link java.util.Map} object
+	 * @param replacement a {@link fr.becpg.repo.ecm.data.dataList.ReplacementListDataItem} object
+	 * @param toRemoveItems a {@link java.util.Set} object
+	 * @param <T> a T class
+	 */
 	private <T extends CompositionDataItem> void checkForItemsToDelete(ChangeOrderData ecoData, List<T> items, 
 			Map<T, WUsedListDataItem> itemToWUsedData, ReplacementListDataItem replacement, Set<T> toRemoveItems) {
 		List<NodeRef> sourceItems = getSourceItems(ecoData, replacement);
@@ -1372,6 +1568,13 @@ public class ECOServiceImpl implements ECOService {
 		}
 	}
 	
+	/**
+	 * <p>calculateUnitFactor.</p>
+	 *
+	 * @param unit1 a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
+	 * @param unit2 a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double calculateUnitFactor(ProductUnit unit1, ProductUnit unit2) {
 		if (unit1.equals(unit2)) {
 			return 1d;
@@ -1384,6 +1587,15 @@ public class ECOServiceImpl implements ECOService {
 		return null;
 	}
 	
+	/**
+	 * <p>getQtySumCompo.</p>
+	 *
+	 * @param sources a {@link java.util.List} object
+	 * @param wUsed a {@link fr.becpg.repo.ecm.data.dataList.WUsedListDataItem} object
+	 * @param target a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param currentUnit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
+	 * @return a {@link org.alfresco.util.Pair} object
+	 */
 	private Pair<Double, ProductUnit> getQtySumCompo(List<NodeRef> sources, WUsedListDataItem wUsed, NodeRef target, ProductUnit currentUnit) {
 	    double qty = 0;
 	    double densityFactor = 1;
@@ -1411,6 +1623,15 @@ public class ECOServiceImpl implements ECOService {
 	    return new Pair<>(qty * densityFactor, targetUnit);
 	}
 	
+	/**
+	 * <p>getQtySumPackaging.</p>
+	 *
+	 * @param sources a {@link java.util.List} object
+	 * @param wUsed a {@link fr.becpg.repo.ecm.data.dataList.WUsedListDataItem} object
+	 * @param target a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param currentUnit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
+	 * @return a {@link org.alfresco.util.Pair} object
+	 */
 	private Pair<Double, ProductUnit> getQtySumPackaging(List<NodeRef> sources, WUsedListDataItem wUsed, NodeRef target, ProductUnit currentUnit) {
 	    double qty = 0;
 	    
@@ -1438,6 +1659,18 @@ public class ECOServiceImpl implements ECOService {
 	}
 
 
+	/**
+	 * <p>copyOrUpdateItem.</p>
+	 *
+	 * @param item a T object
+	 * @param replacement a {@link fr.becpg.repo.ecm.data.dataList.ReplacementListDataItem} object
+	 * @param target a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param wUsedData a {@link fr.becpg.repo.ecm.data.dataList.WUsedListDataItem} object
+	 * @param createNew a boolean
+	 * @param shouldReturn a boolean
+	 * @param <T> a T class
+	 * @return a T object
+	 */
 	@SuppressWarnings("unchecked")
 	private <T extends CompositionDataItem> T copyOrUpdateItem(T item, ReplacementListDataItem replacement, NodeRef target, 
 			WUsedListDataItem wUsedData, boolean createNew, boolean shouldReturn) {
@@ -1491,11 +1724,27 @@ public class ECOServiceImpl implements ECOService {
 		return null;
 	}
 
+	/**
+	 * <p>isFuture.</p>
+	 *
+	 * @param effectiveDate a {@link java.util.Date} object
+	 * @return a boolean
+	 */
 	private boolean isFuture(Date effectiveDate) {
 		Date now = new Date();
 		return (effectiveDate != null) && (effectiveDate.getTime() > now.getTime());
 	}
 
+	/**
+	 * <p>updateComponent.</p>
+	 *
+	 * @param component a T object
+	 * @param target a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param newQuantity a {@link java.lang.Double} object
+	 * @param newLoss a {@link java.lang.Double} object
+	 * @param newUnit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
+	 * @param <T> a T class
+	 */
 	private <T extends CompositionDataItem> void updateComponent(T component, NodeRef target, Double newQuantity, Double newLoss, ProductUnit newUnit) {
 		component.setComponent(target);
 		if (component instanceof CompoListDataItem compoListDataItem) {
@@ -1514,6 +1763,14 @@ public class ECOServiceImpl implements ECOService {
 
 	}
 
+	/**
+	 * <p>getProductToImpact.</p>
+	 *
+	 * @param ecoData a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 * @param changeUnitDataItem a {@link fr.becpg.repo.ecm.data.dataList.ChangeUnitDataItem} object
+	 * @param isSimulation a boolean
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getProductToImpact(ChangeOrderData ecoData, ChangeUnitDataItem changeUnitDataItem, boolean isSimulation) {
 		NodeRef productToImpact = changeUnitDataItem.getSourceItem();
 		// Create a new revision if apply else use
@@ -1527,6 +1784,15 @@ public class ECOServiceImpl implements ECOService {
 		return productToImpact;
 	}
 
+	/**
+	 * <p>createNewProductVersion.</p>
+	 *
+	 * @param productToImpact a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param versionType a {@link org.alfresco.service.cmr.version.VersionType} object
+	 * @param ecoData a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 * @param parent a {@link fr.becpg.repo.ecm.data.dataList.WUsedListDataItem} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef createNewProductVersion(final NodeRef productToImpact, VersionType versionType, ChangeOrderData ecoData,
 			WUsedListDataItem parent) {
 
@@ -1553,6 +1819,13 @@ public class ECOServiceImpl implements ECOService {
 
 	}
 
+	/**
+	 * <p>createCalculatedCharactValues.</p>
+	 *
+	 * @param ecoData a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 * @param sourceData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param sort a int
+	 */
 	private void createCalculatedCharactValues(ChangeOrderData ecoData, ProductData sourceData, int sort) {
 
 		for (NodeRef charactNodeRef : ecoData.getCalculatedCharacts()) {
@@ -1567,6 +1840,13 @@ public class ECOServiceImpl implements ECOService {
 
 	}
 
+	/**
+	 * <p>updateCalculatedCharactValues.</p>
+	 *
+	 * @param ecoData a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 * @param targetData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void updateCalculatedCharactValues(ChangeOrderData ecoData, ProductData targetData, NodeRef productNodeRef) {
 
 		List<SimulationListDataItem> toRemove = new ArrayList<>();
@@ -1598,6 +1878,12 @@ public class ECOServiceImpl implements ECOService {
 		}
 	}
 
+	/**
+	 * <p>checkRequirements.</p>
+	 *
+	 * @param changeUnitDataItem a {@link fr.becpg.repo.ecm.data.dataList.ChangeUnitDataItem} object
+	 * @param targetData a {@link fr.becpg.repo.product.data.ProductData} object
+	 */
 	private void checkRequirements(ChangeUnitDataItem changeUnitDataItem, ProductData targetData) {
 
 		RequirementType reqType = null;
@@ -1639,6 +1925,12 @@ public class ECOServiceImpl implements ECOService {
 
 	}
 
+	/**
+	 * <p>evaluateListFromAssociation.</p>
+	 *
+	 * @param associationName a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private QName evaluateListFromAssociation(QName associationName) {
 
 		QName listQName = null;
@@ -1654,6 +1946,14 @@ public class ECOServiceImpl implements ECOService {
 		return listQName;
 	}
 
+	/**
+	 * <p>getCharactValue.</p>
+	 *
+	 * @param charactNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param charactType a {@link org.alfresco.service.namespace.QName} object
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.lang.Object} object
+	 */
 	private Object getCharactValue(NodeRef charactNodeRef, QName charactType, ProductData productData) {
 		if (charactType.equals(PLMModel.TYPE_COST)) {
 			return getCharactValue(charactNodeRef, productData.getCostList());
@@ -1694,6 +1994,13 @@ public class ECOServiceImpl implements ECOService {
 		return null;
 	}
 
+	/**
+	 * <p>getCharactValue.</p>
+	 *
+	 * @param charactNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param charactList a {@link java.util.List} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double getCharactValue(NodeRef charactNodeRef, List<? extends SimpleCharactDataItem> charactList) {
 
 		if ((charactList != null) && (charactNodeRef != null)) {

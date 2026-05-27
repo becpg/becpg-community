@@ -31,6 +31,7 @@ import fr.becpg.report.client.ReportFormat;
 @Service("exportSearchService")
 public class ExportSearchServiceImpl implements ExportSearchService {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ExportSearchServiceImpl.class);
 
 	@Autowired
@@ -52,12 +53,19 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 	@Override
 	public void createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat,
 			OutputStream outputStream) {
+		createReport(nodeType, templateNodeRef, searchResults, reportFormat, outputStream, (String[]) null);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat,
+			OutputStream outputStream, String[] parameters) {
 
 		if (templateNodeRef != null) {
 
 			SearchReportRenderer searchReportRender = getSearchReportRender(templateNodeRef, reportFormat);
 			if (searchReportRender != null) {
-				searchReportRender.renderReport(templateNodeRef, searchResults, reportFormat, outputStream);
+				searchReportRender.renderReport(templateNodeRef, searchResults, reportFormat, outputStream, parameters);
 			} else {
 				logger.error("No search report renderer found for : " + reportFormat.toString() + " " + templateNodeRef);
 			}
@@ -65,6 +73,13 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 		}
 	}
 
+	/**
+	 * <p>getSearchReportRender.</p>
+	 *
+	 * @param templateNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param reportFormat a {@link fr.becpg.report.client.ReportFormat} object
+	 * @return a {@link fr.becpg.repo.report.search.SearchReportRenderer} object
+	 */
 	private SearchReportRenderer getSearchReportRender(NodeRef templateNodeRef, ReportFormat reportFormat) {
 		if (searchReportRenderers != null) {
 			for (SearchReportRenderer searchReportRenderer : searchReportRenderers) {
@@ -79,6 +94,13 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat) {
+		return createReport(nodeType, templateNodeRef, searchResults, reportFormat, (String[]) null);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public NodeRef createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat,
+			String[] parameters) {
 
 		ParameterCheck.mandatory("templateNodeRef", templateNodeRef);
 		
@@ -107,7 +129,7 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 
 		SearchReportRenderer searchReportRender = getSearchReportRender(templateNodeRef, reportFormat);
 		if (searchReportRender != null) {
-			searchReportRender.executeAction(templateNodeRef, downloadNode, reportFormat);
+			searchReportRender.executeAction(templateNodeRef, downloadNode, reportFormat, parameters);
 		} else {
 			logger.error("No search report renderer found for : " + reportFormat.toString() + " " + templateNodeRef);
 		}

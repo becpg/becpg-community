@@ -33,6 +33,7 @@ import fr.becpg.repo.repository.model.EffectiveDataItem;
  */
 public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(CompletionReqCtrlCalculatingFormulationHandler.class);
 
 	/** Constant <code>MESSAGE_NON_VALIDATED_STATE="message.formulate.nonValidatedState"</code> */
@@ -106,6 +107,13 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 		return true;
 	}
 
+	/**
+	 * <p>extractReqCtrl.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param catalogs a {@link org.json.JSONArray} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private void extractReqCtrl(ProductData productData, JSONArray catalogs) throws JSONException {
 
 		for (int i = 0; i < catalogs.length(); i++) {
@@ -168,6 +176,12 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 	}
 
+	/**
+	 * <p>extractDisplayName.</p>
+	 *
+	 * @param missingField a {@link org.json.JSONObject} object
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
 	private MLText extractDisplayName(JSONObject missingField) {
 
 		return MLTextHelper.createMLTextI18N(loc -> {
@@ -185,6 +199,13 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 		});
 	}
 
+	/**
+	 * <p>fromJsonArray.</p>
+	 *
+	 * @param jsonArray a {@link org.json.JSONArray} object
+	 * @return a {@link java.util.List} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private List<NodeRef> fromJsonArray(JSONArray jsonArray) throws JSONException {
 		List<NodeRef> ret = new ArrayList<>();
 		for (int j = 0; j < jsonArray.length(); j++) {

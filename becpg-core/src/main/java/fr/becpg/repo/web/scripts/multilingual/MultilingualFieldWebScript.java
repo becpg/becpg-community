@@ -64,36 +64,59 @@ import fr.becpg.repo.helper.RestTemplateHelper;
  */
 public class MultilingualFieldWebScript extends AbstractWebScript {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(MultilingualFieldWebScript.class);
 
+	/** Constant <code>PARAM_NODEREF="nodeRef"</code> */
 	private static final String PARAM_NODEREF = "nodeRef";
 
+	/** Constant <code>PARAM_FIELD="field"</code> */
 	private static final String PARAM_FIELD = "field";
 
+	/** Constant <code>PARAM_DIFF_FIELD="diffField"</code> */
 	private static final String PARAM_DIFF_FIELD = "diffField";
 
+	/** Constant <code>PARAM_SUGGEST="suggest"</code> */
 	private static final String PARAM_SUGGEST = "suggest";
 
+	/** Constant <code>PARAM_TARGET="target"</code> */
 	private static final String PARAM_TARGET = "target";
 
+	/** Constant <code>PARAM_COPY="copy"</code> */
 	private static final String PARAM_COPY = "copy";
 
+	/** Constant <code>PARAM_DEST_FIELD="destField"</code> */
 	private static final String PARAM_DEST_FIELD = "destField";
 
+	/** Constant <code>DEEPL_API_URL="https://api.deepl.com/v2/translate"</code> */
 	private static final String DEEPL_API_URL = "https://api.deepl.com/v2/translate";
+	/** Constant <code>GOOGLE_TRANSLATE_API_URL="https://www.googleapis.com/language/tra"{trunked}</code> */
 	private static final String GOOGLE_TRANSLATE_API_URL = "https://www.googleapis.com/language/translate/v2";
+	/** Constant <code>DEEPL_AUTH_KEY="auth_key"</code> */
 	private static final String DEEPL_AUTH_KEY = "auth_key";
+	/** Constant <code>DEEPL_TEXT="text"</code> */
 	private static final String DEEPL_TEXT = "text";
+	/** Constant <code>DEEPL_SOURCE_LANG="source_lang"</code> */
 	private static final String DEEPL_SOURCE_LANG = "source_lang";
+	/** Constant <code>DEEPL_TARGET_LANG="target_lang"</code> */
 	private static final String DEEPL_TARGET_LANG = "target_lang";
+	/** Constant <code>GOOGLE_KEY="key"</code> */
 	private static final String GOOGLE_KEY = "key";
+	/** Constant <code>GOOGLE_SOURCE="source"</code> */
 	private static final String GOOGLE_SOURCE = "source";
+	/** Constant <code>GOOGLE_QUERY="q"</code> */
 	private static final String GOOGLE_QUERY = "q";
+	/** Constant <code>JSON_DATA="data"</code> */
 	private static final String JSON_DATA = "data";
+	/** Constant <code>JSON_TRANSLATIONS="translations"</code> */
 	private static final String JSON_TRANSLATIONS = "translations";
+	/** Constant <code>JSON_TEXT="text"</code> */
 	private static final String JSON_TEXT = "text";
+	/** Constant <code>JSON_TRANSLATED_TEXT="translatedText"</code> */
 	private static final String JSON_TRANSLATED_TEXT = "translatedText";
+	/** Constant <code>NO_SUGGESTION_MSG="No suggestion available"</code> */
 	private static final String NO_SUGGESTION_MSG = "No suggestion available";
+	/** Constant <code>NO_API_KEY_MSG="No google translate API key provided"</code> */
 	private static final String NO_API_KEY_MSG = "No google translate API key provided";
 
 	private String googleApiKey;
@@ -344,6 +367,13 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 
 	}
 
+	/**
+	 * <p>getTranslatedText.</p>
+	 *
+	 * @param mlText a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @param target a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getTranslatedText(MLText mlText, String target) {
 		String language = I18NUtil.getContentLocale().getLanguage();
 

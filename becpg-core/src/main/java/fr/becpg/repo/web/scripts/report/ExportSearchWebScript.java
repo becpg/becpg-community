@@ -46,10 +46,14 @@ import fr.becpg.report.client.ReportFormat;
  */
 public class ExportSearchWebScript extends AbstractSearchWebScript {
 
+	/** Constant <code>PARAM_STORE_TYPE="store_type"</code> */
 	private static final String PARAM_STORE_TYPE = "store_type";
+	/** Constant <code>PARAM_STORE_ID="store_id"</code> */
 	private static final String PARAM_STORE_ID = "store_id";
+	/** Constant <code>PARAM_ID="id"</code> */
 	private static final String PARAM_ID = "id";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ExportSearchWebScript.class);
 
 	private ExportSearchService exportSearchService;
@@ -60,6 +64,11 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 
 	private BeCPGAuditService beCPGAuditService;
 	
+	/**
+	 * <p>Setter for the field <code>beCPGAuditService</code>.</p>
+	 *
+	 * @param beCPGAuditService a {@link fr.becpg.repo.audit.service.BeCPGAuditService} object
+	 */
 	public void setBeCPGAuditService(BeCPGAuditService beCPGAuditService) {
 		this.beCPGAuditService = beCPGAuditService;
 	}
@@ -140,6 +149,9 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 			String mimeType = mimetypeService.getMimetype(extension);
 			name = FilenameUtils.removeExtension(name) + FilenameUtils.EXTENSION_SEPARATOR_STR + mimetypeService.getExtension(mimeType);
 			
+			String parameter = req.getParameter("parameter");
+			String[] parameters = (parameter != null) ? new String[] { parameter } : null;
+
 			boolean async = "true".equals(req.getParameter("async"));
 			try (AuditScope auditScope = beCPGAuditService.startAudit(AuditType.EXPORT_SEARCH, getClass(), "export search: " + name)) {
 				auditScope.putAttribute(ExportSearchAuditPlugin.FILENAME, name);
@@ -148,7 +160,7 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 				auditScope.putAttribute(ExportSearchAuditPlugin.RESULTS_SIZE, resultNodeRefs.size());
 				auditScope.putAttribute(ExportSearchAuditPlugin.ASYNC, async);
 				if (async) {
-					NodeRef downloadNodeRef = exportSearchService.createReport(datatype, templateNodeRef, resultNodeRefs, reportFormat);
+					NodeRef downloadNodeRef = exportSearchService.createReport(datatype, templateNodeRef, resultNodeRefs, reportFormat, parameters);
 					
 					JSONObject ret = new JSONObject();
 					
@@ -166,7 +178,7 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 					res.setContentType(mimeType);
 					AttachmentHelper.setAttachment(req, res, name);
 					
-					exportSearchService.createReport(datatype, templateNodeRef, resultNodeRefs, reportFormat, res.getOutputStream());
+					exportSearchService.createReport(datatype, templateNodeRef, resultNodeRefs, reportFormat, res.getOutputStream(), parameters);
 				}
 			}
 

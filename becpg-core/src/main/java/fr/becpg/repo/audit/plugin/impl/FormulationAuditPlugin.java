@@ -28,7 +28,9 @@ public class FormulationAuditPlugin extends AbstractAuditPlugin implements Datab
 	/** Constant <code>CHAIN_ID="chainId"</code> */
 	public static final String CHAIN_ID = "chainId";
 
+	/** Constant <code>FORMULATION="formulation"</code> */
 	private static final String FORMULATION = "formulation";
+	/** Constant <code>FORMULATION_AUDIT_ID="beCPGFormulationAudit"</code> */
 	private static final String FORMULATION_AUDIT_ID = "beCPGFormulationAudit";
 	
 	static {

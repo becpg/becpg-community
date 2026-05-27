@@ -53,6 +53,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public abstract class AbstractBeCPGPatch extends AbstractPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AbstractBeCPGPatch.class);
 
 	protected Repository repository;

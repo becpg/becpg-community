@@ -33,6 +33,7 @@ public class BeCPGStateHelper extends BaseScopableProcessorExtension {
 	/** Constant <code>ACTION_CREATE_ENTITY="ACTION_CREATE_ENTITY"</code> */
 	public static final String ACTION_CREATE_ENTITY = "ACTION_CREATE_ENTITY";
 	
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(BeCPGStateHelper.class);
 	
 
@@ -122,6 +123,12 @@ public class BeCPGStateHelper extends BaseScopableProcessorExtension {
 		
 	}
 
+	/**
+	 * <p>getCounterState.</p>
+	 *
+	 * @param state a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private static String getCounterState(String state) {
 		return state+"_IDX";
 	}
@@ -291,6 +298,13 @@ public class BeCPGStateHelper extends BaseScopableProcessorExtension {
 		return hasEntity(entityNodeRef, ACTION_BRANCH_ENTITY);
 	}
 
+	/**
+	 * <p>hasEntity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param state a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	private static boolean hasEntity(NodeRef entityNodeRef, String state) {
 		Set<NodeRef> nodeRefs = TransactionalResourceHelper.getSet(state);
 		return nodeRefs.contains(entityNodeRef);

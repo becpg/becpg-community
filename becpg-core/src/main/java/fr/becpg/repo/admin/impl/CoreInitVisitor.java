@@ -80,6 +80,7 @@ import fr.becpg.report.client.ReportFormat;
 @Service
 public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
+	/** Constant <code>COMPARE_ENTITIES_REPORT_PATH="beCPG/birt/system/CompareEntities.rptde"{trunked}</code> */
 	private static final String COMPARE_ENTITIES_REPORT_PATH = "beCPG/birt/system/CompareEntities.rptdesign";
 
 	@Autowired
@@ -174,6 +175,11 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		return new ArrayList<>();
 	}
 
+	/**
+	 * <p>visitVersionFolder.</p>
+	 *
+	 * @param entitiesHistoryFolder a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void visitVersionFolder(NodeRef entitiesHistoryFolder) {
 
 		if (!ruleService.hasRules(entitiesHistoryFolder)) {
@@ -201,6 +207,9 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 	}
 
+	/**
+	 * <p>visitGroups.</p>
+	 */
 	private void visitGroups() {
 
 		createGroups(new String[] { SystemGroup.SystemMgr.toString(), SystemGroup.OlapUser.toString(), SystemGroup.AiUser.toString(),
@@ -314,6 +323,11 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 	}
 
+	/**
+	 * <p>visitReports.</p>
+	 *
+	 * @param systemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void visitReports(NodeRef systemNodeRef) {
 
 		// reports folder
@@ -342,6 +356,11 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 	}
 
+	/**
+	 * <p>visitEntityTpls.</p>
+	 *
+	 * @param systemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void visitEntityTpls(NodeRef systemNodeRef) {
 
 		NodeRef entityTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_ENTITY_TEMPLATES);

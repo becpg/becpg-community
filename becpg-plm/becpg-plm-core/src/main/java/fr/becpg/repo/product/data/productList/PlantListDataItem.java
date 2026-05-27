@@ -18,6 +18,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 public class PlantListDataItem extends BeCPGDataObject{
 
 	
+	/** Constant <code>serialVersionUID=5761731974557143651L</code> */
 	private static final long serialVersionUID = 5761731974557143651L;
 	
 	private String packerCode;

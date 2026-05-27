@@ -58,8 +58,12 @@ import org.xml.sax.SAXException;
  */
 public class DOMUtils {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(DOMUtils.class);
 
+	/**
+	 * <p>Constructor for DOMUtils.</p>
+	 */
 	private DOMUtils() {
 		//Do Nothing
 	}

@@ -43,6 +43,11 @@ public class EntityDictionaryWebScript extends AbstractEntityWebScript {
 
 	private EntityDictionaryService entityDictionaryService;
 	
+	/**
+	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
+	 *
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object
+	 */
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}

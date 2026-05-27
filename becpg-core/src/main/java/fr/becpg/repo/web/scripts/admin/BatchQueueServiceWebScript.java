@@ -26,16 +26,22 @@ import fr.becpg.repo.batch.BatchQueueService;
  */
 public class BatchQueueServiceWebScript extends AbstractWebScript {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(BatchQueueServiceWebScript.class);
 	
+	/** Constant <code>QUEUE_ACTION="queue"</code> */
 	private static final String QUEUE_ACTION = "queue";
 
+	/** Constant <code>CANCEL_ACTION="cancel"</code> */
 	private static final String CANCEL_ACTION = "cancel";
 
+	/** Constant <code>REMOVE_ACTION="remove"</code> */
 	private static final String REMOVE_ACTION = "remove";
 	
+	/** Constant <code>RETRY_ACTION="retry"</code> */
 	private static final String RETRY_ACTION = "retry";
 	
+	/** Constant <code>ERRORS_ACTION="errors"</code> */
 	private static final String ERRORS_ACTION = "errors";
 
 	private BatchQueueService batchQueueService;

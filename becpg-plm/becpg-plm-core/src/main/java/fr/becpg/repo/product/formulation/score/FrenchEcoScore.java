@@ -39,6 +39,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @Service("ecoScore")
 public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugin {
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(FrenchEcoScore.class);
 
 	private final NodeService nodeService;
@@ -89,7 +90,9 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 	 */
 
 	private static final List<String> GROUP1_CLAIM = Arrays.asList("NATURE_ET_PROGRES", "BIO_COHERANCE", "DEMETER_LABEL");
+	/** Constant <code>GROUP2_CLAIM</code> */
 	private static final List<String> GROUP2_CLAIM = Arrays.asList("EU_ORGANIC", "ORGANIC");
+	/** Constant <code>GROUP3_CLAIM</code> */
 	private static final List<String> GROUP3_CLAIM = Arrays.asList("HAUTE_VALEUR_ENVIRONNEMENTALE", "UTZ_CERTIFIED", "RAINFOREST_ALLIANCE",
 			"FAIR_TRADE_MARK", "BLEU_BLANC_COEUR", "LABEL_ROUGE", "AQUACULTURE_STEWARDSHIP_COUNCIL", "MARINE_STEWARDSHIP_COUNCIL_LABEL");
 
@@ -234,6 +237,12 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 
 	}
 
+	/**
+	 * <p>hasThreatenedSpecies.</p>
+	 *
+	 * @param labelClaimList a {@link java.util.List} object
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	private Boolean hasThreatenedSpecies(List<LabelClaimListDataItem> labelClaimList) {
 
 		Boolean hasThreatenedSpecies = false;
@@ -254,6 +263,12 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 		return hasThreatenedSpecies;
 	}
 
+	/**
+	 * <p>isNotRecyclable.</p>
+	 *
+	 * @param packMaterialList a {@link java.util.List} object
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	private Boolean isNotRecyclable(List<PackMaterialListDataItem> packMaterialList) {
 
 		Boolean notRecyclable = false;
@@ -269,6 +284,12 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 		return notRecyclable;
 	}
 
+	/**
+	 * <p>computeClaimBonus.</p>
+	 *
+	 * @param labelClaimList a {@link java.util.List} object
+	 * @return a int
+	 */
 	private int computeClaimBonus(List<LabelClaimListDataItem> labelClaimList) {
 
 		int claimBonus = 0;
@@ -308,6 +329,12 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 		return claimBonus;
 	}
 
+	/**
+	 * <p>computePackagingMalus.</p>
+	 *
+	 * @param packMaterialList a {@link java.util.List} object
+	 * @return a int
+	 */
 	private int computePackagingMalus(List<PackMaterialListDataItem> packMaterialList) {
 
 		int packagingMalus = 0;
@@ -346,6 +373,13 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 		return packagingMalus;
 	}
 
+	/**
+	 * <p>computeEFScore.</p>
+	 *
+	 * @param categoryCode a {@link java.lang.String} object
+	 * @param isDrink a boolean
+	 * @return a int
+	 */
 	private int computeEFScore(String categoryCode, boolean isDrink) {
 
 		
@@ -368,6 +402,12 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 
 	//	SUSTAINABLE_PALM_OIL_RSPO
 
+	/**
+	 * <p>computeTransportAndPoliticalScore.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return an array of {@link int} objects
+	 */
 	private int[] computeTransportAndPoliticalScore(ProductData productData) {
 
 		int[] result = new int[2];
@@ -424,6 +464,12 @@ public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugi
 		return result;
 	}
 
+	/**
+	 * <p>isWater.</p>
+	 *
+	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private boolean isWater(NodeRef ing) {
 		return nodeService.hasAspect(ing, PLMModel.ASPECT_WATER) 
 				|| (nodeService.hasAspect(ing, PLMModel.ASPECT_EVAPORABLE)

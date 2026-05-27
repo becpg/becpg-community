@@ -46,14 +46,22 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  */
 public class ProjectActivityPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ProjectActivityPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.projet.projectActivityPatch."{trunked}</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.projet.projectActivityPatch.result";
 
+	/** Constant <code>TYPE_ACTIVITY_LIST</code> */
 	private static final QName TYPE_ACTIVITY_LIST = QName.createQName(ProjectModel.PROJECT_URI, "activityList");
+	/** Constant <code>PROP_ACTIVITYLIST_USERID</code> */
 	private static final QName PROP_ACTIVITYLIST_USERID = QName.createQName(ProjectModel.PROJECT_URI, "alUserId");
+	/** Constant <code>PROP_ACTIVITYLIST_TYPE</code> */
 	private static final QName PROP_ACTIVITYLIST_TYPE = QName.createQName(ProjectModel.PROJECT_URI, "alType");
+	/** Constant <code>PROP_ACTIVITYLIST_TASKID</code> */
 	private static final QName PROP_ACTIVITYLIST_TASKID = QName.createQName(ProjectModel.PROJECT_URI, "alTaskId");
+	/** Constant <code>PROP_ACTIVITYLIST_DELIVERABLEID</code> */
 	private static final QName PROP_ACTIVITYLIST_DELIVERABLEID = QName.createQName(ProjectModel.PROJECT_URI, "alDeliverableId");
+	/** Constant <code>PROP_ACTIVITYLIST_DATA</code> */
 	private static final QName PROP_ACTIVITYLIST_DATA = QName.createQName(ProjectModel.PROJECT_URI, "alData");
 
 	private NodeDAO nodeDAO;
@@ -356,6 +364,12 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
+	/**
+	 * <p>getOrCreateActivityList.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getOrCreateActivityList(NodeRef entityNodeRef) {
 		NodeRef listNodeRef = null;
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);

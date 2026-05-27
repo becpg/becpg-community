@@ -117,11 +117,16 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @BeCPGPublicApi
 public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(DataListItemAutoCompletePlugin.class);
 
+	/** Constant <code>SOURCE_TYPE_PARENT_VALUE="ParentValue"</code> */
 	private static final String SOURCE_TYPE_PARENT_VALUE = "ParentValue";
+	/** Constant <code>SOURCE_TYPE_DATA_LIST_CHARACT="DataListCharact"</code> */
 	private static final String SOURCE_TYPE_DATA_LIST_CHARACT = "DataListCharact";
+	/** Constant <code>FILTER_PARENT_AS_ENTITY="parentAsEntity"</code> */
 	private static final String FILTER_PARENT_AS_ENTITY = "parentAsEntity";
+	/** Constant <code>FILTER_ITEM_AS_ENTITY="itemAsEntity"</code> */
 	private static final String FILTER_ITEM_AS_ENTITY = "itemAsEntity";
 
 	@Autowired
@@ -253,6 +258,20 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 		return new AutoCompletePage(new ArrayList<>(), pageNum, pageSize, null);
 	}
 
+	/**
+	 * <p>suggestFromProp.</p>
+	 *
+	 * @param dataListNodeRefs a {@link java.util.List} object
+	 * @param itemId a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param datalistType a {@link org.alfresco.service.namespace.QName} object
+	 * @param propertyQNames a {@link java.util.Set} object
+	 * @param query a {@link java.lang.String} object
+	 * @param queryFilter a {@link java.lang.String} object
+	 * @param parent a {@link java.lang.String} object
+	 * @param pageNum a {@link java.lang.Integer} object
+	 * @param pageSize a {@link java.lang.Integer} object
+	 * @return a {@link fr.becpg.repo.autocomplete.AutoCompletePage} object
+	 */
 	private AutoCompletePage suggestFromProp(List<NodeRef> dataListNodeRefs, NodeRef itemId, QName datalistType, Set<QName> propertyQNames,
 			String query, String queryFilter, String parent, Integer pageNum, Integer pageSize) {
 		List<NodeRef> ret = new ArrayList<>();
@@ -308,6 +327,20 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 		return new AutoCompletePage(ret, pageNum, pageSize, new NodeRefAutoCompleteExtractor(propertyQNames, nodeService));
 	}
 
+	/**
+	 * <p>suggestFromAssoc.</p>
+	 *
+	 * @param sourceType a {@link java.lang.String} object
+	 * @param dataListNodeRefs a {@link java.util.List} object
+	 * @param itemId a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param datalistType a {@link org.alfresco.service.namespace.QName} object
+	 * @param associationQName a {@link org.alfresco.service.namespace.QName} object
+	 * @param query a {@link java.lang.String} object
+	 * @param pageNum a {@link java.lang.Integer} object
+	 * @param pageSize a {@link java.lang.Integer} object
+	 * @param showFullPath a boolean
+	 * @return a {@link fr.becpg.repo.autocomplete.AutoCompletePage} object
+	 */
 	private AutoCompletePage suggestFromAssoc(String sourceType, List<NodeRef> dataListNodeRefs, NodeRef itemId, QName datalistType,
 			QName associationQName, String query, Integer pageNum, Integer pageSize, boolean showFullPath) {
 
@@ -343,6 +376,14 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 		return new AutoCompletePage(result, pageNum, pageSize, null);
 	}
 
+	/**
+	 * <p>extractHierarchyFullName.</p>
+	 *
+	 * @param dataListItemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param associationQName a {@link org.alfresco.service.namespace.QName} object
+	 * @param visited a {@link java.util.Set} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extractHierarchyFullName(NodeRef dataListItemNodeRef, QName associationQName, Set<NodeRef> visited) {
 		visited.add(dataListItemNodeRef);
 
@@ -358,11 +399,25 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 		return res;
 	}
 
+	/**
+	 * <p>extractHierarchyName.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extractHierarchyName(NodeRef nodeRef) {
 		QName type = nodeService.getType(nodeRef);
 		return attributeExtractorService.extractPropName(type, nodeRef);
 	}
 
+	/**
+	 * <p>accepts.</p>
+	 *
+	 * @param dataListItemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param itemId a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param sourceType a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	private boolean accepts(NodeRef dataListItemNodeRef, NodeRef itemId, String sourceType) {
 
 		if (dataListItemNodeRef.equals(itemId)) {
@@ -376,6 +431,13 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 		return true;
 	}
 
+	/**
+	 * <p>isChildOf.</p>
+	 *
+	 * @param dataListItemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param itemId a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private boolean isChildOf(NodeRef dataListItemNodeRef, NodeRef itemId) {
 
 		NodeRef parentNodeRef = (NodeRef) nodeService.getProperty(dataListItemNodeRef, BeCPGModel.PROP_PARENT_LEVEL);

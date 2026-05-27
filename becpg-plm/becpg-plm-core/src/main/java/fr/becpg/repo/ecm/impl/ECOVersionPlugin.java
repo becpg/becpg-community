@@ -58,6 +58,11 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
 
+	/**
+	 * <p>deleteOnApply.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	private Boolean deleteOnApply() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.eco.automatic.deleteOnApply"));
 	}
@@ -68,6 +73,7 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 	@Autowired
 	private TenantAdminService tenantAdminService;
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ECOVersionPlugin.class);
 
 	/** {@inheritDoc} */
@@ -162,11 +168,22 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 		
 	}
 	
+	/**
+	 * <p>getChangeOrderFolder.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getChangeOrderFolder() {
 		return repoService.getFolderByPath("/" + RepoConsts.PATH_SYSTEM + "/" + PlmRepoConsts.PATH_ECO);
 	}
 	
 
+	/**
+	 * <p>generateEcoName.</p>
+	 *
+	 * @param name a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String generateEcoName(String name) {
 		return name + "-" + I18NUtil.getMessage("plm.ecm.current.name", new Date());
 	}

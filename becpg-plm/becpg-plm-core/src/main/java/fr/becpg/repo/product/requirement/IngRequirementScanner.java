@@ -39,10 +39,13 @@ import fr.becpg.repo.repository.RepositoryEntity;
  */
 public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenIngListDataItem> {
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(IngRequirementScanner.class);
 
+	/** Constant <code>MESSAGE_NOTAUTHORIZED_ING="message.formulate.notauhorized.ing"</code> */
 	private static final String MESSAGE_NOTAUTHORIZED_ING = "message.formulate.notauhorized.ing";
 
+	/** Constant <code>MESSAGE_FORBIDDEN_ING="message.formulate.ingredient.forbidden"</code> */
 	private static final String MESSAGE_FORBIDDEN_ING = "message.formulate.ingredient.forbidden";
 
 	AlfrescoRepository<RepositoryEntity> alfrescoRepository;
@@ -109,14 +112,14 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	/**
 	 * check the ingredients of the part according to the specification
 	 *
-	 * @param productNodeRef
-	 * @param declType
-	 * @param componentProductData
-	 * @param forbiddenIngredientsList
-	 * @param specification
-	 * @param sources
-	 * @param visited
-	 * @param productData
+	 * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param declType a {@link fr.becpg.repo.product.data.constraints.DeclarationType} object
+	 * @param componentProductData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param forbiddenIngredientsList a {@link java.util.List} object
+	 * @param specification a {@link fr.becpg.repo.product.data.ProductSpecificationData} object
+	 * @param sources a {@link java.util.Map} object
+	 * @param visited a {@link java.util.Set} object
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
 	 */
 	private void checkILOfPart(NodeRef productNodeRef, DeclarationType declType, ProductData componentProductData,
 			List<ForbiddenIngListDataItem> forbiddenIngredientsList, ProductSpecificationData specification, Map<String, List<NodeRef>> sources,
@@ -163,6 +166,15 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 		}
 	}
 
+	/**
+	 * <p>processForbiddenRequirements.</p>
+	 *
+	 * @param specification a {@link fr.becpg.repo.product.data.ProductSpecificationData} object
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param fil a {@link fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem} object
+	 * @param reqCtrlMap a {@link java.util.List} object
+	 * @param sources a {@link java.util.Map} object
+	 */
 	private void processForbiddenRequirements(ProductSpecificationData specification, ProductData productData, ForbiddenIngListDataItem fil,
 			List<RequirementListDataItem> reqCtrlMap, Map<String, List<NodeRef>> sources) {
 
@@ -209,10 +221,22 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 		}
 	}
 
+	/**
+	 * <p>isQtyCheck.</p>
+	 *
+	 * @param fil a {@link fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem} object
+	 * @return a boolean
+	 */
 	private boolean isQtyCheck(ForbiddenIngListDataItem fil) {
 		return (fil.getQtyPercMaxi() != null) || (fil.getQtyPercMini() != null);
 	}
 
+	/**
+	 * <p>buildQtyInfo.</p>
+	 *
+	 * @param fil a {@link fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String buildQtyInfo(ForbiddenIngListDataItem fil) {
 		StringBuilder sb = new StringBuilder();
 		if (fil.getQtyPercMaxi() != null) {
@@ -232,6 +256,14 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 		return sb.toString();
 	}
 
+	/**
+	 * <p>processAuthorizedRequirements.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param requirements a {@link java.util.List} object
+	 * @param specification a {@link fr.becpg.repo.product.data.ProductSpecificationData} object
+	 * @param reqCtrlMap a {@link java.util.List} object
+	 */
 	private void processAuthorizedRequirements(ProductData productData, List<ForbiddenIngListDataItem> requirements,
 			ProductSpecificationData specification, List<RequirementListDataItem> reqCtrlMap) {
 		for (IngListDataItem ingListDataItem : productData.getIngList()) {
@@ -263,6 +295,15 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 	}
 
+	/**
+	 * <p>createForbiddenReq.</p>
+	 *
+	 * @param specification a {@link fr.becpg.repo.product.data.ProductSpecificationData} object
+	 * @param fil a {@link fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem} object
+	 * @param ingListDataItem a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @param sources a {@link java.util.Map} object
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementListDataItem} object
+	 */
 	private RequirementListDataItem createForbiddenReq(ProductSpecificationData specification, ForbiddenIngListDataItem fil,
 			IngListDataItem ingListDataItem, Map<String, List<NodeRef>> sources) {
 
@@ -297,10 +338,24 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 	}
 
+	/**
+	 * <p>createReqSourceKey.</p>
+	 *
+	 * @param fil a {@link fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem} object
+	 * @param ingListDataItem a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String createReqSourceKey(ForbiddenIngListDataItem fil, IngListDataItem ingListDataItem) {
 		return ingListDataItem.getIng() + "" + fil.hashCode();
 	}
 
+	/**
+	 * <p>calculateQtyPerc.</p>
+	 *
+	 * @param fil a {@link fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem} object
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double calculateQtyPerc(ForbiddenIngListDataItem fil, ProductData productData) {
 		Double totalQtyPerc = null;
 
@@ -319,6 +374,13 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 		return totalQtyPerc;
 	}
 
+	/**
+	 * <p>getQtyPerc.</p>
+	 *
+	 * @param il a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @param fil a {@link fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double getQtyPerc(IngListDataItem il, ForbiddenIngListDataItem fil) {
 		if (fil.getQtyPercType() != null) {
 			return switch (fil.getQtyPercType()) {
@@ -337,6 +399,14 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 		return il.getQtyPerc();
 	}
 
+	/**
+	 * <p>getFilQtyPerc.</p>
+	 *
+	 * @param product a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param fil a {@link fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem} object
+	 * @param isMaxi a boolean
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double getFilQtyPerc(ProductData product, ForbiddenIngListDataItem fil, boolean isMaxi) {
 		String unit = fil.getQtyPercMaxiUnit();
 		Double quantity = isMaxi ? fil.getQtyPercMaxi() : fil.getQtyPercMini();
@@ -360,10 +430,24 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 		return quantity;
 	}
 
+	/**
+	 * <p>getFilMaxQtyPerc.</p>
+	 *
+	 * @param product a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param fil a {@link fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double getFilMaxQtyPerc(ProductData product, ForbiddenIngListDataItem fil) {
 		return getFilQtyPerc(product, fil, true);
 	}
 
+	/**
+	 * <p>getFilMinQtyPerc.</p>
+	 *
+	 * @param product a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param fil a {@link fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double getFilMinQtyPerc(ProductData product, ForbiddenIngListDataItem fil) {
 		return getFilQtyPerc(product, fil, false);
 	}
@@ -375,6 +459,14 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 				: new ArrayList<>();
 	}
 
+	/**
+	 * <p>checkRuleMatchIng.</p>
+	 *
+	 * @param ingListDataItem a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @param fil a {@link fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem} object
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a boolean
+	 */
 	private boolean checkRuleMatchIng(IngListDataItem ingListDataItem, ForbiddenIngListDataItem fil, ProductData productData) {
 	
 		if (!matchBooleanFilter(fil.getIsGMO(), ingListDataItem.getIsGMO())) {
@@ -452,6 +544,13 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 	}
 	
+	/**
+	 * <p>matchBooleanFilter.</p>
+	 *
+	 * @param filterValue a {@link java.lang.String} object
+	 * @param itemValue a {@link java.lang.Boolean} object
+	 * @return a boolean
+	 */
 	private boolean matchBooleanFilter(String filterValue, Boolean itemValue) {
 	    if (filterValue == null || filterValue.isEmpty()) {
 	        return true;

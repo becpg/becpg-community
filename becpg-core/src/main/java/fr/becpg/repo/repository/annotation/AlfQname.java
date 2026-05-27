@@ -30,7 +30,7 @@ import java.lang.annotation.RetentionPolicy;
 public @interface AlfQname  {
   /**
    * Returns the qualified name for this field.
-   * 
+   *
    * @return the qualified name
    */
   String qname();

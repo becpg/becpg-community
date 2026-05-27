@@ -40,8 +40,10 @@ import fr.becpg.repo.repository.RepositoryEntity;
  */
 public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(BatchFormulationHandler.class);
 
+	/** Constant <code>MESSAGE_MISSING_STOCK="message.formulate.missing.stock"</code> */
 	private static final String MESSAGE_MISSING_STOCK = "message.formulate.missing.stock";
 
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
@@ -195,6 +197,14 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 		return true;
 	}
 
+	/**
+	 * <p>increaseInventory.</p>
+	 *
+	 * @param stockListItems a {@link java.util.List} object
+	 * @param batchQty a {@link java.lang.Double} object
+	 * @param batchUnit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> increaseInventory(List<NodeRef> stockListItems, Double batchQty, ProductUnit batchUnit) {
 		List<NodeRef> stockRefs = new ArrayList<>();
 		if ((stockListItems != null) && !stockListItems.isEmpty()) {
@@ -217,6 +227,16 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 		return stockRefs;
 	}
 
+	/**
+	 * <p>decreaseInventory.</p>
+	 *
+	 * @param batchData a {@link fr.becpg.repo.quality.data.BatchData} object
+	 * @param rawMaterialData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param stockListItems a {@link java.util.List} object
+	 * @param batchQty a {@link java.lang.Double} object
+	 * @param batchUnit a {@link fr.becpg.repo.product.data.constraints.ProductUnit} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> decreaseInventory(BatchData batchData, ProductData rawMaterialData, List<NodeRef> stockListItems, Double batchQty,
 			ProductUnit batchUnit) {
 		List<NodeRef> stockRefs = new ArrayList<>();
@@ -269,6 +289,13 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 				|| accept(batchData, item))).toList();
 	}
 
+	/**
+	 * <p>extractStockList.</p>
+	 *
+	 * @param batchData a {@link fr.becpg.repo.quality.data.BatchData} object
+	 * @param rawMaterialData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<StockListDataItem> extractStockList(BatchData batchData, ProductData rawMaterialData) {
 		List<StockListDataItem> ret = new ArrayList<>();
 
@@ -289,43 +316,102 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 		return ret;
 	}
 
+	/**
+	 * <p>shouldOmit.</p>
+	 *
+	 * @param compoList a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 * @return a boolean
+	 */
 	private boolean shouldOmit(CompoListDataItem compoList) {
 		return StockType.Omit.equals(compoList.getStockType())
 				|| (compoList.getStockType() == null && DeclarationType.Omit.equals(compoList.getDeclType()));
 	}
 
+	/**
+	 * <p>shouldDeclare.</p>
+	 *
+	 * @param compoList a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 * @return a boolean
+	 */
 	private boolean shouldDeclare(CompoListDataItem compoList) {
 		return StockType.Components.equals(compoList.getStockType())
 				|| (compoList.getStockType() == null && DeclarationType.Declare.equals(compoList.getDeclType()));
 
 	}
 
+	/**
+	 * <p>accept.</p>
+	 *
+	 * @param batchData a {@link fr.becpg.repo.quality.data.BatchData} object
+	 * @param item a {@link fr.becpg.repo.quality.data.dataList.StockListDataItem} object
+	 * @return a boolean
+	 */
 	private boolean accept(BatchData batchData, StockListDataItem item) {
 		return isMatch(batchData.getPlants(), item.getPlants()) && isMatch(batchData.getLaboratories(), item.getLaboratories())
 				&& hasValidBatchQty(item) && isNotRefused(item) && isUseByDateValid(item);
 	}
 
+	/**
+	 * <p>accept.</p>
+	 *
+	 * @param batchData a {@link fr.becpg.repo.quality.data.BatchData} object
+	 * @param subProductData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a boolean
+	 */
 	private boolean accept(BatchData batchData, ProductData subProductData) {
 		return isMatch(batchData.getPlants(), subProductData.getPlants());
 	}
 
+	/**
+	 * <p>isMatch.</p>
+	 *
+	 * @param batchList a {@link java.util.List} object
+	 * @param itemList a {@link java.util.List} object
+	 * @return a boolean
+	 */
 	private boolean isMatch(List<NodeRef> batchList, List<NodeRef> itemList) {
 		return (batchList == null) || (itemList == null) || batchList.isEmpty() || itemList.isEmpty()
 				|| batchList.stream().anyMatch(itemList::contains);
 	}
 
+	/**
+	 * <p>hasValidBatchQty.</p>
+	 *
+	 * @param item a {@link fr.becpg.repo.quality.data.dataList.StockListDataItem} object
+	 * @return a boolean
+	 */
 	private boolean hasValidBatchQty(StockListDataItem item) {
 		return (item.getBatchQty() != null) && (item.getBatchQty() > 0);
 	}
 
+	/**
+	 * <p>isNotRefused.</p>
+	 *
+	 * @param item a {@link fr.becpg.repo.quality.data.dataList.StockListDataItem} object
+	 * @return a boolean
+	 */
 	private boolean isNotRefused(StockListDataItem item) {
 		return !SystemState.Refused.equals(item.getState());
 	}
 
+	/**
+	 * <p>isUseByDateValid.</p>
+	 *
+	 * @param item a {@link fr.becpg.repo.quality.data.dataList.StockListDataItem} object
+	 * @return a boolean
+	 */
 	private boolean isUseByDateValid(StockListDataItem item) {
 		return (item.getUseByDate() == null) || (item.getUseByDate().getTime() >= Calendar.getInstance().getTimeInMillis());
 	}
 
+	/**
+	 * <p>computeTotalStock.</p>
+	 *
+	 * @param batchData a {@link fr.becpg.repo.quality.data.BatchData} object
+	 * @param rawMaterialData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param stockListItems a {@link java.util.List} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double computeTotalStock(BatchData batchData, ProductData rawMaterialData, List<NodeRef> stockListItems) {
 		double total = 0d;
 
@@ -359,6 +445,14 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 		return total;
 	}
 
+	/**
+	 * <p>extractRawMaterials.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param rawMaterials a {@link java.util.Map} object
+	 * @param parentQty a {@link java.lang.Double} object
+	 * @param parentLossPerc a {@link java.lang.Double} object
+	 */
 	private void extractRawMaterials(ProductData productData, Map<NodeRef, Double> rawMaterials, Double parentQty, Double parentLossPerc) {
 
 		for (CompoListDataItem compoList : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {

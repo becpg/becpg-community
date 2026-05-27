@@ -1501,8 +1501,6 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		checkILL(finishedProductNodeRef, labelingRuleList, "autres fruits a coque", Locale.ENGLISH, "Rendu2");
 	}
 
-
-
 	@Test
 	public void testDisableAllergenDetection() {
 

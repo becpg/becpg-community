@@ -71,6 +71,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 	
 	private CommentService commentService;
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ImportEntityListItemVisitor.class);
 
 	private FileFolderService fileFolderService;
@@ -286,6 +287,12 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 
 	/**
 	 * Look for the entity list item (check props and assocs match)
+	 *
+	 * @param importContext a {@link fr.becpg.repo.importer.ImportContext} object
+	 * @param listNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param dataListColumnsProps a {@link java.util.Map} object
+	 * @param dataListColumnsAssocs a {@link java.util.Map} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	private NodeRef findEntityListItem(ImportContext importContext, NodeRef listNodeRef, Map<QName, String> dataListColumnsProps,
 			Map<QName, List<NodeRef>> dataListColumnsAssocs) {
@@ -356,6 +363,14 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 		return isFound ? nodeRef : null;
 	}
 
+	/**
+	 * <p>getOrCreateVariant.</p>
+	 *
+	 * @param importContext a {@link fr.becpg.repo.importer.ImportContext} object
+	 * @param value a {@link java.lang.String} object
+	 * @param shouldCreate a boolean
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getOrCreateVariant(ImportContext importContext, String value, boolean shouldCreate) {
 
 		NodeRef entityNodeRef = importContext.getEntityNodeRef();

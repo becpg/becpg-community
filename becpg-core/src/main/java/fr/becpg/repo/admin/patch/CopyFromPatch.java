@@ -33,7 +33,9 @@ import fr.becpg.model.BeCPGModel;
  */
 public class CopyFromPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(CopyFromPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.copyFromPatch.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.copyFromPatch.result";
 
 
@@ -77,6 +79,11 @@ public class CopyFromPatch extends AbstractBeCPGPatch {
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
+	/**
+	 * <p>doForType.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private void doForType(QName type) {
 
 		logger.info("Run patch for type: " + type);

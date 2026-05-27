@@ -53,14 +53,19 @@ import fr.becpg.repo.repository.RepositoryEntity;
  * @version $Id: $Id
  */
 public class ZipSearchAction extends ActionExecuterAbstractBase {
+	/** Constant <code>log</code> */
 	private static final Logger log = LoggerFactory.getLogger(ZipSearchAction.class);
 
+	/** Constant <code>CREATION_ERROR="Unexpected error creating archive file "{trunked}</code> */
 	private static final String CREATION_ERROR = "Unexpected error creating archive file for download";
+	/** Constant <code>TEMP_FILE_PREFIX="download"</code> */
 	private static final String TEMP_FILE_PREFIX = "download";
+	/** Constant <code>TEMP_FILE_SUFFIX=".zip"</code> */
 	private static final String TEMP_FILE_SUFFIX = ".zip";
 
 	/** Constant <code>PARAM_TPL_NODEREF="templateNodeRef"</code> */
 	public static final String PARAM_TPL_NODEREF = "templateNodeRef";
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ZipSearchAction.class);
 
 	/** Constant <code>NAME="zipSearchAction"</code> */
@@ -257,6 +262,13 @@ public class ZipSearchAction extends ActionExecuterAbstractBase {
 		paramList.add(new ParameterDefinitionImpl(PARAM_TPL_NODEREF, DataTypeDefinition.NODE_REF, true, "Search template nodeRef"));
 	}
 
+	/**
+	 * <p>maximumContentSizeExceeded.</p>
+	 *
+	 * @param actionedUponNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param size a long
+	 * @param fileCount a long
+	 */
 	private void maximumContentSizeExceeded(final NodeRef actionedUponNodeRef, final long size, final long fileCount) {
 		log.debug("Maximum contentent size ({}), exceeded ({})", maximumContentSize, size);
 
@@ -268,6 +280,13 @@ public class ZipSearchAction extends ActionExecuterAbstractBase {
 		}, false, true);
 	}
 
+	/**
+	 * <p>archiveCreationComplete.</p>
+	 *
+	 * @param actionedUponNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param tempFile a {@link java.io.File} object
+	 * @param handler a {@link fr.becpg.repo.report.search.actions.ZipSearchDownloadExporter} object
+	 */
 	private void archiveCreationComplete(final NodeRef actionedUponNodeRef, final File tempFile, final ZipSearchDownloadExporter handler) {
 		// Update the content and set the status to done.
 		transactionHelper.doInTransaction(() -> {
@@ -289,6 +308,12 @@ public class ZipSearchAction extends ActionExecuterAbstractBase {
 		}, false, true);
 	}
 
+	/**
+	 * <p>downloadCancelled.</p>
+	 *
+	 * @param actionedUponNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param handler a {@link fr.becpg.repo.report.search.actions.ZipSearchDownloadExporter} object
+	 */
 	private void downloadCancelled(final NodeRef actionedUponNodeRef, final ZipSearchDownloadExporter handler) {
 		// Update the content and set the status to done.
 		transactionHelper.doInTransaction(() -> {

@@ -16,6 +16,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "bcpg:savedSearch")
 public class SavedSearch extends BeCPGDataObject {
 
+	/** Constant <code>serialVersionUID=4295437589439380453L</code> */
 	private static final long serialVersionUID = 4295437589439380453L;
 
 	private String searchType;

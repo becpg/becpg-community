@@ -48,6 +48,7 @@ import fr.becpg.repo.cache.BeCPGCacheService;
  */
 public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBean, RefreshableCacheListener {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(BeCPGCacheServiceImpl.class);
 
 	Map<String, Integer> cacheSizes = new ConcurrentHashMap<>();
@@ -58,6 +59,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 	private AsynchronouslyRefreshedCacheRegistry registry;
 
+	/** Constant <code>INITIAL_CACHE_MAP_SIZE=16</code> */
 	private static final int INITIAL_CACHE_MAP_SIZE = 16;
 
 	private Map<String, SimpleCache<String, ?>> caches = new ConcurrentHashMap<>(INITIAL_CACHE_MAP_SIZE);
@@ -152,7 +154,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 		if (ret == null) {
 			if (isDebugEnable) {
-				logger.error("Cache miss " + cacheKey);
+				logger.debug("Cache miss " + cacheKey);
 			}
 
 			ret = cacheDataProviderCallBack.get();
@@ -166,32 +168,31 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 							logger.debug("Bind key to transaction : " + cacheName);
 						}
 						TransactionSupportUtil.bindResource(cacheName, currentTransactionCacheKeys);
-					}
-					currentTransactionCacheKeys.add(cacheKey);
+						AlfrescoTransactionSupport.bindListener(new TransactionListenerAdapter() {
 
-					AlfrescoTransactionSupport.bindListener(new TransactionListenerAdapter() {
+							@Override
+							public void afterRollback() {
 
-						@Override
-						public void afterRollback() {
-
-							Set<String> txCacheKeys = TransactionSupportUtil.getResource(cacheName);
-							if (txCacheKeys != null) {
-								for (String txCacheKey : txCacheKeys) {
-									if (isDebugEnable) {
-										logger.debug("Remove tx assoc   " + cacheName + " " + txCacheKey);
+								Set<String> txCacheKeys = TransactionSupportUtil.getResource(cacheName);
+								if (txCacheKeys != null) {
+									for (String txCacheKey : txCacheKeys) {
+										if (isDebugEnable) {
+											logger.debug("Remove tx assoc   " + cacheName + " " + txCacheKey);
+										}
+										removeFromCache(cacheName, txCacheKey);
 									}
-									removeFromCache(cacheName, txCacheKey);
+
 								}
 
 							}
-
-						}
-					});
+						});
+					}
+					currentTransactionCacheKeys.add(cacheKey);
 				}
 
 				cache.put(cacheKey, ret);
 			} else if (isDebugEnable && (ret == null)) {
-				logger.error("Data provider is null for " + cacheKey);
+				logger.debug("Data provider is null for " + cacheKey);
 			}
 		} else if (isDebugEnable) {
 			logger.debug("Cache Hit " + cacheKey);
@@ -274,6 +275,12 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		registry.broadcastEvent(new BeCPGRefreshableCacheEvent(getCacheId(), "all"), true);
 	}
 
+	/**
+	 * <p>computeCacheKey.</p>
+	 *
+	 * @param cacheKey a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String computeCacheKey(String cacheKey) {
 
 		final String tenantDomain = TenantUtil.getCurrentDomain();

@@ -63,8 +63,10 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	/** Constant <code>MESSAGE_EMPTY_ALLERGEN="message.formulate.allergen.error.empty"</code> */
 	public static final String MESSAGE_EMPTY_ALLERGEN = "message.formulate.allergen.error.empty";
 
+	/** Constant <code>CONF_ALLERGEN_SORT_BY_PARENT="beCPG.formulation.allergenList.sortByPa"{trunked}</code> */
 	public static final String CONF_ALLERGEN_SORT_BY_PARENT = "beCPG.formulation.allergenList.sortByParent";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AllergensCalculatingFormulationHandler.class);
 
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
@@ -212,10 +214,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 				if (!(formulatedProduct instanceof ResourceProductData)) {
 					for (AllergenListDataItem allergenListDataItem : formulatedProduct.getAllergenList()) {
-						if (!Boolean.TRUE.equals(allergenListDataItem.getIsManual())) {
-							allergenListDataItem.setInVoluntary(false);
-							allergenListDataItem.getInVoluntarySources().clear();
-						}
+						allergenListDataItem.setInVoluntary(false);
+						allergenListDataItem.getInVoluntarySources().clear();
 					}
 				}
 
@@ -320,6 +320,13 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 	}
 
+	/**
+	 * <p>findAllergen.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param allergenNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 */
 	private AllergenListDataItem findAllergen(ProductData formulatedProduct, NodeRef allergenNodeRef) {
 
 		for (AllergenListDataItem allergen : formulatedProduct.getAllergenList()) {
@@ -331,6 +338,13 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		return null;
 	}
 
+	/**
+	 * <p>getRegulatoryThreshold.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param allergen a {@link fr.becpg.repo.product.data.allergen.AllergenItem} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double getRegulatoryThreshold(ProductData formulatedProduct, AllergenItem allergen) {
 		Double ret = null;
 
@@ -352,10 +366,22 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		return ret != null ? ret : allergen.getAllergenRegulatoryThreshold();
 	}
 
+	/**
+	 * <p>getInVolRegulatoryThreshold.</p>
+	 *
+	 * @param allergen a {@link fr.becpg.repo.product.data.allergen.AllergenItem} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double getInVolRegulatoryThreshold(AllergenItem allergen) {
 		return allergen.getAllergenInVoluntaryRegulatoryThreshold();
 	}
 
+	/**
+	 * <p>accept.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a boolean
+	 */
 	private boolean accept(ProductData formulatedProduct) {
 		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (formulatedProduct instanceof ProductSpecificationData)) {
 			return false;
@@ -380,6 +406,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	 * @param qtyUsed the quantity of the part used
 	 * @param netQty the net quantity context
 	 * @param errors a map collecting requirement errors keyed by id
+	 * @return a {@link java.util.List} object
 	 */
 	private List<RequirementListDataItem> visitPart(VariantDataItem variantDataItem, ProductData partProduct, ProductData formulatedProduct,
 			List<AllergenListDataItem> retainNodes, Double qtyUsed, Double netQty, Map<String, RequirementListDataItem> errors) {
@@ -585,6 +612,13 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		return ret;
 	}
 
+	/**
+	 * <p>addEmptyError.</p>
+	 *
+	 * @param errors a {@link java.util.Map} object
+	 * @param ret a {@link java.util.List} object
+	 * @param partProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 */
 	private void addEmptyError(Map<String, RequirementListDataItem> errors, List<RequirementListDataItem> ret, ProductData partProduct) {
 		String message = I18NUtil.getMessage(MESSAGE_EMPTY_ALLERGEN);
 		RequirementListDataItem error = errors.get(message);
@@ -824,6 +858,12 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		return type1.compareTo(type2);
 	}
 
+	/**
+	 * <p>extractName.</p>
+	 *
+	 * @param allergen a {@link fr.becpg.repo.product.data.allergen.AllergenItem} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extractName(AllergenItem allergen) {
 		return allergen.getCharactName();
 	}

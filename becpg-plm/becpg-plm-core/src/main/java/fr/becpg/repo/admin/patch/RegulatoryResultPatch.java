@@ -31,7 +31,9 @@ import fr.becpg.repo.regulatory.RegulatoryResult;
  */
 public class RegulatoryResultPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(RegulatoryResultPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.regulatoryResultPatch.re"{trunked}</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.regulatoryResultPatch.result";
 
 	private NodeDAO nodeDAO;

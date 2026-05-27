@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class MessageHelper implements InitializingBean {
 
+	/** Constant <code>instance</code> */
 	private static MessageHelper instance = null;
 	
 	@Autowired

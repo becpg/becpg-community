@@ -20,7 +20,9 @@ import fr.becpg.repo.product.formulation.lca.LCADatabaseService;
 @Service
 public class LCADatabaseAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
+	/** Constant <code>SOURCE_TYPE_LCA_DB="lcaDataBase"</code> */
 	private static final String SOURCE_TYPE_LCA_DB = "lcaDataBase";
+	/** Constant <code>SOURCE_TYPE_LCA_SUPPLIERS="lcaDatabaseSuppliers"</code> */
 	private static final String SOURCE_TYPE_LCA_SUPPLIERS = "lcaDatabaseSuppliers";
 
 	@Autowired

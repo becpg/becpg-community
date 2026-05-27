@@ -125,6 +125,22 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 		} 
 	}
 
+	/**
+	 * <p>addCompoListProps.</p>
+	 *
+	 * @param comparisonMap a {@link java.util.Map} object
+	 * @param dataListType a {@link org.alfresco.service.namespace.QName} object
+	 * @param charactName a {@link java.lang.String} object
+	 * @param pivotKey a {@link java.lang.String} object
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param nbEntities a int
+	 * @param comparisonPosition a int
+	 * @param totalQty an array of {@link double} objects
+	 * @param baseProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param swap a boolean
+	 * @param position a int
+	 * @param level a int
+	 */
 	private void addCompoListProps(Map<String, CompareResultDataItem> comparisonMap, QName dataListType, String charactName, 
 			String pivotKey, NodeRef entityNodeRef, int nbEntities, int comparisonPosition, double[] totalQty, 
 			ProductData baseProduct, boolean swap, int position, int level) {
@@ -187,6 +203,22 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 		}
 	}
 
+	/**
+	 * <p>addPackagingListProps.</p>
+	 *
+	 * @param comparisonMap a {@link java.util.Map} object
+	 * @param dataListType a {@link org.alfresco.service.namespace.QName} object
+	 * @param charactName a {@link java.lang.String} object
+	 * @param pivotKey a {@link java.lang.String} object
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param nbEntities a int
+	 * @param comparisonPosition a int
+	 * @param totalQty an array of {@link double} objects
+	 * @param baseProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param swap a boolean
+	 * @param position a int
+	 * @param level a int
+	 */
 	private void addPackagingListProps(Map<String, CompareResultDataItem> comparisonMap, QName dataListType, String charactName, 
 			String pivotKey, NodeRef entityNodeRef, int nbEntities, int comparisonPosition, double[] totalQty, 
 			ProductData baseProduct, boolean swap, int position, int level) {
@@ -243,6 +275,22 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 		}
 	}
 
+	/**
+	 * <p>addProcessListProps.</p>
+	 *
+	 * @param comparisonMap a {@link java.util.Map} object
+	 * @param dataListType a {@link org.alfresco.service.namespace.QName} object
+	 * @param charactName a {@link java.lang.String} object
+	 * @param pivotKey a {@link java.lang.String} object
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param nbEntities a int
+	 * @param comparisonPosition a int
+	 * @param totalQty an array of {@link double} objects
+	 * @param baseProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param swap a boolean
+	 * @param position a int
+	 * @param level a int
+	 */
 	private void addProcessListProps(Map<String, CompareResultDataItem> comparisonMap, QName dataListType, String charactName, 
 			String pivotKey, NodeRef entityNodeRef, int nbEntities, int comparisonPosition, double[] totalQty, 
 			ProductData baseProduct, boolean swap, int position, int level) {
@@ -305,6 +353,19 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 
 
 	
+	/**
+	 * <p>extractProps.</p>
+	 *
+	 * @param comparisonMap a {@link java.util.Map} object
+	 * @param dataListType a {@link org.alfresco.service.namespace.QName} object
+	 * @param charactName a {@link java.lang.String} object
+	 * @param pivotKey a {@link java.lang.String} object
+	 * @param property a {@link org.alfresco.service.namespace.QName} object
+	 * @param value a {@link java.lang.String} object
+	 * @param nbEntities a int
+	 * @param comparisonPosition a int
+	 * @param swap a boolean
+	 */
 	private void extractProps(Map<String, CompareResultDataItem> comparisonMap, QName dataListType, String charactName, 
 			String pivotKey, QName property, String value, int nbEntities, int comparisonPosition, boolean swap) {
 
@@ -313,6 +374,16 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 				(!swap ? value : null), (!swap ? null : value), nbEntities, comparisonPosition, isDiff);
 	}
 
+	/**
+	 * <p>getCurrentValue.</p>
+	 *
+	 * @param comparisonMap a {@link java.util.Map} object
+	 * @param dataListType a {@link org.alfresco.service.namespace.QName} object
+	 * @param pivotKey a {@link java.lang.String} object
+	 * @param property a {@link org.alfresco.service.namespace.QName} object
+	 * @param comparisonPosition a int
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getCurrentValue(Map<String, CompareResultDataItem> comparisonMap, QName dataListType,
 			String pivotKey, QName property, int comparisonPosition) {
 		String key = String.format("%s-%s-%s", dataListType, pivotKey, property);
@@ -324,6 +395,16 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 		return null;
 	}
 
+	/**
+	 * <p>isDifferent.</p>
+	 *
+	 * @param comparisonMap a {@link java.util.Map} object
+	 * @param dataListType a {@link org.alfresco.service.namespace.QName} object
+	 * @param pivotKey a {@link java.lang.String} object
+	 * @param property a {@link org.alfresco.service.namespace.QName} object
+	 * @param value a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	private boolean isDifferent(Map<String, CompareResultDataItem> comparisonMap, QName dataListType, String pivotKey, 
 			QName property, String value) {
 		String key = String.format("%s-%s-%s", dataListType, pivotKey, property);
@@ -387,6 +468,17 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 	
 	/**
 	 * Compare a single raw material between two entities.
+	 *
+	 * @param rawMaterialNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param rawMaterials1 a {@link java.util.Map} object
+	 * @param rawMaterials2 a {@link java.util.Map} object
+	 * @param totalQty1 a {@link java.lang.Double} object
+	 * @param totalQty2 a {@link java.lang.Double} object
+	 * @param productNetWeight1 a {@link java.lang.Double} object
+	 * @param productNetWeight2 a {@link java.lang.Double} object
+	 * @param nbEntities a int
+	 * @param comparisonPosition a int
+	 * @param comparisonMap a {@link java.util.Map} object
 	 */
 	private void compareRawMaterial(NodeRef rawMaterialNodeRef, Map<NodeRef, Double> rawMaterials1, 
 			Map<NodeRef, Double> rawMaterials2, Double totalQty1, Double totalQty2,

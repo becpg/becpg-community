@@ -30,9 +30,13 @@ import jakarta.websocket.server.ServerEndpoint;
 @ServerEndpoint(value = "/aiws", configurator = AIWSProxyConfigurator.class)
 public class AIWSProxyHandler {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AIWSProxyHandler.class);
+	/** Constant <code>AI_ENDPOINT="ai"</code> */
 	private static final String AI_ENDPOINT = "ai";
+	/** Constant <code>WS_PROTOCOL="ws"</code> */
 	private static final String WS_PROTOCOL = "ws";
+	/** Constant <code>WSS_PROTOCOL="wss"</code> */
 	private static final String WSS_PROTOCOL = "wss";
 
 	private Session remoteSession;
@@ -153,11 +157,25 @@ public class AIWSProxyHandler {
 		closeSession(remoteSession);
 	}
 
+	/**
+	 * <p>createWSURL.</p>
+	 *
+	 * @param endpointUrl a {@link java.lang.String} object
+	 * @param queryString a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String createWSURL(String endpointUrl, String queryString) {
 		String protocol = endpointUrl.contains("443") ? WSS_PROTOCOL : WS_PROTOCOL;
 		return endpointUrl.replace("http", protocol) + "/ws" + (queryString!=null  ? "?" + queryString : "");
 	}
 
+	/**
+	 * <p>forwardMessage.</p>
+	 *
+	 * @param session a {@link jakarta.websocket.Session} object
+	 * @param message a {@link java.lang.String} object
+	 * @throws java.io.IOException if any.
+	 */
 	private void forwardMessage(Session session, String message) throws IOException {
 		if (session != null && session.isOpen()) {
 			session.getBasicRemote().sendText(message);
@@ -167,6 +185,11 @@ public class AIWSProxyHandler {
 		}
 	}
 
+	/**
+	 * <p>closeSession.</p>
+	 *
+	 * @param session a {@link jakarta.websocket.Session} object
+	 */
 	private void closeSession(Session session) {
 		try {
 			if (session != null) {
@@ -177,6 +200,13 @@ public class AIWSProxyHandler {
 		}
 	}
 
+	/**
+	 * <p>handleError.</p>
+	 *
+	 * @param message a {@link java.lang.String} object
+	 * @param throwable a {@link java.lang.Throwable} object
+	 * @param session a {@link jakarta.websocket.Session} object
+	 */
 	private void handleError(String message, Throwable throwable, Session session) {
 		logger.error(message, throwable);
 		closeSession(session);

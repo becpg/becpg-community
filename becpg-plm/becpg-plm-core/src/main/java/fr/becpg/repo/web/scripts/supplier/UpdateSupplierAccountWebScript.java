@@ -19,6 +19,7 @@ import fr.becpg.repo.supplier.SupplierPortalService;
  */
 public class UpdateSupplierAccountWebScript extends AbstractWebScript {
 
+	/** Constant <code>PARAM_ENTITY_NODEREFS="nodeRefs"</code> */
 	private static final String PARAM_ENTITY_NODEREFS = "nodeRefs";
 
 	private NodeService nodeService;

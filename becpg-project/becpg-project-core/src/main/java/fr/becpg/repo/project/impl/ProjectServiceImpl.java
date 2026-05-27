@@ -83,6 +83,7 @@ import fr.becpg.repo.security.plugins.SecurityServicePlugin;
 @Service("projectService")
 public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements ProjectService, FormulationPlugin, SecurityServicePlugin {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ProjectServiceImpl.class);
 
 	@Autowired
@@ -251,6 +252,12 @@ public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements 
 		formulate(projectNodeRef, new HashSet<>());
 	}
 
+	/**
+	 * <p>formulate.</p>
+	 *
+	 * @param projectNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param visited a {@link java.util.Set} object
+	 */
 	private void formulate(NodeRef projectNodeRef, Set<NodeRef> visited) {
 		if (nodeService.getType(projectNodeRef).equals(ProjectModel.TYPE_PROJECT)) {
 			try {
@@ -543,6 +550,12 @@ public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements 
 		return null;
 	}
 
+	/**
+	 * <p>extractRolePropName.</p>
+	 *
+	 * @param authorityName a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private QName extractRolePropName(String authorityName) {
 		String propName = authorityName
 				.substring((PermissionService.GROUP_PREFIX + ProjectRepoConsts.PROJECT_GROUP_PREFIX).length(), authorityName.length())

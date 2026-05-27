@@ -79,10 +79,20 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 		this.systemConfigurationService = systemConfigurationService;
 	}
 
+	/**
+	 * <p>maxRclSourcesToKeep.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object
+	 */
 	private Integer maxRclSourcesToKeep() {
 		return Integer.valueOf(systemConfigurationService.confValue("beCPG.formulation.reqCtrlList.maxRclSourcesToKeep"));
 	}
 
+	/**
+	 * <p>addChildRclSources.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	private Boolean addChildRclSources() {
 		return Boolean.valueOf(systemConfigurationService.confValue("beCPG.formulation.reqCtrlList.addChildRclSources"));
 	}
@@ -121,6 +131,12 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 		return true;
 	}
 
+	/**
+	 * <p>appendChildReq.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param reqCtrlList a {@link java.util.List} object
+	 */
 	private void appendChildReq(ProductData productData, List<RequirementListDataItem> reqCtrlList) {
 		if (productData.getCompoListView().getCompoList() != null) {
 			for (CompoListDataItem compoListDataItem : productData.getCompoListView().getCompoList()) {
@@ -164,6 +180,12 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 		}
 	}
 
+	/**
+	 * <p>reqCtrlToAdd.</p>
+	 *
+	 * @param componentProductData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.util.Set} object
+	 */
 	private Set<RequirementListDataItem> reqCtrlToAdd(ProductData componentProductData) {
 		Set<RequirementListDataItem> toAdd = new HashSet<>();
 		for (RequirementListDataItem tmp : componentProductData.getReqCtrlList()) {

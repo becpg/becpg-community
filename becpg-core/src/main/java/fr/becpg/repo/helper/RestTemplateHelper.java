@@ -29,20 +29,29 @@ import org.springframework.web.client.RestTemplate;
  */
 public final class RestTemplateHelper {
     
+    /** Constant <code>logger</code> */
     private static final Logger logger = LoggerFactory.getLogger(RestTemplateHelper.class);
     
     // Connection pool configuration
+    /** Constant <code>MAX_TOTAL_CONNECTIONS=50</code> */
     private static final int MAX_TOTAL_CONNECTIONS = 50;
+    /** Constant <code>MAX_CONNECTIONS_PER_ROUTE=20</code> */
     private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
+    /** Constant <code>CONNECTION_TTL_SECONDS=5</code> */
     private static final int CONNECTION_TTL_SECONDS = 5;
     
     // Timeout configuration
+    /** Constant <code>CONNECTION_TIMEOUT</code> */
     private static final Timeout CONNECTION_TIMEOUT = Timeout.of(5, TimeUnit.SECONDS);
+    /** Constant <code>DEFAULT_SOCKET_TIMEOUT</code> */
     private static final Timeout DEFAULT_SOCKET_TIMEOUT = Timeout.of(30, TimeUnit.SECONDS);
+    /** Constant <code>LONG_SOCKET_TIMEOUT</code> */
     private static final Timeout LONG_SOCKET_TIMEOUT = Timeout.of(3, TimeUnit.MINUTES);
     
     // Pre-configured RestTemplate instances
+    /** Constant <code>defaultRestTemplate</code> */
     private static final RestTemplate defaultRestTemplate;
+    /** Constant <code>longTimeoutRestTemplate</code> */
     private static final RestTemplate longTimeoutRestTemplate;
 
     static {
@@ -50,6 +59,9 @@ public final class RestTemplateHelper {
         longTimeoutRestTemplate = createRestTemplate(LONG_SOCKET_TIMEOUT);
     }
 
+    /**
+     * <p>Constructor for RestTemplateHelper.</p>
+     */
     private RestTemplateHelper() {
         throw new AssertionError("Utility class - do not instantiate");
     }

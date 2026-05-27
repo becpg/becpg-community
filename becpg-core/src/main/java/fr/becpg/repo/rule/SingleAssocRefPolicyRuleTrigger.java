@@ -49,6 +49,7 @@ import fr.becpg.model.BeCPGModel;
  * @author matthieu
  */
 public class SingleAssocRefPolicyRuleTrigger extends RuleTriggerAbstractBase {
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(SingleAssocRefPolicyRuleTrigger.class);
 
 	private String policyNamespace = NamespaceService.ALFRESCO_URI;

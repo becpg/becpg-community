@@ -37,6 +37,12 @@ public abstract class AbstractExprNameExtractor implements AttributeExtractorPlu
 		return clean(expressionService.extractExpr(nodeRef,null, exprFormat));
 	}
 	
+	/**
+	 * <p>clean.</p>
+	 *
+	 * @param expr a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String clean(String expr) {
 		return expr != null ? expr.replaceFirst("^ - ", "").replaceFirst(" - $", "").trim() : expr;
 	}

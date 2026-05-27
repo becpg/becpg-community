@@ -111,10 +111,14 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @SuppressWarnings("deprecation")
 public class EntityVersionServiceImpl implements EntityVersionService {
 
+	/** Constant <code>QNAME_ENTITIES_HISTORY</code> */
 	private static final QName QNAME_ENTITIES_HISTORY = QName.createQName(BeCPGModel.BECPG_URI, RepoConsts.ENTITIES_HISTORY_NAME);
 
+	/** Constant <code>KEY_ENTITIES_HISTORY="EntitiesHistory"</code> */
 	private static final String KEY_ENTITIES_HISTORY = "EntitiesHistory";
+	/** Constant <code>MSG_INITIAL_VERSION="create_version.initial_version"</code> */
 	private static final String MSG_INITIAL_VERSION = "create_version.initial_version";
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityVersionServiceImpl.class);
 
 	@Autowired
@@ -247,6 +251,12 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	}
 
 	//Old version type
+	/**
+	 * <p>updateEntitiesHistory.</p>
+	 *
+	 * @param origNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param impactOnlyNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void updateEntitiesHistory(NodeRef origNodeRef, NodeRef impactOnlyNodeRef) {
 		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(origNodeRef, RegexQNamePattern.MATCH_ALL);
 
@@ -301,6 +311,12 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	}
 
+	/**
+	 * <p>removeRemovedAssociation.</p>
+	 *
+	 * @param sourceCopy a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param targetCopy a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void removeRemovedAssociation(NodeRef sourceCopy, NodeRef targetCopy) {
 
 		/*
@@ -348,6 +364,13 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		internalCreateInitialVersion(entityNodeRef, effectiveDate);
 	}
 
+	/**
+	 * <p>internalCreateInitialVersion.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param newEffectivity a {@link java.util.Date} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef internalCreateInitialVersion(NodeRef entityNodeRef, Date newEffectivity) {
 		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 			// Create the initial-version
@@ -639,6 +662,12 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return ret;
 	}
 
+	/**
+	 * <p>getBranchFromNodeRef.</p>
+	 *
+	 * @param branchNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getBranchFromNodeRef(NodeRef branchNodeRef) {
 		return associationService.getTargetAssoc(branchNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
 	}
@@ -683,8 +712,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	}
 
 	/**
-	 * @param entityNodeRef
-	 * @return
+	 * <p>getAllChildVersionBranches.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.util.List} object
 	 */
 	private List<NodeRef> getAllChildVersionBranches(NodeRef entityNodeRef) {
 
@@ -706,11 +737,24 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return ret;
 	}
 
+	/**
+	 * <p>getVersionAssocs.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<ChildAssociationRef> getVersionAssocs(NodeRef entityNodeRef) {
 		NodeRef versionHistoryNodeRef = getVersionHistoryNodeRef(entityNodeRef, false);
 		return versionHistoryNodeRef != null ? getVersionAssocs(versionHistoryNodeRef, false) : new ArrayList<>();
 	}
 
+	/**
+	 * <p>getEntityVersion.</p>
+	 *
+	 * @param versionAssocs a {@link java.util.List} object
+	 * @param version a {@link org.alfresco.service.cmr.version.Version} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getEntityVersion(List<ChildAssociationRef> versionAssocs, Version version) {
 
 		for (ChildAssociationRef versionAssoc : versionAssocs) {
@@ -782,6 +826,18 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return internalMergeBranch(branchNodeRef, branchToNodeRef, versionType, description, impactWused, rename, new Date());
 	}
 
+	/**
+	 * <p>internalMergeBranch.</p>
+	 *
+	 * @param branchNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param branchToNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param versionType a {@link org.alfresco.service.cmr.version.VersionType} object
+	 * @param description a {@link java.lang.String} object
+	 * @param impactWused a boolean
+	 * @param rename a boolean
+	 * @param newEffectivity a {@link java.util.Date} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef internalMergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description,
 			boolean impactWused, boolean rename, Date newEffectivity) {
 
@@ -1042,6 +1098,11 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return branchToNodeRef;
 	}
 
+	/**
+	 * <p>triggerRules.</p>
+	 *
+	 * @param internalBranchToNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void triggerRules(NodeRef internalBranchToNodeRef) {
 	
 		((RuleService) ruleService).enableRules();
@@ -1055,10 +1116,22 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		
 	}
 
+	/**
+	 * <p>generateReportsAsync.</p>
+	 *
+	 * @param internalBranchToNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param priority a {@link java.lang.String} object
+	 */
 	private void generateReportsAsync(final NodeRef internalBranchToNodeRef, String priority) {
 		nodeService.addAspect(internalBranchToNodeRef, BeCPGModel.ASPECT_PENDING_ENTITY_REPORT_ASPECT, Map.of(BeCPGModel.PROP_PENDING_ENTITY_REPORT_PRIORITY, priority));
 	}
 
+	/**
+	 * <p>convertNodeAndWhereUsed.</p>
+	 *
+	 * @param notConvertedNode a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef convertNodeAndWhereUsed(NodeRef notConvertedNode) {
 
 		for (NodeRef source : associationService.getSourcesAssocs(notConvertedNode, QName.createQName(BeCPGModel.BECPG_URI, "compoListProduct"))) {
@@ -1169,6 +1242,11 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return null;
 	}
 	
+	/**
+	 * <p>moveToImportToDoFolder.</p>
+	 *
+	 * @param toMove a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void moveToImportToDoFolder(NodeRef toMove) {
 		NodeRef originalParent = nodeService.getPrimaryParent(toMove).getParentRef();
 		String parentName = (String) nodeService.getProperty(originalParent, ContentModel.PROP_NAME);
@@ -1250,6 +1328,12 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return ret;
 	}
 	
+	/**
+	 * <p>getInnerEntities.</p>
+	 *
+	 * @param node a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.util.Set} object
+	 */
 	private Set<NodeRef> getInnerEntities(NodeRef node) {
 		
 		Set<NodeRef> result = new HashSet<>();
@@ -1264,6 +1348,12 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return result;
 	}
 	
+	/**
+	 * <p>exportEntityToVersion.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param versionNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void exportEntityToVersion(final NodeRef entityNodeRef, final NodeRef versionNodeRef) {
 
 		StopWatchSupport.build().logger(logger).scopeName("convert entity version").run(() -> {
@@ -1318,6 +1408,13 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	}
 	
+	/**
+	 * <p>copyReport.</p>
+	 *
+	 * @param parentFolder a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param reportNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef copyReport(NodeRef parentFolder, NodeRef reportNodeRef) {
 		
 		String reportName = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
@@ -1341,6 +1438,11 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return reportCopy;
 	}
 	
+	/**
+	 * <p>deleteNodeRef.</p>
+	 *
+	 * @param originalNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void deleteNodeRef(final NodeRef originalNodeRef) {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
@@ -1363,6 +1465,12 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		}, false, true);
 	}
 
+	/**
+	 * <p>getFileLinks.</p>
+	 *
+	 * @param parent a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> getFileLinks(NodeRef parent) {
 		List<NodeRef> links = new ArrayList<>();
 		
@@ -1437,6 +1545,16 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return versionNodeRef;
 	}
 	
+	/**
+	 * <p>internalCreateVersion.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param versionProperties a {@link java.util.Map} object
+	 * @param newEffectivity a {@link java.util.Date} object
+	 * @param manualVersionLabel a {@link java.lang.String} object
+	 * @param isInitialVersion a boolean
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef internalCreateVersion(final NodeRef entityNodeRef, Map<String, Serializable> versionProperties, Date newEffectivity, String manualVersionLabel, boolean isInitialVersion) {
 		if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 
@@ -1545,6 +1663,12 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return null;
 	}
 
+	/**
+	 * <p>updateBranchAssoc.</p>
+	 *
+	 * @param branchNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param branchToNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void updateBranchAssoc(NodeRef branchNodeRef, NodeRef branchToNodeRef) {
 
 		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(branchNodeRef, RegexQNamePattern.MATCH_ALL);
@@ -1573,6 +1697,12 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			boolean branchComment) {
 	}
 
+	/**
+	 * <p>mergeComments.</p>
+	 *
+	 * @param branchNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param destinationNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void mergeComments(NodeRef branchNodeRef, NodeRef destinationNodeRef) {
 		List<CommentData> allComments = new ArrayList<>();
 		collectCommentData(branchNodeRef, allComments, true);
@@ -1617,6 +1747,13 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		}
 	}
 
+	/**
+	 * <p>collectCommentData.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param allComments a {@link java.util.List} object
+	 * @param branchComment a boolean
+	 */
 	private void collectCommentData(NodeRef nodeRef, List<CommentData> allComments, boolean branchComment) {
 		PagingResults<NodeRef> sourceComments = commentService.listComments(nodeRef, new PagingRequest(5000, null));
 		if (sourceComments != null && !sourceComments.getPage().isEmpty()) {
@@ -1639,6 +1776,13 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		}
 	}
 
+	/**
+	 * <p>createEmptyBranch.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param parentRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef createEmptyBranch(NodeRef entityNodeRef, NodeRef parentRef) {
 
 		return StopWatchSupport.build().logger(logger).scopeName(entityNodeRef.toString()).run(() -> {
@@ -1746,6 +1890,11 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		});
 	}
 
+	/**
+	 * <p>addEntityHistoryAspect.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void addEntityHistoryAspect(NodeRef nodeRef) {
 		if (nodeRef != null && nodeService.exists(nodeRef)) {
 			if (!nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_HISTORY)) {
@@ -1787,6 +1936,12 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	}
 
+	/**
+	 * <p>findExtractedVersion.</p>
+	 *
+	 * @param versionNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef findExtractedVersion(final NodeRef versionNodeRef) {
 
 		NodeRef versionHistoryRef = getVersionHistoryNodeRef(versionNodeRef,false);
@@ -1809,6 +1964,12 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return null;
 	}
 
+	/**
+	 * <p>createExtractedVersion.</p>
+	 *
+	 * @param versionNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef createExtractedVersion(final NodeRef versionNodeRef) {
 
 		try {

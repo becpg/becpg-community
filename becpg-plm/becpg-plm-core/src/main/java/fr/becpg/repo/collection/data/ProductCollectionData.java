@@ -29,6 +29,7 @@ import fr.becpg.repo.repository.model.StateableEntity;
 @AlfQname(qname = "bcpg:productCollection")
 public class ProductCollectionData extends BeCPGDataObject implements HierarchicalEntity, StateableEntity, FormulatedEntity {
 
+	/** Constant <code>serialVersionUID=-2554133542406623412L</code> */
 	private static final long serialVersionUID = -2554133542406623412L;
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;

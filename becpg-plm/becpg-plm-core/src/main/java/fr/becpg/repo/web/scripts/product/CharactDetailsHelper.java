@@ -57,14 +57,22 @@ import fr.becpg.repo.product.data.CharactDetailsValue;
  */
 public class CharactDetailsHelper {
 
+	/** Constant <code>FORECAST_KEYS</code> */
 	private static final Map<String, String> FORECAST_KEYS = new HashMap<>();
 	
+	/** Constant <code>MINI_VALUE_KEY="I18NUtil.getMessage(bcpg_bcpgmodel.prop"{trunked}</code> */
 	private static final String MINI_VALUE_KEY = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_nutListMini.title");
+	/** Constant <code>MAXI_VALUE_KEY="I18NUtil.getMessage(bcpg_bcpgmodel.prop"{trunked}</code> */
 	private static final String MAXI_VALUE_KEY = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_nutListMaxi.title");
+	/** Constant <code>LEVEL_KEY="I18NUtil.getMessage(bcpg_bcpgmodel.prop"{trunked}</code> */
 	private static final String LEVEL_KEY = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_depthLevel.title");
+	/** Constant <code>PRODUCT_TYPE_KEY="I18NUtil.getMessage(bcpg_bcpgmodel.prop"{trunked}</code> */
 	private static final String PRODUCT_TYPE_KEY = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_productType.title");
 
 	
+	/**
+	 * <p>Constructor for CharactDetailsHelper.</p>
+	 */
 	private CharactDetailsHelper() {
 		//Do NoThing
 	}
@@ -247,6 +255,14 @@ public class CharactDetailsHelper {
 
 	}
 
+	/**
+	 * <p>writeMetadata.</p>
+	 *
+	 * @param colUnits a {@link java.util.Map} object
+	 * @param metadatas a {@link org.json.JSONArray} object
+	 * @param indexMap a {@link java.util.Map} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private static void writeMetadata(Map<String, String> colUnits, JSONArray metadatas, Map<String, Integer> indexMap) throws JSONException {
 		String colUnit = "";
 		for (Entry<String, Integer> entry : indexMap.entrySet()) {
@@ -263,6 +279,15 @@ public class CharactDetailsHelper {
 		}
 	}
 
+	/**
+	 * <p>createColumnMap.</p>
+	 *
+	 * @param characts a {@link java.util.Map} object
+	 * @param additionalValues a {@link java.util.Map} object
+	 * @param attributeExtractorService a {@link fr.becpg.repo.helper.AttributeExtractorService} object
+	 * @param idx a {@link java.lang.Integer} object
+	 * @return a {@link java.util.Map} object
+	 */
 	private static Map<String, Integer> createColumnMap(Map<NodeRef, List<CharactDetailsValue>> characts, Map<String, String> additionalValues,
 			AttributeExtractorService attributeExtractorService, Integer idx) {
 		Map<String, Integer> res = new LinkedHashMap<>();
@@ -275,6 +300,15 @@ public class CharactDetailsHelper {
 		return res;
 	}
 
+	/**
+	 * <p>completeAdditionalValues.</p>
+	 *
+	 * @param charactName a {@link java.lang.String} object
+	 * @param indexMap a {@link java.util.Map} object
+	 * @param idx a {@link java.lang.Integer} object
+	 * @param additionalValues a {@link java.util.Map} object
+	 * @return a {@link java.lang.Integer} object
+	 */
 	private static Integer completeAdditionalValues(String charactName, Map<String, Integer> indexMap, Integer idx,
 			Map<String, String> additionalValues) {
 		for (Entry<String, String> additionalValue : additionalValues.entrySet()) {
@@ -285,6 +319,14 @@ public class CharactDetailsHelper {
 		return idx;
 	}
 
+	/**
+	 * <p>computeTotals.</p>
+	 *
+	 * @param index a {@link java.lang.Integer} object
+	 * @param totals a {@link java.util.List} object
+	 * @param currentValue a {@link java.lang.Double} object
+	 * @param totalOperation a {@link java.lang.String} object
+	 */
 	private static void computeTotals(Integer index, List<Object> totals, Double currentValue, String totalOperation) {
 		if (totals.size() > index) {
 			if ("SUM".equals(totalOperation)) {
@@ -299,6 +341,13 @@ public class CharactDetailsHelper {
 		}
 	}
 
+	/**
+	 * <p>fillAdditionalValuesMap.</p>
+	 *
+	 * @param additionalValues a {@link java.util.Map} object
+	 * @param currentValue a {@link fr.becpg.repo.product.data.CharactDetailsValue} object
+	 * @param propName a {@link java.lang.String} object
+	 */
 	private static void fillAdditionalValuesMap(Map<String, String> additionalValues, CharactDetailsValue currentValue, String propName) {
 
 		for (String forecastColumn : currentValue.getForecastColumns()) {
@@ -322,6 +371,11 @@ public class CharactDetailsHelper {
 
 	}
 
+	/**
+	 * <p>getYAxisLabel.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private static String getYAxisLabel() {
 		return I18NUtil.getMessage("entity.datalist.item.details.yaxis.label");
 	}
@@ -488,6 +542,11 @@ public class CharactDetailsHelper {
 
 	// translation -> index in resulting array, sorted so it goes value - mini -
 	// maxi, or value - previous - future
+	/**
+	 * <p>createAdditionalValuesMap.</p>
+	 *
+	 * @return a {@link java.util.Map} object
+	 */
 	private static Map<String, String> createAdditionalValuesMap() {
 		return new LinkedHashMap<>();
 	}

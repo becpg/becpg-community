@@ -105,6 +105,10 @@ public class LinkedValueAutoCompletePlugin extends TargetAssocAutoCompletePlugin
 	 * @param query
 	 *            the query
 	 * @return the map
+	 * @param pageNum a {@link java.lang.Integer} object
+	 * @param pageSize a {@link java.lang.Integer} object
+	 * @param props a {@link java.util.Map} object
+	 * @param all a boolean
 	 */
 	private AutoCompletePage suggestLinkedValue(String path, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props,
 			boolean all) {

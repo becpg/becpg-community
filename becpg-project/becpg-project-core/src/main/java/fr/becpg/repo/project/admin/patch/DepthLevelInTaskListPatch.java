@@ -35,7 +35,9 @@ import fr.becpg.repo.admin.patch.AbstractBeCPGPatch;
  */
 public class DepthLevelInTaskListPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(DepthLevelInTaskListPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.depthLevelInTaskListPatc"{trunked}</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.depthLevelInTaskListPatch.result";
 
 	private NodeDAO nodeDAO;

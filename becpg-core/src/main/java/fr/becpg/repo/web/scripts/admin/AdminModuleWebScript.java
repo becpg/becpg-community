@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -18,6 +19,7 @@ import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
+import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.admin.InitVisitorService;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
@@ -31,13 +33,20 @@ import fr.becpg.repo.entity.EntitySystemService;
  */
 public class AdminModuleWebScript extends MonitorWebScript {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AdminModuleWebScript.class);
 
+	/** Constant <code>PARAM_ACTION="action"</code> */
 	private static final String PARAM_ACTION = "action";
+	/** Constant <code>ACTION_INIT_REPO="init-repo"</code> */
 	private static final String ACTION_INIT_REPO = "init-repo";
+	/** Constant <code>ACTION_RELOAD_CACHE="reload-cache"</code> */
 	private static final String ACTION_RELOAD_CACHE = "reload-cache";
+	/** Constant <code>ACTION_RELOAD_MODEL="reload-model"</code> */
 	private static final String ACTION_RELOAD_MODEL = "reload-model";
+	/** Constant <code>ACTION_GET_SYSTEM_ENTITIES="system-entities"</code> */
 	private static final String ACTION_GET_SYSTEM_ENTITIES = "system-entities";
+	/** Constant <code>ACTION_GET_CONNECTED_USERS="show-users"</code> */
 	private static final String ACTION_GET_CONNECTED_USERS = "show-users";
 
 	private InitVisitorService initVisitorService;
@@ -98,6 +107,12 @@ public class AdminModuleWebScript extends MonitorWebScript {
 	/** {@inheritDoc} */
 	@Override
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) {
+		
+		if (!authorityService.hasAdminAuthority()
+				&& !authorityService.getAuthorities().contains(PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr)) {
+			throw new WebScriptException(Status.STATUS_FORBIDDEN, "You must be an administrator or system manager to access this webscript");
+		}
+		
 		logger.debug("start admin webscript");
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 

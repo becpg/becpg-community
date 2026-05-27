@@ -96,12 +96,16 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("entityTplService")
 public class EntityTplServiceImpl implements EntityTplService {
 
+	/** Constant <code>ASYNC_ACTION_URL_PREFIX="page/entity-data-lists?list=View-proper"{trunked}</code> */
 	private static final String ASYNC_ACTION_URL_PREFIX = "page/entity-data-lists?list=View-properties&nodeRef=%s";
 
+	/** Constant <code>ENTITY_DATALIST_KEY_PREFIX="entity-datalist-"</code> */
 	private static final String ENTITY_DATALIST_KEY_PREFIX = "entity-datalist-";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityTplServiceImpl.class);
 
+	/** Constant <code>isIgnoredAspect</code> */
 	private static final Set<QName> isIgnoredAspect = new HashSet<>();
 
 	@Autowired
@@ -166,6 +170,12 @@ public class EntityTplServiceImpl implements EntityTplService {
 		isIgnoredAspect.add(BeCPGModel.ASPECT_ENTITY_TPL);
 	}
 
+	/**
+	 * <p>ignoreAspect.</p>
+	 *
+	 * @param aspect a {@link org.alfresco.service.namespace.QName} object
+	 * @return a boolean
+	 */
 	private boolean ignoreAspect(QName aspect) {
 		return (aspect.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI) || isIgnoredAspect.contains(aspect));
 	}
@@ -550,6 +560,13 @@ public class EntityTplServiceImpl implements EntityTplService {
 		return batchInfo;
 	}
 
+	/**
+	 * <p>createWorkProcessWorkProvider.</p>
+	 *
+	 * @param tplNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param includeTpl a boolean
+	 * @return a {@link org.alfresco.repo.batch.BatchProcessWorkProvider} object
+	 */
 	private BatchProcessWorkProvider<NodeRef> createWorkProcessWorkProvider(NodeRef tplNodeRef, boolean includeTpl) {
 		List<NodeRef> entityNodeRefs = new ArrayList<>();
 
@@ -568,6 +585,12 @@ public class EntityTplServiceImpl implements EntityTplService {
 		return new EntityListBatchProcessWorkProvider<>(entityNodeRefs);
 	}
 
+	/**
+	 * <p>synchronizeTitle.</p>
+	 *
+	 * @param entityTpl a {@link fr.becpg.repo.repository.RepositoryEntity} object
+	 * @param entity a {@link fr.becpg.repo.repository.RepositoryEntity} object
+	 */
 	private void synchronizeTitle(RepositoryEntity entityTpl, RepositoryEntity entity) {
 
 		/*-- copy source datalists--*/
@@ -606,6 +629,13 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 	}
 
+	/**
+	 * <p>findCompositeParent.</p>
+	 *
+	 * @param parent a {@link fr.becpg.repo.repository.RepositoryEntity} object
+	 * @param dataListItems a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.repository.RepositoryEntity} object
+	 */
 	private RepositoryEntity findCompositeParent(RepositoryEntity parent, List<BeCPGDataObject> dataListItems) {
 
 		for (RepositoryEntity dataListItem : dataListItems) {

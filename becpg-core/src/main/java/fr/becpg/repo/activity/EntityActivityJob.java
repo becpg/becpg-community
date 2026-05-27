@@ -23,7 +23,9 @@ import org.quartz.PersistJobDataAfterExecution;
 @DisallowConcurrentExecution
 public class EntityActivityJob  extends AbstractScheduledLockedJob implements Job {
 
+	/** Constant <code>KEY_ENTITY_ACTIVITY_SERVICE="entityActivityService"</code> */
 	private static final String KEY_ENTITY_ACTIVITY_SERVICE = "entityActivityService";
+	/** Constant <code>KEY_TENANT_ADMIN_SERVICE="tenantAdminService"</code> */
 	private static final String KEY_TENANT_ADMIN_SERVICE = "tenantAdminService";
 
 	/** {@inheritDoc} */

@@ -35,6 +35,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @DisallowConcurrentExecution
 public class EntityReportJob extends AbstractScheduledLockedJob implements Job {
 
+	/** Constant <code>MAX_RESULTS=50</code> */
 	private static final int MAX_RESULTS = 50;
 
 	
@@ -68,6 +69,17 @@ public class EntityReportJob extends AbstractScheduledLockedJob implements Job {
 		}
 	}
 	
+	/**
+	 * <p>generatePendingReports.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param entityVersionService a {@link fr.becpg.repo.entity.version.EntityVersionService} object
+	 * @param entityReportService a {@link fr.becpg.repo.report.entity.EntityReportService} object
+	 * @param batchQueueService a {@link fr.becpg.repo.batch.BatchQueueService} object
+	 * @param priority a {@link fr.becpg.repo.batch.BatchPriority} object
+	 * @param maxResults a int
+	 * @return a int
+	 */
 	private int generatePendingReports(NodeService nodeService, EntityVersionService entityVersionService, EntityReportService entityReportService,
 			BatchQueueService batchQueueService, BatchPriority priority, int maxResults) {
 		String batchId = "generatePendingReports-" + priority;

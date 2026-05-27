@@ -55,6 +55,7 @@ import fr.becpg.util.ApplicationContextHelper;
  */
 public class NCWorkflowUtils {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(NCWorkflowUtils.class);
 
 	public interface NCWorkflowUtilsTask {
@@ -183,6 +184,13 @@ public class NCWorkflowUtils {
 
 	}
 
+	/**
+	 * <p>convertList.</p>
+	 *
+	 * @param nodes a {@link java.util.List} object
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @return a {@link java.util.List} object
+	 */
 	private static List<NodeRef> convertList(List<ActivitiScriptNode> nodes, NodeService nodeService) {
 		List<NodeRef> ret = new ArrayList<>();
 

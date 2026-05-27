@@ -24,6 +24,7 @@ import fr.becpg.repo.system.SystemConfigurationService;
 @Service("systemConfigurationService")
 public class SystemConfigurationServiceImpl implements SystemConfigurationService {
 	
+	/** Constant <code>CACHE_KEY="SystemConfigurationService.class.getNam"{trunked}</code> */
 	private static final String CACHE_KEY = SystemConfigurationService.class.getName();
 	
 	@Autowired

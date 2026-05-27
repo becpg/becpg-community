@@ -25,6 +25,7 @@ import fr.becpg.repo.helper.MLTextHelper;
  */
 public class BeCPGRuntimeContainer extends TenantRepositoryContainer implements TenantDeployer {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(BeCPGRuntimeContainer.class);
 
 	private NodeService nodeService;

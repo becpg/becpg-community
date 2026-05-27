@@ -43,18 +43,25 @@ import fr.becpg.repo.supplier.SupplierPortalService;
  */
 public class SupplierPortalWebScript extends AbstractWebScript {
 
+	/** Constant <code>PARAM_ENTITY_NODEREF="entityNodeRef"</code> */
 	private static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
 
+	/** Constant <code>PARAM_ALLPAGES="allPages"</code> */
 	private static final String PARAM_ALLPAGES = "allPages";
 
+	/** Constant <code>PARAM_QUERY_EXECUTION_ID="queryExecutionId"</code> */
 	private static final String PARAM_QUERY_EXECUTION_ID = "queryExecutionId";
 
+	/** Constant <code>PARAM_NODEREFS="nodeRefs"</code> */
 	private static final String PARAM_NODEREFS = "nodeRefs";
 
+	/** Constant <code>PARAM_TPL_NODEREF="tplNodeRef"</code> */
 	private static final String PARAM_TPL_NODEREF = "tplNodeRef";
 	
+	/** Constant <code>PROP_PJT_TPL="projectTpl"</code> */
 	private static final String PROP_PJT_TPL = "projectTpl";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(SupplierPortalWebScript.class);
 
 	private SupplierPortalService supplierPortalService;

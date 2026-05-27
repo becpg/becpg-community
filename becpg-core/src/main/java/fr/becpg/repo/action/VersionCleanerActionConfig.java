@@ -97,6 +97,16 @@ public class VersionCleanerActionConfig {
 
 	}
 
+	/**
+	 * <p>versionToKeep.</p>
+	 *
+	 * @param versions a {@link java.util.Collection} object
+	 * @param versionType a {@link org.alfresco.service.cmr.version.VersionType} object
+	 * @param numberOfDay a {@link java.lang.Integer} object
+	 * @param numberByDay a {@link java.lang.Integer} object
+	 * @param numberOfVersion a {@link java.lang.Integer} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<Version> versionToKeep(Collection<Version> versions, VersionType versionType, Integer numberOfDay, Integer numberByDay, Integer numberOfVersion) {
 		Map<Long, List<Version>> cacheByDay = new LinkedHashMap<>();
 		List<Version> majorToKeep = new ArrayList<>();

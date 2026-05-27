@@ -25,9 +25,10 @@ function parseActions(list)
    
    for each (var xmlAction in myConfig.actionSetToolbar.action)
    {
-    if( !list || xmlAction.@list.toString().length < 1 || xmlAction.@list.toString() == list  
-    		||	(xmlAction.@list.toString().indexOf("!")==0 &&  xmlAction.@list.toString() != ("!"+list))){
-      	actionSetToolbar.push(
+      var actionLists = xmlAction.@list.toString();
+      if( !list || actionLists.length < 1 || actionLists.split(",").indexOf(list) >= 0
+              || (actionLists.indexOf("!")==0 && actionLists != ("!"+list))){
+        actionSetToolbar.push(
          {
             id: xmlAction.@id.toString(),
             type: xmlAction.@type.toString(),
@@ -41,9 +42,10 @@ function parseActions(list)
    
    for each (var xmlAction in myConfig.actionSetDataGrid.action)
    {
-      if( !list || xmlAction.@list.toString().length < 1 || xmlAction.@list.toString() == list
-    		  || (xmlAction.@list.toString().indexOf("!")==0 &&  xmlAction.@list.toString() !=  ("!"+list))){
-      	actionSetDataGrid.push(
+      var actionLists2 = xmlAction.@list.toString();
+      if( !list || actionLists2.length < 1 || actionLists2.split(",").indexOf(list) >= 0
+              || (actionLists2.indexOf("!")==0 && actionLists2 != ("!"+list))){
+        actionSetDataGrid.push(
          {
             id: xmlAction.@id.toString(),
             type: xmlAction.@type.toString(),

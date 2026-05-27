@@ -28,7 +28,9 @@ import fr.becpg.model.BeCPGModel;
  */
 public class ListValuePatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ListValuePatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.listValuePatch.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.listValuePatch.result";
 
 

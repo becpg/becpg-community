@@ -63,8 +63,10 @@ import fr.becpg.repo.security.BeCPGAccessDeniedException;
 @Component
 public class FormulaHelper {
 	
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(FormulaHelper.class);
 	
+	/** Constant <code>instance</code> */
 	private static FormulaHelper instance;
 	
 	private final AlfrescoRepository<ProductData> alfrescoRepository;
@@ -340,6 +342,16 @@ public class FormulaHelper {
 
 	}
 	
+	/**
+	 * <p>extractJSONTree.</p>
+	 *
+	 * @param entity a {@link fr.becpg.repo.product.data.AbstractScorableEntity} object
+	 * @param dataListItem a {@link fr.becpg.repo.repository.model.CompositionDataItem} object
+	 * @param value a {@link java.lang.Object} object
+	 * @param exp a {@link org.springframework.expression.Expression} object
+	 * @return a {@link org.json.JSONObject} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private static JSONObject extractJSONTree(AbstractScorableEntity entity, CompositionDataItem dataListItem, Object value, Expression exp) throws JSONException {
 		JSONObject jsonObject = new JSONObject();
 
@@ -354,6 +366,17 @@ public class FormulaHelper {
 		return jsonObject;
 	}
 	
+	/**
+	 * <p>extractJSONSubList.</p>
+	 *
+	 * @param entity a {@link fr.becpg.repo.product.data.AbstractScorableEntity} object
+	 * @param dataListItem a {@link fr.becpg.repo.repository.model.CompositionDataItem} object
+	 * @param exp a {@link org.springframework.expression.Expression} object
+	 * @param path a {@link java.lang.String} object
+	 * @param subList a {@link org.json.JSONArray} object
+	 * @param visited a {@link java.util.Set} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private static void extractJSONSubList(AbstractScorableEntity entity, CompositionDataItem dataListItem, Expression exp, String path, JSONArray subList,
 			Set<NodeRef> visited) throws JSONException {
 		ProductData subProductData = instance.alfrescoRepository.findOne(dataListItem.getComponent());
@@ -446,6 +469,13 @@ public class FormulaHelper {
 		}
 	}
 	
+	/**
+	 * <p>getQtyPerProduct.</p>
+	 *
+	 * @param entity a {@link fr.becpg.repo.product.data.AbstractScorableEntity} object
+	 * @param dataListItem a {@link fr.becpg.repo.repository.model.CompositionDataItem} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private static Double getQtyPerProduct(AbstractScorableEntity entity, CompositionDataItem dataListItem) {
 		if (dataListItem instanceof PackagingListDataItem && entity instanceof ProductData) {
 			VariantPackagingData variantPackagingData = ((ProductData) entity).getDefaultVariantPackagingData();

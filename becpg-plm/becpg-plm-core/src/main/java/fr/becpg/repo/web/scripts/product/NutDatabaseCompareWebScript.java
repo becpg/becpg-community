@@ -35,6 +35,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  */
 public class NutDatabaseCompareWebScript extends AbstractWebScript {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(NutDatabaseCompareWebScript.class);
 
 	@Autowired
@@ -132,6 +133,13 @@ public class NutDatabaseCompareWebScript extends AbstractWebScript {
 		}
 	}
 
+	/**
+	 * <p>getNutsNames.</p>
+	 *
+	 * @param extractedNuts a {@link java.util.List} object
+	 * @return a {@link java.util.Set} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private Set<String> getNutsNames(List<JSONObject> extractedNuts) throws JSONException {
 		Set<String> res = new HashSet<>();
 
@@ -150,6 +158,15 @@ public class NutDatabaseCompareWebScript extends AbstractWebScript {
 		return res;
 	}
 
+	/**
+	 * <p>extractNutsJSON.</p>
+	 *
+	 * @param file a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param entity a {@link java.lang.String} object
+	 * @param existingEntity a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.json.JSONObject} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private JSONObject extractNutsJSON(NodeRef file, String entity, NodeRef existingEntity) throws JSONException {
 		JSONObject currentEntity = new JSONObject();
 		if (existingEntity == null) {
@@ -178,6 +195,13 @@ public class NutDatabaseCompareWebScript extends AbstractWebScript {
 		return currentEntity;
 	}
 
+	/**
+	 * <p>getJSONNutsArray.</p>
+	 *
+	 * @param nuts a {@link java.util.List} object
+	 * @return a {@link org.json.JSONArray} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private JSONArray getJSONNutsArray(List<NutListDataItem> nuts) throws JSONException {
 		JSONArray nutObjectsArray = new JSONArray();
 
@@ -192,10 +216,24 @@ public class NutDatabaseCompareWebScript extends AbstractWebScript {
 		return nutObjectsArray;
 	}
 
+	/**
+	 * <p>getNutCharactName.</p>
+	 *
+	 * @param nut a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getNutCharactName(NutListDataItem nut) {
 		return (String) nodeService.getProperty(nut.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME);
 	}
 
+	/**
+	 * <p>putNutJSONinMap.</p>
+	 *
+	 * @param map a {@link java.util.Map} object
+	 * @param object a {@link org.json.JSONObject} object
+	 * @param nutNames a {@link java.util.Set} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private void putNutJSONinMap(Map<String, JSONArray> map, JSONObject object, Set<String> nutNames) throws JSONException {
 		JSONArray objectNuts = object.getJSONArray("nuts");
 		String productName = object.getString("name");

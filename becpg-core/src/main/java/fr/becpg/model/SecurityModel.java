@@ -31,6 +31,9 @@ public final class SecurityModel {
 	// Namespace
 	//
 	
+	/**
+	 * <p>Constructor for SecurityModel.</p>
+	 */
 	private SecurityModel(){
 		//DO Nothing
 	}

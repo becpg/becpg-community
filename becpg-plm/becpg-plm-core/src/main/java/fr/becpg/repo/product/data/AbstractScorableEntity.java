@@ -82,6 +82,12 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 		addMessage(new MLText(msg), RequirementType.Info);
 	}
 
+	/**
+	 * <p>addMessage.</p>
+	 *
+	 * @param msg a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @param type a {@link fr.becpg.repo.regulatory.RequirementType} object
+	 */
 	private void addMessage(MLText msg, RequirementType type) {
 		reqCtrlList.add(RequirementListDataItem.build().ofType(type).withMessage(msg).ofDataType(RequirementDataType.Formulation));
 
@@ -186,6 +192,13 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 		return hasChanged;
 	}
 
+	/**
+	 * <p>merge.</p>
+	 *
+	 * @param reqCtrlList a {@link java.util.Map} object
+	 * @param r a {@link fr.becpg.repo.regulatory.RequirementListDataItem} object
+	 * @param duplicates a {@link java.util.List} object
+	 */
 	private void merge(Map<String, RequirementListDataItem> reqCtrlList, RequirementListDataItem r, List<RequirementListDataItem> duplicates) {
 		if (reqCtrlList.containsKey(r.getKey())) {
 			RequirementListDataItem dbReq = reqCtrlList.get(r.getKey());
@@ -208,6 +221,7 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 	/**
 	 * Sort by type
 	 *
+	 * @param reqCtrlList a {@link java.util.List} object
 	 */
 	private void sort(List<RequirementListDataItem> reqCtrlList) {
 

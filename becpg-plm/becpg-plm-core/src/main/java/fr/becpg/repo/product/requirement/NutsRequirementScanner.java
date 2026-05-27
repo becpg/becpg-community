@@ -76,6 +76,12 @@ public class NutsRequirementScanner extends SimpleListRequirementScanner<NutList
 		return listDataItem.getValue();
 	}
 
+	/**
+	 * <p>extractCountryKey.</p>
+	 *
+	 * @param regulatoryListItem a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extractCountryKey(NutListDataItem regulatoryListItem) {
 		String key = "EU";
 

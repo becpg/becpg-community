@@ -65,7 +65,9 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("advSearchService")
 public class AdvSearchServiceImpl implements AdvSearchService {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AdvSearchServiceImpl.class);
+	/** Constant <code>MAX_QUERY_FILTER_IDS=1000</code> */
 	private static final int MAX_QUERY_FILTER_IDS = 1000;
 
 	@Autowired
@@ -184,6 +186,14 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 	}
 
+	/**
+	 * <p>buildQueryFilter.</p>
+	 *
+	 * @param datatype a {@link org.alfresco.service.namespace.QName} object
+	 * @param criteria a {@link java.util.Map} object
+	 * @param searchConfig a {@link fr.becpg.repo.search.impl.SearchConfig} object
+	 * @return a {@link fr.becpg.repo.search.AdvSearchQueryFilter} object
+	 */
 	private AdvSearchQueryFilter buildQueryFilter(QName datatype, Map<String, String> criteria, SearchConfig searchConfig) {
 		AdvSearchQueryFilter queryFilter = AdvSearchQueryFilter.empty();
 		if (advSearchPlugins != null) {
@@ -194,6 +204,13 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		return queryFilter;
 	}
 
+	/**
+	 * <p>applyQueryFilter.</p>
+	 *
+	 * @param beCPGQueryBuilder a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 * @param queryFilter a {@link fr.becpg.repo.search.AdvSearchQueryFilter} object
+	 * @return a boolean
+	 */
 	private boolean applyQueryFilter(BeCPGQueryBuilder beCPGQueryBuilder, AdvSearchQueryFilter queryFilter) {
 		if (queryFilter.hasIncludeIds()) {
 			if (queryFilter.getIncludeIds().isEmpty()) {
@@ -214,6 +231,11 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		return queryFilter.hasIncludeIds() || !queryFilter.getExcludeIds().isEmpty();
 	}
 
+	/**
+	 * <p>replaceIndexedAssocs.</p>
+	 *
+	 * @param criteria a {@link java.util.Map} object
+	 */
 	private void replaceIndexedAssocs(Map<String, String> criteria) {
 		if (criteria != null) {
 			Map<String, String> toAdd = new HashMap<>();
@@ -279,6 +301,13 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	// - always string values - interogate DD for type data
 	// - an additional "-mode" suffixed parameter for a value is allowed to specify
 	//   either an AND or OR join condition for multi-value property searches
+	/**
+	 * <p>addCriteriaMap.</p>
+	 *
+	 * @param queryBuilder a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 * @param criteriaMap a {@link java.util.Map} object
+	 * @param ignoredFields a {@link java.util.Set} object
+	 */
 	private void addCriteriaMap(BeCPGQueryBuilder queryBuilder, Map<String, String> criteriaMap, Set<String> ignoredFields) {
 		if ((criteriaMap != null) && !criteriaMap.isEmpty()) {
 
@@ -473,10 +502,22 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 	}
 
+	/**
+	 * <p>cleanFTSQuery.</p>
+	 *
+	 * @param query a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String cleanFTSQuery(String query) {
 		return query.replace("#", "");
 	}
 
+	/**
+	 * <p>cleanValue.</p>
+	 *
+	 * @param propValue a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String cleanValue(String propValue) {
 		String cleanQuery = propValue.replace(".", "").replace("#", "").replace("%", "");
 
@@ -508,6 +549,13 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		return buf.toString();
 	}
 
+	/**
+	 * <p>getHierarchyQuery.</p>
+	 *
+	 * @param propName a {@link java.lang.String} object
+	 * @param hierarchyName a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getHierarchyQuery(String propName, String hierarchyName) {
 		List<NodeRef> nodes = null;
 
@@ -547,10 +595,22 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		return ret.toString();
 	}
 
+	/**
+	 * <p>getHierarchyLevel.</p>
+	 *
+	 * @param hierarchyNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.Integer} object
+	 */
 	private Integer getHierarchyLevel(NodeRef hierarchyNodeRef) {
 		return (Integer) nodeService.getProperty(hierarchyNodeRef, BeCPGModel.PROP_DEPTH_LEVEL);
 	}
 
+	/**
+	 * <p>isSearchFiltered.</p>
+	 *
+	 * @param criteria a {@link java.util.Map} object
+	 * @return a boolean
+	 */
 	private boolean isSearchFiltered(Map<String, String> criteria) {
 		for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
 			if (advSearchPlugin.isSearchFiltered(criteria)) {
@@ -560,6 +620,13 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		return false;
 	}
 
+	/**
+	 * <p>isMultiValueProperty.</p>
+	 *
+	 * @param propValue a {@link java.lang.String} object
+	 * @param modePropValue a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	boolean isMultiValueProperty(String propValue, String modePropValue) {
 		return (propValue.indexOf(",") != -1);
 	}
@@ -601,6 +668,13 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	/*
 	 * @return true if it is tied to a list of properties, false otherwise
 	 */
+	/**
+	 * <p>isListProperty.</p>
+	 *
+	 * @param criteriaMap a {@link java.util.Map} object
+	 * @param prop a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	private boolean isListProperty(Map<String, String> criteriaMap, String prop) {
 		return (prop.indexOf("isListProperty") != -1) || criteriaMap.containsKey(prop + "_isListProperty");
 	}
@@ -617,7 +691,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 				|| criteriaMap.containsKey(prop + "_isCategory");
 	}
 
-		/**
+	/**
 	 * Helper method used to construct lucene query fragment for a default category property.
 	 *
 	 * @param cats the selected categories (array of string noderef)

@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
  */
 public class LowerCaseDecorator extends RegexpLabelingDecorator {
 
+	/** Constant <code>LOWERCASE_PATTERN</code> */
 	private static final Pattern LOWERCASE_PATTERN = Pattern.compile("(<\\s*lo[^>]*>.*?<\\s*/\\s*lo>)");
 
 	/** {@inheritDoc} */

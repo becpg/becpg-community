@@ -47,16 +47,22 @@ import fr.becpg.repo.product.data.CharactDetails;
  */
 public class FormulateCharactDetailsWebScript extends AbstractProductWebscript {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(FormulateCharactDetailsWebScript.class);
 
+	/** Constant <code>PARAM_DATA_LIST_NAME="dataListName"</code> */
 	private static final String PARAM_DATA_LIST_NAME = "dataListName";
 
+	/** Constant <code>PARAM_ITEM_TYPE="itemType"</code> */
 	private static final String PARAM_ITEM_TYPE = "itemType";
 
+	/** Constant <code>PARAM_DATALISTITEMS="dataListItems"</code> */
 	private static final String PARAM_DATALISTITEMS = "dataListItems";
 
+	/** Constant <code>PARAM_ENTITY_NODEREF="entityNodeRef"</code> */
 	private static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
 
+	/** Constant <code>PARAM_ITEM_LEVEL="level"</code> */
 	private static final String PARAM_ITEM_LEVEL = "level";
 
 	private NodeService nodeService;

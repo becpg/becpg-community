@@ -24,6 +24,11 @@ public class ScoreRangeConverter {
         parseIntervals(intervals);
     }
 
+    /**
+     * <p>parseIntervals.</p>
+     *
+     * @param intervals a {@link java.lang.String} object
+     */
     private void parseIntervals(String intervals) {
         // Adjust regex to allow any word or phrase for labels
         String regex = "(\\w+): ?([\\[\\(])(-?\\d+(?:\\.\\d+)?);(-?\\d+(?:\\.\\d+)?)([\\]\\)])";

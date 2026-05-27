@@ -40,7 +40,7 @@ import org.alfresco.service.cmr.view.ExporterContext;
 import org.alfresco.service.namespace.QName;
 
 /**
- * Base {@link Exporter} providing a default implementation of all methods.
+ * Base {@link org.alfresco.service.cmr.view.Exporter} providing a default implementation of all methods.
  *
  * @author Alex Miller
  */
@@ -49,6 +49,12 @@ abstract class BaseExporter implements Exporter
     private CheckOutCheckInService checkOutCheckInService;
     protected NodeService nodeService;
     
+    /**
+     * <p>Constructor for BaseExporter.</p>
+     *
+     * @param checkOutCheckInService a {@link org.alfresco.service.cmr.coci.CheckOutCheckInService} object
+     * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+     */
     BaseExporter(CheckOutCheckInService checkOutCheckInService, NodeService nodeService)
     {
         this.checkOutCheckInService = checkOutCheckInService;

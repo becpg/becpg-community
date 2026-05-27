@@ -69,6 +69,7 @@ import fr.becpg.repo.repository.model.BaseObject;
 @Repository("repositoryEntityDefReader")
 public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefReader<T>, ApplicationListener<ContextRefreshedEvent> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(RepositoryEntityDefReaderImpl.class);
 
 	@Autowired
@@ -118,6 +119,11 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 		return false;
 	}
 
+	/**
+	 * <p>registerEntity.</p>
+	 *
+	 * @param clazz a {@link java.lang.Class} object
+	 */
 	@SuppressWarnings("unchecked")
 	private void registerEntity(Class<T> clazz) {
 		logger.debug("Register entity : " + clazz.getName());
@@ -147,6 +153,11 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 		return defaultPivotAssocs;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>dataListAssocToTargetTypes</code>.</p>
+	 *
+	 * @return a {@link java.util.Map} object
+	 */
 	public Map<QName, String> getDataListAssocToTargetTypes() {
 		return dataListAssocToTargetTypes;
 	}
@@ -217,6 +228,16 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 		return qnameCache.computeIfAbsent(qName, id -> QName.createQName(id, namespaceService));
 	}
 
+	/**
+	 * <p>readValueMap.</p>
+	 *
+	 * @param entity a Z object
+	 * @param annotationClass a {@link java.lang.Class} object
+	 * @param returnType a {@link java.lang.Class} object
+	 * @param <R> a R class
+	 * @param <Z> a Z class
+	 * @return a {@link java.util.Map} object
+	 */
 	@SuppressWarnings("unchecked")
 	private <R, Z> Map<QName, R> readValueMap(Z entity, Class<? extends Annotation> annotationClass, Class<?> returnType) {
 		Map<QName, R> ret = new HashMap<>();
@@ -244,6 +265,13 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 		return ret;
 	}
 
+	/**
+	 * <p>evaluateObject.</p>
+	 *
+	 * @param propertyType a {@link java.lang.Class} object
+	 * @param o a {@link java.lang.Object} object
+	 * @return a {@link java.lang.Object} object
+	 */
 	private Object evaluateObject(Class<?> propertyType, Object o) {
 		if (o != null && Enum.class.isAssignableFrom(propertyType)) {
 			return o.toString();

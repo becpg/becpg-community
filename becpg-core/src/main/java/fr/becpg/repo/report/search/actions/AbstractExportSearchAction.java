@@ -58,13 +58,17 @@ import fr.becpg.report.client.ReportFormat;
  */
 public abstract class AbstractExportSearchAction extends ActionExecuterAbstractBase {
 
+	/** Constant <code>CREATION_ERROR="Unexpected error creating file for down"{trunked}</code> */
 	private static final String CREATION_ERROR = "Unexpected error creating file for download";
 
 	/** Constant <code>PARAM_TPL_NODEREF="templateNodeRef"</code> */
 	public static final String PARAM_TPL_NODEREF = "templateNodeRef";
 	/** Constant <code>PARAM_FORMAT="format"</code> */
 	public static final String PARAM_FORMAT = "format";
+	/** Constant <code>PARAM_PARAMETERS="parameters"</code> */
+	public static final String PARAM_PARAMETERS = "parameters";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AbstractExportSearchAction.class);
 
 	protected NodeService nodeService;
@@ -249,7 +253,7 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 			entityActivityService.postExportActivity(null,
 					(QName) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_TPL_CLASS_NAME), FilenameUtils.removeExtension(tplName) + "." + extension.toLowerCase());
 			
-			AbstractSearchDownloadExporter handler = createHandler(actionedUponNodeRef, templateNodeRef, downloadRequest, reportFormat);
+			AbstractSearchDownloadExporter handler = createHandler(action, actionedUponNodeRef, templateNodeRef, downloadRequest, reportFormat);
 
 			final File tempFile = TempFileProvider.createTempFile(FilenameUtils.removeExtension(tplName), extension);
 			handler.setTempFile(tempFile);
@@ -299,13 +303,14 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 	/**
 	 * <p>createHandler.</p>
 	 *
+	 * @param action a {@link org.alfresco.service.cmr.action.Action} object
 	 * @param actionedUponNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param templateNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param downloadRequest a {@link org.alfresco.service.cmr.download.DownloadRequest} object
 	 * @param format a {@link fr.becpg.report.client.ReportFormat} object
 	 * @return a {@link fr.becpg.repo.report.search.actions.AbstractSearchDownloadExporter} object
 	 */
-	protected abstract AbstractSearchDownloadExporter createHandler(NodeRef actionedUponNodeRef, NodeRef templateNodeRef,
+	protected abstract AbstractSearchDownloadExporter createHandler(Action action, NodeRef actionedUponNodeRef, NodeRef templateNodeRef,
 			DownloadRequest downloadRequest, ReportFormat format);
 
 	/** {@inheritDoc} */
@@ -313,8 +318,17 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 	protected void addParameterDefinitions(List<ParameterDefinition> paramList) {
 		paramList.add(new ParameterDefinitionImpl(PARAM_TPL_NODEREF, DataTypeDefinition.NODE_REF, true, "Search template nodeRef"));
 		paramList.add(new ParameterDefinitionImpl(PARAM_FORMAT, DataTypeDefinition.TEXT, false, "Export search format"));
+		paramList.add(new ParameterDefinitionImpl(PARAM_PARAMETERS, DataTypeDefinition.ANY, false, "Extra parameters"));
 	}
 
+	/**
+	 * <p>fileCreationComplete.</p>
+	 *
+	 * @param actionedUponNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param format a {@link java.lang.String} object
+	 * @param tempFile a {@link java.io.File} object
+	 * @param handler a {@link fr.becpg.repo.report.search.actions.AbstractSearchDownloadExporter} object
+	 */
 	private void fileCreationComplete(final NodeRef actionedUponNodeRef, String format, final File tempFile,
 			final AbstractSearchDownloadExporter handler) {
 		// Update the content and set the status to done.
@@ -337,6 +351,12 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 
 	}
 
+	/**
+	 * <p>downloadCancelled.</p>
+	 *
+	 * @param actionedUponNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param handler a {@link fr.becpg.repo.report.search.actions.AbstractSearchDownloadExporter} object
+	 */
 	private void downloadCancelled(final NodeRef actionedUponNodeRef, final AbstractSearchDownloadExporter handler) {
 		// Update the content and set the status to done.
 		transactionHelper.doInTransaction(() -> {

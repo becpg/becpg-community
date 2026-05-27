@@ -45,6 +45,7 @@ import fr.becpg.repo.survey.helper.SurveyableEntityHelper;
  */
 public class SurveyListFormulationHandler extends FormulationBaseHandler<SurveyableEntity> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(SurveyListFormulationHandler.class);
 
 	private final NamespaceService namespaceService;
@@ -134,6 +135,9 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Surveya
 
 	/**
 	 * Extracts the list of character node references from the PackMaterialList.
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.survey.data.SurveyableEntity} object
+	 * @return a {@link java.util.List} object
 	 */
 	private List<NodeRef> getPackMaterialListCharactNodeRefs(SurveyableEntity formulatedProduct) {
 		if (formulatedProduct instanceof ProductData productData) {
@@ -145,6 +149,9 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Surveya
 
 	/**
 	 * Chooses the hierarchy node reference using hierarchy2 if present, otherwise hierarchy1.
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.survey.data.SurveyableEntity} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	private NodeRef getHierarchyNodeRef(SurveyableEntity formulatedProduct) {
 	    if (formulatedProduct instanceof HierarchicalEntity productData) {
@@ -158,6 +165,13 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Surveya
 
 	/**
 	 * Builds a map of criteria to their associated node references.
+	 *
+	 * @param packMaterialListCharactNodeRefs a {@link java.util.List} object
+	 * @param hierarchyNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param productTypeQName a {@link org.alfresco.service.namespace.QName} object
+	 * @param subsidiaryRefs a {@link java.util.List} object
+	 * @param plants a {@link java.util.List} object
+	 * @return a {@link java.util.Map} object
 	 */
 	private Map<Criterion, List<? extends Serializable>> buildCriteriaNodeRefs(
 			List<NodeRef> packMaterialListCharactNodeRefs, NodeRef hierarchyNodeRef, QName productTypeQName,
@@ -190,6 +204,9 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Surveya
 	/**
 	 * Iterates over the criteria and, for each association found, checks if the corresponding
 	 * survey question meets all the criteria. If so, the question is added to the surveyQuestions set.
+	 *
+	 * @param criteriaNodeRefs a {@link java.util.Map} object
+	 * @param surveyQuestions a {@link java.util.Set} object
 	 */
 	private void processSurveyQuestionAssociations(Map<Criterion, List<? extends Serializable>> criteriaNodeRefs,
 			Set<SurveyQuestion> surveyQuestions) {
@@ -216,7 +233,10 @@ public class SurveyListFormulationHandler extends FormulationBaseHandler<Surveya
 	/**
 	 * Updates the survey lists for the formulated product by adding any missing survey questions.
 	 * If not in a transient context, the data is saved to the repository.
-	 * @param namesSurveyLists
+	 *
+	 * @param namesSurveyLists a {@link java.util.Map} object
+	 * @param formulatedProduct a {@link fr.becpg.repo.survey.data.SurveyableEntity} object
+	 * @param surveyQuestions a {@link java.util.Set} object
 	 */
 	private void updateSurveyLists(SurveyableEntity formulatedProduct, Set<SurveyQuestion> surveyQuestions,
 			Map<String, List<SurveyListDataItem>> namesSurveyLists) {

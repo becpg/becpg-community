@@ -81,6 +81,11 @@ public class LazyLoadingDataList<E extends RepositoryEntity> implements List<E>,
 	}
 
 	
+	/**
+	 * <p>getList.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	private List<E> getList() {
 		if(backedList==null){
 			backedList  = dataProvider.getData();

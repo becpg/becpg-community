@@ -35,6 +35,7 @@ import org.json.JSONTokener;
 public class JsonFormulaHelper {
 
 	
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(JsonFormulaHelper.class);
 	
 	/** Constant <code>JSON_COMP_ITEMS="comp"</code> */
@@ -48,6 +49,9 @@ public class JsonFormulaHelper {
 	/** Constant <code>JSON_SUB_VALUES="sub"</code> */
 	public static final String JSON_SUB_VALUES = "sub";
 	
+	/**
+	 * <p>Constructor for JsonFormulaHelper.</p>
+	 */
 	private JsonFormulaHelper() {
 		//Singleton
 	}

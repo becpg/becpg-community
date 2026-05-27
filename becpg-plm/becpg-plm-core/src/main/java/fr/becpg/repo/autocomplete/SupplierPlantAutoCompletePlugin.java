@@ -60,6 +60,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 @Service("supplierPlantAutoCompletePlugin")
 public class SupplierPlantAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
+	/** Constant <code>SOURCE_TYPE_SUPPLIER_PLANTS="supplierPlants"</code> */
 	private static final String SOURCE_TYPE_SUPPLIER_PLANTS = "supplierPlants";
 
 	@Autowired

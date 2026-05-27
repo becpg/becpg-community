@@ -38,6 +38,7 @@ import fr.becpg.repo.repository.model.CompositionDataItem;
 @Service
 public class ProductSimulationPlugin implements EntitySimulationPlugin {
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(ProductSimulationPlugin.class);
 
 	private final AlfrescoRepository<ProductData> alfrescoRepository;
@@ -124,8 +125,12 @@ public class ProductSimulationPlugin implements EntitySimulationPlugin {
 	 * articles existants sont mises à jour avec une effectivité au 1er janvier
 	 * de l'année budget
 	 *
+	 * @param destNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param visitedNodes a {@link java.util.Map} object
+	 * @param firstLevel a boolean
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
-
 	private NodeRef simuleChild(NodeRef destNodeRef, NodeRef productNodeRef, Map<NodeRef, NodeRef> visitedNodes, boolean firstLevel) {
 		QName type = nodeService.getType(productNodeRef);
 		if (PLMModel.TYPE_FINISHEDPRODUCT.equals(type) || PLMModel.TYPE_SEMIFINISHEDPRODUCT.equals(type) || firstLevel) {

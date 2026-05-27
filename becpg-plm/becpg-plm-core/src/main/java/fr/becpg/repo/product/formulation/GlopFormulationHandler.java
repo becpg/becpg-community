@@ -33,6 +33,7 @@ import fr.becpg.repo.repository.model.SimpleListDataItem;
  */
 public class GlopFormulationHandler extends FormulationBaseHandler<ProductData> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(GlopFormulationHandler.class);
 
 	private GlopService glopService;
@@ -146,6 +147,12 @@ public class GlopFormulationHandler extends FormulationBaseHandler<ProductData> 
 		return true;
 	}
 	
+	/**
+	 * <p>getTotalQuantity.</p>
+	 *
+	 * @param entity a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a double
+	 */
 	private double getTotalQuantity(ProductData entity) {
 		if (entity.getNetWeight() != null && entity.getNetWeight() != 0d) {
 			return entity.getNetWeight();
@@ -156,6 +163,12 @@ public class GlopFormulationHandler extends FormulationBaseHandler<ProductData> 
 		return 1d;
 	}
 
+	/**
+	 * <p>extractGlopListItem.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link fr.becpg.repo.repository.model.SimpleCharactDataItem} object
+	 */
 	private SimpleCharactDataItem extractGlopListItem(ProductData productData) {
 		for (String listName : productData.getGlopConstraintLists()) {
 			QName listQName = QName.createQName(listName, namespaceService);
@@ -169,6 +182,12 @@ public class GlopFormulationHandler extends FormulationBaseHandler<ProductData> 
 		return null;
 	}
 
+	/**
+	 * <p>isGlopApplicable.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a boolean
+	 */
 	private boolean isGlopApplicable(ProductData productData) {
 		if (!productData.getAspects().contains(PLMModel.ASPECT_GLOP_PRODUCT)) {
 			if (logger.isDebugEnabled()) {

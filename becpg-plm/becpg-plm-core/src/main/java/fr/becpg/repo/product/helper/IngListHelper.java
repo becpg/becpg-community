@@ -22,6 +22,9 @@ import fr.becpg.repo.repository.RepositoryEntity;
  */
 public class IngListHelper {
 
+	/**
+	 * <p>Constructor for IngListHelper.</p>
+	 */
 	private IngListHelper() {
 		//Do Nothing
 	}
@@ -46,6 +49,15 @@ public class IngListHelper {
 		return ret;
 	}
 
+	/**
+	 * <p>addParentList.</p>
+	 *
+	 * @param ret a {@link java.util.List} object
+	 * @param ingListDataItem a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 * @return a {@link java.util.List} object
+	 */
 	private static List<IngListDataItem> addParentList(List<IngListDataItem> ret, IngListDataItem ingListDataItem,
 			AssociationService associationService, AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		

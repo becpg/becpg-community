@@ -36,6 +36,7 @@ public class ModelTreeWebScript extends DeclarativeWebScript  {
 	/** The Constant PARAM_ID. */
 	private static final String PARAM_ID = "id";
 
+	/** Constant <code>MODEL_TREE="tree"</code> */
 	private static final String MODEL_TREE = "tree";	
 
 	

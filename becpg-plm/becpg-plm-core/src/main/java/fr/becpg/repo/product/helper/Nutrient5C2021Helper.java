@@ -26,6 +26,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
 @Service
 public class Nutrient5C2021Helper implements InitializingBean, NutrientRegulatoryPlugin {
 	
+	/** Constant <code>INSTANCE</code> */
 	private static Nutrient5C2021Helper INSTANCE = null;
 	
 	private final NodeService nodeService;
@@ -45,33 +46,57 @@ public class Nutrient5C2021Helper implements InitializingBean, NutrientRegulator
 		this.alfrescoRepository = alfrescoRepository;
 	}
 	
+	/** Constant <code>sugarsRange</code> */
 	private static final double[] sugarsRange = { 45d, 40d, 36d, 31d, 27d, 22.5d, 18d, 13.5d, 9d, 4.5d };
+	/** Constant <code>sodiumRange</code> */
 	private static final double[] sodiumRange = { 900d, 810d, 720d, 630d, 540d, 450d, 360d, 270d, 180d, 90d };
+	/** Constant <code>fiberRange</code> */
 	private static final double[] fiberRange = { 4.7d, 3.7d, 2.8d, 1.9d, 0.9d };
+	/** Constant <code>nspFiberRange</code> */
 	private static final double[] nspFiberRange = { 3.5d, 2.8d, 2.1d, 1.4d, 0.7d };
+	/** Constant <code>proteinRange</code> */
 	private static final double[] proteinRange = { 8.0d, 6.4d, 4.8d, 3.2d, 1.6d };
+	/** Constant <code>fruitVegetableRange</code> */
 	private static final double[] fruitVegetableRange = { -1d, -1d, -1d, -1d, -1d, 80d, -1d, -1d, 60d, 40d };
+	/** Constant <code>beveragesFruitVegetableRange</code> */
 	private static final double[] beveragesFruitVegetableRange = { 80d, -1d, -1d, -1d, -1d, -1d, 60d, -1d, 40d, -1d };
+	/** Constant <code>beveragesEnergyRange</code> */
 	private static final double[] beveragesEnergyRange = { 270d, 240d, 210d, 180d, 150d, 120d, 90d, 60d, 30d, 0d };
+	/** Constant <code>beveragesSugarsRange</code> */
 	private static final double[] beveragesSugarsRange = { 13.5d, 12d, 10.5d, 9d, 7.5d, 6d, 4.5d, 3d, 1.5d, 0d };
+	/** Constant <code>fatsRange</code> */
 	private static final double[] fatsRange = { 10d, 9d, 8d, 7d, 6d, 5d, 4d, 3d, 2d, 1d };
+	/** Constant <code>fatsFatsRange</code> */
 	private static final double[] fatsFatsRange = { 64d, 58d, 52d, 46d, 40d, 34d, 28d, 22d, 16d, 10d };
+	/** Constant <code>energyRange</code> */
 	private static final double[] energyRange = { 3350d, 3015d, 2680d, 2345d, 2010d, 1675d, 1340d, 1005d, 670d, 335d };
 
+	/** Constant <code>othersACategories</code> */
 	private static final double[][] othersACategories = new double[][] { energyRange, fatsRange, sugarsRange, sodiumRange };
+	/** Constant <code>cheeseACategories</code> */
 	private static final double[][] cheeseACategories = new double[][] { energyRange, fatsRange, sugarsRange, sodiumRange };
+	/** Constant <code>fatsACategories</code> */
 	private static final double[][] fatsACategories = new double[][] { energyRange, fatsFatsRange, sugarsRange, sodiumRange };
 
+	/** Constant <code>othersCCategories</code> */
 	private static final double[][] othersCCategories = new double[][] { fruitVegetableRange, nspFiberRange, fiberRange, proteinRange };
+	/** Constant <code>cheeseCCategories</code> */
 	private static final double[][] cheeseCCategories = new double[][] { fruitVegetableRange, nspFiberRange, fiberRange, proteinRange };
+	/** Constant <code>fatsCCategories</code> */
 	private static final double[][] fatsCCategories = new double[][] { fruitVegetableRange, nspFiberRange, fiberRange, proteinRange };
 
+	/** Constant <code>beveragesACategories</code> */
 	private static final double[][] beveragesACategories = new double[][] { beveragesEnergyRange, fatsRange, beveragesSugarsRange, sodiumRange };
+	/** Constant <code>beveragesCCategories</code> */
 	private static final double[][] beveragesCCategories = new double[][] { beveragesFruitVegetableRange, nspFiberRange, fiberRange, proteinRange };
 
+	/** Constant <code>BEVERAGES_RANGES</code> */
 	private static final List<Double> BEVERAGES_RANGES = Arrays.asList(9d, 5d, 1d, 0d);
+	/** Constant <code>CHEESES_RANGES</code> */
 	private static final List<Double> CHEESES_RANGES = Arrays.asList(18d, 10d, 2d, -1d);
+	/** Constant <code>FATS_RANGES</code> */
 	private static final List<Double> FATS_RANGES = CHEESES_RANGES;
+	/** Constant <code>OTHERS_RANGES</code> */
 	private static final List<Double> OTHERS_RANGES = CHEESES_RANGES;
 	
 	/** {@inheritDoc} */
@@ -86,6 +111,12 @@ public class Nutrient5C2021Helper implements InitializingBean, NutrientRegulator
 		INSTANCE = this;
 	}
 	
+	/**
+	 * <p>getACategory.</p>
+	 *
+	 * @param category a {@link fr.becpg.model.NutrientProfileCategory} object
+	 * @return an array of {@link double} objects
+	 */
 	private static double[][] getACategory(NutrientProfileCategory category) {
 		switch (category) {
 		case Fats:
@@ -100,6 +131,12 @@ public class Nutrient5C2021Helper implements InitializingBean, NutrientRegulator
 
 	}
 
+	/**
+	 * <p>getCCategory.</p>
+	 *
+	 * @param category a {@link fr.becpg.model.NutrientProfileCategory} object
+	 * @return an array of {@link double} objects
+	 */
 	private static double[][] getCCategory(NutrientProfileCategory category) {
 		switch (category) {
 		case Fats:

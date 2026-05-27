@@ -35,7 +35,9 @@ import fr.becpg.model.PLMModel;
  */
 public class CostParentLevelPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(CostParentLevelPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.costParentLevelPatch.res"{trunked}</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.costParentLevelPatch.result";
 
 	private NodeDAO nodeDAO;

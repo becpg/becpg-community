@@ -32,7 +32,9 @@ import fr.becpg.model.PLMModel;
  */
 public class FormulatedAspectPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(FormulatedAspectPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.formulatedAspectPatch.re"{trunked}</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.formulatedAspectPatch.result";
 
 	private NodeDAO nodeDAO;
@@ -55,6 +57,11 @@ public class FormulatedAspectPatch extends AbstractBeCPGPatch {
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
+	/**
+	 * <p>doForType.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private void doForType(final QName type) {
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			final List<NodeRef> result = new ArrayList<>();

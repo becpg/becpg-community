@@ -19,8 +19,10 @@ import org.apache.commons.logging.LogFactory;
  * @version $Id: $Id
  */
 public abstract class AbstractDownloadExporter {
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(AbstractDownloadExporter.class);
 
+	/** Constant <code>STATUS_UPDATE_FREQUENCY=50</code> */
 	private static final int STATUS_UPDATE_FREQUENCY = 50;
 
 	private NodeRef downloadNodeRef;

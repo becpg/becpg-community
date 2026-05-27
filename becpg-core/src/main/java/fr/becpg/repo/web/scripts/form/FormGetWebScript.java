@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2018 beCPG.
+ * Copyright (C) 2010-2026 beCPG.
  *
  * This file is part of beCPG
  *
@@ -45,24 +45,34 @@ import fr.becpg.repo.security.filter.SecurityContextHelper;
  */
 public class FormGetWebScript extends AbstractWebScript {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(FormGetWebScript.class);
 
+	/** Constant <code>PARAM_SITEID="siteId"</code> */
 	private static final String PARAM_SITEID = "siteId";
 
+	/** Constant <code>PARAM_ITEMKIND="itemKind"</code> */
 	private static final String PARAM_ITEMKIND = "itemKind";
 
+	/** Constant <code>PARAM_ITEMID="itemId"</code> */
 	private static final String PARAM_ITEMID = "itemId";
 
+	/** Constant <code>PARAM_FORMID="formId"</code> */
 	private static final String PARAM_FORMID = "formId";
 
+	/** Constant <code>PARAM_RELOAD="reload"</code> */
 	private static final String PARAM_RELOAD = "reload";
 
+	/** Constant <code>PARAM_NODE_REF="entityNodeRef"</code> */
 	private static final String PARAM_NODE_REF = "entityNodeRef";
 
+	/** Constant <code>PARAM_FIELDS="fields"</code> */
 	private static final String PARAM_FIELDS = "fields";
 
+	/** Constant <code>PARAM_FORCEDFIELDS="force"</code> */
 	private static final String PARAM_FORCEDFIELDS = "force";
 
+	/** Constant <code>PARAM_SKIP_SECURITY_RULES="skipSecurityRules"</code> */
 	private static final String PARAM_SKIP_SECURITY_RULES = "skipSecurityRules";
 
 	private BecpgFormService becpgFormService;

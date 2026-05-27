@@ -58,6 +58,13 @@ public class ProductColumnDecorator implements ColumnDecorator, InitializingBean
 		return new DynamicColumnNameResolver(filter, nodeService, dictionaryService);
 	}
 
+	/**
+	 * <p>getList.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param item a {@link org.alfresco.repo.forms.Item} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getList(NodeRef entityNodeRef, Item item) {
 		NodeRef listNodeRef = null;
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);

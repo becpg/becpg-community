@@ -24,6 +24,7 @@ import fr.becpg.repo.entity.version.VersionHelper;
 @Service("compareEntityService")
 public class CompareEntityServiceImpl implements CompareEntityService {
 	
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(CompareEntityServiceImpl.class);
 
 	@Autowired
@@ -67,6 +68,12 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		return compareResult;
 	}
 
+	/**
+	 * <p>getPlugin.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link fr.becpg.repo.entity.comparison.CompareEntityServicePlugin} object
+	 */
 	private CompareEntityServicePlugin getPlugin(QName type) {
 		CompareEntityServicePlugin defaultPlugin = null;
 		for (CompareEntityServicePlugin plugin : compareEntityServicePlugins) {

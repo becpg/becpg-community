@@ -26,6 +26,7 @@ import fr.becpg.repo.audit.service.DatabaseAuditService;
 @Service("beCPGAuditService")
 public class BeCPGAuditServiceImpl implements BeCPGAuditService, AuditScopeListener {
 
+	/** Constant <code>NOT_DATABASE_PLUGIN="Audit plugin for type '%s' is not a dat"{trunked}</code> */
 	private static final String NOT_DATABASE_PLUGIN = "Audit plugin for type '%s' is not a database plugin";
 	
 	@Autowired
@@ -80,6 +81,12 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService, AuditScopeListe
 		}
 	}
 	
+	/**
+	 * <p>getPlugin.</p>
+	 *
+	 * @param type a {@link fr.becpg.repo.audit.model.AuditType} object
+	 * @return a {@link fr.becpg.repo.audit.plugin.AuditPlugin} object
+	 */
 	private AuditPlugin getPlugin(AuditType type) {
 		for (AuditPlugin auditPlugin : auditPlugins) {
 			if (auditPlugin.applyTo(type)) {

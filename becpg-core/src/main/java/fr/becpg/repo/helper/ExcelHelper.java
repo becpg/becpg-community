@@ -220,6 +220,14 @@ public class ExcelHelper {
 		return cellnum;
 	}
 
+	/**
+	 * <p>shiftFormula.</p>
+	 *
+	 * @param formula a {@link java.lang.String} object
+	 * @param rowNum a int
+	 * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private static String shiftFormula(String formula, int rowNum, XSSFSheet sheet) {
 		XSSFEvaluationWorkbook workbookWrapper = XSSFEvaluationWorkbook.create(sheet.getWorkbook());
 		Ptg[] ptgs = FormulaParser.parse(formula, workbookWrapper, FormulaType.CELL, sheet.getWorkbook().getSheetIndex(sheet));

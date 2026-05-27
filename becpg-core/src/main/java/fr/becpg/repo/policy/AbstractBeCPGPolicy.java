@@ -77,6 +77,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 	/** Constant <code>ASSOC_REGISTRY="assoc_registry"</code> */
 	protected static final String ASSOC_REGISTRY = "assoc_registry";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AbstractBeCPGPolicy.class);
 
 	/**
@@ -317,6 +318,12 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 		pendingNodes.add(nodeRef);
 	}
 
+	/**
+	 * <p>addKeyRegistry.</p>
+	 *
+	 * @param registry a {@link java.lang.String} object
+	 * @param key a {@link java.lang.String} object
+	 */
 	private void addKeyRegistry(String registry, String key) {
 		Set<String> keys = getKeyRegistry(registry);
 

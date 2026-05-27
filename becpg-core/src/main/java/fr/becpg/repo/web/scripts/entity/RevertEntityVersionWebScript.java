@@ -24,8 +24,11 @@ import fr.becpg.repo.entity.version.EntityVersionService;
  */
 public class RevertEntityVersionWebScript extends AbstractWebScript {
 
+	/** Constant <code>PARAM_STORE_TYPE="store_type"</code> */
 	private static final String PARAM_STORE_TYPE = "store_type";
+	/** Constant <code>PARAM_STORE_ID="store_id"</code> */
 	private static final String PARAM_STORE_ID = "store_id";
+	/** Constant <code>PARAM_ID="id"</code> */
 	private static final String PARAM_ID = "id";
 
 	private EntityVersionService entityVersionService;
