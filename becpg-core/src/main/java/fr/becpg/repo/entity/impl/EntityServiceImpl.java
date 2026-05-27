@@ -93,6 +93,8 @@ public class EntityServiceImpl implements EntityService {
 	/** Constant <code>ENTITY_ICONS_PATTERN</code> */
 	private static final Pattern ENTITY_ICONS_PATTERN = Pattern.compile("generic-.*\\.png");
 
+	private static final String[] IMAGE_EXTENSIONS = { ".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg" };
+
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityServiceImpl.class);
 
@@ -143,19 +145,23 @@ public class EntityServiceImpl implements EntityService {
 
 		NodeRef imagesFolderNodeRef = getImageFolder(nodeRef);
 
-		NodeRef imageNodeRef = null;
-		List<FileInfo> files = fileFolderService.listFiles(imagesFolderNodeRef);
-		for (FileInfo file : files) {
-			if (file.getName().toLowerCase().startsWith(imgName.toLowerCase())) {
-				imageNodeRef = file.getNodeRef();
+		String lowerImgName = imgName.toLowerCase();
+
+		for (String ext : IMAGE_EXTENSIONS) {
+			NodeRef candidate = nodeService.getChildByName(imagesFolderNodeRef, ContentModel.ASSOC_CONTAINS, lowerImgName + ext);
+			if (candidate != null) {
+				return candidate;
 			}
 		}
 
-		if (imageNodeRef == null) {
-			throw new BeCPGException("image not found. imgName: " + imgName);
+		List<FileInfo> files = fileFolderService.listFiles(imagesFolderNodeRef);
+		for (FileInfo file : files) {
+			if (file.getName().toLowerCase().startsWith(lowerImgName)) {
+				return file.getNodeRef();
+			}
 		}
 
-		return imageNodeRef;
+		throw new BeCPGException("image not found. imgName: " + imgName);
 	}
 
 	/** {@inheritDoc} */
