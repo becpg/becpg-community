@@ -96,6 +96,14 @@ public interface BatchQueueService {
 	String getRunningBatchInfo();
 
 	/**
+	 * <p>isBatchCompleted.</p>
+	 *
+	 * @param batchInfo a {@link fr.becpg.repo.batch.BatchInfo} object
+	 * @return true if the batch has completed and is no longer tracked as running
+	 */
+	boolean isBatchCompleted(BatchInfo batchInfo);
+
+	/**
 	 * <p>getBatchesInError.</p>
 	 *
 	 * @return a {@link java.lang.String} object
