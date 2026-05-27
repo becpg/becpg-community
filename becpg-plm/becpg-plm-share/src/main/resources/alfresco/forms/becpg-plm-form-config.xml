@@ -12711,7 +12711,7 @@
 			<form>
 				<field-visibility>
 					<show id="gs1:targetMarketCode" />
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="gs1:targetMarketCountries" />
 					<show id="bcpg:eanCode" force="true" />
 					<show id="sec:readGroups" force="true" />
@@ -12736,7 +12736,7 @@
 			</form>
 			<form id="filter">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="gs1:targetMarketCountries" />
 					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
@@ -12751,7 +12751,7 @@
 			<form id="datagrid">
 				<field-visibility>
 					<show id="gs1:targetMarketCode" />
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="gs1:targetMarketCountries" />
 					<show id="bcpg:eanCode" force="true" />
 					<show id="sec:readGroups" force="true" />
@@ -12771,7 +12771,7 @@
 			<form>
 				<field-visibility>
 					<show id="gs1:targetMarketCode" />
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="gs1:targetMarketCountries" />
 					<show id="bcpg:eanCode" force="true" />
 					<show id="sec:readGroups" force="true" />
