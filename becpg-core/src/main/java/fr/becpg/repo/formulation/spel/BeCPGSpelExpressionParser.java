@@ -1,5 +1,7 @@
 package fr.becpg.repo.formulation.spel;
 
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -28,17 +30,18 @@ public class BeCPGSpelExpressionParser extends SpelExpressionParser {
 	/** Constant <code>FORBIDDEN_METHODS</code> */
 	private static final Set<String> FORBIDDEN_METHODS = Set.of("getBean", "executeScript", "executeScriptString",
 			"call", "createNewFile", "eval", "exec",
-			"exit", "forName", "gc", "getByName", "getDeclaredConstructor",
-			"getDeclaredConstructors", "getDeclaredFields", "getDeclaredMethod", "getField",
-			"getFields", "getHostName", "getLocalHost", "getMethod", "getMethods",
-			"getProperties", "getRuntime", "getSystemClassLoader", "getenv", "invoke",
-			"invokeFunction", "load", "loadLibrary", "mkdir", "mkdirs",
-			"newInstance", "openConnection", "read",
-			"readObject", "setAccessible", "start", "write", "writeObject");
+			"exit", "forName", "gc", "getByName", "getClass", "getClassLoader", "getConstructor", "getConstructors",
+			"getDeclaredConstructor", "getDeclaredConstructors", "getDeclaredField", "getDeclaredFields",
+			"getDeclaredMethod", "getDeclaredMethods", "getDeclaringClass", "getEnclosingClass", "getClasses",
+			"getDeclaredClasses", "getPackage", "getProtectionDomain", "getField", "getFields", "getHostName",
+			"getLocalHost", "getMethod", "getMethods", "getProperties", "getRuntime", "getSystemClassLoader",
+			"getenv", "invoke", "invokeFunction", "load", "loadLibrary", "mkdir", "mkdirs",
+			"newInstance", "openConnection", "read", "readObject", "setAccessible", "start", "write", "writeObject");
 
 	/** Constant <code>FORBIDDEN_FIELDS</code> */
 	private static final Set<String> FORBIDDEN_FIELDS = Set.of(
-			"class", "classLoader", "declaredFields", "declaredMethods", "declaredConstructors", "declaredClasses");
+			"class", "classLoader", "declaredFields", "declaredMethods", "declaredConstructors", "declaredClasses",
+			"protectionDomain");
 
 	/**
 	 * <p>Constructor for BeCPGSpelExpressionParser.</p>
@@ -79,22 +82,30 @@ public class BeCPGSpelExpressionParser extends SpelExpressionParser {
 	/**
 	 * <p>checkAst.</p>
 	 *
-	 * @param node a {@link org.springframework.expression.spel.SpelNode} object
+	 * @param root a {@link org.springframework.expression.spel.SpelNode} object
 	 */
-	private void checkAst(SpelNode node) {
-		if (node == null) {
+	private void checkAst(SpelNode root) {
+		if (root == null) {
 			return;
 		}
-		if (node instanceof MethodReference ref && FORBIDDEN_METHODS.contains(ref.getName())) {
-			logger.error("Expression contains unsafe method: " + ref.getName());
-			throw new EvaluationException("Expression contains unsafe method: " + ref.getName());
-		}
-		if (node instanceof PropertyOrFieldReference ref && FORBIDDEN_FIELDS.contains(ref.getName())) {
-			logger.error("Expression contains unsafe field: " + ref.getName());
-			throw new EvaluationException("Expression contains unsafe field: " + ref.getName());
-		}
-		for (int i = 0; i < node.getChildCount(); i++) {
-			checkAst(node.getChild(i));
+		Queue<SpelNode> queue = new LinkedList<>();
+		queue.add(root);
+		while (!queue.isEmpty()) {
+			SpelNode node = queue.poll();
+			if (node == null) {
+				continue;
+			}
+			if (node instanceof MethodReference ref && FORBIDDEN_METHODS.contains(ref.getName())) {
+				logger.error("Expression contains unsafe method: " + ref.getName());
+				throw new EvaluationException("Expression contains unsafe method: " + ref.getName());
+			}
+			if (node instanceof PropertyOrFieldReference ref && FORBIDDEN_FIELDS.contains(ref.getName())) {
+				logger.error("Expression contains unsafe field: " + ref.getName());
+				throw new EvaluationException("Expression contains unsafe field: " + ref.getName());
+			}
+			for (int i = 0; i < node.getChildCount(); i++) {
+				queue.add(node.getChild(i));
+			}
 		}
 	}
 
