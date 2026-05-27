@@ -82,7 +82,7 @@
             var templateUrl = YAHOO.lang
                 .substitute(
                     Alfresco.constants.URL_SERVICECONTEXT
-                    + "components/form?bulkEdit=true&entityNodeRef={entityNodeRef}&entityType={entityType}&itemKind={itemKind}&itemId={itemId}&destination={destination}&mode={mode}&submitType={submitType}&showCancelButton=true&list={list}&siteId={siteId}",
+                    + "components/form?bulkEdit=true&entityNodeRef={entityNodeRef}&entityType={entityType}&itemKind={itemKind}&formId=create&itemId={itemId}&destination={destination}&mode={mode}&submitType={submitType}&showCancelButton=true&list={list}&siteId={siteId}",
                     {
                         itemKind: "type",
                         itemId: itemType,
