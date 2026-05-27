@@ -637,7 +637,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 						associationService.update(nodeRef, assocDef.getName(), targetRefs);
 
-					} else if ((value != null) && value.isEmpty()) {
+					} else if ((value != null) && value.isEmpty() || ImportHelper.NULL_VALUE.equals(value)) {
 
 						associationService.update(nodeRef, assocDef.getName(), new ArrayList<>());
 
