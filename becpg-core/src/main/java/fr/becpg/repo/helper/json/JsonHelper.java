@@ -24,6 +24,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public final class JsonHelper {
 	
 	
+	/**
+	 * <p>Constructor for JsonHelper.</p>
+	 */
 	private JsonHelper() {
 		//Singleton
 	}

@@ -35,6 +35,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 public class ResourceBundleBootstrapComponent
 {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ResourceBundleBootstrapComponent.class);
 	
 	/**

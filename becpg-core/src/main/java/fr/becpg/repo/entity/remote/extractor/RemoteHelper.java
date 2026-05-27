@@ -31,6 +31,9 @@ import fr.becpg.repo.entity.EntityDictionaryService;
  */
 public class RemoteHelper {
 	
+    /**
+     * <p>Constructor for RemoteHelper.</p>
+     */
     private RemoteHelper() {
     	//DO Nothing
     }

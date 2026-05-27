@@ -28,6 +28,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  */
 public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
+	/** Constant <code>logger</code> */
 	private final static Log logger = LogFactory.getLog(BudgetFormulationHandler.class);
 
 	private AssociationService associationService;
@@ -87,6 +88,12 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 		return true;
 	}
 	
+	/**
+	 * <p>calculateExpensesAndInvoices.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param budgetListDataItem a {@link fr.becpg.repo.project.data.projectList.BudgetListDataItem} object
+	 */
 	private void calculateExpensesAndInvoices(ProjectData projectData, BudgetListDataItem budgetListDataItem){
 		List<NodeRef> assocs = associationService.getSourcesAssocs(budgetListDataItem.getNodeRef());
 		for(NodeRef item : assocs){
@@ -115,6 +122,11 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 		}
 	}
 
+	/**
+	 * <p>calculateTaskExpenses.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 */
 	private void calculateTaskExpenses(ProjectData projectData) {		
 
 		for (TaskListDataItem taskListDataItem : projectData.getTaskList()) {			
@@ -137,6 +149,12 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 		}
 	}
 	
+	/**
+	 * <p>calculateTaskParentValue.</p>
+	 *
+	 * @param parent a {@link fr.becpg.repo.data.hierarchicalList.Composite} object
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 */
 	private void calculateTaskParentValue(Composite<TaskListDataItem> parent, ProjectData projectData) {
 		Double expense = 0d;
 		if (!parent.isLeaf()) {
@@ -154,6 +172,12 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 		}		
 	}
 	
+	/**
+	 * <p>calculateBudgetParentValue.</p>
+	 *
+	 * @param parent a {@link fr.becpg.repo.data.hierarchicalList.Composite} object
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 */
 	private void calculateBudgetParentValue(Composite<BudgetListDataItem> parent, ProjectData projectData) {		
 		Double expense = 0d;
 		Double invoice = 0d;
@@ -185,6 +209,11 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 		
 	}
 	
+	/**
+	 * <p>clearData.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 */
 	private void clearData(ProjectData projectData) {
 		for (TaskListDataItem tl : projectData.getTaskList()) {
 			tl.setLoggedTime(0d);
@@ -196,6 +225,11 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 		}
 	}
 	
+	/**
+	 * <p>removeZeroValues.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 */
 	private void removeZeroValues(ProjectData projectData) {
 		for (TaskListDataItem tl : projectData.getTaskList()) {
 			tl.setLoggedTime(tl.getLoggedTime() != 0d ? tl.getLoggedTime() : null);
@@ -207,6 +241,11 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 		}
 	}
 	
+	/**
+	 * <p>calculateLogTime.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 */
 	private void calculateLogTime(ProjectData projectData) {
 		Double totalLogTime = 0d;
 		for (LogTimeListDataItem logTime : projectData.getLogTimeList()) {							

@@ -32,6 +32,7 @@ import fr.becpg.common.BeCPGException;
  */
 public class JsonActivityVisitor implements RemoteActivityVisitor {
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(JsonActivityVisitor.class);
 
 	/** Constant <code>NODE_REF="nodeRef"</code> */
@@ -99,8 +100,11 @@ public class JsonActivityVisitor implements RemoteActivityVisitor {
 	}
 
 	/**
-	 * @param feedEntry
-	 * @throws IOException
+	 * <p>createFeedEntityJson.</p>
+	 *
+	 * @param feedEntry a {@link org.alfresco.repo.domain.activities.ActivityFeedEntity} object
+	 * @return a {@link org.json.JSONObject} object
+	 * @throws fr.becpg.common.BeCPGException if any.
 	 */
 	private JSONObject createFeedEntityJson(ActivityFeedEntity feedEntry) throws BeCPGException {
 		try {
@@ -162,6 +166,12 @@ public class JsonActivityVisitor implements RemoteActivityVisitor {
 		}
 	}
 
+	/**
+	 * <p>toString.</p>
+	 *
+	 * @param val a {@link java.lang.Object} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String toString(Object val) {
 		if (val != null) {
 			return val.toString();

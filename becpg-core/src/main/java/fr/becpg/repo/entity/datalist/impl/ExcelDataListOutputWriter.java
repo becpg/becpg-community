@@ -73,6 +73,7 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
 @Service
 public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
+	/** Constant <code>CREATION_ERROR="Unexpected error creating file for down"{trunked}</code> */
 	private static final String CREATION_ERROR = "Unexpected error creating file for download";
 
 	@Autowired
@@ -107,6 +108,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 	@Autowired
 	private EntityActivityService entityActivityService;
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(ExcelDataListOutputWriter.class);
 
 	/** {@inheritDoc} */
@@ -248,10 +250,22 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 	}
 
+	/**
+	 * <p>cleanPath.</p>
+	 *
+	 * @param path a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String cleanPath(String path) {
 		return path.replace("/app:company_home", "").replace("cm:", "");
 	}
 
+	/**
+	 * <p>getFileName.</p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getFileName(DataListFilter dataListFilter) {
 		if (dataListFilter.getEntityNodeRef() != null) {
 			return (String) nodeService.getProperty(dataListFilter.getEntityNodeRef(), ContentModel.PROP_NAME) + "_"
@@ -261,6 +275,12 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 	}
 
+	/**
+	 * <p>getPlugin.</p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @return a {@link fr.becpg.repo.entity.datalist.impl.ExcelDataListOutputPlugin} object
+	 */
 	@Nonnull
 	private ExcelDataListOutputPlugin getPlugin(DataListFilter dataListFilter) {
 		ExcelDataListOutputPlugin ret = null;
@@ -287,7 +307,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 	 * @param asyncExtractor the paginated extractor wrapper
 	 * @param handler the download exporter for status tracking
 	 * @param outputStream the output stream to write to
-	 * @throws IOException if an I/O error occurs
+	 * @throws java.io.IOException if an I/O error occurs
 	 */
 	private void createAsyncExcelFile(AsyncPaginatedExtractorWrapper asyncExtractor,
 			ExcelDataListDownloadExporter handler, OutputStream outputStream) throws IOException {
@@ -301,6 +321,17 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 		createExcelFileFromPages(asyncExtractor, dataListFilter, plugin, handler, firstPage, outputStream);
 	}
 
+	/**
+	 * <p>createExcelFileFromPages.</p>
+	 *
+	 * @param asyncExtractor a {@link fr.becpg.repo.entity.datalist.AsyncPaginatedExtractorWrapper} object
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @param plugin a {@link fr.becpg.repo.entity.datalist.impl.ExcelDataListOutputPlugin} object
+	 * @param handler a {@link fr.becpg.repo.entity.datalist.impl.ExcelDataListDownloadExporter} object
+	 * @param firstPage a {@link java.util.List} object
+	 * @param outputStream a {@link java.io.OutputStream} object
+	 * @throws java.io.IOException if any.
+	 */
 	private void createExcelFileFromPages(AsyncPaginatedExtractorWrapper asyncExtractor,
 			DataListFilter dataListFilter, ExcelDataListOutputPlugin plugin,
 			ExcelDataListDownloadExporter handler, List<Map<String, Object>> firstPage,
@@ -390,6 +421,12 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 		}
 	}
 
+	/**
+	 * <p>resolveSheetName.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String resolveSheetName(QName type) {
 		String sheetName = "";
 		if (type != null) {
@@ -409,6 +446,13 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 		return sheetName;
 	}
 
+	/**
+	 * <p>resolveBcpgCode.</p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String resolveBcpgCode(DataListFilter dataListFilter, QName type) {
 		if (entityDictionaryService.isSubClass(dataListFilter.getDataType(), BeCPGModel.TYPE_ENTITYLIST_ITEM)
 				&& (dataListFilter.getEntityNodeRef() != null)) {
@@ -420,6 +464,15 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 		return null;
 	}
 
+	/**
+	 * <p>writeHeaders.</p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+	 * @param exeCellStyles a {@link fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles} object
+	 * @return a int
+	 */
 	private int writeHeaders(DataListFilter dataListFilter, QName type, XSSFSheet sheet, ExcelCellStyles exeCellStyles) {
 		int rownum = 0;
 

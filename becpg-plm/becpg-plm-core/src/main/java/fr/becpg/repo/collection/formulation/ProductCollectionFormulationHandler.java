@@ -44,6 +44,11 @@ public class ProductCollectionFormulationHandler extends FormulationBaseHandler<
 		return true;
 	}
 
+	/**
+	 * <p>calculateProfitabilityAndPrice.</p>
+	 *
+	 * @param priceListItem a {@link fr.becpg.repo.collection.data.list.CollectionPriceListDataItem} object
+	 */
 	private void calculateProfitabilityAndPrice(CollectionPriceListDataItem priceListItem) {
 
 		Double taxRate = null;
@@ -97,6 +102,11 @@ public class ProductCollectionFormulationHandler extends FormulationBaseHandler<
 		
 	}
 
+	/**
+	 * <p>calculatePriceParentValue.</p>
+	 *
+	 * @param parent a {@link fr.becpg.repo.data.hierarchicalList.Composite} object
+	 */
 	private void calculatePriceParentValue(Composite<CollectionPriceListDataItem> parent) {
 		Double price = 0d;
 		Double priceTaxIncl = 0d;

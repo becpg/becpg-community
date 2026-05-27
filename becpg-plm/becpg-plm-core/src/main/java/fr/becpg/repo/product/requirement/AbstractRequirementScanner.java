@@ -71,6 +71,12 @@ public abstract class AbstractRequirementScanner<T> implements RequirementScanne
 
 	}
 
+	/**
+	 * <p>extractRequirementsFromParent.</p>
+	 *
+	 * @param specifications a {@link java.util.List} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<T> extractRequirementsFromParent(List<ProductSpecificationData> specifications) {
 		List<T> ret = new ArrayList<>();
 		if (specifications != null) {

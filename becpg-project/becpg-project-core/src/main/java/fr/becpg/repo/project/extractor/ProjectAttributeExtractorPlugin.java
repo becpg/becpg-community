@@ -46,6 +46,11 @@ public class ProjectAttributeExtractorPlugin extends AbstractExprNameExtractor {
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
 	
+	/**
+	 * <p>projectNameFormat.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String projectNameFormat() {
 		return systemConfigurationService.confValue("beCPG.project.name.format");
 	}

@@ -40,9 +40,12 @@ import fr.becpg.repo.project.impl.ProjectHelper;
  */
 public class TaskOverdueFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(TaskOverdueFormulationHandler.class);
 
+	/** Constant <code>MAIL_TEMPLATE="/app:company_home/app:dictionary/app:em"{trunked}</code> */
 	private static final String MAIL_TEMPLATE = "/app:company_home/app:dictionary/app:email_templates/cm:project/cm:task-overdue.ftl";
+	/** Constant <code>MAIL_SUBJECT="project.notification.overdue.subject"</code> */
 	private static final String MAIL_SUBJECT = "project.notification.overdue.subject";
 
 	private BeCPGMailService beCPGMailService;
@@ -223,6 +226,12 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 				argsMap, true);
 	}
 	
+	/**
+	 * <p>emailProjectNotificationDisabled.</p>
+	 *
+	 * @param person a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private boolean emailProjectNotificationDisabled(NodeRef person) {
 		if (person != null) {
 			Serializable emailProjectNotificationDisabled = nodeService.getProperty(person, BeCPGModel.PROP_EMAIL_PROJECT_NOTIFICATION_DISABLED);

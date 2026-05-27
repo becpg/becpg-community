@@ -32,7 +32,9 @@ import fr.becpg.repo.helper.AssociationService;
  */
 public class ReqCtrlSourcesPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ReqCtrlSourcesPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.reqCtrlSourcesPatch.resu"{trunked}</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.reqCtrlSourcesPatch.result";
 
 	private NodeDAO nodeDAO;

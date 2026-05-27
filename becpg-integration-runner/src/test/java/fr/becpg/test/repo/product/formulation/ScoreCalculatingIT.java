@@ -3,6 +3,7 @@ package fr.becpg.test.repo.product.formulation;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -12,7 +13,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
-import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MLText;
@@ -22,12 +22,9 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Calendar;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -77,6 +74,7 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 		familyNodeRef = getFamilyNodeRef();
 		beCPGCacheService.clearAllCaches();
 		setUpCatalogs(familyNodeRef);
+		beCPGCacheService.clearAllCaches();
 		// create RM and lSF
 		initParts();
 	}
@@ -239,41 +237,28 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 
 	private void setUpCatalogs(NodeRef family) {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			String catalogJSONString = "[{\"entityType\":[\"bcpg:finishedProduct\"],\"uniqueFields\":[\"bcpg:erpCode\"],\"id\":\"incoFinishedProduct\",\"label\":\"EU 1169/2011 (INCO)\",\"fields\":[\"bcpg:legalName\",\"bcpg:precautionOfUseRef\",\"bcpg:useByDate|bcpg:bestBeforeDate\",\"bcpg:storageConditionsRef\",\"cm:title\"]},{\"entityType\":[\"bcpg:rawMaterial\"],\"uniqueFields\":[\"bcpg:erpCode\"],\"id\":\"incoRawMaterials\",\"label\":\"EU 1169/2011 (INCO)\",\"fields\":[\"bcpg:legalName\"]}]";
 
-			JSONArray properCatalogs = new JSONArray(catalogJSONString);
-			logger.info("properCatalog: " + properCatalogs);
-			NodeRef folder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
+			NodeRef folderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
 					"/app:company_home/cm:System/cm:PropertyCatalogs");
 
-			List<FileInfo> files = fileFolderService.list(folder);
-			if (!files.isEmpty()) {
+			List<FileInfo> files = fileFolderService.list(folderNodeRef);
 
-				NodeRef catalogFile = files.get(0).getNodeRef();
-				ContentReader reader = contentService.getReader(catalogFile, ContentModel.PROP_CONTENT);
-
-				String content = reader.getContentString();
-
-				JSONArray catalogs = new JSONArray();
-
-				try {
-					catalogs = new JSONArray(content);
-					JSONObject catalog = catalogs.getJSONObject(0);
-					catalog.put("entityFilter", "hierarchy1!=null && hierarchy1.toString() == '" + family + "' ? true : false");
-					logger.info("Catalog before writing: " + catalogs);
-					ContentWriter writer = contentService.getWriter(catalogFile, ContentModel.PROP_CONTENT, true);
-					PrintWriter printWriter = new PrintWriter(writer.getContentOutputStream());
-
-					printWriter.write(catalogs.toString());
-					printWriter.flush();
-					printWriter.close();
-				} catch (JSONException e) {
-					logger.error("unable to parse content " + content + " to jsonarray", e);
-				}
-
-			} else {
-				logger.error("No catalog in folder, do init repo");
+			for (FileInfo fileInfo : files) {
+				nodeService.deleteNode(fileInfo.getNodeRef());
 			}
+
+			String catalogJSONString = "[{\"entityType\":[\"bcpg:finishedProduct\"],\"uniqueFields\":[\"bcpg:erpCode\",\"cm:name\"],\"id\":\"incoFinishedProduct\",\"label\":\"EU 1169/2011 (INCO)\",\"fields\":[\"bcpg:legalName\",\"bcpg:useByDate|bcpg:bestBeforeDate\",\"bcpg:storageConditionsRef|bcpg:preparationTips\",\"cm:title\"],\"entityFilter\":\"hierarchy1!=null && hierarchy1.toString() == '" + family + "' ? true : false\"}]";
+
+			NodeRef catalogFile = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "test-catalogs.json"),
+					ContentModel.TYPE_CONTENT).getChildRef();
+
+			ContentWriter writer = contentService.getWriter(catalogFile, ContentModel.PROP_CONTENT, true);
+			PrintWriter printWriter = new PrintWriter(writer.getContentOutputStream());
+
+			printWriter.write(catalogJSONString);
+			printWriter.flush();
+			printWriter.close();
 
 			return null;
 		}, false, true);

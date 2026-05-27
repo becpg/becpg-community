@@ -61,6 +61,11 @@ public class AsyncPaginatedExtractorWrapper extends PaginatedExtractedItems  {
 
 	}
 
+	/**
+	 * <p>clone.</p>
+	 *
+	 * @param extract a {@link fr.becpg.repo.entity.datalist.PaginatedExtractedItems} object
+	 */
 	private void clone(PaginatedExtractedItems extract) {
 		this.fullListSize = extract.getFullListSize();
 		this.computedFields = extract.getComputedFields();

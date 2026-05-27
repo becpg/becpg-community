@@ -31,10 +31,14 @@ import fr.becpg.model.GS1Model;
  */
 public class GS1ModelPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(GS1ModelPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.gs1ModelPatch.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.gs1ModelPatch.result";
 
+	/** Constant <code>ASPECT_GS1_DATES_ASPECT</code> */
 	private static final QName ASPECT_GS1_DATES_ASPECT = QName.createQName(GS1Model.GS1_URI, "datesAspect");
+	/** Constant <code>ASPECT_GS1_INDICATORS_ASPECT</code> */
 	private static final QName ASPECT_GS1_INDICATORS_ASPECT = QName.createQName(GS1Model.GS1_URI, "indicatorsAspect");
 	
 
@@ -137,6 +141,9 @@ public class GS1ModelPatch extends AbstractBeCPGPatch {
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
+	/**
+	 * <p>applyPatch.</p>
+	 */
 	private void applyPatch() {
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			final List<NodeRef> result = new ArrayList<>();

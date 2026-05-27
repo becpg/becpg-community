@@ -214,6 +214,15 @@ public class NutrientHelper {
 		return null;
 	}
 
+	/**
+	 * <p>visitCharactLists.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param nutriScoreContext a {@link fr.becpg.repo.product.formulation.score.NutriScoreContext} object
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @return a {@link java.util.Map} object
+	 */
 	private static Map<String, NodeRef> visitCharactLists(ProductData productData, NutriScoreContext nutriScoreContext,
 			AlfrescoRepository<RepositoryEntity> alfrescoRepository, NodeService nodeService) {
 		Map<String, NodeRef> missingCharacts = new HashMap<>();
@@ -228,6 +237,14 @@ public class NutrientHelper {
 		return missingCharacts;
 	}
 
+	/**
+	 * <p>visitNutrientList.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param nutriScoreContext a {@link fr.becpg.repo.product.formulation.score.NutriScoreContext} object
+	 * @param missingCharacts a {@link java.util.Map} object
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 */
 	private static void visitNutrientList(ProductData productData, NutriScoreContext nutriScoreContext, Map<String, NodeRef> missingCharacts,
 			AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 
@@ -274,6 +291,14 @@ public class NutrientHelper {
 		}
 	}
 
+	/**
+	 * <p>visitPhysicoChemList.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param nutriScoreContext a {@link fr.becpg.repo.product.formulation.score.NutriScoreContext} object
+	 * @param missingCharacts a {@link java.util.Map} object
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	private static void visitPhysicoChemList(ProductData productData, NutriScoreContext nutriScoreContext, Map<String, NodeRef> missingCharacts,
 			NodeService nodeService) {
 		for (String physicoCode : NutriScoreContext.PHYSICO_CODE_LIST) {
@@ -296,6 +321,15 @@ public class NutrientHelper {
 		}
 	}
 
+	/**
+	 * <p>findPhysico.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param physicoCode a {@link java.lang.String} object
+	 * @param missingCharacts a {@link java.util.Map} object
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.PhysicoChemListDataItem} object
+	 */
 	private static PhysicoChemListDataItem findPhysico(ProductData productData, String physicoCode, Map<String, NodeRef> missingCharacts,
 			NodeService nodeService) {
 		for (PhysicoChemListDataItem physico : productData.getPhysicoChemList()) {
@@ -317,6 +351,15 @@ public class NutrientHelper {
 		return null;
 	}
 
+	/**
+	 * <p>findNutrient.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param nutrientCode a {@link java.lang.String} object
+	 * @param missingCharacts a {@link java.util.Map} object
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 */
 	private static NutListDataItem findNutrient(ProductData productData, String nutrientCode, Map<String, NodeRef> missingCharacts,
 			AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		for (NutListDataItem nutList : productData.getNutList()) {

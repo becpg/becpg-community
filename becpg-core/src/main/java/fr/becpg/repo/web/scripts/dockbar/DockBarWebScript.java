@@ -60,16 +60,22 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public class DockBarWebScript extends AbstractWebScript {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(DockBarWebScript.class);
 
+	/** Constant <code>PARAM_ENTITY_NODEREF="entityNodeRef"</code> */
 	private static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
 	
+	/** Constant <code>PARAM_ENTITY_LIST="list"</code> */
 	private static final String PARAM_ENTITY_LIST = "list";
 	
+	/** Constant <code>DELIMITER="#"</code> */
 	private static final String DELIMITER = "#";
 
+	/** Constant <code>PREF_DOCKBAR_HISTORY="fr.becpg.DockBarHistory"</code> */
 	private static final String PREF_DOCKBAR_HISTORY = "fr.becpg.DockBarHistory";
 
+	/** Constant <code>DOCKBAR_SIZE=6</code> */
 	private static final  int DOCKBAR_SIZE = 6;
 
 	private AttributeExtractorService attributeExtractorService;
@@ -240,6 +246,16 @@ public class DockBarWebScript extends AbstractWebScript {
 
 	}
 
+	/**
+	 * <p>processResults.</p>
+	 *
+	 * @param results a {@link java.util.List} object
+	 * @param metadataFields a {@link java.util.List} object
+	 * @param elements a {@link java.util.Map} object
+	 * @return a {@link org.json.JSONObject} object
+	 * @throws org.alfresco.service.cmr.repository.InvalidNodeRefException if any.
+	 * @throws org.json.JSONException if any.
+	 */
 	private JSONObject processResults(List<NodeRef> results, List< AttributeExtractorField> metadataFields, Map<NodeRef, String> elements) throws InvalidNodeRefException, JSONException {
 
 		JSONArray items = new JSONArray();

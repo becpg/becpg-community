@@ -82,6 +82,13 @@ public class AllocationStockAutocompletePlugin implements AutoCompletePlugin {
 	    });
 	}
 
+	/**
+	 * <p>matchesQuery.</p>
+	 *
+	 * @param item a {@link fr.becpg.repo.quality.data.dataList.StockListDataItem} object
+	 * @param query a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	private boolean matchesQuery(StockListDataItem item, String query) {
 	    return  BeCPGQueryHelper.isAllQuery(query) ||  BeCPGQueryHelper.isQueryMatch(query,  item.getBatchId());
 	}

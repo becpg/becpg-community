@@ -54,6 +54,7 @@ import fr.becpg.repo.quality.QualityControlService;
 public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy,
 NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.BeforeDeleteNodePolicy,CopyServicePolicies.OnCopyNodePolicy, EntityVersionPlugin {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(QualityControlPolicies.class);
 
 	private QualityControlService qualityControlService;
@@ -62,10 +63,15 @@ NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePo
 	
 	private EntityListDAO entityListDAO;
 
+	/** Constant <code>KEY_PREFIX_CTRL_PLAN_ASSOC="QualityControlPolicies.class.getName() "{trunked}</code> */
 	private static final  String KEY_PREFIX_CTRL_PLAN_ASSOC = QualityControlPolicies.class.getName() + "_CONTROL_PLANS_ASSOC";
+	/** Constant <code>KEY_PREFIX_PRODUCT_ASSOC="QualityControlPolicies.class.getName() "{trunked}</code> */
 	private static final  String KEY_PREFIX_PRODUCT_ASSOC = QualityControlPolicies.class.getName() + "_PRODUCT_ASSOC";
+	/** Constant <code>KEY_UPDATE_CONTROL_LIST_STATE="QualityControlPolicies.class.getName() "{trunked}</code> */
 	private static final  String KEY_UPDATE_CONTROL_LIST_STATE = QualityControlPolicies.class.getName() + "_UPDATE_CONTROL_LIST_STATE";
+	/** Constant <code>KEY_UPDATE_QUALITY_CONTROL_STATE="QualityControlPolicies.class.getName() "{trunked}</code> */
 	private static final  String KEY_UPDATE_QUALITY_CONTROL_STATE = QualityControlPolicies.class.getName() + "_UPDATE_QUALITY_CONTROL_STATE";
+	/** Constant <code>KEY_CREATE_CONTROL_LIST="QualityControlPolicies.class.getName() "{trunked}</code> */
 	private static final  String KEY_CREATE_CONTROL_LIST = QualityControlPolicies.class.getName() + "_CREATE_CONTROL_LIST";
 
 

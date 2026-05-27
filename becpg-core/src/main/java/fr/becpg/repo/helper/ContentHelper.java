@@ -54,6 +54,7 @@ import fr.becpg.repo.RepoConsts;
  */
 public class ContentHelper {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ContentHelper.class);
 
 	private ContentService contentService;

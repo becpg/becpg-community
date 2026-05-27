@@ -25,6 +25,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 @AlfQname(qname = "bcpg:toxList")
 public class ToxListDataItem extends AbstractManualDataItem implements SimpleCharactDataItem, AspectAwareDataItem {
 
+	/** Constant <code>serialVersionUID=8297326459126736070L</code> */
 	private static final long serialVersionUID = 8297326459126736070L;
 
 	private NodeRef tox;

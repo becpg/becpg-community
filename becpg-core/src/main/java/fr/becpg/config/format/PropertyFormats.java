@@ -24,23 +24,33 @@ import org.springframework.extensions.surf.util.I18NUtil;
 public class PropertyFormats {
 
 	// Cache for thread-safe, immutable formatters
+	/** Constant <code>DATE_FORMATTER_CACHE</code> */
 	private static final ConcurrentHashMap<FormatConfig, DateTimeFormatter> DATE_FORMATTER_CACHE = new ConcurrentHashMap<>();
+	/** Constant <code>NUMBER_FORMATTER_CACHE</code> */
 	private static final ConcurrentHashMap<FormatConfig, NumberFormat> NUMBER_FORMATTER_CACHE = new ConcurrentHashMap<>();
+	/** Constant <code>MODE_CACHE</code> */
 	private static final ConcurrentHashMap<String, PropertyFormats> MODE_CACHE = new ConcurrentHashMap<>();
 
 	// Default patterns as constants
+	/** Constant <code>DEFAULT_DATE_PATTERN="EEE d MMM yyyy"</code> */
 	private static final String DEFAULT_DATE_PATTERN = "EEE d MMM yyyy";
+	/** Constant <code>DEFAULT_DATETIME_PATTERN="EEE d MMM yyyy HH:mm:ss"</code> */
 	private static final String DEFAULT_DATETIME_PATTERN = "EEE d MMM yyyy HH:mm:ss";
 	/** Constant <code>DEFAULT_DECIMAL_PATTERN="###,###.####"</code> */
 	public static final String DEFAULT_DECIMAL_PATTERN = "###,###.####";
 
 	/** Constant <code>PROCESS_DATE_FORMAT="dd MMMM, yyyy"</code> */
 	public static final String PROCESS_DATE_FORMAT = "dd MMMM, yyyy";
+	/** Constant <code>FRENCH_CSV_DATETIME_FORMAT="dd/MM/yyyy HH:mm:ss"</code> */
 	private static final String FRENCH_CSV_DATETIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
+	/** Constant <code>CSV_DATETIME_FORMAT="MM/dd/yyyy HH:mm:ss"</code> */
 	private static final String CSV_DATETIME_FORMAT = "MM/dd/yyyy HH:mm:ss";
+	/** Constant <code>FRENCH_CSV_DATE_FORMAT="dd/MM/yyyy"</code> */
 	private static final String FRENCH_CSV_DATE_FORMAT = "dd/MM/yyyy";
+	/** Constant <code>CSV_DATE_FORMAT="MM/dd/yyyy"</code> */
 	private static final String CSV_DATE_FORMAT = "MM/dd/yyyy";
 
+	/** Constant <code>COMPARE_MAX_PRECISION=9</code> */
 	private static final int COMPARE_MAX_PRECISION = 9;
 
 	// Immutable configuration record
@@ -239,6 +249,13 @@ public class PropertyFormats {
 		return formatter.format(o);
 	}
 
+	/**
+	 * <p>formatWithPrecision.</p>
+	 *
+	 * @param qty a {@link java.lang.Double} object
+	 * @param baseFormatter a {@link java.text.NumberFormat} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String formatWithPrecision(Double qty, NumberFormat baseFormatter) {
 		// Create a copy for thread safety
 		var formatter = (DecimalFormat) ((DecimalFormat) baseFormatter).clone();
@@ -321,23 +338,50 @@ public class PropertyFormats {
 	}
 
 	// Cached formatter retrieval methods
+	/**
+	 * <p>getDateFormatter.</p>
+	 *
+	 * @return a {@link java.time.format.DateTimeFormatter} object
+	 */
 	private DateTimeFormatter getDateFormatter() {
 		return DATE_FORMATTER_CACHE.computeIfAbsent(dateConfig, this::createDateTimeFormatter);
 	}
 
+	/**
+	 * <p>getDateTimeFormatter.</p>
+	 *
+	 * @return a {@link java.time.format.DateTimeFormatter} object
+	 */
 	private DateTimeFormatter getDateTimeFormatter() {
 		return DATE_FORMATTER_CACHE.computeIfAbsent(datetimeConfig, this::createDateTimeFormatter);
 	}
 
+	/**
+	 * <p>getNumberFormatter.</p>
+	 *
+	 * @return a {@link java.text.NumberFormat} object
+	 */
 	private NumberFormat getNumberFormatter() {
 		return NUMBER_FORMATTER_CACHE.computeIfAbsent(decimalConfig, this::createNumberFormat);
 	}
 
 	// Factory methods for creating formatters
+	/**
+	 * <p>createDateTimeFormatter.</p>
+	 *
+	 * @param config a {@link fr.becpg.config.format.PropertyFormats.FormatConfig} object
+	 * @return a {@link java.time.format.DateTimeFormatter} object
+	 */
 	private DateTimeFormatter createDateTimeFormatter(FormatConfig config) {
 		return DateTimeFormatter.ofPattern(config.pattern(), config.locale());
 	}
 
+	/**
+	 * <p>createNumberFormat.</p>
+	 *
+	 * @param config a {@link fr.becpg.config.format.PropertyFormats.FormatConfig} object
+	 * @return a {@link java.text.NumberFormat} object
+	 */
 	private NumberFormat createNumberFormat(FormatConfig config) {
 		if (config.useDefaultLocale()) {
 			return new DecimalFormat(config.pattern());
@@ -349,14 +393,32 @@ public class PropertyFormats {
 	}
 
 	// Utility methods for Date/LocalDateTime conversion
+	/**
+	 * <p>convertToLocalDate.</p>
+	 *
+	 * @param date a {@link java.util.Date} object
+	 * @return a {@link java.time.LocalDate} object
+	 */
 	private LocalDate convertToLocalDate(Date date) {
 		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 	}
 
+	/**
+	 * <p>convertToLocalDateTime.</p>
+	 *
+	 * @param date a {@link java.util.Date} object
+	 * @return a {@link java.time.LocalDateTime} object
+	 */
 	private LocalDateTime convertToLocalDateTime(Date date) {
 		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 	}
 
+	/**
+	 * <p>convertToDate.</p>
+	 *
+	 * @param localDateTime a {@link java.time.LocalDateTime} object
+	 * @return a {@link java.util.Date} object
+	 */
 	private Date convertToDate(LocalDateTime localDateTime) {
 		return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
 	}

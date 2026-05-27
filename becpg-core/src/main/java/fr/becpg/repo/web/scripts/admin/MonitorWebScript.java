@@ -54,24 +54,34 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class MonitorWebScript extends DeclarativeWebScript {
 
+	/** Constant <code>SYSTEM_PATH="/app:company_home/cm:System/"</code> */
 	private static final String SYSTEM_PATH = "/app:company_home/cm:System/";
 
+	/** Constant <code>SUCCESS_STATUS="SUCCESS"</code> */
 	private static final String SUCCESS_STATUS = "SUCCESS";
 
+	/** Constant <code>AUTHENTICATED_KEY="authenticated"</code> */
 	private static final String AUTHENTICATED_KEY = "authenticated";
 
+	/** Constant <code>VOLUMETRY_PARAMETER="volumetry"</code> */
 	private static final String VOLUMETRY_PARAMETER = "volumetry";
 
+	/** Constant <code>DOWN_STATUS="DOWN"</code> */
 	private static final String DOWN_STATUS = "DOWN";
 
+	/** Constant <code>UP_STATUS="UP"</code> */
 	private static final String UP_STATUS = "UP";
 
+	/** Constant <code>STATUS_KEY="status"</code> */
 	private static final String STATUS_KEY = "status";
 
+	/** Constant <code>MONITORS_USER_AGENT="beCPG Monitors"</code> */
 	private static final String MONITORS_USER_AGENT = "beCPG Monitors";
 
+	/** Constant <code>SOLR_STATUS="solr_status"</code> */
 	private static final String SOLR_STATUS = "solr_status";
 
+	/** Constant <code>VOLUMETRY_QUERY="SELECT ns.uri, qn.local_name, st.protoc"{trunked}</code> */
 	private static final String VOLUMETRY_QUERY = "SELECT "
             + "ns.uri, "
             + "qn.local_name, "
@@ -99,8 +109,10 @@ public class MonitorWebScript extends DeclarativeWebScript {
             + "node_count DESC;";
 
 	
+	/** Constant <code>BYTES_TO_MEGA_BYTES=1048576d</code> */
 	private static final double BYTES_TO_MEGA_BYTES = 1048576d;
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(MonitorWebScript.class);
 	
 	private ContentService contentService;
@@ -113,7 +125,7 @@ public class MonitorWebScript extends DeclarativeWebScript {
 
 	private String becpgSchema;
 
-	private AuthorityService authorityService;
+	protected AuthorityService authorityService;
 
 	private BatchQueueService batchQueueService;
 	
@@ -175,6 +187,11 @@ public class MonitorWebScript extends DeclarativeWebScript {
 
 	}
 
+	/**
+	 * <p>fillVolumetry.</p>
+	 *
+	 * @param ret a {@link java.util.Map} object
+	 */
 	@SuppressWarnings("unchecked")
 	private void fillVolumetry(Map<String, Object> ret) {
 		JSONArray volumetryArray = new JSONArray();
@@ -200,6 +217,12 @@ public class MonitorWebScript extends DeclarativeWebScript {
 		ret.put(VOLUMETRY_PARAMETER, volumetryArray.toString());
 	}
 
+	/**
+	 * <p>extractQNameString.</p>
+	 *
+	 * @param qname a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extractQNameString(QName qname) {
 		try {
 			return qname.toPrefixString(namespaceService);

@@ -62,6 +62,7 @@ import fr.becpg.repo.variant.filters.VariantFilters;
 @Service
 public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(SimpleCharactDetailsVisitor.class);
 
 	protected AlfrescoRepository<? extends RepositoryEntity> alfrescoRepository;
@@ -226,6 +227,14 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		return context.getCharactDetails();
 	}
 	
+	/**
+	 * <p>getQty.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param packagingListDataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 * @param componentProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double getQty(ProductData formulatedProduct, PackagingListDataItem packagingListDataItem, ProductData componentProduct) {
 		if (PackagingLevel.Primary.equals(packagingListDataItem.getPkgLevel())) {
 			return FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, componentProduct);
@@ -233,10 +242,22 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		return null;
 	}
 	
+	/**
+	 * <p>getNetQty.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double getNetQty(ProductData formulatedProduct) {
 		return FormulationHelper.getNetQtyInLorKg(formulatedProduct, null, FormulationHelper.DEFAULT_NET_WEIGHT);
 	}
 	
+	/**
+	 * <p>getNetWeight.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double getNetWeight(ProductData formulatedProduct) {
 		return FormulationHelper.getNetWeight(formulatedProduct, null, FormulationHelper.DEFAULT_NET_WEIGHT);
 	}
@@ -254,6 +275,14 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 				&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getComponent()));
 	}
 
+	/**
+	 * <p>computeCompoListVol.</p>
+	 *
+	 * @param subProductData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param subVol a {@link java.lang.Double} object
+	 * @param compoListDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double computeCompoListVol(ProductData subProductData, Double subVol, CompoListDataItem compoListDataItem) {
 		ProductData partProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
 		Double volUsed = FormulationHelper.getNetVolume(compoListDataItem, partProduct);
@@ -264,6 +293,14 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		return volUsed;
 	}
 
+	/**
+	 * <p>computeCompoListWeight.</p>
+	 *
+	 * @param subProductData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param parentProductNetWeight a {@link java.lang.Double} object
+	 * @param compoListDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double computeCompoListWeight(ProductData subProductData, Double parentProductNetWeight, CompoListDataItem compoListDataItem) {
 		Double compoListWeight = FormulationHelper.getQtyInKg(compoListDataItem);
 		Double compoProductNetWeight = FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT);
@@ -274,6 +311,12 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		return compoListWeight;
 	}
 
+	/**
+	 * <p>omitItem.</p>
+	 *
+	 * @param compoListDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 * @return a boolean
+	 */
 	private boolean omitItem(CompoListDataItem compoListDataItem) {
 		//omit item if parent is omitted
 		while (compoListDataItem != null) {
@@ -360,6 +403,19 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		}
 	}
 
+	/**
+	 * <p>calculateCharactDetailsValues.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.product.formulation.details.CharactDetailsVisitorContext} object
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param partProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param componentDataList a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param currLevel a {@link java.lang.Integer} object
+	 * @param simpleCharact a {@link fr.becpg.repo.repository.model.SimpleCharactDataItem} object
+	 * @param unit a {@link java.lang.String} object
+	 * @param qtyUsed a {@link java.lang.Double} object
+	 * @param netQty a {@link java.lang.Double} object
+	 */
 	private void calculateCharactDetailsValues(CharactDetailsVisitorContext context, ProductData formulatedProduct, ProductData partProduct,
 			NodeRef componentDataList, Integer currLevel, SimpleCharactDataItem simpleCharact, String unit, Double qtyUsed, Double netQty) {
 		Double value = FormulationHelper.calculateValue(0d, qtyUsed, extractValue(formulatedProduct, partProduct, simpleCharact), netQty);
@@ -418,6 +474,11 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		}
 	}
 
+	/**
+	 * <p>removeUnreadableAdditionalValues.</p>
+	 *
+	 * @param currentCharactDetailsValue a {@link fr.becpg.repo.product.data.CharactDetailsValue} object
+	 */
 	private void removeUnreadableAdditionalValues(CharactDetailsValue currentCharactDetailsValue) {
 		currentCharactDetailsValue.getAdditionalValues().removeIf(add -> !isColumnReadable(add.getColumnKey()));
 	}
@@ -470,6 +531,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	 * @param partProduct a {@link fr.becpg.repo.product.data.ProductData} object
 	 * @param simpleCharact a {@link fr.becpg.repo.repository.model.SimpleCharactDataItem} object
 	 * @return boolean
+	 * @since 25.3.0.34
 	 */
 	protected boolean shouldVisitPartItem(CharactDetailsVisitorContext context, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
 		return true;

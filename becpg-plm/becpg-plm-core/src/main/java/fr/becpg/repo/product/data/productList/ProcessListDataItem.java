@@ -28,6 +28,7 @@ import fr.becpg.repo.repository.model.CompositionDataItem;
 @MultiLevelDataList
 public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem implements CompositionDataItem {
 
+	/** Constant <code>serialVersionUID=-8313567761346202059L</code> */
 	private static final long serialVersionUID = -8313567761346202059L;
 
 	private Double qty = 0d;

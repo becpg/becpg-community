@@ -50,18 +50,30 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 @Service
 public class ECOReportExtractor implements EntityReportExtractorPlugin {
 
+	/** Constant <code>TAG_ECO="eco"</code> */
 	private static final String TAG_ECO = "eco";
+	/** Constant <code>TAG_CALCULATED_CHARACTS="calculatedCharacts"</code> */
 	private static final String TAG_CALCULATED_CHARACTS = "calculatedCharacts";
+	/** Constant <code>TAG_CALCULATED_CHARACT="calculatedCharact"</code> */
 	private static final String TAG_CALCULATED_CHARACT = "calculatedCharact";
+	/** Constant <code>ATTR_SOURCEITEM_HIERARCHY1="sourceItemHierarchy1"</code> */
 	private static final String ATTR_SOURCEITEM_HIERARCHY1 = "sourceItemHierarchy1";
+	/** Constant <code>ATTR_SOURCEITEM_HIERARCHY2="sourceItemHierarchy2"</code> */
 	private static final String ATTR_SOURCEITEM_HIERARCHY2 = "sourceItemHierarchy2";
+	/** Constant <code>ATTR_SOURCEITEM_NAME="sourceItemName"</code> */
 	private static final String ATTR_SOURCEITEM_NAME = "sourceItemName";
+	/** Constant <code>ATTR_SOURCEITEM_CODE="sourceItemCode"</code> */
 	private static final String ATTR_SOURCEITEM_CODE = "sourceItemCode";
+	/** Constant <code>ATTR_CHARACT_NAME="charactName"</code> */
 	private static final String ATTR_CHARACT_NAME = "charactName";
+	/** Constant <code>ATTR_SOURCE_VALUE="sourceValue"</code> */
 	private static final String ATTR_SOURCE_VALUE = "sourceValue";
+	/** Constant <code>ATTR_TARGET_VALUE="targetValue"</code> */
 	private static final String ATTR_TARGET_VALUE = "targetValue";
+	/** Constant <code>ATTR_IS_COST="isCost"</code> */
 	private static final String ATTR_IS_COST = "isCost";
 
+	/** Constant <code>DEFAULT_PROJECTED_QTY</code> */
 	private static final Integer DEFAULT_PROJECTED_QTY = 1;
 
 	@Autowired
@@ -88,6 +100,12 @@ public class ECOReportExtractor implements EntityReportExtractorPlugin {
 
 	}
 
+	/**
+	 * <p>extractXml.</p>
+	 *
+	 * @param ecoData a {@link fr.becpg.repo.ecm.data.ChangeOrderData} object
+	 * @return a {@link org.dom4j.Element} object
+	 */
 	private Element extractXml(ChangeOrderData ecoData) {
 
 		Document document = DocumentHelper.createDocument();

@@ -18,6 +18,7 @@ import fr.becpg.repo.helper.impl.AttributeExtractorField;
 public class ScoreListExtractor extends MultiLevelExtractor {
 
 
+	/** Constant <code>SCORE_LIST="scoreList"</code> */
 	private static final String SCORE_LIST = "scoreList";
 
 	/** {@inheritDoc} */

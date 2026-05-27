@@ -38,6 +38,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 		implements NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnAddAspectPolicy, NodeServicePolicies.OnDeleteNodePolicy,
 		CopyServicePolicies.OnCopyNodePolicy, CopyServicePolicies.OnCopyCompletePolicy {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(SortableListPolicy.class);
 
 	private DataListSortService dataListSortService;

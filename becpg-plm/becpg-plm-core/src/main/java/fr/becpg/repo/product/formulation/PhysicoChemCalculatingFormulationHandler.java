@@ -15,6 +15,7 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
@@ -29,6 +30,7 @@ import fr.becpg.repo.repository.model.SimpleListDataItem;
  */
 public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleListFormulationHandler<PhysicoChemListDataItem> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(PhysicoChemCalculatingFormulationHandler.class);
 
 
@@ -52,9 +54,9 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 			}
 
 
-			boolean hasCompoEl = formulatedProduct.hasCompoListEl(FormulationFilters.EFFECTIVE_VARIANT_COMPO)
-					|| formulatedProduct.hasPackagingListEl(FormulationFilters.EFFECTIVE_VARIANT_PACKAGING)
-					|| formulatedProduct.hasProcessListEl(FormulationFilters.EFFECTIVE_VARIANT_PROCESS);
+			boolean hasCompoEl = formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))
+					|| formulatedProduct.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))
+					|| formulatedProduct.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE));
 
 			formulateSimpleList(formulatedProduct, formulatedProduct.getPhysicoChemList(), new DefaultSimpleListQtyProvider(formulatedProduct),
 					hasCompoEl);

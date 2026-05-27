@@ -35,14 +35,19 @@ import org.springframework.extensions.webscripts.json.JSONWriter;
  */
 public class FilterFormUIGet extends FormUIGet {
 
+	/** Constant <code>ENTITY_PREFIX="entity_"</code> */
 	private static final String ENTITY_PREFIX = "entity_";
 
+	/** Constant <code>PARAM_SITEID="siteId"</code> */
 	private static final String PARAM_SITEID = "siteId";
 
+	/** Constant <code>PARAM_ENTITY_TYPE="entityType"</code> */
 	private static final String PARAM_ENTITY_TYPE = "entityType";
 
+	/** Constant <code>PARAM_LIST="list"</code> */
 	private static final String PARAM_LIST = "list";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(FilterFormUIGet.class);
 
 	/** {@inheritDoc} */
@@ -141,6 +146,13 @@ public class FilterFormUIGet extends FormUIGet {
 		return model;
 	}
 	
+	/**
+	 * <p>buildFormId.</p>
+	 *
+	 * @param itemId a {@link java.lang.String} object
+	 * @param params a {@link java.util.Map} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String buildFormId(String itemId, Map<String, String> params) {
 		List<List<String>> expectedCombinations = List.of(
 				List.of("formId", "entityType", "siteId", "list"),
@@ -167,6 +179,13 @@ public class FilterFormUIGet extends FormUIGet {
 	    return null;
 	}
 	
+	/**
+	 * <p>buildCandidate.</p>
+	 *
+	 * @param params a {@link java.util.Map} object
+	 * @param keys a {@link java.util.List} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String buildCandidate(Map<String, String> params, List<String> keys) {
 		List<String> validParts = new ArrayList<>();
 		for (String key : keys) {
@@ -179,6 +198,12 @@ public class FilterFormUIGet extends FormUIGet {
 		return String.join("-", validParts);
 	}
 	
+	/**
+	 * <p>normalize.</p>
+	 *
+	 * @param value a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String normalize(String value) {
 		if (value == null) return null;
 		value = value.trim();
@@ -192,6 +217,15 @@ public class FilterFormUIGet extends FormUIGet {
 		}
 	}
 
+	/**
+	 * <p>merge.</p>
+	 *
+	 * @param model a {@link java.util.Map} object
+	 * @param name a {@link java.lang.String} object
+	 * @param subModel a {@link java.util.Map} object
+	 * @param fieldSet a {@link java.lang.String} object
+	 * @param prevFieldId a {@link java.lang.String} object
+	 */
 	@SuppressWarnings("unchecked")
 	private void merge(Map<String, Object> model, String name, Map<String, Object> subModel, String fieldSet, String prevFieldId) {
 
@@ -236,6 +270,13 @@ public class FilterFormUIGet extends FormUIGet {
 
 	}
 
+	/**
+	 * <p>createProxy.</p>
+	 *
+	 * @param constraint a Constraint object
+	 * @param name a {@link java.lang.String} object
+	 * @return a Constraint object
+	 */
 	private Constraint createProxy(final Constraint constraint, final String name) {
 
 		try {
@@ -250,6 +291,13 @@ public class FilterFormUIGet extends FormUIGet {
 
 	}
 
+	/**
+	 * <p>insertAfter.</p>
+	 *
+	 * @param prevFieldId a {@link java.lang.String} object
+	 * @param mainSet a Set object
+	 * @param fieldPointer a {@link fr.becpg.web.scripts.forms.FilterFormUIGet.FieldPointer} object
+	 */
 	private void insertAfter(String prevFieldId, Set mainSet, FieldPointer fieldPointer) {
 		int idx = 0;
 		if (prevFieldId != null) {
@@ -268,6 +316,13 @@ public class FilterFormUIGet extends FormUIGet {
 		mainSet.addChild(fieldPointer);
 	}
 
+	/**
+	 * <p>findSet.</p>
+	 *
+	 * @param elements a {@link java.util.List} object
+	 * @param fieldSet a {@link java.lang.String} object
+	 * @return a Set object
+	 */
 	private Set findSet(List<Element> elements, String fieldSet) {
 
 		for (Element el : elements) {

@@ -45,8 +45,10 @@ import fr.becpg.repo.autocomplete.AutoCompletePlugin;
 @Service
 public class SecurityAutoCompletePlugin implements AutoCompletePlugin {
 
+	/** Constant <code>TYPE_ACL_TYPE="aclType"</code> */
 	private static final String TYPE_ACL_TYPE = "aclType";
 
+	/** Constant <code>SEPARATOR="|"</code> */
 	private static final String SEPARATOR = "|";
 
 	@Autowired
@@ -91,10 +93,25 @@ public class SecurityAutoCompletePlugin implements AutoCompletePlugin {
 
 	}
 
+	/**
+	 * <p>filter.</p>
+	 *
+	 * @param suggestion a {@link java.lang.String} object
+	 * @param query a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	private boolean filter(String suggestion, String query) {
 		return query.contains("*") || suggestion.toLowerCase().contains(query.toLowerCase());
 	}
 
+	/**
+	 * <p>getAvailableEntityTypeNames.</p>
+	 *
+	 * @param query a {@link java.lang.String} object
+	 * @param pageNum a {@link java.lang.Integer} object
+	 * @param pageSize a {@link java.lang.Integer} object
+	 * @return a {@link fr.becpg.repo.autocomplete.AutoCompletePage} object
+	 */
 	private AutoCompletePage getAvailableEntityTypeNames(String query, Integer pageNum, Integer pageSize) {
 
 		List<String> suggestions = new ArrayList<>();
@@ -105,6 +122,13 @@ public class SecurityAutoCompletePlugin implements AutoCompletePlugin {
 		return new AutoCompletePage(suggestions, pageNum, pageSize, new StringValueExtractor("modelType"));
 	}
 
+	/**
+	 * <p>addSuggestions.</p>
+	 *
+	 * @param types a {@link java.util.Collection} object
+	 * @param suggestions a {@link java.util.List} object
+	 * @param query a {@link java.lang.String} object
+	 */
 	private void addSuggestions(Collection<QName> types, List<String> suggestions, String query) {
 		if (types != null) {
 			for (QName type : types) {

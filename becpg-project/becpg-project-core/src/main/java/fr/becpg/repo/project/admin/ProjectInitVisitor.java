@@ -62,21 +62,28 @@ import fr.becpg.report.client.ReportFormat;
 @Service
 public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
+	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_PROJECTS="ExportProjects"</code> */
 	private static final String PATH_REPORTS_EXPORT_SEARCH_PROJECTS = "ExportProjects";
 
+	/** Constant <code>EXPORT_PROJECTS_REPORT_RPTFILE_PATH="beCPG/birt/project/ProjectsReport.rptde"{trunked}</code> */
 	private static final String EXPORT_PROJECTS_REPORT_RPTFILE_PATH = "beCPG/birt/project/ProjectsReport.rptdesign";
 
+	/** Constant <code>EXPORT_PROJECTS_REPORT_XMLFILE_PATH="beCPG/birt/project/ExportSearchQuery.xm"{trunked}</code> */
 	private static final String EXPORT_PROJECTS_REPORT_XMLFILE_PATH = "beCPG/birt/project/ExportSearchQuery.xml";
 
 	/** Constant <code>EMAIL_TEMPLATES="./app:dictionary/app:email_templates"</code> */
 	public static final String EMAIL_TEMPLATES = "./app:dictionary/app:email_templates";
 
+	/** Constant <code>PROJECT_REPORT_CSS_RESOURCE="beCPG/birt/project/project-report.css"</code> */
 	private static final String PROJECT_REPORT_CSS_RESOURCE = "beCPG/birt/project/project-report.css";
 
+	/** Constant <code>PROJECT_REPORT_EN_RESOURCE="beCPG/birt/project/ProjectReport_en.pro"{trunked}</code> */
 	private static final String PROJECT_REPORT_EN_RESOURCE = "beCPG/birt/project/ProjectReport_en.properties";
 
+	/** Constant <code>PROJECT_REPORT_FR_RESOURCE="beCPG/birt/project/ProjectReport_fr.pro"{trunked}</code> */
 	private static final String PROJECT_REPORT_FR_RESOURCE = "beCPG/birt/project/ProjectReport_fr.properties";
 	
+	/** Constant <code>DEFAULT_PJT_TPL_NAME="plm.project.default.tpl.name"</code> */
 	private static final String DEFAULT_PJT_TPL_NAME = "plm.project.default.tpl.name";
 
 	@Autowired
@@ -125,7 +132,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 	/**
 	 * Create the entity templates
 	 *
-	 * @param systemNodeRef
+	 * @param systemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	private void visitEntityTpls(NodeRef systemNodeRef) {
 
@@ -136,6 +143,12 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		
 	}
 
+	/**
+	 * <p>createDefaultProjectTpl.</p>
+	 *
+	 * @param entityTplsNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param projectTplsNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void createDefaultProjectTpl(NodeRef entityTplsNodeRef, NodeRef projectTplsNodeRef) {
 		NodeRef projectTplNodeRef = nodeService.getChildByName(projectTplsNodeRef, ContentModel.ASSOC_CONTAINS,
 				I18NUtil.getMessage(DEFAULT_PJT_TPL_NAME));
@@ -172,9 +185,9 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 	/**
 	 * Create NPD List values
 	 *
-	 * @param parentNodeRef
-	 * @param path
-	 * @return
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param path a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	private NodeRef visitSystemProjectListValuesEntity(NodeRef parentNodeRef, String path) {
 
@@ -194,6 +207,11 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
 
+	/**
+	 * <p>visitReports.</p>
+	 *
+	 * @param systemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void visitReports(NodeRef systemNodeRef) {
 
 		// reports folder
@@ -235,6 +253,11 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 	}
 
+	/**
+	 * <p>createSystemGroups.</p>
+	 *
+	 * @param groups an array of {@link java.lang.String} objects
+	 */
 	private void createSystemGroups(String[] groups) {
 
 		createGroups(groups);

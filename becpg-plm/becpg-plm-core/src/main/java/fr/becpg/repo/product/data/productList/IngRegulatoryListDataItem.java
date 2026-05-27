@@ -26,6 +26,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "bcpg:ingRegulatoryList")
 public class IngRegulatoryListDataItem extends BeCPGDataObject {
 
+	/** Constant <code>serialVersionUID=8297326459126736070L</code> */
 	private static final long serialVersionUID = 8297326459126736070L;
 
 	private NodeRef ing;

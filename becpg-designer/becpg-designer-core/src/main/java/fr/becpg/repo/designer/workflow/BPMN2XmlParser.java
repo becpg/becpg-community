@@ -41,6 +41,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class BPMN2XmlParser {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(BPMN2XmlParser.class);
 	
 	private final List<String> startTasks = new ArrayList<>();
@@ -118,11 +119,21 @@ public class BPMN2XmlParser {
 	}
 	
 
+	/**
+	 * <p>createUserTask.</p>
+	 *
+	 * @param qName a {@link java.lang.String} object
+	 */
 	private void createUserTask(String qName) {
 		userTasks.add(qName);
 		
 	}
 	
+	/**
+	 * <p>createStartTask.</p>
+	 *
+	 * @param qName a {@link java.lang.String} object
+	 */
 	private void createStartTask(String qName) {
 		startTasks.add(qName);
 	}

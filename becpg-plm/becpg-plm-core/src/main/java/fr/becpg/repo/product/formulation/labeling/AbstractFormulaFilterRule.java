@@ -17,6 +17,7 @@ import fr.becpg.repo.helper.MLTextHelper;
  */
 public abstract class AbstractFormulaFilterRule implements Serializable {
 
+	/** Constant <code>serialVersionUID=-3030472014517241276L</code> */
 	private static final long serialVersionUID = -3030472014517241276L;
 
 	private final String formula;

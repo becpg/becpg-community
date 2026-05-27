@@ -18,7 +18,9 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
  */
 public class ContactListExtractor extends SimpleExtractor {
 
+	/** Constant <code>UPDATE_SUPPLIER_ACCOUNT="update-supplier-account"</code> */
 	private static final String UPDATE_SUPPLIER_ACCOUNT = "update-supplier-account";
+	/** Constant <code>CONTACT_LIST="contactList"</code> */
 	private static final String CONTACT_LIST = "contactList";
 
 	/** {@inheritDoc} */

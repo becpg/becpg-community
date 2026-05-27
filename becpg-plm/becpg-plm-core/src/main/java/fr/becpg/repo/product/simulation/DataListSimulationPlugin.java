@@ -30,6 +30,7 @@ import fr.becpg.repo.repository.model.CompositionDataItem;
 @Service
 public class DataListSimulationPlugin implements EntitySimulationPlugin {
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(DataListSimulationPlugin.class);
 
 	private final AlfrescoRepository<ProductData> alfrescoRepository;
@@ -77,6 +78,15 @@ public class DataListSimulationPlugin implements EntitySimulationPlugin {
 		return null;
 	}
 
+	/**
+	 * <p>recurSimule.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param dataListItem a {@link fr.becpg.repo.repository.model.CompositionDataItem} object
+	 * @param dataListItemsNodeRefs a {@link java.util.List} object
+	 * @param branch a boolean
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef recurSimule(NodeRef entityNodeRef, CompositionDataItem dataListItem, List<NodeRef> dataListItemsNodeRefs, boolean branch) {
 
 		NodeRef parentNodeRef = dataListItem != null ? dataListItem.getComponent() : entityNodeRef;
@@ -132,6 +142,14 @@ public class DataListSimulationPlugin implements EntitySimulationPlugin {
 
 	}
 
+	/**
+	 * <p>createSimulationNodeRef.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param parentRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param branch a boolean
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef createSimulationNodeRef(NodeRef entityNodeRef, NodeRef parentRef, boolean branch) {
 		return branch ? entityVersionService.createBranch(entityNodeRef, parentRef)
 				: entityService.createOrCopyFrom(entityNodeRef, parentRef, nodeService.getType(entityNodeRef),

@@ -42,11 +42,16 @@ import org.springframework.extensions.webscripts.connector.Response;
  */
 public class SharePublishService implements ApplicationListener<ContextRefreshedEvent>  {
 
+	/** Constant <code>XML=".xml"</code> */
 	private static final String XML = ".xml";
+	/** Constant <code>PUBLISHED_CONFIG_NAME="publishedConfigName"</code> */
 	private static final String PUBLISHED_CONFIG_NAME = "publishedConfigName";
+	/** Constant <code>PROPERTIES=".properties"</code> */
 	private static final String PROPERTIES = ".properties";
+	/** Constant <code>FILE_SEPARATOR="System.getProperty(file.separator)"</code> */
 	private static final String FILE_SEPARATOR = System.getProperty("file.separator");
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(SharePublishService.class);
 
 	private String configPath;
@@ -77,6 +82,9 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 		loadDiskMessages();
 	}
 
+	/**
+	 * <p>loadDiskMessages.</p>
+	 */
 	private void loadDiskMessages() {
 		File configDir = new File(configPath + FILE_SEPARATOR + "messages");
 		if (configDir.exists()) {
@@ -106,6 +114,12 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 		}
 	}
 
+	/**
+	 * <p>writeClassPathMessages.</p>
+	 *
+	 * @param bundleId a {@link java.lang.Long} object
+	 * @param file a {@link java.io.File} object
+	 */
 	private void writeClassPathMessages(Long bundleId, File file) {
 		try {
 			String fileName = file.getName();
@@ -157,6 +171,14 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 		}
 	}
 
+	/**
+	 * <p>publishProperties.</p>
+	 *
+	 * @param nodeRef a {@link java.lang.String} object
+	 * @param fileName a {@link java.lang.String} object
+	 * @param bundleId a {@link java.lang.Long} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String publishProperties(String nodeRef, String fileName, Long bundleId) {
 		JSONObject jsonResponse = alfrescoRequest(HttpMethod.POST, "/becpg/designer/model/publish?nodeRef=" + nodeRef + "&writeXml=false");
 		if (jsonResponse.has("type") && jsonResponse.getString("type").equals("config")) {
@@ -184,6 +206,13 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 		return null;
 	}
 
+	/**
+	 * <p>publishXml.</p>
+	 *
+	 * @param nodeRef a {@link java.lang.String} object
+	 * @param fileName a {@link java.lang.String} object
+	 * @param writeXml a {@link java.lang.Boolean} object
+	 */
 	private void publishXml(String nodeRef, String fileName, Boolean writeXml) {
 		JSONObject jsonResponse = alfrescoRequest(HttpMethod.POST, "/becpg/designer/model/publish?nodeRef=" + nodeRef + "&writeXml=" + writeXml);
 		if (jsonResponse.has("type") && jsonResponse.getString("type").equals("config")) {
@@ -222,6 +251,11 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 		configService.reset();
 	}
 
+	/**
+	 * <p>cleanConfigFromPath.</p>
+	 *
+	 * @param path a {@link java.lang.String} object
+	 */
 	@SuppressWarnings("unchecked")
 	private void cleanConfigFromPath(String path) {
 		File configDir = new File(path);
@@ -242,6 +276,12 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 		}
 	}
 
+	/**
+	 * <p>deleteFileOnDisk.</p>
+	 *
+	 * @param path a {@link java.lang.String} object
+	 * @param fileName a {@link java.lang.String} object
+	 */
 	private void deleteFileOnDisk(String path, String fileName) {
 		File configDir = new File(path);
 		if (configDir.exists()) {
@@ -254,6 +294,13 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 		}
 	}
 
+	/**
+	 * <p>alfrescoRequest.</p>
+	 *
+	 * @param method a {@link org.springframework.extensions.webscripts.connector.HttpMethod} object
+	 * @param url a {@link java.lang.String} object
+	 * @return a {@link org.json.JSONObject} object
+	 */
 	private JSONObject alfrescoRequest(HttpMethod method, String url) {
 		try {
 			RequestContext rc = ThreadLocalRequestContext.getRequestContext();
@@ -271,6 +318,13 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 		}
 	}
 
+	/**
+	 * <p>writeFileOnDisk.</p>
+	 *
+	 * @param path a {@link java.lang.String} object
+	 * @param fileName a {@link java.lang.String} object
+	 * @param content a {@link java.lang.String} object
+	 */
 	private void writeFileOnDisk(String path, String fileName, String content) {
 		File configDir = new File(path);
 		if (!configDir.exists()) {
@@ -322,6 +376,14 @@ public class SharePublishService implements ApplicationListener<ContextRefreshed
 		}
 	}
 
+	/**
+	 * <p>writeClassPathFile.</p>
+	 *
+	 * @param contentString a {@link java.lang.String} object
+	 * @param fileName a {@link java.lang.String} object
+	 * @param locale a {@link java.lang.String} object
+	 * @throws java.io.IOException if any.
+	 */
 	private void writeClassPathFile(String contentString, String fileName, String locale) throws IOException {
 		String pathName = System.getProperty("catalina.base") + "/shared/classes/alfresco/messages/custom";
 		File messageDir = new File(pathName);

@@ -66,8 +66,10 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 	protected PaginatedSearchCache paginatedSearchCache;
 
+	/** Constant <code>dataListItemExtractors</code> */
 	private static final Map<QName, DataListItemExtractor> dataListItemExtractors = new HashMap<>();
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(SimpleExtractor.class);
 
 	/**

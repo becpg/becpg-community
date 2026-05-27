@@ -32,8 +32,11 @@ import org.springframework.extensions.surf.util.I18NUtil;
  */
 public class CopyFromPatch2 extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(CopyFromPatch2.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.copyFromPatch2.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.copyFromPatch2.result";
+	/** Constant <code>ASSOC_BATCH_SIZE=50</code> */
 	private static final int ASSOC_BATCH_SIZE = 50;
 
 	private BehaviourFilter policyBehaviourFilter;
@@ -76,6 +79,11 @@ public class CopyFromPatch2 extends AbstractBeCPGPatch {
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
+	/**
+	 * <p>doForType.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private void doForType(QName type) {
 
 		logger.info("Run patch for type: " + type);

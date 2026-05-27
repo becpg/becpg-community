@@ -35,6 +35,7 @@ public class ProjectListPolicy extends ProjectPolicy
 		implements NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateAssociationPolicy,
 		NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.BeforeDeleteNodePolicy {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ProjectListPolicy.class);
 
 	private AssociationService associationService;
@@ -141,6 +142,13 @@ public class ProjectListPolicy extends ProjectPolicy
 
 	}
 
+	/**
+	 * <p>onUpdatePropertiesTaskList.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param before a {@link java.util.Map} object
+	 * @param after a {@link java.util.Map} object
+	 */
 	private void onUpdatePropertiesTaskList(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
 		boolean formulateProject = false;
@@ -191,6 +199,13 @@ public class ProjectListPolicy extends ProjectPolicy
 		}
 	}
 
+	/**
+	 * <p>onUpdatePropertiesDeliverableList.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param before a {@link java.util.Map} object
+	 * @param after a {@link java.util.Map} object
+	 */
 	private void onUpdatePropertiesDeliverableList(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
 		boolean formulateProject = false;
@@ -235,6 +250,13 @@ public class ProjectListPolicy extends ProjectPolicy
 
 	}
 
+	/**
+	 * <p>onUpdatePropertiesScoreList.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param before a {@link java.util.Map} object
+	 * @param after a {@link java.util.Map} object
+	 */
 	private void onUpdatePropertiesScoreList(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
 		if (isPropChanged(before, after, ProjectModel.PROP_SL_SCORE) || isPropChanged(before, after, ProjectModel.PROP_SL_WEIGHT)) {
@@ -244,6 +266,13 @@ public class ProjectListPolicy extends ProjectPolicy
 		}
 	}
 
+	/**
+	 * <p>onUpdatePropertiesLogTimeList.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param before a {@link java.util.Map} object
+	 * @param after a {@link java.util.Map} object
+	 */
 	private void onUpdatePropertiesLogTimeList(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
 		if (isPropChanged(before, after, ProjectModel.PROP_LTL_TIME)) {
@@ -253,6 +282,13 @@ public class ProjectListPolicy extends ProjectPolicy
 		}
 	}
 
+	/**
+	 * <p>onUpdatePropertiesBudgetAspect.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param before a {@link java.util.Map} object
+	 * @param after a {@link java.util.Map} object
+	 */
 	private void onUpdatePropertiesBudgetAspect(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
 		if (isPropChanged(before, after, ProjectModel.PROP_BUDGET_EXPENSE) || isPropChanged(before, after, ProjectModel.PROP_BUDGET_INVOICE)
@@ -298,6 +334,12 @@ public class ProjectListPolicy extends ProjectPolicy
 		queueListItem(assocRef.getSourceRef());
 	}
 
+	/**
+	 * <p>setPermission.</p>
+	 *
+	 * @param assocRef a {@link org.alfresco.service.cmr.repository.AssociationRef} object
+	 * @param allow a boolean
+	 */
 	private void setPermission(AssociationRef assocRef, boolean allow) {
 		NodeRef taskListNodeRef = assocRef.getSourceRef();
 		NodeRef resourceNodeRef = assocRef.getTargetRef();

@@ -29,8 +29,10 @@ import fr.becpg.repo.repository.L2CacheSupport;
  */
 public class LCADatabaseImportWebScript extends AbstractWebScript {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(LCADatabaseImportWebScript.class);
 
+	/** Constant <code>SUPPLIER_PARAM="supplier"</code> */
 	private static final String SUPPLIER_PARAM = "supplier";
 
 	@Autowired

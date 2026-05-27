@@ -37,6 +37,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 @Service
 public class AssociationIndexerService {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AssociationIndexerService.class);
 
 	/** Constant <code>BATCH_THREADS=4</code> */
@@ -96,6 +97,12 @@ public class AssociationIndexerService {
 		}
 	}
 
+	/**
+	 * <p>applyToType.</p>
+	 *
+	 * @param toApplyType a {@link org.alfresco.service.namespace.QName} object
+	 * @param assocQName a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private void applyToType(QName toApplyType, QName assocQName) {
 		logger.info("reindex assoc for: " + toApplyType);
 		BatchProcessor<NodeRef> batchProcessor = createBatchTypeProcessor(toApplyType);
@@ -207,6 +214,12 @@ public class AssociationIndexerService {
 				BATCH_SIZE, applicationEventPublisher, logger, 500);
 	}
 
+	/**
+	 * <p>getPatchWorker.</p>
+	 *
+	 * @param assocQName a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker} object
+	 */
 	private BatchProcessWorker<NodeRef> getPatchWorker(QName assocQName) {
 		return new BatchProcessWorker<NodeRef>() {
 			public void afterProcess() throws Throwable {

@@ -28,8 +28,10 @@ import fr.becpg.util.ApplicationContextHelper;
  */
 public class SubmitTask extends ScriptTaskListener {
 
+	/** Constant <code>serialVersionUID=8018666006871621151L</code> */
 	private static final long serialVersionUID = 8018666006871621151L;
 
+	/** Constant <code>logger</code> */
 	private final static Log logger = LogFactory.getLog(SubmitTask.class);
 
 	private NodeService nodeService;
@@ -81,6 +83,12 @@ public class SubmitTask extends ScriptTaskListener {
 
 	}
 
+	/**
+	 * <p>updateSelectedNodes.</p>
+	 *
+	 * @param pkgNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param selectedNodes a {@link java.util.List} object
+	 */
 	private void updateSelectedNodes(final NodeRef pkgNodeRef, final List<ActivitiScriptNode> selectedNodes) {
 		if ((selectedNodes != null) && !selectedNodes.isEmpty()) {
 

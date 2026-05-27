@@ -68,10 +68,13 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 	private final TransactionService transactionService;
 	private final BehaviourFilter policyBehaviourFilter;
 
+	/** Constant <code>logger</code> */
 	private static final  Log logger = LogFactory.getLog(NutDatabaseServiceImpl.class);
 	
+	/** Constant <code>DATABASES_FOLDER="/app:company_home/cm:System/cm:Nutritio"{trunked}</code> */
 	private static final String DATABASES_FOLDER = "/app:company_home/cm:System/cm:NutritionalDatabases";
 	
+	/** Constant <code>NUT_CSV_DECIMAL_FORMAT="###,###.####"</code> */
 	private static final String NUT_CSV_DECIMAL_FORMAT = "###,###.####";
 
 	@Autowired
@@ -345,11 +348,24 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 		}
 	}
 
+	/**
+	 * <p>getCSVReaderFromNodeRef.</p>
+	 *
+	 * @param file a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.common.csv.CSVReader} object
+	 */
 	private CSVReader getCSVReaderFromNodeRef(NodeRef file) {
 		ContentReader fileReader = contentService.getReader(file, ContentModel.PROP_CONTENT);
 		return new CSVReader(new InputStreamReader(fileReader.getContentInputStream(), java.nio.charset.StandardCharsets.UTF_8), ';');
 	}
 
+	/**
+	 * <p>getColumn.</p>
+	 *
+	 * @param file a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param columnIndex a int
+	 * @return a {@link java.util.List} object
+	 */
 	private List<IdentifiedValue> getColumn(NodeRef file, int columnIndex) {
 		List<IdentifiedValue> res = new ArrayList<>();
 
@@ -381,6 +397,12 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 
 	}
 
+	/**
+	 * <p>extractIdentifierColumnIndex.</p>
+	 *
+	 * @param header an array of {@link java.lang.String} objects
+	 * @return a int
+	 */
 	private int extractIdentifierColumnIndex(String[] header) {
 		int res = -1;
 		int i = 1;
@@ -396,6 +418,12 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 		return res;
 	}
 
+	/**
+	 * <p>extractNameColumnIndex.</p>
+	 *
+	 * @param header an array of {@link java.lang.String} objects
+	 * @return a int
+	 */
 	private int extractNameColumnIndex(String[] header) {
 		int res = -1;
 		int i = 1;
@@ -411,6 +439,14 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 		return res;
 	}
 
+	/**
+	 * <p>getLineByIndex.</p>
+	 *
+	 * @param file a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param id a {@link java.lang.String} object
+	 * @param indexColumn a int
+	 * @return an array of {@link java.lang.String} objects
+	 */
 	private String[] getLineByIndex(NodeRef file, String id, int indexColumn) {
 
 		try (CSVReader csvReader = getCSVReaderFromNodeRef(file)) {
@@ -431,6 +467,15 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 		}
 	}
 
+	/**
+	 * <p>getProductName.</p>
+	 *
+	 * @param file a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param id a {@link java.lang.String} object
+	 * @param indexColumn a int
+	 * @param nameColumn a int
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getProductName(NodeRef file, String id, int indexColumn, int nameColumn) {
 		try (CSVReader csvReader = getCSVReaderFromNodeRef(file)) {
 			String res = null;
@@ -453,6 +498,12 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 		}
 	}
 
+	/**
+	 * <p>getNutNodeRef.</p>
+	 *
+	 * @param nutName a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getNutNodeRef(String nutName) {
 		logger.debug("Finding nodeRef for nut named \"" + nutName + "\"");
 		List<NodeRef> foundNuts = BeCPGQueryBuilder.createQuery().inDB().ofType(PLMModel.TYPE_NUT)
@@ -470,6 +521,12 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 		}
 	}
 
+	/**
+	 * <p>getHeaderRow.</p>
+	 *
+	 * @param file a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return an array of {@link java.lang.String} objects
+	 */
 	private String[] getHeaderRow(NodeRef file) {
 		try (CSVReader csvReader = getCSVReaderFromNodeRef(file)) {
 			String[] res = new String[0];
@@ -528,10 +585,23 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 		}
 	}
 
+	/**
+	 * <p>nameMatches.</p>
+	 *
+	 * @param query a {@link java.lang.String} object
+	 * @param name a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	private boolean nameMatches(String query, String name) {
 		return BeCPGQueryHelper.isQueryMatch(query, name);
 	}
 
+	/**
+	 * <p>isInDictionary.</p>
+	 *
+	 * @param str a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	private boolean isInDictionary(String str) {
 		try {
 			return ((dictionaryService.getProperty(QName.createQName(str, namespaceService)) != null)
@@ -541,6 +611,14 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 		}
 	}
 
+	/**
+	 * <p>extractValueById.</p>
+	 *
+	 * @param file a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param id a {@link java.lang.String} object
+	 * @param column a int
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extractValueById(NodeRef file, String id, int column) {
 		String[] line = getLineByIndex(file, id, extractIdentifierColumnIndex(getHeaderRow(file)));
 

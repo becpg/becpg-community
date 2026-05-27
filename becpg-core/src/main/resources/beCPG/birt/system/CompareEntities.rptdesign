@@ -3358,14 +3358,15 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3431">
+                        <text id="3431">
                             <property name="fontSize">9pt</property>
                             <property name="paddingTop">2pt</property>
                             <property name="paddingLeft">2pt</property>
                             <property name="paddingBottom">2pt</property>
                             <property name="paddingRight">2pt</property>
-                            <property name="resultSetColumn">value1</property>
-                        </data>
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value1"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3384">
                         <property name="borderBottomStyle">none</property>
@@ -3394,14 +3395,15 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3432">
+                        <text id="3432">
                             <property name="fontSize">9pt</property>
                             <property name="paddingTop">2pt</property>
                             <property name="paddingLeft">2pt</property>
                             <property name="paddingBottom">2pt</property>
                             <property name="paddingRight">2pt</property>
-                            <property name="resultSetColumn">value2</property>
-                        </data>
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value2"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3385">
                         <property name="borderBottomStyle">none</property>
@@ -3434,14 +3436,15 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3433">
+                        <text id="3433">
                             <property name="fontSize">9pt</property>
                             <property name="paddingTop">2pt</property>
                             <property name="paddingLeft">2pt</property>
                             <property name="paddingBottom">2pt</property>
                             <property name="paddingRight">2pt</property>
-                            <property name="resultSetColumn">value3</property>
-                        </data>
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value3"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3386">
                         <property name="borderBottomStyle">none</property>
@@ -3470,14 +3473,15 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3434">
+                        <text id="3434">
                             <property name="fontSize">9pt</property>
                             <property name="paddingTop">2pt</property>
                             <property name="paddingLeft">2pt</property>
                             <property name="paddingBottom">2pt</property>
                             <property name="paddingRight">2pt</property>
-                            <property name="resultSetColumn">value4</property>
-                        </data>
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value4"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3630">
                         <property name="borderBottomStyle">none</property>
@@ -3510,9 +3514,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3653">
-                            <property name="resultSetColumn">value5</property>
-                        </data>
+                        <text id="3653">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value5"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3633">
                         <property name="borderBottomStyle">none</property>
@@ -3541,9 +3546,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3654">
-                            <property name="resultSetColumn">value6</property>
-                        </data>
+                        <text id="3654">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value6"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3636">
                         <property name="borderBottomStyle">none</property>
@@ -3576,9 +3582,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3655">
-                            <property name="resultSetColumn">value7</property>
-                        </data>
+                        <text id="3655">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value7"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3639">
                         <property name="borderBottomStyle">none</property>
@@ -3607,9 +3614,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3656">
-                            <property name="resultSetColumn">value8</property>
-                        </data>
+                        <text id="3656">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value8"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3642">
                         <property name="borderBottomStyle">none</property>
@@ -3642,9 +3650,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3657">
-                            <property name="resultSetColumn">value9</property>
-                        </data>
+                        <text id="3657">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value9"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3645">
                         <property name="borderBottomStyle">none</property>
@@ -3673,9 +3682,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3658">
-                            <property name="resultSetColumn">value10</property>
-                        </data>
+                        <text id="3658">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value10"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3660">
                         <property name="borderBottomStyle">none</property>
@@ -3708,9 +3718,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3683">
-                            <property name="resultSetColumn">value11</property>
-                        </data>
+                        <text id="3683">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value11"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3675">
                         <property name="borderBottomStyle">none</property>
@@ -3739,9 +3750,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3684">
-                            <property name="resultSetColumn">value12</property>
-                        </data>
+                        <text id="3684">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value12"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3672">
                         <property name="borderBottomStyle">none</property>
@@ -3774,9 +3786,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3685">
-                            <property name="resultSetColumn">value13</property>
-                        </data>
+                        <text id="3685">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value13"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3669">
                         <property name="borderBottomStyle">none</property>
@@ -3809,9 +3822,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3686">
-                            <property name="resultSetColumn">value14</property>
-                        </data>
+                        <text id="3686">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value14"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3666">
                         <property name="borderBottomStyle">none</property>
@@ -3840,9 +3854,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3687">
-                            <property name="resultSetColumn">value15</property>
-                        </data>
+                        <text id="3687">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value15"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3663">
                         <property name="borderBottomStyle">none</property>
@@ -3871,9 +3886,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3707">
-                            <property name="resultSetColumn">value16</property>
-                        </data>
+                        <text id="3707">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value16"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3689">
                         <property name="borderBottomStyle">none</property>
@@ -3902,9 +3918,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3708">
-                            <property name="resultSetColumn">value17</property>
-                        </data>
+                        <text id="3708">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value17"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3701">
                         <property name="borderBottomStyle">none</property>
@@ -3933,9 +3950,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3709">
-                            <property name="resultSetColumn">value18</property>
-                        </data>
+                        <text id="3709">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value18"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3698">
                         <property name="borderBottomStyle">none</property>
@@ -3964,9 +3982,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3710">
-                            <property name="resultSetColumn">value19</property>
-                        </data>
+                        <text id="3710">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value19"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3695">
                         <property name="borderBottomStyle">none</property>
@@ -3995,9 +4014,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3711">
-                            <property name="resultSetColumn">value20</property>
-                        </data>
+                        <text id="3711">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value20"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3692">
                         <property name="borderBottomStyle">none</property>
@@ -4026,9 +4046,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3752">
-                            <property name="resultSetColumn">value21</property>
-                        </data>
+                        <text id="3752">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value21"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3713">
                         <property name="borderBottomStyle">none</property>
@@ -4057,9 +4078,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3753">
-                            <property name="resultSetColumn">value22</property>
-                        </data>
+                        <text id="3753">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value22"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3734">
                         <property name="borderBottomStyle">none</property>
@@ -4088,9 +4110,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3754">
-                            <property name="resultSetColumn">value23</property>
-                        </data>
+                        <text id="3754">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value23"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3731">
                         <property name="borderBottomStyle">none</property>
@@ -4119,9 +4142,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3755">
-                            <property name="resultSetColumn">value24</property>
-                        </data>
+                        <text id="3755">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value24"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3728">
                         <property name="borderBottomStyle">none</property>
@@ -4150,9 +4174,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3756">
-                            <property name="resultSetColumn">value25</property>
-                        </data>
+                        <text id="3756">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value25"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3725">
                         <property name="borderBottomStyle">none</property>
@@ -4181,9 +4206,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3757">
-                            <property name="resultSetColumn">value26</property>
-                        </data>
+                        <text id="3757">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value26"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3722">
                         <property name="borderBottomStyle">none</property>
@@ -4212,9 +4238,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3758">
-                            <property name="resultSetColumn">value27</property>
-                        </data>
+                        <text id="3758">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value27"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3719">
                         <property name="borderBottomStyle">none</property>
@@ -4243,9 +4270,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3759">
-                            <property name="resultSetColumn">value28</property>
-                        </data>
+                        <text id="3759">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value28"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3716">
                         <property name="borderBottomStyle">none</property>
@@ -4274,9 +4302,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3760">
-                            <property name="resultSetColumn">value29</property>
-                        </data>
+                        <text id="3760">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value29"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3740">
                         <property name="borderBottomStyle">none</property>
@@ -4305,9 +4334,10 @@ if ( row["properties2"] != null ) {
                                 </simple-property-list>
                             </structure>
                         </list-property>
-                        <data id="3761">
-                            <property name="resultSetColumn">value30</property>
-                        </data>
+                        <text id="3761">
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value30"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                 </row>
             </detail>

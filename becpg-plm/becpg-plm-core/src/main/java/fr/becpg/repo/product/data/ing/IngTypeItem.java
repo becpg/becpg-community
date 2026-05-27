@@ -39,11 +39,13 @@ import fr.becpg.repo.repository.annotation.AlfType;
 @AlfCacheable(isCharact = true)
 public class IngTypeItem extends LabelingComponent{
 
+	/** Constant <code>serialVersionUID=182156222574786727L</code> */
 	private static final long serialVersionUID = 182156222574786727L;
 
     /** Constant <code>DEFAULT_GROUP</code> */
     public static final IngTypeItem DEFAULT_GROUP = new IngTypeItem();
 
+	/** Constant <code>LAST_GROUP="LastGroup"</code> */
 	private static final String LAST_GROUP = "LastGroup";
 	
 	private Double decThreshold;

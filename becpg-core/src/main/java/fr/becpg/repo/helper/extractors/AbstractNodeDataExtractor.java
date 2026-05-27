@@ -123,6 +123,7 @@ public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 		this.nodeService = services.getNodeService();
 	}
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AbstractNodeDataExtractor.class);
 
 	/** {@inheritDoc} */

@@ -29,6 +29,7 @@ public class EntityActivityStateListener implements EntityActivityListener {
 	/** Constant <code>ENTITY_STATE_ACTIVITY="fr.becpg.entity.state-changed"</code> */
 	public static final String ENTITY_STATE_ACTIVITY = "fr.becpg.entity.state-changed";
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(EntityActivityStateListener.class);
 
 	@Autowired

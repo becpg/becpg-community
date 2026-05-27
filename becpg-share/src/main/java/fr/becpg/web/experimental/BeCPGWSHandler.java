@@ -26,8 +26,10 @@ import jakarta.websocket.server.ServerEndpoint;
 @ServerEndpoint(value = "/becpgws/{store_type}/{store_id}/{id}/{user}/{mode}")
 public class BeCPGWSHandler {
 
+	/** Constant <code>userSessions</code> */
 	private static final Map<String, Session> userSessions = new ConcurrentHashMap<>();
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(BeCPGWSHandler.class);
 
 	/**

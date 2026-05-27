@@ -31,16 +31,21 @@ import fr.becpg.repo.system.SystemConfigurationRegistry;
  */
 public class MLTextHelper {
 
+	/** Constant <code>mlTextCache</code> */
 	private static Map<String, MLText> mlTextCache = new ConcurrentHashMap<>();
 
+	/** Constant <code>supportedLocales</code> */
 	private static  List<Locale> supportedLocales = null;
 
+	/** Constant <code>supportedLocalesText="null"</code> */
 	private static  String supportedLocalesText = null;
 
+	/** Constant <code>DEPRECATED_LOCALE_LANGUAGES</code> */
 	private static final Set<String> DEPRECATED_LOCALE_LANGUAGES = Set.of("iw", "in", "ji", "yi");
 
 
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(MLTextHelper.class);
 
 	/**
@@ -68,6 +73,11 @@ public class MLTextHelper {
 		MLTextHelper.supportedLocalesText = supportedLocalesText;
 	}
 
+	/**
+	 * <p>useBrowserLocale.</p>
+	 *
+	 * @return a boolean
+	 */
 	private static boolean useBrowserLocale() {
 		return Boolean.parseBoolean(SystemConfigurationRegistry.instance().confValue("beCPG.multilinguale.useBrowserLocale"));
 	}
@@ -265,7 +275,7 @@ public class MLTextHelper {
 		return (contentLocale != null) && getSupportedLocales().contains(contentLocale);
 	}
 
-	/**
+    /**
      * Returns true when the locale uses a deprecated or legacy language code that must not be accepted.
      *
      * @param locale a {@link java.util.Locale} object.
@@ -418,6 +428,13 @@ public class MLTextHelper {
 		return internalI18NMessage(messageKey, variables);
 	}
 
+	/**
+	 * <p>internalI18NMessage.</p>
+	 *
+	 * @param messageKey a {@link java.lang.String} object
+	 * @param variables a {@link java.lang.Object} object
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
 	private static MLText internalI18NMessage(String messageKey, Object... variables) {
 
 		MLText ret = new MLText();

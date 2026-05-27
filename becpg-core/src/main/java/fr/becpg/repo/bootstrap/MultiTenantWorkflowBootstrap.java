@@ -49,6 +49,7 @@ public class MultiTenantWorkflowBootstrap extends AbstractLifecycleBean {
 	private WorkflowService workflowService;
 	private TransactionService transactionService;
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(MultiTenantWorkflowBootstrap.class);
 
 	/**

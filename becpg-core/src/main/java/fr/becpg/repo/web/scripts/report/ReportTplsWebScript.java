@@ -44,9 +44,13 @@ import fr.becpg.repo.report.template.ReportType;
  */
 public class ReportTplsWebScript extends DeclarativeWebScript {
 
+	/** Constant <code>PARAM_ENTITY_NODEREF="entityNodeRef"</code> */
 	private static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
+	/** Constant <code>PARAM_DATATYPE="datatype"</code> */
 	private static final String PARAM_DATATYPE = "datatype";
+	/** Constant <code>PARAM_REPORT_TYPE="type"</code> */
 	private static final String PARAM_REPORT_TYPE = "type";
+	/** Constant <code>MODEL_KEY_NAME_REPORT_TEMPLATES="reportTpls"</code> */
 	private static final String MODEL_KEY_NAME_REPORT_TEMPLATES = "reportTpls";
 
 	private NamespaceService namespaceService;

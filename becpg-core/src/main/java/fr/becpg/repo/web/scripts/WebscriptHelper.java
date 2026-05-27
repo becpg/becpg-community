@@ -40,6 +40,9 @@ public class WebscriptHelper {
 	/** Constant <code>PARAM_FIELDS="metadataFields"</code> */
 	public static final String PARAM_FIELDS = "metadataFields";
 	
+	/**
+	 * <p>Constructor for WebscriptHelper.</p>
+	 */
 	private WebscriptHelper() {
 		super();
 	}

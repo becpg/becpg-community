@@ -88,14 +88,19 @@ import jakarta.annotation.Nonnull;
 @Service("beCPGQueryBuilder")
 public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements InitializingBean {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(BeCPGQueryBuilder.class);
 
+	/** Constant <code>DEFAULT_FIELD_NAME="keywords"</code> */
 	private static final String DEFAULT_FIELD_NAME = "keywords";
 
+	/** Constant <code>CANNED_QUERY_FILEFOLDER_LIST="fileFolderGetChildrenCannedQueryFactory"</code> */
 	private static final String CANNED_QUERY_FILEFOLDER_LIST = "fileFolderGetChildrenCannedQueryFactory";
 
+	/** Constant <code>ENABLE_INDEX_TYPES_KEY="beCPG.solr.enableIndexForTypes"</code> */
 	private static final String ENABLE_INDEX_TYPES_KEY = "beCPG.solr.enableIndexForTypes";
 
+	/** Constant <code>INSTANCE</code> */
 	private static BeCPGQueryBuilder INSTANCE = null;
 
 	@Autowired
@@ -118,6 +123,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
 
+	/**
+	 * <p>includeReportInSearch.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	private Boolean includeReportInSearch() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.report.includeReportInSearch"));
 	}
@@ -167,6 +177,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private StoreRef store = RepoConsts.SPACES_STORE;
     private boolean isBulkFetchEnabled = false;
 
+	/**
+	 * <p>defaultSearchTemplate.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String defaultSearchTemplate() {
 		return systemConfigurationService.confValue("beCPG.defaultSearchTemplate");
 	}
@@ -189,6 +204,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return INSTANCE != null;
 	}
 
+	/**
+	 * <p>Constructor for BeCPGQueryBuilder.</p>
+	 */
 	private BeCPGQueryBuilder() {
 		// Make creation private
 
@@ -833,11 +851,23 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 
+	/**
+	 * <p>isPropQueryNull.</p>
+	 *
+	 * @param value a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	private boolean isPropQueryNull(String value) {
 		return (value == null) || "ISUNSET".equalsIgnoreCase(value) || "ISNULL".equalsIgnoreCase(value) || "NULL".equalsIgnoreCase(value)
 				|| "EMPTY".equalsIgnoreCase(value);
 	}
 
+	/**
+	 * <p>isPropQueryNotNull.</p>
+	 *
+	 * @param value a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	private boolean isPropQueryNotNull(String value) {
 		return (value == null) || "ISSET".equalsIgnoreCase(value) || "ISNOTNULL".equalsIgnoreCase(value) || "NOTNULL".equalsIgnoreCase(value)
 				|| "NOTEMPTY".equalsIgnoreCase(value);
@@ -1171,6 +1201,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	 * thinking in terms of AND, OR, and NOT ... think in terms of OPTIONAL, REQUIRED, and PROHIBITED ... your life will be much easier: documentation will make more sense, conversations on the email
 	 * list will be more synergistastic, wine will be sweeter, and food will taste better.
 	 */
+	/**
+	 * <p>buildQuery.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String buildQuery() {
 
 		StringBuilder runnedQuery = new StringBuilder();
@@ -1373,6 +1408,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return ret;
 	}
 
+	/**
+	 * <p>buildCmisQuery.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String buildCmisQuery() {
 		StringBuilder runnedQuery = new StringBuilder();
 		StringBuilder orderBy = new StringBuilder();
@@ -1536,10 +1576,22 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	}
 
+	/**
+	 * <p>sanitizeProperty.</p>
+	 *
+	 * @param prop a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String sanitizeProperty(String prop) {
 		return prop.replaceAll("(?<!\\\\)'", "\\\\'");
 	}
 
+	/**
+	 * <p>getCmisPrefix.</p>
+	 *
+	 * @param tmpQName a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getCmisPrefix(QName tmpQName) {
 		String ret = tmpQName.toPrefixString(namespaceService);
 		PropertyDefinition def = entityDictionaryService.getProperty(tmpQName);
@@ -1566,6 +1618,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return ret;
 	}
 
+	/**
+	 * <p>isCmis.</p>
+	 *
+	 * @return a boolean
+	 */
 	private boolean isCmis() {
 		return SearchService.LANGUAGE_CMIS_ALFRESCO.equals(language);
 	}
@@ -1596,6 +1653,15 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 
+	/**
+	 * <p>search.</p>
+	 *
+	 * @param runnedQuery a {@link java.lang.String} object
+	 * @param sort a {@link java.util.Map} object
+	 * @param page a int
+	 * @param maxResults a int
+	 * @return a {@link org.alfresco.query.PagingResults} object
+	 */
 	private PagingResults<NodeRef> search(String runnedQuery, Map<String, Boolean> sort, int page, int maxResults) {
 
 		List<NodeRef> nodes = new ArrayList<>();
@@ -1713,6 +1779,14 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	}
 
+	/**
+	 * <p>asPagingResults.</p>
+	 *
+	 * @param nodes a {@link java.util.List} object
+	 * @param hasMore a boolean
+	 * @param total a {@link org.alfresco.util.Pair} object
+	 * @return a {@link org.alfresco.query.PagingResults} object
+	 */
 	private PagingResults<NodeRef> asPagingResults(List<NodeRef> nodes, boolean hasMore, Pair<Integer, Integer> total) {
 
 		return new PagingResults<NodeRef>() {
@@ -1865,6 +1939,16 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return pageOfNodeInfos;
 	}
 
+	/**
+	 * <p>internalList.</p>
+	 *
+	 * @param rootNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param searchTypeQNames a {@link java.util.Set} object
+	 * @param ignoreAspectQNames a {@link java.util.Set} object
+	 * @param sortProps a {@link java.util.List} object
+	 * @param pagingRequest a {@link org.alfresco.query.PagingRequest} object
+	 * @return a {@link org.alfresco.query.PagingResults} object
+	 */
 	private PagingResults<NodeRef> internalList(NodeRef rootNodeRef, Set<QName> searchTypeQNames, Set<QName> ignoreAspectQNames,
 			List<Pair<QName, Boolean>> sortProps, PagingRequest pagingRequest) {
 
@@ -1881,6 +1965,13 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return getPagingResults(pagingRequest, results);
 	}
 
+	/**
+	 * <p>getPagingResults.</p>
+	 *
+	 * @param pagingRequest a {@link org.alfresco.query.PagingRequest} object
+	 * @param results a {@link org.alfresco.query.CannedQueryResults} object
+	 * @return a {@link org.alfresco.query.PagingResults} object
+	 */
 	private PagingResults<NodeRef> getPagingResults(PagingRequest pagingRequest, final CannedQueryResults<NodeRef> results) {
 
 		final List<NodeRef> nodeRefs;

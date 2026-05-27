@@ -9,5 +9,12 @@ import org.alfresco.repo.copy.CopyDetails;
  */
 public interface BeCPGCopyPlugin {
 
+	/**
+	 * <p>shouldCopy.</p>
+	 *
+	 * @param typeToReset a {@link java.lang.String} object
+	 * @param copyDetails a {@link org.alfresco.repo.copy.CopyDetails} object
+	 * @return a boolean
+	 */
 	public boolean shouldCopy(String typeToReset, CopyDetails copyDetails);
 }

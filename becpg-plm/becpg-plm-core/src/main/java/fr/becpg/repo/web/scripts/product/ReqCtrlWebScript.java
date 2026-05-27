@@ -22,6 +22,7 @@ import fr.becpg.model.BeCPGModel;
  */
 public class ReqCtrlWebScript extends AbstractProductWebscript {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ReqCtrlWebScript.class);
 
 	NodeService nodeService;

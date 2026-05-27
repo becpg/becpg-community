@@ -37,10 +37,13 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 public class DesignerInitServiceImpl implements DesignerInitService {
 
 
+	/** Constant <code>PATH_MODELS="./app:dictionary/app:models"</code> */
 	private static final String PATH_MODELS = "./app:dictionary/app:models";
 
+	/** Constant <code>PATH_WORKFLOWS="./app:dictionary/app:workflow_defs"</code> */
 	private static final String PATH_WORKFLOWS = "./app:dictionary/app:workflow_defs";
 	
+	/** Constant <code>PATH_CONFIGS="./app:dictionary/cm:configs"</code> */
 	private static final String PATH_CONFIGS = "./app:dictionary/cm:configs";
 	
 

@@ -31,10 +31,14 @@ import fr.becpg.repo.autocomplete.AutoCompletePlugin;
 @Service
 public class NotificationRuleAutoCompletePlugin implements AutoCompletePlugin {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(NotificationRuleAutoCompletePlugin.class);
 	
+	/** Constant <code>ENTITY_TYPE_VALUE="entityTypeValue"</code> */
 	private static final String ENTITY_TYPE_VALUE = "entityTypeValue";
+	/** Constant <code>PROP_DATE_VALUE="propertyDateValue"</code> */
 	private static final String PROP_DATE_VALUE = "propertyDateValue";
+	/** Constant <code>SEPARATOR="|"</code> */
 	private static final String SEPARATOR = "|";
 	
 	@Autowired
@@ -66,6 +70,13 @@ public class NotificationRuleAutoCompletePlugin implements AutoCompletePlugin {
 	}
 	
 	
+	/**
+	 * <p>filter.</p>
+	 *
+	 * @param suggestion a {@link java.lang.String} object
+	 * @param query a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	private boolean filter(String suggestion, String query) {
 		return query.contains("*") || suggestion.toLowerCase().contains(query.toLowerCase());
 	}
@@ -95,6 +106,14 @@ public class NotificationRuleAutoCompletePlugin implements AutoCompletePlugin {
 	}
 	
 	
+	/**
+	 * <p>getAvailableTypeNames.</p>
+	 *
+	 * @param query a {@link java.lang.String} object
+	 * @param pageNum a {@link java.lang.Integer} object
+	 * @param pageSize a {@link java.lang.Integer} object
+	 * @return a {@link fr.becpg.repo.autocomplete.AutoCompletePage} object
+	 */
 	private AutoCompletePage getAvailableTypeNames(String query, Integer pageNum, Integer pageSize) {
 		List<String> suggestions = new ArrayList<>();
 		Collection<QName> types = serviceRegistry.getDictionaryService().getAllTypes();
@@ -115,6 +134,14 @@ public class NotificationRuleAutoCompletePlugin implements AutoCompletePlugin {
 	}
 	
 	
+	/**
+	 * <p>getAvailablePropNames.</p>
+	 *
+	 * @param query a {@link java.lang.String} object
+	 * @param pageNum a {@link java.lang.Integer} object
+	 * @param pageSize a {@link java.lang.Integer} object
+	 * @return a {@link fr.becpg.repo.autocomplete.AutoCompletePage} object
+	 */
 	private AutoCompletePage getAvailablePropNames(String query, Integer pageNum, Integer pageSize) {
 		List<String> suggestions = new ArrayList<>();
 		Collection<QName> props = serviceRegistry.getDictionaryService().getAllProperties(DataTypeDefinition.DATETIME);

@@ -65,68 +65,99 @@ import fr.becpg.repo.system.SystemConfigurationService;
 @Service
 public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 
+	/** Constant <code>FUNCTION="function"</code> */
 	private static final String FUNCTION = "function";
 
+	/** Constant <code>COUNTRY="country"</code> */
 	private static final String COUNTRY = "country";
 
+	/** Constant <code>USAGE_ON_LIST="usageOnList"</code> */
 	private static final String USAGE_ON_LIST = "usageOnList";
 
+	/** Constant <code>COMMENTS="comments"</code> */
 	private static final String COMMENTS = "comments";
 
+	/** Constant <code>TABULAR_REPORT="tabularReport"</code> */
 	private static final String TABULAR_REPORT = "tabularReport";
 
+	/** Constant <code>DID="did"</code> */
 	private static final String DID = "did";
 
 	/** Constant <code>MODULE_SUFFIX=" module"</code> */
 	public static final String MODULE_SUFFIX = " module";
 
+	/** Constant <code>MESSAGE_DECERNIS_ERROR="message.decernis.error"</code> */
 	private static final String MESSAGE_DECERNIS_ERROR = "message.decernis.error";
 
+	/** Constant <code>EUROPEAN_UNION="European Union"</code> */
 	private static final String EUROPEAN_UNION = "European Union";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(DecernisRegulatoryPlugin.class);
 
 	/** Constant <code>NOT_APPLICABLE="NA"</code> */
 	public static final String NOT_APPLICABLE = "NA";
 
+	/** Constant <code>RESULT_INDICATOR="resultIndicator"</code> */
 	private static final String RESULT_INDICATOR = "resultIndicator";
 
+	/** Constant <code>RECIPE_REPORT="recipeReport"</code> */
 	private static final String RECIPE_REPORT = "recipeReport";
 
+	/** Constant <code>RECIPE_ANALAYSIS_REPORT="recipeAnalaysisReport"</code> */
 	private static final String RECIPE_ANALAYSIS_REPORT = "recipeAnalaysisReport";
 
+	/** Constant <code>PARAM_COUNTRY="COUNTRY"</code> */
 	private static final String PARAM_COUNTRY = COUNTRY;
 
+	/** Constant <code>PARAM_NAME="name"</code> */
 	private static final String PARAM_NAME = "name";
 
+	/** Constant <code>PARAM_PHRASE="phrase"</code> */
 	private static final String PARAM_PHRASE = "phrase";
 
+	/** Constant <code>PARAM_SCOPE_ID="scope_id"</code> */
 	private static final String PARAM_SCOPE_ID = "scope_id";
 
+	/** Constant <code>GET_URL="GET url: "</code> */
 	private static final String GET_URL = "GET url: ";
 
+	/** Constant <code>POST_URL="POST url: "</code> */
 	private static final String POST_URL = "POST url: ";
 
+	/** Constant <code>PARAM_RESULTS="results"</code> */
 	private static final String PARAM_RESULTS = "results";
 
+	/** Constant <code>PARAM_COUNT="count"</code> */
 	private static final String PARAM_COUNT = "count";
 
+	/** Constant <code>PARAM_QUERY="query"</code> */
 	private static final String PARAM_QUERY = "query";
 
+	/** Constant <code>PARAM_COMPANY="company"</code> */
 	private static final String PARAM_COMPANY = "company";
 
+	/** Constant <code>LIBIDENTS="libidents"</code> */
 	private static final String LIBIDENTS = "libidents";
 
+	/** Constant <code>THRESHOLD="threshold"</code> */
 	private static final String THRESHOLD = "threshold";
 
+	/** Constant <code>CITATION="citation"</code> */
 	private static final String CITATION = "citation";
 
+	/** Constant <code>moduleToCodeMap</code> */
 	private static final Map<String, String> moduleToCodeMap = new HashMap<>();
+	/** Constant <code>moduleToIDMap</code> */
 	private static final Map<String, Integer> moduleToIDMap = new HashMap<>();
 
+	/** Constant <code>FORMULATION_CHECK="FORMULATION_CHECK"</code> */
 	private static final String FORMULATION_CHECK = "FORMULATION_CHECK";
+	/** Constant <code>COSMETICS="COSMETICS"</code> */
 	private static final String COSMETICS = "COSMETICS";
+	/** Constant <code>STANDARDS_OF_IDENTITY_FOOD="STANDARDS_OF_IDENTITY_FOOD"</code> */
 	private static final String STANDARDS_OF_IDENTITY_FOOD = "STANDARDS_OF_IDENTITY_FOOD";
+	/** Constant <code>FOOD_ADDITIVES="FOOD_ADDITIVES"</code> */
 	private static final String FOOD_ADDITIVES = "FOOD_ADDITIVES";
 
 	/** Constant <code>MESSAGE_PROHIBITED_ING="message.decernis.ingredient.prohibited"</code> */
@@ -136,6 +167,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 	/** Constant <code>MESSAGE_PERMITTED_ING="message.decernis.ingredient.permitted"</code> */
 	public static final String MESSAGE_PERMITTED_ING = "message.decernis.ingredient.permitted";
 
+	/** Constant <code>ingNumbers</code> */
 	private static final Map<QName, String> ingNumbers = new HashMap<>();
 
 	static {
@@ -167,14 +199,29 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return systemConfigurationService.confValue("beCPG.decernis.analysisUrl");
 	}
 
+	/**
+	 * <p>serverUrl.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String serverUrl() {
 		return systemConfigurationService.confValue("beCPG.decernis.serverUrl");
 	}
 
+	/**
+	 * <p>companyName.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String companyName() {
 		return systemConfigurationService.confValue("beCPG.decernis.companyName");
 	}
 	
+	/**
+	 * <p>maxCountriesPerRequest.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object
+	 */
 	private Integer maxCountriesPerRequest() {
 		String confValue = systemConfigurationService.confValue("beCPG.decernis.maxCountriesPerRequest");
 		if (confValue != null && !confValue.isBlank()) {
@@ -183,6 +230,11 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return null;
 	}
 	
+	/**
+	 * <p>maxUsagesPerRequest.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object
+	 */
 	private Integer maxUsagesPerRequest() {
 		String confValue = systemConfigurationService.confValue("beCPG.decernis.maxUsagesPerRequest");
 		if (confValue != null && !confValue.isBlank()) {
@@ -191,6 +243,11 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return null;
 	}
 
+	/**
+	 * <p>addInfoReqCtrl.</p>
+	 *
+	 * @return a boolean
+	 */
 	private boolean addInfoReqCtrl() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.specification.addInfoReqCtrl"));
 	}
@@ -254,6 +311,13 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		}
 	}
 
+	/**
+	 * <p>recipeAnalysis.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.regulatory.RegulatoryContext} object
+	 * @param regulatoryBatch a {@link fr.becpg.repo.regulatory.RegulatoryBatch} object
+	 * @return a {@link org.json.JSONObject} object
+	 */
 	private JSONObject recipeAnalysis(RegulatoryContext context, RegulatoryBatch regulatoryBatch) {
 		JSONObject recipeAnalysisResults = null;
 		int retries = 2;
@@ -283,6 +347,11 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return null;
 	}
 
+	/**
+	 * <p>checkUsagesID.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.regulatory.RegulatoryContext} object
+	 */
 	private void checkUsagesID(RegulatoryContext context) {
 		for (NodeRef usageRef : context.getProduct().getRegulatoryUsagesRef()) {
 			String usageCode = (String) nodeService.getProperty(usageRef, PLMModel.PROP_REGULATORY_CODE);
@@ -298,6 +367,13 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		}
 	}
 
+	/**
+	 * <p>updateUsageID.</p>
+	 *
+	 * @param usageRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param usageCode a {@link java.lang.String} object
+	 * @param moduleId a {@link java.lang.Integer} object
+	 */
 	private void updateUsageID(NodeRef usageRef, String usageCode, Integer moduleId) {
 		if (nodeService.getProperty(usageRef, PLMModel.PROP_REGULATORY_ID) instanceof String) {
 			return;
@@ -326,12 +402,22 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		}
 	}
 
+	/**
+	 * <p>traceGetRequest.</p>
+	 *
+	 * @param url a {@link java.lang.String} object
+	 */
 	private void traceGetRequest(String url) {
 		if (logger.isTraceEnabled()) {
 			logger.trace(GET_URL + url);
 		}
 	}
 
+	/**
+	 * <p>createRecipe.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.regulatory.RegulatoryContext} object
+	 */
 	private void createRecipe(RegulatoryContext context) {
 		try {
 			JSONObject recipePayload = createRecipePayload(context);
@@ -366,6 +452,14 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		}
 	}
 
+	/**
+	 * <p>postRecipe.</p>
+	 *
+	 * @param recipePayload a {@link org.json.JSONObject} object
+	 * @param request a {@link org.springframework.http.HttpEntity} object
+	 * @param url a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String postRecipe(JSONObject recipePayload, HttpEntity<String> request, String url) {
 		tracePostRequest(recipePayload, url);
 		JSONObject jsonObject = new JSONObject(RestTemplateHelper.getRestTemplateLongTimeout().postForObject(url, request, String.class));
@@ -377,12 +471,25 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return recipeId;
 	}
 
+	/**
+	 * <p>tracePostRequest.</p>
+	 *
+	 * @param recipePayload a {@link org.json.JSONObject} object
+	 * @param url a {@link java.lang.String} object
+	 */
 	private void tracePostRequest(JSONObject recipePayload, String url) {
 		if (logger.isTraceEnabled()) {
 			logger.trace(POST_URL + url + " body: " + recipePayload);
 		}
 	}
 
+	/**
+	 * <p>createRecipePayload.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.regulatory.RegulatoryContext} object
+	 * @return a {@link org.json.JSONObject} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private JSONObject createRecipePayload(RegulatoryContext context) throws JSONException {
 
 		JSONObject ret = new JSONObject();
@@ -443,6 +550,12 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return null;
 	}
 
+	/**
+	 * <p>fetchFunctionId.</p>
+	 *
+	 * @param regulatoryCode a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String fetchFunctionId(String regulatoryCode) {
 		if (functionsIdMap.containsKey(regulatoryCode)) {
 			return functionsIdMap.get(regulatoryCode);
@@ -473,16 +586,34 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return null;
 	}
 
+	/**
+	 * <p>isRIDValid.</p>
+	 *
+	 * @param rid a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	private boolean isRIDValid(String rid) {
 		return rid != null && !rid.isEmpty() && !rid.equals(NOT_APPLICABLE) && !rid.equals(RegulatoryService.UNKNOWN);
 	}
 
+	/**
+	 * <p>extractIngName.</p>
+	 *
+	 * @param ingItem a {@link fr.becpg.repo.product.data.ing.IngItem} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extractIngName(IngItem ingItem) {
 		MLText mlTextLegalName = ingItem.getLegalName();
 		String legalName = mlTextLegalName != null ? mlTextLegalName.getClosestValue(I18NUtil.getContentLocale()) : null;
 		return legalName != null && !legalName.isBlank() ? legalName : ingItem.getCharactName();
 	}
 
+	/**
+	 * <p>cleanToken.</p>
+	 *
+	 * @param token a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String cleanToken(String token) {
 		return token != null ? token.replace("Bearer ", "").strip() : "";
 	}
@@ -507,6 +638,13 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		}
 	}
 	
+	/**
+	 * <p>ingredientAnalysis.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.regulatory.RegulatoryContext} object
+	 * @param regulatoryBatch a {@link fr.becpg.repo.regulatory.RegulatoryBatch} object
+	 * @return a {@link org.json.JSONObject} object
+	 */
 	private JSONObject ingredientAnalysis(RegulatoryContext context, RegulatoryBatch regulatoryBatch) {
 		JSONObject ingredientAnalysisResults = null;
 		int retries = 2;
@@ -526,6 +664,12 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return ingredientAnalysisResults;
 	}
 
+	/**
+	 * <p>generateError.</p>
+	 *
+	 * @param e a {@link org.springframework.web.client.RestClientException} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String generateError(RestClientException e) {
 		return "Error while creating Decernis recipe: " + DecernisHelper.cleanError(e.getMessage());
 	}
@@ -662,6 +806,14 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return usageBatches;
 	}
 
+	/**
+	 * <p>postV5RecipeAnalysis.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.regulatory.RegulatoryContext} object
+	 * @param checkContext a {@link fr.becpg.repo.regulatory.RegulatoryBatch} object
+	 * @return a {@link org.json.JSONObject} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private JSONObject postV5RecipeAnalysis(RegulatoryContext context, RegulatoryBatch checkContext) throws JSONException {
 
 		String recipeAnalysisResult = "";
@@ -772,6 +924,14 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return null;
 	}
 
+	/**
+	 * <p>postV5IngredientAnalysis.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.regulatory.RegulatoryContext} object
+	 * @param checkContext a {@link fr.becpg.repo.regulatory.RegulatoryBatch} object
+	 * @return a {@link org.json.JSONObject} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private JSONObject postV5IngredientAnalysis(RegulatoryContext context, RegulatoryBatch checkContext) throws JSONException {
 
 		String ingredientAnalysisResult = "";
@@ -850,6 +1010,14 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return null;
 	}
 
+	/**
+	 * <p>parseIngredientAnalysisResults.</p>
+	 *
+	 * @param productContext a {@link fr.becpg.repo.regulatory.RegulatoryContext} object
+	 * @param checkContext a {@link fr.becpg.repo.regulatory.RegulatoryBatch} object
+	 * @param analysisResults a {@link org.json.JSONObject} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<IngRegulatoryListDataItem> parseIngredientAnalysisResults(RegulatoryContext productContext, RegulatoryBatch checkContext,
 			JSONObject analysisResults) {
 
@@ -957,6 +1125,13 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return ingRegulatoryListDataItem;
 	}
 
+	/**
+	 * <p>findReportsForCountry.</p>
+	 *
+	 * @param tabularReports a {@link org.json.JSONArray} object
+	 * @param country a {@link java.lang.String} object
+	 * @return a {@link java.util.Map} object
+	 */
 	private Map<String, List<JSONObject>> findReportsForCountry(JSONArray tabularReports, String country) {
 		Map<String, List<JSONObject>> map = new HashMap<>();
 		for (int i = 0; i < tabularReports.length(); i++) {
@@ -969,6 +1144,13 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return map;
 	}
 
+	/**
+	 * <p>findFunction.</p>
+	 *
+	 * @param moduleCode a {@link java.lang.String} object
+	 * @param ingTypeValue a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String findFunction(String moduleCode, String ingTypeValue) {
 		if (!functionsMap.containsKey(moduleCode)) {
 			List<String> functions = fetchFunctions(moduleCode);
@@ -987,6 +1169,12 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return null;
 	}
 
+	/**
+	 * <p>fetchFunctions.</p>
+	 *
+	 * @param moduleCode a {@link java.lang.String} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<String> fetchFunctions(String moduleCode) {
 
 		List<String> functions = new ArrayList<>();
@@ -1028,6 +1216,14 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return new HttpEntity<>(body, headers);
 	}
 
+	/**
+	 * <p>parseRecipeAnalysisResults.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.regulatory.RegulatoryContext} object
+	 * @param checkContext a {@link fr.becpg.repo.regulatory.RegulatoryBatch} object
+	 * @param analysisResults a {@link org.json.JSONObject} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<RequirementListDataItem> parseRecipeAnalysisResults(RegulatoryContext context, RegulatoryBatch checkContext,
 			JSONObject analysisResults) {
 		List<RequirementListDataItem> requirements = new ArrayList<>();
@@ -1127,6 +1323,15 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return requirements;
 	}
 
+	/**
+	 * <p>findIngredientItemV5.</p>
+	 *
+	 * @param ingList a {@link java.util.List} object
+	 * @param decernisID a {@link java.lang.String} object
+	 * @param function a {@link java.lang.String} object
+	 * @param ingredientName a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 */
 	private IngListDataItem findIngredientItemV5(List<IngListDataItem> ingList, String decernisID, String function, String ingredientName) {
 		for (IngListDataItem ing : ingList) {
 			IngItem ingItem = (IngItem) alfrescoRepository.findOne(ing.getIng());
@@ -1169,6 +1374,13 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return reqCtrlItem;
 	}
 
+	/**
+	 * <p>buildQuery.</p>
+	 *
+	 * @param ingListDataItem a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @param params a {@link java.util.Map} object
+	 * @return a boolean
+	 */
 	private boolean buildQuery(IngListDataItem ingListDataItem, Map<String, String> params) {
 		Iterator<Map.Entry<QName, String>> iterator = ingNumbers.entrySet().iterator();
 		while (iterator.hasNext()) {
@@ -1187,6 +1399,15 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return false;
 	}
 
+	/**
+	 * <p>findIngredient.</p>
+	 *
+	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param ingName a {@link java.lang.String} object
+	 * @param jsonObject a {@link org.json.JSONObject} object
+	 * @param params a {@link java.util.Map} object
+	 * @return a {@link org.json.JSONObject} object
+	 */
 	private JSONObject findIngredient(NodeRef ing, String ingName, JSONObject jsonObject, Map<String, String> params) {
 		JSONArray results = jsonObject.getJSONArray(PARAM_RESULTS);
 		JSONObject result = null;
@@ -1205,6 +1426,14 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return result;
 	}
 
+	/**
+	 * <p>findIngByNumber.</p>
+	 *
+	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param results a {@link org.json.JSONArray} object
+	 * @param type a {@link java.lang.String} object
+	 * @return a {@link org.json.JSONObject} object
+	 */
 	private JSONObject findIngByNumber(NodeRef ing, JSONArray results, String type) {
 		for (Entry<QName, String> entry : ingNumbers.entrySet()) {
 			QName numberProp = entry.getKey();
@@ -1235,6 +1464,14 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 		return null;
 	}
 
+	/**
+	 * <p>getRidByIngName.</p>
+	 *
+	 * @param results a {@link org.json.JSONArray} object
+	 * @param ingName a {@link java.lang.String} object
+	 * @return a {@link org.json.JSONObject} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private JSONObject getRidByIngName(JSONArray results, String ingName) throws JSONException {
 		for (int i = 0; i < results.length(); i++) {
 			JSONObject result = results.getJSONObject(i);

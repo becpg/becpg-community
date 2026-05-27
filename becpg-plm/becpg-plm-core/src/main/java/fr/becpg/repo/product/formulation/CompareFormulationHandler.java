@@ -66,6 +66,7 @@ import fr.becpg.repo.repository.model.CompositionDataItem;
  */
 public class CompareFormulationHandler extends FormulationBaseHandler<ProductData> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(CompareFormulationHandler.class);
 
 	private AssociationService associationService;
@@ -152,6 +153,15 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		return true;
 	}
 
+	/**
+	 * <p>processComparison.</p>
+	 *
+	 * @param referenceProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param comparedProducts a {@link java.util.List} object
+	 * @param view a {@link fr.becpg.repo.product.data.AbstractProductDataView} object
+	 * @param dynamicCharactResults a {@link java.util.Map} object
+	 * @param dynamicColumnResults a {@link java.util.Map} object
+	 */
 	private void processComparison(final ProductData referenceProduct, List<ProductData> comparedProducts, AbstractProductDataView view,
 			Map<DynamicCharactListItem, JSONArray> dynamicCharactResults,
 			Map<Pair<CompositionDataItem, QName>, JSONArray> dynamicColumnResults) {
@@ -169,6 +179,14 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 	}
 
+	/**
+	 * <p>compareDynamicColumn.</p>
+	 *
+	 * @param comparedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param columnName a {@link org.alfresco.service.namespace.QName} object
+	 * @param view a {@link fr.becpg.repo.product.data.AbstractProductDataView} object
+	 * @param dynamicColumnResults a {@link java.util.Map} object
+	 */
 	private void compareDynamicColumn(ProductData comparedProduct, QName columnName, AbstractProductDataView view,
 			Map<Pair<CompositionDataItem, QName>, JSONArray> dynamicColumnResults) {
 		int pos = 0;
@@ -182,6 +200,15 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 	}
 
+	/**
+	 * <p>compareItems.</p>
+	 *
+	 * @param referenceItem a {@link fr.becpg.repo.repository.model.CompositionDataItem} object
+	 * @param comparedItem a {@link fr.becpg.repo.repository.model.CompositionDataItem} object
+	 * @param columnName a {@link org.alfresco.service.namespace.QName} object
+	 * @param comparedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param dynamicColumnResults a {@link java.util.Map} object
+	 */
 	private void compareItems(CompositionDataItem referenceItem, CompositionDataItem comparedItem, QName columnName,
 			ProductData comparedProduct, Map<Pair<CompositionDataItem, QName>, JSONArray> dynamicColumnResults) {
 		JSONArray itemComparisonArray = dynamicColumnResults.get(new Pair<>(referenceItem, columnName));
@@ -195,6 +222,14 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		dynamicColumnResults.put(new Pair<>(referenceItem, columnName), itemComparisonArray);
 	}
 
+	/**
+	 * <p>compareDynamicCharacts.</p>
+	 *
+	 * @param comparedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param view a {@link fr.becpg.repo.product.data.AbstractProductDataView} object
+	 * @param dynamicCharactToTreat a {@link java.util.Map} object
+	 * @param dynamicColumnToTreat a {@link java.util.Map} object
+	 */
 	private void compareDynamicCharacts(ProductData comparedProduct, AbstractProductDataView view,
 			Map<DynamicCharactListItem, JSONArray> dynamicCharactToTreat,
 			Map<Pair<CompositionDataItem, QName>, JSONArray> dynamicColumnToTreat) {
@@ -251,6 +286,12 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 	}
 
+	/**
+	 * <p>getDuplicatedColumnLastIndexMap.</p>
+	 *
+	 * @param view a {@link fr.becpg.repo.product.data.AbstractProductDataView} object
+	 * @return a {@link java.util.Map} object
+	 */
 	private Map<String, Integer> getDuplicatedColumnLastIndexMap(AbstractProductDataView view) {
 		// map each duplicated column to its last occurrence in the dynamicCharactList
 
@@ -269,6 +310,12 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		return duplicateDynCharactColumnsMap;
 	}
 
+	/**
+	 * <p>applyResults.</p>
+	 *
+	 * @param dynamicCharactResults a {@link java.util.Map} object
+	 * @param dynamicColumnResults a {@link java.util.Map} object
+	 */
 	private void applyResults(Map<DynamicCharactListItem, JSONArray> dynamicCharactResults, Map<Pair<CompositionDataItem, QName>, JSONArray> dynamicColumnResults) {
 		for (Map.Entry<DynamicCharactListItem, JSONArray> entry : dynamicCharactResults.entrySet()) {
 			
@@ -287,6 +334,14 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 	}
 
+	/**
+	 * <p>extractCompoItemValue.</p>
+	 *
+	 * @param dataListItem a {@link fr.becpg.repo.repository.model.CompositionDataItem} object
+	 * @param columnName a {@link org.alfresco.service.namespace.QName} object
+	 * @param associatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link org.json.JSONObject} object
+	 */
 	private JSONObject extractCompoItemValue(CompositionDataItem dataListItem, QName columnName, ProductData associatedProduct) {
 
 		JSONObject jsonObject = new JSONObject();
@@ -336,6 +391,12 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		return jsonObject;
 	}
 
+	/**
+	 * <p>appendProductInfo.</p>
+	 *
+	 * @param jsonObject a {@link org.json.JSONObject} object
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 */
 	private void appendProductInfo(JSONObject jsonObject, ProductData productData) {
 		if (productData != null) {
 			jsonObject.put(JsonFormulaHelper.JSON_NODEREF, productData.getNodeRef());
@@ -348,6 +409,13 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 	}
 
+	/**
+	 * <p>getMatchingView.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param view a {@link fr.becpg.repo.product.data.AbstractProductDataView} object
+	 * @return a {@link fr.becpg.repo.product.data.AbstractProductDataView} object
+	 */
 	private AbstractProductDataView getMatchingView(ProductData productData, AbstractProductDataView view) {
 		for (AbstractProductDataView tmp : productData.getViews()) {
 			if (tmp.getClass().isAssignableFrom(view.getClass())) {
@@ -357,6 +425,15 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		throw new IllegalStateException("No Matching view");
 	}
 
+	/**
+	 * <p>findMatchingItem.</p>
+	 *
+	 * @param dataListItem a {@link fr.becpg.repo.repository.model.CompositionDataItem} object
+	 * @param compositionDataItems a {@link java.util.List} object
+	 * @param cache a {@link java.util.Set} object
+	 * @param currentPos a int
+	 * @return a {@link fr.becpg.repo.repository.model.CompositionDataItem} object
+	 */
 	private CompositionDataItem findMatchingItem(CompositionDataItem dataListItem,
 			List<? extends CompositionDataItem> compositionDataItems, Set<CompositionDataItem> cache, int currentPos) {
 		// branches
@@ -394,6 +471,13 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		return ret;
 	}
 
+	/**
+	 * <p>approxMatch.</p>
+	 *
+	 * @param refProductNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param toCompareProductNoRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private boolean approxMatch(NodeRef refProductNodeRef, NodeRef toCompareProductNoRef) {
 
 		if ((refProductNodeRef != null) && (toCompareProductNoRef != null)) {
@@ -408,6 +492,13 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		return false;
 	}
 
+	/**
+	 * <p>getMatchingCharact.</p>
+	 *
+	 * @param dynamicCharactListItem a {@link fr.becpg.repo.product.data.productList.DynamicCharactListItem} object
+	 * @param dynamicCharactList a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.DynamicCharactListItem} object
+	 */
 	private DynamicCharactListItem getMatchingCharact(DynamicCharactListItem dynamicCharactListItem,
 			List<DynamicCharactListItem> dynamicCharactList) {
 		for (DynamicCharactListItem tmp : dynamicCharactList) {
@@ -422,6 +513,12 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		return null;
 	}
 
+	/**
+	 * <p>getComparableProductDatas.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<ProductData> getComparableProductDatas(ProductData productData) {
 
 		List<ProductData> compareWithEntities = productData.getCompareWithEntities();

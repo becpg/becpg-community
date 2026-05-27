@@ -30,6 +30,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class CompositionLexer {
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(CompositionLexer.class);
 	
 	
@@ -140,6 +141,12 @@ public class CompositionLexer {
 		return compoList;
 	}
 
+	/**
+	 * <p>extractProduct.</p>
+	 *
+	 * @param productName a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private static NodeRef extractProduct(String productName) {
 		return BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_PRODUCT).excludeDefaults().inDBIfPossible().andPropEquals(ContentModel.PROP_NAME, productName.trim())
 				.singleValue();

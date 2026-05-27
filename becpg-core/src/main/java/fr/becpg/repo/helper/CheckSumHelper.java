@@ -17,8 +17,12 @@ import org.json.JSONObject;
  */
 public class CheckSumHelper {
 	
+     /** Constant <code>logger</code> */
      private static final  Log logger = LogFactory.getLog(CheckSumHelper.class);
 	
+     /**
+      * <p>Constructor for CheckSumHelper.</p>
+      */
      private CheckSumHelper() {
     	 super();
      }

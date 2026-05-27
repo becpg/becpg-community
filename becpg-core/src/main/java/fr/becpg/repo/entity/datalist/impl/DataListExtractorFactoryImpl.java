@@ -37,6 +37,7 @@ public class DataListExtractorFactoryImpl implements DataListExtractorFactory {
 	DataListExtractor defaultExtractor;
 	
 	// extractor with the highest priority goes first
+	/** Constant <code>extractorComparator</code> */
 	private static final Comparator<DataListExtractor> extractorComparator = (DataListExtractor e1, DataListExtractor e2) -> ((Integer) e2.getPriority()).compareTo((Integer) e1.getPriority());	
 	
 	final List<DataListExtractor> extractors = new ArrayList<>();

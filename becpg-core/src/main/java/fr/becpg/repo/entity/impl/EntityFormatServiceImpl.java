@@ -72,6 +72,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 	@Autowired
 	protected RuleService ruleService;
 	
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityFormatServiceImpl.class);
 
 	/** {@inheritDoc} */
@@ -129,6 +130,11 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		}
 	}
 
+	/**
+	 * <p>convertEntityToJsonFormat.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void convertEntityToJsonFormat(NodeRef entityNodeRef) {
 		String currentFormat = getEntityFormat(entityNodeRef);
 		
@@ -142,6 +148,11 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		removeEntityDatalists(entityNodeRef);
 	}
 
+	/**
+	 * <p>removeEntityDatalists.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void removeEntityDatalists(NodeRef entityNodeRef) {
 		NodeRef listContainer = entityListDAO.getListContainer(entityNodeRef);
 	
@@ -158,6 +169,11 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		}
 	}
 
+	/**
+	 * <p>convertEntityToNodeFormat.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void convertEntityToNodeFormat(NodeRef entityNodeRef) {
 		String currentFormat = getEntityFormat(entityNodeRef);
 		if (currentFormat == null || EntityFormat.NODE.toString().equals(currentFormat)) {

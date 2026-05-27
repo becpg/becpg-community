@@ -124,29 +124,53 @@ import fr.becpg.util.MutexFactory;
 @Service("entityReportService")
 public class EntityReportServiceImpl implements EntityReportService, FormulationChainPlugin {
 
+	/** Constant <code>CREATE_REPORT="createReport"</code> */
 	private static final String CREATE_REPORT = "createReport";
+	/** Constant <code>EXTRACT="extract"</code> */
 	private static final String EXTRACT = "extract";
+	/** Constant <code>PREF_REPORT_PREFIX="fr.becpg.repo.report."</code> */
 	private static final String PREF_REPORT_PREFIX = "fr.becpg.repo.report.";
+	/** Constant <code>PREF_REPORT_SUFFIX=".view"</code> */
 	private static final String PREF_REPORT_SUFFIX = ".view";
+	/** Constant <code>REPORT_PARAM_SEPARATOR="#"</code> */
 	private static final String REPORT_PARAM_SEPARATOR = "#";
+	/** Constant <code>REPORT_LIST_CACHE_KEY="REPORT_KIND_CACHE_KEY"</code> */
 	private static final String REPORT_LIST_CACHE_KEY = "REPORT_KIND_CACHE_KEY";
+	/** Constant <code>MAX_TRACE_XML_LENGTH=1024 * 1024</code> */
 	private static final int MAX_TRACE_XML_LENGTH = 1024 * 1024;
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
 
+	/** Constant <code>SEMICOLON_SEPARATED_PROPERTIES</code> */
 	private static final List<String> SEMICOLON_SEPARATED_PROPERTIES = List.of("extraImagePaths","extraDocumentPaths");
 
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
 	
+	/**
+	 * <p>reportNameFormat.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String reportNameFormat() {
 		return systemConfigurationService.confValue("beCPG.report.name.format");
 	}
 
+	/**
+	 * <p>reportTitleFormat.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String reportTitleFormat() {
 		return systemConfigurationService.confValue("beCPG.report.title.format");
 	}
 	
+	/**
+	 * <p>includeReportInSearch.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	private Boolean includeReportInSearch() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.report.includeReportInSearch"));
 	}
@@ -252,6 +276,13 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		generateReports(nodeRefFrom, nodeRefTo, false);
 	}
 	
+	/**
+	 * <p>generateReports.</p>
+	 *
+	 * @param nodeRefFrom a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param nodeRefTo a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param generateAllReports a boolean
+	 */
 	private void generateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo, boolean generateAllReports) {
 		ReentrantLock lock = mutexFactory.getMutex("report-"+nodeRefTo.getId());
 	    boolean lockAcquired = false;
@@ -281,6 +312,13 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	    }
 	}
 
+	/**
+	 * <p>internalGenerateReports.</p>
+	 *
+	 * @param nodeRefFrom a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param nodeRefTo a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param generateAllReports a boolean
+	 */
 	private void internalGenerateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo, boolean generateAllReports) {
 
 		if (nodeRefFrom == null) {
@@ -325,6 +363,15 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		}, false, true);
 	}
 
+	/**
+	 * <p>getReports.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param entityNodeTo a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param defaultLocale a {@link java.util.Locale} object
+	 * @param generateAllReports a boolean
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> getReports(final NodeRef entityNodeRef, final NodeRef entityNodeTo, Locale defaultLocale, boolean generateAllReports) {
 
 		Set<ReportableError> engineErrors = new HashSet<>();
@@ -544,6 +591,12 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		return newReports;
 	}
 
+	/**
+	 * <p>filterByReportKind.</p>
+	 *
+	 * @param dataXml a {@link org.dom4j.Element} object
+	 * @param tplNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	@SuppressWarnings("unchecked")
 	private void filterByReportKind(Element dataXml, NodeRef tplNodeRef) {
 		
@@ -601,6 +654,12 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 	}
 
+	/**
+	 * <p>estimateXmlSize.</p>
+	 *
+	 * @param element a {@link org.dom4j.Element} object
+	 * @return a long
+	 */
 	private long estimateXmlSize(Element element) {
 		class CountingOutputStream extends OutputStream {
 			private long count = 0;
@@ -627,6 +686,12 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		return counter.getCount();
 	}
 
+	/**
+	 * <p>filterDatalistsByReportKind.</p>
+	 *
+	 * @param reportKindCode a {@link java.lang.String} object
+	 * @param entityEl a {@link org.dom4j.Element} object
+	 */
 	private void filterDatalistsByReportKind(String reportKindCode, Element entityEl) {
 		for (Iterator<Element> datalistsIterator = entityEl.elementIterator(); datalistsIterator.hasNext();) {
 			Element dlEl = datalistsIterator.next();
@@ -659,6 +724,12 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		}
 	}
 
+	/**
+	 * <p>splitReportKinds.</p>
+	 *
+	 * @param input a {@link java.lang.String} object
+	 * @return an array of {@link java.lang.String} objects
+	 */
 	private String[] splitReportKinds(String input) {
 		String[] repKindCodes = input.split(",");
 		for (int i = 0; i < repKindCodes.length; i++) {
@@ -681,6 +752,12 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		});
 	}
 
+	/**
+	 * <p>filterByParams.</p>
+	 *
+	 * @param entity a {@link org.dom4j.Element} object
+	 * @param filteredParams a {@link java.util.List} object
+	 */
 	private void filterByParams(Element entity, List<String> filteredParams) {
 
 		for (Iterator<Element> entityIter = entity.elementIterator(); entityIter.hasNext();) {
@@ -710,6 +787,14 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 	}
 
+	/**
+	 * <p>getFilteredParams.</p>
+	 *
+	 * @param params a {@link java.util.Map} object
+	 * @param paramList a {@link java.util.List} object
+	 * @param reportKind a {@link java.lang.String} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<String> getFilteredParams(Map<String, String> params, List<String> paramList, String reportKind) {
 		List<String> ret = new ArrayList<>();
 
@@ -727,6 +812,12 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		return ret;
 	}
 
+	/**
+	 * <p>isValidReportParams.</p>
+	 *
+	 * @param codeParams a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	private boolean isValidReportParams(String codeParams) {
 		if ((codeParams != null) && !codeParams.isEmpty()) {
 			String[] strParams = codeParams.split(REPORT_PARAM_SEPARATOR);
@@ -737,6 +828,12 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		return false;
 	}
 
+	/**
+	 * <p>getMergedPreferences.</p>
+	 *
+	 * @param tplsNodeRef a {@link java.util.List} object
+	 * @return a {@link java.util.Map} object
+	 */
 	private Map<String, String> getMergedPreferences(List<NodeRef> tplsNodeRef) {
 
 		Map<String, String> prefs = new HashMap<>();
@@ -783,6 +880,14 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		return prefs;
 	}
 
+	/**
+	 * <p>getEntityReportParametersList.</p>
+	 *
+	 * @param tplNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param engineLogs a {@link java.util.Set} object
+	 * @return a {@link java.util.List} object
+	 */
 	@SuppressWarnings("unchecked")
 	private List<EntityReportParameters> getEntityReportParametersList(NodeRef tplNodeRef, NodeRef entityNodeRef, Set<ReportableError> engineLogs) {
 
@@ -856,11 +961,24 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		return Arrays.asList(defaultEntityReportParameter);
 	}
 
+	/**
+	 * <p>readParameters.</p>
+	 *
+	 * @param config a {@link fr.becpg.repo.report.entity.EntityReportParameters} object
+	 * @return a {@link fr.becpg.repo.report.entity.EntityReportParameters} object
+	 */
 	private EntityReportParameters readParameters(EntityReportParameters config) {
 		return readParameters(null, config);
 
 	}
 
+	/**
+	 * <p>readParameters.</p>
+	 *
+	 * @param itemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param config a {@link fr.becpg.repo.report.entity.EntityReportParameters} object
+	 * @return a {@link fr.becpg.repo.report.entity.EntityReportParameters} object
+	 */
 	private EntityReportParameters readParameters(NodeRef itemNodeRef, EntityReportParameters config) {
 		EntityReportParameters ret = new EntityReportParameters(config);
 		for (EntityReportParameter configParam : config.getParameters()) {
@@ -1094,6 +1212,17 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		internalGenerateReport(entityNodeRef, templateNodeRef, reportParameters, locale, reportFormat, outputStream, new HashSet<>());
 	}
 
+	/**
+	 * <p>internalGenerateReport.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param templateNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param reportParameters a {@link fr.becpg.repo.report.entity.EntityReportParameters} object
+	 * @param locale a {@link java.util.Locale} object
+	 * @param reportFormat a {@link fr.becpg.report.client.ReportFormat} object
+	 * @param outputStream a {@link java.io.OutputStream} object
+	 * @param engineErrors a {@link java.util.Set} object
+	 */
 	private void internalGenerateReport(NodeRef entityNodeRef, NodeRef templateNodeRef, EntityReportParameters reportParameters, Locale locale,
 			ReportFormat reportFormat, OutputStream outputStream, Set<ReportableError> engineErrors) {
 		AuthenticationUtil.runAsSystem(() -> {
@@ -1202,6 +1331,13 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 	}
 
+	/**
+	 * <p>extractReportParametersAndHandleErrors.</p>
+	 *
+	 * @param documentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param engineLogs a {@link java.util.Set} object
+	 * @return a {@link fr.becpg.repo.report.entity.EntityReportParameters} object
+	 */
 	private EntityReportParameters extractReportParametersAndHandleErrors(NodeRef documentNodeRef, Set<ReportableError> engineLogs) {
 		EntityReportParameters reportParameters = null;
 		try {
@@ -1276,6 +1412,13 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		return retrieveExtractor(entityNodeRef, null);
 	}
 
+	/**
+	 * <p>retrieveExtractor.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param engine a {@link fr.becpg.repo.report.engine.BeCPGReportEngine} object
+	 * @return a {@link fr.becpg.repo.report.entity.EntityReportExtractorPlugin} object
+	 */
 	private EntityReportExtractorPlugin retrieveExtractor(NodeRef entityNodeRef, BeCPGReportEngine engine) {
 
 		EntityReportExtractorPlugin ret = null;
@@ -1299,6 +1442,14 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		return ret;
 	}
 
+	/**
+	 * <p>getReportEngine.</p>
+	 *
+	 * @param templateNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param reportFormat a {@link fr.becpg.report.client.ReportFormat} object
+	 * @return a {@link fr.becpg.repo.report.engine.BeCPGReportEngine} object
+	 * @throws fr.becpg.report.client.ReportException if any.
+	 */
 	private BeCPGReportEngine getReportEngine(NodeRef templateNodeRef, ReportFormat reportFormat) throws ReportException {
 		if (engines != null) {
 			for (BeCPGReportEngine engine : engines) {
@@ -1310,6 +1461,17 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		throw new ReportException("No report engine found for  tpl:" + templateNodeRef + " " + reportFormat);
 	}
 
+	/**
+	 * <p>getReportDocumentName.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param tplNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param reportFormat a {@link java.lang.String} object
+	 * @param locale a {@link java.util.Locale} object
+	 * @param reportParameters a {@link fr.becpg.repo.report.entity.EntityReportParameters} object
+	 * @param nameFormat a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getReportDocumentName(NodeRef entityNodeRef, NodeRef tplNodeRef, String reportFormat, Locale locale,
 			EntityReportParameters reportParameters, String nameFormat) {
 
@@ -1349,6 +1511,16 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		return documentName;
 	}
 
+	/**
+	 * <p>extractPropText.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param tplNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param lang a {@link java.lang.String} object
+	 * @param propQname a {@link java.lang.String} object
+	 * @param params a {@link java.util.List} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extractPropText(NodeRef nodeRef, NodeRef tplNodeRef, String lang, String propQname, List<EntityReportParameter> params) {
 		if (propQname != null) {
 			if (propQname.indexOf("report_") == 0) {
@@ -1372,6 +1544,17 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		return null;
 	}
 
+	/**
+	 * <p>getReportDocumentNodeRef.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param tplNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param documentName a {@link java.lang.String} object
+	 * @param locale a {@link java.util.Locale} object
+	 * @param reportParameters a {@link fr.becpg.repo.report.entity.EntityReportParameters} object
+	 * @param engineLogs a {@link java.util.Set} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getReportDocumentNodeRef(NodeRef entityNodeRef, NodeRef tplNodeRef, String documentName, Locale locale,
 			EntityReportParameters reportParameters, Set<ReportableError> engineLogs) {
 		NodeRef documentNodeRef = null;
@@ -1418,6 +1601,14 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		return documentNodeRef;
 	}
 
+	/**
+	 * <p>isLocaleEnableOnTemplate.</p>
+	 *
+	 * @param tplNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param locale a {@link java.util.Locale} object
+	 * @param hideDefaultLocal a boolean
+	 * @return a boolean
+	 */
 	@SuppressWarnings("unchecked")
 	private boolean isLocaleEnableOnTemplate(NodeRef tplNodeRef, Locale locale, boolean hideDefaultLocal) {
 
@@ -1434,6 +1625,12 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		return MLTextHelper.isDefaultLocale(locale);
 	}
 
+	/**
+	 * <p>getEntityReportLocales.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.util.List} object
+	 */
 	@SuppressWarnings("unchecked")
 	private List<Locale> getEntityReportLocales(NodeRef entityNodeRef) {
 		List<Locale> ret = new ArrayList<>();
@@ -1448,6 +1645,12 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		return ret;
 	}
 
+	/**
+	 * <p>updateReportsAssoc.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param newReports a {@link java.util.List} object
+	 */
 	private void updateReportsAssoc(NodeRef entityNodeRef, List<NodeRef> newReports) {
 
 		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_WORKING_COPY)) {
@@ -1777,6 +1980,13 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 	}
 
+	/**
+	 * <p>getTruncatedXml.</p>
+	 *
+	 * @param element a {@link org.dom4j.Element} object
+	 * @param maxLength a int
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getTruncatedXml(Element element, int maxLength) {
 		class TruncatingWriter extends Writer {
 			private StringBuilder sb = new StringBuilder();

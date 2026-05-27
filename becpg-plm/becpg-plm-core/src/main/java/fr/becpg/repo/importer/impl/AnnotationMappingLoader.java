@@ -63,9 +63,13 @@ import jakarta.annotation.PostConstruct;
 @Service("annotationMappingLoader")
 public class AnnotationMappingLoader implements MappingLoader {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AnnotationMappingLoader.class);
+	/** Constant <code>ANNOTATION_PACKAGE="Annotation.class.getPackage().getName()"{trunked}</code> */
 	private static final String ANNOTATION_PACKAGE = Annotation.class.getPackage().getName() + ".";
+	/** Constant <code>REGX_ANNOTATION="\\s*@(\\w+)(\\s*\\(\\s*(.*)\\s*\\))*"</code> */
 	private static final String REGX_ANNOTATION = "\\s*@(\\w+)(\\s*\\(\\s*(.*)\\s*\\))*";
+	/** Constant <code>REGX_ANNOTATION_PROPERTIES="\\s*(\\w+)\\s*=\\s*\&quot;(.+)\&quot;\\"{trunked}</code> */
 	private static final String REGX_ANNOTATION_PROPERTIES = "\\s*(\\w+)\\s*=\\s*\"(.+)\"\\s*";
 
 	@Autowired
@@ -77,6 +81,9 @@ public class AnnotationMappingLoader implements MappingLoader {
 	@Autowired
 	private MappingLoaderFactory mappingLoaderFactory;
 
+	/**
+	 * <p>init.</p>
+	 */
 	@PostConstruct
 	private void init() {
 		mappingLoaderFactory.register(this);
@@ -292,6 +299,14 @@ public class AnnotationMappingLoader implements MappingLoader {
 		return importContext;
 	}
 
+	/**
+	 * <p>isColumnHasAnnotation.</p>
+	 *
+	 * @param columnId a int
+	 * @param annotation a {@link java.lang.String} object
+	 * @param columnsParams a {@link java.util.List} object
+	 * @return a boolean
+	 */
 	private boolean isColumnHasAnnotation(int columnId, String annotation, List<List<String>> columnsParams) {
 		for (List<String> params : columnsParams) {
 			if ((columnId < params.size()) && annotation.equals(params.get(columnId))) {
@@ -301,6 +316,13 @@ public class AnnotationMappingLoader implements MappingLoader {
 		return false;
 	}
 
+	/**
+	 * <p>parseAnnotation.</p>
+	 *
+	 * @param value a {@link java.lang.String} object
+	 * @return a {@link java.lang.Object} object
+	 * @throws fr.becpg.config.mapping.MappingException if any.
+	 */
 	private Object parseAnnotation(String value) throws MappingException {
 		Pattern pattern = Pattern.compile(REGX_ANNOTATION);
 		Matcher matcher = pattern.matcher(value);
@@ -325,6 +347,12 @@ public class AnnotationMappingLoader implements MappingLoader {
 		return annotation;
 	}
 
+	/**
+	 * <p>getAnnotationProperties.</p>
+	 *
+	 * @param properties an array of {@link java.lang.String} objects
+	 * @return a {@link java.util.Map} object
+	 */
 	private Map<String, Object> getAnnotationProperties(String[] properties) {
 		Pattern pattern = Pattern.compile(REGX_ANNOTATION_PROPERTIES);
 		Matcher matcher;

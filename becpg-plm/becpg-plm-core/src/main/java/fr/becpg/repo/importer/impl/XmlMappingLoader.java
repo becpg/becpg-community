@@ -47,6 +47,7 @@ import jakarta.annotation.PostConstruct;
 @Service("xmlMappingLoader")
 public class XmlMappingLoader implements MappingLoader {
 	
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(XmlMappingLoader.class);
 	
 	@Autowired
@@ -58,6 +59,9 @@ public class XmlMappingLoader implements MappingLoader {
     @Autowired
     private MappingLoaderFactory mappingLoaderFactory;
 
+    /**
+     * <p>init.</p>
+     */
     @PostConstruct
     private void init() {
     	mappingLoaderFactory.register(this);

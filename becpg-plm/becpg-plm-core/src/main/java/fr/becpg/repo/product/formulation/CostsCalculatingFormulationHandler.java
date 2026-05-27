@@ -30,7 +30,9 @@ import fr.becpg.repo.repository.model.SimpleListDataItem;
  */
 public class CostsCalculatingFormulationHandler extends AbstractCostCalculatingFormulationHandler<CostListDataItem> {
 
+	/** Constant <code>MESSAGE_FORMULATE_COST_LIST_ERROR="message.formulate.costList.error"</code> */
 	private static final String MESSAGE_FORMULATE_COST_LIST_ERROR = "message.formulate.costList.error";
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(CostsCalculatingFormulationHandler.class);
 
 	/** {@inheritDoc} */
@@ -88,6 +90,11 @@ public class CostsCalculatingFormulationHandler extends AbstractCostCalculatingF
 		return MESSAGE_FORMULATE_COST_LIST_ERROR;
 	}
 
+	/**
+	 * <p>calculateProfitability.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 */
 	private void calculateProfitability(ProductData formulatedProduct) {
 	
 		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, 1d);

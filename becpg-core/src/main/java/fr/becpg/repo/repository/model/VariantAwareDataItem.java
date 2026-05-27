@@ -31,6 +31,7 @@ import fr.becpg.repo.variant.model.VariantData;
 public abstract class VariantAwareDataItem extends AbstractManualDataItem {
 
 
+	/** Constant <code>serialVersionUID=-2757971744559304500L</code> */
 	private static final long serialVersionUID = -2757971744559304500L;
 
 	/** Constant <code>VARIANT_COLUMN_NAME="bcpg_variantColumn"</code> */

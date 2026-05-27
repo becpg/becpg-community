@@ -69,6 +69,7 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 	/** Constant <code>VIEW_DOCUMENTS="View-documents"</code> */
 	public static final String VIEW_DOCUMENTS= "View-documents";
 	
+	/** Constant <code>CACHE_KEY="SecurityFormulationHandler.class.getNam"{trunked}</code> */
 	private static final String CACHE_KEY = SecurityFormulationHandler.class.getName();
 
 	private NodeService nodeService;
@@ -226,10 +227,20 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		this.siteService = siteService;
 	}
 	
+	/**
+	 * <p>enforceACL.</p>
+	 *
+	 * @return a boolean
+	 */
 	private boolean enforceACL() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.security.enforceACL"));
 	}
 	
+	/**
+	 * <p>forceResetACL.</p>
+	 *
+	 * @return a boolean
+	 */
 	private boolean forceResetACL() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.security.forceResetACL"));
 	}
@@ -283,6 +294,12 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		return true;
 	}
 	
+	/**
+	 * <p>getTemplateCachedPermissions.</p>
+	 *
+	 * @param tplNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.util.Map} object
+	 */
 	private Map<String, Set<AccessPermission>> getTemplateCachedPermissions(NodeRef tplNodeRef) {
 		return beCPGCacheService.getFromCache(CACHE_KEY, "templateFoldersPermissions." + tplNodeRef, () -> {
 			List<FileInfo> tplFolders = null;
@@ -302,6 +319,12 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		});
 	}
 
+	/**
+	 * <p>updatePermissionsFromTemplateFolder.</p>
+	 *
+	 * @param folderNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param templateFolderPermissions a {@link java.util.Set} object
+	 */
 	private void updatePermissionsFromTemplateFolder(NodeRef folderNodeRef, Set<AccessPermission> templateFolderPermissions) {
 		if (permissionService.getInheritParentPermissions(folderNodeRef)) {
 			permissionService.setInheritParentPermissions(folderNodeRef, false);
@@ -314,10 +337,21 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 	}
 
+	/**
+	 * <p>isSecurityApplicable.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a boolean
+	 */
 	private boolean isSecurityApplicable(ProductData productData) {
 		return productData.getNodeRef() != null && !productData.isEntityTemplate();
 	}
 
+	/**
+	 * <p>updateSecurityRuleFromTemplate.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 */
 	private void updateSecurityRuleFromTemplate(ProductData productData) {
 		if(productData.getEntityTpl()!=null) {
 			NodeRef tplNodeRef = productData.getEntityTpl().getNodeRef();
@@ -333,6 +367,16 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 	}
 
+	/**
+	 * <p>updatePermissions.</p>
+	 *
+	 * @param productDataNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param siteInfo a {@link org.alfresco.service.cmr.site.SiteInfo} object
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param permissionModels a {@link java.util.List} object
+	 * @param areDocuments a boolean
+	 * @param parentPermissionsMap a {@link java.util.Map} object
+	 */
 	private void updatePermissions(NodeRef productDataNodeRef, SiteInfo siteInfo, NodeRef nodeRef, List<PermissionModel> permissionModels,
 			boolean areDocuments, Map<NodeRef, Map<String, String>> parentPermissionsMap) {
 		if (forceResetACL()) {
@@ -403,6 +447,11 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 	}
 
+	/**
+	 * <p>resetPermissions.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void resetPermissions(NodeRef nodeRef) {
 		boolean hasParentPermissions = permissionService.getInheritParentPermissions(nodeRef);
 		Map<String, String> specificPermissions = new HashMap<>();
@@ -422,6 +471,13 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 	}
 	
+	/**
+	 * <p>copyPermissionsForSuppliers.</p>
+	 *
+	 * @param productDataNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param permissionModels a {@link java.util.List} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<PermissionModel> copyPermissionsForSuppliers(NodeRef productDataNodeRef, List<PermissionModel> permissionModels) {
 		List<PermissionModel> copyPermissions = new ArrayList<>();
 		
@@ -443,6 +499,16 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		return copyPermissions;
 	}
 
+	/**
+	 * <p>computePermissions.</p>
+	 *
+	 * @param siteInfo a {@link org.alfresco.service.cmr.site.SiteInfo} object
+	 * @param parentPermissions a {@link java.util.Map} object
+	 * @param specificPermissions a {@link java.util.Map} object
+	 * @param permissionModels a {@link java.util.List} object
+	 * @param toAdd a {@link java.util.HashMap} object
+	 * @param toRemove a {@link java.util.Set} object
+	 */
 	private void computePermissions(SiteInfo siteInfo, Map<String, String> parentPermissions, Map<String, String> specificPermissions, List<PermissionModel> permissionModels, HashMap<String, String> toAdd, Set<String> toRemove) {
 		for (PermissionModel permissionModel : permissionModels) {
 			String targetPermission = PermissionModel.READ_ONLY.equals(permissionModel.getPermission()) ? PermissionService.CONSUMER : PermissionService.CONTRIBUTOR;
@@ -478,6 +544,15 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 	}
 	
+	/**
+	 * <p>adaptPermissionToSite.</p>
+	 *
+	 * @param targetPermission a {@link java.lang.String} object
+	 * @param siteInfo a {@link org.alfresco.service.cmr.site.SiteInfo} object
+	 * @param authorityName a {@link java.lang.String} object
+	 * @param enforceACL a boolean
+	 * @return a {@link java.lang.String} object
+	 */
 	private String adaptPermissionToSite(String targetPermission, SiteInfo siteInfo, String authorityName, boolean enforceACL) {
 		if (siteInfo != null) {
 			String sitePermission = siteService.getMembersRole(siteInfo.getShortName(), authorityName);
@@ -498,6 +573,14 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 
+	/**
+	 * <p>addPermission.</p>
+	 *
+	 * @param authority a {@link java.lang.String} object
+	 * @param permission a {@link java.lang.String} object
+	 * @param toAdd a {@link java.util.HashMap} object
+	 * @param toRemove a {@link java.util.Set} object
+	 */
 	private void addPermission(String authority, String permission, HashMap<String, String> toAdd, Set<String> toRemove) {
 		if ((PermissionService.READ.equals(permission) || PermissionService.CONSUMER.equals(permission)) && toAdd.containsKey(authority)) {
 			return;

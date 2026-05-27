@@ -29,7 +29,9 @@ import fr.becpg.repo.RepoConsts;
  */
 public class EntityHistoryAspectPatch extends AbstractBeCPGPatch {
 
+    /** Constant <code>logger</code> */
     private static final Log logger = LogFactory.getLog(EntityHistoryAspectPatch.class);
+    /** Constant <code>MSG_SUCCESS="patch.bcpg.entityHistoryAspectPatch.res"{trunked}</code> */
     private static final String MSG_SUCCESS = "patch.bcpg.entityHistoryAspectPatch.result";
 
     /** {@inheritDoc} */
@@ -100,6 +102,12 @@ public class EntityHistoryAspectPatch extends AbstractBeCPGPatch {
         return I18NUtil.getMessage(MSG_SUCCESS);
     }
 
+    /**
+     * <p>collectNodes.</p>
+     *
+     * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     * @param nodes a {@link java.util.List} object
+     */
     private void collectNodes(NodeRef nodeRef, List<NodeRef> nodes) {
         if (nodeService.exists(nodeRef)) {
             nodes.add(nodeRef);
@@ -109,6 +117,11 @@ public class EntityHistoryAspectPatch extends AbstractBeCPGPatch {
         }
     }
 
+    /**
+     * <p>addEntityHistoryAspects.</p>
+     *
+     * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+     */
     private void addEntityHistoryAspects(NodeRef nodeRef) {
         if (nodeService.exists(nodeRef)) {
             if (!nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_HISTORY)) {

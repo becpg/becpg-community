@@ -12,6 +12,11 @@ public enum RegulatoryResult {
 	    PERMITTED(1),
 	    NOT_LISTED(0);
 
+	    /**
+	     * <p>Constructor for RegulatoryResult.</p>
+	     *
+	     * @param severity a int
+	     */
 	    private final int severity;
 
 	    RegulatoryResult(int severity) {

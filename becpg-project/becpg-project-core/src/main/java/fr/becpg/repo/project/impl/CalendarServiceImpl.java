@@ -30,11 +30,16 @@ import fr.becpg.repo.project.CalendarService;
 @Service("projectCalendarService")
 public class CalendarServiceImpl implements CalendarService {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(CalendarServiceImpl.class);
 
+	/** Constant <code>DATE_FORMAT="yyyy/MM/dd"</code> */
 	private static final String DATE_FORMAT = "yyyy/MM/dd";
+	/** Constant <code>FORMATTER</code> */
 	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
+	/** Constant <code>SHORT_DATE_FORMAT="MM/dd"</code> */
 	private static final String SHORT_DATE_FORMAT = "MM/dd";
+	/** Constant <code>SHORT_FORMATTER</code> */
 	private static final DateTimeFormatter SHORT_FORMATTER = DateTimeFormatter.ofPattern(SHORT_DATE_FORMAT);
 
 	@Autowired
@@ -56,6 +61,14 @@ public class CalendarServiceImpl implements CalendarService {
 		return isWorkingDay(localDate, getHolidays(calendarNodeRef, localDate.getYear()), getNonWorkingDays(calendarNodeRef));
 	}
 
+	/**
+	 * <p>isWorkingDay.</p>
+	 *
+	 * @param date a {@link java.time.LocalDate} object
+	 * @param holidays a {@link java.util.Set} object
+	 * @param nonWorkingDays a {@link java.util.Set} object
+	 * @return a boolean
+	 */
 	private boolean isWorkingDay(LocalDate date, Set<LocalDate> holidays, Set<Integer> nonWorkingDays) {
 		// DayOfWeek.getValue() returns 1 (Monday) to 7 (Sunday)
 		// java.util.Calendar uses 1 (Sunday) to 7 (Saturday)
@@ -91,6 +104,13 @@ public class CalendarServiceImpl implements CalendarService {
 		return null;
 	}
 
+	/**
+	 * <p>getHolidays.</p>
+	 *
+	 * @param calendarNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param targetYear a int
+	 * @return a {@link java.util.Set} object
+	 */
 	private Set<LocalDate> getHolidays(NodeRef calendarNodeRef, int targetYear) {
 		Set<LocalDate> holidays = new HashSet<>();
 		if ((calendarNodeRef == null) || !nodeService.exists(calendarNodeRef)) {
@@ -103,6 +123,12 @@ public class CalendarServiceImpl implements CalendarService {
 		return holidays;
 	}
 
+	/**
+	 * <p>getNonWorkingDays.</p>
+	 *
+	 * @param calendarNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.util.Set} object
+	 */
 	private Set<Integer> getNonWorkingDays(NodeRef calendarNodeRef) {
 		Set<Integer> nonWorkingDays = new HashSet<>();
 
@@ -149,12 +175,24 @@ public class CalendarServiceImpl implements CalendarService {
 		return nonWorkingDays;
 	}
 
+	/**
+	 * <p>addDefaultDays.</p>
+	 *
+	 * @param target a {@link java.util.Set} object
+	 */
 	private void addDefaultDays(Set<Integer> target) {
 		target.add(Calendar.SATURDAY); // 7
 		target.add(Calendar.SUNDAY); // 1
 	}
 
 	
+	/**
+	 * <p>parseDates.</p>
+	 *
+	 * @param holidays a {@link java.util.Set} object
+	 * @param dateString a {@link java.lang.String} object
+	 * @param targetYear a int
+	 */
 	private void parseDates(Set<LocalDate> holidays, String dateString, int targetYear) {
 		if ((dateString == null) || dateString.isBlank()) {
 			return;
@@ -182,10 +220,22 @@ public class CalendarServiceImpl implements CalendarService {
 		}
 	}
 
+	/**
+	 * <p>asLocalDate.</p>
+	 *
+	 * @param date a {@link java.util.Date} object
+	 * @return a {@link java.time.LocalDate} object
+	 */
 	private LocalDate asLocalDate(Date date) {
 		return date.toInstant().atZone(ProjectRepoConsts.PROJECT_TIMEZONE.toZoneId()).toLocalDate();
 	}
 
+	/**
+	 * <p>parseDateRange.</p>
+	 *
+	 * @param holidays a {@link java.util.Set} object
+	 * @param dateRange a {@link java.lang.String} object
+	 */
 	private void parseDateRange(Set<LocalDate> holidays, String dateRange) {
 		String[] range = dateRange.split("-");
 		if (range.length == 2) {

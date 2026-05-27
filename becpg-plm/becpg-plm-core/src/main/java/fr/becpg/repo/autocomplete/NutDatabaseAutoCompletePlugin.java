@@ -21,12 +21,15 @@ import fr.becpg.repo.product.formulation.nutrient.NutDatabaseService;
 @Service("nutDatabaseAutoCompletePlugin")
 public class NutDatabaseAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
+	/** Constant <code>SOURCE_TYPE_NUT_DB="nutDataBase"</code> */
 	private static final String SOURCE_TYPE_NUT_DB = "nutDataBase";
+	/** Constant <code>SOURCE_TYPE_DATABASE_SUPPLIERS="nutDatabaseSuppliers"</code> */
 	private static final String SOURCE_TYPE_DATABASE_SUPPLIERS = "nutDatabaseSuppliers";
 
 	@Autowired
 	private NutDatabaseService nutDatabaseService;
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(NutDatabaseAutoCompletePlugin.class);
 
 	/** {@inheritDoc} */

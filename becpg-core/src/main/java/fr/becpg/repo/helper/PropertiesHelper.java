@@ -30,6 +30,9 @@ import org.alfresco.service.namespace.QName;
 public class PropertiesHelper {
 
 
+	/**
+	 * <p>Constructor for PropertiesHelper.</p>
+	 */
 	private PropertiesHelper() {
 		//Do Nothing
 	}

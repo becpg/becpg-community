@@ -28,6 +28,7 @@ import fr.becpg.report.client.ReportFormat;
  */
 public class ReportSearchDownloadExporter extends AbstractSearchDownloadExporter {
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(ReportSearchDownloadExporter.class);
 
 	private ReportServerSearchRenderer reportServerSearchRenderer;
@@ -35,6 +36,8 @@ public class ReportSearchDownloadExporter extends AbstractSearchDownloadExporter
 	ReportServerSearchContext exportSearchCtx;
 
 	ReportFormat format;
+
+	String[] parameters;
 
 	/**
 	 * <p>Constructor for ReportSearchDownloadExporter.</p>
@@ -51,12 +54,33 @@ public class ReportSearchDownloadExporter extends AbstractSearchDownloadExporter
 	public ReportSearchDownloadExporter(RetryingTransactionHelper transactionHelper, DownloadStatusUpdateService updateService,
 			DownloadStorage downloadStorage, ReportServerSearchRenderer reportServerSearchRenderer, NodeRef downloadNodeRef, NodeRef templateNodeRef,
 			Long nbOfLines, ReportFormat format) {
+		this(transactionHelper, updateService, downloadStorage, reportServerSearchRenderer, downloadNodeRef, templateNodeRef, nbOfLines, format, null);
+	}
+
+	/**
+	 * <p>Constructor for ReportSearchDownloadExporter.</p>
+	 *
+	 * @param transactionHelper a {@link org.alfresco.repo.transaction.RetryingTransactionHelper} object
+	 * @param updateService a {@link org.alfresco.repo.download.DownloadStatusUpdateService} object
+	 * @param downloadStorage a {@link org.alfresco.repo.download.DownloadStorage} object
+	 * @param reportServerSearchRenderer a {@link fr.becpg.repo.report.search.impl.ReportServerSearchRenderer} object
+	 * @param downloadNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param templateNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param nbOfLines a {@link java.lang.Long} object
+	 * @param format a {@link fr.becpg.report.client.ReportFormat} object
+	 * @param parameters an array of {@link java.lang.String} objects.
+	 * @since 25.3.0.34
+	 */
+	public ReportSearchDownloadExporter(RetryingTransactionHelper transactionHelper, DownloadStatusUpdateService updateService,
+			DownloadStorage downloadStorage, ReportServerSearchRenderer reportServerSearchRenderer, NodeRef downloadNodeRef, NodeRef templateNodeRef,
+			Long nbOfLines, ReportFormat format, String[] parameters) {
 
 		super(transactionHelper, updateService, downloadStorage, downloadNodeRef, templateNodeRef, nbOfLines);
 
 		this.reportServerSearchRenderer = reportServerSearchRenderer;
 
 		this.format = format;
+		this.parameters = parameters;
 
 	}
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2010-2011 beCPG. All rights reserved.
+ *  Copyright (C) 2010-2026 beCPG. All rights reserved.
  */
 package fr.becpg.repo.autocomplete.impl;
 
@@ -26,6 +26,7 @@ import fr.becpg.repo.autocomplete.AutoCompleteService;
 public class AutoCompleteServiceImpl implements AutoCompleteService {
 	
 
+	/** Constant <code>logger</code> */
 	private static final  Log logger = LogFactory.getLog(AutoCompleteServiceImpl.class);
 	
 	private Map<String,AutoCompletePlugin> plugins;
@@ -50,6 +51,12 @@ public class AutoCompleteServiceImpl implements AutoCompleteService {
 	}
 
 	
+	/**
+	 * <p>getListValuePluginBySourceType.</p>
+	 *
+	 * @param sourceType a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.autocomplete.AutoCompletePlugin} object
+	 */
 	private AutoCompletePlugin getListValuePluginBySourceType(String sourceType) {
 		if(plugins == null || plugins.isEmpty()){
 			plugins = new HashMap<>();

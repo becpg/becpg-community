@@ -37,18 +37,30 @@ import fr.becpg.repo.publication.PublicationChannelService;
  */
 public class RemoteChannelBatchWebScript extends AbstractWebScript {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(RemoteChannelBatchWebScript.class);
 
+	/** Constant <code>ENTITY="entity"</code> */
 	private static final String ENTITY = "entity";
+	/** Constant <code>ATTRIBUTES="attributes"</code> */
 	private static final String ATTRIBUTES = "attributes";
+	/** Constant <code>BATCH_ACK_ENDPOINT="/becpg/remote/channel/batch/ack"</code> */
 	private static final String BATCH_ACK_ENDPOINT = "/becpg/remote/channel/batch/ack";
+	/** Constant <code>CHANNEL_NODEREF="channelNodeRef"</code> */
 	private static final String CHANNEL_NODEREF = "channelNodeRef";
+	/** Constant <code>SUCCESS="SUCCESS"</code> */
 	private static final String SUCCESS = "SUCCESS";
+	/** Constant <code>STATUS="status"</code> */
 	private static final String STATUS = "status";
+	/** Constant <code>ACTION="action"</code> */
 	private static final String ACTION = "action";
+	/** Constant <code>CHANNEL_ID="channelId"</code> */
 	private static final String CHANNEL_ID = "channelId";
+	/** Constant <code>NODEREF="nodeRef"</code> */
 	private static final String NODEREF = "nodeRef";
+	/** Constant <code>START="start"</code> */
 	private static final String START = "start";
+	/** Constant <code>END="end"</code> */
 	private static final String END = "end";
 
 	private NamespaceService namespaceService;
@@ -236,6 +248,12 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 		res.getWriter().write(jsonResponse.toString());
 	}
 	
+	/**
+	 * <p>hasChannelPermission.</p>
+	 *
+	 * @param channelNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private boolean hasChannelPermission(NodeRef channelNodeRef) {
 		String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
 		List<NodeRef> channelAccounts = associationService.getTargetAssocs(channelNodeRef, PublicationModel.ASSOC_PUBCHANNEL_ACCOUNTS);
@@ -250,12 +268,25 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 				.anyMatch(u -> u.equals(currentUser));
 	}
 	
+	/**
+	 * <p>checkAttributePresence.</p>
+	 *
+	 * @param entityAttributes a {@link fr.becpg.repo.helper.json.JsonData} object
+	 * @param attribute a {@link java.lang.String} object
+	 */
 	private void checkAttributePresence(JsonData entityAttributes, String attribute) {
 		if (!entityAttributes.has(attribute)) {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'attributes' must contain '" + attribute + "'");
 		}
 	}
 	
+	/**
+	 * <p>getStringAttribute.</p>
+	 *
+	 * @param entityAttributes a {@link fr.becpg.repo.helper.json.JsonData} object
+	 * @param attribute a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getStringAttribute(JsonData entityAttributes, String attribute) {
 		try {
 			return entityAttributes.get(attribute).getString();
@@ -265,6 +296,13 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 		}
 	}
 	
+	/**
+	 * <p>getIntAttribute.</p>
+	 *
+	 * @param entityAttributes a {@link fr.becpg.repo.helper.json.JsonData} object
+	 * @param attribute a {@link java.lang.String} object
+	 * @return a {@link java.lang.Integer} object
+	 */
 	private Integer getIntAttribute(JsonData entityAttributes, String attribute) {
 		try {
 			return entityAttributes.get(attribute).getInt();
@@ -274,6 +312,13 @@ public class RemoteChannelBatchWebScript extends AbstractWebScript {
 		}
 	}
 	
+	/**
+	 * <p>parseDateAttribute.</p>
+	 *
+	 * @param entityAttributes a {@link fr.becpg.repo.helper.json.JsonData} object
+	 * @param attribute a {@link java.lang.String} object
+	 * @return a {@link java.util.Date} object
+	 */
 	private Date parseDateAttribute(JsonData entityAttributes, String attribute) {
 		try {
 			String dateString = entityAttributes.get(attribute).getString();

@@ -49,9 +49,12 @@ import fr.becpg.repo.system.SystemConfigurationService;
  */
 public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
+	/** Constant <code>COMPLETED=100</code> */
 	private static final int COMPLETED = 100;
+	/** Constant <code>DEFAULT_WORK_HOURS_PER_DAY=8</code> */
 	private static final int DEFAULT_WORK_HOURS_PER_DAY = 8;
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(TaskFormulationHandler.class);
 
 	private ProjectWorkflowService projectWorkflowService;
@@ -72,48 +75,103 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 	private fr.becpg.repo.project.CalendarService calendarService;
 
+	/**
+	 * <p>Setter for the field <code>calendarService</code>.</p>
+	 *
+	 * @param calendarService a {@link fr.becpg.repo.project.CalendarService} object
+	 */
 	public void setCalendarService(fr.becpg.repo.project.CalendarService calendarService) {
 		this.calendarService = calendarService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>personService</code>.</p>
+	 *
+	 * @param personService a {@link org.alfresco.service.cmr.security.PersonService} object
+	 */
 	public void setPersonService(PersonService personService) {
 		this.personService = personService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>namespaceService</code>.</p>
+	 *
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
+	 */
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
+	 *
+	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object
+	 */
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
+	 *
+	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
+	 */
 	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
 		this.systemConfigurationService = systemConfigurationService;
 	}
 
 	AlfrescoRepository<ProjectData> alfrescoRepository;
 
+	/**
+	 * <p>myProjectAttributes.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String myProjectAttributes() {
 		return systemConfigurationService.confValue("project.extractor.myProjectAttributes");
 	}
 
+	/**
+	 * <p>Setter for the field <code>projectWorkflowService</code>.</p>
+	 *
+	 * @param projectWorkflowService a {@link fr.becpg.repo.project.ProjectWorkflowService} object
+	 */
 	public void setProjectWorkflowService(ProjectWorkflowService projectWorkflowService) {
 		this.projectWorkflowService = projectWorkflowService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>projectService</code>.</p>
+	 *
+	 * @param projectService a {@link fr.becpg.repo.project.ProjectService} object
+	 */
 	public void setProjectService(ProjectService projectService) {
 		this.projectService = projectService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>projectActivityService</code>.</p>
+	 *
+	 * @param projectActivityService a {@link fr.becpg.repo.project.ProjectActivityService} object
+	 */
 	public void setProjectActivityService(ProjectActivityService projectActivityService) {
 		this.projectActivityService = projectActivityService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 */
 	public void setAlfrescoRepository(AlfrescoRepository<ProjectData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
@@ -175,6 +233,11 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		return true;
 	}
 
+	/**
+	 * <p>calculateCapacity.</p>
+	 *
+	 * @param tl a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+	 */
 	private void calculateCapacity(TaskListDataItem tl) {
 		if ((tl.getWork() != null) && (tl.getDuration() != null) && (tl.getDuration() != 0)) {
 			double hoursPerDay = DEFAULT_WORK_HOURS_PER_DAY;
@@ -185,6 +248,13 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		}
 	}
 
+	/**
+	 * <p>visitParents.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param tasks a {@link java.util.Set} object
+	 * @param calculateState a boolean
+	 */
 	private void visitParents(ProjectData projectData, Set<TaskWrapper> tasks, boolean calculateState) {
 
 		List<TaskWrapper> completed = new ArrayList<>();
@@ -311,6 +381,14 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		}
 	}
 
+	/**
+	 * <p>calculateStartDate.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param tasks a {@link java.util.Set} object
+	 * @param isTpl a boolean
+	 * @param today a {@link java.util.Date} object
+	 */
 	private void calculateStartDate(ProjectData projectData, Set<TaskWrapper> tasks, boolean isTpl, Date today) {
 
 		NodeRef calendarRef = calendarService.getCalendar(projectData.getNodeRef());
@@ -362,6 +440,13 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		}
 	}
 
+	/**
+	 * <p>visitProject.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param tasks a {@link java.util.Set} object
+	 * @param isTpl a boolean
+	 */
 	private void visitProject(ProjectData projectData, Set<TaskWrapper> tasks, boolean isTpl) {
 
 		double work = 0d;
@@ -471,6 +556,14 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		}
 	}
 
+	/**
+	 * <p>visit.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param allTasks a {@link java.util.Set} object
+	 * @param calculateState a boolean
+	 * @return a boolean
+	 */
 	private boolean visit(ProjectData projectData, Set<TaskWrapper> allTasks, boolean calculateState) {
 
 		List<TaskWrapper> completed = new ArrayList<>();
@@ -542,6 +635,14 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		return reformulate;
 	}
 
+	/**
+	 * <p>calculateState.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param task a {@link fr.becpg.repo.project.formulation.TaskWrapper} object
+	 * @param today a {@link java.util.Date} object
+	 * @return a boolean
+	 */
 	private boolean calculateState(ProjectData projectData, TaskWrapper task, Date today) {
 
 		boolean reformulate = false;
@@ -608,6 +709,13 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		return reformulate;
 	}
 
+	/**
+	 * <p>previousDone.</p>
+	 *
+	 * @param task a {@link fr.becpg.repo.project.formulation.TaskWrapper} object
+	 * @param visited a {@link java.util.Set} object
+	 * @return a boolean
+	 */
 	private boolean previousDone(TaskWrapper task, Set<TaskWrapper> visited) {
 		for (TaskWrapper t : task.getAncestors()) {
 			if (visited.contains(t)) {
@@ -625,6 +733,13 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		return true;
 	}
 
+	/**
+	 * <p>assign.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param taskListDataItem a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+	 * @param deliverables a {@link java.util.List} object
+	 */
 	private void assign(ProjectData projectData, TaskListDataItem taskListDataItem, List<DeliverableListDataItem> deliverables) {
 		if ((taskListDataItem.getResources() != null) && !taskListDataItem.getResources().isEmpty()) {
 
@@ -647,6 +762,15 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		}
 	}
 
+	/**
+	 * <p>extractReassignedPeople.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param taskListDataItem a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+	 * @param originalResources a {@link java.util.List} object
+	 * @param updatePermission a boolean
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> extractReassignedPeople(ProjectData projectData, TaskListDataItem taskListDataItem, List<NodeRef> originalResources,
 			boolean updatePermission) {
 
@@ -687,6 +811,14 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		return resources;
 	}
 
+	/**
+	 * <p>calculatePlanning.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param task a {@link fr.becpg.repo.project.formulation.TaskWrapper} object
+	 * @param now a {@link java.util.Date} object
+	 * @param today a {@link java.util.Date} object
+	 */
 	private void calculatePlanning(ProjectData projectData, TaskWrapper task, Date now, Date today) {
 		int maxDuration = 0;
 		int maxRealDuration = 0;
@@ -809,11 +941,25 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 		}
 	}
 
+	/**
+	 * <p>getTaskWorkingDayProvider.</p>
+	 *
+	 * @param task a {@link fr.becpg.repo.project.formulation.TaskWrapper} object
+	 * @return a {@link fr.becpg.repo.project.impl.WorkingDayProvider} object
+	 */
 	private WorkingDayProvider getTaskWorkingDayProvider(TaskWrapper task) {
 		NodeRef calendarRef = calendarService.getCalendar(task.getTask().getNodeRef());
 		return new CalendarWorkingDayProvider(calendarService, calendarRef);
 	}
 
+	/**
+	 * <p>visitDeliverables.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param taskListDataItem a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+	 * @param deliverables a {@link java.util.List} object
+	 * @return a boolean
+	 */
 	private boolean visitDeliverables(ProjectData projectData, TaskListDataItem taskListDataItem, List<DeliverableListDataItem> deliverables) {
 
 		TaskState previousState = taskListDataItem.getTaskState();

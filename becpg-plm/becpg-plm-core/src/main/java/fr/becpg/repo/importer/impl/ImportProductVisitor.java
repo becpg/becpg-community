@@ -38,6 +38,7 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 	/** Constant <code>MSG_ERROR_OVERRIDE_EXISTING_ONE="import_service.error.err_override_exist"{trunked}</code> */
 	protected static final String MSG_ERROR_OVERRIDE_EXISTING_ONE = "import_service.error.err_override_existing_one";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ImportProductVisitor.class);
 
 	/**

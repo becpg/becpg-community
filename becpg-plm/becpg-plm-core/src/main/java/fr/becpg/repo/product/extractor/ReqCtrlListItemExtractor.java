@@ -29,6 +29,7 @@ import fr.becpg.repo.survey.data.SurveyListDataItem;
  */
 public class ReqCtrlListItemExtractor implements DataListItemExtractor {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ReqCtrlListItemExtractor.class);
 
 	private NodeService nodeService;

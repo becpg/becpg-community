@@ -67,8 +67,10 @@ import fr.becpg.repo.system.SystemConfigurationService;
 @Service("hierarchyService")
 public class HierarchyServiceImpl implements HierarchyService {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(HierarchyServiceImpl.class);
 
+	/** Constant <code>SUFFIX_ALL="*"</code> */
 	private static final String SUFFIX_ALL = "*";
 
 	@Autowired
@@ -183,6 +185,16 @@ public class HierarchyServiceImpl implements HierarchyService {
 		return entityNodeRef;
 	}
 
+	/**
+	 * <p>getLuceneQuery.</p>
+	 *
+	 * @param path a {@link java.lang.String} object
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param property a {@link org.alfresco.service.namespace.QName} object
+	 * @param value a {@link java.lang.String} object
+	 * @param all a boolean
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 */
 	private BeCPGQueryBuilder getLuceneQuery(String path, NodeRef parentNodeRef, QName property, String value, boolean all) {
 
 		NodeRef listContainerNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
@@ -191,6 +203,16 @@ public class HierarchyServiceImpl implements HierarchyService {
 		return buildLuceneQuery(parentNodeRef, property, value, all, listContainerNodeRef);
 	}
 
+	/**
+	 * <p>buildLuceneQuery.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param property a {@link org.alfresco.service.namespace.QName} object
+	 * @param value a {@link java.lang.String} object
+	 * @param all a boolean
+	 * @param listContainerNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 */
 	private BeCPGQueryBuilder buildLuceneQuery(NodeRef parentNodeRef, QName property, String value, boolean all, NodeRef listContainerNodeRef) {
 		BeCPGQueryBuilder ret = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_LINKED_VALUE).parent(listContainerNodeRef)
 				.maxResults(RepoConsts.MAX_SUGGESTIONS);
@@ -298,6 +320,13 @@ public class HierarchyServiceImpl implements HierarchyService {
 
 	}
 
+	/**
+	 * <p>getHierarchyNodeRef.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param hierarchyQname a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getHierarchyNodeRef(NodeRef entityNodeRef, QName hierarchyQname) {
 
 		NodeRef hierarchyNodeRef = null;
@@ -333,6 +362,13 @@ public class HierarchyServiceImpl implements HierarchyService {
 		return destinationNodeRef;
 	}
 
+	/**
+	 * <p>getOrCreateHierachyFolder.</p>
+	 *
+	 * @param hierarchyNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getOrCreateHierachyFolder(NodeRef hierarchyNodeRef, NodeRef parentNodeRef) {
 		NodeRef destinationNodeRef = null;
 

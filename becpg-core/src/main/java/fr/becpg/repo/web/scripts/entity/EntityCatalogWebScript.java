@@ -38,6 +38,7 @@ import fr.becpg.repo.repository.L2CacheSupport;
  */
 public class EntityCatalogWebScript extends AbstractWebScript {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityCatalogWebScript.class);
 
 	private NodeService nodeService;

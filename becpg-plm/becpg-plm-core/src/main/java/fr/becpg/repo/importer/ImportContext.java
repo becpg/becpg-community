@@ -27,15 +27,22 @@ import fr.becpg.config.mapping.AbstractAttributeMapping;
  */
 public class ImportContext {
 
+	/** Constant <code>MAX_IMPORT_PRECISION=9</code> */
 	private static final int MAX_IMPORT_PRECISION = 9;
 
 	private ImportFileReader importFileReader;
 
+	/** Constant <code>FORMAT_DATE_FRENCH="dd/MM/yyyy"</code> */
 	private static final String FORMAT_DATE_FRENCH = "dd/MM/yyyy";
+	/** Constant <code>FORMAT_DATE_ENGLISH="yyyy/MM/dd"</code> */
 	private static final String FORMAT_DATE_ENGLISH = "yyyy/MM/dd";
+	/** Constant <code>FORMAT_DATETIME_FRENCH="dd/MM/yyyy HH:mm:ss"</code> */
 	private static final String FORMAT_DATETIME_FRENCH = "dd/MM/yyyy HH:mm:ss";
+	/** Constant <code>FORMAT_DATETIME_ENGLISH="yyyy/MM/dd HH:mm:ss"</code> */
 	private static final String FORMAT_DATETIME_ENGLISH = "yyyy/MM/dd HH:mm:ss";
+	/** Constant <code>MSG_ERROR_IMPORT_LINE="import_service.error.err_import_line"</code> */
 	private static final String MSG_ERROR_IMPORT_LINE = "import_service.error.err_import_line";
+	/** Constant <code>MSG_INFO_IMPORT_LINE="import_service.info.import_line"</code> */
 	private static final String MSG_INFO_IMPORT_LINE = "import_service.info.import_line";
 
 	private NodeRef nodeRef;

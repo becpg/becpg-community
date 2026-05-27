@@ -4,6 +4,8 @@ import java.util.Date;
 
 /**
  * Carries remote publication channel batch values between web scripts and the service layer.
+ *
+ * @author matthieu
  */
 public class ChannelData {
 
@@ -17,6 +19,11 @@ public class ChannelData {
 	private final String action;
 	private final Date modifiedDate;
 
+	/**
+	 * <p>Constructor for ChannelData.</p>
+	 *
+	 * @param builder a {@link fr.becpg.repo.publication.ChannelData.Builder} object
+	 */
 	private ChannelData(Builder builder) {
 		this.status = builder.status;
 		this.batchId = builder.batchId;
@@ -110,6 +117,11 @@ public class ChannelData {
 		return action;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>modifiedDate</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object
+	 */
 	public Date getModifiedDate() {
 		return modifiedDate;
 	}

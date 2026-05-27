@@ -13,6 +13,9 @@ package fr.becpg.model;
  */
 public class DeliverableUrl {
 	
+	/**
+	 * <p>Constructor for DeliverableUrl.</p>
+	 */
 	private DeliverableUrl(){
 		//Do Nothing
 	}

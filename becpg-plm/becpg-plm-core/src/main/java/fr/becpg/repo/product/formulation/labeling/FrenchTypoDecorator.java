@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
  */
 public class FrenchTypoDecorator extends RegexpLabelingDecorator {
 
+	/** Constant <code>pattern</code> */
 	private static Pattern pattern = Pattern.compile("([:;\\?\\!])");
 	
 	/** {@inheritDoc} */

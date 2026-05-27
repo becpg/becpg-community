@@ -63,6 +63,14 @@ public class ActivityExcelDataListOutputPlugin extends StandardExcelDataListOutp
 		return items;
 	}
 
+	/**
+	 * <p>decorate.</p>
+	 *
+	 * @param items a {@link java.util.Map} object
+	 * @param subCache a {@link java.util.Map} object
+	 * @return a {@link java.util.Map} object
+	 * @throws org.json.JSONException if any.
+	 */
 	@SuppressWarnings("unchecked")
 	private Map<String, Object> decorate(Map<String, Object> items, Map<String, JSONArray> subCache) throws JSONException {
 		String activityType = "";

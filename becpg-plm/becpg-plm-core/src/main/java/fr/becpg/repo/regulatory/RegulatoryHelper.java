@@ -8,12 +8,27 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
+/**
+ * <p>RegulatoryHelper class.</p>
+ *
+ * @author matthieu
+ */
 public class RegulatoryHelper {
 
+	/**
+	 * <p>Constructor for RegulatoryHelper.</p>
+	 */
 	private RegulatoryHelper() {
 		// Private constructor to prevent instantiation
 	}
 	
+	/**
+	 * <p>extractIngTypes.</p>
+	 *
+	 * @param ingListDataItem a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 * @return a {@link java.util.List} object
+	 */
 	public static List<IngTypeItem> extractIngTypes(IngListDataItem ingListDataItem, AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		if (ingListDataItem.getIngTypes() != null && !ingListDataItem.getIngTypes().isEmpty()) {
 			return ingListDataItem.getIngTypes().stream()

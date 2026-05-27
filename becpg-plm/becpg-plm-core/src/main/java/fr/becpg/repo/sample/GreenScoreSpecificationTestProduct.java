@@ -23,6 +23,7 @@ import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
  */
 public class GreenScoreSpecificationTestProduct extends StandardSoapTestProduct {
 
+	/** Constant <code>DEFAULT_RANGE="A: [80;100), B: [60;80), C: [40;60), D:"{trunked}</code> */
 	private static final String DEFAULT_RANGE = "A: [80;100), B: [60;80), C: [40;60), D: [20;40), E: [0;20)";
 
 	// Main categories
@@ -114,6 +115,11 @@ public class GreenScoreSpecificationTestProduct extends StandardSoapTestProduct 
 		soapProduct.setHcList(new ArrayList<>());
 	}
 
+	/**
+	 * <p>createGreenScoreList.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	private List<ScoreListDataItem> createGreenScoreList() {
 
 		List<ScoreListDataItem> scoreList = new ArrayList<>();
@@ -249,6 +255,17 @@ public class GreenScoreSpecificationTestProduct extends StandardSoapTestProduct 
 		return scoreList;
 	}
 
+	/**
+	 * <p>addCriterion.</p>
+	 *
+	 * @param scoreList a {@link java.util.List} object
+	 * @param parent a {@link fr.becpg.repo.project.data.projectList.ScoreListDataItem} object
+	 * @param key a {@link java.lang.String} object
+	 * @param weight a {@link java.lang.Double} object
+	 * @param field a {@link java.lang.String} object
+	 * @param detailFormula a {@link java.lang.String} object
+	 * @param ds an array of {@link java.lang.Double} objects
+	 */
 	private void addCriterion(List<ScoreListDataItem> scoreList, ScoreListDataItem parent, String key, Double weight, String field,
 			String detailFormula, Double[] ds) {
 
@@ -262,6 +279,16 @@ public class GreenScoreSpecificationTestProduct extends StandardSoapTestProduct 
 		}
 	}
 
+	/**
+	 * <p>crit.</p>
+	 *
+	 * @param label a {@link java.lang.String} object
+	 * @param range a {@link java.lang.String} object
+	 * @param weight a {@link java.lang.Double} object
+	 * @param formula a {@link java.lang.String} object
+	 * @param detailFormula a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef crit(String label, String range, Double weight, String formula, String detailFormula) {
 		NodeRef crit = crit(label);
 
@@ -276,14 +303,34 @@ public class GreenScoreSpecificationTestProduct extends StandardSoapTestProduct 
 		return crit;
 	}
 
+	/**
+	 * <p>createLcaFormula.</p>
+	 *
+	 * @param lca a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String createLcaFormula(String lca) {
 		return String.format("entity.lca['%s']?.value", CharactTestHelper.getOrCreateLCA(nodeService, lca));
 	}
 
+	/**
+	 * <p>createPhysicoFormula.</p>
+	 *
+	 * @param physico a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String createPhysicoFormula(String physico) {
 		return String.format("entity.physico['%s']?.value", CharactTestHelper.getOrCreatePhysico(nodeService, physico));
 	}
 
+	/**
+	 * <p>crit.</p>
+	 *
+	 * @param label a {@link java.lang.String} object
+	 * @param range a {@link java.lang.String} object
+	 * @param weight a {@link java.lang.Double} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef crit(String label, String range, Double weight) {
 		NodeRef crit = crit(label);
 
@@ -296,6 +343,12 @@ public class GreenScoreSpecificationTestProduct extends StandardSoapTestProduct 
 		return crit;
 	}
 
+	/**
+	 * <p>crit.</p>
+	 *
+	 * @param label a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef crit(String label) {
 		return CharactTestHelper.getOrCreateScoreCriterion(nodeService, label);
 	}

@@ -46,7 +46,9 @@ import fr.becpg.repo.hierarchy.HierarchyHelper;
 @Service
 public class ProjectListSortPlugin implements DataListSortPlugin {
 
+	/** Constant <code>PLUGIN_ID="ProjectList"</code> */
 	private static final String PLUGIN_ID = "ProjectList";
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ProjectListSortPlugin.class);
 
 	@Autowired

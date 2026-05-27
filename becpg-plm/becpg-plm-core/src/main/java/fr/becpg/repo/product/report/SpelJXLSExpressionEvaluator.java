@@ -26,6 +26,7 @@ public class SpelJXLSExpressionEvaluator implements ExpressionEvaluator {
 
 	private SpelFormulaService formulaService;
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(SpelJXLSExpressionEvaluator.class);
 
 	Expression expression;

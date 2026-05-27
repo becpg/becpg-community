@@ -34,10 +34,12 @@ import fr.becpg.repo.repository.model.VariantAwareDataItem;
  */
 public abstract class AbstractCostCalculatingFormulationHandler<T extends AbstractCostListDataItem<T>> extends AbstractSimpleListFormulationHandler<T> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AbstractCostCalculatingFormulationHandler.class);
 
 	protected PackagingHelper packagingHelper;
 
+	/** Constant <code>instance</code> */
 	private static AbstractCostCalculatingFormulationHandler<?> instance;
 	
 	/**
@@ -316,6 +318,15 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 		return mandatoryCharacts;
 	}
 	
+	/**
+	 * <p>synchronizeCost.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param templateCostListItem a T object
+	 * @param costList a {@link java.util.List} object
+	 * @param isTemplateCost a boolean
+	 * @param toRemove a {@link java.util.List} object
+	 */
 	private void synchronizeCost(ProductData formulatedProduct, T templateCostListItem, List<T> costList,
 			boolean isTemplateCost, List<T> toRemove) {
 
@@ -361,6 +372,13 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 
 	}
 
+	/**
+	 * <p>copyTemplateCost.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param templateCostList a T object
+	 * @param costList a T object
+	 */
 	private void copyTemplateCost(ProductData formulatedProduct, T templateCostList, T costList) {
 
 		if (logger.isDebugEnabled()) {
@@ -406,6 +424,14 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 		}
 	}
 
+	/**
+	 * <p>calculateValues.</p>
+	 *
+	 * @param templateCostList a T object
+	 * @param costList a T object
+	 * @param divide a {@link java.lang.Boolean} object
+	 * @param qty a {@link java.lang.Double} object
+	 */
 	private void calculateValues(T templateCostList, T costList, Boolean divide, Double qty) {
 
 		if (logger.isDebugEnabled()) {
@@ -447,6 +473,13 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 		
 	}
 
+	/**
+	 * <p>divide.</p>
+	 *
+	 * @param a a {@link java.lang.Double} object
+	 * @param b a {@link java.lang.Double} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double divide(Double a, Double b) {
 		if ((a != null) && (b != null) && (b != 0d)) {
 			return a / b;
@@ -454,6 +487,13 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 		return null;
 	}
 
+	/**
+	 * <p>multiply.</p>
+	 *
+	 * @param a a {@link java.lang.Double} object
+	 * @param b a {@link java.lang.Double} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double multiply(Double a, Double b) {
 		if ((a != null) && (b != null)) {
 			return a * b;
@@ -461,6 +501,12 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 		return null;
 	}
 
+	/**
+	 * <p>calculateParentCost.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param composite a {@link fr.becpg.repo.data.hierarchicalList.Composite} object
+	 */
 	private void calculateParentCost(ProductData formulatedProduct, Composite<T> composite) {
 		if (!composite.isLeaf()) {
 
@@ -525,6 +571,11 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 		}
 	}
 
+	/**
+	 * <p>calculateSimulationCosts.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 */
 	private void calculateSimulationCosts(ProductData formulatedProduct) {
 		Double netQty = FormulationHelper.getNetQtyForCost(formulatedProduct,null);
 

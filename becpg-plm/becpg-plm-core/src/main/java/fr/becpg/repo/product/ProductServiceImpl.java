@@ -58,6 +58,7 @@ import fr.becpg.repo.repository.L2CacheSupport;
 @Service("productService")
 public class ProductServiceImpl implements ProductService, InitializingBean, FormulationPlugin {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ProductServiceImpl.class);
 
 	private final AlfrescoRepository<ProductData> alfrescoRepository;

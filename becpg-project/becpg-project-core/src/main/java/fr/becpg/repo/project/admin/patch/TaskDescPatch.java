@@ -32,7 +32,9 @@ import fr.becpg.repo.admin.patch.AbstractBeCPGPatch;
  */
 public class TaskDescPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(TaskDescPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.projet.taskDescPatch.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.projet.taskDescPatch.result";
 	
 

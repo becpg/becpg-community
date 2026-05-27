@@ -51,8 +51,10 @@ import fr.becpg.report.client.ReportFormat;
  * @version $Id: $Id
  */
 public class ReportContentGet extends ContentGet {
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ReportContentGet.class);
 
+	/** Constant <code>PARAM_ENTITY_NODEREF="entityNodeRef"</code> */
 	private static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
 	/** Constant <code>PARAM_STORE_TYPE="store_type"</code> */
 	protected static final String PARAM_STORE_TYPE = "store_type";

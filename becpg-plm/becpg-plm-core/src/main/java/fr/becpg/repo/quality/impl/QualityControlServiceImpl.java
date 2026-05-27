@@ -71,7 +71,9 @@ import fr.becpg.repo.system.SystemConfigurationService;
  */
 public class QualityControlServiceImpl implements QualityControlService {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(QualityControlServiceImpl.class);
+	/** Constant <code>HOUR=3600L * 1000L</code> */
 	private static final long HOUR = 3600L * 1000L; // in milli-seconds.
 	private NodeService nodeService;
 	private EntityTplService entityTplService;
@@ -90,10 +92,16 @@ public class QualityControlServiceImpl implements QualityControlService {
 		this.systemConfigurationService = systemConfigurationService;
 	}
 	
+	/**
+	 * <p>sampleIdPattern.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String sampleIdPattern() {
 		return systemConfigurationService.confValue("beCPG.quality.sampleId.format");
 	}
 
+	/** Constant <code>datalistsToCopy</code> */
 	private static final Set<QName> datalistsToCopy = new HashSet<>();
 
 	static {
@@ -507,6 +515,11 @@ public class QualityControlServiceImpl implements QualityControlService {
 		updateSampleState(controlListNodeRef);
 	}
 
+	/**
+	 * <p>updateSampleState.</p>
+	 *
+	 * @param controlListNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void updateSampleState(NodeRef controlListNodeRef) {
 
 		String sampleId = (String) nodeService.getProperty(controlListNodeRef, QualityModel.PROP_CL_SAMPLE_ID);
@@ -598,6 +611,11 @@ public class QualityControlServiceImpl implements QualityControlService {
 
 	}
 
+	/**
+	 * <p>updateQualityControlState.</p>
+	 *
+	 * @param qualityControlData a {@link fr.becpg.repo.quality.data.QualityControlData} object
+	 */
 	private void updateQualityControlState(QualityControlData qualityControlData) {
 		boolean isQCControled = true;
 		boolean isQCCompliant = true;
@@ -653,6 +671,13 @@ public class QualityControlServiceImpl implements QualityControlService {
 		}
 	}
 
+	/**
+	 * <p>getDataListNodeRef.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param datalistQName a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getDataListNodeRef(NodeRef entityNodeRef, QName datalistQName) {
 		NodeRef listNodeRef = null;
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);

@@ -60,6 +60,7 @@ public class WorkflowDefinitionType
 	/** Key to the pending models */
 	private static final String KEY_PENDING_DEFS = "workflowDefinitionType.pendingDefs";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(WorkflowDefinitionType.class);
 
 	/**
@@ -131,6 +132,11 @@ public class WorkflowDefinitionType
 		}
 	}
 
+	/**
+	 * <p>queueModel.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void queueModel(NodeRef nodeRef) {
 
 		Set<NodeRef> pendingModels = TransactionSupportUtil.getResource(KEY_PENDING_DEFS);

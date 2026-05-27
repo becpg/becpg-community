@@ -40,13 +40,21 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  */
 public class MigrateWorkLogListToActivityListPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(MigrateWorkLogListToActivityListPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.migrateWorkLog.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.migrateWorkLog.result";
+	/** Constant <code>PROP_ACTIVITY_EVENT="activityEvent"</code> */
 	private static final String PROP_ACTIVITY_EVENT = "activityEvent";
+	/** Constant <code>PROP_ENTITY_NODEREF="entityNodeRef"</code> */
 	private static final String PROP_ENTITY_NODEREF = "entityNodeRef";
+	/** Constant <code>PROP_BEFORE_STATE="beforeState"</code> */
 	private static final String PROP_BEFORE_STATE = "beforeState";
+	/** Constant <code>PROP_AFTER_STATE="afterState"</code> */
 	private static final String PROP_AFTER_STATE = "afterState";
+	/** Constant <code>PROP_CONTENT="content"</code> */
 	private static final String PROP_CONTENT = "content";
+	/** Constant <code>PROP_TITLE="title"</code> */
 	private static final String PROP_TITLE = "title";
 
 	private NodeDAO nodeDAO;

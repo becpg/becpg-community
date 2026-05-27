@@ -165,6 +165,13 @@ public class Composite<T extends CompositeDataItem<T>> {
 		return sb.toString();
 	}
 
+	/**
+	 * <p>print.</p>
+	 *
+	 * @param sb a {@link java.lang.StringBuilder} object
+	 * @param prefix a {@link java.lang.String} object
+	 * @param isTail a boolean
+	 */
 	private void print(StringBuilder sb, String prefix, boolean isTail) {
 		sb.append(prefix).append(isTail ? "└──[" : "├──[").append(data == null ? "root" : data).append("]\n");
         for (Iterator<Composite<T>> iterator = children.iterator(); iterator.hasNext(); ) {

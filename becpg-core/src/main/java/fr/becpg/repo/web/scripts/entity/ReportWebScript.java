@@ -29,14 +29,21 @@ import fr.becpg.repo.report.entity.EntityReportService;
  */
 public class ReportWebScript extends AbstractWebScript {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ReportWebScript.class);
 
+	/** Constant <code>ACTION_CHECK="check"</code> */
 	private static final String ACTION_CHECK = "check";
+	/** Constant <code>ACTION_FORCE="force"</code> */
 	private static final String ACTION_FORCE = "force";
 
+	/** Constant <code>PARAM_ACTION="action"</code> */
 	private static final String PARAM_ACTION = "action";
+	/** Constant <code>PARAM_STORE_TYPE="store_type"</code> */
 	private static final String PARAM_STORE_TYPE = "store_type";
+	/** Constant <code>PARAM_STORE_ID="store_id"</code> */
 	private static final String PARAM_STORE_ID = "store_id";
+	/** Constant <code>PARAM_ID="id"</code> */
 	private static final String PARAM_ID = "id";
 
 	private NodeService nodeService;

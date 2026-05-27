@@ -49,6 +49,7 @@ import fr.becpg.repo.product.formulation.ProductSpecificationsFormulationHandler
 @DisallowConcurrentExecution
 public class ProductSpecificationFormulationJob extends AbstractScheduledLockedJob implements Job {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ProductSpecificationFormulationJob.class);
 	
 	/** {@inheritDoc} */

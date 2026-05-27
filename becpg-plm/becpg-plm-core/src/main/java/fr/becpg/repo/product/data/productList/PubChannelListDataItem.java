@@ -38,6 +38,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "bp:pubChannelList")
 public class PubChannelListDataItem extends BeCPGDataObject {
 
+	/** Constant <code>serialVersionUID=1L</code> */
 	private static final long serialVersionUID = 1L;
 	
 	private String batchId;

@@ -133,7 +133,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 
 		Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
 		Map<String, Object> item = doExtract(itemNodeRef, itemType, metadataFields, properties, cache);
-		return item.entrySet().stream().filter(map -> map.getKey().contains("entity_") && (map.getValue() != null))
+		return item.entrySet().stream().filter(map -> map.getKey().startsWith("entity_") && (map.getValue() != null))
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 	}
 

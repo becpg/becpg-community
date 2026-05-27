@@ -12,11 +12,18 @@ import org.alfresco.util.cache.RefreshableCacheEvent;
 public class BeCPGRefreshableCacheEvent  implements RefreshableCacheEvent
 {
 	  
+	/** Constant <code>serialVersionUID=-6131535575464962047L</code> */
 	private static final long serialVersionUID = -6131535575464962047L;
 	
 	private String cacheId;
 	    private String key;
 
+	    /**
+	     * <p>Constructor for BeCPGRefreshableCacheEvent.</p>
+	     *
+	     * @param cacheId a {@link java.lang.String} object
+	     * @param key a {@link java.lang.String} object
+	     */
 	    BeCPGRefreshableCacheEvent(String cacheId, String key)
 	    {
 	        this.cacheId = cacheId;

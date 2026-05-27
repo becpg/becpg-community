@@ -32,7 +32,9 @@ public class BatchAuditPlugin extends AbstractAuditPlugin implements DatabaseAud
 	public static final String BATCH_USER = "batchUser";
 	/** Constant <code>BATCH_ID="batchId"</code> */
 	public static final String BATCH_ID = "batchId";
+	/** Constant <code>BATCH="batch"</code> */
 	private static final String BATCH = "batch";
+	/** Constant <code>BATCH_AUDIT_ID="beCPGBatchAudit"</code> */
 	private static final String BATCH_AUDIT_ID = "beCPGBatchAudit";
 	
 	static {

@@ -56,12 +56,15 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 
 	private ShareFormParser shareFormParser;
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(BecpgFormServiceImpl.class);
 
 	Map<String, Map<String, BecpgFormDefinition>> definitions = new HashMap<>();
 
+	/** Constant <code>PREFIX_FILE="file:"</code> */
 	private static final String PREFIX_FILE = "file:";
 
+	/** Constant <code>WILDCARD="*"</code> */
 	private static final String WILDCARD = "*";
 
 	/**
@@ -237,6 +240,13 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 		return def;
 	}
 
+	/**
+	 * <p>parseDefinitions.</p>
+	 *
+	 * @param customFormDefinition a {@link java.lang.String} object
+	 * @return a {@link java.util.Map} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private Map<String, Map<String, BecpgFormDefinition>> parseDefinitions(String customFormDefinition) throws JSONException {
 		Map<String, Map<String, BecpgFormDefinition>> ret = new HashMap<>();
 		BecpgFormParser becpgFormParser = new BecpgFormParser();
@@ -244,6 +254,16 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 		return ret;
 	}
 
+	/**
+	 * <p>getFormDefinition.</p>
+	 *
+	 * @param defs a {@link java.util.Map} object
+	 * @param item a {@link org.alfresco.repo.forms.Item} object
+	 * @param formId a {@link java.lang.String} object
+	 * @param siteId a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.form.impl.BecpgFormDefinition} object
+	 * @throws fr.becpg.common.BeCPGException if any.
+	 */
 	private BecpgFormDefinition getFormDefinition(Map<String, Map<String, BecpgFormDefinition>> defs, Item item, String formId, String siteId)
 			throws BeCPGException {
 
@@ -281,6 +301,12 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 		return null;
 	}
 
+	/**
+	 * <p>processWildcards.</p>
+	 *
+	 * @param configs a {@link java.util.List} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<String> processWildcards(List<String> configs) {
 		List<String> ret = new ArrayList<>();
 		for (String config : configs) {
@@ -293,6 +319,12 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 	// file:${dir.root}/designer/*.xml
 	// file:C:\Alfresco\alf_data\*.xml
 
+	/**
+	 * <p>processWildcard.</p>
+	 *
+	 * @param sourceString a {@link java.lang.String} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<String> processWildcard(String sourceString) {
 		List<String> ret = new ArrayList<>();
 		if ((sourceString != null) && sourceString.startsWith(PREFIX_FILE) && sourceString.contains(WILDCARD)) {
@@ -317,6 +349,12 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 		return ret;
 	}
 
+	/**
+	 * <p>guessSeparator.</p>
+	 *
+	 * @param sourceString a {@link java.lang.String} object
+	 * @return a char
+	 */
 	private char guessSeparator(String sourceString) {
 		return sourceString.lastIndexOf('\\') > -1 ? '\\' : '/';
 	}

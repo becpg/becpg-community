@@ -87,6 +87,7 @@ import fr.becpg.repo.security.SecurityService;
 @Service("attributeExtractorService")
 public class AttributeExtractorServiceImpl implements AttributeExtractorService {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AttributeExtractorServiceImpl.class);
 
 	@Autowired
@@ -174,6 +175,12 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 	}
 
+	/**
+	 * <p>getAttributeExtractorPlugin.</p>
+	 *
+	 * @param type a {@link org.alfresco.service.namespace.QName} object
+	 * @return a AttributeExtractorPlugin object
+	 */
 	private AttributeExtractorPlugin getAttributeExtractorPlugin(QName type) {
 
 		Map<QName, AttributeExtractorPlugin> pluginsCache = beCPGCacheService.getFromCache(AttributeExtractorService.class.getName(), "PLUGINS_CACHE",
@@ -382,6 +389,16 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return getStringValue(null, propertyDef, v, propertyFormats, true);
 	}
 
+	/**
+	 * <p>getStringValue.</p>
+	 *
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
+	 * @param propertyDef a {@link org.alfresco.service.cmr.dictionary.PropertyDefinition} object
+	 * @param v a {@link java.io.Serializable} object
+	 * @param propertyFormats a {@link fr.becpg.config.format.PropertyFormats} object
+	 * @param formatData a boolean
+	 * @return a {@link java.lang.String} object
+	 */
 	@SuppressWarnings("unchecked")
 	private String getStringValue(QName nodeType, PropertyDefinition propertyDef, Serializable v, PropertyFormats propertyFormats,
 			boolean formatData) {
@@ -840,6 +857,13 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return ret;
 	}
 
+	/**
+	 * <p>getFieldDef.</p>
+	 *
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object
+	 * @param field a {@link fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure} object
+	 * @return a {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition} object
+	 */
 	private ClassAttributeDefinition getFieldDef(QName itemType, AttributeExtractorStructure field) {
 
 		if (!field.getItemType().equals(itemType)) {
@@ -848,10 +872,27 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return field.getFieldDef();
 	}
 
+	/**
+	 * <p>isAssoc.</p>
+	 *
+	 * @param propDef a {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition} object
+	 * @return a boolean
+	 */
 	private boolean isAssoc(ClassAttributeDefinition propDef) {
 		return propDef instanceof AssociationDefinition;
 	}
 
+	/**
+	 * <p>extractNodeData.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param properties a {@link java.util.Map} object
+	 * @param locale a {@link java.util.Locale} object
+	 * @param attribute a {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition} object
+	 * @param mode a {@link fr.becpg.config.format.FormatMode} object
+	 * @param order a int
+	 * @return a {@link java.lang.Object} object
+	 */
 	@SuppressWarnings("unchecked")
 	private Object extractNodeData(NodeRef nodeRef, Map<QName, Serializable> properties, Locale locale, ClassAttributeDefinition attribute,
 			FormatMode mode, int order) {
@@ -1009,6 +1050,12 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return null;
 	}
 
+	/**
+	 * <p>isPropertyToExtractAsAssoc.</p>
+	 *
+	 * @param attribute a {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition} object
+	 * @return a boolean
+	 */
 	private boolean isPropertyToExtractAsAssoc(ClassAttributeDefinition attribute) {
 		if (attribute instanceof PropertyDefinition) {
 			return ((PropertyDefinition) attribute).isMultiValued() && DataTypeDefinition.NODE_REF
@@ -1142,6 +1189,13 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return result;
 	}
 
+	/**
+	 * <p>hasReadAccess.</p>
+	 *
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
+	 * @param propName a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	private boolean hasReadAccess(QName nodeType, String propName) {
 		return securityService.computeAccessMode(null, nodeType, propName) != SecurityService.NONE_ACCESS;
 	}
@@ -1171,6 +1225,13 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return false;
 	}
 
+	/**
+	 * <p>internalMatchCriteria.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param criteriaMap a {@link java.util.Map} object
+	 * @return a boolean
+	 */
 	@SuppressWarnings("unchecked")
 	private boolean internalMatchCriteria(NodeRef nodeRef, Map<String, String> criteriaMap) {
 
@@ -1240,6 +1301,14 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		}
 	}
 
+	/**
+	 * <p>matchData.</p>
+	 *
+	 * @param data a {@link java.util.Map} object
+	 * @param critKey a {@link java.lang.String} object
+	 * @param criteriaMap a {@link java.util.Map} object
+	 * @return a boolean
+	 */
 	@SuppressWarnings("unchecked")
 	private boolean matchData(Map<String, Object> data, String critKey, Map<String, String> criteriaMap) {
 		if ((data == null) || data.isEmpty()) {
@@ -1336,6 +1405,13 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return true;
 	}
 
+	/**
+	 * <p>dateMatches.</p>
+	 *
+	 * @param value a {@link java.lang.String} object
+	 * @param compValue a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	private boolean dateMatches(String value, String compValue) {
 		String dateRegex = "^\\d{4}-\\d{2}-\\d{2}$";
 		Pattern pattern = Pattern.compile(dateRegex);

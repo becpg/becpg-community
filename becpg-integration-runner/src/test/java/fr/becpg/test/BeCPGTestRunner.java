@@ -109,6 +109,19 @@ public class BeCPGTestRunner extends SpringJUnit4ClassRunner {
 
 	private static Log logger = LogFactory.getLog(BeCPGTestRunner.class);
 
+	private static final CloseableHttpClient SHARED_HTTP_CLIENT;
+
+	static {
+		SHARED_HTTP_CLIENT = buildSharedHttpClient();
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			try {
+				SHARED_HTTP_CLIENT.close();
+			} catch (IOException e) {
+				logger.warn("Error closing shared HTTP client", e);
+			}
+		}));
+	}
+
 	public BeCPGTestRunner(Class<?> klass) throws InitializationError {
 		super(klass);
 	}
@@ -154,12 +167,12 @@ public class BeCPGTestRunner extends SpringJUnit4ClassRunner {
 			className += "#" + methodName;
 		}
 
-		try (CloseableHttpClient httpclient = createHttpClient()) {
+		try {
 			String fullUrl = buildTestUrl(className, method);
 			HttpGet get = new HttpGet(fullUrl);
 
 			long startTime = System.currentTimeMillis();
-			HttpResponse resp = httpclient.execute(get);
+			HttpResponse resp = SHARED_HTTP_CLIENT.execute(get);
 			long duration = System.currentTimeMillis() - startTime;
 
 			if (logger.isDebugEnabled()) {
@@ -187,9 +200,9 @@ public class BeCPGTestRunner extends SpringJUnit4ClassRunner {
 	}
 
 	/**
-	 * Create configured HTTP client with credentials, timeouts, retry logic, and connection pooling.
+	 * Build the shared HTTP client with credentials, timeouts, retry logic, and connection pooling.
 	 */
-	private CloseableHttpClient createHttpClient() {
+	private static CloseableHttpClient buildSharedHttpClient() {
 		String username = System.getProperty(ACS_USERNAME_PROP, DEFAULT_USERNAME);
 		String password = System.getProperty(ACS_PASSWORD_PROP, DEFAULT_PASSWORD);
 

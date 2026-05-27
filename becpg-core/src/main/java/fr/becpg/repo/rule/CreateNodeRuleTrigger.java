@@ -59,8 +59,10 @@ import fr.becpg.model.BeCPGModel;
  * @author Roy Wetherall
  */
 public class CreateNodeRuleTrigger extends RuleTriggerAbstractBase implements NodeServicePolicies.OnCreateNodePolicy {
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(CreateNodeRuleTrigger.class);
 
+	/** Constant <code>POLICY="onCreateNode"</code> */
 	private static final String POLICY = "onCreateNode";
 
 	/** Indicates whether this is a class behaviour or not */

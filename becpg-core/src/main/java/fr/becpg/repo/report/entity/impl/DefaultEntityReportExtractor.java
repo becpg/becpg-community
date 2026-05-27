@@ -103,6 +103,7 @@ import fr.becpg.repo.system.SystemConfigurationService;
 @Service
 public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(DefaultEntityReportExtractor.class);
 
 	/** Constant <code>TAG_ENTITY="entity"</code> */
@@ -157,16 +158,23 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected static final String AVATAR_IMG_ID = "avatar";
 	/** Constant <code>REPORT_LOGO_ID="report_logo"</code> */
 	protected static final String REPORT_LOGO_ID = "report_logo";
+	/** Constant <code>TAG_COMMENTS="comments"</code> */
 	private static final String TAG_COMMENTS = "comments";
+	/** Constant <code>TAG_COMMENT="comment"</code> */
 	private static final String TAG_COMMENT = "comment";
+	/** Constant <code>TAG_PREFERENCES="preferences"</code> */
 	private static final String TAG_PREFERENCES = "preferences";
+	/** Constant <code>TAG_PREFERENCE="preference"</code> */
 	private static final String TAG_PREFERENCE = "preference";
+	/** Constant <code>ATTR_ENTITY_CODE="entityCode"</code> */
 	private static final String ATTR_ENTITY_CODE = "entityCode";
+	/** Constant <code>ATTR_ENTITY_NAME="entityName"</code> */
 	private static final String ATTR_ENTITY_NAME = "entityName";
 
 	/** Constant <code>VALUE_NULL=""</code> */
 	protected static final String VALUE_NULL = "";
 
+	/** Constant <code>REGEX_REMOVE_CHAR="[^\\p{L}\\p{N}]"</code> */
 	private static final String REGEX_REMOVE_CHAR = "[^\\p{L}\\p{N}]";
 
 	/** Constant <code>hiddenNodeAttributes</code> */
@@ -177,6 +185,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	/** Constant <code>hiddenDataListItemAttributes</code> */
 	protected static final ArrayList<QName> hiddenDataListItemAttributes = new ArrayList<>(
 			Arrays.asList(ContentModel.PROP_CREATED, ContentModel.PROP_CREATOR, ContentModel.PROP_MODIFIED, ContentModel.PROP_MODIFIER));
+	/** Constant <code>FORUM_TO_TOPIC_ASSOC_QNAME</code> */
 	private static final QName FORUM_TO_TOPIC_ASSOC_QNAME = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "Comments");
 
 	@Autowired
@@ -185,10 +194,20 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	@Autowired
 	private EntityVersionService entityVersionService;
 	
+	/**
+	 * <p>mlTextFields.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String mlTextFields() {
 		return systemConfigurationService.confValue("beCPG.entity.report.mltext.fields");
 	}
 
+	/**
+	 * <p>mlTextLocales.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String mlTextLocales() {
 		return systemConfigurationService.confValue("beCPG.entity.report.mltext.locales");
 	}
@@ -211,6 +230,11 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		return systemConfigurationService.confValue("beCPG.product.report.assocsToExtractWithImage");
 	}
 
+	/**
+	 * <p>extraImagePaths.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extraImagePaths() {
 		return systemConfigurationService.confValue("beCPG.product.report.extraImagePaths");
 	}
@@ -382,6 +406,12 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		loadVersions(entityNodeRef, entityElt);
 	}
 
+	/**
+	 * <p>extractSiteInfo.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param entityElt a {@link org.dom4j.Element} object
+	 */
 	private void extractSiteInfo(NodeRef entityNodeRef, Element entityElt) {
 		Element siteElt = entityElt.addElement("site");
 		Path path = nodeService.getPath(entityNodeRef);
@@ -510,6 +540,17 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		extractImageInternal(entityNodeRef, imgNodeRef, imgId, imgsElt, context, extratAttributes);
 	}
 
+	/**
+	 * <p>extractImageInternal.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param imgNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param imgId a {@link java.lang.String} object
+	 * @param imgsElt a {@link org.dom4j.Element} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 * @param extratAttributes a {@link java.util.Map} object
+	 * @return a boolean
+	 */
 	private boolean extractImageInternal(NodeRef entityNodeRef, NodeRef imgNodeRef, String imgId, Element imgsElt, DefaultExtractorContext context,
 			Map<String, String> extratAttributes) {
 
@@ -1098,6 +1139,13 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	}
 
+	/**
+	 * <p>extractName.</p>
+	 *
+	 * @param targetClass a {@link org.alfresco.service.namespace.QName} object
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extractName(QName targetClass, NodeRef nodeRef) {
 		if (nodeService.exists(nodeRef)) {
 
@@ -1125,6 +1173,13 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 	}
 
+	/**
+	 * <p>loadComments.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param nodeElt a {@link org.dom4j.Element} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
 	private void loadComments(NodeRef nodeRef, Element nodeElt, DefaultExtractorContext context) {
 		if (nodeService.hasAspect(nodeRef, ForumModel.ASPECT_DISCUSSABLE)) {
 			List<NodeRef> assocs = associationService.getChildAssocs(nodeRef, ForumModel.ASSOC_DISCUSSION);
@@ -1397,6 +1452,14 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		return EntityReportExtractorPriority.LOW;
 	}
 
+	/**
+	 * <p>loadCreator.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param entityElt a {@link org.dom4j.Element} object
+	 * @param imgsElt a {@link org.dom4j.Element} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
 	private void loadCreator(NodeRef entityNodeRef, Element entityElt, Element imgsElt, DefaultExtractorContext context) {
 		if ((tenantAdminService != null) && tenantAdminService.isEnabled()) {
 			String creator = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATOR);

@@ -28,6 +28,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 @Service
 public class QNameAutoCompletePlugin implements AutoCompletePlugin {
 
+	/** Constant <code>SOURCE_TYPE_QNAME="qname"</code> */
 	private static final String SOURCE_TYPE_QNAME = "qname";
 
 	@Autowired

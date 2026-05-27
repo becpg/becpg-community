@@ -45,6 +45,7 @@ import fr.becpg.repo.autocomplete.impl.extractors.NodeRefAutoCompleteExtractor;
 @Service
 public class WorkflowPackageAutoCompletePlugin implements AutoCompletePlugin {
 
+	/** Constant <code>SOURCE_TYPE_WF_PACKAGE="workflow"</code> */
 	private static final String SOURCE_TYPE_WF_PACKAGE = "workflow";
 
 	@Autowired

@@ -55,6 +55,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 @Service
 public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(PackagingMaterialCharactDetailsVisitor.class);
 
 	private static class PackagingMaterialVisitorContext extends CharactDetailsVisitorContext {
@@ -70,12 +71,16 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	protected boolean shouldVisitPartItem(CharactDetailsVisitorContext context, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
 		if (simpleCharact instanceof PackMaterialListDataItem packMaterialListDataItem) {
 			PackagingLevel filterLevel = null;
 			if (context instanceof PackagingMaterialVisitorContext pContext) {
 				filterLevel = pContext.getFilterLevel();
+			}
+			if (filterLevel == null) {
+				return true;
 			}
 			PackagingLevel pkgLevel = packMaterialListDataItem.getPkgLevel();
 			if (pkgLevel == null && partProduct.isRawMaterial()) {
@@ -137,16 +142,26 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 		return ret;
 	}
 
+	/**
+	 * <p>visitMaterial.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.product.formulation.details.CharactDetailsVisitorContext} object
+	 * @param parent a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param packagingListDataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 * @param charactDetails a {@link fr.becpg.repo.product.data.CharactDetails} object
+	 * @param currLevel a {@link java.lang.Integer} object
+	 * @param subQty a double
+	 */
 	private void visitMaterial(CharactDetailsVisitorContext context, NodeRef parent, PackagingListDataItem packagingListDataItem, CharactDetails charactDetails, Integer currLevel,
 			double subQty)  {
 
 		if (nodeService.getType(packagingListDataItem.getProduct()).equals(PLMModel.TYPE_PACKAGINGKIT)) {
-			PackagingLevel filterLevel = PackagingLevel.Primary;
+			PackagingLevel filterLevel = null;
 			if (context instanceof PackagingMaterialVisitorContext pContext) {
 				filterLevel = pContext.getFilterLevel();
 			}
 			if ((packagingListDataItem.getQty() != null) && ProductUnit.P.equals(packagingListDataItem.getPackagingListUnit())
-					&& filterLevel.equals(packagingListDataItem.getPkgLevel()) ) {
+					&& (filterLevel == null || filterLevel.equals(packagingListDataItem.getPkgLevel())) ) {
 				subQty *= packagingListDataItem.getQty();
 			}
 			ProductData packagingListDataItemProduct = (ProductData) alfrescoRepository.findOne(packagingListDataItem.getProduct());
@@ -161,15 +176,25 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 
 	}
 
+	/**
+	 * <p>visitMaterialPackaging.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.product.formulation.details.CharactDetailsVisitorContext} object
+	 * @param parent a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param packagingListDataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 * @param charactDetails a {@link fr.becpg.repo.product.data.CharactDetails} object
+	 * @param currLevel a {@link java.lang.Integer} object
+	 * @param subQty a double
+	 */
 	private void visitMaterialPackaging(CharactDetailsVisitorContext context, NodeRef parent, PackagingListDataItem packagingListDataItem, CharactDetails charactDetails, Integer currLevel,
 			double subQty)  {
 		
-		PackagingLevel filterLevel = PackagingLevel.Primary;
+		PackagingLevel filterLevel = null;
 		if (context instanceof PackagingMaterialVisitorContext) {
 			filterLevel = ((PackagingMaterialVisitorContext) context).getFilterLevel();
 		}
 
-		if ((packagingListDataItem.getProduct() != null) && Objects.equals(filterLevel, packagingListDataItem.getPkgLevel())) {
+		if ((packagingListDataItem.getProduct() != null) && (filterLevel == null || Objects.equals(filterLevel, packagingListDataItem.getPkgLevel()))) {
 
 			PackagingMaterialData packagingMaterial = (PackagingMaterialData) alfrescoRepository.findOne(packagingListDataItem.getProduct());
 
@@ -306,7 +331,7 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 
 				visitPart(context, subProductData, compoListProduct, compoListDataItem.getNodeRef(), qties, currLevel);
 				if (shouldVisitNextLevel(currLevel, context.getMaxLevel(), compoListDataItem)) {
-					visitRecur(context, compoListProduct, currLevel + 1, weightUsed, volUsed, netQty);
+					visitRecurPMaterial(context, compoListProduct, currLevel + 1, weightUsed, volUsed, netQty);
 				}
 
 			}

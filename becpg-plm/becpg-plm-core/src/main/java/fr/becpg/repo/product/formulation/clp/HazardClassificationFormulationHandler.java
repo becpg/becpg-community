@@ -56,12 +56,18 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class HazardClassificationFormulationHandler extends FormulationBaseHandler<ProductData> {
 
+	/** Constant <code>DATABASES_FOLDER="/app:company_home/cm:System/cm:CLPDatab"{trunked}</code> */
 	private static final String DATABASES_FOLDER = "/app:company_home/cm:System/cm:CLPDatabases";
+	/** Constant <code>MISSING_CHARACTS_MSG="message.clp.missingCharacts"</code> */
 	private static final String MISSING_CHARACTS_MSG = "message.clp.missingCharacts";
+	/** Constant <code>FORMULA_ERROR_MSG="message.clp.formula.error"</code> */
 	private static final String FORMULA_ERROR_MSG = "message.clp.formula.error";
+	/** Constant <code>HAZARD_STATEMENT_NOT_FOUND_MSG="message.clp.hazardStatement.notFound"</code> */
 	private static final String HAZARD_STATEMENT_NOT_FOUND_MSG = "message.clp.hazardStatement.notFound";
+	/** Constant <code>PICTOGRAM_NOT_FOUND_MSG="message.clp.pictogram.notFound"</code> */
 	private static final String PICTOGRAM_NOT_FOUND_MSG = "message.clp.pictogram.notFound";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(HazardClassificationFormulationHandler.class);
 
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
@@ -196,6 +202,15 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 		return true;
 	}
 
+	/**
+	 * <p>processCSVData.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param retainNodes a {@link java.util.List} object
+	 * @param context a {@link org.springframework.expression.spel.support.StandardEvaluationContext} object
+	 * @param csvReader a {@link fr.becpg.common.csv.CSVReader} object
+	 * @throws java.io.IOException if any.
+	 */
 	private void processCSVData(ProductData formulatedProduct, List<HazardClassificationListDataItem> retainNodes, StandardEvaluationContext context,
 			CSVReader csvReader) throws IOException {
 		String[] data;
@@ -256,6 +271,13 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 
 	}
 
+	/**
+	 * <p>findOrCreateHazardClassificationListDataItem.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param newClp a {@link fr.becpg.repo.product.data.productList.HazardClassificationListDataItem} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.HazardClassificationListDataItem} object
+	 */
 	private HazardClassificationListDataItem findOrCreateHazardClassificationListDataItem(ProductData formulatedProduct,
 			HazardClassificationListDataItem newClp) {
 
@@ -277,6 +299,13 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 		return Boolean.TRUE.equals(ret.getIsManual()) ? ret : ret.merge(newClp);
 	}
 
+	/**
+	 * <p>handleFormulaError.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param formula a {@link java.lang.String} object
+	 * @param e a {@link java.lang.Exception} object
+	 */
 	private void handleFormulaError(ProductData formulatedProduct, String formula, Exception e) {
 		Throwable validCause = ExceptionStackUtil.getCause(e, RetryingTransactionHelper.RETRY_EXCEPTIONS);
 		if (validCause != null) {
@@ -296,6 +325,14 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 
 	}
 
+	/**
+	 * <p>populateHazardQuantities.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param clpQuantities a {@link java.util.Map} object
+	 * @param maxQuantities a {@link java.util.Map} object
+	 * @param details a {@link java.util.Map} object
+	 */
 	private void populateHazardQuantities(ProductData formulatedProduct, Map<String, Double> clpQuantities, Map<String, Double> maxQuantities,
 			Map<String, Map<IngItem, Double>> details) {
 		if (formulatedProduct.getIngList() != null) {
@@ -383,6 +420,14 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 		}
 	}
 
+	/**
+	 * <p>evaluateDetailFormula.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param context a {@link org.springframework.expression.spel.support.StandardEvaluationContext} object
+	 * @param formula a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String evaluateDetailFormula(ProductData formulatedProduct, StandardEvaluationContext context, String formula) {
 		if ((formula == null) || formula.isBlank()) {
 			return null;
@@ -397,16 +442,36 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 		}
 	}
 
+	/**
+	 * <p>findPictogram.</p>
+	 *
+	 * @param pictogramCode a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef findPictogram(String pictogramCode) {
 		return BeCPGQueryBuilder.createQuery().ofType(GHSModel.TYPE_PICTOGRAM).andPropEquals(GHSModel.PROP_PICTOGRAM_CODE, pictogramCode).inDB()
 				.singleValue();
 	}
 
+	/**
+	 * <p>findHazardStatement.</p>
+	 *
+	 * @param hazardCode a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef findHazardStatement(String hazardCode) {
 		return BeCPGQueryBuilder.createQuery().ofType(GHSModel.TYPE_HAZARD_STATEMENT).andPropEquals(GHSModel.PROP_HAZARD_CODE, hazardCode).inDB()
 				.singleValue();
 	}
 
+	/**
+	 * <p>addToDetails.</p>
+	 *
+	 * @param details a {@link java.util.Map} object
+	 * @param key a {@link java.lang.String} object
+	 * @param ingItem a {@link fr.becpg.repo.product.data.ing.IngItem} object
+	 * @param quantityPercentage a {@link java.lang.Double} object
+	 */
 	private void addToDetails(Map<String, Map<IngItem, Double>> details, String key, IngItem ingItem, Double quantityPercentage) {
 		if (ingItem != null) {
 			Map<IngItem, Double> casNumbersDetail = details.getOrDefault(key, new HashMap<>());
@@ -415,6 +480,14 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 		}
 	}
 
+	/**
+	 * <p>findPhysicoValue.</p>
+	 *
+	 * @param entity a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param physicoCode a {@link java.lang.String} object
+	 * @param missingCharacts a {@link java.util.Map} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double findPhysicoValue(ProductData entity, String physicoCode, Map<String, NodeRef> missingCharacts) {
 		PhysicoChemListDataItem physicoListItem = null;
 		if (entity.getPhysicoChemList() != null) {
@@ -447,6 +520,12 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 		return null;
 	}
 
+	/**
+	 * <p>accept.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a boolean
+	 */
 	private boolean accept(ProductData formulatedProduct) {
 		// Reject if the product contains the ASPECT_ENTITY_TPL aspect or is an instance of ProductSpecificationData
 		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (formulatedProduct instanceof ProductSpecificationData)) {
@@ -474,6 +553,12 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 		return fileFolderService.listFiles(dbFolderNR).get(0).getNodeRef();
 	}
 
+	/**
+	 * <p>getCSVReaderFromNodeRef.</p>
+	 *
+	 * @param file a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.common.csv.CSVReader} object
+	 */
 	private CSVReader getCSVReaderFromNodeRef(NodeRef file) {
 		ContentReader fileReader = contentService.getReader(file, ContentModel.PROP_CONTENT);
 		return new CSVReader(new InputStreamReader(fileReader.getContentInputStream(), java.nio.charset.StandardCharsets.UTF_8), ';', '"', 1);

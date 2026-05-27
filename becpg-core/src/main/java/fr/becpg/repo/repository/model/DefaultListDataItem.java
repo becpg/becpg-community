@@ -14,6 +14,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
 public class DefaultListDataItem extends BeCPGDataObject {
 
 	
+	/** Constant <code>serialVersionUID=162170923610286636L</code> */
 	private static final long serialVersionUID = 162170923610286636L;
 
 }

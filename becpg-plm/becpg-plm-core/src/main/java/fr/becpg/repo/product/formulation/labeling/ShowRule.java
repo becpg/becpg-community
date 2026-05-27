@@ -10,6 +10,11 @@ import javax.annotation.Nonnull;
 
 import fr.becpg.repo.helper.MLTextHelper;
 
+/**
+ * <p>ShowRule class.</p>
+ *
+ * @author matthieu
+ */
 class ShowRule {
 	String format;
 	RoundingMode roundingMode = null;

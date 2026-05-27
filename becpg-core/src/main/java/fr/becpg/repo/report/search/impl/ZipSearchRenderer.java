@@ -38,9 +38,10 @@ public class ZipSearchRenderer  implements SearchReportRenderer {
 	
 	/** {@inheritDoc} */
 	@Override
-	public void renderReport(NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream) {
-      throw new IllegalStateException("Please use async method");
-		
+	public void renderReport(NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream,
+			String[] parameters) {
+		throw new IllegalStateException("Please use async method");
+
 	}
 
 	/** {@inheritDoc} */
@@ -52,11 +53,11 @@ public class ZipSearchRenderer  implements SearchReportRenderer {
 
 	/** {@inheritDoc} */
 	@Override
-	public void executeAction(NodeRef templateNodeRef, NodeRef downloadNode, ReportFormat reportFormat) {
-		    Action action = actionService.createAction(ZipSearchAction.NAME);
-	        action.setExecuteAsynchronously(true);
-	        action.setParameterValue(ZipSearchAction.PARAM_TPL_NODEREF, templateNodeRef);
-	        actionService.executeAction(action, downloadNode);
+	public void executeAction(NodeRef templateNodeRef, NodeRef downloadNode, ReportFormat reportFormat, String[] parameters) {
+		Action action = actionService.createAction(ZipSearchAction.NAME);
+		action.setExecuteAsynchronously(true);
+		action.setParameterValue(ZipSearchAction.PARAM_TPL_NODEREF, templateNodeRef);
+		actionService.executeAction(action, downloadNode);
 	}
 	
 	

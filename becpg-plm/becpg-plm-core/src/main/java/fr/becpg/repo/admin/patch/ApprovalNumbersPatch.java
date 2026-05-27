@@ -33,7 +33,9 @@ import fr.becpg.model.PLMModel;
  */
 public class ApprovalNumbersPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ApprovalNumbersPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.approvalNumbersPatch.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.approvalNumbersPatch.result";
 
 	private QName ASSOC_PLANT_APPROVAL_NUMBERS = QName.createQName(BeCPGModel.BECPG_URI, "plantApprovalNumbers");

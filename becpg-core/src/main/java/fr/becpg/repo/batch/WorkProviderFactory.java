@@ -23,9 +23,14 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class WorkProviderFactory {
 
+	/** Constant <code>DEFAULT_PULL_SIZE=1000</code> */
 	private static final int DEFAULT_PULL_SIZE = 1000;
+	/** Constant <code>DEFAULT_PUSH_SIZE=15</code> */
 	private static final int DEFAULT_PUSH_SIZE = 15;
 
+	/**
+	 * <p>Constructor for WorkProviderFactory.</p>
+	 */
 	private WorkProviderFactory() {
 
 	}

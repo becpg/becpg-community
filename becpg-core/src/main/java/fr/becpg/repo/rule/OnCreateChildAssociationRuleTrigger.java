@@ -60,6 +60,7 @@ public class OnCreateChildAssociationRuleTrigger
      */
     private static Log logger = LogFactory.getLog(OnCreateChildAssociationRuleTrigger.class);
 	
+	/** Constant <code>POLICY_NAME="onCreateChildAssociation"</code> */
 	private static final String POLICY_NAME = "onCreateChildAssociation";
     
     private boolean isClassBehaviour = false;

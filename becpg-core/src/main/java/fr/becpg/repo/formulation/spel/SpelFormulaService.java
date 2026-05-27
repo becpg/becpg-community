@@ -39,6 +39,7 @@ import fr.becpg.repo.system.SystemConfigurationService;
 @SuppressWarnings("deprecation")
 public class SpelFormulaService {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(SpelFormulaService.class);
 
 	@Autowired
@@ -54,9 +55,11 @@ public class SpelFormulaService {
 	private CustomSpelFunctions[] customSpelFunctions;
 	
 	//  https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions-spel-compilation
+	/** Constant <code>parser</code> */
 	private static final ExpressionParser parser = new BeCPGSpelExpressionParser(
 			new SpelParserConfiguration(SpelCompilerMode.MIXED, SpelFormulaService.class.getClassLoader()));
 
+	/** Constant <code>EXPRESSION_CACHE_MAX_SIZE=500</code> */
 	private static final int EXPRESSION_CACHE_MAX_SIZE = 500;
 
 	private final Map<String, Expression> expressionCache = Collections.synchronizedMap(
@@ -93,6 +96,13 @@ public class SpelFormulaService {
 	}
 
 
+	/**
+	 * <p>registerCustomFunctions.</p>
+	 *
+	 * @param entity a T object
+	 * @param context a {@link org.springframework.expression.spel.support.StandardEvaluationContext} object
+	 * @param <T> a T class
+	 */
 	private <T extends RepositoryEntity> void registerCustomFunctions(T entity, StandardEvaluationContext context) {
 
 		context.setBeanResolver((context1, beanName) -> {
@@ -156,6 +166,15 @@ public class SpelFormulaService {
 		return context;
 	}
 
+	/**
+	 * <p>createDataListItemSpelContext.</p>
+	 *
+	 * @param entity a T object
+	 * @param dataListItem a {@link fr.becpg.repo.repository.RepositoryEntity} object
+	 * @param applySecurity a boolean
+	 * @param <T> a T class
+	 * @return a {@link org.springframework.expression.spel.support.StandardEvaluationContext} object
+	 */
 	private <T extends RepositoryEntity> StandardEvaluationContext createDataListItemSpelContext(T entity, RepositoryEntity dataListItem,
 			boolean applySecurity) {
 		DataListItemSpelContext<T> formulaContext = new DataListItemSpelContext<>(this);
@@ -357,8 +376,10 @@ public class SpelFormulaService {
 		}
 	}
 	
+	/** Constant <code>TYPE_NOT_AUTHORIZED="Type is not authorized: "</code> */
 	private static final String TYPE_NOT_AUTHORIZED = "Type is not authorized: ";
 	
+	/** Constant <code>FORBIDDEN_TYPES</code> */
 	private static final List<String> FORBIDDEN_TYPES = List.of("java.lang.System", "java.lang.Runtime", "java.lang.ProcessBuilder",
 			"java.lang.Class", "java.lang.ClassLoader", "java.lang.Thread", "java.lang.ThreadGroup", "java.lang.reflect.Method",
 			"java.lang.reflect.Field", "java.lang.reflect.Constructor", "java.lang.reflect.Proxy", "javax.script.ScriptEngine",

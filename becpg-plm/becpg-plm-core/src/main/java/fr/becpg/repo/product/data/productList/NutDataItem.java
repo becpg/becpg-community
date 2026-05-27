@@ -24,6 +24,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 public class NutDataItem extends BeCPGDataObject {
 
 
+	/** Constant <code>serialVersionUID=-4580421935974923617L</code> */
 	private static final long serialVersionUID = -4580421935974923617L;
 
 	

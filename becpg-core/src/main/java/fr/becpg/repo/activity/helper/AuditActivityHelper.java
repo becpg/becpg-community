@@ -15,6 +15,9 @@ import fr.becpg.repo.audit.plugin.impl.ActivityAuditPlugin;
  */
 public class AuditActivityHelper {
 	
+	/**
+	 * <p>Constructor for AuditActivityHelper.</p>
+	 */
 	private AuditActivityHelper() {
 		
 	}

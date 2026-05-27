@@ -54,6 +54,7 @@ import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorPlugin;
 public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin {
 
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(PersonAttributeExtractorPlugin.class);
 	
 	@Autowired

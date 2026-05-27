@@ -56,19 +56,31 @@ import fr.becpg.repo.signature.SignatureProjectService;
 @Service("signatureProjectService")
 public class SignatureProjectServiceImpl implements SignatureProjectService {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(SignatureProjectServiceImpl.class);
 	
 	// Constants
+	/** Constant <code>TASK_SIGNATURE_NAME_KEY="signatureWorkflow.task-signature.name"</code> */
 	private static final String TASK_SIGNATURE_NAME_KEY = "signatureWorkflow.task-signature.name";
+	/** Constant <code>TASK_REJECT_NAME_KEY="signatureWorkflow.task-reject.name"</code> */
 	private static final String TASK_REJECT_NAME_KEY = "signatureWorkflow.task-reject.name";
+	/** Constant <code>TASK_REJECT_DESCRIPTION_KEY="signatureWorkflow.task-reject.descripti"{trunked}</code> */
 	private static final String TASK_REJECT_DESCRIPTION_KEY = "signatureWorkflow.task-reject.description";
+	/** Constant <code>TASK_CHECKIN_NAME_KEY="signatureWorkflow.task-checkin.name"</code> */
 	private static final String TASK_CHECKIN_NAME_KEY = "signatureWorkflow.task-checkin.name";
+	/** Constant <code>PREPARE_SCRIPT="cm:prepare-signature.js"</code> */
 	private static final String PREPARE_SCRIPT = "cm:prepare-signature.js";
+	/** Constant <code>VALIDATE_SCRIPT="cm:validate-signature.js"</code> */
 	private static final String VALIDATE_SCRIPT = "cm:validate-signature.js";
+	/** Constant <code>REJECT_SCRIPT="cm:reject-signature.js"</code> */
 	private static final String REJECT_SCRIPT = "cm:reject-signature.js";
+	/** Constant <code>SIGN_SCRIPT="cm:sign-document.js"</code> */
 	private static final String SIGN_SCRIPT = "cm:sign-document.js";
+	/** Constant <code>NOTIFICATION_FREQUENCY=7</code> */
 	private static final int NOTIFICATION_FREQUENCY = 7;
+	/** Constant <code>SIGNATURE_TASK_DURATION=7</code> */
 	private static final int SIGNATURE_TASK_DURATION = 7;
+	/** Constant <code>INITIAL_NOTIFICATION=-1</code> */
 	private static final int INITIAL_NOTIFICATION = -1;
 
 	@Autowired
@@ -181,6 +193,11 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 		return project.getNodeRef();
 	}
 
+	/**
+	 * <p>closeSignedTasks.</p>
+	 *
+	 * @param project a {@link fr.becpg.repo.project.data.ProjectData} object
+	 */
 	private void closeSignedTasks(ProjectData project) {
 		for (TaskListDataItem task : project.getTaskList()) {
 			// Get deliverables associated with this task
@@ -213,6 +230,12 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 		return new ArrayList<>();
 	}
 
+	/**
+	 * <p>findSignatureProjectPlugin.</p>
+	 *
+	 * @param projectType a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.signature.SignatureProjectPlugin} object
+	 */
 	private SignatureProjectPlugin findSignatureProjectPlugin(String projectType) {
 		if (signatureProjectPlugins != null) {
 			for (SignatureProjectPlugin signatureProjectPlugin : signatureProjectPlugins) {
@@ -224,6 +247,14 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 		return null;
 	}
 
+	/**
+	 * <p>prepareDocuments.</p>
+	 *
+	 * @param projectNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param documents a {@link java.util.List} object
+	 * @param viewRecipients a {@link java.util.List} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> prepareDocuments(NodeRef projectNodeRef, List<NodeRef> documents, List<NodeRef> viewRecipients) {
 		List<NodeRef> preparedDocuments = new ArrayList<>();
 		NodeRef externalSignatureFolder = getExternalSignatureFolder(projectNodeRef, documents, viewRecipients);
@@ -258,6 +289,14 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 		return preparedDocuments;
 	}
 
+	/**
+	 * <p>getExternalSignatureFolder.</p>
+	 *
+	 * @param projectNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param documents a {@link java.util.List} object
+	 * @param viewRecipients a {@link java.util.List} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getExternalSignatureFolder(NodeRef projectNodeRef, List<NodeRef> documents, List<NodeRef> viewRecipients) {
 		if (signatureProjectPlugins != null) {
 			for (SignatureProjectPlugin signatureProjectPlugin : signatureProjectPlugins) {
@@ -270,6 +309,13 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 		return null;
 	}
 
+	/**
+	 * <p>createValidatingTask.</p>
+	 *
+	 * @param project a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param documents a {@link java.util.List} object
+	 * @param lastTask a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void createValidatingTask(ProjectData project, List<NodeRef> documents, NodeRef lastTask) {
 		TaskListDataItem validatingTask = projectService.insertNewTask(project, List.of(lastTask));
 		validatingTask.setTaskName(I18NUtil.getMessage(TASK_CHECKIN_NAME_KEY));
@@ -293,6 +339,13 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 		}
 	}
 
+	/**
+	 * <p>createRejectTask.</p>
+	 *
+	 * @param project a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param documents a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+	 */
 	private TaskListDataItem createRejectTask(ProjectData project, List<NodeRef> documents) {
 		TaskListDataItem rejectTask = projectService.insertNewTask(project, null);
 		rejectTask.setTaskName(I18NUtil.getMessage(TASK_REJECT_NAME_KEY));
@@ -317,6 +370,16 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 		return rejectTask;
 	}
 
+	/**
+	 * <p>createOrUpdateSignatureTasks.</p>
+	 *
+	 * @param project a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param documents a {@link java.util.List} object
+	 * @param recipients a {@link java.util.List} object
+	 * @param previousTask a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param rejectTask a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef createOrUpdateSignatureTasks(ProjectData project, List<NodeRef> documents, List<NodeRef> recipients, NodeRef previousTask,
 			TaskListDataItem rejectTask) {
 		for (NodeRef recipient : recipients) {

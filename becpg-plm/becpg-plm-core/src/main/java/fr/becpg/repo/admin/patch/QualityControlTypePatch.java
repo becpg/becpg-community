@@ -30,7 +30,9 @@ import fr.becpg.model.QualityModel;
  */
 public class QualityControlTypePatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(QualityControlTypePatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.qualityControlTypePatch.resu"{trunked}</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.qualityControlTypePatch.result";
 
 	private NodeDAO nodeDAO;

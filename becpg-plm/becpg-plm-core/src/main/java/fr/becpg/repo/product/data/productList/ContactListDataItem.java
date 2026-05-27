@@ -17,6 +17,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "bcpg:contactList")
 public class ContactListDataItem extends BeCPGDataObject {
 
+	/** Constant <code>serialVersionUID=7013902261053544166L</code> */
 	private static final long serialVersionUID = 7013902261053544166L;
 
 	private String firstName;

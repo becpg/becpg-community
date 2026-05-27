@@ -33,13 +33,21 @@ public class EntityIconServiceImpl implements EntityIconService {
 	@Autowired
 	private ContentService contentService;
 
+	/** Constant <code>DATA_IMAGE_PREFIX="data:"</code> */
 	private static final String DATA_IMAGE_PREFIX = "data:";
+	/** Constant <code>DATA_BASE64_ENCODING=";base64,"</code> */
 	private static final String DATA_BASE64_ENCODING = ";base64,";
+	/** Constant <code>URL_OPEN_TARGET_PATTERN="url('"</code> */
 	private static final String URL_OPEN_TARGET_PATTERN = "url('";
+	/** Constant <code>URL_CLOSE_TARGET_PATTERN="')"</code> */
 	private static final String URL_CLOSE_TARGET_PATTERN = "')";
+	/** Constant <code>OPEN_CURLY_BRACKET="{"</code> */
 	private static final String OPEN_CURLY_BRACKET = "{";
+	/** Constant <code>CLOSE_CURLY_BRACKET="}"</code> */
 	private static final String CLOSE_CURLY_BRACKET = "}";
+	/** Constant <code>DOUBLE_DASH="--"</code> */
 	private static final String DOUBLE_DASH = "--";
+	/** Constant <code>COLON=":"</code> */
 	private static final String COLON = ":";
 
 	/** {@inheritDoc} */

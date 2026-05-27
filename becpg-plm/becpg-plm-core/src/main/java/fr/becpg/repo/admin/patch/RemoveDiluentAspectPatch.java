@@ -31,8 +31,11 @@ import fr.becpg.model.BeCPGModel;
  */
 public class RemoveDiluentAspectPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>ASPECT_DILUENT</code> */
 	private static final QName ASPECT_DILUENT = QName.createQName(BeCPGModel.BECPG_URI, "diluentAspect");
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(RemoveDiluentAspectPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.RemoveDiluentAspectPatch"{trunked}</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.RemoveDiluentAspectPatch.result";
 
 	private NodeDAO nodeDAO;

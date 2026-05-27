@@ -125,6 +125,12 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 		}
 	}
 
+	/**
+	 * <p>mergeTitle.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param translatedPathMLText a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
 	private void mergeTitle(NodeRef entityNodeRef, MLText translatedPathMLText) {
 		boolean isMLAware = MLPropertyInterceptor.setMLAware(true);
 		try {

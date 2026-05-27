@@ -73,9 +73,13 @@ import fr.becpg.repo.security.plugins.SecurityServicePlugin;
 @Service("securityService")
 public class SecurityServiceImpl implements SecurityService {
 
+	/** Constant <code>ACLS_CACHE_KEY="ACLS_CACHE_KEY"</code> */
 	private static final String ACLS_CACHE_KEY = "ACLS_CACHE_KEY";
+	/** Constant <code>LOCAL_ACLS_CACHE_KEY="LOCAL_ACLS_CACHE_KEY"</code> */
 	private static final String LOCAL_ACLS_CACHE_KEY = "LOCAL_ACLS_CACHE_KEY";
+	/** Constant <code>USER_ROLE_CACHE_KEY="USER_ROLE_CACHE_KEY"</code> */
 	private static final String USER_ROLE_CACHE_KEY = "USER_ROLE_CACHE_KEY";
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(SecurityServiceImpl.class);
 
 	@Autowired
@@ -149,10 +153,24 @@ public class SecurityServiceImpl implements SecurityService {
 		}
 	}
 
+	/**
+	 * <p>isEntityTemplate.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private boolean isEntityTemplate(NodeRef nodeRef) {
 		return nodeRef != null && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL);
 	}
 
+	/**
+	 * <p>computeAccessMode.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
+	 * @param permissions a {@link java.util.List} object
+	 * @return a int
+	 */
 	private int computeAccessMode(NodeRef nodeRef, QName nodeType, List<PermissionModel> permissions) {
 		int accessMode = SecurityService.NONE_ACCESS;
 
@@ -207,6 +225,12 @@ public class SecurityServiceImpl implements SecurityService {
 
 	}
 
+	/**
+	 * <p>computeCacheKey.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String computeCacheKey(NodeRef nodeRef) {
 		String cacheKey = ACLS_CACHE_KEY;
 		if ((nodeRef != null) && nodeService.hasAspect(nodeRef, SecurityModel.ASPECT_SECURITY)) {
@@ -219,6 +243,12 @@ public class SecurityServiceImpl implements SecurityService {
 		return cacheKey;
 	}
 
+	/**
+	 * <p>getReadOnlyCachedMap.</p>
+	 *
+	 * @param cacheKey a {@link java.lang.String} object
+	 * @return a {@link java.util.Map} object
+	 */
 	private Map<String, Boolean> getReadOnlyCachedMap(String cacheKey) {
 		return beCPGCacheService.getFromCache(SecurityService.class.getName(), cacheKey + ".readOnly", () -> {
 			Map<String, Boolean> readOnlyMap = new HashMap<>();
@@ -262,6 +292,12 @@ public class SecurityServiceImpl implements SecurityService {
 		});
 	}
 
+	/**
+	 * <p>computeNodeTypeKey.</p>
+	 *
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String computeNodeTypeKey(QName nodeType) {
 		return nodeType.toString();
 	}
@@ -272,6 +308,12 @@ public class SecurityServiceImpl implements SecurityService {
 		beCPGCacheService.clearCache(SecurityService.class.getName());
 	}
 
+	/**
+	 * <p>getPermissionCachedMap.</p>
+	 *
+	 * @param cacheKey a {@link java.lang.String} object
+	 * @return a {@link java.util.Map} object
+	 */
 	private Map<String, List<PermissionModel>> getPermissionCachedMap(String cacheKey) {
 		return beCPGCacheService.getFromCache(SecurityService.class.getName(), cacheKey, () -> {
 			Map<String, List<PermissionModel>> permissionMap = new HashMap<>();
@@ -366,12 +408,22 @@ public class SecurityServiceImpl implements SecurityService {
 		});
 	}
 
+	/**
+	 * <p>isAdmin.</p>
+	 *
+	 * @return a boolean
+	 */
 	private boolean isAdmin() {
 		return authorityService.hasAdminAuthority() || AuthenticationUtil.isRunAsUserTheSystemUser();
 	}
 
 	/**
 	 * Check if current user is in corresponding group or role
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
+	 * @param groups a {@link java.util.List} object
+	 * @return a boolean
 	 */
 	private boolean isInGroup(NodeRef nodeRef, QName nodeType, List<NodeRef> groups) {
 
@@ -387,6 +439,14 @@ public class SecurityServiceImpl implements SecurityService {
 		});
 	}
 
+	/**
+	 * <p>computePluginAccessMode.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
+	 * @param accesMode a int
+	 * @return a int
+	 */
 	private int computePluginAccessMode(NodeRef nodeRef, QName nodeType, int accesMode) {
 		return Math.min(beCPGCacheService.getFromTransactionCache(SecurityService.class.getName() + ".computePluginAccessMode",
 				buildPluginAccessModeCacheKey(nodeRef, nodeType), () -> {
@@ -401,6 +461,13 @@ public class SecurityServiceImpl implements SecurityService {
 				}), accesMode);
 	}
 
+	/**
+	 * <p>buildCacheKey.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param groups a {@link java.util.List} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String buildCacheKey(NodeRef nodeRef, List<NodeRef> groups) {
 
 		String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
@@ -410,6 +477,13 @@ public class SecurityServiceImpl implements SecurityService {
 		return nodePart + "_" + groupPart + "_" + currentUser;
 	}
 
+	/**
+	 * <p>buildPluginAccessModeCacheKey.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String buildPluginAccessModeCacheKey(NodeRef nodeRef, QName nodeType) {
 		String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
 		String nodePart = (nodeRef != null) ? nodeRef.getId() : "null";
@@ -417,10 +491,22 @@ public class SecurityServiceImpl implements SecurityService {
 		return nodePart + "_" + nodeTypePart + "_" + currentUser;
 	}
 
+	/**
+	 * <p>computeNodeTypePropKey.</p>
+	 *
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
+	 * @param propName a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String computeNodeTypePropKey(QName nodeType, String propName) {
 		return nodeType.toString() + "_" + propName;
 	}
 
+	/**
+	 * <p>findAllAclGroups.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> findAllAclGroups() {
 		List<NodeRef> ret = new ArrayList<>();
 
@@ -476,6 +562,13 @@ public class SecurityServiceImpl implements SecurityService {
 		return ret;
 	}
 
+	/**
+	 * <p>appendPropName.</p>
+	 *
+	 * @param typeDefinition a {@link org.alfresco.service.cmr.dictionary.TypeDefinition} object
+	 * @param properties a {@link java.util.Map.Entry} object
+	 * @param ret a {@link java.util.List} object
+	 */
 	private void appendPropName(TypeDefinition typeDefinition, Entry<QName, PropertyDefinition> properties, List<String> ret) {
 		String key = properties.getKey().toPrefixString(namespaceService);
 		String label = dictionaryService.getTitle(properties.getValue(), typeDefinition.getName());

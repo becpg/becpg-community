@@ -31,6 +31,16 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface DataListIdentifierAttr  {
+	/**
+	 * <p>isDefaultPivotAssoc.</p>
+	 *
+	 * @return a boolean
+	 */
 	boolean isDefaultPivotAssoc() default true;
+	/**
+	 * <p>targetTypes.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	String targetTypes() default "";
 }

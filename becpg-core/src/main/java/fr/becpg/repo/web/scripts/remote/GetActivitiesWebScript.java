@@ -84,6 +84,7 @@ public class GetActivitiesWebScript extends AbstractEntityWebScript {
 		this.siteService = siteService;
 	}
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(GetActivitiesWebScript.class);
 
 	/** {@inheritDoc} */

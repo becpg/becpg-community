@@ -82,11 +82,13 @@ import fr.becpg.repo.survey.helper.SurveyableEntityHelper;
  */
 public class DocumentFormulationHandler extends FormulationBaseHandler<RepositoryEntity> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(DocumentFormulationHandler.class);
 
 	/** Constant <code>MESSAGE_DOCUMENT_FORMULATION_ERROR="message.formulate.document.error"</code> */
 	public static final String MESSAGE_DOCUMENT_FORMULATION_ERROR = "message.formulate.document.error";
 
+	/** Constant <code>MESSAGE_DOCUMENT_MANDATORY="message.formulate.document.mandatory"</code> */
 	private static final String MESSAGE_DOCUMENT_MANDATORY = "message.formulate.document.mandatory";
 
 	private FileFolderService fileFolderService;

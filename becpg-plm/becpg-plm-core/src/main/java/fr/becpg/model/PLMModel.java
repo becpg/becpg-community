@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2010-2011 beCPG. All rights reserved.
+ *  Copyright (C) 2010-2026 beCPG. All rights reserved.
  */
 package fr.becpg.model;
 
@@ -880,6 +880,7 @@ public interface PLMModel {
 	/** Constant <code>ASSOC_REGULATORY_USAGE_REF</code> */
 	QName ASSOC_REGULATORY_USAGE_REF = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryUsageRef");
 	
+	/** Constant <code>PROP_REQUIREMENT_CHECKSUM</code> */
 	QName PROP_REQUIREMENT_CHECKSUM = QName.createQName(BeCPGModel.BECPG_URI, "requirementChecksum");
 
 	/** Constant <code>TYPE_ING_REGULATORY_LIST</code> */

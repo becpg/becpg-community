@@ -28,6 +28,7 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 public class DocumentAspectPolicy extends AbstractBeCPGPolicy
 		implements ContentServicePolicies.OnContentUpdatePolicy, NodeServicePolicies.OnCreateAssociationPolicy {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(DocumentAspectPolicy.class);
 
 	private AssociationService associationService;

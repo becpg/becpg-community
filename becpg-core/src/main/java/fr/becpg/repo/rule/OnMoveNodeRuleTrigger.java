@@ -43,6 +43,7 @@ import fr.becpg.model.BeCPGModel;
  * @author matthieu
  */
 public class OnMoveNodeRuleTrigger extends RuleTriggerAbstractBase implements NodeServicePolicies.OnMoveNodePolicy {
+	/** Constant <code>POLICY_NAME="NodeServicePolicies.OnMoveNodePolicy.QN"{trunked}</code> */
 	private static final String POLICY_NAME = NodeServicePolicies.OnMoveNodePolicy.QNAME.getLocalName();
 
 	private boolean isClassBehaviour = false;
@@ -104,6 +105,11 @@ public class OnMoveNodeRuleTrigger extends RuleTriggerAbstractBase implements No
 		}
 	}
 
+	/**
+	 * <p>triggerChildrenRules.</p>
+	 *
+	 * @param newChildAssocRef a {@link org.alfresco.service.cmr.repository.ChildAssociationRef} object
+	 */
 	private void triggerChildrenRules(ChildAssociationRef newChildAssocRef) {
 		NodeRef nodeRef = newChildAssocRef.getChildRef();
 		boolean enabled = ruleService.rulesEnabled(nodeRef);

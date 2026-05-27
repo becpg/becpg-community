@@ -75,8 +75,10 @@ import fr.becpg.repo.system.SystemConfigurationService;
 @Service
 public class DefaultCompareEntityServicePlugin implements CompareEntityServicePlugin {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(DefaultCompareEntityServicePlugin.class);
 
+	/** Constant <code>COMPARISON_SEPARATOR=" - "</code> */
 	private static final String COMPARISON_SEPARATOR = " - ";
 
 	protected final AlfrescoRepository<BeCPGDataObject> alfrescoRepository;
@@ -135,10 +137,20 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		this.systemConfigurationService = systemConfigurationService;
 	}
 
+	/**
+	 * <p>customNames.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String customNames() {
 		return systemConfigurationService.confValue("beCPG.comparison.name.format");
 	}
 	
+	/**
+	 * <p>customPivots.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private String customPivots() {
 		return systemConfigurationService.confValue("beCPG.comparison.pivots");
 	}
@@ -240,6 +252,18 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 			int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap, double[] totalQty) {
 	}
 
+	/**
+	 * <p>compareFiles.</p>
+	 *
+	 * @param depthLevel a int
+	 * @param entity1 a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param entity2 a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param structCompareResults a {@link java.util.Map} object
+	 * @param structCompareListTMP a {@link java.util.List} object
+	 * @param comparison a {@link java.lang.String} object
+	 * @param rootInsert a boolean
+	 * @return a {@link org.alfresco.util.Pair} object
+	 */
 	private Pair<List<StructCompareResultDataItem>, Boolean> compareFiles(int depthLevel, NodeRef entity1, NodeRef entity2,
 			Map<String, List<StructCompareResultDataItem>> structCompareResults, List<StructCompareResultDataItem> structCompareListTMP,
 			String comparison, boolean rootInsert) {
@@ -359,6 +383,13 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		return resultsArray;
 	}
 
+	/**
+	 * <p>isContainOperatorDifferentThan.</p>
+	 *
+	 * @param equal a {@link fr.becpg.repo.entity.comparison.StructCompareOperator} object
+	 * @param structComparisonList a {@link java.util.List} object
+	 * @return a boolean
+	 */
 	private boolean isContainOperatorDifferentThan(StructCompareOperator equal, List<StructCompareResultDataItem> structComparisonList) {
 		boolean isDifferentTo = false;
 
@@ -437,18 +468,18 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		return isOperatorFolderIsEqual;
 	}
 
-	/**
-	 * Create a StructCompareResultDataItem which represent a folder. Then Merge
-	 * 'structCompareList with the folder representation and structListFiles.
-	 *
-	 * @param folderNodeRef1 the folder node from the first tree (can be null)
-	 * @param folderNodeRef2 the folder node from the second tree (can be null)
-	 * @param structListFiles list of file comparisons within the folder
-	 * @param structCompareList the list to merge into
-	 * @param depthLevel current depth level
-	 * @param root when true, create the folder parent entry
-	 * @param setFolderOperator when true, set folder operator as Modified, otherwise Equal
-	 */
+		/**
+		 * Create a StructCompareResultDataItem which represent a folder. Then Merge
+		 * 'structCompareList with the folder representation and structListFiles.
+		 *
+		 * @param folderNodeRef1 the folder node from the first tree (can be null)
+		 * @param folderNodeRef2 the folder node from the second tree (can be null)
+		 * @param structListFiles list of file comparisons within the folder
+		 * @param structCompareList the list to merge into
+		 * @param depthLevel current depth level
+		 * @param root when true, create the folder parent entry
+		 * @param setFolderOperator when true, set folder operator as Modified, otherwise Equal
+		 */
 		private void createFolderStruc(NodeRef folderNodeRef1, NodeRef folderNodeRef2, List<StructCompareResultDataItem> structListFiles,
 			List<StructCompareResultDataItem> structCompareList, int depthLevel, boolean root, boolean setFolderOperator) {
 
@@ -474,10 +505,26 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		}
 	}
 
+	/**
+	 * <p>getDataListQName.</p>
+	 *
+	 * @param listNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private QName getDataListQName(NodeRef listNodeRef) {
 		return QName.createQName((String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE), namespaceService);
 	}
 
+	/**
+	 * <p>compareDataLists.</p>
+	 *
+	 * @param dataListType a {@link org.alfresco.service.namespace.QName} object
+	 * @param dataList1NodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param dataList2NodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param nbEntities a int
+	 * @param comparisonPosition a int
+	 * @param comparisonMap a {@link java.util.Map} object
+	 */
 	private void compareDataLists(QName dataListType, NodeRef dataList1NodeRef, NodeRef dataList2NodeRef, int nbEntities, int comparisonPosition,
 			Map<String, CompareResultDataItem> comparisonMap) {
 
@@ -628,6 +675,17 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		}
 	}
 
+	/**
+	 * <p>calculateDataListsQty.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param dataListType a {@link org.alfresco.service.namespace.QName} object
+	 * @param comparisonMap a {@link java.util.Map} object
+	 * @param charactName a {@link java.lang.String} object
+	 * @param nbEntities a int
+	 * @param totalQty an array of {@link double} objects
+	 * @param position a int
+	 */
 	private void calculateDataListsQty(NodeRef nodeRef, QName dataListType, Map<String, CompareResultDataItem> comparisonMap, String charactName,
 			int nbEntities, double[] totalQty, int position) {
 		CompositionDataItem item = null;
@@ -665,6 +723,18 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		}
 	}
 
+	/**
+	 * <p>calculateDataListQty.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param item a {@link fr.becpg.repo.repository.model.CompositionDataItem} object
+	 * @param comparisonMap a {@link java.util.Map} object
+	 * @param charactName a {@link java.lang.String} object
+	 * @param dataListType a {@link org.alfresco.service.namespace.QName} object
+	 * @param pivotKey a {@link java.lang.String} object
+	 * @param nbEntities a int
+	 * @param comparisonPosition a int
+	 */
 	private void calculateDataListQty(ProductData productData, CompositionDataItem item, Map<String, CompareResultDataItem> comparisonMap,
 			String charactName, QName dataListType, String pivotKey, int nbEntities, int comparisonPosition) {
 		CurrentLevelQuantities levelQuantities = null;
@@ -792,6 +862,13 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		}
 	}
 
+	/**
+	 * <p>loadCompositeDataList.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param datalistType a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object
+	 */
 	private MultiLevelListData loadCompositeDataList(NodeRef entityNodeRef, QName datalistType) {
 		DataListFilter dataListFilter = new DataListFilter();
 		dataListFilter.setDataType(datalistType);
@@ -801,6 +878,12 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		return multiLevelDataListService.getMultiLevelListData(dataListFilter);
 	}
 
+	/**
+	 * <p>loadComparableItems.</p>
+	 *
+	 * @param compositeItem a {@link fr.becpg.repo.entity.comparison.CompositeComparableItem} object
+	 * @param listData a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object
+	 */
 	private void loadComparableItems(CompositeComparableItem compositeItem, MultiLevelListData listData) {
 
 		for (Entry<NodeRef, MultiLevelListData> entry : listData.getTree().entrySet()) {
@@ -821,6 +904,13 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		}
 	}
 
+	/**
+	 * <p>addComparableItem.</p>
+	 *
+	 * @param compositeItem a {@link fr.becpg.repo.entity.comparison.CompositeComparableItem} object
+	 * @param pivot a {@link java.lang.String} object
+	 * @param c a {@link fr.becpg.repo.entity.comparison.AbstractComparableItem} object
+	 */
 	private void addComparableItem(CompositeComparableItem compositeItem, String pivot, AbstractComparableItem c) {
 		String key = pivot;
 		if (compositeItem.get(pivot) != null) {
@@ -833,6 +923,15 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		compositeItem.add(key, c);
 	}
 
+	/**
+	 * <p>structCompareCompositeDataLists.</p>
+	 *
+	 * @param entityListType a {@link org.alfresco.service.namespace.QName} object
+	 * @param pivotProperty a {@link org.alfresco.service.namespace.QName} object
+	 * @param strucComparisonList a {@link java.util.List} object
+	 * @param compositeItem1 a {@link fr.becpg.repo.entity.comparison.CompositeComparableItem} object
+	 * @param compositeItem2 a {@link fr.becpg.repo.entity.comparison.CompositeComparableItem} object
+	 */
 	private void structCompareCompositeDataLists(QName entityListType, QName pivotProperty, List<StructCompareResultDataItem> strucComparisonList,
 			CompositeComparableItem compositeItem1, CompositeComparableItem compositeItem2) {
 
@@ -1074,6 +1173,20 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 
 	}
 
+	/**
+	 * <p>compareAssocs.</p>
+	 *
+	 * @param dataListType a {@link org.alfresco.service.namespace.QName} object
+	 * @param charactName a {@link java.lang.String} object
+	 * @param privotKey a {@link java.lang.String} object
+	 * @param propertyQName a {@link org.alfresco.service.namespace.QName} object
+	 * @param nodeRefs1 a {@link java.util.List} object
+	 * @param nodeRefs2 a {@link java.util.List} object
+	 * @param nbEntities a int
+	 * @param comparisonPosition a int
+	 * @param comparisonMap a {@link java.util.Map} object
+	 * @param isDifferent a boolean
+	 */
 	private void compareAssocs(QName dataListType, String charactName, String privotKey, QName propertyQName, List<NodeRef> nodeRefs1,
 			List<NodeRef> nodeRefs2, int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap, boolean isDifferent) {
 
@@ -1110,6 +1223,20 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 				comparisonPosition, isDifferent);
 	}
 
+	/**
+	 * <p>compareValues.</p>
+	 *
+	 * @param dataListType a {@link org.alfresco.service.namespace.QName} object
+	 * @param charactName a {@link java.lang.String} object
+	 * @param privotKey a {@link java.lang.String} object
+	 * @param propertyQName a {@link org.alfresco.service.namespace.QName} object
+	 * @param oValue1 a {@link java.io.Serializable} object
+	 * @param oValue2 a {@link java.io.Serializable} object
+	 * @param nbEntities a int
+	 * @param comparisonPosition a int
+	 * @param comparisonMap a {@link java.util.Map} object
+	 * @param propertyFormats a {@link fr.becpg.config.format.PropertyFormats} object
+	 */
 	@SuppressWarnings("deprecation")
 	private void compareValues(QName dataListType, String charactName, String privotKey, QName propertyQName, Serializable oValue1,
 			Serializable oValue2, int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap,
@@ -1239,6 +1366,13 @@ public class DefaultCompareEntityServicePlugin implements CompareEntityServicePl
 		return res;
 	}
 
+	/**
+	 * <p>getKeyFromPivots.</p>
+	 *
+	 * @param node a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param pivotProperties a {@link java.util.List} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getKeyFromPivots(NodeRef node, List<QName> pivotProperties) {
 		logger.debug("getKeyFromPivots, node = " + node);
 		StringBuilder builder = new StringBuilder();

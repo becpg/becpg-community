@@ -992,7 +992,9 @@ public class DiffMatchPatch {
 	}
 
 	// Define some regex patterns for matching boundaries.
+	/** Constant <code>BLANKLINEEND</code> */
 	private static final Pattern BLANKLINEEND = Pattern.compile("\\n\\r?\\n\\Z", Pattern.DOTALL);
+	/** Constant <code>BLANKLINESTART</code> */
 	private static final  Pattern BLANKLINESTART = Pattern.compile("\\A\\r?\\n\\r?\\n", Pattern.DOTALL);
 
 	/**

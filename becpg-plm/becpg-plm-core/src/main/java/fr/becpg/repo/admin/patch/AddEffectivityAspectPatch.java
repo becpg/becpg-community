@@ -34,7 +34,9 @@ import fr.becpg.model.PLMModel;
  */
 public class AddEffectivityAspectPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AddEffectivityAspectPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.addEffectivityAspectPatch.re"{trunked}</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.addEffectivityAspectPatch.result";
 
 	private NodeDAO nodeDAO;

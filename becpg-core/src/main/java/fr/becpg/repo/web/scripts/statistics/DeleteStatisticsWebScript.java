@@ -21,8 +21,11 @@ import fr.becpg.repo.audit.service.BeCPGAuditService;
  */
 public class DeleteStatisticsWebScript extends AbstractWebScript {
 
+	/** Constant <code>PARAM_TYPE="type"</code> */
 	private static final String PARAM_TYPE = "type";
+	/** Constant <code>PARAM_FROM_ID="fromId"</code> */
 	private static final String PARAM_FROM_ID = "fromId";
+	/** Constant <code>PARAM_TO_ID="toId"</code> */
 	private static final String PARAM_TO_ID = "toId";
 	
 	private BeCPGAuditService beCPGAuditService;
@@ -65,6 +68,12 @@ public class DeleteStatisticsWebScript extends AbstractWebScript {
 		
 	}
 	
+	/**
+	 * <p>getAuditType.</p>
+	 *
+	 * @param reqType a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.repo.audit.model.AuditType} object
+	 */
 	private AuditType getAuditType(String reqType) {
 		AuditType[] auditTypes = AuditType.class.getEnumConstants();
 		for (AuditType auditType : auditTypes) {

@@ -21,8 +21,10 @@ import org.springframework.util.ConcurrentReferenceHashMap;
 @Component
 public class MutexFactory {
 
+	/** Constant <code>LOCK_TIMEOUT</code> */
 	private static final Long LOCK_TIMEOUT = 5 * 60 * 1000L;
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(MutexFactory.class);
 
 	private ConcurrentReferenceHashMap<String, ReentrantLock> memoryMap;

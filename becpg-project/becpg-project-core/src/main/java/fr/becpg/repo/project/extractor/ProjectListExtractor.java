@@ -68,28 +68,45 @@ import fr.becpg.repo.security.SecurityService;
  */
 public class ProjectListExtractor extends SimpleExtractor {
 
+	/** Constant <code>PREF_FOLDER_FAVOURITES="org.alfresco.share.folders.favourites"</code> */
 	private static final String PREF_FOLDER_FAVOURITES = "org.alfresco.share.folders.favourites";
+	/** Constant <code>PROP_IS_FAVOURITE="isFavourite"</code> */
 	private static final String PROP_IS_FAVOURITE = "isFavourite";
+	/** Constant <code>FILTER_DATA="filterData"</code> */
 	private static final String FILTER_DATA = "filterData";
+	/** Constant <code>PAGINATION="pagination"</code> */
 	private static final String PAGINATION = "pagination";
 
+	/** Constant <code>VIEW_TASKS="tasks"</code> */
 	private static final String VIEW_TASKS = "tasks";
+	/** Constant <code>VIEW_RESOURCES="resources"</code> */
 	private static final String VIEW_RESOURCES = "resources";
+	/** Constant <code>FILTER_ENTITY_PROJECTS="entity-projects"</code> */
 	private static final String FILTER_ENTITY_PROJECTS = "entity-projects";
+	/** Constant <code>FILTER_FAVOURITES="favourites"</code> */
 	private static final String FILTER_FAVOURITES = "favourites";
+	/** Constant <code>FILTER_TASKS="tasks"</code> */
 	private static final String FILTER_TASKS = "tasks";
+	/** Constant <code>FILTER_MY_TASKS="my-tasks"</code> */
 	private static final String FILTER_MY_TASKS = "my-tasks";
+	/** Constant <code>FILTER_MY_PROJECTS="my-projects"</code> */
 	private static final String FILTER_MY_PROJECTS = "my-projects";
+	/** Constant <code>FILTER_PROJECTS="projects"</code> */
 	private static final String FILTER_PROJECTS = "projects";
 
+	/** Constant <code>PROJECT_LIST="projectList"</code> */
 	private static final String PROJECT_LIST = "projectList";
 
+	/** Constant <code>PROP_PROJECT_STATE="prop_pjt_projectState"</code> */
 	private static final String PROP_PROJECT_STATE = "prop_pjt_projectState";
 
+	/** Constant <code>PROP_PROJECT_OWNERS="prop_pjt_projectOwners"</code> */
 	private static final String PROP_PROJECT_OWNERS = "prop_pjt_projectOwners";
 
+	/** Constant <code>PROP_PROJECT_LEGEND="prop_pjt_projectLegends"</code> */
 	private static final String PROP_PROJECT_LEGEND = "prop_pjt_projectLegends";
 
+	/** Constant <code>PROP_SORT="sort"</code> */
 	private static final String PROP_SORT = "sort";
 
 	private String projectSearchTemplate = "%(cm:name bcpg:code cm:title)";
@@ -105,6 +122,7 @@ public class ProjectListExtractor extends SimpleExtractor {
 
 	private EntityActivityExtractorService entityActivityExtractorService;
 	
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ProjectListExtractor.class);
 	
 	/**
@@ -203,6 +221,11 @@ public class ProjectListExtractor extends SimpleExtractor {
 		return ret;
 	}
 
+	/**
+	 * <p>getFavorites.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> getFavorites() {
 
 		Map<String, Serializable> preferences = preferenceService.getPreferences(AuthenticationUtil.getFullyAuthenticatedUser());
@@ -229,6 +252,14 @@ public class ProjectListExtractor extends SimpleExtractor {
 		return ret;
 	}
 
+	/**
+	 * <p>getListNodeRef.</p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @param pagination a {@link fr.becpg.repo.entity.datalist.data.DataListPagination} object
+	 * @param favorites a {@link java.util.List} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> getListNodeRef(DataListFilter dataListFilter, DataListPagination pagination, List<NodeRef> favorites) {
 
 		List<NodeRef> results = paginatedSearchCache.getSearchResults(pagination.getQueryExecutionId());
@@ -270,6 +301,15 @@ public class ProjectListExtractor extends SimpleExtractor {
 		return pagination.paginate(results);
 	}
 
+	/**
+	 * <p>extractProjectResults.</p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @param pagination a {@link fr.becpg.repo.entity.datalist.data.DataListPagination} object
+	 * @param favorites a {@link java.util.List} object
+	 * @param beCPGQueryBuilder a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> extractProjectResults(DataListFilter dataListFilter, DataListPagination pagination, List<NodeRef> favorites,
 			BeCPGQueryBuilder beCPGQueryBuilder) {
 		List<NodeRef> results;
@@ -360,6 +400,14 @@ public class ProjectListExtractor extends SimpleExtractor {
 		return results;
 	}
 
+	/**
+	 * <p>getProjectResults.</p>
+	 *
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 * @param beCPGQueryBuilder a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object
+	 * @param pagination a {@link fr.becpg.repo.entity.datalist.data.DataListPagination} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> getProjectResults(DataListFilter dataListFilter, BeCPGQueryBuilder beCPGQueryBuilder, DataListPagination pagination) {
 
 		QName dataType = ProjectModel.TYPE_PROJECT;
@@ -555,6 +603,14 @@ public class ProjectListExtractor extends SimpleExtractor {
 		return ret;
 	}
 
+	/**
+	 * <p>extractTaskListResources.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param mode a {@link fr.becpg.config.format.FormatMode} object
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object
+	 * @param ret a {@link java.util.Map} object
+	 */
 	private void extractTaskListResources(NodeRef nodeRef, FormatMode mode, QName itemType, Map<String, Object> ret) {
 
 		if (FormatMode.CSV.equals(mode) || FormatMode.XLSX.equals(mode)) {
@@ -591,6 +647,12 @@ public class ProjectListExtractor extends SimpleExtractor {
 
 	}
 
+	/**
+	 * <p>extractResourcePropName.</p>
+	 *
+	 * @param resourceRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extractResourcePropName(NodeRef resourceRef) {
 		return (String) nodeService.getProperty(resourceRef, nodeService.getType(resourceRef).equals(ContentModel.TYPE_AUTHORITY_CONTAINER)
 				? (nodeService.getProperty(resourceRef, ContentModel.PROP_AUTHORITY_DISPLAY_NAME) != null ? ContentModel.PROP_AUTHORITY_DISPLAY_NAME

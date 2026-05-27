@@ -39,8 +39,10 @@ import fr.becpg.repo.variant.model.VariantData;
 @Service
 public class PackagingHelper implements InitializingBean {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(PackagingHelper.class);
 
+	/** Constant <code>instance</code> */
 	private static PackagingHelper instance = null;
 
 	private final NodeService nodeService;
@@ -136,6 +138,12 @@ public class PackagingHelper implements InitializingBean {
 		return packagingData;
 	}
 
+	/**
+	 * <p>getDefaultVariant.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef getDefaultVariant(ProductData productData) {
 		NodeRef defaultVariantNodeRef = null;
 		if (productData.getVariants() != null) {
@@ -148,6 +156,14 @@ public class PackagingHelper implements InitializingBean {
 		return defaultVariantNodeRef;
 	}
 
+	/**
+	 * <p>loadPackagingItem.</p>
+	 *
+	 * @param dataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 * @param packagingData a {@link fr.becpg.repo.product.data.packaging.PackagingData} object
+	 * @param currentVariants a {@link java.util.List} object
+	 * @param subQty a double
+	 */
 	private void loadPackagingItem(PackagingListDataItem dataItem, PackagingData packagingData,  List<NodeRef> currentVariants , double subQty) {
 
 		if (nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_PACKAGINGKIT)) {
@@ -157,6 +173,14 @@ public class PackagingHelper implements InitializingBean {
 		}
 	}
 
+	/**
+	 * <p>loadPackaging.</p>
+	 *
+	 * @param dataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 * @param packagingData a {@link fr.becpg.repo.product.data.packaging.PackagingData} object
+	 * @param currentVariants a {@link java.util.List} object
+	 * @param subQty a double
+	 */
 	private void loadPackaging(PackagingListDataItem dataItem, PackagingData packagingData, List<NodeRef> currentVariants, double subQty) {
 		QName nodeType = nodeService.getType(dataItem.getProduct());
 
@@ -257,6 +281,12 @@ public class PackagingHelper implements InitializingBean {
 	}
 
 
+	/**
+	 * <p>extractPalletInformations.</p>
+	 *
+	 * @param product a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param variantPackagingData a {@link fr.becpg.repo.product.data.packaging.VariantPackagingData} object
+	 */
 	private void extractPalletInformations(NodeRef product, VariantPackagingData variantPackagingData) {
 
 		variantPackagingData.setPalletLayers((Integer) nodeService.getProperty(product, PackModel.PROP_PALLET_LAYERS));
@@ -275,6 +305,14 @@ public class PackagingHelper implements InitializingBean {
 	
 
 	// manage 2 level depth
+	/**
+	 * <p>loadPackagingKit.</p>
+	 *
+	 * @param dataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 * @param packagingData a {@link fr.becpg.repo.product.data.packaging.PackagingData} object
+	 * @param currentVariants a {@link java.util.List} object
+	 * @param subQty a double
+	 */
 	private void loadPackagingKit(PackagingListDataItem dataItem, PackagingData packagingData,  List<NodeRef> currentVariants, double subQty) {
 
 		if (dataItem.getQty()!=null &&  ProductUnit.P.equals(dataItem.getPackagingListUnit()) ) {
@@ -300,6 +338,13 @@ public class PackagingHelper implements InitializingBean {
 		return instance.flatPackagingList(productData, 1d);
 	}
 
+	/**
+	 * <p>flatPackagingList.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param subQty a {@link java.lang.Double} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<PackagingListDataItem> flatPackagingList(ProductData productData, Double subQty) {
 		List<PackagingListDataItem> ret = new ArrayList<>();
 		for (PackagingListDataItem dataItem : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {

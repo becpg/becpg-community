@@ -30,7 +30,9 @@ import fr.becpg.model.PLMModel;
  */
 public class ForbiddenIngMaxUnitPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ForbiddenIngMaxUnitPatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.plm.ForbiddenIngMaxUnitPatch"{trunked}</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.ForbiddenIngMaxUnitPatch.result";
 
 	private NodeDAO nodeDAO;
@@ -46,6 +48,11 @@ public class ForbiddenIngMaxUnitPatch extends AbstractBeCPGPatch {
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
+	/**
+	 * <p>apply.</p>
+	 *
+	 * @param sourceType a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private void apply(QName sourceType) {
 		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 

@@ -29,6 +29,7 @@ import org.springframework.context.ApplicationContextAware;
  */
 public class ApplicationContextHelper implements ApplicationContextAware {
 		
+	/** Constant <code>ctx</code> */
 	private static ApplicationContext ctx = null;
 
 	/**

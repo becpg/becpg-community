@@ -22,8 +22,10 @@ import fr.becpg.repo.search.PaginatedSearchCache;
 @Service("paginatedSearchCache")
 public class PaginatedSearchCacheImpl  implements PaginatedSearchCache {
 
+		/** Constant <code>CACHE_KEY="PaginatedSearchCache.class.getName()"</code> */
 		private static final String CACHE_KEY = PaginatedSearchCache.class.getName();
 		
+		/** Constant <code>CACHE_KEY_MULTI_LEVEL="PaginatedSearchCache.class.getName()+.m"{trunked}</code> */
 		private static final String CACHE_KEY_MULTI_LEVEL = PaginatedSearchCache.class.getName()+".multiLevel";
 		
 	
@@ -49,6 +51,12 @@ public class PaginatedSearchCacheImpl  implements PaginatedSearchCache {
 			return ret;
 		}
 		
+		/**
+		 * <p>extract.</p>
+		 *
+		 * @param data a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object
+		 * @return a {@link java.util.List} object
+		 */
 		private List<NodeRef> extract(MultiLevelListData data) {
 			List<NodeRef> ret = new ArrayList<>();
 			

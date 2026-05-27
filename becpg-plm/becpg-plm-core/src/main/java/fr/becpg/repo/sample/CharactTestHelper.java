@@ -31,6 +31,7 @@ import fr.becpg.repo.survey.SurveyModel;
  */
 public class CharactTestHelper {
 
+	/** Constant <code>NUTRIENT_CHARACT_NAMES</code> */
 	private static final Map<String, String> NUTRIENT_CHARACT_NAMES = Map.ofEntries(
 			Map.entry("ENER-KJO", "Energy kJ"),
 			Map.entry("ENER-Kcal", "Energy kcal"),
@@ -53,6 +54,9 @@ public class CharactTestHelper {
 			Map.entry("SATFAT", "Fatty acids, total saturated"),
 			Map.entry("FIBT", "Fiber, total dietary"));
 
+	/**
+	 * <p>Constructor for CharactTestHelper.</p>
+	 */
 	private CharactTestHelper() {
 		//Do Nothing
 	}

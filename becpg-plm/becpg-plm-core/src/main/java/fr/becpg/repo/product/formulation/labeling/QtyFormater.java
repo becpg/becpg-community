@@ -15,6 +15,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class QtyFormater {
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(QtyFormater.class);
 
 	private DecimalFormat decimalFormat;

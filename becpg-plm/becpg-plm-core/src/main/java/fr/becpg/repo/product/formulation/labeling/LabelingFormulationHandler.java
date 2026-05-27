@@ -86,8 +86,10 @@ import fr.becpg.repo.variant.filters.VariantFilters;
  */
 public class LabelingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(LabelingFormulationHandler.class);
 
+	/** Constant <code>NULL_ING_ERROR="message.formulate.labelRule.error.nullI"{trunked}</code> */
 	private static final String NULL_ING_ERROR = "message.formulate.labelRule.error.nullIng";
 
 	private NodeService nodeService;
@@ -111,6 +113,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		this.systemConfigurationService = systemConfigurationService;
 	}
 
+	/**
+	 * <p>ingsCalculatingWithYield.</p>
+	 *
+	 * @return a boolean
+	 */
 	private boolean ingsCalculatingWithYield() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.ingsCalculatingWithYield"));
 	}
@@ -470,6 +477,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		return true;
 	}
 
+	/**
+	 * <p>remapRulesFromOtherEntities.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param labelingRuleListsByGroup a {@link java.util.Map} object
+	 */
 	private void remapRulesFromOtherEntities(ProductData formulatedProduct, Map<String, List<LabelingRuleListDataItem>> labelingRuleListsByGroup) {
 		List<LabelingRuleListDataItem> allRules = labelingRuleListsByGroup.values().stream().flatMap(k -> k.stream()).toList();
 		
@@ -491,6 +504,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 	}
 
+	/**
+	 * <p>extractAllergens.</p>
+	 *
+	 * @param labelingFormulaContext a {@link fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext} object
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 */
 	private void extractAllergens(LabelingFormulaContext labelingFormulaContext, ProductData productData) {
 		AllergenHelper.AllergenMaps maps = AllergenHelper.extract(productData, alfrescoRepository, nodeService);
 		labelingFormulaContext.getAllergens().putAll(maps.getAllergens());
@@ -503,6 +522,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		labelingFormulaContext.getAllInVolAllergensRawMaterial().putAll(maps.getAllInVolAllergensRawMaterial());
 	}
 
+	/**
+	 * <p>applyMeatContentRules.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param labelingFormulaContext a {@link fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext} object
+	 */
 	private void applyMeatContentRules(ProductData formulatedProduct, CompositeLabeling parent, LabelingFormulaContext labelingFormulaContext) {
 
 		if (!labelingFormulaContext.getMeatContentRules().isEmpty() && !formulatedProduct.getMeatContents().isEmpty()) {
@@ -627,6 +653,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
+	/**
+	 * <p>aggregateLegalName.</p>
+	 *
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param labelingFormulaContext a {@link fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext} object
+	 * @param multiLevel a boolean
+	 */
 	private void aggregateLegalName(CompositeLabeling parent, LabelingFormulaContext labelingFormulaContext, boolean multiLevel) {
 
 		Map<String, List<CompositeLabeling>> componentsByName = new HashMap<>();
@@ -670,6 +703,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
+	/**
+	 * <p>mergeAtEndLabeling.</p>
+	 *
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param labelingFormulaContext a {@link fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext} object
+	 * @param componentsByName a {@link java.util.Map} object
+	 * @param isRoot a boolean
+	 */
 	private void mergeAtEndLabeling(CompositeLabeling parent, LabelingFormulaContext labelingFormulaContext,
 			Map<String, List<CompositeLabeling>> componentsByName, boolean isRoot) {
 
@@ -726,6 +767,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
+	/**
+	 * <p>merge.</p>
+	 *
+	 * @param prev a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param component a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 */
 	private void merge(CompositeLabeling prev, CompositeLabeling component) {
 		if ((prev != null) && (component != null)) {
 			if ((prev.getQty() != null) && (component.getQty() != null)) {
@@ -784,6 +831,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 	}
 
+	/**
+	 * <p>copyAttributes.</p>
+	 *
+	 * @param prev a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param component a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 */
 	private void copyAttributes(CompositeLabeling prev, CompositeLabeling component) {
 
 		prev.getAllergens().addAll(component.getAllergens());
@@ -802,6 +855,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
+	/**
+	 * <p>mergeCompositeLabeling.</p>
+	 *
+	 * @param lblCompositeContext a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param labelingFormulaContext a {@link fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext} object
+	 * @return a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 */
 	private CompositeLabeling mergeCompositeLabeling(CompositeLabeling lblCompositeContext, LabelingFormulaContext labelingFormulaContext) {
 		CompositeLabeling merged = new CompositeLabeling();
 		merged.setQtyTotal(lblCompositeContext.getQtyTotal());
@@ -870,6 +930,15 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
+	/**
+	 * <p>computeVolumePerc.</p>
+	 *
+	 * @param labelingFormulaContext a {@link fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext} object
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param component a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param ratio a {@link java.lang.Double} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double computeVolumePerc(LabelingFormulaContext labelingFormulaContext, CompositeLabeling parent, CompositeLabeling component,
 			Double ratio) {
 		BigDecimal ret = labelingFormulaContext.computeVolumePerc(parent, component,
@@ -877,6 +946,15 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		return ret != null ? ret.doubleValue() : null;
 	}
 
+	/**
+	 * <p>computeQtyPerc.</p>
+	 *
+	 * @param labelingFormulaContext a {@link fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext} object
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param component a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param ratio a {@link java.lang.Double} object
+	 * @return a {@link java.lang.Double} object
+	 */
 	private Double computeQtyPerc(LabelingFormulaContext labelingFormulaContext, CompositeLabeling parent, CompositeLabeling component,
 			Double ratio) {
 		BigDecimal ret = labelingFormulaContext.computeQtyPerc(parent, component,
@@ -884,6 +962,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		return ret != null ? ret.doubleValue() : null;
 	}
 
+	/**
+	 * <p>getLabelingRules.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.util.Map} object
+	 */
 	private Map<String, List<LabelingRuleListDataItem>> getLabelingRules(ProductData formulatedProduct) {
 		Map<String, List<LabelingRuleListDataItem>> ret = new TreeMap<>(Comparable::compareTo);
 		if (formulatedProduct.getLabelingListView().getLabelingRuleList() != null) {
@@ -930,6 +1014,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		return ret;
 	}
 
+	/**
+	 * <p>addLabelingRule.</p>
+	 *
+	 * @param ret a {@link java.util.Map} object
+	 * @param labelingRule a {@link fr.becpg.repo.product.data.productList.LabelingRuleListDataItem} object
+	 */
 	private void addLabelingRule(Map<String, List<LabelingRuleListDataItem>> ret, LabelingRuleListDataItem labelingRule) {
 		if ((labelingRule.getGroups() != null) && !labelingRule.getGroups().isEmpty()) {
 			for (String group : labelingRule.getGroups()) {
@@ -954,6 +1044,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 	}
 
+	/**
+	 * <p>copyTemplateLabelingRuleList.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 */
 	private void copyTemplateLabelingRuleList(ProductData formulatedProduct) {
 		if ((formulatedProduct.getEntityTpl() != null) && !formulatedProduct.getEntityTpl().equals(formulatedProduct)
 				&& (formulatedProduct.getEntityTpl().getLabelingListView().getLabelingRuleList() != null)) {
@@ -991,6 +1086,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
+	/**
+	 * <p>applyAggregateRules.</p>
+	 *
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param labelingFormulaContext a {@link fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext} object
+	 * @param recur a boolean
+	 * @param mergedLabelling a boolean
+	 */
 	private void applyAggregateRules(CompositeLabeling parent, LabelingFormulaContext labelingFormulaContext, boolean recur,
 			boolean mergedLabelling) {
 
@@ -1225,6 +1328,18 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
+	/**
+	 * <p>appendToAggregate.</p>
+	 *
+	 * @param component a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param compositeLabeling a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param aggregateRule a {@link fr.becpg.repo.product.formulation.labeling.AggregateRule} object
+	 * @param qty a {@link java.lang.Double} object
+	 * @param volume a {@link java.lang.Double} object
+	 * @param qtyWithYield a {@link java.lang.Double} object
+	 * @param volumeWithYield a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementListDataItem} object
+	 */
 	private RequirementListDataItem appendToAggregate(CompositeLabeling component, CompositeLabeling compositeLabeling, AggregateRule aggregateRule,
 			Double qty, Double volume, Double qtyWithYield, Double volumeWithYield) {
 		CompositeLabeling current = compositeLabeling.getIngList().get(component.getNodeRef());
@@ -1308,6 +1423,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	// Move Group at top
+	/**
+	 * <p>reorderCompositeLabeling.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext} object
+	 * @param current a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param isFirst a boolean
+	 * @return a {@link java.util.List} object
+	 */
 	private List<CompositeLabeling> reorderCompositeLabeling(LabelingFormulaContext context, CompositeLabeling current, boolean isFirst) {
 		List<CompositeLabeling> ret = new ArrayList<>();
 
@@ -1393,6 +1516,17 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		return ret;
 	}
 
+	/**
+	 * <p>getOrCreateILLDataItems.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param key a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param label a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @param log a {@link java.lang.String} object
+	 * @param labelingFormulaContext a {@link fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext} object
+	 * @param sortOrder a int
+	 * @return a {@link java.util.List} object
+	 */
 	private List<IngLabelingListDataItem> getOrCreateILLDataItems(ProductData formulatedProduct, NodeRef key, MLText label, String log,
 			LabelingFormulaContext labelingFormulaContext, int sortOrder) {
 		List<IngLabelingListDataItem> ret = new ArrayList<>();
@@ -1417,6 +1551,17 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
+	/**
+	 * <p>getOrCreateILLDataItem.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param key a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param label a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @param log a {@link java.lang.String} object
+	 * @param lang a {@link java.lang.String} object
+	 * @param sortOrder a int
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngLabelingListDataItem} object
+	 */
 	IngLabelingListDataItem getOrCreateILLDataItem(ProductData formulatedProduct, NodeRef key, MLText label, String log, String lang, int sortOrder) {
 
 		IngLabelingListDataItem ill = null;
@@ -1457,6 +1602,16 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
+	/**
+	 * <p>visitCompoList.</p>
+	 *
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param parentComposite a {@link fr.becpg.repo.data.hierarchicalList.Composite} object
+	 * @param labelingFormulaContext a {@link fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext} object
+	 * @param ratio a {@link java.math.BigDecimal} object
+	 * @param currYield a {@link java.lang.Double} object
+	 * @param apply a boolean
+	 */
 	private void visitCompoList(CompositeLabeling parent, Composite<CompoListDataItem> parentComposite, LabelingFormulaContext labelingFormulaContext,
 			final BigDecimal ratio, final Double currYield, final boolean apply) {
 
@@ -1802,10 +1957,27 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 	}
 
+	/**
+	 * <p>hasEvaporationData.</p>
+	 *
+	 * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
 	private boolean hasEvaporationData(NodeRef productNodeRef) {
 		return EvaporatingFormulationHelper.hasEvaporationData(productNodeRef, nodeService);
 	}
 
+	/**
+	 * <p>appendQtiesToLabeling.</p>
+	 *
+	 * @param compositeLabeling a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param qty a {@link java.lang.Double} object
+	 * @param qtyWithYield a {@link java.lang.Double} object
+	 * @param volume a {@link java.lang.Double} object
+	 * @param volumeWithYield a {@link java.lang.Double} object
+	 * @param addToQty a boolean
+	 * @param addToTotal a boolean
+	 */
 	private void appendQtiesToLabeling(CompositeLabeling compositeLabeling, Double qty, Double qtyWithYield, Double volume, Double volumeWithYield,
 			boolean addToQty, boolean addToTotal) {
 		if (addToQty) {
@@ -1873,6 +2045,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 	}
 
+	/**
+	 * <p>fillAllergensAndGeos.</p>
+	 *
+	 * @param compositeLabeling a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 */
 	private void fillAllergensAndGeos(CompositeLabeling compositeLabeling, ProductData productData) {
 
 		for (AllergenListDataItem allergenListDataItem : productData.getAllergenList()) {
@@ -1890,6 +2068,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
+	/**
+	 * <p>getName.</p>
+	 *
+	 * @param component a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String getName(CompositeLabeling component) {
 		if (component instanceof IngItem ingItem) {
 			return ingItem.getCharactName();
@@ -1897,6 +2081,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		return component.getName();
 	}
 
+	/**
+	 * <p>mergeEvaporatedItem.</p>
+	 *
+	 * @param evaporatedDataItems a {@link java.util.Set} object
+	 * @param evaporatedDataItem a {@link fr.becpg.repo.product.formulation.labeling.EvaporatedDataItem} object
+	 */
 	private void mergeEvaporatedItem(Set<EvaporatedDataItem> evaporatedDataItems, EvaporatedDataItem evaporatedDataItem) {
 
 		EvaporatedDataItem existingItem = evaporatedDataItems.stream()
@@ -1920,6 +2110,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 	}
 
+	/**
+	 * <p>applyEvaporation.</p>
+	 *
+	 * @param labelingFormulaContext a {@link fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext} object
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 */
 	private void applyEvaporation(LabelingFormulaContext labelingFormulaContext, CompositeLabeling parent) {
 
 		if (!parent.getEvaporatedDataItems().isEmpty()) {
@@ -1975,6 +2171,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 	}
 
+	/**
+	 * <p>processEvaporation.</p>
+	 *
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param items a {@link java.util.Set} object
+	 * @param totalRate a {@link java.lang.Double} object
+	 * @param isDoNotPropagateYield a boolean
+	 */
 	private void processEvaporation(CompositeLabeling parent, Set<EvaporatedDataItem> items, Double totalRate, boolean isDoNotPropagateYield) {
 		if (parent.getEvaporatedQty() > 0d) {
 			AtomicReference<Double> evaporatingQty = new AtomicReference<>(parent.getEvaporatedQty());
@@ -2090,6 +2294,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 	}
 
+	/**
+	 * <p>applyReconstitution.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext} object
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 */
 	private void applyReconstitution(LabelingFormulaContext context, CompositeLabeling parent) {
 
 		if (!parent.getReconstituableDataItems().isEmpty()) {
@@ -2215,6 +2425,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
+	/**
+	 * <p>getAggregateRules.</p>
+	 *
+	 * @param component a {@link fr.becpg.repo.data.hierarchicalList.Composite} object
+	 * @param brothers a {@link java.util.List} object
+	 * @param labelingFormulaContext a {@link fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext} object
+	 * @return a {@link java.util.List} object
+	 */
 	@Nonnull
 	private List<AggregateRule> getAggregateRules(Composite<CompoListDataItem> component, List<Composite<CompoListDataItem>> brothers,
 			LabelingFormulaContext labelingFormulaContext) {
@@ -2225,6 +2443,23 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		return Collections.emptyList();
 	}
 
+	/**
+	 * <p>visitIngList.</p>
+	 *
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param product a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param compositeIngList a {@link fr.becpg.repo.data.hierarchicalList.Composite} object
+	 * @param omitQtyPerc a {@link java.lang.Double} object
+	 * @param qty a {@link java.lang.Double} object
+	 * @param volume a {@link java.lang.Double} object
+	 * @param qtyWithYield a {@link java.lang.Double} object
+	 * @param volumeWithYield a {@link java.lang.Double} object
+	 * @param labelingFormulaContext a {@link fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext} object
+	 * @param compoListDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 * @param errors a {@link java.util.Map} object
+	 * @param calculatedYield a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 */
 	private CompositeLabeling visitIngList(CompositeLabeling parent, ProductData product, Composite<IngListDataItem> compositeIngList,
 			Double omitQtyPerc, Double qty, Double volume, Double qtyWithYield, Double volumeWithYield, LabelingFormulaContext labelingFormulaContext,
 			CompoListDataItem compoListDataItem, Map<String, RequirementListDataItem> errors, Double calculatedYield) {
@@ -2479,6 +2714,15 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		return parent;
 	}
 
+	/**
+	 * <p>updateIfNotNull.</p>
+	 *
+	 * @param oldValue a {@link java.lang.Double} object
+	 * @param newValue a {@link java.lang.Double} object
+	 * @param qtyPerc a {@link java.lang.Double} object
+	 * @param updateFunction a {@link java.util.function.DoubleConsumer} object
+	 * @param name a {@link java.lang.String} object
+	 */
 	private void updateIfNotNull(Double oldValue, Double newValue, Double qtyPerc, DoubleConsumer updateFunction, String name) {
 		if ((oldValue != null) && (newValue != null)) {
 			BigDecimal valueToAdd = BigDecimal.valueOf(newValue).multiply(BigDecimal.valueOf(qtyPerc), LabelingFormulaContext.PRECISION)
@@ -2490,6 +2734,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 	}
 
+	/**
+	 * <p>allergenMatchSubIngs.</p>
+	 *
+	 * @param voluntarySources a {@link java.util.List} object
+	 * @param ingListItem a {@link fr.becpg.repo.data.hierarchicalList.Composite} object
+	 * @return a boolean
+	 */
 	private boolean allergenMatchSubIngs(List<NodeRef> voluntarySources, Composite<IngListDataItem> ingListItem) {
 		if ((voluntarySources != null) && !voluntarySources.isEmpty() && !ingListItem.isLeaf()) {
 			for (Composite<IngListDataItem> child : ingListItem.getChildren()) {
@@ -2503,6 +2754,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		return false;
 	}
 
+	/**
+	 * <p>addGeo.</p>
+	 *
+	 * @param labelingComponent a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param geoOrigins a {@link java.util.List} object
+	 * @param defaultActivity a {@link fr.becpg.repo.product.data.constraints.PlaceOfActivityTypeCode} object
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	private Boolean addGeo(LabelingComponent labelingComponent, List<NodeRef> geoOrigins, PlaceOfActivityTypeCode defaultActivity) {
 
 		boolean added = false;
@@ -2530,6 +2789,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
+	/**
+	 * <p>hasVisibleSubIng.</p>
+	 *
+	 * @param compoListDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 * @param ingListItem a {@link fr.becpg.repo.data.hierarchicalList.Composite} object
+	 * @param labelingFormulaContext a {@link fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext} object
+	 * @return a boolean
+	 */
 	private boolean hasVisibleSubIng(CompoListDataItem compoListDataItem, Composite<IngListDataItem> ingListItem,
 			LabelingFormulaContext labelingFormulaContext) {
 		for (Composite<IngListDataItem> subIngListItem : ingListItem.getChildren()) {
@@ -2544,6 +2811,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		return false;
 	}
 
+	/**
+	 * <p>createError.</p>
+	 *
+	 * @param ingItem a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementListDataItem} object
+	 */
 	private RequirementListDataItem createError(CompositeLabeling ingItem, NodeRef productNodeRef) {
 		List<NodeRef> sourceNodeRefs = new ArrayList<>();
 		if (productNodeRef != null) {
@@ -2554,6 +2828,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
+	/**
+	 * <p>getDeclarationType.</p>
+	 *
+	 * @param compoListDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 * @param ingListDataItem a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @param labelingFormulaContext a {@link fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext} object
+	 * @return a {@link fr.becpg.repo.product.data.constraints.DeclarationType} object
+	 */
 	private DeclarationType getDeclarationType(CompoListDataItem compoListDataItem, IngListDataItem ingListDataItem,
 			LabelingFormulaContext labelingFormulaContext) {
 
@@ -2627,6 +2909,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		return compoListDataItem.getDeclType();
 	}
 
+	/**
+	 * <p>sorted.</p>
+	 *
+	 * @param toSort a {@link java.util.List} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<DeclarationFilterRule> sorted(List<DeclarationFilterRule> toSort) {
 		return toSort.stream().sorted(Comparator.comparingInt(rule -> {
 			boolean hasFormula = (rule.getFormula() != null) && !rule.getFormula().isEmpty();
@@ -2645,6 +2933,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		})).toList();
 	}
 
+	/**
+	 * <p>extractFootNotes.</p>
+	 *
+	 * @param compoListDataItem a {@link fr.becpg.repo.product.data.productList.CompoListDataItem} object
+	 * @param ingListDataItem a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @param labelingFormulaContext a {@link fr.becpg.repo.product.formulation.labeling.LabelingFormulaContext} object
+	 * @return a {@link java.util.Set} object
+	 */
 	private Set<FootNoteRule> extractFootNotes(CompoListDataItem compoListDataItem, IngListDataItem ingListDataItem,
 			LabelingFormulaContext labelingFormulaContext) {
 

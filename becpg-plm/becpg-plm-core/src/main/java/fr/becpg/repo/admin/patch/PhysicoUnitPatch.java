@@ -51,6 +51,7 @@ import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
  */
 public class PhysicoUnitPatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(PhysicoUnitPatch.class);
 
 	private BehaviourFilter policyBehaviourFilter;

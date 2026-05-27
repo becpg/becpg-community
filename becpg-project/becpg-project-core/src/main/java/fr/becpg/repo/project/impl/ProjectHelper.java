@@ -57,14 +57,21 @@ import fr.becpg.repo.project.formulation.TaskWrapper;
 @SuppressWarnings("deprecation")
 public class ProjectHelper {
 
+	/**
+	 * <p>Constructor for ProjectHelper.</p>
+	 */
 	private ProjectHelper() {
 		//Do Nothing
 	}
 
+	/** Constant <code>DURATION_DEFAULT=1</code> */
 	private static final int DURATION_DEFAULT = 1;
+	/** Constant <code>DURATION_NEXT_DAY=2</code> */
 	private static final int DURATION_NEXT_DAY = 2;
+	/** Constant <code>MAX_ITERATIONS=366</code> */
 	private static final int MAX_ITERATIONS = 366;
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ProjectHelper.class);
 
 	/**
@@ -194,6 +201,14 @@ public class ProjectHelper {
 
 	}
 
+	/**
+	 * <p>reOpenRefusedTask.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param nextTask a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+	 * @param refusedTasksToReopen a {@link java.util.List} object
+	 * @param projectActivityService a {@link fr.becpg.repo.project.ProjectActivityService} object
+	 */
 	private static void reOpenRefusedTask(ProjectData projectData, TaskListDataItem nextTask, List<NodeRef> refusedTasksToReopen,
 			ProjectActivityService projectActivityService) {
 
@@ -210,6 +225,12 @@ public class ProjectHelper {
 		}
 	}
 
+	/**
+	 * <p>reOpenDeliverables.</p>
+	 *
+	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
+	 * @param nextTask a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object
+	 */
 	private static void reOpenDeliverables(ProjectData projectData, TaskListDataItem nextTask) {
 		List<DeliverableListDataItem> nextDeliverables = ProjectHelper.getDeliverables(projectData, nextTask.getNodeRef());
 		for (DeliverableListDataItem dl : nextDeliverables) {

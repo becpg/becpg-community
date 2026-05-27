@@ -67,6 +67,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class BeCPGMailServiceImpl implements BeCPGMailService {
 
+	/** Constant <code>_logger</code> */
 	private static final Log _logger = LogFactory.getLog(BeCPGMailServiceImpl.class);
 
 	private NodeService nodeService;
@@ -186,6 +187,14 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 		sendMailUser(personNodeRef, userName, password, "becpg.mail.newPassword.title");
 	}
 	
+	/**
+	 * <p>sendMailUser.</p>
+	 *
+	 * @param personNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param userName a {@link java.lang.String} object
+	 * @param password a {@link java.lang.String} object
+	 * @param mailTitleKey a {@link java.lang.String} object
+	 */
 	private void sendMailUser(NodeRef personNodeRef, String userName, String password, String mailTitleKey) {
 		Map<String, Object> templateModel = new HashMap<>(8, 1.0f);
 		templateModel.put("person", new TemplateNode(personNodeRef, serviceRegistry, null));
@@ -215,6 +224,13 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 		return templateNodeRef;
 	}
 
+	/**
+	 * <p>findLocalizedTemplateNodeRef.</p>
+	 *
+	 * @param templateNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param locale a {@link java.util.Locale} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef findLocalizedTemplateNodeRef(NodeRef templateNodeRef, Locale locale) {
 		_logger.debug("Finding sibling of template " + templateNodeRef);
 		
@@ -310,6 +326,16 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 		}
 	}
 
+	/**
+	 * <p>internalSendMail.</p>
+	 *
+	 * @param singleAuthorities a {@link java.util.Set} object
+	 * @param fromEmail a {@link java.lang.String} object
+	 * @param subject a {@link java.lang.String} object
+	 * @param mailTemplate a {@link java.lang.String} object
+	 * @param templateArgs a {@link java.util.Map} object
+	 * @param locale a {@link java.util.Locale} object
+	 */
 	private void internalSendMail(Set<String> singleAuthorities, String fromEmail, String subject, String mailTemplate, Map<String, Object> templateArgs, Locale locale) {
 		
 		NodeRef templateNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), mailTemplate);
@@ -380,6 +406,12 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 		return searchFolder("app:company_home/app:dictionary/app:email_templates/cm:project/.");
 	}
 
+	/**
+	 * <p>searchFolder.</p>
+	 *
+	 * @param xpath a {@link java.lang.String} object
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private NodeRef searchFolder(String xpath) {
 		List<NodeRef> nodeRefs = searchService.selectNodes(repository.getRootHome(), xpath, null, this.namespaceService, false);
 

@@ -132,6 +132,9 @@ public class FormulationChain<T extends FormulatedEntity> {
 		return handlers;
 	}
 
+	/**
+	 * <p>prepareHandlerChain.</p>
+	 */
 	private void prepareHandlerChain() {
 
 		ListIterator<FormulationHandler<T>> handlersIt = handlers.listIterator();

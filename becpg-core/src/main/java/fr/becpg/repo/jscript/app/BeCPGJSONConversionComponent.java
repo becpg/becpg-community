@@ -46,12 +46,14 @@ import fr.becpg.repo.security.SecurityService;
  */
 public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 
+	/** Constant <code>CREATE_CHILDREN="CreateChildren"</code> */
 	private static final String CREATE_CHILDREN = "CreateChildren";
 
 	private AssociationService associationService;
 
 	private SecurityService securityService;
 	
+	/** Constant <code>REPORT_DOWNLOAD_API_URL="becpg/report/node/{0}/{1}/{2}/content/{"{trunked}</code> */
 	private static final String REPORT_DOWNLOAD_API_URL = "becpg/report/node/{0}/{1}/{2}/content/{3}";
 
 
@@ -73,6 +75,7 @@ public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 		this.associationService = associationService;
 	}
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(BeCPGJSONConversionComponent.class);
 
 	/** Registered decorators */
@@ -181,6 +184,9 @@ public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 	/**
 	 * Convert a qname to a string - either full or short prefixed named.
 	 *
+	 * @param qname a {@link org.alfresco.service.namespace.QName} object
+	 * @param isShortName a boolean
+	 * @return a {@link java.lang.String} object
 	 */
 	private String qnameToString(final QName qname, final boolean isShortName) {
 		String result;

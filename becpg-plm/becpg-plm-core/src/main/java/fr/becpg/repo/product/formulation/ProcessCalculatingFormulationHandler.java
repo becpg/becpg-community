@@ -44,6 +44,7 @@ import fr.becpg.repo.variant.filters.VariantFilters;
  */
 public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ProcessCalculatingFormulationHandler.class);
 
 	private AlfrescoRepository<ResourceProductData> alfrescoRepository;

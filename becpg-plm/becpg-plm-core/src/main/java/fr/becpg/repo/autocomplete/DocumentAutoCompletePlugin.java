@@ -23,6 +23,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service
 public class DocumentAutoCompletePlugin implements AutoCompletePlugin {
 
+	/** Constant <code>EXTENSIONS="extensions"</code> */
 	private static final String EXTENSIONS = "extensions";
 	
 	@Autowired

@@ -28,15 +28,24 @@ public class CurrencyConstraint extends ListOfValuesConstraint {
 
 	/** Constant <code>UNDIFINED_CONSTRAINT_VALUE="-"</code> */
 	public static final String UNDIFINED_CONSTRAINT_VALUE = "-";
+	/** Constant <code>ERR_NON_STRING="d_dictionary.constraint.string_length.n"{trunked}</code> */
 	private static final String ERR_NON_STRING = "d_dictionary.constraint.string_length.non_string";
+	/** Constant <code>ERR_INVALID_VALUE="d_dictionary.constraint.list_of_values."{trunked}</code> */
 	private static final String ERR_INVALID_VALUE = "d_dictionary.constraint.list_of_values.invalid_value";
 	
+	/** Constant <code>beCPGCacheService</code> */
 	private static BeCPGCacheService beCPGCacheService;
 	
+	/** Constant <code>systemConfigurationService</code> */
 	private static SystemConfigurationService systemConfigurationService;
 	
 	private List<String> allowedValuesSuffix = null;
 	
+	/**
+	 * <p>propConstraints.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
 	private static String propConstraints() {
 		return systemConfigurationService.confValue("beCPG.currency.supported");
 	}

@@ -32,7 +32,9 @@ import fr.becpg.model.BeCPGModel;
  */
 public class CharactNamePatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(CharactNamePatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.charactNamePatch.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.charactNamePatch.result";
 
 
@@ -80,6 +82,11 @@ public class CharactNamePatch extends AbstractBeCPGPatch {
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
+	/**
+	 * <p>doApply.</p>
+	 *
+	 * @param toApplyType a {@link org.alfresco.service.namespace.QName} object
+	 */
 	private void doApply(QName toApplyType) {
         logger.info("Applying patch for: "+toApplyType);
 

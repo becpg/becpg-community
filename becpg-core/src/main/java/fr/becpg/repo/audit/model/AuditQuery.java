@@ -30,6 +30,9 @@ public class AuditQuery {
     
     private Date toTime;
     
+    /**
+     * <p>Constructor for AuditQuery.</p>
+     */
     private AuditQuery() {
     	
     }

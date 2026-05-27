@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2010-2011 beCPG. All rights reserved.
+ *  Copyright (C) 2010-2026 beCPG. All rights reserved.
  */
 package fr.becpg.repo.product.data;
 
@@ -29,6 +29,7 @@ import fr.becpg.repo.survey.data.SurveyListDataItem;
 @AlfQname(qname = "bcpg:finishedProduct")
 public class FinishedProductData extends ProductData {
 
+	/** Constant <code>serialVersionUID=-6530714937830741832L</code> */
 	private static final long serialVersionUID = -6530714937830741832L;
 
 	/**

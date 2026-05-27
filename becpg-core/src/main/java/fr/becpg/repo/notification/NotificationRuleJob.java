@@ -28,10 +28,14 @@ import org.quartz.PersistJobDataAfterExecution;
 @DisallowConcurrentExecution
 public class NotificationRuleJob extends AbstractScheduledLockedJob implements Job {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(NotificationRuleJob.class);
 
+	/** Constant <code>KEY_NOTIFICATION_RULE_SERVICE="notificationRuleService"</code> */
 	private static final String KEY_NOTIFICATION_RULE_SERVICE = "notificationRuleService";
+	/** Constant <code>KEY_TENANT_ADMIN_SERVICE="tenantAdminService"</code> */
 	private static final String KEY_TENANT_ADMIN_SERVICE = "tenantAdminService";
+	/** Constant <code>KEY_TRANSACTION_SERVICE="transactionService"</code> */
 	private static final String KEY_TRANSACTION_SERVICE = "transactionService";
 
 	/** {@inheritDoc} */

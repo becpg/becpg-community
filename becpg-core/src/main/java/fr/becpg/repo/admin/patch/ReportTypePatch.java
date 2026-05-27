@@ -28,7 +28,9 @@ import fr.becpg.report.client.ReportFormat;
  */
 public class ReportTypePatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ReportTypePatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.reportTypePatch.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.reportTypePatch.result";
 
 	private BehaviourFilter policyBehaviourFilter;

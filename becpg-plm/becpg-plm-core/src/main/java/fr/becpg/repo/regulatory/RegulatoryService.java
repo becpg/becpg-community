@@ -73,10 +73,13 @@ public class RegulatoryService {
 	/** Constant <code>REGULATORY_KEY="regulatory"</code> */
 	public static final String REGULATORY_KEY = "regulatory";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(RegulatoryService.class);
 
+	/** Constant <code>MESSAGE_NO_CODE_CHARACT="message.regulatory.charact.noCode"</code> */
 	private static final String MESSAGE_NO_CODE_CHARACT = "message.regulatory.charact.noCode";
 
+	/** Constant <code>ASYNC_ACTION_URL_PREFIX="page/entity-data-lists?list=regulatoryL"{trunked}</code> */
 	private static final String ASYNC_ACTION_URL_PREFIX = "page/entity-data-lists?list=regulatoryList&nodeRef=%s";
 
 	private NodeService nodeService;
@@ -126,8 +129,14 @@ public class RegulatoryService {
 		this.mutexFactory = mutexFactory;
 	}
 
+	/** Constant <code>DEFAULT_REGULATORY_BATCH_THREADS=1</code> */
 	private static final int DEFAULT_REGULATORY_BATCH_THREADS = 1;
 
+	/**
+	 * <p>ingredientAnalysisEnabled.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
 	private Boolean ingredientAnalysisEnabled() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.decernis.ingredient.analysis.enabled"));
 	}
@@ -178,6 +187,12 @@ public class RegulatoryService {
 		return result;
 	}
 
+	/**
+	 * <p>createContext.</p>
+	 *
+	 * @param product a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link fr.becpg.repo.regulatory.RegulatoryContext} object
+	 */
 	private RegulatoryContext createContext(ProductData product) {
 		RegulatoryContext context = new RegulatoryContext();
 		if (product.getIngList() != null) {
@@ -193,10 +208,23 @@ public class RegulatoryService {
 		return context;
 	}
 
+	/**
+	 * <p>isIngItemValid.</p>
+	 *
+	 * @param ingListDataItem a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @return a boolean
+	 */
 	private boolean isIngItemValid(IngListDataItem ingListDataItem) {
 		return !DeclarationType.Omit.equals(ingListDataItem.getDeclType());
 	}
 
+	/**
+	 * <p>createRegulatoryBatches.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.regulatory.RegulatoryContext} object
+	 * @param regulatoryEntity a {@link fr.becpg.repo.regulatory.RegulatoryEntity} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<RegulatoryBatch> createRegulatoryBatches(RegulatoryContext context, RegulatoryEntity regulatoryEntity) {
 		List<RegulatoryBatch> regulatoryBatches = new ArrayList<>();
 		List<CountryBatch> countryBatches = createCountryBatches(context, regulatoryEntity);
@@ -209,6 +237,13 @@ public class RegulatoryService {
 		return regulatoryBatches;
 	}
 
+	/**
+	 * <p>createCountryBatches.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.regulatory.RegulatoryContext} object
+	 * @param regulatoryEntity a {@link fr.becpg.repo.regulatory.RegulatoryEntity} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<CountryBatch> createCountryBatches(RegulatoryContext context, RegulatoryEntity regulatoryEntity) {
 		List<String> countries = new ArrayList<>();
 		for (NodeRef countryRef : regulatoryEntity.getRegulatoryCountriesRef()) {
@@ -217,6 +252,13 @@ public class RegulatoryService {
 		return getPlugin().splitCountries(context, countries);
 	}
 
+	/**
+	 * <p>addCountry.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.regulatory.RegulatoryContext} object
+	 * @param countries a {@link java.util.List} object
+	 * @param countryRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void addCountry(RegulatoryContext context, List<String> countries, NodeRef countryRef) {
 		String code = extractCode(countryRef);
 		if (code != null && !code.isBlank()) {
@@ -229,6 +271,13 @@ public class RegulatoryService {
 		}
 	}
 
+	/**
+	 * <p>createUsageBatches.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.regulatory.RegulatoryContext} object
+	 * @param regulatoryEntity a {@link fr.becpg.repo.regulatory.RegulatoryEntity} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<UsageBatch> createUsageBatches(RegulatoryContext context, RegulatoryEntity regulatoryEntity) {
 		List<String> usages = new ArrayList<>();
 		for (NodeRef usageRef : regulatoryEntity.getRegulatoryUsagesRef()) {
@@ -237,6 +286,13 @@ public class RegulatoryService {
 		return getPlugin().splitUsages(context, usages);
 	}
 
+	/**
+	 * <p>addUsage.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.regulatory.RegulatoryContext} object
+	 * @param usages a {@link java.util.List} object
+	 * @param usageRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
 	private void addUsage(RegulatoryContext context, List<String> usages, NodeRef usageRef) {
 		String code = extractCode(usageRef);
 		if (code != null && !code.isBlank()) {
@@ -250,10 +306,22 @@ public class RegulatoryService {
 		}
 	}
 
+	/**
+	 * <p>extractCode.</p>
+	 *
+	 * @param node a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String extractCode(NodeRef node) {
 		return (String) nodeService.getProperty(node, PLMModel.PROP_REGULATORY_CODE);
 	}
 
+	/**
+	 * <p>checkComplianceSync.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.regulatory.RegulatoryContext} object
+	 * @return a boolean
+	 */
 	private boolean checkComplianceSync(RegulatoryContext context) {
 		ReentrantLock mutex = mutexFactory.getMutex("complianceCheck-" + context.getProduct().getNodeRef().getId());
 		if (mutex.tryLock()) {
@@ -278,11 +346,23 @@ public class RegulatoryService {
 		return false;
 	}
 
+	/**
+	 * <p>isIngRegulatoryListEnabled.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a boolean
+	 */
 	private boolean isIngRegulatoryListEnabled(ProductData productData) {
 		return alfrescoRepository.hasDataList(productData, PLMModel.TYPE_ING_REGULATORY_LIST) && productData.getIngRegulatoryList() != null
 				&& ingredientAnalysisEnabled();
 	}
 
+	/**
+	 * <p>checkComplianceAsync.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.regulatory.RegulatoryContext} object
+	 * @param status a {@link fr.becpg.repo.regulatory.ComplianceResult} object
+	 */
 	private void checkComplianceAsync(RegulatoryContext context, ComplianceResult status) {
 		boolean batchStarted = false;
 		NodeRef entityNodeRef = context.getProduct().getNodeRef();
@@ -354,6 +434,12 @@ public class RegulatoryService {
 		status.setBatchId(batchId);
 	}
 
+	/**
+	 * <p>finalizeRecipeCheck.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.regulatory.RegulatoryContext} object
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 */
 	private void finalizeRecipeCheck(RegulatoryContext context, ProductData productData) {
 		if (productData.getReqCtrlList() == null) {
 			productData.setReqCtrlList(new ArrayList<>());
@@ -375,6 +461,12 @@ public class RegulatoryService {
 		}
 	}
 	
+	/**
+	 * <p>hasError.</p>
+	 *
+	 * @param reqList a {@link java.util.List} object
+	 * @return a boolean
+	 */
 	private boolean hasError(List<RequirementListDataItem> reqList) {
 		for (RequirementListDataItem req : reqList) {
 			if (RequirementType.Forbidden.equals(req.getReqType()) && RequirementDataType.Formulation.equals(req.getReqDataType())) {
@@ -384,6 +476,12 @@ public class RegulatoryService {
 		return false;
 	}
 
+	/**
+	 * <p>updateChecksums.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.regulatory.RegulatoryContext} object
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 */
 	private void updateChecksums(RegulatoryContext context, ProductData productData) {
 		String checkSum = createContextChecksum(context);
 		productData.setRequirementChecksum(CheckSumHelper.updateChecksum(REGULATORY_KEY, productData.getRequirementChecksum(), checkSum));
@@ -397,6 +495,12 @@ public class RegulatoryService {
 		}
 	}
 
+	/**
+	 * <p>processRegulatoryList.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param ingRegulatoryListDataItems a {@link java.util.List} object
+	 */
 	private void processRegulatoryList(ProductData productData, List<IngRegulatoryListDataItem> ingRegulatoryListDataItems) {
 		Map<NodeRef, Map<NodeRef, List<IngRegulatoryListDataItem>>> groupedByIngAndCountry = ingRegulatoryListDataItems.stream().collect(
 				Collectors.groupingBy(IngRegulatoryListDataItem::getIng, Collectors.groupingBy(item -> item.getRegulatoryCountries().get(0))));
@@ -418,6 +522,13 @@ public class RegulatoryService {
 
 	}
 
+	/**
+	 * <p>mergeItems.</p>
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param items a {@link java.util.List} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem} object
+	 */
 	private IngRegulatoryListDataItem mergeItems(ProductData productData, List<IngRegulatoryListDataItem> items) {
 
 		// Assuming all items have the same ing and country
@@ -461,6 +572,13 @@ public class RegulatoryService {
 		return mergedItem;
 	}
 
+	/**
+	 * <p>extractSources.</p>
+	 *
+	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> extractSources(NodeRef ing, ProductData formulatedProduct) {
 
 		Set<NodeRef> sources = new HashSet<>();
@@ -488,6 +606,12 @@ public class RegulatoryService {
 		return new ArrayList<>(sources);
 	}
 
+	/**
+	 * <p>regulatoryWorkProvider.</p>
+	 *
+	 * @param regulatoryBatches a {@link java.util.List} object
+	 * @return a {@link org.alfresco.repo.batch.BatchProcessWorkProvider} object
+	 */
 	private BatchProcessWorkProvider<RegulatoryBatch> regulatoryWorkProvider(List<RegulatoryBatch> regulatoryBatches) {
 		Iterator<RegulatoryBatch> it = regulatoryBatches.iterator();
 		return new BatchProcessWorkProvider<RegulatoryBatch>() {
@@ -511,10 +635,20 @@ public class RegulatoryService {
 		};
 	}
 
+	/**
+	 * <p>getPlugin.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.regulatory.RegulatoryPlugin} object
+	 */
 	private RegulatoryPlugin getPlugin() {
 		return regulatoryPlugins.get(0);
 	}
 
+	/**
+	 * <p>fetchIngredients.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.regulatory.RegulatoryContext} object
+	 */
 	private void fetchIngredients(RegulatoryContext context) {
 		for (IngListDataItem ingListDataItem : context.getIngList()) {
 			if (ingListDataItem.getIng() != null) {
@@ -547,6 +681,11 @@ public class RegulatoryService {
 		}
 	}
 
+	/**
+	 * <p>updateProductFromRegulatoryList.</p>
+	 *
+	 * @param product a {@link fr.becpg.repo.product.data.ProductData} object
+	 */
 	private void updateProductFromRegulatoryList(ProductData product) {
 		Set<NodeRef> countries = new HashSet<>();
 		Set<NodeRef> usages = new HashSet<>();
@@ -564,6 +703,11 @@ public class RegulatoryService {
 		}
 	}
 
+	/**
+	 * <p>updateProductFromLinkedSearches.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 */
 	private void updateProductFromLinkedSearches(ProductData formulatedProduct) {
 		updateRegulatoryEntityFromLinkedSearches(formulatedProduct);
 		for (RegulatoryListDataItem regList : formulatedProduct.getRegulatoryList()) {
@@ -571,6 +715,11 @@ public class RegulatoryService {
 		}
 	}
 
+	/**
+	 * <p>updateRegulatoryEntityFromLinkedSearches.</p>
+	 *
+	 * @param regulatoryEntity a {@link fr.becpg.repo.regulatory.RegulatoryEntity} object
+	 */
 	private void updateRegulatoryEntityFromLinkedSearches(RegulatoryEntity regulatoryEntity) {
 		List<NodeRef> linkedSearches = extractLinkedSearches(regulatoryEntity.getRegulatoryCountriesRef());
 		regulatoryEntity.getRegulatoryCountriesRef().clear();
@@ -581,6 +730,12 @@ public class RegulatoryService {
 		}
 	}
 
+	/**
+	 * <p>extractLinkedSearches.</p>
+	 *
+	 * @param regulatoryCountriesRef a {@link java.util.List} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> extractLinkedSearches(List<NodeRef> regulatoryCountriesRef) {
 		List<NodeRef> linkedSearches = new ArrayList<>();
 		for (NodeRef regulatoryCountry : regulatoryCountriesRef) {
@@ -589,6 +744,12 @@ public class RegulatoryService {
 		return linkedSearches;
 	}
 
+	/**
+	 * <p>extractLinkedSearches.</p>
+	 *
+	 * @param regulatoryCountry a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.util.List} object
+	 */
 	private List<NodeRef> extractLinkedSearches(NodeRef regulatoryCountry) {
 		List<NodeRef> linkedSearches = new ArrayList<>();
 		List<AssociationRef> targetAssocs = nodeService.getTargetAssocs(regulatoryCountry, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION);
@@ -602,6 +763,12 @@ public class RegulatoryService {
 		return linkedSearches;
 	}
 
+	/**
+	 * <p>isUpToDate.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.regulatory.RegulatoryContext} object
+	 * @return a boolean
+	 */
 	private boolean isUpToDate(RegulatoryContext context) {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DAY_OF_YEAR, -1);
@@ -622,6 +789,12 @@ public class RegulatoryService {
 		return true;
 	}
 
+	/**
+	 * <p>createContextChecksum.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.regulatory.RegulatoryContext} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String createContextChecksum(RegulatoryContext context) {
 		Set<String> countries = context.getProduct().getRegulatoryCountriesRef().stream().map(this::extractCode).collect(Collectors.toSet());
 		Set<String> usages = context.getProduct().getRegulatoryUsagesRef().stream().map(this::extractCode).collect(Collectors.toSet());
@@ -646,6 +819,13 @@ public class RegulatoryService {
 		return CheckSumHelper.hashChecksum(checksumBuilder.toString());
 	}
 
+	/**
+	 * <p>createRequirementChecksum.</p>
+	 *
+	 * @param countries a {@link java.util.Set} object
+	 * @param usages a {@link java.util.Set} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String createRequirementChecksum(Set<String> countries, Set<String> usages) {
 		StringBuilder key = new StringBuilder();
 		if (countries != null) {
@@ -657,6 +837,12 @@ public class RegulatoryService {
 		return CheckSumHelper.hashChecksum(key.toString());
 	}
 
+	/**
+	 * <p>isContextCompatible.</p>
+	 *
+	 * @param context a {@link fr.becpg.repo.regulatory.RegulatoryContext} object
+	 * @return a boolean
+	 */
 	private boolean isContextCompatible(RegulatoryContext context) {
 		if (context.getProduct().getRegulatoryMode() == null || RegulatoryMode.DISABLED.equals(context.getProduct().getRegulatoryMode())) {
 			return false;
@@ -664,6 +850,14 @@ public class RegulatoryService {
 		return true;
 	}
 
+	/**
+	 * <p>createReqCtrl.</p>
+	 *
+	 * @param ingListDataItem a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
+	 * @param reqCtrlMessage a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @param reqType a {@link fr.becpg.repo.regulatory.RequirementType} object
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementListDataItem} object
+	 */
 	private RequirementListDataItem createReqCtrl(IngListDataItem ingListDataItem, MLText reqCtrlMessage, RequirementType reqType) {
 		RequirementListDataItem reqCtrlItem = new RequirementListDataItem();
 		reqCtrlItem.setReqType(reqType);

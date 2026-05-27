@@ -24,6 +24,7 @@ public class EntityListBatchProcessWorkProvider<T> implements BatchProcessWorkPr
 
 	private final Iterator<T> iterator;
 
+	/** Constant <code>BATCH_SIZE=15</code> */
 	private static final int BATCH_SIZE = 15;
 
 	/**

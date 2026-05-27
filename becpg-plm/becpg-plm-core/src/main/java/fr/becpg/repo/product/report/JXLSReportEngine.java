@@ -41,6 +41,7 @@ public class JXLSReportEngine implements BeCPGReportEngine {
 	/** Constant <code>JXLS_EXTENSION=".jxls"</code> */
 	public static final String JXLS_EXTENSION = ".jxls";
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(JXLSReportEngine.class);
 
 	private final NodeService nodeService;
@@ -118,6 +119,12 @@ public class JXLSReportEngine implements BeCPGReportEngine {
 
 	}
 
+	/**
+	 * <p>cleanName.</p>
+	 *
+	 * @param name a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	private String cleanName(String name) {
 		return name.indexOf('.') >= 0 ? name.toLowerCase().substring(0, name.lastIndexOf('.')) : name;
 	}

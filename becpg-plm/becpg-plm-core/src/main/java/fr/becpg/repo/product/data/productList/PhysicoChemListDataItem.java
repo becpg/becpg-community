@@ -37,6 +37,7 @@ import fr.becpg.repo.repository.model.VariantAwareDataItem;
 public class PhysicoChemListDataItem extends VariantAwareDataItem implements SimpleListDataItem, MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ControlableListDataItem, RegulatoryEntityItem {
 			
 	
+	/** Constant <code>serialVersionUID=-3018711765028656339L</code> */
 	private static final long serialVersionUID = -3018711765028656339L;
 
 	private Double value;

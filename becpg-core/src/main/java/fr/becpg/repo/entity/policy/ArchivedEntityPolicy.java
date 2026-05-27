@@ -50,8 +50,10 @@ public class ArchivedEntityPolicy extends AbstractBeCPGPolicy implements OnAddAs
 	
 	private BeCPGCacheService beCPGCacheService;
 	
+	/** Constant <code>KEY_ASPECT_ADDED="aspectAdded"</code> */
 	private static final String KEY_ASPECT_ADDED = "aspectAdded";
 
+	/** Constant <code>KEY_ASPECT_REMOVED="aspectRemoved"</code> */
 	private static final String KEY_ASPECT_REMOVED = "aspectRemoved";
 	
 	/**

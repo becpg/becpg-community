@@ -47,6 +47,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	/** Constant <code>MESSAGE_MAXIMAL_DAILY_VALUE="message.formulate.nut.maximalDailyValue"</code> */
 	public static final String MESSAGE_MAXIMAL_DAILY_VALUE = "message.formulate.nut.maximalDailyValue";
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(NutsCalculatingFormulationHandler.class);
 
 	/** {@inheritDoc} */
@@ -132,6 +133,14 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 		return true;
 	}
 
+	/**
+	 * <p>calculateNutListDataItem.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param reconstituant a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param onlyFormulaNutrient a boolean
+	 * @param hasCompo a boolean
+	 */
 	private void calculateNutListDataItem(ProductData formulatedProduct, ProductData reconstituant, boolean onlyFormulaNutrient, boolean hasCompo) {
 		formulatedProduct.getNutList().forEach(n -> {
 			if (n.getNut() != null) {
@@ -340,6 +349,9 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 	/**
 	 * Parses a string to a Double, returning null if the input is not a valid number.
+	 *
+	 * @param value a {@link java.lang.String} object
+	 * @return a {@link java.lang.Double} object
 	 */
 	private Double parseToDouble(String value) {
 		try {
@@ -353,6 +365,10 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 	/**
 	 * Calculates the percentage reduction based on the reference value and the base value (either prepared or unprepared).
+	 *
+	 * @param refValue a {@link java.lang.Double} object
+	 * @param baseValue a {@link java.lang.Double} object
+	 * @return a {@link java.lang.Double} object
 	 */
 	private Double calculateReduction(Double refValue, Double baseValue) {
 

@@ -28,8 +28,12 @@ import fr.becpg.repo.product.formulation.labeling.EvaporatedDataItem;
  */
 public class EvaporatingFormulationHelper {
 
+    /** Constant <code>logger</code> */
     private static final Log logger = LogFactory.getLog(EvaporatingFormulationHelper.class);
 
+    /**
+     * <p>Constructor for EvaporatingFormulationHelper.</p>
+     */
     private EvaporatingFormulationHelper() {
         // Private constructor
     }
@@ -149,7 +153,7 @@ public class EvaporatingFormulationHelper {
 
     /**
      * Process evaporation for a set of items with similar evaporation characteristics.
-     * 
+     *
      * @param <T> the type of items being processed
      * @param evaporatingQty the quantity to evaporate
      * @param items the evaporated data items to process

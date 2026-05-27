@@ -31,7 +31,9 @@ import fr.becpg.repo.ecm.data.ChangeOrderType;
  */
 public class ECOTypePatch extends AbstractBeCPGPatch {
 
+	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ECOTypePatch.class);
+	/** Constant <code>MSG_SUCCESS="patch.bcpg.ecoTypePatch.result"</code> */
 	private static final String MSG_SUCCESS = "patch.bcpg.ecoTypePatch.result";
 
 	private NodeDAO nodeDAO;

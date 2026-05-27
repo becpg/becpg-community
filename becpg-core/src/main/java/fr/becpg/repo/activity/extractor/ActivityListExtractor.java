@@ -61,6 +61,7 @@ import fr.becpg.repo.security.SecurityService;
  */
 public class ActivityListExtractor extends SimpleExtractor {
 
+	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(ActivityListExtractor.class);
 
 	private EntityActivityService entityActivityService;
@@ -69,10 +70,13 @@ public class ActivityListExtractor extends SimpleExtractor {
 
 	private SecurityService securityService;
 
+	/** Constant <code>ACTIVITYEVENT_UPDATE="Update"</code> */
 	private static final String ACTIVITYEVENT_UPDATE = "Update";
+	/** Constant <code>PROP_BECPG_ALDATA="prop_bcpg_alData"</code> */
 	private static final String PROP_BECPG_ALDATA = "prop_bcpg_alData";
 	
 
+	/** Constant <code>isIgnoredTypes</code> */
 	private static final Set<QName> isIgnoredTypes = new HashSet<>();
 
 	/**
@@ -294,6 +298,13 @@ public class ActivityListExtractor extends SimpleExtractor {
 
 	}
 
+	/**
+	 * <p>areStringsDifferent.</p>
+	 *
+	 * @param object a {@link java.lang.Object} object
+	 * @param object2 a {@link java.lang.Object} object
+	 * @return a boolean
+	 */
 	private boolean areStringsDifferent(Object object, Object object2) {
 
 		if ((object == null) && (object2 == null)) {
@@ -307,6 +318,13 @@ public class ActivityListExtractor extends SimpleExtractor {
 		return !object.toString().equals(object2.toString());
 	}
 
+	/**
+	 * <p>adaptProperty.</p>
+	 *
+	 * @param propToAdapt a {@link org.json.JSONArray} object
+	 * @param propRef a {@link org.json.JSONArray} object
+	 * @throws org.json.JSONException if any.
+	 */
 	private void adaptProperty(JSONArray propToAdapt, JSONArray propRef) throws JSONException {
 
 		if ((propToAdapt.get(0) == JSONObject.NULL) && (propRef.get(0) instanceof JSONArray)) {
@@ -400,6 +418,12 @@ public class ActivityListExtractor extends SimpleExtractor {
 		return postproperty;
 	}
 
+	/**
+	 * <p>extractDate.</p>
+	 *
+	 * @param prop a {@link java.lang.String} object
+	 * @return a {@link java.lang.Object} object
+	 */
 	private Object extractDate(String prop) {
 		try {
 			return ISO8601DateFormat.parse(prop);
