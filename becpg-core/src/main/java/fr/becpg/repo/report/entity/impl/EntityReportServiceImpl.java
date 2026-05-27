@@ -1777,24 +1777,6 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 	}
 
-	private long estimateXmlSize(Element element) {
-		class CountingOutputStream extends OutputStream {
-			private long count = 0;
-			@Override public void write(int b) { count++; }
-			@Override public void write(byte[] b, int off, int len) { count += len; }
-			public long getCount() { return count; }
-		}
-		CountingOutputStream counter = new CountingOutputStream();
-		try {
-			org.dom4j.io.XMLWriter writer = new org.dom4j.io.XMLWriter(counter);
-			writer.write(element);
-			writer.flush();
-		} catch (IOException e) {
-			logger.warn("Could not estimate XML datasource size: " + e.getMessage());
-		}
-		return counter.getCount();
-	}
-
 	private String getTruncatedXml(Element element, int maxLength) {
 		class TruncatingWriter extends Writer {
 			private StringBuilder sb = new StringBuilder();
@@ -1814,7 +1796,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 			@Override public void close() {}
 			@Override public String toString() { return sb.toString(); }
 		}
-		
+
 		TruncatingWriter writer = new TruncatingWriter();
 		try {
 			org.dom4j.io.XMLWriter xmlWriter = new org.dom4j.io.XMLWriter(writer);
