@@ -79,6 +79,9 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 			if (context instanceof PackagingMaterialVisitorContext pContext) {
 				filterLevel = pContext.getFilterLevel();
 			}
+			if (filterLevel == null) {
+				return true;
+			}
 			PackagingLevel pkgLevel = packMaterialListDataItem.getPkgLevel();
 			if (pkgLevel == null && partProduct.isRawMaterial()) {
 				pkgLevel = PackagingLevel.Primary;
@@ -153,12 +156,12 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 			double subQty)  {
 
 		if (nodeService.getType(packagingListDataItem.getProduct()).equals(PLMModel.TYPE_PACKAGINGKIT)) {
-			PackagingLevel filterLevel = PackagingLevel.Primary;
+			PackagingLevel filterLevel = null;
 			if (context instanceof PackagingMaterialVisitorContext pContext) {
 				filterLevel = pContext.getFilterLevel();
 			}
 			if ((packagingListDataItem.getQty() != null) && ProductUnit.P.equals(packagingListDataItem.getPackagingListUnit())
-					&& filterLevel.equals(packagingListDataItem.getPkgLevel()) ) {
+					&& (filterLevel == null || filterLevel.equals(packagingListDataItem.getPkgLevel())) ) {
 				subQty *= packagingListDataItem.getQty();
 			}
 			ProductData packagingListDataItemProduct = (ProductData) alfrescoRepository.findOne(packagingListDataItem.getProduct());
@@ -186,12 +189,12 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 	private void visitMaterialPackaging(CharactDetailsVisitorContext context, NodeRef parent, PackagingListDataItem packagingListDataItem, CharactDetails charactDetails, Integer currLevel,
 			double subQty)  {
 		
-		PackagingLevel filterLevel = PackagingLevel.Primary;
+		PackagingLevel filterLevel = null;
 		if (context instanceof PackagingMaterialVisitorContext) {
 			filterLevel = ((PackagingMaterialVisitorContext) context).getFilterLevel();
 		}
 
-		if ((packagingListDataItem.getProduct() != null) && Objects.equals(filterLevel, packagingListDataItem.getPkgLevel())) {
+		if ((packagingListDataItem.getProduct() != null) && (filterLevel == null || Objects.equals(filterLevel, packagingListDataItem.getPkgLevel()))) {
 
 			PackagingMaterialData packagingMaterial = (PackagingMaterialData) alfrescoRepository.findOne(packagingListDataItem.getProduct());
 
