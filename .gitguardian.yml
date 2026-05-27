@@ -1,0 +1,28 @@
+# GitGuardian configuration file
+# This file marks known false positives to reduce noise
+
+version: 2
+
+# Matches secrets that are not really secrets
+matches:
+  # becpg is a local default password, not a real credential
+  - match: becpg
+    type: password
+    severity: low
+    
+  # Local development passwords (not production secrets)
+  - match: admin
+    type: password
+    severity: low
+    
+  - path: becpg-integration-runner/**/alfresco-global.properties
+    type: path
+    severity: low
+
+# Ignore specific matches in specific files
+ignores:
+    
+  - match: becpg
+    path: run.sh
+    type: password
+    severity: low
