@@ -7,7 +7,11 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.node.NodeServicePolicies.OnAddAspectPolicy;
 import org.alfresco.repo.node.NodeServicePolicies.OnRemoveAspectPolicy;
+import org.alfresco.repo.node.NodeServicePolicies.OnUpdatePropertiesPolicy;
 import org.alfresco.repo.policy.JavaBehaviour;
+import java.io.Serializable;
+import java.util.Map;
+import fr.becpg.common.BeCPGException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
@@ -32,7 +36,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
  *
  * @author matthieu
  */
-public class ArchivedEntityPolicy extends AbstractBeCPGPolicy implements OnAddAspectPolicy, OnRemoveAspectPolicy {
+public class ArchivedEntityPolicy extends AbstractBeCPGPolicy implements OnAddAspectPolicy, OnRemoveAspectPolicy, OnUpdatePropertiesPolicy {
 
 	private EntityFormatService entityFormatService;
 
@@ -111,6 +115,13 @@ public class ArchivedEntityPolicy extends AbstractBeCPGPolicy implements OnAddAs
 				new JavaBehaviour(this, "onAddAspect"));
 		policyComponent.bindClassBehaviour(OnRemoveAspectPolicy.QNAME, BeCPGModel.ASPECT_ARCHIVED_ENTITY,
 				new JavaBehaviour(this, "onRemoveAspect"));
+		policyComponent.bindClassBehaviour(OnUpdatePropertiesPolicy.QNAME, BeCPGModel.ASPECT_ARCHIVED_ENTITY,
+				new JavaBehaviour(this, "onUpdateProperties"));
+	}
+
+	@Override
+	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+		throw new BeCPGException("Cannot update an archived entity");
 	}
 
 	/** {@inheritDoc} */

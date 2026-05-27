@@ -53,6 +53,9 @@ public class RemoteChannelBatchWebScriptIT extends PLMBaseTestCase {
 	@Autowired
 	private EntityListDAO entityListDAO;
 
+	@Autowired
+	private fr.becpg.repo.entity.EntityFormatService entityFormatService;
+
 	@Test
 	public void testBatchAuthentication() throws IOException {
 		inWriteTx(() -> {
@@ -251,6 +254,85 @@ public class RemoteChannelBatchWebScriptIT extends PLMBaseTestCase {
 			assertEquals(PublicationChannelStatus.COMPLETED.toString(), nodeService.getProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_STATUS));
 			assertEquals("batch-003", nodeService.getProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_BATCHID));
 			assertNotNull(nodeService.getProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_PUBLISHEDDATE));
+			return null;
+		});
+	}
+
+	/**
+	 * Test batch acknowledgment for an archived entity.
+	 */
+	@Test
+	public void testBatchAckArchivedEntity() throws IOException {
+		inWriteTx(() -> {
+			if (authenticationDAO.userExists(CONNECTOR_ACCOUNT_TEST)) {
+				personService.deletePerson(CONNECTOR_ACCOUNT_TEST);
+			}
+			BeCPGTestHelper.createUser(CONNECTOR_ACCOUNT_TEST);
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.ApiConnector, CONNECTOR_ACCOUNT_TEST);
+			return null;
+		});
+
+		// Create a test channel and entity
+		NodeRef channelNodeRef = createTestChannel("test-channel-ack-archived");
+		String channelId = inReadTx(() -> (String) nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_ID));
+		NodeRef entityNodeRef = createTestEntity("test-entity-archived");
+
+		// Archive the entity
+		inWriteTx(() -> {
+			nodeService.addAspect(entityNodeRef, fr.becpg.model.BeCPGModel.ASPECT_ARCHIVED_ENTITY, null);
+			return null;
+		});
+
+		// Wait for the archiving background batch to finish converting the entity to JSON format
+		boolean isArchived = false;
+		for (int i = 0; i < 30; i++) {
+			isArchived = inReadTx(() -> {
+				return fr.becpg.model.BeCPGModel.EntityFormat.JSON.toString().equals(entityFormatService.getEntityFormat(entityNodeRef));
+			});
+			if (isArchived) {
+				break;
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// Ignore
+			}
+		}
+		assertTrue("Entity was not archived in time", isArchived);
+
+		// Prepare request body
+		JSONObject requestBody = new JSONObject();
+		JSONObject entity = new JSONObject();
+		JSONObject attributes = new JSONObject();
+
+		attributes.put("bp:pubChannelListStatus", PublicationChannelStatus.COMPLETED.toString());
+		attributes.put("bp:pubChannelListBatchId", "batch-004");
+
+		entity.put("attributes", attributes);
+		requestBody.put("entity", entity);
+
+		// Execute request
+		String url = "/becpg/remote/channel/batch/ack?channelId=" + channelId + "&nodeRef=" + entityNodeRef.toString();
+		Response response = TestWebscriptExecuters.sendRequest(new PostRequest(url, requestBody.toString(), "application/json"), 200,
+				CONNECTOR_ACCOUNT_TEST, CONNECTOR_PASSWORD);
+
+		assertEquals(200, response.getStatus());
+
+		inReadTx(() -> {
+			// Verify channel properties were updated on the archived entity
+			java.util.List<String> publishedChannelIds = (java.util.List<String>) nodeService.getProperty(entityNodeRef, PublicationModel.PROP_PUBLISHED_CHANNELIDS);
+			assertNotNull(publishedChannelIds);
+			assertTrue(publishedChannelIds.contains(channelId));
+
+			// Verify NO channel list container/item was created
+			NodeRef listContainer = entityListDAO.getListContainer(entityNodeRef);
+			if (listContainer != null) {
+				NodeRef listNodeRef = entityListDAO.getList(listContainer, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST);
+				if (listNodeRef != null) {
+					NodeRef channelListNodeRef = entityListDAO.getListItem(listNodeRef, PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL, channelNodeRef);
+					assertTrue(channelListNodeRef == null || !nodeService.exists(channelListNodeRef));
+				}
+			}
 			return null;
 		});
 	}
