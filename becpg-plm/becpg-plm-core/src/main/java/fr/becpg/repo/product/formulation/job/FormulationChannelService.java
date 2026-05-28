@@ -23,6 +23,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.query.PagingRequest;
 import org.alfresco.query.PagingResults;
 import org.alfresco.repo.batch.BatchProcessor;
+import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AbstractAuthenticationService;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -416,7 +417,7 @@ public class FormulationChannelService implements BatchQueuePlugin {
 		
 		AtomicReference<Integer> numberOfErrors = new AtomicReference<>(0);
 		
-		ReformulateChangedEntitiesProcessWorker processWorker = new ReformulateChangedEntitiesProcessWorker(toPublishProductsSet, batchId);
+		ReformulateChangedEntitiesProcessWorker processWorker = new ReformulateChangedEntitiesProcessWorker(toPublishProductsSet, batchId, numberOfErrors);
 		BatchStep<NodeRef> formulateStep = batchQueueService.createBatchStepWithErrorHandling(batchInfo, totalNodesToProcess, processWorker,
 				(nodeRef, throwable) -> {
 					publicationChannelService.publishEntityChannel(nodeRef, FORMULATE_ENTITIES_CHANNEL_ID,
@@ -734,10 +735,12 @@ public class FormulationChannelService implements BatchQueuePlugin {
 
 		private Set<NodeRef> toPublishProducts;
 		private String batchId;
+		private AtomicReference<Integer> numberOfErrors;
 
-		public ReformulateChangedEntitiesProcessWorker(Set<NodeRef> toPublishProducts, String batchId) {
+		public ReformulateChangedEntitiesProcessWorker(Set<NodeRef> toPublishProducts, String batchId, AtomicReference<Integer> numberOfErrors) {
 			this.toPublishProducts = toPublishProducts;
 			this.batchId = batchId;
+			this.numberOfErrors = numberOfErrors;
 		}
 
 		@Override
@@ -790,8 +793,21 @@ public class FormulationChannelService implements BatchQueuePlugin {
 				@Override
 				public void afterCommit() {
 					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-						publicationChannelService.publishEntityChannel(toProcess, FORMULATE_ENTITIES_CHANNEL_ID,
-								ChannelData.builder().status(PublicationChannelStatus.COMPLETED.toString()).batchId(batchId).build());
+						try {
+							IntegrityChecker.setWarnInTransaction();
+							publicationChannelService.publishEntityChannel(toProcess, FORMULATE_ENTITIES_CHANNEL_ID,
+									ChannelData.builder().status(PublicationChannelStatus.COMPLETED.toString()).batchId(batchId).build());
+						} catch (Exception e) {
+							logger.error("Error publishing product to channel after formulation: " + toProcess, e);
+							publicationChannelService.publishEntityChannel(toProcess, FORMULATE_ENTITIES_CHANNEL_ID,
+									ChannelData.builder()
+									.status(PublicationChannelStatus.FAILED.toString())
+									.batchId(batchId)
+									.error(getRootCause(e).getMessage())
+									.build());
+							numberOfErrors.set(numberOfErrors.get() + 1);
+						
+						}
 						return null;
 					}, false, true);
 				}
