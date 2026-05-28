@@ -2696,7 +2696,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 	}
 
 	String replaceAllergen(String allergenName, String ingLegalName) {
-		Matcher ma = Pattern.compile("\\b(" + Pattern.quote(allergenName) + "(s?))\\b", Pattern.CASE_INSENSITIVE).matcher(ingLegalName);
+		Matcher ma = Pattern.compile("\\b(" + Pattern.quote(allergenName) + "(s?))\\b", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CHARACTER_CLASS).matcher(ingLegalName);
 		if (ma.find() && (ma.group(1) != null)) {
 			return ma.replaceAll("<b>$1</b>");
 		}
