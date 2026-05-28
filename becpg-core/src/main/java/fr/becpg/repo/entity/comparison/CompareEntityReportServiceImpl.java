@@ -285,12 +285,12 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 
 				i = 1;
 				for (String value : c.getValues()) {
-					// Escaping text to replace invalid chars in rendered XML output (e.g: 'property="Name "value""')
-					value = StringEscapeUtils.escapeXml11(value);
 					if (logger.isDebugEnabled()) {
 						logger.debug("compare prop: " + c.getProperty() + " - " + ATTR_VALUE + i + " " + value);
 					}
-					cmpRowElt.addAttribute(ATTR_VALUE + i, value);
+					// Use CDATA element instead of attribute to preserve HTML content (rich text fields)
+					Element valueElt = cmpRowElt.addElement(ATTR_VALUE + i);
+					valueElt.addCDATA(value != null ? value : "");
 					i++;
 				}
 
