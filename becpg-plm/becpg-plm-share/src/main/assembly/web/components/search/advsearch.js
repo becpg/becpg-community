@@ -361,23 +361,6 @@
 								// this hidden field and set the
 								// value
 								var cntrl = Dom.get(element.id + "-entry");
-								if (!cntrl) {
-									var entryControls = elForm.elements[element.name + "-entry"];
-									if (entryControls && entryControls.length) {
-										for (var l = 0; l < entryControls.length; l++) {
-											var isChecked = (entryControls[l].value === savedValue);
-											entryControls[l].checked = isChecked;
-											if (isChecked) {
-												entryControls[l].setAttribute("checked", "checked");
-												if (entryControls[l].dispatchEvent) {
-													entryControls[l].dispatchEvent(new Event("change"));
-												}
-											} else {
-												entryControls[l].removeAttribute("checked");
-											}
-										}
-									}
-								}
 								if (cntrl) {
 									switch (cntrl.type) {
 									case "checkbox":
