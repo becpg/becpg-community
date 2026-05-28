@@ -13,6 +13,7 @@ import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.repository.model.ManualDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
 /**
@@ -23,7 +24,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  */
 @AlfType
 @AlfQname(qname = "pack:packMaterialList")
-public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleCharactDataItem, AspectAwareDataItem {
+public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleCharactDataItem, AspectAwareDataItem, ManualDataItem {
 
 	/**
 	 * 
@@ -35,6 +36,7 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 	private Double pmlRecycledPercentage;
 	private NodeRef pmlMaterial;
 	private PackagingLevel pkgLevel = PackagingLevel.Primary;
+	private Boolean isManual = Boolean.FALSE;
 
 	/** {@inheritDoc} */
 	@Override
@@ -59,6 +61,29 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 	@Override
 	public Double getValue() {
 		return getPmlWeight();
+	}
+
+	/**
+	 * <p>Getter for the field <code>isManual</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object
+	 */
+	@AlfProp
+	@InternalField
+	@AlfQname(qname = "bcpg:isManualListItem")
+	@Override
+	public Boolean getIsManual() {
+		return isManual != null ? isManual : Boolean.FALSE;
+	}
+
+	/**
+	 * <p>Setter for the field <code>isManual</code>.</p>
+	 *
+	 * @param isManual a {@link java.lang.Boolean} object
+	 */
+	@Override
+	public void setIsManual(Boolean isManual) {
+		this.isManual = isManual;
 	}
 
 	/**
@@ -248,6 +273,7 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 		this.pmlWeight = o.pmlWeight;
 		this.pkgLevel = o.pkgLevel;
 		this.pmlRecycledPercentage = o.pmlRecycledPercentage;
+		this.isManual = o.isManual;
 	}
 
 	/** {@inheritDoc} */
@@ -265,7 +291,7 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(pkgLevel, pmlMaterial, pmlPerc, pmlRecycledPercentage, pmlWeight);
+		result = prime * result + Objects.hash(isManual, pkgLevel, pmlMaterial, pmlPerc, pmlRecycledPercentage, pmlWeight);
 		return result;
 	}
 
@@ -279,8 +305,9 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 		if (getClass() != obj.getClass())
 			return false;
 		PackMaterialListDataItem other = (PackMaterialListDataItem) obj;
-		return pkgLevel == other.pkgLevel && Objects.equals(pmlMaterial, other.pmlMaterial) && Objects.equals(pmlPerc, other.pmlPerc)
-				&& Objects.equals(pmlRecycledPercentage, other.pmlRecycledPercentage) && Objects.equals(pmlWeight, other.pmlWeight);
+		return Objects.equals(isManual, other.isManual) && pkgLevel == other.pkgLevel && Objects.equals(pmlMaterial, other.pmlMaterial)
+				&& Objects.equals(pmlPerc, other.pmlPerc) && Objects.equals(pmlRecycledPercentage, other.pmlRecycledPercentage)
+				&& Objects.equals(pmlWeight, other.pmlWeight);
 	}
 
 	/** {@inheritDoc} */
