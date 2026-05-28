@@ -260,29 +260,6 @@ case "$1" in
   test)
     test
     ;;
-  test_profile)
-    test_profile
-    ;;
-  reindex)
-    reindex
-    ;;
-review)
-    ./review/review-wizard.sh
-    ;;
-visualvm)
-    jvisualvm --openjmx localhost:9091
-    ;;
-  *)
-    echo "Usage: $0 {install|install_hotswap|build_start|build_test|start|stop|purge|tail|test|deploy_fast|deploy_java [module]|visualvm|reindex}"
-esac
-urge
-    ;;
-  tail)
-    tail
-    ;;
-  test)
-    test
-    ;;
   reindex)
     reindex
     ;;
