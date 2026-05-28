@@ -36,7 +36,6 @@ import fr.becpg.repo.system.SystemConfigurationService;
  * @version $Id: $Id
  */
 @Service("formulaService")
-@SuppressWarnings("deprecation")
 public class SpelFormulaService {
 
 	/** Constant <code>logger</code> */

@@ -22,7 +22,6 @@ import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
  *
  * @author matthieu
  */
-@SuppressWarnings("unused")
 public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 
 	/** Constant <code>MASKING="MASKING"</code> */
