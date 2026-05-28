@@ -510,4 +510,46 @@ public class MultiLevelExcelReportSearchPluginIT extends PLMBaseTestCase {
 			assertTrue("Should have at least one data row when wUsedAllLevelIncludeEmpty is true (data row count: " + dataRowCount + ")", dataRowCount >= 1);
 		}
 	}
+
+	/**
+	 * Test wUsedAllLevel and IncludeEmpty passed as separate parameters (ticket #34545)
+	 */
+	@Test
+	public void testMultiLevelExcelReportWUsedSeparateIncludeEmpty() throws IOException {
+		initTestReports();
+
+		NodeRef sfNodeRef = inWriteTx(() -> {
+			FinishedProductData product = FinishedProductData.build()
+					.withName("Unused SF Separate")
+					.withQty(100d)
+					.withUnit(ProductUnit.kg);
+			NodeRef created = alfrescoRepository.create(getTestFolderNodeRef(), product).getNodeRef();
+			nodeService.setType(created, PLMModel.TYPE_SEMIFINISHEDPRODUCT);
+			return created;
+		});
+
+		byte[] reportData = inReadTx(() -> {
+			java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
+			exportSearchService.createReport(PLMModel.TYPE_SEMIFINISHEDPRODUCT, compositionPackagingReportTpl,
+					List.of(sfNodeRef), ReportFormat.XLSX, baos, new String[] { "wUsedAllLevel", "IncludeEmpty" });
+			return baos.toByteArray();
+		});
+
+		assertNotNull("Report data should not be null", reportData);
+		assertTrue("Report data should not be empty", reportData.length > 0);
+
+		try (XSSFWorkbook workbook = new XSSFWorkbook(new ByteArrayInputStream(reportData))) {
+			XSSFSheet sheet = workbook.getSheetAt(0);
+			assertNotNull("Sheet should not be null", sheet);
+
+			int dataRowCount = 0;
+			for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+				Row row = sheet.getRow(i);
+				if (row != null && row.getCell(0) != null && "VALUES".equals(row.getCell(0).getStringCellValue())) {
+					dataRowCount++;
+				}
+			}
+			assertTrue("Should have at least one data row when wUsedAllLevel and IncludeEmpty are separate parameters (data row count: " + dataRowCount + ")", dataRowCount >= 1);
+		}
+	}
 }

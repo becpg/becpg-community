@@ -247,9 +247,17 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
     /** {@inheritDoc} */
     @Override
     public boolean isApplicable(QName itemType, String[] parameters) {
-        String parameter = (parameters != null) && (parameters.length > 0) ? parameters[0] : null;
-        return (PLMModel.TYPE_PACKAGINGLIST.equals(itemType) || PLMModel.TYPE_COMPOLIST.equals(itemType) || MPMModel.TYPE_PROCESSLIST.equals(itemType))
-                && ((parameter != null) && parameter.contains(PARAM_SUFFIX_LEVEL));
+        if (!PLMModel.TYPE_PACKAGINGLIST.equals(itemType) && !PLMModel.TYPE_COMPOLIST.equals(itemType) && !MPMModel.TYPE_PROCESSLIST.equals(itemType)) {
+            return false;
+        }
+        if (parameters != null) {
+            for (String p : parameters) {
+                if ((p != null) && p.contains(PARAM_SUFFIX_LEVEL)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /** {@inheritDoc} */
@@ -263,9 +271,20 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
         QName pivotAssoc = null;
         String depthLevel;
 
+        if (parameters != null) {
+            for (String p : parameters) {
+                if (p != null) {
+                    if (p.contains(PARAM_PREFIX_WUSED)) {
+                        wUsed = true;
+                    }
+                    if (p.contains(TOKEN_INCLUDE_EMPTY)) {
+                        includeEmpty = true;
+                    }
+                }
+            }
+        }
+
         if (parameter != null) {
-            wUsed = parameter.contains(PARAM_PREFIX_WUSED);
-            includeEmpty = parameter.contains(TOKEN_INCLUDE_EMPTY);
             if (wUsed) {
                 parameter = parameter.replace(PARAM_PREFIX_WUSED, "");
                 pivotAssoc = entityDictionaryService.getDefaultPivotAssoc(itemType);
