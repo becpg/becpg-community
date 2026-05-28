@@ -104,6 +104,10 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 
 				List<PackMaterialListDataItem> toRemove = new ArrayList<>();
 				for (PackMaterialListDataItem packmaterial : formulatedProduct.getPackMaterialList()) {
+					if (Boolean.TRUE.equals(packmaterial.getIsManual())) {
+						toUpdate.remove(new Pair<>(packmaterial.getPkgLevel(), packmaterial.getPmlMaterial()));
+						continue;
+					}
 					Pair<PackagingLevel, NodeRef> key = new Pair<>(packmaterial.getPkgLevel(), packmaterial.getPmlMaterial());
 					if (!toUpdate.containsKey(key) || toUpdate.get(key).getFirst().doubleValue() == 0d) {
 						toRemove.add(packmaterial);
