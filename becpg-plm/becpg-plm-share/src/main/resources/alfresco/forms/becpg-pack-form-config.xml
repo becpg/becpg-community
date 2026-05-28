@@ -231,8 +231,12 @@
 					<show id="pack:pmlPerc" />
 					<show id="pack:pmlWeight" />
 					<show id="pack:pmlRecycledPercentage" />
+					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:isManualListItem">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
 					<field id="pack:pmlMaterial">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial
@@ -249,14 +253,10 @@
 					<show id="pack:pmlPerc" />
 					<show id="pack:pmlWeight" />
 					<show id="pack:pmlRecycledPercentage" />	
-					<show id="bcpg:isManualListItem" force="true" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="pack:pmlLevel"  read-only="true" />
-					<field id="bcpg:isManualListItem" >
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
-					</field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
@@ -306,8 +306,12 @@
 					<show id="pack:pmlPerc" />
 					<show id="pack:pmlWeight" />
 					<show id="pack:pmlRecycledPercentage" />
+					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:isManualListItem">
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
 					<field id="pack:pmlMaterial">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial
