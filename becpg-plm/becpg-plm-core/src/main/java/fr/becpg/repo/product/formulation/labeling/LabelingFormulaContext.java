@@ -1724,7 +1724,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						if (!ret.isEmpty()) {
 							ret.append(getLocaleSeparator(allergensSeparator));
 						} else {
-							ma = Pattern.compile("\\b(" + Pattern.quote(allergenName) + "(s?))\\b", Pattern.CASE_INSENSITIVE).matcher(ingLegalName);
+							ma = Pattern.compile("\\b(" + Pattern.quote(allergenName) + "(s?))\\b", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CHARACTER_CLASS).matcher(ingLegalName);
 							if (ma.find() && (ma.group(1) != null)) {
 
 								detectedAllergens.add(ma.group(1));
@@ -1734,7 +1734,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 								for (NodeRef subAllergen : associationService.getTargetAssocs(allergen, PLMModel.ASSOC_ALLERGENSUBSETS)) {
 									String subAllergenName = uncapitalize(getCharactName(subAllergen));
 									if ((subAllergenName != null) && !subAllergenName.isEmpty()) {
-										ma = Pattern.compile("\\b(" + Pattern.quote(subAllergenName) + "(s?))\\b", Pattern.CASE_INSENSITIVE)
+										ma = Pattern.compile("\\b(" + Pattern.quote(subAllergenName) + "(s?))\\b", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CHARACTER_CLASS)
 												.matcher(ingLegalName);
 										if (ma.find() && (ma.group(1) != null)) {
 
