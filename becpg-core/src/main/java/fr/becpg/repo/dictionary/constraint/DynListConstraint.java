@@ -334,7 +334,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 			throw new ConstraintException(ERR_NON_STRING, value);
 		}
 
-		if (!getAllowedValues(false).contains(valueStr)) {
+		if (!UNDIFINED_CONSTRAINT_VALUE.equals(valueStr) && !getAllowedValues(false).contains(valueStr)) {
 			throw new ConstraintException(ERR_INVALID_VALUE, value);
 		}
 
