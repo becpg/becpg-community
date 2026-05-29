@@ -37,6 +37,7 @@ import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.ml.MultilingualContentService;
 import org.alfresco.service.cmr.repository.ContentData;
+import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -333,22 +334,23 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             throw new IllegalArgumentException("NodeRef may not be null for calls to NodeService.  Check client code.");
         }
         
-        // Check if node exists first to reduce likelihood of stale node exceptions
-        if (!nodeService.exists(nodeRef))
+        // Single nodeService lookup: hasAspect already validates node existence and throws
+        // InvalidNodeRefException for stale nodes, so the previous explicit exists() check is redundant.
+        // This hot path is hit on every getProperty/getProperties call.
+        try
+        {
+            if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_MULTILINGUAL_EMPTY_TRANSLATION))
+            {
+                return multilingualContentService.getPivotTranslation(nodeRef);
+            }
+            return null;
+        }
+        catch (InvalidNodeRefException e)
         {
             if (logger.isDebugEnabled())
             {
                 logger.debug("NodeRef does not exist: " + nodeRef);
             }
-            return null;
-        }
-        
-        if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_MULTILINGUAL_EMPTY_TRANSLATION))
-        {
-            return multilingualContentService.getPivotTranslation(nodeRef);
-        }
-        else
-        {
             return null;
         }
     }

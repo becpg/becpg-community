@@ -258,6 +258,9 @@ public class SpelFormulaService {
 	 * @return a {@link java.lang.Double} object.
 	 */
 	public Double aggreate(RepositoryEntity entity, Collection<RepositoryEntity> range, String formula, SpelFormulaContext.Operator operator) {
+		if (range == null || range.isEmpty()) {
+			return 0d;
+		}
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Running aggregate fonction [" + formula + "] on range (" + range.size() + ") for operator " + operator);

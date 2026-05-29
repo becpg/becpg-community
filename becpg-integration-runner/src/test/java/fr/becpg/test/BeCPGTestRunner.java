@@ -29,6 +29,8 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -48,6 +50,8 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -110,6 +114,7 @@ public class BeCPGTestRunner extends SpringJUnit4ClassRunner {
 	private static Log logger = LogFactory.getLog(BeCPGTestRunner.class);
 
 	private static final CloseableHttpClient SHARED_HTTP_CLIENT;
+	private static String cachedAlfrescoTicket = null;
 
 	static {
 		SHARED_HTTP_CLIENT = buildSharedHttpClient();
@@ -252,12 +257,72 @@ public class BeCPGTestRunner extends SpringJUnit4ClassRunner {
 	}
 
 	/**
+	 * Retrieve the Alfresco authentication ticket in a thread-safe manner.
+	 */
+	private static synchronized String getAlfrescoTicket(String contextRoot, String username, String password) {
+		if (cachedAlfrescoTicket != null) {
+			return cachedAlfrescoTicket;
+		}
+		try {
+			String loginUrl = contextRoot + "/service/api/login";
+			HttpPost post = new HttpPost(loginUrl);
+			post.setHeader("Content-Type", "application/json");
+			
+			String jsonPayload = String.format("{\"username\":\"%s\", \"password\":\"%s\"}", username, password);
+			post.setEntity(new StringEntity(jsonPayload, StandardCharsets.UTF_8));
+
+			try (org.apache.http.client.methods.CloseableHttpResponse resp = SHARED_HTTP_CLIENT.execute(post)) {
+				int statusCode = resp.getStatusLine().getStatusCode();
+				if (statusCode == HttpStatus.SC_OK) {
+					String responseBody = readResponseBodyStatic(resp);
+					Pattern pattern = Pattern.compile("\"ticket\"\\s*:\\s*\"(TICKET_[a-zA-Z0-9_]+)\"");
+					Matcher matcher = pattern.matcher(responseBody);
+					if (matcher.find()) {
+						cachedAlfrescoTicket = matcher.group(1);
+						if (logger.isInfoEnabled()) {
+							logger.info("Successfully obtained Alfresco authentication ticket: " + cachedAlfrescoTicket);
+						}
+						return cachedAlfrescoTicket;
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.warn("Could not retrieve Alfresco authentication ticket, falling back to Basic Auth", e);
+		}
+		return null;
+	}
+
+	private static String readResponseBodyStatic(HttpResponse resp) throws IOException {
+		StringBuilder body = new StringBuilder();
+		try (InputStream is = resp.getEntity().getContent();
+			 InputStreamReader ir = new InputStreamReader(is, StandardCharsets.UTF_8);
+			 BufferedReader br = new BufferedReader(ir)) {
+			
+			String line;
+			while ((line = br.readLine()) != null) {
+				body.append(line).append("\n");
+			}
+		}
+		return body.toString();
+	}
+
+	/**
 	 * Build the full URL for the test web script.
 	 */
 	private String buildTestUrl(String className, FrameworkMethod method) {
 		String encodedClassName = URLEncoder.encode(className, StandardCharsets.UTF_8);
 		String testWebScriptUrl = "/service/testing/test.xml?clazz=" + encodedClassName;
-		return getContextRoot(method) + testWebScriptUrl;
+		String contextRoot = getContextRoot(method);
+
+		String username = System.getProperty(ACS_USERNAME_PROP, DEFAULT_USERNAME);
+		String password = System.getProperty(ACS_PASSWORD_PROP, DEFAULT_PASSWORD);
+
+		String ticket = getAlfrescoTicket(contextRoot, username, password);
+		if (ticket != null) {
+			testWebScriptUrl += "&alf_ticket=" + ticket;
+		}
+
+		return contextRoot + testWebScriptUrl;
 	}
 
 	/**
