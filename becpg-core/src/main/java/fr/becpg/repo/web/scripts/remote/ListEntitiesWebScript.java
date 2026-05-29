@@ -51,6 +51,7 @@ public class ListEntitiesWebScript extends AbstractEntityWebScript {
 			Set<String> lists = extractLists(req);
 			params.setFilteredFields(fields, namespaceService);
 			params.setFilteredLists(lists);
+			params.setJsonParams(extractParams(req));
 
 			boolean shouldLimit = fields != null && !fields.isEmpty() || lists != null && !lists.isEmpty();
 

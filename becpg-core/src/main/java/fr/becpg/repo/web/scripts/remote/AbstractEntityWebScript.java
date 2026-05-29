@@ -246,8 +246,9 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 		String path = decodeParam(req.getParameter(PARAM_PATH));
 		String query = decodeParam(req.getParameter(PARAM_QUERY));
-		Integer page = intParam(req, PARAM_PAGE);
-		
+		JSONObject jsonParams = extractParams(req);
+		Integer page = intParam(req, jsonParams, PARAM_PAGE);
+
 		String entityQuery = null;
 		if (allowAdvancedSearch) {
 			try {
@@ -256,16 +257,20 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				logger.error("Error while extracting request body: " + e.getMessage(), e);
 			}
 		}
-		
+
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
-		if ((req.getParameter(PARAM_ALL_VERSION) == null) || "false".equalsIgnoreCase(req.getParameter(PARAM_ALL_VERSION))) {
-			if((req.getParameter(PARAM_EXCLUDE_SYSTEMS) == null) || "true".equalsIgnoreCase(req.getParameter(PARAM_EXCLUDE_SYSTEMS))){
+
+		boolean allVersion = booleanParam(req, jsonParams, PARAM_ALL_VERSION, false);
+		boolean excludeSystems = booleanParam(req, jsonParams, PARAM_EXCLUDE_SYSTEMS, true);
+
+		if (!allVersion) {
+			if (excludeSystems) {
 				queryBuilder.excludeDefaults();
 			} else {
 				queryBuilder.excludeVersions();
 			}
 		} else {
-			if((req.getParameter(PARAM_EXCLUDE_SYSTEMS) == null) || "true".equalsIgnoreCase(req.getParameter(PARAM_EXCLUDE_SYSTEMS))){
+			if (excludeSystems) {
 				queryBuilder.excludeSystems();
 			}
 		}
@@ -378,7 +383,19 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	 * @param paramName a {@link java.lang.String} object
 	 * @return a {@link java.lang.Integer} object
 	 */
-	protected Integer intParam(WebScriptRequest req,  String paramName) {
+	protected Integer intParam(WebScriptRequest req, String paramName) {
+		return intParam(req, null, paramName);
+	}
+
+	/**
+	 * <p>intParam.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object
+	 * @param jsonParams a {@link org.json.JSONObject} object
+	 * @param paramName a {@link java.lang.String} object
+	 * @return a {@link java.lang.Integer} object
+	 */
+	protected Integer intParam(WebScriptRequest req, JSONObject jsonParams, String paramName) {
 		String paramString = req.getParameter(paramName);
 
 		Integer ret = null;
@@ -386,11 +403,35 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			try {
 				ret = Integer.parseInt(paramString);
 			} catch (NumberFormatException e) {
-				logger.error("Cannot parse "+paramName+" argument", e);
+				logger.error("Cannot parse " + paramName + " argument", e);
 			}
 		}
-		
+
+		if (ret == null && jsonParams != null && jsonParams.has(paramName)) {
+			ret = jsonParams.optInt(paramName);
+		}
+
 		return ret;
+	}
+
+	/**
+	 * <p>booleanParam.</p>
+	 *
+	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object
+	 * @param jsonParams a {@link org.json.JSONObject} object
+	 * @param paramName a {@link java.lang.String} object
+	 * @param defaultValue a boolean
+	 * @return a boolean
+	 */
+	protected boolean booleanParam(WebScriptRequest req, JSONObject jsonParams, String paramName, boolean defaultValue) {
+		String paramString = req.getParameter(paramName);
+		if (paramString != null) {
+			return Boolean.parseBoolean(paramString);
+		}
+		if (jsonParams != null && jsonParams.has(paramName)) {
+			return jsonParams.optBoolean(paramName);
+		}
+		return defaultValue;
 	}
 
 	/**
