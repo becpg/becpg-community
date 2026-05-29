@@ -18,12 +18,10 @@
 package fr.becpg.repo.product.formulation;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.lock.LockStatus;
@@ -141,7 +139,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 				|| (productData.hasProcessListEl(new VariantFilters<>()))) {
 
 			if (formulateChildren) {
-				checkShouldFormulateComponents(true, productData, new HashSet<>());
+				checkShouldFormulateComponents(true, productData);
 			}
 
 			checkMissingProperties(productData);
@@ -159,21 +157,19 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	 * @return a boolean
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */
-	private boolean checkShouldFormulateComponents(boolean isRoot, ProductData productData, Set<NodeRef> visitedNodeRefs) throws FormulateException {
+	private boolean checkShouldFormulateComponents(boolean isRoot, ProductData productData) throws FormulateException {
 		boolean isFormulated = false;
 
-		NodeRef nodeRef = productData.getNodeRef();
-		if (nodeRef == null || !visitedNodeRefs.contains(nodeRef)) {
-			
-			if (nodeRef != null) {
-				visitedNodeRefs.add(nodeRef);
-			}
-			
+		if (!Boolean.TRUE.equals(productData.getIsUpToDate())) {
+
+			// Avoid recheck
+			productData.setIsUpToDate(true);
+
 			if (logger.isDebugEnabled()) {
 				logger.debug("checkShouldFormulateComponents: " + productData.getName());
 			}
 
-			if (((nodeRef == null) || (lockService.getLockStatus(nodeRef) == LockStatus.NO_LOCK))
+			if (((productData.getNodeRef() == null) || (lockService.getLockStatus(productData.getNodeRef()) == LockStatus.NO_LOCK))
 					&& !(productData instanceof LocalSemiFinishedProductData)) {
 
 				boolean shouldFormulate = false;
@@ -182,7 +178,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 					for (CompositionDataItem c : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 						if ((c.getComponent() != null)) {
 							ProductData subComponent = alfrescoRepository.findOne(c.getComponent());
-							if (checkShouldFormulateComponents(false, subComponent, visitedNodeRefs)
+							if (checkShouldFormulateComponents(false, subComponent)
 									|| ((productData.getFormulatedDate() == null) || ((subComponent.getFormulatedDate() != null)
 											&& (productData.getFormulatedDate().getTime() < subComponent.getFormulatedDate().getTime())))) {
 								shouldFormulate = true;
@@ -194,7 +190,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 					for (CompositionDataItem c : productData.getPackagingList()) {
 						if ((c.getComponent() != null)) {
 							ProductData subComponent = alfrescoRepository.findOne(c.getComponent());
-							if (checkShouldFormulateComponents(false, subComponent, visitedNodeRefs)
+							if (checkShouldFormulateComponents(false, subComponent)
 									|| ((productData.getFormulatedDate() == null) || ((subComponent.getFormulatedDate() != null)
 											&& (productData.getFormulatedDate().getTime() < subComponent.getFormulatedDate().getTime())))) {
 								shouldFormulate = true;
@@ -206,7 +202,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 					for (CompositionDataItem c : productData.getProcessList()) {
 						if ((c.getComponent() != null)) {
 							ProductData subComponent = alfrescoRepository.findOne(c.getComponent());
-							if (checkShouldFormulateComponents(false, subComponent, visitedNodeRefs)
+							if (checkShouldFormulateComponents(false, subComponent)
 									|| ((productData.getFormulatedDate() == null) || ((subComponent.getFormulatedDate() != null)
 											&& (productData.getFormulatedDate().getTime() < subComponent.getFormulatedDate().getTime())))) {
 								shouldFormulate = true;
