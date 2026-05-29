@@ -22,7 +22,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -426,7 +428,7 @@ public class BeCPGHashCodeBuilder {
 			throw new IllegalArgumentException("The object to build a hash code for must not be null");
 		}
 		BeCPGHashCodeBuilder builder = new BeCPGHashCodeBuilder();
-		return builder.reflectionAppend(object, new HashSet<>());
+		return builder.reflectionAppend(object, Collections.newSetFromMap(new IdentityHashMap<>()));
 	}
 
 	/**

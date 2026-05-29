@@ -54,9 +54,10 @@ public class EntityIconServiceImpl implements EntityIconService {
 	@Override
 	public void writeIconCSS(OutputStream out) {
 
-		StringBuilder builder = new StringBuilder();
+		Map<String, NodeRef> icons = entityService.getEntityIcons();
+		StringBuilder builder = new StringBuilder(icons.size() * 1024);
 		
-		for (Map.Entry<String, NodeRef> icon : entityService.getEntityIcons().entrySet()) {
+		for (Map.Entry<String, NodeRef> icon : icons.entrySet()) {
 			String name = icon.getKey();
 			NodeRef iconNodeRef = icon.getValue();
 
@@ -134,18 +135,16 @@ public class EntityIconServiceImpl implements EntityIconService {
 	 */
 	public static String encodeImage(InputStream inputStream) throws IOException {
 
-		try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+		try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream(16384)) {
 
-			byte[] buffer = new byte[1024];
+			byte[] buffer = new byte[8192];
 			int bytesRead;
 
 			while ((bytesRead = inputStream.read(buffer)) != -1) {
 				outputStream.write(buffer, 0, bytesRead);
 			}
 
-			byte[] bytes = outputStream.toByteArray();
-
-			return Base64.getEncoder().encodeToString(bytes);
+			return Base64.getEncoder().encodeToString(outputStream.toByteArray());
 		}
 	}
 

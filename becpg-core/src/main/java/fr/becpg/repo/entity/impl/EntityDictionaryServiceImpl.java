@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.alfresco.repo.dictionary.DictionaryComponent;
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.i18n.MessageService;
+import org.alfresco.repo.tenant.TenantUtil;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
@@ -44,25 +45,6 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 	private static final Log logger = LogFactory.getLog(EntityDictionaryServiceImpl.class);
 
 	// Constants for cache keys
-	/** Constant <code>PROP_DEF_CACHE_SUFFIX=".propDef"</code> */
-	private static final String PROP_DEF_CACHE_SUFFIX = ".propDef";
-	/** Constant <code>CLASS_DEF_CACHE_SUFFIX=".classDef"</code> */
-	private static final String CLASS_DEF_CACHE_SUFFIX = ".classDef";
-	/** Constant <code>SUB_TYPES_CACHE_SUFFIX=".getSubTypes."</code> */
-	private static final String SUB_TYPES_CACHE_SUFFIX = ".getSubTypes.";
-	/** Constant <code>SUB_ASPECTS_CACHE_SUFFIX=".getSubAspects."</code> */
-	private static final String SUB_ASPECTS_CACHE_SUFFIX = ".getSubAspects.";
-	/** Constant <code>PREFIX_STRING_CACHE_SUFFIX=".toPrefixString"</code> */
-	private static final String PREFIX_STRING_CACHE_SUFFIX = ".toPrefixString";
-	/** Constant <code>IS_SUB_CLASS_CACHE_SUFFIX=".isSubClass"</code> */
-	private static final String IS_SUB_CLASS_CACHE_SUFFIX = ".isSubClass";
-	/** Constant <code>ASSOC_INDEX_CACHE_SUFFIX=".assocIndex"</code> */
-	private static final String ASSOC_INDEX_CACHE_SUFFIX = ".assocIndex";
-	/** Constant <code>ASSOC_INDEX_PROPERTY_SUFFIX="AssocIndex"</code> */
-	private static final String ASSOC_INDEX_PROPERTY_SUFFIX = "AssocIndex";
-
-	/** Constant <code>CACHE_SEPARATOR="_"</code> */
-	private static final String CACHE_SEPARATOR = "_";
 	/** Constant <code>MODEL_OVERRIDE_PREFIX="model.override."</code> */
 	private static final String MODEL_OVERRIDE_PREFIX = "model.override.";
 	/** Constant <code>TITLE_SUFFIX=".title"</code> */
@@ -88,8 +70,21 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 	// Cache for frequently computed strings to avoid repeated computations
 	private final Map<QName, String> prefixStringCache = new ConcurrentHashMap<>();
 	private final Map<String, String> overrideKeyCache = new ConcurrentHashMap<>();
-	private final Map<QName, List<QName>> defaultPivotAssocsFromTargetTypeCache = new ConcurrentHashMap<>();
-	private final Map<QName, List<QName>> targetTypesFromAssocCache = new ConcurrentHashMap<>();
+	
+	// Tenant-aware caches
+	private final Map<String, Map<QName, Collection<QName>>> subTypesCache = new ConcurrentHashMap<>();
+	private final Map<String, Map<QName, Collection<QName>>> subTypesNoFollowCache = new ConcurrentHashMap<>();
+	private final Map<String, Map<QName, ClassAttributeDefinition>> propDefCache = new ConcurrentHashMap<>();
+	private final Map<String, Map<QName, ClassDefinition>> classDefCache = new ConcurrentHashMap<>();
+	private final Map<String, Map<QName, List<AssociationDefinition>>> pivotAssocDefsCache = new ConcurrentHashMap<>();
+	private final Map<String, Map<QName, Map<QName, Boolean>>> isSubClassCache = new ConcurrentHashMap<>();
+	private final Map<String, Map<QName, List<QName>>> defaultPivotAssocsFromTargetTypeCache = new ConcurrentHashMap<>();
+	private final Map<String, Map<QName, List<QName>>> targetTypesFromAssocCache = new ConcurrentHashMap<>();
+
+	private <K, V> Map<K, V> getTenantCache(Map<String, Map<K, V>> caches) {
+		String domain = TenantUtil.getCurrentDomain();
+		return caches.computeIfAbsent(domain, k -> new ConcurrentHashMap<>());
+	}
 
 	// Setters
 	/**
@@ -199,10 +194,15 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 	/** {@inheritDoc} */
 	@Override
 	public List<AssociationDefinition> getPivotAssocDefs(QName sourceType, boolean exactMatch) {
-		// Use ArrayList with initial capacity to avoid resizing
-		List<AssociationDefinition> ret = new ArrayList<>(16);
+		if (exactMatch) {
+			return computePivotAssocDefs(sourceType, true);
+		}
 
-		// Cache associations list to avoid repeated calls
+		return getTenantCache(pivotAssocDefsCache).computeIfAbsent(sourceType, k -> computePivotAssocDefs(k, false));
+	}
+
+	private List<AssociationDefinition> computePivotAssocDefs(QName sourceType, boolean exactMatch) {
+		List<AssociationDefinition> ret = new ArrayList<>(16);
 		Collection<QName> allAssociations = getAllAssociations();
 
 		for (QName assocQName : allAssociations) {
@@ -215,7 +215,6 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 			}
 		}
 
-		// Add extra associations if present
 		Set<QName> extraAssocs = extraAssocsDefMapping.get(sourceType);
 		if (extraAssocs != null && !extraAssocs.isEmpty()) {
 			for (QName assocQName : extraAssocs) {
@@ -226,13 +225,13 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 			}
 		}
 
-		return ret;
+		return Collections.unmodifiableList(ret);
 	}
 	
 	/** {@inheritDoc} */
 	@Override
 	public List<QName> getDefaultPivotAssocsFromTargetType(QName targetType) {
-		return defaultPivotAssocsFromTargetTypeCache.computeIfAbsent(targetType, k -> {
+		return getTenantCache(defaultPivotAssocsFromTargetTypeCache).computeIfAbsent(targetType, k -> {
 			List<QName> assocs = new ArrayList<>();
 			for (QName defaultPivotAssoc : repositoryEntityDefReader.getDefaultPivotAssocs()) {
 				String defaultPivotTargetTypes = repositoryEntityDefReader.getDataListAssocToTargetTypes().get(defaultPivotAssoc);
@@ -258,7 +257,7 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
     /** {@inheritDoc} */
 	@Override
     public List<QName> getTargetTypes(QName assocName) {
-		return targetTypesFromAssocCache.computeIfAbsent(assocName, k -> {
+		return getTenantCache(targetTypesFromAssocCache).computeIfAbsent(assocName, k -> {
 			List<QName> targetTypes = new ArrayList<>();
 			String targetTypesString = repositoryEntityDefReader.getDataListAssocToTargetTypes().get(assocName);
 			if (targetTypesString != null && !targetTypesString.isBlank()) {
@@ -283,13 +282,11 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 	/** {@inheritDoc} */
 	@Override
 	public ClassAttributeDefinition findMatchingPropDef(QName itemType, QName newItemType, QName fieldQname) {
-		// Check mapping first
 		QName mappedQName = propDefMapping.get(fieldQname);
 		if (mappedQName != null) {
 			return getPropDef(mappedQName);
 		}
 
-		// Try name-based matching with caching
 		String fieldLocalName = fieldQname.getLocalName();
 		String itemLocalName = itemType.getLocalName();
 
@@ -307,12 +304,10 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 	/** {@inheritDoc} */
 	@Override
 	public ClassAttributeDefinition getPropDef(final QName fieldQname) {
-		String cacheKey = buildCacheKey(fieldQname.toString(), PROP_DEF_CACHE_SUFFIX);
-
-		return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(), cacheKey, () -> {
-			ClassAttributeDefinition propDef = getProperty(fieldQname);
+		return getTenantCache(propDefCache).computeIfAbsent(fieldQname, k -> {
+			ClassAttributeDefinition propDef = getProperty(k);
 			if (propDef == null) {
-				propDef = getAssociation(fieldQname);
+				propDef = getAssociation(k);
 			}
 			return propDef;
 		});
@@ -333,9 +328,8 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getSubTypes(QName superType, boolean follow) {
-		String cacheKey = buildCacheKey(superType.toString(), SUB_TYPES_CACHE_SUFFIX, String.valueOf(follow));
-
-		return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(), cacheKey, () -> {
+		Map<String, Map<QName, Collection<QName>>> caches = follow ? subTypesCache : subTypesNoFollowCache;
+		return getTenantCache(caches).computeIfAbsent(superType, k -> {
 			Collection<QName> result = dictionaryDAO.getSubTypes(superType, follow);
 			return result != null ? Collections.unmodifiableCollection(result) : Collections.emptyList();
 		});
@@ -344,9 +338,8 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 	/** {@inheritDoc} */
 	@Override
 	public Collection<QName> getSubAspects(QName superAspect, boolean follow) {
-		String cacheKey = buildCacheKey(superAspect.toString(), SUB_ASPECTS_CACHE_SUFFIX, String.valueOf(follow));
-
-		return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(), cacheKey, () -> {
+		Map<String, Map<QName, Collection<QName>>> caches = follow ? subTypesCache : subTypesNoFollowCache;
+		return getTenantCache(caches).computeIfAbsent(superAspect, k -> {
 			Collection<QName> result = dictionaryDAO.getSubAspects(superAspect, follow);
 			return result != null ? Collections.unmodifiableCollection(result) : Collections.emptyList();
 		});
@@ -355,11 +348,7 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 	/** {@inheritDoc} */
 	@Override
 	public String toPrefixString(QName propertyQName) {
-		return prefixStringCache.computeIfAbsent(propertyQName, qname -> {
-			String cacheKey = buildCacheKey(qname.toString(), PREFIX_STRING_CACHE_SUFFIX);
-			return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(), cacheKey,
-					() -> qname.toPrefixString(namespaceService));
-		});
+		return prefixStringCache.computeIfAbsent(propertyQName, qname -> qname.toPrefixString(namespaceService));
 	}
 
 	/** {@inheritDoc} */
@@ -373,9 +362,8 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 			return true;
 		}
 
-		String cacheKey = buildCacheKey(className.toString(), CACHE_SEPARATOR, ofClassName.toString(), IS_SUB_CLASS_CACHE_SUFFIX);
-
-		return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(), cacheKey, () -> computeIsSubClass(className, ofClassName));
+		return getTenantCache(isSubClassCache).computeIfAbsent(className, k -> new ConcurrentHashMap<>())
+				.computeIfAbsent(ofClassName, k -> computeIsSubClass(className, ofClassName));
 	}
 
 	/** {@inheritDoc} */
@@ -388,6 +376,14 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 			beCPGCacheService.clearCache(EntityDictionaryServiceImpl.class.getName());
 			prefixStringCache.clear();
 			overrideKeyCache.clear();
+			subTypesCache.clear();
+			subTypesNoFollowCache.clear();
+			propDefCache.clear();
+			classDefCache.clear();
+			pivotAssocDefsCache.clear();
+			isSubClassCache.clear();
+			defaultPivotAssocsFromTargetTypeCache.clear();
+			targetTypesFromAssocCache.clear();
 		}
 	}
 
@@ -432,13 +428,9 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 	/** {@inheritDoc} */
 	@Override
 	public QName getAssocIndexQName(QName assocQName) {
-		String cacheKey = buildCacheKey(assocQName.toString(), ASSOC_INDEX_CACHE_SUFFIX);
-
-		return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(), cacheKey, () -> {
-			QName indexPropertyQName = QName.createQName(assocQName.getNamespaceURI(), assocQName.getLocalName() + ASSOC_INDEX_PROPERTY_SUFFIX);
-			ClassAttributeDefinition indexProp = getPropDef(indexPropertyQName);
-			return indexProp != null ? indexProp.getName() : null;
-		});
+		QName indexPropertyQName = QName.createQName(assocQName.getNamespaceURI(), assocQName.getLocalName() + "AssocIndex");
+		ClassAttributeDefinition indexProp = getPropDef(indexPropertyQName);
+		return indexProp != null ? indexProp.getName() : null;
 	}
 
 	/** {@inheritDoc} */
@@ -447,32 +439,10 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 		if (name == null) {
 			return null;
 		}
-		String cacheKey = buildCacheKey(name.toString(), CLASS_DEF_CACHE_SUFFIX);
-
-		return beCPGCacheService.getFromCache(EntityDictionaryServiceImpl.class.getName(), cacheKey, () -> {
-			return super.getClass(name);
-		});
+		return getTenantCache(classDefCache).computeIfAbsent(name, super::getClass);
 	}
 
 	// Private helper methods
-
-	/**
-	 * Efficiently builds cache keys by concatenating strings
-	 *
-	 * @param parts a {@link java.lang.String} object
-	 * @return a {@link java.lang.String} object
-	 */
-	private String buildCacheKey(String... parts) {
-		if (parts.length == 1) {
-			return parts[0];
-		}
-
-		StringBuilder sb = new StringBuilder();
-		for (String part : parts) {
-			sb.append(part);
-		}
-		return sb.toString();
-	}
 
 	/**
 	 * Computes the actual isSubClass logic separated for better readability
@@ -482,7 +452,6 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 	 * @return a boolean
 	 */
 	private boolean computeIsSubClass(QName className, QName ofClassName) {
-		// Validate arguments
 		ParameterCheck.mandatory("className", className);
 		ParameterCheck.mandatory("ofClassName", ofClassName);
 
@@ -496,18 +465,14 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 			return false;
 		}
 
-		// Only check if both ends are either a type or an aspect
 		if (classDef.isAspect() != ofClassDef.isAspect()) {
 			return false;
 		}
 
-		// Walk up the hierarchy
 		while (classDef != null) {
 			if (classDef.equals(ofClassDef)) {
 				return true;
 			}
-
-			// Move to parent class
 			QName parentClassName = classDef.getParentName();
 			classDef = (parentClassName == null) ? null : getClass(parentClassName);
 		}
