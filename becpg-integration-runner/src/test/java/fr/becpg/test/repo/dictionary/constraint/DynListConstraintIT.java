@@ -302,6 +302,86 @@ public class DynListConstraintIT extends PLMBaseTestCase {
 		// Base CSV is loaded second (index 1) and overwrites "shared" -> "Base shared label".
 		assertEquals("Base shared label", constraint.getDisplayLabel("shared", Locale.ENGLISH));
 	}
+
+	@Test
+	public void testListValueMixedPathsWithIsDeleted() {
+		beCPGCacheService.clearAllCaches();
+
+		final NodeRef listValueNodeShared = inWriteTx(() -> {
+			NodeRef nutTypesNodeRef = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), NUT_TYPES_PATH);
+
+			NodeRef testSharedNodeRef = nodeService.getChildByName(nutTypesNodeRef, ContentModel.ASSOC_CONTAINS, "shared");
+			if (testSharedNodeRef != null) {
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_LIST_VALUE);
+				try {
+					nodeService.deleteNode(testSharedNodeRef);
+				} finally {
+					policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_LIST_VALUE);
+				}
+			}
+
+			Map<QName, Serializable> props = new HashMap<>();
+			props.put(BeCPGModel.PROP_LV_CODE, "shared");
+			props.put(BeCPGModel.PROP_LV_VALUE, "shared");
+			props.put(ContentModel.PROP_NAME, "shared");
+			props.put(BeCPGModel.PROP_IS_DELETED, true);
+
+			return nodeService
+					.createNode(nutTypesNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, BeCPGModel.TYPE_LIST_VALUE, props)
+					.getChildRef();
+		});
+
+		final NodeRef listValueNodeCustom = inWriteTx(() -> {
+			NodeRef nutTypesNodeRef = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), NUT_TYPES_PATH);
+
+			NodeRef testCustomNodeRef = nodeService.getChildByName(nutTypesNodeRef, ContentModel.ASSOC_CONTAINS, "customAdded");
+			if (testCustomNodeRef != null) {
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_LIST_VALUE);
+				try {
+					nodeService.deleteNode(testCustomNodeRef);
+				} finally {
+					policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_LIST_VALUE);
+				}
+			}
+
+			Map<QName, Serializable> props = new HashMap<>();
+			props.put(BeCPGModel.PROP_LV_CODE, "customAdded");
+			props.put(BeCPGModel.PROP_LV_VALUE, "customAdded");
+			props.put(ContentModel.PROP_NAME, "customAdded");
+			props.put(BeCPGModel.PROP_IS_DELETED, false);
+
+			return nodeService
+					.createNode(nutTypesNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, BeCPGModel.TYPE_LIST_VALUE, props)
+					.getChildRef();
+		});
+
+		try {
+			DynListConstraint constraint = createClasspathConstraint("TEST_OVERRIDE",
+					Arrays.asList("classpath:beCPG/dictionary/constraint/base-dyn-list.csv",
+							"/System/Lists/bcpg:entityLists/NutTypes"));
+
+			assertFalse(constraint.getAllowedValues(true).contains("shared"));
+			assertTrue(constraint.getAllowedValues(true).contains("baseOnly"));
+			assertTrue(constraint.getAllowedValues(true).contains("customAdded"));
+
+		} finally {
+			inWriteTx(() -> {
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_LIST_VALUE);
+				try {
+					if (nodeService.exists(listValueNodeShared)) {
+						nodeService.deleteNode(listValueNodeShared);
+					}
+					if (nodeService.exists(listValueNodeCustom)) {
+						nodeService.deleteNode(listValueNodeCustom);
+					}
+					beCPGCacheService.clearAllCaches();
+				} finally {
+					policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_LIST_VALUE);
+				}
+				return null;
+			});
+		}
+	}
 	
 	/**
 	 * Creates a dynamic list constraint backed by test classpath CSV resources.
