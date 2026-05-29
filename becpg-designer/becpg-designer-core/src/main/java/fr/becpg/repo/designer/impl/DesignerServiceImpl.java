@@ -105,11 +105,22 @@ public class DesignerServiceImpl implements DesignerService {
 
 	private DictionaryDAO dictionaryDAO;
 
+	private Configuration freemarkerConfiguration;
+
 	// Controls cache
 	private List<FormControl> controls = new ArrayList<>();
 
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(DesignerServiceImpl.class);
+
+	private synchronized Configuration getFreemarkerConfiguration() {
+		if (freemarkerConfiguration == null) {
+			freemarkerConfiguration = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
+			TemplateLoader templateLoader = new ClassTemplateLoader(DesignerServiceImpl.class, "/beCPG/designer/");
+			freemarkerConfiguration.setTemplateLoader(templateLoader);
+		}
+		return freemarkerConfiguration;
+	}
 
 	/**
 	 * <p>
@@ -754,10 +765,7 @@ public class DesignerServiceImpl implements DesignerService {
 
 			writer.setMimetype(mimetypeService.guessMimetype(modelName));
 
-			Configuration cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
-			TemplateLoader templateLoader = new ClassTemplateLoader(DesignerServiceImpl.class, "/beCPG/designer/");
-			cfg.setTemplateLoader(templateLoader);
-			Template ftlTemplate = cfg.getTemplate(modelTemplate);
+			Template ftlTemplate = getFreemarkerConfiguration().getTemplate(modelTemplate);
 
 			try (Writer out = new OutputStreamWriter(writer.getContentOutputStream())) {
 				ftlTemplate.process(templateContext, out);
