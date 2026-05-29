@@ -167,6 +167,7 @@ public class ArchivedEntityPolicy extends AbstractBeCPGPolicy implements OnAddAs
 				reportStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<NodeRef>() {
 					@Override
 					public void process(NodeRef entry) throws Throwable {
+						policyBehaviourFilter.disableBehaviour();
 						entityReportService.generateReports(nodeRef, true);
 					}
 				});
@@ -199,7 +200,7 @@ public class ArchivedEntityPolicy extends AbstractBeCPGPolicy implements OnAddAs
 				batchStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<NodeRef>() {
 					@Override
 					public void process(NodeRef entry) throws Throwable {
-						policyBehaviourFilter.disableBehaviour();
+						policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ARCHIVED_ENTITY);
 						entityFormatService.convertToFormat(nodeRef, EntityFormat.NODE);
 					}
 				});
