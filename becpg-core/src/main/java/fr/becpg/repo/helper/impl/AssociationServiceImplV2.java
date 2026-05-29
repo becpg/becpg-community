@@ -800,6 +800,25 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		List<EntitySourceAssoc> ret = new ArrayList<>();
 
 		if ((nodeRefs != null) && !nodeRefs.isEmpty()) {
+			if (nodeRefs.size() <= 64 || pagingRequest != null) {
+				return internalEntitySourceAssocsChunk(nodeRefs, assocTypeQName, listTypeQname, criteriaFilters, pagingRequest, checkPermissions);
+			} else {
+				int chunkSize = 64;
+				for (int i = 0; i < nodeRefs.size(); i += chunkSize) {
+					List<NodeRef> chunk = nodeRefs.subList(i, Math.min(i + chunkSize, nodeRefs.size()));
+					List<EntitySourceAssoc> chunkResults = internalEntitySourceAssocsChunk(chunk, assocTypeQName, listTypeQname, criteriaFilters, null, checkPermissions);
+					ret.addAll(chunkResults);
+				}
+			}
+		}
+		return ret;
+	}
+
+	private List<EntitySourceAssoc> internalEntitySourceAssocsChunk(List<NodeRef> nodeRefs, QName assocTypeQName, QName listTypeQname,
+			List<AssociationCriteriaFilter> criteriaFilters, PagingRequest pagingRequest, boolean checkPermissions) {
+		List<EntitySourceAssoc> ret = new ArrayList<>();
+
+		if ((nodeRefs != null) && !nodeRefs.isEmpty()) {
 			Map<String, Object> params = buildQueryParameters(nodeRefs, assocTypeQName, listTypeQname);
 
 			if (params.isEmpty()) {
@@ -861,6 +880,18 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			Pair<Long, NodeRef> nodePair = nodeDAO.getNodePair(tenantService.getName(nodeRef));
 			if (nodePair != null) {
 				nodeIds.add(nodePair.getFirst());
+			}
+		}
+
+		if (!nodeIds.isEmpty()) {
+			int originalSize = nodeIds.size();
+			int targetSize = 1;
+			while (targetSize < originalSize) {
+				targetSize *= 2;
+			}
+			Long lastId = nodeIds.get(originalSize - 1);
+			while (nodeIds.size() < targetSize) {
+				nodeIds.add(lastId);
 			}
 		}
 		queryParams.put("nodeIds", nodeIds);

@@ -791,6 +791,9 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return sum range of double
 		 */
 		public Double sum(Collection<Double> range) {
+			if (range == null || range.isEmpty()) {
+				return 0d;
+			}
 			return range.stream().mapToDouble(Double::doubleValue).sum();
 		}
 
@@ -812,7 +815,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return average range of double
 		 */
 		public Double avg(Collection<Double> range) {
-			return range.stream().mapToDouble(Double::doubleValue).average().getAsDouble();
+			if (range == null || range.isEmpty()) {
+				return 0d;
+			}
+			return range.stream().mapToDouble(Double::doubleValue).average().orElse(0d);
 		}
 
 		/**
@@ -833,7 +839,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return get max of range of double
 		 */
 		public Double max(Collection<Double> range) {
-			return range.stream().mapToDouble(Double::doubleValue).max().getAsDouble();
+			if (range == null || range.isEmpty()) {
+				return 0d;
+			}
+			return range.stream().mapToDouble(Double::doubleValue).max().orElse(0d);
 		}
 
 		/**
@@ -885,7 +894,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return get min of range of double
 		 */
 		public Double min(Collection<Double> range) {
-			return range.stream().mapToDouble(Double::doubleValue).min().getAsDouble();
+			if (range == null || range.isEmpty()) {
+				return 0d;
+			}
+			return range.stream().mapToDouble(Double::doubleValue).min().orElse(0d);
 		}
 
 		/**

@@ -16,11 +16,13 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.annotation.DirtiesContext;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PublicationModel;
@@ -35,6 +37,7 @@ import fr.becpg.repo.publication.PublicationChannelService.PublicationChannelAct
 import fr.becpg.repo.publication.PublicationChannelService.PublicationChannelStatus;
 import fr.becpg.test.PLMBaseTestCase;
 
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class FormulationChannelServiceIT extends PLMBaseTestCase {
 
 	protected static final Log logger = LogFactory.getLog(FormulationChannelServiceIT.class);
@@ -57,6 +60,19 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		formulationChannelService = new FormulationChannelService(batchQueueService, publicationChannelService, systemConfigurationService,
 				transactionService, nodeService, alfrescoRepository, entityDictionaryService, wUsedListService, formulationService,
 				policyBehaviourFilter, namespaceService, authenticationService, 1, 1);
+	}
+
+	@After
+	public void tearDown() {
+		if (Mockito.mockingDetails(publicationChannelService).isMock()) {
+			Mockito.reset(publicationChannelService);
+		}
+		if (Mockito.mockingDetails(systemConfigurationService).isMock()) {
+			Mockito.reset(systemConfigurationService);
+		}
+		if (Mockito.mockingDetails(formulationService).isMock()) {
+			Mockito.reset(formulationService);
+		}
 	}
 	
 	@Test
