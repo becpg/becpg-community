@@ -33,6 +33,7 @@
 
         this.isLoaded = false;
         this.submitButton = null;
+        this.catalogData = null;
         
         YAHOO.Bubbling.on("formContentReady", this.onFormContentReady, this);
         YAHOO.Bubbling.on("afterFormRuntimeInit", this.onAfterFormRuntimeInit, this);
@@ -123,6 +124,10 @@
             if (args[1].eventGroup === formId) {
                 this.submitButton = args[1].buttons.submit;
                 this.updateSubmitButtonState();
+
+                if (this.catalogData) {
+                    this.colorizeMissingFields(this.catalogData, insertId);
+                }
             }
         },
 
@@ -162,6 +167,7 @@
                         var protectedFields = [];
                         if (response.json && response.json.catalogs && Object.keys(response.json.catalogs).length > 0) {
 
+                            instance.catalogData = response.json;
                             var catalogs = response.json.catalogs;
 
                             // Collect protected fields from all catalogs
