@@ -32,6 +32,7 @@ import javax.annotation.Nonnull;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.MLPropertyInterceptor;
+import org.alfresco.repo.transaction.TransactionalResourceHelper;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -334,16 +335,23 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             throw new IllegalArgumentException("NodeRef may not be null for calls to NodeService.  Check client code.");
         }
         
-        // Single nodeService lookup: hasAspect already validates node existence and throws
-        // InvalidNodeRefException for stale nodes, so the previous explicit exists() check is redundant.
-        // This hot path is hit on every getProperty/getProperties call.
+        Map<NodeRef, NodeRef> pivotCache = TransactionalResourceHelper.getMap(
+                BeCPGMLPropertyInterceptor.class.getName() + ".pivotCache");
+        
+        if (pivotCache.containsKey(nodeRef))
+        {
+            return pivotCache.get(nodeRef);
+        }
+        
         try
         {
+            NodeRef pivot = null;
             if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_MULTILINGUAL_EMPTY_TRANSLATION))
             {
-                return multilingualContentService.getPivotTranslation(nodeRef);
+                pivot = multilingualContentService.getPivotTranslation(nodeRef);
             }
-            return null;
+            pivotCache.put(nodeRef, pivot);
+            return pivot;
         }
         catch (InvalidNodeRefException e)
         {
@@ -351,6 +359,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             {
                 logger.debug("NodeRef does not exist: " + nodeRef);
             }
+            pivotCache.put(nodeRef, null);
             return null;
         }
     }

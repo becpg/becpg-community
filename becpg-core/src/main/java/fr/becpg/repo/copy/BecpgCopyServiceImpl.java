@@ -34,6 +34,7 @@ import org.alfresco.repo.copy.DefaultCopyBehaviourCallback;
 import org.alfresco.repo.copy.DoNothingCopyBehaviourCallback;
 import org.alfresco.repo.copy.query.AbstractCopyCannedQueryFactory;
 import org.alfresco.repo.node.ContentPropertyRestrictionInterceptor;
+import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.policy.ClassPolicyDelegate;
@@ -1037,8 +1038,15 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	        QName sourceNodeTypeQName = nodeService.getType(sourceNodeRef);
 	        // ALF-730: MLText is not fully carried during cut-paste or copy-paste
 	        //          Use the internalNodeService to fetch the properties.  It should be mlAwareNodeService.
-	        Map<QName, Serializable> sourceNodeProperties = internalNodeService.getProperties(sourceNodeRef);
-	        Set<QName> sourceNodeAspectQNames = internalNodeService.getAspects(sourceNodeRef);
+	        MLPropertyInterceptor.setMLAware(true);
+	        Map<QName, Serializable> sourceNodeProperties;
+	        Set<QName> sourceNodeAspectQNames;
+	        try {
+	            sourceNodeProperties = internalNodeService.getProperties(sourceNodeRef);
+	            sourceNodeAspectQNames = internalNodeService.getAspects(sourceNodeRef);
+	        } finally {
+	            MLPropertyInterceptor.setMLAware(false);
+	        }
 	        
 	        // Create a target node, if necessary
 	        boolean targetNodeIsNew = false;

@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.namespace.QName;
@@ -136,6 +137,11 @@ public class BeCPGHashCodeBuilder {
 	private static final int NULL_MULTIPLIER = iConstant + 12;
 	/** Constant <code>annotatedMethodsCache</code> */
 	private static final Map<Class<?>, List<Method>> annotatedMethodsCache = new ConcurrentHashMap<>();
+
+	private static final ThreadLocal<Set<RepositoryEntity>> VISITED_CACHE = ThreadLocal.withInitial(
+			() -> Collections.newSetFromMap(new IdentityHashMap<>()));
+
+	private static final ThreadLocal<AtomicBoolean> VISITED_IN_USE = ThreadLocal.withInitial(() -> new AtomicBoolean(false));
 	
 	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(BeCPGHashCodeBuilder.class);
@@ -427,8 +433,17 @@ public class BeCPGHashCodeBuilder {
 		if (object == null) {
 			throw new IllegalArgumentException("The object to build a hash code for must not be null");
 		}
-		BeCPGHashCodeBuilder builder = new BeCPGHashCodeBuilder();
-		return builder.reflectionAppend(object, Collections.newSetFromMap(new IdentityHashMap<>()));
+		AtomicBoolean inUse = VISITED_IN_USE.get();
+		if (inUse.compareAndSet(false, true)) {
+			Set<RepositoryEntity> visited = VISITED_CACHE.get();
+			try {
+				return new BeCPGHashCodeBuilder().reflectionAppend(object, visited);
+			} finally {
+				visited.clear();
+				inUse.set(false);
+			}
+		}
+		return new BeCPGHashCodeBuilder().reflectionAppend(object, Collections.newSetFromMap(new IdentityHashMap<>()));
 	}
 
 	/**

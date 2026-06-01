@@ -449,7 +449,7 @@ public class EntityServiceImpl implements EntityService {
 	 * @param docByType the map to populate with documents by type
 	 */
 	private void processDocumentsInFolder(NodeRef folderNodeRef, Map<NodeRef, List<NodeRef>> docByType) {
-		for (FileInfo fileInfo : fileFolderService.listFiles(folderNodeRef)) {
+		for (FileInfo fileInfo : getCachedFiles(folderNodeRef)) {
 			NodeRef fileNodeRef = fileInfo.getNodeRef();
 			if (nodeService.hasAspect(fileNodeRef, BeCPGModel.ASPECT_DOCUMENT_ASPECT)) {
 				NodeRef docType = associationService.getTargetAssoc(fileNodeRef, BeCPGModel.ASSOC_DOCUMENT_TYPE_REF);
@@ -478,13 +478,23 @@ public class EntityServiceImpl implements EntityService {
 			return;
 		}
 		
-		for (FileInfo folder : fileFolderService.listFolders(parentNodeRef)) {
+		for (FileInfo folder : getCachedFolders(parentNodeRef)) {
 			// Process documents in this folder
 			processDocumentsInFolder(folder.getNodeRef(), docByType);
 			
 			// Recurse into subfolders if we haven't reached max depth
 			processFoldersRecursively(folder.getNodeRef(), docByType, currentDepth + 1, maxDepth);
 		}
+	}
+
+	private List<FileInfo> getCachedFiles(NodeRef folderNodeRef) {
+		return beCPGCacheService.getFromTransactionCache(EntityServiceImpl.class.getName() + ".files",
+				folderNodeRef.toString(), () -> fileFolderService.listFiles(folderNodeRef));
+	}
+
+	private List<FileInfo> getCachedFolders(NodeRef folderNodeRef) {
+		return beCPGCacheService.getFromTransactionCache(EntityServiceImpl.class.getName() + ".folders",
+				folderNodeRef.toString(), () -> fileFolderService.listFolders(folderNodeRef));
 	}
 
 	/** {@inheritDoc} */
