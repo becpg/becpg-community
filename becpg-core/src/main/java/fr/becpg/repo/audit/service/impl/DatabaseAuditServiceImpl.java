@@ -118,7 +118,34 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 			statistics.add(statItem);
 		}
 		if (auditQuery.getSortBy() != null && !auditQuery.getSortBy().isBlank()) {
-			Collections.sort(statistics, new StatisticsComparator(plugin.getKeyMap(), auditQuery.getSortBy(), auditQuery.isAscending()));
+			String sortBy = auditQuery.getSortBy();
+			AuditDataType dataType = plugin.getKeyMap().get(sortBy);
+			if (AuditDataType.DATE.equals(dataType)) {
+				Map<JSONObject, Date> parsedDates = new HashMap<>(statistics.size());
+				for (JSONObject item : statistics) {
+					if (item.has(sortBy)) {
+						Object raw = item.get(sortBy);
+						parsedDates.put(item, raw instanceof Date d ? d : ISO8601DateFormat.parse(raw.toString()));
+					}
+				}
+				int factor = auditQuery.isAscending() ? 1 : -1;
+				statistics.sort((o1, o2) -> {
+					Date d1 = parsedDates.get(o1);
+					Date d2 = parsedDates.get(o2);
+					if (d1 == null && d2 == null) {
+						return 0;
+					}
+					if (d1 == null) {
+						return -factor;
+					}
+					if (d2 == null) {
+						return factor;
+					}
+					return factor * d1.compareTo(d2);
+				});
+			} else {
+				Collections.sort(statistics, new StatisticsComparator(plugin.getKeyMap(), sortBy, auditQuery.isAscending()));
+			}
 		}
 		return statistics;
 	}
