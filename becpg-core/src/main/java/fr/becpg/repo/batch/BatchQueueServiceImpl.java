@@ -554,7 +554,14 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 					if (!pausedCommands.isEmpty()) {
 						BatchCommand<?> nextCommand = pausedCommands.pop();
 						if (nextCommand != null) {
-							if (logger.isInfoEnabled()) {
+							if (cancelledBatches.contains(nextCommand.getBatchId())) {
+								cancelledBatches.remove(nextCommand.getBatchId());
+								nextCommand.getBatchInfo().setCancelled(true);
+								nextCommand.getBatchInfo().setIsCompleted(true);
+								if (logger.isInfoEnabled()) {
+									logger.info("Cancelled paused batch: " + nextCommand.getBatchId());
+								}
+							} else if (logger.isInfoEnabled()) {
 								logger.info("Resume batch: " + nextCommand.getBatchId());
 							}
 						}
@@ -657,6 +664,9 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
                         break;
                     }
                     Thread.sleep(1000);
+                }
+                if (cancelledBatches.contains(this.getBatchId())) {
+                	BatchCommand.this.getBatchInfo().setCancelled(true);
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
