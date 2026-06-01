@@ -421,6 +421,35 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 		return TestWebscriptExecuters.sendRequest(request, 200, username, password);
 	}
 
+	/**
+	 * Verifies that skipSecurityRules bypasses an ACL group flagged as default read only:
+	 * outside a wizard the fields stay protected, inside a wizard they become editable (#34551).
+	 */
+	@Test
+	public void testDefaultReadOnlyWithSkipSecurityRules() {
+		logger.info("=== Default ReadOnly with skipSecurityRules ===");
+
+		inWriteTx(() -> {
+			NodeRef readOnlyProjectNodeRef = createTestProject();
+			NodeRef aclGroupNodeRef = createProjectSecurityACLGroup(true);
+			if (!nodeService.hasAspect(readOnlyProjectNodeRef, SecurityModel.ASPECT_SECURITY)) {
+				nodeService.addAspect(readOnlyProjectNodeRef, SecurityModel.ASPECT_SECURITY, null);
+			}
+			nodeService.createAssociation(readOnlyProjectNodeRef, aclGroupNodeRef, SecurityModel.ASSOC_SECURITY_REF);
+			securityService.refreshAcls();
+
+			authenticationComponent.setCurrentUser("userTwo");
+
+			testFormFieldProtection(readOnlyProjectNodeRef, false, true,
+					"userTwo should see fields in read-only mode outside wizard when defaultReadOnly is true");
+			testFormFieldProtection(readOnlyProjectNodeRef, true, false,
+					"userTwo should see fields in edit mode inside wizard when defaultReadOnly is true");
+
+			nodeService.deleteNode(readOnlyProjectNodeRef);
+			return null;
+		});
+	}
+
 	private NodeRef createProjectSecurityACLGroup(boolean isDefaultReadOnly) {
 		String groupName = PermissionService.GROUP_PREFIX + GROUP_WIZARD_SECURITY_WRITE;
 		if (!authorityService.authorityExists(groupName)) {
