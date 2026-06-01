@@ -18,15 +18,18 @@
 package fr.becpg.repo.product.formulation;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.lock.LockStatus;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.util.transaction.TransactionSupportUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StopWatch;
@@ -58,6 +61,7 @@ import fr.becpg.repo.variant.filters.VariantFilters;
  */
 public class ProductFormulationHandler extends FormulationBaseHandler<ProductData> {
 
+	private static final String UP_TO_DATE_NODES_TX_KEY = "ProductFormulationHandler.upToDateNodes";
 	private static final String MESSAGE_MISSING_UNIT = "message.formulate.missing.unit";
 	private static final String MESSAGE_MISSING_DENSITY = "message.formulate.missing.density";
 	private static final String MESSAGE_WRONG_UNIT = "message.formulate.wrong.unit";
@@ -148,16 +152,29 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	private boolean checkShouldFormulateComponents(boolean isRoot, ProductData productData) throws FormulateException {
 		boolean isFormulated = false;
 
-		if (!Boolean.TRUE.equals(productData.getIsUpToDate())) {
+		NodeRef nodeRef = productData.getNodeRef();
+		boolean alreadyUpToDate = false;
+		Set<NodeRef> upToDateNodes = null;
+		if (nodeRef != null) {
+			upToDateNodes = TransactionSupportUtil.getResource(UP_TO_DATE_NODES_TX_KEY);
+			if (upToDateNodes == null) {
+				upToDateNodes = new HashSet<>();
+				TransactionSupportUtil.bindResource(UP_TO_DATE_NODES_TX_KEY, upToDateNodes);
+			}
+			alreadyUpToDate = upToDateNodes.contains(nodeRef);
+		}
 
-			// Avoid recheck
-			productData.setIsUpToDate(true);
+		if (!alreadyUpToDate) {
+
+			if (nodeRef != null && upToDateNodes != null) {
+				upToDateNodes.add(nodeRef);
+			}
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("checkShouldFormulateComponents: " + productData.getName());
 			}
 
-			if (((productData.getNodeRef() == null) || (lockService.getLockStatus(productData.getNodeRef()) == LockStatus.NO_LOCK))
+			if (((nodeRef == null) || (lockService.getLockStatus(nodeRef) == LockStatus.NO_LOCK))
 					&& !(productData instanceof LocalSemiFinishedProductData)) {
 
 				boolean shouldFormulate = false;
