@@ -335,6 +335,59 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 	}
 
 	/**
+	 * Test 7: Test isDefaultReadOnly with skipSecurityRules
+	 */
+	@Test
+	public void testDefaultReadOnlyWithSkipSecurityRules() {
+		logger.info("=== Test 7: Default ReadOnly with skipSecurityRules ===");
+
+		inWriteTx(() -> {
+			// Create a new test project and associate it with a default read-only ACL group
+			NodeRef readOnlyProjectNodeRef = createTestProject();
+			NodeRef aclGroupNodeRef = createProjectSecurityACLGroup(true);
+			if (!nodeService.hasAspect(readOnlyProjectNodeRef, SecurityModel.ASPECT_SECURITY)) {
+				nodeService.addAspect(readOnlyProjectNodeRef, SecurityModel.ASPECT_SECURITY, null);
+			}
+			nodeService.createAssociation(readOnlyProjectNodeRef, aclGroupNodeRef, SecurityModel.ASSOC_SECURITY_REF);
+			securityService.refreshAcls();
+
+			// Test as userTwo (no task assignment, isDefaultReadOnly=true)
+			authenticationComponent.setCurrentUser("userTwo");
+
+			// Outside wizard (skipSecurityRules = false), fields should be protected (read-only)
+			testFormFieldProtection(readOnlyProjectNodeRef, false, true, "userTwo should see fields in read-only mode outside wizard when defaultReadOnly is true");
+
+			// Inside wizard (skipSecurityRules = true), fields should be editable (not protected), because skipSecurityRules bypasses defaultReadOnly
+			testFormFieldProtection(readOnlyProjectNodeRef, true, false, "userTwo should see fields in edit mode inside wizard when defaultReadOnly is true");
+
+			// Clean up the new project
+			nodeService.deleteNode(readOnlyProjectNodeRef);
+			return null;
+		});
+	}
+
+	private NodeRef createProjectSecurityACLGroup(boolean isDefaultReadOnly) {
+		String groupName = PermissionService.GROUP_PREFIX + GROUP_WIZARD_SECURITY_WRITE;
+		if (!authorityService.authorityExists(groupName)) {
+			authorityService.createAuthority(AuthorityType.GROUP, GROUP_WIZARD_SECURITY_WRITE);
+		}
+
+		ACLGroupData aclGroupData = new ACLGroupData();
+		aclGroupData.setName("Wizard Security ACL Default ReadOnly");
+		aclGroupData.setNodeType(ProjectModel.TYPE_PROJECT.toPrefixString(namespaceService));
+		aclGroupData.setIsDefaultReadOnly(isDefaultReadOnly);
+
+		List<NodeRef> writeGroups = new ArrayList<>();
+		writeGroups.add(authorityService.getAuthorityNodeRef(groupName));
+
+		List<ACLEntryDataItem> acls = new ArrayList<>();
+		acls.add(new ACLEntryDataItem("cm:name", PermissionModel.READ_WRITE, writeGroups));
+		aclGroupData.setAcls(acls);
+
+		return alfrescoRepository.create(getTestFolderNodeRef(), aclGroupData).getNodeRef();
+	}
+
+	/**
 	 * Helper method to create a test project
 	 */
 	private NodeRef createTestProject() {
