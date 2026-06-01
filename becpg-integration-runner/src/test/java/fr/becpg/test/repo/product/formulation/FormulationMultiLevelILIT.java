@@ -18,18 +18,23 @@
 package fr.becpg.test.repo.product.formulation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
+import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class FormulationMultiLevelILIT extends AbstractFinishedProductTest {
@@ -93,6 +98,68 @@ public class FormulationMultiLevelILIT extends AbstractFinishedProductTest {
 
 		}, false, true);
 
+	}
+	
+	@Test
+	public void testCachedUpToDateInLaterFormulations() {
+		List<NodeRef> nodeRefs = inWriteTx(() -> {
+			RawMaterialData rm2 = new RawMaterialData();
+			rm2.setName("RM2");
+			NodeRef rm2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rm2).getNodeRef();
+
+			RawMaterialData rm1 = new RawMaterialData();
+			rm1.setName("RM1");
+			rm1.getCompoListView().setCompoList(Arrays.asList(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(rm2NodeRef)));
+			NodeRef rm1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rm1).getNodeRef();
+
+			FinishedProductData fp1 = new FinishedProductData();
+			fp1.setName("FP1");
+			fp1.getCompoListView().setCompoList(Arrays.asList(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(rm1NodeRef)));
+			NodeRef fp1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), fp1).getNodeRef();
+
+			return Arrays.asList(rm2NodeRef, rm1NodeRef, fp1NodeRef);
+		});
+
+		NodeRef rm2NodeRef = nodeRefs.get(0);
+		NodeRef rm1NodeRef = nodeRefs.get(1);
+		NodeRef fp1NodeRef = nodeRefs.get(2);
+
+		inWriteTx(() -> {
+			L2CacheSupport.doInCacheContext(
+					() -> AuthenticationUtil
+							.runAsSystem(() -> formulationService.formulate(fp1NodeRef, FormulationService.DEFAULT_CHAIN_ID)),
+					false, true);
+			return true;
+		});
+
+		long initialRm1FormulatedTime = inWriteTx(() -> {
+			RawMaterialData rm1 = (RawMaterialData) alfrescoRepository.findOne(rm1NodeRef);
+			assertNotNull(rm1.getFormulatedDate());
+			long formTime = rm1.getFormulatedDate().getTime();
+
+			RawMaterialData rm2 = (RawMaterialData) alfrescoRepository.findOne(rm2NodeRef);
+			rm2.setModifiedDate(new java.util.Date(formTime + 10000));
+			alfrescoRepository.save(rm2);
+
+			return formTime;
+		});
+
+		inWriteTx(() -> {
+			L2CacheSupport.doInCacheContext(
+					() -> AuthenticationUtil
+							.runAsSystem(() -> formulationService.formulate(fp1NodeRef, FormulationService.DEFAULT_CHAIN_ID)),
+					false, true);
+			return true;
+		});
+
+		inReadTx(() -> {
+			RawMaterialData rm1 = (RawMaterialData) alfrescoRepository.findOne(rm1NodeRef);
+			assertNotNull(rm1.getFormulatedDate());
+			assertTrue("RM1 should have been reformulated because RM2 was changed!", rm1.getFormulatedDate().getTime() > initialRm1FormulatedTime);
+			return null;
+		});
 	}
 
 }
