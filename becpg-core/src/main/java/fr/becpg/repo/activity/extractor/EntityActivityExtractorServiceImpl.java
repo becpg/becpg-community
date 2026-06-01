@@ -170,8 +170,9 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 			entityType = nodeService.getType(entityNodeRef);
 		}
 
-		if (((entityType != null) && (postLookup.has(EntityActivityService.PROP_DATALIST_TYPE) && (securityService.computeAccessMode(entityNodeRef,
-				entityType, postLookup.getString(EntityActivityService.PROP_DATALIST_TYPE)) == SecurityService.NONE_ACCESS)))
+		if (((entityNodeRef != null) && (entityType != null) && postLookup.has(EntityActivityService.PROP_DATALIST_TYPE)
+				&& (securityService.computeAccessMode(entityNodeRef, entityType,
+						postLookup.getString(EntityActivityService.PROP_DATALIST_TYPE)) == SecurityService.NONE_ACCESS))
 				|| ((charactNodeRef != null) && (permissionService.hasPermission(charactNodeRef, "Read") != AccessStatus.ALLOWED))) {
 
 			// Entity Title

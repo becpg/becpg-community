@@ -37,7 +37,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  *
  * @author matthieu
  * @version $Id: $Id
- * TODO use batch Service
+ * @deprecated since 26.1
  */
 @Deprecated(since = "26.1", forRemoval = false)
 public class PurgeNodesWebscript extends AbstractWebScript {
@@ -65,6 +65,7 @@ public class PurgeNodesWebscript extends AbstractWebScript {
 	 *
 	 * @param entityDictionaryService a {@link fr.becpg.repo.entity.EntityDictionaryService} object.
 	 */
+	@Deprecated
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
@@ -74,6 +75,7 @@ public class PurgeNodesWebscript extends AbstractWebScript {
 	 *
 	 * @param transactionService a {@link org.alfresco.service.transaction.TransactionService} object.
 	 */
+	@Deprecated
 	public void setTransactionService(TransactionService transactionService) {
 		this.transactionService = transactionService;
 	}
@@ -83,6 +85,7 @@ public class PurgeNodesWebscript extends AbstractWebScript {
 	 *
 	 * @param ruleService a {@link org.alfresco.service.cmr.rule.RuleService} object.
 	 */
+	@Deprecated
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
@@ -92,6 +95,7 @@ public class PurgeNodesWebscript extends AbstractWebScript {
 	 *
 	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object.
 	 */
+	@Deprecated
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
@@ -101,6 +105,7 @@ public class PurgeNodesWebscript extends AbstractWebScript {
 	 *
 	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
 	 */
+	@Deprecated
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -110,6 +115,7 @@ public class PurgeNodesWebscript extends AbstractWebScript {
 	 *
 	 * @param tenantService a {@link org.alfresco.repo.tenant.TenantService} object.
 	 */
+	@Deprecated
 	public void setTenantService(TenantService tenantService) {
 		this.tenantService = tenantService;
 	}
@@ -122,6 +128,7 @@ public class PurgeNodesWebscript extends AbstractWebScript {
 	private static final int BATCH_SIZE = 40;
 
 	/** {@inheritDoc} */
+	@Deprecated
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 		String nodeRef = req.getParameter(PARAM_FOLDER_NODEREF);

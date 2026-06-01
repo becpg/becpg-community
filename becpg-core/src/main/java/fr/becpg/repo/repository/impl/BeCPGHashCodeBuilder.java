@@ -441,6 +441,8 @@ public class BeCPGHashCodeBuilder {
 			} finally {
 				visited.clear();
 				inUse.set(false);
+				VISITED_CACHE.remove();
+				VISITED_IN_USE.remove();
 			}
 		}
 		return new BeCPGHashCodeBuilder().reflectionAppend(object, Collections.newSetFromMap(new IdentityHashMap<>()));

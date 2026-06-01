@@ -32,7 +32,7 @@ public class AttachmentHelper {
 	  public  static void setAttachment(WebScriptRequest req, WebScriptResponse res, String attachFileName)
 	    {
 	            String headerValue = "attachment";
-	            if (attachFileName != null && attachFileName.length() > 0)
+	            if (attachFileName != null && !attachFileName.isEmpty())
 	            {
 	            	 if (req == null)
 		                {

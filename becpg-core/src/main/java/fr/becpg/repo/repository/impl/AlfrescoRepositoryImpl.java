@@ -105,6 +105,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AlfrescoRepositoryImpl.class);
 
+	private static final String LOG_CLEAR_CACHE = "Clear cache of:";
+
 	@Autowired
 	private RepositoryEntityDefReader<T> repositoryEntityDefReader;
 
@@ -224,7 +226,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			if (entityClass != null) {
 				if (entityClass.isAnnotationPresent(AlfCacheable.class)) {
 					if (logger.isDebugEnabled()) {
-						logger.info("Clear cache of:" + nodeRef + " - " + nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
+						logger.info(LOG_CLEAR_CACHE + nodeRef + " - " + nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
 					}
 					if (entityClass.getAnnotation(AlfCacheable.class).isCharact()) {
 						charactCache.remove(nodeRef);
@@ -234,7 +236,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				} else {
 					if (cache.contains(nodeRef)) {
 						if (logger.isDebugEnabled()) {
-							logger.info("Clear cache of:" + nodeRef + " - " + nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
+							logger.info(LOG_CLEAR_CACHE + nodeRef + " - " + nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
 						}
 						cache.remove(nodeRef);
 					}
@@ -242,7 +244,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			}
 		} else if (cache.contains(nodeRef)) {
 			if (logger.isDebugEnabled()) {
-				logger.info("Clear cache of:" + nodeRef + " - deleted");
+				logger.info(LOG_CLEAR_CACHE + nodeRef + " - deleted");
 			}
 			cache.remove(nodeRef);
 		} else if (charactCache.contains(nodeRef)) {

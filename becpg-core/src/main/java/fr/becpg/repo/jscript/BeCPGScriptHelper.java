@@ -2603,12 +2603,12 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 */
 	public void forceDelete(ScriptNode node) {
 		try {
-			policyBehaviourFilter.disableAllBehaviours();
+			policyBehaviourFilter.disableBehaviour();
 			nodeService.addAspect(node.getNodeRef(), ContentModel.ASPECT_TEMPORARY, null);
 			node.remove();
 
 		} finally {
-			policyBehaviourFilter.enableAllBehaviours(); 
+			policyBehaviourFilter.enableBehaviour();
 		}
 	}
 	

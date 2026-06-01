@@ -304,13 +304,21 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 	/** {@inheritDoc} */
 	@Override
 	public ClassAttributeDefinition getPropDef(final QName fieldQname) {
-		return getTenantCache(propDefCache).computeIfAbsent(fieldQname, k -> {
-			ClassAttributeDefinition propDef = getProperty(k);
+		if (fieldQname == null) {
+			return null;
+		}
+		Map<QName, ClassAttributeDefinition> cache = getTenantCache(propDefCache);
+		ClassAttributeDefinition propDef = cache.get(fieldQname);
+		if (propDef == null) {
+			propDef = getProperty(fieldQname);
 			if (propDef == null) {
-				propDef = getAssociation(k);
+				propDef = getAssociation(fieldQname);
 			}
-			return propDef;
-		});
+			if (propDef != null) {
+				cache.put(fieldQname, propDef);
+			}
+		}
+		return propDef;
 	}
 
 	/** {@inheritDoc} */
@@ -439,7 +447,15 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 		if (name == null) {
 			return null;
 		}
-		return getTenantCache(classDefCache).computeIfAbsent(name, super::getClass);
+		Map<QName, ClassDefinition> cache = getTenantCache(classDefCache);
+		ClassDefinition classDef = cache.get(name);
+		if (classDef == null) {
+			classDef = super.getClass(name);
+			if (classDef != null) {
+				cache.put(name, classDef);
+			}
+		}
+		return classDef;
 	}
 
 	// Private helper methods

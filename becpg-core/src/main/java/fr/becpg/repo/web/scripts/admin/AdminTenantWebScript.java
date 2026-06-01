@@ -36,8 +36,8 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
  * The Class AdminTenantWebScript.
  *
  * @author matthieu
- * Deprected since 4.2 see TenantPost
  * @version $Id: $Id
+ * @deprecated since 4.2, see TenantPost
  */
 @Deprecated(since = "4.2", forRemoval = false)
 public class AdminTenantWebScript extends AbstractWebScript {
@@ -80,6 +80,7 @@ public class AdminTenantWebScript extends AbstractWebScript {
 	 *
 	 * @param tenantAdminService a {@link org.alfresco.repo.tenant.TenantAdminService} object.
 	 */
+	@Deprecated
 	public void setTenantAdminService(TenantAdminService tenantAdminService) {
 		this.tenantAdminService = tenantAdminService;
 	}
@@ -89,6 +90,7 @@ public class AdminTenantWebScript extends AbstractWebScript {
 	 *
 	 * @param tenantService a {@link org.alfresco.repo.tenant.TenantService} object.
 	 */
+	@Deprecated
 	public void setTenantService(TenantService tenantService) {
 		this.tenantService = tenantService;
 	}
@@ -98,6 +100,7 @@ public class AdminTenantWebScript extends AbstractWebScript {
 	 *
 	 * @param authorityService a {@link org.alfresco.service.cmr.security.AuthorityService} object.
 	 */
+	@Deprecated
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
 	}
@@ -107,6 +110,7 @@ public class AdminTenantWebScript extends AbstractWebScript {
 	 *
 	 * @param authenticationService a {@link org.alfresco.service.cmr.security.AuthenticationService} object.
 	 */
+	@Deprecated
 	public void setAuthenticationService(AuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
 	}
@@ -120,6 +124,7 @@ public class AdminTenantWebScript extends AbstractWebScript {
 	 * org.springframework.extensions.webscripts.WebScriptResponse)
 	 */
 	/** {@inheritDoc} */
+	@Deprecated
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws WebScriptException {
 

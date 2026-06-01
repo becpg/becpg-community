@@ -116,7 +116,7 @@ public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 	 * @param services a {@link org.alfresco.service.ServiceRegistry} object.
 	 * @param attributeExtractorService a {@link fr.becpg.repo.helper.AttributeExtractorService} object.
 	 */
-	public AbstractNodeDataExtractor(ServiceRegistry services, AttributeExtractorService attributeExtractorService) {
+	protected AbstractNodeDataExtractor(ServiceRegistry services, AttributeExtractorService attributeExtractorService) {
 		super();
 		this.attributeExtractorService = attributeExtractorService;
 		this.services = services;

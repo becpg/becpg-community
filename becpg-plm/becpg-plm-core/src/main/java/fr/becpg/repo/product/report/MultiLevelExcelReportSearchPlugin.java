@@ -37,6 +37,7 @@ import fr.becpg.repo.product.formulation.FormulationHelper;
  *
  * @author matthieu
  * @version $Id: $Id
+ * @deprecated
  */
 //@Service
 @Deprecated
@@ -57,6 +58,7 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 	 * @param multiLevelDataListService a {@link fr.becpg.repo.entity.datalist.MultiLevelDataListService} object
 	 * @param wUsedListService a {@link fr.becpg.repo.entity.datalist.WUsedListService} object
 	 */
+	@Deprecated
 	public MultiLevelExcelReportSearchPlugin(MultiLevelDataListService multiLevelDataListService,
 			WUsedListService wUsedListService) {
 		this.multiLevelDataListService = multiLevelDataListService;
@@ -64,12 +66,14 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 	}
 
 	/** {@inheritDoc} */
+	@Deprecated
 	@Override
 	public boolean isDefault() {
 		return false;
 	}
 
 	/** {@inheritDoc} */
+	@Deprecated
 	@Override
 	public boolean isApplicable(QName itemType, String[] parameters) {
 		String parameter = (parameters != null) && (parameters.length > 0) ? parameters[0] : null;
@@ -78,6 +82,7 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 	}
 
 	/** {@inheritDoc} */
+	@Deprecated
 	@Override
 	public int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
 			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
@@ -161,6 +166,7 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 	 * @param wUsedEntityType a {@link org.alfresco.service.namespace.QName} object
 	 * @param wUsedAssocCache a {@link java.util.Map} object
 	 */
+	@Deprecated
 	protected int appendNextLevel(MultiLevelListData listData, XSSFSheet sheet, QName itemType,
 			List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache, int rownum,
 			Serializable key, Double parentQty, String[] parameters, Map<String, Object> entityItems,

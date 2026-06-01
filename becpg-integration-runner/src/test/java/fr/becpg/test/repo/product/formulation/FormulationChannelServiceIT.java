@@ -62,6 +62,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 				policyBehaviourFilter, namespaceService, authenticationService, 1, 1);
 	}
 
+	@SuppressWarnings("unchecked")
 	@After
 	public void tearDown() {
 		if (Mockito.mockingDetails(publicationChannelService).isMock()) {

@@ -261,6 +261,7 @@ public class RemoteChannelBatchWebScriptIT extends PLMBaseTestCase {
 	/**
 	 * Test batch acknowledgment for an archived entity.
 	 */
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testBatchAckArchivedEntity() throws IOException {
 		inWriteTx(() -> {

@@ -53,6 +53,8 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 	/** Constant <code>BACKSLASH="\\\\&quot;"</code> */
 	private static final String BACKSLASH = "\\\\";
 
+	private static final String LOG_ADD_NESTED_FIELD = "Add nested field : ";
+
 	
 	@Autowired
 	private ActionService actionService;
@@ -97,7 +99,6 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 				mainType = fillSheet(sheet, searchResults, mainType, parameters);
 				sheet.setForceFormulaRecalculation(true);
 			}
-		  //Disable for XLSM (break #2259 ?) workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
 			workbook.setForceFormulaRecalculation(true);
 			workbook.write(outputStream);
 
@@ -304,18 +305,6 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 	 * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
 	 * @param searchResults a {@link java.util.List} object
 	 * @param mainType a {@link org.alfresco.service.namespace.QName} object
-	 * @return a {@link org.alfresco.service.namespace.QName} object
-	 */
-	private QName fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType) {
-		return fillSheet(sheet, searchResults, mainType, null);
-	}
-
-	/**
-	 * <p>fillSheet.</p>
-	 *
-	 * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
-	 * @param searchResults a {@link java.util.List} object
-	 * @param mainType a {@link org.alfresco.service.namespace.QName} object
 	 * @param parameters an array of {@link java.lang.String} objects
 	 * @return a {@link org.alfresco.service.namespace.QName} object
 	 */
@@ -336,7 +325,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 	 */
 	private List<AttributeExtractorStructure> extractListStruct(QName itemType, Row headerRow) {
 		List<AttributeExtractorField> metadataFields = new ArrayList<>();
-		String currentNested = "";
+		StringBuilder currentNested = new StringBuilder();
 		for (int i = 1; i < headerRow.getLastCellNum(); i++) {
 			if (headerRow.getCell(i) != null) {
 				if (headerRow.getCell(i).getCellType() == CellType.STRING) {
@@ -346,53 +335,53 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 							if (cellValue.contains(BACKSLASH + "_")) {
 								cellValue = cellValue.replace(BACKSLASH + "_", BACKSLASH + "|");
 							}
-							if (!currentNested.isEmpty() && currentNested.startsWith(cellValue.split("_")[0])) {
-								currentNested += "|" + cellValue.split("_")[1];
+							if (currentNested.length() > 0 && currentNested.toString().startsWith(cellValue.split("_")[0])) {
+								currentNested.append("|").append(cellValue.split("_")[1]);
 							} else {
-								if (!currentNested.isEmpty()) {
-									logger.debug("Add nested field : " + currentNested);
-									metadataFields.add(new AttributeExtractorField(currentNested, null));
-									currentNested = "";
+								if (currentNested.length() > 0) {
+									logger.debug(LOG_ADD_NESTED_FIELD + currentNested);
+									metadataFields.add(new AttributeExtractorField(currentNested.toString(), null));
+									currentNested.setLength(0);
 								}
-								if (MLTextHelper.getSupportedLocalesList() != null ) { 
+								if (MLTextHelper.getSupportedLocalesList() != null) {
 									String[] cellValues = cellValue.split("_");
-									currentNested = cellValue.replace("_","|");
+									String nested = cellValue.replace("_", "|");
 									if (MLTextHelper.getSupportedLocalesList().contains(cellValues[cellValues.length-2] + "_" + cellValues[cellValues.length-1])) {
 										int index = cellValue.lastIndexOf("_");
-										currentNested = currentNested.substring(0,index) + "_" + currentNested.substring(index+1);
+										nested = nested.substring(0, index) + "_" + nested.substring(index + 1);
 									}
-									if (currentNested.contains(BACKSLASH + "|")) {
-										currentNested = currentNested.replace(BACKSLASH + "|", "_");
+									if (nested.contains(BACKSLASH + "|")) {
+										nested = nested.replace(BACKSLASH + "|", "_");
 									}
-									metadataFields.add(new AttributeExtractorField(currentNested,null));
-									currentNested = "";
-									
+									metadataFields.add(new AttributeExtractorField(nested, null));
+									currentNested.setLength(0);
 								} else {
-									currentNested = cellValue.replace("_", "|");
+									currentNested.setLength(0);
+									currentNested.append(cellValue.replace("_", "|"));
 								}
 							}
 
 						} else {
-							if (!currentNested.isEmpty() && !cellValue.contains("formula") && !cellValue.contains("image")) {
-								logger.debug("Add nested field : " + currentNested);
-								metadataFields.add(new AttributeExtractorField(currentNested,null));
-								currentNested = "";
+							if (currentNested.length() > 0 && !cellValue.contains("formula") && !cellValue.contains("image")) {
+								logger.debug(LOG_ADD_NESTED_FIELD + currentNested);
+								metadataFields.add(new AttributeExtractorField(currentNested.toString(), null));
+								currentNested.setLength(0);
 							}
 							logger.debug("Add field : " + cellValue);
-							metadataFields.add(new AttributeExtractorField(cellValue,null));
+							metadataFields.add(new AttributeExtractorField(cellValue, null));
 						}
 					}
 				} else if (headerRow.getCell(i).getCellType() == CellType.FORMULA) {
 					String cellFormula = headerRow.getCell(i).getCellFormula();
-					metadataFields.add(new AttributeExtractorField("excel|" + cellFormula,null));
+					metadataFields.add(new AttributeExtractorField("excel|" + cellFormula, null));
 				}
 			}
 
 		}
 
-		if (!currentNested.isEmpty()) {
-			logger.debug("Add nested field : " + currentNested);
-			metadataFields.add(new AttributeExtractorField(currentNested,null));
+		if (currentNested.length() > 0) {
+			logger.debug(LOG_ADD_NESTED_FIELD + currentNested);
+			metadataFields.add(new AttributeExtractorField(currentNested.toString(), null));
 		}
 
 		return attributeExtractorService.readExtractStructure(itemType, metadataFields);

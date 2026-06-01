@@ -242,6 +242,7 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 	 * @param ret a {@link java.util.List} object
 	 * @param filter a {@link org.alfresco.service.cmr.repository.Path} object
 	 * @return a {@link java.util.List} object
+	 * @deprecated since 26.1
 	 */
 	@Deprecated(since = "26.1", forRemoval = false)
 	private List<NodeRef> filterByPath(List<NodeRef> ret, SearchRuleFilter filter) {
@@ -296,6 +297,14 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 
 	}
 
+	/**
+	 * <p>filterByEntityCriteria.</p>
+	 *
+	 * @param nodes a {@link java.util.List} object
+	 * @param filter a {@link fr.becpg.repo.search.data.SearchRuleFilter} object
+	 * @return a {@link java.util.List} object
+	 * @deprecated since 26.1
+	 */
 	@Deprecated(since = "26.1", forRemoval = false)
 	private List<NodeRef> filterByEntityCriteria(List<NodeRef> nodes, SearchRuleFilter filter) {
 	

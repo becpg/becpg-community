@@ -204,7 +204,7 @@ public class EvaporatingFormulationHelper {
                         }
                     }
                     
-                    evaporationDataMap.put(evaporatedDataItem, new EvapData<>(item, rate, maxEvapQty, qtyWithYield));
+                    evaporationDataMap.put(evaporatedDataItem, new EvapData<>(item, maxEvapQty, qtyWithYield));
                     totalAvailableWater += maxEvapQty;
                 }
             }
@@ -247,14 +247,12 @@ public class EvaporatingFormulationHelper {
     private static class EvapData<T>
     {
         final T item;
-        final Double rate;
         final Double maxEvapQty;
         final Double qtyWithYield;
 
-        EvapData(T item, Double rate, Double maxEvapQty, Double qtyWithYield)
+        EvapData(T item, Double maxEvapQty, Double qtyWithYield)
         {
             this.item = item;
-            this.rate = rate;
             this.maxEvapQty = maxEvapQty;
             this.qtyWithYield = qtyWithYield;
         }
