@@ -343,7 +343,7 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 
 		inWriteTx(() -> {
 			// Create a new test project and associate it with a default read-only ACL group
-			NodeRef readOnlyProjectNodeRef = createTestProject();
+			NodeRef readOnlyProjectNodeRef = createTestProject("TestProjectReadOnly");
 			NodeRef aclGroupNodeRef = createProjectSecurityACLGroup(true);
 			if (!nodeService.hasAspect(readOnlyProjectNodeRef, SecurityModel.ASPECT_SECURITY)) {
 				nodeService.addAspect(readOnlyProjectNodeRef, SecurityModel.ASPECT_SECURITY, null);
@@ -391,8 +391,15 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 	 * Helper method to create a test project
 	 */
 	private NodeRef createTestProject() {
+		return createTestProject("TestProject");
+	}
+
+	/**
+	 * Helper method to create a test project with a specific name
+	 */
+	private NodeRef createTestProject(String name) {
 		ProjectData project = new ProjectData();
-		project.setName("TestProject");
+		project.setName(name);
 		project.setCode("TP001");
 		project.setState("Planned");
 		project.setStartDate(new Date());
