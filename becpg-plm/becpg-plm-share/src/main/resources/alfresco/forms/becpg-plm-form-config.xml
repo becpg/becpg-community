@@ -9594,6 +9594,120 @@
 
                 </appearance>
             </form>
+            <!-- Info view form -->
+            <form id="info">
+                <field-visibility>
+                    <show id="bcpg:ingListIng" />
+
+                    <show id="bcpg:ingListQtyPerc" />
+                    <show id="bcpg:ingListQtyPerc1" force="true" />
+                    <show id="bcpg:ingListQtyPerc2" force="true" />
+                    <show id="bcpg:ingListQtyPerc3" force="true" />
+                    <show id="bcpg:ingListQtyPerc4" force="true" />
+                    <show id="bcpg:ingListQtyPerc5" force="true" />
+                    <show id="bcpg:ingListQtyMini" />
+                    <show id="bcpg:ingListQtyMaxi" />
+
+                    <show id="bcpg:ingListIsGMO" />
+                    <show id="bcpg:ingListIsIonized" />
+                    <show id="bcpg:ingListIsProcessingAid" />
+                    <show id="bcpg:ingListIsSupport" />
+                    <show id="bcpg:ingListGeoOrigin" />
+                    <show id="bcpg:ingListGeoTransfo" />
+                    <show id="bcpg:ingListBioOrigin" />
+                    <show id="bcpg:ingListIngTypes" />
+                    <show id="bcpg:ingListClaims" />
+                    <show id="bcpg:ingListDeclType" />
+                    <show id="bcpg:linkedSearchAssociation" force="true" />
+                    <show id="bcpg:ingListComments" />
+                    <show id="bcpg:parentLevel" />
+
+                </field-visibility>
+
+                <appearance>
+
+                    <set id="1-col-1" />
+                    <set id="2-col-1" template="/org/alfresco/components/form/2-column-set.ftl" />
+                    <set id="1-col-2" />
+
+                    <field id="bcpg:ingListIng" set="1-col-1">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing?extra.searchTemplate=%25(bcpg%3AcharactName%20bcpg%3AerpCode%20bcpg%3AlegalName%20bcpg%3AingCEECode%20bcpg%3AcasNumber%20bcpg%3AecNumber%20bcpg%3AceNumber%20bcpg%3AfdaNumber%20bcpg%3AfemaNumber%20bcpg%3AflNumber)&amp;extra.characNameFormat=%7Bml_bcpg%3AcharactName%7D%20-%20%7Bbcpg%3AcasNumber%7D&amp;excludeProps=bcpg:excludeFromSearch%7Ctrue
+                            </control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:ingListQtyPerc" set="1-col-1">
+                        <control template="/org/alfresco/components/form/controls/number-unit.ftl">
+                            <control-param name="unit">perc</control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:ingListQtyPerc1" set="2-col-1" />
+                    <field id="bcpg:ingListQtyPerc2" set="2-col-1" />
+                    <field id="bcpg:ingListQtyPerc3" set="2-col-1" />
+                    <field id="bcpg:ingListQtyPerc4" set="2-col-1" />
+                    <field id="bcpg:ingListQtyPerc5" set="2-col-1" />
+
+
+                    <field id="bcpg:ingListQtyMini" set="2-col-1" />
+                    <field id="bcpg:ingListQtyMaxi" set="2-col-1" />
+
+                    <field id="bcpg:ingListGeoOrigin" set="2-col-1">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                    </field>
+                    <field id="bcpg:ingListGeoTransfo" set="2-col-1">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                    </field>
+                    <field id="bcpg:ingListBioOrigin" set="2-col-1">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                    </field>
+
+                    <field id="bcpg:ingListIngTypes" set="2-col-1">
+                        <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
+                            </control-param>
+                        </control>
+                    </field>
+
+                    <field id="bcpg:ingListClaims" set="2-col-1">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:labelClaim?andProps=bcpg:labelClaimType%7CCertification
+                            </control-param>
+                        </control>
+                    </field>
+
+                    <field id="bcpg:ingListComments" set="2-col-1" />
+
+                    <field id="bcpg:ingListIsIonized" set="2-col-1" />
+                    <field id="bcpg:ingListIsGMO" set="2-col-1" />
+                    <field id="bcpg:ingListIsProcessingAid" set="2-col-1" />
+                    <field id="bcpg:ingListIsSupport" set="2-col-1" />
+
+
+                    <field id="bcpg:parentLevel" set="1-col-2">
+                        <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+                            <control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng&#38;extra.showFullPath=true
+                            </control-param>
+                        </control>
+                    </field>
+
+                    <field id="bcpg:ingListDeclType" set="1-col-2">
+                        <control template="/org/alfresco/components/form/controls/selectone.ftl">
+                            <control-param name="isStoreable">true</control-param>
+                            <control-param name="options">Declare|data.declarationtype.declare,DoNotDetails|data.declarationtype.donotdetails,Detail|data.declarationtype.detail,Omit|data.declarationtype.omit,DoNotDeclare|data.declarationtype.donotdeclare
+                            </control-param>
+                        </control>
+                    </field>
+
+                    <field id="bcpg:linkedSearchAssociation" set="1-col-2">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing?extra.getByAssoc=bcpg:linkedSearchAssociation
+                            </control-param>
+                            <control-param name="parentAssoc">bcpg_ingListIng</control-param>
+                        </control>
+                    </field>
+
+                </appearance>
+            </form>
             <!-- Data Grid view -->
             <form id="datagrid">
                 <field-visibility>
