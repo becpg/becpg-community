@@ -5792,7 +5792,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value1"] ? (row["value1"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value1"] ? (row["value1"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="3465">
@@ -5836,7 +5838,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value2"] ? (row["value2"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value2"] ? (row["value2"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12234">
@@ -5880,7 +5884,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value3"] ? (row["value3"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value3"] ? (row["value3"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12235">
@@ -5914,7 +5920,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value4"] ? (row["value4"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value4"] ? (row["value4"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12236">
@@ -5954,7 +5962,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value5"] ? (row["value5"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value5"] ? (row["value5"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12237">
@@ -5988,7 +5998,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value6"] ? (row["value6"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value6"] ? (row["value6"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12238">
@@ -6028,7 +6040,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value7"] ? (row["value7"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value7"] ? (row["value7"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12239">
@@ -6062,7 +6076,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value8"] ? (row["value8"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value8"] ? (row["value8"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12240">
@@ -6102,7 +6118,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value9"] ? (row["value9"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value9"] ? (row["value9"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12241">
@@ -6136,7 +6154,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value10"] ? (row["value10"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value10"] ? (row["value10"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12242">
@@ -6176,7 +6196,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value11"] ? (row["value11"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value11"] ? (row["value11"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12243">
@@ -6210,7 +6232,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value12"] ? (row["value12"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value12"] ? (row["value12"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12244">
@@ -6250,7 +6274,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value13"] ? (row["value13"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value13"] ? (row["value13"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12245">
@@ -6284,7 +6310,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value14"] ? (row["value14"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value14"] ? (row["value14"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12246">
@@ -6318,7 +6346,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value15"] ? (row["value15"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value15"] ? (row["value15"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12247">
@@ -6352,7 +6382,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value16"] ? (row["value16"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value16"] ? (row["value16"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12248">
@@ -6386,7 +6418,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value17"] ? (row["value17"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value17"] ? (row["value17"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12249">
@@ -6420,7 +6454,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value18"] ? (row["value18"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value18"] ? (row["value18"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12250">
@@ -6454,7 +6490,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value19"] ? (row["value19"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value19"] ? (row["value19"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12251">
@@ -6488,7 +6526,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value20"] ? (row["value20"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value20"] ? (row["value20"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12252">
@@ -6522,7 +6562,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value21"] ? (row["value21"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value21"] ? (row["value21"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12253">
@@ -6556,7 +6598,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value22"] ? (row["value22"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value22"] ? (row["value22"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12254">
@@ -6590,7 +6634,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value23"] ? (row["value23"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value23"] ? (row["value23"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12255">
@@ -6624,7 +6670,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value24"] ? (row["value24"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value24"] ? (row["value24"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12256">
@@ -6658,7 +6706,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value25"] ? (row["value25"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value25"] ? (row["value25"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12257">
@@ -6692,7 +6742,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value26"] ? (row["value26"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value26"] ? (row["value26"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12258">
@@ -6726,7 +6778,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value27"] ? (row["value27"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value27"] ? (row["value27"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12259">
@@ -6760,7 +6814,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value28"] ? (row["value28"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value28"] ? (row["value28"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12260">
@@ -6794,7 +6850,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value29"] ? (row["value29"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value29"] ? (row["value29"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12261">
@@ -6828,7 +6886,9 @@ color;</expression>
                                     <expression name="valueExpr" type="javascript">row["entityListQName"]=="bcpg:ingLabelingList" ? false :true</expression>
                                 </structure>
                             </list-property>
-                            <expression name="valueExpr">row["value30"] ? (row["value30"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
+                            <expression name="valueExpr"><![CDATA[
+									row["value30"] ? (row["value30"].replace(/&amp;lt;/g, "<").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;apos;/g, "'").replace(/&amp;amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, "&")) : ""
+									]]></expression>
                             <property name="contentType">html</property>
                         </text-data>
                         <data id="12262">
