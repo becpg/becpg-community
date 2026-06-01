@@ -22,6 +22,7 @@ if (beCPG.module.EntityDataGridRenderers) {
     var NUMBER_FORMAT = { "maximumFractionDigits": 4 };
     var NUTDETAILS_EVENTCLASS = Alfresco.util.generateDomId(null, "nutDetails");
     var CHARACTDETAILS_EVENTCLASS = Alfresco.util.generateDomId(null, "charactDetails");
+    var INGLISTING_INFO_EVENTCLASS = Alfresco.util.generateDomId(null, "ingListIngInfo");
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["bcpg:product", "bcpg:supplier", "bcpg:client", "bcpg:entityV2", "bcpg:resourceProduct",
@@ -116,10 +117,25 @@ if (beCPG.module.EntityDataGridRenderers) {
                 Dom.addClass(tr, "mtl-leaf");
             }
 
+            var displayName = Alfresco.util.encodeHTML(data.displayValue);
+            var content = '';
+            var infoIcon = '';
+            
+            if (label == "bcpg:ing_bcpg:ingListIng") {
+                content = '<span class="node-' + oRecord.getData("nodeRef") + '" data-noderef="' + oRecord.getData("nodeRef") + '">'
+                    + '<a class="' + INGLISTING_INFO_EVENTCLASS + '" href="#" style="text-decoration: none;">' + displayName + '</a>'
+                    + '</span>';
+                infoIcon = '<span class="node-' + oRecord.getData("nodeRef") + '" data-noderef="' + oRecord.getData("nodeRef") + '">'
+                    + '<a class="show-details ' + INGLISTING_INFO_EVENTCLASS + '" title="' + (scope.msg("link.title.ing-details") || "Details") + '" href="#">'
+                    + '&nbsp;'
+                    + '</a></span>';
+            } else {
+                content = '<span class="' + data.metadata + '" ' + (toogleGroupButton == null && padding != 0 ? 'style="margin-left:' + padding + 'px;"' : '') + '>'
+                    + (url != null ? '<a href="' + url + '">' : '')
+                    + displayName + (url != null ? '</a>' : '') + '</span>';
+            }
 
-            return (toogleGroupButton != null ? toogleGroupButton : '') + '<span class="' + data.metadata + '" ' + (toogleGroupButton == null && padding != 0 ? 'style="margin-left:' + padding + 'px;"' : '') + '>'
-                + (url != null ? '<a href="' + url + '">' : '')
-                + Alfresco.util.encodeHTML(data.displayValue) + (url != null ? '</a>' : '') + '</span>';
+            return (toogleGroupButton != null ? toogleGroupButton : '') + content + infoIcon;
         }
 
     });
@@ -940,6 +956,60 @@ if (beCPG.module.EntityDataGridRenderers) {
 
             dt._showPanel(url, dt.id, null, "60em");
 
+        }
+        return true;
+    });
+
+
+    YAHOO.Bubbling.addDefaultAction(INGLISTING_INFO_EVENTCLASS, function(layer, args) {
+        var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
+        if (owner !== null) {
+            var nodeRef = owner.getAttribute("data-noderef");
+            if (!nodeRef) {
+                var match = owner.className.match(/node-([^\s]+)/);
+                if (match) {
+                    nodeRef = match[1];
+                }
+            }
+            if (nodeRef) {
+                var dt = Alfresco.util.ComponentManager.find({
+                    name: "beCPG.module.EntityDataGrid"
+                })[0];
+                if (dt) {
+                    var templateUrl = YAHOO.lang.substitute(
+                        Alfresco.constants.URL_SERVICECONTEXT
+                        + "components/form?entityNodeRef={entityNodeRef}&entityType={entityType}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&formId={formId}&showCancelButton=true&list={list}&siteId={siteId}",
+                        {
+                            itemKind: "node",
+                            itemId: nodeRef,
+                            formId: "info",
+                            mode: "view",
+                            submitType: "json",
+                            entityType: dt.entity != null ? encodeURIComponent(dt.entity.type) : "",
+                            entityNodeRef: dt.options.entityNodeRef,
+                            list: encodeURIComponent(dt.datalistMeta.name != null ? dt.datalistMeta.name : dt.options.list),
+                            siteId: dt.options.siteId
+                        });
+
+                    var popupId = dt.id + "-infoDetails";
+                    var infoDetails = new Alfresco.module.SimpleDialog(popupId);
+                    infoDetails.setOptions({
+                        width: dt.options.formWidth,
+                        templateUrl: templateUrl,
+                        actionUrl: null,
+                        destroyOnHide: true,
+                        doBeforeDialogShow: {
+                            fn: function(p_form, p_dialog) {
+                                Alfresco.util.populateHTML([p_dialog.id + "-dialogTitle", dt.msg("label.view-row.title") || "Details"]);
+                                if (dt.options.formWidth != "34em") {
+                                    Dom.addClass(p_dialog.id + "-dialog", "large-dialog");
+                                }
+                            },
+                            scope: dt
+                        }
+                    }).show();
+                }
+            }
         }
         return true;
     });
