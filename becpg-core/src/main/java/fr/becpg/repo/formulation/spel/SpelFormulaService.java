@@ -3,10 +3,9 @@ package fr.becpg.repo.formulation.spel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
@@ -21,7 +20,6 @@ import org.springframework.expression.spel.SpelCompilerMode;
 import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.expression.spel.support.StandardTypeLocator;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -61,15 +59,7 @@ public class SpelFormulaService {
 	/** Constant <code>EXPRESSION_CACHE_MAX_SIZE=500</code> */
 	private static final int EXPRESSION_CACHE_MAX_SIZE = 500;
 
-	private final Map<String, Expression> expressionCache = Collections.synchronizedMap(
-			new LinkedHashMap<>(EXPRESSION_CACHE_MAX_SIZE, 0.75f, true) {
-				private static final long serialVersionUID = 1634566060749074187L;
-
-				@Override
-				protected boolean removeEldestEntry(Map.Entry<String, Expression> eldest) {
-					return size() > EXPRESSION_CACHE_MAX_SIZE;
-				}
-			});
+	private final Map<String, Expression> expressionCache = new ConcurrentHashMap<>(EXPRESSION_CACHE_MAX_SIZE);
 
 	/**
 	 * <p>parseExpression.</p>
@@ -146,7 +136,7 @@ public class SpelFormulaService {
 	 * @param rootObject a {@link java.lang.Object} object
 	 * @return a {@link org.springframework.expression.spel.support.StandardEvaluationContext} object
 	 */
-	public StandardEvaluationContext createSpelContext(@Nullable Object rootObject) {
+	public StandardEvaluationContext createSpelContext(Object rootObject) {
 		StandardEvaluationContext context = new StandardEvaluationContext(rootObject);
 		context.setTypeLocator(new BecpgSpelSecurityTypeLocator(systemConfigurationService.confValue("beCPG.spel.security.authorizedTypes")));
 		return context;

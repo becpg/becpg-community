@@ -79,6 +79,8 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 
 	private final Map<String, QName> qnameCache = new ConcurrentHashMap<>();
 
+	private final Map<Class<?>, PropertyDescriptor[]> propertyDescriptorCache = new ConcurrentHashMap<>();
+
 	private final List<QName> defaultPivotAssocs = new ArrayList<>();
 	private final Map<QName, String> dataListAssocToTargetTypes = new HashMap<>();
 
@@ -242,8 +244,11 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	private <R, Z> Map<QName, R> readValueMap(Z entity, Class<? extends Annotation> annotationClass, Class<?> returnType) {
 		Map<QName, R> ret = new HashMap<>();
 
+		Class<?> entityClass = AopProxyUtils.ultimateTargetClass(entity);
+		PropertyDescriptor[] descriptors = propertyDescriptorCache.computeIfAbsent(entityClass,
+				c -> new BeanWrapperImpl(c).getPropertyDescriptors());
 		BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(entity);
-		for (PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
+		for (PropertyDescriptor pd : descriptors) {
 			Method readMethod = pd.getReadMethod();
 			if (readMethod != null) {
 				if (readMethod.isAnnotationPresent(annotationClass) && readMethod.isAnnotationPresent(AlfQname.class)
@@ -296,9 +301,9 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 			return null;
 		}
 
-		BeanWrapper beanWrapper = new BeanWrapperImpl(entityClass);
-
-		for (PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
+		PropertyDescriptor[] descriptors = propertyDescriptorCache.computeIfAbsent(entityClass,
+				c -> new BeanWrapperImpl(c).getPropertyDescriptors());
+		for (PropertyDescriptor pd : descriptors) {
 			Method readMethod = pd.getReadMethod();
 			if (readMethod != null) {
 				if (readMethod.isAnnotationPresent(DataListIdentifierAttr.class) && readMethod.isAnnotationPresent(AlfQname.class)
@@ -352,9 +357,9 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 			return null;
 		}
 
-		BeanWrapper beanWrapper = new BeanWrapperImpl(entityClass);
-
-		for (PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
+		PropertyDescriptor[] descriptors = propertyDescriptorCache.computeIfAbsent(entityClass,
+				c -> new BeanWrapperImpl(c).getPropertyDescriptors());
+		for (PropertyDescriptor pd : descriptors) {
 			Method readMethod = pd.getReadMethod();
 			if (readMethod != null) {
 				if (readMethod.isAnnotationPresent(MultiLevelGroup.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
