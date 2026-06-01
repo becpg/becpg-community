@@ -70,6 +70,9 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	/** Constant <code>MAX_QUERY_FILTER_IDS=1000</code> */
 	private static final int MAX_QUERY_FILTER_IDS = 1000;
 
+	private static final String SUFFIX_OR_ADDED = "_or_added";
+	private static final String PREFIX_ASSOC = "assoc_";
+
 	@Autowired
 	private NamespaceService namespaceService;
 
@@ -160,7 +163,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		watch.stop();
 		if (watch.getTotalTimeSeconds() > 5 && searchFiltered) {
 			logger.warn("Slow advSearch query for user " + AuthenticationUtil.getRunAsUser() + ", executed in " + watch.getTotalTimeSeconds() + " seconds. Consider indexing assocs: "
-					+ String.join(", ", criteria.keySet().stream().filter(k -> k.startsWith("assoc_"))
+					+ String.join(", ", criteria.keySet().stream().filter(k -> k.startsWith(PREFIX_ASSOC))
 							.filter(k -> criteria.get(k) != null && !criteria.get(k).isBlank()).toList()));
 		}
 
@@ -240,14 +243,15 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		if (criteria != null) {
 			Map<String, String> toAdd = new HashMap<>();
 			Set<String> toRemove = new HashSet<>();
-			for (String key : criteria.keySet()) {
-				if (key.startsWith("assoc_")) {
-					String assocName = key.replace("assoc_", "").replace("_or_added", "").replace("_added", "").replace("_", ":");
+			for (Map.Entry<String, String> entry : criteria.entrySet()) {
+				String key = entry.getKey();
+				if (key.startsWith(PREFIX_ASSOC)) {
+					String assocName = key.replace(PREFIX_ASSOC, "").replace(SUFFIX_OR_ADDED, "").replace("_added", "").replace("_", ":");
 					QName assocQName = QName.createQName(assocName, namespaceService);
 					QName assocIndexQName = entityDictionaryService.getAssocIndexQName(assocQName);
 					if (assocIndexQName != null) {
-						String value = criteria.get(key);
-						String suffix = key.endsWith("_or_added") ? "_or_added" : "_added";
+						String value = entry.getValue();
+						String suffix = key.endsWith(SUFFIX_OR_ADDED) ? SUFFIX_OR_ADDED : "_added";
 						String newKey = "prop_" + assocIndexQName.toPrefixString().replace(":", "_") + suffix;
 						toAdd.put(newKey, value);
 						toRemove.add(key);
@@ -266,9 +270,9 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	public BeCPGQueryBuilder createSearchQuery(QName datatype, String term, String tag, boolean isRepo, String siteId, String containerId) {
 		BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery();
 		// Simple keyword search and tag specific search
-		if ((term != null) && (term.length() != 0)) {
+		if ((term != null) && !term.isEmpty()) {
 			beCPGQueryBuilder.andFTSQuery(cleanFTSQuery(term));
-		} else if ((tag != null) && (tag.length() != 0)) {
+		} else if ((tag != null) && !tag.isEmpty()) {
 			beCPGQueryBuilder.andFTSQuery("TAG:\"" + tag + "\"");
 		}
 
@@ -376,7 +380,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 							} else if (propName.contains("Hierarchy")) {
 								String hierarchyQuery = getHierarchyQuery(propName, propValue);
 
-								if ((hierarchyQuery != null) && (hierarchyQuery.length() > 0)) {
+								if ((hierarchyQuery != null) && !hierarchyQuery.isEmpty()) {
 									List<String> hierarchyNodes = new ArrayList<>();
 									String[] results = hierarchyQuery.split(",");
 									for (String result : results) {
@@ -388,7 +392,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 									if (!hierarchyNodes.isEmpty()) {
 										Integer depthLevel = getHierarchyLevel(new NodeRef(hierarchyNodes.get(0)));
 										if ((depthLevel != null) && !hierarchyPropName.contains(depthLevel.toString())) {
-											hierarchyPropName = hierarchyPropName.replaceAll("[0-9]", depthLevel.toString());
+											hierarchyPropName = hierarchyPropName.replaceAll("\\d", depthLevel.toString());
 										}
 										if (entityDictionaryService.getProperty(QName.createQName(hierarchyPropName, namespaceService)) == null) {
 											hierarchyPropName = propName;
@@ -582,10 +586,10 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		StringBuilder ret = new StringBuilder();
 		if ((nodes != null) && !nodes.isEmpty()) {
 			for (NodeRef node : nodes) {
-				ret.append(" \"" + node.toString() + "\"");
+				ret.append(" \"").append(node.toString()).append("\"");
 			}
 		} else {
-			ret.append("\"" + hierarchyName + "\"");
+			ret.append("\"").append(hierarchyName).append("\"");
 		}
 
 		if (logger.isDebugEnabled() && (watch != null)) {
@@ -628,7 +632,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	 * @return a boolean
 	 */
 	boolean isMultiValueProperty(String propValue, String modePropValue) {
-		return (propValue.indexOf(",") != -1);
+		return propValue.contains(",");
 	}
 
 	/**
@@ -651,14 +655,14 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		for (var i = 0; i < multiValue.length; i++) {
 
 			if (i > 0) {
-				formQuery.append(' ' + operand + ' ');
+				formQuery.append(' ').append(operand).append(' ');
 			}
 
 			if (pseudo) {
-				formQuery.append("(cm:content." + propName + ":\"" + multiValue[i] + "\")");
+				formQuery.append("(cm:content.").append(propName).append(":\"").append(multiValue[i]).append("\")");
 			} else {
-				formQuery.append(  QName.createQName(propName, namespaceService) + ":("
-						+ cleanValue(multiValue[i]) + ")");
+				formQuery.append(QName.createQName(propName, namespaceService)).append(":(")
+						.append(cleanValue(multiValue[i])).append(")");
 			}
 		}
 
@@ -709,8 +713,8 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			final StringBuilder buf = new StringBuilder(128);
 			final Path path = nodeService.getPath(catNode);
 			for (final Path.Element e : path) {
-				if (e instanceof Path.ChildAssocElement) {
-					final QName qname = ((Path.ChildAssocElement) e).getRef().getQName();
+					if (e instanceof Path.ChildAssocElement childAssocElement) {
+					final QName qname = childAssocElement.getRef().getQName();
 					if (qname != null) {
 						String prefix = cache.get(qname.getNamespaceURI());
 						if (prefix == null) {
@@ -720,7 +724,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 							cache.put(qname.getNamespaceURI(), prefix);
 						}
 						buf.append('/');
-						if (prefix.length() > 0) {
+						if (!prefix.isEmpty()) {
 							buf.append(prefix).append(':');
 						}
 						buf.append(ISO9075.encode(qname.getLocalName()));
@@ -730,7 +734,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 				}
 			}
 
-			catQuery.append((firstCat ? "" : " OR ") + "PATH:\"" + buf.toString() + (useSubCats ? "//*\"" : "/member\""));
+			catQuery.append(firstCat ? "" : " OR ").append("PATH:\"").append(buf.toString()).append(useSubCats ? "//*\"" : "/member\"");
 
 			firstCat = false;
 
@@ -752,7 +756,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 			NodeRef catNode = new NodeRef(cat);
 
-			catQuery.append((first ? "" : " OR ") + "TAG:\"" + nodeService.getProperty(catNode, ContentModel.PROP_NAME) + "\"");
+			catQuery.append(first ? "" : " OR ").append("TAG:\"").append(nodeService.getProperty(catNode, ContentModel.PROP_NAME)).append("\"");
 			first = false;
 		}
 

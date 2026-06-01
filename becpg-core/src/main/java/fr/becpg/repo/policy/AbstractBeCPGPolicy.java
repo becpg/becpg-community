@@ -77,6 +77,8 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 	/** Constant <code>ASSOC_REGISTRY="assoc_registry"</code> */
 	protected static final String ASSOC_REGISTRY = "assoc_registry";
 
+	private static final String LOG_SECONDS_FOR_KEY = " seconds for key ";
+
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AbstractBeCPGPolicy.class);
 
@@ -445,10 +447,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 		Serializable beforeProp = before.get(propertyQName);
 		Serializable afterProp = after.get(propertyQName);
 
-		if (((afterProp != null) && !afterProp.equals(beforeProp)) || (afterProp == null && beforeProp != null)) {
-			return true;
-		}
-		return false;
+		return ((afterProp != null) && !afterProp.equals(beforeProp)) || (afterProp == null && beforeProp != null);
 	}
 
 	protected class BeCPGPolicyTransactionListener extends TransactionListenerAdapter {
@@ -492,7 +491,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 
 					if (logger.isDebugEnabled() && watch!=null) {
 						watch.stop();
-						logger.debug(id + " - BeforeCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + key+"  - pendingNodesSize : "+pendingNodes.size());
+						logger.debug(id + " - BeforeCommit run in  " + watch.getTotalTimeSeconds() + LOG_SECONDS_FOR_KEY + key+"  - pendingNodesSize : "+pendingNodes.size());
 					}
 					
 					
@@ -519,7 +518,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 
 					if (logger.isDebugEnabled()  && watch!=null) {
 						watch.stop();
-						logger.debug(id + " - BeforeCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + key+"  - pendingAssocsSize : "+pendingAssocs.size());
+						logger.debug(id + " - BeforeCommit run in  " + watch.getTotalTimeSeconds() + LOG_SECONDS_FOR_KEY + key+"  - pendingAssocsSize : "+pendingAssocs.size());
 					}
 					
 					
@@ -553,7 +552,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 
 					if (logger.isDebugEnabled()  && watch!=null) {
 						watch.stop();
-						logger.debug(id + " - AfterCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + key+"  - pendingNodesSize : "+pendingNodes.size());
+						logger.debug(id + " - AfterCommit run in  " + watch.getTotalTimeSeconds() + LOG_SECONDS_FOR_KEY + key+"  - pendingNodesSize : "+pendingNodes.size());
 
 					}
 				}
@@ -573,7 +572,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 					
 					if (logger.isDebugEnabled()  && watch!=null) {
 						watch.stop();
-						logger.debug(id + " - AfterCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + key+"  - pendingASSOCSSize : "+pendingAssocs.size());
+						logger.debug(id + " - AfterCommit run in  " + watch.getTotalTimeSeconds() + LOG_SECONDS_FOR_KEY + key+"  - pendingASSOCSSize : "+pendingAssocs.size());
 						
 					}
 				}
@@ -596,19 +595,13 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 		@Override
 		public boolean equals(Object obj)
 		{
-			if (this == obj)
-	        {
-	            return true;
-	        }
-	        if (obj instanceof BeCPGPolicyTransactionListener)
-	        {
-	        	BeCPGPolicyTransactionListener that = (BeCPGPolicyTransactionListener) obj;
-	            return (this.id.equals(that.id));
-	        }
-	        else
-	        {
-	            return false;
-	        }
+			if (this == obj) {
+			return true;
+		}
+		if (obj instanceof BeCPGPolicyTransactionListener that) {
+			return this.id.equals(that.id);
+		}
+		return false;
 		}
 
 	}

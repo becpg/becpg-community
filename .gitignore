@@ -44,3 +44,4 @@ build/
 /.env
 .aider*
 /becpg.code-workspace
+recording.jfr

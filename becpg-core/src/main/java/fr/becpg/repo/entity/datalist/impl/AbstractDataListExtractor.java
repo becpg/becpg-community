@@ -217,8 +217,12 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	public static final String PROP_ACCESSRIGHT = "accessRight";
 	/** Constant <code>PROP_SITE="site"</code> */
 	public static final String PROP_SITE = "site";
+	/**
+	 * Constant <code>PROP_SITE_ID="siteId"</code>
+	 *
+	 * @deprecated since 26.1
+	 */
 	@Deprecated(since = "26.1", forRemoval = false)
-	/** Constant <code>PROP_SITE_ID="siteId"</code> */
 	public static final String PROP_SITE_ID = "siteId";
 	/** Constant <code>PROP_CONTAINER="container"</code> */
 	public static final String PROP_CONTAINER = "container";
@@ -267,7 +271,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			QName itemType = nodeService.getType(nodeRef);
 			Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
 
-			Map<String, Object> ret = new HashMap<>(20);
+			Map<String, Object> ret = HashMap.newHashMap(20);
 
 			ret.put(PROP_NODE, nodeRef.toString());
 
@@ -289,10 +293,10 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 				ret.put(PROP_COLOR, properties.get(BeCPGModel.PROP_COLOR));
 			}
 
-			Map<String, Map<String, Boolean>> permissions = new HashMap<>(1);
-			Map<String, Boolean> userAccess = new HashMap<>(5);
+			Map<String, Map<String, Boolean>> permissions = HashMap.newHashMap(1);
+			Map<String, Boolean> userAccess = HashMap.newHashMap(5);
 
-			boolean accessRight = (Boolean) (props.get(PROP_ACCESSRIGHT) != null ? props.get(PROP_ACCESSRIGHT) : false);
+			boolean accessRight = Boolean.TRUE.equals(props.get(PROP_ACCESSRIGHT));
 			boolean isLocked = isLocked(nodeRef);
 			boolean hasWrite = hasWriteAccess(nodeRef);
 			boolean hasRead = hasReadAccess(nodeRef);
@@ -323,7 +327,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			
 			if(nodeService.hasAspect(nodeRef,ContentModel.ASPECT_LIKES_RATING_SCHEME_ROLLUPS)) {
 				
-				Map<String, Object> likes = new HashMap<>(20);
+				Map<String, Object> likes = HashMap.newHashMap(2);
 				
 				likes.put("isLiked",ratingService.getRatingByCurrentUser(nodeRef, "likesRatingScheme")!=null);
 				likes.put("totalLikes",ratingService.getTotalRating(nodeRef, "likesRatingScheme"));
@@ -347,7 +351,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 
 				if (siteId != null) {
 
-					Map<String, Object> siteData = new HashMap<>();
+					Map<String, Object> siteData = HashMap.newHashMap(2);
 					siteData.put(PROP_SHORTNAME, siteId);
 
 					SiteInfo site = services.getSiteService().getSite(siteId);
@@ -493,7 +497,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	 * @return a {@link java.util.Map} object.
 	 */
 	protected Map<String, String> extractPerson(String person) {
-		Map<String, String> ret = new HashMap<>(2);
+		Map<String, String> ret = HashMap.newHashMap(2);
 		ret.put("value", person);
 		ret.put("displayValue", attributeExtractorService.getPersonDisplayName(person));
 		return ret;
@@ -507,8 +511,8 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	 * @return a {@link java.lang.String} object.
 	 */
 	protected String convertDateValue(Serializable value, FormatMode mode) {
-		if (value instanceof Date) {
-			return formatDate((Date) value, mode);
+		if (value instanceof Date date) {
+			return formatDate(date, mode);
 		}
 		return null;
 	}

@@ -52,6 +52,7 @@ public class SupplierWorkflowPackageHandler implements WorkflowPackageHandler
 	private NodeService nodeService;
 
 	/** {@inheritDoc} */
+	@Deprecated
 	@Override
 	public void addToWorkflowPackage(NodeRef wfPackage, ProjectData projectData)
 	{

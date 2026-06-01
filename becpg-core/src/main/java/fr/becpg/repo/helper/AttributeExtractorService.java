@@ -183,6 +183,7 @@ public interface AttributeExtractorService {
 	 * @param propertyFormats a {@link fr.becpg.config.format.PropertyFormats} object.
 	 * @param formatData a boolean.
 	 * @return a {@link java.lang.String} object.
+	 * @deprecated since 26.1
 	 */
 	@Deprecated(since = "26.1", forRemoval = false)
 	String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats, boolean formatData);

@@ -19,7 +19,6 @@ package fr.becpg.repo.search;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -37,8 +36,8 @@ public interface AdvSearchService {
 	
 	/** Constant <code>IGNORED_FIELDS</code> */
 	List<String> IGNORED_FIELDS = IntStream.rangeClosed(1, 10)
-			.mapToObj(i -> "prop_survey_advSearchResponseCommentType%d".formatted(i))
-			.collect(Collectors.toUnmodifiableList());
+			.mapToObj("prop_survey_advSearchResponseCommentType%d"::formatted)
+			.toList();
 
 	
 	/**

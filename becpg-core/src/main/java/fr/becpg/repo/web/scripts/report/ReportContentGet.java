@@ -117,7 +117,7 @@ public class ReportContentGet extends ContentGet {
 
 		// render content
 		QName propertyQName = ContentModel.PROP_CONTENT;
-		String contentPart = templateArgs != null ? templateArgs.get(PARAM_PROPERTY) : null;
+		String contentPart = templateArgs.get(PARAM_PROPERTY);
 		if (contentPart == null) {
 			contentPart = "";
 		}
