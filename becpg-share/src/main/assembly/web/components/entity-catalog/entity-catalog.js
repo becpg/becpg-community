@@ -117,11 +117,21 @@
         },
 
         onFormContentReady: function(__layer, args) {
-            var insertId = this.id.replace("wizard-mgr", "%%%").replace("_cat", "")
-                               .replace("-mgr", "").replace("%%%", "wizard-mgr");
-            var formId = insertId + "-form";
+            var baseId = this.id.replace("-step-step1_cat", "").replace("_cat", "");
+            var eventGroup = args[1].eventGroup;
+            
+            var isMatching = false;
+            var insertId = "";
+            
+            if (eventGroup === baseId + "-form") {
+                isMatching = true;
+                insertId = baseId;
+            } else if (eventGroup.indexOf(baseId + "-step-") === 0 && eventGroup.substring(eventGroup.length - 5) === "-form") {
+                isMatching = true;
+                insertId = eventGroup.substring(0, eventGroup.length - 5);
+            }
 
-            if (args[1].eventGroup === formId) {
+            if (isMatching) {
                 this.submitButton = args[1].buttons.submit;
                 this.updateSubmitButtonState();
 
@@ -512,11 +522,18 @@
         },
 
         onAfterFormRuntimeInit: function(__layer, args) {
-            var insertId = this.id.replace("wizard-mgr", "%%%").replace("_cat", "")
-                               .replace("-mgr", "").replace("%%%", "wizard-mgr");
-            var formId = insertId + "-form";
-            if (this.formRuntime == null && formId.indexOf(args[1].runtime.formId) > -1) {
-                this.formRuntime = args[1].runtime;
+            var baseId = this.id.replace("-step-step1_cat", "").replace("_cat", "");
+            var formId = args[1].runtime.formId;
+            
+            var isMatching = false;
+            if (formId === baseId + "-form" || (formId.indexOf(baseId + "-step-") === 0 && formId.substring(formId.length - 5) === "-form")) {
+                isMatching = true;
+            }
+
+            if (isMatching) {
+                if (this.formRuntime == null) {
+                    this.formRuntime = args[1].runtime;
+                }
 
                 // Capture the context for the validation function
                 var self = this;
@@ -534,7 +551,7 @@
                 }
 
                 // Add validation using the form runtime
-                this.formRuntime.addValidation(
+                args[1].runtime.addValidation(
                     validationFieldId,
                     function(__field, __args, __event, __form) {
                        return (!self.hasProtectedFieldChanges && self.isLoaded) || self.allowSubmission;
