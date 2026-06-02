@@ -121,8 +121,8 @@ if (beCPG.module.EntityDataGridRenderers) {
             var content = '';
             var infoIcon = '';
             
-            if (label == "bcpg:ing_bcpg:ingListIng") {
-                content = '<span class="node-' + oRecord.getData("nodeRef") + '" data-noderef="' + oRecord.getData("nodeRef") + '">'
+            if (label == "bcpg:ing_bcpg:ingListIng" || label == "bcpg:ingListIng") {
+                content = '<span class="' + data.metadata + ' node-' + oRecord.getData("nodeRef") + '" data-noderef="' + oRecord.getData("nodeRef") + '" ' + (toogleGroupButton == null && padding != 0 ? 'style="margin-left:' + padding + 'px;"' : '') + '>'
                     + '<a class="' + INGLISTING_INFO_EVENTCLASS + '" href="#" style="text-decoration: none;">' + displayName + '</a>'
                     + '</span>';
                 infoIcon = '<span class="node-' + oRecord.getData("nodeRef") + '" data-noderef="' + oRecord.getData("nodeRef") + '">'
