@@ -1,6 +1,8 @@
 package fr.becpg.repo.form.column.decorator;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -10,6 +12,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.helper.ExcelHelper.ExcelFieldTitleProvider;
@@ -50,8 +53,25 @@ public class DynamicColumnNameResolver implements ExcelFieldTitleProvider, DataG
 
 		this.dictionaryService = dictionaryService;
 		if (filter.getParentNodeRef() != null) {
-			for (NodeRef nodeRef : BeCPGQueryBuilder.createQuery().parent(filter.getParentNodeRef()).ofType(PLMModel.TYPE_DYNAMICCHARACTLIST)
-					.isNotNull(PLMModel.PROP_DYNAMICCHARACT_COLUMN).inDB().list()) {
+			List<NodeRef> nodeRefs = new ArrayList<>(BeCPGQueryBuilder.createQuery().parent(filter.getParentNodeRef()).ofType(PLMModel.TYPE_DYNAMICCHARACTLIST)
+					.isNotNull(PLMModel.PROP_DYNAMICCHARACT_COLUMN).inDB().list());
+
+			nodeRefs.sort((o1, o2) -> {
+				Integer sort1 = (Integer) nodeService.getProperty(o1, BeCPGModel.PROP_SORT);
+				Integer sort2 = (Integer) nodeService.getProperty(o2, BeCPGModel.PROP_SORT);
+				if (sort1 == null && sort2 == null) {
+					return 0;
+				}
+				if (sort1 == null) {
+					return -1;
+				}
+				if (sort2 == null) {
+					return 1;
+				}
+				return sort1.compareTo(sort2);
+			});
+
+			for (NodeRef nodeRef : nodeRefs) {
 
 				String title = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_TITLE);
 				if (title == null || title.isBlank()) {
