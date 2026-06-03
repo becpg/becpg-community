@@ -391,6 +391,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			NodeRef versionNode = internalCreateVersion(entityNodeRef, versionProperties, newEffectivity, manualVersionLabel, true);
 
+			if (manualVersionLabel != null && !manualVersionLabel.isBlank()) {
+				nodeService.removeProperty(entityNodeRef, BeCPGModel.PROP_MANUAL_VERSION_LABEL);
+			}
+
 			// we need to retrieve the AUDITABLE properties because Version2ServiceImpl only freezes these properties
 			nodeService.setProperty(versionNode, ContentModel.PROP_CREATED, nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED));
 			nodeService.setProperty(versionNode, ContentModel.PROP_CREATOR, nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATOR));
@@ -1538,7 +1542,14 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef createVersion(final NodeRef entityNodeRef, Map<String, Serializable> versionProperties, Date effectiveDate) {
-		NodeRef versionNodeRef = internalCreateVersion(entityNodeRef, versionProperties, effectiveDate, null, false);
+		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+			createInitialVersion(entityNodeRef, effectiveDate);
+		}
+		String manualVersionLabel = (String) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_MANUAL_VERSION_LABEL);
+		NodeRef versionNodeRef = internalCreateVersion(entityNodeRef, versionProperties, effectiveDate, manualVersionLabel, false);
+		if (manualVersionLabel != null && !manualVersionLabel.isBlank()) {
+			nodeService.removeProperty(entityNodeRef, BeCPGModel.PROP_MANUAL_VERSION_LABEL);
+		}
 		generateReportsAsync(entityNodeRef, BatchPriority.HIGH.toString());
 		return versionNodeRef;
 	}
