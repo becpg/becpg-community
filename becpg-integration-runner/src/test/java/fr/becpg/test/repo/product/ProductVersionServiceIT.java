@@ -1041,4 +1041,58 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 		
 	}
 
+	@Test
+	public void testCreateVersionWithManualVersionLabel() {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test manual version");
+			
+			Map<String, Serializable> properties = new HashMap<>();
+			properties.put(VersionBaseModel.PROP_VERSION_TYPE, VersionType.MAJOR);
+			entityVersionService.createVersion(rawMaterialNodeRef, properties);
+			
+			nodeService.setProperty(rawMaterialNodeRef, BeCPGModel.PROP_MANUAL_VERSION_LABEL, "15.0");
+			
+			properties = new HashMap<>();
+			properties.put(VersionBaseModel.PROP_VERSION_TYPE, VersionType.MINOR);
+			entityVersionService.createVersion(rawMaterialNodeRef, properties);
+			
+			String versionLabel = (String) nodeService.getProperty(rawMaterialNodeRef, ContentModel.PROP_VERSION_LABEL);
+			org.junit.Assert.assertEquals("15.0", versionLabel);
+			
+			Serializable manualVersionAfter = nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_MANUAL_VERSION_LABEL);
+			org.junit.Assert.assertNull(manualVersionAfter);
+			
+			return null;
+		}, false, true);
+	}
+
+	@Test
+	public void testCreateVersionWithoutAspectWithManualVersionLabel() {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test manual version initial");
+			
+			if (nodeService.hasAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+				nodeService.removeAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE);
+			}
+			
+			nodeService.setProperty(rawMaterialNodeRef, BeCPGModel.PROP_MANUAL_VERSION_LABEL, "15.0");
+			
+			Map<String, Serializable> properties = new HashMap<>();
+			properties.put(VersionBaseModel.PROP_VERSION_TYPE, VersionType.MAJOR);
+			entityVersionService.createVersion(rawMaterialNodeRef, properties);
+			
+			String versionLabel = (String) nodeService.getProperty(rawMaterialNodeRef, ContentModel.PROP_VERSION_LABEL);
+			org.junit.Assert.assertEquals("16.0", versionLabel);
+			
+			Serializable manualVersionAfter = nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_MANUAL_VERSION_LABEL);
+			org.junit.Assert.assertNull(manualVersionAfter);
+			
+			VersionHistory versionHistory = versionService.getVersionHistory(rawMaterialNodeRef);
+			org.junit.Assert.assertNotNull(versionHistory.getVersion("15.0"));
+			org.junit.Assert.assertNotNull(versionHistory.getVersion("16.0"));
+			
+			return null;
+		}, false, true);
+	}
+
 }
