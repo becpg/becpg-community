@@ -235,6 +235,71 @@ public class OlapServiceImpl implements OlapService {
 		}
 	}
 
+	private String xmlEscape(String input) {
+		if (input == null) return null;
+		return input.replace("&", "&amp;")
+					.replace("<", "&lt;")
+					.replace(">", "&gt;")
+					.replace("\"", "&quot;")
+					.replace("'", "&apos;");
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public OlapChartData runMdxQuery(String cube, String mdxQuery) throws IOException, JSONException {
+		try (OlapContext olapContext = new OlapContext(beCPGTicketService.getCurrentBeCPGUserName(), beCPGTicketService.getCurrentAuthToken())) {
+			String olapQueryId = "dynamic_" + java.util.UUID.randomUUID().toString();
+			OlapChartData ret = new OlapChartData();
+
+			String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+					"<Query name=\"" + olapQueryId + "\" type=\"QM\" connection=\"beCPG\" cube=\"" + (cube.startsWith("[") ? cube : "[" + cube + "]") + "\" catalog=\"beCPG OLAP Schema\" schema=\"beCPG OLAP Schema\">\n" +
+					"  <MDX>" + xmlEscape(mdxQuery) + "</MDX>\n" +
+					"</Query>";
+
+			OlapUtils.sendCreateQueryPostRequest(olapContext, buildCreateQueryUrl(olapQueryId, olapContext), xml);
+
+			String data = OlapUtils.readJsonFromUrl(buildDataUrl(olapQueryId, olapContext), olapContext);
+
+			if (data != null && data.length() > 0) {
+				try {
+					JSONArray jsonArray = (new JSONObject(data)).getJSONArray("cellset");
+					if (jsonArray != null) {
+						int lowestLevel = 0;
+						for (int row = 0; row < jsonArray.length(); row++) {
+							JSONArray cur = jsonArray.getJSONArray(row);
+							if (ROW_HEADER.equals(cur.getJSONObject(0).getString("type"))) {
+								for (int field = 0; field < cur.length(); field++) {
+									if (ROW_HEADER.equals(cur.getJSONObject(field).getString("type"))) {
+										ret.shiftMetadata();
+										lowestLevel = field;
+									}
+									ret.addMetadata(new OlapChartMetadata(field, retrieveDataType(jsonArray.getJSONArray(row + 1).getJSONObject(field).getString("value")), cur.getJSONObject(field).getString("value")));
+								}
+							} else if (cur.getJSONObject(0).getString("value") != null) {
+								List<Object> olapRecord = new ArrayList<>();
+								for (int col = lowestLevel; col < cur.length(); col++) {
+									String value = cur.getJSONObject(col).getString("value");
+									olapRecord.add(OlapUtils.convert(value));
+								}
+								ret.getResultsets().add(olapRecord);
+							}
+						}
+					}
+				} catch (JSONException e) {
+					logger.error("Incorrect data return by saiku for dynamic query execution " + buildDataUrl(olapQueryId, olapContext));
+					if (logger.isDebugEnabled()) {
+						logger.debug("Data: " + data);
+					}
+					throw e;
+				}
+			} else {
+				logger.error("No data return by saiku for dynamic query " + buildDataUrl(olapQueryId, olapContext));
+			}
+
+			return ret;
+		}
+	}
+
 
 	/** {@inheritDoc} */
 	@Override

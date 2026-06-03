@@ -74,5 +74,16 @@ public interface OlapService {
 	 * @return a {@link java.lang.String} object.
 	 */
 	String getSSOUrl();
+
+	/**
+	 * <p>runMdxQuery.</p>
+	 *
+	 * @param cube the cube name.
+	 * @param mdxQuery the MDX query.
+	 * @return a {@link fr.becpg.repo.olap.data.OlapChartData} object.
+	 * @throws java.io.IOException if any.
+	 * @throws org.json.JSONException if any.
+	 */
+	OlapChartData runMdxQuery(String cube, String mdxQuery) throws IOException, JSONException;
 	
 }
