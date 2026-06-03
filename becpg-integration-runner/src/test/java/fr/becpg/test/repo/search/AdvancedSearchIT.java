@@ -16,11 +16,21 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+
+import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.json.JsonHelper;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.repo.search.AdvSearchQueryFilter;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -207,6 +217,73 @@ public class AdvancedSearchIT extends PLMBaseTestCase {
 		QName datatype = QName.createQName(jsonObject.getString("datatype"), namespaceService);
 
 		return productAdvSearchPlugin.buildQueryFilter(datatype, criteriaMap, advSearchService.getSearchConfig());
+	}
+
+	@Test
+	public void testLargeSearchWithPermissions() {
+		final String userName = "search_test_user_large";
+		inWriteTx(() -> {
+			BeCPGTestHelper.createUser(userName);
+			return null;
+		});
+
+		final int totalNodes = 10000;
+		final int batchSize = 1000;
+		final List<NodeRef> createdNodes = new ArrayList<>(totalNodes);
+
+//		for (int i = 0; i < totalNodes; i += batchSize) {
+//			final int start = i;
+//			final int end = Math.min(i + batchSize, totalNodes);
+//			List<NodeRef> batchResult = inWriteTx(() -> {
+//				List<NodeRef> batch = new ArrayList<>();
+//				try {
+//					policyBehaviourFilter.disableBehaviour();
+//					for (int k = start; k < end; k++) {
+//						Map<QName, Serializable> properties = new HashMap<>();
+//						properties.put(ContentModel.PROP_NAME, "AdvancedSearchLargeTest_" + k);
+//						properties.put(ContentModel.PROP_TITLE, "LargeTestTitle");
+//						NodeRef nodeRef = nodeService.createNode(
+//								getTestFolderNodeRef(),
+//								ContentModel.ASSOC_CONTAINS,
+//								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "node_" + k),
+//								BeCPGModel.TYPE_LIST_VALUE,
+//								properties).getChildRef();
+//
+//						permissionService.setInheritParentPermissions(nodeRef, false);
+//						batch.add(nodeRef);
+//					}
+//				} finally {
+//					policyBehaviourFilter.enableBehaviour();
+//				}
+//				return batch;
+//			});
+//			createdNodes.addAll(batchResult);
+//		}
+//
+//		List<NodeRef> shuffledNodes = new ArrayList<>(createdNodes);
+//		Collections.shuffle(shuffledNodes);
+//		List<NodeRef> selectedNodes = shuffledNodes.subList(0, 1000);
+//
+//		inWriteTx(() -> {
+//			for (NodeRef nodeRef : selectedNodes) {
+//				permissionService.setPermission(nodeRef, userName, PermissionService.READ, true);
+//			}
+//			return null;
+//		});
+
+		List<NodeRef> queriedNodes = inReadTx(() -> {
+			return AuthenticationUtil.runAs(() -> {
+				BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
+						.ofType(BeCPGModel.TYPE_LIST_VALUE)
+						.andPropEquals(ContentModel.PROP_TITLE, "LargeTestTitle")
+						.maxResults(10000)
+						.inDB();
+				return queryBuilder.list();
+			}, userName);
+		});
+
+		assertEquals(1000, queriedNodes.size());
+//		assertTrue(selectedNodes.containsAll(queriedNodes));
 	}
 
 }
