@@ -71,11 +71,21 @@ public class OlapChartWebScript  extends AbstractWebScript
     	logger.debug("Call OlapChartWebScript");
     	
     	String olapQueryId = req.getParameter(PARAM_QUERY_ID);
+    	String mdx = req.getParameter("mdx");
+    	String cube = req.getParameter("cube");
 
     	try {
 	    
-	    	
-	    	if(olapQueryId!=null){
+	    	if (mdx != null && cube != null) {
+	    		OlapChartData data = new OlapChartData();
+	    		try {
+	    			data = olapService.runMdxQuery(cube, mdx);
+	    		} catch (Exception e) {
+	    			logger.error(e, e);
+	    		}
+	    		String jsonString = data.toJSONObject().toString();
+		    	res.getWriter().write(jsonString);
+	    	} else if(olapQueryId!=null){
 	    		OlapChartData data = new OlapChartData();
 	    		if(!olapQueryId.isEmpty()){
 	    			try {
