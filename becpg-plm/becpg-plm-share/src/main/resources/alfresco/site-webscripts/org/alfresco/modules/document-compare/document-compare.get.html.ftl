@@ -1,4 +1,5 @@
 <#assign el=args.htmlid?html>
+<#assign nodeRef=args.nodeRef!"">
 <#assign document="">
 <#assign comparisonType="">
 <script type="text/javascript">//<![CDATA[
@@ -10,7 +11,7 @@
    {
  		mode: "edit",
         multipleSelectMode: false, 
- 		dsStr: "becpg/autocomplete/document?extra.extensions=pdf"
+ 		dsStr: "becpg/autocomplete/document?extra.extensions=pdf<#if nodeRef?has_content>&extra.excludeNodeRefs=${nodeRef?js_string}</#if>"
   });
 
 })();
