@@ -197,7 +197,7 @@
 			// Always create a new instance
 			this.modules.documentCompare = new Alfresco.module.SimpleDialog(this.id + "-documentCompare").setOptions({
 				width: "33em",
-				templateUrl: Alfresco.constants.URL_SERVICECONTEXT + "modules/document-compare/document-compare",
+				templateUrl: Alfresco.constants.URL_SERVICECONTEXT + "modules/document-compare/document-compare?nodeRef=" + encodeURIComponent(p_record.nodeRef),
 				actionUrl: compareUrl,
 				validateOnSubmit: false,
 				firstFocus: this.id + "-documentCompare-document-field",

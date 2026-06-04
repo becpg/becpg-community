@@ -61,6 +61,29 @@ public class DocumentAutoCompletePlugin implements AutoCompletePlugin {
 		}
 		queryBuilder.andFTSQuery(ftsQuery);
 		List<NodeRef> docs = queryBuilder.list();
+		if (props.containsKey(AutoCompleteService.EXTRA_PARAM)) {
+			Map<String, String> extras = (Map<String, String>) props.get(AutoCompleteService.EXTRA_PARAM);
+			if (extras != null && extras.containsKey("excludeNodeRefs")) {
+				String excludeNodeRefsStr = extras.get("excludeNodeRefs");
+				if (excludeNodeRefsStr != null && !excludeNodeRefsStr.isBlank()) {
+					List<String> excludeList = Arrays.asList(excludeNodeRefsStr.split(","));
+					List<NodeRef> filteredDocs = new ArrayList<>();
+					for (NodeRef doc : docs) {
+						boolean exclude = false;
+						for (String excludeRef : excludeList) {
+							if (doc.toString().trim().equals(excludeRef.trim())) {
+								exclude = true;
+								break;
+							}
+						}
+						if (!exclude) {
+							filteredDocs.add(doc);
+						}
+					}
+					docs = filteredDocs;
+				}
+			}
+		}
 		return new AutoCompletePage(docs, pageNum, pageSize, new NodeRefAutoCompleteExtractor(ContentModel.PROP_NAME, nodeService));
 	}
 
