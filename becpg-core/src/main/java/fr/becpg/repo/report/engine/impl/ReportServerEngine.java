@@ -18,10 +18,16 @@
  ******************************************************************************/
 package fr.becpg.repo.report.engine.impl;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +37,10 @@ import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.util.TempFileProvider;
 import org.apache.commons.io.FileUtils;
 import org.apache.hc.core5.http.ParseException;
+import org.dom4j.io.XMLWriter;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.entity.EntityService;
@@ -211,24 +219,40 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 				reportSession.setTimeZone(timeZoneParam);
 			}
 			
-			byte[] datasourceBytes = reportData.getXmlDataSource().asXML().getBytes();
-			
-			try (InputStream in = new ByteArrayInputStream(datasourceBytes)) {
+			File tempFile = null;
+			try {
+				tempFile = TempFileProvider.createTempFile("datasource-", ".xml");
+				try (OutputStream outStream = new BufferedOutputStream(new FileOutputStream(tempFile))) {
+					XMLWriter writer = new XMLWriter(outStream);
+					writer.write(reportData.getXmlDataSource());
+					writer.flush();
+				}
 				
-				if (datasourceBytes.length > reportDatasourceMaxSizeInBytes()) {
+				long datasourceSize = tempFile.length();
+				
+				if (datasourceSize > reportDatasourceMaxSizeInBytes()) {
 					reportData.getLogs()
 							.add(new ReportableError(ReportableErrorType.WARNING, "Datasource size exceeds: " + params,
 									MLTextHelper.getI18NMessage("message.report.datasource.size",
-											FileUtils.byteCountToDisplaySize(datasourceBytes.length),
+											FileUtils.byteCountToDisplaySize(datasourceSize),
 											FileUtils.byteCountToDisplaySize(reportDatasourceMaxSizeInBytes())), List.of(tplNodeRef)));
 				}
 				
-				List<String> errors = generateReport(reportSession, in, out);
-				
-				for (String error : errors) {
-					reportData.getLogs().add(
-							new ReportableError(ReportableErrorType.ERROR, error,
-									MLTextHelper.getI18NMessage("message.report.error", error), List.of(tplNodeRef)));
+				try (InputStream in = new BufferedInputStream(new FileInputStream(tempFile))) {
+					List<String> errors = generateReport(reportSession, in, out);
+					
+					for (String error : errors) {
+						reportData.getLogs().add(
+								new ReportableError(ReportableErrorType.ERROR, error,
+										MLTextHelper.getI18NMessage("message.report.error", error), List.of(tplNodeRef)));
+					}
+				}
+			} catch (IOException e) {
+				logger.error("Failed to write/read temporary XML datasource file", e);
+				throw new ReportException("Failed to process datasource", e);
+			} finally {
+				if (tempFile != null && tempFile.exists()) {
+					Files.delete(tempFile.toPath());
 				}
 			}
 		});
