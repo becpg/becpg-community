@@ -23,7 +23,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -70,6 +72,10 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 
 	@Autowired
 	private FormulationService<FormulatedEntity> formulationService;
+
+	@Autowired
+	@org.springframework.beans.factory.annotation.Qualifier("DictionaryService")
+	protected DictionaryService dictionaryService;
 
 	@Override
 	public void setUp() throws Exception {
@@ -414,6 +420,52 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 
 			assertEquals(2, checks);
 			return fp1.getNodeRef();
+		});
+	}
+
+	@Test
+	public void testDynamicColumnNameResolverSorting() {
+		inWriteTx(() -> {
+			NodeRef folder = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(BeCPGModel.BECPG_URI, "testFolder"), ContentModel.TYPE_FOLDER).getChildRef();
+
+			// Create multiple dynamic column nodes on the same column name with different sort indices and titles
+			java.util.Map<QName, java.io.Serializable> props1 = new java.util.HashMap<>();
+			props1.put(PLMModel.PROP_DYNAMICCHARACT_COLUMN, "bcpg_dynamicCharactColumn1");
+			props1.put(PLMModel.PROP_DYNAMICCHARACT_TITLE, "High Sort Title");
+			props1.put(BeCPGModel.PROP_SORT, 20);
+			props1.put(ContentModel.PROP_NAME, "dyn1");
+			nodeService.createNode(folder, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(BeCPGModel.BECPG_URI, "dyn1"), PLMModel.TYPE_DYNAMICCHARACTLIST, props1);
+
+			java.util.Map<QName, java.io.Serializable> props2 = new java.util.HashMap<>();
+			props2.put(PLMModel.PROP_DYNAMICCHARACT_COLUMN, "bcpg_dynamicCharactColumn1");
+			props2.put(PLMModel.PROP_DYNAMICCHARACT_TITLE, "Low Sort Title");
+			props2.put(BeCPGModel.PROP_SORT, 10);
+			props2.put(ContentModel.PROP_NAME, "dyn2");
+			nodeService.createNode(folder, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(BeCPGModel.BECPG_URI, "dyn2"), PLMModel.TYPE_DYNAMICCHARACTLIST, props2);
+
+			java.util.Map<QName, java.io.Serializable> props3 = new java.util.HashMap<>();
+			props3.put(PLMModel.PROP_DYNAMICCHARACT_COLUMN, "bcpg_dynamicCharactColumn1");
+			props3.put(PLMModel.PROP_DYNAMICCHARACT_TITLE, "Lowest Sort Title");
+			props3.put(BeCPGModel.PROP_SORT, 5);
+			props3.put(ContentModel.PROP_NAME, "dyn3");
+			nodeService.createNode(folder, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(BeCPGModel.BECPG_URI, "dyn3"), PLMModel.TYPE_DYNAMICCHARACTLIST, props3);
+
+			// Instantiate DynamicColumnNameResolver with filter
+			fr.becpg.repo.entity.datalist.data.DataListFilter filter = new fr.becpg.repo.entity.datalist.data.DataListFilter();
+			filter.setParentNodeRef(folder);
+
+			fr.becpg.repo.form.column.decorator.DynamicColumnNameResolver resolver =
+					new fr.becpg.repo.form.column.decorator.DynamicColumnNameResolver(filter, nodeService, dictionaryService);
+
+			// The resolver must resolve "dynamicCharactColumn1" to "High Sort Title" (highest sort value)
+			String resolvedTitle = resolver.getTitle(QName.createQName(BeCPGModel.BECPG_URI, "dynamicCharactColumn1"));
+			assertEquals("High Sort Title", resolvedTitle);
+
+			return null;
 		});
 	}
 
