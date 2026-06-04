@@ -39,6 +39,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.util.TempFileProvider;
 import org.apache.commons.io.FileUtils;
 import org.apache.hc.core5.http.ParseException;
+import org.dom4j.Element;
 import org.dom4j.io.XMLWriter;
 import org.springframework.util.StopWatch;
 
@@ -208,6 +209,16 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 				reportSession.setTimeZone(timeZoneParam);
 			}
 			
+			long datasourceSize = estimateXmlSize(reportData.getXmlDataSource());
+			
+			if (datasourceSize > reportDatasourceMaxSizeInBytes()) {
+				reportData.getLogs()
+						.add(new ReportableError(ReportableErrorType.WARNING, "Datasource size exceeds: " + params,
+								MLTextHelper.getI18NMessage("message.report.datasource.size",
+										FileUtils.byteCountToDisplaySize(datasourceSize),
+										FileUtils.byteCountToDisplaySize(reportDatasourceMaxSizeInBytes())), List.of(tplNodeRef)));
+			}
+			
 			File tempFile = null;
 			try {
 				tempFile = TempFileProvider.createTempFile("datasource-", ".xml");
@@ -215,16 +226,6 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 					XMLWriter writer = new XMLWriter(outStream);
 					writer.write(reportData.getXmlDataSource());
 					writer.flush();
-				}
-				
-				long datasourceSize = tempFile.length();
-				
-				if (datasourceSize > reportDatasourceMaxSizeInBytes()) {
-					reportData.getLogs()
-							.add(new ReportableError(ReportableErrorType.WARNING, "Datasource size exceeds: " + params,
-									MLTextHelper.getI18NMessage("message.report.datasource.size",
-											FileUtils.byteCountToDisplaySize(datasourceSize),
-											FileUtils.byteCountToDisplaySize(reportDatasourceMaxSizeInBytes())), List.of(tplNodeRef)));
 				}
 				
 				try (InputStream in = new BufferedInputStream(new FileInputStream(tempFile))) {
@@ -278,6 +279,24 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 			}
 		}
 
+	}
+
+	private long estimateXmlSize(Element element) {
+		class CountingOutputStream extends OutputStream {
+			private long count = 0;
+			@Override public void write(int b) { count++; }
+			@Override public void write(byte[] b, int off, int len) { count += len; }
+			public long getCount() { return count; }
+		}
+		CountingOutputStream counter = new CountingOutputStream();
+		try {
+			XMLWriter writer = new XMLWriter(counter);
+			writer.write(element);
+			writer.flush();
+		} catch (IOException e) {
+			logger.warn("Could not estimate XML datasource size: " + e.getMessage());
+		}
+		return counter.getCount();
 	}
 
 	/** {@inheritDoc} */
