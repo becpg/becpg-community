@@ -26,7 +26,7 @@ public class NoXmlEntityReportExtractor extends DefaultEntityReportExtractor{
 		
 		
 
-		DefaultExtractorContext context = new DefaultExtractorContext(preferences);
+		DefaultExtractorContext context = new DefaultExtractorContext(preferences, entityNodeRef);
 
 		
 		Document document = DocumentHelper.createDocument();

@@ -29,6 +29,7 @@ public class DefaultExtractorContext {
 	EntityReportData reportData = new EntityReportData();
 
 	private boolean isInfiniteLoop = false;
+	private NodeRef rootNodeRef;
 
 	/**
 	 * <p>Constructor for DefaultExtractorContext.</p>
@@ -36,8 +37,37 @@ public class DefaultExtractorContext {
 	 * @param preferences a {@link java.util.Map} object
 	 */
 	public DefaultExtractorContext(Map<String, String> preferences) {
+		this(preferences, null);
+	}
+
+	/**
+	 * <p>Constructor for DefaultExtractorContext.</p>
+	 *
+	 * @param preferences a {@link java.util.Map} object
+	 * @param rootNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	public DefaultExtractorContext(Map<String, String> preferences, NodeRef rootNodeRef) {
 		super();
 		this.preferences = preferences;
+		this.rootNodeRef = rootNodeRef;
+	}
+
+	/**
+	 * <p>Getter for the field <code>rootNodeRef</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	public NodeRef getRootNodeRef() {
+		return rootNodeRef;
+	}
+
+	/**
+	 * <p>Setter for the field <code>rootNodeRef</code>.</p>
+	 *
+	 * @param rootNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	public void setRootNodeRef(NodeRef rootNodeRef) {
+		this.rootNodeRef = rootNodeRef;
 	}
 	
 	/**
