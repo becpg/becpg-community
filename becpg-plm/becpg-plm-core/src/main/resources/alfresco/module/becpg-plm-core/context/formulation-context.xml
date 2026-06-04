@@ -511,6 +511,10 @@
                 <bean class="fr.becpg.repo.product.requirement.HazardClassificationRequirementScanner">
                     <property name="mlNodeService" ref="mlAwareNodeService" />
                 </bean>
+				<bean class="fr.becpg.repo.product.requirement.ToxRequirementScanner">
+					<property name="mlNodeService" ref="mlAwareNodeService" />
+					<property name="addInfoReqCtrl" value="${beCPG.formulation.specification.addInfoReqCtrl}" />
+				</bean>
 			</list>
 		</property>
 	</bean>

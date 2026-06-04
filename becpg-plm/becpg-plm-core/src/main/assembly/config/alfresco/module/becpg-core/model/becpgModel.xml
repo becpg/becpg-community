@@ -4254,6 +4254,16 @@
 					<type>d:double</type>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:toxListMini">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:toxListMaxi">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:toxListTox">

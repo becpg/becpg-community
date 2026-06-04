@@ -10127,7 +10127,43 @@
                 <field-visibility>
                     <show id="bcpg:toxListTox" />
                     <show id="bcpg:toxListValue" />
+					<show id="bcpg:regulatoryCountries" force="true" />
+					<show id="bcpg:regulatoryUsageRef" force="true" />
+                </field-visibility>
+                <appearance>
+                    <field id="bcpg:toxListTox">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                    </field>
+                    <field id="bcpg:regulatoryCountries">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                    </field>
+                    <field id="bcpg:regulatoryUsageRef">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                    </field>
+                </appearance>
+            </form>
+            <form id="datagrid">
+                <field-visibility>
+                    <show id="bcpg:toxListTox" />
+                    <show id="bcpg:toxListValue" />
                     <show id="bcpg:isManualListItem" force="true" />
+                    <show id="dataList_bcpg:reqCtrlList" />
+                </field-visibility>
+                <appearance>
+                    <field id="bcpg:toxListTox">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                    </field>
+                    <field id="dataList_bcpg:reqCtrlList" label="hidden" />
+                </appearance>
+            </form>
+            <form id="datagrid-productSpecification">
+                <field-visibility>
+                    <show id="bcpg:toxListTox" />
+                    <show id="bcpg:toxListMini" />
+                    <show id="bcpg:toxListMaxi" />
+                    <show id="bcpg:regulatoryType" force="true" />
+					<show id="bcpg:regulatoryCountries" force="true" />
+					<show id="bcpg:regulatoryUsageRef" force="true" />
                 </field-visibility>
                 <appearance>
                     <field id="bcpg:toxListTox">
@@ -10168,10 +10204,17 @@
                 <field-visibility>
                     <show id="bcpg:toxListTox" />
                     <show id="bcpg:toxListValue" />
-                    <show id="bcpg:isManualListItem" force="true" />
+					<show id="bcpg:regulatoryCountries" force="true" />
+					<show id="bcpg:regulatoryUsageRef" force="true" />
                 </field-visibility>
                 <appearance>
                     <field id="bcpg:toxListTox">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                    </field>
+                    <field id="bcpg:regulatoryCountries">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                    </field>
+                    <field id="bcpg:regulatoryUsageRef">
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
                 </appearance>
