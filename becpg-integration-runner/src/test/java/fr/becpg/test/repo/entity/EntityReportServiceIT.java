@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.PlmRepoConsts;
@@ -492,6 +493,74 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 			List<Node> docNodes = ((Element) xmlDoc.selectSingleNode("//documents")).selectNodes("document");
 			assertEquals("Should extract 4 documents from both folders", 4, docNodes.size());
 			
+			return null;
+		});
+	}
+
+	@Test
+	public void testEntityAssocToExtractPrefix() {
+		logger.debug("testEntityAssocToExtractPrefix()");
+
+		final NodeRef rootProductRef = inWriteTx(() -> {
+			FinishedProductData pfData = new FinishedProductData();
+			pfData.setName("Root Product Prefix Test");
+			NodeRef rootRef = alfrescoRepository.create(getTestFolderNodeRef(), pfData).getNodeRef();
+
+			// Add manufacturingAspect to the root product
+			nodeService.addAspect(rootRef, QName.createQName(BeCPGModel.BECPG_URI, "manufacturingAspect"), null);
+
+			// Create plant 1
+			Map<QName, Serializable> plantProps = new HashMap<>();
+			plantProps.put(ContentModel.PROP_NAME, "Test Plant 1");
+			NodeRef plant1Ref = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "Test_Plant_1"),
+					QName.createQName(BeCPGModel.BECPG_URI, "plant"), plantProps).getChildRef();
+
+			// Create certification for plant 1
+			Map<QName, Serializable> certProps = new HashMap<>();
+			certProps.put(ContentModel.PROP_NAME, "Test Certification 1");
+			NodeRef cert1Ref = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "Test_Cert_1"),
+					PLMModel.TYPE_CERTIFICATION, certProps).getChildRef();
+
+			// Associate plant 1 to plantCertifications
+			nodeService.createAssociation(plant1Ref, cert1Ref, QName.createQName(BeCPGModel.BECPG_URI, "plantCertifications"));
+
+			// Associate plant 1 to root product's plants
+			nodeService.createAssociation(rootRef, plant1Ref, QName.createQName(BeCPGModel.BECPG_URI, "plants"));
+
+			return rootRef;
+		});
+
+		// Now let's extract reports and verify
+		inReadTx(() -> {
+			// First, test with normal "bcpg:plants,bcpg:plantCertifications" -> should extract both plants and plantCertifications
+			Map<String, String> preferences1 = new HashMap<>();
+			preferences1.put("assocsToExtract", "bcpg:plants,bcpg:plantCertifications");
+
+			EntityReportData reportData1 = defaultEntityReportExtractor.extract(rootProductRef, preferences1);
+			assertNotNull("Report data 1 should not be null", reportData1);
+			Document xmlDoc1 = (Document) reportData1.getXmlDataSource().getDocument();
+			assertNotNull("XML document 1 should not be null", xmlDoc1);
+
+			// plantCertifications should exist inside plant since we are extracting it on child nodes too
+			assertNotNull("plant should exist in report XML 1", xmlDoc1.selectSingleNode("//plant"));
+			assertNotNull("certification should exist inside plantCertifications in XML 1", xmlDoc1.selectSingleNode("//plant/plantCertifications/certification"));
+
+			// Second, test with "bcpg:plants,entity_bcpg:plantCertifications"
+			// -> plantCertifications is NOT on the root entity (root product), but on the plant (child entity).
+			// So plantCertifications should NOT be extracted!
+			Map<String, String> preferences2 = new HashMap<>();
+			preferences2.put("assocsToExtract", "bcpg:plants,entity_bcpg:plantCertifications");
+
+			EntityReportData reportData2 = defaultEntityReportExtractor.extract(rootProductRef, preferences2);
+			assertNotNull("Report data 2 should not be null", reportData2);
+			Document xmlDoc2 = (Document) reportData2.getXmlDataSource().getDocument();
+			assertNotNull("XML document 2 should not be null", xmlDoc2);
+
+			assertNotNull("plant should exist in report XML 2", xmlDoc2.selectSingleNode("//plant"));
+			assertNull("certification should NOT exist inside plantCertifications in XML 2", xmlDoc2.selectSingleNode("//plant/plantCertifications/certification"));
+
 			return null;
 		});
 	}
