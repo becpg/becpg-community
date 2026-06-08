@@ -850,6 +850,15 @@
 			  *           {String} Field to sort by
 			  */
 			return function EntityDataGridRenderers_sortFunction(a, b, desc, field) {
+				var isTotalA = (a.getData("itemType") == "total" || (a.getData("itemData") && a.getData("itemData").itemType == "total"));
+				var isTotalB = (b.getData("itemType") == "total" || (b.getData("itemData") && b.getData("itemData").itemType == "total"));
+
+				if (isTotalA) {
+					return (isTotalB) ? 0 : (desc ? -1 : 1);
+				} else if (isTotalB) {
+					return (desc ? 1 : -1);
+				}
+
 				var fieldA = a.getData().itemData[field], fieldB = b.getData().itemData[field];
 
 				if (YAHOO.lang.isArray(fieldA)) {

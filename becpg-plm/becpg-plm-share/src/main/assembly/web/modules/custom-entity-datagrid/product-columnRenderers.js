@@ -121,7 +121,12 @@ if (beCPG.module.EntityDataGridRenderers) {
             var content = '';
             var infoIcon = '';
             
-            if ((label == "bcpg:ing_bcpg:ingListIng" || label == "bcpg:ingListIng") && data.value) {
+            var isTotalRow = (data.metadata == "total" || oRecord.getData("itemType") == "total");
+
+            if (isTotalRow) {
+                content = '<span class="total ' + (data.metadata || "") + '" ' + (toogleGroupButton == null && padding != 0 ? 'style="margin-left:' + padding + 'px;"' : '') + '>'
+                    + displayName + '</span>';
+            } else if ((label == "bcpg:ing_bcpg:ingListIng" || label == "bcpg:ingListIng") && data.value) {
                 content = '<span class="' + data.metadata + ' node-' + data.value + '" data-noderef="' + data.value + '" ' + (toogleGroupButton == null && padding != 0 ? 'style="margin-left:' + padding + 'px;"' : '') + '>'
                     + '<a class="' + INGLISTING_INFO_EVENTCLASS + '" href="#" style="text-decoration: none;">' + displayName + '</a>'
                     + '</span>';
@@ -976,31 +981,78 @@ if (beCPG.module.EntityDataGridRenderers) {
                     name: "beCPG.module.EntityDataGrid"
                 })[0];
                 if (dt) {
-                    var templateUrl = YAHOO.lang.substitute(
-                        Alfresco.constants.URL_SERVICECONTEXT
-                        + "components/form?popup=true&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true&siteId={siteId}",
-                        {
-                            itemKind: "node",
-                            itemId: nodeRef,
-                            mode: "view",
-                            submitType: "json",
-                            siteId: dt.options.siteId
-                        });
-
-                    var popupId = dt.id + "-infoDetails";
+                    var popupId = dt.id + "-ingInfoDetails";
                     var infoDetails = new Alfresco.module.SimpleDialog(popupId);
+                    
+                    var originalOnTemplateLoaded = infoDetails.onTemplateLoaded;
+                    infoDetails.onTemplateLoaded = function(response) {
+                        originalOnTemplateLoaded.call(this, response);
+                        var dialogEl = Dom.get(this.id + "-dialog") || Dom.get(this.id);
+                        var titleEl = Dom.get(this.id + "-dialogTitle") || YAHOO.util.Selector.query(".hd", dialogEl)[0];
+                        if (titleEl) {
+                            titleEl.innerHTML = dt.msg("link.title.ing-details") || "Ingredient details";
+                        }
+                        var submitBtn = Dom.get(this.id + "-form-submit");
+                        var cancelBtn = Dom.get(this.id + "-form-cancel");
+                        if (submitBtn) {
+                            Dom.setStyle(submitBtn, "display", "none");
+                        }
+                        if (cancelBtn) {
+                            Dom.setStyle(cancelBtn, "display", "none");
+                        }
+                        var buttonsDiv = YAHOO.util.Selector.query(".bdft", dialogEl)[0];
+                        if (buttonsDiv) {
+                            Dom.setStyle(buttonsDiv, "display", "none");
+                        }
+                        var bodyDiv = YAHOO.util.Selector.query(".bd", dialogEl)[0];
+                        if (bodyDiv) {
+                            Dom.setStyle(bodyDiv, "maxHeight", "60vh");
+                            Dom.setStyle(bodyDiv, "overflow", "auto");
+                        }
+                        if (this.dialog) {
+                            this.dialog.show();
+                            var dialogY = Dom.getY(dialogEl);
+                            if (dialogY !== null) {
+                                window.scrollTo(0, dialogY - 50);
+                            }
+                        }
+                    };
+                    
                     infoDetails.setOptions({
-                        width: dt.options.formWidth && dt.options.formWidth !== "34em" ? dt.options.formWidth : "800px",
-                        templateUrl: templateUrl,
+                        width: "60em",
+                        templateUrl: YAHOO.lang.substitute(
+                            Alfresco.constants.URL_SERVICECONTEXT
+                            + "components/form?popup=true&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true&siteId={siteId}",
+                            {
+                                itemKind: "node",
+                                itemId: nodeRef,
+                                mode: "view",
+                                submitType: "json",
+                                siteId: dt.options.siteId || ""
+                            }),
                         actionUrl: null,
                         destroyOnHide: true,
                         doBeforeDialogShow: {
                             fn: function(p_form, p_dialog) {
-                                Alfresco.util.populateHTML([p_dialog.id + "-dialogTitle", dt.msg("label.view-row.title") || "Details"]);
-                                Dom.addClass(p_dialog.id + "-dialog", "large-dialog");
-                                if (Dom.get(p_dialog.id + "-form-submit")) {
-                                    Dom.setStyle(p_dialog.id + "-form-submit", "display", "none");
-                                }
+                                var dialogId = p_dialog.id;
+                                Alfresco.util.populateHTML([dialogId + "-dialogTitle", dt.msg("link.title.ing-details") || "Ingredient details"]);
+                                Dom.addClass(dialogId + "-dialog", "large-dialog");
+                            },
+                            scope: dt
+                        },
+                        onSuccess: {
+                            fn: function() {
+                                Alfresco.util.PopupManager.displayMessage({
+                                    text: dt.msg("message.details.success")
+                                });
+                            },
+                            scope: dt
+                        },
+                        onFailure: {
+                            fn: function() {
+                                Alfresco.util.PopupManager.displayMessage({
+                                    text: dt.msg("message.details.failure")
+                                });
                             },
                             scope: dt
                         }
