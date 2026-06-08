@@ -417,7 +417,6 @@
 							aspects: instance.entity ? instance.entity.aspects || [] : []
 						},
 						jsNode: {
-							isContainer: false,
 							properties: instance.entity ? instance.entity.properties || {} : {}
 						},
 						listId: instance.datalistMeta && instance.datalistMeta.name ? instance.datalistMeta.name : instance.options.list
@@ -429,12 +428,6 @@
 				Dom.addClass(linkEl, "enabled");
 				Dom.setAttribute(linkEl, "title", instance.msg("aisuggestion.show.tip"));
 				Dom.setAttribute(linkEl, "tabindex", "0");
-
-				var initialRecord = buildRecord();
-				if (!aiSuggestionService.isEnabled(initialRecord)) {
-					Dom.addClass(linkEl, "disabled");
-				}
-
 				divEl.appendChild(linkEl);
 
 				YAHOO.util.Event.addListener(linkEl, "click", function(e) {

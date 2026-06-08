@@ -781,8 +781,19 @@
 							}
 
 							// call webscript
+							var reportFileName = args.reportFileName;
+							if (reportFileName) {
+								var extIndex = reportFileName.lastIndexOf(".");
+								var timestamp = Alfresco.util.formatDate(new Date(), "ddmmyyyy-HHMM");
+								if (extIndex !== -1) {
+									reportFileName = reportFileName.substring(0, extIndex) + "_" + timestamp + reportFileName.substring(extIndex);
+								} else {
+									reportFileName = reportFileName + "_" + timestamp;
+								}
+							}
+
 							var url = Alfresco.constants.PROXY_URI + "becpg/report/exportsearch/" + args.reportTpl.replace("://", "/") + "/"
-									+ encodeURIComponent(args.reportFileName);
+									+ encodeURIComponent(reportFileName);
 
 							// add search data webscript arguments
 							url += "?term=" + encodeURIComponent(searchTerm);
@@ -803,7 +814,7 @@
 								url += "&site=&repo=true";
 							}
 							
-							beCPG.util.launchAsyncDownload(args.reportFileName, args.reportTplName , url);
+							beCPG.util.launchAsyncDownload(reportFileName, args.reportTplName , url);
 
 						},
 
