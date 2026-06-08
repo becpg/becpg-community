@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -35,7 +36,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.hc.core5.http.ParseException;
 import org.springframework.util.StopWatch;
 
-import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.formulation.ReportableError;
 import fr.becpg.repo.formulation.ReportableError.ReportableErrorType;
 import fr.becpg.repo.helper.MLTextHelper;
@@ -60,8 +60,6 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 	private NodeService nodeService;
 
 	private ContentService contentService;
-
-	private EntityService entityService;
 	
 	private String instanceName;
 	
@@ -92,15 +90,6 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>entityService</code>.</p>
-	 *
-	 * @param entityService a {@link fr.becpg.repo.entity.EntityService} object
-	 */
-	public void setEntityService(EntityService entityService) {
-		this.entityService = entityService;
 	}
 	
 	/**
@@ -184,21 +173,23 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 			reportSession.setTemplateId(templateId);
 			
 			for (EntityImageInfo entry : reportData.getImages()) {
-				byte[] imageBytes = entityService.getImage(entry.getImageNodeRef());
-				if (imageBytes != null) {
-					
-					if (imageBytes.length > reportImageMaxSizeInBytes()) {
-						
-						reportData.getLogs()
-								.add(new ReportableError(ReportableErrorType.WARNING, "Image size exceeds: " + entry,
-										MLTextHelper.getI18NMessage("message.report.image.size", entry.getName(),
-												FileUtils.byteCountToDisplaySize(imageBytes.length),
-												FileUtils.byteCountToDisplaySize(reportImageMaxSizeInBytes())), List.of(tplNodeRef)));
-					}
-					
-					try (InputStream in = new ByteArrayInputStream(imageBytes)) {
-						sendImage(reportSession, entry.getId(), in);
-					} catch (ReportException e) {
+				NodeRef imageNodeRef = entry.getImageNodeRef();
+				ContentReader reader = contentService.getReader(imageNodeRef, ContentModel.PROP_CONTENT);
+				if (reader != null && reader.exists()) {
+				    try (InputStream in = reader.getContentInputStream()) {
+				        sendImage(reportSession, entry.getId(), in);
+				        long imageSize = reader.getSize();
+				        if (imageSize > reportImageMaxSizeInBytes()) {
+				        	reportData.getLogs()
+				        	.add(new ReportableError(ReportableErrorType.WARNING, "Image size exceeds: " + entry,
+				        			MLTextHelper.getI18NMessage("message.report.image.size", entry.getName(),
+				        					FileUtils.byteCountToDisplaySize(imageSize),
+				        					FileUtils.byteCountToDisplaySize(reportImageMaxSizeInBytes())), List.of(tplNodeRef)));
+				        }
+				    } catch (Exception e) {
+				    	if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+							throw e;
+						}
 						logger.error(e, e);
 					}
 				}
