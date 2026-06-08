@@ -783,14 +783,8 @@
 							// call webscript
 							var reportFileName = args.reportFileName;
 							if (reportFileName) {
-								var d = new Date();
-								var timestamp = d.getFullYear() + 
-									("0" + (d.getMonth() + 1)).slice(-2) + 
-									("0" + d.getDate()).slice(-2) + "_" + 
-									("0" + d.getHours()).slice(-2) + 
-									("0" + d.getMinutes()).slice(-2) + 
-									("0" + d.getSeconds()).slice(-2);
 								var extIndex = reportFileName.lastIndexOf(".");
+								var timestamp = Alfresco.util.formatDate(new Date(), "ddmmyyyy-HHMM");
 								if (extIndex !== -1) {
 									reportFileName = reportFileName.substring(0, extIndex) + "_" + timestamp + reportFileName.substring(extIndex);
 								} else {
