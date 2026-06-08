@@ -398,7 +398,7 @@
 
 		YAHOO.Bubbling.fire("registerToolbarButtonAction", {
 			actionName: "ai-suggestion-entity",
-			right: true,
+			right: false,
 			evaluate: function(asset, entity) {
 				return beCPG.constants.AI_ENABLED === true && entity != null && asset.name != null;
 			},

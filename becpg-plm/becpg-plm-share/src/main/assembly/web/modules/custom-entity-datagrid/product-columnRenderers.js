@@ -121,11 +121,11 @@ if (beCPG.module.EntityDataGridRenderers) {
             var content = '';
             var infoIcon = '';
             
-            if (label == "bcpg:ing_bcpg:ingListIng" || label == "bcpg:ingListIng") {
-                content = '<span class="' + data.metadata + ' node-' + oRecord.getData("nodeRef") + '" data-noderef="' + oRecord.getData("nodeRef") + '" ' + (toogleGroupButton == null && padding != 0 ? 'style="margin-left:' + padding + 'px;"' : '') + '>'
+            if ((label == "bcpg:ing_bcpg:ingListIng" || label == "bcpg:ingListIng") && data.value) {
+                content = '<span class="' + data.metadata + ' node-' + data.value + '" data-noderef="' + data.value + '" ' + (toogleGroupButton == null && padding != 0 ? 'style="margin-left:' + padding + 'px;"' : '') + '>'
                     + '<a class="' + INGLISTING_INFO_EVENTCLASS + '" href="#" style="text-decoration: none;">' + displayName + '</a>'
                     + '</span>';
-                infoIcon = '<span class="node-' + oRecord.getData("nodeRef") + '" data-noderef="' + oRecord.getData("nodeRef") + '">'
+                infoIcon = '<span class="node-' + data.value + '" data-noderef="' + data.value + '">'
                     + '<a class="show-details ' + INGLISTING_INFO_EVENTCLASS + '" title="' + (scope.msg("link.title.ing-details") || "Details") + '" href="#">'
                     + '&nbsp;'
                     + '</a></span>';
@@ -978,31 +978,28 @@ if (beCPG.module.EntityDataGridRenderers) {
                 if (dt) {
                     var templateUrl = YAHOO.lang.substitute(
                         Alfresco.constants.URL_SERVICECONTEXT
-                        + "components/form?entityNodeRef={entityNodeRef}&entityType={entityType}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&formId={formId}&showCancelButton=true&list={list}&siteId={siteId}",
+                        + "components/form?popup=true&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true&siteId={siteId}",
                         {
                             itemKind: "node",
                             itemId: nodeRef,
-                            formId: "info",
                             mode: "view",
                             submitType: "json",
-                            entityType: dt.entity != null ? encodeURIComponent(dt.entity.type) : "",
-                            entityNodeRef: dt.options.entityNodeRef,
-                            list: encodeURIComponent(dt.datalistMeta.name != null ? dt.datalistMeta.name : dt.options.list),
                             siteId: dt.options.siteId
                         });
 
                     var popupId = dt.id + "-infoDetails";
                     var infoDetails = new Alfresco.module.SimpleDialog(popupId);
                     infoDetails.setOptions({
-                        width: dt.options.formWidth,
+                        width: dt.options.formWidth && dt.options.formWidth !== "34em" ? dt.options.formWidth : "800px",
                         templateUrl: templateUrl,
                         actionUrl: null,
                         destroyOnHide: true,
                         doBeforeDialogShow: {
                             fn: function(p_form, p_dialog) {
                                 Alfresco.util.populateHTML([p_dialog.id + "-dialogTitle", dt.msg("label.view-row.title") || "Details"]);
-                                if (dt.options.formWidth != "34em") {
-                                    Dom.addClass(p_dialog.id + "-dialog", "large-dialog");
+                                Dom.addClass(p_dialog.id + "-dialog", "large-dialog");
+                                if (Dom.get(p_dialog.id + "-form-submit")) {
+                                    Dom.setStyle(p_dialog.id + "-form-submit", "display", "none");
                                 }
                             },
                             scope: dt
