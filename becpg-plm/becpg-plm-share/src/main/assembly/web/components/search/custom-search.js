@@ -781,8 +781,25 @@
 							}
 
 							// call webscript
+							var reportFileName = args.reportFileName;
+							if (reportFileName) {
+								var d = new Date();
+								var timestamp = d.getFullYear() + 
+									("0" + (d.getMonth() + 1)).slice(-2) + 
+									("0" + d.getDate()).slice(-2) + "_" + 
+									("0" + d.getHours()).slice(-2) + 
+									("0" + d.getMinutes()).slice(-2) + 
+									("0" + d.getSeconds()).slice(-2);
+								var extIndex = reportFileName.lastIndexOf(".");
+								if (extIndex !== -1) {
+									reportFileName = reportFileName.substring(0, extIndex) + "_" + timestamp + reportFileName.substring(extIndex);
+								} else {
+									reportFileName = reportFileName + "_" + timestamp;
+								}
+							}
+
 							var url = Alfresco.constants.PROXY_URI + "becpg/report/exportsearch/" + args.reportTpl.replace("://", "/") + "/"
-									+ encodeURIComponent(args.reportFileName);
+									+ encodeURIComponent(reportFileName);
 
 							// add search data webscript arguments
 							url += "?term=" + encodeURIComponent(searchTerm);
@@ -803,7 +820,7 @@
 								url += "&site=&repo=true";
 							}
 							
-							beCPG.util.launchAsyncDownload(args.reportFileName, args.reportTplName , url);
+							beCPG.util.launchAsyncDownload(reportFileName, args.reportTplName , url);
 
 						},
 
