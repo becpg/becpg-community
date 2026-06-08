@@ -1502,6 +1502,38 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 	}
 
 	@Test
+	public void testManualInvoluntaryAllergenWithZeroComposition() {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Zero Compo Manual Allergen Product");
+			finishedProduct.setLegalName("Legal Zero Compo Manual Allergen Product");
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setQty(1d);
+			finishedProduct.setDensity(1d);
+
+			List<AllergenListDataItem> allergenList = new ArrayList<>();
+			allergenList.add(AllergenListDataItem.build()
+					.withAllergen(allergen1)
+					.withInVoluntary(true)
+					.withIsManual(true));
+			finishedProduct.setAllergenList(allergenList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		inReadTx(() -> {
+			FinishedProductData product = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+			Assert.assertNotNull(product);
+			List<AllergenListDataItem> list = product.getAllergenList();
+			Assert.assertFalse(list.isEmpty());
+			AllergenListDataItem item = list.get(0);
+			Assert.assertEquals(allergen1, item.getAllergen());
+			Assert.assertTrue(item.getInVoluntary());
+			return null;
+		});
+	}
+
+	@Test
 	public void testDisableAllergenDetection() {
 
 		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
