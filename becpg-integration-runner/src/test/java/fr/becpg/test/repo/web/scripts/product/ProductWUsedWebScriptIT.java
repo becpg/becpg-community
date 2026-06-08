@@ -85,4 +85,70 @@ public class ProductWUsedWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 
 	}
 
+	/**
+	 * Test get product wused with model filter.
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Test
+	public void testgetProductWusedWithModelFilter() throws Exception {
+
+		final List<NodeRef> tplNodeRefContainer = new ArrayList<>();
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			/*-- Create raw material --*/
+			logger.debug("/*-- Create raw material 2 --*/");
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("Raw material 2");
+			rawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+			LocalSemiFinishedProductData lSF = new LocalSemiFinishedProductData();
+			lSF.setName("Local semi finished 2");
+			NodeRef lSFNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), lSF).getNodeRef();
+
+			/*-- Create finished product model --*/
+			FinishedProductData finishedProductTpl = new FinishedProductData();
+			finishedProductTpl.setName("My Product Model");
+			NodeRef tplNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProductTpl).getNodeRef();
+			tplNodeRefContainer.add(tplNodeRef);
+
+			/*-- Create finished product --*/
+			logger.debug("/*-- Create finished product 2 --*/");
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Finished Product 2");
+			finishedProduct.setEntityTpl(finishedProductTpl);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(new CompoListDataItem(null, null, 1d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, lSFNodeRef));
+			compoList.add(new CompoListDataItem(null, compoList.get(0), 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, rawMaterialNodeRef));
+			finishedProduct.getCompoListView().setCompoList(compoList);
+
+			finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+
+			return null;
+
+		}, false, true);
+
+		NodeRef tplNodeRef = tplNodeRefContainer.get(0);
+
+		// Call webscript on raw material with model filter
+		String url = "/becpg/entity/datalists/data/node?entityNodeRef=" + rawMaterialNodeRef.toString()
+				+ "&itemType=bcpg%3AcompoList&dataListName=WUsed";
+		String filterDataStr = "{\\\"nested_bcpg_compoListProduct_assoc_bcpg_entityTplRef_added\\\":\\\"" + tplNodeRef.toString() + "\\\"}";
+		String data = "{\"fields\":[\"bcpg_costListCost\",\"bcpg_costListValue\",\"bcpg_costListUnit\"],\"filter\":{\"filterId\":\"filterform\",\"filterData\":\"" + filterDataStr + "\"}}";
+		logger.debug("url : " + url);
+		logger.debug("data : " + data);
+
+		Response response = TestWebscriptExecuters.sendRequest(new PostRequest(url, data, "application/json"), 200, "admin");
+		logger.debug("content : " + response.getContentAsString());
+		org.junit.Assert.assertTrue("Should return matches using the model filter", response.getContentAsString().contains("Finished Product 2"));
+
+		// Try with a non-matching model filter
+		String nonMatchingFilterDataStr = "{\\\"nested_bcpg_compoListProduct_assoc_bcpg_entityTplRef_added\\\":\\\"workspace://SpacesStore/non-existent-node\\\"}";
+		String dataNonMatching = "{\"fields\":[\"bcpg_costListCost\",\"bcpg_costListValue\",\"bcpg_costListUnit\"],\"filter\":{\"filterId\":\"filterform\",\"filterData\":\"" + nonMatchingFilterDataStr + "\"}}";
+		Response responseNonMatching = TestWebscriptExecuters.sendRequest(new PostRequest(url, dataNonMatching, "application/json"), 200, "admin");
+		org.junit.Assert.assertFalse("Should not return matches with non-matching model filter", responseNonMatching.getContentAsString().contains("Finished Product 2"));
+
+	}
+
 }
