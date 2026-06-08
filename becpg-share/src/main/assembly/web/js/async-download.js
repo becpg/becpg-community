@@ -30,16 +30,11 @@
 		var isAsyncExt = function(name) {
 			if (!name) return false;
 			var n = name.toLowerCase();
-			return n.indexOf(".zip") > 0 || 
-			       n.indexOf(".xlsx") > 0 || 
-			       n.indexOf(".xlsm") > 0 || 
-			       n.indexOf(".rptdesign") > 0 || 
-			       n.indexOf(".pdf") > 0 || 
-			       n.indexOf(".doc") > 0 || 
-			       n.indexOf(".docx") > 0 || 
-			       n.indexOf(".odt") > 0 || 
-			       n.indexOf(".ppt") > 0 || 
-			       n.indexOf(".pptx") > 0;
+			// Only extensions with async SearchReportRenderer executeAction() support
+			return n.indexOf(".zip") > 0 ||
+			       n.indexOf(".xlsx") > 0 ||
+			       n.indexOf(".xlsm") > 0 ||
+			       n.indexOf(".rptdesign") > 0;
 		};
 
 		var getCriteria = function(urlStr) {
@@ -90,12 +85,6 @@
 
 			if (fileName.indexOf(".xlsx") > 0 || fileName.indexOf(".xlsm") > 0) {
 				downloadDialog.mimeType = "-excel";
-			} else if (fileName.indexOf(".pdf") > 0) {
-				downloadDialog.mimeType = "-pdf";
-			} else if (fileName.indexOf(".doc") > 0 || fileName.indexOf(".docx") > 0 || fileName.indexOf(".odt") > 0) {
-				downloadDialog.mimeType = "-doc";
-			} else if (fileName.indexOf(".ppt") > 0 || fileName.indexOf(".pptx") > 0) {
-				downloadDialog.mimeType = "-ppt";
 			} else {
 				downloadDialog.mimeType = "";
 			}
