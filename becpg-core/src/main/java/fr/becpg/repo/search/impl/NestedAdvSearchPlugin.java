@@ -102,12 +102,12 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 
 		for (String key : criteriaMap.keySet()) {
 			if (criteriaMap.get(key) != null && !criteriaMap.get(key).isEmpty()) {
-				if (!key.equals(DataListFilter.PROP_DEPTH_LEVEL)) {
-					if (!key.startsWith(AttributeExtractorService.ASSOC_SUFFIX) && !key.startsWith(NESTED_PROP)) {
+				if (!key.equals(DataListFilter.PROP_DEPTH_LEVEL) && !key.startsWith(NESTED_PROP)) {
+					if (!key.startsWith(AttributeExtractorService.ASSOC_SUFFIX)) {
 						ret.put(key.replace(AttributeExtractorService.PROP_SUFFIX, "").replace("_", ":"),
 								criteriaMap.get(key) != null ? criteriaMap.get(key).replace("=", "") : null);
 					} else if (key.endsWith("_added")) {
-						ret.put(key.replace(AttributeExtractorService.ASSOC_SUFFIX, "").replace(NESTED_PROP, "").replace("_added", "").replace("_",
+						ret.put(key.replace(AttributeExtractorService.ASSOC_SUFFIX, "").replace("_added", "").replace("_",
 								":"), criteriaMap.get(key));
 					}
 				}
