@@ -69,7 +69,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Attribute;
 import org.dom4j.Element;
-import org.dom4j.Node;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -614,12 +613,12 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 			}
 			
 			// Filter XML report by reportKind
-			List<Node> dataListsElements = dataXml.selectNodes("//dataLists");
+			List<Element> dataListsElements = new ArrayList<>();
+			collectDataLists(dataXml, dataListsElements);
+					
 			if (dataListsElements != null) {
-				for (Node dataListsElement : dataListsElements) {
-					if (dataListsElement.getName().equals("dataLists") && dataListsElement instanceof Element) {
-						filterDatalistsByReportKind(reportKindCode, (Element) dataListsElement);
-					}
+				for (Element dataListsElement : dataListsElements) {
+					filterDatalistsByReportKind(reportKindCode, dataListsElement);
 				}
 			}
 			String[] entityParams = null;
@@ -652,6 +651,15 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 			return null;
 		});
 
+	}
+	
+	private void collectDataLists(Element element, List<Element> results) {
+	    if ("dataLists".equals(element.getName())) {
+	        results.add(element);
+	    }
+	    for (Iterator<Element> it = element.elementIterator(); it.hasNext();) {
+	        collectDataLists(it.next(), results);
+	    }
 	}
 
 	/**
