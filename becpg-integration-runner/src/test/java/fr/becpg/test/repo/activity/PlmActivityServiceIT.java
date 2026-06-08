@@ -13,6 +13,7 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.namespace.NamespaceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
@@ -271,6 +272,81 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 		}, false, true);
 
 		assertEquals("Check update Activity", 2, getActivities(finishedProductNodeRef, null).size());
+	}
+
+	@Test
+	public void checkEntityMoveActivity() {
+		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+
+		final NodeRef firstFolderNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, "Folder 1");
+			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "folder1"), ContentModel.TYPE_FOLDER, properties).getChildRef();
+		}, false, true);
+
+		final NodeRef secondFolderNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, "Folder 2");
+			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "folder2"), ContentModel.TYPE_FOLDER, properties).getChildRef();
+		}, false, true);
+
+		final NodeRef productNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			FinishedProductData productData = new FinishedProductData();
+			productData.setParentNodeRef(firstFolderNodeRef);
+			productData.setName("finished-product-move-test");
+			alfrescoRepository.save(productData);
+
+			NodeRef listContainerNodeRef = entityListDAO.getListContainer(productData.getNodeRef());
+			entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+
+			return productData.getNodeRef();
+		}, false, true);
+
+		assertEquals("Check if 1 Activity on creation", 1, getActivities(productNodeRef, null).size());
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			nodeService.moveNode(productNodeRef, secondFolderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+			return null;
+		}, false, true);
+
+		assertEquals("Check if Move Activity recorded", 2, getActivities(productNodeRef, null).size());
+
+		List<ActivityListDataItem> activities = getActivityListDataItems(productNodeRef);
+		Assert.assertFalse(activities.isEmpty());
+		ActivityListDataItem lastActivity = activities.get(0);
+		Assert.assertEquals(ActivityType.Move, lastActivity.getActivityType());
+		Assert.assertTrue(lastActivity.getActivityData().contains("Folder 1"));
+		Assert.assertTrue(lastActivity.getActivityData().contains("Folder 2"));
+		Assert.assertTrue(lastActivity.getActivityData().contains("beforeStateNodeRef"));
+		Assert.assertTrue(lastActivity.getActivityData().contains("afterStateNodeRef"));
+	}
+
+	@Test
+	public void checkClassifyMoveActivityDoesNotLog() {
+		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+
+		final NodeRef productNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			FinishedProductData productData = new FinishedProductData();
+			productData.setParentNodeRef(getTestFolderNodeRef());
+			productData.setName("finished-product-classify-test");
+			alfrescoRepository.save(productData);
+
+			NodeRef listContainerNodeRef = entityListDAO.getListContainer(productData.getNodeRef());
+			entityListDAO.createList(listContainerNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+
+			return productData.getNodeRef();
+		}, false, true);
+
+		assertEquals("Check if 1 Activity on creation", 1, getActivities(productNodeRef, null).size());
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			hierarchyService.classifyByHierarchy(getTestFolderNodeRef(), productNodeRef);
+			return null;
+		}, false, true);
+
+		List<ActivityListDataItem> activities = getActivityListDataItems(productNodeRef);
+		long moveActivityCount = activities.stream().filter(a -> a.getActivityType().equals(ActivityType.Move)).count();
+		Assert.assertEquals(0, moveActivityCount);
 	}
 
 }

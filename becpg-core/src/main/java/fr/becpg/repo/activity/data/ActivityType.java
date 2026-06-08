@@ -69,5 +69,7 @@ public enum ActivityType {
 	 */
 	AspectsRemoval,
 	
-	ComplianceCheck
+	ComplianceCheck,
+	
+	Move
 }

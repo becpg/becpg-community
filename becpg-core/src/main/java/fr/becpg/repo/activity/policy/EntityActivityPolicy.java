@@ -51,7 +51,8 @@ import fr.becpg.repo.repository.L2CacheSupport;
  */
 public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnAddAspectPolicy,
 		NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.BeforeDeleteNodePolicy, NodeServicePolicies.OnCreateNodePolicy,
-		NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy, ContentServicePolicies.OnContentUpdatePolicy {
+		NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy, ContentServicePolicies.OnContentUpdatePolicy,
+		NodeServicePolicies.OnMoveNodePolicy {
 
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityActivityPolicy.class);
@@ -66,6 +67,8 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 	public static final String KEY_QUEUE_UPDATED_STATUS = "EntityActivity_UpdatedStatus";
 	/** Constant <code>KEY_QUEUE_ADDED_TPL_ASPECT="EntityActivity_AddedTplAspect"</code> */
 	public static final String KEY_QUEUE_ADDED_TPL_ASPECT = "EntityActivity_AddedTplAspect";
+	
+	public static final String KEY_IGNORE_MOVE_ACTIVITIES = "EntityActivity_IgnoreMoveActivities";
 
 	/** Constant <code>DELIMITER="###"</code> */
 	private static final String DELIMITER = "###";
@@ -116,6 +119,8 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 				new JavaBehaviour(this, "onCreateNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
 				new JavaBehaviour(this, "beforeDeleteNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnMoveNodePolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
+				new JavaBehaviour(this, "onMoveNode"));
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
 				new JavaBehaviour(this, "onCreateAssociation"));
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
@@ -169,6 +174,33 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 		return (type.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
 				|| ((!before.containsKey(type) || (before.get(type) == null)) && ((after.get(type) == null) || after.get(type).equals("")))
 				|| ((!after.containsKey(type) || (after.get(type) == null)) && ((before.get(type) == null) || before.get(type).equals(""))));
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void onMoveNode(ChildAssociationRef oldChildAssocRef, ChildAssociationRef newChildAssocRef) {
+		NodeRef movedNodeRef = newChildAssocRef.getChildRef();
+		@SuppressWarnings("unchecked")
+		Set<NodeRef> ignoredNodes = (Set<NodeRef>) TransactionSupportUtil.getResource(KEY_IGNORE_MOVE_ACTIVITIES);
+		if (ignoredNodes != null && ignoredNodes.contains(movedNodeRef)) {
+			return;
+		}
+		if (policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE) && policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_SORTABLE_LIST)
+				&& policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ACTIVITY_LIST)) {
+			if (L2CacheSupport.isThreadLockEnable()) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Entity [" + Thread.currentThread().getName() + "] is locked  :" + newChildAssocRef.getChildRef());
+				}
+				return;
+			}
+			if (nodeService.exists(movedNodeRef) && entityDictionaryService.isSubClass(nodeService.getType(movedNodeRef), BeCPGModel.TYPE_ENTITY_V2)) {
+				NodeRef oldParentNodeRef = oldChildAssocRef.getParentRef();
+				NodeRef newParentNodeRef = newChildAssocRef.getParentRef();
+				if (!oldParentNodeRef.equals(newParentNodeRef)) {
+					entityActivityService.postMoveActivity(movedNodeRef, oldParentNodeRef, newParentNodeRef);
+				}
+			}
+		}
 	}
 
 	/** {@inheritDoc} */

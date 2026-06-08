@@ -878,6 +878,58 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	/** {@inheritDoc} */
 	@Override
+	public boolean postMoveActivity(NodeRef entityNodeRef, NodeRef oldParentNodeRef, NodeRef newParentNodeRef) {
+		if ((entityNodeRef != null) && (oldParentNodeRef != null) && (newParentNodeRef != null)) {
+			try {
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				NodeRef activityListNodeRef = getActivityList(entityNodeRef);
+
+				// No list no activity
+				if (activityListNodeRef != null) {
+
+					if (nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
+						logger.debug(NO_ACTIVITY_MESSAGE);
+						return false;
+					}
+
+					ActivityListDataItem activityListDataItem = new ActivityListDataItem();
+					JSONObject data = new JSONObject();
+
+					data.put(PROP_ENTITY_NODEREF, entityNodeRef);
+					data.put(PROP_TITLE, nodeService.exists(entityNodeRef) ? (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) : entityNodeRef.toString());
+
+					String oldParentName = nodeService.exists(oldParentNodeRef) ? (String) nodeService.getProperty(oldParentNodeRef, ContentModel.PROP_NAME) : oldParentNodeRef.toString();
+					String newParentName = nodeService.exists(newParentNodeRef) ? (String) nodeService.getProperty(newParentNodeRef, ContentModel.PROP_NAME) : newParentNodeRef.toString();
+
+					data.put(PROP_BEFORE_STATE, oldParentName);
+					data.put(PROP_AFTER_STATE, newParentName);
+					data.put("beforeStateNodeRef", oldParentNodeRef.toString());
+					data.put("afterStateNodeRef", newParentNodeRef.toString());
+					activityListDataItem.setActivityType(ActivityType.Move);
+					activityListDataItem.setActivityData(data.toString());
+					activityListDataItem.setParentNodeRef(activityListNodeRef);
+
+					recordAuditActivity(entityNodeRef, activityListDataItem);
+
+					notifyListeners(entityNodeRef, activityListDataItem);
+
+					return true;
+
+				}
+
+			} catch (JSONException e) {
+				logger.error(e, e);
+			} finally {
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+			}
+		}
+
+		return false;
+
+	}
+
+	/** {@inheritDoc} */
+	@Override
 	public boolean postVersionActivity(NodeRef entityNodeRef, NodeRef versionNodeRef, String versionLabel) {
 		if ((entityNodeRef != null) && (versionNodeRef != null)) {
 			try {

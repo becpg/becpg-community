@@ -102,6 +102,16 @@ if (beCPG.module.EntityDataGridRenderers) {
 					title  = scope.msg("entity.activity.entity.added-aspect", title, data.addedAspects);
 				} else if(activityType == "AspectsRemoval" && data.removedAspects){
 					title  = scope.msg("entity.activity.entity.removed-aspect", title, data.removedAspects);
+				} else if(activityType == "Move"){
+					var beforeStateHtml = Alfresco.util.encodeHTML(data.beforeState || "");
+					var afterStateHtml = Alfresco.util.encodeHTML(data.afterState || "");
+					if (data.beforeStateNodeRef) {
+						beforeStateHtml = '<a class="theme-color-1" href="' + beCPG.util.entityURL(oRecord.getData("siteId"), data.beforeStateNodeRef) + '">' + Alfresco.util.encodeHTML(data.beforeState || "") + '</a>';
+					}
+					if (data.afterStateNodeRef) {
+						afterStateHtml = '<a class="theme-color-1" href="' + beCPG.util.entityURL(oRecord.getData("siteId"), data.afterStateNodeRef) + '">' + Alfresco.util.encodeHTML(data.afterState || "") + '</a>';
+					}
+					title  = scope.msg("entity.activity.move", title, beforeStateHtml, afterStateHtml);
 				} else if(activityType == "Formulation" || activityType == "Report"){
 					title  = scope.msg("entity.activity."+activityType.toLowerCase(), title);
 				} else if(activityType == "Export"){
