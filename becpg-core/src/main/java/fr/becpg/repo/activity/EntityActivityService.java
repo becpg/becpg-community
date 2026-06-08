@@ -258,4 +258,14 @@ public interface EntityActivityService {
 	 */
 	void postDataListCopyActivity(NodeRef entityNodeRef, NodeRef sourceEntityNodeRef, NodeRef sourceListNodeRef, String action);
 
+	/**
+	 * <p>postMoveActivity.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param oldParentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param newParentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a boolean.
+	 */
+	boolean postMoveActivity(NodeRef entityNodeRef, NodeRef oldParentNodeRef, NodeRef newParentNodeRef);
+
 }

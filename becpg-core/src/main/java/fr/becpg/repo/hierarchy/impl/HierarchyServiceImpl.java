@@ -20,9 +20,11 @@ package fr.becpg.repo.hierarchy.impl;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
@@ -38,6 +40,7 @@ import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.transaction.TransactionSupportUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +49,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.activity.policy.EntityActivityPolicy;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.helper.RepoService;
@@ -301,6 +305,13 @@ public class HierarchyServiceImpl implements HierarchyService {
 									return null;
 								}, user);
 							}
+							@SuppressWarnings("unchecked")
+							Set<NodeRef> ignoredNodes = (Set<NodeRef>) TransactionSupportUtil.getResource(EntityActivityPolicy.KEY_IGNORE_MOVE_ACTIVITIES);
+							if (ignoredNodes == null) {
+								ignoredNodes = new HashSet<>();
+								TransactionSupportUtil.bindResource(EntityActivityPolicy.KEY_IGNORE_MOVE_ACTIVITIES, ignoredNodes);
+							}
+							ignoredNodes.add(entityNodeRef);
 							return repoService.moveNode(entityNodeRef, destinationNodeRef);
 						}
 					} else {
