@@ -429,7 +429,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected void extractEntityImages(NodeRef entityNodeRef, Element imgsElt, DefaultExtractorContext context,
 			Map<String, String> extratAttributes) {
 
-		int cnt = imgsElt.selectNodes(TAG_IMAGE) != null ? imgsElt.selectNodes(TAG_IMAGE).size() : 1;
+		List<Element> elements = imgsElt.elements(TAG_IMAGE);
+		int cnt = elements != null ? elements.size() : 1;
 		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS,
 				TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 		if (imagesFolderNodeRef != null) {
@@ -663,9 +664,10 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 			if (context.prefsContains("assocsToExtractWithImage", assocsToExtractWithImage(), prefixedAssocName)) {
 				List<NodeRef> nodeRefs = associationService.getTargetAssocs(entityNodeRef, assocDef.getName());
-				Element imgsElt = (Element) entityElt.getDocument().selectSingleNode(TAG_ENTITY + "/" + TAG_IMAGES);
+				Element imgsElt = entityElt.element(TAG_IMAGES);
 				if (imgsElt != null) {
-					int cnt = imgsElt.selectNodes(TAG_IMAGE) != null ? imgsElt.selectNodes(TAG_IMAGE).size() : 1;
+					List<Element> selectNodes = imgsElt.elements(TAG_IMAGE);
+					int cnt = selectNodes != null ? selectNodes.size() : 1;
 
 					for (NodeRef nodeRef : nodeRefs) {
 						if (entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
@@ -1464,7 +1466,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		if ((tenantAdminService != null) && tenantAdminService.isEnabled()) {
 			String creator = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATOR);
 			if ((creator != null) && personService.personExists(creator)) {
-				Element creatorElt = (Element) entityElt.selectSingleNode(ContentModel.PROP_CREATOR.getLocalName());
+				Element creatorElt = entityElt.element(ContentModel.PROP_CREATOR.getLocalName());
 				NodeRef creatorNodeRef = personService.getPerson(creator);
 				loadNodeAttributes(creatorNodeRef, creatorElt, true, context);
 				// extract avatar
