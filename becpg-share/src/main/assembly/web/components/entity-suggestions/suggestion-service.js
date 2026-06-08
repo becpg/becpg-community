@@ -133,16 +133,20 @@
 						},
 						visible: false
 					}, {
-						type: YAHOO.widget.Menu
+						type: YAHOO.widget.Panel
 					});
 					me.widgets.overlay.render(Dom.get("doc3"));
-					
+
+					Event.addListener(overlayEl, "click", function(e) {
+						Event.stopPropagation(e);
+					});
+
 					// Setup button actions
 					var closeBtn = overlayEl.getElementsByClassName("suggestion-overlay-btn-close")[0];
 					if (closeBtn) {
 						Event.addListener(closeBtn, "click", function(e) {
 							me.widgets.overlay.hide();
-							Event.preventDefault(e);
+							Event.stopEvent(e);
 						});
 					}
 
@@ -165,7 +169,7 @@
 									iframe.style.height = "100%";
 								}
 							}
-							Event.preventDefault(e);
+							Event.stopEvent(e);
 						});
 					}
 

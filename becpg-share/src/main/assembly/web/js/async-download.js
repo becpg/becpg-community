@@ -27,7 +27,57 @@
 	
 		fileName = fileName.replace(/[^a-zA-ZÀ-ÿ0-9\s.,:\-]/g, ""); // remove special characters
 		    
-		if (fileName.indexOf(".zip") > 0 || tplName.indexOf(".xlsx") > 0 ||  tplName.indexOf(".xlsm") > 0 || tplName.indexOf(".rptdesign") > 0) {
+		var isAsyncExt = function(name) {
+			if (!name) return false;
+			var n = name.toLowerCase();
+			// Only extensions with async SearchReportRenderer executeAction() support
+			return n.indexOf(".zip") > 0 ||
+			       n.indexOf(".xlsx") > 0 ||
+			       n.indexOf(".xlsm") > 0 ||
+			       n.indexOf(".rptdesign") > 0;
+		};
+
+		var getCriteria = function(urlStr) {
+			if (!urlStr) return null;
+			var searchString = urlStr.split('?')[1];
+			if (!searchString) return null;
+			var params = searchString.split('&');
+			var term = null, tag = null, query = null;
+			for (var i = 0; i < params.length; i++) {
+				var pair = params[i].split('=');
+				var key = decodeURIComponent(pair[0]);
+				var val = decodeURIComponent(pair[1] || '');
+				if (key === 'term') {
+					term = val;
+				} else if (key === 'tag') {
+					tag = val;
+				} else if (key === 'query') {
+					query = val;
+				}
+			}
+			var critList = [];
+			if (term) {
+				critList.push(term);
+			}
+			if (tag) {
+				critList.push(tag);
+			}
+			if (query) {
+				try {
+					var qObj = JSON.parse(query);
+					for (var prop in qObj) {
+						if (qObj.hasOwnProperty(prop) && prop !== "datatype") {
+							critList.push(qObj[prop]);
+						}
+					}
+				} catch (e) {
+					critList.push(query);
+				}
+			}
+			return critList.length > 0 ? critList.join(", ") : null;
+		};
+
+		if (isAsyncExt(fileName) || isAsyncExt(tplName)) {
 
 			url += "&async=true";
 
@@ -35,12 +85,6 @@
 
 			if (fileName.indexOf(".xlsx") > 0 || fileName.indexOf(".xlsm") > 0) {
 				downloadDialog.mimeType = "-excel";
-			} else if (fileName.indexOf(".pdf") > 0) {
-				downloadDialog.mimeType = "-pdf";
-			} else if (fileName.indexOf(".doc") > 0 || fileName.indexOf(".docx") > 0 || fileName.indexOf(".odt") > 0) {
-				downloadDialog.mimeType = "-doc";
-			} else if (fileName.indexOf(".ppt") > 0 || fileName.indexOf(".pptx") > 0) {
-				downloadDialog.mimeType = "-ppt";
 			} else {
 				downloadDialog.mimeType = "";
 			}
@@ -54,7 +98,17 @@
 				this._currentArchiveNodeURL = "";
 				Dom.setStyle(this.id + "-aggregate-progress-span", "left", "-300px");
 				Dom.get(this.id + "-file-count-span").innerHTML = "";
-				Dom.get(this.id + "-aggregate-status-span").innerHTML = this.msg("status.label" + this.mimeType);
+
+				var criteriaStr = getCriteria(url);
+				var criteriaLabel = this.msg("label.criteria");
+				if (criteriaLabel === "label.criteria") {
+					criteriaLabel = "Critères :";
+				}
+				var statusHtml = this.msg("status.label" + this.mimeType) + " (" + this._currentArchiveName + ")";
+				if (criteriaStr) {
+					statusHtml += "<br/>" + criteriaLabel + " " + criteriaStr;
+				}
+				Dom.get(this.id + "-aggregate-status-span").innerHTML = statusHtml;
 			};
 
 			downloadDialog.updateProgress = function(json) {
@@ -112,6 +166,8 @@
 
 			downloadDialog.showExport = function(reportName) {
 
+				this._currentArchiveName = reportName;
+
 				// Reset the dialog...
 				this._resetGUI();
 
@@ -119,8 +175,6 @@
 				this.widgets.escapeListener.enable();
 				this.panel.setFirstLastFocusable();
 				this.panel.show();
-
-				this._currentArchiveName = reportName;
 
 				// Kick off the request...
 
