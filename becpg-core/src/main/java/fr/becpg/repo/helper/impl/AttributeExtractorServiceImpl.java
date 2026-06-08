@@ -1244,7 +1244,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 			ArrayList<AttributeExtractorField> fields = new ArrayList<>();
 			for (String metadataField : criteriaMap.keySet()) {
-				AttributeExtractorField field = new AttributeExtractorField(metadataField, null);
+				AttributeExtractorField field = new AttributeExtractorField(metadataField.replace("-range", ""), null);
 				fields.add(field);
 			}
 
@@ -1267,9 +1267,10 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				boolean found = false;
 
 				for (Map.Entry<String, Object> entry : comp.entrySet()) {
-					String compKey = entry.getKey().replace(PROP_SUFFIX, "").replace(ASSOC_SUFFIX, "").replace(DT_SUFFIX, "").replace("_", ":");
+					String compKey = entry.getKey().replace(PROP_SUFFIX, "")
+							.replace(ASSOC_SUFFIX, "").replace(DT_SUFFIX, "").replace("_", ":");
 
-					if (critKey.equals(compKey)) {
+					if (critKey.replace("-range", "").equals(compKey)) {
 						Object tmp = entry.getValue();
 						if (tmp != null) {
 							List<Map<String, Object>> dataList = new ArrayList<>();
@@ -1345,6 +1346,17 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 		String compValue = criteriaMap.get(critKey);
 
+		if (compValue == null) {
+			compValue = criteriaMap.get(critKey + "-range");
+			if (compValue != null && compValue.contains("|") && "double".equals(data.get(KEY_METADATA)) && value != null && !value.isBlank()) {
+				String[] bounds = compValue.split("\\|");
+				Double minValue = bounds[0].isEmpty() ? Double.MIN_VALUE : Double.parseDouble(bounds[0]);
+				Double maxValue = bounds.length <= 1 || bounds[1].isEmpty() ? Double.MAX_VALUE : Double.parseDouble(bounds[1]);
+				Double actualValue = Double.parseDouble(value);
+				return actualValue >= minValue && actualValue <= maxValue;
+			}
+		}
+		
 		if (value == null) {
 			return compValue == null;
 		}
@@ -1398,7 +1410,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			if (!dateMatches(value, compValue)) {
 				return false;
 			}
-		} else if ((compValue != null) && !value.equals(compValue) && !compValue.contains(value) && !displayValue.equals(compValue)) {
+		} else if ((compValue != null) && !value.equals(compValue) && (value.isBlank() || !compValue.contains(value)) && !displayValue.equals(compValue)) {
 			return false;
 
 		}

@@ -12002,6 +12002,7 @@
                     <show id="entity_bcpg:lclLabelClaim_bcpg:product" for-mode="view" />
                     <show id="bcpg:lclType" />
                     <show id="bcpg:lclClaimValue" />
+                    <show id="bcpg:lclPercentClaim" />
                 </field-visibility>
                 <appearance>
                     <field id="bcpg:lclType">
@@ -12009,7 +12010,7 @@
                             <control-param name="isSearch">true</control-param>
                         </control>
                     </field>
-                    <field id="bcpg:lclClaimValue">
+                    <field id="bcpg:lclPercentClaim">
                         <control template="/org/alfresco/components/form/controls/numberrange.ftl">
                             <control-param name="isSearch">true</control-param>
                             <control-param name="forceEditable">true</control-param>
