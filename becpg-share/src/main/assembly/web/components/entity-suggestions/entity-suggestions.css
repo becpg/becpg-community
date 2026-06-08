@@ -89,4 +89,147 @@
     text-indent: -9999px;
     vertical-align: middle;
 }
+
+/* Suggestion Overlay styles (Removing black border and adding a modern shadow) */
+.suggestion-overlay {
+	border: none !important;
+	background: #fff !important;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+	border-radius: 6px;
+	overflow: hidden;
+}
+
+.suggestion-container iframe {
+	border: none !important;
+}
+
+/* Header style for suggestion overlay */
+.suggestion-overlay-header {
+	background-color: #f5f5f5;
+	padding: 8px 12px;
+	border-bottom: 1px solid #e5e5e5;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	height: 36px;
+	box-sizing: border-box;
+}
+
+.suggestion-overlay-title {
+	font-weight: bold;
+	color: #333;
+	font-size: 13px;
+	line-height: 20px;
+}
+
+.suggestion-overlay-actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	position: absolute;
+	right: 12px;
+	top: 8px;
+}
+
+.suggestion-overlay-actions button {
+	background: none;
+	border: none;
+	cursor: pointer;
+	padding: 4px;
+	width: 20px;
+	height: 20px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 14px;
+	color: #666;
+	vertical-align: middle;
+}
+
+.suggestion-overlay-actions button:hover {
+	color: #333;
+	background-color: #e0e0e0;
+	border-radius: 3px;
+}
+
+/* Fullscreen toggle */
+.suggestion-overlay-btn-fullscreen:before {
+	content: "\26F6";
+}
+
+.suggestion-overlay-btn-close:before {
+	content: "\2716";
+}
+
+/* Resize handle */
+.suggestion-overlay-resize-handle {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	width: 15px;
+	height: 15px;
+	cursor: se-resize;
+	background: linear-gradient(135deg, transparent 40%, rgba(0,0,0,0.15) 40%, rgba(0,0,0,0.15) 50%, transparent 50%, transparent 60%, rgba(0,0,0,0.15) 60%, rgba(0,0,0,0.15) 70%, transparent 70%, transparent 80%, rgba(0,0,0,0.15) 80%, rgba(0,0,0,0.15) 90%, transparent 90%);
+	z-index: 1000;
+}
+
+/* Fullscreen Overlay mode */
+.suggestion-overlay.fullscreen {
+	position: fixed !important;
+	top: 0 !important;
+	left: 0 !important;
+	right: 0 !important;
+	bottom: 0 !important;
+	width: 100vw !important;
+	height: 100vh !important;
+	z-index: 10000 !important;
+}
+
+.suggestion-overlay.fullscreen .suggestion-container {
+	height: calc(100vh - 36px) !important;
+}
+
+.suggestion-overlay.fullscreen .suggestion-container iframe {
+	width: 100% !important;
+	height: 100% !important;
+}
+
+.suggestion-overlay.fullscreen .suggestion-overlay-resize-handle {
+	display: none !important;
+}
+
+/* Style for the toolbar button when left-aligned (placed right of Formuler) */
+.datalist-toolbar .left .ai-suggestion {
+	float: left;
+	margin-right: 6px;
+	margin-top: 2px;
+}
+
+.datalist-toolbar .left .ai-suggestion a.ai-suggestion-action {
+    background-image: url(../entity-suggestions/images/chef-ai-16.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+    display: inline-block;
+    height: 24px;
+    width: 24px;
+    border: 1px solid #CCCCCC;
+    border-radius: 4px;
+    background-color: #FFFFFF;
+    box-sizing: border-box;
+    cursor: pointer;
+    vertical-align: middle;
+    transition: background-color 0.15s, border-color 0.15s;
+}
+
+.datalist-toolbar .left .ai-suggestion a.ai-suggestion-action:hover {
+    background-color: #f0f0f0;
+    border-color: #aaaaaa;
+}
+
+.datalist-toolbar .left .ai-suggestion a.ai-suggestion-action.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
  

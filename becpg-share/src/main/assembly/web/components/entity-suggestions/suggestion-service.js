@@ -14,6 +14,15 @@
 	 */
 	beCPG.service.AiSuggestion = function AiSuggestion_constructor() {
 		beCPG.service.AiSuggestion.superclass.constructor.call(this);
+		this.resizeData = {
+			isResizing: false,
+			startX: 0,
+			startY: 0,
+			startWidth: 750,
+			startHeight: 650,
+			currentWidth: 750,
+			currentHeight: 650
+		};
 		return this;
 	};
 
@@ -87,9 +96,20 @@
 					Dom.addClass(overlayEl, "yuimenu");
 					Dom.addClass(overlayEl, "suggestion-overlay");
 					
+					var titleText = Alfresco.util.message("label.tab.suggestions") || "Suggestions";
+					var fullscreenTitle = Alfresco.util.message("button.suggestions.fullscreen") || "Plein écran";
+					var closeTitle = Alfresco.util.message("button.close") || "Fermer";
+
 					var html = '' +
+						'<div class="suggestion-overlay-header">' +
+						'  <span class="suggestion-overlay-title">' + titleText + '</span>' +
+						'  <div class="suggestion-overlay-actions">' +
+						'    <button class="suggestion-overlay-btn-fullscreen" type="button" title="' + fullscreenTitle + '"></button>' +
+						'    <button class="suggestion-overlay-btn-close" type="button" title="' + closeTitle + '"></button>' +
+						'  </div>' +
+						'</div>' +
 						'<div class="bd suggestion-container">' +
-						'<iframe src="' + iframeUrl + '" style="width:450px; height:600px;" referrerpolicy="origin" ' + 
+						'  <iframe src="' + iframeUrl + '" style="width:750px; height:650px;" referrerpolicy="origin" ' + 
 						'sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>' +
 						'</div>';
 						
@@ -117,6 +137,94 @@
 					});
 					me.widgets.overlay.render(Dom.get("doc3"));
 					
+					// Setup button actions
+					var closeBtn = overlayEl.getElementsByClassName("suggestion-overlay-btn-close")[0];
+					if (closeBtn) {
+						Event.addListener(closeBtn, "click", function(e) {
+							me.widgets.overlay.hide();
+							Event.preventDefault(e);
+						});
+					}
+
+					var fullscreenBtn = overlayEl.getElementsByClassName("suggestion-overlay-btn-fullscreen")[0];
+					if (fullscreenBtn) {
+						Event.addListener(fullscreenBtn, "click", function(e) {
+							var iframe = overlayEl.getElementsByTagName("iframe")[0];
+							if (Dom.hasClass(overlayEl, "fullscreen")) {
+								Dom.removeClass(overlayEl, "fullscreen");
+								if (iframe) {
+									iframe.style.width = (me.resizeData.currentWidth || 750) + "px";
+									iframe.style.height = (me.resizeData.currentHeight || 650) + "px";
+								}
+								overlayEl.style.width = "";
+								overlayEl.style.height = "";
+							} else {
+								Dom.addClass(overlayEl, "fullscreen");
+								if (iframe) {
+									iframe.style.width = "100%";
+									iframe.style.height = "100%";
+								}
+							}
+							Event.preventDefault(e);
+						});
+					}
+
+					// Resize handle functionality
+					var resizeHandle = document.createElement("div");
+					Dom.addClass(resizeHandle, "suggestion-overlay-resize-handle");
+					overlayEl.appendChild(resizeHandle);
+					
+					Event.addListener(resizeHandle, "mousedown", function(e) {
+						Event.preventDefault(e);
+						
+						if (Dom.hasClass(overlayEl, "fullscreen")) {
+							return;
+						}
+						
+						var iframe = overlayEl.getElementsByTagName("iframe")[0];
+						if (!iframe) return;
+						
+						me.resizeData.isResizing = true;
+						me.resizeData.startX = e.clientX;
+						me.resizeData.startY = e.clientY;
+						me.resizeData.startWidth = iframe.offsetWidth;
+						me.resizeData.startHeight = iframe.offsetHeight;
+						
+						iframe.style.pointerEvents = "none";
+						Dom.addClass(overlayEl, "being-resized");
+						
+						var onMouseMove = function(event) {
+							if (!me.resizeData.isResizing) return;
+							
+							var deltaX = event.clientX - me.resizeData.startX;
+							var deltaY = event.clientY - me.resizeData.startY;
+							
+							var newWidth = me.resizeData.startWidth + deltaX;
+							var newHeight = me.resizeData.startHeight + deltaY;
+							
+							newWidth = Math.max(350, newWidth);
+							newHeight = Math.max(400, newHeight);
+							
+							iframe.style.width = newWidth + "px";
+							iframe.style.height = newHeight + "px";
+							
+							me.resizeData.currentWidth = newWidth;
+							me.resizeData.currentHeight = newHeight;
+						};
+						
+						var onMouseUp = function(event) {
+							me.resizeData.isResizing = false;
+							iframe.style.pointerEvents = "auto";
+							Dom.removeClass(overlayEl, "being-resized");
+							
+							Event.removeListener(document, "mousemove", onMouseMove);
+							Event.removeListener(document, "mouseup", onMouseUp);
+						};
+						
+						Event.addListener(document, "mousemove", onMouseMove);
+						Event.addListener(document, "mouseup", onMouseUp);
+					});
+
 					// Set flag when iframe is loaded
 					me.isIFrameLoaded = true;
 				}
