@@ -101,7 +101,7 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 					if (!key.startsWith(AttributeExtractorService.ASSOC_SUFFIX) && !key.startsWith(NESTED_PROP)) {
 						ret.put(key.replace(AttributeExtractorService.PROP_SUFFIX, "").replace("_", ":"),
 								criteriaMap.get(key) != null ? criteriaMap.get(key).replace("=", "") : null);
-					} else if (key.endsWith("_added")) {
+					} else if (key.endsWith("_added") && !key.startsWith(NESTED_PROP)) {
 						ret.put(key.replace(AttributeExtractorService.ASSOC_SUFFIX, "").replace(NESTED_PROP, "").replace("_added", "").replace("_",
 								":"), criteriaMap.get(key));
 					}
