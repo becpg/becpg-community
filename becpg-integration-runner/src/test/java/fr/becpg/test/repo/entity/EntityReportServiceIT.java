@@ -21,6 +21,8 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.alfresco.service.cmr.repository.ContentWriter;
+import java.io.ByteArrayInputStream;
 
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
@@ -560,4 +562,63 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 		assertTrue("Should find certificate document", foundCert);
 		assertTrue("Should find MSDS document", foundMsds);
 	}
+
+	@Test
+	public void testReportOptimizationsAndImageStreaming() {
+		logger.debug("testReportOptimizationsAndImageStreaming()");
+
+		final NodeRef testProductNodeRef = inWriteTx(() -> {
+			// Create product
+			FinishedProductData pfData = new FinishedProductData();
+			pfData.setName("Optimization Test Product");
+			
+			// Add allergen list data to populate dataLists
+			List<AllergenListDataItem> allergenList = new ArrayList<>();
+			allergenList.add(AllergenListDataItem.build().withVoluntary(true).withInVoluntary(true).withAllergen(allergens.get(0)).withIsManual(false));
+			pfData.setAllergenList(allergenList);
+			
+			NodeRef productRef = alfrescoRepository.create(getTestFolderNodeRef(), pfData).getNodeRef();
+
+			// Create Images folder structure
+			NodeRef imagesFolder = repoService.getOrCreateFolderByPath(productRef, RepoConsts.PATH_IMAGES, RepoConsts.PATH_IMAGES);
+			
+			// Create test image with content
+			Map<QName, Serializable> imgProps = new HashMap<>();
+			imgProps.put(ContentModel.PROP_NAME, "test_image.jpg");
+			NodeRef imageNodeRef = nodeService.createNode(imagesFolder, ContentModel.ASSOC_CONTAINS, 
+				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "test_image.jpg"), 
+				ContentModel.TYPE_CONTENT, imgProps).getChildRef();
+
+			ContentWriter writer = contentService.getWriter(imageNodeRef, ContentModel.PROP_CONTENT, true);
+			writer.setMimetype("image/jpeg");
+			writer.putContent(new ByteArrayInputStream(new byte[] { 1, 2, 3, 4 }));
+
+			return productRef;
+		});
+
+		inReadTx(() -> {
+			// Extract report data
+			Map<String, String> preferences = new HashMap<>();
+			EntityReportData reportData = defaultEntityReportExtractor.extract(testProductNodeRef, preferences);
+			
+			// Validate report data structure
+			assertNotNull("Report data should not be null", reportData);
+			Document xmlDoc = (Document) reportData.getXmlDataSource().getDocument();
+			assertNotNull("XML document should not be null", xmlDoc);
+			
+			// Validate images section exists and contains the image
+			Element imagesElt = (Element) xmlDoc.selectSingleNode("//images");
+			assertNotNull("Images section should exist in report XML", imagesElt);
+			
+			List<Node> imgNodes = imagesElt.selectNodes("image");
+			assertEquals("Should extract 1 image from Images folder", 1, imgNodes.size());
+			
+			// Validate dataLists section exists (allergen list)
+			Element dataListsElt = (Element) xmlDoc.selectSingleNode("//dataLists");
+			assertNotNull("dataLists section should exist in report XML", dataListsElt);
+			
+			return null;
+		});
+	}
+
 }
