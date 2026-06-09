@@ -2047,16 +2047,16 @@
 		* @method onActionAiSuggestion
 		* @param record {object} Object literal representing the file or folder to be actioned
 		 */
-		onActionAiSuggestion: function dlA_onActionAiSuggestion(record) {
+		onActionAiSuggestion: function dlA_onActionAiSuggestion(record, owner) {
 			
 			if (YAHOO.lang.isArray(record)) {
 				// If multiple records are selected, only show suggestions for the first one
 				if (record.length > 0) {
-					this._showAiSuggestion(record[0]);
+					this._showAiSuggestion(record[0], owner);
 				}
 			}
 			else {
-				this._showAiSuggestion(record);
+				this._showAiSuggestion(record, owner);
 			}
 		},
 		
@@ -2067,11 +2067,11 @@
 		* @param record {object} Object literal representing the file to show suggestions for
 		* @private
 		*/
-		_showAiSuggestion: function dlA__showAiSuggestion(record) {
+		_showAiSuggestion: function dlA__showAiSuggestion(record, owner) {
 			this.services.aiSuggestion = this.services.aiSuggestion || new beCPG.service.AiSuggestion();
 			
 			if (this.services.aiSuggestion.isEnabled(record)) {
-				this.services.aiSuggestion.showSuggestions(record);
+				this.services.aiSuggestion.showSuggestions(record, owner);
 			} else {
 				Alfresco.util.PopupManager.displayMessage({
 					text: this.msg("message.ai.suggestion.not.available"),
