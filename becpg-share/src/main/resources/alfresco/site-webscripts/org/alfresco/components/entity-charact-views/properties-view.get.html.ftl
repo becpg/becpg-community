@@ -6,7 +6,6 @@
    <@link href="${url.context}/res/components/comments/comments-list.css" group="properties-view"/>
    <@link href="${url.context}/res/components/entity-charact-views/properties-view.css" group="properties-view"/>
    <@link href="${url.context}/res/components/entity-catalog/entity-catalog.css" group="properties-view"/>
-   <@link href="${url.context}/res/components/entity-suggestions/entity-suggestions.css" group="properties-view"/>
 </@>
 
 <@markup id="js">
