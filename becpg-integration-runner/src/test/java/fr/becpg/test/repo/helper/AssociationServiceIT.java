@@ -31,6 +31,8 @@ import fr.becpg.repo.helper.impl.AssociationCriteriaFilter;
 import fr.becpg.repo.helper.impl.AssociationCriteriaFilter.AssociationCriteriaFilterMode;
 import fr.becpg.repo.helper.impl.EntitySourceAssoc;
 import fr.becpg.repo.product.data.FinishedProductData;
+import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -948,6 +950,57 @@ public class AssociationServiceIT extends PLMBaseTestCase {
 		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef), 
 				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
 		assertEquals("Five filters complex scenario", 3, results.size());
+	}
+
+	@Test
+	public void testEntityTypeFilter() {
+		NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			RawMaterialData rm = new RawMaterialData();
+			rm.setName("RM EntityType Test");
+			return alfrescoRepository.create(getTestFolderNodeRef(), rm).getNodeRef();
+		}, false, true);
+
+		NodeRef fp = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			FinishedProductData product = new FinishedProductData();
+			product.setName("FP EntityType Test");
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(CompoListDataItem.build().withQtyUsed(10.0).withUnit(ProductUnit.kg)
+					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterialNodeRef));
+			product.getCompoListView().setCompoList(compoList);
+			return alfrescoRepository.create(getTestFolderNodeRef(), product).getNodeRef();
+		}, false, true);
+
+		NodeRef semi = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			SemiFinishedProductData product = new SemiFinishedProductData();
+			product.setName("Semi EntityType Test");
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(CompoListDataItem.build().withQtyUsed(10.0).withUnit(ProductUnit.kg)
+					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterialNodeRef));
+			product.getCompoListView().setCompoList(compoList);
+			return alfrescoRepository.create(getTestFolderNodeRef(), product).getNodeRef();
+		}, false, true);
+
+		// Test 1: No entityType filter -> both are returned
+		List<AssociationCriteriaFilter> filters = new ArrayList<>();
+		List<EntitySourceAssoc> results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef),
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertTrue("No filter returns both", results.size() >= 2);
+
+		// Test 2: Filter with entityType "bcpg:finishedProduct" -> only FinishedProduct returned
+		filters.clear();
+		filters.add(new AssociationCriteriaFilter("bcpg:finishedProduct"));
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef),
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("Filter by finishedProduct type", 1, results.size());
+		assertEquals("Result is FP", fp, results.get(0).getEntityNodeRef());
+
+		// Test 3: Filter with entityType "bcpg:semiFinishedProduct" -> only SemiFinishedProduct returned
+		filters.clear();
+		filters.add(new AssociationCriteriaFilter("bcpg:semiFinishedProduct"));
+		results = inReadTx(() -> associationService.getEntitySourceAssocs(List.of(rawMaterialNodeRef),
+				PLMModel.ASSOC_COMPOLIST_PRODUCT, null, false, filters));
+		assertEquals("Filter by semiFinishedProduct type", 1, results.size());
+		assertEquals("Result is Semi", semi, results.get(0).getEntityNodeRef());
 	}
 
 }
