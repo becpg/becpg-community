@@ -40,6 +40,7 @@ import fr.becpg.repo.entity.datalist.WUsedFilter;
 import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.impl.AssociationCriteriaFilter;
 import fr.becpg.repo.helper.impl.EntitySourceAssoc;
 
 /**
@@ -139,8 +140,9 @@ public class WUsedListServiceImpl implements WUsedListService {
 		if ((entityNodeRefs != null) && !entityNodeRefs.isEmpty() && !parentNodeRefs.contains(entityNodeRefs.get(0))) {
 			parentNodeRefs.addAll(entityNodeRefs);
 
+			List<AssociationCriteriaFilter> criteriaFilters = (filter != null) ? filter.getCriteriaFilters() : null;
 			appendAssocs(ret,
-					associationService.getEntitySourceAssocs(entityNodeRefs, associationName, null, WUsedOperator.OR.equals(operator), null,
+					associationService.getEntitySourceAssocs(entityNodeRefs, associationName, null, WUsedOperator.OR.equals(operator), criteriaFilters,
 							pagingRequest),
 					depthLevel, maxDepthLevel, associationName, filter, parentNodeRefs, permCache, WUsedOperator.OR.equals(operator),
 					pagingRequest);

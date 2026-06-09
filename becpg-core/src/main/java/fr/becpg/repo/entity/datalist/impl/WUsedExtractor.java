@@ -45,6 +45,10 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
 import fr.becpg.repo.helper.json.JsonHelper;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.impl.NestedAdvSearchPlugin;
+import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.impl.AssociationCriteriaFilter;
+import fr.becpg.repo.helper.impl.AssociationCriteriaFilter.AssociationCriteriaFilterMode;
+import java.util.ArrayList;
 
 /**
  * <p>
@@ -167,45 +171,7 @@ public class WUsedExtractor extends MultiLevelExtractor {
 
 			@Override
 			public void filter(MultiLevelListData wUsedData) {
-
-				if ((dataListFilter.getExtraParams() != null) && (dataListFilter.getExtraParams().length() > 0)) {
-					try {
-						JSONObject jsonObject = new JSONObject(dataListFilter.getExtraParams());
-						if (jsonObject.has("typeFilter")) {
-							String typeFilter = (String) jsonObject.get("typeFilter");
-							if ((typeFilter != null) && !typeFilter.isEmpty() && !"all".equalsIgnoreCase(typeFilter)) {
-
-								QName type = QName.createQName(typeFilter, namespaceService);
-								for (Iterator<Entry<NodeRef, MultiLevelListData>> iterator = wUsedData.getTree().entrySet().iterator(); iterator
-										.hasNext();) {
-									Entry<NodeRef, MultiLevelListData> entry = iterator.next();
-									NodeRef nodeRef = entry.getValue().getEntityNodeRef();
-									if (!type.equals(nodeService.getType(nodeRef))) {
-										iterator.remove();
-									}
-								}
-							}
-						}
-
-					} catch (JSONException e) {
-						logger.error(e);
-					}
-				}
-
 				if (dataListFilter.getFilterId().equals(DataListFilter.FORM_FILTER)) {
-					Map<String, String> criteriaMap = nestedAdvSearchPlugin.cleanCriteria(dataListFilter.getCriteriaMap());
-
-					if (!criteriaMap.isEmpty()) {
-						for (Iterator<Entry<NodeRef, MultiLevelListData>> iterator = wUsedData.getTree().entrySet().iterator(); iterator.hasNext();) {
-							Entry<NodeRef, MultiLevelListData> entry = iterator.next();
-							NodeRef nodeRef = entry.getKey();
-
-							if (!nestedAdvSearchPlugin.match(nodeRef, criteriaMap)) {
-								iterator.remove();
-							}
-						}
-					}
-
 					Map<String, Map<String, String>> nested = nestedAdvSearchPlugin.extractNested(dataListFilter.getCriteriaMap());
 
 					if (!nested.isEmpty()) {
@@ -213,7 +179,7 @@ public class WUsedExtractor extends MultiLevelExtractor {
 						for (Map.Entry<String, Map<String, String>> nestedEntry : nested.entrySet()) {
 							String assocName = nestedEntry.getKey();
 							QName assocQName = QName.createQName(assocName, namespaceService);
-							criteriaMap = nestedAdvSearchPlugin.cleanCriteria(nestedEntry.getValue());
+							Map<String, String> criteriaMap = nestedAdvSearchPlugin.cleanCriteria(nestedEntry.getValue());
 
 							for (Iterator<Entry<NodeRef, MultiLevelListData>> iterator = wUsedData.getTree().entrySet().iterator(); iterator
 									.hasNext();) {
@@ -251,7 +217,58 @@ public class WUsedExtractor extends MultiLevelExtractor {
 				return WUsedFilterKind.STANDARD;
 			}
 
+			@Override
+			public List<AssociationCriteriaFilter> getCriteriaFilters() {
+				List<AssociationCriteriaFilter> criteriaFilters = new ArrayList<>();
+				if ((dataListFilter.getExtraParams() != null) && !dataListFilter.getExtraParams().isBlank()) {
+					try {
+						JSONObject jsonObject = new JSONObject(dataListFilter.getExtraParams());
+						if (jsonObject.has("typeFilter")) {
+							String typeFilter = (String) jsonObject.get("typeFilter");
+							if ((typeFilter != null) && !typeFilter.isEmpty() && !"all".equalsIgnoreCase(typeFilter)) {
+								criteriaFilters.add(new AssociationCriteriaFilter(typeFilter));
+							}
+						}
+					} catch (JSONException e) {
+						logger.error(e);
+					}
+				}
+				if (dataListFilter.getFilterId().equals(DataListFilter.FORM_FILTER)) {
+					if (dataListFilter.getCriteriaMap() != null && !dataListFilter.getCriteriaMap().isEmpty()) {
+						for (Map.Entry<String, String> entry : dataListFilter.getCriteriaMap().entrySet()) {
+							String key = entry.getKey();
+							String value = entry.getValue();
+							if (value != null && !value.isEmpty() && !key.equals(DataListFilter.PROP_DEPTH_LEVEL) && !key.startsWith("nested_")) {
+								if (key.startsWith(AttributeExtractorService.PROP_SUFFIX)) {
+									String qNameStr = key.replace(AttributeExtractorService.PROP_SUFFIX, "").replace("_", ":");
+									boolean isRange = qNameStr.contains("-range");
+									if (isRange) {
+										qNameStr = qNameStr.replace("-range", "");
+									}
+									try {
+										QName qName = QName.createQName(qNameStr, namespaceService);
+										AssociationCriteriaFilterMode mode = isRange ? AssociationCriteriaFilterMode.RANGE : AssociationCriteriaFilterMode.EQUALS;
+										AssociationCriteriaFilter filter = new AssociationCriteriaFilter(qName, cleanValueForDB(value), mode);
+										criteriaFilters.add(filter);
+									} catch (Exception e) {
+										logger.error("Error parsing QName: " + qNameStr, e);
+									}
+								}
+							}
+						}
+					}
+				}
+				return criteriaFilters;
+			}
+
 		};
+	}
+
+	private String cleanValueForDB(String criteriaValue) {
+		if (criteriaValue != null && criteriaValue.startsWith("=")) {
+			return criteriaValue.substring(1);
+		}
+		return criteriaValue;
 	}
 
 	/**
