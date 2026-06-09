@@ -1007,6 +1007,16 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 						index++;
 					}
 				}
+			} else if (criteriaFilter.getEntityType() != null && !criteriaFilter.getEntityType().isEmpty()) {
+				try {
+					QName typeQName = QName.createQName(criteriaFilter.getEntityType(), namespaceService);
+					Pair<Long, QName> qNamePair = qnameDAO.getQName(typeQName);
+					if (qNamePair != null) {
+						filterMap.put("entityType", qNamePair.getFirst());
+					}
+				} catch (Exception e) {
+					logger.error("Error resolving entityType: " + criteriaFilter.getEntityType(), e);
+				}
 			}
 		}
 
