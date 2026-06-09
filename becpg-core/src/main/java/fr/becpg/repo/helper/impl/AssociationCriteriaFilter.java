@@ -16,6 +16,7 @@ public class AssociationCriteriaFilter {
 	private QName attributeQname;
 	private AssociationCriteriaFilterMode mode = AssociationCriteriaFilterMode.EQUALS;
 	private boolean isEntityFilter = false;
+	private String entityType = null;
 	
 	/**
 	 * Types of filter modes for association criteria.
@@ -63,6 +64,14 @@ public class AssociationCriteriaFilter {
 		return isEntityFilter;
 	}
 	
+	public void setEntityType(String entityType) {
+		this.entityType = entityType;
+	}
+	
+	public String getEntityType() {
+		return entityType;
+	}
+	
 	/**
 	 * <p>Constructor for AssociationCriteriaFilter.</p>
 	 *
@@ -85,6 +94,10 @@ public class AssociationCriteriaFilter {
 		} else {
 			this.value = criteriaValue;
 		}
+	}
+	
+	public AssociationCriteriaFilter(String entityType) {
+		this.entityType = entityType;
 	}
 	
 	/**
