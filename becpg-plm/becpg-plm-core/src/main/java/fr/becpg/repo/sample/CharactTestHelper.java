@@ -138,7 +138,19 @@ public class CharactTestHelper {
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	public static NodeRef getOrCreateIng(NodeService nodeService, String ingName, NodeRef ingType) {
-		Map<QName, Serializable> properties = new HashMap<>();
+		return getOrCreateIng(nodeService, ingName, ingType, new HashMap<>());
+	}
+
+	/**
+	 * <p>getOrCreateIng.</p>
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param ingName a {@link java.lang.String} object
+	 * @param ingType a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param properties
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	public static NodeRef getOrCreateIng(NodeService nodeService, String ingName, NodeRef ingType, Map<QName, Serializable> properties) {
 		properties.put(BeCPGModel.PROP_CHARACT_NAME, ingName);
 		if (ingType != null) {
 			properties.put(PLMModel.PROP_ING_TYPE_V2, ingType);
@@ -146,7 +158,7 @@ public class CharactTestHelper {
 		return getOrCreateNode(nodeService, "/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:Ings", ingName, PLMModel.TYPE_ING,
 				properties);
 	}
-	
+
 	
 	/**
 	 * <p>getOrCreateIngType.</p>
