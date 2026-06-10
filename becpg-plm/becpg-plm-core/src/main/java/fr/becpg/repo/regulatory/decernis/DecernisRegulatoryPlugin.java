@@ -1,4 +1,4 @@
-package fr.becpg.repo.regulatory.plugins;
+package fr.becpg.repo.regulatory.decernis;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import fr.becpg.repo.regulatory.RegulatoryPlugin;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -42,17 +43,9 @@ import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
-import fr.becpg.repo.regulatory.CountryBatch;
-import fr.becpg.repo.regulatory.RegulatoryBatch;
-import fr.becpg.repo.regulatory.RegulatoryContext;
-import fr.becpg.repo.regulatory.RegulatoryHelper;
-import fr.becpg.repo.regulatory.RegulatoryMode;
-import fr.becpg.repo.regulatory.RegulatoryPlugin;
-import fr.becpg.repo.regulatory.RegulatoryService;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
-import fr.becpg.repo.regulatory.UsageBatch;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.system.SystemConfigurationService;
@@ -196,7 +189,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 	 * @return a {@link java.lang.String} object
 	 */
 	public String analysisUrl() {
-		return systemConfigurationService.confValue("beCPG.decernis.analysisUrl");
+		return systemConfigurationService.confValue("beCPG.regulatory.decernis.analysisUrl");
 	}
 
 	/**
@@ -205,7 +198,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 	 * @return a {@link java.lang.String} object
 	 */
 	private String serverUrl() {
-		return systemConfigurationService.confValue("beCPG.decernis.serverUrl");
+		return systemConfigurationService.confValue("beCPG.regulatory.decernis.serverUrl");
 	}
 
 	/**
@@ -214,7 +207,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 	 * @return a {@link java.lang.String} object
 	 */
 	private String companyName() {
-		return systemConfigurationService.confValue("beCPG.decernis.companyName");
+		return systemConfigurationService.confValue("beCPG.regulatory.decernis.companyName");
 	}
 	
 	/**
@@ -223,7 +216,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 	 * @return a {@link java.lang.Integer} object
 	 */
 	private Integer maxCountriesPerRequest() {
-		String confValue = systemConfigurationService.confValue("beCPG.decernis.maxCountriesPerRequest");
+		String confValue = systemConfigurationService.confValue("beCPG.regulatory.decernis.maxCountriesPerRequest");
 		if (confValue != null && !confValue.isBlank()) {
 			return Integer.parseInt(confValue);
 		}
@@ -236,7 +229,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 	 * @return a {@link java.lang.Integer} object
 	 */
 	private Integer maxUsagesPerRequest() {
-		String confValue = systemConfigurationService.confValue("beCPG.decernis.maxUsagesPerRequest");
+		String confValue = systemConfigurationService.confValue("beCPG.regulatory.decernis.maxUsagesPerRequest");
 		if (confValue != null && !confValue.isBlank()) {
 			return Integer.parseInt(confValue);
 		}
@@ -295,7 +288,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 					for (String usage : regulatoryBatch.usageBatches().usages()) {
 						RequirementListDataItem req = RequirementListDataItem.forbidden()
 								.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e)))
-								.ofDataType(RequirementDataType.Formulation).withFormulationChainId(RegulatoryService.REGULATORY_KEY)
+								.ofDataType(RequirementDataType.Formulation).withFormulationChainId(DecernisRegulatoryService.REGULATORY_KEY)
 								.withRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
 
 						context.getRequirements().add(req);
@@ -340,7 +333,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 	/** {@inheritDoc} */
 	@Override
 	public Integer getBatchThreads() {
-		String confValue = systemConfigurationService.confValue("beCPG.decernis.batchThreads");
+		String confValue = systemConfigurationService.confValue("beCPG.regulatory.batchThreads");
 		if (confValue != null && !confValue.isBlank()) {
 			return Integer.parseInt(confValue);
 		}
@@ -447,7 +440,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 			logger.error(generateError(e), e);
 			RequirementListDataItem req = RequirementListDataItem.forbidden()
 					.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e))).ofDataType(RequirementDataType.Specification)
-					.withFormulationChainId(RegulatoryService.REGULATORY_KEY);
+					.withFormulationChainId(DecernisRegulatoryService.REGULATORY_KEY);
 			context.getRequirements().add(req);
 		}
 	}
@@ -593,7 +586,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 	 * @return a boolean
 	 */
 	private boolean isRIDValid(String rid) {
-		return rid != null && !rid.isEmpty() && !rid.equals(NOT_APPLICABLE) && !rid.equals(RegulatoryService.UNKNOWN);
+		return rid != null && !rid.isEmpty() && !rid.equals(NOT_APPLICABLE) && !rid.equals(DecernisRegulatoryService.UNKNOWN);
 	}
 
 	/**
@@ -628,7 +621,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 			logger.error("Error during Decernis ingredients analysis: " + DecernisHelper.cleanError(e.getMessage()), e);
 			RequirementListDataItem req = RequirementListDataItem.forbidden()
 					.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e))).ofDataType(RequirementDataType.Formulation)
-					.withFormulationChainId(RegulatoryService.REGULATORY_KEY);
+					.withFormulationChainId(DecernisRegulatoryService.REGULATORY_KEY);
 			context.getRequirements().add(req);
 		}
 		if (ingredientAnalysisResults != null) {
@@ -1286,7 +1279,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 											}
 
 										} else if (tabularReport.getString(RESULT_INDICATOR).toLowerCase().startsWith("not listed")) {
-											MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING);
+											MLText reqMessage = MLTextHelper.getI18NMessage(RegulatoryPlugin.MESSAGE_NOTLISTED_ING);
 											RequirementListDataItem reqCtrlItem = createReqCtrl(ingItem.getNodeRef(), reqMessage,
 													RequirementType.Tolerated);
 											reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
@@ -1353,25 +1346,6 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * <p>createReqCtrl.</p>
-	 *
-	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @param reqCtrlMessage a {@link org.alfresco.service.cmr.repository.MLText} object
-	 * @param reqType a {@link fr.becpg.repo.regulatory.RequirementType} object
-	 * @return a {@link fr.becpg.repo.regulatory.RequirementListDataItem} object
-	 */
-	protected RequirementListDataItem createReqCtrl(NodeRef ing, MLText reqCtrlMessage, RequirementType reqType) {
-		RequirementListDataItem reqCtrlItem = new RequirementListDataItem();
-		reqCtrlItem.setReqType(reqType);
-		reqCtrlItem.setCharact(ing);
-		reqCtrlItem.addSource(ing);
-		reqCtrlItem.setReqDataType(RequirementDataType.Specification);
-		reqCtrlItem.setReqMlMessage(reqCtrlMessage);
-		reqCtrlItem.setFormulationChainId(RegulatoryService.REGULATORY_KEY);
-		return reqCtrlItem;
 	}
 
 	/**

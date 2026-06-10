@@ -1,4 +1,4 @@
-package fr.becpg.repo.regulatory;
+package fr.becpg.repo.regulatory.decernis;
 
 /**
  * <p>DecernisMode class.</p>
