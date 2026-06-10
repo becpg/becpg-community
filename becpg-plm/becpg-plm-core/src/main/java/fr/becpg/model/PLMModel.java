@@ -336,6 +336,12 @@ public interface PLMModel {
 	QName PROP_RCL_REQ_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "rclReqType");
 	/** Constant <code>PROP_RCL_REQ_MESSAGE</code> */
 	QName PROP_RCL_REQ_MESSAGE = QName.createQName(BeCPGModel.BECPG_URI, "rclReqMessage");
+	/** Constant <code>PROP_RCL_REQ_MAX_QTY</code> */
+	QName PROP_RCL_REQ_MAX_QTY = QName.createQName(BeCPGModel.BECPG_URI, "rclReqMaxQty");
+	/** Constant <code>PROP_RCL_FORMULATION_CHAIN_ID</code> */
+	QName PROP_RCL_FORMULATION_CHAIN_ID = QName.createQName(BeCPGModel.BECPG_URI, "rclFormulationChainId");
+	/** Constant <code>PROP_RCL_ERROR_LOG</code> */
+	QName PROP_RCL_ERROR_LOG = QName.createQName(BeCPGModel.BECPG_URI, "rclErrorLog");
 	/** Constant <code>ASSOC_RCL_SOURCES</code> */
 	@Deprecated
 	QName ASSOC_RCL_SOURCES = QName.createQName(BeCPGModel.BECPG_URI, "rclSources");
@@ -885,6 +891,18 @@ public interface PLMModel {
 
 	/** Constant <code>TYPE_ING_REGULATORY_LIST</code> */
 	QName TYPE_ING_REGULATORY_LIST = QName.createQName(BeCPGModel.BECPG_URI, "ingRegulatoryList");
+	/** Constant <code>ASSOC_IRL_ING</code> */
+	QName ASSOC_IRL_ING = QName.createQName(BeCPGModel.BECPG_URI, "irlIng");
+	/** Constant <code>PROP_IRL_CITATION</code> */
+	QName PROP_IRL_CITATION = QName.createQName(BeCPGModel.BECPG_URI, "irlCitation");
+	/** Constant <code>PROP_IRL_RESTRICTION_LEVELS</code> */
+	QName PROP_IRL_RESTRICTION_LEVELS = QName.createQName(BeCPGModel.BECPG_URI, "irlRestrictionLevels");
+	/** Constant <code>PROP_IRL_PRECAUTIONS</code> */
+	QName PROP_IRL_PRECAUTIONS = QName.createQName(BeCPGModel.BECPG_URI, "irlPrecautions");
+	/** Constant <code>PROP_IRL_RESULT_INDICATOR</code> */
+	QName PROP_IRL_RESULT_INDICATOR = QName.createQName(BeCPGModel.BECPG_URI, "irlResultIndicator");
+	/** Constant <code>PROP_IRL_USAGES</code> */
+	QName PROP_IRL_USAGES = QName.createQName(BeCPGModel.BECPG_URI, "irlUsages");
 
 	//Chemical code
 	/** Constant <code>PROP_CAS_NUMBER</code> */
