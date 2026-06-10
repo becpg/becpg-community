@@ -19,7 +19,7 @@ import fr.becpg.repo.regulatory.RegulatoryResult;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
-import fr.becpg.repo.regulatory.plugins.DecernisRegulatoryPlugin;
+import fr.becpg.repo.regulatory.decernis.DecernisRegulatoryPlugin;
 
 /**
  * <p>ProductRegulatoryFormulationHandler class.</p>

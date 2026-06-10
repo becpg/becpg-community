@@ -1,4 +1,4 @@
-package fr.becpg.test.repo.decernis;
+package fr.becpg.test.repo.regulatory;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import fr.becpg.repo.regulatory.RegulatoryService;
+import fr.becpg.repo.regulatory.decernis.DecernisRegulatoryPlugin;
+import fr.becpg.repo.regulatory.decernis.DecernisRegulatoryService;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -30,11 +33,9 @@ import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
-import fr.becpg.repo.regulatory.RegulatoryService;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
-import fr.becpg.repo.regulatory.plugins.DecernisRegulatoryPlugin;
 import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 import fr.becpg.util.MutexFactory;
@@ -90,7 +91,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 	public void setUp() throws Exception {
 		
 		DecernisRegulatoryPlugin decernisRegulatoryPlugin = new DecernisRegulatoryPlugin(systemConfigurationService, nodeService, alfrescoRepository);
-		regulatoryService = new RegulatoryService(nodeService, List.of(decernisRegulatoryPlugin), alfrescoRepository, formulationService,
+		regulatoryService = new DecernisRegulatoryService(nodeService, List.of(decernisRegulatoryPlugin), alfrescoRepository, formulationService,
 				batchQueueService, systemConfigurationService, policyBehaviourFilter, entityActivityService, mutexFactory);
 		
 		mockWebServer = new MockWebServer();
@@ -242,8 +243,8 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 		NodeRef finishedProductNodeRef = createFinishedProduct("PF Decernis testProductUpdateFromList");
 		
 		inWriteTx(() -> {
-			systemConfigurationService.updateConfValue("beCPG.decernis.token", "TEST_TOKEN");
-			systemConfigurationService.updateConfValue("beCPG.decernis.ingredient.analysis.enabled", "false");
+			systemConfigurationService.updateConfValue("beCPG.regulatory.decernis.token", "TEST_TOKEN");
+			systemConfigurationService.updateConfValue("beCPG.regulatory.decernis.ingredient.analysis.enabled", "false");
 			return null;
 		});
 		
@@ -294,8 +295,8 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 			});
 		} finally {
 			inWriteTx(() -> {
-				systemConfigurationService.resetConfValue("beCPG.decernis.token");
-				systemConfigurationService.resetConfValue("beCPG.decernis.ingredient.analysis.enabled");
+				systemConfigurationService.resetConfValue("beCPG.regulatory.decernis.token");
+				systemConfigurationService.resetConfValue("beCPG.regulatory.decernis.ingredient.analysis.enabled");
 				return null;
 			});
 		}
@@ -305,11 +306,11 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 	public void testV5Analysis()  {
 		
 		inWriteTx(() -> {
-			systemConfigurationService.updateConfValue("beCPG.decernis.serverUrl", mockServerUrl);
-			systemConfigurationService.updateConfValue("beCPG.decernis.analysisUrl", mockAnalysisUrl);
-			systemConfigurationService.updateConfValue("beCPG.decernis.ingredient.analysis.enabled", "false");
-			mockWebAnalysis.enqueue(new MockResponse().setBody(readJsonResource("beCPG/decernis/functions.json")));
-			mockWebAnalysis.enqueue(new MockResponse().setBody(readJsonResource("beCPG/decernis/v5-analysis-response.json")));
+			systemConfigurationService.updateConfValue("beCPG.regulatory.decernis.serverUrl", mockServerUrl);
+			systemConfigurationService.updateConfValue("beCPG.regulatory.decernis.analysisUrl", mockAnalysisUrl);
+			systemConfigurationService.updateConfValue("beCPG.regulatory.decernis.ingredient.analysis.enabled", "false");
+			mockWebAnalysis.enqueue(new MockResponse().setBody(readJsonResource("beCPG/regulatory/decernis/functions.json")));
+			mockWebAnalysis.enqueue(new MockResponse().setBody(readJsonResource("beCPG/regulatory/decernis/v5-analysis-response.json")));
 			mockWebServer.enqueue(new MockResponse().setBody(""));
 			return null;
 		});
@@ -348,9 +349,9 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 			});
 		} finally {
 			inWriteTx(() -> {
-				systemConfigurationService.resetConfValue("beCPG.decernis.serverUrl");
-				systemConfigurationService.resetConfValue("beCPG.decernis.analysisUrl");
-				systemConfigurationService.resetConfValue("beCPG.decernis.ingredient.analysis.enabled");
+				systemConfigurationService.resetConfValue("beCPG.regulatory.decernis.serverUrl");
+				systemConfigurationService.resetConfValue("beCPG.regulatory.decernis.analysisUrl");
+				systemConfigurationService.resetConfValue("beCPG.regulatory.decernis.ingredient.analysis.enabled");
 				return null;
 			});
 		}
@@ -360,11 +361,11 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 	@Test
 	public void testV5AnalysisUsesIngTypes() throws Exception {
 		inWriteTx(() -> {
-			systemConfigurationService.updateConfValue("beCPG.decernis.serverUrl", mockServerUrl);
-			systemConfigurationService.updateConfValue("beCPG.decernis.analysisUrl", mockAnalysisUrl);
-			systemConfigurationService.updateConfValue("beCPG.decernis.ingredient.analysis.enabled", "false");
-			mockWebAnalysis.enqueue(new MockResponse().setBody(readJsonResource("beCPG/decernis/functions.json")));
-			mockWebAnalysis.enqueue(new MockResponse().setBody(readJsonResource("beCPG/decernis/v5-analysis-ing-types-response.json")));
+			systemConfigurationService.updateConfValue("beCPG.regulatory.decernis.serverUrl", mockServerUrl);
+			systemConfigurationService.updateConfValue("beCPG.regulatory.decernis.analysisUrl", mockAnalysisUrl);
+			systemConfigurationService.updateConfValue("beCPG.regulatory.decernis.ingredient.analysis.enabled", "false");
+			mockWebAnalysis.enqueue(new MockResponse().setBody(readJsonResource("beCPG/regulatory/decernis/functions.json")));
+			mockWebAnalysis.enqueue(new MockResponse().setBody(readJsonResource("beCPG/regulatory/decernis/v5-analysis-ing-types-response.json")));
 			mockWebServer.enqueue(new MockResponse().setBody(""));
 			return null;
 		});
@@ -433,9 +434,9 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 			assertEquals(1d, secondIngredient.getDouble("percentage"));
 		} finally {
 			inWriteTx(() -> {
-				systemConfigurationService.resetConfValue("beCPG.decernis.serverUrl");
-				systemConfigurationService.resetConfValue("beCPG.decernis.analysisUrl");
-				systemConfigurationService.resetConfValue("beCPG.decernis.ingredient.analysis.enabled");
+				systemConfigurationService.resetConfValue("beCPG.regulatory.decernis.serverUrl");
+				systemConfigurationService.resetConfValue("beCPG.regulatory.decernis.analysisUrl");
+				systemConfigurationService.resetConfValue("beCPG.regulatory.decernis.ingredient.analysis.enabled");
 				return null;
 			});
 		}
@@ -445,11 +446,11 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 	public void testV5DoubleFunction()  {
 		
 		inWriteTx(() -> {
-			systemConfigurationService.updateConfValue("beCPG.decernis.serverUrl", mockServerUrl);
-			systemConfigurationService.updateConfValue("beCPG.decernis.analysisUrl", mockAnalysisUrl);
-			systemConfigurationService.updateConfValue("beCPG.decernis.ingredient.analysis.enabled", "false");
-			mockWebAnalysis.enqueue(new MockResponse().setBody(readJsonResource("beCPG/decernis/functions.json")));
-			mockWebAnalysis.enqueue(new MockResponse().setBody(readJsonResource("beCPG/decernis/v5-double-function-response.json")));
+			systemConfigurationService.updateConfValue("beCPG.regulatory.decernis.serverUrl", mockServerUrl);
+			systemConfigurationService.updateConfValue("beCPG.regulatory.decernis.analysisUrl", mockAnalysisUrl);
+			systemConfigurationService.updateConfValue("beCPG.regulatory.decernis.ingredient.analysis.enabled", "false");
+			mockWebAnalysis.enqueue(new MockResponse().setBody(readJsonResource("beCPG/regulatory/decernis/functions.json")));
+			mockWebAnalysis.enqueue(new MockResponse().setBody(readJsonResource("beCPG/regulatory/decernis/v5-double-function-response.json")));
 			mockWebServer.enqueue(new MockResponse().setBody(""));
 			return null;
 		});
@@ -499,9 +500,9 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 			});
 		} finally {
 			inWriteTx(() -> {
-				systemConfigurationService.resetConfValue("beCPG.decernis.serverUrl");
-				systemConfigurationService.resetConfValue("beCPG.decernis.analysisUrl");
-				systemConfigurationService.resetConfValue("beCPG.decernis.ingredient.analysis.enabled");
+				systemConfigurationService.resetConfValue("beCPG.regulatory.decernis.serverUrl");
+				systemConfigurationService.resetConfValue("beCPG.regulatory.decernis.analysisUrl");
+				systemConfigurationService.resetConfValue("beCPG.regulatory.decernis.ingredient.analysis.enabled");
 				return null;
 			});
 		}

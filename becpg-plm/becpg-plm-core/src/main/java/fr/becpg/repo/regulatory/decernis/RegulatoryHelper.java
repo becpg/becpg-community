@@ -1,4 +1,4 @@
-package fr.becpg.repo.regulatory;
+package fr.becpg.repo.regulatory.decernis;
 
 import java.util.List;
 
