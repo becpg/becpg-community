@@ -690,7 +690,7 @@
 							b.doc->>"$.bcpg_code" as projectCode,
 							b.doc->>"$.metadata_siteId" as siteId,
 							b.doc->>"$.metadata_siteName" as siteName,
-							b.doc->>"$.pjt_projectEntity_bcpg_nodeRef[0]" as projectEntityNodeRef,
+							SUBSTRING_INDEX(b.doc->>"$.pjt_projectEntity_bcpg_nodeRef", '|', -1) as projectEntityNodeRef,
 							b.doc->>"$.bcpg_entityTplRef[0]" as entityTplRef
 						from
 							taskList a inner join pjt_project b on a.entityNodeRef = b.nodeRef 					
@@ -1002,7 +1002,7 @@
 						doc->>"$.pjt_projectOrigin" as projectOrigin,
 						doc->>"$.pjt_projectSponsor" as projectSponsor,
 						doc->>"$.bcpg_entityTplRef[0]" as entityTplRef,
-						doc->>"$.pjt_projectEntity_bcpg_nodeRef[0]" as projectEntityNodeRef,
+						SUBSTRING_INDEX(doc->>"$.pjt_projectEntity_bcpg_nodeRef", '|', -1) as projectEntityNodeRef,
 						DATEDIFF(CAST(doc->>"$.pjt_projectCompletionDate" as DATE),CAST(doc->>"$.pjt_projectStartDate" as DATE)) as duration
 					from
 						pjt_project
