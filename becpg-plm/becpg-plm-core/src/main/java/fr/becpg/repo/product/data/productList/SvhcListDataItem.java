@@ -17,11 +17,17 @@
  ******************************************************************************/
 package fr.becpg.repo.product.data.productList;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.regulatory.RegulatoryEntityItem;
+import fr.becpg.repo.regulatory.RequirementType;
+import fr.becpg.repo.repository.annotation.AlfMlText;
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -42,7 +48,7 @@ import fr.becpg.repo.repository.model.SimpleListDataItem;
  */
 @AlfType
 @AlfQname(qname = "bcpg:svhcList")
-public class SvhcListDataItem extends AbstractManualDataItem implements SimpleListDataItem, MinMaxValueDataItem, SimpleCharactDataItem, AspectAwareDataItem {
+public class SvhcListDataItem extends AbstractManualDataItem implements SimpleListDataItem, MinMaxValueDataItem, SimpleCharactDataItem, AspectAwareDataItem, RegulatoryEntityItem {
 
 	/** Constant <code>serialVersionUID=-2710240943326822672L</code> */
 	private static final long serialVersionUID = -2710240943326822672L;
@@ -51,6 +57,13 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 	private Double migrationPerc;
 	private NodeRef ing;
 	private List<String> reasonsForInclusion;
+	private Double mini;
+	private Double maxi;
+
+	private RequirementType regulatoryType;
+	private MLText regulatoryMessage;
+	private List<NodeRef> regulatoryCountriesRef = new ArrayList<>();
+	private List<NodeRef> regulatoryUsagesRef = new ArrayList<>();
 
 	/**
 	 * <p>Getter for the field <code>qtyPerc</code>.</p>
@@ -169,33 +182,34 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 
 	/** {@inheritDoc} */
 	@Override
+	@AlfProp
+	@AlfQname(qname = "bcpg:svhcListMini")
 	public Double getMini() {
-		return null;
+		return mini;
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public void setMini(Double value) {
-		//Do Nothing
+	public void setMini(Double mini) {
+		this.mini = mini;
 	}
 	
 
-	private Double maxQtyPerc = null;
-
 	/** {@inheritDoc} */
 	@Override
+	@AlfProp
+	@AlfQname(qname = "bcpg:svhcListMaxi")
 	public Double getMaxi() {
-		if(maxQtyPerc == null) {
-			maxQtyPerc = qtyPerc;
+		if(maxi == null) {
+			return qtyPerc;
 		}
-		return maxQtyPerc;
+		return maxi;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void setMaxi(Double maxi) {
-		this.maxQtyPerc = maxi;
-		
+		this.maxi = maxi;
 	}
 
 	/**
@@ -271,6 +285,79 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 	}
 
 	/**
+	 * <p>Getter for the field <code>regulatoryCountriesRef</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@Override
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:regulatoryCountries")
+	public List<NodeRef> getRegulatoryCountriesRef() {
+		return regulatoryCountriesRef;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void setRegulatoryCountriesRef(List<NodeRef> regulatoryCountries) {
+		this.regulatoryCountriesRef = regulatoryCountries;
+	}
+
+	/**
+	 * <p>Getter for the field <code>regulatoryUsagesRef</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@Override
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:regulatoryUsageRef")
+	public List<NodeRef> getRegulatoryUsagesRef() {
+		return regulatoryUsagesRef;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void setRegulatoryUsagesRef(List<NodeRef> regulatoryUsages) {
+		this.regulatoryUsagesRef = regulatoryUsages;
+	}
+
+	/**
+	 * <p>Getter for the field <code>regulatoryType</code>.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementType} object
+	 */
+	@Override
+	@AlfProp
+	@AlfQname(qname = "bcpg:regulatoryType")
+	public RequirementType getRegulatoryType() {
+		return regulatoryType;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void setRegulatoryType(RequirementType regulatoryType) {
+		this.regulatoryType = regulatoryType;
+	}
+
+	/**
+	 * <p>Getter for the field <code>regulatoryMessage</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
+	@Override
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname = "bcpg:regulatoryText")
+	public MLText getRegulatoryMessage() {
+		return regulatoryMessage;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void setRegulatoryMessage(MLText regulatoryMessage) {
+		this.regulatoryMessage = regulatoryMessage;
+	}
+
+	/**
 	 * Copy constructor
 	 *
 	 * @param i a {@link fr.becpg.repo.product.data.productList.SvhcListDataItem} object.
@@ -281,6 +368,16 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 		this.ing = i.ing;
 		this.reasonsForInclusion = i.reasonsForInclusion;
 		this.migrationPerc = i.migrationPerc;
+		this.regulatoryType = i.regulatoryType;
+		this.regulatoryMessage = i.regulatoryMessage;
+		this.mini = i.mini;
+		this.maxi = i.maxi;
+		if (i.regulatoryCountriesRef != null) {
+			this.regulatoryCountriesRef = new ArrayList<>(i.regulatoryCountriesRef);
+		}
+		if (i.regulatoryUsagesRef != null) {
+			this.regulatoryUsagesRef = new ArrayList<>(i.regulatoryUsagesRef);
+		}
 	}
 
 	/** {@inheritDoc} */
@@ -298,7 +395,7 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(ing, migrationPerc, qtyPerc, reasonsForInclusion);
+		result = prime * result + Objects.hash(ing, migrationPerc, qtyPerc, reasonsForInclusion, mini, maxi);
 		return result;
 	}
 
@@ -313,7 +410,7 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 			return false;
 		SvhcListDataItem other = (SvhcListDataItem) obj;
 		return Objects.equals(ing, other.ing) && Objects.equals(migrationPerc, other.migrationPerc) && Objects.equals(qtyPerc, other.qtyPerc)
-				&& Objects.equals(reasonsForInclusion, other.reasonsForInclusion);
+				&& Objects.equals(reasonsForInclusion, other.reasonsForInclusion) && Objects.equals(mini, other.mini) && Objects.equals(maxi, other.maxi);
 	}
 
 	/** {@inheritDoc} */

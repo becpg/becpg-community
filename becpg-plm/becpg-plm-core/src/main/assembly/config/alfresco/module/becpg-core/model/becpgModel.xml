@@ -3835,6 +3835,16 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:svhcListMini">
+                    <type>d:double</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="false" />
+                </property>
+                <property name="bcpg:svhcListMaxi">
+                    <type>d:double</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="false" />
+                </property>
 			</properties>
 			<associations>
 				<association name="bcpg:svhcListIng">

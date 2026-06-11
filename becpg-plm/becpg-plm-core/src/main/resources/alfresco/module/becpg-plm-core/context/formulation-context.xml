@@ -515,6 +515,10 @@
 					<property name="mlNodeService" ref="mlAwareNodeService" />
 					<property name="addInfoReqCtrl" value="${beCPG.formulation.specification.addInfoReqCtrl}" />
 				</bean>
+				<bean class="fr.becpg.repo.product.requirement.SvhcRequirementScanner">
+					<property name="mlNodeService" ref="mlAwareNodeService" />
+					<property name="addInfoReqCtrl" value="${beCPG.formulation.specification.addInfoReqCtrl}" />
+				</bean>
 			</list>
 		</property>
 	</bean>
