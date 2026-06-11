@@ -1650,6 +1650,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		dataLists.add(SurveyModel.TYPE_SURVEY_LIST);
 		dataLists.add(GHSModel.TYPE_HAZARD_CLASSIFICATION_LIST);
 		dataLists.add(ProjectModel.TYPE_SCORE_LIST);
+		dataLists.add(PLMModel.TYPE_SVHCLIST);
 		dataLists.add(BeCPGModel.TYPE_ACTIVITY_LIST);
 		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, PLMModel.TYPE_PRODUCT_SPECIFICATION, null, true, true, dataLists,
 				null);
