@@ -3,6 +3,7 @@ package fr.becpg.repo.product.requirement;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.MLText;
@@ -35,6 +36,71 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 	private static Log logger = LogFactory.getLog(SimpleListRequirementScanner.class);
 
 
+	private boolean isCharactAllowed(T specDataItem, T listDataItem) {
+		if ((specDataItem.getValue() != null) && !specDataItem.getValue().equals(getValue(specDataItem, listDataItem))) {
+			return false;
+		}
+
+		Double specMini = getMini(specDataItem, listDataItem);
+		Double specMaxi = getMaxi(specDataItem, listDataItem);
+		Double value = getValue(specDataItem, listDataItem);
+
+		if (specMini != null && ((value == null && !isNullValueAllowed())
+				|| (value != null && value < specMini))) {
+			return false;
+		}
+
+		if (specMaxi != null && ((value == null && !isNullValueAllowed())
+				|| (value != null && value > specMaxi))) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private Double calculateMaxQty(T specDataItem, T listDataItem) {
+		Double specMaxi = getMaxi(specDataItem, listDataItem);
+		Double value = getValue(specDataItem, listDataItem);
+		if (specMaxi != null && value != null && value != 0) {
+			return (specMaxi / value) * 100d;
+		}
+		return null;
+	}
+
+	private RequirementListDataItem buildRequirementControl(T specDataItem, T listDataItem, ProductSpecificationData specification, boolean isCharactAllowed) {
+		Double specMini = getMini(specDataItem, listDataItem);
+		Double specMaxi = getMaxi(specDataItem, listDataItem);
+		Double reqCtrlMaxQty = isCharactAllowed ? null : calculateMaxQty(specDataItem, listDataItem);
+
+		String keyMessage = isCharactAllowed ? getSpecInfoMessageKey(specDataItem) : getSpecErrorMessageKey(specDataItem);
+		MLText message = getScannerMessage(specDataItem, listDataItem, keyMessage, specMini, specMaxi);
+
+		String regulatoryId = null;
+		RequirementType reqType = isCharactAllowed ? RequirementType.Info : RequirementType.Forbidden;
+
+		if (specDataItem instanceof RegulatoryEntityItem regulatoryEntityItem) {
+			regulatoryId = extractRegulatoryId(regulatoryEntityItem, specification);
+			if (!isCharactAllowed && (regulatoryEntityItem.getRegulatoryType() != null)) {
+				reqType = regulatoryEntityItem.getRegulatoryType();
+			}
+			if ((regulatoryEntityItem.getRegulatoryMessage() != null)
+					&& !MLTextHelper.isEmpty(regulatoryEntityItem.getRegulatoryMessage())) {
+				message = regulatoryEntityItem.getRegulatoryMessage();
+			}
+		}
+
+		if ((regulatoryId == null) || regulatoryId.isBlank()) {
+			if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
+				regulatoryId = specification.getRegulatoryCode();
+			} else {
+				regulatoryId = specification.getName();
+			}
+		}
+
+		return RequirementListDataItem.build().ofType(reqType).withMessage(message).withCharact(listDataItem.getCharactNodeRef())
+				.ofDataType(RequirementDataType.Specification).withReqMaxQty(reqCtrlMaxQty).withRegulatoryCode(regulatoryId);
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public List<RequirementListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
@@ -44,92 +110,140 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 
 		if ((dataListVisited != null) && !dataListVisited.isEmpty()) {
 
-			for (Map.Entry<ProductSpecificationData, List<T>> entry : extractRequirements(specifications).entrySet()) {
-				List<T> requirements = entry.getValue();
-				ProductSpecificationData specification = entry.getKey();
+			Map<ProductSpecificationData, List<T>> requirementsMap = extractRequirements(specifications);
+			boolean checkAuthorized = isAuthorizedModeSupported() && shouldCheckAuthorized(formulatedProduct, requirementsMap);
 
-				requirements.forEach(specDataItem -> {
-					// Check regulatory usage and country filtering first
-					if (checkRegulatoryUsageMatch(specDataItem, formulatedProduct)) {
-						dataListVisited.forEach(listDataItem -> {
-							if ((specDataItem instanceof MinMaxValueDataItem minMaxSpecValueDataItem)
-									&& specDataItem.getCharactNodeRef().equals(listDataItem.getCharactNodeRef())) {
-								boolean isCharactAllowed = true;
-								if ((specDataItem.getValue() != null) && !specDataItem.getValue().equals(getValue(specDataItem, listDataItem))) {
-									isCharactAllowed = false;
+			if (checkAuthorized) {
+				for (T listDataItem : dataListVisited) {
+					if (listDataItem.getCharactNodeRef() == null) {
+						continue;
+					}
+
+					boolean authorized = false;
+					for (Map.Entry<ProductSpecificationData, List<T>> entry : requirementsMap.entrySet()) {
+						List<T> requirements = entry.getValue();
+						ProductSpecificationData specification = entry.getKey();
+
+						for (T specDataItem : requirements) {
+							if ((specDataItem instanceof RegulatoryEntityItem regulatoryEntityItem)
+									&& RequirementType.Authorized.equals(regulatoryEntityItem.getRegulatoryType())
+									&& listDataItem.getCharactNodeRef().equals(specDataItem.getCharactNodeRef())
+									&& checkRegulatoryUsageMatch(specDataItem, formulatedProduct)) {
+								
+								authorized = true;
+								boolean isAllowed = isCharactAllowed(specDataItem, listDataItem);
+
+								if (!isAllowed || Boolean.TRUE.equals(addInfoReqCtrl)) {
+									ret.add(buildRequirementControl(specDataItem, listDataItem, specification, isAllowed));
 								}
+								break;
+							}
+						}
+						if (authorized) {
+							break;
+						}
+					}
 
-								Double specMini = getMini(specDataItem, listDataItem);
-								Double specMaxi = getMaxi(specDataItem, listDataItem);
+					if (!authorized) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Characteristic not authorized: " + listDataItem.getCharactNodeRef());
+						}
+						MLText message = getNotAuthorizedMessage(listDataItem);
+						ret.add(RequirementListDataItem.build()
+								.ofType(RequirementType.Forbidden)
+								.withMessage(message)
+								.withCharact(listDataItem.getCharactNodeRef())
+								.ofDataType(RequirementDataType.Specification)
+								.withRegulatoryCode(extractRegulatoryId(null, specifications.get(0))));
+					}
+				}
+			} else {
+				for (Map.Entry<ProductSpecificationData, List<T>> entry : requirementsMap.entrySet()) {
+					List<T> requirements = entry.getValue();
+					ProductSpecificationData specification = entry.getKey();
 
-								if (specMini != null) {
-									if ((getValue(specDataItem, listDataItem) == null)
-											|| (getValue(specDataItem, listDataItem) < specMini)) {
-										isCharactAllowed = false;
+					for (T specDataItem : requirements) {
+						// Check regulatory usage and country filtering first
+						if (checkRegulatoryUsageMatch(specDataItem, formulatedProduct)) {
+							for (T listDataItem : dataListVisited) {
+								if ((specDataItem instanceof MinMaxValueDataItem)
+										&& specDataItem.getCharactNodeRef().equals(listDataItem.getCharactNodeRef())) {
+									
+									boolean isAllowed = isCharactAllowed(specDataItem, listDataItem);
+
+									if (!isAllowed || Boolean.TRUE.equals(addInfoReqCtrl)) {
+										ret.add(buildRequirementControl(specDataItem, listDataItem, specification, isAllowed));
 									}
-								}
-
-								Double reqCtrlMaxQty = null;
-
-								if (specMaxi != null) {
-									if ((getValue(specDataItem, listDataItem) == null)
-											|| (getValue(specDataItem, listDataItem) > specMaxi)) {
-										isCharactAllowed = false;
-										if ((getValue(specDataItem, listDataItem) != null) && (getValue(specDataItem, listDataItem) != 0)) {
-											reqCtrlMaxQty = (specMaxi / getValue(specDataItem, listDataItem)) * 100d;
-										}
-									}
-								}
-
-								if (!isCharactAllowed || Boolean.TRUE.equals(addInfoReqCtrl)) {
-
-									String keyMessage = isCharactAllowed ? getSpecInfoMessageKey(specDataItem) : getSpecErrorMessageKey(specDataItem);
-
-									MLText message = MLTextHelper
-											.getI18NMessage(keyMessage,
-													mlNodeService.getProperty(listDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME),
-													(getValue(specDataItem, listDataItem) != null ? getValue(specDataItem, listDataItem)
-															: MLTextHelper.getI18NMessage(MESSAGE_UNDEFINED_VALUE)),
-													MLTextHelper.createMLTextI18N(l -> (specMini != null
-															? NumberFormat.getInstance(l).format(specMini) + "<= "
-															: "")), MLTextHelper.createMLTextI18N(l -> (specMaxi != null
-															? " <=" + NumberFormat.getInstance(l).format(specMaxi)
-															: "")));
-
-									String regulatoryId = null;
-
-									RequirementType reqType = isCharactAllowed ? RequirementType.Info : RequirementType.Forbidden;
-
-									if (minMaxSpecValueDataItem instanceof RegulatoryEntityItem regulatoryEntityItem) {
-										regulatoryId = extractRegulatoryId(regulatoryEntityItem, specification);
-										if (!isCharactAllowed && (regulatoryEntityItem.getRegulatoryType() != null)) {
-											reqType = regulatoryEntityItem.getRegulatoryType();
-										}
-										if ((regulatoryEntityItem.getRegulatoryMessage() != null)
-												&& !MLTextHelper.isEmpty(regulatoryEntityItem.getRegulatoryMessage())) {
-											message = regulatoryEntityItem.getRegulatoryMessage();
-										}
-									}
-
-									if ((regulatoryId == null) || regulatoryId.isBlank()) {
-										if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
-											regulatoryId = specification.getRegulatoryCode();
-										} else {
-											regulatoryId = specification.getName();
-										}
-									}
-
-									ret.add(RequirementListDataItem.build().ofType(reqType).withMessage(message).withCharact(listDataItem.getCharactNodeRef())
-											.ofDataType(RequirementDataType.Specification).withReqMaxQty(reqCtrlMaxQty).withRegulatoryCode(regulatoryId));
 								}
 							}
-						});
+						}
 					}
-				});
+				}
 			}
 		}
 
 		return ret;
+	}
+
+	private boolean shouldCheckAuthorized(ProductData formulatedProduct, Map<ProductSpecificationData, List<T>> requirementsMap) {
+		for (Map.Entry<ProductSpecificationData, List<T>> entry : requirementsMap.entrySet()) {
+			List<T> requirements = entry.getValue();
+			for (T specDataItem : requirements) {
+				if (checkRegulatoryUsageMatch(specDataItem, formulatedProduct)
+						&& (specDataItem instanceof RegulatoryEntityItem regulatoryEntityItem)
+						&& RequirementType.Authorized.equals(regulatoryEntityItem.getRegulatoryType())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	protected boolean isAuthorizedModeSupported() {
+		return false;
+	}
+
+	protected boolean isNullValueAllowed() {
+		return false;
+	}
+
+	protected MLText getNotAuthorizedMessage(T listDataItem) {
+		return MLTextHelper.getI18NMessage(
+				"message.formulate.notAuthorized",
+				mlNodeService.getProperty(listDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
+		);
+	}
+
+	protected Object getDisplayedValue(Double value, Locale locale) {
+		return value != null ? NumberFormat.getInstance(locale).format(value) : "";
+	}
+
+	protected Object getFormattedValue(T specDataItem, T listDataItem) {
+		Double val = getValue(specDataItem, listDataItem);
+		if (val == null) {
+			return MLTextHelper.getI18NMessage(MESSAGE_UNDEFINED_VALUE);
+		}
+		return MLTextHelper.createMLTextI18N(l -> String.valueOf(getDisplayedValue(val, l)));
+	}
+
+	protected Object getFormattedMini(Double specMini) {
+		return MLTextHelper.createMLTextI18N(l -> (specMini != null
+				? getDisplayedValue(specMini, l) + "<= "
+				: ""));
+	}
+
+	protected Object getFormattedMaxi(Double specMaxi) {
+		return MLTextHelper.createMLTextI18N(l -> (specMaxi != null
+				? " <=" + getDisplayedValue(specMaxi, l)
+				: ""));
+	}
+
+	protected MLText getScannerMessage(T specDataItem, T listDataItem, String keyMessage, Double specMini, Double specMaxi) {
+		return MLTextHelper.getI18NMessage(keyMessage,
+				mlNodeService.getProperty(listDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME),
+				getFormattedValue(specDataItem, listDataItem),
+				getFormattedMini(specMini),
+				getFormattedMaxi(specMaxi));
 	}
 
 	/**
