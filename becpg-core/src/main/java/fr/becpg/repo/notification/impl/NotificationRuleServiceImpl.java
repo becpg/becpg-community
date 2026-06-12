@@ -22,6 +22,7 @@ import org.alfresco.service.cmr.download.DownloadService;
 import org.alfresco.service.cmr.download.DownloadStatus;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.ScriptService;
@@ -382,9 +383,14 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		}
 
 		nodeService.setProperty(exportNode, ContentModel.PROP_NAME, name);
-		fileFolderService.getWriter(exportNode).putContent(fileFolderService.getReader(downloadNode));
+		ContentReader reader = fileFolderService.getReader(downloadNode);
+		if (reader != null) {
+			fileFolderService.getWriter(exportNode).putContent(reader);
+			return exportNode;
+		}
+		
+		return null;
 
-		return exportNode;
 	}
 
 	private void executeScriptIfExists(NotificationRuleListDataItem notification, List<NodeRef> items, Map<String, Object> templateArgs) {
