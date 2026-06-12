@@ -69,10 +69,14 @@
 				
 				// Get the target element for positioning
 				var targetEl = null;
-				if (event && event.target) {
-					targetEl = event.target;
-					while (targetEl && !Dom.hasClass(targetEl, "ai-suggestion-action")) {
-						targetEl = targetEl.parentNode;
+				if (event) {
+					if (event.nodeType) {
+						targetEl = event;
+					} else if (event.target) {
+						targetEl = event.target;
+						while (targetEl && !Dom.hasClass(targetEl, "ai-suggestion-action")) {
+							targetEl = targetEl.parentNode;
+						}
 					}
 				}
 				

@@ -1,6 +1,5 @@
 <@markup id="css" >
    <#include "../../modules/entity-datagrid/include/entity-datagrid.css.ftl"/>
-   <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/entity-suggestions/entity-suggestions.css" group="entity-datalists" />
    <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/entity-data-lists/product-notifications.css" group="entity-datalists" />
    <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/entity-charact-views/survey-view.css" />
 </@>
