@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-import fr.becpg.repo.regulatory.RegulatoryPlugin;
+import fr.becpg.repo.regulatory.*;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -43,9 +43,6 @@ import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
-import fr.becpg.repo.regulatory.RequirementDataType;
-import fr.becpg.repo.regulatory.RequirementListDataItem;
-import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.system.SystemConfigurationService;
@@ -1279,7 +1276,7 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 											}
 
 										} else if (tabularReport.getString(RESULT_INDICATOR).toLowerCase().startsWith("not listed")) {
-											MLText reqMessage = MLTextHelper.getI18NMessage(RegulatoryPlugin.MESSAGE_NOTLISTED_ING);
+											MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING);
 											RequirementListDataItem reqCtrlItem = createReqCtrl(ingItem.getNodeRef(), reqMessage,
 													RequirementType.Tolerated);
 											reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
@@ -1346,6 +1343,25 @@ public class DecernisRegulatoryPlugin implements RegulatoryPlugin {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * <p>createReqCtrl.</p>
+	 *
+	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param reqCtrlMessage a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @param reqType a {@link fr.becpg.repo.regulatory.RequirementType} object
+	 * @return a {@link fr.becpg.repo.regulatory.RequirementListDataItem} object
+	 */
+	protected RequirementListDataItem createReqCtrl(NodeRef ing, MLText reqCtrlMessage, RequirementType reqType) {
+		RequirementListDataItem reqCtrlItem = new RequirementListDataItem();
+		reqCtrlItem.setReqType(reqType);
+		reqCtrlItem.setCharact(ing);
+		reqCtrlItem.addSource(ing);
+		reqCtrlItem.setReqDataType(RequirementDataType.Specification);
+		reqCtrlItem.setReqMlMessage(reqCtrlMessage);
+		reqCtrlItem.setFormulationChainId(DecernisRegulatoryService.REGULATORY_KEY);
+		return reqCtrlItem;
 	}
 
 	/**

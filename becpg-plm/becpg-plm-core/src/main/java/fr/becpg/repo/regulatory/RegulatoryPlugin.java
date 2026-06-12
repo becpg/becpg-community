@@ -4,8 +4,6 @@ import java.util.List;
 
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.regulatory.decernis.*;
-import org.alfresco.service.cmr.repository.MLText;
-import org.alfresco.service.cmr.repository.NodeRef;
 
 /**
  * <p>RegulatoryPlugin interface.</p>
@@ -13,9 +11,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
  * @author Valentin
  */
 public interface RegulatoryPlugin {
-
-	/** Constant <code>MESSAGE_NOTLISTED_ING="message.decernis.ingredient.notListed"</code> */
-	String MESSAGE_NOTLISTED_ING = "message.decernis.ingredient.notListed";
 
 	/**
 	 * <p>checkRecipe.</p>
@@ -66,22 +61,4 @@ public interface RegulatoryPlugin {
 	 */
 	Integer getBatchThreads();
 
-	/**
-	 * <p>createReqCtrl.</p>
-	 *
-	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @param reqCtrlMessage a {@link org.alfresco.service.cmr.repository.MLText} object
-	 * @param reqType a {@link fr.becpg.repo.regulatory.RequirementType} object
-	 * @return a {@link fr.becpg.repo.regulatory.RequirementListDataItem} object
-	 */
-	default RequirementListDataItem createReqCtrl(NodeRef ing, MLText reqCtrlMessage, RequirementType reqType) {
-		RequirementListDataItem reqCtrlItem = new RequirementListDataItem();
-		reqCtrlItem.setReqType(reqType);
-		reqCtrlItem.setCharact(ing);
-		reqCtrlItem.addSource(ing);
-		reqCtrlItem.setReqDataType(RequirementDataType.Specification);
-		reqCtrlItem.setReqMlMessage(reqCtrlMessage);
-		reqCtrlItem.setFormulationChainId(DecernisRegulatoryService.REGULATORY_KEY);
-		return reqCtrlItem;
-	}
 }
