@@ -12,6 +12,7 @@ import fr.becpg.repo.regulatory.RegulatoryResult;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.becpg.regulatory.BecpgRegulatoryPlugin;
 import fr.becpg.repo.regulatory.becpg.regulatory.BecpgRegulatoryService;
+import fr.becpg.repo.regulatory.becpg.regulatory.ProductDataJSONService;
 import fr.becpg.repo.sample.StandardBodyMilkTestProduct;
 import fr.becpg.repo.sample.StandardSoapTestProduct;
 import fr.becpg.repo.system.SystemConfigurationService;
@@ -45,6 +46,9 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
     @Autowired
     RemoteEntityService remoteEntityService;
 
+    @Autowired
+    ProductDataJSONService productDataJSONService;
+
     private BecpgRegulatoryService regulatoryService;
 
 
@@ -56,7 +60,7 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
     @Override
     public void setUp() throws Exception {
 
-        BecpgRegulatoryPlugin becpgRegulatoryPlugin = new BecpgRegulatoryPlugin(systemConfigurationService, alfrescoRepository, remoteEntityService, nodeService);
+        BecpgRegulatoryPlugin becpgRegulatoryPlugin = new BecpgRegulatoryPlugin(systemConfigurationService, remoteEntityService, productDataJSONService);
         regulatoryService = new BecpgRegulatoryService(nodeService, List.of(becpgRegulatoryPlugin), alfrescoRepository, formulationService,
                 batchQueueService, policyBehaviourFilter, entityActivityService, mutexFactory);
 
