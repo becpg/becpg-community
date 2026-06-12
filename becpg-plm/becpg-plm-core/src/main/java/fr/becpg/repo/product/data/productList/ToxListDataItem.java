@@ -5,6 +5,7 @@ package fr.becpg.repo.product.data.productList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -19,10 +20,9 @@ import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
-import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.CopiableDataItem;
 import fr.becpg.repo.repository.model.MinMaxValueDataItem;
-import fr.becpg.repo.repository.model.SimpleCharactDataItem;
+import fr.becpg.repo.repository.model.SimpleListDataItem;
 
 /**
  * <p>ToxListDataItem class.</p>
@@ -31,7 +31,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  */
 @AlfType
 @AlfQname(qname = "bcpg:toxList")
-public class ToxListDataItem extends AbstractManualDataItem implements SimpleCharactDataItem, AspectAwareDataItem, RegulatoryEntityItem, MinMaxValueDataItem {
+public class ToxListDataItem extends AbstractManualDataItem implements SimpleListDataItem, RegulatoryEntityItem, MinMaxValueDataItem {
 
 	/** Constant <code>serialVersionUID=8297326459126736070L</code> */
 	private static final long serialVersionUID = 8297326459126736070L;
@@ -246,4 +246,30 @@ public class ToxListDataItem extends AbstractManualDataItem implements SimpleCha
 		return getTox();
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ Objects.hash(maxi, mini, regulatoryCountriesRef, regulatoryMessage, regulatoryType, regulatoryUsagesRef, tox, value);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ToxListDataItem other = (ToxListDataItem) obj;
+		return Objects.equals(maxi, other.maxi) && Objects.equals(mini, other.mini)
+				&& Objects.equals(regulatoryCountriesRef, other.regulatoryCountriesRef) && Objects.equals(regulatoryMessage, other.regulatoryMessage)
+				&& regulatoryType == other.regulatoryType && Objects.equals(regulatoryUsagesRef, other.regulatoryUsagesRef)
+				&& Objects.equals(tox, other.tox) && Objects.equals(value, other.value);
+	}
+	
 }

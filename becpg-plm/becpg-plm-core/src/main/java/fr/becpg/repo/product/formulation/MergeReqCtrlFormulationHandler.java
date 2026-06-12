@@ -195,6 +195,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 						.withSources((addChildRclSources() == null || Boolean.TRUE.equals(addChildRclSources())) ? tmp.getSources() : new ArrayList<>())
 						.ofDataType(tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutrient)
 						.withRegulatoryCode(tmp.getRegulatoryCode());
+				reqCtl.addSource(componentProductData.getNodeRef());
 				toAdd.add(reqCtl);
 			}
 		}
