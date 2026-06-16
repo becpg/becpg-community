@@ -166,6 +166,11 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 	}
 
 	@Override
+	protected String getToken() {
+		return DecernisHelper.getToken().trim();
+	}
+
+	@Override
 	protected RegulatoryContext createContext(ProductData product) {
 		RegulatoryContext context = new RegulatoryContext();
 		if (product.getIngList() != null) {
@@ -309,7 +314,7 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 			logger.error("Error during Decernis ingredients analysis: " + DecernisHelper.cleanError(e.getMessage()), e);
 			RequirementListDataItem req = RequirementListDataItem.forbidden()
 					.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e))).ofDataType(RequirementDataType.Formulation)
-					.withFormulationChainId(DecernisRegulatoryService.REGULATORY_KEY);
+					.withFormulationChainId(REGULATORY_KEY);
 			context.getRequirements().add(req);
 		}
 		if (ingredientAnalysisResults != null) {
@@ -364,7 +369,7 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 					for (String usage : regulatoryBatch.usageBatches().usages()) {
 						RequirementListDataItem req = RequirementListDataItem.forbidden()
 								.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e)))
-								.ofDataType(RequirementDataType.Formulation).withFormulationChainId(DecernisRegulatoryService.REGULATORY_KEY)
+								.ofDataType(RequirementDataType.Formulation).withFormulationChainId(REGULATORY_KEY)
 								.withRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
 
 						context.getRequirements().add(req);
@@ -523,7 +528,7 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 			logger.error(generateError(e), e);
 			RequirementListDataItem req = RequirementListDataItem.forbidden()
 					.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e))).ofDataType(RequirementDataType.Specification)
-					.withFormulationChainId(DecernisRegulatoryService.REGULATORY_KEY);
+					.withFormulationChainId(REGULATORY_KEY);
 			context.getRequirements().add(req);
 		}
 	}
@@ -721,13 +726,13 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 		}
 
 		if (logger.isTraceEnabled()) {
-			logger.trace("GET url: " + url + " params: " + params);
+			logger.trace(GET_URL + url + " params: " + params);
 		}
 
 		ResponseEntity<String> response = RestTemplateHelper.getRestTemplateLongTimeout()
 				.exchange(url, HttpMethod.GET, createEntity(null), String.class, params);
 
-		if ((response != null) && HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
+		if (HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
 			ingredientId = productDataDecernisJsonService.parseIngredients(ingListDataItem, response, ingName, params, ingredientId);
 		}
 		return ingredientId;
@@ -838,10 +843,12 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 		String url = analysisUrl + "/scope/function?topic=" + moduleCode;
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.setBearerAuth(DecernisHelper.getToken().trim());
+		String token = getToken();
+		if (token != null && !token.isBlank())
+			headers.setBearerAuth(token);
 
 		traceGetRequest(url);
-		ResponseEntity<String> response = RestTemplateHelper.getRestTemplateLongTimeout().exchange(url, HttpMethod.GET, createEntity(null),
+		ResponseEntity<String> response = RestTemplateHelper.getRestTemplateLongTimeout().exchange(url, HttpMethod.GET, new HttpEntity<>(headers),
 				String.class, new HashMap<>());
 
 		if (HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {

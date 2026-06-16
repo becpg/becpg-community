@@ -72,6 +72,12 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
     }
 
     @Override
+    protected String getToken() {
+        String token = systemConfigurationService.confValue("beCPG.regulatory.token");
+        return token != null ? token.trim() : null;
+    }
+
+    @Override
     protected void checkComplianceAsync(RegulatoryContext context, ComplianceResult status) {
         NodeRef entityNodeRef = context.getProduct().getNodeRef();
         String entityDescription = nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE) + " - " + context.getProduct().getName();

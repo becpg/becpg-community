@@ -15,7 +15,6 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
-import fr.becpg.repo.regulatory.decernis.DecernisHelper;
 import fr.becpg.repo.regulatory.decernis.RegulatoryBatch;
 import fr.becpg.repo.regulatory.decernis.RegulatoryContext;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -179,6 +178,8 @@ public abstract class AbstractRegulatoryService {
     protected abstract void checkComplianceAsync(RegulatoryContext context, ComplianceResult status);
 
     protected abstract boolean isEnabled();
+
+    protected abstract String getToken();
 
     protected void finalizeRecipeCheck(RegulatoryContext context, ProductData productData) {
         if (productData.getReqCtrlList() == null) {
@@ -502,9 +503,10 @@ public abstract class AbstractRegulatoryService {
     protected HttpEntity<String> createEntity(String body) {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        headers.setBearerAuth(DecernisHelper.getToken().trim());
         headers.setContentType(MediaType.APPLICATION_JSON);
-
+        String token = getToken();
+        if (token != null && !token.isBlank())
+            headers.setBearerAuth(token);
         return new HttpEntity<>(body, headers);
     }
 }
