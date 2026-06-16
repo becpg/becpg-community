@@ -8,11 +8,11 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
+import fr.becpg.repo.regulatory.ComplianceResult;
 import fr.becpg.repo.regulatory.RegulatoryResult;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
-import fr.becpg.repo.regulatory.becpg.regulatory.BecpgRegulatoryPlugin;
 import fr.becpg.repo.regulatory.becpg.regulatory.BecpgRegulatoryService;
-import fr.becpg.repo.regulatory.becpg.regulatory.ProductDataJSONService;
+import fr.becpg.repo.regulatory.becpg.regulatory.ProductDataEntityJsonService;
 import fr.becpg.repo.sample.StandardBodyMilkTestProduct;
 import fr.becpg.repo.sample.StandardSoapTestProduct;
 import fr.becpg.repo.system.SystemConfigurationService;
@@ -47,7 +47,7 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
     RemoteEntityService remoteEntityService;
 
     @Autowired
-    ProductDataJSONService productDataJSONService;
+    ProductDataEntityJsonService productDataEntityJsonService;
 
     private BecpgRegulatoryService regulatoryService;
 
@@ -60,9 +60,18 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
     @Override
     public void setUp() throws Exception {
 
-        BecpgRegulatoryPlugin becpgRegulatoryPlugin = new BecpgRegulatoryPlugin(systemConfigurationService, remoteEntityService, productDataJSONService);
-        regulatoryService = new BecpgRegulatoryService(nodeService, List.of(becpgRegulatoryPlugin), alfrescoRepository, formulationService,
-                batchQueueService, policyBehaviourFilter, entityActivityService, mutexFactory);
+        regulatoryService = new BecpgRegulatoryService(
+                nodeService,
+                alfrescoRepository,
+                formulationService,
+                batchQueueService,
+                policyBehaviourFilter,
+                entityActivityService,
+                mutexFactory,
+                systemConfigurationService,
+                productDataEntityJsonService,
+                remoteEntityService
+        );
 
         super.setUp();
         initParts();
@@ -89,7 +98,8 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
         NodeRef finishedProductNodeRef = createTestFinishedProduct();
 
         inWriteTx(() -> {
-            return regulatoryService.checkCompliance(finishedProductNodeRef, false);
+            ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+            return regulatoryService.doCheck(false, new ComplianceResult(), product);
         });
 
         inWriteTx(() -> {
@@ -124,8 +134,8 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
         });
 
         inWriteTx(() -> {
-            return regulatoryService.checkCompliance(finishedProductNodeRef, false);
-        });
+            ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+            return regulatoryService.doCheck(false, new ComplianceResult(), product);        });
 
         inWriteTx(() -> {
             ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);

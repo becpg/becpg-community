@@ -923,9 +923,10 @@
 		<constraint name="bcpg:regulatoryModes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
-					<value>BECPG_ONLY</value>
+					<value>REGULATORY</value>
+					<value>DECERNIS_BECPG_ONLY</value>
 					<value>DECERNIS_ONLY</value>
-					<value>BOTH</value>
+					<value>DECERNIS_BOTH</value>
 					<value>DISABLED</value>
 				</list>
 			</parameter>
@@ -6707,7 +6708,7 @@
 			<properties>
 				<property name="bcpg:regulatoryMode">
 					<type>d:text</type>
-					<default>BECPG_ONLY</default>
+					<default>DECERNIS_BECPG_ONLY</default>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>true</facetable>
