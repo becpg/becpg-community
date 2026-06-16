@@ -5,7 +5,9 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.activity.EntityActivityService;
-import fr.becpg.repo.batch.*;
+import fr.becpg.repo.batch.BatchQueueService;
+import fr.becpg.repo.batch.BatchStep;
+import fr.becpg.repo.batch.BatchStepAdapter;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
@@ -18,7 +20,6 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.regulatory.*;
-import fr.becpg.repo.regulatory.ComplianceResult.Status;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.system.SystemConfigurationService;
@@ -26,7 +27,6 @@ import fr.becpg.util.MutexFactory;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.policy.BehaviourFilter;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -172,11 +172,7 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 
 	@Override
 	protected RegulatoryContext createContext(ProductData product) {
-		RegulatoryContext context = new RegulatoryContext();
-		if (product.getIngList() != null) {
-			context.getIngList().addAll(product.getIngList().stream().filter(this::isIngItemValid).toList());
-		}
-		context.setProduct(product);
+		RegulatoryContext context = super.createContext(product);
 		List<RegulatoryBatch> regulatoryBatches = new ArrayList<>();
 		regulatoryBatches.addAll(createRegulatoryBatches(context, product));
 		for (RegulatoryListDataItem regulatoryListItem : product.getRegulatoryList()) {
@@ -311,9 +307,10 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 		try {
 			ingredientAnalysisResults = ingredientAnalysis(context, checkContext);
 		} catch (RestClientException e) {
-			logger.error("Error during Decernis ingredients analysis: " + DecernisHelper.cleanError(e.getMessage()), e);
+			logger.error("Error during Decernis ingredients analysis: " + cleanError(e.getMessage()), e);
 			RequirementListDataItem req = RequirementListDataItem.forbidden()
-					.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e))).ofDataType(RequirementDataType.Formulation)
+					.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e)))
+					.ofDataType(RequirementDataType.Formulation)
 					.withFormulationChainId(REGULATORY_KEY);
 			context.getRequirements().add(req);
 		}
@@ -341,7 +338,7 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 				if (retries <= 0) {
 					throw e;
 				}
-				logger.error("Error during Decernis ingredient analysis: " + DecernisHelper.cleanError(e.getMessage())
+				logger.error("Error during Decernis ingredient analysis: " + cleanError(e.getMessage())
 						+ ", try restarting request...");
 				ingredientAnalysisResults = null;
 			}
@@ -364,12 +361,13 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 			try {
 				recipeAnalysisResults = recipeAnalysis(context, regulatoryBatch);
 			} catch (RestClientException e) {
-				logger.error("Error during Decernis recipe analysis: " + DecernisHelper.cleanError(e.getMessage()), e);
+				logger.error("Error during Decernis recipe analysis: " + cleanError(e.getMessage()), e);
 				for (String country : regulatoryBatch.countryBatches().countries()) {
 					for (String usage : regulatoryBatch.usageBatches().usages()) {
 						RequirementListDataItem req = RequirementListDataItem.forbidden()
 								.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e)))
-								.ofDataType(RequirementDataType.Formulation).withFormulationChainId(REGULATORY_KEY)
+								.ofDataType(RequirementDataType.Formulation)
+								.withFormulationChainId(REGULATORY_KEY)
 								.withRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
 
 						context.getRequirements().add(req);
@@ -439,7 +437,7 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 				if (retries <= 0) {
 					throw e;
 				}
-				logger.error("Error during Decernis recipe analysis: " + DecernisHelper.cleanError(e.getMessage())
+				logger.error("Error during Decernis recipe analysis: " + cleanError(e.getMessage())
 						+ ", try restarting request...");
 				recipeAnalysisResults = null;
 			}
@@ -527,7 +525,8 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 		} catch (RestClientException e) {
 			logger.error(generateError(e), e);
 			RequirementListDataItem req = RequirementListDataItem.forbidden()
-					.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e))).ofDataType(RequirementDataType.Specification)
+					.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e)))
+					.ofDataType(RequirementDataType.Specification)
 					.withFormulationChainId(REGULATORY_KEY);
 			context.getRequirements().add(req);
 		}
@@ -558,7 +557,7 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 						logger.warn("Cannot retrieve ingredient " + ingName + " error:" + e.getMessage());
 					} catch (Exception e) {
 						logger.error(e, e);
-						throw new FormulateException("Unexpected decernis error: " + DecernisHelper.cleanError(e.getMessage()), e);
+						throw new FormulateException("Unexpected decernis error: " + cleanError(e.getMessage()), e);
 					}
 				}
 			}
@@ -595,20 +594,9 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 	}
 
 	@Override
-	protected void checkComplianceAsync(RegulatoryContext context, ComplianceResult status) {
-		boolean batchStarted = false;
-		NodeRef entityNodeRef = context.getProduct().getNodeRef();
-		String entityDescription = nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE) + " - " + context.getProduct().getName();
-		BatchInfo regulatoryBatchInfo = new BatchInfo(String.format("regulatory-%s", entityNodeRef.getId()), "becpg.batch.regulatory",
-				entityDescription);
+	protected List<BatchStep<RegulatoryBatch>> delegatePrepareAsyncSteps(RegulatoryContext context, NodeRef entityNodeRef) {
 		List<BatchStep<RegulatoryBatch>> steps = new ArrayList<>();
-		regulatoryBatchInfo.setBatchUser(AuthenticationUtil.getFullyAuthenticatedUser());
-		Integer batchThreads = getBatchThreads();
-		regulatoryBatchInfo.setWorkerThreads(batchThreads != null ? batchThreads : DEFAULT_REGULATORY_BATCH_THREADS);
-		String batchId = regulatoryBatchInfo.getBatchId();
-		regulatoryBatchInfo.setPriority(BatchPriority.VERY_HIGH);
-		regulatoryBatchInfo.enableNotifyByMail(REGULATORY_KEY, String.format(ASYNC_ACTION_URL_PREFIX, entityNodeRef.toString()));
-		
+
 		BatchStep<RegulatoryBatch> fetchIngredientsStep = new BatchStep<>();
 		fetchIngredientsStep.setStepDescId("becpg.batch.regulatory.fetchIng");
 		fetchIngredientsStep.setWorkProvider(regulatoryWorkProvider(List.of(new RegulatoryBatch(null, null))));
@@ -618,6 +606,7 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 			}
 		});
 		steps.add(fetchIngredientsStep);
+
 		BatchStep<RegulatoryBatch> recipeStep = new BatchStep<>();
 		recipeStep.setStepDescId("becpg.batch.regulatory.recipe");
 		recipeStep.setWorkProvider(regulatoryWorkProvider(context.getRegulatoryBatches()));
@@ -638,6 +627,7 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 			}
 		});
 		steps.add(recipeStep);
+
 		if (isIngRegulatoryListEnabled(context.getProduct())) {
 			BatchStep<RegulatoryBatch> ingredientsStep = new BatchStep<>();
 			ingredientsStep.setWorkProvider(regulatoryWorkProvider(context.getRegulatoryBatches()));
@@ -656,14 +646,11 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 					processRegulatoryList(finalProductData, context.getIngRegulatoryListDataItems());
 					alfrescoRepository.save(finalProductData);
 				}
-
 			});
 			ingredientsStep.setStepDescId("becpg.batch.regulatory.ingredients");
 			steps.add(ingredientsStep);
 		}
-		batchStarted = batchQueueService.queueBatch(regulatoryBatchInfo, steps);
-		status.setStatus(batchStarted ? Status.STARTED : Status.PENDING);
-		status.setBatchId(batchId);
+		return steps;
 	}
 
 	@Override
@@ -751,8 +738,9 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 		return reqCtrlItem;
 	}
 
-	private String generateError(RestClientException e) {
-		return "Error while creating Decernis recipe: " + DecernisHelper.cleanError(e.getMessage());
+	@Override
+	protected String generateError(Exception e) {
+		return "Error while creating Decernis recipe: " + cleanError(e.getMessage());
 	}
 
 	/**

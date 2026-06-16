@@ -79,22 +79,6 @@ public class DecernisHelper {
 	}
 	
 	/**
-	 * <p>cleanError.</p>
-	 *
-	 * @param error a {@link java.lang.String} object
-	 * @return a {@link java.lang.String} object
-	 */
-	public static String cleanError(String error) {
-		if (error != null) {
-			String token = getToken();
-			if (token != null && !token.isBlank()) {
-				return error.replace(token, "XXX");
-			}
-		}
-		return error;
-	}
-	
-	/**
 	 * <p>getToken.</p>
 	 *
 	 * @return a {@link java.lang.String} object

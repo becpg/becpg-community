@@ -4,7 +4,10 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.activity.EntityActivityService;
+import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.batch.BatchQueueService;
+import fr.becpg.repo.batch.BatchStep;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.CheckSumHelper;
@@ -25,6 +28,7 @@ import fr.becpg.util.MutexFactory;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.policy.BehaviourFilter;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -101,6 +105,8 @@ public abstract class AbstractRegulatoryService {
         this.systemConfigurationService = systemConfigurationService;
     }
 
+    /* Config accessors */
+
     protected Integer getBatchThreads() {
         String confValue = systemConfigurationService.confValue("beCPG.regulatory.batchThreads");
         if (confValue != null && !confValue.isBlank()) {
@@ -109,16 +115,17 @@ public abstract class AbstractRegulatoryService {
         return null;
     }
 
-    protected abstract String serverUrl();
-
-    /**
-     * <p>addInfoReqCtrl.</p>
-     *
-     * @return a boolean
-     */
     protected boolean addInfoReqCtrl() {
         return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.specification.addInfoReqCtrl"));
     }
+
+    protected abstract String serverUrl();
+
+    protected abstract boolean isEnabled();
+
+    protected abstract String getToken();
+
+    /* Regulatory verification logic */
 
     public Boolean doCheck(boolean async, ComplianceResult result, ProductData productData) {
         updateProductFromRegulatoryList(productData);
@@ -152,14 +159,6 @@ public abstract class AbstractRegulatoryService {
         return context;
     }
 
-    protected boolean isIngItemValid(IngListDataItem ingListDataItem) {
-        return !DeclarationType.Omit.equals(ingListDataItem.getDeclType());
-    }
-
-    protected String extractCode(NodeRef node) {
-        return (String) nodeService.getProperty(node, PLMModel.PROP_REGULATORY_CODE);
-    }
-
     protected boolean checkComplianceSync(RegulatoryContext context) {
         ReentrantLock mutex = mutexFactory.getMutex("complianceCheck-" + context.getProduct().getNodeRef().getId());
         if (mutex.tryLock()) {
@@ -175,11 +174,38 @@ public abstract class AbstractRegulatoryService {
 
     protected abstract void delegateSyncComplianceCheck(RegulatoryContext context);
 
-    protected abstract void checkComplianceAsync(RegulatoryContext context, ComplianceResult status);
+    protected void checkComplianceAsync(RegulatoryContext context, ComplianceResult status) {
+        NodeRef entityNodeRef = context.getProduct().getNodeRef();
+        String entityDescription = nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE) + " - " + context.getProduct().getName();
+        BatchInfo regulatoryBatchInfo = getBatchInfo(entityNodeRef, entityDescription);
+        List<BatchStep<RegulatoryBatch>> steps = delegatePrepareAsyncSteps(context, entityNodeRef);
 
-    protected abstract boolean isEnabled();
+        boolean batchStarted = batchQueueService.queueBatch(regulatoryBatchInfo, steps);
+        status.setStatus(batchStarted ? ComplianceResult.Status.STARTED : ComplianceResult.Status.PENDING);
+        status.setBatchId(regulatoryBatchInfo.getBatchId());
+    }
 
-    protected abstract String getToken();
+    private BatchInfo getBatchInfo(NodeRef entityNodeRef, String entityDescription) {
+        BatchInfo regulatoryBatchInfo = new BatchInfo(String.format("regulatory-%s", entityNodeRef.getId()), "becpg.batch.regulatory",
+                entityDescription);
+        regulatoryBatchInfo.setBatchUser(AuthenticationUtil.getFullyAuthenticatedUser());
+        Integer batchThreads = getBatchThreads();
+        regulatoryBatchInfo.setWorkerThreads(batchThreads != null ? batchThreads : DEFAULT_REGULATORY_BATCH_THREADS);
+        regulatoryBatchInfo.setPriority(BatchPriority.VERY_HIGH);
+        regulatoryBatchInfo.enableNotifyByMail(REGULATORY_KEY, String.format(ASYNC_ACTION_URL_PREFIX, entityNodeRef));
+        return regulatoryBatchInfo;
+    }
+
+    protected abstract List<BatchStep<RegulatoryBatch>> delegatePrepareAsyncSteps(RegulatoryContext context, NodeRef entityNodeRef);
+
+
+    protected boolean isIngItemValid(IngListDataItem ingListDataItem) {
+        return !DeclarationType.Omit.equals(ingListDataItem.getDeclType());
+    }
+
+    protected String extractCode(NodeRef node) {
+        return (String) nodeService.getProperty(node, PLMModel.PROP_REGULATORY_CODE);
+    }
 
     protected void finalizeRecipeCheck(RegulatoryContext context, ProductData productData) {
         if (productData.getReqCtrlList() == null) {
@@ -508,5 +534,23 @@ public abstract class AbstractRegulatoryService {
         if (token != null && !token.isBlank())
             headers.setBearerAuth(token);
         return new HttpEntity<>(body, headers);
+    }
+
+    protected abstract String generateError(Exception e);
+
+    /**
+     * <p>cleanError.</p>
+     *
+     * @param error a {@link java.lang.String} object
+     * @return a {@link java.lang.String} object
+     */
+    protected String cleanError(String error) {
+        if (error != null) {
+            String token = getToken();
+            if (token != null && !token.isBlank()) {
+                return error.replace(token, "XXX");
+            }
+        }
+        return error;
     }
 }

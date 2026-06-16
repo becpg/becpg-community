@@ -4,18 +4,20 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.activity.EntityActivityService;
-import fr.becpg.repo.batch.*;
+import fr.becpg.repo.batch.BatchQueueService;
+import fr.becpg.repo.batch.BatchStep;
+import fr.becpg.repo.batch.BatchStepAdapter;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteParams;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RestTemplateHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.regulatory.AbstractRegulatoryService;
-import fr.becpg.repo.regulatory.ComplianceResult;
-import fr.becpg.repo.regulatory.ComplianceResult.Status;
-import fr.becpg.repo.regulatory.decernis.DecernisHelper;
+import fr.becpg.repo.regulatory.RequirementDataType;
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.decernis.RegulatoryBatch;
 import fr.becpg.repo.regulatory.decernis.RegulatoryContext;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -25,7 +27,6 @@ import fr.becpg.util.MutexFactory;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.policy.BehaviourFilter;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
@@ -46,6 +47,8 @@ import java.util.Set;
 @Service
 public class BecpgRegulatoryService extends AbstractRegulatoryService {
     private static final Log logger = LogFactory.getLog(BecpgRegulatoryService.class);
+    public static final String ERROR_PREFIX = "Error during becpg-regulatory analysis: ";
+    private static final String MESSAGE_REGULATORY_ERROR = "message.regulatory.error";
 
     private ProductDataEntityJsonService productDataEntityJsonService;
     private RemoteEntityService remoteEntityService;
@@ -78,17 +81,12 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
     }
 
     @Override
-    protected void checkComplianceAsync(RegulatoryContext context, ComplianceResult status) {
-        NodeRef entityNodeRef = context.getProduct().getNodeRef();
-        String entityDescription = nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE) + " - " + context.getProduct().getName();
-        BatchInfo regulatoryBatchInfo = new BatchInfo(String.format("regulatory-%s", entityNodeRef.getId()), "becpg.batch.regulatory",
-                entityDescription);
-        regulatoryBatchInfo.setBatchUser(AuthenticationUtil.getFullyAuthenticatedUser());
-        Integer batchThreads = getBatchThreads();
-        regulatoryBatchInfo.setWorkerThreads(batchThreads != null ? batchThreads : DEFAULT_REGULATORY_BATCH_THREADS);
-        regulatoryBatchInfo.setPriority(BatchPriority.VERY_HIGH);
-        regulatoryBatchInfo.enableNotifyByMail(REGULATORY_KEY, String.format(ASYNC_ACTION_URL_PREFIX, entityNodeRef));
+    protected String generateError(Exception e) {
+        return "Error while performing regulatory check: " + cleanError(e.getMessage());
+    }
 
+    @Override
+    protected List<BatchStep<RegulatoryBatch>> delegatePrepareAsyncSteps(RegulatoryContext context, NodeRef entityNodeRef) {
         BatchStep<RegulatoryBatch> postToCheckStep = new BatchStep<>();
         postToCheckStep.setStepDescId("becpg.batch.regulatory.post");
         postToCheckStep.setWorkProvider(regulatoryWorkProvider(List.of(new RegulatoryBatch(null, null))));
@@ -109,9 +107,7 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
                 alfrescoRepository.save(finalProductData);
             }
         });
-        boolean batchStarted = batchQueueService.queueBatch(regulatoryBatchInfo, List.of(postToCheckStep));
-        status.setStatus(batchStarted ? Status.STARTED : Status.PENDING);
-        status.setBatchId(regulatoryBatchInfo.getBatchId());
+        return List.of(postToCheckStep);
     }
 
     @Override
@@ -122,7 +118,16 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
 
     @Override
     protected void delegateSyncComplianceCheck(RegulatoryContext context) {
-        checkRecipe(context);
+        try {
+            checkRecipe(context);
+        } catch (Exception e) {
+            logger.error(ERROR_PREFIX + cleanError(e.getMessage()), e);
+            RequirementListDataItem req = RequirementListDataItem.forbidden()
+                    .withMessage(MLTextHelper.getI18NMessage(MESSAGE_REGULATORY_ERROR, generateError(e)))
+                    .ofDataType(RequirementDataType.Formulation)
+                    .withFormulationChainId(REGULATORY_KEY);
+            context.getRequirements().add(req);
+        }
         finalizeRecipeCheck(context, context.getProduct());
         processRegulatoryList(context.getProduct(), context.getIngRegulatoryListDataItems());
     }
@@ -142,8 +147,7 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
                 if (retries <= 0) {
                     throw e;
                 }
-                logger.error("Error during becpg-regulatory analysis: " + DecernisHelper.cleanError(e.getMessage())
-                        + ", try restarting request...");
+                logger.error(ERROR_PREFIX + cleanError(e.getMessage()) + ", try restarting request...");
             }
         }
     }
