@@ -135,7 +135,8 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
 
         inWriteTx(() -> {
             ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
-            return regulatoryService.doCheck(false, new ComplianceResult(), product);        });
+            return regulatoryService.doCheck(false, new ComplianceResult(), product);
+        });
 
         inWriteTx(() -> {
             ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
