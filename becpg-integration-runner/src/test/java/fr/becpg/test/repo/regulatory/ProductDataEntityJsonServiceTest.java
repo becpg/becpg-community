@@ -9,7 +9,7 @@ import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
-import fr.becpg.repo.regulatory.becpg.regulatory.ProductDataJSONService;
+import fr.becpg.repo.regulatory.becpg.regulatory.ProductDataEntityJsonService;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -34,7 +34,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
-public class ProductDataJSONServiceTest {
+public class ProductDataEntityJsonServiceTest {
 
     private static final String STORE_PREFIX        = "workspace://SpacesStore/";
     private static final String ING_ID              = "51fa6f16-3448-43ae-ba6f-16344833ae9f";
@@ -79,12 +79,12 @@ public class ProductDataJSONServiceTest {
     @Mock
     private NodeService nodeService;
 
-    private ProductDataJSONService service;
+    private ProductDataEntityJsonService service;
 
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        service = new ProductDataJSONService(nodeService);
+        service = new ProductDataEntityJsonService(nodeService);
     }
 
     private ProductData referenceWithOneRegulatoryPair(String countryCode, String usageCode) {
@@ -123,7 +123,7 @@ public class ProductDataJSONServiceTest {
 
             ProductData result;
             try (MockedStatic<MLTextHelper> mlTextHelper = mockStatic(MLTextHelper.class)) {
-                mlTextHelper.when(() -> MLTextHelper.getI18NMessage(ProductDataJSONService.MESSAGE_NOTLISTED_ING))
+                mlTextHelper.when(() -> MLTextHelper.getI18NMessage(ProductDataEntityJsonService.MESSAGE_NOTLISTED_ING))
                         .thenReturn(INGREDIENT_NOT_LISTED);
                 result = service.newProductDataFromJson(ref, json);
 
@@ -185,7 +185,7 @@ public class ProductDataJSONServiceTest {
             JSONObject json = new JSONObject(new JSONTokener(is));
 
             try (MockedStatic<MLTextHelper> mlTextHelper = mockStatic(MLTextHelper.class)) {
-                mlTextHelper.when(() -> MLTextHelper.getI18NMessage(ProductDataJSONService.MESSAGE_NOTLISTED_ING))
+                mlTextHelper.when(() -> MLTextHelper.getI18NMessage(ProductDataEntityJsonService.MESSAGE_NOTLISTED_ING))
                         .thenReturn(INGREDIENT_NOT_LISTED);
 
                 ProductData result = service.newProductDataFromJson(ref, json);
@@ -235,9 +235,9 @@ public class ProductDataJSONServiceTest {
             JSONObject json = new JSONObject(new JSONTokener(is));
 
             try (MockedStatic<MLTextHelper> mlTextHelper = mockStatic(MLTextHelper.class)) {
-                mlTextHelper.when(() -> MLTextHelper.getI18NMessage(ProductDataJSONService.MESSAGE_NOTLISTED_ING))
+                mlTextHelper.when(() -> MLTextHelper.getI18NMessage(ProductDataEntityJsonService.MESSAGE_NOTLISTED_ING))
                         .thenReturn(INGREDIENT_NOT_LISTED);
-                mlTextHelper.when(() -> MLTextHelper.getI18NMessage(ProductDataJSONService.MESSAGE_COUNTRY_USAGE_PAIR_NOT_FOUND))
+                mlTextHelper.when(() -> MLTextHelper.getI18NMessage(ProductDataEntityJsonService.MESSAGE_COUNTRY_USAGE_PAIR_NOT_FOUND))
                         .thenReturn(COUNTRY_USAGE_PAIR_NOT_FOUND);
 
                 ProductData result = service.newProductDataFromJson(ref, json);

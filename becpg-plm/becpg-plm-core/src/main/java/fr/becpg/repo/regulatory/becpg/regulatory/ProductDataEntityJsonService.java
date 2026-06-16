@@ -35,14 +35,14 @@ import java.util.stream.Stream;
  * are surfaced as {@link RequirementListDataItem} alerts on the filled product.
  */
 @Service
-public class ProductDataJSONService {
+public class ProductDataEntityJsonService {
 
     public static final String MESSAGE_COUNTRY_USAGE_PAIR_NOT_FOUND = "message.regulatory.usage-to-country.missing";
     public static final String MESSAGE_NOTLISTED_ING = "message.decernis.ingredient.notListed";
 
     private NodeService nodeService;
 
-    public ProductDataJSONService(@Qualifier("nodeService") NodeService nodeService) {
+    public ProductDataEntityJsonService(@Qualifier("nodeService") NodeService nodeService) {
         this.nodeService = nodeService;
     }
 
