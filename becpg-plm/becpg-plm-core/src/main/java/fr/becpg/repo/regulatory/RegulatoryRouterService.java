@@ -53,9 +53,9 @@ public class RegulatoryRouterService {
             ProductData productData = (ProductData) alfrescoRepository.findOne(nodeRef);
             RegulatoryMode regulatoryMode = productData.getRegulatoryMode();
 
-            if (RegulatoryMode.REGULATORY.equals(regulatoryMode) && becpgRegulatoryService.isEnabled()) {
+            if (RegulatoryMode.REGULATORY.equals(regulatoryMode)) {
                 return becpgRegulatoryService.doCheck(async, result, productData);
-            } else if (!RegulatoryMode.DISABLED.equals(regulatoryMode) && decernisRegulatoryService.isEnabled()) {
+            } else if (regulatoryMode != null && !RegulatoryMode.DISABLED.equals(regulatoryMode)) {
                 return decernisRegulatoryService.doCheck(async, result, productData);
             } else {
                 result.setStatus(ComplianceResult.Status.NOT_APPLICABLE);

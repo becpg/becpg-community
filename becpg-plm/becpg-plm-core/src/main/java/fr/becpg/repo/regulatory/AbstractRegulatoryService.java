@@ -131,6 +131,11 @@ public abstract class AbstractRegulatoryService {
         updateProductFromRegulatoryList(productData);
         updateProductFromLinkedSearches(productData);
         RegulatoryContext context = createContext(productData);
+        if (!isEnabled()) {
+            result.setStatus(ComplianceResult.Status.NOT_APPLICABLE);
+            logger.debug("Product in regulatory mode " + productData.getRegulatoryMode() + " can't be checked - service is disabled in the configuration");
+            return false;
+        }
         if (isUpToDate(context)) {
             result.setStatus(ComplianceResult.Status.UP_TO_DATE);
             logger.debug("Product compliance is up to date");
