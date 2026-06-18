@@ -1,5 +1,6 @@
 package fr.becpg.repo.regulatory.becpg.regulatory;
 
+import com.google.common.collect.Streams;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
@@ -15,6 +16,7 @@ import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RestTemplateHelper;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.regulatory.AbstractRegulatoryService;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
@@ -43,6 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 @Service
 public class BecpgRegulatoryService extends AbstractRegulatoryService {
@@ -161,12 +164,21 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
                 becpgRegulatoryUrl, createEntity(recipePayload.toString()), String.class, new HashMap<>());
         if (analysisResult == null)
             return false;
+        JSONObject json = new JSONObject(analysisResult);
 
-        ProductData deserialized = new ProductData();
-        deserialized.setReqCtrlList(context.getRequirements());
-        deserialized.setIngRegulatoryList(context.getIngRegulatoryListDataItems());
+        List<IngRegulatoryListDataItem> parsedIngRegulatoryElements = productDataEntityJsonService.deserializeDatalist(IngRegulatoryListDataItem.class, json).toList();
+        context.getIngRegulatoryListDataItems().addAll(parsedIngRegulatoryElements);
 
-        productDataEntityJsonService.fillProductDataFromJson(deserialized, context.getProduct(), new JSONObject(analysisResult));
+        List<RequirementListDataItem> parsedRequirements = productDataEntityJsonService.deserializeDatalist(RequirementListDataItem.class, json).toList();
+        Stream<RequirementListDataItem> alertsForNotCoveredCountryToUsagePairs = productDataEntityJsonService.createAlertsForNotCoveredCountryToUsagePairs(
+                context.getProduct().getRegulatoryList(), parsedRequirements);
+        Stream<RequirementListDataItem> alertsForNotCoveredIngredients = productDataEntityJsonService.createAlertsForNotCoveredIngredients(
+                context.getProduct().getIngList(), parsedIngRegulatoryElements);
+        List<RequirementListDataItem> allRequirementAlerts = Streams.concat(
+                parsedRequirements.stream(), alertsForNotCoveredCountryToUsagePairs, alertsForNotCoveredIngredients
+        ).toList();
+        context.getRequirements().addAll(allRequirementAlerts);
+
         return true;
     }
 
