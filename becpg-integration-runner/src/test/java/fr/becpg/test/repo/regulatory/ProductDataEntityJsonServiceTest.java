@@ -125,7 +125,7 @@ public class ProductDataEntityJsonServiceTest {
             try (MockedStatic<MLTextHelper> mlTextHelper = mockStatic(MLTextHelper.class)) {
                 mlTextHelper.when(() -> MLTextHelper.getI18NMessage(ProductDataEntityJsonService.MESSAGE_NOTLISTED_ING))
                         .thenReturn(INGREDIENT_NOT_LISTED);
-                result = service.newProductDataFromJson(ref, json);
+                result = service.newProductDataFromJson(json);
 
                 // ReqCtrl elements
                 assertNotNull(result.getReqCtrlList());
@@ -188,20 +188,19 @@ public class ProductDataEntityJsonServiceTest {
                 mlTextHelper.when(() -> MLTextHelper.getI18NMessage(ProductDataEntityJsonService.MESSAGE_NOTLISTED_ING))
                         .thenReturn(INGREDIENT_NOT_LISTED);
 
-                ProductData result = service.newProductDataFromJson(ref, json);
+                ProductData result = service.newProductDataFromJson(json);
 
                 assertNotNull(result.getIngRegulatoryList());
                 assertEquals(1, result.getIngRegulatoryList().size());
 
-                // the 2 explicit reqCtrl entries from the JSON + 1 alert for the unhandled ingredient
-                assertEquals(3, result.getReqCtrlList().size());
+                // the 2 explicit reqCtrl entries from the JSON
+                assertEquals(2, result.getReqCtrlList().size());
 
-                List<RequirementListDataItem> alerts = result.getReqCtrlList().stream()
-                        .filter(i -> i.getReqMlMessage() != null && i.getReqMlMessage().equals(INGREDIENT_NOT_LISTED))
-                        .toList();
-                assertEquals(1, alerts.size());
+                List<RequirementListDataItem> alertsForMissingIngRegulatory = service.createAlertsForNotCoveredIngredients(ref.getIngList(), result.getIngRegulatoryList()).toList();
+                assertEquals(1, alertsForMissingIngRegulatory.size());
 
-                RequirementListDataItem alert = alerts.getFirst();
+                RequirementListDataItem alert = alertsForMissingIngRegulatory.getFirst();
+                assertEquals(INGREDIENT_NOT_LISTED, alert.getReqMlMessage());
                 assertEquals(RequirementType.Tolerated, alert.getReqType());
                 assertEquals(RequirementDataType.Specification, alert.getReqDataType());
                 assertEquals(FORMULATION_CHAIN_ID, alert.getFormulationChainId());
@@ -240,25 +239,24 @@ public class ProductDataEntityJsonServiceTest {
                 mlTextHelper.when(() -> MLTextHelper.getI18NMessage(ProductDataEntityJsonService.MESSAGE_COUNTRY_USAGE_PAIR_NOT_FOUND))
                         .thenReturn(COUNTRY_USAGE_PAIR_NOT_FOUND);
 
-                ProductData result = service.newProductDataFromJson(ref, json);
+                ProductData result = service.newProductDataFromJson(json);
 
-                // the 2 explicit reqCtrl entries from the JSON + 3 alerts for each uncovered pair
-                assertEquals(5, result.getReqCtrlList().size());
+                // the 2 explicit reqCtrl entries from the JSON
+                assertEquals(2, result.getReqCtrlList().size());
 
-                List<RequirementListDataItem> alerts = result.getReqCtrlList().stream()
-                        .filter(i -> i.getReqMlMessage() != null && i.getReqMlMessage().equals(COUNTRY_USAGE_PAIR_NOT_FOUND))
-                        .toList();
-                assertEquals(3, alerts.size());
+                List<RequirementListDataItem> alertsForMissingsCountryUsage = service.createAlertsForNotCoveredCountryToUsagePairs(ref.getRegulatoryList(), result.getReqCtrlList()).toList();
+                assertEquals(3, alertsForMissingsCountryUsage.size());
 
                 List<String> expectedCodes = List.of(COUNTRY_CODE + " - " + OTHER_USAGE_CODE,
                         OTHER_COUNTRY_CODE + " - " + USAGE_CODE, OTHER_COUNTRY_CODE + " - " + OTHER_USAGE_CODE);
 
-                List<String> actualCodes = alerts.stream()
+                // all codes are covered
+                List<String> actualCodes = alertsForMissingsCountryUsage.stream()
                         .map(RequirementListDataItem::getRegulatoryCode)
                         .toList();
                 assertTrue(actualCodes.containsAll(expectedCodes));
 
-                for (RequirementListDataItem alert : alerts) {
+                for (RequirementListDataItem alert : alertsForMissingsCountryUsage) {
                     assertEquals(RequirementType.Tolerated, alert.getReqType());
                     assertEquals(RequirementDataType.Specification, alert.getReqDataType());
                     assertEquals(FORMULATION_CHAIN_ID, alert.getFormulationChainId());
@@ -267,7 +265,7 @@ public class ProductDataEntityJsonServiceTest {
                 }
 
                 // spot-check one alert's sources resolve to the correct country/usage nodes
-                RequirementListDataItem otherCoutryOtherUsageP = alerts.stream()
+                RequirementListDataItem otherCoutryOtherUsageP = alertsForMissingsCountryUsage.stream()
                         .filter(a -> a.getRegulatoryCode().equals(OTHER_COUNTRY_CODE + " - " + OTHER_USAGE_CODE))
                         .findFirst().orElseThrow();
                 assertTrue(otherCoutryOtherUsageP.getSources().stream().anyMatch(n -> n.getId().equals(OTHER_COUNTRY_ID)));
