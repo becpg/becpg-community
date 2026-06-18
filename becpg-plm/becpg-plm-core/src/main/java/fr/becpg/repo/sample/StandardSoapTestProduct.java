@@ -443,8 +443,9 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 	 * @param superSensitizing a {@link java.lang.Boolean} object
 	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
 	 */
-	private IngListDataItem createIngListItem(String ingName, Double percentage, String casNumber, String hazardClass, Double toxicityOral,
-			Double toxicityDermal, Double mFactor, Boolean superSensitizing) {
+	protected IngListDataItem createIngListItem(String ingName, Double percentage, String casNumber, String hazardClass,
+	                                            Double toxicityOral, Double toxicityDermal, Double mFactor,
+	                                            Boolean superSensitizing) {
 
 		NodeRef ing = CharactTestHelper.getOrCreateIng(nodeService, ingName);
 

@@ -56,7 +56,7 @@ import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.StockListDataItem;
 import fr.becpg.repo.regulatory.RegulatoryEntity;
-import fr.becpg.repo.regulatory.RegulatoryMode;
+import fr.becpg.repo.regulatory.decernis.RegulatoryMode;
 import fr.becpg.repo.regulatory.RegulatoryResult;
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
@@ -2634,7 +2634,7 @@ public class ProductData extends AbstractScorableEntity
 	/**
 	 * <p>Getter for the field <code>regulatoryMode</code>.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.regulatory.RegulatoryMode} object
+	 * @return a {@link RegulatoryMode} object
 	 */
 	@AlfProp
 	@AlfQname(qname = "bcpg:regulatoryMode")
@@ -2645,7 +2645,7 @@ public class ProductData extends AbstractScorableEntity
 	/**
 	 * <p>Setter for the field <code>regulatoryMode</code>.</p>
 	 *
-	 * @param regulatoryMode a {@link fr.becpg.repo.regulatory.RegulatoryMode} object
+	 * @param regulatoryMode a {@link RegulatoryMode} object
 	 */
 	public void setRegulatoryMode(RegulatoryMode regulatoryMode) {
 		this.regulatoryMode = regulatoryMode;

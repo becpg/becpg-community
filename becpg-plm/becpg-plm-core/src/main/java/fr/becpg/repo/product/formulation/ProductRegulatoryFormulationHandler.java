@@ -19,7 +19,6 @@ import fr.becpg.repo.regulatory.RegulatoryResult;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
-import fr.becpg.repo.regulatory.plugins.DecernisRegulatoryPlugin;
 
 /**
  * <p>ProductRegulatoryFormulationHandler class.</p>
@@ -29,6 +28,7 @@ import fr.becpg.repo.regulatory.plugins.DecernisRegulatoryPlugin;
  */
 public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<ProductData> {
 
+	public static final String REGULATORY_MODULE_SUFFIX = " module";
 	private NodeService nodeService;
 
 	/**
@@ -125,7 +125,7 @@ public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<
 				String countryCode = (String) nodeService.getProperty(country, PLMModel.PROP_REGULATORY_CODE);
 				for (NodeRef usage : regulatoryListItem.getRegulatoryUsagesRef()) {
 					String usageCode = (String) nodeService.getProperty(usage, PLMModel.PROP_REGULATORY_CODE);
-					if (!usageCode.endsWith(DecernisRegulatoryPlugin.MODULE_SUFFIX)) {
+					if (!usageCode.endsWith(REGULATORY_MODULE_SUFFIX)) {
 						regulatoryIds.add(countryCode + " - " + usageCode);
 					}
 				}
