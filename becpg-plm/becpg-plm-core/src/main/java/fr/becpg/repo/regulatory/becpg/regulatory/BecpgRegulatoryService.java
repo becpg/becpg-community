@@ -41,10 +41,7 @@ import org.springframework.web.client.RestClientException;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Service
@@ -78,9 +75,9 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
     }
 
     @Override
-    protected String getToken() {
+    protected Optional<String> getToken() {
         String token = systemConfigurationService.confValue("beCPG.regulatory.token");
-        return token != null ? token.trim() : null;
+        return Optional.ofNullable(token != null ? token.trim() : null);
     }
 
     @Override

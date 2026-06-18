@@ -1,5 +1,6 @@
 package fr.becpg.repo.regulatory.decernis;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -39,10 +40,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static fr.becpg.repo.regulatory.decernis.RegulatoryHelper.extractIngName;
@@ -166,8 +164,9 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 	}
 
 	@Override
-	protected String getToken() {
-		return DecernisHelper.getToken().trim();
+	protected Optional<String> getToken() {
+		String token = DecernisHelper.getToken();
+		return Optional.ofNullable(token != null ? token.trim() : null);
 	}
 
 	@Override
@@ -830,10 +829,7 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 		String url = analysisUrl + "/scope/function?topic=" + moduleCode;
 
 		HttpHeaders headers = new HttpHeaders();
-		String token = getToken();
-		if (token != null && !token.isBlank())
-			headers.setBearerAuth(token);
-
+		getToken().ifPresent(headers::setBearerAuth);
 		traceGetRequest(url);
 		ResponseEntity<String> response = RestTemplateHelper.getRestTemplateLongTimeout().exchange(url, HttpMethod.GET, new HttpEntity<>(headers),
 				String.class, new HashMap<>());
