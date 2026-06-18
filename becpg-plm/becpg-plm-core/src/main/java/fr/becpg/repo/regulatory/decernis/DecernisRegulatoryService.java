@@ -1,64 +1,51 @@
 package fr.becpg.repo.regulatory.decernis;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
-
+import com.google.common.collect.Lists;
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
+import fr.becpg.model.ReportModel;
+import fr.becpg.repo.activity.EntityActivityService;
+import fr.becpg.repo.batch.*;
+import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.formulation.FormulatedEntity;
+import fr.becpg.repo.formulation.FormulationService;
+import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.RestTemplateHelper;
+import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ing.IngItem;
+import fr.becpg.repo.product.data.ing.IngTypeItem;
+import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
+import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.regulatory.*;
+import fr.becpg.repo.regulatory.ComplianceResult.Status;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.system.SystemConfigurationService;
+import fr.becpg.util.MutexFactory;
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor;
-import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 
-import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.PLMModel;
-import fr.becpg.model.ReportModel;
-import fr.becpg.model.SystemState;
-import fr.becpg.repo.activity.EntityActivityService;
-import fr.becpg.repo.batch.BatchInfo;
-import fr.becpg.repo.batch.BatchPriority;
-import fr.becpg.repo.batch.BatchQueueService;
-import fr.becpg.repo.batch.BatchStep;
-import fr.becpg.repo.batch.BatchStepAdapter;
-import fr.becpg.repo.formulation.FormulatedEntity;
-import fr.becpg.repo.formulation.FormulationService;
-import fr.becpg.repo.helper.CheckSumHelper;
-import fr.becpg.repo.helper.MLTextHelper;
-import fr.becpg.repo.product.data.EffectiveFilters;
-import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.constraints.DeclarationType;
-import fr.becpg.repo.product.data.ing.IngItem;
-import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.IngListDataItem;
-import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
-import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
-import fr.becpg.repo.regulatory.ComplianceResult.Status;
-import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.repository.L2CacheSupport;
-import fr.becpg.repo.repository.RepositoryEntity;
-import fr.becpg.repo.system.SystemConfigurationService;
-import fr.becpg.repo.variant.filters.VariantFilters;
-import fr.becpg.util.MutexFactory;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static fr.becpg.repo.regulatory.decernis.RegulatoryHelper.extractIngName;
 
 /**
  * <p>RegulatoryService class.</p>
@@ -66,121 +53,120 @@ import fr.becpg.util.MutexFactory;
  * @author Valentin
  */
 @Service
-public class DecernisRegulatoryService implements RegulatoryService {
-
-	/** Constant <code>UNKNOWN="unknown"</code> */
-	public static final String UNKNOWN = "unknown";
-	
-	/** Constant <code>REGULATORY_KEY="regulatory"</code> */
-	public static final String REGULATORY_KEY = "regulatory";
-
+public class DecernisRegulatoryService extends AbstractRegulatoryService {
 	private static final Log logger = LogFactory.getLog(DecernisRegulatoryService.class);
 
 	private static final String MESSAGE_NO_CODE_CHARACT = "message.regulatory.charact.noCode";
+	/** Constant <code>MESSAGE_DECERNIS_ERROR="message.decernis.error"</code> */
+	private static final String MESSAGE_DECERNIS_ERROR = "message.decernis.error";
 
-	private static final String ASYNC_ACTION_URL_PREFIX = "page/entity-data-lists?list=regulatoryList&nodeRef=%s";
+	/** Constant <code>PARAM_QUERY="query"</code> */
+	private static final String PARAM_QUERY = "query";
+	/** Constant <code>PARAM_PHRASE="phrase"</code> */
+	private static final String PARAM_PHRASE = "phrase";
+	/** Constant <code>PARAM_SCOPE_ID="scope_id"</code> */
+	private static final String PARAM_SCOPE_ID = "scope_id";
+	/** Constant <code>PARAM_RESULTS="results"</code> */
+	private static final String PARAM_RESULTS = "results";
+	/** Constant <code>PARAM_COMPANY="company"</code> */
+	private static final String PARAM_COMPANY = "company";
 
-	private NodeService nodeService;
 
-	private List<RegulatoryPlugin> regulatoryPlugins;
+	/** Constant <code>EUROPEAN_UNION="European Union"</code> */
+	private static final String EUROPEAN_UNION = "European Union";
+	/** Constant <code>FORMULATION_CHECK="FORMULATION_CHECK"</code> */
+	private static final String FORMULATION_CHECK = "FORMULATION_CHECK";
+	/** Constant <code>COSMETICS="COSMETICS"</code> */
+	private static final String COSMETICS = "COSMETICS";
+	/** Constant <code>STANDARDS_OF_IDENTITY_FOOD="STANDARDS_OF_IDENTITY_FOOD"</code> */
+	private static final String STANDARDS_OF_IDENTITY_FOOD = "STANDARDS_OF_IDENTITY_FOOD";
+	/** Constant <code>FOOD_ADDITIVES="FOOD_ADDITIVES"</code> */
+	private static final String FOOD_ADDITIVES = "FOOD_ADDITIVES";
 
-	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+	/** Constant <code>GET_URL="GET url: "</code> */
+	private static final String GET_URL = "GET url: ";
 
-	private FormulationService<FormulatedEntity> formulationService;
+	/** Constant <code>moduleToCodeMap</code> */
+	private static final Map<String, String> moduleToCodeMap = new HashMap<>();
+	/** Constant <code>moduleToIDMap</code> */
+	private static final Map<String, Integer> moduleToIDMap = new HashMap<>();
 
-	private BatchQueueService batchQueueService;
+	static {
+		moduleToCodeMap.put(FOOD_ADDITIVES, "ADD");
+		moduleToCodeMap.put(STANDARDS_OF_IDENTITY_FOOD, "SOI");
+		moduleToCodeMap.put(COSMETICS, "COS");
+		moduleToCodeMap.put(FORMULATION_CHECK, "PC");
+		moduleToIDMap.put(FOOD_ADDITIVES, 1);
+		moduleToIDMap.put(STANDARDS_OF_IDENTITY_FOOD, 2);
+		moduleToIDMap.put(COSMETICS, 9);
+		moduleToIDMap.put(FORMULATION_CHECK, 100);
+	}
 
-	private SystemConfigurationService systemConfigurationService;
-	
-	private BehaviourFilter policyBehaviourFilter;
-	
-	private EntityActivityService entityActivityService;
-	
-	private MutexFactory mutexFactory;
-	
+	private ProductDataDecernisJsonService productDataDecernisJsonService;
+	private Map<String, List<String>> functionsMap = new ConcurrentHashMap<>();
+	private Map<String, String> functionsIdMap = new ConcurrentHashMap<>();
+
+
 	/**
 	 * <p>Constructor for RegulatoryService.</p>
 	 *
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
-	 * @param regulatoryPlugins a {@link java.util.List} object
-	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
-	 * @param formulationService a {@link fr.becpg.repo.formulation.FormulationService} object
-	 * @param batchQueueService a {@link fr.becpg.repo.batch.BatchQueueService} object
-	 * @param systemConfigurationService a {@link fr.becpg.repo.system.SystemConfigurationService} object
-	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object
-	 * @param entityActivityService a {@link fr.becpg.repo.activity.EntityActivityService} object
-	 * @param mutexFactory a {@link fr.becpg.util.MutexFactory} object
+	 * @param nodeService           a {@link NodeService} object
+	 * @param alfrescoRepository    a {@link AlfrescoRepository} object
+	 * @param formulationService    a {@link FormulationService} object
+	 * @param batchQueueService     a {@link BatchQueueService} object
+	 * @param policyBehaviourFilter a {@link BehaviourFilter} object
+	 * @param entityActivityService a {@link EntityActivityService} object
+	 * @param mutexFactory          a {@link MutexFactory} object
 	 */
-	public DecernisRegulatoryService(@Qualifier("nodeService") NodeService nodeService, List<RegulatoryPlugin> regulatoryPlugins, AlfrescoRepository<RepositoryEntity> alfrescoRepository,
-	                                 FormulationService<FormulatedEntity> formulationService, BatchQueueService batchQueueService,
-	                                 SystemConfigurationService systemConfigurationService, @Qualifier("policyBehaviourFilter") BehaviourFilter policyBehaviourFilter, EntityActivityService entityActivityService,
-	                                 MutexFactory mutexFactory) {
-		super();
-		this.nodeService = nodeService;
-		this.regulatoryPlugins = regulatoryPlugins;
-		this.alfrescoRepository = alfrescoRepository;
-		this.formulationService = formulationService;
-		this.batchQueueService = batchQueueService;
-		this.systemConfigurationService = systemConfigurationService;
-		this.policyBehaviourFilter = policyBehaviourFilter;
-		this.entityActivityService = entityActivityService;
-		this.mutexFactory = mutexFactory;
+	public DecernisRegulatoryService(@Qualifier("nodeService") NodeService nodeService,
+                                        AlfrescoRepository<RepositoryEntity> alfrescoRepository,
+                                        FormulationService<FormulatedEntity> formulationService,
+                                        BatchQueueService batchQueueService,
+                                        @Qualifier("policyBehaviourFilter") BehaviourFilter policyBehaviourFilter,
+                                        EntityActivityService entityActivityService,
+                                        SystemConfigurationService systemConfigurationService,
+                                        MutexFactory mutexFactory,
+										ProductDataDecernisJsonService productDataDecernisJsonService) {
+		super(nodeService, alfrescoRepository, formulationService, batchQueueService,
+				policyBehaviourFilter, entityActivityService, mutexFactory, systemConfigurationService);
+        this.productDataDecernisJsonService = productDataDecernisJsonService;
 	}
 
-	private static final int DEFAULT_REGULATORY_BATCH_THREADS = 1;
+	@Override
+	protected String serverUrl() {
+		return systemConfigurationService.confValue("beCPG.regulatory.decernis.serverUrl");
+	}
 
-	private Boolean ingredientAnalysisEnabled() {
+	protected Boolean ingredientAnalysisEnabled() {
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.regulatory.decernis.ingredient.analysis.enabled"));
 	}
 
-	/**
-	 * <p>checkCompliance.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @param async a boolean
-	 * @return a {@link ComplianceResult} object
-	 */
-	@Override
-	public ComplianceResult checkCompliance(NodeRef nodeRef, boolean async) {
-		policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-		policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-		policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-
-		ComplianceResult result = new ComplianceResult();
-
-		L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
-			ProductData productData = (ProductData) alfrescoRepository.findOne(nodeRef);
-			updateProductFromRegulatoryList(productData);
-			updateProductFromLinkedSearches(productData);
-			RegulatoryContext context = createContext(productData);
-			if (!isContextCompatible(context)) {
-				result.setStatus(Status.NOT_APPLICABLE);
-				logger.debug("Product is not compatible for compliance check");
-				return false;
-			}
-			if (isUpToDate(context)) {
-				result.setStatus(Status.UP_TO_DATE);
-				logger.debug("Product compliance is up to date");
-				return false;
-			}
-			result.setContext(context);
-			if (async) {
-				checkComplianceAsync(context, result);
-			} else {
-				boolean finished = checkComplianceSync(context);
-				result.setStatus(finished ? Status.FINISHED : Status.PENDING);
-			}
-			alfrescoRepository.save(productData);
-			if (result.getStatus() == Status.STARTED || result.getStatus() == Status.FINISHED) {
-				entityActivityService.postComplianceCheckActivity(productData.getNodeRef());
-			}
-			return true;
-		}), false, true);
-
-		return result;
+	protected Integer maxCountriesPerRequest() {
+		String confValue = systemConfigurationService.confValue("beCPG.regulatory.decernis.maxCountriesPerRequest");
+		if (confValue != null && !confValue.isBlank()) {
+			return Integer.parseInt(confValue);
+		}
+		return null;
 	}
 
-	private RegulatoryContext createContext(ProductData product) {
+	protected Integer maxUsagesPerRequest() {
+		String confValue = systemConfigurationService.confValue("beCPG.regulatory.decernis.maxUsagesPerRequest");
+		if (confValue != null && !confValue.isBlank()) {
+			return Integer.parseInt(confValue);
+		}
+		return null;
+	}
+
+	protected String analysisUrl() {
+		return systemConfigurationService.confValue("beCPG.regulatory.decernis.analysisUrl");
+	}
+
+	protected String companyName() {
+		return systemConfigurationService.confValue("beCPG.regulatory.decernis.companyName");
+	}
+
+	@Override
+	protected RegulatoryContext createContext(ProductData product) {
 		RegulatoryContext context = new RegulatoryContext();
 		if (product.getIngList() != null) {
 			context.getIngList().addAll(product.getIngList().stream().filter(this::isIngItemValid).toList());
@@ -193,10 +179,6 @@ public class DecernisRegulatoryService implements RegulatoryService {
 		}
 		context.setRegulatoryBatches(regulatoryBatches);
 		return context;
-	}
-
-	private boolean isIngItemValid(IngListDataItem ingListDataItem) {
-		return !DeclarationType.Omit.equals(ingListDataItem.getDeclType());
 	}
 
 	private List<RegulatoryBatch> createRegulatoryBatches(RegulatoryContext context, RegulatoryEntity regulatoryEntity) {
@@ -216,7 +198,35 @@ public class DecernisRegulatoryService implements RegulatoryService {
 		for (NodeRef countryRef : regulatoryEntity.getRegulatoryCountriesRef()) {
 			addCountry(context, countries, countryRef);
 		}
-		return getPlugin().splitCountries(context, countries);
+		return splitCountries(context, countries);
+	}
+
+	private List<CountryBatch> splitCountries(RegulatoryContext context, List<String> countries) {
+		List<CountryBatch> countryBatches = new ArrayList<>();
+		if (countries.contains(EUROPEAN_UNION)) {
+			countries.remove(EUROPEAN_UNION);
+			countryBatches.add(new CountryBatch(List.of(EUROPEAN_UNION)));
+		}
+		int ingListSize = context.getIngList().size();
+		int maxCountries = 20;
+		if (ingListSize >= 130) {
+			maxCountries = 3;
+		} else if (ingListSize >= 100) {
+			maxCountries = 5;
+		} else if (ingListSize >= 50) {
+			maxCountries = 9;
+		} else if (ingListSize >= 25) {
+			maxCountries = 11;
+		}
+		Integer maxCountriesPerRequest = maxCountriesPerRequest();
+		if (maxCountriesPerRequest != null) {
+			maxCountries = Math.min(maxCountries, maxCountriesPerRequest);
+		}
+		List<List<String>> countriesBatches = Lists.partition(countries, maxCountries);
+		for (List<String> countriesBatch : countriesBatches) {
+			countryBatches.add(new CountryBatch(countriesBatch));
+		}
+		return countryBatches;
 	}
 
 	private void addCountry(RegulatoryContext context, List<String> countries, NodeRef countryRef) {
@@ -236,7 +246,30 @@ public class DecernisRegulatoryService implements RegulatoryService {
 		for (NodeRef usageRef : regulatoryEntity.getRegulatoryUsagesRef()) {
 			addUsage(context, usages, usageRef);
 		}
-		return getPlugin().splitUsages(context, usages);
+		return splitUsages(context, usages);
+	}
+
+	private List<UsageBatch> splitUsages(RegulatoryContext context, List<String> usages) {
+		List<UsageBatch> usageBatches = new ArrayList<>();
+		Map<String, List<String>> moduleToUsages = new HashMap<>();
+		for (String usage : usages) {
+			String usageModule = context.getUsageModule(usage);
+			List<String> moduleUsages = moduleToUsages.computeIfAbsent(usageModule, k -> new ArrayList<>());
+			moduleUsages.add(usage);
+		}
+		int maxUsages = 20;
+		Integer maxUsagesPerRequest = maxUsagesPerRequest();
+		if (maxUsagesPerRequest != null) {
+			maxUsages = Math.min(maxUsages, maxUsagesPerRequest);
+		}
+		for (Map.Entry<String, List<String>> entry : moduleToUsages.entrySet()) {
+			List<String> allUsages = entry.getValue();
+			List<List<String>> usagesBatches = Lists.partition(new ArrayList<>(allUsages), maxUsages);
+			for (List<String> usagesBatch : usagesBatches) {
+				usageBatches.add(new UsageBatch(entry.getKey(), usagesBatch));
+			}
+		}
+		return usageBatches;
 	}
 
 	private void addUsage(RegulatoryContext context, List<String> usages, NodeRef usageRef) {
@@ -252,32 +285,303 @@ public class DecernisRegulatoryService implements RegulatoryService {
 		}
 	}
 
-	private String extractCode(NodeRef node) {
-		return (String) nodeService.getProperty(node, PLMModel.PROP_REGULATORY_CODE);
+	@Override
+	protected void delegateSyncComplianceCheck(RegulatoryContext context) {
+		fetchIngredients(context);
+		for (RegulatoryBatch regulatoryCheckContext : context.getRegulatoryBatches()) {
+			checkRecipe(context, regulatoryCheckContext);
+		}
+		finalizeRecipeCheck(context, context.getProduct());
+		if (isIngRegulatoryListEnabled(context.getProduct())) {
+			List<IngRegulatoryListDataItem> ingRegulatoryListDataItems = new ArrayList<>();
+			for (RegulatoryBatch regulatoryCheckContext : context.getRegulatoryBatches()) {
+				checkIngredients(context, regulatoryCheckContext);
+			}
+			processRegulatoryList(context.getProduct(), ingRegulatoryListDataItems);
+		}
 	}
 
-	private boolean checkComplianceSync(RegulatoryContext context) {
-		ReentrantLock mutex = mutexFactory.getMutex("complianceCheck-" + context.getProduct().getNodeRef().getId());
-		if (mutex.tryLock()) {
-			try {
-				fetchIngredients(context);
-				for (RegulatoryBatch regulatoryCheckContext : context.getRegulatoryBatches()) {
-					getPlugin().checkRecipe(context, regulatoryCheckContext);
-				}
-				finalizeRecipeCheck(context, context.getProduct());
-				if (isIngRegulatoryListEnabled(context.getProduct())) {
-					List<IngRegulatoryListDataItem> ingRegulatoryListDataItems = new ArrayList<>();
-					for (RegulatoryBatch regulatoryCheckContext : context.getRegulatoryBatches()) {
-						getPlugin().checkIngredients(context, regulatoryCheckContext);
-					}
-					processRegulatoryList(context.getProduct(), ingRegulatoryListDataItems);
-				}
-			} finally {
-				mutex.unlock();
-			}
-			return true;
+	private void checkIngredients(RegulatoryContext context, RegulatoryBatch checkContext) {
+		JSONObject ingredientAnalysisResults = null;
+		try {
+			ingredientAnalysisResults = ingredientAnalysis(context, checkContext);
+		} catch (RestClientException e) {
+			logger.error("Error during Decernis ingredients analysis: " + DecernisHelper.cleanError(e.getMessage()), e);
+			RequirementListDataItem req = RequirementListDataItem.forbidden()
+					.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e))).ofDataType(RequirementDataType.Formulation)
+					.withFormulationChainId(DecernisRegulatoryService.REGULATORY_KEY);
+			context.getRequirements().add(req);
 		}
-		return false;
+		if (ingredientAnalysisResults != null) {
+			List<IngRegulatoryListDataItem> parseIngredientAnalysisResults = productDataDecernisJsonService.ingredientAnalysisParseResults(context, checkContext,
+					ingredientAnalysisResults);
+			context.getIngRegulatoryListDataItems().addAll(parseIngredientAnalysisResults);
+		}
+	}
+
+	private JSONObject ingredientAnalysis(RegulatoryContext context, RegulatoryBatch regulatoryBatch) {
+		JSONObject ingredientAnalysisResults = null;
+		int retries = 2;
+		while (ingredientAnalysisResults == null && retries >= 0) {
+			try {
+				retries--;
+				JSONObject payload = productDataDecernisJsonService.ingredientAnalysisPreparePayload(context, regulatoryBatch);
+				String url = serverUrl() + "/ingredient-analysis/transaction?report=tabular";
+				HttpEntity<String> entity = createEntity(payload.toString());
+
+				tracePostRequest(payload, url);
+				String responseStr = RestTemplateHelper.getRestTemplateLongTimeout().postForObject(url, entity, String.class, new HashMap<>());
+				ingredientAnalysisResults = new JSONObject(responseStr);
+			} catch (RestClientException e) {
+				if (retries <= 0) {
+					throw e;
+				}
+				logger.error("Error during Decernis ingredient analysis: " + DecernisHelper.cleanError(e.getMessage())
+						+ ", try restarting request...");
+				ingredientAnalysisResults = null;
+			}
+		}
+		return ingredientAnalysisResults;
+	}
+
+	private void checkRecipe(RegulatoryContext context, RegulatoryBatch regulatoryBatch) {
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Launch decernis in mode :" + context.getRegulatoryMode());
+		}
+
+		if (RegulatoryMode.DECERNIS_BOTH.equals(context.getRegulatoryMode()) || RegulatoryMode.DECERNIS_ONLY.equals(context.getRegulatoryMode())) {
+			createRecipe(context);
+		}
+
+		if (RegulatoryMode.DECERNIS_BOTH.equals(context.getRegulatoryMode()) || RegulatoryMode.DECERNIS_BECPG_ONLY.equals(context.getRegulatoryMode())) {
+			JSONObject recipeAnalysisResults = null;
+			try {
+				recipeAnalysisResults = recipeAnalysis(context, regulatoryBatch);
+			} catch (RestClientException e) {
+				logger.error("Error during Decernis recipe analysis: " + DecernisHelper.cleanError(e.getMessage()), e);
+				for (String country : regulatoryBatch.countryBatches().countries()) {
+					for (String usage : regulatoryBatch.usageBatches().usages()) {
+						RequirementListDataItem req = RequirementListDataItem.forbidden()
+								.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e)))
+								.ofDataType(RequirementDataType.Formulation).withFormulationChainId(DecernisRegulatoryService.REGULATORY_KEY)
+								.withRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
+
+						context.getRequirements().add(req);
+					}
+				}
+			}
+			if (recipeAnalysisResults != null) {
+				List<RequirementListDataItem> parseRecipeAnalysisResults = productDataDecernisJsonService.recipeAnalysisParseResults(
+						context, regulatoryBatch, recipeAnalysisResults, addInfoReqCtrl());
+				context.getRequirements().addAll(parseRecipeAnalysisResults);
+			}
+			checkUsagesID(context);
+		}
+	}
+
+	/**
+	 * <p>checkUsagesID.</p>
+	 *
+	 * @param context a {@link RegulatoryContext} object
+	 */
+	private void checkUsagesID(RegulatoryContext context) {
+		for (NodeRef usageRef : context.getProduct().getRegulatoryUsagesRef()) {
+			String usageCode = (String) nodeService.getProperty(usageRef, PLMModel.PROP_REGULATORY_CODE);
+			Integer moduleId = moduleToIDMap.get(context.getUsageModule(usageCode));
+			updateUsageID(usageRef, usageCode, moduleId, serverUrl());
+		}
+		for (RegulatoryListDataItem regulatoryListItem : context.getProduct().getRegulatoryList()) {
+			for (NodeRef usageRef : regulatoryListItem.getRegulatoryUsagesRef()) {
+				String usageCode = (String) nodeService.getProperty(usageRef, PLMModel.PROP_REGULATORY_CODE);
+				Integer moduleId = moduleToIDMap.get(context.getUsageModule(usageCode));
+				updateUsageID(usageRef, usageCode, moduleId, serverUrl());
+			}
+		}
+	}
+
+	/**
+	 * <p>updateUsageID.</p>
+	 *
+	 * @param usageRef  a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param usageCode a {@link java.lang.String} object
+	 * @param moduleId  a {@link java.lang.Integer} object
+	 * @param serverUrl
+	 */
+	public void updateUsageID(NodeRef usageRef, String usageCode, Integer moduleId, String serverUrl) {
+		if (nodeService.getProperty(usageRef, PLMModel.PROP_REGULATORY_ID) instanceof String) {
+			return;
+		}
+		String url = serverUrl + "/usages/structurized" + "?module_id=" + moduleId + "&phrase=" + usageCode;
+		traceGetRequest(url);
+		ResponseEntity<String> response = RestTemplateHelper.getRestTemplateLongTimeout().exchange(url, HttpMethod.GET, createEntity(null),
+				String.class, new HashMap<>());
+		if (HttpStatus.OK.equals(response.getStatusCode()) && response.getBody() != null) {
+			productDataDecernisJsonService.getUsageId(usageCode, response).ifPresent(usageId ->
+					nodeService.setProperty(usageRef, PLMModel.PROP_REGULATORY_ID, usageId));
+		}
+	}
+
+	private JSONObject recipeAnalysis(RegulatoryContext context, RegulatoryBatch regulatoryBatch) {
+		JSONObject recipeAnalysisResults = null;
+		int retries = 2;
+		while (recipeAnalysisResults == null && retries >= 0) {
+			try {
+				retries--;
+
+				recipeAnalysisResults = postV5RecipeAnalysis(context, regulatoryBatch);
+			} catch (RestClientException e) {
+				if (retries <= 0) {
+					throw e;
+				}
+				logger.error("Error during Decernis recipe analysis: " + DecernisHelper.cleanError(e.getMessage())
+						+ ", try restarting request...");
+				recipeAnalysisResults = null;
+			}
+		}
+		return recipeAnalysisResults;
+	}
+
+	private JSONObject postV5RecipeAnalysis(RegulatoryContext context, RegulatoryBatch regulatoryBatch) {
+		JSONArray ingredients = new JSONArray();
+
+		String moduleCode = moduleToCodeMap.get(regulatoryBatch.usageBatches().module());
+
+		for (IngListDataItem ingListDataItem : context.getIngList()) {
+
+			IngItem ingItem = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
+
+			for (IngTypeItem ingType : RegulatoryHelper.extractIngTypes(ingListDataItem, alfrescoRepository)) {
+				productDataDecernisJsonService.buildIngredientJsonById(ingListDataItem, ingItem, getFunction(ingType, moduleCode))
+						.ifPresent(ingredients::put);
+			}
+		}
+		String code = (String) nodeService.getProperty(context.getProduct().getNodeRef(), BeCPGModel.PROP_CODE);
+		JSONObject payload = productDataDecernisJsonService.recipeAnalysisPreparePayload(context, regulatoryBatch, code, ingredients, moduleCode);
+		String url = analysisUrl() + "/recipe-analysis/transaction?report=tabular";
+		HttpEntity<String> entity = createEntity(payload.toString());
+
+		tracePostRequest(payload, url);
+		String responseStr = RestTemplateHelper.getRestTemplateLongTimeout().postForObject(url, entity, String.class, new HashMap<>());
+		return new JSONObject(responseStr);
+	}
+
+	private String getFunction(IngTypeItem ingType, String moduleCode) {
+		String function = null;
+		if (ingType != null) {
+			String functionValue = ingType.getRegulatoryCode();
+			if (functionValue != null) {
+				function = findFunction(moduleCode, functionValue);
+			}
+			if (function == null) {
+				functionValue = ingType.getLvCode();
+				if (functionValue != null) {
+					function = findFunction(moduleCode, functionValue);
+				}
+			}
+			if (function == null) {
+				functionValue = ingType.getLvValue();
+				if (functionValue != null) {
+					function = findFunction(moduleCode, functionValue);
+				}
+			}
+		}
+		return function;
+	}
+
+	/**
+	 * <p>createRecipe.</p>
+	 *
+	 * @param context a {@link RegulatoryContext} object
+	 */
+	private void createRecipe(RegulatoryContext context) {
+		try {
+			JSONObject recipePayload = createRecipePayload(context);
+			if (recipePayload != null) {
+				String recipeId = context.getProduct().getRegulatoryRecipeId();
+				HttpEntity<String> request = createEntity(recipePayload.toString());
+				String url = serverUrl() + "/formulas";
+				if (recipeId != null && !recipeId.isBlank()) {
+					url += "/" + recipeId;
+					if (logger.isTraceEnabled()) {
+						logger.trace("PUT url: " + url + " body: " + recipePayload);
+					}
+					logger.debug("Update decernis recipe : " + recipeId);
+					ResponseEntity<String> responseEntity = RestTemplateHelper.getRestTemplateLongTimeout()
+							.exchange(url, HttpMethod.PUT, request, String.class);
+
+					if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+						logger.debug("Error while updating recipe : " + recipeId + ", response is: " + responseEntity);
+						recipeId = postRecipe(recipePayload, request, url);
+					}
+				} else {
+					recipeId = postRecipe(recipePayload, request, url);
+				}
+				context.setRegulatoryRecipeId(recipeId);
+			}
+		} catch (RestClientException e) {
+			logger.error(generateError(e), e);
+			RequirementListDataItem req = RequirementListDataItem.forbidden()
+					.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e))).ofDataType(RequirementDataType.Specification)
+					.withFormulationChainId(DecernisRegulatoryService.REGULATORY_KEY);
+			context.getRequirements().add(req);
+		}
+	}
+
+	private JSONObject createRecipePayload(RegulatoryContext context) {
+		JSONArray ingredients = new JSONArray();
+		JSONObject ret = productDataDecernisJsonService.wrapIngredients(context, companyName(), ingredients);
+
+		for (IngListDataItem ingListDataItem : context.getIngList()) {
+
+			if (ingListDataItem.getIng() != null) {
+
+				IngItem ingItem = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
+				String ingName = extractIngName(ingItem);
+				String rid = ingItem.getRegulatoryCode();
+
+				Double ingQtyPerc = DecernisHelper.truncateDoubleValue(ingListDataItem.getQtyPerc());
+
+				for (IngTypeItem ingType : RegulatoryHelper.extractIngTypes(ingListDataItem, alfrescoRepository)) {
+					String function = null;
+					if (ingType != null) {
+						function = fetchFunctionId(ingType.getRegulatoryCode(), companyName(), serverUrl());
+					}
+					try {
+						productDataDecernisJsonService.buildIngredientJsonByDid(rid, ingName, ingQtyPerc, function).ifPresent(ingredients::put);
+					} catch (RestClientException e) {
+						logger.warn("Cannot retrieve ingredient " + ingName + " error:" + e.getMessage());
+					} catch (Exception e) {
+						logger.error(e, e);
+						throw new FormulateException("Unexpected decernis error: " + DecernisHelper.cleanError(e.getMessage()), e);
+					}
+				}
+			}
+		}
+		if (ingredients.length() > 0) {
+			return ret;
+		}
+		return null;
+	}
+
+	/**
+	 * <p>postRecipe.</p>
+	 *
+	 * @param recipePayload a {@link org.json.JSONObject} object
+	 * @param request a {@link org.springframework.http.HttpEntity} object
+	 * @param url a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
+	private String postRecipe(JSONObject recipePayload, HttpEntity<String> request, String url) {
+		tracePostRequest(recipePayload, url);
+		String payload = RestTemplateHelper.getRestTemplateLongTimeout().postForObject(url, request, String.class);
+		JSONObject jsonObject = new JSONObject(payload);
+		String recipeId = null;
+		if (jsonObject.has("id")) {
+			recipeId = jsonObject.get("id").toString();
+		}
+		logger.debug("Create decernis recipe : " + recipeId);
+		return recipeId;
 	}
 
 	private boolean isIngRegulatoryListEnabled(ProductData productData) {
@@ -285,7 +589,8 @@ public class DecernisRegulatoryService implements RegulatoryService {
 				&& ingredientAnalysisEnabled();
 	}
 
-	private void checkComplianceAsync(RegulatoryContext context, ComplianceResult status) {
+	@Override
+	protected void checkComplianceAsync(RegulatoryContext context, ComplianceResult status) {
 		boolean batchStarted = false;
 		NodeRef entityNodeRef = context.getProduct().getNodeRef();
 		String entityDescription = nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE) + " - " + context.getProduct().getName();
@@ -293,7 +598,7 @@ public class DecernisRegulatoryService implements RegulatoryService {
 				entityDescription);
 		List<BatchStep<RegulatoryBatch>> steps = new ArrayList<>();
 		regulatoryBatchInfo.setBatchUser(AuthenticationUtil.getFullyAuthenticatedUser());
-		Integer batchThreads = getPlugin().getBatchThreads();
+		Integer batchThreads = getBatchThreads();
 		regulatoryBatchInfo.setWorkerThreads(batchThreads != null ? batchThreads : DEFAULT_REGULATORY_BATCH_THREADS);
 		String batchId = regulatoryBatchInfo.getBatchId();
 		regulatoryBatchInfo.setPriority(BatchPriority.VERY_HIGH);
@@ -313,7 +618,7 @@ public class DecernisRegulatoryService implements RegulatoryService {
 		recipeStep.setWorkProvider(regulatoryWorkProvider(context.getRegulatoryBatches()));
 		recipeStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<>() {
 			public void process(RegulatoryBatch regulatoryCheckContext) throws Throwable {
-				getPlugin().checkRecipe(context, regulatoryCheckContext);
+				checkRecipe(context, regulatoryCheckContext);
 			}
 		});
 		recipeStep.setBatchStepListener(new BatchStepAdapter() {
@@ -333,7 +638,7 @@ public class DecernisRegulatoryService implements RegulatoryService {
 			ingredientsStep.setWorkProvider(regulatoryWorkProvider(context.getRegulatoryBatches()));
 			ingredientsStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<>() {
 				public void process(RegulatoryBatch regulatoryCheckContext) throws Throwable {
-					getPlugin().checkIngredients(context, regulatoryCheckContext);
+					checkIngredients(context, regulatoryCheckContext);
 				}
 			});
 			ingredientsStep.setBatchStepListener(new BatchStepAdapter() {
@@ -356,168 +661,10 @@ public class DecernisRegulatoryService implements RegulatoryService {
 		status.setBatchId(batchId);
 	}
 
-	private void finalizeRecipeCheck(RegulatoryContext context, ProductData productData) {
-		if (productData.getReqCtrlList() == null) {
-			productData.setReqCtrlList(new ArrayList<>());
-		}
-		productData.getReqCtrlList().addAll(context.getRequirements());
-		formulationService.formulate(productData, REGULATORY_KEY);
-		if (!hasError(context.getRequirements())) {
-			updateChecksums(context, productData);
-			productData.setRegulatoryFormulatedDate(new Date());
-		} else {
-			productData.setRequirementChecksum(null);
-		}
-		String regulatoryRecipeId = context.getRegulatoryRecipeId();
-		if (regulatoryRecipeId != null && !regulatoryRecipeId.isBlank()) {
-			productData.setRegulatoryRecipeId(regulatoryRecipeId);
-			for (RegulatoryListDataItem regulatoryListItem : productData.getRegulatoryList()) {
-				regulatoryListItem.setRegulatoryRecipeId(regulatoryRecipeId);
-			}
-		}
-	}
-	
-	private boolean hasError(List<RequirementListDataItem> reqList) {
-		for (RequirementListDataItem req : reqList) {
-			if (RequirementType.Forbidden.equals(req.getReqType()) && RequirementDataType.Formulation.equals(req.getReqDataType())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private void updateChecksums(RegulatoryContext context, ProductData productData) {
-		String checkSum = createContextChecksum(context);
-		productData.setRequirementChecksum(CheckSumHelper.updateChecksum(REGULATORY_KEY, productData.getRequirementChecksum(), checkSum));
-		for (RegulatoryListDataItem regulatoryListDataItem : productData.getRegulatoryList()) {
-			Set<String> itemCountries = regulatoryListDataItem.getRegulatoryCountriesRef().stream().map(this::extractCode)
-					.collect(Collectors.toSet());
-			Set<String> itemUsages = regulatoryListDataItem.getRegulatoryUsagesRef().stream().map(this::extractCode).collect(Collectors.toSet());
-			String itemCheckSum = createRequirementChecksum(itemCountries, itemUsages);
-			regulatoryListDataItem.setRequirementChecksum(
-					CheckSumHelper.updateChecksum(REGULATORY_KEY, regulatoryListDataItem.getRequirementChecksum(), itemCheckSum));
-		}
-	}
-
-	private void processRegulatoryList(ProductData productData, List<IngRegulatoryListDataItem> ingRegulatoryListDataItems) {
-		Map<NodeRef, Map<NodeRef, List<IngRegulatoryListDataItem>>> groupedByIngAndCountry = ingRegulatoryListDataItems.stream().collect(
-				Collectors.groupingBy(IngRegulatoryListDataItem::getIng, Collectors.groupingBy(item -> item.getRegulatoryCountries().get(0))));
-
-		for (Map<NodeRef, List<IngRegulatoryListDataItem>> countryGroup : groupedByIngAndCountry.values()) {
-			for (List<IngRegulatoryListDataItem> items : countryGroup.values()) {
-				mergeItems(productData, items);
-			}
-		}
-
-		List<IngRegulatoryListDataItem> filteredList = productData
-				.getIngRegulatoryList().stream().filter(
-						item -> ingRegulatoryListDataItems.stream()
-								.anyMatch(ingRegulatoryListDataItem -> Objects.equals(item.getIng(), ingRegulatoryListDataItem.getIng())
-										&& Objects.equals(item.getRegulatoryCountries(), ingRegulatoryListDataItem.getRegulatoryCountries())))
-				.toList();
-
-		productData.getIngRegulatoryList().retainAll(filteredList);
-
-	}
-
-	private IngRegulatoryListDataItem mergeItems(ProductData productData, List<IngRegulatoryListDataItem> items) {
-
-		// Assuming all items have the same ing and country
-		IngRegulatoryListDataItem sampleItem = items.get(0);
-
-		IngRegulatoryListDataItem mergedItem = productData.getIngRegulatoryList().stream()
-				.filter(item -> Objects.equals(item.getIng(), sampleItem.getIng())
-						&& Objects.equals(item.getRegulatoryCountries(), sampleItem.getRegulatoryCountries()))
-				.findFirst().orElseGet(() -> {
-					IngRegulatoryListDataItem newItem = new IngRegulatoryListDataItem();
-					newItem.setIng(sampleItem.getIng());
-					newItem.setRegulatoryCountries(sampleItem.getRegulatoryCountries());
-					productData.getIngRegulatoryList().add(newItem);
-					return newItem;
-				});
-
-		String citation = items.stream().map(item -> item.getCitation().getDefaultValue()).distinct().sorted().collect(Collectors.joining(";;"));
-		String usages = items.stream().map(item -> item.getUsages().getDefaultValue()).distinct().sorted().collect(Collectors.joining(";;"));
-		String restrictionLevels = items.stream().map(item -> item.getRestrictionLevels().getDefaultValue())
-				.filter(r -> r != null && !r.isBlank() && !r.equals("-")).distinct().sorted().collect(Collectors.joining(";;"));
-		String resultIndicators = items.stream().map(item -> item.getResultIndicator().getDefaultValue()).distinct().sorted()
-				.collect(Collectors.joining(";;"));
-		String precautions = items.stream().filter(i -> i.getPrecautions() != null).map(item -> item.getPrecautions().getDefaultValue()).distinct()
-				.sorted().collect(Collectors.joining(";;"));
-
-		mergedItem.setResultIndicator(new MLText(resultIndicators));
-		mergedItem.setCitation(new MLText(citation));
-		mergedItem.setUsages(new MLText(usages));
-		mergedItem.setRestrictionLevels(new MLText(restrictionLevels));
-		mergedItem.setPrecautions(new MLText(precautions));
-		boolean mlAware = MLPropertyInterceptor.setMLAware(true);
-		try {
-			MLText comment = (MLText) nodeService.getProperty(mergedItem.getIng(), PLMModel.PROP_REGULATORY_COMMENT);
-			mergedItem.setComment(comment);
-		} finally {
-			MLPropertyInterceptor.setMLAware(mlAware);
-		}
-
-		mergedItem.setSources(extractSources(mergedItem.getIng(), productData));
-
-		return mergedItem;
-	}
-
-	private List<NodeRef> extractSources(NodeRef ing, ProductData formulatedProduct) {
-
-		Set<NodeRef> sources = new HashSet<>();
-
-		List<CompoListDataItem> compoList = formulatedProduct
-				.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()));
-
-		if (compoList != null) {
-			for (CompoListDataItem compoItem : compoList) {
-
-				if ((compoItem.getQtySubFormula() != null) && (compoItem.getQtySubFormula() > 0)) {
-					ProductData componentProductData = (ProductData) alfrescoRepository.findOne(compoItem.getProduct());
-					if (componentProductData.getIngList() != null) {
-
-						for (IngListDataItem ingListDataItem : componentProductData.getIngList()) {
-							if (ingListDataItem.getIng().equals(ing)) {
-								sources.add(compoItem.getProduct());
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-		return new ArrayList<>(sources);
-	}
-
-	private BatchProcessWorkProvider<RegulatoryBatch> regulatoryWorkProvider(List<RegulatoryBatch> regulatoryBatches) {
-		Iterator<RegulatoryBatch> it = regulatoryBatches.iterator();
-		return new BatchProcessWorkProvider<RegulatoryBatch>() {
-			@Override
-			public long getTotalEstimatedWorkSizeLong() {
-				return getTotalEstimatedWorkSize();
-			}
-
-			@Override
-			public int getTotalEstimatedWorkSize() {
-				return regulatoryBatches.size();
-			}
-
-			@Override
-			public Collection<RegulatoryBatch> getNextWork() {
-				if (it.hasNext()) {
-					return List.of(it.next());
-				}
-				return List.of();
-			}
-		};
-	}
-
-	private RegulatoryPlugin getPlugin() {
-		return regulatoryPlugins.stream()
-				.filter(DecernisRegulatoryPlugin.class::isInstance)
-				.findFirst()
-				.orElse(regulatoryPlugins.get(0));
+	@Override
+	protected boolean isEnabled() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.regulatory.decernis.enabled")) &&
+				serverUrl() != null && !serverUrl().isBlank() && analysisUrl() != null && !analysisUrl().isBlank();
 	}
 
 	private void fetchIngredients(RegulatoryContext context) {
@@ -526,7 +673,7 @@ public class DecernisRegulatoryService implements RegulatoryService {
 				IngItem ingItem = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
 				String rid = ingItem.getRegulatoryCode();
 				if (rid == null || rid.isEmpty()) {
-					rid = getPlugin().fetchIngredientId(ingListDataItem);
+					rid = fetchIngredientId(ingListDataItem, companyName());
 					if (logger.isDebugEnabled()) {
 						logger.debug("Try to fetch ingredient ID: " + ingItem.getCharactName());
 					}
@@ -552,121 +699,38 @@ public class DecernisRegulatoryService implements RegulatoryService {
 		}
 	}
 
-	private void updateProductFromRegulatoryList(ProductData product) {
-		Set<NodeRef> countries = new HashSet<>();
-		Set<NodeRef> usages = new HashSet<>();
-		for (RegulatoryListDataItem item : product.getRegulatoryList()) {
-			if (SystemState.Valid.equals(item.getRegulatoryState())) {
-				countries.addAll(item.getRegulatoryCountriesRef());
-				usages.addAll(item.getRegulatoryUsagesRef());
-			}
-		}
-		if (!countries.isEmpty() || !usages.isEmpty()) {
-			product.getRegulatoryCountriesRef().clear();
-			product.getRegulatoryCountriesRef().addAll(countries);
-			product.getRegulatoryUsagesRef().clear();
-			product.getRegulatoryUsagesRef().addAll(usages);
-		}
-	}
+	public String fetchIngredientId(IngListDataItem ingListDataItem, String companyName) {
 
-	private void updateProductFromLinkedSearches(ProductData formulatedProduct) {
-		updateRegulatoryEntityFromLinkedSearches(formulatedProduct);
-		for (RegulatoryListDataItem regList : formulatedProduct.getRegulatoryList()) {
-			updateRegulatoryEntityFromLinkedSearches(regList);
-		}
-	}
+		IngItem ingItem = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
+		String ingName = RegulatoryHelper.extractIngName(ingItem);
 
-	private void updateRegulatoryEntityFromLinkedSearches(RegulatoryEntity regulatoryEntity) {
-		List<NodeRef> linkedSearches = extractLinkedSearches(regulatoryEntity.getRegulatoryCountriesRef());
-		regulatoryEntity.getRegulatoryCountriesRef().clear();
-		for (NodeRef linkedSearch : linkedSearches) {
-			if (!regulatoryEntity.getRegulatoryCountriesRef().contains(linkedSearch)) {
-				regulatoryEntity.getRegulatoryCountriesRef().add(linkedSearch);
-			}
-		}
-	}
+		String ingredientId = null;
 
-	private List<NodeRef> extractLinkedSearches(List<NodeRef> regulatoryCountriesRef) {
-		List<NodeRef> linkedSearches = new ArrayList<>();
-		for (NodeRef regulatoryCountry : regulatoryCountriesRef) {
-			linkedSearches.addAll(extractLinkedSearches(regulatoryCountry));
-		}
-		return linkedSearches;
-	}
+		String url = serverUrl() + "/ingredients?current_company={company}&q={query}&identifier_type={type}&limit=25";
 
-	private List<NodeRef> extractLinkedSearches(NodeRef regulatoryCountry) {
-		List<NodeRef> linkedSearches = new ArrayList<>();
-		List<AssociationRef> targetAssocs = nodeService.getTargetAssocs(regulatoryCountry, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION);
-		if (!targetAssocs.isEmpty()) {
-			for (AssociationRef targetAssoc : targetAssocs) {
-				linkedSearches.addAll(extractLinkedSearches(targetAssoc.getTargetRef()));
-			}
-		} else {
-			linkedSearches.add(regulatoryCountry);
-		}
-		return linkedSearches;
-	}
+		Map<String, String> params = new HashMap<>();
+		params.put(PARAM_COMPANY, companyName);
 
-	private boolean isUpToDate(RegulatoryContext context) {
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DAY_OF_YEAR, -1);
-		if (context.getProduct().getRegulatoryFormulatedDate() == null || context.getProduct().getRegulatoryFormulatedDate().before(cal.getTime())) {
-			return false;
-		}
-		if (!CheckSumHelper.isSameChecksum(REGULATORY_KEY, context.getProduct().getRequirementChecksum(), createContextChecksum(context))) {
-			return false;
-		}
-		for (RegulatoryListDataItem regulatoryListDataItem : context.getProduct().getRegulatoryList()) {
-			Set<String> countries = regulatoryListDataItem.getRegulatoryCountriesRef().stream().map(this::extractCode).collect(Collectors.toSet());
-			Set<String> usages = regulatoryListDataItem.getRegulatoryUsagesRef().stream().map(this::extractCode).collect(Collectors.toSet());
-			if (!CheckSumHelper.isSameChecksum(REGULATORY_KEY, regulatoryListDataItem.getRequirementChecksum(),
-					createRequirementChecksum(countries, usages))) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private String createContextChecksum(RegulatoryContext context) {
-		Set<String> countries = context.getProduct().getRegulatoryCountriesRef().stream().map(this::extractCode).collect(Collectors.toSet());
-		Set<String> usages = context.getProduct().getRegulatoryUsagesRef().stream().map(this::extractCode).collect(Collectors.toSet());
-		if (!context.getProduct().getRegulatoryUsages().isEmpty() && !context.getProduct().getRegulatoryCountries().isEmpty()) {
-			countries = context.getProduct().getRegulatoryCountries().stream().collect(Collectors.toSet());
-			usages = context.getProduct().getRegulatoryUsages().stream().collect(Collectors.toSet());
-		}
-		StringBuilder checksumBuilder = new StringBuilder();
-		checksumBuilder.append(createRequirementChecksum(countries, usages));
-		for (RegulatoryListDataItem regulatoryListDataItem : context.getProduct().getRegulatoryList()) {
-			Set<String> itemCountries = regulatoryListDataItem.getRegulatoryCountriesRef().stream().map(this::extractCode)
-					.collect(Collectors.toSet());
-			Set<String> itemUsages = regulatoryListDataItem.getRegulatoryUsagesRef().stream().map(this::extractCode).collect(Collectors.toSet());
-			checksumBuilder.append(createRequirementChecksum(itemCountries, itemUsages));
+		if (!productDataDecernisJsonService.buildQuery(ingListDataItem, params)) {
+			params.put(PARAM_QUERY, ingName);
+			params.put("type", "Name");
 		}
 
-		if (context.getIngList() != null) {
-			context.getIngList().stream().map(ing -> ing.getNodeRef().getId() + ing.getIng() + ing.getValue()).sorted()
-					.forEach(checksumBuilder::append);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Look for ingredients in decernis by " + params.get("type") + ": " + params.get(PARAM_QUERY));
 		}
 
-		return CheckSumHelper.hashChecksum(checksumBuilder.toString());
-	}
+		if (logger.isTraceEnabled()) {
+			logger.trace("GET url: " + url + " params: " + params);
+		}
 
-	private String createRequirementChecksum(Set<String> countries, Set<String> usages) {
-		StringBuilder key = new StringBuilder();
-		if (countries != null) {
-			countries.stream().filter(c -> (c != null) && !c.isEmpty()).sorted().forEach(key::append);
-		}
-		if (usages != null) {
-			usages.stream().filter(c -> (c != null) && !c.isEmpty()).sorted().forEach(key::append);
-		}
-		return CheckSumHelper.hashChecksum(key.toString());
-	}
+		ResponseEntity<String> response = RestTemplateHelper.getRestTemplateLongTimeout()
+				.exchange(url, HttpMethod.GET, createEntity(null), String.class, params);
 
-	private boolean isContextCompatible(RegulatoryContext context) {
-		if (context.getProduct().getRegulatoryMode() == null || RegulatoryMode.DISABLED.equals(context.getProduct().getRegulatoryMode())) {
-			return false;
+		if ((response != null) && HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
+			ingredientId = productDataDecernisJsonService.parseIngredients(ingListDataItem, response, ingName, params, ingredientId);
 		}
-		return true;
+		return ingredientId;
 	}
 
 	private RequirementListDataItem createReqCtrl(IngListDataItem ingListDataItem, MLText reqCtrlMessage, RequirementType reqType) {
@@ -682,4 +746,114 @@ public class DecernisRegulatoryService implements RegulatoryService {
 		return reqCtrlItem;
 	}
 
+	private String generateError(RestClientException e) {
+		return "Error while creating Decernis recipe: " + DecernisHelper.cleanError(e.getMessage());
+	}
+
+	/**
+	 * <p>traceGetRequest.</p>
+	 *
+	 * @param url a {@link java.lang.String} object
+	 */
+	private void traceGetRequest(String url) {
+		if (logger.isTraceEnabled()) {
+			logger.trace(GET_URL + url);
+		}
+	}
+
+	/**
+	 * <p>fetchFunctionId.</p>
+	 *
+	 * @param regulatoryCode a {@link java.lang.String} object
+	 * @param companyName
+	 * @param serverUrl
+	 * @return a {@link java.lang.String} object
+	 */
+	private String fetchFunctionId(String regulatoryCode, String companyName, String serverUrl) {
+		if (functionsIdMap.containsKey(regulatoryCode)) {
+			return functionsIdMap.get(regulatoryCode);
+		}
+		String url = serverUrl + "/functions?current_company={company}&phrase={phrase}&module_id=1&limit=1";
+		Map<String, String> params = new HashMap<>();
+		params.put(PARAM_COMPANY, companyName);
+		params.put(PARAM_PHRASE, regulatoryCode);
+		if (logger.isTraceEnabled()) {
+			logger.trace(GET_URL + url + " params: " + params);
+		}
+		ResponseEntity<String> response = RestTemplateHelper.getRestTemplateLongTimeout()
+				.exchange(url, HttpMethod.GET, createEntity(null), String.class, params);
+		if (HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
+			JSONObject jsonObject = new JSONObject(response.getBody());
+			if (jsonObject.has(PARAM_RESULTS)) {
+				JSONArray results = jsonObject.getJSONArray(PARAM_RESULTS);
+				if (results.length() > 0) {
+					JSONObject result = results.getJSONObject(0);
+					if (result.has(PARAM_SCOPE_ID)) {
+						String functionId = result.get(PARAM_SCOPE_ID).toString();
+						functionsIdMap.put(regulatoryCode, functionId);
+						return functionId;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * <p>findFunction.</p>
+	 *
+	 * @param moduleCode   a {@link java.lang.String} object
+	 * @param ingTypeValue a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
+	private String findFunction(String moduleCode, String ingTypeValue) {
+		if (!functionsMap.containsKey(moduleCode)) {
+			List<String> functions = fetchFunctions(moduleCode, analysisUrl());
+			functionsMap.put(moduleCode, functions);
+		}
+		if (logger.isTraceEnabled()) {
+			logger.trace("functionsMap=" + functionsMap);
+		}
+		for (String function : functionsMap.get(moduleCode)) {
+			if (function.trim().equalsIgnoreCase(ingTypeValue.trim())) {
+				return function;
+			}
+		}
+		logger.warn("Ingredient function is not recognized by Decernis v5 API: " + ingTypeValue + ", available functions are: "
+				+ functionsMap.get(moduleCode));
+		return null;
+	}
+
+	/**
+	 * <p>fetchFunctions.</p>
+	 *
+	 * @param moduleCode  a {@link java.lang.String} object
+	 * @param analysisUrl
+	 * @return a {@link java.util.List} object
+	 */
+	private List<String> fetchFunctions(String moduleCode, String analysisUrl) {
+
+		List<String> functions = new ArrayList<>();
+
+		String url = analysisUrl + "/scope/function?topic=" + moduleCode;
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setBearerAuth(DecernisHelper.getToken().trim());
+
+		traceGetRequest(url);
+		ResponseEntity<String> response = RestTemplateHelper.getRestTemplateLongTimeout().exchange(url, HttpMethod.GET, createEntity(null),
+				String.class, new HashMap<>());
+
+		if (HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
+			JSONObject responseBody = new JSONObject(response.getBody());
+
+			if (responseBody.has("functions")) {
+				JSONArray functionArray = responseBody.getJSONArray("functions");
+				for (int i = 0; i < functionArray.length(); i++) {
+					functions.add(functionArray.getString(i));
+				}
+			}
+		}
+		return functions;
+	}
 }
