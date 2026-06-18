@@ -59,8 +59,10 @@ public class ProductDataEntityJsonService {
      */
     public ProductData newProductDataFromJson(JSONObject json) {
         ProductData deserialized = new ProductData();
-        deserialized.setIngRegulatoryList(parseIngredientRegulations(json).collect(Collectors.toCollection(ArrayList::new)));
-        deserialized.setReqCtrlList(parseReqCtrlList(json).collect(Collectors.toCollection(ArrayList::new)));
+        if (json != null) {
+            deserialized.setIngRegulatoryList(parseIngredientRegulations(json).collect(Collectors.toCollection(ArrayList::new)));
+            deserialized.setReqCtrlList(parseReqCtrlList(json).collect(Collectors.toCollection(ArrayList::new)));
+        }
         return deserialized;
     }
 
@@ -72,7 +74,8 @@ public class ProductDataEntityJsonService {
      */
     @SuppressWarnings("unchecked")
     public <T> Stream<T> deserializeDatalist(Class<T> datalistElementClass, JSONObject json) {
-        return (Stream<T>) listDeserializerRegistry.getOrDefault(datalistElementClass, ignored -> Stream.empty()).apply(json);
+        return json == null ? Stream.empty() :
+                (Stream<T>) listDeserializerRegistry.getOrDefault(datalistElementClass, ignored -> Stream.empty()).apply(json);
     }
 
 
@@ -123,6 +126,9 @@ public class ProductDataEntityJsonService {
      */
     public Stream<RequirementListDataItem> createAlertsForNotCoveredCountryToUsagePairs(Collection<RegulatoryListDataItem> regulatoryElements,
                                                                                         Collection<RequirementListDataItem> parsedReqCtrlElements) {
+        if (regulatoryElements == null || parsedReqCtrlElements == null || regulatoryElements.isEmpty() || parsedReqCtrlElements.isEmpty())
+            return Stream.empty();
+
         // COUNTRY - USAGE that were handled
         Set<String> coveredPairCodes = parsedReqCtrlElements.stream()
                 .map(RequirementListDataItem::getRegulatoryCode)
@@ -187,6 +193,9 @@ public class ProductDataEntityJsonService {
      */
     public Stream<RequirementListDataItem> createAlertsForNotCoveredIngredients(Collection<IngListDataItem> ingredientElements,
                                                                                 Collection<IngRegulatoryListDataItem> ingredientRegulatoryElements) {
+
+        if (ingredientElements == null || ingredientRegulatoryElements == null || ingredientElements.isEmpty() || ingredientRegulatoryElements.isEmpty())
+            return Stream.empty();
 
         Set<NodeRef> parsedIngRegulatoryElements = ingredientRegulatoryElements.stream()
                 .map(IngRegulatoryListDataItem::getIng)

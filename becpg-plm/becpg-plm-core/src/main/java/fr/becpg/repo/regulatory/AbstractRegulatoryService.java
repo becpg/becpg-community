@@ -123,7 +123,7 @@ public abstract class AbstractRegulatoryService {
 
     protected abstract boolean isEnabled();
 
-    protected abstract String getToken();
+    protected abstract Optional<String> getToken();
 
     /* Regulatory verification logic */
 
@@ -530,9 +530,7 @@ public abstract class AbstractRegulatoryService {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         headers.setContentType(MediaType.APPLICATION_JSON);
-        String token = getToken();
-        if (token != null && !token.isBlank())
-            headers.setBearerAuth(token);
+        getToken().ifPresent(headers::setBearerAuth);
         return new HttpEntity<>(body, headers);
     }
 
@@ -546,10 +544,9 @@ public abstract class AbstractRegulatoryService {
      */
     protected String cleanError(String error) {
         if (error != null) {
-            String token = getToken();
-            if (token != null && !token.isBlank()) {
-                return error.replace(token, "XXX");
-            }
+            Optional<String> errorWithHiddenToken = getToken().map(token -> error.replace(token, "XXX"));
+            if (errorWithHiddenToken.isPresent())
+                return errorWithHiddenToken.get();
         }
         return error;
     }
