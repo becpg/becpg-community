@@ -389,6 +389,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	@Value("${becpg.olap.enabled}")
 	private Boolean isOlapEnabled;
+
+	@Value("${beCPG.product.cosmeticIcons}")
+	private Boolean cosmeticIconsEnabled;
 	
 
 	/**
@@ -735,6 +738,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	protected void visitFiles(NodeRef folderNodeRef, String folderName, boolean folderExists) {
 		if (Objects.equals(folderName, RepoConsts.PATH_ICON)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/images/*.png");
+			if (Boolean.TRUE.equals(cosmeticIconsEnabled)) {
+				contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/iconsets/cosmetic/*.png", true);
+			}
 		}
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_MAPPING)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/import/mapping/*.xml");
