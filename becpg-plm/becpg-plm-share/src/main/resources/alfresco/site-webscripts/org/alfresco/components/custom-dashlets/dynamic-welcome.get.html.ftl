@@ -52,7 +52,11 @@
                                         <#if column??>
                                            <div class="welcome-details-column welcome-details-column-${column_index}">
                                               <div class="welcome-details-column-image">
-                                                 <img src="${url.context}${column.imageUrl}"/>
+                                                 <#if column.iconClass??>
+                                                    <span class="welcome-column-icon ${column.iconClass}"></span>
+                                                 <#else>
+                                                    <img src="${url.context}${column.imageUrl}"/>
+                                                 </#if>
                                               </div>
                                               <div class="welcome-details-column-info">
                                                  <h3>${msg(column.title)}</h3>

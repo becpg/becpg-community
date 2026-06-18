@@ -30,6 +30,37 @@
 		url("../../components/images/filetypes/generic-entity-16.png");
 	--icon-project-16:
 		url("../../components/images/filetypes/generic-project-16.png");
+
+	--icon-finishedProduct-64:
+		url("../../components/images/filetypes/generic-finishedProduct-64.png");
+	--icon-rawMaterial-64:
+		url("../../components/images/filetypes/generic-rawMaterial-64.png");
+	--icon-semiFinishedProduct-64:
+		url("../../components/images/filetypes/generic-semiFinishedProduct-64.png");
+	--icon-project-64:
+		url("../../components/images/filetypes/generic-project-64.png");
+}
+
+/* Themeable large icons for the dynamic welcome dashlet (overridable per theme) */
+.welcome-details-column-image .welcome-column-icon {
+	display: inline-block;
+	width: 64px;
+	height: 64px;
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-size: contain;
+}
+.welcome-column-icon.welcome-icon-finishedProduct {
+	background-image: var(--icon-finishedProduct-64);
+}
+.welcome-column-icon.welcome-icon-rawMaterial {
+	background-image: var(--icon-rawMaterial-64);
+}
+.welcome-column-icon.welcome-icon-semiFinishedProduct {
+	background-image: var(--icon-semiFinishedProduct-64);
+}
+.welcome-column-icon.welcome-icon-project {
+	background-image: var(--icon-project-64);
 }
 
 #bd {
