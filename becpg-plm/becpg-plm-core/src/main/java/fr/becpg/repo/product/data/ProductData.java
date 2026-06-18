@@ -228,7 +228,7 @@ public class ProductData extends AbstractScorableEntity
 	private List<String> regulatoryCountries = new ArrayList<>();
 	private List<String> regulatoryUsages = new ArrayList<>();
 	private Date regulatoryFormulatedDate;
-	private RegulatoryMode regulatoryMode = RegulatoryMode.DECERNIS_BECPG_ONLY;
+	private RegulatoryMode regulatoryMode = RegulatoryMode.BECPG_ONLY;
 	private String regulatoryRecipeId;
 	private RegulatoryResult regulatoryResult;
 	private String regulatoryUrl;

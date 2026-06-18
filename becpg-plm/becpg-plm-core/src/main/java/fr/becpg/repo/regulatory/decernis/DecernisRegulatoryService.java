@@ -352,11 +352,11 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 			logger.debug("Launch decernis in mode :" + context.getRegulatoryMode());
 		}
 
-		if (RegulatoryMode.DECERNIS_BOTH.equals(context.getRegulatoryMode()) || RegulatoryMode.DECERNIS_ONLY.equals(context.getRegulatoryMode())) {
+		if (RegulatoryMode.BOTH.equals(context.getRegulatoryMode()) || RegulatoryMode.DECERNIS_ONLY.equals(context.getRegulatoryMode())) {
 			createRecipe(context);
 		}
 
-		if (RegulatoryMode.DECERNIS_BOTH.equals(context.getRegulatoryMode()) || RegulatoryMode.DECERNIS_BECPG_ONLY.equals(context.getRegulatoryMode())) {
+		if (RegulatoryMode.BOTH.equals(context.getRegulatoryMode()) || RegulatoryMode.BECPG_ONLY.equals(context.getRegulatoryMode())) {
 			JSONObject recipeAnalysisResults = null;
 			try {
 				recipeAnalysisResults = recipeAnalysis(context, regulatoryBatch);
