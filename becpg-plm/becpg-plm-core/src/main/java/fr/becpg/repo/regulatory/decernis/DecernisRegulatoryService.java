@@ -294,11 +294,10 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 		}
 		finalizeRecipeCheck(context, context.getProduct());
 		if (isIngRegulatoryListEnabled(context.getProduct())) {
-			List<IngRegulatoryListDataItem> ingRegulatoryListDataItems = new ArrayList<>();
 			for (RegulatoryBatch regulatoryCheckContext : context.getRegulatoryBatches()) {
 				checkIngredients(context, regulatoryCheckContext);
 			}
-			processRegulatoryList(context.getProduct(), ingRegulatoryListDataItems);
+			processRegulatoryList(context.getProduct(), context.getIngRegulatoryListDataItems());
 		}
 	}
 
