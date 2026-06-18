@@ -1,10 +1,11 @@
-package fr.becpg.repo.regulatory;
+package fr.becpg.repo.regulatory.decernis;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import fr.becpg.repo.regulatory.RequirementListDataItem;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.product.data.ProductData;
@@ -20,7 +21,7 @@ import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 public class RegulatoryContext {
 
 	private ProductData product;
-	
+
 	private List<IngListDataItem> ingList = new CopyOnWriteArrayList<>();
 	
 	private List<RegulatoryBatch> regulatoryBatches = new CopyOnWriteArrayList<>();
@@ -140,7 +141,7 @@ public class RegulatoryContext {
 	/**
 	 * <p>getRegulatoryMode.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.regulatory.RegulatoryMode} object
+	 * @return a {@link RegulatoryMode} object
 	 */
 	public RegulatoryMode getRegulatoryMode() {
 		return product.getRegulatoryMode();

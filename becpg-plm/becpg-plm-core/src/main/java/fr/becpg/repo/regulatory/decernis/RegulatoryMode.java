@@ -1,4 +1,4 @@
-package fr.becpg.repo.regulatory;
+package fr.becpg.repo.regulatory.decernis;
 
 /**
  * <p>DecernisMode class.</p>
@@ -7,5 +7,5 @@ package fr.becpg.repo.regulatory;
  * @version $Id: $Id
  */
 public enum RegulatoryMode {
-   BECPG_ONLY, DECERNIS_ONLY, BOTH, DISABLED
+   REGULATORY, BECPG_ONLY, DECERNIS_ONLY, BOTH, DISABLED
 }

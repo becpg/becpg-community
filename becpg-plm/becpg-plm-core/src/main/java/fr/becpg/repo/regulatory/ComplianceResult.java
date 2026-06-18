@@ -1,6 +1,7 @@
 package fr.becpg.repo.regulatory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import fr.becpg.repo.regulatory.decernis.RegulatoryContext;
 
 /**
  * <p>ComplianceResult class.</p>
@@ -19,7 +20,7 @@ public class ComplianceResult {
 	/**
 	 * <p>Getter for the field <code>context</code>.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.regulatory.RegulatoryContext} object
+	 * @return a {@link RegulatoryContext} object
 	 */
 	public RegulatoryContext getContext() {
 		return context;
@@ -28,7 +29,7 @@ public class ComplianceResult {
 	/**
 	 * <p>Setter for the field <code>context</code>.</p>
 	 *
-	 * @param context a {@link fr.becpg.repo.regulatory.RegulatoryContext} object
+	 * @param context a {@link RegulatoryContext} object
 	 */
 	public void setContext(RegulatoryContext context) {
 		this.context = context;
@@ -55,7 +56,7 @@ public class ComplianceResult {
 	/**
 	 * <p>Getter for the field <code>status</code>.</p>
 	 *
-	 * @return a {@link fr.becpg.repo.regulatory.ComplianceResult.Status} object
+	 * @return a {@link Status} object
 	 */
 	public Status getStatus() {
 		return status;
@@ -64,13 +65,13 @@ public class ComplianceResult {
 	/**
 	 * <p>Setter for the field <code>status</code>.</p>
 	 *
-	 * @param status a {@link fr.becpg.repo.regulatory.ComplianceResult.Status} object
+	 * @param status a {@link Status} object
 	 */
 	public void setStatus(Status status) {
 		this.status = status;
 	}
 	
-	enum Status {
+	public enum Status {
 		STARTED,
 		PENDING,
 		FINISHED,

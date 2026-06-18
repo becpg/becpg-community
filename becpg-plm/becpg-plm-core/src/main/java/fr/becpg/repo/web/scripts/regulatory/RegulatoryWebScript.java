@@ -1,15 +1,14 @@
 package fr.becpg.repo.web.scripts.regulatory;
 
-import java.io.IOException;
-
+import fr.becpg.repo.helper.json.JsonHelper;
+import fr.becpg.repo.regulatory.ComplianceResult;
+import fr.becpg.repo.regulatory.RegulatoryRouterService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
-import fr.becpg.repo.regulatory.RegulatoryService;
-import fr.becpg.repo.helper.json.JsonHelper;
-import fr.becpg.repo.regulatory.ComplianceResult;
+import java.io.IOException;
 
 /**
  * <p>RegulatoryWebScript class.</p>
@@ -23,15 +22,15 @@ public class RegulatoryWebScript extends AbstractWebScript {
 	/** Constant <code>PARAM_ASYNC="async"</code> */
 	private static final String PARAM_ASYNC = "async";
 
-	private RegulatoryService regulatoryService;
+	private RegulatoryRouterService regulatoryRouterService;
 	
 	/**
-	 * <p>Setter for the field <code>regulatoryService</code>.</p>
+	 * <p>Setter for the field <code>regulatoryRouterService</code>.</p>
 	 *
-	 * @param regulatoryService a {@link fr.becpg.repo.regulatory.RegulatoryService} object
+	 * @param regulatoryRouterService a {@link fr.becpg.repo.regulatory.RegulatoryRouterService} object
 	 */
-	public void setRegulatoryService(RegulatoryService regulatoryService) {
-		this.regulatoryService = regulatoryService;
+	public void setRegulatoryRouterService(RegulatoryRouterService regulatoryRouterService) {
+		this.regulatoryRouterService = regulatoryRouterService;
 	}
 	
 	/** {@inheritDoc} */
@@ -41,7 +40,7 @@ public class RegulatoryWebScript extends AbstractWebScript {
 		NodeRef nodeRef = new NodeRef(req.getParameter(PARAM_NODEREF));
 		boolean async = Boolean.parseBoolean(req.getParameter(PARAM_ASYNC));
 		
-		ComplianceResult result = regulatoryService.checkCompliance(nodeRef, async);
+		ComplianceResult result = regulatoryRouterService.checkCompliance(nodeRef, async);
 		res.setContentType("application/json");
 		res.getWriter().write(JsonHelper.serialize(result));
 	}

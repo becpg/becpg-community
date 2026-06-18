@@ -1,4 +1,4 @@
-package fr.becpg.repo.regulatory.plugins;
+package fr.becpg.repo.regulatory.decernis;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -79,22 +79,6 @@ public class DecernisHelper {
 	}
 	
 	/**
-	 * <p>cleanError.</p>
-	 *
-	 * @param error a {@link java.lang.String} object
-	 * @return a {@link java.lang.String} object
-	 */
-	public static String cleanError(String error) {
-		if (error != null) {
-			String token = getToken();
-			if (token != null && !token.isBlank()) {
-				return error.replace(token, "XXX");
-			}
-		}
-		return error;
-	}
-	
-	/**
 	 * <p>getToken.</p>
 	 *
 	 * @return a {@link java.lang.String} object
@@ -106,7 +90,7 @@ public class DecernisHelper {
 				return confValue;
 			}
 		}
-		return SystemConfigurationRegistry.instance().confValue("beCPG.decernis.token");
+		return SystemConfigurationRegistry.instance().confValue("beCPG.regulatory.decernis.token");
 	}
 	
 }

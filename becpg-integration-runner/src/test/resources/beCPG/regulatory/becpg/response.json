@@ -1,0 +1,73 @@
+{
+  "id": "1da9a199-f6c9-49a0-a9a1-99f6c929a013",
+  "attributes": {},
+  "datalists": {
+    "bcpg:ingRegulatoryList": [
+      {
+        "attributes": {
+          "bcpg:regulatoryCode": "BECPG_2981",
+          "bcpg:irlRestrictionLevels": "COSMETIC :: (a) Leave-on products (b) Rinse-off products Maximum concentration: (a) 3,0 % (b) 4,0 %",
+          "bcpg:regulatoryCountries": [
+            {
+              "id": "40f8e29a-54d4-42cb-b8e2-9a54d462cb11"
+            }
+          ],
+          "bcpg:irlCitation": "CE Regulation 1223/2009 - Annex III, Entry 257",
+          "bcpg:irlResultIndicator": "COSMETIC: RESTRICTED: Simple business rule: RESTRICTED for leave-on products ;; Simple business rule: RESTRICTED for rinse-off products",
+          "bcpg:irlIng": {
+            "id": "51fa6f16-3448-43ae-ba6f-16344833ae9f"
+          }
+        }
+      }
+    ],
+    "bcpg:reqCtrlList": [
+      {
+        "cm:name": "f2a46917-4d86-410a-9cd4-a38d5e9f2d52",
+        "type": "bcpg:reqCtrlList",
+        "attributes": {
+          "bcpg:regulatoryCode": "European Union - IFRA_BAR_SOAP",
+          "bcpg:rclSourcesV2": [
+            {
+              "id": "58b9e321-c7f8-489e-b9e3-21c7f8e89ed3",
+              "cm:name": "23d58c8c-40b8-4ba9-958c-8c40b83ba9e4",
+              "type": "bcpg:ingList"
+            }
+          ],
+          "bcpg:rclCharact": {
+            "id": "58b9e321-c7f8-489e-b9e3-21c7f8e89ed3",
+            "cm:name": "23d58c8c-40b8-4ba9-958c-8c40b83ba9e4",
+            "type": "bcpg:ingList"
+          },
+          "bcpg:rclReqMessage": "Forbidden ingredients (<=3.0%)",
+          "bcpg:rclDataType": "Specification",
+          "bcpg:rclFormulationChainId": "regulatory",
+          "bcpg:rclReqType": "Forbidden",
+          "bcpg:rclReqMaxQty": 3.0
+        }
+      },
+      {
+        "cm:name": "e5b2f5fd-230c-4e3b-849e-77815fc08cc5",
+        "type": "bcpg:reqCtrlList",
+        "attributes": {
+          "bcpg:regulatoryCode": "European Union - IFRA_BAR_SOAP",
+          "bcpg:rclSourcesV2": [
+            {
+              "id": "58b9e321-c7f8-489e-b9e3-21c7f8e89ed3",
+              "cm:name": "23d58c8c-40b8-4ba9-958c-8c40b83ba9e4",
+              "type": "bcpg:ingList"
+            }
+          ],
+          "bcpg:rclCharact": {
+            "id": "58b9e321-c7f8-489e-b9e3-21c7f8e89ed3",
+            "cm:name": "23d58c8c-40b8-4ba9-958c-8c40b83ba9e4",
+            "type": "bcpg:ingList"
+          },
+          "bcpg:rclDataType": "Specification",
+          "bcpg:rclFormulationChainId": "regulatory",
+          "bcpg:rclReqType": "Tolerated",
+          "bcpg:rclReqMaxQty": 4.0
+        }
+      }
+    ]
+  }
+}
