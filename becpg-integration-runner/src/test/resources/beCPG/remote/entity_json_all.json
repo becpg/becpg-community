@@ -1993,7 +1993,7 @@
       "bcpg:productCompoQtyUsed": 550,
       "bcpg:nutrientProfilingClass": "E",
       "bcpg:nutrientPreparedUnit": "g",
-      "bcpg:regulatoryMode": "BECPG_ONLY",
+      "bcpg:regulatoryMode": "DECERNIS_BECPG_ONLY",
       "cm:name": "Éclair au chocolat",
       "bcpg:regulatoryState": "Simulation",
       "bcpg:nutrientProfileCategory": "Others"
