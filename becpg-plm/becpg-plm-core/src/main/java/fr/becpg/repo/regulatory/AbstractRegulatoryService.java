@@ -533,7 +533,18 @@ public abstract class AbstractRegulatoryService {
         String token = getToken();
         if (token != null && !token.isBlank())
             headers.setBearerAuth(token);
+        customizeHeaders(headers);
         return new HttpEntity<>(body, headers);
+    }
+
+    /**
+     * Hook letting a concrete service add request headers (e.g. a delegated
+     * authentication ticket). The default implementation does nothing.
+     *
+     * @param headers the headers being built for the outgoing request
+     */
+    protected void customizeHeaders(HttpHeaders headers) {
+        // No additional headers by default
     }
 
     protected abstract String generateError(Exception e);
