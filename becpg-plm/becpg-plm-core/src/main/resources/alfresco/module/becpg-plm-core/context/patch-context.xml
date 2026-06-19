@@ -1265,6 +1265,7 @@
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
         <property name="ruleService" ref="ruleService"/>
+        <property name="integrityChecker" ref="integrityChecker"/>
         <property name="patchDAO">
             <ref bean="patchDAO"/>
         </property>
