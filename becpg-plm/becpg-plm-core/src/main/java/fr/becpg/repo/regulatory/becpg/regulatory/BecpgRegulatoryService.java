@@ -35,6 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -77,7 +78,10 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
     @Override
     protected Optional<String> getToken() {
         String token = systemConfigurationService.confValue("beCPG.regulatory.token");
-        return Optional.ofNullable(token != null ? token.trim() : null);
+        if (token == null)
+            return Optional.empty();
+        token = token.trim();
+        return token.isEmpty() ? Optional.empty() : Optional.of(token);
     }
 
     @Override
@@ -118,16 +122,7 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
 
     @Override
     protected void delegateSyncComplianceCheck(RegulatoryContext context) {
-        try {
-            checkRecipe(context);
-        } catch (Exception e) {
-            logger.error(ERROR_PREFIX + cleanError(e.getMessage()), e);
-            RequirementListDataItem req = RequirementListDataItem.forbidden()
-                    .withMessage(MLTextHelper.getI18NMessage(MESSAGE_REGULATORY_ERROR, generateError(e)))
-                    .ofDataType(RequirementDataType.Formulation)
-                    .withFormulationChainId(REGULATORY_KEY);
-            context.getRequirements().add(req);
-        }
+        checkRecipe(context);
         finalizeRecipeCheck(context, context.getProduct());
         processRegulatoryList(context.getProduct(), context.getIngRegulatoryListDataItems());
     }
@@ -144,12 +139,24 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
                 retries--;
                 analysisPassed = analyze(context);
             } catch (RestClientException e) {
-                if (retries <= 0) {
-                    throw e;
-                }
+                if (retries <= 0)
+                    context.getRequirements().addAll(generateErrorsforAllRegulatoryPairs(context, e));
                 logger.error(ERROR_PREFIX + cleanError(e.getMessage()) + ", try restarting request...");
+            } catch (Exception e) {
+                context.getRequirements().addAll(generateErrorsforAllRegulatoryPairs(context, e));
             }
         }
+    }
+
+    private List<RequirementListDataItem> generateErrorsforAllRegulatoryPairs(RegulatoryContext context, Exception e) {
+        logger.error("Error during beCPG regulatory analysis: " + cleanError(e.getMessage()), e);
+        Map<NodeRef, String> nodeRefRegCodeMap = productDataEntityJsonService.fillNodeRefDictionary(context.getProduct().getRegulatoryList());
+
+        return context.getProduct().getRegulatoryList().stream().flatMap(regElement -> generateReqCtrlErrors(
+                regElement.getRegulatoryCountriesRef().stream().map(nodeRefRegCodeMap::get).filter(Objects::nonNull).toList(),
+                regElement.getRegulatoryUsagesRef().stream().map(nodeRefRegCodeMap::get).filter(Objects::nonNull).toList(),
+                MLTextHelper.getI18NMessage(MESSAGE_REGULATORY_ERROR, generateError(e))
+        )).toList();
     }
 
     private boolean analyze(RegulatoryContext context) throws JSONException {

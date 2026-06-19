@@ -1,5 +1,6 @@
 package fr.becpg.repo.regulatory;
 
+import com.google.common.collect.Lists;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
@@ -43,6 +44,7 @@ import org.springframework.http.MediaType;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class AbstractRegulatoryService {
     private static final Log logger = LogFactory.getLog(AbstractRegulatoryService.class);
@@ -199,6 +201,16 @@ public abstract class AbstractRegulatoryService {
         regulatoryBatchInfo.setPriority(BatchPriority.VERY_HIGH);
         regulatoryBatchInfo.enableNotifyByMail(REGULATORY_KEY, String.format(ASYNC_ACTION_URL_PREFIX, entityNodeRef));
         return regulatoryBatchInfo;
+    }
+
+    protected Stream<RequirementListDataItem> generateReqCtrlErrors(List<String> countries, List<String> usages, MLText message) {
+        return Lists.cartesianProduct(countries, usages).stream().map(countryUsage ->
+                RequirementListDataItem.forbidden()
+                        .withMessage(message)
+                        .ofDataType(RequirementDataType.Formulation)
+                        .withFormulationChainId(REGULATORY_KEY)
+                        .withRegulatoryCode(countryUsage.getFirst() + " - " + (countryUsage.size() == 1 ? "" : countryUsage.get(1)))
+        );
     }
 
     protected abstract List<BatchStep<RegulatoryBatch>> delegatePrepareAsyncSteps(RegulatoryContext context, NodeRef entityNodeRef);

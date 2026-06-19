@@ -134,13 +134,7 @@ public class ProductDataEntityJsonService {
                 .map(RequirementListDataItem::getRegulatoryCode)
                 .collect(Collectors.toSet());
 
-        // distinct() ensures that each noderef is only looked-up once, all standard map-based solutions look-up and then dedup
-        Map<NodeRef, String> codeByRef = regulatoryElements.stream().flatMap(item -> Stream.concat(
-                item.getRegulatoryCountriesRef().stream(), item.getRegulatoryUsagesRef().stream()
-        )).distinct().collect(Collectors.toMap(
-                Function.identity(),
-                nodeRef -> (String) nodeService.getProperty(nodeRef, PLMModel.PROP_REGULATORY_CODE)
-        ));
+        Map<NodeRef, String> codeByRef = fillNodeRefDictionary(regulatoryElements);
 
         return regulatoryElements.stream().flatMap(item -> Lists.cartesianProduct(
                         item.getRegulatoryCountriesRef(), item.getRegulatoryUsagesRef()).stream()
@@ -158,6 +152,18 @@ public class ProductDataEntityJsonService {
                         sink.accept(createToleratedReqCtrl(sources, i18NMessage, null, code));
                     }
                 });
+    }
+
+    public Map<NodeRef, String> fillNodeRefDictionary(Collection<RegulatoryListDataItem> regulatoryElements) {
+        if (regulatoryElements == null)
+            return Collections.emptyMap();
+        // distinct() ensures that each noderef is only looked-up once, all standard map-based solutions look-up and then dedup
+        return regulatoryElements.stream().flatMap(item -> Stream.concat(
+                item.getRegulatoryCountriesRef().stream(), item.getRegulatoryUsagesRef().stream()
+        )).distinct().collect(Collectors.toMap(
+                Function.identity(),
+                nodeRef -> (String) nodeService.getProperty(nodeRef, PLMModel.PROP_REGULATORY_CODE)
+        ));
     }
 
     private static Stream<IngRegulatoryListDataItem> parseIngredientRegulations(JSONObject json) {
