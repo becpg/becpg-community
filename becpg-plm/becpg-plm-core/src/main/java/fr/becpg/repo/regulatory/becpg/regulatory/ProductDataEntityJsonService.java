@@ -59,8 +59,10 @@ public class ProductDataEntityJsonService {
      */
     public ProductData newProductDataFromJson(JSONObject json) {
         ProductData deserialized = new ProductData();
-        deserialized.setIngRegulatoryList(parseIngredientRegulations(json).collect(Collectors.toCollection(ArrayList::new)));
-        deserialized.setReqCtrlList(parseReqCtrlList(json).collect(Collectors.toCollection(ArrayList::new)));
+        if (json != null) {
+            deserialized.setIngRegulatoryList(parseIngredientRegulations(json).collect(Collectors.toCollection(ArrayList::new)));
+            deserialized.setReqCtrlList(parseReqCtrlList(json).collect(Collectors.toCollection(ArrayList::new)));
+        }
         return deserialized;
     }
 
@@ -72,7 +74,8 @@ public class ProductDataEntityJsonService {
      */
     @SuppressWarnings("unchecked")
     public <T> Stream<T> deserializeDatalist(Class<T> datalistElementClass, JSONObject json) {
-        return (Stream<T>) listDeserializerRegistry.getOrDefault(datalistElementClass, ignored -> Stream.empty()).apply(json);
+        return json == null ? Stream.empty() :
+                (Stream<T>) listDeserializerRegistry.getOrDefault(datalistElementClass, ignored -> Stream.empty()).apply(json);
     }
 
 
@@ -123,18 +126,15 @@ public class ProductDataEntityJsonService {
      */
     public Stream<RequirementListDataItem> createAlertsForNotCoveredCountryToUsagePairs(Collection<RegulatoryListDataItem> regulatoryElements,
                                                                                         Collection<RequirementListDataItem> parsedReqCtrlElements) {
+        if (regulatoryElements == null || parsedReqCtrlElements == null || regulatoryElements.isEmpty() || parsedReqCtrlElements.isEmpty())
+            return Stream.empty();
+
         // COUNTRY - USAGE that were handled
         Set<String> coveredPairCodes = parsedReqCtrlElements.stream()
                 .map(RequirementListDataItem::getRegulatoryCode)
                 .collect(Collectors.toSet());
 
-        // distinct() ensures that each noderef is only looked-up once, all standard map-based solutions look-up and then dedup
-        Map<NodeRef, String> codeByRef = regulatoryElements.stream().flatMap(item -> Stream.concat(
-                item.getRegulatoryCountriesRef().stream(), item.getRegulatoryUsagesRef().stream()
-        )).distinct().collect(Collectors.toMap(
-                Function.identity(),
-                nodeRef -> (String) nodeService.getProperty(nodeRef, PLMModel.PROP_REGULATORY_CODE)
-        ));
+        Map<NodeRef, String> codeByRef = fillNodeRefDictionary(regulatoryElements);
 
         return regulatoryElements.stream().flatMap(item -> Lists.cartesianProduct(
                         item.getRegulatoryCountriesRef(), item.getRegulatoryUsagesRef()).stream()
@@ -152,6 +152,18 @@ public class ProductDataEntityJsonService {
                         sink.accept(createToleratedReqCtrl(sources, i18NMessage, null, code));
                     }
                 });
+    }
+
+    public Map<NodeRef, String> fillNodeRefDictionary(Collection<RegulatoryListDataItem> regulatoryElements) {
+        if (regulatoryElements == null)
+            return Collections.emptyMap();
+        // distinct() ensures that each noderef is only looked-up once, all standard map-based solutions look-up and then dedup
+        return regulatoryElements.stream().flatMap(item -> Stream.concat(
+                item.getRegulatoryCountriesRef().stream(), item.getRegulatoryUsagesRef().stream()
+        )).distinct().collect(Collectors.toMap(
+                Function.identity(),
+                nodeRef -> (String) nodeService.getProperty(nodeRef, PLMModel.PROP_REGULATORY_CODE)
+        ));
     }
 
     private static Stream<IngRegulatoryListDataItem> parseIngredientRegulations(JSONObject json) {
@@ -187,6 +199,9 @@ public class ProductDataEntityJsonService {
      */
     public Stream<RequirementListDataItem> createAlertsForNotCoveredIngredients(Collection<IngListDataItem> ingredientElements,
                                                                                 Collection<IngRegulatoryListDataItem> ingredientRegulatoryElements) {
+
+        if (ingredientElements == null || ingredientRegulatoryElements == null || ingredientElements.isEmpty() || ingredientRegulatoryElements.isEmpty())
+            return Stream.empty();
 
         Set<NodeRef> parsedIngRegulatoryElements = ingredientRegulatoryElements.stream()
                 .map(IngRegulatoryListDataItem::getIng)
