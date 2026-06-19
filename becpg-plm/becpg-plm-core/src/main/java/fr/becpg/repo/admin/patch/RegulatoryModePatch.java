@@ -8,6 +8,7 @@ import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.repo.domain.patch.PatchDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
+import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -33,6 +34,7 @@ public class RegulatoryModePatch extends AbstractBeCPGPatch {
 	private QNameDAO qnameDAO;
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
+	private IntegrityChecker integrityChecker;
 
 	@Override
 	protected String applyInternal() throws Exception {
@@ -84,7 +86,7 @@ public class RegulatoryModePatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("ErrorLogPatch", transactionService.getRetryingTransactionHelper(),
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("RegulatoryModePatch", transactionService.getRetryingTransactionHelper(),
 				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
 
 		BatchProcessor.BatchProcessWorker<NodeRef> worker = new BatchProcessor.BatchProcessWorker<>() {
@@ -122,7 +124,12 @@ public class RegulatoryModePatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		batchProcessor.processLong(worker, true);
+		getIntegrityChecker().setEnabled(false);
+		try {
+			batchProcessor.processLong(worker, true);
+		} finally {
+			getIntegrityChecker().setEnabled(true);
+		}
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
@@ -171,5 +178,13 @@ public class RegulatoryModePatch extends AbstractBeCPGPatch {
 
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
+	}
+
+	public IntegrityChecker getIntegrityChecker() {
+		return integrityChecker;
+	}
+
+	public void setIntegrityChecker(IntegrityChecker integrityChecker) {
+		this.integrityChecker = integrityChecker;
 	}
 }
