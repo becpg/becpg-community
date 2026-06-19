@@ -8,9 +8,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
-import fr.becpg.repo.regulatory.ComplianceResult;
-import fr.becpg.repo.regulatory.RegulatoryResult;
-import fr.becpg.repo.regulatory.RequirementListDataItem;
+import fr.becpg.repo.regulatory.*;
 import fr.becpg.repo.regulatory.becpg.regulatory.BecpgRegulatoryService;
 import fr.becpg.repo.regulatory.becpg.regulatory.ProductDataEntityJsonService;
 import fr.becpg.repo.sample.StandardBodyMilkTestProduct;
@@ -94,8 +92,13 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
      */
     @Ignore("Requires access to running becpg-regulatory instance, to run manually")
     @Test
-    public void becpgRegulatoryTest() {
+    public void becpgRegulatoryRemoteTest() {
         NodeRef finishedProductNodeRef = createTestFinishedProduct();
+
+        inWriteTx(() -> {
+            systemConfigurationService.updateConfValue("beCPG.regulatory.enabled", "true");
+            return null;
+        });
 
         inWriteTx(() -> {
             ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
@@ -142,6 +145,46 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
             ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
             RegulatoryListDataItem regulatoryElement = product.getRegulatoryList().getFirst();
             assertEquals(RegulatoryResult.PROHIBITED, regulatoryElement.getRegulatoryResult());
+            return null;
+        });
+    }
+
+    @Test
+    public void becpgRegulatoryNotAccessibleTest() {
+        NodeRef finishedProductNodeRef = createTestFinishedProduct();
+
+        inWriteTx(() -> {
+            systemConfigurationService.updateConfValue("beCPG.regulatory.serverUrl", "http://does-not-exist.nowhere");
+            systemConfigurationService.updateConfValue("beCPG.regulatory.enabled", "true");
+            return null;
+        });
+
+        inWriteTx(() -> {
+            ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+            return regulatoryService.doCheck(false, new ComplianceResult(), product);
+        });
+
+        inWriteTx(() -> {
+            ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+
+            int declaredCountriesAmount = product.getRegulatoryList().getFirst().getRegulatoryCountriesRef().size();
+            int declaredUsagesAmount = product.getRegulatoryList().getFirst().getRegulatoryUsagesRef().size();
+            int amountOfRegulatoryErrors = declaredCountriesAmount * declaredUsagesAmount;
+
+            RegulatoryListDataItem regulatoryElement = product.getRegulatoryList().getFirst();
+            assertEquals(RegulatoryResult.ERROR, regulatoryElement.getRegulatoryResult());
+
+            List<RequirementListDataItem> regulatoryErrorsList = product.getReqCtrlList().stream().filter(reqCtrl ->
+                    "regulatory".equals(reqCtrl.getFormulationChainId())
+            ).toList();
+
+            assertEquals(amountOfRegulatoryErrors, regulatoryErrorsList.size());
+            for (RequirementListDataItem reqCtrl : regulatoryErrorsList) {
+                assertEquals(RequirementType.Forbidden, reqCtrl.getReqType());
+                assertEquals(RequirementDataType.Formulation, reqCtrl.getReqDataType());
+                assertTrue(reqCtrl.getReqMessage().contains("I/O error on POST request for \"http://does-not-exist.nowhere/v1/regulatory/check\""));
+                assertTrue(reqCtrl.getReqMessage().toLowerCase().contains("becpg"));
+            }
             return null;
         });
     }
