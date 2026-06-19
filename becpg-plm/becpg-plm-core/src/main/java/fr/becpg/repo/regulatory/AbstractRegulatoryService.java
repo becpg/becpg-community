@@ -1,5 +1,6 @@
 package fr.becpg.repo.regulatory;
 
+import com.google.common.collect.Lists;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
@@ -43,6 +44,7 @@ import org.springframework.http.MediaType;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class AbstractRegulatoryService {
     private static final Log logger = LogFactory.getLog(AbstractRegulatoryService.class);
@@ -123,7 +125,7 @@ public abstract class AbstractRegulatoryService {
 
     protected abstract boolean isEnabled();
 
-    protected abstract String getToken();
+    protected abstract Optional<String> getToken();
 
     /* Regulatory verification logic */
 
@@ -131,6 +133,11 @@ public abstract class AbstractRegulatoryService {
         updateProductFromRegulatoryList(productData);
         updateProductFromLinkedSearches(productData);
         RegulatoryContext context = createContext(productData);
+        if (!isEnabled()) {
+            result.setStatus(ComplianceResult.Status.NOT_APPLICABLE);
+            logger.debug("Product in regulatory mode " + productData.getRegulatoryMode() + " can't be checked - service is disabled in the configuration");
+            return false;
+        }
         if (isUpToDate(context)) {
             result.setStatus(ComplianceResult.Status.UP_TO_DATE);
             logger.debug("Product compliance is up to date");
@@ -194,6 +201,16 @@ public abstract class AbstractRegulatoryService {
         regulatoryBatchInfo.setPriority(BatchPriority.VERY_HIGH);
         regulatoryBatchInfo.enableNotifyByMail(REGULATORY_KEY, String.format(ASYNC_ACTION_URL_PREFIX, entityNodeRef));
         return regulatoryBatchInfo;
+    }
+
+    protected Stream<RequirementListDataItem> generateReqCtrlErrors(List<String> countries, List<String> usages, MLText message) {
+        return Lists.cartesianProduct(countries, usages).stream().map(countryUsage ->
+                RequirementListDataItem.forbidden()
+                        .withMessage(message)
+                        .ofDataType(RequirementDataType.Formulation)
+                        .withFormulationChainId(REGULATORY_KEY)
+                        .withRegulatoryCode(countryUsage.getFirst() + " - " + (countryUsage.size() == 1 ? "" : countryUsage.get(1)))
+        );
     }
 
     protected abstract List<BatchStep<RegulatoryBatch>> delegatePrepareAsyncSteps(RegulatoryContext context, NodeRef entityNodeRef);
@@ -530,9 +547,7 @@ public abstract class AbstractRegulatoryService {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         headers.setContentType(MediaType.APPLICATION_JSON);
-        String token = getToken();
-        if (token != null && !token.isBlank())
-            headers.setBearerAuth(token);
+        getToken().ifPresent(headers::setBearerAuth);
         customizeHeaders(headers);
         return new HttpEntity<>(body, headers);
     }
@@ -557,10 +572,9 @@ public abstract class AbstractRegulatoryService {
      */
     protected String cleanError(String error) {
         if (error != null) {
-            String token = getToken();
-            if (token != null && !token.isBlank()) {
-                return error.replace(token, "XXX");
-            }
+            Optional<String> errorWithHiddenToken = getToken().map(token -> error.replace(token, "XXX"));
+            if (errorWithHiddenToken.isPresent())
+                return errorWithHiddenToken.get();
         }
         return error;
     }
