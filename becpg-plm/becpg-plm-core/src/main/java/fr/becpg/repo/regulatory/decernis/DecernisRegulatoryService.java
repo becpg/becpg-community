@@ -1,6 +1,5 @@
 package fr.becpg.repo.regulatory.decernis;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -166,7 +165,10 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 	@Override
 	protected Optional<String> getToken() {
 		String token = DecernisHelper.getToken();
-		return Optional.ofNullable(token != null ? token.trim() : null);
+		if (token == null)
+			return Optional.empty();
+		token = token.trim();
+		return token.isEmpty() ? Optional.empty() : Optional.of(token);
 	}
 
 	@Override
@@ -320,12 +322,12 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 	}
 
 	private JSONObject ingredientAnalysis(RegulatoryContext context, RegulatoryBatch regulatoryBatch) {
+		JSONObject payload = productDataDecernisJsonService.ingredientAnalysisPreparePayload(context, regulatoryBatch);
 		JSONObject ingredientAnalysisResults = null;
 		int retries = 2;
-		while (ingredientAnalysisResults == null && retries >= 0) {
+		while (payload != null && ingredientAnalysisResults == null && retries >= 0) {
 			try {
 				retries--;
-				JSONObject payload = productDataDecernisJsonService.ingredientAnalysisPreparePayload(context, regulatoryBatch);
 				String url = serverUrl() + "/ingredient-analysis/transaction?report=tabular";
 				HttpEntity<String> entity = createEntity(payload.toString());
 
@@ -358,19 +360,13 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 			JSONObject recipeAnalysisResults = null;
 			try {
 				recipeAnalysisResults = recipeAnalysis(context, regulatoryBatch);
-			} catch (RestClientException e) {
+			} catch (Exception e) {
 				logger.error("Error during Decernis recipe analysis: " + cleanError(e.getMessage()), e);
-				for (String country : regulatoryBatch.countryBatches().countries()) {
-					for (String usage : regulatoryBatch.usageBatches().usages()) {
-						RequirementListDataItem req = RequirementListDataItem.forbidden()
-								.withMessage(MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e)))
-								.ofDataType(RequirementDataType.Formulation)
-								.withFormulationChainId(REGULATORY_KEY)
-								.withRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
-
-						context.getRequirements().add(req);
-					}
-				}
+				context.getRequirements().addAll(generateReqCtrlErrors(
+						regulatoryBatch.countryBatches().countries(),
+						regulatoryBatch.usageBatches().usages(),
+						MLTextHelper.getI18NMessage(MESSAGE_DECERNIS_ERROR, generateError(e))
+				).toList());
 			}
 			if (recipeAnalysisResults != null) {
 				List<RequirementListDataItem> parseRecipeAnalysisResults = productDataDecernisJsonService.recipeAnalysisParseResults(
@@ -761,7 +757,7 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 	 * @return a {@link java.lang.String} object
 	 */
 	private String fetchFunctionId(String regulatoryCode, String companyName, String serverUrl) {
-		if (functionsIdMap.containsKey(regulatoryCode)) {
+		if (regulatoryCode != null && functionsIdMap.containsKey(regulatoryCode)) {
 			return functionsIdMap.get(regulatoryCode);
 		}
 		String url = serverUrl + "/functions?current_company={company}&phrase={phrase}&module_id=1&limit=1";
