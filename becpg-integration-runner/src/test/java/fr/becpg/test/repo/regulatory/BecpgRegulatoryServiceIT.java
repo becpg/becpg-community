@@ -1,6 +1,7 @@
 package fr.becpg.test.repo.regulatory;
 
 import fr.becpg.repo.activity.EntityActivityService;
+import fr.becpg.repo.authentication.BeCPGTicketService;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
@@ -49,6 +50,9 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
     @Autowired
     ProductDataEntityJsonService productDataEntityJsonService;
 
+    @Autowired
+    private BeCPGTicketService beCPGTicketService;
+
     private BecpgRegulatoryService regulatoryService;
 
 
@@ -70,7 +74,8 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
                 mutexFactory,
                 systemConfigurationService,
                 productDataEntityJsonService,
-                remoteEntityService
+                remoteEntityService,
+                beCPGTicketService
         );
 
         super.setUp();
