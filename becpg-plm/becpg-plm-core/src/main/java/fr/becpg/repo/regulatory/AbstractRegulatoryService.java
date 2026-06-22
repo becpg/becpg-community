@@ -506,8 +506,8 @@ public abstract class AbstractRegulatoryService {
         Set<String> countries = context.getProduct().getRegulatoryCountriesRef().stream().map(this::extractCode).collect(Collectors.toSet());
         Set<String> usages = context.getProduct().getRegulatoryUsagesRef().stream().map(this::extractCode).collect(Collectors.toSet());
         if (!context.getProduct().getRegulatoryUsages().isEmpty() && !context.getProduct().getRegulatoryCountries().isEmpty()) {
-            countries = context.getProduct().getRegulatoryCountries().stream().collect(Collectors.toSet());
-            usages = context.getProduct().getRegulatoryUsages().stream().collect(Collectors.toSet());
+            countries = new HashSet<>(context.getProduct().getRegulatoryCountries());
+            usages = new HashSet<>(context.getProduct().getRegulatoryUsages());
         }
         StringBuilder checksumBuilder = new StringBuilder();
         checksumBuilder.append(createRequirementChecksum(countries, usages));
@@ -545,7 +545,7 @@ public abstract class AbstractRegulatoryService {
 
     protected HttpEntity<String> createEntity(String body) {
         HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
         headers.setContentType(MediaType.APPLICATION_JSON);
         getToken().ifPresent(headers::setBearerAuth);
         customizeHeaders(headers);
