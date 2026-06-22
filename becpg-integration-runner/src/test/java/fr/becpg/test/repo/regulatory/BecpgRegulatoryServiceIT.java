@@ -10,6 +10,7 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.regulatory.*;
+import fr.becpg.repo.regulatory.becpg.regulatory.BecpgRegulatoryAuthenticationService;
 import fr.becpg.repo.regulatory.becpg.regulatory.BecpgRegulatoryService;
 import fr.becpg.repo.regulatory.becpg.regulatory.ProductDataEntityJsonService;
 import fr.becpg.repo.sample.StandardBodyMilkTestProduct;
@@ -21,6 +22,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -48,11 +50,10 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
     @Autowired
     ProductDataEntityJsonService productDataEntityJsonService;
 
-    @Autowired
-    private BeCPGTicketService beCPGTicketService;
-
     private BecpgRegulatoryService regulatoryService;
 
+    @Autowired
+    private BecpgRegulatoryAuthenticationService becpgRegulatoryAuthenticationService;
 
     @Override
     public void tearDown() throws Exception {
@@ -73,7 +74,7 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
                 systemConfigurationService,
                 productDataEntityJsonService,
                 remoteEntityService,
-                beCPGTicketService
+                becpgRegulatoryAuthenticationService
         );
 
         super.setUp();
@@ -156,41 +157,50 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
 
     @Test
     public void becpgRegulatoryNotAccessibleTest() {
-        NodeRef finishedProductNodeRef = createTestFinishedProduct();
+        try {
 
-        inWriteTx(() -> {
-            systemConfigurationService.updateConfValue("beCPG.regulatory.serverUrl", "http://does-not-exist.nowhere");
-            systemConfigurationService.updateConfValue("beCPG.regulatory.enabled", "true");
-            return null;
-        });
+            NodeRef finishedProductNodeRef = createTestFinishedProduct();
 
-        inWriteTx(() -> {
-            ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
-            return regulatoryService.doCheck(false, new ComplianceResult(), product);
-        });
+            inWriteTx(() -> {
+                systemConfigurationService.updateConfValue("beCPG.regulatory.serverUrl", "http://does-not-exist.nowhere");
+                systemConfigurationService.updateConfValue("beCPG.regulatory.enabled", "true");
+                return null;
+            });
 
-        inWriteTx(() -> {
-            ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+            inWriteTx(() -> {
+                ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+                return regulatoryService.doCheck(false, new ComplianceResult(), product);
+            });
 
-            int declaredCountriesAmount = product.getRegulatoryList().getFirst().getRegulatoryCountriesRef().size();
-            int declaredUsagesAmount = product.getRegulatoryList().getFirst().getRegulatoryUsagesRef().size();
-            int amountOfRegulatoryErrors = declaredCountriesAmount * declaredUsagesAmount;
+            inWriteTx(() -> {
+                ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
 
-            RegulatoryListDataItem regulatoryElement = product.getRegulatoryList().getFirst();
-            assertEquals(RegulatoryResult.ERROR, regulatoryElement.getRegulatoryResult());
+                int declaredCountriesAmount = product.getRegulatoryList().getFirst().getRegulatoryCountriesRef().size();
+                int declaredUsagesAmount = product.getRegulatoryList().getFirst().getRegulatoryUsagesRef().size();
+                int amountOfRegulatoryErrors = declaredCountriesAmount * declaredUsagesAmount;
 
-            List<RequirementListDataItem> regulatoryErrorsList = product.getReqCtrlList().stream().filter(reqCtrl ->
-                    "regulatory".equals(reqCtrl.getFormulationChainId())
-            ).toList();
+                RegulatoryListDataItem regulatoryElement = product.getRegulatoryList().getFirst();
+                assertEquals(RegulatoryResult.ERROR, regulatoryElement.getRegulatoryResult());
 
-            assertEquals(amountOfRegulatoryErrors, regulatoryErrorsList.size());
-            for (RequirementListDataItem reqCtrl : regulatoryErrorsList) {
-                assertEquals(RequirementType.Forbidden, reqCtrl.getReqType());
-                assertEquals(RequirementDataType.Formulation, reqCtrl.getReqDataType());
-                assertTrue(reqCtrl.getReqMessage().contains("I/O error on POST request for \"http://does-not-exist.nowhere/v1/regulatory/check\""));
-                assertTrue(reqCtrl.getReqMessage().toLowerCase().contains("becpg"));
-            }
-            return null;
-        });
+                List<RequirementListDataItem> regulatoryErrorsList = product.getReqCtrlList().stream().filter(reqCtrl ->
+                        "regulatory".equals(reqCtrl.getFormulationChainId())
+                ).toList();
+
+                assertEquals(amountOfRegulatoryErrors, regulatoryErrorsList.size());
+                for (RequirementListDataItem reqCtrl : regulatoryErrorsList) {
+                    assertEquals(RequirementType.Forbidden, reqCtrl.getReqType());
+                    assertEquals(RequirementDataType.Formulation, reqCtrl.getReqDataType());
+                    assertTrue(reqCtrl.getReqMessage().contains("I/O error on POST request for \"http://does-not-exist.nowhere/v1/regulatory/check\""));
+                    assertTrue(reqCtrl.getReqMessage().toLowerCase().contains("becpg"));
+                }
+                return null;
+            });
+        } finally {
+            inWriteTx(() -> {
+                systemConfigurationService.resetConfValue("beCPG.regulatory.serverUrl");
+                systemConfigurationService.resetConfValue("beCPG.regulatory.enabled");
+                return null;
+            });
+        }
     }
 }
