@@ -26,7 +26,9 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
@@ -40,6 +42,9 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 public class FormulationMultiLevelILIT extends AbstractFinishedProductTest {
 
 	protected static final Log logger = LogFactory.getLog(FormulationMultiLevelILIT.class);
+
+	@Autowired
+	protected FormulationService<FormulatedEntity> formulationService;
 
 	@Override
 	public void setUp() throws Exception {
