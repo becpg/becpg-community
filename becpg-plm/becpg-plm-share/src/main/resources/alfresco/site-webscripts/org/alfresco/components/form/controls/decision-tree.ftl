@@ -26,7 +26,7 @@
             <span class="incomplete-warning"><img class="icon16" src="${url.context}/res/components/form/images/warning-16.png" title="${msg("form.field.incomplete")}" /><span>
          </#if>
          <span class="viewmode-label">${field.label?html}:</span>
-          <div id="${controlId}" class="decision-tree-control">
+          <div id="${controlId}-control" class="decision-tree-control">
         	 <div id="${controlId}-body" ></div>
          </div>
       </div>

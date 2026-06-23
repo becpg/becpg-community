@@ -584,7 +584,7 @@
         getCurrentValueChecked: function(qid, cid) {
             for (var i = 0; i < this.options.currentValue.length; i++) {
                 var current = this.options.currentValue[i];
-                if (qid === current.qid && cid === current.cid) {
+                if (qid == current.qid && cid == current.cid) {
                     return true;
                 }
             }
@@ -600,7 +600,7 @@
         getCurrentListOptions: function(qid, cid) {
             for (var i = 0; i < this.options.currentValue.length; i++) {
                 var current = this.options.currentValue[i];
-                if (qid === current.qid && cid === current.cid) {
+                if (qid == current.qid && cid == current.cid) {
                     return current.listOptions || "";
                 }
             }
@@ -615,7 +615,7 @@
         getCurrentValueComment: function(qid) {
             for (var i = 0; i < this.options.currentValue.length; i++) {
                 var current = this.options.currentValue[i];
-                if (qid === current.qid && current.comment) {
+                if (qid == current.qid && current.comment) {
                     return current.comment;
                 }
             }
@@ -659,7 +659,11 @@
                 if (i === 0 || question.start === true) {
                     if (!question.choices && !question.mandatory) {
                         visible.push(question.id);
-                    } else if (!this.options.disabled || this.options.currentValue.length > 0) {
+                    } else if (!this.options.disabled) {
+                        // In edit mode: always show the first question
+                        visible.push(question.id);
+                    } else if (this.options.currentValue.length > 0) {
+                        // In view mode: only show if there are answers
                         visible.push(question.id);
                     }
                 }
