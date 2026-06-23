@@ -3,10 +3,10 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>23.4.2</version>
+		<version>23.4.1</version>
 		<relativePath>../</relativePath>
 	</parent>
-    <version>23.4.2.71-SNAPSHOT</version>
+ <version>23.4.1.44-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
 	<artifactId>becpg-share</artifactId>
 	<packaging>jar</packaging>
@@ -66,10 +66,6 @@
 		    <version>2.0.0</version>
 		    <scope>provided</scope>
 		</dependency>
-	   <dependency>
-          <groupId>org.apache.httpcomponents.client5</groupId>
-          <artifactId>httpclient5</artifactId>
-      </dependency>	
 	 
 	</dependencies>
 	<build>
@@ -81,8 +77,7 @@
 		</plugins>
 	</build>
 
-
   <scm>
-    <tag>23.4.2.52</tag>
+    <tag>23.4.1.32</tag>
   </scm>
 </project>
