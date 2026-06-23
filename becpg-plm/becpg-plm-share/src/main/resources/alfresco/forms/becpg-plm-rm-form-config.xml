@@ -1251,9 +1251,6 @@
 						</control>
 					</field>
 					<field id="bcpg:certificateDate" mandatory="false" read-only="false" set="2-col-product-criteria">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl">
-							<control-param name="forceEditable">true</control-param>
-						</control>
 					</field>
 					<field id="bcpg:suppliers" mandatory="false" read-only="false" set="2-col-product-criteria">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
