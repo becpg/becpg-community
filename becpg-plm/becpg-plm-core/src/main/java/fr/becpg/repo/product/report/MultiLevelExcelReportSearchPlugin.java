@@ -73,17 +73,22 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 		String parameter = (parameters != null) && (parameters.length > 0) ? parameters[0] : null;
 
 		boolean wUsed = false;
+		boolean includeEmpty = false;
 		QName pivotAssoc = null;
 		
 		String depthLevel;
 		
 		if (parameter != null) {
 			wUsed = parameter.contains("wUsed");
+			includeEmpty = parameter.contains("IncludeEmpty");
 			if (wUsed) {
 				parameter = parameter.replace("wUsed", "");
 				pivotAssoc = entityDictionaryService.getDefaultPivotAssoc(itemType);
 				mainType = entityDictionaryService.getTargetType(pivotAssoc);
-			} 
+			}
+			if (includeEmpty) {
+				parameter = parameter.replace("IncludeEmpty", "");
+			}
 			depthLevel = parameter.replace("Level", "").replace("Max", "").replace("Only", "");
 		} else {
 			depthLevel = "All";
@@ -123,8 +128,22 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 
 				entityItems.putAll(getDynamicProperties(entityNodeRef, itemType));
 
-				rownum = appendNextLevel(listData, sheet, itemType, metadataFields, cache, rownum, key, null, parameters, entityItems,
-						new HashMap<>(), excelCellStyles, mainType, wUsedAssocCache);
+				if (!listData.getTree().isEmpty()) {
+					rownum = appendNextLevel(listData, sheet, itemType, metadataFields, cache, rownum, key, null, parameters, entityItems,
+							new HashMap<>(), excelCellStyles, mainType, wUsedAssocCache);
+				} else if (includeEmpty) {
+					Row emptyRow = sheet.createRow(rownum++);
+					int cellNum = 0;
+					Cell emptyCell = emptyRow.createCell(cellNum++);
+					emptyCell.setCellValue("VALUES");
+					if (key != null) {
+						emptyCell = emptyRow.createCell(cellNum++);
+						emptyCell.setCellValue(String.valueOf(key));
+					}
+					Map<String, Object> emptyItem = new HashMap<>(entityItems);
+					emptyItem.put("prop_bcpg_depthLevel", 1);
+					ExcelHelper.appendExcelField(metadataFields, null, emptyItem, sheet, emptyRow, cellNum, rownum, null, excelCellStyles);
+				}
 			}
 		}
 
@@ -240,16 +259,25 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 					}
 					
 					if (wUsedAssocCache != null) {
+						NodeRef wUsedEntityNodeRef = entityListDAO.getEntity(itemNodeRef);
 						item.putAll(
 								wUsedAssocCache
 										.computeIfAbsent(itemNodeRef,
 												unused -> nodeService
-														.getProperties(entityListDAO.getEntity(itemNodeRef)))
+														.getProperties(wUsedEntityNodeRef))
 										.entrySet().stream().filter(property -> property.getValue() != null)
 										.collect(Collectors.toMap(
 												property -> "wUsedEntity_" + property.getKey()
 														.toPrefixString(namespaceService).replaceFirst(":", "_"),
 												Entry::getValue)));
+
+						Map<String, Object> wUsedExtracted = doExtract(wUsedEntityNodeRef, wUsedEntityType, metadataFields,
+								nodeService.getProperties(wUsedEntityNodeRef), cache);
+						for (Entry<String, Object> wUsedEntry : wUsedExtracted.entrySet()) {
+							if (wUsedEntry.getKey().startsWith("wUsedEntity_") && wUsedEntry.getValue() != null) {
+								item.put(wUsedEntry.getKey(), wUsedEntry.getValue());
+							}
+						}
 					}
 
 					String parameter = (parameters != null) && (parameters.length > 0) ? parameters[0] : null;
