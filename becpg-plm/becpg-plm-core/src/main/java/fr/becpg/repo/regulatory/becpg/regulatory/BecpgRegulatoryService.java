@@ -5,7 +5,6 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.activity.EntityActivityService;
-import fr.becpg.repo.authentication.BeCPGTicketService;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.BatchStep;
 import fr.becpg.repo.batch.BatchStepAdapter;
@@ -19,7 +18,6 @@ import fr.becpg.repo.helper.RestTemplateHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.regulatory.AbstractRegulatoryService;
-import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.decernis.RegulatoryBatch;
 import fr.becpg.repo.regulatory.decernis.RegulatoryContext;
@@ -37,12 +35,8 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 
 import java.io.ByteArrayOutputStream;
@@ -56,29 +50,26 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
     public static final String ERROR_PREFIX = "Error during becpg-regulatory analysis: ";
     private static final String MESSAGE_REGULATORY_ERROR = "message.regulatory.error";
 
-    private ProductDataEntityJsonService productDataEntityJsonService;
-    private RemoteEntityService remoteEntityService;
-    private BeCPGTicketService beCPGTicketService;
-
-    private volatile String cachedAccessToken;
-    private volatile long tokenExpiryEpochMs;
+    private final RemoteEntityService remoteEntityService;
+    private final ProductDataEntityJsonService productDataEntityJsonService;
+    private final BecpgRegulatoryAuthenticationService authenticationService;
 
     public BecpgRegulatoryService(@Qualifier("nodeService") NodeService nodeService,
-                                     AlfrescoRepository<RepositoryEntity> alfrescoRepository,
-                                     FormulationService<FormulatedEntity> formulationService,
-                                     BatchQueueService batchQueueService,
-                                     @Qualifier("policyBehaviourFilter") BehaviourFilter policyBehaviourFilter,
-                                     EntityActivityService entityActivityService,
-                                     MutexFactory mutexFactory,
-                                     SystemConfigurationService systemConfigurationService,
-                                     ProductDataEntityJsonService productDataEntityJsonService,
-                                     RemoteEntityService remoteEntityService,
-                                     BeCPGTicketService beCPGTicketService) {
+                                  AlfrescoRepository<RepositoryEntity> alfrescoRepository,
+                                  FormulationService<FormulatedEntity> formulationService,
+                                  BatchQueueService batchQueueService,
+                                  @Qualifier("policyBehaviourFilter") BehaviourFilter policyBehaviourFilter,
+                                  EntityActivityService entityActivityService,
+                                  MutexFactory mutexFactory,
+                                  SystemConfigurationService systemConfigurationService,
+                                  ProductDataEntityJsonService productDataEntityJsonService,
+                                  RemoteEntityService remoteEntityService,
+                                  BecpgRegulatoryAuthenticationService authenticationService) {
         super(nodeService, alfrescoRepository, formulationService, batchQueueService, policyBehaviourFilter,
                 entityActivityService, mutexFactory, systemConfigurationService);
         this.productDataEntityJsonService = productDataEntityJsonService;
         this.remoteEntityService = remoteEntityService;
-        this.beCPGTicketService = beCPGTicketService;
+        this.authenticationService = authenticationService;
     }
 
     @Override
@@ -86,18 +77,23 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
         return systemConfigurationService.confValue("beCPG.regulatory.serverUrl");
     }
 
+    /**
+     * In OAuth2 mode, delegates token acquisition to {@link BecpgRegulatoryAuthenticationService}.
+     * In ticket mode, no bearer token is needed (the ticket is set as a header).
+     */
     @Override
     protected Optional<String> getToken() {
-        if (isOAuth2Mode()) {
-            return Optional.ofNullable(fetchOAuth2Token());
-        }
-        // ticket mode: no bearer token, authentication is carried by the BECPG_TICKET header
-        return Optional.empty();
+        return authenticationService.getOauth2Token();
     }
 
     @Override
     protected String generateError(Exception e) {
         return "Error while performing regulatory check: " + cleanError(e.getMessage());
+    }
+
+    @Override
+    protected Log logger() {
+        return logger;
     }
 
     /**
@@ -110,98 +106,7 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
      */
     @Override
     protected void customizeHeaders(HttpHeaders headers) {
-        if (!isTicketMode()) {
-            return;
-        }
-        try {
-            String authToken = beCPGTicketService.getCurrentAuthToken();
-            if (authToken != null && !authToken.isBlank()) {
-                headers.set("BECPG_TICKET", authToken);
-            }
-        } catch (Exception e) {
-            logger.warn("Unable to build BECPG_TICKET for regulatory request: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Returns the configured authentication mode for calls to the regulatory
-     * service. Either {@code ticket} (delegated Alfresco ticket, default) or
-     * {@code oauth2} (Keycloak client_credentials bearer).
-     *
-     * @return the lower-cased authentication mode, never null
-     */
-    private String authMode() {
-        String mode = systemConfigurationService.confValue("beCPG.regulatory.authMode");
-        return mode != null && !mode.isBlank() ? mode.trim().toLowerCase() : "ticket";
-    }
-
-    private boolean isTicketMode() {
-        return "ticket".equals(authMode());
-    }
-
-    private boolean isOAuth2Mode() {
-        return "oauth2".equals(authMode());
-    }
-
-    /**
-     * Obtains a bearer token from Keycloak using the OAuth2 client_credentials
-     * flow, mirroring the regulatory batch. Tokens are cached and refreshed
-     * shortly before expiry. The client secret is read from configuration and
-     * is therefore never persisted in code.
-     *
-     * @return a valid access token, or null when one could not be obtained
-     */
-    private synchronized String fetchOAuth2Token() {
-        long now = System.currentTimeMillis();
-        if (cachedAccessToken != null && now < tokenExpiryEpochMs) {
-            return cachedAccessToken;
-        }
-
-        String tokenUrl = systemConfigurationService.confValue("beCPG.regulatory.oauth2.tokenUrl");
-        String clientId = systemConfigurationService.confValue("beCPG.regulatory.oauth2.clientId");
-        String clientSecret = systemConfigurationService.confValue("beCPG.regulatory.oauth2.clientSecret");
-        String scope = systemConfigurationService.confValue("beCPG.regulatory.oauth2.scope");
-
-        if (tokenUrl == null || tokenUrl.isBlank() || clientId == null || clientId.isBlank()) {
-            logger.warn("OAuth2 mode enabled but beCPG.regulatory.oauth2.tokenUrl/clientId are not configured");
-            return null;
-        }
-
-        try {
-            MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
-            form.add("grant_type", "client_credentials");
-            form.add("client_id", clientId);
-            if (clientSecret != null && !clientSecret.isBlank()) {
-                form.add("client_secret", clientSecret);
-            }
-            if (scope != null && !scope.isBlank()) {
-                form.add("scope", scope);
-            }
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(form, headers);
-
-            String response = RestTemplateHelper.getRestTemplateLongTimeout().postForObject(tokenUrl, request, String.class);
-            JSONObject json = new JSONObject(response);
-            String accessToken = json.getString("access_token");
-            int expiresIn = json.optInt("expires_in", 300);
-
-            cachedAccessToken = accessToken;
-            tokenExpiryEpochMs = now + (Math.max(expiresIn - 30, 30) * 1000L);
-            if (logger.isDebugEnabled()) {
-                logger.debug("Obtained regulatory OAuth2 token, expires in " + expiresIn + "s");
-            }
-            return accessToken;
-        } catch (Exception e) {
-            // Do not call cleanError() here: it resolves getToken(), which would
-            // re-enter this method in OAuth2 mode. The thrown message carries the
-            // token endpoint response, not the request body, so no secret leaks.
-            logger.error("Unable to obtain OAuth2 token for regulatory service: " + e.getMessage(), e);
-            cachedAccessToken = null;
-            tokenExpiryEpochMs = 0;
-            return null;
-        }
+        authenticationService.getBecpgTicket().ifPresent(ticket -> headers.set("BECPG_TICKET", ticket));
     }
 
     @Override
@@ -243,10 +148,6 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
     }
 
     private void checkRecipe(RegulatoryContext context) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Launch becpg regulatory in mode :" + context.getRegulatoryMode());
-        }
-
         boolean analysisPassed = false;
         int retries = 2;
         while (!analysisPassed && retries >= 0) {
@@ -261,6 +162,8 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
                 context.getRequirements().addAll(generateErrorsforAllRegulatoryPairs(context, e));
             }
         }
+        if (analysisPassed)
+            logger.info("Regulatory check for " + context.getProduct().getName() + " finished");
     }
 
     private List<RequirementListDataItem> generateErrorsforAllRegulatoryPairs(RegulatoryContext context, Exception e) {
