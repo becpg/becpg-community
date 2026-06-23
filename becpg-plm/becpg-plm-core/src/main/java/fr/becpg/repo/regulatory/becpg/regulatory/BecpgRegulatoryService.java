@@ -91,6 +91,11 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
         return "Error while performing regulatory check: " + cleanError(e.getMessage());
     }
 
+    @Override
+    protected Log logger() {
+        return logger;
+    }
+
     /**
      * Adds the delegated Alfresco authentication ticket so the regulatory service
      * can authenticate the caller against this repository. The header name matches
@@ -143,10 +148,6 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
     }
 
     private void checkRecipe(RegulatoryContext context) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Launch becpg regulatory in mode :" + context.getRegulatoryMode());
-        }
-
         boolean analysisPassed = false;
         int retries = 2;
         while (!analysisPassed && retries >= 0) {
@@ -161,6 +162,8 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
                 context.getRequirements().addAll(generateErrorsforAllRegulatoryPairs(context, e));
             }
         }
+        if (analysisPassed)
+            logger.info("Regulatory check for " + context.getProduct().getName() + " finished");
     }
 
     private List<RequirementListDataItem> generateErrorsforAllRegulatoryPairs(RegulatoryContext context, Exception e) {

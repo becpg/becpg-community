@@ -35,7 +35,6 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -47,8 +46,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class AbstractRegulatoryService {
-    private static final Log logger = LogFactory.getLog(AbstractRegulatoryService.class);
-
     /** Constant <code>UNKNOWN="unknown"</code> */
     public static final String UNKNOWN = "unknown";
 
@@ -130,17 +127,18 @@ public abstract class AbstractRegulatoryService {
     /* Regulatory verification logic */
 
     public Boolean doCheck(boolean async, ComplianceResult result, ProductData productData) {
+        logger().info("Starting regulatory analysis for " + productData.getName());
         updateProductFromRegulatoryList(productData);
         updateProductFromLinkedSearches(productData);
         RegulatoryContext context = createContext(productData);
         if (!isEnabled()) {
             result.setStatus(ComplianceResult.Status.NOT_APPLICABLE);
-            logger.debug("Product in regulatory mode " + productData.getRegulatoryMode() + " can't be checked - service is disabled in the configuration");
+            logger().info("Product can't be analyzed - service is disabled in the configuration");
             return false;
         }
         if (isUpToDate(context)) {
             result.setStatus(ComplianceResult.Status.UP_TO_DATE);
-            logger.debug("Product compliance is up to date");
+            logger().info("Product compliance is up to date");
             return false;
         }
         result.setContext(context);
@@ -170,6 +168,7 @@ public abstract class AbstractRegulatoryService {
         ReentrantLock mutex = mutexFactory.getMutex("complianceCheck-" + context.getProduct().getNodeRef().getId());
         if (mutex.tryLock()) {
             try {
+                logger().info("Starting synchronous analysis");
                 delegateSyncComplianceCheck(context);
             } finally {
                 mutex.unlock();
@@ -186,7 +185,7 @@ public abstract class AbstractRegulatoryService {
         String entityDescription = nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE) + " - " + context.getProduct().getName();
         BatchInfo regulatoryBatchInfo = getBatchInfo(entityNodeRef, entityDescription);
         List<BatchStep<RegulatoryBatch>> steps = delegatePrepareAsyncSteps(context, entityNodeRef);
-
+        logger().info("Prepared " + steps.size() + " regulatory batches ");
         boolean batchStarted = batchQueueService.queueBatch(regulatoryBatchInfo, steps);
         status.setStatus(batchStarted ? ComplianceResult.Status.STARTED : ComplianceResult.Status.PENDING);
         status.setBatchId(regulatoryBatchInfo.getBatchId());
@@ -538,8 +537,8 @@ public abstract class AbstractRegulatoryService {
     }
 
     protected void tracePostRequest(JSONObject recipePayload, String url) {
-        if (logger.isTraceEnabled()) {
-            logger.trace(POST_URL + url + " body: " + recipePayload);
+        if (logger().isTraceEnabled()) {
+            logger().trace(POST_URL + url + " body: " + recipePayload);
         }
     }
 
@@ -578,4 +577,6 @@ public abstract class AbstractRegulatoryService {
         }
         return error;
     }
+
+    protected abstract Log logger();
 }

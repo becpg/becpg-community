@@ -130,6 +130,11 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 	}
 
 	@Override
+	protected Log logger() {
+		return logger;
+	}
+
+	@Override
 	protected String serverUrl() {
 		return systemConfigurationService.confValue("beCPG.regulatory.decernis.serverUrl");
 	}
@@ -318,6 +323,7 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 			List<IngRegulatoryListDataItem> parseIngredientAnalysisResults = productDataDecernisJsonService.ingredientAnalysisParseResults(context, checkContext,
 					ingredientAnalysisResults);
 			context.getIngRegulatoryListDataItems().addAll(parseIngredientAnalysisResults);
+			logger.info("Regulatory ingredients check for " + context.getProduct().getName() + " finished");
 		}
 	}
 
@@ -347,11 +353,6 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 	}
 
 	private void checkRecipe(RegulatoryContext context, RegulatoryBatch regulatoryBatch) {
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("Launch decernis in mode :" + context.getRegulatoryMode());
-		}
-
 		if (RegulatoryMode.DECERNIS_BOTH.equals(context.getRegulatoryMode()) || RegulatoryMode.DECERNIS_ONLY.equals(context.getRegulatoryMode())) {
 			createRecipe(context);
 		}
@@ -372,6 +373,7 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 				List<RequirementListDataItem> parseRecipeAnalysisResults = productDataDecernisJsonService.recipeAnalysisParseResults(
 						context, regulatoryBatch, recipeAnalysisResults, addInfoReqCtrl());
 				context.getRequirements().addAll(parseRecipeAnalysisResults);
+				logger.info("Regulatory recipe check for " + context.getProduct().getName() + " finished");
 			}
 			checkUsagesID(context);
 		}

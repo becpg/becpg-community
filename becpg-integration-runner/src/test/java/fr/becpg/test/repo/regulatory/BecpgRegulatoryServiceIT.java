@@ -1,7 +1,6 @@
 package fr.becpg.test.repo.regulatory;
 
 import fr.becpg.repo.activity.EntityActivityService;
-import fr.becpg.repo.authentication.BeCPGTicketService;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
@@ -22,7 +21,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
