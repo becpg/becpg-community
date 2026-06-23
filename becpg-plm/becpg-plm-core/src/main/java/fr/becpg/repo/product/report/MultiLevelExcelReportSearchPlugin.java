@@ -61,9 +61,17 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 	/** {@inheritDoc} */
 	@Override
 	public boolean isApplicable(QName itemType, String[] parameters) {
-		String parameter = (parameters != null) && (parameters.length > 0) ? parameters[0] : null;
-
-		return PLMModel.TYPE_PACKAGINGLIST.equals(itemType) || ((parameter != null) && !parameter.isEmpty() && parameter.contains("Level"));
+		if (PLMModel.TYPE_PACKAGINGLIST.equals(itemType)) {
+			return true;
+		}
+		if (parameters != null) {
+			for (String p : parameters) {
+				if ((p != null) && p.contains("Level")) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/** {@inheritDoc} */
@@ -76,11 +84,22 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 		boolean includeEmpty = false;
 		QName pivotAssoc = null;
 		
+		if (parameters != null) {
+			for (String p : parameters) {
+				if (p != null) {
+					if (p.contains("wUsed")) {
+						wUsed = true;
+					}
+					if (p.contains("IncludeEmpty")) {
+						includeEmpty = true;
+					}
+				}
+			}
+		}
+		
 		String depthLevel;
 		
 		if (parameter != null) {
-			wUsed = parameter.contains("wUsed");
-			includeEmpty = parameter.contains("IncludeEmpty");
 			if (wUsed) {
 				parameter = parameter.replace("wUsed", "");
 				pivotAssoc = entityDictionaryService.getDefaultPivotAssoc(itemType);
