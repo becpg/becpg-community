@@ -306,8 +306,8 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 				String url = "https://api.deepl.com/v2/translate";
 				HttpHeaders headers = new HttpHeaders();
 				headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+				headers.add("Authorization", "DeepL-Auth-Key " + deepLAPIKey);
 				MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-				map.add("auth_key", deepLAPIKey);
 				map.add("text", defaultValue);
 				map.add("source_lang", language);
 				map.add("target_lang", target.split("_")[0]);
