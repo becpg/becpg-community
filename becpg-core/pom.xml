@@ -3,10 +3,10 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>23.4.2</version>
+		<version>23.4.1</version>
 		<relativePath>../</relativePath>
 	</parent>
-    <version>23.4.2.71-SNAPSHOT</version>
+    <version>23.4.1.44-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>    
 	<artifactId>becpg-core</artifactId>
 	<packaging>jar</packaging>
@@ -54,12 +54,6 @@
 			<artifactId>spring-webscripts</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		
-		<dependency>
-            <groupId>org.alfresco</groupId>
-            <artifactId>alfresco-trashcan-cleaner</artifactId>
-			<scope>provided</scope>
-        </dependency>
 		
 		
 		<!-- PdfBox -->
@@ -121,9 +115,7 @@
 		</plugins>
 	</build>
 
-
-
   <scm>
-    <tag>23.4.2.52</tag>
+    <tag>23.4.1.32</tag>
   </scm>
 </project>
