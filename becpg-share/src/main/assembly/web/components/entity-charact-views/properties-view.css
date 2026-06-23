@@ -14,7 +14,7 @@
 .properties-view a.upload-logo-action:hover  span.upload-logo-span {
    background-image: url(../images/edit-16.png);
    background-color: transparent;
-   background-position: 6px 4px;
+   background-position: 0px -1px;
    background-repeat: no-repeat ;
    padding-left: 20px;
 }
