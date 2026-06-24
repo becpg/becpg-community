@@ -195,6 +195,36 @@ public class AdvancedSearchIT extends PLMBaseTestCase {
 		});
 	}
 
+	@Test
+	public void testIdFilterForcedInDb() {
+		NodeRef raw1 = inWriteTx(() -> BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP db id test 1"));
+		NodeRef raw2 = inWriteTx(() -> BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP db id test 2"));
+		NodeRef raw3 = inWriteTx(() -> BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP db id test 3"));
+
+		inReadTx(() -> {
+			QName type = QName.createQName("bcpg:rawMaterial", namespaceService);
+
+			// andIDs forced in DB: the DB-AFTS engine does not support the ID field, the filter is applied as a post-filter
+			List<NodeRef> included = BeCPGQueryBuilder.createQuery().ofType(type).andIDs(Set.of(raw1, raw2)).inDB().list();
+			assertTrue(included.contains(raw1));
+			assertTrue(included.contains(raw2));
+			assertFalse(included.contains(raw3));
+
+			// single andID forced in DB
+			NodeRef single = BeCPGQueryBuilder.createQuery().ofType(type).andID(raw1).inDB().singleValue();
+			assertEquals(raw1, single);
+
+			// andNotID forced in DB excludes the node (uniqueness check pattern)
+			List<NodeRef> excluded = BeCPGQueryBuilder.createQuery().ofType(type).parent(getTestFolderNodeRef()).andNotID(raw1)
+					.inDB().list();
+			assertFalse(excluded.contains(raw1));
+			assertTrue(excluded.contains(raw2));
+			assertTrue(excluded.contains(raw3));
+
+			return null;
+		});
+	}
+
 	private List<NodeRef> queryAdvancedSearch(String query) throws InvalidQNameException, NamespaceException, JSONException {
 		QName datatype = null;
 		Map<String, String> criteriaMap = null;
