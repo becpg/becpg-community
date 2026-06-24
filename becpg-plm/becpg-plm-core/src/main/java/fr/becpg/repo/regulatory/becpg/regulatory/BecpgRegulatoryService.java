@@ -156,17 +156,17 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
                 analysisPassed = analyze(context);
             } catch (RestClientException e) {
                 if (retries <= 0)
-                    context.getRequirements().addAll(generateErrorsforAllRegulatoryPairs(context, e));
+                    context.getRequirements().addAll(generateErrorsForAllRegulatoryPairs(context, e));
                 logger.error(ERROR_PREFIX + cleanError(e.getMessage()) + ", try restarting request...");
             } catch (Exception e) {
-                context.getRequirements().addAll(generateErrorsforAllRegulatoryPairs(context, e));
+                context.getRequirements().addAll(generateErrorsForAllRegulatoryPairs(context, e));
             }
         }
         if (analysisPassed)
             logger.info("Regulatory check for " + context.getProduct().getName() + " finished");
     }
 
-    private List<RequirementListDataItem> generateErrorsforAllRegulatoryPairs(RegulatoryContext context, Exception e) {
+    private List<RequirementListDataItem> generateErrorsForAllRegulatoryPairs(RegulatoryContext context, Exception e) {
         logger.error("Error during beCPG regulatory analysis: " + cleanError(e.getMessage()), e);
         Map<NodeRef, String> nodeRefRegCodeMap = productDataEntityJsonService.fillNodeRefDictionary(context.getProduct().getRegulatoryList());
 
