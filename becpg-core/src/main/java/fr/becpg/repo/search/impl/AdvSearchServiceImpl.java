@@ -361,8 +361,8 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 										// we only want the "YYYY-MM-DD" part of
 										// the ISO date value - so crop the
 										// strings
-										from = (sepindex == 0 ? "MIN" : propValue.substring(0, 10));
-										to = (sepindex == (propValue.length() - 1) ? "MAX" : propValue.substring(sepindex + 1, sepindex + 11));
+										from = (sepindex == 0 ? "MIN" : cropDateRangeValue(propValue));
+										to = (sepindex == (propValue.length() - 1) ? "MAX" : cropDateRangeValue(propValue.substring(sepindex + 1)));
 									} else {
 										// simple range found
 										propName = propName.substring(0, propName.length() - "-range".length());
@@ -504,6 +504,17 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 		}
 
+	}
+
+	/**
+	 * Crops a date-range bound to the leading "YYYY-MM-DD" part of an ISO date value,
+	 * while preserving shorter query tokens such as "NOW".
+	 *
+	 * @param value the raw range bound (ISO date or query token)
+	 * @return the value cropped to at most 10 characters
+	 */
+	private static String cropDateRangeValue(String value) {
+		return value.length() > 10 ? value.substring(0, 10) : value;
 	}
 
 	/**
