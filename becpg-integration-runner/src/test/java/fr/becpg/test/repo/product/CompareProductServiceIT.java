@@ -26,6 +26,7 @@ import fr.becpg.repo.entity.comparison.CompareResultDataItem;
 import fr.becpg.repo.entity.comparison.StructCompareOperator;
 import fr.becpg.repo.entity.comparison.StructCompareResultDataItem;
 import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.ProductAttributeExtractorPlugin;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -35,6 +36,7 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
@@ -54,7 +56,10 @@ public class CompareProductServiceIT extends AbstractCompareProductTest {
 	
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
-	
+
+	@Autowired
+	private AttributeExtractorService attributeExtractorService;
+
 	private final QName ASSOC_PRODUCT_GEO_ORIGIN = QName.createQName(BeCPGModel.BECPG_URI, "productGeoOrigin");
 	
 	/**
@@ -456,6 +461,104 @@ public class CompareProductServiceIT extends AbstractCompareProductTest {
 
 		} finally {
 			systemConfigurationService.resetConfValue("beCPG.product.name.format");
+		}
+	}
+
+	/**
+	 * Test the raw material INCI ingredient breakdown in the comparison (Redmine #33231).
+	 *
+	 * For each raw material of the formula, the comparison must expose the percentage of each
+	 * ingredient within the raw material ({@code ingListQtyPerc}) and within the formula
+	 * ({@code ingListQtyPercWithYield}) computed as the cross product
+	 * {@code ingredientPercInRawMaterial * rawMaterialPercInFormula / 100}.
+	 */
+	@Test
+	public void testRawMaterialIngListComparison() {
+		try {
+			inWriteTx(() -> {
+				systemConfigurationService.updateConfValue("beCPG.product.compare.extractRawMaterialIngList", "true");
+				return null;
+			});
+
+			NodeRef rawMaterialANodeRef = inWriteTx(() -> {
+				RawMaterialData rawMaterialA = new RawMaterialData();
+				rawMaterialA.setName("MP INCI A");
+				rawMaterialA.setIngList(List.of(IngListDataItem.build().withIngredient(ings.get(0)).withQtyPerc(60d),
+						IngListDataItem.build().withIngredient(ings.get(1)).withQtyPerc(40d)));
+				return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterialA).getNodeRef();
+			});
+
+			NodeRef rawMaterialBNodeRef = inWriteTx(() -> {
+				RawMaterialData rawMaterialB = new RawMaterialData();
+				rawMaterialB.setName("MP INCI B");
+				rawMaterialB.setIngList(List.of(IngListDataItem.build().withIngredient(ings.get(2)).withQtyPerc(100d)));
+				return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterialB).getNodeRef();
+			});
+
+			// FP 1: 1kg of MP A + 1kg of MP B => A = 50%, B = 50%
+			fp1NodeRef = inWriteTx(() -> {
+				FinishedProductData fp1 = new FinishedProductData();
+				fp1.setName("FP INCI 1");
+				fp1.setUnit(ProductUnit.kg);
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(CompoListDataItem.build().withParent(null).withQty(1d).withQtyUsed(0d).withUnit(ProductUnit.kg)
+						.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterialANodeRef));
+				compoList.add(CompoListDataItem.build().withParent(null).withQty(1d).withQtyUsed(0d).withUnit(ProductUnit.kg)
+						.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterialBNodeRef));
+				fp1.getCompoListView().setCompoList(compoList);
+				return alfrescoRepository.create(getTestFolderNodeRef(), fp1).getNodeRef();
+			});
+
+			// FP 2: 3kg of MP A + 1kg of MP B => A = 75%, B = 25%
+			fp2NodeRef = inWriteTx(() -> {
+				FinishedProductData fp2 = new FinishedProductData();
+				fp2.setName("FP INCI 2");
+				fp2.setUnit(ProductUnit.kg);
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(CompoListDataItem.build().withParent(null).withQty(3d).withQtyUsed(0d).withUnit(ProductUnit.kg)
+						.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterialANodeRef));
+				compoList.add(CompoListDataItem.build().withParent(null).withQty(1d).withQtyUsed(0d).withUnit(ProductUnit.kg)
+						.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterialBNodeRef));
+				fp2.getCompoListView().setCompoList(compoList);
+				return alfrescoRepository.create(getTestFolderNodeRef(), fp2).getNodeRef();
+			});
+
+			waitForSolr();
+
+			inReadTx(() -> {
+				List<NodeRef> productsNodeRef = new ArrayList<>();
+				productsNodeRef.add(fp2NodeRef);
+
+				List<CompareResultDataItem> compareResult = new ArrayList<>();
+				Map<String, List<StructCompareResultDataItem>> structCompareResults = new HashMap<>();
+				compareEntityService.compare(fp1NodeRef, productsNodeRef, compareResult, structCompareResults);
+
+				String entityList = PLMModel.TYPE_INGLIST.toString();
+				String qtyPercProp = PLMModel.PROP_INGLIST_QTY_PERC.toString();
+				String qtyPercWithYieldProp = PLMModel.PROP_INGLIST_QTY_PERCWITHYIELD.toString();
+
+				String charactAIng0 = "MP INCI A" + " - " + attributeExtractorService.extractPropName(ings.get(0));
+				String charactAIng1 = "MP INCI A" + " - " + attributeExtractorService.extractPropName(ings.get(1));
+				String charactBIng2 = "MP INCI B" + " - " + attributeExtractorService.extractPropName(ings.get(2));
+
+				// % INCI within the raw material is static (identical on both sides)
+				assertTrue(checkCompareRow(compareResult, entityList, charactAIng0, qtyPercProp, "[60.0, 60.0]"));
+				assertTrue(checkCompareRow(compareResult, entityList, charactAIng1, qtyPercProp, "[40.0, 40.0]"));
+				assertTrue(checkCompareRow(compareResult, entityList, charactBIng2, qtyPercProp, "[100.0, 100.0]"));
+
+				// % INCI within the formula = % INCI in MP * % MP in formula / 100
+				assertTrue(checkCompareRow(compareResult, entityList, charactAIng0, qtyPercWithYieldProp, "[30.0, 45.0]"));
+				assertTrue(checkCompareRow(compareResult, entityList, charactAIng1, qtyPercWithYieldProp, "[20.0, 30.0]"));
+				assertTrue(checkCompareRow(compareResult, entityList, charactBIng2, qtyPercWithYieldProp, "[50.0, 25.0]"));
+
+				return null;
+			});
+
+		} finally {
+			inWriteTx(() -> {
+				systemConfigurationService.resetConfValue("beCPG.product.compare.extractRawMaterialIngList");
+				return null;
+			});
 		}
 	}
 

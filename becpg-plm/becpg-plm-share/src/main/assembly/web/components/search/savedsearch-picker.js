@@ -200,6 +200,9 @@
                                     }
                                     if (data.filter) {
                                         data.filter.skipLabel = true;
+                                        if (data.filter.filterData) {
+                                            data.filter.filterData = data.filter.filterData.replace(/\|/g, "$ML$");
+                                        }
                                         YAHOO.Bubbling.fire("changeFilter", data.filter);
                                     }
                                 }
