@@ -54,6 +54,8 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 	private static final Log logger = LogFactory.getLog(DecernisRegulatoryService.class);
 
 	private static final String MESSAGE_NO_CODE_CHARACT = "message.regulatory.charact.noCode";
+
+	private static final String DECERNIS_PREFIX = "DECERNIS_";
 	/** Constant <code>MESSAGE_DECERNIS_ERROR="message.decernis.error"</code> */
 	private static final String MESSAGE_DECERNIS_ERROR = "message.decernis.error";
 
@@ -281,15 +283,36 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 
 	private void addUsage(RegulatoryContext context, List<String> usages, NodeRef usageRef) {
 		String code = extractCode(usageRef);
-		if (code != null && !code.isBlank()) {
-			usages.add(code);
-			String moduleName = (String) nodeService.getProperty(usageRef, PLMModel.PROP_REGULATORY_MODULE);
-			context.addUsage(code, moduleName);
-		} else {
+		if (code == null || code.isBlank()) {
 			RequirementListDataItem noCodeRequirement = createReqCtrl(null,
 					MLTextHelper.getI18NMessage(MESSAGE_NO_CODE_CHARACT), RequirementType.Tolerated);
 			context.getRequirements().add(noCodeRequirement);
+			return;
 		}
+		List<String> decernisUsages = extractDecernisUsages(code);
+		if (decernisUsages.isEmpty()) {
+			return;
+		}
+		String moduleName = (String) nodeService.getProperty(usageRef, PLMModel.PROP_REGULATORY_MODULE);
+		for (String decernisUsage : decernisUsages) {
+			usages.add(decernisUsage);
+			context.addUsage(decernisUsage, moduleName);
+		}
+	}
+
+	private static List<String> extractDecernisUsages(String regulatoryCode) {
+		List<String> result = new ArrayList<>();
+		if (regulatoryCode != null) {
+			for (String part : regulatoryCode.split(",(?=" + DECERNIS_PREFIX + ")")) {
+				if (part.startsWith(DECERNIS_PREFIX)) {
+					String usage = part.substring(DECERNIS_PREFIX.length()).trim();
+					if (!usage.isBlank()) {
+						result.add(usage);
+					}
+				}
+			}
+		}
+		return result;
 	}
 
 	@Override
@@ -386,16 +409,20 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 	 */
 	private void checkUsagesID(RegulatoryContext context) {
 		for (NodeRef usageRef : context.getProduct().getRegulatoryUsagesRef()) {
-			String usageCode = (String) nodeService.getProperty(usageRef, PLMModel.PROP_REGULATORY_CODE);
-			Integer moduleId = moduleToIDMap.get(context.getUsageModule(usageCode));
-			updateUsageID(usageRef, usageCode, moduleId, serverUrl());
+			checkUsageID(context, usageRef);
 		}
 		for (RegulatoryListDataItem regulatoryListItem : context.getProduct().getRegulatoryList()) {
 			for (NodeRef usageRef : regulatoryListItem.getRegulatoryUsagesRef()) {
-				String usageCode = (String) nodeService.getProperty(usageRef, PLMModel.PROP_REGULATORY_CODE);
-				Integer moduleId = moduleToIDMap.get(context.getUsageModule(usageCode));
-				updateUsageID(usageRef, usageCode, moduleId, serverUrl());
+				checkUsageID(context, usageRef);
 			}
+		}
+	}
+
+	private void checkUsageID(RegulatoryContext context, NodeRef usageRef) {
+		String code = (String) nodeService.getProperty(usageRef, PLMModel.PROP_REGULATORY_CODE);
+		for (String usageCode : extractDecernisUsages(code)) {
+			Integer moduleId = moduleToIDMap.get(context.getUsageModule(usageCode));
+			updateUsageID(usageRef, usageCode, moduleId, serverUrl());
 		}
 	}
 

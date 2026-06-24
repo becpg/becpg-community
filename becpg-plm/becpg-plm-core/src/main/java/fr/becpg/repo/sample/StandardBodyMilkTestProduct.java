@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -151,7 +150,9 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 
 		RegulatoryListDataItem item = new RegulatoryListDataItem();
 		item.setRegulatoryCountriesRef(countryRefs);
-		item.setRegulatoryUsagesRef(Stream.of("Body Cream", "Body Soap", "Hand Soap", "IFRA_LIQUID_SOAP").map(this::getOrCreateUsageRef).toList());
+		item.setRegulatoryUsagesRef(List.of(
+				getOrCreateUsageRef("Body Lotion", "COSMETIC_BODY_LOTION,DECERNIS_Body Lotion"),
+				getOrCreateUsageRef("Body Cream", "COSMETIC_BODY_CREAM,DECERNIS_Body Cream")));
 
 		regulatoryList.add(item);
 		return regulatoryList;
@@ -160,16 +161,17 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 	/**
 	 * <p>getOrCreateUsageRef.</p>
 	 *
-	 * @param usage a {@link java.lang.String} object
+	 * @param name           the usage charact name
+	 * @param regulatoryCode the regulatory code ({@code <beCPGcode>,DECERNIS_<phrase>})
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
-	private NodeRef getOrCreateUsageRef(String usage) {
+	private NodeRef getOrCreateUsageRef(String name, String regulatoryCode) {
 		HashMap<QName, Serializable> properties = new HashMap<>();
-		properties.put(BeCPGModel.PROP_CHARACT_NAME, usage);
-		properties.put(PLMModel.PROP_REGULATORY_CODE, usage);
+		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
+		properties.put(PLMModel.PROP_REGULATORY_CODE, regulatoryCode);
 		properties.put(PLMModel.PROP_REGULATORY_MODULE, "COSMETICS");
 		return CharactTestHelper.getOrCreateNode(nodeService,
-				"/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:RegulatoryUsages", usage, PLMModel.TYPE_REGULATORY_USAGE, properties);
+				"/app:company_home/cm:System/cm:Characts/bcpg:entityLists/cm:RegulatoryUsages", name, PLMModel.TYPE_REGULATORY_USAGE, properties);
 	}
 
 	/**
