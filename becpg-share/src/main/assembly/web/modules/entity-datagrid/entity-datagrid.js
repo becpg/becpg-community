@@ -1040,7 +1040,7 @@
                             filterOwner: this.id,
                             filterId: "filterform",
                             filterData: YAHOO.lang.JSON.stringify(
-                                this.cleanFilterData(this.formsFilterRuntime.getFormData())).replace("|",
+                                this.cleanFilterData(this.formsFilterRuntime.getFormData())).replace(/\|/g,
                                     "$ML$")
                         });
 
@@ -1171,7 +1171,7 @@
                         var filters = strFilter.split("|"), filterObj =
                         {
                             filterId: window.unescape(filters[0] || ""),
-                            filterData: window.unescape((filters[1] || "")).replace("$ML$", "|")
+                            filterData: window.unescape((filters[1] || "")).replace(/\$ML\$/g, "|")
                         };
 
                         filterObj.filterOwner = Alfresco.util.FilterManager.getOwner(filterObj.filterId);
