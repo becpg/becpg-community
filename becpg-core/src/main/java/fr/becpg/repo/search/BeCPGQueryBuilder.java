@@ -1321,7 +1321,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			}
 		}
 
-		if (!ids.isEmpty()) {
+		if (!ids.isEmpty() && !isDbIdPostFilter()) {
 			if (ids.size() == 1) {
 				runnedQuery.append(mandatory(getCondEqualID(ids.iterator().next())));
 			} else {
@@ -1339,7 +1339,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			}
 		}
 
-		if (!notIds.isEmpty()) {
+		if (!notIds.isEmpty() && !isDbIdPostFilter()) {
 			for (NodeRef tmpNodeRef : notIds) {
 				runnedQuery.append(prohibided(getCondEqualID(tmpNodeRef)));
 			}
@@ -1629,6 +1629,57 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	/**
 	 * <p>
+	 * Returns {@code true} when ID based filters ({@code andID}/{@code andNotID}) must be applied as a Java post-filter
+	 * on the result set instead of being pushed into the query.
+	 * </p>
+	 * <p>
+	 * The Alfresco database query engine (DB-AFTS) does not support the special {@code ID} field: such a clause is parsed
+	 * as a {@code cm:ID} property and fails with {@code No prop def for ...ID}. The CMIS engine handles it natively through
+	 * {@code cmis:objectId} and Solr supports the {@code ID} field, so post-filtering is only required for transactional
+	 * (database) FTS queries.
+	 * </p>
+	 *
+	 * @return a boolean
+	 */
+	private boolean isDbIdPostFilter() {
+		if (isCmis()) {
+			return false;
+		}
+		if (queryConsistancy == QueryConsistency.TRANSACTIONAL) {
+			return true;
+		}
+		if (queryConsistancy == QueryConsistency.TRANSACTIONAL_IF_POSSIBLE) {
+			// TRANSACTIONAL_IF_POSSIBLE only runs against the database when the searched type is not indexed in Solr;
+			// otherwise it runs against Solr where the ID field is natively supported and can stay in the query.
+			return (type != null) && isExcludedFromIndex(type);
+		}
+		return false;
+	}
+
+	/**
+	 * <p>
+	 * Filters out the nodes that do not match the configured {@code ID} based filters.
+	 * </p>
+	 *
+	 * @param nodes the nodes returned by the search engine
+	 * @return the nodes kept after applying the include ({@code ids}) and exclude ({@code notIds}) filters
+	 */
+	private List<NodeRef> applyIdPostFilter(List<NodeRef> nodes) {
+		List<NodeRef> filtered = new ArrayList<>(nodes.size());
+		for (NodeRef node : nodes) {
+			if (!ids.isEmpty() && !ids.contains(node)) {
+				continue;
+			}
+			if (notIds.contains(node)) {
+				continue;
+			}
+			filtered.add(node);
+		}
+		return filtered;
+	}
+
+	/**
+	 * <p>
 	 * inSearchTemplate.
 	 * </p>
 	 *
@@ -1726,8 +1777,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			sp.setLimit(Integer.MAX_VALUE);
 			sp.setMaxItems(Integer.MAX_VALUE);
 		} else {
-			sp.setLimit(maxResults);
-			sp.setMaxItems(maxResults);
+			int effectiveMaxResults = maxResults;
+			if (isDbIdPostFilter() && !notIds.isEmpty() && (maxResults <= (Integer.MAX_VALUE - notIds.size()))) {
+				effectiveMaxResults = maxResults + notIds.size();
+			}
+			sp.setLimit(effectiveMaxResults);
+			sp.setMaxItems(effectiveMaxResults);
 			sp.setLimitBy(LimitBy.FINAL_SIZE);
 		}
 
@@ -1773,6 +1828,18 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			if (result != null) {
 				result.close();
 			}
+		}
+
+		if (isDbIdPostFilter() && (!ids.isEmpty() || !notIds.isEmpty())) {
+			nodes = applyIdPostFilter(nodes);
+			if ((maxResults != RepoConsts.MAX_RESULTS_UNLIMITED) && (nodes.size() > maxResults)) {
+				nodes = new ArrayList<>(nodes.subList(0, maxResults));
+				hasMore = true;
+			} else {
+				hasMore = false;
+			}
+			totalFirst = nodes.size();
+			totalSecond = nodes.size();
 		}
 
 		return asPagingResults(nodes, hasMore, new Pair<>(totalFirst, totalSecond));
@@ -1854,7 +1921,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 					logger.warn("Count size was limited by: " + result.getResultSetMetaData().getLimitedBy());
 				}
 
-				ret = result.getNumberFound();
+				if (isDbIdPostFilter() && (!ids.isEmpty() || !notIds.isEmpty())) {
+					ret = (long) applyIdPostFilter(result.getNodeRefs()).size();
+				} else {
+					ret = result.getNumberFound();
+				}
 			}
 		} finally {
 			if (result != null) {
