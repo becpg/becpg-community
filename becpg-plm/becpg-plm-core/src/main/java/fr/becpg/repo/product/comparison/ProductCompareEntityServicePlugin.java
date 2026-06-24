@@ -30,6 +30,7 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
@@ -85,6 +86,9 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 
 	
 
+	/** Separator used to build the MP - ingredient characteristic name. */
+	private static final String CHARACT_NAME_SEPARATOR = " - ";
+
 	/**
 	 * Check if raw material extraction is enabled via system configuration.
 	 *
@@ -94,16 +98,25 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.product.compare.extractRawMaterial"));
 	}
 
+	/**
+	 * Check if raw material ingredient (INCI) extraction is enabled via system configuration.
+	 *
+	 * @return true if the ingredient breakdown of each raw material must be extracted
+	 */
+	private boolean extractRawMaterialIngListEnabled() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.product.compare.extractRawMaterialIngList"));
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public void compareEntities(NodeRef entity1NodeRef, NodeRef entity2NodeRef, int nbEntities, int comparisonPosition,
 			Map<String, CompareResultDataItem> comparisonMap, Map<String, List<StructCompareResultDataItem>> structCompareResults) {
-		
+
 		// Call parent implementation for standard comparison
 		super.compareEntities(entity1NodeRef, entity2NodeRef, nbEntities, comparisonPosition, comparisonMap, structCompareResults);
-		
-		// Extract and compare raw materials if enabled
-		if (extractRawMaterialEnabled()) {
+
+		// Extract and compare raw materials (and optionally their ingredients) if enabled
+		if (extractRawMaterialEnabled() || extractRawMaterialIngListEnabled()) {
 			compareRawMaterials(entity1NodeRef, entity2NodeRef, nbEntities, comparisonPosition, comparisonMap);
 		}
 	}
@@ -496,32 +509,98 @@ public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServi
 			// Calculate percentages relative to total raw materials
 			Double qtyPerc1 = (100 * qty1) / (totalQty1 != 0d ? totalQty1 : 1d);
 			Double qtyPerc2 = (100 * qty2) / (totalQty2 != 0d ? totalQty2 : 1d);
-			
-			// Check if values are different
-			boolean isDifferent = !Double.toString(qtyPerc1).equals(Double.toString(qtyPerc2));
-			
-			// Add percentage values for both entities in a single call
-			addComparisonDataItem(comparisonMap, PLMModel.TYPE_RAWMATERIAL, rawMaterialName, pivotKey, 
-					PLMModel.PROP_COMPOLIST_QTY, Double.toString(qtyPerc1), Double.toString(qtyPerc2), 
+
+			if (extractRawMaterialEnabled()) {
+				// Check if values are different
+				boolean isDifferent = !Double.toString(qtyPerc1).equals(Double.toString(qtyPerc2));
+
+				// Add percentage values for both entities in a single call
+				addComparisonDataItem(comparisonMap, PLMModel.TYPE_RAWMATERIAL, rawMaterialName, pivotKey,
+						PLMModel.PROP_COMPOLIST_QTY, Double.toString(qtyPerc1), Double.toString(qtyPerc2),
+						nbEntities, comparisonPosition, isDifferent);
+
+				// Calculate and add quantity per product (percentage of product net weight)
+				String qtyForProduct1Str = "";
+				if (productNetWeight1 != 0d) {
+					Double qtyForProduct1 = (100 * qty1) / productNetWeight1;
+					qtyForProduct1Str = Double.toString(qtyForProduct1);
+				}
+
+				String qtyForProduct2Str = "";
+				if (productNetWeight2 != 0d) {
+					Double qtyForProduct2 = (100 * qty2) / productNetWeight2;
+					qtyForProduct2Str = Double.toString(qtyForProduct2);
+				}
+
+				boolean isDifferentForProduct = !qtyForProduct1Str.equals(qtyForProduct2Str);
+				addComparisonDataItem(comparisonMap, PLMModel.TYPE_RAWMATERIAL, rawMaterialName, pivotKey,
+						PLMModel.PROP_COMPOLIST_QTY_FOR_PRODUCT, qtyForProduct1Str, qtyForProduct2Str,
+						nbEntities, comparisonPosition, isDifferentForProduct);
+			}
+
+			// Extract the INCI ingredient breakdown of the raw material if enabled
+			if (extractRawMaterialIngListEnabled()) {
+				compareRawMaterialIngList(rawMaterialNodeRef, rawMaterialName, qtyPerc1, qtyPerc2,
+						nbEntities, comparisonPosition, comparisonMap);
+			}
+		}
+	}
+
+	/**
+	 * Compare the INCI ingredient breakdown of a single raw material between two entities.
+	 *
+	 * For each ingredient of the raw material, two percentages are added to the comparison:
+	 * <ul>
+	 * <li>{@link fr.becpg.model.PLMModel#PROP_INGLIST_QTY_PERC} the static percentage of the
+	 * ingredient within the raw material (constant when the raw material is identical between
+	 * the compared versions).</li>
+	 * <li>{@link fr.becpg.model.PLMModel#PROP_INGLIST_QTY_PERCWITHYIELD} the percentage of the
+	 * ingredient within the formula, computed as the cross product
+	 * {@code ingredientPercInRawMaterial * rawMaterialPercInFormula / 100}.</li>
+	 * </ul>
+	 *
+	 * The raw material persisted ingredient list is read as-is (no re-formulation) to keep the
+	 * comparison performant.
+	 *
+	 * @param rawMaterialNodeRef the raw material node reference
+	 * @param rawMaterialName the raw material display name, used as characteristic name prefix
+	 * @param rawMaterialPerc1 the percentage of the raw material in the first entity formula
+	 * @param rawMaterialPerc2 the percentage of the raw material in the second entity formula
+	 * @param nbEntities number of entities being compared
+	 * @param comparisonPosition position of the second entity in the comparison
+	 * @param comparisonMap the comparison map to populate
+	 */
+	private void compareRawMaterialIngList(NodeRef rawMaterialNodeRef, String rawMaterialName, Double rawMaterialPerc1,
+			Double rawMaterialPerc2, int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap) {
+
+		ProductData rawMaterialData = (ProductData) alfrescoRepository.findOne(rawMaterialNodeRef);
+		if ((rawMaterialData == null) || (rawMaterialData.getIngList() == null)) {
+			return;
+		}
+
+		for (IngListDataItem ingItem : rawMaterialData.getIngList()) {
+			NodeRef ingNodeRef = ingItem.getIng();
+			Double ingPercInRawMaterial = ingItem.getQtyPerc();
+
+			if ((ingNodeRef == null) || (ingPercInRawMaterial == null)) {
+				continue;
+			}
+
+			String charactName = rawMaterialName + CHARACT_NAME_SEPARATOR + attributeExtractorService.extractPropName(ingNodeRef);
+			String pivotKey = rawMaterialNodeRef.toString() + "-" + ingItem.getNodeRef().toString();
+
+			// % INCI in the raw material (static, identical on both sides for a shared raw material)
+			String ingPercStr = Double.toString(ingPercInRawMaterial);
+			addComparisonDataItem(comparisonMap, PLMModel.TYPE_INGLIST, charactName, pivotKey,
+					PLMModel.PROP_INGLIST_QTY_PERC, ingPercStr, ingPercStr, nbEntities, comparisonPosition, false);
+
+			// % INCI in the formula = % INCI in the raw material * % raw material in the formula / 100
+			String ingPercInFormula1 = Double.toString((ingPercInRawMaterial * rawMaterialPerc1) / 100);
+			String ingPercInFormula2 = Double.toString((ingPercInRawMaterial * rawMaterialPerc2) / 100);
+			boolean isDifferent = !ingPercInFormula1.equals(ingPercInFormula2);
+			addComparisonDataItem(comparisonMap, PLMModel.TYPE_INGLIST, charactName, pivotKey,
+					PLMModel.PROP_INGLIST_QTY_PERCWITHYIELD, ingPercInFormula1, ingPercInFormula2,
 					nbEntities, comparisonPosition, isDifferent);
-			
-			// Calculate and add quantity per product (percentage of product net weight)
-			String qtyForProduct1Str = "";
-			if (productNetWeight1 != 0d) {
-				Double qtyForProduct1 = (100 * qty1) / productNetWeight1;
-				qtyForProduct1Str = Double.toString(qtyForProduct1);
-			}
-			
-			String qtyForProduct2Str = "";
-			if (productNetWeight2 != 0d) {
-				Double qtyForProduct2 = (100 * qty2) / productNetWeight2;
-				qtyForProduct2Str = Double.toString(qtyForProduct2);
-			}
-			
-			boolean isDifferentForProduct = !qtyForProduct1Str.equals(qtyForProduct2Str);
-			addComparisonDataItem(comparisonMap, PLMModel.TYPE_RAWMATERIAL, rawMaterialName, pivotKey,
-					PLMModel.PROP_COMPOLIST_QTY_FOR_PRODUCT, qtyForProduct1Str, qtyForProduct2Str, 
-					nbEntities, comparisonPosition, isDifferentForProduct);
 		}
 	}
 	

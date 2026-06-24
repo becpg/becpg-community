@@ -86,8 +86,15 @@ if (beCPG.module.EntityDataGridRenderers) {
     });
 
 
+    function isDetailLinkLabel(label) {
+        return label == "bcpg:ing_bcpg:ingListIng" || label == "bcpg:ingListIng"
+            || label == "bcpg:allergen_bcpg:allergenListAllergen" || label == "bcpg:allergenListAllergen"
+            || label == "bcpg:tox_bcpg:toxListTox" || label == "bcpg:toxListTox"
+            || label == "bcpg:ing_bcpg:svhcListIng" || label == "bcpg:svhcListIng";
+    }
+
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
-        propertyName: ["bcpg:ing_bcpg:ingListIng", "pjt:scoreCriterion_pjt:slScoreCriterion","bcpg:allergenListAllergen"],
+        propertyName: ["bcpg:ing_bcpg:ingListIng", "pjt:scoreCriterion_pjt:slScoreCriterion", "bcpg:allergenListAllergen", "bcpg:toxListTox", "bcpg:svhcListIng"],
         renderer: function(oRecord, data, label, scope, z, zz, elCell, oColumn) {
             var url = null;
             var toogleGroupButton = null;
@@ -119,28 +126,23 @@ if (beCPG.module.EntityDataGridRenderers) {
 
             var displayName = Alfresco.util.encodeHTML(data.displayValue);
             var content = '';
-            var infoIcon = '';
-            
+
             var isTotalRow = (data.metadata == "total" || oRecord.getData("itemType") == "total");
 
             if (isTotalRow) {
                 content = '<span class="total ' + (data.metadata || "") + '" ' + (toogleGroupButton == null && padding != 0 ? 'style="margin-left:' + padding + 'px;"' : '') + '>'
                     + displayName + '</span>';
-            } else if ((label == "bcpg:ing_bcpg:ingListIng" || label == "bcpg:ingListIng") && data.value) {
+            } else if (isDetailLinkLabel(label) && data.value) {
                 content = '<span class="' + data.metadata + ' node-' + data.value + '" data-noderef="' + data.value + '" ' + (toogleGroupButton == null && padding != 0 ? 'style="margin-left:' + padding + 'px;"' : '') + '>'
-                    + '<a class="' + INGLISTING_INFO_EVENTCLASS + '" href="#" style="text-decoration: none;">' + displayName + '</a>'
+                    + '<a class="' + INGLISTING_INFO_EVENTCLASS + '" title="' + (scope.msg("link.title.details") || "Details") + '" href="#" style="text-decoration: none;">' + displayName + '</a>'
                     + '</span>';
-                infoIcon = '<span class="node-' + data.value + '" data-noderef="' + data.value + '">'
-                    + '<a class="show-details ' + INGLISTING_INFO_EVENTCLASS + '" title="' + (scope.msg("link.title.ing-details") || "Details") + '" href="#">'
-                    + '&nbsp;'
-                    + '</a></span>';
             } else {
                 content = '<span class="' + data.metadata + '" ' + (toogleGroupButton == null && padding != 0 ? 'style="margin-left:' + padding + 'px;"' : '') + '>'
                     + (url != null ? '<a href="' + url + '">' : '')
                     + displayName + (url != null ? '</a>' : '') + '</span>';
             }
 
-            return (toogleGroupButton != null ? toogleGroupButton : '') + content + infoIcon;
+            return (toogleGroupButton != null ? toogleGroupButton : '') + content;
         }
 
     });
@@ -990,7 +992,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                         var dialogEl = Dom.get(this.id + "-dialog") || Dom.get(this.id);
                         var titleEl = Dom.get(this.id + "-dialogTitle") || YAHOO.util.Selector.query(".hd", dialogEl)[0];
                         if (titleEl) {
-                            titleEl.innerHTML = dt.msg("link.title.ing-details") || "Ingredient details";
+                            titleEl.innerHTML = dt.msg("link.title.details") || "Details";
                         }
                         var submitBtn = Dom.get(this.id + "-form-submit");
                         var cancelBtn = Dom.get(this.id + "-form-cancel");
@@ -1035,7 +1037,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                         doBeforeDialogShow: {
                             fn: function(p_form, p_dialog) {
                                 var dialogId = p_dialog.id;
-                                Alfresco.util.populateHTML([dialogId + "-dialogTitle", dt.msg("link.title.ing-details") || "Ingredient details"]);
+                                Alfresco.util.populateHTML([dialogId + "-dialogTitle", dt.msg("link.title.details") || "Details"]);
                                 Dom.addClass(dialogId + "-dialog", "large-dialog");
                             },
                             scope: dt

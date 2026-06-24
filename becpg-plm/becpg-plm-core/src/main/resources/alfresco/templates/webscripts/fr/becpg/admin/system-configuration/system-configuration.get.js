@@ -99,6 +99,7 @@ function main() {
         "beCPG.entity.report.mltext.locales",
         "beCPG.product.report.showDeprecatedXml",
         "beCPG.product.compare.extractRawMaterial",
+        "beCPG.product.compare.extractRawMaterialIngList",
         "beCPG.comparison.pivots"
     ].forEach(function(p) {
         addAttribute(p, "report");
