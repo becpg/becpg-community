@@ -209,7 +209,7 @@ public class ProductDataEntityJsonService {
 
         return ingredientElements.stream().mapMulti((ing, sink) -> {
             NodeRef ingNodeRef = ing.getIng();
-            if (!parsedIngRegulatoryElements.contains(ingNodeRef)) {
+            if (ingNodeRef != null && !parsedIngRegulatoryElements.contains(ingNodeRef)) {
                 ArrayList<NodeRef> sources = Lists.newArrayList(ingNodeRef);
                 MLText i18NMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING);
                 sink.accept(createToleratedReqCtrl(sources, i18NMessage, ingNodeRef, null));
