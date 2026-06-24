@@ -117,7 +117,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 		usage1NodeRef = inWriteTx(() -> {
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "Thickening agents");
-			properties.put(PLMModel.PROP_REGULATORY_CODE, "Thickening agents");
+			properties.put(PLMModel.PROP_REGULATORY_CODE, "DECERNIS_Thickening agents");
 			properties.put(PLMModel.PROP_REGULATORY_ID, "Thickening agents");
 			properties.put(PLMModel.PROP_REGULATORY_MODULE, "FOOD_ADDITIVES");
 			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
@@ -128,7 +128,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 		usage2NodeRef = inWriteTx(() -> {
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "Margarine and fat spreads");
-			properties.put(PLMModel.PROP_REGULATORY_CODE, "Margarine and fat spreads");
+			properties.put(PLMModel.PROP_REGULATORY_CODE, "DECERNIS_Margarine and fat spreads");
 			properties.put(PLMModel.PROP_REGULATORY_ID, "Margarine and fat spreads");
 			properties.put(PLMModel.PROP_REGULATORY_MODULE, "FOOD_ADDITIVES");
 			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,

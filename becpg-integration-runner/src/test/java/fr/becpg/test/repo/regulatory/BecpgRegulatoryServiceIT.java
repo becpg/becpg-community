@@ -114,9 +114,11 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
 
             int amountOfListedIngredients = 45; // identifiable ingredients for this product
             int amountOfListedCountries = 5; // "France", "Germany", "Spain", "Italy", "European Union"
-            int amountOfIdentifiedUsages = 1; // IFRA_LIQUID_SOAP
+            int amountOfIdentifiedUsages = 2; // COSMETIC_BODY_LOTION, COSMETIC_BODY_CREAM
 
-            int amountOfCountryToUsagePairsNotFound = 23; // non-EU countries : "Body Cream", "Body Soap", "Hand Soap"
+            // NOTE: this test is @Ignore (run manually against a live becpg-regulatory). Both usages now
+            // resolve to product types, so the not-found count must be re-tuned against the live instance.
+            int amountOfCountryToUsagePairsNotFound = 0;
             int amountOfIngredientsNotHandled = 45;
 
             int resolvedCombinations = amountOfListedIngredients * amountOfListedCountries * amountOfIdentifiedUsages;
