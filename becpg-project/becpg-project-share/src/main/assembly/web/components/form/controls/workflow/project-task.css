@@ -97,4 +97,44 @@
 	visibility: hidden;
 }
 
+/* #34820 - Differentiate the project task workflow transition buttons (Task done / Reject).
+   Targets the YUI transition buttons by id suffix so the rule wins over every theme skin.
+   Colors are driven by CSS variables so each theme can override them (presentation.css);
+   the second argument of var() is the fallback used by themes that don't override them. */
+span.yui-button[id$="worflowTransition-validate"],
+span.yui-button[id$="worflowTransition-validate"] span.first-child {
+	background-color: var(--pjt-task-done-bg, #e8f5e9);
+	border-color: var(--pjt-task-done-border, #43a047);
+}
+
+span.yui-button[id$="worflowTransition-validate"] button {
+	color: var(--pjt-task-done-text, #2e7d32);
+}
+
+span.yui-button[id$="worflowTransition-validate"].yui-button-hover,
+span.yui-button[id$="worflowTransition-validate"].yui-button-hover span.first-child,
+span.yui-button[id$="worflowTransition-validate"].yui-button-focus,
+span.yui-button[id$="worflowTransition-validate"].yui-button-focus span.first-child {
+	background-color: var(--pjt-task-done-bg-hover, #c8e6c9);
+	border-color: var(--pjt-task-done-text, #2e7d32);
+}
+
+span.yui-button[id$="worflowTransition-refused"],
+span.yui-button[id$="worflowTransition-refused"] span.first-child {
+	background-color: var(--pjt-task-reject-bg, #fdecea);
+	border-color: var(--pjt-task-reject-border, #e53935);
+}
+
+span.yui-button[id$="worflowTransition-refused"] button {
+	color: var(--pjt-task-reject-text, #c62828);
+}
+
+span.yui-button[id$="worflowTransition-refused"].yui-button-hover,
+span.yui-button[id$="worflowTransition-refused"].yui-button-hover span.first-child,
+span.yui-button[id$="worflowTransition-refused"].yui-button-focus,
+span.yui-button[id$="worflowTransition-refused"].yui-button-focus span.first-child {
+	background-color: var(--pjt-task-reject-bg-hover, #fadbd8);
+	border-color: var(--pjt-task-reject-text, #c62828);
+}
+
  
