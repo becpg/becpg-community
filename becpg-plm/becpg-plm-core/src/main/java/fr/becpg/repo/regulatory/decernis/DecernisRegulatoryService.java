@@ -334,7 +334,7 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 		while (payload != null && ingredientAnalysisResults == null && retries >= 0) {
 			try {
 				retries--;
-				String url = serverUrl() + "/ingredient-analysis/transaction?report=tabular";
+				String url = analysisUrl() + "/ingredient-analysis/transaction?report=tabular";
 				HttpEntity<String> entity = createEntity(payload.toString());
 
 				tracePostRequest(payload, url);
@@ -450,9 +450,14 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 
 			IngItem ingItem = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
 
-			for (IngTypeItem ingType : RegulatoryHelper.extractIngTypes(ingListDataItem, alfrescoRepository)) {
-				productDataDecernisJsonService.buildIngredientJsonById(ingListDataItem, ingItem, getFunction(ingType, moduleCode))
-						.ifPresent(ingredients::put);
+			List<IngTypeItem> ingTypes = RegulatoryHelper.extractIngTypes(ingListDataItem, alfrescoRepository);
+			if (!ingTypes.isEmpty()) {
+				for (IngTypeItem ingType : ingTypes) {
+					productDataDecernisJsonService.buildIngredientJsonById(ingListDataItem, ingItem, getFunction(ingType, moduleCode))
+					.ifPresent(ingredients::put);
+				}
+			} else {
+				productDataDecernisJsonService.buildIngredientJsonById(ingListDataItem, ingItem, null).ifPresent(ingredients::put);
 			}
 		}
 		String code = (String) nodeService.getProperty(context.getProduct().getNodeRef(), BeCPGModel.PROP_CODE);
