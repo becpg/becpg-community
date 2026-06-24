@@ -173,7 +173,20 @@ public class ProductDataDecernisJsonService {
 
     private static final Map<QName, String> ingNumbers = new HashMap<>();
 
+	/** Constant <code>FORMULATION_CHECK="FORMULATION_CHECK"</code> */
+	private static final String FORMULATION_CHECK = "FORMULATION_CHECK";
+	/** Constant <code>COSMETICS="COSMETICS"</code> */
+	private static final String COSMETICS = "COSMETICS";
+	/** Constant <code>STANDARDS_OF_IDENTITY_FOOD="STANDARDS_OF_IDENTITY_FOOD"</code> */
+	private static final String STANDARDS_OF_IDENTITY_FOOD = "STANDARDS_OF_IDENTITY_FOOD";
+	/** Constant <code>FOOD_ADDITIVES="FOOD_ADDITIVES"</code> */
+	private static final String FOOD_ADDITIVES = "FOOD_ADDITIVES";
+	
     static {
+    	moduleToCodeMap.put(FOOD_ADDITIVES, "ADD");
+		moduleToCodeMap.put(STANDARDS_OF_IDENTITY_FOOD, "SOI");
+		moduleToCodeMap.put(COSMETICS, "COS");
+		moduleToCodeMap.put(FORMULATION_CHECK, "PC");
         ingNumbers.put(PLMModel.PROP_CAS_NUMBER, "CAS");
         ingNumbers.put(PLMModel.PROP_EC_NUMBER, "EC No.");
         ingNumbers.put(PLMModel.PROP_CE_NUMBER, "EINECS");
