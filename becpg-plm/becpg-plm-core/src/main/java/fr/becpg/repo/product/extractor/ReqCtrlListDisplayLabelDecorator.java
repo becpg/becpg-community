@@ -30,6 +30,8 @@ public class ReqCtrlListDisplayLabelDecorator implements DataListItemDecorator {
 
 	private static final String CODE_SEPARATOR = " - ";
 
+	private static final String DECERNIS_PREFIX = "DECERNIS_";
+
 	private static final NodeRef NOT_FOUND = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, "not-found");
 
 	private NodeService nodeService;
@@ -96,13 +98,50 @@ public class ReqCtrlListDisplayLabelDecorator implements DataListItemDecorator {
 	/**
 	 * <p>Queries the charact (country or usage) carrying the given regulatory code.</p>
 	 *
+	 * <p>A usage code may be stored as a compound {@code <beCPGcode>,DECERNIS_<phrase>}
+	 * value, so an exact match on the whole property fails for the requirement token,
+	 * which holds only a single component (the beCPG code or the Decernis phrase). When
+	 * the exact match misses, the regulatory usages are scanned and matched against each
+	 * component of their stored code.</p>
+	 *
 	 * @param code the regulatory code
 	 * @return the matching node, or {@link #NOT_FOUND} when none exists
 	 */
 	private NodeRef findCharactByCode(String code) {
 		List<NodeRef> results = BeCPGQueryBuilder.createQuery().inDB()
 				.andPropEquals(PLMModel.PROP_REGULATORY_CODE, code).list();
-		return results.isEmpty() ? NOT_FOUND : results.get(0);
+		if (!results.isEmpty()) {
+			return results.get(0);
+		}
+		for (NodeRef usageRef : BeCPGQueryBuilder.createQuery().inDB().ofType(PLMModel.TYPE_REGULATORY_USAGE).list()) {
+			String charactCode = (String) nodeService.getProperty(usageRef, PLMModel.PROP_REGULATORY_CODE);
+			if (matchesComponent(charactCode, code)) {
+				return usageRef;
+			}
+		}
+		return NOT_FOUND;
+	}
+
+	/**
+	 * <p>Tests whether the given token equals any component of a compound
+	 * {@code <beCPGcode>,DECERNIS_<phrase>} regulatory code, stripping the
+	 * {@code DECERNIS_} prefix from the phrase component.</p>
+	 *
+	 * @param charactCode the stored compound regulatory code, possibly null
+	 * @param token       the requirement code component to match
+	 * @return true when the token matches a component
+	 */
+	private static boolean matchesComponent(String charactCode, String token) {
+		if (charactCode == null) {
+			return false;
+		}
+		for (String part : charactCode.split(",(?=" + DECERNIS_PREFIX + ")")) {
+			String candidate = part.startsWith(DECERNIS_PREFIX) ? part.substring(DECERNIS_PREFIX.length()) : part;
+			if (token.equals(candidate.trim())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
