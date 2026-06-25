@@ -1031,10 +1031,17 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		Object prop = properties.get(qname);
 
 		if ((prop != null) && Enum.class.isAssignableFrom(pd.getPropertyType())) {
-			if (((String) prop).isEmpty()) {
+			String enumValue = (String) prop;
+			if (enumValue.isEmpty()) {
 				PropertyUtils.setProperty(entity, pd.getName(), null);
 			} else {
-				PropertyUtils.setProperty(entity, pd.getName(), Enum.valueOf((Class<Enum>) pd.getPropertyType(), (String) prop));
+				try {
+					PropertyUtils.setProperty(entity, pd.getName(), Enum.valueOf((Class<Enum>) pd.getPropertyType(), enumValue));
+				} catch (IllegalArgumentException e) {
+					logger.warn("Ignoring unknown enum constant '" + enumValue + "' for property " + pd.getName() + " ("
+							+ pd.getPropertyType().getSimpleName() + ")");
+					PropertyUtils.setProperty(entity, pd.getName(), null);
+				}
 			}
 		} else if ((prop != null) && pd.getPropertyType().isAnnotationPresent(AlfType.class)) {
 			if (nodeService.exists((NodeRef) prop)) {
