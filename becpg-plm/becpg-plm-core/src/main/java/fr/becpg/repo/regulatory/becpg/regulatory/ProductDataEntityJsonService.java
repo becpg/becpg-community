@@ -157,13 +157,15 @@ public class ProductDataEntityJsonService {
     public Map<NodeRef, String> fillNodeRefDictionary(Collection<RegulatoryListDataItem> regulatoryElements) {
         if (regulatoryElements == null)
             return Collections.emptyMap();
-        // distinct() ensures that each noderef is only looked-up once, all standard map-based solutions look-up and then dedup
-        return regulatoryElements.stream().flatMap(item -> Stream.concat(
+        // distinct() ensures that each noderef is only looked-up once, all standard map-based solutions look-up and then dedup.
+        // A HashMap (rather than Collectors.toMap) is used on purpose: the regulatory code may be null and toMap rejects null values.
+        Map<NodeRef, String> codeByRef = new HashMap<>();
+        regulatoryElements.stream().flatMap(item -> Stream.concat(
                 item.getRegulatoryCountriesRef().stream(), item.getRegulatoryUsagesRef().stream()
-        )).distinct().collect(Collectors.toMap(
-                Function.identity(),
-                nodeRef -> (String) nodeService.getProperty(nodeRef, PLMModel.PROP_REGULATORY_CODE)
-        ));
+        )).distinct().forEach(nodeRef ->
+                codeByRef.put(nodeRef, (String) nodeService.getProperty(nodeRef, PLMModel.PROP_REGULATORY_CODE))
+        );
+        return codeByRef;
     }
 
     private static Stream<IngRegulatoryListDataItem> parseIngredientRegulations(JSONObject json) {
