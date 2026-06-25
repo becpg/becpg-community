@@ -2315,7 +2315,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 							CompositeLabeling ingLabelItem = parent.get(reconstituableData.getDiluentIngNodeRef());
 
-							if ((ingLabelItem != null) && (ingLabelItem.getQty() != null) && (reconstituableData.getRate() != 0d)) {
+							if ((ingLabelItem != null) && (ingLabelItem.getQty() != null) && (reconstituableData.getRate() != 0d)
+									&& (productLabelItem.getQty() > 0d)) {
 
 								BigDecimal rate = BigDecimal.valueOf(reconstituableData.getRate());
 
