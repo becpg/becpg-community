@@ -97,7 +97,60 @@ public class LargeTextHelperTest {
         
         String expectedHtml = "<span>The </span><del style=\"background:#ffe6e6;\">qu</del><ins style=\"background:#e6ffe6;\">sw</ins><span>i</span><del style=\"background:#ffe6e6;\">ck</del><ins style=\"background:#e6ffe6;\">ft</ins><span> brown fox </span><del style=\"background:#ffe6e6;\">jum</del><ins style=\"background:#e6ffe6;\">lea</ins><span>ps over the lazy dog.</span>";
         String actualHtml = LargeTextHelper.htmlDiff(text1, text2);
-        
+
         assertEquals(expectedHtml, actualHtml);
+    }
+
+    // #34846 : non-blocking HTML truncation of the labeling table (must not cut mid-tag)
+
+    private static String htmlTable(int rows) {
+        StringBuilder sb = new StringBuilder("<table class=\"labelingTable\"><tbody>");
+        for (int i = 0; i < rows; i++) {
+            sb.append("<tr><td>ing</td><td>10%</td></tr>");
+        }
+        sb.append("</tbody></table>");
+        return sb.toString();
+    }
+
+    private static int count(String haystack, String needle) {
+        int total = 0;
+        int idx = haystack.indexOf(needle);
+        while (idx != -1) {
+            total++;
+            idx = haystack.indexOf(needle, idx + needle.length());
+        }
+        return total;
+    }
+
+    @Test
+    public void testElipseHtmlShortValueUnchanged() {
+        String html = htmlTable(2);
+        assertEquals(html, LargeTextHelper.elipseHtml(html, LargeTextHelper.TEXT_SIZE_LIMIT));
+    }
+
+    @Test
+    public void testElipseHtmlNullUnchanged() {
+        assertEquals(null, LargeTextHelper.elipseHtml(null, 100));
+    }
+
+    @Test
+    public void testElipseHtmlTruncatedOnRowBoundaryAndClosed() {
+        String html = htmlTable(500);
+        String truncated = LargeTextHelper.elipseHtml(html, 200);
+
+        assertTrue("Output must stay within budget + closing tag", truncated.length() <= 200 + "</table>".length());
+        assertTrue("Must end on a complete row + closing table", truncated.endsWith("</tr></table>"));
+        assertTrue("No tag must be cut mid-way", truncated.lastIndexOf('<') <= truncated.lastIndexOf('>'));
+        assertEquals(count(truncated, "<tr>"), count(truncated, "</tr>"));
+        assertEquals(1, count(truncated, "<table"));
+        assertEquals(1, count(truncated, "</table>"));
+    }
+
+    @Test
+    public void testElipseHtmlNonHtmlFallsBackToPlainElipse() {
+        String plain = "a".repeat(500);
+        String truncated = LargeTextHelper.elipseHtml(plain, 100);
+        assertTrue(truncated.endsWith("..."));
+        assertEquals(103, truncated.length());
     }
 }
