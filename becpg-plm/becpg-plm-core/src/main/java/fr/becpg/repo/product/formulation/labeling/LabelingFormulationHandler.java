@@ -1580,29 +1580,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		for (Locale locale : label.keySet()) {
 			String value = label.get(locale);
 			if ((value != null) && (value.length() > budget)) {
-				label.put(locale, htmlSafeElipse(value, budget));
+				label.put(locale, LargeTextHelper.elipseHtml(value, budget));
 			}
 		}
-	}
-
-	/**
-	 * Truncates a value to the given budget. When the value is an HTML table, the cut is done after
-	 * the last complete row and the table is closed, so the rendered output stays valid.
-	 *
-	 * @param value the value to truncate
-	 * @param budget the maximum length
-	 * @return the truncated value
-	 */
-	private String htmlSafeElipse(String value, int budget) {
-		int tableStart = value.indexOf("<table");
-		if (tableStart > -1) {
-			String head = value.substring(0, budget);
-			int lastRow = head.lastIndexOf("</tr>");
-			if (lastRow > tableStart) {
-				return value.substring(0, lastRow + "</tr>".length()) + "</table>";
-			}
-		}
-		return LargeTextHelper.elipse(value, budget);
 	}
 
 	IngLabelingListDataItem getOrCreateILLDataItem(ProductData formulatedProduct, NodeRef key, MLText label, String log, String lang, int sortOrder) {
