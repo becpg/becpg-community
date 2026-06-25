@@ -52,6 +52,9 @@ public abstract class AbstractRegulatoryService {
     /** Constant <code>REGULATORY_KEY="regulatory"</code> */
     public static final String REGULATORY_KEY = "regulatory";
 
+    /** Constant <code>DECERNIS_PREFIX="DECERNIS_"</code> */
+    protected static final String DECERNIS_PREFIX = "DECERNIS_";
+
     protected static final String POST_URL = "POST url: ";
 
     protected static final String ASYNC_ACTION_URL_PREFIX = "page/entity-data-lists?list=regulatoryList&nodeRef=%s";
@@ -212,6 +215,23 @@ public abstract class AbstractRegulatoryService {
         );
     }
 
+    /**
+     * Keeps only the leading beCPG code of a requirement {@code <country> - <usage>}
+     * code. A usage may carry both its beCPG code and the Decernis phrase
+     * ({@code COSMETIC_BODY_CREAM,DECERNIS_Body Cream}); only the beCPG code is kept
+     * for display and filtering. A code with no beCPG part (food,
+     * {@code DECERNIS_<name>}) is returned unchanged as the only available token.
+     *
+     * @param regulatoryCode the raw requirement code, possibly null
+     * @return the shortened code, or null when the input is null
+     */
+    protected static String shortenRegulatoryCode(String regulatoryCode) {
+        if (regulatoryCode == null) {
+            return null;
+        }
+        return regulatoryCode.split(",(?=" + DECERNIS_PREFIX + ")")[0].trim();
+    }
+
     protected abstract List<BatchStep<RegulatoryBatch>> delegatePrepareAsyncSteps(RegulatoryContext context, NodeRef entityNodeRef);
 
 
@@ -226,6 +246,9 @@ public abstract class AbstractRegulatoryService {
     protected void finalizeRecipeCheck(RegulatoryContext context, ProductData productData) {
         if (productData.getReqCtrlList() == null) {
             productData.setReqCtrlList(new ArrayList<>());
+        }
+        for (RequirementListDataItem requirement : context.getRequirements()) {
+            requirement.setRegulatoryCode(shortenRegulatoryCode(requirement.getRegulatoryCode()));
         }
         productData.getReqCtrlList().addAll(context.getRequirements());
         formulationService.formulate(productData, REGULATORY_KEY);

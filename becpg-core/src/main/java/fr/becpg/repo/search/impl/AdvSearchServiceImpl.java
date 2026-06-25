@@ -467,7 +467,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 									}
 								}
-							} else if (isMultiValueProperty(propValue, modePropValue) || isListProperty(criteriaMap, key)) {
+							} else if (!propValue.startsWith("=") && (isMultiValueProperty(propValue, modePropValue) || isListProperty(criteriaMap, key))) {
 								if (propName.indexOf("isListProperty") == -1) {
 									queryBuilder.andFTSQuery(processMultiValue(propName, propValue, modePropValue, false));
 								}
