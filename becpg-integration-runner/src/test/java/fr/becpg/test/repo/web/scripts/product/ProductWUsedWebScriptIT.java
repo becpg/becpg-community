@@ -4,6 +4,8 @@
 package fr.becpg.test.repo.web.scripts.product;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -149,6 +151,91 @@ public class ProductWUsedWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		Response responseNonMatching = TestWebscriptExecuters.sendRequest(new PostRequest(url, dataNonMatching, "application/json"), 200, "admin");
 		org.junit.Assert.assertFalse("Should not return matches with non-matching model filter", responseNonMatching.getContentAsString().contains("Finished Product 2"));
 
+	}
+
+	/**
+	 * Reproduces #34682 (test failed): the WUsed filter form for product attributes
+	 * (erpCode, effectivity dates) must keep only the matching parent products.
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Test
+	public void testgetProductWusedWithPropertyFilters() throws Exception {
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("Shared raw material");
+			rawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+
+			// Two finished products using the same raw material, with distinct
+			// erpCodes (one a substring of the other) and effectivity dates.
+			finishedProductNodeRef = createUsingProduct("WUsed Match Product", "TESTXYZ", buildDate(2030, Calendar.JUNE, 15));
+			createUsingProduct("WUsed Other Product", "TEST", buildDate(2020, Calendar.JUNE, 15));
+
+			return null;
+
+		}, false, true);
+
+		String url = "/becpg/entity/datalists/data/node?entityNodeRef=" + rawMaterialNodeRef.toString()
+				+ "&itemType=bcpg%3AcompoList&dataListName=WUsed";
+
+		// --- erpCode filter (nested) : "TESTXYZ" must not match the product whose code is "TEST" ---
+		String erpContent = sendFilter(url, "{\\\"nested_bcpg_compoListProduct_prop_bcpg_erpCode\\\":\\\"TESTXYZ\\\"}");
+		logger.info("erpCode filter content : " + erpContent);
+		org.junit.Assert.assertTrue("erpCode filter should keep the matching product", erpContent.contains("WUsed Match Product"));
+		org.junit.Assert.assertFalse("erpCode filter must not keep a product whose code is only a substring of the search term",
+				erpContent.contains("WUsed Other Product"));
+
+		// --- startEffectivity range filter (root, as sent by the WUsed filter form) :
+		// 2029..2031 keeps only the product effective in 2030 ---
+		String dateContent = sendFilter(url,
+				"{\\\"prop_bcpg_startEffectivity-date-range\\\":\\\"2029-01-01T00:00:00.000Z|2031-01-01T00:00:00.000Z\\\"}");
+		logger.info("startEffectivity range filter content : " + dateContent);
+		org.junit.Assert.assertTrue("startEffectivity range filter should keep the product effective within the range",
+				dateContent.contains("WUsed Match Product"));
+		org.junit.Assert.assertFalse("startEffectivity range filter must drop the product effective outside the range",
+				dateContent.contains("WUsed Other Product"));
+
+		// A range that excludes both products must return no row.
+		String emptyDateContent = sendFilter(url,
+				"{\\\"prop_bcpg_startEffectivity-date-range\\\":\\\"2040-01-01T00:00:00.000Z|2041-01-01T00:00:00.000Z\\\"}");
+		org.junit.Assert.assertFalse("out-of-range filter must drop the 2030 product", emptyDateContent.contains("WUsed Match Product"));
+		org.junit.Assert.assertFalse("out-of-range filter must drop the 2020 product", emptyDateContent.contains("WUsed Other Product"));
+
+	}
+
+	private NodeRef createUsingProduct(String name, String erpCode, Date startEffectivity) {
+		LocalSemiFinishedProductData lSF = new LocalSemiFinishedProductData();
+		lSF.setName("SF for " + name);
+		NodeRef lSFNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), lSF).getNodeRef();
+
+		FinishedProductData finishedProduct = new FinishedProductData();
+		finishedProduct.setName(name);
+		finishedProduct.setErpCode(erpCode);
+		finishedProduct.setStartEffectivity(startEffectivity);
+		List<CompoListDataItem> compoList = new ArrayList<>();
+		compoList.add(CompoListDataItem.build().withParent(null).withQty(1d).withQtyUsed(0d).withUnit(ProductUnit.kg).withLossPerc(0d)
+				.withDeclarationType(DeclarationType.Omit).withProduct(lSFNodeRef));
+		compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(3d).withQtyUsed(0d).withUnit(ProductUnit.kg).withLossPerc(0d)
+				.withDeclarationType(DeclarationType.Omit).withProduct(rawMaterialNodeRef));
+		finishedProduct.getCompoListView().setCompoList(compoList);
+		return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+	}
+
+	private String sendFilter(String url, String filterDataStr) throws Exception {
+		String data = "{\"fields\":[\"bcpg_costListCost\",\"bcpg_costListValue\",\"bcpg_costListUnit\"],\"filter\":{\"filterId\":\"filterform\",\"filterData\":\""
+				+ filterDataStr + "\"}}";
+		Response response = TestWebscriptExecuters.sendRequest(new PostRequest(url, data, "application/json"), 200, "admin");
+		return response.getContentAsString();
+	}
+
+	private static Date buildDate(int year, int month, int day) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.clear();
+		calendar.set(year, month, day, 12, 0, 0);
+		return calendar.getTime();
 	}
 
 }

@@ -456,8 +456,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									.createJsonLog(labelingRuleListDataItem.getFormula().replace(" ", "").contains("render(false)"));
 						}
 
-						// Limit label size to prevent property write failures
-						LargeTextHelper.elipse(label);
+						// Limit label size to prevent property write failures (HTML-safe to avoid breaking the rendered table)
+						truncateRenderedLabel(label);
 
 						retainNodes.addAll(getOrCreateILLDataItems(formulatedProduct, labelingRuleListDataItem.getNodeRef(), label, log,
 								labelingFormulaContext, sortOrder));
@@ -1562,6 +1562,49 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	 * @param sortOrder a int
 	 * @return a {@link fr.becpg.repo.product.data.productList.IngLabelingListDataItem} object
 	 */
+	/**
+	 * Truncates the rendered labeling value (bcpg:illValue) to prevent property write failures,
+	 * keeping the same per-locale budget as {@link LargeTextHelper#elipse(MLText)} but truncating
+	 * HTML output on a complete row boundary so the rendered table is not broken mid-tag.
+	 *
+	 * @param label the rendered labeling value, modified in place
+	 */
+	private void truncateRenderedLabel(MLText label) {
+		if (label.toString().length() <= LargeTextHelper.TEXT_SIZE_LIMIT) {
+			return;
+		}
+
+		int localesNumber = Math.max(1, label.keySet().size());
+		int budget = (LargeTextHelper.TEXT_SIZE_LIMIT / localesNumber) - 20;
+
+		for (Locale locale : label.keySet()) {
+			String value = label.get(locale);
+			if ((value != null) && (value.length() > budget)) {
+				label.put(locale, htmlSafeElipse(value, budget));
+			}
+		}
+	}
+
+	/**
+	 * Truncates a value to the given budget. When the value is an HTML table, the cut is done after
+	 * the last complete row and the table is closed, so the rendered output stays valid.
+	 *
+	 * @param value the value to truncate
+	 * @param budget the maximum length
+	 * @return the truncated value
+	 */
+	private String htmlSafeElipse(String value, int budget) {
+		int tableStart = value.indexOf("<table");
+		if (tableStart > -1) {
+			String head = value.substring(0, budget);
+			int lastRow = head.lastIndexOf("</tr>");
+			if (lastRow > tableStart) {
+				return value.substring(0, lastRow + "</tr>".length()) + "</table>";
+			}
+		}
+		return LargeTextHelper.elipse(value, budget);
+	}
+
 	IngLabelingListDataItem getOrCreateILLDataItem(ProductData formulatedProduct, NodeRef key, MLText label, String log, String lang, int sortOrder) {
 
 		IngLabelingListDataItem ill = null;
@@ -2315,7 +2358,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 							CompositeLabeling ingLabelItem = parent.get(reconstituableData.getDiluentIngNodeRef());
 
-							if ((ingLabelItem != null) && (ingLabelItem.getQty() != null) && (reconstituableData.getRate() != 0d)) {
+							if ((ingLabelItem != null) && (ingLabelItem.getQty() != null) && (reconstituableData.getRate() != 0d)
+									&& (productLabelItem.getQty() > 0d)) {
 
 								BigDecimal rate = BigDecimal.valueOf(reconstituableData.getRate());
 
