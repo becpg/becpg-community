@@ -1,5 +1,6 @@
 package fr.becpg.repo.product.formulation.labeling;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -65,11 +66,20 @@ public class QtyFormater {
 	/**
 	 * <p>format.</p>
 	 *
+	 * The value is formatted through {@link java.math.BigDecimal#valueOf(double)} (canonical
+	 * decimal representation) rather than from the raw double, so that floating-point noise does
+	 * not interact with truncating rounding modes (e.g. a value mathematically equal to 29.0%
+	 * stored as 0.28999999998 must not be rounded down to 28% with {@code RoundingMode.DOWN}).
+	 *
 	 * @param qty a {@link java.lang.Double} object
 	 * @return a {@link java.lang.String} object
 	 */
 	public String format(Double qty) {
-		return decimalFormat.format(apply(qty));
+		Double applied = apply(qty);
+		if (applied == null) {
+			return decimalFormat.format(applied);
+		}
+		return decimalFormat.format(BigDecimal.valueOf(applied));
 	}
 
 	/**
