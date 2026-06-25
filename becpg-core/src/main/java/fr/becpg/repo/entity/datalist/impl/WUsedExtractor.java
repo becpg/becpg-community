@@ -241,15 +241,20 @@ public class WUsedExtractor extends MultiLevelExtractor {
 							if (value != null && !value.isEmpty() && !key.equals(DataListFilter.PROP_DEPTH_LEVEL) && !key.startsWith("nested_")) {
 								if (key.startsWith(AttributeExtractorService.PROP_SUFFIX)) {
 									String qNameStr = key.replace(AttributeExtractorService.PROP_SUFFIX, "").replace("_", ":");
-									boolean isRange = qNameStr.contains("-range");
-									if (isRange) {
-										qNameStr = qNameStr.replace("-range", "");
+									boolean isRange = qNameStr.endsWith("-range");
+									if (qNameStr.endsWith("-date-range")) {
+										qNameStr = qNameStr.substring(0, qNameStr.length() - "-date-range".length());
+									} else if (isRange) {
+										qNameStr = qNameStr.substring(0, qNameStr.length() - "-range".length());
 									}
 									try {
 										QName qName = QName.createQName(qNameStr, namespaceService);
-										AssociationCriteriaFilterMode mode = isRange ? AssociationCriteriaFilterMode.RANGE : AssociationCriteriaFilterMode.EQUALS;
-										AssociationCriteriaFilter filter = new AssociationCriteriaFilter(qName, cleanValueForDB(value), mode);
-										criteriaFilters.add(filter);
+										if (entityDictionaryService.getProperty(qName) != null) {
+											AssociationCriteriaFilterMode mode = isRange ? AssociationCriteriaFilterMode.RANGE : AssociationCriteriaFilterMode.EQUALS;
+											AssociationCriteriaFilter filter = new AssociationCriteriaFilter(qName, cleanValueForDB(value), mode);
+											filter.setEntityFilter(true);
+											criteriaFilters.add(filter);
+										}
 									} catch (Exception e) {
 										logger.error("Error parsing QName: " + qNameStr, e);
 									}

@@ -733,6 +733,11 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				newIngListDataItem.setIsIonized(true);
 			}
 
+			// For generic products, propagate the reconstitution defined on the variants, keeping the highest rate
+			if (isGeneric) {
+				propagateReconstitution(newIngListDataItem, ingListDataItem);
+			}
+
 			// recursive
 			if (!component.isLeaf()) {
 				calculateILOfPart(formulatedProduct, componentProductData, compoListDataItem, component, ingList, retainNodes, totalQtyIngMap,
@@ -912,6 +917,32 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			return ingItem.getLegalName(Locale.getDefault());
 		}
 		return ingListDataItem.getName();
+	}
+
+	/**
+	 * Propagates the reconstitution definition of a variant ingredient onto the aggregated generic
+	 * ingredient. When several variants define a reconstitution for the same ingredient, the highest
+	 * rate is retained along with its diluent, target and priority.
+	 *
+	 * @param target the aggregated generic ingredient
+	 * @param source the variant ingredient
+	 */
+	private void propagateReconstitution(IngListDataItem target, IngListDataItem source) {
+		Double sourceRate = source.getReconstitutionRate();
+		if ((sourceRate == null) || (source.getAspects() == null) || !source.getAspects().contains(PLMModel.ASPECT_RECONSTITUTABLE)) {
+			return;
+		}
+
+		Double targetRate = target.getReconstitutionRate();
+		if ((targetRate == null) || (sourceRate > targetRate)) {
+			target.setReconstitutionRate(sourceRate);
+			target.setReconstitutionPriority(source.getReconstitutionPriority());
+			target.setDiluentRef(source.getDiluentRef());
+			target.setTargetReconstitutionRef(source.getTargetReconstitutionRef());
+			if (!target.getAspects().contains(PLMModel.ASPECT_RECONSTITUTABLE)) {
+				target.getAspects().add(PLMModel.ASPECT_RECONSTITUTABLE);
+			}
+		}
 	}
 
 	/**
