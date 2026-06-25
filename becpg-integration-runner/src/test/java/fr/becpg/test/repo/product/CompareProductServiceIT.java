@@ -500,6 +500,7 @@ public class CompareProductServiceIT extends AbstractCompareProductTest {
 				FinishedProductData fp1 = new FinishedProductData();
 				fp1.setName("FP INCI 1");
 				fp1.setUnit(ProductUnit.kg);
+				fp1.setQty(2d);
 				List<CompoListDataItem> compoList = new ArrayList<>();
 				compoList.add(CompoListDataItem.build().withParent(null).withQty(1d).withQtyUsed(0d).withUnit(ProductUnit.kg)
 						.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterialANodeRef));
@@ -514,6 +515,7 @@ public class CompareProductServiceIT extends AbstractCompareProductTest {
 				FinishedProductData fp2 = new FinishedProductData();
 				fp2.setName("FP INCI 2");
 				fp2.setUnit(ProductUnit.kg);
+				fp2.setQty(4d);
 				List<CompoListDataItem> compoList = new ArrayList<>();
 				compoList.add(CompoListDataItem.build().withParent(null).withQty(3d).withQtyUsed(0d).withUnit(ProductUnit.kg)
 						.withLossPerc(0d).withDeclarationType(DeclarationType.Declare).withProduct(rawMaterialANodeRef));
