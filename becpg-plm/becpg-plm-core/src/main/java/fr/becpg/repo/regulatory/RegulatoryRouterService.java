@@ -54,7 +54,10 @@ public class RegulatoryRouterService {
             RegulatoryMode regulatoryMode = productData.getRegulatoryMode();
 
             if (RegulatoryMode.REGULATORY.equals(regulatoryMode)) {
-                return becpgRegulatoryService.doCheck(async, result, productData);
+                // The beCPG regulatory plugin is fast enough to run synchronously so the UI can wait
+                // for the response and refresh, like formulation does. Unlike the Decernis plugin,
+                // it does not need the asynchronous batch + email notification flow (#34620).
+                return becpgRegulatoryService.doCheck(false, result, productData);
             } else if (regulatoryMode != null && !RegulatoryMode.DISABLED.equals(regulatoryMode)) {
                 return decernisRegulatoryService.doCheck(async, result, productData);
             } else {
