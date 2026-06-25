@@ -1398,7 +1398,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			if (!dateMatches(value, compValue)) {
 				return false;
 			}
-		} else if ((compValue != null) && !value.equals(compValue) && !compValue.contains(value) && !displayValue.equals(compValue)) {
+		} else if ((compValue != null) && !value.equals(compValue) && !value.contains(compValue) && !displayValue.equals(compValue)) {
 			return false;
 
 		}
