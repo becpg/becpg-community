@@ -462,6 +462,11 @@ if (beCPG.module.EntityDataGridRenderers) {
         propertyName: ["cm:cmobject_bcpg:allergenListVolSources", "cm:cmobject_bcpg:allergenListInVolSources", "bcpg:irlIng", "bcpg:irlSources"],
         renderer: function(oRecord, data, label, scope) {
             if (data.metadata == "ing") {
+                if (data.value) {
+                    return '<span class="' + data.metadata + ' node-' + data.value + '" data-noderef="' + data.value + '">'
+                        + '<a class="' + INGLISTING_INFO_EVENTCLASS + '" title="' + (scope.msg("link.title.details") || "Details") + '" href="#" style="text-decoration: none;">'
+                        + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';
+                }
                 return '<span class="' + data.metadata + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
             }
             return '<span class="' + data.metadata + '" ><a href="' + beCPG.util.entityURL(data.siteId, data.value) + '">'
