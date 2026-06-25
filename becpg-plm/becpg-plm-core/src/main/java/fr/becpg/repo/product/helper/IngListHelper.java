@@ -84,6 +84,14 @@ public class IngListHelper {
 						toAdd.setQtyPerc((toAdd.getQtyPerc() * ingListDataItem.getQtyPerc()) / 100d);
 					}
 
+					if ((toAdd != null) && (toAdd.getQtyPercWithYield() != null) && (ingListDataItem != null)) {
+						Double parentQtyPercWithYield = ingListDataItem.getQtyPercWithYield() != null ? ingListDataItem.getQtyPercWithYield()
+								: ingListDataItem.getQtyPerc();
+						if (parentQtyPercWithYield != null) {
+							toAdd.setQtyPercWithYield((toAdd.getQtyPercWithYield() * parentQtyPercWithYield) / 100d);
+						}
+					}
+
 					if ((toAdd != null) && (toAdd.getVolumeQtyPerc() != null) && (ingListDataItem != null)
 							&& (ingListDataItem.getVolumeQtyPerc() != null)) {
 						toAdd.setVolumeQtyPerc((toAdd.getVolumeQtyPerc() * ingListDataItem.getVolumeQtyPerc()) / 100d);
