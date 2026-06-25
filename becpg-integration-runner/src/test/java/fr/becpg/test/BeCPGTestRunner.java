@@ -29,6 +29,7 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,6 +45,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.NoHttpResponseException;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
@@ -110,6 +112,8 @@ public class BeCPGTestRunner extends SpringJUnit4ClassRunner {
 	private static final int MAX_RETRY_ATTEMPTS = 3;
 	private static final int MAX_TOTAL_CONNECTIONS = 10;
 	private static final int MAX_CONNECTIONS_PER_ROUTE = 5;
+	private static final int VALIDATE_AFTER_INACTIVITY_MS = 1000;
+	private static final long EVICT_IDLE_CONNECTIONS_S = 10;
 
 	private static Log logger = LogFactory.getLog(BeCPGTestRunner.class);
 
@@ -224,10 +228,18 @@ public class BeCPGTestRunner extends SpringJUnit4ClassRunner {
 		PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
 		connectionManager.setMaxTotal(MAX_TOTAL_CONNECTIONS);
 		connectionManager.setDefaultMaxPerRoute(MAX_CONNECTIONS_PER_ROUTE);
+		// Revalidate connections idle longer than this before reuse, to avoid stale keep-alive
+		// connections closed server-side during long-running tests (NoHttpResponseException)
+		connectionManager.setValidateAfterInactivity(VALIDATE_AFTER_INACTIVITY_MS);
 
 		HttpRequestRetryHandler retryHandler = (exception, executionCount, context) -> {
 			if (executionCount > MAX_RETRY_ATTEMPTS) {
 				return false;
+			}
+			if (exception instanceof NoHttpResponseException) {
+				// Stale keep-alive connection closed server-side: safe to retry idempotent test GET requests
+				logger.warn("Stale connection (no response) on attempt " + executionCount + ", retrying...");
+				return true;
 			}
 			if (exception instanceof java.net.SocketTimeoutException) {
 				logger.warn("Socket timeout on attempt " + executionCount + ", retrying...");
@@ -253,6 +265,7 @@ public class BeCPGTestRunner extends SpringJUnit4ClassRunner {
 				.setDefaultRequestConfig(requestConfig)
 				.setConnectionManager(connectionManager)
 				.setRetryHandler(retryHandler)
+				.evictIdleConnections(EVICT_IDLE_CONNECTIONS_S, TimeUnit.SECONDS)
 				.build();
 	}
 
