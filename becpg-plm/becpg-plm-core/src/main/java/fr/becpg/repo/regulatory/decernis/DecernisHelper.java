@@ -85,7 +85,7 @@ public class DecernisHelper {
 	 */
 	public static String getToken() {
 		if (!TenantService.DEFAULT_DOMAIN.equals(TenantUtil.getCurrentDomain())) {
-			String confValue = SystemConfigurationRegistry.instance().confValue("beCPG.decernis.token." + TenantUtil.getCurrentDomain());
+			String confValue = SystemConfigurationRegistry.instance().confValue("beCPG.regulatory.decernis.token." + TenantUtil.getCurrentDomain());
 			if (confValue != null) {
 				return confValue;
 			}
