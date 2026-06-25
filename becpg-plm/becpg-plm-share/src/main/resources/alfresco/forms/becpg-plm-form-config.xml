@@ -9246,7 +9246,9 @@
                 </field-visibility>
                 <appearance>
                     <field id="bcpg:illGrp">
-                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/labelingGroup</control-param>
+                        </control>
                     </field>
                 </appearance>
             </form>
