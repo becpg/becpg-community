@@ -67,7 +67,11 @@
 		<property name="entityListDAO" ref="entityListDAO"/>
 		<property name="associationService" ref="associationService"/>
 	</bean>
-	
+
+	<bean id="reqCtrlListDisplayLabelDecorator" class="fr.becpg.repo.product.extractor.ReqCtrlListDisplayLabelDecorator">
+		<property name="nodeService" ref="nodeService"/>
+	</bean>
+
 	<bean id="ingListExtractor" parent="multiLevelExtractor" class="fr.becpg.repo.product.extractor.IngListExtractor"></bean>
 	
 	<bean id="ingRegulatoryListExtractor" parent="simpleExtractor" class="fr.becpg.repo.product.extractor.IngRegulatoryListExtractor">

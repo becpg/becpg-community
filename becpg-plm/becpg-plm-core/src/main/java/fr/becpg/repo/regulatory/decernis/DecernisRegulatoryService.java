@@ -55,7 +55,6 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 
 	private static final String MESSAGE_NO_CODE_CHARACT = "message.regulatory.charact.noCode";
 
-	private static final String DECERNIS_PREFIX = "DECERNIS_";
 	/** Constant <code>MESSAGE_DECERNIS_ERROR="message.decernis.error"</code> */
 	private static final String MESSAGE_DECERNIS_ERROR = "message.decernis.error";
 
