@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.MLPropertyInterceptor;
@@ -46,6 +47,7 @@ import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
+import fr.becpg.repo.entity.datalist.DataListItemDecorator;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.MLTextHelper;
@@ -83,8 +85,21 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	private AuthorityService authorityService;
 	
 	private boolean isDefaultExtractor = false;
-	
+
 	private int priority = 0;
+
+	private static final Map<QName, DataListItemDecorator> itemDecorators = new ConcurrentHashMap<>();
+
+	/**
+	 * <p>Registers a decorator that contributes extra computed attributes for a given
+	 * data list item type.</p>
+	 *
+	 * @param itemType the data list item type
+	 * @param decorator the decorator to register
+	 */
+	public static void registerItemDecorator(QName itemType, DataListItemDecorator decorator) {
+		itemDecorators.put(itemType, decorator);
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -364,6 +379,11 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 					ret.put(PROP_SITE_ID, siteId);
 
 				}
+			}
+
+			DataListItemDecorator decorator = itemDecorators.get(itemType);
+			if (decorator != null) {
+				ret.putAll(decorator.decorate(nodeRef));
 			}
 
 			cache.put(nodeRef, ret);
