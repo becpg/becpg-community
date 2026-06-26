@@ -218,7 +218,7 @@ public abstract class AbstractRegulatoryService {
     /**
      * Keeps only the leading beCPG code of a requirement {@code <country> - <usage>}
      * code. A usage may carry both its beCPG code and the Decernis phrase
-     * ({@code COSMETIC_BODY_CREAM,DECERNIS_Body Cream}); only the beCPG code is kept
+     * ({@code COSMETIC_BODY_CREAM_LOTION,DECERNIS_Body Cream/Lotion}); only the beCPG code is kept
      * for display and filtering. A code with no beCPG part (food,
      * {@code DECERNIS_<name>}) is returned unchanged as the only available token.
      *

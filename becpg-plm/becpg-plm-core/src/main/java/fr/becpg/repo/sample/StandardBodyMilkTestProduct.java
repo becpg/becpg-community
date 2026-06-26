@@ -151,8 +151,7 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 		RegulatoryListDataItem item = new RegulatoryListDataItem();
 		item.setRegulatoryCountriesRef(countryRefs);
 		item.setRegulatoryUsagesRef(List.of(
-				getOrCreateUsageRef("Body Lotion", "COSMETIC_BODY_LOTION,DECERNIS_Body Lotion"),
-				getOrCreateUsageRef("Body Cream", "COSMETIC_BODY_CREAM,DECERNIS_Body Cream")));
+				getOrCreateUsageRef("Body Cream/Lotion", "COSMETIC_BODY_CREAM_LOTION,DECERNIS_Body Cream/Lotion")));
 
 		regulatoryList.add(item);
 		return regulatoryList;
