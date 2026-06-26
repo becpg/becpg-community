@@ -88,6 +88,13 @@ public class ReqCtrlListDisplayLabelDecorator implements DataListItemDecorator {
 		if (NOT_FOUND.equals(charact)) {
 			return code;
 		}
+		if (!nodeService.exists(charact)) {
+			nodeRefByCode.remove(code, charact);
+			charact = nodeRefByCode.computeIfAbsent(code, this::findCharactByCode);
+			if (NOT_FOUND.equals(charact)) {
+				return code;
+			}
+		}
 		String legalName = (String) nodeService.getProperty(charact, BeCPGModel.PROP_CHARACT_NAME);
 		if (legalName == null || legalName.isBlank()) {
 			legalName = (String) nodeService.getProperty(charact, ContentModel.PROP_NAME);
