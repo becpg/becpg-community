@@ -3,7 +3,6 @@ package fr.becpg.repo.product.formulation.ecoscore;
 import java.util.Objects;
 
 import org.json.JSONObject;
-import org.springframework.extensions.surf.util.I18NUtil;
 
 /**
  * <p>EcoScoreContext class.</p>
@@ -165,49 +164,6 @@ public class EcoScoreContext {
 		json.put("packagingMalus", packagingMalus);
 
 		return json;
-	}
-	
-	/**
-	 * <p>toHtmlDisplayValue.</p>
-	 *
-	 * @return a {@link java.lang.String} object
-	 */
-	public String toHtmlDisplayValue() {
-
-		StringBuilder sb = new StringBuilder();
-		
-		sb.append("@html");
-		
-		sb.append("<ul>");
-		sb.append("<li>" + I18NUtil.getMessage("ecoscore.acvScore", acvScore));
-		sb.append("<li>" + I18NUtil.getMessage("ecoscore.claimBonus", claimBonus));
-		sb.append("<li>" + I18NUtil.getMessage("ecoscore.transportScore", transportScore));
-		sb.append("<li>" + I18NUtil.getMessage("ecoscore.politicalScore", politicalScore));
-		sb.append("<li>" + I18NUtil.getMessage("ecoscore.packagingMalus", packagingMalus));
-		sb.append("<li><b>" + I18NUtil.getMessage("ecoscore.score", ecoScore) + "</b>");
-		sb.append("<li><b>" + I18NUtil.getMessage("ecoscore.class", scoreClass) + "</b>");
-		sb.append("<ul>");
-
-		String classString = "ecoscore-class-error";
-		
-		if ("A".equals(scoreClass)) {
-			classString = "ecoscore-class-a";
-		} else if ("B".equals(scoreClass)) {
-			classString = "ecoscore-class-b";
-		} else if ("C".equals(scoreClass)) {
-			classString = "ecoscore-class-c";
-		} else if ("D".equals(scoreClass)) {
-			classString = "ecoscore-class-d";
-		} else if ("E".equals(scoreClass)) {
-			classString = "ecoscore-class-e";
-		}
-		
-		sb.append("<p>");
-        sb.append("<span class=\"" + classString + "\"></span>");
-		sb.append("</p>");
-
-		return sb.toString();
-		
 	}
 	
 	/**
