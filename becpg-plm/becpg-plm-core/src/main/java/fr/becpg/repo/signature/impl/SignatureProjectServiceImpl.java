@@ -3,6 +3,7 @@ package fr.becpg.repo.signature.impl;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -12,12 +13,18 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.version.VersionBaseModel;
+import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PersonService;
+import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionHistory;
+import org.alfresco.service.cmr.version.VersionService;
+import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -55,6 +62,9 @@ import fr.becpg.repo.signature.SignatureProjectService;
 @Service("signatureProjectService")
 public class SignatureProjectServiceImpl implements SignatureProjectService {
 
+
+	private static final String REVERT_SIGNATURE_VERSION_KEY = "signatureWorkflow.revert-signature.version.description";
+
 	@Autowired
 	private NodeService nodeService;
 
@@ -90,6 +100,12 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 
 	@Autowired
 	private SignatureProjectPlugin[] signatureProjectPlugins;
+	
+	@Autowired
+	private VersionService versionService;
+	
+	@Autowired
+	private CheckOutCheckInService checkOutCheckInService;
 
 	/** {@inheritDoc} */
 	@Override
@@ -374,6 +390,32 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 		writer.setMimetype(reader.getMimetype());
 		writer.putContent(reader);
 		return reportCopy;
+	}
+
+	@Override
+	public NodeRef cancelProjectSignature(NodeRef documentNodeRef, NodeRef projectNodeRef) {
+		documentNodeRef = signatureService.cancelDocument(documentNodeRef);
+		
+		VersionHistory versionHistory = versionService.getVersionHistory(documentNodeRef);
+		
+		if (versionHistory != null) {
+			Date projectCreationDate = (Date) nodeService.getProperty(projectNodeRef, ContentModel.PROP_CREATED);
+			Version versionToRestore = versionHistory.getAllVersions().stream()
+					.filter(v -> v.getFrozenModifiedDate().before(projectCreationDate))
+					.max(Comparator.comparing(Version::getFrozenModifiedDate))
+					.orElse(null);
+			if (versionToRestore != null) {
+				versionService.revert(documentNodeRef, versionToRestore);
+				documentNodeRef = signatureService.cancelDocument(documentNodeRef);
+				NodeRef checkedOut = checkOutCheckInService.checkout(documentNodeRef);
+				Map<String, Serializable> props = new HashMap<>();
+				props.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage(REVERT_SIGNATURE_VERSION_KEY));
+		        props.put(VersionBaseModel.PROP_VERSION_TYPE, VersionType.MINOR);
+				checkOutCheckInService.checkin(checkedOut, props);
+			}
+		}
+		
+		return documentNodeRef;
 	}
 
 	private List<NodeRef> findDocumentsToSign(NodeRef folder) {

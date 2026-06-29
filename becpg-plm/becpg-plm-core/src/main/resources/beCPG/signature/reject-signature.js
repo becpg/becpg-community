@@ -15,7 +15,7 @@ function main() {
 		
 		var recipients = document.assocs["sign:recipients"];
 			
-		document = bSign.cancelSignature(document);
+		document = bSignProject.cancelProjectSignature(document, project.nodeRef);
 		
 		for (var j in recipients) {
 			var recipient = recipients[j];
