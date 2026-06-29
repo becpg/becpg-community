@@ -8,9 +8,6 @@ import java.util.stream.Collectors;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.extensions.surf.util.I18NUtil;
-
-import fr.becpg.model.NutrientProfileCategory;
 
 /**
  * <p>NutriScoreContext class.</p>
@@ -430,85 +427,6 @@ public class NutriScoreContext {
 
 	}
 
-	/**
-	 * <p>toHtmlDisplayValue.</p>
-	 *
-	 * @return a {@link java.lang.String} object
-	 */
-	public String toHtmlDisplayValue() {
-
-		StringBuilder sb = new StringBuilder();
-		
-		sb.append("@html");
-		sb.append("<b>");
-		sb.append(I18NUtil.getMessage("nutriscore.display.negative"));
-		sb.append("</b>");
-		
-		sb.append("<ul>");
-		sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.energy", parts.getJSONObject(ENERGY_CODE).get(LOWER_VALUE), parts.getJSONObject(ENERGY_CODE).get(VALUE), parts.getJSONObject(ENERGY_CODE).get(UPPER_VALUE), parts.getJSONObject(ENERGY_CODE).get(SCORE)));
-		
-		if (NutrientProfileCategory.Fats.equals(NutrientProfileCategory.valueOf(category))) {
-			sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.totalfat", parts.getJSONObject(FAT_CODE).get(LOWER_VALUE), parts.getJSONObject(FAT_CODE).get(VALUE), parts.getJSONObject(FAT_CODE).get(UPPER_VALUE), parts.getJSONObject(FAT_CODE).get(SCORE)));
-		} else {
-			sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.satfat", parts.getJSONObject(SATFAT_CODE).get(LOWER_VALUE), parts.getJSONObject(SATFAT_CODE).get(VALUE), parts.getJSONObject(SATFAT_CODE).get(UPPER_VALUE), parts.getJSONObject(SATFAT_CODE).get(SCORE)));
-		}
-		
-		sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.totalsugar", parts.getJSONObject(SUGAR_CODE).get(LOWER_VALUE), parts.getJSONObject(SUGAR_CODE).get(VALUE), parts.getJSONObject(SUGAR_CODE).get(UPPER_VALUE), parts.getJSONObject(SUGAR_CODE).get(SCORE)));
-		String saltSodiumKey = displaySaltScore ? "nutriscore.display.salt" : "nutriscore.display.sodium";
-		sb.append("<li>" + I18NUtil.getMessage(saltSodiumKey, parts.getJSONObject(SODIUM_CODE).get(LOWER_VALUE), parts.getJSONObject(SODIUM_CODE).get(VALUE), parts.getJSONObject(SODIUM_CODE).get(UPPER_VALUE), parts.getJSONObject(SODIUM_CODE).get(SCORE)));
-		
-		if (!nonNutritiveSugars.isEmpty()) {
-			sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.nns", nonNutritiveSugars));
-		}
-		
-		sb.append("</ul>");
-		
-		sb.append("</br>");
-		
-		sb.append("<b>");
-		sb.append(I18NUtil.getMessage("nutriscore.display.positive"));
-		sb.append("</b>");
-		
-		sb.append("<ul>");
-		if (hasProteinScore) {
-			sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.protein", parts.getJSONObject(PROTEIN_CODE).get(LOWER_VALUE), parts.getJSONObject(PROTEIN_CODE).get(VALUE), parts.getJSONObject(PROTEIN_CODE).get(UPPER_VALUE), parts.getJSONObject(PROTEIN_CODE).get(SCORE)));
-		}
-		sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.percfruitsandveg", parts.getJSONObject(FRUIT_VEGETABLE_CODE).get(LOWER_VALUE), parts.getJSONObject(FRUIT_VEGETABLE_CODE).get(VALUE), parts.getJSONObject(FRUIT_VEGETABLE_CODE).get(UPPER_VALUE), parts.getJSONObject(FRUIT_VEGETABLE_CODE).get(SCORE)));
-		sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.nspfibre", parts.getJSONObject(NSP_CODE).get(LOWER_VALUE), parts.getJSONObject(NSP_CODE).get(VALUE), parts.getJSONObject(NSP_CODE).get(UPPER_VALUE), parts.getJSONObject(NSP_CODE).get(SCORE)));
-		sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.aoacfibre", parts.getJSONObject(AOAC_CODE).get(LOWER_VALUE), parts.getJSONObject(AOAC_CODE).get(VALUE), parts.getJSONObject(AOAC_CODE).get(UPPER_VALUE), parts.getJSONObject(AOAC_CODE).get(SCORE)));
-		sb.append("</ul>");
-
-		sb.append("</br>");
-		
-		sb.append("<p>");
-		sb.append(I18NUtil.getMessage("nutriscore.display.finalScore", aScore, cScore, nutriScore));
-		sb.append("</p>");
-		
-		sb.append("</br>");
-
-		sb.append("<p>");
-		sb.append(I18NUtil.getMessage("nutriscore.display.class", classLowerValue, nutriScore, classUpperValue, nutrientClass));
-		sb.append("</p>");
-		
-		sb.append("<p>");
-		
-		String aClass = "A".equals(nutrientClass) ? "selected nutrient-class-a" : "nutrient-class-a";
-		String bClass = "B".equals(nutrientClass) ? "selected nutrient-class-b" : "nutrient-class-b";
-		String cClass = "C".equals(nutrientClass) ? "selected nutrient-class-c" : "nutrient-class-c";
-		String dClass = "D".equals(nutrientClass) ? "selected nutrient-class-d" : "nutrient-class-d";
-		String eClass = "E".equals(nutrientClass) ? "selected nutrient-class-e" : "nutrient-class-e";
-		
-        sb.append("<span class=\"" + aClass + "\">A</span>");
-        sb.append("<span class=\"" + bClass + "\">B</span>");
-        sb.append("<span class=\"" + cClass + "\">C</span>");
-        sb.append("<span class=\"" + dClass + "\">D</span>");
-        sb.append("<span class=\"" + eClass + "\">E</span>");
-		sb.append("</p>");
-		
-		return sb.toString();
-		
-	}
-	
 	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
