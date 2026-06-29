@@ -359,9 +359,9 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 		List<IngListDataItem> ingredients = new ArrayList<>();
 
 		// Sodium Hydroxide ingredients
-		ingredients.add(createIngListItem(SODIUM_HYDROXIDE, 80.0, "1310-73-2", "Skin Corr. 1A:H314, Met. Corr. 1:H290", 500.0, 1000.0, 1.0, true));
-		ingredients.add(createIngListItem(SODIUM_CARBONATE, 10.0, "497-19-8", "Eye Irrit. 2:H319", 2800.0, 2000.0, null, false));
-		ingredients.add(createIngListItem(SODIUM_CHLORIDE, 10.0, "7647-14-5", "Eye Irrit. 2:H319", 3000.0, null, null, false));
+		ingredients.add(createIngListItem(SODIUM_HYDROXIDE, 80.0, "1310-73-2", "Skin Corr. 1A:H314, Met. Corr. 1:H290", 500.0, 1000.0, 1.0, true, null, null));
+		ingredients.add(createIngListItem(SODIUM_CARBONATE, 10.0, "497-19-8", "Eye Irrit. 2:H319", 2800.0, 2000.0, null, false, null, null));
+		ingredients.add(createIngListItem(SODIUM_CHLORIDE, 10.0, "7647-14-5", "Eye Irrit. 2:H319", 3000.0, null, null, false, null, null));
 
 		if (isWithToxicology) {
 			NodeRef ing = CharactTestHelper.getOrCreateIng(nodeService, SODIUM_HYDROXIDE);
@@ -406,9 +406,9 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 		List<IngListDataItem> ingredients = new ArrayList<>();
 
 		// Olive Oil ingredients
-		ingredients.add(createIngListItem("Oleic Acid", 55.0, "112-80-1", "Skin Irrit. 2:H315", null, null, null, false));
-		ingredients.add(createIngListItem("Linoleic Acid", 20.0, "60-33-3", "Skin Sens. 1:H317", null, null, 1.0, true));
-		ingredients.add(createIngListItem("Palmitic Acid", 15.0, "57-10-3", "Eye Irrit. 2:H319", null, null, null, false));
+		ingredients.add(createIngListItem("Oleic Acid", 55.0, "112-80-1", "Skin Irrit. 2:H315", null, null, null, false, null, null));
+		ingredients.add(createIngListItem("Linoleic Acid", 20.0, "60-33-3", "Skin Sens. 1:H317", null, null, 1.0, true, null, null));
+		ingredients.add(createIngListItem("Palmitic Acid", 15.0, "57-10-3", "Eye Irrit. 2:H319", null, null, null, false, null, null));
 
 		return ingredients;
 	}
@@ -422,10 +422,10 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 		List<IngListDataItem> ingredients = new ArrayList<>();
 
 		// Essential Oils ingredients
-		ingredients.add(createIngListItem("Lavender Oil", 40.0, "8000-28-0", "Skin Sens. 1:H317, Aquatic Chronic 3:H412", null, null, 1.0, true));
-		ingredients.add(createIngListItem("Eucalyptus Oil", 30.0, "8000-48-4", "Flam. Liq. 3:H226, Skin Sens. 1:H317", null, null, 1.0, true));
+		ingredients.add(createIngListItem("Lavender Oil", 40.0, "8000-28-0", "Skin Sens. 1:H317, Aquatic Chronic 3:H412", null, null, 1.0, true, null, null));
+		ingredients.add(createIngListItem("Eucalyptus Oil", 30.0, "8000-48-4", "Flam. Liq. 3:H226, Skin Sens. 1:H317", null, null, 1.0, true, null, null));
 		ingredients.add(createIngListItem("Tea Tree Oil", 30.0, "68647-73-4", "Flam. Liq. 3:H226, Acute Tox. 4:H302, Skin Sens. 1:H317", 1900.0, null,
-				1.0, true));
+				1.0, true, null, null));
 
 		return ingredients;
 	}
@@ -433,25 +433,33 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 	/**
 	 * <p>createIngListItem.</p>
 	 *
-	 * @param ingName a {@link java.lang.String} object
-	 * @param percentage a {@link java.lang.Double} object
-	 * @param casNumber a {@link java.lang.String} object
-	 * @param hazardClass a {@link java.lang.String} object
-	 * @param toxicityOral a {@link java.lang.Double} object
-	 * @param toxicityDermal a {@link java.lang.Double} object
-	 * @param mFactor a {@link java.lang.Double} object
-	 * @param superSensitizing a {@link java.lang.Boolean} object
+	 * @param ingName          a {@link String} object
+	 * @param percentage       a {@link Double} object
+	 * @param casNumber        a {@link String} object
+	 * @param hazardClass      a {@link String} object
+	 * @param toxicityOral     a {@link Double} object
+	 * @param toxicityDermal   a {@link Double} object
+	 * @param mFactor          a {@link Double} object
+	 * @param superSensitizing a {@link Boolean} object
+	 * @param ceNumber
+	 * @param ecNumber
 	 * @return a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
 	 */
 	protected IngListDataItem createIngListItem(String ingName, Double percentage, String casNumber, String hazardClass,
 	                                            Double toxicityOral, Double toxicityDermal, Double mFactor,
-	                                            Boolean superSensitizing) {
+	                                            Boolean superSensitizing, String ceNumber, String ecNumber) {
 
 		NodeRef ing = CharactTestHelper.getOrCreateIng(nodeService, ingName);
 
 		Map<QName, Serializable> properties = new HashMap<>();
-		properties.put(PLMModel.PROP_CAS_NUMBER, casNumber);
-		properties.put(GHSModel.PROP_SDS_HAZARD_CLASSIFICATIONS, hazardClass);
+		if (casNumber != null)
+			properties.put(PLMModel.PROP_CAS_NUMBER, casNumber);
+		if (hazardClass != null)
+			properties.put(GHSModel.PROP_SDS_HAZARD_CLASSIFICATIONS, hazardClass);
+		if (ceNumber != null)
+			properties.put(PLMModel.PROP_CE_NUMBER, ceNumber);
+		if (ecNumber != null)
+			properties.put(PLMModel.PROP_EC_NUMBER, ecNumber);
 		properties.put(BeCPGModel.PROP_ING_TOX_ACUTE_ORAL, toxicityOral);
 		properties.put(BeCPGModel.PROP_ING_TOX_ACUTE_DERMAL, toxicityDermal);
 		properties.put(BeCPGModel.PROP_ING_TOX_AQUATIC_MFACTOR, mFactor);
@@ -479,7 +487,7 @@ public class StandardSoapTestProduct extends SampleProductBuilder {
 			product.setIngList(new ArrayList<>());
 		}
 
-		product.getIngList().add(createIngListItem(ingName, percentage, null, hazardClass, toxicityOral, null, mFactor, superSensitizing));
+		product.getIngList().add(createIngListItem(ingName, percentage, null, hazardClass, toxicityOral, null, mFactor, superSensitizing, null, null));
 
 	}
 
