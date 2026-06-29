@@ -13,9 +13,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.product.data.SupplierData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -204,6 +207,71 @@ public class ProductWUsedWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		org.junit.Assert.assertFalse("out-of-range filter must drop the 2030 product", emptyDateContent.contains("WUsed Match Product"));
 		org.junit.Assert.assertFalse("out-of-range filter must drop the 2020 product", emptyDateContent.contains("WUsed Other Product"));
 
+	}
+
+	/**
+	 * Reproduces #28166: the where-used list must honour the column sort sent by the data grid.
+	 * Builds an entity-level where-used (bcpg:suppliers) and checks that the rows come back ordered
+	 * by name both ascending and descending.
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
+	@Test
+	public void testgetProductWusedSortedByColumn() throws Exception {
+
+		final List<NodeRef> supplierContainer = new ArrayList<>();
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			SupplierData supplier = new SupplierData();
+			supplier.setName("WUsed Sort Supplier");
+			NodeRef supplierNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), supplier).getNodeRef();
+			supplierContainer.add(supplierNodeRef);
+
+			// Three raw materials sharing the same supplier, created in a non-alphabetical order.
+			createSuppliedRawMaterial("WUsed Sort Zebra", supplierNodeRef);
+			createSuppliedRawMaterial("WUsed Sort Alpha", supplierNodeRef);
+			createSuppliedRawMaterial("WUsed Sort Mango", supplierNodeRef);
+
+			return null;
+
+		}, false, true);
+
+		NodeRef supplierNodeRef = supplierContainer.get(0);
+
+		String url = "/becpg/entity/datalists/data/node?entityNodeRef=" + supplierNodeRef.toString()
+				+ "&itemType=bcpg%3ArawMaterial&dataListName=WUsed-bcpg_suppliers";
+		String data = "{\"fields\":[\"cm_name\"],\"filter\":{\"filterId\":\"all\",\"filterData\":\"\"}}";
+
+		// Ascending sort by name : Alpha, Mango, Zebra
+		Response ascResponse = TestWebscriptExecuters.sendRequest(new PostRequest(url + "&sort=cm%3Aname%7Ctrue", data, "application/json"), 200,
+				"admin");
+		assertSortedOrder(ascResponse.getContentAsString(), Arrays.asList("WUsed Sort Alpha", "WUsed Sort Mango", "WUsed Sort Zebra"));
+
+		// Descending sort by name : Zebra, Mango, Alpha
+		Response descResponse = TestWebscriptExecuters.sendRequest(new PostRequest(url + "&sort=cm%3Aname%7Cfalse", data, "application/json"), 200,
+				"admin");
+		assertSortedOrder(descResponse.getContentAsString(), Arrays.asList("WUsed Sort Zebra", "WUsed Sort Mango", "WUsed Sort Alpha"));
+
+	}
+
+	private void assertSortedOrder(String content, List<String> expectedOrder) {
+		int previousIndex = -1;
+		for (String name : expectedOrder) {
+			int index = content.indexOf(name);
+			org.junit.Assert.assertTrue("Expected '" + name + "' to be present in the where-used response", index >= 0);
+			org.junit.Assert.assertTrue("Where-used rows are not sorted as expected (" + expectedOrder + "), content: " + content,
+					index > previousIndex);
+			previousIndex = index;
+		}
+	}
+
+	private NodeRef createSuppliedRawMaterial(String name, NodeRef supplierNodeRef) {
+		RawMaterialData rawMaterial = new RawMaterialData();
+		rawMaterial.setName(name);
+		rawMaterial.setSuppliers(new ArrayList<>(List.of(supplierNodeRef)));
+		return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
 	}
 
 	private NodeRef createUsingProduct(String name, String erpCode, Date startEffectivity) {
