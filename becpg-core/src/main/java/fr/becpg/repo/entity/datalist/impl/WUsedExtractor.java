@@ -348,7 +348,8 @@ public class WUsedExtractor extends MultiLevelExtractor {
 								if (key.startsWith(AttributeExtractorService.PROP_SUFFIX)) {
 									String qNameStr = key.replace(AttributeExtractorService.PROP_SUFFIX, "").replace("_", ":");
 									boolean isRange = qNameStr.endsWith("-range");
-									if (qNameStr.endsWith("-date-range")) {
+									boolean isDateRange = qNameStr.endsWith("-date-range");
+									if (isDateRange) {
 										qNameStr = qNameStr.substring(0, qNameStr.length() - "-date-range".length());
 									} else if (isRange) {
 										qNameStr = qNameStr.substring(0, qNameStr.length() - "-range".length());
@@ -357,8 +358,13 @@ public class WUsedExtractor extends MultiLevelExtractor {
 										QName qName = QName.createQName(qNameStr, namespaceService);
 										if (entityDictionaryService.getProperty(qName) != null) {
 											AssociationCriteriaFilterMode mode = isRange ? AssociationCriteriaFilterMode.RANGE : AssociationCriteriaFilterMode.EQUALS;
-											AssociationCriteriaFilter filter = new AssociationCriteriaFilter(qName, cleanValueForDB(value), mode);
+											String criteriaValue = cleanValueForDB(value);
+											if (isDateRange) {
+												criteriaValue = cropDateRangeValue(criteriaValue);
+											}
+											AssociationCriteriaFilter filter = new AssociationCriteriaFilter(qName, criteriaValue, mode);
 											filter.setEntityFilter(true);
+											filter.setDateRange(isDateRange);
 											criteriaFilters.add(filter);
 										}
 									} catch (Exception e) {
@@ -380,6 +386,35 @@ public class WUsedExtractor extends MultiLevelExtractor {
 			return criteriaValue.substring(1);
 		}
 		return criteriaValue;
+	}
+
+	/**
+	 * <p>Crops each bound of a packed date range ({@code from|to}) to its leading {@code YYYY-MM-DD}
+	 * part so the comparison is done on the date only.</p>
+	 *
+	 * <p>Effectivity dates are {@code d:datetime} properties persisted as full ISO8601 strings with a
+	 * time and a timezone offset (e.g. {@code 2026-06-23T00:00:00.000+02:00}). Comparing such strings
+	 * lexicographically against the bounds sent by the filter form ({@code Z} suffix, no milliseconds)
+	 * yields wrong results (the {@code +02:00} offset sorts before {@code Z}, milliseconds shift the
+	 * upper bound), which made every date filter return an empty list. Keeping only the date part makes
+	 * the range comparison timezone and time independent, consistent with the Solr-based advanced search.</p>
+	 *
+	 * @param rangeValue the packed {@code from|to} range value
+	 * @return the range value with both bounds cropped to their date part
+	 */
+	private String cropDateRangeValue(String rangeValue) {
+		if (rangeValue == null) {
+			return null;
+		}
+		int sepIndex = rangeValue.indexOf('|');
+		if (sepIndex < 0) {
+			return cropDateBound(rangeValue);
+		}
+		return cropDateBound(rangeValue.substring(0, sepIndex)) + "|" + cropDateBound(rangeValue.substring(sepIndex + 1));
+	}
+
+	private String cropDateBound(String bound) {
+		return ((bound != null) && (bound.length() > 10)) ? bound.substring(0, 10) : bound;
 	}
 
 	/**
