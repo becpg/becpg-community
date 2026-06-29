@@ -38,5 +38,7 @@ public interface SignatureProjectService {
 	 * @return a {@link java.util.List} object
 	 */
 	List<NodeRef> extractRecipients(NodeRef nodeRef);
+
+	NodeRef cancelProjectSignature(NodeRef documentNodeRef, NodeRef projectNodeRef);
 		
 }

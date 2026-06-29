@@ -108,4 +108,8 @@ public class SignatureProjectScriptHelper extends BaseScopableProcessorExtension
 	public static DeliverableListDataItem findDocDeliverable(ProjectData project, DeliverableListDataItem taskDeliverable) {
 		return SignatureProjectHelper.findDocDeliverable(project, taskDeliverable);
 	}
+	
+	public ScriptNode cancelProjectSignature(ScriptNode document, NodeRef projectNodeRef) {
+		return new ActivitiScriptNode(signatureProjectService.cancelProjectSignature(document.getNodeRef(), projectNodeRef), serviceRegistry);
+	}
 }
