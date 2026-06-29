@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,6 +60,8 @@ import fr.becpg.repo.hierarchy.HierarchyService;
 @Service("linkedValueAutoCompletePlugin")
 @BeCPGPublicApi
 public class LinkedValueAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
+
+	private static final Log logger = LogFactory.getLog(LinkedValueAutoCompletePlugin.class);
 
 	/** Constant <code>SOURCE_TYPE_LINKED_VALUE="linkedvalue"</code> */
 	protected static final String SOURCE_TYPE_LINKED_VALUE = "linkedvalue";
@@ -128,11 +132,14 @@ public class LinkedValueAutoCompletePlugin extends TargetAssocAutoCompletePlugin
 					itemIdNodeRef = new NodeRef(extras.get(AutoCompleteService.EXTRA_PARAM_ITEMID));
 					entityNodeRef = nodeService.getPrimaryParent(itemIdNodeRef).getParentRef();
 				} else if (extras.get(AutoCompleteService.EXTRA_PARAM_LIST) != null) {
-					QName dataListQName = QName.createQName(extras.get(AutoCompleteService.EXTRA_PARAM_LIST), namespaceService);
-					entityNodeRef = new NodeRef((String) props.get(AutoCompleteService.PROP_ENTITYNODEREF));
-					NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
-					if (listContainerNodeRef != null) {
-						entityNodeRef = entityListDAO.getList(listContainerNodeRef, dataListQName);
+					String entityNodeRefStr = (String) props.get(AutoCompleteService.PROP_ENTITYNODEREF);
+					if ((entityNodeRefStr != null) && NodeRef.isNodeRef(entityNodeRefStr)) {
+						QName dataListQName = QName.createQName(extras.get(AutoCompleteService.EXTRA_PARAM_LIST), namespaceService);
+						entityNodeRef = new NodeRef(entityNodeRefStr);
+						NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+						if (listContainerNodeRef != null) {
+							entityNodeRef = entityListDAO.getList(listContainerNodeRef, dataListQName);
+						}
 					}
 				}
 
@@ -140,6 +147,15 @@ public class LinkedValueAutoCompletePlugin extends TargetAssocAutoCompletePlugin
 					path = nodeService.getPath(entityNodeRef).toPrefixString(namespaceService);
 				}
 			}
+		}
+
+		if (path == null) {
+			if (logger.isWarnEnabled()) {
+				logger.warn("Cannot resolve hierarchy path for linked value autocomplete (sourceType all=" + all
+						+ "), returning empty result. extras=" + extras);
+			}
+			return new AutoCompletePage(new ArrayList<>(), pageNum, pageSize,
+					all ? new LinkedValueAutoCompleteExtractor(nodeService) : new NodeRefAutoCompleteExtractor(BeCPGModel.PROP_LKV_VALUE, nodeService));
 		}
 
 		query = prepareQuery(query);
