@@ -7,19 +7,28 @@ import java.util.Locale;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.FinishedProductData;
+import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
+import fr.becpg.repo.sample.CharactTestHelper;
 import fr.becpg.repo.sample.StandardChocolateEclairTestProduct;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTest {
+
+	@Autowired
+	protected AssociationService associationService;
 
 	@Test
 	public void testEvaporatedRate() {
@@ -416,6 +425,105 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 				return null;
 			});
 		}
+	}
+
+	/**
+	 * Reproduces #34702: a composite ingredient ("Tomate purée") whose sub-ingredient ("Tomate")
+	 * carries an evaporation rate, used in a product that also contains free water which fully
+	 * evaporates. The sum of the top-level "Qty with yield" percentages must stay at 100 %.
+	 */
+	@Test
+	public void testSubIngredientEvaporation() {
+
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+
+			NodeRef ingFlour = CharactTestHelper.getOrCreateIng(nodeService, "ING Flour 34702");
+			NodeRef ingWater = CharactTestHelper.getOrCreateIng(nodeService, "ING Water 34702");
+			NodeRef ingTomatoPuree = CharactTestHelper.getOrCreateIng(nodeService, "ING Tomato puree 34702");
+			NodeRef ingTomato = CharactTestHelper.getOrCreateIng(nodeService, "ING Tomato 34702");
+
+			// Free water fully evaporates; the tomato sub-ingredient partially evaporates
+			nodeService.setProperty(ingWater, PLMModel.PROP_EVAPORATED_RATE, 100d);
+			nodeService.setProperty(ingTomato, PLMModel.PROP_EVAPORATED_RATE, 50d);
+
+			// Sub-product detailing "Tomato puree" -> "Tomato" (the evaporating child)
+			RawMaterialData tomatoPureeSub = RawMaterialData.build().withName("RM Tomato puree sub 34702").withQty(100d)
+					.withUnit(ProductUnit.kg).withIngList(List.of(buildIng(ingTomato, 100d)));
+			NodeRef tomatoPureeSubNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), tomatoPureeSub).getNodeRef();
+
+			RawMaterialData tomatoPuree = RawMaterialData.build().withName("RM Tomato puree 34702").withQty(100d).withUnit(ProductUnit.kg)
+					.withIngList(List.of(buildIng(ingTomatoPuree, 100d)));
+			NodeRef tomatoPureeNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), tomatoPuree).getNodeRef();
+			associationService.update(ingTomatoPuree, BeCPGModel.ASSOC_PARENT_ENTITY, List.of(tomatoPureeSubNodeRef));
+
+			RawMaterialData flour = RawMaterialData.build().withName("RM Flour 34702").withQty(100d).withUnit(ProductUnit.kg)
+					.withIngList(List.of(buildIng(ingFlour, 100d)));
+			NodeRef flourNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), flour).getNodeRef();
+
+			RawMaterialData water = RawMaterialData.build().withName("RM Water 34702").withQty(100d).withUnit(ProductUnit.kg)
+					.withIngList(List.of(buildIng(ingWater, 100d)));
+			NodeRef waterNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), water).getNodeRef();
+
+			// Finished product: 100 kg in, 80 kg net -> yield 80 %, 20 kg evaporated
+			// (15 kg free water + 5 kg from the tomato sub-ingredient)
+			FinishedProductData fp = FinishedProductData.build().withName("FP Pizza 34702").withUnit(ProductUnit.kg).withQty(80d)
+					.withCompoList(List.of(
+							CompoListDataItem.build().withQtyUsed(40d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail)
+									.withProduct(flourNodeRef),
+							CompoListDataItem.build().withQtyUsed(45d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail)
+									.withProduct(tomatoPureeNodeRef),
+							CompoListDataItem.build().withQtyUsed(15d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail)
+									.withProduct(waterNodeRef)));
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), fp).getNodeRef();
+		});
+
+		inWriteTx(() -> {
+			productService.formulate(finishedProductNodeRef);
+			return null;
+		});
+
+		inReadTx(() -> {
+			FinishedProductData formulatedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+			List<IngListDataItem> ingList = formulatedProduct.getIngList();
+			Assert.assertNotNull("Ingredient list should not be null", ingList);
+
+			double topLevelWithYield = 0d;
+			for (IngListDataItem item : ingList) {
+				if ((item.getParent() == null) && (item.getQtyPercWithYield() != null)) {
+					topLevelWithYield += item.getQtyPercWithYield();
+				}
+			}
+
+			IngListDataItem tomatoPuree = findIngByName(ingList, "ING Tomato puree 34702");
+			IngListDataItem tomato = findIngByName(ingList, "ING Tomato 34702");
+			Assert.assertNotNull("Tomato puree ingredient missing", tomatoPuree);
+			Assert.assertNotNull("Tomato sub-ingredient missing", tomato);
+			Assert.assertNotNull("Tomato should be a child of Tomato puree", tomato.getParent());
+
+			// 100 kg in, 80 kg net; 15 kg free water + 5 kg tomato water evaporate -> 40 kg flour, 40 kg tomato out of 80 kg
+			Assert.assertEquals("Sum of top-level Qty with yield should be 100%", 100d, topLevelWithYield, 0.1);
+			Assert.assertEquals("Tomato puree Qty with yield should be 50%", 50d, tomatoPuree.getQtyPercWithYield(), 0.2);
+			Assert.assertEquals("Tomato (child) Qty with yield should be 50%", 50d, tomato.getQtyPercWithYield(), 0.2);
+			Assert.assertEquals("Parent Qty with yield should equal the sum of its children", tomatoPuree.getQtyPercWithYield(),
+					tomato.getQtyPercWithYield(), 0.1);
+			return null;
+		});
+	}
+
+	private IngListDataItem findIngByName(List<IngListDataItem> ingList, String charactName) {
+		for (IngListDataItem item : ingList) {
+			if ((item.getIng() != null) && charactName.equals(nodeService.getProperty(item.getIng(), BeCPGModel.PROP_CHARACT_NAME))) {
+				return item;
+			}
+		}
+		return null;
+	}
+
+	private IngListDataItem buildIng(NodeRef ingNodeRef, double qtyPerc) {
+		IngListDataItem item = IngListDataItem.build().withQtyPerc(qtyPerc).withIngredient(ingNodeRef);
+		item.setQtyPercWithYield(qtyPerc);
+		return item;
 	}
 
 }
