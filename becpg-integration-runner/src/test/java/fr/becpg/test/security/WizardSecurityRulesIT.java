@@ -335,6 +335,73 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 	}
 
 	/**
+	 * Test 8: Entity level access mode (propName == null) must honor per field write permissions even when the
+	 * security group is configured as default read only. This is the check used by the wizard
+	 * (EntitySecurityWebScript) to decide whether a step is fully read-only: a user that can write at least one
+	 * field must keep write access at entity level, otherwise the whole wizard step is wrongly locked (#34913).
+	 */
+	@Test
+	public void testDefaultReadOnlyEntityAccessHonorsFieldPermissions() {
+		logger.info("=== Test 8: Default ReadOnly entity access honors field permissions ===");
+
+		inWriteTx(() -> {
+			NodeRef readOnlyProjectNodeRef = createTestProject("TestProjectReadOnlyEntityAccess");
+			NodeRef aclGroupNodeRef = createProjectSecurityACLGroup(true);
+			if (!nodeService.hasAspect(readOnlyProjectNodeRef, SecurityModel.ASPECT_SECURITY)) {
+				nodeService.addAspect(readOnlyProjectNodeRef, SecurityModel.ASPECT_SECURITY, null);
+			}
+			nodeService.createAssociation(readOnlyProjectNodeRef, aclGroupNodeRef, SecurityModel.ASSOC_SECURITY_REF);
+			securityService.refreshAcls();
+
+			// userOne belongs to GROUP_WIZARD_SECURITY_WRITE which has write on cm:name
+			authenticationComponent.setCurrentUser("userOne");
+			int accessModeUserOne = securityService.computeAccessMode(readOnlyProjectNodeRef, ProjectModel.TYPE_PROJECT, (String) null);
+			Assert.assertEquals("userOne can write cm:name, entity level access must be WRITE despite default read only",
+					SecurityService.WRITE_ACCESS, accessModeUserOne);
+
+			// userTwo has no writable field, entity stays read-only
+			authenticationComponent.setCurrentUser("userTwo");
+			int accessModeUserTwo = securityService.computeAccessMode(readOnlyProjectNodeRef, ProjectModel.TYPE_PROJECT, (String) null);
+			Assert.assertEquals("userTwo has no writable field, entity level access must stay READ", SecurityService.READ_ACCESS,
+					accessModeUserTwo);
+
+			nodeService.deleteNode(readOnlyProjectNodeRef);
+			return null;
+		});
+	}
+
+	private NodeRef createProjectSecurityACLGroup(boolean isDefaultReadOnly) {
+		String groupName = PermissionService.GROUP_PREFIX + GROUP_WIZARD_SECURITY_WRITE;
+		if (!authorityService.authorityExists(groupName)) {
+			authorityService.createAuthority(AuthorityType.GROUP, GROUP_WIZARD_SECURITY_WRITE);
+		}
+
+		ACLGroupData aclGroupData = new ACLGroupData();
+		aclGroupData.setName("Wizard Security ACL Default ReadOnly");
+		aclGroupData.setNodeType(ProjectModel.TYPE_PROJECT.toPrefixString(namespaceService));
+		aclGroupData.setIsDefaultReadOnly(isDefaultReadOnly);
+
+		List<NodeRef> writeGroups = new ArrayList<>();
+		writeGroups.add(authorityService.getAuthorityNodeRef(groupName));
+
+		List<ACLEntryDataItem> acls = new ArrayList<>();
+		acls.add(new ACLEntryDataItem("cm:name", PermissionModel.READ_WRITE, writeGroups));
+		aclGroupData.setAcls(acls);
+
+		return alfrescoRepository.create(getTestFolderNodeRef(), aclGroupData).getNodeRef();
+	}
+
+	private NodeRef createTestProject(String name) {
+		ProjectData project = new ProjectData();
+		project.setName(name);
+		project.setCode("TP001");
+		project.setState("Planned");
+		project.setStartDate(new Date());
+
+		return alfrescoRepository.create(getTestFolderNodeRef(), project).getNodeRef();
+	}
+
+	/**
 	 * Helper method to create a test project
 	 */
 	private NodeRef createTestProject() {
