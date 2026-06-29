@@ -16,6 +16,7 @@ public class AssociationCriteriaFilter {
 	private QName attributeQname;
 	private AssociationCriteriaFilterMode mode = AssociationCriteriaFilterMode.EQUALS;
 	private boolean isEntityFilter = false;
+	private boolean isDateRange = false;
 	private String entityType = null;
 	
 	/**
@@ -63,7 +64,29 @@ public class AssociationCriteriaFilter {
 	public boolean isEntityFilter() {
 		return isEntityFilter;
 	}
-	
+
+	/**
+	 * <p>setDateRange.</p>
+	 *
+	 * <p>When {@code true} the {@link AssociationCriteriaFilterMode#RANGE} bounds are compared on the
+	 * date part only ({@code YYYY-MM-DD}). This avoids the pitfalls of a lexicographic comparison of
+	 * full ISO8601 datetimes stored with a time and a timezone offset (e.g. {@code 2026-06-23T00:00:00.000+02:00}).</p>
+	 *
+	 * @param isDateRange a boolean
+	 */
+	public void setDateRange(boolean isDateRange) {
+		this.isDateRange = isDateRange;
+	}
+
+	/**
+	 * <p>isDateRange.</p>
+	 *
+	 * @return a boolean
+	 */
+	public boolean isDateRange() {
+		return isDateRange;
+	}
+
 	public void setEntityType(String entityType) {
 		this.entityType = entityType;
 	}

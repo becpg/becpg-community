@@ -207,6 +207,16 @@ public class ProductWUsedWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		org.junit.Assert.assertFalse("out-of-range filter must drop the 2030 product", emptyDateContent.contains("WUsed Match Product"));
 		org.junit.Assert.assertFalse("out-of-range filter must drop the 2020 product", emptyDateContent.contains("WUsed Other Product"));
 
+		// --- single-day startEffectivity filter (from = to = the exact effectivity day) : the product
+		// effective that day must be kept. Effectivity is a d:datetime stored with a time and a timezone
+		// offset; comparing the full ISO string against the day bounds used to drop every row (#34682). ---
+		String singleDayContent = sendFilter(url,
+				"{\\\"prop_bcpg_startEffectivity-date-range\\\":\\\"2030-06-15T00:00:00.000Z|2030-06-15T00:00:00.000Z\\\"}");
+		org.junit.Assert.assertTrue("single-day startEffectivity filter must keep the product effective that day",
+				singleDayContent.contains("WUsed Match Product"));
+		org.junit.Assert.assertFalse("single-day startEffectivity filter must drop a product effective another day",
+				singleDayContent.contains("WUsed Other Product"));
+
 	}
 
 	/**
