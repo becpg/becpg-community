@@ -97,4 +97,8 @@ public class SignatureProjectScriptHelper extends BaseScopableProcessorExtension
 
 		return new ScriptNode[0];
 	}
+	
+	public ScriptNode cancelProjectSignature(ScriptNode document, NodeRef projectNodeRef) {
+		return new ActivitiScriptNode(signatureProjectService.cancelProjectSignature(document.getNodeRef(), projectNodeRef), serviceRegistry);
+	}
 }
