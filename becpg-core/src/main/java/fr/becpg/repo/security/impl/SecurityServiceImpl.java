@@ -131,6 +131,9 @@ public class SecurityServiceImpl implements SecurityService {
 				List<PermissionModel> permissions = permissionContext.getPermissions();
 				if (!permissions.isEmpty()) {
 					accesMode = computeAccessMode(nodeRef, nodeType, permissions);
+				} else if ((propName == null) && (accesMode == SecurityService.READ_ACCESS)
+						&& hasWritablePropForUser(nodeRef, nodeType)) {
+					accesMode = SecurityService.WRITE_ACCESS;
 				}
 
 				if (nodeRef != null) {
@@ -179,6 +182,33 @@ public class SecurityServiceImpl implements SecurityService {
 		}
 
 		return accessMode;
+	}
+
+	/**
+	 * Check if the current user has write access on at least one property of the given node type.
+	 *
+	 * <p>
+	 * Used for entity level access checks (propName is <code>null</code>): when the security group is configured as
+	 * "default read only", the entity should still be considered writable as soon as the user can edit one of its
+	 * fields through a local ACL entry. The per field protection is then applied by the form filters.
+	 * </p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param nodeType a {@link org.alfresco.service.namespace.QName} object
+	 * @return a boolean
+	 */
+	private boolean hasWritablePropForUser(NodeRef nodeRef, QName nodeType) {
+		Map<String, List<PermissionModel>> permissionMap = getPermissionCachedMap(computeCacheKey(nodeRef));
+		String propKeyPrefix = computeNodeTypeKey(nodeType) + "_";
+
+		for (Map.Entry<String, List<PermissionModel>> entry : permissionMap.entrySet()) {
+			if (entry.getKey().startsWith(propKeyPrefix)
+					&& (computeAccessMode(nodeRef, nodeType, entry.getValue()) == SecurityService.WRITE_ACCESS)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/** {@inheritDoc} */
