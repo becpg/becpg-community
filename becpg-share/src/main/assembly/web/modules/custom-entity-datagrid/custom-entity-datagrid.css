@@ -232,3 +232,33 @@
     font-size: 11px;
     margin: 0;
 }
+
+.entity-Simulation,
+.entity-ToValidate,
+.entity-Valid,
+.entity-Refused,
+.entity-Stopped,
+.entity-Archived,
+.entity-Planned,
+.entity-InProgress,
+.entity-OnHold,
+.entity-Cancelled,
+.entity-Completed {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.entity-Simulation { color: #546e7a; background-color: #eceff1; }
+.entity-ToValidate { color: #e65100; background-color: #fff3e0; }
+.entity-Valid { color: #2e7d32; background-color: #e8f5e9; }
+.entity-Refused { color: #c62828; background-color: #ffebee; }
+.entity-Stopped { color: #ffffff; background-color: #90a4ae; }
+.entity-Archived { color: #607d8b; background-color: #eceff1; }
+.entity-Planned { color: #1565c0; background-color: #e3f2fd; }
+.entity-InProgress { color: #e65100; background-color: #fff3e0; }
+.entity-OnHold { color: #546e7a; background-color: #eceff1; }
+.entity-Cancelled { color: #c62828; background-color: #ffebee; }
+.entity-Completed { color: #2e7d32; background-color: #e8f5e9; }

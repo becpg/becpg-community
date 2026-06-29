@@ -363,12 +363,80 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				applySecondaryEvaporation(formulatedProduct, evaporatedDataItems);
 			}
 
+			aggregateParentQtyPercWithYield(formulatedProduct.getIngList());
+
 		}
 
 		// sort collection
 		if (shouldSort) {
 			sortIL(formulatedProduct.getIngList());
 		}
+	}
+
+	/**
+	 * Recomputes each parent (composite) ingredient "with yield" percentages as the sum of its
+	 * direct children percentages.
+	 * <p>
+	 * A composite ingredient is, by definition, the sum of its sub-ingredients. When an evaporation
+	 * rate is present on a sub-ingredient, the leaf percentages already reflect the lost water,
+	 * whereas the parent percentage was re-concentrated independently by the product yield, producing
+	 * top-level sums above 100 %. Aggregating the children back into the parent restores the invariant
+	 * for both the primary and secondary yield percentages. The computation runs bottom-up so
+	 * multi-level hierarchies are resolved consistently. Items without children are left untouched.
+	 *
+	 * @param ingList the formulated product ingredient list
+	 */
+	private void aggregateParentQtyPercWithYield(List<IngListDataItem> ingList) {
+
+		List<IngListDataItem> children = ingList.stream().filter(item -> item.getParent() != null)
+				.sorted(Comparator.comparingInt(this::getIngDepth).reversed()).toList();
+
+		if (children.isEmpty()) {
+			return;
+		}
+
+		Set<IngListDataItem> parents = new HashSet<>();
+		for (IngListDataItem child : children) {
+			parents.add(child.getParent());
+		}
+
+		for (IngListDataItem parent : parents) {
+			parent.setQtyPercWithYield(null);
+			parent.setQtyPercWithSecondaryYield(null);
+		}
+
+		for (IngListDataItem child : children) {
+			IngListDataItem parent = child.getParent();
+			if (child.getQtyPercWithYield() != null) {
+				parent.setQtyPercWithYield(
+						(parent.getQtyPercWithYield() == null ? 0d : parent.getQtyPercWithYield()) + child.getQtyPercWithYield());
+			}
+			if (child.getQtyPercWithSecondaryYield() != null) {
+				parent.setQtyPercWithSecondaryYield(
+						(parent.getQtyPercWithSecondaryYield() == null ? 0d : parent.getQtyPercWithSecondaryYield())
+								+ child.getQtyPercWithSecondaryYield());
+			}
+		}
+	}
+
+	/**
+	 * Returns the depth of an ingredient in the ingredient hierarchy, walking up the parent chain
+	 * when the stored depth level is not available.
+	 *
+	 * @param ingListDataItem the ingredient item
+	 * @return the depth (1 for a top-level ingredient)
+	 */
+	private int getIngDepth(IngListDataItem ingListDataItem) {
+		if (ingListDataItem.getDepthLevel() != null) {
+			return ingListDataItem.getDepthLevel();
+		}
+		int depth = 1;
+		IngListDataItem parent = ingListDataItem.getParent();
+		while ((parent != null) && (depth < 256)) {
+			depth++;
+			parent = parent.getParent();
+		}
+		return depth;
 	}
 
 	/**

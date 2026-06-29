@@ -674,6 +674,18 @@ if (beCPG.module.EntityDataGridRenderers) {
     });
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["bcpg:productState", "bcpg:supplierState", "bcpg:clientState"],
+        renderer: function(oRecord, data, label, scope) {
+            if (data.value != null && data.value !== "") {
+                return '<span class="product-state entity-' + data.value + '">'
+                    + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+            }
+            return Alfresco.util.encodeHTML(data.displayValue);
+        }
+
+    });
+
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["bcpg:allergen", "bcpg:ing", "bcpg:geoOrigin", "bcpg:bioOrigin", "bcpg:geo", "bcpg:microbio", "bcpg:organo", "bcpg:listValue"
             , "bcpg:linkedSearchAssociation"],
         renderer: function(oRecord, data, label, scope) {
@@ -1137,6 +1149,30 @@ if (beCPG.module.EntityDataGridRenderers) {
 
             }
             return "";
+        }
+    });
+
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["bcpg:profitability"],
+        renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+            if (data.value === null || typeof data.value === "undefined" || data.value === "") {
+                return "";
+            }
+
+            var num = parseFloat(data.value);
+
+            var text = data.displayValue != null ? data.displayValue.toString() : "" + data.value;
+            if (!isNaN(num) && text.indexOf("%") < 0) {
+                text += " %";
+            }
+
+            if (isNaN(num)) {
+                return Alfresco.util.encodeHTML(text);
+            }
+
+            var cssClass = num < 0 ? "red" : (num > 0 ? "green" : "");
+
+            return '<span class="' + cssClass + '">' + Alfresco.util.encodeHTML(text) + '</span>';
         }
     });
 

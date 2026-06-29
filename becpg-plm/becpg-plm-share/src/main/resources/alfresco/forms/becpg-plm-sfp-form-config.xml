@@ -1779,9 +1779,11 @@
 					<show force="false" id="ghs:sdsOnuCode" />
 					<show force="false" id="ghs:sdsClassCode" />
 					<show force="false" id="ghs:sdsPackagingGroupCode" />
+					<show force="false" id="bcpg:entityScore" />
 				</field-visibility>
 				<appearance>
 					<field id="cm:name" read-only="true"></field>
+					<field id="bcpg:entityScore" read-only="true"/>
 				</appearance>
 			</form>
 

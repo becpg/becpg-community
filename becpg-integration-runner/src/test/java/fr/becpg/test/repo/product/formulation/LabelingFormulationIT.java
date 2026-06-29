@@ -1501,6 +1501,94 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		checkILL(finishedProductNodeRef, labelingRuleList, "autres fruits a coque", Locale.ENGLISH, "Rendu2");
 	}
 
+	/**
+	 * Reproduces ticket #33442 on Camille's dev product: the parent allergen ("Fruits a coque") is added
+	 * MANUALLY on the finished product as both voluntary AND involuntary, the involuntary minor child
+	 * ("Noisette") is added MANUALLY (no raw-material source), and the voluntary presence of the family
+	 * comes from a real composition ingredient ("Amande"). The involuntary render must still group the
+	 * minor child under "autres fruits a coque".
+	 */
+	@Test
+	public void testRenderAllergenInvoluntaryOtherLegalNameMinorVoluntaryManual() {
+
+		final NodeRef parentAllergen = inWriteTx(() -> {
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, "Fruits a coque");
+			properties.put(PLMModel.PROP_ALLERGEN_TYPE, "Major");
+			MLText othersLegalName = new MLText();
+			othersLegalName.addValue(Locale.FRENCH, "autres fruits a coque");
+			properties.put(PLMModel.PROP_ALLERGEN_INVOLUNTARY_OTHER_LEGAL_NAME, othersLegalName);
+
+			NodeRef parent = nodeService
+					.createNode(getTestFolderNodeRef(), org.alfresco.model.ContentModel.ASSOC_CONTAINS,
+							QName.createQName(org.alfresco.service.namespace.NamespaceService.CONTENT_MODEL_1_0_URI, "fruitsACoqueManual"),
+							PLMModel.TYPE_ALLERGEN, properties)
+					.getChildRef();
+
+			// allergen1 = Amande (voluntary via composition), allergen2 = Noisette (manual involuntary child)
+			associationService.update(parent, PLMModel.ASSOC_ALLERGENSUBSETS, Arrays.asList(allergen1, allergen2));
+			return parent;
+		});
+
+		inWriteTx(() -> {
+			nodeService.setProperty(allergen1, PLMModel.PROP_ALLERGEN_TYPE, "Minor");
+			nodeService.setProperty(allergen2, PLMModel.PROP_ALLERGEN_TYPE, "Minor");
+			return null;
+		});
+
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			logger.debug("/*-- Create finished product (allergenOthersLegalName minor voluntary manual) --*/");
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Produit fini Allergen Others Minor Vol Manual");
+			finishedProduct.setLegalName("Legal Produit fini Allergen Others Minor Vol Manual");
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setQty(4d);
+			finishedProduct.setDensity(1d);
+
+			// Composition brings allergen1 (Amande) as voluntary presence (real ingredient)
+			RawMaterialData rmVol = new RawMaterialData();
+			rmVol.setName("RM Vol Amande");
+			List<AllergenListDataItem> allergenListVol = new ArrayList<>();
+			allergenListVol.add(AllergenListDataItem.build().withAllergen(allergen1).withVoluntary(true).withQtyPerc(1d));
+			rmVol.setAllergenList(allergenListVol);
+			NodeRef rmVolRef = alfrescoRepository.create(getTestFolderNodeRef(), rmVol).getNodeRef();
+
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rmVolRef));
+			finishedProduct.getCompoListView().setCompoList(compoList);
+
+			// Manual allergen declarations on the finished product (as Camille does):
+			// - the involuntary minor child "Noisette" entered by hand (no source)
+			// - the parent "Fruits a coque" flagged both voluntary and involuntary by hand
+			List<AllergenListDataItem> manualAllergens = new ArrayList<>();
+			manualAllergens.add(AllergenListDataItem.build().withAllergen(allergen2).withInVoluntary(true).withIsManual(true));
+			manualAllergens.add(AllergenListDataItem.build().withAllergen(parentAllergen).withVoluntary(true).withInVoluntary(true)
+					.withIsManual(true));
+			finishedProduct.setAllergenList(manualAllergens);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+		labelingRuleList.add(
+				LabelingRuleListDataItem.build().withName("Rendu").withFormula("renderAllergens()").withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Rendu2").withFormula("renderInvoluntaryAllergens()")
+				.withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Langue").withFormula("fr_FR,en")
+				.withLabelingRuleType(LabelingRuleType.Locale));
+
+		// The manually-entered minor involuntary child must be grouped under "autres fruits a coque"
+		// because the family is voluntary (Amande from composition + parent flagged voluntary manually).
+		checkILL(finishedProductNodeRef, labelingRuleList, "autres fruits a coque", Locale.FRANCE, "Rendu2");
+		checkILL(finishedProductNodeRef, labelingRuleList, "autres fruits a coque", Locale.ENGLISH, "Rendu2");
+
+		inWriteTx(() -> {
+			associationService.update(parentAllergen, PLMModel.ASSOC_ALLERGENSUBSETS, Collections.emptyList());
+			return null;
+		});
+	}
+
 	@Test
 	public void testManualInvoluntaryAllergenWithZeroComposition() {
 		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
