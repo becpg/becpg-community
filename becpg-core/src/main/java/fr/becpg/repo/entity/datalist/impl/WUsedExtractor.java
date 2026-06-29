@@ -17,6 +17,9 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.datalist.impl;
 
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -24,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
@@ -33,6 +37,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import fr.becpg.config.format.FormatMode;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.WUsedFilter;
@@ -151,12 +156,113 @@ public class WUsedExtractor extends MultiLevelExtractor {
 
 		}
 
+		sortWUsedData(wUsedData, dataListFilter);
+
 		appendNextLevel(ret, metadataFields, wUsedData, 0, startIndex, pageSize, props, dataListFilter);
 
 		ret.setFullListSize(wUsedData.getSize());
 
 		return ret;
 
+	}
+
+	/**
+	 * <p>Sorts the where-used tree according to the column selected in the data grid.</p>
+	 *
+	 * <p>The sort is applied in-memory, before pagination, on the node displayed for each row (each
+	 * tree entry key) and recursively on every sub-level so the tree structure is preserved. When no
+	 * explicit sort is requested the natural query order is kept.</p>
+	 *
+	 * @param wUsedData a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object
+	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
+	 */
+	private void sortWUsedData(MultiLevelListData wUsedData, DataListFilter dataListFilter) {
+		if (dataListFilter.isDefaultSort()) {
+			return;
+		}
+
+		Map<String, Boolean> sortMap = dataListFilter.getSortMap();
+		if ((sortMap == null) || sortMap.isEmpty()) {
+			return;
+		}
+
+		Entry<String, Boolean> sortEntry = sortMap.entrySet().iterator().next();
+		String sortKey = sortEntry.getKey();
+		if ((sortKey == null) || !sortKey.startsWith("@")) {
+			return;
+		}
+
+		QName sortQName;
+		try {
+			sortQName = QName.createQName(sortKey.substring(1));
+		} catch (Exception e) {
+			logger.warn("Unable to parse wUsed sort field: " + sortKey);
+			return;
+		}
+
+		boolean ascending = !Boolean.FALSE.equals(sortEntry.getValue());
+		Comparator<String> valueComparator = ascending ? String.CASE_INSENSITIVE_ORDER : String.CASE_INSENSITIVE_ORDER.reversed();
+		Comparator<NodeRef> comparator = Comparator.comparing(nodeRef -> extractSortValue(nodeRef, sortQName),
+				Comparator.nullsLast(valueComparator));
+
+		sortTree(wUsedData, comparator);
+	}
+
+	/**
+	 * <p>Reorders the entries of a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} tree
+	 * and all its sub-levels using the given comparator.</p>
+	 *
+	 * @param listData a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object
+	 * @param comparator a {@link java.util.Comparator} object
+	 */
+	private void sortTree(MultiLevelListData listData, Comparator<NodeRef> comparator) {
+		Map<NodeRef, MultiLevelListData> tree = listData.getTree();
+		if (tree.isEmpty()) {
+			return;
+		}
+
+		List<Entry<NodeRef, MultiLevelListData>> entries = new ArrayList<>(tree.entrySet());
+		entries.sort(Entry.comparingByKey(comparator));
+
+		tree.clear();
+		for (Entry<NodeRef, MultiLevelListData> entry : entries) {
+			tree.put(entry.getKey(), entry.getValue());
+			sortTree(entry.getValue(), comparator);
+		}
+	}
+
+	/**
+	 * <p>Extracts a comparable display value for the given sort field on a row node. Properties are
+	 * formatted as they are displayed, associations are resolved to their (sorted, comma-separated)
+	 * names. Blank values are returned as {@code null} so empty rows are kept last.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param sortQName a {@link org.alfresco.service.namespace.QName} object
+	 * @return a {@link java.lang.String} object, or {@code null} when there is no value
+	 */
+	private String extractSortValue(NodeRef nodeRef, QName sortQName) {
+		String value = null;
+
+		PropertyDefinition propertyDef = entityDictionaryService.getProperty(sortQName);
+		if (propertyDef != null) {
+			Serializable property = nodeService.getProperty(nodeRef, sortQName);
+			if (property != null) {
+				value = attributeExtractorService.getStringValue(propertyDef, property,
+						attributeExtractorService.getPropertyFormats(FormatMode.JSON, false));
+			}
+		} else if (entityDictionaryService.getAssociation(sortQName) != null) {
+			List<String> names = new ArrayList<>();
+			for (AssociationRef assocRef : nodeService.getTargetAssocs(nodeRef, sortQName)) {
+				String name = attributeExtractorService.extractPropName(assocRef.getTargetRef());
+				if (name != null) {
+					names.add(name);
+				}
+			}
+			Collections.sort(names, String.CASE_INSENSITIVE_ORDER);
+			value = String.join(", ", names);
+		}
+
+		return ((value == null) || value.isBlank()) ? null : value;
 	}
 
 	/**
