@@ -2,6 +2,7 @@ package fr.becpg.repo.regulatory.decernis;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import java.text.NumberFormat;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.ing.IngTypeItem;
@@ -428,7 +429,13 @@ public class ProductDataDecernisJsonService {
                                                     ? "(" + tabularReport.getString(THRESHOLD) + ")"
                                                     : "");
 
-                                            MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, threshold);
+                                            String thresholdVal = (tabularReport.has(THRESHOLD) && !tabularReport.getString(THRESHOLD).equals("None")
+                                                    ? tabularReport.getString(THRESHOLD)
+                                                    : "");
+
+                                            MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING,
+                                                    getFormattedValue(ingItem.getQtyPerc()),
+                                                    thresholdVal);
                                             RequirementListDataItem reqCtrlItem = createReqCtrl(ingItem.getNodeRef(), reqMessage,
                                                     RequirementType.Forbidden);
                                             reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
@@ -712,6 +719,13 @@ public class ProductDataDecernisJsonService {
             }
         }
         return null;
+    }
+
+    private Object getFormattedValue(Double qtyPerc) {
+        if (qtyPerc == null) {
+            return "";
+        }
+        return MLTextHelper.createMLTextI18N(l -> NumberFormat.getInstance(l).format(qtyPerc) + "%");
     }
 
     /**
