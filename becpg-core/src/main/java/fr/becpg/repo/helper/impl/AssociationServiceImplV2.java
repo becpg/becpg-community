@@ -123,6 +123,9 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	/** Constant <code>ENTITY_FILTER="entityFilter"</code> */
 	private static final String ENTITY_FILTER = "entityFilter";
 
+	/** Constant <code>DATE_RANGE="dateRange"</code> */
+	private static final String DATE_RANGE = "dateRange";
+
 	/** Constant <code>INDEX="index"</code> */
 	private static final String INDEX = "index";
 
@@ -973,6 +976,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 				Map<String, Object> filterEntry = new HashMap<>();
 				filterEntry.put(INDEX, index);
 				filterEntry.put(ENTITY_FILTER, criteriaFilter.isEntityFilter());
+				filterEntry.put(DATE_RANGE, criteriaFilter.isDateRange());
 				filterEntry.put(MODE, criteriaFilter.getMode().toString());
 				QName criteriaAttribute = criteriaFilter.getAttributeQname();
 				String fieldName = DBQuery.getFieldName(entityDictionaryService, criteriaAttribute, true);
