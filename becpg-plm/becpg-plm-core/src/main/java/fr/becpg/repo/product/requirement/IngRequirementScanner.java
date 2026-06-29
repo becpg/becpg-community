@@ -1,5 +1,6 @@
 package fr.becpg.repo.product.requirement;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -183,8 +184,6 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 		for (IngListDataItem ingListDataItem : productData.getIngList()) {
 			if (checkRuleMatchIng(ingListDataItem, fil, productData)) {
 
-				RequirementListDataItem reqCtrl = createForbiddenReq(specification, fil, ingListDataItem, sources);
-
 				if (isQtyCheck(fil)) {
 
 					Double filMaxQtyPerc = getFilMaxQtyPerc(productData, fil);
@@ -200,6 +199,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 								&& !fil.getReqMessage().isEmpty();
 
 						if (dontMatchQty || isInfo) {
+							RequirementListDataItem reqCtrl = createForbiddenReq(specification, fil, ingListDataItem, sources, productData, totalQtyPerc, !dontMatchQty);
 
 							if (isInfo) {
 								reqCtrl.setReqType(RequirementType.Info);
@@ -213,6 +213,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 					}
 
 				} else {
+					RequirementListDataItem reqCtrl = createForbiddenReq(specification, fil, ingListDataItem, sources, productData, totalQtyPerc, false);
 					reqCtrlMap.add(reqCtrl);
 				}
 
@@ -229,31 +230,6 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	 */
 	private boolean isQtyCheck(ForbiddenIngListDataItem fil) {
 		return (fil.getQtyPercMaxi() != null) || (fil.getQtyPercMini() != null);
-	}
-
-	/**
-	 * <p>buildQtyInfo.</p>
-	 *
-	 * @param fil a {@link fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem} object
-	 * @return a {@link java.lang.String} object
-	 */
-	private String buildQtyInfo(ForbiddenIngListDataItem fil) {
-		StringBuilder sb = new StringBuilder();
-		if (fil.getQtyPercMaxi() != null) {
-			sb.append(" (max: ").append(fil.getQtyPercMaxi());
-			if (fil.getQtyPercMaxiUnit() != null) {
-				sb.append(" ").append(fil.getQtyPercMaxiUnit());
-			}
-			sb.append(")");
-		}
-		if (fil.getQtyPercMini() != null) {
-			sb.append(" (min: ").append(fil.getQtyPercMini());
-			if (fil.getQtyPercMaxiUnit() != null) {
-				sb.append(" ").append(fil.getQtyPercMaxiUnit());
-			}
-			sb.append(")");
-		}
-		return sb.toString();
 	}
 
 	/**
@@ -302,23 +278,26 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	 * @param fil a {@link fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem} object
 	 * @param ingListDataItem a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
 	 * @param sources a {@link java.util.Map} object
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param totalQtyPerc a {@link java.lang.Double} object
+	 * @param isAllowed a boolean
 	 * @return a {@link fr.becpg.repo.regulatory.RequirementListDataItem} object
 	 */
 	private RequirementListDataItem createForbiddenReq(ProductSpecificationData specification, ForbiddenIngListDataItem fil,
-			IngListDataItem ingListDataItem, Map<String, List<NodeRef>> sources) {
+			IngListDataItem ingListDataItem, Map<String, List<NodeRef>> sources, ProductData productData, Double totalQtyPerc, boolean isAllowed) {
 
 		MLText curMessage = fil.getReqMessage();
 		if ((curMessage == null) || curMessage.values().stream().noneMatch(mes -> (mes != null) && !mes.isEmpty())) {
-			curMessage = MLTextHelper.getI18NMessage(MESSAGE_FORBIDDEN_ING,
-					mlNodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
-
 			if (isQtyCheck(fil)) {
-				String qtyInfo = buildQtyInfo(fil);
-				MLText appendedMessage = new MLText();
-				for (Map.Entry<Locale, String> entry : curMessage.entrySet()) {
-					appendedMessage.put(entry.getKey(), entry.getValue() + qtyInfo);
-				}
-				curMessage = appendedMessage;
+				String keyMessage = isAllowed ? "message.formulate.info.ingredient.notInRangeValue" : "message.formulate.ingredient.notInRangeValue";
+				curMessage = MLTextHelper.getI18NMessage(keyMessage,
+						mlNodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME),
+						getFormattedValue(totalQtyPerc, productData, fil),
+						getFormattedMini(fil),
+						getFormattedMaxi(fil));
+			} else {
+				curMessage = MLTextHelper.getI18NMessage(MESSAGE_FORBIDDEN_ING,
+						mlNodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
 			}
 		}
 
@@ -336,6 +315,67 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 				.withCharact(ingListDataItem.getNodeRef() != null ? ingListDataItem.getNodeRef() : ingListDataItem.getIng())
 				.ofDataType(RequirementDataType.Specification).withRegulatoryCode(extractRegulatoryId(fil, specification)).withSources(sourceList);
 
+	}
+
+	private Double getCurrentQtyInUnit(Double totalQtyPerc, ProductData product, ForbiddenIngListDataItem fil) {
+		if (totalQtyPerc == null) {
+			return null;
+		}
+		String unit = fil.getQtyPercMaxiUnit();
+		if (unit != null) {
+			switch (unit) {
+			case "%":
+				return totalQtyPerc;
+			case "mg/kg":
+				return totalQtyPerc * 10000;
+			case "mg/L": {
+				Double density = product.getDensity();
+				if ((density == null) || (density == 0d)) {
+					density = 1d;
+				}
+				return totalQtyPerc * density * 10000;
+			}
+			default:
+				break;
+			}
+		}
+		return totalQtyPerc;
+	}
+
+	private Object getDisplayedValue(Double value, String unit, Locale locale) {
+		if (value == null) {
+			return "";
+		}
+		String formattedValue = NumberFormat.getInstance(locale).format(value);
+		if (unit != null && !unit.isEmpty()) {
+			return formattedValue + " " + unit;
+		}
+		return formattedValue;
+	}
+
+	private Object getFormattedValue(Double totalQtyPerc, ProductData product, ForbiddenIngListDataItem fil) {
+		Double val = getCurrentQtyInUnit(totalQtyPerc, product, fil);
+		if (val == null) {
+			return MLTextHelper.getI18NMessage(SimpleListRequirementScanner.MESSAGE_UNDEFINED_VALUE);
+		}
+		String unit = fil.getQtyPercMaxiUnit();
+		return MLTextHelper.createMLTextI18N(l -> String.valueOf(getDisplayedValue(val, unit, l)));
+	}
+
+	private Object getFormattedMini(ForbiddenIngListDataItem fil) {
+		Double specMini = fil.getQtyPercMini();
+		String unit = fil.getQtyPercMaxiUnit();
+		return MLTextHelper.createMLTextI18N(l -> (specMini != null
+				? getDisplayedValue(specMini, unit, l) + "<= "
+				: ""));
+	}
+
+	private Object getFormattedMaxi(ForbiddenIngListDataItem fil) {
+		Double specMaxi = fil.getQtyPercMaxi();
+		String unit = fil.getQtyPercMaxiUnit();
+		return MLTextHelper.createMLTextI18N(l -> (specMaxi != null
+				? " <=" + getDisplayedValue(specMaxi, unit, l)
+				: ""));
 	}
 
 	/**

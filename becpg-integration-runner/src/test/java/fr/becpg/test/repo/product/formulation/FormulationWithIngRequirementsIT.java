@@ -558,7 +558,7 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 
 				if (RequirementDataType.Specification.equals(reqCtrlList.getReqDataType()) 
 						&& reqCtrlList.getReqMessage() != null 
-						&& reqCtrlList.getReqMessage().contains("max:")) {
+						&& (reqCtrlList.getReqMessage().contains("max:") || reqCtrlList.getReqMessage().contains("<="))) {
 					qtyThresholdAlerts++;
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 				}
