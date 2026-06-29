@@ -356,7 +356,7 @@ PARTICULAR
 								becpg/autocomplete/allLinkedvalue
 							</control-param>
 							<control-param name="urlParamsToPass">
-								destination,itemId
+								destination,itemId,list
 							</control-param>
 						</control>
 					</field>
@@ -385,7 +385,7 @@ PARTICULAR
 								becpg/autocomplete/allLinkedvalue
 							</control-param>
 							<control-param name="urlParamsToPass">
-								destination,itemId
+								destination,itemId,list
 							</control-param>
 						</control>
 					</field>
@@ -438,7 +438,7 @@ PARTICULAR
 								becpg/autocomplete/linkedvalue
 							</control-param>
 							<control-param name="urlParamsToPass">
-								destination,itemId
+								destination,itemId,list
 							</control-param>
 						</control>
 					</field>
