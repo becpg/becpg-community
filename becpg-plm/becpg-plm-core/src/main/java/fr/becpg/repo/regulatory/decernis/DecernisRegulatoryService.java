@@ -42,7 +42,8 @@ import org.springframework.web.client.RestClientException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static fr.becpg.repo.regulatory.decernis.RegulatoryHelper.extractIngName;
+import static fr.becpg.repo.regulatory.RegulatoryHelper.DECERNIS_PREFIX;
+import static fr.becpg.repo.regulatory.RegulatoryHelper.extractIngName;
 
 /**
  * <p>RegulatoryService class.</p>

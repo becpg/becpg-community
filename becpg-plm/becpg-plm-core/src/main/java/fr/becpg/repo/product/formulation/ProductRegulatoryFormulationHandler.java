@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import fr.becpg.repo.regulatory.*;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 
@@ -14,11 +15,6 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
-import fr.becpg.repo.regulatory.RegulatoryEntity;
-import fr.becpg.repo.regulatory.RegulatoryResult;
-import fr.becpg.repo.regulatory.RequirementDataType;
-import fr.becpg.repo.regulatory.RequirementListDataItem;
-import fr.becpg.repo.regulatory.RequirementType;
 
 /**
  * <p>ProductRegulatoryFormulationHandler class.</p>
@@ -126,7 +122,7 @@ public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<
 				for (NodeRef usage : regulatoryListItem.getRegulatoryUsagesRef()) {
 					String usageCode = (String) nodeService.getProperty(usage, PLMModel.PROP_REGULATORY_CODE);
 					if (!usageCode.endsWith(REGULATORY_MODULE_SUFFIX)) {
-						regulatoryIds.add(countryCode + " - " + usageCode);
+						regulatoryIds.add(RegulatoryHelper.shortenRegulatoryCode(countryCode + " - " + usageCode));
 					}
 				}
 			}
