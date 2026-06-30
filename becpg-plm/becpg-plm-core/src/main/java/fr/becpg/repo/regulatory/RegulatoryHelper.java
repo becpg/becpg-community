@@ -1,4 +1,4 @@
-package fr.becpg.repo.regulatory.decernis;
+package fr.becpg.repo.regulatory;
 
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.ing.IngTypeItem;
@@ -16,6 +16,8 @@ import java.util.List;
  * @author matthieu
  */
 public class RegulatoryHelper {
+	/** Constant <code>DECERNIS_PREFIX="DECERNIS_"</code> */
+	public static final String DECERNIS_PREFIX = "DECERNIS_";
 
 	/**
 	 * <p>Constructor for RegulatoryHelper.</p>
@@ -54,5 +56,22 @@ public class RegulatoryHelper {
 		MLText mlTextLegalName = ingItem.getLegalName();
 		String legalName = mlTextLegalName != null ? mlTextLegalName.getClosestValue(I18NUtil.getContentLocale()) : null;
 		return legalName != null && !legalName.isBlank() ? legalName : ingItem.getCharactName();
+	}
+
+	/**
+	 * Keeps only the leading beCPG code of a requirement {@code <country> - <usage>}
+	 * code. A usage may carry both its beCPG code and the Decernis phrase
+	 * ({@code COSMETIC_BODY_CREAM_LOTION,DECERNIS_Body Cream/Lotion}); only the beCPG code is kept
+	 * for display and filtering. A code with no beCPG part (food,
+	 * {@code DECERNIS_<name>}) is returned unchanged as the only available token.
+	 *
+	 * @param regulatoryCode the raw requirement code, possibly null
+	 * @return the shortened code, or null when the input is null
+	 */
+	public static String shortenRegulatoryCode(String regulatoryCode) {
+		if (regulatoryCode == null) {
+			return null;
+		}
+		return regulatoryCode.split(",(?=" + DECERNIS_PREFIX + ")")[0].trim();
 	}
 }
