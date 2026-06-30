@@ -1747,8 +1747,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				}
 
-				// Reconstitution
-				if (nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_RECONSTITUTABLE)) {
+				// Reconstitution (skipped when the raw material quantity is 0)
+				if (nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_RECONSTITUTABLE) && (qty != null) && (qty > 0d)) {
 					Double reconstitionRate = (Double) nodeService.getProperty(productNodeRef, PLMModel.PROP_RECONSTITUTION_RATE);
 					if (reconstitionRate != null) {
 						NodeRef diluentNodeRef = associationService.getTargetAssoc(productNodeRef, PLMModel.ASSOC_DILUENT_REF);
@@ -2592,7 +2592,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				Double ingListReconstitutionRate = ingListItem.getData().getReconstitutionRate();
 				if ((ingListReconstitutionRate != null) && (ingListItem.getData().getAspects() != null)
-						&& ingListItem.getData().getAspects().contains(PLMModel.ASPECT_RECONSTITUTABLE)) {
+						&& ingListItem.getData().getAspects().contains(PLMModel.ASPECT_RECONSTITUTABLE) && (qty != null) && (qty > 0d)) {
 					NodeRef diluentNodeRef = ingListItem.getData().getDiluentRef();
 					NodeRef targetNodeRef = ingListItem.getData().getTargetReconstitutionRef();
 					if ((diluentNodeRef != null) && (targetNodeRef != null)) {
