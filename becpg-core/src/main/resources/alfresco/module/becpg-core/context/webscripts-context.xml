@@ -299,6 +299,12 @@
 		<property name="moduleService" ref="moduleService" />
 	</bean>
 
+	<bean id="webscript.fr.becpg.remote.ai.dictionary.get" class="fr.becpg.repo.web.scripts.remote.ai.AiDictionaryWebScript" parent="webscript">
+		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="entityDictionaryService" ref="entityDictionaryService" />
+		<property name="namespaceService" ref="namespaceService" />
+	</bean>
+
 	<bean id="webscript.fr.becpg.remote.ai.search.get" class="fr.becpg.repo.web.scripts.remote.ai.AiSearchWebScript" parent="abstractEntityWebScript">
 	</bean>
 

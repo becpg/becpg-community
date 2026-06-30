@@ -69,7 +69,7 @@ public class AiCapabilitiesWebScript extends AbstractWebScript {
 		try {
 			JSONObject out = new JSONObject();
 			out.put("apiVersion", API_VERSION);
-			out.put("endpoints", new JSONArray().put("capabilities").put("search"));
+			out.put("endpoints", new JSONArray().put("capabilities").put("search").put("dictionary"));
 			out.put("becpgVersion", resolveBecpgVersion());
 			out.put("user", buildUser());
 			out.put("entityTypes", buildEntityTypes());
