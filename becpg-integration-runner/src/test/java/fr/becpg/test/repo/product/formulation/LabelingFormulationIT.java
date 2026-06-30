@@ -943,6 +943,18 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		checkILL(finishedProductNodeRef, labelingRuleList,
 				"epaississant french : ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing2 french 16,7%, ing1 french 8,3%", Locale.FRENCH);
 
+		// #32476 ForcePercentage to 0 must omit the ingredient (the threshold/omit decision uses the forced %)
+		labelingRuleList = new ArrayList<>();
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("%").withFormula("#.#%|HALF_DOWN").withLabelingRuleType(LabelingRuleType.ShowPerc));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Force zero").withFormula("0")
+				.withLabelingRuleType(LabelingRuleType.ForcePercentage).withComponents(Collections.singletonList(ing2)));
+
+		checkILL(finishedProductNodeRef, labelingRuleList,
+				"epaississant french : ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing1 french 8,3%", Locale.FRENCH);
+
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList
 				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
@@ -1233,6 +1245,63 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 				.withLabelingRuleType(LabelingRuleType.Prefs));
 
 		checkILL(finishedProductNodeRef3, labelingRuleList, "ing4 english 71.4%, epices english, legal Raw material 1 10.7%", Locale.ENGLISH);
+	}
+
+	@Test
+	public void testReconstitutionSkippedWhenQtyZero() {
+
+		// #32476 - A reconstitutable raw material used at quantity 0 must not trigger reconstitution
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Produit fini reconstitution qty 0");
+			finishedProduct.setLegalName("Legal reconstitution qty 0");
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setQty(4d);
+			finishedProduct.setDensity(1d);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+
+			compoList.add(CompoListDataItem.build().withQtyUsed(10d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial7NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(0d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+
+			Map<QName, Serializable> props = new HashMap<>();
+			props.put(PLMModel.PROP_RECONSTITUTION_RATE, 5d);
+			nodeService.addAspect(rawMaterial1NodeRef, PLMModel.ASPECT_RECONSTITUTABLE, props);
+			associationService.update(rawMaterial1NodeRef, PLMModel.ASSOC_DILUENT_REF, ing5);
+			associationService.update(rawMaterial1NodeRef, PLMModel.ASSOC_TARGET_RECONSTITUTION_REF, ing6);
+
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+
+		String label = inWriteTx(() -> {
+			ProductData ret = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+			ret.getLabelingListView().getLabelingRuleList().clear();
+			ret.getLabelingListView().getLabelingRuleList().addAll(labelingRuleList);
+			alfrescoRepository.save(ret);
+			productService.formulate(ret);
+			alfrescoRepository.save(ret);
+
+			StringBuilder sb = new StringBuilder();
+			for (IngLabelingListDataItem illDataItem : ret.getLabelingListView().getIngLabelingList()) {
+				sb.append(illDataItem.getValue().getValue(Locale.FRENCH));
+			}
+			return sb.toString();
+		});
+
+		// ing6 is the reconstitution target; it must be absent since the reconstitutable raw material qty is 0
+		Assert.assertFalse("Reconstitution target should be absent when the raw material qty is 0, label: " + label,
+				label.contains("ing6 french"));
+
+		inWriteTx(() -> {
+			nodeService.removeAspect(rawMaterial1NodeRef, PLMModel.ASPECT_RECONSTITUTABLE);
+			return null;
+		});
 	}
 
 	@Test
