@@ -18,6 +18,8 @@
 package fr.becpg.repo.web.scripts.remote.ai;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
@@ -66,6 +68,7 @@ public class AiDictionaryWebScript extends AbstractWebScript {
 			JSONObject out = new JSONObject();
 			if ((typeParam == null) || typeParam.isBlank()) {
 				out.put("types", buildTypes());
+				out.put("fields", buildAllFields());
 			} else {
 				out.put("type", typeParam);
 				ClassDefinition classDef = dictionaryService.getClass(QName.createQName(typeParam, namespaceService));
@@ -103,6 +106,38 @@ public class AiDictionaryWebScript extends AbstractWebScript {
 			types.put(entry);
 		}
 		return types;
+	}
+
+	/**
+	 * Distinct union of properties across all entity types (subtypes of {@code bcpg:entityV2}), deduplicated by
+	 * name — the lexical corpus for intent → field resolution. In-memory (compiled model), so cheap; the result
+	 * is bounded by the size of the data model and cached client-side per tenant.
+	 */
+	private JSONArray buildAllFields() throws JSONException {
+		Map<String, JSONObject> byName = new LinkedHashMap<>();
+		for (QName type : entityDictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITY_V2)) {
+			ClassDefinition classDef = dictionaryService.getClass(type);
+			if (classDef == null) {
+				continue;
+			}
+			for (PropertyDefinition prop : classDef.getProperties().values()) {
+				String name = prop.getName().toPrefixString(namespaceService);
+				if (byName.containsKey(name)) {
+					continue;
+				}
+				JSONObject entry = new JSONObject();
+				entry.put("name", name);
+				String title = prop.getTitle(dictionaryService);
+				if (title != null) {
+					entry.put("title", title);
+				}
+				if (prop.getDataType() != null) {
+					entry.put("dataType", prop.getDataType().getName().toPrefixString(namespaceService));
+				}
+				byName.put(name, entry);
+			}
+		}
+		return new JSONArray(byName.values());
 	}
 
 	private JSONArray buildFields(ClassDefinition classDef) throws JSONException {
