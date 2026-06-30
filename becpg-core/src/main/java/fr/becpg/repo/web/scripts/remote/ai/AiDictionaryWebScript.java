@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -109,9 +110,29 @@ public class AiDictionaryWebScript extends AbstractWebScript {
 	}
 
 	/**
-	 * Distinct union of properties across all entity types (subtypes of {@code bcpg:entityV2}), deduplicated by
-	 * name — the lexical corpus for intent → field resolution. In-memory (compiled model), so cheap; the result
-	 * is bounded by the size of the data model and cached client-side per tenant.
+	 * The full default field set of a type: its own properties plus the properties of its default aspects
+	 * (mirrors how {@code JsonSchemaEntityVisitor} builds an entity schema). In-memory model lookups only.
+	 */
+	private Map<QName, PropertyDefinition> allProperties(ClassDefinition classDef) {
+		Map<QName, PropertyDefinition> properties = new LinkedHashMap<>(classDef.getProperties());
+		for (AspectDefinition aspect : classDef.getDefaultAspects()) {
+			properties.putAll(aspect.getProperties());
+		}
+		return properties;
+	}
+
+	private Map<QName, AssociationDefinition> allAssociations(ClassDefinition classDef) {
+		Map<QName, AssociationDefinition> associations = new LinkedHashMap<>(classDef.getAssociations());
+		for (AspectDefinition aspect : classDef.getDefaultAspects()) {
+			associations.putAll(aspect.getAssociations());
+		}
+		return associations;
+	}
+
+	/**
+	 * Distinct union of properties (type + default aspects) across all entity types (subtypes of
+	 * {@code bcpg:entityV2}), deduplicated by name — the lexical corpus for intent → field resolution.
+	 * In-memory (compiled model), so cheap; bounded by the data model and cached client-side per tenant.
 	 */
 	private JSONArray buildAllFields() throws JSONException {
 		Map<String, JSONObject> byName = new LinkedHashMap<>();
@@ -120,21 +141,11 @@ public class AiDictionaryWebScript extends AbstractWebScript {
 			if (classDef == null) {
 				continue;
 			}
-			for (PropertyDefinition prop : classDef.getProperties().values()) {
+			for (PropertyDefinition prop : allProperties(classDef).values()) {
 				String name = prop.getName().toPrefixString(namespaceService);
-				if (byName.containsKey(name)) {
-					continue;
+				if (!byName.containsKey(name)) {
+					byName.put(name, fieldEntry(prop, false));
 				}
-				JSONObject entry = new JSONObject();
-				entry.put("name", name);
-				String title = prop.getTitle(dictionaryService);
-				if (title != null) {
-					entry.put("title", title);
-				}
-				if (prop.getDataType() != null) {
-					entry.put("dataType", prop.getDataType().getName().toPrefixString(namespaceService));
-				}
-				byName.put(name, entry);
 			}
 		}
 		return new JSONArray(byName.values());
@@ -142,27 +153,31 @@ public class AiDictionaryWebScript extends AbstractWebScript {
 
 	private JSONArray buildFields(ClassDefinition classDef) throws JSONException {
 		JSONArray fields = new JSONArray();
-		for (PropertyDefinition prop : classDef.getProperties().values()) {
-			JSONObject entry = new JSONObject();
-			entry.put("name", prop.getName().toPrefixString(namespaceService));
-			String title = prop.getTitle(dictionaryService);
-			if (title != null) {
-				entry.put("title", title);
-			}
-			if (prop.getDataType() != null) {
-				entry.put("dataType", prop.getDataType().getName().toPrefixString(namespaceService));
-			}
-			if (prop.isMandatory()) {
-				entry.put("mandatory", true);
-			}
-			fields.put(entry);
+		for (PropertyDefinition prop : allProperties(classDef).values()) {
+			fields.put(fieldEntry(prop, true));
 		}
 		return fields;
 	}
 
+	private JSONObject fieldEntry(PropertyDefinition prop, boolean withMandatory) throws JSONException {
+		JSONObject entry = new JSONObject();
+		entry.put("name", prop.getName().toPrefixString(namespaceService));
+		String title = prop.getTitle(dictionaryService);
+		if (title != null) {
+			entry.put("title", title);
+		}
+		if (prop.getDataType() != null) {
+			entry.put("dataType", prop.getDataType().getName().toPrefixString(namespaceService));
+		}
+		if (withMandatory && prop.isMandatory()) {
+			entry.put("mandatory", true);
+		}
+		return entry;
+	}
+
 	private JSONArray buildAssociations(ClassDefinition classDef) throws JSONException {
 		JSONArray associations = new JSONArray();
-		for (AssociationDefinition assoc : classDef.getAssociations().values()) {
+		for (AssociationDefinition assoc : allAssociations(classDef).values()) {
 			JSONObject entry = new JSONObject();
 			entry.put("name", assoc.getName().toPrefixString(namespaceService));
 			String title = assoc.getTitle(dictionaryService);
