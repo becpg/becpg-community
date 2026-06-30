@@ -453,6 +453,10 @@ public class UserImporterServiceImpl implements UserImporterService {
 				
 				String username = splitted[headers.get(ATTR_USERNAME)];
 				
+				if (username.isBlank()) {
+					return null;
+				}
+				
 				if (headers.containsKey(ATTR_DELETE) && Boolean.TRUE.equals(Boolean.parseBoolean(splitted[headers.get(ATTR_DELETE)].toLowerCase()))) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Delete user: " + username);
