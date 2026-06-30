@@ -289,7 +289,22 @@
 	<bean id="webscript.fr.becpg.remote.dictionary.get" class="fr.becpg.repo.web.scripts.remote.EntityDictionaryWebScript" parent="abstractEntityWebScript">
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
 	</bean>
-	
+
+	<!-- AI remote API (Vague 1). Additive endpoints consumed by becpg-ai; capabilities drives dual-mode detection. -->
+	<bean id="webscript.fr.becpg.remote.ai.capabilities.get" class="fr.becpg.repo.web.scripts.remote.ai.AiCapabilitiesWebScript" parent="webscript">
+		<property name="nodeService" ref="NodeService" />
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="personService" ref="personService" />
+		<property name="entityDictionaryService" ref="entityDictionaryService" />
+		<property name="moduleService" ref="moduleService" />
+	</bean>
+
+	<bean id="webscript.fr.becpg.remote.ai.search.get" class="fr.becpg.repo.web.scripts.remote.ai.AiSearchWebScript" parent="abstractEntityWebScript">
+	</bean>
+
+	<bean id="webscript.fr.becpg.remote.ai.search.post" class="fr.becpg.repo.web.scripts.remote.ai.AiSearchWebScript" parent="abstractEntityWebScript">
+	</bean>
+
 	<bean id="webscript.fr.becpg.remote.activities.get" class="fr.becpg.repo.web.scripts.remote.GetActivitiesWebScript"  parent="abstractEntityWebScript" >
 		<property name="activityService" ref="activityService" />
 		<property name="siteService" ref="SiteService" />
