@@ -217,6 +217,23 @@ public class ProductWUsedWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		org.junit.Assert.assertFalse("single-day startEffectivity filter must drop a product effective another day",
 				singleDayContent.contains("WUsed Other Product"));
 
+		// --- single-date startEffectivity filter, exactly as emitted by the WUsed filter form's
+		// single date picker (no -date-range suffix, a single YYYY-MM-DD value) : it must match on
+		// the date part of the d:datetime, like the day range above. This is the flow Pamela tested
+		// (#34682) that used to return an empty list because the value fell into an exact EQUALS. ---
+		String singleDateContent = sendFilter(url, "{\\\"prop_bcpg_startEffectivity\\\":\\\"2030-06-15\\\"}");
+		org.junit.Assert.assertTrue("single-date startEffectivity filter must keep the product effective that day",
+				singleDateContent.contains("WUsed Match Product"));
+		org.junit.Assert.assertFalse("single-date startEffectivity filter must drop a product effective another day",
+				singleDateContent.contains("WUsed Other Product"));
+
+		// The same key with a non-matching day must drop the row.
+		String otherDateContent = sendFilter(url, "{\\\"prop_bcpg_startEffectivity\\\":\\\"2020-06-15\\\"}");
+		org.junit.Assert.assertFalse("single-date startEffectivity filter must drop the 2030 product on a 2020 day",
+				otherDateContent.contains("WUsed Match Product"));
+		org.junit.Assert.assertTrue("single-date startEffectivity filter must keep the 2020 product on its day",
+				otherDateContent.contains("WUsed Other Product"));
+
 	}
 
 	/**
