@@ -2438,8 +2438,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					qtyPerc = (useVolume ? volumePerc : qtyPerc);
 					qtyPercWithYield = (useVolume ? volumePercWithYield : qtyPercWithYield);
 
-					boolean shouldSkip = shouldSkip(component.getNodeRef(), qtyPerc);
-					boolean shouldSkipWithYield = shouldSkip(component.getNodeRef(), qtyPercWithYield);
+					boolean shouldSkip = shouldSkip(component, qtyPerc);
+					boolean shouldSkipWithYield = shouldSkip(component, qtyPercWithYield);
 
 					if (!(shouldSkip && shouldSkipWithYield)) {
 
@@ -2838,7 +2838,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				String bioOriginsLabel = createBioOriginsLabel(component.getNodeRef(), List.of(component));
 				String additionalInformation = createAdditionalInformationLabel(component.getAdditionalInformation());
 
-				if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
+				if (!shouldSkip(component, qtyPerc)) {
 					if (component instanceof CompositeLabeling) {
 						BigDecimal subRatio = computeQtyPerc(parent, component, ratio, false);
 						if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType()) || computePercByParent) {
@@ -2945,7 +2945,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 					qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
-					if (!shouldSkip(component.getNodeRef(), qtyPerc) && (qtyPerc != null) && (qtyPerc > 0)) {
+					if (!shouldSkip(component, qtyPerc) && (qtyPerc != null) && (qtyPerc > 0)) {
 						total = total.add(BigDecimal.valueOf(roundeedValue(qtyPerc, component)));
 
 					}
@@ -3150,7 +3150,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						+ "), ratio: " + ratio);
 			}
 
-			if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
+			if (!shouldSkip(component, qtyPerc)) {
 
 				String toAppend = "";
 
@@ -3410,6 +3410,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * @param qtyPerc a {@link java.lang.Double} object
 	 * @return a boolean
 	 */
+	private boolean shouldSkip(LabelingComponent component, Double qtyPerc) {
+		return shouldSkip(component.getNodeRef(), getForcedPercentage(component, qtyPerc));
+	}
+
 	private boolean shouldSkip(NodeRef nodeRef, Double qtyPerc) {
 
 		boolean shouldSkip = !((qtyPerc == null) || (toApplyThresholdItems.contains(nodeRef) && (qtyPerc > qtyPrecisionThreshold))
