@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -356,15 +357,29 @@ public class WUsedExtractor extends MultiLevelExtractor {
 									}
 									try {
 										QName qName = QName.createQName(qNameStr, namespaceService);
-										if (entityDictionaryService.getProperty(qName) != null) {
-											AssociationCriteriaFilterMode mode = isRange ? AssociationCriteriaFilterMode.RANGE : AssociationCriteriaFilterMode.EQUALS;
+										PropertyDefinition propertyDef = entityDictionaryService.getProperty(qName);
+										if (propertyDef != null) {
 											String criteriaValue = cleanValueForDB(value);
-											if (isDateRange) {
-												criteriaValue = cropDateRangeValue(criteriaValue);
+											AssociationCriteriaFilterMode mode;
+											boolean dateRange;
+											if (isRange) {
+												mode = AssociationCriteriaFilterMode.RANGE;
+												dateRange = isDateRange;
+												if (isDateRange) {
+													criteriaValue = cropDateRangeValue(criteriaValue);
+												}
+											} else if (isDateProperty(propertyDef)) {
+												String day = cropDateBound(criteriaValue);
+												criteriaValue = day + "|" + day;
+												mode = AssociationCriteriaFilterMode.RANGE;
+												dateRange = true;
+											} else {
+												mode = AssociationCriteriaFilterMode.EQUALS;
+												dateRange = false;
 											}
 											AssociationCriteriaFilter filter = new AssociationCriteriaFilter(qName, criteriaValue, mode);
 											filter.setEntityFilter(true);
-											filter.setDateRange(isDateRange);
+											filter.setDateRange(dateRange);
 											criteriaFilters.add(filter);
 										}
 									} catch (Exception e) {
@@ -415,6 +430,25 @@ public class WUsedExtractor extends MultiLevelExtractor {
 
 	private String cropDateBound(String bound) {
 		return ((bound != null) && (bound.length() > 10)) ? bound.substring(0, 10) : bound;
+	}
+
+	/**
+	 * <p>Indicates whether a property is a {@code d:date} or {@code d:datetime}.</p>
+	 *
+	 * <p>The WUsed filter form exposes effectivity dates ({@code bcpg:startEffectivity} /
+	 * {@code bcpg:endEffectivity}) as single date pickers, which submit the property key without a
+	 * {@code -date-range} suffix and a single date value. Such a value must be compared on its date
+	 * part, not matched exactly against the full ISO8601 datetime stored in the database.</p>
+	 *
+	 * @param propertyDef the property definition to test
+	 * @return {@code true} if the property holds a date or datetime value
+	 */
+	private boolean isDateProperty(PropertyDefinition propertyDef) {
+		if (propertyDef.getDataType() == null) {
+			return false;
+		}
+		QName dataType = propertyDef.getDataType().getName();
+		return DataTypeDefinition.DATE.equals(dataType) || DataTypeDefinition.DATETIME.equals(dataType);
 	}
 
 	/**
