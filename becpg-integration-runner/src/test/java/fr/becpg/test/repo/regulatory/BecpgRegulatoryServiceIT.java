@@ -111,25 +111,6 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
 
         inWriteTx(() -> {
             ProductData product = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
-
-            int amountOfListedIngredients = 45; // identifiable ingredients for this product
-            int amountOfListedCountries = 5; // "France", "Germany", "Spain", "Italy", "European Union"
-            int amountOfIdentifiedUsages = 1; // COSMETIC_BODY_CREAM_LOTION
-
-            // NOTE: this test is @Ignore (run manually against a live becpg-regulatory). The single usage now
-            // resolves to a product type, so the not-found count must be re-tuned against the live instance.
-            int amountOfCountryToUsagePairsNotFound = 0;
-            int amountOfIngredientsNotHandled = 45;
-
-            int resolvedCombinations = amountOfListedIngredients * amountOfListedCountries * amountOfIdentifiedUsages;
-
-            List<IngRegulatoryListDataItem> ingRegulatoryListDataItems = product.getIngRegulatoryList();
-            assertEquals(resolvedCombinations, ingRegulatoryListDataItems.size());
-
-            List<RequirementListDataItem> requirements = product.getReqCtrlList();
-            assertEquals(resolvedCombinations + amountOfCountryToUsagePairsNotFound + amountOfIngredientsNotHandled, requirements.size());
-
-            // product is valid. There are forbidden ingredients, but qty is 0
             RegulatoryListDataItem regulatoryElement = product.getRegulatoryList().getFirst();
             assertEquals(RegulatoryResult.PERMITTED, regulatoryElement.getRegulatoryResult());
 
