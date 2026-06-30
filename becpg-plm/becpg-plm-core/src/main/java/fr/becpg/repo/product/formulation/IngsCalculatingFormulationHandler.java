@@ -140,6 +140,14 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 							il.getBioOrigin().clear();
 							il.getClaims().clear();
 							il.setDeclType(null);
+							// Reconstitution is re-derived from the variants on each formulation (generic products)
+							il.setReconstitutionRate(null);
+							il.setReconstitutionPriority(null);
+							il.setDiluentRef(null);
+							il.setTargetReconstitutionRef(null);
+							if (il.getAspects() != null) {
+								il.getAspects().remove(PLMModel.ASPECT_RECONSTITUTABLE);
+							}
 						}
 					}
 				} else {
