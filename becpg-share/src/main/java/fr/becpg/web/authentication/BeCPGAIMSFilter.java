@@ -32,7 +32,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
@@ -313,8 +312,9 @@ public class BeCPGAIMSFilter implements Filter
                     }
                     catch (Exception oauth2AuthenticationException)
                     {
-                        LOGGER.error("Resulted in Error while doing refresh token "
-                                         + oauth2AuthenticationException.getMessage());
+                        LOGGER.error("Error while refreshing OAuth2 token, invalidating session (URI="
+                                         + request.getRequestURI() + "): " + oauth2AuthenticationException.getMessage(),
+                                     oauth2AuthenticationException);
                         session.invalidate();
                         if (!request.getRequestURI()
                             .contains(this.shareContext + SHARE_AIMS_LOGOUT))
@@ -672,9 +672,9 @@ public class BeCPGAIMSFilter implements Filter
         }
         else
         {
-            JSONObject json = new JSONObject(r.getText());
             try
             {
+                JSONObject json = new JSONObject(r.getText());
                 alfTicket = json.getJSONObject("entry")
                     .getString("id");
             }
@@ -1228,7 +1228,7 @@ public class BeCPGAIMSFilter implements Filter
     private OAuth2TokenValidator<Jwt> createCustomValidator(ProviderDetails providerDetails)
     {
         List<OAuth2TokenValidator<Jwt>> validators = new ArrayList<>();
-        validators.add(new JwtTimestampValidator(Duration.of(0, ChronoUnit.MILLIS)));
+        validators.add(new JwtTimestampValidator(Duration.ofSeconds(60)));
         validators.add(new JwtIssuerValidator(providerDetails.getIssuerUri()));
 
         if (this.audience!=null && !this.audience.isEmpty())
