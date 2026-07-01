@@ -448,5 +448,65 @@ public class BatchQueueServiceIT extends RepoBaseTestCase {
 			org.alfresco.model.ContentModel.TYPE_CONTENT
 		).getChildRef();
 	}
+
+	@Test
+	public void testPausedBatchResumeState() throws InterruptedException {
+		AtomicInteger highProcessed = new AtomicInteger(0);
+		AtomicInteger lowProcessed = new AtomicInteger(0);
+
+		BatchInfo highBatchInfo = new BatchInfo("batch.high.id", "batch.high.desc");
+		highBatchInfo.setPriority(BatchPriority.HIGH);
+		highBatchInfo.setWorkerThreads(1);
+		BatchStep<Integer> highStep = new BatchStep<>();
+		highStep.setWorkProvider(new EntityListBatchProcessWorkProvider<Integer>(IntStream.range(0, 5).boxed().toList()));
+		highStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<Integer>() {
+			@Override
+			public void process(Integer entry) throws Throwable {
+				highProcessed.addAndGet(1);
+				Thread.sleep(500);
+			}
+		});
+
+		BatchInfo lowBatchInfo = new BatchInfo("batch.low.id", "batch.low.desc");
+		lowBatchInfo.setPriority(BatchPriority.LOW);
+		lowBatchInfo.setWorkerThreads(1);
+		BatchStep<Integer> lowStep = new BatchStep<>();
+		lowStep.setWorkProvider(new EntityListBatchProcessWorkProvider<Integer>(IntStream.range(0, 10).boxed().toList()));
+		lowStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<Integer>() {
+			@Override
+			public void process(Integer entry) throws Throwable {
+				lowProcessed.addAndGet(1);
+				Thread.sleep(500);
+			}
+		});
+
+		// 1. Queue high priority batch
+		batchQueueService.queueBatch(highBatchInfo, List.of(highStep));
+		Thread.sleep(500); // Allow it to start running
+
+		// 2. Queue low priority batch (it will start and pause immediately because high is running)
+		batchQueueService.queueBatch(lowBatchInfo, List.of(lowStep));
+		Thread.sleep(1000); // Allow it to register as paused
+
+		// Verify it is in the queue list because it is paused
+		assertFalse(batchQueueService.getBatchesInQueue().isEmpty());
+
+		// 3. Wait for the high priority batch to finish
+		waitForBatchEnd(highBatchInfo);
+		assertEquals(5, highProcessed.get());
+
+		// 4. Wait a bit for the low priority batch to resume and start processing
+		Thread.sleep(1000);
+		assertTrue(lowProcessed.get() > 0);
+
+		// 5. At this point, the low priority batch is running.
+		// It should be reported as the running batch, NOT be in the queue list.
+		assertNotNull("Running batch info should not be null", batchQueueService.getRunningBatchInfo());
+		assertTrue("Running batch info should contain low batch id", batchQueueService.getRunningBatchInfo().contains("batch.low.id"));
+		assertTrue("Queue should be empty for the low batch since it is now running", batchQueueService.getBatchesInQueue().isEmpty());
+
+		// Cleanup
+		waitForBatchEnd(lowBatchInfo);
+	}
 	
 }
