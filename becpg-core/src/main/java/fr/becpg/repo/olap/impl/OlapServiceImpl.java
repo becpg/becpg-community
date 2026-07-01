@@ -251,8 +251,12 @@ public class OlapServiceImpl implements OlapService {
 			String olapQueryId = "dynamic_" + java.util.UUID.randomUUID().toString();
 			OlapChartData ret = new OlapChartData();
 
+			// Raw-MDX execution must declare type="MDX": with type="QM" (Query Model) Saiku tries to expand a
+			// QueryModel that is not provided here (only <MDX> is), which fails with Mondrian
+			// "Not enough variable values available to expand ...". Saved .saiku queries use QM because they
+			// carry a full <QueryModel>; a dynamic raw-MDX query must not.
 			String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-					"<Query name=\"" + olapQueryId + "\" type=\"QM\" connection=\"beCPG\" cube=\"" + (cube.startsWith("[") ? cube : "[" + cube + "]") + "\" catalog=\"beCPG OLAP Schema\" schema=\"beCPG OLAP Schema\">\n" +
+					"<Query name=\"" + olapQueryId + "\" type=\"MDX\" connection=\"beCPG\" cube=\"" + (cube.startsWith("[") ? cube : "[" + cube + "]") + "\" catalog=\"beCPG OLAP Schema\" schema=\"beCPG OLAP Schema\">\n" +
 					"  <MDX>" + xmlEscape(mdxQuery) + "</MDX>\n" +
 					"</Query>";
 
