@@ -19,6 +19,7 @@ import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.ScorableEntity;
+import fr.becpg.repo.product.extractor.ReqCtrlListDisplayLabelDecorator;
 import fr.becpg.repo.product.formulation.score.ScoreCalculatingPlugin;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
@@ -42,6 +43,8 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<S
 
 	private ScoreCalculatingPlugin[] scorePlugins;
 
+	private ReqCtrlListDisplayLabelDecorator reqCtrlListDisplayLabelDecorator;
+
 	/**
 	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
 	 *
@@ -49,6 +52,15 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<S
 	 */
 	public void setAlfrescoRepository(AlfrescoRepository<ScorableEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
+	}
+
+	/**
+	 * <p>Setter for the field <code>reqCtrlListDisplayLabelDecorator</code>.</p>
+	 *
+	 * @param reqCtrlListDisplayLabelDecorator a {@link fr.becpg.repo.product.extractor.ReqCtrlListDisplayLabelDecorator} object
+	 */
+	public void setReqCtrlListDisplayLabelDecorator(ReqCtrlListDisplayLabelDecorator reqCtrlListDisplayLabelDecorator) {
+		this.reqCtrlListDisplayLabelDecorator = reqCtrlListDisplayLabelDecorator;
 	}
 
 	/**
@@ -203,6 +215,8 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<S
 				currentJSO.put("RegulatoryCodes", reqNbByRegulatoryCode);
 
 				ctrlArray.add(currentJSO);
+
+				scores.put("regulatoryCodeLabels", buildRegulatoryCodeLabels(reqNbByRegulatoryCode.keySet()));
 			}
 
 			ctrlArray.sort((o1, o2) -> {
@@ -242,6 +256,29 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<S
 		scorableEntity.setEntityScore(scores.toString());
 
 		return true;
+	}
+
+	/**
+	 * Resolves a human-readable label ({@code <country> - <usage>} legal names) for each
+	 * regulatory code, so the notifications panel can display friendly tags while still
+	 * filtering on the raw {@code bcpg:regulatoryCode}. Codes that cannot be resolved are
+	 * omitted, letting the client fall back to the raw code.
+	 *
+	 * @param regulatoryCodes the distinct regulatory codes present in the requirements
+	 * @return a JSON mapping of code to display label
+	 * @throws JSONException if the label map cannot be built
+	 */
+	private JSONObject buildRegulatoryCodeLabels(Set<String> regulatoryCodes) throws JSONException {
+		JSONObject labels = new JSONObject();
+		if (reqCtrlListDisplayLabelDecorator != null) {
+			for (String regulatoryCode : regulatoryCodes) {
+				String label = reqCtrlListDisplayLabelDecorator.buildDisplayLabel(regulatoryCode);
+				if ((label != null) && !label.equals(regulatoryCode)) {
+					labels.put(regulatoryCode, label);
+				}
+			}
+		}
+		return labels;
 	}
 
 	/**
