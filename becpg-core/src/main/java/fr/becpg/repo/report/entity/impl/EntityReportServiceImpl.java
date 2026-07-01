@@ -466,6 +466,16 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 												|| ((selectedReportNodeRef == null) && Boolean.TRUE.equals(isDefault))
 												|| !entityNodeRef.equals(entityNodeTo)) {
 											
+											String reportKindCode = "";
+											if (tplNodeRef != null) {
+												List<String> reportKindProp = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS);
+												if ((reportKindProp != null) && !reportKindProp.isEmpty()) {
+													reportKindCode = reportKindProp.get(0);
+												}
+											}
+											reportParameters.getPreferences().put("reportKindCode", reportKindCode);
+											reportParameters.getPreferences().put("reportParametersJson", reportParameters.toJSONString());
+
 											EntityReportData reportData = extractor.extract(entityNodeRef, reportParameters.getPreferences());
 											
 											auditScope.addCheckpoint(EXTRACT);
@@ -1105,6 +1115,16 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 							auditScope.putAttribute(ReportAuditPlugin.FORMAT, reportFormat);
 							auditScope.putAttribute(ReportAuditPlugin.NAME, documentName);
 
+							String reportKindCode = "";
+							if (tplNodeRef != null) {
+								List<String> reportKindProp = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS);
+								if ((reportKindProp != null) && !reportKindProp.isEmpty()) {
+									reportKindCode = reportKindProp.get(0);
+								}
+							}
+							reportParameters.getPreferences().put("reportKindCode", reportKindCode);
+							reportParameters.getPreferences().put("reportParametersJson", reportParameters.toJSONString());
+
 							EntityReportData reportData = extractor.extract(entityNodeRef, reportParameters.getPreferences());
 							
 							auditScope.addCheckpoint(EXTRACT);
@@ -1250,6 +1270,16 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 				I18NUtil.setLocale(locale);
 				I18NUtil.setContentLocale(locale);
 
+				String reportKindCode = "";
+				if (templateNodeRef != null) {
+					List<String> reportKindProp = (List<String>) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_KINDS);
+					if ((reportKindProp != null) && !reportKindProp.isEmpty()) {
+						reportKindCode = reportKindProp.get(0);
+					}
+				}
+				reportParameters.getPreferences().put("reportKindCode", reportKindCode);
+				reportParameters.getPreferences().put("reportParametersJson", reportParameters.toJSONString());
+
 				EntityReportData reportData = extractor.extract(entityNodeRef, reportParameters.getPreferences());
 				
 				auditScope.addCheckpoint(EXTRACT);
@@ -1389,6 +1419,9 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 			
 			preferences = reportParameters.getPreferences();
 		}
+		
+		preferences.put("reportKindCode", "");
+		preferences.put("reportParametersJson", reportParameters.toJSONString());
 		
 		final Map<String, String> finalPreferences = preferences;
 		final EntityReportParameters finalReportParameters = reportParameters;

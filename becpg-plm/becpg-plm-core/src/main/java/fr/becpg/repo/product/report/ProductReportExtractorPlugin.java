@@ -584,6 +584,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	 * @return a boolean
 	 */
 	private boolean shouldExtractList(boolean isExtractedProduct, DefaultExtractorContext context, QName type, QName dataListQName) {
+		if (context != null && (context.isFilteredParam(dataListQName.getLocalName() + "s") || context.isFilteredParam("bcpg_" + dataListQName.getLocalName() + "s"))) {
+			return false;
+		}
 		if (isExtractedProduct) {
 			return !(context.isNotEmptyPrefs(EntityReportParameters.PARAM_ENTITY_DATALISTS_TO_EXTRACT, null)
 					&& !context.multiPrefsEquals(EntityReportParameters.PARAM_ENTITY_DATALISTS_TO_EXTRACT, null,
@@ -636,18 +639,45 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 
 		if (productData.hasCompoListEl(new EffectiveFilters<>(filter))) {
-			Element compoListElt = dataListsElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName() + "s");
-			addDataListStateAndName(compoListElt, productData.getCompoList().get(0).getParentNodeRef());
-
-			for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(filter))) {
-				if ((dataItem.getProduct() != null) && nodeService.exists(dataItem.getProduct())) {
-					loadCompoListItem(productData.getNodeRef(), null, compoListElt, level,
-							new CurrentLevelQuantities(alfrescoRepository, packagingHelper, productData, dataItem), context);
+			List<CompoListDataItem> compoList = productData.getCompoList(new EffectiveFilters<>(filter));
+			String reportKindCode = context != null ? context.getReportKindCode() : "";
+			boolean hasReportKindAspect = false;
+			if (reportKindCode != null && !reportKindCode.isEmpty()) {
+				for (CompoListDataItem dataItem : compoList) {
+					String[] repKindCodes = getReportKindCodes(dataItem.getNodeRef());
+					if (Arrays.asList(repKindCodes).contains(reportKindCode)) {
+						hasReportKindAspect = true;
+						break;
+					}
 				}
 			}
 
-			loadDynamicCharactList(productData.getCompoListView().getDynamicCharactList(), compoListElt);
-			loadReqCtrlList(context, productData.getReqCtrlList(), compoListElt);
+			List<CompoListDataItem> filteredCompos = new ArrayList<>();
+			for (CompoListDataItem dataItem : compoList) {
+				String[] repKindCodes = getReportKindCodes(dataItem.getNodeRef());
+				if (Arrays.asList(repKindCodes).contains("None")) {
+					continue;
+				}
+				if (hasReportKindAspect && !Arrays.asList(repKindCodes).contains(reportKindCode)) {
+					continue;
+				}
+				filteredCompos.add(dataItem);
+			}
+
+			if (!filteredCompos.isEmpty()) {
+				Element compoListElt = dataListsElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName() + "s");
+				addDataListStateAndName(compoListElt, filteredCompos.get(0).getParentNodeRef());
+
+				for (CompoListDataItem dataItem : filteredCompos) {
+					if ((dataItem.getProduct() != null) && nodeService.exists(dataItem.getProduct())) {
+						loadCompoListItem(productData.getNodeRef(), null, compoListElt, level,
+								new CurrentLevelQuantities(alfrescoRepository, packagingHelper, productData, dataItem), context);
+					}
+				}
+
+				loadDynamicCharactList(productData.getCompoListView().getDynamicCharactList(), compoListElt);
+				loadReqCtrlList(context, productData.getReqCtrlList(), compoListElt);
+			}
 		}
 
 	}
@@ -670,7 +700,32 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			Element processListElt = dataListsElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName() + "s");
 			addDataListStateAndName(processListElt, productData.getProcessList().get(0).getParentNodeRef());
 
-			for (ProcessListDataItem dataItem : productData.getProcessList(new EffectiveFilters<>(filter))) {
+			List<ProcessListDataItem> processList = productData.getProcessList(new EffectiveFilters<>(filter));
+			String reportKindCode = context != null ? context.getReportKindCode() : "";
+			boolean hasReportKindAspect = false;
+			if (reportKindCode != null && !reportKindCode.isEmpty()) {
+				for (ProcessListDataItem dataItem : processList) {
+					String[] repKindCodes = getReportKindCodes(dataItem.getNodeRef());
+					if (Arrays.asList(repKindCodes).contains(reportKindCode)) {
+						hasReportKindAspect = true;
+						break;
+					}
+				}
+			}
+
+			List<ProcessListDataItem> filteredProc = new ArrayList<>();
+			for (ProcessListDataItem dataItem : processList) {
+				String[] repKindCodes = getReportKindCodes(dataItem.getNodeRef());
+				if (Arrays.asList(repKindCodes).contains("None")) {
+					continue;
+				}
+				if (hasReportKindAspect && !Arrays.asList(repKindCodes).contains(reportKindCode)) {
+					continue;
+				}
+				filteredProc.add(dataItem);
+			}
+
+			for (ProcessListDataItem dataItem : filteredProc) {
 				loadProcessListItem(productData.getNodeRef(), new CurrentLevelQuantities(nodeService, alfrescoRepository, productData, dataItem),
 						dataItem, processListElt, 1, context);
 			}
@@ -778,7 +833,32 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			productData.setDefaultVariantPackagingData(defaultVariantPackagingData);
 
-			for (PackagingListDataItem dataItem : productData.getPackagingList(new EffectiveFilters<>(filter))) {
+			List<PackagingListDataItem> pkgList = productData.getPackagingList(new EffectiveFilters<>(filter));
+			String reportKindCode = context != null ? context.getReportKindCode() : "";
+			boolean hasReportKindAspect = false;
+			if (reportKindCode != null && !reportKindCode.isEmpty()) {
+				for (PackagingListDataItem dataItem : pkgList) {
+					String[] repKindCodes = getReportKindCodes(dataItem.getNodeRef());
+					if (Arrays.asList(repKindCodes).contains(reportKindCode)) {
+						hasReportKindAspect = true;
+						break;
+					}
+				}
+			}
+
+			List<PackagingListDataItem> filteredPkgs = new ArrayList<>();
+			for (PackagingListDataItem dataItem : pkgList) {
+				String[] repKindCodes = getReportKindCodes(dataItem.getNodeRef());
+				if (Arrays.asList(repKindCodes).contains("None")) {
+					continue;
+				}
+				if (hasReportKindAspect && !Arrays.asList(repKindCodes).contains(reportKindCode)) {
+					continue;
+				}
+				filteredPkgs.add(dataItem);
+			}
+
+			for (PackagingListDataItem dataItem : filteredPkgs) {
 				loadPackagingItem(productData.getNodeRef(), new CurrentLevelQuantities(alfrescoRepository, productData, dataItem), dataItem,
 						packagingListElt, context, 1, false, false);
 			}
