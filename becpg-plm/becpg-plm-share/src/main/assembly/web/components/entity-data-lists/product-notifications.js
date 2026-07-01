@@ -425,9 +425,10 @@
                                         for ( var type in types[dataTypeName]) {
                                             var value = types[dataTypeName][type];
                                             if(dataTypeName == "RegulatoryCodes"){
+                                                var regulatoryLabel = (scores.regulatoryCodeLabels && scores.regulatoryCodeLabels[type]) ? scores.regulatoryCodeLabels[type] : type;
                                                 html += '<li><span class="req-' + dataTypeName.toString().toLowerCase() + '-' + type.replace(/ /gi,"@").replace(/-/gi,"$")
                                                 + '" ><a class="req-filter tag '
-                                                + instance.id +REQFILTER_EVENTCLASS + '" href="#"><span>' + type + 
+                                                + instance.id +REQFILTER_EVENTCLASS + '" href="#"><span>' + Alfresco.util.encodeHTML(regulatoryLabel) +
                                                 ' ('+ value + ')</span></a></li>';
                                             } else {
                                                 html += '<li><span class="req-' + dataTypeName.toString().toLowerCase() + '-' + type
@@ -534,7 +535,8 @@
                                 var reqType = oRecord.getData("itemData")["prop_bcpg_rclReqType"].value;
                                 var reqDataType = oRecord.getData("itemData")["prop_bcpg_rclDataType"].value;
                                 var regulatoryCode = oRecord.getData("itemData")["prop_bcpg_regulatoryCode"].value;
-                                
+                                var regulatoryLabel = oRecord.getData("displayLabel") ? oRecord.getData("displayLabel") : regulatoryCode;
+
                                 var reqProducts = oRecord.getData("itemData")["prop_bcpg_rclSourcesV2"];
                                 desc += '<div class="rclReq-details">';
                                 if (reqType) {
@@ -545,7 +547,7 @@
                                 var errorLog = oRecord.getData("itemData")["prop_bcpg_rclErrorLog"] ? oRecord.getData("itemData")["prop_bcpg_rclErrorLog"].value : null;
                                 if (regulatoryCode && displayMsg) {
                                     desc += '      <div class="rclReq-regulatoryCode">'
-                                        + Alfresco.util.encodeHTML(regulatoryCode) + '</div>';
+                                        + Alfresco.util.encodeHTML(regulatoryLabel) + '</div>';
                                     desc += '      <div class="rclReq-title">'
                                         + Alfresco.util.encodeHTML(displayMsg.replace(regulatoryCode,"")) + '</div>';
                                 } else {

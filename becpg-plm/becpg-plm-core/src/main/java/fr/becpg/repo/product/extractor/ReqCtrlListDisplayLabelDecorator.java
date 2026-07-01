@@ -58,8 +58,24 @@ public class ReqCtrlListDisplayLabelDecorator implements DataListItemDecorator {
 	@Override
 	public Map<String, Object> decorate(NodeRef nodeRef) {
 		String regulatoryCode = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_REGULATORY_CODE);
-		if (regulatoryCode == null || regulatoryCode.isBlank()) {
+		String displayLabel = buildDisplayLabel(regulatoryCode);
+		if (displayLabel == null) {
 			return Collections.emptyMap();
+		}
+		return Map.of(DISPLAY_LABEL, displayLabel);
+	}
+
+	/**
+	 * <p>Builds the human-readable label for a stored {@code bcpg:regulatoryCode}
+	 * ({@code <country> - <usage>}) by resolving the legal names of the referenced
+	 * country and usage. Reusable outside datalist extraction (e.g. score summaries).</p>
+	 *
+	 * @param regulatoryCode the stored regulatory code, possibly null
+	 * @return the display label, or null when the code is null/blank
+	 */
+	public String buildDisplayLabel(String regulatoryCode) {
+		if (regulatoryCode == null || regulatoryCode.isBlank()) {
+			return null;
 		}
 
 		int separator = regulatoryCode.indexOf(CODE_SEPARATOR);
@@ -69,8 +85,7 @@ public class ReqCtrlListDisplayLabelDecorator implements DataListItemDecorator {
 		String countryLabel = resolveLegalName(countryCode);
 		String usageLabel = resolveLegalName(usageCode);
 
-		String displayLabel = usageLabel.isEmpty() ? countryLabel : countryLabel + CODE_SEPARATOR + usageLabel;
-		return Map.of(DISPLAY_LABEL, displayLabel);
+		return usageLabel.isEmpty() ? countryLabel : countryLabel + CODE_SEPARATOR + usageLabel;
 	}
 
 	/**
