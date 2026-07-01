@@ -20,43 +20,33 @@
 }
 
 .datalist-toolbar .rapidLink  span.finishedProduct {
-	background: url(../images/filetypes/generic-finishedProduct-16.png)
-		no-repeat 2px 50%;
+	background: var(--icon-finishedProduct-16) no-repeat 2px 50%;
 }
 
 .datalist-toolbar .rapidLink  span.rawMaterial {
-	background: url(../images/filetypes/generic-rawMaterial-16.png)
-		no-repeat 2px 50%;
+	background: var(--icon-rawMaterial-16) no-repeat 2px 50%;
 }
 
 .datalist-toolbar .rapidLink  span.semiFinishedProduct {
-	background: url(../images/filetypes/generic-semiFinishedProduct-16.png)
-		no-repeat 2px 50%;
+	background: var(--icon-semiFinishedProduct-16) no-repeat 2px 50%;
 }
 
 .datalist-toolbar .rapidLink  span.localSemiFinishedProduct {
-	background:
-		url(../images/filetypes/generic-localSemiFinishedProduct-16.png)
-		no-repeat 2px 50%;
+	background: var(--icon-localSemiFinishedProduct-16) no-repeat 2px 50%;
 }
 
 .datalist-toolbar .rapidLink  span.logisticUnit {
-	background:
-		url(../images/filetypes/generic-logisticUnit-16.png)
-		no-repeat 2px 50%;
+	background: var(--icon-logisticUnit-16) no-repeat 2px 50%;
 }
 
 .datalist-toolbar .rapidLink  span.packagingMaterial {
-	background: url(../images/filetypes/generic-packagingMaterial-16.png)
-		no-repeat 2px 50%;
+	background: var(--icon-packagingMaterial-16) no-repeat 2px 50%;
 }
 
 .datalist-toolbar .rapidLink  span.packagingKit {
-	background: url(../images/filetypes/generic-packagingKit-16.png)
-		no-repeat 2px 50%;
+	background: var(--icon-packagingKit-16) no-repeat 2px 50%;
 }
 
 .datalist-toolbar .rapidLink  span.resourceProduct {
-	background: url(../images/filetypes/generic-resourceProduct-16.png)
-		no-repeat 2px 50%;
+	background: var(--icon-resourceProduct-16) no-repeat 2px 50%;
 }
