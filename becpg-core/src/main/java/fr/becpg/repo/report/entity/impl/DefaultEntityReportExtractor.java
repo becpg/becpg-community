@@ -419,22 +419,25 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			}
 		}
 
-		NodeRef reportParamsFolderNodeRef = getFromCacheListFolderNodeRef(RepoConsts.PATH_REPORT_PARAMS);
-		if (reportParamsFolderNodeRef != null) {
-			Map<String, String> valideCode = new HashMap<>();
-			List<ChildAssociationRef> assocList = nodeService.getChildAssocs(reportParamsFolderNodeRef);
-			for (ChildAssociationRef val : assocList) {
-				String paramCode = (String) nodeService.getProperty(val.getChildRef(), BeCPGModel.PROP_LV_CODE);
-				String paramValue = (String) nodeService.getProperty(val.getChildRef(), BeCPGModel.PROP_LV_VALUE);
-				if (isValidReportParams(paramCode)) {
-					valideCode.put(paramValue, paramCode);
+		Map<String, String> valideCode = beCPGCacheService.getFromCache("fr.becpg.repo.report.entity.impl.EntityReportServiceImpl", "reportParamsValideCode", () -> {
+			NodeRef reportParamsFolderNodeRef = getFromCacheListFolderNodeRef(RepoConsts.PATH_REPORT_PARAMS);
+			Map<String, String> map = new HashMap<>();
+			if (reportParamsFolderNodeRef != null) {
+				List<ChildAssociationRef> assocList = nodeService.getChildAssocs(reportParamsFolderNodeRef);
+				for (ChildAssociationRef val : assocList) {
+					String paramCode = (String) nodeService.getProperty(val.getChildRef(), BeCPGModel.PROP_LV_CODE);
+					String paramValue = (String) nodeService.getProperty(val.getChildRef(), BeCPGModel.PROP_LV_VALUE);
+					if (isValidReportParams(paramCode)) {
+						map.put(paramValue, paramCode);
+					}
 				}
 			}
+			return map;
+		});
 
-			if (!valideCode.isEmpty()) {
-				List<String> filtered = getFilteredParams(valideCode, entityParams, reportKindCode);
-				context.getFilteredParams().addAll(filtered);
-			}
+		if (valideCode != null && !valideCode.isEmpty()) {
+			List<String> filtered = getFilteredParams(valideCode, entityParams, reportKindCode);
+			context.getFilteredParams().addAll(filtered);
 		}
 	}
 
@@ -1119,6 +1122,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 */
 	protected void loadAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData, List<QName> hiddenAttributes, DefaultExtractorContext context) {
 
+		QName nodeType = nodeService.getType(nodeRef);
 		// properties
 		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
 
@@ -1147,7 +1151,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		for (Map.Entry<QName, Serializable> property : properties.entrySet()) {
 
 			if (ContentModel.PROP_CONTENT.equals(property.getKey())
-					&& entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)
+					&& entityDictionaryService.isSubClass(nodeType, BeCPGModel.TYPE_ENTITYLIST_ITEM)
 					&& context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_DATALIST_IMAGE, Boolean.FALSE)) {
 				String imgId = String.format(DATALIST_IMG_ID, nodeRef.getId());
 				extractImage(nodeRef, imgId, nodeElt, context);
@@ -1572,13 +1576,19 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		List<NodeRef> nodeRefs = associationService.getTargetAssocs(entityNodeRef, assocDef.getName());
 
 		for (NodeRef nodeRef : nodeRefs) {
-			if (!context.getExtractedNodes().contains(nodeRef)) {
+			String cacheKey = "targetAssoc_" + nodeRef.toString() + "_" + extractDataList;
+			Element cached = context != null ? context.getCachedProductData(cacheKey) : null;
+			if (cached != null) {
+				assocElt.add((Element) cached.clone());
+				continue;
+			}
+
+			if (context != null && !context.getExtractedNodes().contains(nodeRef)) {
 
 				context.getExtractedNodes().add(nodeRef);
 				QName qName = nodeService.getType(nodeRef);
 
-				Element nodeElt = assocElt.addElement(qName.getLocalName());
-
+				Element nodeElt = org.dom4j.DocumentHelper.createElement(qName.getLocalName());
 				appendPrefix(qName, nodeElt);
 
 				EntityReportExtractorPlugin extractor = entityReportService.retrieveExtractor(nodeRef);
@@ -1601,6 +1611,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 						loadDataLists(nodeRef, dataListsElt, new DefaultExtractorContext(context.getPreferences(), context.getRootNodeRef()));
 					}
 				}
+				assocElt.add(nodeElt);
+				context.cacheProductData(cacheKey, nodeElt);
 
 				context.getExtractedNodes().remove(nodeRef);
 			}

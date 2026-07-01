@@ -2346,14 +2346,41 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	protected void loadProductData(NodeRef entityNodeRef, NodeRef partProductNodeRef, Element dataListItemElt, DefaultExtractorContext context,
 			CostType costType) {
 		if (partProductNodeRef != null) {
+			String cacheKey = "prodData_" + partProductNodeRef.toString() + "_" + (costType != null ? costType.name() : "null");
+			Element cached = context != null ? context.getCachedProductData(cacheKey) : null;
+			if (cached != null) {
+				for (Object attr : cached.attributes()) {
+					org.dom4j.Attribute a = (org.dom4j.Attribute) attr;
+					dataListItemElt.addAttribute(a.getQName(), a.getValue());
+				}
+				for (Object child : cached.elements()) {
+					org.dom4j.Element c = (org.dom4j.Element) child;
+					dataListItemElt.add((org.dom4j.Element) c.clone());
+				}
+				return;
+			}
 
+			Element tempElt = org.dom4j.DocumentHelper.createElement(dataListItemElt.getQName());
 			context.doInDataListContext(() -> {
-				loadNodeAttributes(partProductNodeRef, dataListItemElt, false, context);
+				loadNodeAttributes(partProductNodeRef, tempElt, false, context);
 			});
-			extractCost(entityNodeRef, partProductNodeRef, dataListItemElt, costType, context);
+			extractCost(entityNodeRef, partProductNodeRef, tempElt, costType, context);
 
-			dataListItemElt.addAttribute(ATTR_ITEM_TYPE, entityDictionaryService.toPrefixString(nodeService.getType(partProductNodeRef)));
-			dataListItemElt.addAttribute(ATTR_ASPECTS, extractAspects(partProductNodeRef));
+			tempElt.addAttribute(ATTR_ITEM_TYPE, entityDictionaryService.toPrefixString(nodeService.getType(partProductNodeRef)));
+			tempElt.addAttribute(ATTR_ASPECTS, extractAspects(partProductNodeRef));
+
+			for (Object attr : tempElt.attributes()) {
+				org.dom4j.Attribute a = (org.dom4j.Attribute) attr;
+				dataListItemElt.addAttribute(a.getQName(), a.getValue());
+			}
+			for (Object child : tempElt.elements()) {
+				org.dom4j.Element c = (org.dom4j.Element) child;
+				dataListItemElt.add((org.dom4j.Element) c.clone());
+			}
+
+			if (context != null) {
+				context.cacheProductData(cacheKey, tempElt);
+			}
 		}
 	}
 
