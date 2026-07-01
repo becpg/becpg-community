@@ -299,6 +299,10 @@
 		<property name="moduleService" ref="moduleService" />
 	</bean>
 
+	<bean id="webscript.fr.becpg.remote.ai.token.get" class="fr.becpg.repo.web.scripts.remote.ai.AiTokenWebScript" parent="webscript">
+		<property name="beCPGTicketService" ref="beCPGTicketService" />
+	</bean>
+
 	<bean id="webscript.fr.becpg.remote.ai.dictionary.get" class="fr.becpg.repo.web.scripts.remote.ai.AiDictionaryWebScript" parent="webscript">
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
