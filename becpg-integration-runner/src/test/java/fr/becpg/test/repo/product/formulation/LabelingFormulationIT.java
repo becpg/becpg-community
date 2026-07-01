@@ -955,6 +955,29 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		checkILL(finishedProductNodeRef, labelingRuleList,
 				"epaississant french : ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing1 french 8,3%", Locale.FRENCH);
 
+		// #32476 The forced value is always a percentage (0-100), predictable regardless of magnitude: 1 -> 1%, 2 -> 2%
+		labelingRuleList = new ArrayList<>();
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("%").withFormula("#.#%|HALF_DOWN").withLabelingRuleType(LabelingRuleType.ShowPerc));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Force one").withFormula("1")
+				.withLabelingRuleType(LabelingRuleType.ForcePercentage).withComponents(Collections.singletonList(ing2)));
+
+		checkILL(finishedProductNodeRef, labelingRuleList,
+				"epaississant french : ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing2 french 1%, ing1 french 8,3%", Locale.FRENCH);
+
+		labelingRuleList = new ArrayList<>();
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("%").withFormula("#.#%|HALF_DOWN").withLabelingRuleType(LabelingRuleType.ShowPerc));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Force two").withFormula("2")
+				.withLabelingRuleType(LabelingRuleType.ForcePercentage).withComponents(Collections.singletonList(ing2)));
+
+		checkILL(finishedProductNodeRef, labelingRuleList,
+				"epaississant french : ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing2 french 2%, ing1 french 8,3%", Locale.FRENCH);
+
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList
 				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));

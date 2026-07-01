@@ -1436,11 +1436,17 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
-	 * <p>getForcedPercentage.</p>
+	 * <p>Evaluates the ForcePercentage rule for the given component.</p>
+	 *
+	 * The rule formula always works in percentage units (0-100): the {@code #qty} SpEL
+	 * variable exposes the original computed percentage and the formula must return a
+	 * percentage. The result is converted back to a ratio (0-1) for internal use. There is
+	 * no magnitude-based heuristic, so a computed value keeps a predictable meaning
+	 * (e.g. {@code 1} yields 1%, {@code 50} yields 50%).
 	 *
 	 * @param lblComponent a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
-	 * @param qty a {@link java.lang.Double} object
-	 * @return a {@link java.lang.Double} object
+	 * @param qty the original ratio (0-1) for the component
+	 * @return the forced ratio (0-1), or the original {@code qty} when no rule applies
 	 */
 	private Double getForcedPercentage(LabelingComponent lblComponent, Double qty) {
 		ForcePercentageRule forcePercentageRule = getSelectedForcePercentageRule(lblComponent);
@@ -1451,17 +1457,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		try {
 			StandardEvaluationContext dataContext = formulaService.createCustomSpelContext(entity, this, false);
 			dataContext.setVariable("lblComponent", lblComponent);
-			dataContext.setVariable("qty", qty);
+			dataContext.setVariable("qty", qty * 100d);
 
 			Expression exp = formulaService.parseExpression(SpelHelper.formatFormula(forcePercentageRule.getFormula()));
 			Number forcedPercentage = exp.getValue(dataContext, Number.class);
 
 			if (forcedPercentage != null) {
-				Double forcedPercentageValue = forcedPercentage.doubleValue();
-				if (forcedPercentageValue > 1d) {
-					return forcedPercentageValue / 100d;
-				}
-				return forcedPercentageValue;
+				return forcedPercentage.doubleValue() / 100d;
 			}
 		} catch (Exception e) {
 			getEntity().getReqCtrlList()
