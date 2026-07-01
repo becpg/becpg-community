@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.alfresco.service.cmr.dictionary.AspectDefinition;
+import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -378,7 +380,7 @@ public class WUsedExtractor extends MultiLevelExtractor {
 												dateRange = false;
 											}
 											AssociationCriteriaFilter filter = new AssociationCriteriaFilter(qName, criteriaValue, mode);
-											filter.setEntityFilter(true);
+											filter.setEntityFilter(!isListItemProperty(dataListFilter.getDataType(), qName));
 											filter.setDateRange(dateRange);
 											criteriaFilters.add(filter);
 										}
@@ -449,6 +451,38 @@ public class WUsedExtractor extends MultiLevelExtractor {
 		}
 		QName dataType = propertyDef.getDataType().getName();
 		return DataTypeDefinition.DATE.equals(dataType) || DataTypeDefinition.DATETIME.equals(dataType);
+	}
+
+	/**
+	 * <p>Indicates whether a property is carried by the data list item type (including its mandatory
+	 * aspects) rather than by the where-used entity.</p>
+	 *
+	 * <p>In the WUsed grid, effectivity dates ({@code bcpg:startEffectivity} / {@code bcpg:endEffectivity},
+	 * from the mandatory {@code bcpg:effectivityAspect} of {@code bcpg:compoList}) belong to the composition
+	 * line, not to the using product. Such filters must therefore target the list item node, not the entity
+	 * node, otherwise they compare against the entity's own (often absent) effectivity and drop every row.</p>
+	 *
+	 * @param itemType the data list item type (e.g. {@code bcpg:compoList})
+	 * @param propQName the filtered property
+	 * @return {@code true} if the property is defined on the item type or one of its mandatory aspects
+	 */
+	private boolean isListItemProperty(QName itemType, QName propQName) {
+		if (itemType == null) {
+			return false;
+		}
+		ClassDefinition classDef = entityDictionaryService.getClass(itemType);
+		if (classDef == null) {
+			return false;
+		}
+		if (classDef.getProperties().containsKey(propQName)) {
+			return true;
+		}
+		for (AspectDefinition aspectDef : classDef.getDefaultAspects(true)) {
+			if (aspectDef.getProperties().containsKey(propQName)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
