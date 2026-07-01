@@ -36,6 +36,7 @@ import java.util.Optional;
 import org.alfresco.model.ContentModel;
 import org.alfresco.query.PagingResults;
 import org.alfresco.repo.rule.RuleModel;
+import org.alfresco.repo.security.permissions.AccessDeniedException;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
@@ -617,14 +618,29 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 					}
 					for (NodeRef childRef : assocRefs) {
 						JSONObject jsonAssocNode = new JSONObject();
+
+						// An association target can legitimately be unreadable for the current user (permissions
+						// / broken inheritance). This is a normal situation, so instead of failing the whole
+						// entity export with an AccessDeniedException, keep the reference but mark it as
+						// inaccessible ("#AccessDenied", mirroring the UI) so consumers (e.g. the AI) can handle it.
+						try {
+							visitNode(childRef, jsonAssocNode, JsonVisitNodeType.ASSOC, nodeType, context);
+						} catch (AccessDeniedException e) {
+							if (logger.isDebugEnabled()) {
+								logger.debug("Association target " + childRef + " of " + nodeRef + " (assoc "
+										+ assocDef.getName() + ") not accessible for current user, marking as #AccessDenied: "
+										+ e.getMessage());
+							}
+							jsonAssocNode = new JSONObject();
+							jsonAssocNode.put(RemoteEntityService.ATTR_ID, childRef.getId());
+							jsonAssocNode.put(entityDictionaryService.toPrefixString(ContentModel.PROP_NAME), "#AccessDenied");
+						}
+
 						if (assocDef.isTargetMany()) {
 							jsonAssocs.put(jsonAssocNode);
 						} else {
 							entity.put(entityDictionaryService.toPrefixString(nodeType), jsonAssocNode);
 						}
-
-						visitNode(childRef, jsonAssocNode, JsonVisitNodeType.ASSOC, nodeType, context);
-
 					}
 				}
 
