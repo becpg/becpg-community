@@ -18,6 +18,11 @@
 package fr.becpg.repo.entity.datalist.impl;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -371,10 +376,9 @@ public class WUsedExtractor extends MultiLevelExtractor {
 													criteriaValue = cropDateRangeValue(criteriaValue);
 												}
 											} else if (isDateProperty(propertyDef)) {
-												String day = cropDateBound(criteriaValue);
-												criteriaValue = day + "|" + day;
+												criteriaValue = buildLocalDayUtcRange(cropDateBound(criteriaValue));
 												mode = AssociationCriteriaFilterMode.RANGE;
-												dateRange = true;
+												dateRange = false;
 											} else {
 												mode = AssociationCriteriaFilterMode.EQUALS;
 												dateRange = false;
@@ -434,13 +438,39 @@ public class WUsedExtractor extends MultiLevelExtractor {
 		return ((bound != null) && (bound.length() > 10)) ? bound.substring(0, 10) : bound;
 	}
 
+	/** ISO8601 UTC formatter matching the datetime strings persisted by Alfresco ({@code yyyy-MM-dd'T'HH:mm:ss.SSS'Z'}). */
+	private static final DateTimeFormatter UTC_ISO8601 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(ZoneOffset.UTC);
+
+	/**
+	 * <p>Turns a single local day ({@code YYYY-MM-DD}, as sent by the WUsed date picker) into a packed
+	 * {@code from|to} range of UTC datetime bounds covering that whole day in the server timezone.</p>
+	 *
+	 * <p>Effectivity dates are {@code d:datetime} persisted in UTC (e.g. midnight of 24/06/2026 in
+	 * {@code Europe/Paris} is stored {@code 2026-06-23T22:00:00.000Z}). Cropping the stored value to its
+	 * date part therefore yields the previous day for any midnight-local date, so a filter on the displayed
+	 * day matched nothing. Comparing the full stored datetime against the day's UTC bounds instead is
+	 * timezone-correct: for a filter day {@code D} it selects every datetime falling within {@code D} in the
+	 * server timezone.</p>
+	 *
+	 * @param isoDate the local day in {@code YYYY-MM-DD} form
+	 * @return the packed {@code from|to} range of UTC ISO8601 bounds for that day
+	 */
+	private String buildLocalDayUtcRange(String isoDate) {
+		LocalDate day = LocalDate.parse(isoDate);
+		ZoneId zone = ZoneId.systemDefault();
+		String from = UTC_ISO8601.format(day.atStartOfDay(zone).toInstant());
+		String to = UTC_ISO8601.format(day.atTime(LocalTime.MAX).atZone(zone).toInstant());
+		return from + "|" + to;
+	}
+
 	/**
 	 * <p>Indicates whether a property is a {@code d:date} or {@code d:datetime}.</p>
 	 *
 	 * <p>The WUsed filter form exposes effectivity dates ({@code bcpg:startEffectivity} /
 	 * {@code bcpg:endEffectivity}) as single date pickers, which submit the property key without a
-	 * {@code -date-range} suffix and a single date value. Such a value must be compared on its date
-	 * part, not matched exactly against the full ISO8601 datetime stored in the database.</p>
+	 * {@code -date-range} suffix and a single date value. Such a value must be matched against the
+	 * whole day (see {@link #buildLocalDayUtcRange(String)}), not compared exactly against the full
+	 * ISO8601 datetime stored in the database.</p>
 	 *
 	 * @param propertyDef the property definition to test
 	 * @return {@code true} if the property holds a date or datetime value
