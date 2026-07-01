@@ -56,19 +56,21 @@ import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dom4j.Branch;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.audit.helper.StopWatchSupport;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
@@ -334,37 +336,34 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	/** {@inheritDoc} */
 	@Override
 	public EntityReportData extract(NodeRef entityNodeRef, Map<String, String> preferences) {
+		return StopWatchSupport.build().scopeName("extract_" + entityNodeRef).logger(logger).run(() -> {
+			DefaultExtractorContext context = new DefaultExtractorContext(preferences, entityNodeRef);
 
-		StopWatch watch = null;
-		if (logger.isDebugEnabled()) {
-			watch = new StopWatch();
-			watch.start();
-		}
+			Document document = DocumentHelper.createDocument();
+			Element entityElt = document.addElement(TAG_ENTITY);
 
-		DefaultExtractorContext context = new DefaultExtractorContext(preferences, entityNodeRef);
+			Element prefs = entityElt.addElement(TAG_PREFERENCES);
 
-		Document document = DocumentHelper.createDocument();
-		Element entityElt = document.addElement(TAG_ENTITY);
+			for (Map.Entry<String, String> perfEntry : preferences.entrySet()) {
+				Element pref = prefs.addElement(TAG_PREFERENCE);
+				pref.addAttribute("key", perfEntry.getKey());
+				pref.addAttribute("value", perfEntry.getValue());
+			}
 
-		Element prefs = entityElt.addElement(TAG_PREFERENCES);
+			extractEntity(entityNodeRef, entityElt, context);
 
-		for (Map.Entry<String, String> perfEntry : preferences.entrySet()) {
-			Element pref = prefs.addElement(TAG_PREFERENCE);
-			pref.addAttribute("key", perfEntry.getKey());
-			pref.addAttribute("value", perfEntry.getValue());
-		}
+			context.getReportData().setXmlDataSource(entityElt);
 
-		extractEntity(entityNodeRef, entityElt, context);
+			if (logger.isDebugEnabled()) {
+				int nodeCount = countNodes(entityElt);
+				String xmlStr = entityElt.asXML();
+				int xmlSize = xmlStr == null ? 0 : xmlStr.getBytes(java.nio.charset.StandardCharsets.UTF_8).length;
+				logger.debug("Extraction XML stats - Node count: " + nodeCount + ", Size: " + xmlSize + " bytes");
+				StopWatchSupport.addCheckpoint("xml_stats_nodes_" + nodeCount + "_size_" + xmlSize);
+			}
 
-		context.getReportData().setXmlDataSource(entityElt);
-
-		if (logger.isDebugEnabled() && (watch != null)) {
-			watch.stop();
-			logger.debug("extract datasource in  " + watch.getTotalTimeSeconds() + " seconds for node " + entityNodeRef);
-		}
-
-		return context.getReportData();
-
+			return context.getReportData();
+		});
 	}
 
 	/**
@@ -737,6 +736,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				QName dataListQName = QName.createQName((String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE),
 						namespaceService);
 
+				StopWatchSupport.addCheckpoint("start_datalist_" + dataListQName.getLocalName());
+
 				Class<RepositoryEntity> entityClass = repositoryEntityDefReader.getEntityClass(dataListQName);
 				if (entityClass != null) {
 					List<BeCPGDataObject> dataListItems = alfrescoRepository.loadDataList(listNodeRef, dataListQName);
@@ -760,6 +761,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 						loadDataList(dataListsElt, listNodeRef, dataListQName, context);
 					}
 				}
+
+				logDatalistStats(dataListsElt, dataListQName.getLocalName() + "s", dataListQName.getLocalName());
 			}
 		}
 	}
@@ -1509,6 +1512,33 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					extractImage(creatorNodeRef, avatarNodeRef, AVATAR_IMG_ID, imgsElt, context, null);
 				}
 			}
+		}
+	}
+
+	protected int countNodes(Node node) {
+		if (node instanceof Branch branch) {
+			int count = 1;
+			for (int i = 0; i < branch.nodeCount(); i++) {
+				count += countNodes(branch.node(i));
+			}
+			return count;
+		}
+		return 1;
+	}
+
+	protected void logDatalistStats(Element dataListsElt, String nameSuffix, String key) {
+		if (logger.isDebugEnabled()) {
+			Element addedElt = dataListsElt.element(nameSuffix);
+			if (addedElt != null) {
+				int dlNodes = countNodes(addedElt);
+				String dlXml = addedElt.asXML();
+				int dlSize = dlXml == null ? 0 : dlXml.getBytes(java.nio.charset.StandardCharsets.UTF_8).length;
+				StopWatchSupport.addCheckpoint("end_datalist_" + key + "_nodes_" + dlNodes + "_size_" + dlSize);
+			} else {
+				StopWatchSupport.addCheckpoint("end_datalist_" + key + "_empty");
+			}
+		} else {
+			StopWatchSupport.addCheckpoint("end_datalist_" + key);
 		}
 	}
 
