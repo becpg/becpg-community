@@ -307,6 +307,11 @@ public class BeCPGAIMSFilter implements Filter
                         OAuth2AccessToken oAuth2AccessToken = oAuth2LoginAuthenticationToken.getAccessToken();
                         if (isAuthTokenExpired(oAuth2AccessToken.getExpiresAt()))
                         {
+                            // The token refresh below reaches Surf services (connector, authorized-client store)
+                            // that expect a RequestContext bound to the thread. Unlike the initial login path,
+                            // the AIMS filter runs before Share establishes it, so bind it here to avoid a
+                            // NullPointerException that would otherwise invalidate the session on every refresh.
+                            this.initRequestContext(request, response);
                             refreshToken(attribute, session);
                         }
                     }
