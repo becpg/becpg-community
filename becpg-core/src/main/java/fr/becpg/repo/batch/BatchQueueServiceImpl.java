@@ -561,8 +561,13 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 								if (logger.isInfoEnabled()) {
 									logger.info("Cancelled paused batch: " + nextCommand.getBatchId());
 								}
-							} else if (logger.isInfoEnabled()) {
-								logger.info("Resume batch: " + nextCommand.getBatchId());
+							} else {
+								if (logger.isInfoEnabled()) {
+									logger.info("Resume batch: " + nextCommand.getBatchId());
+								}
+								if (!runningCommands.contains(nextCommand)) {
+									runningCommands.add(nextCommand);
+								}
 							}
 						}
 					}
