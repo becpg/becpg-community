@@ -10,6 +10,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContextCallBack;
+import org.dom4j.Element;
 
 /**
  * <p>DefaultExtractorContext class.</p>
@@ -263,6 +264,19 @@ public class DefaultExtractorContext {
 
 	public boolean isFilteredParam(String name) {
 		return filteredParams != null && filteredParams.contains(name);
+	}
+
+	private Map<String, Element> productDataCache = new HashMap<>();
+
+	public Element getCachedProductData(String cacheKey) {
+		Element cached = productDataCache.get(cacheKey);
+		return cached != null ? (Element) cached.clone() : null;
+	}
+
+	public void cacheProductData(String cacheKey, Element elt) {
+		if (elt != null) {
+			productDataCache.put(cacheKey, (Element) elt.clone());
+		}
 	}
 
 }

@@ -641,19 +641,23 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 			}
 			
 			// Filter XML report by parameters
-			NodeRef reportParamsFolderNodRef = getFromCacheListFolderNodeRef(RepoConsts.PATH_REPORT_PARAMS);
-			Map<String, String> valideCode = new HashMap<>();
-			List<ChildAssociationRef> assocList = nodeService.getChildAssocs(reportParamsFolderNodRef);
-			assocList.forEach(val -> {
-				String paramCode = (String) nodeService.getProperty(val.getChildRef(), BeCPGModel.PROP_LV_CODE);
-				String paramValue = (String) nodeService.getProperty(val.getChildRef(), BeCPGModel.PROP_LV_VALUE);
-				if (isValidReportParams(paramCode)) {
-					valideCode.put(paramValue, paramCode);
+			Map<String, String> valideCode = beCPGCacheService.getFromCache("fr.becpg.repo.report.entity.impl.EntityReportServiceImpl", "reportParamsValideCode", () -> {
+				NodeRef reportParamsFolderNodRef = getFromCacheListFolderNodeRef(RepoConsts.PATH_REPORT_PARAMS);
+				Map<String, String> map = new HashMap<>();
+				if (reportParamsFolderNodRef != null) {
+					List<ChildAssociationRef> assocList = nodeService.getChildAssocs(reportParamsFolderNodRef);
+					for (ChildAssociationRef val : assocList) {
+						String paramCode = (String) nodeService.getProperty(val.getChildRef(), BeCPGModel.PROP_LV_CODE);
+						String paramValue = (String) nodeService.getProperty(val.getChildRef(), BeCPGModel.PROP_LV_VALUE);
+						if (isValidReportParams(paramCode)) {
+							map.put(paramValue, paramCode);
+						}
+					}
 				}
-				
+				return map;
 			});
 			
-			if (valideCode.size() > 0) {
+			if (valideCode != null && valideCode.size() > 0) {
 				filterByParams(dataXml,
 						getFilteredParams(valideCode, Arrays.asList(entityParams != null ? entityParams : new String[0]), reportKindCode));
 			}
