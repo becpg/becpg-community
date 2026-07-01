@@ -30,6 +30,8 @@ public class DefaultExtractorContext {
 
 	private boolean isInfiniteLoop = false;
 	private NodeRef rootNodeRef;
+	private Set<String> filteredParams = new HashSet<>();
+	private String reportKindCode = "";
 
 	/**
 	 * <p>Constructor for DefaultExtractorContext.</p>
@@ -238,6 +240,29 @@ public class DefaultExtractorContext {
 	 */
 	public boolean isInfiniteLoop() {
 		return isInfiniteLoop;
+	}
+
+	public Set<String> getFilteredParams() {
+		return filteredParams;
+	}
+
+	public void setFilteredParams(Set<String> filteredParams) {
+		this.filteredParams = filteredParams;
+	}
+
+	public String getReportKindCode() {
+		if (reportKindCode == null || reportKindCode.isEmpty()) {
+			reportKindCode = preferences != null ? preferences.getOrDefault("reportKindCode", "") : "";
+		}
+		return reportKindCode;
+	}
+
+	public void setReportKindCode(String reportKindCode) {
+		this.reportKindCode = reportKindCode;
+	}
+
+	public boolean isFilteredParam(String name) {
+		return filteredParams != null && filteredParams.contains(name);
 	}
 
 }
