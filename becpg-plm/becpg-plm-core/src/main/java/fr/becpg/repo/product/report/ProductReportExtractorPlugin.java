@@ -14,6 +14,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import fr.becpg.repo.audit.helper.StopWatchSupport;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.query.PagingRequest;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
@@ -339,6 +341,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					
 					String dataListName = (String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME);
 
+					StopWatchSupport.addCheckpoint("start_datalist_" + dataListQName.getLocalName());
+
 					if ((datalists != null) && datalists.containsKey(dataListQName)
 							&& shouldExtractList(isExtractedProduct, context, type, dataListQName)) {
 
@@ -378,6 +382,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 							loadDataList(dataListsElt, listNodeRef, dataListQName, context);
 						}
 					}
+
+					logDatalistStats(dataListsElt, dataListQName.getLocalName() + "s", dataListQName.getLocalName());
 				}
 			}
 		}
@@ -385,26 +391,37 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		if (productData != null) {
 			// lists extracted on entity and raw materials
 			if (shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_ORGANOLIST)) {
+				StopWatchSupport.addCheckpoint("start_datalist_organo");
 				loadOrganoLists(productData, dataListsElt, context);
+				logDatalistStats(dataListsElt, PLMModel.TYPE_ORGANOLIST.getLocalName() + "s", "organo");
 			}
 
 			if (shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_LABELCLAIMLIST)) {
+				StopWatchSupport.addCheckpoint("start_datalist_labelclaim");
 				loadLabelCLaimLists(productData, dataListsElt, context);
+				logDatalistStats(dataListsElt, PLMModel.TYPE_LABELCLAIMLIST.getLocalName() + "s", "labelclaim");
 			}
 
 			if (shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_INGLIST)) {
+				StopWatchSupport.addCheckpoint("start_datalist_ing");
 				loadIngLists(productData, dataListsElt, context);
+				logDatalistStats(dataListsElt, PLMModel.TYPE_INGLIST.getLocalName() + "s", "ing");
 			}
 
 			if (shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_NUTLIST)) {
+				StopWatchSupport.addCheckpoint("start_datalist_nut");
 				loadNutLists(productData, dataListsElt, context);
+				logDatalistStats(dataListsElt, PLMModel.TYPE_NUTLIST.getLocalName() + "s", "nut");
 			}
 			
 			if (!isExtractedProduct && shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_DYNAMICCHARACTLIST)) {
+				StopWatchSupport.addCheckpoint("start_datalist_dyncharact");
 				loadDynamicCharactList(productData.getCompoListView().getDynamicCharactList(), dataListsElt);
+				logDatalistStats(dataListsElt, PLMModel.TYPE_DYNAMICCHARACTLIST.getLocalName() + "s", "dyncharact");
 			}
 
 			if (shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_MICROBIOLIST)) {
+				StopWatchSupport.addCheckpoint("start_datalist_microbio");
 				// MicrobioList
 				List<MicrobioListDataItem> microbioList = null;
 				NodeRef productMicrobioCriteriaNodeRef = null;
@@ -434,50 +451,56 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						loadDataListItemAttributes(dataItem, nodeElt, context);
 					}
 				}
+				logDatalistStats(dataListsElt, PLMModel.TYPE_MICROBIOLIST.getLocalName() + "s", "microbio");
 			}
 
 			if (shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_ALLERGENLIST)) {
-
+				StopWatchSupport.addCheckpoint("start_datalist_allergen");
 				loadAllergenLists(productData, dataListsElt, context);
+				logDatalistStats(dataListsElt, PLMModel.TYPE_ALLERGENLIST.getLocalName() + "s", "allergen");
 			}
 
 			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel())
 					|| shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_COMPOLIST)) {
+				StopWatchSupport.addCheckpoint("start_datalist_compo");
 				loadCompoList(productData, dataListsElt, context, level);
+				logDatalistStats(dataListsElt, PLMModel.TYPE_COMPOLIST.getLocalName() + "s", "compo");
 			}
 
 			if (shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_PACKAGINGLIST)) {
-
-				// packList
+				StopWatchSupport.addCheckpoint("start_datalist_packaging");
 				loadPackagingList(productData, dataListsElt, defaultVariantNodeRef, context, isExtractedProduct);
-
+				logDatalistStats(dataListsElt, PLMModel.TYPE_PACKAGINGLIST.getLocalName() + "s", "packaging");
 			}
 
 			if (shouldExtractList(isExtractedProduct, context, type, MPMModel.TYPE_PROCESSLIST)) {
-
-				// processList
+				StopWatchSupport.addCheckpoint("start_datalist_process");
 				loadProcessList(productData, dataListsElt, context, isExtractedProduct);
-
+				logDatalistStats(dataListsElt, MPMModel.TYPE_PROCESSLIST.getLocalName() + "s", "process");
 			}
 
 			if (isExtractedProduct && context.isPrefOn("extractPriceBreaks", extractPriceBreaks())) {
-
+				StopWatchSupport.addCheckpoint("start_datalist_pricebreaks");
 				extractPriceBreaks(productData, dataListsElt);
+				logDatalistStats(dataListsElt, "priceBreaks", "pricebreaks");
 			}
 
 			// extract RawMaterials
 			if (isExtractedProduct && context.isPrefOn("extractRawMaterial", extractRawMaterial())) {
-
+				StopWatchSupport.addCheckpoint("start_datalist_rawmaterials");
 				extractRawMaterials(productData, dataListsElt, context);
+				logDatalistStats(dataListsElt, PLMModel.TYPE_RAWMATERIAL.getLocalName() + "s", "rawmaterials");
 			}
 
 			if (isExtractedProduct && (context.isPrefOn("extractWUsed", extractWUsed())
 					|| hasExtractWUsedModePreference(context))) {
-
+				StopWatchSupport.addCheckpoint("start_datalist_wused");
 				extractWUsed(productData, dataListsElt, context);
+				logDatalistStats(dataListsElt, "wUseds", "wused");
 			}
 
 			if (shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_INGLABELINGLIST)) {
+				StopWatchSupport.addCheckpoint("start_datalist_inglabeling");
 				// IngLabelingList
 				if ((productData.getLabelingListView().getIngLabelingList() != null)
 						&& !productData.getLabelingListView().getIngLabelingList().isEmpty()) {
@@ -542,6 +565,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					}
 				}
 
+				logDatalistStats(dataListsElt, PLMModel.TYPE_INGLABELINGLIST.getLocalName() + "s", "inglabeling");
 			}
 
 		}
