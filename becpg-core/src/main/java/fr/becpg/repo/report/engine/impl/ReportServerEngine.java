@@ -209,16 +209,16 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 				reportSession.setTimeZone(timeZoneParam);
 			}
 			
-			File tempFile = null;
 			try {
-				tempFile = TempFileProvider.createTempFile("datasource-", ".xml");
-				try (OutputStream outStream = new BufferedOutputStream(new FileOutputStream(tempFile))) {
+				java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream();
+				org.apache.commons.io.output.CountingOutputStream countingOut = new org.apache.commons.io.output.CountingOutputStream(bos);
+				try (OutputStream outStream = new BufferedOutputStream(countingOut)) {
 					XMLWriter writer = new XMLWriter(outStream);
 					writer.write(reportData.getXmlDataSource());
 					writer.flush();
 				}
 				
-				long datasourceSize = tempFile.length();
+				long datasourceSize = countingOut.getByteCount();
 				
 				if (datasourceSize > reportDatasourceMaxSizeInBytes()) {
 					reportData.getLogs()
@@ -228,7 +228,7 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 											FileUtils.byteCountToDisplaySize(reportDatasourceMaxSizeInBytes())), List.of(tplNodeRef)));
 				}
 				
-				try (InputStream in = new BufferedInputStream(new FileInputStream(tempFile))) {
+				try (InputStream in = new BufferedInputStream(new java.io.ByteArrayInputStream(bos.toByteArray()))) {
 					List<String> errors = generateReport(reportSession, in, out);
 					
 					for (String error : errors) {
@@ -238,12 +238,8 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 					}
 				}
 			} catch (IOException e) {
-				logger.error("Failed to write/read temporary XML datasource file", e);
+				logger.error("Failed to write/read XML datasource", e);
 				throw new ReportException("Failed to process datasource", e);
-			} finally {
-				if (tempFile != null && tempFile.exists()) {
-					Files.delete(tempFile.toPath());
-				}
 			}
 		});
 
