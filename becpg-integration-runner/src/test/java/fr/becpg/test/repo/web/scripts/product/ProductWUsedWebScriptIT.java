@@ -174,8 +174,9 @@ public class ProductWUsedWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 
 			// Two finished products using the same raw material, with distinct
 			// erpCodes (one a substring of the other) and effectivity dates.
-			finishedProductNodeRef = createUsingProduct("WUsed Match Product", "TESTXYZ", buildDate(2030, Calendar.JUNE, 15));
-			createUsingProduct("WUsed Other Product", "TEST", buildDate(2020, Calendar.JUNE, 15));
+			finishedProductNodeRef = createUsingProduct("WUsed Match Product", "TESTXYZ", buildDate(2030, Calendar.JUNE, 15),
+					buildDate(2031, Calendar.JUNE, 15));
+			createUsingProduct("WUsed Other Product", "TEST", buildDate(2020, Calendar.JUNE, 15), null);
 
 			return null;
 
@@ -233,6 +234,22 @@ public class ProductWUsedWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 				otherDateContent.contains("WUsed Match Product"));
 		org.junit.Assert.assertTrue("single-date startEffectivity filter must keep the 2020 product on its day",
 				otherDateContent.contains("WUsed Other Product"));
+
+		// --- endEffectivity filter (#34682, comment #10) : effectivity is carried by the composition line,
+		// not by the using product entity, so the filter must target the list item. Only the Match line has an
+		// endEffectivity (2031-06-15); the Other line has none and must always be dropped by an endEffectivity filter. ---
+		String endSingleContent = sendFilter(url, "{\\\"prop_bcpg_endEffectivity\\\":\\\"2031-06-15\\\"}");
+		org.junit.Assert.assertTrue("single-date endEffectivity filter must keep the line ending that day",
+				endSingleContent.contains("WUsed Match Product"));
+		org.junit.Assert.assertFalse("single-date endEffectivity filter must drop a line with no end effectivity",
+				endSingleContent.contains("WUsed Other Product"));
+
+		String endRangeContent = sendFilter(url,
+				"{\\\"prop_bcpg_endEffectivity-date-range\\\":\\\"2031-01-01T00:00:00.000Z|2031-12-31T00:00:00.000Z\\\"}");
+		org.junit.Assert.assertTrue("endEffectivity range filter should keep the line ending within the range",
+				endRangeContent.contains("WUsed Match Product"));
+		org.junit.Assert.assertFalse("endEffectivity range filter must drop a line with no end effectivity",
+				endRangeContent.contains("WUsed Other Product"));
 
 	}
 
@@ -301,7 +318,7 @@ public class ProductWUsedWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
 	}
 
-	private NodeRef createUsingProduct(String name, String erpCode, Date startEffectivity) {
+	private NodeRef createUsingProduct(String name, String erpCode, Date lineStartEffectivity, Date lineEndEffectivity) {
 		LocalSemiFinishedProductData lSF = new LocalSemiFinishedProductData();
 		lSF.setName("SF for " + name);
 		NodeRef lSFNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), lSF).getNodeRef();
@@ -309,12 +326,17 @@ public class ProductWUsedWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		FinishedProductData finishedProduct = new FinishedProductData();
 		finishedProduct.setName(name);
 		finishedProduct.setErpCode(erpCode);
-		finishedProduct.setStartEffectivity(startEffectivity);
+		// Entity effectivity is deliberately unrelated: the WUsed effectivity columns/filters must target the
+		// composition line (bcpg:compoList), not the using product entity.
+		finishedProduct.setStartEffectivity(buildDate(2000, Calendar.JANUARY, 1));
 		List<CompoListDataItem> compoList = new ArrayList<>();
 		compoList.add(CompoListDataItem.build().withParent(null).withQty(1d).withQtyUsed(0d).withUnit(ProductUnit.kg).withLossPerc(0d)
 				.withDeclarationType(DeclarationType.Omit).withProduct(lSFNodeRef));
-		compoList.add(CompoListDataItem.build().withParent(compoList.get(0)).withQty(3d).withQtyUsed(0d).withUnit(ProductUnit.kg).withLossPerc(0d)
-				.withDeclarationType(DeclarationType.Omit).withProduct(rawMaterialNodeRef));
+		CompoListDataItem usingLine = CompoListDataItem.build().withParent(compoList.get(0)).withQty(3d).withQtyUsed(0d).withUnit(ProductUnit.kg)
+				.withLossPerc(0d).withDeclarationType(DeclarationType.Omit).withProduct(rawMaterialNodeRef);
+		usingLine.setStartEffectivity(lineStartEffectivity);
+		usingLine.setEndEffectivity(lineEndEffectivity);
+		compoList.add(usingLine);
 		finishedProduct.getCompoListView().setCompoList(compoList);
 		return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 	}
