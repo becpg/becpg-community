@@ -469,18 +469,23 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 								if (shouldExtract && (listItems != null) && !listItems.isEmpty()) {
 
-									JSONArray list = new JSONArray();
-
-									if (!entityLists.has(listType)) {
-										entityLists.put(listType, list);
-									} else {
-										entityLists.put(listType + "|" + dataListName, list);
-									}
-									for (NodeRef listItem : listItems) {
-										JSONObject jsonAssocNode = new JSONObject();
-										list.put(jsonAssocNode);
-
-										visitNode(listItem, jsonAssocNode, JsonVisitNodeType.DATALIST, context);
+									// Build the list first and only commit it on success: a single failing datalist
+									// must NOT abort the whole entity export (which would return an empty body).
+									try {
+										JSONArray list = new JSONArray();
+										for (NodeRef listItem : listItems) {
+											JSONObject jsonAssocNode = new JSONObject();
+											visitNode(listItem, jsonAssocNode, JsonVisitNodeType.DATALIST, context);
+											list.put(jsonAssocNode);
+										}
+										if (!entityLists.has(listType)) {
+											entityLists.put(listType, list);
+										} else {
+											entityLists.put(listType + "|" + dataListName, list);
+										}
+									} catch (Exception e) {
+										logger.warn("Skipping datalist '" + listName + "' (" + listType + ") for node " + nodeRef
+												+ " — export failed, returning entity without it: " + e.getMessage(), e);
 									}
 								}
 							}
