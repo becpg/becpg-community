@@ -361,11 +361,11 @@ public class BeCPGAIMSFilter implements Filter
             }
             else
             {
-                if (LOGGER.isInfoEnabled())
+                if (LOGGER.isDebugEnabled())
                 {
-                    LOGGER.info("AIMS re-auth for URI=" + request.getRequestURI() + " requestedSessionId="
-                                    + request.getRequestedSessionId() + " sessionIdValid="
-                                    + request.isRequestedSessionIdValid() + " newSession=" + session.isNew());
+                    LOGGER.debug("AIMS re-auth for URI=" + request.getRequestURI() + " requestedSessionId="
+                                     + request.getRequestedSessionId() + " sessionIdValid="
+                                     + request.isRequestedSessionIdValid() + " newSession=" + session.isNew());
                 }
                 try
                 {
