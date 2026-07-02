@@ -1224,7 +1224,8 @@
 		<Measure name="averageProgress" caption="${msg("jsolap.averageProgress.title")}" column="completionPercent" datatype="Numeric" aggregator="avg" visible="true"  />
 		<Measure name="averageNote" caption="${msg("jsolap.averageNote.title")}" column="projectScore" datatype="Numeric" aggregator="avg" visible="true"  />
 		<Measure name="delay" caption="${msg("jsolap.delay.title")}" column="projectOverdue" datatype="Numeric" aggregator="sum" visible="true"  />
-		
+		<Measure name="averageOverdue" caption="${msg("jsolap.projectOverdue.title")}" column="projectOverdue" datatype="Numeric" aggregator="avg" visible="true"  />
+
 		<CalculatedMember name="lastProgress" caption="${msg("jsolap.lastProgress.title")}" dimension="Measures" visible="true">
 			<Formula>[Measures].[averageProgress],LastNonEmpty(YTD(),[Measures].[averageProgress])</Formula>
 		</CalculatedMember> 
@@ -1973,6 +1974,9 @@
 		</Measure>
 		<Measure name="unitPrice" caption="${msg("jsolap.unitPrice.title")}" column="unitPrice" datatype="Numeric" aggregator="avg" visible="true">
 		</Measure>
+		<Measure name="averageNutrientScore" caption="${msg("jsolap.nutrientScore.title")}" column="nutrientProfilingScore" datatype="Numeric" aggregator="avg" visible="true" />
+		<Measure name="averageEcoScore" caption="${msg("jsolap.ecoScore.title")}" column="ecoScore" datatype="Numeric" aggregator="avg" visible="true" />
+		<Measure name="averageLcaScore" caption="${msg("jsolap.lcaScore.title")}" column="lcaScore" datatype="Numeric" aggregator="avg" visible="true" />
 		<CalculatedMember name="profit" caption="${msg("jsolap.profitProjectedQuantity.title")}" dimension="Measures" visible="true">
 			<Formula>([Measures].[unitPrice] - [Measures].[unitTotalCost])*[Measures].[projectedQty]
 			</Formula>
