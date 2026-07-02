@@ -32,7 +32,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
@@ -211,6 +210,13 @@ public class BeCPGAIMSFilter implements Filter
     private String shareContext;
 
     /**
+     * Margin applied before the real access-token expiry so the token is refreshed slightly ahead of time.
+     * This absorbs clock skew between Share and the identity provider and avoids using a token that would
+     * expire in the middle of a downstream request.
+     */
+    private static final Duration TOKEN_EXPIRY_REFRESH_MARGIN = Duration.ofSeconds(60);
+
+    /**
      * <p>Constructor for BeCPGAIMSFilter.</p>
      */
     public BeCPGAIMSFilter()
@@ -301,13 +307,19 @@ public class BeCPGAIMSFilter implements Filter
                         OAuth2AccessToken oAuth2AccessToken = oAuth2LoginAuthenticationToken.getAccessToken();
                         if (isAuthTokenExpired(oAuth2AccessToken.getExpiresAt()))
                         {
+                            // The token refresh below reaches Surf services (connector, authorized-client store)
+                            // that expect a RequestContext bound to the thread. Unlike the initial login path,
+                            // the AIMS filter runs before Share establishes it, so bind it here to avoid a
+                            // NullPointerException that would otherwise invalidate the session on every refresh.
+                            this.initRequestContext(request, response);
                             refreshToken(attribute, session);
                         }
                     }
                     catch (Exception oauth2AuthenticationException)
                     {
-                        LOGGER.error("Resulted in Error while doing refresh token "
-                                         + oauth2AuthenticationException.getMessage());
+                        LOGGER.error("Error while refreshing OAuth2 token, invalidating session (URI="
+                                         + request.getRequestURI() + "): " + oauth2AuthenticationException.getMessage(),
+                                     oauth2AuthenticationException);
                         session.invalidate();
                         if (!request.getRequestURI()
                             .contains(this.shareContext + SHARE_AIMS_LOGOUT))
@@ -349,6 +361,12 @@ public class BeCPGAIMSFilter implements Filter
             }
             else
             {
+                if (LOGGER.isDebugEnabled())
+                {
+                    LOGGER.debug("AIMS re-auth for URI=" + request.getRequestURI() + " requestedSessionId="
+                                     + request.getRequestedSessionId() + " sessionIdValid="
+                                     + request.isRequestedSessionIdValid() + " newSession=" + session.isNew());
+                }
                 try
                 {
 
@@ -665,9 +683,9 @@ public class BeCPGAIMSFilter implements Filter
         }
         else
         {
-            JSONObject json = new JSONObject(r.getText());
             try
             {
+                JSONObject json = new JSONObject(r.getText());
                 alfTicket = json.getJSONObject("entry")
                     .getString("id");
             }
@@ -1138,6 +1156,15 @@ public class BeCPGAIMSFilter implements Filter
     {
         OAuth2LoginAuthenticationToken oAuth2LoginAuthenticationToken =
             (OAuth2LoginAuthenticationToken) attribute.getAuthentication();
+
+        // A concurrent request for the same user may have already refreshed the token while this thread was
+        // waiting on the lock. Re-check the expiry inside the critical section to avoid a redundant round-trip
+        // to the identity provider (token + userinfo endpoints).
+        if (!isAuthTokenExpired(oAuth2LoginAuthenticationToken.getAccessToken().getExpiresAt()))
+        {
+            return;
+        }
+
         ClientRegistration clientRegistration = oAuth2LoginAuthenticationToken.getClientRegistration();
         OAuth2RefreshTokenGrantRequest refreshTokenGrantRequest =
             new OAuth2RefreshTokenGrantRequest(clientRegistration, oAuth2LoginAuthenticationToken.getAccessToken(),
@@ -1164,6 +1191,43 @@ public class BeCPGAIMSFilter implements Filter
         this.oauth2ClientService.saveAuthorizedClient(updatedAuthorizedClient, authenticationResult);
         attribute.setAuthentication(authenticationResult);
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, attribute);
+
+        // The Alfresco ticket is baked into the connector session only at initial login. Renew it here so that
+        // long-lived sessions do not keep sending a stale ticket to the repository (which would fail with 401
+        // once the ticket expires on its own AFTER_INACTIVITY timeout).
+        renewAlfTicket(session, oidcUser, accessTokenResponse.getAccessToken());
+    }
+
+    /**
+     * Re-fetch a fresh Alfresco ticket after an OAuth2 token refresh and store it on the connector session,
+     * so repository calls keep authenticating once the previously obtained ticket has expired.
+     *
+     * @param session the HTTP session
+     * @param oidcUser the refreshed OIDC user
+     * @param accessToken the refreshed access token
+     */
+    private void renewAlfTicket(HttpSession session, OidcUser oidcUser, OAuth2AccessToken accessToken)
+    {
+        try
+        {
+            String username = oidcUser.getAttribute(this.principalAttribute);
+            if (username == null)
+            {
+                return;
+            }
+
+            String alfTicket = this.getAlfTicket(session, username, accessToken.getTokenValue());
+            if (alfTicket != null)
+            {
+                Connector connector = this.connectorService.getConnector(ALFRESCO_ENDPOINT_ID, username, session);
+                connector.getConnectorSession()
+                    .setParameter(AlfrescoAuthenticator.CS_PARAM_ALF_TICKET, alfTicket);
+            }
+        }
+        catch (ConnectorServiceException e)
+        {
+            LOGGER.error("Failed to renew Alfresco ticket after token refresh: " + e.getMessage(), e);
+        }
     }
 
     /**
@@ -1175,7 +1239,7 @@ public class BeCPGAIMSFilter implements Filter
     private OAuth2TokenValidator<Jwt> createCustomValidator(ProviderDetails providerDetails)
     {
         List<OAuth2TokenValidator<Jwt>> validators = new ArrayList<>();
-        validators.add(new JwtTimestampValidator(Duration.of(0, ChronoUnit.MILLIS)));
+        validators.add(new JwtTimestampValidator(Duration.ofSeconds(60)));
         validators.add(new JwtIssuerValidator(providerDetails.getIssuerUri()));
 
         if (this.audience!=null && !this.audience.isEmpty())
@@ -1290,7 +1354,12 @@ public class BeCPGAIMSFilter implements Filter
      */
     private static boolean isAuthTokenExpired(Instant authTokenExpiration)
     {
+        if (authTokenExpiration == null)
+        {
+            return true;
+        }
         return Instant.now()
+            .plus(TOKEN_EXPIRY_REFRESH_MARGIN)
             .compareTo(authTokenExpiration) >= 0;
     }
 }
