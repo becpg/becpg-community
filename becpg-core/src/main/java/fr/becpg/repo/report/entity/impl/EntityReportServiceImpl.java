@@ -466,6 +466,16 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 												|| ((selectedReportNodeRef == null) && Boolean.TRUE.equals(isDefault))
 												|| !entityNodeRef.equals(entityNodeTo)) {
 											
+											String reportKindCode = "";
+											if (tplNodeRef != null) {
+												List<String> reportKindProp = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS);
+												if ((reportKindProp != null) && !reportKindProp.isEmpty()) {
+													reportKindCode = reportKindProp.get(0);
+												}
+											}
+											reportParameters.getPreferences().put("reportKindCode", reportKindCode);
+											reportParameters.getPreferences().put("reportParametersJson", reportParameters.toJSONString());
+
 											EntityReportData reportData = extractor.extract(entityNodeRef, reportParameters.getPreferences());
 											
 											auditScope.addCheckpoint(EXTRACT);
@@ -631,19 +641,23 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 			}
 			
 			// Filter XML report by parameters
-			NodeRef reportParamsFolderNodRef = getFromCacheListFolderNodeRef(RepoConsts.PATH_REPORT_PARAMS);
-			Map<String, String> valideCode = new HashMap<>();
-			List<ChildAssociationRef> assocList = nodeService.getChildAssocs(reportParamsFolderNodRef);
-			assocList.forEach(val -> {
-				String paramCode = (String) nodeService.getProperty(val.getChildRef(), BeCPGModel.PROP_LV_CODE);
-				String paramValue = (String) nodeService.getProperty(val.getChildRef(), BeCPGModel.PROP_LV_VALUE);
-				if (isValidReportParams(paramCode)) {
-					valideCode.put(paramValue, paramCode);
+			Map<String, String> valideCode = beCPGCacheService.getFromCache("fr.becpg.repo.report.entity.impl.EntityReportServiceImpl", "reportParamsValideCode", () -> {
+				NodeRef reportParamsFolderNodRef = getFromCacheListFolderNodeRef(RepoConsts.PATH_REPORT_PARAMS);
+				Map<String, String> map = new HashMap<>();
+				if (reportParamsFolderNodRef != null) {
+					List<ChildAssociationRef> assocList = nodeService.getChildAssocs(reportParamsFolderNodRef);
+					for (ChildAssociationRef val : assocList) {
+						String paramCode = (String) nodeService.getProperty(val.getChildRef(), BeCPGModel.PROP_LV_CODE);
+						String paramValue = (String) nodeService.getProperty(val.getChildRef(), BeCPGModel.PROP_LV_VALUE);
+						if (isValidReportParams(paramCode)) {
+							map.put(paramValue, paramCode);
+						}
+					}
 				}
-				
+				return map;
 			});
 			
-			if (valideCode.size() > 0) {
+			if (valideCode != null && valideCode.size() > 0) {
 				filterByParams(dataXml,
 						getFilteredParams(valideCode, Arrays.asList(entityParams != null ? entityParams : new String[0]), reportKindCode));
 			}
@@ -1105,6 +1119,16 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 							auditScope.putAttribute(ReportAuditPlugin.FORMAT, reportFormat);
 							auditScope.putAttribute(ReportAuditPlugin.NAME, documentName);
 
+							String reportKindCode = "";
+							if (tplNodeRef != null) {
+								List<String> reportKindProp = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS);
+								if ((reportKindProp != null) && !reportKindProp.isEmpty()) {
+									reportKindCode = reportKindProp.get(0);
+								}
+							}
+							reportParameters.getPreferences().put("reportKindCode", reportKindCode);
+							reportParameters.getPreferences().put("reportParametersJson", reportParameters.toJSONString());
+
 							EntityReportData reportData = extractor.extract(entityNodeRef, reportParameters.getPreferences());
 							
 							auditScope.addCheckpoint(EXTRACT);
@@ -1250,6 +1274,16 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 				I18NUtil.setLocale(locale);
 				I18NUtil.setContentLocale(locale);
 
+				String reportKindCode = "";
+				if (templateNodeRef != null) {
+					List<String> reportKindProp = (List<String>) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_KINDS);
+					if ((reportKindProp != null) && !reportKindProp.isEmpty()) {
+						reportKindCode = reportKindProp.get(0);
+					}
+				}
+				reportParameters.getPreferences().put("reportKindCode", reportKindCode);
+				reportParameters.getPreferences().put("reportParametersJson", reportParameters.toJSONString());
+
 				EntityReportData reportData = extractor.extract(entityNodeRef, reportParameters.getPreferences());
 				
 				auditScope.addCheckpoint(EXTRACT);
@@ -1389,6 +1423,9 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 			
 			preferences = reportParameters.getPreferences();
 		}
+		
+		preferences.put("reportKindCode", "");
+		preferences.put("reportParametersJson", reportParameters.toJSONString());
 		
 		final Map<String, String> finalPreferences = preferences;
 		final EntityReportParameters finalReportParameters = reportParameters;
