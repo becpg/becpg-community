@@ -56,19 +56,21 @@ import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dom4j.Branch;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.audit.helper.StopWatchSupport;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
@@ -93,6 +95,19 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.system.SystemConfigurationService;
+
+import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.entity.EntitySystemService;
+import fr.becpg.model.ReportModel;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
+import org.alfresco.service.cmr.dictionary.AssociationDefinition;
+import org.alfresco.service.cmr.dictionary.ChildAssociationDefinition;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.repository.StoreRef;
+import java.util.Collections;
+import java.util.Arrays;
+import java.util.HashSet;
 
 /**
  * <p>DefaultEntityReportExtractor class.</p>
@@ -327,44 +342,137 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	@Autowired
 	private TenantAdminService tenantAdminService;
 
+	@Autowired
+	protected BeCPGCacheService beCPGCacheService;
+
+	@Autowired
+	protected EntitySystemService entitySystemService;
+
 	protected interface DefaultExtractorContextCallBack {
 		public void run();
+	}
+
+	protected String[] getReportKindCodes(NodeRef nodeRef) {
+		if (nodeRef == null || !nodeService.exists(nodeRef)) {
+			return new String[0];
+		}
+		String repKindCodesStr = (String) nodeService.getProperty(nodeRef, ReportModel.PROP_REPORT_KINDS_CODE);
+		if (repKindCodesStr == null || repKindCodesStr.isEmpty()) {
+			return new String[0];
+		}
+		String[] repKindCodes = repKindCodesStr.split(",");
+		for (int i = 0; i < repKindCodes.length; i++) {
+			repKindCodes[i] = repKindCodes[i].trim();
+		}
+		return repKindCodes;
+	}
+
+	protected NodeRef getFromCacheListFolderNodeRef(String listPath) {
+		return beCPGCacheService.getFromCache(DefaultEntityReportExtractor.class.getName(), "reportListCacheKey" + listPath, () -> {
+			NodeRef systemFolderNodeRef = entitySystemService.getSystemEntity(nodeService.getRootNode(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE), RepoConsts.PATH_SYSTEM);
+			NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_LISTS);
+			return entitySystemService.getSystemEntityDataList(listsFolder, listPath);
+		});
+	}
+
+	private boolean isValidReportParams(String codeParams) {
+		if ((codeParams != null) && !codeParams.isEmpty()) {
+			String[] strParams = codeParams.split(":");
+			if ((strParams[0].equals("hide") || strParams[0].equals("show")) && ((strParams.length == 2) || (strParams.length == 3))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private List<String> getFilteredParams(Map<String, String> params, List<String> paramList, String reportKind) {
+		List<String> ret = new ArrayList<>();
+
+		params.forEach((val, code) -> {
+			String[] codes = code.split(":");
+			if ((codes.length == 3) && !codes[1].equals(reportKind)) {
+				return;
+			}
+			if ((!paramList.contains(val) && code.startsWith("show")) || (paramList.contains(val) && code.startsWith("hide"))) {
+				ret.add(codes[codes.length - 1]);
+			}
+		});
+
+		return ret;
+	}
+
+	protected void calculateFilteredParams(DefaultExtractorContext context, NodeRef entityNodeRef) {
+		String reportKindCode = context.getPreferences().getOrDefault("reportKindCode", "");
+		String reportParametersJson = context.getPreferences().get("reportParametersJson");
+		if (reportParametersJson == null || reportParametersJson.isEmpty()) {
+			return;
+		}
+		EntityReportParameters reportParams = EntityReportParameters.createFromJSON(reportParametersJson);
+		if (reportParams == null) {
+			return;
+		}
+
+		List<String> entityParams = new ArrayList<>();
+		for (EntityReportParameters.EntityReportParameter param : reportParams.getParameters()) {
+			if (param.getId() != null) {
+				entityParams.add(param.getId());
+			}
+		}
+
+		Map<String, String> valideCode = beCPGCacheService.getFromCache("fr.becpg.repo.report.entity.impl.EntityReportServiceImpl", "reportParamsValideCode", () -> {
+			NodeRef reportParamsFolderNodeRef = getFromCacheListFolderNodeRef(RepoConsts.PATH_REPORT_PARAMS);
+			Map<String, String> map = new HashMap<>();
+			if (reportParamsFolderNodeRef != null) {
+				List<ChildAssociationRef> assocList = nodeService.getChildAssocs(reportParamsFolderNodeRef);
+				for (ChildAssociationRef val : assocList) {
+					String paramCode = (String) nodeService.getProperty(val.getChildRef(), BeCPGModel.PROP_LV_CODE);
+					String paramValue = (String) nodeService.getProperty(val.getChildRef(), BeCPGModel.PROP_LV_VALUE);
+					if (isValidReportParams(paramCode)) {
+						map.put(paramValue, paramCode);
+					}
+				}
+			}
+			return map;
+		});
+
+		if (valideCode != null && !valideCode.isEmpty()) {
+			List<String> filtered = getFilteredParams(valideCode, entityParams, reportKindCode);
+			context.getFilteredParams().addAll(filtered);
+		}
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public EntityReportData extract(NodeRef entityNodeRef, Map<String, String> preferences) {
+		return StopWatchSupport.build().scopeName("extract_" + entityNodeRef).logger(logger).run(() -> {
+			DefaultExtractorContext context = new DefaultExtractorContext(preferences, entityNodeRef);
+			calculateFilteredParams(context, entityNodeRef);
 
-		StopWatch watch = null;
-		if (logger.isDebugEnabled()) {
-			watch = new StopWatch();
-			watch.start();
-		}
+			Document document = DocumentHelper.createDocument();
+			Element entityElt = document.addElement(TAG_ENTITY);
 
-		DefaultExtractorContext context = new DefaultExtractorContext(preferences, entityNodeRef);
+			Element prefs = entityElt.addElement(TAG_PREFERENCES);
 
-		Document document = DocumentHelper.createDocument();
-		Element entityElt = document.addElement(TAG_ENTITY);
+			for (Map.Entry<String, String> perfEntry : preferences.entrySet()) {
+				Element pref = prefs.addElement(TAG_PREFERENCE);
+				pref.addAttribute("key", perfEntry.getKey());
+				pref.addAttribute("value", perfEntry.getValue());
+			}
 
-		Element prefs = entityElt.addElement(TAG_PREFERENCES);
+			extractEntity(entityNodeRef, entityElt, context);
 
-		for (Map.Entry<String, String> perfEntry : preferences.entrySet()) {
-			Element pref = prefs.addElement(TAG_PREFERENCE);
-			pref.addAttribute("key", perfEntry.getKey());
-			pref.addAttribute("value", perfEntry.getValue());
-		}
+			context.getReportData().setXmlDataSource(entityElt);
 
-		extractEntity(entityNodeRef, entityElt, context);
+			if (logger.isDebugEnabled()) {
+				int nodeCount = countNodes(entityElt);
+				String xmlStr = entityElt.asXML();
+				int xmlSize = xmlStr == null ? 0 : xmlStr.getBytes(java.nio.charset.StandardCharsets.UTF_8).length;
+				logger.debug("Extraction XML stats - Node count: " + nodeCount + ", Size: " + xmlSize + " bytes");
+				StopWatchSupport.addCheckpoint("xml_stats_nodes_" + nodeCount + "_size_" + xmlSize);
+			}
 
-		context.getReportData().setXmlDataSource(entityElt);
-
-		if (logger.isDebugEnabled() && (watch != null)) {
-			watch.stop();
-			logger.debug("extract datasource in  " + watch.getTotalTimeSeconds() + " seconds for node " + entityNodeRef);
-		}
-
-		return context.getReportData();
-
+			return context.getReportData();
+		});
 	}
 
 	/**
@@ -737,18 +845,51 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				QName dataListQName = QName.createQName((String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE),
 						namespaceService);
 
+				if (context != null && (context.isFilteredParam(dataListQName.getLocalName() + "s") || context.isFilteredParam("bcpg_" + dataListQName.getLocalName() + "s"))) {
+					StopWatchSupport.addCheckpoint("skipped_datalist_" + dataListQName.getLocalName() + "_by_params");
+					continue;
+				}
+
+				StopWatchSupport.addCheckpoint("start_datalist_" + dataListQName.getLocalName());
+
 				Class<RepositoryEntity> entityClass = repositoryEntityDefReader.getEntityClass(dataListQName);
 				if (entityClass != null) {
 					List<BeCPGDataObject> dataListItems = alfrescoRepository.loadDataList(listNodeRef, dataListQName);
 
 					if ((dataListItems != null) && !dataListItems.isEmpty()) {
-						Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
+						String reportKindCode = context != null ? context.getReportKindCode() : "";
+						boolean hasReportKindAspect = false;
+						if (reportKindCode != null && !reportKindCode.isEmpty()) {
+							for (BeCPGDataObject dataListItem : dataListItems) {
+								String[] repKindCodes = getReportKindCodes(dataListItem.getNodeRef());
+								if (Arrays.asList(repKindCodes).contains(reportKindCode)) {
+									hasReportKindAspect = true;
+									break;
+								}
+							}
+						}
 
-						addDataListStateAndName(dataListElt, listNodeRef);
-
+						List<BeCPGDataObject> filteredItems = new ArrayList<>();
 						for (BeCPGDataObject dataListItem : dataListItems) {
-							Element nodeElt = dataListElt.addElement(dataListQName.getLocalName());
-							loadDataListItemAttributes(dataListItem, nodeElt, context);
+							String[] repKindCodes = getReportKindCodes(dataListItem.getNodeRef());
+							if (Arrays.asList(repKindCodes).contains("None")) {
+								continue;
+							}
+							if (hasReportKindAspect && !Arrays.asList(repKindCodes).contains(reportKindCode)) {
+								continue;
+							}
+							filteredItems.add(dataListItem);
+						}
+
+						if (!filteredItems.isEmpty()) {
+							Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
+
+							addDataListStateAndName(dataListElt, listNodeRef);
+
+							for (BeCPGDataObject dataListItem : filteredItems) {
+								Element nodeElt = dataListElt.addElement(dataListQName.getLocalName());
+								loadDataListItemAttributes(dataListItem, nodeElt, context);
+							}
 						}
 					}
 				} else {
@@ -760,6 +901,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 						loadDataList(dataListsElt, listNodeRef, dataListQName, context);
 					}
 				}
+
+				logDatalistStats(dataListsElt, dataListQName.getLocalName() + "s", dataListQName.getLocalName());
 			}
 		}
 	}
@@ -802,14 +945,45 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object.
 	 */
 	protected void loadDataList(Element dataListsElt, NodeRef listNodeRef, QName dataListQName, DefaultExtractorContext context) {
+		if (context != null && (context.isFilteredParam(dataListQName.getLocalName() + "s") || context.isFilteredParam("bcpg_" + dataListQName.getLocalName() + "s"))) {
+			StopWatchSupport.addCheckpoint("skipped_datalist_" + dataListQName.getLocalName() + "_by_params");
+			return;
+		}
+
 		List<NodeRef> dataListItems = entityListDAO.getListItems(listNodeRef, dataListQName);
 		if ((dataListItems != null) && !dataListItems.isEmpty()) {
-			Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
-			addDataListStateAndName(dataListElt, listNodeRef);
+			String reportKindCode = context != null ? context.getReportKindCode() : "";
+			boolean hasReportKindAspect = false;
+			if (reportKindCode != null && !reportKindCode.isEmpty()) {
+				for (NodeRef dataListItem : dataListItems) {
+					String[] repKindCodes = getReportKindCodes(dataListItem);
+					if (Arrays.asList(repKindCodes).contains(reportKindCode)) {
+						hasReportKindAspect = true;
+						break;
+					}
+				}
+			}
 
+			List<NodeRef> filteredItems = new ArrayList<>();
 			for (NodeRef dataListItem : dataListItems) {
-				Element nodeElt = dataListElt.addElement(dataListQName.getLocalName());
-				loadDataListItemAttributes(dataListItem, nodeElt, context);
+				String[] repKindCodes = getReportKindCodes(dataListItem);
+				if (Arrays.asList(repKindCodes).contains("None")) {
+					continue;
+				}
+				if (hasReportKindAspect && !Arrays.asList(repKindCodes).contains(reportKindCode)) {
+					continue;
+				}
+				filteredItems.add(dataListItem);
+			}
+
+			if (!filteredItems.isEmpty()) {
+				Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
+				addDataListStateAndName(dataListElt, listNodeRef);
+
+				for (NodeRef dataListItem : filteredItems) {
+					Element nodeElt = dataListElt.addElement(dataListQName.getLocalName());
+					loadDataListItemAttributes(dataListItem, nodeElt, context);
+				}
 			}
 		}
 	}
@@ -948,6 +1122,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 */
 	protected void loadAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData, List<QName> hiddenAttributes, DefaultExtractorContext context) {
 
+		QName nodeType = nodeService.getType(nodeRef);
 		// properties
 		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
 
@@ -976,7 +1151,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		for (Map.Entry<QName, Serializable> property : properties.entrySet()) {
 
 			if (ContentModel.PROP_CONTENT.equals(property.getKey())
-					&& entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)
+					&& entityDictionaryService.isSubClass(nodeType, BeCPGModel.TYPE_ENTITYLIST_ITEM)
 					&& context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_DATALIST_IMAGE, Boolean.FALSE)) {
 				String imgId = String.format(DATALIST_IMG_ID, nodeRef.getId());
 				extractImage(nodeRef, imgId, nodeElt, context);
@@ -1254,13 +1429,21 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * @return a {@link org.dom4j.Element} object.
 	 */
 	protected Element addData(Element nodeElt, boolean useCData, QName propertyQName, String value, String suffix, DefaultExtractorContext context) {
+		if (value == null || value.isEmpty()) {
+			return nodeElt;
+		}
+		String localName = propertyQName.getLocalName();
+		if ((suffix != null) && !suffix.isEmpty()) {
+			localName += "_" + suffix;
+		}
+		String prefix = entityDictionaryService.toPrefixString(propertyQName).split(":")[0];
+		String prefixValue = prefix.isEmpty() ? "" : prefix + "_";
+		if (context != null && (context.isFilteredParam(prefixValue + localName) || context.isFilteredParam(localName))) {
+			return nodeElt;
+		}
 		if (useCData || isMultiLinesAttribute(propertyQName, context)) {
 			return addCDATA(nodeElt, propertyQName, value, suffix);
 		} else {
-			String localName = propertyQName.getLocalName();
-			if ((suffix != null) && !suffix.isEmpty()) {
-				localName += "_" + suffix;
-			}
 			nodeElt.addAttribute(localName, value);
 			return nodeElt;
 		}
@@ -1393,13 +1576,19 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		List<NodeRef> nodeRefs = associationService.getTargetAssocs(entityNodeRef, assocDef.getName());
 
 		for (NodeRef nodeRef : nodeRefs) {
-			if (!context.getExtractedNodes().contains(nodeRef)) {
+			String cacheKey = "targetAssoc_" + nodeRef.toString() + "_" + extractDataList;
+			Element cached = context != null ? context.getCachedProductData(cacheKey) : null;
+			if (cached != null) {
+				assocElt.add((Element) cached.clone());
+				continue;
+			}
+
+			if (context != null && !context.getExtractedNodes().contains(nodeRef)) {
 
 				context.getExtractedNodes().add(nodeRef);
 				QName qName = nodeService.getType(nodeRef);
 
-				Element nodeElt = assocElt.addElement(qName.getLocalName());
-
+				Element nodeElt = org.dom4j.DocumentHelper.createElement(qName.getLocalName());
 				appendPrefix(qName, nodeElt);
 
 				EntityReportExtractorPlugin extractor = entityReportService.retrieveExtractor(nodeRef);
@@ -1422,6 +1611,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 						loadDataLists(nodeRef, dataListsElt, new DefaultExtractorContext(context.getPreferences(), context.getRootNodeRef()));
 					}
 				}
+				assocElt.add(nodeElt);
+				context.cacheProductData(cacheKey, nodeElt);
 
 				context.getExtractedNodes().remove(nodeRef);
 			}
@@ -1509,6 +1700,33 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					extractImage(creatorNodeRef, avatarNodeRef, AVATAR_IMG_ID, imgsElt, context, null);
 				}
 			}
+		}
+	}
+
+	protected int countNodes(Node node) {
+		if (node instanceof Branch branch) {
+			int count = 1;
+			for (int i = 0; i < branch.nodeCount(); i++) {
+				count += countNodes(branch.node(i));
+			}
+			return count;
+		}
+		return 1;
+	}
+
+	protected void logDatalistStats(Element dataListsElt, String nameSuffix, String key) {
+		if (logger.isDebugEnabled()) {
+			Element addedElt = dataListsElt.element(nameSuffix);
+			if (addedElt != null) {
+				int dlNodes = countNodes(addedElt);
+				String dlXml = addedElt.asXML();
+				int dlSize = dlXml == null ? 0 : dlXml.getBytes(java.nio.charset.StandardCharsets.UTF_8).length;
+				StopWatchSupport.addCheckpoint("end_datalist_" + key + "_nodes_" + dlNodes + "_size_" + dlSize);
+			} else {
+				StopWatchSupport.addCheckpoint("end_datalist_" + key + "_empty");
+			}
+		} else {
+			StopWatchSupport.addCheckpoint("end_datalist_" + key);
 		}
 	}
 
