@@ -112,27 +112,27 @@ public class BecpgRegulatoryAuthenticationServiceTest {
     @Test(expected = Exception.class)
     public void nullTokenUrlThrowsInOAuth2Mode() throws Exception {
         configureOAuth2(null);
-        buildService();
+        buildService().getOauth2Token();
     }
 
     @Test(expected = Exception.class)
     public void malformedTokenUrlThrowsInOAuth2Mode() throws Exception {
         configureOAuth2("not a valid url !!!");
-        buildService();
+        buildService().getOauth2Token();
     }
 
     @Test(expected = Exception.class)
     public void nullClientIdThrowsInOAuth2Mode() throws Exception {
         configureOAuth2();
         when(configService.confValue("beCPG.regulatory.oauth2.clientId")).thenReturn(null);
-        buildService();
+        buildService().getOauth2Token();
     }
 
     @Test(expected = Exception.class)
     public void nullClientSecretThrowsInOAuth2Mode() throws Exception {
         configureOAuth2();
         when(configService.confValue("beCPG.regulatory.oauth2.clientSecret")).thenReturn(null);
-        buildService();
+        buildService().getOauth2Token();
     }
 
     // -----------------------------------------------------------------------
