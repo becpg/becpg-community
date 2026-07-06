@@ -764,8 +764,17 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 		 */
 		var vDiv = pDiv;
 		/**
+		 * Flag telling if the sticky headers scroll listener is already bound
+		 *
+		 * @property vStickyHeadersBound
+		 * @type Boolean
+		 * @default false
+		 * @private
+		 */
+		var vStickyHeadersBound = false;
+		/**
 		 * Selected format (minute,hour,day,week,month)
-		 * 
+		 *
 		 * @property vFormat
 		 * @type String
 		 * @default pFormat
@@ -1848,6 +1857,13 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 							case 'Complete':
 								vCaptionStr = vTaskList[i].getCompStr();
 								break;
+							case 'Name':
+								vCaptionStr = vTaskList[i].getName();
+								break;
+							case 'Dates':
+								vCaptionStr = JSGantt.formatDateStr(vTaskList[i].getStart(), vDateDisplayFormat) + ' - '
+									+ JSGantt.formatDateStr(vTaskList[i].getEnd(), vDateDisplayFormat);
+								break;
 						}
 					}
 
@@ -1950,9 +1966,56 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 
 			this.scrollToY(vCurrPosY, vDiv);
 
+			this.bindStickyHeaders();
 
 		};
 
+		/**
+		 * Keep the gantt headers (columns and dates rows) visible when scrolling the page vertically
+		 *
+		 * @method bindStickyHeaders
+		 * @return {Void}
+		 */
+		this.bindStickyHeaders = function() {
+			if (!vStickyHeadersBound) {
+				vStickyHeadersBound = true;
+				YAHOO.util.Event.addListener(window, "scroll", this.updateStickyHeaders, this, true);
+			}
+			this.updateStickyHeaders();
+		};
+
+		/**
+		 * Translates the gantt table headers so that they stay visible on vertical scroll
+		 *
+		 * @method updateStickyHeaders
+		 * @return {Void}
+		 */
+		this.updateStickyHeaders = function() {
+			if (vDiv == null || vDiv.getElementsByTagName == null) {
+				return;
+			}
+			var vRect = vDiv.getBoundingClientRect != null ? vDiv.getBoundingClientRect() : null;
+			if (vRect == null) {
+				return;
+			}
+			var vTables = vDiv.getElementsByTagName("table");
+			for (var i = 0; i < vTables.length; i++) {
+				var vHead = vTables[i].tHead;
+				if (vHead != null) {
+					var vOffset = 0;
+					if (vRect.top < 0) {
+						vOffset = Math.min(-vRect.top, Math.max(vDiv.offsetHeight - vHead.offsetHeight, 0));
+					}
+					if (vOffset > 0) {
+						vHead.style.transform = "translateY(" + vOffset + "px)";
+						YAHOO.util.Dom.addClass(vHead, "ghead-floating");
+					} else {
+						vHead.style.transform = "";
+						YAHOO.util.Dom.removeClass(vHead, "ghead-floating");
+					}
+				}
+			}
+		};
 
 		this.renderMile = function(vcurrDivID, vTaskLeft, vDayWidth, vDateRowStr, vCaptionStr, vTask) {
 			if (vDayWidth < 6) {

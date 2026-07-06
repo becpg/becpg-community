@@ -72,6 +72,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.security.plugins.DefaultSecurityServicePlugin;
 import fr.becpg.repo.security.plugins.SecurityServicePlugin;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * Project service that manage project
@@ -120,6 +121,9 @@ public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements 
 	private EntityListDAO entityListDAO;
 	@Autowired
 	private DataListSortService dataListSortService;
+
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
 
 	@Autowired
 	SysAdminParams sysAdminParams;
@@ -201,7 +205,7 @@ public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements 
 
 				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 				for (TaskListDataItem taskListDataItem : projectData.getTaskList()) {
-					if (TaskState.InProgress.equals(taskListDataItem.getTaskState())) {
+					if (shouldPropagateStateToTask(taskListDataItem.getTaskState(), afterState)) {
 						nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_PREVIOUS_STATE, taskListDataItem.getState());
 						if (taskListDataItem.getSubProject() != null) {
 							String previousState = (String) nodeService.getProperty(taskListDataItem.getSubProject(),
@@ -229,6 +233,24 @@ public class ProjectServiceImpl extends DefaultSecurityServicePlugin implements 
 		}
 
 		return toReformulates;
+	}
+
+	/**
+	 * Tells whether a project state change should be propagated to a task and its sub-project.
+	 * In progress tasks are always updated. When the project state is automatically derived from
+	 * its task states, planned and on hold tasks are updated as well so that the derived state
+	 * remains consistent with a manual project state change.
+	 *
+	 * @param taskState the current task state
+	 * @param afterState the new project state
+	 * @return true when the task state must be aligned with the new project state
+	 */
+	private boolean shouldPropagateStateToTask(TaskState taskState, String afterState) {
+		if (TaskState.InProgress.equals(taskState)) {
+			return true;
+		}
+		return Boolean.parseBoolean(systemConfigurationService.confValue("project.formulation.autoProjectState"))
+				&& (TaskState.Planned.equals(taskState) || TaskState.OnHold.equals(taskState)) && !taskState.toString().equals(afterState);
 	}
 
 	/** {@inheritDoc} */
