@@ -50,6 +50,88 @@ public class IngListHelper {
 	}
 
 	/**
+	 * Returns a copy of the ingredient list where the percentages of depth-declared
+	 * sub-ingredients (items whose parent belongs to the same list) are rescaled by their parent
+	 * percentage.
+	 * <p>
+	 * In a manually entered ingredient list, sub-ingredient percentages are expressed relative to
+	 * their parent ingredient (children sum to 100 %), exactly like the sub-entity lists handled by
+	 * {@link #extractParentList(List, AssociationService, AlfrescoRepository)}. This method converts
+	 * them into absolute percentages of the owning entity so the formulation aggregates children
+	 * consistently with their parent (see #34702). Top-level items are returned as-is; children are
+	 * defensive copies, so the persisted component list is never mutated. Lists produced by the
+	 * formulation already hold absolute child percentages and must not go through this method.
+	 *
+	 * @param ingList the manually entered ingredient list
+	 * @return the list with children rescaled by their parent percentage, or the original list when
+	 *         it contains no depth-declared children
+	 */
+	public static List<IngListDataItem> scaleRelativeDepthChildren(List<IngListDataItem> ingList) {
+
+		boolean hasDepthChildren = false;
+		for (IngListDataItem item : ingList) {
+			if (item.getParent() != null) {
+				hasDepthChildren = true;
+				break;
+			}
+		}
+		if (!hasDepthChildren) {
+			return ingList;
+		}
+
+		Map<IngListDataItem, IngListDataItem> scaledItems = new HashMap<>();
+		List<IngListDataItem> ret = new ArrayList<>(ingList.size());
+		for (IngListDataItem item : ingList) {
+			ret.add(scaleDepthChild(item, scaledItems));
+		}
+		return ret;
+	}
+
+	private static IngListDataItem scaleDepthChild(IngListDataItem item, Map<IngListDataItem, IngListDataItem> scaledItems) {
+
+		IngListDataItem scaled = scaledItems.get(item);
+		if (scaled != null) {
+			return scaled;
+		}
+
+		if (item.getParent() == null) {
+			scaledItems.put(item, item);
+			return item;
+		}
+
+		IngListDataItem scaledParent = scaleDepthChild(item.getParent(), scaledItems);
+		IngListDataItem copy = item.copy();
+		copy.setParent(scaledParent);
+
+		if ((copy.getQtyPerc() != null) && (scaledParent.getQtyPerc() != null)) {
+			copy.setQtyPerc((copy.getQtyPerc() * scaledParent.getQtyPerc()) / 100d);
+		}
+
+		if (copy.getQtyPercWithYield() != null) {
+			Double parentQtyPercWithYield = scaledParent.getQtyPercWithYield() != null ? scaledParent.getQtyPercWithYield()
+					: scaledParent.getQtyPerc();
+			if (parentQtyPercWithYield != null) {
+				copy.setQtyPercWithYield((copy.getQtyPercWithYield() * parentQtyPercWithYield) / 100d);
+			}
+		}
+
+		if ((copy.getVolumeQtyPerc() != null) && (scaledParent.getVolumeQtyPerc() != null)) {
+			copy.setVolumeQtyPerc((copy.getVolumeQtyPerc() * scaledParent.getVolumeQtyPerc()) / 100d);
+		}
+
+		if ((copy.getMini() != null) && (scaledParent.getMini() != null)) {
+			copy.setMini((copy.getMini() * scaledParent.getMini()) / 100d);
+		}
+
+		if ((copy.getMaxi() != null) && (scaledParent.getMaxi() != null)) {
+			copy.setMaxi((copy.getMaxi() * scaledParent.getMaxi()) / 100d);
+		}
+
+		scaledItems.put(item, copy);
+		return copy;
+	}
+
+	/**
 	 * <p>addParentList.</p>
 	 *
 	 * @param ret a {@link java.util.List} object

@@ -757,9 +757,13 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 
 		// calculate ingList of formulated product
+		List<IngListDataItem> componentIngList = componentProductData.getIngList();
+		if ((componentIngList != null) && !componentProductData.hasCompoListEl()) {
+			componentIngList = IngListHelper.scaleRelativeDepthChildren(componentIngList);
+		}
 		calculateILOfPart(formulatedProduct, componentProductData, compoListDataItem,
 				CompositeHelper.getHierarchicalCompoList(
-						IngListHelper.extractParentList(componentProductData.getIngList(), associationService, alfrescoRepository)),
+						IngListHelper.extractParentList(componentIngList, associationService, alfrescoRepository)),
 				formulatedProduct.getIngList(), retainNodes, totalQtyIngMap, totalQtyOmittedIngMap, null, formulatedProduct.isGeneric());
 	}
 
