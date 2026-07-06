@@ -22,6 +22,7 @@
 	if (beCPG.component.EntityDataListToolbar) {
 		var PREF_VIEW_MODE = "org.alfresco.share.project.gantt.mode"
     	var PREF_SHOW_TARGET_DATE =  "org.alfresco.share.project.gantt.showTargetDate";
+    	var PREF_CAPTION_TYPE = "org.alfresco.share.project.gantt.captionType";
 
 		YAHOO.Bubbling.fire("registerToolbarButtonAction",
 			{
@@ -51,6 +52,66 @@
 					widget.on("checkedChange", function() {
 						YAHOO.Bubbling.fire("viewModeChange");
 
+					});
+
+					return widget;
+				}
+			});
+
+		YAHOO.Bubbling.fire("registerToolbarButtonAction",
+			{
+				actionName: "gantt-caption",
+				right: true,
+				evaluate: function(asset, entity) {
+					return asset.name !== null && (asset.name.indexOf("View-gantt") > -1 || asset.name === "taskList");
+				},
+				createWidget: function(containerDiv, instance) {
+
+					var divEl = document.createElement("div");
+
+					containerDiv.appendChild(divEl);
+
+					Dom.addClass(divEl, "ganttCaptionMenu");
+
+					var captionTypes = [
+						{ value: "Resource", text: instance.msg("button.gantt-caption.resource") },
+						{ value: "Name", text: instance.msg("button.gantt-caption.name") },
+						{ value: "Dates", text: instance.msg("button.gantt-caption.dates") }
+					];
+
+					var currentType = Alfresco.util.findValueByDotNotation(instance.services.preferences.get(), PREF_CAPTION_TYPE);
+					if (currentType == null || currentType.length === 0) {
+						currentType = "Resource";
+					}
+
+					var currentLabel = captionTypes[0].text, menuItems = [], i;
+					for (i = 0; i < captionTypes.length; i++) {
+						if (captionTypes[i].value === currentType) {
+							currentLabel = captionTypes[i].text;
+						}
+						menuItems.push({ text: captionTypes[i].text, value: captionTypes[i].value });
+					}
+
+					var widget = new YAHOO.widget.Button(
+						{
+							type: "menu",
+							title: instance.msg("button.gantt-caption.description"),
+							label: currentLabel,
+							menu: menuItems,
+							container: divEl
+						});
+
+					widget.getMenu().subscribe("click", function(p_sType, p_aArgs) {
+						var menuItem = p_aArgs[1];
+						if (menuItem) {
+							widget.set("label", menuItem.cfg.getProperty("text"));
+							instance.services.preferences.set(PREF_CAPTION_TYPE, menuItem.value);
+							if (typeof g !== "undefined" && g != null) {
+								g.setCaptionType(menuItem.value);
+								g.Draw();
+								g.DrawDependencies();
+							}
+						}
 					});
 
 					return widget;
