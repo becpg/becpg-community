@@ -3,6 +3,7 @@
  */
 package fr.becpg.test.repo.product.formulation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,10 @@ import fr.becpg.repo.product.data.CharactDetailAdditionalValue;
 import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.CharactDetailsValue;
 import fr.becpg.repo.product.data.FinishedProductData;
+import fr.becpg.repo.product.data.SemiFinishedProductData;
+import fr.becpg.repo.product.data.constraints.DeclarationType;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.sample.StandardChocolateEclairTestProduct;
 import fr.becpg.repo.web.scripts.product.CharactDetailsHelper;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
@@ -37,7 +42,12 @@ public class IngCharactDetailsFormulationIT extends AbstractFinishedProductTest 
     @Autowired
     private AttributeExtractorService attributeExtractorService;
 
- 
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        initParts();
+    }
+
     /**
      * Validates that proportion percentages are displayed correctly at all levels
      * without being recalculated with qtyUsed.
@@ -160,6 +170,119 @@ public class IngCharactDetailsFormulationIT extends AbstractFinishedProductTest 
 
             return null;
         });
+    }
+
+    /**
+     * Validates that the "Qté ap. rdmt (%)" column is present even when the root
+     * product has no yield of its own, the yield being carried by a semi-finished
+     * component (Fix #30123, last KO point).
+     *
+     * The detail decomposition must stay consistent with the ingList computed by
+     * IngsCalculatingFormulationHandler: the sum of the per-component values of the
+     * yield column must match the root ingList qtyPercWithYield.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testYieldColumnWithoutRootYield() throws Exception {
+
+        final NodeRef semiFinishedNodeRef = inWriteTx(() -> {
+            SemiFinishedProductData semiFinished = new SemiFinishedProductData();
+            semiFinished.setName("SF rendement 90 - #30123");
+            semiFinished.setLegalName("Legal SF rendement 90");
+            semiFinished.setUnit(ProductUnit.kg);
+            semiFinished.setQty(0.9d);
+            semiFinished.setDensity(1d);
+            List<CompoListDataItem> compoList = new ArrayList<>();
+            compoList.add(CompoListDataItem.build().withQtyUsed(0.5d).withUnit(ProductUnit.kg)
+                    .withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+            compoList.add(CompoListDataItem.build().withQtyUsed(0.5d).withUnit(ProductUnit.kg)
+                    .withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial2NodeRef));
+            semiFinished.getCompoListView().setCompoList(compoList);
+            return alfrescoRepository.create(getTestFolderNodeRef(), semiFinished).getNodeRef();
+        });
+
+        final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+            productService.formulate(semiFinishedNodeRef);
+
+            FinishedProductData finishedProduct = new FinishedProductData();
+            finishedProduct.setName("PF sans rendement - #30123");
+            finishedProduct.setLegalName("Legal PF sans rendement");
+            finishedProduct.setUnit(ProductUnit.kg);
+            List<CompoListDataItem> compoList = new ArrayList<>();
+            compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg)
+                    .withDeclarationType(DeclarationType.Declare).withProduct(semiFinishedNodeRef));
+            compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg)
+                    .withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial3NodeRef));
+            finishedProduct.getCompoListView().setCompoList(compoList);
+            return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+        });
+
+        inWriteTx(() -> {
+            productService.formulate(finishedProductNodeRef);
+
+            FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+            Assert.assertNull("Root product should have no yield", finishedProduct.getYield());
+
+            Double ingListQtyPercWithYield = finishedProduct.getIngList().stream()
+                    .filter(item -> ing1.equals(item.getIng())).findFirst()
+                    .map(item -> item.getQtyPercWithYield()).orElse(null);
+            Assert.assertNotNull("Root ingList should carry qtyPercWithYield", ingListQtyPercWithYield);
+            Assert.assertEquals(16.2037d, ingListQtyPercWithYield, 0.001d);
+
+            CharactDetails ingDetails = productService.formulateDetails(finishedProductNodeRef, PLMModel.TYPE_INGLIST, "ingList", null, 2);
+
+            logger.info(CharactDetailsHelper.toJSONObject(ingDetails, nodeService, attributeExtractorService).toString(3));
+
+            List<CharactDetailsValue> ing1Values = ingDetails.getData().get(ing1);
+            Assert.assertNotNull("ing1 should be present in details", ing1Values);
+
+            boolean semiFinishedLineChecked = false;
+            boolean rawMaterialLineChecked = false;
+            double levelZeroWithYieldSum = 0d;
+
+            for (CharactDetailsValue detailsValue : ing1Values) {
+                Double withYieldValue = getAdditionalValue(detailsValue, "bcpg:ingListQtyPercWithYield");
+                Assert.assertNotNull("Yield column should be present at level " + detailsValue.getLevel(), withYieldValue);
+                Assert.assertNull("Secondary yield column should be absent",
+                        getAdditionalValue(detailsValue, "bcpg:ingListQtyPercWithSecondaryYield"));
+
+                if (Integer.valueOf(0).equals(detailsValue.getLevel())) {
+                    levelZeroWithYieldSum += withYieldValue;
+                    if (semiFinishedNodeRef.equals(detailsValue.getKeyNodeRef())) {
+                        Assert.assertEquals("Quantity (%) should stay before yield", 14.5833d, detailsValue.getValue(), 0.001d);
+                        Assert.assertEquals("Qty with yield (%) should carry the SF yield", 16.2037d, withYieldValue, 0.001d);
+                        semiFinishedLineChecked = true;
+                    }
+                } else if (rawMaterial1NodeRef.equals(detailsValue.getKeyNodeRef())) {
+                    Assert.assertEquals(9.2593d, withYieldValue, 0.001d);
+                    rawMaterialLineChecked = true;
+                }
+            }
+
+            Assert.assertTrue("Semi-finished line should be checked at level 0", semiFinishedLineChecked);
+            Assert.assertTrue("Raw material line should be checked at level 1", rawMaterialLineChecked);
+            Assert.assertEquals("Level 0 yield column should sum up to the root ingList value", ingListQtyPercWithYield,
+                    levelZeroWithYieldSum, 0.001d);
+
+            return null;
+        });
+    }
+
+    /**
+     * Returns the value of an additional column of a detail line.
+     *
+     * @param detailsValue the detail line
+     * @param columnKey the additional column key
+     * @return the column value, or null when the column is absent
+     */
+    private Double getAdditionalValue(CharactDetailsValue detailsValue, String columnKey) {
+        for (CharactDetailAdditionalValue additionalValue : detailsValue.getAdditionalValues()) {
+            if ((additionalValue != null) && columnKey.equals(additionalValue.getColumnKey())) {
+                return additionalValue.getValue();
+            }
+        }
+        return null;
     }
 
 }

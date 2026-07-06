@@ -30,26 +30,28 @@ public class IngCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 		Double qtyPerc = ingListDataItem.getQtyPerc();
 
-		// Calculate qty with yield based on root product's yield applied to the base qtyPerc
-		Double rootYield = rootProduct.getYield();
-		if ((rootYield != null) && (rootYield != 0d) && (qtyPerc != null)) {
-			Double qtyPercWithYield = qtyPerc / (rootYield / 100d);
+		// Mirror IngsCalculatingFormulationHandler: the stored value carries the component yield chain, fallback on qtyPerc
+		Double qtyPercWithYield = ingListDataItem.getQtyPercWithYield();
+		if (qtyPercWithYield == null) {
+			qtyPercWithYield = qtyPerc;
+		}
 
+		Double rootYield = rootProduct.getYield();
+		if ((qtyPercWithYield != null) && (rootYield != null) && (rootYield != 0d)) {
+			qtyPercWithYield = qtyPercWithYield / (rootYield / 100d);
+		}
+
+		if (qtyPercWithYield != null) {
 			CharactDetailAdditionalValue qtyWithYieldValue = new CharactDetailAdditionalValue("bcpg:ingListQtyPercWithYield",
 					I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListQtyPercWithYield.title"),
 					FormulationHelper.calculateValue(0d, qtyUsed, qtyPercWithYield, netQty), unit);
 			currentCharactDetailsValue.getAdditionalValues().add(qtyWithYieldValue);
 		}
 
-		// Calculate qty with secondary yield based on root product's secondary yield
+		// Secondary yield column only exists when the root product declares a secondary yield
 		Double rootSecondaryYield = rootProduct.getSecondaryYield();
-		if ((rootSecondaryYield != null) && (rootSecondaryYield != 0d) && (qtyPerc != null)) {
-			// Apply both yields if primary yield exists, otherwise just secondary yield
-			Double baseValue = qtyPerc;
-			if ((rootYield != null) && (rootYield != 0d)) {
-				baseValue = qtyPerc / (rootYield / 100d);
-			}
-			Double qtyPercWithSecondaryYield = baseValue / (rootSecondaryYield / 100d);
+		if ((rootSecondaryYield != null) && (rootSecondaryYield != 0d) && (qtyPercWithYield != null)) {
+			Double qtyPercWithSecondaryYield = qtyPercWithYield / (rootSecondaryYield / 100d);
 			CharactDetailAdditionalValue qtyWithSecondaryYieldValue = new CharactDetailAdditionalValue("bcpg:ingListQtyPercWithSecondaryYield",
 					I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListQtyPercWithSecondaryYield.title"),
 					FormulationHelper.calculateValue(0d, qtyUsed, qtyPercWithSecondaryYield, netQty), unit);
