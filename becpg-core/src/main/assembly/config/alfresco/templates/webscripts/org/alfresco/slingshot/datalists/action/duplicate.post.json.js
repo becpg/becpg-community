@@ -116,6 +116,36 @@ function runAction(p_params)
    }
    
 
+   // Remap bcpg:parentLevel to the duplicated parent when the parent has been duplicated too
+   for(index in results){
+       if(results[index].success){
+           try
+           {
+              itemNode = search.findNode(results[index].nodeRef);
+              if (itemNode !== null)
+              {
+                   var parentLevel = itemNode.properties["bcpg:parentLevel"];
+                   if(parentLevel!=null ){
+                       for(index2 in results){
+                           var tmp = parentLevel.nodeRef;
+                           var tmp2 = results[index2].oldNodeRef;
+                           if(String(tmp) ===  String(tmp2)){
+                               itemNode.properties["bcpg:parentLevel"] =  search.findNode(results[index2].nodeRef);
+                               itemNode.save();
+                               results[index].parentDuplicated = true;
+                               break;
+                           }
+                       }
+                   }
+              }
+           }
+           catch (e)
+           {
+              results[index].success = false;
+           }
+       }
+   }
+
    for(index in results){
        nodeRef = results[index].nodeRef;
        if(results[index].success){
@@ -125,65 +155,11 @@ function runAction(p_params)
               itemNode = search.findNode(nodeRef);
               if (itemNode !== null && oldNode!=null)
               {
-                   var parentLevel = itemNode.properties["bcpg:parentLevel"];     
-                   if(parentLevel!=null ){
-                       for(index2 in results){
-                           var tmp = parentLevel.nodeRef;
-                           var tmp2 = results[index2].oldNodeRef;
-                           if(String(tmp) ===  String(tmp2)){
-                               itemNode.properties["bcpg:parentLevel"] =  search.findNode(results[index2].nodeRef);
-                               itemNode.save();
-                               break;
-                           }
-                       }
-                   }
-
-
-                    // set proper sorting
-
-                     var oldSort = oldNode.properties["bcpg:sort"];
-                     
-                     //only do it on nodes with sort attribute
-                     if(oldSort != null){
-                    	 
-	                     //make sure the next item hasn't got sort+1, otherwise multiply all sorts by 10
-	                    var dataList = oldNode.parent;
-	
-	                    //get all compoList items with this duplicated node as a parent
-	                    var childNodes = search.luceneSearch("+@bcpg\\:parentLevel:\""+oldNode.nodeRef+"\"");
-	
-	
-	                    //if there are any, set oldSort to biggest sort of these children
-	                    for(var childIndex in childNodes){
-	                      if(childNodes[childIndex].properties["bcpg:sort"] > oldSort){
-	                          oldSort = childNodes[childIndex].properties["bcpg:sort"];
-	                      }
-	                    }
-	
-	                    //we have compoList, check all children's sort values and see if one has sort+1
-	                    var shouldMultiplySortByTen = false;
-	
-	                    //find smallest sort > oldSort
-	                    for(var childIndex in dataList.children){
-	                    	if(!shouldMultiplySortByTen && dataList.children[childIndex].nodeRef != oldNode.nodeRef && dataList.children[childIndex].properties["bcpg:sort"] == oldSort+1){
-	                          shouldMultiplySortByTen = true;
-	                      }
-	                    }
-	
-	                    if(shouldMultiplySortByTen){
-	                      for(var childIndex in dataList.children){
-	                    	  var sortVal = dataList.children[childIndex].properties["bcpg:sort"];
-	                    	  if(sortVal != null){
-		                        dataList.children[childIndex].properties["bcpg:sort"] = sortVal*10;
-		                        dataList.children[childIndex].save();
-	                    	  }
-	                      }
-	                      oldSort = oldSort * 10;
-	                    }
-	
-	                    itemNode.properties["bcpg:sort"] =  ++oldSort;
-	                    itemNode.save();
-                     }
+                    // Set proper sort and depth level. Items whose duplicated parent is inserted
+                    // are placed recursively with it
+                    if(oldNode.properties["bcpg:sort"] != null && results[index].parentDuplicated !== true){
+                        bcpg.insertAfter(itemNode, oldNode);
+                    }
 
                     // Now copy any associations
                     for (var idxAssoc in oldNode.assocs)
@@ -192,7 +168,7 @@ function runAction(p_params)
                        for (var j = 0, jj = assocs.length; j < jj; j++)
                        {
                            var assocNode = assocs[j];
-                           
+
                            for(index2 in results){
                                var tmp = assocNode.nodeRef;
                                var tmp2 = results[index2].oldNodeRef;
@@ -200,17 +176,17 @@ function runAction(p_params)
                                    assocNode =  search.findNode(results[index2].nodeRef);
                                    break;
                                }
-                               
+
                            }
                            itemNode.createAssociation(assocNode, idxAssoc);
                        }
                     }
                  }
-              
+
            }
            catch (e)
            {
-              result.success = false;
+              results[index].success = false;
            }
        }
    }
