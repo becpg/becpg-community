@@ -1,5 +1,13 @@
 package fr.becpg.repo.regulatory.becpg.regulatory;
 
+import java.net.URI;
+import java.time.Instant;
+import java.util.Optional;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
+
 import com.nimbusds.oauth2.sdk.ClientCredentialsGrant;
 import com.nimbusds.oauth2.sdk.Scope;
 import com.nimbusds.oauth2.sdk.TokenRequest;
@@ -8,15 +16,9 @@ import com.nimbusds.oauth2.sdk.auth.ClientSecretBasic;
 import com.nimbusds.oauth2.sdk.auth.Secret;
 import com.nimbusds.oauth2.sdk.id.ClientID;
 import com.nimbusds.oauth2.sdk.token.AccessToken;
+
 import fr.becpg.repo.authentication.BeCPGTicketService;
 import fr.becpg.repo.system.SystemConfigurationService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.time.Instant;
-import java.util.Optional;
 
 /**
  * This service encapsulates an authentication suite for becpg-regulatory.
@@ -29,35 +31,68 @@ public class BecpgRegulatoryAuthenticationService {
     public static final String OAUTH_MODE = "oauth2";
     public static final String TICKET_MODE = "ticket";
 
-    private final String mode;
-    private final int buffer;
-    private final TokenRequest.Builder standardRequestbuilder;
+    private final SystemConfigurationService systemConfigurationService;
+    private final BeCPGTicketService beCPGTicketService;
+
+    private volatile String mode;
+    private volatile int buffer;
+    private volatile TokenRequest.Builder standardRequestbuilder;
+
+    private volatile boolean initialized = false;
 
     private volatile String cachedAccessToken;
     private volatile Instant expiresAt;
 
-    private final BeCPGTicketService beCPGTicketService;
-
     public BecpgRegulatoryAuthenticationService(SystemConfigurationService systemConfigurationService,
-                                                BeCPGTicketService beCPGTicketService) throws Exception {
+                                                BeCPGTicketService beCPGTicketService)
+    {
+        this.systemConfigurationService = systemConfigurationService;
         this.beCPGTicketService = beCPGTicketService;
-        this.mode = systemConfigurationService.confValue("beCPG.regulatory.authMode");
-        this.buffer = Integer.getInteger(systemConfigurationService.confValue("beCPG.regulatory.oauth2.buffer"), 0);
+    }
 
-        if (mode != null && mode.equalsIgnoreCase(OAUTH_MODE)) {
-            String scope = systemConfigurationService.confValue("beCPG.regulatory.oauth2.scope");
-            String tokenUrl = systemConfigurationService.confValue("beCPG.regulatory.oauth2.tokenUrl");
-            String clientId = systemConfigurationService.confValue("beCPG.regulatory.oauth2.clientId");
-            String clientSecret = systemConfigurationService.confValue("beCPG.regulatory.oauth2.clientSecret");
-            this.standardRequestbuilder = new TokenRequest.Builder(
-                    new URI(tokenUrl),
-                    new ClientSecretBasic(new ClientID(clientId), new Secret(clientSecret)),
-                    new ClientCredentialsGrant()
-            );
-            if (scope != null)
-                this.standardRequestbuilder.scope(Scope.parse(scope));
-        } else {
-            this.standardRequestbuilder = null;
+    /**
+     * Lazily initializes the configuration properties of the service in a thread-safe manner.
+     */
+    private void ensureInitialized()
+    {
+        if (!initialized)
+        {
+            synchronized (this)
+            {
+                if (!initialized)
+                {
+                    try
+                    {
+                        this.mode = systemConfigurationService.confValue("beCPG.regulatory.authMode");
+                        this.buffer = Integer.getInteger(systemConfigurationService.confValue("beCPG.regulatory.oauth2.buffer"), 0);
+
+                        if (mode != null && mode.equalsIgnoreCase(OAUTH_MODE))
+                        {
+                            String scope = systemConfigurationService.confValue("beCPG.regulatory.oauth2.scope");
+                            String tokenUrl = systemConfigurationService.confValue("beCPG.regulatory.oauth2.tokenUrl");
+                            String clientId = systemConfigurationService.confValue("beCPG.regulatory.oauth2.clientId");
+                            String clientSecret = systemConfigurationService.confValue("beCPG.regulatory.oauth2.clientSecret");
+                            this.standardRequestbuilder = new TokenRequest.Builder(
+                                    new URI(tokenUrl),
+                                    new ClientSecretBasic(new ClientID(clientId), new Secret(clientSecret)),
+                                    new ClientCredentialsGrant()
+                            );
+                            if (scope != null)
+                                this.standardRequestbuilder.scope(Scope.parse(scope));
+                        }
+                        else
+                        {
+                            this.standardRequestbuilder = null;
+                        }
+                        this.initialized = true;
+                    }
+                    catch (Exception e)
+                    {
+                        logger.error("Failed to initialize regulatory authentication service configurations: " + e.getMessage(), e);
+                        throw new RuntimeException("Failed to initialize regulatory authentication service configurations", e);
+                    }
+                }
+            }
         }
     }
 
@@ -68,7 +103,9 @@ public class BecpgRegulatoryAuthenticationService {
      *
      * @return the lower-cased authentication mode, never null
      */
-    private String authMode() {
+    private String authMode()
+    {
+        ensureInitialized();
         return mode != null && !mode.isBlank() ? mode.trim().toLowerCase() : TICKET_MODE;
     }
 
