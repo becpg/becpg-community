@@ -215,9 +215,9 @@ reindex() {
 
 upload_test() {
     TOKEN="${STATUS_AUTH_TOKEN:-status-auth-token}"
-    HOST_ID="${USER}@$(hostname)"
+    HOST_ID="${STATUS_HOST_ID:-${USER}@$(hostname)}"
+    VERSION="${BECPG_VERSION:-$(git describe --tags --always 2>/dev/null || echo "unknown")}"
     ZIP_FILE="/tmp/failsafe-reports.zip"
-    VERSION=$(git describe --tags --always 2>/dev/null || echo "unknown")
 
     echo "Zipping failsafe reports..."
     rm -f "$ZIP_FILE"
