@@ -141,7 +141,8 @@ function main() {
     [
         "project.subProject.propsToCopyFromParent",
         "project.subProject.propsToCopyToParent",
-        "project.extractor.myProjectAttributes"
+        "project.extractor.myProjectAttributes",
+        "project.formulation.autoProjectState"
     ].forEach(function(p) {
         addAttribute(p, "project");
     });
