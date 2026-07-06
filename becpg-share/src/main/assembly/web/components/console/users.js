@@ -827,20 +827,23 @@
 			   pattern: "^[^A-Z]+$",
 			   match: true
 			}, "keyup", parent._msg("Alfresco.forms.validation.lowercase.message"));
-            form.addValidation(parent.id + "-create-password", Alfresco.forms.validation.length,
-            {
-               min: parent.options.minPasswordLength,
-               max: 100,
-               crop: true,
-               ignoreEmpty: true
-            }, "change", parent._msg("Alfresco.forms.validation.length.message.min", parent.options.minPasswordLength));
-            form.addValidation(parent.id + "-create-verifypassword", Alfresco.forms.validation.length,
-            {
-               min: parent.options.minPasswordLength,
-               max: 100,
-               crop: true,
-               ignoreEmpty: true
-            }, "change", parent._msg("Alfresco.forms.validation.length.message.min", parent.options.minPasswordLength));
+            var isPasswordSecureValidator = function(field, args) {
+               var pw = field.value;
+               if (!pw) return true;
+               if (pw.length < 14) return false;
+               var hasUpper = false, hasLower = false, hasDigit = false, hasSpecial = false;
+               var specialChars = "!@#$%^&*()-_=+[]{} ";
+               for (var i = 0; i < pw.length; i++) {
+                  var c = pw.charAt(i);
+                  if (c >= 'A' && c <= 'Z') hasUpper = true;
+                  else if (c >= 'a' && c <= 'z') hasLower = true;
+                  else if (c >= '0' && c <= '9') hasDigit = true;
+                  else if (specialChars.indexOf(c) >= 0) hasSpecial = true;
+               }
+               return hasUpper && hasLower && hasDigit && hasSpecial;
+            };
+            form.addValidation(parent.id + "-create-password", isPasswordSecureValidator, null, "change", parent._msg("message.password-validate-strength"));
+            form.addValidation(parent.id + "-create-verifypassword", isPasswordSecureValidator, null, "change", parent._msg("message.password-validate-strength"));
             form.addValidation(parent.id + "-create-quota", Alfresco.forms.validation.number, null, "keyup");
 
             // Initialise the form
@@ -2482,14 +2485,27 @@
                });
                return;
             }
-            if (YAHOO.lang.trim(password).length < this.options.minPasswordLength)
-            {
-               Alfresco.util.PopupManager.displayMessage(
-               {
-                  text: this._msg("message.password-validate-length", this.options.minPasswordLength)
-               });
-               return;
-            }
+             var isPasswordSecure = function(pw) {
+                if (!pw || pw.length < 14) return false;
+                var hasUpper = false, hasLower = false, hasDigit = false, hasSpecial = false;
+                var specialChars = "!@#$%^&*()-_=+[]{} ";
+                for (var i = 0; i < pw.length; i++) {
+                   var c = pw.charAt(i);
+                   if (c >= 'A' && c <= 'Z') hasUpper = true;
+                   else if (c >= 'a' && c <= 'z') hasLower = true;
+                   else if (c >= '0' && c <= '9') hasDigit = true;
+                   else if (specialChars.indexOf(c) >= 0) hasSpecial = true;
+                }
+                return hasUpper && hasLower && hasDigit && hasSpecial;
+             };
+             if (!isPasswordSecure(password))
+             {
+                Alfresco.util.PopupManager.displayMessage(
+                {
+                   text: this._msg("message.password-validate-strength")
+                });
+                return;
+             }
             if (password !== verifypw)
             {
                Alfresco.util.PopupManager.displayMessage(

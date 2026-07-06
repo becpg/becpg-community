@@ -104,7 +104,7 @@ public class UserImportServiceIT extends PLMBaseTestCase {
 		trackUserForCleanup(username);
 		NodeRef xlsx = inWriteTx(() -> createXlsxImport(buildFileName("xlsx-default", ".xlsx"),
 				new String[] { "username", "password", "cm:firstName", "cm:lastName", "cm:email" },
-				new String[] { username, "Password123", "Matthieu", "Dupont", "matthieu.dupont@test.com" }));
+				new String[] { username, "SecurePwd12345!", "Matthieu", "Dupont", "matthieu.dupont@test.com" }));
 
 		inWriteTx(() -> {
 			userImporterService.importUser(xlsx);
@@ -120,7 +120,7 @@ public class UserImportServiceIT extends PLMBaseTestCase {
 		trackUserForCleanup(username);
 		String csvContent = createCsvContent(
 				new String[] { "username", "password", "cm:firstName", "cm:lastName", "cm:email" },
-				new String[] { username, "Password123", "Matthieu", "Dupont", "matthieu.dupont@test.com" });
+				new String[] { username, "SecurePwd12345!", "Matthieu", "Dupont", "matthieu.dupont@test.com" });
 		NodeRef csv = inWriteTx(() -> createCsvImport(buildFileName("csv-default", ".csv"), csvContent));
 
 		inWriteTx(() -> {
@@ -129,6 +129,32 @@ public class UserImportServiceIT extends PLMBaseTestCase {
 		});
 
 		assertUserProperties(username, "Matthieu", "Dupont", "matthieu.dupont@test.com", false);
+	}
+
+	@Test
+	public void testUserCreationWithWeakPasswordShouldFail() {
+		String username = buildUsername("weak-pwd");
+		trackUserForCleanup(username);
+		
+		BeCPGUserAccount userAccount = new BeCPGUserAccount();
+		userAccount.setUserName(username);
+		userAccount.setPassword("Weak1");
+		userAccount.setFirstName("Matthieu");
+		userAccount.setLastName("Dupont");
+		userAccount.setEmail("matthieu.dupont@test.com");
+
+		try {
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				beCPGUserAccountService.getOrCreateUser(userAccount, true);
+				return null;
+			}, false, true);
+			org.junit.Assert.fail("User creation should have failed due to weak password policy violation");
+		} catch (Exception e) {
+			// Expected exception
+			boolean matches = e.getMessage().contains("Password does not match the security policy") || 
+					(e.getCause() != null && e.getCause().getMessage().contains("Password does not match the security policy"));
+			org.junit.Assert.assertTrue(matches);
+		}
 	}
 
 	@Test
