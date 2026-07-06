@@ -17,6 +17,19 @@ tr.gheader {
 	height: 2em;
 }
 
+thead.ghead-floating {
+	position: relative;
+	z-index: 5;
+}
+
+thead.ghead-floating th {
+	background-color: #fff;
+}
+
+thead.ghead-floating th.gheadwkend {
+	background-color: #cfcfcf;
+}
+
 .project-list .projects .yui-dt .gheader th {
 	vertical-align: middle;
 }
