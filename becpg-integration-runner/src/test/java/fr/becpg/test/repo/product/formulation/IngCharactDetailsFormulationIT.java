@@ -93,11 +93,11 @@ public class IngCharactDetailsFormulationIT extends AbstractFinishedProductTest 
             logger.info(CharactDetailsHelper.toJSONObject(ingDetailsMultiLevel, nodeService, attributeExtractorService).toString(3));
 
             // Expected values by level (we have 3 components with 2 levels each = 6 entries)
-            // Level 0: [6.493506493506494, 7.272727272727273, 5.454545454545455]
-            // Level 1: [41.32231404958677, 7.272727272727273, 5.454545454545455]
+            // The main column stays on the raw recipe basis at every level: the sugar line under
+            // "Pâte à choux" (yield 22/140) matches its parent line instead of being re-concentrated
             Map<Integer, Double[]> expectedSugarByLevel = new HashMap<>();
             expectedSugarByLevel.put(0, new Double[]{6.49350649350649, 7.27272727272727, 5.45454545454546});
-            expectedSugarByLevel.put(1, new Double[]{41.3223140495868, 7.27272727272727, 5.45454545454546});
+            expectedSugarByLevel.put(1, new Double[]{6.49350649350649, 7.27272727272727, 5.45454545454546});
 
             Map<String, Integer> foundSugarEntries = new HashMap<>();
             boolean sugarFound = false;
@@ -255,6 +255,8 @@ public class IngCharactDetailsFormulationIT extends AbstractFinishedProductTest 
                         semiFinishedLineChecked = true;
                     }
                 } else if (rawMaterial1NodeRef.equals(detailsValue.getKeyNodeRef())) {
+                    Assert.assertEquals("Quantity (%) should stay on the raw recipe basis at level 1", 8.3333d,
+                            detailsValue.getValue(), 0.001d);
                     Assert.assertEquals(9.2593d, withYieldValue, 0.001d);
                     rawMaterialLineChecked = true;
                 }
