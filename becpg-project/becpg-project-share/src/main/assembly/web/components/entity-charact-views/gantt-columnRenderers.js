@@ -51,7 +51,9 @@
                                                             .getFormat() : null, true);
                                                     g.setDateInputFormat("mediumDate");
                                                     g.setDateDisplayFormat("mediumDate");
-                                                    g.setCaptionType('Resource');
+                                                    var captionType = Alfresco.util.findValueByDotNotation(this.services.preferences.get(),
+                                                            "org.alfresco.share.project.gantt.captionType");
+                                                    g.setCaptionType(captionType != null && captionType.length > 0 ? captionType : 'Resource');
                                                     var start = new Date();
                                                     var previousTask = null;
                                                     for (var i = 0; i < recordSet.getLength(); i++)

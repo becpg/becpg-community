@@ -766,10 +766,15 @@
                         if (owner !== null) {
                             if (typeof me[owner.className] == "function") {
                                 args[1].stop = true;
-                                if (args[1].target && me.widgets.dataTable.getRecord(args[1].target.offsetParent) != null) {
-                                    var asset = me.widgets.dataTable.getRecord(args[1].target.offsetParent)
-                                        .getData();
-                                    me[owner.className].call(me, asset, owner);
+                                var record = null;
+                                if (args[1].target) {
+                                    record = me.widgets.dataTable.getRecord(args[1].target.offsetParent);
+                                }
+                                if (record === null) {
+                                    record = me.widgets.dataTable.getRecord(args[1].anchor);
+                                }
+                                if (record !== null) {
+                                    me[owner.className].call(me, record.getData(), owner);
                                 } else {
                                     me[owner.className].call(me, owner, owner);
                                 }
