@@ -213,6 +213,54 @@ reindex() {
     docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d solr
 }
 
+upload_test() {
+    TOKEN="${STATUS_AUTH_TOKEN:-status-auth-token}"
+    HOST_ID="${USER}@$(hostname)"
+    ZIP_FILE="/tmp/failsafe-reports.zip"
+    VERSION=$(git describe --tags --always 2>/dev/null || echo "unknown")
+
+    echo "Zipping failsafe reports..."
+    rm -f "$ZIP_FILE"
+
+    TARGET_DIR="./becpg-integration-runner/target"
+    if [ ! -d "$TARGET_DIR" ]; then
+        echo "Error: Target directory $TARGET_DIR does not exist!"
+        return 1
+    fi
+
+    # Save original directory
+    ORIG_DIR=$(pwd)
+    cd "$TARGET_DIR" || return 1
+
+    if [ ! -d "failsafe-reports" ]; then
+        echo "Error: failsafe-reports directory not found! Please run your tests first."
+        cd "$ORIG_DIR"
+        return 1
+    fi
+
+    zip -r "$ZIP_FILE" failsafe-reports/ > /dev/null
+
+    cd "$ORIG_DIR"
+
+    echo "Uploading test results to Status for host: ${HOST_ID}..."
+    STATUS_URL="https://status.becpg.fr/test-reports/upload"
+
+    response=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+      -H "Authorization: ${TOKEN}" \
+      -F "file=@${ZIP_FILE}" \
+      -F "hostId=${HOST_ID}" \
+      -F "version=${VERSION}" \
+      "$STATUS_URL")
+
+    if [ "$response" -eq 200 ]; then
+        echo "Upload completed successfully! (HTTP 200)"
+    else
+        echo "Upload failed with HTTP response code: $response"
+        echo "Please ensure the becpg-status application is running on $STATUS_URL"
+        return 1
+    fi
+}
+
 
 case "$1" in
   install)
@@ -263,6 +311,9 @@ case "$1" in
   reindex)
     reindex
     ;;
+  upload_test)
+    upload_test
+    ;;
 review)
     ./review/review-wizard.sh
     ;;
@@ -270,5 +321,5 @@ visualvm)
     jvisualvm --openjmx localhost:9091
     ;;
   *)
-    echo "Usage: $0 {install|install_hotswap|build_start|build_test|start|stop|purge|tail|test|deploy_fast|deploy_java [module]|visualvm|reindex}"
+    echo "Usage: $0 {install|install_hotswap|build_start|build_test|start|stop|purge|tail|test|deploy_fast|deploy_java [module]|visualvm|reindex|upload_test}"
 esac
