@@ -683,6 +683,153 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 		return null;
 	}
 
+	/**
+	 * Reproduces the remaining KO of #34702: sub-ingredients declared in depth inside the raw
+	 * material list (parent "Tomato puree" 99 % detailed as "Tomato" 99 % + "Oil" 1 %, children
+	 * expressed relative to their parent). The finished product percentages of the children must be
+	 * rescaled by the parent percentage — not by the raw material share — so that the composite
+	 * always equals the sum of its sub-ingredients, on both the plain and the "with yield" columns.
+	 */
+	@Test
+	public void testDepthDeclaredSubIngredientRelativePercentages() {
+
+		final NodeRef semiFinishedNodeRef = inWriteTx(() -> {
+
+			NodeRef ingCheese = CharactTestHelper.getOrCreateIng(nodeService, "ING Cheese 34702d");
+			NodeRef ingPreservative = CharactTestHelper.getOrCreateIng(nodeService, "ING Preservative 34702d");
+			NodeRef ingTomatoPuree = CharactTestHelper.getOrCreateIng(nodeService, "ING Tomato puree 34702d");
+			NodeRef ingTomato = CharactTestHelper.getOrCreateIng(nodeService, "ING Tomato 34702d");
+			NodeRef ingOil = CharactTestHelper.getOrCreateIng(nodeService, "ING Oil 34702d");
+
+			nodeService.setProperty(ingTomato, PLMModel.PROP_EVAPORATED_RATE, 50d);
+
+			// Raw material declared like the customer product: children relative to their parent
+			IngListDataItem preservative = buildIng(ingPreservative, 1d);
+			IngListDataItem puree = buildIng(ingTomatoPuree, 99d);
+			IngListDataItem tomato = buildIng(ingTomato, 99d).withParent(puree);
+			IngListDataItem oil = buildIng(ingOil, 1d).withParent(puree);
+			RawMaterialData tomatoRM = RawMaterialData.build().withName("RM Tomato 34702d").withQty(100d).withUnit(ProductUnit.kg)
+					.withIngList(List.of(preservative, puree, tomato, oil));
+			NodeRef tomatoRMNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), tomatoRM).getNodeRef();
+
+			RawMaterialData cheese = RawMaterialData.build().withName("RM Cheese 34702d").withQty(100d).withUnit(ProductUnit.kg)
+					.withIngList(List.of(buildIng(ingCheese, 100d)));
+			NodeRef cheeseNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), cheese).getNodeRef();
+
+			SemiFinishedProductData topping = SemiFinishedProductData.build().withName("SF Topping 34702d").withUnit(ProductUnit.kg)
+					.withQty(148d)
+					.withCompoList(List.of(
+							CompoListDataItem.build().withQtyUsed(80d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail)
+									.withProduct(cheeseNodeRef),
+							CompoListDataItem.build().withQtyUsed(68d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail)
+									.withProduct(tomatoRMNodeRef)));
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), topping).getNodeRef();
+		});
+
+		inWriteTx(() -> {
+			productService.formulate(semiFinishedNodeRef);
+			return null;
+		});
+
+		inReadTx(() -> {
+			SemiFinishedProductData formulatedTopping = (SemiFinishedProductData) alfrescoRepository.findOne(semiFinishedNodeRef);
+			List<IngListDataItem> ingList = formulatedTopping.getIngList();
+			Assert.assertNotNull("Topping ingredient list should not be null", ingList);
+
+			IngListDataItem puree = findIngByName(ingList, "ING Tomato puree 34702d");
+			IngListDataItem tomato = findIngByName(ingList, "ING Tomato 34702d");
+			IngListDataItem oil = findIngByName(ingList, "ING Oil 34702d");
+			Assert.assertNotNull("Tomato puree missing in topping", puree);
+			Assert.assertNotNull("Tomato child missing in topping", tomato);
+			Assert.assertNotNull("Oil child missing in topping", oil);
+
+			// RM share: 68/148 = 45.946 %; puree = 99 % of it, children relative to the puree
+			Assert.assertEquals("Puree qtyPerc in topping", 45.4864864d, puree.getQtyPerc(), 0.05);
+			Assert.assertEquals("Tomato child must be 99% of the puree", puree.getQtyPerc() * 0.99d, tomato.getQtyPerc(), 0.05);
+			Assert.assertEquals("Oil child must be 1% of the puree", puree.getQtyPerc() * 0.01d, oil.getQtyPerc(), 0.05);
+			Assert.assertEquals("Puree must equal the sum of its children", tomato.getQtyPerc() + oil.getQtyPerc(), puree.getQtyPerc(), 0.05);
+			return null;
+		});
+
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+
+			NodeRef ingFlour = CharactTestHelper.getOrCreateIng(nodeService, "ING Flour 34702d");
+			NodeRef ingWater = CharactTestHelper.getOrCreateIng(nodeService, "ING Water 34702d");
+			nodeService.setProperty(ingWater, PLMModel.PROP_EVAPORATED_RATE, 100d);
+
+			RawMaterialData flour = RawMaterialData.build().withName("RM Flour 34702d").withQty(100d).withUnit(ProductUnit.kg)
+					.withIngList(List.of(buildIng(ingFlour, 100d)));
+			NodeRef flourNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), flour).getNodeRef();
+
+			RawMaterialData water = RawMaterialData.build().withName("RM Water 34702d").withQty(100d).withUnit(ProductUnit.kg)
+					.withIngList(List.of(buildIng(ingWater, 100d)));
+			NodeRef waterNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), water).getNodeRef();
+
+			// 100 kg in, 80 kg net: 15 kg free water + 5 kg from the tomato sub-ingredient evaporate
+			FinishedProductData fp = FinishedProductData.build().withName("FP Pizza 34702d").withUnit(ProductUnit.kg).withQty(80d)
+					.withCompoList(List.of(
+							CompoListDataItem.build().withQtyUsed(40d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail)
+									.withProduct(flourNodeRef),
+							CompoListDataItem.build().withQtyUsed(45d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail)
+									.withProduct(semiFinishedNodeRef),
+							CompoListDataItem.build().withQtyUsed(15d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Detail)
+									.withProduct(waterNodeRef)));
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), fp).getNodeRef();
+		});
+
+		inWriteTx(() -> {
+			productService.formulate(finishedProductNodeRef);
+			return null;
+		});
+
+		inReadTx(() -> {
+			FinishedProductData formulatedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+			List<IngListDataItem> ingList = formulatedProduct.getIngList();
+			Assert.assertNotNull("Ingredient list should not be null", ingList);
+
+			IngListDataItem puree = findIngByName(ingList, "ING Tomato puree 34702d");
+			IngListDataItem tomato = findIngByName(ingList, "ING Tomato 34702d");
+			IngListDataItem oil = findIngByName(ingList, "ING Oil 34702d");
+			Assert.assertNotNull("Tomato puree missing", puree);
+			Assert.assertNotNull("Tomato child missing", tomato);
+			Assert.assertNotNull("Oil child missing", oil);
+			Assert.assertNotNull("Tomato should be a child of Tomato puree", tomato.getParent());
+
+			double topLevelQtyPerc = 0d;
+			double topLevelWithYield = 0d;
+			for (IngListDataItem item : ingList) {
+				if (item.getParent() == null) {
+					if (item.getQtyPerc() != null) {
+						topLevelQtyPerc += item.getQtyPerc();
+					}
+					if (item.getQtyPercWithYield() != null) {
+						topLevelWithYield += item.getQtyPercWithYield();
+					}
+				}
+			}
+
+			// RM tomato share in FP: 45 * 68/148 / 100 = 20.6757 %; puree = 99 % of it
+			Assert.assertEquals("Sum of top-level Quantity should be 100%", 100d, topLevelQtyPerc, 0.1);
+			Assert.assertEquals("Puree qtyPerc", 20.4689189d, puree.getQtyPerc(), 0.05);
+			Assert.assertEquals("Tomato child must be 99% of the puree", puree.getQtyPerc() * 0.99d, tomato.getQtyPerc(), 0.05);
+			Assert.assertEquals("Oil child must be 1% of the puree", puree.getQtyPerc() * 0.01d, oil.getQtyPerc(), 0.05);
+			Assert.assertEquals("Puree must equal the sum of its children", tomato.getQtyPerc() + oil.getQtyPerc(), puree.getQtyPerc(), 0.05);
+
+			Assert.assertEquals("Sum of top-level Qty with yield should be 100%", 100d, topLevelWithYield, 0.1);
+			Assert.assertEquals("Puree Qty with yield must equal the sum of its children",
+					tomato.getQtyPercWithYield() + oil.getQtyPercWithYield(), puree.getQtyPercWithYield(), 0.1);
+			for (IngListDataItem item : ingList) {
+				if (item.getQtyPercWithYield() != null) {
+					Assert.assertTrue("No ingredient should have a negative Qty with yield (" + item.getQtyPercWithYield() + ")",
+							item.getQtyPercWithYield() >= -0.0001d);
+				}
+			}
+			return null;
+		});
+	}
+
 	private IngListDataItem buildIng(NodeRef ingNodeRef, double qtyPerc) {
 		IngListDataItem item = IngListDataItem.build().withQtyPerc(qtyPerc).withIngredient(ingNodeRef);
 		item.setQtyPercWithYield(qtyPerc);
