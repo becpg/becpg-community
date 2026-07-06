@@ -53,6 +53,8 @@
                 Alfresco.util.populateHTML([p_dialog.id + "-dialogTitle", this.msg("label.new-row.title")], [
                     p_dialog.id + "-dialogHeader", this.msg("label.new-row.header")]);
 
+                this._freezeGridScroll(p_dialog);
+
                 // Is it a bulk action?
                 if (Dom.get(p_dialog.id + "-form-bulkAction")) {
                     Dom.get(p_dialog.id + "-form-bulkAction").checked = this.onActionCreateBulkEdit;
@@ -221,6 +223,8 @@
             // Intercept before dialog show
             var doBeforeDialogShow = function EntityDataGrid_onActionEdit_doBeforeDialogShow(p_form, p_dialog) {
                 Alfresco.util.populateHTML([p_dialog.id + "-dialogTitle", this.msg("label.edit-row.title")]);
+
+                this._freezeGridScroll(p_dialog);
 
                 // Is it a bulk action?
                 if (Dom.get(p_dialog.id + "-form-bulkAction")) {
@@ -816,6 +820,32 @@
             if (forceHide) {
                 Dom.addClass(messageNode, "hidden");
                 messageNode.innerHTML = "";
+            }
+        },
+
+        /**
+          * Freezes the datagrid scroll while a create/edit dialog is open and restores it when the
+          * dialog is hidden or destroyed. Avoids the Chrome double-scroll issue where the mouse
+          * wheel over the dialog scrolls the list behind it (#29203).
+          *
+          * @method _freezeGridScroll
+          * @param p_dialog
+          *           {object} the Alfresco.module.SimpleDialog instance being shown
+          */
+        _freezeGridScroll: function EntityDataGrid__freezeGridScroll(p_dialog) {
+            var gridEl = Dom.get(this.id + "-grid");
+            if (gridEl === null) {
+                return;
+            }
+
+            Dom.addClass(gridEl, "dialog-opened");
+
+            if (p_dialog && p_dialog.dialog) {
+                var unfreeze = function EntityDataGrid__freezeGridScroll_unfreeze() {
+                    Dom.removeClass(gridEl, "dialog-opened");
+                };
+                p_dialog.dialog.hideEvent.subscribe(unfreeze);
+                p_dialog.dialog.destroyEvent.subscribe(unfreeze);
             }
         }
 
