@@ -192,6 +192,12 @@ div.multi-level-warning {
     position: relative;
 }
 
+/* #29203 - While a create/edit dialog is open, Chrome routes the mouse wheel over the dialog
+   to the scrollable list behind it; freezing the list scroll keeps the wheel on the form. */
+.datagrid div.grid.dialog-opened {
+    overflow: hidden;
+}
+
 .datagrid.dashlet div.grid {
     height: 100%;
     max-height: 100%;
