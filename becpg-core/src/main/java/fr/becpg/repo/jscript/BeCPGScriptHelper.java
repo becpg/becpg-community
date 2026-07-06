@@ -97,6 +97,7 @@ import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.entity.datalist.DataListSortService;
 import fr.becpg.repo.entity.version.EntityVersion;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.entity.version.VersionHelper;
@@ -169,6 +170,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private RepoService repoService;
 
 	private EntityListDAO entityListDAO;
+
+	private DataListSortService dataListSortService;
 
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
@@ -624,6 +627,26 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
+	}
+
+	/**
+	 * <p>Setter for the field <code>dataListSortService</code>.</p>
+	 *
+	 * @param dataListSortService a {@link fr.becpg.repo.entity.datalist.DataListSortService} object.
+	 */
+	public void setDataListSortService(DataListSortService dataListSortService) {
+		this.dataListSortService = dataListSortService;
+	}
+
+	/**
+	 * Inserts a sortable data list item after another one, recomputing its sort and depth level
+	 * from its parent level so that the item is correctly placed in the list.
+	 *
+	 * @param nodeToInsert the data list item to insert
+	 * @param anchorNode the data list item after which the node is inserted
+	 */
+	public void insertAfter(ScriptNode nodeToInsert, ScriptNode anchorNode) {
+		dataListSortService.insertAfter(nodeToInsert.getNodeRef(), anchorNode.getNodeRef());
 	}
 
 	/**
