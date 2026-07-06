@@ -42,12 +42,15 @@ public class ProjectAutoStateIT extends AbstractProjectTestCase {
 	@Test
 	public void testProjectStateDerivedFromSubProjects() {
 
-		systemConfigurationService.updateConfValue("project.formulation.autoProjectState", "true");
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			systemConfigurationService.updateConfValue("project.formulation.autoProjectState", "true");
+			return null;
+		}, false, true);
 
 		try {
-			final NodeRef subProject1 = createProject(ProjectState.Planned, null, null);
-			final NodeRef subProject2 = createProject(ProjectState.Planned, null, null);
-			final NodeRef parentNodeRef = createParentProject(subProject1, subProject2);
+			final NodeRef subProject1 = createSubProject("Sub Pjt 1.1");
+			final NodeRef subProject2 = createSubProject("Sub Pjt 1.2");
+			final NodeRef parentNodeRef = createParentProject("Parent Pjt 1", subProject1, subProject2);
 
 			formulateProject(parentNodeRef);
 			assertProjectState(parentNodeRef, ProjectState.Planned);
@@ -70,7 +73,10 @@ public class ProjectAutoStateIT extends AbstractProjectTestCase {
 			assertProjectState(parentNodeRef, ProjectState.Cancelled);
 
 		} finally {
-			systemConfigurationService.resetConfValue("project.formulation.autoProjectState");
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				systemConfigurationService.resetConfValue("project.formulation.autoProjectState");
+				return null;
+			}, false, true);
 		}
 	}
 
@@ -81,12 +87,15 @@ public class ProjectAutoStateIT extends AbstractProjectTestCase {
 	@Test
 	public void testCancelParentProjectCascadesToSubProjects() {
 
-		systemConfigurationService.updateConfValue("project.formulation.autoProjectState", "true");
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			systemConfigurationService.updateConfValue("project.formulation.autoProjectState", "true");
+			return null;
+		}, false, true);
 
 		try {
-			final NodeRef subProject1 = createProject(ProjectState.Planned, null, null);
-			final NodeRef subProject2 = createProject(ProjectState.Planned, null, null);
-			final NodeRef parentNodeRef = createParentProject(subProject1, subProject2);
+			final NodeRef subProject1 = createSubProject("Sub Pjt 2.1");
+			final NodeRef subProject2 = createSubProject("Sub Pjt 2.2");
+			final NodeRef parentNodeRef = createParentProject("Parent Pjt 2", subProject1, subProject2);
 
 			formulateProject(parentNodeRef);
 			assertProjectState(parentNodeRef, ProjectState.Planned);
@@ -100,17 +109,36 @@ public class ProjectAutoStateIT extends AbstractProjectTestCase {
 			assertProjectState(parentNodeRef, ProjectState.Cancelled);
 
 		} finally {
-			systemConfigurationService.resetConfValue("project.formulation.autoProjectState");
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				systemConfigurationService.resetConfValue("project.formulation.autoProjectState");
+				return null;
+			}, false, true);
 		}
 	}
 
-	private NodeRef createParentProject(final NodeRef subProject1, final NodeRef subProject2) {
+	private NodeRef createSubProject(final String name) {
 
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
 
-			ProjectData projectData = new ProjectData(null, "Parent Pjt", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, null,
+			ProjectData projectData = new ProjectData(null, name, PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, null, null, null,
+					PlanningMode.Planning, null, ProjectState.Planned, null, 0, null);
+			projectData.setParentNodeRef(getTestFolderNodeRef());
+
+			projectData = (ProjectData) alfrescoRepository.save(projectData);
+
+			return projectData.getNodeRef();
+		}, false, true);
+	}
+
+	private NodeRef createParentProject(final String name, final NodeRef subProject1, final NodeRef subProject2) {
+
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
+
+			ProjectData projectData = new ProjectData(null, name, PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, null,
 					null, null, PlanningMode.Planning, null, ProjectState.Planned, null, 0, null);
 			projectData.setParentNodeRef(getTestFolderNodeRef());
 
@@ -147,7 +175,15 @@ public class ProjectAutoStateIT extends AbstractProjectTestCase {
 	private void assertProjectState(final NodeRef projectNodeRef, final ProjectState expectedState) {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
-			assertEquals(expectedState, projectData.getProjectState());
+			StringBuilder states = new StringBuilder();
+			for (TaskListDataItem task : projectData.getTaskList()) {
+				states.append(task.getTaskName()).append("=").append(task.getTaskState());
+				if (task.getSubProject() != null) {
+					states.append(" (sub=").append(nodeService.getProperty(task.getSubProject(), ProjectModel.PROP_PROJECT_STATE)).append(")");
+				}
+				states.append("; ");
+			}
+			assertEquals("Task states: " + states, expectedState, projectData.getProjectState());
 			return null;
 		}, false, true);
 	}
