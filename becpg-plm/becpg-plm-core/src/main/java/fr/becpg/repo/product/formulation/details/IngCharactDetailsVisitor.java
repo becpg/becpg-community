@@ -22,11 +22,23 @@ public class IngCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Keeps the main quantity column on the raw recipe basis: the yields of the intermediate
+	 * components are cancelled out so that children lines sum up to their parent line.
+	 */
+	@Override
+	protected double provideQtyUsedBasisFactor(CharactDetailsVisitorContext context) {
+		return context.getCumulatedYieldFactor();
+	}
+
 	/** {@inheritDoc} */
 	@Override
-	protected void provideAdditionalValues(ProductData rootProduct, ProductData formulatedProduct, SimpleCharactDataItem simpleCharact, String unit,
-			Double qtyUsed, Double netQty, CharactDetailsValue currentCharactDetailsValue) {
+	protected void provideAdditionalValues(CharactDetailsVisitorContext context, ProductData formulatedProduct, SimpleCharactDataItem simpleCharact,
+			String unit, Double qtyUsed, Double netQty, CharactDetailsValue currentCharactDetailsValue) {
 		IngListDataItem ingListDataItem = (IngListDataItem) simpleCharact;
+		ProductData rootProduct = context.getRootProductData();
 
 		Double qtyPerc = ingListDataItem.getQtyPerc();
 
@@ -58,17 +70,17 @@ public class IngCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 			currentCharactDetailsValue.getAdditionalValues().add(qtyWithSecondaryYieldValue);
 		}
 
-		// Array of percentage values
+		// Alternate percentage columns follow the raw recipe basis of the main column
+		Double rawQtyUsed = qtyUsed * context.getCumulatedYieldFactor();
 		Double[] qtyPercValues = { ingListDataItem.getQtyPerc1(), ingListDataItem.getQtyPerc2(), ingListDataItem.getQtyPerc3(),
 				ingListDataItem.getQtyPerc4(), ingListDataItem.getQtyPerc5() };
 
-		// Loop through percentage values
 		for (int i = 0; i < qtyPercValues.length; i++) {
 			Double qtyPercPerValue = qtyPercValues[i];
 			if (qtyPercPerValue != null) {
 				String titleKey = String.format("bcpg_bcpgmodel.property.bcpg_ingListQtyPerc%d.title", i + 1);
-				CharactDetailAdditionalValue additionalValue = new CharactDetailAdditionalValue("bcpg:ingListQtyPerc" + (i + 1), I18NUtil.getMessage(titleKey),
-						FormulationHelper.calculateValue(0d, qtyUsed, qtyPercPerValue, netQty), unit);
+				CharactDetailAdditionalValue additionalValue = new CharactDetailAdditionalValue("bcpg:ingListQtyPerc" + (i + 1),
+						I18NUtil.getMessage(titleKey), FormulationHelper.calculateValue(0d, rawQtyUsed, qtyPercPerValue, netQty), unit);
 				currentCharactDetailsValue.getAdditionalValues().add(additionalValue);
 			}
 		}
