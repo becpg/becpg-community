@@ -211,6 +211,7 @@ public class BeCPGUserAccountService {
 	 * @param notify a boolean
 	 */
 	private void updatePassword(String username, String newPassword, boolean notify) {
+		validatePasswordStrength(newPassword);
 		if (isIdsUser(personService.getPerson(username))) {
 			identityServiceAccountProvider.updatePassword(username, newPassword);
 		} else {
@@ -528,6 +529,9 @@ public class BeCPGUserAccountService {
 	 * @param personNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	private void createAuthentication(BeCPGUserAccount userAccount, NodeRef personNodeRef) {
+		if (userAccount.getPassword() != null && !userAccount.getPassword().isEmpty()) {
+			validatePasswordStrength(userAccount.getPassword());
+		}
 		if (Boolean.TRUE.equals(identityServiceAccountProvider.isEnabled()) && Boolean.TRUE.equals(userAccount.getSynchronizeWithIDS())) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Create user in Identity Service");
@@ -575,6 +579,32 @@ public class BeCPGUserAccountService {
 			userName += "@" + tenantAdminService.getCurrentUserDomain();
 		}
 		return userName;
+	}
+
+	private void validatePasswordStrength(String password) {
+		if (password == null || password.length() < 14) {
+			throw new IllegalArgumentException("Password does not match the security policy (at least 14 characters, one uppercase, one lowercase, one digit and one special character).");
+		}
+		boolean hasUpper = false;
+		boolean hasLower = false;
+		boolean hasDigit = false;
+		boolean hasSpecial = false;
+		String specialChars = "!@#$%^&*()-_=+[]{}";
+		for (int i = 0; i < password.length(); i++) {
+			char c = password.charAt(i);
+			if (Character.isUpperCase(c)) {
+				hasUpper = true;
+			} else if (Character.isLowerCase(c)) {
+				hasLower = true;
+			} else if (Character.isDigit(c)) {
+				hasDigit = true;
+			} else if (specialChars.indexOf(c) >= 0) {
+				hasSpecial = true;
+			}
+		}
+		if (!hasUpper || !hasLower || !hasDigit || !hasSpecial) {
+			throw new IllegalArgumentException("Password does not match the security policy (at least 14 characters, one uppercase, one lowercase, one digit and one special character).");
+		}
 	}
 
 }
