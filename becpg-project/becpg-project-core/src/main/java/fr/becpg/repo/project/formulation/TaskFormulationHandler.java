@@ -132,6 +132,15 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 	}
 
 	/**
+	 * <p>isAutoProjectState.</p>
+	 *
+	 * @return true when the project state is automatically derived from its task states
+	 */
+	private boolean isAutoProjectState() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("project.formulation.autoProjectState"));
+	}
+
+	/**
 	 * <p>Setter for the field <code>projectWorkflowService</code>.</p>
 	 *
 	 * @param projectWorkflowService a {@link fr.becpg.repo.project.ProjectWorkflowService} object
@@ -441,6 +450,35 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 	}
 
 	/**
+	 * Derives the project state from its task states, by priority: all tasks cancelled leads to Cancelled,
+	 * at least one task in progress leads to InProgress, otherwise at least one task on hold leads to OnHold,
+	 * otherwise no planned task and at least one completed task leads to Completed, otherwise Planned.
+	 *
+	 * @param hasNonCancelledTask true when at least one task is not cancelled
+	 * @param hasInProgressTask true when at least one task is in progress or refused
+	 * @param hasOnHoldTask true when at least one task is on hold
+	 * @param hasPlannedTask true when at least one task is planned
+	 * @param hasCompletedTask true when at least one task is completed
+	 * @return the derived {@link fr.becpg.repo.project.data.ProjectState}
+	 */
+	private ProjectState computeProjectState(boolean hasNonCancelledTask, boolean hasInProgressTask, boolean hasOnHoldTask,
+			boolean hasPlannedTask, boolean hasCompletedTask) {
+		if (!hasNonCancelledTask) {
+			return ProjectState.Cancelled;
+		}
+		if (hasInProgressTask) {
+			return ProjectState.InProgress;
+		}
+		if (hasOnHoldTask) {
+			return ProjectState.OnHold;
+		}
+		if (!hasPlannedTask && hasCompletedTask) {
+			return ProjectState.Completed;
+		}
+		return ProjectState.Planned;
+	}
+
+	/**
 	 * <p>visitProject.</p>
 	 *
 	 * @param projectData a {@link fr.becpg.repo.project.data.ProjectData} object
@@ -456,8 +494,14 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 		if (!tasks.isEmpty() && !isTpl) {
 
+			boolean autoProjectState = isAutoProjectState();
 			boolean allTaskPlanned = true;
 			boolean allTaskDone = true;
+			boolean hasNonCancelledTask = false;
+			boolean hasInProgressTask = false;
+			boolean hasOnHoldTask = false;
+			boolean hasPlannedTask = false;
+			boolean hasCompletedTask = false;
 			int totalWork = 0;
 			int workDone = 0;
 
@@ -466,6 +510,17 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 					TaskState state = task.getTask().getTaskState();
 
 					if (!TaskState.Cancelled.equals(state)) {
+						hasNonCancelledTask = true;
+						if (TaskState.InProgress.equals(state) || TaskState.Refused.equals(state)) {
+							hasInProgressTask = true;
+						} else if (TaskState.OnHold.equals(state)) {
+							hasOnHoldTask = true;
+						} else if (TaskState.Completed.equals(state)) {
+							hasCompletedTask = true;
+						} else {
+							hasPlannedTask = true;
+						}
+
 						if (!task.getTask().isPlanned()) {
 							allTaskPlanned = false;
 						}
@@ -502,7 +557,10 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 				}
 			}
 
-			if (!allTaskPlanned && ProjectState.Planned.equals(projectData.getProjectState())) {
+			if (autoProjectState) {
+				projectData.setProjectState(
+						computeProjectState(hasNonCancelledTask, hasInProgressTask, hasOnHoldTask, hasPlannedTask, hasCompletedTask));
+			} else if (!allTaskPlanned && ProjectState.Planned.equals(projectData.getProjectState())) {
 				projectData.setProjectState(ProjectState.InProgress);
 			} else if (allTaskPlanned && ProjectState.InProgress.equals(projectData.getProjectState())) {
 				projectData.setProjectState(ProjectState.Planned);
@@ -510,7 +568,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 
 		    Date lastTaskEnd = ProjectHelper.getLastEndDate(tasks);
-			if (allTaskDone) {
+			if (allTaskDone && (hasCompletedTask || !autoProjectState)) {
 				projectData.setCompletionDate(lastTaskEnd);
 				projectData.setCompletionPercent(COMPLETED);
 				projectData.setProjectState(ProjectState.Completed);
