@@ -201,7 +201,13 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 						visitPart(context, subProductData, compoListProduct, compoListDataItem.getNodeRef(), qties, currLevel);
 						
 						if (shouldVisitNextLevel(currLevel, context.getMaxLevel(), compoListDataItem)) {
+							double previousYieldFactor = context.getCumulatedYieldFactor();
+							Double componentYield = compoListProduct.getYield();
+							if ((componentYield != null) && (componentYield != 0d)) {
+								context.setCumulatedYieldFactor(previousYieldFactor * (componentYield / 100d));
+							}
 							visitRecur(context, compoListProduct, currLevel + 1, compoListWeight, compoListVol, parentQuantity);
+							context.setCumulatedYieldFactor(previousYieldFactor);
 						}
 					}
 				}
@@ -418,7 +424,8 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	 */
 	private void calculateCharactDetailsValues(CharactDetailsVisitorContext context, ProductData formulatedProduct, ProductData partProduct,
 			NodeRef componentDataList, Integer currLevel, SimpleCharactDataItem simpleCharact, String unit, Double qtyUsed, Double netQty) {
-		Double value = FormulationHelper.calculateValue(0d, qtyUsed, extractValue(formulatedProduct, partProduct, simpleCharact), netQty);
+		Double basisQtyUsed = qtyUsed * provideQtyUsedBasisFactor(context);
+		Double value = FormulationHelper.calculateValue(0d, basisQtyUsed, extractValue(formulatedProduct, partProduct, simpleCharact), netQty);
 
 		CharactDetailsValue currentCharactDetailsValue = null;
 
@@ -442,7 +449,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 						// add future and past values
 						if (forecastValue.getForecastValue(forecastColumn) != null) {
 							currentCharactDetailsValue
-							.setForecastValue(forecastColumn, FormulationHelper.calculateValue(0d, qtyUsed, forecastValue.getForecastValue(forecastColumn), netQty));
+							.setForecastValue(forecastColumn, FormulationHelper.calculateValue(0d, basisQtyUsed, forecastValue.getForecastValue(forecastColumn), netQty));
 						}
 					}
 
@@ -457,16 +464,16 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 				logger.debug("minMaxValue, prev=" + minMaxValue.getMini() + ", maxi=" + minMaxValue.getMaxi());
 				// add future and past values
 				if (minMaxValue.getMini() != null && isColumnReadable(getMiniPropName())) {
-					currentCharactDetailsValue.setMini(FormulationHelper.calculateValue(0d, qtyUsed, minMaxValue.getMini(), netQty));
+					currentCharactDetailsValue.setMini(FormulationHelper.calculateValue(0d, basisQtyUsed, minMaxValue.getMini(), netQty));
 				}
-				
+
 				if (minMaxValue.getMaxi() != null && isColumnReadable(getMaxiPropName())) {
-					currentCharactDetailsValue.setMaxi(FormulationHelper.calculateValue(0d, qtyUsed, minMaxValue.getMaxi(), netQty));
+					currentCharactDetailsValue.setMaxi(FormulationHelper.calculateValue(0d, basisQtyUsed, minMaxValue.getMaxi(), netQty));
 				}
 			}
 			
 			if (!context.getCharactDetails().isMultiple()) {
-				provideAdditionalValues(context.getRootProductData(), formulatedProduct, simpleCharact, unit, qtyUsed, netQty, currentCharactDetailsValue);
+				provideAdditionalValues(context, formulatedProduct, simpleCharact, unit, qtyUsed, netQty, currentCharactDetailsValue);
 				removeUnreadableAdditionalValues(currentCharactDetailsValue);
 			}
 			
@@ -564,9 +571,20 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	}
 
 	/**
+	 * Provides the factor applied to the used quantity when computing the main, mini, maxi
+	 * and forecast values of a detail line. Defaults to 1 (no adjustment).
+	 *
+	 * @param context a {@link fr.becpg.repo.product.formulation.details.CharactDetailsVisitorContext} object
+	 * @return the factor applied to the used quantity for the main value computation
+	 */
+	protected double provideQtyUsedBasisFactor(CharactDetailsVisitorContext context) {
+		return 1d;
+	}
+
+	/**
 	 * <p>provideAdditionalValues.</p>
 	 *
-	 * @param rootProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param context a {@link fr.becpg.repo.product.formulation.details.CharactDetailsVisitorContext} object
 	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
 	 * @param simpleCharact a {@link fr.becpg.repo.repository.model.SimpleCharactDataItem} object
 	 * @param unit a {@link java.lang.String} object
@@ -574,7 +592,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	 * @param netQty a {@link java.lang.Double} object
 	 * @param currentCharactDetailsValue a {@link fr.becpg.repo.product.data.CharactDetailsValue} object
 	 */
-	protected void provideAdditionalValues(ProductData rootProduct, ProductData formulatedProduct, SimpleCharactDataItem simpleCharact, String unit, Double qtyUsed, Double netQty, CharactDetailsValue currentCharactDetailsValue) {
+	protected void provideAdditionalValues(CharactDetailsVisitorContext context, ProductData formulatedProduct, SimpleCharactDataItem simpleCharact, String unit, Double qtyUsed, Double netQty, CharactDetailsValue currentCharactDetailsValue) {
 		// nothing by default
 	}
 
