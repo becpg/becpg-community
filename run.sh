@@ -216,7 +216,7 @@ reindex() {
 upload_test() {
     TOKEN="${STATUS_AUTH_TOKEN:-status-auth-token}"
     HOST_ID="${STATUS_HOST_ID:-${USER}@$(hostname)}"
-    VERSION="${BECPG_VERSION:-$(git describe --tags --always 2>/dev/null || echo "unknown")}"
+    VERSION="${BECPG_VERSION:-$(git describe --tags --abbrev=0 --always 2>/dev/null || echo "unknown") - $(git rev-parse --short HEAD 2>/dev/null || echo "unknown")}"
     ZIP_FILE="/tmp/failsafe-reports.zip"
 
     echo "Zipping failsafe reports..."
@@ -243,7 +243,7 @@ upload_test() {
     cd "$ORIG_DIR"
 
     echo "Uploading test results to Status for host: ${HOST_ID}..."
-    STATUS_URL="https://status.becpg.fr/test-reports/upload"
+    STATUS_URL="http://localhost:5555/test-reports/upload"
 
     response=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
       -H "Authorization: ${TOKEN}" \
