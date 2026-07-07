@@ -157,21 +157,7 @@ div.selected-items, div.item-select {
 .search .product-state.entity-Valid,
 .search .product-state.entity-Refused,
 .search .product-state.entity-Stopped,
-.search .product-state.entity-Archived,
-.search .product-state.entity-Planned,
-.search .product-state.entity-InProgress,
-.search .product-state.entity-OnHold,
-.search .product-state.entity-Cancelled,
-.search .product-state.entity-Completed,
-.search .product-state.entity-new,
-.search .product-state.entity-analysis,
-.search .product-state.entity-treatment,
-.search .product-state.entity-response,
-.search .product-state.entity-classification,
-.search .product-state.entity-closing,
-.search .product-state.entity-closed,
-.search .product-state.entity-Compliant,
-.search .product-state.entity-NonCompliant {
+.search .product-state.entity-Archived {
     display: inline-block;
     padding: 0 6px;
     border-radius: 3px;
@@ -184,18 +170,4 @@ div.selected-items, div.item-select {
 .search .product-state.entity-Refused { color: #c62828; background-color: #ffebee; }
 .search .product-state.entity-Stopped { color: #ffffff; background-color: #90a4ae; }
 .search .product-state.entity-Archived { color: #607d8b; background-color: #eceff1; }
-.search .product-state.entity-Planned { color: #1565c0; background-color: #e3f2fd; }
-.search .product-state.entity-InProgress { color: #e65100; background-color: #fff3e0; }
-.search .product-state.entity-OnHold { color: #546e7a; background-color: #eceff1; }
-.search .product-state.entity-Cancelled { color: #c62828; background-color: #ffebee; }
-.search .product-state.entity-Completed { color: #2e7d32; background-color: #e8f5e9; }
-.search .product-state.entity-new { color: #1565c0; background-color: #e3f2fd; }
-.search .product-state.entity-analysis { color: #e65100; background-color: #fff3e0; }
-.search .product-state.entity-treatment { color: #e65100; background-color: #fff3e0; }
-.search .product-state.entity-response { color: #546e7a; background-color: #eceff1; }
-.search .product-state.entity-classification { color: #546e7a; background-color: #eceff1; }
-.search .product-state.entity-closing { color: #607d8b; background-color: #eceff1; }
-.search .product-state.entity-closed { color: #2e7d32; background-color: #e8f5e9; }
-.search .product-state.entity-Compliant { color: #2e7d32; background-color: #e8f5e9; }
-.search .product-state.entity-NonCompliant { color: #c62828; background-color: #ffebee; }
 
