@@ -479,6 +479,9 @@
                     });
                     var surveyUrl = baseUrl + "survey/survey-form?list={list}&nodeRef={nodeRef}&itemType={itemType}&title={title}";
                     if (readOnly || validated) surveyUrl += "&mode=view";
+                    if (this.options.skipSecurityRules) {
+                        surveyUrl += "&skipSecurityRules=true";
+                    }
                     return YAHOO.lang.substitute(surveyUrl, surveyParams);
                 default:
                     return null;
