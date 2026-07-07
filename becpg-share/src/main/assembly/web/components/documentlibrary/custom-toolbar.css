@@ -46,3 +46,10 @@
    background-image: url(../images/basket-action-16.png);
 }
 
+div[id$="-createContent-menu"]
+{
+   max-height: 80vh;
+   overflow-y: auto;
+   overflow-x: hidden;
+}
+
