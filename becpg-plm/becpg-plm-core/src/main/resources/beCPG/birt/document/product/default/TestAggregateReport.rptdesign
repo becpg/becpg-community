@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="author">beCPG</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.7.0</property>
+    <property name="units">in</property>
+    <styles>
+        <style name="report-title" id="2">
+            <property name="fontFamily">Helvetica</property>
+            <property name="fontSize">16pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#000000</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="toc-header" id="3">
+            <property name="fontFamily">Helvetica</property>
+            <property name="fontSize">14pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#000000</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="toc-level1" id="4">
+            <property name="fontFamily">Helvetica</property>
+            <property name="fontSize">10pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#000000</property>
+        </style>
+        <style name="toc-num-level1" id="5">
+            <property name="fontFamily">Helvetica</property>
+            <property name="fontSize">8pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#000000</property>
+            <property name="textAlign">right</property>
+        </style>
+        <style name="footer-text" id="6">
+            <property name="fontFamily">Helvetica</property>
+            <property name="fontSize">8pt</property>
+            <property name="color">#1F3864</property>
+            <property name="fontWeight">bold</property>
+        </style>
+        <style name="section-title" id="7">
+            <property name="fontFamily">Helvetica</property>
+            <property name="fontSize">12pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#1F3864</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="10">
+            <page-footer>
+                <grid id="11">
+                    <column id="12"/>
+                    <column id="13"/>
+                    <row id="14">
+                        <cell id="15">
+                            <label id="16">
+                                <property name="style">footer-text</property>
+                                <text-property name="text">HEALTHCARE - TECHNICAL SPECIFICATION</text-property>
+                            </label>
+                        </cell>
+                        <cell id="17">
+                            <grid id="18">
+                                <column id="19"/>
+                                <column id="20"/>
+                                <column id="21"/>
+                                <column id="22"/>
+                                <row id="23">
+                                    <cell id="24">
+                                        <auto-text id="27">
+                                            <property name="style">footer-text</property>
+                                            <property name="type">page-number</property>
+                                        </auto-text>
+                                    </cell>
+                                    <cell id="28">
+                                        <label id="29">
+                                            <property name="style">footer-text</property>
+                                            <text-property name="text"> / </text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="30">
+                                        <auto-text id="31">
+                                            <property name="style">footer-text</property>
+                                            <property name="type">total-page</property>
+                                        </auto-text>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                </grid>
+            </page-footer>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <!-- Page 1: Table of Contents -->
+        <grid id="100">
+            <property name="width">100%</property>
+            <column id="101"/>
+            <row id="102">
+                <cell id="103">
+                    <label id="104">
+                        <property name="style">toc-header</property>
+                        <text-property name="text">TABLE OF CONTENT</text-property>
+                    </label>
+                </cell>
+            </row>
+        </grid>
+        <grid id="200">
+            <property name="width">100%</property>
+            <column id="201">
+                <property name="width">75%</property>
+            </column>
+            <column id="202">
+                <property name="width">25%</property>
+            </column>
+            
+            <!-- First Report: TECHNICAL SPECIFICATIONS of the ITEM on page 2 -->
+            <row id="203">
+                <cell id="204">
+                    <label id="205">
+                        <property name="style">toc-level1</property>
+                        <text-property name="text">TECHNICAL SPECIFICATIONS of the ITEM</text-property>
+                    </label>
+                </cell>
+                <cell id="206">
+                    <label id="207">
+                        <property name="style">toc-num-level1</property>
+                        <text-property name="text">2</text-property>
+                    </label>
+                </cell>
+            </row>
+
+            <!-- Annexes -->
+            <row id="208">
+                <cell id="209">
+                    <label id="210">
+                        <property name="style">toc-level1</property>
+                        <text-property name="text">ANNEX 1: TECHNICAL SPECIFICATIONS – RAW MATERIALS</text-property>
+                    </label>
+                </cell>
+                <cell id="211">
+                    <label id="212">
+                        <property name="style">toc-num-level1</property>
+                        <text-property name="text">{{page:annexe-mp}}</text-property>
+                    </label>
+                </cell>
+            </row>
+
+            <row id="213">
+                <cell id="214">
+                    <label id="215">
+                        <property name="style">toc-level1</property>
+                        <text-property name="text">ANNEX 2: TECHNICAL SPECIFICATIONS – PRIMARY PACKAGING</text-property>
+                    </label>
+                </cell>
+                <cell id="216">
+                    <label id="217">
+                        <property name="style">toc-num-level1</property>
+                        <text-property name="text">{{page:annexe-emb-primaire}}</text-property>
+                    </label>
+                </cell>
+            </row>
+
+            <row id="218">
+                <cell id="219">
+                    <label id="220">
+                        <property name="style">toc-level1</property>
+                        <text-property name="text">ANNEX 3: TECHNICAL SPECIFICATIONS – SECONDARY PACKAGING</text-property>
+                    </label>
+                </cell>
+                <cell id="221">
+                    <label id="222">
+                        <property name="style">toc-num-level1</property>
+                        <text-property name="text">{{page:annexe-emb-secondaire}}</text-property>
+                    </label>
+                </cell>
+            </row>
+
+            <row id="223">
+                <cell id="224">
+                    <label id="225">
+                        <property name="style">toc-level1</property>
+                        <text-property name="text">ANNEX 4: PHOTOS</text-property>
+                    </label>
+                </cell>
+                <cell id="226">
+                    <label id="227">
+                        <property name="style">toc-num-level1</property>
+                        <text-property name="text">{{page:annexe-photos}}</text-property>
+                    </label>
+                </cell>
+            </row>
+
+            <row id="228">
+                <cell id="229">
+                    <label id="230">
+                        <property name="style">toc-level1</property>
+                        <text-property name="text">ANNEX 5: QUALITY DOCUMENTS</text-property>
+                    </label>
+                </cell>
+                <cell id="231">
+                    <label id="232">
+                        <property name="style">toc-num-level1</property>
+                        <text-property name="text">{{page:annexe-qualite}}</text-property>
+                    </label>
+                </cell>
+            </row>
+
+            <row id="233">
+                <cell id="234">
+                    <label id="235">
+                        <property name="style">toc-level1</property>
+                        <text-property name="text">ANNEX 6: LIST OF THE AUTHORISED SUBCONTRACTOR</text-property>
+                    </label>
+                </cell>
+                <cell id="236">
+                    <label id="237">
+                        <property name="style">toc-num-level1</property>
+                        <text-property name="text">{{page:annexe-subcontractor}}</text-property>
+                    </label>
+                </cell>
+            </row>
+        </grid>
+
+        <!-- Page 2: Core Item Specification Body -->
+        <grid id="300">
+            <property name="pageBreakBefore">always</property>
+            <property name="width">100%</property>
+            <column id="301"/>
+            <row id="302">
+                <cell id="303">
+                    <label id="304">
+                        <property name="style">section-title</property>
+                        <text-property name="text">TECHNICAL SPECIFICATIONS OF THE ITEM</text-property>
+                    </label>
+                </cell>
+            </row>
+        </grid>
+    </body>
+</report>

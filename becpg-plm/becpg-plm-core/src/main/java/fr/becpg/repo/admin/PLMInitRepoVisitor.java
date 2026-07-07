@@ -1932,6 +1932,19 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				reportKindDefaultValues.put(reportKind, reportKindListProps);
 			}
 
+			List<String> annexReportKinds = Arrays.asList("annexe-mp", "annexe-emb-primaire", "annexe-emb-secondaire", "annexe-photos", "annexe-qualite");
+			for (String rk : annexReportKinds) {
+				MLText mltValue = new MLText();
+				mltValue.put(Locale.FRENCH, I18NUtil.getMessage("becpg.reportkind." + rk.toLowerCase() + ".value", Locale.FRENCH));
+				mltValue.put(Locale.ENGLISH, I18NUtil.getMessage("becpg.reportkind." + rk.toLowerCase() + ".value", Locale.ENGLISH));
+
+				Map<QName, Serializable> props = new HashMap<>();
+				props.put(ContentModel.PROP_NAME, rk);
+				props.put(BeCPGModel.PROP_LV_CODE, rk);
+				props.put(BeCPGModel.PROP_LV_VALUE, mltValue);
+				reportKindDefaultValues.put(rk, props);
+			}
+
 			visitReportKindList(reportKindDefaultValues);
 
 			List<NodeRef> resources = new ArrayList<>();
@@ -1990,6 +2003,30 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 					}
 
+				}
+
+				if (productType.equals(PLMModel.TYPE_FINISHEDPRODUCT)) {
+					try {
+						NodeRef aggJsonNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/ProductSpecReport.agg.json", false);
+						List<NodeRef> aggResources = new ArrayList<>(resources);
+						aggResources.add(aggJsonNodeRef);
+
+						ReportTplInformation aggTplInfo = new ReportTplInformation();
+						aggTplInfo.setReportType(ReportType.Document);
+						aggTplInfo.setReportFormat(ReportFormat.PDF);
+						aggTplInfo.setNodeType(productType);
+						aggTplInfo.setDefaultTpl(false);
+						aggTplInfo.setSystemTpl(true);
+						aggTplInfo.setResources(aggResources);
+						aggTplInfo.setSupportedLocale(supportedLocale);
+
+						NodeRef aggTplNodeRef = reportTplService.createTplRptDesign(folderNodeRef,
+								TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PRODUCT_SPEC_REPORT),
+								"beCPG/birt/document/product/default/ProductSpecReport.rptdesign", aggTplInfo, false);
+						nodeService.setProperty(aggTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_AGGREGATE, true);
+					} catch (Exception e) {
+						logger.error("Failed to create Specification Technique aggregate report template", e);
+					}
 				}
 
 				i++;
