@@ -72,6 +72,19 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["pjt:projectState"],
+        renderer: function(oRecord, data, label, scope) {
+            if (data.value != null && data.value !== "") {
+                return '<span class="product-state entity-' + data.value + '">'
+                    + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+            }
+            return Alfresco.util.encodeHTML(data.displayValue);
+        }
+
+    });
+
+
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["pjt:tlState", "pjt:dlState"],
         renderer: function(oRecord, data, label, scope) {
             return '<span class="' + "task-" + data.value.toLowerCase() + '" title="' + data.displayValue + '" />';
