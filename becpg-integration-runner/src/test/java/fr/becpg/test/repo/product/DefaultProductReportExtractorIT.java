@@ -66,10 +66,6 @@ public class DefaultProductReportExtractorIT extends AbstractFinishedProductTest
 	@Test
 	public void testReport() throws InterruptedException {
 
-		org.apache.logging.log4j.core.config.Configurator.setLevel("fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor", org.apache.logging.log4j.Level.DEBUG);
-		org.apache.logging.log4j.core.config.Configurator.setLevel("fr.becpg.repo.product.report.ProductReportExtractorPlugin", org.apache.logging.log4j.Level.DEBUG);
-		org.apache.logging.log4j.core.config.Configurator.setLevel("fr.becpg.repo.audit.helper.StopWatchSupport", org.apache.logging.log4j.Level.DEBUG);
-
 		logger.debug("testReport()");
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
