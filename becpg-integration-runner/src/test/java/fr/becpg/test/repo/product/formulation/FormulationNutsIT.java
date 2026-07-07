@@ -150,11 +150,19 @@ public class FormulationNutsIT extends AbstractFinishedProductTest {
 				nodeService.getProperty(nut4, BeCPGModel.PROP_CHARACT_NAME), "14", "1,5<=", " <=10");
 		String message7 = I18NUtil.getMessage(NutsRequirementScanner.MESSAGE_NUT_NOT_IN_RANGE + ".GdaPerc",
 				nodeService.getProperty(nut4, BeCPGModel.PROP_CHARACT_NAME), "0.75", "1,5<=", " <=10");
+		String message8 = I18NUtil.getMessage(NutsRequirementScanner.MESSAGE_NUT_NOT_IN_RANGE + ".LabeledValue",
+				nodeService.getProperty(nut4, BeCPGModel.PROP_CHARACT_NAME), "2", "1,5<= ", " <=1,8");
+
+		boolean labeledValueAlertFound = false;
 
 		logger.info("Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItems");
 		for (RequirementListDataItem r : formulatedProduct.getReqCtrlList()) {
 
 			logger.info("reqCtrl " + r.getReqMessage() + r.getReqType() + r.getSources());
+
+			if (message8.equals(r.getReqMessage())) {
+				labeledValueAlertFound = true;
+			}
 
 			if (message1.equals(r.getReqMessage())) {
 				assertEquals(0, r.getSources().size());
@@ -180,6 +188,10 @@ public class FormulationNutsIT extends AbstractFinishedProductTest {
 
 		}
 
+		if (propagateMode) {
+			assertTrue("Labeled value requirement alert is missing from the reqCtrlList", labeledValueAlertFound);
+		}
+
 		assertEquals(3, checks);
 	}
 
@@ -192,7 +204,8 @@ public class FormulationNutsIT extends AbstractFinishedProductTest {
 							NutListDataItem.build().withMini(1.5d).withMaxi(10d).withNut(nut4),
 							NutListDataItem.build().withMini(1.5d).withMaxi(10d).withNutRequirementType(NutRequirementType.AsPrepared).withNut(nut4),
 							NutListDataItem.build().withMini(1.5d).withMaxi(10d).withNutRequirementType(NutRequirementType.Serving).withNut(nut4),
-							NutListDataItem.build().withMini(1.5d).withMaxi(10d).withNutRequirementType(NutRequirementType.GdaPerc).withNut(nut4)
+							NutListDataItem.build().withMini(1.5d).withMaxi(10d).withNutRequirementType(NutRequirementType.GdaPerc).withNut(nut4),
+							NutListDataItem.build().withMini(1.5d).withMaxi(1.8d).withNutRequirementType(NutRequirementType.LabeledValue).withNut(nut4)
 
 					));
 

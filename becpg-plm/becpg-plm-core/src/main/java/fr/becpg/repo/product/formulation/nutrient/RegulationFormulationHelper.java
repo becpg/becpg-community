@@ -286,6 +286,25 @@ public class RegulationFormulationHelper {
 	}
 
 	/**
+	 * Maps a regulatory code to a nutrient regulation key used in the roundedValue JSON.
+	 * The code is returned as is when it matches a known regulation (EU, US, CA...),
+	 * otherwise it is resolved through its country locale (e.g. "FR" is mapped to "EU").
+	 * Defaults to "EU" when the code is null or blank.
+	 *
+	 * @param regulatoryCode the regulatory code of a country, can be null
+	 * @return the matching regulation key, never null
+	 */
+	public static String toRegulationKey(String regulatoryCode) {
+		if ((regulatoryCode != null) && !regulatoryCode.isBlank()) {
+			if (regulations.containsKey(regulatoryCode)) {
+				return regulatoryCode;
+			}
+			return getLocalKey(new Locale("", regulatoryCode));
+		}
+		return "EU";
+	}
+
+	/**
 	 * <p>getLocalKey.</p>
 	 *
 	 * @param locale a {@link java.util.Locale} object
