@@ -11,6 +11,7 @@
             <#assign controlId = args.htmlid?js_string?html +"-control" >
             <#assign fieldHtmlId = args.htmlid?js_string?html +"-survey" >
             <#assign isViewMode = (args.mode?? && args.mode == "view")>
+            <#assign skipSecurityRules = (args.skipSecurityRules?? && args.skipSecurityRules == "true")>
                   <script type="text/javascript">//<![CDATA[
 				      new Alfresco.FormUI("${formId}", "${args.htmlid?js_string}").setOptions(
 				      {
@@ -29,7 +30,7 @@
                
               <div id="${formId}-container" class="form-container">
                      <div id="${formId}-caption" class="caption"><span class="mandatory-indicator">*</span>${msg("form.required.fields")}</div>
-                     <form id="${formId}" method="POST" accept-charset="utf-8" enctype="application/json" action="${url.context}/proxy/alfresco/becpg/survey?entityNodeRef=${nodeRef}&dataListName=${list}"<#if isViewMode> onsubmit="return false;"</#if>>
+                     <form id="${formId}" method="POST" accept-charset="utf-8" enctype="application/json" action="${url.context}/proxy/alfresco/becpg/survey?entityNodeRef=${nodeRef}&dataListName=${list}<#if skipSecurityRules>&skipSecurityRules=true</#if>"<#if isViewMode> onsubmit="return false;"</#if>>
 			      
 					      <div id="${formId}-fields" class="form-fields">
 		
