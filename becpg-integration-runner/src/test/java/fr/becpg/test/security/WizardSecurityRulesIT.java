@@ -370,6 +370,57 @@ public class WizardSecurityRulesIT extends RepoBaseTestCase {
 		});
 	}
 
+	/**
+	 * Test 9: Survey webscript honors skipSecurityRules when the security group is default read-only (#30050).
+	 * The survey list rendered in a wizard step must be editable when skipSecurityRules is passed, and stay
+	 * disabled for the classic survey view.
+	 */
+	@Test
+	public void testSurveyWebScriptWithSkipSecurityRules() throws Exception {
+		logger.info("=== Test 9: Survey webscript with skipSecurityRules ===");
+
+		NodeRef readOnlyProjectNodeRef = inWriteTx(() -> {
+			NodeRef projectRef = createTestProject("TestProjectSurveyReadOnly");
+			NodeRef aclGroupNodeRef = createProjectSecurityACLGroup(true);
+			if (!nodeService.hasAspect(projectRef, SecurityModel.ASPECT_SECURITY)) {
+				nodeService.addAspect(projectRef, SecurityModel.ASPECT_SECURITY, null);
+			}
+			nodeService.createAssociation(projectRef, aclGroupNodeRef, SecurityModel.ASSOC_SECURITY_REF);
+			securityService.refreshAcls();
+			return projectRef;
+		});
+
+		try {
+			// Outside wizard: default read-only applies, survey must be disabled
+			Response response = callSurveyWebScript(readOnlyProjectNodeRef, false, "userTwo", "PWD");
+			JSONObject json = new JSONObject(response.getContentAsString());
+			Assert.assertTrue("Survey should be disabled outside wizard when defaultReadOnly is true", json.getBoolean("disabled"));
+			response.release();
+
+			// Inside wizard (skipSecurityRules=true): survey must be editable
+			response = callSurveyWebScript(readOnlyProjectNodeRef, true, "userTwo", "PWD");
+			json = new JSONObject(response.getContentAsString());
+			Assert.assertFalse("Survey should be editable inside wizard when skipSecurityRules is true", json.getBoolean("disabled"));
+			response.release();
+		} finally {
+			inWriteTx(() -> {
+				nodeService.deleteNode(readOnlyProjectNodeRef);
+				return null;
+			});
+		}
+	}
+
+	/**
+	 * Helper method to call the survey webscript
+	 */
+	private Response callSurveyWebScript(NodeRef entityNodeRef, boolean skipSecurityRules, String username, String password) throws Exception {
+		String uri = "/becpg/survey?entityNodeRef=" + entityNodeRef + "&dataListName=surveyList"
+				+ (skipSecurityRules ? "&skipSecurityRules=true" : "");
+
+		GetRequest request = new GetRequest(uri);
+		return TestWebscriptExecuters.sendRequest(request, 200, username, password);
+	}
+
 	private NodeRef createProjectSecurityACLGroup(boolean isDefaultReadOnly) {
 		String groupName = PermissionService.GROUP_PREFIX + GROUP_WIZARD_SECURITY_WRITE;
 		if (!authorityService.authorityExists(groupName)) {
