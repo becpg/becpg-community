@@ -1127,3 +1127,11 @@ span a.show-details {
 div.yui-dialog {
 	padding-bottom: 250px !important;
 }
+
+/** Keep rich text lists indentation in form view mode **/
+
+.form-container .viewmode-value ul,
+.form-container .viewmode-value ol {
+	padding-left: 2em;
+	margin: 0.2em 0;
+}
