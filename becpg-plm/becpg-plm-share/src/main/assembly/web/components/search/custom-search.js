@@ -458,19 +458,14 @@
 
 								var metadata = oRecord.getData("metadata");
 								
-								var entityStateProps = [
+								const entityStateProps = [
 										"prop_bcpg_productState",
 								 		"prop_bcpg_supplierState",
 								        "prop_bcpg_clientState",
-								        "prop_bcpg_documentState",
-								        "prop_bcpg_productCollectionState",
-								        "prop_pjt_projectState",
-								        "prop_qa_batchState",
-								        "prop_qa_ncState",
-								        "prop_qa_qcState"
+								        "prop_bcpg_documentState"
 								];
-
-								var effectivityProps = [
+								
+								const effectivityProps = [
 										"prop_cm_from",
 								 		"prop_cm_to"
 								];
