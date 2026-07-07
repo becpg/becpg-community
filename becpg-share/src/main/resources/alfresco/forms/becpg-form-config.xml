@@ -244,6 +244,7 @@ PARTICULAR
 					<show id="cm:from" force="true" />
 					<show id="cm:to" force="true" />
 					<show id="cm:taggable" force="false" />
+					<show id="rep:reportKinds" force="false" />
 				</field-visibility>
 				<edit-form
 					template="../documentlibrary/forms/doclib-simple-metadata.ftl" />
@@ -254,6 +255,8 @@ PARTICULAR
 						label-id="becpg.forms.set.effectivity.label" />
 					<set id="categories" appearance="bordered-panel"
 						label-id="becpg.forms.set.category.label" />
+					<set id="report" appearance="bordered-panel"
+						label-id="becpg.forms.set.report.label" />
 						
 					<field id="cm:name" set="mainInfo">
 						<control>
@@ -300,6 +303,7 @@ PARTICULAR
 							<control-param name="createNewItemIcon">tag</control-param>
 						</control>
 					</field>
+					<field id="rep:reportKinds" mandatory="false" read-only="false" set="report" />
 				</appearance>
 			</form>
 

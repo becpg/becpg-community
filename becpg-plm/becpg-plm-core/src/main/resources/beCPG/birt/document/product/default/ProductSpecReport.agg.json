@@ -1,0 +1,84 @@
+{
+  "header": {
+    "logo": "becpg-logo.png",
+    "title": "SLabel.specificationSheet",
+    "subtitle": "${legalName}",
+    "date": "${cm:modified?date}",
+    "startNumberingAt": 1
+  },
+
+  "tableOfContents": {
+    "enabled": true,
+    "title": "SLabel.tableOfContents",
+    "font": "Helvetica-Bold",
+    "size": 16,
+    "color": "#1F3864"
+  },
+
+  "pagination": {
+    "enabled": true,
+    "format": "Page ${page} / ${total}",
+    "startNumberingAt": 1,
+    "font": "Helvetica",
+    "size": 8,
+    "color": "#404040"
+  },
+
+  "componentHeadingStyle": {
+    "font": "Helvetica-Bold",
+    "size": 11,
+    "color": "#1F3864",
+    "prefix": "> "
+  },
+
+  "annexes": [
+    {
+      "reportKind": "annexe-mp",
+      "title": "SLabel.annexRawMaterials",
+      "scope": "COMPO_CHILDREN",
+      "recurse": true,
+      "componentTypes": ["bcpg:rawMaterial", "bcpg:semiFinishedProduct"],
+      "componentHeading": true,
+      "sort": "COMPO_ORDER",
+      "dedup": true,
+      "mimeTypes": ["application/pdf"]
+    },
+    {
+      "reportKind": "annexe-emb-primaire",
+      "title": "SLabel.annexPrimaryPackaging",
+      "scope": "PACKAGING_CHILDREN",
+      "pkgLevel": "Primary",
+      "componentHeading": true,
+      "sort": "COMPO_ORDER",
+      "dedup": true,
+      "mimeTypes": ["application/pdf"]
+    },
+    {
+      "reportKind": "annexe-emb-secondaire",
+      "title": "SLabel.annexSecondaryPackaging",
+      "scope": "PACKAGING_CHILDREN",
+      "pkgLevel": "Secondary",
+      "componentHeading": true,
+      "sort": "COMPO_ORDER",
+      "dedup": true,
+      "mimeTypes": ["application/pdf"]
+    },
+    {
+      "reportKind": "annexe-photos",
+      "title": "SLabel.annexPhotos",
+      "scope": "ENTITY",
+      "componentHeading": false,
+      "emptyPlaceholder": "SLabel.annexPhotosEmptyPlaceholder",
+      "required": false,
+      "mimeTypes": ["application/pdf", "image/png", "image/jpeg"]
+    },
+    {
+      "reportKind": "annexe-qualite",
+      "title": "SLabel.annexQualityDocuments",
+      "scope": "ENTITY",
+      "componentHeading": false,
+      "required": false,
+      "mimeTypes": ["application/pdf"]
+    }
+  ]
+}

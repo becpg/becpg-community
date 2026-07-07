@@ -57,12 +57,14 @@ This is a **Java 17** enterprise project with emphasis on:
 
 ### 4. Code Quality Standards
 - **4 spaces indentation**, no tabs
-- **Braces on new lines** for classes and methods
-- Keep methods **short and focused** (≤ 30 lines recommended)
-- Use standard **Java naming conventions**
+- **Braces on the same line** (K&R style) for classes and methods
+- Keep methods **extremely short and focused** (ideally 10-15 lines, max 20 lines) to respect Clean Code
+- Use standard **Java naming conventions** with intention-revealing, pronounceable, and searchable names
 - Prioritize **readability over cleverness**
 - Use `Objects.equals()` for null-safe comparisons
 - Use `String.join()` instead of manual concatenation
+- **No commented-out code**: Never leave commented-out blocks of code in the codebase; rely on Git history instead
+- **No magic strings**: Never use magic strings. Always declare them as `static final String` fields to ensure maintainability and prevent typos
 
 ### 5. JavaScript Standards
 - **Use ECMAScript 5 (ES5)** syntax only - no modern ES6+ features
@@ -80,6 +82,57 @@ This is a **Java 17** enterprise project with emphasis on:
   - `YAHOO.Bubbling` for custom event messaging
 - Follow YUI 2 patterns and conventions for component development
 - Extend existing YUI-based components rather than creating vanilla JavaScript alternatives
+
+### 7. Clean Code Principles (Robert C. Martin)
+All code written in this project must adhere to Robert C. Martin's **Clean Code** principles to ensure readability, scalability, and long-term maintainability:
+
+- **Meaningful Names**:
+  - Use **intention-revealing, pronounceable, and searchable** names for classes, variables, and methods.
+  - Class and object names must be **nouns or noun phrases** (e.g., `FinishedProductData`, `NutriScoreIT`). Avoid generic/vague suffixes.
+  - Method and function names must be **verbs or verb phrases** (e.g., `updateProduct`, `performBusinessOperation`).
+  - Avoid mental mappings, disinformation, and arbitrary encodings.
+  - **No magic strings**: Always declare string literals as `static final String` fields rather than hardcoding them inline.
+
+- **Functions & Methods**:
+  - **Smaller than Small**: Keep methods extremely short and focused (ideally 10-15 lines, maximum 20 lines).
+  - **Do One Thing**: A function should do exactly one thing, do it well, and do it only. Ensure all statements inside a function are at the same level of abstraction (Single Level of Abstraction Principle - SLAP).
+  - **Minimize Arguments**: Monadic (1 arg) and dyadic (2 args) are preferred. Triadic (3 args) should be avoided where possible, and polyadic (4+ args) require exceptional justification. If a function needs more than 2 or 3 arguments, wrap them in a dedicated object/record (e.g., a parameter object).
+  - **No Side Effects**: Functions must not have hidden side effects (e.g., unexpectedly modifying global state or class attributes that aren't clear from the function's name).
+  - **Command-Query Separation (CQS)**: Functions should either perform an action (modify state) or return an answer (query state), but never both.
+  - **DRY (Don't Repeat Yourself)**: Actively eliminate duplication in both code and logic.
+
+- **Comments**:
+  - **Don't comment bad code—rewrite it**: Code should explain itself.
+  - **Only high-value comments**: Keep inline comments to a minimum. Use comments to explain *why* something is done (intent, clarification, or warnings), not *what* is done.
+  - **No commented-out code**: Never leave dead or commented-out code blocks in the files. Rely on Git history to retrieve past versions.
+
+- **Formatting (The Newspaper Metaphor)**:
+  - Keep source files cohesive and readable, with high-level concepts at the top and implementation details/utilities below.
+  - Use vertical open space (empty lines) between logical thoughts, statements, and methods.
+
+- **Objects & Data Structures**:
+  - Keep **data structures** (simple data holders like Records, DTOs, or POJOs exposing data and having no behavior) clearly distinct from **objects** (exposing behavior and hiding data). Do not mix them into "Hybrids".
+  - **Law of Demeter**: A method of a class should only call methods on its own class, its parameters, objects it creates, or its direct components. Avoid chaining calls (e.g., `a.getB().getC().doSomething()`).
+
+- **Error Handling**:
+  - **Exceptions over Return Codes**: Use runtime exceptions (e.g., `BeCPGException`) to signal errors rather than returning error codes or boolean success flags.
+  - **Write Try-Catch-Finally First**: Define the boundary and scope of the transaction/logic block using try-catch blocks.
+  - **Don't Return or Pass Null**: Avoid passing or returning `null` references. Use modern alternatives like `Optional`, empty collections, or throw a descriptive exception.
+
+- **Classes**:
+  - **Single Responsibility Principle (SRP)**: A class must have one, and only one, reason to change.
+  - **High Cohesion**: Methods should manipulate a small number of the class's instance variables. High cohesion indicates the class is focused on a single logical concept.
+  - **Organizing for Change**: Design classes to be open for extension but closed for modification (Open-Closed Principle - OCP).
+
+- **Unit and Integration Tests**:
+  - Treat test code as first-class citizens; it must be kept as clean and maintainable as production code.
+  - Follow the **F.I.R.S.T.** rules:
+    - **F**ast: Tests should run quickly.
+    - **I**ndependent: Tests must not depend on each other or run in a specific order.
+    - **R**epeatable: Tests must run and pass in any environment (local, CI/CD).
+    - **S**elf-Validating: Tests must have a boolean output (pass/fail) without requiring manual interpretation.
+    - **T**imely: Tests should be written in tandem with the production code.
+  - **One Concept per Test**: Keep test methods highly focused on testing a single concept with minimal assertions.
 
 ## Git Commit Message Format
 
@@ -110,6 +163,7 @@ Fix #1234 - [Security] Patch authentication vulnerability
 - **One line only** - no multi-line commit messages
 - **English descriptions** - clear and concise
 - Include ticket references when applicable
+- **Stage and commit only explicitly modified or created files** - never use generic `git add .` or stage unrelated untracked files from the workspace.
 
 ## AI Assistant Best Practices
 
@@ -117,14 +171,14 @@ Fix #1234 - [Security] Patch authentication vulnerability
 1. **Always follow the coding style guide** - no exceptions
 2. **Minimize external dependencies** - check if functionality exists in JDK first
 3. **Use Java 17 features** appropriately
-4. **Keep methods focused** and under 30 lines when possible
+4. **Keep methods focused** and under 30 lines when possible (ideally 10-15 lines, max 20 lines to respect Clean Code)
 5. **Add proper error handling** with try-catch blocks
 6. **Use meaningful variable names** with explicit types
 
 ### Code Documentation and Comments
 1. **Generate or update Javadoc** for all new/modified methods and classes
 2. **Use proper Javadoc format** with `@param`, `@return`, `@throws` tags
-3. **Avoid inline comments** only write high-value comments if at all. Avoid talking to the user through comments.
+3. **Avoid inline comments**: Keep inline comments to an absolute minimum, focusing only on explaining *why* something is done. Never talk to the user or describe what the code does through inline comments.
 4. **Let code be self-documenting** through clear naming and structure
 
 ### Logging Standards

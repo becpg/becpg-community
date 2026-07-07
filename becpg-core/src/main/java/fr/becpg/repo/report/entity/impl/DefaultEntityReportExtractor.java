@@ -68,18 +68,22 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.audit.helper.StopWatchSupport;
+import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.entity.version.EntityVersion;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.expressions.ExpressionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.helper.XMLTextHelper;
@@ -95,19 +99,6 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.system.SystemConfigurationService;
-
-import fr.becpg.repo.cache.BeCPGCacheService;
-import fr.becpg.repo.entity.EntitySystemService;
-import fr.becpg.model.ReportModel;
-import org.alfresco.service.cmr.dictionary.PropertyDefinition;
-import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
-import org.alfresco.service.cmr.dictionary.AssociationDefinition;
-import org.alfresco.service.cmr.dictionary.ChildAssociationDefinition;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
-import org.alfresco.service.cmr.repository.StoreRef;
-import java.util.Collections;
-import java.util.Arrays;
-import java.util.HashSet;
 
 /**
  * <p>DefaultEntityReportExtractor class.</p>
@@ -347,6 +338,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	@Autowired
 	protected EntitySystemService entitySystemService;
+	
+	@Autowired
+	protected RepoService repoService;
 
 	protected interface DefaultExtractorContextCallBack {
 		public void run();
@@ -369,7 +363,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	protected NodeRef getFromCacheListFolderNodeRef(String listPath) {
 		return beCPGCacheService.getFromCache(DefaultEntityReportExtractor.class.getName(), "reportListCacheKey" + listPath, () -> {
-			NodeRef systemFolderNodeRef = entitySystemService.getSystemEntity(nodeService.getRootNode(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE), RepoConsts.PATH_SYSTEM);
+			NodeRef systemFolderNodeRef = repoService.getFolderByPath(RepoConsts.PATH_SYSTEM);
 			NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_LISTS);
 			return entitySystemService.getSystemEntityDataList(listsFolder, listPath);
 		});
