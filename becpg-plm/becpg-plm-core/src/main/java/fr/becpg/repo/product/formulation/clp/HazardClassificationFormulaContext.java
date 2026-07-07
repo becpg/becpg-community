@@ -2,6 +2,8 @@ package fr.becpg.repo.product.formulation.clp;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import fr.becpg.config.format.FormatMode;
 import fr.becpg.config.format.PropertyFormats;
@@ -11,6 +13,10 @@ import fr.becpg.repo.product.data.ing.IngItem;
 
 /**
  * <p>HazardClassificationFormulaContext class.</p>
+ *
+ * Aggregates CLP hazard quantities per substance so that helper methods
+ * (hSum, hMax, hSumUnique, eta*) can apply a per-rule substance inclusion
+ * threshold before summing.
  *
  * @author matthieu
  */
@@ -22,7 +28,7 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 	public static final String FLASH_POINT = "FLASH_POINT";
 	/** Constant <code>HYDROCARBON_PERC="HYDROCARBON_PERC"</code> */
 	public static final String HYDROCARBON_PERC = "HYDROCARBON_PERC";
-	
+
 	/** Constant <code>ETA_VO="ETA_VO"</code> */
 	public static final String ETA_VO = "ETA_VO";
 	/** Constant <code>ETA_VC="ETA_VC"</code> */
@@ -33,6 +39,8 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 	public static final String ETA_IN_MIST = "ETA_IN_MIST";
 	/** Constant <code>ETA_IN_VAPOR="ETA_IN_VAPOR"</code> */
 	public static final String ETA_IN_VAPOR = "ETA_IN_VAPOR";
+
+	private static final double ROUNDING_FACTOR = 1e6d;
 
 	/**
 	 * <p>etaType.</p>
@@ -53,32 +61,73 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 		}
 	}
 
-	Map<String, Double> hSum;
-	Map<String, Map<IngItem, Double>> details;
-	Map<String, Double> hMax;
+	/**
+	 * Substance inclusion threshold parsed from the CLP rules file
+	 * (e.g. "&gt;=1%", "&gt;0,1%"). Substances whose quantity percentage in the
+	 * product does not satisfy the threshold are excluded from sums.
+	 *
+	 * @param value the percentage threshold
+	 * @param strict true for a strict comparison (&gt;), false for &gt;=
+	 */
+	public record SubstanceThreshold(double value, boolean strict) {
 
-	ProductData entity;
+		private static final Pattern THRESHOLD_PATTERN = Pattern.compile("^\\s*(>=|>)?\\s*([0-9]+(?:[.,][0-9]+)?)\\s*%?\\s*$");
 
-	Double boilingPoint;
-	Double flashPoint;
-	Double hydrocarbonPerc;
+		/**
+		 * Parses a threshold expression such as "&gt;=1%", "&gt;0,1%" or "1%".
+		 *
+		 * @param expression the raw threshold cell content
+		 * @return the parsed threshold, or null when blank or not parseable
+		 */
+		public static SubstanceThreshold parse(String expression) {
+			if ((expression == null) || expression.isBlank()) {
+				return null;
+			}
+			Matcher matcher = THRESHOLD_PATTERN.matcher(expression);
+			if (!matcher.matches()) {
+				return null;
+			}
+			double value = Double.parseDouble(matcher.group(2).replace(',', '.'));
+			return new SubstanceThreshold(value, ">".equals(matcher.group(1)));
+		}
+
+		/**
+		 * Checks whether a substance quantity percentage satisfies the threshold.
+		 *
+		 * @param qtyPerc the substance quantity percentage in the product
+		 * @return true if the substance must be taken into account
+		 */
+		public boolean accept(double qtyPerc) {
+			double rounded = round(qtyPerc);
+			return strict ? rounded > value : rounded >= value;
+		}
+	}
+
+	private final Map<String, Map<IngItem, Double>> substanceValues;
+	private final Map<IngItem, Double> substanceQtyPercs;
+
+	private ProductData entity;
+
+	private Double boilingPoint;
+	private Double flashPoint;
+	private Double hydrocarbonPerc;
+
+	private SubstanceThreshold substanceThreshold;
 
 	/**
 	 * <p>Constructor for HazardClassificationFormulaContext.</p>
 	 *
 	 * @param entity a {@link fr.becpg.repo.product.data.ProductData} object
-	 * @param hSum a {@link java.util.Map} object
-	 * @param hMax a {@link java.util.Map} object
-	 * @param details a {@link java.util.Map} object
+	 * @param substanceValues per hazard key, the value contributed by each substance
+	 * @param substanceQtyPercs the raw quantity percentage of each substance in the product
 	 * @param boilingPoint a {@link java.lang.Double} object
 	 * @param flashPoint a {@link java.lang.Double} object
 	 * @param hydrocarbonPerc a {@link java.lang.Double} object
 	 */
-	public HazardClassificationFormulaContext(ProductData entity, Map<String, Double> hSum, Map<String, Double> hMax,
-			Map<String, Map<IngItem, Double>> details, Double boilingPoint, Double flashPoint, Double hydrocarbonPerc) {
-		this.hSum = hSum;
-		this.hMax = hMax;
-		this.details = details;
+	public HazardClassificationFormulaContext(ProductData entity, Map<String, Map<IngItem, Double>> substanceValues,
+			Map<IngItem, Double> substanceQtyPercs, Double boilingPoint, Double flashPoint, Double hydrocarbonPerc) {
+		this.substanceValues = substanceValues;
+		this.substanceQtyPercs = substanceQtyPercs;
 		this.entity = entity;
 		this.boilingPoint = boilingPoint;
 		this.flashPoint = flashPoint;
@@ -110,13 +159,22 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 	}
 
 	/**
+	 * Sets the substance inclusion threshold of the CLP rule being evaluated.
+	 *
+	 * @param substanceThreshold the current rule threshold, or null for none
+	 */
+	public void setSubstanceThreshold(SubstanceThreshold substanceThreshold) {
+		this.substanceThreshold = substanceThreshold;
+	}
+
+	/**
 	 *
 	 * Helpers for CLP Spel formula
 	 *
 	 * @return a {@link java.lang.Double} object
 	 */
 	public Double getEtaVo() {
-		return computeETA(hSum.getOrDefault(ETA_VO, 0d));
+		return computeETA(filteredSum(ETA_VO));
 	}
 
 	/**
@@ -126,8 +184,8 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 	 * @return a {@link java.lang.Double} object
 	 */
 	private Double computeETA(Double ret) {
-		if(ret!=0d) {
-			ret = 100/ret;
+		if (ret != 0d) {
+			ret = 100 / ret;
 		}
 		return ret;
 	}
@@ -138,7 +196,7 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 	 * @return a {@link java.lang.Double} object
 	 */
 	public Double getEtaVc() {
-		return computeETA(hSum.getOrDefault(ETA_VC, 0d));
+		return computeETA(filteredSum(ETA_VC));
 	}
 
 	/**
@@ -147,7 +205,7 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 	 * @return a {@link java.lang.Double} object
 	 */
 	public Double getEtaInGas() {
-		return computeETA(hSum.getOrDefault(ETA_IN_GAS, 0d));
+		return computeETA(filteredSum(ETA_IN_GAS));
 	}
 
 	/**
@@ -156,7 +214,7 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 	 * @return a {@link java.lang.Double} object
 	 */
 	public Double getEtaInVapor() {
-		return computeETA(hSum.getOrDefault(ETA_IN_GAS, 0d));
+		return computeETA(filteredSum(ETA_IN_VAPOR));
 	}
 
 	/**
@@ -165,7 +223,7 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 	 * @return a {@link java.lang.Double} object
 	 */
 	public Double getEtaInMist() {
-		return computeETA(hSum.getOrDefault(ETA_IN_MIST, 0d));
+		return computeETA(filteredSum(ETA_IN_MIST));
 	}
 
 	/**
@@ -231,7 +289,34 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 	 * @return a {@link java.lang.Double} object
 	 */
 	public Double hSum(String hazardStatement, String hazardClassCode) {
-		return hSum.getOrDefault(toCode(hazardStatement, hazardClassCode), 0d);
+		return filteredSum(toCode(hazardStatement, hazardClassCode));
+	}
+
+	/**
+	 * Sums the quantity of the substances carrying at least one of the given
+	 * hazard statements, counting each substance only once even when it
+	 * carries several of them (e.g. a substance classified both H314 and H318).
+	 *
+	 * @param hazardStatements the hazard statement codes to combine
+	 * @return the sum of the distinct substance quantities
+	 */
+	public Double hSumUnique(String... hazardStatements) {
+		Map<IngItem, Double> merged = new HashMap<>();
+		for (String hazardStatement : hazardStatements) {
+			Map<IngItem, Double> values = substanceValues.get(hazardStatement);
+			if (values != null) {
+				for (Map.Entry<IngItem, Double> entry : values.entrySet()) {
+					merged.merge(entry.getKey(), entry.getValue(), Double::max);
+				}
+			}
+		}
+		double sum = 0d;
+		for (Map.Entry<IngItem, Double> entry : merged.entrySet()) {
+			if (accept(entry.getKey())) {
+				sum += entry.getValue();
+			}
+		}
+		return round(sum);
 	}
 
 	/**
@@ -252,7 +337,16 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 	 * @return a {@link java.lang.Double} object
 	 */
 	public Double hMax(String hazardStatement, String hazardClassCode) {
-		return hMax.getOrDefault(toCode(hazardStatement, hazardClassCode), 0d);
+		Map<IngItem, Double> values = substanceValues.get(toCode(hazardStatement, hazardClassCode));
+		double max = 0d;
+		if (values != null) {
+			for (Map.Entry<IngItem, Double> entry : values.entrySet()) {
+				if (accept(entry.getKey()) && (entry.getValue() != null) && (entry.getValue() > max)) {
+					max = entry.getValue();
+				}
+			}
+		}
+		return round(max);
 	}
 
 	/**
@@ -276,8 +370,8 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 	 * @return a {@link java.lang.Boolean} object
 	 */
 	public Boolean isDangerousMisture() {
-		return entity.getHcList()!=null 
-				&& entity.getHcList().stream().anyMatch(h -> "Danger".equals(h.getSignalWord())); 
+		return entity.getHcList() != null
+				&& entity.getHcList().stream().anyMatch(h -> "Danger".equals(h.getSignalWord()));
 	}
 
 	/**
@@ -288,30 +382,26 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 	 * @return a {@link java.lang.String} object
 	 */
 	public String detail(String hazardStatement, String hazardClassCode) {
-		Map<IngItem, Double> detail = null;
-
-		if (hazardClassCode != null) {
-			detail = details.getOrDefault(toCode(hazardStatement, hazardClassCode), new HashMap<>());
-		} else {
-			detail = details.getOrDefault(hazardStatement, new HashMap<>());
-		}
+		Map<IngItem, Double> detail = substanceValues.getOrDefault(toCode(hazardStatement, hazardClassCode), new HashMap<>());
 
 		// Convert Map to a string format "(key value%, key2 value2%)"
-		if (detail != null && !detail.isEmpty()) {
-			 StringBuilder result = new StringBuilder(toCode(hazardStatement, hazardClassCode) + " [");
-		        for (Map.Entry<IngItem, Double> entry : detail.entrySet()) {
-		            result.append("{").append(entry.getKey().getNodeRef().getId()).append(":")
-		                  .append(entry.getKey().getIngCASCode() != null ? entry.getKey().getIngCASCode() : entry.getKey().getCharactName())
-		                  .append("} ").append(formatNumber(entry.getValue())).append("%, ");
-		        }
-		        // Remove the last ", " and close the parenthesis
-		        if (result.length() > 1) {
-		            result.setLength(result.length() - 2); // Remove ", "
-		        }
-		        result.append("]");
-		        return result.toString();
+		StringBuilder result = new StringBuilder(toCode(hazardStatement, hazardClassCode) + " [");
+		boolean empty = true;
+		for (Map.Entry<IngItem, Double> entry : detail.entrySet()) {
+			if (accept(entry.getKey())) {
+				result.append("{").append(entry.getKey().getNodeRef().getId()).append(":")
+						.append(entry.getKey().getIngCASCode() != null ? entry.getKey().getIngCASCode() : entry.getKey().getCharactName())
+						.append("} ").append(formatNumber(entry.getValue())).append("%, ");
+				empty = false;
+			}
 		}
-		return toCode(hazardStatement, hazardClassCode) + " [none]"; // Return empty parenthesis if detail is null or empty
+		if (empty) {
+			return toCode(hazardStatement, hazardClassCode) + " [none]";
+		}
+		// Remove the last ", " and close the parenthesis
+		result.setLength(result.length() - 2);
+		result.append("]");
+		return result.toString();
 	}
 
 	/**
@@ -321,7 +411,7 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 	 * @return a {@link java.lang.String} object
 	 */
 	private String formatNumber(Double value) {
-		if(value!=null) {
+		if (value != null) {
 			return PropertyFormats.forMode(FormatMode.JSON, true).formatDecimal(value);
 		}
 		return "N/A";
@@ -335,6 +425,50 @@ public class HazardClassificationFormulaContext implements SpelFormulaContext<Pr
 	 */
 	public String detail(String hazardStatement) {
 		return detail(hazardStatement, null);
+	}
+
+	/**
+	 * Sums the values of the given hazard key over the substances satisfying
+	 * the current substance threshold.
+	 *
+	 * @param key the hazard aggregation key
+	 * @return the rounded filtered sum
+	 */
+	private Double filteredSum(String key) {
+		Map<IngItem, Double> values = substanceValues.get(key);
+		double sum = 0d;
+		if (values != null) {
+			for (Map.Entry<IngItem, Double> entry : values.entrySet()) {
+				if (accept(entry.getKey()) && (entry.getValue() != null)) {
+					sum += entry.getValue();
+				}
+			}
+		}
+		return round(sum);
+	}
+
+	/**
+	 * Checks whether a substance satisfies the current rule threshold.
+	 *
+	 * @param ingItem the substance
+	 * @return true if the substance must be taken into account
+	 */
+	private boolean accept(IngItem ingItem) {
+		if (substanceThreshold == null) {
+			return true;
+		}
+		return substanceThreshold.accept(substanceQtyPercs.getOrDefault(ingItem, 0d));
+	}
+
+	/**
+	 * Rounds a value to 6 decimals to avoid floating point artifacts around
+	 * regulatory thresholds (e.g. 0.09999999999999998 vs 0.1).
+	 *
+	 * @param value the value to round
+	 * @return the rounded value
+	 */
+	private static double round(double value) {
+		return Math.round(value * ROUNDING_FACTOR) / ROUNDING_FACTOR;
 	}
 
 }

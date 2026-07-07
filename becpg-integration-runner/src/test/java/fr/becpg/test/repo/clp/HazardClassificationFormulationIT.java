@@ -213,6 +213,74 @@ public class HazardClassificationFormulationIT extends PLMBaseTestCase {
 		}), "H302", "GHS07", "Warning");
 	}
 
+	@Test
+	public void testSubstanceThresholdExcludesLowQuantities() {
+		// 9.5% + 0.6% = 10.1% but the 0.6% substance is below the >=1% inclusion threshold: sum = 9.5 < 10
+		assertNoHazard(inWriteTx(() -> {
+			ProductData product = createTestProduct((builder, p) -> {
+				((StandardSoapTestProduct) builder).addIngredient(p, "Eye Irritant Major", 9.5, "Eye Irrit. 2:H319", null, null, null);
+				((StandardSoapTestProduct) builder).addIngredient(p, "Eye Irritant Trace", 0.6, "Eye Irrit. 2:H319", null, null, null);
+			});
+			return formulationService.formulate(product);
+		}), "H319");
+
+		// 9.5% + 1% = 10.5 >= 10, the 0.5% substance stays excluded from sum and detail
+		ProductData product = inWriteTx(() -> {
+			ProductData p = createTestProduct((builder, pr) -> {
+				((StandardSoapTestProduct) builder).addIngredient(pr, "Eye Irritant Major Bis", 9.5, "Eye Irrit. 2:H319", null, null, null);
+				((StandardSoapTestProduct) builder).addIngredient(pr, "Eye Irritant Minor Bis", 1.0, "Eye Irrit. 2:H319", null, null, null);
+				((StandardSoapTestProduct) builder).addIngredient(pr, "Eye Irritant Trace Bis", 0.5, "Eye Irrit. 2:H319", null, null, null);
+			});
+			return formulationService.formulate(p);
+		});
+
+		assertHasHazard(product, "H319", "GHS07", "Warning");
+
+		for (HazardClassificationListDataItem hc : product.getHcList()) {
+			if ("H319".equals(nodeService.getProperty(hc.getHazardStatement(), GHSModel.PROP_HAZARD_CODE)) && (hc.getDetails() != null)) {
+				Assert.assertTrue("Detail should contain included substance", hc.getDetails().contains("Eye Irritant Major Bis"));
+				Assert.assertFalse("Detail should not contain excluded substance", hc.getDetails().contains("Eye Irritant Trace Bis"));
+			}
+		}
+	}
+
+	@Test
+	public void testSubstanceBothH314AndH318CountedOnce() {
+		// The substance carries both H314 and H318: it must be counted once (2.5%),
+		// so H318 (>= 3) does not apply, H319 (1 <= x < 3) and H315 (1 <= H314 < 5) do
+		ProductData product = inWriteTx(() -> {
+			ProductData p = createTestProduct((builder, pr) -> {
+				((StandardSoapTestProduct) builder).addIngredient(pr, "Corrosive Eye Dam Substance", 2.5,
+						"Skin Corr. 1A:H314,Eye Dam. 1:H318", null, null, null);
+			});
+			return formulationService.formulate(p);
+		});
+
+		assertNoHazard(product, "H318");
+		assertHasHazard(product, "H319", "GHS07", "Warning");
+		assertHasHazard(product, "H315", "GHS07", "Warning");
+	}
+
+	@Test
+	public void testAcuteToxicityExclusions() {
+		// "Above ATE Bound" is excluded (oral toxicity > 2000) and "Toxic Trace" is below the
+		// 1% inclusion threshold of the H302 rule: etaVo = 100 / (90/1900) ≈ 2111 > 2000
+		ProductData product = inWriteTx(() -> {
+			ProductData p = createTestProduct((builder, pr) -> {
+				((StandardSoapTestProduct) builder).addIngredient(pr, "Moderate Oral Tox", 90.0, null, 1900.0, null, null);
+				((StandardSoapTestProduct) builder).addIngredient(pr, "Above ATE Bound", 10.0, null, 2500.0, null, null);
+				((StandardSoapTestProduct) builder).addIngredient(pr, "Toxic Trace", 0.5, null, 100.0, null, null);
+				((StandardSoapTestProduct) builder).addIngredient(pr, "Eye Irritant Control", 15.0, "Eye Irrit. 2:H319", null, null, null);
+			});
+			return formulationService.formulate(p);
+		});
+
+		assertHasHazard(product, "H319", "GHS07", "Warning");
+		assertNoHazard(product, "H300");
+		assertNoHazard(product, "H301");
+		assertNoHazard(product, "H302");
+	}
+
 	private ProductData createTestProduct(SampleProductBuilder.ProductBuilder builder) {
 		StandardSoapTestProduct testProduct = new StandardSoapTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
 				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(false).withPhysico(false).build();
@@ -246,6 +314,14 @@ public class HazardClassificationFormulationIT extends PLMBaseTestCase {
 		}
 		Assert.assertTrue("Expected hazard " + hazardCode + " with pictogram " + pictogramCode + " and signal word " + signalWord + " not found",
 				found);
+	}
+
+	private ProductData assertNoHazard(ProductData product, String hazardCode) {
+		for (HazardClassificationListDataItem hc : product.getHcList()) {
+			String currentHazardCode = (String) nodeService.getProperty(hc.getHazardStatement(), GHSModel.PROP_HAZARD_CODE);
+			Assert.assertNotEquals("Unexpected hazard " + hazardCode + " found", hazardCode, currentHazardCode);
+		}
+		return product;
 	}
 
 }

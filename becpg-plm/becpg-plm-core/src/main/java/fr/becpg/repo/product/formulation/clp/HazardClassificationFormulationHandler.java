@@ -39,6 +39,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.HazardClassificationListDataItem;
+import fr.becpg.repo.product.formulation.clp.HazardClassificationFormulaContext.SubstanceThreshold;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.regulatory.RequirementDataType;
@@ -66,6 +67,13 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 	private static final String HAZARD_STATEMENT_NOT_FOUND_MSG = "message.clp.hazardStatement.notFound";
 	/** Constant <code>PICTOGRAM_NOT_FOUND_MSG="message.clp.pictogram.notFound"</code> */
 	private static final String PICTOGRAM_NOT_FOUND_MSG = "message.clp.pictogram.notFound";
+
+	private static final int DEFAULT_FORMULA_COLUMN = 6;
+
+	private static final double MAX_ATE_ORAL = 2000d;
+	private static final double MAX_ATE_DERMAL = 2000d;
+	private static final Map<String, Double> MAX_ATE_INHALATION = Map.of(HazardClassificationFormulaContext.ETA_IN_GAS, 20000d,
+			HazardClassificationFormulaContext.ETA_IN_VAPOR, 20d, HazardClassificationFormulaContext.ETA_IN_MIST, 5d);
 
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(HazardClassificationFormulationHandler.class);
@@ -168,16 +176,15 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 				}
 			}
 
-			Map<String, Double> clpQuantities = new HashMap<>();
-			Map<String, Double> maxQuantities = new HashMap<>();
-			Map<String, Map<IngItem, Double>> details = new HashMap<>();
+			Map<String, Map<IngItem, Double>> substanceValues = new HashMap<>();
+			Map<IngItem, Double> substanceQtyPercs = new HashMap<>();
 
-			populateHazardQuantities(formulatedProduct, clpQuantities, maxQuantities, details);
+			populateHazardQuantities(formulatedProduct, substanceValues, substanceQtyPercs);
 
 			Map<String, NodeRef> missingCharacts = new HashMap<>();
 
-			HazardClassificationFormulaContext formulaContext = new HazardClassificationFormulaContext(formulatedProduct, clpQuantities,
-					maxQuantities, details, findPhysicoValue(formulatedProduct, HazardClassificationFormulaContext.BOILING_POINT, missingCharacts),
+			HazardClassificationFormulaContext formulaContext = new HazardClassificationFormulaContext(formulatedProduct, substanceValues,
+					substanceQtyPercs, findPhysicoValue(formulatedProduct, HazardClassificationFormulaContext.BOILING_POINT, missingCharacts),
 					findPhysicoValue(formulatedProduct, HazardClassificationFormulaContext.FLASH_POINT, missingCharacts),
 					findPhysicoValue(formulatedProduct, HazardClassificationFormulaContext.HYDROCARBON_PERC, missingCharacts));
 
@@ -191,7 +198,7 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 			StandardEvaluationContext context = formulaService.createCustomSpelContext(formulatedProduct, formulaContext);
 
 			try (CSVReader csvReader = getCSVReaderFromNodeRef(getCLPDatabase())) {
-				processCSVData(formulatedProduct, retainNodes, context, csvReader);
+				processCSVData(formulatedProduct, retainNodes, context, formulaContext, csvReader);
 			} catch (IOException e) {
 				logger.error("Error reading CLP database CSV", e);
 				return false;
@@ -208,26 +215,33 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
 	 * @param retainNodes a {@link java.util.List} object
 	 * @param context a {@link org.springframework.expression.spel.support.StandardEvaluationContext} object
+	 * @param formulaContext a {@link fr.becpg.repo.product.formulation.clp.HazardClassificationFormulaContext} object
 	 * @param csvReader a {@link fr.becpg.common.csv.CSVReader} object
 	 * @throws java.io.IOException if any.
 	 */
 	private void processCSVData(ProductData formulatedProduct, List<HazardClassificationListDataItem> retainNodes, StandardEvaluationContext context,
-			CSVReader csvReader) throws IOException {
+			HazardClassificationFormulaContext formulaContext, CSVReader csvReader) throws IOException {
 		String[] data;
 		Set<String> matchedHPhrases = new HashSet<>();
 
+		int formulaColumn = findFormulaColumn(csvReader.readNext());
+		boolean hasThresholdColumn = formulaColumn > DEFAULT_FORMULA_COLUMN;
+
 		while ((data = csvReader.readNext()) != null) {
-			if (data.length >= 6) {
+			if (data.length > formulaColumn) {
 				String hazardCode = data[1];
 				String hazardClassCode = data[2];
 				String pictogramCode = data[3];
 				String signalWord = data[4];
-				String regulatoryText = data[5];
-				String formula = data[6];
-				String detailFormula = data[7];
+				String regulatoryText = data[formulaColumn - 1];
+				String formula = data[formulaColumn];
+				String detailFormula = data.length > (formulaColumn + 1) ? data[formulaColumn + 1] : null;
 
 				if (!matchedHPhrases.contains(hazardCode)) {
 					try {
+						if (hasThresholdColumn) {
+							formulaContext.setSubstanceThreshold(SubstanceThreshold.parse(data[formulaColumn - 2]));
+						}
 						Expression exp = formulaService.parseExpression(formula);
 						if (Boolean.TRUE.equals(exp.getValue(context, Boolean.class))) {
 
@@ -264,11 +278,31 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 
 					} catch (Exception e) {
 						handleFormulaError(formulatedProduct, formula, e);
+					} finally {
+						formulaContext.setSubstanceThreshold(null);
 					}
 				}
 			}
 		}
 
+	}
+
+	/**
+	 * Locates the formula column from the CSV header, supporting both the
+	 * legacy 8-column format and the format with a substance threshold column.
+	 *
+	 * @param header the first CSV line
+	 * @return the index of the formula column
+	 */
+	private int findFormulaColumn(String[] header) {
+		if (header != null) {
+			for (int i = 0; i < header.length; i++) {
+				if ("formula".equalsIgnoreCase(header[i] != null ? header[i].trim() : null)) {
+					return i;
+				}
+			}
+		}
+		return DEFAULT_FORMULA_COLUMN;
 	}
 
 	/**
@@ -328,41 +362,52 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 	/**
 	 * <p>populateHazardQuantities.</p>
 	 *
+	 * Aggregates per-substance hazard quantities. Substances above the ATE
+	 * upper bounds (e.g. oral toxicity above 2000) are excluded from the
+	 * acute toxicity estimate contributions.
+	 *
 	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
-	 * @param clpQuantities a {@link java.util.Map} object
-	 * @param maxQuantities a {@link java.util.Map} object
-	 * @param details a {@link java.util.Map} object
+	 * @param substanceValues a {@link java.util.Map} object
+	 * @param substanceQtyPercs a {@link java.util.Map} object
 	 */
-	private void populateHazardQuantities(ProductData formulatedProduct, Map<String, Double> clpQuantities, Map<String, Double> maxQuantities,
-			Map<String, Map<IngItem, Double>> details) {
+	private void populateHazardQuantities(ProductData formulatedProduct, Map<String, Map<IngItem, Double>> substanceValues,
+			Map<IngItem, Double> substanceQtyPercs) {
 		if (formulatedProduct.getIngList() != null) {
 			for (IngListDataItem ing : formulatedProduct.getIngList()) {
 
 				Double quantityPercentage = ing.getQtyPerc();
-				
+
 				if (quantityPercentage == null || quantityPercentage == 0) {
 					continue;
 				}
 
 				IngItem ingItem = (IngItem) alfrescoRepository.findOne(ing.getIng());
 
+				if (ingItem == null) {
+					continue;
+				}
+
+				substanceQtyPercs.merge(ingItem, quantityPercentage, Double::sum);
+
 				String clpClassifications = (String) nodeService.getProperty(ing.getIng(), GHSModel.PROP_SDS_HAZARD_CLASSIFICATIONS);
 				Double toxicityAcuteOral = (Double) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_ING_TOX_ACUTE_ORAL);
-				if ((toxicityAcuteOral != null) && (toxicityAcuteOral != 0)) {
-					clpQuantities.merge(HazardClassificationFormulaContext.ETA_VO, quantityPercentage / toxicityAcuteOral, Double::sum);
+				if ((toxicityAcuteOral != null) && (toxicityAcuteOral != 0) && (toxicityAcuteOral <= MAX_ATE_ORAL)) {
+					addToDetails(substanceValues, HazardClassificationFormulaContext.ETA_VO, ingItem, quantityPercentage / toxicityAcuteOral);
 				}
 
 				Double toxicityAcuteDemal = (Double) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_ING_TOX_ACUTE_DERMAL);
-				if ((toxicityAcuteDemal != null) && (toxicityAcuteDemal != 0)) {
-					clpQuantities.merge(HazardClassificationFormulaContext.ETA_VC, quantityPercentage / toxicityAcuteDemal, Double::sum);
+				if ((toxicityAcuteDemal != null) && (toxicityAcuteDemal != 0) && (toxicityAcuteDemal <= MAX_ATE_DERMAL)) {
+					addToDetails(substanceValues, HazardClassificationFormulaContext.ETA_VC, ingItem, quantityPercentage / toxicityAcuteDemal);
 				}
 
 				Double toxicityAcuteInhalation = (Double) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_ING_TOX_ACUTE_INHALATION);
 				String toxicityAcuteInhalationType = (String) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_ING_TOX_ACUTE_INHALATION_TYPE);
 				if ((toxicityAcuteInhalation != null) && (toxicityAcuteInhalation != 0) && (toxicityAcuteInhalationType != null)
 						&& !toxicityAcuteInhalationType.isBlank()) {
-					clpQuantities.merge(HazardClassificationFormulaContext.etaType(toxicityAcuteInhalationType),
-							quantityPercentage / toxicityAcuteInhalation, Double::sum);
+					String etaKey = HazardClassificationFormulaContext.etaType(toxicityAcuteInhalationType);
+					if ((etaKey != null) && (toxicityAcuteInhalation <= MAX_ATE_INHALATION.get(etaKey))) {
+						addToDetails(substanceValues, etaKey, ingItem, quantityPercentage / toxicityAcuteInhalation);
+					}
 				}
 
 				Double mFactor = (Double) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_ING_TOX_AQUATIC_MFACTOR);
@@ -377,42 +422,29 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 						if (parts.length > 1) {
 							hazardClassCode = parts[0].trim();
 							hazardStatement = parts[1].trim();
-							clpQuantities.merge(classification, quantityPercentage, Double::sum);
-							maxQuantities.merge(classification, quantityPercentage, Double::max);
-							addToDetails(details, classification, ingItem, quantityPercentage);
+							String classificationKey = hazardClassCode + ":" + hazardStatement;
+							addToDetails(substanceValues, classificationKey, ingItem, quantityPercentage);
 
 							if (mFactor != null) {
-								clpQuantities.merge("M:" + classification, quantityPercentage * mFactor, Double::sum);
-								maxQuantities.merge("M:" + classification, quantityPercentage * mFactor, Double::max);
-								addToDetails(details, "M:" + classification, ingItem, quantityPercentage * mFactor);
+								addToDetails(substanceValues, "M:" + classificationKey, ingItem, quantityPercentage * mFactor);
 							}
 							if (Boolean.TRUE.equals(superSensitizing)) {
-								clpQuantities.merge("S:" + classification, quantityPercentage, Double::sum);
-								maxQuantities.merge("S:" + classification, quantityPercentage, Double::max);
-								addToDetails(details, "S:" + classification, ingItem, quantityPercentage);
+								addToDetails(substanceValues, "S:" + classificationKey, ingItem, quantityPercentage);
 							}
 
 						} else {
 							hazardStatement = parts[0].trim();
 						}
-						clpQuantities.merge(hazardStatement, quantityPercentage, Double::sum);
-						maxQuantities.merge(hazardStatement, quantityPercentage, Double::max);
-						addToDetails(details, hazardStatement, ingItem, quantityPercentage);
+						addToDetails(substanceValues, hazardStatement, ingItem, quantityPercentage);
 
 						if (hazardClassCode != null) {
-							clpQuantities.merge(hazardClassCode, quantityPercentage, Double::sum);
-							maxQuantities.merge(hazardClassCode, quantityPercentage, Double::max);
-							addToDetails(details, hazardClassCode, ingItem, quantityPercentage);
+							addToDetails(substanceValues, hazardClassCode, ingItem, quantityPercentage);
 						}
 						if (mFactor != null) {
-							clpQuantities.merge("M:" + hazardStatement, quantityPercentage * mFactor, Double::sum);
-							maxQuantities.merge("M:" + hazardStatement, quantityPercentage * mFactor, Double::max);
-							addToDetails(details, "M:" + hazardStatement, ingItem, quantityPercentage * mFactor);
+							addToDetails(substanceValues, "M:" + hazardStatement, ingItem, quantityPercentage * mFactor);
 						}
 						if (Boolean.TRUE.equals(superSensitizing)) {
-							clpQuantities.merge("S:" + hazardStatement, quantityPercentage, Double::sum);
-							maxQuantities.merge("S:" + hazardStatement, quantityPercentage, Double::max);
-							addToDetails(details, "S:" + hazardStatement, ingItem, quantityPercentage);
+							addToDetails(substanceValues, "S:" + hazardStatement, ingItem, quantityPercentage);
 						}
 					}
 				}
@@ -561,7 +593,7 @@ public class HazardClassificationFormulationHandler extends FormulationBaseHandl
 	 */
 	private CSVReader getCSVReaderFromNodeRef(NodeRef file) {
 		ContentReader fileReader = contentService.getReader(file, ContentModel.PROP_CONTENT);
-		return new CSVReader(new InputStreamReader(fileReader.getContentInputStream(), java.nio.charset.StandardCharsets.UTF_8), ';', '"', 1);
+		return new CSVReader(new InputStreamReader(fileReader.getContentInputStream(), java.nio.charset.StandardCharsets.UTF_8), ';', '"', 0);
 	}
 
 }
