@@ -1066,11 +1066,13 @@
             var htmlForm = "";
             var currentValue = this.getCurrentValueComment(questionId);
 
-            // Add label if not hidden
-            if (choice.label && choice.label !== "hidden") {
-                var labelText = this.msg("form.control.decision-tree." + this.options.prefix + "." + questionId + ".comment");
+            // Add label if not hidden, using the choice commentLabel when provided (e.g. survey questions)
+            var hasCommentLabel = choice.commentLabel && choice.commentLabel !== "hidden";
+            if (hasCommentLabel || (choice.label && choice.label !== "hidden")) {
+                var labelText = hasCommentLabel ? choice.commentLabel
+                    : this.msg("form.control.decision-tree." + this.options.prefix + "." + questionId + ".comment");
                 var mandatoryIndicator = mandatory ? '<span id="' + this.id + '-mandatory_' + questionId + '" class="mandatory-indicator" title="' + this._escapeHtml(this.msg("form.field.incomplete")) + '">*</span>' : "";
-                htmlForm += '<label id="' + labelId + '" for="' + inputId + '">' + 
+                htmlForm += '<label id="' + labelId + '" for="' + inputId + '">' +
                            this._escapeHtml(labelText) + mandatoryIndicator + ':</label>';
             }
 
