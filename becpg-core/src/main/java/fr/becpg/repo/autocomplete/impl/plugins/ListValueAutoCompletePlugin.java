@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.api.BeCPGPublicApi;
@@ -67,6 +68,7 @@ public class ListValueAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
 		queryBuilder.inPath(path);
 		queryBuilder.ofType(BeCPGModel.TYPE_LIST_VALUE);
+		queryBuilder.locale(I18NUtil.getContentLocale());
 
 		if (!isAllQuery(query)) {
 			queryBuilder.andPropQuery(BeCPGModel.PROP_LV_VALUE, prepareQuery(query));
