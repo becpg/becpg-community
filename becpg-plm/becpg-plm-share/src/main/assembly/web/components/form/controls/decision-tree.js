@@ -87,6 +87,7 @@
                 ctrlBody.innerHTML = htmlForm;
                 this._executeAfterFormInitStack();
                 this._setupEventHandlers();
+                this.toggleVisible();
             }
         },
 
