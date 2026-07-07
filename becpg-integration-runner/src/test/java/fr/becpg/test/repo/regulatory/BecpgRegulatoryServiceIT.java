@@ -6,7 +6,6 @@ import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
-import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.regulatory.*;
 import fr.becpg.repo.regulatory.becpg.regulatory.BecpgRegulatoryAuthenticationService;
@@ -167,13 +166,18 @@ public class BecpgRegulatoryServiceIT extends AbstractFinishedProductTest {
                         "regulatory".equals(reqCtrl.getFormulationChainId())
                 ).toList();
 
-                assertEquals(amountOfRegulatoryErrors, regulatoryErrorsList.size());
+                // list has errors for each country usage pair
+                assertTrue(regulatoryErrorsList.size() >= amountOfRegulatoryErrors);
+                int serviceUnreachableErrorsAmount = 0;
                 for (RequirementListDataItem reqCtrl : regulatoryErrorsList) {
-                    assertEquals(RequirementType.Forbidden, reqCtrl.getReqType());
-                    assertEquals(RequirementDataType.Formulation, reqCtrl.getReqDataType());
-                    assertTrue(reqCtrl.getReqMessage().contains("I/O error on POST request for \"http://does-not-exist.nowhere/v1/regulatory/check\""));
-                    assertTrue(reqCtrl.getReqMessage().toLowerCase().contains("becpg"));
+                    if (RequirementType.Forbidden.equals(reqCtrl.getReqType()) &&
+                            RequirementDataType.Formulation.equals(reqCtrl.getReqDataType()) &&
+                            reqCtrl.getReqMessage().contains("I/O error on POST request for \"http://does-not-exist.nowhere/v1/regulatory/check\"") &&
+                            reqCtrl.getReqMessage().toLowerCase().contains("becpg")) {
+                        serviceUnreachableErrorsAmount++;
+                    }
                 }
+                assertEquals(serviceUnreachableErrorsAmount, amountOfRegulatoryErrors);
                 return null;
             });
         } finally {
