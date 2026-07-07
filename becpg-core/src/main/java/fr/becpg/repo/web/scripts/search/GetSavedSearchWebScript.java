@@ -10,10 +10,12 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.search.SavedSearchService;
 import fr.becpg.repo.search.data.SavedSearch;
 
@@ -84,7 +86,7 @@ public class GetSavedSearchWebScript extends AbstractSearchWebScript {
 				for (SavedSearch savedSearch : results) {
 					JSONObject ret = new JSONObject();
 					ret.put("nodeRef", savedSearch.getNodeRef());
-					ret.put("name", savedSearch.getName());
+					ret.put("name", extractDisplayName(savedSearch));
 					ret.put("isGlobal", savedSearch.getIsGlobal());
 					items.put(ret);
 				}
@@ -101,6 +103,22 @@ public class GetSavedSearchWebScript extends AbstractSearchWebScript {
 			throw new WebScriptException("Erreur lors du traitement de la requête JSON", e);
 		}
 
+	}
+
+	/**
+	 * Extracts the display name of a saved search, using the localized title when available.
+	 *
+	 * @param savedSearch the saved search
+	 * @return the localized title or the node name as fallback
+	 */
+	private String extractDisplayName(SavedSearch savedSearch) {
+		if ((savedSearch.getTitle() != null) && !savedSearch.getTitle().isEmpty()) {
+			String localizedTitle = MLTextHelper.getClosestValue(savedSearch.getTitle(), I18NUtil.getContentLocale());
+			if ((localizedTitle != null) && !localizedTitle.isBlank()) {
+				return localizedTitle;
+			}
+		}
+		return savedSearch.getName();
 	}
 
 }

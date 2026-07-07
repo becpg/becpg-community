@@ -2,6 +2,9 @@ package fr.becpg.repo.search.data;
 
 import java.util.Objects;
 
+import org.alfresco.service.cmr.repository.MLText;
+
+import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
@@ -24,6 +27,29 @@ public class SavedSearch extends BeCPGDataObject {
 	private String siteId;
 
 	private Boolean isGlobal = false;
+
+	private MLText title;
+
+	/**
+	 * <p>Getter for the field <code>title</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname = "cm:title")
+	public MLText getTitle() {
+		return title;
+	}
+
+	/**
+	 * <p>Setter for the field <code>title</code>.</p>
+	 *
+	 * @param title a {@link org.alfresco.service.cmr.repository.MLText} object
+	 */
+	public void setTitle(MLText title) {
+		this.title = title;
+	}
 
 	/**
 	 * <p>Getter for the field <code>searchType</code>.</p>
@@ -88,7 +114,7 @@ public class SavedSearch extends BeCPGDataObject {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "SavedSearch [searchType=" + searchType + ", siteId=" + siteId + ", isGlobal=" + isGlobal + "]";
+		return "SavedSearch [searchType=" + searchType + ", siteId=" + siteId + ", isGlobal=" + isGlobal + ", title=" + title + "]";
 	}
 
 	/** {@inheritDoc} */
@@ -96,7 +122,7 @@ public class SavedSearch extends BeCPGDataObject {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = (prime * result) + Objects.hash(isGlobal, searchType, siteId);
+		result = (prime * result) + Objects.hash(isGlobal, searchType, siteId, title);
 		return result;
 	}
 
@@ -110,7 +136,8 @@ public class SavedSearch extends BeCPGDataObject {
 			return false;
 		}
 		SavedSearch other = (SavedSearch) obj;
-		return Objects.equals(isGlobal, other.isGlobal) && Objects.equals(searchType, other.searchType) && Objects.equals(siteId, other.siteId);
+		return Objects.equals(isGlobal, other.isGlobal) && Objects.equals(searchType, other.searchType) && Objects.equals(siteId, other.siteId)
+				&& Objects.equals(title, other.title);
 	}
 
 	/**

@@ -63,6 +63,31 @@ public class SavedSearchIT extends RepoBaseTestCase {
 		});
 	}
 
+	@Test
+	public void testObsoleteDocumentsSampleSavedSearch() {
+
+		inReadTx(() -> {
+
+			SavedSearch filter = new SavedSearch();
+			filter.setSearchType("product-list-bcpg:document");
+
+			List<SavedSearch> savedSearches = savedSearchService.findSavedSearch(filter).stream()
+					.filter(s -> "Obsolete documents".equals(s.getName())).toList();
+
+			assertEquals(1, savedSearches.size());
+
+			SavedSearch obsoleteDocuments = savedSearches.get(0);
+			assertTrue(Boolean.TRUE.equals(obsoleteDocuments.getIsGlobal()));
+			assertNotNull(obsoleteDocuments.getTitle());
+
+			String content = savedSearchService.getSavedSearchContent(obsoleteDocuments);
+			assertNotNull(content);
+			assertTrue(content.contains("\\\"prop_cm_to-date-range\\\":\\\"|NOW\\\""));
+
+			return null;
+		});
+	}
+
 	private SavedSearch createSavedSearch(String name, String searchType, String siteId, boolean isGlobal) {
 		SavedSearch savedSearch = new SavedSearch();
 		savedSearch.setName(name);
