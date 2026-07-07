@@ -255,13 +255,37 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 		var x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 
 		/**
+		 * Unique row identifier, may differ from the task ID when the same task
+		 * appears several times in the chart (e.g. resources view)
+		 */
+		var vRowId = null;
+
+		/**
 		 * Returns task ID
-		 * 
+		 *
 		 * @method getID
 		 * @return {String}
 		 */
 		this.getID = function() {
 			return vID;
+		};
+		/**
+		 * Returns the unique row identifier used to build the row DOM ids
+		 *
+		 * @method getRowId
+		 * @return {String}
+		 */
+		this.getRowId = function() {
+			return vRowId !== null ? vRowId : vID;
+		};
+		/**
+		 * Sets the unique row identifier
+		 *
+		 * @method setRowId
+		 * @return {Void}
+		 */
+		this.setRowId = function(pRowId) {
+			vRowId = pRowId;
 		};
 		/**
 		 * Returns task name
@@ -1122,7 +1146,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 			var vList = this.getList();
 
 			for (var i = 0; i < vList.length; i++) {
-				var vcurrDivID = vList[i].getID();
+				var vcurrDivID = vList[i].getRowId();
 				var vBarDiv = document.getElementById("bardiv_" + vcurrDivID);
 				var vParDiv = document.getElementById("childgrid_" + vcurrDivID);
 
@@ -1557,6 +1581,19 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 
 				vLeftTable += '</tr></thead><tbody class="yui-dt-data">';
 
+				// Assign a unique row id per entry, the same task can appear under several groups (resources view)
+				var vSeenIds = {};
+				for (var vIdx = 0; vIdx < vTaskList.length; vIdx++) {
+					var vTmpID = vTaskList[vIdx].getID();
+					if (vSeenIds[vTmpID] === undefined) {
+						vSeenIds[vTmpID] = 0;
+						vTaskList[vIdx].setRowId(vTmpID);
+					} else {
+						vSeenIds[vTmpID]++;
+						vTaskList[vIdx].setRowId(vTmpID + '_dup' + vSeenIds[vTmpID]);
+					}
+				}
+
 				for (var i = 0; i < vTaskList.length; i++) {
 
 					var vRowType = "row";
@@ -1564,7 +1601,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 						vRowType = "group";
 					}
 
-					vcurrDivID = vTaskList[i].getID();
+					vcurrDivID = vTaskList[i].getRowId();
 
 					var vLineColorStyle = vTaskList[i].getLineColor() ? 'style="background-color:'
 						+ vTaskList[i].getLineColor() + '"' : "";
@@ -1576,7 +1613,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 					}
 
 					if (vShowSelect === 1) {
-						vLeftTable += '<td class="ggtaskCheckbox"><input type="checkbox" id="taskChecked-' + vcurrDivID + '" name="taskChecked" onclick="g.selectItem(this,\'' + vcurrDivID + '\');"  ' + (JSGantt.scope.selectedItems[vcurrDivID] ? ' checked="checked">'
+						vLeftTable += '<td class="ggtaskCheckbox"><input type="checkbox" id="taskChecked-' + vcurrDivID + '" name="taskChecked" onclick="g.selectItem(this,\'' + vTaskList[i].getID() + '\');"  ' + (JSGantt.scope.selectedItems[vTaskList[i].getID()] ? ' checked="checked">'
 							: '>') + '<label for="taskChecked-' + vcurrDivID + '"></label></td>';
 					}
 
@@ -1815,7 +1852,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 					var vTaskEnd = vTaskList[i].getEnd();
 
 
-					vcurrDivID = vTaskList[i].getID();
+					vcurrDivID = vTaskList[i].getRowId();
 
 					// vNumUnits = Math.ceil((vTaskList[i].getEnd() -
 					// vTaskList[i].getStart()) / (24 * 60 * 60 * 1000)) + 1;
@@ -2416,21 +2453,21 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 	 */
 	JSGantt.toogleDiv = function(pID, ganttObj, pShow) {
 		var vList = ganttObj.getList();
-		var vCurrID = 0;
+		var vCurrRowID = 0;
 
 		for (var i = 0; i < vList.length; i++) {
 			if (vList[i].getParent() == pID) {
-				vCurrID = vList[i].getID();
+				vCurrRowID = vList[i].getRowId();
 				if (pShow == 0) {
-					Dom.addClass('child_' + vCurrID, "hidden");
-					Dom.addClass('childgrid_' + vCurrID, "hidden");
+					Dom.addClass('child_' + vCurrRowID, "hidden");
+					Dom.addClass('childgrid_' + vCurrRowID, "hidden");
 				} else {
-					Dom.removeClass('child_' + vCurrID, "hidden");
-					Dom.removeClass('childgrid_' + vCurrID, "hidden");
+					Dom.removeClass('child_' + vCurrRowID, "hidden");
+					Dom.removeClass('childgrid_' + vCurrRowID, "hidden");
 				}
 				vList[i].setVisible(pShow);
 				if (vList[i].getGroup() == 1) {
-					JSGantt.toogleDiv(vCurrID, ganttObj, pShow);
+					JSGantt.toogleDiv(vList[i].getID(), ganttObj, pShow);
 				}
 			}
 

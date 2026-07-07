@@ -700,16 +700,21 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 			NodeRef ingTomatoPuree = CharactTestHelper.getOrCreateIng(nodeService, "ING Tomato puree 34702d");
 			NodeRef ingTomato = CharactTestHelper.getOrCreateIng(nodeService, "ING Tomato 34702d");
 			NodeRef ingOil = CharactTestHelper.getOrCreateIng(nodeService, "ING Oil 34702d");
+			NodeRef ingFlavour = CharactTestHelper.getOrCreateIng(nodeService, "ING Flavour 34702d");
+			NodeRef ingSalt = CharactTestHelper.getOrCreateIng(nodeService, "ING Salt 34702d");
 
 			nodeService.setProperty(ingTomato, PLMModel.PROP_EVAPORATED_RATE, 50d);
 
-			// Raw material declared like the customer product: children relative to their parent
+			// Raw material declared like the customer product: children relative to their parent,
+			// plus a label-only wrapper (0 %) whose child carries the real percentage
 			IngListDataItem preservative = buildIng(ingPreservative, 1d);
 			IngListDataItem puree = buildIng(ingTomatoPuree, 99d);
 			IngListDataItem tomato = buildIng(ingTomato, 99d).withParent(puree);
 			IngListDataItem oil = buildIng(ingOil, 1d).withParent(puree);
+			IngListDataItem flavour = buildIng(ingFlavour, 0d);
+			IngListDataItem salt = buildIng(ingSalt, 100d).withParent(flavour);
 			RawMaterialData tomatoRM = RawMaterialData.build().withName("RM Tomato 34702d").withQty(100d).withUnit(ProductUnit.kg)
-					.withIngList(List.of(preservative, puree, tomato, oil));
+					.withIngList(List.of(preservative, puree, tomato, oil, flavour, salt));
 			NodeRef tomatoRMNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), tomatoRM).getNodeRef();
 
 			RawMaterialData cheese = RawMaterialData.build().withName("RM Cheese 34702d").withQty(100d).withUnit(ProductUnit.kg)
@@ -749,6 +754,11 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 			Assert.assertEquals("Tomato child must be 99% of the puree", puree.getQtyPerc() * 0.99d, tomato.getQtyPerc(), 0.05);
 			Assert.assertEquals("Oil child must be 1% of the puree", puree.getQtyPerc() * 0.01d, oil.getQtyPerc(), 0.05);
 			Assert.assertEquals("Puree must equal the sum of its children", tomato.getQtyPerc() + oil.getQtyPerc(), puree.getQtyPerc(), 0.05);
+
+			// Children of a 0 % wrapper keep their own percentage instead of being zeroed
+			IngListDataItem salt = findIngByName(ingList, "ING Salt 34702d");
+			Assert.assertNotNull("Salt child missing in topping", salt);
+			Assert.assertEquals("Salt child of a 0% wrapper must keep the raw material share", 45.9459459d, salt.getQtyPerc(), 0.05);
 			return null;
 		});
 
@@ -820,6 +830,12 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 			Assert.assertEquals("Sum of top-level Qty with yield should be 100%", 100d, topLevelWithYield, 0.1);
 			Assert.assertEquals("Puree Qty with yield must equal the sum of its children",
 					tomato.getQtyPercWithYield() + oil.getQtyPercWithYield(), puree.getQtyPercWithYield(), 0.1);
+
+			// Children of a 0 % wrapper keep their own percentage instead of being zeroed
+			IngListDataItem salt = findIngByName(ingList, "ING Salt 34702d");
+			Assert.assertNotNull("Salt child missing", salt);
+			Assert.assertEquals("Salt child of a 0% wrapper must keep the raw material share", 20.6756756d, salt.getQtyPerc(), 0.05);
+
 			for (IngListDataItem item : ingList) {
 				if (item.getQtyPercWithYield() != null) {
 					Assert.assertTrue("No ingredient should have a negative Qty with yield (" + item.getQtyPercWithYield() + ")",

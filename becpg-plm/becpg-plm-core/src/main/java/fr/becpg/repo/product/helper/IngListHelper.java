@@ -58,7 +58,9 @@ public class IngListHelper {
 	 * their parent ingredient (children sum to 100 %), exactly like the sub-entity lists handled by
 	 * {@link #extractParentList(List, AssociationService, AlfrescoRepository)}. This method converts
 	 * them into absolute percentages of the owning entity so the formulation aggregates children
-	 * consistently with their parent (see #34702). Top-level items are returned as-is; children are
+	 * consistently with their parent (see #34702). Children of a parent declared at 0 % (or without
+	 * percentage) are kept as-is: such a parent is a label-only wrapper and scaling would zero the
+	 * real percentages carried by its children. Top-level items are returned as-is; children are
 	 * defensive copies, so the persisted component list is never mutated. Lists produced by the
 	 * formulation already hold absolute child percentages and must not go through this method.
 	 *
@@ -100,30 +102,44 @@ public class IngListHelper {
 		}
 
 		IngListDataItem scaledParent = scaleDepthChild(item.getParent(), scaledItems);
+
+		// A parent declared at 0 % (or without percentage) is a label-only wrapper: its children
+		// carry the real percentages and must be kept as-is instead of being zeroed
+		if ((scaledParent.getQtyPerc() == null) || (scaledParent.getQtyPerc() <= 0d)) {
+			if (scaledParent == item.getParent()) {
+				scaledItems.put(item, item);
+				return item;
+			}
+			IngListDataItem unscaled = item.copy();
+			unscaled.setParent(scaledParent);
+			scaledItems.put(item, unscaled);
+			return unscaled;
+		}
+
 		IngListDataItem copy = item.copy();
 		copy.setParent(scaledParent);
 
-		if ((copy.getQtyPerc() != null) && (scaledParent.getQtyPerc() != null)) {
+		if (copy.getQtyPerc() != null) {
 			copy.setQtyPerc((copy.getQtyPerc() * scaledParent.getQtyPerc()) / 100d);
 		}
 
 		if (copy.getQtyPercWithYield() != null) {
 			Double parentQtyPercWithYield = scaledParent.getQtyPercWithYield() != null ? scaledParent.getQtyPercWithYield()
 					: scaledParent.getQtyPerc();
-			if (parentQtyPercWithYield != null) {
+			if ((parentQtyPercWithYield != null) && (parentQtyPercWithYield > 0d)) {
 				copy.setQtyPercWithYield((copy.getQtyPercWithYield() * parentQtyPercWithYield) / 100d);
 			}
 		}
 
-		if ((copy.getVolumeQtyPerc() != null) && (scaledParent.getVolumeQtyPerc() != null)) {
+		if ((copy.getVolumeQtyPerc() != null) && (scaledParent.getVolumeQtyPerc() != null) && (scaledParent.getVolumeQtyPerc() > 0d)) {
 			copy.setVolumeQtyPerc((copy.getVolumeQtyPerc() * scaledParent.getVolumeQtyPerc()) / 100d);
 		}
 
-		if ((copy.getMini() != null) && (scaledParent.getMini() != null)) {
+		if ((copy.getMini() != null) && (scaledParent.getMini() != null) && (scaledParent.getMini() > 0d)) {
 			copy.setMini((copy.getMini() * scaledParent.getMini()) / 100d);
 		}
 
-		if ((copy.getMaxi() != null) && (scaledParent.getMaxi() != null)) {
+		if ((copy.getMaxi() != null) && (scaledParent.getMaxi() != null) && (scaledParent.getMaxi() > 0d)) {
 			copy.setMaxi((copy.getMaxi() * scaledParent.getMaxi()) / 100d);
 		}
 

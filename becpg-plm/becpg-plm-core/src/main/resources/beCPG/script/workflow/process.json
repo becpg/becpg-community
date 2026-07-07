@@ -75,6 +75,33 @@
 			"redirectUrl": "/entity-data-lists?nodeRef={nodeRef}&list=View-properties"
         },
 		{
+            "title": "becpg.process.add-to-composition.title",
+            "description": "becpg.process.add-to-composition.description",
+            "itemId": "bcpg:product",
+            "itemKind": "type",
+            "formId": "add-to-list-process",
+            "condition": "js(items.length > 0 && items.every( (n) => n.isSubType(\"bcpg:rawMaterial\") || n.isSubType(\"bcpg:semiFinishedProduct\") || n.isSubType(\"bcpg:finishedProduct\")) )",
+            "submissionUrl": "/becpg/workflow/start-process?script=add-to-composition.js&nodeRefs={selectedItems}"
+        },
+		{
+            "title": "becpg.process.add-to-packaging-list.title",
+            "description": "becpg.process.add-to-packaging-list.description",
+            "itemId": "bcpg:product",
+            "itemKind": "type",
+            "formId": "add-to-list-process",
+            "condition": "js(items.length > 0 && items.every( (n) => n.isSubType(\"bcpg:packagingMaterial\") || n.isSubType(\"bcpg:packagingKit\")) )",
+            "submissionUrl": "/becpg/workflow/start-process?script=add-to-packaging-list.js&nodeRefs={selectedItems}"
+        },
+		{
+            "title": "becpg.process.add-to-process-list.title",
+            "description": "becpg.process.add-to-process-list.description",
+            "itemId": "bcpg:product",
+            "itemKind": "type",
+            "formId": "add-to-list-process",
+            "condition": "js(items.length > 0 && items.every( (n) => n.isSubType(\"bcpg:resourceProduct\")) )",
+            "submissionUrl": "/becpg/workflow/start-process?script=add-to-process-list.js&nodeRefs={selectedItems}"
+        },
+		{
             "title": "becpg.process.send-to-supplier.title",
             "description": "becpg.process.send-to-supplier.description",
             "itemId": "pjt:project",
