@@ -797,7 +797,6 @@
 					<show force="false" id="bcpg:productGeoOrigin" />
 					<show force="false" id="bcpg:entityTplRef" />
 					<show force="false" id="bcpg:parentEntityRef" />
-					<show force="false" id="bcpg:entityScore" />
 					<show force="false" id="pack:tare" />
 					<show force="false" id="pack:tareUnit" />
 
@@ -833,7 +832,6 @@
 				</field-visibility>
 				<appearance>
 					<field id="cm:name" read-only="true"></field>
-					<field id="bcpg:entityScore" read-only="true" />
 				</appearance>
 			</form>
 			<form id="create">
