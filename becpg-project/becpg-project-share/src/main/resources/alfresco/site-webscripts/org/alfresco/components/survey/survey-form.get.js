@@ -9,9 +9,14 @@ function main() {
 	AlfrescoUtil.param('itemType', null);
 	AlfrescoUtil.param('title', null);
 	AlfrescoUtil.param('mode', null);
+	AlfrescoUtil.param('skipSecurityRules', null);
 
+	var surveyUrl = '/becpg/survey?entityNodeRef=' + model.nodeRef + "&dataListName=" + model.list;
+	if (model.skipSecurityRules == "true") {
+		surveyUrl += "&skipSecurityRules=true";
+	}
 
-	var result = remote.connect("alfresco").get('/becpg/survey?entityNodeRef=' + model.nodeRef + "&dataListName="+model.list);
+	var result = remote.connect("alfresco").get(surveyUrl);
 	if (result.status != 200) {
 		AlfrescoUtil.error(result.status, 'Could not load survey' + model.nodeRef);
 	}

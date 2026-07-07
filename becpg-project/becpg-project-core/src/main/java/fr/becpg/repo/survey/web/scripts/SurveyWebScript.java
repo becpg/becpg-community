@@ -12,6 +12,7 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
+import fr.becpg.repo.security.filter.SecurityContextHelper;
 import fr.becpg.repo.survey.SurveyModel;
 import fr.becpg.repo.survey.SurveyService;
 import fr.becpg.repo.web.scripts.entity.datalist.AbstractEntityDataListWebScript;
@@ -62,6 +63,11 @@ public class SurveyWebScript extends AbstractEntityDataListWebScript {
 
 		try {
 
+			String skipSecurityRules = req.getParameter("skipSecurityRules");
+			if ((skipSecurityRules != null) && Boolean.parseBoolean(skipSecurityRules)) {
+				SecurityContextHelper.setSkipSecurityRules(true);
+			}
+
 			JSONObject ret = new JSONObject();
 			final Access access = getAccess(SurveyModel.TYPE_SURVEY_LIST, entityNodeRef, false, null, dataListName, null);
 			final JSONObject jsonReq = (JSONObject) req.parseContent();
@@ -85,6 +91,8 @@ public class SurveyWebScript extends AbstractEntityDataListWebScript {
 			ret.write(res.getWriter());
 		} catch (JSONException e) {
 			throw new WebScriptException("Unable to serialize JSON", e);
+		} finally {
+			SecurityContextHelper.clear();
 		}
 
 	}
