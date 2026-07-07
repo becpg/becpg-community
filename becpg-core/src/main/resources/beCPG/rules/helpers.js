@@ -122,7 +122,11 @@
  * submitForm(entity, formDataJson) applies formulary data (properties and associations) to an entity
  * 
  * getEntityListFromNode(product, listName) returns entityList named listName from given product
- * 
+ *
+ * getOrCreateEntityList(entity, listQname) returns entity datalist for given QName, creating it if missing
+ *
+ * addItemsToList(entity, listQname, assocName, nodes) adds one list item per node in entity datalist, creating the list if missing
+ *
  * toISO8601(dateObject, options) convert date toISO8601
  * 
  * isOnCreateEntity(node) Test we are creating entity
@@ -1068,6 +1072,35 @@ function getEntityListFromNode(product, listName) {
 		}
 	}
 	return entityList;
+}
+
+/**
+ * @example getOrCreateEntityList(product, "bcpg:compoList");
+ *
+ * @param {(ScriptNode|NodeRef|string)} entity
+ * @param {string} listQname
+ * @returns {ScriptNode} entity datalist for given QName, creating it if missing
+ */
+function getOrCreateEntityList(entity, listQname) {
+	return bcpg.getOrCreateList(getNode(entity), listQname);
+}
+
+/**
+ * Add one list item per node in entity datalist, creating the list if missing
+ * @example addItemsToList(product, "bcpg:compoList", "bcpg:compoListProduct", items);
+ *
+ * @param {(ScriptNode|NodeRef|string)} entity
+ * @param {string} listQname datalist type QName, also used as item type
+ * @param {string} assocName association QName between list item and node
+ * @param {(ScriptNode[]|NodeRef[])} nodes
+ * @returns {void}
+ */
+function addItemsToList(entity, listQname, assocName, nodes) {
+	var list = getOrCreateEntityList(entity, listQname);
+	for (var i = 0; i < nodes.length; i++) {
+		var newItem = list.createNode(null, listQname);
+		newItem.createAssociation(getNode(nodes[i]), assocName);
+	}
 }
 
 /**
