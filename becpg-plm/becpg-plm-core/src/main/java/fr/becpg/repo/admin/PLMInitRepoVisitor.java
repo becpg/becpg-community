@@ -44,6 +44,7 @@ import org.alfresco.repo.action.executer.ScriptActionExecuter;
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.rule.RuleModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.site.SiteModel;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ActionCondition;
@@ -115,7 +116,9 @@ import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.search.SavedSearchService;
 import fr.becpg.repo.search.data.DateFilterType;
+import fr.becpg.repo.search.data.SavedSearch;
 import fr.becpg.repo.search.data.VersionFilterType;
 import fr.becpg.repo.survey.SurveyModel;
 import fr.becpg.report.client.ReportFormat;
@@ -344,6 +347,15 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	/** Constant <code>XPATH_DICTIONARY_SCRIPTS="./app:dictionary/app:scripts"</code> */
 	private static final String XPATH_DICTIONARY_SCRIPTS = "./app:dictionary/app:scripts";
 
+	/** Constant <code>OBSOLETE_DOCUMENTS_SAVED_SEARCH_NAME="Obsolete documents"</code> */
+	private static final String OBSOLETE_DOCUMENTS_SAVED_SEARCH_NAME = "Obsolete documents";
+	/** Constant <code>OBSOLETE_DOCUMENTS_SAVED_SEARCH_TITLE="plm.savedsearch.obsolete-documents.title"</code> */
+	private static final String OBSOLETE_DOCUMENTS_SAVED_SEARCH_TITLE = "plm.savedsearch.obsolete-documents.title";
+	/** Constant <code>OBSOLETE_DOCUMENTS_SAVED_SEARCH_TYPE="product-list-bcpg:document"</code> */
+	private static final String OBSOLETE_DOCUMENTS_SAVED_SEARCH_TYPE = "product-list-bcpg:document";
+	/** Constant <code>OBSOLETE_DOCUMENTS_SAVED_SEARCH_CONTENT</code> */
+	private static final String OBSOLETE_DOCUMENTS_SAVED_SEARCH_CONTENT = "{\"filter\":{\"filterId\":\"filterform\",\"filterData\":\"{\\\"prop_cm_to-date-range\\\":\\\"|NOW\\\"}\"}}";
+
 	@Autowired
 	private SiteService siteService;
 
@@ -386,6 +398,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	@Autowired
 	private AssociationService associationService;
+
+	@Autowired
+	private SavedSearchService savedSearchService;
 
 	@Value("${becpg.olap.enabled}")
 	private Boolean isOlapEnabled;
@@ -481,6 +496,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		contentHelper.addFilesResources(beCPGMailService.getEmailTemplatesFolder(), "classpath*:beCPG/mails/*.ftl");
 		contentHelper.addFilesResources(beCPGMailService.getEmailWorkflowTemplatesFolder(), "classpath*:beCPG/mails/workflow/*.ftl");
 		createNotifications(systemNodeRef);
+
+		// Saved searches samples
+		createObsoleteDocumentsSavedSearch();
 
 		// Reports
 		visitReports(systemNodeRef);
@@ -813,6 +831,32 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		createValidatedProductsNotification(notificationFolder);
 		createValidatedAndUpdatedProductsNotification(notificationFolder);
 		createArchivedProductsNotification(notificationFolder);
+	}
+
+	/**
+	 * Creates the sample global saved search listing obsolete documents (end of effectivity before NOW).
+	 */
+	private void createObsoleteDocumentsSavedSearch() {
+
+		AuthenticationUtil.runAsSystem(() -> {
+
+			SavedSearch savedSearch = new SavedSearch();
+			savedSearch.setName(OBSOLETE_DOCUMENTS_SAVED_SEARCH_NAME);
+			savedSearch.setSearchType(OBSOLETE_DOCUMENTS_SAVED_SEARCH_TYPE);
+			savedSearch.setIsGlobal(true);
+
+			NodeRef folderNodeRef = savedSearchService.getSaveSearchFolder(savedSearch);
+			if ((folderNodeRef != null)
+					&& (nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, OBSOLETE_DOCUMENTS_SAVED_SEARCH_NAME) == null)) {
+
+				logger.info("Create sample saved search: " + OBSOLETE_DOCUMENTS_SAVED_SEARCH_NAME);
+
+				savedSearch.setTitle(TranslateHelper.getTranslatedKey(OBSOLETE_DOCUMENTS_SAVED_SEARCH_TITLE));
+				savedSearchService.createOrUpdate(savedSearch, OBSOLETE_DOCUMENTS_SAVED_SEARCH_CONTENT);
+			}
+
+			return null;
+		});
 	}
 
 	/**
