@@ -1,5 +1,6 @@
 package fr.becpg.repo.product.helper;
 
+import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -46,15 +47,20 @@ public class AllocationHelper {
 	public static Map<NodeRef, Double> extractAllocations(ProductData productData, Map<NodeRef, Double> allocations, Double parentQty,
 			AlfrescoRepository<BeCPGDataObject> alfrescoRepository) {
 
-		Composite<CompoListDataItem> composite = CompositeHelper
-				.getHierarchicalCompoList(productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
-		extractAllocations(productData, allocations, parentQty, alfrescoRepository, composite);
+		List<CompoListDataItem> compoList = productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE));
+		if (compoList != null) {
+			Composite<CompoListDataItem> composite = CompositeHelper.getHierarchicalCompoList(compoList);
+			extractAllocations(productData, allocations, parentQty, alfrescoRepository, composite);
+		}
 
 		return allocations;
 	}
 
 	/**
-	 * <p>extractAllocations.</p>
+	 * Extracts raw material allocations from a hierarchical composition. Local
+	 * semi-finished products are treated as grouping levels of the enclosing
+	 * recipe: their children are processed in the context of the enclosing
+	 * product with the same parent quantity.
 	 *
 	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
 	 * @param allocations a {@link java.util.Map} object
@@ -70,7 +76,12 @@ public class AllocationHelper {
 			NodeRef productNodeRef = compoList.getProduct();
 			if ((productNodeRef != null) && !DeclarationType.Omit.equals(compoList.getDeclType())) {
 				ProductData componentProductData = (ProductData) alfrescoRepository.findOne(productNodeRef);
-				
+
+				if (componentProductData.isLocalSemiFinished()) {
+					extractAllocations(productData, allocations, parentQty, alfrescoRepository, child);
+					continue;
+				}
+
 				Double qty = FormulationHelper.getQtyInKg(compoList);
 				Double netWeight = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
 				if (logger.isDebugEnabled()) {
