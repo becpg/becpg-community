@@ -1566,6 +1566,27 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 
 	/**
+	 * Returns the entity datalist matching the provided QName, creating the list container
+	 * and the list when they do not exist yet.
+	 *
+	 * @param node the entity node
+	 * @param listQname the datalist type QName (e.g. "bcpg:compoList")
+	 * @return the datalist node
+	 */
+	public ScriptNode getOrCreateList(ScriptNode node, String listQname) {
+		NodeRef listContainer = entityListDAO.getListContainer(node.getNodeRef());
+		if (listContainer == null) {
+			listContainer = entityListDAO.createListContainer(node.getNodeRef());
+		}
+		QName listType = getQName(listQname);
+		NodeRef listNodeRef = entityListDAO.getList(listContainer, listType);
+		if (listNodeRef == null) {
+			listNodeRef = entityListDAO.createList(listContainer, listType);
+		}
+		return new ScriptNode(listNodeRef, serviceRegistry);
+	}
+
+	/**
 	 * <p>getSubTypes.</p>
 	 *
 	 * @param type a {@link java.lang.String} object.
