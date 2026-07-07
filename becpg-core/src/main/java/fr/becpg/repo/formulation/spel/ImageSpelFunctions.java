@@ -2,11 +2,14 @@ package fr.becpg.repo.formulation.spel;
 
 import java.util.List;
 
+import org.alfresco.model.QuickShareModel;
 import org.alfresco.repo.admin.SysAdminParams;
 import org.alfresco.service.cmr.quickshare.QuickShareDTO;
 import org.alfresco.service.cmr.quickshare.QuickShareService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.XPathException;
+import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,12 @@ public class ImageSpelFunctions implements CustomSpelFunctions {
 
 	@Autowired
 	private SysAdminParams sysAdminParams;
+
+	@Autowired
+	private NodeService nodeService;
+
+	@Autowired
+	private TransactionService transactionService;
 
 	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(ImageSpelFunctions.class);
@@ -138,15 +147,41 @@ public class ImageSpelFunctions implements CustomSpelFunctions {
 		private String shareImage(NodeRef imageNodeRef) {
 
 			if (imageNodeRef != null) {
-
-				QuickShareDTO quickShareDTO = quickShareService.shareContent(imageNodeRef);
-
-				if (quickShareDTO != null) {
+				String sharedId = findOrCreateSharedId(imageNodeRef);
+				if (sharedId != null) {
 					return sysAdminParams.getAlfrescoProtocol() + "://" + sysAdminParams.getAlfrescoHost() + ":" + sysAdminParams.getAlfrescoPort()
-							+ "/alfresco/service/api/internal/shared/node/" + quickShareDTO.getId() + "/content";
+							+ "/alfresco/service/api/internal/shared/node/" + sharedId + "/content";
 				}
 			}
 			return null;
+		}
+
+		/**
+		 * Returns the quick-share id of the image, reusing an existing share when present
+		 * so no write is needed, otherwise creating it in a new read-write transaction.
+		 * This keeps the method safe when called from a read-only transaction
+		 * (e.g. Excel search export).
+		 *
+		 * @param imageNodeRef the image node
+		 * @return the shared id, or null if the image could not be shared
+		 */
+		private String findOrCreateSharedId(NodeRef imageNodeRef) {
+			try {
+				if (nodeService.hasAspect(imageNodeRef, QuickShareModel.ASPECT_QSHARE)) {
+					return (String) nodeService.getProperty(imageNodeRef, QuickShareModel.PROP_QSHARE_SHAREDID);
+				}
+
+				return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+					QuickShareDTO quickShareDTO = quickShareService.shareContent(imageNodeRef);
+					return quickShareDTO != null ? quickShareDTO.getId() : null;
+				}, false, true);
+			} catch (Exception e) {
+				logger.warn("Cannot share image " + imageNodeRef + ": " + e.getMessage());
+				if (logger.isDebugEnabled()) {
+					logger.debug(e, e);
+				}
+				return null;
+			}
 		}
 
 	}
