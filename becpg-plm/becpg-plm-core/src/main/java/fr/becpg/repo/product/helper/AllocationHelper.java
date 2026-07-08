@@ -1,5 +1,8 @@
 package fr.becpg.repo.product.helper;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +57,27 @@ public class AllocationHelper {
 		}
 
 		return allocations;
+	}
+
+	/**
+	 * Returns a copy of the allocation map ordered by allocated quantity descending,
+	 * so that the main raw material (the one with the highest allocated quantity) comes
+	 * first. This allows a single representative raw material to be picked deterministically
+	 * (e.g. {@code keySet().iterator().next()} in a SmartContent formula), instead of relying
+	 * on the arbitrary iteration order of a {@link java.util.HashMap}.
+	 *
+	 * @param allocations the allocation map
+	 * @return a new map ordered by allocated quantity descending, empty when the input is empty
+	 */
+	public static Map<NodeRef, Double> sortByAllocationDesc(Map<NodeRef, Double> allocations) {
+		List<Map.Entry<NodeRef, Double>> entries = new ArrayList<>(allocations.entrySet());
+		entries.sort(Comparator.comparingDouble((Map.Entry<NodeRef, Double> entry) -> entry.getValue() != null ? entry.getValue() : 0d).reversed());
+
+		Map<NodeRef, Double> sorted = new LinkedHashMap<>();
+		for (Map.Entry<NodeRef, Double> entry : entries) {
+			sorted.put(entry.getKey(), entry.getValue());
+		}
+		return sorted;
 	}
 
 	/**
