@@ -1998,6 +1998,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
 			policyBehaviourFilter.disableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
+			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_TAGGABLE);
+			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_TAGSCOPE);
 
 			// create the temporary mirror node in EntitiesHistory folder
 
@@ -2059,6 +2061,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_VERSIONABLE);
 			policyBehaviourFilter.enableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
 			policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
+			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_TAGGABLE);
+			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_TAGSCOPE);
 		}
 	}
 
