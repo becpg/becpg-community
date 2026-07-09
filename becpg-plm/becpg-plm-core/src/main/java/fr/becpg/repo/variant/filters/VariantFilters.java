@@ -36,7 +36,9 @@ import fr.becpg.repo.variant.model.VariantDataItem;
  */
 public class VariantFilters<T extends VariantDataItem> implements DataListFilter<ProductData, T> {
 
-	private Set<NodeRef> variantNodeRefs = new HashSet<>();
+	private final Set<NodeRef> explicitVariantNodeRefs = new HashSet<>();
+
+	private final boolean useExplicitVariants;
 
 	private Boolean isDefaultVariant = true;
 
@@ -46,6 +48,7 @@ public class VariantFilters<T extends VariantDataItem> implements DataListFilter
 	 */
 	public VariantFilters() {
 		super();
+		this.useExplicitVariants = false;
 	}
 
 	/**
@@ -55,7 +58,8 @@ public class VariantFilters<T extends VariantDataItem> implements DataListFilter
 	 */
 	public VariantFilters(NodeRef variantNodeRef) {
 		super();
-		this.variantNodeRefs.add(variantNodeRef);
+		this.explicitVariantNodeRefs.add(variantNodeRef);
+		this.useExplicitVariants = true;
 	}
 
 	/**
@@ -66,16 +70,22 @@ public class VariantFilters<T extends VariantDataItem> implements DataListFilter
 	public VariantFilters(Boolean isDefaultVariant) {
 		super();
 		this.isDefaultVariant = isDefaultVariant;
-
+		this.useExplicitVariants = false;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public Predicate<T> createPredicate(final ProductData entity) {
-		if ((variantNodeRefs.isEmpty()) && (entity.getVariants() != null)) {			
-			for (VariantData variant : entity.getVariants()) {
-				if (Boolean.TRUE.equals(variant.getIsDefaultVariant())) {
-					this.variantNodeRefs.add(variant.getNodeRef());
+		final Set<NodeRef> variantNodeRefs;
+		if (useExplicitVariants) {
+			variantNodeRefs = explicitVariantNodeRefs;
+		} else {
+			variantNodeRefs = new HashSet<>();
+			if (entity.getVariants() != null) {
+				for (VariantData variant : entity.getVariants()) {
+					if (Boolean.TRUE.equals(variant.getIsDefaultVariant())) {
+						variantNodeRefs.add(variant.getNodeRef());
+					}
 				}
 			}
 		}
