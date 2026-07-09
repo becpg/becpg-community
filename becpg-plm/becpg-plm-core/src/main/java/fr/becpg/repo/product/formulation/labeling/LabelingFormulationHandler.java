@@ -315,7 +315,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			List<CompoListDataItem> compoList = new ArrayList<>();
 
 			if ((formulatedProduct.isGeneric()) || Boolean.TRUE.equals(formulatedProduct.getIsIngListManual())
-					|| !formulatedProduct.hasCompoListEl()) {
+					|| !formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 				compoList.add(CompoListDataItem.build().withQty(1d).withQtyUsed(1d).withUnit(ProductUnit.kg)
 						.withDeclarationType(DeclarationType.Declare).withProduct(formulatedProduct.getNodeRef()));
 
