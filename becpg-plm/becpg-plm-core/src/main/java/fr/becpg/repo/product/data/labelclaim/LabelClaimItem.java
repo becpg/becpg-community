@@ -3,9 +3,14 @@
  */
 package fr.becpg.repo.product.data.labelclaim;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
+import org.alfresco.service.cmr.repository.NodeRef;
+
 import fr.becpg.repo.repository.annotation.AlfCacheable;
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
@@ -37,8 +42,10 @@ public class LabelClaimItem extends BeCPGDataObject {
 	private Boolean isCertificationPropagateUp;
 	
 	private Boolean isCharactPropagateUp;
-	
+
 	private Boolean isManualListItem;
+
+	private List<NodeRef> linkedCharacts = new ArrayList<>();
 
 	/**
 	 * <p>Getter for the field <code>charactName</code>.</p>
@@ -202,13 +209,37 @@ public class LabelClaimItem extends BeCPGDataObject {
 		this.isCharactPropagateUp = isCharactPropagateUp;
 	}
 
+	/**
+	 * <p>Getter for the field <code>linkedCharacts</code>.</p>
+	 *
+	 * <p>Generic association to the characteristics (e.g. {@code bcpg:nut}) this claim is about.
+	 * Used by the nutrient formulation to apply the claim-specific tolerances (EU Table 3)
+	 * to the linked nutrients instead of the standard tolerances (EU Table 1).</p>
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:labelClaimLinkedCharacts")
+	public List<NodeRef> getLinkedCharacts() {
+		return linkedCharacts;
+	}
+
+	/**
+	 * <p>Setter for the field <code>linkedCharacts</code>.</p>
+	 *
+	 * @param linkedCharacts a {@link java.util.List} object
+	 */
+	public void setLinkedCharacts(List<NodeRef> linkedCharacts) {
+		this.linkedCharacts = linkedCharacts;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + Objects.hash(charactName, isCertificationPropagateUp, isCharactPropagateUp,
-				isManualListItem, labelClaimCode, labelClaimFormula, labelClaimRegulatoryThreshold, labelClaimType);
+				isManualListItem, labelClaimCode, labelClaimFormula, labelClaimRegulatoryThreshold, labelClaimType, linkedCharacts);
 		return result;
 	}
 
@@ -227,7 +258,7 @@ public class LabelClaimItem extends BeCPGDataObject {
 			    && Objects.equals(isManualListItem, other.isManualListItem)
 				&& Objects.equals(labelClaimCode, other.labelClaimCode) && Objects.equals(labelClaimFormula, other.labelClaimFormula)
 				&& Objects.equals(labelClaimRegulatoryThreshold, other.labelClaimRegulatoryThreshold)
-				&& Objects.equals(labelClaimType, other.labelClaimType);
+				&& Objects.equals(labelClaimType, other.labelClaimType) && Objects.equals(linkedCharacts, other.linkedCharacts);
 	}
 
 	/** {@inheritDoc} */
@@ -236,7 +267,8 @@ public class LabelClaimItem extends BeCPGDataObject {
 		return "LabelClaimItem [charactName=" + charactName + ", labelClaimCode=" + labelClaimCode + ", labelClaimType=" + labelClaimType
 				+ ", labelClaimFormula=" + labelClaimFormula + ", labelClaimRegulatoryThreshold=" + labelClaimRegulatoryThreshold
 				+ ", isCertificationPropagateUp=" + isCertificationPropagateUp
-				+ ", isCharactPropagateUp=" + isCharactPropagateUp + ", isManualListItem=" + isManualListItem + "]";
+				+ ", isCharactPropagateUp=" + isCharactPropagateUp + ", isManualListItem=" + isManualListItem
+				+ ", linkedCharacts=" + linkedCharacts + "]";
 	}
 	
 }

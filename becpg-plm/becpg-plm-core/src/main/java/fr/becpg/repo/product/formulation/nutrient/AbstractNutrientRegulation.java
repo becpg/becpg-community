@@ -198,14 +198,17 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 	/** {@inheritDoc} */
 	@Override
 	public Pair<Double,Double> tolerances(Double value, String nutrientTypeCode, String nutUnit) {
-	
-		Pair<Double,Double> ret = null;
-		
+		return tolerances(value, nutrientTypeCode, nutUnit, false);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public Pair<Double,Double> tolerances(Double value, String nutrientTypeCode, String nutUnit, boolean isClaimed) {
 
 		if (value == null) {
 			return null;
 		}
-		
+
 		if (Double.isInfinite(value) || Double.isNaN(value)) {
 			return null;
 		}
@@ -218,9 +221,9 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 			if (logger.isDebugEnabled()) {
 				logger.debug("round : nutrientTypeCode " + nutrientTypeCode + " value " + value + " nutUnit " + nutUnit + " regulUnit " + regulUnit);
 			}
-			return tolerancesByCode(convertValue(value, nutUnit, regulUnit), nutrientTypeCode);
+			return tolerancesByCode(convertValue(value, nutUnit, regulUnit), nutrientTypeCode, isClaimed);
 		}
-		return ret;
+		return null;
 	}
 
 
@@ -402,6 +405,22 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 	 */
 	protected Pair<Double, Double> tolerancesByCode(Double value, String nutrientTypeCode) {
 		return null;
+	}
+
+	/**
+	 * <p>tolerancesByCode.</p>
+	 *
+	 * <p>Claim-aware variant. By default it ignores the claim flag and delegates to the standard
+	 * {@link #tolerancesByCode(Double, String)}. Regulations that support claim tolerances
+	 * (EU Table 3) override this method.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @param nutrientTypeCode a {@link java.lang.String} object
+	 * @param isClaimed whether the nutrient is subject to a claim
+	 * @return a {@link org.alfresco.util.Pair} object
+	 */
+	protected Pair<Double, Double> tolerancesByCode(Double value, String nutrientTypeCode, boolean isClaimed) {
+		return tolerancesByCode(value, nutrientTypeCode);
 	}
 
 }
