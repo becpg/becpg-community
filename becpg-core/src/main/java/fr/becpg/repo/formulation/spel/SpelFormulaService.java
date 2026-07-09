@@ -380,5 +380,5 @@ public class SpelFormulaService {
 			"java.net.URL", "java.net.Socket", "java.sql.Connection", "java.sql.Statement", "java.sql.ResultSet",
 			"org.springframework.beans.factory.config.BeanFactory", "org.springframework.beans.factory.config.ConfigurableListableBeanFactory",
 			"org.springframework.context.ApplicationContext", "org.springframework.context.support.AbstractApplicationContext", "sun.misc.Unsafe",
-			"org.apache.commons.io.FileUtils");
+			"org.apache.commons.io.FileUtils","fr.becpg.util.ApplicationContextHelper");
 }
