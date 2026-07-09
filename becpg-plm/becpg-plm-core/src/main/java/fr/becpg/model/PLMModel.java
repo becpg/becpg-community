@@ -706,6 +706,8 @@ public interface PLMModel {
 
 	/** Constant <code>PROP_CLAIM_REGULATORY_THRESHOLD</code> */
 	QName PROP_CLAIM_REGULATORY_THRESHOLD = QName.createQName(BeCPGModel.BECPG_URI, "labelClaimRegulatoryThreshold");
+	/** Constant <code>ASSOC_LABEL_CLAIM_LINKED_CHARACTS</code> */
+	QName ASSOC_LABEL_CLAIM_LINKED_CHARACTS = QName.createQName(BeCPGModel.BECPG_URI, "labelClaimLinkedCharacts");
 
 	// storageConditions
 	/** Constant <code>TYPE_STORAGE_CONDITIONS</code> */

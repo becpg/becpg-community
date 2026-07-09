@@ -5243,6 +5243,7 @@
                     <show id="bcpg:isManualListItem" force="true" />
                     <show id="bcpg:isCharactPropagateUp" force="true" />
                     <show id="bcpg:isCertificationPropagateUp" force="true" />
+                    <show id="bcpg:labelClaimLinkedCharacts" />
                     <show id="sec:readGroups" force="true" />
                     <show id="rep:reportLocales" force="true" />
                     <show id="bcpg:isDeleted" />
@@ -5280,6 +5281,9 @@
                             <control-param name="rows">10</control-param>
                         </control>
                     </field>
+                    <field id="bcpg:labelClaimLinkedCharacts" help-id="becpg.forms.help.labelClaimLinkedCharacts">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                    </field>
                     <field id="rep:reportLocales">
                         <control template="/org/alfresco/components/form/controls/mtlangue.ftl">
                             <control-param name="insertBlank">true</control-param>
@@ -5306,6 +5310,7 @@
                     <show id="bcpg:isManualListItem" force="true" />
                     <show id="bcpg:isCharactPropagateUp" force="true" />
                     <show id="bcpg:isCertificationPropagateUp" force="true" />
+                    <show id="bcpg:labelClaimLinkedCharacts" />
                     <show id="rep:reportLocales" force="true" />
                     <show id="sec:readGroups" force="true" />
                     <show id="bcpg:isDeleted" />
@@ -5326,6 +5331,9 @@
                         <control template="/org/alfresco/components/form/controls/spel-editor.ftl">
                             <control-param name="rows">10</control-param>
                         </control>
+                    </field>
+                    <field id="bcpg:labelClaimLinkedCharacts" help-id="becpg.forms.help.labelClaimLinkedCharacts">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
                     <field id="rep:reportLocales">
                         <control template="/org/alfresco/components/form/controls/mtlangue.ftl">

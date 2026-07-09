@@ -73,4 +73,22 @@ public interface NutrientRegulation {
 	 * @return a {@link org.alfresco.util.Pair} object
 	 */
 	Pair<Double, Double> tolerances(Double value, String nutrientTypeCode, String nutUnit);
+
+	/**
+	 * <p>tolerances.</p>
+	 *
+	 * <p>Claim-aware tolerances. When {@code isClaimed} is {@code true} the nutrient is subject to a
+	 * nutritional or health claim and the claim-specific tolerances (EU Table 3, "side 1 / side 2")
+	 * are applied instead of the standard ones (EU Table 1). Regulations that do not distinguish the
+	 * claim case fall back to the standard tolerances.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @param nutrientTypeCode a {@link java.lang.String} object
+	 * @param nutUnit a {@link java.lang.String} object
+	 * @param isClaimed whether the nutrient is subject to a claim
+	 * @return a {@link org.alfresco.util.Pair} object
+	 */
+	default Pair<Double, Double> tolerances(Double value, String nutrientTypeCode, String nutUnit, boolean isClaimed) {
+		return tolerances(value, nutrientTypeCode, nutUnit);
+	}
 }
