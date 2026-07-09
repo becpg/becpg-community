@@ -4775,15 +4775,14 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3431">
+						<data id="3431">
 							<property name="fontSize">9pt</property>
 							<property name="paddingTop">2pt</property>
 							<property name="paddingLeft">2pt</property>
 							<property name="paddingBottom">2pt</property>
 							<property name="paddingRight">2pt</property>
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value1"]</VALUE-OF>]]></text-property>
-						</text>
+							<property name="resultSetColumn">value1</property>
+						</data>
 					</cell>
 					<cell id="3384">
 						<property name="borderBottomStyle">none</property>
@@ -4812,15 +4811,14 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3432">
+						<data id="3432">
 							<property name="fontSize">9pt</property>
 							<property name="paddingTop">2pt</property>
 							<property name="paddingLeft">2pt</property>
 							<property name="paddingBottom">2pt</property>
 							<property name="paddingRight">2pt</property>
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value2"]</VALUE-OF>]]></text-property>
-						</text>
+							<property name="resultSetColumn">value2</property>
+						</data>
 					</cell>
 					<cell id="3385">
 						<property name="borderBottomStyle">none</property>
@@ -4853,15 +4851,14 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3433">
+						<data id="3433">
 							<property name="fontSize">9pt</property>
 							<property name="paddingTop">2pt</property>
 							<property name="paddingLeft">2pt</property>
 							<property name="paddingBottom">2pt</property>
 							<property name="paddingRight">2pt</property>
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value3"]</VALUE-OF>]]></text-property>
-						</text>
+							<property name="resultSetColumn">value3</property>
+						</data>
 					</cell>
 					<cell id="3386">
 						<property name="borderBottomStyle">none</property>
@@ -4890,15 +4887,14 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3434">
+						<data id="3434">
 							<property name="fontSize">9pt</property>
 							<property name="paddingTop">2pt</property>
 							<property name="paddingLeft">2pt</property>
 							<property name="paddingBottom">2pt</property>
 							<property name="paddingRight">2pt</property>
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value4"]</VALUE-OF>]]></text-property>
-						</text>
+							<property name="resultSetColumn">value4</property>
+						</data>
 					</cell>
 					<cell id="3775">
 						<property name="borderBottomStyle">none</property>
@@ -4927,16 +4923,15 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3786">
+						<data id="3786">
 							<property name="borderLeftColor">#004254</property>
 							<property name="borderLeftStyle">solid</property>
 							<property name="borderLeftWidth">thin</property>
 							<property name="borderRightColor">#004254</property>
 							<property name="borderRightStyle">solid</property>
 							<property name="borderRightWidth">thin</property>
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value5"]</VALUE-OF>]]></text-property>
-						</text>
+							<property name="resultSetColumn">value5</property>
+						</data>
 					</cell>
 					<cell id="3778">
 						<property name="borderBottomStyle">none</property>
@@ -4965,10 +4960,9 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3787">
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value6"]</VALUE-OF>]]></text-property>
-						</text>
+						<data id="3787">
+							<property name="resultSetColumn">value6</property>
+						</data>
 					</cell>
 					<cell id="3781">
 						<property name="borderBottomStyle">none</property>
@@ -5001,10 +4995,9 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3788">
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value7"]</VALUE-OF>]]></text-property>
-						</text>
+						<data id="3788">
+							<property name="resultSetColumn">value7</property>
+						</data>
 					</cell>
 					<cell id="3790">
 						<property name="borderBottomStyle">none</property>
@@ -5033,10 +5026,9 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3885">
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value8"]</VALUE-OF>]]></text-property>
-						</text>
+						<data id="3885">
+							<property name="resultSetColumn">value8</property>
+						</data>
 					</cell>
 					<cell id="3794">
 						<property name="borderBottomStyle">none</property>
@@ -5065,10 +5057,9 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3886">
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value9"]</VALUE-OF>]]></text-property>
-						</text>
+						<data id="3886">
+							<property name="resultSetColumn">value9</property>
+						</data>
 					</cell>
 					<cell id="3797">
 						<property name="borderBottomStyle">none</property>
@@ -5097,10 +5088,9 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3887">
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value10"]</VALUE-OF>]]></text-property>
-						</text>
+						<data id="3887">
+							<property name="resultSetColumn">value10</property>
+						</data>
 					</cell>
 					<cell id="3821">
 						<property name="borderBottomStyle">none</property>
@@ -5129,10 +5119,9 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3888">
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value11"]</VALUE-OF>]]></text-property>
-						</text>
+						<data id="3888">
+							<property name="resultSetColumn">value11</property>
+						</data>
 					</cell>
 					<cell id="3857">
 						<property name="borderBottomStyle">none</property>
@@ -5161,10 +5150,9 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3889">
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value12"]</VALUE-OF>]]></text-property>
-						</text>
+						<data id="3889">
+							<property name="resultSetColumn">value12</property>
+						</data>
 					</cell>
 					<cell id="3854">
 						<property name="borderBottomStyle">none</property>
@@ -5193,10 +5181,9 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3890">
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value13"]</VALUE-OF>]]></text-property>
-						</text>
+						<data id="3890">
+							<property name="resultSetColumn">value13</property>
+						</data>
 					</cell>
 					<cell id="3851">
 						<property name="borderBottomStyle">none</property>
@@ -5225,10 +5212,9 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3891">
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value14"]</VALUE-OF>]]></text-property>
-						</text>
+						<data id="3891">
+							<property name="resultSetColumn">value14</property>
+						</data>
 					</cell>
 					<cell id="3848">
 						<property name="borderBottomStyle">none</property>
@@ -5257,10 +5243,9 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3892">
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value15"]</VALUE-OF>]]></text-property>
-						</text>
+						<data id="3892">
+							<property name="resultSetColumn">value15</property>
+						</data>
 					</cell>
 					<cell id="3845">
 						<property name="borderBottomStyle">none</property>
@@ -5289,10 +5274,9 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3893">
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value16"]</VALUE-OF>]]></text-property>
-						</text>
+						<data id="3893">
+							<property name="resultSetColumn">value16</property>
+						</data>
 					</cell>
 					<cell id="3839">
 						<property name="borderBottomStyle">none</property>
@@ -5321,10 +5305,9 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3894">
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value17"]</VALUE-OF>]]></text-property>
-						</text>
+						<data id="3894">
+							<property name="resultSetColumn">value17</property>
+						</data>
 					</cell>
 					<cell id="3836">
 						<property name="borderBottomStyle">none</property>
@@ -5353,10 +5336,9 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3895">
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value18"]</VALUE-OF>]]></text-property>
-						</text>
+						<data id="3895">
+							<property name="resultSetColumn">value18</property>
+						</data>
 					</cell>
 					<cell id="3833">
 						<property name="borderBottomStyle">none</property>
@@ -5385,10 +5367,9 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3896">
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value19"]</VALUE-OF>]]></text-property>
-						</text>
+						<data id="3896">
+							<property name="resultSetColumn">value19</property>
+						</data>
 					</cell>
 					<cell id="3830">
 						<property name="borderBottomStyle">none</property>
@@ -5417,10 +5398,9 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3897">
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value20"]</VALUE-OF>]]></text-property>
-						</text>
+						<data id="3897">
+							<property name="resultSetColumn">value20</property>
+						</data>
 					</cell>
 					<cell id="3827">
 						<property name="borderBottomStyle">none</property>
@@ -5449,10 +5429,9 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3898">
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value21"]</VALUE-OF>]]></text-property>
-						</text>
+						<data id="3898">
+							<property name="resultSetColumn">value21</property>
+						</data>
 					</cell>
 					<cell id="3824">
 						<property name="borderBottomStyle">none</property>
@@ -5481,10 +5460,9 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3899">
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value22"]</VALUE-OF>]]></text-property>
-						</text>
+						<data id="3899">
+							<property name="resultSetColumn">value22</property>
+						</data>
 					</cell>
 					<cell id="3818">
 						<property name="borderBottomStyle">none</property>
@@ -5513,10 +5491,9 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3900">
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value23"]</VALUE-OF>]]></text-property>
-						</text>
+						<data id="3900">
+							<property name="resultSetColumn">value23</property>
+						</data>
 					</cell>
 					<cell id="3815">
 						<property name="borderBottomStyle">none</property>
@@ -5545,10 +5522,9 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3901">
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value24"]</VALUE-OF>]]></text-property>
-						</text>
+						<data id="3901">
+							<property name="resultSetColumn">value24</property>
+						</data>
 					</cell>
 					<cell id="3812">
 						<property name="borderBottomStyle">none</property>
@@ -5577,10 +5553,9 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3902">
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value25"]</VALUE-OF>]]></text-property>
-						</text>
+						<data id="3902">
+							<property name="resultSetColumn">value25</property>
+						</data>
 					</cell>
 					<cell id="3809">
 						<property name="borderBottomStyle">none</property>
@@ -5609,10 +5584,9 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3903">
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value26"]</VALUE-OF>]]></text-property>
-						</text>
+						<data id="3903">
+							<property name="resultSetColumn">value26</property>
+						</data>
 					</cell>
 					<cell id="3806">
 						<property name="borderBottomStyle">none</property>
@@ -5641,10 +5615,9 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3904">
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value27"]</VALUE-OF>]]></text-property>
-						</text>
+						<data id="3904">
+							<property name="resultSetColumn">value27</property>
+						</data>
 					</cell>
 					<cell id="3803">
 						<property name="borderBottomStyle">none</property>
@@ -5673,10 +5646,9 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3905">
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value28"]</VALUE-OF>]]></text-property>
-						</text>
+						<data id="3905">
+							<property name="resultSetColumn">value28</property>
+						</data>
 					</cell>
 					<cell id="3800">
 						<property name="borderBottomStyle">none</property>
@@ -5705,10 +5677,9 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3906">
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value29"]</VALUE-OF>]]></text-property>
-						</text>
+						<data id="3906">
+							<property name="resultSetColumn">value29</property>
+						</data>
 					</cell>
 					<cell id="3882">
 						<property name="borderBottomStyle">none</property>
@@ -5737,10 +5708,9 @@ function formatWeight ( dataSetValue ) {
 								</simple-property-list>
 							</structure>
 						</list-property>
-						<text id="3907">
-							<property name="contentType">html</property>
-							<text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["value30"]</VALUE-OF>]]></text-property>
-						</text>
+						<data id="3907">
+							<property name="resultSetColumn">value30</property>
+						</data>
 					</cell>
 				</row>
 			</detail>
