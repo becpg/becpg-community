@@ -96,6 +96,12 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 
 	/** {@inheritDoc} */
 	@Override
+	protected boolean propagateNestedPackaging() {
+		return true;
+	}
+
+	/** {@inheritDoc} */
+	@Override
 	protected boolean isCharactFormulated(SimpleListDataItem sl) {
 		if (!super.isCharactFormulated(sl)) {
 			return false;
