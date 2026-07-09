@@ -44,6 +44,20 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 		return new Pair<>(ret.getMaxToleratedValue(), ret.getMinToleratedValue());
 	}
 
+	/** {@inheritDoc} */
+	@Override
+	protected Pair<Double, Double> tolerancesByCode(Double value, String nutrientTypeCode, boolean isClaimed) {
+		if (!isClaimed) {
+			return tolerancesByCode(value, nutrientTypeCode);
+		}
+
+		NutrientRoundedValue ret = extractNutrientRoundedValue(value, nutrientTypeCode);
+
+		applyClaimTolerance(ret, nutrientTypeCode);
+
+		return new Pair<>(ret.getMaxToleratedValue(), ret.getMinToleratedValue());
+	}
+
 	/**
 	 * <p>extractNutrientRoundedValue.</p>
 	 *
@@ -161,9 +175,99 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 				ret.setTolerances(0.375d, false);
 			}
 		} else if (isVitamin(nutrientTypeCode)) {
-			ret.setTolerances(50d, -35d, true);
+			ret.setTolerances(50d, 35d, true);
 		} else if (isMineral(nutrientTypeCode)) {
-			ret.setTolerances(45d, -35d, true);
+			ret.setTolerances(45d, 35d, true);
+		}
+
+	}
+
+	/**
+	 * <p>applyClaimTolerance.</p>
+	 *
+	 * <p>Applies the EU guidance "Table 3" tolerances used when the nutrient is subject to a
+	 * nutritional or health claim. Only the claim-guaranteed direction ("side 1", measurement
+	 * uncertainty included) gets the global margin; the opposite direction ("side 2") is limited
+	 * to the measurement uncertainty (approximated here by the rounding band, i.e. a zero
+	 * additional tolerance). The guaranteed direction is intrinsic to each nutrient family (a
+	 * downward margin for nutrients consumers want to reduce, an upward margin for those they
+	 * want to increase), which matches the regulated claim families ("low/free/reduced" vs
+	 * "source/high/increased").</p>
+	 *
+	 * @param ret a {@link fr.becpg.repo.product.formulation.nutrient.NutrientRoundedValue} object
+	 * @param nutrientTypeCode a {@link java.lang.String} object
+	 */
+	protected void applyClaimTolerance(NutrientRoundedValue ret, String nutrientTypeCode) {
+
+		Double roundedValue = ret.getRoundedValue();
+		if (roundedValue == null) {
+			return;
+		}
+
+		if (nutrientTypeCode.equals(NutrientCode.CarbohydrateByDiff) || nutrientTypeCode.equals(NutrientCode.FiberDietary)
+				|| nutrientTypeCode.startsWith(NutrientCode.Protein)) {
+			// Side 1 = upward margin
+			if (roundedValue < 10) {
+				ret.setTolerances(4d, 0d, false);
+			} else if (roundedValue <= 40) {
+				ret.setTolerances(40d, 0d, true);
+			} else {
+				ret.setTolerances(16d, 0d, false);
+			}
+		} else if (nutrientTypeCode.equals(NutrientCode.Sugar)) {
+			// Side 1 = downward margin
+			if (roundedValue < 10) {
+				ret.setTolerances(0d, 4d, false);
+			} else if (roundedValue <= 40) {
+				ret.setTolerances(0d, 40d, true);
+			} else {
+				ret.setTolerances(0d, 16d, false);
+			}
+		} else if (nutrientTypeCode.equals(NutrientCode.Fat)) {
+			// Side 1 = downward margin
+			if (roundedValue < 10) {
+				ret.setTolerances(0d, 3d, false);
+			} else if (roundedValue <= 40) {
+				ret.setTolerances(0d, 40d, true);
+			} else {
+				ret.setTolerances(0d, 16d, false);
+			}
+		} else if (nutrientTypeCode.equals(NutrientCode.FatSaturated)) {
+			// Side 1 = downward margin
+			if (roundedValue < 4) {
+				ret.setTolerances(0d, 1.6d, false);
+			} else {
+				ret.setTolerances(0d, 40d, true);
+			}
+		} else if (nutrientTypeCode.equals(NutrientCode.FatMonounsaturated) || nutrientTypeCode.equals(NutrientCode.FatPolyunsaturated)
+				|| nutrientTypeCode.equals(NutrientCode.FatOmega3) || nutrientTypeCode.equals(NutrientCode.FatOmega6)) {
+			// Side 1 = upward margin
+			if (roundedValue < 4) {
+				ret.setTolerances(1.6d, 0d, false);
+			} else {
+				ret.setTolerances(40d, 0d, true);
+			}
+		} else if (nutrientTypeCode.equals(NutrientCode.Sodium)) {
+			// Side 1 = downward margin
+			if (roundedValue < 0.5d) {
+				ret.setTolerances(0d, 0.3d, false);
+			} else {
+				ret.setTolerances(0d, 40d, true);
+			}
+		} else if (nutrientTypeCode.equals(NutrientCode.Salt)) {
+			// Side 1 = downward margin
+			if (roundedValue < 1.25d) {
+				ret.setTolerances(0d, 0.75d, false);
+			} else {
+				ret.setTolerances(0d, 40d, true);
+			}
+		} else if (isVitamin(nutrientTypeCode)) {
+			ret.setTolerances(50d, 0d, true);
+		} else if (isMineral(nutrientTypeCode)) {
+			ret.setTolerances(45d, 0d, true);
+		} else {
+			// No Table 3 entry for this nutrient (e.g. energy): keep the standard tolerances
+			applyTolerance(ret, nutrientTypeCode);
 		}
 
 	}

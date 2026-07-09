@@ -126,7 +126,8 @@ public class NutrientRoundedValue {
 			if (rule.getRule(value).delta != null) {
 				return roundedValue + (rule.getRule(value).delta * 0.4);
 			}
-
+			// Precision/scale based rounding (eg. vitamins and minerals): no delta band
+			return roundedValue;
 		}
 		return null;
 	}
@@ -138,12 +139,13 @@ public class NutrientRoundedValue {
 	 */
 	public Double getMinRoundedValue() {
 		Double roundedValue = getRoundedValue();
-		
+
 		if (roundedValue != null) {
 			if (rule.getRule(value).delta != null) {
 				return roundedValue - (rule.getRule(value).delta * 0.5);
 			}
-
+			// Precision/scale based rounding (eg. vitamins and minerals): no delta band
+			return roundedValue;
 		}
 		return null;
 	}
