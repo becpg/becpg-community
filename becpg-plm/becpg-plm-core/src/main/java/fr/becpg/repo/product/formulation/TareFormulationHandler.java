@@ -98,6 +98,11 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 		formulatedProduct.setWeightPrimary(weightPrimary.doubleValue());
 
 		if (variantPackagingData != null) {
+
+			// #31701: secondary/tertiary/inner packaging declared on the sub-components must be counted
+			// at every level (added flat, without re-multiplication by productPerBoxes / boxesPerPallet).
+			VariantPackagingData compositionTare = PackagingHelper.getCompositionTareByLevel(formulatedProduct);
+
 			if (variantPackagingData.getProductPerInnerPack() != null) {
 				Integer productPerInnerPack = variantPackagingData.getProductPerInnerPack();
 
@@ -105,7 +110,8 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 				BigDecimal netWeightInnerPack = netWeightPrimary.multiply(BigDecimal.valueOf(productPerInnerPack));
 
 				// Calculate gross weight inner pack (kg): (Net weight * Nb products / inner pack) + (tare * Nb products / inner pack) + innerTare
-				BigDecimal tareInnerPack = tarePrimary.multiply(BigDecimal.valueOf(productPerInnerPack)).add(variantPackagingData.getTareInner());
+				BigDecimal tareInnerPack = tarePrimary.multiply(BigDecimal.valueOf(productPerInnerPack)).add(variantPackagingData.getTareInner())
+						.add(compositionTare.getTareInner());
 				BigDecimal weightInnerPack = tareInnerPack.add(netWeightInnerPack);
 
 				formulatedProduct.getExtraProperties().put(GS1Model.PROP_PRODUCT_PER_INNER_PACK, productPerInnerPack);
@@ -116,8 +122,12 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 
 			if ((variantPackagingData.getProductPerBoxes() != null)) {
 
-				BigDecimal tareSecondary = tarePrimary.multiply(BigDecimal.valueOf(variantPackagingData.getProductPerBoxes()))
+				// Own secondary tare (product's own packaging), used as the base for the tertiary roll-up
+				// so the composition secondary tare is not re-multiplied by boxesPerPallet.
+				BigDecimal tareSecondaryOwn = tarePrimary.multiply(BigDecimal.valueOf(variantPackagingData.getProductPerBoxes()))
 						.add(variantPackagingData.getTareSecondary());
+
+				BigDecimal tareSecondary = tareSecondaryOwn.add(compositionTare.getTareSecondary());
 
 				BigDecimal netWeightSecondary = netWeightPrimary.multiply(BigDecimal.valueOf(variantPackagingData.getProductPerBoxes()));
 				BigDecimal weightSecondary = tareSecondary.add(netWeightSecondary);
@@ -126,8 +136,8 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 
 				if (variantPackagingData.getBoxesPerPallet() != null) {
 
-					BigDecimal tareTertiary = tareSecondary.multiply(BigDecimal.valueOf(variantPackagingData.getBoxesPerPallet()))
-							.add(variantPackagingData.getTareTertiary());
+					BigDecimal tareTertiary = tareSecondaryOwn.multiply(BigDecimal.valueOf(variantPackagingData.getBoxesPerPallet()))
+							.add(variantPackagingData.getTareTertiary()).add(compositionTare.getTareTertiary());
 
 					BigDecimal netWeightTertiary = netWeightSecondary.multiply(BigDecimal.valueOf(variantPackagingData.getBoxesPerPallet()));
 					BigDecimal weightTertiary = tareTertiary.add(netWeightTertiary);
