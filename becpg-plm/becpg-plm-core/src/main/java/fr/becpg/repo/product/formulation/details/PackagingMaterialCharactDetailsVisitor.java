@@ -300,7 +300,14 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 				}
 				
 				if (compoListDataItem.getCompoListUnit().isP()) {
-					weightUsed = 1d;
+					Double compoQty = compoListDataItem.getQtySubFormula();
+					if (compoQty == null || compoQty == 0d) {
+						compoQty = compoListDataItem.getQty();
+					}
+					weightUsed = compoQty != null ? compoQty : 1d;
+					if ((netWeight != 0d) && (subWeight != null)) {
+						weightUsed = (weightUsed / netWeight) * subWeight;
+					}
 				}
 
 				Double volUsed = FormulationHelper.getNetVolume(compoListDataItem, subProductData);
