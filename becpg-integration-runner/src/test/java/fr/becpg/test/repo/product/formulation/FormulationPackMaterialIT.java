@@ -63,6 +63,7 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 	protected NodeRef rawMaterial1NodeRef;
 	protected NodeRef rawMaterial2NodeRef;
 	protected NodeRef rawMaterial3NodeRef;
+	protected NodeRef rawMaterial4NodeRef;
 	protected NodeRef packaging1NodeRef;
 	protected NodeRef packaging2NodeRef;
 	protected NodeRef packaging3NodeRef;
@@ -108,7 +109,10 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 						.withProduct(rawMaterial2NodeRef),
 				// no material
 				CompoListDataItem.build().withQtyUsed(50d).withUnit(ProductUnit.g).withDeclarationType(DeclarationType.Declare)
-				.withProduct(rawMaterial3NodeRef))
+				.withProduct(rawMaterial3NodeRef),
+				// Plastique 2 pieces * 12g = 24g
+				CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.P).withDeclarationType(DeclarationType.Declare)
+				.withProduct(rawMaterial4NodeRef))
 				// Papier 50 % 30 * 12 = 20g
 				)
 				.withPackagingList(List.of(
@@ -144,7 +148,7 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 				checks++;
 			}
 			if (packMaterialListDataItem.getPmlMaterial().equals(packMaterial4NodeRef)) {
-				assertEquals(df.format(80d + (453.592 / 2)), df.format(packMaterialListDataItem.getPmlWeight()));
+				assertEquals(df.format(80d + (453.592 / 2) + 24d), df.format(packMaterialListDataItem.getPmlWeight()));
 				checks++;
 			}
 			if (packMaterialListDataItem.getPmlMaterial().equals(packMaterial5NodeRef)) {
@@ -228,6 +232,14 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 				List.of(PackMaterialListDataItem.build().withMaterial(packMaterial6NodeRef).withWeight(12d).withPkgLevel(PackagingLevel.Primary)));
 
 		rawMaterial3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial3).getNodeRef();
+
+		/*-- Raw material 4 (piece based) --*/
+		RawMaterialData rawMaterial4 = RawMaterialData.build().withName("Raw material 4").withUnit(ProductUnit.P).withNetWeight(0.05);
+		
+		rawMaterial4.setPackMaterialList(
+				List.of(PackMaterialListDataItem.build().withMaterial(packMaterial4NodeRef).withWeight(12d).withPkgLevel(PackagingLevel.Primary)));
+
+		rawMaterial4NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial4).getNodeRef();
 
 	}
 
