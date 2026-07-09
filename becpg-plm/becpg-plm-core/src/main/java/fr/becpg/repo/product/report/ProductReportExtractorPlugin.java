@@ -785,6 +785,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			BigDecimal grossWeightPrimary = tarePrimary.add(netWeightPrimary);
 
 			PackagingData packagingData = packagingHelper.getPackagingData(productData);
+			// #31701: secondary/tertiary packaging of the sub-components counted at every level (added flat).
+			VariantPackagingData compositionTare = PackagingHelper.getCompositionTareByLevel(productData);
 			for (Map.Entry<NodeRef, VariantPackagingData> kv : packagingData.getVariants().entrySet()) {
 				VariantPackagingData variantPackagingData = kv.getValue();
 
@@ -804,8 +806,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 				if (variantPackagingData.getProductPerBoxes() != null) {
 
-					BigDecimal tareSecondary = tarePrimary.multiply(BigDecimal.valueOf(variantPackagingData.getProductPerBoxes()))
+					BigDecimal tareSecondaryOwn = tarePrimary.multiply(BigDecimal.valueOf(variantPackagingData.getProductPerBoxes()))
 							.add(variantPackagingData.getTareSecondary());
+					BigDecimal tareSecondary = tareSecondaryOwn.add(compositionTare.getTareSecondary());
 
 					BigDecimal netWeightSecondary = netWeightPrimary.multiply(BigDecimal.valueOf(variantPackagingData.getProductPerBoxes()));
 					BigDecimal grossWeightSecondary = tareSecondary.add(netWeightSecondary);
@@ -817,8 +820,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 					if (variantPackagingData.getBoxesPerPallet() != null) {
 
-						BigDecimal tareTertiary = tareSecondary.multiply(BigDecimal.valueOf(variantPackagingData.getBoxesPerPallet()))
-								.add(variantPackagingData.getTareTertiary());
+						BigDecimal tareTertiary = tareSecondaryOwn.multiply(BigDecimal.valueOf(variantPackagingData.getBoxesPerPallet()))
+								.add(variantPackagingData.getTareTertiary()).add(compositionTare.getTareTertiary());
 						BigDecimal netWeightTertiary = netWeightSecondary.multiply(BigDecimal.valueOf(variantPackagingData.getBoxesPerPallet()));
 						packgLevelMesuresElt.addAttribute(ATTR_PKG_TARE_LEVEL_3, toString(tareTertiary));
 						packgLevelMesuresElt.addAttribute(ATTR_PKG_NET_WEIGHT_LEVEL_3, toString(netWeightTertiary));
@@ -2038,8 +2041,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			packLevel = PackagingLevel.Primary;
 		}
 
-		extraAttributes.put(PLMModel.PROP_PRODUCT_DROP_PACKAGING_OF_COMPONENTS.getLocalName(),
-				Boolean.toString((!packLevel.equals(PackagingLevel.Primary) && isPackagingOfComponent) || dropPackagingOfComponents));
+		// #31701: keep secondary/tertiary packaging of sub-components in the report (only the explicit
+		// "drop packaging of components" flag hides component packaging now).
+		extraAttributes.put(PLMModel.PROP_PRODUCT_DROP_PACKAGING_OF_COMPONENTS.getLocalName(), Boolean.toString(dropPackagingOfComponents));
 
 		extractEntityImages(product, imgsElt, context, extraAttributes);
 
@@ -2108,8 +2112,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			partElt.addAttribute(ATTR_QTY_FOR_COST, Double.toString(qtyForCost));
 
+			// #31701: keep secondary/tertiary packaging of sub-components in the report.
 			partElt.addAttribute(PLMModel.PROP_PRODUCT_DROP_PACKAGING_OF_COMPONENTS.getLocalName(),
-					Boolean.toString((!packLevel.equals(PackagingLevel.Primary) && isPackagingOfComponent) || dropPackagingOfComponents));
+					Boolean.toString(dropPackagingOfComponents));
 		}
 		return partElt;
 	}

@@ -33,7 +33,6 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
 import fr.becpg.repo.product.data.CurrentLevelQuantities;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
@@ -767,13 +766,8 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
             item.put(KEY_QTY_FOR_COST, currentLevelQuantities.getQtyForCost());
             item.put(KEY_DEPTH_LEVEL, level);
 
-            PackagingLevel packLevel = dataItem.getPkgLevel();
-            if (packLevel == null) {
-                packLevel = PackagingLevel.Primary;
-            }
-
-            item.put("prop_" + PLMModel.PROP_PRODUCT_DROP_PACKAGING_OF_COMPONENTS.getLocalName(),
-                    (!packLevel.equals(PackagingLevel.Primary) && isPackagingOfComponent) || dropPackagingOfComponents);
+            // #31701: keep secondary/tertiary packaging of sub-components in the report.
+            item.put("prop_" + PLMModel.PROP_PRODUCT_DROP_PACKAGING_OF_COMPONENTS.getLocalName(), dropPackagingOfComponents);
 
             // Apply formulas
             for (AttributeExtractorStructure metadataField : metadataFields) {

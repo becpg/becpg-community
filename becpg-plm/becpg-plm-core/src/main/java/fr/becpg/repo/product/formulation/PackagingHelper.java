@@ -339,6 +339,64 @@ public class PackagingHelper implements InitializingBean {
 	}
 
 	/**
+	 * #31701: aggregates the SECONDARY / TERTIARY / INNER packaging tare (kg) declared on the
+	 * sub-components of the composition, scaled by each component quantity, so that a secondary
+	 * packaging (e.g. a "caisse") placed at a lower composition level is counted at every level -
+	 * exactly as the primary tare already is.
+	 * <p>
+	 * Only secondary/tertiary/inner levels are returned: the primary tare of components is already
+	 * aggregated separately (see {@link FormulationHelper#getTareInKg(CompoListDataItem, ProductData)}).
+	 * The returned holder carries the composition contribution to be added flat to the product secondary /
+	 * tertiary / inner tare, without re-multiplication by productPerBoxes / boxesPerPallet.
+	 *
+	 * @param productData the product whose composition is walked
+	 * @return a {@link fr.becpg.repo.product.data.packaging.VariantPackagingData} holding the aggregated secondary/tertiary/inner tare
+	 */
+	public static VariantPackagingData getCompositionTareByLevel(ProductData productData) {
+		return instance.doGetCompositionTareByLevel(productData);
+	}
+
+	private VariantPackagingData doGetCompositionTareByLevel(ProductData productData) {
+		VariantPackagingData ret = new VariantPackagingData();
+
+		if (Boolean.TRUE.equals(productData.getDropPackagingOfComponents())) {
+			return ret;
+		}
+
+		for (CompoListDataItem compoList : productData
+				.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+
+			if ((compoList.getProduct() == null) || PLMModel.TYPE_RAWMATERIAL.equals(nodeService.getType(compoList.getProduct()))) {
+				continue;
+			}
+
+			ProductData subProduct = alfrescoRepository.findOne(compoList.getProduct());
+
+			if (!subProduct.hasPackagingListEl() && !subProduct.hasCompoListEl()) {
+				continue;
+			}
+
+			BigDecimal qtyFactor = FormulationHelper.getPackagingListQtyForProduct(compoList, subProduct);
+			if ((qtyFactor == null) || (qtyFactor.doubleValue() == 0d)) {
+				continue;
+			}
+
+			VariantPackagingData subOwn = getDefaultVariantPackagingData(subProduct);
+			VariantPackagingData subComposition = doGetCompositionTareByLevel(subProduct);
+
+			BigDecimal subSecondary = (subOwn != null ? subOwn.getTareSecondary() : BigDecimal.ZERO).add(subComposition.getTareSecondary());
+			BigDecimal subTertiary = (subOwn != null ? subOwn.getTareTertiary() : BigDecimal.ZERO).add(subComposition.getTareTertiary());
+			BigDecimal subInner = (subOwn != null ? subOwn.getTareInner() : BigDecimal.ZERO).add(subComposition.getTareInner());
+
+			ret.addTareSecondary(subSecondary.multiply(qtyFactor));
+			ret.addTareTertiary(subTertiary.multiply(qtyFactor));
+			ret.addTareInner(subInner.multiply(qtyFactor));
+		}
+
+		return ret;
+	}
+
+	/**
 	 * <p>flatPackagingList.</p>
 	 *
 	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
