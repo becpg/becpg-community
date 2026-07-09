@@ -129,6 +129,9 @@ public class CharactDetailsPackMaterialFormulationIT extends  FormulationPackMat
 						} else if (kv2.getKeyNodeRef().equals(packaging3NodeRef)) {
 							checks++;
 							assertEquals(df.format(226.796d), df.format(kv2.getValue()));
+						} else if (kv2.getKeyNodeRef().equals(rawMaterial4NodeRef)) {
+							checks++;
+							assertEquals(df.format(24d), df.format(kv2.getValue()));
 						}
 					}
 					// material 5 (Verre)
@@ -152,7 +155,7 @@ public class CharactDetailsPackMaterialFormulationIT extends  FormulationPackMat
 
 			}
 
-			assertEquals("Verify checks done", 10, checks);
+			assertEquals("Verify checks done", 11, checks);
 
 			return null;
 
