@@ -161,6 +161,12 @@ public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 	/** {@inheritDoc} */
 	@Override
+	protected boolean propagateNestedPackaging() {
+		return true;
+	}
+
+	/** {@inheritDoc} */
+	@Override
 	protected RequirementDataType getRequirementDataType() {
 		return RequirementDataType.Formulation;
 	}
