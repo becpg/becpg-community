@@ -519,7 +519,7 @@ public class RegulationFormulationHelper {
 		case KEY_TOLERANCE_MAX:
 			return "ToleranceMax";
 		case KEY_TOLERANCE_MIN:
-			return "ToleranceMax";
+			return "ToleranceMin";
 		case KEY_UL:
 			return "UpperLimit";
 		default:
@@ -551,6 +551,18 @@ public class RegulationFormulationHelper {
 	 * @param n a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object.
 	 */
 	public static void extractRoundedValue(ProductData formulatedProduct, String nutCode, NutListDataItem n) {
+		extractRoundedValue(formulatedProduct, nutCode, n, false);
+	}
+
+	/**
+	 * <p>extractRoundedValue.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
+	 * @param nutCode a {@link java.lang.String} object.
+	 * @param n a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object.
+	 * @param isClaimed whether the nutrient is subject to a nutritional or health claim (EU Table 3 tolerances)
+	 */
+	public static void extractRoundedValue(ProductData formulatedProduct, String nutCode, NutListDataItem n, boolean isClaimed) {
 		JSONObject jsonRound = new JSONObject();
 		JSONObject jsonPreparedRound = new JSONObject();
 		try {
@@ -587,13 +599,13 @@ public class RegulationFormulationHelper {
 				mini.put(key, regulation.round(n.getMini(), nutCode, nutUnit));
 				maxi.put(key, regulation.round(n.getMaxi(), nutCode, nutUnit));
 
-				Pair<Double, Double> tolerances = regulation.tolerances(n.getValue(), nutCode, nutUnit);
+				Pair<Double, Double> tolerances = regulation.tolerances(n.getValue(), nutCode, nutUnit, isClaimed);
 				if (tolerances != null) {
 					tmin.put(key, tolerances.getFirst());
 					tmax.put(key, tolerances.getSecond());
 				}
 
-				tolerances = regulation.tolerances(n.getPreparedValue(), nutCode, nutUnit);
+				tolerances = regulation.tolerances(n.getPreparedValue(), nutCode, nutUnit, isClaimed);
 				if (tolerances != null) {
 					secondaryTmin.put(key, tolerances.getFirst());
 					secondaryTmax.put(key, tolerances.getSecond());
@@ -908,7 +920,21 @@ public class RegulationFormulationHelper {
 	 * @return a {@link org.alfresco.util.Pair} object
 	 */
 	public static Pair<Double, Double> tolerances(Double value, String nutCode, Locale locale, String nutUnit) {
-		return tolerances(value, nutCode, getLocalKey(locale), nutUnit);
+		return tolerances(value, nutCode, getLocalKey(locale), nutUnit, false);
+	}
+
+	/**
+	 * <p>tolerances.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object
+	 * @param nutCode a {@link java.lang.String} object
+	 * @param locale a {@link java.util.Locale} object
+	 * @param nutUnit a {@link java.lang.String} object
+	 * @param isClaimed whether the nutrient is subject to a nutritional or health claim (EU Table 3 tolerances)
+	 * @return a {@link org.alfresco.util.Pair} object
+	 */
+	public static Pair<Double, Double> tolerances(Double value, String nutCode, Locale locale, String nutUnit, boolean isClaimed) {
+		return tolerances(value, nutCode, getLocalKey(locale), nutUnit, isClaimed);
 	}
 
 	/**
@@ -920,11 +946,11 @@ public class RegulationFormulationHelper {
 	 * @param nutUnit a {@link java.lang.String} object
 	 * @return a {@link org.alfresco.util.Pair} object
 	 */
-	private static Pair<Double, Double> tolerances(Double value, String nutCode, String key, String nutUnit) {
+	private static Pair<Double, Double> tolerances(Double value, String nutCode, String key, String nutUnit, boolean isClaimed) {
 		if (value == null) {
 			return null;
 		}
-		return getRegulation(key).tolerances(value, nutCode, nutUnit);
+		return getRegulation(key).tolerances(value, nutCode, nutUnit, isClaimed);
 	}
 
 	/**

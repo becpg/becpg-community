@@ -95,7 +95,7 @@ public class VariantFilters<T extends VariantDataItem> implements DataListFilter
 				VariantDataItem item = (obj);
 				if (!variantNodeRefs.isEmpty()) {
 					if (isDefaultVariant != null) {
-						if (Boolean.TRUE.equals(isDefaultVariant) && (item.getVariants() == null) || item.getVariants().isEmpty()) {
+						if (Boolean.TRUE.equals(isDefaultVariant) && ((item.getVariants() == null) || item.getVariants().isEmpty())) {
 							return true;
 						}
 						for(NodeRef variantNodeRef : variantNodeRefs) {
