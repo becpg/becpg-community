@@ -243,7 +243,7 @@ upload_test() {
     cd "$ORIG_DIR"
 
     echo "Uploading test results to Status for host: ${HOST_ID}..."
-    STATUS_URL="http://localhost:5555/test-reports/upload"
+    STATUS_URL="https://status.becpg.fr/test-reports/upload"
 
     response=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
       -H "Authorization: ${TOKEN}" \
@@ -256,7 +256,7 @@ upload_test() {
         echo "Upload completed successfully! (HTTP 200)"
     else
         echo "Upload failed with HTTP response code: $response"
-        echo "Please ensure the becpg-status application is running on $STATUS_URL"
+        echo "Please ensure the becpg-status application is running on $STATUS_URL and STATUS_AUTH_TOKEN contains a valid key"
         return 1
     fi
 }
