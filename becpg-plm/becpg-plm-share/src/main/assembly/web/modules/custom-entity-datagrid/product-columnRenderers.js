@@ -2421,6 +2421,23 @@ if (beCPG.module.EntityDataGridRenderers) {
         }
     });
 
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: "qa:batchAllocationStockRefs",
+        renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+            var itemData = oRecord.getData("itemData");
+            var elTr = scope.widgets.dataTable.getTrEl(elCell);
+            var stockRefs = itemData["assoc_qa_batchAllocationStockRefs"];
+            if (stockRefs && stockRefs.length > 0) {
+                Dom.setStyle(elTr, "opacity", "0.6");
+                Dom.setStyle(elTr, "background-color", "#f5f5f5");
+            } else {
+                Dom.setStyle(elTr, "opacity", "");
+                Dom.setStyle(elTr, "background-color", "");
+            }
+            return data ? Alfresco.util.encodeHTML(data.displayValue) : "";
+        }
+    });
+
     YAHOO.Bubbling.on("dirtyDataTable", function(event, args) {
         if (args && args.length > 1) {
             var field = args[1].column.field;

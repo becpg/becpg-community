@@ -169,6 +169,10 @@ public interface QualityModel {
 	QName PROP_BATCH_START = QName.createQName(QUALITY_URI, "batchStart");
 	/** Constant <code>PROP_BATCH_DURATION</code> */
 	QName PROP_BATCH_DURATION = QName.createQName(QUALITY_URI, "batchDuration");
+	/** Constant <code>PROP_BATCH_SCANNER_INPUT</code> */
+	QName PROP_BATCH_SCANNER_INPUT = QName.createQName(QUALITY_URI, "batchScannerInput");
+	/** Constant <code>ASSOC_BATCH_ALLOCATION_STOCK_REFS</code> */
+	QName ASSOC_BATCH_ALLOCATION_STOCK_REFS = QName.createQName(QUALITY_URI, "batchAllocationStockRefs");
 	/** Constant <code>ASSOC_PRODUCT</code> */
 	QName ASSOC_PRODUCT = QName.createQName(QUALITY_URI, "product");
 

@@ -37,6 +37,12 @@
 		<property name="entityListDAO" ref="entityListDAO"/>
 	</bean>
 
+    <bean id="webscript.fr.becpg.product.scanBatch.post" class="fr.becpg.repo.quality.web.scripts.ScanBatchWebScript" parent="webscript" lazy-init="true">
+		<property name="nodeService" ref="nodeService"/>
+		<property name="entityListDAO" ref="entityListDAO"/>
+		<property name="alfrescoRepository" ref="alfrescoRepository"/>
+	</bean>
+
     <bean id="nonConformityService" class="fr.becpg.repo.quality.impl.NonConformityServiceImpl">
 		<property name="repoService" ref="repoService" />				
 		<property name="repositoryHelper" ref="repositoryHelper" />		

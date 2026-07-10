@@ -1,0 +1,4 @@
+{
+   "status": "${scanStatus!""}",
+   "message": "${msgText!""}"
+}

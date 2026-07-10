@@ -1,0 +1,8 @@
+<webscript>
+	<shortname>Execute Batch</shortname>
+	<description>Executes/Validates a Batch by setting its state to Valid</description>
+	<url>/becpg/quality/execute-batch?nodeRef={nodeRef}</url>
+	<format default="json">argument</format>
+	<authentication>user</authentication>
+	<transaction>required</transaction>
+</webscript>
