@@ -348,12 +348,190 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				applyEvaporation(formulatedProduct, evaporatedDataItems);
 				applySecondaryEvaporation(formulatedProduct, evaporatedDataItems);
 			}
+
+			boolean fixCompositeYield = !formulatedProduct.isGeneric() && !evaporatedDataItems.isEmpty()
+					&& formulatedProduct.getIngList().stream().anyMatch(item -> item.getParent() != null);
+
+			if (fixCompositeYield) {
+				clampNegativeQtyPercWithYield(formulatedProduct.getIngList());
+			}
+
+			aggregateParentQtyPercWithYield(formulatedProduct.getIngList());
+
+			if (fixCompositeYield) {
+				normalizeQtyPercWithYield(formulatedProduct.getIngList());
+			}
+
 		}
 
 		// sort collection
 		if (shouldSort) {
 			sortIL(formulatedProduct.getIngList());
 		}
+	}
+
+	/**
+	 * Recomputes each parent (composite) ingredient "with yield" percentages as the sum of its
+	 * direct children percentages.
+	 * <p>
+	 * A composite ingredient is, by definition, the sum of its sub-ingredients. When an evaporation
+	 * rate is present on a sub-ingredient, the leaf percentages already reflect the lost water,
+	 * whereas the parent percentage was re-concentrated independently by the product yield, producing
+	 * top-level sums above 100 %. Aggregating the children back into the parent restores the invariant
+	 * for both the primary and secondary yield percentages. The computation runs bottom-up so
+	 * multi-level hierarchies are resolved consistently. Items without children are left untouched.
+	 *
+	 * @param ingList the formulated product ingredient list
+	 */
+	private void aggregateParentQtyPercWithYield(List<IngListDataItem> ingList) {
+
+		List<IngListDataItem> children = ingList.stream().filter(item -> item.getParent() != null)
+				.sorted(Comparator.comparingInt(this::getIngDepth).reversed()).toList();
+
+		if (children.isEmpty()) {
+			return;
+		}
+
+		Set<IngListDataItem> parents = new HashSet<>();
+		for (IngListDataItem child : children) {
+			parents.add(child.getParent());
+		}
+
+		for (IngListDataItem parent : parents) {
+			parent.setQtyPercWithYield(null);
+			parent.setQtyPercWithSecondaryYield(null);
+		}
+
+		for (IngListDataItem child : children) {
+			IngListDataItem parent = child.getParent();
+			if (child.getQtyPercWithYield() != null) {
+				parent.setQtyPercWithYield(
+						(parent.getQtyPercWithYield() == null ? 0d : parent.getQtyPercWithYield()) + child.getQtyPercWithYield());
+			}
+			if (child.getQtyPercWithSecondaryYield() != null) {
+				parent.setQtyPercWithSecondaryYield(
+						(parent.getQtyPercWithSecondaryYield() == null ? 0d : parent.getQtyPercWithSecondaryYield())
+								+ child.getQtyPercWithSecondaryYield());
+			}
+		}
+	}
+
+	/**
+	 * Clamps any negative "with yield" percentage to zero.
+	 * <p>
+	 * When the product yield implies more evaporation than the evaporating ingredients can absorb,
+	 * the leftover-evaporation fallback subtracts the unapplied amount from the first fully
+	 * evaporating ingredient, which can drive its percentage below zero. A mass fraction can never
+	 * be negative, so it is floored at zero; the resulting deviation from 100 % is then corrected by
+	 * {@link #normalizeQtyPercWithYield(List)}.
+	 *
+	 * @param ingList the formulated product ingredient list
+	 */
+	private void clampNegativeQtyPercWithYield(List<IngListDataItem> ingList) {
+		for (IngListDataItem item : ingList) {
+			if ((item.getQtyPercWithYield() != null) && (item.getQtyPercWithYield() < 0d)) {
+				item.setQtyPercWithYield(0d);
+			}
+			if ((item.getQtyPercWithSecondaryYield() != null) && (item.getQtyPercWithSecondaryYield() < 0d)) {
+				item.setQtyPercWithSecondaryYield(0d);
+			}
+		}
+	}
+
+	/**
+	 * Restores the "sum of top-level percentages = 100 %" invariant on the "with yield" columns.
+	 * <p>
+	 * The top-level "with yield" percentages are mass fractions of the finished product and must
+	 * therefore sum to 100 %, exactly like the plain {@code qtyPerc} column. When a sub-ingredient
+	 * carries an evaporation rate but the evaporating ingredients cannot absorb the whole product
+	 * yield loss (net quantity implying more evaporation than the rates account for), part of the
+	 * evaporation budget stays unapplied and the items remain over-concentrated, producing a sum
+	 * above 100 % (see #34702). Rescaling every "with yield" value by {@code 100 / topLevelSum} is
+	 * equivalent to concentrating the non-evaporating ingredients by the effective yield (the
+	 * evaporation actually applied) instead of the raw net/gross yield, and preserves the
+	 * parent = sum-of-children invariant since parents and children are scaled by the same factor.
+	 * <p>
+	 * The correction is only applied when the list is a complete 100 % list (its {@code qtyPerc}
+	 * top-level sum is ~100 %), so partial lists (omitted ingredients, etc.) are left untouched.
+	 *
+	 * @param ingList the formulated product ingredient list
+	 */
+	private void normalizeQtyPercWithYield(List<IngListDataItem> ingList) {
+
+		double topLevelQtyPerc = 0d;
+		for (IngListDataItem item : ingList) {
+			if ((item.getParent() == null) && (item.getQtyPerc() != null)) {
+				topLevelQtyPerc += item.getQtyPerc();
+			}
+		}
+
+		if (Math.abs(topLevelQtyPerc - 100d) > 1d) {
+			return;
+		}
+
+		rescaleToHundred(ingList, IngListDataItem::getQtyPercWithYield, IngListDataItem::setQtyPercWithYield);
+		rescaleToHundred(ingList, IngListDataItem::getQtyPercWithSecondaryYield, IngListDataItem::setQtyPercWithSecondaryYield);
+	}
+
+	/**
+	 * Rescales a "with yield" percentage column so that the top-level values sum to 100 %.
+	 *
+	 * @param ingList the ingredient list
+	 * @param getter the accessor of the column to rescale
+	 * @param setter the mutator of the column to rescale
+	 */
+	private void rescaleToHundred(List<IngListDataItem> ingList, Function<IngListDataItem, Double> getter,
+			BiConsumer<IngListDataItem, Double> setter) {
+
+		double topLevelSum = 0d;
+		for (IngListDataItem item : ingList) {
+			if (item.getParent() == null) {
+				Double value = getter.apply(item);
+				if (value != null) {
+					topLevelSum += value;
+				}
+			}
+		}
+
+		if (topLevelSum <= 0.000001d) {
+			return;
+		}
+
+		double factor = 100d / topLevelSum;
+		if (Math.abs(factor - 1d) < 0.0001d) {
+			return;
+		}
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Normalizing ingList with-yield column: top-level sum=" + topLevelSum + " factor=" + factor);
+		}
+
+		for (IngListDataItem item : ingList) {
+			Double value = getter.apply(item);
+			if (value != null) {
+				setter.accept(item, value * factor);
+			}
+		}
+	}
+
+	/**
+	 * Returns the depth of an ingredient in the ingredient hierarchy, walking up the parent chain
+	 * when the stored depth level is not available.
+	 *
+	 * @param ingListDataItem the ingredient item
+	 * @return the depth (1 for a top-level ingredient)
+	 */
+	private int getIngDepth(IngListDataItem ingListDataItem) {
+		if (ingListDataItem.getDepthLevel() != null) {
+			return ingListDataItem.getDepthLevel();
+		}
+		int depth = 1;
+		IngListDataItem parent = ingListDataItem.getParent();
+		while ((parent != null) && (depth < 256)) {
+			depth++;
+			parent = parent.getParent();
+		}
+		return depth;
 	}
 
 	private boolean hasEvaporationData(IngListDataItem ingListDataItem) {
