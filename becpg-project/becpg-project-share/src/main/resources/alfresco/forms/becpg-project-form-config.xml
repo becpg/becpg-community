@@ -1692,6 +1692,8 @@
 			</form>
 			<!-- bulk-edit -->
 			<form id="create">
+				<create-form template="tab-edit" />
+				<edit-form template="tab-edit" />
 				<field-visibility>
 					<show id="pjt:tlTaskName" />
 					<show id="pjt:tlTaskDescription" />
