@@ -112,35 +112,37 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 		final Map<NodeRef, Map<QName, Serializable>> wUsedAssocCache = wUsed ? new HashMap<>() : null;
 
 		for (NodeRef entityNodeRef : searchResults) {
-			QName entityType = nodeService.getType(entityNodeRef);
-			if (mainType.equals(entityType) || entityDictionaryService.isSubClass(entityType, mainType)) {
-				Serializable key = keyColumn != null ? nodeService.getProperty(entityNodeRef, keyColumn.getFieldDef().getName()) : null;
-				if (key == null) {
-					key = nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE);
-				}
-				if (key == null) {
-					key = nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
-				}
-				final MultiLevelListData listData;
-				if (!wUsed) {
-					DataListFilter dataListFilter = new DataListFilter();
-					dataListFilter.setDataType(itemType);
-					Map<String, String> criteriaMap = new HashMap<>();
-					criteriaMap.put(DataListFilter.PROP_DEPTH_LEVEL, depthLevel);
-					dataListFilter.setCriteriaMap(criteriaMap);
-					dataListFilter.setEntityNodeRefs(Collections.singletonList(entityNodeRef));
+			if (nodeService.exists(entityNodeRef)) {
+				QName entityType = nodeService.getType(entityNodeRef);
+				if (mainType.equals(entityType) || entityDictionaryService.isSubClass(entityType, mainType)) {
+					Serializable key = keyColumn != null ? nodeService.getProperty(entityNodeRef, keyColumn.getFieldDef().getName()) : null;
+					if (key == null) {
+						key = nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE);
+					}
+					if (key == null) {
+						key = nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
+					}
+					final MultiLevelListData listData;
+					if (!wUsed) {
+						DataListFilter dataListFilter = new DataListFilter();
+						dataListFilter.setDataType(itemType);
+						Map<String, String> criteriaMap = new HashMap<>();
+						criteriaMap.put(DataListFilter.PROP_DEPTH_LEVEL, depthLevel);
+						dataListFilter.setCriteriaMap(criteriaMap);
+						dataListFilter.setEntityNodeRefs(Collections.singletonList(entityNodeRef));
+		
+						listData = multiLevelDataListService.getMultiLevelListData(dataListFilter);
+					} else {
+						listData = wUsedListService.getWUsedEntity(entityNodeRef, pivotAssoc, depthLevelNum);
+					}
 	
-					listData = multiLevelDataListService.getMultiLevelListData(dataListFilter);
-				} else {
-					listData = wUsedListService.getWUsedEntity(entityNodeRef, pivotAssoc, depthLevelNum);
+					Map<String, Object> entityItems = getEntityProperties(entityNodeRef, mainType, metadataFields, cache);
+	
+					entityItems.putAll(getDynamicProperties(entityNodeRef, itemType));
+	
+					rownum = appendNextLevel(listData, sheet, itemType, metadataFields, cache, rownum, key, null, parameters, entityItems,
+							new HashMap<>(), excelCellStyles, mainType, wUsedAssocCache);
 				}
-
-				Map<String, Object> entityItems = getEntityProperties(entityNodeRef, mainType, metadataFields, cache);
-
-				entityItems.putAll(getDynamicProperties(entityNodeRef, itemType));
-
-				rownum = appendNextLevel(listData, sheet, itemType, metadataFields, cache, rownum, key, null, parameters, entityItems,
-						new HashMap<>(), excelCellStyles, mainType, wUsedAssocCache);
 			}
 		}
 
@@ -173,11 +175,19 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 			Map<String, List<String>> dynamicCharactColumnCache, ExcelCellStyles excelCellStyles, QName wUsedEntityType, Map<NodeRef, Map<QName, Serializable>> wUsedAssocCache) {
 		for (Entry<NodeRef, MultiLevelListData> entry : listData.getTree().entrySet()) {
 			NodeRef itemNodeRef = entry.getKey();
-			if (itemType.equals(nodeService.getType(itemNodeRef))) {
-				if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
-
+			if (nodeService.exists(itemNodeRef) && itemType.equals(nodeService.getType(itemNodeRef))) {
+				boolean hasPermission = false;
+				Map<String, Object> item = null;
+				if (cache != null && cache.containsKey(itemNodeRef)) {
+					item = new HashMap<>(cache.get(itemNodeRef));
+					hasPermission = true;
+				} else if (nodeService.exists(itemNodeRef) && permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
+					hasPermission = true;
 					Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
-					Map<String, Object> item = doExtract(itemNodeRef, itemType, metadataFields, properties, cache);
+					item = doExtract(itemNodeRef, itemType, metadataFields, properties, cache);
+				}
+
+				if (hasPermission && item != null) {
 
 					for (Entry<String, Object> itemEntry : item.entrySet()) {
 						String itemKey = itemEntry.getKey();
