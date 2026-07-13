@@ -2,6 +2,7 @@ package fr.becpg.repo.report.search.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -17,6 +18,8 @@ import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -50,6 +53,8 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @Service
 public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 
+	protected static final Log logger = LogFactory.getLog(DefaultExcelReportSearchPlugin.class);
+
 	@Autowired
 	protected NodeService nodeService;
 
@@ -82,7 +87,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 		ExcelCellStyles excelCellStyles = new ExcelCellStyles(sheet.getWorkbook());
 		
 		for (NodeRef entityNodeRef : searchResults) {
-			if (entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), mainType)) {
+			if (nodeService.exists(entityNodeRef) && entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), mainType)) {
 				if (keyColumn != null) {
 					Serializable key = nodeService.getProperty(entityNodeRef, keyColumn.getFieldDef().getName());
 					if (key == null) {
@@ -102,8 +107,8 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 
 						List<NodeRef> results = entityListDAO.getListItems(listNodeRef, actualType);
 						for (NodeRef itemNodeRef : results) {
-							if (actualType.equals(nodeService.getType(itemNodeRef))) {
-								if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
+							if (nodeService.exists(itemNodeRef) && actualType.equals(nodeService.getType(itemNodeRef))) {
+							if (nodeService.exists(itemNodeRef) && permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
 									rownum = fillRow(sheet, entityNodeRef, itemNodeRef, itemType, metadataFields, cache, rownum, key, entityItems,excelCellStyles);
 								}
 							}
@@ -210,7 +215,13 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
 			Map<QName, Serializable> properties, final Map<NodeRef, Map<String, Object>> cache) {
 
-		return attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, FormatMode.XLSX,
+		if (cache != null && cache.containsKey(nodeRef)) {
+			logger.warn("### CACHE HIT for: " + nodeRef);
+			return new HashMap<>(cache.get(nodeRef));
+		}
+		logger.warn("### CACHE MISS for: " + nodeRef);
+
+		Map<String, Object> result = attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, FormatMode.XLSX,
 				new AttributeExtractorService.DataListCallBack() {
 
 					@Override
@@ -272,19 +283,26 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 					}
 
 					private void addExtracted(NodeRef itemNodeRef, AttributeExtractorStructure field, List<Map<String, Object>> ret) {
-						if (cache.containsKey(itemNodeRef)) {
+						if (cache != null && cache.containsKey(itemNodeRef)) {
 							ret.add(cache.get(itemNodeRef));
 						} else {
 							if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
 								QName itemType = nodeService.getType(itemNodeRef);
 								Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
-								ret.add(doExtract(itemNodeRef, itemType, field.getChildrens(), properties, cache));
+								Map<String, Object> extracted = doExtract(itemNodeRef, itemType, field.getChildrens(), properties, cache);
+								if (cache != null) {
+									cache.put(itemNodeRef, extracted);
+								}
+								ret.add(extracted);
 							}
 						}
 					}
 
 				});
-
+		if (cache != null) {
+			cache.put(nodeRef, result);
+		}
+		return result;
 	}
 
 	public class SimpleRepositoryEntity extends BeCPGDataObject {
