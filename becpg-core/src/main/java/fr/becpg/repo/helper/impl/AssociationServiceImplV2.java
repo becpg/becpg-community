@@ -325,6 +325,14 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			if (hasChanged) {
 				assocNodeRefs.removeAll(toRemoveNodeRefs);
 				assocsCache.put(new AssociationCacheRegion(nodeRef, qName), assocNodeRefs);
+
+				QName indexQName = entityDictionaryService.getAssocIndexQName(qName);
+				if (indexQName != null) {
+					QName typeQName = nodeService.getType(nodeRef);
+					if (!policyBehaviourFilter.isEnabled(nodeRef) || !policyBehaviourFilter.isEnabled(nodeRef, typeQName)) {
+						nodeService.setProperty(nodeRef, indexQName, new ArrayList<>(assocNodeRefs));
+					}
+				}
 			}
 		} finally {
 			TransactionalResourceHelper.decrementCount(UPDATE_ASSOC_COUNT, false);
