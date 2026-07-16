@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import fr.becpg.model.BeCPGModel.EntityFormat;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.EntityFormatService;
+import fr.becpg.repo.entity.remote.RemoteEntityFormat;
+import fr.becpg.repo.entity.remote.RemoteParams;
 import fr.becpg.test.BeCPGPLMTestHelper;
 import fr.becpg.test.PLMBaseTestCase;
 
@@ -65,6 +67,50 @@ public class EntityFormatServiceIT extends PLMBaseTestCase {
 			JSONArray ingList = datalists.getJSONArray("bcpg:" + PLMModel.TYPE_INGLIST.getLocalName());
 			assertNotNull(ingList);
 			assertTrue(ingList.length() > 0);
+
+			return true;
+		}, false, true);
+	}
+
+	@Test
+	public void testGetArchivedEntityRemoteJsonWithFilters() {
+		NodeRef rawMaterialNoderef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef result = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test archived filters");
+			return result;
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			entityFormatService.convertToFormat(rawMaterialNoderef, EntityFormat.JSON);
+			
+			java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
+			RemoteParams params = new RemoteParams(RemoteEntityFormat.json);
+			
+			// Exclude the name property and the ingredients list
+			java.util.Set<String> fields = new java.util.HashSet<>();
+			fields.add("!cm:name");
+			params.setFilteredFields(fields, serviceRegistry.getNamespaceService());
+			
+			java.util.Set<String> lists = new java.util.HashSet<>();
+			lists.add("!" + PLMModel.TYPE_INGLIST.getLocalName());
+			params.setFilteredLists(lists);
+
+			remoteEntityService.getEntity(rawMaterialNoderef, out, params);
+			
+			String resultJson = out.toString();
+			JSONObject root = new JSONObject(resultJson);
+			JSONObject entity = root.getJSONObject("entity");
+
+			// Check that attributes were filtered
+			if (entity.has("attributes")) {
+				JSONObject attributes = entity.getJSONObject("attributes");
+				assertFalse("The name property should have been filtered out", attributes.has("cm:name"));
+			}
+			
+			// Check that the list was filtered
+			if (entity.has("datalists")) {
+				JSONObject datalists = entity.getJSONObject("datalists");
+				assertFalse("The ingredients list should have been filtered out", datalists.has("bcpg:" + PLMModel.TYPE_INGLIST.getLocalName()));
+			}
 
 			return true;
 		}, false, true);
