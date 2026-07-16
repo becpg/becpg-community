@@ -24,9 +24,11 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -54,6 +56,7 @@ import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.VersionService;
+import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.GUID;
@@ -225,6 +228,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 							for (String key : archivedEntity.keySet()) {
 								entity.put(key, archivedEntity.get(key));
 							}
+							filterArchivedEntity(entity);
 							return;
 						}
 					} catch (JSONException e) {
@@ -745,6 +749,56 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 			}
 		}
 
+	}
+
+	private void filterArchivedEntity(JSONObject entity) throws JSONException {
+		// Filter attributes
+		if (entity.has(RemoteEntityService.ELEM_ATTRIBUTES)) {
+			JSONObject attributes = entity.getJSONObject(RemoteEntityService.ELEM_ATTRIBUTES);
+			Iterator<String> keys = attributes.keys();
+			List<String> keysToRemove = new ArrayList<>();
+			while (keys.hasNext()) {
+				String key = keys.next();
+				try {
+					QName qname = QName.createQName(key, namespaceService);
+					if (!params.shouldExtractField(qname) || !matchProp(null, qname, false)) {
+						keysToRemove.add(key);
+					}
+				} catch (NamespaceException e) {
+					// Ignore keys that are not valid QNames
+				}
+			}
+			for (String key : keysToRemove) {
+				attributes.remove(key);
+			}
+		}
+	
+		// Filter lists
+		if (entity.has(RemoteEntityService.ELEM_DATALISTS)) {
+			JSONObject lists = entity.getJSONObject(RemoteEntityService.ELEM_DATALISTS);
+			Iterator<String> keys = lists.keys();
+			List<String> keysToRemove = new ArrayList<>();
+			while (keys.hasNext()) {
+				String key = keys.next();
+				String listName = key;
+				String[] parts = key.split("\\|");
+				if (parts.length > 1) {
+					listName = parts[1];
+				} else {
+					String[] qnameParts = listName.split(":");
+					if (qnameParts.length > 1) {
+						listName = qnameParts[1];
+					}
+				}
+	
+				if (!params.shouldExtractList(listName)) {
+					keysToRemove.add(key);
+				}
+			}
+			for (String key : keysToRemove) {
+				lists.remove(key);
+			}
+		}
 	}
 
 	/**
