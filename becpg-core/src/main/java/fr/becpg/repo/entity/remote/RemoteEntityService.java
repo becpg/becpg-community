@@ -42,6 +42,8 @@ public interface RemoteEntityService {
 	String NODEREF_TYPE = "d:noderef";
 	/** Constant <code>CATEGORY_TYPE="d:category"</code> */
 	String CATEGORY_TYPE = "d:category";
+	/** Constant <code>ANY_TYPE="d:any"</code> */
+	String ANY_TYPE = "d:any";
 	/** Constant <code>NODE_TYPE="node"</code> */
 	String NODE_TYPE = "node";
 	/** Constant <code>MLTEXT_TYPE="d:mltext"</code> */
