@@ -209,16 +209,17 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 				nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_AUTO_MERGE_COMMENTS, projectName);
 				nodeService.setProperty(branchNodeRef, ContentModel.PROP_NAME, branchName);
 
-				NodeRef supplierDocumentsFolder = getOrCreateSupplierDocumentsFolder(branchNodeRef);
-
-				for (ChildAssociationRef childAssoc : nodeService.getChildAssocs(supplierDocumentsFolder)) {
-					NodeRef childNodeRef = childAssoc.getChildRef();
-					nodeService.setProperty(childNodeRef, ContentModel.PROP_OWNER, AuthenticationUtil.SYSTEM_USER_NAME);
-				}
 			} else {
 				branchNodeRef = supplierNodeRef;
 			}
 
+			NodeRef supplierDocumentsFolder = getOrCreateSupplierDocumentsFolder(branchNodeRef);
+			
+			for (ChildAssociationRef childAssoc : nodeService.getChildAssocs(supplierDocumentsFolder)) {
+				NodeRef childNodeRef = childAssoc.getChildRef();
+				nodeService.setProperty(childNodeRef, ContentModel.PROP_OWNER, AuthenticationUtil.SYSTEM_USER_NAME);
+			}
+			
 			projectData.setEntities(Arrays.asList(branchNodeRef));
 
 		}
