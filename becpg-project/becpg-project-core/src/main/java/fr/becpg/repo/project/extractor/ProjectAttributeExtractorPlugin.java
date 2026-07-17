@@ -29,7 +29,9 @@ import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.impl.AbstractExprNameExtractor;
 import fr.becpg.repo.system.SystemConfigurationService;
 
@@ -45,6 +47,9 @@ public class ProjectAttributeExtractorPlugin extends AbstractExprNameExtractor {
 
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
+
+	@Autowired
+	private AssociationService associationService;
 	
 	private String projectNameFormat() {
 		return systemConfigurationService.confValue("beCPG.project.name.format");
@@ -81,10 +86,26 @@ public class ProjectAttributeExtractorPlugin extends AbstractExprNameExtractor {
 	@Override
 	@Nonnull
 	public String extractMetadata(@Nonnull QName type, @Nonnull NodeRef nodeRef) {
-		// TODO task state
-		// TODO Handle also project state (search results)
+		StringBuilder ret = new StringBuilder();
+
 		String[] parts = type.toPrefixString(namespaceService).split(":");
-		return parts.length > 1 ? parts[1] : "";
+		String typeCss = parts.length > 1 ? parts[1] : "";
+
+		ret.append(typeCss);
+
+		if (ProjectModel.TYPE_PROJECT.equals(type)) {
+			String state = (String) nodeService.getProperty(nodeRef, ProjectModel.PROP_PROJECT_STATE);
+			if (state != null && !state.isBlank()) {
+				ret.append(" ").append(typeCss).append("-").append(state.toLowerCase());
+			}
+
+			NodeRef entityTplRef = associationService.getTargetAssoc(nodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
+			if (entityTplRef != null) {
+				ret.append(" ").append(typeCss).append("-").append(entityTplRef.getId());
+			}
+		}
+
+		return ret.toString();
 	}
 
 	/** {@inheritDoc} */

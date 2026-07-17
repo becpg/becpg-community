@@ -91,6 +91,23 @@ public class EntityIconServiceImpl implements EntityIconService {
 								+ "background-image: var(" + DOUBLE_DASH + cssVarName + ") !important;"
 								+ CLOSE_CURLY_BRACKET);
 						}
+					} else {
+						builder.append(".entity." + cssClassName + " img[src*=\"-" + type + "-" + resolution + ".png\"],"
+								+ "span." + cssClassName + " img[src*=\"-" + type + "-" + resolution + ".png\"]" + OPEN_CURLY_BRACKET
+								+ "content: var(" + DOUBLE_DASH + cssVarName + ") !important;"
+								+ "background-image: var(" + DOUBLE_DASH + cssVarName + ") !important;"
+								+ "background-size: contain;"
+								+ "background-repeat: no-repeat;"
+								+ "width: " + resolution + "px;"
+								+ "height: " + resolution + "px;"
+								+ CLOSE_CURLY_BRACKET);
+						
+						if("16".equals(resolution)) {
+							builder.append(".entity." + cssClassName + " span." + type + "-file,"
+								+ "span." + cssClassName + " span." + type + "-file" + OPEN_CURLY_BRACKET
+								+ "background-image: var(" + DOUBLE_DASH + cssVarName + ") !important;"
+								+ CLOSE_CURLY_BRACKET);
+						}
 					}
 				} catch (IOException e) {
 					throw beCPGException("Failed to encode image for node ref " + iconNodeRef, e);
