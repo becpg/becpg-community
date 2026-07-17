@@ -82,7 +82,7 @@ define([ "dojo/_base/declare", "alfresco/core/CoreXhr", "dojo/_base/lang", "dojo
 					
 					this.addChild(new AlfMenuItem({
 						label : item.displayName,
-						iconClass : "entity " + item.itemType.split(":")[1],
+						iconClass : "entity " + (item.metadata ? item.metadata : item.itemType.split(":")[1]),
 						targetUrl : targetUrl
 					}));
 
