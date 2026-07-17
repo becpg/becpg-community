@@ -577,6 +577,17 @@ public class ImportEntityXmlVisitor {
 										mltextAttributes.forEach(mltext::addValue);
 										nodeService.setProperty(curNodeRef.peek(), currProp, mltext);
 										mltextAttributes.clear();
+									} else if (RemoteEntityService.ANY_TYPE.equals(type)) {
+										if ("true".equalsIgnoreCase(currValue.toString()) || "false".equalsIgnoreCase(currValue.toString())) {
+										    nodeService.setProperty(curNodeRef.peek(), currProp, Boolean.parseBoolean(currValue.toString()));
+										} else {
+											try  {
+												Double doubleValue = Double.parseDouble(currValue.toString());
+												nodeService.setProperty(curNodeRef.peek(), currProp, doubleValue);
+											} catch (NumberFormatException e) {
+												nodeService.setProperty(curNodeRef.peek(), currProp, currValue.toString());
+											}
+										}
 									} else {
 										nodeService.setProperty(curNodeRef.peek(), currProp, currValue.toString());
 									}
