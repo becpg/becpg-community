@@ -15,6 +15,7 @@
 	beCPG.custom.Search = function CustomSearch_constructor(htmlId) {
 		beCPG.custom.Search.superclass.constructor.call(this, htmlId);
 		this.selectedItems = {};
+		this.queryExecutionId = null;
 
 		YAHOO.Bubbling.on("selectedItemsChanged", this.onSelectedItemsChanged, this);
 		YAHOO.Bubbling.on("registerAction", this.onRegisterAction, this);
@@ -163,7 +164,8 @@
 									metaFields : {
 										page : "page",
 										pageSize : "pageSize",
-										fullListSize : "fullListSize"
+										fullListSize : "fullListSize",
+										queryExecutionId : "queryExecutionId"
 									}
 								}
 							});
@@ -681,6 +683,7 @@
 									// Pagination
 									me.resultsCount = oResponse.meta.fullListSize;
 									me.currentPage = oResponse.meta.page;
+									me.queryExecutionId = oResponse.meta.queryExecutionId;
 
 									// clear the empty error message
 									me.widgets.dataTable.set("MSG_EMPTY", "");
@@ -871,6 +874,10 @@
 											// were
 											// available
 											});
+
+							if (this.queryExecutionId) {
+								params += "&queryExecutionId=" + encodeURIComponent(this.queryExecutionId);
+							}
 
 							return params;
 						},

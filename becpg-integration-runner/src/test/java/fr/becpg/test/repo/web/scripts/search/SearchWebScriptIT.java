@@ -46,4 +46,32 @@ public class SearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 
 	}
 
+	@Test
+	public void testSearchWithPaginationCache() throws IOException {
+
+		String url = "/becpg/search?site=&term=MP*&tag=&maxResults=251&sort=&query=&repo=true&metadataFields=bcpg_legalName";
+
+		Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
+		assertEquals(response.getStatus(), 200);
+
+		String responseString = response.getContentAsString();
+		assertNotNull(responseString);
+
+		org.json.JSONObject json = new org.json.JSONObject(responseString);
+		assertTrue(json.has("queryExecutionId"));
+		String queryExecutionId = json.getString("queryExecutionId");
+		assertNotNull(queryExecutionId);
+		assertFalse(queryExecutionId.isEmpty());
+
+		// Second request passing queryExecutionId
+		String urlPage2 = url + "&page=2&pageSize=50&queryExecutionId=" + queryExecutionId;
+		Response responsePage2 = TestWebscriptExecuters.sendRequest(new GetRequest(urlPage2), 200, "admin");
+		assertEquals(responsePage2.getStatus(), 200);
+
+		String responsePage2String = responsePage2.getContentAsString();
+		assertNotNull(responsePage2String);
+		org.json.JSONObject jsonPage2 = new org.json.JSONObject(responsePage2String);
+		assertEquals(jsonPage2.getString("queryExecutionId"), queryExecutionId);
+	}
+
 }
