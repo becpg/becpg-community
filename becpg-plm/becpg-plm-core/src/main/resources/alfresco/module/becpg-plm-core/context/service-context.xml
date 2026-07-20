@@ -153,6 +153,7 @@
 		<property name="namespaceService" ref="NamespaceService" />
 		<property name="serviceRegistry" ref="ServiceRegistry" />
 		<property name="attributeExtractorService" ref="attributeExtractorService" />
+		<property name="paginatedSearchCache" ref="paginatedSearchCache" />
 	</bean>
   
 	<!-- Migration -->
