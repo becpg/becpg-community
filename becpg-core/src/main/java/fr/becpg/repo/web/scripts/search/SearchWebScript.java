@@ -30,6 +30,7 @@ import fr.becpg.repo.helper.extractors.LinkDataExtractor;
 import fr.becpg.repo.helper.extractors.NodeDataExtractor;
 import fr.becpg.repo.helper.extractors.WikiDataExtractor;
 import fr.becpg.repo.helper.impl.AttributeExtractorField;
+import fr.becpg.repo.search.PaginatedSearchCache;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
 
 /**
@@ -46,6 +47,17 @@ public class SearchWebScript extends AbstractSearchWebScript {
 	private ServiceRegistry serviceRegistry;
 
 	private AttributeExtractorService attributeExtractorService;
+
+	private PaginatedSearchCache paginatedSearchCache;
+
+	/**
+	 * <p>Setter for the field <code>paginatedSearchCache</code>.</p>
+	 *
+	 * @param paginatedSearchCache the paginatedSearchCache to set
+	 */
+	public void setPaginatedSearchCache(PaginatedSearchCache paginatedSearchCache) {
+		this.paginatedSearchCache = paginatedSearchCache;
+	}
 
 	/**
 	 * <p>Setter for the field <code>attributeExtractorService</code>.</p>
@@ -81,9 +93,24 @@ public class SearchWebScript extends AbstractSearchWebScript {
 		Integer page = getNumParameter(req, PARAM_PAGE);
 		Integer pageSize = getNumParameter(req, PARAM_PAGE_SIZE);
 		List<AttributeExtractorField> metadataFields = WebscriptHelper.extractMetadataFields(req);
+		String queryExecutionId = req.getParameter("queryExecutionId");
 
 		try {
-			List<NodeRef> results = doSearch(req, maxResults);
+			List<NodeRef> results = null;
+			if (queryExecutionId != null && !queryExecutionId.isEmpty() && paginatedSearchCache != null) {
+				results = paginatedSearchCache.getSearchResults(queryExecutionId);
+			}
+
+			if (results == null) {
+				results = doSearch(req, maxResults);
+				if (results != null && paginatedSearchCache != null) {
+					queryExecutionId = paginatedSearchCache.storeSearchResults(results);
+				}
+			}
+
+			if (results == null) {
+				results = new java.util.ArrayList<>();
+			}
 
 			if (page == null) {
 				page = 1;
@@ -103,6 +130,9 @@ public class SearchWebScript extends AbstractSearchWebScript {
 			ret.put("page", page);
 			ret.put("pageSize", pageSize);
 			ret.put("fullListSize", size);
+			if (queryExecutionId != null) {
+				ret.put("queryExecutionId", queryExecutionId);
+			}
 
 			res.setContentType("application/json");
 			res.setContentEncoding("UTF-8");

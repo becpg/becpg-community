@@ -378,7 +378,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 			String propValue = criteria.get(CRITERIA_PRODUCT_COLLECTIONS);
 			if ((propValue != null) && !propValue.isBlank()) {
-				List<NodeRef> retainNodes = new ArrayList<>();
+				Set<NodeRef> retainNodes = new HashSet<>();
 				for (NodeRef nodeRef : extractNodeRefs(propValue, false)) {
 					ProductCollectionData productCollection = (ProductCollectionData) alfrescoRepository.findOne(nodeRef);
 					for (ProductListDataItem dataItem : productCollection.getProductList()) {
@@ -421,7 +421,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 		List<EntitySourceAssoc> entitySourceAssocs = null;
 		List<EntitySourceAssoc> notEntitySourceAssocs = null;
-		List<NodeRef> entities = new ArrayList<>();
+		Set<NodeRef> entities = new HashSet<>();
 
 		for (DataListSearchFilterField assocFilter : filter.getAssocsFilters()) {
 			String propValue = null;
@@ -471,9 +471,10 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 		if (entitySourceAssocs != null) {
 
+			Set<NodeRef> nodesSet = new HashSet<>(nodes);
 			for (EntitySourceAssoc assocRef : entitySourceAssocs) {
 
-				if (nodes.contains(assocRef.getEntityNodeRef())) {
+				if (nodesSet.contains(assocRef.getEntityNodeRef())) {
 					entities.add(assocRef.getEntityNodeRef());
 				}
 			}
@@ -483,7 +484,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		}
 
 		if (notEntitySourceAssocs != null) {
-			nodes.removeAll(notEntitySourceAssocs.stream().map(EntitySourceAssoc::getEntityNodeRef).collect(Collectors.toList()));
+			nodes.removeAll(notEntitySourceAssocs.stream().map(EntitySourceAssoc::getEntityNodeRef).collect(Collectors.toSet()));
 
 		}
 
@@ -772,7 +773,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				for (NodeRef nodeRef : extractNodeRefs(propValue, false)) {
 
 					ProductSpecificationData productSpecificationData = (ProductSpecificationData) alfrescoRepository.findOne(nodeRef);
-					List<NodeRef> retainNodes = new ArrayList<>();
+					Set<NodeRef> retainNodes = new HashSet<>();
 					for (NodeRef productNodeRef : nodes) {
 						boolean retain = false;
 						for (SpecCompatibilityDataItem dataItem : productSpecificationData.getSpecCompatibilityList()) {
@@ -800,7 +801,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			if ((propValue != null) && !propValue.isEmpty()) {
 				for (NodeRef nodeRef : extractNodeRefs(propValue, false)) {
 					ProductSpecificationData productSpecificationData = (ProductSpecificationData) alfrescoRepository.findOne(nodeRef);
-					List<NodeRef> removedNodes = new ArrayList<>();
+					Set<NodeRef> removedNodes = new HashSet<>();
 					for (NodeRef productNodeRef : nodes) {
 						boolean remove = false;
 						for (SpecCompatibilityDataItem dataItem : productSpecificationData.getSpecCompatibilityList()) {
@@ -862,7 +863,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 					MultiLevelListData ret = wUsedListService.getWUsedEntity(toFilterByNodes, WUsedOperator.OR, criteriaAssoc, -1);
 					if (ret != null) {
-						nodes.retainAll(ret.getAllChilds());
+						nodes.retainAll(new HashSet<>(ret.getAllChilds()));
 					}
 				}
 			}
