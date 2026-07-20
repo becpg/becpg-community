@@ -24,6 +24,27 @@ function formatWeight ( value ) {
         // Formatter.format va automatiquement remettre les virgules "à la française" si ton rapport est en FR !
         return Formatter.format(value, "###,##0.###") + " kg";
     }   
+}
+
+function unescapeQuotes(val) {
+	if (val == null || val == undefined) {
+		return null;
+	}
+	var str = val.toString();
+	return str.replace(/&amp;quot;/g, "\"")
+		.replace(/&quot;/g, "\"")
+		.replace(/&amp;apos;/g, "'")
+		.replace(/&apos;/g, "'")
+		.replace(/&amp;#39;/g, "'")
+		.replace(/&#39;/g, "'");
+}
+
+function isHtml(val) {
+	if (val == null || val == undefined) {
+		return false;
+	}
+	var str = val.toString();
+	return /<[a-z][\s\S]*>/i.test(str) || /&(amp;)?lt;[a-z][\s\S]*&(amp;)?gt;/i.test(str);
 }]]></method>
     <property name="iconFile">/templates/blank_report.gif</property>
     <property name="bidiLayoutOrientation">ltr</property>
@@ -50,7 +71,7 @@ function formatWeight ( value ) {
     </parameters>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="1347">
-            <property name="FILELIST">src/main/resources/beCPG/birt/system/compDataSource.xml</property>
+			<property name="FILELIST">src/main/resources/beCPG/birt/system/compDataSource.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -2853,13 +2874,13 @@ function formatWeight ( value ) {
                 <structure>
                     <property name="name">characteristic</property>
                     <text-property name="displayName">characteristic</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["characteristic"]</expression>
+                    <expression name="expression" type="javascript">unescapeQuotes(dataSetRow["characteristic"])</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">property</property>
                     <text-property name="displayName">property</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["property"]</expression>
+                    <expression name="expression" type="javascript">unescapeQuotes(dataSetRow["property"])</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
@@ -2877,97 +2898,97 @@ function formatWeight ( value ) {
                 <structure>
                     <property name="name">entity1</property>
                     <text-property name="displayName">entity1</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["entity1"]</expression>
+                    <expression name="expression" type="javascript">unescapeQuotes(dataSetRow["entity1"])</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">entity2</property>
                     <text-property name="displayName">entity2</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["entity2"]</expression>
+                    <expression name="expression" type="javascript">unescapeQuotes(dataSetRow["entity2"])</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">entity3</property>
                     <text-property name="displayName">entity3</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["entity3"]</expression>
+                    <expression name="expression" type="javascript">unescapeQuotes(dataSetRow["entity3"])</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">entity4</property>
                     <text-property name="displayName">entity4</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["entity4"]</expression>
+                    <expression name="expression" type="javascript">unescapeQuotes(dataSetRow["entity4"])</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">entity5</property>
                     <text-property name="displayName">entity5</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["entity5"]</expression>
+                    <expression name="expression" type="javascript">unescapeQuotes(dataSetRow["entity5"])</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">entity6</property>
                     <text-property name="displayName">entity6</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["entity6"]</expression>
+                    <expression name="expression" type="javascript">unescapeQuotes(dataSetRow["entity6"])</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">entity7</property>
                     <text-property name="displayName">entity7</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["entity7"]</expression>
+                    <expression name="expression" type="javascript">unescapeQuotes(dataSetRow["entity7"])</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">entity8</property>
                     <text-property name="displayName">entity8</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["entity8"]</expression>
+                    <expression name="expression" type="javascript">unescapeQuotes(dataSetRow["entity8"])</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">value1</property>
                     <text-property name="displayName">value1</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value1"]</expression>
+                    <expression name="expression" type="javascript">unescapeQuotes(dataSetRow["value1"])</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">value2</property>
                     <text-property name="displayName">value2</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value2"]</expression>
+                    <expression name="expression" type="javascript">unescapeQuotes(dataSetRow["value2"])</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">value3</property>
                     <text-property name="displayName">value3</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value3"]</expression>
+                    <expression name="expression" type="javascript">unescapeQuotes(dataSetRow["value3"])</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">value4</property>
                     <text-property name="displayName">value4</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value4"]</expression>
+                    <expression name="expression" type="javascript">unescapeQuotes(dataSetRow["value4"])</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">value5</property>
                     <text-property name="displayName">value5</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value5"]</expression>
+                    <expression name="expression" type="javascript">unescapeQuotes(dataSetRow["value5"])</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">value6</property>
                     <text-property name="displayName">value6</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value6"]</expression>
+                    <expression name="expression" type="javascript">unescapeQuotes(dataSetRow["value6"])</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">value7</property>
                     <text-property name="displayName">value7</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value7"]</expression>
+                    <expression name="expression" type="javascript">unescapeQuotes(dataSetRow["value7"])</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">value8</property>
                     <text-property name="displayName">value8</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value8"]</expression>
+                    <expression name="expression" type="javascript">unescapeQuotes(dataSetRow["value8"])</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
@@ -5437,7 +5458,7 @@ dataSetRow["value8"]</expression>
                             <list-property name="visibility">
                                 <structure>
                                     <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" || isHtml(row["value1"]) ? false :true</expression>
                                 </structure>
                             </list-property>
                             <expression name="valueExpr">row["value1"] ? (row["value1"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
@@ -5452,7 +5473,7 @@ dataSetRow["value8"]</expression>
                             <list-property name="visibility">
                                 <structure>
                                     <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" || isHtml(row["value1"]) ? true :false</expression>
                                 </structure>
                             </list-property>
                             <property name="resultSetColumn">value1</property>
@@ -5493,7 +5514,7 @@ dataSetRow["value8"]</expression>
                             <list-property name="visibility">
                                 <structure>
                                     <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" || isHtml(row["value2"]) ? false :true</expression>
                                 </structure>
                             </list-property>
                             <expression name="valueExpr">row["value2"] ? (row["value2"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
@@ -5508,7 +5529,7 @@ dataSetRow["value8"]</expression>
                             <list-property name="visibility">
                                 <structure>
                                     <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" || isHtml(row["value2"]) ? true :false</expression>
                                 </structure>
                             </list-property>
                             <property name="resultSetColumn">value2</property>
@@ -5549,7 +5570,7 @@ dataSetRow["value8"]</expression>
                             <list-property name="visibility">
                                 <structure>
                                     <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" || isHtml(row["value3"]) ? false :true</expression>
                                 </structure>
                             </list-property>
                             <expression name="valueExpr">row["value3"] ? (row["value3"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
@@ -5564,7 +5585,7 @@ dataSetRow["value8"]</expression>
                             <list-property name="visibility">
                                 <structure>
                                     <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" || isHtml(row["value3"]) ? true :false</expression>
                                 </structure>
                             </list-property>
                             <property name="resultSetColumn">value3</property>
@@ -5601,7 +5622,7 @@ dataSetRow["value8"]</expression>
                             <list-property name="visibility">
                                 <structure>
                                     <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" || isHtml(row["value4"]) ? false :true</expression>
                                 </structure>
                             </list-property>
                             <expression name="valueExpr">row["value4"] ? (row["value4"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
@@ -5616,7 +5637,7 @@ dataSetRow["value8"]</expression>
                             <list-property name="visibility">
                                 <structure>
                                     <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" || isHtml(row["value4"]) ? true :false</expression>
                                 </structure>
                             </list-property>
                             <property name="resultSetColumn">value4</property>
@@ -5653,7 +5674,7 @@ dataSetRow["value8"]</expression>
                             <list-property name="visibility">
                                 <structure>
                                     <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" || isHtml(row["value5"]) ? false :true</expression>
                                 </structure>
                             </list-property>
                             <expression name="valueExpr">row["value5"] ? (row["value5"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
@@ -5663,7 +5684,7 @@ dataSetRow["value8"]</expression>
                             <list-property name="visibility">
                                 <structure>
                                     <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" || isHtml(row["value5"]) ? true :false</expression>
                                 </structure>
                             </list-property>
                             <property name="resultSetColumn">value5</property>
@@ -5700,7 +5721,7 @@ dataSetRow["value8"]</expression>
                             <list-property name="visibility">
                                 <structure>
                                     <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" || isHtml(row["value6"]) ? false :true</expression>
                                 </structure>
                             </list-property>
                             <expression name="valueExpr">row["value6"] ? (row["value6"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
@@ -5710,7 +5731,7 @@ dataSetRow["value8"]</expression>
                             <list-property name="visibility">
                                 <structure>
                                     <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" || isHtml(row["value6"]) ? true :false</expression>
                                 </structure>
                             </list-property>
                             <property name="resultSetColumn">value6</property>
@@ -5747,7 +5768,7 @@ dataSetRow["value8"]</expression>
                             <list-property name="visibility">
                                 <structure>
                                     <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" || isHtml(row["value7"]) ? false :true</expression>
                                 </structure>
                             </list-property>
                             <expression name="valueExpr">row["value7"] ? (row["value7"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
@@ -5757,7 +5778,7 @@ dataSetRow["value8"]</expression>
                             <list-property name="visibility">
                                 <structure>
                                     <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" || isHtml(row["value7"]) ? true :false</expression>
                                 </structure>
                             </list-property>
                             <property name="resultSetColumn">value7</property>
@@ -5794,7 +5815,7 @@ dataSetRow["value8"]</expression>
                             <list-property name="visibility">
                                 <structure>
                                     <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? false :true</expression>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" || isHtml(row["value8"]) ? false :true</expression>
                                 </structure>
                             </list-property>
                             <expression name="valueExpr">row["value8"] ? (row["value8"].replace(/&amp;lt;/g, "&lt;").replace(/&amp;gt;/g, ">").replace(/&amp;quot;/g, "\"").replace(/&amp;amp;/g, "&amp;")) : ""</expression>
@@ -5804,7 +5825,7 @@ dataSetRow["value8"]</expression>
                             <list-property name="visibility">
                                 <structure>
                                     <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" ? true :false</expression>
+                                    <expression name="valueExpr" type="javascript">row["propertyQName"]=="bcpg:illValue" || isHtml(row["value8"]) ? true :false</expression>
                                 </structure>
                             </list-property>
                             <property name="resultSetColumn">value8</property>
