@@ -775,19 +775,28 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 	 * @return a boolean
 	 */
 	private boolean previousDone(TaskWrapper task, Set<TaskWrapper> visited) {
-		for (TaskWrapper t : task.getAncestors()) {
-			if (visited.contains(t)) {
-				logger.warn("Cycle detected in previousDone for task: " + task.getTask().getTaskName());
-				return false;
-			}
-			visited.add(t);
+		return previousDone(task, new HashSet<>(), visited);
+	}
 
+	private boolean previousDone(TaskWrapper task, Set<TaskWrapper> visiting, Set<TaskWrapper> visited) {
+		if (visited.contains(task)) {
+			return true;
+		}
+		if (visiting.contains(task)) {
+			logger.warn("Cycle detected in previousDone for task: " + task.getTask().getTaskName());
+			return false;
+		}
+		visiting.add(task);
+		for (TaskWrapper t : task.getAncestors()) {
 			boolean taskDone = TaskState.Completed.equals(t.getTask().getTaskState()) || TaskState.Cancelled.equals(t.getTask().getTaskState());
 
-			if (!taskDone || (TaskState.Cancelled.equals(t.getTask().getTaskState()) && !previousDone(t, visited))) {
+			if (!taskDone || (TaskState.Cancelled.equals(t.getTask().getTaskState()) && !previousDone(t, visiting, visited))) {
+				visiting.remove(task);
 				return false;
 			}
 		}
+		visiting.remove(task);
+		visited.add(task);
 		return true;
 	}
 
