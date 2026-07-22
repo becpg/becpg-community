@@ -110,6 +110,7 @@ Fix #1234 - [Security] Patch authentication vulnerability
 - **One line only** - no multi-line commit messages
 - **English descriptions** - clear and concise
 - Include ticket references when applicable
+- **Stage and commit only explicitly modified or created files** - never use generic `git add .` or stage unrelated untracked files from the workspace.
 
 ## AI Assistant Best Practices
 
