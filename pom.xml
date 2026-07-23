@@ -359,6 +359,7 @@
 							<outputDirectory>${project.basedir}/src/main/assembly/web</outputDirectory>
 							<excludes>
 								<exclude>**/templates/**</exclude>
+								<exclude>**/pdfjs/**</exclude>
 								<exclude>**/webscripts/**</exclude>
 								<exclude>**/supplier/**</exclude>
 								<exclude>**/artworks-viewer/**</exclude>
