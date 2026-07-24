@@ -46,14 +46,7 @@ public class MultiLevelDataServiceIT extends PLMBaseTestCase {
 	private NodeRef lSF4NodeRef = null;
 	private NodeRef finishedProductNodeRef = null;
 
-	/**
-	 * Test get Multilevel of the compoList
-	 */
-	@Test
-	public void testGetMultiLevelCompoList() {
-
-		logger.debug("testGetMultiLevelCompoList");
-
+	private void setupMultiLevelCompoListTestData() {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			/*-- Create raw material --*/
@@ -107,6 +100,17 @@ public class MultiLevelDataServiceIT extends PLMBaseTestCase {
 		}, false, true);
 
 		waitForSolr();
+	}
+
+	/**
+	 * Test get Multilevel of the compoList
+	 */
+	@Test
+	public void testGetMultiLevelCompoList() {
+
+		logger.debug("testGetMultiLevelCompoList");
+
+		setupMultiLevelCompoListTestData();
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -127,6 +131,48 @@ public class MultiLevelDataServiceIT extends PLMBaseTestCase {
 			assertEquals(6, checks);
 			return null;
 
+		}, false, true);
+	}
+
+	@Test
+	public void testFilterMultiLevelCompoList() {
+		logger.debug("testFilterMultiLevelCompoList");
+
+		setupMultiLevelCompoListTestData();
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			final DataListFilter dataListFilter = new DataListFilter();
+			dataListFilter.setDataType(PLMModel.TYPE_COMPOLIST);
+			dataListFilter.updateMaxDepth(-1);
+			dataListFilter.setEntityNodeRefs(Collections.singletonList(finishedProductNodeRef));
+			dataListFilter.setFilterId("FORM_FILTER");
+			dataListFilter.getCriteriaMap().put("prop_bcpg_compoListUnit", "kg");
+
+			MultiLevelListData mlld = multiLevelDataListService.getMultiLevelListData(dataListFilter);
+
+			assertNotNull(mlld);
+			assertEquals(3, mlld.getTree().size());
+
+			boolean foundChild12 = false;
+			boolean foundChild2 = false;
+			boolean foundChild21 = false;
+
+			for (MultiLevelListData childData : mlld.getTree().values()) {
+				if (childData.getEntityNodeRef().equals(rawMaterial1NodeRef)) {
+					foundChild12 = true;
+				} else if (childData.getEntityNodeRef().equals(rawMaterial2NodeRef)) {
+					foundChild2 = true;
+				} else if (childData.getEntityNodeRef().equals(lSF4NodeRef)) {
+					foundChild21 = true;
+				}
+			}
+
+			assertTrue("rawMaterial1NodeRef not found at root", foundChild12);
+			assertTrue("rawMaterial2NodeRef not found at root", foundChild2);
+			assertTrue("lSF4NodeRef not found at root", foundChild21);
+
+			return null;
 		}, false, true);
 	}
 
