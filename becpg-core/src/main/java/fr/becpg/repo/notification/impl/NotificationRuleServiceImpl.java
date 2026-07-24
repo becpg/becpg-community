@@ -20,6 +20,7 @@ import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.ServiceRegistry;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.download.DownloadService;
 import org.alfresco.service.cmr.download.DownloadStatus;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -156,29 +157,41 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		for (NodeRef notificationNodeRef : getAllNotificationRule()) {
 			NotificationRuleListDataItem notification = alfrescoRepository.findOne(notificationNodeRef);
 			if ((notification != null) && !shouldSkip(notification)) {
+				try {
+					initializeNotification(notification);
 
-				initializeNotification(notification);
+					SearchRuleFilter filter = buildSearchFilter(notification);
+					SearchRuleResult searchResult = searchRuleService.search(filter);
 
-				SearchRuleFilter filter = buildSearchFilter(notification);
-				SearchRuleResult searchResult = searchRuleService.search(filter);
+					if (!isEmptyResult(notification, searchResult, filter)) {
 
-				if (!isEmptyResult(notification, searchResult, filter)) {
+						Map<String, Object> templateArgs = buildTemplateArgs(notification, filter);
+						Map<NodeRef, Object> entities = buildEntities(searchResult.getResults(), notification);
 
-					Map<String, Object> templateArgs = buildTemplateArgs(notification, filter);
-					Map<NodeRef, Object> entities = buildEntities(searchResult.getResults(), notification);
+						Consumer<NodeRef> mailSender = createMailSender(notification, templateArgs, entities, filter, searchResult);
 
-					Consumer<NodeRef> mailSender = createMailSender(notification, templateArgs, entities, filter, searchResult);
+						if (CollectionUtils.isNotEmpty(notification.getReportTpls())) {
+							processReportTemplates(notification, searchResult, mailSender);
+						} else {
+							mailSender.accept(null);
+						}
 
-					if (CollectionUtils.isNotEmpty(notification.getReportTpls())) {
-						processReportTemplates(notification, searchResult, mailSender);
+						executeScriptIfExists(notification, searchResult.getResults(), templateArgs);
 					} else {
-						mailSender.accept(null);
+						logNoObjects(notification, filter);
+
 					}
-
-					executeScriptIfExists(notification, searchResult.getResults(), templateArgs);
-				} else {
-					logNoObjects(notification, filter);
-
+				} catch (Throwable e) {
+					if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+						throw e;
+					}
+					logger.error("Error while sending notification " + notificationNodeRef, e);
+					try {
+						notification.setErrorLog(e.getMessage() != null ? e.getMessage() : e.toString());
+						alfrescoRepository.save(notification);
+					} catch (Exception ex) {
+						logger.error("Error while saving notification error details " + notificationNodeRef, ex);
+					}
 				}
 			}
 		}
