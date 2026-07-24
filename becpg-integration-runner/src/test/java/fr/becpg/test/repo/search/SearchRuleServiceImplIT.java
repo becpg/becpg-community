@@ -1,5 +1,6 @@
 package fr.becpg.test.repo.search;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -39,5 +40,19 @@ public class SearchRuleServiceImplIT extends PLMBaseTestCase {
 		results = searchRuleService.search(filter).getResults();
 		Assert.assertEquals(10, results.size());
 
+	}
+
+	@Test
+	public void testDateFormatPaddedWithZeros() throws Exception {
+		SearchRuleService impl = new fr.becpg.repo.search.impl.SearchRuleServiceImpl();
+		java.lang.reflect.Method method = impl.getClass().getDeclaredMethod("formatDate", 
+				fr.becpg.repo.search.data.DateFilterDelayUnit.class, java.util.Calendar.class);
+		method.setAccessible(true);
+		
+		Calendar cal = Calendar.getInstance();
+		cal.set(2026, Calendar.JULY, 9);
+		
+		String formatted = (String) method.invoke(impl, fr.becpg.repo.search.data.DateFilterDelayUnit.DATE, cal);
+		Assert.assertEquals("2026\\-07\\-09", formatted);
 	}
 }
