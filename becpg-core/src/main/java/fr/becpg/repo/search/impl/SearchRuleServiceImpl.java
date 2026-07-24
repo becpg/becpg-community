@@ -379,7 +379,7 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 
 	private String formatDate(DateFilterDelayUnit dateFilterDelayUnit, Calendar date) {
 		if (DateFilterDelayUnit.DATE.equals(dateFilterDelayUnit)) {
-			return date.get(Calendar.YEAR) + "\\-" + (date.get(Calendar.MONTH) + 1) + "\\-" + date.get(Calendar.DAY_OF_MONTH);
+			return formatter.get().format(date.getTime());
 		}
 		return ISO8601DateFormat.format(date.getTime());
 	}
