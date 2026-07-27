@@ -243,7 +243,16 @@
 .entity-InProgress,
 .entity-OnHold,
 .entity-Cancelled,
-.entity-Completed {
+.entity-Completed,
+.entity-new,
+.entity-analysis,
+.entity-treatment,
+.entity-response,
+.entity-classification,
+.entity-closing,
+.entity-closed,
+.entity-Compliant,
+.entity-NonCompliant {
     display: inline-block;
     padding: 1px 7px;
     border-radius: 3px;
@@ -262,3 +271,12 @@
 .entity-OnHold { color: #546e7a; background-color: #eceff1; }
 .entity-Cancelled { color: #c62828; background-color: #ffebee; }
 .entity-Completed { color: #2e7d32; background-color: #e8f5e9; }
+.entity-new { color: #1565c0; background-color: #e3f2fd; }
+.entity-analysis { color: #e65100; background-color: #fff3e0; }
+.entity-treatment { color: #e65100; background-color: #fff3e0; }
+.entity-response { color: #546e7a; background-color: #eceff1; }
+.entity-classification { color: #546e7a; background-color: #eceff1; }
+.entity-closing { color: #607d8b; background-color: #eceff1; }
+.entity-closed { color: #2e7d32; background-color: #e8f5e9; }
+.entity-Compliant { color: #2e7d32; background-color: #e8f5e9; }
+.entity-NonCompliant { color: #c62828; background-color: #ffebee; }
