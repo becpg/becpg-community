@@ -5,6 +5,10 @@ var Evaluator =
     */
    getNodeType: function Evaluator_getNodeType(node)
    {
+      if (node == null)
+      {
+         return "document";
+      }
       var nodeType = "document";
       if (node.hasAspect("bcpg:entityListsAspect"))
       {
@@ -30,6 +34,10 @@ var Evaluator =
     */
    run: function Evaluator_run(node, isParent)
    {
+      if (node == null)
+      {
+         return null;
+      }
       var nodeType = Evaluator.getNodeType(node),
          workingCopy = {},
          activeWorkflows = [],
