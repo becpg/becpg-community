@@ -235,18 +235,22 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 	/** {@inheritDoc} */
 	@Override
 	public void publishEntityChannel(NodeRef entityNodeRef, String channelId, ChannelData channelData) {
-		boolean isEnabledAudit = policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE);
-		try {
-			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-			NodeRef channelListNodeRef = getOrCreateChannelListNodeRef(entityNodeRef, channelId);
-			nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_STATUS, channelData.getStatus());
-			nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_BATCHID, channelData.getBatchId());
-			nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ERROR, channelData.getError());
-			nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ACTION, channelData.getAction());
-			nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_PUBLISHEDDATE, new Date());
-		} finally {
-			if (isEnabledAudit) {
-				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+		if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ARCHIVED_ENTITY)) {
+			updateArchivedEntityChannelIds(entityNodeRef, channelId, channelData);
+		} else {
+			boolean isEnabledAudit = policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE);
+			try {
+				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				NodeRef channelListNodeRef = getOrCreateChannelListNodeRef(entityNodeRef, channelId);
+				nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_STATUS, channelData.getStatus());
+				nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_BATCHID, channelData.getBatchId());
+				nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ERROR, channelData.getError());
+				nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ACTION, channelData.getAction());
+				nodeService.setProperty(channelListNodeRef, PublicationModel.PROP_PUBCHANNELLIST_PUBLISHEDDATE, new Date());
+			} finally {
+				if (isEnabledAudit) {
+					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				}
 			}
 		}
 	}
@@ -429,7 +433,7 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 	@SuppressWarnings("unchecked")
 	private List<String> getPropertyOrDefault(NodeRef entityNodeRef, QName propertyQName) {
 		List<String> propertyValue = (List<String>) nodeService.getProperty(entityNodeRef, propertyQName);
-		return propertyValue != null ? propertyValue : new ArrayList<>();
+		return propertyValue != null ? new ArrayList<>(propertyValue) : new ArrayList<>();
 	}
 
 	/** {@inheritDoc} */
@@ -509,6 +513,67 @@ public class PublicationChannelServiceImpl extends AbstractBeCPGPolicy implement
 		}
 
 		return query.inDBIfPossible().ftsLanguage().pagingResults();
+	}
+
+	private void updateArchivedEntityChannelIds(NodeRef entityNodeRef, String channelId, ChannelData channelData) {
+		String action = channelData.getAction();
+		String status = channelData.getStatus();
+		
+		List<String> channelIds = getPropertyOrDefault(entityNodeRef, PublicationModel.PROP_CHANNELIDS);
+		List<String> failedChannelIds = getPropertyOrDefault(entityNodeRef, PublicationModel.PROP_FAILED_CHANNELIDS);
+		List<String> publishedChannelIds = getPropertyOrDefault(entityNodeRef, PublicationModel.PROP_PUBLISHED_CHANNELIDS);
+
+		if (!channelIds.contains(channelId)) {
+			channelIds.add(channelId);
+		}
+
+		if (PublicationChannelService.PublicationChannelStatus.FAILED.toString().equals(status) 
+				&& !PublicationChannelService.PublicationChannelAction.RETRY.toString().equals(action)) {
+			if (!failedChannelIds.contains(channelId)) {
+				failedChannelIds.add(channelId);
+			}
+		} else {
+			failedChannelIds.remove(channelId);
+		}
+
+		Date modifiedDate = (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIED);
+		if (modifiedDate == null) {
+			modifiedDate = (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED);
+		}
+		Date publishDate = new Date();
+
+		if (!PublicationChannelService.PublicationChannelAction.RETRY.toString().equals(action) 
+				&& PublicationChannelService.PublicationChannelStatus.COMPLETED.toString().equals(status)
+				&& modifiedDate != null && (publishDate.after(modifiedDate) || publishDate.equals(modifiedDate))) {
+			if (!publishedChannelIds.contains(channelId)) {
+				publishedChannelIds.add(channelId);
+			}
+		} else {
+			publishedChannelIds.remove(channelId);
+		}
+
+		if (PublicationChannelService.PublicationChannelAction.STOP.toString().equals(action)) {
+			if (!publishedChannelIds.contains(channelId)) {
+				publishedChannelIds.add(channelId);
+			}
+		}
+
+		boolean isEnabledAudit = policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE);
+		boolean isEnabledArchivedEntity = policyBehaviourFilter.isEnabled(BeCPGModel.ASPECT_ARCHIVED_ENTITY);
+		try {
+			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ARCHIVED_ENTITY);
+			nodeService.setProperty(entityNodeRef, PublicationModel.PROP_FAILED_CHANNELIDS, (Serializable) failedChannelIds);
+			nodeService.setProperty(entityNodeRef, PublicationModel.PROP_PUBLISHED_CHANNELIDS, (Serializable) publishedChannelIds);
+			nodeService.setProperty(entityNodeRef, PublicationModel.PROP_CHANNELIDS, (Serializable) channelIds);
+		} finally {
+			if (isEnabledArchivedEntity) {
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_ARCHIVED_ENTITY);
+			}
+			if (isEnabledAudit) {
+				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			}
+		}
 	}
 
 }

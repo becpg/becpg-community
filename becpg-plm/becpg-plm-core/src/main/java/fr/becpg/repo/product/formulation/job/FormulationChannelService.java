@@ -629,6 +629,9 @@ public class FormulationChannelService implements BatchQueuePlugin {
 	@SuppressWarnings("unchecked")
 	private boolean needsFormulation(NodeRef channelProduct) {
 		
+		if (nodeService.hasAspect(channelProduct, BeCPGModel.ASPECT_ARCHIVED_ENTITY)) {
+			return false;
+		}
 		List<String> channelIds = (List<String>) nodeService.getProperty(channelProduct, PublicationModel.PROP_CHANNELIDS);
 		if (channelIds != null && channelIds.contains(FORMULATE_ENTITIES_CHANNEL_ID)) {
 			return true;
