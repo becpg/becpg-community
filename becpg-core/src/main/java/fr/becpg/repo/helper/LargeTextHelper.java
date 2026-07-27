@@ -1,6 +1,5 @@
 package fr.becpg.repo.helper;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
@@ -23,10 +22,16 @@ public class LargeTextHelper {
 	/** Constant <code>TEXT_SIZE_LIMIT=50000</code> */
 	public static final int TEXT_SIZE_LIMIT = 50000;
 
+	/** Overhead kept when shortening a value to leave room for the ellipsis suffix. */
+	private static final int ELLIPSIS_OVERHEAD = 20;
+
+	/**
+	 * <p>Constructor for LargeTextHelper.</p>
+	 */
 	private LargeTextHelper() {
 		//Do Nothing
 	}
-	
+
 	/**
 	 * <p>elipse.</p>
 	 *
@@ -60,7 +65,7 @@ public class LargeTextHelper {
 	 */
 	public static Pair<String, String> createTextDiffs(String string1, String string2) {
 
-		
+
 		DiffMatchPatch dmp = new DiffMatchPatch();
 		List<Diff> diffs = dmp.diffMain(string1, string2);
 
@@ -80,27 +85,44 @@ public class LargeTextHelper {
 
 		return new Pair<>(beforeBuilder.toString(), afterBuilder.toString());
 	}
-	
+
 
 	/**
 	 * <p>elipse.</p>
 	 *
+	 * Returns a copy of the given {@link org.alfresco.service.cmr.repository.MLText} whose values are
+	 * shortened so that the total length (all locales combined) stays under {@link #TEXT_SIZE_LIMIT}.
+	 * The budget is shared between locales proportionally to their actual content, empty locales are
+	 * ignored, and the source {@link org.alfresco.service.cmr.repository.MLText} is left untouched.
+	 *
 	 * @param mlText a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @return a new {@link org.alfresco.service.cmr.repository.MLText} object
 	 */
-	public static void elipse(MLText mlText) {
-		
-		if (mlText.toString().length() > TEXT_SIZE_LIMIT) {
-			int localesNumber = mlText.keySet().size();
-			
-			int newTextLength = TEXT_SIZE_LIMIT / localesNumber - 20;
-			
-			Iterator<Entry<Locale, String>> it = mlText.entrySet().iterator();
+	public static MLText elipse(MLText mlText) {
 
-			while (it.hasNext()) {
-				Locale locale = it.next().getKey();
-				mlText.put(locale, elipse(mlText.get(locale),newTextLength));
+		MLText result = new MLText();
+		if (mlText == null) {
+			return result;
+		}
+
+		int totalLength = 0;
+		for (String value : mlText.values()) {
+			if (value != null) {
+				totalLength += value.length();
 			}
 		}
+
+		for (Entry<Locale, String> entry : mlText.entrySet()) {
+			String value = entry.getValue();
+			if ((value == null) || value.isEmpty() || (totalLength <= TEXT_SIZE_LIMIT)) {
+				result.put(entry.getKey(), value);
+			} else {
+				// Share the global budget proportionally to each locale's actual size
+				int allowed = (int) ((long) value.length() * TEXT_SIZE_LIMIT / totalLength) - ELLIPSIS_OVERHEAD;
+				result.put(entry.getKey(), elipse(value, Math.max(allowed, 0)));
+			}
+		}
+		return result;
 	}
 
 	/**
