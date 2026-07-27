@@ -20,6 +20,9 @@ package fr.becpg.repo.admin.patch;
 import java.util.List;
 
 import org.alfresco.repo.admin.patch.AbstractPatch;
+import org.alfresco.repo.domain.node.NodeDAO;
+import org.alfresco.repo.domain.patch.PatchDAO;
+import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.admin.PatchException;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -47,7 +50,67 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 	protected RepoService repoService;
 	protected EntitySystemService entitySystemService;
 	protected ContentHelper contentHelper;
-	
+
+	protected NodeDAO nodeDAO;
+
+	protected PatchDAO patchDAO;
+
+	protected QNameDAO qnameDAO;
+
+	/**
+	 * <p>Setter for the field <code>nodeDAO</code>.</p>
+	 *
+	 * @param nodeDAO a {@link org.alfresco.repo.domain.node.NodeDAO} object
+	 */
+	public void setNodeDAO(NodeDAO nodeDAO) {
+		this.nodeDAO = nodeDAO;
+	}
+
+	/**
+	 * <p>Setter for the field <code>patchDAO</code>.</p>
+	 *
+	 * @param patchDAO a {@link org.alfresco.repo.domain.patch.PatchDAO} object
+	 */
+	public void setPatchDAO(PatchDAO patchDAO) {
+		this.patchDAO = patchDAO;
+	}
+
+	/**
+	 * <p>Setter for the field <code>qnameDAO</code>.</p>
+	 *
+	 * @param qnameDAO a {@link org.alfresco.repo.domain.qname.QNameDAO} object
+	 */
+	public void setQnameDAO(QNameDAO qnameDAO) {
+		this.qnameDAO = qnameDAO;
+	}
+
+	/**
+	 * <p>Getter for the field <code>nodeDAO</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.repo.domain.node.NodeDAO} object
+	 */
+	public NodeDAO getNodeDAO() {
+		return nodeDAO;
+	}
+
+	/**
+	 * <p>Getter for the field <code>patchDAO</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.repo.domain.patch.PatchDAO} object
+	 */
+	public PatchDAO getPatchDAO() {
+		return patchDAO;
+	}
+
+	/**
+	 * <p>Getter for the field <code>qnameDAO</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.repo.domain.qname.QNameDAO} object
+	 */
+	public QNameDAO getQnameDAO() {
+		return qnameDAO;
+	}
+
 	/** Batch processing configuration, overridable via -D system properties */
 	protected static final int BATCH_THREADS = Integer.getInteger("becpg.patch.threads", 4);
 	protected static final int BATCH_SIZE = Integer.getInteger("becpg.patch.batchSize", 50);
