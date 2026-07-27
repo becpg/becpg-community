@@ -606,6 +606,9 @@
 					</index>
 				</property>
 			</properties>
+			<mandatory-aspects>
+				<aspect>cm:titled</aspect>
+			</mandatory-aspects>
 		</type>
 		
 		<type name="bcpg:documentType">
