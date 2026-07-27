@@ -3,6 +3,7 @@ package fr.becpg.test.repo.helper;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.Locale;
 
 import org.alfresco.service.cmr.repository.MLText;
@@ -49,12 +50,63 @@ public class LargeTextHelperTest {
         mlText.put(Locale.ENGLISH, "This is a very long text that needs to be shortened in multiple languages.");
         mlText.put(Locale.FRENCH, "Ceci est un texte très long qui doit être raccourci dans plusieurs langues.");
 
-        LargeTextHelper.elipse(mlText);
-        
-        assertTrue(mlText.get(Locale.ENGLISH).length() <= LargeTextHelper.TEXT_SIZE_LIMIT / mlText.size() - 20
-               );
-        assertTrue(mlText.get(Locale.FRENCH).length() <= LargeTextHelper.TEXT_SIZE_LIMIT / mlText.size() - 20
-                );
+        MLText result = LargeTextHelper.elipse(mlText);
+
+        // Below the global budget: values are kept as-is and the source is left untouched (no mutation)
+        assertEquals(mlText.get(Locale.ENGLISH), result.get(Locale.ENGLISH));
+        assertEquals(mlText.get(Locale.FRENCH), result.get(Locale.FRENCH));
+    }
+
+    private static String repeat(char c, int length) {
+        char[] chars = new char[length];
+        Arrays.fill(chars, c);
+        return new String(chars);
+    }
+
+    /**
+     * Ticket #35528: a label written in a single language must not be truncated to ~4000 characters
+     * just because the MLText carries empty entries for the other configured locales. The budget must
+     * be shared according to the actual content, not the number of locale keys.
+     */
+    @Test
+    public void testSingleContentLanguageAmongManyEmptyLocales() {
+        MLText mlText = new MLText();
+        mlText.put(Locale.FRENCH, repeat('a', 60000));
+        // Other configured locales are present but empty
+        for (Locale locale : new Locale[] { Locale.ENGLISH, Locale.GERMAN, Locale.ITALIAN, new Locale("es"),
+                new Locale("pt"), new Locale("nl"), new Locale("pl"), new Locale("ru"), new Locale("zh"),
+                new Locale("ja"), new Locale("ar") }) {
+            mlText.put(locale, "");
+        }
+
+        MLText result = LargeTextHelper.elipse(mlText);
+
+        // The single populated language keeps almost the whole budget, not ~4000 (= 50000 / 12)
+        assertTrue("French value was over-truncated: " + result.get(Locale.FRENCH).length(),
+                result.get(Locale.FRENCH).length() > 40000);
+        // Empty locales stay empty
+        assertEquals("", result.get(Locale.ENGLISH));
+        // Source MLText must NOT be mutated (no leak toward the stored property)
+        assertEquals(60000, mlText.get(Locale.FRENCH).length());
+    }
+
+    @Test
+    public void testMultiLanguageBudgetSharedProportionally() {
+        MLText mlText = new MLText();
+        mlText.put(Locale.FRENCH, repeat('a', 40000));
+        mlText.put(Locale.ENGLISH, repeat('b', 40000));
+
+        MLText result = LargeTextHelper.elipse(mlText);
+
+        // 80000 total > 50000 -> each gets ~25000 (proportional to its size)
+        assertTrue(result.get(Locale.FRENCH).length() < 26000);
+        assertTrue(result.get(Locale.FRENCH).length() > 24000);
+        assertEquals(result.get(Locale.FRENCH).length(), result.get(Locale.ENGLISH).length());
+    }
+
+    @Test
+    public void testNullMlTextReturnsEmpty() {
+        assertTrue(LargeTextHelper.elipse((MLText) null).isEmpty());
     }
     
     @Test
