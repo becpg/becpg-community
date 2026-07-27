@@ -518,13 +518,26 @@ if (beCPG.module.EntityDataGridRenderers) {
     });
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
-        propertyName: ["qa:stockList", "bp:pubChannelListChannel"],
+        propertyName: ["qa:stockList"],
         renderer: function(_oRecord, data, _label, scope) {
             var url = scope._buildCellUrl(data);
             if (scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed") > -1) {
                 url = beCPG.util.entityURL(data.siteId, data.value);
             }
             return '<span class="' + data.metadata + '"><a href="' + url + '">' + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';
+
+        }
+
+    });
+
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["bp:pubChannelListChannel"],
+        renderer: function(_oRecord, data, _label, scope) {
+            if (scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed") > -1) {
+                return '<span class="' + data.metadata + '"><a href="' + beCPG.util.entityURL(data.siteId, data.value) + '">'
+                    + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';
+            }
+            return '<span class="' + data.metadata + '">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
 
         }
 
