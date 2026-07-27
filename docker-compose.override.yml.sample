@@ -19,15 +19,8 @@ services:
         --add-opens=java.base/java.io=ALL-UNNAMED
         --add-opens=java.base/java.util=ALL-UNNAMED
         --add-opens=java.base/java.net=ALL-UNNAMED
-        -javaagent:/opt/hotswap/hotswap-agent.jar
     volumes:
       - becpg_data:/usr/local/tomcat/data
-      - /opt/hotswap/hotswap-agent.jar:/opt/hotswap/hotswap-agent.jar:ro
-      - ./becpg-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-core/target/classes:ro
-      - ./becpg-plm/becpg-plm-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-plm-core/target/classes:ro
-      - ./becpg-project/becpg-project-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-project-core/target/classes:ro
-      - ./becpg-designer/becpg-designer-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-designer-core/target/classes:ro
-      - ./becpg-integration-runner/target/test-classes:/usr/local/tomcat/hotswap-agent/becpg-integration-runner/target/test-classes:ro
                  
 #  busybox-chown:
 #    image: busybox
