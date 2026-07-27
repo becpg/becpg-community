@@ -114,6 +114,45 @@ public class SvhcNestedPackagingIT extends PLMBaseTestCase {
 		});
 	}
 
+	/**
+	 * Closest to the customer data of #32363: the neutral box is nested in the printed box without an
+	 * explicit packaging level, which is what users usually leave in the sub packaging list. Checks both
+	 * the printed box own aggregation and the propagation up to the finished product.
+	 */
+	@Test
+	public void testNestedPrintedBoxWithoutExplicitLevel() {
+		final NodeRef[] refs = inWriteTx(() -> {
+			NodeRef neutralBox = createNeutralBox();
+
+			PackagingMaterialData printedBox = PackagingMaterialData.build().withName("Boite imprimee sans niveau").withTare(1d, TareUnit.kg);
+			printedBox.getPackagingListView().setPackagingList(List.of(
+					PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P).withIsMaster(true).withProduct(neutralBox)));
+			NodeRef printedBoxNodeRef = createNode(printedBox);
+
+			FinishedProductData fp = FinishedProductData.build().withName("Quiche printed box no level").withUnit(ProductUnit.kg)
+					.withCompoList(List.of(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withProduct(createRawMaterial())))
+					.withPackagingList(List.of(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P).withIsMaster(true)
+							.withPkgLevel(PackagingLevel.Primary).withProduct(printedBoxNodeRef)));
+			return new NodeRef[] { alfrescoRepository.create(getTestFolderNodeRef(), fp).getNodeRef(), printedBoxNodeRef };
+		});
+
+		inWriteTx(() -> {
+			productService.formulate(refs[1]);
+			productService.formulate(refs[0]);
+			return null;
+		});
+
+		inReadTx(() -> {
+			ProductData printedBox = (ProductData) alfrescoRepository.findOne(refs[1]);
+			dumpSvhc("printed box own list (no level)", printedBox);
+			ProductData fp = (ProductData) alfrescoRepository.findOne(refs[0]);
+			dumpSvhc("finished product (no level)", fp);
+			assertTrue("SVHC must propagate to the finished product through a nested packaging without explicit level (#32363)",
+					hasSvhc(fp, ings.get(0)));
+			return null;
+		});
+	}
+
 	private NodeRef createRawMaterial() {
 		RawMaterialData rm = RawMaterialData.build().withName("Quiche filling").withUnit(ProductUnit.kg);
 		return createNode(rm);
