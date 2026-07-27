@@ -71,6 +71,4 @@ public interface PublicationChannelService {
 	  */
 	 NodeRef getOrCreateChannelListNodeRef(NodeRef entityNodeRef, String channelId);
 
-	 /** {@inheritDoc} */
-	 
 }
