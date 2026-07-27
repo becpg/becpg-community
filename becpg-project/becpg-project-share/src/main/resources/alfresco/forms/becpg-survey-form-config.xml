@@ -309,6 +309,8 @@
 				</appearance>
 			</form>
 			<form id="create">
+				<create-form template="tab-edit" />
+				<edit-form template="tab-edit" />
 				<field-visibility>
 					<show id="bcpg:parentLevel" />
 					<show id="survey:questionLabel" />
@@ -541,6 +543,8 @@
 				</appearance>
 			</form>
 			<form id="create">
+				<create-form template="tab-edit" />
+				<edit-form template="tab-edit" />
 				<field-visibility>
 					<show id="bcpg:parentLevel" />
 					<show id="survey:questionLabel" />
