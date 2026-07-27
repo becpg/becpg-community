@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -570,20 +569,15 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		}
 		if (mlTextBefore != null) {
 			newMlTextBefore = compareMLTexts(mlTextBefore, mlTextAfter);
-			Iterator<Entry<Locale, String>> it = mlTextBefore.entrySet().iterator();
-			while (it.hasNext()) {
-				Locale locale = it.next().getKey();
-				mlTextBefore.put(locale, newMlTextBefore.get(locale));
-			}
 		}
 		if (mlTextAfter != null) {
 			newMlTextAfter = compareMLTexts(mlTextAfter, mlTextBefore);
-			Iterator<Entry<Locale, String>> it = mlTextAfter.entrySet().iterator();
-			while (it.hasNext()) {
-				Locale locale = it.next().getKey();
-				mlTextAfter.put(locale, newMlTextAfter.get(locale));
-			}
-
+		}
+		// Replace the activity entry with shortened copies without mutating the live property values
+		if ((newMlTextBefore != null) || (newMlTextAfter != null)) {
+			Serializable before = newMlTextBefore != null ? newMlTextBefore : entry.getValue().getFirst();
+			Serializable after = newMlTextAfter != null ? newMlTextAfter : entry.getValue().getSecond();
+			entry.setValue(new Pair<>(before, after));
 		}
 	}
 
@@ -642,15 +636,12 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object
 	 */
 	private MLText compareMLTexts(MLText mlText, MLText otherMlText) {
-		LargeTextHelper.elipse(mlText);
+		MLText elipsedMlText = LargeTextHelper.elipse(mlText);
 		MLText newMlText = new MLText();
-		Iterator<Entry<Locale, String>> it = mlText.entrySet().iterator();
 
-		
-		
-		while (it.hasNext()) {
-			Locale locale = it.next().getKey();
-			String text = mlText.get(locale);
+		for (Entry<Locale, String> entry : elipsedMlText.entrySet()) {
+			Locale locale = entry.getKey();
+			String text = entry.getValue();
 			newMlText.put(locale, text);
 			if ((text != null) && (text.length() > ML_TEXT_SIZE_LIMIT)) {
 				String otherText = otherMlText != null ? otherMlText.get(locale) : null;
@@ -658,8 +649,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					text = LargeTextHelper.elipse(text, ML_TEXT_SIZE_LIMIT);
 				} else {
 					Pair<String, String> diffs = LargeTextHelper.createTextDiffs(text, otherText);
-					text = diffs.getFirst().replace(" ", "").equals("") ? text : diffs.getFirst();
-					text =  LargeTextHelper.elipse(text, ML_TEXT_SIZE_LIMIT);
+					text = diffs.getFirst().replace(" ", "").isEmpty() ? text : diffs.getFirst();
+					text = LargeTextHelper.elipse(text, ML_TEXT_SIZE_LIMIT);
 				}
 				newMlText.put(locale, text);
 			}
