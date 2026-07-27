@@ -2423,6 +2423,8 @@
             </form>
 
             <form id="create">
+                <create-form template="tab-edit" />
+                <edit-form template="tab-edit" />
                 <field-visibility>
                     <show id="bcpg:charactName" />
                     <show id="cm:description" force="true" />
@@ -3664,6 +3666,8 @@
             </form>
             
             <form id="create">
+                <create-form template="tab-edit" />
+                <edit-form template="tab-edit" />
                 <field-visibility>
                     <show id="bcpg:charactName" />
                     <show id="bcpg:docTypeCategory" force="true" />
