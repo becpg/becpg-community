@@ -12585,6 +12585,7 @@
             <form>
                 <field-visibility>
                     <show id="cm:name" />
+                    <show id="cm:title" />
                     <show id="bcpg:isGlobalSavedSearch" />
                 </field-visibility>
                 <appearance>
@@ -12599,12 +12600,14 @@
             <form>
                 <field-visibility>
                     <show id="cm:name" />
+                    <show id="cm:title" />
                     <show id="bcpg:isGlobalSavedSearch" />
                 </field-visibility>
             </form>
             <form id="duplicate">
                 <field-visibility>
                     <show id="cm:name" />
+                    <show id="cm:title" />
                     <show id="bcpg:isGlobalSavedSearch" />
                 </field-visibility>
             </form>
