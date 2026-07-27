@@ -1395,6 +1395,7 @@
                     <show id="bcpg:productHierarchy1" force="true" />
                     <show id="bcpg:productHierarchy2" force="true" />
                     <show id="bcpg:productState" force="true" />
+                    <show id="bcpg:entityScore" force="false" />
                     <show id="bcpg:productUnit" force="true" />
                     <show id="bcpg:code" force="true" />
                     <show id="bcpg:erpCode" force="true" />
@@ -1418,6 +1419,7 @@
                 </field-visibility>
                 <appearance>
                     <field id="cm:name" read-only="true"></field>
+                    <field id="bcpg:entityScore" read-only="true" />
                 </appearance>
             </form>
 
@@ -6305,6 +6307,7 @@
                     <show id="cm:description" force="true" />
                     <show id="bcpg:supplierHierarchy1" force="true" />
                     <show id="bcpg:supplierState" force="true" />
+                    <show id="bcpg:entityScore" force="false" />
                     <show id="bcpg:code" force="true" />
                     <show id="bcpg:erpCode" force="true" />
                     <show id="bcpg:eanCode" force="true" />
@@ -6335,6 +6338,7 @@
                 </field-visibility>
                 <appearance>
                     <field id="cm:name" read-only="true"></field>
+                    <field id="bcpg:entityScore" read-only="true" />
                     <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1">
                     	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
                     </field>
@@ -6346,7 +6350,7 @@
                     </field>
                 </appearance>
             </form>
-            
+
             <form id="datagridWUsed">
                 <field-visibility>
                     <show id="bcpg:parentEntityRef" force="true" />
@@ -6859,6 +6863,7 @@
                     <show id="bcpg:clientHierarchy1" force="true" />
                     <show id="bcpg:clientHierarchy2" force="true"/>
                     <show id="bcpg:clientState" force="true" />
+                    <show id="bcpg:entityScore" force="false" />
                     <show id="cm:description" force="true" />
                     <show id="cm:modified" force="true" />
                     <show id="cm:modifier" force="true" />
@@ -6886,6 +6891,7 @@
                 </field-visibility>
                 <appearance>
                     <field id="cm:name" read-only="true"></field>
+                    <field id="bcpg:entityScore" read-only="true" />
                     <field id="bcpg:httpLink1" label-id="becpg.forms.field.website1">
                     	<control template="/org/alfresco/components/form/controls/httplink.ftl" />
                     </field>
@@ -6899,10 +6905,10 @@
             </form>
         </forms>
     </config>
-    
-    
-    
-        
+
+
+
+
     <!-- bcpg:supplier type (existing nodes) -->
     <config evaluator="node-type" condition="bcpg:productCollection">
         <forms>
