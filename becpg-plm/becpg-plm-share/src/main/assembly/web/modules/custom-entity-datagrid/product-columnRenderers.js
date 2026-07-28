@@ -295,7 +295,9 @@ if (beCPG.module.EntityDataGridRenderers) {
         var tooltip = details ? buildEcoScoreTooltip(scope, details) : buildEcoScoreFallbackTooltip(scope, score, scoreClass);
         var badgeClass = getEcoScoreBadgeClass(scoreClass);
 
-        var html = '<div class="eco-score-cell"' + (tooltip ? ' title="' + Alfresco.util.encodeHTML(tooltip) + '"' : '') + '>';
+        // encodeAttr and not encodeHTML: the latter turns newlines into "<br />", which a title
+        // attribute renders literally. encodeAttr emits "&#10;" instead (#29832).
+        var html = '<div class="eco-score-cell"' + (tooltip ? ' title="' + beCPG.util.encodeAttr(tooltip) + '"' : '') + '>';
         if (badgeClass) {
             html += '<span class="ecoscore-class ' + badgeClass + '" aria-hidden="true"></span>';
         }
@@ -383,7 +385,8 @@ if (beCPG.module.EntityDataGridRenderers) {
         }
 
         var tooltip = details ? buildNutrientTooltip(scope, details) : buildNutriScoreFallbackTooltip(scope, score, nutrientClass);
-        var html = '<div class="nutrient-score-cell"' + (tooltip ? ' title="' + Alfresco.util.encodeHTML(tooltip) + '"' : '') + '>';
+        // encodeAttr and not encodeHTML: see renderEcoScore (#29832).
+        var html = '<div class="nutrient-score-cell"' + (tooltip ? ' title="' + beCPG.util.encodeAttr(tooltip) + '"' : '') + '>';
 
         html += buildNutrientClassRow(nutrientClass);
         html += '</div>';
