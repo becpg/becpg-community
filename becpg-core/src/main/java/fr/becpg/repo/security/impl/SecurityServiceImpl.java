@@ -57,6 +57,7 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.security.SecurityService;
+import fr.becpg.repo.security.filter.SecurityContextHelper;
 import fr.becpg.repo.security.data.ACLGroupData;
 import fr.becpg.repo.security.data.PermissionContext;
 import fr.becpg.repo.security.data.PermissionModel;
@@ -122,18 +123,20 @@ public class SecurityServiceImpl implements SecurityService {
 			int accesMode = SecurityService.WRITE_ACCESS;
 
 			if (!isAdmin() && !isEntityTemplate(nodeRef)) {
-				PermissionContext permissionContext = getPermissionContext(nodeRef, nodeType, propName);
+				if (!SecurityContextHelper.skipSecurityRules()) {
+					PermissionContext permissionContext = getPermissionContext(nodeRef, nodeType, propName);
 
-				if (Boolean.TRUE.equals(permissionContext.isDefaultReadOnly())) {
-					accesMode = SecurityService.READ_ACCESS;
-				}
+					if (Boolean.TRUE.equals(permissionContext.isDefaultReadOnly())) {
+						accesMode = SecurityService.READ_ACCESS;
+					}
 
-				List<PermissionModel> permissions = permissionContext.getPermissions();
-				if (!permissions.isEmpty()) {
-					accesMode = computeAccessMode(nodeRef, nodeType, permissions);
-				} else if ((propName == null) && (accesMode == SecurityService.READ_ACCESS)
-						&& hasWritablePropForUser(nodeRef, nodeType)) {
-					accesMode = SecurityService.WRITE_ACCESS;
+					List<PermissionModel> permissions = permissionContext.getPermissions();
+					if (!permissions.isEmpty()) {
+						accesMode = computeAccessMode(nodeRef, nodeType, permissions);
+					} else if ((propName == null) && (accesMode == SecurityService.READ_ACCESS)
+							&& hasWritablePropForUser(nodeRef, nodeType)) {
+						accesMode = SecurityService.WRITE_ACCESS;
+					}
 				}
 
 				if (nodeRef != null) {
