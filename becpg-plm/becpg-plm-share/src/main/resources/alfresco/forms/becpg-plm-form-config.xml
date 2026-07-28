@@ -13066,7 +13066,7 @@
 					</field>
 					<field help-id="becpg.forms.help.eanCode" id="bcpg:eanCode" mandatory="false" read-only="false" >
                         <control template="/org/alfresco/components/form/controls/textfield.ftl">
-                             <control-param name="maxLength">13</control-param>
+                             <control-param name="maxLength">14</control-param>
                         </control>
                         <constraint-handlers>
                             <constraint event="keyup,change" type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN"/>
@@ -13126,7 +13126,7 @@
 					</field>
 					<field help-id="becpg.forms.help.eanCode" id="bcpg:eanCode" mandatory="false" read-only="false" >
                         <control template="/org/alfresco/components/form/controls/textfield.ftl">
-                            <control-param name="maxLength">13</control-param>
+                            <control-param name="maxLength">14</control-param>
                         </control>
                         <constraint-handlers>
                             <constraint event="keyup,change" type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN"/>
