@@ -205,6 +205,20 @@
 
 		});
 
+		// #29832 : same state pill as the product referential. This renderer file is the one
+		// loaded by the project list view, project-columnRenderers.js is not.
+		YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		   propertyName : "pjt:projectState",
+		   renderer : function(oRecord, data, label, scope) {
+			   if (data.value != null && data.value !== "") {
+				   return '<span class="product-state entity-' + data.value + '">'
+					   + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+			   }
+			   return Alfresco.util.encodeHTML(data.displayValue);
+		   }
+
+		});
+
 		YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		   propertyName : "pjt:projectStartDate",
 		   renderer : function(oRecord, data, label, scope) {
