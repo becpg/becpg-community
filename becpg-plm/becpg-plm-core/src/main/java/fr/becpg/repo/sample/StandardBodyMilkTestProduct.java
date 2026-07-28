@@ -26,7 +26,7 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 	public static final String EMOLLIENT = "EMOLLIENT";
 	public static final String MASKING = "MASKING";
 	public static final String SKIN_CONDITIONING = "SKIN CONDITIONING";
-	public static final String FRAGRANCE_FLAVORING = "FRAGRANCE-FLAVORING";
+	public static final String FRAGRANCE_FLAVORING = "FLAVOURING";
 	public static final String FLAVOURING = "FLAVOURING";
 
 	public static final String EYE_IRRIT_2_H_319 = "Eye Irrit. 2:H319";
@@ -237,7 +237,7 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 		ingredients.add(createIngListItemWithType("CETEARYL ALCOHOL", EMOLLIENT, 0.15, "67762-27-0", null, null, null, null, null, "267-008-6", "267-008-6,616-857-4"));
 		ingredients.add(createIngListItemWithType("SODIUM STEAROYL GLUTAMATE", "CLEANSING", 0.1, "38517-23-6", null, null, null, null, null, null, "253-980-9"));
 		ingredients.add(createIngListItemWithType("TOCOPHEROL", "ANTIOXIDANT", 0.0502, "1406-66-2", null, null, null, null, null, "215-798-8", "200-201-5,215-798-8,604-195-9,606-803-8"));
-		ingredients.add(createIngListItemWithType("CITRIC ACID", "ACIDIC-BASIC-BUFFER", 0.013, "77-92-9", EYE_IRRIT_2_H_319, 5400.0, null, null, false, "201-069-1", "201-069-1,920-306-6,921-454-4"));
+		ingredients.add(createIngListItemWithType("CITRIC ACID", "BUFFERING", 0.013, "77-92-9", EYE_IRRIT_2_H_319, 5400.0, null, null, false, "201-069-1", "201-069-1,920-306-6,921-454-4"));
 		ingredients.add(createIngListItemWithType("RHEUM PALMATUM ROOT EXTRACT", "ASTRINGENT", 0.0025, "90106-27-1", null, null, null, null, null, null, null));
 		ingredients.add(createIngListItemWithType("CITRUS PARADISI FRUIT EXTRACT", SKIN_CONDITIONING, 0.00075, "90045-43-5", null, null, null, null, null, null, null));
 		ingredients.add(createIngListItemWithType("SODIUM BENZOATE", "ANTICORROSIVE", 0.0006, "532-32-1", EYE_IRRIT_2_H_319, 4070.0, null, null, false, "208-534-8", "208-534-8"));
@@ -286,7 +286,7 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 		ingredients.add(createIngListItemWithType("GLYCOL", "HUMECTANT", 0.0, "107-21-1", ACUTE_TOX_4_H_302, 4700.0, 10600.0, null, false, "203-473-3", "203-473-3,920-413-8"));
 		ingredients.add(createIngListItemWithType("HEXANE", null, 0.0, "110-54-3", "Flam. Liq. 2:H225, Repr. 2:H361f", 16000.0, null, null, false, "203-777-6", "203-777-6"));
 		ingredients.add(createIngListItemWithType("ISOEUGENOL", FLAVOURING, 0.0, "97-54-1", "Acute Tox. 4:H302, Skin Sens. 1:H317", 1500.0, 1912.0, null, true, "202-590-7", "202-590-7,227-633-7,227-678-2"));
-		ingredients.add(createIngListItemWithType("ISOPROPYL ALCOHOL", "FOAM CONTROL", 0.0, "67-63-0", "Flam. Liq. 2:H225, Eye Irrit. 2:H319", 5045.0, 12800.0, null, false, "200-661-7", "200-661-7,414-810-0,273-530-5"));
+		ingredients.add(createIngListItemWithType("ISOPROPYL ALCOHOL", "ANTIFOAMING", 0.0, "67-63-0", "Flam. Liq. 2:H225, Eye Irrit. 2:H319", 5045.0, 12800.0, null, false, "200-661-7", "200-661-7,414-810-0,273-530-5"));
 		ingredients.add(createIngListItemWithType("JUNIPERUS VIRGINIANA OIL", MASKING, 0.0, "8000-27-9", "Aquatic Chronic 1:H410", null, null, 1.0, false, null, "917-390-1"));
 		ingredients.add(createIngListItemWithType("LAVANDULA OIL/EXTRACT", null, 0.0, "8000-28-0", "Skin Sens. 1:H317, Aquatic Chronic 3:H412", null, null, 1.0, true, null, null));
 		ingredients.add(createIngListItemWithType("LINALOOL", "DEODORANT", 0.0, "78-70-6", "Skin Irrit. 2:H315, Eye Irrit. 2:H319, Skin Sens. 1B:H317", 2790.0, 5610.0, null, true, "201-134-4,245-083-6", "201-134-4,204-810-7,204-811-2,245-083-6"));
@@ -302,7 +302,7 @@ public class StandardBodyMilkTestProduct extends StandardSoapTestProduct {
 		ingredients.add(createIngListItemWithType("P-CYMENE", MASKING, 0.0, "99-87-6", "Flam. Liq. 3:H226", 4750.0, null, null, false, "202-796-7", "202-796-7"));
 		ingredients.add(createIngListItemWithType("PERILLALDEHYDE", MASKING, 0.0, "2111-75-3", SKIN_SENS_1_H_317, 2500.0, null, null, true, "218-302-8", "218-302-8"));
 		ingredients.add(createIngListItemWithType("PHENETHYL ALCOHOL", MASKING, 0.0, "60-12-8", "Acute Tox. 4:H302, Eye Irrit. 2:H319", 1790.0, 790.0, null, false, "200-456-2", "200-456-2"));
-		ingredients.add(createIngListItemWithType("PINENE", "FOAM CONTROL", 0.0, "80-56-8", FLAM_LIQ_3_H_226_SKIN_SENS_1_H_317, 3700.0, null, null, true, null, null));
+		ingredients.add(createIngListItemWithType("PINENE", "ANTIFOAMING", 0.0, "80-56-8", FLAM_LIQ_3_H_226_SKIN_SENS_1_H_317, 3700.0, null, null, true, null, null));
 		ingredients.add(createIngListItemWithType("PYRUVIC ACID", MASKING, 0.0, "127-17-3", "Skin Corr. 1B:H314", null, null, null, false, "204-824-3", "204-824-3"));
 		ingredients.add(createIngListItemWithType("SAFROLE", null, 0.0, "94-59-7", "Acute Tox. 4:H302, Carc. 1B:H350", 1950.0, null, null, false, "202-345-4", "202-345-4"));
 		ingredients.add(createIngListItemWithType("SODIUM CHLORIDE", "BULKING", 0.0, "7647-14-5", EYE_IRRIT_2_H_319, 3000.0, null, null, false, null, null));
