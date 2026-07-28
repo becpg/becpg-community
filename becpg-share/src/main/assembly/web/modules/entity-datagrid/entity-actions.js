@@ -48,6 +48,42 @@
             var destination = this.datalistMeta.nodeRef != null ? this.datalistMeta.nodeRef : this.options.parentNodeRef, itemType = this.options.itemType != null ? this.options.itemType
                 : this.datalistMeta.itemType, me = this;
 
+            // #35600 : on the product referential there is neither a data list nor a parent entity,
+            // so the destination stays empty, the form is rendered without alf_destination and the
+            // submit fails. Fall back to the site document library, resolved once then cached.
+            if (destination == null || destination.length === 0) {
+                if (this.siteContainerNodeRef != null) {
+                    destination = this.siteContainerNodeRef;
+                } else if (this.options.siteId && !this.siteContainerResolved) {
+                    this.siteContainerResolved = true;
+                    Alfresco.util.Ajax.request({
+                        url: Alfresco.constants.PROXY_URI + "slingshot/doclib/containers/"
+                            + encodeURIComponent(this.options.siteId),
+                        method: "GET",
+                        successCallback: {
+                            fn: function EntityDataGrid_onActionCreate_containers(response) {
+                                var containers = response.json != null ? response.json.containers : null;
+                                for (var i = 0; containers != null && i < containers.length; i++) {
+                                    if (containers[i].name === "documentLibrary") {
+                                        me.siteContainerNodeRef = containers[i].nodeRef;
+                                        break;
+                                    }
+                                }
+                                me.onActionCreate(e, p_obj);
+                            },
+                            scope: this
+                        },
+                        failureCallback: {
+                            fn: function EntityDataGrid_onActionCreate_containersFailure() {
+                                me.onActionCreate(e, p_obj);
+                            },
+                            scope: this
+                        }
+                    });
+                    return;
+                }
+            }
+
             // Intercept before dialog show
             var doBeforeDialogShow = function EntityDataGrid_onActionCreate_doBeforeDialogShow(p_form, p_dialog) {
                 Alfresco.util.populateHTML([p_dialog.id + "-dialogTitle", this.msg("label.new-row.title")], [
