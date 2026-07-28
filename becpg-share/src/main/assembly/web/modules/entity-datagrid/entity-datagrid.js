@@ -1055,8 +1055,15 @@
 
                 onFilterFormClear: function EntityDataGrid_onFilterFormClear() {
                     this.onChangeFilter(null, [null, { filterOwner: this.id, filterId: "all" }]);
-                  
+
                     this.formsFilterRuntime.reset();
+
+                    // Object pickers (associations, including cm:authority) keep their own
+                    // selection state and rendered list, which a native form reset leaves
+                    // untouched. Clear them first: redrawing a picker also rewrites its hidden
+                    // input, which would otherwise undo the defaults restored just below.
+                    this.clearFilterObjectFinders(this.formsFilterRuntime.form);
+
                     var hiddenFields = YAHOO.util.Selector.query('input[type=hidden]', this.formsFilterRuntime.form);
                     for (var j = 0; j < hiddenFields.length; j++) {
                         if (hiddenFields[j].getAttribute("data-default") !== null) {
@@ -1068,6 +1075,31 @@
 
 
                     this.widgets.filterForm.getMenu().hide();
+                },
+
+                /**
+                 * Empties every object picker of the filter form (associations, including
+                 * cm:authority). Resetting the selection then firing "renderCurrentValue" lets
+                 * each picker redraw its own current values and sync its hidden input, exactly
+                 * as Alfresco.ObjectFinder does on its own "remove all" action.
+                 *
+                 * @method clearFilterObjectFinders
+                 * @param form {HTMLElement} the filter form element
+                 */
+                clearFilterObjectFinders: function EntityDataGrid_clearFilterObjectFinders(form) {
+                    if (form == null) {
+                        return;
+                    }
+                    var containers = YAHOO.util.Selector.query('div.object-finder', form);
+                    for (var i = 0; i < containers.length; i++) {
+                        var finder = Alfresco.util.ComponentManager.get(containers[i].id);
+                        if (finder == null) {
+                            continue;
+                        }
+                        finder.selectedItems = {};
+                        finder.singleSelectedItem = null;
+                        Bubbling.fire("renderCurrentValue", { eventGroup: finder });
+                    }
                 },
 
                 cleanFilterData: function EntityDataGrid_cleanFilterData(formData) {
