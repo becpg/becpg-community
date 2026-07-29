@@ -366,6 +366,7 @@ public class EntityListsWebScript extends AbstractEntityDataListWebScript {
 		List<ChildAssociationRef> variantsAssociations = new ArrayList<>();
 		NodeRef entityTplNodeRef = associationService.getTargetAssoc(entity, BeCPGModel.ASSOC_ENTITY_TPL_REF);
 		if (entityTplNodeRef != null) {
+			result.put("entityTplId", entityTplNodeRef.getId());
 			nodeRefs.add(entityTplNodeRef);
 		}
 		for (NodeRef nodeRef : nodeRefs) {
