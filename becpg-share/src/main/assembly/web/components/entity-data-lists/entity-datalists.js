@@ -209,6 +209,13 @@
 									this.containerNodeRef = new Alfresco.util.NodeRef(this.options.entityNodeRef);
 								}
 								this.entity = response.json.entity;
+								if (this.entity && this.entity.entityTplId && this.entity.type) {
+									var headerBarSpans = YAHOO.util.Dom.getElementsByClassName("entity", "span", this.id + "-headerBar");
+									if (headerBarSpans && headerBarSpans.length > 0) {
+										var typeCss = this.entity.type.split(":")[1];
+										YAHOO.util.Dom.addClass(headerBarSpans[0], typeCss + "-" + this.entity.entityTplId);
+									}
+								}
 								if(this.options.showCreate){
 								    this.widgets.newList.set("disabled", !response.json.permissions.create);
 								}   
