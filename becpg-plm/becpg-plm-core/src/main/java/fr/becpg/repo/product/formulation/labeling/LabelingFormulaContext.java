@@ -1914,7 +1914,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						isDoNotDetails(origNodeRef) ? null
 								: renderLabelingComponent(lblCompositeContext, kv.getValue(), true, DEFAULT_RATIO,
 										ingsLabelingWithYield && force100Perc ? totalWithYield : null, true, true),
-						null, null });
+						geoOriginsLabel, bioOriginsLabel, additionalInformation, otherGeoOriginsLabel });
 
 				if ((subLabel != null) && !subLabel.isEmpty()) {
 
@@ -1981,7 +1981,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 							subLabel = getIngTextFormat(component, qtyPerc, ((CompositeLabeling) component).getIngList().size() > 1)
 									.format(new Object[] { ingName, qtyPerc, renderCompositeIng((CompositeLabeling) component, subRatio,
-											ingsLabelingWithYield && force100Perc ? totalWithYield : null, true, true), null, null });
+											ingsLabelingWithYield && force100Perc ? totalWithYield : null, true, true), geoOriginsLabel,
+										bioOriginsLabel, additionalInformation, otherGeoOriginsLabel });
 
 						} else {
 							logger.error(String.format(UNSUPPORTED_ING_TYPE, component.getName()));
@@ -2404,6 +2405,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				}
 
 				String geoOriginsLabel = createGeoOriginsLabel(kv.getKey().getNodeRef(), kv.getValue(), PlaceOfActivityTypeCode.LAST_PROCESSING);
+				String otherGeoOriginsLabel = createGeoOriginsLabel(kv.getKey().getNodeRef(), kv.getValue(), PlaceOfActivityTypeCode.EMPTY);
 				String bioOriginsLabel = createBioOriginsLabel(kv.getKey().getNodeRef(), kv.getValue());
 				String additionalInformation = createAdditionalInformationLabel(kv.getValue());
 
@@ -2412,7 +2414,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				toAppend.append(getIngTextFormat(kv.getKey(), qtyPerc, kv.getValue().size() > 1).format(new Object[] { ingTypeLegalName, qtyPerc,
 						isDoNotDetails(origNodeRef) ? null
 								: renderLabelingComponent(compositeLabeling, kv.getValue(), true, ratio, subTotal, hideGeo, hideBio),
-						hideGeo ? null : geoOriginsLabel, hideBio ? null : bioOriginsLabel, additionalInformation }));
+						hideGeo ? null : geoOriginsLabel, hideBio ? null : bioOriginsLabel, additionalInformation, otherGeoOriginsLabel }));
 
 			} else {
 				if (!kv.getValue().isEmpty()) {
@@ -2517,6 +2519,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			String geoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOriginsByPlaceOfActivity(),
 					PlaceOfActivityTypeCode.LAST_PROCESSING);
+			String otherGeoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOriginsByPlaceOfActivity(),
+					PlaceOfActivityTypeCode.EMPTY);
 			String bioOriginsLabel = createBioOriginsLabel(component.getNodeRef(), component.getBioOrigins());
 			String additionalInformation = createAdditionalInformationLabel(component.getAdditionalInformation());
 			if (logger.isDebugEnabled()) {
@@ -2544,7 +2548,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 					toAppend = formater.format(
 							new Object[] { ingName, qtyPerc, renderCompositeIng((CompositeLabeling) component, subRatio, subTotal, hideGeo, hideBio),
-									hideGeo ? null : geoOriginsLabel, hideBio ? null : bioOriginsLabel, additionalInformation });
+									hideGeo ? null : geoOriginsLabel, hideBio ? null : bioOriginsLabel, additionalInformation, hideGeo ? null : otherGeoOriginsLabel });
 
 					first = false;
 
