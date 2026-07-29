@@ -96,6 +96,69 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 		});
 	}
 
+	/**
+	 * A packaging flagged as recycled is not destroyed by the product: it must contribute neither to
+	 * the costs nor to the packaging materials (see #35780). Only the packaging materials coming from
+	 * the composition and from the non-recycled packaging are expected here.
+	 */
+	@Test
+	public void testRecycledPackagingIsExcludedFromMaterials() throws Exception {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			FinishedProductData finishedProduct = FinishedProductData.build().withName("Produit fini recyclage").withUnit(ProductUnit.kg).withQty(1d)
+					.withDensity(1d)
+					.withCompoList(List.of(
+							// Allu 20 / Carton 40
+							CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+									.withProduct(PF1NodeRef),
+							// Plastique 2 pieces * 12g = 24g
+							CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.P).withDeclarationType(DeclarationType.Declare)
+									.withProduct(rawMaterial4NodeRef)))
+					.withPackagingList(List.of(
+							// recycled: its 3g of Alluminium must be ignored
+							PackagingListDataItem.build().withQty(3d).withUnit(ProductUnit.g).withPkgLevel(PackagingLevel.Primary)
+									.withIsRecycle(true).withProduct(packaging1NodeRef),
+							// kept: adds 28.349523125g of Carton
+							PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.oz).withPkgLevel(PackagingLevel.Primary)
+									.withProduct(packaging2NodeRef),
+							// recycled: its Fer and Plastique must be ignored
+							PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.lb).withPkgLevel(PackagingLevel.Primary)
+									.withIsRecycle(true).withProduct(packaging3NodeRef)));
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		inWriteTx(() -> {
+			productService.formulate(finishedProductNodeRef);
+
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+			DecimalFormat df = new DecimalFormat("0.###");
+			int checks = 0;
+
+			for (PackMaterialListDataItem packMaterialListDataItem : formulatedProduct.getPackMaterialList()) {
+				if (packMaterialListDataItem.getPmlMaterial().equals(packMaterial1NodeRef)) {
+					assertEquals("Recycled packaging must not add Alluminium", df.format(20d), df.format(packMaterialListDataItem.getPmlWeight()));
+					checks++;
+				}
+				if (packMaterialListDataItem.getPmlMaterial().equals(packMaterial2NodeRef)) {
+					assertEquals("Non recycled packaging must still add Carton", df.format(40d + 28.349523125d),
+							df.format(packMaterialListDataItem.getPmlWeight()));
+					checks++;
+				}
+				if (packMaterialListDataItem.getPmlMaterial().equals(packMaterial3NodeRef)) {
+					fail("Fer only comes from the recycled packaging and must not appear");
+				}
+				if (packMaterialListDataItem.getPmlMaterial().equals(packMaterial4NodeRef)) {
+					assertEquals("Recycled packaging must not add Plastique", df.format(24d),
+							df.format(packMaterialListDataItem.getPmlWeight()));
+					checks++;
+				}
+			}
+
+			assertEquals("Verify checks done", 3, checks);
+			return null;
+		});
+	}
+
 	protected FinishedProductData createFinishedProduct() {
 		return FinishedProductData.build().withName("Produit fini 1").withUnit(ProductUnit.kg).withQty(1d).withDensity(1d).withCompoList(List.of(
 				CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare).withProduct(PF1NodeRef),

@@ -144,6 +144,9 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 
 	/**
 	 * <p>visitMaterial.</p>
+	 * <p>
+	 * Recycled packaging is skipped so that the details stay consistent with the packaging material
+	 * list, which excludes it as well (see #35780).
 	 *
 	 * @param context a {@link fr.becpg.repo.product.formulation.details.CharactDetailsVisitorContext} object
 	 * @param parent a {@link org.alfresco.service.cmr.repository.NodeRef} object
@@ -154,6 +157,10 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 	 */
 	private void visitMaterial(CharactDetailsVisitorContext context, NodeRef parent, PackagingListDataItem packagingListDataItem, CharactDetails charactDetails, Integer currLevel,
 			double subQty)  {
+
+		if (Boolean.TRUE.equals(packagingListDataItem.getIsRecycle())) {
+			return;
+		}
 
 		if (nodeService.getType(packagingListDataItem.getProduct()).equals(PLMModel.TYPE_PACKAGINGKIT)) {
 			PackagingLevel filterLevel = null;
