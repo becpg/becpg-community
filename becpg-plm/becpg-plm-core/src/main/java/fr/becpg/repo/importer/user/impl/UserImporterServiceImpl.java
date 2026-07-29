@@ -42,6 +42,7 @@ import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.cmr.site.SiteVisibility;
 import org.alfresco.service.namespace.NamespacePrefixResolver;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -105,7 +106,18 @@ public class UserImporterServiceImpl implements UserImporterService {
 	private SysAdminParams sysAdminParams;
 	
 	private DictionaryService dictionaryService;
-	
+
+	private TransactionService transactionService;
+
+	public void setTransactionService(TransactionService transactionService) {
+		this.transactionService = transactionService;
+	}
+
+	/**
+	 * <p>Setter for the field <code>dictionaryService</code>.</p>
+	 *
+	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object
+	 */
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
@@ -215,22 +227,24 @@ public class UserImporterServiceImpl implements UserImporterService {
 	}
 
 	private void proccessUpload(InputStream input, String filename, Charset charset) throws IOException, ImporterException {
-		if ((filename != null) && (filename.length() > 0)) {
-			if (filename.endsWith(".csv")) {
-				processCSVUpload(input, charset);
-				return;
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			if ((filename != null) && (filename.length() > 0)) {
+				if (filename.endsWith(".csv")) {
+					processCSVUpload(input, charset);
+					return null;
+				} else if (filename.endsWith(".xls")) {
+					processXLSUpload(input);
+					return null;
+				}
+				if (filename.endsWith(".xlsx")) {
+					processXLSXUpload(input);
+					return null;
+				}
 			}
-			if (filename.endsWith(".xls")) {
-				processXLSUpload(input);
-				return;
-			}
-			if (filename.endsWith(".xlsx")) {
-				processXLSXUpload(input);
-				return;
-			}
-		}
-		// If in doubt, assume it's probably a .csv
-		processCSVUpload(input, charset);
+			// If in doubt, assume it's probably a .csv
+			processCSVUpload(input, charset);
+			return null;
+		});
 
 	}
 
