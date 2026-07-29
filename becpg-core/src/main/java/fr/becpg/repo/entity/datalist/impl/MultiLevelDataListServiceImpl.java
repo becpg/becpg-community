@@ -236,7 +236,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 						currTmp.put(childRef, tmp);
 
 						if (!isSecondary || (!tmp.getTree().isEmpty())) {
-							if ((parentNodeRef != null) && currTmp.containsKey(parentNodeRef)) {
+							if ((parentNodeRef != null) && !parentNodeRef.equals(childRef) && currTmp.containsKey(parentNodeRef)) {
 								MultiLevelListData parent = currTmp.get(parentNodeRef);
 								parent.getTree().put(childRef, tmp);
 							} else {
@@ -246,9 +246,9 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 
 					} 
 					
-					if(parentNodeRef!=null  && currTmp.containsKey(parentNodeRef) && currEntityNodeRef==null ) {
+					if (parentNodeRef != null && !parentNodeRef.equals(childRef) && currTmp.containsKey(parentNodeRef) && currEntityNodeRef == null) {
 						MultiLevelListData parent = currTmp.get(parentNodeRef);
-						if(currEntityNodeRef == null ) {
+						if (currEntityNodeRef == null) {
 							parent.setLeaf(false);
 						}
 					}

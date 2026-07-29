@@ -176,6 +176,49 @@ public class MultiLevelDataServiceIT extends PLMBaseTestCase {
 		}, false, true);
 	}
 
+	@Test
+	public void testSelfContainedParentItem() {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Finished Product Self Contained");
+
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("Raw material Self");
+			NodeRef rawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+
+			CompoListDataItem compoItem = CompoListDataItem.build()
+					.withParent(null)
+					.withQty(1d)
+					.withQtyUsed(1d)
+					.withUnit(ProductUnit.P)
+					.withDeclarationType(DeclarationType.Declare)
+					.withProduct(rawMaterialNodeRef);
+
+			finishedProduct.getCompoListView().setCompoList(Collections.singletonList(compoItem));
+			NodeRef fpNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+
+			NodeRef listContainerNodeRef = entityListDAO.getListContainer(fpNodeRef);
+			NodeRef compoListNodeRef = entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_COMPOLIST);
+			List<NodeRef> items = entityListDAO.getListItems(compoListNodeRef, PLMModel.TYPE_COMPOLIST, null);
+			assertEquals(1, items.size());
+			NodeRef itemNodeRef = items.get(0);
+
+			nodeService.setProperty(itemNodeRef, fr.becpg.model.BeCPGModel.PROP_PARENT_LEVEL, itemNodeRef);
+
+			final DataListFilter dataListFilter = new DataListFilter();
+			dataListFilter.setDataType(PLMModel.TYPE_COMPOLIST);
+			dataListFilter.updateMaxDepth(-1);
+			dataListFilter.setEntityNodeRefs(Collections.singletonList(fpNodeRef));
+
+			MultiLevelListData mlld = multiLevelDataListService.getMultiLevelListData(dataListFilter);
+			assertNotNull(mlld);
+			assertEquals(1, mlld.getTree().size());
+			assertTrue(mlld.getTree().containsKey(itemNodeRef));
+
+			return null;
+		}, false, true);
+	}
+
 	int doChecks(MultiLevelListData mlld2, int checks) {
 
 		if (mlld2.getEntityNodeRef().equals(lSF1NodeRef)) {
