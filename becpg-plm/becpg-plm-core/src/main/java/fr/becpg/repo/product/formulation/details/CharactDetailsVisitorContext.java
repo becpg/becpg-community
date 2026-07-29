@@ -16,6 +16,8 @@ public class CharactDetailsVisitorContext {
 	
 	private CharactDetails charactDetails;
 
+	private double cumulatedYieldFactor = 1d;
+
 	/**
 	 * <p>Constructor for CharactDetailsVisitorContext.</p>
 	 *
@@ -28,6 +30,25 @@ public class CharactDetailsVisitorContext {
 		this.rootProductData = rootProductData;
 		this.maxLevel = maxLevel;
 		this.charactDetails = charactDetails;
+	}
+
+	/**
+	 * Returns the product of the yields of the components visited between the root product
+	 * and the current composition level (1 when no intermediate component declares a yield).
+	 *
+	 * @return the cumulated yield factor of the current composition branch
+	 */
+	public double getCumulatedYieldFactor() {
+		return cumulatedYieldFactor;
+	}
+
+	/**
+	 * <p>Setter for the field <code>cumulatedYieldFactor</code>.</p>
+	 *
+	 * @param cumulatedYieldFactor the cumulated yield factor of the current composition branch
+	 */
+	public void setCumulatedYieldFactor(double cumulatedYieldFactor) {
+		this.cumulatedYieldFactor = cumulatedYieldFactor;
 	}
 
 	/**

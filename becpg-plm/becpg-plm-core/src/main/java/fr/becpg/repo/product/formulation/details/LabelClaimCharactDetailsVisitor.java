@@ -68,7 +68,7 @@ public class LabelClaimCharactDetailsVisitor extends SimpleCharactDetailsVisitor
 	
 	/** {@inheritDoc} */
 	@Override
-	protected void provideAdditionalValues(ProductData rootProduct, ProductData formulatedProduct, SimpleCharactDataItem simpleCharact, String unit, Double qtyUsed, Double netQty, CharactDetailsValue currentCharactDetailsValue) {
+	protected void provideAdditionalValues(CharactDetailsVisitorContext context, ProductData formulatedProduct, SimpleCharactDataItem simpleCharact, String unit, Double qtyUsed, Double netQty, CharactDetailsValue currentCharactDetailsValue) {
 		
 		LabelClaimListDataItem labelClaimItem = (LabelClaimListDataItem) simpleCharact;
 		

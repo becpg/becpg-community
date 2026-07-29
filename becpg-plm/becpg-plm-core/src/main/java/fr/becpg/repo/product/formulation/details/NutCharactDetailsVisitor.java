@@ -96,7 +96,8 @@ public class NutCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 	
 	/** {@inheritDoc} */
 	@Override
-	protected void provideAdditionalValues(ProductData rootProduct, ProductData formulatedProduct, SimpleCharactDataItem simpleCharact, String unit, Double qtyUsed, Double netQty, CharactDetailsValue currentCharactDetailsValue) {
+	protected void provideAdditionalValues(CharactDetailsVisitorContext context, ProductData formulatedProduct, SimpleCharactDataItem simpleCharact, String unit, Double qtyUsed, Double netQty, CharactDetailsValue currentCharactDetailsValue) {
+		ProductData rootProduct = context.getRootProductData();
 		NutListDataItem nutListDataItem = (NutListDataItem) simpleCharact;
 		Double value = nutListDataItem.getValue();
 		Double valueForServingSize = value;
