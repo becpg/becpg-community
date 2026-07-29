@@ -282,6 +282,11 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 
 	/**
 	 * <p>calculateTareByMaterialItem.</p>
+	 * <p>
+	 * Recycled packaging is skipped: such a packaging is not destroyed by the product, so it
+	 * contributes neither to the costs (already handled by the simple list handlers) nor to the
+	 * packaging materials (see #35780). The check is done here so that it applies to the packaging
+	 * list of the product as well as to the content of a packaging kit.
 	 *
 	 * @param dataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
 	 * @param toUpdate a {@link java.util.Map} object
@@ -290,7 +295,7 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 	private void calculateTareByMaterialItem(PackagingListDataItem dataItem,
 			Map<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> toUpdate, double subQty) {
 
-		if (dataItem.getProduct() == null) {
+		if ((dataItem.getProduct() == null) || Boolean.TRUE.equals(dataItem.getIsRecycle())) {
 			return;
 		}
 

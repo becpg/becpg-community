@@ -291,6 +291,17 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	}
 
 	/**
+	 * <p>withIsRecycle.</p>
+	 *
+	 * @param isRecycle a {@link java.lang.Boolean} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 */
+	public PackagingListDataItem withIsRecycle(Boolean isRecycle) {
+		setIsRecycle(isRecycle);
+		return this;
+	}
+
+	/**
 	 * <p>
 	 * Constructor for PackagingListDataItem.
 	 * </p>
