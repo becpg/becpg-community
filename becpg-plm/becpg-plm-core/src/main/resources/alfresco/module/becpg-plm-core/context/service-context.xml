@@ -90,6 +90,7 @@
 		<property name="namespacePrefixResolver" ref="namespaceService" />
 		<property name="sysAdminParams" ref="sysAdminParams"/>
 		<property name="dictionaryService" ref="dictionaryService"/>
+		<property name="transactionService" ref="transactionService"/>
 	</bean>
 
     <!-- Variant -->

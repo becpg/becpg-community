@@ -1,9 +1,14 @@
 package fr.becpg.repo.authentication;
 
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import javax.sql.DataSource;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
@@ -14,6 +19,7 @@ import org.alfresco.repo.security.authentication.identityservice.IdentityService
 import org.alfresco.repo.security.person.PersonServiceImpl;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
+import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
 import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -22,12 +28,15 @@ import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.MutableAuthenticationService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.transaction.TransactionListenerAdapter;
 import org.alfresco.util.transaction.TransactionSupportUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.authentication.provider.IdentityServiceAccountProvider;
 import fr.becpg.repo.mail.BeCPGMailService;
@@ -75,6 +84,10 @@ public class BeCPGUserAccountService {
 	
 	@Autowired
 	private PreferenceService preferenceService;
+
+	@Autowired
+	@Qualifier("dataSource")
+	private DataSource dataSource;
 
 	/**
 	 * <p>getOrCreateUser.</p>
@@ -286,8 +299,12 @@ public class BeCPGUserAccountService {
 	private void renameUser(BeCPGUserAccount userAccount, NodeRef personNodeRef) {
 		String newUserName = createTenantAware(userAccount.getNewUserName());
 		if (!newUserName.equals(userAccount.getUserName())) {
+			if (personService.personExists(newUserName)) {
+				throw new UserAlreadyExistsException("Cannot rename user to '" + newUserName + "' because it already exists");
+			}
+			String oldUserName = userAccount.getUserName();
 			if (isIdsUser(personNodeRef)) {
-				identityServiceAccountProvider.deleteAccount(userAccount.getUserName());
+				identityServiceAccountProvider.deleteAccount(oldUserName);
 			}
 			userAccount.setUserName(newUserName);
 			if (isIdsUser(personNodeRef)) {
@@ -300,8 +317,115 @@ public class BeCPGUserAccountService {
 			NodeRef homeFolder = (NodeRef) nodeService.getProperty(personNodeRef, ContentModel.PROP_HOMEFOLDER);
 			if (homeFolder != null) {
 				nodeService.setProperty(homeFolder, ContentModel.PROP_NAME, newUserName);
+				nodeService.setProperty(homeFolder, ContentModel.PROP_OWNER, newUserName);
+			}
+			AlfrescoTransactionSupport.bindListener(new TransactionListenerAdapter() {
+				// make sure the transaction is committed before updating activiti tasks to avoid inconsistencies
+				@Override
+				public void afterCommit() {
+					updateActivitiTasks(oldUserName, newUserName);
+				}
+			});
+		}
+	}
+	
+	private static final int MAX_RETRIES = 3;
+	private static final long RETRY_DELAY_MS = 500;
+
+	private void updateActivitiTasks(String oldUserName, String newUserName) {
+		String[] updateStatements = {
+			"UPDATE ACT_RU_TASK SET assignee_ = ? WHERE assignee_ = ?",
+			"UPDATE ACT_RU_TASK SET owner_ = ? WHERE owner_ = ?",
+			"UPDATE ACT_RU_IDENTITYLINK SET user_id_ = ? WHERE user_id_ = ?",
+			"UPDATE ACT_HI_TASKINST SET assignee_ = ? WHERE assignee_ = ?",
+			"UPDATE ACT_HI_TASKINST SET owner_ = ? WHERE owner_ = ?",
+			"UPDATE ACT_HI_ACTINST SET assignee_ = ? WHERE assignee_ = ?",
+			"UPDATE ACT_HI_IDENTITYLINK SET user_id_ = ? WHERE user_id_ = ?",
+			"UPDATE ACT_HI_PROCINST SET start_user_id_ = ? WHERE start_user_id_ = ?"
+		};
+
+		try (Connection connection = dataSource.getConnection()) {
+			for (String sql : updateStatements) {
+				executeWithRetry(connection, sql, oldUserName, newUserName);
+			}
+			if (!connection.getAutoCommit()) {
+				connection.commit();
+			}
+		} catch (SQLException e) {
+			logger.error("Failed to obtain or commit database connection for updating Activiti tasks during user rename: " + oldUserName + " -> " + newUserName, e);
+			throw new BeCPGException(e.getMessage(), e);
+		}
+	}
+	
+	private void executeWithRetry(Connection connection, String sql, String oldUserName, String newUserName) throws SQLException {
+	    int attempt = 0;
+	    SQLException lastException = null;
+
+	    // First: retry with original SQL
+	    while (attempt < MAX_RETRIES) {
+	        try {
+	            updateStatement(oldUserName, newUserName, connection, sql);
+	            return; // success
+	        } catch (SQLException e) {
+	            lastException = e;
+	            attempt++;
+	            logger.warn("Retry " + attempt + "/" + MAX_RETRIES + " failed for SQL: " + sql, e);
+
+	            sleep();
+	        }
+	    }
+
+	    // Second: fallback to uppercase table names
+	    String upperSql = toUppercaseTableName(sql);
+	    logger.warn("Retry failed. Trying with lowercase table name: " + upperSql);
+
+	    attempt = 0;
+
+	    while (attempt < MAX_RETRIES) {
+	        try {
+	            updateStatement(oldUserName, newUserName, connection, upperSql);
+	            return; // success
+	        } catch (SQLException e) {
+	            lastException = e;
+	            attempt++;
+	            logger.warn("Uppercase retry " + attempt + "/" + MAX_RETRIES + " failed for SQL: " + upperSql, e);
+
+	            sleep();
+	        }
+	    }
+
+	    // Final failure
+	    if (lastException != null) {
+	        throw lastException;
+	    }
+	}
+
+	private void updateStatement(String oldUserName, String newUserName, Connection connection, String sql) throws SQLException {
+		try (PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setString(1, newUserName);
+			statement.setString(2, oldUserName);
+			int updated = statement.executeUpdate();
+			if (logger.isDebugEnabled() && updated > 0) {
+				logger.debug("Activiti patch: " + sql + " — " + updated + " row(s) updated for user rename: " + oldUserName + " -> " + newUserName);
 			}
 		}
+	}
+	
+	private String toUppercaseTableName(String sql) {
+	    // naive but effective: uppercase word after UPDATE
+	    String[] parts = sql.split(" ");
+	    if (parts.length > 1) {
+	        parts[1] = parts[1].toUpperCase();
+	    }
+	    return String.join(" ", parts);
+	}
+	
+	private void sleep() {
+	    try {
+	        Thread.sleep(RETRY_DELAY_MS);
+	    } catch (InterruptedException ie) {
+	        Thread.currentThread().interrupt();
+	    }
 	}
 	
 	private boolean isIdsUser(NodeRef personNodeRef) {
