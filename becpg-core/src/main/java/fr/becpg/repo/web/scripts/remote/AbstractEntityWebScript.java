@@ -214,6 +214,34 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	protected  Integer maxResultsLimit() {
 		return Integer.parseInt(systemConfigurationService.confValue("beCPG.remote.maxResults.limit"));
 	}
+
+	/**
+	 * <p>maxResultsHardLimit.</p>
+	 *
+	 * Ceiling up to which an explicit <code>maxResults</code> is honoured on a listing that requests
+	 * <code>fields</code> or <code>lists</code>, read from <code>beCPG.remote.maxResults.hardLimit</code>.
+	 * <p>
+	 * It is shipped equal to <code>beCPG.remote.maxResults.limit</code> (256), so out of the box the
+	 * behaviour is exactly the one of {@link #maxResultsLimit()} : anything above 256 is clamped to
+	 * 256. Raising it — and only raising it — lets a caller ask for a bigger window (monitoring
+	 * listings and server side sorting over more than ~250 entities) while
+	 * <code>beCPG.remote.maxResults.limit</code> keeps being the default window size applied to every
+	 * caller that does not ask for one. Falls back on {@link #maxResultsLimit()} when the property is
+	 * missing or not a number.
+	 *
+	 * @return a {@link java.lang.Integer} object
+	 */
+	protected Integer maxResultsHardLimit() {
+		String confValue = systemConfigurationService.confValue("beCPG.remote.maxResults.hardLimit");
+		if ((confValue != null) && !confValue.isBlank()) {
+			try {
+				return Integer.parseInt(confValue.trim());
+			} catch (NumberFormatException e) {
+				logger.warn("Cannot parse beCPG.remote.maxResults.hardLimit: " + confValue + ", falling back on beCPG.remote.maxResults.limit");
+			}
+		}
+		return maxResultsLimit();
+	}
 	
 	
 	/** {@inheritDoc} */

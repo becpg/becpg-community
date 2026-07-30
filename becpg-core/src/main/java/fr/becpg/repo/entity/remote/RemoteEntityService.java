@@ -107,6 +107,15 @@ public interface RemoteEntityService {
 	/** Constant <code>ATTR_PARENT_ID="parent"</code> */
 	String ATTR_PARENT_ID = "parent";
 	
+	/**
+	 * Constant <code>ATTR_ENTITY_ID="entityId"</code>
+	 * <p>
+	 * nodeRef id of the entity owning the datalist a listing row belongs to. Only emitted on
+	 * <code>ENTITY_LIST</code> rows, and only when <code>appendParent=true</code> is requested
+	 * (see {@link fr.becpg.repo.entity.remote.RemoteParams#PARAM_APPEND_PARENT}).
+	 */
+	String ATTR_ENTITY_ID = "entityId";
+
 	/** Constant <code>ATTR_VERSION="version"</code> */
 	String ATTR_VERSION = "version";
 	
