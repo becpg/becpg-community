@@ -273,6 +273,10 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 				}
 			}
 
+			if (JsonVisitNodeType.ENTITY_LIST.equals(type) && params.isAppendParent()) {
+				visitListingRowParent(nodeRef, entity);
+			}
+
 			entity.put(RemoteEntityService.ATTR_TYPE, entityDictionaryService.toPrefixString(nodeType));
 
 			QName propName = RemoteHelper.getPropName(nodeType, entityDictionaryService);
@@ -415,6 +419,52 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 			}
 		} finally {
 			cacheList.remove(nodeRef);
+		}
+	}
+
+	/**
+	 * Appends the parentage of a listing row (<code>ENTITY_LIST</code>), so that a consumer of
+	 * <code>becpg/remote/entity/list</code> can attribute a row to its container without an extra
+	 * query. Emitted only when <code>appendParent=true</code> is requested, see
+	 * {@link fr.becpg.repo.entity.remote.RemoteParams#PARAM_APPEND_PARENT} : by default nothing is
+	 * written and the listing output is left untouched.
+	 * <p>
+	 * Three attributes are added:
+	 * <ul>
+	 * <li><code>parent</code> : nodeRef id of the primary parent (for a datalist item, the datalist
+	 * itself),</li>
+	 * <li><code>path</code> : prefixed path of that primary parent, absolute (a listing row is its
+	 * own context entity, so there is no entity path to make it relative to),</li>
+	 * <li><code>entityId</code> : nodeRef id of the entity owning the datalist, only for a
+	 * <code>bcpg:entityListItem</code> — e.g. the <code>pjt:project</code> of a
+	 * <code>pjt:taskList</code> row.</li>
+	 * </ul>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param entity a {@link org.json.JSONObject} object
+	 * @throws org.json.JSONException if any.
+	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if any.
+	 */
+	private void visitListingRowParent(NodeRef nodeRef, JSONObject entity) throws JSONException, RemoteException {
+		NodeRef parentRef = getPrimaryParentRef(nodeRef);
+		if (parentRef == null) {
+			logger.warn("Node : " + nodeRef + " has no primary parent");
+			return;
+		}
+
+		entity.put(RemoteEntityService.ATTR_PARENT_ID, parentRef.getId());
+
+		try {
+			entity.put(RemoteEntityService.ATTR_PATH, nodeService.getPath(parentRef).toPrefixString(namespaceService));
+		} catch (RuntimeException e) {
+			logger.warn("Failed to resolve path for parent node " + parentRef + ": " + e.getMessage());
+		}
+
+		if ((entityListDAO != null) && entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+			NodeRef entityNodeRef = entityListDAO.getEntity(nodeRef);
+			if (entityNodeRef != null) {
+				entity.put(RemoteEntityService.ATTR_ENTITY_ID, entityNodeRef.getId());
+			}
 		}
 	}
 
