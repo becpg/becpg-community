@@ -28,7 +28,9 @@ import java.util.Objects;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
+import org.alfresco.repo.transaction.TransactionListenerAdapter;
 import org.alfresco.repo.workflow.WorkflowConstants;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.repo.workflow.WorkflowNotificationUtils;
@@ -146,26 +148,77 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 			logger.debug("Cancelling workflow instance: " + workflowId);
 		}
 
+		clearWorkflowReferences(task);
+		runAfterCommit("cancel workflow " + workflowId, () -> cancelWorkflowById(workflowId));
+	}
+
+	/**
+	 * Cancel a workflow instance, deleting it when Activiti reports it as corrupted.
+	 *
+	 * @param workflowId a {@link java.lang.String} object
+	 */
+	private void cancelWorkflowById(String workflowId) {
 		try {
 			WorkflowInstance instance = workflowService.cancelWorkflow(workflowId);
-			if ((instance == null) || !instance.isActive()) {
-				clearWorkflowReferences(task);
-				if (logger.isDebugEnabled()) {
-					logger.debug("Workflow cancelled successfully: " + workflowId);
-				}
-			} else {
+			if ((instance != null) && instance.isActive()) {
 				logger.error("Failed to cancel workflow: " + workflowId + " - instance is still active");
+			} else if (logger.isDebugEnabled()) {
+				logger.debug("Workflow cancelled successfully: " + workflowId);
 			}
 		} catch (Exception e) {
 			if (RetryingTransactionHelper.extractRetryCause(e) != null) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Retrying the formulation due to exception " + e.getMessage());
-				}
-                throw e;
-            }
+				throw e;
+			}
 			logger.error("Error cancelling workflow: " + workflowId, e);
 			handleCorruptedWorkflow(workflowId);
-			clearWorkflowReferences(task);
+		}
+	}
+
+	/**
+	 * Defer an Activiti operation until the current transaction has committed.
+	 *
+	 * Activiti cancellations and task updates hold locks on the ACT_RU_* rows of the instance for
+	 * the whole transaction: concurrent formulations of the same project then wait for
+	 * innodb_lock_wait_timeout before being retried. Running them once the transaction is committed
+	 * keeps that contention out of the user request.
+	 *
+	 * @param description a {@link java.lang.String} object used for logging
+	 * @param operation a {@link java.lang.Runnable} object
+	 */
+	private void runAfterCommit(String description, Runnable operation) {
+		if (AlfrescoTransactionSupport.getTransactionId() == null) {
+			operation.run();
+			return;
+		}
+
+		String runAsUser = AuthenticationUtil.getRunAsUser();
+
+		AlfrescoTransactionSupport.bindListener(new TransactionListenerAdapter() {
+
+			@Override
+			public void afterCommit() {
+				executeDeferredOperation(description, operation, runAsUser);
+			}
+		});
+	}
+
+	/**
+	 * Run a deferred Activiti operation in its own transaction, so that a failure never impacts the
+	 * committed formulation.
+	 *
+	 * @param description a {@link java.lang.String} object used for logging
+	 * @param operation a {@link java.lang.Runnable} object
+	 * @param runAsUser a {@link java.lang.String} object
+	 */
+	private void executeDeferredOperation(String description, Runnable operation, String runAsUser) {
+		String user = runAsUser != null ? runAsUser : AuthenticationUtil.getSystemUserName();
+		try {
+			AuthenticationUtil.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				operation.run();
+				return null;
+			}, false, true), user);
+		} catch (Exception e) {
+			logger.error("Deferred workflow operation failed: " + description, e);
 		}
 	}
 
@@ -618,19 +671,9 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 		}
 
 		if ((taskListDataItem.getResources() == null) || taskListDataItem.getResources().isEmpty()) {
-			try {
-				workflowService.cancelWorkflow(taskListDataItem.getWorkflowInstance());
-			} catch (Exception e) {
-				if (RetryingTransactionHelper.extractRetryCause(e) != null) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Retrying the formulation due to exception " + e.getMessage());
-					}
-	                throw e;
-	            }
-				logger.error("Error cancelling workflow with no resources: " + taskListDataItem.getWorkflowInstance(), e);
-				handleCorruptedWorkflow(taskListDataItem.getWorkflowInstance());
-			}
+			String workflowId = taskListDataItem.getWorkflowInstance();
 			clearWorkflowReferences(taskListDataItem);
+			runAfterCommit("cancel workflow without resources " + workflowId, () -> cancelWorkflowById(workflowId));
 			return;
 		}
 
@@ -744,8 +787,26 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Updating task " + taskListDataItem.getTaskName() + " with properties: " + properties);
 			}
-			workflowService.updateTask(workflowTask.getId(), properties, null, null);
-			taskListDataItem.setWorkflowTaskInstance(workflowTask.getId());
+			String workflowTaskId = workflowTask.getId();
+			runAfterCommit("update workflow task " + workflowTaskId, () -> updateWorkflowTaskProperties(workflowTaskId, properties));
+			taskListDataItem.setWorkflowTaskInstance(workflowTaskId);
+		}
+	}
+
+	/**
+	 * Update the properties of an Activiti task, tolerating a task that has been completed meanwhile.
+	 *
+	 * @param workflowTaskId a {@link java.lang.String} object
+	 * @param properties a {@link java.util.Map} object
+	 */
+	private void updateWorkflowTaskProperties(String workflowTaskId, Map<QName, Serializable> properties) {
+		try {
+			workflowService.updateTask(workflowTaskId, properties, null, null);
+		} catch (Exception e) {
+			if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+				throw e;
+			}
+			logger.warn("Cannot update workflow task " + workflowTaskId + ": " + e.getMessage());
 		}
 	}
 
