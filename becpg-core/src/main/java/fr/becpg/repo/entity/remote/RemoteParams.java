@@ -41,6 +41,16 @@ public class RemoteParams {
 	/** Constant <code>PARAM_APPEND_CONTENT="appendContent"</code> */
 	public static final String PARAM_APPEND_CONTENT = "appendContent";
 
+	/**
+	 * Constant <code>PARAM_APPEND_PARENT="appendParent"</code>
+	 * <p>
+	 * Opt-in flag, <b>OFF by default</b>: when set, the JSON serialisation of a listing row
+	 * ({@link fr.becpg.repo.entity.remote.extractor.RemoteJSONContext.JsonVisitNodeType#ENTITY_LIST})
+	 * also carries its primary parent ({@code parent} + {@code path}) and, for a datalist item, the
+	 * nodeRef of the entity owning the list ({@code entityId}). Left unset the output is unchanged.
+	 */
+	public static final String PARAM_APPEND_PARENT = "appendParent";
+
 	/** Constant <code>PARAM_IS_INITIAL_VERSION="isInitialVersion"</code> */
 	public static final String PARAM_IS_INITIAL_VERSION = "isInitialVersion";
 
@@ -70,6 +80,8 @@ public class RemoteParams {
 	private RemoteEntityFormat format;
 
 	private JSONObject jsonParams;
+
+	private boolean appendParent = false;
 
 	private Set<QName> filteredProperties = new HashSet<>();
 	private Set<QName> ignoredFields = new HashSet<>();
@@ -103,6 +115,27 @@ public class RemoteParams {
 		this.jsonParams = jsonParams;
 	}
 
+
+	/**
+	 * <p>isAppendParent.</p>
+	 *
+	 * Whether the parent of a listing row should be serialized, see {@link #PARAM_APPEND_PARENT}.
+	 * Defaults to <code>false</code> so that the output stays unchanged for every existing consumer.
+	 *
+	 * @return a boolean
+	 */
+	public boolean isAppendParent() {
+		return appendParent;
+	}
+
+	/**
+	 * <p>Setter for the field <code>appendParent</code>.</p>
+	 *
+	 * @param appendParent a boolean
+	 */
+	public void setAppendParent(boolean appendParent) {
+		this.appendParent = appendParent;
+	}
 
 	/**
 	 * <p>Getter for the field <code>filteredAssocProperties</code>.</p>

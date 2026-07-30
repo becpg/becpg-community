@@ -52,6 +52,7 @@ public class ListEntitiesWebScript extends AbstractEntityWebScript {
 			params.setFilteredFields(fields, namespaceService);
 			params.setFilteredLists(lists);
 			params.setJsonParams(extractParams(req));
+			params.setAppendParent(booleanParam(req, params.getJsonParams(), RemoteParams.PARAM_APPEND_PARENT, false));
 
 			boolean shouldLimit = fields != null && !fields.isEmpty() || lists != null && !lists.isEmpty();
 
@@ -60,8 +61,10 @@ public class ListEntitiesWebScript extends AbstractEntityWebScript {
 
 			Integer maxResults = intParam(req, PARAM_MAX_RESULTS);
 			if (shouldLimit && maxResults != null) {
-				if (maxResults <= 0 || maxResults > maxResultsLimit()) {
+				if (maxResults <= 0) {
 					maxResults = maxResultsLimit();
+				} else if (maxResults > maxResultsHardLimit()) {
+					maxResults = Math.max(maxResultsLimit(), maxResultsHardLimit());
 				}
 			}
 

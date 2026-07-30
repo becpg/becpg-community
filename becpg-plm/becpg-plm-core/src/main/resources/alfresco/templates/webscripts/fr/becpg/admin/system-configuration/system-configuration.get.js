@@ -30,6 +30,7 @@ function main() {
         "beCPG.remote.rateLimiter.capacity",
         "beCPG.remote.rateLimiter.refillRate",
         "beCPG.remote.maxResults.limit",
+        "beCPG.remote.maxResults.hardLimit",
         "beCPG.security.supplierPermission",
         "beCPG.solr.enableIndexForTypes",
         "beCPG.classify.rights.check",
@@ -142,7 +143,8 @@ function main() {
         "project.subProject.propsToCopyFromParent",
         "project.subProject.propsToCopyToParent",
         "project.extractor.myProjectAttributes",
-        "project.formulation.autoProjectState"
+        "project.formulation.autoProjectState",
+        "beCPG.survey.subsidiaryScope.enabled"
     ].forEach(function(p) {
         addAttribute(p, "project");
     });
