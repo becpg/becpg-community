@@ -3,7 +3,15 @@
  */
 package fr.becpg.test.repo.product;
 
+import java.io.ByteArrayOutputStream;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.alfresco.query.PagingResults;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.util.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -12,140 +20,198 @@ import org.springframework.beans.factory.annotation.Autowired;
 import fr.becpg.model.BeCPGModel.EntityFormat;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.EntityFormatService;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
+import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteParams;
 import fr.becpg.test.BeCPGPLMTestHelper;
 import fr.becpg.test.PLMBaseTestCase;
 
+/**
+ * Integration tests for {@link EntityFormatService}.
+ */
 public class EntityFormatServiceIT extends PLMBaseTestCase {
 
 	@Autowired
 	private EntityFormatService entityFormatService;
 
 	@Autowired
-	private fr.becpg.repo.entity.EntityListDAO entityListDAO;
+	private EntityListDAO entityListDAO;
 
 	@Autowired
-	private fr.becpg.repo.entity.remote.RemoteEntityService remoteEntityService;
+	private RemoteEntityService remoteEntityService;
 
 	@Test
 	public void testGetArchivedEntityRemoteJson() {
-		NodeRef rawMaterialNoderef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			NodeRef result = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test archived remote");
-			return result;
-		}, false, true);
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test archived remote"));
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			entityFormatService.convertToFormat(rawMaterialNoderef, EntityFormat.JSON);
-			
-			// Verify that the datalist is absent from the node itself in DB
-			NodeRef listContainer = entityListDAO.getListContainer(rawMaterialNoderef);
+		inWriteTx(() -> {
+			entityFormatService.convertToFormat(rawMaterialNodeRef, EntityFormat.JSON);
+
+			NodeRef listContainer = entityListDAO.getListContainer(rawMaterialNodeRef);
 			if (listContainer != null) {
 				NodeRef listNodeRef = entityListDAO.getList(listContainer, PLMModel.TYPE_INGLIST);
 				if (listNodeRef != null) {
-					java.util.List<org.alfresco.service.cmr.repository.ChildAssociationRef> childAssocs = nodeService.getChildAssocs(listNodeRef);
+					List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(listNodeRef);
 					assertTrue(childAssocs == null || childAssocs.isEmpty());
 				}
 			}
 
-			java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
-			remoteEntityService.getEntity(rawMaterialNoderef, out, new fr.becpg.repo.entity.remote.RemoteParams(fr.becpg.repo.entity.remote.RemoteEntityFormat.json));
-			
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			remoteEntityService.getEntity(rawMaterialNodeRef, out, new RemoteParams(RemoteEntityFormat.json));
+
 			String resultJson = out.toString();
 			assertNotNull(resultJson);
-			
+
 			JSONObject root = new JSONObject(resultJson);
-			assertNotNull(root);
-			
 			JSONObject entity = root.getJSONObject("entity");
-			assertNotNull(entity);
 			assertEquals("MP test archived remote", entity.getString("cm:name"));
 
-			// Verify that lists are still present in the returned JSON
 			JSONObject datalists = entity.getJSONObject("datalists");
 			assertNotNull(datalists);
 			JSONArray ingList = datalists.getJSONArray("bcpg:" + PLMModel.TYPE_INGLIST.getLocalName());
 			assertNotNull(ingList);
 			assertTrue(ingList.length() > 0);
 
-			return true;
-		}, false, true);
+			return null;
+		});
 	}
 
 	@Test
 	public void testGetArchivedEntityRemoteJsonWithFilters() {
-		NodeRef rawMaterialNoderef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			NodeRef result = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test archived filters");
-			return result;
-		}, false, true);
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test archived filters"));
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			entityFormatService.convertToFormat(rawMaterialNoderef, EntityFormat.JSON);
-			
-			java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
+		inWriteTx(() -> {
+			entityFormatService.convertToFormat(rawMaterialNodeRef, EntityFormat.JSON);
+
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			RemoteParams params = new RemoteParams(RemoteEntityFormat.json);
-			
-			// Exclude the name property and the ingredients list
-			java.util.Set<String> fields = new java.util.HashSet<>();
+
+			Set<String> fields = new HashSet<>();
 			fields.add("!cm:name");
 			params.setFilteredFields(fields, serviceRegistry.getNamespaceService());
-			
-			java.util.Set<String> lists = new java.util.HashSet<>();
+
+			Set<String> lists = new HashSet<>();
 			lists.add("!" + PLMModel.TYPE_INGLIST.getLocalName());
 			params.setFilteredLists(lists);
 
-			remoteEntityService.getEntity(rawMaterialNoderef, out, params);
-			
+			remoteEntityService.getEntity(rawMaterialNodeRef, out, params);
+
 			String resultJson = out.toString();
 			JSONObject root = new JSONObject(resultJson);
 			JSONObject entity = root.getJSONObject("entity");
 
-			// Check that attributes were filtered
 			if (entity.has("attributes")) {
 				JSONObject attributes = entity.getJSONObject("attributes");
 				assertFalse("The name property should have been filtered out", attributes.has("cm:name"));
 			}
-			
-			// Check that the list was filtered
+
 			if (entity.has("datalists")) {
 				JSONObject datalists = entity.getJSONObject("datalists");
 				assertFalse("The ingredients list should have been filtered out", datalists.has("bcpg:" + PLMModel.TYPE_INGLIST.getLocalName()));
 			}
 
-			return true;
-		}, false, true);
+			return null;
+		});
 	}
 
 	@Test
-	public void convertToJsonTest() {
+	public void testGetArchivedEntityRemoteJsonWithPositiveFieldFilter() {
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test archived positive fields"));
 
-		NodeRef rawMaterialNoderef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			NodeRef result = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
-			return result;
-		}, false, true);
+		inWriteTx(() -> {
+			entityFormatService.convertToFormat(rawMaterialNodeRef, EntityFormat.JSON);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			RemoteParams params = new RemoteParams(RemoteEntityFormat.json);
+			Set<String> fields = new HashSet<>();
+			fields.add("cm:name");
+			fields.add("bcpg:legalName");
+			params.setFilteredFields(fields, serviceRegistry.getNamespaceService());
 
-			entityFormatService.convertToFormat(rawMaterialNoderef, EntityFormat.JSON);
-			String format = entityFormatService.getEntityFormat(rawMaterialNoderef);
+			remoteEntityService.getEntity(rawMaterialNodeRef, out, params);
+
+			JSONObject root = new JSONObject(out.toString());
+			JSONObject entity = root.getJSONObject("entity");
+
+			assertEquals("MP test archived positive fields", entity.getString("cm:name"));
+			if (entity.has("attributes")) {
+				JSONObject attributes = entity.getJSONObject("attributes");
+				assertFalse("Unrequested attribute bcpg:erpCode should be filtered out", attributes.has("bcpg:erpCode"));
+			}
+
+			return null;
+		});
+	}
+
+	@Test
+	public void testListArchivedEntityRemoteJsonNoDatalists() {
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test archived list"));
+
+		inWriteTx(() -> {
+			entityFormatService.convertToFormat(rawMaterialNodeRef, EntityFormat.JSON);
+
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			RemoteParams params = new RemoteParams(RemoteEntityFormat.json);
+
+			PagingResults<NodeRef> pagingResults = new PagingResults<NodeRef>() {
+				@Override
+				public boolean hasMoreItems() {
+					return false;
+				}
+				@Override
+				public Pair<Integer, Integer> getTotalResultCount() {
+					return new Pair<>(1, 1);
+				}
+				@Override
+				public String getQueryExecutionId() {
+					return null;
+				}
+				@Override
+				public List<NodeRef> getPage() {
+					return List.of(rawMaterialNodeRef);
+				}
+			};
+
+			remoteEntityService.listEntities(pagingResults, out, params);
+
+			String resultJson = out.toString();
+			JSONObject root = new JSONObject(resultJson);
+			JSONArray entities = root.getJSONArray("entities");
+			assertEquals(1, entities.length());
+
+			JSONObject entityObj = entities.getJSONObject(0).getJSONObject("entity");
+			assertEquals("MP test archived list", entityObj.getString("cm:name"));
+			assertFalse("Datalists should not be returned in entity lists", entityObj.has("datalists"));
+			assertFalse("Attributes should not be returned in entity lists when no fields specified", entityObj.has("attributes"));
+
+			return null;
+		});
+	}
+
+	@Test
+	public void testConvertToJson() {
+		NodeRef rawMaterialNodeRef = inWriteTx(() -> BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report"));
+
+		inWriteTx(() -> {
+			entityFormatService.convertToFormat(rawMaterialNodeRef, EntityFormat.JSON);
+			String format = entityFormatService.getEntityFormat(rawMaterialNodeRef);
 			assertEquals(EntityFormat.JSON.toString(), format);
 
-			String entityJson = entityFormatService.getEntityData(rawMaterialNoderef);
+			String entityJson = entityFormatService.getEntityData(rawMaterialNodeRef);
 			assertNotNull(entityJson);
 
 			JSONObject root = new JSONObject(entityJson);
-			assertNotNull(root);
-
-			JSONObject entity = (JSONObject) root.get("entity");
+			JSONObject entity = root.getJSONObject("entity");
 			assertNotNull(entity);
 
-			JSONObject datalists = (JSONObject) entity.get("datalists");
+			JSONObject datalists = entity.getJSONObject("datalists");
 			assertNotNull(datalists);
 
-			JSONArray ingList = (JSONArray) datalists.get("bcpg:" + PLMModel.TYPE_INGLIST.getLocalName());
+			JSONArray ingList = datalists.getJSONArray("bcpg:" + PLMModel.TYPE_INGLIST.getLocalName());
 			assertNotNull(ingList);
 
-			return true;
-		}, false, true);
+			return null;
+		});
 	}
 }

@@ -156,7 +156,7 @@ public class ArchivedEntityPolicy extends AbstractBeCPGPolicy implements OnAddAs
 					@Override
 					public void process(NodeRef entry) throws Throwable {
 						if (alfrescoRepository.findOne(nodeRef) instanceof FormulatedEntity) {
-							policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ARCHIVED_ENTITY);
+							policyBehaviourFilter.disableBehaviour();
 							formulationService.formulate(nodeRef);
 						}
 					}
@@ -201,7 +201,7 @@ public class ArchivedEntityPolicy extends AbstractBeCPGPolicy implements OnAddAs
 				batchStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<NodeRef>() {
 					@Override
 					public void process(NodeRef entry) throws Throwable {
-						policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ARCHIVED_ENTITY);
+						policyBehaviourFilter.disableBehaviour();
 						entityFormatService.convertToFormat(nodeRef, EntityFormat.NODE);
 					}
 				});

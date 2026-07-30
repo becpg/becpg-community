@@ -24,7 +24,6 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -220,7 +219,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	 */
 	protected void visitNode(NodeRef nodeRef, JSONObject entity, JsonVisitNodeType type, QName assocName, RemoteJSONContext context)
 			throws JSONException, RemoteException {
-		if (tryVisitPreStoredJson(nodeRef, entity)) {
+		if (tryVisitPreStoredJson(nodeRef, entity, type, assocName, context)) {
 			return;
 		}
 
@@ -245,7 +244,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		}
 	}
 
-	private boolean tryVisitPreStoredJson(NodeRef nodeRef, JSONObject entity) throws JSONException {
+	private boolean tryVisitPreStoredJson(NodeRef nodeRef, JSONObject entity, JsonVisitNodeType type, QName assocName, RemoteJSONContext context) throws JSONException {
 		if (!nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_FORMAT)
 				|| !BeCPGModel.EntityFormat.JSON.toString().equals(String.valueOf(nodeService.getProperty(nodeRef, BeCPGModel.PROP_ENTITY_FORMAT)))) {
 			return false;
@@ -259,10 +258,64 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 					JSONObject root = new JSONObject(jsonString);
 					if (root.has(RemoteEntityService.ELEM_ENTITY)) {
 						JSONObject archivedEntity = root.getJSONObject(RemoteEntityService.ELEM_ENTITY);
-						for (String key : archivedEntity.keySet()) {
-							entity.put(key, archivedEntity.get(key));
+						QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
+
+						if (archivedEntity.has(RemoteEntityService.ATTR_TYPE)) {
+							entity.put(RemoteEntityService.ATTR_TYPE, archivedEntity.get(RemoteEntityService.ATTR_TYPE));
 						}
-						filterArchivedEntity(entity);
+
+						if (nodeRef != null && Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_NODEREF, Boolean.TRUE))) {
+							entity.put(RemoteEntityService.ATTR_ID, nodeRef.getId());
+						}
+
+						QName primaryPropName = RemoteHelper.getPropName(nodeType, entityDictionaryService);
+						String primaryPropKey = entityDictionaryService.toPrefixString(primaryPropName);
+						if (archivedEntity.has(primaryPropKey)) {
+							entity.put(primaryPropKey, archivedEntity.get(primaryPropKey));
+						}
+
+						String codeKey = BeCPGModel.PROP_CODE.toPrefixString(namespaceService);
+						if (archivedEntity.has(codeKey) && Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_CODE, Boolean.TRUE))) {
+							entity.put(codeKey, archivedEntity.get(codeKey));
+						}
+
+						String erpCodeKey = BeCPGModel.PROP_ERP_CODE.toPrefixString(namespaceService);
+						if (archivedEntity.has(erpCodeKey) && Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_ERP_CODE, Boolean.TRUE))) {
+							entity.put(erpCodeKey, archivedEntity.get(erpCodeKey));
+						}
+
+						if (!JsonVisitNodeType.CHILD_ASSOC.equals(type) && archivedEntity.has(RemoteEntityService.ATTR_VERSION)) {
+							entity.put(RemoteEntityService.ATTR_VERSION, archivedEntity.get(RemoteEntityService.ATTR_VERSION));
+						}
+
+						if (shouldProcessParent(type, nodeType)) {
+							if (archivedEntity.has(RemoteEntityService.ATTR_PATH)) {
+								entity.put(RemoteEntityService.ATTR_PATH, archivedEntity.get(RemoteEntityService.ATTR_PATH));
+							}
+							if (archivedEntity.has(RemoteEntityService.ATTR_PARENT_ID)) {
+								entity.put(RemoteEntityService.ATTR_PARENT_ID, archivedEntity.get(RemoteEntityService.ATTR_PARENT_ID));
+							}
+							if (archivedEntity.has(RemoteEntityService.ATTR_SITE)) {
+								entity.put(RemoteEntityService.ATTR_SITE, archivedEntity.get(RemoteEntityService.ATTR_SITE));
+							}
+						}
+
+						if (isAll() && archivedEntity.has(KEY_METADATA)) {
+							entity.put(KEY_METADATA, archivedEntity.get(KEY_METADATA));
+						}
+
+						if ((JsonVisitNodeType.CONTENT.equals(type) || (ContentModel.TYPE_CONTENT.equals(nodeType)
+								&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_CONTENT, Boolean.FALSE))))
+								&& archivedEntity.has(RemoteEntityService.ELEM_CONTENT)) {
+							entity.put(RemoteEntityService.ELEM_CONTENT, archivedEntity.get(RemoteEntityService.ELEM_CONTENT));
+						}
+
+						if (shouldExtractAttributes(type, assocName, nodeType) && archivedEntity.has(RemoteEntityService.ELEM_ATTRIBUTES)) {
+							JSONObject archivedAttributes = archivedEntity.getJSONObject(RemoteEntityService.ELEM_ATTRIBUTES);
+							JSONObject filteredAttributes = filterArchivedAttributes(archivedAttributes, assocName);
+							entity.put(RemoteEntityService.ELEM_ATTRIBUTES, filteredAttributes);
+						}
+
 						cacheList.add(nodeRef);
 						return true;
 					}
@@ -519,6 +572,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	protected void visitLists(NodeRef nodeRef, JSONObject entity, RemoteJSONContext context) throws JSONException {
 		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_FORMAT)
 				&& BeCPGModel.EntityFormat.JSON.toString().equals(String.valueOf(nodeService.getProperty(nodeRef, BeCPGModel.PROP_ENTITY_FORMAT)))) {
+			visitArchivedLists(nodeRef, entity);
 			return;
 		}
 
@@ -770,15 +824,12 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	 * @return a boolean
 	 */
 	protected boolean matchProp(QName assocName, QName propName, boolean checkFilter) {
-		if (assocName == null) {
-			if (params.getFilteredProperties() != null && !params.getFilteredProperties().isEmpty()) {
-				return params.getFilteredProperties().contains(propName);
-			}
-			return !checkFilter;
+		if (assocName != null && params.getFilteredAssocProperties() != null && !params.getFilteredAssocProperties().isEmpty()
+				&& params.getFilteredAssocProperties().containsKey(assocName)) {
+			return params.getFilteredAssocProperties().get(assocName).contains(propName);
 		}
-		if (params.getFilteredAssocProperties() != null && !params.getFilteredAssocProperties().isEmpty()) {
-			return params.getFilteredAssocProperties().containsKey(assocName)
-					&& params.getFilteredAssocProperties().get(assocName).contains(propName);
+		if (params.getFilteredProperties() != null && !params.getFilteredProperties().isEmpty()) {
+			return params.getFilteredProperties().contains(propName);
 		}
 		return !checkFilter;
 	}
@@ -872,46 +923,168 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		}
 	}
 
-	private void filterArchivedEntity(JSONObject entity) throws JSONException {
-		if (entity.has(RemoteEntityService.ELEM_ATTRIBUTES)) {
-			filterArchivedAttributes(entity.getJSONObject(RemoteEntityService.ELEM_ATTRIBUTES));
+	private void visitArchivedLists(NodeRef nodeRef, JSONObject entity) throws JSONException {
+		ContentReader reader = contentService.getReader(nodeRef, BeCPGModel.PROP_ENTITY_DATA);
+		if (reader == null) {
+			return;
 		}
-		if (entity.has(RemoteEntityService.ELEM_DATALISTS)) {
-			filterArchivedDatalists(entity.getJSONObject(RemoteEntityService.ELEM_DATALISTS));
+		String jsonString = reader.getContentString();
+		if (jsonString == null || jsonString.isEmpty()) {
+			return;
+		}
+		try {
+			JSONObject root = new JSONObject(jsonString);
+			if (root.has(RemoteEntityService.ELEM_ENTITY)) {
+				JSONObject archivedEntity = root.getJSONObject(RemoteEntityService.ELEM_ENTITY);
+				if (archivedEntity.has(RemoteEntityService.ELEM_DATALISTS)) {
+					JSONObject archivedLists = archivedEntity.getJSONObject(RemoteEntityService.ELEM_DATALISTS);
+					JSONObject filteredLists = new JSONObject();
+					Iterator<String> keys = archivedLists.keys();
+					while (keys.hasNext()) {
+						String key = keys.next();
+						String listName = extractArchivedListName(key);
+						if (params.shouldExtractList(listName)) {
+							Object listVal = archivedLists.get(key);
+							QName listTypeQName = getQNameQuietly(key);
+							Object filteredListVal = filterSubJsonValue(listVal, listTypeQName);
+							if (filteredListVal != null) {
+								filteredLists.put(key, filteredListVal);
+							}
+						}
+					}
+					if (filteredLists.length() > 0) {
+						entity.put(RemoteEntityService.ELEM_DATALISTS, filteredLists);
+					}
+				}
+			}
+		} catch (JSONException e) {
+			logger.error("Error parsing pre-stored JSON datalists for node: " + nodeRef, e);
 		}
 	}
 
-	private void filterArchivedAttributes(JSONObject attributes) {
+	private JSONObject filterArchivedAttributes(JSONObject attributes, QName assocName) throws JSONException {
+		JSONObject filtered = new JSONObject();
 		Iterator<String> keys = attributes.keys();
-		List<String> keysToRemove = new ArrayList<>();
 		while (keys.hasNext()) {
 			String key = keys.next();
+			if (KEY_METADATA.equals(key)) {
+				if (isAll()) {
+					filtered.put(key, attributes.get(key));
+				}
+				continue;
+			}
+			if (isArchivedAttributeMatching(key, assocName)) {
+				Object value = attributes.get(key);
+				QName childAssocName = getQNameQuietly(key);
+				Object filteredValue = filterSubJsonValue(value, childAssocName != null ? childAssocName : assocName);
+				if (filteredValue != null) {
+					filtered.put(key, filteredValue);
+				}
+			}
+		}
+		return filtered;
+	}
+
+	private Object filterSubJsonValue(Object value, QName assocName) throws JSONException {
+		if (value instanceof JSONObject jsonObj) {
+			return filterSubJsonObject(jsonObj, assocName);
+		} else if (value instanceof JSONArray jsonArr) {
+			JSONArray filteredArr = new JSONArray();
+			for (int i = 0; i < jsonArr.length(); i++) {
+				Object item = jsonArr.get(i);
+				Object filteredItem = filterSubJsonValue(item, assocName);
+				if (filteredItem != null) {
+					filteredArr.put(filteredItem);
+				}
+			}
+			return filteredArr;
+		}
+		return value;
+	}
+
+	private JSONObject filterSubJsonObject(JSONObject jsonObj, QName assocName) throws JSONException {
+		JSONObject filteredObj = new JSONObject();
+		Iterator<String> keys = jsonObj.keys();
+		while (keys.hasNext()) {
+			String key = keys.next();
+			Object val = jsonObj.get(key);
+
+			if (KEY_METADATA.equals(key)) {
+				if (isAll()) {
+					filteredObj.put(key, val);
+				}
+				continue;
+			}
+
+			if (RemoteEntityService.ATTR_ID.equals(key) || RemoteEntityService.ATTR_TYPE.equals(key)
+					|| RemoteEntityService.ATTR_VERSION.equals(key) || RemoteEntityService.ATTR_PATH.equals(key)) {
+				filteredObj.put(key, val);
+				continue;
+			}
+
+			if (RemoteEntityService.ELEM_ATTRIBUTES.equals(key) && val instanceof JSONObject attrsObj) {
+				JSONObject filteredAttrs = filterArchivedAttributes(attrsObj, assocName);
+				filteredObj.put(key, filteredAttrs);
+				continue;
+			}
+
+			if (isArchivedAttributeMatching(key, assocName)) {
+				QName childAssoc = getQNameQuietly(key);
+				Object filteredVal = filterSubJsonValue(val, childAssoc != null ? childAssoc : assocName);
+				if (filteredVal != null) {
+					filteredObj.put(key, filteredVal);
+				}
+			}
+		}
+		return filteredObj;
+	}
+
+	private QName getQNameQuietly(String key) {
+		try {
+			String baseKey = key;
+			if (key.contains("_") && key.lastIndexOf('_') > key.indexOf(':')) {
+				baseKey = key.substring(0, key.lastIndexOf('_'));
+			}
+			return QName.createQName(baseKey, namespaceService);
+		} catch (NamespaceException e) {
+			return null;
+		}
+	}
+
+	private boolean isArchivedAttributeMatching(String key, QName assocName) {
+		QName qname = getQNameQuietly(key);
+		if (qname == null) {
+			return false;
+		}
+
+		if (key.contains("_") && key.lastIndexOf('_') > key.indexOf(':')) {
 			try {
-				QName qname = QName.createQName(key, namespaceService);
-				if (!params.shouldExtractField(qname) || !matchProp(null, qname, false)) {
-					keysToRemove.add(key);
+				if (entityDictionaryService.getProperty(qname) != null || isQNameInFilteredParams(qname, assocName)) {
+					if (!Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_MLTEXT, Boolean.TRUE))) {
+						return false;
+					}
 				}
 			} catch (NamespaceException e) {
-				// Ignore keys that are not valid QNames
+				// Ignore
 			}
 		}
-		for (String key : keysToRemove) {
-			attributes.remove(key);
+
+		if (!params.shouldExtractField(qname)) {
+			return false;
 		}
+
+		return matchProp(assocName, qname, false);
 	}
 
-	private void filterArchivedDatalists(JSONObject lists) {
-		Iterator<String> keys = lists.keys();
-		List<String> keysToRemove = new ArrayList<>();
-		while (keys.hasNext()) {
-			String key = keys.next();
-			String listName = extractArchivedListName(key);
-			if (!params.shouldExtractList(listName)) {
-				keysToRemove.add(key);
+	private boolean isQNameInFilteredParams(QName qname, QName assocName) {
+		if (assocName == null) {
+			if (params.getFilteredProperties() != null && params.getFilteredProperties().contains(qname)) {
+				return true;
 			}
-		}
-		for (String key : keysToRemove) {
-			lists.remove(key);
+			return params.getFilteredAssocProperties() != null && params.getFilteredAssocProperties().containsKey(qname);
+		} else {
+			return params.getFilteredAssocProperties() != null && params.getFilteredAssocProperties().containsKey(assocName)
+					&& params.getFilteredAssocProperties().get(assocName).contains(qname);
 		}
 	}
 
