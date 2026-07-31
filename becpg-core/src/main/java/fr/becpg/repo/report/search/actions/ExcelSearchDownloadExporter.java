@@ -26,6 +26,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import org.alfresco.service.namespace.QName;
 import fr.becpg.repo.report.search.impl.ExcelReportSearchRenderer;
 import fr.becpg.repo.report.search.impl.ExcelReportSearchRenderer.ExcelSheetExportContext;
 
@@ -133,11 +134,17 @@ public class ExcelSearchDownloadExporter extends AbstractSearchDownloadExporter 
 	 * @param template a {@link org.apache.poi.xssf.usermodel.XSSFWorkbook} object
 	 */
 	private void readTemplateHeaders(XSSFWorkbook template) {
+		QName mainType = null;
 		for (int i = 0; i < template.getNumberOfSheets(); i++) {
 			XSSFSheet templateSheet = template.getSheetAt(i);
 
+			final QName currentMainType = mainType;
 			ExcelSheetExportContext sheetContext = transactionHelper
-					.doInTransaction(() -> excelReportSearchRenderer.readHeader(templateSheet, null, parameters), true, true);
+					.doInTransaction(() -> excelReportSearchRenderer.readHeader(templateSheet, currentMainType, parameters), true, true);
+
+			if (sheetContext != null && sheetContext.getMainType() != null) {
+				mainType = sheetContext.getMainType();
+			}
 
 			context.put(templateSheet.getSheetName(), sheetContext);
 		}
