@@ -14,6 +14,8 @@ import org.alfresco.service.cmr.action.ParameterDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.download.DownloadRequest;
 import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.ContentReader;
+import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.view.ExporterCrawlerParameters;
@@ -113,11 +115,18 @@ public abstract class AbstractExportSearchAction extends AbstractDownloadArchive
 
 		// Get the download request data and set up the exporter crawler
 		// parameters.
-		final DownloadRequest downloadRequest = downloadStorage.getDownloadRequest(actionedUponNodeRef);
+		final DownloadRequest originalRequest = downloadStorage.getDownloadRequest(actionedUponNodeRef);
+		final NodeRef[] nodeRefs = getNodeRefsToExport(actionedUponNodeRef, originalRequest);
+		
+		final DownloadRequest downloadRequest = new DownloadRequest(false, java.util.Collections.emptyList(), originalRequest.getOwner()) {
+			@Override
+			public NodeRef[] getRequetedNodeRefs() {
+				return nodeRefs;
+			}
+		};
 
 		AuthenticationUtil.runAs(() -> {
 
-			NodeRef[] nodeRefs = downloadRequest.getRequetedNodeRefs();
 			if (completeIfEmpty(actionedUponNodeRef, nodeRefs)) {
 				return null;
 			}
@@ -217,6 +226,31 @@ public abstract class AbstractExportSearchAction extends AbstractDownloadArchive
 		paramList.add(new ParameterDefinitionImpl(PARAM_TPL_NODEREF, DataTypeDefinition.NODE_REF, true, "Search template nodeRef"));
 		paramList.add(new ParameterDefinitionImpl(PARAM_FORMAT, DataTypeDefinition.TEXT, false, "Export search format"));
 		paramList.add(new ParameterDefinitionImpl(PARAM_PARAMETERS, DataTypeDefinition.ANY, false, "Extra parameters"));
+	}
+
+	private NodeRef[] getNodeRefsToExport(NodeRef downloadNodeRef, DownloadRequest downloadRequest) {
+		ContentReader reader = contentService.getReader(downloadNodeRef, ContentModel.PROP_CONTENT);
+		if (reader != null && reader.exists() && MimetypeMap.MIMETYPE_JSON.equals(reader.getMimetype())) {
+			String json = reader.getContentString();
+			return parseNodeRefs(json);
+		}
+		return downloadRequest.getRequetedNodeRefs();
+	}
+
+	private NodeRef[] parseNodeRefs(String json) {
+		if (json == null || json.trim().isEmpty() || "[]".equals(json.trim())) {
+			return new NodeRef[0];
+		}
+		String cleaned = json.replace("[", "").replace("]", "").replace("\"", "").trim();
+		if (cleaned.isEmpty()) {
+			return new NodeRef[0];
+		}
+		String[] parts = cleaned.split(",");
+		NodeRef[] nodeRefs = new NodeRef[parts.length];
+		for (int i = 0; i < parts.length; i++) {
+			nodeRefs[i] = new NodeRef(parts[i].trim());
+		}
+		return nodeRefs;
 	}
 
 }
