@@ -104,6 +104,10 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 	/** {@inheritDoc} */
 	@Override
 	public MultiLevelListData getMultiLevelListData(DataListFilter dataListFilter, boolean useExpandedCache, boolean resetTree) {
+		if (resetTree) {
+			beCPGCacheService.removeFromCache(CACHE_KEY, AuthenticationUtil.getFullyAuthenticatedUser());
+		}
+
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
@@ -320,17 +324,16 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 	/** {@inheritDoc} */
 	@Override
 	public boolean isExpandedNode(NodeRef entityFolder, boolean condition, boolean resetTree) {
+		if (resetTree) {
+			return condition;
+		}
 		if (entityFolder != null) {
 			Map<NodeRef, Boolean> expandedNodes = beCPGCacheService.getFromCache(CACHE_KEY, AuthenticationUtil.getFullyAuthenticatedUser(), () -> new LRUCache(100));
 			if ((expandedNodes != null) && expandedNodes.containsKey(entityFolder)) {
-				if (resetTree) {
-					expandedNodes.remove(entityFolder);
-				} else {
-					if (logger.isDebugEnabled()) {
-						logger.debug("found Expanded node : " + entityFolder + " for " + AuthenticationUtil.getFullyAuthenticatedUser());
-					}
-					return expandedNodes.get(entityFolder);
+				if (logger.isDebugEnabled()) {
+					logger.debug("found Expanded node : " + entityFolder + " for " + AuthenticationUtil.getFullyAuthenticatedUser());
 				}
+				return expandedNodes.get(entityFolder);
 			}
 		}
 		return condition;
