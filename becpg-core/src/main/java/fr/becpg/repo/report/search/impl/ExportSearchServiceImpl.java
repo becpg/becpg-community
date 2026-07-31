@@ -4,10 +4,13 @@
 package fr.becpg.repo.report.search.impl;
 
 import java.io.OutputStream;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.alfresco.repo.download.DownloadStorage;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -21,6 +24,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.repo.report.search.ExportSearchService;
 import fr.becpg.repo.report.search.SearchReportRenderer;
 import fr.becpg.report.client.ReportFormat;
+import fr.becpg.util.MutexFactory;
 
 /**
  * Class used to render the result of a search in a report
@@ -33,6 +37,10 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ExportSearchServiceImpl.class);
+
+	private static final String EXPORT_MUTEX_PREFIX = "exportSearch-";
+
+	private static final int DOWNLOAD_BATCH_SIZE = 500;
 
 	@Autowired
 	private SearchReportRenderer[] searchReportRenderers;
@@ -47,7 +55,7 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 	private NodeService nodeService;
 	
 	@Autowired
-	private fr.becpg.util.MutexFactory mutexFactory;
+	private MutexFactory mutexFactory;
 
 	/** {@inheritDoc} */
 	@Override
@@ -105,27 +113,18 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 		ParameterCheck.mandatory("templateNodeRef", templateNodeRef);
 		
 
-		NodeRef downloadNode = retryingTransactionHelper.doInTransaction(() -> {
-			
-			java.util.concurrent.locks.ReentrantLock lock = mutexFactory.getMutex("exportSearch-" + org.alfresco.repo.security.authentication.AuthenticationUtil.getRunAsUser());
-			lock.lock();
-			try {
-				// Create a download node
-				NodeRef downloadNode1 = downloadStorage.createDownloadNode(false);
-	
-				// Add requested nodes
-				for (NodeRef node : new HashSet<>(searchResults)) {
-					if (nodeService.exists(node)) {
-						downloadStorage.addNodeToDownload(downloadNode1, node);
-					}
-				}
-	
-				return downloadNode1;
-			} finally {
-				lock.unlock();
-				mutexFactory.removeMutex("exportSearch-" + org.alfresco.repo.security.authentication.AuthenticationUtil.getRunAsUser(), lock);
-			}
-		}, false, true);
+		String mutexKey = EXPORT_MUTEX_PREFIX + AuthenticationUtil.getRunAsUser();
+		ReentrantLock lock = mutexFactory.getMutex(mutexKey);
+		lock.lock();
+
+		NodeRef downloadNode;
+		try {
+			downloadNode = retryingTransactionHelper.doInTransaction(() -> downloadStorage.createDownloadNode(false), false, true);
+			addNodesToDownload(downloadNode, searchResults);
+		} finally {
+			lock.unlock();
+			mutexFactory.removeMutex(mutexKey, lock);
+		}
 
 		SearchReportRenderer searchReportRender = getSearchReportRender(templateNodeRef, reportFormat);
 		if (searchReportRender != null) {
@@ -134,11 +133,38 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 			logger.error("No search report renderer found for : " + reportFormat.toString() + " " + templateNodeRef);
 		}
 
-		// This is done in a new transaction to avoid node not found errors when
-		// the zip creation occurs
-		// on a remote transformation server.
-
 		return downloadNode;
+	}
+
+	/**
+	 * Attach the search results to the download node, one batch of associations per transaction.
+	 *
+	 * A single transaction over a large result set saturates the transactional caches and holds its
+	 * database locks for the whole request: an export of tens of thousands of entities then takes
+	 * minutes before the asynchronous rendering even starts.
+	 *
+	 * @param downloadNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param searchResults a {@link java.util.List} object
+	 */
+	private void addNodesToDownload(NodeRef downloadNodeRef, List<NodeRef> searchResults) {
+		List<NodeRef> distinctResults = new ArrayList<>(new LinkedHashSet<>(searchResults));
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Adding " + distinctResults.size() + " node(s) to download " + downloadNodeRef);
+		}
+
+		for (int fromIndex = 0; fromIndex < distinctResults.size(); fromIndex += DOWNLOAD_BATCH_SIZE) {
+			List<NodeRef> batch = distinctResults.subList(fromIndex, Math.min(fromIndex + DOWNLOAD_BATCH_SIZE, distinctResults.size()));
+
+			retryingTransactionHelper.doInTransaction(() -> {
+				for (NodeRef nodeRef : batch) {
+					if (nodeService.exists(nodeRef)) {
+						downloadStorage.addNodeToDownload(downloadNodeRef, nodeRef);
+					}
+				}
+				return null;
+			}, false, true);
+		}
 	}
 
 }

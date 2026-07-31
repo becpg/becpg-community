@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.ss.usermodel.Sheet;
 
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
@@ -20,7 +20,7 @@ public interface ExcelReportSearchPlugin {
 	/**
 	 * <p>fillSheet.</p>
 	 *
-	 * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object.
+	 * @param sheet a {@link org.apache.poi.ss.usermodel.Sheet} object.
 	 * @param searchResults a {@link java.util.List} object.
 	 * @param mainType a {@link org.alfresco.service.namespace.QName} object.
 	 * @param itemType a {@link org.alfresco.service.namespace.QName} object.
@@ -31,7 +31,7 @@ public interface ExcelReportSearchPlugin {
 	 * @param cache a {@link java.util.Map} object.
 	 * @return a int.
 	 */
-	int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameter,
+	int fillSheet(Sheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameter,
 			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache);
 
 	/**

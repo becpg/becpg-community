@@ -47,6 +47,7 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import fr.becpg.model.ReportModel;
+import fr.becpg.repo.download.DownloadProgressReporter;
 import fr.becpg.repo.expressions.ExpressionService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -58,7 +59,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * @author Matthieu
  * @version $Id: $Id
  */
-public class ZipSearchDownloadExporter implements Exporter {
+public class ZipSearchDownloadExporter implements Exporter, DownloadProgressReporter {
 	/** Constant <code>log</code> */
 	private static Logger log = LoggerFactory.getLogger(ZipSearchDownloadExporter.class);
 
@@ -457,8 +458,15 @@ public class ZipSearchDownloadExporter implements Exporter {
 	 *
 	 * @return a int.
 	 */
+	@Override
 	public int getNextSequenceNumber() {
 		return sequenceNumber++;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public DownloadStatus buildStatus(Status status) {
+		return new DownloadStatus(status, getDone(), getSize(), getFilesAdded(), getFileCount());
 	}
 
 	/**

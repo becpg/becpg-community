@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
@@ -81,7 +81,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 
 	/** {@inheritDoc} */
 	@Override
-	public int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
+	public int fillSheet(Sheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
 			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
 
 		ExcelCellStyles excelCellStyles = new ExcelCellStyles(sheet.getWorkbook());
@@ -145,7 +145,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 	/**
 	 * <p>fillRow.</p>
 	 *
-	 * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object.
+	 * @param sheet a {@link org.apache.poi.ss.usermodel.Sheet} object.
 	 * @param itemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param itemType a {@link org.alfresco.service.namespace.QName} object.
 	 * @param metadataFields a {@link java.util.List} object.
@@ -157,7 +157,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param excelCellStyles a {@link fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles} object
 	 */
-	protected int fillRow(XSSFSheet sheet, NodeRef entityNodeRef, NodeRef itemNodeRef, QName itemType,
+	protected int fillRow(Sheet sheet, NodeRef entityNodeRef, NodeRef itemNodeRef, QName itemType,
 			List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache, int rownum, Serializable key,
 			Map<String, Object> entityItems, ExcelCellStyles excelCellStyles) {
 

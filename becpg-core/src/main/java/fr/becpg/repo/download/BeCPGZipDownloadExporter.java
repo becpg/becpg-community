@@ -82,7 +82,7 @@ import fr.becpg.repo.entity.EntityService;
  * @author Alex Miller
  * @version $Id: $Id
  */
-public class BeCPGZipDownloadExporter extends BaseExporter
+public class BeCPGZipDownloadExporter extends BaseExporter implements DownloadProgressReporter
 {
     /** Constant <code>log</code> */
     private static Logger log = LoggerFactory.getLogger(BeCPGZipDownloadExporter.class);
@@ -485,9 +485,17 @@ public class BeCPGZipDownloadExporter extends BaseExporter
      *
      * @return a int
      */
+    @Override
     public int getNextSequenceNumber()
     {
         return sequenceNumber++;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public DownloadStatus buildStatus(Status status)
+    {
+        return new DownloadStatus(status, getDone(), getTotal(), getFilesAdded(), getTotalFiles());
     }
 
     /**
