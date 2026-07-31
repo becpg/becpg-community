@@ -109,11 +109,12 @@ public class MultiLevelExtractor extends SimpleExtractor {
 
 		boolean resetTree = false;
 
-		if (!dataListFilter.isDepthDefined()) {
+		if (dataListFilter.isDepthDefined()) {
+			updateDepthUserPref(dataListFilter);
+			resetTree = true;
+		} else {
 			int depth = getDepthUserPref(dataListFilter);
 			dataListFilter.updateMaxDepth(depth);
-		} else {
-			resetTree = updateDepthUserPref(dataListFilter);
 		}
 
 		int pageSize = dataListFilter.getPagination().getPageSize();
@@ -290,9 +291,8 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	 * <p>updateDepthUserPref.</p>
 	 *
 	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object
-	 * @return a boolean
 	 */
-	private boolean updateDepthUserPref(DataListFilter dataListFilter) {
+	private void updateDepthUserPref(DataListFilter dataListFilter) {
 		String username = AuthenticationUtil.getFullyAuthenticatedUser();
 
 		Map<String, Serializable> prefs = preferenceService.getPreferences(username);
@@ -309,11 +309,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 			} catch (ConcurrencyFailureException e) {
 				logger.warn("Depth preference save skipped due to concurrent lock on user node for '" + username + "': " + e.getMessage());
 			}
-
-			return true;
 		}
-		return false;
-
 	}
 
 	/**
