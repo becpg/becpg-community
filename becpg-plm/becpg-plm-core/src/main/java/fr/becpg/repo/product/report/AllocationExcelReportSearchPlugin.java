@@ -15,7 +15,7 @@ import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.namespace.QName;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -70,7 +70,7 @@ public class AllocationExcelReportSearchPlugin extends DynamicCharactExcelReport
 
 	/** {@inheritDoc} */
 	@Override
-	public int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
+	public int fillSheet(Sheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
 			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
 
 		ExcelCellStyles excelCellStyles = new ExcelCellStyles(sheet.getWorkbook());
@@ -103,7 +103,7 @@ public class AllocationExcelReportSearchPlugin extends DynamicCharactExcelReport
 	 * <p>extractAllocations.</p>
 	 *
 	 * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @param sheet a {@link org.apache.poi.xssf.usermodel.XSSFSheet} object
+	 * @param sheet a {@link org.apache.poi.ss.usermodel.Sheet} object
 	 * @param metadataFields a {@link java.util.List} object
 	 * @param cache a {@link java.util.Map} object
 	 * @param rownum a int
@@ -112,7 +112,7 @@ public class AllocationExcelReportSearchPlugin extends DynamicCharactExcelReport
 	 * @param excelCellStyles a {@link fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles} object
 	 * @return a int
 	 */
-	private int extractAllocations(NodeRef productNodeRef, XSSFSheet sheet, List<AttributeExtractorStructure> metadataFields,
+	private int extractAllocations(NodeRef productNodeRef, Sheet sheet, List<AttributeExtractorStructure> metadataFields,
 			Map<NodeRef, Map<String, Object>> cache, int rownum, Serializable key, Map<String, Object> entityItems, ExcelCellStyles excelCellStyles) {
 
 		if (permissionService.hasPermission(productNodeRef, "Read") == AccessStatus.ALLOWED) {

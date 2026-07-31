@@ -86,7 +86,7 @@ public class ReportSearchDownloadExporter extends AbstractSearchDownloadExporter
 
 	/** {@inheritDoc} */
 	@Override
-	public void start(final ExporterContext context) {
+	public void startExport() {
 
 		try {
 			exportSearchCtx = reportServerSearchRenderer.createContext(templateNodeRef);
@@ -108,7 +108,7 @@ public class ReportSearchDownloadExporter extends AbstractSearchDownloadExporter
 
 	/** {@inheritDoc} */
 	@Override
-	public void end() {
+	public void endExport() {
 		if (tempFile != null) {
 			try (OutputStream outputStream = new FileOutputStream(tempFile)) {
 				reportServerSearchRenderer.createReport(templateNodeRef, exportSearchCtx, outputStream, format);

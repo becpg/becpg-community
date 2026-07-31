@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.download.DownloadStatusUpdateService;
@@ -19,10 +18,11 @@ import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.view.ExporterContext;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -40,13 +40,16 @@ public class ExcelSearchDownloadExporter extends AbstractSearchDownloadExporter 
 	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(ExcelSearchDownloadExporter.class);
 
+	/** Number of rows kept in memory before being flushed to disk */
+	private static final int ROW_ACCESS_WINDOW_SIZE = 100;
+
 	private ExcelReportSearchRenderer excelReportSearchRenderer;
 
 	private ContentService contentService;
 
-	private XSSFWorkbook workbook;
+	private SXSSFWorkbook workbook;
 
-	private List<XSSFSheet> sheets = new ArrayList<>();
+	private List<Sheet> sheets = new ArrayList<>();
 
 	Map<String, ExcelSheetExportContext> context = new HashMap<>();
 
@@ -98,17 +101,45 @@ public class ExcelSearchDownloadExporter extends AbstractSearchDownloadExporter 
 
 	/** {@inheritDoc} */
 	@Override
-	public void start(final ExporterContext context) {
+	public void startExport() {
 		ContentReader reader = contentService.getReader(templateNodeRef, ContentModel.PROP_CONTENT);
 
 		try {
-			workbook = new XSSFWorkbook(reader.getContentInputStream());
+			XSSFWorkbook template = new XSSFWorkbook(reader.getContentInputStream());
+
+			readTemplateHeaders(template);
+
+			workbook = new SXSSFWorkbook(template, ROW_ACCESS_WINDOW_SIZE);
+			workbook.setCompressTempFiles(true);
+
 			for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
-				sheets.add(i, workbook.getSheetAt(i));
+				SXSSFSheet sheet = workbook.getSheetAt(i);
+
+				// Columns have to be tracked to stay auto-sizeable once the rows are flushed to disk
+				sheet.trackAllColumnsForAutoSizing();
+
+				sheets.add(i, sheet);
 			}
 
 		} catch (ContentIOException | IOException e) {
 			logger.error("Error generating excel report", e);
+		}
+	}
+
+	/**
+	 * Read the header of each sheet on the template itself: once the workbook is wrapped for
+	 * streaming, the rows already written are no longer randomly accessible.
+	 *
+	 * @param template a {@link org.apache.poi.xssf.usermodel.XSSFWorkbook} object
+	 */
+	private void readTemplateHeaders(XSSFWorkbook template) {
+		for (int i = 0; i < template.getNumberOfSheets(); i++) {
+			XSSFSheet templateSheet = template.getSheetAt(i);
+
+			ExcelSheetExportContext sheetContext = transactionHelper
+					.doInTransaction(() -> excelReportSearchRenderer.readHeader(templateSheet, null, parameters), true, true);
+
+			context.put(templateSheet.getSheetName(), sheetContext);
 		}
 	}
 
@@ -117,31 +148,22 @@ public class ExcelSearchDownloadExporter extends AbstractSearchDownloadExporter 
 	public void startNode(NodeRef entityNodeRef) {
 
 	    incFilesAddedCount();
-	    AtomicReference<QName> mainTypeRef = new AtomicReference<>();
 
-	    for (XSSFSheet sheet : sheets) {
-	        QName type = transactionHelper.doInTransaction(() -> {
+	    for (Sheet sheet : sheets) {
+	        ExcelSheetExportContext excelSheetExportContext = context.get(sheet.getSheetName());
 
-	            ExcelSheetExportContext excelSheetExportContext = context.get(sheet.getSheetName());
-	            if (excelSheetExportContext == null) {
-	                excelSheetExportContext = excelReportSearchRenderer.readHeader(sheet, mainTypeRef.get(), parameters);
-	                context.put(sheet.getSheetName(), excelSheetExportContext);
-	            }
+	        if (excelSheetExportContext == null) {
+	            continue;
+	        }
 
-	            QName t = excelReportSearchRenderer.fillSheet(
-	                sheet,
-	                List.of(entityNodeRef),
-	                excelSheetExportContext
-	            );
+	        transactionHelper.doInTransaction(() -> {
+
+	            excelReportSearchRenderer.fillSheet(sheet, List.of(entityNodeRef), excelSheetExportContext);
 
 	            sheet.setForceFormulaRecalculation(true);
-	            return t;
+	            return null;
 
 	        }, true, true);
-
-	        if (mainTypeRef.get() == null && type != null) {
-	            mainTypeRef.set(type);
-	        }
 
 	        updateStatus();
 	    }
@@ -165,17 +187,31 @@ public class ExcelSearchDownloadExporter extends AbstractSearchDownloadExporter 
 
 	/** {@inheritDoc} */
 	@Override
-	public void end() {
-		if (tempFile != null) {
-			try (OutputStream outputStream = new FileOutputStream(tempFile)) {
-				workbook.setForceFormulaRecalculation(true);
-				workbook.write(outputStream);
-				workbook.close();
-			} catch (FileNotFoundException e) {
-				logger.error("Failed to create excel file", e);
-			} catch (ContentIOException | IOException e) {
-				logger.error("Error generating excel report", e);
-			}
+	public void endExport() {
+		if ((tempFile == null) || (workbook == null)) {
+			return;
+		}
+
+		try (OutputStream outputStream = new FileOutputStream(tempFile)) {
+			workbook.setForceFormulaRecalculation(true);
+			workbook.write(outputStream);
+		} catch (FileNotFoundException e) {
+			logger.error("Failed to create excel file", e);
+		} catch (ContentIOException | IOException e) {
+			logger.error("Error generating excel report", e);
+		} finally {
+			closeWorkbook();
+		}
+	}
+
+	private void closeWorkbook() {
+		try {
+			workbook.close();
+		} catch (IOException e) {
+			logger.error("Cannot close excel workbook", e);
+		} finally {
+			// Streaming keeps the flushed rows in temporary files that POI only removes on demand
+			workbook.dispose();
 		}
 	}
 

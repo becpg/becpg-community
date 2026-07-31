@@ -18,7 +18,7 @@ import org.apache.commons.logging.LogFactory;
  * @author matthieu
  * @version $Id: $Id
  */
-public abstract class AbstractDownloadExporter {
+public abstract class AbstractDownloadExporter implements DownloadProgressReporter {
 	/** Constant <code>logger</code> */
 	private static Log logger = LogFactory.getLog(AbstractDownloadExporter.class);
 
@@ -71,6 +71,12 @@ public abstract class AbstractDownloadExporter {
 	 */
 	public long getFileCount() {
 		return fileCount;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public DownloadStatus buildStatus(Status status) {
+		return new DownloadStatus(status, getFilesAddedCount(), getFileCount(), getFilesAddedCount(), getFileCount());
 	}
 
 	/**

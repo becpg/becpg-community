@@ -15,7 +15,7 @@ import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.namespace.QName;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
@@ -84,7 +84,7 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 	/** {@inheritDoc} */
 	@Deprecated
 	@Override
-	public int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
+	public int fillSheet(Sheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
 			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
 		String parameter = (parameters != null) && (parameters.length > 0) ? parameters[0] : null;
 
@@ -153,7 +153,7 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 	 * <p>appendNextLevel.</p>
 	 *
 	 * @param listData a {@link fr.becpg.repo.entity.datalist.data.MultiLevelListData} object.
-	 * @param sheet an {@link org.apache.poi.xssf.usermodel.XSSFSheet} object.
+	 * @param sheet an {@link org.apache.poi.ss.usermodel.Sheet} object.
 	 * @param itemType a {@link org.alfresco.service.namespace.QName} object.
 	 * @param metadataFields a {@link java.util.List} object.
 	 * @param cache a {@link java.util.Map} object.
@@ -169,7 +169,7 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 	 * @param wUsedAssocCache a {@link java.util.Map} object
 	 */
 	@Deprecated
-	protected int appendNextLevel(MultiLevelListData listData, XSSFSheet sheet, QName itemType,
+	protected int appendNextLevel(MultiLevelListData listData, Sheet sheet, QName itemType,
 			List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache, int rownum,
 			Serializable key, Double parentQty, String[] parameters, Map<String, Object> entityItems,
 			Map<String, List<String>> dynamicCharactColumnCache, ExcelCellStyles excelCellStyles, QName wUsedEntityType, Map<NodeRef, Map<QName, Serializable>> wUsedAssocCache) {
