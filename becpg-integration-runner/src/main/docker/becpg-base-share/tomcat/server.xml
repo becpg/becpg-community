@@ -74,8 +74,9 @@
                    port="8080" protocol="HTTP/1.1"
                    serverRemoveAppProvidedValues="true"
               	   redirectPort="8443"  >
-               <UpgradeProtocol className="org.apache.coyote.http2.Http2Protocol" />   
-   </Connector>           	   
+               <!-- HTTP/2 retire : CVE-2026-41293 (en-tetes HTTP/2 non valides).
+                    Le load balancer termine deja HTTP/2 cote client. -->
+   </Connector>
   
 
 
