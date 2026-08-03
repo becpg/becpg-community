@@ -22,6 +22,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMGroup;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.impl.AbstractInitVisitorImpl;
@@ -57,6 +58,9 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String SUPPLIER_PRE_SCRIPT = "plm.supplier.portal.deliverable.scripts.pre.name";
 	/** Constant <code>SIGNATURES_PREPARATION_SCRIPT="plm.supplier.portal.deliverable.scripts"{trunked}</code> */
 	private static final String SIGNATURES_PREPARATION_SCRIPT = "plm.supplier.portal.deliverable.scripts.signature.name";
+
+	/** Constant <code>SUPPLIER_SPEC_NAME="plm.supplier.portal.specification.name"</code> */
+	private static final String SUPPLIER_SPEC_NAME = "plm.supplier.portal.specification.name";
 
 	/** Constant <code>SUPPLIER_SITE_PRESET="supplier-site-dashboard"</code> */
 	private static final String SUPPLIER_SITE_PRESET = "supplier-site-dashboard";
@@ -212,8 +216,52 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 			associationService.update(projectTplNodeRef, BeCPGModel.PROP_ENTITY_TPL_DEFAULT_DEST, documentLibraryNodeRef);
 		}
 
+		visitDefaultRawMaterialSpecification(entityTplsNodeRef);
+
 		return ret;
 
+	}
+
+	/**
+	 * <p>Creates the default raw material specification and attaches it to the raw material
+	 * template, so that a supplier asked to reference a raw material can read what is expected of
+	 * it.</p>
+	 *
+	 * <p>Create-if-absent on both counts: nothing is created when a specification of that name
+	 * already exists, and the association is only written when the template carries none. An
+	 * instance that defines its own specification is left untouched — this visitor runs on every
+	 * startup and has to stay replayable.</p>
+	 *
+	 * @param entityTplsNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	private void visitDefaultRawMaterialSpecification(NodeRef entityTplsNodeRef) {
+
+		NodeRef rawMaterialTplNodeRef = entityTplService.getEntityTpl(PLMModel.TYPE_RAWMATERIAL);
+
+		if (rawMaterialTplNodeRef == null) {
+			logger.debug("No raw material template, skipping the default specification");
+			return;
+		}
+
+		NodeRef productTplsNodeRef = visitFolder(entityTplsNodeRef, PlmRepoConsts.PATH_PRODUCT_TEMPLATES);
+
+		String specName = I18NUtil.getMessage(SUPPLIER_SPEC_NAME);
+		NodeRef specNodeRef = nodeService.getChildByName(productTplsNodeRef, ContentModel.ASSOC_CONTAINS, specName);
+
+		if (specNodeRef == null) {
+			Set<QName> specLists = new LinkedHashSet<>();
+			specLists.add(PLMModel.TYPE_SPEC_COMPATIBILTY_LIST);
+
+			specNodeRef = entityTplService.createEntityTpl(productTplsNodeRef, PLMModel.TYPE_PRODUCT_SPECIFICATION,
+					specName, true, false, specLists, Collections.singleton(RepoConsts.PATH_SUPPLIER_DOCUMENTS));
+
+			logger.info("Created the default raw material specification: " + specName);
+		}
+
+		if (associationService.getTargetAssoc(rawMaterialTplNodeRef, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS) == null) {
+			associationService.update(rawMaterialTplNodeRef, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS, specNodeRef);
+			logger.info("Attached the default specification to the raw material template");
+		}
 	}
 
 	/** {@inheritDoc} */
