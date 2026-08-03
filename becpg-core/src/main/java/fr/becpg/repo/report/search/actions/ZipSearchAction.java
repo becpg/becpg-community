@@ -19,6 +19,7 @@ import org.alfresco.util.TempFileProvider;
 
 import fr.becpg.repo.download.AbstractDownloadArchiveAction;
 import fr.becpg.repo.expressions.ExpressionService;
+import fr.becpg.repo.report.helpers.ExportSearchNodesHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
@@ -118,7 +119,7 @@ public class ZipSearchAction extends AbstractDownloadArchiveAction {
 
 		AuthenticationUtil.runAs(() -> {
 
-			NodeRef[] nodeRefs = downloadRequest.getRequetedNodeRefs();
+			NodeRef[] nodeRefs = getNodeRefsToExport(actionedUponNodeRef, downloadRequest);
 			if (completeIfEmpty(actionedUponNodeRef, nodeRefs)) {
 				return null;
 			}
@@ -150,6 +151,12 @@ public class ZipSearchAction extends AbstractDownloadArchiveAction {
 	@Override
 	protected void addParameterDefinitions(List<ParameterDefinition> paramList) {
 		paramList.add(new ParameterDefinitionImpl(PARAM_TPL_NODEREF, DataTypeDefinition.NODE_REF, true, "Search template nodeRef"));
+	}
+
+	private NodeRef[] getNodeRefsToExport(NodeRef downloadNodeRef, DownloadRequest downloadRequest) {
+		NodeRef[] storedNodeRefs = ExportSearchNodesHelper.readNodes(contentService, downloadNodeRef);
+
+		return storedNodeRefs.length > 0 ? storedNodeRefs : downloadRequest.getRequetedNodeRefs();
 	}
 
 }

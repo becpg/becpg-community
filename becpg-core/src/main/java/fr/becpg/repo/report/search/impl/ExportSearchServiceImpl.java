@@ -13,18 +13,15 @@ import org.alfresco.repo.download.DownloadStorage;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ParameterCheck;
-import org.alfresco.model.ContentModel;
-import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.service.cmr.repository.ContentService;
-import org.alfresco.service.cmr.repository.ContentWriter;
+import org.alfresco.util.ParameterCheck;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.repo.report.helpers.ExportSearchNodesHelper;
 import fr.becpg.repo.report.search.ExportSearchService;
 import fr.becpg.repo.report.search.SearchReportRenderer;
 import fr.becpg.report.client.ReportFormat;
@@ -44,8 +41,6 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 
 	private static final String EXPORT_MUTEX_PREFIX = "exportSearch-";
 
-	private static final int DOWNLOAD_BATCH_SIZE = 500;
-
 	@Autowired
 	private SearchReportRenderer[] searchReportRenderers;
 
@@ -54,10 +49,7 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 
 	@Autowired
 	private DownloadStorage downloadStorage;
-	
-	@Autowired
-	private NodeService nodeService;
-	
+
 	@Autowired
 	private MutexFactory mutexFactory;
 
@@ -161,25 +153,9 @@ public class ExportSearchServiceImpl implements ExportSearchService {
 		}
 
 		retryingTransactionHelper.doInTransaction(() -> {
-			String json = buildJsonArray(distinctResults);
-			ContentWriter writer = contentService.getWriter(downloadNodeRef, ContentModel.PROP_CONTENT, true);
-			writer.setMimetype(MimetypeMap.MIMETYPE_JSON);
-			writer.putContent(json);
+			ExportSearchNodesHelper.storeNodes(contentService, downloadNodeRef, distinctResults);
 			return null;
 		}, false, true);
-	}
-
-	private String buildJsonArray(List<NodeRef> nodes) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("[");
-		for (int i = 0; i < nodes.size(); i++) {
-			if (i > 0) {
-				sb.append(",");
-			}
-			sb.append("\"").append(nodes.get(i).toString()).append("\"");
-		}
-		sb.append("]");
-		return sb.toString();
 	}
 
 }

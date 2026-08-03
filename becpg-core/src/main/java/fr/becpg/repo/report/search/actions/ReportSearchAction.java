@@ -2,7 +2,6 @@
 package fr.becpg.repo.report.search.actions;
 
 import org.alfresco.service.cmr.action.Action;
-import org.alfresco.service.cmr.download.DownloadRequest;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.report.search.impl.ReportServerSearchRenderer;
@@ -39,11 +38,11 @@ public class ReportSearchAction extends AbstractExportSearchAction {
 
 	/** {@inheritDoc} */
 	@Override
-	protected AbstractSearchDownloadExporter createHandler(Action action, NodeRef actionedUponNodeRef, NodeRef templateNodeRef, DownloadRequest downloadRequest,
+	protected AbstractSearchDownloadExporter createHandler(Action action, NodeRef actionedUponNodeRef, NodeRef templateNodeRef, long nodeCount,
 			ReportFormat format) {
 		String[] parameters = (String[]) action.getParameterValue(PARAM_PARAMETERS);
 		return new ReportSearchDownloadExporter(transactionHelper, updateService, downloadStorage, reportServerSearchRenderer,
-				actionedUponNodeRef, templateNodeRef, Long.valueOf(downloadRequest.getRequetedNodeRefs().length), format, parameters);
+				actionedUponNodeRef, templateNodeRef, nodeCount, format, parameters);
 	}
 
 
