@@ -2,6 +2,7 @@ package fr.becpg.repo.report.search.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,9 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 
 	protected static final Log logger = LogFactory.getLog(DefaultExcelReportSearchPlugin.class);
 
+	/** Constant <code>HEADER_VALUES="VALUES"</code> */
+	protected static final String HEADER_VALUES = "VALUES";
+
 	@Autowired
 	protected NodeService nodeService;
 
@@ -85,35 +89,14 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
 
 		ExcelCellStyles excelCellStyles = new ExcelCellStyles(sheet.getWorkbook());
-		
+
+		boolean includeEmpty = ExcelReportSearchPlugin.isIncludeEmpty(parameters);
+
 		for (NodeRef entityNodeRef : searchResults) {
 			if (nodeService.exists(entityNodeRef) && entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), mainType)) {
 				if (keyColumn != null) {
-					Serializable key = nodeService.getProperty(entityNodeRef, keyColumn.getFieldDef().getName());
-					if (key == null) {
-						key = nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE);
-					}
-					if (key == null) {
-						key = nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
-					}
-
-					NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
-					NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, itemType);
-					if (listNodeRef != null) {
-						Map<String, Object> entityItems = getEntityProperties(entityNodeRef, mainType, metadataFields, cache);
-
-						// case of multiple lists of same type (ex: bcpg:surveyList@1)
-						QName actualType = QName.createQName(itemType.toString().split("@")[0]);
-
-						List<NodeRef> results = entityListDAO.getListItems(listNodeRef, actualType);
-						for (NodeRef itemNodeRef : results) {
-							if (nodeService.exists(itemNodeRef) && actualType.equals(nodeService.getType(itemNodeRef))) {
-							if (nodeService.exists(itemNodeRef) && permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
-									rownum = fillRow(sheet, entityNodeRef, itemNodeRef, itemType, metadataFields, cache, rownum, key, entityItems,excelCellStyles);
-								}
-							}
-						}
-					}
+					rownum = fillEntityListRows(sheet, entityNodeRef, mainType, itemType, rownum, keyColumn, metadataFields, cache, excelCellStyles,
+							includeEmpty);
 				} else {
 					rownum = fillRow(sheet, entityNodeRef, entityNodeRef, itemType, metadataFields, cache, rownum, null, null, excelCellStyles);
 				}
@@ -122,6 +105,123 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 
 		return rownum;
 
+	}
+
+	/**
+	 * <p>Appends the rows of a datalist for a single entity.</p>
+	 *
+	 * <p>When <code>includeEmpty</code> is set and the list holds no exportable item, a single row carrying only the
+	 * entity columns is created, so that entities without the list still show up in the report.</p>
+	 *
+	 * @param sheet a {@link org.apache.poi.ss.usermodel.Sheet} object.
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param mainType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object.
+	 * @param rownum a int.
+	 * @param keyColumn a {@link fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure} object.
+	 * @param metadataFields a {@link java.util.List} object.
+	 * @param cache a {@link java.util.Map} object.
+	 * @param excelCellStyles a {@link fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles} object.
+	 * @param includeEmpty a boolean.
+	 * @return a int.
+	 */
+	protected int fillEntityListRows(Sheet sheet, NodeRef entityNodeRef, QName mainType, QName itemType, int rownum,
+			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache,
+			ExcelCellStyles excelCellStyles, boolean includeEmpty) {
+
+		Serializable key = extractKey(entityNodeRef, keyColumn);
+		Map<String, Object> entityItems = getEntityProperties(entityNodeRef, mainType, metadataFields, cache);
+
+		int firstRownum = rownum;
+
+		for (NodeRef itemNodeRef : getListItems(entityNodeRef, itemType)) {
+			rownum = fillRow(sheet, entityNodeRef, itemNodeRef, itemType, metadataFields, cache, rownum, key, entityItems, excelCellStyles);
+		}
+
+		if (includeEmpty && (rownum == firstRownum)) {
+			rownum = createEmptyEntityRow(sheet, rownum, key, metadataFields, entityItems, excelCellStyles);
+		}
+
+		return rownum;
+	}
+
+	/**
+	 * <p>Returns the readable items of the given list for an entity, or an empty list when the entity has no such list.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param itemType a {@link org.alfresco.service.namespace.QName} object.
+	 * @return a {@link java.util.List} object.
+	 */
+	protected List<NodeRef> getListItems(NodeRef entityNodeRef, QName itemType) {
+
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+		NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, itemType);
+		if (listNodeRef == null) {
+			return Collections.emptyList();
+		}
+
+		// case of multiple lists of same type (ex: bcpg:surveyList@1)
+		QName actualType = QName.createQName(itemType.toString().split("@")[0]);
+
+		List<NodeRef> items = new ArrayList<>();
+		for (NodeRef itemNodeRef : entityListDAO.getListItems(listNodeRef, actualType)) {
+			if (nodeService.exists(itemNodeRef) && actualType.equals(nodeService.getType(itemNodeRef))
+					&& (permissionService.hasPermission(itemNodeRef, PermissionService.READ) == AccessStatus.ALLOWED)) {
+				items.add(itemNodeRef);
+			}
+		}
+		return items;
+	}
+
+	/**
+	 * <p>Extracts the key identifying an entity in the report, falling back on its code then its name.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param keyColumn a {@link fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure} object.
+	 * @return a {@link java.io.Serializable} object.
+	 */
+	protected Serializable extractKey(NodeRef entityNodeRef, AttributeExtractorStructure keyColumn) {
+
+		Serializable key = keyColumn != null ? nodeService.getProperty(entityNodeRef, keyColumn.getFieldDef().getName()) : null;
+		if (key == null) {
+			key = nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE);
+		}
+		if (key == null) {
+			key = nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
+		}
+		return key;
+	}
+
+	/**
+	 * <p>Creates a row holding only the entity columns, for an entity whose list is empty or missing.</p>
+	 *
+	 * @param sheet a {@link org.apache.poi.ss.usermodel.Sheet} object.
+	 * @param rownum a int.
+	 * @param key a {@link java.io.Serializable} object.
+	 * @param metadataFields a {@link java.util.List} object.
+	 * @param entityItems a {@link java.util.Map} object.
+	 * @param excelCellStyles a {@link fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles} object.
+	 * @return a int.
+	 */
+	protected int createEmptyEntityRow(Sheet sheet, int rownum, Serializable key, List<AttributeExtractorStructure> metadataFields,
+			Map<String, Object> entityItems, ExcelCellStyles excelCellStyles) {
+
+		Row row = sheet.createRow(rownum++);
+
+		int cellNum = 0;
+		Cell cell = row.createCell(cellNum++);
+		cell.setCellValue(HEADER_VALUES);
+
+		if (key != null) {
+			cell = row.createCell(cellNum++);
+			cell.setCellValue(String.valueOf(key));
+		}
+
+		Map<String, Object> item = entityItems != null ? new HashMap<>(entityItems) : new HashMap<>();
+
+		ExcelHelper.appendExcelField(metadataFields, null, item, sheet, row, cellNum, rownum, null, excelCellStyles);
+
+		return rownum;
 	}
 
 	/**
@@ -179,7 +279,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 
 		int cellNum = 0;
 		Cell cell = row.createCell(cellNum++);
-		cell.setCellValue("VALUES");
+		cell.setCellValue(HEADER_VALUES);
 
 		if (key != null) {
 			cell = row.createCell(cellNum++);
@@ -216,10 +316,8 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 			Map<QName, Serializable> properties, final Map<NodeRef, Map<String, Object>> cache) {
 
 		if (cache != null && cache.containsKey(nodeRef)) {
-			logger.warn("### CACHE HIT for: " + nodeRef);
 			return new HashMap<>(cache.get(nodeRef));
 		}
-		logger.warn("### CACHE MISS for: " + nodeRef);
 
 		Map<String, Object> result = attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, FormatMode.XLSX,
 				new AttributeExtractorService.DataListCallBack() {

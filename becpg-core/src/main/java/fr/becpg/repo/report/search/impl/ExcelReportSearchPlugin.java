@@ -17,6 +17,26 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
  */
 public interface ExcelReportSearchPlugin {
 
+	/** Constant <code>TOKEN_INCLUDE_EMPTY="IncludeEmpty"</code> */
+	String TOKEN_INCLUDE_EMPTY = "IncludeEmpty";
+
+	/**
+	 * <p>Indicates whether a row should be created for entities having an empty list.</p>
+	 *
+	 * @param parameters an array of {@link java.lang.String} objects.
+	 * @return true if one of the parameters carries the <code>IncludeEmpty</code> token.
+	 */
+	static boolean isIncludeEmpty(String[] parameters) {
+		if (parameters != null) {
+			for (String parameter : parameters) {
+				if ((parameter != null) && parameter.contains(TOKEN_INCLUDE_EMPTY)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * <p>fillSheet.</p>
 	 *
