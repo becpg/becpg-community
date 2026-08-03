@@ -301,7 +301,11 @@ function main() {
 	cache.mustRevalidate=true;
 	
 	if (noCache) {
-	   cache.lastModified = new Date(noCache);	
+	   // noCache holds a timestamp in milliseconds: parse it as a number, "new Date(string)" yields an invalid date
+	   var noCacheTimeStamp = parseInt(noCache, 10);
+	   if (!isNaN(noCacheTimeStamp)) {
+	      cache.lastModified = new Date(noCacheTimeStamp);
+	   }
 	}
 
 	var prefixedSiteId = siteId ? "-" + siteId : "";
