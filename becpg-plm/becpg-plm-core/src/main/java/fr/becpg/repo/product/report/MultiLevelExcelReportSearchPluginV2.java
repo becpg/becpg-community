@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.namespace.QName;
@@ -180,8 +179,6 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
     private static final String TOKEN_ONLY = "Only";
     /** Constant <code>TOKEN_ALL="All"</code> */
     private static final String TOKEN_ALL = "All";
-    /** Constant <code>TOKEN_INCLUDE_EMPTY="IncludeEmpty"</code> */
-    private static final String TOKEN_INCLUDE_EMPTY = "IncludeEmpty";
     /** Constant <code>ONLY_LEVEL_PREFIX="OnlyLevel"</code> */
     private static final String ONLY_LEVEL_PREFIX = "OnlyLevel";
     /** Constant <code>MAX_RECURSION_DEPTH=20</code> */
@@ -190,8 +187,6 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
     private static final int DEPTH_UNLIMITED = -1;
     /** Constant <code>PERMISSION_READ="Read"</code> */
     private static final String PERMISSION_READ = "Read";
-    /** Constant <code>HEADER_VALUES="VALUES"</code> */
-    private static final String HEADER_VALUES = "VALUES";
     /** Constant <code>KEY_PACKAGING_QTY_FOR_PRODUCT="prop_bcpg_packagingListQtyForProduct"</code> */
     private static final String KEY_PACKAGING_QTY_FOR_PRODUCT = "prop_bcpg_packagingListQtyForProduct";
     /** Constant <code>KEY_COMPO_QTY_FOR_PRODUCT="prop_bcpg_compoListQtyForProduct"</code> */
@@ -431,24 +426,6 @@ public class MultiLevelExcelReportSearchPluginV2 extends DynamicCharactExcelRepo
         }
 
         return rownum;
-    }
-
-    /**
-     * <p>extractKey.</p>
-     *
-     * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-     * @param keyColumn a {@link fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure} object
-     * @return a {@link java.io.Serializable} object
-     */
-    private Serializable extractKey(NodeRef entityNodeRef, AttributeExtractorStructure keyColumn) {
-        Serializable key = keyColumn != null ? nodeService.getProperty(entityNodeRef, keyColumn.getFieldDef().getName()) : null;
-        if (key == null) {
-            key = nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE);
-        }
-        if (key == null) {
-            key = nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
-        }
-        return key;
     }
 
     /**
