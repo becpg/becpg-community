@@ -356,6 +356,15 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	/** Constant <code>OBSOLETE_DOCUMENTS_SAVED_SEARCH_CONTENT</code> */
 	private static final String OBSOLETE_DOCUMENTS_SAVED_SEARCH_CONTENT = "{\"filter\":{\"filterId\":\"filterform\",\"filterData\":\"{\\\"prop_cm_to-date-range\\\":\\\"|NOW\\\"}\"}}";
 
+	/** Constant <code>UPCOMING_QUALITY_CONTROLS_SAVED_SEARCH_NAME="Quality controls to perform"</code> */
+	private static final String UPCOMING_QUALITY_CONTROLS_SAVED_SEARCH_NAME = "Quality controls to perform";
+	/** Constant <code>UPCOMING_QUALITY_CONTROLS_SAVED_SEARCH_TITLE="plm.savedsearch.upcoming-quality-controls.title"</code> */
+	private static final String UPCOMING_QUALITY_CONTROLS_SAVED_SEARCH_TITLE = "plm.savedsearch.upcoming-quality-controls.title";
+	/** Constant <code>UPCOMING_QUALITY_CONTROLS_SAVED_SEARCH_TYPE="product-list-qa:qualityControl"</code> */
+	private static final String UPCOMING_QUALITY_CONTROLS_SAVED_SEARCH_TYPE = "product-list-qa:qualityControl";
+	/** Constant <code>UPCOMING_QUALITY_CONTROLS_SAVED_SEARCH_CONTENT</code> */
+	private static final String UPCOMING_QUALITY_CONTROLS_SAVED_SEARCH_CONTENT = "{\"filter\":{\"filterId\":\"filterform\",\"filterData\":\"{\\\"prop_qa_qcNextAnalysisDate-date-range\\\":\\\"NOW|NOW+7DAY\\\"}\"}}";
+
 	@Autowired
 	private SiteService siteService;
 
@@ -498,7 +507,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		createNotifications(systemNodeRef);
 
 		// Saved searches samples
-		createObsoleteDocumentsSavedSearch();
+		createSampleSavedSearches();
 
 		// Reports
 		visitReports(systemNodeRef);
@@ -834,25 +843,39 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	}
 
 	/**
-	 * Creates the sample global saved search listing obsolete documents (end of effectivity before NOW).
+	 * Creates the sample global saved searches shipped with the product.
 	 */
-	private void createObsoleteDocumentsSavedSearch() {
+	private void createSampleSavedSearches() {
+		createSampleSavedSearch(OBSOLETE_DOCUMENTS_SAVED_SEARCH_NAME, OBSOLETE_DOCUMENTS_SAVED_SEARCH_TITLE, OBSOLETE_DOCUMENTS_SAVED_SEARCH_TYPE,
+				OBSOLETE_DOCUMENTS_SAVED_SEARCH_CONTENT);
+		createSampleSavedSearch(UPCOMING_QUALITY_CONTROLS_SAVED_SEARCH_NAME, UPCOMING_QUALITY_CONTROLS_SAVED_SEARCH_TITLE,
+				UPCOMING_QUALITY_CONTROLS_SAVED_SEARCH_TYPE, UPCOMING_QUALITY_CONTROLS_SAVED_SEARCH_CONTENT);
+	}
+
+	/**
+	 * Creates a sample global saved search, unless an administrator already removed or renamed it.
+	 *
+	 * @param name the technical name of the saved search
+	 * @param titleKey the message key of the multilingual title
+	 * @param searchType the search type the saved search applies to
+	 * @param content the JSON filter definition
+	 */
+	private void createSampleSavedSearch(String name, String titleKey, String searchType, String content) {
 
 		AuthenticationUtil.runAsSystem(() -> {
 
 			SavedSearch savedSearch = new SavedSearch();
-			savedSearch.setName(OBSOLETE_DOCUMENTS_SAVED_SEARCH_NAME);
-			savedSearch.setSearchType(OBSOLETE_DOCUMENTS_SAVED_SEARCH_TYPE);
+			savedSearch.setName(name);
+			savedSearch.setSearchType(searchType);
 			savedSearch.setIsGlobal(true);
 
 			NodeRef folderNodeRef = savedSearchService.getSaveSearchFolder(savedSearch);
-			if ((folderNodeRef != null)
-					&& (nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, OBSOLETE_DOCUMENTS_SAVED_SEARCH_NAME) == null)) {
+			if ((folderNodeRef != null) && (nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, name) == null)) {
 
-				logger.info("Create sample saved search: " + OBSOLETE_DOCUMENTS_SAVED_SEARCH_NAME);
+				logger.info("Create sample saved search: " + name);
 
-				savedSearch.setTitle(TranslateHelper.getTranslatedKey(OBSOLETE_DOCUMENTS_SAVED_SEARCH_TITLE));
-				savedSearchService.createOrUpdate(savedSearch, OBSOLETE_DOCUMENTS_SAVED_SEARCH_CONTENT);
+				savedSearch.setTitle(TranslateHelper.getTranslatedKey(titleKey));
+				savedSearchService.createOrUpdate(savedSearch, content);
 			}
 
 			return null;

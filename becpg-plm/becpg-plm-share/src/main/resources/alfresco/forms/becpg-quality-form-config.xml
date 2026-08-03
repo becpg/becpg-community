@@ -1564,12 +1564,13 @@
 					<show id="cm:title" />
 					<show id="cm:description" force="true" />
 					<show id="qa:qcState" />
+					<show id="qa:qcNextAnalysisDate" />
 					<show id="qa:qcControlPlans" />
 
 					<!-- batch -->
 					<show id="qa:batchId" />
 					<show id="qa:orderId" />
-				
+
 					<!-- Product -->
 					<show id="qa:product" />
 
@@ -1584,12 +1585,13 @@
 					<show id="cm:title" />
 					<show id="cm:description" force="true" />
 					<show id="qa:qcState" />
+					<show id="qa:qcNextAnalysisDate" />
 					<show id="qa:qcControlPlans" />
 
 					<!-- batch -->
 					<show id="qa:batchId" />
 					<show id="qa:orderId" />
-				
+
 					<!-- Product -->
 					<show id="qa:product" />
 
@@ -1612,6 +1614,11 @@
 					</field>
 					<field id="qa:qcState">
 						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="qa:qcNextAnalysisDate">
+						<control template="/org/alfresco/components/form/controls/daterange.ftl">
 							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
