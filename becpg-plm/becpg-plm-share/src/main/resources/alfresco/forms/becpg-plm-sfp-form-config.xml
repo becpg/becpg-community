@@ -1734,6 +1734,7 @@
 					<show force="true" id="bcpg:productHierarchy2" />
 					<show force="true" id="bcpg:legalName" />
 					<show force="true" id="bcpg:productState" />
+					<show force="false" id="bcpg:entityScore" />
 					<show force="true" id="bcpg:code" />
 					<show force="true" id="bcpg:erpCode" />
 					<show force="true" id="bcpg:suppliers" />
@@ -1779,7 +1780,6 @@
 					<show force="false" id="ghs:sdsOnuCode" />
 					<show force="false" id="ghs:sdsClassCode" />
 					<show force="false" id="ghs:sdsPackagingGroupCode" />
-					<show force="false" id="bcpg:entityScore" />
 				</field-visibility>
 				<appearance>
 					<field id="cm:name" read-only="true"></field>

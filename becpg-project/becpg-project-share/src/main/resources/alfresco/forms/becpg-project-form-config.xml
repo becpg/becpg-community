@@ -464,7 +464,6 @@
 				    <!-- <show id="pjt:projectPriority" /> -->
 					<show id="pjt:completionPercent" />
 					<show id="pjt:projectScore" force="true" />
-					<show id="bcpg:entityScore" force="false" />
 					<show id="pjt:projectManager" />
 					<show id="dataList_pjt:taskList" />
 					<show id="dataList_bcpg:activityList" />
@@ -475,6 +474,7 @@
 					<show id="pjt:projectCompletionDate" />
 					<show id="pjt:projectDueDate" />
 					<show id="pjt:projectState" />
+					<show id="bcpg:entityScore" force="false" />
 					<show id="fm:commentCount" force="true" />
 					
 				</field-visibility>
@@ -1174,6 +1174,7 @@
 					<show id="pjt:projectEntity" />
 					<show id="pjt:projectPriority" />
 					<show id="pjt:projectState" />
+					<show id="bcpg:entityScore" force="false" />
 					<show id="bcpg:suppliers" />
 					<show id="bcpg:clients" />
 					<show id="pjt:projectStartDate" />
@@ -1184,7 +1185,6 @@
 					<show id="pjt:completionPercent" />
 					<show id="pjt:projectOverdue" />
 					<show id="pjt:projectScore" />
-					<show id="bcpg:entityScore" force="false" />
 					<show id="pjt:projectWork" />
 					<show id="pjt:projectBudgetedCost" />
 					<show id="pjt:projectLoggedTime" />

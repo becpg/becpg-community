@@ -3450,6 +3450,7 @@
 		  <show force="true" id="bcpg:productHierarchy2" />
 		  <show force="true" id="bcpg:legalName" />
 		  <show force="true" id="bcpg:productState" />
+		  <show force="false" id="bcpg:entityScore"/>
 		  <show force="true" id="bcpg:code" />
 		  <show force="true" id="bcpg:erpCode"/>
 		  <show force="true" id="bcpg:eanCode" />
@@ -3482,7 +3483,6 @@
           <show force="false" id="bcpg:entityTplRef"/>
           <show force="false" id="bcpg:parentEntityRef"/>
           <show force="false" id="pjt:projectScore"/>
-          <show force="false" id="bcpg:entityScore"/>
           <show force="false" id="gs1:tradeItemMarketingMessage"/>
           <show force="false" id="gs1:tradeItemFeatureBenefit"/>
           <show force="false" id="gs1:specialItemCode"/>
