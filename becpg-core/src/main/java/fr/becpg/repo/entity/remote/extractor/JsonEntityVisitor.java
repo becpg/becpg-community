@@ -383,9 +383,28 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 				entity.put(RemoteEntityService.ATTR_PARENT_ID, parentRef.getId());
 			}
 		} catch (RuntimeException e) {
-			if (logger.isWarnEnabled()) {
-				logger.warn("Failed to resolve path for parent node " + parentRef + ": " + e.getMessage());
+			logParentPathFailure(parentRef, e);
+		}
+	}
+
+	/**
+	 * A parent whose path the caller may not read is the normal case, not an incident.
+	 * <p>
+	 * An entity is routinely visible to a user who cannot read the folder it sits in — that is
+	 * exactly what a supplier account looks like on the portal — so
+	 * {@link org.alfresco.repo.security.permissions.AccessDeniedException} here says "this parent
+	 * is out of scope", the same thing {@link #createTargetAssociationNode} already treats as
+	 * DEBUG. Logging it at WARN produced one line per row on every listing call and buried the
+	 * failures that do deserve attention. Anything else is still a real surprise: it keeps WARN.
+	 */
+	private void logParentPathFailure(NodeRef parentRef, RuntimeException e) {
+		if (e instanceof AccessDeniedException) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Parent node " + parentRef + " is not readable by the current user, path omitted: "
+						+ e.getMessage());
 			}
+		} else if (logger.isWarnEnabled()) {
+			logger.warn("Failed to resolve path for parent node " + parentRef + ": " + e.getMessage());
 		}
 	}
 
@@ -600,7 +619,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		try {
 			entity.put(RemoteEntityService.ATTR_PATH, nodeService.getPath(parentRef).toPrefixString(namespaceService));
 		} catch (RuntimeException e) {
-			logger.warn("Failed to resolve path for parent node " + parentRef + ": " + e.getMessage());
+			logParentPathFailure(parentRef, e);
 		}
 
 		if ((entityListDAO != null) && entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
@@ -694,6 +713,15 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 			}
 			String listKey = entityLists.has(listType) ? listType + DATALIST_NAME_SEPARATOR + dataListName : listType;
 			entityLists.put(listKey, list);
+		} catch (AccessDeniedException e) {
+			// A list the caller may not read is the list being out of scope, not an export failure.
+			// `bcpg:reqCtrlList` is the everyday case: it is internal, a supplier never has rights on
+			// it, and the entity is returned without it exactly as intended. At WARN — with a stack
+			// trace — this printed a dozen frames per entity on every supplier-facing call.
+			if (logger.isDebugEnabled()) {
+				logger.debug("Datalist '" + listName + "' (" + listType + ") is not readable by the current user for node "
+						+ entityNodeRef + ", returning entity without it: " + e.getMessage());
+			}
 		} catch (Exception e) {
 			if (logger.isWarnEnabled()) {
 				logger.warn("Skipping datalist '" + listName + "' (" + listType + ") for node " + entityNodeRef
