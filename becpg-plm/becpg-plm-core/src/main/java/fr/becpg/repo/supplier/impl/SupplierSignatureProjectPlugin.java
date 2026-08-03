@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 import org.alfresco.model.ContentModel;
@@ -187,7 +188,7 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 
 		String taskName = I18NUtil.getMessage(CLOSING_TASK_NAME_KEY);
 
-		TaskListDataItem closingTask = project.getTaskList().stream().filter(task -> task.getTaskName().equals(taskName)).findFirst()
+		TaskListDataItem closingTask = project.getTaskList().stream().filter(task -> Objects.equals(task.getTaskName(), taskName)).findFirst()
 				.orElseGet(() -> projectService.insertNewTask(project, lastTasks));
 
 		closingTask.setTaskName(taskName);
