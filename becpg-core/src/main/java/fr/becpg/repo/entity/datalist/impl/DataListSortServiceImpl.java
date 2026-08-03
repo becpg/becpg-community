@@ -65,6 +65,26 @@ public class DataListSortServiceImpl implements DataListSortService {
 	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
 
+	/**
+	 * Carries the state shared by the whole {@code insertAfter} recursion: the nodes waiting to be sorted in the
+	 * current batch and the nodes already visited, used as a guard against cyclic parent levels.
+	 */
+	private record SortContext(Set<NodeRef> pendingNodeRefs, Set<NodeRef> visitedNodeRefs) {
+
+		static SortContext of(Set<NodeRef> pendingNodeRefs) {
+			return new SortContext(pendingNodeRefs, new HashSet<>());
+		}
+
+		boolean markVisited(NodeRef nodeRef) {
+			return visitedNodeRefs.add(nodeRef);
+		}
+
+		boolean shouldVisit(NodeRef nodeRef) {
+			return !pendingNodeRefs.contains(nodeRef) && !visitedNodeRefs.contains(nodeRef);
+		}
+
+	}
+
 	private class SortableDataList {
 		
 		public SortableDataList(NodeRef nodeRef) {
@@ -327,7 +347,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 								if ((prevParentLevel == null) || !prevParentLevel.equals(parentLevel)) {
 									prevParentLevel = parentLevel;
 									NodeRef prevSiblingNode = list.getLastChildOfLevel(parentLevel, pendingNodeRefs);
-									insertAfter(list, prevSiblingNode, nodeRef, pendingNodeRefs);
+									insertAfter(list, prevSiblingNode, nodeRef, SortContext.of(pendingNodeRefs));
 									sort = (Integer) nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT);
 									level = (Integer) nodeService.getProperty(nodeRef, BeCPGModel.PROP_DEPTH_LEVEL);
 								} else {
@@ -500,12 +520,14 @@ public class DataListSortServiceImpl implements DataListSortService {
 			}
 
 			// Put at same level
-			if ((parentLevel != null) || (nodeService.getProperty(selectedNodeRef, BeCPGModel.PROP_PARENT_LEVEL) != null)) {
+			if (selectedNodeRef.equals(parentLevel)) {
+				logger.error("Cannot select itself as parent, otherwise we get a cycle. nodeRef: " + selectedNodeRef);
+			} else if ((parentLevel != null) || (nodeService.getProperty(selectedNodeRef, BeCPGModel.PROP_PARENT_LEVEL) != null)) {
 				nodeService.setProperty(selectedNodeRef, BeCPGModel.PROP_PARENT_LEVEL, parentLevel);
 			}
 
 			if (list.exists()) {
-				insertAfter(list, nodeRef, selectedNodeRef, new HashSet<>());
+				insertAfter(list, nodeRef, selectedNodeRef, SortContext.of(new HashSet<>()));
 			} else {
 				logger.debug("list doesn't exists");
 			}
@@ -525,10 +547,14 @@ public class DataListSortServiceImpl implements DataListSortService {
 	 * @param list a {@link fr.becpg.repo.entity.datalist.impl.DataListSortServiceImpl.SortableDataList} object
 	 * @param siblingNode a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @param pendingNodeRefs a {@link java.util.Set} object
+	 * @param context a {@link fr.becpg.repo.entity.datalist.impl.DataListSortServiceImpl.SortContext} object
 	 */
-	private void insertAfter(SortableDataList list, NodeRef siblingNode, NodeRef nodeRef, Set<NodeRef> pendingNodeRefs) {
+	private void insertAfter(SortableDataList list, NodeRef siblingNode, NodeRef nodeRef, SortContext context) {
 
+		if (!context.markVisited(nodeRef)) {
+			logger.warn("Cycle detected in parent level hierarchy, skipping node: " + nodeRef);
+			return;
+		}
 
 		Integer nextSort = getNextSort(list, siblingNode, nodeRef);
 
@@ -567,12 +593,12 @@ public class DataListSortServiceImpl implements DataListSortService {
 			NodeRef prevNode = nodeRef;
 
 			for (NodeRef tmp : list.getChildren(nodeRef, true)) {
-				
-				if (!pendingNodeRefs.contains(tmp)) {
+
+				if (context.shouldVisit(tmp)) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Recur call insertAfter for children: " + tryGetName(tmp));
 					}
-					insertAfter(list, prevNode, tmp, pendingNodeRefs);
+					insertAfter(list, prevNode, tmp, context);
 				}
 				prevNode = tmp;
 			}

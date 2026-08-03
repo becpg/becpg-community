@@ -532,6 +532,42 @@ public class DepthLevelListPolicyIT extends PLMBaseTestCase {
 	}
 
 	/**
+	 * Test that a cyclic parent level hierarchy is detected instead of ending in an infinite recursion (#33840)
+	 */
+	@Test
+	public void testInsertAfterWithCyclicParentLevel() {
+
+		logger.debug("testInsertAfterWithCyclicParentLevel");
+
+		NodeRef finishedProductNodeRef = inWriteTx(() -> BeCPGPLMTestHelper.createMultiLevelProduct(getTestFolderNodeRef()));
+
+		final ProductData finishedProductLoaded = inWriteTx(() -> (ProductData) alfrescoRepository.findOne(finishedProductNodeRef));
+
+		final NodeRef parentNodeRef = finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef();
+		final NodeRef childNodeRef = finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef();
+
+		// childNodeRef is already a child of parentNodeRef, closing the cycle the other way round
+		inWriteTx(() -> {
+			nodeService.setProperty(parentNodeRef, BeCPGModel.PROP_PARENT_LEVEL, childNodeRef);
+			return null;
+		});
+
+		inWriteTx(() -> {
+			dataListSortService.insertAfter(childNodeRef, parentNodeRef);
+			return null;
+		});
+
+		inReadTx(() -> {
+			printSort(finishedProductLoaded.getCompoListView().getCompoList());
+
+			assertNotSame(childNodeRef, nodeService.getProperty(childNodeRef, BeCPGModel.PROP_PARENT_LEVEL));
+			assertNotNull(nodeService.getProperty(childNodeRef, BeCPGModel.PROP_SORT));
+			assertNotNull(nodeService.getProperty(parentNodeRef, BeCPGModel.PROP_SORT));
+			return null;
+		});
+	}
+
+	/**
 	 * Test parent level copy (#637)
 	 *
 	 * PF MP SFL
