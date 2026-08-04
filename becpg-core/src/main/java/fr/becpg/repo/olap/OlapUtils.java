@@ -137,7 +137,53 @@ public class OlapUtils {
 	private static final Pattern NUMERIC = Pattern.compile("^[-+]?[\\d.,]+$");
 
 	/**
-	 * Converts one Saiku cell value.
+	 * Converts one Saiku cell, <b>preferring its raw value</b>.
+	 *
+	 * <h3>Why the raw value and not the displayed one</h3>
+	 *
+	 * A Saiku data cell carries both, and only one of them is a number:
+	 *
+	 * <pre>
+	 * {"value":"1,148","type":"DATA_CELL","properties":{"raw":"1148.0","position":"0:1"}}
+	 * </pre>
+	 *
+	 * {@code value} is what a human reads — grouped for the connection locale — and
+	 * parsing it is a lossy guess: {@code "1.148"} is 1 148 in one cell and 19.468
+	 * really is a fraction in the next. {@code raw} is the measure itself, in Java's
+	 * canonical form, and it removes the ambiguity entirely. Row and column headers
+	 * carry no {@code raw}, which is correct: a caption is not a number, and the
+	 * fallback returns it untouched.
+	 *
+	 * A whole {@code raw} ({@code "1148.0"}) is returned as a {@link java.lang.Long}
+	 * rather than a {@link java.lang.Double}, so a count keeps reading as a count —
+	 * `retrieveDataType` publishes that class as the column type, and turning every
+	 * count into a decimal would change what charts are told about their own axes.
+	 *
+	 * @param rawValue       {@code properties.raw}, or {@code null} when absent
+	 * @param formattedValue {@code value}, the displayed one
+	 * @return a {@link java.lang.Long}, a {@link java.lang.Double}, or the formatted
+	 *         value unchanged when neither is a number
+	 */
+	public static Object convertCell(String rawValue, String formattedValue) {
+		if (rawValue == null || rawValue.isEmpty()) {
+			return convert(formattedValue);
+		}
+		try {
+			double parsed = Double.parseDouble(rawValue.trim());
+			if ((parsed == Math.rint(parsed)) && !Double.isInfinite(parsed) && (Math.abs(parsed) <= Long.MAX_VALUE)) {
+				return Long.valueOf((long) parsed);
+			}
+			return Double.valueOf(parsed);
+		} catch (NumberFormatException e) {
+			// A raw value that is not a number is not something to guess about.
+			return convert(formattedValue);
+		}
+	}
+
+	/**
+	 * Converts one Saiku <b>display</b> value — the fallback of
+	 * {@link #convertCell(String, String)}, used for the cells that carry no raw
+	 * one (headers) and for older payloads.
 	 *
 	 * <h3>Why this is not a {@code parseDouble}</h3>
 	 *
