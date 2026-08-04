@@ -112,7 +112,6 @@
 				<value>bcpg:lvValue</value>
 			</parameter>
 		</constraint>
-
 		<constraint name="pack:packagingComponents"
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">

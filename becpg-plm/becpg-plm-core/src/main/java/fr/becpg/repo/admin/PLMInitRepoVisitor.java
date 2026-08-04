@@ -1459,6 +1459,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_PM_MATERIALS, PackModel.TYPE_PACKAGING_MATERIAL);
 		entityLists.put(PlmRepoConsts.PATH_PM_PRINT_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_PM_PRINT_VANISHS, BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(PlmRepoConsts.PATH_PACKAGING_COMPONENTS, BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(PlmRepoConsts.PATH_PACKAGING_PROCESSES, BeCPGModel.TYPE_LIST_VALUE);
 
 		entityLists.put(PlmRepoConsts.PATH_MEAT_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 
@@ -1581,6 +1583,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_SVHCLIST);
 				dataLists.add(PLMModel.TYPE_MICROBIOLIST);
 				dataLists.add(SurveyModel.TYPE_SURVEY_LIST);
+				dataLists.add(PackModel.TYPE_SUPPLIER_PACKAGING_LIST);
 
 				wusedQName = PLMModel.TYPE_COMPOLIST;
 
@@ -1595,7 +1598,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
 				dataLists.add(PLMModel.TYPE_SVHCLIST);
 				dataLists.add(PackModel.TYPE_LABELING_LIST);
+				dataLists.add(PackModel.TYPE_PACKAGING_COMPONENT_LIST);
 				dataLists.add(PackModel.PACK_MATERIAL_LIST_TYPE);
+				dataLists.add(PackModel.TYPE_SUPPLIER_PACKAGING_LIST);
 
 				wusedQName = PLMModel.TYPE_PACKAGINGLIST;
 

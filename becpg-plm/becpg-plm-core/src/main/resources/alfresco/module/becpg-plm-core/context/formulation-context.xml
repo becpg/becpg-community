@@ -208,6 +208,9 @@
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="nodeService" ref="nodeService" />
 				</bean>
+				<!-- After the packaging materials: when a packaging declares its components,
+					 they are what its tare and its materials are computed from. -->
+				<bean class="fr.becpg.repo.product.formulation.PackagingComponentFormulationHandler" />
 				<bean class="fr.becpg.repo.product.formulation.GlopFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="glopService" ref="glopService" />

@@ -144,6 +144,8 @@
 			<list id="certification" index="200"/>
 			<list id="plant" index="210"/>
 			<list id="packMaterialList" index="212"/>
+			<list id="packagingComponentList" index="61" view="true" />
+			<list id="supplierPackagingList" index="62" view="true" />
 			<list id="regulatoryList" index="213"/>
 			<list id="ingRegulatoryList" index="214"/>
 			<list id="toxList" index="215"/>
@@ -247,9 +249,12 @@
  					listId="microbioList" itemId="bcpg:microbioList"></step>
 				<step id="step9" labelId="becpg.wizard.supplier.organoList.label"
 					titleId="becpg.wizard.supplier.organoList.title" type="entityDataList"
-					listId="organoList" itemId="bcpg:organoList" 
+					listId="organoList" itemId="bcpg:organoList"></step>
+				<step id="step10" labelId="becpg.wizard.supplier.supplierPackagingList.label"
+					titleId="becpg.wizard.supplier.supplierPackagingList.title" type="entityDataList"
+					listId="supplierPackagingList" itemId="pack:supplierPackagingList"
 					nextStepWebScript="becpg/project/path?nodeRef={nodeRef}&amp;path=SupplierDocuments" ></step>
-				<step id="step10" labelId="becpg.wizard.supplier.documents.label"
+				<step id="step11" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
 			<wizard id="supplier-finishedProduct" draft="true" comments="true"
@@ -323,11 +328,18 @@
 				<step id="step3" labelId="becpg.wizard.supplier.labelClaimList.label"
 					titleId="becpg.wizard.supplier.labelClaimList.title" type="entityDataList" 
 					listId="labelClaimList" itemId="bcpg:labelClaimList"></step>
-				<step id="step4" labelId="becpg.wizard.supplier.packMaterialList.label"
+				<step id="step4" labelId="becpg.wizard.supplier.packagingComponentList.label"
+					titleId="becpg.wizard.supplier.packagingComponentList.title" type="entityDataList"
+					listId="packagingComponentList" itemId="pack:packagingComponentList"
+					nextStepWebScript="becpg/remote/formulate?nodeRef={nodeRef}&amp;format=json"></step>
+				<step id="step5" labelId="becpg.wizard.supplier.packMaterialList.label"
 					titleId="becpg.wizard.supplier.packMaterialList.title" type="entityDataList"
-					listId="packMaterialList" itemId="pack:packMaterialList"
+					listId="packMaterialList" itemId="pack:packMaterialList"></step>
+				<step id="step6" labelId="becpg.wizard.supplier.supplierPackagingList.label"
+					titleId="becpg.wizard.supplier.supplierPackagingList.title" type="entityDataList"
+					listId="supplierPackagingList" itemId="pack:supplierPackagingList"
 					nextStepWebScript="becpg/project/path?nodeRef={nodeRef}&amp;path=SupplierDocuments"></step>
-				<step id="step5" labelId="becpg.wizard.supplier.documents.label"
+				<step id="step7" labelId="becpg.wizard.supplier.documents.label"
 					titleId="becpg.wizard.supplier.documents.title" type="documents"></step>
 			</wizard>
 			<wizard id="supplier-packagingKit" draft="true"
