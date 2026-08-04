@@ -1,31 +1,33 @@
-# VITAL 3.0 reference doses (ED01) - Allergen Bureau, "Recommended Reference Doses",
-# Table 1 of the VITAL 4.0 Summary and FAQ, August 2024 (VITAL 3.0 column).
+# VITAL 3.0 reference doses (ED01) - Allergen Bureau, Table 1 of the VITAL 4.0 Summary and FAQ, August 2024 (VITAL 3.0 column).
 # Values are mg of TOTAL PROTEIN of the allergen.
 # Action Limit (ppm) = rfdMg / consumption amount (kg), capped by maxActionPpm when set.
-# Cashew and pistachio share one reference dose, as do walnut and pecan.
-# Molluscs and buckwheat carry no VITAL 3.0 reference dose: they are deliberately absent
-# here and keep the fixed threshold held by the allergen.
-# allergenCode must match bcpg:allergenCode on the allergen characteristic.
+# allergenCode holds the bcpg:allergenCode of the beCPG allergen reference data:
+# regulated categories (AW gluten cereals, AC crustaceans, AE egg, AF fish, AP peanut,
+# AY soy, AM milk, AS sesame, BC celery, BM mustard, UM molluscs, NL lupin) plus the
+# individual tree nuts, whose reference doses differ per species.
+# Sulphites (AU) carry no reference dose and keep the fixed threshold held by the allergen.
+# Molluscs and buckwheat carry no VITAL 3.0 reference dose: they are deliberately
+# absent here and keep the fixed threshold held by the allergen.
 # proteinPerc is optional: leave it empty when the declared quantity is already
 # expressed in allergenic protein.
 allergenCode;rfdMg;maxActionPpm;proteinPerc
-GLUTEN;0.7;;
-CRUSTACEANS;25.0;;
-EGG;0.2;;
-FISH;1.3;;
-PEANUT;0.2;;
-SOY;0.5;;
-MILK;0.2;;
-ALMOND;0.1;;
-HAZELNUT;0.1;;
-WALNUT;0.03;;
-CASHEW;0.05;;
-PECAN;0.03;;
-BRAZIL_NUT;0.1;;
-PISTACHIO;0.05;;
-MACADAMIA;0.1;;
-PINE_NUT;0.1;;
-CELERY;0.05;;
-MUSTARD;0.05;;
-SESAME;0.1;;
-LUPIN;2.6;;
+AW;0.7;;
+UW;0.7;;
+AC;25.0;;
+AE;0.2;;
+AF;1.3;;
+AP;0.2;;
+AY;0.5;;
+AM;0.2;;
+AS;0.1;;
+BC;0.05;;
+BM;0.05;;
+NL;2.6;;
+SA;0.1;;
+SH;0.1;;
+SW;0.03;;
+SC;0.05;;
+SP;0.03;;
+SR;0.1;;
+ST;0.05;;
+PN;0.1;;
