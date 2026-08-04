@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -342,35 +343,53 @@ public class SpelFormulaService {
 	}
 
 	private class BecpgSpelSecurityTypeLocator extends StandardTypeLocator {
-		
+
 		private List<String> authorizedTypes = new ArrayList<>();
-		
+
 		private BecpgSpelSecurityTypeLocator(String authorizedTypes) {
 			if (authorizedTypes != null && !authorizedTypes.isBlank()) {
 				this.authorizedTypes = Arrays.asList(authorizedTypes.split(","));
 			}
 		}
-		
+
 		@Override
 		public Class<?> findType(String typeName) throws EvaluationException {
-			if (!isTypeAuthorized(typeName, authorizedTypes)) {
+			String resolvedTypeName = TYPE_ALIASES.getOrDefault(typeName, typeName);
+			if (!isTypeAuthorized(resolvedTypeName, authorizedTypes)) {
 				logger.error(TYPE_NOT_AUTHORIZED + typeName);
 				throw new EvaluationException(TYPE_NOT_AUTHORIZED + typeName);
 			}
-			return super.findType(typeName);
+			return super.findType(resolvedTypeName);
 		}
-		
+
 		private boolean isTypeAuthorized(String typeName, List<String> authorizedTypes) {
 			if (FORBIDDEN_TYPES.contains(typeName)) {
 				return false;
 			}
+			if (BUILT_IN_AUTHORIZED_TYPES.contains(typeName)) {
+				return true;
+			}
 			return authorizedTypes.stream().anyMatch(clazz -> clazz.equals(typeName) || clazz.endsWith("*") && typeName.startsWith(clazz.replace("*", "")));
 		}
 	}
-	
+
 	/** Constant <code>TYPE_NOT_AUTHORIZED="Type is not authorized: "</code> */
 	private static final String TYPE_NOT_AUTHORIZED = "Type is not authorized: ";
-	
+
+	/**
+	 * Short names and legacy fully qualified names kept working in existing formulas, mapped to the type actually shipped.
+	 */
+	private static final Map<String, String> TYPE_ALIASES = Map.of(
+			"VariantFilters", "fr.becpg.repo.variant.filters.VariantFilters",
+			"NutriScoreContext", "fr.becpg.repo.product.formulation.score.NutriScoreContext",
+			"EcoScoreContext", "fr.becpg.repo.product.formulation.ecoscore.EcoScoreContext",
+			"NutrientHelper", "fr.becpg.repo.product.helper.NutrientHelper",
+			"Nutrient5CHelper", "fr.becpg.repo.product.helper.Nutrient5CHelper",
+			"fr.becpg.repo.product.formulation.score.EcoScoreContext", "fr.becpg.repo.product.formulation.ecoscore.EcoScoreContext");
+
+	/** Types always authorized in formulas, whatever the configured authorized types are */
+	private static final Set<String> BUILT_IN_AUTHORIZED_TYPES = Set.copyOf(TYPE_ALIASES.values());
+
 	/** Constant <code>FORBIDDEN_TYPES</code> */
 	private static final List<String> FORBIDDEN_TYPES = List.of("java.lang.System", "java.lang.Runtime", "java.lang.ProcessBuilder",
 			"java.lang.Class", "java.lang.ClassLoader", "java.lang.Thread", "java.lang.ThreadGroup", "java.lang.reflect.Method",
