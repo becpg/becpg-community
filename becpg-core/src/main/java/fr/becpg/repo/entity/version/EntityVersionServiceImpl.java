@@ -5,13 +5,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Comparator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -1391,7 +1392,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 					NodeRef documentsFolder = nodeService.getChildByName(versionNodeRef, ContentModel.ASSOC_CONTAINS, "Documents");
 					List<NodeRef> reports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
-					List<NodeRef> reportCopyList = reports.stream().map(n -> copyReport(documentsFolder, n)).toList();
+					List<NodeRef> reportCopyList = reports.stream().map(n -> copyReport(documentsFolder, n)).filter(Objects::nonNull).toList();
 					associationService.update(versionNodeRef, ReportModel.ASSOC_REPORTS, reportCopyList);
 					return null;
 				}, false, true);
@@ -1418,25 +1419,26 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	private NodeRef copyReport(NodeRef parentFolder, NodeRef reportNodeRef) {
-		
+		if (parentFolder == null) {
+			return null;
+		}
+		ContentReader reader = contentService.getReader(reportNodeRef, ContentModel.PROP_CONTENT);
+		if (reader == null) {
+			return null;
+		}
 		String reportName = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
-
 		Map<QName, Serializable> props = new HashMap<>();
 		props.put(ContentModel.PROP_NAME, reportName);
-
 		NodeRef reportCopy = nodeService.getChildByName(parentFolder, ContentModel.ASSOC_CONTAINS, reportName);
 		if (reportCopy == null ) {
 			reportCopy = nodeService.createNode(parentFolder, ContentModel.ASSOC_CONTAINS,
 					ContentModel.ASSOC_CONTAINS, ReportModel.TYPE_REPORT, props).getChildRef();
 		}
-
-		ContentReader reader = contentService.getReader(reportNodeRef, ContentModel.PROP_CONTENT);
 		ContentWriter writer = contentService.getWriter(reportCopy, ContentModel.PROP_CONTENT, true);
 		writer.setEncoding(reader.getEncoding());
 		writer.setMimetype("application/pdf");
-
+		
 		writer.putContent(reader);
-
 		return reportCopy;
 	}
 	
