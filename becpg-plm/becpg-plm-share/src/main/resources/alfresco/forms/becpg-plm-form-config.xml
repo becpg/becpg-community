@@ -8569,6 +8569,8 @@
                     <show id="bcpg:depthLevel" force="true"/>
                     <show id="bcpg:allergenListAllergen" />
                     <show id="bcpg:allergenListQtyPerc" />
+                    <show id="bcpg:allergenListParticleWeight" />
+                    <show id="bcpg:allergenListParticleProteinPerc" />
                     <show id="bcpg:allergenListVoluntary" />
                     <show id="bcpg:allergenListInVoluntary" />
                     <!--  <show id="bcpg:allergenListDecisionTree" /> -->
