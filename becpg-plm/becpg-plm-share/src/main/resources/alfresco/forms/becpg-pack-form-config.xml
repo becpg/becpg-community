@@ -392,5 +392,319 @@
 			</form>
 		</forms>
 	</config>
-	
+
+	<config evaluator="model-type" condition="pack:packagingComponentList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="pack:pclComponent" />
+					<show id="bcpg:parentLevel" force="true" />
+					<show id="pack:pclQty" />
+					<show id="pack:pclUnit" />
+					<show id="pack:tare" force="true" />
+					<show id="pack:tareUnit" force="true" />
+					<show id="pack:pclMaterial" />
+					<show id="pack:pclRecycledPerc" />
+					<show id="pack:pclProcess" />
+					<show id="pack:length" force="true" />
+					<show id="pack:width" force="true" />
+					<show id="pack:height" force="true" />
+					<show id="pack:pmThickness" force="true" />
+					<show id="pack:pmPaperWeight" force="true" />
+					<show id="pack:pclDeclType" />
+					<show id="pack:pclProduct" />
+					<show id="pack:pclComment" />
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel"
+						label-id="becpg.forms.set.designation.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="materialInfo" appearance="bordered-panel"
+						label-id="becpg.forms.set.material.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+
+					<field id="pack:pclComponent" set="mainInfo" />
+					<field id="bcpg:parentLevel" force="true" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pack:packagingComponentList&#38;attributeName=pack:pclComponent</control-param>
+						</control>
+					</field>
+					<field id="pack:pclQty" set="mainInfo" />
+					<field id="pack:pclUnit" set="mainInfo" />
+					<field id="pack:tare" force="true" set="mainInfo" />
+					<field id="pack:tareUnit" force="true" set="mainInfo" />
+					<field id="pack:pclProcess" set="mainInfo" />
+					<field id="pack:pclDeclType" set="mainInfo" />
+					<field id="pack:pclComment" set="mainInfo" />
+					<field id="pack:pclMaterial" set="materialInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial
+							</control-param>
+						</control>
+					</field>
+					<field id="pack:pclRecycledPerc" set="materialInfo" />
+					<field id="pack:length" force="true" set="materialInfo" />
+					<field id="pack:width" force="true" set="materialInfo" />
+					<field id="pack:height" force="true" set="materialInfo" />
+					<field id="pack:pmThickness" force="true" set="materialInfo" />
+					<field id="pack:pmPaperWeight" force="true" set="materialInfo" />
+					<field id="pack:pclProduct" set="materialInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingMaterial
+							</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					<show id="pack:pclComponent" />
+					<show id="pack:pclQty" />
+					<show id="pack:pclUnit" />
+					<show id="pack:tare" force="true" />
+					<show id="pack:tareUnit" force="true" />
+					<show id="pack:pclMaterial" />
+					<show id="pack:pclRecycledPerc" />
+					<show id="pack:pclProcess" />
+					<show id="pack:length" force="true" />
+					<show id="pack:width" force="true" />
+					<show id="pack:height" force="true" />
+					<show id="pack:pmThickness" force="true" />
+					<show id="pack:pmPaperWeight" force="true" />
+					<show id="pack:pclDeclType" />
+					<show id="pack:pclComment" />
+					<show id="bcpg:depthLevel" force="true" />
+					<show id="fm:commentCount" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="pack:pclMaterial">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:depthLevel" label="hidden" read-only="true" />
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+				</appearance>
+			</form>
+
+			<form id="filter">
+				<field-visibility>
+					<show id="pack:pclComponent" />
+					<show id="pack:pclProcess" />
+					<show id="pack:pclMaterial" />
+					<show id="pack:pclDeclType" />
+				</field-visibility>
+				<appearance>
+					<field id="pack:pclMaterial">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial
+							</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="node-type" condition="pack:packagingComponentList">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="pack:pclComponent" />
+					<show id="bcpg:parentLevel" force="true" />
+					<show id="pack:pclQty" />
+					<show id="pack:pclUnit" />
+					<show id="pack:tare" force="true" />
+					<show id="pack:tareUnit" force="true" />
+					<show id="pack:pclMaterial" />
+					<show id="pack:pclRecycledPerc" />
+					<show id="pack:pclProcess" />
+					<show id="pack:length" force="true" />
+					<show id="pack:width" force="true" />
+					<show id="pack:height" force="true" />
+					<show id="pack:pmThickness" force="true" />
+					<show id="pack:pmPaperWeight" force="true" />
+					<show id="pack:pclDeclType" />
+					<show id="pack:pclProduct" />
+					<show id="pack:pclComment" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:parentLevel" force="true">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pack:packagingComponentList&#38;attributeName=pack:pclComponent</control-param>
+						</control>
+					</field>
+					<field id="pack:pclMaterial">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial
+							</control-param>
+						</control>
+					</field>
+					<field id="pack:pclProduct">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingMaterial
+							</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="model-type" condition="pack:supplierPackagingList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="pack:splPkgLevel" />
+					<show id="pack:splComponent" />
+					<show id="bcpg:parentLevel" force="true" />
+					<show id="pack:splQty" />
+					<show id="pack:splUnit" />
+					<show id="pack:tare" force="true" />
+					<show id="pack:tareUnit" force="true" />
+					<show id="pack:splMaterial" />
+					<show id="pack:splRecycledPerc" />
+					<show id="pack:length" force="true" />
+					<show id="pack:width" force="true" />
+					<show id="pack:height" force="true" />
+					<show id="pack:splDeclType" />
+					<show id="pack:splProduct" />
+					<show id="pack:splComment" />
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel"
+						label-id="becpg.forms.set.designation.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="materialInfo" appearance="bordered-panel"
+						label-id="becpg.forms.set.material.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+
+					<field id="pack:splPkgLevel" set="mainInfo" />
+					<field id="pack:splComponent" set="mainInfo" />
+					<field id="bcpg:parentLevel" force="true" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pack:supplierPackagingList&#38;attributeName=pack:splComponent</control-param>
+						</control>
+					</field>
+					<field id="pack:splQty" set="mainInfo" />
+					<field id="pack:splUnit" set="mainInfo" />
+					<field id="pack:tare" force="true" set="mainInfo" />
+					<field id="pack:tareUnit" force="true" set="mainInfo" />
+					<field id="pack:splDeclType" set="mainInfo" />
+					<field id="pack:splComment" set="mainInfo" />
+					<field id="pack:splMaterial" set="materialInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial
+							</control-param>
+						</control>
+					</field>
+					<field id="pack:splRecycledPerc" set="materialInfo" />
+					<field id="pack:length" force="true" set="materialInfo" />
+					<field id="pack:width" force="true" set="materialInfo" />
+					<field id="pack:height" force="true" set="materialInfo" />
+					<field id="pack:splProduct" set="materialInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingMaterial
+							</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					<show id="pack:splPkgLevel" />
+					<show id="pack:splComponent" />
+					<show id="pack:splQty" />
+					<show id="pack:splUnit" />
+					<show id="pack:tare" force="true" />
+					<show id="pack:tareUnit" force="true" />
+					<show id="pack:splMaterial" />
+					<show id="pack:splRecycledPerc" />
+					<show id="pack:length" force="true" />
+					<show id="pack:width" force="true" />
+					<show id="pack:height" force="true" />
+					<show id="pack:splDeclType" />
+					<show id="pack:splComment" />
+					<show id="bcpg:depthLevel" force="true" />
+					<show id="fm:commentCount" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="pack:splMaterial">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:depthLevel" label="hidden" read-only="true" />
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+				</appearance>
+			</form>
+
+			<form id="filter">
+				<field-visibility>
+					<show id="pack:splPkgLevel" />
+					<show id="pack:splComponent" />
+					<show id="pack:splMaterial" />
+					<show id="pack:splDeclType" />
+				</field-visibility>
+				<appearance>
+					<field id="pack:splMaterial">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial
+							</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="node-type" condition="pack:supplierPackagingList">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="pack:splPkgLevel" />
+					<show id="pack:splComponent" />
+					<show id="bcpg:parentLevel" force="true" />
+					<show id="pack:splQty" />
+					<show id="pack:splUnit" />
+					<show id="pack:tare" force="true" />
+					<show id="pack:tareUnit" force="true" />
+					<show id="pack:splMaterial" />
+					<show id="pack:splRecycledPerc" />
+					<show id="pack:length" force="true" />
+					<show id="pack:width" force="true" />
+					<show id="pack:height" force="true" />
+					<show id="pack:splDeclType" />
+					<show id="pack:splProduct" />
+					<show id="pack:splComment" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:parentLevel" force="true">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pack:supplierPackagingList&#38;attributeName=pack:splComponent</control-param>
+						</control>
+					</field>
+					<field id="pack:splMaterial">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial
+							</control-param>
+						</control>
+					</field>
+					<field id="pack:splProduct">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingMaterial
+							</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
 </alfresco-config>

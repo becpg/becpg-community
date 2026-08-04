@@ -92,6 +92,10 @@ public class PlmRepoConsts {
 	public static final String PATH_PM_PRINT_TYPES = "pmPrintTypes";
 	/** Constant <code>PATH_PM_PRINT_VANISHS="pmPrintVarnishs"</code> */
 	public static final String PATH_PM_PRINT_VANISHS = "pmPrintVarnishs";
+	/** Constant <code>PATH_PACKAGING_COMPONENTS="PackagingComponents"</code> */
+	public static final String PATH_PACKAGING_COMPONENTS = "PackagingComponents";
+	/** Constant <code>PATH_PACKAGING_PROCESSES="PackagingProcesses"</code> */
+	public static final String PATH_PACKAGING_PROCESSES = "PackagingProcesses";
 	/** Constant <code>PATH_GS1_HIERARCHY="gs1_Hierarchy"</code> */
 	public static final String PATH_GS1_HIERARCHY = "gs1_Hierarchy";
 
