@@ -210,6 +210,50 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 	}
 
 	@Test
+	public void testVariantFiltersFormula() {
+
+		NodeRef finishedProductDataNodeRef = inWriteTx(() -> {
+
+			FinishedProductData finishedProductData = new FinishedProductData();
+			finishedProductData.setName("testVariantFilters FP");
+
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial1NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(rawMaterial2NodeRef));
+			finishedProductData.getCompoListView().setCompoList(compoList);
+
+			List<DynamicCharactListItem> dynamicCharactListItems = new ArrayList<>();
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("qualifiedName").withFormula(
+					"@beCPG.sum(getCompoList(new fr.becpg.repo.variant.filters.VariantFilters(true)),\"dataListItem.qty\")"));
+			dynamicCharactListItems.add(DynamicCharactListItem.build().withTitle("alias")
+					.withFormula("@beCPG.sum(getCompoList(new VariantFilters()),\"dataListItem.qty\")"));
+			finishedProductData.getCompoListView().setDynamicCharactList(dynamicCharactListItems);
+
+			alfrescoRepository.create(getTestFolderNodeRef(), finishedProductData);
+			return finishedProductData.getNodeRef();
+		});
+
+		inWriteTx(() -> {
+			L2CacheSupport.doInCacheContext(
+					() -> AuthenticationUtil
+							.runAsSystem(() -> formulationService.formulate(finishedProductDataNodeRef, FormulationService.DEFAULT_CHAIN_ID)),
+					false, true);
+			return true;
+		});
+
+		inReadTx(() -> {
+			FinishedProductData finishedProductData = (FinishedProductData) alfrescoRepository.findOne(finishedProductDataNodeRef);
+			for (DynamicCharactListItem dynamicCharactListItem : finishedProductData.getCompoListView().getDynamicCharactList()) {
+				assertNull(dynamicCharactListItem.getTitle(), dynamicCharactListItem.getErrorLog());
+				assertEquals(3d, Double.parseDouble(dynamicCharactListItem.getValue().toString()), 0.001d);
+			}
+			return null;
+		});
+	}
+
+	@Test
 	public void testCopyHelperFormula() {
 
 		NodeRef finishedProductData1NodeRef = inWriteTx(() -> {
