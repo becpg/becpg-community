@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -366,9 +365,6 @@ public class SpelFormulaService {
 			if (FORBIDDEN_TYPES.contains(typeName)) {
 				return false;
 			}
-			if (BUILT_IN_AUTHORIZED_TYPES.contains(typeName)) {
-				return true;
-			}
 			return authorizedTypes.stream().anyMatch(clazz -> clazz.equals(typeName) || clazz.endsWith("*") && typeName.startsWith(clazz.replace("*", "")));
 		}
 	}
@@ -386,9 +382,6 @@ public class SpelFormulaService {
 			"NutrientHelper", "fr.becpg.repo.product.helper.NutrientHelper",
 			"Nutrient5CHelper", "fr.becpg.repo.product.helper.Nutrient5CHelper",
 			"fr.becpg.repo.product.formulation.score.EcoScoreContext", "fr.becpg.repo.product.formulation.ecoscore.EcoScoreContext");
-
-	/** Types always authorized in formulas, whatever the configured authorized types are */
-	private static final Set<String> BUILT_IN_AUTHORIZED_TYPES = Set.copyOf(TYPE_ALIASES.values());
 
 	/** Constant <code>FORBIDDEN_TYPES</code> */
 	private static final List<String> FORBIDDEN_TYPES = List.of("java.lang.System", "java.lang.Runtime", "java.lang.ProcessBuilder",
