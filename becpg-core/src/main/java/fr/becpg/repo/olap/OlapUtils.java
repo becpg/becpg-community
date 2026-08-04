@@ -19,6 +19,7 @@ package fr.becpg.repo.olap;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -126,26 +127,142 @@ public class OlapUtils {
 
 	}
 
+	/** Grouping separators Mondrian may emit, depending on the locale. */
+	private static final String GROUPING_SPACES = "    ";
+
+	/** A number with no separator at all: `-1148`, `19`. */
+	private static final Pattern PLAIN = Pattern.compile("^[-+]?\\d+$");
+
+	/** Anything that can plausibly be a formatted number. */
+	private static final Pattern NUMERIC = Pattern.compile("^[-+]?[\\d.,]+$");
+
 	/**
-	 * <p>convert.</p>
+	 * Converts one Saiku cell value.
+	 *
+	 * <h3>Why this is not a {@code parseDouble}</h3>
+	 *
+	 * Saiku returns the cell's <b>display</b> value, formatted by Mondrian for the
+	 * connection locale — {@code 1148} comes back as {@code "1.148"} on a locale
+	 * whose grouping separator is a dot. The previous implementation handed that
+	 * straight to {@code Double.parseDouble}, so every count of a thousand or more
+	 * was silently divided by a thousand: measured on dev.becpg.fr, 1 148 completed
+	 * tasks were reported as {@code 1.148}, and a refusal rate computed from them
+	 * read 97 % instead of roughly 3.5 %.
+	 *
+	 * <h3>What is decided, and what cannot be</h3>
+	 *
+	 * Most formatted numbers are unambiguous and are now read correctly:
+	 * <ul>
+	 *   <li>both separators present ({@code "1.234,56"}) — the <b>last</b> one is the
+	 *       decimal separator, whatever the locale;</li>
+	 *   <li>the same separator more than once ({@code "1.234.567"}) — grouping;</li>
+	 *   <li>a separator followed by anything other than exactly three digits
+	 *       ({@code "19.4"}, {@code "0,25"}) — decimal;</li>
+	 *   <li>spaces, including the non-breaking ones Mondrian uses in French
+	 *       ({@code "1 148"}) — grouping.</li>
+	 * </ul>
+	 *
+	 * One shape stays <b>undecidable</b>: a single separator followed by exactly
+	 * three digits. It is left as a decimal — the historical behaviour — and this
+	 * is deliberate rather than a default. The locale cannot settle it: measured on
+	 * dev.becpg.fr, one and the same cellset carries {@code "1.148"} for a count of
+	 * 1 148 <i>and</i> {@code "19.468"} for an average of 19.468. Same connection,
+	 * same locale, same separator, two readings — Mondrian formatted them with
+	 * different format strings and kept only the result. Guessing on the locale
+	 * would merely move the error from counts to averages.
+	 *
+	 * <b>The cure is upstream</b>: Saiku's raw cell value instead of its formatted
+	 * one, which means a different result formatter in {@code buildDataUrl} and the
+	 * matching cellset parsing in {@code OlapServiceImpl}. That change should be
+	 * written against an observed Saiku payload — a direct call answers 401, the
+	 * {@code ticket} parameter not being an Alfresco login ticket — and not against
+	 * a guessed field name.
 	 *
 	 * @param value a {@link java.lang.String} object.
-	 * @return a {@link java.lang.Object} object.
+	 * @return a {@link java.lang.Long}, a {@link java.lang.Double}, or the value
+	 *         unchanged when it is not a number at all.
 	 */
 	public static Object convert(String value) {
 		if (value == null || value.isEmpty()) {
 			return 0L;
 		}
-		try {
-			return Long.parseLong(value);
-		} catch (NumberFormatException e) {
+
+		String trimmed = value.trim();
+		// Spaces are grouping separators, never decimal ones: dropping them first
+		// turns "1 148" and "1 234,56" into cases the rules below already cover.
+		for (int i = 0; i < GROUPING_SPACES.length(); i++) {
+			trimmed = trimmed.replace(String.valueOf(GROUPING_SPACES.charAt(i)), "");
+		}
+
+		if (trimmed.isEmpty() || !NUMERIC.matcher(trimmed).matches()) {
+			return value;
+		}
+		if (PLAIN.matcher(trimmed).matches()) {
 			try {
-				return Double.parseDouble(value.replace(",", "."));
-			} catch (NumberFormatException ignored) {
-				//DO NOthing
+				return Long.parseLong(trimmed);
+			} catch (NumberFormatException e) {
+				// Beyond a long: keep the precision a double can offer rather than
+				// handing the caller a string it will not know how to plot.
+				return Double.parseDouble(trimmed);
 			}
 		}
-		return value;
+
+		Character decimalSeparator = decimalSeparatorOf(trimmed);
+		String canonical = decimalSeparator == null
+				? trimmed.replace(".", "").replace(",", "")
+				: stripGrouping(trimmed, decimalSeparator.charValue());
+
+		try {
+			return decimalSeparator == null ? (Object) Long.valueOf(canonical) : (Object) Double.valueOf(canonical);
+		} catch (NumberFormatException e) {
+			logger.debug("Unparseable OLAP cell value: " + value);
+			return value;
+		}
+	}
+
+	/**
+	 * Which character carries the decimal point, or {@code null} when the value is
+	 * a grouped integer. See {@link #convert(String)} for the rules.
+	 *
+	 * @param value already stripped of spaces and known to be numeric
+	 * @return the decimal separator, or {@code null}
+	 */
+	private static Character decimalSeparatorOf(String value) {
+		int lastDot = value.lastIndexOf('.');
+		int lastComma = value.lastIndexOf(',');
+
+		// Both present: the rightmost separates the decimals, the other groups.
+		if ((lastDot >= 0) && (lastComma >= 0)) {
+			return lastDot > lastComma ? Character.valueOf('.') : Character.valueOf(',');
+		}
+
+		char separator = lastDot >= 0 ? '.' : ',';
+		int last = Math.max(lastDot, lastComma);
+		if (last < 0) {
+			return null;
+		}
+		// The same separator twice or more can only be grouping.
+		if (value.indexOf(separator) != last) {
+			return null;
+		}
+
+		// Exactly three digits is undecidable — see convert(). Reading it as a
+		// decimal is what this code has always done, so a caller that had learnt to
+		// live with it is not handed a different wrong answer today.
+		return Character.valueOf(separator);
+	}
+
+	/**
+	 * Removes the grouping separators and normalises the decimal one to a dot, so
+	 * the result can be handed to {@link java.lang.Double#valueOf(String)}.
+	 *
+	 * @param value  already stripped of spaces
+	 * @param decimal the decimal separator
+	 * @return a canonical numeric string
+	 */
+	private static String stripGrouping(String value, char decimal) {
+		char grouping = decimal == '.' ? ',' : '.';
+		return value.replace(String.valueOf(grouping), "").replace(decimal, '.');
 	}
 
 }
