@@ -2469,6 +2469,16 @@
 						<facetable>true</facetable>
 					</index>
 				</property>
+				<property name="bcpg:allergenListParticleWeight">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:allergenListParticleProteinPerc">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:allergenListOnSite">
 					<type>d:boolean</type>
 					<index enabled="true">
@@ -5291,6 +5301,14 @@
 				<property name="bcpg:servingSizeByCountry">
 					<type>d:mltext</type>
 					<index enabled="false" />
+				</property>
+				<property name="bcpg:allergenRegulatoryFramework">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
 				<property name="bcpg:servingSizeUnit">
 					<type>d:text</type>

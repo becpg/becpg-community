@@ -333,6 +333,9 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_CLP_DATABASES="CLPDatabases"</code> */
 	public static final String PATH_CLP_DATABASES = "CLPDatabases";
 
+	/** Constant <code>PATH_PAL_DATABASES="PALDatabases"</code> */
+	public static final String PATH_PAL_DATABASES = "PALDatabases";
+
 	//GS1
 	/** Constant <code>PATH_GS1_PACKAGING_TYPE_CODES="PackagingTypeCodes"</code> */
 	@Deprecated

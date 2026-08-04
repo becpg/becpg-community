@@ -132,6 +132,7 @@ public class ProductData extends AbstractScorableEntity
 	private Double servingSize;
 	private MLText servingSizeByCountry;
 	private ProductUnit servingSizeUnit;
+	private String allergenRegulatoryFramework;
 	private Double recipeQtyUsed;
 	private Double recipeVolumeUsed;
 	private Double productLossPerc;
@@ -1455,6 +1456,29 @@ public class ProductData extends AbstractScorableEntity
 	 */
 	public void setServingSize(Double servingSize) {
 		this.servingSize = servingSize;
+	}
+
+	/**
+	 * <p>Getter for the field <code>allergenRegulatoryFramework</code>.</p>
+	 *
+	 * Code of the reference-dose grid (PAL / VITAL) applicable to this product. When
+	 * empty, the fixed involuntary thresholds carried by the allergens apply.
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:allergenRegulatoryFramework")
+	public String getAllergenRegulatoryFramework() {
+		return allergenRegulatoryFramework;
+	}
+
+	/**
+	 * <p>Setter for the field <code>allergenRegulatoryFramework</code>.</p>
+	 *
+	 * @param allergenRegulatoryFramework a {@link java.lang.String} object.
+	 */
+	public void setAllergenRegulatoryFramework(String allergenRegulatoryFramework) {
+		this.allergenRegulatoryFramework = allergenRegulatoryFramework;
 	}
 
 	/**

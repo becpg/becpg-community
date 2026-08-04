@@ -536,6 +536,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		// LCADatabases
 	    visitFolder(systemNodeRef, PlmRepoConsts.PATH_CLP_DATABASES);
 
+		// PALDatabases
+		visitFolder(systemNodeRef, PlmRepoConsts.PATH_PAL_DATABASES);
+
 		// Property catalogs
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_CATALOGS);
 
@@ -790,6 +793,12 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_CLP_DATABASES)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/clp/*.csv");
+		}
+
+		if (Objects.equals(folderName, PlmRepoConsts.PATH_PAL_DATABASES)) {
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/pal/NL_ED05.csv");
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/pal/VITAL_3.csv");
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/pal/VITAL_4.csv");
 		}
 		
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_CATALOGS)) {
