@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,6 +14,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -1322,7 +1324,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 					NodeRef documentsFolder = nodeService.getChildByName(versionNodeRef, ContentModel.ASSOC_CONTAINS, "Documents");
 					List<NodeRef> reports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
-					List<NodeRef> reportCopyList = reports.stream().map(n -> copyReport(documentsFolder, n)).toList();
+					List<NodeRef> reportCopyList = reports.stream().map(n -> copyReport(documentsFolder, n)).filter(Objects::nonNull).toList();
 					associationService.update(versionNodeRef, ReportModel.ASSOC_REPORTS, reportCopyList);
 					return null;
 				}, false, true);
@@ -1342,22 +1344,23 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	}
 	
 	private NodeRef copyReport(NodeRef parentFolder, NodeRef reportNodeRef) {
-		
+		if (parentFolder == null) {
+			return null;
+		}
+		ContentReader reader = contentService.getReader(reportNodeRef, ContentModel.PROP_CONTENT);
+		if (reader == null) {
+			return null;
+		}
 		String reportName = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
-
 		Map<QName, Serializable> props = new HashMap<>();
 		props.put(ContentModel.PROP_NAME, reportName);
-
 		NodeRef reportCopy = nodeService.createNode(parentFolder, ContentModel.ASSOC_CONTAINS,
 				ContentModel.ASSOC_CONTAINS, ReportModel.TYPE_REPORT, props).getChildRef();
-
-		ContentReader reader = contentService.getReader(reportNodeRef, ContentModel.PROP_CONTENT);
 		ContentWriter writer = contentService.getWriter(reportCopy, ContentModel.PROP_CONTENT, true);
 		writer.setEncoding(reader.getEncoding());
 		writer.setMimetype("application/pdf");
-
+		
 		writer.putContent(reader);
-
 		return reportCopy;
 	}
 	
