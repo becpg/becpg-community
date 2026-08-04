@@ -194,11 +194,13 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 		closingTask.setTaskName(taskName);
 		closingTask.setRefusedTask(firstTask);
 
-		NodeRef creator = personService.getPerson(project.getCreator());
-
-		if (!closingTask.getResources().contains(creator)) {
-			closingTask.getResources().add(creator);
+		if (project.getCreator() != null && !project.getCreator().isBlank() && personService.personExists(project.getCreator())) {
+			NodeRef creator = personService.getPerson(project.getCreator());
+			if (!closingTask.getResources().contains(creator)) {
+				closingTask.getResources().add(creator);
+			}
 		}
+		
 
 		lastTasks.stream().filter(Predicate.not(closingTask.getPrevTasks()::contains)).forEach(closingTask.getPrevTasks()::add);
 
