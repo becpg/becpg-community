@@ -44,6 +44,8 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 	/** Constant <code>serialVersionUID=-6746076643301742367L</code> */
 	private static final long serialVersionUID = -6746076643301742367L;
 	private Double qtyPerc;
+	private Double particleWeight;
+	private Double particleProteinPerc;
 	private Boolean voluntary = null;
 	private Boolean inVoluntary = null;
 	private Boolean onSite = null;
@@ -201,6 +203,52 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 	 */
 	public void setQtyPerc(Double qtyPerc) {
 		this.qtyPerc = qtyPerc;
+	}
+
+	/**
+	 * <p>Getter for the field <code>particleWeight</code>.</p>
+	 *
+	 * Weight in grams of a single discrete particle of the allergen (a whole seed, a
+	 * debris). Filling it switches the allergen to the particulate contamination
+	 * assessment instead of the homogeneous one.
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:allergenListParticleWeight")
+	public Double getParticleWeight() {
+		return particleWeight;
+	}
+
+	/**
+	 * <p>Setter for the field <code>particleWeight</code>.</p>
+	 *
+	 * @param particleWeight a {@link java.lang.Double} object.
+	 */
+	public void setParticleWeight(Double particleWeight) {
+		this.particleWeight = particleWeight;
+	}
+
+	/**
+	 * <p>Getter for the field <code>particleProteinPerc</code>.</p>
+	 *
+	 * Protein content, in percent, of a single particle of the allergen.
+	 *
+	 * @return a {@link java.lang.Double} object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:allergenListParticleProteinPerc")
+	public Double getParticleProteinPerc() {
+		return particleProteinPerc;
+	}
+
+	/**
+	 * <p>Setter for the field <code>particleProteinPerc</code>.</p>
+	 *
+	 * @param particleProteinPerc a {@link java.lang.Double} object.
+	 */
+	public void setParticleProteinPerc(Double particleProteinPerc) {
+		this.particleProteinPerc = particleProteinPerc;
 	}
 
 	/**
@@ -458,6 +506,28 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 	}
 
 	/**
+	 * <p>withParticleWeight.</p>
+	 *
+	 * @param particleWeight a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 */
+	public AllergenListDataItem withParticleWeight(Double particleWeight) {
+		setParticleWeight(particleWeight);
+		return this;
+	}
+
+	/**
+	 * <p>withParticleProteinPerc.</p>
+	 *
+	 * @param particleProteinPerc a {@link java.lang.Double} object
+	 * @return a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 */
+	public AllergenListDataItem withParticleProteinPerc(Double particleProteinPerc) {
+		setParticleProteinPerc(particleProteinPerc);
+		return this;
+	}
+
+	/**
 	 * <p>withVoluntary.</p>
 	 *
 	 * @param voluntary a {@link java.lang.Boolean} object
@@ -674,7 +744,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + Objects.hash(allergen, allergenValue, inVoluntary, inVoluntarySources, isCleaned, onLine, onSite, qtyPerc,
-				voluntary, voluntarySources, depthLevel);
+				particleWeight, particleProteinPerc, voluntary, voluntarySources, depthLevel);
 		return result;
 	}
 
@@ -691,8 +761,9 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 		return Objects.equals(allergen, other.allergen) && Objects.equals(allergenValue, other.allergenValue)
 				&& Objects.equals(inVoluntary, other.inVoluntary) && Objects.equals(inVoluntarySources, other.inVoluntarySources)
 				&& Objects.equals(isCleaned, other.isCleaned) && Objects.equals(onLine, other.onLine) && Objects.equals(onSite, other.onSite)
-				&& Objects.equals(qtyPerc, other.qtyPerc) && Objects.equals(voluntary, other.voluntary) && Objects.equals(depthLevel, other.depthLevel)
-				&& Objects.equals(voluntarySources, other.voluntarySources);
+				&& Objects.equals(qtyPerc, other.qtyPerc) && Objects.equals(particleWeight, other.particleWeight)
+				&& Objects.equals(particleProteinPerc, other.particleProteinPerc) && Objects.equals(voluntary, other.voluntary)
+				&& Objects.equals(depthLevel, other.depthLevel) && Objects.equals(voluntarySources, other.voluntarySources);
 	}
 
 	/** {@inheritDoc} */

@@ -691,9 +691,21 @@
 							b.doc->>"$.metadata_siteId" as siteId,
 							b.doc->>"$.metadata_siteName" as siteName,
 							SUBSTRING_INDEX(b.doc->>"$.pjt_projectEntity_bcpg_nodeRef", '|', -1) as projectEntityNodeRef,
-							b.doc->>"$.bcpg_entityTplRef[0]" as entityTplRef
+							b.doc->>"$.bcpg_entityTplRef[0]" as entityTplRef,
+							<#-- Supplier portal: a refusal rate and a response delay cannot be
+							     expressed as Mondrian measures over `tlState` alone — a measure
+							     aggregates a column, it does not filter rows. The three columns
+							     below carry the predicate into SQL so `refusedSteps`,
+							     `completedSteps` and `avgResponseDelay` are plain aggregates. -->
+							CASE WHEN a.doc->>"$.pjt_tlState" = 'Refused' THEN 1 ELSE 0 END as tlRefused,
+							CASE WHEN a.doc->>"$.pjt_tlState" = 'Completed' THEN 1 ELSE 0 END as tlCompleted,
+							<#-- Days between the date a task was due and the date it actually
+							     ended: negative when answered early, positive when late. NULL
+							     while the task is open, so the average only counts answered
+							     tasks instead of reading an open one as "on time". -->
+							DATEDIFF(CAST(a.doc->>"$.pjt_tlEnd" as DATE), CAST(a.doc->>"$.pjt_tlTargetEnd" as DATE)) as tlResponseDelay
 						from
-							taskList a inner join pjt_project b on a.entityNodeRef = b.nodeRef 					
+							taskList a inner join pjt_project b on a.entityNodeRef = b.nodeRef
 					</SQL>
 				</View>
 
@@ -825,8 +837,16 @@
 			</Hierarchy>
 		</Dimension>
 					
-		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="entityNodeRef" />		
-		
+		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="entityNodeRef" />
+
+		<#-- Supplier portal (§4.6.6): the same task facts, read by supplier. The shared
+		     dimension joins `assoc_bcpg_suppliers` on the entity carrying the association —
+		     here the project, which is this cube's `entityNodeRef`. It brings the supplier,
+		     its family and subfamily (the "filiale" axis) and `bcpg:supplierState`, so a
+		     response delay or a refusal rate can be read per supplier and per state without
+		     any new table. -->
+		<DimensionUsage name="suppliers" caption="${msg("jsolap.supplier.title")}" source="suppliersDimension" foreignKey="entityNodeRef" />
+
 		<DimensionUsage name="tlStart" caption="${msg("jsolap.startDate.title")}" source="timeDimension" foreignKey="tlStart" />
 		<DimensionUsage name="tlEnd" caption="${msg("jsolap.endDate.title")}" source="timeDimension" foreignKey="tlEnd" />
 		<DimensionUsage name="tlTargetStart" caption="${msg("jsolap.tlTargetStart.title")}" source="timeDimension" foreignKey="tlTargetStart" />
@@ -839,10 +859,23 @@
 		<Measure name="workload" caption="${msg("jsolap.workload.title")}" column="tlWork" datatype="Integer" aggregator="sum" visible="true"></Measure>
 		<Measure name="loggedTime" caption="${msg("jsolap.loggedTime.title")}" column="tlLoggedTime" datatype="Integer" aggregator="sum" visible="true"></Measure>
 		<Measure name="avgLoggedTime" caption="${msg("jsolap.avgLoggedTime.title")}" column="tlLoggedTime" datatype="Integer" aggregator="avg" visible="true"></Measure>
-		
+
+		<#-- Supplier portal (§4.6.6): "taux de refus" and "délai de réponse aux tâches". -->
+		<Measure name="refusedSteps" caption="${msg("jsolap.refusedSteps.title")}" column="tlRefused" datatype="Integer" aggregator="sum" visible="true" />
+		<Measure name="completedSteps" caption="${msg("jsolap.completedSteps.title")}" column="tlCompleted" datatype="Integer" aggregator="sum" visible="true" />
+		<Measure name="avgResponseDelay" caption="${msg("jsolap.avgResponseDelay.title")}" column="tlResponseDelay" datatype="Numeric" aggregator="avg" visible="true" />
+
 		<CalculatedMember name="averageDurations" caption="${msg("jsolap.averageDurations.title")}" dimension="Measures" visible="true">
 			<Formula>([Measures].[averageDurations],[designation.taskPerName].PrevMember) + ([Measures].[averageActualDurations])</Formula>
-		</CalculatedMember>  
+		</CalculatedMember>
+
+		<#-- Refused over answered, not over every task: an open task has not been refused
+		     and must not dilute the rate. `IIf` on the divisor keeps the cell empty rather
+		     than dividing by zero on a supplier that has answered nothing yet. -->
+		<CalculatedMember name="refusalRate" caption="${msg("jsolap.refusalRate.title")}" dimension="Measures" visible="true">
+			<Formula>IIf(([Measures].[refusedSteps] + [Measures].[completedSteps]) = 0, NULL, [Measures].[refusedSteps] / ([Measures].[refusedSteps] + [Measures].[completedSteps]))</Formula>
+			<CalculatedMemberProperty name="FORMAT_STRING" value="0.0%" />
+		</CalculatedMember>
 		
 		
 	</Cube>
@@ -1212,6 +1245,12 @@
 			</Hierarchy>
 		</Dimension>
 		
+		<#-- Supplier portal (§4.6.6): completeness and lead time per supplier, per approval
+		     state and per subsidiary. This cube's fact IS the project, so the association
+		     table joins on its own `nodeRef`. `averageProgress` (pjt:completionPercent) then
+		     reads as the completeness measure the portal's monitoring needs. -->
+		<DimensionUsage name="suppliers" caption="${msg("jsolap.supplier.title")}" source="suppliersDimension" foreignKey="nodeRef" />
+
 		<DimensionUsage name="projectDateModified" caption="${msg("jsolap.modificationDate.title")}" source="timeDimension"  foreignKey="projectDateModified" />
 	   	<DimensionUsage name="projectDateCreated" caption="${msg("jsolap.creationDate.title")}" source="timeDimension" foreignKey="projectDateCreated" />
 		<DimensionUsage name="projectStartDate" caption="${msg("jsolap.startDate.title")}" source="timeDimension" foreignKey="projectStartDate" />
