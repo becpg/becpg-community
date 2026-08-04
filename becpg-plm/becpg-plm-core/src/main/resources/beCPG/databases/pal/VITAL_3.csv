@@ -1,10 +1,31 @@
-# VITAL 3.0 reference doses (ED01) - Allergen Bureau
+# VITAL 3.0 reference doses (ED01) - Allergen Bureau, "Recommended Reference Doses",
+# Table 1 of the VITAL 4.0 Summary and FAQ, August 2024 (VITAL 3.0 column).
+# Values are mg of TOTAL PROTEIN of the allergen.
 # Action Limit (ppm) = rfdMg / consumption amount (kg), capped by maxActionPpm when set.
+# Cashew and pistachio share one reference dose, as do walnut and pecan.
+# Molluscs and buckwheat carry no VITAL 3.0 reference dose: they are deliberately absent
+# here and keep the fixed threshold held by the allergen.
 # allergenCode must match bcpg:allergenCode on the allergen characteristic.
 # proteinPerc is optional: leave it empty when the declared quantity is already
-# expressed in allergenic protein. Complete this grid with the allergens you use:
-# an allergen absent from the grid keeps the fixed threshold it carries.
+# expressed in allergenic protein.
 allergenCode;rfdMg;maxActionPpm;proteinPerc
 GLUTEN;0.7;;
-SESAME;0.1;;
+CRUSTACEANS;25.0;;
+EGG;0.2;;
+FISH;1.3;;
+PEANUT;0.2;;
 SOY;0.5;;
+MILK;0.2;;
+ALMOND;0.1;;
+HAZELNUT;0.1;;
+WALNUT;0.03;;
+CASHEW;0.05;;
+PECAN;0.03;;
+BRAZIL_NUT;0.1;;
+PISTACHIO;0.05;;
+MACADAMIA;0.1;;
+PINE_NUT;0.1;;
+CELERY;0.05;;
+MUSTARD;0.05;;
+SESAME;0.1;;
+LUPIN;2.6;;

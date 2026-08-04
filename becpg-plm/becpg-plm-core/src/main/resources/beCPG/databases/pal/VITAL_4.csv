@@ -1,10 +1,34 @@
-# VITAL 4.0 reference doses (ED05) - Allergen Bureau
+# VITAL 4.0 reference doses (ED05) - Allergen Bureau, "Recommended Reference Doses",
+# Table 1 of the VITAL 4.0 Summary and FAQ, August 2024 (VITAL 4.0 column).
+# Values are mg of TOTAL PROTEIN of the allergen, rounded from the ED05.
 # Action Limit (ppm) = rfdMg / consumption amount (kg), capped by maxActionPpm when set.
+# Cashew and pistachio share one reference dose, as do walnut and pecan.
+# Lupin and mustard are Risk Management Values; the Dutch legislated values differ
+# (lupin 15,0 and mustard 0,4) and are carried by the NL_ED05 grid.
+# Mollusc is a VSEP Risk Management Value based on the ED05 for crustacea.
 # allergenCode must match bcpg:allergenCode on the allergen characteristic.
 # proteinPerc is optional: leave it empty when the declared quantity is already
-# expressed in allergenic protein. Complete this grid with the allergens you use:
-# an allergen absent from the grid keeps the fixed threshold it carries.
+# expressed in allergenic protein.
 allergenCode;rfdMg;maxActionPpm;proteinPerc
 GLUTEN;5.0;;
-SESAME;2.0;;
+CRUSTACEANS;200.0;;
+EGG;2.0;;
+FISH;5.0;;
+PEANUT;2.0;;
 SOY;10.0;;
+MILK;2.0;;
+ALMOND;1.0;;
+HAZELNUT;3.0;;
+WALNUT;1.0;;
+CASHEW;1.0;;
+PECAN;1.0;;
+BRAZIL_NUT;1.0;;
+PISTACHIO;1.0;;
+MACADAMIA;1.0;;
+PINE_NUT;1.0;;
+CELERY;1.0;;
+MUSTARD;1.0;;
+SESAME;2.0;;
+LUPIN;10.0;;
+MOLLUSCS;20.0;;
+BUCKWHEAT;10.0;;

@@ -1,12 +1,31 @@
-# Dutch guidance reference doses (ED05) - NVWA, cross-contact of allergens, April 2024
+# Dutch reference doses (ED05) - NVWA "Guidelines on cross-contact of allergens (PAL)", April 2024, Annex "Reference doses".
+# Values are mg of TOTAL PROTEIN of the allergen.
 # Action Limit (ppm) = rfdMg / consumption amount (kg), capped by maxActionPpm when set.
-# Gluten-containing cereals are capped at 20 ppm to stay consistent with the legal
-# gluten-free threshold, whatever the consumption amount.
+# Gluten-containing cereals are cut off at 20 ppm to stay consistent with the legal
+# gluten-free limit; per the NVWA this happens up to a consumption amount of 250 g.
+# Sulphites carry no reference dose: the NVWA keeps a fixed 10 mg/kg threshold, so they
+# are deliberately absent here and keep the fixed threshold held by the allergen.
 # allergenCode must match bcpg:allergenCode on the allergen characteristic.
 # proteinPerc is optional: leave it empty when the declared quantity is already
-# expressed in allergenic protein. Complete this grid with the allergens you use:
-# an allergen absent from the grid keeps the fixed threshold it carries.
+# expressed in allergenic protein.
 allergenCode;rfdMg;maxActionPpm;proteinPerc
 GLUTEN;5.0;20;
-SESAME;2.0;;
+CRUSTACEANS;200.0;;
+EGG;2.0;;
+FISH;5.0;;
+PEANUT;2.0;;
 SOY;10.0;;
+MILK;2.0;;
+ALMOND;1.0;;
+HAZELNUT;3.0;;
+WALNUT;1.0;;
+CASHEW;1.0;;
+PECAN;1.0;;
+BRAZIL_NUT;1.0;;
+PISTACHIO;1.0;;
+MACADAMIA;1.0;;
+CELERY;1.0;;
+MUSTARD;0.4;;
+SESAME;2.0;;
+LUPIN;15.0;;
+MOLLUSCS;20.0;;
