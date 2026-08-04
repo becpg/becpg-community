@@ -636,6 +636,11 @@
 					</field>
 					<field id="bcpg:servingSize" mandatory="false" read-only="false" />
 					<field id="bcpg:servingSizeUnit" mandatory="false" read-only="false" />
+					<field id="bcpg:allergenRegulatoryFramework" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/palRegulatoryFrameworks</control-param>
+						</control>
+					</field>
 					<field id="bcpg:preparationTips" mandatory="false" read-only="false" />
 					<field id="bcpg:productSpecifications" mandatory="false" read-only="false">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -717,6 +722,11 @@
 				<appearance>
 					<field help-id="becpg.forms.help.servingSize" id="bcpg:servingSize" mandatory="false" read-only="false" />
 					<field id="bcpg:servingSizeUnit" mandatory="false" read-only="false" />
+					<field id="bcpg:allergenRegulatoryFramework" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/palRegulatoryFrameworks</control-param>
+						</control>
+					</field>
 					<field id="bcpg:servingSizeText" mandatory="false" read-only="false">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
