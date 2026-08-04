@@ -67,6 +67,10 @@ public interface PLMModel {
 	QName PROP_ALLERGEN_DECISION_TREE = QName.createQName(BeCPGModel.BECPG_URI, "allergenListDecisionTree");
 	/** Constant <code>ASSOC_ALLERGENSUBSETS</code> */
 	QName ASSOC_ALLERGENSUBSETS = QName.createQName(BeCPGModel.BECPG_URI, "allergenSubset");
+	/** Constant <code>PROP_ALLERGENLIST_PARTICLE_WEIGHT</code> */
+	QName PROP_ALLERGENLIST_PARTICLE_WEIGHT = QName.createQName(BeCPGModel.BECPG_URI, "allergenListParticleWeight");
+	/** Constant <code>PROP_ALLERGENLIST_PARTICLE_PROTEIN_PERC</code> */
+	QName PROP_ALLERGENLIST_PARTICLE_PROTEIN_PERC = QName.createQName(BeCPGModel.BECPG_URI, "allergenListParticleProteinPerc");
 
 	//productList
 
@@ -438,6 +442,9 @@ public interface PLMModel {
 
 	/** Constant <code>PROP_ALLERGEN_INVOLUNTARY_OTHER_LEGAL_NAME</code> */
 	QName PROP_ALLERGEN_INVOLUNTARY_OTHER_LEGAL_NAME = QName.createQName(BeCPGModel.BECPG_URI, "allergenInvoluntaryOtherLegalName");
+
+	/** Constant <code>PROP_ALLERGEN_REGULATORY_FRAMEWORK</code> */
+	QName PROP_ALLERGEN_REGULATORY_FRAMEWORK = QName.createQName(BeCPGModel.BECPG_URI, "allergenRegulatoryFramework");
 
 	// cost
 	/** Constant <code>TYPE_COST</code> */

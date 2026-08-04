@@ -536,6 +536,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		// LCADatabases
 	    visitFolder(systemNodeRef, PlmRepoConsts.PATH_CLP_DATABASES);
 
+		// PALDatabases
+		visitFolder(systemNodeRef, PlmRepoConsts.PATH_PAL_DATABASES);
+
 		// Property catalogs
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_CATALOGS);
 
@@ -1446,6 +1449,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_PHYSICO_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 
 		entityLists.put(PlmRepoConsts.PATH_SVHC_REASONS_FOR_INCLUSIONS, BeCPGModel.TYPE_LIST_VALUE);
+
+		entityLists.put(PlmRepoConsts.PATH_ALLERGEN_REGULATORY_FRAMEWORKS, BeCPGModel.TYPE_LIST_VALUE);
 
 		entityLists.put(PlmRepoConsts.PATH_PM_MATERIALS, PackModel.TYPE_PACKAGING_MATERIAL);
 		entityLists.put(PlmRepoConsts.PATH_PM_PRINT_TYPES, BeCPGModel.TYPE_LIST_VALUE);

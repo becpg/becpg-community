@@ -35,6 +35,8 @@ import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.formulation.allergen.PALDatabaseService;
+import fr.becpg.repo.product.formulation.allergen.PALReferenceDose;
 import fr.becpg.repo.product.requirement.AllergenRequirementScanner;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
@@ -78,6 +80,17 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	private AllergenRequirementScanner allergenRequirementScanner;
 
 	private SystemConfigurationService systemConfigurationService;
+
+	private PALDatabaseService palDatabaseService;
+
+	/**
+	 * <p>Setter for the field <code>palDatabaseService</code>.</p>
+	 *
+	 * @param palDatabaseService a {@link fr.becpg.repo.product.formulation.allergen.PALDatabaseService} object.
+	 */
+	public void setPalDatabaseService(PALDatabaseService palDatabaseService) {
+		this.palDatabaseService = palDatabaseService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>allergenRequirementScanner</code>.</p>
@@ -288,26 +301,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 			formulatedProduct.getAllergenList().forEach(allergenListDataItem -> {
 				if (!Boolean.TRUE.equals(allergenListDataItem.getIsManual())) {
-					AllergenItem allergen = (AllergenItem) alfrescoRepository.findOne(allergenListDataItem.getAllergen());
-					Double regulatoryThreshold = getRegulatoryThreshold(formulatedProduct, allergen);
-					if (regulatoryThreshold != null && allergenListDataItem.getQtyPerc() != null) {
-						if (regulatoryThreshold > allergenListDataItem.getQtyPerc()) {
-							allergenListDataItem.setVoluntary(false);
-						} else if (regulatoryThreshold <= allergenListDataItem.getQtyPerc()) {
-							allergenListDataItem.setVoluntary(true);
-						}
-					}
-
-					if (!Boolean.TRUE.equals(allergenListDataItem.getVoluntary())) {
-						Double inVolRegulatoryThreshold = getInVolRegulatoryThreshold(allergen);
-						if (inVolRegulatoryThreshold != null && allergenListDataItem.getQtyPerc() != null) {
-							if (inVolRegulatoryThreshold > allergenListDataItem.getQtyPerc()) {
-								allergenListDataItem.setInVoluntary(false);
-							} else if (inVolRegulatoryThreshold <= allergenListDataItem.getQtyPerc()) {
-								allergenListDataItem.setInVoluntary(true);
-							}
-						}
-					}
+					applyRegulatoryThresholds(formulatedProduct, allergenListDataItem);
 				}
 			});
 
@@ -369,13 +363,162 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	}
 
 	/**
-	 * <p>getInVolRegulatoryThreshold.</p>
+	 * Applies the voluntary then the involuntary regulatory thresholds to one
+	 * allergen line. The involuntary assessment is skipped for allergens declared as
+	 * voluntary: an ingredient of the recipe is labelled in the ingredient list, it
+	 * never gets a precautionary statement.
 	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param allergenListDataItem a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 */
+	private void applyRegulatoryThresholds(ProductData formulatedProduct, AllergenListDataItem allergenListDataItem) {
+		AllergenItem allergen = (AllergenItem) alfrescoRepository.findOne(allergenListDataItem.getAllergen());
+
+		applyVoluntaryThreshold(formulatedProduct, allergen, allergenListDataItem);
+
+		if (!Boolean.TRUE.equals(allergenListDataItem.getVoluntary())) {
+			applyInVoluntaryThreshold(formulatedProduct, allergen, allergenListDataItem);
+		}
+	}
+
+	/**
+	 * <p>applyVoluntaryThreshold.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param allergen a {@link fr.becpg.repo.product.data.allergen.AllergenItem} object
+	 * @param allergenListDataItem a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 */
+	private void applyVoluntaryThreshold(ProductData formulatedProduct, AllergenItem allergen, AllergenListDataItem allergenListDataItem) {
+		Double regulatoryThreshold = getRegulatoryThreshold(formulatedProduct, allergen);
+
+		if ((regulatoryThreshold == null) || (allergenListDataItem.getQtyPerc() == null)) {
+			return;
+		}
+
+		allergenListDataItem.setVoluntary(regulatoryThreshold <= allergenListDataItem.getQtyPerc());
+	}
+
+	/**
+	 * Assesses the precautionary allergen labelling of one allergen. A homogeneous
+	 * concentration is compared to the action limit while a discrete particle is
+	 * assessed on its own dose; when the raw materials declare both, the worst of the
+	 * two decides. The flag is left untouched when neither assessment applies, which
+	 * preserves the presence declared by the parts.
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param allergen a {@link fr.becpg.repo.product.data.allergen.AllergenItem} object
+	 * @param allergenListDataItem a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 */
+	private void applyInVoluntaryThreshold(ProductData formulatedProduct, AllergenItem allergen, AllergenListDataItem allergenListDataItem) {
+		Boolean exceedsHomogeneous = assessHomogeneousContamination(formulatedProduct, allergen, allergenListDataItem);
+		Boolean exceedsParticle = assessParticleContamination(formulatedProduct, allergen, allergenListDataItem);
+
+		if ((exceedsHomogeneous == null) && (exceedsParticle == null)) {
+			return;
+		}
+
+		allergenListDataItem.setInVoluntary(Boolean.TRUE.equals(exceedsHomogeneous) || Boolean.TRUE.equals(exceedsParticle));
+	}
+
+	/**
+	 * <p>assessHomogeneousContamination.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param allergen a {@link fr.becpg.repo.product.data.allergen.AllergenItem} object
+	 * @param allergenListDataItem a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 * @return whether the concentration exceeds the action limit, or {@code null} when it cannot be assessed
+	 */
+	private Boolean assessHomogeneousContamination(ProductData formulatedProduct, AllergenItem allergen,
+			AllergenListDataItem allergenListDataItem) {
+		Double inVolRegulatoryThreshold = getInVolRegulatoryThreshold(formulatedProduct, allergen);
+
+		if ((inVolRegulatoryThreshold == null) || (allergenListDataItem.getQtyPerc() == null)) {
+			return null;
+		}
+
+		return inVolRegulatoryThreshold <= allergenListDataItem.getQtyPerc();
+	}
+
+	/**
+	 * <p>assessParticleContamination.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param allergen a {@link fr.becpg.repo.product.data.allergen.AllergenItem} object
+	 * @param allergenListDataItem a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 * @return whether a single whole particle exceeds the reference dose, or {@code null} when it cannot be assessed
+	 */
+	private Boolean assessParticleContamination(ProductData formulatedProduct, AllergenItem allergen,
+			AllergenListDataItem allergenListDataItem) {
+		if (allergenListDataItem.getParticleWeight() == null) {
+			return null;
+		}
+
+		PALReferenceDose referenceDose = findReferenceDose(formulatedProduct, allergen);
+
+		if (referenceDose == null) {
+			return null;
+		}
+
+		return referenceDose.exceedsParticleDose(allergenListDataItem.getParticleWeight(), allergenListDataItem.getParticleProteinPerc());
+	}
+
+	/**
+	 * Returns the involuntary threshold in percent. When a regulatory framework is
+	 * selected on the product, the threshold becomes the action limit derived from
+	 * the reference dose and the consumption amount; otherwise the fixed threshold
+	 * carried by the allergen applies.
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
 	 * @param allergen a {@link fr.becpg.repo.product.data.allergen.AllergenItem} object
 	 * @return a {@link java.lang.Double} object
 	 */
-	private Double getInVolRegulatoryThreshold(AllergenItem allergen) {
+	private Double getInVolRegulatoryThreshold(ProductData formulatedProduct, AllergenItem allergen) {
+		PALReferenceDose referenceDose = findReferenceDose(formulatedProduct, allergen);
+
+		if (referenceDose != null) {
+			Double actionLimitPerc = referenceDose.toActionLimitPerc(FormulationHelper.getServingSizeInLorKg(formulatedProduct));
+
+			if (actionLimitPerc != null) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Action limit of " + extractName(allergen) + " is " + actionLimitPerc + "% for framework "
+							+ formulatedProduct.getAllergenRegulatoryFramework());
+				}
+
+				return actionLimitPerc;
+			}
+		}
+
 		return allergen.getAllergenInVoluntaryRegulatoryThreshold();
+	}
+
+	/**
+	 * <p>exceedsParticleDose.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param allergen a {@link fr.becpg.repo.product.data.allergen.AllergenItem} object
+	 * @param allergenListDataItem a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
+	 * @return true when a single whole particle exceeds the reference dose
+	 */
+	private boolean exceedsParticleDose(ProductData formulatedProduct, AllergenItem allergen, AllergenListDataItem allergenListDataItem) {
+		PALReferenceDose referenceDose = findReferenceDose(formulatedProduct, allergen);
+
+		return (referenceDose != null)
+				&& referenceDose.exceedsParticleDose(allergenListDataItem.getParticleWeight(), allergenListDataItem.getParticleProteinPerc());
+	}
+
+	/**
+	 * <p>findReferenceDose.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param allergen a {@link fr.becpg.repo.product.data.allergen.AllergenItem} object
+	 * @return the reference dose of the selected framework, or {@code null} when none applies
+	 */
+	private PALReferenceDose findReferenceDose(ProductData formulatedProduct, AllergenItem allergen) {
+		if (palDatabaseService == null) {
+			return null;
+		}
+
+		return palDatabaseService.findReferenceDose(formulatedProduct.getAllergenRegulatoryFramework(), allergen.getAllergenCode());
 	}
 
 	/**
@@ -447,6 +590,9 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 						newAllergenListDataItem.setInVoluntary(false);
 						newAllergenListDataItem.getInVoluntarySources().clear();
 
+						newAllergenListDataItem.setParticleWeight(null);
+						newAllergenListDataItem.setParticleProteinPerc(null);
+
 						newAllergenListDataItem.setOnLine(false);
 						newAllergenListDataItem.setOnSite(false);
 
@@ -512,6 +658,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 							}
 						}
 					}
+
+					retainWorstParticle(allergenListDataItem, newAllergenListDataItem);
 
 					if (!(partProduct.isRawMaterial()) || (formulatedProduct.isGeneric())) {
 
@@ -612,6 +760,28 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		}
 
 		return ret;
+	}
+
+	/**
+	 * Rolls up the particulate contamination of a part into the formulated product.
+	 * Unlike a homogeneous concentration, a whole particle does not dilute in the
+	 * recipe, so the worst particle of the parts is kept as is.
+	 *
+	 * @param sourceItem the allergen line of the visited part
+	 * @param targetItem the allergen line of the formulated product
+	 */
+	private void retainWorstParticle(AllergenListDataItem sourceItem, AllergenListDataItem targetItem) {
+		if (sourceItem.getParticleWeight() == null) {
+			return;
+		}
+
+		double candidateDose = PALReferenceDose.particleDose(sourceItem.getParticleWeight(), sourceItem.getParticleProteinPerc());
+		double currentDose = PALReferenceDose.particleDose(targetItem.getParticleWeight(), targetItem.getParticleProteinPerc());
+
+		if (candidateDose > currentDose) {
+			targetItem.setParticleWeight(sourceItem.getParticleWeight());
+			targetItem.setParticleProteinPerc(sourceItem.getParticleProteinPerc());
+		}
 	}
 
 	/**
