@@ -208,14 +208,13 @@ public class OlapServiceImpl implements OlapService {
 											ret.shiftMetadata();
 											lowestLevel = field;
 										}
-										ret.addMetadata(new OlapChartMetadata(field, retrieveDataType(jsonArray.getJSONArray(row + 1).getJSONObject(field).getString("value")), cur.getJSONObject(field)
+										ret.addMetadata(new OlapChartMetadata(field, retrieveDataType(jsonArray.getJSONArray(row + 1).getJSONObject(field)), cur.getJSONObject(field)
 												.getString("value")));
 									}
 								} else if (cur.getJSONObject(0).getString("value") != null) {
 									List<Object> olapRecord = new ArrayList<>();
 									for (int col = lowestLevel; col < cur.length(); col++) {
-										String value = cur.getJSONObject(col).getString("value");
-										olapRecord.add(OlapUtils.convert(value));
+										olapRecord.add(cellValue(cur.getJSONObject(col)));
 									}
 									ret.getResultsets().add(olapRecord);
 								}
@@ -277,13 +276,12 @@ public class OlapServiceImpl implements OlapService {
 										ret.shiftMetadata();
 										lowestLevel = field;
 									}
-									ret.addMetadata(new OlapChartMetadata(field, retrieveDataType(jsonArray.getJSONArray(row + 1).getJSONObject(field).getString("value")), cur.getJSONObject(field).getString("value")));
+									ret.addMetadata(new OlapChartMetadata(field, retrieveDataType(jsonArray.getJSONArray(row + 1).getJSONObject(field)), cur.getJSONObject(field).getString("value")));
 								}
 							} else if (cur.getJSONObject(0).getString("value") != null) {
 								List<Object> olapRecord = new ArrayList<>();
 								for (int col = lowestLevel; col < cur.length(); col++) {
-									String value = cur.getJSONObject(col).getString("value");
-									olapRecord.add(OlapUtils.convert(value));
+									olapRecord.add(cellValue(cur.getJSONObject(col)));
 								}
 								ret.getResultsets().add(olapRecord);
 							}
@@ -331,13 +329,35 @@ public class OlapServiceImpl implements OlapService {
 	}
 
 	/**
-	 * <p>retrieveDataType.</p>
+	 * The class a column's values will be published as, taken from the first data
+	 * cell of that column.
 	 *
-	 * @param value a {@link java.lang.String} object
-	 * @return a {@link java.lang.String} object
+	 * @param cell the first data cell under the header being described
+	 * @return the simple class name of the converted value
 	 */
-	private String retrieveDataType(String value) {
-		return OlapUtils.convert(value).getClass().getSimpleName();
+	private String retrieveDataType(JSONObject cell) {
+		return cellValue(cell).getClass().getSimpleName();
+	}
+
+	/**
+	 * The value of one cellset cell.
+	 *
+	 * A Saiku data cell carries the measure twice: {@code value}, formatted for the
+	 * connection locale, and {@code properties.raw}, the number itself. Only the
+	 * second one can be parsed without guessing — the displayed {@code "1,148"} is
+	 * 1 148, and the same shape elsewhere in the payload is a genuine fraction. See
+	 * {@link fr.becpg.repo.olap.OlapUtils#convertCell(String, String)}.
+	 *
+	 * @param cell a cellset cell
+	 * @return the converted value
+	 */
+	private Object cellValue(JSONObject cell) {
+		String raw = null;
+		JSONObject properties = cell.optJSONObject("properties");
+		if (properties != null) {
+			raw = properties.optString("raw", null);
+		}
+		return OlapUtils.convertCell(raw, cell.optString("value", null));
 	}
 
 	/**

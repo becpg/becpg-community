@@ -112,6 +112,55 @@
 				<value>bcpg:lvValue</value>
 			</parameter>
 		</constraint>
+
+		<constraint name="pack:packagingComponents"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/PackagingComponents</value>
+				</list>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+		</constraint>
+
+		<constraint name="pack:packagingProcesses"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/PackagingProcesses</value>
+				</list>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+		</constraint>
+
+		<constraint name="pack:packagingDeclarationType" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Declare</value>
+					<value>Omit</value>
+					<value>DoNotDeclare</value>
+				</list>
+			</parameter>
+			<parameter name="caseSensitive">
+				<value>true</value>
+			</parameter>
+		</constraint>
 	</constraints>
 
 	<types>
@@ -247,13 +296,197 @@
 			</property>
 		</properties>
 	</type>
-	
-		
+
+		<!-- Describes what a packaging entity is made of: a purchased article broken
+			 down into its own components (bottle, cap, seal, label). Feeds the tare and
+			 the packaging materials of the packaging entity. -->
+		<type name="pack:packagingComponentList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="pack:pclComponent">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="pack:packagingComponents" />
+					</constraints>
+				</property>
+				<property name="pack:pclQty">
+					<type>d:double</type>
+					<default>1</default>
+					<index enabled="false" />
+				</property>
+				<property name="pack:pclUnit">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:packagingListUnit" />
+					</constraints>
+				</property>
+				<property name="pack:pclProcess">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="pack:packagingProcesses" />
+					</constraints>
+				</property>
+				<property name="pack:pclRecycledPerc">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="pack:pclDeclType">
+					<type>d:text</type>
+					<default>Declare</default>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="pack:packagingDeclarationType" />
+					</constraints>
+				</property>
+				<property name="pack:pclComment">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+			</properties>
+			<associations>
+				<association name="pack:pclMaterial">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pack:packMaterial</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="pack:pclProduct">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:packagingMaterial</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:depthLevelAspect</aspect>
+				<aspect>pack:packagingComponentAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+		<!-- Describes how a raw material or a packaging is delivered by the supplier
+			 (bag, carton, pallet). Upstream packaging: it never contributes to the tare
+			 nor to the packaging materials of the product. -->
+		<type name="pack:supplierPackagingList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="pack:splComponent">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="pack:packagingComponents" />
+					</constraints>
+				</property>
+				<property name="pack:splQty">
+					<type>d:double</type>
+					<default>1</default>
+					<index enabled="false" />
+				</property>
+				<property name="pack:splUnit">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:packagingListUnit" />
+					</constraints>
+				</property>
+				<property name="pack:splPkgLevel">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:packagingLevel" />
+					</constraints>
+				</property>
+				<property name="pack:splRecycledPerc">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="pack:splDeclType">
+					<type>d:text</type>
+					<default>Declare</default>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="pack:packagingDeclarationType" />
+					</constraints>
+				</property>
+				<property name="pack:splComment">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+			</properties>
+			<associations>
+				<association name="pack:splMaterial">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pack:packMaterial</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="pack:splProduct">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:packagingMaterial</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:depthLevelAspect</aspect>
+				<aspect>pack:packagingComponentAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
 	</types>
 	
 
 	<aspects>
 
+		<!-- Carried by the lines of the packaging component and supplier packaging lists:
+			 a free component has no entity to inherit its weight, size and thickness from. -->
+		<aspect name="pack:packagingComponentAspect">
+			<mandatory-aspects>
+				<aspect>pack:tareAspect</aspect>
+				<aspect>pack:sizeAspect</aspect>
+				<aspect>pack:pmThicknessAspect</aspect>
+			</mandatory-aspects>
+		</aspect>
 
 		<!-- pallet -->
 		<aspect name="pack:palletAspect">

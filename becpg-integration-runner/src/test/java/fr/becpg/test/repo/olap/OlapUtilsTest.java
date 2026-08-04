@@ -74,6 +74,37 @@ public class OlapUtilsTest {
 	}
 
 	/**
+	 * The cell shape actually returned by dev.becpg.fr, raw value included:
+	 *
+	 * <pre>
+	 * {"value":"1,148","type":"DATA_CELL","properties":{"raw":"1148.0","position":"0:1"}}
+	 * </pre>
+	 *
+	 * The raw value settles what the displayed one cannot.
+	 */
+	@Test
+	public void rawValueWinsOverTheFormattedOne() {
+		Assert.assertEquals(Long.valueOf(1148L), OlapUtils.convertCell("1148.0", "1,148"));
+		Assert.assertEquals(Long.valueOf(305L), OlapUtils.convertCell("305.0", "305"));
+		Assert.assertEquals(Long.valueOf(2047L), OlapUtils.convertCell("2047.0", "2,047"));
+		// A genuine fraction stays one.
+		Assert.assertEquals(Double.valueOf(19.468d), OlapUtils.convertCell("19.468", "19.468"));
+		// The same displayed string, two different truths — and both are now right.
+		Assert.assertEquals(Long.valueOf(1148L), OlapUtils.convertCell("1148.0", "1.148"));
+		Assert.assertEquals(Double.valueOf(1.148d), OlapUtils.convertCell("1.148", "1.148"));
+	}
+
+	/** No raw value — a header, or an older payload — falls back to the display one. */
+	@Test
+	public void missingRawFallsBackToTheDisplayValue() {
+		Assert.assertEquals("Refusé", OlapUtils.convertCell(null, "Refusé"));
+		Assert.assertEquals(Long.valueOf(305L), OlapUtils.convertCell(null, "305"));
+		Assert.assertEquals(Long.valueOf(1234567L), OlapUtils.convertCell("", "1.234.567"));
+		// A raw value that is not a number is not something to guess about either.
+		Assert.assertEquals(Long.valueOf(305L), OlapUtils.convertCell("n/a", "305"));
+	}
+
+	/**
 	 * The undecidable shape: a single separator followed by exactly three digits.
 	 *
 	 * <p>
