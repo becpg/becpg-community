@@ -42,6 +42,13 @@
  */
 
 /**
+ * Types d'entité génériques sur lesquels beCPG déclare les formulaires communs,
+ * du plus précis au plus général. Interrogés en dernier recours, quand ni le
+ * nodeRef ni le type exact ne portent de configuration.
+ */
+var PORTAL_GENERIC_ENTITY_TYPES = ["bcpg:entityV2"];
+
+/**
  * Finds the form configuration for an item, applying the beCPG resolution
  * cascade. Extracted from columns.get.js::getFormConfig.
  *
