@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
@@ -36,7 +35,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.PlmRepoConsts;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
@@ -45,6 +43,8 @@ import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.formulation.allergen.PALDatabaseService;
+import fr.becpg.repo.product.formulation.allergen.PALReferenceDose;
 import fr.becpg.test.PLMBaseTestCase;
 
 /**
@@ -60,9 +60,9 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class AllergenPALFormulationIT extends PLMBaseTestCase {
 
-	private static final String VITAL_3 = "VITAL_3";
+	private static final String VITAL_3 = "TEST_VITAL_3";
 
-	private static final String NL_ED05 = "NL_ED05";
+	private static final String NL_ED05 = "TEST_NL_ED05";
 
 	private static final String WHEAT_CODE = "WHT";
 
@@ -95,8 +95,18 @@ public class AllergenPALFormulationIT extends PLMBaseTestCase {
 	/** 5 ppm of soy: above the VITAL 3.0 action limit of 2 ppm, below the NL one of 40 ppm */
 	private static final Double SOY_CONTAMINATION_PERC = 0.0005d;
 
+	/** Grids shipped with the product and published by the repository initialisation */
+	private static final String SHIPPED_NL_ED05 = "NL_ED05";
+
+	private static final String[] SHIPPED_FRAMEWORKS = { SHIPPED_NL_ED05, "VITAL_3", "VITAL_4" };
+
+	private static final String SHIPPED_GLUTEN_CODE = "GLUTEN";
+
 	@Autowired
 	private ProductService productService;
+
+	@Autowired
+	private PALDatabaseService palDatabaseService;
 
 	private NodeRef wheatNodeRef;
 
@@ -119,8 +129,6 @@ public class AllergenPALFormulationIT extends PLMBaseTestCase {
 		});
 
 		inWriteTx(() -> {
-			registerRegulatoryFramework(VITAL_3);
-			registerRegulatoryFramework(NL_ED05);
 			createReferenceDoseGrid(VITAL_3, VITAL_3_GRID);
 			createReferenceDoseGrid(NL_ED05, NL_ED05_GRID);
 			return null;
@@ -234,6 +242,31 @@ public class AllergenPALFormulationIT extends PLMBaseTestCase {
 	}
 
 	/**
+	 * The reference dose grids shipped with the product and published by the
+	 * repository initialisation must be readable, comment lines and header included.
+	 * Only their structure is asserted: the doses themselves are data the customer
+	 * completes and maintains.
+	 *
+	 * @throws Exception if the grids cannot be read
+	 */
+	@Test
+	public void testShippedGridsArePublishedAndParsed() throws Exception {
+		inReadTx(() -> {
+			for (String frameworkCode : SHIPPED_FRAMEWORKS) {
+				Map<String, PALReferenceDose> referenceDoses = palDatabaseService.getReferenceDoses(frameworkCode);
+
+				Assert.assertFalse("The shipped grid " + frameworkCode + " must expose reference doses", referenceDoses.isEmpty());
+				Assert.assertNotNull("The shipped grid " + frameworkCode + " must carry a gluten reference dose",
+						referenceDoses.get(SHIPPED_GLUTEN_CODE));
+			}
+
+			Assert.assertEquals("The Dutch grid caps gluten at the legal gluten-free threshold", Double.valueOf(20d),
+					palDatabaseService.getReferenceDoses(SHIPPED_NL_ED05).get(SHIPPED_GLUTEN_CODE).maxActionPpm());
+			return null;
+		});
+	}
+
+	/**
 	 * Creates the 250 g baguette using the whole seed topping as its single part.
 	 *
 	 * @param regulatoryFramework the framework code, or null to keep the legacy behaviour
@@ -298,58 +331,6 @@ public class AllergenPALFormulationIT extends PLMBaseTestCase {
 
 		return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), PLMModel.TYPE_ALLERGEN, properties).getChildRef();
-	}
-
-	/**
-	 * Registers a framework code in the list of values backing the product property,
-	 * which is what an administrator does when publishing a new grid.
-	 *
-	 * @param frameworkCode the framework code to allow on the products
-	 */
-	private void registerRegulatoryFramework(String frameworkCode) {
-		NodeRef frameworksFolder = getOrCreateFrameworksList();
-
-		if (findFrameworkValue(frameworksFolder, frameworkCode) != null) {
-			return;
-		}
-
-		Map<QName, Serializable> properties = new HashMap<>();
-		properties.put(BeCPGModel.PROP_LV_VALUE, frameworkCode);
-
-		nodeService.createNode(frameworksFolder, ContentModel.ASSOC_CONTAINS,
-				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, frameworkCode), BeCPGModel.TYPE_LIST_VALUE, properties);
-	}
-
-	/**
-	 * Returns the list of values backing the regulatory framework property, creating
-	 * it when the repository predates the feature.
-	 *
-	 * @return the node reference of the list container
-	 */
-	private NodeRef getOrCreateFrameworksList() {
-		Map<String, QName> entityLists = new HashMap<>();
-		entityLists.put(PlmRepoConsts.PATH_ALLERGEN_REGULATORY_FRAMEWORKS, BeCPGModel.TYPE_LIST_VALUE);
-
-		NodeRef listsFolder = entitySystemService.createSystemEntity(systemFolderNodeRef, RepoConsts.PATH_LISTS, entityLists);
-
-		return entitySystemService.getSystemEntityDataList(listsFolder, PlmRepoConsts.PATH_ALLERGEN_REGULATORY_FRAMEWORKS);
-	}
-
-	/**
-	 * <p>findFrameworkValue.</p>
-	 *
-	 * @param frameworksFolder the list container
-	 * @param frameworkCode the framework code to look up
-	 * @return the matching list value, or null when it is not registered yet
-	 */
-	private NodeRef findFrameworkValue(NodeRef frameworksFolder, String frameworkCode) {
-		for (ChildAssociationRef childAssoc : nodeService.getChildAssocs(frameworksFolder)) {
-			if (frameworkCode.equals(nodeService.getProperty(childAssoc.getChildRef(), BeCPGModel.PROP_LV_VALUE))) {
-				return childAssoc.getChildRef();
-			}
-		}
-
-		return null;
 	}
 
 	/**

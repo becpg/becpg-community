@@ -794,6 +794,12 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_CLP_DATABASES)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/clp/*.csv");
 		}
+
+		if (Objects.equals(folderName, PlmRepoConsts.PATH_PAL_DATABASES)) {
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/pal/NL_ED05.csv");
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/pal/VITAL_3.csv");
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/pal/VITAL_4.csv");
+		}
 		
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_CATALOGS)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/catalogs/*.json");
@@ -1449,8 +1455,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_PHYSICO_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 
 		entityLists.put(PlmRepoConsts.PATH_SVHC_REASONS_FOR_INCLUSIONS, BeCPGModel.TYPE_LIST_VALUE);
-
-		entityLists.put(PlmRepoConsts.PATH_ALLERGEN_REGULATORY_FRAMEWORKS, BeCPGModel.TYPE_LIST_VALUE);
 
 		entityLists.put(PlmRepoConsts.PATH_PM_MATERIALS, PackModel.TYPE_PACKAGING_MATERIAL);
 		entityLists.put(PlmRepoConsts.PATH_PM_PRINT_TYPES, BeCPGModel.TYPE_LIST_VALUE);

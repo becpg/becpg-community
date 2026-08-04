@@ -6,6 +6,7 @@ package fr.becpg.repo.product.formulation.allergen;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +65,10 @@ public class PALDatabaseService {
 
 	private static final int PROTEIN_PERC_COLUMN = 3;
 
+	private static final String COMMENT_PREFIX = "#";
+
+	private static final String ALLERGEN_CODE_HEADER = "allergenCode";
+
 	private static final String CACHE_KEY = PALDatabaseService.class.getName();
 
 	private static final Log logger = LogFactory.getLog(PALDatabaseService.class);
@@ -110,6 +115,21 @@ public class PALDatabaseService {
 	}
 
 	/**
+	 * <p>getPALDatabases.</p>
+	 *
+	 * @return the reference dose grids published in the database folder, never {@code null}
+	 */
+	public List<FileInfo> getPALDatabases() {
+		NodeRef databasesFolder = BeCPGQueryBuilder.createQuery().inDB().selectNodeByPath(repositoryHelper.getCompanyHome(), DATABASES_FOLDER);
+
+		if (databasesFolder == null) {
+			return new ArrayList<>();
+		}
+
+		return fileFolderService.listFiles(databasesFolder);
+	}
+
+	/**
 	 * <p>getReferenceDoses.</p>
 	 *
 	 * @param frameworkCode the regulatory framework selected on the product
@@ -138,8 +158,6 @@ public class PALDatabaseService {
 		}
 
 		try (CSVReader csvReader = createReader(databaseNodeRef)) {
-			csvReader.readNext();
-
 			String[] line = csvReader.readNext();
 			while (line != null) {
 				appendReferenceDose(referenceDoses, line);
@@ -168,6 +186,11 @@ public class PALDatabaseService {
 		}
 
 		String allergenCode = line[ALLERGEN_CODE_COLUMN].trim();
+
+		if (allergenCode.startsWith(COMMENT_PREFIX) || ALLERGEN_CODE_HEADER.equalsIgnoreCase(allergenCode)) {
+			return;
+		}
+
 		Double rfdMg = parseDouble(line, RFD_MG_COLUMN);
 
 		if (rfdMg == null) {
