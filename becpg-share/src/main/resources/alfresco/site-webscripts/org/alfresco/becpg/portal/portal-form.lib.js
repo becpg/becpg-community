@@ -42,11 +42,66 @@
  */
 
 /**
- * Types d'entité génériques sur lesquels beCPG déclare les formulaires communs,
- * du plus précis au plus général. Interrogés en dernier recours, quand ni le
- * nodeRef ni le type exact ne portent de configuration.
+ * Makes the `node-type` config evaluator usable outside a Share session.
+ *
+ * beCPG declares its product forms — `supplier` and the default form — only under
+ * `evaluator="node-type"`. Share answers such a condition through
+ * NodeMetadataBasedEvaluator, which asks /api/metadata for the node's type using a
+ * connector built from the SHARE SESSION (ServiceBasedEvaluator: ConnectorService
+ * .getConnector("alfresco", requestContext.userId, ServletUtil.getSession(false))).
+ * The portal has no Share session, the call comes back 401, the evaluator swallows the
+ * NotAuthenticatedException and reports "does not apply" — so every node-type block
+ * silently vanishes from config.scoped[nodeRef] and the entity form resolves to nothing.
+ *
+ * That evaluator reads a per-request cache before calling anything: the request context
+ * value "forms.cache." + <url>. So fetch the metadata ourselves, with the caller's own
+ * ticket, and store it under that key. The evaluator then applies exactly as it does
+ * inside a Share page and the whole beCPG cascade — client overrides included — resolves
+ * unchanged. The lookup runs as the caller, so a node the supplier cannot read yields no
+ * configuration rather than someone else's.
+ *
+ * Measured on the local stack, wizard `supplier-rawMaterial` on
+ * workspace://SpacesStore/bf9bdda3-1063-4d4b-9bdd-a310636d4b09 with a valid portalTicket:
+ * priming the cache resolves step1 to formId "supplier" with 21 fields, whereas without it
+ * step1 returns no-form-config while the datalist steps — which look up by item type —
+ * resolve 3 to 28 fields each.
  */
-var PORTAL_GENERIC_ENTITY_TYPES = ["bcpg:entityV2"];
+var PORTAL_PRIMED_NODES = {};
+
+function portalPrimeNodeTypeEvaluator(entityNodeRef, alfTicket) {
+	if (entityNodeRef == null || ("" + entityNodeRef).indexOf("://") === -1) {
+		return;
+	}
+
+	// One metadata call per node and per request: a wizard may hold several entity steps.
+	if (PORTAL_PRIMED_NODES["" + entityNodeRef] === true) {
+		return;
+	}
+	PORTAL_PRIMED_NODES["" + entityNodeRef] = true;
+
+	// Must match NodeMetadataBasedEvaluator.callMetadataService byte for byte: it is the
+	// cache key the evaluator will look up.
+	var metadataUrl = "/api/metadata?nodeRef=" + entityNodeRef + "&shortQNames=true";
+
+	try {
+		var endpoint = "alfresco";
+		var path = metadataUrl;
+		if (alfTicket != null && ("" + alfTicket).length > 0) {
+			endpoint = "alfresco-noauth";
+			path = metadataUrl + "&alf_ticket=" + encodeURIComponent("" + alfTicket);
+		}
+
+		var response = remote.connect(endpoint).get(path);
+		if (parseInt(response.status.code, 10) === 200) {
+			context.setValue("forms.cache." + metadataUrl, "" + response.response);
+		}
+	} catch (e) {
+		// Best effort: without it the caller simply gets no node-type configuration.
+		if (logger.isLoggingEnabled()) {
+			logger.log("portalPrimeNodeTypeEvaluator: " + e);
+		}
+	}
+}
 
 /**
  * Finds the form configuration for an item, applying the beCPG resolution
@@ -296,31 +351,17 @@ function portalResolveDefinition(itemType, formId, mode, list, prefixedSiteId, p
 	var lookupKey = "" + itemType;
 	if (useNodeRefLookup === true && entityNodeRef != null && ("" + entityNodeRef).indexOf("://") !== -1) {
 		lookupKey = "" + entityNodeRef;
+		// Without this the node-type evaluator cannot answer outside a Share session and
+		// the product forms — which beCPG declares only there — resolve to nothing.
+		//
+		// Falling back to the item type instead does NOT work: measured locally on
+		// bcpg:rawMaterial with a valid ticket, the type lookup finds no configuration at
+		// all and step1 still returns no-form-config (lookupKey "bcpg:rawMaterial"),
+		// because the product forms carry no `model-type` declaration to inherit from.
+		portalPrimeNodeTypeEvaluator(entityNodeRef, alfTicket);
 	}
 
 	var formConfig = portalGetFormConfig(lookupKey, itemType, formId, mode, prefixedSiteId, prefixedEntityType, list);
-
-	// The `node-type` lookup resolves the node — and walks its parent types — through the
-	// repository, which the evaluator can only do with a *Share session*. This webscript is
-	// called by the portal with an Alfresco ticket and no such session, so
-	// `config.scoped[<nodeRef>]` yields nothing and the entity form came back
-	// `no-form-config` on every product.
-	//
-	// Measured on dev.becpg.fr, `supplier-rawMaterial`: the eight datalist steps resolved 7
-	// to 28 fields each — they look up by item type — while `step1` alone resolved none,
-	// and it is the only step whose lookup key is the nodeRef.
-	//
-	// So fall back to the type, which is the lookup the datalist steps already use and the
-	// one that reaches beCPG's product form: it is declared on `bcpg:entityV2`
-	// (`becpg-form-config.xml`, `model-type`), which the type lookup finds by inheritance.
-	// `portalGetFormConfig` then falls back to that config's `defaultForm` when the
-	// requested `formId` ("supplier") is not declared — the same "no specific form, use the
-	// default one" behaviour Share has. The nodeRef is still tried first, so an instance
-	// where the Share session IS available keeps its per-node configuration.
-	if ((formConfig === null || formConfig === undefined) && lookupKey !== ("" + itemType)) {
-		lookupKey = "" + itemType;
-		formConfig = portalGetFormConfig(lookupKey, itemType, formId, mode, prefixedSiteId, prefixedEntityType, list);
-	}
 
 	if (formConfig === null || formConfig === undefined) {
 		// No form configuration matches. Returning a typed marker rather than null so the
