@@ -293,6 +293,28 @@ function portalResolveDefinition(itemType, formId, mode, list, prefixedSiteId, p
 
 	var formConfig = portalGetFormConfig(lookupKey, itemType, formId, mode, prefixedSiteId, prefixedEntityType, list);
 
+	// The `node-type` lookup resolves the node — and walks its parent types — through the
+	// repository, which the evaluator can only do with a *Share session*. This webscript is
+	// called by the portal with an Alfresco ticket and no such session, so
+	// `config.scoped[<nodeRef>]` yields nothing and the entity form came back
+	// `no-form-config` on every product.
+	//
+	// Measured on dev.becpg.fr, `supplier-rawMaterial`: the eight datalist steps resolved 7
+	// to 28 fields each — they look up by item type — while `step1` alone resolved none,
+	// and it is the only step whose lookup key is the nodeRef.
+	//
+	// So fall back to the type, which is the lookup the datalist steps already use and the
+	// one that reaches beCPG's product form: it is declared on `bcpg:entityV2`
+	// (`becpg-form-config.xml`, `model-type`), which the type lookup finds by inheritance.
+	// `portalGetFormConfig` then falls back to that config's `defaultForm` when the
+	// requested `formId` ("supplier") is not declared — the same "no specific form, use the
+	// default one" behaviour Share has. The nodeRef is still tried first, so an instance
+	// where the Share session IS available keeps its per-node configuration.
+	if ((formConfig === null || formConfig === undefined) && lookupKey !== ("" + itemType)) {
+		lookupKey = "" + itemType;
+		formConfig = portalGetFormConfig(lookupKey, itemType, formId, mode, prefixedSiteId, prefixedEntityType, list);
+	}
+
 	if (formConfig === null || formConfig === undefined) {
 		// No form configuration matches. Returning a typed marker rather than null so the
 		// portal can tell "not configured" apart from "not applicable" (a documents step).
