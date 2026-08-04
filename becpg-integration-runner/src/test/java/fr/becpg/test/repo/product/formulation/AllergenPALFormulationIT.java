@@ -104,7 +104,8 @@ public class AllergenPALFormulationIT extends PLMBaseTestCase {
 
 	private static final String[] SHIPPED_FRAMEWORKS = { SHIPPED_NL_ED05, SHIPPED_VITAL_3, SHIPPED_VITAL_4 };
 
-	private static final String SHIPPED_GLUTEN_CODE = "GLUTEN";
+	/** bcpg:allergenCode of the "cereals containing gluten" regulated category */
+	private static final String SHIPPED_GLUTEN_CODE = "AW";
 
 	/** The regulated allergen set the shipped grids must at least cover */
 	private static final int MINIMUM_SHIPPED_ALLERGENS = 20;
@@ -269,17 +270,17 @@ public class AllergenPALFormulationIT extends PLMBaseTestCase {
 			}
 
 			assertReferenceDose(SHIPPED_NL_ED05, SHIPPED_GLUTEN_CODE, 5.0d);
-			assertReferenceDose(SHIPPED_NL_ED05, "MUSTARD", 0.4d);
-			assertReferenceDose(SHIPPED_NL_ED05, "LUPIN", 15.0d);
+			assertReferenceDose(SHIPPED_NL_ED05, "BM", 0.4d);
+			assertReferenceDose(SHIPPED_NL_ED05, "NL", 15.0d);
 			assertReferenceDose(SHIPPED_VITAL_3, SHIPPED_GLUTEN_CODE, 0.7d);
-			assertReferenceDose(SHIPPED_VITAL_3, "WALNUT", 0.03d);
-			assertReferenceDose(SHIPPED_VITAL_4, "CRUSTACEANS", 200.0d);
-			assertReferenceDose(SHIPPED_VITAL_4, "MUSTARD", 1.0d);
+			assertReferenceDose(SHIPPED_VITAL_3, "SW", 0.03d);
+			assertReferenceDose(SHIPPED_VITAL_4, "AC", 200.0d);
+			assertReferenceDose(SHIPPED_VITAL_4, "BM", 1.0d);
 
 			Assert.assertEquals("The Dutch grid caps gluten at the legal gluten-free threshold", Double.valueOf(20d),
 					palDatabaseService.getReferenceDoses(SHIPPED_NL_ED05).get(SHIPPED_GLUTEN_CODE).maxActionPpm());
 			Assert.assertNull("Molluscs carry no VITAL 3.0 reference dose",
-					palDatabaseService.getReferenceDoses(SHIPPED_VITAL_3).get("MOLLUSCS"));
+					palDatabaseService.getReferenceDoses(SHIPPED_VITAL_3).get("UM"));
 			return null;
 		});
 	}
