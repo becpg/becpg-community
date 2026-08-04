@@ -1,0 +1,12 @@
+# Dutch guidance reference doses (ED05) - NVWA, cross-contact of allergens, April 2024
+# Action Limit (ppm) = rfdMg / consumption amount (kg), capped by maxActionPpm when set.
+# Gluten-containing cereals are capped at 20 ppm to stay consistent with the legal
+# gluten-free threshold, whatever the consumption amount.
+# allergenCode must match bcpg:allergenCode on the allergen characteristic.
+# proteinPerc is optional: leave it empty when the declared quantity is already
+# expressed in allergenic protein. Complete this grid with the allergens you use:
+# an allergen absent from the grid keeps the fixed threshold it carries.
+allergenCode;rfdMg;maxActionPpm;proteinPerc
+GLUTEN;5.0;20;
+SESAME;2.0;;
+SOY;10.0;;

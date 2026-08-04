@@ -1,0 +1,10 @@
+# VITAL 4.0 reference doses (ED05) - Allergen Bureau
+# Action Limit (ppm) = rfdMg / consumption amount (kg), capped by maxActionPpm when set.
+# allergenCode must match bcpg:allergenCode on the allergen characteristic.
+# proteinPerc is optional: leave it empty when the declared quantity is already
+# expressed in allergenic protein. Complete this grid with the allergens you use:
+# an allergen absent from the grid keeps the fixed threshold it carries.
+allergenCode;rfdMg;maxActionPpm;proteinPerc
+GLUTEN;5.0;;
+SESAME;2.0;;
+SOY;10.0;;
