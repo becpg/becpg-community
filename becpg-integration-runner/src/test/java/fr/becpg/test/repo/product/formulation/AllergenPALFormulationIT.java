@@ -98,9 +98,16 @@ public class AllergenPALFormulationIT extends PLMBaseTestCase {
 	/** Grids shipped with the product and published by the repository initialisation */
 	private static final String SHIPPED_NL_ED05 = "NL_ED05";
 
-	private static final String[] SHIPPED_FRAMEWORKS = { SHIPPED_NL_ED05, "VITAL_3", "VITAL_4" };
+	private static final String SHIPPED_VITAL_3 = "VITAL_3";
+
+	private static final String SHIPPED_VITAL_4 = "VITAL_4";
+
+	private static final String[] SHIPPED_FRAMEWORKS = { SHIPPED_NL_ED05, SHIPPED_VITAL_3, SHIPPED_VITAL_4 };
 
 	private static final String SHIPPED_GLUTEN_CODE = "GLUTEN";
+
+	/** The regulated allergen set the shipped grids must at least cover */
+	private static final int MINIMUM_SHIPPED_ALLERGENS = 20;
 
 	@Autowired
 	private ProductService productService;
@@ -255,15 +262,40 @@ public class AllergenPALFormulationIT extends PLMBaseTestCase {
 			for (String frameworkCode : SHIPPED_FRAMEWORKS) {
 				Map<String, PALReferenceDose> referenceDoses = palDatabaseService.getReferenceDoses(frameworkCode);
 
-				Assert.assertFalse("The shipped grid " + frameworkCode + " must expose reference doses", referenceDoses.isEmpty());
+				Assert.assertTrue("The shipped grid " + frameworkCode + " must cover the regulated allergens",
+						referenceDoses.size() >= MINIMUM_SHIPPED_ALLERGENS);
 				Assert.assertNotNull("The shipped grid " + frameworkCode + " must carry a gluten reference dose",
 						referenceDoses.get(SHIPPED_GLUTEN_CODE));
 			}
 
+			assertReferenceDose(SHIPPED_NL_ED05, SHIPPED_GLUTEN_CODE, 5.0d);
+			assertReferenceDose(SHIPPED_NL_ED05, "MUSTARD", 0.4d);
+			assertReferenceDose(SHIPPED_NL_ED05, "LUPIN", 15.0d);
+			assertReferenceDose(SHIPPED_VITAL_3, SHIPPED_GLUTEN_CODE, 0.7d);
+			assertReferenceDose(SHIPPED_VITAL_3, "WALNUT", 0.03d);
+			assertReferenceDose(SHIPPED_VITAL_4, "CRUSTACEANS", 200.0d);
+			assertReferenceDose(SHIPPED_VITAL_4, "MUSTARD", 1.0d);
+
 			Assert.assertEquals("The Dutch grid caps gluten at the legal gluten-free threshold", Double.valueOf(20d),
 					palDatabaseService.getReferenceDoses(SHIPPED_NL_ED05).get(SHIPPED_GLUTEN_CODE).maxActionPpm());
+			Assert.assertNull("Molluscs carry no VITAL 3.0 reference dose",
+					palDatabaseService.getReferenceDoses(SHIPPED_VITAL_3).get("MOLLUSCS"));
 			return null;
 		});
+	}
+
+	/**
+	 * <p>assertReferenceDose.</p>
+	 *
+	 * @param frameworkCode the shipped grid to read
+	 * @param allergenCode the allergen to look up
+	 * @param expectedRfdMg the published reference dose in mg of protein
+	 */
+	private void assertReferenceDose(String frameworkCode, String allergenCode, double expectedRfdMg) {
+		PALReferenceDose referenceDose = palDatabaseService.getReferenceDoses(frameworkCode).get(allergenCode);
+
+		Assert.assertNotNull(frameworkCode + " must carry a reference dose for " + allergenCode, referenceDose);
+		Assert.assertEquals(frameworkCode + " reference dose of " + allergenCode, Double.valueOf(expectedRfdMg), referenceDose.rfdMg());
 	}
 
 	/**
