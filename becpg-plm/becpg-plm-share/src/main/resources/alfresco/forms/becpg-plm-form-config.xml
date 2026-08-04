@@ -8417,6 +8417,8 @@
                 <field-visibility>
                     <show id="bcpg:allergenListAllergen" />
                     <show id="bcpg:allergenListQtyPerc" />
+                    <show id="bcpg:allergenListParticleWeight" />
+                    <show id="bcpg:allergenListParticleProteinPerc" />
                     <show id="bcpg:allergenListVoluntary" />
                     <!--  <show id="bcpg:allergenListDecisionTree" /> -->
                     <show id="bcpg:allergenListInVoluntary" />
@@ -8435,6 +8437,16 @@
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
                     <field id="bcpg:allergenListQtyPerc" help-id="becpg.forms.help.allergenListQtyPerc" set="1-col-1">
+                        <control template="/org/alfresco/components/form/controls/number-unit.ftl">
+                            <control-param name="unit">perc</control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:allergenListParticleWeight" set="1-col-1">
+                        <control template="/org/alfresco/components/form/controls/number-unit.ftl">
+                            <control-param name="unit">g</control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:allergenListParticleProteinPerc" set="1-col-1">
                         <control template="/org/alfresco/components/form/controls/number-unit.ftl">
                             <control-param name="unit">perc</control-param>
                         </control>
@@ -8642,6 +8654,8 @@
                 <field-visibility>
                     <show id="bcpg:allergenListAllergen" />
                     <show id="bcpg:allergenListQtyPerc" />
+                    <show id="bcpg:allergenListParticleWeight" />
+                    <show id="bcpg:allergenListParticleProteinPerc" />
                     <show id="bcpg:allergenListVoluntary" />
                     <!--  <show id="bcpg:allergenListDecisionTree" /> -->
                     <show id="bcpg:allergenListInVoluntary" />
@@ -8661,6 +8675,16 @@
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
                     <field id="bcpg:allergenListQtyPerc" help-id="becpg.forms.help.allergenListQtyPerc" set="1-col-1">
+                        <control template="/org/alfresco/components/form/controls/number-unit.ftl">
+                            <control-param name="unit">perc</control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:allergenListParticleWeight" set="1-col-1">
+                        <control template="/org/alfresco/components/form/controls/number-unit.ftl">
+                            <control-param name="unit">g</control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:allergenListParticleProteinPerc" set="1-col-1">
                         <control template="/org/alfresco/components/form/controls/number-unit.ftl">
                             <control-param name="unit">perc</control-param>
                         </control>

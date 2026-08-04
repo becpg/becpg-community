@@ -98,6 +98,9 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_SVHC_REASONS_FOR_INCLUSIONS="SvhcReasonsForInclusions"</code> */
 	public static final String PATH_SVHC_REASONS_FOR_INCLUSIONS = "SvhcReasonsForInclusions";
 
+	/** Constant <code>PATH_ALLERGEN_REGULATORY_FRAMEWORKS="AllergenRegulatoryFrameworks"</code> */
+	public static final String PATH_ALLERGEN_REGULATORY_FRAMEWORKS = "AllergenRegulatoryFrameworks";
+
 	/** Constant <code>PATH_LABEL="Labels"</code> */
 	public static final String PATH_LABEL = "Labels";
 	/** Constant <code>PATH_LABEL_TYPES="LabelTypes"</code> */
@@ -332,6 +335,9 @@ public class PlmRepoConsts {
 	
 	/** Constant <code>PATH_CLP_DATABASES="CLPDatabases"</code> */
 	public static final String PATH_CLP_DATABASES = "CLPDatabases";
+
+	/** Constant <code>PATH_PAL_DATABASES="PALDatabases"</code> */
+	public static final String PATH_PAL_DATABASES = "PALDatabases";
 
 	//GS1
 	/** Constant <code>PATH_GS1_PACKAGING_TYPE_CODES="PackagingTypeCodes"</code> */
