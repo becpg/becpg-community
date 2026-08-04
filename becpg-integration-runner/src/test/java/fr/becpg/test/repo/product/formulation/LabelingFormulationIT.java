@@ -198,6 +198,78 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		checkILL(finishedProductNodeRef1, labelingRuleList, expectedHtml, Locale.FRENCH);
 	}
 
+	@Test
+	public void testRenderFlatHtmlTableSubIngsWithYield() {
+
+		NodeRef flatTableRawMaterialNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("Flat table sub ings raw material " + Calendar.getInstance().getTimeInMillis());
+			MLText legalName = new MLText("Legal Flat table sub ings raw material");
+			legalName.addValue(Locale.FRENCH, "Legal Flat table sub ings raw material");
+			legalName.addValue(Locale.ENGLISH, "Legal Flat table sub ings raw material");
+			rawMaterial.setLegalName(legalName);
+			rawMaterial.setDensity(1d);
+
+			List<IngListDataItem> ingList = new ArrayList<>();
+			ingList.add(IngListDataItem.build().withQtyPerc(100d).withIngredient(ing3).withIsManual(false));
+			ingList.add(IngListDataItem.build().withParent(ingList.get(0)).withQtyPerc(60d).withIngredient(ing1).withIsManual(false));
+			ingList.add(IngListDataItem.build().withParent(ingList.get(0)).withQtyPerc(40d).withIngredient(ing2).withIsManual(false));
+			rawMaterial.setIngList(ingList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+		});
+
+		NodeRef finishedProductNodeRef1 = inWriteTx(() -> {
+			FinishedProductData finishedProduct1 = new FinishedProductData();
+			finishedProduct1.setName("Finished product flat sub ings " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct1.setLegalName("legal Finished product flat sub ings");
+			finishedProduct1.setQty(1d);
+			finishedProduct1.setUnit(ProductUnit.kg);
+			finishedProduct1.setYield(80d);
+
+			List<CompoListDataItem> compoList1 = new ArrayList<>();
+			compoList1.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(flatTableRawMaterialNodeRef));
+
+			finishedProduct1.getCompoListView().setCompoList(compoList1);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		});
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("renderAsFlatHtmlTable('', false, false)")
+				.withLabelingRuleType(LabelingRuleType.Render));
+
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Detail").withLabelingRuleType(LabelingRuleType.Detail)
+				.withComponents(Collections.singletonList(ing3)).withReplacements(null));
+
+		String expectedHtml = "<table class=\"labelingTable\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"border: solid 1px; border-collapse:collapse\" rules=\"none\">"
+				+ "<thead><tr><th style=\"border: solid 1px; padding: 5px;\" >Ingrédient</th>"
+				+ "<th style=\"border: solid 1px;padding: 5px;\" >Origine géographique</th>"
+				+ "<th style=\"border: solid 1px;padding: 5px;\" >Origine biologique</th>"
+				+ "<th style=\"border: solid 1px;padding: 5px;text-align:center;\">Quantité (%)</th>"
+				+ "<th style=\"border: solid 1px;padding: 5px;text-align:center;\">Qté ap. rdmt (%)</th></tr></thead>"
+				+ "<tbody>"
+				+ "<tr><td style=\"border: solid 1px; padding: 5px;\" >ing3 french</td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\" ></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\" ></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">100%</td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">200%</td></tr>"
+				+ "<tr><td style=\"border: solid 1px; padding: 5px;\" >&nbsp;&nbsp;ing1 french</td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\" ></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\" ></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">60%</td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">120%</td></tr>"
+				+ "<tr><td style=\"border: solid 1px; padding: 5px;\" >&nbsp;&nbsp;ing2 french</td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\" ></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;\" ></td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">40%</td>"
+				+ "<td style=\"border: solid 1px;padding: 5px;text-align:center;\">80%</td></tr>"
+				+ "</tbody></table>";
+
+		checkILL(finishedProductNodeRef1, labelingRuleList, expectedHtml, Locale.FRENCH);
+	}
 
 	@Test
 	public void testNullIng() {

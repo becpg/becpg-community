@@ -2727,8 +2727,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						logger.trace(" -- Adding subings " + ingListItem.getChildren().size() + " to current " + ingLabelItem.getIngList().size());
 					}
 
-					visitIngList(ingLabelItem, product, ingListItem, omitQtyPerc, qty, volume, qty, volume, labelingFormulaContext, compoListDataItem,
-							errors, calculatedYield);
+					visitIngList(ingLabelItem, product, ingListItem, omitQtyPerc, qty, volume, qtyWithYield, volumeWithYield, labelingFormulaContext,
+							compoListDataItem, errors, calculatedYield);
 
 				}
 
