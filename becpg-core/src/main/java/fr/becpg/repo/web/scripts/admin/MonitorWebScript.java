@@ -119,7 +119,7 @@ public class MonitorWebScript extends DeclarativeWebScript {
 	
 	private AbstractAuthenticationService authenticationService;
 
-	private BeCPGLicenseManager licenseManager;
+	protected BeCPGLicenseManager licenseManager;
 
 	private TenantAdminService tenantAdminService;
 

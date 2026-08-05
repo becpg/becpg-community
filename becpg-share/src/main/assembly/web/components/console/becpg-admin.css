@@ -66,17 +66,124 @@ ul.batches {
 	padding-left: 20px;
 }
 
-ul.users {
-    height: 25em;
-    line-height: 2em;
-    padding-top: 20px;
-    overflow: auto;
-    overflow-x: hidden;
+.connected-users-panel .bd {
+    position: relative;
+    padding: 45px 15px 15px 15px !important;
+    background-color: #ffffff;
+    border-radius: 4px;
 }
 
-.users li span {
-	vertical-align: top;
-	padding-left: 20px;
+.connected-users-panel .container-close {
+    top: 12px !important;
+    right: 15px !important;
+    z-index: 100 !important;
+}
+
+.connected-users-panel .connected-users-title {
+    position: absolute;
+    top: 12px;
+    left: 15px;
+    font-size: 15px;
+    font-weight: bold;
+    color: #333333;
+    line-height: 20px;
+}
+
+.connected-users-table-wrapper {
+    min-height: 14em;
+    max-height: 28em;
+    overflow-y: auto;
+    border: 1px solid #e8e8e8;
+    border-radius: 4px;
+    background-color: #ffffff;
+}
+
+table.users-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table.users-table td {
+    padding: 10px 15px;
+    vertical-align: middle;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+table.users-table tr:last-child td {
+    border-bottom: none;
+}
+
+table.users-table td.user-cell {
+    text-align: left;
+}
+
+table.users-table .user-info {
+    display: flex;
+    align-items: center;
+}
+
+table.users-table .user-info .avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+table.users-table .user-info .avatar img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+table.users-table .user-info .username {
+    padding-left: 12px;
+}
+
+table.users-table td.user-license {
+    text-align: right;
+    white-space: nowrap;
+}
+
+a.no-license-user {
+    color: #c62828 !important;
+    font-weight: bold;
+}
+
+.license-badge {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-weight: bold;
+    white-space: nowrap;
+    font-size: 11px;
+}
+
+.license-specialuser {
+    color: #546e7a;
+    background-color: #eceff1;
+}
+
+.license-licensewritenamed,
+.license-licensewriteconcurrent {
+    color: #2e7d32;
+    background-color: #e8f5e9;
+}
+
+.license-licensereadnamed,
+.license-licensereadconcurrent {
+    color: #1565c0;
+    background-color: #e3f2fd;
+}
+
+.license-licensesupplierconcurrent {
+    color: #e65100;
+    background-color: #fff3e0;
+}
+
+.license-nolicense {
+    color: #c62828;
+    background-color: #ffebee;
 }
 
 .gauge-wrapper {
