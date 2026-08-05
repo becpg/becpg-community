@@ -116,7 +116,7 @@ public class SupplierPackagingListDataItem extends BeCPGDataObject
 	 */
 	@AlfProp
 	@AlfQname(qname = "pack:splComponent")
-	@DataListIdentifierAttr
+	@DataListIdentifierAttr(isDefaultPivotAssoc = false)
 	public String getComponent() {
 		return component;
 	}
