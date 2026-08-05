@@ -16,7 +16,9 @@ public class EntityImageInfo {
 	String title;
 	String description;
 	NodeRef imageNodeRef;
-	
+	byte[] content;
+	String mimeType;
+
 
 	/**
 	 * <p>Constructor for EntityImageInfo.</p>
@@ -28,6 +30,48 @@ public class EntityImageInfo {
 		super();
 		this.id = imgId;
 		this.imageNodeRef = imageNodeRef;
+	}
+
+	/**
+	 * <p>Constructor for an image generated on the fly rather than read from a content node, so that
+	 * a report can carry a picture that exists nowhere in the repository.</p>
+	 *
+	 * @param imgId a {@link java.lang.String} object
+	 * @param content an array of {@link byte} objects
+	 * @param mimeType a {@link java.lang.String} object
+	 */
+	public EntityImageInfo(String imgId, byte[] content, String mimeType) {
+		super();
+		this.id = imgId;
+		this.content = content;
+		this.mimeType = mimeType;
+	}
+
+	/**
+	 * <p>Tells whether this image carries its bytes instead of pointing at a content node.</p>
+	 *
+	 * @return a boolean
+	 */
+	public boolean isInMemory() {
+		return (imageNodeRef == null) && (content != null) && (content.length > 0);
+	}
+
+	/**
+	 * <p>Getter for the field <code>content</code>.</p>
+	 *
+	 * @return an array of {@link byte} objects
+	 */
+	public byte[] getContent() {
+		return content;
+	}
+
+	/**
+	 * <p>Getter for the field <code>mimeType</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
+	public String getMimeType() {
+		return mimeType;
 	}
 
 	
@@ -114,10 +158,16 @@ public class EntityImageInfo {
 	}
 
 	
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Images are held in a set and reach the report engine keyed by their id, so the id alone
+	 * decides identity. Comparing the bytes as well would let two generated images with the same
+	 * id both survive, and the report would then pick either one.
+	 */
 	@Override
 	public int hashCode() {
-		return Objects.hash(description, id, imageNodeRef, name, title);
+		return Objects.hash(id);
 	}
 
 	/** {@inheritDoc} */
@@ -125,13 +175,9 @@ public class EntityImageInfo {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if ((obj == null) || (getClass() != obj.getClass()))
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		EntityImageInfo other = (EntityImageInfo) obj;
-		return Objects.equals(description, other.description) && Objects.equals(id, other.id) && Objects.equals(imageNodeRef, other.imageNodeRef)
-				&& Objects.equals(name, other.name) && Objects.equals(title, other.title);
+		return Objects.equals(id, ((EntityImageInfo) obj).id);
 	}
 
 	

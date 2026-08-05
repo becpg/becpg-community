@@ -20,6 +20,7 @@ package fr.becpg.repo.report.engine.impl;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -124,6 +125,41 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 		}
 		return Long.MAX_VALUE;
 	}
+
+	/**
+	 * Streams an image generated on the fly, such as a nutrition facts panel rendered for the
+	 * locale of the report, which exists nowhere in the repository.
+	 */
+	private void sendInMemoryImage(ReportSession reportSession, EntityImageInfo entry, EntityReportData reportData, NodeRef tplNodeRef)
+			throws IOException, ReportException, ParseException {
+		byte[] content = entry.getContent();
+		try (InputStream in = new ByteArrayInputStream(content)) {
+			sendImage(reportSession, entry.getId(), in);
+		}
+		warnIfImageTooLarge(reportData, entry, content.length, tplNodeRef);
+	}
+
+	private void sendNodeImage(ReportSession reportSession, EntityImageInfo entry, EntityReportData reportData, NodeRef tplNodeRef)
+			throws IOException, ReportException, ParseException {
+		ContentReader reader = contentService.getReader(entry.getImageNodeRef(), ContentModel.PROP_CONTENT);
+		if ((reader == null) || !reader.exists()) {
+			return;
+		}
+		try (InputStream in = reader.getContentInputStream()) {
+			sendImage(reportSession, entry.getId(), in);
+		}
+		warnIfImageTooLarge(reportData, entry, reader.getSize(), tplNodeRef);
+	}
+
+	private void warnIfImageTooLarge(EntityReportData reportData, EntityImageInfo entry, long imageSize, NodeRef tplNodeRef) {
+		if (imageSize > reportImageMaxSizeInBytes()) {
+			reportData.getLogs()
+					.add(new ReportableError(ReportableErrorType.WARNING, "Image size exceeds: " + entry,
+							MLTextHelper.getI18NMessage("message.report.image.size", entry.getName(), FileUtils.byteCountToDisplaySize(imageSize),
+									FileUtils.byteCountToDisplaySize(reportImageMaxSizeInBytes())),
+							List.of(tplNodeRef)));
+		}
+	}
 	
 	/**
 	 * <p>Setter for the field <code>instanceName</code>.</p>
@@ -180,25 +216,17 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 			reportSession.setTemplateId(templateId);
 			
 			for (EntityImageInfo entry : reportData.getImages()) {
-				NodeRef imageNodeRef = entry.getImageNodeRef();
-				ContentReader reader = contentService.getReader(imageNodeRef, ContentModel.PROP_CONTENT);
-				if (reader != null && reader.exists()) {
-				    try (InputStream in = reader.getContentInputStream()) {
-				        sendImage(reportSession, entry.getId(), in);
-				        long imageSize = reader.getSize();
-				        if (imageSize > reportImageMaxSizeInBytes()) {
-				        	reportData.getLogs()
-				        	.add(new ReportableError(ReportableErrorType.WARNING, "Image size exceeds: " + entry,
-				        			MLTextHelper.getI18NMessage("message.report.image.size", entry.getName(),
-				        					FileUtils.byteCountToDisplaySize(imageSize),
-				        					FileUtils.byteCountToDisplaySize(reportImageMaxSizeInBytes())), List.of(tplNodeRef)));
-				        }
-				    } catch (Exception e) {
-				    	if (RetryingTransactionHelper.extractRetryCause(e) != null) {
-							throw e;
-						}
-						logger.error(e, e);
+				try {
+					if (entry.isInMemory()) {
+						sendInMemoryImage(reportSession, entry, reportData, tplNodeRef);
+					} else {
+						sendNodeImage(reportSession, entry, reportData, tplNodeRef);
 					}
+				} catch (Exception e) {
+					if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+						throw e;
+					}
+					logger.error(e, e);
 				}
 			}
 			
