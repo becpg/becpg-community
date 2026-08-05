@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.NamespaceService;
@@ -258,31 +259,12 @@ public class RemoteParams {
 	}
 
 	/**
-	 * Whether a property can be discarded on sight, before any costly work.
+	 * Whether a property can be discarded before resolving its prefixed name and its
+	 * definition, both of which are paid once per property and per row.
 	 *
-	 * <h3>What it saves</h3>
-	 *
-	 * {@code JsonEntityVisitor} used to resolve the prefixed QName and look the
-	 * property definition up in the dictionary <i>before</i> testing it against the
-	 * filter. On a raw material carrying some 150 properties and a request asking
-	 * for one, that is 150 namespace resolutions and 150 dictionary lookups per row
-	 * to keep a single value — repeated for every row of a listing.
-	 *
-	 * <h3>Why testing the raw QName is sound</h3>
-	 *
-	 * The filter is populated with {@code QName.createQName("cm:name", namespaceService)},
-	 * which resolves the prefix, and the visitor compares against
-	 * {@code propQName.getPrefixedQName(namespaceService)}. Both yield
-	 * {@code {http://www.alfresco.org/model/content/1.0}name} and compare equal —
-	 * verified rather than assumed — so the membership test gives the same answer on
-	 * the raw QName as it did on the prefixed one.
-	 *
-	 * <h3>When it must not fire</h3>
-	 *
-	 * Only a <b>positive property filter</b> allows the shortcut. An
-	 * {@code assoc|property} request is answered by a different branch keyed on the
-	 * association, and a rejection filter ({@code !field}) says what to drop rather
-	 * than what to keep — in both cases the full path still decides.
+	 * Only a positive property filter allows the shortcut: an {@code assoc|property}
+	 * request is answered by the association branch and a rejection filter ({@code !field})
+	 * says what to drop rather than what to keep.
 	 *
 	 * @param assocName the association being visited, or {@code null} for the node itself
 	 * @param propQName the raw property QName
@@ -302,38 +284,16 @@ public class RemoteParams {
 	}
 
 	/**
-	 * Whether serialising a node under this filter needs its associations walked.
+	 * Whether serialising a node under this filter needs its child and target
+	 * associations walked, a traversal otherwise paid for every row of a listing.
 	 *
-	 * <h3>Why the question is worth asking</h3>
-	 *
-	 * {@code JsonEntityVisitor} walks every child and target association of a node —
-	 * and of each of its aspects — before the filter throws the result away. On a
-	 * listing that is done once per row. Measured on dev.becpg.fr,
-	 * {@code becpg/remote/entity/list} over 200 raw materials: 0.22 s with no
-	 * {@code fields} at all, 0.92 s with {@code fields=cm:name} — four times slower
-	 * for a single property, because asking for any field switches the visitor to
-	 * the per-node extraction path and that path always walked the associations.
-	 *
-	 * <h3>The rule</h3>
-	 *
-	 * <ul>
-	 * <li>no filter at all — the caller wants everything, associations included;</li>
-	 * <li>a rejection filter ({@code !field}) — it says what to drop, not what to
-	 *     keep, so nothing can be skipped;</li>
-	 * <li>an {@code assoc|property} entry — an association is explicitly asked for;</li>
-	 * <li>otherwise, walk them only if one of the requested names IS an association.
-	 *     A bare {@code fields=bcpg:suppliers} lands in the properties set exactly
-	 *     like {@code cm:name} does — the two are indistinguishable without the
-	 *     dictionary, which is why the caller passes the lookup in.</li>
-	 * </ul>
-	 *
-	 * The predicate is a dictionary lookup, independent of the node, so the answer
-	 * holds for a whole request and is computed once rather than per row.
+	 * A requested field name lands in the properties set whether it denotes a property
+	 * or an association, hence the dictionary lookup passed in to tell them apart.
 	 *
 	 * @param isAssociation tells whether a QName is an association in the model
 	 * @return true when the associations must be visited
 	 */
-	public boolean requiresAssociations(java.util.function.Predicate<QName> isAssociation) {
+	public boolean requiresAssociations(Predicate<QName> isAssociation) {
 		if (!filteredAssocProperties.isEmpty() || !ignoredFields.isEmpty()) {
 			return true;
 		}

@@ -20,51 +20,21 @@
 /**
  * Shared form-resolution helpers for the beCPG portal endpoints.
  *
- * WHY THIS FILE EXISTS
- * --------------------
- * Share owns the form configuration and its resolution cascade
- * (formId + entityType + siteId + list, then fallback to the default form); the
- * repository only describes the fields that Share asks about, through
- * POST /becpg/form. The reference implementation of that dance is
- *   .../modules/entity-datagrid/config/columns.get.js
- * which is the datagrid's own endpoint and must not be touched.
- *
- * The functions below are a faithful extraction of that logic so the portal
- * endpoint can reuse it verbatim instead of reimplementing the cascade — which
- * would guarantee divergence the first time a client overrides a form.
- *
- * DELIBERATE DIFFERENCE with columns.get.js: no AlfrescoUtil.getPreferences call.
- * Column preferences are a Share-internal, per-user notion with no meaning for an
- * external supplier, and depending on them would force this endpoint to run
- * inside an authenticated Share session.
- *
- * Additive: new file, nothing existing is modified.
+ * Faithful extraction of .../modules/entity-datagrid/config/columns.get.js so the
+ * portal reuses the Share resolution cascade instead of reimplementing it. Single
+ * deliberate difference: no AlfrescoUtil.getPreferences call, column preferences
+ * being a per-user Share notion that would require an authenticated Share session.
  */
 
 /**
  * Makes the `node-type` config evaluator usable outside a Share session.
  *
- * beCPG declares its product forms — `supplier` and the default form — only under
- * `evaluator="node-type"`. Share answers such a condition through
- * NodeMetadataBasedEvaluator, which asks /api/metadata for the node's type using a
- * connector built from the SHARE SESSION (ServiceBasedEvaluator: ConnectorService
- * .getConnector("alfresco", requestContext.userId, ServletUtil.getSession(false))).
- * The portal has no Share session, the call comes back 401, the evaluator swallows the
- * NotAuthenticatedException and reports "does not apply" — so every node-type block
- * silently vanishes from config.scoped[nodeRef] and the entity form resolves to nothing.
- *
- * That evaluator reads a per-request cache before calling anything: the request context
- * value "forms.cache." + <url>. So fetch the metadata ourselves, with the caller's own
- * ticket, and store it under that key. The evaluator then applies exactly as it does
- * inside a Share page and the whole beCPG cascade — client overrides included — resolves
- * unchanged. The lookup runs as the caller, so a node the supplier cannot read yields no
- * configuration rather than someone else's.
- *
- * Measured on the local stack, wizard `supplier-rawMaterial` on
- * workspace://SpacesStore/bf9bdda3-1063-4d4b-9bdd-a310636d4b09 with a valid portalTicket:
- * priming the cache resolves step1 to formId "supplier" with 21 fields, whereas without it
- * step1 returns no-form-config while the datalist steps — which look up by item type —
- * resolve 3 to 28 fields each.
+ * NodeMetadataBasedEvaluator resolves the node type through /api/metadata with a
+ * connector built from the Share session; the portal has none, the call returns 401
+ * and every node-type block — where beCPG declares its product forms — silently
+ * vanishes from config.scoped[nodeRef]. The evaluator reads its per-request cache
+ * first, so fetching the metadata with the caller's own ticket and storing it under
+ * that key restores the whole cascade, with the caller's own permissions.
  */
 var PORTAL_PRIMED_NODES = {};
 
@@ -73,14 +43,12 @@ function portalPrimeNodeTypeEvaluator(entityNodeRef, alfTicket) {
 		return;
 	}
 
-	// One metadata call per node and per request: a wizard may hold several entity steps.
 	if (PORTAL_PRIMED_NODES["" + entityNodeRef] === true) {
 		return;
 	}
 	PORTAL_PRIMED_NODES["" + entityNodeRef] = true;
 
-	// Must match NodeMetadataBasedEvaluator.callMetadataService byte for byte: it is the
-	// cache key the evaluator will look up.
+	// Must match NodeMetadataBasedEvaluator.callMetadataService: it is the cache key.
 	var metadataUrl = "/api/metadata?nodeRef=" + entityNodeRef + "&shortQNames=true";
 
 	try {
@@ -96,7 +64,6 @@ function portalPrimeNodeTypeEvaluator(entityNodeRef, alfTicket) {
 			context.setValue("forms.cache." + metadataUrl, "" + response.response);
 		}
 	} catch (e) {
-		// Best effort: without it the caller simply gets no node-type configuration.
 		if (logger.isLoggingEnabled()) {
 			logger.log("portalPrimeNodeTypeEvaluator: " + e);
 		}
@@ -107,24 +74,10 @@ function portalPrimeNodeTypeEvaluator(entityNodeRef, alfTicket) {
  * Finds the form configuration for an item, applying the beCPG resolution
  * cascade. Extracted from columns.get.js::getFormConfig.
  *
- * CHOOSING THE LOOKUP KEY — this is the subtlety that makes `form` steps work.
- *
- * `config.scoped[x]` passes `x` straight to `ConfigService.getConfig(x)` as the
- * evaluation context (see ConfigModel.ScopedConfigMap in spring-webscripts). So the
- * key decides which evaluator can fire:
- *
- *   - a type QName ("bcpg:nutList") matches `evaluator="model-type"`;
- *   - a nodeRef string ("workspace://SpacesStore/…") matches `evaluator="node-type"`,
- *     because NodeMetadataBasedEvaluator.applies() only accepts a String matching
- *     `.+://.+/.+`, then resolves the node's type through /api/metadata.
- *
- * beCPG declares its datalist forms under BOTH evaluators (becpg-plm-form-config.xml:
- * 64 model-type blocks, 63 node-type ones) but its PRODUCT types only under
- * `node-type`. Passing the type QName therefore finds datalist forms and misses
- * product forms — which is exactly the symptom the portal saw.
- *
- * Hence `lookupKey`: the caller passes the nodeRef when it has one, and the type
- * QName otherwise.
+ * The lookup key decides which evaluator can fire: a type QName matches
+ * `evaluator="model-type"`, a nodeRef matches `evaluator="node-type"`. beCPG declares
+ * its datalist forms under both but its product types only under `node-type`, hence a
+ * caller passing the nodeRef whenever it has one and the type QName otherwise.
  *
  * @param lookupKey the config evaluation key: a nodeRef (preferred) or a type QName
  * @param itemId the type QName the form belongs to, used for logging
