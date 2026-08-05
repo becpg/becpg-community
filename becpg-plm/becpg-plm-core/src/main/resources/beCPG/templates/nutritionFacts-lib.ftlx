@@ -105,6 +105,88 @@
 </#macro>
 
 <#--
+  Vertical cursor left behind by panelBody, so that a format can size its svg once the body has
+  been drawn. A macro cannot return a value, but an assignment made inside it lands in this
+  namespace, which the calling template reads back as nf.cursorY.
+-->
+<#assign cursorY = 0>
+
+<#--
+  Everything a panel draws below its opening block: the thick rule, the calories, the daily
+  value header, the two nutrient blocks and the footnote. Only the opening block differs from
+  one regulation to the next, so this is what the formats share.
+
+  A caption or a footnote with no wording is skipped rather than drawn empty, which is how a
+  regulation that has no "Amount per serving" line opts out of it.
+-->
+<#macro panelBody data y footnoteChars=44>
+	<#assign cursorY = y>
+
+	<@rule y=cursorY height=RULE_THICK/>
+	<#assign cursorY = cursorY + RULE_THICK + 1>
+
+	<#if data.label("amountPerServing")?has_content>
+	<text x="${PAD}" y="${baseline(cursorY, CAPTION_SIZE)}" font-size="${CAPTION_SIZE}" font-weight="bold">${data.label("amountPerServing")}</text>
+	<#assign cursorY = cursorY + CAPTION_ROW_H>
+	</#if>
+
+	<#if data.calories()??>
+	<text x="${PAD}" y="${baseline(cursorY, CALORIES_VALUE_SIZE)}" font-family="${FONT_HEAVY}" font-weight="900" font-size="${CALORIES_LABEL_SIZE}">${data.calories().label()}</text>
+	<#if data.calories().value()??>
+	<text x="${RIGHT}" y="${baseline(cursorY, CALORIES_VALUE_SIZE)}" font-family="${FONT_HEAVY}" font-weight="900" font-size="${CALORIES_VALUE_SIZE}" text-anchor="end">${data.calories().value()}</text>
+	</#if>
+	<#assign cursorY = cursorY + CALORIES_ROW_H>
+	</#if>
+
+	<@rule y=cursorY height=RULE_MEDIUM/>
+	<#assign cursorY = cursorY + RULE_MEDIUM + 1>
+
+	<text x="${RIGHT}" y="${baseline(cursorY, CAPTION_SIZE)}" font-size="${CAPTION_SIZE}" font-weight="bold" text-anchor="end">${data.label("dailyValue")}</text>
+	<#assign cursorY = cursorY + CAPTION_ROW_H>
+
+	<#list data.nutrients() as line>
+	<@rule y=cursorY/>
+	<#assign cursorY = cursorY + HAIRLINE>
+	<@nutrientRow line=line y=cursorY/>
+	<#assign cursorY = cursorY + NUTRIENT_ROW_H>
+	</#list>
+
+	<#if data.micronutrients()?has_content>
+	<@rule y=cursorY height=RULE_THICK/>
+	<#assign cursorY = cursorY + RULE_THICK>
+	<#list data.micronutrients() as line>
+	<#if (line?index gt 0)>
+	<@rule y=cursorY/>
+	<#assign cursorY = cursorY + HAIRLINE>
+	</#if>
+	<@nutrientRow line=line y=cursorY/>
+	<#assign cursorY = cursorY + NUTRIENT_ROW_H>
+	</#list>
+	</#if>
+
+	<#if data.footNote()?has_content>
+	<@rule y=cursorY height=RULE_MEDIUM/>
+	<#assign cursorY = cursorY + RULE_MEDIUM + 1>
+	<#list wrap(data.footNote(), footnoteChars) as footNoteLine>
+	<text x="${PAD}" y="${baseline(cursorY, FOOTNOTE_SIZE)}" font-size="${FOOTNOTE_SIZE}">${footNoteLine}</text>
+	<#assign cursorY = cursorY + FOOTNOTE_LINE_H>
+	</#list>
+	</#if>
+
+	<#assign cursorY = cursorY + BORDER + 1>
+</#macro>
+
+<#-- The svg envelope, identical for every format: white ground, border, then the drawn body. -->
+<#macro panel height>
+<svg xmlns="http://www.w3.org/2000/svg" width="${PANEL_W}pt" height="${height}pt" viewBox="0 0 ${PANEL_W} ${height}"
+	preserveAspectRatio="xMinYMin meet" font-family="${FONT_BODY}" fill="#000000">
+	<rect x="0" y="0" width="${PANEL_W}" height="${height}" fill="#ffffff"/>
+	<@border height=height/>
+	<#nested>
+</svg>
+</#macro>
+
+<#--
   Greedy word wrap, by character count. The footnote is the only free text of a panel and it
   never has to align with anything, so an approximate measure is enough here; a glyph accurate
   wrap would need the font metrics.
