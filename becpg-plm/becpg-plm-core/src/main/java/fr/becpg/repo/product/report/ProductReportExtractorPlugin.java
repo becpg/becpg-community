@@ -496,7 +496,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					|| hasExtractWUsedModePreference(context))) {
 				StopWatchSupport.addCheckpoint("start_datalist_wused");
 				extractWUsed(productData, dataListsElt, context);
-				logDatalistStats(dataListsElt, "wUseds", "wused");
+				logDatalistStats(dataListsElt, TAG_WUSEDS, "wused");
 			}
 
 			if (shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_INGLABELINGLIST)) {

@@ -63,8 +63,9 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
 	@After
-	public void tearDown() {
+	public void tearDown() throws Exception {
 		if (Mockito.mockingDetails(publicationChannelService).isMock()) {
 			Mockito.reset(publicationChannelService);
 		}
@@ -74,6 +75,7 @@ public class FormulationChannelServiceIT extends PLMBaseTestCase {
 		if (Mockito.mockingDetails(formulationService).isMock()) {
 			Mockito.reset(formulationService);
 		}
+		super.tearDown();
 	}
 	
 	@Test

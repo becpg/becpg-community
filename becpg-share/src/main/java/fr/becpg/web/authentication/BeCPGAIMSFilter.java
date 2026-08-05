@@ -363,8 +363,7 @@ public class BeCPGAIMSFilter implements Filter
             {
                 if (LOGGER.isDebugEnabled())
                 {
-                    LOGGER.debug("AIMS re-auth for URI=" + request.getRequestURI() + " requestedSessionId="
-                                     + request.getRequestedSessionId() + " sessionIdValid="
+                    LOGGER.debug("AIMS re-auth for URI=" + request.getRequestURI() + " sessionIdValid="
                                      + request.isRequestedSessionIdValid() + " newSession=" + session.isNew());
                 }
                 try

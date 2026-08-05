@@ -165,6 +165,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	/** Constant <code>REPORT_LOGO_ID="report_logo"</code> */
 	protected static final String REPORT_LOGO_ID = "report_logo";
 	/** Constant <code>TAG_COMMENTS="comments"</code> */
+	private static final String CHECKPOINT_END_DATALIST = "end_datalist_";
+
 	private static final String TAG_COMMENTS = "comments";
 	/** Constant <code>TAG_COMMENT="comment"</code> */
 	private static final String TAG_COMMENT = "comment";
@@ -1715,12 +1717,12 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				int dlNodes = countNodes(addedElt);
 				String dlXml = addedElt.asXML();
 				int dlSize = dlXml == null ? 0 : dlXml.getBytes(java.nio.charset.StandardCharsets.UTF_8).length;
-				StopWatchSupport.addCheckpoint("end_datalist_" + key + "_nodes_" + dlNodes + "_size_" + dlSize);
+				StopWatchSupport.addCheckpoint(CHECKPOINT_END_DATALIST + key + "_nodes_" + dlNodes + "_size_" + dlSize);
 			} else {
-				StopWatchSupport.addCheckpoint("end_datalist_" + key + "_empty");
+				StopWatchSupport.addCheckpoint(CHECKPOINT_END_DATALIST + key + "_empty");
 			}
 		} else {
-			StopWatchSupport.addCheckpoint("end_datalist_" + key);
+			StopWatchSupport.addCheckpoint(CHECKPOINT_END_DATALIST + key);
 		}
 	}
 
