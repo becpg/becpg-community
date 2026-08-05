@@ -115,10 +115,10 @@ public abstract class AbstractExportSearchAction extends AbstractDownloadArchive
 		// Get the download request data and set up the exporter crawler
 		// parameters.
 		final DownloadRequest downloadRequest = downloadStorage.getDownloadRequest(actionedUponNodeRef);
-		final NodeRef[] nodeRefs = getNodeRefsToExport(actionedUponNodeRef, downloadRequest);
 
 		AuthenticationUtil.runAs(() -> {
 
+			NodeRef[] nodeRefs = getNodeRefsToExport(actionedUponNodeRef, downloadRequest);
 			if (completeIfEmpty(actionedUponNodeRef, nodeRefs)) {
 				return null;
 			}
@@ -221,7 +221,7 @@ public abstract class AbstractExportSearchAction extends AbstractDownloadArchive
 	}
 
 	private NodeRef[] getNodeRefsToExport(NodeRef downloadNodeRef, DownloadRequest downloadRequest) {
-		NodeRef[] storedNodeRefs = ExportSearchNodesHelper.readNodes(contentService, downloadNodeRef);
+		NodeRef[] storedNodeRefs = ExportSearchNodesHelper.readNodes(contentService, nodeService, downloadNodeRef);
 
 		return storedNodeRefs.length > 0 ? storedNodeRefs : downloadRequest.getRequetedNodeRefs();
 	}

@@ -245,13 +245,6 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 					}
 				} else {
 					AssociationDefinition defaultPivotAssocDef = getAssociation(defaultPivotAssoc);
-					// Une association déclarée comme pivot mais absente du dictionnaire :
-					// le modèle qui la porte n'est pas déployé, ou plus. Sans cette garde
-					// le déréférencement fait tomber TOUTE la datalist en 500 — pour tous
-					// les utilisateurs et sur toutes les listes du type. Constaté le
-					// 04/08/2026 sur dev : ingList et nutList inaccessibles, le portail
-					// affichant « connexion impossible » alors que beCPG répondait.
-					// Une association inconnue n'est simplement pas un pivot pour ce type.
 					if (defaultPivotAssocDef == null) {
 						logger.warn("Default pivot assoc not found in dictionary, ignoring: " + defaultPivotAssoc);
 					} else if (targetType.equals(defaultPivotAssocDef.getTargetClass().getName())) {

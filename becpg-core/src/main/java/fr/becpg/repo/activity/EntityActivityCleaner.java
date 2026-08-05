@@ -196,7 +196,7 @@ public class EntityActivityCleaner {
                         boolean hasReport = false;
 
                         // Pre-size set for efficiency (used for both content and export deduplication)
-                        Set<String> contentSet = new HashSet<>(Math.max(16, sortedActivityList.size()));
+                        Set<String> contentSet = HashSet.newHashSet(Math.max(16, sortedActivityList.size()));
 
                         for (ActivityListDataItem activity : sortedActivityList) {
                             if (activityInPage == MAX_PAGE) {
@@ -345,7 +345,7 @@ public class EntityActivityCleaner {
                     continue;
                 }
 
-                Map<NodeRef, Set<String>> activitiesByEntity = new HashMap<>(activities.size());
+                Map<NodeRef, Set<String>> activitiesByEntity = HashMap.newHashMap(activities.size());
                 Iterator<ActivityListDataItem> iter = activities.iterator();
 
                 while (iter.hasNext()) {

@@ -250,7 +250,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 * @return a {@link java.util.Map} object.
 	 */
 	protected Map<NodeRef, List<NodeRef>> getMandatoryCharactsFromList(List<T> simpleListDataList) {
-		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<>(simpleListDataList.size());
+		Map<NodeRef, List<NodeRef>> mandatoryCharacts = HashMap.newHashMap(simpleListDataList.size());
 		for (SimpleListDataItem sl : simpleListDataList) {
 			if (isCharactFormulated(sl)) {
 				mandatoryCharacts.put(sl.getCharactNodeRef(), new ArrayList<>());

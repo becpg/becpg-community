@@ -69,7 +69,7 @@ public class TargetAssocAutoCompleteExtractor implements AutoCompleteExtractor<N
 				QName type = nodeService.getType(nodeRef);
 				String name = attributeExtractorService.extractPropName(type, nodeRef, characNameFormat);
 				String cssClass = attributeExtractorService.extractMetadata(type, nodeRef);
-				Map<String, String> props = new HashMap<>(2);
+				Map<String, String> props = HashMap.newHashMap(2);
 				props.put("type", type.toPrefixString(namespaceService));
 				String userName = AuthenticationUtil.getFullyAuthenticatedUser();
 				if(!AuthenticationUtil.SYSTEM_USER_NAME.equals(userName) && favouritesService.getType(nodeRef)!=null && favouritesService.isFavourite(userName, nodeRef)){

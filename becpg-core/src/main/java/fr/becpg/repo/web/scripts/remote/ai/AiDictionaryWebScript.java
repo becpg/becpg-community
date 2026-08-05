@@ -57,6 +57,8 @@ import fr.becpg.repo.entity.EntityDictionaryService;
  */
 public class AiDictionaryWebScript extends AbstractWebScript {
 
+	private static final String ATTR_TITLE = "title";
+
 	private DictionaryService dictionaryService;
 	private EntityDictionaryService entityDictionaryService;
 	private NamespaceService namespaceService;
@@ -76,7 +78,7 @@ public class AiDictionaryWebScript extends AbstractWebScript {
 				if (classDef != null) {
 					String title = classDef.getTitle(dictionaryService);
 					if (title != null) {
-						out.put("title", title);
+						out.put(ATTR_TITLE, title);
 					}
 					out.put("fields", buildFields(classDef));
 					out.put("associations", buildAssociations(classDef));
@@ -101,7 +103,7 @@ public class AiDictionaryWebScript extends AbstractWebScript {
 			if (classDef != null) {
 				String title = classDef.getTitle(dictionaryService);
 				if (title != null) {
-					entry.put("title", title);
+					entry.put(ATTR_TITLE, title);
 				}
 			}
 			types.put(entry);
@@ -164,7 +166,7 @@ public class AiDictionaryWebScript extends AbstractWebScript {
 		entry.put("name", prop.getName().toPrefixString(namespaceService));
 		String title = prop.getTitle(dictionaryService);
 		if (title != null) {
-			entry.put("title", title);
+			entry.put(ATTR_TITLE, title);
 		}
 		if (prop.getDataType() != null) {
 			entry.put("dataType", prop.getDataType().getName().toPrefixString(namespaceService));
@@ -182,7 +184,7 @@ public class AiDictionaryWebScript extends AbstractWebScript {
 			entry.put("name", assoc.getName().toPrefixString(namespaceService));
 			String title = assoc.getTitle(dictionaryService);
 			if (title != null) {
-				entry.put("title", title);
+				entry.put(ATTR_TITLE, title);
 			}
 			if (assoc.getTargetClass() != null) {
 				entry.put("targetType", assoc.getTargetClass().getName().toPrefixString(namespaceService));

@@ -796,9 +796,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_PAL_DATABASES)) {
-			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/pal/NL_ED05.csv");
-			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/pal/VITAL_3.csv");
-			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/pal/VITAL_4.csv");
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/pal/*.csv");
 		}
 		
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_CATALOGS)) {
@@ -967,7 +965,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		if (nodeService.getChildByName(notificationFolder, ContentModel.ASSOC_CONTAINS, RepoConsts.OBSOLETE_DOCUMENTS_NOTIFICATION) == null) {
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, RepoConsts.OBSOLETE_DOCUMENTS_NOTIFICATION);
-			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrSubject"), "Obsolete documents");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrSubject"), OBSOLETE_DOCUMENTS_SAVED_SEARCH_NAME);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrNodeType"), "cm:folder");
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringTimeType"), RecurringTimeType.Day);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrDateField"), "cm:to");

@@ -59,7 +59,7 @@ public class AccentFilter extends TokenFilter {
 	 * @return a {@link java.util.HashMap} object
 	 */
 	private static HashMap<String,String> initSubstitutions() {
-		HashMap<String,String> retVal = new HashMap<>(12);
+		HashMap<String,String> retVal = HashMap.newHashMap(12);
 
 		retVal.put("Â", "A");
 		retVal.put("Ç", "C");

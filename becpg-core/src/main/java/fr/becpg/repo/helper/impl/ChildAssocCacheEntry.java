@@ -33,7 +33,7 @@ public final class ChildAssocCacheEntry implements Serializable {
 	    */
 	   public ChildAssocCacheEntry(int expectedSize) {
 	        this.items = new ArrayList<>(expectedSize);
-	        this.itemsByType = new HashMap<>(4);
+	        this.itemsByType = HashMap.newHashMap(4);
 	    }
 	
 	/**

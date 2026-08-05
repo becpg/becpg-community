@@ -50,7 +50,7 @@ public class L2CacheSupport {
 		if (threadLocalCache.get().isThreadCacheEnable()) {
 			return threadLocalCache.get().getCache();
 		}
-		return new HashMap<>(500);
+		return HashMap.newHashMap(500);
 	}
 
 	/**

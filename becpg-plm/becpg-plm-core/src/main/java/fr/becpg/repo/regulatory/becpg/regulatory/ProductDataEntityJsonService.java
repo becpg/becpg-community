@@ -7,10 +7,10 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
+import fr.becpg.repo.regulatory.AbstractRegulatoryService;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.regulatory.RequirementType;
-import fr.becpg.repo.regulatory.decernis.DecernisRegulatoryService;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -226,7 +226,7 @@ public class ProductDataEntityJsonService {
         item.setReqDataType(RequirementDataType.Specification);
         item.setReqMlMessage(message);
         item.setSources(sources);
-        item.setFormulationChainId(DecernisRegulatoryService.REGULATORY_KEY);
+        item.setFormulationChainId(AbstractRegulatoryService.REGULATORY_KEY);
 
         if (code != null && !code.isBlank()) {
             item.setRegulatoryCode(code);

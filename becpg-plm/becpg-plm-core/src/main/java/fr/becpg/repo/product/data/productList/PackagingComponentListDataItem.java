@@ -116,7 +116,7 @@ public class PackagingComponentListDataItem extends BeCPGDataObject
 	 */
 	@AlfProp
 	@AlfQname(qname = "pack:pclComponent")
-	@DataListIdentifierAttr
+	@DataListIdentifierAttr(isDefaultPivotAssoc = false)
 	public String getComponent() {
 		return component;
 	}

@@ -154,7 +154,7 @@ public class ZipSearchAction extends AbstractDownloadArchiveAction {
 	}
 
 	private NodeRef[] getNodeRefsToExport(NodeRef downloadNodeRef, DownloadRequest downloadRequest) {
-		NodeRef[] storedNodeRefs = ExportSearchNodesHelper.readNodes(contentService, downloadNodeRef);
+		NodeRef[] storedNodeRefs = ExportSearchNodesHelper.readNodes(contentService, nodeService, downloadNodeRef);
 
 		return storedNodeRefs.length > 0 ? storedNodeRefs : downloadRequest.getRequetedNodeRefs();
 	}

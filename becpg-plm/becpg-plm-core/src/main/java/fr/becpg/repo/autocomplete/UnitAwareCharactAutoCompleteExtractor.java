@@ -69,7 +69,7 @@ public class UnitAwareCharactAutoCompleteExtractor implements AutoCompleteExtrac
 				QName type = nodeService.getType(nodeRef);
 				String name = attributeExtractorService.extractPropName(type, nodeRef);
 				String cssClass = attributeExtractorService.extractMetadata(type, nodeRef);
-				Map<String, String> props = new HashMap<>(2);
+				Map<String, String> props = HashMap.newHashMap(2);
 				props.put("type", type.toPrefixString(namespaceService));
 
 				String unit = "";
