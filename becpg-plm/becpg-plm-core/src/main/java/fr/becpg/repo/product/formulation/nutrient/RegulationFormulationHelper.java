@@ -258,6 +258,62 @@ public class RegulationFormulationHelper {
 	}
 
 	/**
+	 * <p>extractGDAPercPerContainer.</p>
+	 *
+	 * @param roundedValue a {@link java.lang.String} object.
+	 * @param key a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Double} object.
+	 */
+	public static Double extractGDAPercPerContainer(String roundedValue, String key) {
+		return extractValueByKey(roundedValue, KEY_GDA_PERC_PER_CONTAINER, key);
+	}
+
+	/**
+	 * <p>Extracts the display-ready view of a nutrient for a single regulation.</p>
+	 *
+	 * <p>Single-regulation counterpart of {@link #extractXMLAttribute(Element, String, Locale, boolean, String)}:
+	 * both read the same regulation definition and the same rounded value blob, one returning a record
+	 * and the other writing report attributes.</p>
+	 *
+	 * @param nutListItem a {@link fr.becpg.repo.product.data.productList.NutListDataItem} object
+	 * @param nutCode a {@link java.lang.String} object, the regulatory code of the nutrient
+	 * @param locale a {@link java.util.Locale} object, drives the number formatting
+	 * @param locKey a {@link java.lang.String} object, the regulation key, may differ from the locale
+	 * @return a {@link fr.becpg.repo.product.formulation.nutrient.RegulatedNutrient} object
+	 */
+	public static RegulatedNutrient extractRegulatedNutrient(NutListDataItem nutListItem, String nutCode, Locale locale, String locKey) {
+
+		String roundedValue = nutListItem.getRoundedValue();
+		String precision = nutListItem.getMeasurementPrecision();
+
+		Double value = extractValue(roundedValue, locKey);
+		Double valuePerServing = extractValuePerServing(roundedValue, locKey);
+		Double valuePerContainer = extractValuePerContainer(roundedValue, locKey);
+
+		return new RegulatedNutrient(nutCode, toDisplayRule(getRegulation(locKey).getNutrientDefinition(nutCode)), value, valuePerServing,
+				valuePerContainer, extractGDAPerc(roundedValue, locKey), extractGDAPercPerContainer(roundedValue, locKey),
+				toDisplayValue(nutListItem.getValue(), value, nutCode, precision, locale, locKey),
+				toDisplayValue(nutListItem.getValuePerServing(), valuePerServing, nutCode, precision, locale, locKey),
+				toDisplayValue(valuePerContainer, valuePerContainer, nutCode, precision, locale, locKey));
+	}
+
+	private static NutrientDisplayRule toDisplayRule(NutrientDefinition definition) {
+		if (definition == null) {
+			return NutrientDisplayRule.undefined();
+		}
+		return new NutrientDisplayRule(definition.getSort(), definition.getDepthLevel(), Boolean.TRUE.equals(definition.getBold()),
+				Boolean.TRUE.equals(definition.getMandatory()), Boolean.TRUE.equals(definition.getOptional()),
+				Boolean.TRUE.equals(definition.getShowGDAPerc()), definition.getGda(), definition.getUl(), definition.getUnit());
+	}
+
+	private static String toDisplayValue(Double value, Double roundedValue, String nutCode, String precision, Locale locale, String locKey) {
+		if (value == null) {
+			return null;
+		}
+		return displayValue(value, roundedValue, nutCode, precision, locale, locKey);
+	}
+
+	/**
 	 * <p>extractValueByKey.</p>
 	 *
 	 * @param roundedValue a {@link java.lang.String} object
