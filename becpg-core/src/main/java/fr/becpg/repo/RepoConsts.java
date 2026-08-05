@@ -107,6 +107,10 @@ public class RepoConsts
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH="ExportSearch"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH = "ExportSearch";
 
+	// templates
+	/** Constant <code>PATH_TEMPLATES="Templates"</code> */
+	public static final String PATH_TEMPLATES = "Templates";
+
 	/** Constant <code>PATH_EXCHANGE="Exchange"</code> */
 	public static final String PATH_EXCHANGE = "Exchange";
 	/** Constant <code>PATH_EXPORT="Export"</code> */
