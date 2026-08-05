@@ -879,6 +879,15 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	private void processTargetAssociationEntry(NodeRef nodeRef, JSONObject entity, QName assocName, AssociationDefinition assocDef, RemoteJSONContext context) throws JSONException, RemoteException {
+		// Decide on the raw QName, before resolving the prefixed form: the loop runs
+		// over every association the type and its aspects declare — around forty on a
+		// product — and all but the requested ones are dropped one line later. Same
+		// equivalence as for properties: the filter holds URI-form QNames and the
+		// prefixed form compares equal to them.
+		if ((params != null) && params.canSkipProperty(assocName, assocDef.getName())) {
+			return;
+		}
+
 		QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
 		if (!matchProp(assocName, nodeType, false)) {
 			return;
