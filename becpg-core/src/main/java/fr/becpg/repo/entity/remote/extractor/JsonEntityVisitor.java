@@ -27,6 +27,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -804,16 +807,77 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		visitTargetAssociations(nodeRef, entity, assocName, assocs, context);
 	}
 
+	/**
+	 * Association definitions already assembled during this request, keyed by the
+	 * only thing they depend on: the node's type and its aspects.
+	 *
+	 * <p>
+	 * The visitor is instantiated per request ({@code RemoteEntityServiceImpl}), so
+	 * this map lives exactly as long as one listing and needs no invalidation — a
+	 * model reloaded between two requests is picked up by the next one.
+	 * </p>
+	 */
+	private final Map<String, Map<QName, AssociationDefinition>> assocDefsByShape = new HashMap<>();
+
+	/**
+	 * The associations a node can carry: those of its type plus those of each of its
+	 * aspects.
+	 *
+	 * <p>
+	 * The result depends on the <b>type and the aspects</b>, never on the node
+	 * itself, yet it used to be rebuilt for every row — a dictionary lookup per
+	 * aspect and a fresh map, two hundred times over on a listing of two hundred
+	 * raw materials that all share the same shape. Keyed on that shape it is
+	 * assembled once per distinct combination.
+	 * </p>
+	 *
+	 * <p>
+	 * Returned unmodifiable: the callers only read it, and a shared map that one of
+	 * them mutated would corrupt every later row of the same shape.
+	 * </p>
+	 */
 	private Map<QName, AssociationDefinition> collectAssociations(NodeRef nodeRef, TypeDefinition typeDef) {
+		Set<QName> aspects = nodeService.getAspects(nodeRef);
+		String shape = associationShapeKey(typeDef.getName(), aspects);
+
+		Map<QName, AssociationDefinition> cached = assocDefsByShape.get(shape);
+		if (cached != null) {
+			return cached;
+		}
+
 		Map<QName, AssociationDefinition> assocs = new HashMap<>(typeDef.getAssociations());
-		for (QName aspect : nodeService.getAspects(nodeRef)) {
+		for (QName aspect : aspects) {
 			if (entityDictionaryService.getAspect(aspect) != null) {
 				assocs.putAll(entityDictionaryService.getAspect(aspect).getAssociations());
 			} else if (logger.isWarnEnabled()) {
 				logger.warn("No definition for :" + aspect);
 			}
 		}
-		return assocs;
+
+		Map<QName, AssociationDefinition> shared = Collections.unmodifiableMap(assocs);
+		assocDefsByShape.put(shape, shared);
+		return shared;
+	}
+
+	/**
+	 * Identity of an association shape. Aspects are sorted so that two nodes
+	 * carrying the same set in a different order share one entry.
+	 *
+	 * @param type the node type
+	 * @param aspects its aspects
+	 * @return a stable key
+	 */
+	private static String associationShapeKey(QName type, Set<QName> aspects) {
+		StringBuilder key = new StringBuilder(type.toString());
+		List<String> sorted = new ArrayList<>(aspects.size());
+		for (QName aspect : aspects) {
+			sorted.add(aspect.toString());
+		}
+		Collections.sort(sorted);
+		for (String aspect : sorted) {
+			key.append('|').append(aspect);
+		}
+		return key.toString();
 	}
 
 	private void visitChildAssociations(NodeRef nodeRef, JSONObject entity, Map<QName, AssociationDefinition> assocs, RemoteJSONContext context) throws JSONException, RemoteException {
