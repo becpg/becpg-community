@@ -18,6 +18,7 @@
 package fr.becpg.repo.report.helpers;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
@@ -26,6 +27,7 @@ import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -76,11 +78,15 @@ public final class ExportSearchNodesHelper {
 	 * <p>Read back the nodes to export, or an empty array if the download node doesn't carry any:
 	 * the caller then falls back on the associations of the download request.</p>
 	 *
+	 * <p>A node deleted between the search and the asynchronous export is left out: the exporter
+	 * would fail on it and lose the whole archive, whereas it is simply out of scope.</p>
+	 *
 	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
 	 * @param downloadNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @return an array of {@link org.alfresco.service.cmr.repository.NodeRef} objects
 	 */
-	public static NodeRef[] readNodes(ContentService contentService, NodeRef downloadNodeRef) {
+	public static NodeRef[] readNodes(ContentService contentService, NodeService nodeService, NodeRef downloadNodeRef) {
 
 		ContentReader reader = contentService.getReader(downloadNodeRef, ContentModel.PROP_CONTENT);
 
@@ -91,13 +97,16 @@ public final class ExportSearchNodesHelper {
 		try {
 			JSONArray jsonArray = new JSONArray(reader.getContentString());
 
-			NodeRef[] nodeRefs = new NodeRef[jsonArray.length()];
+			List<NodeRef> nodeRefs = new ArrayList<>(jsonArray.length());
 
 			for (int i = 0; i < jsonArray.length(); i++) {
-				nodeRefs[i] = new NodeRef(jsonArray.getString(i));
+				NodeRef nodeRef = new NodeRef(jsonArray.getString(i));
+				if (nodeService.exists(nodeRef)) {
+					nodeRefs.add(nodeRef);
+				}
 			}
 
-			return nodeRefs;
+			return nodeRefs.toArray(new NodeRef[0]);
 		} catch (JSONException e) {
 			logger.error("Cannot read the nodes to export stored on download node: " + downloadNodeRef, e);
 			return new NodeRef[0];
