@@ -92,6 +92,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	/** Constant <code>NULL_ING_ERROR="message.formulate.labelRule.error.nullI"{trunked}</code> */
 	private static final String NULL_ING_ERROR = "message.formulate.labelRule.error.nullIng";
 
+	/** Constant <code>CONTENT_TOO_LONG="message.formulate.labelRule.contentToo"{trunked}</code> */
+	private static final String CONTENT_TOO_LONG = "message.formulate.labelRule.contentTooLong";
+
+	/** Safety margin kept on each locale share of {@link LargeTextHelper#TEXT_SIZE_LIMIT}. */
+	private static final int TRUNCATE_OVERHEAD = 20;
+
 	private NodeService nodeService;
 
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
@@ -1563,9 +1569,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	 * @return a {@link fr.becpg.repo.product.data.productList.IngLabelingListDataItem} object
 	 */
 	/**
-	 * Truncates the rendered labeling value (bcpg:illValue) to prevent property write failures,
-	 * keeping the same per-locale budget as {@link LargeTextHelper#elipse(MLText)} but truncating
-	 * HTML output on a complete row boundary so the rendered table is not broken mid-tag.
+	 * Drops the rendered labeling values (bcpg:illValue) that exceed their share of
+	 * {@link LargeTextHelper#TEXT_SIZE_LIMIT}, to prevent property write failures. Only the locales
+	 * that are actually over budget are replaced, each by a notice in its own language: a partially
+	 * cut markup value is never usable, whereas an explicit notice tells the user what happened.
 	 *
 	 * @param label the rendered labeling value, modified in place
 	 */
@@ -1575,12 +1582,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 
 		int localesNumber = Math.max(1, label.keySet().size());
-		int budget = (LargeTextHelper.TEXT_SIZE_LIMIT / localesNumber) - 20;
+		int budget = (LargeTextHelper.TEXT_SIZE_LIMIT / localesNumber) - TRUNCATE_OVERHEAD;
 
 		for (Locale locale : label.keySet()) {
 			String value = label.get(locale);
 			if ((value != null) && (value.length() > budget)) {
-				label.put(locale, LargeTextHelper.elipseHtml(value, budget));
+				logger.warn("Rendered labeling value of " + value.length() + " characters exceeds the budget of " + budget
+						+ " for locale " + locale + ", replaced by a notice");
+				label.put(locale, I18NUtil.getMessage(CONTENT_TOO_LONG, locale));
 			}
 		}
 	}
