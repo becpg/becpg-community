@@ -624,6 +624,12 @@ public interface PLMModel {
 	/** Constant <code>PROP_PRODUCT_SERVING_SIZE_UNIT</code> */
 	QName PROP_PRODUCT_SERVING_SIZE_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "servingSizeUnit");
 
+	/** Constant <code>PROP_PRODUCT_SERVING_SIZE_TEXT</code> */
+	QName PROP_PRODUCT_SERVING_SIZE_TEXT = QName.createQName(BeCPGModel.BECPG_URI, "servingSizeText");
+
+	/** Constant <code>PROP_PRODUCT_NUMBER_OF_SERVINGS</code> */
+	QName PROP_PRODUCT_NUMBER_OF_SERVINGS = QName.createQName(BeCPGModel.BECPG_URI, "numberOfServings");
+
 	/** Constant <code>PROP_NUTRIENT_PREPARED_UNIT</code> */
 	QName PROP_NUTRIENT_PREPARED_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "nutrientPreparedUnit");
 
