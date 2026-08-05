@@ -32,6 +32,8 @@ public class NutritionFactsTemplateTest {
 
 	private static final String VERTICAL_TEMPLATE = "nutritionFacts-vertical.ftlx";
 
+	private static final String CANADA_TEMPLATE = "nutritionFacts-canada.ftlx";
+
 	private static final String MODEL_KEY = "nf_data";
 
 	private static final double HAIRLINE = 0.25d;
@@ -131,6 +133,37 @@ public class NutritionFactsTemplateTest {
 		Assert.assertTrue("The footnote has to be split over several lines to fit the panel", footnoteLines > 1);
 	}
 
+	@Test
+	public void testCanadianPanelOpensOnASingleServingLine() throws Exception {
+		Document panel = parse(renderToString(CANADA_TEMPLATE, canadianPanel()));
+
+		Assert.assertNotNull("The Canadian panel is titled Valeur nutritive in French", findText(panel, "Valeur nutritive"));
+		Assert.assertNotNull("It opens on a Per <serving> line", findText(panel, "Pour 1 tasse"));
+		Assert.assertNotNull("Its footnote states the little/lot rule", findText(panel, "* 5 % ou moins"));
+	}
+
+	@Test
+	public void testCanadianPanelKeepsTheSameRuleVocabulary() throws Exception {
+		List<Element> rects = elements(parse(renderToString(CANADA_TEMPLATE, canadianPanel())), "rect");
+
+		Assert.assertEquals("A thick rule under the serving line and another above the minerals", 2, countByHeight(rects, 7d));
+		Assert.assertEquals("A medium rule under the calories and another above the footnote", 2, countByHeight(rects, 3d));
+	}
+
+	private NutritionFactsData canadianPanel() {
+		Map<String, String> labels = new LinkedHashMap<>();
+		labels.put("title", "Valeur nutritive");
+		labels.put("servingSize", "Pour");
+		labels.put("dailyValue", "% valeur quotidienne*");
+
+		return new NutritionFactsData("canada", "CA", new NutritionFactsServing(null, "1 tasse (250 mL)"),
+				line("US_ENER-E14", "Calories", "230", null, 1, true),
+				List.of(line("FAT", "Lipides", "8 g", "10%", 1, true), line("FASAT", "saturés", "1 g", "5%", 2, false),
+						line("NA", "Sodium", "160 mg", "7%", 1, true)),
+				List.of(line("K", "Potassium", "235 mg", "5%", 1, false), line("CA", "Calcium", "260 mg", "20%", 1, false)),
+				"* 5 % ou moins c'est peu, 15 % ou plus c'est beaucoup", labels);
+	}
+
 	private double textStart(Document panel, String label) {
 		return Double.parseDouble(findText(panel, label).getAttribute("x"));
 	}
@@ -178,8 +211,12 @@ public class NutritionFactsTemplateTest {
 	}
 
 	private String renderToString(NutritionFactsData data) throws Exception {
+		return renderToString(VERTICAL_TEMPLATE, data);
+	}
+
+	private String renderToString(String templateName, NutritionFactsData data) throws Exception {
 		java.io.StringWriter writer = new java.io.StringWriter();
-		configuration.getTemplate(VERTICAL_TEMPLATE, Locale.US).process(Map.of(MODEL_KEY, data), writer);
+		configuration.getTemplate(templateName, Locale.US).process(Map.of(MODEL_KEY, data), writer);
 		return writer.toString();
 	}
 

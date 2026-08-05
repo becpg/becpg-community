@@ -193,6 +193,7 @@
 					<property name="associationService" ref="associationService" />
 					<property name="formulaService" ref="formulaService" />
 					<property name="systemConfigurationService" ref="systemConfigurationService" />
+					<property name="templateRenderService" ref="beCPGTemplateRenderService" />
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler" class="fr.becpg.repo.product.formulation.PhysicoChemCalculatingFormulationHandler">
 					<property name="formulaService" ref="formulaService" />
