@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.template.impl;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Date;
@@ -101,11 +102,14 @@ public class RepositoryTemplateLoader implements TemplateLoader {
 
 	/** {@inheritDoc} */
 	@Override
-	public Reader getReader(Object templateSource, String encoding) {
-		return AuthenticationUtil.runAsSystem(() -> {
-			ContentReader reader = contentService.getReader((NodeRef) templateSource, ContentModel.PROP_CONTENT);
-			return new InputStreamReader(reader.getContentInputStream(), encoding);
-		});
+	public Reader getReader(Object templateSource, String encoding) throws IOException {
+		ContentReader reader = AuthenticationUtil
+				.runAsSystem(() -> contentService.getReader((NodeRef) templateSource, ContentModel.PROP_CONTENT));
+
+		if ((reader == null) || !reader.exists()) {
+			throw new IOException("Template node has no content: " + templateSource);
+		}
+		return new InputStreamReader(reader.getContentInputStream(), encoding);
 	}
 
 	/** {@inheritDoc} */
