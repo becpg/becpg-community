@@ -1,0 +1,129 @@
+<#--
+  Shared geometry and drawing macros of the regulatory nutrition facts panels.
+
+  Units: 1 SVG user unit = 1 point, so every figure below is directly the measurement the
+  regulation states. Never switch to pixels.
+
+  Rules are drawn as <rect> and never as <line>: a line of width 0.25 straddles its coordinate
+  and ends up anti-aliased over two device pixels, which is what makes a panel look off by a
+  hair once printed. A rect has exact edges.
+
+  Model access uses the method form (line.label(), not line.label): the model is made of Java
+  records, and record accessors are not JavaBean getters, so FreeMarker only sees them as
+  methods.
+-->
+
+<#-- Panel box -->
+<#assign PANEL_W = 144>
+<#assign PAD = 4>
+<#assign CONTENT_W = PANEL_W - 2 * PAD>
+<#assign RIGHT = PANEL_W - PAD>
+<#assign BORDER = 1>
+
+<#-- Rules, as thick as the regulation requires -->
+<#assign HAIRLINE = 0.25>
+<#assign RULE_MEDIUM = 3>
+<#assign RULE_THICK = 7>
+
+<#-- Type -->
+<#assign FONT_BODY = "Arial, 'Liberation Sans', 'Arial Unicode MS', sans-serif">
+<#assign FONT_HEAVY = "'Arial Black', Arial, 'Liberation Sans', sans-serif">
+<#assign TITLE_SIZE = 27>
+<#assign SERVING_SIZE = 10>
+<#assign CAPTION_SIZE = 6>
+<#assign CALORIES_LABEL_SIZE = 16>
+<#assign CALORIES_VALUE_SIZE = 22>
+<#assign NUTRIENT_SIZE = 8>
+<#assign FOOTNOTE_SIZE = 6>
+
+<#-- Vertical rhythm -->
+<#assign NUTRIENT_ROW_H = 11>
+<#assign SERVING_ROW_H = 12>
+<#assign CAPTION_ROW_H = 8>
+<#assign CALORIES_ROW_H = 24>
+<#assign FOOTNOTE_LINE_H = 7>
+<#assign INDENT = 5.5>
+
+<#-- Ratio of the Arial cap height to the font size, to place a baseline from the top of a line -->
+<#assign ASCENT_RATIO = 0.716>
+
+<#--
+  Baseline of a text whose top edge sits at "top". The y attribute of an SVG text is its
+  baseline, and dominant-baseline is not reliable enough in Batik to be used instead.
+-->
+<#function baseline top size>
+	<#return top + size * ASCENT_RATIO>
+</#function>
+
+<#-- Horizontal rule spanning the content width. -->
+<#macro rule y height=HAIRLINE>
+	<rect x="${PAD}" y="${y}" width="${CONTENT_W}" height="${height}"/>
+</#macro>
+
+<#-- Panel border. Drawn as four rects so that its thickness is exact on every side. -->
+<#macro border height>
+	<rect x="0" y="0" width="${PANEL_W}" height="${BORDER}"/>
+	<rect x="0" y="${height - BORDER}" width="${PANEL_W}" height="${BORDER}"/>
+	<rect x="0" y="0" width="${BORDER}" height="${height}"/>
+	<rect x="${PANEL_W - BORDER}" y="0" width="${BORDER}" height="${height}"/>
+</#macro>
+
+<#--
+  Panel title. textLength forces the exact width whatever font the rendering host resolves,
+  which keeps the panel identical when Helvetica Black is missing and Arial Black steps in,
+  and when the wording changes with the language.
+-->
+<#macro title text y>
+	<text x="${PAD}" y="${baseline(y, TITLE_SIZE)}" font-family="${FONT_HEAVY}" font-weight="900" font-size="${TITLE_SIZE}"
+		textLength="${CONTENT_W}" lengthAdjust="spacingAndGlyphs">${text}</text>
+</#macro>
+
+<#-- A nutrient line: name, value, and the percent daily value pinned to the right margin. -->
+<#macro nutrientRow line y>
+	<#local top = y + 2>
+	<#local base = baseline(top, NUTRIENT_SIZE)>
+	<#local x = PAD + (line.indentLevel() - 1) * INDENT>
+	<text x="${x}" y="${base}" font-size="${NUTRIENT_SIZE}"<#if line.bold()> font-weight="bold"</#if>>${line.label()}<#if line.value()??> <tspan font-weight="normal">${line.value()}</tspan></#if></text>
+	<#if line.hasDailyValue()>
+	<text x="${RIGHT}" y="${base}" font-size="${NUTRIENT_SIZE}" font-weight="bold" text-anchor="end">${line.dailyValuePercent()}</text>
+	</#if>
+</#macro>
+
+<#--
+  A pair of micronutrients on one line, separated by a drawn dot. The bullet is a circle and
+  not a glyph: a typographic bullet shifts with the font and never lands on the centre.
+-->
+<#macro micronutrientPair pair y>
+	<#local base = baseline(y + 2, NUTRIENT_SIZE)>
+	<#local left = pair[0]>
+	<text x="${PAD}" y="${base}" font-size="${NUTRIENT_SIZE}">${left.label()}<#if left.value()??> ${left.value()}</#if><#if left.hasDailyValue()> ${left.dailyValuePercent()}</#if></text>
+	<#if (pair?size gt 1)>
+	<#local right = pair[1]>
+	<circle cx="${PANEL_W / 2}" cy="${base - NUTRIENT_SIZE * 0.3}" r="0.9"/>
+	<text x="${RIGHT}" y="${base}" font-size="${NUTRIENT_SIZE}" text-anchor="end">${right.label()}<#if right.value()??> ${right.value()}</#if><#if right.hasDailyValue()> ${right.dailyValuePercent()}</#if></text>
+	</#if>
+</#macro>
+
+<#--
+  Greedy word wrap, by character count. The footnote is the only free text of a panel and it
+  never has to align with anything, so an approximate measure is enough here; a glyph accurate
+  wrap would need the font metrics.
+-->
+<#function wrap text charsPerLine>
+	<#local lines = []>
+	<#local current = "">
+	<#list text?trim?split(r"\s+", "r") as word>
+		<#if current?length == 0>
+			<#local current = word>
+		<#elseif (current?length + 1 + word?length) lte charsPerLine>
+			<#local current = current + " " + word>
+		<#else>
+			<#local lines = lines + [current]>
+			<#local current = word>
+		</#if>
+	</#list>
+	<#if (current?length gt 0)>
+		<#local lines = lines + [current]>
+	</#if>
+	<#return lines>
+</#function>
