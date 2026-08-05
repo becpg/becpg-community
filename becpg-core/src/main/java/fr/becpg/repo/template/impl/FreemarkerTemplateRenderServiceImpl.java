@@ -37,6 +37,7 @@ import fr.becpg.repo.template.TemplateRenderException;
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.cache.MultiTemplateLoader;
 import freemarker.cache.TemplateLoader;
+import freemarker.core.TemplateClassResolver;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -143,6 +144,9 @@ public class FreemarkerTemplateRenderServiceImpl implements BeCPGTemplateRenderS
 		config.setWrapUncheckedExceptions(true);
 		config.setLocalizedLookup(true);
 		config.setTemplateUpdateDelayMilliseconds(TEMPLATE_UPDATE_DELAY_MS);
+		// A template is rendered with the rights of the formulation, and templates are editable
+		// content: denying ?new keeps a template from instantiating arbitrary classes.
+		config.setNewBuiltinClassResolver(TemplateClassResolver.ALLOWS_NOTHING_RESOLVER);
 		return config;
 	}
 

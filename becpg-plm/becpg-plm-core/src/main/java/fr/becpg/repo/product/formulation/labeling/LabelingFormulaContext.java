@@ -158,15 +158,15 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	private static final String DEFAULT_NUTRITION_FACTS_FORMAT = "vertical";
 
-	private final transient BeCPGTemplateRenderService templateRenderService;
+	private final BeCPGTemplateRenderService templateRenderService;
 
-	private final transient NutritionFactsDataBuilder nutritionFactsDataBuilder;
+	private final NutritionFactsDataBuilder nutritionFactsDataBuilder;
 
 	/**
 	 * A formulation renders one panel per locale and possibly several Render rules ask for the same
 	 * one, so the model is built once per format, regulation and locale.
 	 */
-	private final transient Map<String, NutritionFactsData> nutritionFactsCache = new HashMap<>();
+	private final Map<String, NutritionFactsData> nutritionFactsCache = new HashMap<>();
 
 	private String nutritionFactsFormat = DEFAULT_NUTRITION_FACTS_FORMAT;
 
