@@ -35,7 +35,14 @@ public record NutritionFactsOptions(String regulationKey, boolean showOptional, 
 	/** Regulation key of the United States. */
 	public static final String US_REGULATION_KEY = "US";
 
+	/** Regulation key of Canada. */
+	public static final String CA_REGULATION_KEY = "CA";
+
+	/** Under the 2016 FDA regulation, protein sorts at 22 and vitamin D at 23. */
 	private static final int US_MICRONUTRIENT_START_SORT = 23;
+
+	/** Under the 2016 Canadian regulation, sodium sorts at 21 and potassium at 23. */
+	private static final int CA_MICRONUTRIENT_START_SORT = 23;
 
 	private static final int DEFAULT_MICRONUTRIENT_START_SORT = Integer.MAX_VALUE;
 
@@ -49,6 +56,9 @@ public record NutritionFactsOptions(String regulationKey, boolean showOptional, 
 	public static NutritionFactsOptions forRegulation(String regulationKey) {
 		if (US_REGULATION_KEY.equals(regulationKey)) {
 			return new NutritionFactsOptions(regulationKey, false, US_MICRONUTRIENT_START_SORT);
+		}
+		if (CA_REGULATION_KEY.equals(regulationKey)) {
+			return new NutritionFactsOptions(regulationKey, false, CA_MICRONUTRIENT_START_SORT);
 		}
 		return new NutritionFactsOptions(regulationKey, false, DEFAULT_MICRONUTRIENT_START_SORT);
 	}

@@ -66,6 +66,7 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.spel.LabelingFormulaFilterContext;
 import fr.becpg.repo.product.formulation.EvaporatingFormulationHelper;
+import fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsDataBuilder;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.helper.AllergenHelper;
 import fr.becpg.repo.product.helper.IngListHelper;
@@ -74,6 +75,7 @@ import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.system.SystemConfigurationService;
+import fr.becpg.repo.template.BeCPGTemplateRenderService;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
@@ -109,6 +111,17 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private SpelFormulaService formulaService;
 
 	private SystemConfigurationService systemConfigurationService;
+
+	private BeCPGTemplateRenderService templateRenderService;
+
+	/**
+	 * <p>Setter for the field <code>templateRenderService</code>.</p>
+	 *
+	 * @param templateRenderService a {@link fr.becpg.repo.template.BeCPGTemplateRenderService} object
+	 */
+	public void setTemplateRenderService(BeCPGTemplateRenderService templateRenderService) {
+		this.templateRenderService = templateRenderService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>systemConfigurationService</code>.</p>
@@ -251,7 +264,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			logger.debug("Calculate Ingredient Labeling for group : " + labelingRuleListsGroup.getKey() + " - " + formulatedProduct.getName());
 
 			LabelingFormulaContext labelingFormulaContext = new LabelingFormulaContext(mlNodeService, associationService, alfrescoRepository,
-					formulaService);
+					formulaService, templateRenderService, new NutritionFactsDataBuilder(mlNodeService, alfrescoRepository));
 
 			labelingFormulaContext.setIngsLabelingWithYield(ingsCalculatingWithYield());
 

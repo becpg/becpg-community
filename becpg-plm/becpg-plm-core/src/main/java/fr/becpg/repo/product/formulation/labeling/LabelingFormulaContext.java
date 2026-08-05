@@ -75,11 +75,16 @@ import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.ing.LabelingComponent;
 import fr.becpg.repo.product.data.meat.MeatType;
 import fr.becpg.repo.product.data.spel.LabelingFormulaFilterContext;
+import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
+import fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsData;
+import fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsDataBuilder;
+import fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsOptions;
 import fr.becpg.repo.product.helper.AllergenHelper;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.template.BeCPGTemplateRenderService;
 
 /**
  * <p>
@@ -137,6 +142,35 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private Set<FootNoteRule> footNotes = new HashSet<>();
 
 	private Set<NodeRef> toApplyThresholdItems = new HashSet<>();
+
+	/** Name under which the labeling context itself is exposed to a template. */
+	private static final String MODEL_CONTEXT = "ctx";
+
+	/** Name under which the formulated product is exposed to a template. */
+	private static final String MODEL_ENTITY = "entity";
+
+	/** Name under which the nutrition facts model is exposed to a template. */
+	private static final String MODEL_NUTRITION_FACTS = "nf_data";
+
+	private static final String NUTRITION_FACTS_TEMPLATE_PREFIX = "nutritionFacts-";
+
+	private static final String NUTRITION_FACTS_TEMPLATE_SUFFIX = ".ftlx";
+
+	private static final String DEFAULT_NUTRITION_FACTS_FORMAT = "vertical";
+
+	private final transient BeCPGTemplateRenderService templateRenderService;
+
+	private final transient NutritionFactsDataBuilder nutritionFactsDataBuilder;
+
+	/**
+	 * A formulation renders one panel per locale and possibly several Render rules ask for the same
+	 * one, so the model is built once per format, regulation and locale.
+	 */
+	private final transient Map<String, NutritionFactsData> nutritionFactsCache = new HashMap<>();
+
+	private String nutritionFactsFormat = DEFAULT_NUTRITION_FACTS_FORMAT;
+
+	private boolean nutritionFactsShowOptional = false;
 
 	// Spel variable
 	private Locale locale;
@@ -429,13 +463,108 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * @param alfrescoRepository
 	 *            a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
 	 * @param formulaService a {@link fr.becpg.repo.formulation.spel.SpelFormulaService} object
+	 * @param templateRenderService a {@link fr.becpg.repo.template.BeCPGTemplateRenderService} object
+	 * @param nutritionFactsDataBuilder a {@link fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsDataBuilder} object
 	 */
 	public LabelingFormulaContext(NodeService mlNodeService, AssociationService associationService,
-			AlfrescoRepository<RepositoryEntity> alfrescoRepository, SpelFormulaService formulaService) {
+			AlfrescoRepository<RepositoryEntity> alfrescoRepository, SpelFormulaService formulaService,
+			BeCPGTemplateRenderService templateRenderService, NutritionFactsDataBuilder nutritionFactsDataBuilder) {
 		super(mlNodeService);
 		this.alfrescoRepository = alfrescoRepository;
 		this.associationService = associationService;
 		this.formulaService = formulaService;
+		this.templateRenderService = templateRenderService;
+		this.nutritionFactsDataBuilder = nutritionFactsDataBuilder;
+	}
+
+	/**
+	 * <p>Renders a template, the labeling context being available to it as {@code ctx} so that a
+	 * template can call back into {@code render()} or {@code renderAllergens()}.</p>
+	 *
+	 * @param templateName a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
+	public String renderTemplate(String templateName) {
+		return renderTemplate(templateName, Collections.emptyMap());
+	}
+
+	/**
+	 * <p>Renders a template with extra variables merged into its model.</p>
+	 *
+	 * @param templateName a {@link java.lang.String} object
+	 * @param extraModel a {@link java.util.Map} object
+	 * @return a {@link java.lang.String} object
+	 */
+	public String renderTemplate(String templateName, Map<String, Object> extraModel) {
+		Map<String, Object> model = new HashMap<>(extraModel);
+		model.put(MODEL_CONTEXT, this);
+		model.put(MODEL_ENTITY, getEntity());
+		return templateRenderService.render(templateName, I18NUtil.getLocale(), model);
+	}
+
+	/**
+	 * <p>Renders the regulatory nutrition facts panel as inline SVG, for the regulation the current
+	 * locale belongs to.</p>
+	 *
+	 * @param format a {@link java.lang.String} object, the panel format code such as "vertical"
+	 * @return a {@link java.lang.String} object
+	 */
+	public String renderNutritionFacts(String format) {
+		return renderNutritionFacts(format, null);
+	}
+
+	/**
+	 * <p>Renders the regulatory nutrition facts panel as inline SVG.</p>
+	 *
+	 * @param format a {@link java.lang.String} object, the panel format code such as "vertical"
+	 * @param regulationKey a {@link java.lang.String} object, overrides the regulation of the locale
+	 * @return a {@link java.lang.String} object
+	 */
+	public String renderNutritionFacts(String format, String regulationKey) {
+
+		String panelFormat = (format != null) && !format.isBlank() ? format : nutritionFactsFormat;
+		Locale locale = I18NUtil.getLocale();
+
+		NutritionFactsData nutritionFacts = nutritionFactsCache.computeIfAbsent(nutritionFactsCacheKey(panelFormat, regulationKey, locale),
+				key -> buildNutritionFacts(panelFormat, regulationKey, locale));
+
+		return renderTemplate(nutritionFactsTemplateName(panelFormat), Map.of(MODEL_NUTRITION_FACTS, nutritionFacts));
+	}
+
+	/**
+	 * <p>Setter for the field <code>nutritionFactsFormat</code>, the panel format a Render rule uses
+	 * when it does not name one itself.</p>
+	 *
+	 * @param nutritionFactsFormat a {@link java.lang.String} object
+	 */
+	public void setNutritionFactsFormat(String nutritionFactsFormat) {
+		this.nutritionFactsFormat = nutritionFactsFormat;
+	}
+
+	/**
+	 * <p>Setter for the field <code>nutritionFactsShowOptional</code>, whether the panel carries the
+	 * nutrients the regulation allows but does not require.</p>
+	 *
+	 * @param nutritionFactsShowOptional a boolean
+	 */
+	public void setNutritionFactsShowOptional(boolean nutritionFactsShowOptional) {
+		this.nutritionFactsShowOptional = nutritionFactsShowOptional;
+	}
+
+	private NutritionFactsData buildNutritionFacts(String format, String regulationKey, Locale locale) {
+		String regulation = (regulationKey != null) && !regulationKey.isBlank() ? regulationKey
+				: RegulationFormulationHelper.getLocalKey(locale);
+		NutritionFactsOptions options = NutritionFactsOptions.forRegulation(regulation);
+		return nutritionFactsDataBuilder.build(getEntity(), locale, format,
+				nutritionFactsShowOptional ? options.withOptionalNutrients() : options);
+	}
+
+	private String nutritionFactsTemplateName(String format) {
+		return NUTRITION_FACTS_TEMPLATE_PREFIX + format + NUTRITION_FACTS_TEMPLATE_SUFFIX;
+	}
+
+	private String nutritionFactsCacheKey(String format, String regulationKey, Locale locale) {
+		return format + "|" + regulationKey + "|" + locale;
 	}
 
 	/**
