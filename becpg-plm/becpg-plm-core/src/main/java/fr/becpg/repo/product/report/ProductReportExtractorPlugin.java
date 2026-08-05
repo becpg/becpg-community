@@ -1,6 +1,7 @@
 package fr.becpg.repo.product.report;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,6 +45,7 @@ import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.CurrentLevelQuantities;
 import fr.becpg.repo.product.data.EffectiveFilters;
+import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.CostType;
@@ -65,6 +67,7 @@ import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
+import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
@@ -151,6 +154,14 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	/** Constant <code>TAG_PACKAGING_LEVEL_MEASURES="packagingLevelMeasures"</code> */
 	private static final String TAG_PACKAGING_LEVEL_MEASURES = "packagingLevelMeasures";
+	/** Constant <code>TAG_PACK_MATERIAL_LISTS="packMaterialLists"</code> */
+	private static final String TAG_PACK_MATERIAL_LISTS = "packMaterialLists";
+	/** Constant <code>PARAM_EXTRACT_PACKAGING_MATERIALS="extractPackagingMaterials"</code> */
+	private static final String PARAM_EXTRACT_PACKAGING_MATERIALS = "extractPackagingMaterials";
+	/** Constant <code>KG_TO_G</code> */
+	private static final BigDecimal KG_TO_G = BigDecimal.valueOf(1000d);
+	/** Constant <code>ONE_HUNDRED</code> */
+	private static final BigDecimal ONE_HUNDRED = BigDecimal.valueOf(100d);
 	/** Constant <code>ATTR_NODEREF="nodeRef"</code> */
 	private static final String ATTR_NODEREF = "nodeRef";
 	/** Constant <code>ATTR_PARENT_NODEREF="parentNodeRef"</code> */
@@ -2073,6 +2084,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			partElt.addAttribute("futureCost", Double.toString(0d));
 		}
 		loadDataListItemAttributes(dataItem, partElt, context);
+		loadPackagingMaterials(partElt, dataItem, context);
 
 		extractVariants(dataItem.getVariants(), partElt);
 
@@ -2117,6 +2129,110 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					Boolean.toString(dropPackagingOfComponents));
 		}
 		return partElt;
+	}
+
+	/**
+	 * <p>Details the materials of a packaging line, under a &lt;packMaterialLists&gt; element.</p>
+	 * <p>
+	 * The weights are computed as in
+	 * {@link fr.becpg.repo.product.formulation.PackagingMaterialFormulationHandler}, so that the detail
+	 * of a packaging line sums up to the packMaterialList formulated on the entity. Extraction is opt-in
+	 * through the <code>extractPackagingMaterials</code> report preference (see #31702).
+	 *
+	 * @param packagingElt a {@link org.dom4j.Element} object
+	 * @param dataItem a {@link fr.becpg.repo.product.data.productList.PackagingListDataItem} object
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
+	private void loadPackagingMaterials(Element packagingElt, PackagingListDataItem dataItem, DefaultExtractorContext context) {
+
+		if (!context.isPrefOn(PARAM_EXTRACT_PACKAGING_MATERIALS, Boolean.FALSE) || Boolean.TRUE.equals(dataItem.getIsRecycle())
+				|| (dataItem.getProduct() == null) || !nodeService.exists(dataItem.getProduct())) {
+			return;
+		}
+
+		if (!(alfrescoRepository.findOne(dataItem.getProduct()) instanceof PackagingMaterialData packagingMaterial)) {
+			return;
+		}
+
+		BigDecimal tare = FormulationHelper.getTareInKg(dataItem, packagingMaterial).multiply(KG_TO_G);
+
+		if (alfrescoRepository.hasDataList(packagingMaterial, PackModel.PACK_MATERIAL_LIST_TYPE) && (packagingMaterial.getPackMaterialList() != null)) {
+			extractPackMaterialList(packagingElt.addElement(TAG_PACK_MATERIAL_LISTS), packagingMaterial, tare, context);
+		} else if ((packagingMaterial.getPackagingMaterials() != null) && !packagingMaterial.getPackagingMaterials().isEmpty()) {
+			extractPackagingMaterialRefs(packagingElt.addElement(TAG_PACK_MATERIAL_LISTS), packagingMaterial, tare);
+		}
+	}
+
+	/**
+	 * <p>extractPackMaterialList.</p>
+	 *
+	 * @param packMaterialListsElt a {@link org.dom4j.Element} object
+	 * @param packagingMaterial a {@link fr.becpg.repo.product.data.PackagingMaterialData} object
+	 * @param tare the weight in grams of the packaging line
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
+	 */
+	private void extractPackMaterialList(Element packMaterialListsElt, PackagingMaterialData packagingMaterial, BigDecimal tare,
+			DefaultExtractorContext context) {
+
+		BigDecimal unitTare = unitTareInG(packagingMaterial);
+
+		for (PackMaterialListDataItem dataItem : packagingMaterial.getPackMaterialList()) {
+			if (dataItem.getPmlWeight() == null) {
+				continue;
+			}
+
+			Element packMaterialElt = packMaterialListsElt.addElement(PackModel.PACK_MATERIAL_LIST_TYPE.getLocalName());
+			loadDataListItemAttributes(dataItem, packMaterialElt, context);
+
+			BigDecimal materialWeight = BigDecimal.valueOf(dataItem.getPmlWeight());
+			BigDecimal weight = materialWeight.multiply(tare);
+
+			if (unitTare.signum() != 0) {
+				weight = weight.divide(unitTare, MathContext.DECIMAL64);
+			}
+
+			packMaterialElt.addAttribute(PackModel.PROP_PACK_MATERIAL_LIST_WEIGHT.getLocalName(), toString(weight));
+
+			if ((dataItem.getPmlPerc() == null) && (unitTare.signum() != 0)) {
+				packMaterialElt.addAttribute(PackModel.PROP_PACK_MATERIAL_LIST_PERC.getLocalName(),
+						toString(materialWeight.multiply(ONE_HUNDRED).divide(unitTare, MathContext.DECIMAL64)));
+			}
+		}
+	}
+
+	/**
+	 * <p>Splits the tare evenly when the packaging only references its materials through
+	 * <code>pack:pmMaterialRefs</code>, without any packMaterialList.</p>
+	 *
+	 * @param packMaterialListsElt a {@link org.dom4j.Element} object
+	 * @param packagingMaterial a {@link fr.becpg.repo.product.data.PackagingMaterialData} object
+	 * @param tare the weight in grams of the packaging line
+	 */
+	private void extractPackagingMaterialRefs(Element packMaterialListsElt, PackagingMaterialData packagingMaterial, BigDecimal tare) {
+
+		List<NodeRef> packagingMaterials = packagingMaterial.getPackagingMaterials();
+		BigDecimal materialCount = BigDecimal.valueOf(packagingMaterials.size());
+		BigDecimal tareByMaterial = tare.divide(materialCount, MathContext.DECIMAL64);
+		BigDecimal percByMaterial = ONE_HUNDRED.divide(materialCount, MathContext.DECIMAL64);
+
+		for (NodeRef packagingMaterialRef : packagingMaterials) {
+			Element packMaterialElt = packMaterialListsElt.addElement(PackModel.PACK_MATERIAL_LIST_TYPE.getLocalName());
+			packMaterialElt.addAttribute(PackModel.ASSOC_PACK_MATERIAL_LIST_MATERIAL.getLocalName(),
+					attributeExtractorService.extractPropName(nodeService.getType(packagingMaterialRef), packagingMaterialRef));
+			packMaterialElt.addAttribute(PackModel.PROP_PACK_MATERIAL_LIST_WEIGHT.getLocalName(), toString(tareByMaterial));
+			packMaterialElt.addAttribute(PackModel.PROP_PACK_MATERIAL_LIST_PERC.getLocalName(), toString(percByMaterial));
+		}
+	}
+
+	/**
+	 * <p>unitTareInG.</p>
+	 *
+	 * @param packagingMaterial a {@link fr.becpg.repo.product.data.PackagingMaterialData} object
+	 * @return the tare of a single packaging unit in grams, zero when it is unknown
+	 */
+	private BigDecimal unitTareInG(PackagingMaterialData packagingMaterial) {
+		BigDecimal unitTare = FormulationHelper.getTareInKg(packagingMaterial);
+		return unitTare != null ? unitTare.multiply(KG_TO_G) : BigDecimal.ZERO;
 	}
 
 	/**
