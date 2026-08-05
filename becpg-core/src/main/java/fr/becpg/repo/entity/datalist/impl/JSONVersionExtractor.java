@@ -436,7 +436,7 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		Object value = null;
 		String metadata = attribute.getDataType().getName().getLocalName();
 		
-		HashMap<String, Object> tmp = new HashMap<>(6);
+		HashMap<String, Object> tmp = HashMap.newHashMap(6);
 
 		if (!properties.has(attribute.getName().toPrefixString(namespaceService))) {
 			
@@ -690,7 +690,7 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		}
 		try {
 			
-			Map<String, Object> ret = new HashMap<>(20);
+			Map<String, Object> ret = HashMap.newHashMap(20);
 			
 			QName fieldType = null;
 			
@@ -733,8 +733,8 @@ public class JSONVersionExtractor extends SimpleExtractor {
 				}
 			}
 			
-			Map<String, Map<String, Boolean>> permissions = new HashMap<>(1);
-			Map<String, Boolean> userAccess = new HashMap<>(5);
+			Map<String, Map<String, Boolean>> permissions = HashMap.newHashMap(1);
+			Map<String, Boolean> userAccess = HashMap.newHashMap(5);
 
 			// Read-only access
 			userAccess.put("delete", false);

@@ -103,7 +103,7 @@ public class ExternalUserDashboardInterceptor extends AbstractWebFrameworkInterc
 						if (serviceRegistry.getModelObjectService().getPage("user/" + userid + "/dashboard") == null) {
 								// no dashboard found! create initial dashboard
 								// for this user...
-								Map<String, String> tokens = new HashMap<String, String>(2);
+								Map<String, String> tokens = HashMap.newHashMap(2);
 								tokens.put("userid", userid);
 								//beCPG
 								if (!isExternalUser(rc.getUser())) {

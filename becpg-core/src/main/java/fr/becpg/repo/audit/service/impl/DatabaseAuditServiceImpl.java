@@ -121,7 +121,7 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 			String sortBy = auditQuery.getSortBy();
 			AuditDataType dataType = plugin.getKeyMap().get(sortBy);
 			if (AuditDataType.DATE.equals(dataType)) {
-				Map<JSONObject, Date> parsedDates = new HashMap<>(statistics.size());
+				Map<JSONObject, Date> parsedDates = HashMap.newHashMap(statistics.size());
 				for (JSONObject item : statistics) {
 					if (item.has(sortBy)) {
 						Object raw = item.get(sortBy);

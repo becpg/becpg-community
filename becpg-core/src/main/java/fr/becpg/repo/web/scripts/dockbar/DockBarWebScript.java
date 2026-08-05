@@ -207,7 +207,7 @@ public class DockBarWebScript extends AbstractWebScript {
 							logger.debug("Setting :" + nodeRefs + " to history");
 						}
 
-						Map<String, java.io.Serializable> updates = new HashMap<>(1);
+						Map<String, java.io.Serializable> updates = HashMap.newHashMap(1);
 						updates.put(PREF_DOCKBAR_HISTORY, nodeRefs);
 						try {
 							preferenceService.setPreferences(username, updates);
