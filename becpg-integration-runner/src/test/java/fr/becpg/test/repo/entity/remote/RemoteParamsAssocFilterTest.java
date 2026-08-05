@@ -3,10 +3,14 @@
  */
 package fr.becpg.test.repo.entity.remote;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.junit.Assert;
@@ -17,22 +21,8 @@ import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteParams;
 
 /**
- * Non-regression tests for {@link RemoteParams#requiresAssociations}.
- *
- * <p>
- * The optimisation this guards is a <b>skip</b>: on a listing whose {@code fields}
- * name only plain properties, {@code JsonEntityVisitor} no longer walks the child
- * and target associations of every row. The risk of a skip is always the same —
- * dropping something a caller asked for — so each case below pins one shape of the
- * {@code fields} parameter and states what must still be served.
- * </p>
- *
- * <p>
- * The trap worth knowing: a bare {@code fields=bcpg:suppliers} lands in the
- * <i>properties</i> set, exactly like {@code cm:name}. Only the dictionary can tell
- * the two apart, which is why the decision takes a lookup rather than reading the
- * parsed structure.
- * </p>
+ * Non-regression tests for {@link RemoteParams#requiresAssociations}, each case
+ * pinning one shape of the {@code fields} parameter and what must still be served.
  *
  * @author matthieu
  */
@@ -91,7 +81,7 @@ public class RemoteParamsAssocFilterTest {
 	 * the walk and silently dropped `bcpg:suppliers` from every row.
 	 */
 	@Test
-	public void abareAssociationStillNeedsTheWalk() {
+	public void bareAssociationStillNeedsTheWalk() {
 		Assert.assertTrue(paramsFor("bcpg:suppliers").requiresAssociations(isAssociation));
 		Assert.assertTrue(paramsFor("cm:name,bcpg:suppliers").requiresAssociations(isAssociation));
 		Assert.assertTrue(paramsFor("cm:name,bcpg:code,bcpg:clients").requiresAssociations(isAssociation));
@@ -153,24 +143,24 @@ public class RemoteParamsAssocFilterTest {
 		public String getNamespaceURI(String prefix) {
 			String uri = uriFor(prefix);
 			if (uri == null) {
-				throw new org.alfresco.service.namespace.NamespaceException("Unknown prefix: " + prefix);
+				throw new NamespaceException("Unknown prefix: " + prefix);
 			}
 			return uri;
 		}
 
 		@Override
-		public java.util.Collection<String> getPrefixes(String namespaceURI) {
-			return java.util.Collections.emptyList();
+		public Collection<String> getPrefixes(String namespaceURI) {
+			return Collections.emptyList();
 		}
 
 		@Override
-		public java.util.Collection<String> getPrefixes() {
-			return java.util.List.of("cm", "bcpg", "pjt");
+		public Collection<String> getPrefixes() {
+			return List.of("cm", "bcpg", "pjt");
 		}
 
 		@Override
-		public java.util.Collection<String> getURIs() {
-			return java.util.List.of(uriFor("cm"), uriFor("bcpg"), uriFor("pjt"));
+		public Collection<String> getURIs() {
+			return List.of(uriFor("cm"), uriFor("bcpg"), uriFor("pjt"));
 		}
 
 		@Override
@@ -184,7 +174,7 @@ public class RemoteParamsAssocFilterTest {
 		}
 	}
 
-	private static QName q(String prefixed) {
+	private static QName qname(String prefixed) {
 		String[] parts = prefixed.split(":");
 		String uri = "cm".equals(parts[0]) ? "http://www.alfresco.org/model/content/1.0"
 				: "http://www.bcpg.fr/model/becpg/1.0";
@@ -195,24 +185,24 @@ public class RemoteParamsAssocFilterTest {
 	@Test
 	public void positiveFilterSkipsUnrequestedProperties() {
 		RemoteParams params = paramsFor("cm:name,bcpg:code");
-		Assert.assertFalse("cm:name was asked for", params.canSkipProperty(null, q("cm:name")));
-		Assert.assertFalse("bcpg:code was asked for", params.canSkipProperty(null, q("bcpg:code")));
-		Assert.assertTrue("cm:title was not", params.canSkipProperty(null, q("cm:title")));
-		Assert.assertTrue("bcpg:legalName was not", params.canSkipProperty(null, q("bcpg:legalName")));
+		Assert.assertFalse("cm:name was asked for", params.canSkipProperty(null, qname("cm:name")));
+		Assert.assertFalse("bcpg:code was asked for", params.canSkipProperty(null, qname("bcpg:code")));
+		Assert.assertTrue("cm:title was not", params.canSkipProperty(null, qname("cm:title")));
+		Assert.assertTrue("bcpg:legalName was not", params.canSkipProperty(null, qname("bcpg:legalName")));
 	}
 
 	/** No filter: nothing may be skipped. */
 	@Test
 	public void noFilterSkipsNothing() {
-		Assert.assertFalse(paramsFor(null).canSkipProperty(null, q("cm:title")));
-		Assert.assertFalse(paramsFor("").canSkipProperty(null, q("cm:title")));
+		Assert.assertFalse(paramsFor(null).canSkipProperty(null, qname("cm:title")));
+		Assert.assertFalse(paramsFor("").canSkipProperty(null, qname("cm:title")));
 	}
 
 	/** A rejection filter says what to drop, so the full path must keep deciding. */
 	@Test
 	public void rejectionFilterSkipsNothingEarly() {
-		Assert.assertFalse(paramsFor("!bcpg:entityScore").canSkipProperty(null, q("cm:title")));
-		Assert.assertFalse(paramsFor("cm:name,!bcpg:entityScore").canSkipProperty(null, q("cm:title")));
+		Assert.assertFalse(paramsFor("!bcpg:entityScore").canSkipProperty(null, qname("cm:title")));
+		Assert.assertFalse(paramsFor("cm:name,!bcpg:entityScore").canSkipProperty(null, qname("cm:title")));
 	}
 
 	/**
@@ -222,9 +212,9 @@ public class RemoteParamsAssocFilterTest {
 	@Test
 	public void assocPropertyBranchIsLeftAlone() {
 		RemoteParams params = paramsFor("cm:name,bcpg:documentTypeRef|bcpg:docTypeCategory");
-		Assert.assertFalse(params.canSkipProperty(q("bcpg:documentTypeRef"), q("bcpg:docTypeCategory")));
-		Assert.assertFalse(params.canSkipProperty(q("bcpg:documentTypeRef"), q("cm:title")));
+		Assert.assertFalse(params.canSkipProperty(qname("bcpg:documentTypeRef"), qname("bcpg:docTypeCategory")));
+		Assert.assertFalse(params.canSkipProperty(qname("bcpg:documentTypeRef"), qname("cm:title")));
 		// On the node itself the property filter applies again.
-		Assert.assertTrue(params.canSkipProperty(null, q("cm:title")));
+		Assert.assertTrue(params.canSkipProperty(null, qname("cm:title")));
 	}
 }

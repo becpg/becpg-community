@@ -117,6 +117,11 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	private final AssociationService associationService;
 	private final EntityListDAO entityListDAO;
 
+	/** Association definitions assembled during this request, keyed by node type and aspects. */
+	private final Map<String, Map<QName, AssociationDefinition>> assocDefsByShape = new HashMap<>();
+
+	private Boolean requiresAssocs = null;
+
 	/**
 	 * <p>Constructor for JsonEntityVisitor.</p>
 	 *
@@ -552,13 +557,6 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		}
 	}
 
-	/**
-	 * Memoised answer of {@link fr.becpg.repo.entity.remote.RemoteParams#requiresAssociations}
-	 * for the current request: the filter does not change while a listing is being
-	 * written, and the predicate behind it is a dictionary lookup.
-	 */
-	private Boolean requiresAssocs = null;
-
 	private boolean requiresAssociations() {
 		if (requiresAssocs == null) {
 			requiresAssocs = params == null
@@ -574,13 +572,6 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		}
 
 		JSONObject attributes = new JSONObject();
-		// Walking the associations means reading the node's type and aspects, then
-		// every child and target association declared by each of them — per node.
-		// On a listing filtered down to plain properties that whole traversal is
-		// computed and then discarded by the filter. `requiresAssociations` answers
-		// from the request alone, so the dictionary lookups happen once instead of
-		// once per row. See RemoteParams#requiresAssociations for the rule and the
-		// measurement that motivated it.
 		if (requiresAssociations()) {
 			visitAssocs(nodeRef, attributes, assocName, context);
 		}
@@ -808,37 +799,17 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	/**
-	 * Association definitions already assembled during this request, keyed by the
-	 * only thing they depend on: the node's type and its aspects.
-	 *
-	 * <p>
-	 * The visitor is instantiated per request ({@code RemoteEntityServiceImpl}), so
-	 * this map lives exactly as long as one listing and needs no invalidation — a
-	 * model reloaded between two requests is picked up by the next one.
-	 * </p>
-	 */
-	private final Map<String, Map<QName, AssociationDefinition>> assocDefsByShape = new HashMap<>();
-
-	/**
 	 * The associations a node can carry: those of its type plus those of each of its
-	 * aspects.
+	 * aspects. The result depends on that shape only, so it is assembled once per
+	 * distinct combination and shared unmodifiable between the rows of a request.
 	 *
-	 * <p>
-	 * The result depends on the <b>type and the aspects</b>, never on the node
-	 * itself, yet it used to be rebuilt for every row — a dictionary lookup per
-	 * aspect and a fresh map, two hundred times over on a listing of two hundred
-	 * raw materials that all share the same shape. Keyed on that shape it is
-	 * assembled once per distinct combination.
-	 * </p>
-	 *
-	 * <p>
-	 * Returned unmodifiable: the callers only read it, and a shared map that one of
-	 * them mutated would corrupt every later row of the same shape.
-	 * </p>
+	 * @param nodeRef the node being visited
+	 * @param typeDef its type definition
+	 * @return the association definitions, never null
 	 */
 	private Map<QName, AssociationDefinition> collectAssociations(NodeRef nodeRef, TypeDefinition typeDef) {
 		Set<QName> aspects = nodeService.getAspects(nodeRef);
-		String shape = associationShapeKey(typeDef.getName(), aspects);
+		String shape = buildAssociationShapeKey(typeDef.getName(), aspects);
 
 		Map<QName, AssociationDefinition> cached = assocDefsByShape.get(shape);
 		if (cached != null) {
@@ -867,7 +838,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	 * @param aspects its aspects
 	 * @return a stable key
 	 */
-	private static String associationShapeKey(QName type, Set<QName> aspects) {
+	private static String buildAssociationShapeKey(QName type, Set<QName> aspects) {
 		StringBuilder key = new StringBuilder(type.toString());
 		List<String> sorted = new ArrayList<>(aspects.size());
 		for (QName aspect : aspects) {
@@ -943,11 +914,6 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	private void processTargetAssociationEntry(NodeRef nodeRef, JSONObject entity, QName assocName, AssociationDefinition assocDef, RemoteJSONContext context) throws JSONException, RemoteException {
-		// Decide on the raw QName, before resolving the prefixed form: the loop runs
-		// over every association the type and its aspects declare — around forty on a
-		// product — and all but the requested ones are dropped one line later. Same
-		// equivalence as for properties: the filter holds URI-form QNames and the
-		// prefixed form compares equal to them.
 		if ((params != null) && params.canSkipProperty(assocName, assocDef.getName())) {
 			return;
 		}
@@ -1037,9 +1003,6 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 			return;
 		}
 
-		// Decide on the raw QName first: everything below — the namespace
-		// resolution and the dictionary lookup — is wasted on a property the filter
-		// is going to reject anyway, and it is paid once per property per row.
 		if ((params != null) && params.canSkipProperty(assocName, propQName)) {
 			return;
 		}
