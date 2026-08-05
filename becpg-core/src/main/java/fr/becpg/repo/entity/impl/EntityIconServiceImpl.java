@@ -49,6 +49,8 @@ public class EntityIconServiceImpl implements EntityIconService {
 	private static final String DOUBLE_DASH = "--";
 	/** Constant <code>COLON=":"</code> */
 	private static final String COLON = ":";
+	/** Constant <code>ENTITY_CSS_SELECTOR=".entity."</code> */
+	private static final String ENTITY_CSS_SELECTOR = ".entity.";
 
 	/** {@inheritDoc} */
 	@Override
@@ -80,7 +82,7 @@ public class EntityIconServiceImpl implements EntityIconService {
 					String cssVarName = "icon-"+type+"-"+resolution ;
 					
 					// Original CSS class rule for entity and span elements
-					builder.append(".entity."+cssClassName+",span."  + cssClassName + OPEN_CURLY_BRACKET + DOUBLE_DASH + cssVarName + COLON + URL_OPEN_TARGET_PATTERN 
+					builder.append(ENTITY_CSS_SELECTOR+cssClassName+",span."  + cssClassName + OPEN_CURLY_BRACKET + DOUBLE_DASH + cssVarName + COLON + URL_OPEN_TARGET_PATTERN 
 					+ DATA_IMAGE_PREFIX + reader.getMimetype() + DATA_BASE64_ENCODING + encodedImage + URL_CLOSE_TARGET_PATTERN + ";" + CLOSE_CURLY_BRACKET);
 					
 					if(parts.length == 3) {
@@ -101,7 +103,7 @@ public class EntityIconServiceImpl implements EntityIconService {
 								+ CLOSE_CURLY_BRACKET);
 						}
 					} else {
-						builder.append(".entity." + cssClassName + " img[src*=\"-" + type + "-" + resolution + ".png\"],"
+						builder.append(ENTITY_CSS_SELECTOR + cssClassName + " img[src*=\"-" + type + "-" + resolution + ".png\"],"
 								+ "span." + cssClassName + " img[src*=\"-" + type + "-" + resolution + ".png\"]" + OPEN_CURLY_BRACKET
 								+ "content: var(" + DOUBLE_DASH + cssVarName + ") !important;"
 								+ "background-image: var(" + DOUBLE_DASH + cssVarName + ") !important;"
@@ -112,7 +114,7 @@ public class EntityIconServiceImpl implements EntityIconService {
 								+ CLOSE_CURLY_BRACKET);
 						
 						if("16".equals(resolution)) {
-							builder.append(".entity." + cssClassName + " span." + type + "-file,"
+							builder.append(ENTITY_CSS_SELECTOR + cssClassName + " span." + type + "-file,"
 								+ "span." + cssClassName + " span." + type + "-file" + OPEN_CURLY_BRACKET
 								+ "background-image: var(" + DOUBLE_DASH + cssVarName + ") !important;"
 								+ CLOSE_CURLY_BRACKET);
