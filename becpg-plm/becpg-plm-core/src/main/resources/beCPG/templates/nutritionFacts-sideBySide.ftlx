@@ -1,0 +1,31 @@
+<#--
+  Vertical panel with the micronutrients listed side by side, 21 CFR 101.9(d)(12).
+
+  Same panel as the standard vertical one, except that the vitamins and minerals are paired two
+  per line, separated by a drawn dot. Used when the height of the label is constrained.
+-->
+<#import "nutritionFacts-lib.ftlx" as nf>
+
+<#assign y = nf.BORDER + 2>
+<#assign body>
+
+	<@nf.title text=nf_data.label("title") y=y/>
+	<#assign y = y + nf.TITLE_SIZE>
+
+	<@nf.rule y=y/>
+	<#assign y = y + nf.HAIRLINE + 1>
+
+	<#if nf_data.serving().hasServingsPerContainer()>
+	<text x="${nf.PAD}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}">${nf_data.serving().servingsPerContainer()} ${nf_data.label("servingsPerContainer")}</text>
+	<#assign y = y + nf.SERVING_ROW_H>
+	</#if>
+
+	<text x="${nf.PAD}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}" font-weight="bold">${nf_data.label("servingSize")}</text>
+	<#if nf_data.serving().servingSize()??>
+	<text x="${nf.RIGHT}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}" font-weight="bold" text-anchor="end">${nf_data.serving().servingSize()}</text>
+	</#if>
+	<#assign y = y + nf.SERVING_ROW_H>
+
+	<@nf.panelBody data=nf_data y=y pairedMicronutrients=true/>
+</#assign>
+<@nf.panel height=nf.cursorY>${body}</@nf.panel>

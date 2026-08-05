@@ -1,0 +1,47 @@
+<#--
+  Linear panel, 21 CFR 101.9(j)(13)(ii)(A)(2).
+
+  The whole declaration is a single run-on sentence rather than a table, which small packages
+  are allowed to use. Nutrients are named by their regulated abbreviation and their percentage
+  follows in parentheses.
+-->
+<#import "nutritionFacts-lib.ftlx" as nf>
+<#-- Arial at 8pt averages about 4.1pt per character, so 136pt of content width takes 33 of them. -->
+<#assign SENTENCE_CHARS_PER_LINE = 33>
+
+<#assign y = nf.BORDER + 2>
+<#assign body>
+
+	<text x="${nf.PAD}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-family="${nf.FONT_HEAVY}" font-weight="900" font-size="${nf.SERVING_SIZE}">${nf_data.label("title")}</text>
+	<#assign y = y + nf.SERVING_ROW_H>
+
+	<#if nf_data.serving().servingSize()??>
+	<text x="${nf.PAD}" y="${nf.baseline(y, nf.NUTRIENT_SIZE)}" font-size="${nf.NUTRIENT_SIZE}" font-weight="bold">${nf_data.label("servingSize")} ${nf_data.serving().servingSize()}</text>
+	<#assign y = y + nf.NUTRIENT_ROW_H>
+	</#if>
+
+	<@nf.rule y=y/>
+	<#assign y = y + nf.HAIRLINE + 2>
+
+	<#if nf_data.calories()??>
+	<text x="${nf.PAD}" y="${nf.baseline(y, nf.NUTRIENT_SIZE)}" font-size="${nf.NUTRIENT_SIZE}" font-weight="bold">${nf_data.label("amountPerServing")} ${nf_data.calories().label()}<#if nf_data.calories().value()??> ${nf_data.calories().value()}</#if></text>
+	<#assign y = y + nf.NUTRIENT_ROW_H>
+	</#if>
+
+	<#list nf.wrap(nf.linearSentence(nf_data), SENTENCE_CHARS_PER_LINE) as sentenceLine>
+	<text x="${nf.PAD}" y="${nf.baseline(y, nf.NUTRIENT_SIZE)}" font-size="${nf.NUTRIENT_SIZE}">${sentenceLine}</text>
+	<#assign y = y + nf.NUTRIENT_ROW_H>
+	</#list>
+
+	<#if nf_data.footNote()?has_content>
+	<@nf.rule y=y/>
+	<#assign y = y + nf.HAIRLINE + 2>
+	<#list nf.wrap(nf_data.footNote(), 44) as footNoteLine>
+	<text x="${nf.PAD}" y="${nf.baseline(y, nf.FOOTNOTE_SIZE)}" font-size="${nf.FOOTNOTE_SIZE}">${footNoteLine}</text>
+	<#assign y = y + nf.FOOTNOTE_LINE_H>
+	</#list>
+	</#if>
+
+	<#assign y = y + nf.BORDER + 1>
+</#assign>
+<@nf.panel height=y>${body}</@nf.panel>

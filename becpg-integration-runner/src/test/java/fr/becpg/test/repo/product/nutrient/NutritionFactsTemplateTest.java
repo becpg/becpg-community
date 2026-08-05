@@ -134,6 +134,47 @@ public class NutritionFactsTemplateTest {
 	}
 
 	@Test
+	public void testEveryShippedFormatRendersAWellFormedPanel() throws Exception {
+		for (String format : List.of("vertical", "sideBySide", "tabular", "linear", "simplified", "dualColumn")) {
+			String svg = renderToString("nutritionFacts-" + format + ".ftlx", standardPanel());
+
+			Assert.assertEquals(format + " must be a svg", "svg", parse(svg).getDocumentElement().getTagName());
+			Assert.assertFalse(format + " must not carry a DOCTYPE", svg.contains("<!DOCTYPE"));
+			Assert.assertFalse(format + " must not use foreignObject", svg.contains("foreignObject"));
+		}
+	}
+
+	@Test
+	public void testLinearFormatUsesTheRegulatedAbbreviations() throws Exception {
+		NutritionFactsData data = panelData(
+				new NutritionFactsLine("FASAT", "Saturated Fat", "Sat. Fat", "1g", null, "5%", null, 2, false, true));
+
+		Assert.assertTrue("The linear format names nutrients by their abbreviation",
+				renderToString("nutritionFacts-linear.ftlx", data).contains("Sat. Fat"));
+	}
+
+	@Test
+	public void testTabularFormatIsDrawnWider() throws Exception {
+		Element svg = parse(renderToString("nutritionFacts-tabular.ftlx", standardPanel())).getDocumentElement();
+
+		Assert.assertEquals("A tabular panel runs across the width", "288pt", svg.getAttribute("width"));
+	}
+
+	@Test
+	public void testDualColumnFormatCarriesBothColumnsOfFigures() throws Exception {
+		String svg = renderToString("nutritionFacts-dualColumn.ftlx", standardPanel());
+
+		Assert.assertEquals("Four columns of figures need a wider panel", "216pt", parse(svg).getDocumentElement().getAttribute("width"));
+		Assert.assertTrue("The per container header must be drawn", svg.contains("Per container"));
+	}
+
+	@Test
+	public void testSimplifiedFormatClosesOnItsStatement() throws Exception {
+		Assert.assertTrue("A simplified panel states what it does not list",
+				renderToString("nutritionFacts-simplified.ftlx", standardPanel()).contains("Not a significant source"));
+	}
+
+	@Test
 	public void testCanadianPanelOpensOnASingleServingLine() throws Exception {
 		Document panel = parse(renderToString(CANADA_TEMPLATE, canadianPanel()));
 
@@ -161,7 +202,7 @@ public class NutritionFactsTemplateTest {
 				List.of(line("FAT", "Lipides", "8 g", "10%", 1, true), line("FASAT", "saturés", "1 g", "5%", 2, false),
 						line("NA", "Sodium", "160 mg", "7%", 1, true)),
 				List.of(line("K", "Potassium", "235 mg", "5%", 1, false), line("CA", "Calcium", "260 mg", "20%", 1, false)),
-				"* 5 % ou moins c'est peu, 15 % ou plus c'est beaucoup", labels);
+				"* 5 % ou moins c'est peu, 15 % ou plus c'est beaucoup", "", labels);
 	}
 
 	private double textStart(Document panel, String label) {
@@ -235,7 +276,7 @@ public class NutritionFactsTemplateTest {
 						line("FE", "Iron", "8mg", "45%", 1, false), line("K", "Potassium", "235mg", "6%", 1, false)),
 				"* The % Daily Value (DV) tells you how much a nutrient in a serving of food contributes to a daily diet. "
 						+ "2,000 calories a day is used for general nutrition advice.",
-				panelLabels());
+				"Not a significant source of other nutrients.", panelLabels());
 	}
 
 	private Map<String, String> panelLabels() {
@@ -245,11 +286,13 @@ public class NutritionFactsTemplateTest {
 		labels.put("servingSize", "Serving size");
 		labels.put("amountPerServing", "Amount per serving");
 		labels.put("dailyValue", "% Daily Value*");
+		labels.put("perServing", "Per serving");
+		labels.put("perContainer", "Per container");
 		return labels;
 	}
 
 	private NutritionFactsLine line(String nutCode, String label, String value, String dailyValue, int indentLevel, boolean bold) {
-		return new NutritionFactsLine(nutCode, label, value, null, dailyValue, null, indentLevel, bold, dailyValue != null);
+		return new NutritionFactsLine(nutCode, label, label, value, value, dailyValue, dailyValue, indentLevel, bold, dailyValue != null);
 	}
 
 }

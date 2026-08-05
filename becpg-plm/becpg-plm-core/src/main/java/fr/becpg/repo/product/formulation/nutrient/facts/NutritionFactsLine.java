@@ -20,15 +20,16 @@ package fr.becpg.repo.product.formulation.nutrient.facts;
 /**
  * <p>One line of a nutrition facts panel, fully formatted: a template only has to place it.</p>
  *
- * <p>{@code value} already carries its unit ("8g", "160mg") and {@code dailyValuePercent} already
+ * <p>{@code abbreviatedLabel} is the shortened wording the linear format uses ("Sat. Fat"), the
+ * full one everywhere else. {@code value} already carries its unit ("8g", "160mg") and {@code dailyValuePercent} already
  * carries its percent sign, both rounded according to the regulation. {@code indentLevel} starts at
  * 1 for a top level nutrient, which is what drives the horizontal offset of the line.</p>
  *
  * @author matthieu
  * @version $Id: $Id
  */
-public record NutritionFactsLine(String nutCode, String label, String value, String valuePerContainer, String dailyValuePercent,
-		String dailyValuePercentPerContainer, int indentLevel, boolean bold, boolean showDailyValue) {
+public record NutritionFactsLine(String nutCode, String label, String abbreviatedLabel, String value, String valuePerContainer,
+		String dailyValuePercent, String dailyValuePercentPerContainer, int indentLevel, boolean bold, boolean showDailyValue) {
 
 	/**
 	 * <p>Tells whether the line carries a percentage of the daily value to print.</p>

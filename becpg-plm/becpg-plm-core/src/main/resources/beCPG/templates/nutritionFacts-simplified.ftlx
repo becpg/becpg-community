@@ -1,0 +1,45 @@
+<#--
+  Simplified panel, 21 CFR 101.9(f).
+
+  Allowed when most of the mandatory nutrients are present in insignificant amounts: the panel
+  then lists only what is worth declaring and closes on a statement covering the rest. The body
+  is the standard one, the selection of nutrients having already been made upstream.
+-->
+<#import "nutritionFacts-lib.ftlx" as nf>
+
+<#assign y = nf.BORDER + 2>
+<#assign body>
+
+	<@nf.title text=nf_data.label("title") y=y/>
+	<#assign y = y + nf.TITLE_SIZE>
+
+	<@nf.rule y=y/>
+	<#assign y = y + nf.HAIRLINE + 1>
+
+	<#if nf_data.serving().hasServingsPerContainer()>
+	<text x="${nf.PAD}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}">${nf_data.serving().servingsPerContainer()} ${nf_data.label("servingsPerContainer")}</text>
+	<#assign y = y + nf.SERVING_ROW_H>
+	</#if>
+
+	<text x="${nf.PAD}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}" font-weight="bold">${nf_data.label("servingSize")}</text>
+	<#if nf_data.serving().servingSize()??>
+	<text x="${nf.RIGHT}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}" font-weight="bold" text-anchor="end">${nf_data.serving().servingSize()}</text>
+	</#if>
+	<#assign y = y + nf.SERVING_ROW_H>
+
+	<@nf.panelBody data=nf_data y=y/>
+	<#assign y = nf.cursorY - nf.BORDER - 1>
+
+	<#if nf_data.notSignificantSource()?has_content>
+	<@nf.rule y=y/>
+	<#assign y = y + nf.HAIRLINE + 1>
+	<#list nf.wrap(nf_data.notSignificantSource(), 44) as statementLine>
+	<text x="${nf.PAD}" y="${nf.baseline(y, nf.FOOTNOTE_SIZE)}" font-size="${nf.FOOTNOTE_SIZE}">${statementLine}</text>
+	<#assign y = y + nf.FOOTNOTE_LINE_H>
+	</#list>
+	<#assign y = y + nf.BORDER + 1>
+	<#else>
+	<#assign y = nf.cursorY>
+	</#if>
+</#assign>
+<@nf.panel height=y>${body}</@nf.panel>

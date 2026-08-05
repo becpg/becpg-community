@@ -33,7 +33,8 @@ import java.util.Map;
  * @version $Id: $Id
  */
 public record NutritionFactsData(String format, String regulationKey, NutritionFactsServing serving, NutritionFactsLine calories,
-		List<NutritionFactsLine> nutrients, List<NutritionFactsLine> micronutrients, String footNote, Map<String, String> labels) {
+		List<NutritionFactsLine> nutrients, List<NutritionFactsLine> micronutrients, String footNote, String notSignificantSource,
+		Map<String, String> labels) {
 
 	/**
 	 * <p>Tells whether the panel carries any nutrient at all, an empty panel being usually the sign

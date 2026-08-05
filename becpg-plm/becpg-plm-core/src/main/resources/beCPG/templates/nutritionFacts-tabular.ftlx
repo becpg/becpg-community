@@ -1,0 +1,27 @@
+<#--
+  Tabular panel, 21 CFR 101.9(d)(11)(iii).
+
+  The declaration runs across the width rather than down the height, which is what lets a wide,
+  shallow package carry a full panel. The nutrients are split into two columns separated by a
+  hairline, and the vitamins run on a single line at the bottom.
+-->
+<#import "nutritionFacts-lib.ftlx" as nf>
+<#assign TABULAR_W = 288>
+
+<#assign y = nf.BORDER + 2>
+<#assign body>
+
+	<text x="${nf.PAD}" y="${nf.baseline(y, nf.SERVING_SIZE + 4)}" font-family="${nf.FONT_HEAVY}" font-weight="900" font-size="${nf.SERVING_SIZE + 4}">${nf_data.label("title")}</text>
+	<#if nf_data.serving().servingSize()??>
+	<text x="${TABULAR_W - nf.PAD}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}" font-weight="bold" text-anchor="end">${nf_data.label("servingSize")} ${nf_data.serving().servingSize()}</text>
+	</#if>
+	<#assign y = y + nf.SERVING_ROW_H + 4>
+
+	<#if nf_data.serving().hasServingsPerContainer()>
+	<text x="${nf.PAD}" y="${nf.baseline(y, nf.CAPTION_SIZE)}" font-size="${nf.CAPTION_SIZE}">${nf_data.serving().servingsPerContainer()} ${nf_data.label("servingsPerContainer")}</text>
+	<#assign y = y + nf.CAPTION_ROW_H>
+	</#if>
+
+	<@nf.tabularBody data=nf_data y=y width=TABULAR_W/>
+</#assign>
+<@nf.panelOfWidth height=nf.cursorY width=TABULAR_W>${body}</@nf.panelOfWidth>
