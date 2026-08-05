@@ -375,7 +375,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	private NodeRef internalCreateInitialVersion(NodeRef entityNodeRef, Date newEffectivity) {
 		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 			// Create the initial-version
-			Map<String, Serializable> versionProperties = new HashMap<>(1);
+			Map<String, Serializable> versionProperties = HashMap.newHashMap(1);
 			versionProperties.put(VersionBaseModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 
 			if (logger.isDebugEnabled()) {
@@ -1912,7 +1912,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				nodeService.addAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_HISTORY, null);
 			}
 			if (!nodeService.hasAspect(nodeRef, ContentModel.ASPECT_INDEX_CONTROL)) {
-				Map<QName, Serializable> aspectProperties = new HashMap<>(2);
+				Map<QName, Serializable> aspectProperties = HashMap.newHashMap(2);
 				aspectProperties.put(ContentModel.PROP_IS_INDEXED, Boolean.FALSE);
 				aspectProperties.put(ContentModel.PROP_IS_CONTENT_INDEXED, Boolean.FALSE);
 				nodeService.addAspect(nodeRef, ContentModel.ASPECT_INDEX_CONTROL, aspectProperties);
@@ -2039,7 +2039,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			}
 
 			String name = nodeService.getProperty(extractedVersion, ContentModel.PROP_NAME) + RepoConsts.VERSION_NAME_DELIMITER + versionLabel;
-			Map<QName, Serializable> versionAspectProperties = new HashMap<>(2);
+			Map<QName, Serializable> versionAspectProperties = HashMap.newHashMap(2);
 			versionAspectProperties.put(ContentModel.PROP_NAME, name);
 			versionAspectProperties.put(BeCPGModel.PROP_VERSION_LABEL, versionLabel);
 			nodeService.addAspect(extractedVersion, BeCPGModel.ASPECT_COMPOSITE_VERSION, versionAspectProperties);
