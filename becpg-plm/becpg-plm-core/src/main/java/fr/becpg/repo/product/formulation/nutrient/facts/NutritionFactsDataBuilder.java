@@ -100,6 +100,7 @@ public class NutritionFactsDataBuilder {
 		return new NutritionFactsData(format, options.regulationKey(), buildServing(product, locale),
 				buildCalories(regulated, locale, options), buildLines(regulated, locale, options, false),
 				buildLines(regulated, locale, options, true), NutritionFactsLabelResolver.footNote(options.regulationKey(), locale),
+				NutritionFactsLabelResolver.notSignificantSource(options.regulationKey(), locale),
 				NutritionFactsLabelResolver.panelLabels(options.regulationKey(), locale));
 	}
 
@@ -234,7 +235,8 @@ public class NutritionFactsDataBuilder {
 			NutritionFactsOptions options) {
 
 		String unit = regulated.displayRule().unit();
-		String value = withUnit(regulated.displayValuePerServing(), unit);
+		String unitValue = withUnit(regulated.displayValuePerServing(), unit);
+		String value = unitValue;
 
 		String label = NutritionFactsLabelResolver.nutrientLabel(options.regulationKey(), regulated.nutCode(),
 				regulatedNutrients.charactNames().get(regulated.nutCode()), locale);
@@ -246,7 +248,12 @@ public class NutritionFactsDataBuilder {
 
 		SharedDailyValues shared = regulatedNutrients.sharedDailyValues();
 
-		return new NutritionFactsLine(regulated.nutCode(), label, value, withUnit(regulated.displayValuePerContainer(), unit),
+		String abbreviation = NutritionFactsLabelResolver.nutrientAbbreviation(options.regulationKey(), regulated.nutCode(), label, locale);
+		if (NutritionFactsLabelResolver.embedsValue(abbreviation)) {
+			abbreviation = NutritionFactsLabelResolver.formatWithValue(abbreviation, unitValue, locale);
+		}
+
+		return new NutritionFactsLine(regulated.nutCode(), label, abbreviation, value, withUnit(regulated.displayValuePerContainer(), unit),
 				toPercent(shared.percentOf(regulated)), toPercent(regulated.gdaPercPerContainer()), regulated.displayRule().indentLevel(),
 				regulated.displayRule().bold(), regulated.showsDailyValue() && !shared.isFoldedIn(regulated.nutCode()));
 	}

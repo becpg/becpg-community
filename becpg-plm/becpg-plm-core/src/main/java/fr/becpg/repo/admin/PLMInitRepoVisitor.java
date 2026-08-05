@@ -319,6 +319,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	/** Constant <code>PRODUCT_REPORT_SETTINGS_RESOURCE="beCPG/birt/document/product/default/set"{trunked}</code> */
 	private static final String PRODUCT_REPORT_SETTINGS_RESOURCE = "beCPG/birt/document/product/default/settings.properties";
 	/** Constant <code>PRODUCT_REPORT_LOGO_RESOURCE="beCPG/birt/document/product/default/log"{trunked}</code> */
+	/** Constant <code>NUTRITION_FACTS_TEMPLATES_RESOURCES="classpath*:beCPG/templates/nutritionFacts-*.ftlx"</code> */
+	private static final String NUTRITION_FACTS_TEMPLATES_RESOURCES = "classpath*:beCPG/templates/nutritionFacts-*.ftlx";
+
 	private static final String PRODUCT_REPORT_LOGO_RESOURCE = "beCPG/birt/document/product/default/logo.png";
 	/** Constant <code>PRODUCT_REPORT_CSS_RESOURCE="beCPG/birt/document/product/default/bec"{trunked}</code> */
 	private static final String PRODUCT_REPORT_CSS_RESOURCE = "beCPG/birt/document/product/default/becpg-report.css";
@@ -511,6 +514,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		// Reports
 		visitReports(systemNodeRef);
+
+		// Rendering templates
+		visitTemplates(systemNodeRef);
 
 		// AutoNum
 		visitFolder(systemNodeRef, RepoConsts.PATH_AUTO_NUM);
@@ -1821,6 +1827,16 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	 *
 	 * @param systemNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
+	/**
+	 * Uploads the rendering templates shipped on the classpath into the repository, so that a
+	 * customer can adapt one without redeploying the module. The renderer looks the repository up
+	 * first and falls back to the classpath, so an untouched instance behaves the same either way.
+	 */
+	private void visitTemplates(NodeRef systemNodeRef) {
+		NodeRef templatesNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_TEMPLATES);
+		contentHelper.addFilesResources(templatesNodeRef, NUTRITION_FACTS_TEMPLATES_RESOURCES);
+	}
+
 	private void visitReports(NodeRef systemNodeRef) {
 		try {
 			// reports folder

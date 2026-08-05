@@ -76,9 +76,13 @@ public class NutritionFactsLabelResolver {
 
 	private static final String NUTRIENT_KEY_PREFIX = "nutritionFacts.nutrient.";
 
+	private static final String ABBREVIATION_KEY_PREFIX = "nutritionFacts.abbrev.";
+
 	private static final String PANEL_KEY_PREFIX = "nutritionFacts.panel.";
 
 	private static final String FOOTNOTE_KEY_PREFIX = "nutritionFacts.footNote.";
+
+	private static final String NOT_SIGNIFICANT_SOURCE_KEY_PREFIX = "nutritionFacts.notSignificantSource.";
 
 	private static final String KEY_SEPARATOR = ".";
 
@@ -101,6 +105,21 @@ public class NutritionFactsLabelResolver {
 	public static String nutrientLabel(String regulationKey, String nutCode, String charactName, Locale locale) {
 		String label = message(NUTRIENT_KEY_PREFIX + regulationKey + KEY_SEPARATOR + nutCode, locale);
 		return label != null ? label : charactName;
+	}
+
+	/**
+	 * <p>Shortened wording a nutrient takes in the linear format, where the whole panel is a single
+	 * sentence: the FDA writes "Sat. Fat" and "Potas." there. Falls back to the full wording.</p>
+	 *
+	 * @param regulationKey a {@link java.lang.String} object
+	 * @param nutCode a {@link java.lang.String} object
+	 * @param fullLabel a {@link java.lang.String} object, used when no abbreviation is declared
+	 * @param locale a {@link java.util.Locale} object
+	 * @return a {@link java.lang.String} object
+	 */
+	public static String nutrientAbbreviation(String regulationKey, String nutCode, String fullLabel, Locale locale) {
+		String abbreviation = message(ABBREVIATION_KEY_PREFIX + regulationKey + KEY_SEPARATOR + nutCode, locale);
+		return abbreviation != null ? abbreviation : fullLabel;
 	}
 
 	/**
@@ -153,6 +172,18 @@ public class NutritionFactsLabelResolver {
 	public static String footNote(String regulationKey, Locale locale) {
 		String footNote = message(FOOTNOTE_KEY_PREFIX + regulationKey, locale);
 		return footNote != null ? footNote : "";
+	}
+
+	/**
+	 * <p>Statement closing a simplified panel, covering the nutrients it does not list.</p>
+	 *
+	 * @param regulationKey a {@link java.lang.String} object
+	 * @param locale a {@link java.util.Locale} object
+	 * @return a {@link java.lang.String} object
+	 */
+	public static String notSignificantSource(String regulationKey, Locale locale) {
+		String statement = message(NOT_SIGNIFICANT_SOURCE_KEY_PREFIX + regulationKey, locale);
+		return statement != null ? statement : "";
 	}
 
 	/**
