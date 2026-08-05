@@ -796,9 +796,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_PAL_DATABASES)) {
-			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/pal/NL_ED05.csv");
-			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/pal/VITAL_3.csv");
-			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/pal/VITAL_4.csv");
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/pal/*.csv");
 		}
 		
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_CATALOGS)) {
