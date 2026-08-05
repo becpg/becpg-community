@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation.nutrient.facts;
 
+import java.util.List;
+
 /**
  * <p>What to put on a nutrition facts panel, beyond the product data itself.</p>
  *
@@ -27,7 +29,21 @@ package fr.becpg.repo.product.formulation.nutrient.facts;
  * @author matthieu
  * @version $Id: $Id
  */
-public record NutritionFactsOptions(String regulationKey, boolean showOptional, int micronutrientStartSort) {
+public record NutritionFactsOptions(String regulationKey, boolean showOptional, int micronutrientStartSort,
+		List<SharedDailyValue> sharedDailyValues) {
+
+	/**
+	 * <p>A nutrient whose percent daily value also accounts for another one, the way the Canadian
+	 * saturated fat line carries the value of saturated and trans fat together.</p>
+	 *
+	 * <p>The two percentages may only be added when both nutrients are measured against the same
+	 * reference intake, which the builder checks before combining anything.</p>
+	 *
+	 * @param hostNutCode the nutrient carrying the combined percentage
+	 * @param guestNutCode the nutrient folded into it, which shows no percentage of its own
+	 */
+	public record SharedDailyValue(String hostNutCode, String guestNutCode) {
+	}
 
 	/** Sort order of the energy line, which every panel prints as its large calories figure. */
 	public static final int CALORIES_SORT = 1;
@@ -46,6 +62,10 @@ public record NutritionFactsOptions(String regulationKey, boolean showOptional, 
 
 	private static final int DEFAULT_MICRONUTRIENT_START_SORT = Integer.MAX_VALUE;
 
+	private static final String SATURATED_FAT_NUT_CODE = "FASAT";
+
+	private static final String TRANS_FAT_NUT_CODE = "FATRN";
+
 	/**
 	 * <p>Default options of a regulation. A regulation without a known vitamin block keeps all its
 	 * nutrients in a single block rather than guessing where to split them.</p>
@@ -55,12 +75,13 @@ public record NutritionFactsOptions(String regulationKey, boolean showOptional, 
 	 */
 	public static NutritionFactsOptions forRegulation(String regulationKey) {
 		if (US_REGULATION_KEY.equals(regulationKey)) {
-			return new NutritionFactsOptions(regulationKey, false, US_MICRONUTRIENT_START_SORT);
+			return new NutritionFactsOptions(regulationKey, false, US_MICRONUTRIENT_START_SORT, List.of());
 		}
 		if (CA_REGULATION_KEY.equals(regulationKey)) {
-			return new NutritionFactsOptions(regulationKey, false, CA_MICRONUTRIENT_START_SORT);
+			return new NutritionFactsOptions(regulationKey, false, CA_MICRONUTRIENT_START_SORT,
+					List.of(new SharedDailyValue(SATURATED_FAT_NUT_CODE, TRANS_FAT_NUT_CODE)));
 		}
-		return new NutritionFactsOptions(regulationKey, false, DEFAULT_MICRONUTRIENT_START_SORT);
+		return new NutritionFactsOptions(regulationKey, false, DEFAULT_MICRONUTRIENT_START_SORT, List.of());
 	}
 
 	/**
@@ -69,7 +90,7 @@ public record NutritionFactsOptions(String regulationKey, boolean showOptional, 
 	 * @return a {@link fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsOptions} object
 	 */
 	public NutritionFactsOptions withOptionalNutrients() {
-		return new NutritionFactsOptions(regulationKey, true, micronutrientStartSort);
+		return new NutritionFactsOptions(regulationKey, true, micronutrientStartSort, sharedDailyValues);
 	}
 
 }

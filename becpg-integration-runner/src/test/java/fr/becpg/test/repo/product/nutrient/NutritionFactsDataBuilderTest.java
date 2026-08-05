@@ -39,6 +39,10 @@ public class NutritionFactsDataBuilderTest {
 
 	private static final String VERTICAL_FORMAT = "vertical";
 
+	private static final String US_REGULATION_KEY = NutritionFactsOptions.US_REGULATION_KEY;
+
+	private static final String CA_REGULATION_KEY = NutritionFactsOptions.CA_REGULATION_KEY;
+
 	private static final NodeRef PRODUCT_NODE_REF = new NodeRef("workspace://SpacesStore/product");
 
 	private NutritionFactsDataBuilder builder;
@@ -69,7 +73,7 @@ public class NutritionFactsDataBuilderTest {
 		NutritionFactsData data = build(standardProduct());
 
 		Assert.assertEquals("Calories", data.calories().label());
-		Assert.assertEquals(List.of("Total Fat", "Saturated Fat", "Cholesterol", "Added Sugars"),
+		Assert.assertEquals(List.of("Total Fat", "Saturated Fat", "Cholesterol", "Includes 10g Added Sugars"),
 				data.nutrients().stream().map(NutritionFactsLine::label).toList());
 		Assert.assertEquals(List.of("Vitamin D"), data.micronutrients().stream().map(NutritionFactsLine::label).toList());
 	}
@@ -87,7 +91,7 @@ public class NutritionFactsDataBuilderTest {
 		Assert.assertEquals(2, saturatedFat.indentLevel());
 		Assert.assertFalse("An indented nutrient is never bold", saturatedFat.bold());
 
-		Assert.assertEquals("Added sugars sits two levels in, under total sugars", 3, lineOf(data, "Added Sugars").indentLevel());
+		Assert.assertEquals("Added sugars sits two levels in, under total sugars", 3, lineOf(data, "Includes 10g Added Sugars").indentLevel());
 	}
 
 	@Test
@@ -171,6 +175,42 @@ public class NutritionFactsDataBuilderTest {
 		Assert.assertTrue(build(product).isEmpty());
 	}
 
+	@Test
+	public void testAddedSugarsCarriesItsValueInsideTheRegulatedSentence() {
+
+		NutritionFactsLine addedSugars = lineOf(build(standardProduct()), "Includes 10g Added Sugars");
+
+		Assert.assertNull("The value is part of the sentence, it must not be printed twice", addedSugars.value());
+		Assert.assertEquals("20%", addedSugars.dailyValuePercent());
+	}
+
+	@Test
+	public void testCanadianSaturatedFatCarriesTheTransFatDailyValue() {
+
+		ProductData product = new ProductData();
+		product.setNodeRef(PRODUCT_NODE_REF);
+		product.setNutList(List.of(nutListItem("FASAT", "Saturated", 1d, 5d, CA_REGULATION_KEY),
+				nutListItem("FATRN", "Trans", 2d, 10d, CA_REGULATION_KEY)));
+
+		NutritionFactsData data = builder.build(product, Locale.CANADA, "canada",
+				NutritionFactsOptions.forRegulation(NutritionFactsOptions.CA_REGULATION_KEY));
+
+		Assert.assertEquals("Saturated and trans fat share a single percentage under B.01.401", "15%",
+				lineOf(data, "Saturated").dailyValuePercent());
+		Assert.assertFalse("The trans fat line carries no percentage of its own", lineOf(data, "+ Trans").showDailyValue());
+	}
+
+	@Test
+	public void testTheUnitedStatesKeepSaturatedAndTransFatApart() {
+
+		ProductData product = new ProductData();
+		product.setNodeRef(PRODUCT_NODE_REF);
+		product.setNutList(List.of(nutListItem("FASAT", "Saturated", 1d, 5d), nutListItem("FATRN", "Trans", 2d, 10d)));
+
+		Assert.assertEquals("The FDA gives saturated fat its own percentage", "5%",
+				lineOf(build(product), "Saturated Fat").dailyValuePercent());
+	}
+
 	private NutritionFactsData build(ProductData product) {
 		return builder.build(product, Locale.US, VERTICAL_FORMAT);
 	}
@@ -192,6 +232,10 @@ public class NutritionFactsDataBuilderTest {
 	}
 
 	private NutListDataItem nutListItem(String nutCode, String charactName, Double value, Double gdaPerc) {
+		return nutListItem(nutCode, charactName, value, gdaPerc, US_REGULATION_KEY);
+	}
+
+	private NutListDataItem nutListItem(String nutCode, String charactName, Double value, Double gdaPerc, String regulationKey) {
 
 		NodeRef nutNodeRef = new NodeRef("workspace://SpacesStore/" + nutCode.replace("_", "").replace("-", ""));
 
@@ -205,12 +249,13 @@ public class NutritionFactsDataBuilderTest {
 		nutListItem.setNut(nutNodeRef);
 		nutListItem.setValue(value);
 		nutListItem.setValuePerServing(value);
-		nutListItem.setRoundedValue(roundedValue(value, gdaPerc));
+		nutListItem.setRoundedValue(roundedValue(value, gdaPerc, regulationKey));
 		return nutListItem;
 	}
 
-	private String roundedValue(Double value, Double gdaPerc) {
-		return "{\"v\":{\"US\":" + value + "},\"vps\":{\"US\":" + value + "},\"gda\":{\"US\":" + gdaPerc + "}}";
+	private String roundedValue(Double value, Double gdaPerc, String regulationKey) {
+		return "{\"v\":{\"" + regulationKey + "\":" + value + "},\"vps\":{\"" + regulationKey + "\":" + value + "},\"gda\":{\""
+				+ regulationKey + "\":" + gdaPerc + "}}";
 	}
 
 	private void mockMlProperty(org.alfresco.service.namespace.QName property, String value) {
@@ -220,7 +265,9 @@ public class NutritionFactsDataBuilderTest {
 	}
 
 	private NutritionFactsLine lineOf(NutritionFactsData data, String label) {
-		for (NutritionFactsLine line : data.nutrients()) {
+		List<NutritionFactsLine> lines = new ArrayList<>(data.nutrients());
+		lines.addAll(data.micronutrients());
+		for (NutritionFactsLine line : lines) {
 			if (label.equals(line.label())) {
 				return line;
 			}

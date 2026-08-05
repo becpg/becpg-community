@@ -20,9 +20,11 @@ package fr.becpg.repo.product.formulation.nutrient.facts;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -35,6 +37,7 @@ import fr.becpg.repo.product.data.productList.NutDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.formulation.nutrient.RegulatedNutrient;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
+import fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsOptions.SharedDailyValue;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
@@ -112,7 +115,54 @@ public class NutritionFactsDataBuilder {
 		}
 
 		nutrients.sort(Comparator.comparing(nutrient -> nutrient.displayRule().sort(), Comparator.nullsLast(Comparator.naturalOrder())));
-		return new RegulatedNutrients(nutrients, charactNames);
+		return new RegulatedNutrients(nutrients, charactNames, shareDailyValues(nutrients, options));
+	}
+
+	/**
+	 * Adds up the percentages of the nutrients a regulation groups on a single line. Percentages
+	 * are only additive when both nutrients are measured against the same reference intake, so a
+	 * pair that disagrees on it is left alone rather than silently mixed.
+	 */
+	private SharedDailyValues shareDailyValues(List<RegulatedNutrient> nutrients, NutritionFactsOptions options) {
+
+		if (options.sharedDailyValues().isEmpty()) {
+			return SharedDailyValues.none();
+		}
+
+		Map<String, Double> hostPercents = new HashMap<>();
+		Set<String> foldedIn = new HashSet<>();
+
+		for (SharedDailyValue shared : options.sharedDailyValues()) {
+			RegulatedNutrient host = findByNutCode(nutrients, shared.hostNutCode());
+			RegulatedNutrient guest = findByNutCode(nutrients, shared.guestNutCode());
+
+			if (hasSameReferenceIntake(host, guest)) {
+				hostPercents.put(host.nutCode(), sumPercents(host.gdaPerc(), guest.gdaPerc()));
+				foldedIn.add(guest.nutCode());
+			}
+		}
+		return new SharedDailyValues(hostPercents, foldedIn);
+	}
+
+	private boolean hasSameReferenceIntake(RegulatedNutrient host, RegulatedNutrient guest) {
+		return (host != null) && (guest != null) && (host.displayRule().gda() != null)
+				&& host.displayRule().gda().equals(guest.displayRule().gda());
+	}
+
+	private Double sumPercents(Double hostPercent, Double guestPercent) {
+		if ((hostPercent == null) && (guestPercent == null)) {
+			return null;
+		}
+		return (hostPercent != null ? hostPercent : 0d) + (guestPercent != null ? guestPercent : 0d);
+	}
+
+	private RegulatedNutrient findByNutCode(List<RegulatedNutrient> nutrients, String nutCode) {
+		for (RegulatedNutrient nutrient : nutrients) {
+			if (nutrient.nutCode().equals(nutCode)) {
+				return nutrient;
+			}
+		}
+		return null;
 	}
 
 	private void addNutrient(NutListDataItem nutListItem, List<RegulatedNutrient> nutrients, Map<String, String> charactNames, Locale locale,
@@ -153,7 +203,7 @@ public class NutritionFactsDataBuilder {
 	private NutritionFactsLine buildCalories(RegulatedNutrients regulated, Locale locale, NutritionFactsOptions options) {
 		for (RegulatedNutrient nutrient : regulated.nutrients()) {
 			if (isSort(nutrient, NutritionFactsOptions.CALORIES_SORT)) {
-				return toLine(nutrient, regulated.charactNames(), locale, options);
+				return toLine(nutrient, regulated, locale, options);
 			}
 		}
 		return null;
@@ -165,7 +215,7 @@ public class NutritionFactsDataBuilder {
 		List<NutritionFactsLine> lines = new ArrayList<>();
 		for (RegulatedNutrient nutrient : regulated.nutrients()) {
 			if (!isSort(nutrient, NutritionFactsOptions.CALORIES_SORT) && (isMicronutrient(nutrient, options) == micronutrients)) {
-				lines.add(toLine(nutrient, regulated.charactNames(), locale, options));
+				lines.add(toLine(nutrient, regulated, locale, options));
 			}
 		}
 		return lines;
@@ -180,17 +230,25 @@ public class NutritionFactsDataBuilder {
 		return (nutrient.displayRule().sort() != null) && (nutrient.displayRule().sort() == sort);
 	}
 
-	private NutritionFactsLine toLine(RegulatedNutrient regulated, Map<String, String> charactNames, Locale locale,
+	private NutritionFactsLine toLine(RegulatedNutrient regulated, RegulatedNutrients regulatedNutrients, Locale locale,
 			NutritionFactsOptions options) {
 
-		String label = NutritionFactsLabelResolver.nutrientLabel(options.regulationKey(), regulated.nutCode(),
-				charactNames.get(regulated.nutCode()), locale);
-
 		String unit = regulated.displayRule().unit();
+		String value = withUnit(regulated.displayValuePerServing(), unit);
 
-		return new NutritionFactsLine(regulated.nutCode(), label, withUnit(regulated.displayValuePerServing(), unit),
-				withUnit(regulated.displayValuePerContainer(), unit), toPercent(regulated.gdaPerc()), toPercent(regulated.gdaPercPerContainer()),
-				regulated.displayRule().indentLevel(), regulated.displayRule().bold(), regulated.showsDailyValue());
+		String label = NutritionFactsLabelResolver.nutrientLabel(options.regulationKey(), regulated.nutCode(),
+				regulatedNutrients.charactNames().get(regulated.nutCode()), locale);
+
+		if (NutritionFactsLabelResolver.embedsValue(label)) {
+			label = NutritionFactsLabelResolver.formatWithValue(label, value, locale);
+			value = null;
+		}
+
+		SharedDailyValues shared = regulatedNutrients.sharedDailyValues();
+
+		return new NutritionFactsLine(regulated.nutCode(), label, value, withUnit(regulated.displayValuePerContainer(), unit),
+				toPercent(shared.percentOf(regulated)), toPercent(regulated.gdaPercPerContainer()), regulated.displayRule().indentLevel(),
+				regulated.displayRule().bold(), regulated.showsDailyValue() && !shared.isFoldedIn(regulated.nutCode()));
 	}
 
 	/**
@@ -228,8 +286,29 @@ public class NutritionFactsDataBuilder {
 		return value != null ? MLTextHelper.getClosestValue(value, locale) : null;
 	}
 
+	/**
+	 * Percentages of the daily value a regulation asks to be shown on one line for several
+	 * nutrients, the Canadian saturated fat line carrying saturated and trans fat together.
+	 */
+	private record SharedDailyValues(Map<String, Double> hostPercents, Set<String> foldedIn) {
+
+		static SharedDailyValues none() {
+			return new SharedDailyValues(Map.of(), Set.of());
+		}
+
+		/** Percentage to print for a nutrient, combined when it hosts another one. */
+		Double percentOf(RegulatedNutrient nutrient) {
+			return hostPercents.getOrDefault(nutrient.nutCode(), nutrient.gdaPerc());
+		}
+
+		/** Tells whether the percentage of a nutrient is already carried by another line. */
+		boolean isFoldedIn(String nutCode) {
+			return foldedIn.contains(nutCode);
+		}
+	}
+
 	/** Regulated nutrients of a product, with the characteristic names used when a regulation names nothing. */
-	private record RegulatedNutrients(List<RegulatedNutrient> nutrients, Map<String, String> charactNames) {
+	private record RegulatedNutrients(List<RegulatedNutrient> nutrients, Map<String, String> charactNames, SharedDailyValues sharedDailyValues) {
 	}
 
 }
