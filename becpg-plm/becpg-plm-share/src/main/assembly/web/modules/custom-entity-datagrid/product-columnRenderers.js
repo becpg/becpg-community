@@ -702,6 +702,43 @@ if (beCPG.module.EntityDataGridRenderers) {
 
     });
 
+    // Packaging components carry their hierarchy on a free-text column, so none of the
+    // association renderers above applies and the rows used to be drawn flat even though
+    // the level and the parent were stored (#34468).
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["pack:pclComponent", "pack:splComponent"],
+        renderer: function(oRecord, data, label, scope, z, zz, elCell) {
+
+            var padding = 0;
+            var toogleGroupButton = null;
+            var tr = scope.widgets.dataTable.getTrEl(elCell);
+            var depthLevel = oRecord.getData("itemData")["prop_bcpg_depthLevel"];
+
+            if (depthLevel && depthLevel.value) {
+                padding = (depthLevel.value - 1) * 25;
+
+                Dom.addClass(tr, "mtl-level-" + depthLevel.value);
+            }
+
+            if (false === oRecord.getData("itemData")["isLeaf"]) {
+                toogleGroupButton = '<div id="group_' + (oRecord.getData("itemData")["open"] ? "expanded" : "collapsed") + '_' + oRecord.getData("nodeRef") + '" style="margin-left:' + padding
+                    + 'px;" class="onCollapsedAndExpanded" ><a href="#" class="' + scope.id + '-action-link"><span class="gicon ggroup-'
+                    + (oRecord.getData("itemData")["open"] ? "expanded" : "collapsed") + '"></span></a></div>';
+                Dom.addClass(tr, "mtl-" + (oRecord.getData("itemData")["open"] ? "expanded" : "collapsed"));
+
+            } else if (true === oRecord.getData("itemData")["isLeaf"]) {
+                padding += 25;
+
+                Dom.addClass(tr, "mtl-leaf");
+            }
+
+            return (toogleGroupButton != null ? toogleGroupButton : '') + '<span class="' + (data.metadata || "") + '" '
+                + (toogleGroupButton == null && padding != 0 ? 'style="margin-left:' + padding + 'px;"' : '') + '>'
+                + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+        }
+
+    });
+
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["bcpg:allergen", "bcpg:ing", "bcpg:geoOrigin", "bcpg:bioOrigin", "bcpg:geo", "bcpg:microbio", "bcpg:organo", "bcpg:listValue"
             , "bcpg:linkedSearchAssociation"],
