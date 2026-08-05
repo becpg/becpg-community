@@ -2,6 +2,7 @@ package fr.becpg.repo.product.report;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -81,6 +82,7 @@ import fr.becpg.repo.product.helper.WUsedAssociationResolver;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.report.entity.EntityReportParameters;
+import fr.becpg.repo.report.entity.EntityImageInfo;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 import fr.becpg.repo.report.entity.impl.DefaultExtractorContext;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -99,6 +101,27 @@ import fr.becpg.repo.variant.model.VariantData;
 @SuppressWarnings("deprecation")
 @Service("productReportExtractor")
 public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
+
+	/** Element gathering the regulatory nutrition facts panels of an entity. */
+	private static final String TAG_NUTRITION_FACTS = "nutritionFacts";
+
+	private static final String TAG_NUTRITION_FACT = "nutritionFact";
+
+	private static final String ATTR_IMAGE_ID = "imageId";
+
+	private static final String ATTR_CODE = "code";
+
+	private static final String ATTR_LOCALE = "locale";
+
+	/** Prefix of the image id a report binds to, see reportContext.getAppContext(). */
+	private static final String NUTRITION_FACTS_IMAGE_PREFIX = "nutritionFacts_";
+
+	private static final String DEFAULT_PANEL_CODE = "default";
+
+	private static final String SVG_ROOT_ELEMENT = "<svg";
+
+	private static final String SVG_MIME_TYPE = "image/svg+xml";
+
 
 	/** Constant <code>KEY_PRODUCT_IMAGE="productImage"</code> */
 	protected static final String KEY_PRODUCT_IMAGE = "productImage";
@@ -422,6 +445,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			if (shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_NUTLIST)) {
 				StopWatchSupport.addCheckpoint("start_datalist_nut");
 				loadNutLists(productData, dataListsElt, context);
+				loadNutritionFactsPanels(productData, dataListsElt, context);
 				logDatalistStats(dataListsElt, PLMModel.TYPE_NUTLIST.getLocalName() + "s", "nut");
 			}
 			
@@ -1244,6 +1268,71 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	 * @param dataListsElt a {@link org.dom4j.Element} object
 	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultExtractorContext} object
 	 */
+	/**
+	 * Hands the nutrition facts panels rendered by the labeling rules over to the report engine.
+	 *
+	 * <p>A panel is an SVG that lives only in the labeling value, so it is streamed as an in-memory
+	 * image rather than written to the repository first. BIRT embeds it as vector graphics, which
+	 * is what keeps the typography and the rules of a regulated panel exact in the PDF.</p>
+	 */
+	private void loadNutritionFactsPanels(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
+
+		if (productData.getLabelingListView().getIngLabelingList() == null) {
+			return;
+		}
+
+		Element panelsElt = dataListsElt.getParent().addElement(TAG_NUTRITION_FACTS);
+
+		for (IngLabelingListDataItem dataItem : productData.getLabelingListView().getIngLabelingList()) {
+			for (Locale locale : panelLocales(dataItem)) {
+				addNutritionFactsPanel(dataItem, locale, panelsElt, context);
+			}
+		}
+	}
+
+	private Set<Locale> panelLocales(IngLabelingListDataItem dataItem) {
+		Set<Locale> locales = new HashSet<>();
+		if (dataItem.getValue() != null) {
+			locales.addAll(dataItem.getValue().getLocales());
+		}
+		if (dataItem.getManualValue() != null) {
+			locales.addAll(dataItem.getManualValue().getLocales());
+		}
+		return locales;
+	}
+
+	private void addNutritionFactsPanel(IngLabelingListDataItem dataItem, Locale locale, Element panelsElt, DefaultExtractorContext context) {
+
+		String panel = panelValue(dataItem, locale);
+		if ((panel == null) || !panel.stripLeading().startsWith(SVG_ROOT_ELEMENT)) {
+			return;
+		}
+
+		String imageId = NUTRITION_FACTS_IMAGE_PREFIX + panelCode(dataItem) + "_" + MLTextHelper.localeKey(locale);
+
+		Element panelElt = panelsElt.addElement(TAG_NUTRITION_FACT);
+		panelElt.addAttribute(ATTR_IMAGE_ID, imageId);
+		panelElt.addAttribute(ATTR_CODE, panelCode(dataItem));
+		panelElt.addAttribute(ATTR_LOCALE, MLTextHelper.localeKey(locale));
+
+		context.getReportData().getImages().add(new EntityImageInfo(imageId, panel.getBytes(StandardCharsets.UTF_8), SVG_MIME_TYPE));
+	}
+
+	private String panelValue(IngLabelingListDataItem dataItem, Locale locale) {
+		String manualValue = dataItem.getManualValue() != null ? dataItem.getManualValue().getValue(locale) : null;
+		if ((manualValue != null) && !manualValue.isBlank()) {
+			return manualValue;
+		}
+		return dataItem.getValue() != null ? dataItem.getValue().getValue(locale) : null;
+	}
+
+	private String panelCode(IngLabelingListDataItem dataItem) {
+		if (dataItem.getGrp() == null) {
+			return DEFAULT_PANEL_CODE;
+		}
+		return (String) nodeService.getProperty(dataItem.getGrp(), ContentModel.PROP_NAME);
+	}
+
 	private void loadNutLists(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
 
 		if ((productData.getNutList() != null) && !productData.getNutList().isEmpty()) {
