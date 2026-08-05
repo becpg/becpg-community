@@ -964,6 +964,13 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 			return;
 		}
 
+		// Decide on the raw QName first: everything below — the namespace
+		// resolution and the dictionary lookup — is wasted on a property the filter
+		// is going to reject anyway, and it is paid once per property per row.
+		if ((params != null) && params.canSkipProperty(assocName, propQName)) {
+			return;
+		}
+
 		QName propName = propQName.getPrefixedQName(namespaceService);
 		if (!shouldExportProperty(propQName, propName, assocName)) {
 			return;

@@ -258,6 +258,50 @@ public class RemoteParams {
 	}
 
 	/**
+	 * Whether a property can be discarded on sight, before any costly work.
+	 *
+	 * <h3>What it saves</h3>
+	 *
+	 * {@code JsonEntityVisitor} used to resolve the prefixed QName and look the
+	 * property definition up in the dictionary <i>before</i> testing it against the
+	 * filter. On a raw material carrying some 150 properties and a request asking
+	 * for one, that is 150 namespace resolutions and 150 dictionary lookups per row
+	 * to keep a single value — repeated for every row of a listing.
+	 *
+	 * <h3>Why testing the raw QName is sound</h3>
+	 *
+	 * The filter is populated with {@code QName.createQName("cm:name", namespaceService)},
+	 * which resolves the prefix, and the visitor compares against
+	 * {@code propQName.getPrefixedQName(namespaceService)}. Both yield
+	 * {@code {http://www.alfresco.org/model/content/1.0}name} and compare equal —
+	 * verified rather than assumed — so the membership test gives the same answer on
+	 * the raw QName as it did on the prefixed one.
+	 *
+	 * <h3>When it must not fire</h3>
+	 *
+	 * Only a <b>positive property filter</b> allows the shortcut. An
+	 * {@code assoc|property} request is answered by a different branch keyed on the
+	 * association, and a rejection filter ({@code !field}) says what to drop rather
+	 * than what to keep — in both cases the full path still decides.
+	 *
+	 * @param assocName the association being visited, or {@code null} for the node itself
+	 * @param propQName the raw property QName
+	 * @return true when the property is certainly not wanted
+	 */
+	public boolean canSkipProperty(QName assocName, QName propQName) {
+		if (!ignoredFields.isEmpty()) {
+			return false;
+		}
+		if ((assocName != null) && filteredAssocProperties.containsKey(assocName)) {
+			return false;
+		}
+		if (filteredProperties.isEmpty()) {
+			return false;
+		}
+		return !filteredProperties.contains(propQName);
+	}
+
+	/**
 	 * Whether serialising a node under this filter needs its associations walked.
 	 *
 	 * <h3>Why the question is worth asking</h3>

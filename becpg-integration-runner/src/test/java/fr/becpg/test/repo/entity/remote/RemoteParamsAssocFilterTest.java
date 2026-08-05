@@ -183,4 +183,48 @@ public class RemoteParamsAssocFilterTest {
 			throw new UnsupportedOperationException();
 		}
 	}
+
+	private static QName q(String prefixed) {
+		String[] parts = prefixed.split(":");
+		String uri = "cm".equals(parts[0]) ? "http://www.alfresco.org/model/content/1.0"
+				: "http://www.bcpg.fr/model/becpg/1.0";
+		return QName.createQName(uri, parts[1]);
+	}
+
+	/** A positive property filter drops everything it did not name, on sight. */
+	@Test
+	public void positiveFilterSkipsUnrequestedProperties() {
+		RemoteParams params = paramsFor("cm:name,bcpg:code");
+		Assert.assertFalse("cm:name was asked for", params.canSkipProperty(null, q("cm:name")));
+		Assert.assertFalse("bcpg:code was asked for", params.canSkipProperty(null, q("bcpg:code")));
+		Assert.assertTrue("cm:title was not", params.canSkipProperty(null, q("cm:title")));
+		Assert.assertTrue("bcpg:legalName was not", params.canSkipProperty(null, q("bcpg:legalName")));
+	}
+
+	/** No filter: nothing may be skipped. */
+	@Test
+	public void noFilterSkipsNothing() {
+		Assert.assertFalse(paramsFor(null).canSkipProperty(null, q("cm:title")));
+		Assert.assertFalse(paramsFor("").canSkipProperty(null, q("cm:title")));
+	}
+
+	/** A rejection filter says what to drop, so the full path must keep deciding. */
+	@Test
+	public void rejectionFilterSkipsNothingEarly() {
+		Assert.assertFalse(paramsFor("!bcpg:entityScore").canSkipProperty(null, q("cm:title")));
+		Assert.assertFalse(paramsFor("cm:name,!bcpg:entityScore").canSkipProperty(null, q("cm:title")));
+	}
+
+	/**
+	 * Inside an association covered by an `assoc|property` request, the decision
+	 * belongs to the association branch — the shortcut must stand aside.
+	 */
+	@Test
+	public void assocPropertyBranchIsLeftAlone() {
+		RemoteParams params = paramsFor("cm:name,bcpg:documentTypeRef|bcpg:docTypeCategory");
+		Assert.assertFalse(params.canSkipProperty(q("bcpg:documentTypeRef"), q("bcpg:docTypeCategory")));
+		Assert.assertFalse(params.canSkipProperty(q("bcpg:documentTypeRef"), q("cm:title")));
+		// On the node itself the property filter applies again.
+		Assert.assertTrue(params.canSkipProperty(null, q("cm:title")));
+	}
 }
