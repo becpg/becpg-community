@@ -549,6 +549,21 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		}
 	}
 
+	/**
+	 * Memoised answer of {@link fr.becpg.repo.entity.remote.RemoteParams#requiresAssociations}
+	 * for the current request: the filter does not change while a listing is being
+	 * written, and the predicate behind it is a dictionary lookup.
+	 */
+	private Boolean requiresAssocs = null;
+
+	private boolean requiresAssociations() {
+		if (requiresAssocs == null) {
+			requiresAssocs = params == null
+					|| params.requiresAssociations(qname -> entityDictionaryService.getAssociation(qname) != null);
+		}
+		return requiresAssocs.booleanValue();
+	}
+
 	private void processAttributes(NodeRef nodeRef, JSONObject entity, JsonVisitNodeType type, QName assocName, QName nodeType, Map<QName, Serializable> properties, RemoteJSONContext context)
 			throws JSONException, RemoteException {
 		if (!shouldExtractAttributes(type, assocName, nodeType)) {
@@ -556,7 +571,16 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		}
 
 		JSONObject attributes = new JSONObject();
-		visitAssocs(nodeRef, attributes, assocName, context);
+		// Walking the associations means reading the node's type and aspects, then
+		// every child and target association declared by each of them — per node.
+		// On a listing filtered down to plain properties that whole traversal is
+		// computed and then discarded by the filter. `requiresAssociations` answers
+		// from the request alone, so the dictionary lookups happen once instead of
+		// once per row. See RemoteParams#requiresAssociations for the rule and the
+		// measurement that motivated it.
+		if (requiresAssociations()) {
+			visitAssocs(nodeRef, attributes, assocName, context);
+		}
 		visitProps(nodeRef, attributes, assocName, properties, context);
 
 		if (attributes.length() > 0) {
