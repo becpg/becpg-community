@@ -150,6 +150,26 @@ public class LicenseManagerIT extends RepoBaseTestCase {
 	}
 
 	@Test
+	public void testGetUserLicenseGroup() {
+		inWriteTx(() -> {
+			assertEquals("specialuser", licenseManager.getUserLicenseGroup("admin"));
+
+			String testUserRead = "testLicenseReadUser";
+			BeCPGTestHelper.createUser(testUserRead);
+			if (!authorityService.getAuthoritiesForUser(testUserRead).contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadConcurrent.name())) {
+				authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadConcurrent.name(), testUserRead);
+			}
+			assertEquals("licensereadconcurrent", licenseManager.getUserLicenseGroup(testUserRead));
+
+			String testUserNoLicense = "testNoLicenseUser";
+			BeCPGTestHelper.createUser(testUserNoLicense);
+			assertEquals("nolicense", licenseManager.getUserLicenseGroup(testUserNoLicense));
+
+			return null;
+		});
+	}
+
+	@Test
 	public void concurrentReadLicenseShouldBeReleasedWhenUserDisconnects() {
 		String firstUser = "licenseConcurrentReadUserOne";
 		String secondUser = "licenseConcurrentReadUserTwo";

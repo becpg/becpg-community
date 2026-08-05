@@ -243,25 +243,46 @@
 						successCallback: {
 							fn: function(response) {
 								if (response.json) {
-									// Inject the template from the XHR request into a new DIV element
 									var containerDiv = document.createElement("div");
+									var panelTitle = this.msg("label.connectedUsers").replace(/:$/, "");
 
-									var ret = '<div id="' + this.id + '-show-users-panel" class="about-share"><div class="bd"><ul class="users">';
+									var ret = '<div id="' + this.id + '-show-users-panel" class="connected-users-panel">' +
+									          '<div class="bd">' +
+									          '<div class="connected-users-title">' + Alfresco.util.encodeHTML(panelTitle) + '</div>' +
+									          '<div class="connected-users-table-wrapper">' +
+									          '<table class="users-table">';
 
-									for (j in response.json.users) {
-										var user = response.json.users[j];
-										ret += "<li >";
-										ret += '<span class="avatar" title="' + user.fullName + '">';
-										ret += Alfresco.Share.userAvatar(user.username, 64);
-										ret += '</span><span class="username" ><a id="yui-gen59" class="theme-color-1" tabindex="0" href="/share/page/user/' + user.username + '/profile">' + user.fullName + '</a></span></li>';
+									var usersList = (response.json && response.json.users) ? response.json.users : [];
+
+									for (var j = 0; j < usersList.length; j++) {
+										var user = usersList[j];
+										var licenseGroup = user.licenseGroup || "nolicense";
+										var isNoLicense = licenseGroup === "nolicense";
+										var nameClass = isNoLicense ? "no-license-user" : "theme-color-1";
+										var licenseLabel = this.msg("becpg.group." + licenseGroup);
+
+										ret += '<tr>';
+										ret += '<td class="user-cell">';
+										ret += '<div class="user-info">';
+										ret += '<span class="avatar" title="' + Alfresco.util.encodeHTML(user.fullName) + '">';
+										ret += Alfresco.Share.userAvatar(user.username, 32);
+										ret += '</span><span class="username"><a class="' + nameClass + '" tabindex="0" href="/share/page/user/' + encodeURIComponent(user.username) + '/profile">' + Alfresco.util.encodeHTML(user.fullName) + '</a></span>';
+										ret += '</div>';
+										ret += '</td>';
+										ret += '<td class="user-license">';
+										ret += '<span class="license-badge license-' + licenseGroup + '">' + Alfresco.util.encodeHTML(licenseLabel) + '</span>';
+										ret += '</td>';
+										ret += '</tr>';
 									}
 
-									ret += "</ul></div></div>";
+									ret += '</table></div></div></div>';
 
 									containerDiv.innerHTML = ret;
 
 									var panelDiv = Dom.getFirstChild(containerDiv);
-									this.widgets.panel = Alfresco.util.createYUIPanel(panelDiv, { draggable: false, width: "25em" });
+									this.widgets.panel = Alfresco.util.createYUIPanel(panelDiv, { draggable: false, width: "55em" });
+
+									Dom.addClass(this.widgets.panel.element, "becpg-panel");
 
 									this.widgets.panel.show();
 
