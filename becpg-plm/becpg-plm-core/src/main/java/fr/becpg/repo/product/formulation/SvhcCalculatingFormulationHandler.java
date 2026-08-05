@@ -71,7 +71,7 @@ public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormula
 				
 						@Override
 						public Double getQty(PackagingListDataItem packagingListDataItem, ProductData componentProduct) {
-							if (PackagingLevel.Primary.equals(packagingListDataItem.getPkgLevel())) {
+							if (migratesToProduct(packagingListDataItem)) {
 								return FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, componentProduct);
 							}
 							return null;
@@ -111,6 +111,37 @@ public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormula
 	}
 
 	/**
+	 * Hazardous substances only migrate from the packaging in contact with the product, hence the
+	 * secondary and tertiary levels are left out. A level that was never filled in is read as primary,
+	 * as it already is when the quantity is computed
+	 * ({@link fr.becpg.repo.product.formulation.FormulationHelper#getQtyForCostByPackagingLevel}), so
+	 * that a packaging line stays accounted for instead of being silently dropped (see #32363).
+	 *
+	 * @param packagingListDataItem the packaging line being visited
+	 * @return {@code true} when the substances of that packaging must be aggregated
+	 */
+	private boolean migratesToProduct(PackagingListDataItem packagingListDataItem) {
+		PackagingLevel pkgLevel = packagingListDataItem.getPkgLevel();
+		return (pkgLevel == null) || PackagingLevel.Primary.equals(pkgLevel);
+	}
+
+	/**
+	 * A packaging aggregates the substances of the packaging it embeds without keeping their migration
+	 * rate, so its own formulated lines must not be aggregated again by the product using it: the nested
+	 * definitions, which do carry the migration rate, are walked instead (see
+	 * {@link fr.becpg.repo.product.formulation.AbstractSimpleListFormulationHandler#visitNestedPackaging}).
+	 * Aggregating both would count the substance twice (see #32363).
+	 *
+	 * @param partProduct the component being visited
+	 * @param visitedListItem the component substance line
+	 * @return {@code true} when the line is an aggregate already covered by the nested walk
+	 */
+	private boolean isAggregatedPackagingItem(ProductData partProduct, SimpleListDataItem visitedListItem) {
+		return partProduct.isPackaging() && partProduct.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))
+				&& (visitedListItem instanceof SvhcListDataItem svhcListDataItem) && (svhcListDataItem.getMigrationPerc() == null);
+	}
+
+	/**
 	 * <p>addMPIngredientsToSvhcList.</p>
 	 *
 	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
@@ -135,6 +166,18 @@ public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormula
 				}
 			}
 		}
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	protected void calculate(ProductData formulatedProduct, ProductData partProduct, SimpleListDataItem calculatedListItem,
+			SimpleListDataItem visitedListItem, Double qtyUsed, Double netQty, VariantData variant) {
+
+		if (isAggregatedPackagingItem(partProduct, visitedListItem)) {
+			return;
+		}
+
+		super.calculate(formulatedProduct, partProduct, calculatedListItem, visitedListItem, qtyUsed, netQty, variant);
 	}
 
 	/** {@inheritDoc} */

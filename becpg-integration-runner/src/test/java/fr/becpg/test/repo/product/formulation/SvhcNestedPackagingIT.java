@@ -153,6 +153,100 @@ public class SvhcNestedPackagingIT extends PLMBaseTestCase {
 		});
 	}
 
+	/**
+	 * Retest of #32363 on the customer data: no packaging level was filled in, neither on the printed box
+	 * used by the finished product nor on the neutral box nested in it. An unset level must be read as
+	 * primary so that the substances still reach the finished product, and the printed box own list must
+	 * carry them exactly once.
+	 */
+	@Test
+	public void testNestedPrintedBoxWithoutAnyLevel() {
+		final NodeRef[] refs = inWriteTx(() -> {
+			NodeRef neutralBox = createNeutralBox();
+
+			PackagingMaterialData printedBox = PackagingMaterialData.build().withName("Boite imprimee sans aucun niveau").withTare(1d, TareUnit.kg);
+			printedBox.getPackagingListView().setPackagingList(
+					List.of(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P).withIsMaster(true).withProduct(neutralBox)));
+			NodeRef printedBoxNodeRef = createNode(printedBox);
+
+			FinishedProductData fp = FinishedProductData.build().withName("Quiche printed box no level at all").withUnit(ProductUnit.kg)
+					.withCompoList(List.of(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withProduct(createRawMaterial())))
+					.withPackagingList(List.of(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P).withIsMaster(true)
+							.withProduct(printedBoxNodeRef)));
+			return new NodeRef[] { alfrescoRepository.create(getTestFolderNodeRef(), fp).getNodeRef(), printedBoxNodeRef };
+		});
+
+		inWriteTx(() -> {
+			productService.formulate(refs[1]);
+			productService.formulate(refs[0]);
+			return null;
+		});
+
+		inReadTx(() -> {
+			ProductData printedBox = (ProductData) alfrescoRepository.findOne(refs[1]);
+			dumpSvhc("printed box own list (no level at all)", printedBox);
+			assertTrue("The printed box own list must carry the substances of the nested neutral box (#32363)",
+					hasSvhc(printedBox, ings.get(0)));
+
+			ProductData fp = (ProductData) alfrescoRepository.findOne(refs[0]);
+			dumpSvhc("finished product (no level at all)", fp);
+			assertTrue("SVHC must propagate when no packaging level is filled in (#32363)", hasSvhc(fp, ings.get(0)));
+			return null;
+		});
+	}
+
+	/**
+	 * The printed box aggregates the substances of the nested neutral box in its own list, and the
+	 * finished product also walks the nested packaging: the substance must be counted once, so the
+	 * finished product must hold the same amount whether the printed box carries an aggregate or not.
+	 */
+	@Test
+	public void testNestedPrintedBoxIsNotCountedTwice() {
+		final NodeRef[] refs = inWriteTx(() -> {
+			NodeRef neutralBox = createNeutralBox();
+
+			PackagingMaterialData printedBox = PackagingMaterialData.build().withName("Boite imprimee double comptage").withTare(1d, TareUnit.kg);
+			printedBox.getPackagingListView().setPackagingList(List.of(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P)
+					.withIsMaster(true).withPkgLevel(PackagingLevel.Primary).withProduct(neutralBox)));
+			NodeRef printedBoxNodeRef = createNode(printedBox);
+
+			FinishedProductData directFp = FinishedProductData.build().withName("Quiche direct reference").withUnit(ProductUnit.kg)
+					.withCompoList(List.of(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withProduct(createRawMaterial())))
+					.withPackagingList(List.of(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P).withIsMaster(true)
+							.withPkgLevel(PackagingLevel.Primary).withProduct(neutralBox)));
+
+			FinishedProductData nestedFp = FinishedProductData.build().withName("Quiche nested comparison").withUnit(ProductUnit.kg)
+					.withCompoList(List.of(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withProduct(createRawMaterial())))
+					.withPackagingList(List.of(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P).withIsMaster(true)
+							.withPkgLevel(PackagingLevel.Primary).withProduct(printedBoxNodeRef)));
+
+			return new NodeRef[] { alfrescoRepository.create(getTestFolderNodeRef(), directFp).getNodeRef(),
+					alfrescoRepository.create(getTestFolderNodeRef(), nestedFp).getNodeRef(), printedBoxNodeRef };
+		});
+
+		inWriteTx(() -> {
+			productService.formulate(refs[2]);
+			productService.formulate(refs[0]);
+			productService.formulate(refs[1]);
+			return null;
+		});
+
+		inReadTx(() -> {
+			ProductData directFp = (ProductData) alfrescoRepository.findOne(refs[0]);
+			ProductData nestedFp = (ProductData) alfrescoRepository.findOne(refs[1]);
+			dumpSvhc("direct reference", directFp);
+			dumpSvhc("nested comparison", nestedFp);
+			assertEquals("The nested neutral box must not be counted twice (#32363)", maxiOf(directFp, ings.get(0)),
+					maxiOf(nestedFp, ings.get(0)), 0.0001d);
+			return null;
+		});
+	}
+
+	private Double maxiOf(ProductData product, NodeRef ing) {
+		return product.getSvhcList().stream().filter(s -> ing.equals(s.getIng())).map(SvhcListDataItem::getMaxi).filter(m -> m != null).findFirst()
+				.orElse(0d);
+	}
+
 	private NodeRef createRawMaterial() {
 		RawMaterialData rm = RawMaterialData.build().withName("Quiche filling").withUnit(ProductUnit.kg);
 		return createNode(rm);
