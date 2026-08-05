@@ -84,7 +84,7 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 	public Map<String, Object> extractAuditActivityData(JSONObject auditActivityData, List<AttributeExtractorStructure> metadataFields,
 			FormatMode mode) {
 
-		Map<String, Object> ret = new HashMap<>(metadataFields.size());
+		Map<String, Object> ret = HashMap.newHashMap(metadataFields.size());
 
 		for (AttributeExtractorStructure metadataField : metadataFields) {
 			ClassAttributeDefinition attributeDef = getFieldDef(BeCPGModel.TYPE_ACTIVITY_LIST, metadataField);
@@ -262,7 +262,7 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 	 * @return a {@link java.util.Map} object
 	 */
 	private Map<String, String> extractPerson(String person) {
-		Map<String, String> ret = new HashMap<>(2);
+		Map<String, String> ret = HashMap.newHashMap(2);
 		ret.put("value", person);
 		ret.put("displayValue", attributeExtractorService.getPersonDisplayName(person));
 		return ret;

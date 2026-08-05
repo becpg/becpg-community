@@ -941,7 +941,7 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 	 * @return the headers required for the request - if any
 	 */
 	private Map<String, String> getConnectionHeaders(Connector conn) {
-		Map<String, String> headers = new HashMap<>(4);
+		Map<String, String> headers = HashMap.newHashMap(4);
 		headers.put("user-agent", "");
 		if (conn.getConnectorSession().getCookie("JSESSIONID") == null) {
 			// Ensure we do not proxy over the Session ID from the browser request:
@@ -1365,7 +1365,7 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 				if (logger.isDebugEnabled()) {
 					logger.debug("Accept-Language header present: " + req.getHeader(HEADER_ACCEPT_LANGUAGE));
 				}
-				Map<String, String> headers = new HashMap<>(7);
+				Map<String, String> headers = HashMap.newHashMap(7);
 				headers.put(HEADER_ACCEPT_LANGUAGE, req.getHeader(HEADER_ACCEPT_LANGUAGE));
 
 				ctx = new ConnectorContext(null, headers);
@@ -1377,7 +1377,7 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
 			if (Status.STATUS_UNAUTHORIZED == remoteRes.getStatus().getCode()) {
 				String authHdr = remoteRes.getStatus().getHeaders().get(HEADER_WWWAUTHENTICATE);
 				if (authHdr.equals(AUTH_SPNEGO)) {
-					Map<String, String> headers = new HashMap<>(7);
+					Map<String, String> headers = HashMap.newHashMap(7);
 					headers.put(HEADER_AUTHORIZATION, AUTH_SPNEGO + ' ' + tokenForEndpoint);
 
 					if (req.getHeader(HEADER_ACCEPT_LANGUAGE) != null) {

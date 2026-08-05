@@ -281,7 +281,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                                 desc += '<span class="reqType' + reqType + '" title="'
                                     + Alfresco.util.encodeHTML(scope.msg("data.reqtype." + reqType.toLowerCase())) + '">&nbsp;</span>';
                             }
-                             if (reqCtrl["itemData"]["prop_bcpg_regulatoryCode"] && reqCtrl["itemData"]["prop_bcpg_regulatoryCode"].value != null && reqCtrl["itemData"]["prop_bcpg_regulatoryCode"].value.length > 1) {
+                            if (reqCtrl["itemData"]["prop_bcpg_regulatoryCode"] && reqCtrl["itemData"]["prop_bcpg_regulatoryCode"].value != null && reqCtrl["itemData"]["prop_bcpg_regulatoryCode"].value.length > 1) {
                                 var regulatoryCode = reqCtrl["itemData"]["prop_bcpg_regulatoryCode"].value;
                                 var displayLabel = reqCtrl["displayLabel"] ? reqCtrl["displayLabel"] : regulatoryCode;
                                 desc += '      <span class="rclReq-regulatoryCode" title="'

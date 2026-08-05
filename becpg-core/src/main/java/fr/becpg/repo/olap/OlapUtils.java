@@ -45,6 +45,15 @@ public class OlapUtils {
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(OlapUtils.class);
 
+	/** Grouping separators Mondrian may emit, depending on the locale. */
+	private static final String GROUPING_SPACES = "    ";
+
+	/** A number with no separator at all: `-1148`, `19`. */
+	private static final Pattern PLAIN = Pattern.compile("^[-+]?\\d+$");
+
+	/** Anything that can plausibly be a formatted number. */
+	private static final Pattern NUMERIC = Pattern.compile("^[-+]?[\\d.,]+$");
+
 	
 	/**
 	 * <p>Constructor for OlapUtils.</p>
@@ -127,37 +136,13 @@ public class OlapUtils {
 
 	}
 
-	/** Grouping separators Mondrian may emit, depending on the locale. */
-	private static final String GROUPING_SPACES = "    ";
-
-	/** A number with no separator at all: `-1148`, `19`. */
-	private static final Pattern PLAIN = Pattern.compile("^[-+]?\\d+$");
-
-	/** Anything that can plausibly be a formatted number. */
-	private static final Pattern NUMERIC = Pattern.compile("^[-+]?[\\d.,]+$");
-
 	/**
-	 * Converts one Saiku cell, <b>preferring its raw value</b>.
+	 * Converts one Saiku cell, preferring its raw value: {@code value} is formatted for
+	 * the connection locale, {@code properties.raw} is the measure itself. Headers carry
+	 * no raw value and fall back on {@link #convert(String)}.
 	 *
-	 * <h3>Why the raw value and not the displayed one</h3>
-	 *
-	 * A Saiku data cell carries both, and only one of them is a number:
-	 *
-	 * <pre>
-	 * {"value":"1,148","type":"DATA_CELL","properties":{"raw":"1148.0","position":"0:1"}}
-	 * </pre>
-	 *
-	 * {@code value} is what a human reads — grouped for the connection locale — and
-	 * parsing it is a lossy guess: {@code "1.148"} is 1 148 in one cell and 19.468
-	 * really is a fraction in the next. {@code raw} is the measure itself, in Java's
-	 * canonical form, and it removes the ambiguity entirely. Row and column headers
-	 * carry no {@code raw}, which is correct: a caption is not a number, and the
-	 * fallback returns it untouched.
-	 *
-	 * A whole {@code raw} ({@code "1148.0"}) is returned as a {@link java.lang.Long}
-	 * rather than a {@link java.lang.Double}, so a count keeps reading as a count —
-	 * `retrieveDataType` publishes that class as the column type, and turning every
-	 * count into a decimal would change what charts are told about their own axes.
+	 * A whole raw value is returned as a {@link java.lang.Long} so that a count keeps
+	 * being published as a count by {@code retrieveDataType}.
 	 *
 	 * @param rawValue       {@code properties.raw}, or {@code null} when absent
 	 * @param formattedValue {@code value}, the displayed one
@@ -181,48 +166,15 @@ public class OlapUtils {
 	}
 
 	/**
-	 * Converts one Saiku <b>display</b> value — the fallback of
-	 * {@link #convertCell(String, String)}, used for the cells that carry no raw
-	 * one (headers) and for older payloads.
+	 * Converts one Saiku display value — the fallback of
+	 * {@link #convertCell(String, String)}, for the cells carrying no raw one.
 	 *
-	 * <h3>Why this is not a {@code parseDouble}</h3>
-	 *
-	 * Saiku returns the cell's <b>display</b> value, formatted by Mondrian for the
-	 * connection locale — {@code 1148} comes back as {@code "1.148"} on a locale
-	 * whose grouping separator is a dot. The previous implementation handed that
-	 * straight to {@code Double.parseDouble}, so every count of a thousand or more
-	 * was silently divided by a thousand: measured on dev.becpg.fr, 1 148 completed
-	 * tasks were reported as {@code 1.148}, and a refusal rate computed from them
-	 * read 97 % instead of roughly 3.5 %.
-	 *
-	 * <h3>What is decided, and what cannot be</h3>
-	 *
-	 * Most formatted numbers are unambiguous and are now read correctly:
-	 * <ul>
-	 *   <li>both separators present ({@code "1.234,56"}) — the <b>last</b> one is the
-	 *       decimal separator, whatever the locale;</li>
-	 *   <li>the same separator more than once ({@code "1.234.567"}) — grouping;</li>
-	 *   <li>a separator followed by anything other than exactly three digits
-	 *       ({@code "19.4"}, {@code "0,25"}) — decimal;</li>
-	 *   <li>spaces, including the non-breaking ones Mondrian uses in French
-	 *       ({@code "1 148"}) — grouping.</li>
-	 * </ul>
-	 *
-	 * One shape stays <b>undecidable</b>: a single separator followed by exactly
-	 * three digits. It is left as a decimal — the historical behaviour — and this
-	 * is deliberate rather than a default. The locale cannot settle it: measured on
-	 * dev.becpg.fr, one and the same cellset carries {@code "1.148"} for a count of
-	 * 1 148 <i>and</i> {@code "19.468"} for an average of 19.468. Same connection,
-	 * same locale, same separator, two readings — Mondrian formatted them with
-	 * different format strings and kept only the result. Guessing on the locale
-	 * would merely move the error from counts to averages.
-	 *
-	 * <b>The cure is upstream</b>: Saiku's raw cell value instead of its formatted
-	 * one, which means a different result formatter in {@code buildDataUrl} and the
-	 * matching cellset parsing in {@code OlapServiceImpl}. That change should be
-	 * written against an observed Saiku payload — a direct call answers 401, the
-	 * {@code ticket} parameter not being an Alfresco login ticket — and not against
-	 * a guessed field name.
+	 * The value is formatted by Mondrian for the connection locale, so it is read
+	 * rather than parsed: both separators present means the last one is the decimal
+	 * one, the same separator twice means grouping, spaces always mean grouping. A
+	 * single separator followed by exactly three digits stays undecidable — one and
+	 * the same cellset carries {@code "1.148"} for a count and {@code "19.468"} for
+	 * an average — and is read as a decimal, the historical behaviour.
 	 *
 	 * @param value a {@link java.lang.String} object.
 	 * @return a {@link java.lang.Long}, a {@link java.lang.Double}, or the value

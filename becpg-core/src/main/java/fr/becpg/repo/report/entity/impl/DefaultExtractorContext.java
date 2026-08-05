@@ -22,7 +22,7 @@ public class DefaultExtractorContext {
 	boolean isInDataListContext = false;
 
 	Map<String, String> preferences;
-	Map<String, Boolean> cache = new HashMap<>(4);
+	Map<String, Boolean> cache = HashMap.newHashMap(4);
 
 	Set<NodeRef> extractedNodes = new HashSet<>();
 	Set<NodeRef> extractedImages = new HashSet<>();

@@ -105,7 +105,7 @@ public abstract class BaseAssociationDecorator implements AssociationDecorator{
 	     */
 	    public void setAssociationName(String AssociationName)
 	    {
-	        associationNames = new HashSet<>(1);
+	        associationNames = HashSet.newHashSet(1);
 	        associationNames.add(QName.createQName(AssociationName, namespaceService));
 	    }
 	    
@@ -116,7 +116,7 @@ public abstract class BaseAssociationDecorator implements AssociationDecorator{
 	     */
 	    public void setAssociationNames(Set<String> associationNames)
 	    {
-	        this.associationNames = new HashSet<>(associationNames.size());
+	        this.associationNames = HashSet.newHashSet(associationNames.size());
 	        for (String associationName : associationNames)
 	        {
 	            this.associationNames.add(QName.createQName(associationName, namespaceService));

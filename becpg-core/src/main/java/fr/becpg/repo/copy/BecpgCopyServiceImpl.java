@@ -285,8 +285,8 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	        TransactionalResourceHelper.getList(KEY_POST_COPY_ASSOCS).clear();
 	        
 	        // Keep track of copied children in order of copying
-	        Map<NodeRef, NodeRef> copiesByOriginals = new LinkedHashMap<NodeRef, NodeRef>(17);
-	        Set<NodeRef> copies = new HashSet<NodeRef>(17);
+	        Map<NodeRef, NodeRef> copiesByOriginals = LinkedHashMap.newLinkedHashMap(17);
+	        Set<NodeRef> copies = HashSet.newHashSet(17);
 
 	        NodeRef copiedNodeRef = copyImpl(
 	                sourceNodeRef, targetParentRef,
@@ -424,10 +424,10 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	        copyAspects(copyDetails, targetNodeRef, Collections.<QName>emptySet(), callbacks);
 	        copyResidualProperties(copyDetails, targetNodeRef);
 	        
-	        Map<NodeRef, NodeRef> copiedNodeRefs = new HashMap<NodeRef, NodeRef>(1);
+	        Map<NodeRef, NodeRef> copiedNodeRefs = HashMap.newHashMap(1);
 	        copiedNodeRefs.put(sourceNodeRef, targetNodeRef);
 
-	        Set<NodeRef> copies = new HashSet<NodeRef>(5);
+	        Set<NodeRef> copies = HashSet.newHashSet(5);
 	        copyChildren(
 	                copyDetails,
 	                targetNodeRef,
@@ -762,7 +762,7 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	        {
 	            return Collections.emptySet();
 	        }
-	        Set<QName> defaultAspectQNames = new HashSet<QName>(7);
+	        Set<QName> defaultAspectQNames = HashSet.newHashSet(7);
 	        for (AspectDefinition aspectDef : sourceNodeTypeDef.getDefaultAspects())
 	        {
 	            defaultAspectQNames.add(aspectDef.getName());
@@ -786,7 +786,7 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    {
 	        Map<QName, Serializable> sourceNodeProperties = copyDetails.getSourceNodeProperties();
 	        Map<QName, Serializable> copyProperties = new HashMap<QName, Serializable>(sourceNodeProperties.size(), 1.0F);
-	        Map<QName, Serializable> scratchProperties = new HashMap<QName, Serializable>(11);
+	        Map<QName, Serializable> scratchProperties = HashMap.newHashMap(11);
 	        // Each defined callback gets a chance to say which properties get copied
 	        // Only model-defined properties are considered
 	        for (QName classQName : classQNames)
@@ -1081,7 +1081,7 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	    {
 	        QName sourceNodeTypeQName = copyDetails.getSourceNodeTypeQName();
 	        
-	        Map<QName, CopyBehaviourCallback> callbacks = new HashMap<QName, CopyBehaviourCallback>(11);
+	        Map<QName, CopyBehaviourCallback> callbacks = HashMap.newHashMap(11);
 	        // Get the type-specific behaviour
 	        CopyBehaviourCallback callback = getCallback(sourceNodeTypeQName, copyDetails);
 	        callbacks.put(sourceNodeTypeQName, callback);
@@ -1204,7 +1204,7 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	        residualProperties.putAll(copyDetails.getSourceNodeProperties());
 	        
 	        QName sourceNodeTypeQName = copyDetails.getSourceNodeTypeQName();
-	        Set<QName> knownClassQNames = new HashSet<QName>(13);
+	        Set<QName> knownClassQNames = HashSet.newHashSet(13);
 	        // We add the default aspects, source-applied aspects and the source node type
 	        knownClassQNames.addAll(getDefaultAspects(sourceNodeTypeQName));
 	        knownClassQNames.addAll(copyDetails.getSourceNodeAspectQNames());

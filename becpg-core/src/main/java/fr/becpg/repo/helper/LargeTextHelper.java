@@ -129,16 +129,15 @@ public class LargeTextHelper {
 			return result;
 		}
 
-		int totalLength = 0;
-		for (String value : mlText.values()) {
-			if (value != null) {
-				totalLength += value.length();
-			}
+		int totalLength = totalLength(mlText);
+		if (totalLength <= TEXT_SIZE_LIMIT) {
+			result.putAll(mlText);
+			return result;
 		}
 
 		for (Entry<Locale, String> entry : mlText.entrySet()) {
 			String value = entry.getValue();
-			if ((value == null) || value.isEmpty() || (totalLength <= TEXT_SIZE_LIMIT)) {
+			if ((value == null) || value.isEmpty()) {
 				result.put(entry.getKey(), value);
 			} else {
 				// Share the global budget proportionally to each locale's actual size
@@ -147,6 +146,16 @@ public class LargeTextHelper {
 			}
 		}
 		return result;
+	}
+
+	private static int totalLength(MLText mlText) {
+		int totalLength = 0;
+		for (String value : mlText.values()) {
+			if (value != null) {
+				totalLength += value.length();
+			}
+		}
+		return totalLength;
 	}
 
 	/**

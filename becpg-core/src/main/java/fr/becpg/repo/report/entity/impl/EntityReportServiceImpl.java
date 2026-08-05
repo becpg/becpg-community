@@ -138,6 +138,12 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	/** Constant <code>MAX_TRACE_XML_LENGTH=1024 * 1024</code> */
 	private static final int MAX_TRACE_XML_LENGTH = 1024 * 1024;
 
+	private static final String PREF_REPORT_KIND_CODE = "reportKindCode";
+
+	private static final String PREF_REPORT_PARAMETERS_JSON = "reportParametersJson";
+
+	private static final String FILTERED_DATASOURCE_XML_TRACE = "Filtered DataSource XML : \n";
+
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
 
@@ -473,8 +479,8 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 													reportKindCode = reportKindProp.get(0);
 												}
 											}
-											reportParameters.getPreferences().put("reportKindCode", reportKindCode);
-											reportParameters.getPreferences().put("reportParametersJson", reportParameters.toJSONString());
+											reportParameters.getPreferences().put(PREF_REPORT_KIND_CODE, reportKindCode);
+											reportParameters.getPreferences().put(PREF_REPORT_PARAMETERS_JSON, reportParameters.toJSONString());
 
 											EntityReportData reportData = extractor.extract(entityNodeRef, reportParameters.getPreferences());
 											
@@ -511,7 +517,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 												auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, estimateXmlSize(reportData.getXmlDataSource()));
 												
 												if (logger.isTraceEnabled()) {
-													logger.trace("Filtered DataSource XML : \n" + getTruncatedXml(reportData.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
+													logger.trace(FILTERED_DATASOURCE_XML_TRACE + getTruncatedXml(reportData.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
 												}
 												
 											}
@@ -1126,8 +1132,8 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 									reportKindCode = reportKindProp.get(0);
 								}
 							}
-							reportParameters.getPreferences().put("reportKindCode", reportKindCode);
-							reportParameters.getPreferences().put("reportParametersJson", reportParameters.toJSONString());
+							reportParameters.getPreferences().put(PREF_REPORT_KIND_CODE, reportKindCode);
+							reportParameters.getPreferences().put(PREF_REPORT_PARAMETERS_JSON, reportParameters.toJSONString());
 
 							EntityReportData reportData = extractor.extract(entityNodeRef, reportParameters.getPreferences());
 							
@@ -1169,7 +1175,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 									auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, estimateXmlSize(reportData.getXmlDataSource()));
 									
 									if (logger.isTraceEnabled()) {
-										logger.trace("Filtered DataSource XML : \n" + getTruncatedXml(reportData.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
+										logger.trace(FILTERED_DATASOURCE_XML_TRACE + getTruncatedXml(reportData.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
 									}
 									
 								}
@@ -1281,8 +1287,8 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 						reportKindCode = reportKindProp.get(0);
 					}
 				}
-				reportParameters.getPreferences().put("reportKindCode", reportKindCode);
-				reportParameters.getPreferences().put("reportParametersJson", reportParameters.toJSONString());
+				reportParameters.getPreferences().put(PREF_REPORT_KIND_CODE, reportKindCode);
+				reportParameters.getPreferences().put(PREF_REPORT_PARAMETERS_JSON, reportParameters.toJSONString());
 
 				EntityReportData reportData = extractor.extract(entityNodeRef, reportParameters.getPreferences());
 				
@@ -1315,7 +1321,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 						auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, estimateXmlSize(reportData.getXmlDataSource()));
 
 						if (logger.isTraceEnabled()) {
-							logger.trace("Filtered DataSource XML : \n" + getTruncatedXml(reportData.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
+							logger.trace(FILTERED_DATASOURCE_XML_TRACE + getTruncatedXml(reportData.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
 						}
 					}
 
@@ -1424,8 +1430,8 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 			preferences = reportParameters.getPreferences();
 		}
 		
-		preferences.put("reportKindCode", "");
-		preferences.put("reportParametersJson", reportParameters.toJSONString());
+		preferences.put(PREF_REPORT_KIND_CODE, "");
+		preferences.put(PREF_REPORT_PARAMETERS_JSON, reportParameters.toJSONString());
 		
 		final Map<String, String> finalPreferences = preferences;
 		final EntityReportParameters finalReportParameters = reportParameters;

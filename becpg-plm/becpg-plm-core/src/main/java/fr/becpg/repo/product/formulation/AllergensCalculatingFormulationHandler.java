@@ -449,7 +449,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	 */
 	private Boolean assessParticleContamination(ProductData formulatedProduct, AllergenItem allergen,
 			AllergenListDataItem allergenListDataItem) {
-		if (allergenListDataItem.getParticleWeight() == null) {
+		if ((allergenListDataItem.getParticleWeight() == null) || (allergenListDataItem.getParticleProteinPerc() == null)) {
 			return null;
 		}
 
@@ -489,21 +489,6 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		}
 
 		return allergen.getAllergenInVoluntaryRegulatoryThreshold();
-	}
-
-	/**
-	 * <p>exceedsParticleDose.</p>
-	 *
-	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
-	 * @param allergen a {@link fr.becpg.repo.product.data.allergen.AllergenItem} object
-	 * @param allergenListDataItem a {@link fr.becpg.repo.product.data.productList.AllergenListDataItem} object
-	 * @return true when a single whole particle exceeds the reference dose
-	 */
-	private boolean exceedsParticleDose(ProductData formulatedProduct, AllergenItem allergen, AllergenListDataItem allergenListDataItem) {
-		PALReferenceDose referenceDose = findReferenceDose(formulatedProduct, allergen);
-
-		return (referenceDose != null)
-				&& referenceDose.exceedsParticleDose(allergenListDataItem.getParticleWeight(), allergenListDataItem.getParticleProteinPerc());
 	}
 
 	/**

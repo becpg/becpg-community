@@ -210,7 +210,7 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 
 		if (isPropChanged(before, after, BeCPGModel.PROP_ENTITY_TPL_ENABLED)
 				|| isPropChanged(before, after, BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT)) {
-			Set<QName> impactedTypes = new HashSet<>(1);
+			Set<QName> impactedTypes = HashSet.newHashSet(1);
 			impactedTypes.add(nodeService.getType(nodeRef));
 			invalidateTplCache(impactedTypes);
 		}

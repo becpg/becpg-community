@@ -170,8 +170,8 @@ public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 				ret.put(PROP_SITE, siteData);
 			}
 
-			Map<String, Map<String, Boolean>> permissions = new HashMap<>(1);
-			Map<String, Boolean> userAccess = new HashMap<>(5);
+			Map<String, Map<String, Boolean>> permissions = HashMap.newHashMap(1);
+			Map<String, Boolean> userAccess = HashMap.newHashMap(5);
 
 			boolean hasWrite = (services.getPermissionService().hasPermission(nodeRef, "Write") == AccessStatus.ALLOWED);
 

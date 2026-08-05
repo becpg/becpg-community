@@ -8,6 +8,7 @@ import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
+import fr.becpg.repo.regulatory.AbstractRegulatoryService;
 import fr.becpg.repo.regulatory.RegulatoryHelper;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
@@ -213,7 +214,7 @@ public class ProductDataDecernisJsonService {
      * @return a boolean
      */
     private boolean isRIDValid(String rid) {
-        return rid != null && !rid.isEmpty() && !rid.equals(NOT_APPLICABLE) && !rid.equals(DecernisRegulatoryService.UNKNOWN);
+        return rid != null && !rid.isEmpty() && !rid.equals(NOT_APPLICABLE) && !rid.equals(AbstractRegulatoryService.UNKNOWN);
     }
 
     /**
@@ -744,7 +745,7 @@ public class ProductDataDecernisJsonService {
         reqCtrlItem.addSource(ing);
         reqCtrlItem.setReqDataType(RequirementDataType.Specification);
         reqCtrlItem.setReqMlMessage(reqCtrlMessage);
-        reqCtrlItem.setFormulationChainId(DecernisRegulatoryService.REGULATORY_KEY);
+        reqCtrlItem.setFormulationChainId(AbstractRegulatoryService.REGULATORY_KEY);
         return reqCtrlItem;
     }
 
