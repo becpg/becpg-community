@@ -1,17 +1,15 @@
 <#--
   Canadian nutrition facts panel, B.01.401.
 
-  It differs from the FDA one in its opening block, which is a single "Per <serving>" line
-  instead of a servings count followed by a serving size, and in its footnote, which states the
-  little/lot rule rather than the daily diet disclaimer. The wording follows the locale, so the
-  same template renders "Valeur nutritive" in French and "Nutrition Facts" in English.
+  Its opening block is a single "Per <serving>" line instead of the two lines of the FDA one,
+  and its footnote states the little/lot rule rather than the daily diet disclaimer. The
+  wording follows the locale, so the same template renders "Valeur nutritive" in French and
+  "Nutrition Facts" in English.
 
   Known gap: the regulation prints a single % daily value shared by "Saturated + Trans", which
   this template still shows as two independent lines.
 -->
 <#import "nutritionFacts-lib.ftlx" as nf>
-<#-- Arial at 6pt averages about 3.1pt per character, so 136pt of content width takes 44 of them. -->
-<#assign FOOTNOTE_CHARS_PER_LINE = 44>
 
 <#assign y = nf.BORDER + 2>
 <#assign body>
@@ -25,58 +23,6 @@
 	<text x="${nf.PAD}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}" font-weight="bold">${nf_data.label("servingSize")}<#if nf_data.serving().servingSize()??> ${nf_data.serving().servingSize()}</#if></text>
 	<#assign y = y + nf.SERVING_ROW_H>
 
-	<@nf.rule y=y height=nf.RULE_THICK/>
-	<#assign y = y + nf.RULE_THICK + 1>
-
-	<#if nf_data.calories()??>
-	<text x="${nf.PAD}" y="${nf.baseline(y, nf.CALORIES_VALUE_SIZE)}" font-family="${nf.FONT_HEAVY}" font-weight="900" font-size="${nf.CALORIES_LABEL_SIZE}">${nf_data.calories().label()}</text>
-	<#if nf_data.calories().value()??>
-	<text x="${nf.RIGHT}" y="${nf.baseline(y, nf.CALORIES_VALUE_SIZE)}" font-family="${nf.FONT_HEAVY}" font-weight="900" font-size="${nf.CALORIES_VALUE_SIZE}" text-anchor="end">${nf_data.calories().value()}</text>
-	</#if>
-	<#assign y = y + nf.CALORIES_ROW_H>
-	</#if>
-
-	<@nf.rule y=y height=nf.RULE_MEDIUM/>
-	<#assign y = y + nf.RULE_MEDIUM + 1>
-
-	<text x="${nf.RIGHT}" y="${nf.baseline(y, nf.CAPTION_SIZE)}" font-size="${nf.CAPTION_SIZE}" font-weight="bold" text-anchor="end">${nf_data.label("dailyValue")}</text>
-	<#assign y = y + nf.CAPTION_ROW_H>
-
-	<#list nf_data.nutrients() as line>
-	<@nf.rule y=y/>
-	<#assign y = y + nf.HAIRLINE>
-	<@nf.nutrientRow line=line y=y/>
-	<#assign y = y + nf.NUTRIENT_ROW_H>
-	</#list>
-
-	<#if nf_data.micronutrients()?has_content>
-	<@nf.rule y=y height=nf.RULE_THICK/>
-	<#assign y = y + nf.RULE_THICK>
-
-	<#list nf_data.micronutrients() as line>
-	<#if (line?index gt 0)>
-	<@nf.rule y=y/>
-	<#assign y = y + nf.HAIRLINE>
-	</#if>
-	<@nf.nutrientRow line=line y=y/>
-	<#assign y = y + nf.NUTRIENT_ROW_H>
-	</#list>
-	</#if>
-
-	<#if nf_data.footNote()?has_content>
-	<@nf.rule y=y height=nf.RULE_MEDIUM/>
-	<#assign y = y + nf.RULE_MEDIUM + 1>
-	<#list nf.wrap(nf_data.footNote(), FOOTNOTE_CHARS_PER_LINE) as footNoteLine>
-	<text x="${nf.PAD}" y="${nf.baseline(y, nf.FOOTNOTE_SIZE)}" font-size="${nf.FOOTNOTE_SIZE}">${footNoteLine}</text>
-	<#assign y = y + nf.FOOTNOTE_LINE_H>
-	</#list>
-	</#if>
-
-	<#assign y = y + nf.BORDER + 1>
+	<@nf.panelBody data=nf_data y=y/>
 </#assign>
-<svg xmlns="http://www.w3.org/2000/svg" width="${nf.PANEL_W}pt" height="${y}pt" viewBox="0 0 ${nf.PANEL_W} ${y}"
-	preserveAspectRatio="xMinYMin meet" font-family="${nf.FONT_BODY}" fill="#000000">
-	<rect x="0" y="0" width="${nf.PANEL_W}" height="${y}" fill="#ffffff"/>
-	<@nf.border height=y/>
-	${body}
-</svg>
+<@nf.panel height=nf.cursorY>${body}</@nf.panel>
