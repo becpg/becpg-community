@@ -17,12 +17,16 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation.nutrient.facts;
 
+import java.text.MessageFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
-import org.springframework.extensions.surf.util.I18NUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * <p>Resolves the wording of a nutrition facts panel.</p>
@@ -36,6 +40,15 @@ import org.springframework.extensions.surf.util.I18NUtil;
  * @version $Id: $Id
  */
 public class NutritionFactsLabelResolver {
+
+	private static final Log logger = LogFactory.getLog(NutritionFactsLabelResolver.class);
+
+	/** Bundle holding the regulated wording of every panel. */
+	private static final String BUNDLE_NAME = "alfresco/module/becpg-plm-core/messages/nutrition-facts";
+
+	/** Resolution that skips the locale of the server, see {@link #message(String, Locale)}. */
+	private static final ResourceBundle.Control NO_DEFAULT_LOCALE_FALLBACK = ResourceBundle.Control
+			.getNoFallbackControl(ResourceBundle.Control.FORMAT_PROPERTIES);
 
 	/** Key of the panel title, "Nutrition Facts". */
 	public static final String LABEL_TITLE = "title";
@@ -69,6 +82,9 @@ public class NutritionFactsLabelResolver {
 
 	private static final String KEY_SEPARATOR = ".";
 
+	/** Placeholder a regulated wording uses when it carries the value inside the sentence. */
+	private static final String VALUE_PLACEHOLDER = "{0}";
+
 	private NutritionFactsLabelResolver() {
 		// Do nothing
 	}
@@ -85,6 +101,30 @@ public class NutritionFactsLabelResolver {
 	public static String nutrientLabel(String regulationKey, String nutCode, String charactName, Locale locale) {
 		String label = message(NUTRIENT_KEY_PREFIX + regulationKey + KEY_SEPARATOR + nutCode, locale);
 		return label != null ? label : charactName;
+	}
+
+	/**
+	 * <p>Tells whether a regulated wording carries the value inside the sentence rather than after
+	 * it, the way the FDA requires "Includes 10g Added Sugars" to be written.</p>
+	 *
+	 * @param label a {@link java.lang.String} object
+	 * @return a boolean
+	 */
+	public static boolean embedsValue(String label) {
+		return (label != null) && label.contains(VALUE_PLACEHOLDER);
+	}
+
+	/**
+	 * <p>Fills the value into a wording that embeds it. The value is then printed only once, as
+	 * part of the sentence.</p>
+	 *
+	 * @param label a {@link java.lang.String} object
+	 * @param value a {@link java.lang.String} object
+	 * @param locale a {@link java.util.Locale} object
+	 * @return a {@link java.lang.String} object
+	 */
+	public static String formatWithValue(String label, String value, Locale locale) {
+		return new MessageFormat(label, locale).format(new Object[] { value != null ? value : "" });
 	}
 
 	/**
@@ -116,12 +156,22 @@ public class NutritionFactsLabelResolver {
 	}
 
 	/**
-	 * I18NUtil echoes the key back when it resolves nothing, which would print
-	 * "nutritionFacts.nutrient.US.FASAT" on a label instead of falling back.
+	 * Resolves a wording without ever falling back to the default locale of the server.
+	 *
+	 * <p>The standard resolution walks the requested locale, then the locale of the machine, then
+	 * the base bundle. On a server configured in French, an American panel would therefore print
+	 * "saturés" instead of "Saturated Fat" merely because a French bundle exists: a compliance
+	 * defect on a regulated label. Denying that middle step leaves the requested language, then
+	 * the base bundle, which carries the English wording the regulations state.</p>
 	 */
 	private static String message(String key, Locale locale) {
-		String message = I18NUtil.getMessage(key, locale);
-		return ((message == null) || message.equals(key)) ? null : message;
+		try {
+			ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, locale != null ? locale : Locale.ENGLISH, NO_DEFAULT_LOCALE_FALLBACK);
+			return bundle.containsKey(key) ? bundle.getString(key) : null;
+		} catch (MissingResourceException e) {
+			logger.debug("No nutrition facts bundle for " + locale, e);
+			return null;
+		}
 	}
 
 }
