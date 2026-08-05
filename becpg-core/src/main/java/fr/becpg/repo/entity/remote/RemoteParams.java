@@ -258,6 +258,56 @@ public class RemoteParams {
 	}
 
 	/**
+	 * Whether serialising a node under this filter needs its associations walked.
+	 *
+	 * <h3>Why the question is worth asking</h3>
+	 *
+	 * {@code JsonEntityVisitor} walks every child and target association of a node —
+	 * and of each of its aspects — before the filter throws the result away. On a
+	 * listing that is done once per row. Measured on dev.becpg.fr,
+	 * {@code becpg/remote/entity/list} over 200 raw materials: 0.22 s with no
+	 * {@code fields} at all, 0.92 s with {@code fields=cm:name} — four times slower
+	 * for a single property, because asking for any field switches the visitor to
+	 * the per-node extraction path and that path always walked the associations.
+	 *
+	 * <h3>The rule</h3>
+	 *
+	 * <ul>
+	 * <li>no filter at all — the caller wants everything, associations included;</li>
+	 * <li>a rejection filter ({@code !field}) — it says what to drop, not what to
+	 *     keep, so nothing can be skipped;</li>
+	 * <li>an {@code assoc|property} entry — an association is explicitly asked for;</li>
+	 * <li>otherwise, walk them only if one of the requested names IS an association.
+	 *     A bare {@code fields=bcpg:suppliers} lands in the properties set exactly
+	 *     like {@code cm:name} does — the two are indistinguishable without the
+	 *     dictionary, which is why the caller passes the lookup in.</li>
+	 * </ul>
+	 *
+	 * The predicate is a dictionary lookup, independent of the node, so the answer
+	 * holds for a whole request and is computed once rather than per row.
+	 *
+	 * @param isAssociation tells whether a QName is an association in the model
+	 * @return true when the associations must be visited
+	 */
+	public boolean requiresAssociations(java.util.function.Predicate<QName> isAssociation) {
+		if (!filteredAssocProperties.isEmpty() || !ignoredFields.isEmpty()) {
+			return true;
+		}
+		if (filteredProperties.isEmpty()) {
+			return true;
+		}
+		if (isAssociation == null) {
+			return true;
+		}
+		for (QName property : filteredProperties) {
+			if (isAssociation.test(property)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * <p>isValidQNameString.</p>
 	 *
 	 * @param qName a {@link java.lang.String} object.
