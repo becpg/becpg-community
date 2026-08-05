@@ -1,9 +1,11 @@
 package fr.becpg.repo.product.formulation;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -353,14 +355,48 @@ public class PackagingHelper implements InitializingBean {
 	 * @return a {@link fr.becpg.repo.product.data.packaging.VariantPackagingData} holding the aggregated secondary/tertiary/inner tare
 	 */
 	public static VariantPackagingData getCompositionTareByLevel(ProductData productData) {
-		return instance.doGetCompositionTareByLevel(productData);
+		return instance.doGetCompositionTareByLevel(productData, new HashSet<>());
 	}
 
-	private VariantPackagingData doGetCompositionTareByLevel(ProductData productData) {
+	/**
+	 * Walks the composition, guarding against a recipe that refers to itself: a cyclic composition
+	 * would otherwise recurse until the stack overflows and fail the whole formulation.
+	 *
+	 * @param productData the product whose composition is walked
+	 * @param visited the products already walked on the current branch
+	 * @return the aggregated secondary/tertiary/inner tare
+	 */
+	private VariantPackagingData doGetCompositionTareByLevel(ProductData productData, Set<NodeRef> visited) {
 		VariantPackagingData ret = new VariantPackagingData();
 
-		if (Boolean.TRUE.equals(productData.getDropPackagingOfComponents())) {
+		NodeRef productNodeRef = productData.getNodeRef();
+
+		if ((productNodeRef != null) && !visited.add(productNodeRef)) {
+			logger.warn("Cycle detected in composition, skipping packaging tare of: " + productData.getName());
 			return ret;
+		}
+
+		try {
+			appendCompositionTareByLevel(productData, ret, visited);
+		} finally {
+			visited.remove(productNodeRef);
+		}
+
+		return ret;
+	}
+
+	/**
+	 * Adds to the given holder the secondary/tertiary/inner tare of every sub-component of the
+	 * composition, scaled by its quantity.
+	 *
+	 * @param productData the product whose composition is walked
+	 * @param ret the holder being filled
+	 * @param visited the products already walked on the current branch
+	 */
+	private void appendCompositionTareByLevel(ProductData productData, VariantPackagingData ret, Set<NodeRef> visited) {
+
+		if (Boolean.TRUE.equals(productData.getDropPackagingOfComponents())) {
+			return;
 		}
 
 		for (CompoListDataItem compoList : productData
@@ -382,7 +418,7 @@ public class PackagingHelper implements InitializingBean {
 			}
 
 			VariantPackagingData subOwn = getDefaultVariantPackagingData(subProduct);
-			VariantPackagingData subComposition = doGetCompositionTareByLevel(subProduct);
+			VariantPackagingData subComposition = doGetCompositionTareByLevel(subProduct, visited);
 
 			BigDecimal subSecondary = (subOwn != null ? subOwn.getTareSecondary() : BigDecimal.ZERO).add(subComposition.getTareSecondary());
 			BigDecimal subTertiary = (subOwn != null ? subOwn.getTareTertiary() : BigDecimal.ZERO).add(subComposition.getTareTertiary());
@@ -392,8 +428,6 @@ public class PackagingHelper implements InitializingBean {
 			ret.addTareTertiary(subTertiary.multiply(qtyFactor));
 			ret.addTareInner(subInner.multiply(qtyFactor));
 		}
-
-		return ret;
 	}
 
 	/**
