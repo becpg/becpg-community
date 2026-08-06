@@ -303,6 +303,7 @@
 							<ref bean="nutriScore"/>
 							<ref bean="thresholdNutritionScore"/>
 							<ref bean="fsaOfcomNutrientProfile"/>
+							<ref bean="healthStarRating"/>
 						</list>
 					</property>
 				</bean>
@@ -353,6 +354,7 @@
 							<ref bean="nutriScore"/>
 							<ref bean="thresholdNutritionScore"/>
 							<ref bean="fsaOfcomNutrientProfile"/>
+							<ref bean="healthStarRating"/>
 						</list>
 					</property>
 				</bean>
