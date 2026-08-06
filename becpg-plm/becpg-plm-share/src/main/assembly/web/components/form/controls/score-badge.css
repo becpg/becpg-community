@@ -1,0 +1,166 @@
+/*
+ * Generic score badge, driven by the scale of the score definition.
+ * Repository badges are served as <img>; when none exists the image errors out and the
+ * fallback classes below take over, so a repository without custom badges keeps rendering.
+ */
+
+.score-badge {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: normal;
+    word-spacing: normal;
+}
+
+.score-badge-img {
+    max-height: 50px;
+    max-width: 120px;
+    vertical-align: middle;
+}
+
+.score-badge-value {
+    font-weight: bold;
+    padding-left: 4px;
+    vertical-align: middle;
+}
+
+.score-badge-unit {
+    color: #666;
+    padding-left: 2px;
+    font-size: 11px;
+}
+
+/* Letter scale, same colour language as the nutrient class chips */
+
+.score-badge-letter {
+    border: 0 none;
+    border-radius: 5px;
+    color: white;
+    display: inline-block;
+    font-size: 17px;
+    font-weight: bold;
+    height: 20px;
+    padding: 7px;
+    text-align: center;
+    width: 15px;
+}
+
+.score-badge-letter-a {
+    background: #00853f;
+}
+
+.score-badge-letter-b {
+    background: #64bf21;
+}
+
+.score-badge-letter-c {
+    background: #ffc800;
+}
+
+.score-badge-letter-d {
+    background: #ff7600;
+}
+
+.score-badge-letter-e {
+    background: #ff0100;
+}
+
+/* Stars scale, Health Star Rating and the like */
+
+.score-badge-stars {
+    color: #f0a30a;
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
+/* Warnings scale, one pictogram per warning */
+
+.score-badge-warning {
+    background: #000;
+    border-radius: 50%;
+    color: white;
+    display: inline-block;
+    font-size: 11px;
+    font-weight: bold;
+    height: 22px;
+    line-height: 22px;
+    margin-right: 2px;
+    text-align: center;
+    width: 22px;
+}
+
+/* Traffic lights scale, one light per part */
+
+.score-badge-traffic {
+    border-radius: 3px;
+    color: white;
+    display: inline-block;
+    font-size: 11px;
+    margin-right: 2px;
+    padding: 2px 5px;
+}
+
+.score-badge-traffic-low {
+    background: #00853f;
+}
+
+.score-badge-traffic-medium {
+    background: #ffc800;
+    color: #333;
+}
+
+.score-badge-traffic-high {
+    background: #ff0100;
+}
+
+/* Grade scale, named grade without ordering */
+
+.score-badge-grade {
+    background: #4a4a4a;
+    border-radius: 3px;
+    color: white;
+    display: inline-block;
+    font-size: 12px;
+    padding: 3px 7px;
+}
+
+.score-badge-error {
+    background: url("../../images/states/warning-16.png") no-repeat;
+    padding-left: 20px;
+}
+
+/* Detail panel, replaces the concatenated title tooltips */
+
+.score-details {
+    border-collapse: collapse;
+    margin-top: 6px;
+    width: 100%;
+}
+
+.score-details th,
+.score-details td {
+    border-bottom: 1px solid #e0e0e0;
+    padding: 3px 6px;
+    text-align: left;
+}
+
+.score-details th {
+    color: #666;
+    font-weight: bold;
+}
+
+.score-details td.score-details-number {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.score-details tr.score-details-step td {
+    background: #f7f7f7;
+    font-style: italic;
+}
+
+.score-details-share {
+    background: #e8e8e8;
+    display: inline-block;
+    height: 8px;
+    vertical-align: middle;
+}
