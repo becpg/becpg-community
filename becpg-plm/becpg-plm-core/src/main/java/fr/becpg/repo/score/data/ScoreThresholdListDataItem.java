@@ -3,6 +3,7 @@
  */
 package fr.becpg.repo.score.data;
 
+import java.util.Map;
 import java.util.Objects;
 
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -39,6 +40,10 @@ public class ScoreThresholdListDataItem extends BeCPGDataObject {
 	private Double points;
 
 	private Double referenceIntake;
+
+	private String ratioNutCode;
+
+	private Double ratioFactor;
 
 	/**
 	 * <p>Getter for the field <code>nutCode</code>.</p>
@@ -179,6 +184,69 @@ public class ScoreThresholdListDataItem extends BeCPGDataObject {
 	 */
 	public void setReferenceIntake(Double referenceIntake) {
 		this.referenceIntake = referenceIntake;
+	}
+
+	/**
+	 * Characteristic the value is divided by before being compared, such as the energy of
+	 * the product. Empty means the value is compared as it stands.
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:stlRatioNutCode")
+	public String getRatioNutCode() {
+		return ratioNutCode;
+	}
+
+	/**
+	 * <p>Setter for the field <code>ratioNutCode</code>.</p>
+	 *
+	 * @param ratioNutCode a {@link java.lang.String} object
+	 */
+	public void setRatioNutCode(String ratioNutCode) {
+		this.ratioNutCode = ratioNutCode;
+	}
+
+	/**
+	 * Multiplier applied to the value before the division, typically the energy density of
+	 * the nutrient when a regulation reasons in share of the total energy.
+	 *
+	 * @return a {@link java.lang.Double} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:stlRatioFactor")
+	public Double getRatioFactor() {
+		return ratioFactor;
+	}
+
+	/**
+	 * <p>Setter for the field <code>ratioFactor</code>.</p>
+	 *
+	 * @param ratioFactor a {@link java.lang.Double} object
+	 */
+	public void setRatioFactor(Double ratioFactor) {
+		this.ratioFactor = ratioFactor;
+	}
+
+	/**
+	 * Value actually compared to the bounds: the raw value, or its share of another
+	 * characteristic when the regulation reasons in ratio.
+	 *
+	 * @param value the value of the nutrient
+	 * @param values every documented characteristic of the product
+	 * @return a {@link java.lang.Double} object
+	 */
+	public Double comparedValue(Double value, Map<String, Double> values) {
+		if ((value == null) || (ratioNutCode == null) || ratioNutCode.isBlank()) {
+			return value;
+		}
+
+		Double divisor = values.get(ratioNutCode);
+		if ((divisor == null) || (divisor == 0d)) {
+			return null;
+		}
+
+		return (value * (ratioFactor != null ? ratioFactor : 1d)) / divisor;
 	}
 
 	/**

@@ -518,6 +518,10 @@ public interface PLMModel {
 	QName PROP_STL_POINTS = QName.createQName(BeCPGModel.BECPG_URI, "stlPoints");
 	/** Constant <code>PROP_STL_REFERENCE_INTAKE</code> */
 	QName PROP_STL_REFERENCE_INTAKE = QName.createQName(BeCPGModel.BECPG_URI, "stlReferenceIntake");
+	/** Constant <code>PROP_STL_RATIO_NUT_CODE</code> */
+	QName PROP_STL_RATIO_NUT_CODE = QName.createQName(BeCPGModel.BECPG_URI, "stlRatioNutCode");
+	/** Constant <code>PROP_STL_RATIO_FACTOR</code> */
+	QName PROP_STL_RATIO_FACTOR = QName.createQName(BeCPGModel.BECPG_URI, "stlRatioFactor");
 
 	/** Constant <code>TYPE_SCORE_BADGE_LIST</code> */
 	QName TYPE_SCORE_BADGE_LIST = QName.createQName(BeCPGModel.BECPG_URI, "scoreBadgeList");

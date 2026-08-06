@@ -2039,6 +2039,14 @@
 					<type>d:double</type>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:stlRatioNutCode">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:stlRatioFactor">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
 			</properties>
 		</type>
 
