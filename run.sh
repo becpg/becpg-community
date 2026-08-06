@@ -245,20 +245,30 @@ upload_test() {
     echo "Uploading test results to Status for host: ${HOST_ID}..."
     STATUS_URL="https://status.becpg.fr/test-reports/upload"
 
-    response=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
-      -H "Authorization: ${TOKEN}" \
-      -F "file=@${ZIP_FILE}" \
-      -F "hostId=${HOST_ID}" \
-      -F "version=${VERSION}" \
-      "$STATUS_URL")
-
-    if [ "$response" -eq 200 ]; then
-        echo "Upload completed successfully! (HTTP 200)"
-    else
-        echo "Upload failed with HTTP response code: $response"
-        echo "Please ensure the becpg-status application is running on $STATUS_URL and STATUS_AUTH_TOKEN contains a valid key"
-        return 1
-    fi
+	response=$(mktemp)
+	
+	http_code=$(curl -s \
+	    -o "$response" \
+	    -w "%{http_code}" \
+	    -X POST \
+	    -H "Authorization: ${TOKEN}" \
+	    -F "file=@${ZIP_FILE}" \
+	    -F "hostId=${HOST_ID}" \
+	    -F "version=${VERSION}" \
+	    "$STATUS_URL")
+	
+	body=$(cat "$response")
+	rm "$response"
+	
+	if [ "$http_code" -eq 200 ]; then
+	    echo "Upload completed successfully! (HTTP 200)"
+	    [ -n "$body" ] && echo "$body"
+	else
+	    echo "Upload failed with HTTP response code: $http_code"
+	    [ -n "$body" ] && echo "Response: $body"
+	    echo "Please ensure the becpg-status application is running on $STATUS_URL and STATUS_AUTH_TOKEN contains a valid key"
+	    return 1
+	fi
 }
 
 
