@@ -46,3 +46,4 @@ build/
 .aider*
 /becpg.code-workspace
 recording.jfr
+docker-compose.override.yml.bak-*
