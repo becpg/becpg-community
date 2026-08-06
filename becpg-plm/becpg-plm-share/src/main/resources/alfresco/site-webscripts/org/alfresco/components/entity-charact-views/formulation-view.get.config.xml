@@ -3,6 +3,7 @@
    	    <customList id="nutList" type="bcpg:nutList"  selected="true" filter="!qa:batch" />
    	    <customList id="costList" type="bcpg:costList" filter="!qa:batch" />
    	    <customList id="lcaList" type="bcpg:lcaList" filter="!qa:batch" />
+   	    <customList id="entityScoreList" type="bcpg:entityScoreList" filter="!qa:batch" />
    	    <customList id="physicoChemList" type="bcpg:physicoChemList"  filter="!qa:batch" />
    	    <customList id="ingList" type="bcpg:ingList"  filter="!qa:batch" />
    	    <customList id="labelClaimList" type="bcpg:labelClaimList"  filter="!qa:batch" />

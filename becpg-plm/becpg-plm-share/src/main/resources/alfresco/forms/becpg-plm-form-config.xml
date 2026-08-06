@@ -1854,6 +1854,8 @@
                     <show id="bcpg:scoreDefValidityPeriod" />
                     <show id="bcpg:scoreDefStartEffectivity" />
                     <show id="bcpg:scoreDefEndEffectivity" />
+                    <show id="bcpg:scoreDefCountries" />
+                    <show id="bcpg:scoreDefUsages" />
                     <show id="sec:readGroups" force="true" />
                     <show id="bcpg:isDeleted" />
                 </field-visibility>
@@ -1872,6 +1874,12 @@
                     <field id="bcpg:scoreDefValidityPeriod" set="2-col" />
                     <field id="bcpg:scoreDefStartEffectivity" set="2-col" />
                     <field id="bcpg:scoreDefEndEffectivity" set="2-col" />
+                    <field id="bcpg:scoreDefCountries" set="2-col">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                    </field>
+                    <field id="bcpg:scoreDefUsages" set="2-col">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                    </field>
                     <field id="bcpg:scoreDefRange" />
                     <field id="cm:description">
                         <control>
@@ -1921,6 +1929,8 @@
                     <show id="bcpg:scoreDefValidityPeriod" />
                     <show id="bcpg:scoreDefStartEffectivity" />
                     <show id="bcpg:scoreDefEndEffectivity" />
+                    <show id="bcpg:scoreDefCountries" />
+                    <show id="bcpg:scoreDefUsages" />
                 </field-visibility>
                 <appearance>
                     <set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
@@ -1937,6 +1947,12 @@
                     <field id="bcpg:scoreDefValidityPeriod" set="2-col" />
                     <field id="bcpg:scoreDefStartEffectivity" set="2-col" />
                     <field id="bcpg:scoreDefEndEffectivity" set="2-col" />
+                    <field id="bcpg:scoreDefCountries" set="2-col">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                    </field>
+                    <field id="bcpg:scoreDefUsages" set="2-col">
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                    </field>
                     <field id="bcpg:scoreDefRange" />
                     <field id="cm:description">
                         <control>

@@ -493,6 +493,10 @@ public interface PLMModel {
 	QName PROP_SCORE_DEF_START_EFFECTIVITY = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefStartEffectivity");
 	/** Constant <code>PROP_SCORE_DEF_END_EFFECTIVITY</code> */
 	QName PROP_SCORE_DEF_END_EFFECTIVITY = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefEndEffectivity");
+	/** Constant <code>ASSOC_SCORE_DEF_COUNTRIES</code> */
+	QName ASSOC_SCORE_DEF_COUNTRIES = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefCountries");
+	/** Constant <code>ASSOC_SCORE_DEF_USAGES</code> */
+	QName ASSOC_SCORE_DEF_USAGES = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefUsages");
 
 	/** Constant <code>TYPE_SCORE_DEF_COEFF_LIST</code> */
 	QName TYPE_SCORE_DEF_COEFF_LIST = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefCoeffList");

@@ -445,7 +445,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		NodeRef channelListFolder = entitySystemService.getSystemEntityDataList(systemNodeRef, RepoConsts.PATH_CHARACTS,
 				PlmRepoConsts.PATH_PUBCHANNELS);
 		visitChannelList(channelListFolder);
-		
+
 		// Dynamic constraints
 		visitSystemListValuesEntity(systemNodeRef, RepoConsts.PATH_LISTS);
 
@@ -1583,6 +1583,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_ALLERGENLIST);
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_LCALIST);
+				dataLists.add(PLMModel.TYPE_ENTITY_SCORE_LIST);
 				dataLists.add(PLMModel.TYPE_NUTLIST);
 				dataLists.add(PLMModel.TYPE_INGLIST);
 				dataLists.add(PLMModel.TYPE_ORGANOLIST);
@@ -1601,6 +1602,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_LCALIST);
+				dataLists.add(PLMModel.TYPE_ENTITY_SCORE_LIST);
 				dataLists.add(PLMModel.TYPE_PRICELIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
@@ -1618,6 +1620,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_LCALIST);
+				dataLists.add(PLMModel.TYPE_ENTITY_SCORE_LIST);
 				dataLists.add(PLMModel.TYPE_PRICELIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(MPMModel.TYPE_RESOURCEPARAMLIST);
@@ -1641,6 +1644,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_ALLERGENLIST);
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_LCALIST);
+				dataLists.add(PLMModel.TYPE_ENTITY_SCORE_LIST);
 				dataLists.add(PLMModel.TYPE_NUTLIST);
 				dataLists.add(PLMModel.TYPE_INGLIST);
 				dataLists.add(PLMModel.TYPE_ORGANOLIST);
@@ -1664,6 +1668,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_ALLERGENLIST);
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_LCALIST);
+				dataLists.add(PLMModel.TYPE_ENTITY_SCORE_LIST);
 				dataLists.add(PLMModel.TYPE_NUTLIST);
 				dataLists.add(PLMModel.TYPE_INGLIST);
 				dataLists.add(PLMModel.TYPE_INGLABELINGLIST);
@@ -1681,6 +1686,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_PACKAGINGLIST);
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_LCALIST);
+				dataLists.add(PLMModel.TYPE_ENTITY_SCORE_LIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_SVHCLIST);
 				dataLists.add(PackModel.PACK_MATERIAL_LIST_TYPE);

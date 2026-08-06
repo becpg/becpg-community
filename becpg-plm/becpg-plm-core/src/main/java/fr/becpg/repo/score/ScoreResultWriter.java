@@ -13,6 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.repo.regulatory.RegulatoryEntity;
 import fr.becpg.repo.score.data.EntityScoreListDataItem;
 import fr.becpg.repo.score.data.ScoreDefinitionItem;
 
@@ -59,6 +60,13 @@ public class ScoreResultWriter {
 			return;
 		}
 
+		if (!isApplicable(entity, definition.get())) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Score " + context.getCode() + " does not apply to the markets of the entity");
+			}
+			return;
+		}
+
 		context.computeShares();
 
 		EntityScoreListDataItem item = findOrCreateItem(entity, definition.get());
@@ -69,6 +77,21 @@ public class ScoreResultWriter {
 		item.setDetails(context.toJSON().toString());
 		item.setVersion(context.getVersion());
 		item.setComputedDate(new Date());
+	}
+
+	/**
+	 * An entity that carries no regulatory information is served by every score, so a
+	 * repository not using the market filtering keeps every score it used to get.
+	 *
+	 * @param entity a {@link fr.becpg.repo.score.ScoredEntity} object
+	 * @param definition a {@link fr.becpg.repo.score.data.ScoreDefinitionItem} object
+	 * @return a boolean
+	 */
+	private boolean isApplicable(ScoredEntity entity, ScoreDefinitionItem definition) {
+		if (entity instanceof RegulatoryEntity regulatoryEntity) {
+			return scoreDefinitionService.isApplicable(definition, regulatoryEntity);
+		}
+		return true;
 	}
 
 	/**

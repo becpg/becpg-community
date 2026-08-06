@@ -136,140 +136,57 @@ public class LCADatabaseService {
 	}
 
 	/**
-	 * <p>extractLCAList.</p>
+	 * <p>Turns one entry of an LCA database into the lines of an LCA list.</p>
 	 *
 	 * @param databaseNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @param entity a {@link java.lang.String} object
-	 * @return a {@link java.util.List} object
+	 * @param entity the identifier of the entry in the database
+	 * @return a {@link java.util.List} object, never null
 	 */
 	public List<LCAListDataItem> extractLCAList(NodeRef databaseNodeRef, String entity) {
 
+		LCADatabasePlugin plugin = getPlugin(databaseNodeRef);
+		LCAData efpData = plugin.extractData(databaseNodeRef).get(entity);
+
+		if (efpData == null) {
+			return new ArrayList<>();
+		}
+
 		List<LCAListDataItem> items = new ArrayList<>();
 
-		LCADatabasePlugin plugin = getPlugin(databaseNodeRef);
-		Map<String, LCAData> lcaData = plugin.extractData(databaseNodeRef);
+		for (Map.Entry<String, Double> impact : efpData.getImpacts().entrySet()) {
+			LCAListDataItem item = createLCAListDataItem(impact.getKey(), impact.getValue());
+			if (item != null) {
+				item.setMethod(plugin.getMethod());
+				items.add(item);
+			}
+		}
 
-		String method = plugin.getMethod();
-		
-		LCAData efpData = lcaData.get(entity);
-		
-		LCAListDataItem item = createLCAListDataItem("ACIDIFICATION", efpData.getAcidification());
-		if (item != null) {
-			item.setMethod(method);
-			items.add(item);
-		}
-		
-		item = createLCAListDataItem("CLIMATE_CHANGE", efpData.getClimateChange());
-		if (item != null) {
-			item.setMethod(method);
-			items.add(item);
-		}
-		
-		item = createLCAListDataItem("PARTICULATE_MATTER", efpData.getParticulateMatter());
-		if (item != null) {
-			item.setMethod(method);
-			items.add(item);
-		}
-		
-		item = createLCAListDataItem("WATER_USE", efpData.getWaterUse());
-		if (item != null) {
-			item.setMethod(method);
-			items.add(item);
-		}
-		
-		item = createLCAListDataItem("LAND_USE", efpData.getLandUse());
-		if (item != null) {
-			item.setMethod(method);
-			items.add(item);
-		}
-		
-		item = createLCAListDataItem("RESOURCE_USE_FOSSILS", efpData.getResourceUseFossils());
-		if (item != null) {
-			item.setMethod(method);
-			items.add(item);
-		}
-		
-		item = createLCAListDataItem("ECOTOXICITY_FRESHWATER", efpData.getFreshwaterEcotoxicity());
-		if (item != null) {
-			item.setMethod(method);
-			items.add(item);
-		}
-		
-		item = createLCAListDataItem("OZONE_DEPLETION", efpData.getOzoneDepletion());
-		if (item != null) {
-			item.setMethod(method);
-			items.add(item);
-		}
-		
-		item = createLCAListDataItem("IONIZING_RADIATION", efpData.getIonizingRadiation());
-		if (item != null) {
-			item.setMethod(method);
-			items.add(item);
-		}
-		
-		item = createLCAListDataItem("PHOTOCHEMICAL_OZONE_FORMATION", efpData.getPhotochemicalOzoneFormation());
-		if (item != null) {
-			item.setMethod(method);
-			items.add(item);
-		}
-		
-		item = createLCAListDataItem("EUTROPHICATION_TERRESTRIAL", efpData.getTerrestrialEutrophication());
-		if (item != null) {
-			item.setMethod(method);
-			items.add(item);
-		}
-		
-		item = createLCAListDataItem("EUTROPHICATION_MARINE", efpData.getMarineEutrophication());
-		if (item != null) {
-			item.setMethod(method);
-			items.add(item);
-		}
-		
-		item = createLCAListDataItem("EUTROPHICATION_FRESHWATER", efpData.getFreshwaterEutrophication());
-		if (item != null) {
-			item.setMethod(method);
-			items.add(item);
-		}
-		
-		item = createLCAListDataItem("HUMAN_TOXICITY_CANCER", efpData.getHumanToxicityCancer());
-		if (item != null) {
-			item.setMethod(method);
-			items.add(item);
-		}
-		
-		item = createLCAListDataItem("HUMAN_TOXICITY_NON_CANCER", efpData.getHumanToxicityNonCancer());
-		if (item != null) {
-			item.setMethod(method);
-			items.add(item);
-		}
-		
-		item = createLCAListDataItem("RESOURCE_USE_MINERALS_METALS", efpData.getResourceUseMineralsMetal());
-		if (item != null) {
-			item.setMethod(method);
-			items.add(item);
-		}
-		
 		return items;
 	}
-	
+
 	/**
 	 * <p>createLCAListDataItem.</p>
 	 *
-	 * @param lcaCode a {@link java.lang.String} object
-	 * @param lcaValue a {@link java.lang.Double} object
-	 * @return a {@link fr.becpg.repo.product.data.productList.LCAListDataItem} object
+	 * @param lcaCode the indicator code, as held by {@code bcpg:lcaCode}
+	 * @param lcaValue the impact value
+	 * @return the line, or null when the repository holds no indicator for that code
 	 */
 	private LCAListDataItem createLCAListDataItem(String lcaCode, Double lcaValue) {
-		if (lcaValue != null) {
-			List<NodeRef> lca = BeCPGQueryBuilder.createQuery().inDB().ofType(PLMModel.TYPE_LCA).andPropEquals(PLMModel.PROP_LCA_CODE, lcaCode).list();
-			if (lca != null && !lca.isEmpty()) {
-				LCAListDataItem item = new LCAListDataItem();
-				item.setLca(lca.get(0));
-				item.setValue(lcaValue);
-				return item;
-			}
+		if (lcaValue == null) {
+			return null;
 		}
-		return null;
+
+		List<NodeRef> lca = BeCPGQueryBuilder.createQuery().inDB().ofType(PLMModel.TYPE_LCA).andPropEquals(PLMModel.PROP_LCA_CODE, lcaCode).list();
+
+		if ((lca == null) || lca.isEmpty()) {
+			return null;
+		}
+
+		LCAListDataItem item = new LCAListDataItem();
+		item.setLca(lca.get(0));
+		item.setValue(lcaValue);
+
+		return item;
 	}
 
 	/**

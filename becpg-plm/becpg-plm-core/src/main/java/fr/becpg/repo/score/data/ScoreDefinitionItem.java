@@ -3,11 +3,15 @@
  */
 package fr.becpg.repo.score.data;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import org.alfresco.service.cmr.repository.NodeRef;
+
 import fr.becpg.repo.repository.annotation.AlfCacheable;
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
@@ -62,7 +66,52 @@ public class ScoreDefinitionItem extends BeCPGDataObject {
 
 	private Date endEffectivity;
 
+	private List<NodeRef> countries = new ArrayList<>();
+
+	private List<NodeRef> usages = new ArrayList<>();
+
 	private List<ScoreDefCoeffListDataItem> coeffList;
+
+	/**
+	 * Markets the score applies to. An empty list means the score applies to every market,
+	 * the same convention as the regulatory lists.
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:scoreDefCountries")
+	public List<NodeRef> getCountries() {
+		return countries;
+	}
+
+	/**
+	 * <p>Setter for the field <code>countries</code>.</p>
+	 *
+	 * @param countries a {@link java.util.List} object
+	 */
+	public void setCountries(List<NodeRef> countries) {
+		this.countries = countries;
+	}
+
+	/**
+	 * Usages the score applies to. An empty list means every usage.
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:scoreDefUsages")
+	public List<NodeRef> getUsages() {
+		return usages;
+	}
+
+	/**
+	 * <p>Setter for the field <code>usages</code>.</p>
+	 *
+	 * @param usages a {@link java.util.List} object
+	 */
+	public void setUsages(List<NodeRef> usages) {
+		this.usages = usages;
+	}
 
 	/**
 	 * Normalization and weighting factors of the score, one line per LCA indicator.
