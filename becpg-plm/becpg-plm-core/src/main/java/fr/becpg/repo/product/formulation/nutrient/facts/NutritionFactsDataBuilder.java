@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation.nutrient.facts;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -56,6 +57,9 @@ import fr.becpg.repo.repository.RepositoryEntity;
 public class NutritionFactsDataBuilder {
 
 	private static final double ZERO_THRESHOLD = 0.0001d;
+
+	/** Serving size shown without trailing zeros: "55g" and not "55.0g". */
+	private static final String SERVING_SIZE_PATTERN = "#.##";
 
 	private final NodeService mlNodeService;
 
@@ -179,8 +183,18 @@ public class NutritionFactsDataBuilder {
 
 		if (isDeclared(regulated, options)) {
 			nutrients.add(regulated);
-			charactNames.put(regulated.nutCode(), nut.getName());
+			charactNames.put(regulated.nutCode(), charactName(nut, locale));
 		}
+	}
+
+	/**
+	 * Name of the characteristic, used when a regulation does not name a nutrient itself. The
+	 * multilingual name is what a user reads; the node name is a fallback and is often a raw
+	 * identifier, which must never be printed on a label.
+	 */
+	private String charactName(NutDataItem nut, Locale locale) {
+		String charactName = MLTextHelper.getClosestValue(nut.getCharactName(), locale);
+		return ((charactName != null) && !charactName.isBlank()) ? charactName : nut.getName();
 	}
 
 	/**
@@ -234,7 +248,7 @@ public class NutritionFactsDataBuilder {
 	private NutritionFactsLine toLine(RegulatedNutrient regulated, RegulatedNutrients regulatedNutrients, Locale locale,
 			NutritionFactsOptions options) {
 
-		String unit = regulated.displayRule().unit();
+		String unit = carriesUnit(regulated) ? regulated.displayRule().unit() : null;
 		String unitValue = withUnit(regulated.displayValuePerServing(), unit);
 		String value = unitValue;
 
@@ -259,6 +273,15 @@ public class NutritionFactsDataBuilder {
 	}
 
 	/**
+	 * The energy line is printed as a bare figure: a panel writes "Calories 230", never
+	 * "230kcal", and the unit would collide with the label at that type size.
+	 */
+	private boolean carriesUnit(RegulatedNutrient regulated) {
+		Integer sort = regulated.displayRule().sort();
+		return (sort == null) || (sort != NutritionFactsOptions.CALORIES_SORT);
+	}
+
+	/**
 	 * The regulation formats the figure, never its unit, which the report design used to append
 	 * itself. A panel needs the two as a single token, "8g" and not "8" next to "g".
 	 */
@@ -277,12 +300,31 @@ public class NutritionFactsDataBuilder {
 		return new NutritionFactsServing(closestValue(product, PLMModel.PROP_PRODUCT_NUMBER_OF_SERVINGS, locale), servingSize(product, locale));
 	}
 
+	/**
+	 * Wording of the serving, preferring what the user wrote ("2/3 cup (55g)"), then the country
+	 * specific wording, and falling back on the serving size itself so that the line is never
+	 * printed empty on a product that only carries a quantity.
+	 */
 	private String servingSize(ProductData product, Locale locale) {
 		String servingSizeText = closestValue(product, PLMModel.PROP_PRODUCT_SERVING_SIZE_TEXT, locale);
 		if ((servingSizeText != null) && !servingSizeText.isBlank()) {
 			return servingSizeText;
 		}
-		return MLTextHelper.getClosestValue(product.getServingSizeByCountry(), locale);
+
+		String byCountry = MLTextHelper.getClosestValue(product.getServingSizeByCountry(), locale);
+		if ((byCountry != null) && !byCountry.isBlank()) {
+			return byCountry;
+		}
+
+		return formatServingSize(product);
+	}
+
+	private String formatServingSize(ProductData product) {
+		if (product.getServingSize() == null) {
+			return null;
+		}
+		String unit = product.getServingSizeUnit() != null ? product.getServingSizeUnit().toString() : "";
+		return new DecimalFormat(SERVING_SIZE_PATTERN).format(product.getServingSize()) + unit;
 	}
 
 	private String closestValue(ProductData product, QName property, Locale locale) {
