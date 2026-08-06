@@ -302,6 +302,7 @@
 							<ref bean="ecoScore"/>
 							<ref bean="nutriScore"/>
 							<ref bean="thresholdNutritionScore"/>
+							<ref bean="fsaOfcomNutrientProfile"/>
 						</list>
 					</property>
 				</bean>
@@ -351,6 +352,7 @@
 							<ref bean="ecoScore"/>
 							<ref bean="nutriScore"/>
 							<ref bean="thresholdNutritionScore"/>
+							<ref bean="fsaOfcomNutrientProfile"/>
 						</list>
 					</property>
 				</bean>
