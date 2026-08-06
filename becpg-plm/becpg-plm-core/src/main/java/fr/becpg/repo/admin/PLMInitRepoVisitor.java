@@ -538,6 +538,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		// LCADatabases
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_LCA_DATABASES);
+
+		// ScoreBadges
+		visitFolder(systemNodeRef, PlmRepoConsts.PATH_SCORE_BADGES);
 		
 		// LCADatabases
 	    visitFolder(systemNodeRef, PlmRepoConsts.PATH_CLP_DATABASES);

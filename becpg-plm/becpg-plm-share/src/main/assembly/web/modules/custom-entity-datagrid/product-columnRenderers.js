@@ -461,6 +461,24 @@ if (beCPG.module.EntityDataGridRenderers) {
         }
     });
 
+    // Generic score of the score framework: the rendering is driven by the scale carried
+    // by the normalized detail, so a new score needs no renderer of its own.
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName: ["bcpg:eslDetails"],
+        renderer: function(oRecord, data, label, scope) {
+            if (!beCPG.util.score) {
+                return "";
+            }
+
+            var details = beCPG.util.score.parseDetails(data ? data.value : null);
+            if (!details) {
+                return "";
+            }
+
+            return '<div class="score-badge-cell">' + beCPG.util.score.renderBadge(details) + '</div>';
+        }
+    });
+
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName: ["cm:cmobject_bcpg:allergenListVolSources", "cm:cmobject_bcpg:allergenListInVolSources", "bcpg:irlIng", "bcpg:irlSources"],
         renderer: function(oRecord, data, label, scope) {
