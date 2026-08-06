@@ -7,7 +7,7 @@
 -->
 <#import "nutritionFacts-lib.ftlx" as nf>
 <#-- Four columns of figures need more width than a vertical panel: 3 inches. -->
-<#assign DUAL_W = 216>
+<#assign DUAL_W = 252>
 
 <#assign y = nf.BORDER + 2>
 <#assign body>

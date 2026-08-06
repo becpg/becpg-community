@@ -147,7 +147,7 @@ public class NutritionFactsTemplateTest {
 	@Test
 	public void testLinearFormatUsesTheRegulatedAbbreviations() throws Exception {
 		NutritionFactsData data = panelData(
-				new NutritionFactsLine("FASAT", "Saturated Fat", "Sat. Fat", "1g", null, "5%", null, 2, false, true));
+				new NutritionFactsLine("FASAT", "Saturated Fat", "Sat. Fat", "Saturated Fat", "1g", null, "5%", null, 2, false, true, false));
 
 		Assert.assertTrue("The linear format names nutrients by their abbreviation",
 				renderToString("nutritionFacts-linear.ftlx", data).contains("Sat. Fat"));
@@ -164,7 +164,7 @@ public class NutritionFactsTemplateTest {
 	public void testDualColumnFormatCarriesBothColumnsOfFigures() throws Exception {
 		String svg = renderToString("nutritionFacts-dualColumn.ftlx", standardPanel());
 
-		Assert.assertEquals("Four columns of figures need a wider panel", "216pt", parse(svg).getDocumentElement().getAttribute("width"));
+		Assert.assertEquals("Four columns of figures need a wider panel", "252pt", parse(svg).getDocumentElement().getAttribute("width"));
 		Assert.assertTrue("The per container header must be drawn", svg.contains("Per container"));
 	}
 
@@ -292,7 +292,7 @@ public class NutritionFactsTemplateTest {
 	}
 
 	private NutritionFactsLine line(String nutCode, String label, String value, String dailyValue, int indentLevel, boolean bold) {
-		return new NutritionFactsLine(nutCode, label, label, value, value, dailyValue, dailyValue, indentLevel, bold, dailyValue != null);
+		return new NutritionFactsLine(nutCode, label, label, label, value, value, dailyValue, dailyValue, indentLevel, bold, dailyValue != null, false);
 	}
 
 }

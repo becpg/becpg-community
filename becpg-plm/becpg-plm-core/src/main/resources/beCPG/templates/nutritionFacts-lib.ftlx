@@ -92,7 +92,7 @@
 	<#local top = y + 2>
 	<#local base = baseline(top, NUTRIENT_SIZE)>
 	<#local x = PAD + (line.indentLevel() - 1) * INDENT>
-	<text x="${x}" y="${base}" font-size="${NUTRIENT_SIZE}"<#if line.bold()> font-family="${FONT_HEAVY}" font-weight="900"</#if>>${line.label()}<#if line.value()??> <tspan font-family="${FONT_BODY}" font-weight="normal">${line.value()}</tspan></#if></text>
+	<text x="${x}" y="${base}" font-size="${NUTRIENT_SIZE}"<#if line.bold()> font-family="${FONT_HEAVY}" font-weight="900"</#if>>${line.label()}<#if line.printsValue()> <tspan font-family="${FONT_BODY}" font-weight="normal">${line.value()}</tspan></#if></text>
 	<#if line.hasDailyValue()>
 	<text x="${RIGHT}" y="${base}" font-size="${NUTRIENT_SIZE}" font-family="${FONT_HEAVY}" font-weight="900" text-anchor="end">${line.dailyValuePercent()}</text>
 	</#if>
@@ -105,11 +105,11 @@
 <#macro micronutrientPair pair y>
 	<#local base = baseline(y + 2, NUTRIENT_SIZE)>
 	<#local left = pair[0]>
-	<text x="${PAD}" y="${base}" font-size="${NUTRIENT_SIZE}">${left.label()}<#if left.value()??> ${left.value()}</#if><#if left.hasDailyValue()> ${left.dailyValuePercent()}</#if></text>
+	<text x="${PAD}" y="${base}" font-size="${NUTRIENT_SIZE}">${left.abbreviatedLabel()}<#if left.printsValue()> ${left.value()}</#if><#if left.hasDailyValue()> ${left.dailyValuePercent()}</#if></text>
 	<#if (pair?size gt 1)>
 	<#local right = pair[1]>
 	<circle cx="${PANEL_W / 2}" cy="${base - NUTRIENT_SIZE * 0.3}" r="0.9"/>
-	<text x="${RIGHT}" y="${base}" font-size="${NUTRIENT_SIZE}" text-anchor="end">${right.label()}<#if right.value()??> ${right.value()}</#if><#if right.hasDailyValue()> ${right.dailyValuePercent()}</#if></text>
+	<text x="${RIGHT}" y="${base}" font-size="${NUTRIENT_SIZE}" text-anchor="end">${right.abbreviatedLabel()}<#if right.printsValue()> ${right.value()}</#if><#if right.hasDailyValue()> ${right.dailyValuePercent()}</#if></text>
 	</#if>
 </#macro>
 
@@ -207,11 +207,13 @@
 <#macro dualColumnBody data y width footnoteChars=70>
 	<#assign cursorY = y>
 	<#-- Deux colonnes strictement de meme largeur : retour client du 23/07 sur le format 3. -->
-	<#local columnW = (width - PAD - 60) / 2>
-	<#local servingValueX = 60 + columnW * 0.62>
-	<#local servingPercentX = 60 + columnW>
-	<#local containerValueX = 60 + columnW + columnW * 0.62>
-	<#local containerPercentX = 60 + 2 * columnW>
+	<#-- La colonne des libelles doit loger "Total Carbohydrate" en Black sans toucher les chiffres. -->
+	<#local labelW = 104>
+	<#local columnW = (width - PAD - labelW) / 2>
+	<#local servingValueX = labelW + columnW * 0.60>
+	<#local servingPercentX = labelW + columnW>
+	<#local containerValueX = labelW + columnW + columnW * 0.60>
+	<#local containerPercentX = labelW + 2 * columnW>
 
 	<@ruleOfWidth y=cursorY height=RULE_THICK width=width/>
 	<#assign cursorY = cursorY + RULE_THICK + 2>
@@ -266,7 +268,7 @@
 	<#local top = y + 2>
 	<#local base = baseline(top, NUTRIENT_SIZE)>
 	<#local x = PAD + (line.indentLevel() - 1) * INDENT>
-	<text x="${x}" y="${base}" font-size="${NUTRIENT_SIZE}"<#if line.bold()> font-family="${FONT_HEAVY}" font-weight="900"</#if>>${line.label()}</text>
+	<text x="${x}" y="${base}" font-size="${NUTRIENT_SIZE}"<#if line.bold()> font-family="${FONT_HEAVY}" font-weight="900"</#if>>${line.plainLabel()}</text>
 	<#if line.value()??>
 	<text x="${servingValueX}" y="${base}" font-size="${NUTRIENT_SIZE}" text-anchor="end">${line.value()}</text>
 	</#if>
