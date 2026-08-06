@@ -6,12 +6,16 @@ package fr.becpg.repo.score;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,10 +83,68 @@ public class ScoreDefinitionService {
 		List<ScoreDefinitionItem> definitions = new ArrayList<>();
 		for (NodeRef nodeRef : getScoreDefinitionNodeRefs()) {
 			if (!Boolean.TRUE.equals(nodeService.getProperty(nodeRef, BeCPGModel.PROP_IS_DELETED))) {
-				definitions.add((ScoreDefinitionItem) alfrescoRepository.findOne(nodeRef));
+				ScoreDefinitionItem definition = (ScoreDefinitionItem) alfrescoRepository.findOne(nodeRef);
+				attachSubLists(definition);
+				definitions.add(definition);
 			}
 		}
 		return definitions;
+	}
+
+	/**
+	 * <p>Reads the thresholds, the badges and the coefficients of a definition.</p>
+	 *
+	 * <p>A charact cannot own nested lists, so they live in their own system datalists and
+	 * point back to their definition.</p>
+	 *
+	 * @param definition a {@link fr.becpg.repo.score.data.ScoreDefinitionItem} object
+	 */
+	private void attachSubLists(ScoreDefinitionItem definition) {
+		definition.setThresholdList(readSubList(PLMModel.TYPE_SCORE_THRESHOLD_LIST, PLMModel.ASSOC_STL_SCORE_DEF, definition));
+		definition.setBadgeList(readSubList(PLMModel.TYPE_SCORE_BADGE_LIST, PLMModel.ASSOC_SBL_SCORE_DEF, definition));
+		definition.setCoeffList(readSubList(PLMModel.TYPE_SCORE_DEF_COEFF_LIST, PLMModel.ASSOC_SDCL_SCORE_DEF, definition));
+	}
+
+	/**
+	 * <p>Reads the lines of one system datalist that point to a definition.</p>
+	 *
+	 * @param type the type of the datalist items
+	 * @param assocQName the association carrying the definition
+	 * @param definition a {@link fr.becpg.repo.score.data.ScoreDefinitionItem} object
+	 * @return a {@link java.util.List} object, never null
+	 */
+	@SuppressWarnings("unchecked")
+	private <T extends RepositoryEntity> List<T> readSubList(QName type, QName assocQName, ScoreDefinitionItem definition) {
+		List<T> items = new ArrayList<>();
+		for (NodeRef nodeRef : getSubListNodeRefs(type, assocQName).getOrDefault(definition.getNodeRef(), Collections.emptyList())) {
+			items.add((T) alfrescoRepository.findOne(nodeRef));
+		}
+		return items;
+	}
+
+	/**
+	 * <p>Indexes the lines of one system datalist by the definition they belong to.</p>
+	 *
+	 * @param type the type of the datalist items
+	 * @param assocQName the association carrying the definition
+	 * @return a {@link java.util.Map} object, never null
+	 */
+	private Map<NodeRef, List<NodeRef>> getSubListNodeRefs(QName type, QName assocQName) {
+		return beCPGCacheService.getFromCache(CACHE_KEY, type.getLocalName(), () -> {
+			Map<NodeRef, List<NodeRef>> byDefinition = new HashMap<>();
+
+			for (NodeRef nodeRef : BeCPGQueryBuilder.createQuery().inDB().ofType(type).list()) {
+				if (Boolean.TRUE.equals(nodeService.getProperty(nodeRef, BeCPGModel.PROP_IS_DELETED))) {
+					continue;
+				}
+
+				for (AssociationRef assocRef : nodeService.getTargetAssocs(nodeRef, assocQName)) {
+					byDefinition.computeIfAbsent(assocRef.getTargetRef(), key -> new ArrayList<>()).add(nodeRef);
+				}
+			}
+
+			return byDefinition;
+		});
 	}
 
 	/**

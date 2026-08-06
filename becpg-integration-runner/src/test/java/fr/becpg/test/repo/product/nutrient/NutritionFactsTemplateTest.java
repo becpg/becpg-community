@@ -157,7 +157,11 @@ public class NutritionFactsTemplateTest {
 	public void testTabularFormatIsDrawnWider() throws Exception {
 		Element svg = parse(renderToString("nutritionFacts-tabular.ftlx", standardPanel())).getDocumentElement();
 
-		Assert.assertEquals("A tabular panel runs across the width", "288pt", svg.getAttribute("width"));
+		Assert.assertEquals("A tabular panel runs across the width", "552pt", svg.getAttribute("width"));
+
+		String markup = renderToString("nutritionFacts-tabular.ftlx", standardPanel());
+		Assert.assertTrue("Its title is stacked on two lines in the left band", markup.contains(">Nutrition<") && markup.contains(">Facts<"));
+		Assert.assertTrue("Each column carries the Amount/serving header", markup.contains("Amount/serving"));
 	}
 
 	@Test
@@ -285,6 +289,7 @@ public class NutritionFactsTemplateTest {
 		labels.put("servingsPerContainer", "servings per container");
 		labels.put("servingSize", "Serving size");
 		labels.put("amountPerServing", "Amount per serving");
+		labels.put("amountPerServingShort", "Amount/serving");
 		labels.put("dailyValue", "% Daily Value*");
 		labels.put("perServing", "Per serving");
 		labels.put("perContainer", "Per container");

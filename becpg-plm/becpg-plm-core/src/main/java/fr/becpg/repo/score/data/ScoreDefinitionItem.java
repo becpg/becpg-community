@@ -15,7 +15,6 @@ import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
-import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.score.ScoreAggregation;
 import fr.becpg.repo.score.ScoreBasis;
@@ -126,10 +125,11 @@ public class ScoreDefinitionItem extends BeCPGDataObject {
 	/**
 	 * Thresholds of the score, one line per nutrient and per category.
 	 *
+	 * <p>Loaded from its own system datalist by the score definition service, a charact
+	 * cannot own nested lists.</p>
+	 *
 	 * @return a {@link java.util.List} object
 	 */
-	@DataList
-	@AlfQname(qname = "bcpg:scoreThresholdList")
 	public List<ScoreThresholdListDataItem> getThresholdList() {
 		return thresholdList;
 	}
@@ -146,10 +146,11 @@ public class ScoreDefinitionItem extends BeCPGDataObject {
 	/**
 	 * Badges of the score, one line per class.
 	 *
+	 * <p>Loaded from its own system datalist by the score definition service, a charact
+	 * cannot own nested lists.</p>
+	 *
 	 * @return a {@link java.util.List} object
 	 */
-	@DataList
-	@AlfQname(qname = "bcpg:scoreBadgeList")
 	public List<ScoreBadgeListDataItem> getBadgeList() {
 		return badgeList;
 	}
@@ -225,10 +226,11 @@ public class ScoreDefinitionItem extends BeCPGDataObject {
 	/**
 	 * Normalization and weighting factors of the score, one line per LCA indicator.
 	 *
+	 * <p>Loaded from its own system datalist by the score definition service, a charact
+	 * cannot own nested lists.</p>
+	 *
 	 * @return a {@link java.util.List} object
 	 */
-	@DataList
-	@AlfQname(qname = "bcpg:scoreDefCoeffList")
 	public List<ScoreDefCoeffListDataItem> getCoeffList() {
 		return coeffList;
 	}

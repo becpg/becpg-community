@@ -62,6 +62,9 @@ public class NutritionFactsLabelResolver {
 	/** Key of the "Amount per serving" caption. */
 	public static final String LABEL_AMOUNT_PER_SERVING = "amountPerServing";
 
+	/** Key of the "Amount/serving" header the tabular format uses. */
+	public static final String LABEL_AMOUNT_PER_SERVING_SHORT = "amountPerServingShort";
+
 	/** Key of the "% Daily Value*" column header. */
 	public static final String LABEL_DAILY_VALUE = "dailyValue";
 
@@ -72,7 +75,7 @@ public class NutritionFactsLabelResolver {
 	public static final String LABEL_PER_CONTAINER = "perContainer";
 
 	private static final List<String> PANEL_LABEL_KEYS = List.of(LABEL_TITLE, LABEL_SERVINGS_PER_CONTAINER, LABEL_SERVING_SIZE,
-			LABEL_AMOUNT_PER_SERVING, LABEL_DAILY_VALUE, LABEL_PER_SERVING, LABEL_PER_CONTAINER);
+			LABEL_AMOUNT_PER_SERVING, LABEL_AMOUNT_PER_SERVING_SHORT, LABEL_DAILY_VALUE, LABEL_PER_SERVING, LABEL_PER_CONTAINER);
 
 	private static final String NUTRIENT_KEY_PREFIX = "nutritionFacts.nutrient.";
 

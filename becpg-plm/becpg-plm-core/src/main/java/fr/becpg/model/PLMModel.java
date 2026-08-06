@@ -536,6 +536,12 @@ public interface PLMModel {
 	QName PROP_SDCL_PONDERATION = QName.createQName(BeCPGModel.BECPG_URI, "sdclPonderation");
 	/** Constant <code>ASSOC_SDCL_LCA</code> */
 	QName ASSOC_SDCL_LCA = QName.createQName(BeCPGModel.BECPG_URI, "sdclLca");
+	/** Constant <code>ASSOC_STL_SCORE_DEF</code> */
+	QName ASSOC_STL_SCORE_DEF = QName.createQName(BeCPGModel.BECPG_URI, "stlScoreDef");
+	/** Constant <code>ASSOC_SBL_SCORE_DEF</code> */
+	QName ASSOC_SBL_SCORE_DEF = QName.createQName(BeCPGModel.BECPG_URI, "sblScoreDef");
+	/** Constant <code>ASSOC_SDCL_SCORE_DEF</code> */
+	QName ASSOC_SDCL_SCORE_DEF = QName.createQName(BeCPGModel.BECPG_URI, "sdclScoreDef");
 
 	/** Constant <code>TYPE_ENTITY_SCORE_LIST</code> */
 	QName TYPE_ENTITY_SCORE_LIST = QName.createQName(BeCPGModel.BECPG_URI, "entityScoreList");

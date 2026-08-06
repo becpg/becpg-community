@@ -4,6 +4,7 @@
 package fr.becpg.repo.score;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,7 +21,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
- * Invalidates the cached score definitions when one is created, updated or deleted.
+ * Invalidates the cached score definitions when one, or one of its sub lists, changes.
  *
  * <p>Without it a definition created by an administrator, or imported as reference data,
  * would only be taken into account after a restart, and the score it defines would silently
@@ -34,6 +35,10 @@ public class ScoreDefinitionPolicy extends AbstractBeCPGPolicy
 
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ScoreDefinitionPolicy.class);
+
+	/** Constant <code>WATCHED_TYPES</code> */
+	private static final List<QName> WATCHED_TYPES = List.of(PLMModel.TYPE_SCORE_DEFINITION, PLMModel.TYPE_SCORE_THRESHOLD_LIST,
+			PLMModel.TYPE_SCORE_BADGE_LIST, PLMModel.TYPE_SCORE_DEF_COEFF_LIST);
 
 	private ScoreDefinitionService scoreDefinitionService;
 
@@ -50,14 +55,12 @@ public class ScoreDefinitionPolicy extends AbstractBeCPGPolicy
 	 * <p>doInit.</p>
 	 */
 	public void doInit() {
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, PLMModel.TYPE_SCORE_DEFINITION,
-				new JavaBehaviour(this, "onCreateNode"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdateNodePolicy.QNAME, PLMModel.TYPE_SCORE_DEFINITION,
-				new JavaBehaviour(this, "onUpdateNode"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, PLMModel.TYPE_SCORE_DEFINITION,
-				new JavaBehaviour(this, "onDeleteNode"));
-		policyComponent.bindClassBehaviour(OnUpdatePropertiesPolicy.QNAME, PLMModel.TYPE_SCORE_DEFINITION,
-				new JavaBehaviour(this, "onUpdateProperties"));
+		for (QName type : WATCHED_TYPES) {
+			policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, type, new JavaBehaviour(this, "onCreateNode"));
+			policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdateNodePolicy.QNAME, type, new JavaBehaviour(this, "onUpdateNode"));
+			policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, type, new JavaBehaviour(this, "onDeleteNode"));
+			policyComponent.bindClassBehaviour(OnUpdatePropertiesPolicy.QNAME, type, new JavaBehaviour(this, "onUpdateProperties"));
+		}
 	}
 
 	/** {@inheritDoc} */

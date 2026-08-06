@@ -1369,6 +1369,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_COSTS, PLMModel.TYPE_COST);
 		entityLists.put(PlmRepoConsts.PATH_LCA, PLMModel.TYPE_LCA);
 		entityLists.put(PlmRepoConsts.PATH_SCORE_DEFINITIONS, PLMModel.TYPE_SCORE_DEFINITION);
+		entityLists.put(PlmRepoConsts.PATH_SCORE_THRESHOLDS, PLMModel.TYPE_SCORE_THRESHOLD_LIST);
+		entityLists.put(PlmRepoConsts.PATH_SCORE_BADGES, PLMModel.TYPE_SCORE_BADGE_LIST);
+		entityLists.put(PlmRepoConsts.PATH_SCORE_DEF_COEFFS, PLMModel.TYPE_SCORE_DEF_COEFF_LIST);
 		entityLists.put(PlmRepoConsts.PATH_PHYSICO_CHEM, PLMModel.TYPE_PHYSICO_CHEM);
 		entityLists.put(PlmRepoConsts.PATH_MICROBIOS, PLMModel.TYPE_MICROBIO);
 		entityLists.put(PlmRepoConsts.PATH_GEO_ORIGINS, PLMModel.TYPE_GEO_ORIGIN);

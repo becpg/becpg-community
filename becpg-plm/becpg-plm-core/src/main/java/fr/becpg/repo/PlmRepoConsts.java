@@ -39,6 +39,12 @@ public class PlmRepoConsts {
 
 	/** Constant <code>PATH_SCORE_DEFINITIONS="ScoreDefinitions"</code> */
 	public static final String PATH_SCORE_DEFINITIONS = "ScoreDefinitions";
+	/** Constant <code>PATH_SCORE_THRESHOLDS="ScoreThresholds"</code> */
+	public static final String PATH_SCORE_THRESHOLDS = "ScoreThresholds";
+	/** Constant <code>PATH_SCORE_BADGES="ScoreBadges"</code> */
+	public static final String PATH_SCORE_BADGES = "ScoreBadges";
+	/** Constant <code>PATH_SCORE_DEF_COEFFS="ScoreCoefficients"</code> */
+	public static final String PATH_SCORE_DEF_COEFFS = "ScoreCoefficients";
 
 	/** Constant <code>PATH_ECOBALYSE_CROP_GROUPS="EcobalyseCropGroups"</code> */
 	public static final String PATH_ECOBALYSE_CROP_GROUPS = "EcobalyseCropGroups";

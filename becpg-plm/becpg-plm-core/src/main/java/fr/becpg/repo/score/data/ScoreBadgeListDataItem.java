@@ -5,8 +5,11 @@ package fr.becpg.repo.score.data;
 
 import java.util.Objects;
 
+import org.alfresco.service.cmr.repository.NodeRef;
+
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
@@ -24,6 +27,8 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 public class ScoreBadgeListDataItem extends BeCPGDataObject {
 
 	private static final long serialVersionUID = 1L;
+
+	private NodeRef scoreDef;
 
 	private String scoreClass;
 
@@ -71,4 +76,25 @@ public class ScoreBadgeListDataItem extends BeCPGDataObject {
 	public String toString() {
 		return "ScoreBadgeListDataItem [scoreClass=" + scoreClass + "]";
 	}
+
+	/**
+	 * Definition the line belongs to.
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	@AlfSingleAssoc
+	@AlfQname(qname = "bcpg:sblScoreDef")
+	public NodeRef getScoreDef() {
+		return scoreDef;
+	}
+
+	/**
+	 * <p>Setter for the field <code>scoreDef</code>.</p>
+	 *
+	 * @param scoreDef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	public void setScoreDef(NodeRef scoreDef) {
+		this.scoreDef = scoreDef;
+	}
+
 }

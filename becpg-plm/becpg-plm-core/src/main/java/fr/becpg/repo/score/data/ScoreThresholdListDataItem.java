@@ -6,8 +6,11 @@ package fr.becpg.repo.score.data;
 import java.util.Map;
 import java.util.Objects;
 
+import org.alfresco.service.cmr.repository.NodeRef;
+
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
@@ -26,6 +29,8 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 public class ScoreThresholdListDataItem extends BeCPGDataObject {
 
 	private static final long serialVersionUID = 1L;
+
+	private NodeRef scoreDef;
 
 	private String nutCode;
 
@@ -301,4 +306,25 @@ public class ScoreThresholdListDataItem extends BeCPGDataObject {
 		return "ScoreThresholdListDataItem [nutCode=" + nutCode + ", category=" + category + ", lowerBound=" + lowerBound + ", upperBound="
 				+ upperBound + ", result=" + result + "]";
 	}
+
+	/**
+	 * Definition the line belongs to.
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	@AlfSingleAssoc
+	@AlfQname(qname = "bcpg:stlScoreDef")
+	public NodeRef getScoreDef() {
+		return scoreDef;
+	}
+
+	/**
+	 * <p>Setter for the field <code>scoreDef</code>.</p>
+	 *
+	 * @param scoreDef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	public void setScoreDef(NodeRef scoreDef) {
+		this.scoreDef = scoreDef;
+	}
+
 }
