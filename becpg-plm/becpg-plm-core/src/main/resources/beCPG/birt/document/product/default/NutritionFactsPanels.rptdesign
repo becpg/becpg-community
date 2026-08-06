@@ -168,10 +168,9 @@ and the rules of a regulated panel exact in the PDF.</property>
                     <property name="source">expr</property>
                     <expression name="valueExpr" type="javascript">row["panel"]</expression>
                     <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
-                    <property name="width">5.4in</property>
-                    <property name="height">6.825in</property>
+                    <property name="width">3.8in</property>
+                    <property name="height">4.803in</property>
                     <property name="fitToContainer">false</property>
-                    <property name="pageBreakAfter">always</property>
                     <list-property name="visibility">
                         <structure>
                             <property name="format">all</property>
@@ -183,10 +182,9 @@ and the rules of a regulated panel exact in the PDF.</property>
                     <property name="source">expr</property>
                     <expression name="valueExpr" type="javascript">row["panel"]</expression>
                     <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
-                    <property name="width">4.2in</property>
-                    <property name="height">4.885in</property>
+                    <property name="width">2.9in</property>
+                    <property name="height">3.373in</property>
                     <property name="fitToContainer">false</property>
-                    <property name="pageBreakAfter">always</property>
                     <list-property name="visibility">
                         <structure>
                             <property name="format">all</property>
@@ -198,10 +196,9 @@ and the rules of a regulated panel exact in the PDF.</property>
                     <property name="source">expr</property>
                     <expression name="valueExpr" type="javascript">row["panel"]</expression>
                     <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
-                    <property name="width">4.2in</property>
-                    <property name="height">8.247in</property>
+                    <property name="width">2.9in</property>
+                    <property name="height">5.694in</property>
                     <property name="fitToContainer">false</property>
-                    <property name="pageBreakAfter">always</property>
                     <list-property name="visibility">
                         <structure>
                             <property name="format">all</property>
@@ -213,10 +210,9 @@ and the rules of a regulated panel exact in the PDF.</property>
                     <property name="source">expr</property>
                     <expression name="valueExpr" type="javascript">row["panel"]</expression>
                     <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
-                    <property name="width">6.8in</property>
-                    <property name="height">3.506in</property>
+                    <property name="width">5.0in</property>
+                    <property name="height">2.578in</property>
                     <property name="fitToContainer">false</property>
-                    <property name="pageBreakAfter">always</property>
                     <list-property name="visibility">
                         <structure>
                             <property name="format">all</property>
@@ -228,10 +224,9 @@ and the rules of a regulated panel exact in the PDF.</property>
                     <property name="source">expr</property>
                     <expression name="valueExpr" type="javascript">row["panel"]</expression>
                     <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
-                    <property name="width">4.2in</property>
-                    <property name="height">8.889in</property>
+                    <property name="width">2.9in</property>
+                    <property name="height">6.137in</property>
                     <property name="fitToContainer">false</property>
-                    <property name="pageBreakAfter">always</property>
                     <list-property name="visibility">
                         <structure>
                             <property name="format">all</property>
@@ -243,10 +238,9 @@ and the rules of a regulated panel exact in the PDF.</property>
                     <property name="source">expr</property>
                     <expression name="valueExpr" type="javascript">row["panel"]</expression>
                     <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
-                    <property name="width">5.4in</property>
-                    <property name="height">7.175in</property>
+                    <property name="width">3.8in</property>
+                    <property name="height">5.049in</property>
                     <property name="fitToContainer">false</property>
-                    <property name="pageBreakAfter">always</property>
                     <list-property name="visibility">
                         <structure>
                             <property name="format">all</property>
@@ -258,10 +252,9 @@ and the rules of a regulated panel exact in the PDF.</property>
                     <property name="source">expr</property>
                     <expression name="valueExpr" type="javascript">row["panel"]</expression>
                     <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
-                    <property name="width">4.2in</property>
-                    <property name="height">5.615in</property>
+                    <property name="width">2.9in</property>
+                    <property name="height">3.877in</property>
                     <property name="fitToContainer">false</property>
-                    <property name="pageBreakAfter">always</property>
                     <list-property name="visibility">
                         <structure>
                             <property name="format">all</property>
@@ -273,10 +266,9 @@ and the rules of a regulated panel exact in the PDF.</property>
                     <property name="source">expr</property>
                     <expression name="valueExpr" type="javascript">row["panel"]</expression>
                     <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
-                    <property name="width">4.2in</property>
-                    <property name="height">8.232in</property>
+                    <property name="width">2.9in</property>
+                    <property name="height">5.684in</property>
                     <property name="fitToContainer">false</property>
-                    <property name="pageBreakAfter">always</property>
                     <list-property name="visibility">
                         <structure>
                             <property name="format">all</property>
@@ -288,10 +280,9 @@ and the rules of a regulated panel exact in the PDF.</property>
                     <property name="source">expr</property>
                     <expression name="valueExpr" type="javascript">row["panel"]</expression>
                     <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
-                    <property name="width">4.2in</property>
-                    <property name="height">9.129in</property>
+                    <property name="width">2.9in</property>
+                    <property name="height">6.303in</property>
                     <property name="fitToContainer">false</property>
-                    <property name="pageBreakAfter">always</property>
                     <list-property name="visibility">
                         <structure>
                             <property name="format">all</property>
@@ -303,10 +294,9 @@ and the rules of a regulated panel exact in the PDF.</property>
                     <property name="source">expr</property>
                     <expression name="valueExpr" type="javascript">row["panel"]</expression>
                     <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
-                    <property name="width">6.8in</property>
-                    <property name="height">3.672in</property>
+                    <property name="width">5.0in</property>
+                    <property name="height">2.7in</property>
                     <property name="fitToContainer">false</property>
-                    <property name="pageBreakAfter">always</property>
                     <list-property name="visibility">
                         <structure>
                             <property name="format">all</property>

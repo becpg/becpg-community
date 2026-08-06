@@ -18,7 +18,7 @@
 <#assign PAD = 4>
 <#assign CONTENT_W = PANEL_W - 2 * PAD>
 <#assign RIGHT = PANEL_W - PAD>
-<#assign BORDER = 1>
+<#assign BORDER = 0.5>
 
 <#-- Rules, as thick as the regulation requires -->
 <#assign HAIRLINE = 0.25>
@@ -55,10 +55,19 @@
 	<#return top + size * ASCENT_RATIO>
 </#function>
 
-<#-- Horizontal rule spanning the content width. -->
-<#macro rule y height=HAIRLINE>
-	<rect x="${PAD}" y="${y}" width="${CONTENT_W}" height="${height}"/>
+<#--
+  Horizontal rule. It spans the content width by default, but the regulation asks for a
+  shortened rule above a declaration nested under another one, "Includes Added Sugars" being
+  the case the FDA spells out: the rule then starts at the indentation of the line it precedes.
+-->
+<#macro rule y height=HAIRLINE fromX=PAD>
+	<rect x="${fromX}" y="${y}" width="${PANEL_W - PAD - fromX}" height="${height}"/>
 </#macro>
+
+<#-- Abscissa a rule starts at, given the line it sits above. -->
+<#function ruleStart line>
+	<#return (line.indentLevel() gte 3)?then(PAD + (line.indentLevel() - 1) * INDENT, PAD)>
+</#function>
 
 <#-- Panel border. Drawn as four rects so that its thickness is exact on every side. -->
 <#macro border height>
@@ -145,7 +154,7 @@
 	<#assign cursorY = cursorY + CAPTION_ROW_H>
 
 	<#list data.nutrients() as line>
-	<@rule y=cursorY/>
+	<@rule y=cursorY fromX=ruleStart(line)/>
 	<#assign cursorY = cursorY + HAIRLINE>
 	<@nutrientRow line=line y=cursorY/>
 	<#assign cursorY = cursorY + NUTRIENT_ROW_H>
@@ -228,7 +237,7 @@
 	<#assign cursorY = cursorY + CAPTION_ROW_H>
 
 	<#list data.nutrients() + data.micronutrients() as line>
-	<@ruleOfWidth y=cursorY height=HAIRLINE width=width/>
+	<@ruleOfWidth y=cursorY height=HAIRLINE width=width fromX=ruleStart(line)/>
 	<#assign cursorY = cursorY + HAIRLINE>
 	<@dualColumnRow line=line y=cursorY servingValueX=servingValueX servingPercentX=servingPercentX
 		containerValueX=containerValueX containerPercentX=containerPercentX/>
@@ -371,8 +380,8 @@
 </#macro>
 
 <#-- Rule spanning a panel of arbitrary width, the tabular format being wider than the others. -->
-<#macro ruleOfWidth y height width>
-	<rect x="${PAD}" y="${y}" width="${width - 2 * PAD}" height="${height}"/>
+<#macro ruleOfWidth y height width fromX=PAD>
+	<rect x="${fromX}" y="${y}" width="${width - PAD - fromX}" height="${height}"/>
 </#macro>
 
 <#-- Envelope of a panel drawn at a width other than the standard one. -->
