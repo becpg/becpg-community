@@ -1,7 +1,6 @@
 package fr.becpg.repo.helper;
 
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
@@ -24,6 +23,17 @@ public class LargeTextHelper {
 
 	/** Constant <code>TEXT_SIZE_LIMIT=50000</code> */
 	public static final int TEXT_SIZE_LIMIT = 50000;
+
+	/**
+	 * Maximum size of a single locale value, in UTF-8 bytes.
+	 *
+	 * Alfresco keys {@code alf_node_properties} on the locale, so every language of a d:mltext
+	 * property lands in its own {@code string_value} row. On MySQL that column is a {@code TEXT},
+	 * capped at 65535 bytes, and the InnoDB dialect never spills strings to {@code serializable_value}
+	 * (SchemaBootstrap sets its threshold to Integer.MAX_VALUE), so the column is the hard wall.
+	 * The margin absorbs the encoding of the notice replacing an oversized value.
+	 */
+	public static final int MAX_LOCALE_SIZE_BYTES = 60000;
 
 	/** Overhead kept when shortening a value to leave room for the ellipsis suffix. */
 	private static final int ELLIPSIS_OVERHEAD = 20;
@@ -152,13 +162,13 @@ public class LargeTextHelper {
 	}
 
 	/**
-	 * <p>Keeps a {@link org.alfresco.service.cmr.repository.MLText} under {@link #TEXT_SIZE_LIMIT}
-	 * without ever cutting a value in the middle: the largest locales are dropped one by one, each
-	 * replaced by the notice supplied for that locale, until the whole fits.</p>
+	 * <p>Replaces the locale values that cannot be persisted by the notice supplied for that locale,
+	 * without ever cutting a value in the middle. A partially cut value carries wrong data and is
+	 * never usable, whereas an explicit notice tells the user what happened.</p>
 	 *
-	 * <p>A partially cut value carries wrong data and is never usable, so dropping a few complete
-	 * languages and telling the user is preferred over shortening every language. Dropping the
-	 * largest first keeps as many intact languages as possible.</p>
+	 * <p>Each locale is weighed on its own: Alfresco stores every locale of a d:mltext property in
+	 * its own {@code alf_node_properties} row, so one oversized language never penalises the
+	 * others.</p>
 	 *
 	 * @param mlText a {@link org.alfresco.service.cmr.repository.MLText} object
 	 * @param noticeProvider supplies the replacement notice for a dropped locale
@@ -170,32 +180,32 @@ public class LargeTextHelper {
 		if (mlText == null) {
 			return result;
 		}
-		result.putAll(mlText);
 
-		for (Locale locale : populatedLocalesByDescendingLength(mlText)) {
-			if (totalLength(result) <= TEXT_SIZE_LIMIT) {
-				break;
-			}
-			result.put(locale, noticeProvider.apply(locale));
+		for (Entry<Locale, String> entry : mlText.entrySet()) {
+			String value = entry.getValue();
+			result.put(entry.getKey(), fitsInProperty(value) ? value : noticeProvider.apply(entry.getKey()));
 		}
 		return result;
 	}
 
 	/**
-	 * Orders the locales carrying content from the longest value to the shortest, ties broken on the
-	 * locale name so that the outcome stays reproducible from one formulation to the next. Empty
-	 * locales are left out: replacing them by a notice would add length instead of freeing any.
+	 * <p>Tells whether a single locale value can be persisted, measured in UTF-8 bytes rather than in
+	 * characters: the underlying column is capped in bytes, and a character weighs from one byte
+	 * (markup, digits) to four, so a limit counted in characters would be either too lax for Chinese
+	 * or needlessly strict for Latin scripts.</p>
+	 *
+	 * @param value a {@link java.lang.String} object
+	 * @return true when the value fits {@link #MAX_LOCALE_SIZE_BYTES}
 	 */
-	private static List<Locale> populatedLocalesByDescendingLength(MLText mlText) {
-		List<Locale> locales = new ArrayList<>();
-		for (Entry<Locale, String> entry : mlText.entrySet()) {
-			if ((entry.getValue() != null) && !entry.getValue().isEmpty()) {
-				locales.add(entry.getKey());
-			}
+	public static boolean fitsInProperty(String value) {
+		if (value == null) {
+			return true;
 		}
-		locales.sort(Comparator.comparingInt((Locale locale) -> valueLength(mlText.get(locale))).reversed()
-				.thenComparing(Locale::toString));
-		return locales;
+		// A character never exceeds 4 UTF-8 bytes, so below that ratio the value fits without encoding it
+		if (value.length() <= (MAX_LOCALE_SIZE_BYTES / 4)) {
+			return true;
+		}
+		return value.getBytes(StandardCharsets.UTF_8).length <= MAX_LOCALE_SIZE_BYTES;
 	}
 
 	private static int valueLength(String value) {

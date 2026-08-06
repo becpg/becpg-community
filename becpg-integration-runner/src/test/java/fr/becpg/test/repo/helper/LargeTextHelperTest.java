@@ -3,6 +3,7 @@ package fr.becpg.test.repo.helper;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.function.Function;
@@ -110,129 +111,101 @@ public class LargeTextHelperTest {
         assertTrue(LargeTextHelper.elipse((MLText) null).isEmpty());
     }
 
-    // #35900 : keep the whole under the property size limit by dropping complete languages, never cutting a value
+    // #35900 : each locale is weighed on its own, in UTF-8 bytes, and is never cut
 
     private static final Function<Locale, String> NOTICE = locale -> "Content too long";
 
+    private static final int OVER = LargeTextHelper.MAX_LOCALE_SIZE_BYTES + 1;
+
     @Test
-    public void testDropOversizedLocalesKeepsEverythingWhenItFits() {
+    public void testDropOversizedLocalesKeepsEveryLanguageThatFits() {
         MLText mlText = new MLText();
-        mlText.put(Locale.FRENCH, repeat('a', 20000));
-        mlText.put(Locale.ENGLISH, repeat('b', 20000));
+        // Well over the former 50000 global budget, yet each language fits its own property row
+        mlText.put(Locale.FRENCH, repeat('a', 45000));
+        mlText.put(Locale.ENGLISH, repeat('b', 45000));
+        mlText.put(Locale.GERMAN, repeat('c', 45000));
 
         MLText result = LargeTextHelper.dropOversizedLocales(mlText, NOTICE);
 
         assertEquals(mlText.get(Locale.FRENCH), result.get(Locale.FRENCH));
         assertEquals(mlText.get(Locale.ENGLISH), result.get(Locale.ENGLISH));
+        assertEquals(mlText.get(Locale.GERMAN), result.get(Locale.GERMAN));
+    }
+
+    @Test
+    public void testDropOversizedLocalesDropsOnlyTheLanguageOverTheLimit() {
+        MLText mlText = new MLText();
+        mlText.put(Locale.FRENCH, repeat('a', OVER));
+        mlText.put(Locale.ENGLISH, repeat('b', 45000));
+
+        MLText result = LargeTextHelper.dropOversizedLocales(mlText, NOTICE);
+
+        assertEquals("Content too long", result.get(Locale.FRENCH));
+        assertEquals(mlText.get(Locale.ENGLISH), result.get(Locale.ENGLISH));
+        // Source is left untouched
+        assertEquals(OVER, mlText.get(Locale.FRENCH).length());
     }
 
     /**
-     * Ticket #35900: the languages that fit must be kept complete. Only the largest ones are dropped,
-     * and only as many as needed to get back under the limit.
+     * Ticket #35900: the column is capped in bytes, not in characters. The same character count is
+     * fine in Latin script and busts the limit in Chinese, where each ideogram costs three bytes.
      */
     @Test
-    public void testDropOversizedLocalesDropsTheFewestLargestLanguages() {
+    public void testDropOversizedLocalesCountsUtf8BytesNotCharacters() {
+        int chars = 25000;
         MLText mlText = new MLText();
-        mlText.put(Locale.FRENCH, repeat('a', 20000));
-        mlText.put(Locale.ENGLISH, repeat('b', 20000));
-        mlText.put(Locale.GERMAN, repeat('c', 30000));
-        mlText.put(Locale.ITALIAN, repeat('d', 40000));
+        mlText.put(Locale.ENGLISH, repeat('a', chars));
+        mlText.put(Locale.CHINESE, repeat('\u4e2d', chars));
 
         MLText result = LargeTextHelper.dropOversizedLocales(mlText, NOTICE);
 
-        // 110000 total: dropping it/de is enough to get the remaining 40000 under the limit
-        assertEquals("Content too long", result.get(Locale.ITALIAN));
-        assertEquals("Content too long", result.get(Locale.GERMAN));
-        // The languages that fit keep their full content, untouched
-        assertEquals(mlText.get(Locale.FRENCH), result.get(Locale.FRENCH));
+        assertEquals(chars, mlText.get(Locale.CHINESE).getBytes(StandardCharsets.UTF_8).length / 3);
         assertEquals(mlText.get(Locale.ENGLISH), result.get(Locale.ENGLISH));
-        assertTrue(totalLength(result) <= LargeTextHelper.TEXT_SIZE_LIMIT);
+        assertEquals("Content too long", result.get(Locale.CHINESE));
+    }
+
+    @Test
+    public void testDropOversizedLocalesKeepsValueExactlyAtTheLimit() {
+        MLText mlText = new MLText();
+        mlText.put(Locale.FRENCH, repeat('a', LargeTextHelper.MAX_LOCALE_SIZE_BYTES));
+
+        MLText result = LargeTextHelper.dropOversizedLocales(mlText, NOTICE);
+
+        assertEquals(mlText.get(Locale.FRENCH), result.get(Locale.FRENCH));
+    }
+
+    @Test
+    public void testDropOversizedLocalesLeavesEmptyLocalesUntouched() {
+        MLText mlText = new MLText();
+        mlText.put(Locale.FRENCH, repeat('a', OVER));
+        mlText.put(Locale.GERMAN, "");
+
+        MLText result = LargeTextHelper.dropOversizedLocales(mlText, NOTICE);
+
+        assertEquals("Content too long", result.get(Locale.FRENCH));
+        // An empty language has nothing to report, it must not get a notice
+        assertEquals("", result.get(Locale.GERMAN));
     }
 
     @Test
     public void testDropOversizedLocalesNeverCutsAValue() {
         MLText mlText = new MLText();
-        for (int i = 0; i < 12; i++) {
-            mlText.put(new Locale("l" + i), htmlTable(200));
-        }
+        mlText.put(Locale.FRENCH, htmlTable(3000));
+        mlText.put(Locale.ENGLISH, htmlTable(200));
 
         MLText result = LargeTextHelper.dropOversizedLocales(mlText, NOTICE);
 
-        assertTrue(totalLength(result) <= LargeTextHelper.TEXT_SIZE_LIMIT);
         for (String value : result.values()) {
-            // Each value is either the intact table or the notice, never a cut fragment
-            assertTrue("Value was cut: " + value, "Content too long".equals(value) || htmlTable(200).equals(value));
+            // Either the intact table or the notice, never a cut fragment
+            assertTrue("Value was cut: " + value, "Content too long".equals(value) || value.endsWith("</table>"));
         }
-    }
-
-    /**
-     * A single language that alone busts the limit must be replaced by the notice, otherwise the
-     * property write still fails.
-     */
-    @Test
-    public void testDropOversizedLocalesSingleOverLimitLanguage() {
-        MLText mlText = new MLText();
-        mlText.put(Locale.FRENCH, repeat('a', 60000));
-
-        MLText result = LargeTextHelper.dropOversizedLocales(mlText, NOTICE);
-
-        assertEquals("Content too long", result.get(Locale.FRENCH));
-        assertEquals(60000, mlText.get(Locale.FRENCH).length());
-    }
-
-    @Test
-    public void testDropOversizedLocalesKeepsSinglePopulatedLanguageWhenItFits() {
-        MLText mlText = new MLText();
-        mlText.put(Locale.FRENCH, repeat('a', 40000));
-        for (Locale locale : new Locale[] { Locale.ENGLISH, Locale.GERMAN, Locale.ITALIAN }) {
-            mlText.put(locale, "");
-        }
-
-        MLText result = LargeTextHelper.dropOversizedLocales(mlText, NOTICE);
-
-        // Empty locales cost nothing, so the only populated language stays complete
-        assertEquals(mlText.get(Locale.FRENCH), result.get(Locale.FRENCH));
-        assertEquals("", result.get(Locale.ENGLISH));
-    }
-
-    /**
-     * Empty locales must never be turned into a notice: that would add length instead of freeing any,
-     * and would tell the user content was dropped when there was none.
-     */
-    @Test
-    public void testDropOversizedLocalesNeverReplacesEmptyLocales() {
-        MLText mlText = new MLText();
-        mlText.put(Locale.FRENCH, repeat('a', 40000));
-        mlText.put(Locale.ENGLISH, repeat('b', 20000));
-        for (Locale locale : new Locale[] { Locale.GERMAN, Locale.ITALIAN }) {
-            mlText.put(locale, "");
-        }
-
-        MLText result = LargeTextHelper.dropOversizedLocales(mlText, NOTICE);
-
-        // 60000 total: the largest (fr) is dropped, en keeps its full content
-        assertEquals("Content too long", result.get(Locale.FRENCH));
-        assertEquals(mlText.get(Locale.ENGLISH), result.get(Locale.ENGLISH));
-        assertEquals("", result.get(Locale.GERMAN));
-        assertEquals("", result.get(Locale.ITALIAN));
-        assertTrue(totalLength(result) <= LargeTextHelper.TEXT_SIZE_LIMIT);
+        assertEquals(htmlTable(200), result.get(Locale.ENGLISH));
     }
 
     @Test
     public void testDropOversizedLocalesNullReturnsEmpty() {
         assertTrue(LargeTextHelper.dropOversizedLocales(null, NOTICE).isEmpty());
     }
-
-    private static int totalLength(MLText mlText) {
-        int total = 0;
-        for (String value : mlText.values()) {
-            if (value != null) {
-                total += value.length();
-            }
-        }
-        return total;
-    }
-
 
     @Test
     public void testHtmlDiff_NoDifferences() {

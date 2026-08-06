@@ -1580,10 +1580,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	 * @return a {@link fr.becpg.repo.product.data.productList.IngLabelingListDataItem} object
 	 */
 	/**
-	 * Keeps the rendered labeling values (bcpg:illValue) under {@link LargeTextHelper#TEXT_SIZE_LIMIT}
-	 * to prevent property write failures. No value is ever cut: the largest languages are dropped as
-	 * a whole, each replaced by a notice in its own language, until the whole fits. A partially cut
-	 * ingredient list carries wrong data, whereas an explicit notice tells the user what happened.
+	 * Keeps every rendered labeling value (bcpg:illValue) within what its own property row can hold,
+	 * to prevent property write failures. No value is ever cut: a language that does not fit is
+	 * replaced as a whole by a notice in its own language, and the other languages are untouched. A
+	 * partially cut ingredient list carries wrong data, whereas a notice tells the user what happened.
 	 *
 	 * @param label the rendered labeling value
 	 * @return the labeling value fitting the size limit
@@ -1597,8 +1597,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private void logDroppedLocales(MLText label, MLText result) {
 		for (Entry<Locale, String> entry : label.entrySet()) {
 			if (!Objects.equals(entry.getValue(), result.get(entry.getKey()))) {
-				logger.warn("Rendered labeling value of " + entry.getValue().length() + " characters does not fit the size limit of "
-						+ LargeTextHelper.TEXT_SIZE_LIMIT + " for locale " + entry.getKey() + ", replaced by a notice");
+				logger.warn("Rendered labeling value of " + entry.getValue().length() + " characters exceeds the "
+						+ LargeTextHelper.MAX_LOCALE_SIZE_BYTES + " bytes a property row can hold for locale " + entry.getKey()
+						+ ", replaced by a notice");
 			}
 		}
 	}
