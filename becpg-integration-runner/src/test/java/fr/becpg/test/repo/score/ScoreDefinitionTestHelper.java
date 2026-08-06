@@ -22,7 +22,6 @@ import fr.becpg.repo.score.ScoreEngine;
 import fr.becpg.repo.score.ScoreScale;
 import fr.becpg.repo.score.ScoredEntity;
 import fr.becpg.repo.score.data.EntityScoreListDataItem;
-import fr.becpg.repo.score.data.ScoreDefinitionItem;
 
 /**
  * Creates the score definitions the integration tests need, and reads back the scores they
@@ -53,13 +52,20 @@ public final class ScoreDefinitionTestHelper {
 	public static NodeRef createPluginDefinition(NodeService nodeService, EntitySystemService entitySystemService,
 			ScoreDefinitionService scoreDefinitionService, NodeRef systemFolderNodeRef, String code, String version) {
 
-		Optional<ScoreDefinitionItem> existing = scoreDefinitionService.findByCode(code, version);
-		if (existing.isPresent()) {
-			return existing.get().getNodeRef();
-		}
-
 		NodeRef listNodeRef = entitySystemService.getSystemEntityDataList(systemFolderNodeRef, RepoConsts.PATH_CHARACTS,
 				PlmRepoConsts.PATH_SCORE_DEFINITIONS);
+
+		if (listNodeRef == null) {
+			throw new IllegalStateException("The ScoreDefinitions list is missing, run the init-repo first");
+		}
+
+		// looked up by name rather than through the service, so that a stale cache cannot make
+		// the test create a duplicate
+		NodeRef existing = nodeService.getChildByName(listNodeRef, ContentModel.ASSOC_CONTAINS, code + " " + version);
+		if (existing != null) {
+			scoreDefinitionService.clearCache();
+			return existing;
+		}
 
 		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(ContentModel.PROP_NAME, code + " " + version);
