@@ -17,6 +17,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.NutDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.formulation.nutrient.facts.NutritionFactsData;
@@ -209,6 +210,54 @@ public class NutritionFactsDataBuilderTest {
 
 		Assert.assertEquals("The FDA gives saturated fat its own percentage", "5%",
 				lineOf(build(product), "Saturated Fat").dailyValuePercent());
+	}
+
+	@Test
+	public void testCaloriesArePrintedWithoutTheirUnit() {
+
+		NutritionFactsData data = build(standardProduct());
+
+		Assert.assertEquals("A panel writes Calories 230, never 230kcal", "230", data.calories().value());
+	}
+
+	@Test
+	public void testNutrientUnnamedByTheRegulationFallsBackOnItsCharactName() {
+
+		ProductData product = new ProductData();
+		product.setNodeRef(PRODUCT_NODE_REF);
+		product.setNutList(List.of(nutListItemWithCharactName("NACL", "b7322239-9650-4983-b609", "Salt", 1d, 5d)));
+
+		NutritionFactsData data = builder.build(product, Locale.US, VERTICAL_FORMAT,
+				NutritionFactsOptions.forRegulation(US_REGULATION_KEY).withOptionalNutrients());
+
+		Assert.assertEquals("A node identifier must never be printed on a label", "Salt", data.nutrients().get(0).label());
+	}
+
+	@Test
+	public void testServingSizeFallsBackOnTheQuantityWhenNoWordingIsGiven() {
+
+		ProductData product = standardProduct();
+		product.setServingSize(55d);
+		product.setServingSizeUnit(ProductUnit.g);
+
+		Assert.assertEquals("55g", builder.build(product, Locale.US, VERTICAL_FORMAT).serving().servingSize());
+	}
+
+	private NutListDataItem nutListItemWithCharactName(String nutCode, String nodeName, String charactName, Double value, Double gdaPerc) {
+		NodeRef nutNodeRef = new NodeRef("workspace://SpacesStore/" + nutCode.toLowerCase());
+		NutDataItem nut = new NutDataItem();
+		nut.setNutCode(nutCode);
+		nut.setName(nodeName);
+		nut.setCharactName(new MLText(Locale.ENGLISH, charactName));
+		nut.setNodeRef(nutNodeRef);
+		Mockito.when(alfrescoRepository.findOne(nutNodeRef)).thenReturn(nut);
+
+		NutListDataItem item = new NutListDataItem();
+		item.setNut(nutNodeRef);
+		item.setValue(value);
+		item.setValuePerServing(value);
+		item.setRoundedValue(roundedValue(value, gdaPerc, US_REGULATION_KEY));
+		return item;
 	}
 
 	private NutritionFactsData build(ProductData product) {
