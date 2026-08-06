@@ -17,6 +17,7 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.score.ScoreAggregation;
 import fr.becpg.repo.score.ScoreEngine;
 import fr.becpg.repo.score.ScoreScale;
 
@@ -70,7 +71,105 @@ public class ScoreDefinitionItem extends BeCPGDataObject {
 
 	private List<NodeRef> usages = new ArrayList<>();
 
+	private String aggregation;
+
+	private String classOrder;
+
 	private List<ScoreDefCoeffListDataItem> coeffList;
+
+	private List<ScoreThresholdListDataItem> thresholdList;
+
+	private List<ScoreBadgeListDataItem> badgeList;
+
+	/**
+	 * Way the per nutrient verdicts are turned into the score of the product.
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:scoreDefAggregation")
+	public String getAggregation() {
+		return aggregation;
+	}
+
+	/**
+	 * <p>Setter for the field <code>aggregation</code>.</p>
+	 *
+	 * @param aggregation a {@link java.lang.String} object
+	 */
+	public void setAggregation(String aggregation) {
+		this.aggregation = aggregation;
+	}
+
+	/**
+	 * Classes from the best to the worst, comma separated. Needed by the aggregations
+	 * comparing verdicts, such as the worst one deciding the grade of a beverage.
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:scoreDefClassOrder")
+	public String getClassOrder() {
+		return classOrder;
+	}
+
+	/**
+	 * <p>Setter for the field <code>classOrder</code>.</p>
+	 *
+	 * @param classOrder a {@link java.lang.String} object
+	 */
+	public void setClassOrder(String classOrder) {
+		this.classOrder = classOrder;
+	}
+
+	/**
+	 * Thresholds of the score, one line per nutrient and per category.
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@DataList
+	@AlfQname(qname = "bcpg:scoreThresholdList")
+	public List<ScoreThresholdListDataItem> getThresholdList() {
+		return thresholdList;
+	}
+
+	/**
+	 * <p>Setter for the field <code>thresholdList</code>.</p>
+	 *
+	 * @param thresholdList a {@link java.util.List} object
+	 */
+	public void setThresholdList(List<ScoreThresholdListDataItem> thresholdList) {
+		this.thresholdList = thresholdList;
+	}
+
+	/**
+	 * Badges of the score, one line per class.
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@DataList
+	@AlfQname(qname = "bcpg:scoreBadgeList")
+	public List<ScoreBadgeListDataItem> getBadgeList() {
+		return badgeList;
+	}
+
+	/**
+	 * <p>Setter for the field <code>badgeList</code>.</p>
+	 *
+	 * @param badgeList a {@link java.util.List} object
+	 */
+	public void setBadgeList(List<ScoreBadgeListDataItem> badgeList) {
+		this.badgeList = badgeList;
+	}
+
+	/**
+	 * <p>Returns the aggregation as an enum, defaulting to {@link fr.becpg.repo.score.ScoreAggregation#None}.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.score.ScoreAggregation} object
+	 */
+	public ScoreAggregation getScoreAggregation() {
+		return ScoreAggregation.parse(aggregation);
+	}
 
 	/**
 	 * Markets the score applies to. An empty list means the score applies to every market,

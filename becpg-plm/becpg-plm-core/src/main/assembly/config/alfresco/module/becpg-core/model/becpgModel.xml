@@ -68,6 +68,7 @@
 				<list>
 					<value>Plugin</value>
 					<value>Criteria</value>
+					<value>Threshold</value>
 					<value>Manual</value>
 				</list>
 			</parameter>
@@ -95,6 +96,17 @@
 					<value>PerServing</value>
 					<value>PerKg</value>
 					<value>PerProduct</value>
+				</list>
+			</parameter>
+		</constraint>
+
+		<constraint name="bcpg:scoreAggregations" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>None</value>
+					<value>Worst</value>
+					<value>Count</value>
+					<value>Sum</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -1917,6 +1929,18 @@
 					<type>d:double</type>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:scoreDefAggregation">
+					<type>d:text</type>
+					<default>None</default>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:scoreAggregations" />
+					</constraints>
+				</property>
+				<property name="bcpg:scoreDefClassOrder">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:scoreDefFormula">
 					<type>d:text</type>
 					<index enabled="false" />
@@ -1974,6 +1998,63 @@
 			<mandatory-aspects>
 				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>
+		</type>
+
+		<!-- Thresholds of a score definition, one line per nutrient and per category -->
+		<type name="bcpg:scoreThresholdList">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="bcpg:stlNutCode">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="bcpg:stlCategory">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="bcpg:stlLowerBound">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:stlUpperBound">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:stlResult">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:stlPoints">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:stlReferenceIntake">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+			</properties>
+		</type>
+
+		<!-- Badges of a score definition, one line per class, the image being the content -->
+		<type name="bcpg:scoreBadgeList">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="bcpg:sblClass">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+			</properties>
 		</type>
 
 		<!-- Normalization and weighting factors of a score definition, one line per LCA indicator -->

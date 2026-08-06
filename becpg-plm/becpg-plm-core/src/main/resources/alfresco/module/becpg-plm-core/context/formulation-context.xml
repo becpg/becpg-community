@@ -295,6 +295,7 @@
 						<list>
 							<ref bean="ecoScore"/>
 							<ref bean="nutriScore"/>
+							<ref bean="thresholdNutritionScore"/>
 						</list>
 					</property>
 				</bean>
@@ -343,6 +344,7 @@
 						<list>
 							<ref bean="ecoScore"/>
 							<ref bean="nutriScore"/>
+							<ref bean="thresholdNutritionScore"/>
 						</list>
 					</property>
 				</bean>

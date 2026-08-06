@@ -16,6 +16,9 @@ public enum ScoreEngine {
 	/** Computed by the criteria engine, from SpEL formulas held by the score criteria */
 	Criteria,
 
+	/** Computed by comparing nutrients to the thresholds held by the definition */
+	Threshold,
+
 	/** Not computed: the value is entered by the user */
 	Manual;
 

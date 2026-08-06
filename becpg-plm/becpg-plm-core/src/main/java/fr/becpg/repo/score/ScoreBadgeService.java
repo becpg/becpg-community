@@ -3,27 +3,25 @@
  */
 package fr.becpg.repo.score;
 
+import java.util.List;
 import java.util.Optional;
 
-import org.alfresco.repo.model.Repository;
-import org.alfresco.service.cmr.model.FileFolderService;
-import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.score.data.ScoreBadgeListDataItem;
+import fr.becpg.repo.score.data.ScoreDefinitionItem;
 
 /**
  * Resolves the badge image of a score class.
  *
- * <p>Badges live in {@code /System/ScoreBadges/&lt;code&gt;/badge-&lt;class&gt;.svg}, so a customer
- * brands its own score by dropping files in the repository, without redeploying Share.
- * When no badge is found, Share falls back on the images shipped with the web
- * application.</p>
+ * <p>Badges are held by the score definition itself, as the content of its badge list, so
+ * they are imported like any other reference data and a customer brands its own score
+ * without redeploying Share. When no badge is found, Share falls back on the images
+ * shipped with the web application.</p>
  *
  * @author matthieu
  */
@@ -33,30 +31,19 @@ public class ScoreBadgeService {
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(ScoreBadgeService.class);
 
-	/** Constant <code>BADGES_FOLDER="/app:company_home/cm:System/cm:ScoreBadges"</code> */
-	private static final String BADGES_FOLDER = "/app:company_home/cm:System/cm:ScoreBadges";
+	/** Constant <code>DEFAULT_CLASS="default"</code> */
+	private static final String DEFAULT_CLASS = "default";
 
-	/** Constant <code>BADGE_PREFIX="badge-"</code> */
-	private static final String BADGE_PREFIX = "badge-";
-
-	/** Constant <code>DEFAULT_BADGE="badge-default"</code> */
-	private static final String DEFAULT_BADGE = "badge-default";
-
-	private final NodeRef companyHome;
-
-	private final FileFolderService fileFolderService;
+	private final ScoreDefinitionService scoreDefinitionService;
 
 	/**
 	 * <p>Constructor for ScoreBadgeService.</p>
 	 *
-	 * @param fileFolderService a {@link org.alfresco.service.cmr.model.FileFolderService} object
-	 * @param repositoryHelper a {@link org.alfresco.repo.model.Repository} object
+	 * @param scoreDefinitionService a {@link fr.becpg.repo.score.ScoreDefinitionService} object
 	 */
 	@Autowired
-	public ScoreBadgeService(@Qualifier("fileFolderService") FileFolderService fileFolderService,
-			@Qualifier("repositoryHelper") Repository repositoryHelper) {
-		this.fileFolderService = fileFolderService;
-		this.companyHome = repositoryHelper.getCompanyHome();
+	public ScoreBadgeService(ScoreDefinitionService scoreDefinitionService) {
+		this.scoreDefinitionService = scoreDefinitionService;
 	}
 
 	/**
@@ -67,70 +54,45 @@ public class ScoreBadgeService {
 	 * @return a {@link java.util.Optional} object
 	 */
 	public Optional<NodeRef> findBadge(String code, String scoreClass) {
-		NodeRef scoreFolder = findScoreFolder(code);
-		if (scoreFolder == null) {
+		Optional<ScoreDefinitionItem> definition = scoreDefinitionService.findByCode(code, null);
+
+		if (definition.isEmpty()) {
 			return Optional.empty();
 		}
 
-		Optional<NodeRef> badge = findFileStartingWith(scoreFolder, badgeName(scoreClass));
-		return badge.isPresent() ? badge : findFileStartingWith(scoreFolder, DEFAULT_BADGE);
-	}
+		List<ScoreBadgeListDataItem> badges = definition.get().getBadgeList();
 
-	/**
-	 * <p>badgeName.</p>
-	 *
-	 * @param scoreClass a {@link java.lang.String} object
-	 * @return a {@link java.lang.String} object
-	 */
-	private String badgeName(String scoreClass) {
-		if ((scoreClass == null) || scoreClass.isBlank()) {
-			return DEFAULT_BADGE;
+		if (badges == null) {
+			return Optional.empty();
 		}
-		return BADGE_PREFIX + scoreClass.trim().toLowerCase();
+
+		Optional<NodeRef> badge = findByClass(badges, scoreClass);
+
+		return badge.isPresent() ? badge : findByClass(badges, DEFAULT_CLASS);
 	}
 
 	/**
-	 * <p>findScoreFolder.</p>
+	 * <p>findByClass.</p>
 	 *
-	 * @param code a {@link java.lang.String} object
-	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 */
-	private NodeRef findScoreFolder(String code) {
-		if ((code == null) || code.isBlank()) {
-			return null;
-		}
-		return BeCPGQueryBuilder.createQuery().inDB().selectNodeByPath(companyHome, BADGES_FOLDER + "/cm:" + code);
-	}
-
-	/**
-	 * Matches on the file name without its extension, so the customer chooses between SVG
-	 * and PNG without the code knowing.
-	 *
-	 * @param folderNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @param baseName the expected file name, extension excluded
+	 * @param badges the badge list of the definition
+	 * @param scoreClass the class to look for
 	 * @return a {@link java.util.Optional} object
 	 */
-	private Optional<NodeRef> findFileStartingWith(NodeRef folderNodeRef, String baseName) {
-		for (FileInfo file : fileFolderService.listFiles(folderNodeRef)) {
-			if (removeExtension(file.getName()).equalsIgnoreCase(baseName)) {
+	private Optional<NodeRef> findByClass(List<ScoreBadgeListDataItem> badges, String scoreClass) {
+		if ((scoreClass == null) || scoreClass.isBlank()) {
+			return Optional.empty();
+		}
+
+		for (ScoreBadgeListDataItem badge : badges) {
+			if (scoreClass.equalsIgnoreCase(badge.getScoreClass())) {
 				if (logger.isDebugEnabled()) {
-					logger.debug("Found score badge " + file.getName());
+					logger.debug("Found score badge for class " + scoreClass);
 				}
-				return Optional.of(file.getNodeRef());
+				return Optional.ofNullable(badge.getNodeRef());
 			}
 		}
-		return Optional.empty();
-	}
 
-	/**
-	 * <p>removeExtension.</p>
-	 *
-	 * @param fileName a {@link java.lang.String} object
-	 * @return a {@link java.lang.String} object
-	 */
-	private String removeExtension(String fileName) {
-		int dotIndex = fileName.lastIndexOf('.');
-		return dotIndex > 0 ? fileName.substring(0, dotIndex) : fileName;
+		return Optional.empty();
 	}
 
 }
