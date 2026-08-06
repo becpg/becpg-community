@@ -2035,9 +2035,6 @@
 					</target>
 				</association>
 			</associations>
-			<mandatory-aspects>
-				<aspect>bcpg:entityListsAspect</aspect>
-			</mandatory-aspects>
 		</type>
 
 		<!-- Thresholds of a score definition, one line per nutrient and per category -->
@@ -2088,6 +2085,19 @@
 					<index enabled="false" />
 				</property>
 			</properties>
+			<associations>
+				<association name="bcpg:stlScoreDef">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:scoreDefinition</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
 		</type>
 
 		<!-- Badges of a score definition, one line per class, the image being the content -->
@@ -2103,6 +2113,19 @@
 					</index>
 				</property>
 			</properties>
+			<associations>
+				<association name="bcpg:sblScoreDef">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:scoreDefinition</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
 		</type>
 
 		<!-- Normalization and weighting factors of a score definition, one line per LCA indicator -->
@@ -2119,6 +2142,17 @@
 				</property>
 			</properties>
 			<associations>
+				<association name="bcpg:sdclScoreDef">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:scoreDefinition</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
 				<association name="bcpg:sdclLca">
 					<source>
 						<mandatory>false</mandatory>

@@ -1,27 +1,105 @@
 <#--
   Tabular panel, 21 CFR 101.9(d)(11)(iii).
 
-  The declaration runs across the width rather than down the height, which is what lets a wide,
-  shallow package carry a full panel. The nutrients are split into two columns separated by a
-  hairline, and the vitamins run on a single line at the bottom.
+  The regulation lays this format out across the width, in four bands: the title with the
+  servings and the calories on the left, then two columns of nutrients each carrying its own
+  "Amount/serving" and "% Daily Value*" headers, the vitamins running underneath both, and the
+  footnote in a narrow column on the right.
+
+  None of that matches the vertical panels, so this template draws its own body instead of
+  reusing panelBody.
 -->
 <#import "nutritionFacts-lib.ftlx" as nf>
-<#assign TABULAR_W = 288>
 
-<#assign y = nf.BORDER + 2>
+<#assign W = 552>
+<#assign LEFT_W = 148>
+<#assign FOOT_W = 96>
+<#assign COL_W = (W - LEFT_W - FOOT_W) / 2>
+<#assign COL1_X = LEFT_W>
+<#assign COL2_X = LEFT_W + COL_W>
+<#assign FOOT_X = LEFT_W + 2 * COL_W>
+<#assign TITLE_LINE = 17>
+
+<#-- Nutrients split over two columns, the first taking the extra line when the count is odd. -->
+<#assign nutrients = nf_data.nutrients()>
+<#assign firstColumnSize = ((nutrients?size + 1) / 2)?floor>
+<#assign column1 = nutrients[0..*firstColumnSize]>
+<#assign column2 = nutrients[firstColumnSize..]>
+<#assign rows = [column1?size, column2?size]?max>
+
 <#assign body>
-
-	<text x="${nf.PAD}" y="${nf.baseline(y, nf.SERVING_SIZE + 4)}" font-family="${nf.FONT_HEAVY}" font-weight="900" font-size="${nf.SERVING_SIZE + 4}">${nf_data.label("title")}</text>
-	<#if nf_data.serving().servingSize()??>
-	<text x="${TABULAR_W - nf.PAD}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}" font-weight="bold" text-anchor="end">${nf_data.label("servingSize")} ${nf_data.serving().servingSize()}</text>
-	</#if>
-	<#assign y = y + nf.SERVING_ROW_H + 4>
+	<#assign y = nf.BORDER + 2>
+	<text x="${nf.PAD}" y="${nf.baseline(y, TITLE_LINE)}" font-family="${nf.FONT_HEAVY}" font-weight="900" font-size="${TITLE_LINE}">Nutrition</text>
+	<#assign y = y + TITLE_LINE>
+	<text x="${nf.PAD}" y="${nf.baseline(y, TITLE_LINE)}" font-family="${nf.FONT_HEAVY}" font-weight="900" font-size="${TITLE_LINE}">Facts</text>
+	<#assign y = y + TITLE_LINE + 3>
 
 	<#if nf_data.serving().hasServingsPerContainer()>
-	<text x="${nf.PAD}" y="${nf.baseline(y, nf.CAPTION_SIZE)}" font-size="${nf.CAPTION_SIZE}">${nf_data.serving().servingsPerContainer()} ${nf_data.label("servingsPerContainer")}</text>
-	<#assign y = y + nf.CAPTION_ROW_H>
+	<text x="${nf.PAD}" y="${nf.baseline(y, nf.NUTRIENT_SIZE)}" font-size="${nf.NUTRIENT_SIZE}">${nf_data.serving().servingsPerContainer()} ${nf_data.label("servingsPerContainer")}</text>
+	<#assign y = y + nf.NUTRIENT_ROW_H>
+	</#if>
+	<text x="${nf.PAD}" y="${nf.baseline(y, nf.NUTRIENT_SIZE)}" font-size="${nf.NUTRIENT_SIZE}" font-family="${nf.FONT_HEAVY}" font-weight="900">${nf_data.label("servingSize")}</text>
+	<#assign y = y + nf.NUTRIENT_ROW_H>
+	<#if nf_data.serving().servingSize()??>
+	<text x="${nf.PAD}" y="${nf.baseline(y, nf.NUTRIENT_SIZE)}" font-size="${nf.NUTRIENT_SIZE}" font-family="${nf.FONT_HEAVY}" font-weight="900">${nf_data.serving().servingSize()}</text>
+	<#assign y = y + nf.NUTRIENT_ROW_H>
 	</#if>
 
-	<@nf.tabularBody data=nf_data y=y width=TABULAR_W/>
+	<#if nf_data.calories()??>
+	<#assign y = y + 4>
+	<text x="${nf.PAD}" y="${nf.baseline(y, 20)}" font-family="${nf.FONT_HEAVY}" font-weight="900" font-size="14">${nf_data.calories().label()}</text>
+	<#if nf_data.calories().value()??>
+	<text x="${COL1_X - 6}" y="${nf.baseline(y, 20)}" font-family="${nf.FONT_HEAVY}" font-weight="900" font-size="20" text-anchor="end">${nf_data.calories().value()}</text>
+	</#if>
+	<#assign y = y + 21>
+	<text x="${nf.PAD}" y="${nf.baseline(y, nf.CAPTION_SIZE)}" font-size="${nf.CAPTION_SIZE}">${nf_data.label("perServing")}</text>
+	<#assign y = y + nf.CAPTION_ROW_H>
+	</#if>
+	<#assign leftBottom = y>
+
+	<#assign y = nf.BORDER + 2>
+	<#list [COL1_X, COL2_X] as colX>
+	<text x="${colX + 4}" y="${nf.baseline(y, nf.CAPTION_SIZE)}" font-size="${nf.CAPTION_SIZE}" font-family="${nf.FONT_HEAVY}" font-weight="900">${nf_data.label("amountPerServingShort")}</text>
+	<text x="${colX + COL_W - 4}" y="${nf.baseline(y, nf.CAPTION_SIZE)}" font-size="${nf.CAPTION_SIZE}" font-family="${nf.FONT_HEAVY}" font-weight="900" text-anchor="end">${nf_data.label("dailyValue")}</text>
+	</#list>
+	<#assign y = y + nf.CAPTION_ROW_H>
+	<#assign columnsTop = y>
+
+	<#list 0..(rows - 1) as index>
+	<rect x="${COL1_X}" y="${y}" width="${2 * COL_W}" height="${nf.HAIRLINE}"/>
+	<#assign y = y + nf.HAIRLINE>
+	<#if (column1?size gt index)>
+	<@nf.tabularRow line=column1[index] y=y labelX=COL1_X + 4 percentX=COL1_X + COL_W - 4/>
+	</#if>
+	<#if (column2?size gt index)>
+	<@nf.tabularRow line=column2[index] y=y labelX=COL2_X + 4 percentX=COL2_X + COL_W - 4/>
+	</#if>
+	<#assign y = y + nf.NUTRIENT_ROW_H>
+	</#list>
+
+	<#if nf_data.micronutrients()?has_content>
+	<rect x="${COL1_X}" y="${y}" width="${2 * COL_W}" height="${nf.RULE_MEDIUM}"/>
+	<#assign y = y + nf.RULE_MEDIUM + 1>
+	<#assign micro = []>
+	<#list nf_data.micronutrients() as line>
+		<#assign micro = micro + [line.label() + (line.printsValue())?then(" " + line.value(), "") + (line.hasDailyValue())?then(" " + line.dailyValuePercent(), "")]>
+	</#list>
+	<#list nf.wrap(micro?join("  •  "), 88) as microLine>
+	<text x="${COL1_X + 4}" y="${nf.baseline(y, nf.NUTRIENT_SIZE)}" font-size="${nf.NUTRIENT_SIZE}">${microLine}</text>
+	<#assign y = y + nf.NUTRIENT_ROW_H>
+	</#list>
+	</#if>
+	<#assign columnsBottom = y>
+
+	<#assign y = nf.BORDER + 3>
+	<#list nf.wrap(nf_data.footNote(), 29) as footNoteLine>
+	<text x="${FOOT_X + 4}" y="${nf.baseline(y, nf.FOOTNOTE_SIZE)}" font-size="${nf.FOOTNOTE_SIZE}">${footNoteLine}</text>
+	<#assign y = y + nf.FOOTNOTE_LINE_H - 1>
+	</#list>
+
+	<#assign panelH = [leftBottom, columnsBottom, y]?max + nf.BORDER + 2>
+	<rect x="${COL1_X}" y="0" width="${nf.HAIRLINE}" height="${panelH}"/>
+	<rect x="${COL2_X}" y="${columnsTop}" width="${nf.HAIRLINE}" height="${columnsBottom - columnsTop}"/>
+	<rect x="${FOOT_X}" y="0" width="${nf.HAIRLINE}" height="${panelH}"/>
 </#assign>
-<@nf.panelOfWidth height=nf.cursorY width=TABULAR_W>${body}</@nf.panelOfWidth>
+<@nf.panelOfWidth height=panelH width=W>${body}</@nf.panelOfWidth>

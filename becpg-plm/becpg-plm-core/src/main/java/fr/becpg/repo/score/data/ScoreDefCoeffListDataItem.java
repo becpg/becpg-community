@@ -25,6 +25,8 @@ public class ScoreDefCoeffListDataItem extends BeCPGDataObject {
 
 	private static final long serialVersionUID = 1L;
 
+	private NodeRef scoreDef;
+
 	private NodeRef lca;
 
 	private Double normalization;
@@ -117,4 +119,25 @@ public class ScoreDefCoeffListDataItem extends BeCPGDataObject {
 	public String toString() {
 		return "ScoreDefCoeffListDataItem [lca=" + lca + ", normalization=" + normalization + ", ponderation=" + ponderation + "]";
 	}
+
+	/**
+	 * Definition the line belongs to.
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	@AlfSingleAssoc
+	@AlfQname(qname = "bcpg:sdclScoreDef")
+	public NodeRef getScoreDef() {
+		return scoreDef;
+	}
+
+	/**
+	 * <p>Setter for the field <code>scoreDef</code>.</p>
+	 *
+	 * @param scoreDef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	public void setScoreDef(NodeRef scoreDef) {
+		this.scoreDef = scoreDef;
+	}
+
 }
