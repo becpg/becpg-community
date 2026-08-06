@@ -25,13 +25,25 @@ import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
+import fr.becpg.repo.product.formulation.ecoscore.EcoScoreContext;
 import fr.becpg.repo.product.formulation.score.FrenchEcoScore;
+import fr.becpg.repo.score.ScoreContext;
+import fr.becpg.repo.score.ScoreDefinitionService;
+import fr.becpg.repo.score.ScoreResultWriter;
+import fr.becpg.repo.score.data.EntityScoreListDataItem;
+import fr.becpg.test.repo.score.ScoreDefinitionTestHelper;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 
 	@Autowired
 	FrenchEcoScore frenchEcoScore;
+
+	@Autowired
+	private ScoreDefinitionService scoreDefinitionService;
+
+	@Autowired
+	private ScoreResultWriter scoreResultWriter;
 
 	@Override
 	public void setUp() throws Exception {
@@ -61,6 +73,10 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 		final NodeRef finishedProduct1 = createFinishedProduct("Biscuit sec chocolaté, préemballé", "24036", "Prince goût chocolat", geoOrigin1, 48d,
 				ing1, packMaterial1, null);
 
+		final NodeRef greenScoreDefinition = transactionService.getRetryingTransactionHelper()
+				.doInTransaction(() -> ScoreDefinitionTestHelper.createPluginDefinition(nodeService, entitySystemService, scoreDefinitionService,
+						systemFolderNodeRef, EcoScoreContext.SCORE_CODE, FrenchEcoScore.SCORE_VERSION), false, true);
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			FinishedProductData finishedProductData = (FinishedProductData) alfrescoRepository.findOne(finishedProduct1);
@@ -70,6 +86,20 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 			Assert.assertEquals((Double) 57d, finishedProductData.getEcoScore());
 
 			Assert.assertEquals("C", finishedProductData.getEcoScoreClass());
+
+			// the score framework publishes the same verdict, without touching the historical properties
+			frenchEcoScore.getScoreContext(finishedProductData)
+					.ifPresent(context -> scoreResultWriter.write(finishedProductData, context));
+
+			EntityScoreListDataItem publishedScore = ScoreDefinitionTestHelper.findScore(finishedProductData, greenScoreDefinition)
+					.orElseThrow(() -> new AssertionError("The Green-Score was not published in the score list"));
+
+			Assert.assertEquals("C", publishedScore.getScoreClass());
+			Assert.assertEquals((Double) 57d, publishedScore.getValue());
+
+			ScoreContext details = ScoreContext.parse(publishedScore.getDetails());
+			Assert.assertEquals(EcoScoreContext.SCORE_CODE, details.getCode());
+			Assert.assertEquals(5, details.getSteps().size());
 
 			alfrescoRepository.save(finishedProductData);
 

@@ -69,6 +69,7 @@
 					<value>Plugin</value>
 					<value>Criteria</value>
 					<value>Threshold</value>
+					<value>Lca</value>
 					<value>Manual</value>
 				</list>
 			</parameter>
