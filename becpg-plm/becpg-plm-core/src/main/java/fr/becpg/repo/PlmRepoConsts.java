@@ -339,6 +339,7 @@ public class PlmRepoConsts {
 
 	/** Constant <code>PATH_SCORE_BADGES="ScoreBadges"</code> */
 	public static final String PATH_SCORE_BADGES = "ScoreBadges";
+
 	
 	/** Constant <code>PATH_CLP_DATABASES="CLPDatabases"</code> */
 	public static final String PATH_CLP_DATABASES = "CLPDatabases";

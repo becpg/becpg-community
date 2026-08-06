@@ -1947,6 +1947,30 @@
 					<index enabled="false" />
 				</property>
 			</properties>
+			<associations>
+				<!-- Markets the score applies to, empty meaning every market -->
+				<association name="bcpg:scoreDefCountries">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:geoOrigin</class>
+						<many>true</many>
+					</target>
+				</association>
+				<!-- Usages the score applies to, empty meaning every usage -->
+				<association name="bcpg:scoreDefUsages">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:regulatoryUsage</class>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:entityListsAspect</aspect>
 			</mandatory-aspects>

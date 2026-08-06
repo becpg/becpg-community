@@ -20,6 +20,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.regulatory.RegulatoryEntity;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.score.data.ScoreDefCoeffListDataItem;
 import fr.becpg.repo.score.data.ScoreDefinitionItem;
@@ -120,6 +121,43 @@ public class ScoreDefinitionService {
 			return false;
 		}
 		return (version == null) || version.isBlank() || Objects.equals(definition.getVersion(), version);
+	}
+
+	/**
+	 * Checks whether a score applies to an entity, on the markets and the usages it targets.
+	 *
+	 * <p>Same convention as the regulatory lists: a definition declaring no country applies
+	 * everywhere, and an entity declaring no market is served by every definition. The score
+	 * is filtered out only when both sides are set and disjoint.</p>
+	 *
+	 * @param definition a {@link fr.becpg.repo.score.data.ScoreDefinitionItem} object
+	 * @param entity the entity being formulated
+	 * @return a boolean
+	 */
+	public boolean isApplicable(ScoreDefinitionItem definition, RegulatoryEntity entity) {
+		return matches(definition.getCountries(), entity.getRegulatoryCountriesRef())
+				&& matches(definition.getUsages(), entity.getRegulatoryUsagesRef());
+	}
+
+	/**
+	 * <p>matches.</p>
+	 *
+	 * @param definitionRefs the references declared by the score definition
+	 * @param entityRefs the references declared by the entity
+	 * @return a boolean
+	 */
+	private boolean matches(List<NodeRef> definitionRefs, List<NodeRef> entityRefs) {
+		if ((definitionRefs == null) || definitionRefs.isEmpty() || (entityRefs == null) || entityRefs.isEmpty()) {
+			return true;
+		}
+
+		for (NodeRef entityRef : entityRefs) {
+			if (definitionRefs.contains(entityRef)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
