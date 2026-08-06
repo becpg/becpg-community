@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
@@ -90,6 +91,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private static final Log logger = LogFactory.getLog(LabelingFormulationHandler.class);
 
 	private static final String NULL_ING_ERROR = "message.formulate.labelRule.error.nullIng";
+
+	/** Constant <code>CONTENT_TOO_LONG="message.formulate.labelRule.contentToo"{trunked}</code> */
+	private static final String CONTENT_TOO_LONG = "message.formulate.labelRule.contentTooLong";
 
 	private NodeService nodeService;
 
@@ -451,8 +455,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									.createJsonLog(labelingRuleListDataItem.getFormula().replace(" ", "").contains("render(false)"));
 						}
 
-						// Limit label size to prevent property write failures (HTML-safe to avoid breaking the rendered table)
-						label = LargeTextHelper.elipse(label);
+						// Keep the label under the property size limit by dropping whole languages, never cutting a value
+						label = dropOversizedLabelValues(label);
 
 						retainNodes.addAll(getOrCreateILLDataItems(formulatedProduct, labelingRuleListDataItem.getNodeRef(), label, log,
 								labelingFormulaContext, sortOrder));
@@ -1419,6 +1423,30 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 
 		return ret;
+	}
+
+	/**
+	 * Keeps the rendered labeling values (bcpg:illValue) under {@link LargeTextHelper#TEXT_SIZE_LIMIT}
+	 * to prevent property write failures. No value is ever cut: the largest languages are dropped as
+	 * a whole, each replaced by a notice in its own language, until the whole fits. A partially cut
+	 * ingredient list carries wrong data, whereas an explicit notice tells the user what happened.
+	 *
+	 * @param label the rendered labeling value
+	 * @return the labeling value fitting the size limit
+	 */
+	private MLText dropOversizedLabelValues(MLText label) {
+		MLText result = LargeTextHelper.dropOversizedLocales(label, locale -> I18NUtil.getMessage(CONTENT_TOO_LONG, locale));
+		logDroppedLocales(label, result);
+		return result;
+	}
+
+	private void logDroppedLocales(MLText label, MLText result) {
+		for (Entry<Locale, String> entry : label.entrySet()) {
+			if (!Objects.equals(entry.getValue(), result.get(entry.getKey()))) {
+				logger.warn("Rendered labeling value of " + entry.getValue().length() + " characters does not fit the size limit of "
+						+ LargeTextHelper.TEXT_SIZE_LIMIT + " for locale " + entry.getKey() + ", replaced by a notice");
+			}
+		}
 	}
 
 	private List<IngLabelingListDataItem> getOrCreateILLDataItems(ProductData formulatedProduct, NodeRef key, MLText label, String log,
