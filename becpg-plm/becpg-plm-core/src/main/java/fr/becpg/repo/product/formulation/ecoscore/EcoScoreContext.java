@@ -4,6 +4,10 @@ import java.util.Objects;
 
 import org.json.JSONObject;
 
+import fr.becpg.repo.score.ScoreContext;
+import fr.becpg.repo.score.ScorePart;
+import fr.becpg.repo.score.ScoreScale;
+
 /**
  * <p>EcoScoreContext class.</p>
  *
@@ -11,7 +15,10 @@ import org.json.JSONObject;
  * @version $Id: $Id
  */
 public class EcoScoreContext {
-	
+
+	/** Constant <code>SCORE_CODE="GREENSCORE"</code> */
+	public static final String SCORE_CODE = "GREENSCORE";
+
 	private int ecoScore;
 	private String scoreClass;
 	private int acvScore;
@@ -145,6 +152,30 @@ public class EcoScoreContext {
 	 */
 	public void setPackagingMalus(int packagingMalus) {
 		this.packagingMalus = packagingMalus;
+	}
+
+	/**
+	 * Converts this context to the normalized format shared by all scores.
+	 *
+	 * @param version the version of the method that produced the score
+	 * @return a {@link fr.becpg.repo.score.ScoreContext} object
+	 */
+	public ScoreContext toScoreContext(String version) {
+		ScoreContext context = new ScoreContext();
+
+		context.setCode(SCORE_CODE);
+		context.setVersion(version);
+		context.setValue(ecoScore * 1d);
+		context.setScoreClass(scoreClass);
+		context.setScale(ScoreScale.Letter.name());
+
+		context.getSteps().add(new ScorePart("acvScore").withContribution(acvScore * 1d));
+		context.getSteps().add(new ScorePart("claimBonus").withContribution(claimBonus * 1d));
+		context.getSteps().add(new ScorePart("transportScore").withContribution(transportScore * 1d));
+		context.getSteps().add(new ScorePart("politicalScore").withContribution(politicalScore * 1d));
+		context.getSteps().add(new ScorePart("packagingMalus").withContribution(packagingMalus * 1d));
+
+		return context;
 	}
 
 	/**

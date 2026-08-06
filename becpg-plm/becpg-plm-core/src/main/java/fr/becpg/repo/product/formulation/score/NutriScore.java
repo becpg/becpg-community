@@ -1,6 +1,7 @@
 package fr.becpg.repo.product.formulation.score;
 
 import java.util.Locale;
+import java.util.Optional;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.apache.commons.logging.Log;
@@ -15,6 +16,7 @@ import fr.becpg.repo.product.helper.NutrientRegulatoryHelper;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.regulatory.RequirementListDataItem;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.score.ScoreContext;
 
 /**
  * <p>NutriScore class.</p>
@@ -33,6 +35,33 @@ public class NutriScore implements ScoreCalculatingPlugin {
 	public boolean accept(ScorableEntity productData) {
 		return (productData instanceof ProductData)
 				&& ((BeCPGDataObject) productData).getAspects().contains(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public String getCode() {
+		return NutriScoreContext.SCORE_CODE;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * The version is carried by the product through {@code bcpg:nutrientProfileVersion},
+	 * so this plugin serves every version of the code.
+	 */
+	@Override
+	public String getVersion() {
+		return ANY_VERSION;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public Optional<ScoreContext> getScoreContext(ScorableEntity scorableEntity) {
+		String details = ((ProductData) scorableEntity).getNutrientDetails();
+		if ((details == null) || details.isBlank()) {
+			return Optional.empty();
+		}
+		return Optional.of(NutriScoreContext.parse(details).toScoreContext());
 	}
 
 	/** {@inheritDoc} */

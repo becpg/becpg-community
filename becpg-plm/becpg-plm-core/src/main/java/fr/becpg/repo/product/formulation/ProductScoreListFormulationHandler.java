@@ -22,6 +22,7 @@ import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.project.formulation.ScoreListFormulationHandler;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
+import fr.becpg.repo.score.CriteriaScoreEngine;
 
 /**
  * <p>LCACalculatingFormulationHandler class.</p>
@@ -33,6 +34,8 @@ public class ProductScoreListFormulationHandler extends AbstractSimpleListFormul
 
 	private ScoreListFormulationHandler scoreListFormulationHandler;
 
+	private CriteriaScoreEngine criteriaScoreEngine;
+
 	/**
 	 * <p>Setter for the field <code>scoreListFormulationHandler</code>.</p>
 	 *
@@ -40,6 +43,15 @@ public class ProductScoreListFormulationHandler extends AbstractSimpleListFormul
 	 */
 	public void setScoreListFormulationHandler(ScoreListFormulationHandler scoreListFormulationHandler) {
 		this.scoreListFormulationHandler = scoreListFormulationHandler;
+	}
+
+	/**
+	 * <p>Setter for the field <code>criteriaScoreEngine</code>.</p>
+	 *
+	 * @param criteriaScoreEngine a {@link fr.becpg.repo.score.CriteriaScoreEngine} object
+	 */
+	public void setCriteriaScoreEngine(CriteriaScoreEngine criteriaScoreEngine) {
+		this.criteriaScoreEngine = criteriaScoreEngine;
 	}
 
 	/** {@inheritDoc} */
@@ -75,6 +87,10 @@ public class ProductScoreListFormulationHandler extends AbstractSimpleListFormul
 			scoreListFormulationHandler.calculateScore(formulatedProduct);
 
 			scoreListFormulationHandler.calculateScoreType(formulatedProduct);
+
+			if (criteriaScoreEngine != null) {
+				criteriaScoreEngine.formulateScores(formulatedProduct);
+			}
 
 		}
 

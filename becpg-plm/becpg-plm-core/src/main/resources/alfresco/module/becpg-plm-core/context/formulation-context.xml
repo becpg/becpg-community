@@ -176,6 +176,14 @@
 				<bean parent="abstractSimpleFormulationHandler" class="fr.becpg.repo.product.formulation.LCACalculatingFormulationHandler">
 					<property name="formulaService" ref="formulaService" />
 					<property name="packagingHelper" ref="packagingHelper" />
+					<property name="scoreDefinitionService" ref="scoreDefinitionService" />
+					<property name="scoreResultWriter" ref="scoreResultWriter" />
+					<property name="ecobalyseComplementsCalculator">
+						<bean class="fr.becpg.repo.product.formulation.ecobalyse.EcobalyseComplementsCalculator">
+							<property name="nodeService" ref="nodeService" />
+							<property name="ecobalyseIngredientService" ref="ecobalyseIngredientService" />
+						</bean>
+					</property>
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.IngsCalculatingFormulationHandler">
 					<property name="nodeService" ref="nodeService" />
@@ -240,6 +248,7 @@
 		                    <property name="surveyService" ref="surveyService" />
 		                </bean>
 					</property>
+					<property name="criteriaScoreEngine" ref="criteriaScoreEngine" />
 				</bean>
                 <bean class="fr.becpg.repo.product.formulation.SurveyListFormulationHandler">
                 	<constructor-arg><ref bean="namespaceService"/></constructor-arg>
@@ -287,10 +296,14 @@
 				<bean class="fr.becpg.repo.product.formulation.ScoreCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="reqCtrlListDisplayLabelDecorator" ref="reqCtrlListDisplayLabelDecorator" />
+					<property name="scoreResultWriter" ref="scoreResultWriter" />
 					<property name="scorePlugins">
 						<list>
 							<ref bean="ecoScore"/>
 							<ref bean="nutriScore"/>
+							<ref bean="thresholdNutritionScore"/>
+							<ref bean="fsaOfcomNutrientProfile"/>
+							<ref bean="healthStarRating"/>
 						</list>
 					</property>
 				</bean>
@@ -334,10 +347,14 @@
 				<bean class="fr.becpg.repo.product.formulation.ScoreCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="reqCtrlListDisplayLabelDecorator" ref="reqCtrlListDisplayLabelDecorator" />
+					<property name="scoreResultWriter" ref="scoreResultWriter" />
 					<property name="scorePlugins">
 						<list>
 							<ref bean="ecoScore"/>
 							<ref bean="nutriScore"/>
+							<ref bean="thresholdNutritionScore"/>
+							<ref bean="fsaOfcomNutrientProfile"/>
+							<ref bean="healthStarRating"/>
 						</list>
 					</property>
 				</bean>

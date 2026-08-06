@@ -1646,6 +1646,12 @@
           <show force="true" id="bcpg:advPclValue2"/>
           <show force="true" id="bcpg:advLca"/>
           <show force="true" id="bcpg:lcaListValue"/>
+          <show force="true" id="bcpg:advScoreDef1"/>
+          <show force="true" id="bcpg:advEslValue1"/>
+          <show force="true" id="bcpg:advEslClass1"/>
+          <show force="true" id="bcpg:advScoreDef2"/>
+          <show force="true" id="bcpg:advEslValue2"/>
+          <show force="true" id="bcpg:advEslClass2"/>
           <show force="true" id="bcpg:advSvhcAnd"/>
           <show force="true" id="bcpg:svhcListQtyPerc"/>
           <show force="true" id="bcpg:advSvhcNot"/>
@@ -2018,6 +2024,31 @@
               <control-param name="forceEditable">true</control-param>
             </control>
           </field>
+          <set appearance="bordered-panel" id="score-criteria" label-id="becpg.forms.set.score-criteria.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
+          <field id="bcpg:advScoreDef1" mandatory="false" read-only="false" set="score-criteria">
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+              <control-param name="forceEditable">true</control-param>
+              <control-param name="isSearch">true</control-param>
+            </control>
+          </field>
+          <field id="bcpg:advEslValue1" mandatory="false" read-only="false" set="score-criteria">
+            <control template="/org/alfresco/components/form/controls/numberrange.ftl">
+              <control-param name="forceEditable">true</control-param>
+            </control>
+          </field>
+          <field id="bcpg:advEslClass1" mandatory="false" read-only="false" set="score-criteria" />
+          <field id="bcpg:advScoreDef2" mandatory="false" read-only="false" set="score-criteria">
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+              <control-param name="forceEditable">true</control-param>
+              <control-param name="isSearch">true</control-param>
+            </control>
+          </field>
+          <field id="bcpg:advEslValue2" mandatory="false" read-only="false" set="score-criteria">
+            <control template="/org/alfresco/components/form/controls/numberrange.ftl">
+              <control-param name="forceEditable">true</control-param>
+            </control>
+          </field>
+          <field id="bcpg:advEslClass2" mandatory="false" read-only="false" set="score-criteria" />
           <set appearance="bordered-panel" id="svhc" label-id="becpg.forms.set.svhc-criteria.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="bcpg:advSvhcAnd" mandatory="false" read-only="false" set="svhc">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">

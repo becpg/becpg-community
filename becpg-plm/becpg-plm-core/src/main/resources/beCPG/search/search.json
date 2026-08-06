@@ -116,6 +116,18 @@
            {"attribute": "bcpg:lcaListLca" , "htmlId":"assoc_bcpg_advLca_added", "listType": "bcpg:lcaList" },
        	   {"attribute": "bcpg:lcaListValue" , "htmlId":"prop_bcpg_lcaListValue-range" }
        	 ],
+
+         "score1": [
+           {"attribute": "bcpg:eslScoreDef" , "htmlId":"assoc_bcpg_advScoreDef1_added", "listType": "bcpg:entityScoreList" },
+           {"attribute": "bcpg:eslValue" , "htmlId":"prop_bcpg_advEslValue1-range" },
+           {"attribute": "bcpg:eslClass" , "htmlId":"prop_bcpg_advEslClass1" }
+       	 ],
+
+         "score2": [
+           {"attribute": "bcpg:eslScoreDef" , "htmlId":"assoc_bcpg_advScoreDef2_added", "listType": "bcpg:entityScoreList", "operator": "AND" },
+           {"attribute": "bcpg:eslValue" , "htmlId":"prop_bcpg_advEslValue2-range" },
+           {"attribute": "bcpg:eslClass" , "htmlId":"prop_bcpg_advEslClass2" }
+       	 ],
        	 
 		 "svhc1" : [ 
            {"attribute": "bcpg:svhcListIng" , "htmlId":"assoc_bcpg_svhcListIng_added", "listType": "bcpg:svhcList" },
