@@ -19,7 +19,6 @@ services:
         --add-opens=java.base/java.io=ALL-UNNAMED
         --add-opens=java.base/java.util=ALL-UNNAMED
         --add-opens=java.base/java.net=ALL-UNNAMED
-    mem_limit: 6g
     volumes:
       - becpg_data:/usr/local/tomcat/data
                  
@@ -33,7 +32,6 @@ services:
   becpg-report:
     image:  europe-west1-docker.pkg.dev/becpg-314807/becpg-docker/becpg-report:4.20.0.1
     user: root
-    mem_limit: 1500m
     ports:
        - "8086:8080"
 
