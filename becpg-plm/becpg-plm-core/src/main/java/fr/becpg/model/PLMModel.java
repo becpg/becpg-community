@@ -458,6 +458,74 @@ public interface PLMModel {
 	/** Constant <code>PROP_COSTTYPE</code> */
 	QName PROP_COSTTYPE = QName.createQName(BeCPGModel.BECPG_URI, "costType");
 
+	// score framework
+	/** Constant <code>TYPE_SCORE_DEFINITION</code> */
+	QName TYPE_SCORE_DEFINITION = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefinition");
+	/** Constant <code>PROP_SCORE_DEF_CODE</code> */
+	QName PROP_SCORE_DEF_CODE = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefCode");
+	/** Constant <code>PROP_SCORE_DEF_VERSION</code> */
+	QName PROP_SCORE_DEF_VERSION = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefVersion");
+	/** Constant <code>PROP_SCORE_DEF_ENGINE</code> */
+	QName PROP_SCORE_DEF_ENGINE = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefEngine");
+	/** Constant <code>PROP_SCORE_DEF_PLUGIN_ID</code> */
+	QName PROP_SCORE_DEF_PLUGIN_ID = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefPluginId");
+	/** Constant <code>PROP_SCORE_DEF_SCALE</code> */
+	QName PROP_SCORE_DEF_SCALE = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefScale");
+	/** Constant <code>PROP_SCORE_DEF_RANGE</code> */
+	QName PROP_SCORE_DEF_RANGE = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefRange");
+	/** Constant <code>PROP_SCORE_DEF_UNIT</code> */
+	QName PROP_SCORE_DEF_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefUnit");
+	/** Constant <code>PROP_SCORE_DEF_BASIS</code> */
+	QName PROP_SCORE_DEF_BASIS = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefBasis");
+	/** Constant <code>PROP_SCORE_DEF_SCALE_FACTOR</code> */
+	QName PROP_SCORE_DEF_SCALE_FACTOR = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefScaleFactor");
+	/** Constant <code>PROP_SCORE_DEF_FORMULA</code> */
+	QName PROP_SCORE_DEF_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefFormula");
+	/** Constant <code>PROP_SCORE_DEF_DETAIL_FORMULA</code> */
+	QName PROP_SCORE_DEF_DETAIL_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefDetailFormula");
+	/** Constant <code>PROP_SCORE_DEF_RANGE_FORMULA</code> */
+	QName PROP_SCORE_DEF_RANGE_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefRangeFormula");
+	/** Constant <code>PROP_SCORE_DEF_IS_OFFICIAL</code> */
+	QName PROP_SCORE_DEF_IS_OFFICIAL = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefIsOfficial");
+	/** Constant <code>PROP_SCORE_DEF_VALIDITY_PERIOD</code> */
+	QName PROP_SCORE_DEF_VALIDITY_PERIOD = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefValidityPeriod");
+	/** Constant <code>PROP_SCORE_DEF_START_EFFECTIVITY</code> */
+	QName PROP_SCORE_DEF_START_EFFECTIVITY = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefStartEffectivity");
+	/** Constant <code>PROP_SCORE_DEF_END_EFFECTIVITY</code> */
+	QName PROP_SCORE_DEF_END_EFFECTIVITY = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefEndEffectivity");
+
+	/** Constant <code>TYPE_SCORE_DEF_COEFF_LIST</code> */
+	QName TYPE_SCORE_DEF_COEFF_LIST = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefCoeffList");
+	/** Constant <code>PROP_SDCL_NORMALIZATION</code> */
+	QName PROP_SDCL_NORMALIZATION = QName.createQName(BeCPGModel.BECPG_URI, "sdclNormalization");
+	/** Constant <code>PROP_SDCL_PONDERATION</code> */
+	QName PROP_SDCL_PONDERATION = QName.createQName(BeCPGModel.BECPG_URI, "sdclPonderation");
+	/** Constant <code>ASSOC_SDCL_LCA</code> */
+	QName ASSOC_SDCL_LCA = QName.createQName(BeCPGModel.BECPG_URI, "sdclLca");
+
+	/** Constant <code>TYPE_ENTITY_SCORE_LIST</code> */
+	QName TYPE_ENTITY_SCORE_LIST = QName.createQName(BeCPGModel.BECPG_URI, "entityScoreList");
+	/** Constant <code>PROP_ESL_VALUE</code> */
+	QName PROP_ESL_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "eslValue");
+	/** Constant <code>PROP_ESL_CLASS</code> */
+	QName PROP_ESL_CLASS = QName.createQName(BeCPGModel.BECPG_URI, "eslClass");
+	/** Constant <code>PROP_ESL_DETAILS</code> */
+	QName PROP_ESL_DETAILS = QName.createQName(BeCPGModel.BECPG_URI, "eslDetails");
+	/** Constant <code>PROP_ESL_VERSION</code> */
+	QName PROP_ESL_VERSION = QName.createQName(BeCPGModel.BECPG_URI, "eslVersion");
+	/** Constant <code>PROP_ESL_COMPUTED_DATE</code> */
+	QName PROP_ESL_COMPUTED_DATE = QName.createQName(BeCPGModel.BECPG_URI, "eslComputedDate");
+	/** Constant <code>PROP_ESL_PREVIOUS_VALUE</code> */
+	QName PROP_ESL_PREVIOUS_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "eslPreviousValue");
+	/** Constant <code>PROP_ESL_PREVIOUS_CLASS</code> */
+	QName PROP_ESL_PREVIOUS_CLASS = QName.createQName(BeCPGModel.BECPG_URI, "eslPreviousClass");
+	/** Constant <code>PROP_ESL_IS_MANUAL</code> */
+	QName PROP_ESL_IS_MANUAL = QName.createQName(BeCPGModel.BECPG_URI, "eslIsManual");
+	/** Constant <code>PROP_ESL_ERROR_LOG</code> */
+	QName PROP_ESL_ERROR_LOG = QName.createQName(BeCPGModel.BECPG_URI, "eslErrorLog");
+	/** Constant <code>ASSOC_ESL_SCORE_DEF</code> */
+	QName ASSOC_ESL_SCORE_DEF = QName.createQName(BeCPGModel.BECPG_URI, "eslScoreDef");
+
 	// lca
 	/** Constant <code>TYPE_LCA</code> */
 	QName TYPE_LCA = QName.createQName(BeCPGModel.BECPG_URI, "lca");

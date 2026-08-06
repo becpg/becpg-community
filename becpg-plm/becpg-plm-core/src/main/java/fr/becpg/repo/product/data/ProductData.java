@@ -55,6 +55,8 @@ import fr.becpg.repo.product.data.productList.SvhcListDataItem;
 import fr.becpg.repo.product.data.productList.ToxListDataItem;
 import fr.becpg.repo.product.formulation.clp.HazardClassificationFormulaContext;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
+import fr.becpg.repo.score.ScoredEntity;
+import fr.becpg.repo.score.data.EntityScoreListDataItem;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.StockListDataItem;
 import fr.becpg.repo.regulatory.RegulatoryEntity;
@@ -86,7 +88,8 @@ import fr.becpg.repo.variant.model.VariantEntity;
  */
 @BeCPGPublicApi
 public class ProductData extends AbstractScorableEntity
-		implements EffectiveDataItem, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity, RegulatoryEntity, SurveyableEntity {
+		implements EffectiveDataItem, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity, RegulatoryEntity, SurveyableEntity,
+		ScoredEntity {
 
 	/** Constant <code>serialVersionUID=764534088277737617L</code> */
 	private static final long serialVersionUID = 764534088277737617L;
@@ -325,6 +328,7 @@ public class ProductData extends AbstractScorableEntity
 	 * Survey score
 	 */
 	private List<ScoreListDataItem> scoreList;
+	private List<EntityScoreListDataItem> entityScoreList;
 	private List<SurveyListDataItem> surveyList;
 	private Integer productScore;
 
@@ -2606,6 +2610,28 @@ public class ProductData extends AbstractScorableEntity
 	 */
 	public void setPubChannelList(List<PubChannelListDataItem> pubChannelList) {
 		this.pubChannelList = pubChannelList;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>Getter for the field <code>entityScoreList</code>.</p>
+	 */
+	@DataList
+	@AlfQname(qname = "bcpg:entityScoreList")
+	@Override
+	public List<EntityScoreListDataItem> getEntityScoreList() {
+		return entityScoreList;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>Setter for the field <code>entityScoreList</code>.</p>
+	 */
+	@Override
+	public void setEntityScoreList(List<EntityScoreListDataItem> entityScoreList) {
+		this.entityScoreList = entityScoreList;
 	}
 
 	/**
