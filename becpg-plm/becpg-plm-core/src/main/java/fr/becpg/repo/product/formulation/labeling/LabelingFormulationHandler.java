@@ -451,8 +451,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									.createJsonLog(labelingRuleListDataItem.getFormula().replace(" ", "").contains("render(false)"));
 						}
 
-						// Limit label size to prevent property write failures
-						LargeTextHelper.elipse(label);
+						// Limit label size to prevent property write failures (HTML-safe to avoid breaking the rendered table)
+						label = LargeTextHelper.elipse(label);
 
 						retainNodes.addAll(getOrCreateILLDataItems(formulatedProduct, labelingRuleListDataItem.getNodeRef(), label, log,
 								labelingFormulaContext, sortOrder));

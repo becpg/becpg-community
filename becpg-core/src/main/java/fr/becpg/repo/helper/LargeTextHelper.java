@@ -1,6 +1,5 @@
 package fr.becpg.repo.helper;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
@@ -22,6 +21,9 @@ public class LargeTextHelper {
 
 	/** Constant <code>TEXT_SIZE_LIMIT=50000</code> */
 	public static final int TEXT_SIZE_LIMIT = 50000;
+
+	/** Overhead kept when shortening a value to leave room for the ellipsis suffix. */
+	private static final int ELLIPSIS_OVERHEAD = 20;
 
 	private LargeTextHelper() {
 		//Do Nothing
@@ -49,6 +51,30 @@ public class LargeTextHelper {
 			return textBefore.substring(0, textLength) + "...";
 		}
 		return textBefore;
+	}
+
+	/**
+	 * <p>HTML-aware truncation. When the value is an HTML table, the cut is done after the last
+	 * complete row (&lt;/tr&gt;) and the table is closed, so the rendered output stays valid instead
+	 * of being broken mid-tag. Otherwise falls back to {@link #elipse(String, int)}.</p>
+	 *
+	 * @param value a {@link java.lang.String} object
+	 * @param textLength a int
+	 * @return a {@link java.lang.String} object
+	 */
+	public static final String elipseHtml(String value, int textLength) {
+		if ((value == null) || (value.length() <= textLength)) {
+			return value;
+		}
+		int tableStart = value.indexOf("<table");
+		if (tableStart > -1) {
+			String head = value.substring(0, textLength);
+			int lastRow = head.lastIndexOf("</tr>");
+			if (lastRow > tableStart) {
+				return value.substring(0, lastRow + "</tr>".length()) + "</table>";
+			}
+		}
+		return elipse(value, textLength);
 	}
 
 	/**
@@ -85,22 +111,39 @@ public class LargeTextHelper {
 	/**
 	 * <p>elipse.</p>
 	 *
+	 * Returns a copy of the given {@link org.alfresco.service.cmr.repository.MLText} whose values are
+	 * shortened so that the total length (all locales combined) stays under {@link #TEXT_SIZE_LIMIT}.
+	 * The budget is shared between locales proportionally to their actual content, empty locales are
+	 * ignored, and the source {@link org.alfresco.service.cmr.repository.MLText} is left untouched.
+	 *
 	 * @param mlText a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @return a new {@link org.alfresco.service.cmr.repository.MLText} object
 	 */
-	public static void elipse(MLText mlText) {
-		
-		if (mlText.toString().length() > TEXT_SIZE_LIMIT) {
-			int localesNumber = mlText.keySet().size();
-			
-			int newTextLength = TEXT_SIZE_LIMIT / localesNumber - 20;
-			
-			Iterator<Entry<Locale, String>> it = mlText.entrySet().iterator();
+	public static MLText elipse(MLText mlText) {
 
-			while (it.hasNext()) {
-				Locale locale = it.next().getKey();
-				mlText.put(locale, elipse(mlText.get(locale),newTextLength));
+		MLText result = new MLText();
+		if (mlText == null) {
+			return result;
+		}
+
+		int totalLength = 0;
+		for (String value : mlText.values()) {
+			if (value != null) {
+				totalLength += value.length();
 			}
 		}
+
+		for (Entry<Locale, String> entry : mlText.entrySet()) {
+			String value = entry.getValue();
+			if ((value == null) || value.isEmpty() || (totalLength <= TEXT_SIZE_LIMIT)) {
+				result.put(entry.getKey(), value);
+			} else {
+				// Share the global budget proportionally to each locale's actual size
+				int allowed = (int) ((long) value.length() * TEXT_SIZE_LIMIT / totalLength) - ELLIPSIS_OVERHEAD;
+				result.put(entry.getKey(), elipseHtml(value, Math.max(allowed, 0)));
+			}
+		}
+		return result;
 	}
 
 	/**

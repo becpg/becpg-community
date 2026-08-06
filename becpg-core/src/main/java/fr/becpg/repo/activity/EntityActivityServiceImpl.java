@@ -580,15 +580,12 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	}
 
 	private MLText compareMLTexts(MLText mlText, MLText otherMlText) {
-		LargeTextHelper.elipse(mlText);
+		MLText elipsedMlText = LargeTextHelper.elipse(mlText);
 		MLText newMlText = new MLText();
-		Iterator<Entry<Locale, String>> it = mlText.entrySet().iterator();
 
-		
-		
-		while (it.hasNext()) {
-			Locale locale = it.next().getKey();
-			String text = mlText.get(locale);
+		for (Entry<Locale, String> entry : elipsedMlText.entrySet()) {
+			Locale locale = entry.getKey();
+			String text = entry.getValue();
 			newMlText.put(locale, text);
 			if ((text != null) && (text.length() > ML_TEXT_SIZE_LIMIT)) {
 				String otherText = otherMlText != null ? otherMlText.get(locale) : null;
@@ -596,8 +593,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					text = LargeTextHelper.elipse(text, ML_TEXT_SIZE_LIMIT);
 				} else {
 					Pair<String, String> diffs = LargeTextHelper.createTextDiffs(text, otherText);
-					text = diffs.getFirst().replace(" ", "").equals("") ? text : diffs.getFirst();
-					text =  LargeTextHelper.elipse(text, ML_TEXT_SIZE_LIMIT);
+					text = diffs.getFirst().replace(" ", "").isEmpty() ? text : diffs.getFirst();
+					text = LargeTextHelper.elipse(text, ML_TEXT_SIZE_LIMIT);
 				}
 				newMlText.put(locale, text);
 			}
