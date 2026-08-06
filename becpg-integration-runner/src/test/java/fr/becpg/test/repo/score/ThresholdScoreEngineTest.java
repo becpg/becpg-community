@@ -147,6 +147,55 @@ public class ThresholdScoreEngineTest {
 		assertEquals("Medium", partOf(context, SUGAR).getLabel());
 	}
 
+	@Test
+	public void testRatioThresholdsCompareAShareOfTheEnergy() {
+		nutrients.put("ENER-KCA", 400d);
+		nutrients.put(SUGAR, 12d);
+
+		ScoreDefinitionItem definition = definition(ScoreAggregation.Count, null);
+		ScoreThresholdListDataItem threshold = threshold(SUGAR, 0.1d, null, "EXCESO AZUCARES");
+		threshold.setRatioNutCode("ENER-KCA");
+		threshold.setRatioFactor(4d);
+		definition.setThresholdList(List.of(threshold));
+
+		ScoreContext context = engine.compute(product, definition);
+
+		// 12 g of sugar is 48 kcal, that is 12 percent of 400 kcal, above the 10 percent bound
+		assertEquals(1d, context.getValue(), PRECISION);
+	}
+
+	@Test
+	public void testRatioThresholdStaysBelowTheBound() {
+		nutrients.put("ENER-KCA", 400d);
+		nutrients.put(SUGAR, 8d);
+
+		ScoreDefinitionItem definition = definition(ScoreAggregation.Count, null);
+		ScoreThresholdListDataItem threshold = threshold(SUGAR, 0.1d, null, "EXCESO AZUCARES");
+		threshold.setRatioNutCode("ENER-KCA");
+		threshold.setRatioFactor(4d);
+		definition.setThresholdList(List.of(threshold));
+
+		ScoreContext context = engine.compute(product, definition);
+
+		// 8 g of sugar is 32 kcal, that is 8 percent of 400 kcal
+		assertEquals(0d, context.getValue(), PRECISION);
+	}
+
+	@Test
+	public void testRatioIsSkippedWhenTheDivisorIsMissing() {
+		nutrients.put(SUGAR, 12d);
+
+		ScoreDefinitionItem definition = definition(ScoreAggregation.Count, null);
+		ScoreThresholdListDataItem threshold = threshold(SUGAR, 0.1d, null, "EXCESO AZUCARES");
+		threshold.setRatioNutCode("ENER-KCA");
+		threshold.setRatioFactor(4d);
+		definition.setThresholdList(List.of(threshold));
+
+		ScoreContext context = engine.compute(product, definition);
+
+		assertEquals(0, context.getParts().size());
+	}
+
 	private ScoreDefinitionItem definition(ScoreAggregation aggregation, String classOrder) {
 		ScoreDefinitionItem definition = new ScoreDefinitionItem();
 		definition.setCode("TEST");

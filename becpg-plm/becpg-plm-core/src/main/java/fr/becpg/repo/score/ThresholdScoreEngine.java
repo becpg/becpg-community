@@ -113,7 +113,7 @@ public class ThresholdScoreEngine {
 			if (!threshold.appliesTo(category) || matched.containsKey(threshold.getNutCode())) {
 				continue;
 			}
-			if (threshold.matches(nutrients.get(threshold.getNutCode()))) {
+			if (threshold.matches(threshold.comparedValue(nutrients.get(threshold.getNutCode()), nutrients))) {
 				matched.put(threshold.getNutCode(), threshold);
 			}
 		}
