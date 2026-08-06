@@ -18,6 +18,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.score.ScoreAggregation;
+import fr.becpg.repo.score.ScoreBasis;
 import fr.becpg.repo.score.ScoreEngine;
 import fr.becpg.repo.score.ScoreScale;
 
@@ -160,6 +161,15 @@ public class ScoreDefinitionItem extends BeCPGDataObject {
 	 */
 	public void setBadgeList(List<ScoreBadgeListDataItem> badgeList) {
 		this.badgeList = badgeList;
+	}
+
+	/**
+	 * <p>Returns the basis as an enum, defaulting to {@link fr.becpg.repo.score.ScoreBasis#Per100g}.</p>
+	 *
+	 * @return a {@link fr.becpg.repo.score.ScoreBasis} object
+	 */
+	public ScoreBasis getScoreBasis() {
+		return ScoreBasis.parse(basis);
 	}
 
 	/**

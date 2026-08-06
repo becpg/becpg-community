@@ -52,12 +52,41 @@ public class NutrientValueProvider {
 	 * @return a {@link java.util.Map} object, never null
 	 */
 	public Map<String, Double> extractNutrients(ProductData product) {
+		return extractNutrients(product, ScoreBasis.Per100g);
+	}
+
+	/**
+	 * <p>Returns the characteristics of a product, converted to the quantity a score refers
+	 * to.</p>
+	 *
+	 * <p>Only the nutrients are converted: a percentage such as the fruit and vegetable
+	 * content of the physico chemical list does not depend on the quantity.</p>
+	 *
+	 * @param product a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param basis the quantity the score refers to
+	 * @return a {@link java.util.Map} object, never null
+	 */
+	public Map<String, Double> extractNutrients(ProductData product, ScoreBasis basis) {
 		Map<String, Double> values = new LinkedHashMap<>();
 
 		fillNutrients(product, values);
+		convert(values, basis.conversionFactor(product));
 		fillPhysicoChems(product, values);
 
 		return values;
+	}
+
+	/**
+	 * <p>convert.</p>
+	 *
+	 * @param values the nutrients held per 100 g
+	 * @param factor the conversion factor of the basis
+	 */
+	private void convert(Map<String, Double> values, double factor) {
+		if (factor == 1d) {
+			return;
+		}
+		values.replaceAll((code, value) -> value * factor);
 	}
 
 	/**

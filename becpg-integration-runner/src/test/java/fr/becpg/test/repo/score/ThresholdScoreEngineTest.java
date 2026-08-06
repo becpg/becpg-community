@@ -15,6 +15,7 @@ import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.score.NutrientValueProvider;
 import fr.becpg.repo.score.ScoreAggregation;
+import fr.becpg.repo.score.ScoreBasis;
 import fr.becpg.repo.score.ScoreContext;
 import fr.becpg.repo.score.ScoreEngine;
 import fr.becpg.repo.score.ScorePart;
@@ -52,8 +53,11 @@ public class ThresholdScoreEngineTest {
 		product = new FinishedProductData();
 		engine = new ThresholdScoreEngine(new NutrientValueProvider(null) {
 			@Override
-			public Map<String, Double> extractNutrients(ProductData productData) {
-				return nutrients;
+			public Map<String, Double> extractNutrients(ProductData productData, ScoreBasis basis) {
+				Map<String, Double> converted = new LinkedHashMap<>(nutrients);
+				double factor = basis.conversionFactor(productData);
+				converted.replaceAll((code, value) -> value * factor);
+				return converted;
 			}
 		});
 	}
@@ -194,6 +198,44 @@ public class ThresholdScoreEngineTest {
 		ScoreContext context = engine.compute(product, definition);
 
 		assertEquals(0, context.getParts().size());
+	}
+
+	@Test
+	public void testPerServingBasisScalesTheNutrients() {
+		nutrients.put(SUGAR, 6d);
+		product.setServingSize(250d);
+
+		ScoreDefinitionItem definition = definition(ScoreAggregation.Count, null);
+		definition.setBasis(ScoreBasis.PerServing.name());
+		definition.setThresholdList(List.of(threshold(SUGAR, 10d, null, "High")));
+
+		// 6 g per 100 g is 15 g on a 250 g serving, above the 10 g bound
+		assertEquals(1d, engine.compute(product, definition).getValue(), PRECISION);
+	}
+
+	@Test
+	public void testPer100mlBasisUsesTheDensity() {
+		nutrients.put(SUGAR, 10d);
+		product.setDensity(1.04d);
+
+		ScoreDefinitionItem definition = definition(ScoreAggregation.Count, null);
+		definition.setBasis(ScoreBasis.Per100ml.name());
+		definition.setThresholdList(List.of(threshold(SUGAR, 10.2d, null, "High")));
+
+		// 10 g per 100 g is 10.4 g per 100 mL at a density of 1.04
+		assertEquals(1d, engine.compute(product, definition).getValue(), PRECISION);
+	}
+
+	@Test
+	public void testConversionFallsBackWhenTheProductLacksTheData() {
+		nutrients.put(SUGAR, 6d);
+
+		ScoreDefinitionItem definition = definition(ScoreAggregation.Count, null);
+		definition.setBasis(ScoreBasis.PerServing.name());
+		definition.setThresholdList(List.of(threshold(SUGAR, 5d, null, "High")));
+
+		// no serving size: the product keeps being scored on its per 100 g values
+		assertEquals(1d, engine.compute(product, definition).getValue(), PRECISION);
 	}
 
 	private ScoreDefinitionItem definition(ScoreAggregation aggregation, String classOrder) {

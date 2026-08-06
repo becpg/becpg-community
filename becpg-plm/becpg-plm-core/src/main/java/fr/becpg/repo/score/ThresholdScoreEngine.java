@@ -70,7 +70,7 @@ public class ThresholdScoreEngine {
 			return context;
 		}
 
-		Map<String, Double> nutrients = nutrientValueProvider.extractNutrients(product);
+		Map<String, Double> nutrients = nutrientValueProvider.extractNutrients(product, definition.getScoreBasis());
 		String category = product.getNutrientProfileCategory();
 
 		for (Map.Entry<String, ScoreThresholdListDataItem> matched : matchThresholds(thresholds, nutrients, category).entrySet()) {
