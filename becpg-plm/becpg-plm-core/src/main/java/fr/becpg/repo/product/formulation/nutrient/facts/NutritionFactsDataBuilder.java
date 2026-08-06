@@ -18,6 +18,7 @@
 package fr.becpg.repo.product.formulation.nutrient.facts;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -170,6 +171,21 @@ public class NutritionFactsDataBuilder {
 		return null;
 	}
 
+	/**
+	 * Locale the figures of a panel are formatted with. A regulated panel states its numbers the
+	 * way the regulation does: an American label writes "0.5g" and never "0,5g", whatever the
+	 * language the reader browses in. The wording keeps following the content locale.
+	 */
+	private Locale numberLocale(String regulationKey, Locale contentLocale) {
+		if (NutritionFactsOptions.US_REGULATION_KEY.equals(regulationKey)) {
+			return Locale.US;
+		}
+		if (NutritionFactsOptions.CA_REGULATION_KEY.equals(regulationKey)) {
+			return Locale.CANADA;
+		}
+		return contentLocale;
+	}
+
 	private void addNutrient(NutListDataItem nutListItem, List<RegulatedNutrient> nutrients, Map<String, String> charactNames, Locale locale,
 			NutritionFactsOptions options) {
 
@@ -178,8 +194,8 @@ public class NutritionFactsDataBuilder {
 		}
 
 		NutDataItem nut = (NutDataItem) alfrescoRepository.findOne(nutListItem.getNut());
-		RegulatedNutrient regulated = RegulationFormulationHelper.extractRegulatedNutrient(nutListItem, nut.getNutCode(), locale,
-				options.regulationKey());
+		RegulatedNutrient regulated = RegulationFormulationHelper.extractRegulatedNutrient(nutListItem, nut.getNutCode(),
+				numberLocale(options.regulationKey(), locale), options.regulationKey());
 
 		if (isDeclared(regulated, options)) {
 			nutrients.add(regulated);
@@ -324,7 +340,7 @@ public class NutritionFactsDataBuilder {
 			return null;
 		}
 		String unit = product.getServingSizeUnit() != null ? product.getServingSizeUnit().toString() : "";
-		return new DecimalFormat(SERVING_SIZE_PATTERN).format(product.getServingSize()) + unit;
+		return new DecimalFormat(SERVING_SIZE_PATTERN, DecimalFormatSymbols.getInstance(Locale.US)).format(product.getServingSize()) + unit;
 	}
 
 	private String closestValue(ProductData product, QName property, Locale locale) {

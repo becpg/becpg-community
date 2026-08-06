@@ -1308,7 +1308,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			return;
 		}
 
-		String imageId = NUTRITION_FACTS_IMAGE_PREFIX + panelCode(dataItem) + "_" + MLTextHelper.localeKey(locale);
+		String imageId = NUTRITION_FACTS_IMAGE_PREFIX + toImageIdPart(panelCode(dataItem)) + "_" + MLTextHelper.localeKey(locale);
 
 		Element panelElt = panelsElt.addElement(TAG_NUTRITION_FACT);
 		panelElt.addAttribute(ATTR_IMAGE_ID, imageId);
@@ -1324,6 +1324,15 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			return manualValue;
 		}
 		return dataItem.getValue() != null ? dataItem.getValue().getValue(locale) : null;
+	}
+
+	/**
+	 * An image id travels to the report engine as a resource key, and a rule is named freely by
+	 * the user. Anything but letters, digits and underscores makes the image unreachable from the
+	 * report, which fails with "The resource of this report item is not reachable".
+	 */
+	private String toImageIdPart(String code) {
+		return code.replaceAll("[^A-Za-z0-9]+", "_");
 	}
 
 	private String panelCode(IngLabelingListDataItem dataItem) {
