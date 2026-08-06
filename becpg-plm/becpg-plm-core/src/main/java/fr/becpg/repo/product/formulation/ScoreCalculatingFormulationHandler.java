@@ -27,6 +27,8 @@ import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 import fr.becpg.repo.repository.model.StateableEntity;
+import fr.becpg.repo.score.ScoreResultWriter;
+import fr.becpg.repo.score.ScoredEntity;
 
 /**
  * Computes product completion score
@@ -42,6 +44,8 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<S
 	private AlfrescoRepository<ScorableEntity> alfrescoRepository;
 
 	private ScoreCalculatingPlugin[] scorePlugins;
+
+	private ScoreResultWriter scoreResultWriter;
 
 	private ReqCtrlListDisplayLabelDecorator reqCtrlListDisplayLabelDecorator;
 
@@ -72,17 +76,20 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<S
 		this.scorePlugins = scorePlugins;
 	}
 
+	/**
+	 * <p>Setter for the field <code>scoreResultWriter</code>.</p>
+	 *
+	 * @param scoreResultWriter a {@link fr.becpg.repo.score.ScoreResultWriter} object
+	 */
+	public void setScoreResultWriter(ScoreResultWriter scoreResultWriter) {
+		this.scoreResultWriter = scoreResultWriter;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public boolean process(ScorableEntity scorableEntity) {
 
-		if (scorePlugins != null) {
-			for (ScoreCalculatingPlugin plugin : scorePlugins) {
-				if (plugin.accept(scorableEntity)) {
-					plugin.formulateScore(scorableEntity);
-				}
-			}
-		}
+		runScorePlugins(scorableEntity);
 
 		JSONObject scores = new JSONObject();
 
@@ -279,6 +286,43 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<S
 			}
 		}
 		return labels;
+	}
+
+	/**
+	 * Runs every applicable score plugin, then publishes its breakdown into the score list
+	 * of the entity when a matching score definition exists.
+	 *
+	 * @param scorableEntity a {@link fr.becpg.repo.product.data.ScorableEntity} object
+	 */
+	private void runScorePlugins(ScorableEntity scorableEntity) {
+		if (scorePlugins == null) {
+			return;
+		}
+
+		for (ScoreCalculatingPlugin plugin : scorePlugins) {
+			if (plugin.accept(scorableEntity)) {
+				plugin.formulateScore(scorableEntity);
+				publishScore(scorableEntity, plugin);
+			}
+		}
+	}
+
+	/**
+	 * <p>publishScore.</p>
+	 *
+	 * @param scorableEntity a {@link fr.becpg.repo.product.data.ScorableEntity} object
+	 * @param plugin a {@link fr.becpg.repo.product.formulation.score.ScoreCalculatingPlugin} object
+	 */
+	private void publishScore(ScorableEntity scorableEntity, ScoreCalculatingPlugin plugin) {
+		if ((scoreResultWriter == null) || !(scorableEntity instanceof ScoredEntity scoredEntity)) {
+			return;
+		}
+
+		try {
+			plugin.getScoreContext(scorableEntity).ifPresent(context -> scoreResultWriter.write(scoredEntity, context));
+		} catch (Exception e) {
+			logger.error("Cannot publish score " + plugin.getCode() + " for " + scorableEntity.getNodeRef(), e);
+		}
 	}
 
 	/**

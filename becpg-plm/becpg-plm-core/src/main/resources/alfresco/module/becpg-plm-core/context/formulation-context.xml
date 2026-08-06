@@ -287,6 +287,7 @@
 				<bean class="fr.becpg.repo.product.formulation.ScoreCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="reqCtrlListDisplayLabelDecorator" ref="reqCtrlListDisplayLabelDecorator" />
+					<property name="scoreResultWriter" ref="scoreResultWriter" />
 					<property name="scorePlugins">
 						<list>
 							<ref bean="ecoScore"/>
@@ -334,6 +335,7 @@
 				<bean class="fr.becpg.repo.product.formulation.ScoreCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="reqCtrlListDisplayLabelDecorator" ref="reqCtrlListDisplayLabelDecorator" />
+					<property name="scoreResultWriter" ref="scoreResultWriter" />
 					<property name="scorePlugins">
 						<list>
 							<ref bean="ecoScore"/>
