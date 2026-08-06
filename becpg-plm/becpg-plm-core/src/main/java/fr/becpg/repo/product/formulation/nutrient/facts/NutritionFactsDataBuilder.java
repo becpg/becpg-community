@@ -224,7 +224,9 @@ public class NutritionFactsDataBuilder {
 		if (regulated.isMandatory()) {
 			return true;
 		}
-		return regulated.displayRule().optional() && (options.showOptional() || hasValue(regulated));
+		// Le panneau ne declare que ce que la reglementation impose : un nutriment simplement
+		// autorise n'y figure que sur demande explicite, sinon il alourdit l'etiquette.
+		return regulated.displayRule().optional() && options.showOptional();
 	}
 
 	private boolean hasValue(RegulatedNutrient regulated) {
@@ -268,12 +270,14 @@ public class NutritionFactsDataBuilder {
 		String unitValue = withUnit(regulated.displayValuePerServing(), unit);
 		String value = unitValue;
 
-		String label = NutritionFactsLabelResolver.nutrientLabel(options.regulationKey(), regulated.nutCode(),
+		String rawLabel = NutritionFactsLabelResolver.nutrientLabel(options.regulationKey(), regulated.nutCode(),
 				regulatedNutrients.charactNames().get(regulated.nutCode()), locale);
+		String plainLabel = NutritionFactsLabelResolver.withoutValue(rawLabel, locale);
+		String label = rawLabel;
 
-		if (NutritionFactsLabelResolver.embedsValue(label)) {
+		boolean valueInLabel = NutritionFactsLabelResolver.embedsValue(label);
+		if (valueInLabel) {
 			label = NutritionFactsLabelResolver.formatWithValue(label, value, locale);
-			value = null;
 		}
 
 		SharedDailyValues shared = regulatedNutrients.sharedDailyValues();
@@ -283,9 +287,9 @@ public class NutritionFactsDataBuilder {
 			abbreviation = NutritionFactsLabelResolver.formatWithValue(abbreviation, unitValue, locale);
 		}
 
-		return new NutritionFactsLine(regulated.nutCode(), label, abbreviation, value, withUnit(regulated.displayValuePerContainer(), unit),
+		return new NutritionFactsLine(regulated.nutCode(), label, abbreviation, plainLabel, value, withUnit(regulated.displayValuePerContainer(), unit),
 				toPercent(shared.percentOf(regulated)), toPercent(regulated.gdaPercPerContainer()), regulated.displayRule().indentLevel(),
-				regulated.displayRule().bold(), regulated.showsDailyValue() && !shared.isFoldedIn(regulated.nutCode()));
+				regulated.displayRule().bold(), regulated.showsDailyValue() && !shared.isFoldedIn(regulated.nutCode()), valueInLabel);
 	}
 
 	/**

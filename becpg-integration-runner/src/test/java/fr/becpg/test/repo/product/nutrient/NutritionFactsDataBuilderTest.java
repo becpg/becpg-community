@@ -181,7 +181,8 @@ public class NutritionFactsDataBuilderTest {
 
 		NutritionFactsLine addedSugars = lineOf(build(standardProduct()), "Includes 10g Added Sugars");
 
-		Assert.assertNull("The value is part of the sentence, it must not be printed twice", addedSugars.value());
+		Assert.assertFalse("The sentence already carries the amount, a panel must not print it twice", addedSugars.printsValue());
+		Assert.assertEquals("The amount stays available for the column formats", "10g", addedSugars.value());
 		Assert.assertEquals("20%", addedSugars.dailyValuePercent());
 	}
 

@@ -21,21 +21,33 @@ package fr.becpg.repo.product.formulation.nutrient.facts;
  * <p>One line of a nutrition facts panel, fully formatted: a template only has to place it.</p>
  *
  * <p>{@code abbreviatedLabel} is the shortened wording the linear format uses ("Sat. Fat"), the
- * full one everywhere else. {@code value} already carries its unit ("8g", "160mg") and {@code dailyValuePercent} already
+ * full one everywhere else. {@code plainLabel} never embeds the value, which the column formats
+ * need since they print the figures in their own columns. {@code value} already carries its unit ("8g", "160mg") and {@code dailyValuePercent} already
  * carries its percent sign, both rounded according to the regulation. {@code indentLevel} starts at
  * 1 for a top level nutrient, which is what drives the horizontal offset of the line.</p>
  *
  * @author matthieu
  * @version $Id: $Id
  */
-public record NutritionFactsLine(String nutCode, String label, String abbreviatedLabel, String value, String valuePerContainer,
-		String dailyValuePercent, String dailyValuePercentPerContainer, int indentLevel, boolean bold, boolean showDailyValue) {
+public record NutritionFactsLine(String nutCode, String label, String abbreviatedLabel, String plainLabel, String value, String valuePerContainer,
+		String dailyValuePercent, String dailyValuePercentPerContainer, int indentLevel, boolean bold, boolean showDailyValue,
+		boolean valueInLabel) {
 
 	/**
 	 * <p>Tells whether the line carries a percentage of the daily value to print.</p>
 	 *
 	 * @return a boolean
 	 */
+	/**
+	 * <p>Tells whether the amount has to be printed after the wording. It must not be when the
+	 * regulated sentence already carries it, as "Includes 10g Added Sugars" does.</p>
+	 *
+	 * @return a boolean
+	 */
+	public boolean printsValue() {
+		return (value != null) && !valueInLabel;
+	}
+
 	public boolean hasDailyValue() {
 		return showDailyValue && (dailyValuePercent != null);
 	}

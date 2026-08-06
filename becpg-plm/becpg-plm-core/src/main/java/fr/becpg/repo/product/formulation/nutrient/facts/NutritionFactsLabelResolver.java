@@ -147,6 +147,21 @@ public class NutritionFactsLabelResolver {
 	}
 
 	/**
+	 * <p>Same wording with the value left out, for the formats that print the figures in their own
+	 * columns: a dual column panel writes "Includes Added Sugars" and puts the amounts alongside.</p>
+	 *
+	 * @param label a {@link java.lang.String} object
+	 * @param locale a {@link java.util.Locale} object
+	 * @return a {@link java.lang.String} object
+	 */
+	public static String withoutValue(String label, Locale locale) {
+		if (!embedsValue(label)) {
+			return label;
+		}
+		return formatWithValue(label, "", locale).replaceAll("\\s+", " ").trim();
+	}
+
+	/**
 	 * <p>Fixed wording of the panel, by key, for the given regulation and locale.</p>
 	 *
 	 * @param regulationKey a {@link java.lang.String} object
