@@ -21,6 +21,7 @@ services:
         -Djava.rmi.server.hostname=127.0.0.1
         -Dtomcat.util.scan.StandardJarScanFilter.jarsToSkip=*
       JAVA_TOOL_OPTIONS: "${keystore.settings}"
+    mem_limit: 6g
     depends_on:
      - becpg-db
     ports:
@@ -36,6 +37,7 @@ services:
       JAVA_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888  -Duser.language=fr -Duser.country=FR -Dtomcat.util.scan.StandardJarScanFilter.jarsToSkip=*"
       REPO_HOST: becpg
       REPO_PORT: 8080
+    mem_limit: 2g
     ports:
       - "${share.port}:8080"
       - "${share.debug.port}:8888"
@@ -49,6 +51,7 @@ services:
       MYSQL_PASSWORD: becpg
       MYSQL_ROOT_PASSWORD: becpg
       MYSQL_USER: becpg
+    mem_limit: 2g
     volumes:
       - becpg_data_db:/var/lib/mysql
       
@@ -62,6 +65,7 @@ services:
       SOLR_CREATE_ALFRESCO_DEFAULTS: alfresco,archive
       ALFRESCO_SECURE_COMMS: "secret"
       JAVA_TOOL_OPTIONS: "-Dalfresco.secureComms.secret=changethatsecret"
+    mem_limit: 2g
     ports:
       - "8983:8983"
     volumes:
@@ -73,6 +77,7 @@ services:
       image: alfresco/alfresco-transform-core-aio:5.4.0
       environment:
           JAVA_OPTS: " -Xms256m -Xmx256m"
+      mem_limit: 2g
       ports:
           - 8090:8090
       healthcheck:
