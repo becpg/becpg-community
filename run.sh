@@ -15,7 +15,7 @@ set -e
 export COMPOSE_FILE_PATH=${PWD}/becpg-integration-runner/target/docker-compose.yml
 export MVN_EXEC="${PWD}/mvnw"
 export BECPG_VERSION_PROFILE=becpg_26_1_0
-export EXTRA_ENV="-T 1C -Dmaven.threads.useForkedJvm=false -Dmaven.yuicompressor.skip=true"
+export EXTRA_ENV="-T 8 -Dmaven.threads.useForkedJvm=false -Dmaven.yuicompressor.skip=true"
 
 
 if [ -f .env ]; then
