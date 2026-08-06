@@ -78,7 +78,7 @@ public class ScoreDefinitionService {
 	public List<ScoreDefinitionItem> getScoreDefinitions() {
 		List<ScoreDefinitionItem> definitions = new ArrayList<>();
 		for (NodeRef nodeRef : getScoreDefinitionNodeRefs()) {
-			if (!nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DELETED)) {
+			if (!Boolean.TRUE.equals(nodeService.getProperty(nodeRef, BeCPGModel.PROP_IS_DELETED))) {
 				definitions.add((ScoreDefinitionItem) alfrescoRepository.findOne(nodeRef));
 			}
 		}
@@ -210,8 +210,8 @@ public class ScoreDefinitionService {
 	 */
 	private List<NodeRef> getScoreDefinitionNodeRefs() {
 		return beCPGCacheService.getFromCache(CACHE_KEY, DEFINITIONS_CACHE_ENTRY, () -> {
-			// the database query does not support excluding an aspect, the deleted ones are
-			// filtered when the definitions are read
+			// the deleted ones are filtered when the definitions are read: bcpg:isDeletedAspect
+			// is mandatory on the characts, only its flag tells a definition apart
 			List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery().inDB().ofType(PLMModel.TYPE_SCORE_DEFINITION).list();
 
 			if (logger.isDebugEnabled()) {
