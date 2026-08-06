@@ -63,6 +63,94 @@
 			</parameter>
 		</constraint>
 
+		<constraint name="bcpg:scoreDefEngines" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Plugin</value>
+					<value>Criteria</value>
+					<value>Threshold</value>
+					<value>Lca</value>
+					<value>Manual</value>
+				</list>
+			</parameter>
+		</constraint>
+
+		<constraint name="bcpg:scoreDefScales" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Letter</value>
+					<value>Numeric</value>
+					<value>Stars</value>
+					<value>Warnings</value>
+					<value>Traffic</value>
+					<value>Grade</value>
+				</list>
+			</parameter>
+		</constraint>
+
+		<constraint name="bcpg:scoreDefBasis" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>Per100g</value>
+					<value>Per100ml</value>
+					<value>PerServing</value>
+					<value>PerKg</value>
+					<value>PerProduct</value>
+				</list>
+			</parameter>
+		</constraint>
+
+		<constraint name="bcpg:apScenarios" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>reference</value>
+					<value>organic</value>
+					<value>import</value>
+				</list>
+			</parameter>
+		</constraint>
+
+		<constraint name="bcpg:apAnimalProductionTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>Meat</value>
+					<value>Egg</value>
+					<value>Milk</value>
+				</list>
+			</parameter>
+		</constraint>
+
+		<constraint name="bcpg:apCropGroups" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/EcobalyseCropGroups</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+		</constraint>
+
+		<constraint name="bcpg:scoreAggregations" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>None</value>
+					<value>Worst</value>
+					<value>Count</value>
+					<value>Sum</value>
+				</list>
+			</parameter>
+		</constraint>
+
 
 		<constraint name="bcpg:nutrientPreparationStates" type="LIST">
 			<parameter name="allowedValues">
@@ -1815,6 +1903,236 @@
 			</properties>
 		</type>
 
+		<!-- Definition of a score: how it is computed, ranged and rendered -->
+		<type name="bcpg:scoreDefinition">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="bcpg:scoreDefCode">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="bcpg:scoreDefVersion">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="bcpg:scoreDefEngine">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<default>Criteria</default>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:scoreDefEngines" />
+					</constraints>
+				</property>
+				<property name="bcpg:scoreDefPluginId">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:scoreDefScale">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<default>Numeric</default>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:scoreDefScales" />
+					</constraints>
+				</property>
+				<property name="bcpg:scoreDefRange">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:scoreDefUnit">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:scoreDefBasis">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:scoreDefBasis" />
+					</constraints>
+				</property>
+				<property name="bcpg:scoreDefScaleFactor">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:scoreDefAggregation">
+					<type>d:text</type>
+					<default>None</default>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:scoreAggregations" />
+					</constraints>
+				</property>
+				<property name="bcpg:scoreDefClassOrder">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:scoreDefFormula">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:scoreDefDetailFormula">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:scoreDefRangeFormula">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:scoreDefIsOfficial">
+					<type>d:boolean</type>
+					<default>false</default>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:scoreDefValidityPeriod">
+					<type>d:int</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:scoreDefStartEffectivity">
+					<type>d:date</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:scoreDefEndEffectivity">
+					<type>d:date</type>
+					<index enabled="false" />
+				</property>
+			</properties>
+			<associations>
+				<!-- Markets the score applies to, empty meaning every market -->
+				<association name="bcpg:scoreDefCountries">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:geoOrigin</class>
+						<many>true</many>
+					</target>
+				</association>
+				<!-- Usages the score applies to, empty meaning every usage -->
+				<association name="bcpg:scoreDefUsages">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:regulatoryUsage</class>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:entityListsAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+		<!-- Thresholds of a score definition, one line per nutrient and per category -->
+		<type name="bcpg:scoreThresholdList">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="bcpg:stlNutCode">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="bcpg:stlCategory">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="bcpg:stlLowerBound">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:stlUpperBound">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:stlResult">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:stlPoints">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:stlReferenceIntake">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:stlRatioNutCode">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:stlRatioFactor">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+			</properties>
+		</type>
+
+		<!-- Badges of a score definition, one line per class, the image being the content -->
+		<type name="bcpg:scoreBadgeList">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="bcpg:sblClass">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+			</properties>
+		</type>
+
+		<!-- Normalization and weighting factors of a score definition, one line per LCA indicator -->
+		<type name="bcpg:scoreDefCoeffList">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="bcpg:sdclNormalization">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:sdclPonderation">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:sdclLca">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:lca</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</type>
+
 		<type name="bcpg:organo">
 			<parent>bcpg:charact</parent>
 		</type>
@@ -2743,6 +3061,72 @@
 			<mandatory-aspects>
 				<aspect>bcpg:depthLevelAspect</aspect>
 			</mandatory-aspects>
+		</type>
+
+		<!-- Computed scores of an entity, one line per score definition -->
+		<type name="bcpg:entityScoreList">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="bcpg:eslValue">
+					<type>d:double</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="bcpg:eslClass">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="bcpg:eslDetails">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:eslVersion">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="bcpg:eslComputedDate">
+					<type>d:datetime</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:eslPreviousValue">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:eslPreviousClass">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:eslIsManual">
+					<type>d:boolean</type>
+					<default>false</default>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:eslErrorLog">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:eslScoreDef">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:scoreDefinition</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
 		</type>
 
 		<type name="bcpg:priceList">
@@ -6237,6 +6621,84 @@
 		</aspect>
 
 
+		<!-- Mapping of an entity to the Ecobalyse reference, the same idea as bcpg:regulatoryCode -->
+		<aspect name="bcpg:ecobalyseAspect">
+			<properties>
+				<property name="bcpg:ecobalyseCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+			</properties>
+		</aspect>
+
+		<!-- Farming practices feeding the non-LCA complements of the environmental cost -->
+		<aspect name="bcpg:agriculturalPracticeAspect">
+			<properties>
+				<property name="bcpg:apScenario">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:apScenarios" />
+					</constraints>
+				</property>
+				<property name="bcpg:apCropGroup">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:apCropGroups" />
+					</constraints>
+				</property>
+				<property name="bcpg:apLandOccupation">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:apHedges">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:apPlotSize">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:apCropDiversity">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:apPermanentPasture">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:apTemporaryPasture">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:apAnimalProductionType">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:apAnimalProductionTypes" />
+					</constraints>
+				</property>
+				<property name="bcpg:apLivestockUnitPerKg">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+			</properties>
+		</aspect>
+
 		<aspect name="bcpg:ecoScoreAspect">
 			<properties>
 				<property name="bcpg:ecoScore">
@@ -6367,9 +6829,51 @@
 					<mandatory>false</mandatory>
 					<index enabled="false"></index>
 				</property>
+				<property name="bcpg:advEslValue1">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"></index>
+				</property>
+				<property name="bcpg:advEslValue2">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"></index>
+				</property>
+				<property name="bcpg:advEslClass1">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"></index>
+				</property>
+				<property name="bcpg:advEslClass2">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"></index>
+				</property>
 			</properties>
 
 			<associations>
+				<association name="bcpg:advScoreDef1">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:scoreDefinition</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:advScoreDef2">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:scoreDefinition</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
 				<association name="bcpg:advLca">
 					<source>
 						<mandatory>false</mandatory>

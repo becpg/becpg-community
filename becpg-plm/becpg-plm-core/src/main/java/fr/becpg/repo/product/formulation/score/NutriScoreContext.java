@@ -9,6 +9,10 @@ import java.util.stream.Collectors;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import fr.becpg.repo.score.ScoreContext;
+import fr.becpg.repo.score.ScorePart;
+import fr.becpg.repo.score.ScoreScale;
+
 /**
  * <p>NutriScoreContext class.</p>
  *
@@ -16,7 +20,10 @@ import org.json.JSONObject;
  * @version $Id: $Id
  */
 public class NutriScoreContext {
-	
+
+	/** Constant <code>SCORE_CODE="NUTRISCORE"</code> */
+	public static final String SCORE_CODE = "NUTRISCORE";
+
 	/** Constant <code>NON_NUTRITIVE_SUGARS="nonNutritiveSugars"</code> */
 	private static final String NON_NUTRITIVE_SUGARS = "nonNutritiveSugars";
 
@@ -364,6 +371,45 @@ public class NutriScoreContext {
 	 */
 	public Integer getCScore() {
 		return cScore;
+	}
+
+	/**
+	 * Converts this context to the normalized format shared by all scores.
+	 *
+	 * @return a {@link fr.becpg.repo.score.ScoreContext} object
+	 */
+	public ScoreContext toScoreContext() {
+		ScoreContext context = new ScoreContext();
+
+		context.setCode(SCORE_CODE);
+		context.setVersion(version);
+		context.setValue(nutriScore != null ? nutriScore * 1d : null);
+		context.setScoreClass(nutrientClass);
+		context.setScale(ScoreScale.Letter.name());
+
+		for (String code : parts.keySet()) {
+			context.getParts().add(toScorePart(code));
+		}
+
+		context.getSteps().add(new ScorePart(A_SCORE).withContribution(aScore != null ? aScore * 1d : null));
+		context.getSteps().add(new ScorePart(C_SCORE).withContribution(cScore != null ? cScore * 1d : null));
+
+		return context;
+	}
+
+	/**
+	 * <p>toScorePart.</p>
+	 *
+	 * @param code the nutrient or physico chemical code of the part
+	 * @return a {@link fr.becpg.repo.score.ScorePart} object
+	 */
+	private ScorePart toScorePart(String code) {
+		JSONObject part = parts.getJSONObject(code);
+
+		Double value = part.has(VALUE) && !part.isNull(VALUE) ? part.getDouble(VALUE) : null;
+		Double score = part.has(SCORE) && !part.isNull(SCORE) ? part.getDouble(SCORE) : null;
+
+		return new ScorePart(code).withValue(value, null).withContribution(score);
 	}
 
 	/**

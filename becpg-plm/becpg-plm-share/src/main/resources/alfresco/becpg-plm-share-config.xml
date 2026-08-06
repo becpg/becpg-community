@@ -134,6 +134,7 @@
 			<list id="allergenList" index="110" />
 			<list id="costList" index="120" />
 			<list id="lcaList" index="125" />
+			<list id="entityScoreList" index="126" />
 			<list id="priceList" index="130" />
 			<list id="nutList" index="140" />
 			<list id="ingLabelingList" index="150" view="true" />
@@ -427,6 +428,9 @@
 				<css src="/components/form/controls/nutrient-class.css" />
 				<!-- ECO score -->
 				<css src="/components/form/controls/ecoscore-class.css" />
+				<!-- Score framework -->
+				<css src="/components/form/controls/score-badge.css" />
+				<js src="/components/form/controls/score-badge.js" />
 				<!-- Decision tree -->
 				<css src="/components/form/controls/decision-tree.css" />
 				<js src="/components/form/controls/decision-tree.js" />

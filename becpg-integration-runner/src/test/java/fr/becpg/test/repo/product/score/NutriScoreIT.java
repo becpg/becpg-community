@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.NutrientProfileCategory;
+import fr.becpg.model.NutrientProfileVersion;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -21,7 +22,11 @@ import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.formulation.score.NutriScoreContext;
 import fr.becpg.repo.sample.CharactTestHelper;
 import fr.becpg.repo.system.SystemConfigurationService;
+import fr.becpg.repo.score.ScoreContext;
+import fr.becpg.repo.score.ScoreDefinitionService;
+import fr.becpg.repo.score.data.EntityScoreListDataItem;
 import fr.becpg.test.PLMBaseTestCase;
+import fr.becpg.test.repo.score.ScoreDefinitionTestHelper;
 
 public class NutriScoreIT extends PLMBaseTestCase {
 
@@ -30,6 +35,9 @@ public class NutriScoreIT extends PLMBaseTestCase {
 	
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
+
+	@Autowired
+	private ScoreDefinitionService scoreDefinitionService;
 
 	private NodeRef energyKjNode;
 	private NodeRef satFatNode;
@@ -122,6 +130,10 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			return null;
 		}, false, true);
 
+		final NodeRef nutriScoreDefinition = transactionService.getRetryingTransactionHelper()
+				.doInTransaction(() -> ScoreDefinitionTestHelper.createPluginDefinition(nodeService, entitySystemService, scoreDefinitionService,
+						systemFolderNodeRef, NutriScoreContext.SCORE_CODE, NutrientProfileVersion.VERSION_2023.toString()), false, true);
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef1);
@@ -131,6 +143,18 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			Assert.assertEquals((Double) 12d, finishedProduct.getNutrientScore());
 
 			Assert.assertEquals("D", finishedProduct.getNutrientClass());
+
+			// the score framework publishes the same verdict, without touching the historical properties
+			EntityScoreListDataItem publishedScore = ScoreDefinitionTestHelper.findScore(finishedProduct, nutriScoreDefinition)
+					.orElseThrow(() -> new AssertionError("The Nutri-Score was not published in the score list"));
+
+			Assert.assertEquals("D", publishedScore.getScoreClass());
+			Assert.assertEquals((Double) 12d, publishedScore.getValue());
+			Assert.assertNotNull(publishedScore.getDetails());
+
+			ScoreContext details = ScoreContext.parse(publishedScore.getDetails());
+			Assert.assertEquals(NutriScoreContext.SCORE_CODE, details.getCode());
+			Assert.assertEquals("D", details.getScoreClass());
 
 			alfrescoRepository.save(finishedProduct);
 

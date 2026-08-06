@@ -445,7 +445,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		NodeRef channelListFolder = entitySystemService.getSystemEntityDataList(systemNodeRef, RepoConsts.PATH_CHARACTS,
 				PlmRepoConsts.PATH_PUBCHANNELS);
 		visitChannelList(channelListFolder);
-		
+
 		// Dynamic constraints
 		visitSystemListValuesEntity(systemNodeRef, RepoConsts.PATH_LISTS);
 
@@ -1368,6 +1368,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_ALLERGENS, PLMModel.TYPE_ALLERGEN);
 		entityLists.put(PlmRepoConsts.PATH_COSTS, PLMModel.TYPE_COST);
 		entityLists.put(PlmRepoConsts.PATH_LCA, PLMModel.TYPE_LCA);
+		entityLists.put(PlmRepoConsts.PATH_SCORE_DEFINITIONS, PLMModel.TYPE_SCORE_DEFINITION);
 		entityLists.put(PlmRepoConsts.PATH_PHYSICO_CHEM, PLMModel.TYPE_PHYSICO_CHEM);
 		entityLists.put(PlmRepoConsts.PATH_MICROBIOS, PLMModel.TYPE_MICROBIO);
 		entityLists.put(PlmRepoConsts.PATH_GEO_ORIGINS, PLMModel.TYPE_GEO_ORIGIN);
@@ -1469,6 +1470,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_MEAT_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 
 		entityLists.put(PlmRepoConsts.PATH_LCA_UNITS, BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(PlmRepoConsts.PATH_ECOBALYSE_CROP_GROUPS, BeCPGModel.TYPE_LIST_VALUE);
 
 		entityLists.put(PlmRepoConsts.PATH_GS1_SORTING_BONUS_CRITERIA, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_GS1_SORTING_MALUS_CRITERIA, BeCPGModel.TYPE_LIST_VALUE);
@@ -1579,6 +1581,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_ALLERGENLIST);
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_LCALIST);
+				dataLists.add(PLMModel.TYPE_ENTITY_SCORE_LIST);
 				dataLists.add(PLMModel.TYPE_NUTLIST);
 				dataLists.add(PLMModel.TYPE_INGLIST);
 				dataLists.add(PLMModel.TYPE_ORGANOLIST);
@@ -1597,6 +1600,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_LCALIST);
+				dataLists.add(PLMModel.TYPE_ENTITY_SCORE_LIST);
 				dataLists.add(PLMModel.TYPE_PRICELIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
@@ -1614,6 +1618,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_LCALIST);
+				dataLists.add(PLMModel.TYPE_ENTITY_SCORE_LIST);
 				dataLists.add(PLMModel.TYPE_PRICELIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(MPMModel.TYPE_RESOURCEPARAMLIST);
@@ -1637,6 +1642,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_ALLERGENLIST);
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_LCALIST);
+				dataLists.add(PLMModel.TYPE_ENTITY_SCORE_LIST);
 				dataLists.add(PLMModel.TYPE_NUTLIST);
 				dataLists.add(PLMModel.TYPE_INGLIST);
 				dataLists.add(PLMModel.TYPE_ORGANOLIST);
@@ -1660,6 +1666,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_ALLERGENLIST);
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_LCALIST);
+				dataLists.add(PLMModel.TYPE_ENTITY_SCORE_LIST);
 				dataLists.add(PLMModel.TYPE_NUTLIST);
 				dataLists.add(PLMModel.TYPE_INGLIST);
 				dataLists.add(PLMModel.TYPE_INGLABELINGLIST);
@@ -1677,6 +1684,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_PACKAGINGLIST);
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_LCALIST);
+				dataLists.add(PLMModel.TYPE_ENTITY_SCORE_LIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_SVHCLIST);
 				dataLists.add(PackModel.PACK_MATERIAL_LIST_TYPE);
