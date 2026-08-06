@@ -11,9 +11,11 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
@@ -51,16 +53,21 @@ public class ScoreDefinitionService {
 
 	private final AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
+	private final NodeService nodeService;
+
 	/**
 	 * <p>Constructor for ScoreDefinitionService.</p>
 	 *
 	 * @param beCPGCacheService a {@link fr.becpg.repo.cache.BeCPGCacheService} object
 	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
 	 */
 	@Autowired
-	public ScoreDefinitionService(BeCPGCacheService beCPGCacheService, AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
+	public ScoreDefinitionService(BeCPGCacheService beCPGCacheService, AlfrescoRepository<RepositoryEntity> alfrescoRepository,
+			@Qualifier("nodeService") NodeService nodeService) {
 		this.beCPGCacheService = beCPGCacheService;
 		this.alfrescoRepository = alfrescoRepository;
+		this.nodeService = nodeService;
 	}
 
 	/**
@@ -71,7 +78,9 @@ public class ScoreDefinitionService {
 	public List<ScoreDefinitionItem> getScoreDefinitions() {
 		List<ScoreDefinitionItem> definitions = new ArrayList<>();
 		for (NodeRef nodeRef : getScoreDefinitionNodeRefs()) {
-			definitions.add((ScoreDefinitionItem) alfrescoRepository.findOne(nodeRef));
+			if (!nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DELETED)) {
+				definitions.add((ScoreDefinitionItem) alfrescoRepository.findOne(nodeRef));
+			}
 		}
 		return definitions;
 	}
@@ -201,8 +210,9 @@ public class ScoreDefinitionService {
 	 */
 	private List<NodeRef> getScoreDefinitionNodeRefs() {
 		return beCPGCacheService.getFromCache(CACHE_KEY, DEFINITIONS_CACHE_ENTRY, () -> {
-			List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery().inDB().ofType(PLMModel.TYPE_SCORE_DEFINITION)
-					.excludeAspect(BeCPGModel.ASPECT_DELETED).list();
+			// the database query does not support excluding an aspect, the deleted ones are
+			// filtered when the definitions are read
+			List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery().inDB().ofType(PLMModel.TYPE_SCORE_DEFINITION).list();
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Found " + nodeRefs.size() + " score definitions");
