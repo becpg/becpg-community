@@ -13,7 +13,12 @@ function main() {
 	if (projectTpl != null) {
 
 		var project = bSupplier.createSupplierProject(items, projectTpl,
-		 formDataJson.assoc_bcpg_supplierAccountRef_added!=null ? formDataJson.assoc_bcpg_supplierAccountRef_added.split(",") : "");
+		 // An empty *array*, never an empty string: the helper signature is
+		 // createSupplierProject(ScriptNode[], ScriptNode, String[]), and Rhino
+		 // matches overloads on the runtime type. Passing "" made it report
+		 // "la méthode … (…, …, string) est introuvable" — a 500 with a message
+		 // nobody can act on — whenever the caller resolved no account.
+		 formDataJson.assoc_bcpg_supplierAccountRef_added!=null ? formDataJson.assoc_bcpg_supplierAccountRef_added.split(",") : []);
 
 		if (project) {
             formDataJson.assoc_bcpg_entityTplRef_added = "";
