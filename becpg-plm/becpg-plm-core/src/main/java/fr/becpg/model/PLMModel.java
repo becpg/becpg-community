@@ -881,6 +881,34 @@ public interface PLMModel {
 	QName PROP_NUTRIENT_PROFILE_VERSION = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileVersion");
 
 	//Eco score
+	/** Constant <code>ASPECT_ECOBALYSE</code> */
+	QName ASPECT_ECOBALYSE = QName.createQName(BeCPGModel.BECPG_URI, "ecobalyseAspect");
+	/** Constant <code>PROP_ECOBALYSE_CODE</code> */
+	QName PROP_ECOBALYSE_CODE = QName.createQName(BeCPGModel.BECPG_URI, "ecobalyseCode");
+
+	/** Constant <code>ASPECT_AGRICULTURAL_PRACTICE</code> */
+	QName ASPECT_AGRICULTURAL_PRACTICE = QName.createQName(BeCPGModel.BECPG_URI, "agriculturalPracticeAspect");
+	/** Constant <code>PROP_AP_SCENARIO</code> */
+	QName PROP_AP_SCENARIO = QName.createQName(BeCPGModel.BECPG_URI, "apScenario");
+	/** Constant <code>PROP_AP_CROP_GROUP</code> */
+	QName PROP_AP_CROP_GROUP = QName.createQName(BeCPGModel.BECPG_URI, "apCropGroup");
+	/** Constant <code>PROP_AP_LAND_OCCUPATION</code> */
+	QName PROP_AP_LAND_OCCUPATION = QName.createQName(BeCPGModel.BECPG_URI, "apLandOccupation");
+	/** Constant <code>PROP_AP_HEDGES</code> */
+	QName PROP_AP_HEDGES = QName.createQName(BeCPGModel.BECPG_URI, "apHedges");
+	/** Constant <code>PROP_AP_PLOT_SIZE</code> */
+	QName PROP_AP_PLOT_SIZE = QName.createQName(BeCPGModel.BECPG_URI, "apPlotSize");
+	/** Constant <code>PROP_AP_CROP_DIVERSITY</code> */
+	QName PROP_AP_CROP_DIVERSITY = QName.createQName(BeCPGModel.BECPG_URI, "apCropDiversity");
+	/** Constant <code>PROP_AP_PERMANENT_PASTURE</code> */
+	QName PROP_AP_PERMANENT_PASTURE = QName.createQName(BeCPGModel.BECPG_URI, "apPermanentPasture");
+	/** Constant <code>PROP_AP_TEMPORARY_PASTURE</code> */
+	QName PROP_AP_TEMPORARY_PASTURE = QName.createQName(BeCPGModel.BECPG_URI, "apTemporaryPasture");
+	/** Constant <code>PROP_AP_ANIMAL_PRODUCTION_TYPE</code> */
+	QName PROP_AP_ANIMAL_PRODUCTION_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "apAnimalProductionType");
+	/** Constant <code>PROP_AP_LIVESTOCK_UNIT_PER_KG</code> */
+	QName PROP_AP_LIVESTOCK_UNIT_PER_KG = QName.createQName(BeCPGModel.BECPG_URI, "apLivestockUnitPerKg");
+
 	/** Constant <code>ASPECT_ECO_SCORE</code> */
 	QName ASPECT_ECO_SCORE = QName.createQName(BeCPGModel.BECPG_URI, "ecoScoreAspect");
 	/** Constant <code>PROP_ECO_SCORE</code> */

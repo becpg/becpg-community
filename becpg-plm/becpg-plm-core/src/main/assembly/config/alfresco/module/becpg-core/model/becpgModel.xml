@@ -101,6 +101,45 @@
 			</parameter>
 		</constraint>
 
+		<constraint name="bcpg:apScenarios" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>reference</value>
+					<value>organic</value>
+					<value>import</value>
+				</list>
+			</parameter>
+		</constraint>
+
+		<constraint name="bcpg:apAnimalProductionTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>Meat</value>
+					<value>Egg</value>
+					<value>Milk</value>
+				</list>
+			</parameter>
+		</constraint>
+
+		<constraint name="bcpg:apCropGroups" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/EcobalyseCropGroups</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+		</constraint>
+
 		<constraint name="bcpg:scoreAggregations" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -6581,6 +6620,84 @@
 			</associations>
 		</aspect>
 
+
+		<!-- Mapping of an entity to the Ecobalyse reference, the same idea as bcpg:regulatoryCode -->
+		<aspect name="bcpg:ecobalyseAspect">
+			<properties>
+				<property name="bcpg:ecobalyseCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+			</properties>
+		</aspect>
+
+		<!-- Farming practices feeding the non-LCA complements of the environmental cost -->
+		<aspect name="bcpg:agriculturalPracticeAspect">
+			<properties>
+				<property name="bcpg:apScenario">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:apScenarios" />
+					</constraints>
+				</property>
+				<property name="bcpg:apCropGroup">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:apCropGroups" />
+					</constraints>
+				</property>
+				<property name="bcpg:apLandOccupation">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:apHedges">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:apPlotSize">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:apCropDiversity">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:apPermanentPasture">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:apTemporaryPasture">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:apAnimalProductionType">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:apAnimalProductionTypes" />
+					</constraints>
+				</property>
+				<property name="bcpg:apLivestockUnitPerKg">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+			</properties>
+		</aspect>
 
 		<aspect name="bcpg:ecoScoreAspect">
 			<properties>
