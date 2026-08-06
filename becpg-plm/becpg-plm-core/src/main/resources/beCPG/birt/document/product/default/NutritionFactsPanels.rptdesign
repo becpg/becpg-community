@@ -164,14 +164,155 @@ and the rules of a regulated panel exact in the PDF.</property>
                     <property name="marginBottom">3pt</property>
                     <text-property name="content"><![CDATA[<value-of>row["code"]</value-of>]]></text-property>
                 </text>
-                <image id="32">
+                <image id="100">
                     <property name="source">expr</property>
                     <expression name="valueExpr" type="javascript">row["panel"]</expression>
                     <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
-                    <property name="width">4in</property>
-                    <property name="proportionalScale">true</property>
+                    <property name="width">5.4in</property>
+                    <property name="height">6.825in</property>
                     <property name="fitToContainer">false</property>
                     <property name="pageBreakAfter">always</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">row["code"] != "Canada_Dual_column"</expression>
+                        </structure>
+                    </list-property>
+                </image>
+                <image id="101">
+                    <property name="source">expr</property>
+                    <expression name="valueExpr" type="javascript">row["panel"]</expression>
+                    <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
+                    <property name="width">4.2in</property>
+                    <property name="height">4.885in</property>
+                    <property name="fitToContainer">false</property>
+                    <property name="pageBreakAfter">always</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">row["code"] != "Canada_Linear"</expression>
+                        </structure>
+                    </list-property>
+                </image>
+                <image id="102">
+                    <property name="source">expr</property>
+                    <expression name="valueExpr" type="javascript">row["panel"]</expression>
+                    <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
+                    <property name="width">4.2in</property>
+                    <property name="height">8.247in</property>
+                    <property name="fitToContainer">false</property>
+                    <property name="pageBreakAfter">always</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">row["code"] != "Canada_Standard"</expression>
+                        </structure>
+                    </list-property>
+                </image>
+                <image id="103">
+                    <property name="source">expr</property>
+                    <expression name="valueExpr" type="javascript">row["panel"]</expression>
+                    <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
+                    <property name="width">6.8in</property>
+                    <property name="height">3.506in</property>
+                    <property name="fitToContainer">false</property>
+                    <property name="pageBreakAfter">always</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">row["code"] != "Canada_Tabular"</expression>
+                        </structure>
+                    </list-property>
+                </image>
+                <image id="104">
+                    <property name="source">expr</property>
+                    <expression name="valueExpr" type="javascript">row["panel"]</expression>
+                    <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
+                    <property name="width">4.2in</property>
+                    <property name="height">8.889in</property>
+                    <property name="fitToContainer">false</property>
+                    <property name="pageBreakAfter">always</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">row["code"] != "FDA"</expression>
+                        </structure>
+                    </list-property>
+                </image>
+                <image id="105">
+                    <property name="source">expr</property>
+                    <expression name="valueExpr" type="javascript">row["panel"]</expression>
+                    <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
+                    <property name="width">5.4in</property>
+                    <property name="height">7.175in</property>
+                    <property name="fitToContainer">false</property>
+                    <property name="pageBreakAfter">always</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">row["code"] != "FDA_Dual_column"</expression>
+                        </structure>
+                    </list-property>
+                </image>
+                <image id="106">
+                    <property name="source">expr</property>
+                    <expression name="valueExpr" type="javascript">row["panel"]</expression>
+                    <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
+                    <property name="width">4.2in</property>
+                    <property name="height">5.615in</property>
+                    <property name="fitToContainer">false</property>
+                    <property name="pageBreakAfter">always</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">row["code"] != "FDA_Linear"</expression>
+                        </structure>
+                    </list-property>
+                </image>
+                <image id="107">
+                    <property name="source">expr</property>
+                    <expression name="valueExpr" type="javascript">row["panel"]</expression>
+                    <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
+                    <property name="width">4.2in</property>
+                    <property name="height">8.232in</property>
+                    <property name="fitToContainer">false</property>
+                    <property name="pageBreakAfter">always</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">row["code"] != "FDA_Side_by_side"</expression>
+                        </structure>
+                    </list-property>
+                </image>
+                <image id="108">
+                    <property name="source">expr</property>
+                    <expression name="valueExpr" type="javascript">row["panel"]</expression>
+                    <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
+                    <property name="width">4.2in</property>
+                    <property name="height">9.129in</property>
+                    <property name="fitToContainer">false</property>
+                    <property name="pageBreakAfter">always</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">row["code"] != "FDA_Simplified"</expression>
+                        </structure>
+                    </list-property>
+                </image>
+                <image id="109">
+                    <property name="source">expr</property>
+                    <expression name="valueExpr" type="javascript">row["panel"]</expression>
+                    <expression name="typeExpr" type="javascript">"image/svg+xml"</expression>
+                    <property name="width">6.8in</property>
+                    <property name="height">3.672in</property>
+                    <property name="fitToContainer">false</property>
+                    <property name="pageBreakAfter">always</property>
+                    <list-property name="visibility">
+                        <structure>
+                            <property name="format">all</property>
+                            <expression name="valueExpr" type="javascript">row["code"] != "FDA_Tabular"</expression>
+                        </structure>
+                    </list-property>
                 </image>
             </detail>
         </list>
