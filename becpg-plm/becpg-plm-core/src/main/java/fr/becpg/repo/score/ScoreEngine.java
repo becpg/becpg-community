@@ -19,6 +19,9 @@ public enum ScoreEngine {
 	/** Computed by comparing nutrients to the thresholds held by the definition */
 	Threshold,
 
+	/** Computed by aggregating the LCA list with the coefficients held by the definition */
+	Lca,
+
 	/** Not computed: the value is entered by the user */
 	Manual;
 
