@@ -17,6 +17,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.SupplierData;
 import fr.becpg.repo.product.data.productList.LCAListDataItem;
+import fr.becpg.repo.product.formulation.ecobalyse.EcobalyseComplementsCalculator;
 import fr.becpg.repo.regulatory.RequirementDataType;
 import fr.becpg.repo.score.ScoreContext;
 import fr.becpg.repo.score.ScoreDefinitionService;
@@ -43,6 +44,17 @@ public class LCACalculatingFormulationHandler extends AbstractCostCalculatingFor
 
 	private ScoreResultWriter scoreResultWriter;
 
+	private EcobalyseComplementsCalculator ecobalyseComplementsCalculator;
+
+	/**
+	 * <p>Setter for the field <code>ecobalyseComplementsCalculator</code>.</p>
+	 *
+	 * @param ecobalyseComplementsCalculator a {@link fr.becpg.repo.product.formulation.ecobalyse.EcobalyseComplementsCalculator} object
+	 */
+	public void setEcobalyseComplementsCalculator(EcobalyseComplementsCalculator ecobalyseComplementsCalculator) {
+		this.ecobalyseComplementsCalculator = ecobalyseComplementsCalculator;
+	}
+
 	/**
 	 * <p>Setter for the field <code>scoreDefinitionService</code>.</p>
 	 *
@@ -66,6 +78,10 @@ public class LCACalculatingFormulationHandler extends AbstractCostCalculatingFor
 	protected void afterProcess(ProductData formulatedProduct) {
 		if (!shouldCalculateScore(formulatedProduct)) {
 			return;
+		}
+
+		if (ecobalyseComplementsCalculator != null) {
+			ecobalyseComplementsCalculator.addComplements(formulatedProduct);
 		}
 
 		Optional<ScoreDefinitionItem> definition = findScoreDefinition(formulatedProduct);

@@ -178,6 +178,12 @@
 					<property name="packagingHelper" ref="packagingHelper" />
 					<property name="scoreDefinitionService" ref="scoreDefinitionService" />
 					<property name="scoreResultWriter" ref="scoreResultWriter" />
+					<property name="ecobalyseComplementsCalculator">
+						<bean class="fr.becpg.repo.product.formulation.ecobalyse.EcobalyseComplementsCalculator">
+							<property name="nodeService" ref="nodeService" />
+							<property name="ecobalyseIngredientService" ref="ecobalyseIngredientService" />
+						</bean>
+					</property>
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.IngsCalculatingFormulationHandler">
 					<property name="nodeService" ref="nodeService" />

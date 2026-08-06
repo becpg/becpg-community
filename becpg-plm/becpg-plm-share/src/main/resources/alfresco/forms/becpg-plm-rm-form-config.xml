@@ -16,6 +16,18 @@
 					<show force="false" id="bcpg:productState" />
 					<show force="false" id="bcpg:code" />
 					<show force="true" id="bcpg:erpCode" />
+					<!-- Ecobalyse -->
+					<show force="true" id="bcpg:ecobalyseCode" />
+					<show force="true" id="bcpg:apScenario" />
+					<show force="true" id="bcpg:apCropGroup" />
+					<show force="true" id="bcpg:apLandOccupation" />
+					<show force="true" id="bcpg:apHedges" />
+					<show force="true" id="bcpg:apPlotSize" />
+					<show force="true" id="bcpg:apCropDiversity" />
+					<show force="true" id="bcpg:apPermanentPasture" />
+					<show force="true" id="bcpg:apTemporaryPasture" />
+					<show force="true" id="bcpg:apAnimalProductionType" />
+					<show force="true" id="bcpg:apLivestockUnitPerKg" />
 					<show force="false" id="bcpg:casNumber" />
 					<show force="false" id="bcpg:ecNumber" />
 					<show force="false" id="bcpg:ceNumber" />
@@ -382,6 +394,22 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl"></control>
 					</field>
 
+					<set appearance="bordered-panel" id="ecobalyse" label-id="becpg.forms.set.ecobalyse.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:ecobalyseCode" set="ecobalyse">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/ecobalyse</control-param>
+						</control>
+					</field>
+					<field id="bcpg:apScenario" set="ecobalyse" />
+					<field id="bcpg:apCropGroup" set="ecobalyse" />
+					<field id="bcpg:apLandOccupation" set="ecobalyse" />
+					<field id="bcpg:apHedges" set="ecobalyse" />
+					<field id="bcpg:apPlotSize" set="ecobalyse" />
+					<field id="bcpg:apCropDiversity" set="ecobalyse" />
+					<field id="bcpg:apPermanentPasture" set="ecobalyse" />
+					<field id="bcpg:apTemporaryPasture" set="ecobalyse" />
+					<field id="bcpg:apAnimalProductionType" set="ecobalyse" />
+					<field id="bcpg:apLivestockUnitPerKg" set="ecobalyse" />
 					<set appearance="bordered-panel" id="regulatory" label-id="becpg.forms.set.regulatory.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="bcpg:regulatoryCountries" set="regulatory">
 						<control

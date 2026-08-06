@@ -40,6 +40,9 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_SCORE_DEFINITIONS="ScoreDefinitions"</code> */
 	public static final String PATH_SCORE_DEFINITIONS = "ScoreDefinitions";
 
+	/** Constant <code>PATH_ECOBALYSE_CROP_GROUPS="EcobalyseCropGroups"</code> */
+	public static final String PATH_ECOBALYSE_CROP_GROUPS = "EcobalyseCropGroups";
+
 	/** Constant <code>PATH_LCA_LIST_METHODS="LcaListMethods"</code> */
 	public static final String PATH_LCA_LIST_METHODS = "LcaListMethods";
 
