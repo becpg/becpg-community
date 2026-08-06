@@ -1856,6 +1856,8 @@
                     <show id="bcpg:scoreDefEndEffectivity" />
                     <show id="bcpg:scoreDefCountries" />
                     <show id="bcpg:scoreDefUsages" />
+                    <show id="bcpg:scoreDefAggregation" />
+                    <show id="bcpg:scoreDefClassOrder" />
                     <show id="sec:readGroups" force="true" />
                     <show id="bcpg:isDeleted" />
                 </field-visibility>
@@ -1880,6 +1882,8 @@
                     <field id="bcpg:scoreDefUsages" set="2-col">
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
+                    <field id="bcpg:scoreDefAggregation" set="2-col" />
+                    <field id="bcpg:scoreDefClassOrder" set="2-col" />
                     <field id="bcpg:scoreDefRange" />
                     <field id="cm:description">
                         <control>
@@ -1931,6 +1935,8 @@
                     <show id="bcpg:scoreDefEndEffectivity" />
                     <show id="bcpg:scoreDefCountries" />
                     <show id="bcpg:scoreDefUsages" />
+                    <show id="bcpg:scoreDefAggregation" />
+                    <show id="bcpg:scoreDefClassOrder" />
                 </field-visibility>
                 <appearance>
                     <set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
@@ -1953,6 +1959,8 @@
                     <field id="bcpg:scoreDefUsages" set="2-col">
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
+                    <field id="bcpg:scoreDefAggregation" set="2-col" />
+                    <field id="bcpg:scoreDefClassOrder" set="2-col" />
                     <field id="bcpg:scoreDefRange" />
                     <field id="cm:description">
                         <control>
@@ -1986,6 +1994,60 @@
                     <show id="bcpg:scoreDefScale" />
                     <show id="bcpg:scoreDefUnit" />
                     <show id="bcpg:scoreDefIsOfficial" />
+                </field-visibility>
+            </form>
+        </forms>
+    </config>
+
+    <config evaluator="model-type" condition="bcpg:scoreThresholdList">
+        <forms>
+            <form>
+                <field-visibility>
+                    <show id="bcpg:stlNutCode" />
+                    <show id="bcpg:stlCategory" />
+                    <show id="bcpg:stlLowerBound" />
+                    <show id="bcpg:stlUpperBound" />
+                    <show id="bcpg:stlResult" />
+                    <show id="bcpg:stlPoints" />
+                    <show id="bcpg:stlReferenceIntake" />
+                </field-visibility>
+                <appearance>
+                    <set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+                    <field id="bcpg:stlNutCode" set="2-col" />
+                    <field id="bcpg:stlCategory" set="2-col" />
+                    <field id="bcpg:stlLowerBound" set="2-col" />
+                    <field id="bcpg:stlUpperBound" set="2-col" />
+                    <field id="bcpg:stlResult" set="2-col" />
+                    <field id="bcpg:stlPoints" set="2-col" />
+                    <field id="bcpg:stlReferenceIntake" set="2-col" />
+                </appearance>
+            </form>
+            <form id="datagrid">
+                <field-visibility>
+                    <show id="bcpg:stlNutCode" />
+                    <show id="bcpg:stlCategory" />
+                    <show id="bcpg:stlLowerBound" />
+                    <show id="bcpg:stlUpperBound" />
+                    <show id="bcpg:stlResult" />
+                    <show id="bcpg:stlPoints" />
+                    <show id="bcpg:stlReferenceIntake" />
+                </field-visibility>
+            </form>
+        </forms>
+    </config>
+
+    <config evaluator="model-type" condition="bcpg:scoreBadgeList">
+        <forms>
+            <form>
+                <field-visibility>
+                    <show id="bcpg:sblClass" />
+                    <show id="bcpg:charactName" force="true" />
+                </field-visibility>
+            </form>
+            <form id="datagrid">
+                <field-visibility>
+                    <show id="bcpg:sblClass" />
+                    <show id="cm:name" force="true" />
                 </field-visibility>
             </form>
         </forms>

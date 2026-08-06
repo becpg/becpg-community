@@ -497,6 +497,32 @@ public interface PLMModel {
 	QName ASSOC_SCORE_DEF_COUNTRIES = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefCountries");
 	/** Constant <code>ASSOC_SCORE_DEF_USAGES</code> */
 	QName ASSOC_SCORE_DEF_USAGES = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefUsages");
+	/** Constant <code>PROP_SCORE_DEF_AGGREGATION</code> */
+	QName PROP_SCORE_DEF_AGGREGATION = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefAggregation");
+	/** Constant <code>PROP_SCORE_DEF_CLASS_ORDER</code> */
+	QName PROP_SCORE_DEF_CLASS_ORDER = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefClassOrder");
+
+	/** Constant <code>TYPE_SCORE_THRESHOLD_LIST</code> */
+	QName TYPE_SCORE_THRESHOLD_LIST = QName.createQName(BeCPGModel.BECPG_URI, "scoreThresholdList");
+	/** Constant <code>PROP_STL_NUT_CODE</code> */
+	QName PROP_STL_NUT_CODE = QName.createQName(BeCPGModel.BECPG_URI, "stlNutCode");
+	/** Constant <code>PROP_STL_CATEGORY</code> */
+	QName PROP_STL_CATEGORY = QName.createQName(BeCPGModel.BECPG_URI, "stlCategory");
+	/** Constant <code>PROP_STL_LOWER_BOUND</code> */
+	QName PROP_STL_LOWER_BOUND = QName.createQName(BeCPGModel.BECPG_URI, "stlLowerBound");
+	/** Constant <code>PROP_STL_UPPER_BOUND</code> */
+	QName PROP_STL_UPPER_BOUND = QName.createQName(BeCPGModel.BECPG_URI, "stlUpperBound");
+	/** Constant <code>PROP_STL_RESULT</code> */
+	QName PROP_STL_RESULT = QName.createQName(BeCPGModel.BECPG_URI, "stlResult");
+	/** Constant <code>PROP_STL_POINTS</code> */
+	QName PROP_STL_POINTS = QName.createQName(BeCPGModel.BECPG_URI, "stlPoints");
+	/** Constant <code>PROP_STL_REFERENCE_INTAKE</code> */
+	QName PROP_STL_REFERENCE_INTAKE = QName.createQName(BeCPGModel.BECPG_URI, "stlReferenceIntake");
+
+	/** Constant <code>TYPE_SCORE_BADGE_LIST</code> */
+	QName TYPE_SCORE_BADGE_LIST = QName.createQName(BeCPGModel.BECPG_URI, "scoreBadgeList");
+	/** Constant <code>PROP_SBL_CLASS</code> */
+	QName PROP_SBL_CLASS = QName.createQName(BeCPGModel.BECPG_URI, "sblClass");
 
 	/** Constant <code>TYPE_SCORE_DEF_COEFF_LIST</code> */
 	QName TYPE_SCORE_DEF_COEFF_LIST = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefCoeffList");
