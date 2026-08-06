@@ -2172,6 +2172,7 @@
 			<form>
 				<field-visibility>
 					<show id="pjt:slScoreCriterion" />
+					<show id="pjt:slScoreDefinition" />
 					<show id="pjt:slWeight" />
 					<show id="pjt:slScore" />
 					<show id="pjt:slScoreRange" />
@@ -2205,6 +2206,7 @@
 			<form id="edit-productSpecification">
 				<field-visibility>
 					<show id="pjt:slScoreCriterion" />
+					<show id="pjt:slScoreDefinition" />
 					<show id="pjt:slScreening" />
 					<show id="bcpg:parentLevel" />
 				</field-visibility>
@@ -2238,6 +2240,7 @@
 			<form>
 				<field-visibility>
 				    <show id="pjt:slScoreCriterion" />
+				    <show id="pjt:slScoreDefinition" />
 					<show id="pjt:slWeight" />
 					<show id="pjt:slScore" />
 					<show id="pjt:slScoreRange" />
@@ -2271,6 +2274,7 @@
 			<form id="create-productSpecification">
 				<field-visibility>
 				    <show id="pjt:slScoreCriterion" />
+				    <show id="pjt:slScoreDefinition" />
 					<show id="pjt:slScreening" />
 					<show id="bcpg:parentLevel" />
 				</field-visibility>
