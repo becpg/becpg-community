@@ -1,8 +1,11 @@
 package fr.becpg.repo.helper;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
+import java.util.function.Function;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.util.Pair;
@@ -142,18 +145,67 @@ public class LargeTextHelper {
 			} else {
 				// Share the global budget proportionally to each locale's actual size
 				int allowed = (int) ((long) value.length() * TEXT_SIZE_LIMIT / totalLength) - ELLIPSIS_OVERHEAD;
-				result.put(entry.getKey(), elipse(value, Math.max(allowed, 0)));
+				result.put(entry.getKey(), elipseHtml(value, Math.max(allowed, 0)));
 			}
 		}
 		return result;
 	}
 
+	/**
+	 * <p>Keeps a {@link org.alfresco.service.cmr.repository.MLText} under {@link #TEXT_SIZE_LIMIT}
+	 * without ever cutting a value in the middle: the largest locales are dropped one by one, each
+	 * replaced by the notice supplied for that locale, until the whole fits.</p>
+	 *
+	 * <p>A partially cut value carries wrong data and is never usable, so dropping a few complete
+	 * languages and telling the user is preferred over shortening every language. Dropping the
+	 * largest first keeps as many intact languages as possible.</p>
+	 *
+	 * @param mlText a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @param noticeProvider supplies the replacement notice for a dropped locale
+	 * @return a new {@link org.alfresco.service.cmr.repository.MLText} object, the source is left untouched
+	 */
+	public static MLText dropOversizedLocales(MLText mlText, Function<Locale, String> noticeProvider) {
+
+		MLText result = new MLText();
+		if (mlText == null) {
+			return result;
+		}
+		result.putAll(mlText);
+
+		for (Locale locale : populatedLocalesByDescendingLength(mlText)) {
+			if (totalLength(result) <= TEXT_SIZE_LIMIT) {
+				break;
+			}
+			result.put(locale, noticeProvider.apply(locale));
+		}
+		return result;
+	}
+
+	/**
+	 * Orders the locales carrying content from the longest value to the shortest, ties broken on the
+	 * locale name so that the outcome stays reproducible from one formulation to the next. Empty
+	 * locales are left out: replacing them by a notice would add length instead of freeing any.
+	 */
+	private static List<Locale> populatedLocalesByDescendingLength(MLText mlText) {
+		List<Locale> locales = new ArrayList<>();
+		for (Entry<Locale, String> entry : mlText.entrySet()) {
+			if ((entry.getValue() != null) && !entry.getValue().isEmpty()) {
+				locales.add(entry.getKey());
+			}
+		}
+		locales.sort(Comparator.comparingInt((Locale locale) -> valueLength(mlText.get(locale))).reversed()
+				.thenComparing(Locale::toString));
+		return locales;
+	}
+
+	private static int valueLength(String value) {
+		return value != null ? value.length() : 0;
+	}
+
 	private static int totalLength(MLText mlText) {
 		int totalLength = 0;
 		for (String value : mlText.values()) {
-			if (value != null) {
-				totalLength += value.length();
-			}
+			totalLength += valueLength(value);
 		}
 		return totalLength;
 	}
