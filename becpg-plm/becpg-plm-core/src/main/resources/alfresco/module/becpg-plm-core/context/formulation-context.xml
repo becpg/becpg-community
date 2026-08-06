@@ -176,6 +176,8 @@
 				<bean parent="abstractSimpleFormulationHandler" class="fr.becpg.repo.product.formulation.LCACalculatingFormulationHandler">
 					<property name="formulaService" ref="formulaService" />
 					<property name="packagingHelper" ref="packagingHelper" />
+					<property name="scoreDefinitionService" ref="scoreDefinitionService" />
+					<property name="scoreResultWriter" ref="scoreResultWriter" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.IngsCalculatingFormulationHandler">
 					<property name="nodeService" ref="nodeService" />
@@ -240,6 +242,7 @@
 		                    <property name="surveyService" ref="surveyService" />
 		                </bean>
 					</property>
+					<property name="criteriaScoreEngine" ref="criteriaScoreEngine" />
 				</bean>
                 <bean class="fr.becpg.repo.product.formulation.SurveyListFormulationHandler">
                 	<constructor-arg><ref bean="namespaceService"/></constructor-arg>
