@@ -507,29 +507,53 @@
      */
     function renderParts(details) {
         var html = "";
+
         for (var i = 0; i < details.parts.length; i++) {
             var part = details.parts[i];
-            var amount = formatNumber(part.value) + (isBlank(part.unit) ? "" : " " + part.unit);
-            var name = Alfresco.util.encodeHTML(part.label ? part.label : part.code);
-
+            var name = part.label ? part.label : part.code;
             var intake = part.unit === "%" ? part.value : part.share;
-            if (!isBlank(intake)) {
-                var fill = Math.max(0, Math.min(100, parseFloat(intake)));
-                amount = formatNumber(intake, 1) + " %";
-                html += '<span class="score-badge-battery">'
-                    + '<span class="score-badge-battery-name">' + name + "</span>"
-                    + '<span class="score-badge-battery-body"><span class="score-badge-battery-fill" style="width:'
-                    + fill.toFixed(0) + '%"></span></span>'
-                    + '<span class="score-badge-battery-amount">' + Alfresco.util.encodeHTML(amount) + "</span></span>";
-            } else {
+
+            if (isBlank(intake)) {
                 html += '<span class="score-badge-part">'
-                    + '<span class="score-badge-part-name">' + name + "</span>"
-                    + '<span class="score-badge-part-amount">' + Alfresco.util.encodeHTML(amount) + "</span></span>";
+                    + '<span class="score-badge-part-name">' + Alfresco.util.encodeHTML(name) + "</span>"
+                    + '<span class="score-badge-part-amount">'
+                    + Alfresco.util.encodeHTML(formatNumber(part.value) + (isBlank(part.unit) ? "" : " " + part.unit))
+                    + "</span></span>";
+            } else {
+                html += renderBattery(name, Math.max(0, Math.min(100, parseFloat(intake))));
             }
         }
         return html;
     }
 
+    /**
+     * One battery of the NutrInform mark: the nutrient, a cell filled to the share of the
+     * reference intake a portion covers, and that share written underneath.
+     */
+    function renderBattery(name, share) {
+        var width = 58;
+        var height = 46;
+        var body = { x: 6, y: 16, w: 40, h: 13 };
+        var html = svgOpen(width, height, "score-badge-battery", name);
+
+        html += svgText(width / 2, 7, name, "#222", 9);
+
+        html += '<rect x="' + body.x + '" y="' + body.y + '" width="' + body.w + '" height="' + body.h
+            + '" rx="2" fill="#fff" stroke="#222" stroke-width="1.5" />';
+        html += '<rect x="' + (body.x + body.w + 1) + '" y="' + (body.y + 4) + '" width="3" height="'
+            + (body.h - 8) + '" rx="1" fill="#222" />';
+
+        var filled = (body.w - 4) * (share / 100);
+
+        if (filled > 0) {
+            html += '<rect x="' + (body.x + 2) + '" y="' + (body.y + 2) + '" width="' + filled.toFixed(1)
+                + '" height="' + (body.h - 4) + '" fill="#1f6fb2" />';
+        }
+
+        html += svgText(width / 2, height - 8, formatNumber(share, 1) + " %", "#222", 9, "normal");
+
+        return html + "</svg>";
+    }
 
     /**
      * Gauge of the Planet-score axes: the whole A to E range as a colour bar, with a marker
@@ -546,15 +570,42 @@
             return '<span class="score-badge-error">' + Alfresco.util.encodeHTML(scoreClass.toString()) + "</span>";
         }
 
-        var html = "";
+        var step = 16;
+        var bar = 8;
+        var width = (LETTER_CLASSES.length * step) + 2;
+        var height = 22;
+        var top = 7;
+        var html = svgOpen(width, height, "score-badge-gauge", upper);
+
         for (var i = 0; i < LETTER_CLASSES.length; i++) {
-            html += '<span class="score-badge-gauge-step score-badge-gauge-step-' + LETTER_CLASSES[i].toLowerCase() + '">'
-                + (i === reached ? '<span class="score-badge-gauge-marker"></span>' : "") + "</span>";
+            var first = i === 0;
+            var last = i === (LETTER_CLASSES.length - 1);
+            var x = 1 + (i * step);
+
+            html += '<rect x="' + x + '" y="' + top + '" width="' + step + '" height="' + bar + '"'
+                + (first || last ? ' rx="4"' : "") + ' fill="' + LETTER_COLOURS[LETTER_CLASSES[i]] + '" />';
+            // the rounded end must not round the inner side of the first and last cells
+            if (first) {
+                html += '<rect x="' + (x + 4) + '" y="' + top + '" width="' + (step - 4) + '" height="' + bar
+                    + '" fill="' + LETTER_COLOURS[LETTER_CLASSES[i]] + '" />';
+            }
+            if (last) {
+                html += '<rect x="' + x + '" y="' + top + '" width="' + (step - 4) + '" height="' + bar
+                    + '" fill="' + LETTER_COLOURS[LETTER_CLASSES[i]] + '" />';
+            }
         }
 
-        return '<span class="score-badge-gauge" title="' + beCPG.util.encodeAttr(upper) + '">' + html + "</span>";
-    }
+        // the cursor sits astride the bar on the level the product reaches
+        var centre = 1 + (reached * step) + (step / 2);
 
+        html += '<polygon points="' + centre + ',' + (top - 1) + " " + (centre - 4) + ',' + (top - 6) + " "
+            + (centre + 4) + ',' + (top - 6) + '" fill="#333" />';
+        html += '<rect x="' + (centre - 6) + '" y="' + (top - 1) + '" width="12" height="' + (bar + 2)
+            + '" rx="3" fill="none" stroke="#333" stroke-width="2" />';
+        html += svgText(centre, height - 3, upper, "#333", 8);
+
+        return html + "</svg>";
+    }
 
     /**
      * A mark states its themes side by side rather than a single verdict: one row per axis,
