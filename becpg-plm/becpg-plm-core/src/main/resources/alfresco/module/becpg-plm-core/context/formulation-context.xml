@@ -307,6 +307,9 @@
 							<ref bean="healthStarRating"/>
 							<ref bean="lcaAggregatedScore"/>
 							<ref bean="planetScore"/>
+							<ref bean="repEcoModulation"/>
+							<ref bean="novaClassification"/>
+							<ref bean="yukaScore"/>
 						</list>
 					</property>
 				</bean>
@@ -360,6 +363,9 @@
 							<ref bean="healthStarRating"/>
 							<ref bean="lcaAggregatedScore"/>
 							<ref bean="planetScore"/>
+							<ref bean="repEcoModulation"/>
+							<ref bean="novaClassification"/>
+							<ref bean="yukaScore"/>
 						</list>
 					</property>
 				</bean>
