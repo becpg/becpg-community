@@ -400,7 +400,9 @@
 
     function renderDetailRow(scope, part, isStep) {
         var html = '<tr' + (isStep ? ' class="score-details-step"' : "") + ">";
-        html += "<td>" + Alfresco.util.encodeHTML(partLabel(scope, part)) + "</td>";
+        html += "<td>" + Alfresco.util.encodeHTML(partLabel(scope, part))
+            + (isBlank(part["class"]) ? "" : ' <span class="score-details-class">'
+                + Alfresco.util.encodeHTML(part["class"]) + "</span>") + "</td>";
         html += '<td class="score-details-number">' + formatNumber(part.value)
             + (isBlank(part.unit) ? "" : " " + Alfresco.util.encodeHTML(part.unit)) + "</td>";
         html += '<td class="score-details-number">' + formatNumber(part.weight, 4) + "</td>";

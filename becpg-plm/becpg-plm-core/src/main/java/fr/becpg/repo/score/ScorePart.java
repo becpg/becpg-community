@@ -19,6 +19,9 @@ public class ScorePart {
 	public static final String CODE = "code";
 	/** Constant <code>LABEL="label"</code> */
 	public static final String LABEL = "label";
+
+	/** Constant <code>SCORE_CLASS="class"</code> */
+	public static final String SCORE_CLASS = "class";
 	/** Constant <code>VALUE="value"</code> */
 	public static final String VALUE = "value";
 	/** Constant <code>UNIT="unit"</code> */
@@ -47,6 +50,8 @@ public class ScorePart {
 	private Double contribution;
 
 	private Double share;
+
+	private String scoreClass;
 
 	/**
 	 * <p>Constructor for ScorePart.</p>
@@ -181,6 +186,29 @@ public class ScorePart {
 	 * @param contribution the amount this part adds to the total score
 	 * @return this part
 	 */
+	/**
+	 * <p>Class of one part, for the marks whose axes are graded on their own scale.</p>
+	 *
+	 * <p>It is kept apart from the label so the breakdown can name the axis and grade it at
+	 * the same time, rather than showing a column of bare letters.</p>
+	 *
+	 * @param scoreClass the class of the part
+	 * @return a {@link fr.becpg.repo.score.ScorePart} object
+	 */
+	public ScorePart withScoreClass(String scoreClass) {
+		this.scoreClass = scoreClass;
+		return this;
+	}
+
+	/**
+	 * <p>Getter for the field <code>scoreClass</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
+	public String getScoreClass() {
+		return scoreClass;
+	}
+
 	public ScorePart withContribution(Double contribution) {
 		this.contribution = contribution;
 		return this;
@@ -201,6 +229,7 @@ public class ScorePart {
 		json.putOpt(WEIGHT, weight);
 		json.putOpt(CONTRIBUTION, contribution);
 		json.putOpt(SHARE, share);
+		json.putOpt(SCORE_CLASS, scoreClass);
 		return json;
 	}
 
@@ -219,6 +248,7 @@ public class ScorePart {
 		part.weight = optDouble(json, WEIGHT);
 		part.contribution = optDouble(json, CONTRIBUTION);
 		part.share = optDouble(json, SHARE);
+		part.scoreClass = json.optString(SCORE_CLASS, null);
 		return part;
 	}
 

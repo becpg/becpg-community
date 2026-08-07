@@ -174,7 +174,7 @@ public class PlanetScore implements ScoreCalculatingPlugin {
 		for (String axis : ENVIRONMENT_AXES) {
 			String reached = publishedClass(product, axis);
 			if (reached != null) {
-				context.getParts().add(new ScorePart(axis).withLabel(reached));
+				context.getParts().add(new ScorePart(axis).withScoreClass(reached));
 			}
 		}
 	}
@@ -218,7 +218,7 @@ public class PlanetScore implements ScoreCalculatingPlugin {
 		}
 
 		if (level != null) {
-			context.getParts().add(new ScorePart(theme).withLabel(level));
+			context.getParts().add(new ScorePart(theme).withScoreClass(level));
 		}
 	}
 
@@ -251,7 +251,7 @@ public class PlanetScore implements ScoreCalculatingPlugin {
 			worst = Math.max(worst, 3);
 		}
 
-		context.getParts().add(new ScorePart(PROCESSING).withLabel(String.valueOf(LEVELS.charAt(worst - 1))));
+		context.getParts().add(new ScorePart(PROCESSING).withScoreClass(String.valueOf(LEVELS.charAt(worst - 1))));
 	}
 
 	/**
@@ -266,11 +266,11 @@ public class PlanetScore implements ScoreCalculatingPlugin {
 		for (ScorePart part : context.getParts()) {
 			// an axis whose value fell outside its scale carries no level: it must not become
 			// the verdict of the whole mark by comparing above every letter
-			if (!isLevel(part.getLabel())) {
+			if (!isLevel(part.getScoreClass())) {
 				continue;
 			}
-			if ((worst == null) || (part.getLabel().compareTo(worst) > 0)) {
-				worst = part.getLabel();
+			if ((worst == null) || (part.getScoreClass().compareTo(worst) > 0)) {
+				worst = part.getScoreClass();
 			}
 		}
 
@@ -391,12 +391,12 @@ public class PlanetScore implements ScoreCalculatingPlugin {
 
 		if (claimed == null) {
 			// unknown, the mark shows its grey level rather than a bad one
-			context.getParts().add(new ScorePart(FAIR_PAY).withLabel(LEVEL_B));
+			context.getParts().add(new ScorePart(FAIR_PAY).withScoreClass(LEVEL_B));
 			return;
 		}
 
 		context.getParts().add(new ScorePart(FAIR_PAY).withValue(claimed, PERCENT)
-				.withLabel(claimed > FAIR_TRADE_THRESHOLD ? LEVEL_A : LEVEL_D));
+				.withScoreClass(claimed > FAIR_TRADE_THRESHOLD ? LEVEL_A : LEVEL_D));
 	}
 
 	/**
@@ -460,11 +460,11 @@ public class PlanetScore implements ScoreCalculatingPlugin {
 		double europeanShare = (european * 100d) / known;
 
 		if (frenchShare > ORIGIN_THRESHOLD) {
-			context.getParts().add(new ScorePart(ORIGIN).withValue(frenchShare, PERCENT).withLabel(LEVEL_A));
+			context.getParts().add(new ScorePart(ORIGIN).withValue(frenchShare, PERCENT).withScoreClass(LEVEL_A));
 		} else if (europeanShare > ORIGIN_THRESHOLD) {
-			context.getParts().add(new ScorePart(ORIGIN).withValue(europeanShare, PERCENT).withLabel(LEVEL_B));
+			context.getParts().add(new ScorePart(ORIGIN).withValue(europeanShare, PERCENT).withScoreClass(LEVEL_B));
 		} else if ((100d - europeanShare) > OUTSIDE_THRESHOLD) {
-			context.getParts().add(new ScorePart(ORIGIN).withValue(100d - europeanShare, PERCENT).withLabel(LEVEL_C));
+			context.getParts().add(new ScorePart(ORIGIN).withValue(100d - europeanShare, PERCENT).withScoreClass(LEVEL_C));
 		}
 	}
 
