@@ -90,8 +90,24 @@
             lines.push(header);
         }
 
-        var parts = details.parts || [];
-        for (var i = 0; i < parts.length; i++) {
+        appendTooltipParts(lines, details.parts, scope);
+
+        // a score built by successive steps, the Green-Score being the case, carries its
+        // breakdown in steps rather than in parts: the hover must show them just the same
+        appendTooltipParts(lines, details.steps, scope);
+
+        return lines.join("\n");
+    }
+
+    /**
+     * <p>Appends one line per part to a tooltip.</p>
+     *
+     * @param lines the lines gathered so far
+     * @param parts the parts or the steps of a score
+     * @param scope the datagrid, for the wording of the parts
+     */
+    function appendTooltipParts(lines, parts, scope) {
+        for (var i = 0; i < (parts || []).length; i++) {
             var part = parts[i];
             var line = partLabel(scope, part);
 
@@ -107,8 +123,6 @@
             }
             lines.push(line);
         }
-
-        return lines.join("\n");
     }
 
     function badgeUrl(code, scoreClass) {
