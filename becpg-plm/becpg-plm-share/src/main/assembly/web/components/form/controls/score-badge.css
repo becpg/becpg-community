@@ -121,126 +121,6 @@
     font-weight: bold;
 }
 
-/* NutrInform battery: one cell per nutrient, filled to its share of the reference intake */
-
-.score-badge .score-badge-battery,
-.datagrid .score-badge .score-badge-battery {
-    display: inline-block;
-    font-size: 10px;
-    line-height: 13px;
-    margin: 0 3px 2px 0;
-    min-width: 52px;
-    text-align: center;
-    vertical-align: middle;
-}
-
-.score-badge .score-badge-battery-name,
-.datagrid .score-badge .score-badge-battery-name,
-.score-badge .score-badge-battery-amount,
-.datagrid .score-badge .score-badge-battery-amount {
-    color: #333;
-    display: block;
-    width: 100%;
-}
-
-.score-badge .score-badge-battery-amount,
-.datagrid .score-badge .score-badge-battery-amount {
-    font-weight: bold;
-}
-
-.score-badge .score-badge-battery-body,
-.datagrid .score-badge .score-badge-battery-body {
-    background: #fff;
-    border: 2px solid #1a3d7c;
-    border-radius: 2px;
-    display: block;
-    height: 10px;
-    margin: 1px auto;
-    position: relative;
-    width: 44px;
-}
-
-.score-badge .score-badge-battery-body:after,
-.datagrid .score-badge .score-badge-battery-body:after {
-    background: #1a3d7c;
-    content: "";
-    height: 4px;
-    position: absolute;
-    right: -4px;
-    top: 1px;
-    width: 3px;
-}
-
-.score-badge .score-badge-battery-fill,
-.datagrid .score-badge .score-badge-battery-fill {
-    background: #1a3d7c;
-    display: block;
-    height: 100%;
-}
-
-/* Gauge scale: the whole range as a colour bar, with a marker on the level reached */
-
-.score-badge .score-badge-gauge,
-.datagrid .score-badge .score-badge-gauge {
-    background: #fff;
-    border-radius: 3px;
-    display: inline-block;
-    font-size: 0;
-    line-height: 0;
-    overflow: hidden;
-    padding: 0;
-    vertical-align: middle;
-    white-space: nowrap;
-}
-
-.score-badge .score-badge-gauge-step,
-.datagrid .score-badge .score-badge-gauge-step {
-    display: inline-block;
-    height: 16px;
-    position: relative;
-    width: 26px;
-}
-
-.score-badge .score-badge-gauge-step-a,
-.datagrid .score-badge .score-badge-gauge-step-a {
-    background: #00853f;
-}
-
-.score-badge .score-badge-gauge-step-b,
-.datagrid .score-badge .score-badge-gauge-step-b {
-    background: #86bc2a;
-}
-
-.score-badge .score-badge-gauge-step-c,
-.datagrid .score-badge .score-badge-gauge-step-c {
-    background: #ffc800;
-}
-
-.score-badge .score-badge-gauge-step-d,
-.datagrid .score-badge .score-badge-gauge-step-d {
-    background: #ff7600;
-}
-
-.score-badge .score-badge-gauge-step-e,
-.datagrid .score-badge .score-badge-gauge-step-e {
-    background: #ff0100;
-}
-
-.score-badge .score-badge-gauge-marker,
-.datagrid .score-badge .score-badge-gauge-marker {
-    background: transparent;
-    border: 3px solid #fff;
-    border-radius: 50%;
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
-    display: block;
-    height: 8px;
-    left: 50%;
-    margin: -7px 0 0 -7px;
-    position: absolute;
-    top: 50%;
-    width: 8px;
-}
-
 /* Mark scale: one row per theme, the way the Planet-score states them */
 
 .score-badge .score-badge-mark,
@@ -299,4 +179,14 @@
 
 .score-details {
     min-width: 420px;
+}
+
+/* The marks are drawings, they must never paint over the header of the datagrid: the badge
+   opens its own stacking context at the bottom of the pile. */
+
+.score-badge,
+.datagrid .score-badge {
+    isolation: isolate;
+    position: relative;
+    z-index: 0;
 }
