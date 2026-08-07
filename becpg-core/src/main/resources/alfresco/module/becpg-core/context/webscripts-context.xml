@@ -303,6 +303,31 @@
 		<property name="beCPGTicketService" ref="beCPGTicketService" />
 	</bean>
 
+	<!--
+	  AI suggestions PROXY (outbound). The four beans above are inbound — becpg-ai calls
+	  them. These three go the other way: a client asks the repository, the repository asks
+	  becpg-ai. That keeps `beCPG.ai.serverUrl` and the auth-token format inside beCPG, the
+	  same arrangement as `becpg/olap/chart` for Saiku. The operation is fixed per bean, so
+	  no caller can choose the upstream path.
+	-->
+	<bean id="webscript.fr.becpg.ai.suggestions.get" class="fr.becpg.repo.web.scripts.remote.ai.AiSuggestionsProxyWebScript" parent="webscript">
+		<property name="operation" value="suggestions" />
+		<property name="beCPGTicketService" ref="beCPGTicketService" />
+		<property name="systemConfigurationService" ref="systemConfigurationService" />
+	</bean>
+
+	<bean id="webscript.fr.becpg.ai.suggestionsApply.post" class="fr.becpg.repo.web.scripts.remote.ai.AiSuggestionsProxyWebScript" parent="webscript">
+		<property name="operation" value="apply" />
+		<property name="beCPGTicketService" ref="beCPGTicketService" />
+		<property name="systemConfigurationService" ref="systemConfigurationService" />
+	</bean>
+
+	<bean id="webscript.fr.becpg.ai.suggestionsApplyPlan.post" class="fr.becpg.repo.web.scripts.remote.ai.AiSuggestionsProxyWebScript" parent="webscript">
+		<property name="operation" value="applyPlan" />
+		<property name="beCPGTicketService" ref="beCPGTicketService" />
+		<property name="systemConfigurationService" ref="systemConfigurationService" />
+	</bean>
+
 	<bean id="webscript.fr.becpg.remote.ai.dictionary.get" class="fr.becpg.repo.web.scripts.remote.ai.AiDictionaryWebScript" parent="webscript">
 		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
