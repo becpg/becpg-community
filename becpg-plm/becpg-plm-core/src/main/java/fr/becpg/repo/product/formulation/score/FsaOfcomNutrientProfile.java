@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.NutrientProfileCategory;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ScorableEntity;
 import fr.becpg.repo.score.NutrientValueProvider;
@@ -51,6 +52,18 @@ public class FsaOfcomNutrientProfile implements ScoreCalculatingPlugin {
 	private static final String SALT_CODE = "NACL";
 	/** Constant <code>FRUIT_VEGETABLE_CODE="FRUIT_VEGETABLE"</code> */
 	private static final String FRUIT_VEGETABLE_CODE = "FRUIT_VEGETABLE";
+
+	/** A food is high in fat, salt and sugar from four points */
+	private static final int FOOD_HFSS_THRESHOLD = 4;
+
+	/** A drink is high in fat, salt and sugar from one point */
+	private static final int DRINK_HFSS_THRESHOLD = 1;
+
+	/** Constant <code>HFSS="HFSS"</code> */
+	private static final String HFSS = "HFSS";
+
+	/** Constant <code>NON_HFSS="NonHFSS"</code> */
+	private static final String NON_HFSS = "NonHFSS";
 	/** Constant <code>NSP_FIBRE_CODE="PSACNS"</code> */
 	private static final String NSP_FIBRE_CODE = "PSACNS";
 	/** Constant <code>AOAC_FIBRE_CODE="FIBTG"</code> */
@@ -164,7 +177,9 @@ public class FsaOfcomNutrientProfile implements ScoreCalculatingPlugin {
 		int countedProtein = countsProtein(aPoints, fruitPoints) ? proteinPoints : 0;
 		context.getParts().add(part(PROTEIN_CODE, nutrients.get(PROTEIN_CODE), -countedProtein));
 
-		context.setValue((aPoints - fruitPoints - fibrePoints - countedProtein) * 1d);
+		double score = (aPoints - fruitPoints - fibrePoints - countedProtein) * 1d;
+		context.setValue(score);
+		context.setScoreClass(hfssVerdict(product, score));
 		context.getSteps().add(new ScorePart("aPoints").withContribution(aPoints * 1d));
 		context.getSteps().add(new ScorePart("cPoints").withContribution((fruitPoints + fibrePoints + countedProtein) * 1d));
 
@@ -294,4 +309,18 @@ public class FsaOfcomNutrientProfile implements ScoreCalculatingPlugin {
 		return Optional.empty();
 	}
 
+
+	/**
+	 * HFSS verdict of the product. The regulation sets the bar at four points for a food and
+	 * at one point for a drink, so the category decides which threshold applies.
+	 *
+	 * @param product a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param score the nutrient profiling score
+	 * @return a {@link java.lang.String} object
+	 */
+	private String hfssVerdict(ProductData product, double score) {
+		boolean drink = NutrientProfileCategory.Beverages.toString().equals(product.getNutrientProfileCategory());
+
+		return score >= (drink ? DRINK_HFSS_THRESHOLD : FOOD_HFSS_THRESHOLD) ? HFSS : NON_HFSS;
+	}
 }

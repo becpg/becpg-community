@@ -3,15 +3,19 @@
  */
 package fr.becpg.repo.score.data;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.MultiLevelDataList;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
@@ -22,8 +26,9 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  * @author matthieu
  */
 @AlfType
-@AlfQname(qname = "bcpg:entityScoreList")
-public class EntityScoreListDataItem extends BeCPGDataObject {
+@MultiLevelDataList
+@AlfQname(qname = "bcpg:regulatoryScoreList")
+public class RegulatoryScoreListDataItem extends BeCPGDataObject {
 
 	private static final long serialVersionUID = 1L;
 
@@ -47,6 +52,16 @@ public class EntityScoreListDataItem extends BeCPGDataObject {
 
 	private String errorLog;
 
+	private String category;
+
+	private List<NodeRef> countries = new ArrayList<>();
+
+	private List<NodeRef> usages = new ArrayList<>();
+
+	private Integer depthLevel = 0;
+
+	private NodeRef parentLevel;
+
 	/**
 	 * <p>Getter for the field <code>scoreDef</code>.</p>
 	 *
@@ -54,7 +69,7 @@ public class EntityScoreListDataItem extends BeCPGDataObject {
 	 */
 	@AlfSingleAssoc
 	@DataListIdentifierAttr
-	@AlfQname(qname = "bcpg:eslScoreDef")
+	@AlfQname(qname = "bcpg:rslScoreDef")
 	public NodeRef getScoreDef() {
 		return scoreDef;
 	}
@@ -74,7 +89,7 @@ public class EntityScoreListDataItem extends BeCPGDataObject {
 	 * @return a {@link java.lang.Double} object
 	 */
 	@AlfProp
-	@AlfQname(qname = "bcpg:eslValue")
+	@AlfQname(qname = "bcpg:rslValue")
 	public Double getValue() {
 		return value;
 	}
@@ -94,7 +109,7 @@ public class EntityScoreListDataItem extends BeCPGDataObject {
 	 * @return a {@link java.lang.String} object
 	 */
 	@AlfProp
-	@AlfQname(qname = "bcpg:eslClass")
+	@AlfQname(qname = "bcpg:rslClass")
 	public String getScoreClass() {
 		return scoreClass;
 	}
@@ -114,7 +129,7 @@ public class EntityScoreListDataItem extends BeCPGDataObject {
 	 * @return a {@link java.lang.String} object
 	 */
 	@AlfProp
-	@AlfQname(qname = "bcpg:eslDetails")
+	@AlfQname(qname = "bcpg:rslDetails")
 	@InternalField
 	public String getDetails() {
 		return details;
@@ -135,7 +150,7 @@ public class EntityScoreListDataItem extends BeCPGDataObject {
 	 * @return a {@link java.lang.String} object
 	 */
 	@AlfProp
-	@AlfQname(qname = "bcpg:eslVersion")
+	@AlfQname(qname = "bcpg:rslVersion")
 	public String getVersion() {
 		return version;
 	}
@@ -155,7 +170,7 @@ public class EntityScoreListDataItem extends BeCPGDataObject {
 	 * @return a {@link java.util.Date} object
 	 */
 	@AlfProp
-	@AlfQname(qname = "bcpg:eslComputedDate")
+	@AlfQname(qname = "bcpg:rslComputedDate")
 	public Date getComputedDate() {
 		return computedDate;
 	}
@@ -175,7 +190,7 @@ public class EntityScoreListDataItem extends BeCPGDataObject {
 	 * @return a {@link java.lang.Double} object
 	 */
 	@AlfProp
-	@AlfQname(qname = "bcpg:eslPreviousValue")
+	@AlfQname(qname = "bcpg:rslPreviousValue")
 	public Double getPreviousValue() {
 		return previousValue;
 	}
@@ -195,7 +210,7 @@ public class EntityScoreListDataItem extends BeCPGDataObject {
 	 * @return a {@link java.lang.String} object
 	 */
 	@AlfProp
-	@AlfQname(qname = "bcpg:eslPreviousClass")
+	@AlfQname(qname = "bcpg:rslPreviousClass")
 	public String getPreviousClass() {
 		return previousClass;
 	}
@@ -215,7 +230,7 @@ public class EntityScoreListDataItem extends BeCPGDataObject {
 	 * @return a {@link java.lang.Boolean} object
 	 */
 	@AlfProp
-	@AlfQname(qname = "bcpg:eslIsManual")
+	@AlfQname(qname = "bcpg:rslIsManual")
 	public Boolean getIsManual() {
 		return isManual;
 	}
@@ -235,7 +250,7 @@ public class EntityScoreListDataItem extends BeCPGDataObject {
 	 * @return a {@link java.lang.String} object
 	 */
 	@AlfProp
-	@AlfQname(qname = "bcpg:eslErrorLog")
+	@AlfQname(qname = "bcpg:rslErrorLog")
 	@InternalField
 	public String getErrorLog() {
 		return errorLog;
@@ -274,7 +289,7 @@ public class EntityScoreListDataItem extends BeCPGDataObject {
 		if (!super.equals(obj) || (getClass() != obj.getClass())) {
 			return false;
 		}
-		EntityScoreListDataItem other = (EntityScoreListDataItem) obj;
+		RegulatoryScoreListDataItem other = (RegulatoryScoreListDataItem) obj;
 		return Objects.equals(scoreDef, other.scoreDef) && Objects.equals(value, other.value)
 				&& Objects.equals(scoreClass, other.scoreClass);
 	}
@@ -282,6 +297,113 @@ public class EntityScoreListDataItem extends BeCPGDataObject {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "EntityScoreListDataItem [scoreDef=" + scoreDef + ", value=" + value + ", scoreClass=" + scoreClass + "]";
+		return "RegulatoryScoreListDataItem [scoreDef=" + scoreDef + ", value=" + value + ", scoreClass=" + scoreClass + "]";
 	}
+
+	/**
+	 * Markets the published score applies to, copied from its definition so the score can be
+	 * read by market without walking back to the administration.
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:regulatoryCountry")
+	public List<NodeRef> getCountries() {
+		return countries;
+	}
+
+	/**
+	 * <p>Setter for the field <code>countries</code>.</p>
+	 *
+	 * @param countries a {@link java.util.List} object
+	 */
+	public void setCountries(List<NodeRef> countries) {
+		this.countries = countries;
+	}
+
+	/**
+	 * Usages the published score applies to.
+	 *
+	 * @return a {@link java.util.List} object
+	 */
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:regulatoryUsage")
+	public List<NodeRef> getUsages() {
+		return usages;
+	}
+
+	/**
+	 * <p>Setter for the field <code>usages</code>.</p>
+	 *
+	 * @param usages a {@link java.util.List} object
+	 */
+	public void setUsages(List<NodeRef> usages) {
+		this.usages = usages;
+	}
+
+
+	/**
+	 * Depth of the score in the tree of scores, zero for a score standing on its own.
+	 *
+	 * @return a {@link java.lang.Integer} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:depthLevel")
+	@InternalField
+	public Integer getDepthLevel() {
+		return depthLevel;
+	}
+
+	/**
+	 * <p>Setter for the field <code>depthLevel</code>.</p>
+	 *
+	 * @param depthLevel a {@link java.lang.Integer} object
+	 */
+	public void setDepthLevel(Integer depthLevel) {
+		this.depthLevel = depthLevel;
+	}
+
+	/**
+	 * Score this one is a sub score of.
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:parentLevel")
+	@InternalField
+	public NodeRef getParentLevel() {
+		return parentLevel;
+	}
+
+	/**
+	 * <p>Setter for the field <code>parentLevel</code>.</p>
+	 *
+	 * @param parentLevel a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	public void setParentLevel(NodeRef parentLevel) {
+		this.parentLevel = parentLevel;
+	}
+
+
+	/**
+	 * Category the score was computed for, read on the product through the property its
+	 * definition names.
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:rslCategory")
+	public String getCategory() {
+		return category;
+	}
+
+	/**
+	 * <p>Setter for the field <code>category</code>.</p>
+	 *
+	 * @param category a {@link java.lang.String} object
+	 */
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
 }

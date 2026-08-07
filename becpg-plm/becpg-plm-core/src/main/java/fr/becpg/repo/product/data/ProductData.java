@@ -56,7 +56,7 @@ import fr.becpg.repo.product.data.productList.ToxListDataItem;
 import fr.becpg.repo.product.formulation.clp.HazardClassificationFormulaContext;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.score.ScoredEntity;
-import fr.becpg.repo.score.data.EntityScoreListDataItem;
+import fr.becpg.repo.score.data.RegulatoryScoreListDataItem;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.StockListDataItem;
 import fr.becpg.repo.regulatory.RegulatoryEntity;
@@ -328,7 +328,7 @@ public class ProductData extends AbstractScorableEntity
 	 * Survey score
 	 */
 	private List<ScoreListDataItem> scoreList;
-	private List<EntityScoreListDataItem> entityScoreList;
+	private List<RegulatoryScoreListDataItem> regulatoryScoreList;
 	private List<SurveyListDataItem> surveyList;
 	private Integer productScore;
 
@@ -2615,23 +2615,23 @@ public class ProductData extends AbstractScorableEntity
 	/**
 	 * {@inheritDoc}
 	 *
-	 * <p>Getter for the field <code>entityScoreList</code>.</p>
+	 * <p>Getter for the field <code>regulatoryScoreList</code>.</p>
 	 */
 	@DataList
-	@AlfQname(qname = "bcpg:entityScoreList")
+	@AlfQname(qname = "bcpg:regulatoryScoreList")
 	@Override
-	public List<EntityScoreListDataItem> getEntityScoreList() {
-		return entityScoreList;
+	public List<RegulatoryScoreListDataItem> getRegulatoryScoreList() {
+		return regulatoryScoreList;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 *
-	 * <p>Setter for the field <code>entityScoreList</code>.</p>
+	 * <p>Setter for the field <code>regulatoryScoreList</code>.</p>
 	 */
 	@Override
-	public void setEntityScoreList(List<EntityScoreListDataItem> entityScoreList) {
-		this.entityScoreList = entityScoreList;
+	public void setRegulatoryScoreList(List<RegulatoryScoreListDataItem> regulatoryScoreList) {
+		this.regulatoryScoreList = regulatoryScoreList;
 	}
 
 	/**

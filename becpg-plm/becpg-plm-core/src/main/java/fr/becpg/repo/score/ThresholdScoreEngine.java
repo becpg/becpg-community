@@ -133,8 +133,10 @@ public class ThresholdScoreEngine {
 		ScorePart part = new ScorePart(nutCode).withLabel(threshold.getResult()).withValue(value, null)
 				.withContribution(threshold.getPoints());
 
+		// the value stays the measured amount, the share carries what it represents of the
+		// reference intake: the traffic lights print both, the batteries read the share alone
 		if ((threshold.getReferenceIntake() != null) && (threshold.getReferenceIntake() != 0d) && (value != null)) {
-			part.withValue((value / threshold.getReferenceIntake()) * 100d, PERCENT);
+			part.setShare((value / threshold.getReferenceIntake()) * 100d);
 		}
 
 		return part;

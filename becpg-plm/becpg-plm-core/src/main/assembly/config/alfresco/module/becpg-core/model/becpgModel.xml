@@ -84,6 +84,8 @@
 					<value>Warnings</value>
 					<value>Traffic</value>
 					<value>Grade</value>
+					<value>Gauge</value>
+					<value>Mark</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -112,21 +114,11 @@
 			</parameter>
 		</constraint>
 
-		<constraint name="bcpg:apAnimalProductionTypes" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-					<value></value>
-					<value>Meat</value>
-					<value>Egg</value>
-					<value>Milk</value>
-				</list>
-			</parameter>
-		</constraint>
 
 		<constraint name="bcpg:apCropGroups" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
-					<value>/System/Lists/bcpg:entityLists/EcobalyseCropGroups</value>
+					<value>/System/Scores/bcpg:entityLists/EcobalyseCropGroups</value>
 				</list>
 			</parameter>
 			<parameter name="constraintType">
@@ -1993,6 +1985,12 @@
 					<type>d:text</type>
 					<index enabled="false" />
 				</property>
+				<!-- Product property holding the category this score reads, for instance
+				     bcpg:nutrientProfileCategory or bcpg:ecoScoreCategory -->
+				<property name="bcpg:scoreDefCategoryProperty">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:scoreDefIsOfficial">
 					<type>d:boolean</type>
 					<default>false</default>
@@ -2012,29 +2010,22 @@
 				</property>
 			</properties>
 			<associations>
-				<!-- Markets the score applies to, empty meaning every market -->
-				<association name="bcpg:scoreDefCountries">
+				<!-- Score this one is a sub score of, empty for a score standing on its own -->
+				<association name="bcpg:scoreDefParent">
 					<source>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:geoOrigin</class>
-						<many>true</many>
-					</target>
-				</association>
-				<!-- Usages the score applies to, empty meaning every usage -->
-				<association name="bcpg:scoreDefUsages">
-					<source>
+						<class>bcpg:scoreDefinition</class>
 						<mandatory>false</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>bcpg:regulatoryUsage</class>
-						<many>true</many>
+						<many>false</many>
 					</target>
 				</association>
 			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:regulatoryScopeAspect</aspect>
+			</mandatory-aspects>
 		</type>
 
 		<!-- Thresholds of a score definition, one line per nutrient and per category -->
@@ -3098,58 +3089,65 @@
 		</type>
 
 		<!-- Computed scores of an entity, one line per score definition -->
-		<type name="bcpg:entityScoreList">
+		<type name="bcpg:regulatoryScoreList">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
-				<property name="bcpg:eslValue">
+				<property name="bcpg:rslValue">
 					<type>d:double</type>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>true</facetable>
 					</index>
 				</property>
-				<property name="bcpg:eslClass">
+				<property name="bcpg:rslClass">
 					<type>d:text</type>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>true</facetable>
 					</index>
 				</property>
-				<property name="bcpg:eslDetails">
+				<property name="bcpg:rslDetails">
 					<type>d:text</type>
 					<index enabled="false" />
 				</property>
-				<property name="bcpg:eslVersion">
+				<property name="bcpg:rslVersion">
 					<type>d:text</type>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>true</facetable>
 					</index>
 				</property>
-				<property name="bcpg:eslComputedDate">
+				<property name="bcpg:rslComputedDate">
 					<type>d:datetime</type>
 					<index enabled="false" />
 				</property>
-				<property name="bcpg:eslPreviousValue">
+				<property name="bcpg:rslPreviousValue">
 					<type>d:double</type>
 					<index enabled="false" />
 				</property>
-				<property name="bcpg:eslPreviousClass">
+				<property name="bcpg:rslPreviousClass">
 					<type>d:text</type>
 					<index enabled="false" />
 				</property>
-				<property name="bcpg:eslIsManual">
+				<property name="bcpg:rslIsManual">
 					<type>d:boolean</type>
 					<default>false</default>
 					<index enabled="false" />
 				</property>
-				<property name="bcpg:eslErrorLog">
+				<property name="bcpg:rslCategory">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="bcpg:rslErrorLog">
 					<type>d:text</type>
 					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
-				<association name="bcpg:eslScoreDef">
+				<association name="bcpg:rslScoreDef">
 					<source>
 						<mandatory>false</mandatory>
 						<many>true</many>
@@ -3161,6 +3159,10 @@
 					</target>
 				</association>
 			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:depthLevelAspect</aspect>
+				<aspect>bcpg:regulatoryScopeAspect</aspect>
+			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:priceList">
@@ -6670,6 +6672,8 @@
 		</aspect>
 
 		<!-- Farming practices feeding the non-LCA complements of the environmental cost -->
+		<!-- Farming qualifiers of a raw material. The quantities they used to hold are
+		     characteristics of the life cycle list, so a new practice is reference data -->
 		<aspect name="bcpg:agriculturalPracticeAspect">
 			<properties>
 				<property name="bcpg:apScenario">
@@ -6691,44 +6695,6 @@
 					<constraints>
 						<constraint ref="bcpg:apCropGroups" />
 					</constraints>
-				</property>
-				<property name="bcpg:apLandOccupation">
-					<type>d:double</type>
-					<index enabled="false" />
-				</property>
-				<property name="bcpg:apHedges">
-					<type>d:double</type>
-					<index enabled="false" />
-				</property>
-				<property name="bcpg:apPlotSize">
-					<type>d:double</type>
-					<index enabled="false" />
-				</property>
-				<property name="bcpg:apCropDiversity">
-					<type>d:double</type>
-					<index enabled="false" />
-				</property>
-				<property name="bcpg:apPermanentPasture">
-					<type>d:double</type>
-					<index enabled="false" />
-				</property>
-				<property name="bcpg:apTemporaryPasture">
-					<type>d:double</type>
-					<index enabled="false" />
-				</property>
-				<property name="bcpg:apAnimalProductionType">
-					<type>d:text</type>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					</index>
-					<constraints>
-						<constraint ref="bcpg:apAnimalProductionTypes" />
-					</constraints>
-				</property>
-				<property name="bcpg:apLivestockUnitPerKg">
-					<type>d:double</type>
-					<index enabled="false" />
 				</property>
 			</properties>
 		</aspect>
@@ -7284,6 +7250,32 @@
 					<index enabled="false"></index>
 				</property>
 			</properties>
+		</aspect>
+
+		<!-- Market and usage a score applies to, shared by the definition and the published score -->
+		<aspect name="bcpg:regulatoryScopeAspect">
+			<associations>
+				<association name="bcpg:regulatoryCountry">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:geoOrigin</class>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:regulatoryUsage">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:regulatoryUsage</class>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
 		</aspect>
 
 		<aspect name="bcpg:regulatoryAspect">

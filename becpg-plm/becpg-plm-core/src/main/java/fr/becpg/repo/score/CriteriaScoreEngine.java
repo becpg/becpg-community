@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.project.formulation.ScoreRangeConverter;
 import fr.becpg.repo.score.data.ScoreDefinitionItem;
@@ -184,7 +185,13 @@ public class CriteriaScoreEngine {
 	private ScorePart toScorePart(ScoreListDataItem item) {
 		String label = (String) nodeService.getProperty(item.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME);
 
-		return new ScorePart(item.getCharactNodeRef().getId()).withLabel(label).withValue(item.getScore(), null)
+		// the criterion is named by its code, a node reference would say nothing in a breakdown
+		String code = (String) nodeService.getProperty(item.getCharactNodeRef(), ProjectModel.PROP_SCORE_CRITERION_TYPE);
+		if ((code == null) || code.isBlank()) {
+			code = (label != null) ? label : item.getCharactNodeRef().getId();
+		}
+
+		return new ScorePart(code).withLabel(label).withValue(item.getScore(), null)
 				.withCoefficients(null, item.getWeight()).withContribution((item.getScore() * item.getWeight()) / MAX_SCORE);
 	}
 

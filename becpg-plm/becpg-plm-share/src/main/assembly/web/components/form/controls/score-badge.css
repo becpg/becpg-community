@@ -2,28 +2,35 @@
  * Generic score badge, driven by the scale of the score definition.
  * Repository badges are served as <img>; when none exists the image errors out and the
  * fallback classes below take over, so a repository without custom badges keeps rendering.
+ *
+ * Every rule carries the .score-badge ancestor and is repeated under .datagrid: the project
+ * score list styles span[class^="score-"] in black, and that selector would otherwise win.
  */
 
-.score-badge {
+.score-badge,
+.datagrid .score-badge {
     display: inline-block;
     vertical-align: middle;
     line-height: normal;
     word-spacing: normal;
 }
 
-.score-badge-img {
+.score-badge .score-badge-img,
+.datagrid .score-badge .score-badge-img {
     max-height: 50px;
     max-width: 120px;
     vertical-align: middle;
 }
 
-.score-badge-value {
+.score-badge .score-badge-value,
+.datagrid .score-badge .score-badge-value {
     font-weight: bold;
     padding-left: 4px;
     vertical-align: middle;
 }
 
-.score-badge-unit {
+.score-badge .score-badge-unit,
+.datagrid .score-badge .score-badge-unit {
     color: #666;
     padding-left: 2px;
     font-size: 11px;
@@ -31,7 +38,8 @@
 
 /* Letter scale, same colour language as the nutrient class chips */
 
-.score-badge-letter {
+.score-badge .score-badge-letter,
+.datagrid .score-badge .score-badge-letter {
     border: 0 none;
     border-radius: 5px;
     color: white;
@@ -44,29 +52,61 @@
     width: 15px;
 }
 
-.score-badge-letter-a {
+/* the reached class stands out, the others stay muted like on the printed marks */
+
+.score-badge .score-badge-scale,
+.datagrid .score-badge .score-badge-scale {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.score-badge .score-badge-scale .score-badge-letter,
+.datagrid .score-badge .score-badge-scale .score-badge-letter {
+    font-size: 13px;
+    height: 14px;
+    opacity: 0.35;
+    padding: 4px;
+    width: 11px;
+}
+
+.score-badge .score-badge-scale .score-badge-letter-current,
+.datagrid .score-badge .score-badge-scale .score-badge-letter-current {
+    font-size: 17px;
+    height: 20px;
+    opacity: 1;
+    padding: 7px;
+    width: 15px;
+}
+
+.score-badge .score-badge-letter-a,
+.datagrid .score-badge .score-badge-letter-a {
     background: #00853f;
 }
 
-.score-badge-letter-b {
+.score-badge .score-badge-letter-b,
+.datagrid .score-badge .score-badge-letter-b {
     background: #64bf21;
 }
 
-.score-badge-letter-c {
+.score-badge .score-badge-letter-c,
+.datagrid .score-badge .score-badge-letter-c {
     background: #ffc800;
 }
 
-.score-badge-letter-d {
+.score-badge .score-badge-letter-d,
+.datagrid .score-badge .score-badge-letter-d {
     background: #ff7600;
 }
 
-.score-badge-letter-e {
+.score-badge .score-badge-letter-e,
+.datagrid .score-badge .score-badge-letter-e {
     background: #ff0100;
 }
 
 /* Stars scale, Health Star Rating and the like */
 
-.score-badge-stars {
+.score-badge .score-badge-stars,
+.datagrid .score-badge .score-badge-stars {
     color: #f0a30a;
     font-size: 16px;
     letter-spacing: 1px;
@@ -74,47 +114,114 @@
 
 /* Warnings scale, one pictogram per warning */
 
-.score-badge-warning {
-    background: #000;
+.score-badge .score-badge-warning-octagon,
+.datagrid .score-badge .score-badge-warning-octagon {
+    clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+    border: 0 none;
+    height: 62px;
+    padding: 12px 4px;
+    width: 62px;
+}
+
+.score-badge .score-badge-warning-circle,
+.datagrid .score-badge .score-badge-warning-circle {
+    background: #d8232a;
+    border-color: #d8232a;
     border-radius: 50%;
+    height: 62px;
+    padding: 12px 4px;
+    width: 62px;
+}
+
+.score-badge .score-badge-warning,
+.datagrid .score-badge .score-badge-warning {
+    background: #000;
+    border: 2px solid #000;
+    border-radius: 4px;
     color: white;
     display: inline-block;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: bold;
-    height: 22px;
-    line-height: 22px;
-    margin-right: 2px;
+    box-sizing: border-box;
+    line-height: 11px;
+    margin: 0 3px 3px 0;
+    overflow: hidden;
+    padding: 6px 4px;
     text-align: center;
-    width: 22px;
+    text-transform: uppercase;
+    vertical-align: middle;
+    width: 72px;
 }
 
 /* Traffic lights scale, one light per part */
 
-.score-badge-traffic {
+.score-badge .score-badge-traffic,
+.datagrid .score-badge .score-badge-traffic {
     border-radius: 3px;
     color: white;
     display: inline-block;
-    font-size: 11px;
-    margin-right: 2px;
-    padding: 2px 5px;
+    font-size: 10px;
+    line-height: 13px;
+    margin: 0 2px 2px 0;
+    min-width: 46px;
+    padding: 3px 5px;
+    text-align: center;
+    vertical-align: middle;
 }
 
-.score-badge-traffic-low {
+.score-badge .score-badge-traffic-name,
+.datagrid .score-badge .score-badge-traffic-name,
+.score-badge .score-badge-traffic-amount,
+.datagrid .score-badge .score-badge-traffic-amount,
+.score-badge .score-badge-traffic-intake,
+.datagrid .score-badge .score-badge-traffic-intake {
+    color: inherit;
+    display: block;
+    width: 100%;
+}
+
+.score-badge .score-badge-traffic-level,
+.datagrid .score-badge .score-badge-traffic-level {
+    color: inherit;
+    display: block;
+    width: 100%;
+}
+
+.score-badge .score-badge-traffic,
+.datagrid .score-badge .score-badge-traffic {
+    flex-direction: column;
+}
+
+.score-badge .score-badge-traffic-name,
+.datagrid .score-badge .score-badge-traffic-name {
+    font-weight: bold;
+}
+
+.score-badge .score-badge-traffic-level,
+.datagrid .score-badge .score-badge-traffic-level {
+    text-transform: uppercase;
+}
+
+.score-badge .score-badge-traffic-low,
+.datagrid .score-badge .score-badge-traffic-low {
     background: #00853f;
 }
 
-.score-badge-traffic-medium {
+.score-badge .score-badge-traffic-medium,
+.datagrid .score-badge .score-badge-traffic-medium {
     background: #ffc800;
     color: #333;
 }
 
-.score-badge-traffic-high {
+.score-badge .score-badge-traffic-high,
+.datagrid .score-badge .score-badge-traffic-high {
     background: #ff0100;
 }
 
 /* Grade scale, named grade without ordering */
 
-.score-badge-grade {
+.score-badge .score-badge-grade,
+.datagrid .score-badge .score-badge-grade {
     background: #4a4a4a;
     border-radius: 3px;
     color: white;
@@ -123,7 +230,8 @@
     padding: 3px 7px;
 }
 
-.score-badge-error {
+.score-badge .score-badge-error,
+.datagrid .score-badge .score-badge-error {
     background: url("../../images/states/warning-16.png") no-repeat;
     padding-left: 20px;
 }
@@ -164,3 +272,187 @@
     height: 8px;
     vertical-align: middle;
 }
+
+/* Numeric scale with no aggregated verdict, one cell per part */
+
+.score-badge .score-badge-part,
+.datagrid .score-badge .score-badge-part {
+    background: #f0f0f0;
+    border: 1px solid #c8c8c8;
+    border-radius: 3px;
+    color: #333;
+    display: inline-block;
+    flex-direction: column;
+    font-size: 10px;
+    line-height: 13px;
+    margin: 0 2px 2px 0;
+    min-width: 46px;
+    padding: 3px 5px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.score-badge .score-badge-part-name,
+.datagrid .score-badge .score-badge-part-name,
+.score-badge .score-badge-part-amount,
+.datagrid .score-badge .score-badge-part-amount {
+    color: inherit;
+    display: block;
+    width: 100%;
+}
+
+.score-badge .score-badge-part-amount,
+.datagrid .score-badge .score-badge-part-amount {
+    font-weight: bold;
+}
+
+/* NutrInform battery: one cell per nutrient, filled to its share of the reference intake */
+
+.score-badge .score-badge-battery,
+.datagrid .score-badge .score-badge-battery {
+    display: inline-block;
+    font-size: 10px;
+    line-height: 13px;
+    margin: 0 3px 2px 0;
+    min-width: 52px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.score-badge .score-badge-battery-name,
+.datagrid .score-badge .score-badge-battery-name,
+.score-badge .score-badge-battery-amount,
+.datagrid .score-badge .score-badge-battery-amount {
+    color: #333;
+    display: block;
+    width: 100%;
+}
+
+.score-badge .score-badge-battery-amount,
+.datagrid .score-badge .score-badge-battery-amount {
+    font-weight: bold;
+}
+
+.score-badge .score-badge-battery-body,
+.datagrid .score-badge .score-badge-battery-body {
+    background: #fff;
+    border: 2px solid #1a3d7c;
+    border-radius: 2px;
+    display: block;
+    height: 10px;
+    margin: 1px auto;
+    position: relative;
+    width: 44px;
+}
+
+.score-badge .score-badge-battery-body:after,
+.datagrid .score-badge .score-badge-battery-body:after {
+    background: #1a3d7c;
+    content: "";
+    height: 4px;
+    position: absolute;
+    right: -4px;
+    top: 1px;
+    width: 3px;
+}
+
+.score-badge .score-badge-battery-fill,
+.datagrid .score-badge .score-badge-battery-fill {
+    background: #1a3d7c;
+    display: block;
+    height: 100%;
+}
+
+/* Gauge scale: the whole range as a colour bar, with a marker on the level reached */
+
+.score-badge .score-badge-gauge,
+.datagrid .score-badge .score-badge-gauge {
+    background: #fff;
+    border-radius: 3px;
+    display: inline-block;
+    font-size: 0;
+    line-height: 0;
+    overflow: hidden;
+    padding: 0;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.score-badge .score-badge-gauge-step,
+.datagrid .score-badge .score-badge-gauge-step {
+    display: inline-block;
+    height: 16px;
+    position: relative;
+    width: 26px;
+}
+
+.score-badge .score-badge-gauge-step-a,
+.datagrid .score-badge .score-badge-gauge-step-a {
+    background: #00853f;
+}
+
+.score-badge .score-badge-gauge-step-b,
+.datagrid .score-badge .score-badge-gauge-step-b {
+    background: #86bc2a;
+}
+
+.score-badge .score-badge-gauge-step-c,
+.datagrid .score-badge .score-badge-gauge-step-c {
+    background: #ffc800;
+}
+
+.score-badge .score-badge-gauge-step-d,
+.datagrid .score-badge .score-badge-gauge-step-d {
+    background: #ff7600;
+}
+
+.score-badge .score-badge-gauge-step-e,
+.datagrid .score-badge .score-badge-gauge-step-e {
+    background: #ff0100;
+}
+
+.score-badge .score-badge-gauge-marker,
+.datagrid .score-badge .score-badge-gauge-marker {
+    background: transparent;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+    display: block;
+    height: 8px;
+    left: 50%;
+    margin: -7px 0 0 -7px;
+    position: absolute;
+    top: 50%;
+    width: 8px;
+}
+
+/* Mark scale: one row per theme, the way the Planet-score states them */
+
+.score-badge .score-badge-mark,
+.datagrid .score-badge .score-badge-mark {
+    border: 2px solid #1a6b3c;
+    border-radius: 4px;
+    display: inline-block;
+    padding: 4px 6px;
+    vertical-align: middle;
+}
+
+.score-badge .score-badge-mark-row,
+.datagrid .score-badge .score-badge-mark-row {
+    display: block;
+    line-height: 18px;
+    white-space: nowrap;
+}
+
+.score-badge .score-badge-mark-name,
+.datagrid .score-badge .score-badge-mark-name {
+    color: #1a3d7c;
+    display: inline-block;
+    font-size: 9px;
+    font-weight: bold;
+    min-width: 92px;
+    text-align: left;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+

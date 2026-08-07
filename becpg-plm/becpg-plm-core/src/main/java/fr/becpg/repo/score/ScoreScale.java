@@ -26,7 +26,9 @@ public enum ScoreScale {
 	Traffic,
 
 	/** Named grade without ordering (NOVA group, EcoVadis medal) */
-	Grade;
+	Grade,
+	Gauge,
+	Mark;
 
 	/**
 	 * <p>Parses a scale name, falling back on {@link #Numeric} when unknown.</p>

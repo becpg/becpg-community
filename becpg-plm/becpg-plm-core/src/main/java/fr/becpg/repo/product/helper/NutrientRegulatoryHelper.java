@@ -93,6 +93,17 @@ public class NutrientRegulatoryHelper {
 	public static NutriScoreContext buildContext(ProductData productData) throws JSONException {
 		return retrieveNutrientPlugin(productData.getNutrientProfileVersion()).buildContext(productData);
 	}
+
+	/**
+	 * Version of the method actually applied to a product, once the configured default has
+	 * been resolved. The persisted breakdown does not carry it.
+	 *
+	 * @param productData a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.lang.String} object
+	 */
+	public static String resolveVersion(ProductData productData) {
+		return retrieveNutrientPlugin(productData.getNutrientProfileVersion()).getVersion();
+	}
 	
 	/**
 	 * <p>retrieveNutrientPlugin.</p>

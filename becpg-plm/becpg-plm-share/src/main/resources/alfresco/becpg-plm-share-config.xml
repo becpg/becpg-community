@@ -134,7 +134,7 @@
 			<list id="allergenList" index="110" />
 			<list id="costList" index="120" />
 			<list id="lcaList" index="125" />
-			<list id="entityScoreList" index="126" />
+			<list id="regulatoryScoreList" index="126" />
 			<list id="priceList" index="130" />
 			<list id="nutList" index="140" />
 			<list id="ingLabelingList" index="150" view="true" />

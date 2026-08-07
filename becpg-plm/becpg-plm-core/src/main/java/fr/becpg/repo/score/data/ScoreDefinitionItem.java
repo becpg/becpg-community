@@ -13,6 +13,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import fr.becpg.repo.repository.annotation.AlfCacheable;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
@@ -70,6 +71,10 @@ public class ScoreDefinitionItem extends BeCPGDataObject {
 	private List<NodeRef> countries = new ArrayList<>();
 
 	private List<NodeRef> usages = new ArrayList<>();
+
+	private NodeRef parent;
+
+	private String categoryProperty;
 
 	private String aggregation;
 
@@ -189,7 +194,7 @@ public class ScoreDefinitionItem extends BeCPGDataObject {
 	 * @return a {@link java.util.List} object
 	 */
 	@AlfMultiAssoc
-	@AlfQname(qname = "bcpg:scoreDefCountries")
+	@AlfQname(qname = "bcpg:regulatoryCountry")
 	public List<NodeRef> getCountries() {
 		return countries;
 	}
@@ -209,7 +214,7 @@ public class ScoreDefinitionItem extends BeCPGDataObject {
 	 * @return a {@link java.util.List} object
 	 */
 	@AlfMultiAssoc
-	@AlfQname(qname = "bcpg:scoreDefUsages")
+	@AlfQname(qname = "bcpg:regulatoryUsage")
 	public List<NodeRef> getUsages() {
 		return usages;
 	}
@@ -639,4 +644,47 @@ public class ScoreDefinitionItem extends BeCPGDataObject {
 	public String toString() {
 		return "ScoreDefinitionItem [code=" + code + ", version=" + version + ", engine=" + engine + ", scale=" + scale + "]";
 	}
+
+	/**
+	 * Score this one is a sub score of, so the published scores can be read as a tree.
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	@AlfSingleAssoc
+	@AlfQname(qname = "bcpg:scoreDefParent")
+	public NodeRef getParent() {
+		return parent;
+	}
+
+	/**
+	 * <p>Setter for the field <code>parent</code>.</p>
+	 *
+	 * @param parent a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	public void setParent(NodeRef parent) {
+		this.parent = parent;
+	}
+
+
+	/**
+	 * Product property holding the category this score reads, for instance the nutrient
+	 * profile category or the eco score one. Empty when the score needs no category.
+	 *
+	 * @return a {@link java.lang.String} object
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:scoreDefCategoryProperty")
+	public String getCategoryProperty() {
+		return categoryProperty;
+	}
+
+	/**
+	 * <p>Setter for the field <code>categoryProperty</code>.</p>
+	 *
+	 * @param categoryProperty a {@link java.lang.String} object
+	 */
+	public void setCategoryProperty(String categoryProperty) {
+		this.categoryProperty = categoryProperty;
+	}
+
 }

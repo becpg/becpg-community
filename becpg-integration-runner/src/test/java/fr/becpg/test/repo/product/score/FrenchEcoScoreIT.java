@@ -30,7 +30,7 @@ import fr.becpg.repo.product.formulation.score.FrenchEcoScore;
 import fr.becpg.repo.score.ScoreContext;
 import fr.becpg.repo.score.ScoreDefinitionService;
 import fr.becpg.repo.score.ScoreResultWriter;
-import fr.becpg.repo.score.data.EntityScoreListDataItem;
+import fr.becpg.repo.score.data.RegulatoryScoreListDataItem;
 import fr.becpg.test.repo.score.ScoreDefinitionTestHelper;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
@@ -91,7 +91,7 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 			frenchEcoScore.getScoreContext(finishedProductData)
 					.ifPresent(context -> scoreResultWriter.write(finishedProductData, context));
 
-			EntityScoreListDataItem publishedScore = ScoreDefinitionTestHelper.findScore(finishedProductData, greenScoreDefinition)
+			RegulatoryScoreListDataItem publishedScore = ScoreDefinitionTestHelper.findScore(finishedProductData, greenScoreDefinition)
 					.orElseThrow(() -> new AssertionError("The Green-Score was not published in the score list"));
 
 			Assert.assertEquals("C", publishedScore.getScoreClass());

@@ -5,13 +5,13 @@ package fr.becpg.repo.score;
 
 import java.util.List;
 
-import fr.becpg.repo.score.data.EntityScoreListDataItem;
+import fr.becpg.repo.score.data.RegulatoryScoreListDataItem;
 
 /**
  * Entity able to carry several computed scores at once.
  *
  * <p>Implementing this interface is what makes an entity eligible to the score
- * framework: the orchestrator writes one {@link fr.becpg.repo.score.data.EntityScoreListDataItem}
+ * framework: the orchestrator writes one {@link fr.becpg.repo.score.data.RegulatoryScoreListDataItem}
  * per applicable score definition.</p>
  *
  * @author matthieu
@@ -19,17 +19,17 @@ import fr.becpg.repo.score.data.EntityScoreListDataItem;
 public interface ScoredEntity {
 
 	/**
-	 * <p>getEntityScoreList.</p>
+	 * <p>getRegulatoryScoreList.</p>
 	 *
 	 * @return the computed scores of the entity, may be null when the list is not loaded
 	 */
-	List<EntityScoreListDataItem> getEntityScoreList();
+	List<RegulatoryScoreListDataItem> getRegulatoryScoreList();
 
 	/**
-	 * <p>setEntityScoreList.</p>
+	 * <p>setRegulatoryScoreList.</p>
 	 *
-	 * @param entityScoreList the computed scores of the entity
+	 * @param regulatoryScoreList the computed scores of the entity
 	 */
-	void setEntityScoreList(List<EntityScoreListDataItem> entityScoreList);
+	void setRegulatoryScoreList(List<RegulatoryScoreListDataItem> regulatoryScoreList);
 
 }

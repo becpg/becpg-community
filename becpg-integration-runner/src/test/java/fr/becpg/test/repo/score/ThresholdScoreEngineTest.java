@@ -119,8 +119,8 @@ public class ThresholdScoreEngineTest {
 
 		ScoreContext context = engine.compute(product, definition);
 
-		assertEquals(50d, partOf(context, SALT).getValue(), PRECISION);
-		assertEquals("%", partOf(context, SALT).getUnit());
+		assertEquals(3d, partOf(context, SALT).getValue(), PRECISION);
+		assertEquals(50d, partOf(context, SALT).getShare(), PRECISION);
 	}
 
 	@Test
