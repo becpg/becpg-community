@@ -133,6 +133,27 @@
     }
 
     /**
+     * The marks are drawn as inline SVG rather than styled spans: a glyph centred by
+     * text-anchor and dominant-baseline lands exactly in its shape, whatever the font and
+     * the line height of the page, which no amount of padding on a span achieves.
+     */
+    var LETTER_COLOURS = { A: "#00853f", B: "#64bf21", C: "#ffc800", D: "#ff7600", E: "#ff0100" };
+
+    function svgText(x, y, text, fill, size, weight) {
+        return '<text x="' + x + '" y="' + y + '" text-anchor="middle" dominant-baseline="central"'
+            + ' font-family="Arial, Helvetica, sans-serif" font-size="' + size + '"'
+            + ' font-weight="' + (weight || "bold") + '" fill="' + fill + '">'
+            + Alfresco.util.encodeHTML(text) + "</text>";
+    }
+
+    function svgOpen(width, height, cssClass, title) {
+        return '<svg class="' + cssClass + '" width="' + width + '" height="' + height + '"'
+            + ' viewBox="0 0 ' + width + " " + height + '" role="img" aria-label="'
+            + beCPG.util.encodeAttr(title || "") + '">'
+            + (title ? "<title>" + Alfresco.util.encodeHTML(title) + "</title>" : "");
+    }
+
+    /**
      * Draws the whole scale with the reached class emphasised, the way the official marks
      * do, rather than the single chip that told nothing of the range.
      */
@@ -143,20 +164,36 @@
 
         var upper = scoreClass.toString().toUpperCase();
         var reached = false;
-        var html = "";
 
-        for (var i = 0; i < LETTER_CLASSES.length; i++) {
-            var letter = LETTER_CLASSES[i];
-            var isCurrent = letter === upper;
-            reached = reached || isCurrent;
-            html += '<span class="score-badge-letter score-badge-letter-' + letter.toLowerCase()
-                + (isCurrent ? " score-badge-letter-current" : "") + '">' + letter + "</span>";
+        for (var c = 0; c < LETTER_CLASSES.length; c++) {
+            reached = reached || LETTER_CLASSES[c] === upper;
         }
-
         if (!reached) {
             return '<span class="score-badge-error">' + Alfresco.util.encodeHTML(scoreClass.toString()) + "</span>";
         }
-        return '<span class="score-badge-scale">' + html + "</span>";
+
+        var cell = 17;
+        var grown = 25;
+        var height = grown + 4;
+        var width = (LETTER_CLASSES.length * cell) + (grown - cell) + 4;
+        var html = svgOpen(width, height, "score-badge-scale", upper);
+        var x = 2;
+
+        for (var i = 0; i < LETTER_CLASSES.length; i++) {
+            var letter = LETTER_CLASSES[i];
+            var current = letter === upper;
+            var size = current ? grown : cell;
+            var y = (height - size) / 2;
+
+            html += '<rect x="' + x + '" y="' + y + '" width="' + size + '" height="' + size + '" rx="3"'
+                + ' fill="' + LETTER_COLOURS[letter] + '"' + (current ? ' stroke="#333" stroke-width="1.5"' : "")
+                + (current ? "" : ' opacity="0.45"') + " />";
+            html += svgText(x + (size / 2), y + (size / 2), letter, "#fff", current ? 16 : 11);
+
+            x += size;
+        }
+
+        return html + "</svg>";
     }
 
     function renderStars(value) {
@@ -183,15 +220,43 @@
         if (isNaN(count)) {
             count = details.parts ? details.parts.length : 0;
         }
+
         var shape = warningShape(details.code);
         var html = "";
+
         for (var i = 0; i < count; i++) {
             var part = details.parts && details.parts[i] ? details.parts[i] : null;
-            var label = part && part.label ? part.label : "!";
-            html += '<span class="score-badge-warning score-badge-warning-' + shape + '" title="'
-                + beCPG.util.encodeAttr(label) + '">' + Alfresco.util.encodeHTML(label) + "</span>";
+            html += renderWarningMark(shape, part && part.label ? part.label : "!");
         }
         return html;
+    }
+
+    /**
+     * One warning mark. The wording is stacked over as many lines as it has words, so a
+     * three word mention stays inside its shape instead of overflowing it.
+     */
+    function renderWarningMark(shape, label) {
+        var size = 54;
+        var fill = shape === "circle" ? "#d0021b" : "#000";
+        var html = svgOpen(size, size, "score-badge-warning", label);
+
+        if (shape === "circle") {
+            html += '<circle cx="27" cy="27" r="26" fill="' + fill + '" />';
+        } else if (shape === "rect") {
+            html += '<rect x="1" y="8" width="52" height="38" rx="2" fill="' + fill + '" />';
+        } else {
+            html += '<polygon points="16,1 38,1 53,16 53,38 38,53 16,53 1,38 1,16" fill="' + fill + '" />';
+        }
+
+        var words = label.toString().split(/\s+/);
+        var lineHeight = words.length > 3 ? 9 : 11;
+        var top = 27 - (((words.length - 1) * lineHeight) / 2);
+
+        for (var i = 0; i < words.length; i++) {
+            html += svgText(27, top + (i * lineHeight), words[i], "#fff", words.length > 3 ? 7 : 8);
+        }
+
+        return html + "</svg>";
     }
 
     /**
@@ -236,22 +301,51 @@
         return "high";
     }
 
+    var TRAFFIC_COLOURS = { low: "#00853f", medium: "#ffc800", high: "#ff0100" };
+
     function renderTraffic(details) {
         var parts = details.parts || [];
         var html = "";
+
         for (var i = 0; i < parts.length; i++) {
-            var part = parts[i];
-            var level = part.label ? part.label : "";
-            var name = NUTRIENT_LABELS[part.code] || part.code;
-            var amount = isBlank(part.value) ? "" : formatNumber(part.value) + (isBlank(part.unit) ? " g" : " " + part.unit);
-            var intake = isBlank(part.share) ? "" : formatNumber(part.share, 0) + " %";
-            html += '<span class="score-badge-traffic score-badge-traffic-' + trafficLevel(part) + '">'
-                + '<span class="score-badge-traffic-name">' + Alfresco.util.encodeHTML(name) + "</span>"
-                + (amount ? '<span class="score-badge-traffic-amount">' + Alfresco.util.encodeHTML(amount) + "</span>" : "")
-                + (intake ? '<span class="score-badge-traffic-intake">' + Alfresco.util.encodeHTML(intake) + "</span>" : "")
-                + '<span class="score-badge-traffic-level">' + Alfresco.util.encodeHTML(level) + "</span></span>";
+            html += renderTrafficLight(parts[i]);
         }
         return html;
+    }
+
+    /**
+     * One traffic light: the nutrient, the amount it holds, the share of the reference
+     * intake it covers and the verdict, on four evenly spaced lines of one pill.
+     */
+    function renderTrafficLight(part) {
+        var level = trafficLevel(part);
+        var name = NUTRIENT_LABELS[part.code] || part.code;
+        var amount = isBlank(part.value) ? "" : formatNumber(part.value) + (isBlank(part.unit) ? " g" : " " + part.unit);
+        var intake = isBlank(part.share) ? "" : formatNumber(part.share, 0) + " %";
+        var verdict = part.label ? part.label : "";
+
+        var lines = [name, amount, intake, verdict];
+        var width = 62;
+        var height = 68;
+        var ink = level === "medium" ? "#333" : "#fff";
+        var html = svgOpen(width, height, "score-badge-traffic", name + " " + verdict);
+
+        html += '<rect x="1" y="1" width="' + (width - 2) + '" height="' + (height - 2) + '" rx="4" fill="'
+            + TRAFFIC_COLOURS[level] + '" />';
+
+        var shown = [];
+        for (var i = 0; i < lines.length; i++) {
+            if (!isBlank(lines[i])) {
+                shown.push(lines[i]);
+            }
+        }
+
+        var step = (height - 10) / shown.length;
+        for (var j = 0; j < shown.length; j++) {
+            html += svgText(width / 2, 5 + (step * (j + 0.5)), shown[j], ink, 10, j === 0 ? "bold" : "normal");
+        }
+
+        return html + "</svg>";
     }
 
     /**
