@@ -77,7 +77,7 @@
      * Text summary of a score, shown on hover: the verdict then one line per part, so the
      * breakdown is reachable without opening the detail panel.
      */
-    function buildTooltip(details) {
+    function buildTooltip(details, scope) {
         var lines = [];
         var header = details.code || "";
 
@@ -93,7 +93,7 @@
         var parts = details.parts || [];
         for (var i = 0; i < parts.length; i++) {
             var part = parts[i];
-            var line = part.label ? part.label : part.code;
+            var line = partLabel(scope, part);
 
             // the marks whose axes are graded on their own scale carry no value, only a class
             if (!isBlank(part["class"])) {
@@ -667,7 +667,7 @@
     /**
      * Renders the badge of a score, without its detail.
      */
-    beCPG.util.score.renderBadge = function(details) {
+    beCPG.util.score.renderBadge = function(details, scope) {
         if (!details) {
             return "";
         }
@@ -696,15 +696,17 @@
         // any score may carry its official artwork, the shipped CSS is only the fallback
         var body = renderRepositoryBadge(details.code, details["class"], fallback);
 
-        return '<span class="score-badge" title="' + beCPG.util.encodeAttr(buildTooltip(details)) + '">' + body + "</span>";
+        return '<span class="score-badge" title="' + beCPG.util.encodeAttr(buildTooltip(details, scope)) + '">' + body + "</span>";
     };
 
     function partLabel(scope, part) {
         if (part.label) {
             return part.label;
         }
+
         var key = "score.part." + part.code;
-        var translated = scope && scope.msg ? scope.msg(key) : key;
+        var translated = (scope && scope.msg) ? scope.msg(key) : key;
+
         return translated === key ? part.code : translated;
     }
 
