@@ -310,6 +310,7 @@
 							<ref bean="repEcoModulation"/>
 							<ref bean="novaClassification"/>
 							<ref bean="yukaScore"/>
+							<ref bean="animalWelfareLabel"/>
 						</list>
 					</property>
 				</bean>
@@ -366,6 +367,7 @@
 							<ref bean="repEcoModulation"/>
 							<ref bean="novaClassification"/>
 							<ref bean="yukaScore"/>
+							<ref bean="animalWelfareLabel"/>
 						</list>
 					</property>
 				</bean>
