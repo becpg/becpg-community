@@ -1,17 +1,18 @@
 package fr.becpg.repo.product.formulation.score;
 
-import java.io.Serializable;
-import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PackModel;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ScorableEntity;
 import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
@@ -26,12 +27,13 @@ import fr.becpg.repo.score.data.ScoreThresholdListDataItem;
 /**
  * Computes the extended producer responsibility contribution of a product.
  *
- * <p>The scale is data: one threshold line per packaging material, holding its tariff per
- * kilo. The contribution is the weight of each material multiplied by its tariff, reduced by
- * the recycled content bonus when the material reaches the threshold the scheme sets.</p>
+ * <p>The scheme charges by Citeo category, not by material: several materials of the
+ * referential share a category, and it is the total weight of a category that is tariffed.
+ * The category is declared on the material itself, in {@code pack:pmEcoTaxeCategory}.</p>
  *
- * <p>The breakdown states one part per material, so the published score reads like the
- * simulation sheet it replaces.</p>
+ * <p>The scale is data: one threshold line per category, holding its tariff per kilo. The
+ * breakdown states one part per category, so the published score reads like the simulation
+ * sheet it replaces.</p>
  *
  * @author matthieu
  */
@@ -44,7 +46,7 @@ public class RepEcoModulation implements ScoreCalculatingPlugin {
 	/** Half the material recycled earns the bonus */
 	private static final double RECYCLED_THRESHOLD = 50d;
 
-	/** The bonus cuts the contribution of the material by this share */
+	/** The bonus cuts the contribution of the category by this share */
 	private static final double RECYCLED_BONUS = 0.2d;
 
 	/** Constant <code>EURO="EUR"</code> */
@@ -116,17 +118,12 @@ public class RepEcoModulation implements ScoreCalculatingPlugin {
 	 * @return a {@link fr.becpg.repo.score.ScoreContext} object
 	 */
 	private ScoreContext buildContext(ProductData product, ScoreDefinitionItem definition) {
-		ScoreContext context = new ScoreContext();
-
-		context.setCode(SCORE_CODE);
-		context.setVersion(definition.getVersion());
-		context.setScale(definition.getScale());
-		context.setUnit(EURO);
+		ScoreContext context = newContext(definition);
 
 		double total = 0d;
 
-		for (PackMaterialListDataItem line : product.getPackMaterialList()) {
-			Optional<ScorePart> part = toPart(line, definition);
+		for (Map.Entry<String, CategoryWeight> entry : weighCategories(product).entrySet()) {
+			Optional<ScorePart> part = toPart(entry.getKey(), entry.getValue(), definition);
 			if (part.isPresent()) {
 				context.getParts().add(part.get());
 				total += part.get().getContribution();
@@ -139,57 +136,78 @@ public class RepEcoModulation implements ScoreCalculatingPlugin {
 	}
 
 	/**
-	 * <p>Contribution of one material: its weight times its tariff, less the bonus.</p>
+	 * <p>newContext.</p>
 	 *
-	 * @param line a {@link fr.becpg.repo.product.data.productList.PackMaterialListDataItem} object
+	 * @param definition a {@link fr.becpg.repo.score.data.ScoreDefinitionItem} object
+	 * @return a {@link fr.becpg.repo.score.ScoreContext} object
+	 */
+	private ScoreContext newContext(ScoreDefinitionItem definition) {
+		ScoreContext context = new ScoreContext();
+
+		context.setCode(SCORE_CODE);
+		context.setVersion(definition.getVersion());
+		context.setScale(definition.getScale());
+		context.setUnit(EURO);
+
+		return context;
+	}
+
+	/**
+	 * <p>Total weight of each Citeo category, in declaration order.</p>
+	 *
+	 * @param product a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.util.Map} object, keyed by category
+	 */
+	private Map<String, CategoryWeight> weighCategories(ProductData product) {
+		Map<String, CategoryWeight> weights = new LinkedHashMap<>();
+
+		for (PackMaterialListDataItem line : product.getPackMaterialList()) {
+			String category = categoryOf(line);
+
+			if ((category != null) && (line.getPmlWeight() != null) && (line.getPmlWeight() != 0d)) {
+				weights.computeIfAbsent(category, key -> new CategoryWeight()).add(line);
+			}
+		}
+
+		return weights;
+	}
+
+	/**
+	 * <p>Contribution of one category: its total weight times its tariff, less the bonus.</p>
+	 *
+	 * @param category the Citeo category
+	 * @param weight a {@link fr.becpg.repo.product.formulation.score.RepEcoModulation.CategoryWeight} object
 	 * @param definition a {@link fr.becpg.repo.score.data.ScoreDefinitionItem} object
 	 * @return a {@link java.util.Optional} object
 	 */
-	private Optional<ScorePart> toPart(PackMaterialListDataItem line, ScoreDefinitionItem definition) {
-		if ((line.getPmlMaterial() == null) || (line.getPmlWeight() == null) || (line.getPmlWeight() == 0d)) {
-			return Optional.empty();
-		}
-
-		String code = materialCode(line.getPmlMaterial());
-		Optional<ScoreThresholdListDataItem> tariff = findTariff(definition, code);
+	private Optional<ScorePart> toPart(String category, CategoryWeight weight, ScoreDefinitionItem definition) {
+		Optional<ScoreThresholdListDataItem> tariff = findTariff(definition, category);
 
 		if (tariff.isEmpty() || (tariff.get().getPoints() == null)) {
 			return Optional.empty();
 		}
 
-		double kilos = line.getPmlWeight() / GRAMS_PER_KILO;
-		double contribution = kilos * tariff.get().getPoints() * (1d - bonus(line));
+		double kilos = weight.getWeight() / GRAMS_PER_KILO;
+		double contribution = kilos * tariff.get().getPoints() * (1d - weight.bonus());
 
-		return Optional.of(new ScorePart(code).withLabel(tariff.get().getResult()).withValue(line.getPmlWeight(), null)
+		return Optional.of(new ScorePart(category).withLabel(tariff.get().getResult()).withValue(weight.getWeight(), null)
 				.withCoefficients(null, tariff.get().getPoints()).withContribution(contribution));
-	}
-
-	/**
-	 * <p>Share of the contribution taken off by the recycled content bonus.</p>
-	 *
-	 * @param line a {@link fr.becpg.repo.product.data.productList.PackMaterialListDataItem} object
-	 * @return a double
-	 */
-	private double bonus(PackMaterialListDataItem line) {
-		Double recycled = line.getPmlRecycledPercentage();
-
-		return ((recycled != null) && (recycled >= RECYCLED_THRESHOLD)) ? RECYCLED_BONUS : 0d;
 	}
 
 	/**
 	 * <p>findTariff.</p>
 	 *
 	 * @param definition a {@link fr.becpg.repo.score.data.ScoreDefinitionItem} object
-	 * @param code the material code
+	 * @param category the Citeo category
 	 * @return a {@link java.util.Optional} object
 	 */
-	private Optional<ScoreThresholdListDataItem> findTariff(ScoreDefinitionItem definition, String code) {
-		if ((code == null) || (definition.getThresholdList() == null)) {
+	private Optional<ScoreThresholdListDataItem> findTariff(ScoreDefinitionItem definition, String category) {
+		if (definition.getThresholdList() == null) {
 			return Optional.empty();
 		}
 
 		for (ScoreThresholdListDataItem threshold : definition.getThresholdList()) {
-			if (code.equals(threshold.getNutCode())) {
+			if (category.equals(threshold.getNutCode())) {
 				return Optional.of(threshold);
 			}
 		}
@@ -198,32 +216,21 @@ public class RepEcoModulation implements ScoreCalculatingPlugin {
 	}
 
 	/**
-	 * <p>materialCode.</p>
+	 * <p>Citeo category declared on the material of a line.</p>
 	 *
-	 * @param material a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @return a {@link java.lang.String} object
+	 * @param line a {@link fr.becpg.repo.product.data.productList.PackMaterialListDataItem} object
+	 * @return a {@link java.lang.String} object, null when the material declares none
 	 */
-	private String materialCode(NodeRef material) {
-		String code = (String) nodeService.getProperty(material, BeCPGModel.PROP_CODE);
+	private String categoryOf(PackMaterialListDataItem line) {
+		NodeRef material = line.getPmlMaterial();
 
-		return ((code != null) && !code.isBlank()) ? code : normalize(nodeService.getProperty(material, ContentModel.PROP_NAME));
-	}
-
-	/**
-	 * <p>Materials are created by each repository, so their code is rarely the one of the
-	 * scale: their name is then read as a code, "Carton ondulé" standing for CARTON_ONDULE.</p>
-	 *
-	 * @param name the name of the material
-	 * @return a {@link java.lang.String} object
-	 */
-	private String normalize(Serializable name) {
-		if (name == null) {
+		if (material == null) {
 			return null;
 		}
 
-		String stripped = Normalizer.normalize(name.toString(), Normalizer.Form.NFD).replaceAll("\\p{M}", "");
+		String category = (String) nodeService.getProperty(material, PackModel.PROP_PACK_MATERIAL_ECOTAXE_CATEGORY);
 
-		return stripped.toUpperCase().replaceAll("[^A-Z0-9]+", "_");
+		return ((category == null) || category.isBlank()) ? null : category.trim();
 	}
 
 	/**
@@ -234,6 +241,46 @@ public class RepEcoModulation implements ScoreCalculatingPlugin {
 	@Override
 	public Optional<ScoreContext> getScoreContext(ScorableEntity scorableEntity) {
 		return Optional.empty();
+	}
+
+	/**
+	 * Weight of one Citeo category, and the lines it was gathered from.
+	 *
+	 * <p>The recycled content bonus is granted on the weighted average of the lines, so a
+	 * category half filled with recycled material does not earn the bonus of a category
+	 * entirely made of it.</p>
+	 */
+	private static class CategoryWeight {
+
+		private final List<PackMaterialListDataItem> lines = new ArrayList<>();
+
+		private double weight = 0d;
+
+		void add(PackMaterialListDataItem line) {
+			lines.add(line);
+			weight += line.getPmlWeight();
+		}
+
+		double getWeight() {
+			return weight;
+		}
+
+		double bonus() {
+			return recycledShare() >= RECYCLED_THRESHOLD ? RECYCLED_BONUS : 0d;
+		}
+
+		private double recycledShare() {
+			double recycled = 0d;
+
+			for (PackMaterialListDataItem line : lines) {
+				if (line.getPmlRecycledPercentage() != null) {
+					recycled += (line.getPmlWeight() * line.getPmlRecycledPercentage()) / 100d;
+				}
+			}
+
+			return weight == 0d ? 0d : (recycled / weight) * 100d;
+		}
+
 	}
 
 }
