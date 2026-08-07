@@ -3,8 +3,10 @@ package fr.becpg.test.repo.helper;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.function.Function;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.util.Pair;
@@ -108,7 +110,103 @@ public class LargeTextHelperTest {
     public void testNullMlTextReturnsEmpty() {
         assertTrue(LargeTextHelper.elipse((MLText) null).isEmpty());
     }
-    
+
+    // #35900 : each locale is weighed on its own, in UTF-8 bytes, and is never cut
+
+    private static final Function<Locale, String> NOTICE = locale -> "Content too long";
+
+    private static final int OVER = LargeTextHelper.MAX_LOCALE_SIZE_BYTES + 1;
+
+    @Test
+    public void testDropOversizedLocalesKeepsEveryLanguageThatFits() {
+        MLText mlText = new MLText();
+        // Well over the former 50000 global budget, yet each language fits its own property row
+        mlText.put(Locale.FRENCH, repeat('a', 45000));
+        mlText.put(Locale.ENGLISH, repeat('b', 45000));
+        mlText.put(Locale.GERMAN, repeat('c', 45000));
+
+        MLText result = LargeTextHelper.dropOversizedLocales(mlText, NOTICE);
+
+        assertEquals(mlText.get(Locale.FRENCH), result.get(Locale.FRENCH));
+        assertEquals(mlText.get(Locale.ENGLISH), result.get(Locale.ENGLISH));
+        assertEquals(mlText.get(Locale.GERMAN), result.get(Locale.GERMAN));
+    }
+
+    @Test
+    public void testDropOversizedLocalesDropsOnlyTheLanguageOverTheLimit() {
+        MLText mlText = new MLText();
+        mlText.put(Locale.FRENCH, repeat('a', OVER));
+        mlText.put(Locale.ENGLISH, repeat('b', 45000));
+
+        MLText result = LargeTextHelper.dropOversizedLocales(mlText, NOTICE);
+
+        assertEquals("Content too long", result.get(Locale.FRENCH));
+        assertEquals(mlText.get(Locale.ENGLISH), result.get(Locale.ENGLISH));
+        // Source is left untouched
+        assertEquals(OVER, mlText.get(Locale.FRENCH).length());
+    }
+
+    /**
+     * Ticket #35900: the column is capped in bytes, not in characters. The same character count is
+     * fine in Latin script and busts the limit in Chinese, where each ideogram costs three bytes.
+     */
+    @Test
+    public void testDropOversizedLocalesCountsUtf8BytesNotCharacters() {
+        int chars = 25000;
+        MLText mlText = new MLText();
+        mlText.put(Locale.ENGLISH, repeat('a', chars));
+        mlText.put(Locale.CHINESE, repeat('\u4e2d', chars));
+
+        MLText result = LargeTextHelper.dropOversizedLocales(mlText, NOTICE);
+
+        assertEquals(chars, mlText.get(Locale.CHINESE).getBytes(StandardCharsets.UTF_8).length / 3);
+        assertEquals(mlText.get(Locale.ENGLISH), result.get(Locale.ENGLISH));
+        assertEquals("Content too long", result.get(Locale.CHINESE));
+    }
+
+    @Test
+    public void testDropOversizedLocalesKeepsValueExactlyAtTheLimit() {
+        MLText mlText = new MLText();
+        mlText.put(Locale.FRENCH, repeat('a', LargeTextHelper.MAX_LOCALE_SIZE_BYTES));
+
+        MLText result = LargeTextHelper.dropOversizedLocales(mlText, NOTICE);
+
+        assertEquals(mlText.get(Locale.FRENCH), result.get(Locale.FRENCH));
+    }
+
+    @Test
+    public void testDropOversizedLocalesLeavesEmptyLocalesUntouched() {
+        MLText mlText = new MLText();
+        mlText.put(Locale.FRENCH, repeat('a', OVER));
+        mlText.put(Locale.GERMAN, "");
+
+        MLText result = LargeTextHelper.dropOversizedLocales(mlText, NOTICE);
+
+        assertEquals("Content too long", result.get(Locale.FRENCH));
+        // An empty language has nothing to report, it must not get a notice
+        assertEquals("", result.get(Locale.GERMAN));
+    }
+
+    @Test
+    public void testDropOversizedLocalesNeverCutsAValue() {
+        MLText mlText = new MLText();
+        mlText.put(Locale.FRENCH, htmlTable(3000));
+        mlText.put(Locale.ENGLISH, htmlTable(200));
+
+        MLText result = LargeTextHelper.dropOversizedLocales(mlText, NOTICE);
+
+        for (String value : result.values()) {
+            // Either the intact table or the notice, never a cut fragment
+            assertTrue("Value was cut: " + value, "Content too long".equals(value) || value.endsWith("</table>"));
+        }
+        assertEquals(htmlTable(200), result.get(Locale.ENGLISH));
+    }
+
+    @Test
+    public void testDropOversizedLocalesNullReturnsEmpty() {
+        assertTrue(LargeTextHelper.dropOversizedLocales(null, NOTICE).isEmpty());
+    }
+
     @Test
     public void testHtmlDiff_NoDifferences() {
         String text1 = "Hello, World!";
@@ -149,7 +247,60 @@ public class LargeTextHelperTest {
         
         String expectedHtml = "<span>The </span><del style=\"background:#ffe6e6;\">qu</del><ins style=\"background:#e6ffe6;\">sw</ins><span>i</span><del style=\"background:#ffe6e6;\">ck</del><ins style=\"background:#e6ffe6;\">ft</ins><span> brown fox </span><del style=\"background:#ffe6e6;\">jum</del><ins style=\"background:#e6ffe6;\">lea</ins><span>ps over the lazy dog.</span>";
         String actualHtml = LargeTextHelper.htmlDiff(text1, text2);
-        
+
         assertEquals(expectedHtml, actualHtml);
+    }
+
+    // #34846 : non-blocking HTML truncation of the labeling table (must not cut mid-tag)
+
+    private static String htmlTable(int rows) {
+        StringBuilder sb = new StringBuilder("<table class=\"labelingTable\"><tbody>");
+        for (int i = 0; i < rows; i++) {
+            sb.append("<tr><td>ing</td><td>10%</td></tr>");
+        }
+        sb.append("</tbody></table>");
+        return sb.toString();
+    }
+
+    private static int count(String haystack, String needle) {
+        int total = 0;
+        int idx = haystack.indexOf(needle);
+        while (idx != -1) {
+            total++;
+            idx = haystack.indexOf(needle, idx + needle.length());
+        }
+        return total;
+    }
+
+    @Test
+    public void testElipseHtmlShortValueUnchanged() {
+        String html = htmlTable(2);
+        assertEquals(html, LargeTextHelper.elipseHtml(html, LargeTextHelper.TEXT_SIZE_LIMIT));
+    }
+
+    @Test
+    public void testElipseHtmlNullUnchanged() {
+        assertEquals(null, LargeTextHelper.elipseHtml(null, 100));
+    }
+
+    @Test
+    public void testElipseHtmlTruncatedOnRowBoundaryAndClosed() {
+        String html = htmlTable(500);
+        String truncated = LargeTextHelper.elipseHtml(html, 200);
+
+        assertTrue("Output must stay within budget + closing tag", truncated.length() <= 200 + "</table>".length());
+        assertTrue("Must end on a complete row + closing table", truncated.endsWith("</tr></table>"));
+        assertTrue("No tag must be cut mid-way", truncated.lastIndexOf('<') <= truncated.lastIndexOf('>'));
+        assertEquals(count(truncated, "<tr>"), count(truncated, "</tr>"));
+        assertEquals(1, count(truncated, "<table"));
+        assertEquals(1, count(truncated, "</table>"));
+    }
+
+    @Test
+    public void testElipseHtmlNonHtmlFallsBackToPlainElipse() {
+        String plain = "a".repeat(500);
+        String truncated = LargeTextHelper.elipseHtml(plain, 100);
+        assertTrue(truncated.endsWith("..."));
+        assertEquals(103, truncated.length());
     }
 }
