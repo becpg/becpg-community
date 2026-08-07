@@ -39,9 +39,6 @@ public class ThresholdScoreEngine {
 	/** Constant <code>CLASS_SEPARATOR=","</code> */
 	private static final String CLASS_SEPARATOR = ",";
 
-	/** Constant <code>PERCENT="%"</code> */
-	private static final String PERCENT = "%";
-
 	private final NutrientValueProvider nutrientValueProvider;
 
 	/**

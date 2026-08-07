@@ -70,6 +70,18 @@ public class PlanetScore implements ScoreCalculatingPlugin {
 	/** Constant <code>FRANCE="FR"</code> */
 	private static final String FRANCE = "FR";
 
+	private static final String LEVEL_A = "A";
+
+	private static final String LEVEL_B = "B";
+
+	private static final String LEVEL_C = "C";
+
+	private static final String LEVEL_D = "D";
+
+	private static final String EUROPE = "EU";
+
+	private static final String WORLD = "MONDE";
+
 	/** Member states, the mark tells France, Europe and the rest of the world apart */
 	private static final Set<String> EUROPEAN_UNION = Set.of("AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI",
 			"FR", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK");
@@ -250,12 +262,29 @@ public class PlanetScore implements ScoreCalculatingPlugin {
 	 */
 	private String worstLevel(ScoreContext context) {
 		String worst = null;
+
 		for (ScorePart part : context.getParts()) {
+			// an axis whose value fell outside its scale carries no level: it must not become
+			// the verdict of the whole mark by comparing above every letter
+			if (!isLevel(part.getLabel())) {
+				continue;
+			}
 			if ((worst == null) || (part.getLabel().compareTo(worst) > 0)) {
 				worst = part.getLabel();
 			}
 		}
+
 		return worst;
+	}
+
+	/**
+	 * <p>Whether a label is one of the four levels of the mark.</p>
+	 *
+	 * @param label the label carried by an axis
+	 * @return a boolean
+	 */
+	private boolean isLevel(String label) {
+		return (label != null) && (label.length() == 1) && (LEVEL_A.compareTo(label) <= 0) && (LEVEL_D.compareTo(label) >= 0);
 	}
 
 	/**
@@ -284,12 +313,12 @@ public class PlanetScore implements ScoreCalculatingPlugin {
 	 */
 	private String originLevel(String suffix) {
 		if ("FR".equals(suffix)) {
-			return "A";
+			return LEVEL_A;
 		}
-		if ("EU".equals(suffix)) {
-			return "B";
+		if (EUROPE.equals(suffix)) {
+			return LEVEL_B;
 		}
-		return "MONDE".equals(suffix) ? "C" : null;
+		return WORLD.equals(suffix) ? LEVEL_C : null;
 	}
 
 	/**
@@ -362,12 +391,12 @@ public class PlanetScore implements ScoreCalculatingPlugin {
 
 		if (claimed == null) {
 			// unknown, the mark shows its grey level rather than a bad one
-			context.getParts().add(new ScorePart(FAIR_PAY).withLabel("B"));
+			context.getParts().add(new ScorePart(FAIR_PAY).withLabel(LEVEL_B));
 			return;
 		}
 
 		context.getParts().add(new ScorePart(FAIR_PAY).withValue(claimed, PERCENT)
-				.withLabel(claimed > FAIR_TRADE_THRESHOLD ? "A" : "D"));
+				.withLabel(claimed > FAIR_TRADE_THRESHOLD ? LEVEL_A : LEVEL_D));
 	}
 
 	/**
@@ -408,7 +437,7 @@ public class PlanetScore implements ScoreCalculatingPlugin {
 
 		for (IngListDataItem ing : product.getIngList()) {
 			Double qty = ing.getQtyPerc();
-			if ((qty == null) || ing.getGeoOrigin().isEmpty()) {
+			if ((qty == null) || (ing.getGeoOrigin() == null) || ing.getGeoOrigin().isEmpty()) {
 				continue;
 			}
 
@@ -431,11 +460,11 @@ public class PlanetScore implements ScoreCalculatingPlugin {
 		double europeanShare = (european * 100d) / known;
 
 		if (frenchShare > ORIGIN_THRESHOLD) {
-			context.getParts().add(new ScorePart(ORIGIN).withValue(frenchShare, PERCENT).withLabel("A"));
+			context.getParts().add(new ScorePart(ORIGIN).withValue(frenchShare, PERCENT).withLabel(LEVEL_A));
 		} else if (europeanShare > ORIGIN_THRESHOLD) {
-			context.getParts().add(new ScorePart(ORIGIN).withValue(europeanShare, PERCENT).withLabel("B"));
+			context.getParts().add(new ScorePart(ORIGIN).withValue(europeanShare, PERCENT).withLabel(LEVEL_B));
 		} else if ((100d - europeanShare) > OUTSIDE_THRESHOLD) {
-			context.getParts().add(new ScorePart(ORIGIN).withValue(100d - europeanShare, PERCENT).withLabel("C"));
+			context.getParts().add(new ScorePart(ORIGIN).withValue(100d - europeanShare, PERCENT).withLabel(LEVEL_C));
 		}
 	}
 

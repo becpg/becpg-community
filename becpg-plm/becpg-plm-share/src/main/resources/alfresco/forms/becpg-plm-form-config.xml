@@ -2415,6 +2415,7 @@
                     <show id="bcpg:regulatoryCode" force="true" />
                     <show id="bcpg:regulatoryComment" force="true" />
                     <show id="bcpg:ingTypeV2" force="true" />
+                    <show id="bcpg:ecobalyseCode" force="true" />
                     <show id="bcpg:evaporatedRate" force="true" />
                     <show id="bcpg:ingAllergens" force="true" />
                     <show id="bcpg:ingAllergensQtyPerc" force="true" />
@@ -2580,6 +2581,7 @@
                     <show id="bcpg:regulatoryCode" force="true" />
                     <show id="bcpg:regulatoryComment" force="true" />
                     <show id="bcpg:ingTypeV2" force="true" />
+                    <show id="bcpg:ecobalyseCode" force="true" />
                     <show id="bcpg:evaporatedRate" force="true" />
                     <show id="bcpg:ingAllergens" />
                     <show id="bcpg:ingAllergensQtyPerc" />
@@ -2721,6 +2723,7 @@
                     <show id="bcpg:regulatoryCode" force="true" />
                     <show id="bcpg:regulatoryComment" force="true" />
                     <show id="bcpg:ingTypeV2" force="true" />
+                    <show id="bcpg:ecobalyseCode" force="true" />
                     <show id="bcpg:evaporatedRate" force="true" />
                     <show id="bcpg:ingAllergens" />
                     <show id="bcpg:ingAllergensQtyPerc" />
@@ -2956,6 +2959,7 @@
                     <show id="bcpg:regulatoryCode" force="true" />
                     <show id="bcpg:regulatoryComment" force="true" />
                     <show id="bcpg:ingTypeV2" force="true" />
+                    <show id="bcpg:ecobalyseCode" force="true" />
                     <show id="bcpg:evaporatedRate" force="true" />
                     <show id="gs1:productActivityTypeCode" force="true" />
                     <show id="bcpg:linkedSearchAssociation" force="true" />

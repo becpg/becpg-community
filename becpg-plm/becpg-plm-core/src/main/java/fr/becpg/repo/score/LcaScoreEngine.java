@@ -141,8 +141,12 @@ public class LcaScoreEngine {
 			return Optional.empty();
 		}
 
-		Double normalization = normalization(line.getLca(), definition);
-		Double weight = weight(line.getLca(), definition);
+		// resolving a coefficient walks every declared coefficient and reads its code: it is
+		// done once per indicator, not once per factor
+		Optional<ScoreDefCoeffListDataItem> coefficient = scoreDefinitionService.findCoefficient(definition, line.getLca());
+
+		Double normalization = normalization(line.getLca(), coefficient);
+		Double weight = weight(line.getLca(), coefficient);
 
 		if ((normalization == null) || (normalization == 0d) || (weight == null)) {
 			return Optional.empty();
@@ -158,12 +162,10 @@ public class LcaScoreEngine {
 	 * <p>Normalization factor of an indicator, from the definition then from the indicator.</p>
 	 *
 	 * @param lcaNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @param definition a {@link fr.becpg.repo.score.data.ScoreDefinitionItem} object
+	 * @param coefficient the coefficient the definition declares for this indicator
 	 * @return a {@link java.lang.Double} object
 	 */
-	private Double normalization(NodeRef lcaNodeRef, ScoreDefinitionItem definition) {
-		Optional<ScoreDefCoeffListDataItem> coefficient = scoreDefinitionService.findCoefficient(definition, lcaNodeRef);
-
+	private Double normalization(NodeRef lcaNodeRef, Optional<ScoreDefCoeffListDataItem> coefficient) {
 		if (coefficient.isPresent() && (coefficient.get().getNormalization() != null)) {
 			return coefficient.get().getNormalization();
 		}
@@ -174,12 +176,10 @@ public class LcaScoreEngine {
 	 * <p>Weight of an indicator, from the definition then from the indicator.</p>
 	 *
 	 * @param lcaNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @param definition a {@link fr.becpg.repo.score.data.ScoreDefinitionItem} object
+	 * @param coefficient the coefficient the definition declares for this indicator
 	 * @return a {@link java.lang.Double} object
 	 */
-	private Double weight(NodeRef lcaNodeRef, ScoreDefinitionItem definition) {
-		Optional<ScoreDefCoeffListDataItem> coefficient = scoreDefinitionService.findCoefficient(definition, lcaNodeRef);
-
+	private Double weight(NodeRef lcaNodeRef, Optional<ScoreDefCoeffListDataItem> coefficient) {
 		if (coefficient.isPresent() && (coefficient.get().getPonderation() != null)) {
 			return coefficient.get().getPonderation();
 		}

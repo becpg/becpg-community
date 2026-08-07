@@ -1,8 +1,10 @@
 package fr.becpg.repo.product.formulation.score;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -28,7 +30,7 @@ import fr.becpg.repo.score.data.ScoreDefinitionItem;
  *
  * <p>The classification is read from the ingredients rather than declared: a marker of
  * industrial formulation puts the product in group 4, an added culinary ingredient in group
- * 3, and a product that is itself a culinary ingredient in group 2.</p>
+ * 3, and a composition made of nothing but culinary ingredients in group 2.</p>
  *
  * <p>The markers of group 4 are the additive functions that exist to make an industrial
  * formulation palatable — colours, flavour enhancers, sweeteners, emulsifiers, thickeners
@@ -116,8 +118,10 @@ public class NovaClassification implements ScoreCalculatingPlugin {
 		context.setVersion(definition.getVersion());
 		context.setScale(definition.getScale());
 
-		List<IngListDataItem> markers = markersOf(product, COSMETIC_ADDITIVES);
-		List<IngListDataItem> culinary = markersOf(product, CULINARY_INGREDIENTS);
+		Map<NodeRef, String> codes = readIngredientTypeCodes(product);
+
+		List<IngListDataItem> markers = markersOf(product, COSMETIC_ADDITIVES, codes);
+		List<IngListDataItem> culinary = markersOf(product, CULINARY_INGREDIENTS, codes);
 
 		int group = group(markers, culinary, product);
 
@@ -125,7 +129,8 @@ public class NovaClassification implements ScoreCalculatingPlugin {
 		context.setScoreClass(String.valueOf(group));
 
 		for (IngListDataItem marker : markers) {
-			context.getParts().add(new ScorePart(labelOf(marker)).withLabel(labelOf(marker)).withContribution(1d));
+			String label = labelOf(marker);
+			context.getParts().add(new ScorePart(label).withLabel(label).withContribution(1d));
 		}
 
 		return context;
@@ -154,32 +159,70 @@ public class NovaClassification implements ScoreCalculatingPlugin {
 	 *
 	 * @param product a {@link fr.becpg.repo.product.data.ProductData} object
 	 * @param markers the marker types, in lower case
+	 * @param codes the code of every ingredient type of the product
 	 * @return a {@link java.util.List} object, never null
 	 */
-	private List<IngListDataItem> markersOf(ProductData product, Set<String> markers) {
-		return product.getIngList().stream().filter(ing -> matches(ing, markers)).toList();
+	private List<IngListDataItem> markersOf(ProductData product, Set<String> markers, Map<NodeRef, String> codes) {
+		return product.getIngList().stream().filter(ing -> matches(ing, markers, codes)).toList();
 	}
 
 	/**
-	 * <p>matches.</p>
+	 * <p>Whether an ingredient carries one of the marker types.</p>
 	 *
 	 * @param ing a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object
 	 * @param markers the marker types, in lower case
+	 * @param codes the code of every ingredient type of the product
 	 * @return a boolean
 	 */
-	private boolean matches(IngListDataItem ing, Set<String> markers) {
+	private boolean matches(IngListDataItem ing, Set<String> markers, Map<NodeRef, String> codes) {
 		if (ing.getIngTypes() == null) {
 			return false;
 		}
 
 		for (NodeRef ingType : ing.getIngTypes()) {
-			String code = (String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_CODE);
-			if ((code != null) && markers.contains(code.toLowerCase())) {
+			String code = codes.get(ingType);
+			if ((code != null) && markers.contains(code)) {
 				return true;
 			}
 		}
 
 		return false;
+	}
+
+	/**
+	 * <p>Codes of every ingredient type used by a product, read once.</p>
+	 *
+	 * <p>The same type is carried by many ingredients, and the classification tests each one
+	 * against two sets of markers: reading the referential once spares as many repository
+	 * reads as there are ingredients.</p>
+	 *
+	 * @param product a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.util.Map} object, never null
+	 */
+	private Map<NodeRef, String> readIngredientTypeCodes(ProductData product) {
+		Map<NodeRef, String> codes = new HashMap<>();
+
+		for (IngListDataItem ing : product.getIngList()) {
+			if (ing.getIngTypes() == null) {
+				continue;
+			}
+			for (NodeRef ingType : ing.getIngTypes()) {
+				codes.computeIfAbsent(ingType, this::lowerCaseCode);
+			}
+		}
+
+		return codes;
+	}
+
+	/**
+	 * <p>lowerCaseCode.</p>
+	 *
+	 * @param ingType a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.String} object
+	 */
+	private String lowerCaseCode(NodeRef ingType) {
+		String code = (String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_CODE);
+		return code != null ? code.toLowerCase() : null;
 	}
 
 	/**
