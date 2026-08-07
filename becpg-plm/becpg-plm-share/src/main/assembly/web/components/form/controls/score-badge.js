@@ -236,14 +236,16 @@
      * three word mention stays inside its shape instead of overflowing it.
      */
     function renderWarningMark(shape, label) {
+        if (shape === "rect") {
+            return renderBrazilianMark(label);
+        }
+
         var size = 54;
         var fill = shape === "circle" ? "#d0021b" : "#000";
         var html = svgOpen(size, size, "score-badge-warning", label);
 
         if (shape === "circle") {
             html += '<circle cx="27" cy="27" r="26" fill="' + fill + '" />';
-        } else if (shape === "rect") {
-            html += '<rect x="1" y="8" width="52" height="38" rx="2" fill="' + fill + '" />';
         } else {
             html += '<polygon points="16,1 38,1 53,16 53,38 38,53 16,53 1,38 1,16" fill="' + fill + '" />';
         }
@@ -254,6 +256,47 @@
 
         for (var i = 0; i < words.length; i++) {
             html += svgText(27, top + (i * lineHeight), words[i], "#fff", words.length > 3 ? 7 : 8);
+        }
+
+        return html + "</svg>";
+    }
+
+    /**
+     * The Brazilian mark: a black rectangle bearing a magnifying glass over the wording,
+     * the lens standing for the reading the label invites.
+     */
+    function renderBrazilianMark(label) {
+        var words = label.toString().split(/\s+/);
+        var longest = 0;
+
+        for (var w = 0; w < words.length; w++) {
+            longest = Math.max(longest, words[w].length);
+        }
+
+        var size = 9;
+        var textLeft = 40;
+        // Arial bold runs at roughly 0.62 em per character, enough to size the plate
+        var width = Math.max(88, textLeft + Math.ceil(longest * size * 0.62) + 8);
+        var height = Math.max(56, (words.length * 11) + 18);
+        var html = svgOpen(width, height, "score-badge-warning", label);
+
+        html += '<rect x="1" y="1" width="' + (width - 2) + '" height="' + (height - 2)
+            + '" fill="#000" stroke="#fff" stroke-width="2" />';
+
+        var middle = height / 2;
+
+        html += '<circle cx="19" cy="' + (middle - 4) + '" r="9" fill="none" stroke="#fff" stroke-width="3" />';
+        html += '<line x1="26" y1="' + (middle + 3) + '" x2="33" y2="' + (middle + 10)
+            + '" stroke="#fff" stroke-width="3" stroke-linecap="round" />';
+
+        var lineHeight = 11;
+        var top = middle - (((words.length - 1) * lineHeight) / 2);
+
+        for (var i = 0; i < words.length; i++) {
+            html += '<text x="' + textLeft + '" y="' + (top + (i * lineHeight)) + '" text-anchor="start"'
+                + ' dominant-baseline="central" font-family="Arial, Helvetica, sans-serif" font-size="' + size
+                + '" font-weight="bold" fill="#fff">'
+                + Alfresco.util.encodeHTML(words[i]) + "</text>";
         }
 
         return html + "</svg>";
@@ -301,48 +344,76 @@
         return "high";
     }
 
-    var TRAFFIC_COLOURS = { low: "#00853f", medium: "#ffc800", high: "#ff0100" };
+    var TRAFFIC_COLOURS = { low: "#008a3e", medium: "#f0a30a", high: "#d0021b" };
+
+    /** Energy carries no verdict on the British mark, it is stated on a plain panel */
+    var ENERGY_CODES = { "ENER-KJO": true, "ENER-KJ": true, "ENER-E14": true, "ENER-KCAL": true, ENERGY: true };
 
     function renderTraffic(details) {
         var parts = details.parts || [];
         var html = "";
 
         for (var i = 0; i < parts.length; i++) {
-            html += renderTrafficLight(parts[i]);
+            html += ENERGY_CODES[parts[i].code] ? renderEnergyPanel(parts[i]) : renderTrafficLight(parts[i]);
         }
         return html;
     }
 
     /**
-     * One traffic light: the nutrient, the amount it holds, the share of the reference
-     * intake it covers and the verdict, on four evenly spaced lines of one pill.
+     * One panel of the British mark: the nutrient, the amount it holds and the verdict on
+     * the coloured body, then the share of the reference intake on a white foot, the way
+     * the Food Standards Agency lays it out.
      */
     function renderTrafficLight(part) {
         var level = trafficLevel(part);
         var name = NUTRIENT_LABELS[part.code] || part.code;
-        var amount = isBlank(part.value) ? "" : formatNumber(part.value) + (isBlank(part.unit) ? " g" : " " + part.unit);
-        var intake = isBlank(part.share) ? "" : formatNumber(part.share, 0) + " %";
-        var verdict = part.label ? part.label : "";
+        var amount = isBlank(part.value) ? "" : formatNumber(part.value) + (isBlank(part.unit) ? "g" : part.unit);
+        var verdict = part.label ? part.label.toString().toUpperCase() : "";
 
-        var lines = [name, amount, intake, verdict];
-        var width = 62;
-        var height = 68;
-        var ink = level === "medium" ? "#333" : "#fff";
+        var width = 64;
+        var height = 78;
+        var foot = 18;
+        var ink = level === "medium" ? "#222" : "#fff";
         var html = svgOpen(width, height, "score-badge-traffic", name + " " + verdict);
 
-        html += '<rect x="1" y="1" width="' + (width - 2) + '" height="' + (height - 2) + '" rx="4" fill="'
-            + TRAFFIC_COLOURS[level] + '" />';
+        // the foot is clipped by the pill itself, so both share the very same rounded corners
+        var clipId = Alfresco.util.generateDomId(null, "scoreTrafficClip");
 
-        var shown = [];
-        for (var i = 0; i < lines.length; i++) {
-            if (!isBlank(lines[i])) {
-                shown.push(lines[i]);
-            }
+        html += '<defs><clipPath id="' + clipId + '"><rect x="1" y="1" width="' + (width - 2) + '" height="'
+            + (height - 2) + '" rx="8" /></clipPath></defs>';
+        html += '<g clip-path="url(#' + clipId + ')">';
+        html += '<rect x="0" y="0" width="' + width + '" height="' + height + '" fill="' + TRAFFIC_COLOURS[level] + '" />';
+        html += '<rect x="0" y="' + (height - foot) + '" width="' + width + '" height="' + foot + '" fill="#fff" />';
+        html += "</g>";
+
+        html += svgText(width / 2, 15, name, ink, 11);
+        html += svgText(width / 2, 34, amount, ink, 15);
+        html += svgText(width / 2, 51, verdict, ink, 11);
+
+        if (!isBlank(part.share)) {
+            html += svgText(width / 2, height - (foot / 2) - 1, formatNumber(part.share, 0) + "% RI", "#222", 10);
         }
 
-        var step = (height - 10) / shown.length;
-        for (var j = 0; j < shown.length; j++) {
-            html += svgText(width / 2, 5 + (step * (j + 0.5)), shown[j], ink, 10, j === 0 ? "bold" : "normal");
+        return html + "</svg>";
+    }
+
+    /**
+     * The energy panel of the British mark, stated in kilojoules and kilocalories without a
+     * colour: energy is informative, it carries no verdict.
+     */
+    function renderEnergyPanel(part) {
+        var width = 64;
+        var height = 78;
+        var amount = isBlank(part.value) ? "" : formatNumber(part.value) + (isBlank(part.unit) ? "" : part.unit);
+        var html = svgOpen(width, height, "score-badge-traffic", "Energy " + amount);
+
+        html += '<rect x="1" y="1" width="' + (width - 2) + '" height="' + (height - 2)
+            + '" rx="8" fill="#fff" stroke="#222" stroke-width="1.5" />';
+        html += svgText(width / 2, 20, "Energy", "#222", 11);
+        html += svgText(width / 2, 42, amount, "#222", 14);
+
+        if (!isBlank(part.share)) {
+            html += svgText(width / 2, 62, formatNumber(part.share, 0) + "% RI", "#222", 10);
         }
 
         return html + "</svg>";
