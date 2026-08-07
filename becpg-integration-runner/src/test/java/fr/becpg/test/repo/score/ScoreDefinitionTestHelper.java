@@ -15,13 +15,13 @@ import org.alfresco.service.namespace.QName;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.PlmRepoConsts;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.score.ScoreDefinitionService;
 import fr.becpg.repo.score.ScoreEngine;
+import fr.becpg.repo.score.data.ScoreDefinitionItem;
 import fr.becpg.repo.score.ScoreScale;
 import fr.becpg.repo.score.ScoredEntity;
-import fr.becpg.repo.score.data.EntityScoreListDataItem;
+import fr.becpg.repo.score.data.RegulatoryScoreListDataItem;
 
 /**
  * Creates the score definitions the integration tests need, and reads back the scores they
@@ -52,15 +52,20 @@ public final class ScoreDefinitionTestHelper {
 	public static NodeRef createPluginDefinition(NodeService nodeService, EntitySystemService entitySystemService,
 			ScoreDefinitionService scoreDefinitionService, NodeRef systemFolderNodeRef, String code, String version) {
 
-		NodeRef listNodeRef = entitySystemService.getSystemEntityDataList(systemFolderNodeRef, RepoConsts.PATH_CHARACTS,
+		NodeRef listNodeRef = entitySystemService.getSystemEntityDataList(systemFolderNodeRef, PlmRepoConsts.PATH_SCORES,
 				PlmRepoConsts.PATH_SCORE_DEFINITIONS);
 
 		if (listNodeRef == null) {
 			throw new IllegalStateException("The ScoreDefinitions list is missing, run the init-repo first");
 		}
 
-		// looked up by name rather than through the service, so that a stale cache cannot make
-		// the test create a duplicate
+		// the reference data ships a definition for most codes: creating a second one for the
+		// same code and version would make the score be published against either of them
+		Optional<ScoreDefinitionItem> shipped = scoreDefinitionService.findByCode(code, version);
+		if (shipped.isPresent()) {
+			return shipped.get().getNodeRef();
+		}
+
 		NodeRef existing = nodeService.getChildByName(listNodeRef, ContentModel.ASSOC_CONTAINS, code + " " + version);
 		if (existing != null) {
 			scoreDefinitionService.clearCache();
@@ -91,14 +96,14 @@ public final class ScoreDefinitionTestHelper {
 	 * @param definitionNodeRef the definition of the wanted score
 	 * @return a {@link java.util.Optional} object
 	 */
-	public static Optional<EntityScoreListDataItem> findScore(ScoredEntity entity, NodeRef definitionNodeRef) {
-		List<EntityScoreListDataItem> scores = entity.getEntityScoreList();
+	public static Optional<RegulatoryScoreListDataItem> findScore(ScoredEntity entity, NodeRef definitionNodeRef) {
+		List<RegulatoryScoreListDataItem> scores = entity.getRegulatoryScoreList();
 
 		if (scores == null) {
 			return Optional.empty();
 		}
 
-		for (EntityScoreListDataItem score : scores) {
+		for (RegulatoryScoreListDataItem score : scores) {
 			if (Objects.equals(score.getScoreDef(), definitionNodeRef)) {
 				return Optional.of(score);
 			}

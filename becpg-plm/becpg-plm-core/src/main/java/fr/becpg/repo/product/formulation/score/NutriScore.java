@@ -57,11 +57,18 @@ public class NutriScore implements ScoreCalculatingPlugin {
 	/** {@inheritDoc} */
 	@Override
 	public Optional<ScoreContext> getScoreContext(ScorableEntity scorableEntity) {
-		String details = ((ProductData) scorableEntity).getNutrientDetails();
+		ProductData productData = (ProductData) scorableEntity;
+		String details = productData.getNutrientDetails();
 		if ((details == null) || details.isBlank()) {
 			return Optional.empty();
 		}
-		return Optional.of(NutriScoreContext.parse(details).toScoreContext());
+
+		ScoreContext context = NutriScoreContext.parse(details).toScoreContext();
+		// the persisted breakdown does not carry the version, without it the score would be
+		// published against whichever definition of the code comes first
+		context.setVersion(NutrientRegulatoryHelper.resolveVersion(productData));
+
+		return Optional.of(context);
 	}
 
 	/** {@inheritDoc} */

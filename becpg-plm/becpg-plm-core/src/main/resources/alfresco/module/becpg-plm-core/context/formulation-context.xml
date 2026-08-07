@@ -181,6 +181,7 @@
 					<property name="ecobalyseComplementsCalculator">
 						<bean class="fr.becpg.repo.product.formulation.ecobalyse.EcobalyseComplementsCalculator">
 							<property name="nodeService" ref="nodeService" />
+							<property name="alfrescoRepository" ref="alfrescoRepository" />
 							<property name="ecobalyseIngredientService" ref="ecobalyseIngredientService" />
 						</bean>
 					</property>
@@ -304,6 +305,8 @@
 							<ref bean="thresholdNutritionScore"/>
 							<ref bean="fsaOfcomNutrientProfile"/>
 							<ref bean="healthStarRating"/>
+							<ref bean="lcaAggregatedScore"/>
+							<ref bean="planetScore"/>
 						</list>
 					</property>
 				</bean>
@@ -355,6 +358,8 @@
 							<ref bean="thresholdNutritionScore"/>
 							<ref bean="fsaOfcomNutrientProfile"/>
 							<ref bean="healthStarRating"/>
+							<ref bean="lcaAggregatedScore"/>
+							<ref bean="planetScore"/>
 						</list>
 					</property>
 				</bean>

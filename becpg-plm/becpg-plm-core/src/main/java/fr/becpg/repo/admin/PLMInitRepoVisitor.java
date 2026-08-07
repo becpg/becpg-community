@@ -449,6 +449,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		// Dynamic constraints
 		visitSystemListValuesEntity(systemNodeRef, RepoConsts.PATH_LISTS);
 
+		// Scores, kept out of the characteristics so their four lists stay together
+		visitSystemScoresEntity(systemNodeRef, PlmRepoConsts.PATH_SCORES);
+
 		// Hierarchy
 		visitSystemHierachiesEntity(systemNodeRef, RepoConsts.PATH_PRODUCT_HIERARCHY);
 
@@ -1368,10 +1371,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_ALLERGENS, PLMModel.TYPE_ALLERGEN);
 		entityLists.put(PlmRepoConsts.PATH_COSTS, PLMModel.TYPE_COST);
 		entityLists.put(PlmRepoConsts.PATH_LCA, PLMModel.TYPE_LCA);
-		entityLists.put(PlmRepoConsts.PATH_SCORE_DEFINITIONS, PLMModel.TYPE_SCORE_DEFINITION);
-		entityLists.put(PlmRepoConsts.PATH_SCORE_THRESHOLDS, PLMModel.TYPE_SCORE_THRESHOLD_LIST);
-		entityLists.put(PlmRepoConsts.PATH_SCORE_BADGES, PLMModel.TYPE_SCORE_BADGE_LIST);
-		entityLists.put(PlmRepoConsts.PATH_SCORE_DEF_COEFFS, PLMModel.TYPE_SCORE_DEF_COEFF_LIST);
 		entityLists.put(PlmRepoConsts.PATH_PHYSICO_CHEM, PLMModel.TYPE_PHYSICO_CHEM);
 		entityLists.put(PlmRepoConsts.PATH_MICROBIOS, PLMModel.TYPE_MICROBIO);
 		entityLists.put(PlmRepoConsts.PATH_GEO_ORIGINS, PLMModel.TYPE_GEO_ORIGIN);
@@ -1473,7 +1472,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_MEAT_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 
 		entityLists.put(PlmRepoConsts.PATH_LCA_UNITS, BeCPGModel.TYPE_LIST_VALUE);
-		entityLists.put(PlmRepoConsts.PATH_ECOBALYSE_CROP_GROUPS, BeCPGModel.TYPE_LIST_VALUE);
 
 		entityLists.put(PlmRepoConsts.PATH_GS1_SORTING_BONUS_CRITERIA, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_GS1_SORTING_MALUS_CRITERIA, BeCPGModel.TYPE_LIST_VALUE);
@@ -1505,6 +1503,26 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	 * @param path a {@link java.lang.String} object
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
+	/**
+	 * <p>Creates the system entity holding everything a score is made of.</p>
+	 *
+	 * @param parentNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param path the name of the system entity
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	private NodeRef visitSystemScoresEntity(NodeRef parentNodeRef, String path) {
+
+		Map<String, QName> entityLists = new LinkedHashMap<>();
+
+		entityLists.put(PlmRepoConsts.PATH_SCORE_DEFINITIONS, PLMModel.TYPE_SCORE_DEFINITION);
+		entityLists.put(PlmRepoConsts.PATH_SCORE_THRESHOLDS, PLMModel.TYPE_SCORE_THRESHOLD_LIST);
+		entityLists.put(PlmRepoConsts.PATH_SCORE_BADGES, PLMModel.TYPE_SCORE_BADGE_LIST);
+		entityLists.put(PlmRepoConsts.PATH_SCORE_DEF_COEFFS, PLMModel.TYPE_SCORE_DEF_COEFF_LIST);
+		entityLists.put(PlmRepoConsts.PATH_ECOBALYSE_CROP_GROUPS, BeCPGModel.TYPE_LIST_VALUE);
+
+		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
+	}
+
 	private NodeRef visitSystemSecurityListValuesEntity(NodeRef parentNodeRef, String path) {
 		Map<String, QName> entityLists = new LinkedHashMap<>();
 		entityLists.put(PlmRepoConsts.PATH_PERSONAL_PROTECTIONS, GHSModel.TYPE_PERSONAL_PROTECTION);

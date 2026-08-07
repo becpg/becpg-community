@@ -1,9 +1,12 @@
 package fr.becpg.repo.admin;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
@@ -13,6 +16,7 @@ import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.cmr.site.SiteVisibility;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -36,6 +40,7 @@ import fr.becpg.repo.project.data.projectList.DeliverableScriptOrder;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>SupplierPortalInitRepoVisitor class.</p>
@@ -62,14 +67,35 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 	/** Constant <code>SUPPLIER_SPEC_NAME="plm.supplier.portal.specification.name"</code> */
 	private static final String SUPPLIER_SPEC_NAME = "plm.supplier.portal.specification.name";
 
+	/** Constant <code>TECHNICAL_SHEET_TYPE_NAME="plm.supplier.portal.documentType.techn"{trunked}</code> */
+	private static final String TECHNICAL_SHEET_TYPE_NAME = "plm.supplier.portal.documentType.technicalSheet.name";
+
+	/** Constant <code>CONF_CREATE_TECHNICAL_SHEET_TYPE="beCPG.supplierPortal.createDefaultTechn"{trunked}</code> */
+	private static final String CONF_CREATE_TECHNICAL_SHEET_TYPE = "beCPG.supplierPortal.createDefaultTechnicalSheetType";
+
 	/** Constant <code>SUPPLIER_SITE_PRESET="supplier-site-dashboard"</code> */
 	private static final String SUPPLIER_SITE_PRESET = "supplier-site-dashboard";
 
 	/** Constant <code>XPATH_DICTIONARY_SCRIPTS="./app:dictionary/app:scripts"</code> */
 	private static final String XPATH_DICTIONARY_SCRIPTS = "./app:dictionary/app:scripts";
 
+	/** Constant <code>XPATH_DOCUMENT_TYPES="./cm:System/cm:Characts/bcpg:entityList"{trunked}</code> */
+	private static final String XPATH_DOCUMENT_TYPES = "./cm:System/cm:Characts/bcpg:entityLists/cm:DocumentTypes";
+
+	/** <code>bcpg:docTypeIsMandatory</code> — see DocumentTypeItem. */
+	private static final QName PROP_DOC_TYPE_IS_MANDATORY = QName.createQName(BeCPGModel.BECPG_URI, "docTypeIsMandatory");
+
+	/** <code>bcpg:docTypeLinkedTypes</code> — what makes a document type synchronised. */
+	private static final QName PROP_DOC_TYPE_LINKED_TYPES = QName.createQName(BeCPGModel.BECPG_URI, "docTypeLinkedTypes");
+
 	@Autowired
 	private SiteService siteService;
+
+	@Autowired
+	private NamespaceService namespaceService;
+
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
 
 	@Autowired
 	private EntityTplService entityTplService;
@@ -218,8 +244,73 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		visitDefaultRawMaterialSpecification(entityTplsNodeRef);
 
+		visitDefaultTechnicalSheetType(companyHome);
+
 		return ret;
 
+	}
+
+	/**
+	 * <p>Creates the default supplier technical sheet document type, so that the supplier portal
+	 * opens on a <b>named</b> requirement rather than on a free deposit.</p>
+	 *
+	 * <p>The portal asks for exactly one document before any data entry: the technical sheet. It
+	 * is the only one that does not depend on what has been entered — every other expected type is
+	 * derived by {@code DocumentFormulationHandler} from the claims, the labels and the hierarchy,
+	 * so at step one that list is empty or wrong. The portal recognises the sheet by the
+	 * {@code bcpg:documentType} the customer configured; on an instance where none is configured
+	 * the step degrades to a free deposit, the supplier reads "aucun type « fiche technique »
+	 * configuré", and the AI extraction has no requirement to attach its suggestions to.</p>
+	 *
+	 * <p><b>Disabled by default</b>
+	 * ({@code beCPG.supplierPortal.createDefaultTechnicalSheetType}). Creating the type is not a
+	 * neutral act on an existing repository: the formulation handler materialises it as an
+	 * expected document on every raw material. It is therefore created <b>non mandatory</b>, so no
+	 * documentary completeness score moves, and only when an administrator asks for it.</p>
+	 *
+	 * <p>Create-if-absent, matched on the name: an instance that already declares its own
+	 * technical sheet type is left alone. This visitor runs on every startup, so it has to stay
+	 * replayable.</p>
+	 *
+	 * @param companyHome a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	private void visitDefaultTechnicalSheetType(NodeRef companyHome) {
+
+		if (!Boolean.parseBoolean(systemConfigurationService.confValue(CONF_CREATE_TECHNICAL_SHEET_TYPE))) {
+			logger.debug("Default technical sheet document type disabled, skipping");
+			return;
+		}
+
+		NodeRef documentTypesNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, XPATH_DOCUMENT_TYPES);
+
+		if (documentTypesNodeRef == null) {
+			logger.warn("No DocumentTypes characteristic list, skipping the default technical sheet type");
+			return;
+		}
+
+		String typeName = I18NUtil.getMessage(TECHNICAL_SHEET_TYPE_NAME);
+
+		if (nodeService.getChildByName(documentTypesNodeRef, ContentModel.ASSOC_CONTAINS, typeName) != null) {
+			return;
+		}
+
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(ContentModel.PROP_NAME, typeName);
+		properties.put(BeCPGModel.PROP_CHARACT_NAME, typeName);
+		// NOT mandatory: the sheet is what the portal *opens on*, not a document whose absence
+		// must suspend an approval. Making it mandatory here would move the documentary
+		// completeness of every raw material of every instance that turns this on.
+		properties.put(PROP_DOC_TYPE_IS_MANDATORY, Boolean.FALSE);
+		// The link to the raw material type is what makes it a SYNCHRONISED document type
+		// (DocumentTypeItem.isSynchronisedDocumentType): without it the type exists but no
+		// requirement is ever materialised, and the portal is no better off than before.
+		properties.put(PROP_DOC_TYPE_LINKED_TYPES,
+				(Serializable) Collections.singletonList(PLMModel.TYPE_RAWMATERIAL.toPrefixString(namespaceService)));
+
+		nodeService.createNode(documentTypesNodeRef, ContentModel.ASSOC_CONTAINS,
+				QName.createQName(BeCPGModel.BECPG_URI, typeName), BeCPGModel.TYPE_DOCUMENT_TYPE, properties);
+
+		logger.info("Created the default supplier technical sheet document type: " + typeName);
 	}
 
 	/**

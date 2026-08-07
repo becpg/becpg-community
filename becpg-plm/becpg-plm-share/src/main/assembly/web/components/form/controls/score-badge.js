@@ -33,6 +33,13 @@
     }
 
     var LETTER_CLASSES = ["A", "B", "C", "D", "E"];
+
+    /** Wording of the front of pack marks, which name nutrients rather than codes. */
+    var NUTRIENT_LABELS = {
+        "ENER-KJO": "Energy", "ENER-E14": "Energy", "FAT": "Fat", "FASAT": "Saturates",
+        "SUGAR": "Sugars", "NACL": "Salt", "NA": "Sodium", "FATRN": "Trans fat",
+        "PRO-": "Protein", "FIBTG": "Fibre"
+    };
     var MAX_STARS = 5;
 
     beCPG.util.score = beCPG.util.score || {};
@@ -66,6 +73,39 @@
         return num.toFixed(typeof decimals === "number" ? decimals : 2).replace(/\.?0+$/, "");
     }
 
+    /**
+     * Text summary of a score, shown on hover: the verdict then one line per part, so the
+     * breakdown is reachable without opening the detail panel.
+     */
+    function buildTooltip(details) {
+        var lines = [];
+        var header = details.code || "";
+
+        if (!isBlank(details["class"])) {
+            header += " : " + details["class"];
+        } else if (!isBlank(details.value)) {
+            header += " : " + formatNumber(details.value) + (isBlank(details.unit) ? "" : " " + details.unit);
+        }
+        if (header) {
+            lines.push(header);
+        }
+
+        var parts = details.parts || [];
+        for (var i = 0; i < parts.length; i++) {
+            var part = parts[i];
+            var line = part.label ? part.label : part.code;
+            if (!isBlank(part.value)) {
+                line += " : " + formatNumber(part.value) + (isBlank(part.unit) ? "" : " " + part.unit);
+            }
+            if (!isBlank(part.contribution)) {
+                line += " (" + formatNumber(part.contribution) + ")";
+            }
+            lines.push(line);
+        }
+
+        return lines.join("\n");
+    }
+
     function badgeUrl(code, scoreClass) {
         var url = Alfresco.constants.PROXY_URI + "becpg/score/badge/" + encodeURIComponent(code);
         if (!isBlank(scoreClass)) {
@@ -92,17 +132,31 @@
             + '<span id="' + fallbackId + '" style="display:none;">' + fallbackHtml + '</span>';
     }
 
+    /**
+     * Draws the whole scale with the reached class emphasised, the way the official marks
+     * do, rather than the single chip that told nothing of the range.
+     */
     function renderLetter(scoreClass) {
         if (isBlank(scoreClass)) {
             return "";
         }
+
         var upper = scoreClass.toString().toUpperCase();
+        var reached = false;
+        var html = "";
+
         for (var i = 0; i < LETTER_CLASSES.length; i++) {
-            if (LETTER_CLASSES[i] === upper) {
-                return '<span class="score-badge-letter score-badge-letter-' + upper.toLowerCase() + '">' + upper + '</span>';
-            }
+            var letter = LETTER_CLASSES[i];
+            var isCurrent = letter === upper;
+            reached = reached || isCurrent;
+            html += '<span class="score-badge-letter score-badge-letter-' + letter.toLowerCase()
+                + (isCurrent ? " score-badge-letter-current" : "") + '">' + letter + "</span>";
         }
-        return '<span class="score-badge-error">' + Alfresco.util.encodeHTML(scoreClass.toString()) + '</span>';
+
+        if (!reached) {
+            return '<span class="score-badge-error">' + Alfresco.util.encodeHTML(scoreClass.toString()) + "</span>";
+        }
+        return '<span class="score-badge-scale">' + html + "</span>";
     }
 
     function renderStars(value) {
@@ -129,16 +183,48 @@
         if (isNaN(count)) {
             count = details.parts ? details.parts.length : 0;
         }
+        var shape = warningShape(details.code);
         var html = "";
         for (var i = 0; i < count; i++) {
             var part = details.parts && details.parts[i] ? details.parts[i] : null;
             var label = part && part.label ? part.label : "!";
-            html += '<span class="score-badge-warning" title="' + beCPG.util.encodeAttr(label) + '">!</span>';
+            html += '<span class="score-badge-warning score-badge-warning-' + shape + '" title="'
+                + beCPG.util.encodeAttr(label) + '">' + Alfresco.util.encodeHTML(label) + "</span>";
         }
         return html;
     }
 
+    /**
+     * Shape of a warning mark. Most of Latin America stamps a black octagon, Brazil a black
+     * rectangle shaped like a magnifying glass and Israel a red circle.
+     */
+    function warningShape(code) {
+        if (code === "WARNINGS_BR") {
+            return "rect";
+        }
+        if (code === "WARNINGS_IL") {
+            return "circle";
+        }
+        return "octagon";
+    }
+
+    /**
+     * Colour of a traffic light. The threshold engine publishes its verdict as the label of
+     * the part, the contribution only serves the schemes that score in points.
+     */
     function trafficLevel(part) {
+        var label = part && part.label ? part.label.toString().toLowerCase() : "";
+
+        if (label.indexOf("low") === 0 || label.indexOf("faible") === 0) {
+            return "low";
+        }
+        if (label.indexOf("medium") === 0 || label.indexOf("moyen") === 0) {
+            return "medium";
+        }
+        if (label.indexOf("high") === 0 || label.indexOf("élev") === 0) {
+            return "high";
+        }
+
         if (part && part.contribution !== null && typeof part.contribution !== "undefined") {
             if (part.contribution <= 1) {
                 return "low";
@@ -154,19 +240,111 @@
         var parts = details.parts || [];
         var html = "";
         for (var i = 0; i < parts.length; i++) {
-            var label = parts[i].label ? parts[i].label : parts[i].code;
-            html += '<span class="score-badge-traffic score-badge-traffic-' + trafficLevel(parts[i]) + '">'
-                + Alfresco.util.encodeHTML(label) + "</span>";
+            var part = parts[i];
+            var level = part.label ? part.label : "";
+            var name = NUTRIENT_LABELS[part.code] || part.code;
+            var amount = isBlank(part.value) ? "" : formatNumber(part.value) + (isBlank(part.unit) ? " g" : " " + part.unit);
+            var intake = isBlank(part.share) ? "" : formatNumber(part.share, 0) + " %";
+            html += '<span class="score-badge-traffic score-badge-traffic-' + trafficLevel(part) + '">'
+                + '<span class="score-badge-traffic-name">' + Alfresco.util.encodeHTML(name) + "</span>"
+                + (amount ? '<span class="score-badge-traffic-amount">' + Alfresco.util.encodeHTML(amount) + "</span>" : "")
+                + (intake ? '<span class="score-badge-traffic-intake">' + Alfresco.util.encodeHTML(intake) + "</span>" : "")
+                + '<span class="score-badge-traffic-level">' + Alfresco.util.encodeHTML(level) + "</span></span>";
         }
         return html;
     }
 
+    /**
+     * Numeric scale. A scheme that publishes no aggregated verdict, the reference intake
+     * batteries being the case, is drawn as one cell per part instead of an empty span.
+     */
     function renderNumeric(details) {
+        if (isBlank(details.value) && details.parts && details.parts.length > 0) {
+            return renderParts(details);
+        }
+
         var html = '<span class="score-badge-value">' + formatNumber(details.value) + "</span>";
         if (!isBlank(details.unit)) {
             html += '<span class="score-badge-unit">' + Alfresco.util.encodeHTML(details.unit) + "</span>";
         }
         return html;
+    }
+
+    /**
+     * One cell per part. A part expressed as a share of a reference intake is drawn as a
+     * battery filled to that share, which is what the NutrInform mark shows.
+     */
+    function renderParts(details) {
+        var html = "";
+        for (var i = 0; i < details.parts.length; i++) {
+            var part = details.parts[i];
+            var amount = formatNumber(part.value) + (isBlank(part.unit) ? "" : " " + part.unit);
+            var name = Alfresco.util.encodeHTML(part.label ? part.label : part.code);
+
+            var intake = part.unit === "%" ? part.value : part.share;
+            if (!isBlank(intake)) {
+                var fill = Math.max(0, Math.min(100, parseFloat(intake)));
+                amount = formatNumber(intake, 1) + " %";
+                html += '<span class="score-badge-battery">'
+                    + '<span class="score-badge-battery-name">' + name + "</span>"
+                    + '<span class="score-badge-battery-body"><span class="score-badge-battery-fill" style="width:'
+                    + fill.toFixed(0) + '%"></span></span>'
+                    + '<span class="score-badge-battery-amount">' + Alfresco.util.encodeHTML(amount) + "</span></span>";
+            } else {
+                html += '<span class="score-badge-part">'
+                    + '<span class="score-badge-part-name">' + name + "</span>"
+                    + '<span class="score-badge-part-amount">' + Alfresco.util.encodeHTML(amount) + "</span></span>";
+            }
+        }
+        return html;
+    }
+
+
+    /**
+     * Gauge of the Planet-score axes: the whole A to E range as a colour bar, with a marker
+     * on the level the product reaches.
+     */
+    function renderGauge(scoreClass) {
+        if (isBlank(scoreClass)) {
+            return "";
+        }
+
+        var upper = scoreClass.toString().toUpperCase();
+        var reached = LETTER_CLASSES.indexOf(upper);
+        if (reached < 0) {
+            return '<span class="score-badge-error">' + Alfresco.util.encodeHTML(scoreClass.toString()) + "</span>";
+        }
+
+        var html = "";
+        for (var i = 0; i < LETTER_CLASSES.length; i++) {
+            html += '<span class="score-badge-gauge-step score-badge-gauge-step-' + LETTER_CLASSES[i].toLowerCase() + '">'
+                + (i === reached ? '<span class="score-badge-gauge-marker"></span>' : "") + "</span>";
+        }
+
+        return '<span class="score-badge-gauge" title="' + beCPG.util.encodeAttr(upper) + '">' + html + "</span>";
+    }
+
+
+    /**
+     * A mark states its themes side by side rather than a single verdict: one row per axis,
+     * each with the gauge of the level it reaches.
+     */
+    function renderMark(details) {
+        var parts = details.parts || [];
+        if (parts.length === 0) {
+            return "";
+        }
+
+        var html = "";
+        for (var i = 0; i < parts.length; i++) {
+            var part = parts[i];
+            var name = NUTRIENT_LABELS[part.code] || part.code;
+            html += '<span class="score-badge-mark-row">'
+                + '<span class="score-badge-mark-name">' + Alfresco.util.encodeHTML(name) + "</span>"
+                + renderGauge(part.label) + "</span>";
+        }
+
+        return '<span class="score-badge-mark">' + html + "</span>";
     }
 
     function renderGrade(details) {
@@ -195,17 +373,20 @@
             fallback = renderWarnings(details);
         } else if (scale === "Traffic") {
             fallback = renderTraffic(details);
+        } else if (scale === "Mark") {
+            fallback = renderMark(details);
+        } else if (scale === "Gauge") {
+            fallback = renderGauge(details["class"]);
         } else if (scale === "Grade") {
             fallback = renderGrade(details);
         } else {
             fallback = renderNumeric(details);
         }
 
-        if (scale === "Letter" || scale === "Grade") {
-            return '<span class="score-badge">' + renderRepositoryBadge(details.code, details["class"], fallback) + "</span>";
-        }
+        // any score may carry its official artwork, the shipped CSS is only the fallback
+        var body = renderRepositoryBadge(details.code, details["class"], fallback);
 
-        return '<span class="score-badge">' + fallback + "</span>";
+        return '<span class="score-badge" title="' + beCPG.util.encodeAttr(buildTooltip(details)) + '">' + body + "</span>";
     };
 
     function partLabel(scope, part) {

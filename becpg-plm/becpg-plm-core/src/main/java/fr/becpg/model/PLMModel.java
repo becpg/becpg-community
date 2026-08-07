@@ -485,6 +485,8 @@ public interface PLMModel {
 	QName PROP_SCORE_DEF_DETAIL_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefDetailFormula");
 	/** Constant <code>PROP_SCORE_DEF_RANGE_FORMULA</code> */
 	QName PROP_SCORE_DEF_RANGE_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefRangeFormula");
+	/** Constant <code>PROP_SCORE_DEF_CATEGORY_PROPERTY</code> */
+	QName PROP_SCORE_DEF_CATEGORY_PROPERTY = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefCategoryProperty");
 	/** Constant <code>PROP_SCORE_DEF_IS_OFFICIAL</code> */
 	QName PROP_SCORE_DEF_IS_OFFICIAL = QName.createQName(BeCPGModel.BECPG_URI, "scoreDefIsOfficial");
 	/** Constant <code>PROP_SCORE_DEF_VALIDITY_PERIOD</code> */
@@ -544,27 +546,29 @@ public interface PLMModel {
 	QName ASSOC_SDCL_SCORE_DEF = QName.createQName(BeCPGModel.BECPG_URI, "sdclScoreDef");
 
 	/** Constant <code>TYPE_ENTITY_SCORE_LIST</code> */
-	QName TYPE_ENTITY_SCORE_LIST = QName.createQName(BeCPGModel.BECPG_URI, "entityScoreList");
-	/** Constant <code>PROP_ESL_VALUE</code> */
-	QName PROP_ESL_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "eslValue");
-	/** Constant <code>PROP_ESL_CLASS</code> */
-	QName PROP_ESL_CLASS = QName.createQName(BeCPGModel.BECPG_URI, "eslClass");
-	/** Constant <code>PROP_ESL_DETAILS</code> */
-	QName PROP_ESL_DETAILS = QName.createQName(BeCPGModel.BECPG_URI, "eslDetails");
-	/** Constant <code>PROP_ESL_VERSION</code> */
-	QName PROP_ESL_VERSION = QName.createQName(BeCPGModel.BECPG_URI, "eslVersion");
-	/** Constant <code>PROP_ESL_COMPUTED_DATE</code> */
-	QName PROP_ESL_COMPUTED_DATE = QName.createQName(BeCPGModel.BECPG_URI, "eslComputedDate");
-	/** Constant <code>PROP_ESL_PREVIOUS_VALUE</code> */
-	QName PROP_ESL_PREVIOUS_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "eslPreviousValue");
-	/** Constant <code>PROP_ESL_PREVIOUS_CLASS</code> */
-	QName PROP_ESL_PREVIOUS_CLASS = QName.createQName(BeCPGModel.BECPG_URI, "eslPreviousClass");
-	/** Constant <code>PROP_ESL_IS_MANUAL</code> */
-	QName PROP_ESL_IS_MANUAL = QName.createQName(BeCPGModel.BECPG_URI, "eslIsManual");
-	/** Constant <code>PROP_ESL_ERROR_LOG</code> */
-	QName PROP_ESL_ERROR_LOG = QName.createQName(BeCPGModel.BECPG_URI, "eslErrorLog");
-	/** Constant <code>ASSOC_ESL_SCORE_DEF</code> */
-	QName ASSOC_ESL_SCORE_DEF = QName.createQName(BeCPGModel.BECPG_URI, "eslScoreDef");
+	QName TYPE_ENTITY_SCORE_LIST = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryScoreList");
+	/** Constant <code>PROP_RSL_VALUE</code> */
+	QName PROP_RSL_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "rslValue");
+	/** Constant <code>PROP_RSL_CLASS</code> */
+	QName PROP_RSL_CLASS = QName.createQName(BeCPGModel.BECPG_URI, "rslClass");
+	/** Constant <code>PROP_RSL_DETAILS</code> */
+	QName PROP_RSL_DETAILS = QName.createQName(BeCPGModel.BECPG_URI, "rslDetails");
+	/** Constant <code>PROP_RSL_VERSION</code> */
+	QName PROP_RSL_VERSION = QName.createQName(BeCPGModel.BECPG_URI, "rslVersion");
+	/** Constant <code>PROP_RSL_COMPUTED_DATE</code> */
+	QName PROP_RSL_COMPUTED_DATE = QName.createQName(BeCPGModel.BECPG_URI, "rslComputedDate");
+	/** Constant <code>PROP_RSL_PREVIOUS_VALUE</code> */
+	QName PROP_RSL_PREVIOUS_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "rslPreviousValue");
+	/** Constant <code>PROP_RSL_PREVIOUS_CLASS</code> */
+	QName PROP_RSL_PREVIOUS_CLASS = QName.createQName(BeCPGModel.BECPG_URI, "rslPreviousClass");
+	/** Constant <code>PROP_RSL_IS_MANUAL</code> */
+	QName PROP_RSL_IS_MANUAL = QName.createQName(BeCPGModel.BECPG_URI, "rslIsManual");
+	/** Constant <code>PROP_RSL_CATEGORY</code> */
+	QName PROP_RSL_CATEGORY = QName.createQName(BeCPGModel.BECPG_URI, "rslCategory");
+	/** Constant <code>PROP_RSL_ERROR_LOG</code> */
+	QName PROP_RSL_ERROR_LOG = QName.createQName(BeCPGModel.BECPG_URI, "rslErrorLog");
+	/** Constant <code>ASSOC_RSL_SCORE_DEF</code> */
+	QName ASSOC_RSL_SCORE_DEF = QName.createQName(BeCPGModel.BECPG_URI, "rslScoreDef");
 
 	// lca
 	/** Constant <code>TYPE_LCA</code> */
@@ -898,22 +902,6 @@ public interface PLMModel {
 	QName PROP_AP_SCENARIO = QName.createQName(BeCPGModel.BECPG_URI, "apScenario");
 	/** Constant <code>PROP_AP_CROP_GROUP</code> */
 	QName PROP_AP_CROP_GROUP = QName.createQName(BeCPGModel.BECPG_URI, "apCropGroup");
-	/** Constant <code>PROP_AP_LAND_OCCUPATION</code> */
-	QName PROP_AP_LAND_OCCUPATION = QName.createQName(BeCPGModel.BECPG_URI, "apLandOccupation");
-	/** Constant <code>PROP_AP_HEDGES</code> */
-	QName PROP_AP_HEDGES = QName.createQName(BeCPGModel.BECPG_URI, "apHedges");
-	/** Constant <code>PROP_AP_PLOT_SIZE</code> */
-	QName PROP_AP_PLOT_SIZE = QName.createQName(BeCPGModel.BECPG_URI, "apPlotSize");
-	/** Constant <code>PROP_AP_CROP_DIVERSITY</code> */
-	QName PROP_AP_CROP_DIVERSITY = QName.createQName(BeCPGModel.BECPG_URI, "apCropDiversity");
-	/** Constant <code>PROP_AP_PERMANENT_PASTURE</code> */
-	QName PROP_AP_PERMANENT_PASTURE = QName.createQName(BeCPGModel.BECPG_URI, "apPermanentPasture");
-	/** Constant <code>PROP_AP_TEMPORARY_PASTURE</code> */
-	QName PROP_AP_TEMPORARY_PASTURE = QName.createQName(BeCPGModel.BECPG_URI, "apTemporaryPasture");
-	/** Constant <code>PROP_AP_ANIMAL_PRODUCTION_TYPE</code> */
-	QName PROP_AP_ANIMAL_PRODUCTION_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "apAnimalProductionType");
-	/** Constant <code>PROP_AP_LIVESTOCK_UNIT_PER_KG</code> */
-	QName PROP_AP_LIVESTOCK_UNIT_PER_KG = QName.createQName(BeCPGModel.BECPG_URI, "apLivestockUnitPerKg");
 
 	/** Constant <code>ASPECT_ECO_SCORE</code> */
 	QName ASPECT_ECO_SCORE = QName.createQName(BeCPGModel.BECPG_URI, "ecoScoreAspect");

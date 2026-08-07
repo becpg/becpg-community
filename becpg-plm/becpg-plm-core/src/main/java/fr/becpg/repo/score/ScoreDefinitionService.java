@@ -250,12 +250,27 @@ public class ScoreDefinitionService {
 	 * @return a {@link java.util.Optional} object
 	 */
 	public Optional<ScoreDefCoeffListDataItem> findCoefficient(ScoreDefinitionItem definition, NodeRef lcaNodeRef) {
+		// matched on the code rather than on the node: a repository may hold several indicators
+		// sharing a code, and the coefficient would then bind to only one of them
+		String lcaCode = lcaCode(lcaNodeRef);
+
 		for (ScoreDefCoeffListDataItem coefficient : getCoefficients(definition)) {
-			if (Objects.equals(coefficient.getLca(), lcaNodeRef)) {
+			if (Objects.equals(coefficient.getLca(), lcaNodeRef)
+					|| ((lcaCode != null) && lcaCode.equals(lcaCode(coefficient.getLca())))) {
 				return Optional.of(coefficient);
 			}
 		}
 		return Optional.empty();
+	}
+
+	/**
+	 * <p>lcaCode.</p>
+	 *
+	 * @param lcaNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.lang.String} object
+	 */
+	private String lcaCode(NodeRef lcaNodeRef) {
+		return lcaNodeRef != null ? (String) nodeService.getProperty(lcaNodeRef, PLMModel.PROP_LCA_CODE) : null;
 	}
 
 	/**

@@ -4,6 +4,8 @@
 package fr.becpg.repo.product.formulation.ecobalyse;
 
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -13,6 +15,8 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.LCAListDataItem;
@@ -41,9 +45,38 @@ public class EcobalyseComplementsCalculator {
 	/** Constant <code>COMPLEMENTS_LCA_CODE="BIODIVERSITY_COMPLEMENTS"</code> */
 	public static final String COMPLEMENTS_LCA_CODE = "BIODIVERSITY_COMPLEMENTS";
 
+	/** Farming practices are read from the life cycle list, their codes share this prefix */
+	private static final String PRACTICE_PREFIX = "AP_";
+
+	/** Constant <code>LAND_OCCUPATION="AP_LAND_OCCUPATION"</code> */
+	private static final String LAND_OCCUPATION = "AP_LAND_OCCUPATION";
+
+	/** Constant <code>HEDGES="AP_HEDGES"</code> */
+	private static final String HEDGES = "AP_HEDGES";
+
+	/** Constant <code>PLOT_SIZE="AP_PLOT_SIZE"</code> */
+	private static final String PLOT_SIZE = "AP_PLOT_SIZE";
+
+	/** Constant <code>CROP_DIVERSITY="AP_CROP_DIVERSITY"</code> */
+	private static final String CROP_DIVERSITY = "AP_CROP_DIVERSITY";
+
+	/** Constant <code>PERMANENT_PASTURE="AP_PERMANENT_PASTURE"</code> */
+	private static final String PERMANENT_PASTURE = "AP_PERMANENT_PASTURE";
+
 	private NodeService nodeService;
 
 	private EcobalyseIngredientService ecobalyseIngredientService;
+
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+
+	/**
+	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
+	 *
+	 * @param alfrescoRepository a {@link fr.becpg.repo.repository.AlfrescoRepository} object
+	 */
+	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
+	}
 
 	/**
 	 * <p>Setter for the field <code>nodeService</code>.</p>
@@ -172,18 +205,48 @@ public class EcobalyseComplementsCalculator {
 			return Optional.empty();
 		}
 
-		EcobalyseIngredient practices = EcobalyseIngredient.builder()
+		// the scenario and the crop group qualify the supply and stay properties, the
+		// practices themselves are measured values read from the life cycle list
+		Map<String, Double> practices = practices(productNodeRef);
+
+		EcobalyseIngredient ingredient = EcobalyseIngredient.builder()
 				.withIdentity(productNodeRef.getId(), null, (String) nodeService.getProperty(productNodeRef, BeCPGModel.PROP_CHARACT_NAME))
 				.withOrigin((String) nodeService.getProperty(productNodeRef, PLMModel.PROP_AP_CROP_GROUP),
 						(String) nodeService.getProperty(productNodeRef, PLMModel.PROP_AP_SCENARIO), null)
-				.withLandOccupation((Double) nodeService.getProperty(productNodeRef, PLMModel.PROP_AP_LAND_OCCUPATION))
-				.withEcosystemicServices((Double) nodeService.getProperty(productNodeRef, PLMModel.PROP_AP_CROP_DIVERSITY),
-						(Double) nodeService.getProperty(productNodeRef, PLMModel.PROP_AP_HEDGES),
-						(Double) nodeService.getProperty(productNodeRef, PLMModel.PROP_AP_PERMANENT_PASTURE),
-						(Double) nodeService.getProperty(productNodeRef, PLMModel.PROP_AP_PLOT_SIZE))
+				.withLandOccupation(practices.get(LAND_OCCUPATION))
+				.withEcosystemicServices(practices.get(CROP_DIVERSITY), practices.get(HEDGES), practices.get(PERMANENT_PASTURE),
+						practices.get(PLOT_SIZE))
 				.build();
 
-		return Optional.of(practices);
+		return Optional.of(ingredient);
+	}
+
+	/**
+	 * <p>Farming practices of a component, read from the life cycle indicators it carries.</p>
+	 *
+	 * @param productNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a {@link java.util.Map} object, never null
+	 */
+	private Map<String, Double> practices(NodeRef productNodeRef) {
+		Map<String, Double> values = new HashMap<>();
+
+		ProductData component = (ProductData) alfrescoRepository.findOne(productNodeRef);
+		if (component.getLcaList() == null) {
+			return values;
+		}
+
+		for (LCAListDataItem line : component.getLcaList()) {
+			if ((line.getLca() == null) || (line.getValue() == null)) {
+				continue;
+			}
+
+			String code = (String) nodeService.getProperty(line.getLca(), PLMModel.PROP_LCA_CODE);
+			if ((code != null) && code.startsWith(PRACTICE_PREFIX)) {
+				values.put(code, line.getValue());
+			}
+		}
+
+		return values;
 	}
 
 	/**

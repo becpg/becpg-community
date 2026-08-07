@@ -37,6 +37,8 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_LCA="LifeCycleAnalysis"</code> */
 	public static final String PATH_LCA = "LifeCycleAnalysis";
 
+	/** Constant <code>PATH_SCORES="Scores"</code> */
+	public static final String PATH_SCORES = "Scores";
 	/** Constant <code>PATH_SCORE_DEFINITIONS="ScoreDefinitions"</code> */
 	public static final String PATH_SCORE_DEFINITIONS = "ScoreDefinitions";
 	/** Constant <code>PATH_SCORE_THRESHOLDS="ScoreThresholds"</code> */

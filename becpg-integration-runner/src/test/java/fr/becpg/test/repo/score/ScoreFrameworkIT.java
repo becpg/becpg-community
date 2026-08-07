@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.PlmRepoConsts;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.score.ScoreContext;
 import fr.becpg.repo.score.ScoreDefinitionService;
@@ -24,7 +23,7 @@ import fr.becpg.repo.score.ScoreEngine;
 import fr.becpg.repo.score.ScorePart;
 import fr.becpg.repo.score.ScoreResultWriter;
 import fr.becpg.repo.score.ScoreScale;
-import fr.becpg.repo.score.data.EntityScoreListDataItem;
+import fr.becpg.repo.score.data.RegulatoryScoreListDataItem;
 import fr.becpg.repo.score.data.ScoreDefinitionItem;
 import fr.becpg.test.PLMBaseTestCase;
 
@@ -73,11 +72,11 @@ public class ScoreFrameworkIT extends PLMBaseTestCase {
 		inReadTx(() -> {
 			FinishedProductData product = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
 
-			List<EntityScoreListDataItem> scores = product.getEntityScoreList();
+			List<RegulatoryScoreListDataItem> scores = product.getRegulatoryScoreList();
 			Assert.assertNotNull("The score list should have been created", scores);
 			Assert.assertEquals(1, scores.size());
 
-			EntityScoreListDataItem score = scores.get(0);
+			RegulatoryScoreListDataItem score = scores.get(0);
 			Assert.assertEquals(definitionNodeRef, score.getScoreDef());
 			Assert.assertEquals(TEST_VALUE, score.getValue());
 			Assert.assertEquals(TEST_CLASS, score.getScoreClass());
@@ -116,7 +115,7 @@ public class ScoreFrameworkIT extends PLMBaseTestCase {
 		inReadTx(() -> {
 			FinishedProductData product = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
 
-			List<EntityScoreListDataItem> scores = product.getEntityScoreList();
+			List<RegulatoryScoreListDataItem> scores = product.getRegulatoryScoreList();
 			Assert.assertTrue("The framework stays dormant without a definition", (scores == null) || scores.isEmpty());
 
 			return null;
@@ -156,7 +155,7 @@ public class ScoreFrameworkIT extends PLMBaseTestCase {
 		inReadTx(() -> {
 			FinishedProductData product = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
 
-			EntityScoreListDataItem score = product.getEntityScoreList().get(0);
+			RegulatoryScoreListDataItem score = product.getRegulatoryScoreList().get(0);
 			Assert.assertEquals((Double) 50d, score.getValue());
 			Assert.assertEquals("A", score.getScoreClass());
 			Assert.assertEquals(TEST_VALUE, score.getPreviousValue());
@@ -177,7 +176,7 @@ public class ScoreFrameworkIT extends PLMBaseTestCase {
 			return existing.get().getNodeRef();
 		}
 
-		NodeRef listNodeRef = entitySystemService.getSystemEntityDataList(systemFolderNodeRef, RepoConsts.PATH_CHARACTS,
+		NodeRef listNodeRef = entitySystemService.getSystemEntityDataList(systemFolderNodeRef, PlmRepoConsts.PATH_SCORES,
 				PlmRepoConsts.PATH_SCORE_DEFINITIONS);
 
 		Map<QName, Serializable> properties = new HashMap<>();
