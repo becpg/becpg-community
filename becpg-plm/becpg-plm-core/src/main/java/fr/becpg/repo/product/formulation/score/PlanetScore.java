@@ -82,6 +82,9 @@ public class PlanetScore implements ScoreCalculatingPlugin {
 
 	private static final String WORLD = "MONDE";
 
+	/** The environmental axes are graded on a five letter scale of their own */
+	private static final String WORST_AXIS_CLASS = "E";
+
 	/** Member states, the mark tells France, Europe and the rest of the world apart */
 	private static final Set<String> EUROPEAN_UNION = Set.of("AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI",
 			"FR", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK");
@@ -266,11 +269,10 @@ public class PlanetScore implements ScoreCalculatingPlugin {
 		for (ScorePart part : context.getParts()) {
 			// an axis whose value fell outside its scale carries no level: it must not become
 			// the verdict of the whole mark by comparing above every letter
-			if (!isLevel(part.getScoreClass())) {
-				continue;
-			}
-			if ((worst == null) || (part.getScoreClass().compareTo(worst) > 0)) {
-				worst = part.getScoreClass();
+			String level = levelOfAxis(part.getScoreClass());
+
+			if ((level != null) && ((worst == null) || (level.compareTo(worst) > 0))) {
+				worst = level;
 			}
 		}
 
@@ -278,13 +280,24 @@ public class PlanetScore implements ScoreCalculatingPlugin {
 	}
 
 	/**
-	 * <p>Whether a label is one of the four levels of the mark.</p>
+	 * <p>Level of the mark an axis stands at.</p>
 	 *
-	 * @param label the label carried by an axis
-	 * @return a boolean
+	 * <p>The mark has four levels where the environmental axes are graded on a five letter
+	 * scale of their own: an axis at E stands at the worst level of the mark. An axis whose
+	 * value fell outside its scale carries no level and must not become the verdict of the
+	 * whole mark by comparing above every letter.</p>
+	 *
+	 * @param scoreClass the class carried by an axis
+	 * @return a {@link java.lang.String} object, null when the axis carries no level
 	 */
-	private boolean isLevel(String label) {
-		return (label != null) && (label.length() == 1) && (LEVEL_A.compareTo(label) <= 0) && (LEVEL_D.compareTo(label) >= 0);
+	private String levelOfAxis(String scoreClass) {
+		if ((scoreClass == null) || (scoreClass.length() != 1) || (LEVEL_A.compareTo(scoreClass) > 0)) {
+			return null;
+		}
+		if (WORST_AXIS_CLASS.compareTo(scoreClass) < 0) {
+			return null;
+		}
+		return LEVEL_D.compareTo(scoreClass) < 0 ? LEVEL_D : scoreClass;
 	}
 
 	/**
