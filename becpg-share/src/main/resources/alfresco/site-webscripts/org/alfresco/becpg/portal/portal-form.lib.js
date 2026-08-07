@@ -391,7 +391,7 @@ function portalResolveDefinition(itemType, formId, mode, list, prefixedSiteId, p
 	var fields = formModel.fields != null ? formModel.fields : [];
 
 	// Enrich with what only Share knows: the overridden label, the help text, the
-	// read-only flag and the owning set.
+	// control, the read-only flag and the owning set.
 	for (var i = 0; i < fields.length; i++) {
 		var field = fields[i];
 		var shareField = null;
@@ -408,11 +408,48 @@ function portalResolveDefinition(itemType, formId, mode, list, prefixedSiteId, p
 					field.label = "" + msg.get(shareField.labelId);
 				}
 			} catch (eLbl) { /* keep the repository label */ }
+			// `help` is the literal attribute, `help-id` a message key — and beCPG
+			// uses the second almost everywhere (becpg-plm-form-config.xml declares
+			// help-id on some ninety fields and help on none). Reading only
+			// getHelpText() therefore returned null for all of them, and the portal
+			// rendered every field without its help text.
 			try {
 				if (shareField.getHelpText() != null) {
 					field.help = "" + shareField.getHelpText();
+				} else if (shareField.getHelpTextId() != null) {
+					field.help = "" + msg.get(shareField.getHelpTextId());
 				}
 			} catch (eHelp) { /* no help configured */ }
+			// The CONTROL, and this is not cosmetic: the datasource of a picker
+			// lives in `<control-param name="ds">`, and nowhere else. Dropped, the
+			// portal could still derive the default datasource of a true
+			// association (`…/targetassoc/associations/<endpointType>`), but not the
+			// one of a `d:noderef` PROPERTY — `bcpg:ingTypeV2` (Catégorie
+			// réglementaire) points at `bcpg:ingTypeItem`, which only this `ds`
+			// says. Those fields answered "carries no datasource" and the supplier
+			// portal showed "la recherche a échoué" on them.
+			try {
+				var control = shareField.getControl();
+				if (control != null) {
+					var params = {};
+					var rawParams = control.getParams();
+					if (rawParams != null) {
+						for (var p = 0; p < rawParams.length; p++) {
+							var param = rawParams[p];
+							if (param != null && param.getName() != null) {
+								// The XML indents its control-param values, so the
+								// declared `ds` arrives with a trailing newline and
+								// tabs. Trimmed here rather than in every consumer.
+								params["" + param.getName()] = ("" + param.getValue()).replace(/^\s+|\s+$/g, "");
+							}
+						}
+					}
+					field.control = {
+						template: control.getTemplate() != null ? "" + control.getTemplate() : null,
+						params: params
+					};
+				}
+			} catch (eCtrl) { /* no control declared: the repository default applies */ }
 			try {
 				if (shareField.isReadOnly()) {
 					field.readOnly = true;
