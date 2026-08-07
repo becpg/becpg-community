@@ -94,6 +94,11 @@
         for (var i = 0; i < parts.length; i++) {
             var part = parts[i];
             var line = part.label ? part.label : part.code;
+
+            // the marks whose axes are graded on their own scale carry no value, only a class
+            if (!isBlank(part["class"])) {
+                line += " : " + part["class"];
+            }
             if (!isBlank(part.value)) {
                 line += " : " + formatNumber(part.value) + (isBlank(part.unit) ? "" : " " + part.unit);
             }
@@ -144,11 +149,15 @@
             + Alfresco.util.encodeHTML(text) + "</text>";
     }
 
+    /**
+     * Opens a mark. The label is carried by aria-label and not by an SVG title element: a
+     * title inside the drawing shadows the title attribute of the enclosing badge, and the
+     * reader would get the bare letter on hover instead of the whole breakdown.
+     */
     function svgOpen(width, height, cssClass, title) {
         return '<svg class="' + cssClass + '" width="' + width + '" height="' + height + '"'
             + ' viewBox="0 0 ' + width + " " + height + '" role="img" aria-label="'
-            + beCPG.util.encodeAttr(title || "") + '">'
-            + (title ? "<title>" + Alfresco.util.encodeHTML(title) + "</title>" : "");
+            + beCPG.util.encodeAttr(title || "") + '">';
     }
 
     var LETTER_COLOURS = { A: "#00853f", B: "#64bf21", C: "#ffc800", D: "#ff7600", E: "#ff0100" };
