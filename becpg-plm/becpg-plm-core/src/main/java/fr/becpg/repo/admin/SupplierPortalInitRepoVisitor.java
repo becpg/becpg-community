@@ -40,7 +40,6 @@ import fr.becpg.repo.project.data.projectList.DeliverableScriptOrder;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
-import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>SupplierPortalInitRepoVisitor class.</p>
@@ -70,9 +69,6 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 	/** Constant <code>TECHNICAL_SHEET_TYPE_NAME="plm.supplier.portal.documentType.techn"{trunked}</code> */
 	private static final String TECHNICAL_SHEET_TYPE_NAME = "plm.supplier.portal.documentType.technicalSheet.name";
 
-	/** Constant <code>CONF_CREATE_TECHNICAL_SHEET_TYPE="beCPG.supplierPortal.createDefaultTechn"{trunked}</code> */
-	private static final String CONF_CREATE_TECHNICAL_SHEET_TYPE = "beCPG.supplierPortal.createDefaultTechnicalSheetType";
-
 	/** Constant <code>SUPPLIER_SITE_PRESET="supplier-site-dashboard"</code> */
 	private static final String SUPPLIER_SITE_PRESET = "supplier-site-dashboard";
 
@@ -93,9 +89,6 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	@Autowired
 	private NamespaceService namespaceService;
-
-	@Autowired
-	private SystemConfigurationService systemConfigurationService;
 
 	@Autowired
 	private EntityTplService entityTplService;
@@ -262,11 +255,17 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 	 * the step degrades to a free deposit, the supplier reads "aucun type « fiche technique »
 	 * configuré", and the AI extraction has no requirement to attach its suggestions to.</p>
 	 *
-	 * <p><b>Disabled by default</b>
-	 * ({@code beCPG.supplierPortal.createDefaultTechnicalSheetType}). Creating the type is not a
-	 * neutral act on an existing repository: the formulation handler materialises it as an
-	 * expected document on every raw material. It is therefore created <b>non mandatory</b>, so no
-	 * documentary completeness score moves, and only when an administrator asks for it.</p>
+	 * <p><b>Created unconditionally</b>, like the default specification just above: this visitor
+	 * already provisions the supplier site, the referencing project template and that
+	 * specification without asking, and a flag for this one alone would have been the odd one
+	 * out. It was gated at first out of caution about touching existing repositories; the gate
+	 * was the wrong answer to a real concern, and the right one is the next paragraph.</p>
+	 *
+	 * <p>Because creating the type is <b>not</b> neutral: {@code DocumentFormulationHandler}
+	 * materialises it as an expected document on every raw material at its next formulation. It
+	 * is therefore created <b>non mandatory</b>, which is what keeps it harmless — an expected
+	 * document that is not mandatory adds a line to the checklist and moves no documentary
+	 * completeness score, no approval status and no supplier's dossier.</p>
 	 *
 	 * <p>Create-if-absent, matched on the name: an instance that already declares its own
 	 * technical sheet type is left alone. This visitor runs on every startup, so it has to stay
@@ -275,11 +274,6 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 	 * @param companyHome a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
 	private void visitDefaultTechnicalSheetType(NodeRef companyHome) {
-
-		if (!Boolean.parseBoolean(systemConfigurationService.confValue(CONF_CREATE_TECHNICAL_SHEET_TYPE))) {
-			logger.debug("Default technical sheet document type disabled, skipping");
-			return;
-		}
 
 		NodeRef documentTypesNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, XPATH_DOCUMENT_TYPES);
 
@@ -297,9 +291,10 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(ContentModel.PROP_NAME, typeName);
 		properties.put(BeCPGModel.PROP_CHARACT_NAME, typeName);
-		// NOT mandatory: the sheet is what the portal *opens on*, not a document whose absence
-		// must suspend an approval. Making it mandatory here would move the documentary
-		// completeness of every raw material of every instance that turns this on.
+		// NOT mandatory, and this is what makes creating it by default safe: the sheet is what
+		// the portal *opens on*, not a document whose absence must suspend an approval. Mandatory,
+		// it would move the documentary completeness — and so the derived approval status — of
+		// every raw material of every instance, on upgrade, without anyone asking.
 		properties.put(PROP_DOC_TYPE_IS_MANDATORY, Boolean.FALSE);
 		// The link to the raw material type is what makes it a SYNCHRONISED document type
 		// (DocumentTypeItem.isSynchronisedDocumentType): without it the type exists but no
