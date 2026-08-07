@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ScorableEntity;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
@@ -242,7 +242,7 @@ public class YukaScore implements ScoreCalculatingPlugin {
 	 * @return a {@link java.lang.String} object
 	 */
 	private String claimCode(NodeRef claim) {
-		return claim != null ? (String) nodeService.getProperty(claim, BeCPGModel.PROP_CODE) : null;
+		return claim != null ? (String) nodeService.getProperty(claim, PLMModel.PROP_LABEL_CLAIM_CODE) : null;
 	}
 
 	/**
