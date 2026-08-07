@@ -45,18 +45,6 @@
     letter-spacing: 1px;
 }
 
-/* Grade scale, named grade without ordering */
-
-.score-badge .score-badge-grade,
-.datagrid .score-badge .score-badge-grade {
-    background: #4a4a4a;
-    border-radius: 3px;
-    color: white;
-    display: inline-block;
-    font-size: 12px;
-    padding: 3px 7px;
-}
-
 .score-badge .score-badge-error,
 .datagrid .score-badge .score-badge-error {
     background: url("../../images/states/warning-16.png") no-repeat;
