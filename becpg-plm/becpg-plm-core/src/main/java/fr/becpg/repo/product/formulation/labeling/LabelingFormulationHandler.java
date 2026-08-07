@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
@@ -90,6 +91,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private static final Log logger = LogFactory.getLog(LabelingFormulationHandler.class);
 
 	private static final String NULL_ING_ERROR = "message.formulate.labelRule.error.nullIng";
+
+	/** Constant <code>CONTENT_TOO_LONG="message.formulate.labelRule.contentToo"{trunked}</code> */
+	private static final String CONTENT_TOO_LONG = "message.formulate.labelRule.contentTooLong";
 
 	private NodeService nodeService;
 
@@ -448,6 +452,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							log = labelingFormulaContext
 									.createJsonLog(labelingRuleListDataItem.getFormula().replace(" ", "").contains("render(false)"));
 						}
+
+						// Keep the label under the property size limit by dropping whole languages, never cutting a value
+						label = dropOversizedLabelValues(label);
 
 						retainNodes.addAll(getOrCreateILLDataItems(formulatedProduct, labelingRuleListDataItem.getNodeRef(), label, log,
 								labelingFormulaContext, sortOrder));
@@ -1417,6 +1424,42 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 		return ret;
 
+	}
+
+	/**
+	 * <p>getOrCreateILLDataItem.</p>
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @param key a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param label a {@link org.alfresco.service.cmr.repository.MLText} object
+	 * @param log a {@link java.lang.String} object
+	 * @param lang a {@link java.lang.String} object
+	 * @param sortOrder a int
+	 * @return a {@link fr.becpg.repo.product.data.productList.IngLabelingListDataItem} object
+	 */
+	/**
+	 * Keeps every rendered labeling value (bcpg:illValue) within what its own property row can hold,
+	 * to prevent property write failures. No value is ever cut: a language that does not fit is
+	 * replaced as a whole by a notice in its own language, and the other languages are untouched. A
+	 * partially cut ingredient list carries wrong data, whereas a notice tells the user what happened.
+	 *
+	 * @param label the rendered labeling value
+	 * @return the labeling value fitting the size limit
+	 */
+	private MLText dropOversizedLabelValues(MLText label) {
+		MLText result = LargeTextHelper.dropOversizedLocales(label, locale -> I18NUtil.getMessage(CONTENT_TOO_LONG, locale));
+		logDroppedLocales(label, result);
+		return result;
+	}
+
+	private void logDroppedLocales(MLText label, MLText result) {
+		for (Entry<Locale, String> entry : label.entrySet()) {
+			if (!Objects.equals(entry.getValue(), result.get(entry.getKey()))) {
+				logger.warn("Rendered labeling value of " + entry.getValue().length() + " characters exceeds the "
+						+ LargeTextHelper.MAX_LOCALE_SIZE_BYTES + " bytes a property row can hold for locale " + entry.getKey()
+						+ ", replaced by a notice");
+			}
+		}
 	}
 
 	IngLabelingListDataItem getOrCreateILLDataItem(ProductData formulatedProduct, NodeRef key, MLText label, String log, String lang, int sortOrder) {
