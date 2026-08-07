@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ApplicationModel;
@@ -533,21 +535,17 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected void extractEntityImages(NodeRef entityNodeRef, Element imgsElt, DefaultExtractorContext context,
 			Map<String, String> extratAttributes) {
 
-		List<Element> elements = imgsElt.elements(TAG_IMAGE);
-		int cnt = elements != null ? elements.size() : 1;
 		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS,
 				TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 		if (imagesFolderNodeRef != null) {
 			for (NodeRef imgNodeRef : associationService.getChildAssocs(imagesFolderNodeRef, ContentModel.ASSOC_CONTAINS)) {
 
-				String imgId = String.format(PRODUCT_IMG_ID, cnt);
-				String name = (String) nodeService.getProperty(imagesFolderNodeRef, ContentModel.PROP_NAME);
-				if (name.startsWith(REPORT_LOGO_ID) || name.startsWith(I18NUtil.getMessage("report.logo.fileName.prefix", Locale.getDefault()))) {
+				String imgId = null;
+				String name = (String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_NAME);
+				if (name != null && (name.startsWith(REPORT_LOGO_ID) || name.startsWith(I18NUtil.getMessage("report.logo.fileName.prefix", Locale.getDefault())))) {
 					imgId = REPORT_LOGO_ID;
 				}
-				if (extractImageInternal(entityNodeRef, imgNodeRef, imgId, imgsElt, context, extratAttributes)) {
-					cnt++;
-				}
+				extractImageInternal(entityNodeRef, imgNodeRef, imgId, imgsElt, context, extratAttributes);
 			}
 		}
 
@@ -668,6 +666,11 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				return false;
 			}
 			context.getExtractedImages().add(imgNodeRef);
+
+			if (imgId == null) {
+				imgId = findOrGenerateImageId(imgNodeRef, context);
+			}
+
 			EntityImageInfo imgInfo = new EntityImageInfo(imgId, imgNodeRef);
 			imgInfo.setName((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_NAME));
 			imgInfo.setTitle((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
@@ -697,6 +700,29 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			addCDATA(imgElt, ContentModel.PROP_DESCRIPTION, imgInfo.getDescription(), null);
 			context.getReportData().getImages().add(imgInfo);
 			return true;
+		}
+		return false;
+	}
+
+	private String findOrGenerateImageId(NodeRef imgNodeRef, DefaultExtractorContext context) {
+		for (EntityImageInfo info : context.getReportData().getImages()) {
+			if (Objects.equals(info.getImageNodeRef(), imgNodeRef)) {
+				return info.getId();
+			}
+		}
+		int cnt = context.getReportData().getImages().size();
+		String imgId;
+		do {
+			imgId = String.format(PRODUCT_IMG_ID, cnt++);
+		} while (isImageIdUsed(imgId, context.getReportData().getImages()));
+		return imgId;
+	}
+
+	private boolean isImageIdUsed(String id, Set<EntityImageInfo> images) {
+		for (EntityImageInfo info : images) {
+			if (Objects.equals(info.getId(), id)) {
+				return true;
+			}
 		}
 		return false;
 	}
