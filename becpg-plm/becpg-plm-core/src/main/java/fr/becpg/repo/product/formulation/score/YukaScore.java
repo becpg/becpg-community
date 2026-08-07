@@ -36,14 +36,25 @@ public class YukaScore implements ScoreCalculatingPlugin {
 	/** Constant <code>SCORE_CODE="YUKA"</code> */
 	public static final String SCORE_CODE = "YUKA";
 
-	/** Constant <code>ORGANIC_CLAIM="ORGANIC"</code> */
-	private static final String ORGANIC_CLAIM = "ORGANIC";
-
 	private static final double NUTRITION_WEIGHT = 0.6d;
 
 	private static final double ADDITIVES_WEIGHT = 0.3d;
 
 	private static final double ORGANIC_WEIGHT = 0.1d;
+
+	private static final String NUTRITION = "NUTRITION";
+
+	private static final String ADDITIVES = "ADDITIVES";
+
+	private static final String ORGANIC = "ORGANIC";
+
+	private static final String NOVA_UNPROCESSED = "1";
+
+	private static final String NOVA_CULINARY = "2";
+
+	private static final String NOVA_PROCESSED = "3";
+
+	private static final String NOVA_ULTRA_PROCESSED = "4";
 
 	private final ScoreDefinitionService scoreDefinitionService;
 
@@ -69,8 +80,8 @@ public class YukaScore implements ScoreCalculatingPlugin {
 	/** {@inheritDoc} */
 	@Override
 	public boolean accept(ScorableEntity scorableEntity) {
-		return (scorableEntity instanceof ProductData) && (scorableEntity instanceof ScoredEntity scored)
-				&& (nutritionGrade(scored) != null);
+		return (scorableEntity instanceof ProductData) && (scorableEntity instanceof ScoredEntity scored) && (nutritionGrade(scored) != null)
+				&& (gradeOf(scored, NovaClassification.SCORE_CODE) != null);
 	}
 
 	/** {@inheritDoc} */
@@ -115,9 +126,9 @@ public class YukaScore implements ScoreCalculatingPlugin {
 		double additives = additivePoints(scored);
 		double organic = isOrganic(product) ? 100d : 0d;
 
-		context.getParts().add(part("NUTRITION", nutrition, NUTRITION_WEIGHT));
-		context.getParts().add(part("ADDITIVES", additives, ADDITIVES_WEIGHT));
-		context.getParts().add(part("ORGANIC", organic, ORGANIC_WEIGHT));
+		context.getParts().add(part(NUTRITION, nutrition, NUTRITION_WEIGHT));
+		context.getParts().add(part(ADDITIVES, additives, ADDITIVES_WEIGHT));
+		context.getParts().add(part(ORGANIC, organic, ORGANIC_WEIGHT));
 
 		context.setValue((nutrition * NUTRITION_WEIGHT) + (additives * ADDITIVES_WEIGHT) + (organic * ORGANIC_WEIGHT));
 
@@ -158,13 +169,16 @@ public class YukaScore implements ScoreCalculatingPlugin {
 	 *
 	 * @param scored a {@link fr.becpg.repo.score.ScoredEntity} object
 	 * @return a double
+	 * @throws java.lang.IllegalStateException when NOVA was not published, an absent
+	 *         classification being no reason to award the marks of a product free of additives
 	 */
 	private double additivePoints(ScoredEntity scored) {
-		return switch (Objects.toString(gradeOf(scored, NovaClassification.SCORE_CODE), "1")) {
-			case "1" -> 100d;
-			case "2" -> 75d;
-			case "3" -> 50d;
-			default -> 0d;
+		return switch (Objects.toString(gradeOf(scored, NovaClassification.SCORE_CODE), "")) {
+			case NOVA_UNPROCESSED -> 100d;
+			case NOVA_CULINARY -> 75d;
+			case NOVA_PROCESSED -> 50d;
+			case NOVA_ULTRA_PROCESSED -> 0d;
+			default -> throw new IllegalStateException("The Yuka rating needs the NOVA classification of the product");
 		};
 	}
 
@@ -191,7 +205,9 @@ public class YukaScore implements ScoreCalculatingPlugin {
 		}
 
 		for (RegulatoryScoreListDataItem score : scored.getRegulatoryScoreList()) {
-			if ((score.getDetails() != null) && code.equals(ScoreContext.parse(score.getDetails()).getCode())) {
+			String details = score.getDetails();
+
+			if ((details != null) && !details.isBlank() && code.equals(ScoreContext.parse(details).getCode())) {
 				return score.getScoreClass();
 			}
 		}
@@ -211,7 +227,7 @@ public class YukaScore implements ScoreCalculatingPlugin {
 		}
 
 		for (LabelClaimListDataItem claim : product.getLabelClaimList()) {
-			if (Boolean.TRUE.equals(claim.getIsClaimed()) && ORGANIC_CLAIM.equals(claimCode(claim.getLabelClaim()))) {
+			if (Boolean.TRUE.equals(claim.getIsClaimed()) && ORGANIC.equals(claimCode(claim.getLabelClaim()))) {
 				return true;
 			}
 		}

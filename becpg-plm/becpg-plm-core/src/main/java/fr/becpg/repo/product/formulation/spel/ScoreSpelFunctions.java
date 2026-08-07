@@ -4,6 +4,7 @@
 package fr.becpg.repo.product.formulation.spel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.formulation.spel.CustomSpelFunctions;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.score.ScoreContext;
 import fr.becpg.repo.score.ScoredEntity;
 import fr.becpg.repo.score.data.RegulatoryScoreListDataItem;
 
@@ -148,7 +150,7 @@ public class ScoreSpelFunctions implements CustomSpelFunctions {
 			if ((details == null) || details.isBlank()) {
 				return null;
 			}
-			return fr.becpg.repo.score.ScoreContext.parse(details).getCode();
+			return ScoreContext.parse(details).getCode();
 		}
 
 		/**
@@ -158,9 +160,9 @@ public class ScoreSpelFunctions implements CustomSpelFunctions {
 		 */
 		private List<RegulatoryScoreListDataItem> scores() {
 			if (!(entity instanceof ScoredEntity scored) || (scored.getRegulatoryScoreList() == null)) {
-				return new ArrayList<>();
+				return Collections.emptyList();
 			}
-			return scored.getRegulatoryScoreList();
+			return Collections.unmodifiableList(scored.getRegulatoryScoreList());
 		}
 
 	}

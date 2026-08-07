@@ -49,6 +49,8 @@ public class ScoreResultWriter {
 	 * <p>Constructor for ScoreResultWriter.</p>
 	 *
 	 * @param scoreDefinitionService a {@link fr.becpg.repo.score.ScoreDefinitionService} object
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object
 	 */
 	@Autowired
 	public ScoreResultWriter(ScoreDefinitionService scoreDefinitionService, @Qualifier("nodeService") NodeService nodeService,
@@ -84,6 +86,14 @@ public class ScoreResultWriter {
 		context.computeShares();
 
 		RegulatoryScoreListDataItem item = findOrCreateItem(entity, definition.get());
+
+		// a score entered by hand is an audited figure, the formulation must not overwrite it
+		if (Boolean.TRUE.equals(item.getIsManual())) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Score " + context.getCode() + " is entered by hand, keeping the value of the entity");
+			}
+			return;
+		}
 
 		item.keepPreviousValue();
 		item.setValue(context.getValue());
@@ -158,7 +168,9 @@ public class ScoreResultWriter {
 		}
 
 		for (RegulatoryScoreListDataItem candidate : entity.getRegulatoryScoreList()) {
-			if (Objects.equals(candidate.getScoreDef(), definition.getParent())) {
+			// a parent still held in memory carries no reference to point at: the score stays
+			// at the root and joins its parent on the next formulation
+			if (Objects.equals(candidate.getScoreDef(), definition.getParent()) && (candidate.getNodeRef() != null)) {
 				item.setParentLevel(candidate.getNodeRef());
 				item.setDepthLevel((candidate.getDepthLevel() == null ? 0 : candidate.getDepthLevel()) + 1);
 				return;

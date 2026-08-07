@@ -50,6 +50,9 @@ public class ScoreDefinitionService {
 	/** Constant <code>CACHE_KEY="fr.becpg.repo.score.ScoreDefinitionServ"{trunked}</code> */
 	private static final String CACHE_KEY = ScoreDefinitionService.class.getName();
 
+	/** Cache entry holding the definitions with their sub lists attached */
+	private static final String ASSEMBLED_CACHE_ENTRY = "assembledDefinitions";
+
 	/** Constant <code>DEFINITIONS_CACHE_ENTRY="definitions"</code> */
 	private static final String DEFINITIONS_CACHE_ENTRY = "definitions";
 
@@ -80,7 +83,21 @@ public class ScoreDefinitionService {
 	 * @return a {@link java.util.List} object, never null
 	 */
 	public List<ScoreDefinitionItem> getScoreDefinitions() {
+		return beCPGCacheService.getFromCache(CACHE_KEY, ASSEMBLED_CACHE_ENTRY, this::readScoreDefinitions);
+	}
+
+	/**
+	 * <p>Reads every definition and attaches its sub lists.</p>
+	 *
+	 * <p>Assembling a definition costs one read per threshold, badge and coefficient line, and
+	 * a score is published for every product formulated: the result is cached, and the policy
+	 * watching the definitions clears it.</p>
+	 *
+	 * @return a {@link java.util.List} object, never null
+	 */
+	private List<ScoreDefinitionItem> readScoreDefinitions() {
 		List<ScoreDefinitionItem> definitions = new ArrayList<>();
+
 		for (NodeRef nodeRef : getScoreDefinitionNodeRefs()) {
 			if (!Boolean.TRUE.equals(nodeService.getProperty(nodeRef, BeCPGModel.PROP_IS_DELETED))) {
 				ScoreDefinitionItem definition = (ScoreDefinitionItem) alfrescoRepository.findOne(nodeRef);
@@ -88,6 +105,7 @@ public class ScoreDefinitionService {
 				definitions.add(definition);
 			}
 		}
+
 		return definitions;
 	}
 
@@ -166,12 +184,15 @@ public class ScoreDefinitionService {
 	/**
 	 * <p>Finds the definition matching a code and a version.</p>
 	 *
+	 * <p>A definition whose effectivity has passed is ignored, so retiring a method is enough
+	 * to stop publishing under it.</p>
+	 *
 	 * @param code the score code, as held by {@code bcpg:scoreDefCode}
 	 * @param version the score version, null or blank to match the first definition of the code
 	 * @return a {@link java.util.Optional} object
 	 */
 	public Optional<ScoreDefinitionItem> findByCode(String code, String version) {
-		for (ScoreDefinitionItem definition : getScoreDefinitions()) {
+		for (ScoreDefinitionItem definition : getEffectiveScoreDefinitions(new Date())) {
 			if (matches(definition, code, version)) {
 				return Optional.of(definition);
 			}
