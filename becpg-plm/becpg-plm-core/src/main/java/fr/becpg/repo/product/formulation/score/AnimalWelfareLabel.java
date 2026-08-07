@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ScorableEntity;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
@@ -198,7 +198,7 @@ public class AnimalWelfareLabel implements ScoreCalculatingPlugin {
 	 * @return a {@link java.lang.String} object
 	 */
 	private String code(NodeRef labelClaim) {
-		return labelClaim != null ? (String) nodeService.getProperty(labelClaim, BeCPGModel.PROP_CODE) : null;
+		return labelClaim != null ? (String) nodeService.getProperty(labelClaim, PLMModel.PROP_LABEL_CLAIM_CODE) : null;
 	}
 
 	/**
