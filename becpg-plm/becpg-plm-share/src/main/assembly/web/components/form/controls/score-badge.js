@@ -512,11 +512,30 @@
         return '<span class="score-badge-mark">' + html + "</span>";
     }
 
+    /** A named grade carries no order, its colour only tells the verdict apart */
+    var GRADE_COLOURS = {
+        EXCELLENT: "#00853f", "TRÈS BON": "#00853f", BON: "#64bf21", GOOD: "#64bf21",
+        MOYEN: "#ffc800", MEDIOCRE: "#ff7600", "MÉDIOCRE": "#ff7600", POOR: "#ff7600",
+        MAUVAIS: "#ff0100", BAD: "#ff0100",
+        "1": "#00853f", "2": "#64bf21", "3": "#ff7600", "4": "#ff0100",
+        PLATINUM: "#6f7d8c", GOLD: "#c9a227", SILVER: "#9aa4ad", BRONZE: "#a1663a"
+    };
+
     function renderGrade(details) {
         if (isBlank(details["class"])) {
             return renderNumeric(details);
         }
-        return '<span class="score-badge-grade">' + Alfresco.util.encodeHTML(details["class"].toString()) + "</span>";
+
+        var grade = details["class"].toString();
+        var fill = GRADE_COLOURS[grade.toUpperCase()] || "#4a4a4a";
+        var width = Math.max(26, Math.ceil(grade.length * 7.4) + 14);
+        var height = 24;
+        var html = svgOpen(width, height, "score-badge-grade", grade);
+
+        html += '<rect x="1" y="1" width="' + (width - 2) + '" height="' + (height - 2) + '" rx="4" fill="' + fill + '" />';
+        html += svgText(width / 2, height / 2, grade, "#fff", 12);
+
+        return html + "</svg>";
     }
 
     /**
