@@ -180,13 +180,3 @@
 .score-details {
     min-width: 420px;
 }
-
-/* The marks are drawings, they must never paint over the header of the datagrid: the badge
-   opens its own stacking context at the bottom of the pile. */
-
-.score-badge,
-.datagrid .score-badge {
-    isolation: isolate;
-    position: relative;
-    z-index: 0;
-}
