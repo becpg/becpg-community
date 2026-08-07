@@ -137,8 +137,6 @@
      * text-anchor and dominant-baseline lands exactly in its shape, whatever the font and
      * the line height of the page, which no amount of padding on a span achieves.
      */
-    var LETTER_COLOURS = { A: "#00853f", B: "#64bf21", C: "#ffc800", D: "#ff7600", E: "#ff0100" };
-
     function svgText(x, y, text, fill, size, weight) {
         return '<text x="' + x + '" y="' + y + '" text-anchor="middle" dominant-baseline="central"'
             + ' font-family="Arial, Helvetica, sans-serif" font-size="' + size + '"'
@@ -153,11 +151,41 @@
             + (title ? "<title>" + Alfresco.util.encodeHTML(title) + "</title>" : "");
     }
 
+    var LETTER_COLOURS = { A: "#00853f", B: "#64bf21", C: "#ffc800", D: "#ff7600", E: "#ff0100" };
+
+    /**
+     * Each mark keeps its own look. They all grade from A to E, but a consumer recognises
+     * them by their drawing, not by their letter: reusing the Nutri-Score strip everywhere
+     * would make five different schemes look like one.
+     */
+    var LETTER_THEMES = {
+        ANIMALWELFARE: {
+            layout: "tag",
+            colours: { A: "#00694e", B: "#3f9c6d", C: "#8cc06a", D: "#e0a02c", E: "#b0763a" },
+            caption: "BIEN-ÊTRE ANIMAL"
+        },
+        NUTRIGRADE: {
+            layout: "tag",
+            colours: { A: "#00853f", B: "#64bf21", C: "#f0a30a", D: "#d0021b", E: "#d0021b" },
+            caption: "NUTRI-GRADE"
+        },
+        FLORINDEX: {
+            layout: "strip",
+            colours: { A: "#1f6f4a", B: "#5aa469", C: "#c8b560", D: "#c98a3c", E: "#a8503a" }
+        }
+    };
+
+    function letterTheme(code) {
+        return LETTER_THEMES[code] || { layout: "strip", colours: LETTER_COLOURS };
+    }
+
     /**
      * Draws the whole scale with the reached class emphasised, the way the official marks
      * do, rather than the single chip that told nothing of the range.
      */
-    function renderLetter(scoreClass) {
+    function renderLetter(details) {
+        var scoreClass = details["class"];
+
         if (isBlank(scoreClass)) {
             return "";
         }
@@ -172,6 +200,16 @@
             return '<span class="score-badge-error">' + Alfresco.util.encodeHTML(scoreClass.toString()) + "</span>";
         }
 
+        var theme = letterTheme(details.code);
+
+        return theme.layout === "tag" ? renderLetterTag(upper, theme) : renderLetterStrip(upper, theme);
+    }
+
+    /**
+     * The scale laid out flat, every class shown and the reached one grown, which is how the
+     * Nutri-Score and the Green-Score are printed.
+     */
+    function renderLetterStrip(upper, theme) {
         var cell = 17;
         var grown = 25;
         var height = grown + 4;
@@ -186,11 +224,39 @@
             var y = (height - size) / 2;
 
             html += '<rect x="' + x + '" y="' + y + '" width="' + size + '" height="' + size + '" rx="3"'
-                + ' fill="' + LETTER_COLOURS[letter] + '"' + (current ? ' stroke="#333" stroke-width="1.5"' : "")
+                + ' fill="' + theme.colours[letter] + '"' + (current ? ' stroke="#333" stroke-width="1.5"' : "")
                 + (current ? "" : ' opacity="0.45"') + " />";
             html += svgText(x + (size / 2), y + (size / 2), letter, "#fff", current ? 16 : 11);
 
             x += size;
+        }
+
+        return html + "</svg>";
+    }
+
+    /**
+     * A single plate bearing the class, its caption and the scale as pips underneath: the
+     * marks that stamp one tag rather than a strip read this way.
+     */
+    function renderLetterTag(upper, theme) {
+        var width = 62;
+        var height = 62;
+        var html = svgOpen(width, height, "score-badge-tag", upper);
+
+        html += '<rect x="1" y="1" width="' + (width - 2) + '" height="' + (height - 2) + '" rx="9" fill="'
+            + theme.colours[upper] + '" />';
+        html += svgText(width / 2, 12, theme.caption, "#fff", 6);
+        html += svgText(width / 2, 32, upper, "#fff", 26);
+
+        var pip = 7;
+        var x = (width - (LETTER_CLASSES.length * pip)) / 2;
+
+        for (var i = 0; i < LETTER_CLASSES.length; i++) {
+            var current = LETTER_CLASSES[i] === upper;
+
+            html += '<circle cx="' + (x + (pip / 2)) + '" cy="52" r="' + (current ? 3 : 2)
+                + '" fill="#fff"' + (current ? "" : ' opacity="0.45"') + " />";
+            x += pip;
         }
 
         return html + "</svg>";
@@ -550,7 +616,7 @@
         var fallback;
 
         if (scale === "Letter") {
-            fallback = renderLetter(details["class"]);
+            fallback = renderLetter(details);
         } else if (scale === "Stars") {
             fallback = renderStars(details.value);
         } else if (scale === "Warnings") {
