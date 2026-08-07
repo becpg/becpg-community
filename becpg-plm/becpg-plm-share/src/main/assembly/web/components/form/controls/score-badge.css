@@ -36,73 +36,6 @@
     font-size: 11px;
 }
 
-/* Letter scale, same colour language as the nutrient class chips */
-
-.score-badge .score-badge-letter,
-.datagrid .score-badge .score-badge-letter {
-    border: 0 none;
-    border-radius: 5px;
-    color: white;
-    display: inline-block;
-    font-size: 17px;
-    font-weight: bold;
-    height: 20px;
-    padding: 7px;
-    text-align: center;
-    width: 15px;
-}
-
-/* the reached class stands out, the others stay muted like on the printed marks */
-
-.score-badge .score-badge-scale,
-.datagrid .score-badge .score-badge-scale {
-    display: inline-block;
-    white-space: nowrap;
-}
-
-.score-badge .score-badge-scale .score-badge-letter,
-.datagrid .score-badge .score-badge-scale .score-badge-letter {
-    font-size: 13px;
-    height: 14px;
-    opacity: 0.35;
-    padding: 4px;
-    width: 11px;
-}
-
-.score-badge .score-badge-scale .score-badge-letter-current,
-.datagrid .score-badge .score-badge-scale .score-badge-letter-current {
-    font-size: 17px;
-    height: 20px;
-    opacity: 1;
-    padding: 7px;
-    width: 15px;
-}
-
-.score-badge .score-badge-letter-a,
-.datagrid .score-badge .score-badge-letter-a {
-    background: #00853f;
-}
-
-.score-badge .score-badge-letter-b,
-.datagrid .score-badge .score-badge-letter-b {
-    background: #64bf21;
-}
-
-.score-badge .score-badge-letter-c,
-.datagrid .score-badge .score-badge-letter-c {
-    background: #ffc800;
-}
-
-.score-badge .score-badge-letter-d,
-.datagrid .score-badge .score-badge-letter-d {
-    background: #ff7600;
-}
-
-.score-badge .score-badge-letter-e,
-.datagrid .score-badge .score-badge-letter-e {
-    background: #ff0100;
-}
-
 /* Stars scale, Health Star Rating and the like */
 
 .score-badge .score-badge-stars,
@@ -110,112 +43,6 @@
     color: #f0a30a;
     font-size: 16px;
     letter-spacing: 1px;
-}
-
-/* Warnings scale, one pictogram per warning */
-
-.score-badge .score-badge-warning-octagon,
-.datagrid .score-badge .score-badge-warning-octagon {
-    clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
-    border: 0 none;
-    height: 62px;
-    padding: 12px 4px;
-    width: 62px;
-}
-
-.score-badge .score-badge-warning-circle,
-.datagrid .score-badge .score-badge-warning-circle {
-    background: #d8232a;
-    border-color: #d8232a;
-    border-radius: 50%;
-    height: 62px;
-    padding: 12px 4px;
-    width: 62px;
-}
-
-.score-badge .score-badge-warning,
-.datagrid .score-badge .score-badge-warning {
-    background: #000;
-    border: 2px solid #000;
-    border-radius: 4px;
-    color: white;
-    display: inline-block;
-    font-size: 10px;
-    font-weight: bold;
-    box-sizing: border-box;
-    line-height: 11px;
-    margin: 0 3px 3px 0;
-    overflow: hidden;
-    padding: 6px 4px;
-    text-align: center;
-    text-transform: uppercase;
-    vertical-align: middle;
-    width: 72px;
-}
-
-/* Traffic lights scale, one light per part */
-
-.score-badge .score-badge-traffic,
-.datagrid .score-badge .score-badge-traffic {
-    border-radius: 3px;
-    color: white;
-    display: inline-block;
-    font-size: 10px;
-    line-height: 13px;
-    margin: 0 2px 2px 0;
-    min-width: 46px;
-    padding: 3px 5px;
-    text-align: center;
-    vertical-align: middle;
-}
-
-.score-badge .score-badge-traffic-name,
-.datagrid .score-badge .score-badge-traffic-name,
-.score-badge .score-badge-traffic-amount,
-.datagrid .score-badge .score-badge-traffic-amount,
-.score-badge .score-badge-traffic-intake,
-.datagrid .score-badge .score-badge-traffic-intake {
-    color: inherit;
-    display: block;
-    width: 100%;
-}
-
-.score-badge .score-badge-traffic-level,
-.datagrid .score-badge .score-badge-traffic-level {
-    color: inherit;
-    display: block;
-    width: 100%;
-}
-
-.score-badge .score-badge-traffic,
-.datagrid .score-badge .score-badge-traffic {
-    flex-direction: column;
-}
-
-.score-badge .score-badge-traffic-name,
-.datagrid .score-badge .score-badge-traffic-name {
-    font-weight: bold;
-}
-
-.score-badge .score-badge-traffic-level,
-.datagrid .score-badge .score-badge-traffic-level {
-    text-transform: uppercase;
-}
-
-.score-badge .score-badge-traffic-low,
-.datagrid .score-badge .score-badge-traffic-low {
-    background: #00853f;
-}
-
-.score-badge .score-badge-traffic-medium,
-.datagrid .score-badge .score-badge-traffic-medium {
-    background: #ffc800;
-    color: #333;
-}
-
-.score-badge .score-badge-traffic-high,
-.datagrid .score-badge .score-badge-traffic-high {
-    background: #ff0100;
 }
 
 /* Grade scale, named grade without ordering */
@@ -456,3 +283,32 @@
     vertical-align: middle;
 }
 
+/* Marks drawn as inline SVG: the glyph is centred by the SVG itself, the page only
+   places the drawing on the baseline of its row. */
+
+.score-badge svg,
+.datagrid .score-badge svg {
+    display: inline-block;
+    margin: 1px 2px;
+    vertical-align: middle;
+}
+
+/* The breakdown states the class of an axis next to its name, for the marks whose axes
+   are graded on a scale of their own. */
+
+.score-details .score-details-class {
+    background: #4a4a4a;
+    border-radius: 3px;
+    color: white;
+    display: inline-block;
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 14px;
+    margin-left: 4px;
+    min-width: 14px;
+    text-align: center;
+}
+
+.score-details {
+    min-width: 420px;
+}
