@@ -73,8 +73,11 @@ public class ThresholdScoreEngine {
 		Map<String, Double> nutrients = nutrientValueProvider.extractNutrients(product, definition.getScoreBasis());
 		String category = product.getNutrientProfileCategory();
 
+		Map<String, Double> intakes = nutrientValueProvider.extractReferenceIntakes(product);
+
 		for (Map.Entry<String, ScoreThresholdListDataItem> matched : matchThresholds(thresholds, nutrients, category).entrySet()) {
-			context.getParts().add(toScorePart(matched.getKey(), matched.getValue(), nutrients.get(matched.getKey())));
+			context.getParts()
+					.add(toScorePart(matched.getKey(), matched.getValue(), nutrients.get(matched.getKey()), intakes.get(matched.getKey())));
 		}
 
 		aggregate(context, definition);
@@ -127,16 +130,19 @@ public class ThresholdScoreEngine {
 	 * @param nutCode the nutrient code
 	 * @param threshold the threshold the value falls into
 	 * @param value the value of the nutrient
+	 * @param referenceIntake the reference intake of the nutrient in the referential
 	 * @return a {@link fr.becpg.repo.score.ScorePart} object
 	 */
-	private ScorePart toScorePart(String nutCode, ScoreThresholdListDataItem threshold, Double value) {
+	private ScorePart toScorePart(String nutCode, ScoreThresholdListDataItem threshold, Double value, Double referenceIntake) {
 		ScorePart part = new ScorePart(nutCode).withLabel(threshold.getResult()).withValue(value, null)
 				.withContribution(threshold.getPoints());
 
 		// the value stays the measured amount, the share carries what it represents of the
 		// reference intake: the traffic lights print both, the batteries read the share alone
-		if ((threshold.getReferenceIntake() != null) && (threshold.getReferenceIntake() != 0d) && (value != null)) {
-			part.setShare((value / threshold.getReferenceIntake()) * 100d);
+		Double intake = threshold.getReferenceIntake() != null ? threshold.getReferenceIntake() : referenceIntake;
+
+		if ((intake != null) && (intake != 0d) && (value != null)) {
+			part.setShare((value / intake) * 100d);
 		}
 
 		return part;

@@ -77,6 +77,38 @@ public class NutrientValueProvider {
 	}
 
 	/**
+	 * <p>Reference intakes of the nutrients of a product, keyed by nutrient code.</p>
+	 *
+	 * <p>They come from the referential, {@code bcpg:nutGDA}, so every scheme printing a
+	 * percentage of the reference intake reads the same figures.</p>
+	 *
+	 * @param product a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.util.Map} object, never null
+	 */
+	public Map<String, Double> extractReferenceIntakes(ProductData product) {
+		Map<String, Double> intakes = new LinkedHashMap<>();
+
+		if (product.getNutList() == null) {
+			return intakes;
+		}
+
+		for (NutListDataItem nutList : product.getNutList()) {
+			if (nutList.getNut() == null) {
+				continue;
+			}
+
+			String code = (String) nodeService.getProperty(nutList.getNut(), GS1Model.PROP_NUTRIENT_TYPE_CODE);
+			Double gda = (Double) nodeService.getProperty(nutList.getNut(), PLMModel.PROP_NUTGDA);
+
+			if ((code != null) && (gda != null) && (gda != 0d)) {
+				intakes.put(code, gda);
+			}
+		}
+
+		return intakes;
+	}
+
+	/**
 	 * <p>convert.</p>
 	 *
 	 * @param values the nutrients held per 100 g

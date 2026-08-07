@@ -61,6 +61,9 @@ public class PackModel {
 	/** Constant <code>PACK_MATERIAL_LIST_TYPE</code> */
 	public static final QName PACK_MATERIAL_LIST_TYPE = QName.createQName(PACK_URI, "packMaterialList");
 
+	/** Constant <code>PROP_PACK_MATERIAL_ECOTAXE_CATEGORY</code> */
+	public static final QName PROP_PACK_MATERIAL_ECOTAXE_CATEGORY = QName.createQName(PACK_URI, "pmEcoTaxeCategory");
+
 	/** Constant <code>PROP_PACK_MATERIAL_LIST_WEIGHT</code> */
 	public static final QName PROP_PACK_MATERIAL_LIST_WEIGHT = QName.createQName(PACK_URI, "pmlWeight");
 
