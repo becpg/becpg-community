@@ -3459,6 +3459,20 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
+	 * Rounds a percentage to keep the detail JSON log compact and free of floating-point noise
+	 * (e.g. 28.999999999999996 -&gt; 29). Reduces the size of the generated tree stored in illLogValue.
+	 *
+	 * @param perc the percentage value (already multiplied by 100)
+	 * @return the rounded percentage, or {@code null} if the input is {@code null}
+	 */
+	private static Double compactPerc(Double perc) {
+		if (perc == null) {
+			return null;
+		}
+		return BigDecimal.valueOf(perc).setScale(4, RoundingMode.HALF_UP).stripTrailingZeros().doubleValue();
+	}
+
+	/**
 	 * <p>createJsonLog.</p>
 	 *
 	 * @param component a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
@@ -3494,10 +3508,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			Double volumePerc = roundedDouble(computeVolumePerc(parent, component, ratio));
 
 			if (volumePerc != null) {
-				tree.put("vol", volumePerc * 100);
+				tree.put("vol", compactPerc(volumePerc * 100));
 			}
 			if (qtyPerc != null) {
-				tree.put("qte", qtyPerc * 100);
+				tree.put("qte", compactPerc(qtyPerc * 100));
 
 				if (component instanceof CompositeLabeling) {
 
@@ -3567,10 +3581,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						}
 
 						if (volumePerc != null) {
-							ingTypeJson.put("vol", volumePerc * 100);
+							ingTypeJson.put("vol", compactPerc(volumePerc * 100));
 						}
 						if (qtyPerc != null) {
-							ingTypeJson.put("qte", qtyPerc * 100);
+							ingTypeJson.put("qte", compactPerc(qtyPerc * 100));
 						}
 
 						JSONArray ingTypeJsonChildren = new JSONArray();
