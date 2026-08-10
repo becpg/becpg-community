@@ -68,6 +68,7 @@ import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
@@ -748,6 +749,82 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 		}, false, true);
 
+	}
+
+	/**
+	 * A composition line whose effectivity end date has passed must not appear in
+	 * the WUsed list of a change order.
+	 */
+	@Test
+	public void testExpiredCompoLineIsNotImpacted() throws InterruptedException {
+
+		final NodeRef componentNodeRef = createRawMaterial("RM to replace");
+		final NodeRef replacementNodeRef = createRawMaterial("RM replacement");
+
+		Calendar yesterday = Calendar.getInstance();
+		yesterday.add(Calendar.DAY_OF_MONTH, -1);
+
+		final NodeRef expiredProductNodeRef = createProductUsing(componentNodeRef, "PF expired", yesterday.getTime());
+		final NodeRef effectiveProductNodeRef = createProductUsing(componentNodeRef, "PF effective", null);
+
+		final NodeRef ecoNodeRef = inWriteTx(() -> {
+
+			ChangeOrderData changeOrderData = new ChangeOrderData("ECO effectivity", ECOState.ToCalculateWUsed, ChangeOrderType.Replacement,
+					new ArrayList<>());
+			changeOrderData.setReplacementList(
+					Collections.singletonList(new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(componentNodeRef), replacementNodeRef, 100)));
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
+		});
+
+		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false, false));
+
+		inReadTx(() -> {
+
+			ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
+
+			List<NodeRef> impactedProducts = new ArrayList<>();
+
+			for (WUsedListDataItem wUsedListDataItem : dbECOData.getWUsedList()) {
+				if (wUsedListDataItem.getLink() != null) {
+					impactedProducts.addAll(wUsedListDataItem.getSourceItems());
+				}
+			}
+
+			assertTrue("Check the effective product is impacted", impactedProducts.contains(effectiveProductNodeRef));
+			assertFalse("Check the expired compo line is not impacted", impactedProducts.contains(expiredProductNodeRef));
+
+			return null;
+		});
+	}
+
+	private NodeRef createRawMaterial(String name) {
+		return inWriteTx(() -> {
+
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName(name);
+			rawMaterial.setDensity(1d);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+		});
+	}
+
+	private NodeRef createProductUsing(NodeRef componentNodeRef, String name, Date endEffectivity) {
+		return inWriteTx(() -> {
+
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName(name);
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setQty(1d);
+
+			CompoListDataItem compoListDataItem = CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Detail).withProduct(componentNodeRef);
+			compoListDataItem.setEndEffectivity(endEffectivity);
+
+			finishedProduct.getCompoListView().setCompoList(Collections.singletonList(compoListDataItem));
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
 	}
 
 	@Test
