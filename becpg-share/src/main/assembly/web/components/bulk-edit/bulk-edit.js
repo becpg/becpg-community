@@ -667,6 +667,10 @@
 						 *         onSelectedTypeChanged event
 						 */
 						onSelectedTypeChanged : function() {
+							// The cached results belong to the previously selected type
+							this.currentPage = 1;
+							this.currentQueryExecutionId = null;
+							this.queryExecutionId = null;
 							this.populateBulkEdit();
 							this.widgets.showButton.set("disabled", false);
 						},
