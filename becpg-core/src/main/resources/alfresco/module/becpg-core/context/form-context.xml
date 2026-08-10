@@ -6,6 +6,18 @@
 
    <bean id="shareFormParser" class="fr.becpg.repo.form.impl.ShareFormParser" />
 
+   <bean id="beCPGContentLocaleNodeFormFilter" parent="baseFormFilter" class="fr.becpg.repo.form.impl.ContentLocaleConstraintFormFilter">
+		<property name="filterRegistry" ref="nodeFilterRegistry" />
+		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="namespacePrefixResolver" ref="namespaceService" />
+	</bean>
+
+   <bean id="beCPGContentLocaleTypeFormFilter" parent="baseFormFilter" class="fr.becpg.repo.form.impl.ContentLocaleConstraintFormFilter">
+		<property name="filterRegistry" ref="typeFilterRegistry" />
+		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="namespacePrefixResolver" ref="namespaceService" />
+	</bean>
+
 
    <bean id="becpgFormService" class="fr.becpg.repo.form.impl.BecpgFormServiceImpl" >
 		<property name="nodeService" ref="nodeService" />
