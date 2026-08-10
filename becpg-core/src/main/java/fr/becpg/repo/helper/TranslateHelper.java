@@ -18,6 +18,7 @@
 package fr.becpg.repo.helper;
 
 import java.util.Locale;
+import java.util.Optional;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.namespace.QName;
@@ -101,6 +102,9 @@ public class TranslateHelper {
 	/**
 	 * <p>getConstraint.</p>
 	 *
+	 * Labels of list of values follow the content language, as the values of the
+	 * dynamic lists do.
+	 *
 	 * @param constraintName a {@link java.lang.String} object.
 	 * @param value a {@link java.lang.String} object.
 	 * @param useDefaultLocale a boolean.
@@ -112,7 +116,7 @@ public class TranslateHelper {
 			return getConstraint(constraintName, value, Locale.getDefault());
 		}
 
-		return getConstraint(constraintName, value, null);
+		return getConstraint(constraintName, value, I18NUtil.getContentLocale());
 
 	}
 
@@ -198,23 +202,32 @@ public class TranslateHelper {
 	 */
 	public static String getConstraint(String constraintName, String value, Locale locale) {
 
-		String translation = null;
+		Optional<String> translation = findConstraintLabel(constraintName, value, locale);
+
+		if (translation.isEmpty() && logger.isDebugEnabled()) {
+			logger.debug("Failed to translate constraint. constraintName: " + constraintName + " - value: " + value);
+		}
+
+		return translation.orElse(value);
+	}
+
+	/**
+	 * <p>findConstraintLabel.</p>
+	 *
+	 * @param constraintName a {@link java.lang.String} object.
+	 * @param value a {@link java.lang.String} object.
+	 * @param locale a {@link java.util.Locale} object.
+	 * @return the label of the list of values, empty if the value has no translation
+	 */
+	public static Optional<String> findConstraintLabel(String constraintName, String value, Locale locale) {
+
 		String messageKey = String.format(LIST_CONSTRAINT_MSG_PFX, constraintName, value);
 
 		if (locale != null) {
-			translation = MessageHelper.getMessage(messageKey, locale);
-		} else {
-			translation = MessageHelper.getMessage(messageKey);
+			return Optional.ofNullable(MessageHelper.getMessage(messageKey, locale));
 		}
 
-		if (translation == null) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Failed to translate constraint. constraintName: " + constraintName + " - value: " + value);
-			}
-			translation = value;
-		}
-
-		return translation;
+		return Optional.ofNullable(MessageHelper.getMessage(messageKey));
 	}
 	
 	/**
