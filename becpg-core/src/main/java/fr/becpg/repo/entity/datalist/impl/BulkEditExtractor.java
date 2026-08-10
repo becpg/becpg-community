@@ -17,12 +17,16 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.datalist.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
@@ -89,7 +93,7 @@ public class BulkEditExtractor extends SimpleExtractor {
 		if (results == null) {
 
 			if ((dataListFilter.getEntityNodeRefs() != null) && (dataListFilter.getEntityNodeRefs().size() > 1)) {
-				results = dataListFilter.getEntityNodeRefs();
+				results = retainEditableEntities(dataListFilter.getEntityNodeRefs(), dataListFilter.getDataType());
 			} else {
 
 				if (logger.isDebugEnabled()) {
@@ -145,6 +149,49 @@ public class BulkEditExtractor extends SimpleExtractor {
 		}
 		return pagination.paginate(results);
 
+	}
+
+	/**
+	 * A selection coming from a datagrid follows the rows of the source list: an entity appears
+	 * once per row that points to it and every entity type is mixed in. Only the entities of the
+	 * edited type are kept, each of them exactly once.
+	 *
+	 * @param selectedNodeRefs the entities selected in the source datagrid
+	 * @param dataType the type currently edited
+	 * @return the editable entities, in selection order, without duplicates
+	 */
+	private List<NodeRef> retainEditableEntities(List<NodeRef> selectedNodeRefs, QName dataType) {
+
+		List<NodeRef> editableNodeRefs = new ArrayList<>(selectedNodeRefs.size());
+		Set<NodeRef> visitedNodeRefs = new HashSet<>();
+
+		for (NodeRef nodeRef : selectedNodeRefs) {
+			if (visitedNodeRefs.add(nodeRef) && isOfDataType(nodeRef, dataType)) {
+				editableNodeRefs.add(nodeRef);
+			}
+		}
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Kept " + editableNodeRefs.size() + " entities of type " + dataType + " out of " + selectedNodeRefs.size()
+					+ " selected nodes");
+		}
+
+		return editableNodeRefs;
+	}
+
+	/**
+	 * <p>isOfDataType.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param dataType a {@link org.alfresco.service.namespace.QName} object
+	 * @return a boolean
+	 */
+	private boolean isOfDataType(NodeRef nodeRef, QName dataType) {
+		if (dataType == null) {
+			return true;
+		}
+
+		return nodeService.exists(nodeRef) && entityDictionaryService.isSubClass(nodeService.getType(nodeRef), dataType);
 	}
 
 }

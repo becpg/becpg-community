@@ -80,22 +80,8 @@
 			var items = YAHOO.lang.isArray(p_items) ? p_items : [p_items], me = this;
 
 			function onActionBulkEdit_redirect(itemAssocName, assocName) {
-				var nodeRefs = [];
+				var nodeRefs = me._collectNodeRefs(items, itemAssocName, assocName);
 
-				for (var i = 0, ii = items.length; i < ii; i++) {
-					if (!assocName) {
-						nodeRefs.push(items[i].nodeRef);
-					} else {
-						if (items[i].itemData[itemAssocName].value) {
-							nodeRefs.push(items[i].itemData[itemAssocName].value);
-						} else {
-							for (var j in items[i].itemData[itemAssocName]) {
-								nodeRefs.push(items[i].itemData[itemAssocName][j].value);
-							}
-						}
-					}
-				}
-				
 				if (nodeRefs.length > 50 && !(me.allPages && me.queryExecutionId)) {
 					Alfresco.util.PopupManager.displayMessage({
 						text: this.msg("message.too.many.items", nodeRefs.length)
@@ -109,8 +95,95 @@
 				}
 			}
 
-			this._showWusedPopup("bulk-edit", items, onActionBulkEdit_redirect);
+			this._withEverySelectedItem(items, function(selectedItems) {
+				items = selectedItems;
+				me._showWusedPopup("bulk-edit", items, onActionBulkEdit_redirect);
+			});
 
+		},
+
+		/**
+		 * Collects the entities an action has to work on.
+		 *
+		 * A row of a where-used list points at an entity that other rows may point at too, so
+		 * the same entity has to be kept only once.
+		 *
+		 * @method _collectNodeRefs
+		 * @param items {Array} Selected rows
+		 * @param itemAssocName {String} Name of the association column holding the entity
+		 * @param assocName {String} Null to act on the rows themselves
+		 * @return {Array} Distinct nodeRefs, in selection order
+		 */
+		_collectNodeRefs: function EntityDataGrid__collectNodeRefs(items, itemAssocName, assocName) {
+			var nodeRefs = [], visited = {};
+
+			function pushNodeRef(nodeRef) {
+				if (nodeRef && !visited[nodeRef]) {
+					visited[nodeRef] = true;
+					nodeRefs.push(nodeRef);
+				}
+			}
+
+			for (var i = 0, ii = items.length; i < ii; i++) {
+				if (!assocName) {
+					pushNodeRef(items[i].nodeRef);
+				} else if (items[i].itemData[itemAssocName].value) {
+					pushNodeRef(items[i].itemData[itemAssocName].value);
+				} else {
+					for (var j in items[i].itemData[itemAssocName]) {
+						pushNodeRef(items[i].itemData[itemAssocName][j].value);
+					}
+				}
+			}
+
+			return nodeRefs;
+		},
+
+		/**
+		 * Hands over every selected row to the callback.
+		 *
+		 * "Select all pages" only ticks the rows currently rendered, so the rows of the pages
+		 * that were never loaded have to be fetched before an action can act on the whole
+		 * selection.
+		 *
+		 * @method _withEverySelectedItem
+		 * @param items {Array} Rows selected on the rendered page
+		 * @param callBack {Function} Called with the full list of selected rows
+		 */
+		_withEverySelectedItem: function EntityDataGrid__withEverySelectedItem(items, callBack) {
+			var me = this;
+
+			if (!this.allPages || !this.totalRecords || this.totalRecords <= items.length) {
+				callBack.call(this, items);
+				return;
+			}
+
+			var request = this._buildDataGridParams({
+				filter: this.currentFilter,
+				page: 1,
+				pageSize: this.totalRecords
+			});
+
+			Alfresco.util.Ajax.request({
+				method: this.options.postMethod ? Alfresco.util.Ajax.POST : Alfresco.util.Ajax.GET,
+				url: this._getDataUrl(),
+				dataObj: this.options.postMethod ? request : { metadata: YAHOO.lang.JSON.stringify(request) },
+				requestContentType: this.options.postMethod ? Alfresco.util.Ajax.JSON : null,
+				successCallback: {
+					fn: function(response) {
+						callBack.call(me, response.json && response.json.items ? response.json.items : items);
+					},
+					scope: me
+				},
+				failureCallback: {
+					fn: function() {
+						Alfresco.util.PopupManager.displayMessage({
+							text: me.msg("message.error.allPages")
+						});
+					},
+					scope: me
+				}
+			});
 		},
 
 		_setupPropsPicker: function EntityDataGrid__setupPropsPicker(nodeRefs) {
@@ -405,25 +478,11 @@
 		},
 
 		onActionShowWused: function EntityDataGrid_onActionShowWused(p_items) {
-			var items = YAHOO.lang.isArray(p_items) ? p_items : [p_items];
+			var items = YAHOO.lang.isArray(p_items) ? p_items : [p_items], me = this;
 
 			function onActionShowWused_redirect(itemAssocName, assocName) {
-				var nodeRefs = [];
+				var nodeRefs = me._collectNodeRefs(items, itemAssocName, assocName);
 
-				for (var i = 0, ii = items.length; i < ii; i++) {
-					if (!assocName) {
-						nodeRefs.push(items[i].nodeRef);
-					} else {
-						if (items[i].itemData[itemAssocName].value) {
-							nodeRefs.push(items[i].itemData[itemAssocName].value);
-						} else {
-							for (var j in items[i].itemData[itemAssocName]) {
-								nodeRefs.push(items[i].itemData[itemAssocName][j].value);
-							}
-						}
-					}
-				}
-				
 				if (nodeRefs.length > 50) {
 					Alfresco.util.PopupManager.displayMessage({
 						text: this.msg("message.too.many.items", nodeRefs.length)
