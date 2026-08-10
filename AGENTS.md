@@ -65,6 +65,7 @@ This is a **Java 17** enterprise project with emphasis on:
 - Use `String.join()` instead of manual concatenation
 - **No commented-out code**: Never leave commented-out blocks of code in the codebase; rely on Git history instead
 - **No magic strings**: Never use magic strings. Always declare them as `static final String` fields to ensure maintainability and prevent typos
+- **No en-dash characters**: Never use the en-dash character (`–`, `\u2013`) in code, configurations, or CSV templates. Always use the standard hyphen/minus character (`-`) instead to avoid character encoding issues and ensure exact matches with external databases.
 
 ### 5. JavaScript Standards
 - **Use ECMAScript 5 (ES5)** syntax only - no modern ES6+ features
