@@ -1206,6 +1206,13 @@ public class ECOServiceImpl implements ECOService {
 		for (NodeRef key : sortedKeys) {
 
 			if (applyToAll || (ecoData.getWUsedList().size() < maxEcoWUsedSize)) {
+
+				MultiLevelListData wUsedLevel = wUsedData.getTree().get(key);
+
+				if (isExpired(key) || isExpired(wUsedLevel.getEntityNodeRef())) {
+					continue;
+				}
+
 				WUsedListDataItem wUsedListDataItem = new WUsedListDataItem();
 				wUsedListDataItem.setLink(key);
 				wUsedListDataItem.setParent(parent);
@@ -1213,27 +1220,34 @@ public class ECOServiceImpl implements ECOService {
 				wUsedListDataItem.setIsWUsedImpacted(isWUsedImpacted || applyToAll);
 				wUsedListDataItem.setSort(sort++);
 				wUsedListDataItem.setTargetItem(targetItem);
+				wUsedListDataItem.setSourceItems(wUsedLevel.getEntityNodeRefs());
 
-				List<NodeRef> sourceItems = wUsedData.getTree().get(key).getEntityNodeRefs();
-				wUsedListDataItem.setSourceItems(sourceItems);
-				
-				Boolean isExpired = false;
-				if (sourceItems != null && !sourceItems.isEmpty()) {
-					Date endEffectivity = (Date) nodeService.getProperty(sourceItems.get(0), BeCPGModel.PROP_END_EFFECTIVITY);
-					isExpired = endEffectivity != null && endEffectivity.before(new Date());
-				}
-				
-				if (!isExpired) {
-					ecoData.getWUsedList().add(wUsedListDataItem);
-				}
-				
+				ecoData.getWUsedList().add(wUsedListDataItem);
+
 				// recursive
-				sort = calculateWUsedList(ecoData, wUsedData.getTree().get(key), dataListQName, wUsedListDataItem, isWUsedImpacted, sort, targetItem,
-						applyToAll);
+				sort = calculateWUsedList(ecoData, wUsedLevel, dataListQName, wUsedListDataItem, isWUsedImpacted, sort, targetItem, applyToAll);
 			}
 		}
 
 		return sort;
+	}
+
+	/**
+	 * A composition, packaging or kit line whose effectivity end date has passed no
+	 * longer impacts anything, no more than the products reached through it.
+	 *
+	 * @param nodeRef the datalist item or the entity to check
+	 * @return true if the effectivity end date has passed
+	 */
+	private boolean isExpired(NodeRef nodeRef) {
+
+		if ((nodeRef == null) || !nodeService.exists(nodeRef)) {
+			return false;
+		}
+
+		Date endEffectivity = (Date) nodeService.getProperty(nodeRef, BeCPGModel.PROP_END_EFFECTIVITY);
+
+		return (endEffectivity != null) && endEffectivity.before(new Date());
 	}
 
 	/**
