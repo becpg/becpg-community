@@ -2024,7 +2024,7 @@
 				</association>
 			</associations>
 			<mandatory-aspects>
-				<aspect>bcpg:regulatoryScopeAspect</aspect>
+				<aspect>bcpg:regulatoryAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
@@ -3161,7 +3161,7 @@
 			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:depthLevelAspect</aspect>
-				<aspect>bcpg:regulatoryScopeAspect</aspect>
+				<aspect>bcpg:regulatoryAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
@@ -7250,32 +7250,6 @@
 					<index enabled="false"></index>
 				</property>
 			</properties>
-		</aspect>
-
-		<!-- Market and usage a score applies to, shared by the definition and the published score -->
-		<aspect name="bcpg:regulatoryScopeAspect">
-			<associations>
-				<association name="bcpg:regulatoryCountry">
-					<source>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>bcpg:geoOrigin</class>
-						<many>true</many>
-					</target>
-				</association>
-				<association name="bcpg:regulatoryUsage">
-					<source>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>bcpg:regulatoryUsage</class>
-						<many>true</many>
-					</target>
-				</association>
-			</associations>
 		</aspect>
 
 		<aspect name="bcpg:regulatoryAspect">

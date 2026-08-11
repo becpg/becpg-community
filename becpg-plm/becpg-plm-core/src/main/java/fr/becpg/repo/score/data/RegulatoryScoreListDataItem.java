@@ -307,7 +307,7 @@ public class RegulatoryScoreListDataItem extends BeCPGDataObject {
 	 * @return a {@link java.util.List} object
 	 */
 	@AlfMultiAssoc
-	@AlfQname(qname = "bcpg:regulatoryCountry")
+	@AlfQname(qname = "bcpg:regulatoryCountries")
 	public List<NodeRef> getCountries() {
 		return countries;
 	}
@@ -327,7 +327,7 @@ public class RegulatoryScoreListDataItem extends BeCPGDataObject {
 	 * @return a {@link java.util.List} object
 	 */
 	@AlfMultiAssoc
-	@AlfQname(qname = "bcpg:regulatoryUsage")
+	@AlfQname(qname = "bcpg:regulatoryUsageRef")
 	public List<NodeRef> getUsages() {
 		return usages;
 	}
