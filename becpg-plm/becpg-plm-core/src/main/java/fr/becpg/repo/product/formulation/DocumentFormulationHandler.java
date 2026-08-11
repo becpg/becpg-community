@@ -257,7 +257,7 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 		for (NodeRef docTypeNodeRef : BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_DOCUMENT_TYPE).inDB().list()) {
 			DocumentTypeItem docTypeItem = (DocumentTypeItem) alfrescoRepository.findOne(docTypeNodeRef);
 
-			if ((docTypeItem.isSynchronisedDocumentType() && isDocTypeMatchProduct(repositoryEntity, docTypeItem))
+			if ((docTypeItem.isSynchronisedDocumentType() && !isDocTypeDeleted(docTypeItem) && isDocTypeMatchProduct(repositoryEntity, docTypeItem))
 					&& !docByType.containsKey(docTypeNodeRef)) {
 				// Create new document if it doesn't exist yet
 				NodeRef docNodeRef = createDocument(repositoryEntity, docTypeItem);
@@ -283,7 +283,11 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 				String documentState = (String) nodeService.getProperty(docNodeRef, BeCPGModel.PROP_DOCUMENT_STATE);
 
 				//We do not delete but set mandatory to false
-				if (docTypeItem.isSynchronisedDocumentType() && !isDocTypeMatchProduct(repositoryEntity, docTypeItem)) {
+				//A document type flagged as deleted is treated exactly like one that no longer matches the
+				//product: the placeholder it generated is withdrawn when nothing was ever uploaded on it
+				//(state still Simulation), and merely made non mandatory once it carries a file.
+				if (isDocTypeDeleted(docTypeItem)
+						|| (docTypeItem.isSynchronisedDocumentType() && !isDocTypeMatchProduct(repositoryEntity, docTypeItem))) {
 
 					if (SystemState.Simulation.toString().equals(documentState)) {
 						nodeService.deleteNode(docNodeRef);
@@ -322,6 +326,24 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 		}
 
 		return true;
+	}
+
+	/**
+	 * Has the document type been flagged as deleted?
+	 * <p>
+	 * A document type is a characteristic, and a characteristic is retired by ticking
+	 * <em>supprimé</em> ({@code bcpg:isDeleted}) rather than by removing the node — the
+	 * documents already filed against it must keep naming what they are. Formulation used
+	 * to ignore the flag altogether: a retired type went on generating its placeholder on
+	 * every product formulated afterwards, and the only way to stop it was to unlink the
+	 * type from every hierarchy, subsidiary and product type it named.
+	 *
+	 * @param docTypeItem the document type configuration
+	 * @return true when the type is retired
+	 */
+	private boolean isDocTypeDeleted(DocumentTypeItem docTypeItem) {
+		return (docTypeItem.getNodeRef() != null)
+				&& Boolean.TRUE.equals(nodeService.getProperty(docTypeItem.getNodeRef(), BeCPGModel.PROP_IS_DELETED));
 	}
 
 	/**
