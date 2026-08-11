@@ -1,0 +1,203 @@
+[
+   {
+      "id": "supplierPortal-rawMaterial",
+      "label": "plm.supplier.portal.catalog.rawMaterial.label",
+      "entityType": [
+         "bcpg:rawMaterial"
+      ],
+      "entityFilter": "suppliers != null && !suppliers.isEmpty()",
+      "locales": [
+         "fr",
+         "en",
+         "de",
+         "es",
+         "fi",
+         "it",
+         "ja",
+         "pt",
+         "ru",
+         "sv",
+         "tr"
+      ],
+      "fields": [
+         "bcpg:legalName",
+         "bcpg:erpCode",
+         "bcpg:geoOrigin"
+      ],
+      "protectedFields": [
+         "bcpg:productState"
+      ],
+      "modifiedField": "bcpg:modifiedCatalog1"
+   },
+   {
+      "id": "supplierPortal-finishedProduct",
+      "label": "plm.supplier.portal.catalog.finishedProduct.label",
+      "entityType": [
+         "bcpg:finishedProduct"
+      ],
+      "entityFilter": "suppliers != null && !suppliers.isEmpty()",
+      "locales": [
+         "fr",
+         "en",
+         "de",
+         "es",
+         "fi",
+         "it",
+         "ja",
+         "pt",
+         "ru",
+         "sv",
+         "tr"
+      ],
+      "fields": [
+         "bcpg:legalName",
+         "bcpg:erpCode",
+         "cm:title"
+      ],
+      "protectedFields": [
+         "bcpg:productState"
+      ],
+      "modifiedField": "bcpg:modifiedCatalog1"
+   },
+   {
+      "id": "supplierPortal-semiFinishedProduct",
+      "label": "plm.supplier.portal.catalog.finishedProduct.label",
+      "entityType": [
+         "bcpg:semiFinishedProduct"
+      ],
+      "entityFilter": "suppliers != null && !suppliers.isEmpty()",
+      "locales": [
+         "fr",
+         "en",
+         "de",
+         "es",
+         "fi",
+         "it",
+         "ja",
+         "pt",
+         "ru",
+         "sv",
+         "tr"
+      ],
+      "fields": [
+         "bcpg:legalName",
+         "bcpg:erpCode"
+      ],
+      "protectedFields": [
+         "bcpg:productState"
+      ],
+      "modifiedField": "bcpg:modifiedCatalog1"
+   },
+   {
+      "id": "supplierPortal-localSemiFinishedProduct",
+      "label": "plm.supplier.portal.catalog.finishedProduct.label",
+      "entityType": [
+         "bcpg:localSemiFinishedProduct"
+      ],
+      "entityFilter": "suppliers != null && !suppliers.isEmpty()",
+      "locales": [
+         "fr",
+         "en",
+         "de",
+         "es",
+         "fi",
+         "it",
+         "ja",
+         "pt",
+         "ru",
+         "sv",
+         "tr"
+      ],
+      "fields": [
+         "bcpg:legalName",
+         "bcpg:erpCode"
+      ],
+      "protectedFields": [
+         "bcpg:productState"
+      ],
+      "modifiedField": "bcpg:modifiedCatalog1"
+   },
+   {
+      "id": "supplierPortal-packagingMaterial",
+      "label": "plm.supplier.portal.catalog.packaging.label",
+      "entityType": [
+         "bcpg:packagingMaterial"
+      ],
+      "entityFilter": "suppliers != null && !suppliers.isEmpty()",
+      "locales": [
+         "fr",
+         "en",
+         "de",
+         "es",
+         "fi",
+         "it",
+         "ja",
+         "pt",
+         "ru",
+         "sv",
+         "tr"
+      ],
+      "fields": [
+         "bcpg:legalName",
+         "bcpg:erpCode"
+      ],
+      "protectedFields": [
+         "bcpg:productState"
+      ],
+      "modifiedField": "bcpg:modifiedCatalog1"
+   },
+   {
+      "id": "supplierPortal-packagingKit",
+      "label": "plm.supplier.portal.catalog.packaging.label",
+      "entityType": [
+         "bcpg:packagingKit"
+      ],
+      "entityFilter": "suppliers != null && !suppliers.isEmpty()",
+      "locales": [
+         "fr",
+         "en",
+         "de",
+         "es",
+         "fi",
+         "it",
+         "ja",
+         "pt",
+         "ru",
+         "sv",
+         "tr"
+      ],
+      "fields": [
+         "bcpg:legalName",
+         "bcpg:erpCode"
+      ],
+      "protectedFields": [
+         "bcpg:productState"
+      ],
+      "modifiedField": "bcpg:modifiedCatalog1"
+   },
+   {
+      "id": "supplierPortal-supplier",
+      "label": "plm.supplier.portal.catalog.supplier.label",
+      "entityType": [
+         "bcpg:supplier"
+      ],
+      "locales": [
+         "fr",
+         "en",
+         "de",
+         "es",
+         "fi",
+         "it",
+         "ja",
+         "pt",
+         "ru",
+         "sv",
+         "tr"
+      ],
+      "fields": [
+         "bcpg:legalName",
+         "bcpg:code"
+      ],
+      "modifiedField": "bcpg:modifiedCatalog1"
+   }
+]

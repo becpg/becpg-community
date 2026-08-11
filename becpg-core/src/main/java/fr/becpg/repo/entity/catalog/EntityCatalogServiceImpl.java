@@ -380,6 +380,31 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 	}
 
 	/**
+	 * <p>Resolves a catalogue label through the message bundles, falling back to the literal.</p>
+	 *
+	 * <p>The label was returned <b>verbatim</b>, which works for the catalogues shipped so far
+	 * because they are named after regulations — "EU 1169/2011 (INCO)", "GS1" — and a regulation
+	 * has the same name in every language. It stops working the moment a catalogue is named after
+	 * what it is <em>for</em>: a label written in French is then read in French by a German
+	 * supplier, on a screen that is otherwise entirely translated.</p>
+	 *
+	 * <p>A key wins, a literal survives: {@code I18NUtil.getMessage()} answers {@code null} for a
+	 * string that is not a key, so every catalogue already installed keeps the exact label it had,
+	 * byte for byte, and a catalogue that names a key gets it resolved in the reader's language.
+	 * That is what makes this safe to apply to an existing repository without a patch.</p>
+	 *
+	 * @param label the {@code label} of the catalogue definition — a message key or a literal
+	 * @return the translated label, or the label itself
+	 */
+	private String translateCatalogLabel(String label) {
+		if ((label == null) || label.isBlank()) {
+			return label;
+		}
+		String translated = MessageHelper.getMessage(label);
+		return ((translated == null) || translated.isBlank()) ? label : translated;
+	}
+
+	/**
 	 * <p>
 	 * getAuditedFields.
 	 * </p>
@@ -508,7 +533,8 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 							catalogDesc.put(EntityCatalogService.PROP_LOCALE, defaultLocale.equals(lang) ? null : lang);
 							catalogDesc.put(EntityCatalogService.PROP_SCORE,
 									((reqFields.length() - missingFields.length()) * 100d) / (reqFields.length() > 0 ? reqFields.length() : 1d));
-							catalogDesc.put(EntityCatalogService.PROP_LABEL, catalog.getString(EntityCatalogService.PROP_LABEL));
+							catalogDesc.put(EntityCatalogService.PROP_LABEL,
+									translateCatalogLabel(catalog.getString(EntityCatalogService.PROP_LABEL)));
 							catalogDesc.put(EntityCatalogService.PROP_ID, catalog.getString(EntityCatalogService.PROP_ID));
 							catalogDesc.put(EntityCatalogService.PROP_COLOR, color);
 

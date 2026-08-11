@@ -63,6 +63,18 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 	/** Constant <code>SIGNATURES_PREPARATION_SCRIPT="plm.supplier.portal.deliverable.scripts"{trunked}</code> */
 	private static final String SIGNATURES_PREPARATION_SCRIPT = "plm.supplier.portal.deliverable.scripts.signature.name";
 
+	/**
+	 * The catalogue the supplier wizard displays its completeness against — <b>templated on the
+	 * entity type</b>, exactly like the wizard id right next to it.
+	 *
+	 * {@code {pjt:projectEntity|@type}} expands to the local name of the entity's type, so one
+	 * deliverable serves every family: a raw material resolves {@code supplierPortal-rawMaterial},
+	 * a packaging {@code supplierPortal-packagingMaterial}. That is why the shipped catalogues are
+	 * one per type rather than one grouping several: the id has to be predictable from the type,
+	 * since nothing here can branch.
+	 */
+	private static final String SUPPLIER_PORTAL_CATALOG_ID = "supplierPortal-{pjt:projectEntity|@type}";
+
 	/** Constant <code>SUPPLIER_SPEC_NAME="plm.supplier.portal.specification.name"</code> */
 	private static final String SUPPLIER_SPEC_NAME = "plm.supplier.portal.specification.name";
 
@@ -198,7 +210,13 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			DeliverableListDataItem supplierMPWizard = new DeliverableListDataItem();
 			supplierMPWizard.setDescription(I18NUtil.getMessage(SUPPLIER_WIZARD_NAME));
-			supplierMPWizard.setUrl("/share/page/wizard?id=supplier-{pjt:projectEntity|@type}&nodeRef={pjt:projectEntity}");
+			// `catalogId` : c'est ainsi qu'un catalogue se relie a un assistant.
+			// `wizard-mgr.get.js` (becpg-share) n'instancie son panneau de completude
+			// que si l'URL le nomme, et le portail lit le meme parametre sur ce meme
+			// livrable. Le lien vit donc dans le modele de projet, ou un client peut
+			// le changer, et non dans le code des deux interfaces.
+			supplierMPWizard.setUrl("/share/page/wizard?id=supplier-{pjt:projectEntity|@type}&nodeRef={pjt:projectEntity}"
+					+ "&catalogId=" + SUPPLIER_PORTAL_CATALOG_ID);
 			supplierMPWizard.setTasks(Collections.singletonList(task1.getNodeRef()));
 
 			DeliverableListDataItem preSupplierScript = new DeliverableListDataItem();
@@ -239,8 +257,76 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		visitDefaultTechnicalSheetType(companyHome);
 
+		visitSupplierPortalCatalogs(companyHome);
+
 		return ret;
 
+	}
+
+	/**
+	 * <p>Creates the catalogues the supplier portal's wizards are scored against.</p>
+	 *
+	 * <p>The portal's <em>Conformité</em> step shows whatever catalogue applies to the entity
+	 * being filled in. On a stock instance that means the client's own catalogues — INCO, GS1 —
+	 * which were written for an internal user filling a finished product, not for a supplier
+	 * filling the handful of fields it is actually asked for. The supplier therefore read a
+	 * completeness score computed against fields nobody asked it to provide.</p>
+	 *
+	 * <p><b>The SpEL filter is what makes this safe</b>, and it is why these catalogues can ship
+	 * enabled. {@code entityFilter} carries {@code suppliers != null && !suppliers.isEmpty()},
+	 * which {@code EntityCatalogServiceImpl.isMatchFilter()} evaluates against the entity itself:
+	 * the catalogue applies to a sheet entrusted to a supplier and to nothing else. No score of an
+	 * existing park moves by one point.</p>
+	 *
+	 * <p>An earlier version used {@code "entityFilter": "wizard"} instead — "only when a
+	 * {@code catalogId} is explicitly asked for". It was safe in the same way and useless for the
+	 * purpose: a catalogue filtered that way is skipped at formulation, so it never enters
+	 * {@code bcpg:entityScore}, and the completeness a supplier reads on its dashboard and on its
+	 * product list could never include it. The SpEL condition puts it in the stored score, where
+	 * every listing picks it up for free; the portal then shows the score of the catalogues whose
+	 * id starts with {@code supplierPortal-} and leaves the customer's own out of the average.</p>
+	 *
+	 * <p>{@code bcpg:supplier} is the exception: {@code SupplierData} has no {@code suppliers}
+	 * association, so the condition would throw on it. Its catalogue ships <b>unfiltered</b> — a
+	 * supplier record is by nature a portal object — which does mean the score of every supplier
+	 * record moves at its next formulation. It is the one deliberate exception here.</p>
+	 *
+	 * <p>{@code catalogId} is named in the deliverable URL as well
+	 * ({@link #SUPPLIER_PORTAL_CATALOG_ID}), and that is a different mechanism serving a different
+	 * screen: it is what makes Share's wizard paint its completeness panel. The two coexist.</p>
+	 *
+	 * <p>{@code locales} is declared for the same reason the catalogue exists: it is the field
+	 * {@code getLocales()} already reads to score completeness language by language, and the one
+	 * the portal reads to decide which languages to offer on a multilingual field (#33085).
+	 * Declaring it here means the entry languages of a supplier wizard are a property of what the
+	 * client asks for, not of how the portal happens to be translated.</p>
+	 *
+	 * <p>The list shipped is <b>the languages beCPG's own UI is translated into</b> — the eleven
+	 * bundles under {@code messages/plm_*.properties}: fr, en, de, es, fi, it, ja, pt, ru, sv, tr.
+	 * That is the defensible default between the two extremes: the portal's own two chrome
+	 * languages said nothing about what a customer expects, and the repository's
+	 * {@code beCPG.multilinguale.supportedLocales} (27 on a stock instance) offers a supplier a
+	 * wall of boxes for markets nobody sells to. A customer narrows or widens it by editing the
+	 * catalogue, which is the point of putting the list there.</p>
+	 *
+	 * <p>Create-if-absent by file name, like every other resource this visitor installs: an
+	 * instance that has edited these catalogues keeps its version, and the visitor stays
+	 * replayable on every startup.</p>
+	 *
+	 * @param companyHome a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	private void visitSupplierPortalCatalogs(NodeRef companyHome) {
+
+		NodeRef catalogsNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, RepoConsts.CATALOGS_PATH);
+
+		if (catalogsNodeRef == null) {
+			// PLMInitRepoVisitor creates the folder; on an instance where it has not run yet
+			// there is nothing to fill, and the next startup will pick this up.
+			logger.warn("No PropertyCatalogs folder, skipping the supplier portal catalogs");
+			return;
+		}
+
+		contentHelper.addFilesResources(catalogsNodeRef, "classpath*:beCPG/supplier/catalogs/*.json");
 	}
 
 	/**
