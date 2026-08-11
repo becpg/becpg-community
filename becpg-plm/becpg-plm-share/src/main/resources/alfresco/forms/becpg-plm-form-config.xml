@@ -1855,8 +1855,8 @@
                     <show id="bcpg:scoreDefValidityPeriod" />
                     <show id="bcpg:scoreDefStartEffectivity" />
                     <show id="bcpg:scoreDefEndEffectivity" />
-                    <show id="bcpg:regulatoryCountry" />
-                    <show id="bcpg:regulatoryUsage" />
+                    <show id="bcpg:regulatoryCountries" />
+                    <show id="bcpg:regulatoryUsageRef" />
                     <show id="bcpg:scoreDefAggregation" />
                     <show id="bcpg:scoreDefClassOrder" />
                     <show id="sec:readGroups" force="true" />
@@ -1877,10 +1877,10 @@
                     <field id="bcpg:scoreDefValidityPeriod" set="2-col" />
                     <field id="bcpg:scoreDefStartEffectivity" set="2-col" />
                     <field id="bcpg:scoreDefEndEffectivity" set="2-col" />
-                    <field id="bcpg:regulatoryCountry" set="2-col">
+                    <field id="bcpg:regulatoryCountries" set="2-col">
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
-                    <field id="bcpg:regulatoryUsage" set="2-col">
+                    <field id="bcpg:regulatoryUsageRef" set="2-col">
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
                     <field id="bcpg:scoreDefAggregation" set="2-col" />
@@ -1935,8 +1935,8 @@
                     <show id="bcpg:scoreDefValidityPeriod" />
                     <show id="bcpg:scoreDefStartEffectivity" />
                     <show id="bcpg:scoreDefEndEffectivity" />
-                    <show id="bcpg:regulatoryCountry" />
-                    <show id="bcpg:regulatoryUsage" />
+                    <show id="bcpg:regulatoryCountries" />
+                    <show id="bcpg:regulatoryUsageRef" />
                     <show id="bcpg:scoreDefAggregation" />
                     <show id="bcpg:scoreDefClassOrder" />
                 </field-visibility>
@@ -1955,10 +1955,10 @@
                     <field id="bcpg:scoreDefValidityPeriod" set="2-col" />
                     <field id="bcpg:scoreDefStartEffectivity" set="2-col" />
                     <field id="bcpg:scoreDefEndEffectivity" set="2-col" />
-                    <field id="bcpg:regulatoryCountry" set="2-col">
+                    <field id="bcpg:regulatoryCountries" set="2-col">
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
-                    <field id="bcpg:regulatoryUsage" set="2-col">
+                    <field id="bcpg:regulatoryUsageRef" set="2-col">
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
                     <field id="bcpg:scoreDefAggregation" set="2-col" />
@@ -9395,14 +9395,14 @@
                     <show id="bcpg:rslClass" />
                     <show id="bcpg:rslVersion" />
                     <show id="bcpg:rslCategory" />
-                    <show id="bcpg:regulatoryCountry" />
-                    <show id="bcpg:regulatoryUsage" />
+                    <show id="bcpg:regulatoryCountries" />
+                    <show id="bcpg:regulatoryUsageRef" />
                 </field-visibility>
                 <appearance>
-                    <field id="bcpg:regulatoryCountry">
+                    <field id="bcpg:regulatoryCountries">
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
-                    <field id="bcpg:regulatoryUsage">
+                    <field id="bcpg:regulatoryUsageRef">
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
                     </field>
                 </appearance>
