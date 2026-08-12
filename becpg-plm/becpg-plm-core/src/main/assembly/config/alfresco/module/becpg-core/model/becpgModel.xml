@@ -3088,7 +3088,6 @@
 			</mandatory-aspects>
 		</type>
 
-		<!-- Computed scores of an entity, one line per score definition -->
 		<type name="bcpg:regulatoryScoreList">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
@@ -7250,6 +7249,28 @@
 					<index enabled="false"></index>
 				</property>
 			</properties>
+		</aspect>
+
+		<!-- TEMPORAIRE (#35938) - aspect porté par aucun type, à retirer une fois les
+		     instances nettoyées. La suppression de bcpg:regulatoryScopeAspect a laissé des
+		     associations bcpg:regulatoryCountry en base ; tant que le nom n'est pas au
+		     dictionnaire, AssociationPolicyDelegate empêche de les retirer, et les nœuds
+		     porteurs ne peuvent plus être ni modifiés ni supprimés. On ne redéclare pas
+		     bcpg:regulatoryUsage : son homonymie avec le type du même nom est précisément
+		     la régression corrigée, et aucune donnée ne la porte. -->
+		<aspect name="bcpg:legacyScopeCleanupAspect">
+			<associations>
+				<association name="bcpg:regulatoryCountry">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:geoOrigin</class>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
 		</aspect>
 
 		<aspect name="bcpg:regulatoryAspect">
