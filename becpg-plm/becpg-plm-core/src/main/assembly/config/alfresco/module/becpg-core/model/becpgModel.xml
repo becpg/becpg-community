@@ -7252,13 +7252,13 @@
 		</aspect>
 
 		<!-- TEMPORAIRE (#35938) - aspect porté par aucun type, à retirer une fois les
-		     instances nettoyées. La suppression de bcpg:regulatoryScopeAspect a laissé des
-		     associations bcpg:regulatoryCountry en base ; tant que le nom n'est pas au
-		     dictionnaire, AssociationPolicyDelegate empêche de les retirer, et les nœuds
-		     porteurs ne peuvent plus être ni modifiés ni supprimés. On ne redéclare pas
-		     bcpg:regulatoryUsage : son homonymie avec le type du même nom est précisément
-		     la régression corrigée, et aucune donnée ne la porte. -->
-		<aspect name="bcpg:legacyScopeCleanupAspect">
+		     instances nettoyées. Il garde son nom d'origine parce que les nœuds le portent
+		     encore en base : sans lui au dictionnaire, le service de formulaire échoue
+		     (« Failed to create anonymous type ») et ni l'aspect ni ses associations ne
+		     peuvent être retirés, les politiques étant résolues par le dictionnaire.
+		     On ne redéclare pas bcpg:regulatoryUsage : son homonymie avec le type du même
+		     nom est précisément la régression corrigée, et aucune donnée ne la porte. -->
+		<aspect name="bcpg:regulatoryScopeAspect">
 			<associations>
 				<association name="bcpg:regulatoryCountry">
 					<source>
