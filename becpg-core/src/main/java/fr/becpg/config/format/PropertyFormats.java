@@ -69,11 +69,6 @@ public class PropertyFormats {
 	private final String datetimePattern;
 	private final String decimalPattern;
 
-	// Cached config instances (immutable)
-	private final FormatConfig dateConfig;
-	private final FormatConfig datetimeConfig;
-	private final FormatConfig decimalConfig;
-
 	/**
 	 * <p>Constructor for PropertyFormats.</p>
 	 *
@@ -110,12 +105,6 @@ public class PropertyFormats {
 		this.datePattern = datePattern;
 		this.datetimePattern = datetimePattern;
 		this.decimalPattern = decimalPattern;
-
-		// Create immutable config objects
-		Locale locale = useDefaultLocale ? Locale.getDefault() : I18NUtil.getLocale();
-		this.dateConfig = new FormatConfig(datePattern, locale, useDefaultLocale);
-		this.datetimeConfig = new FormatConfig(datetimePattern, locale, useDefaultLocale);
-		this.decimalConfig = new FormatConfig(decimalPattern, locale, useDefaultLocale);
 	}
 
 	/**
@@ -156,25 +145,41 @@ public class PropertyFormats {
 	 * @return a {@link fr.becpg.config.format.PropertyFormats} object
 	 */
 	public static PropertyFormats forMode(final FormatMode mode, boolean useServerLocale) {
-		return MODE_CACHE.computeIfAbsent((mode != null ? mode.toString() + "-" : "") + useServerLocale, k -> {
-			PropertyFormats ret;
+		return MODE_CACHE.computeIfAbsent(modeCacheKey(mode, useServerLocale), k -> {
 			if (FormatMode.PROCESS.equals(mode)) {
-				ret = new PropertyFormats(useServerLocale, PROCESS_DATE_FORMAT, DEFAULT_DATETIME_PATTERN, DEFAULT_DECIMAL_PATTERN);
+				return new PropertyFormats(useServerLocale, PROCESS_DATE_FORMAT, DEFAULT_DATETIME_PATTERN, DEFAULT_DECIMAL_PATTERN);
 			} else if (useServerLocale) {
-				ret = new PropertyFormats(useServerLocale);
+				return new PropertyFormats(useServerLocale);
 			} else if (FormatMode.CSV.equals(mode)) {
 				if (Locale.FRENCH.equals(I18NUtil.getContentLocaleLang())) {
-					ret = new PropertyFormats(false, FRENCH_CSV_DATE_FORMAT, FRENCH_CSV_DATETIME_FORMAT, DEFAULT_DECIMAL_PATTERN);
-				} else {
-					ret = new PropertyFormats(false, CSV_DATE_FORMAT, CSV_DATETIME_FORMAT, DEFAULT_DECIMAL_PATTERN);
+					return new PropertyFormats(false, FRENCH_CSV_DATE_FORMAT, FRENCH_CSV_DATETIME_FORMAT, DEFAULT_DECIMAL_PATTERN);
 				}
+				return new PropertyFormats(false, CSV_DATE_FORMAT, CSV_DATETIME_FORMAT, DEFAULT_DECIMAL_PATTERN);
 			} else if (FormatMode.COMP.equals(mode)) {
-				ret = new PropertyFormats(false, DEFAULT_DATE_PATTERN, DEFAULT_DATETIME_PATTERN, DEFAULT_DECIMAL_PATTERN, COMPARE_MAX_PRECISION);
-			} else {
-				ret = new PropertyFormats(false);
+				return new PropertyFormats(false, DEFAULT_DATE_PATTERN, DEFAULT_DATETIME_PATTERN, DEFAULT_DECIMAL_PATTERN, COMPARE_MAX_PRECISION);
 			}
-			return ret;
+			return new PropertyFormats(false);
 		});
+	}
+
+	/**
+	 * Builds the cache key of a shared instance.
+	 * <p>
+	 * The CSV patterns are picked from the content locale, so that locale belongs to
+	 * the key: without it the first export would impose its date layout on all the others.
+	 *
+	 * @param mode a {@link fr.becpg.config.format.FormatMode} object
+	 * @param useServerLocale a boolean
+	 * @return a {@link java.lang.String} object
+	 */
+	private static String modeCacheKey(final FormatMode mode, boolean useServerLocale) {
+		String key = (mode != null ? mode.toString() + "-" : "") + useServerLocale;
+
+		if (!useServerLocale && FormatMode.CSV.equals(mode)) {
+			return key + "-" + I18NUtil.getContentLocaleLang();
+		}
+
+		return key;
 	}
 
 	/**
@@ -344,7 +349,7 @@ public class PropertyFormats {
 	 * @return a {@link java.time.format.DateTimeFormatter} object
 	 */
 	private DateTimeFormatter getDateFormatter() {
-		return DATE_FORMATTER_CACHE.computeIfAbsent(dateConfig, this::createDateTimeFormatter);
+		return DATE_FORMATTER_CACHE.computeIfAbsent(configFor(datePattern), this::createDateTimeFormatter);
 	}
 
 	/**
@@ -353,7 +358,7 @@ public class PropertyFormats {
 	 * @return a {@link java.time.format.DateTimeFormatter} object
 	 */
 	private DateTimeFormatter getDateTimeFormatter() {
-		return DATE_FORMATTER_CACHE.computeIfAbsent(datetimeConfig, this::createDateTimeFormatter);
+		return DATE_FORMATTER_CACHE.computeIfAbsent(configFor(datetimePattern), this::createDateTimeFormatter);
 	}
 
 	/**
@@ -362,7 +367,21 @@ public class PropertyFormats {
 	 * @return a {@link java.text.NumberFormat} object
 	 */
 	private NumberFormat getNumberFormatter() {
-		return NUMBER_FORMATTER_CACHE.computeIfAbsent(decimalConfig, this::createNumberFormat);
+		return NUMBER_FORMATTER_CACHE.computeIfAbsent(configFor(decimalPattern), this::createNumberFormat);
+	}
+
+	/**
+	 * Binds a pattern to the locale of the <b>current</b> thread.
+	 * <p>
+	 * The locale must be resolved on each call: instances returned by
+	 * {@link #forMode(FormatMode, boolean)} are shared between requests, so capturing
+	 * the locale once would format every later request in the locale of the first one.
+	 *
+	 * @param pattern a {@link java.lang.String} object
+	 * @return a {@link fr.becpg.config.format.PropertyFormats.FormatConfig} object
+	 */
+	private FormatConfig configFor(String pattern) {
+		return new FormatConfig(pattern, useDefaultLocale ? Locale.getDefault() : I18NUtil.getLocale(), useDefaultLocale);
 	}
 
 	// Factory methods for creating formatters
