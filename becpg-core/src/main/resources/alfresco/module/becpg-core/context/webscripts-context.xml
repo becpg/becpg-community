@@ -133,7 +133,7 @@
 	</bean>
 
 	<bean id="webscript.fr.becpg.security.entitySecurityCheck.get" class="fr.becpg.repo.web.scripts.entity.EntitySecurityWebScript" parent="abstractEntityWebScript">
-		<property name="workflowService" ref="WorkflowService" />
+		<property name="workflowTaskFinder" ref="workflowTaskFinder" />
 		<property name="workflowPackageComponent" ref="workflowPackageImpl" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="entityService" ref="entityService" />
