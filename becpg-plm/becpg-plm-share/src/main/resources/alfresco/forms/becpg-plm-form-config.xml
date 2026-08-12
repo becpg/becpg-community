@@ -10383,10 +10383,14 @@
                  <field-visibility>
                     <show id="bcpg:depthLevel" />
                     <show id="bcpg:ingListIng" />
+                    <show id="bcpg:ingListIngTypes" />
+                    <show id="bcpg:ingListDeclType" />
                     <show id="bcpg:ingListVolumeQtyPerc" />
                     <show id="bcpg:ingListQtyPerc" />
                     <show id="bcpg:ingListQtyPercWithYield" />
                     <show id="bcpg:ingListQtyPercWithSecondaryYield" />
+                    <show id="bcpg:ingListQtyMini" />
+                    <show id="bcpg:ingListQtyMaxi" />
                     <show id="bcpg:ingListQtyPerc1" />
                     <show id="bcpg:ingListQtyPerc2" />
                     <show id="bcpg:ingListQtyPerc3" />
@@ -10401,6 +10405,8 @@
                     <show id="bcpg:ingListBioOrigin" />
                     <show id="bcpg:ingListClaims" />
                     <show id="bcpg:ingListComments" />
+                    <show id="bcpg:glopTarget" />
+                    <show id="bcpg:glopValue" />
                     <show id="bcpg:linkedSearchAssociation" />
                  </field-visibility>
             </form>
