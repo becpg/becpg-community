@@ -19,6 +19,7 @@ package fr.becpg.repo.product.formulation;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.function.Predicate;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,6 +31,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
  * <p>AbstractCompositionQtyCalculatingFormulationHandler class.</p>
@@ -63,6 +65,8 @@ public abstract class AbstractCompositionQtyCalculatingFormulationHandler<T> ext
 	 */
 	protected void visitQtyChildren(ProductData formulatedProduct, Double parentQty, Composite<CompoListDataItem> composite)
 			throws FormulateException {
+
+		Predicate<CompoListDataItem> usedVariant = defaultVariantPredicate(formulatedProduct);
 
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
 
@@ -109,6 +113,9 @@ public abstract class AbstractCompositionQtyCalculatingFormulationHandler<T> ext
 					Double compositePerc = 0d;
 					boolean isUnitPerc = true;
 					for (Composite<CompoListDataItem> child : component.getChildren()) {
+						if (!usedVariant.test(child.getData())) {
+							continue;
+						}
 						compositePerc += child.getData().getQtySubFormula();
 						isUnitPerc = isUnitPerc && ProductUnit.Perc.equals(child.getData().getCompoListUnit());
 						if (!isUnitPerc) {
@@ -127,6 +134,9 @@ public abstract class AbstractCompositionQtyCalculatingFormulationHandler<T> ext
 				// Parent volume = sum of children volumes
 				Double parentVolume = 0d;
 				for (Composite<CompoListDataItem> child : component.getChildren()) {
+					if (!usedVariant.test(child.getData())) {
+						continue;
+					}
 					Double cv = child.getData().getVolume();
 					parentVolume += ((cv != null) && !cv.isNaN() && !cv.isInfinite()) ? cv : 0d;
 				}
@@ -139,6 +149,9 @@ public abstract class AbstractCompositionQtyCalculatingFormulationHandler<T> ext
 					Double yieldPerc = 100d;
 					double qtyUsed = 0d;
 					for (Composite<CompoListDataItem> child : component.getChildren()) {
+						if (!usedVariant.test(child.getData())) {
+							continue;
+						}
 						Double cQty = child.getData().getQty();
 						if (cQty != null) {
 							if (child.isLeaf()) {
@@ -155,6 +168,24 @@ public abstract class AbstractCompositionQtyCalculatingFormulationHandler<T> ext
 				}
 			}
 		}
+	}
+
+	/**
+	 * Keeps the lines a sub-composition is actually made of.
+	 * <p>
+	 * A sub-composition aggregates its children to derive its own percentage, volume and
+	 * yield. Counting every variant would sum alternatives that are never used together:
+	 * two 100 g variants under a 100 g semi-finished would yield 50 % instead of 100 %.
+	 *
+	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object
+	 * @return a {@link java.util.function.Predicate} object
+	 */
+	private Predicate<CompoListDataItem> defaultVariantPredicate(ProductData formulatedProduct) {
+		if (formulatedProduct == null) {
+			return item -> true;
+		}
+
+		return new VariantFilters<CompoListDataItem>().createPredicate(formulatedProduct);
 	}
 
 	/**
