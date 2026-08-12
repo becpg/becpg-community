@@ -7,17 +7,10 @@
       ],
       "entityFilter": "suppliers != null && !suppliers.isEmpty()",
       "locales": [
-         "fr",
          "en",
-         "de",
+         "fr",
          "es",
-         "fi",
-         "it",
-         "ja",
-         "pt",
-         "ru",
-         "sv",
-         "tr"
+         "de"
       ],
       "fields": [
          "bcpg:legalName",
@@ -37,17 +30,10 @@
       ],
       "entityFilter": "suppliers != null && !suppliers.isEmpty()",
       "locales": [
-         "fr",
          "en",
-         "de",
+         "fr",
          "es",
-         "fi",
-         "it",
-         "ja",
-         "pt",
-         "ru",
-         "sv",
-         "tr"
+         "de"
       ],
       "fields": [
          "bcpg:legalName",
@@ -67,17 +53,10 @@
       ],
       "entityFilter": "suppliers != null && !suppliers.isEmpty()",
       "locales": [
-         "fr",
          "en",
-         "de",
+         "fr",
          "es",
-         "fi",
-         "it",
-         "ja",
-         "pt",
-         "ru",
-         "sv",
-         "tr"
+         "de"
       ],
       "fields": [
          "bcpg:legalName",
@@ -96,17 +75,10 @@
       ],
       "entityFilter": "suppliers != null && !suppliers.isEmpty()",
       "locales": [
-         "fr",
          "en",
-         "de",
+         "fr",
          "es",
-         "fi",
-         "it",
-         "ja",
-         "pt",
-         "ru",
-         "sv",
-         "tr"
+         "de"
       ],
       "fields": [
          "bcpg:legalName",
@@ -125,17 +97,10 @@
       ],
       "entityFilter": "suppliers != null && !suppliers.isEmpty()",
       "locales": [
-         "fr",
          "en",
-         "de",
+         "fr",
          "es",
-         "fi",
-         "it",
-         "ja",
-         "pt",
-         "ru",
-         "sv",
-         "tr"
+         "de"
       ],
       "fields": [
          "bcpg:legalName",
@@ -154,17 +119,10 @@
       ],
       "entityFilter": "suppliers != null && !suppliers.isEmpty()",
       "locales": [
-         "fr",
          "en",
-         "de",
+         "fr",
          "es",
-         "fi",
-         "it",
-         "ja",
-         "pt",
-         "ru",
-         "sv",
-         "tr"
+         "de"
       ],
       "fields": [
          "bcpg:legalName",
@@ -182,17 +140,10 @@
          "bcpg:supplier"
       ],
       "locales": [
-         "fr",
          "en",
-         "de",
+         "fr",
          "es",
-         "fi",
-         "it",
-         "ja",
-         "pt",
-         "ru",
-         "sv",
-         "tr"
+         "de"
       ],
       "fields": [
          "bcpg:legalName",

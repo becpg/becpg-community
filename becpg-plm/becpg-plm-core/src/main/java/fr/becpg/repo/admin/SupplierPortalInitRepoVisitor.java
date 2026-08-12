@@ -301,17 +301,21 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 	 * Declaring it here means the entry languages of a supplier wizard are a property of what the
 	 * client asks for, not of how the portal happens to be translated.</p>
 	 *
-	 * <p>The list shipped is <b>the languages beCPG's own UI is translated into</b> — the eleven
-	 * bundles under {@code messages/plm_*.properties}: fr, en, de, es, fi, it, ja, pt, ru, sv, tr.
-	 * That is the defensible default between the two extremes: the portal's own two chrome
-	 * languages said nothing about what a customer expects, and the repository's
-	 * {@code beCPG.multilinguale.supportedLocales} (27 on a stock instance) offers a supplier a
-	 * wall of boxes for markets nobody sells to. A customer narrows or widens it by editing the
-	 * catalogue, which is the point of putting the list there.</p>
+	 * <p>Four locales are shipped — <b>en, fr, es, de</b> — and the number matters as much as the
+	 * choice: {@code locales} does not mean "the languages to offer for entry", it means
+	 * <b>evaluate this catalogue once per language</b>. {@code EntityCatalogServiceImpl} emits one
+	 * row per locale, so the list length multiplies what {@code bcpg:entityScore} stores on every
+	 * single supplier sheet. Measured on dev with eleven locales: 12 rows and 9,5 kB on one raw
+	 * material, against roughly 1 kB before. Four is the deliberate trade-off between covering the
+	 * markets a supplier usually writes for and not inflating a stored property park-wide. A
+	 * customer narrows or widens it by editing the catalogue, which is the point of putting the
+	 * list there rather than in the portal.</p>
 	 *
 	 * <p>Create-if-absent by file name, like every other resource this visitor installs: an
-	 * instance that has edited these catalogues keeps its version, and the visitor stays
-	 * replayable on every startup.</p>
+	 * instance that has edited these catalogues keeps its version, and the visitor is replayable.
+	 * <b>It does not run at startup</b> — {@code InitVisitorService} is driven by
+	 * {@code GET becpg/admin/repository/init-repo} ({@code AdminModuleWebScript}), so a deployment
+	 * alone seeds nothing and that action has to be called once after it.</p>
 	 *
 	 * @param companyHome a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 */
