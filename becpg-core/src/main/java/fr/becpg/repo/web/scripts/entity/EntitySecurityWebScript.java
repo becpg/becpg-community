@@ -27,10 +27,6 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.workflow.WorkflowPackageComponent;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
-import org.alfresco.service.cmr.workflow.WorkflowService;
-import org.alfresco.service.cmr.workflow.WorkflowTask;
-import org.alfresco.service.cmr.workflow.WorkflowTaskQuery;
-import org.alfresco.service.cmr.workflow.WorkflowTaskState;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -44,6 +40,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.workflow.WorkflowTaskFinder;
 import fr.becpg.repo.security.filter.SecurityContextHelper;
 import fr.becpg.repo.web.scripts.remote.AbstractEntityWebScript;
 
@@ -58,9 +55,10 @@ public class EntitySecurityWebScript extends AbstractEntityWebScript {
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(EntitySecurityWebScript.class);
 
-	private WorkflowService workflowService;
 
 	private WorkflowPackageComponent workflowPackageComponent;
+
+	private WorkflowTaskFinder workflowTaskFinder;
 
 	private EntityListDAO entityListDAO;
 
@@ -110,20 +108,21 @@ public class EntitySecurityWebScript extends AbstractEntityWebScript {
 		return findEntity(req);
 	}
 
-	/**
-	 * <p>Setter for the field <code>workflowService</code>.</p>
-	 *
-	 * @param workflowService a {@link org.alfresco.service.cmr.workflow.WorkflowService} object.
-	 */
-	public void setWorkflowService(WorkflowService workflowService) {
-		this.workflowService = workflowService;
-	}
 
 	/**
 	 * <p>Setter for the field <code>workflowPackageComponent</code>.</p>
 	 *
 	 * @param workflowPackageComponent a {@link org.alfresco.repo.workflow.WorkflowPackageComponent} object.
 	 */
+	/**
+	 * <p>Setter for the field <code>workflowTaskFinder</code>.</p>
+	 *
+	 * @param workflowTaskFinder a {@link fr.becpg.repo.workflow.WorkflowTaskFinder} object
+	 */
+	public void setWorkflowTaskFinder(WorkflowTaskFinder workflowTaskFinder) {
+		this.workflowTaskFinder = workflowTaskFinder;
+	}
+
 	public void setWorkflowPackageComponent(WorkflowPackageComponent workflowPackageComponent) {
 		this.workflowPackageComponent = workflowPackageComponent;
 	}
@@ -208,55 +207,8 @@ public class EntitySecurityWebScript extends AbstractEntityWebScript {
 			return false;
 		}
 
-		// Check assigned tasks — asked WORKFLOW BY WORKFLOW, not by listing the user's tasks.
-		//
-		// This used to be `getAssignedTasks(currentUser, IN_PROGRESS)` followed by an in-memory
-		// filter on `task.getPath().getInstance().getId()`. Two costs stacked: the query returned
-		// every task of the user regardless of the entity being asked about, and the filter forced
-		// a lazy load of the path, then of the workflow instance, ONCE PER TASK — a textbook N+1
-		// against Activiti. Measured through the supplier portal on 2026-08-12: 5 011 ms for this
-		// single webscript, on an account that had accumulated tasks.
-		//
-		// The question is bounded by the entity: a sheet carries one or two workflows. Asking
-		// "does THIS workflow hold an in-progress task for THIS user" is a query Activiti answers
-		// with an index, and the loop runs once or twice instead of over the whole backlog.
-		boolean hasMatchingTask = false;
-		for (String workflowId : contentWorkflowIds) {
-			WorkflowTaskQuery query = new WorkflowTaskQuery();
-			query.setProcessId(workflowId);
-			query.setActorId(currentUser);
-			query.setTaskState(WorkflowTaskState.IN_PROGRESS);
-			query.setActive(Boolean.TRUE);
-			if (!workflowService.queryTasks(query).isEmpty()) {
-				hasMatchingTask = true;
-				break;
-			}
-		}
-
-		if (hasMatchingTask) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("User " + currentUser + " has assigned tasks for entity: " + entityNodeRef);
-			}
-			return true;
-		}
-
-		// Check pooled tasks.
-		//
-		// Left as it was, deliberately: `WorkflowTaskQuery` has no way to express "candidate
-		// group" — checked against alfresco-repository 26.1.0.61, it exposes setProcessId,
-		// setActorId, setTaskState and setActive, and nothing for pooled actors. So the scan is
-		// the only API available here. It stays acceptable because it is now a FALLBACK: a
-		// supplier working on its own referencing task matches above and never reaches this line.
-		List<WorkflowTask> pooledTasks = workflowService.getPooledTasks(currentUser);
-		hasMatchingTask = pooledTasks.stream().anyMatch(task -> contentWorkflowIds.contains(task.getPath().getInstance().getId()));
-
-		if (hasMatchingTask) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("User " + currentUser + " has pooled tasks for entity: " + entityNodeRef);
-			}
-		}
-
-		return hasMatchingTask;
+		// Déléguée : même question, même réponse, un seul endroit. Voir WorkflowTaskFinder.
+		return workflowTaskFinder.hasTaskOn(currentUser, contentWorkflowIds, null);
 	}
 
 	/**
