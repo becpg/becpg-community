@@ -53,6 +53,8 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.Path;
 import org.alfresco.service.cmr.repository.StoreRef;
+import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionHistory;
@@ -124,9 +126,13 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	private final LockService lockService;
 	private final AssociationService associationService;
 	private final EntityListDAO entityListDAO;
+	private final PermissionService permissionService;
 
 	/** Association definitions assembled during this request, keyed by node type and aspects. */
 	private final Map<String, Map<QName, AssociationDefinition>> assocDefsByShape = new HashMap<>();
+
+	/** Read access of the association targets met during this request, one evaluation per node. */
+	private final Map<NodeRef, Boolean> readAccessByNode = new HashMap<>();
 
 	private Boolean requiresAssocs = null;
 
@@ -143,6 +149,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		this.lockService = remoteServiceRegisty.lockService();
 		this.associationService = remoteServiceRegisty.associationService();
 		this.entityListDAO = remoteServiceRegisty.entityListDAO();
+		this.permissionService = remoteServiceRegisty.permissionService();
 	}
 
 	/** {@inheritDoc} */
@@ -979,21 +986,54 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		}
 	}
 
+	/**
+	 * Serializes an association target, or reports it as <code>#AccessDenied</code> when the caller
+	 * may not read it.
+	 * <p>
+	 * A target is reached by traversal, so nothing has filtered it: it is the one place where this
+	 * visitor asks the question itself, rather than letting a permission chain ask it again on
+	 * every metadata read.
+	 *
+	 * @param nodeRef the node holding the association
+	 * @param childRef the target
+	 * @param assocDef the association definition
+	 * @param nodeType the prefixed association name
+	 * @param context the context of the current visit
+	 * @return the serialized target, never null
+	 * @throws org.json.JSONException if any.
+	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if any.
+	 */
 	private JSONObject createTargetAssociationNode(NodeRef nodeRef, NodeRef childRef, AssociationDefinition assocDef, QName nodeType, RemoteJSONContext context) throws JSONException, RemoteException {
 		JSONObject jsonAssocNode = new JSONObject();
-		try {
-			visitNode(childRef, jsonAssocNode, JsonVisitNodeType.ASSOC, nodeType, context);
-		} catch (AccessDeniedException e) {
+
+		if (!canRead(childRef)) {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Association target " + childRef + " of " + nodeRef + " (assoc "
-						+ assocDef.getName() + ") not accessible for current user, marking as #AccessDenied: "
-						+ e.getMessage());
+				logger.debug("Association target " + childRef + " of " + nodeRef + " (assoc " + assocDef.getName()
+						+ ") not accessible for current user, marking as #AccessDenied");
 			}
-			jsonAssocNode = new JSONObject();
 			jsonAssocNode.put(RemoteEntityService.ATTR_ID, childRef.getId());
 			jsonAssocNode.put(entityDictionaryService.toPrefixString(ContentModel.PROP_NAME), ACCESS_DENIED_VALUE);
+			return jsonAssocNode;
 		}
+
+		visitNode(childRef, jsonAssocNode, JsonVisitNodeType.ASSOC, nodeType, context);
 		return jsonAssocNode;
+	}
+
+	/**
+	 * Whether the caller may read a node, answered once per node and per request.
+	 * <p>
+	 * The same target comes back row after row — <code>bcpg:entityTpl</code> is the same node for
+	 * every product of a listing — and one evaluation of it is one permission evaluation. Caching
+	 * is what keeps this check from becoming the cost that reading through the public
+	 * <code>NodeService</code> was.
+	 *
+	 * @param nodeRef the node to test
+	 * @return true when the node is readable
+	 */
+	private boolean canRead(NodeRef nodeRef) {
+		return readAccessByNode.computeIfAbsent(nodeRef,
+				ref -> AccessStatus.ALLOWED.equals(permissionService.hasPermission(ref, PermissionService.READ)));
 	}
 
 	/**
