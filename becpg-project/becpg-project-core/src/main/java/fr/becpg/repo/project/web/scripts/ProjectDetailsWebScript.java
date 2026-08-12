@@ -3,12 +3,13 @@ package fr.becpg.repo.project.web.scripts;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -322,32 +323,38 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 	 */
 	private JSONArray getActivities(NodeRef pjtNodeRef, List<ActivityListDataItem> activityLists) {
 
-		JSONArray ret = new JSONArray();
-
-		Map<String, Integer> temp = new HashMap<>();
+		Map<LocalDate, Integer> activityCountByDay = new TreeMap<>();
 
 		for (ActivityListDataItem activityListDataItem : activityLists) {
-			
+
 			Date activityDate = activityListDataItem.getCreatedDate();
 
-			String activityDateStr = formatDate(activityDate);
-
-			if (temp.get(activityDateStr) == null) {
-				temp.put(activityDateStr, 1);
-			} else {
-				temp.put(activityDateStr, temp.get(activityDateStr) + 1);
+			if (activityDate != null) {
+				activityCountByDay.merge(toLocalDate(activityDate), 1, Integer::sum);
 			}
 
 		}
 
-		for (Map.Entry<String, Integer> entry : temp.entrySet()) {
+		JSONArray ret = new JSONArray();
+
+		for (Map.Entry<LocalDate, Integer> entry : activityCountByDay.entrySet()) {
 			Object[] array = new Object[2];
-			array[0] = entry.getKey();
+			array[0] = formatDate(entry.getKey());
 			array[1] = entry.getValue();
 			ret.put(array);
 		}
 
 		return ret;
+	}
+
+	/**
+	 * <p>toLocalDate.</p>
+	 *
+	 * @param date a {@link java.util.Date} object
+	 * @return a {@link java.time.LocalDate} object
+	 */
+	private LocalDate toLocalDate(Date date) {
+		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 	}
 
 	/**

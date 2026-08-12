@@ -26075,7 +26075,7 @@ var pvc = function(def, pv) {
         desiredTickCount: null,
         showMinorTicks: !0,
         showTicks: null,
-        hiddenLabelText: "Â·",
+        hiddenLabelText: "\u00B7",
         _isScaleSetup: !1,
         _createLogInstanceId: function() {
             return this.base() + " - " + this.axis.id;
