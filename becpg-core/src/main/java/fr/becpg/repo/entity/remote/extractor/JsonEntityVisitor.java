@@ -131,7 +131,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	/** Association definitions assembled during this request, keyed by node type and aspects. */
 	private final Map<String, Map<QName, AssociationDefinition>> assocDefsByShape = new HashMap<>();
 
-	/** Read access of the association targets met during this request, one evaluation per node. */
+	/** Read access of the nodes checked during this request, one evaluation per node. */
 	private final Map<NodeRef, Boolean> readAccessByNode = new HashMap<>();
 
 	private Boolean requiresAssocs = null;
@@ -729,6 +729,19 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	private void processDataListNode(NodeRef entityNodeRef, NodeRef listNodeRef, JSONObject entityLists, RemoteJSONContext context) {
+		// A list the caller may not read is the list being out of scope, not an export failure.
+		// `bcpg:reqCtrlList` is the everyday case: it is internal, a supplier never has rights on it,
+		// and the entity is returned without it exactly as intended. The ACL that says so is set by
+		// SecurityFormulationHandler on the list node itself, one per list, and its items inherit it
+		// — so one question here answers for the whole list.
+		if (!canRead(listNodeRef)) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Datalist " + listNodeRef + " of node " + entityNodeRef
+						+ " is not readable by the current user, returning entity without it");
+			}
+			return;
+		}
+
 		String dataListType = (String) unsecuredNodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
 		if (dataListType == null || dataListType.isEmpty()) {
 			return;
@@ -779,15 +792,6 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 			}
 			String listKey = entityLists.has(listType) ? listType + DATALIST_NAME_SEPARATOR + dataListName : listType;
 			entityLists.put(listKey, list);
-		} catch (AccessDeniedException e) {
-			// A list the caller may not read is the list being out of scope, not an export failure.
-			// `bcpg:reqCtrlList` is the everyday case: it is internal, a supplier never has rights on
-			// it, and the entity is returned without it exactly as intended. At WARN — with a stack
-			// trace — this printed a dozen frames per entity on every supplier-facing call.
-			if (logger.isDebugEnabled()) {
-				logger.debug("Datalist '" + listName + "' (" + listType + ") is not readable by the current user for node "
-						+ entityNodeRef + ", returning entity without it: " + e.getMessage());
-			}
 		} catch (Exception e) {
 			if (logger.isWarnEnabled()) {
 				logger.warn("Skipping datalist '" + listName + "' (" + listType + ") for node " + entityNodeRef
@@ -1023,8 +1027,13 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	/**
 	 * Whether the caller may read a node, answered once per node and per request.
 	 * <p>
-	 * The same target comes back row after row — <code>bcpg:entityTpl</code> is the same node for
-	 * every product of a listing — and one evaluation of it is one permission evaluation. Caching
+	 * This is the whole of the access control this visitor performs, and it is asked in the two
+	 * places nothing else filters: an association target, and a datalist of the entity. Everywhere
+	 * else the metadata is read without a check, because the page came from a search that had
+	 * already granted it.
+	 * <p>
+	 * The same node comes back over and over — <code>bcpg:entityTpl</code> is one node for every
+	 * product of a listing — and each visit would otherwise be one permission evaluation. The cache
 	 * is what keeps this check from becoming the cost that reading through the public
 	 * <code>NodeService</code> was.
 	 *

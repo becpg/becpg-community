@@ -20,6 +20,7 @@ package fr.becpg.test.repo.entity;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
@@ -48,10 +49,11 @@ import fr.becpg.test.PLMBaseTestCase;
  * Integration test for <code>becpg/remote/entity/list</code>, which reads node metadata through the
  * internal <code>nodeService</code> rather than the public one.
  * <p>
- * Two things must hold for that shortcut to be a correct one: a row must be serialized exactly as
+ * Two things must hold for that shortcut to be a correct one. A row must be serialized exactly as
  * the single-entity endpoint serializes it — a property arriving as a raw multilingual value is
- * what a wrong choice of bean would look like — and an association target, reached by traversal and
- * filtered by nothing, must still be refused to a caller who may not read it.
+ * what a wrong choice of bean would look like. And what the search did not filter must still be
+ * refused to a caller who may not read it: an association target, reached by traversal, and a
+ * datalist of the entity.
  *
  * @author matthieu
  */
@@ -62,11 +64,14 @@ public class RemoteEntityListingIT extends PLMBaseTestCase {
 	private static final String SUPPLIER_NAME = "Supplier out of the caller's reach";
 	private static final String ACCESS_DENIED_VALUE = "#AccessDenied";
 
+	private static final String DATALIST_TYPE = "bcpg:costList";
+
 	private static final String FIELD_TITLE = "cm:title";
 	private static final String FIELD_SUPPLIERS = "bcpg:suppliers";
 	private static final String KEY_ENTITIES = "entities";
 	private static final String KEY_ATTRIBUTES = "attributes";
 	private static final String KEY_ENTITY = "entity";
+	private static final String KEY_DATALISTS = "datalists";
 	private static final String KEY_NAME = "cm:name";
 
 	@Autowired
@@ -127,6 +132,51 @@ public class RemoteEntityListingIT extends PLMBaseTestCase {
 		}), BeCPGPLMTestHelper.USER_ONE);
 	}
 
+	/**
+	 * The other place nothing filters is a datalist of the entity. The ACL that puts an internal
+	 * list out of a supplier's reach — <code>bcpg:reqCtrlList</code> is the everyday case — sits on
+	 * the list node, so the entity must come back without it rather than with it.
+	 */
+	@Test
+	public void testEntityOmitsADatalistTheCallerCannotRead() {
+		NodeRef productNodeRef = inWriteTx(this::createProduct);
+
+		NodeRef listNodeRef = inWriteTx(() -> {
+			NodeRef containerNodeRef = entityListDAO.getListContainer(productNodeRef);
+			if (containerNodeRef == null) {
+				containerNodeRef = entityListDAO.createListContainer(productNodeRef);
+			}
+
+			NodeRef nodeRef = entityListDAO.getList(containerNodeRef, PLMModel.TYPE_COSTLIST);
+			if (nodeRef == null) {
+				nodeRef = entityListDAO.createList(containerNodeRef, PLMModel.TYPE_COSTLIST);
+			}
+			entityListDAO.createListItem(nodeRef, PLMModel.TYPE_COSTLIST, Map.of(),
+					Map.of(PLMModel.ASSOC_COSTLIST_COST, List.of(costs.get(0))));
+
+			BeCPGPLMTestHelper.createUser(BeCPGPLMTestHelper.USER_ONE);
+			permissionService.setPermission(productNodeRef, BeCPGPLMTestHelper.USER_ONE, PermissionService.READ, true);
+			return nodeRef;
+		});
+
+		inReadTx(() -> {
+			Assert.assertTrue("the list is there for a caller who may read it",
+					extractDataLists(productNodeRef).has(DATALIST_TYPE));
+			return null;
+		});
+
+		inWriteTx(() -> {
+			permissionService.setInheritParentPermissions(listNodeRef, false);
+			return null;
+		});
+
+		AuthenticationUtil.runAs(() -> inReadTx(() -> {
+			Assert.assertFalse("the list must be dropped for a caller who may not read it",
+					extractDataLists(productNodeRef).has(DATALIST_TYPE));
+			return null;
+		}), BeCPGPLMTestHelper.USER_ONE);
+	}
+
 	private NodeRef createProduct() {
 		FinishedProductData product = new FinishedProductData();
 		product.setName(PRODUCT_NAME);
@@ -139,6 +189,13 @@ public class RemoteEntityListingIT extends PLMBaseTestCase {
 
 		JSONObject root = new JSONObject(out.toString(StandardCharsets.UTF_8));
 		return root.getJSONArray(KEY_ENTITIES).getJSONObject(0).getJSONObject(KEY_ENTITY);
+	}
+
+	private JSONObject extractDataLists(NodeRef nodeRef) {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		remoteEntityService.getEntity(nodeRef, out, new RemoteParams(RemoteEntityFormat.json));
+
+		return new JSONObject(out.toString(StandardCharsets.UTF_8)).getJSONObject(KEY_ENTITY).getJSONObject(KEY_DATALISTS);
 	}
 
 	private JSONObject extractSingleEntity(NodeRef nodeRef, String field) {
