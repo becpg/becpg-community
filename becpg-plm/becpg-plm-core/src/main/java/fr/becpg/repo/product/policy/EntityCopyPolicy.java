@@ -51,15 +51,10 @@ public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyService
 		logger.debug("Init ProductPolicy...");
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyCompletePolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
 				new JavaBehaviour(this, "onCopyComplete"));
-
+		
 		policyComponent.bindClassBehaviour(CopyServicePolicies.BeforeCopyPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
 				new JavaBehaviour(this, "beforeCopy"));
 
-		// Le service de copie d'Alfresco exige un callback par classe portée par le nœud
-		// et lève « Source node class has no callback » à défaut. beCPG ne lie le sien
-		// qu'aux types, jamais aux aspects : bcpg:regulatoryAspect, désormais porté par
-		// les listes de notation présentes sur presque tous les produits, doit l'être.
-		super.disableOnCopyBehaviour(PLMModel.ASPECT_REGULATORY);
 	}
 
 	/** {@inheritDoc} */

@@ -2023,9 +2023,6 @@
 					</target>
 				</association>
 			</associations>
-			<mandatory-aspects>
-				<aspect>bcpg:regulatoryAspect</aspect>
-			</mandatory-aspects>
 		</type>
 
 		<!-- Thresholds of a score definition, one line per nutrient and per category -->
@@ -3160,7 +3157,6 @@
 			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:depthLevelAspect</aspect>
-				<aspect>bcpg:regulatoryAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
