@@ -89,6 +89,14 @@ import fr.becpg.repo.helper.json.JsonHelper;
  * <p>
  * JsonEntityVisitor class.
  * </p>
+ * <p>
+ * Node metadata is read through the internal <code>nodeService</code>, the bean the rest of beCPG
+ * reads with, and not through the public <code>NodeService</code>, whose security interceptor
+ * re-evaluates the caller's permissions on every single call. The visitor makes about a dozen such
+ * calls per node and a listing serializes hundreds of nodes, so that check alone accounted for a
+ * factor six between an administrator and a supplier account on
+ * <code>becpg/remote/entity/list</code>. What a caller is allowed to see is settled upstream, by
+ * the search that produced the page.
  *
  * @author matthieu
  * @version $Id: $Id
@@ -237,7 +245,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 		try {
 			cacheList.add(nodeRef);
-			QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
+			QName nodeType = unsecuredNodeService.getType(nodeRef).getPrefixedQName(namespaceService);
 
 			processParentInformation(nodeRef, entity, type, nodeType, context);
 
@@ -246,7 +254,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 			}
 			entity.put(RemoteEntityService.ATTR_TYPE, entityDictionaryService.toPrefixString(nodeType));
 
-			Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
+			Map<QName, Serializable> properties = unsecuredNodeService.getProperties(nodeRef);
 			processPrimaryProperty(nodeRef, entity, nodeType, properties, context);
 			processEntityMetadataAndVersion(nodeRef, entity, type, nodeType, properties, context);
 			processAttributes(nodeRef, entity, type, assocName, nodeType, properties, context);
@@ -257,8 +265,8 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	private boolean tryVisitPreStoredJson(NodeRef nodeRef, JSONObject entity, JsonVisitNodeType type, QName assocName, RemoteJSONContext context) throws JSONException {
-		if (!nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_FORMAT)
-				|| !BeCPGModel.EntityFormat.JSON.toString().equals(String.valueOf(nodeService.getProperty(nodeRef, BeCPGModel.PROP_ENTITY_FORMAT)))) {
+		if (!unsecuredNodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_FORMAT)
+				|| !BeCPGModel.EntityFormat.JSON.toString().equals(String.valueOf(unsecuredNodeService.getProperty(nodeRef, BeCPGModel.PROP_ENTITY_FORMAT)))) {
 			return false;
 		}
 
@@ -270,7 +278,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 					JSONObject root = new JSONObject(jsonString);
 					if (root.has(RemoteEntityService.ELEM_ENTITY)) {
 						JSONObject archivedEntity = root.getJSONObject(RemoteEntityService.ELEM_ENTITY);
-						QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
+						QName nodeType = unsecuredNodeService.getType(nodeRef).getPrefixedQName(namespaceService);
 
 						if (archivedEntity.has(RemoteEntityService.ATTR_TYPE)) {
 							entity.put(RemoteEntityService.ATTR_TYPE, archivedEntity.get(RemoteEntityService.ATTR_TYPE));
@@ -346,7 +354,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		if (Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_NODEREF, Boolean.TRUE))) {
 			entity.put(RemoteEntityService.ATTR_ID, nodeRef.getId());
 		}
-		QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
+		QName nodeType = unsecuredNodeService.getType(nodeRef).getPrefixedQName(namespaceService);
 		entity.put(RemoteEntityService.ATTR_TYPE, entityDictionaryService.toPrefixString(nodeType));
 		return true;
 	}
@@ -382,10 +390,10 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	private void populateParentDetails(NodeRef parentRef, JSONObject entity, JsonVisitNodeType type, RemoteJSONContext context) {
 		try {
-			Path parentPath = nodeService.getPath(parentRef);
+			Path parentPath = unsecuredNodeService.getPath(parentRef);
 			String path = parentPath.toPrefixString(namespaceService);
 
-			entity.put(RemoteEntityService.ATTR_PATH, path.replace(context.getEntityPath(nodeService, namespaceService), PATH_SEPARATOR_REPLACEMENT));
+			entity.put(RemoteEntityService.ATTR_PATH, path.replace(context.getEntityPath(unsecuredNodeService, namespaceService), PATH_SEPARATOR_REPLACEMENT));
 			if (!JsonVisitNodeType.ASSOC.equals(type)) {
 				visitSite(entity, parentPath);
 				entity.put(RemoteEntityService.ATTR_PARENT_ID, parentRef.getId());
@@ -521,34 +529,66 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		if (nodeRef == null || !Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_NODEREF, Boolean.TRUE))) {
 			return;
 		}
+		entity.put(RemoteEntityService.ATTR_ID, resolveExportedNodeId(nodeRef, context));
+	}
+
+	/**
+	 * The id under which a node is exported: its own, unless the caller asked for the nodeRefs of
+	 * the entity to be renumbered, or for a node of the history space to be reported under the id
+	 * it had before being versioned.
+	 * <p>
+	 * Both options are off by default, and both are the only reason to know where the node sits.
+	 * The path is therefore resolved only when one of them is on — reading it for every node of
+	 * every row was one repository read per row spent on an answer nobody asked for.
+	 *
+	 * @param nodeRef the node being exported
+	 * @param context the context of the current visit
+	 * @return the id to write, never null
+	 */
+	private String resolveExportedNodeId(NodeRef nodeRef, RemoteJSONContext context) {
+		boolean updateEntityNodeRefs = Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_UPDATE_ENTITY_NODEREFS, Boolean.FALSE));
+		boolean replaceHistoryNodeRefs = Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_REPLACE_HISTORY_NODEREFS, Boolean.FALSE));
+
+		if (!updateEntityNodeRefs && !replaceHistoryNodeRefs) {
+			return nodeRef.getId();
+		}
 
 		String nodePath = resolveNodePathQuietly(nodeRef);
-
-		if (nodePath != null && Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_UPDATE_ENTITY_NODEREFS, Boolean.FALSE))
-				&& nodePath.contains(context.getEntityPath(nodeService, namespaceService))) {
-			NodeRef currentNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, nodeRef.getId());
-			NodeRef newNode = context.getCache().computeIfAbsent(currentNode, k -> new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, GUID.generate()));
-			entity.put(RemoteEntityService.ATTR_ID, newNode.getId());
-		} else if (nodePath != null && Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_REPLACE_HISTORY_NODEREFS, Boolean.FALSE))
-				&& nodePath.contains(RepoConsts.ENTITIES_HISTORY_XPATH)) {
-			NodeRef parentNode = getPrimaryParentRefQuietly(nodeRef);
-			if (parentNode != null) {
-				String parentName = (String) nodeService.getProperty(parentNode, ContentModel.PROP_NAME);
-				if (parentName != null) {
-					NodeRef originalNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, parentName);
-					entity.put(RemoteEntityService.ATTR_ID, originalNode.getId());
-					return;
-				}
-			}
-			entity.put(RemoteEntityService.ATTR_ID, nodeRef.getId());
-		} else {
-			entity.put(RemoteEntityService.ATTR_ID, nodeRef.getId());
+		if (nodePath == null) {
+			return nodeRef.getId();
 		}
+
+		if (updateEntityNodeRefs && nodePath.contains(context.getEntityPath(unsecuredNodeService, namespaceService))) {
+			NodeRef currentNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, nodeRef.getId());
+			return context.getCache()
+					.computeIfAbsent(currentNode, k -> new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, GUID.generate())).getId();
+		}
+
+		if (replaceHistoryNodeRefs && nodePath.contains(RepoConsts.ENTITIES_HISTORY_XPATH)) {
+			return resolveHistoryOriginalNodeId(nodeRef);
+		}
+
+		return nodeRef.getId();
+	}
+
+	/**
+	 * The id a node of the history space had before being versioned, which its primary parent
+	 * carries as its name.
+	 *
+	 * @param nodeRef the history node
+	 * @return the original id, or the node's own id when the parent cannot be read
+	 */
+	private String resolveHistoryOriginalNodeId(NodeRef nodeRef) {
+		NodeRef parentNode = getPrimaryParentRefQuietly(nodeRef);
+		if (parentNode != null && unsecuredNodeService.getProperty(parentNode, ContentModel.PROP_NAME) instanceof String parentName) {
+			return new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, parentName).getId();
+		}
+		return nodeRef.getId();
 	}
 
 	private String resolveNodePathQuietly(NodeRef nodeRef) {
 		try {
-			return nodeService.getPath(nodeRef).toPrefixString(namespaceService);
+			return unsecuredNodeService.getPath(nodeRef).toPrefixString(namespaceService);
 		} catch (RuntimeException e) {
 			if (logger.isWarnEnabled()) {
 				logger.warn("Failed to resolve path for node " + nodeRef + ": " + e.getMessage());
@@ -635,12 +675,13 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		entity.put(RemoteEntityService.ATTR_PARENT_ID, parentRef.getId());
 
 		try {
-			entity.put(RemoteEntityService.ATTR_PATH, nodeService.getPath(parentRef).toPrefixString(namespaceService));
+			entity.put(RemoteEntityService.ATTR_PATH, unsecuredNodeService.getPath(parentRef).toPrefixString(namespaceService));
 		} catch (RuntimeException e) {
 			logParentPathFailure(parentRef, e);
 		}
 
-		if ((entityListDAO != null) && entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+		if ((entityListDAO != null)
+				&& entityDictionaryService.isSubClass(unsecuredNodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 			NodeRef entityNodeRef = entityListDAO.getEntity(nodeRef);
 			if (entityNodeRef != null) {
 				entity.put(RemoteEntityService.ATTR_ENTITY_ID, entityNodeRef.getId());
@@ -657,13 +698,13 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	 * @throws org.json.JSONException if any.
 	 */
 	protected void visitLists(NodeRef nodeRef, JSONObject entity, RemoteJSONContext context) throws JSONException {
-		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_FORMAT)
-				&& BeCPGModel.EntityFormat.JSON.toString().equals(String.valueOf(nodeService.getProperty(nodeRef, BeCPGModel.PROP_ENTITY_FORMAT)))) {
+		if (unsecuredNodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_FORMAT)
+				&& BeCPGModel.EntityFormat.JSON.toString().equals(String.valueOf(unsecuredNodeService.getProperty(nodeRef, BeCPGModel.PROP_ENTITY_FORMAT)))) {
 			visitArchivedLists(nodeRef, entity);
 			return;
 		}
 
-		NodeRef listContainerNodeRef = nodeService.getChildByName(nodeRef, BeCPGModel.ASSOC_ENTITYLISTS, RepoConsts.CONTAINER_DATALISTS);
+		NodeRef listContainerNodeRef = unsecuredNodeService.getChildByName(nodeRef, BeCPGModel.ASSOC_ENTITYLISTS, RepoConsts.CONTAINER_DATALISTS);
 
 		JSONObject entityLists = new JSONObject();
 		entity.put(RemoteEntityService.ELEM_DATALISTS, entityLists);
@@ -674,20 +715,20 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	private void visitDataListContainer(NodeRef entityNodeRef, NodeRef listContainerNodeRef, JSONObject entityLists, RemoteJSONContext context) {
-		List<ChildAssociationRef> assocRefs = nodeService.getChildAssocs(listContainerNodeRef);
+		List<ChildAssociationRef> assocRefs = unsecuredNodeService.getChildAssocs(listContainerNodeRef);
 		for (ChildAssociationRef assocRef : assocRefs) {
 			processDataListNode(entityNodeRef, assocRef.getChildRef(), entityLists, context);
 		}
 	}
 
 	private void processDataListNode(NodeRef entityNodeRef, NodeRef listNodeRef, JSONObject entityLists, RemoteJSONContext context) {
-		String dataListType = (String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
+		String dataListType = (String) unsecuredNodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
 		if (dataListType == null || dataListType.isEmpty()) {
 			return;
 		}
 
 		QName dataListTypeQName = QName.createQName(dataListType, namespaceService);
-		String dataListName = (String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME);
+		String dataListName = (String) unsecuredNodeService.getProperty(listNodeRef, ContentModel.PROP_NAME);
 		if (dataListName == null || dataListName.startsWith(RepoConsts.WUSED_PREFIX) || dataListName.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX)) {
 			return;
 		}
@@ -785,7 +826,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if any.
 	 */
 	protected void visitAssocs(NodeRef nodeRef, JSONObject entity, QName assocName, RemoteJSONContext context) throws JSONException, RemoteException {
-		TypeDefinition typeDef = entityDictionaryService.getType(nodeService.getType(nodeRef));
+		TypeDefinition typeDef = entityDictionaryService.getType(unsecuredNodeService.getType(nodeRef));
 		if (typeDef == null) {
 			if (logger.isWarnEnabled()) {
 				logger.warn("No typeDef found for :" + nodeRef);
@@ -793,7 +834,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 			return;
 		}
 
-		Map<QName, AssociationDefinition> assocs = collectAssociations(nodeRef, typeDef);
+		Map<QName, AssociationDefinition> assocs = collectAssociations(typeDef, unsecuredNodeService.getAspects(nodeRef));
 		visitChildAssociations(nodeRef, entity, assocs, context);
 		visitTargetAssociations(nodeRef, entity, assocName, assocs, context);
 	}
@@ -803,12 +844,11 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	 * aspects. The result depends on that shape only, so it is assembled once per
 	 * distinct combination and shared unmodifiable between the rows of a request.
 	 *
-	 * @param nodeRef the node being visited
-	 * @param typeDef its type definition
+	 * @param typeDef the type definition of the node being visited
+	 * @param aspects its aspects
 	 * @return the association definitions, never null
 	 */
-	private Map<QName, AssociationDefinition> collectAssociations(NodeRef nodeRef, TypeDefinition typeDef) {
-		Set<QName> aspects = nodeService.getAspects(nodeRef);
+	private Map<QName, AssociationDefinition> collectAssociations(TypeDefinition typeDef, Set<QName> aspects) {
 		String shape = buildAssociationShapeKey(typeDef.getName(), aspects);
 
 		Map<QName, AssociationDefinition> cached = assocDefsByShape.get(shape);
@@ -852,7 +892,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	private void visitChildAssociations(NodeRef nodeRef, JSONObject entity, Map<QName, AssociationDefinition> assocs, RemoteJSONContext context) throws JSONException, RemoteException {
-		List<ChildAssociationRef> assocRefs = nodeService.getChildAssocs(nodeRef);
+		List<ChildAssociationRef> assocRefs = unsecuredNodeService.getChildAssocs(nodeRef);
 		for (AssociationDefinition assocDef : assocs.values()) {
 			if (isChildAssociationToExport(assocDef)) {
 				processChildAssociationEntry(nodeRef, entity, assocDef, assocRefs, context);
@@ -1304,7 +1344,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	private void visitPropValueListNodeRef(QName propType, JSONArray tmpArray, NodeRef nodeRef, RemoteJSONContext context)
 			throws JSONException, RemoteException {
-		if (nodeService.exists(nodeRef)) {
+		if (unsecuredNodeService.exists(nodeRef)) {
 			JSONObject node = new JSONObject();
 			tmpArray.put(node);
 			visitNode(nodeRef, node, JsonVisitNodeType.ASSOC, context);
@@ -1326,7 +1366,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	private void visitPropValueNodeRef(QName propType, JSONObject entity, NodeRef nodeRef, RemoteJSONContext context)
 			throws JSONException, RemoteException {
-		if (nodeService.exists(nodeRef)) {
+		if (unsecuredNodeService.exists(nodeRef)) {
 			JSONObject node = new JSONObject();
 			entity.put(entityDictionaryService.toPrefixString(propType), node);
 			visitNode(nodeRef, node, JsonVisitNodeType.ASSOC, context);

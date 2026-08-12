@@ -47,6 +47,7 @@ public abstract class AbstractEntityVisitor implements RemoteEntityVisitor {
 
 	protected final NodeService mlNodeService;
 	protected final NodeService nodeService;
+	protected final NodeService unsecuredNodeService;
 	protected final NamespaceService namespaceService;
 	protected final EntityDictionaryService entityDictionaryService;
 	protected final ContentService contentService;
@@ -103,6 +104,7 @@ public abstract class AbstractEntityVisitor implements RemoteEntityVisitor {
 		super();
 		this.mlNodeService = remoteServiceRegisty.mlNodeService();
 		this.nodeService = remoteServiceRegisty.nodeService();
+		this.unsecuredNodeService = remoteServiceRegisty.unsecuredNodeService();
 		this.namespaceService = remoteServiceRegisty.namespaceService();
 		this.entityDictionaryService = remoteServiceRegisty.entityDictionaryService();
 		this.contentService = remoteServiceRegisty.contentService();

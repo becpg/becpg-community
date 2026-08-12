@@ -159,8 +159,13 @@ public interface RemoteEntityService {
 
 	/**
 	 * List entities at format with specific assoc/props
+	 * <p>
+	 * <b>The page must hold search results.</b> The listing serializes what it is handed without
+	 * re-evaluating the caller's permissions, because a search returns only what
+	 * <code>ACLEntryAfterInvocationProvider</code> has already granted the caller read access to.
+	 * A page assembled by any other means would be serialized without an access check.
 	 *
-	 * @param entities a {@link java.util.List} object.
+	 * @param entities a {@link org.alfresco.query.PagingResults} object, holding search results.
 	 * @param result a {@link java.io.OutputStream} object.
 	 * @throws fr.becpg.common.BeCPGException if any.
 	 * @param params a {@link fr.becpg.repo.entity.remote.RemoteParams} object
