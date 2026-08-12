@@ -7247,28 +7247,6 @@
 			</properties>
 		</aspect>
 
-		<!-- TEMPORAIRE (#35938) - aspect porté par aucun type, à retirer une fois les
-		     instances nettoyées. Il garde son nom d'origine parce que les nœuds le portent
-		     encore en base : sans lui au dictionnaire, le service de formulaire échoue
-		     (« Failed to create anonymous type ») et ni l'aspect ni ses associations ne
-		     peuvent être retirés, les politiques étant résolues par le dictionnaire.
-		     On ne redéclare pas bcpg:regulatoryUsage : son homonymie avec le type du même
-		     nom est précisément la régression corrigée, et aucune donnée ne la porte. -->
-		<aspect name="bcpg:regulatoryScopeAspect">
-			<associations>
-				<association name="bcpg:regulatoryCountry">
-					<source>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>bcpg:geoOrigin</class>
-						<many>true</many>
-					</target>
-				</association>
-			</associations>
-		</aspect>
-
 		<aspect name="bcpg:regulatoryAspect">
 			<properties>
 				<property name="bcpg:regulatoryMode">
