@@ -24,9 +24,9 @@ public class PhysicoChemCharactDetailsVisitor extends SimpleCharactDetailsVisito
 	@Override
 	protected boolean shouldForceWeight(CharactDetailsVisitorContext context, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
 		if (FormulationHelper.isCharactFormulatedFromVol(nodeService, simpleCharact)) {
-			return true;
+			return false;
 		}
-		return super.shouldForceWeight(context, partProduct, simpleCharact);
+		return true;
 	}
 	
 }
