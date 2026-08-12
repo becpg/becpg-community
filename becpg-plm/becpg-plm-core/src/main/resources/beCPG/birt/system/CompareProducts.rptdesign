@@ -26,6 +26,41 @@ function formatWeight ( value ) {
     }   
 }
 
+// Les quantites arrivent en texte, et pas toujours dans le meme format : soit ecrites
+// dans la langue de l'utilisateur ("2,5"), soit serialisees avec un point
+// ("99.99999999999999"). On reconnait donc le separateur decimal au lieu de le supposer.
+function parseQuantity ( value ) {
+    if(value == null || value == undefined){
+        return NaN;
+    }
+
+    // separateurs de milliers : espace, espace insecable, espace fine insecable
+    var str = value.toString().replace(/[\s\u00A0\u202F]/g, "");
+
+    if(str == ""){
+        return NaN;
+    }
+
+    var dots = str.split(".").length - 1,
+        commas = str.split(",").length - 1;
+
+    if(dots > 0 && commas > 0){
+        // les deux sont presents : le dernier rencontre est le separateur decimal
+        var cut = Math.max(str.lastIndexOf("."), str.lastIndexOf(","));
+        str = str.substring(0, cut).replace(/[.,]/g, "") + "." + str.substring(cut + 1);
+    } else if(commas == 1){
+        // une seule virgule : c'est le separateur decimal. Le formateur du serveur
+        // separe les milliers par une espace, deja retiree ci-dessus.
+        str = str.replace(",", ".");
+    } else if(commas > 0){
+        str = str.replace(/,/g, "");
+    } else if(dots > 1){
+        str = str.replace(/\./g, "");
+    }
+
+    return parseFloat(str);
+}
+
 function unescapeQuotes(val) {
 	if (val == null || val == undefined) {
 		return null;
@@ -2227,12 +2262,12 @@ function isHtml(val) {
                     <structure>
                         <property name="position">3</property>
                         <property name="name">value1</property>
-                        <property name="dataType">float</property>
+                        <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">4</property>
                         <property name="name">value2</property>
-                        <property name="dataType">float</property>
+                        <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">5</property>
@@ -2252,32 +2287,32 @@ function isHtml(val) {
                     <structure>
                         <property name="position">8</property>
                         <property name="name">value3</property>
-                        <property name="dataType">float</property>
+                        <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">9</property>
                         <property name="name">value4</property>
-                        <property name="dataType">float</property>
+                        <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">10</property>
                         <property name="name">value5</property>
-                        <property name="dataType">float</property>
+                        <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">11</property>
                         <property name="name">value6</property>
-                        <property name="dataType">float</property>
+                        <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">12</property>
                         <property name="name">value7</property>
-                        <property name="dataType">float</property>
+                        <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">13</property>
                         <property name="name">value8</property>
-                        <property name="dataType">float</property>
+                        <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">14</property>
@@ -2331,15 +2366,15 @@ function isHtml(val) {
                     <property name="position">3</property>
                     <property name="name">value1</property>
                     <property name="nativeName">value1</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">4</property>
                     <property name="name">value2</property>
                     <property name="nativeName">value2</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">5</property>
@@ -2366,43 +2401,43 @@ function isHtml(val) {
                     <property name="position">8</property>
                     <property name="name">value3</property>
                     <property name="nativeName">value3</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">9</property>
                     <property name="name">value4</property>
                     <property name="nativeName">value4</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">10</property>
                     <property name="name">value5</property>
                     <property name="nativeName">value5</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">11</property>
                     <property name="name">value6</property>
                     <property name="nativeName">value6</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">12</property>
                     <property name="name">value7</property>
                     <property name="nativeName">value7</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">13</property>
                     <property name="name">value8</property>
                     <property name="nativeName">value8</property>
-                    <property name="dataType">float</property>
-                    <property name="nativeDataType">8</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
                 </structure>
                 <structure>
                     <property name="position">14</property>
@@ -2447,7 +2482,7 @@ function isHtml(val) {
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entitiesComparison/comparisonRows/comparisonRow]#:#{entity1;STRING;../@entity1},{entity2;STRING;../@entity2},{value1;DOUBLE;/@value1},{value2;DOUBLE;/@value2},{propertyQName;STRING;/@propertyQName},{characteristic;STRING;/@characteristic},{isDifferent;BOOLEAN;/@isDifferent},{value3;DOUBLE;/@value3},{value4;DOUBLE;/@value4},{value5;DOUBLE;/@value5},{value6;DOUBLE;/@value6},{value7;DOUBLE;/@value7},{value8;DOUBLE;/@value8},{entity3;STRING;../@entity3},{entity4;STRING;../@entity4},{entity5;STRING;../@entity5},{entity6;STRING;../@entity6},{entity7;STRING;../@entity7},{entity8;STRING;../@entity8}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entitiesComparison/comparisonRows/comparisonRow]#:#{entity1;STRING;../@entity1},{entity2;STRING;../@entity2},{value1;STRING;/@value1},{value2;STRING;/@value2},{propertyQName;STRING;/@propertyQName},{characteristic;STRING;/@characteristic},{isDifferent;BOOLEAN;/@isDifferent},{value3;STRING;/@value3},{value4;STRING;/@value4},{value5;STRING;/@value5},{value6;STRING;/@value6},{value7;STRING;/@value7},{value8;STRING;/@value8},{entity3;STRING;../@entity3},{entity4;STRING;../@entity4},{entity5;STRING;../@entity5},{entity6;STRING;../@entity6},{entity7;STRING;../@entity7},{entity8;STRING;../@entity8}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -3813,14 +3848,14 @@ function isHtml(val) {
                 <structure>
                     <property name="name">value1</property>
                     <text-property name="displayName">value1</text-property>
-                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value1"])</expression>
+                    <expression name="expression" type="javascript">formatWeight(parseQuantity(dataSetRow["value1"]))</expression>
                     <property name="dataType">string</property>
                     <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value2</property>
                     <text-property name="displayName">value2</text-property>
-                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value2"])</expression>
+                    <expression name="expression" type="javascript">formatWeight(parseQuantity(dataSetRow["value2"]))</expression>
                     <property name="dataType">string</property>
                     <property name="allowExport">true</property>
                 </structure>
@@ -3881,42 +3916,42 @@ function isHtml(val) {
                 <structure>
                     <property name="name">value3</property>
                     <text-property name="displayName">value3</text-property>
-                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value3"])</expression>
+                    <expression name="expression" type="javascript">formatWeight(parseQuantity(dataSetRow["value3"]))</expression>
                     <property name="dataType">string</property>
                     <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value4</property>
                     <text-property name="displayName">value4</text-property>
-                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value4"])</expression>
+                    <expression name="expression" type="javascript">formatWeight(parseQuantity(dataSetRow["value4"]))</expression>
                     <property name="dataType">string</property>
                     <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value5</property>
                     <text-property name="displayName">value5</text-property>
-                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value5"])</expression>
+                    <expression name="expression" type="javascript">formatWeight(parseQuantity(dataSetRow["value5"]))</expression>
                     <property name="dataType">string</property>
                     <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value6</property>
                     <text-property name="displayName">value6</text-property>
-                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value6"])</expression>
+                    <expression name="expression" type="javascript">formatWeight(parseQuantity(dataSetRow["value6"]))</expression>
                     <property name="dataType">string</property>
                     <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value7</property>
                     <text-property name="displayName">value7</text-property>
-                    <expression name="expression" type="javascript">formatWeight(dataSetRow["value7"])</expression>
+                    <expression name="expression" type="javascript">formatWeight(parseQuantity(dataSetRow["value7"]))</expression>
                     <property name="dataType">string</property>
                     <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">value8</property>
                     <text-property name="displayName">value8</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["value8"]</expression>
+                    <expression name="expression" type="javascript">formatWeight(parseQuantity(dataSetRow["value8"]))</expression>
                     <property name="dataType">float</property>
                 </structure>
                 <structure>
