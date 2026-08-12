@@ -9157,7 +9157,6 @@ indent_docx (0, 1, this, "right");]]></method>
                                     <property name="paddingBottom">0pt</property>
                                     <property name="paddingRight">1pt</property>
                                     <grid id="9096">
-                                        <property name="backgroundPositionX">-90%</property>
                                         <property name="marginTop">2pt</property>
                                         <property name="marginLeft">1pt</property>
                                         <property name="marginBottom">2pt</property>
@@ -9171,72 +9170,53 @@ indent_docx (0, 1, this, "right");]]></method>
                                         </list-property>
                                         <column id="9097"/>
                                         <row id="9098">
-                                            <method name="onRender"><![CDATA[//If the width of the column changes, adjust the value of the coefficient.
-if (!(reportContext.getOutputFormat().toString()== "docx")) {
-
-	var coef = -251;
-	var roundedGDAPerc = this.getRowData().getColumnValue("roundedGDAPerc");
-	var color = this.getRowData().getColumnValue("color");
-	
-	if (color == "" || color == null  ) {
-		color = "#CCCCCC";
-	}
-	
-	if(roundedGDAPerc != null &amp;&amp; roundedGDAPerc != "") {
-		this.getStyle().backgroundImage = "cccccc-200X30.png";
-		this.getStyle().backgroundPositionX = ((parseFloat(roundedGDAPerc)/100) * coef) + "%";
-		this.getStyle().backgroundRepeat = "no-repeat";
-		this.getStyle().backgroundColor = color;
-	}
-}]]></method>
-                                            <property name="backgroundImageType">embed</property>
-                                            <property name="backgroundRepeat">no-repeat</property>
                                             <property name="height">0.188in</property>
                                             <cell id="9099">
                                                 <property name="paddingTop">0pt</property>
                                                 <property name="paddingLeft">2pt</property>
                                                 <property name="paddingBottom">0pt</property>
                                                 <property name="paddingRight">2pt</property>
-                                                <grid id="9100">
-                                                    <property name="height">0.344in</property>
-                                                    <property name="width">100%</property>
-                                                    <column id="9101">
-                                                        <property name="textAlign">left</property>
-                                                    </column>
-                                                    <column id="9102">
-                                                        <property name="textAlign">right</property>
-                                                    </column>
-                                                    <row id="9103">
-                                                        <property name="backgroundImageType">embed</property>
-                                                        <cell id="9104">
-                                                            <property name="paddingTop">0pt</property>
-                                                            <property name="paddingLeft">0pt</property>
-                                                            <property name="paddingBottom">0pt</property>
-                                                            <property name="paddingRight">0pt</property>
-                                                            <text id="9105">
-                                                                <property name="fontSize">9pt</property>
-                                                                <property name="fontWeight">bold</property>
-                                                                <property name="color">#000000</property>
-                                                                <property name="contentType">html</property>
-                                                                <text-property name="content"><![CDATA[<VALUE-OF>row["roundedGDAPerc"]+ "%"</VALUE-OF>]]></text-property>
-                                                            </text>
-                                                        </cell>
-                                                        <cell id="9107">
-                                                            <property name="paddingTop">0pt</property>
-                                                            <property name="paddingLeft">0pt</property>
-                                                            <property name="paddingBottom">0pt</property>
-                                                            <property name="paddingRight">0pt</property>
-                                                            <text-data id="9108">
-                                                                <expression name="valueExpr">if(row["nutCode"] ==  "NA" ){
-	reportContext.getMessage( "of", reportContext.getLocale()) + row["regulGDA"] + row["nutListUnit"].replace("/100g", "").replace("/100mL", ""); 
-} else {
-	reportContext.getMessage( "of", reportContext.getLocale()) + row["regulGDA"] + row["nutListUnit"].replace("/100g", "").replace("/100mL", "");
-}</expression>
-                                                                <property name="contentType">html</property>
-                                                            </text-data>
-                                                        </cell>
-                                                    </row>
-                                                </grid>
+                                                <text-data id="9109">
+                                                    <property name="contentType">html</property>
+                                                    <expression name="valueExpr" type="javascript"><![CDATA[
+// Jauge des apports de reference. Deux cellules HTML dont la largeur porte le
+// pourcentage : plus d'image de fond a decaler, donc plus de coefficient de calage
+// a reajuster quand la largeur de la colonne change.
+// Contraintes de l'emetteur PDF respectees ici : une seule expression (d'ou
+// l'encapsulation), colonnes liees passees en parametres, largeurs entieres, et
+// du texte dans chaque cellule pour que la bande soit peinte.
+(function (rawPercent, rawColor, label, reference) {
+	var percent = parseFloat(rawPercent);
+	if (isNaN(percent)) {
+		return "";
+	}
+
+	var fillColor = (rawColor == null || rawColor == "") ? "#CCCCCC" : rawColor;
+	var filled = Math.round(Math.max(0, Math.min(100, percent)));
+	var track = "background-color:#EDEDED";
+	var strong = "font-size:9pt;font-weight:bold";
+	var cells;
+
+	// sous 25 %, la part coloree est trop etroite pour accueillir le libelle
+	if (filled >= 25) {
+		cells = "<td style=\"width:" + filled + "%;background-color:" + fillColor + ";"
+				+ strong + ";padding-left:3pt\">" + label + "</td>"
+			+ "<td style=\"" + track + ";font-size:8pt;text-align:right;padding-right:3pt\">"
+				+ reference + "</td>";
+	} else {
+		cells = "<td style=\"width:" + filled + "%;background-color:" + fillColor
+				+ ";font-size:9pt\">&#160;</td>"
+			+ "<td style=\"" + track + ";" + strong + ";padding-left:3pt\">" + label + "</td>"
+			+ "<td style=\"" + track + ";font-size:8pt;text-align:right;padding-right:3pt\">"
+				+ reference + "</td>";
+	}
+
+	return "<table style=\"width:100%;border-collapse:collapse\"><tr>" + cells + "</tr></table>";
+})(row["roundedGDAPerc"], row["color"], row["roundedGDAPerc"] + "%",
+	reportContext.getMessage("of", reportContext.getLocale()) + row["regulGDA"]
+		+ row["nutListUnit"].replace("/100g", "").replace("/100mL", ""))
+                                                    ]]></expression>
+                                                </text-data>
                                             </cell>
                                         </row>
                                     </grid>
