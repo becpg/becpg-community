@@ -902,8 +902,31 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		return key.toString();
 	}
 
+	/**
+	 * Les enfants d'un nœud, énumérés sans contrôle puis <b>filtrés</b> sur ce que l'appelant peut lire.
+	 * <p>
+	 * L'énumération passe par le <code>NodeService</code> non sécurisé pour ne pas payer une
+	 * évaluation de permission par enfant dans la chaîne AOP — c'est tout l'objet de
+	 * l'optimisation. Mais énumérer sans filtrer et visiter ensuite reviendrait à exporter des
+	 * nœuds que l'appelant n'a pas le droit de lire : le filtrage que faisait le service sécurisé
+	 * doit être rendu explicitement, et {@link #canRead} le fait ici en une seule question par
+	 * nœud, mise en cache pour la requête.
+	 * <p>
+	 * Un enfant illisible est <b>omis</b>, et non marqué <code>#AccessDenied</code> comme une cible
+	 * d'association : une association enfant décrit une composition — un sous-dossier, une pièce
+	 * jointe — dont l'absence est la réponse juste, alors qu'une cible manquante laisserait une
+	 * référence pendante dans le document JSON.
+	 */
 	private void visitChildAssociations(NodeRef nodeRef, JSONObject entity, Map<QName, AssociationDefinition> assocs, RemoteJSONContext context) throws JSONException, RemoteException {
-		List<ChildAssociationRef> assocRefs = unsecuredNodeService.getChildAssocs(nodeRef);
+		List<ChildAssociationRef> assocRefs = new ArrayList<>();
+		for (ChildAssociationRef assocRef : unsecuredNodeService.getChildAssocs(nodeRef)) {
+			if (canRead(assocRef.getChildRef())) {
+				assocRefs.add(assocRef);
+			} else if (logger.isDebugEnabled()) {
+				logger.debug("Child " + assocRef.getChildRef() + " of " + nodeRef + " (assoc " + assocRef.getTypeQName()
+						+ ") not readable by the current user, omitted");
+			}
+		}
 		for (AssociationDefinition assocDef : assocs.values()) {
 			if (isChildAssociationToExport(assocDef)) {
 				processChildAssociationEntry(nodeRef, entity, assocDef, assocRefs, context);

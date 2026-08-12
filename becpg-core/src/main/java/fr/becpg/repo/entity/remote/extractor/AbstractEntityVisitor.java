@@ -127,6 +127,19 @@ public abstract class AbstractEntityVisitor implements RemoteEntityVisitor {
 	/**
 	 * <p>getPrimaryParentRef.</p>
 	 *
+	 * <p><b>Les deux <code>AccessDeniedException</code>.</b> Ce <code>catch</code> ne portait que
+	 * sur {@link net.sf.acegisecurity.AccessDeniedException}, et n'a donc jamais rien attrapé :
+	 * <code>ExceptionTranslatorMethodInterceptor</code> traduit l'exception d'acegi en
+	 * {@link org.alfresco.repo.security.permissions.AccessDeniedException} <b>avant</b> qu'elle ne
+	 * sorte du proxy AOP du <code>NodeService</code>. Les deux classes n'ont aucun lien d'héritage
+	 * — celle d'Alfresco dérive d'<code>AlfrescoRuntimeException</code> — si bien que le type
+	 * capturé ici était précisément celui qui ne peut pas arriver.</p>
+	 *
+	 * <p>Le défaut est resté invisible tant que les appelants n'énuméraient que des nœuds déjà
+	 * filtrés par les permissions. Dès qu'un parent illisible a été visité, l'exception a traversé
+	 * tout le visiteur et l'export JSON s'est terminé sur un corps vide en HTTP 200 — les en-têtes
+	 * étant déjà envoyés, le webscript ne pouvait plus signaler l'erreur.</p>
+	 *
 	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @throws fr.becpg.repo.entity.remote.extractor.RemoteException if any.
@@ -135,7 +148,7 @@ public abstract class AbstractEntityVisitor implements RemoteEntityVisitor {
 		try {
 			return Optional.ofNullable(nodeService.getPrimaryParent(nodeRef)).map(ChildAssociationRef::getParentRef)
 					.orElse(null);
-		} catch (final AccessDeniedException e) {
+		} catch (final AccessDeniedException | org.alfresco.repo.security.permissions.AccessDeniedException e) {
 			throw new RemoteException(String.format("Cannot read entity %s's primary parent", nodeRef.toString()), e);
 		}
 	}
