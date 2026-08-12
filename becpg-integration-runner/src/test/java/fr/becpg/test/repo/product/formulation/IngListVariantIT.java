@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
+import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
@@ -224,6 +225,97 @@ public class IngListVariantIT extends AbstractFinishedProductTest {
 			assertNotNull(baselineSucrePerc);
 			assertEquals("ing3 % must match the no-variant baseline (only the default variant counts, sugar not diluted)",
 					baselineSucrePerc, variantSucrePerc, 0.01);
+			return null;
+		});
+	}
+
+	/**
+	 * Reproduces the second point of #35430: a local semi-finished whose sub-lines are
+	 * variants of each other. The sub-composition summed every variant, so a 100 g
+	 * semi-finished made of two alternative 100 g lines was credited 200 g of components
+	 * and got a 50 % yield out of nowhere, which then skewed the labeling percentages.
+	 */
+	@Test
+	public void testLocalSemiFinishedYieldWithInactiveVariant() {
+
+		final NodeRef rmSucre1 = createRawMaterial("LSF sucre blanc (ing3)",
+				List.of(IngListDataItem.build().withIngredient(ing3).withQtyPerc(100d)));
+		final NodeRef rmSucre2 = createRawMaterial("LSF sucre cd2 (ing3)",
+				List.of(IngListDataItem.build().withIngredient(ing3).withQtyPerc(100d)));
+
+		final NodeRef lsfNodeRef = inWriteTx(() -> {
+			LocalSemiFinishedProductData lsf = new LocalSemiFinishedProductData();
+			lsf.setName("LSF post-cuisson");
+			lsf.setUnit(ProductUnit.kg);
+			lsf.setQty(1d);
+			lsf.setDensity(1d);
+			return alfrescoRepository.create(getTestFolderNodeRef(), lsf).getNodeRef();
+		});
+
+		final NodeRef fpNodeRef = inWriteTx(() -> {
+			FinishedProductData fp = new FinishedProductData();
+			fp.setName("FP with LSF and variants");
+			fp.setUnit(ProductUnit.kg);
+			fp.setQty(1d);
+			fp.setDensity(1d);
+			fp = (FinishedProductData) alfrescoRepository.create(getTestFolderNodeRef(), fp);
+
+			Map<QName, Serializable> defProps = new HashMap<>();
+			defProps.put(ContentModel.PROP_NAME, "LSF default variant");
+			defProps.put(BeCPGModel.PROP_IS_DEFAULT_VARIANT, true);
+			nodeService.createNode(fp.getNodeRef(), BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.TYPE_VARIANT, defProps);
+
+			Map<QName, Serializable> altProps = new HashMap<>();
+			altProps.put(ContentModel.PROP_NAME, "LSF alt variant");
+			altProps.put(BeCPGModel.PROP_IS_DEFAULT_VARIANT, false);
+			nodeService.createNode(fp.getNodeRef(), BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.TYPE_VARIANT, altProps);
+			return fp.getNodeRef();
+		});
+
+		inWriteTx(() -> {
+			FinishedProductData fp = (FinishedProductData) alfrescoRepository.findOne(fpNodeRef);
+			List<VariantData> variants = fp.getVariants();
+			VariantData defaultVariant = variants.stream().filter(v -> Boolean.TRUE.equals(v.getIsDefaultVariant())).findFirst().orElse(null);
+			VariantData altVariant = variants.stream().filter(v -> !Boolean.TRUE.equals(v.getIsDefaultVariant())).findFirst().orElse(null);
+
+			List<CompoListDataItem> compoList = new ArrayList<>();
+
+			// the semi-finished weighs exactly one of its two alternative sub-lines
+			CompoListDataItem lsfLine = CompoListDataItem.build().withParent(null).withQtyUsed(0.1d).withUnit(ProductUnit.kg)
+					.withDeclarationType(DeclarationType.Declare).withProduct(lsfNodeRef);
+			compoList.add(lsfLine);
+
+			CompoListDataItem sucre1Line = CompoListDataItem.build().withParent(lsfLine).withQtyUsed(0.1d).withUnit(ProductUnit.kg)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rmSucre1);
+			sucre1Line.setVariants(Collections.singletonList(defaultVariant.getNodeRef()));
+			compoList.add(sucre1Line);
+
+			CompoListDataItem sucre2Line = CompoListDataItem.build().withParent(lsfLine).withQtyUsed(0.1d).withUnit(ProductUnit.kg)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rmSucre2);
+			sucre2Line.setVariants(Collections.singletonList(altVariant.getNodeRef()));
+			compoList.add(sucre2Line);
+
+			fp.getCompoListView().setCompoList(compoList);
+			alfrescoRepository.save(fp);
+			return null;
+		});
+
+		inWriteTx(() -> {
+			productService.formulate(fpNodeRef);
+			return null;
+		});
+
+		inReadTx(() -> {
+			ProductData fp = (ProductData) alfrescoRepository.findOne(fpNodeRef);
+			Double lsfYield = null;
+			for (CompoListDataItem item : fp.getCompoList()) {
+				logger.info("  compo product=" + item.getProduct() + " qty=" + item.getQty() + " yield=" + item.getYieldPerc());
+				if (lsfNodeRef.equals(item.getProduct())) {
+					lsfYield = item.getYieldPerc();
+				}
+			}
+			assertNotNull("the semi-finished line should be present", lsfYield);
+			assertEquals("only the default variant feeds the semi-finished, so no yield should appear", 100d, lsfYield, 0.01);
 			return null;
 		});
 	}
