@@ -28,10 +28,12 @@ import org.alfresco.repo.download.DownloadServiceException;
 import org.alfresco.repo.download.DownloadStatusUpdateService;
 import org.alfresco.repo.download.DownloadStorage;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
+import org.alfresco.service.cmr.download.DownloadRequest;
 import org.alfresco.service.cmr.download.DownloadStatus;
 import org.alfresco.service.cmr.download.DownloadStatus.Status;
 import org.alfresco.service.cmr.repository.ContentData;
 import org.alfresco.service.cmr.repository.ContentIOException;
+import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -42,6 +44,8 @@ import org.alfresco.service.cmr.view.Location;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import fr.becpg.repo.report.helpers.ExportSearchNodesHelper;
 
 /**
  * Base class for the actions building a download archive from a set of nodes.
@@ -66,6 +70,16 @@ public abstract class AbstractDownloadArchiveAction extends ActionExecuterAbstra
 	protected RetryingTransactionHelper transactionHelper;
 	protected DownloadStatusUpdateService updateService;
 	protected MimetypeService mimetypeService;
+	protected ContentService contentService;
+
+	/**
+	 * <p>Setter for the field <code>contentService</code>.</p>
+	 *
+	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object
+	 */
+	public void setContentService(ContentService contentService) {
+		this.contentService = contentService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>mimetypeService</code>.</p>
@@ -188,6 +202,9 @@ public abstract class AbstractDownloadArchiveAction extends ActionExecuterAbstra
 	/**
 	 * Run the given export task and publish the resulting status, whatever the outcome.
 	 *
+	 * A retryable failure is rethrown so that the transaction can be replayed: reporting a transient
+	 * collision as a cancelled download would lose the archive for good.
+	 *
 	 * @param downloadNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param exportTask the task producing the archive
 	 * @param reporter a {@link fr.becpg.repo.download.DownloadProgressReporter} object
@@ -200,9 +217,13 @@ public abstract class AbstractDownloadArchiveAction extends ActionExecuterAbstra
 		} catch (DownloadCancelledException e) {
 			publishStatus(downloadNodeRef, reporter.buildStatus(Status.CANCELLED), reporter.getNextSequenceNumber());
 		} catch (Exception e) {
+			if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+				throw e;
+			}
 			logger.error("Failed to create download archive for node: " + downloadNodeRef, e);
 			publishStatus(downloadNodeRef, reporter.buildStatus(Status.CANCELLED), reporter.getNextSequenceNumber());
 		} finally {
+			reporter.releaseResources();
 			deleteTempFile(tempFile);
 		}
 	}
@@ -267,6 +288,20 @@ public abstract class AbstractDownloadArchiveAction extends ActionExecuterAbstra
 		}
 
 		publishStatus(downloadNodeRef, new DownloadStatus(Status.MAX_CONTENT_SIZE_EXCEEDED, maximumContentSize, size, 0, fileCount), 1);
+	}
+
+	/**
+	 * The nodes to export: those stored on the download node itself, falling back on the associations
+	 * of the download request when it carries none.
+	 *
+	 * @param downloadNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param downloadRequest a {@link org.alfresco.service.cmr.download.DownloadRequest} object
+	 * @return an array of {@link org.alfresco.service.cmr.repository.NodeRef} objects
+	 */
+	protected NodeRef[] getNodeRefsToExport(NodeRef downloadNodeRef, DownloadRequest downloadRequest) {
+		NodeRef[] storedNodeRefs = ExportSearchNodesHelper.readNodes(contentService, nodeService, downloadNodeRef);
+
+		return storedNodeRefs.length > 0 ? storedNodeRefs : downloadRequest.getRequetedNodeRefs();
 	}
 
 	private void deleteTempFile(File tempFile) {

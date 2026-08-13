@@ -1,0 +1,15 @@
+# Line endings are pinned only on the files where a CRLF/LF flip has already cost us:
+# large generated XML edited from several platforms, where the flip rewrites the whole
+# file. Converting becpgModel.xml produced an 18 000-line diff for 523 real changes,
+# which loses `git blame` and turns every backport into a conflict.
+#
+# Deliberately narrow: the rest of the repository is left alone, so that no file starts
+# showing up as modified without anyone having touched it.
+
+# BIRT report designs and libraries.
+*.rptdesign  text eol=lf
+*.rptlibrary text eol=lf
+
+# The two Alfresco content models.
+becpg-core/src/main/assembly/config/alfresco/module/becpg-core/model/becpgModel.xml text eol=lf
+becpg-plm/becpg-plm-core/src/main/assembly/config/alfresco/module/becpg-core/model/becpgModel.xml text eol=lf

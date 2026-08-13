@@ -56,4 +56,14 @@ public interface DownloadProgressReporter {
 		return null;
 	}
 
+	/**
+	 * Release whatever the exporter still holds once the export is over, successful or not.
+	 *
+	 * An exporter spilling to disk leaves its temporary files behind when the export fails halfway,
+	 * so the action calls this on every outcome. Implementations must tolerate being called twice.
+	 */
+	default void releaseResources() {
+		// Nothing to release by default
+	}
+
 }

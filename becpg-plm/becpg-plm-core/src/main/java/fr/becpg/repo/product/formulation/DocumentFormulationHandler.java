@@ -332,11 +332,9 @@ public class DocumentFormulationHandler extends FormulationBaseHandler<Repositor
 	 * Has the document type been flagged as deleted?
 	 * <p>
 	 * A document type is a characteristic, and a characteristic is retired by ticking
-	 * <em>supprimé</em> ({@code bcpg:isDeleted}) rather than by removing the node — the
-	 * documents already filed against it must keep naming what they are. Formulation used
-	 * to ignore the flag altogether: a retired type went on generating its placeholder on
-	 * every product formulated afterwards, and the only way to stop it was to unlink the
-	 * type from every hierarchy, subsidiary and product type it named.
+	 * {@code bcpg:isDeleted} rather than by removing the node — the documents already filed
+	 * against it must keep naming what they are. A retired type must therefore stop generating
+	 * its placeholder without being unlinked from the hierarchies it names.
 	 *
 	 * @param docTypeItem the document type configuration
 	 * @return true when the type is retired

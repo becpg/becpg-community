@@ -224,8 +224,8 @@ public class NutritionFactsDataBuilder {
 		if (regulated.isMandatory()) {
 			return true;
 		}
-		// Le panneau ne declare que ce que la reglementation impose : un nutriment simplement
-		// autorise n'y figure que sur demande explicite, sinon il alourdit l'etiquette.
+		// The panel only declares what the regulation requires: a merely authorised nutrient shows
+		// up on explicit request, otherwise it clutters the label.
 		return regulated.displayRule().optional() && options.showOptional();
 	}
 

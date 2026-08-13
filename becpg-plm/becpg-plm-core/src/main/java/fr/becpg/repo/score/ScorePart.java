@@ -209,6 +209,12 @@ public class ScorePart {
 		return scoreClass;
 	}
 
+	/**
+	 * <p>Sets the share this part takes in the overall score.</p>
+	 *
+	 * @param contribution a {@link java.lang.Double} object
+	 * @return this part
+	 */
 	public ScorePart withContribution(Double contribution) {
 		this.contribution = contribution;
 		return this;

@@ -48,6 +48,11 @@ public record NutritionFactsLine(String nutCode, String label, String abbreviate
 		return (value != null) && !valueInLabel;
 	}
 
+	/**
+	 * <p>Tells whether the daily value column has to be filled for this line.</p>
+	 *
+	 * @return a boolean
+	 */
 	public boolean hasDailyValue() {
 		return showDailyValue && (dailyValuePercent != null);
 	}

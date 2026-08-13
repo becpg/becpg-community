@@ -42,29 +42,16 @@ import fr.becpg.repo.helper.RestTemplateHelper;
 import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
- * <p>Proxies the becpg-ai suggestion API, so that no client has to know where becpg-ai lives.</p>
+ * Proxies the becpg-ai suggestion API, so that no client has to know where becpg-ai lives.
  *
- * <h3>Why a proxy, and why here</h3>
+ * <p>Same arrangement as {@code becpg/olap/chart}: the repository holds the address of the
+ * companion service ({@code beCPG.ai.serverUrl}) and knows how to authenticate the current user
+ * against it through {@link BeCPGTicketService#getCurrentAuthToken()}. A front end calling
+ * becpg-ai directly would need the AI base URL, an AI credential and the format of that
+ * credential — none of which it should hold, the format being owned by beCPG alone.</p>
  *
- * <p>This is the same arrangement as {@code becpg/olap/chart}: the repository already holds the
- * address of the companion service ({@code becpg.olap.url.internal} there,
- * {@code beCPG.ai.serverUrl} here) and already knows how to authenticate the current user against
- * it. A front end that called becpg-ai directly would need three things it has no business
- * holding — the AI base URL, an AI credential, and the <b>format</b> of that credential.</p>
- *
- * <p>The supplier portal did exactly that: it rebuilt beCPG's composite auth token in JavaScript
- * ({@code <instance>$<login>@<tenant>#<TICKET_…>}, base64) from four environment variables of its
- * own. That is a copy of {@link BeCPGTicketService#getCurrentAuthToken()} living outside this
- * repository — it duplicates a format only beCPG owns, and it breaks silently the day the format
- * changes. Through this endpoint the portal needs nothing but what it already has for every other
- * call: the beCPG base URL of its session, and its Alfresco ticket.</p>
- *
- * <h3>The operations are closed</h3>
- *
- * <p>There is deliberately <b>no free-form path parameter</b>. A proxy that forwards an arbitrary
- * path is a generic tunnel into becpg-ai, and the caller decides where it goes; the OLAP proxy
- * makes the same choice for the same reason (its MDX catalogue is server-side). Three operations
- * are exposed, one descriptor each:</p>
+ * <p>There is deliberately no free-form path parameter: a proxy forwarding an arbitrary path is a
+ * generic tunnel into becpg-ai. Three operations are exposed, one descriptor each:</p>
  *
  * <ul>
  *   <li>{@code GET  /becpg/ai/suggestions?nodeRef=…&amp;listId=…&amp;locale=…}</li>
@@ -72,12 +59,9 @@ import fr.becpg.repo.system.SystemConfigurationService;
  *   <li>{@code POST /becpg/ai/suggestions/apply-plan}</li>
  * </ul>
  *
- * <p>Adding a fourth means adding a descriptor here, which is the point.</p>
- *
- * <p>The upstream status is forwarded as-is rather than collapsed: a caller must be able to tell
+ * <p>The upstream status is forwarded as-is rather than collapsed, so that a caller can tell
  * "becpg-ai refused you" (401/403) from "becpg-ai is not configured" (503) from "becpg-ai broke"
- * (502). An unset {@code beCPG.ai.serverUrl} answers <b>503</b>, which is how an instance without
- * becpg-ai says so — no exception, no stack trace, and nothing for the caller to guess.</p>
+ * (502). An unset {@code beCPG.ai.serverUrl} answers 503.</p>
  *
  * @author matthieu
  */
@@ -161,11 +145,10 @@ public class AiSuggestionsProxyWebScript extends AbstractWebScript {
 			ResponseEntity<String> response = RestTemplateHelper.getRestTemplate().exchange(uri,
 					isPost ? HttpMethod.POST : HttpMethod.GET, new HttpEntity<>(body, headers), String.class);
 
-			// **A 200 is not proof of an answer.** An unauthenticated becpg-ai serves its OAuth
-			// login PAGE with HTTP 200 and `text/html` — measured, pointing a local instance at
-			// dev-ai. Relayed as-is that HTML arrives at the caller labelled `application/json`,
-			// which fails much later as "non-JSON payload" and says nothing about the real cause.
-			// The content type is the only thing that tells the two apart, so it is checked.
+			// A 200 is not proof of an answer: an unauthenticated becpg-ai serves its OAuth login
+			// page with HTTP 200 and text/html. Relayed as-is, that HTML reaches the caller
+			// labelled application/json and fails much later as a non-JSON payload. The content
+			// type is the only thing telling the two apart.
 			MediaType upstreamType = response.getHeaders().getContentType();
 			if ((upstreamType != null) && !MediaType.APPLICATION_JSON.isCompatibleWith(upstreamType)) {
 				logger.warn("becpg-ai answered " + upstreamType + " for " + operation

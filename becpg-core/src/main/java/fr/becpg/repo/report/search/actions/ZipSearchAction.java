@@ -11,7 +11,6 @@ import org.alfresco.service.cmr.action.ParameterDefinition;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.download.DownloadRequest;
-import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.view.ExporterCrawlerParameters;
 import org.alfresco.util.ParameterCheck;
@@ -19,7 +18,6 @@ import org.alfresco.util.TempFileProvider;
 
 import fr.becpg.repo.download.AbstractDownloadArchiveAction;
 import fr.becpg.repo.expressions.ExpressionService;
-import fr.becpg.repo.report.helpers.ExportSearchNodesHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
@@ -47,7 +45,6 @@ public class ZipSearchAction extends AbstractDownloadArchiveAction {
 
 	// Dependencies
 	private CheckOutCheckInService checkOutCheckInService;
-	private ContentService contentService;
 	private ExpressionService expressionService;
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	private long maximumContentSize = -1l;
@@ -77,15 +74,6 @@ public class ZipSearchAction extends AbstractDownloadArchiveAction {
 	 */
 	public void setCheckOutCheckInService(CheckOutCheckInService checkOutCheckInService) {
 		this.checkOutCheckInService = checkOutCheckInService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>contentService</code>.</p>
-	 *
-	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
-	 */
-	public void setContentService(ContentService contentService) {
-		this.contentService = contentService;
 	}
 
 	/**
@@ -151,12 +139,6 @@ public class ZipSearchAction extends AbstractDownloadArchiveAction {
 	@Override
 	protected void addParameterDefinitions(List<ParameterDefinition> paramList) {
 		paramList.add(new ParameterDefinitionImpl(PARAM_TPL_NODEREF, DataTypeDefinition.NODE_REF, true, "Search template nodeRef"));
-	}
-
-	private NodeRef[] getNodeRefsToExport(NodeRef downloadNodeRef, DownloadRequest downloadRequest) {
-		NodeRef[] storedNodeRefs = ExportSearchNodesHelper.readNodes(contentService, nodeService, downloadNodeRef);
-
-		return storedNodeRefs.length > 0 ? storedNodeRefs : downloadRequest.getRequetedNodeRefs();
 	}
 
 }

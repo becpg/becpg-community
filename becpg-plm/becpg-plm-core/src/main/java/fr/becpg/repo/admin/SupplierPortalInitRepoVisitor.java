@@ -210,11 +210,10 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			DeliverableListDataItem supplierMPWizard = new DeliverableListDataItem();
 			supplierMPWizard.setDescription(I18NUtil.getMessage(SUPPLIER_WIZARD_NAME));
-			// `catalogId` : c'est ainsi qu'un catalogue se relie a un assistant.
-			// `wizard-mgr.get.js` (becpg-share) n'instancie son panneau de completude
-			// que si l'URL le nomme, et le portail lit le meme parametre sur ce meme
-			// livrable. Le lien vit donc dans le modele de projet, ou un client peut
-			// le changer, et non dans le code des deux interfaces.
+			// `catalogId` is how a catalogue is bound to a wizard: `wizard-mgr.get.js` only
+			// instantiates its completion panel when the URL names one, and the portal reads the
+			// same parameter off the same deliverable. The binding therefore lives in the project
+			// template, where a customer can change it, rather than in the code of either UI.
 			supplierMPWizard.setUrl("/share/page/wizard?id=supplier-{pjt:projectEntity|@type}&nodeRef={pjt:projectEntity}"
 					+ "&catalogId=" + SUPPLIER_PORTAL_CATALOG_ID);
 			supplierMPWizard.setTasks(Collections.singletonList(task1.getNodeRef()));

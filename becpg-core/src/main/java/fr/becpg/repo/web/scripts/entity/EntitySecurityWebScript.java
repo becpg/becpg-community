@@ -207,7 +207,7 @@ public class EntitySecurityWebScript extends AbstractEntityWebScript {
 			return false;
 		}
 
-		// Déléguée : même question, même réponse, un seul endroit. Voir WorkflowTaskFinder.
+		// Same question, same answer, one place: see WorkflowTaskFinder.
 		return workflowTaskFinder.hasTaskOn(currentUser, contentWorkflowIds, null);
 	}
 
