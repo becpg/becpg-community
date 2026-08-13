@@ -387,7 +387,22 @@ function portalResolveDefinition(itemType, formId, mode, list, prefixedSiteId, p
 		};
 	}
 
-	var formModel = eval('(' + response.response + ')');
+	// Parsed, not evaluated: the answer is data, and `eval` would run whatever it contains.
+	var formModel = null;
+	try {
+		formModel = jsonUtils.toObject("" + response.response);
+	} catch (eParse) {
+		if (logger.isLoggingEnabled()) {
+			logger.log("portalResolveDefinition: /becpg/form returned a non-JSON body for " + itemType);
+		}
+		return {
+			error: "form-service-error",
+			status: statusCode,
+			endpoint: endpoint,
+			fields: [], sets: [], tabs: [], nested: post.nested
+		};
+	}
+
 	var fields = formModel.fields != null ? formModel.fields : [];
 
 	// Enrich with what only Share knows: the overridden label, the help text, the

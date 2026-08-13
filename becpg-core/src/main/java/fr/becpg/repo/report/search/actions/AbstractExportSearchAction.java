@@ -13,10 +13,8 @@ import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ParameterDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.download.DownloadRequest;
-import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.PersonService;
-import org.alfresco.service.cmr.view.ExporterCrawlerParameters;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ParameterCheck;
 import org.alfresco.util.TempFileProvider;
@@ -29,7 +27,6 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.download.AbstractDownloadArchiveAction;
 import fr.becpg.repo.helper.MLTextHelper;
-import fr.becpg.repo.report.helpers.ExportSearchNodesHelper;
 import fr.becpg.repo.report.helpers.ReportUtils;
 import fr.becpg.report.client.ReportFormat;
 
@@ -58,7 +55,6 @@ public abstract class AbstractExportSearchAction extends AbstractDownloadArchive
 	/** Constant <code>logger</code> */
 	private static final Log logger = LogFactory.getLog(AbstractExportSearchAction.class);
 
-	protected ContentService contentService;
 	protected EntityActivityService entityActivityService;
 	private PersonService personService;
 	
@@ -70,20 +66,6 @@ public abstract class AbstractExportSearchAction extends AbstractDownloadArchive
 	public void setPersonService(PersonService personService) {
 		this.personService = personService;
 	}
-
-	/**
-	 * <p>
-	 * Setter for the field <code>contentService</code>.
-	 * </p>
-	 *
-	 * @param contentService
-	 *            a {@link org.alfresco.service.cmr.repository.ContentService}
-	 *            object.
-	 */
-	public void setContentService(ContentService contentService) {
-		this.contentService = contentService;
-	}
-
 
 	/**
 	 * <p>Setter for the field <code>entityActivityService</code>.</p>
@@ -218,12 +200,6 @@ public abstract class AbstractExportSearchAction extends AbstractDownloadArchive
 		paramList.add(new ParameterDefinitionImpl(PARAM_TPL_NODEREF, DataTypeDefinition.NODE_REF, true, "Search template nodeRef"));
 		paramList.add(new ParameterDefinitionImpl(PARAM_FORMAT, DataTypeDefinition.TEXT, false, "Export search format"));
 		paramList.add(new ParameterDefinitionImpl(PARAM_PARAMETERS, DataTypeDefinition.ANY, false, "Extra parameters"));
-	}
-
-	private NodeRef[] getNodeRefsToExport(NodeRef downloadNodeRef, DownloadRequest downloadRequest) {
-		NodeRef[] storedNodeRefs = ExportSearchNodesHelper.readNodes(contentService, nodeService, downloadNodeRef);
-
-		return storedNodeRefs.length > 0 ? storedNodeRefs : downloadRequest.getRequetedNodeRefs();
 	}
 
 }

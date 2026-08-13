@@ -18,6 +18,7 @@ import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -26,7 +27,6 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import org.alfresco.service.namespace.QName;
 import fr.becpg.repo.report.search.impl.ExcelReportSearchRenderer;
 import fr.becpg.repo.report.search.impl.ExcelReportSearchRenderer.ExcelSheetExportContext;
 
@@ -211,14 +211,32 @@ public class ExcelSearchDownloadExporter extends AbstractSearchDownloadExporter 
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Called by the action on every outcome, so that an export failing halfway still gives its
+	 * temporary files back.
+	 */
+	@Override
+	public void releaseResources() {
+		closeWorkbook();
+	}
+
 	private void closeWorkbook() {
+		if (workbook == null) {
+			return;
+		}
+
+		SXSSFWorkbook toClose = workbook;
+		workbook = null;
+
 		try {
-			workbook.close();
+			toClose.close();
 		} catch (IOException e) {
 			logger.error("Cannot close excel workbook", e);
 		} finally {
 			// Streaming keeps the flushed rows in temporary files that POI only removes on demand
-			workbook.dispose();
+			toClose.dispose();
 		}
 	}
 

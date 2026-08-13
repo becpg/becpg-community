@@ -13,36 +13,18 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 /**
- * <p>« Cet utilisateur a-t-il une tâche en cours sur ces workflows ? » — posée à Activiti
- * dans le sens où il sait répondre.</p>
+ * Answers whether a user holds an in-progress task on a given set of workflows.
  *
- * <p>Deux endroits posaient cette question, chacun avec sa copie du même code lent :
- * {@code EntitySecurityWebScript.checkUserHasAssignedTask} et
- * {@code SupplierSecurityPlugin.hasMatchingTask}. Tous deux listaient <b>toutes</b> les tâches
- * de l'utilisateur, puis filtraient en mémoire sur
- * {@code task.getPath().getInstance().getId()} — un accès qui charge paresseusement le chemin
- * puis l'instance de workflow, <b>une fois par tâche</b>. Le coût suivait donc le nombre de
- * tâches du compte, alors que la question porte sur une ou deux instances connues d'avance.</p>
+ * <p>Assigned tasks are asked of Activiti workflow by workflow: {@link WorkflowTaskQuery} accepts
+ * both {@code processId} and {@code actorId}, so the returned tasks belong to the right workflow by
+ * construction and nothing has to be filtered in memory. Scanning every task of the account and
+ * reading {@code task.getPath().getInstance().getId()} on each would lazily load the path and the
+ * workflow instance once per task, for a cost driven by the size of the user's task list rather
+ * than by the one or two workflows actually asked about.</p>
  *
- * <p>Mesuré à travers le portail fournisseur le 2026-08-12, sur un compte ayant accumulé des
- * tâches : 5 011 ms pour {@code becpg/security/entitylists/check}, dont 2 700 ms pour le seul
- * {@code computeAccessMode} — c'est-à-dire pour le plugin fournisseur.</p>
- *
- * <h3>Ce que fait cette classe</h3>
- *
- * <p>Elle interroge <b>workflow par workflow</b>. {@link WorkflowTaskQuery} accepte
- * {@code processId} et {@code actorId} : Activiti répond alors par un index, et les tâches
- * rendues appartiennent <b>par construction</b> au bon workflow — il n'y a plus rien à filtrer,
- * donc plus de chargement du chemin ni de l'instance. La boucle tourne une ou deux fois, pas
- * autant de fois que le fournisseur a de tâches.</p>
- *
- * <h3>La limite, et pourquoi elle est assumée</h3>
- *
- * <p>Les tâches <b>en pool</b> ne sont pas exprimables ainsi : {@link WorkflowTaskQuery} n'a
- * aucun réglage pour les groupes candidats — vérifié contre {@code alfresco-repository 26.1.0.61},
- * il n'expose que {@code setProcessId}, {@code setActorId}, {@code setTaskState} et
- * {@code setActive}. Le balayage reste donc le seul recours pour elles, et il est ici un
- * <b>repli</b> : un fournisseur travaillant sur sa propre tâche sort par la voie rapide.</p>
+ * <p>Pooled tasks cannot be expressed that way — {@link WorkflowTaskQuery} has no setting for
+ * candidate groups — so they are scanned, but only as a fallback once the bounded query came back
+ * empty.</p>
  *
  * @author matthieu
  * @version $Id: $Id
@@ -55,17 +37,16 @@ public class WorkflowTaskFinder {
 	private WorkflowService workflowService;
 
 	/**
-	 * <p>L'utilisateur détient-il une tâche en cours sur l'un de ces workflows ?</p>
+	 * Whether the user holds an in-progress task on one of these workflows.
 	 *
-	 * <p>Les tâches assignées sont interrogées d'abord, par requête bornée ; les tâches en pool
-	 * ne sont balayées que si les premières n'ont rien donné.</p>
+	 * <p>Assigned tasks are queried first; pooled tasks are only scanned when the query found
+	 * nothing.</p>
 	 *
-	 * @param actorId l'utilisateur, tel qu'Activiti le connaît
-	 * @param workflowIds les instances de workflow portées par le contenu — une ou deux
-	 * @param accept filtre supplémentaire sur la tâche, ou {@code null} pour tout accepter.
-	 *        Il n'est évalué que sur les tâches déjà retenues : un prédicat coûteux ne l'est
-	 *        donc que sur les rares candidates, jamais sur tout le carnet.
-	 * @return true dès la première tâche qui correspond
+	 * @param actorId the user, as Activiti knows it
+	 * @param workflowIds the workflow instances carried by the content
+	 * @param accept an extra filter on the task, or {@code null} to accept them all. It is only
+	 *        evaluated on the tasks already retained, so a costly predicate stays cheap.
+	 * @return true on the first matching task
 	 */
 	public boolean hasTaskOn(String actorId, Collection<String> workflowIds, Predicate<WorkflowTask> accept) {
 		if ((actorId == null) || (workflowIds == null) || workflowIds.isEmpty()) {
@@ -92,15 +73,15 @@ public class WorkflowTaskFinder {
 	}
 
 	/**
-	 * <p>Le repli : les tâches en pool, faute d'API pour les interroger par workflow.</p>
+	 * The fallback: pooled tasks, for want of an API to query them by workflow.
 	 *
-	 * <p>Le filtre sur l'instance reste nécessaire ici, avec son chargement paresseux — mais il
-	 * n'est payé que par les comptes qui n'ont aucune tâche assignée sur ces workflows.</p>
+	 * <p>Filtering on the instance is still needed here, with its lazy loading, but it is only paid
+	 * by the accounts holding no assigned task on these workflows.</p>
 	 *
-	 * @param actorId l'utilisateur
-	 * @param workflowIds les instances recherchées
-	 * @param filter filtre supplémentaire, jamais {@code null}
-	 * @return true dès la première tâche qui correspond
+	 * @param actorId the user
+	 * @param workflowIds the workflow instances looked for
+	 * @param filter an extra filter, never {@code null}
+	 * @return true on the first matching task
 	 */
 	private boolean hasPooledTaskOn(String actorId, Collection<String> workflowIds, Predicate<WorkflowTask> filter) {
 		List<WorkflowTask> pooledTasks = workflowService.getPooledTasks(actorId);

@@ -133,13 +133,9 @@ public class SupplierSecurityPlugin implements SecurityServicePlugin {
 	 * @return true if user has a matching task
 	 */
 	private boolean hasMatchingTask(List<String> contentWorkflowIds) {
-		// Déléguée : la question « cet utilisateur a-t-il une tâche sur ces workflows »
-		// était posée ici ET dans EntitySecurityWebScript, chacun avec sa copie du même
-		// balayage. Voir WorkflowTaskFinder pour ce que coûtait cette formulation.
-		//
-		// `hasSupplierWizardDeliverable` charge le projet entier : le passer en filtre
-		// plutôt que de l'appliquer dans un `anyMatch` sur tout le carnet fait qu'il n'est
-		// évalué que sur les tâches déjà retenues par le workflow.
+		// `hasSupplierWizardDeliverable` loads the whole project, so it is passed as a filter
+		// rather than applied over every task: it is then only evaluated on the tasks the
+		// workflow query already retained.
 		return workflowTaskFinder.hasTaskOn(AuthenticationUtil.getFullyAuthenticatedUser(), contentWorkflowIds,
 				this::hasSupplierWizardDeliverable);
 	}
