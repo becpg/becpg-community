@@ -11221,6 +11221,24 @@
                     <field id="bcpg:nutListSources" label="hidden" />
                 </appearance>
             </form>
+
+            <!-- Portail fournisseur : saisie seule, sans les colonnes calculées -->
+            <form id="datagrid-supplier-portal">
+                <field-visibility>
+                    <show id="bcpg:nutListNut" />
+                    <show id="bcpg:nutListValue" />
+                    <show id="bcpg:nutListUnit" />
+                    <show id="bcpg:nutListMini" />
+                    <show id="bcpg:nutListMaxi" />
+                    <show id="bcpg:nutListMethod" />
+                    <show id="fm:commentCount" force="true" />
+                </field-visibility>
+                <appearance>
+                    <field id="bcpg:nutListNut" read-only="true" />
+                    <field id="bcpg:nutListUnit" read-only="true" />
+                    <field id="fm:commentCount" label="hidden" read-only="true" />
+                </appearance>
+            </form>
             <form id="datagrid-productSpecification">
                 <field-visibility>
                     <show id="bcpg:regulatoryType" force="true" />
@@ -11469,6 +11487,20 @@
                 <appearance>
                     <field id="bcpg:entityDataListState" label="hidden" />
                     <field id="bcpg:variantIds" label="hidden" />
+                    <field id="fm:commentCount" label="hidden" read-only="true" />
+                </appearance>
+            </form>
+
+            <!-- Portail fournisseur : sans les rapports -->
+            <form id="datagrid-supplier-portal">
+                <field-visibility>
+                    <show id="bcpg:organoListOrgano" />
+                    <show id="bcpg:organoListValue" />
+                    <show id="bcpg:organoListMethod" />
+                    <show id="fm:commentCount" force="true" />
+                </field-visibility>
+                <appearance>
+                    <field id="bcpg:organoListOrgano" read-only="true" />
                     <field id="fm:commentCount" label="hidden" read-only="true" />
                 </appearance>
             </form>
@@ -12761,6 +12793,22 @@
                     <field id="dataList_bcpg:reqCtrlList" label-id="hidden" />
                     <field id="bcpg:lclIsFormulated" label="hidden" />
                     <field id="bcpg:lclFormulaErrorLog" label="hidden" />
+                </appearance>
+            </form>
+
+            <!-- Portail fournisseur : ni type ni certification -->
+            <form id="datagrid-supplier-portal">
+                <field-visibility>
+                    <show id="bcpg:lclLabelClaim" />
+                    <show id="bcpg:lclClaimValue" />
+                    <show id="bcpg:lclPercentClaim" />
+                    <show id="bcpg:lclPercentApplicable" />
+                    <show id="bcpg:lclComments" force="true" />
+                    <show id="fm:commentCount" force="true" />
+                </field-visibility>
+                <appearance>
+                    <field id="bcpg:lclLabelClaim" read-only="true" />
+                    <field id="fm:commentCount" label="hidden" read-only="true" />
                 </appearance>
             </form>
             <form id="datagrid-productSpecification">
