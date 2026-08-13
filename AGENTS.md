@@ -39,7 +39,26 @@ This is a **Java 17** enterprise project with emphasis on:
   - Text blocks
   - Records and sealed classes (when suitable)
 
-### 2. Code Style Principles
+### 2. Language: everything in the source is English
+**All source code is written in English, comments included.** This is not negotiable and it
+applies to every file type in the repository:
+
+- **Identifiers**: classes, methods, fields, variables, Spring bean names, constants
+- **Comments and Javadoc**: every line, including the `@param` and `@return` descriptions
+- **Log messages** and exception messages
+- **Commit messages** (see the Git section below)
+- **Webscript descriptors**: `<shortname>` and `<description>`
+
+French belongs to the *interface*, never to the source. User-facing wording lives in the
+`*_fr.properties` bundles or in repository content; a French sentence anywhere else is either a
+defect or a quote. When it genuinely is a quote — a field label, an error message the system
+really emits, a regulatory footnote used as test data — keep the quote as it is and write the
+sentence around it in English.
+
+This applies to the files you touch: fix the file you are working on, do not translate the
+whole repository in passing.
+
+### 3. Code Style Principles
 - **No `var` declarations** - always use explicit types for readability
 - **Avoid fully-qualified class names** (package class declarations like `com.example.Service`) in code. Instead, declare them as `import` statements at the top of the Java file.
 - Use **lambdas** and **method references** for cleaner code
@@ -47,7 +66,7 @@ This is a **Java 17** enterprise project with emphasis on:
 - Use **try-with-resources** for `AutoCloseable` objects
 - Apply **pattern matching** to simplify type checks
 
-### 3. Dependency Management
+### 4. Dependency Management
 **Critical**: This project emphasizes minimizing external libraries:
 - Prefer JDK APIs and existing internal utilities first
 - Add dependencies only with clear, documented benefits
@@ -55,7 +74,7 @@ This is a **Java 17** enterprise project with emphasis on:
 - Choose small, well-maintained libraries over heavy frameworks
 - Justify any new dependency additions
 
-### 4. Code Quality Standards
+### 5. Code Quality Standards
 - **4 spaces indentation**, no tabs
 - **Braces on the same line** (K&R style) for classes and methods
 - Keep methods **extremely short and focused** (ideally 10-15 lines, max 20 lines) to respect Clean Code
@@ -67,7 +86,7 @@ This is a **Java 17** enterprise project with emphasis on:
 - **No magic strings**: Never use magic strings. Always declare them as `static final String` fields to ensure maintainability and prevent typos
 - **No en-dash characters**: Never use the en-dash character (`–`, `\u2013`) in code, configurations, or CSV templates. Always use the standard hyphen/minus character (`-`) instead to avoid character encoding issues and ensure exact matches with external databases.
 
-### 5. JavaScript Standards
+### 6. JavaScript Standards
 - **Use ECMAScript 5 (ES5)** syntax only - no modern ES6+ features
 - Follow traditional JavaScript patterns compatible with legacy browsers
 - Use `function` declarations instead of arrow functions
@@ -75,7 +94,7 @@ This is a **Java 17** enterprise project with emphasis on:
 - Avoid template literals, destructuring, and other ES6+ features
 - Maintain compatibility with existing YUI-based components
 
-### 6. UI JavaScript Framework
+### 7. UI JavaScript Framework
 - **Use YUI 2 (Yahoo! User Interface Library 2)** for all UI JavaScript components
 - Leverage YUI 2 widgets and utilities:
   - `YAHOO.util.Dom` for DOM manipulation
@@ -84,7 +103,7 @@ This is a **Java 17** enterprise project with emphasis on:
 - Follow YUI 2 patterns and conventions for component development
 - Extend existing YUI-based components rather than creating vanilla JavaScript alternatives
 
-### 7. Clean Code Principles (Robert C. Martin)
+### 8. Clean Code Principles (Robert C. Martin)
 All code written in this project must adhere to Robert C. Martin's **Clean Code** principles to ensure readability, scalability, and long-term maintainability:
 
 - **Meaningful Names**:
