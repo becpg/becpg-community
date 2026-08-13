@@ -11222,21 +11222,70 @@
                 </appearance>
             </form>
 
-            <!-- Portail fournisseur : saisie seule, sans les colonnes calculées -->
+            <!-- Supplier portal grid: the stock datagrid, minus what a supplier does not fill in -->
             <form id="datagrid-supplier-portal">
                 <field-visibility>
+                    <show id="bcpg:entityDataListState" force="true" />
+                    <show id="bcpg:variantIds" force="true" />
+                    <show id="bcpg:depthLevel" />
                     <show id="bcpg:nutListNut" />
                     <show id="bcpg:nutListValue" />
+                    <show id="bcpg:nutListFormulatedValue" />
                     <show id="bcpg:nutListUnit" />
+                    <show id="bcpg:nutListValuePrepared" />
+                    <show id="bcpg:nutListFormulatedValuePrepared" force="true" />
+                    <show id="bcpg:nutListUnitPrepared" force="true" />
                     <show id="bcpg:nutListMini" />
                     <show id="bcpg:nutListMaxi" />
+                    <show id="bcpg:nutListFormulatedMini" />
+                    <show id="bcpg:nutListFormulatedMaxi" />
+                    <show id="bcpg:nutListReductionValue" />
+                    <show id="bcpg:nutListReductionFormulatedValue" force="true" />
+                    <show id="bcpg:nutListReferenceValue" />
+                    <show id="bcpg:nutListValuePerServing" force="true" />
+                    <show id="bcpg:nutListFormulatedValuePerServing" force="true" />
+                    <show id="bcpg:variantColumn1" force="true" />
+                    <show id="bcpg:variantColumn2" force="true" />
+                    <show id="bcpg:variantColumn3" force="true" />
+                    <show id="bcpg:variantColumn4" force="true" />
+                    <show id="bcpg:variantColumn5" force="true" />
+                    <show id="bcpg:nutListGDAPerc" force="true" />
+                    <show id="bcpg:nutListLossPerc" />
                     <show id="bcpg:nutListMethod" />
                     <show id="fm:commentCount" force="true" />
+                    <show id="bcpg:nutListIsFormulated" />
+                    <show id="bcpg:nutListFormulaErrorLog" />
+                    <show id="entity_bcpg:nutListNut_bcpg:nut" force="true" />
+                    <show id="rep:reportKinds" />
+                    <show id="bcpg:nutListSources" />
+                    <show id="dataList_bcpg:reqCtrlList" />
+                    <show id="bcpg:glopTarget" />
+                    <show id="bcpg:glopValue" />
                 </field-visibility>
                 <appearance>
-                    <field id="bcpg:nutListNut" read-only="true" />
-                    <field id="bcpg:nutListUnit" read-only="true" />
+                    <field id="bcpg:entityDataListState" label="hidden" />
+                    <field id="bcpg:variantIds" label="hidden" />
+                    <field id="bcpg:depthLevel" label="hidden" />
+                    <field id="bcpg:nutListFormulatedValue" label="hidden" read-only="true" />
+                    <field id="bcpg:nutListFormulatedMaxi" label="hidden" read-only="true" />
+                    <field id="bcpg:nutListFormulatedMini" label="hidden" read-only="true" />
+                    <field id="bcpg:nutListUnit" read-only="true" label="hidden" />
+                    <field id="bcpg:nutListFormulatedValuePrepared" label="hidden" read-only="true" />
+                    <field id="bcpg:nutListFormulatedValuePerServing" label="hidden" read-only="true" />
+                    <field id="bcpg:nutListReductionFormulatedValue" label="hidden" read-only="true" />
+                    <field id="bcpg:nutListGDAPerc" help="{&quot;width&quot;:200}" />
+                    <field id="bcpg:nutListReferenceValue" />
+                    <field id="bcpg:nutListUnitPrepared" read-only="true" label="hidden" />
+                    <field id="bcpg:variantColumn1" read-only="true" label="hidden" />
+                    <field id="bcpg:variantColumn2" read-only="true" label="hidden" />
+                    <field id="bcpg:variantColumn3" read-only="true" label="hidden" />
+                    <field id="bcpg:variantColumn4" read-only="true" label="hidden" />
+                    <field id="bcpg:variantColumn5" read-only="true" label="hidden" />
                     <field id="fm:commentCount" label="hidden" read-only="true" />
+                    <field id="bcpg:nutListIsFormulated" label="hidden" />
+                    <field id="bcpg:nutListFormulaErrorLog" label="hidden" />
+                    <field id="dataList_bcpg:reqCtrlList" label="hidden" />
+                    <field id="bcpg:nutListSources" label="hidden" />
                 </appearance>
             </form>
             <form id="datagrid-productSpecification">
@@ -11491,16 +11540,19 @@
                 </appearance>
             </form>
 
-            <!-- Portail fournisseur : sans les rapports -->
+            <!-- Supplier portal grid: the stock datagrid, minus what a supplier does not fill in -->
             <form id="datagrid-supplier-portal">
                 <field-visibility>
+                    <show id="bcpg:entityDataListState" force="true" />
+                    <show id="bcpg:variantIds" force="true" />
                     <show id="bcpg:organoListOrgano" />
                     <show id="bcpg:organoListValue" />
                     <show id="bcpg:organoListMethod" />
                     <show id="fm:commentCount" force="true" />
                 </field-visibility>
                 <appearance>
-                    <field id="bcpg:organoListOrgano" read-only="true" />
+                    <field id="bcpg:entityDataListState" label="hidden" />
+                    <field id="bcpg:variantIds" label="hidden" />
                     <field id="fm:commentCount" label="hidden" read-only="true" />
                 </appearance>
             </form>
@@ -12796,19 +12848,31 @@
                 </appearance>
             </form>
 
-            <!-- Portail fournisseur : ni type ni certification -->
+            <!-- Supplier portal grid: the stock datagrid, minus what a supplier does not fill in -->
             <form id="datagrid-supplier-portal">
                 <field-visibility>
+                    <show id="bcpg:entityDataListState" force="true" />
                     <show id="bcpg:lclLabelClaim" />
+                    <show id="entity_bcpg:lclLabelClaim_bcpg:labelClaim" />
                     <show id="bcpg:lclClaimValue" />
                     <show id="bcpg:lclPercentClaim" />
                     <show id="bcpg:lclPercentApplicable" />
+                    <show id="bcpg:lclMissingLabelClaims" force="true" />
                     <show id="bcpg:lclComments" force="true" />
                     <show id="fm:commentCount" force="true" />
+                    <show id="bcpg:lclIsFormulated" />
+                    <show id="bcpg:lclFormulaErrorLog" />
+                    <show id="rep:reportKinds" />
+                    <show id="dataList_bcpg:reqCtrlList" />
                 </field-visibility>
                 <appearance>
-                    <field id="bcpg:lclLabelClaim" read-only="true" />
+                    <field id="bcpg:entityDataListState" label="hidden" />
+                    <field id="bcpg:lclMissingLabelClaims" read-only="true" />
+                    <field id="entity_bcpg:lclLabelClaim_bcpg:labelClaim" label="hidden" />
                     <field id="fm:commentCount" label="hidden" read-only="true" />
+                    <field id="dataList_bcpg:reqCtrlList" label-id="hidden" />
+                    <field id="bcpg:lclIsFormulated" label="hidden" />
+                    <field id="bcpg:lclFormulaErrorLog" label="hidden" />
                 </appearance>
             </form>
             <form id="datagrid-productSpecification">
