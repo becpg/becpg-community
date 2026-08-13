@@ -616,6 +616,7 @@ PARTICULAR
 		<forms>
 			<!-- Create item form -->
 			<form>
+				<create-form template="tab-edit" />
 				<edit-form template="tab-edit" />
 				<field-visibility>
 					<show id="bcpg:nrNotificationAuthorities" />
@@ -751,6 +752,8 @@ PARTICULAR
 			</form>
 
 			<form id="create">
+				<create-form template="tab-edit" />
+				<edit-form template="tab-edit" />
 				<field-visibility>
 					<show id="bcpg:nrNotificationAuthorities" />
 					<show id="bcpg:nrTimeType" />
@@ -961,6 +964,7 @@ PARTICULAR
 		<forms>
 			<!-- Popup update existing node form -->
 			<form>
+				<create-form template="tab-edit" />
 				<edit-form template="tab-edit" />
 				<field-visibility>
 					<show id="bcpg:nrNotificationAuthorities" />
