@@ -30,10 +30,4 @@
     <url>/becpg/portal/wizard?wizardId={wizardId}</url>
     <url>/becpg/portal/wizard?wizardId={wizardId}&amp;nodeRef={nodeRef?}&amp;entityType={entityType?}&amp;siteId={siteId?}&amp;mode={mode?}&amp;portalTicket={portalTicket?}</url>
     <format default="json"></format>
-    <!--
-        The Share authenticator cannot be used here: the React portal holds an Alfresco ticket,
-        not a Share session, and `user` would be required to have one. The identity is checked by
-        the script instead, which refuses to answer without either a Share session or a ticket.
-    -->
-    <authentication>none</authentication>
 </webscript>
