@@ -64,6 +64,22 @@ function getI18N(element, itemName) {
 	return label != null ? "" + label : "";
 }
 
+/**
+ * Whether the caller carries an identity: an authenticated Share session, or the Alfresco ticket
+ * the portal forwards. The ticket itself is validated downstream by the repository, which answers
+ * 401 on the field definitions when it is not a valid one.
+ */
+function hasCallerIdentity(alfTicket) {
+	if (alfTicket != null && ("" + alfTicket).length > 0) {
+		return true;
+	}
+	if (typeof user === "undefined" || user == null || user.id == null) {
+		return false;
+	}
+	var userId = "" + user.id;
+	return userId.length > 0 && userId !== "guest";
+}
+
 /** A listId may carry an @N suffix identifying the list instance (surveyList@1). */
 function stripListInstance(listId) {
 	if (listId == null) {
@@ -87,6 +103,15 @@ function main() {
 	if (wizardId == null || ("" + wizardId).length === 0) {
 		model.error = "wizardId is required";
 		status.setCode(400, model.error);
+		return;
+	}
+
+	// The descriptor cannot ask Surf to authenticate (see wizard.get.desc.xml), so the caller is
+	// checked here: without a Share session nor a ticket, the wizard structure — its steps, its
+	// form ids, its list ids — would be readable by anyone.
+	if (!hasCallerIdentity(alfTicket)) {
+		model.error = "authentication required";
+		status.setCode(401, model.error);
 		return;
 	}
 
