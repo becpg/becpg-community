@@ -192,23 +192,40 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 						logNoObjects(notification, filter);
 
 					}
-				} catch (Throwable e) {
+				} catch (Exception e) {
 					if (RetryingTransactionHelper.extractRetryCause(e) != null) {
 						throw e;
 					}
 					logger.error("Error while sending notification " + notificationNodeRef, e);
-					try {
-						notification.setErrorLog(e.getMessage() != null ? e.getMessage() : e.toString());
-						alfrescoRepository.save(notification);
-					} catch (Exception ex) {
-						logger.error("Error while saving notification error details " + notificationNodeRef, ex);
-					}
+					saveErrorLog(notificationNodeRef, notification, e);
 				}
 			}
 		}
 	}
 
-	
+	/**
+	 * Record on the rule why it failed, in a transaction of its own.
+	 *
+	 * The failure may have left the running transaction marked rollback-only, in which case the
+	 * error log would be lost with it — and the rule would keep failing without ever saying so.
+	 *
+	 * @param notificationNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param notification a {@link fr.becpg.repo.notification.data.NotificationRuleListDataItem} object
+	 * @param cause the failure to report
+	 */
+	private void saveErrorLog(NodeRef notificationNodeRef, NotificationRuleListDataItem notification, Exception cause) {
+		try {
+			notification.setErrorLog(cause.getMessage() != null ? cause.getMessage() : cause.toString());
+
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				alfrescoRepository.save(notification);
+				return null;
+			}, false, true);
+		} catch (Exception e) {
+			logger.error("Error while saving notification error details " + notificationNodeRef, e);
+		}
+	}
+
 	/**
 	 * <p>shouldSkip.</p>
 	 *
