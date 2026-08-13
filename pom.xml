@@ -128,8 +128,8 @@
 		<alfresco-data-model.version>25.3.0.81</alfresco-data-model.version>
 		<alfresco-core.version>25.3.0.81</alfresco-core.version>
 		<spring-surf.version>10.1</spring-surf.version>
-	    <spring-webscripts.version>10.1</spring-webscripts.version>
-	    <spring-webscripts-share.version>10.1</spring-webscripts-share.version>
+	    <spring-webscripts.version>10.2</spring-webscripts.version>
+	    <spring-webscripts-share.version>10.2</spring-webscripts-share.version>
 
 		<alfresco.aos.version>3.4.0</alfresco.aos.version>
 
