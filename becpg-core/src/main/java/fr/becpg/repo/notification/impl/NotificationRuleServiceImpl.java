@@ -204,10 +204,11 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	}
 
 	/**
-	 * Record on the rule why it failed, in a transaction of its own.
+	 * Record on the rule why it failed, so that it does not keep failing without ever saying so.
 	 *
-	 * The failure may have left the running transaction marked rollback-only, in which case the
-	 * error log would be lost with it — and the rule would keep failing without ever saying so.
+	 * The rule node has already been written by {@link #initializeNotification}, so the calling
+	 * transaction holds its row lock: writing the error log in a transaction of its own would wait
+	 * on that lock until it times out and starve the remaining rules.
 	 *
 	 * @param notificationNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param notification a {@link fr.becpg.repo.notification.data.NotificationRuleListDataItem} object
@@ -220,7 +221,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 				alfrescoRepository.save(notification);
 				return null;
-			}, false, true);
+			}, false, false);
 		} catch (Exception e) {
 			logger.error("Error while saving notification error details " + notificationNodeRef, e);
 		}
