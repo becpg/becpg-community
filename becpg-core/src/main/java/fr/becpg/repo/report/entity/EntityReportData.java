@@ -17,7 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.report.entity;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.dom4j.Element;
@@ -36,9 +36,9 @@ public class EntityReportData {
 
 	private Element xmlDataSource;
 	
-	private Set<EntityImageInfo> images = new HashSet<>();
+	private Set<EntityImageInfo> images = new LinkedHashSet<>();
 	
-	private Set<ReportableError> logs = new HashSet<>();
+	private Set<ReportableError> logs = new LinkedHashSet<>();
 	
 	/**
 	 * <p>Getter for the field <code>xmlDataSource</code>.</p>
