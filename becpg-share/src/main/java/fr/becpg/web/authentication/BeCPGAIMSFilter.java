@@ -217,6 +217,14 @@ public class BeCPGAIMSFilter implements Filter
     private static final Duration TOKEN_EXPIRY_REFRESH_MARGIN = Duration.ofSeconds(60);
 
     /**
+     * Identity provider error codes telling the refresh token itself was rejected. Any other failure is treated
+     * as transient, so that a temporary problem with the identity provider does not destroy the user session.
+     */
+    private static final Set<String> UNRECOVERABLE_REFRESH_ERROR_CODES =
+        Set.of(OAuth2ErrorCodes.INVALID_GRANT, OAuth2ErrorCodes.INVALID_TOKEN, OAuth2ErrorCodes.INVALID_CLIENT,
+               OAuth2ErrorCodes.UNAUTHORIZED_CLIENT);
+
+    /**
      * <p>Constructor for BeCPGAIMSFilter.</p>
      */
     public BeCPGAIMSFilter()
@@ -312,19 +320,30 @@ public class BeCPGAIMSFilter implements Filter
                             // the AIMS filter runs before Share establishes it, so bind it here to avoid a
                             // NullPointerException that would otherwise invalidate the session on every refresh.
                             this.initRequestContext(request, response);
-                            refreshToken(attribute, session);
+                            refreshToken(attribute, session, request);
                         }
                     }
-                    catch (Exception oauth2AuthenticationException)
+                    catch (Exception refreshException)
                     {
-                        LOGGER.error("Error while refreshing OAuth2 token, invalidating session (URI="
-                                         + request.getRequestURI() + "): " + oauth2AuthenticationException.getMessage(),
-                                     oauth2AuthenticationException);
-                        session.invalidate();
-                        if (!request.getRequestURI()
-                            .contains(this.shareContext + SHARE_AIMS_LOGOUT))
+                        if (isUnrecoverableRefreshFailure(refreshException))
                         {
-                            isAuthenticated = false;
+                            LOGGER.error("Error while refreshing OAuth2 token, invalidating session (URI="
+                                             + request.getRequestURI() + "): " + refreshException.getMessage(),
+                                         refreshException);
+                            session.invalidate();
+                            if (!request.getRequestURI()
+                                .contains(this.shareContext + SHARE_AIMS_LOGOUT))
+                            {
+                                isAuthenticated = false;
+                            }
+                        }
+                        else
+                        {
+                            // A transient failure, such as an unreachable identity provider, must not cost the user
+                            // its session: the current token is still usable and the next request retries the refresh.
+                            LOGGER.warn("Transient failure while refreshing OAuth2 token, keeping the session (URI="
+                                            + request.getRequestURI() + "): " + refreshException.getMessage(),
+                                        refreshException);
                         }
                     }
                 }
@@ -494,21 +513,7 @@ public class BeCPGAIMSFilter implements Filter
                 String alfTicket = this.getAlfTicket(session, username, accessToken);
                 if (alfTicket != null)
                 {
-                    // Ensure User ID is in session so the web-framework knows we have logged in
-                    session.setAttribute(UserFactory.SESSION_ATTRIBUTE_KEY_USER_ID, username);
-                    session.setAttribute(UserFactory.SESSION_ATTRIBUTE_EXTERNAL_AUTH_AIMS, true);
-
-                    // Set the alfTicket into connector's session for further use on repo calls (will be set on the RemoteClient)
-                    Connector connector = this.connectorService.getConnector(ALFRESCO_ENDPOINT_ID, username, session);
-                    connector.getConnectorSession()
-                        .setParameter(AlfrescoAuthenticator.CS_PARAM_ALF_TICKET, alfTicket);
-
-                    // Set credential username for further use on repo
-                    // if there is no pass, as in our case, there will be a "X-Alfresco-Remote-User" header set using this value
-                    CredentialVault vault = FrameworkUtil.getCredentialVault(session, username);
-                    Credentials credentials = vault.newCredentials(AlfrescoUserFactory.ALFRESCO_ENDPOINT_ID);
-                    credentials.setProperty(Credentials.CREDENTIAL_USERNAME, username);
-                    vault.store(credentials);
+                    this.bindAlfrescoSession(session, username, alfTicket);
 
                     // Inform the Slingshot login controller of a successful login attempt as further processing may be required ?
                      beforeSuccess(request, response);
@@ -529,6 +534,35 @@ public class BeCPGAIMSFilter implements Filter
         }
     }
     
+    /**
+     * Binds the Alfresco ticket and the credentials of the authenticated user to the session, so that repository
+     * calls keep authenticating. Shared by the initial login and by the renewal that follows a token refresh.
+     *
+     * @param session the HTTP session
+     * @param username the authenticated user name
+     * @param alfTicket the Alfresco ticket to bind
+     * @throws org.springframework.extensions.surf.exception.ConnectorServiceException if the connector cannot be obtained
+     */
+    private void bindAlfrescoSession(HttpSession session, String username, String alfTicket)
+        throws ConnectorServiceException
+    {
+        // Ensure User ID is in session so the web-framework knows we have logged in
+        session.setAttribute(UserFactory.SESSION_ATTRIBUTE_KEY_USER_ID, username);
+        session.setAttribute(UserFactory.SESSION_ATTRIBUTE_EXTERNAL_AUTH_AIMS, true);
+
+        // Set the alfTicket into connector's session for further use on repo calls (will be set on the RemoteClient)
+        Connector connector = this.connectorService.getConnector(ALFRESCO_ENDPOINT_ID, username, session);
+        connector.getConnectorSession()
+            .setParameter(AlfrescoAuthenticator.CS_PARAM_ALF_TICKET, alfTicket);
+
+        // Set credential username for further use on repo
+        // if there is no pass, as in our case, there will be a "X-Alfresco-Remote-User" header set using this value
+        CredentialVault vault = FrameworkUtil.getCredentialVault(session, username);
+        Credentials credentials = vault.newCredentials(AlfrescoUserFactory.ALFRESCO_ENDPOINT_ID);
+        credentials.setProperty(Credentials.CREDENTIAL_USERNAME, username);
+        vault.store(credentials);
+    }
+
     /** Constant <code>SESSION_ATTRIBUTE_KEY_USER_GROUPS="_alf_USER_GROUPS"</code> */
 	private static final String SESSION_ATTRIBUTE_KEY_USER_GROUPS = "_alf_USER_GROUPS";
 
@@ -1150,8 +1184,9 @@ public class BeCPGAIMSFilter implements Filter
      *
      * @param attribute a {@link org.springframework.security.core.context.SecurityContext} object
      * @param session a {@link jakarta.servlet.http.HttpSession} object
+     * @param request the HTTP request being served, used to re-initialise the user metadata
      */
-    private synchronized void refreshToken(SecurityContext attribute, HttpSession session)
+    private synchronized void refreshToken(SecurityContext attribute, HttpSession session, HttpServletRequest request)
     {
         OAuth2LoginAuthenticationToken oAuth2LoginAuthenticationToken =
             (OAuth2LoginAuthenticationToken) attribute.getAuthentication();
@@ -1194,18 +1229,20 @@ public class BeCPGAIMSFilter implements Filter
         // The Alfresco ticket is baked into the connector session only at initial login. Renew it here so that
         // long-lived sessions do not keep sending a stale ticket to the repository (which would fail with 401
         // once the ticket expires on its own AFTER_INACTIVITY timeout).
-        renewAlfTicket(session, oidcUser, accessTokenResponse.getAccessToken());
+        renewAlfTicket(session, oidcUser, accessTokenResponse.getAccessToken(), request);
     }
 
     /**
-     * Re-fetch a fresh Alfresco ticket after an OAuth2 token refresh and store it on the connector session,
-     * so repository calls keep authenticating once the previously obtained ticket has expired.
+     * Re-fetch a fresh Alfresco ticket after an OAuth2 token refresh and rebind the session, so repository calls
+     * keep authenticating once the previously obtained ticket has expired.
      *
      * @param session the HTTP session
      * @param oidcUser the refreshed OIDC user
      * @param accessToken the refreshed access token
+     * @param request the HTTP request being served, used to re-initialise the user metadata
      */
-    private void renewAlfTicket(HttpSession session, OidcUser oidcUser, OAuth2AccessToken accessToken)
+    private void renewAlfTicket(HttpSession session, OidcUser oidcUser, OAuth2AccessToken accessToken,
+                                HttpServletRequest request)
     {
         try
         {
@@ -1218,15 +1255,35 @@ public class BeCPGAIMSFilter implements Filter
             String alfTicket = this.getAlfTicket(session, username, accessToken.getTokenValue());
             if (alfTicket != null)
             {
-                Connector connector = this.connectorService.getConnector(ALFRESCO_ENDPOINT_ID, username, session);
-                connector.getConnectorSession()
-                    .setParameter(AlfrescoAuthenticator.CS_PARAM_ALF_TICKET, alfTicket);
+                // Rebind the whole session, not only the ticket: the request served during this refresh would
+                // otherwise reach the web scripts without a user in its request context, and fail on "user is
+                // not defined".
+                this.bindAlfrescoSession(session, username, alfTicket);
+                this.initUser(request);
             }
         }
-        catch (ConnectorServiceException e)
+        catch (ConnectorServiceException | UserFactoryException e)
         {
             LOGGER.error("Failed to renew Alfresco ticket after token refresh: " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * Tells a definitive refresh failure, where the identity provider rejected the refresh token itself, from a
+     * transient one such as an unreachable provider or an error raised by the surrounding framework.
+     *
+     * @param refreshException the failure raised while refreshing the token
+     * @return true when the session has to be invalidated
+     */
+    private boolean isUnrecoverableRefreshFailure(Exception refreshException)
+    {
+        if (refreshException instanceof OAuth2AuthorizationException oAuth2AuthorizationException)
+        {
+            return UNRECOVERABLE_REFRESH_ERROR_CODES.contains(oAuth2AuthorizationException.getError()
+                .getErrorCode());
+        }
+
+        return false;
     }
 
     /**
