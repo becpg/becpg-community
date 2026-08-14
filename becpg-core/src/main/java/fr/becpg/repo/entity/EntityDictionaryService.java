@@ -101,7 +101,10 @@ public interface EntityDictionaryService extends DictionaryService {
 	ClassAttributeDefinition getPropDef(QName fieldQname);
 
 	/**
-	 * <p>findMatchingPropDef.</p>
+	 * Finds the property of <code>newItemType</code> matching a field declared on <code>itemType</code>, by
+	 * substituting the item local name in the field local name (<code>bcpg:packagingListQty</code> read on a
+	 * <code>bcpg:compoList</code> item resolves to <code>bcpg:compoListQty</code>). The mappings registered
+	 * through {@link #registerPropDefMapping(QName, QName)} are applied to the substituted property as well.
 	 *
 	 * @param itemType a {@link org.alfresco.service.namespace.QName} object.
 	 * @param newItemType a {@link org.alfresco.service.namespace.QName} object.
