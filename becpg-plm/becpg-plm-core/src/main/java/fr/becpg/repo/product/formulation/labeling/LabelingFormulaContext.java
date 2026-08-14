@@ -31,6 +31,7 @@ import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -2046,7 +2047,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		List<LabelingComponent> components = new ArrayList<>(lblCompositeContext.getIngList().values());
 
-		sort(components);
+		sort(components, lblCompositeContext);
 
 		for (LabelingComponent component : components) {
 
@@ -2233,21 +2234,16 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * <p>sort.</p>
 	 *
 	 * @param toSort a {@link java.util.List} object
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
 	 */
-	private void sort(List<LabelingComponent> toSort) {
+	private void sort(List<LabelingComponent> toSort, CompositeLabeling parent) {
 		Locale currentLocal = I18NUtil.getLocale();
 		try {
 			if (sortWithSpecificLocale != null) {
 				I18NUtil.setLocale(MLTextHelper.parseLocale(sortWithSpecificLocale));
 			}
 
-			Collections.sort(toSort, (a, b) -> {
-				int result = compareLabelingComponents(a, b);
-				if (result == 0) {
-					result = compareIngredientNames(a, b);
-				}
-				return result;
-			});
+			sortInLocale(toSort, computeSortQties(toSort, parent));
 
 		} finally {
 			I18NUtil.setLocale(currentLocal);
@@ -2255,13 +2251,103 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
+	 * <p>Sorts the components with the locale already positioned by the caller.</p>
+	 *
+	 * @param toSort a {@link java.util.List} object
+	 * @param sortQties the quantities to sort on, keyed by component identity
+	 */
+	private void sortInLocale(List<LabelingComponent> toSort, Map<LabelingComponent, Double> sortQties) {
+		Collections.sort(toSort, (a, b) -> {
+			int result = compareLabelingComponents(a, b, sortQties);
+			if (result == 0) {
+				result = compareIngredientNames(a, b);
+			}
+			return result;
+		});
+	}
+
+	/**
+	 * <p>Computes the quantities the components have to be sorted on.</p>
+	 *
+	 * The label is ordered on the percentage it actually shows, so a ForcePercentage rule is
+	 * applied here as well. The forced percentage is converted back to the component quantity
+	 * scale, keeping the comparison unit of {@code qtyPrecisionThreshold} unchanged.
+	 *
+	 * An {@link java.util.IdentityHashMap} is required: labeling components rely on a
+	 * value-based equality, so two occurrences of the same ingredient would otherwise share a
+	 * single entry.
+	 *
+	 * @param toSort a {@link java.util.List} object
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @return the quantities to sort on, keyed by component identity
+	 */
+	private Map<LabelingComponent, Double> computeSortQties(List<LabelingComponent> toSort, CompositeLabeling parent) {
+		Map<LabelingComponent, Double> sortQties = new IdentityHashMap<>();
+
+		for (LabelingComponent component : toSort) {
+			Double sortQty = computeSortQty(component, parent);
+			if (sortQty != null) {
+				sortQties.put(component, sortQty);
+			}
+		}
+
+		return sortQties;
+	}
+
+	/**
+	 * <p>Sums the sort quantities of an ingredient type, so that a type is ranked on the
+	 * percentages its ingredients actually show.</p>
+	 *
+	 * @param components the components belonging to the type, in their current order
+	 * @param sortQties the quantities to sort on, keyed by component identity
+	 * @return the sum of the quantities
+	 */
+	private Double sumSortQties(List<LabelingComponent> components, Map<LabelingComponent, Double> sortQties) {
+		Double sum = 0d;
+		for (LabelingComponent component : components) {
+			Double sortQty = sortQties.get(component);
+			if (sortQty != null) {
+				sum += sortQty;
+			}
+		}
+		return sum;
+	}
+
+	/**
+	 * <p>computeSortQty.</p>
+	 *
+	 * @param component a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @return the quantity to sort the component on, {@code null} when it has none
+	 */
+	private Double computeSortQty(LabelingComponent component, CompositeLabeling parent) {
+		Double qty = useVolume ? component.getVolume(ingsLabelingWithYield) : component.getQty(ingsLabelingWithYield);
+		if (qty == null) {
+			return null;
+		}
+
+		Double total = useVolume ? parent.getVolumeTotal() : parent.getQtyTotal();
+		boolean hasTotal = (total != null) && (total != 0d);
+
+		Double qtyPerc = hasTotal ? qty / total : qty;
+		Double forcedQtyPerc = getForcedPercentage(component, qtyPerc);
+
+		if (forcedQtyPerc.equals(qtyPerc)) {
+			return qty;
+		}
+
+		return hasTotal ? forcedQtyPerc * total : forcedQtyPerc;
+	}
+
+	/**
 	 * <p>compareLabelingComponents.</p>
 	 *
 	 * @param a a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
 	 * @param b a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param sortQties the quantities to sort on, keyed by component identity
 	 * @return a int
 	 */
-	private int compareLabelingComponents(LabelingComponent a, LabelingComponent b) {
+	private int compareLabelingComponents(LabelingComponent a, LabelingComponent b, Map<LabelingComponent, Double> sortQties) {
 
 		if ((b instanceof CompositeLabeling) && ((CompositeLabeling) b).isGroup()
 				&& !((a instanceof CompositeLabeling) && ((CompositeLabeling) a).isGroup())) {
@@ -2281,26 +2367,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			return 1;
 		}
 
-		if (useVolume) {
-			Double volumeA = a.getVolume(ingsLabelingWithYield);
-			Double volumeB = b.getVolume(ingsLabelingWithYield);
-			if ((volumeA == null) && (volumeB == null)) {
-				return 0;
-			} else if (volumeA == null) {
-				return 1; // b is considered greater if a is null
-			} else if (volumeB == null) {
-				return -1; // a is considered greater if b is null
-			}
-			if (Math.abs(volumeB - volumeA) < qtyPrecisionThreshold) {
-				return 0; // Consider them equal if within the threshold
-			} else {
-				return Double.compare(volumeB, volumeA);
-			}
-
-		}
-
-		Double qtyA = a.getQty(ingsLabelingWithYield);
-		Double qtyB = b.getQty(ingsLabelingWithYield);
+		Double qtyA = getSortQty(a, sortQties);
+		Double qtyB = getSortQty(b, sortQties);
 
 		if ((qtyA == null) && (qtyB == null)) {
 			return 0;
@@ -2315,6 +2383,21 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			return Double.compare(qtyB, qtyA);
 		}
 
+	}
+
+	/**
+	 * <p>getSortQty.</p>
+	 *
+	 * @param component a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param sortQties the quantities to sort on, keyed by component identity
+	 * @return the quantity to sort the component on
+	 */
+	private Double getSortQty(LabelingComponent component, Map<LabelingComponent, Double> sortQties) {
+		if (sortQties.containsKey(component)) {
+			return sortQties.get(component);
+		}
+
+		return useVolume ? component.getVolume(ingsLabelingWithYield) : component.getQty(ingsLabelingWithYield);
 	}
 
 	/**
@@ -4005,18 +4088,22 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		if (!keepOrder) {
 
-			for (Map.Entry<IngTypeItem, List<LabelingComponent>> entry : entries) {
-				sort(entry.getValue());
-			}
-
 			Locale currentLocal = I18NUtil.getLocale();
 			try {
 				if (sortWithSpecificLocale != null) {
 					I18NUtil.setLocale(MLTextHelper.parseLocale(sortWithSpecificLocale));
 				}
 
+				Map<LabelingComponent, Double> ingTypeSortQties = new IdentityHashMap<>();
+
+				for (Map.Entry<IngTypeItem, List<LabelingComponent>> entry : entries) {
+					Map<LabelingComponent, Double> groupSortQties = computeSortQties(entry.getValue(), compositeLabeling);
+					ingTypeSortQties.put(entry.getKey(), sumSortQties(entry.getValue(), groupSortQties));
+					sortInLocale(entry.getValue(), groupSortQties);
+				}
+
 				Collections.sort(entries, (a, b) -> {
-					int result = compareLabelingComponents(a.getKey(), b.getKey());
+					int result = compareLabelingComponents(a.getKey(), b.getKey(), ingTypeSortQties);
 					if (result == 0) {
 						String nameA = getLegalIngName(a.getKey());
 						if ((nameA == null) && !a.getValue().isEmpty()) {
