@@ -209,14 +209,15 @@ public class SvhcNestedPackagingIT extends PLMBaseTestCase {
 			printedBox.getPackagingListView().setPackagingList(List.of(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P)
 					.withIsMaster(true).withPkgLevel(PackagingLevel.Primary).withProduct(neutralBox)));
 			NodeRef printedBoxNodeRef = createNode(printedBox);
+			NodeRef rawMaterial = createRawMaterial();
 
 			FinishedProductData directFp = FinishedProductData.build().withName("Quiche direct reference").withUnit(ProductUnit.kg)
-					.withCompoList(List.of(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withProduct(createRawMaterial())))
+					.withCompoList(List.of(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withProduct(rawMaterial)))
 					.withPackagingList(List.of(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P).withIsMaster(true)
 							.withPkgLevel(PackagingLevel.Primary).withProduct(neutralBox)));
 
 			FinishedProductData nestedFp = FinishedProductData.build().withName("Quiche nested comparison").withUnit(ProductUnit.kg)
-					.withCompoList(List.of(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withProduct(createRawMaterial())))
+					.withCompoList(List.of(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withProduct(rawMaterial)))
 					.withPackagingList(List.of(PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.P).withIsMaster(true)
 							.withPkgLevel(PackagingLevel.Primary).withProduct(printedBoxNodeRef)));
 
