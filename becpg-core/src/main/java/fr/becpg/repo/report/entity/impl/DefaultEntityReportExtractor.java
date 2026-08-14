@@ -647,10 +647,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 			if (context.prefsContains("assocsToExtractWithImage", assocsToExtractWithImage(), prefixedAssocName)) {
 				List<NodeRef> nodeRefs = associationService.getTargetAssocs(entityNodeRef, assocDef.getName());
-				Element imgsElt = entityElt.element(TAG_IMAGES);
+				Element imgsElt = resolveEntityImagesElement(entityElt);
 				if (imgsElt != null) {
-					List<Element> selectNodes = imgsElt.elements(TAG_IMAGE);
-					int cnt = selectNodes != null ? selectNodes.size() : 1;
+					int cnt = imgsElt.elements(TAG_IMAGE).size();
 
 					for (NodeRef nodeRef : nodeRefs) {
 						if (entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
@@ -664,6 +663,27 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			}
 		}
 		return isExtracted;
+	}
+
+	/**
+	 * Resolves the images element the association images have to be appended to.
+	 *
+	 * They always belong to the root entity, whichever element is currently being loaded: a data
+	 * list item element carries no images element of its own, so looking one up locally would
+	 * silently drop every image extracted from that item.
+	 *
+	 * @param entityElt the element currently being loaded
+	 * @return the images element of the root entity, or null when there is none
+	 */
+	private Element resolveEntityImagesElement(Element entityElt) {
+		Document document = entityElt.getDocument();
+		if (document != null) {
+			Element rootElt = document.getRootElement();
+			if ((rootElt != null) && TAG_ENTITY.equals(rootElt.getName())) {
+				return rootElt.element(TAG_IMAGES);
+			}
+		}
+		return entityElt.element(TAG_IMAGES);
 	}
 
 	/**
