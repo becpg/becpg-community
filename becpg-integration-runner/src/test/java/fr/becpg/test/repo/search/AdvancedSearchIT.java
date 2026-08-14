@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.json.JsonHelper;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.search.AdvSearchQueryFilter;
@@ -35,6 +36,10 @@ import fr.becpg.test.PLMBaseTestCase;
 public class AdvancedSearchIT extends PLMBaseTestCase {
 
 	protected static final Log logger = LogFactory.getLog(AdvancedSearchIT.class);
+
+	private static final String DOTTED_ERP_CODE = "REF.001.A";
+
+	private static final String PLAIN_ERP_CODE = "REF002A";
 
 	@Autowired
 	protected AdvSearchService advSearchService;
@@ -210,6 +215,39 @@ public class AdvancedSearchIT extends PLMBaseTestCase {
 			assertFalse(excluded.contains(raw1));
 			assertTrue(excluded.contains(raw2));
 			assertTrue(excluded.contains(raw3));
+
+			return null;
+		});
+	}
+
+	/**
+	 * A criterion on an untokenised text property must match when the exact value is typed,
+	 * dots included. The value used to be stripped of its dots before reaching the query.
+	 */
+	@Test
+	public void testAdvancedSearchOnDottedTextValue() {
+
+		NodeRef dottedCode = inWriteTx(() -> {
+			NodeRef result = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP dotted code test 1");
+			nodeService.addAspect(result, BeCPGModel.ASPECT_ERP_CODE, Map.of(BeCPGModel.PROP_ERP_CODE, DOTTED_ERP_CODE));
+			return result;
+		});
+
+		NodeRef plainCode = inWriteTx(() -> {
+			NodeRef result = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP dotted code test 2");
+			nodeService.addAspect(result, BeCPGModel.ASPECT_ERP_CODE, Map.of(BeCPGModel.PROP_ERP_CODE, PLAIN_ERP_CODE));
+			return result;
+		});
+
+		waitForSolr();
+
+		inReadTx(() -> {
+
+			List<NodeRef> results = queryAdvancedSearch(
+					"{\"prop_bcpg_erpCode\":\"" + DOTTED_ERP_CODE + "\",\"datatype\":\"bcpg:rawMaterial\"}");
+
+			assertTrue(results.contains(dottedCode));
+			assertFalse(results.contains(plainCode));
 
 			return null;
 		});
