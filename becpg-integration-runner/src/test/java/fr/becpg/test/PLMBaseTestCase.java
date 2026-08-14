@@ -62,6 +62,9 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 
 	private static final Log logger = LogFactory.getLog(PLMBaseTestCase.class);
 
+	/** System entities created by the repository initialization: project lists, characteristics, list values, scores, product hierarchy, quality lists and security lists. */
+	private static final int EXPECTED_SYSTEM_ENTITY_COUNT = 7;
+
 	protected static final String HIERARCHY1_SEA_FOOD = "Sea food";
 	protected static final String HIERARCHY2_FISH = "Fish";
 	protected static final String HIERARCHY2_CRUSTACEAN = "Crustacean";
@@ -110,7 +113,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 
 		if (shouldInit) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				Assert.assertEquals(6, entitySystemService.getSystemEntities().size());
+				Assert.assertEquals(EXPECTED_SYSTEM_ENTITY_COUNT, entitySystemService.getSystemEntities().size());
 
 				initConstraints();
 				return false;
