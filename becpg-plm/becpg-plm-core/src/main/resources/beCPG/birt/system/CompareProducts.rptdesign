@@ -3952,7 +3952,8 @@ function isHtml(val) {
                     <property name="name">value8</property>
                     <text-property name="displayName">value8</text-property>
                     <expression name="expression" type="javascript">formatWeight(parseQuantity(dataSetRow["value8"]))</expression>
-                    <property name="dataType">float</property>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">Aggregation</property>
@@ -4642,7 +4643,7 @@ entityNumber == null || entityNumber == ""</expression>
                     <property name="name">value1</property>
                     <text-property name="displayName">value1</text-property>
                     <expression name="expression" type="javascript">if(dataSetRow["propertyQName"]=="bcpg:compoListQty")
-formatWeight(parseFloat(dataSetRow["value1"]))
+formatWeight(parseQuantity(dataSetRow["value1"]))
 else
 dataSetRow["value1"]</expression>
                     <property name="dataType">string</property>
@@ -4652,7 +4653,7 @@ dataSetRow["value1"]</expression>
                     <property name="name">value2</property>
                     <text-property name="displayName">value2</text-property>
                     <expression name="expression" type="javascript">if(dataSetRow["propertyQName"]=="bcpg:compoListQty")
-formatWeight(parseFloat(dataSetRow["value2"]))
+formatWeight(parseQuantity(dataSetRow["value2"]))
 else
 dataSetRow["value2"]</expression>
                     <property name="dataType">string</property>
@@ -4662,7 +4663,7 @@ dataSetRow["value2"]</expression>
                     <property name="name">value3</property>
                     <text-property name="displayName">value3</text-property>
                     <expression name="expression" type="javascript">if(dataSetRow["propertyQName"]=="bcpg:compoListQty")
-formatWeight(parseFloat(dataSetRow["value3"]))
+formatWeight(parseQuantity(dataSetRow["value3"]))
 else
 dataSetRow["value3"]</expression>
                     <property name="dataType">string</property>
@@ -4672,7 +4673,7 @@ dataSetRow["value3"]</expression>
                     <property name="name">value4</property>
                     <text-property name="displayName">value4</text-property>
                     <expression name="expression" type="javascript">if(dataSetRow["propertyQName"]=="bcpg:compoListQty")
-formatWeight(parseFloat(dataSetRow["value4"]))
+formatWeight(parseQuantity(dataSetRow["value4"]))
 else
 dataSetRow["value4"]</expression>
                     <property name="dataType">string</property>
@@ -4682,7 +4683,7 @@ dataSetRow["value4"]</expression>
                     <property name="name">value5</property>
                     <text-property name="displayName">value5</text-property>
                     <expression name="expression" type="javascript">if(dataSetRow["propertyQName"]=="bcpg:compoListQty")
-formatWeight(parseFloat(dataSetRow["value5"]))
+formatWeight(parseQuantity(dataSetRow["value5"]))
 else
 dataSetRow["value5"]</expression>
                     <property name="dataType">string</property>
@@ -4692,7 +4693,7 @@ dataSetRow["value5"]</expression>
                     <property name="name">value6</property>
                     <text-property name="displayName">value6</text-property>
                     <expression name="expression" type="javascript">if(dataSetRow["propertyQName"]=="bcpg:compoListQty")
-formatWeight(parseFloat(dataSetRow["value6"]))
+formatWeight(parseQuantity(dataSetRow["value6"]))
 else
 dataSetRow["value6"]</expression>
                     <property name="dataType">string</property>
@@ -4702,7 +4703,7 @@ dataSetRow["value6"]</expression>
                     <property name="name">value7</property>
                     <text-property name="displayName">value7</text-property>
                     <expression name="expression" type="javascript">if(dataSetRow["propertyQName"]=="bcpg:compoListQty")
-formatWeight(parseFloat(dataSetRow["value7"]))
+formatWeight(parseQuantity(dataSetRow["value7"]))
 else
 dataSetRow["value7"]</expression>
                     <property name="dataType">string</property>
@@ -4712,7 +4713,7 @@ dataSetRow["value7"]</expression>
                     <property name="name">value8</property>
                     <text-property name="displayName">value8</text-property>
                     <expression name="expression" type="javascript">if(dataSetRow["propertyQName"]=="bcpg:compoListQty")
-formatWeight(parseFloat(dataSetRow["value8"]))
+formatWeight(parseQuantity(dataSetRow["value8"]))
 else
 dataSetRow["value8"]</expression>
                     <property name="dataType">string</property>
