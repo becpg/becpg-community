@@ -89,6 +89,15 @@
 					 */
 					entityNodeRef: null,
 
+					/**
+					 * Id of the form the control belongs to
+					 *
+					 * @property formId
+					 * @type string
+					 * @default null
+					 */
+					formId: null,
+
 				},
 
 
@@ -630,6 +639,12 @@
 				 *            {array} Event parameters
 				 */
 				onFormContainerDestroyed: function ConfigEditor_onFormContainerDestroyed(layer, args) {
+					var form = args[1];
+
+					if (form != null && form.id != this.options.formId) {
+						return;
+					}
+
 					if (this.widgets.dialog) {
 						this.widgets.dialog.destroy();
 						delete this.widgets.dialog;
