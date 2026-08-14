@@ -528,13 +528,16 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	}
 
 	/**
-	 * <p>cleanValue.</p>
+	 * <p>Cleans a property criterion value before it is injected in the FTS query.</p>
+	 *
+	 * The dot is kept: it is a legal word character in the FTS grammar and belongs to the
+	 * indexed value of untokenised properties such as cm:creator or bcpg:erpCode.
 	 *
 	 * @param propValue a {@link java.lang.String} object
 	 * @return a {@link java.lang.String} object
 	 */
 	private String cleanValue(String propValue) {
-		String cleanQuery = propValue.replace(".", "").replace("#", "").replace("%", "");
+		String cleanQuery = propValue.replace("#", "").replace("%", "");
 
 		if (cleanQuery.contains("\",\"")) {
 			cleanQuery = cleanQuery.replace("\",\"", "\" OR \"");
