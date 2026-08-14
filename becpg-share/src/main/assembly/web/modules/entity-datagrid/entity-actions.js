@@ -27,6 +27,11 @@
     var Dom = YAHOO.util.Dom, Bubbling = YAHOO.Bubbling;
 
     /**
+     * Delay after which a pending form dialog is unlocked, in case its template could not be loaded.
+     */
+    var FORM_DIALOG_LOCK_TIMEOUT = 10000;
+
+    /**
      * beCPG.module.EntityDataGridActions implementation
      */
     beCPG.module.EntityDataGridActions = {};
@@ -34,6 +39,34 @@
         /**
           * ACTIONS WHICH ARE LOCAL TO THE DATAGRID COMPONENT
           */
+
+        /**
+          * Takes the form dialog lock. The create and edit dialogs share the same popup id, so a second
+          * request sent while the previous form template is still loading injects the same html ids twice
+          * and leaves the page broken until it is reloaded.
+          *
+          * @method _lockFormDialog
+          * @return {boolean} true when the caller is allowed to open the dialog
+          */
+        _lockFormDialog: function EntityDataGrid__lockFormDialog() {
+            if (this.formDialogPending) {
+                return false;
+            }
+
+            this.formDialogPending = true;
+            YAHOO.lang.later(FORM_DIALOG_LOCK_TIMEOUT, this, this._unlockFormDialog);
+
+            return true;
+        },
+
+        /**
+          * Releases the form dialog lock, once the form template is loaded or has failed to load.
+          *
+          * @method _unlockFormDialog
+          */
+        _unlockFormDialog: function EntityDataGrid__unlockFormDialog() {
+            this.formDialogPending = false;
+        },
 
         /**
           * New Row button click handler
@@ -86,6 +119,8 @@
 
             // Intercept before dialog show
             var doBeforeDialogShow = function EntityDataGrid_onActionCreate_doBeforeDialogShow(p_form, p_dialog) {
+                this._unlockFormDialog();
+
                 Alfresco.util.populateHTML([p_dialog.id + "-dialogTitle", this.msg("label.new-row.title")], [
                     p_dialog.id + "-dialogHeader", this.msg("label.new-row.header")]);
 
@@ -132,6 +167,10 @@
                         list: encodeURIComponent(this.datalistMeta.name != null ? this.datalistMeta.name : this.options.list),
                         siteId: this.options.siteId
                     });
+
+            if (!this._lockFormDialog()) {
+                return;
+            }
 
             // Using Forms Service, so always create new instance
             var createRow = new Alfresco.module.SimpleDialog(popupId);
@@ -254,10 +293,14 @@
         onActionEdit: function EntityDataGrid_onActionEdit(item) {
             var me = this;
 
-
+            if (!this._lockFormDialog()) {
+                return;
+            }
 
             // Intercept before dialog show
             var doBeforeDialogShow = function EntityDataGrid_onActionEdit_doBeforeDialogShow(p_form, p_dialog) {
+                this._unlockFormDialog();
+
                 Alfresco.util.populateHTML([p_dialog.id + "-dialogTitle", this.msg("label.edit-row.title")]);
 
                 this._freezeGridScroll(p_dialog);
