@@ -10,6 +10,41 @@
     <method name="initialize"><![CDATA[importPackage(Packages.java.util)
 importPackage(Packages.java.text);
 
+// Les quantites arrivent en texte, et pas toujours dans le meme format : soit ecrites
+// dans la langue de l'utilisateur ("2,5"), soit serialisees avec un point
+// ("99.99999999999999"). On reconnait donc le separateur decimal au lieu de le supposer.
+function parseQuantity ( value ) {
+	if(value == null || value == undefined){
+		return NaN;
+	}
+
+	// separateurs de milliers : espace, espace insecable, espace fine insecable
+	var str = value.toString().replace(/[\s\u00A0\u202F]/g, "");
+
+	if(str == ""){
+		return NaN;
+	}
+
+	var dots = str.split(".").length - 1,
+		commas = str.split(",").length - 1;
+
+	if(dots > 0 && commas > 0){
+		// les deux sont presents : le dernier rencontre est le separateur decimal
+		var cut = Math.max(str.lastIndexOf("."), str.lastIndexOf(","));
+		str = str.substring(0, cut).replace(/[.,]/g, "") + "." + str.substring(cut + 1);
+	} else if(commas == 1){
+		// une seule virgule : c'est le separateur decimal. Le formateur du serveur
+		// separe les milliers par une espace, deja retiree ci-dessus.
+		str = str.replace(",", ".");
+	} else if(commas > 0){
+		str = str.replace(/,/g, "");
+	} else if(dots > 1){
+		str = str.replace(/\./g, "");
+	}
+
+	return parseFloat(str);
+}
+
 function convert ( qty, value, isVolume ) {
 	if(isVolume){ 
 		if(qty<1){
@@ -1310,17 +1345,14 @@ if ( row["properties1"] != null ) {
 				dataSetValue = (data != null ) ? data[0] : null;
 	
 		if ( dataSetValue != null ) {
-		
-			dataSetValue = dataSetValue.replace(new RegExp(" ", 'g'), "");
-			
-			if( dataSetValue != "" ) { 
-		
-				var  format = NumberFormat.getInstance(reportContext.getLocale());
-	 		  		 	number = format.parse( dataSetValue.replace(new RegExp(" ", 'g'), "")),
-			   			value = number.floatValue(),
-			  			qty = Math.abs(value);
-		  
-				properties_array[ data[1] ] = props[index] + " : " + convert(qty, value, (props[index] == volume )); 
+
+			var  value = parseQuantity( dataSetValue );
+
+			if( !isNaN(value) ) {
+
+				var  qty = Math.abs(value);
+
+				properties_array[ data[1] ] = props[index] + " : " + convert(qty, value, (props[index] == volume ));
 		
 				properties_array.join(" ; ");
 			}
@@ -1349,15 +1381,13 @@ if ( row["properties2"] != null ) {
 				dataSetValue = (data != null ) ? data[0] : null;
 	
 		if ( dataSetValue != null ) {
-		
-			dataSetValue = dataSetValue.replace(new RegExp(" ", 'g'), "");
-			
-			if( dataSetValue != "" ) { 
-				var  format = NumberFormat.getInstance(reportContext.getLocale()),
-	 		  		 	number = format.parse( dataSetValue );
-			   			value = number.floatValue(),
-			  			qty = Math.abs(value);
-		  
+
+			var  value = parseQuantity( dataSetValue );
+
+			if( !isNaN(value) ) {
+
+				var  qty = Math.abs(value);
+
 				properties_array[data[1]] = props[index] + " : " + convert(qty, value, props[index] == volume);
 		
 				properties_array.join(" ; ");
