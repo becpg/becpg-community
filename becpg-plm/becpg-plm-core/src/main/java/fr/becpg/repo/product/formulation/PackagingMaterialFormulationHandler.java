@@ -332,8 +332,7 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 
 			BigDecimal tare = FormulationHelper.getTareInKg(dataItem, packagingProduct).multiply(BigDecimal.valueOf(subQty * 1000d));
 
-			if (alfrescoRepository.hasDataList(packagingProduct, PackModel.PACK_MATERIAL_LIST_TYPE)
-					&& (packagingProduct.getPackMaterialList() != null)) {
+			if (hasPackMaterialList(packagingProduct)) {
 
 				for (PackMaterialListDataItem packMateriDataItem : packagingProduct.getPackMaterialList()) {
 					if (packMateriDataItem.getPmlWeight() != null) {
@@ -377,5 +376,19 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 				}
 			}
 		}
+	}
+
+	/**
+	 * <p>Tells whether the packaging details its materials in a packMaterialList.</p>
+	 *
+	 * The entity template of a packaging material always creates the datalist, so its mere existence
+	 * says nothing: only a filled list takes precedence over the <code>pack:pmMaterialRefs</code>
+	 * associations.
+	 *
+	 * @param packagingProduct a {@link fr.becpg.repo.product.data.PackagingMaterialData} object
+	 * @return true when the packaging has at least one packMaterialList line
+	 */
+	private boolean hasPackMaterialList(PackagingMaterialData packagingProduct) {
+		return (packagingProduct.getPackMaterialList() != null) && !packagingProduct.getPackMaterialList().isEmpty();
 	}
 }
