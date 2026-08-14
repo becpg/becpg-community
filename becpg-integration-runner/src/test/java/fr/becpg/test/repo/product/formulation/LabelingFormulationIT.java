@@ -1036,8 +1036,9 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Force one").withFormula("1")
 				.withLabelingRuleType(LabelingRuleType.ForcePercentage).withComponents(Collections.singletonList(ing2)));
 
+		// The label is ordered on the forced percentage, so ing2 forced to 1% now comes after ing1
 		checkILL(finishedProductNodeRef, labelingRuleList,
-				"epaississant french : ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing2 french 1%, ing1 french 8,3%", Locale.FRENCH);
+				"epaississant french : ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing1 french 8,3%, ing2 french 1%", Locale.FRENCH);
 
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList
@@ -1048,7 +1049,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 				.withLabelingRuleType(LabelingRuleType.ForcePercentage).withComponents(Collections.singletonList(ing2)));
 
 		checkILL(finishedProductNodeRef, labelingRuleList,
-				"epaississant french : ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing2 french 2%, ing1 french 8,3%", Locale.FRENCH);
+				"epaississant french : ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing1 french 8,3%, ing2 french 2%", Locale.FRENCH);
 
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList
@@ -1094,6 +1095,48 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		checkILL(finishedProductNodeRef, labelingRuleList,
 				"epaississant french : ing5 french (ing1 french, ing4 french), ing2 french 17%, ing1 french", Locale.FRENCH);
+
+	}
+
+	@Test
+	public void testForcePercentageOrdering() {
+
+		/** #32476 The label is ordered on the forced percentage, not on the computed one */
+
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			logger.debug("/*-- Create finished product --*/");
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Produit fini 4");
+			finishedProduct.setLegalName("Legal Produit fini 4");
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setQty(4d);
+			finishedProduct.setDensity(1d);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+
+			compoList.add(CompoListDataItem.build().withQtyUsed(3d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial7NodeRef));
+			compoList.add(CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("%").withFormula("#.#%|HALF_DOWN").withLabelingRuleType(LabelingRuleType.ShowPerc));
+
+		checkILL(finishedProductNodeRef, labelingRuleList,
+				"epaississant french : ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing2 french 16,7%, ing1 french 8,3%", Locale.FRENCH);
+
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Force five").withFormula("5")
+				.withLabelingRuleType(LabelingRuleType.ForcePercentage).withComponents(Collections.singletonList(ing2)));
+
+		checkILL(finishedProductNodeRef, labelingRuleList,
+				"epaississant french : ing5 french 75% (ing1 french 52,5%, ing4 french 22,5%), ing1 french 8,3%, ing2 french 5%", Locale.FRENCH);
 
 	}
 
