@@ -294,7 +294,8 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent
 
 		if (fieldLocalName.contains(itemLocalName)) {
 			QName newQname = QName.createQName(fieldQname.getNamespaceURI(), fieldLocalName.replace(itemLocalName, newItemType.getLocalName()));
-			ClassAttributeDefinition ret = getPropDef(newQname);
+			QName mappedNewQName = propDefMapping.get(newQname);
+			ClassAttributeDefinition ret = getPropDef(mappedNewQName != null ? mappedNewQName : newQname);
 			if (ret != null) {
 				return ret;
 			}
