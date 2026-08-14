@@ -2254,7 +2254,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 		BigDecimal tare = FormulationHelper.getTareInKg(dataItem, packagingMaterial).multiply(KG_TO_G);
 
-		if (alfrescoRepository.hasDataList(packagingMaterial, PackModel.PACK_MATERIAL_LIST_TYPE) && (packagingMaterial.getPackMaterialList() != null)) {
+		if ((packagingMaterial.getPackMaterialList() != null) && !packagingMaterial.getPackMaterialList().isEmpty()) {
 			extractPackMaterialList(packagingElt.addElement(TAG_PACK_MATERIAL_LISTS), packagingMaterial, tare, context);
 		} else if ((packagingMaterial.getPackagingMaterials() != null) && !packagingMaterial.getPackagingMaterials().isEmpty()) {
 			extractPackagingMaterialRefs(packagingElt.addElement(TAG_PACK_MATERIAL_LISTS), packagingMaterial, tare);

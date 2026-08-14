@@ -20,10 +20,12 @@ package fr.becpg.test.repo.product.formulation;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -259,7 +261,7 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 
 	@SuppressWarnings("unchecked")
 	private List<String> extractPackagingMaterials(EntityReportData reportData) {
-		DecimalFormat df = new DecimalFormat("0.###");
+		DecimalFormat df = new DecimalFormat("0.###", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 		List<String> extractedMaterials = new ArrayList<>();
 
 		List<Node> packMaterialElts = reportData.getXmlDataSource()
