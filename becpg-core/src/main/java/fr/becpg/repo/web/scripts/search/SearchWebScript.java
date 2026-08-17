@@ -14,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
@@ -139,7 +140,10 @@ public class SearchWebScript extends AbstractSearchWebScript {
 			res.getWriter().write(ret.toString(3));
 
 		} catch (JSONException e) {
-			throw new WebScriptException("Unable to serialize JSON");
+			// Keep the cause: this catch also fires when the "query" parameter is not the expected
+			// JSON criteria object, and the bare "Unable to serialize JSON" message sent the reader
+			// looking for a serialization bug instead of a malformed request.
+			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Unable to read the search criteria: " + e.getMessage(), e);
 		} finally {
 			if (logger.isDebugEnabled() && watch!=null) {
 				watch.stop();
