@@ -23,6 +23,10 @@
          <#if col.readOnly??>
           "readOnly": ${col.readOnly?string},
          </#if>
+          <#-- Only present when the caller asked for it with withControls=true. -->
+          <#if col.control??>
+         "control": { "template": <#if col.control.template??>"${jsonUtils.encodeJSONString(col.control.template)}"<#else>null</#if>, "params": {<#list col.control.params?keys as paramName>"${jsonUtils.encodeJSONString(paramName)}": "${jsonUtils.encodeJSONString(col.control.params[paramName])}"<#if paramName_has_next>, </#if></#list>} },
+      	 </#if>
           <#if col.protectedField??>
          "protectedField": ${col.protectedField?string},
       	 </#if>
