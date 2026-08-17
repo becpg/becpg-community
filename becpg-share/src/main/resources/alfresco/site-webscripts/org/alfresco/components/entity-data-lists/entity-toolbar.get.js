@@ -38,10 +38,25 @@ function main()
         model.widgets = [entityDataListToolbar];
 
     } else {
-        var documentDetails = AlfrescoUtil.getNodeDetails(model.nodeRef, model.site,
+        // The action evaluators pull the whole data dictionary (a few MB) from the repository on
+        // first use. A truncated or failed answer there must not take the entire toolbar down with
+        // a 500: fall back on the same reduced toolbar as when no entity is given.
+        var documentDetails = null;
+        try
+        {
+           documentDetails = AlfrescoUtil.getNodeDetails(model.nodeRef, model.site,
                 {
                    actions: true
                 });
+        }
+        catch (e)
+        {
+           if (logger.isLoggingEnabled())
+           {
+              logger.log("Unable to read the entity details, rendering the toolbar without them: " + e);
+           }
+        }
+
                 if (documentDetails)
                 {
                    model.documentDetails = true;
