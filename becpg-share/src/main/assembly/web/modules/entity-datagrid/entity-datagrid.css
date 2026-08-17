@@ -86,47 +86,70 @@
     min-height:0px;
 }
 
-.columns-conf-list .columns-conf-item {
-    margin-bottom: 0em;
-    line-height: 1em;
-    padding: 2px 0;
-    position: relative;
-    min-height: 20px;
-    break-inside: avoid;
-    -webkit-column-break-inside: avoid;
-    page-break-inside: avoid;
+/* Checkbox picker shared by the column chooser and the bulk edit field chooser */
+.picker-list-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 0.8em;
 }
 
-.columns-conf-list .columns-conf-item input[type="checkbox"] {
-    position: absolute;
-    left: -9999px;
-    opacity: 0;
+.picker-list-title {
+    font-weight: bold;
+    margin-right: auto;
+    padding-right: 1em;
 }
 
-.columns-conf-list .columns-conf-item label {
-    position: relative;
-    cursor: pointer;
-    padding-left: 24px;
-    line-height: 1.4em;
-    margin-bottom: 0;
-    display: inline-block;
-    min-height: 16px;
-}
-
-.columns-conf-list .columns-conf-item label:before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 2px;
-    width: 13px;
-    height: 13px;
-    border: 1px solid #5a5a5a;
+.picker-list-header input[type="text"].picker-list-filter {
+    width: 18em;
+    padding: 3px 6px;
+    margin-right: 0.5em;
+    border: 1px solid #ccc;
     border-radius: 2px;
-    background-color: transparent;
 }
 
-.columns-conf-list .columns-conf-item:last-child {
+.picker-list-actions input[type="button"] {
+    margin-left: 0.3em;
+}
+
+.picker-list {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 1.5em;
+    max-height: 50vh;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0 0.5em 0 0;
+    list-style: none;
+}
+
+.picker-list .picker-list-item {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    min-height: 20px;
+    padding: 2px 0;
+    line-height: 1.4em;
+}
+
+.picker-list .picker-list-item input[type="checkbox"] {
+    flex: none;
+    margin: 0 6px 0 0;
+}
+
+.picker-list .picker-list-item label {
+    flex: auto;
+    min-width: 0;
     margin-bottom: 0;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.picker-list-no-match {
+    padding: 1em 0;
+    font-style: italic;
 }
 
 
