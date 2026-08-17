@@ -49,47 +49,6 @@
     </styles>
     <page-setup>
         <simple-master-page name="Simple MasterPage" id="10">
-            <page-footer>
-                <grid id="11">
-                    <column id="12"/>
-                    <column id="13"/>
-                    <row id="14">
-                        <cell id="15">
-                            <label id="16">
-                                <property name="style">footer-text</property>
-                                <text-property name="text" key="SLabel.pifReportTitle">PRODUCT INFORMATION FILE (PIF)</text-property>
-                            </label>
-                        </cell>
-                        <cell id="17">
-                            <grid id="18">
-                                <column id="19"/>
-                                <column id="20"/>
-                                <column id="21"/>
-                                <row id="23">
-                                    <cell id="24">
-                                        <auto-text id="27">
-                                            <property name="style">footer-text</property>
-                                            <property name="type">page-number</property>
-                                        </auto-text>
-                                    </cell>
-                                    <cell id="28">
-                                        <label id="29">
-                                            <property name="style">footer-text</property>
-                                            <text-property name="text"> / </text-property>
-                                        </label>
-                                    </cell>
-                                    <cell id="30">
-                                        <auto-text id="31">
-                                            <property name="style">footer-text</property>
-                                            <property name="type">total-page</property>
-                                        </auto-text>
-                                    </cell>
-                                </row>
-                            </grid>
-                        </cell>
-                    </row>
-                </grid>
-            </page-footer>
         </simple-master-page>
     </page-setup>
     <body>
@@ -101,7 +60,7 @@
                 <cell id="103">
                     <label id="104">
                         <property name="style">toc-header</property>
-                        <text-property name="text" key="SLabel.tableOfContents">TABLE OF CONTENTS</text-property>
+                        <text-property name="text" key="SLabel.tableOfContents">TABLE DES MATIÈRES</text-property>
                     </label>
                 </cell>
             </row>
@@ -120,7 +79,7 @@
                 <cell id="204">
                     <label id="205">
                         <property name="style">toc-level1</property>
-                        <text-property name="text" key="SLabel.pifProductName">PRODUCT INFORMATION FILE SUMMARY</text-property>
+                        <text-property name="text" key="SLabel.pifProductName">RÉSUMÉ DU DOSSIER D'INFORMATION PRODUIT</text-property>
                     </label>
                 </cell>
                 <cell id="206">
@@ -136,7 +95,7 @@
                 <cell id="209">
                     <label id="210">
                         <property name="style">toc-level1</property>
-                        <text-property name="text" key="SLabel.pifAnnexCompoQualiQuanti">ANNEX 1: QUALITATIVE AND QUANTITATIVE COMPOSITION (QUALI-QUANTI)</text-property>
+                        <text-property name="text" key="SLabel.pifAnnexCompoQualiQuanti">ANNEXE 1 : COMPOSITION QUALITATIVE ET QUANTITATIVE (QUALI-QUANTI)</text-property>
                     </label>
                 </cell>
                 <cell id="211">
@@ -152,7 +111,7 @@
                 <cell id="214">
                     <label id="215">
                         <property name="style">toc-level1</property>
-                        <text-property name="text" key="SLabel.pifAnnexRawMaterials">ANNEX 2: RAW MATERIAL TECHNICAL &amp; SAFETY DATA SHEETS</text-property>
+                        <text-property name="text" key="SLabel.pifAnnexRawMaterials">ANNEXE 2 : FICHES TECHNIQUES ET DE SÉCURITÉ DES MATIÈRES PREMIÈRES</text-property>
                     </label>
                 </cell>
                 <cell id="216">
@@ -168,7 +127,7 @@
                 <cell id="219">
                     <label id="220">
                         <property name="style">toc-level1</property>
-                        <text-property name="text" key="SLabel.pifAnnexPrimaryPackaging">ANNEX 3: PACKAGING SPECIFICATIONS &amp; FOOD/COSMETIC CONTACT</text-property>
+                        <text-property name="text" key="SLabel.pifAnnexPrimaryPackaging">ANNEXE 3 : SPÉCIFICATIONS DES EMBALLAGES ET CONTACT COSMÉTIQUE</text-property>
                     </label>
                 </cell>
                 <cell id="221">
@@ -184,7 +143,7 @@
                 <cell id="224">
                     <label id="225">
                         <property name="style">toc-level1</property>
-                        <text-property name="text" key="SLabel.pifAnnexCPSR">ANNEX 4: COSMETIC PRODUCT SAFETY REPORT (CPSR)</text-property>
+                        <text-property name="text" key="SLabel.pifAnnexCPSR">ANNEXE 4 : RAPPORT SUR LA SÉCURITÉ DU PRODUIT COSMÉTIQUE (DSE / CPSR)</text-property>
                     </label>
                 </cell>
                 <cell id="226">
@@ -200,7 +159,7 @@
                 <cell id="229">
                     <label id="230">
                         <property name="style">toc-level1</property>
-                        <text-property name="text" key="SLabel.pifAnnexStabilityMicro">ANNEX 5: STABILITY &amp; MICROBIOLOGICAL CHALLENGE TESTS</text-property>
+                        <text-property name="text" key="SLabel.pifAnnexStabilityMicro">ANNEXE 5 : ESSAIS DE STABILITÉ ET CHALLENGE TESTS MICROBIOLOGIQUES</text-property>
                     </label>
                 </cell>
                 <cell id="231">
@@ -216,7 +175,7 @@
                 <cell id="234">
                     <label id="235">
                         <property name="style">toc-level1</property>
-                        <text-property name="text" key="SLabel.pifAnnexClaimEfficacy">ANNEX 6: CLAIM SUBSTANTIATION &amp; EFFICACY PROOF</text-property>
+                        <text-property name="text" key="SLabel.pifAnnexClaimEfficacy">ANNEXE 6 : JUSTIFICATION DES REVENDICATIONS ET PREUVES D'EFFICACITÉ</text-property>
                     </label>
                 </cell>
                 <cell id="236">
@@ -232,7 +191,7 @@
                 <cell id="239">
                     <label id="240">
                         <property name="style">toc-level1</property>
-                        <text-property name="text" key="SLabel.pifAnnexGMPAnimalTesting">ANNEX 7: GMP CERTIFICATES &amp; ANIMAL TESTING STATEMENT</text-property>
+                        <text-property name="text" key="SLabel.pifAnnexGMPAnimalTesting">ANNEXE 7 : CERTIFICATS BPF ET ATTESTATION EXPÉRIMENTATION ANIMALE</text-property>
                     </label>
                 </cell>
                 <cell id="241">
@@ -253,7 +212,7 @@
                 <cell id="303">
                     <label id="304">
                         <property name="style">section-title</property>
-                        <text-property name="text" key="SLabel.pifProductName">PRODUCT INFORMATION FILE SUMMARY</text-property>
+                        <text-property name="text" key="SLabel.pifProductName">RÉSUMÉ DU DOSSIER D'INFORMATION PRODUIT</text-property>
                     </label>
                 </cell>
             </row>

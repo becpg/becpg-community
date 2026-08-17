@@ -8,11 +8,7 @@
   },
 
   "tableOfContents": {
-    "enabled": true,
-    "title": "SLabel.tableOfContents",
-    "font": "Helvetica-Bold",
-    "size": 16,
-    "color": "#1F3864"
+    "enabled": false
   },
 
   "pagination": {

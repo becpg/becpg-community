@@ -2042,8 +2042,13 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 						pifTplInfo.setResources(pifResources);
 						pifTplInfo.setSupportedLocale(supportedLocale);
 
+						String pifReportName = TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PIF_REPORT);
+						if (pifReportName == null || pifReportName.isEmpty()) {
+							pifReportName = "Dossier d'information produit";
+						}
+
 						NodeRef pifTplNodeRef = reportTplService.createTplRptDesign(folderNodeRef,
-								TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PIF_REPORT),
+								pifReportName,
 								"beCPG/birt/document/product/default/PIFReport.rptdesign", pifTplInfo, false);
 						nodeService.setProperty(pifTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_AGGREGATE, true);
 					} catch (Exception e) {
