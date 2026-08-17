@@ -100,11 +100,16 @@
     min-width: 6em;
     font-weight: bold;
     padding-right: 1em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.picker-list-header input[type="text"].picker-list-filter {
+/* The dialog stylesheet stretches every text field of a form to 30em, which here would push the
+   buttons onto a second line. */
+.form-field .picker-list-header input[type="text"].picker-list-filter {
     flex: none;
-    width: 14em;
+    width: 12em !important;
     padding: 3px 6px;
     margin-right: 0.5em;
     border: 1px solid #ccc;
