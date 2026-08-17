@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="author">beCPG</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.7.0</property>
+    <simple-property-list name="includeResource">
+        <value>./PIFReport</value>
+    </simple-property-list>
+    <property name="units">in</property>
+    <styles>
+        <style name="report-title" id="2">
+            <property name="fontFamily">Helvetica</property>
+            <property name="fontSize">16pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#1F3864</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="toc-header" id="3">
+            <property name="fontFamily">Helvetica</property>
+            <property name="fontSize">14pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#1F3864</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="toc-level1" id="4">
+            <property name="fontFamily">Helvetica</property>
+            <property name="fontSize">10pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#000000</property>
+        </style>
+        <style name="toc-num-level1" id="5">
+            <property name="fontFamily">Helvetica</property>
+            <property name="fontSize">8pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#000000</property>
+            <property name="textAlign">right</property>
+        </style>
+        <style name="footer-text" id="6">
+            <property name="fontFamily">Helvetica</property>
+            <property name="fontSize">8pt</property>
+            <property name="color">#1F3864</property>
+            <property name="fontWeight">bold</property>
+        </style>
+        <style name="section-title" id="7">
+            <property name="fontFamily">Helvetica</property>
+            <property name="fontSize">12pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#1F3864</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="10">
+            <page-footer>
+                <grid id="11">
+                    <column id="12"/>
+                    <column id="13"/>
+                    <row id="14">
+                        <cell id="15">
+                            <label id="16">
+                                <property name="style">footer-text</property>
+                                <text-property name="text" key="SLabel.pifReportTitle">PRODUCT INFORMATION FILE (PIF)</text-property>
+                            </label>
+                        </cell>
+                        <cell id="17">
+                            <grid id="18">
+                                <column id="19"/>
+                                <column id="20"/>
+                                <column id="21"/>
+                                <row id="23">
+                                    <cell id="24">
+                                        <auto-text id="27">
+                                            <property name="style">footer-text</property>
+                                            <property name="type">page-number</property>
+                                        </auto-text>
+                                    </cell>
+                                    <cell id="28">
+                                        <label id="29">
+                                            <property name="style">footer-text</property>
+                                            <text-property name="text"> / </text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="30">
+                                        <auto-text id="31">
+                                            <property name="style">footer-text</property>
+                                            <property name="type">total-page</property>
+                                        </auto-text>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                </grid>
+            </page-footer>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <!-- Page 1: Table of Contents -->
+        <grid id="100">
+            <property name="width">100%</property>
+            <column id="101"/>
+            <row id="102">
+                <cell id="103">
+                    <label id="104">
+                        <property name="style">toc-header</property>
+                        <text-property name="text" key="SLabel.tableOfContents">TABLE OF CONTENTS</text-property>
+                    </label>
+                </cell>
+            </row>
+        </grid>
+        <grid id="200">
+            <property name="width">100%</property>
+            <column id="201">
+                <property name="width">80%</property>
+            </column>
+            <column id="202">
+                <property name="width">20%</property>
+            </column>
+            
+            <!-- Summary Body -->
+            <row id="203">
+                <cell id="204">
+                    <label id="205">
+                        <property name="style">toc-level1</property>
+                        <text-property name="text" key="SLabel.pifProductName">PRODUCT INFORMATION FILE SUMMARY</text-property>
+                    </label>
+                </cell>
+                <cell id="206">
+                    <label id="207">
+                        <property name="style">toc-num-level1</property>
+                        <text-property name="text">2</text-property>
+                    </label>
+                </cell>
+            </row>
+
+            <!-- Annex 1: Compo Quali-Quanti -->
+            <row id="208">
+                <cell id="209">
+                    <label id="210">
+                        <property name="style">toc-level1</property>
+                        <text-property name="text" key="SLabel.pifAnnexCompoQualiQuanti">ANNEX 1: QUALITATIVE AND QUANTITATIVE COMPOSITION (QUALI-QUANTI)</text-property>
+                    </label>
+                </cell>
+                <cell id="211">
+                    <label id="212">
+                        <property name="style">toc-num-level1</property>
+                        <text-property name="text">{{page:annexe-compo-quali-quanti}}</text-property>
+                    </label>
+                </cell>
+            </row>
+
+            <!-- Annex 2: Raw Materials -->
+            <row id="213">
+                <cell id="214">
+                    <label id="215">
+                        <property name="style">toc-level1</property>
+                        <text-property name="text" key="SLabel.pifAnnexRawMaterials">ANNEX 2: RAW MATERIAL TECHNICAL &amp; SAFETY DATA SHEETS</text-property>
+                    </label>
+                </cell>
+                <cell id="216">
+                    <label id="217">
+                        <property name="style">toc-num-level1</property>
+                        <text-property name="text">{{page:annexe-mp}}</text-property>
+                    </label>
+                </cell>
+            </row>
+
+            <!-- Annex 3: Packaging -->
+            <row id="218">
+                <cell id="219">
+                    <label id="220">
+                        <property name="style">toc-level1</property>
+                        <text-property name="text" key="SLabel.pifAnnexPrimaryPackaging">ANNEX 3: PACKAGING SPECIFICATIONS &amp; FOOD/COSMETIC CONTACT</text-property>
+                    </label>
+                </cell>
+                <cell id="221">
+                    <label id="222">
+                        <property name="style">toc-num-level1</property>
+                        <text-property name="text">{{page:annexe-emb-primaire}}</text-property>
+                    </label>
+                </cell>
+            </row>
+
+            <!-- Annex 4: CPSR / DSE -->
+            <row id="223">
+                <cell id="224">
+                    <label id="225">
+                        <property name="style">toc-level1</property>
+                        <text-property name="text" key="SLabel.pifAnnexCPSR">ANNEX 4: COSMETIC PRODUCT SAFETY REPORT (CPSR)</text-property>
+                    </label>
+                </cell>
+                <cell id="226">
+                    <label id="227">
+                        <property name="style">toc-num-level1</property>
+                        <text-property name="text">{{page:annexe-cpsr}}</text-property>
+                    </label>
+                </cell>
+            </row>
+
+            <!-- Annex 5: Stability & Micro -->
+            <row id="228">
+                <cell id="229">
+                    <label id="230">
+                        <property name="style">toc-level1</property>
+                        <text-property name="text" key="SLabel.pifAnnexStabilityMicro">ANNEX 5: STABILITY &amp; MICROBIOLOGICAL CHALLENGE TESTS</text-property>
+                    </label>
+                </cell>
+                <cell id="231">
+                    <label id="232">
+                        <property name="style">toc-num-level1</property>
+                        <text-property name="text">{{page:annexe-stability-micro}}</text-property>
+                    </label>
+                </cell>
+            </row>
+
+            <!-- Annex 6: Claim Efficacy -->
+            <row id="233">
+                <cell id="234">
+                    <label id="235">
+                        <property name="style">toc-level1</property>
+                        <text-property name="text" key="SLabel.pifAnnexClaimEfficacy">ANNEX 6: CLAIM SUBSTANTIATION &amp; EFFICACY PROOF</text-property>
+                    </label>
+                </cell>
+                <cell id="236">
+                    <label id="237">
+                        <property name="style">toc-num-level1</property>
+                        <text-property name="text">{{page:annexe-claim-efficacy}}</text-property>
+                    </label>
+                </cell>
+            </row>
+
+            <!-- Annex 7: GMP & Animal Testing -->
+            <row id="238">
+                <cell id="239">
+                    <label id="240">
+                        <property name="style">toc-level1</property>
+                        <text-property name="text" key="SLabel.pifAnnexGMPAnimalTesting">ANNEX 7: GMP CERTIFICATES &amp; ANIMAL TESTING STATEMENT</text-property>
+                    </label>
+                </cell>
+                <cell id="241">
+                    <label id="242">
+                        <property name="style">toc-num-level1</property>
+                        <text-property name="text">{{page:annexe-gmp-animal-testing}}</text-property>
+                    </label>
+                </cell>
+            </row>
+        </grid>
+
+        <!-- Page 2: Core Item Specification Body -->
+        <grid id="300">
+            <property name="pageBreakBefore">always</property>
+            <property name="width">100%</property>
+            <column id="301"/>
+            <row id="302">
+                <cell id="303">
+                    <label id="304">
+                        <property name="style">section-title</property>
+                        <text-property name="text" key="SLabel.pifProductName">PRODUCT INFORMATION FILE SUMMARY</text-property>
+                    </label>
+                </cell>
+            </row>
+        </grid>
+    </body>
+</report>

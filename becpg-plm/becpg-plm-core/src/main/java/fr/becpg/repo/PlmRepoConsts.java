@@ -280,6 +280,7 @@ public class PlmRepoConsts {
 	public static final String PATH_REPORTS_ECO = "ECOReports";
 	
 	public static final String PATH_PRODUCT_SPEC_REPORT = "ProductSpecReport";
+	public static final String PATH_PIF_REPORT = "PIFReport";
 
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_CITEO="ExportCiteo"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_CITEO = "ExportCiteo";

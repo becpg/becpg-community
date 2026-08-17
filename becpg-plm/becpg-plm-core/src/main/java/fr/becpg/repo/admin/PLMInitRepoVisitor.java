@@ -2027,6 +2027,28 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					} catch (Exception e) {
 						logger.error("Failed to create Specification Technique aggregate report template", e);
 					}
+
+					try {
+						NodeRef pifJsonNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/PIFReport.agg.json", false);
+						List<NodeRef> pifResources = new ArrayList<>(resources);
+						pifResources.add(pifJsonNodeRef);
+
+						ReportTplInformation pifTplInfo = new ReportTplInformation();
+						pifTplInfo.setReportType(ReportType.Document);
+						pifTplInfo.setReportFormat(ReportFormat.PDF);
+						pifTplInfo.setNodeType(productType);
+						pifTplInfo.setDefaultTpl(false);
+						pifTplInfo.setSystemTpl(true);
+						pifTplInfo.setResources(pifResources);
+						pifTplInfo.setSupportedLocale(supportedLocale);
+
+						NodeRef pifTplNodeRef = reportTplService.createTplRptDesign(folderNodeRef,
+								TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PIF_REPORT),
+								"beCPG/birt/document/product/default/PIFReport.rptdesign", pifTplInfo, false);
+						nodeService.setProperty(pifTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_AGGREGATE, true);
+					} catch (Exception e) {
+						logger.error("Failed to create PIF aggregate report template", e);
+					}
 				}
 
 				i++;
