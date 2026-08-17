@@ -1705,8 +1705,8 @@
     </styles>
     <page-setup>
         <simple-master-page name="Simple MasterPage" id="10">
-            <property name="type">a3</property>
-            <property name="orientation">landscape</property>
+            <property name="type">a4</property>
+            <property name="orientation">portrait</property>
             <property name="topMargin">1cm</property>
             <property name="leftMargin">1cm</property>
             <property name="bottomMargin">1cm</property>
@@ -2172,12 +2172,6 @@ dataSetRow["versionLabel"]
             <property name="pageBreakInside">auto</property>
             <property name="width">100%</property>
             <property name="dataSet">rawMaterials</property>
-            <list-property name="visibility">
-                <structure>
-                    <property name="format">all</property>
-                    <expression name="valueExpr" type="javascript">row["run"]==null || row["run"]==0</expression>
-                </structure>
-            </list-property>
             <list-property name="boundDataColumns">
                 <structure>
                     <property name="name">legalName</property>
