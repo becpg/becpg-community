@@ -101,10 +101,11 @@ public class ProductDataEntityJsonService {
 
         readString(attrs, PLMModel.PROP_RCL_REQ_TYPE, v -> item.setReqType(RequirementType.fromString(v)));
         readString(attrs, PLMModel.PROP_RCL_REQ_DATA_TYPE, v -> item.setReqDataType(RequirementDataType.fromString(v)));
-        readString(attrs, PLMModel.PROP_RCL_REQ_MESSAGE, v -> item.setReqMlMessage(new MLText(v)));
         readString(attrs, PLMModel.PROP_REGULATORY_CODE, item::setRegulatoryCode);
         readString(attrs, PLMModel.PROP_RCL_FORMULATION_CHAIN_ID, item::setFormulationChainId);
         readString(attrs, PLMModel.PROP_RCL_ERROR_LOG, item::setErrorLog);
+
+        readMlString(attrs, PLMModel.PROP_RCL_REQ_MESSAGE, item::setReqMlMessage);
 
         readDouble(attrs, PLMModel.PROP_RCL_REQ_MAX_QTY, item::setReqMaxQty);
 
@@ -182,12 +183,12 @@ public class ProductDataEntityJsonService {
                 item.setIng(new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, id));
         }
 
-        readString(attrs, PLMModel.PROP_IRL_CITATION, v -> item.setCitation(new MLText(v)));
-        readString(attrs, PLMModel.PROP_IRL_RESTRICTION_LEVELS, v -> item.setRestrictionLevels(new MLText(v)));
-        readString(attrs, PLMModel.PROP_IRL_PRECAUTIONS, v -> item.setPrecautions(new MLText(v)));
-        readString(attrs, PLMModel.PROP_IRL_RESULT_INDICATOR, v -> item.setResultIndicator(new MLText(v)));
-        readString(attrs, PLMModel.PROP_REGULATORY_COMMENT, v -> item.setComment(new MLText(v)));
-        readString(attrs, PLMModel.PROP_IRL_USAGES, v -> item.setUsages(new MLText(v)));
+        readMlString(attrs, PLMModel.PROP_IRL_CITATION, item::setCitation);
+        readMlString(attrs, PLMModel.PROP_IRL_RESTRICTION_LEVELS, item::setRestrictionLevels);
+        readMlString(attrs, PLMModel.PROP_IRL_PRECAUTIONS, item::setPrecautions);
+        readMlString(attrs, PLMModel.PROP_IRL_RESULT_INDICATOR, item::setResultIndicator);
+        readMlString(attrs, PLMModel.PROP_REGULATORY_COMMENT, item::setComment);
+        readMlString(attrs, PLMModel.PROP_IRL_USAGES, item::setUsages);
 
         readNodeRefs(attrs, PLMModel.ASSOC_REGULATORY_COUNTRIES, item::setRegulatoryCountries);
         readNodeRefs(attrs, PLMModel.ASSOC_REGULATORY_USAGE_REF, item::setRegulatoryUsages);
@@ -239,6 +240,28 @@ public class ProductDataEntityJsonService {
 
     private static String qnameToString(QName qname) {
         return "bcpg:" + qname.getLocalName();
+    }
+
+    private static void readMlString(JSONObject attrs, QName qname, Consumer<MLText> consumer) {
+        String baseKey = qnameToString(qname);
+        MLText value = null;
+        for (String key : attrs.keySet()) {
+            String[] split = key.split(baseKey + "_");
+            if (split.length == 2) {
+                Locale locale = MLTextHelper.parseLocale(split[1]);
+                if (value == null) {
+                    value = new MLText(locale, attrs.getString(key));
+                } else {
+                    value.addValue(locale, attrs.getString(key));
+                }
+            } else if (split.length == 1 && baseKey.equals(split[0])) {
+                consumer.accept(new MLText(attrs.getString(key)));
+                return;
+            }
+        }
+        if (value != null) {
+            consumer.accept(value);
+        }
     }
 
     private static void readString(JSONObject attrs, QName qname, Consumer<String> consumer) {
