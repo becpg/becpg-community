@@ -1134,10 +1134,15 @@ public class ReportPdfAggregator {
     private static String resolvePlaceholders(String template, Map<String, String> properties) {
         if (template == null) return "";
         String result = template;
-        for (Map.Entry<String, String> entry : properties.entrySet()) {
-            result = result.replace("${" + entry.getKey() + "}", entry.getValue());
+        if (properties != null) {
+            for (Map.Entry<String, String> entry : properties.entrySet()) {
+                if (entry.getValue() != null) {
+                    result = result.replace("${" + entry.getKey() + "}", entry.getValue());
+                }
+            }
         }
-        return result;
+        result = result.replaceAll("\\$\\{[^}]+\\}", "");
+        return result.trim();
     }
 
     private static boolean hasExistingBeCPGLayout(byte[] pdfBytes) {

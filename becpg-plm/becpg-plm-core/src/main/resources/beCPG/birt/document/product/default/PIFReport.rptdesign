@@ -7,44 +7,46 @@
     </simple-property-list>
     <property name="units">in</property>
     <styles>
-        <style name="report-title" id="2">
-            <property name="fontFamily">Helvetica</property>
-            <property name="fontSize">16pt</property>
-            <property name="fontWeight">bold</property>
-            <property name="color">#1F3864</property>
-            <property name="textAlign">center</property>
-        </style>
-        <style name="toc-header" id="3">
-            <property name="fontFamily">Helvetica</property>
+        <style name="becpg-header-title" id="2">
+            <property name="fontFamily">sans-serif</property>
             <property name="fontSize">14pt</property>
             <property name="fontWeight">bold</property>
-            <property name="color">#1F3864</property>
+            <property name="color">#004254</property>
             <property name="textAlign">center</property>
+            <property name="paddingTop">6pt</property>
+            <property name="paddingBottom">8pt</property>
         </style>
-        <style name="toc-level1" id="4">
-            <property name="fontFamily">Helvetica</property>
+        <style name="becpg-chapter-header" id="3">
+            <property name="backgroundColor">#004254</property>
+            <property name="fontFamily">sans-serif</property>
+            <property name="fontSize">10pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#FFFFFF</property>
+            <property name="textAlign">center</property>
+            <property name="paddingTop">4pt</property>
+            <property name="paddingBottom">4pt</property>
+        </style>
+        <style name="becpg-toc-title" id="4">
+            <property name="fontFamily">sans-serif</property>
             <property name="fontSize">10pt</property>
             <property name="fontWeight">bold</property>
             <property name="color">#000000</property>
+            <property name="paddingTop">4pt</property>
+            <property name="paddingBottom">4pt</property>
         </style>
-        <style name="toc-num-level1" id="5">
-            <property name="fontFamily">Helvetica</property>
-            <property name="fontSize">8pt</property>
+        <style name="becpg-toc-page" id="5">
+            <property name="fontFamily">sans-serif</property>
+            <property name="fontSize">9pt</property>
             <property name="fontWeight">bold</property>
             <property name="color">#000000</property>
             <property name="textAlign">right</property>
+            <property name="paddingTop">4pt</property>
+            <property name="paddingBottom">4pt</property>
         </style>
-        <style name="footer-text" id="6">
-            <property name="fontFamily">Helvetica</property>
-            <property name="fontSize">8pt</property>
-            <property name="color">#1F3864</property>
-            <property name="fontWeight">bold</property>
-        </style>
-        <style name="section-title" id="7">
-            <property name="fontFamily">Helvetica</property>
-            <property name="fontSize">12pt</property>
-            <property name="fontWeight">bold</property>
-            <property name="color">#1F3864</property>
+        <style name="becpg-row-border" id="6">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderBottomColor">#E0E0E0</property>
         </style>
     </styles>
     <page-setup>
@@ -52,39 +54,44 @@
         </simple-master-page>
     </page-setup>
     <body>
-        <!-- Page 1: Table of Contents -->
+        <!-- Page 1: Table of Contents Header -->
         <grid id="100">
             <property name="width">100%</property>
             <column id="101"/>
             <row id="102">
                 <cell id="103">
+                    <property name="style">becpg-chapter-header</property>
                     <label id="104">
-                        <property name="style">toc-header</property>
+                        <property name="style">becpg-chapter-header</property>
                         <text-property name="text" key="SLabel.tableOfContents">TABLE DES MATIÈRES</text-property>
                     </label>
                 </cell>
             </row>
         </grid>
+
         <grid id="200">
             <property name="width">100%</property>
+            <property name="marginTop">12pt</property>
             <column id="201">
-                <property name="width">80%</property>
+                <property name="width">65%</property>
             </column>
             <column id="202">
-                <property name="width">20%</property>
+                <property name="width">35%</property>
             </column>
             
             <!-- Summary Body -->
             <row id="203">
+                <property name="style">becpg-row-border</property>
                 <cell id="204">
                     <label id="205">
-                        <property name="style">toc-level1</property>
+                        <property name="style">becpg-toc-title</property>
                         <text-property name="text" key="SLabel.pifProductName">RÉSUMÉ DU DOSSIER D'INFORMATION PRODUIT</text-property>
                     </label>
                 </cell>
                 <cell id="206">
                     <label id="207">
-                        <property name="style">toc-num-level1</property>
+                        <property name="style">becpg-toc-page</property>
+                        <property name="noWrap">true</property>
                         <text-property name="text">2</text-property>
                     </label>
                 </cell>
@@ -92,15 +99,17 @@
 
             <!-- Annex 1: Compo Quali-Quanti -->
             <row id="208">
+                <property name="style">becpg-row-border</property>
                 <cell id="209">
                     <label id="210">
-                        <property name="style">toc-level1</property>
+                        <property name="style">becpg-toc-title</property>
                         <text-property name="text" key="SLabel.pifAnnexCompoQualiQuanti">ANNEXE 1 : COMPOSITION QUALITATIVE ET QUANTITATIVE (QUALI-QUANTI)</text-property>
                     </label>
                 </cell>
                 <cell id="211">
                     <label id="212">
-                        <property name="style">toc-num-level1</property>
+                        <property name="style">becpg-toc-page</property>
+                        <property name="noWrap">true</property>
                         <text-property name="text">{{page:annexe-compo-quali-quanti}}</text-property>
                     </label>
                 </cell>
@@ -108,15 +117,17 @@
 
             <!-- Annex 2: Raw Materials -->
             <row id="213">
+                <property name="style">becpg-row-border</property>
                 <cell id="214">
                     <label id="215">
-                        <property name="style">toc-level1</property>
+                        <property name="style">becpg-toc-title</property>
                         <text-property name="text" key="SLabel.pifAnnexRawMaterials">ANNEXE 2 : FICHES TECHNIQUES ET DE SÉCURITÉ DES MATIÈRES PREMIÈRES</text-property>
                     </label>
                 </cell>
                 <cell id="216">
                     <label id="217">
-                        <property name="style">toc-num-level1</property>
+                        <property name="style">becpg-toc-page</property>
+                        <property name="noWrap">true</property>
                         <text-property name="text">{{page:annexe-mp}}</text-property>
                     </label>
                 </cell>
@@ -124,15 +135,17 @@
 
             <!-- Annex 3: Packaging -->
             <row id="218">
+                <property name="style">becpg-row-border</property>
                 <cell id="219">
                     <label id="220">
-                        <property name="style">toc-level1</property>
+                        <property name="style">becpg-toc-title</property>
                         <text-property name="text" key="SLabel.pifAnnexPrimaryPackaging">ANNEXE 3 : SPÉCIFICATIONS DES EMBALLAGES ET CONTACT COSMÉTIQUE</text-property>
                     </label>
                 </cell>
                 <cell id="221">
                     <label id="222">
-                        <property name="style">toc-num-level1</property>
+                        <property name="style">becpg-toc-page</property>
+                        <property name="noWrap">true</property>
                         <text-property name="text">{{page:annexe-emb-primaire}}</text-property>
                     </label>
                 </cell>
@@ -140,15 +153,17 @@
 
             <!-- Annex 4: CPSR / DSE -->
             <row id="223">
+                <property name="style">becpg-row-border</property>
                 <cell id="224">
                     <label id="225">
-                        <property name="style">toc-level1</property>
+                        <property name="style">becpg-toc-title</property>
                         <text-property name="text" key="SLabel.pifAnnexCPSR">ANNEXE 4 : RAPPORT SUR LA SÉCURITÉ DU PRODUIT COSMÉTIQUE (DSE / CPSR)</text-property>
                     </label>
                 </cell>
                 <cell id="226">
                     <label id="227">
-                        <property name="style">toc-num-level1</property>
+                        <property name="style">becpg-toc-page</property>
+                        <property name="noWrap">true</property>
                         <text-property name="text">{{page:annexe-cpsr}}</text-property>
                     </label>
                 </cell>
@@ -156,15 +171,17 @@
 
             <!-- Annex 5: Stability & Micro -->
             <row id="228">
+                <property name="style">becpg-row-border</property>
                 <cell id="229">
                     <label id="230">
-                        <property name="style">toc-level1</property>
+                        <property name="style">becpg-toc-title</property>
                         <text-property name="text" key="SLabel.pifAnnexStabilityMicro">ANNEXE 5 : ESSAIS DE STABILITÉ ET CHALLENGE TESTS MICROBIOLOGIQUES</text-property>
                     </label>
                 </cell>
                 <cell id="231">
                     <label id="232">
-                        <property name="style">toc-num-level1</property>
+                        <property name="style">becpg-toc-page</property>
+                        <property name="noWrap">true</property>
                         <text-property name="text">{{page:annexe-stability-micro}}</text-property>
                     </label>
                 </cell>
@@ -172,15 +189,17 @@
 
             <!-- Annex 6: Claim Efficacy -->
             <row id="233">
+                <property name="style">becpg-row-border</property>
                 <cell id="234">
                     <label id="235">
-                        <property name="style">toc-level1</property>
+                        <property name="style">becpg-toc-title</property>
                         <text-property name="text" key="SLabel.pifAnnexClaimEfficacy">ANNEXE 6 : JUSTIFICATION DES REVENDICATIONS ET PREUVES D'EFFICACITÉ</text-property>
                     </label>
                 </cell>
                 <cell id="236">
                     <label id="237">
-                        <property name="style">toc-num-level1</property>
+                        <property name="style">becpg-toc-page</property>
+                        <property name="noWrap">true</property>
                         <text-property name="text">{{page:annexe-claim-efficacy}}</text-property>
                     </label>
                 </cell>
@@ -188,15 +207,17 @@
 
             <!-- Annex 7: GMP & Animal Testing -->
             <row id="238">
+                <property name="style">becpg-row-border</property>
                 <cell id="239">
                     <label id="240">
-                        <property name="style">toc-level1</property>
+                        <property name="style">becpg-toc-title</property>
                         <text-property name="text" key="SLabel.pifAnnexGMPAnimalTesting">ANNEXE 7 : CERTIFICATS BPF ET ATTESTATION EXPÉRIMENTATION ANIMALE</text-property>
                     </label>
                 </cell>
                 <cell id="241">
                     <label id="242">
-                        <property name="style">toc-num-level1</property>
+                        <property name="style">becpg-toc-page</property>
+                        <property name="noWrap">true</property>
                         <text-property name="text">{{page:annexe-gmp-animal-testing}}</text-property>
                     </label>
                 </cell>
@@ -210,8 +231,9 @@
             <column id="301"/>
             <row id="302">
                 <cell id="303">
+                    <property name="style">becpg-chapter-header</property>
                     <label id="304">
-                        <property name="style">section-title</property>
+                        <property name="style">becpg-chapter-header</property>
                         <text-property name="text" key="SLabel.pifProductName">RÉSUMÉ DU DOSSIER D'INFORMATION PRODUIT</text-property>
                     </label>
                 </cell>
