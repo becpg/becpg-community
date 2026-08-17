@@ -80,7 +80,7 @@ public class AggregateReportEngine implements BeCPGReportEngine {
     @Override
     public void createReport(NodeRef tplNodeRef, EntityReportData reportData, OutputStream out, Map<String, Object> params) throws ReportException {
         if (logger.isDebugEnabled()) {
-            logger.debug("Starting aggregate report generation for template: " + tplNodeRef + ", entity: " + (reportData != null ? reportData.getNodeRef() : "null"));
+            logger.debug("Starting aggregate report generation for template: " + tplNodeRef + ", reportData: " + reportData);
         }
         try {
             byte[] bodyPdfBytes = generateCoreBirtBody(tplNodeRef, reportData, params);
