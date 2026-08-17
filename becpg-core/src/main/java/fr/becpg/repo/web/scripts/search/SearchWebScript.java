@@ -186,7 +186,13 @@ public class SearchWebScript extends AbstractSearchWebScript {
 		for (NodeRef nodeRef : results) {
 			if (serviceRegistry.getNodeService().exists(nodeRef)
 					&& (serviceRegistry.getPermissionService().hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED)) {
-				items.put(new JSONObject(getExtractor(nodeRef, metadataFields).extract(nodeRef)));
+				try {
+					items.put(new JSONObject(getExtractor(nodeRef, metadataFields).extract(nodeRef)));
+				} catch (RuntimeException e) {
+					// One unextractable node must not cost the user the whole result page. Name it in
+					// the log so the offending data can be found, and carry on with the other hits.
+					logger.error("Skipping " + nodeRef + " in the search results: " + e.getMessage(), e);
+				}
 			}
 		}
 
