@@ -45,7 +45,12 @@ c + v;</expression>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="CompoList" id="454">
             <property name="nullsOrdering">nulls lowest</property>
             <property name="dataSource">DataXml</property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/rawMaterials/rawMaterial]#:#{legalName;STRING;/legalName},{compoListQty;DOUBLE;/compoListQty},{code;STRING;/code},{erpCode;STRING;/erpCode}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{compoListProduct;STRING;/@compoListProduct},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{itemType;STRING;/@itemType},{erpCode;STRING;/@erpCode}]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="IngList" id="455">
+            <property name="nullsOrdering">nulls lowest</property>
+            <property name="dataSource">DataXml</property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingLists/ingList]#:#{ingListIng;STRING;/@ingListIng},{ingListQtyPerc;DOUBLE;/@ingListQtyPerc},{ingListFunctionality;STRING;/@ingListFunctionality},{ingListIsGMO;STRING;/@ingListIsGMO},{ingListIsIonized;STRING;/@ingListIsIonized}]]></xml-property>
         </oda-data-set>
     </data-sets>
     <styles>
@@ -241,7 +246,7 @@ c + v;</expression>
                     <label id="212">
                         <property name="style">becpg-toc-page</property>
                         <property name="noWrap">true</property>
-                        <text-property name="text">{{page:annexe-compo-quali-quanti}}</text-property>
+                        <text-property name="text">3</text-property>
                     </label>
                 </cell>
             </row>
@@ -637,29 +642,45 @@ c + v;</expression>
             </detail>
         </table>
 
-        <!-- Section 3: Formula Composition Summary Table -->
+        <!-- Page 3: Annex 1 (Qualitative and Quantitative Formula & Ingredient Composition) -->
         <grid id="400">
+            <property name="pageBreakBefore">always</property>
             <property name="width">100%</property>
-            <property name="marginTop">12pt</property>
             <column id="401"/>
             <row id="402">
                 <cell id="403">
-                    <property name="style">becpg-section-label</property>
+                    <property name="style">becpg-chapter-header</property>
                     <label id="404">
-                        <property name="style">becpg-section-label</property>
-                        <text-property name="text">3. COMPOSITION DE LA FORMULE (RÉSUMÉ)</text-property>
+                        <property name="style">becpg-chapter-header</property>
+                        <text-property name="text" key="SLabel.pifAnnexCompoQualiQuanti">ANNEXE 1 : COMPOSITION QUALITATIVE ET QUANTITATIVE (QUALI-QUANTI)</text-property>
                     </label>
                 </cell>
             </row>
         </grid>
 
-        <table id="410">
+        <!-- Annex 1 Section 1: Formula Compo List -->
+        <grid id="410">
+            <property name="width">100%</property>
+            <property name="marginTop">8pt</property>
+            <column id="411"/>
+            <row id="412">
+                <cell id="413">
+                    <property name="style">becpg-section-label</property>
+                    <label id="414">
+                        <property name="style">becpg-section-label</property>
+                        <text-property name="text">1. COMPOSITION DE LA FORMULE (FORMULA COMPOSITION)</text-property>
+                    </label>
+                </cell>
+            </row>
+        </grid>
+
+        <table id="420">
             <property name="width">100%</property>
             <property name="dataSet">CompoList</property>
             <list-property name="boundDataColumns">
                 <structure>
-                    <property name="name">legalName</property>
-                    <expression name="expression" type="javascript">dataSetRow["legalName"]</expression>
+                    <property name="name">compoListProduct</property>
+                    <expression name="expression" type="javascript">dataSetRow["compoListProduct"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
@@ -668,63 +689,162 @@ c + v;</expression>
                     <property name="dataType">float</property>
                 </structure>
                 <structure>
-                    <property name="name">code</property>
-                    <expression name="expression" type="javascript">dataSetRow["code"]</expression>
+                    <property name="name">compoListUnit</property>
+                    <expression name="expression" type="javascript">dataSetRow["compoListUnit"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">erpCode</property>
+                    <expression name="expression" type="javascript">dataSetRow["erpCode"]</expression>
                     <property name="dataType">string</property>
                 </structure>
             </list-property>
-            <column id="411">
-                <property name="width">25%</property>
-            </column>
-            <column id="412">
-                <property name="width">55%</property>
-            </column>
-            <column id="413">
+            <column id="421">
                 <property name="width">20%</property>
             </column>
+            <column id="422">
+                <property name="width">55%</property>
+            </column>
+            <column id="423">
+                <property name="width">25%</property>
+            </column>
             <header>
-                <row id="414">
-                    <cell id="415">
+                <row id="424">
+                    <cell id="425">
                         <property name="style">becpg-table-header</property>
-                        <label id="416">
+                        <label id="426">
                             <property name="style">becpg-table-header</property>
                             <text-property name="text">Code</text-property>
                         </label>
                     </cell>
-                    <cell id="417">
+                    <cell id="427">
                         <property name="style">becpg-table-header</property>
-                        <label id="418">
+                        <label id="428">
                             <property name="style">becpg-table-header</property>
-                            <text-property name="text">Composant / Ingrédient</text-property>
+                            <text-property name="text">Composant / Matière Première</text-property>
                         </label>
                     </cell>
-                    <cell id="419">
+                    <cell id="429">
                         <property name="style">becpg-table-header</property>
-                        <label id="420">
+                        <label id="430">
                             <property name="style">becpg-table-header</property>
-                            <text-property name="text">Proportion (kg)</text-property>
+                            <text-property name="text">Quantité / Proportion</text-property>
                         </label>
                     </cell>
                 </row>
             </header>
             <detail>
-                <row id="421">
-                    <cell id="422">
-                        <data id="423">
+                <row id="431">
+                    <cell id="432">
+                        <data id="433">
                             <property name="style">becpg-cell-data</property>
-                            <property name="resultSetColumn">code</property>
+                            <property name="resultSetColumn">erpCode</property>
                         </data>
                     </cell>
-                    <cell id="424">
-                        <data id="425">
+                    <cell id="434">
+                        <data id="435">
                             <property name="style">becpg-cell-data</property>
-                            <property name="resultSetColumn">legalName</property>
+                            <property name="resultSetColumn">compoListProduct</property>
                         </data>
                     </cell>
-                    <cell id="426">
-                        <data id="427">
+                    <cell id="436">
+                        <data id="437">
                             <property name="style">becpg-cell-data</property>
                             <property name="resultSetColumn">compoListQty</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+
+        <!-- Annex 1 Section 2: INCI Ingredients Breakdown -->
+        <grid id="440">
+            <property name="width">100%</property>
+            <property name="marginTop">12pt</property>
+            <column id="441"/>
+            <row id="442">
+                <cell id="443">
+                    <property name="style">becpg-section-label</property>
+                    <label id="444">
+                        <property name="style">becpg-section-label</property>
+                        <text-property name="text">2. LISTE INCI DES INGRÉDIENTS (INCI INGREDIENT BREAKDOWN / TOX LIST)</text-property>
+                    </label>
+                </cell>
+            </row>
+        </grid>
+
+        <table id="450">
+            <property name="width">100%</property>
+            <property name="dataSet">IngList</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">ingListIng</property>
+                    <expression name="expression" type="javascript">dataSetRow["ingListIng"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ingListQtyPerc</property>
+                    <expression name="expression" type="javascript">dataSetRow["ingListQtyPerc"]</expression>
+                    <property name="dataType">float</property>
+                </structure>
+                <structure>
+                    <property name="name">ingListFunctionality</property>
+                    <expression name="expression" type="javascript">dataSetRow["ingListFunctionality"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <column id="451">
+                <property name="width">50%</property>
+            </column>
+            <column id="452">
+                <property name="width">25%</property>
+            </column>
+            <column id="453">
+                <property name="width">25%</property>
+            </column>
+            <header>
+                <row id="454">
+                    <cell id="455">
+                        <property name="style">becpg-table-header</property>
+                        <label id="456">
+                            <property name="style">becpg-table-header</property>
+                            <text-property name="text">Nom INCI / Ingrédient</text-property>
+                        </label>
+                    </cell>
+                    <cell id="457">
+                        <property name="style">becpg-table-header</property>
+                        <label id="458">
+                            <property name="style">becpg-table-header</property>
+                            <text-property name="text">Proportion (%)</text-property>
+                        </label>
+                    </cell>
+                    <cell id="459">
+                        <property name="style">becpg-table-header</property>
+                        <label id="460">
+                            <property name="style">becpg-table-header</property>
+                            <text-property name="text">Fonction</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="461">
+                    <cell id="462">
+                        <data id="463">
+                            <property name="style">becpg-cell-data</property>
+                            <property name="resultSetColumn">ingListIng</property>
+                        </data>
+                    </cell>
+                    <cell id="464">
+                        <data id="465">
+                            <property name="style">becpg-cell-data</property>
+                            <property name="resultSetColumn">ingListQtyPerc</property>
+                        </data>
+                    </cell>
+                    <cell id="466">
+                        <data id="467">
+                            <property name="style">becpg-cell-data</property>
+                            <property name="resultSetColumn">ingListFunctionality</property>
                         </data>
                     </cell>
                 </row>

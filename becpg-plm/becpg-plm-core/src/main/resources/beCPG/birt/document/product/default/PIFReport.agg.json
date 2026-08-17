@@ -29,15 +29,6 @@
 
   "annexes": [
     {
-      "reportKind": "annexe-compo-quali-quanti",
-      "title": "SLabel.pifAnnexCompoQualiQuanti",
-      "scope": "ENTITY",
-      "componentHeading": false,
-      "emptyPlaceholder": "SLabel.pifAnnexCompoQualiQuantiEmptyPlaceholder",
-      "required": false,
-      "mimeTypes": ["application/pdf"]
-    },
-    {
       "reportKind": "annexe-mp",
       "title": "SLabel.pifAnnexRawMaterials",
       "scope": "COMPO_CHILDREN",
