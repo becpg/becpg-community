@@ -69,27 +69,63 @@ public class AggregateReportEngine implements BeCPGReportEngine {
             return false;
         }
         Boolean isAggregate = (Boolean) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_TPL_IS_AGGREGATE);
-        if (isAggregate != null && isAggregate) {
-            return true;
-        }
         String name = (String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME);
-        return name != null && name.endsWith(".agg.rptdesign");
+        boolean applicable = (isAggregate != null && isAggregate) || (name != null && name.endsWith(".agg.rptdesign"));
+        if (logger.isDebugEnabled()) {
+            logger.debug("isApplicable check for template " + templateNodeRef + " (name: " + name + ", isAggregate: " + isAggregate + ") -> " + applicable);
+        }
+        return applicable;
     }
 
     @Override
     public void createReport(NodeRef tplNodeRef, EntityReportData reportData, OutputStream out, Map<String, Object> params) throws ReportException {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Starting aggregate report generation for template: " + tplNodeRef + ", entity: " + (reportData != null ? reportData.getNodeRef() : "null"));
+        }
         try {
             byte[] bodyPdfBytes = generateCoreBirtBody(tplNodeRef, reportData, params);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Generated core BIRT body PDF, length: " + (bodyPdfBytes != null ? bodyPdfBytes.length : 0) + " bytes");
+            }
             List<NodeRef> assocFiles = associationService.getTargetAssocs(tplNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Retrieved " + (assocFiles != null ? assocFiles.size() : 0) + " associated template files for " + tplNodeRef);
+            }
             AggregateReportConfig config = loadDescriptorConfig(tplNodeRef, assocFiles);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Loaded descriptor config. Number of configured annexes: " + (config.getAnnexes() != null ? config.getAnnexes().size() : 0));
+            }
             Map<String, String> customI18n = loadAssociatedI18nProperties(assocFiles);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Loaded " + customI18n.size() + " custom i18n properties");
+            }
 
             NodeRef entityNodeRef = getEntityNodeRef(params);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Entity nodeRef for aggregate report: " + entityNodeRef);
+            }
             List<AnnexSection> sections = aggregateReportModelBuilder.buildAnnexSections(entityNodeRef, config, customI18n);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Built " + sections.size() + " annex sections");
+                for (AnnexSection sec : sections) {
+                    logger.debug("  Section: '" + sec.getTitle() + "' (kind: " + sec.getReportKind() + "), documents count: "
+                            + (sec.getDocuments() != null ? sec.getDocuments().size() : 0)
+                            + ", emptyPlaceholder: " + sec.getEmptyPlaceholder());
+                }
+            }
             byte[] logoBytes = loadLogoBytes(config, assocFiles);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Logo loaded: " + (logoBytes != null ? logoBytes.length + " bytes" : "none"));
+            }
             Map<String, String> propertiesMap = gatherEntityProperties(entityNodeRef);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Gathered " + propertiesMap.size() + " entity properties");
+            }
 
             byte[] finalPdfBytes = assembleFinalPdf(bodyPdfBytes, sections, config, logoBytes, propertiesMap, customI18n);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Final aggregated PDF assembled successfully, size: " + (finalPdfBytes != null ? finalPdfBytes.length : 0) + " bytes");
+            }
             streamOutput(finalPdfBytes, out);
         } catch (Exception e) {
             logger.error("Exception caught during Aggregate Report generation: " + e.getMessage(), e);

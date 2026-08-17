@@ -351,14 +351,32 @@ public class ReportPdfAggregator {
     }
 
     public static byte[] assemble(byte[] bodyPdf, List<AnnexSection> sections, HeaderModel header, ComponentHeadingStyle headingStyle, byte[] logoBytes, Map<String, String> properties, TableOfContentsModel tocConfig, PaginationModel paginationConfig, Map<String, String> customI18n) throws Exception {
-        logger.info("[ReportPdfAggregator] Starting assemble operation...");
+        if (logger.isDebugEnabled()) {
+            logger.debug("[ReportPdfAggregator] Starting assemble operation. Body PDF length: " + (bodyPdf != null ? bodyPdf.length : 0) + " bytes, sections: " + (sections != null ? sections.size() : 0));
+            if (sections != null) {
+                for (AnnexSection sec : sections) {
+                    logger.debug("  - AnnexSection title: '" + sec.getTitle() + "', kind: " + sec.getReportKind() + ", documents count: " + (sec.getDocuments() != null ? sec.getDocuments().size() : 0));
+                    if (sec.getDocuments() != null) {
+                        for (AnnexDocument ad : sec.getDocuments()) {
+                            logger.debug("    * AnnexDocument component: '" + ad.getComponentName() + "', size: " + (ad.getPdfBytes() != null ? ad.getPdfBytes().length : 0) + " bytes, isBeCPGDoc: " + ad.isBeCPGDoc());
+                        }
+                    }
+                }
+            }
+        }
         if (bodyPdf == null || bodyPdf.length == 0) {
             throw new IllegalArgumentException("Body PDF is empty");
         }
 
         try (PDDocument doc = Loader.loadPDF(bodyPdf)) {
             int numBodyPages = doc.getNumberOfPages();
+            if (logger.isDebugEnabled()) {
+                logger.debug("Core body PDF pages count: " + numBodyPages);
+            }
             Map<String, Integer> outlineBookmarks = scanOutlineBookmarks(doc);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Scanned outline bookmarks: " + outlineBookmarks);
+            }
             List<TokenLocator.FoundToken> textTokens = new TokenLocator().findTokens(doc);
 
             List<InsertionPoint> insertions = resolveInsertionPoints(sections, numBodyPages, outlineBookmarks, textTokens);
@@ -374,7 +392,11 @@ public class ReportPdfAggregator {
             Map<Integer, Integer> originalToMergedPageMap = new HashMap<>();
             byte[] mergedPdfBytes = executeSequentialMerge(parts, bodyPdf, docToMergedPageMap, originalToMergedPageMap);
 
-            return postProcessMergedPdf(mergedPdfBytes, bodyPdf, numBodyPages, sections, sectionToMergedPageMap, docToMergedPageMap, textTokens, outlineBookmarks, header, logoBytes, properties, headingStyle, tocConfig, paginationConfig, originalToMergedPageMap, customI18n);
+            byte[] result = postProcessMergedPdf(mergedPdfBytes, bodyPdf, numBodyPages, sections, sectionToMergedPageMap, docToMergedPageMap, textTokens, outlineBookmarks, header, logoBytes, properties, headingStyle, tocConfig, paginationConfig, originalToMergedPageMap, customI18n);
+            if (logger.isDebugEnabled()) {
+                logger.debug("[ReportPdfAggregator] Assemble operation completed successfully. Final PDF size: " + result.length + " bytes");
+            }
+            return result;
         }
     }
 
@@ -404,6 +426,9 @@ public class ReportPdfAggregator {
 
             ins.bodyPage = pageIdx;
             insertions.add(ins);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Resolved insertion point for section '" + section.getTitle() + "' (kind: " + rk + ") -> body page index: " + pageIdx);
+            }
         }
         return insertions;
     }

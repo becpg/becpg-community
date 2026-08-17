@@ -78,7 +78,9 @@ public class PDFScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a {@link org.alfresco.repo.jscript.ScriptNode} object.
 	 */
 	public ScriptNode appendPDF(ScriptNode targetPDFNode, ScriptNode toAppendPDFNode) {
-		logger.debug("Append PDF " + toAppendPDFNode.getName() + " to " + targetPDFNode.getName());
+		if (logger.isDebugEnabled()) {
+			logger.debug("Append PDF " + toAppendPDFNode.getName() + " to " + targetPDFNode.getName());
+		}
 
 		try (InputStream is = getReader(toAppendPDFNode.getNodeRef()).getContentInputStream();
 			InputStream tis = getReader(targetPDFNode.getNodeRef()).getContentInputStream();
@@ -141,7 +143,9 @@ public class PDFScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a {@link org.alfresco.repo.jscript.ScriptNode} object
 	 */
 	public ScriptNode mergePDFs(ScriptNode targetPDFNode, Object[] sourceNodes) {
-		logger.debug("Merging multiple PDFs into " + targetPDFNode.getName());
+		if (logger.isDebugEnabled()) {
+			logger.debug("Merging multiple PDFs into " + targetPDFNode.getName() + " (source count: " + (sourceNodes != null ? sourceNodes.length : 0) + ")");
+		}
 		try {
 			ContentReader targetReader = getReader(targetPDFNode.getNodeRef());
 			try (PDDocument pdfTarget = Loader.loadPDF(targetReader.getContentInputStream().readAllBytes())) {
