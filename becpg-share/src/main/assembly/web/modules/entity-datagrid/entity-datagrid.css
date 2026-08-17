@@ -94,30 +94,49 @@
     margin-bottom: 0.8em;
 }
 
+/* The title takes the free space but gives it back before the toolbar wraps to a second line. */
 .picker-list-title {
+    flex: 1 1 auto;
+    min-width: 6em;
     font-weight: bold;
-    margin-right: auto;
     padding-right: 1em;
 }
 
 .picker-list-header input[type="text"].picker-list-filter {
-    width: 18em;
+    flex: none;
+    width: 14em;
     padding: 3px 6px;
     margin-right: 0.5em;
     border: 1px solid #ccc;
     border-radius: 2px;
 }
 
+.picker-list-toggle {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 0.8em;
+    white-space: nowrap;
+}
+
+.picker-list-toggle label {
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
 .picker-list-actions input[type="button"] {
     margin-left: 0.3em;
 }
 
+/* overscroll-behavior keeps the wheel inside the list once it reaches its end: chaining to the page
+   behind moves the popup, which the skin keeps centred on the window. */
 .picker-list {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     column-gap: 1.5em;
     max-height: 50vh;
+    overflow-x: hidden;
     overflow-y: auto;
+    overscroll-behavior: contain;
     margin: 0;
     padding: 0 0.5em 0 0;
     list-style: none;
@@ -135,6 +154,16 @@
 .picker-list .picker-list-item input[type="checkbox"] {
     flex: none;
     margin: 0 6px 0 0;
+}
+
+/* The skin parks the real checkbox at -9999px and draws its own box on the label. Left there, the
+   click that gives the hidden input the focus makes the browser scroll the page over to it, so it
+   is brought back to where it is drawn. */
+.picker-list .picker-list-item input[type="checkbox"]:not(:checked),
+.picker-list .picker-list-item input[type="checkbox"]:checked,
+.picker-list-header .picker-list-toggle input[type="checkbox"]:not(:checked),
+.picker-list-header .picker-list-toggle input[type="checkbox"]:checked {
+    left: auto;
 }
 
 .picker-list .picker-list-item label {
@@ -245,23 +274,29 @@ div.multi-level-warning {
 }
 
 /* The cells hold positioned content of their own - the progress gauge, the score badges - which
-   comes after the header in the document and would therefore be painted over it while scrolling.
-   The sticky header and the sticky first column are stacked above that content. */
+   comes after the header in the document and would otherwise be painted over it while scrolling.
+   The whole header group is raised instead of the individual cells, so that the columns keep their
+   own stacking below and the menus, which YUI opens at 3 and above, still come out on top. */
+.datagrid .yui-dt thead {
+  position: relative;
+  z-index: 2;
+}
+
 .datagrid .yui-dt thead th {
   position: -webkit-sticky; /* for Safari */
   position: sticky;
   background-color: white;
   top: 0;
-  z-index: 2;
+  z-index: 0;
 }
 
 .datagrid .yui-dt thead th.sticky {
   left: 0;
-  z-index: 3;
+  z-index: 1;
 }
 
 .datagrid .yui-dt thead th.sticky.yui-dt-first {
-  z-index: 4;
+  z-index: 2;
 }
 
 
@@ -269,7 +304,7 @@ div.multi-level-warning {
   position: -webkit-sticky; /* for Safari */
   position: sticky;
   left: 0;
-  z-index: 1;
+  z-index: 0;
   background-color : inherit;
 }
 

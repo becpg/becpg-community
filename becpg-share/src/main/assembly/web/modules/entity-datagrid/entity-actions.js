@@ -864,11 +864,16 @@
           */
         _renderCheckboxPicker: function EntityDataGrid__renderCheckboxPicker(picker) {
             var me = this;
+            var checkedOnlyId = this.id + "-picker-checked-only";
 
             var html = '<div class="picker-list-header">';
             html += '<span class="picker-list-title">' + picker.title + '</span>';
             html += '<input class="picker-list-filter" type="text" autocomplete="off" placeholder="'
                 + this.msg("label.picker-list.filter") + '" />';
+            html += '<span class="picker-list-toggle">'
+                + '<input id="' + checkedOnlyId + '" class="picker-list-checked-only" type="checkbox" />'
+                + '<label for="' + checkedOnlyId + '">' + this.msg("label.picker-list.checked-only") + '</label>'
+                + '</span>';
 
             if (picker.selectAllButtons) {
                 html += '<span class="picker-list-actions">'
@@ -883,9 +888,12 @@
 
             picker.containerEl.innerHTML = html;
 
-            Event.on(Selector.query("input.picker-list-filter", picker.containerEl, true), "input", function() {
-                me._filterPickerItems(picker.containerEl, this.value);
-            });
+            var applyFilter = function() {
+                me._filterPickerItems(picker.containerEl);
+            };
+
+            Event.on(Selector.query("input.picker-list-filter", picker.containerEl, true), "input", applyFilter);
+            Event.on(Dom.get(checkedOnlyId), "change", applyFilter);
 
             if (picker.selectAllButtons) {
                 this.widgets.selectAllColumnsButton = Alfresco.util.createYUIButton(this, "columns-select-all", function() {
@@ -904,20 +912,27 @@
         },
 
         /**
-          * Hides the picker lines whose label does not contain the searched text.
+          * Hides the picker lines that the search field and the selected only option leave out.
+          *
+          * Ticking a line off does not re-run the filter: a line vanishing from under the pointer
+          * while the user is unticking a series of them would make the next click land elsewhere.
           *
           * @method _filterPickerItems
           * @param containerEl {object} the element holding the picker
-          * @param filterText {String} the text typed in the search field
           */
-        _filterPickerItems: function EntityDataGrid__filterPickerItems(containerEl, filterText) {
-            var normalizedFilter = this._normalizeForFilter(filterText);
+        _filterPickerItems: function EntityDataGrid__filterPickerItems(containerEl) {
+            var filterEl = Selector.query("input.picker-list-filter", containerEl, true);
+            var checkedOnlyEl = Selector.query("input.picker-list-checked-only", containerEl, true);
+            var normalizedFilter = this._normalizeForFilter(filterEl != null ? filterEl.value : "");
+            var checkedOnly = checkedOnlyEl != null && checkedOnlyEl.checked;
             var items = Selector.query("li.picker-list-item", containerEl);
             var matchCount = 0;
 
             for (var i = 0; i < items.length; i++) {
-                var matches = normalizedFilter.length === 0
-                    || this._normalizeForFilter(items[i].getAttribute("data-label")).indexOf(normalizedFilter) > -1;
+                var checkbox = Selector.query('input[type="checkbox"]', items[i], true);
+                var matches = (!checkedOnly || (checkbox != null && checkbox.checked))
+                    && (normalizedFilter.length === 0
+                        || this._normalizeForFilter(items[i].getAttribute("data-label")).indexOf(normalizedFilter) > -1);
 
                 Dom.setStyle(items[i], "display", matches ? "" : "none");
 
