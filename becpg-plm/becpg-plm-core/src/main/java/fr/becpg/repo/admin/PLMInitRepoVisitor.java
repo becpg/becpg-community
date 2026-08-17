@@ -2029,9 +2029,21 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					}
 
 					try {
-						NodeRef pifJsonNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/PIFReport.agg.json", false);
+						NodeRef existingNull = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "null.rptdesign");
+						if (existingNull != null) {
+							nodeService.deleteNode(existingNull);
+						}
+
+						NodeRef pifJsonNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/PIFReport.agg.json", true);
+						NodeRef pifPropNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/PIFReport.properties", true);
+						NodeRef pifFrPropNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/PIFReport_fr.properties", true);
+						NodeRef pifEnPropNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/PIFReport_en.properties", true);
+
 						List<NodeRef> pifResources = new ArrayList<>(resources);
 						pifResources.add(pifJsonNodeRef);
+						pifResources.add(pifPropNodeRef);
+						pifResources.add(pifFrPropNodeRef);
+						pifResources.add(pifEnPropNodeRef);
 
 						ReportTplInformation pifTplInfo = new ReportTplInformation();
 						pifTplInfo.setReportType(ReportType.Document);
@@ -2049,8 +2061,13 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 						NodeRef pifTplNodeRef = reportTplService.createTplRptDesign(folderNodeRef,
 								pifReportName,
-								"beCPG/birt/document/product/default/PIFReport.rptdesign", pifTplInfo, false);
+								"beCPG/birt/document/product/default/PIFReport.rptdesign", pifTplInfo, true);
 						nodeService.setProperty(pifTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_AGGREGATE, true);
+
+						MLText titleMlt = TranslateHelper.getTranslatedPathMLText(PlmRepoConsts.PATH_PIF_REPORT);
+						if (titleMlt != null && !titleMlt.isEmpty()) {
+							nodeService.setProperty(pifTplNodeRef, ContentModel.PROP_TITLE, titleMlt);
+						}
 					} catch (Exception e) {
 						logger.error("Failed to create PIF aggregate report template", e);
 					}

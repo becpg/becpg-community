@@ -1100,7 +1100,7 @@ public class ReportPdfAggregator {
                     }
                 }
 
-                if (!isBodyPage && paginationEnabled) {
+                if (paginationEnabled) {
                     canvas.setNonStrokingColor(java.awt.Color.WHITE);
                     canvas.addRect(0, 0, width, 45);
                     canvas.fill();
