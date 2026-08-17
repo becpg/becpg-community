@@ -147,9 +147,12 @@
     list-style: none;
 }
 
+/* position anchors the hidden checkbox below: without it the line is not its containing block, the
+   checkbox is laid out against the dialog and drifts away from its label as the list is scrolled. */
 .picker-list .picker-list-item {
     display: flex;
     align-items: center;
+    position: relative;
     min-width: 0;
     min-height: 20px;
     padding: 2px 0;
@@ -161,9 +164,9 @@
     margin: 0 6px 0 0;
 }
 
-/* The skin parks the real checkbox at -9999px and draws its own box on the label. Left there, the
-   click that gives the hidden input the focus makes the browser scroll the page over to it, so it
-   is brought back to where it is drawn. */
+/* The skin parks the real checkbox at -9999px and draws its own box on the label. Clicking a line
+   gives that hidden input the focus, and the browser scrolls the page over to wherever it sits, so
+   it is brought back onto its own line. */
 .picker-list .picker-list-item input[type="checkbox"]:not(:checked),
 .picker-list .picker-list-item input[type="checkbox"]:checked,
 .picker-list-header .picker-list-toggle input[type="checkbox"]:not(:checked),
