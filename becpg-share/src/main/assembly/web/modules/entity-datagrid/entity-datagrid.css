@@ -142,6 +142,14 @@
     min-width: 0;
     margin-bottom: 0;
     cursor: pointer;
+}
+
+/* The skin sizes a checkbox label to the 13px of its box, which would cut the descenders off the
+   truncated text. The text keeps its own line box and is centred back on the box. */
+.picker-list .picker-list-item .picker-list-label {
+    display: block;
+    line-height: 17px;
+    margin: -2px 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -236,21 +244,24 @@ div.multi-level-warning {
     background-color: white;
 }
 
+/* The cells hold positioned content of their own - the progress gauge, the score badges - which
+   comes after the header in the document and would therefore be painted over it while scrolling.
+   The sticky header and the sticky first column are stacked above that content. */
 .datagrid .yui-dt thead th {
   position: -webkit-sticky; /* for Safari */
   position: sticky;
   background-color: white;
   top: 0;
-  z-index: 0;
+  z-index: 2;
 }
 
 .datagrid .yui-dt thead th.sticky {
   left: 0;
-  z-index: 1;
+  z-index: 3;
 }
 
 .datagrid .yui-dt thead th.sticky.yui-dt-first {
-  z-index: 2;
+  z-index: 4;
 }
 
 
@@ -258,7 +269,7 @@ div.multi-level-warning {
   position: -webkit-sticky; /* for Safari */
   position: sticky;
   left: 0;
-  z-index: 0;
+  z-index: 1;
   background-color : inherit;
 }
 
@@ -276,9 +287,11 @@ div.multi-level-warning {
     border-collapse: collapse;
 }
 
+/* Rows are as tall as their tallest cell - a thumbnail, a wrapped nutritional scale - so the
+   plain values have to be centred to stay on the same line as the badges and the gauges. */
 .datagrid .grid.yui-dt .yui-dt-data td {
     border-bottom: 1px solid #f0f0f0;
-    vertical-align: top;
+    vertical-align: middle;
 }
 
 .datagrid .grid.yui-dt .yui-dt-data .yui-dt-last td {

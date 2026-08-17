@@ -846,8 +846,9 @@
 
             return '<li class="picker-list-item" data-label="' + encodedLabel + '">'
                 + '<input id="' + item.id + '" type="checkbox" name="propChecked" value="' + item.value + '"' + (item.checked ? ' checked' : '') + '/>'
-                + '<label for="' + item.id + '" title="' + encodedLabel + '">' + encodedLabel + '</label>'
-                + '</li>';
+                + '<label for="' + item.id + '">'
+                + '<span class="picker-list-label" title="' + encodedLabel + '">' + encodedLabel + '</span>'
+                + '</label></li>';
         },
 
         /**
