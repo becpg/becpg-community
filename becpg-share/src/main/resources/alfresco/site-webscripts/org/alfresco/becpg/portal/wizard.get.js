@@ -183,11 +183,11 @@ function main() {
 		}
 	}
 
-	// Configuration, not data: cacheable, but never shared between users.
-	cache.maxAge = 300;
-	cache.neverCache = false;
-	cache.isPublic = false;
-	cache.mustRevalidate = true;
+	// Configuration, but resolved for the current user, so it must never reach a shared cache.
+	// "isPublic = false" does not achieve that: the web script framework has no "private" branch,
+	// and a CDN or a corporate proxy stores a bare "max-age" response and serves it to another
+	// user - verified on dev on 2026-08-17. "no-cache" is the only safe setting here.
+	cache.neverCache = true;
 
 	model.wizard = descriptor;
 	model.steps = steps;

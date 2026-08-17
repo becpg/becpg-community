@@ -381,26 +381,13 @@ function main() {
 	}
 
 	
-	cache.maxAge = 3600; // in seconds
-	cache.neverCache=false;
-	cache.isPublic=false;
-	// The column set is per user (column preferences and security rules), yet the response goes out
-	// as "Cache-Control: public" - the property assignment above does not reach the setter - so a
-	// shared cache in front of Share may serve one user's columns to another. Call the setter.
-	try {
-		cache.setIsPublic(false);
-	} catch (e) {
-		// older frameworks only expose the property
-	}
-	cache.mustRevalidate=true;
-	
-	if (noCache) {
-	   // noCache holds a timestamp in milliseconds: parse it as a number, "new Date(string)" yields an invalid date
-	   var noCacheTimeStamp = parseInt(noCache, 10);
-	   if (!isNaN(noCacheTimeStamp)) {
-	      cache.lastModified = new Date(noCacheTimeStamp);
-	   }
-	}
+	// This column set is per user: the column preferences and the security rules both filter it.
+	// It must never be stored by a shared cache, and "no-cache" is the only thing the web script
+	// framework can express - it has no "private" branch (WebScriptServletResponse.setCache), and
+	// omitting "public" is not enough: a CDN or a corporate proxy stores a bare "max-age" response
+	// all the same and serves it to another user, which was verified on dev on 2026-08-17 (an
+	// answer built for an authenticated user came back on a request carrying no session at all).
+	cache.neverCache = true;
 
 	var prefixedSiteId = siteId ? "-" + siteId : "";
 	
