@@ -7,34 +7,55 @@
     </simple-property-list>
     <property name="units">in</property>
     <styles>
-        <style name="becpg-header-title" id="2">
+        <style name="becpg-main-title" id="2">
             <property name="fontFamily">sans-serif</property>
-            <property name="fontSize">14pt</property>
+            <property name="fontSize">16pt</property>
             <property name="fontWeight">bold</property>
             <property name="color">#004254</property>
             <property name="textAlign">center</property>
-            <property name="paddingTop">6pt</property>
-            <property name="paddingBottom">8pt</property>
+            <property name="paddingTop">10pt</property>
+            <property name="paddingBottom">4pt</property>
         </style>
-        <style name="becpg-chapter-header" id="3">
+        <style name="becpg-main-subtitle" id="3">
+            <property name="fontFamily">sans-serif</property>
+            <property name="fontSize">10pt</property>
+            <property name="fontStyle">italic</property>
+            <property name="color">#555555</property>
+            <property name="textAlign">center</property>
+            <property name="paddingBottom">14pt</property>
+        </style>
+        <style name="becpg-chapter-header" id="4">
             <property name="backgroundColor">#004254</property>
             <property name="fontFamily">sans-serif</property>
             <property name="fontSize">10pt</property>
             <property name="fontWeight">bold</property>
             <property name="color">#FFFFFF</property>
             <property name="textAlign">center</property>
+            <property name="paddingTop">5pt</property>
+            <property name="paddingBottom">5pt</property>
+        </style>
+        <style name="becpg-section-label" id="5">
+            <property name="backgroundColor">#E8F0F4</property>
+            <property name="fontFamily">sans-serif</property>
+            <property name="fontSize">9pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#004254</property>
+            <property name="paddingLeft">6pt</property>
             <property name="paddingTop">4pt</property>
             <property name="paddingBottom">4pt</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderBottomColor">#B0C4DE</property>
         </style>
-        <style name="becpg-toc-title" id="4">
+        <style name="becpg-toc-title" id="6">
             <property name="fontFamily">sans-serif</property>
-            <property name="fontSize">10pt</property>
+            <property name="fontSize">9.5pt</property>
             <property name="fontWeight">bold</property>
             <property name="color">#000000</property>
             <property name="paddingTop">4pt</property>
             <property name="paddingBottom">4pt</property>
         </style>
-        <style name="becpg-toc-page" id="5">
+        <style name="becpg-toc-page" id="7">
             <property name="fontFamily">sans-serif</property>
             <property name="fontSize">9pt</property>
             <property name="fontWeight">bold</property>
@@ -43,7 +64,30 @@
             <property name="paddingTop">4pt</property>
             <property name="paddingBottom">4pt</property>
         </style>
-        <style name="becpg-row-border" id="6">
+        <style name="becpg-row-border" id="8">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderBottomColor">#E0E0E0</property>
+        </style>
+        <style name="becpg-cell-label" id="9">
+            <property name="fontFamily">sans-serif</property>
+            <property name="fontSize">8.5pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#333333</property>
+            <property name="paddingLeft">6pt</property>
+            <property name="paddingTop">3pt</property>
+            <property name="paddingBottom">3pt</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderBottomColor">#E0E0E0</property>
+        </style>
+        <style name="becpg-cell-data" id="10">
+            <property name="fontFamily">sans-serif</property>
+            <property name="fontSize">8.5pt</property>
+            <property name="color">#000000</property>
+            <property name="paddingLeft">6pt</property>
+            <property name="paddingTop">3pt</property>
+            <property name="paddingBottom">3pt</property>
             <property name="borderBottomStyle">solid</property>
             <property name="borderBottomWidth">thin</property>
             <property name="borderBottomColor">#E0E0E0</property>
@@ -54,7 +98,29 @@
         </simple-master-page>
     </page-setup>
     <body>
-        <!-- Page 1: Table of Contents Header -->
+        <!-- Page 1 Header: Main Document Title -->
+        <grid id="50">
+            <property name="width">100%</property>
+            <column id="51"/>
+            <row id="52">
+                <cell id="53">
+                    <label id="54">
+                        <property name="style">becpg-main-title</property>
+                        <text-property name="text" key="SLabel.pifReportTitle">DOSSIER D'INFORMATION PRODUIT (DIP)</text-property>
+                    </label>
+                </cell>
+            </row>
+            <row id="55">
+                <cell id="56">
+                    <label id="57">
+                        <property name="style">becpg-main-subtitle</property>
+                        <text-property name="text">Règlement (CE) N° 1223/2009 - Produit Cosmétique</text-property>
+                    </label>
+                </cell>
+            </row>
+        </grid>
+
+        <!-- Page 1: Table of Contents Banner -->
         <grid id="100">
             <property name="width">100%</property>
             <column id="101"/>
@@ -71,7 +137,7 @@
 
         <grid id="200">
             <property name="width">100%</property>
-            <property name="marginTop">12pt</property>
+            <property name="marginTop">10pt</property>
             <column id="201">
                 <property name="width">65%</property>
             </column>
@@ -224,7 +290,7 @@
             </row>
         </grid>
 
-        <!-- Page 2: Core Item Specification Body -->
+        <!-- Page 2: Core Item Specification Body Summary -->
         <grid id="300">
             <property name="pageBreakBefore">always</property>
             <property name="width">100%</property>
@@ -239,5 +305,163 @@
                 </cell>
             </row>
         </grid>
+
+        <!-- Product Summary Section 1: Identity -->
+        <grid id="310">
+            <property name="width">100%</property>
+            <property name="marginTop">8pt</property>
+            <column id="311"/>
+            <row id="312">
+                <cell id="313">
+                    <property name="style">becpg-section-label</property>
+                    <label id="314">
+                        <property name="style">becpg-section-label</property>
+                        <text-property name="text">1. IDENTITÉ ET DESCRIPTION DU PRODUIT COSMÉTIQUE</text-property>
+                    </label>
+                </cell>
+            </row>
+        </grid>
+
+        <grid id="320">
+            <property name="width">100%</property>
+            <column id="321">
+                <property name="width">30%</property>
+            </column>
+            <column id="322">
+                <property name="width">70%</property>
+            </column>
+
+            <row id="323">
+                <cell id="324">
+                    <label id="325">
+                        <property name="style">becpg-cell-label</property>
+                        <text-property name="text">Dénomination commerciale :</text-property>
+                    </label>
+                </cell>
+                <cell id="326">
+                    <label id="327">
+                        <property name="style">becpg-cell-data</property>
+                        <text-property name="text">Produit fini cosmétique</text-property>
+                    </label>
+                </cell>
+            </row>
+
+            <row id="328">
+                <cell id="329">
+                    <label id="330">
+                        <property name="style">becpg-cell-label</property>
+                        <text-property name="text">Dénomination légale / INCI :</text-property>
+                    </label>
+                </cell>
+                <cell id="331">
+                    <label id="332">
+                        <property name="style">becpg-cell-data</property>
+                        <text-property name="text">Formulation cosmétique selon Règlement (CE) N° 1223/2009</text-property>
+                    </label>
+                </cell>
+            </row>
+
+            <row id="333">
+                <cell id="334">
+                    <label id="335">
+                        <property name="style">becpg-cell-label</property>
+                        <text-property name="text">Usage prévu &amp; Conseils d'emploi :</text-property>
+                    </label>
+                </cell>
+                <cell id="336">
+                    <label id="337">
+                        <property name="style">becpg-cell-data</property>
+                        <text-property name="text">Usage externe uniquement. Appliquer sur peau saine selon instructions d'étiquetage.</text-property>
+                    </label>
+                </cell>
+            </row>
+
+            <row id="338">
+                <cell id="339">
+                    <label id="340">
+                        <property name="style">becpg-cell-label</property>
+                        <text-property name="text">Durée de conservation &amp; PAO :</text-property>
+                    </label>
+                </cell>
+                <cell id="341">
+                    <label id="342">
+                        <property name="style">becpg-cell-data</property>
+                        <text-property name="text">30 mois (non ouvert) / PAO : 12M après ouverture</text-property>
+                    </label>
+                </cell>
+            </row>
+        </grid>
+
+        <!-- Product Summary Section 2: Regulatory & GMP -->
+        <grid id="350">
+            <property name="width">100%</property>
+            <property name="marginTop">12pt</property>
+            <column id="351"/>
+            <row id="352">
+                <cell id="353">
+                    <property name="style">becpg-section-label</property>
+                    <label id="354">
+                        <property name="style">becpg-section-label</property>
+                        <text-property name="text">2. INFORMATIONS RÉGLEMENTAIRES ET CONFORMITÉ BPF (ISO 22716)</text-property>
+                    </label>
+                </cell>
+            </row>
+        </grid>
+
+        <grid id="360">
+            <property name="width">100%</property>
+            <column id="361">
+                <property name="width">30%</property>
+            </column>
+            <column id="362">
+                <property name="width">70%</property>
+            </column>
+
+            <row id="363">
+                <cell id="364">
+                    <label id="365">
+                        <property name="style">becpg-cell-label</property>
+                        <text-property name="text">Personne Responsable (RP) :</text-property>
+                    </label>
+                </cell>
+                <cell id="366">
+                    <label id="367">
+                        <property name="style">becpg-cell-data</property>
+                        <text-property name="text">Conforme Article 4 - Titulaire de la mise sur le marché UE</text-property>
+                    </label>
+                </cell>
+            </row>
+
+            <row id="368">
+                <cell id="369">
+                    <label id="370">
+                        <property name="style">becpg-cell-label</property>
+                        <text-property name="text">Procédé de fabrication &amp; BPF :</text-property>
+                    </label>
+                </cell>
+                <cell id="371">
+                    <label id="372">
+                        <property name="style">becpg-cell-data</property>
+                        <text-property name="text">Fabrication conforme aux Bonnes Pratiques de Fabrication selon la norme ISO 22716.</text-property>
+                    </label>
+                </cell>
+            </row>
+
+            <row id="373">
+                <cell id="374">
+                    <label id="375">
+                        <property name="style">becpg-cell-label</property>
+                        <text-property name="text">Non-expérimentation animale :</text-property>
+                    </label>
+                </cell>
+                <cell id="376">
+                    <label id="377">
+                        <property name="style">becpg-cell-data</property>
+                        <text-property name="text">Attestation de conformité avec l'Article 18 du Règlement (CE) N° 1223/2009.</text-property>
+                    </label>
+                </cell>
+            </row>
+        </grid>
+
     </body>
 </report>

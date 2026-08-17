@@ -23,7 +23,7 @@
   "componentHeadingStyle": {
     "font": "Helvetica-Bold",
     "size": 11,
-    "color": "#1F3864",
+    "color": "#004254",
     "prefix": "➣ "
   },
 
@@ -34,7 +34,7 @@
       "scope": "ENTITY",
       "componentHeading": false,
       "emptyPlaceholder": "SLabel.pifAnnexCompoQualiQuantiEmptyPlaceholder",
-      "required": true,
+      "required": false,
       "mimeTypes": ["application/pdf"]
     },
     {
@@ -46,6 +46,7 @@
       "componentHeading": true,
       "sort": "COMPO_ORDER",
       "dedup": true,
+      "required": false,
       "mimeTypes": ["application/pdf"]
     },
     {
@@ -56,6 +57,7 @@
       "componentHeading": true,
       "sort": "COMPO_ORDER",
       "dedup": true,
+      "required": false,
       "mimeTypes": ["application/pdf"]
     },
     {
