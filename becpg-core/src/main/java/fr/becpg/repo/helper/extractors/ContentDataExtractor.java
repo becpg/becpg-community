@@ -24,12 +24,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ContentData;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.site.SiteInfo;
+import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.config.format.FormatMode;
@@ -44,6 +47,8 @@ import fr.becpg.repo.helper.impl.AttributeExtractorField;
  * @version $Id: $Id
  */
 public class ContentDataExtractor extends AbstractNodeDataExtractor  {
+
+	private static final Log logger = LogFactory.getLog(ContentDataExtractor.class);
 
 	
 	
@@ -120,7 +125,7 @@ public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 	      
 		 List<String> aspects = new ArrayList<>();
 		 for(QName aspect : nodeService.getAspects(nodeRef)){
-			 aspects.add(aspect.toPrefixString(services.getNamespaceService()));
+			 aspects.add(toPrefixStringOrRaw(aspect, nodeRef));
 		 }
 		 
 		 ret.put(PROP_ASPECTS, aspects);
@@ -130,12 +135,27 @@ public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 	
 	}
 
-
-
-
-
-
-
-
+	/**
+	 * <p>Prefixes an aspect name, without ever failing the whole search.</p>
+	 *
+	 * A node can carry an aspect coming from a model that is no longer registered - a custom model
+	 * removed from an instance, typically. {@link org.alfresco.service.namespace.QName#toPrefixString}
+	 * then throws a NamespaceException and, called from the search web script, that single node used
+	 * to break the whole result page. Fall back on the full "{uri}localName" form and log the
+	 * nodeRef, so the offending data can actually be found.
+	 *
+	 * @param aspect a {@link org.alfresco.service.namespace.QName} object
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return the prefixed name, or the full QName when its namespace is unknown
+	 */
+	private String toPrefixStringOrRaw(QName aspect, NodeRef nodeRef) {
+		try {
+			return aspect.toPrefixString(services.getNamespaceService());
+		} catch (NamespaceException e) {
+			logger.warn("Unregistered namespace on aspect " + aspect + " of node " + nodeRef
+					+ " - the model it comes from is not deployed on this instance", e);
+			return aspect.toString();
+		}
+	}
 
 }
