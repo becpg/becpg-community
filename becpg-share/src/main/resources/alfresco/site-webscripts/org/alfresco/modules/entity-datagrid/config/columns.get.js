@@ -371,6 +371,20 @@ function main() {
 	, mode = getArgument("mode"), noCache = getArgument("noCache"), siteId = getArgument("siteId")
 	, entityType = getArgument("entityType"), entityNodeRef = getArgument("entityNodeRef");
 
+	/*
+	 * withControls=true adds the field's <control> to every column.
+	 *
+	 * Opt-in, and deliberately per call rather than per instance: without the
+	 * argument this web script answers exactly what it answered before, byte for
+	 * byte, so Share's own datagrid is untouched. It exists because the columns
+	 * carry the field's type but not the control the form configuration declares
+	 * for it, and a client that renders its own grid - the supplier portal - has
+	 * no other way to learn that bcpg:ingListIngTypes is filled from
+	 * becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem. The
+	 * information already crosses the wire for a form; it did not for a column.
+	 */
+	var withControls = getArgument("withControls") == "true";
+
 	var skipSecurityRules = false;
 	var referer = getRequestHeader("Referer");
 	if (referer !== null && referer.indexOf("/share/page/wizard") !== -1) {
@@ -398,11 +412,11 @@ function main() {
 	}
 	
 	// pass form ui model to FTL
-	model.columns = getColumns(itemType, list, formId, mode, prefixedSiteId, prefixedEntityType, entityNodeRef, null, skipSecurityRules);
+	model.columns = getColumns(itemType, list, formId, mode, prefixedSiteId, prefixedEntityType, entityNodeRef, null, skipSecurityRules, withControls);
 
 }
 
-function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEntityType, entityNodeRef , nestedPrefKey, skipSecurityRules) {
+function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEntityType, entityNodeRef , nestedPrefKey, skipSecurityRules, withControls) {
 	
 	var columns = [], defaultColumns = [], ret = [];
 
@@ -536,7 +550,7 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 					}
 
 
-					column.columns = getColumns(name + "", "sub-datagrid", null, mode, null, null, null, null, skipSecurityRules);
+					column.columns = getColumns(name + "", "sub-datagrid", null, mode, null, null, null, null, skipSecurityRules, withControls);
 
 					ret.push(column);
 
@@ -564,11 +578,11 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 					
 					if (splitted[1].includes("@")) {
 						var formSplitted = splitted[1].split("@");
-						column.columns = getColumns(formSplitted[0] + "", "sub-datagrid", formSplitted[1] + "", mode, null, null, null, subPrefKey, skipSecurityRules);
+						column.columns = getColumns(formSplitted[0] + "", "sub-datagrid", formSplitted[1] + "", mode, null, null, null, subPrefKey, skipSecurityRules, withControls);
 					} else if (formIdArgs != null && formIdArgs.length > 0) {
-						column.columns = getColumns(splitted[1] + "", "sub-datagrid", "sub-datagrid-" + formIdArgs, mode, null, null, null, subPrefKey, skipSecurityRules);
+						column.columns = getColumns(splitted[1] + "", "sub-datagrid", "sub-datagrid-" + formIdArgs, mode, null, null, null, subPrefKey, skipSecurityRules, withControls);
 					} else {
-						column.columns = getColumns(splitted[1] + "", "sub-datagrid", null, mode, null, null, null, subPrefKey, skipSecurityRules);
+						column.columns = getColumns(splitted[1] + "", "sub-datagrid", null, mode, null, null, null, subPrefKey, skipSecurityRules, withControls);
 					}
 
 					ret.push(column);
@@ -590,7 +604,11 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 								
 								
 								columns[j].readOnly = formConfig.fields[fieldId].isReadOnly();
-								
+
+								if (withControls) {
+									columns[j].control = getControl(formConfig.fields[fieldId], itemType);
+								}
+
 							}	
 							
 							if (mode == "datagrid-prefs") {
@@ -626,6 +644,98 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 }
 
 
+
+/**
+ * The <control> a field declares, as a plain object the FTL can serialise.
+ *
+ * The template names the widget - autocomplete.ftl, textfield.ftl - and the
+ * parameters carry what makes it work, first of all the "ds" of an autocomplete.
+ * The values arrive as configured, whitespace included: a <control-param> written
+ * on its own line carries the indentation of the XML, and trimming it here is the
+ * only place where the caller cannot get it wrong.
+ *
+ * The datagrid form is asked first, then the item's DEFAULT form. That order is
+ * not a convenience: a datagrid form lists the columns to show and almost never
+ * repeats the control, while the default form is where the picker is described -
+ * bcpg:ingListIngTypes declares its "ds" there and nowhere else. Share resolves
+ * the same way when it edits a row, so a client rendering its own grid sees what
+ * Share's editor sees.
+ *
+ * @method getControl
+ * @param field The form configuration field of the resolved form
+ * @param itemType The item type, to fall back on its default form
+ * @return Object {template, params} or null when no form declares a control
+ */
+function getControl(field, itemType) {
+	var control = readControl(field);
+	if (control == null) {
+		control = readControl(getDefaultFormField(itemType, field != null ? field.id : null));
+	}
+	return control;
+}
+
+/**
+ * @method readControl
+ * @param field a form configuration field, or null
+ * @return Object {template, params} or null when the field declares nothing
+ */
+function readControl(field) {
+	var control = field != null ? field.control : null;
+	if (control == null) {
+		return null;
+	}
+
+	var params = {}, hasParam = false;
+	// `getParams()` answers a ControlParam[], each carrying its own name and
+	// value - not a Map, and not something for..in can walk under Rhino.
+	var declared = control.params;
+	if (declared != null) {
+		for (var k = 0; k < declared.length; k++) {
+			var param = declared[k];
+			if (param != null && param.name != null) {
+				params["" + param.name] = trimValue(param.value);
+				hasParam = true;
+			}
+		}
+	}
+
+	var template = control.template != null ? "" + control.template : null;
+	if (template == null && !hasParam) {
+		return null;
+	}
+
+	return { template: template, params: params };
+}
+
+/**
+ * A control-param value written on its own line in the XML carries the
+ * indentation with it.
+ *
+ * @method trimValue
+ * @param value
+ * @return String
+ */
+function trimValue(value) {
+	return value != null ? ("" + value).replace(/^\s+|\s+$/g, "") : "";
+}
+
+/**
+ * The same field, as the item's default form describes it.
+ *
+ * @method getDefaultFormField
+ * @param itemType prefixed type, e.g. bcpg:ingList
+ * @param fieldId the field to look up
+ * @return the field configuration, or null
+ */
+function getDefaultFormField(itemType, fieldId) {
+	if (itemType == null || fieldId == null) {
+		return null;
+	}
+	var nodeConfig = config.scoped[itemType];
+	var formsConfig = nodeConfig !== null ? nodeConfig.forms : null;
+	var defaultForm = formsConfig !== null ? formsConfig.defaultForm : null;
+	return defaultForm !== null && defaultForm.fields != null ? defaultForm.fields[fieldId] : null;
+}
 
 function isChecked(preferences) {
 	if (existInPref(preferences)) {
