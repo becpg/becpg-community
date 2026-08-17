@@ -42,6 +42,12 @@ http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 		</property>
 	</bean>
 
+	<!-- Overrides the stock "preferences" root object: it NPEs when no user is bound to the request context,
+	     turning any web script that reads a preference into a 500 (random datagrid column pop-up) -->
+	<bean id="slingshot.scriptprocessor.preferences" parent="baseScriptExtension" class="fr.becpg.web.scripts.BeCPGUserPreferences">
+		<property name="extensionName" value="preferences" />
+	</bean>
+
 
    <!-- Provide becpg form config -->
 	<bean id="becpg-001-ClientConfig" class="org.springframework.extensions.config.ConfigBootstrap" init-method="register">

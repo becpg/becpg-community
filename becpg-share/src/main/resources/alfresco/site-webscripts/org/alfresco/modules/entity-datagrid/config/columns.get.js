@@ -41,6 +41,92 @@ function getArgument(argName, defValue) {
 	return result;
 }
 
+var preferenceRoot = null;
+
+/**
+ * Reads the whole user preference tree, once per request.
+ *
+ * AlfrescoUtil.getPreferences() re-parses preferences.value on every single call - this web script
+ * calls it twice per column - and blows up when no user is bound to the request context (the stock
+ * "preferences" root object encodes a null user id). A missing preference must never fail the
+ * column definitions, so any failure degrades to "no preference set".
+ *
+ * @method getPreferenceRoot
+ * @return Object the preference tree, never null
+ */
+function getPreferenceRoot() {
+	if (preferenceRoot === null) {
+		preferenceRoot = {};
+		try {
+			var value = preferences.value;
+			if (value) {
+				preferenceRoot = jsonUtils.toObject(value);
+			}
+		} catch (e) {
+			if (logger.isLoggingEnabled()) {
+				logger.log("Unable to read the user preferences, falling back on an empty set: " + e);
+			}
+		}
+	}
+
+	return preferenceRoot;
+}
+
+/**
+ * Resolves a dotted preference path, same contract as AlfrescoUtil.getPreferences.
+ *
+ * @method getPreference
+ * @param filter
+ *            The dotted preference path
+ * @return The preference node or null when the path is not set
+ */
+function getPreference(filter) {
+	var node = getPreferenceRoot(), parts = filter.split(".");
+
+	for (var i = 0; i < parts.length; i++) {
+		if ((node === null) || (typeof node !== "object") || !node[parts[i]]) {
+			return null;
+		}
+		node = node[parts[i]];
+	}
+
+	return node;
+}
+
+/**
+ * Parses the body of a repository response, without ever throwing.
+ *
+ * A connector error leaves the response body null and a proxy may answer HTML: eval() then raises a
+ * SyntaxError that surfaces as a 500 to the browser, i.e. the "Could not read Data List Column
+ * definitions" pop-up, instead of an empty column set.
+ *
+ * @method parseFormResponse
+ * @param response
+ *            The repository response
+ * @return Object the parsed body or null when it is not JSON
+ */
+function parseFormResponse(response) {
+	var body = null;
+
+	try {
+		// Response.toString() returns the raw body, which is null whenever the call failed
+		body = response.response;
+		if (!body || (body == "null")) {
+			if (logger.isLoggingEnabled()) {
+				logger.log("Empty form definition response");
+			}
+			return null;
+		}
+
+		return eval('(' + body + ')');
+	} catch (e) {
+		if (logger.isLoggingEnabled()) {
+			logger.log("Unparseable form definition response: " + e + " - " + body);
+		}
+		return null;
+	}
+}
+
 function getRequestHeader(headerName) {
 	try {
 		if (typeof request !== "undefined" && request !== null && typeof request.getHeader === "function") {
@@ -255,8 +341,8 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig, mode, entit
 				if (formConfig.isFieldForced(fieldId) || mode == "datagrid-prefs") {
 					postBodyForcedFields.push(fieldId);
 				} else  {
-					var preferences = AlfrescoUtil.getPreferences("fr.becpg.formulation.dashlet.custom.datagrid-prefs" + "." + itemId.replace(":", "_") + "." + fieldId.replace(":", "_"));
-					
+					var preferences = getPreference("fr.becpg.formulation.dashlet.custom.datagrid-prefs" + "." + itemId.replace(":", "_") + "." + fieldId.replace(":", "_"));
+
 					if(existInPref(preferences) && isChecked(preferences)){
 						postBodyForcedFields.push(fieldId);
 					}
@@ -298,6 +384,14 @@ function main() {
 	cache.maxAge = 3600; // in seconds
 	cache.neverCache=false;
 	cache.isPublic=false;
+	// The column set is per user (column preferences and security rules), yet the response goes out
+	// as "Cache-Control: public" - the property assignment above does not reach the setter - so a
+	// shared cache in front of Share may serve one user's columns to another. Call the setter.
+	try {
+		cache.setIsPublic(false);
+	} catch (e) {
+		// older frameworks only expose the property
+	}
 	cache.mustRevalidate=true;
 	
 	if (noCache) {
@@ -372,16 +466,22 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 				return;
 			}
 
-			var formModel = eval('(' + json + ')');
 			var override = false;
 
 			// if we got a successful response attempt to render the form
 			if (json.status == 200) {
+				// only a 200 carries a JSON body: parsing anything else (empty body on a connector
+				// error, HTML error page from a proxy) throws and turns into a 500 for the client
+				var formModel = parseFormResponse(json);
+				if (formModel === null) {
+					status.setCode(502, "Invalid form definition response");
+					return;
+				}
 				columns = formModel.fields;
 				override = formModel.override;
 			} else {
 				if (logger.isLoggingEnabled()) {
-					logger.log("error = " + formModel.message);
+					logger.log("error = " + json.status + " " + json);
 				}
 				columns = [];
 			}
@@ -390,8 +490,10 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 			if(mode == "datagrid-prefs"){			
 				postBody.force = [];
 				var jsonDefaultFields = connector.post("/becpg/form", jsonUtils.toJSONString(postBody), "application/json");
-				formModel = eval('(' + jsonDefaultFields + ')');			
-			    defaultColumns = formModel.fields;
+				var defaultFieldsModel = jsonDefaultFields.status == 200 ? parseFormResponse(jsonDefaultFields) : null;
+				if (defaultFieldsModel !== null) {
+					defaultColumns = defaultFieldsModel.fields;
+				}
 			}
 
 			
@@ -423,7 +525,7 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 					    prefKey =nestedPrefKey+"_"+fieldId.replace(":", "_");
 				   } 
 				   
-					var preferences = AlfrescoUtil.getPreferences("fr.becpg.formulation.dashlet.custom.datagrid-prefs." +prefKey);
+					var preferences = getPreference("fr.becpg.formulation.dashlet.custom.datagrid-prefs." +prefKey);
 
 				if (fieldId.indexOf("dataList_") == 0) {
 
