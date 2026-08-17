@@ -34,6 +34,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.logging.log4j.util.Strings;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,6 +45,7 @@ import org.springframework.web.client.RestClientException;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -194,8 +196,18 @@ public class BecpgRegulatoryService extends AbstractRegulatoryService {
         // For decernis - the dedicated endpoint is requested, for becpg - we extract from the response
         productDataEntityJsonService.extractIngIdToRegulatoryCodes(json).forEach((id, regCodes) -> {
             IngItem ingItem = (IngItem) alfrescoRepository.findOne(new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, id));
-            ingItem.setRegulatoryCode(regCodes);
-            alfrescoRepository.save(ingItem);
+
+            Set<String> regCodesFromRegulatory = Arrays.stream(regCodes.split(",")).collect(Collectors.toSet());
+            Set<String> regCodesPresent = Arrays.stream(ingItem.getRegulatoryCode().split(",")).collect(Collectors.toSet());
+            Set<String> combined = new HashSet<>(regCodesPresent);
+            // clear present old becpg-regulatory codes, preserve decernis codes, add all incoming
+            combined.removeIf(regCode -> regCode.startsWith("BECPG_"));
+            combined.addAll(regCodesFromRegulatory);
+            // update entity if there is a change
+            if (!combined.equals(regCodesPresent)) {
+                ingItem.setRegulatoryCode(Strings.join(combined, ','));
+                alfrescoRepository.save(ingItem);
+            }
         });
 
         List<IngRegulatoryListDataItem> parsedIngRegulatoryElements = productDataEntityJsonService.deserializeDatalist(IngRegulatoryListDataItem.class, json).toList();

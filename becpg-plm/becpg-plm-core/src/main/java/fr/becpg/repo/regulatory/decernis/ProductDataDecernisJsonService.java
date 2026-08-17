@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -343,7 +344,7 @@ public class ProductDataDecernisJsonService {
 
         for (IngListDataItem ingListDataItem : context.getIngList()) {
             IngItem ingItem = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
-            String rid = ingItem.getRegulatoryCode();
+            String rid = extractRid(ingListDataItem, ingItem);
             if (isRIDValid(rid)) {
                 String ingName = RegulatoryHelper.extractIngName(ingItem);
                 JSONObject ingredient = new JSONObject();
@@ -384,6 +385,24 @@ public class ProductDataDecernisJsonService {
 
             scopeDetail.put("usage", usages);
             return payload;
+        }
+        return null;
+    }
+
+    public static String extractRid(IngListDataItem ingListDataItem, IngItem ingItem) {
+        String rawCode = ingItem.getRegulatoryCode();
+        if (StringUtils.hasText(rawCode)) {
+            List<String> decernisCodes = Arrays.stream(rawCode.split(","))
+                    .filter(codePart -> !codePart.startsWith("BECPG_"))
+                    .map(parsedRid -> parsedRid.replace("DECERNIS_", ""))
+                    .toList();
+            if (decernisCodes.isEmpty())
+                return null;
+            if (decernisCodes.size() > 1) {
+                logger.warn("Multiple decernis entries found in becpg:regulatoryCode of ingredient {} raw: {} filtered: {}. " +
+                        "Taking the first one.", ingListDataItem.getIng().getId(), rawCode, decernisCodes);
+            }
+            return decernisCodes.getFirst();
         }
         return null;
     }
@@ -592,7 +611,7 @@ public class ProductDataDecernisJsonService {
     }
 
     public Optional<JSONObject> buildIngredientJsonById(IngListDataItem ingListDataItem, IngItem ingItem, String function) {
-        String rid = ingItem.getRegulatoryCode();
+        String rid = extractRid(ingListDataItem, ingItem);
         if (isRIDValid(rid)) {
             String ingName = RegulatoryHelper.extractIngName(ingItem);
             Double ingQtyPerc = DecernisHelper.truncateDoubleValue(ingListDataItem.getQtyPerc());

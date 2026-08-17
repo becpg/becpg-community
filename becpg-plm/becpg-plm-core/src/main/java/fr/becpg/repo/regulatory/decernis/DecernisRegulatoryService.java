@@ -37,6 +37,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClientException;
 
 import java.util.*;
@@ -570,7 +571,7 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 
 				IngItem ingItem = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
 				String ingName = extractIngName(ingItem);
-				String rid = ingItem.getRegulatoryCode();
+				String rid = ProductDataDecernisJsonService.extractRid(ingListDataItem, ingItem);
 
 				Double ingQtyPerc = DecernisHelper.truncateDoubleValue(ingListDataItem.getQtyPerc());
 
@@ -691,26 +692,29 @@ public class DecernisRegulatoryService extends AbstractRegulatoryService {
 		for (IngListDataItem ingListDataItem : context.getIngList()) {
 			if (ingListDataItem.getIng() != null) {
 				IngItem ingItem = (IngItem) alfrescoRepository.findOne(ingListDataItem.getIng());
-				String rid = ingItem.getRegulatoryCode();
-				if (rid == null || rid.isEmpty()) {
-					rid = fetchIngredientId(ingListDataItem, companyName());
+				String presentDecernisCode = ProductDataDecernisJsonService.extractRid(ingListDataItem, ingItem);
+
+				if (!StringUtils.hasText(presentDecernisCode)) {
+					String newDecernisCode = fetchIngredientId(ingListDataItem, companyName());
 					if (logger.isDebugEnabled()) {
 						logger.debug("Try to fetch ingredient ID: " + ingItem.getCharactName());
 					}
-					if (rid != null) {
+					if (StringUtils.hasText(newDecernisCode)) {
 						if (logger.isDebugEnabled()) {
-							logger.debug("Found ingredient ID: " + ingItem.getCharactName() + ", ID: " + rid);
+							logger.debug("Found ingredient ID: " + ingItem.getCharactName() + ", ID: " + newDecernisCode);
 						}
 					} else {
 						if (logger.isDebugEnabled()) {
 							logger.debug("Could not find ingredient ID: " + ingItem.getCharactName());
 						}
-						rid = UNKNOWN;
+						newDecernisCode = UNKNOWN;
 					}
-					ingItem.setRegulatoryCode(rid);
+					String rawCode = ingItem.getRegulatoryCode();
+					ingItem.setRegulatoryCode(StringUtils.hasText(rawCode) ? rawCode + ',' + newDecernisCode : newDecernisCode);
 					alfrescoRepository.save(ingItem);
 				}
-				if (UNKNOWN.equals(rid)) {
+
+				if (ingItem.getRegulatoryCode().contains(UNKNOWN)) {
 					RequirementListDataItem noCodeRequirement = createReqCtrl(ingListDataItem,
 							MLTextHelper.getI18NMessage(MESSAGE_NO_CODE_CHARACT), RequirementType.Tolerated);
 					context.getRequirements().add(noCodeRequirement);
