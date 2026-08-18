@@ -3371,7 +3371,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				if (component instanceof CompositeLabeling) {
 
 					MessageFormat formater = getIngTextFormat(component, qtyPerc, ((CompositeLabeling) component).getIngList().size() > 1);
-					BigDecimal subRatio = computeQtyPerc(parent, component, ratio, ingsLabelingWithYield && (component instanceof IngItem));
+					// The sub ings are scaled by their own "with yield" quantity against the "without yield" total of
+					// their parent : the ratio must stay in the same "without yield" space, otherwise the yield is
+					// applied twice (see #34702). Same rule as the flat table below.
+					BigDecimal subRatio = computeQtyPerc(parent, component, ratio, false);
 
 					if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType()) || computePercByParent) {
 						subRatio = DEFAULT_RATIO;

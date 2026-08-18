@@ -271,6 +271,203 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		checkILL(finishedProductNodeRef1, labelingRuleList, expectedHtml, Locale.FRENCH);
 	}
 
+	/**
+	 * #34702 : same product as {@link #testRenderFlatHtmlTableSubIngsWithYield()}, rendered as text this time. The
+	 * sub-ingredients of a detailed composite ingredient must carry the parent yield exactly once, so that they still
+	 * sum up to their parent (100/200 %, 60/120 %, 40/80 % in the flat table). The yield used to be applied twice on
+	 * them - once through the parent ratio, once through their own "with yield" quantity - which inflated them by
+	 * 1/yield (240 % and 160 % here).
+	 */
+	@Test
+	public void testRenderSubIngsWithYield() {
+
+		NodeRef subIngsRawMaterialNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("Text sub ings raw material " + Calendar.getInstance().getTimeInMillis());
+			MLText legalName = new MLText("Legal Text sub ings raw material");
+			legalName.addValue(Locale.FRENCH, "Legal Text sub ings raw material");
+			legalName.addValue(Locale.ENGLISH, "Legal Text sub ings raw material");
+			rawMaterial.setLegalName(legalName);
+			rawMaterial.setDensity(1d);
+
+			List<IngListDataItem> ingList = new ArrayList<>();
+			ingList.add(IngListDataItem.build().withQtyPerc(100d).withIngredient(ing3).withIsManual(false));
+			ingList.add(IngListDataItem.build().withParent(ingList.get(0)).withQtyPerc(60d).withIngredient(ing1).withIsManual(false));
+			ingList.add(IngListDataItem.build().withParent(ingList.get(0)).withQtyPerc(40d).withIngredient(ing2).withIsManual(false));
+			rawMaterial.setIngList(ingList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+		});
+
+		NodeRef finishedProductNodeRef1 = inWriteTx(() -> {
+			FinishedProductData finishedProduct1 = new FinishedProductData();
+			finishedProduct1.setName("Finished product text sub ings " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct1.setLegalName("legal Finished product text sub ings");
+			finishedProduct1.setQty(1d);
+			finishedProduct1.setUnit(ProductUnit.kg);
+			finishedProduct1.setYield(80d);
+
+			List<CompoListDataItem> compoList1 = new ArrayList<>();
+			compoList1.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(subIngsRawMaterialNodeRef));
+
+			finishedProduct1.getCompoListView().setCompoList(compoList1);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		});
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.#%} ({2})")
+				.withLabelingRuleType(LabelingRuleType.Format));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param1").withFormula("ingsLabelingWithYield=true")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		// show the percentage of the detailed composite ingredient itself, like the customer template does
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param2").withFormula("subIngsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Detail").withLabelingRuleType(LabelingRuleType.Detail)
+				.withComponents(Collections.singletonList(ing3)).withReplacements(null));
+
+		checkILL(finishedProductNodeRef1, labelingRuleList, "ing3 french 200% (ing1 french 120%, ing2 french 80%)", Locale.FRENCH);
+	}
+
+	/**
+	 * #34702, retest of 2026-08-14: the ingredient list is right but the labeling is not. When a sub-ingredient
+	 * evaporates, the percentages rendered for the sub-ingredients must stay aligned with the "Qty with yield" column
+	 * of the ingredient list, and the composite parent must remain the sum of its children.
+	 */
+	@Test
+	public void testRenderSubIngsWithYieldAndEvaporation() {
+
+		NodeRef evaporatingRawMaterialNodeRef = inWriteTx(() -> {
+
+			nodeService.setProperty(ing1, PLMModel.PROP_EVAPORATED_RATE, 50d);
+
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("Evaporating sub ings raw material " + Calendar.getInstance().getTimeInMillis());
+			MLText legalName = new MLText("Legal Evaporating sub ings raw material");
+			legalName.addValue(Locale.FRENCH, "Legal Evaporating sub ings raw material");
+			legalName.addValue(Locale.ENGLISH, "Legal Evaporating sub ings raw material");
+			rawMaterial.setLegalName(legalName);
+			rawMaterial.setDensity(1d);
+
+			List<IngListDataItem> ingList = new ArrayList<>();
+			ingList.add(IngListDataItem.build().withQtyPerc(100d).withIngredient(ing3).withIsManual(false));
+			ingList.add(IngListDataItem.build().withParent(ingList.get(0)).withQtyPerc(60d).withIngredient(ing1).withIsManual(false));
+			ingList.add(IngListDataItem.build().withParent(ingList.get(0)).withQtyPerc(40d).withIngredient(ing2).withIsManual(false));
+			rawMaterial.setIngList(ingList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+		});
+
+		// 2 kg in, 1.6 kg net : the 400 g lost are taken from ing1, the only ingredient that evaporates
+		NodeRef finishedProductNodeRef1 = inWriteTx(() -> {
+			FinishedProductData finishedProduct1 = new FinishedProductData();
+			finishedProduct1.setName("Finished product evaporating sub ings " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct1.setLegalName("legal Finished product evaporating sub ings");
+			finishedProduct1.setQty(1.6d);
+			finishedProduct1.setUnit(ProductUnit.kg);
+
+			List<CompoListDataItem> compoList1 = new ArrayList<>();
+			compoList1.add(CompoListDataItem.build().withQtyUsed(2d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(evaporatingRawMaterialNodeRef));
+
+			finishedProduct1.getCompoListView().setCompoList(compoList1);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		});
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.###%} ({2})")
+				.withLabelingRuleType(LabelingRuleType.Format));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param1").withFormula("ingsLabelingWithYield=true")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param2").withFormula("force100Perc=true")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		// show the percentage of the detailed composite ingredient itself, like the customer template does
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param3").withFormula("subIngsDefaultFormat = \"{0} {1,number,0.###%} ({2})\"")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Detail").withLabelingRuleType(LabelingRuleType.Detail)
+				.withComponents(Collections.singletonList(ing3)).withReplacements(null));
+
+		ProductData formulatedProduct = formulateWithLabelingRules(finishedProductNodeRef1, labelingRuleList);
+
+		Map<NodeRef, Double> qtyPercWithYieldByIng = new HashMap<>();
+		for (IngListDataItem ingListDataItem : formulatedProduct.getIngList()) {
+			qtyPercWithYieldByIng.put(ingListDataItem.getIng(), ingListDataItem.getQtyPercWithYield());
+		}
+
+		String rendered = getFirstIll(formulatedProduct, Locale.FRENCH);
+		String context = "\n   - labeling  : " + rendered + "\n   - ingList   : composite=" + qtyPercWithYieldByIng.get(ing3) + " evaporating="
+				+ qtyPercWithYieldByIng.get(ing1) + " other=" + qtyPercWithYieldByIng.get(ing2);
+		logger.info("Rendered labeling with evaporating sub ingredient:" + context);
+
+		List<Double> renderedPercs = extractPercentages(rendered);
+		Assert.assertEquals("Expecting the composite ingredient and its two sub ingredients:" + context, 3, renderedPercs.size());
+
+		double parentPerc = renderedPercs.get(0);
+		double firstChildPerc = renderedPercs.get(1);
+		double secondChildPerc = renderedPercs.get(2);
+
+		// Before the fix the yield was applied twice on the sub ingredients : they came out at 75 % and 50 % while
+		// their parent stayed at 100 %, so the parenthesis no longer added up to the ingredient it details.
+		Assert.assertEquals("The composite ingredient must be the sum of its sub ingredients:" + context, parentPerc,
+				firstChildPerc + secondChildPerc, 0.2d);
+		Assert.assertEquals("The only top level ingredient must be at 100%:" + context, 100d, parentPerc, 0.2d);
+
+		// The water lost by the composite is shared over its sub ingredients proportionally to their declared
+		// percentages, so they keep their 60/40 split instead of charging the whole loss to the evaporating one.
+		Assert.assertEquals("Evaporating sub ingredient must keep its share of its parent:" + context, 60d, firstChildPerc, 0.2d);
+		Assert.assertEquals("Sub ingredient must keep its share of its parent:" + context, 40d, secondChildPerc, 0.2d);
+
+		// The labeling must tell the same story as the "Qty with yield" column of the ingredient list
+		Assert.assertNotNull("Composite ingredient missing from the ingredient list", qtyPercWithYieldByIng.get(ing3));
+		Assert.assertNotNull("Evaporating sub ingredient missing from the ingredient list", qtyPercWithYieldByIng.get(ing1));
+		Assert.assertNotNull("Sub ingredient missing from the ingredient list", qtyPercWithYieldByIng.get(ing2));
+
+		Assert.assertEquals("Composite ingredient percentage differs from the ingredient list:" + context,
+				qtyPercWithYieldByIng.get(ing3).doubleValue(), parentPerc, 0.2d);
+		Assert.assertEquals("Evaporating sub ingredient percentage differs from the ingredient list:" + context,
+				qtyPercWithYieldByIng.get(ing1).doubleValue(), firstChildPerc, 0.2d);
+		Assert.assertEquals("Sub ingredient percentage differs from the ingredient list:" + context,
+				qtyPercWithYieldByIng.get(ing2).doubleValue(), secondChildPerc, 0.2d);
+	}
+
+	private ProductData formulateWithLabelingRules(final NodeRef productNodeRef, final List<LabelingRuleListDataItem> labelingRuleList) {
+		return inWriteTx(() -> {
+			ProductData ret = (ProductData) alfrescoRepository.findOne(productNodeRef);
+			ret.getLabelingListView().getLabelingRuleList().clear();
+			ret.getLabelingListView().getLabelingRuleList().addAll(labelingRuleList);
+
+			alfrescoRepository.save(ret);
+			productService.formulate(ret);
+			alfrescoRepository.save(ret);
+
+			return ret;
+		});
+	}
+
+	private String getFirstIll(ProductData formulatedProduct, Locale locale) {
+		Assert.assertNotNull("IngLabelingList is null", formulatedProduct.getLabelingListView().getIngLabelingList());
+		Assert.assertFalse("IngLabelingList is empty", formulatedProduct.getLabelingListView().getIngLabelingList().isEmpty());
+
+		return formulatedProduct.getLabelingListView().getIngLabelingList().get(0).getValue().getValue(locale);
+	}
+
+	private List<Double> extractPercentages(String rendered) {
+		List<Double> ret = new ArrayList<>();
+		Matcher matcher = Pattern.compile("([0-9]+(?:[.,][0-9]+)?)\\s*%").matcher(rendered);
+		while (matcher.find()) {
+			ret.add(Double.valueOf(matcher.group(1).replace(',', '.')));
+		}
+		return ret;
+	}
+
 	@Test
 	public void testNullIng() {
 
