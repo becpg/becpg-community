@@ -12741,6 +12741,7 @@
                 <!-- <show id="bcpg:certificateDate" force="true" />  -->
                     <show id="bcpg:lclComments" />
                     <show id="bcpg:isManualListItem" force="true" />
+                    <show id="gs1:lclClaimMarkedOnPackage" force="true" />
                     <show id="rep:reportKinds" force="true" />
                 </field-visibility>
                 <appearance>
@@ -12834,6 +12835,7 @@
                     <show id="fm:commentCount" force="true" />
                     <show id="bcpg:lclIsFormulated" />
                     <show id="bcpg:lclFormulaErrorLog" />
+                    <show id="gs1:lclClaimMarkedOnPackage" force="true" />
                     <show id="rep:reportKinds" />
                     <show id="dataList_bcpg:reqCtrlList" />
                 </field-visibility>
@@ -12901,6 +12903,7 @@
                     <show id="fm:commentCount" force="true" />
                     <show id="bcpg:lclIsFormulated" />
                     <show id="bcpg:lclFormulaErrorLog" />
+                    <show id="gs1:lclClaimMarkedOnPackage" force="true" />
                     <show id="rep:reportKinds" />
                 </field-visibility>
                 <appearance>
@@ -12927,6 +12930,7 @@
                 <!-- <show id="bcpg:certificateDate" force="true" />  -->
                     <show id="bcpg:lclComments" />
                     <show id="bcpg:isManualListItem" force="true" />
+                    <show id="gs1:lclClaimMarkedOnPackage" force="true" />
                     <show id="rep:reportKinds" />
                 </field-visibility>
                 <appearance>
