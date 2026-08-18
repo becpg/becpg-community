@@ -539,9 +539,11 @@ public class ReportPdfAggregator {
                 } else {
                     for (AnnexDocument ad : part.section.getDocuments()) {
                         if (ad.getPdfBytes() != null && ad.getPdfBytes().length > 0) {
-                            docToMergedPageMap.put(ad, runningPageCount);
-                            try (PDDocument adDoc = loadDocumentOrConvertImage(ad.getPdfBytes())) {
+                            PDDocument adDoc = loadDocumentOrConvertImage(ad.getPdfBytes());
+                            if (adDoc != null) {
+                                docToMergedPageMap.put(ad, runningPageCount);
                                 runningPageCount += adDoc.getNumberOfPages();
+                                try { adDoc.close(); } catch (Exception e) {}
                             }
                         }
                     }
@@ -599,12 +601,16 @@ public class ReportPdfAggregator {
                     } else {
                         for (AnnexDocument ad : part.section.getDocuments()) {
                             if (ad.getPdfBytes() != null && ad.getPdfBytes().length > 0) {
-                                logger.info("[ReportPdfAggregator] Appending component doc '" + ad.getComponentName() + "' starting on merged index " + mergedPageCount + "...");
                                 PDDocument adDoc = loadDocumentOrConvertImage(ad.getPdfBytes());
-                                docsToClose.add(adDoc);
-                                merger.appendDocument(finalDocMerged, adDoc);
-                                docToMergedPageMap.put(ad, mergedPageCount);
-                                mergedPageCount += adDoc.getNumberOfPages();
+                                if (adDoc != null) {
+                                    logger.info("[ReportPdfAggregator] Appending component doc '" + ad.getComponentName() + "' starting on merged index " + mergedPageCount + "...");
+                                    docsToClose.add(adDoc);
+                                    merger.appendDocument(finalDocMerged, adDoc);
+                                    docToMergedPageMap.put(ad, mergedPageCount);
+                                    mergedPageCount += adDoc.getNumberOfPages();
+                                } else {
+                                    logger.warn("[ReportPdfAggregator] Skipping unparseable document for component '" + ad.getComponentName() + "'");
+                                }
                             }
                         }
                     }
@@ -714,13 +720,15 @@ public class ReportPdfAggregator {
                     if (ad.isBeCPGDoc()) {
                         Integer startPageIdx = docToMergedPageMap.get(ad);
                         if (startPageIdx != null) {
-                            try (PDDocument adDoc = loadDocumentOrConvertImage(ad.getPdfBytes())) {
+                            PDDocument adDoc = loadDocumentOrConvertImage(ad.getPdfBytes());
+                            if (adDoc != null) {
                                 PageNumberLocator pageNumLocator = new PageNumberLocator();
                                 List<PageNumberLocator.FoundPageNumber> annexPageNums = pageNumLocator.locatePageNumbers(adDoc);
                                 for (PageNumberLocator.FoundPageNumber fpn : annexPageNums) {
                                     fpn.pageIndex = startPageIdx + fpn.pageIndex;
                                     birtPageNums.add(fpn);
                                 }
+                                try { adDoc.close(); } catch (Exception e) {}
                             }
                         }
                     }
@@ -796,11 +804,13 @@ public class ReportPdfAggregator {
                     if (ad.isBeCPGDoc()) {
                         Integer startPageIdx = docToMergedPageMap.get(ad);
                         if (startPageIdx != null) {
-                            try (PDDocument adDoc = loadDocumentOrConvertImage(ad.getPdfBytes())) {
+                            PDDocument adDoc = loadDocumentOrConvertImage(ad.getPdfBytes());
+                            if (adDoc != null) {
                                 int pages = adDoc.getNumberOfPages();
                                 for (int p = startPageIdx; p < startPageIdx + pages; p++) {
                                     noHeaderPageIndexes.add(p);
                                 }
+                                try { adDoc.close(); } catch (Exception e) {}
                             }
                         }
                     }
@@ -995,15 +1005,21 @@ public class ReportPdfAggregator {
         }
     }
 
-    private static PDDocument loadDocumentOrConvertImage(byte[] bytes) throws IOException {
+    private static PDDocument loadDocumentOrConvertImage(byte[] bytes) {
+        if (bytes == null || bytes.length == 0) {
+            return null;
+        }
         try {
             return Loader.loadPDF(bytes);
-        } catch (IOException e) {
+        } catch (Exception e) {
             return convertImageToPdfDocument(bytes);
         }
     }
 
-    private static PDDocument convertImageToPdfDocument(byte[] bytes) throws IOException {
+    private static PDDocument convertImageToPdfDocument(byte[] bytes) {
+        if (bytes == null || bytes.length == 0) {
+            return null;
+        }
         PDDocument doc = new PDDocument();
         try {
             PDImageXObject image = PDImageXObject.createFromByteArray(doc, bytes, "annex-image");
@@ -1025,8 +1041,13 @@ public class ReportPdfAggregator {
             }
             return doc;
         } catch (Exception ex) {
-            doc.close();
-            throw new IOException("Failed to load as PDF or convert image: " + ex.getMessage(), ex);
+            try {
+                doc.close();
+            } catch (Exception e) {
+                // ignore
+            }
+            logger.warn("Failed to load annex file as PDF or convert as image, skipping file: " + ex.getMessage());
+            return null;
         }
     }
 
