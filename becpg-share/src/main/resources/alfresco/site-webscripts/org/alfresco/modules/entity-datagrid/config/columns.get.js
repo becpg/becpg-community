@@ -667,11 +667,44 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
  * @return Object {template, params} or null when no form declares a control
  */
 function getControl(field, itemType) {
-	var control = readControl(field);
+	return mergeControl(
+		readControl(field),
+		readControl(getDefaultFormField(itemType, field != null ? field.id : null)));
+}
+
+/**
+ * The resolved form's control completed by the default form's.
+ *
+ * A datagrid form often repeats the template and drops the parameters -
+ * bcpg:ingListGeoOrigin declares its autocomplete-association.ftl and no "ds".
+ * Taking that control as it stands would shadow the datasource the default form
+ * declares, so the two are merged, the resolved form winning key by key.
+ *
+ * @method mergeControl
+ * @param control the control of the resolved form, or null
+ * @param fallback the control of the default form, or null
+ * @return Object {template, params} or null when neither declares anything
+ */
+function mergeControl(control, fallback) {
 	if (control == null) {
-		control = readControl(getDefaultFormField(itemType, field != null ? field.id : null));
+		return fallback;
 	}
-	return control;
+	if (fallback == null) {
+		return control;
+	}
+
+	var params = {}, name;
+	for (name in fallback.params) {
+		params[name] = fallback.params[name];
+	}
+	for (name in control.params) {
+		params[name] = control.params[name];
+	}
+
+	return {
+		template: control.template != null ? control.template : fallback.template,
+		params: params
+	};
 }
 
 /**
