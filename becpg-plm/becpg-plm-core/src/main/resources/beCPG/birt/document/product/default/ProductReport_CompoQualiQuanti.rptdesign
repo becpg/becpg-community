@@ -276,7 +276,7 @@
                         <cell id="772">
                             <label id="773">
                                 <property name="style">becpg-header-type</property>
-                                <text-property name="text">COMPOSITION QUALITATIVE ET QUANTITATIVE</text-property>
+                                <text-property name="text" key="compoQualiQuantiTitle">COMPOSITION QUALITATIVE ET QUANTITATIVE</text-property>
                             </label>
                             <data id="3333">
                                 <property name="style">becpg-header-title</property>
@@ -325,7 +325,7 @@
                                 <row id="7352">
                                     <cell id="7260">
                                         <label id="3406">
-                                            <text-property name="text">Créé le :</text-property>
+                                            <text-property name="text" key="created">Créé le :</text-property>
                                         </label>
                                     </cell>
                                     <cell id="7261">
@@ -337,7 +337,7 @@
                                 <row id="779">
                                     <cell id="780">
                                         <label id="1520">
-                                            <text-property name="text">Modifié le :</text-property>
+                                            <text-property name="text" key="modified">Modifié le :</text-property>
                                         </label>
                                     </cell>
                                     <cell id="1516">
@@ -349,7 +349,7 @@
                                 <row id="783">
                                     <cell id="784">
                                         <label id="1521">
-                                            <text-property name="text">Code beCPG :</text-property>
+                                            <text-property name="text" key="codeWithColon">Code beCPG :</text-property>
                                         </label>
                                     </cell>
                                     <cell id="1517">
@@ -361,7 +361,7 @@
                                 <row id="785">
                                     <cell id="786">
                                         <label id="787">
-                                            <text-property name="text">Version :</text-property>
+                                            <text-property name="text" key="version">Version :</text-property>
                                         </label>
                                     </cell>
                                     <cell id="788">
@@ -422,7 +422,7 @@
                         <property name="style">becpg-chapter-header</property>
                         <label id="12254">
                             <property name="style">becpg-chapter-header</property>
-                            <text-property name="text">COMPOSITION DE LA FORMULE</text-property>
+                            <text-property name="text" key="formulaComposition">COMPOSITION DE LA FORMULE</text-property>
                         </label>
                     </cell>
                 </row>
@@ -431,21 +431,21 @@
                         <property name="style">becpg-cell-header</property>
                         <label id="12276">
                             <property name="style">becpg-cell-header</property>
-                            <text-property name="text">Code MP</text-property>
+                            <text-property name="text" key="rawMaterialCode">Code MP</text-property>
                         </label>
                     </cell>
                     <cell id="12277">
                         <property name="style">becpg-cell-header</property>
                         <label id="12278">
                             <property name="style">becpg-cell-header</property>
-                            <text-property name="text">Intitulé MP / Composant</text-property>
+                            <text-property name="text" key="rawMaterialName">Intitulé MP / Composant</text-property>
                         </label>
                     </cell>
                     <cell id="12279">
                         <property name="style">becpg-cell-header</property>
                         <label id="12280">
                             <property name="style">becpg-cell-header</property>
-                            <text-property name="text">Quantité / Proportion</text-property>
+                            <text-property name="text" key="quantityProportion">Quantité / Proportion</text-property>
                         </label>
                     </cell>
                 </row>
@@ -497,22 +497,22 @@
                 </structure>
                 <structure>
                     <property name="name">ingListIsGMO</property>
-                    <expression name="expression" type="javascript">reportContext.getMessage(dataSetRow["ingListIsGMO"], reportContext.getLocale()) != null ? reportContext.getMessage(dataSetRow["ingListIsGMO"], reportContext.getLocale()) : "Non"</expression>
+                    <expression name="expression" type="javascript">reportContext.getMessage(dataSetRow["ingListIsGMO"], reportContext.getLocale()) != null ? reportContext.getMessage(dataSetRow["ingListIsGMO"], reportContext.getLocale()) : (dataSetRow["ingListIsGMO"] != null ? dataSetRow["ingListIsGMO"] : reportContext.getMessage("no", reportContext.getLocale()))</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">ingListIsIonized</property>
-                    <expression name="expression" type="javascript">reportContext.getMessage(dataSetRow["ingListIsIonized"], reportContext.getLocale()) != null ? reportContext.getMessage(dataSetRow["ingListIsIonized"], reportContext.getLocale()) : "Non"</expression>
+                    <expression name="expression" type="javascript">reportContext.getMessage(dataSetRow["ingListIsIonized"], reportContext.getLocale()) != null ? reportContext.getMessage(dataSetRow["ingListIsIonized"], reportContext.getLocale()) : (dataSetRow["ingListIsIonized"] != null ? dataSetRow["ingListIsIonized"] : reportContext.getMessage("no", reportContext.getLocale()))</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">auxTech</property>
-                    <expression name="expression" type="javascript">"Non"</expression>
+                    <expression name="expression" type="javascript">reportContext.getMessage("no", reportContext.getLocale())</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">support</property>
-                    <expression name="expression" type="javascript">"Non"</expression>
+                    <expression name="expression" type="javascript">reportContext.getMessage("no", reportContext.getLocale())</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
@@ -574,7 +574,7 @@
                         <property name="style">becpg-chapter-header</property>
                         <label id="12294">
                             <property name="style">becpg-chapter-header</property>
-                            <text-property name="text">LISTE D'INGRÉDIENTS</text-property>
+                            <text-property name="text" key="ingredientsListTitle">LISTE D'INGRÉDIENTS</text-property>
                         </label>
                     </cell>
                 </row>
@@ -583,70 +583,70 @@
                         <property name="style">becpg-cell-header</property>
                         <label id="12313">
                             <property name="style">becpg-cell-header</property>
-                            <text-property name="text">Ingrédient</text-property>
+                            <text-property name="text" key="ingredient">Ingrédient</text-property>
                         </label>
                     </cell>
                     <cell id="12314">
                         <property name="style">becpg-cell-header</property>
                         <label id="12315">
                             <property name="style">becpg-cell-header</property>
-                            <text-property name="text">Quantité (%)</text-property>
+                            <text-property name="text" key="quantityPercentage">Quantité (%)</text-property>
                         </label>
                     </cell>
                     <cell id="12316">
                         <property name="style">becpg-cell-header</property>
                         <label id="12317">
                             <property name="style">becpg-cell-header</property>
-                            <text-property name="text">OGM</text-property>
+                            <text-property name="text" key="gmo">OGM</text-property>
                         </label>
                     </cell>
                     <cell id="12318">
                         <property name="style">becpg-cell-header</property>
                         <label id="12319">
                             <property name="style">becpg-cell-header</property>
-                            <text-property name="text">Ionisation</text-property>
+                            <text-property name="text" key="ionization">Ionisation</text-property>
                         </label>
                     </cell>
                     <cell id="12320">
                         <property name="style">becpg-cell-header</property>
                         <label id="12321">
                             <property name="style">becpg-cell-header</property>
-                            <text-property name="text">Auxiliaire techno.</text-property>
+                            <text-property name="text" key="processingAid">Auxiliaire techno.</text-property>
                         </label>
                     </cell>
                     <cell id="12322">
                         <property name="style">becpg-cell-header</property>
                         <label id="12323">
                             <property name="style">becpg-cell-header</property>
-                            <text-property name="text">Support</text-property>
+                            <text-property name="text" key="carrier">Support</text-property>
                         </label>
                     </cell>
                     <cell id="12324">
                         <property name="style">becpg-cell-header</property>
                         <label id="12325">
                             <property name="style">becpg-cell-header</property>
-                            <text-property name="text">Origine géo.</text-property>
+                            <text-property name="text" key="geographicOrigin">Origine géo.</text-property>
                         </label>
                     </cell>
                     <cell id="12326">
                         <property name="style">becpg-cell-header</property>
                         <label id="12327">
                             <property name="style">becpg-cell-header</property>
-                            <text-property name="text">Pays de transformation</text-property>
+                            <text-property name="text" key="transformationCountry">Pays de transformation</text-property>
                         </label>
                     </cell>
                     <cell id="12328">
                         <property name="style">becpg-cell-header</property>
                         <label id="12329">
                             <property name="style">becpg-cell-header</property>
-                            <text-property name="text">Origine bio.</text-property>
+                            <text-property name="text" key="organicOrigin">Origine bio.</text-property>
                         </label>
                     </cell>
                     <cell id="12330">
                         <property name="style">becpg-cell-header</property>
                         <label id="12331">
                             <property name="style">becpg-cell-header</property>
-                            <text-property name="text">Allégations</text-property>
+                            <text-property name="text" key="claims">Allégations</text-property>
                         </label>
                     </cell>
                 </row>
