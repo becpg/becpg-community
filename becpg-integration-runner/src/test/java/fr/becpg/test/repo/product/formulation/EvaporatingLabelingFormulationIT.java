@@ -1046,4 +1046,69 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 		});
 	}
 
+	/**
+	 * #34702 : the water lost by a composite ingredient must be shared over all its sub-ingredients,
+	 * proportionally to their declared percentages. The evaporation budget is consumed by the
+	 * sub-ingredient carrying the rate, so that one alone used to bear the whole loss : a composite
+	 * detailed 60 % / 40 % came out as 50 % / 50 % in the "Qty with yield" column, while the labeling
+	 * kept showing the declared 60 % / 40 % split.
+	 */
+	@Test
+	public void testEvaporationSpreadOverSubIngredients() {
+
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+
+			NodeRef ingSauce = CharactTestHelper.getOrCreateIng(nodeService, "ING Sauce 34702g");
+			NodeRef ingTomato = CharactTestHelper.getOrCreateIng(nodeService, "ING Tomato 34702g");
+			NodeRef ingOil = CharactTestHelper.getOrCreateIng(nodeService, "ING Oil 34702g");
+
+			nodeService.setProperty(ingTomato, PLMModel.PROP_EVAPORATED_RATE, 50d);
+
+			IngListDataItem sauce = buildIng(ingSauce, 100d);
+			IngListDataItem tomato = buildIng(ingTomato, 60d).withParent(sauce);
+			IngListDataItem oil = buildIng(ingOil, 40d).withParent(sauce);
+
+			RawMaterialData sauceRM = RawMaterialData.build().withName("RM Sauce 34702g").withQty(100d).withUnit(ProductUnit.kg)
+					.withIngList(List.of(sauce, tomato, oil));
+			NodeRef sauceNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), sauceRM).getNodeRef();
+
+			// 100 kg in, 80 kg net : the 20 kg lost come from the tomato, which can supply 60 * 50 % = 30 kg
+			FinishedProductData fp = FinishedProductData.build().withName("FP Sauce 34702g").withUnit(ProductUnit.kg).withQty(80d)
+					.withCompoList(List.of(CompoListDataItem.build().withQtyUsed(100d).withUnit(ProductUnit.kg)
+							.withDeclarationType(DeclarationType.Detail).withProduct(sauceNodeRef)));
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), fp).getNodeRef();
+		});
+
+		inWriteTx(() -> {
+			productService.formulate(finishedProductNodeRef);
+			return null;
+		});
+
+		inReadTx(() -> {
+			FinishedProductData formulatedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+			List<IngListDataItem> ingList = formulatedProduct.getIngList();
+			Assert.assertNotNull("Ingredient list should not be null", ingList);
+
+			IngListDataItem sauce = findIngByName(ingList, "ING Sauce 34702g");
+			IngListDataItem tomato = findIngByName(ingList, "ING Tomato 34702g");
+			IngListDataItem oil = findIngByName(ingList, "ING Oil 34702g");
+			Assert.assertNotNull("Sauce ingredient missing", sauce);
+			Assert.assertNotNull("Tomato sub-ingredient missing", tomato);
+			Assert.assertNotNull("Oil sub-ingredient missing", oil);
+
+			// The composite is the whole product and the loss does not change the declared make-up
+			Assert.assertEquals("Sauce Qty with yield should be 100%", 100d, sauce.getQtyPercWithYield(), 0.1);
+			Assert.assertEquals("Evaporating sub-ingredient must keep its declared share", 60d, tomato.getQtyPercWithYield(), 0.1);
+			Assert.assertEquals("Non evaporating sub-ingredient must keep its declared share", 40d, oil.getQtyPercWithYield(), 0.1);
+			Assert.assertEquals("Parent Qty with yield should equal the sum of its children",
+					tomato.getQtyPercWithYield() + oil.getQtyPercWithYield(), sauce.getQtyPercWithYield(), 0.1);
+
+			// The Quantity column is not affected by the evaporation
+			Assert.assertEquals("Tomato qtyPerc", 60d, tomato.getQtyPerc(), 0.1);
+			Assert.assertEquals("Oil qtyPerc", 40d, oil.getQtyPerc(), 0.1);
+			return null;
+		});
+	}
+
 }
