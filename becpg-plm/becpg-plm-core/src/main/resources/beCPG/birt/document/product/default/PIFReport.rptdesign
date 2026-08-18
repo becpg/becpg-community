@@ -3,9 +3,16 @@
     <property name="author">beCPG</property>
     <property name="createdBy">Eclipse BIRT Designer Version 4.7.0</property>
     <simple-property-list name="includeResource">
+        <value>./ProductReport</value>
         <value>./PIFReport</value>
     </simple-property-list>
     <property name="units">in</property>
+    <list-property name="cssStyleSheets">
+        <structure>
+            <property name="fileName">becpg-report.css</property>
+            <property name="useExternalCss">true</property>
+        </structure>
+    </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
             <property name="FILELIST">beCPG/birt/document/product/default/ProductReport.xml</property>
@@ -44,114 +51,98 @@ c + v;</expression>
         </oda-data-set>
     </data-sets>
     <styles>
-        <style name="becpg-main-title" id="2">
-            <property name="fontFamily">sans-serif</property>
-            <property name="fontSize">16pt</property>
+        <style name="report" id="2">
+            <property name="fontFamily">"arial"</property>
+            <property name="fontSize">10pt</property>
+        </style>
+        <style name="becpg-main-title" id="3">
+            <property name="fontFamily">"arial"</property>
+            <property name="fontSize">14pt</property>
             <property name="fontWeight">bold</property>
             <property name="color">#004254</property>
             <property name="textAlign">center</property>
-            <property name="paddingTop">10pt</property>
+            <property name="paddingTop">8pt</property>
             <property name="paddingBottom">2pt</property>
         </style>
-        <style name="becpg-main-subtitle" id="3">
-            <property name="fontFamily">sans-serif</property>
-            <property name="fontSize">10pt</property>
+        <style name="becpg-main-subtitle" id="4">
+            <property name="fontFamily">"arial"</property>
+            <property name="fontSize">9.5pt</property>
             <property name="fontWeight">bold</property>
             <property name="color">#555555</property>
             <property name="textAlign">center</property>
-            <property name="paddingBottom">12pt</property>
+            <property name="paddingBottom">10pt</property>
         </style>
-        <style name="becpg-chapter-header" id="4">
+        <style name="becpg-chapter-header" id="5">
             <property name="backgroundColor">#004254</property>
-            <property name="fontFamily">sans-serif</property>
+            <property name="fontFamily">"arial"</property>
             <property name="fontSize">10pt</property>
             <property name="fontWeight">bold</property>
             <property name="color">#FFFFFF</property>
             <property name="textAlign">center</property>
-            <property name="paddingTop">5pt</property>
-            <property name="paddingBottom">5pt</property>
+            <property name="paddingTop">4pt</property>
+            <property name="paddingBottom">4pt</property>
         </style>
-        <style name="becpg-section-label" id="5">
-            <property name="backgroundColor">#004254</property>
-            <property name="fontFamily">sans-serif</property>
+        <style name="UnderlinedSubTitle" id="6">
+            <property name="fontFamily">"arial"</property>
             <property name="fontSize">9pt</property>
             <property name="fontWeight">bold</property>
-            <property name="color">#FFFFFF</property>
-            <property name="paddingLeft">6pt</property>
-            <property name="paddingTop">4pt</property>
+            <property name="color">#004254</property>
+            <property name="textUnderline">underline</property>
+            <property name="paddingTop">6pt</property>
             <property name="paddingBottom">4pt</property>
-            <property name="borderBottomStyle">solid</property>
-            <property name="borderBottomWidth">thin</property>
-            <property name="borderBottomColor">#004254</property>
         </style>
-        <style name="becpg-toc-title" id="6">
-            <property name="fontFamily">sans-serif</property>
-            <property name="fontSize">9.5pt</property>
+        <style name="rowHeaderUpper" id="7">
+            <property name="fontFamily">"arial"</property>
+            <property name="fontSize">8pt</property>
             <property name="fontWeight">bold</property>
             <property name="color">#000000</property>
-            <property name="paddingTop">4pt</property>
-            <property name="paddingBottom">4pt</property>
-        </style>
-        <style name="becpg-toc-page" id="7">
-            <property name="fontFamily">sans-serif</property>
-            <property name="fontSize">9pt</property>
-            <property name="fontWeight">bold</property>
-            <property name="color">#000000</property>
-            <property name="textAlign">right</property>
-            <property name="paddingTop">4pt</property>
-            <property name="paddingBottom">4pt</property>
-        </style>
-        <style name="becpg-row-border" id="8">
+            <property name="paddingLeft">2pt</property>
+            <property name="paddingTop">3pt</property>
+            <property name="paddingBottom">3pt</property>
             <property name="borderBottomStyle">solid</property>
             <property name="borderBottomWidth">thin</property>
             <property name="borderBottomColor">#E0E0E0</property>
         </style>
-        <style name="becpg-cell-label" id="9">
-            <property name="backgroundColor">#E8F0F4</property>
-            <property name="fontFamily">sans-serif</property>
+        <style name="becpg-cell-data" id="8">
+            <property name="fontFamily">"arial"</property>
+            <property name="fontSize">8pt</property>
+            <property name="color">#000000</property>
+            <property name="paddingLeft">4pt</property>
+            <property name="paddingTop">3pt</property>
+            <property name="paddingBottom">3pt</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderBottomColor">#E0E0E0</property>
+        </style>
+        <style name="becpg-toc-title" id="9">
+            <property name="fontFamily">"arial"</property>
+            <property name="fontSize">9pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#000000</property>
+            <property name="paddingTop">3pt</property>
+            <property name="paddingBottom">3pt</property>
+        </style>
+        <style name="becpg-toc-page" id="10">
+            <property name="fontFamily">"arial"</property>
             <property name="fontSize">8.5pt</property>
             <property name="fontWeight">bold</property>
-            <property name="color">#004254</property>
-            <property name="paddingLeft">6pt</property>
-            <property name="paddingTop">4pt</property>
-            <property name="paddingBottom">4pt</property>
-            <property name="borderBottomStyle">solid</property>
-            <property name="borderBottomWidth">thin</property>
-            <property name="borderBottomColor">#B0C4DE</property>
-            <property name="borderTopStyle">solid</property>
-            <property name="borderTopWidth">thin</property>
-            <property name="borderTopColor">#B0C4DE</property>
-            <property name="borderLeftStyle">solid</property>
-            <property name="borderLeftWidth">thin</property>
-            <property name="borderLeftColor">#B0C4DE</property>
-            <property name="borderRightStyle">solid</property>
-            <property name="borderRightWidth">thin</property>
-            <property name="borderRightColor">#B0C4DE</property>
-        </style>
-        <style name="becpg-cell-data" id="10">
-            <property name="backgroundColor">#FFFFFF</property>
-            <property name="fontFamily">sans-serif</property>
-            <property name="fontSize">8.5pt</property>
             <property name="color">#000000</property>
-            <property name="paddingLeft">6pt</property>
-            <property name="paddingTop">4pt</property>
-            <property name="paddingBottom">4pt</property>
+            <property name="textAlign">right</property>
+            <property name="paddingTop">3pt</property>
+            <property name="paddingBottom">3pt</property>
+        </style>
+        <style name="becpg-row-border" id="11">
             <property name="borderBottomStyle">solid</property>
             <property name="borderBottomWidth">thin</property>
-            <property name="borderBottomColor">#B0C4DE</property>
-            <property name="borderTopStyle">solid</property>
-            <property name="borderTopWidth">thin</property>
-            <property name="borderTopColor">#B0C4DE</property>
-            <property name="borderLeftStyle">solid</property>
-            <property name="borderLeftWidth">thin</property>
-            <property name="borderLeftColor">#B0C4DE</property>
-            <property name="borderRightStyle">solid</property>
-            <property name="borderRightWidth">thin</property>
-            <property name="borderRightColor">#B0C4DE</property>
+            <property name="borderBottomColor">#E0E0E0</property>
         </style>
     </styles>
     <page-setup>
         <simple-master-page name="Simple MasterPage" id="10">
+            <property name="topMargin">1cm</property>
+            <property name="leftMargin">1.5cm</property>
+            <property name="bottomMargin">0.4cm</property>
+            <property name="rightMargin">1.5cm</property>
         </simple-master-page>
     </page-setup>
     <body>
@@ -418,6 +409,7 @@ c + v;</expression>
             <detail>
                 <row id="302">
                     <cell id="303">
+                        <!-- Chapter Header Banner -->
                         <grid id="304">
                             <property name="width">100%</property>
                             <column id="305"/>
@@ -435,13 +427,12 @@ c + v;</expression>
                         <!-- Section 1: Product Identity -->
                         <grid id="310">
                             <property name="width">100%</property>
-                            <property name="marginTop">8pt</property>
+                            <property name="marginTop">10pt</property>
                             <column id="311"/>
                             <row id="312">
                                 <cell id="313">
-                                    <property name="style">becpg-section-label</property>
                                     <label id="314">
-                                        <property name="style">becpg-section-label</property>
+                                        <property name="style">UnderlinedSubTitle</property>
                                         <text-property name="text" key="SLabel.pifSection1Title">1. IDENTITÉ ET SPÉCIFICATIONS DU PRODUIT</text-property>
                                     </label>
                                 </cell>
@@ -460,7 +451,7 @@ c + v;</expression>
                             <row id="323">
                                 <cell id="324">
                                     <label id="325">
-                                        <property name="style">becpg-cell-label</property>
+                                        <property name="style">rowHeaderUpper</property>
                                         <text-property name="text" key="SLabel.pifLabelCommercialName">Dénomination commerciale :</text-property>
                                     </label>
                                 </cell>
@@ -475,7 +466,7 @@ c + v;</expression>
                             <row id="328">
                                 <cell id="329">
                                     <label id="330">
-                                        <property name="style">becpg-cell-label</property>
+                                        <property name="style">rowHeaderUpper</property>
                                         <text-property name="text" key="SLabel.pifLabelCode">Code &amp; Version :</text-property>
                                     </label>
                                 </cell>
@@ -490,7 +481,7 @@ c + v;</expression>
                             <row id="333">
                                 <cell id="334">
                                     <label id="335">
-                                        <property name="style">becpg-cell-label</property>
+                                        <property name="style">rowHeaderUpper</property>
                                         <text-property name="text" key="SLabel.pifLabelLegalName">Dénomination légale :</text-property>
                                     </label>
                                 </cell>
@@ -505,7 +496,7 @@ c + v;</expression>
                             <row id="338">
                                 <cell id="339">
                                     <label id="340">
-                                        <property name="style">becpg-cell-label</property>
+                                        <property name="style">rowHeaderUpper</property>
                                         <text-property name="text" key="SLabel.pifLabelDescription">Description :</text-property>
                                     </label>
                                 </cell>
@@ -520,7 +511,7 @@ c + v;</expression>
                             <row id="343">
                                 <cell id="344">
                                     <label id="345">
-                                        <property name="style">becpg-cell-label</property>
+                                        <property name="style">rowHeaderUpper</property>
                                         <text-property name="text" key="SLabel.pifLabelIntendedUse">Usage prévu &amp; Conseils d'emploi :</text-property>
                                     </label>
                                 </cell>
@@ -535,7 +526,7 @@ c + v;</expression>
                             <row id="348">
                                 <cell id="349">
                                     <label id="350">
-                                        <property name="style">becpg-cell-label</property>
+                                        <property name="style">rowHeaderUpper</property>
                                         <text-property name="text" key="SLabel.pifLabelHierarchy">Catégorie de produit :</text-property>
                                     </label>
                                 </cell>
@@ -555,9 +546,8 @@ c + v;</expression>
                             <column id="361"/>
                             <row id="362">
                                 <cell id="363">
-                                    <property name="style">becpg-section-label</property>
                                     <label id="364">
-                                        <property name="style">becpg-section-label</property>
+                                        <property name="style">UnderlinedSubTitle</property>
                                         <text-property name="text" key="SLabel.pifSection2Title">2. INFORMATIONS RÉGLEMENTAIRES ET CONSERVATION</text-property>
                                     </label>
                                 </cell>
@@ -576,7 +566,7 @@ c + v;</expression>
                             <row id="373">
                                 <cell id="374">
                                     <label id="375">
-                                        <property name="style">becpg-cell-label</property>
+                                        <property name="style">rowHeaderUpper</property>
                                         <text-property name="text" key="SLabel.pifLabelStorageConditions">Conditions de stockage :</text-property>
                                     </label>
                                 </cell>
@@ -591,7 +581,7 @@ c + v;</expression>
                             <row id="378">
                                 <cell id="379">
                                     <label id="380">
-                                        <property name="style">becpg-cell-label</property>
+                                        <property name="style">rowHeaderUpper</property>
                                         <text-property name="text" key="SLabel.pifLabelPrecautions">Précautions d'emploi :</text-property>
                                     </label>
                                 </cell>
@@ -606,7 +596,7 @@ c + v;</expression>
                             <row id="383">
                                 <cell id="384">
                                     <label id="385">
-                                        <property name="style">becpg-cell-label</property>
+                                        <property name="style">rowHeaderUpper</property>
                                         <text-property name="text" key="SLabel.pifLabelProductState">Statut du produit :</text-property>
                                     </label>
                                 </cell>
@@ -621,7 +611,7 @@ c + v;</expression>
                             <row id="388">
                                 <cell id="389">
                                     <label id="390">
-                                        <property name="style">becpg-cell-label</property>
+                                        <property name="style">rowHeaderUpper</property>
                                         <text-property name="text" key="SLabel.pifLabelModified">Dernière modification :</text-property>
                                     </label>
                                 </cell>
