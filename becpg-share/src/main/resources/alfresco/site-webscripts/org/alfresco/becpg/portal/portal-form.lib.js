@@ -139,6 +139,109 @@ function portalGetFormConfig(lookupKey, itemId, formId, mode, prefixedSiteId, pr
 }
 
 /**
+ * The <control> a field declares, as a plain object the FTL can serialise.
+ *
+ * The template names the widget - autocomplete.ftl, textfield.ftl - and the
+ * parameters carry what makes it work, first of all the "ds" of an autocomplete.
+ *
+ * @param field a form configuration field, or null
+ * @return Object {template, params}, or null when the field declares nothing
+ */
+function portalReadControl(field) {
+	var control = field !== null && field !== undefined ? field.control : null;
+	if (control === null || control === undefined) {
+		return null;
+	}
+
+	var params = {}, hasParam = false;
+	// `getParams()` answers a ControlParam[], each carrying its own name and value
+	// - not a Map, and not something for..in can walk under Rhino.
+	var declared = control.params;
+	if (declared !== null && declared !== undefined) {
+		for (var p = 0; p < declared.length; p++) {
+			var param = declared[p];
+			if (param !== null && param.name !== null) {
+				// The XML indents its control-param values, so the declared `ds`
+				// arrives with a trailing newline and tabs. Trimmed here rather
+				// than in every consumer.
+				params["" + param.name] = ("" + param.value).replace(/^\s+|\s+$/g, "");
+				hasParam = true;
+			}
+		}
+	}
+
+	var template = control.template !== null && control.template !== undefined ? "" + control.template : null;
+	if (template === null && !hasParam) {
+		return null;
+	}
+
+	return { template: template, params: params };
+}
+
+/**
+ * The resolved form's control completed by the default form's.
+ *
+ * A datagrid form often repeats the template and drops the parameters -
+ * `bcpg:ingListGeoOrigin` declares its `autocomplete-association.ftl` and no
+ * `ds`. Taking that control as it stands would shadow the datasource the default
+ * form declares, so the two are merged, the resolved form winning key by key.
+ *
+ * @param control the control of the resolved form, or null
+ * @param fallback the control of the default form, or null
+ * @return Object {template, params}, or null when neither declares anything
+ */
+function portalMergeControl(control, fallback) {
+	if (control === null) {
+		return fallback;
+	}
+	if (fallback === null) {
+		return control;
+	}
+
+	var params = {}, name;
+	for (name in fallback.params) {
+		params[name] = fallback.params[name];
+	}
+	for (name in control.params) {
+		params[name] = control.params[name];
+	}
+
+	return {
+		template: control.template !== null ? control.template : fallback.template,
+		params: params
+	};
+}
+
+/**
+ * The same field, as the item's DEFAULT form describes it.
+ *
+ * A datagrid form lists the columns to show and almost never repeats the
+ * control, while the default form is where the picker is described: on
+ * `bcpg:ingList`, the `datagrid` form declares `bcpg:ingListIngTypes` bare and
+ * the default form carries its `ds`. Share resolves the same way when it edits a
+ * row, so a client rendering its own grid sees what Share's editor sees.
+ *
+ * @param itemType prefixed type, e.g. bcpg:ingList
+ * @param fieldId the field to look up
+ * @return the field configuration, or null
+ */
+function portalDefaultFormField(itemType, fieldId) {
+	if (itemType === null || itemType === undefined || fieldId === null || fieldId === undefined) {
+		return null;
+	}
+	var nodeConfig = config.scoped["" + itemType];
+	if (nodeConfig === null || nodeConfig === undefined) {
+		return null;
+	}
+	var formsConfig = nodeConfig.forms;
+	var defaultForm = formsConfig !== null && formsConfig !== undefined ? formsConfig.defaultForm : null;
+	if (defaultForm === null || defaultForm === undefined || defaultForm.fields === null) {
+		return null;
+	}
+	return defaultForm.fields["" + fieldId];
+}
+
+/**
  * Visible field names for a mode. Extracted from columns.get.js::getVisibleFields.
  *
  * @param mode view | edit | create
@@ -444,25 +547,11 @@ function portalResolveDefinition(itemType, formId, mode, list, prefixedSiteId, p
 			// says. Those fields answered "carries no datasource" and the supplier
 			// portal showed "la recherche a échoué" on them.
 			try {
-				var control = shareField.getControl();
-				if (control != null) {
-					var params = {};
-					var rawParams = control.getParams();
-					if (rawParams != null) {
-						for (var p = 0; p < rawParams.length; p++) {
-							var param = rawParams[p];
-							if (param != null && param.getName() != null) {
-								// The XML indents its control-param values, so the
-								// declared `ds` arrives with a trailing newline and
-								// tabs. Trimmed here rather than in every consumer.
-								params["" + param.getName()] = ("" + param.getValue()).replace(/^\s+|\s+$/g, "");
-							}
-						}
-					}
-					field.control = {
-						template: control.getTemplate() != null ? "" + control.getTemplate() : null,
-						params: params
-					};
+				var control = portalMergeControl(
+					portalReadControl(shareField),
+					portalReadControl(portalDefaultFormField(itemType, field.name)));
+				if (control !== null) {
+					field.control = control;
 				}
 			} catch (eCtrl) { /* no control declared: the repository default applies */ }
 			try {
