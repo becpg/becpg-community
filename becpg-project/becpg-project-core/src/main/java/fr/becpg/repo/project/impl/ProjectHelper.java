@@ -378,7 +378,11 @@ public class ProjectHelper {
 		while (!isWorkingDate(calendar, provider)) {
 			calendar.add(Calendar.DATE, isPlanned ? 1 : -1);
 			if (++iterations > MAX_ITERATIONS) {
-				logger.warn("No working day found within " + MAX_ITERATIONS + " days");
+				// Giving up here returns a date up to MAX_ITERATIONS days away from the one asked for,
+				// which silently shifts the whole planning. Say so, and name the calendar to check.
+				logger.warn("No working day found within " + MAX_ITERATIONS + " days looking "
+						+ (isPlanned ? "forward" : "backward") + " from " + date + " using " + provider
+						+ " - returning " + calendar.getTime() + ", check the non working days of that calendar");
 				break;
 			}
 		}
@@ -427,7 +431,9 @@ public class ProjectHelper {
 			}
 
 			if (iterations > MAX_ITERATIONS) {
-				logger.warn("No working day found within " + MAX_ITERATIONS + " days");
+				logger.warn("Gave up after " + MAX_ITERATIONS + " non working days while looking for " + duration
+						+ " working days from " + startDate + " using " + provider + " - returning " + calendar.getTime()
+						+ ", which is short of the requested duration");
 				return calendar.getTime();
 			}
 		}
@@ -484,7 +490,9 @@ public class ProjectHelper {
 			}
 			startDateCal.add(Calendar.DAY_OF_MONTH, 1);
 			if (iterations > MAX_ITERATIONS) {
-				logger.warn("No working day found within " + MAX_ITERATIONS + " days");
+				logger.warn("Gave up after " + MAX_ITERATIONS + " non working days while counting the working days between "
+						+ startDate + " and " + endDate + " using " + provider + " - returning a partial duration of "
+						+ duration);
 				return duration;
 			}
 
