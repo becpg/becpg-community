@@ -13,7 +13,7 @@
    
 </@>
 
-<@markup id="customSearch-widgets" target="css" action="replace">
+<@markup id="customSearch-widgets" target="widgets" action="replace">
    <@createWidgets group="search"/>
 </@>
 
