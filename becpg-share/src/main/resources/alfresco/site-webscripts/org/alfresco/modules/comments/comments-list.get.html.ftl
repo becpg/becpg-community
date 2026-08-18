@@ -68,6 +68,7 @@
 				   {
 				        nodeRef : "${nodeRef?string}",
 				        siteId : "${site!""?string}",
+			            externalUser: ${externalUser?string},
 				        maxItems : 10,
 				        <#if activityParameters??>
 					      activity :{
