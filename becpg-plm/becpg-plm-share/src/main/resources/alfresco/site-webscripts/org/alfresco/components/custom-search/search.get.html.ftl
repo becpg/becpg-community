@@ -71,7 +71,7 @@
                   </span>
                </span>
                <#-- menu list of available forms -->
-               <div id="${el}-selected-form-list"  style="visibility:hidden" class="yuimenu">
+               <div id="${el}-selected-form-list"  style="visibility:hidden; position:absolute" class="yuimenu">
                   <div class="bd">
                      <ul>
                         <#list searchForms as f>
@@ -93,7 +93,7 @@
                   </span>
                </span>
                <#-- menu list of available forms -->
-               <div id="${el}-adv-search-panel" style="visibility:hidden"  class="yuimenu"> 
+               <div id="${el}-adv-search-panel" style="visibility:hidden; position:absolute"  class="yuimenu"> 
 	                  <div class="bd">
 				         <div id="${el}-forms" class="forms-container form-fields"></div>        
 				         <div class="yui-gc form-row">
