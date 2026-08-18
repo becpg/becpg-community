@@ -7627,7 +7627,7 @@
                     </index>
                 </property>
             </properties>
-         </aspect>h
+         </aspect>
          
          <aspect name="bcpg:batchErrorAspect">
             <properties>
@@ -7642,5 +7642,18 @@
             </properties>
          </aspect>
 
-	</aspects>
+			<aspect name="bcpg:restrictedAccessAspect">
+			<properties>
+                <property name="bcpg:restrictedAccess">
+		            <type>d:boolean</type>
+		            <mandatory>false</mandatory>
+		            <index enabled="true">
+                        <tokenised>false</tokenised>
+                        <facetable>true</facetable>
+                    </index>
+                </property>
+           </properties>
+		</aspect>
+
+</aspects>
 </model>
