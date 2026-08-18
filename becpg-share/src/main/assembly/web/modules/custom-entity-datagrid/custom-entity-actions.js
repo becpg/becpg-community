@@ -34,6 +34,13 @@
 		 */
 
 		/**
+		 * Opens the details of the selected rows.
+		 *
+		 * A list mixes rows whose value the formulation computes and rows the user fills in
+		 * himself, and only the former ones have a detail. Selecting the whole list has to
+		 * stay possible, so the rows without a detail are left out instead of blocking the
+		 * action.
+		 *
 		 * @method onActionShowDetails
 		 * @param items {Object | Array} Object literal representing the Data
 		 *            Item to be actioned, or an Array thereof
@@ -45,7 +52,16 @@
 				var nodeRefs = [];
 
 				for (var i = 0, ii = selectedItems.length; i < ii; i++) {
-					nodeRefs.push(selectedItems[i].nodeRef);
+					if (me._isDetailable(selectedItems[i])) {
+						nodeRefs.push(selectedItems[i].nodeRef);
+					}
+				}
+
+				if (nodeRefs.length === 0) {
+					Alfresco.util.PopupManager.displayMessage({
+						text: me.msg("message.no.details")
+					});
+					return;
 				}
 
 				if (nodeRefs.length > 50 && !(me.allPages && me.queryExecutionId)) {
@@ -105,6 +121,18 @@
 				me._showWusedPopup("bulk-edit", items, onActionBulkEdit_redirect);
 			});
 
+		},
+
+		/**
+		 * Tells whether a row holds a formulated value, the only one the details window
+		 * can break down by raw material.
+		 *
+		 * @method _isDetailable
+		 * @param item {Object} Selected row
+		 * @return {Boolean} True when the row has a detail
+		 */
+		_isDetailable: function EntityDataGrid__isDetailable(item) {
+			return !!(item.permissions && item.permissions.userAccess && item.permissions.userAccess.details);
 		},
 
 		/**

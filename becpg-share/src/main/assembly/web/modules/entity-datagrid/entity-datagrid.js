@@ -35,6 +35,12 @@
     var $html = Alfresco.util.encodeHTML, $links = Alfresco.util.activateLinks;
 
     /**
+     * Prefix of the permissions a single selected row is enough to grant, the action
+     * silently skipping the rows that do not carry them.
+     */
+    var ANY_ROW_PERMISSION_PREFIX = "any:";
+
+    /**
      * Entity DataGrid constructor.
      * 
      * @param htmlId
@@ -2357,6 +2363,19 @@
                     Bubbling.fire(this.scopeId + "selectedItemsChanged");
                 },
                 /**
+                 * Tells whether a permission is granted as soon as one selected row
+                 * carries it, instead of requiring every one of them.
+                 *
+                 * @method _isAnyRowPermission
+                 * @param permission
+                 *            {String} Permission read from the action
+                 *            configuration
+                 * @return {Boolean} True when a single matching row is enough
+                 */
+                _isAnyRowPermission: function DataListToolbar__isAnyRowPermission(permission) {
+                    return permission.indexOf(ANY_ROW_PERMISSION_PREFIX) === 0;
+                },
+                /**
                  * Selected Items Changed event handler. Determines
                  * whether to enable or disable the multi-item action
                  * drop-down
@@ -2377,8 +2396,8 @@
                         Dom.addClass(this.id + "-message", "hidden");
                     }
 
-                    var items = this.getSelectedItems(), item, userAccess = {}, itemAccess, menuItems = this.widgets.selectedItems
-                        .getMenu().getItems(), menuItem, actionPermissions, disabled, i, ii, disabledForAllPages;
+                    var items = this.getSelectedItems(), item, userAccess = {}, anyUserAccess = {}, itemAccess, menuItems = this.widgets.selectedItems
+                        .getMenu().getItems(), menuItem, actionPermissions, permission, disabled, i, ii, disabledForAllPages;
 
                     // Check each item for user permissions
                     for (i = 0, ii = items.length; i < ii; i++) {
@@ -2386,12 +2405,14 @@
 
                         // Required user access level - logical AND of
                         // each
-                        // item's permissions
+                        // item's permissions, and logical OR of them for
+                        // the actions asking for a single matching row
                         itemAccess = item.permissions.userAccess;
                         for (var index in itemAccess) {
                             if (itemAccess.hasOwnProperty(index)) {
                                 userAccess[index] = (userAccess[index] === undefined ? itemAccess[index]
                                     : userAccess[index] && itemAccess[index]);
+                                anyUserAccess[index] = anyUserAccess[index] || itemAccess[index];
                             }
                         }
                     }
@@ -2418,13 +2439,17 @@
                                         // Disable if the user doesn't
                                         // have ALL the
                                         // permissions
-                                        if (actionPermissions[i] != "allPages") {
-                                            if ((!userAccess[actionPermissions[i]])) {
+                                        if (actionPermissions[i] == "allPages") {
+                                            disabledForAllPages = false;
+                                        } else if (this._isAnyRowPermission(actionPermissions[i])) {
+                                            permission = actionPermissions[i].substring(ANY_ROW_PERMISSION_PREFIX.length);
+                                            if (!anyUserAccess[permission]) {
                                                 disabled = true;
                                                 break;
                                             }
-                                        } else {
-                                            disabledForAllPages = false;
+                                        } else if (!userAccess[actionPermissions[i]]) {
+                                            disabled = true;
+                                            break;
                                         }
                                     }
                                 }
