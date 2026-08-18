@@ -20,8 +20,24 @@
     <data-sets>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="Product" id="453">
             <property name="nullsOrdering">nulls lowest</property>
+            <list-property name="computedColumns">
+                <structure>
+                    <property name="name">versionLabelToShow</property>
+                    <expression name="expression">if(row["versionLabelBcpg"] != null){
+	row["versionLabelBcpg"]
+} else if(row["versionLabel"] != null){
+	row["versionLabel"]
+} else "1.0"</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
             <property name="dataSource">DataXml</property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{name;STRING;/name},{title;STRING;/title},{legalName;STRING;/legalName},{versionLabel;STRING;/versionLabel},{productState;STRING;/productState},{modified;TIMESTAMP;/modified}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{name;STRING;/name},{title;STRING;/title},{legalName;STRING;/legalName},{versionLabel;STRING;/versionLabel},{versionLabelBcpg;STRING;/versionLabel[@prefix='bcpg']},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{created;TIMESTAMP;/created},{erpCode;STRING;/erpCode}]]></xml-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="imgLogo" id="12186">
+            <property name="nullsOrdering">nulls lowest</property>
+            <property name="dataSource">DataXml</property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/images/image]#:#{id;STRING;/@id},{entityName;STRING;/@entityName},{name;STRING;/@name},{entityType;STRING;/@entityType}]]></xml-property>
         </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="compoListDirect" id="9991">
             <property name="nullsOrdering">nulls lowest</property>
@@ -38,6 +54,31 @@
         <style name="report" id="2">
             <property name="fontFamily">"arial"</property>
             <property name="fontSize">10pt</property>
+        </style>
+        <style name="becpg-header-type" id="12189">
+            <property name="color">black</property>
+            <property name="fontWeight">bold</property>
+            <property name="fontSize">13pt</property>
+            <property name="textAlign">center</property>
+            <property name="fontFamily">"arial"</property>
+            <property name="marginBottom">2pt</property>
+        </style>
+        <style name="becpg-meta-grid" id="12190">
+            <property name="fontSize">7.5pt</property>
+            <property name="fontFamily">"arial"</property>
+            <property name="textAlign">left</property>
+            <property name="width">100%</property>
+        </style>
+        <style name="becpg-meta-cell-label" id="12191"/>
+        <style name="becpg-meta-cell-data" id="12192">
+            <property name="fontWeight">bold</property>
+        </style>
+        <style name="becpg-header-table" id="12193">
+            <property name="width">100%</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="becpg-header-title" id="12194">
+            <property name="marginTop">2pt</property>
         </style>
         <style name="becpg-chapter-header" id="4">
             <property name="backgroundColor">#004254</property>
@@ -90,6 +131,136 @@
             <property name="leftMargin">1.5cm</property>
             <property name="bottomMargin">0.4cm</property>
             <property name="rightMargin">1.5cm</property>
+            <property name="headerHeight">1.2in</property>
+            <property name="footerHeight">0.3in</property>
+            <page-header>
+                <grid id="765">
+                    <property name="style">becpg-header-table</property>
+                    <column id="766"/>
+                    <column id="767">
+                        <property name="width">50%</property>
+                    </column>
+                    <column id="768"/>
+                    <row id="769">
+                        <cell id="770">
+                            <property name="paddingLeft">1pt</property>
+                            <property name="textAlign">left</property>
+                            <image name="defaultLogo" id="12230">
+                                <property name="height">0.8in</property>
+                                <property name="dataSet">imgLogo</property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">id</property>
+                                        <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                </list-property>
+                                <property name="source">embed</property>
+                                <property name="imageName">logo.png</property>
+                            </image>
+                        </cell>
+                        <cell id="772">
+                            <label id="773">
+                                <property name="style">becpg-header-type</property>
+                                <text-property name="text">COMPOSITION QUALITATIVE ET QUANTITATIVE</text-property>
+                            </label>
+                            <data id="3333">
+                                <property name="style">becpg-header-title</property>
+                                <property name="fontSize">9pt</property>
+                                <property name="dataSet">Product</property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">title</property>
+                                        <expression name="expression" type="javascript">if(dataSetRow["title"] != null &amp;&amp; dataSetRow["title"] != ""){ dataSetRow["title"] } else { dataSetRow["name"] }</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                </list-property>
+                                <property name="resultSetColumn">title</property>
+                            </data>
+                        </cell>
+                        <cell id="776">
+                            <grid id="777">
+                                <property name="style">becpg-meta-grid</property>
+                                <property name="dataSet">Product</property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">created</property>
+                                        <expression name="expression" type="javascript">dataSetRow["created"]</expression>
+                                        <property name="dataType">date-time</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">modified</property>
+                                        <expression name="expression" type="javascript">dataSetRow["modified"]</expression>
+                                        <property name="dataType">date-time</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">code</property>
+                                        <expression name="expression" type="javascript">dataSetRow["code"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">versionLabelToShow</property>
+                                        <expression name="expression" type="javascript">dataSetRow["versionLabelToShow"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                </list-property>
+                                <column id="778">
+                                    <property name="width">55%</property>
+                                </column>
+                                <column id="1519"/>
+                                <row id="7352">
+                                    <cell id="7260">
+                                        <label id="3406">
+                                            <text-property name="text">Créé le :</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="7261">
+                                        <data id="3407">
+                                            <property name="resultSetColumn">created</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                                <row id="779">
+                                    <cell id="780">
+                                        <label id="1520">
+                                            <text-property name="text">Modifié le :</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="1516">
+                                        <data id="1522">
+                                            <property name="resultSetColumn">modified</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                                <row id="783">
+                                    <cell id="784">
+                                        <label id="1521">
+                                            <text-property name="text">Code beCPG :</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="1517">
+                                        <data id="1523">
+                                            <property name="resultSetColumn">code</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                                <row id="785">
+                                    <cell id="786">
+                                        <label id="787">
+                                            <text-property name="text">Version :</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="788">
+                                        <data id="789">
+                                            <property name="resultSetColumn">versionLabelToShow</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                </grid>
+            </page-header>
         </simple-master-page>
     </page-setup>
     <body>
@@ -193,7 +364,7 @@
             <text-property name="text"> </text-property>
         </label>
 
-        <!-- Table 2: INCI Ingredient List (Matching RawMaterialReport exactly) -->
+        <!-- Table 2: INCI Ingredient List (Matching Image 1 / Image 3) -->
         <table id="12300">
             <property name="style">becpg-table</property>
             <property name="marginTop">12pt</property>
