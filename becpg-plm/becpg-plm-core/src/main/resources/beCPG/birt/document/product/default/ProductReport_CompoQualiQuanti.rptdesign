@@ -25,7 +25,7 @@
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="ingListDirect" id="9992">
             <property name="nullsOrdering">nulls lowest</property>
             <property name="dataSource">DataXml</property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingLists/ingList]#:#{ingListIng;STRING;/@ingListIng},{ingListQtyPerc;DOUBLE;/@ingListQtyPerc},{ingListFunctionality;STRING;/@ingListFunctionality},{ingListIsGMO;STRING;/@ingListIsGMO},{ingListIsIonized;STRING;/@ingListIsIonized}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/ingLists/ingList]#:#{ingListIng;STRING;/@ingListIng},{ingListQtyPerc;DOUBLE;/@ingListQtyPerc},{ingListFunctionality;STRING;/@ingListFunctionality},{ingListIsGMO;STRING;/@ingListIsGMO},{ingListIsIonized;STRING;/@ingListIsIonized},{ingListGeoOrigin;STRING;/@ingListGeoOrigin},{ingListGeoTransfo;STRING;/@ingListGeoTransfo},{ingListBioOrigin;STRING;/@ingListBioOrigin},{ingListClaims;STRING;/@ingListClaims}]]></xml-property>
         </oda-data-set>
     </data-sets>
     <styles>
@@ -39,54 +39,73 @@
             <property name="paddingTop">5pt</property>
             <property name="paddingBottom">5pt</property>
         </style>
-        <style name="becpg-section-label" id="5">
-            <property name="backgroundColor">#E8F0F4</property>
+        <style name="becpg-table-header" id="11">
             <property name="fontFamily">sans-serif</property>
-            <property name="fontSize">9pt</property>
+            <property name="fontSize">8pt</property>
             <property name="fontWeight">bold</property>
-            <property name="color">#004254</property>
-            <property name="paddingLeft">6pt</property>
+            <property name="color">#000000</property>
+            <property name="textAlign">center</property>
+            <property name="paddingLeft">2pt</property>
+            <property name="paddingRight">2pt</property>
             <property name="paddingTop">4pt</property>
             <property name="paddingBottom">4pt</property>
             <property name="borderBottomStyle">solid</property>
             <property name="borderBottomWidth">thin</property>
-            <property name="borderBottomColor">#B0C4DE</property>
-        </style>
-        <style name="becpg-cell-label" id="9">
-            <property name="fontFamily">sans-serif</property>
-            <property name="fontSize">8.5pt</property>
-            <property name="fontWeight">bold</property>
-            <property name="color">#333333</property>
-            <property name="paddingLeft">6pt</property>
-            <property name="paddingTop">3pt</property>
-            <property name="paddingBottom">3pt</property>
-            <property name="borderBottomStyle">solid</property>
-            <property name="borderBottomWidth">thin</property>
-            <property name="borderBottomColor">#E0E0E0</property>
+            <property name="borderBottomColor">#000000</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="borderTopColor">#000000</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderLeftColor">#000000</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderRightColor">#000000</property>
         </style>
         <style name="becpg-cell-data" id="10">
             <property name="fontFamily">sans-serif</property>
-            <property name="fontSize">8.5pt</property>
+            <property name="fontSize">8pt</property>
             <property name="color">#000000</property>
-            <property name="paddingLeft">6pt</property>
+            <property name="textAlign">center</property>
+            <property name="paddingLeft">2pt</property>
+            <property name="paddingRight">2pt</property>
             <property name="paddingTop">3pt</property>
             <property name="paddingBottom">3pt</property>
             <property name="borderBottomStyle">solid</property>
             <property name="borderBottomWidth">thin</property>
-            <property name="borderBottomColor">#E0E0E0</property>
+            <property name="borderBottomColor">#000000</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="borderTopColor">#000000</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderLeftColor">#000000</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderRightColor">#000000</property>
         </style>
-        <style name="becpg-table-header" id="11">
-            <property name="backgroundColor">#E8F0F4</property>
+        <style name="becpg-cell-data-left" id="12">
             <property name="fontFamily">sans-serif</property>
-            <property name="fontSize">8.5pt</property>
+            <property name="fontSize">8pt</property>
             <property name="fontWeight">bold</property>
-            <property name="color">#004254</property>
-            <property name="paddingLeft">6pt</property>
+            <property name="color">#000000</property>
+            <property name="textAlign">left</property>
+            <property name="paddingLeft">4pt</property>
+            <property name="paddingRight">2pt</property>
             <property name="paddingTop">3pt</property>
             <property name="paddingBottom">3pt</property>
             <property name="borderBottomStyle">solid</property>
             <property name="borderBottomWidth">thin</property>
-            <property name="borderBottomColor">#B0C4DE</property>
+            <property name="borderBottomColor">#000000</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="borderTopColor">#000000</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderLeftColor">#000000</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderRightColor">#000000</property>
         </style>
     </styles>
     <page-setup>
@@ -109,7 +128,7 @@
                     <property name="style">becpg-chapter-header</property>
                     <label id="12254">
                         <property name="style">becpg-chapter-header</property>
-                        <text-property name="text">COMPOSITION QUALITATIVE ET QUANTITATIVE (QUALI-QUANTI)</text-property>
+                        <text-property name="text">COMPOSITION QUALITATIVE ET QUANTITATIVE</text-property>
                     </label>
                 </cell>
             </row>
@@ -122,10 +141,10 @@
             <column id="12261"/>
             <row id="12262">
                 <cell id="12263">
-                    <property name="style">becpg-section-label</property>
+                    <property name="style">becpg-chapter-header</property>
                     <label id="12264">
-                        <property name="style">becpg-section-label</property>
-                        <text-property name="text">1. COMPOSITION DE LA FORMULE (FORMULA COMPOSITION)</text-property>
+                        <property name="style">becpg-chapter-header</property>
+                        <text-property name="text">COMPOSITION DE LA FORMULE</text-property>
                     </label>
                 </cell>
             </row>
@@ -171,14 +190,14 @@
                         <property name="style">becpg-table-header</property>
                         <label id="12276">
                             <property name="style">becpg-table-header</property>
-                            <text-property name="text">Code</text-property>
+                            <text-property name="text">Code MP</text-property>
                         </label>
                     </cell>
                     <cell id="12277">
                         <property name="style">becpg-table-header</property>
                         <label id="12278">
                             <property name="style">becpg-table-header</property>
-                            <text-property name="text">Composant / Matière première</text-property>
+                            <text-property name="text">Intitulé MP / Composant</text-property>
                         </label>
                     </cell>
                     <cell id="12279">
@@ -200,7 +219,7 @@
                     </cell>
                     <cell id="12284">
                         <data id="12285">
-                            <property name="style">becpg-cell-data</property>
+                            <property name="style">becpg-cell-data-left</property>
                             <property name="resultSetColumn">compoListProduct</property>
                         </data>
                     </cell>
@@ -214,24 +233,23 @@
             </detail>
         </table>
 
-        <!-- Sub-section 2: INCI Ingredients -->
+        <!-- Sub-section 2: INCI Ingredient List (Matching Image 3) -->
         <grid id="12290">
             <property name="width">100%</property>
             <property name="marginTop">14pt</property>
             <column id="12291"/>
             <row id="12292">
                 <cell id="12293">
-                    <property name="style">becpg-section-label</property>
+                    <property name="style">becpg-chapter-header</property>
                     <label id="12294">
-                        <property name="style">becpg-section-label</property>
-                        <text-property name="text">2. LISTE INCI DES INGRÉDIENTS (INCI INGREDIENT LIST)</text-property>
+                        <property name="style">becpg-chapter-header</property>
+                        <text-property name="text">LISTE D'INGRÉDIENTS</text-property>
                     </label>
                 </cell>
             </row>
         </grid>
 
         <table id="12300">
-            <property name="style">becpg-table</property>
             <property name="width">100%</property>
             <property name="dataSet">ingListDirect</property>
             <list-property name="boundDataColumns">
@@ -245,43 +263,211 @@
                     <expression name="expression" type="javascript">dataSetRow["ingListQtyPerc"]</expression>
                     <property name="dataType">float</property>
                 </structure>
+                <structure>
+                    <property name="name">ingListIsGMO</property>
+                    <expression name="expression" type="javascript">dataSetRow["ingListIsGMO"] != null ? dataSetRow["ingListIsGMO"] : "Non"</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ingListIsIonized</property>
+                    <expression name="expression" type="javascript">dataSetRow["ingListIsIonized"] != null ? dataSetRow["ingListIsIonized"] : "Non"</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">auxTech</property>
+                    <expression name="expression" type="javascript">"Non"</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">support</property>
+                    <expression name="expression" type="javascript">"Non"</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ingListGeoOrigin</property>
+                    <expression name="expression" type="javascript">dataSetRow["ingListGeoOrigin"] != null ? dataSetRow["ingListGeoOrigin"] : ""</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ingListGeoTransfo</property>
+                    <expression name="expression" type="javascript">dataSetRow["ingListGeoTransfo"] != null ? dataSetRow["ingListGeoTransfo"] : ""</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ingListBioOrigin</property>
+                    <expression name="expression" type="javascript">dataSetRow["ingListBioOrigin"] != null ? dataSetRow["ingListBioOrigin"] : ""</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">ingListClaims</property>
+                    <expression name="expression" type="javascript">dataSetRow["ingListClaims"] != null ? dataSetRow["ingListClaims"] : ""</expression>
+                    <property name="dataType">string</property>
+                </structure>
             </list-property>
             <column id="12301">
-                <property name="width">65%</property>
+                <property name="width">18%</property>
             </column>
             <column id="12302">
-                <property name="width">35%</property>
+                <property name="width">10%</property>
+            </column>
+            <column id="12303">
+                <property name="width">8%</property>
+            </column>
+            <column id="12304">
+                <property name="width">8%</property>
+            </column>
+            <column id="12305">
+                <property name="width">10%</property>
+            </column>
+            <column id="12306">
+                <property name="width">8%</property>
+            </column>
+            <column id="12307">
+                <property name="width">10%</property>
+            </column>
+            <column id="12308">
+                <property name="width">10%</property>
+            </column>
+            <column id="12309">
+                <property name="width">9%</property>
+            </column>
+            <column id="12310">
+                <property name="width">9%</property>
             </column>
             <header>
-                <row id="12303">
-                    <cell id="12304">
+                <row id="12311">
+                    <cell id="12312">
                         <property name="style">becpg-table-header</property>
-                        <label id="12305">
+                        <label id="12313">
                             <property name="style">becpg-table-header</property>
-                            <text-property name="text">Ingrédient INCI</text-property>
+                            <text-property name="text">Ingrédient</text-property>
                         </label>
                     </cell>
-                    <cell id="12306">
+                    <cell id="12314">
                         <property name="style">becpg-table-header</property>
-                        <label id="12307">
+                        <label id="12315">
                             <property name="style">becpg-table-header</property>
-                            <text-property name="text">Proportion (%)</text-property>
+                            <text-property name="text">Quantité (%)</text-property>
+                        </label>
+                    </cell>
+                    <cell id="12316">
+                        <property name="style">becpg-table-header</property>
+                        <label id="12317">
+                            <property name="style">becpg-table-header</property>
+                            <text-property name="text">OGM</text-property>
+                        </label>
+                    </cell>
+                    <cell id="12318">
+                        <property name="style">becpg-table-header</property>
+                        <label id="12319">
+                            <property name="style">becpg-table-header</property>
+                            <text-property name="text">Ionisation</text-property>
+                        </label>
+                    </cell>
+                    <cell id="12320">
+                        <property name="style">becpg-table-header</property>
+                        <label id="12321">
+                            <property name="style">becpg-table-header</property>
+                            <text-property name="text">Auxiliaire techno.</text-property>
+                        </label>
+                    </cell>
+                    <cell id="12322">
+                        <property name="style">becpg-table-header</property>
+                        <label id="12323">
+                            <property name="style">becpg-table-header</property>
+                            <text-property name="text">Support</text-property>
+                        </label>
+                    </cell>
+                    <cell id="12324">
+                        <property name="style">becpg-table-header</property>
+                        <label id="12325">
+                            <property name="style">becpg-table-header</property>
+                            <text-property name="text">Origine géo.</text-property>
+                        </label>
+                    </cell>
+                    <cell id="12326">
+                        <property name="style">becpg-table-header</property>
+                        <label id="12327">
+                            <property name="style">becpg-table-header</property>
+                            <text-property name="text">Pays de transformation</text-property>
+                        </label>
+                    </cell>
+                    <cell id="12328">
+                        <property name="style">becpg-table-header</property>
+                        <label id="12329">
+                            <property name="style">becpg-table-header</property>
+                            <text-property name="text">Origine bio.</text-property>
+                        </label>
+                    </cell>
+                    <cell id="12330">
+                        <property name="style">becpg-table-header</property>
+                        <label id="12331">
+                            <property name="style">becpg-table-header</property>
+                            <text-property name="text">Allégations</text-property>
                         </label>
                     </cell>
                 </row>
             </header>
             <detail>
-                <row id="12308">
-                    <cell id="12309">
-                        <data id="12310">
-                            <property name="style">becpg-cell-data</property>
+                <row id="12332">
+                    <cell id="12333">
+                        <data id="12334">
+                            <property name="style">becpg-cell-data-left</property>
                             <property name="resultSetColumn">ingListIng</property>
                         </data>
                     </cell>
-                    <cell id="12311">
-                        <data id="12312">
+                    <cell id="12335">
+                        <data id="12336">
                             <property name="style">becpg-cell-data</property>
                             <property name="resultSetColumn">ingListQtyPerc</property>
+                        </data>
+                    </cell>
+                    <cell id="12337">
+                        <data id="12338">
+                            <property name="style">becpg-cell-data</property>
+                            <property name="resultSetColumn">ingListIsGMO</property>
+                        </data>
+                    </cell>
+                    <cell id="12339">
+                        <data id="12340">
+                            <property name="style">becpg-cell-data</property>
+                            <property name="resultSetColumn">ingListIsIonized</property>
+                        </data>
+                    </cell>
+                    <cell id="12341">
+                        <data id="12342">
+                            <property name="style">becpg-cell-data</property>
+                            <property name="resultSetColumn">auxTech</property>
+                        </data>
+                    </cell>
+                    <cell id="12343">
+                        <data id="12344">
+                            <property name="style">becpg-cell-data</property>
+                            <property name="resultSetColumn">support</property>
+                        </data>
+                    </cell>
+                    <cell id="12345">
+                        <data id="12346">
+                            <property name="style">becpg-cell-data</property>
+                            <property name="resultSetColumn">ingListGeoOrigin</property>
+                        </data>
+                    </cell>
+                    <cell id="12347">
+                        <data id="12348">
+                            <property name="style">becpg-cell-data</property>
+                            <property name="resultSetColumn">ingListGeoTransfo</property>
+                        </data>
+                    </cell>
+                    <cell id="12349">
+                        <data id="12350">
+                            <property name="style">becpg-cell-data</property>
+                            <property name="resultSetColumn">ingListBioOrigin</property>
+                        </data>
+                    </cell>
+                    <cell id="12351">
+                        <data id="12352">
+                            <property name="style">becpg-cell-data</property>
+                            <property name="resultSetColumn">ingListClaims</property>
                         </data>
                     </cell>
                 </row>

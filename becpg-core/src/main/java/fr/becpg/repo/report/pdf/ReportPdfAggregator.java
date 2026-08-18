@@ -1153,7 +1153,7 @@ public class ReportPdfAggregator {
                 stripper.setStartPage(1);
                 stripper.setEndPage(1);
                 String text = stripper.getText(doc);
-                if (text != null && (text.contains("beCPG") || text.contains("Fiche Technique") || text.contains("FICHE TECHNIQUE") || text.contains("Fiche R&D") || text.contains("Fiche Coûts"))) {
+                if (text != null && (text.contains("beCPG") || text.contains("Fiche") || text.contains("FICHE") || text.contains("COMPOSITION") || text.contains("Composition") || text.contains("Specification") || text.contains("Spécification") || text.contains("DIP") || text.contains("PIF"))) {
                     return true;
                 }
             }
