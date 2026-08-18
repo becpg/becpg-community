@@ -95,7 +95,7 @@ public class AggregateReportEngine implements BeCPGReportEngine {
             if (logger.isDebugEnabled()) {
                 logger.debug("Loaded descriptor config. Number of configured annexes: " + (config.getAnnexes() != null ? config.getAnnexes().size() : 0));
             }
-            Map<String, String> customI18n = loadAssociatedI18nProperties(assocFiles);
+            Map<String, String> customI18n = loadAssociatedI18nProperties(assocFiles, params);
             if (logger.isDebugEnabled()) {
                 logger.debug("Loaded " + customI18n.size() + " custom i18n properties");
             }
@@ -156,14 +156,26 @@ public class AggregateReportEngine implements BeCPGReportEngine {
         );
     }
 
-    private Map<String, String> loadAssociatedI18nProperties(List<NodeRef> assocFiles) {
+    private Map<String, String> loadAssociatedI18nProperties(List<NodeRef> assocFiles, Map<String, Object> params) {
         Map<String, String> customI18n = new HashMap<>();
         if (assocFiles == null || assocFiles.isEmpty()) {
             return customI18n;
         }
 
-        Locale currentLocale = I18NUtil.getLocale();
-        String lang = currentLocale != null ? currentLocale.getLanguage() : "en";
+        String lang = null;
+        if (params != null) {
+            Object langObj = params.get("lang");
+            if (langObj instanceof String s && !s.isBlank()) {
+                lang = s;
+            }
+        }
+        if (lang == null || lang.isBlank()) {
+            Locale currentLocale = I18NUtil.getLocale();
+            lang = currentLocale != null ? currentLocale.getLanguage() : "en";
+        }
+        if (lang.contains("_")) {
+            lang = lang.substring(0, lang.indexOf('_'));
+        }
 
         List<NodeRef> basePropNodes = new ArrayList<>();
         List<NodeRef> langPropNodes = new ArrayList<>();
