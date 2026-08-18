@@ -1936,7 +1936,18 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				reportKindDefaultValues.put(reportKind, reportKindListProps);
 			}
 
-			List<String> annexReportKinds = Arrays.asList("annexe-compo-quali-quanti", "annexe-mp", "annexe-emb-primaire", "annexe-emb-secondaire", "annexe-photos", "annexe-qualite");
+			List<String> annexReportKinds = Arrays.asList(
+					"annexe-compo-quali-quanti",
+					"annexe-mp",
+					"annexe-emb-primaire",
+					"annexe-emb-secondaire",
+					"annexe-cpsr",
+					"annexe-stability-micro",
+					"annexe-claim-efficacy",
+					"annexe-gmp-animal-testing",
+					"annexe-photos",
+					"annexe-qualite"
+			);
 			for (String rk : annexReportKinds) {
 				MLText mltValue = new MLText();
 				mltValue.put(Locale.FRENCH, I18NUtil.getMessage("becpg.reportkind." + rk.toLowerCase() + ".value", Locale.FRENCH));
