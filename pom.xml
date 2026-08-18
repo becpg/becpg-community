@@ -144,9 +144,9 @@
             -Dencryption.cipherAlgorithm=AES/CBC/PKCS5Padding
             -Dencryption.keyAlgorithm=AES
             -Dencryption.keystore.location=/usr/local/tomcat/shared/classes/alfresco/extension/keystore/keystore
-            -Dmetadata-keystore.password=REDACTED
+            -Dmetadata-keystore.password=mp6yc0UD9e
             -Dmetadata-keystore.aliases=metadata
-            -Dmetadata-keystore.metadata.password=REDACTED
+            -Dmetadata-keystore.metadata.password=oKIWzVdEdA
             -Dmetadata-keystore.metadata.algorithm=AES</keystore.settings>
  		
 
