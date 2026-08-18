@@ -27,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -366,6 +367,9 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		return true;
 	}
 
+	/** Nodes already reported as parentless during this visit. A visitor lives for one request. */
+	private final Set<NodeRef> parentlessNodesReported = new HashSet<>();
+
 	private void processParentInformation(NodeRef nodeRef, JSONObject entity, JsonVisitNodeType type, QName nodeType, RemoteJSONContext context) {
 		if (!shouldProcessParent(type, nodeType)) {
 			return;
@@ -374,8 +378,6 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		NodeRef parentRef = getPrimaryParentRefQuietly(nodeRef);
 		if (parentRef != null) {
 			populateParentDetails(parentRef, entity, type, context);
-		} else if (logger.isWarnEnabled()) {
-			logger.warn("Node : " + nodeRef + " has no primary parent");
 		}
 	}
 
@@ -386,12 +388,26 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	private NodeRef getPrimaryParentRefQuietly(NodeRef nodeRef) {
 		try {
-			return getPrimaryParentRef(nodeRef);
-		} catch (RemoteException e) {
-			if (logger.isWarnEnabled()) {
-				logger.warn("Failed to resolve primary parent for node " + nodeRef + ": " + e.getMessage());
+			NodeRef parentRef = getPrimaryParentRef(nodeRef);
+			if (parentRef == null) {
+				logMissingPrimaryParentOnce(nodeRef, "none returned");
 			}
+			return parentRef;
+		} catch (RemoteException e) {
+			logMissingPrimaryParentOnce(nodeRef, e.getMessage());
 			return null;
+		}
+	}
+
+	/**
+	 * A node out of the repository tree is reached once per association pointing at it, and the
+	 * caller used to log a second, reasonless line on top: 8 such nodes produced 404 lines in a
+	 * single export. One line per node and per visit is enough to act on.
+	 */
+	private void logMissingPrimaryParentOnce(NodeRef nodeRef, String reason) {
+		if (logger.isWarnEnabled() && parentlessNodesReported.add(nodeRef)) {
+			logger.warn("No primary parent for node " + nodeRef + " (" + reason
+					+ ") - it is still referenced but out of the repository tree");
 		}
 	}
 

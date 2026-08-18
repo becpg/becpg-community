@@ -115,6 +115,9 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	
 	protected NamespaceService namespaceService;
 	
+	/** HTTP 429: absent from Surf's Status, which stops before it. */
+	private static final int STATUS_TOO_MANY_REQUESTS = 429;
+
 	protected RemoteRateLimiter remoteRateLimiter;
 	
 	protected SystemConfigurationService systemConfigurationService;
@@ -248,7 +251,11 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 		 if (!remoteRateLimiter.allowRequest()) {
-			 throw new WebScriptException("beCPG Remote API Call RATE limit reached");
+			 // 429 rather than 500: a caller must be able to tell "slow down" from "the server is broken",
+			 // and a throttled call is not an application error worth an ERROR line per rejected request.
+			 resp.setHeader("Retry-After", "1");
+			 throw new WebScriptException(STATUS_TOO_MANY_REQUESTS,
+					 "beCPG Remote API call rate limit reached, retry in a second", (Object[]) null);
 	      }
 		 executeInternal(req,resp);
 	}
