@@ -40,7 +40,7 @@
       "scope": "ENTITY",
       "componentHeading": false,
       "emptyPlaceholder": "SLabel.pifAnnexCompoQualiQuantiEmptyPlaceholder",
-      "required": false,
+      "required": true,
       "mimeTypes": ["application/pdf"]
     },
     {
@@ -52,7 +52,7 @@
       "componentHeading": true,
       "sort": "COMPO_ORDER",
       "dedup": true,
-      "required": false,
+      "required": true,
       "mimeTypes": ["application/pdf"]
     },
     {
@@ -63,7 +63,7 @@
       "componentHeading": true,
       "sort": "COMPO_ORDER",
       "dedup": true,
-      "required": false,
+      "required": true,
       "mimeTypes": ["application/pdf"]
     },
     {
@@ -72,7 +72,7 @@
       "scope": "ENTITY",
       "componentHeading": false,
       "emptyPlaceholder": "SLabel.pifAnnexCPSREmptyPlaceholder",
-      "required": false,
+      "required": true,
       "mimeTypes": ["application/pdf"]
     },
     {
@@ -81,7 +81,7 @@
       "scope": "ENTITY",
       "componentHeading": false,
       "emptyPlaceholder": "SLabel.pifAnnexStabilityMicroEmptyPlaceholder",
-      "required": false,
+      "required": true,
       "mimeTypes": ["application/pdf"]
     },
     {
@@ -90,7 +90,7 @@
       "scope": "ENTITY",
       "componentHeading": false,
       "emptyPlaceholder": "SLabel.pifAnnexClaimEfficacyEmptyPlaceholder",
-      "required": false,
+      "required": true,
       "mimeTypes": ["application/pdf"]
     },
     {
@@ -99,7 +99,7 @@
       "scope": "ENTITY",
       "componentHeading": false,
       "emptyPlaceholder": "SLabel.pifAnnexGMPAnimalTestingEmptyPlaceholder",
-      "required": false,
+      "required": true,
       "mimeTypes": ["application/pdf"]
     }
   ]

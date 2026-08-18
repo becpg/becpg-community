@@ -148,7 +148,7 @@ public class AggregateReportModelBuilder {
         if (logger.isDebugEnabled()) {
             logger.debug("Collecting ENTITY annex for node: " + fpNodeRef + ", reportKind: " + annex.getReportKind());
         }
-        List<AnnexDocument> docs = collectDocumentsForNode(fpNodeRef, annex.getReportKind(), annex.getMimeTypes(), false);
+        List<AnnexDocument> docs = collectDocumentsForNode(fpNodeRef, annex.getReportKind(), annex.getMimeTypes());
         documents.addAll(docs);
         if (logger.isDebugEnabled()) {
             logger.debug("Collected " + docs.size() + " ENTITY documents for node: " + fpNodeRef + ", reportKind: " + annex.getReportKind());
@@ -168,7 +168,7 @@ public class AggregateReportModelBuilder {
             logger.debug("Found " + compoComponents.size() + " composition components for node: " + fpNodeRef + ": " + compoComponents);
         }
         for (NodeRef compNode : compoComponents) {
-            List<AnnexDocument> docs = collectDocumentsForNode(compNode, annex.getReportKind(), annex.getMimeTypes(), true);
+            List<AnnexDocument> docs = collectDocumentsForNode(compNode, annex.getReportKind(), annex.getMimeTypes());
             if (logger.isDebugEnabled()) {
                 logger.debug("Collected " + docs.size() + " documents for composition component: " + compNode + " (reportKind: " + annex.getReportKind() + ")");
             }
@@ -192,7 +192,7 @@ public class AggregateReportModelBuilder {
             logger.debug("Found " + packagingComponents.size() + " packaging components for node: " + fpNodeRef + ": " + packagingComponents);
         }
         for (NodeRef pkgNode : packagingComponents) {
-            List<AnnexDocument> docs = collectDocumentsForNode(pkgNode, annex.getReportKind(), annex.getMimeTypes(), true);
+            List<AnnexDocument> docs = collectDocumentsForNode(pkgNode, annex.getReportKind(), annex.getMimeTypes());
             if (logger.isDebugEnabled()) {
                 logger.debug("Collected " + docs.size() + " documents for packaging component: " + pkgNode + " (reportKind: " + annex.getReportKind() + ")");
             }
@@ -292,23 +292,21 @@ public class AggregateReportModelBuilder {
         }
     }
 
-    private List<AnnexDocument> collectDocumentsForNode(NodeRef entityNodeRef, String reportKind, List<String> mimeTypes, boolean shouldRefresh) {
+    private List<AnnexDocument> collectDocumentsForNode(NodeRef entityNodeRef, String reportKind, List<String> mimeTypes) {
         List<AnnexDocument> results = new ArrayList<>();
         Set<NodeRef> collectedNodeRefs = new HashSet<>();
 
         if (logger.isDebugEnabled()) {
-            logger.debug("collectDocumentsForNode - entityNodeRef: " + entityNodeRef + ", reportKind: " + reportKind + ", mimeTypes: " + mimeTypes + ", shouldRefresh: " + shouldRefresh);
+            logger.debug("collectDocumentsForNode - entityNodeRef: " + entityNodeRef + ", reportKind: " + reportKind + ", mimeTypes: " + mimeTypes);
         }
 
-        if (shouldRefresh) {
-            try {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Triggering getOrRefreshReportsOfKind for node " + entityNodeRef + ", reportKind: " + reportKind);
-                }
-                entityReportService.getOrRefreshReportsOfKind(entityNodeRef, reportKind);
-            } catch (Exception e) {
-                logger.error("On-the-fly report refresh failed for node " + entityNodeRef + ": " + e.getMessage(), e);
+        try {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Triggering getOrRefreshReportsOfKind for node " + entityNodeRef + ", reportKind: " + reportKind);
             }
+            entityReportService.getOrRefreshReportsOfKind(entityNodeRef, reportKind);
+        } catch (Exception e) {
+            logger.error("On-the-fly report refresh failed for node " + entityNodeRef + ": " + e.getMessage(), e);
         }
 
         String compName = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_TITLE);
