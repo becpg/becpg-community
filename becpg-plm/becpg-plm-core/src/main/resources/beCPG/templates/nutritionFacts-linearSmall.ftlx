@@ -1,0 +1,48 @@
+<#--
+  Linear panel for a small package, 21 CFR 101.9(j)(13)(ii)(A)(2).
+
+  The whole declaration is one paragraph, heading included: a package that cannot carry the
+  heading of the linear format on its own line runs it into the sentence. Only the wording the
+  regulation emphasises is set in the heavy face.
+-->
+<#import "nutritionFacts-lib.ftlx" as nf>
+<#assign WIDTH = 504>
+<#assign W = WIDTH in nf>
+
+<#--
+  Opening of the sentence: the heading, the servings and the calories, which the regulation
+  emphasises the same way as the name of a nutrient.
+-->
+<#function opening data>
+	<#local segments = [nf.emphasis(data.label("title"))]>
+	<#if data.serving().hasServingsPerContainer()>
+	<#local segments = segments + [nf.text(data.serving().servingsPerContainer() + " " + data.label("servingsPerContainer") + ",")]>
+	</#if>
+	<#if data.serving().servingSize()??>
+	<#local segments = segments + [nf.emphasis(data.label("servingSize") + " " + data.serving().servingSize() + ",")]>
+	</#if>
+	<#if data.calories()??>
+	<#if data.label("amountPerServing")?has_content>
+	<#local segments = segments + [nf.text(data.label("amountPerServing") + ":")]>
+	</#if>
+	<#local segments = segments + [nf.emphasis(data.calories().label() + (data.calories().value()??)?then(" " + data.calories().value(), "") + ",")]>
+	</#if>
+	<#return segments>
+</#function>
+
+<#assign y = nf.BORDER + 3>
+<#assign body>
+
+	<@nf.paragraph segments=opening(nf_data) + nf.linearSegments(nf_data) y=y/>
+	<#assign y = nf.cursorY>
+
+	<#if nf_data.footNote()?has_content>
+	<@nf.rule y=y/>
+	<#assign y = y + nf.HAIRLINE + 2>
+	<@nf.footNote text=nf_data.footNote() y=y/>
+	<#assign y = nf.cursorY>
+	</#if>
+
+	<#assign y = y + nf.BORDER + 2>
+</#assign>
+<@nf.panel height=y>${body}</@nf.panel>

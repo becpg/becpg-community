@@ -7,16 +7,15 @@
 -->
 <#import "nutritionFacts-lib.ftlx" as nf>
 <#-- Four columns of figures need more width than a vertical panel: 3 inches. -->
-<#assign DUAL_W = 252>
+<#assign W = 252 in nf>
 
 <#assign y = nf.BORDER + 2>
 <#assign body>
 
-	<text x="${nf.PAD}" y="${nf.baseline(y, nf.TITLE_SIZE)}" font-family="${nf.FONT_HEAVY}" font-weight="900" font-size="${nf.TITLE_SIZE}"
-		textLength="${DUAL_W - 2 * nf.PAD}" lengthAdjust="spacingAndGlyphs">${nf_data.label("title")}</text>
+	<@nf.title text=nf_data.label("title") y=y/>
 	<#assign y = y + nf.TITLE_SIZE>
 
-	<@nf.ruleOfWidth y=y height=nf.HAIRLINE width=DUAL_W/>
+	<@nf.rule y=y/>
 	<#assign y = y + nf.HAIRLINE + 1>
 
 	<#if nf_data.serving().hasServingsPerContainer()>
@@ -24,12 +23,12 @@
 	<#assign y = y + nf.SERVING_ROW_H>
 	</#if>
 
-	<text x="${nf.PAD}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}" font-weight="bold">${nf_data.label("servingSize")}</text>
+	<text x="${nf.PAD}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}" font-family="${nf.FONT_HEAVY}" font-weight="900">${nf_data.label("servingSize")}</text>
 	<#if nf_data.serving().servingSize()??>
-	<text x="${DUAL_W - nf.PAD}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}" font-weight="bold" text-anchor="end">${nf_data.serving().servingSize()}</text>
+	<text x="${nf.right()}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}" font-family="${nf.FONT_HEAVY}" font-weight="900" text-anchor="end">${nf_data.serving().servingSize()}</text>
 	</#if>
 	<#assign y = y + nf.SERVING_ROW_H>
 
-	<@nf.dualColumnBody data=nf_data y=y width=DUAL_W/>
+	<@nf.dualColumnBody data=nf_data y=y/>
 </#assign>
-<@nf.panelOfWidth height=nf.cursorY width=DUAL_W>${body}</@nf.panelOfWidth>
+<@nf.panel height=nf.cursorY>${body}</@nf.panel>

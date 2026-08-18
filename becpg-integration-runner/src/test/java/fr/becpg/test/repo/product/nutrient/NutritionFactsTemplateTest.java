@@ -36,6 +36,9 @@ public class NutritionFactsTemplateTest {
 
 	private static final String MODEL_KEY = "nf_data";
 
+	private static final String FOOTNOTE = "* The % Daily Value (DV) tells you how much a nutrient in a serving of food contributes to a daily "
+			+ "diet. 2,000 calories a day is used for general nutrition advice.";
+
 	private static final double HAIRLINE = 0.25d;
 
 	private static final double PANEL_WIDTH = 144d;
@@ -125,17 +128,20 @@ public class NutritionFactsTemplateTest {
 		List<Element> texts = elements(render(), "text");
 
 		int footnoteLines = 0;
+		double widest = 0;
 		for (Element text : texts) {
-			if (text.getTextContent().contains("Daily Value (DV)") || text.getTextContent().contains("nutrition advice")) {
+			if (isFootnoteLine(text)) {
 				footnoteLines++;
+				widest = Math.max(widest, estimatedWidth(text));
 			}
 		}
-		Assert.assertTrue("The footnote has to be split over several lines to fit the panel", footnoteLines > 1);
+		Assert.assertEquals("The disclaimer of the FDA takes three lines at the width of a vertical panel", 3, footnoteLines);
+		Assert.assertTrue("No footnote line may run past the margin", widest <= PANEL_WIDTH - 2 * PAD);
 	}
 
 	@Test
 	public void testEveryShippedFormatRendersAWellFormedPanel() throws Exception {
-		for (String format : List.of("vertical", "sideBySide", "tabular", "linear", "simplified", "dualColumn")) {
+		for (String format : List.of("vertical", "sideBySide", "tabular", "linear", "linearSmall", "simplified", "dualColumn")) {
 			String svg = renderToString("nutritionFacts-" + format + ".ftlx", standardPanel());
 
 			Assert.assertEquals(format + " must be a svg", "svg", parse(svg).getDocumentElement().getTagName());
@@ -146,11 +152,44 @@ public class NutritionFactsTemplateTest {
 
 	@Test
 	public void testLinearFormatUsesTheRegulatedAbbreviations() throws Exception {
-		NutritionFactsData data = panelData(
-				new NutritionFactsLine("FASAT", "Saturated Fat", "Sat. Fat", "Saturated Fat", "1g", null, "5%", null, 2, false, true, false));
+		NutritionFactsData data = panelData(new NutritionFactsLine("FASAT", "Saturated Fat", "Sat. Fat", "Saturated Fat", "Sat. Fat", "1g", null,
+				"5%", null, 2, false, true, false));
 
 		Assert.assertTrue("The linear format names nutrients by their abbreviation",
-				renderToString("nutritionFacts-linear.ftlx", data).contains("Sat. Fat"));
+				findText(parse(renderToString("nutritionFacts-linear.ftlx", data)), "Sat. Fat").getTextContent().startsWith("Sat. Fat 1g (5% DV)"));
+	}
+
+	@Test
+	public void testLinearFormatKeepsTheSpaceBetweenTwoEmphasisedWords() throws Exception {
+		Document panel = parse(renderToString("nutritionFacts-linearSmall.ftlx", standardPanel()));
+
+		Assert.assertTrue("The whole declaration is one paragraph, heading included",
+				findText(panel, "Nutrition Facts").getTextContent().startsWith("Nutrition Facts 8 servings per container,"));
+	}
+
+	@Test
+	public void testLinearFormatsAreDrawnAcrossThePackage() throws Exception {
+		for (String format : List.of("linear", "linearSmall")) {
+			Element svg = parse(renderToString("nutritionFacts-" + format + ".ftlx", standardPanel())).getDocumentElement();
+
+			Assert.assertEquals(format + " states its declaration in a sentence, which needs width", "504pt", svg.getAttribute("width"));
+		}
+	}
+
+	@Test
+	public void testSideBySideFormatIsWidenedForItsPairedMicronutrients() throws Exception {
+		Element svg = parse(renderToString("nutritionFacts-sideBySide.ftlx", standardPanel())).getDocumentElement();
+
+		Assert.assertEquals("Two declarations on one line do not fit the width of a vertical panel", "190pt", svg.getAttribute("width"));
+	}
+
+	@Test
+	public void testDailyValueOfAMicronutrientIsNotEmphasised() throws Exception {
+		Document panel = render();
+
+		Assert.assertTrue("The percentage of a mandatory nutrient is set in the heavy face",
+				findText(panel, "10%").getAttribute("font-family").contains("Black"));
+		Assert.assertEquals("The percentage of a vitamin stays in the body face", "", findText(panel, "45%").getAttribute("font-family"));
 	}
 
 	@Test
@@ -207,6 +246,16 @@ public class NutritionFactsTemplateTest {
 						line("NA", "Sodium", "160 mg", "7%", 1, true)),
 				List.of(line("K", "Potassium", "235 mg", "5%", 1, false), line("CA", "Calcium", "260 mg", "20%", 1, false)),
 				"* 5 % ou moins c'est peu, 15 % ou plus c'est beaucoup", "", labels);
+	}
+
+	/** Tells a drawn line of the disclaimer from any other text of the panel. */
+	private boolean isFootnoteLine(Element text) {
+		return (text.getTextContent().length() > 20) && FOOTNOTE.contains(text.getTextContent());
+	}
+
+	/** Width a line of text takes, counted with the average glyph of Arial at that size. */
+	private double estimatedWidth(Element text) {
+		return text.getTextContent().length() * Double.parseDouble(text.getAttribute("font-size")) * 0.43d;
 	}
 
 	private double textStart(Document panel, String label) {
@@ -278,8 +327,7 @@ public class NutritionFactsTemplateTest {
 				line("US_ENER-E14", "Calories", "230", null, 1, true), List.of(nutrients),
 				List.of(line("VITD-", "Vitamin D", "2mcg", "10%", 1, false), line("CA", "Calcium", "260mg", "20%", 1, false),
 						line("FE", "Iron", "8mg", "45%", 1, false), line("K", "Potassium", "235mg", "6%", 1, false)),
-				"* The % Daily Value (DV) tells you how much a nutrient in a serving of food contributes to a daily diet. "
-						+ "2,000 calories a day is used for general nutrition advice.",
+				FOOTNOTE,
 				"Not a significant source of other nutrients.", panelLabels());
 	}
 
@@ -297,7 +345,8 @@ public class NutritionFactsTemplateTest {
 	}
 
 	private NutritionFactsLine line(String nutCode, String label, String value, String dailyValue, int indentLevel, boolean bold) {
-		return new NutritionFactsLine(nutCode, label, label, label, value, value, dailyValue, dailyValue, indentLevel, bold, dailyValue != null, false);
+		return new NutritionFactsLine(nutCode, label, label, label, label, value, value, dailyValue, dailyValue, indentLevel, bold,
+				dailyValue != null, false);
 	}
 
 }

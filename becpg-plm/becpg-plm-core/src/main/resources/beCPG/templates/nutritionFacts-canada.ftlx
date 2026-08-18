@@ -20,7 +20,7 @@
 	<@nf.rule y=y/>
 	<#assign y = y + nf.HAIRLINE + 1>
 
-	<text x="${nf.PAD}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}" font-weight="bold">${nf_data.label("servingSize")}<#if nf_data.serving().servingSize()??> ${nf_data.serving().servingSize()}</#if></text>
+	<text x="${nf.PAD}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}" font-family="${nf.FONT_HEAVY}" font-weight="900">${nf_data.label("servingSize")}<#if nf_data.serving().servingSize()??> ${nf_data.serving().servingSize()}</#if></text>
 	<#assign y = y + nf.SERVING_ROW_H>
 
 	<@nf.panelBody data=nf_data y=y/>

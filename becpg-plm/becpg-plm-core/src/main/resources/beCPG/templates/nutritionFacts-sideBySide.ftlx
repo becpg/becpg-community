@@ -3,8 +3,12 @@
 
   Same panel as the standard vertical one, except that the vitamins and minerals are paired two
   per line, separated by a drawn dot. Used when the height of the label is constrained.
+
+  Two declarations on one line need more width than a vertical panel: at the width of that one,
+  "Vitamin D 0.6mcg 4%" and "Calcium 260mg 20%" run into each other.
 -->
 <#import "nutritionFacts-lib.ftlx" as nf>
+<#assign W = 190 in nf>
 
 <#assign y = nf.BORDER + 2>
 <#assign body>
@@ -22,7 +26,7 @@
 
 	<text x="${nf.PAD}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}" font-weight="bold">${nf_data.label("servingSize")}</text>
 	<#if nf_data.serving().servingSize()??>
-	<text x="${nf.RIGHT}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}" font-weight="bold" text-anchor="end">${nf_data.serving().servingSize()}</text>
+	<text x="${nf.right()}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}" font-weight="bold" text-anchor="end">${nf_data.serving().servingSize()}</text>
 	</#if>
 	<#assign y = y + nf.SERVING_ROW_H>
 
