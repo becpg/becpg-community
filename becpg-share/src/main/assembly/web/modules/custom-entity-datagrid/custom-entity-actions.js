@@ -39,24 +39,29 @@
 		 *            Item to be actioned, or an Array thereof
 		 */
 		onActionShowDetails: function EntityDataGrid_onActionShowDetails(p_items) {
-			var items = YAHOO.lang.isArray(p_items) ? p_items : [p_items], nodeRefs = [];
+			var items = YAHOO.lang.isArray(p_items) ? p_items : [p_items], me = this;
 
-			for (var i = 0, ii = items.length; i < ii; i++) {
-				nodeRefs.push(items[i].nodeRef);
-			}
-			
-			if (nodeRefs.length > 50 && !(this.allPages && this.queryExecutionId)) {
-				Alfresco.util.PopupManager.displayMessage({
-					text: this.msg("message.too.many.items", nodeRefs.length)
-				});
-				return;
-			}
-			var url = Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-charact-details/entity-charact-details" + "?entityNodeRef="
-				+ this.options.entityNodeRef + "&itemType="
-				+ encodeURIComponent(this.options.itemType != null ? this.options.itemType : this.datalistMeta.itemType) + "&dataListName="
-				+ encodeURIComponent(this.datalistMeta.name) + "&dataListItems=" + nodeRefs.join(",");
+			this._withEverySelectedItem(items, function(selectedItems) {
+				var nodeRefs = [];
 
-			this._showPanel(url, this.id, null, "60em");
+				for (var i = 0, ii = selectedItems.length; i < ii; i++) {
+					nodeRefs.push(selectedItems[i].nodeRef);
+				}
+
+				if (nodeRefs.length > 50 && !(me.allPages && me.queryExecutionId)) {
+					Alfresco.util.PopupManager.displayMessage({
+						text: me.msg("message.too.many.items", nodeRefs.length)
+					});
+					return;
+				}
+
+				var url = Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-charact-details/entity-charact-details" + "?entityNodeRef="
+					+ me.options.entityNodeRef + "&itemType="
+					+ encodeURIComponent(me.options.itemType != null ? me.options.itemType : me.datalistMeta.itemType) + "&dataListName="
+					+ encodeURIComponent(me.datalistMeta.name) + "&dataListItems=" + nodeRefs.join(",");
+
+				me._showPanel(url, me.id, null, "60em");
+			});
 
 		},
 
