@@ -151,7 +151,8 @@ public class AggregateReportEngine implements BeCPGReportEngine {
                 propertiesMap,
                 config.getTableOfContents(),
                 config.getPagination(),
-                customI18n
+                customI18n,
+                config.getPlaceholderStyle()
         );
     }
 

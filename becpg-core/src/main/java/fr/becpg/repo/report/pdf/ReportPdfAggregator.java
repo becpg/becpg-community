@@ -159,12 +159,28 @@ public class ReportPdfAggregator {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class PlaceholderStyle implements Serializable {
+        private static final long serialVersionUID = 1L;
+        private String font = "Helvetica-Bold";
+        private Integer size = 9;
+        private String color = "#000000";
+
+        public String getFont() { return font; }
+        public void setFont(String font) { this.font = font; }
+        public Integer getSize() { return size; }
+        public void setSize(Integer size) { this.size = size; }
+        public String getColor() { return color; }
+        public void setColor(String color) { this.color = color; }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class AggregateReportConfig implements Serializable {
         private static final long serialVersionUID = 1L;
         private HeaderModel header;
         private TableOfContentsModel tableOfContents;
         private PaginationModel pagination;
         private ComponentHeadingStyle componentHeadingStyle;
+        private PlaceholderStyle placeholderStyle;
         private List<AnnexConfig> annexes;
 
         public HeaderModel getHeader() { return header; }
@@ -175,6 +191,8 @@ public class ReportPdfAggregator {
         public void setPagination(PaginationModel pagination) { this.pagination = pagination; }
         public ComponentHeadingStyle getComponentHeadingStyle() { return componentHeadingStyle; }
         public void setComponentHeadingStyle(ComponentHeadingStyle componentHeadingStyle) { this.componentHeadingStyle = componentHeadingStyle; }
+        public PlaceholderStyle getPlaceholderStyle() { return placeholderStyle; }
+        public void setPlaceholderStyle(PlaceholderStyle placeholderStyle) { this.placeholderStyle = placeholderStyle; }
         public List<AnnexConfig> getAnnexes() { return annexes; }
         public void setAnnexes(List<AnnexConfig> annexes) { this.annexes = annexes; }
     }
@@ -351,6 +369,10 @@ public class ReportPdfAggregator {
     }
 
     public static byte[] assemble(byte[] bodyPdf, List<AnnexSection> sections, HeaderModel header, ComponentHeadingStyle headingStyle, byte[] logoBytes, Map<String, String> properties, TableOfContentsModel tocConfig, PaginationModel paginationConfig, Map<String, String> customI18n) throws Exception {
+        return assemble(bodyPdf, sections, header, headingStyle, logoBytes, properties, tocConfig, paginationConfig, customI18n, null);
+    }
+
+    public static byte[] assemble(byte[] bodyPdf, List<AnnexSection> sections, HeaderModel header, ComponentHeadingStyle headingStyle, byte[] logoBytes, Map<String, String> properties, TableOfContentsModel tocConfig, PaginationModel paginationConfig, Map<String, String> customI18n, PlaceholderStyle placeholderStyle) throws Exception {
         if (logger.isDebugEnabled()) {
             logger.debug("[ReportPdfAggregator] Starting assemble operation. Body PDF length: " + (bodyPdf != null ? bodyPdf.length : 0) + " bytes, sections: " + (sections != null ? sections.size() : 0));
             if (sections != null) {
@@ -392,7 +414,7 @@ public class ReportPdfAggregator {
             Map<Integer, Integer> originalToMergedPageMap = new HashMap<>();
             byte[] mergedPdfBytes = executeSequentialMerge(parts, bodyPdf, docToMergedPageMap, originalToMergedPageMap);
 
-            byte[] result = postProcessMergedPdf(mergedPdfBytes, bodyPdf, numBodyPages, sections, sectionToMergedPageMap, docToMergedPageMap, textTokens, outlineBookmarks, header, logoBytes, properties, headingStyle, tocConfig, paginationConfig, originalToMergedPageMap, customI18n);
+            byte[] result = postProcessMergedPdf(mergedPdfBytes, bodyPdf, numBodyPages, sections, sectionToMergedPageMap, docToMergedPageMap, textTokens, outlineBookmarks, header, logoBytes, properties, headingStyle, tocConfig, paginationConfig, originalToMergedPageMap, customI18n, placeholderStyle);
             if (logger.isDebugEnabled()) {
                 logger.debug("[ReportPdfAggregator] Assemble operation completed successfully. Final PDF size: " + result.length + " bytes");
             }
@@ -628,7 +650,7 @@ public class ReportPdfAggregator {
         return mergedPdfBytes;
     }
 
-    private static byte[] postProcessMergedPdf(byte[] mergedPdfBytes, byte[] bodyPdf, int numBodyPages, List<AnnexSection> sections, Map<AnnexSection, Integer> sectionToMergedPageMap, Map<AnnexDocument, Integer> docToMergedPageMap, List<TokenLocator.FoundToken> textTokens, Map<String, Integer> outlineBookmarks, HeaderModel header, byte[] logoBytes, Map<String, String> properties, ComponentHeadingStyle headingStyle, TableOfContentsModel tocConfig, PaginationModel paginationConfig, Map<Integer, Integer> originalToMergedPageMap, Map<String, String> customI18n) throws Exception {
+    private static byte[] postProcessMergedPdf(byte[] mergedPdfBytes, byte[] bodyPdf, int numBodyPages, List<AnnexSection> sections, Map<AnnexSection, Integer> sectionToMergedPageMap, Map<AnnexDocument, Integer> docToMergedPageMap, List<TokenLocator.FoundToken> textTokens, Map<String, Integer> outlineBookmarks, HeaderModel header, byte[] logoBytes, Map<String, String> properties, ComponentHeadingStyle headingStyle, TableOfContentsModel tocConfig, PaginationModel paginationConfig, Map<Integer, Integer> originalToMergedPageMap, Map<String, String> customI18n, PlaceholderStyle placeholderStyle) throws Exception {
         boolean tocEnabled = tocConfig != null && tocConfig.isEnabled();
         boolean paginationEnabled = paginationConfig != null && paginationConfig.isEnabled();
 
@@ -637,7 +659,7 @@ public class ReportPdfAggregator {
                 stampComponentHeadings(finalDoc, sections, docToMergedPageMap, headingStyle);
             }
 
-            rewriteToCPageNumbers(finalDoc, textTokens, sections, sectionToMergedPageMap, outlineBookmarks, originalToMergedPageMap);
+            rewriteToCPageNumbers(finalDoc, textTokens, sections, sectionToMergedPageMap, outlineBookmarks, originalToMergedPageMap, placeholderStyle);
 
             if (paginationEnabled) {
                 coverOldPageNumbers(finalDoc, bodyPdf, numBodyPages, originalToMergedPageMap, sections, docToMergedPageMap);
@@ -670,7 +692,7 @@ public class ReportPdfAggregator {
         }
     }
 
-    private static void rewriteToCPageNumbers(PDDocument finalDoc, List<TokenLocator.FoundToken> textTokens, List<AnnexSection> sections, Map<AnnexSection, Integer> sectionToMergedPageMap, Map<String, Integer> outlineBookmarks, Map<Integer, Integer> originalToMergedPageMap) throws IOException {
+    private static void rewriteToCPageNumbers(PDDocument finalDoc, List<TokenLocator.FoundToken> textTokens, List<AnnexSection> sections, Map<AnnexSection, Integer> sectionToMergedPageMap, Map<String, Integer> outlineBookmarks, Map<Integer, Integer> originalToMergedPageMap, PlaceholderStyle placeholderStyle) throws IOException {
         for (TokenLocator.FoundToken ft : textTokens) {
             if (ft.token.startsWith("{{page:")) {
                 String rk = ft.token.substring(7, ft.token.length() - 2).trim();
@@ -691,9 +713,9 @@ public class ReportPdfAggregator {
                 int mergedEntryPageIdx = originalToMergedPageMap.getOrDefault(ft.pageIndex, ft.pageIndex);
                 if (mergedEntryPageIdx < finalDoc.getNumberOfPages()) {
                     if (targetMergedPage != null) {
-                        overwriteTokenWithPageNumber(finalDoc, mergedEntryPageIdx, ft, targetMergedPage + 1, targetMergedPage);
+                        overwriteTokenWithPageNumber(finalDoc, mergedEntryPageIdx, ft, targetMergedPage + 1, targetMergedPage, placeholderStyle);
                     } else {
-                        overwriteTokenWithText(finalDoc, mergedEntryPageIdx, ft, "N/A");
+                        overwriteTokenWithText(finalDoc, mergedEntryPageIdx, ft, "N/A", placeholderStyle);
                     }
                 }
             }
@@ -940,7 +962,7 @@ public class ReportPdfAggregator {
         }
     }
 
-    private static void overwriteTokenWithPageNumber(PDDocument doc, int entryPageIndex, TokenLocator.FoundToken ft, int resolvedPageNumber, int targetPageIndex) throws IOException {
+    private static void overwriteTokenWithPageNumber(PDDocument doc, int entryPageIndex, TokenLocator.FoundToken ft, int resolvedPageNumber, int targetPageIndex, PlaceholderStyle placeholderStyle) throws IOException {
         PDPage page = doc.getPage(entryPageIndex);
         float pdfY = page.getMediaBox().getHeight() - ft.y;
         try (PDPageContentStream canvas = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
@@ -950,12 +972,13 @@ public class ReportPdfAggregator {
 
             String pageStr = String.valueOf(resolvedPageNumber);
             PDType1Font font = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
-            float fontSize = 9.0f;
+            float fontSize = (placeholderStyle != null && placeholderStyle.getSize() != null) ? placeholderStyle.getSize().floatValue() : 9.0f;
             float strWidth = font.getStringWidth(pageStr) / 1000.0f * fontSize;
             float drawX = ft.x + ft.width - strWidth;
 
+            String colorHex = (placeholderStyle != null && placeholderStyle.getColor() != null) ? placeholderStyle.getColor() : "#000000";
             canvas.beginText();
-            canvas.setNonStrokingColor(new java.awt.Color(31, 56, 100));
+            canvas.setNonStrokingColor(java.awt.Color.decode(colorHex));
             canvas.setFont(font, fontSize);
             canvas.newLineAtOffset(drawX, pdfY);
             canvas.showText(pageStr);
@@ -983,7 +1006,7 @@ public class ReportPdfAggregator {
         }
     }
 
-    private static void overwriteTokenWithText(PDDocument doc, int entryPageIndex, TokenLocator.FoundToken ft, String text) throws IOException {
+    private static void overwriteTokenWithText(PDDocument doc, int entryPageIndex, TokenLocator.FoundToken ft, String text, PlaceholderStyle placeholderStyle) throws IOException {
         PDPage page = doc.getPage(entryPageIndex);
         float pdfY = page.getMediaBox().getHeight() - ft.y;
         try (PDPageContentStream canvas = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
@@ -992,12 +1015,13 @@ public class ReportPdfAggregator {
             canvas.fill();
 
             PDType1Font font = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
-            float fontSize = 8.0f;
+            float fontSize = (placeholderStyle != null && placeholderStyle.getSize() != null) ? placeholderStyle.getSize().floatValue() : 8.5f;
             float strWidth = font.getStringWidth(text) / 1000.0f * fontSize;
             float drawX = ft.x + ft.width - strWidth;
 
+            String colorHex = (placeholderStyle != null && placeholderStyle.getColor() != null) ? placeholderStyle.getColor() : "#808080";
             canvas.beginText();
-            canvas.setNonStrokingColor(java.awt.Color.GRAY);
+            canvas.setNonStrokingColor(java.awt.Color.decode(colorHex));
             canvas.setFont(font, fontSize);
             canvas.newLineAtOffset(drawX, pdfY + 1);
             canvas.showText(text);

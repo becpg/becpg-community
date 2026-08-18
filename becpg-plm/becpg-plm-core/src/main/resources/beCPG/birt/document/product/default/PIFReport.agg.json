@@ -27,6 +27,12 @@
     "prefix": "➣ "
   },
 
+  "placeholderStyle": {
+    "font": "Helvetica-Bold",
+    "size": 9,
+    "color": "#000000"
+  },
+
   "annexes": [
     {
       "reportKind": "annexe-compo-quali-quanti",
