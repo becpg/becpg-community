@@ -251,11 +251,18 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 		 if (!remoteRateLimiter.allowRequest()) {
-			 // 429 rather than 500: a caller must be able to tell "slow down" from "the server is broken",
-			 // and a throttled call is not an application error worth an ERROR line per rejected request.
+			 // 429 rather than 500: a caller must be able to tell "slow down" from "the server is broken".
+			 // Written straight on the response instead of thrown: a WebScriptException would go through
+			 // AbstractRuntime, which logs an ERROR and a stack trace per rejected call - a client hitting
+			 // the limit would then flood the log with hundreds of them. RemoteRateLimiter already logs
+			 // one throttled WARN naming the offending client, which is the trace worth keeping.
+			 resp.setStatus(STATUS_TOO_MANY_REQUESTS);
 			 resp.setHeader("Retry-After", "1");
-			 throw new WebScriptException(STATUS_TOO_MANY_REQUESTS,
-					 "beCPG Remote API call rate limit reached, retry in a second", (Object[]) null);
+			 resp.setContentType("application/json");
+			 resp.setContentEncoding(StandardCharsets.UTF_8.name());
+			 resp.getWriter().write("{\"status\":429,\"message\":\"beCPG Remote API call rate limit reached, retry in a second\"}");
+			 resp.getWriter().flush();
+			 return;
 	      }
 		 executeInternal(req,resp);
 	}
