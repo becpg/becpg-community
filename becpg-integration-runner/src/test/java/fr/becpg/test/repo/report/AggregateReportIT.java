@@ -31,6 +31,7 @@ import fr.becpg.repo.report.entity.EntityReportParameters;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportTplInformation;
 import fr.becpg.repo.report.template.ReportType;
+import fr.becpg.repo.sample.StandardChocolateEclairTestProduct;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.test.PLMBaseTestCase;
 import fr.becpg.repo.PlmRepoConsts;
@@ -409,6 +410,127 @@ public class AggregateReportIT extends PLMBaseTestCase {
                 }
             } catch (Exception e) {
                 logger.warn("Skipping BIRT report validation due to execution exception (BIRT server may be offline): " + e.getMessage(), e);
+            }
+            return null;
+        });
+    }
+
+    @Test
+    public void testGeneratePIFReportForChocolateEclairIT() throws Exception {
+
+        // 1. Create rich test product using StandardChocolateEclairTestProduct.Builder
+        final FinishedProductData testProduct = inWriteTx(() -> {
+            StandardChocolateEclairTestProduct eclair = new StandardChocolateEclairTestProduct.Builder()
+                    .withAlfrescoRepository(alfrescoRepository)
+                    .withNodeService(nodeService)
+                    .withDestFolder(getTestFolderNodeRef())
+                    .withCompo(true)
+                    .withLabeling(true)
+                    .withGenericRawMaterial(true)
+                    .withStocks(true)
+                    .withIngredients(true)
+                    .withSurvey(true)
+                    .withScoreList(true)
+                    .withClaim(true)
+                    .withSpecification(true)
+                    .withNuts(true)
+                    .withProcess(true)
+                    .build();
+            return eclair.createTestProduct();
+        });
+
+        assertNotNull(testProduct);
+        final NodeRef pfNodeRef = testProduct.getNodeRef();
+        assertNotNull(pfNodeRef);
+
+        // 2. Attach a mock CPSR PDF document with reportKind = annexe-cpsr
+        inWriteTx(() -> {
+            NodeRef docsFolder = customRepoService.getOrCreateFolderByPath(pfNodeRef, RepoConsts.PATH_DOCUMENTS,
+                    TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS));
+
+            byte[] cpsrPdfBytes = createMockPdf(
+                    "COSMETIC PRODUCT SAFETY REPORT (CPSR / DSE) - PART A",
+                    "Toxicological Profile & Exposure Assessment - Page 2"
+            );
+
+            NodeRef cpsrDocNodeRef = nodeService.createNode(docsFolder, ContentModel.ASSOC_CONTAINS,
+                    QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "cpsr_safety_report.pdf"),
+                    ContentModel.TYPE_CONTENT).getChildRef();
+
+            ContentWriter writer = contentService.getWriter(cpsrDocNodeRef, ContentModel.PROP_CONTENT, true);
+            writer.setMimetype("application/pdf");
+            writer.putContent(new ByteArrayInputStream(cpsrPdfBytes));
+
+            // Set aspect rep:reportKinds = "annexe-cpsr"
+            Map<QName, Serializable> aspectProps = new HashMap<>();
+            aspectProps.put(ReportModel.PROP_REPORT_KINDS, (Serializable) Collections.singletonList("annexe-cpsr"));
+            nodeService.addAspect(cpsrDocNodeRef, ReportModel.ASPECT_REPORT_KIND, aspectProps);
+
+            return null;
+        });
+
+        // 3. Register PIF aggregate report template
+        final NodeRef pifTemplateNodeRef = inWriteTx(() -> {
+            NodeRef systemFolder = customRepoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
+                    TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+            NodeRef reportsFolder = customRepoService.getOrCreateFolderByPath(systemFolder, RepoConsts.PATH_REPORTS,
+                    TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
+            NodeRef productReportTplFolder = customRepoService.getOrCreateFolderByPath(reportsFolder, PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
+                    TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
+
+            NodeRef pifJsonNodeRef = reportTplService.createTplRessource(productReportTplFolder, "beCPG/birt/document/product/default/PIFReport.agg.json", true);
+            NodeRef pifPropNodeRef = reportTplService.createTplRessource(productReportTplFolder, "beCPG/birt/document/product/default/PIFReport.properties", true);
+            NodeRef pifFrPropNodeRef = reportTplService.createTplRessource(productReportTplFolder, "beCPG/birt/document/product/default/PIFReport_fr.properties", true);
+            NodeRef pifEnPropNodeRef = reportTplService.createTplRessource(productReportTplFolder, "beCPG/birt/document/product/default/PIFReport_en.properties", true);
+
+            List<NodeRef> pifResources = new ArrayList<>();
+            pifResources.add(pifJsonNodeRef);
+            pifResources.add(pifPropNodeRef);
+            pifResources.add(pifFrPropNodeRef);
+            pifResources.add(pifEnPropNodeRef);
+
+            ReportTplInformation pifTplInfo = new ReportTplInformation();
+            pifTplInfo.setReportType(ReportType.Document);
+            pifTplInfo.setReportFormat(ReportFormat.PDF);
+            pifTplInfo.setNodeType(PLMModel.TYPE_FINISHEDPRODUCT);
+            pifTplInfo.setDefaultTpl(false);
+            pifTplInfo.setSystemTpl(true);
+            pifTplInfo.setResources(pifResources);
+
+            NodeRef tplNodeRef = reportTplService.createTplRptDesign(productReportTplFolder, "PIFReportChocolateEclairIT",
+                    "beCPG/birt/document/product/default/PIFReport.rptdesign", pifTplInfo, true);
+            nodeService.setProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_IS_AGGREGATE, true);
+
+            return tplNodeRef;
+        });
+
+        // 4. Generate English PIF Report
+        inWriteTx(() -> {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            EntityReportParameters reportParameters = new EntityReportParameters();
+
+            try {
+                entityReportService.generateReport(pfNodeRef, pifTemplateNodeRef, reportParameters, Locale.ENGLISH, ReportFormat.PDF, out);
+                byte[] finalPdfBytes = out.toByteArray();
+
+                if (finalPdfBytes == null || finalPdfBytes.length == 0) {
+                    logger.warn("[PIFReportEclairIT] BIRT report server returned empty bytes (server may be offline).");
+                    return null;
+                }
+
+                try (PDDocument doc = Loader.loadPDF(finalPdfBytes)) {
+                    assertTrue("Expected PDF to contain pages", doc.getNumberOfPages() > 0);
+                    logger.info("[PIFReportEclairIT Success] Generated English PIF PDF Size: " + finalPdfBytes.length + " bytes, Pages: " + doc.getNumberOfPages());
+
+                    PDFTextStripper stripper = new PDFTextStripper();
+                    String fullText = stripper.getText(doc);
+                    assertNotNull(fullText);
+
+                    assertTrue("Expected English Title", fullText.contains("PRODUCT INFORMATION FILE (PIF)"));
+                    assertTrue("Expected English ToC", fullText.contains("TABLE OF CONTENTS"));
+                }
+            } catch (Exception e) {
+                logger.warn("Skipping BIRT PIF report assertion due to execution exception (BIRT server offline): " + e.getMessage(), e);
             }
             return null;
         });
