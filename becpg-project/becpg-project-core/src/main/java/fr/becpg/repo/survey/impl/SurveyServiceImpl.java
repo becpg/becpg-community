@@ -347,6 +347,11 @@ public class SurveyServiceImpl implements SurveyService {
 	/**
 	 * The questions the questionnaire really serves : those of the existing rows, and everything
 	 * reachable from them through <code>survey:nextQuestion</code>, subsidiary scope applied.
+	 * <p>
+	 * The walk follows the SAME two edges {@link #appendQuestionDefinition(JSONArray, SurveyQuestion,
+	 * Set, Map, Predicate)} follows, and that matters : a follow-up hangs off the CHOICE that reveals
+	 * it, not off the question, for every question rendered as radio buttons. Walking the question's
+	 * own <code>nextQuestion</code> alone would miss exactly the case this exists for.
 	 *
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param dataListName a {@link java.lang.String} object
@@ -356,7 +361,8 @@ public class SurveyServiceImpl implements SurveyService {
 	private Map<String, SurveyQuestion> servedQuestions(NodeRef entityNodeRef, String dataListName,
 			Predicate<SurveyQuestion> subsidiaryScope) {
 
-		Map<NodeRef, SurveyQuestion> byNodeRef = getSurveyQuestionCache().getSurveyQuestionByNodeRef();
+		SurveyQuestionCache cache = getSurveyQuestionCache();
+		Map<NodeRef, SurveyQuestion> byNodeRef = cache.getSurveyQuestionByNodeRef();
 		Map<String, SurveyQuestion> served = new LinkedHashMap<>();
 		List<SurveyQuestion> pending = new ArrayList<>();
 
@@ -372,16 +378,36 @@ public class SurveyServiceImpl implements SurveyService {
 			if (served.put(question.getNodeRef().getId(), question) != null) {
 				continue;
 			}
-			if (question.getNextQuestions() != null) {
-				for (SurveyQuestion next : question.getNextQuestions()) {
-					if (next != null && subsidiaryScope.test(next)) {
-						pending.add(next);
-					}
+
+			appendNextQuestions(question, pending, subsidiaryScope);
+			for (NodeRef choiceNodeRef : cache.getSurveyQuestionsByParent().getOrDefault(question, List.of())) {
+				SurveyQuestion choice = byNodeRef.get(choiceNodeRef);
+				if (choice != null) {
+					appendNextQuestions(choice, pending, subsidiaryScope);
 				}
 			}
 		}
 
 		return served;
+	}
+
+	/**
+	 * Queues everything a question or a choice reveals, subsidiary scope applied.
+	 *
+	 * @param from a {@link fr.becpg.repo.survey.data.SurveyQuestion} object
+	 * @param pending a {@link java.util.List} object, the walk's stack
+	 * @param subsidiaryScope a {@link java.util.function.Predicate} object
+	 */
+	private void appendNextQuestions(SurveyQuestion from, List<SurveyQuestion> pending,
+			Predicate<SurveyQuestion> subsidiaryScope) {
+		if (from.getNextQuestions() == null) {
+			return;
+		}
+		for (SurveyQuestion next : from.getNextQuestions()) {
+			if (next != null && subsidiaryScope.test(next)) {
+				pending.add(next);
+			}
+		}
 	}
 
 
