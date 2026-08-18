@@ -47,7 +47,7 @@ c + v;</expression>
                 </structure>
             </list-property>
             <property name="dataSource">DataXml</property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{name;STRING;/name},{title;STRING;/title},{legalName;STRING;/legalName},{description;STRING;/description},{preparationTips;STRING;/preparationTips},{storageConditionsDescription;STRING;/storageConditions/description},{precautionOfUseDescription;STRING;/precautionOfUse/description},{versionLabel;STRING;/versionLabel},{versionLabelBcpg;STRING;/versionLabel[@prefix='bcpg']},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{created;TIMESTAMP;/created},{creator;STRING;/creator},{modifier;STRING;/modifier},{netWeight;DOUBLE;/netWeight},{productUnit;STRING;/productUnit},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{eanCode;STRING;/eanCode},{erpCode;STRING;/erpCode}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{name;STRING;/name},{title;STRING;/title},{legalName;STRING;/legalName},{description;STRING;/description},{preparationTips;STRING;/preparationTips},{storageConditionsDescription;STRING;/storageConditions/description},{precautionOfUseDescription;STRING;/precautionOfUse/description},{versionLabel;STRING;/versionLabel},{versionLabelBcpg;STRING;/versionLabel[@prefix='bcpg']},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{creator;STRING;/creator},{modifier;STRING;/modifier},{netWeight;DOUBLE;/netWeight},{productUnit;STRING;/productUnit},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{eanCode;STRING;/eanCode},{erpCode;STRING;/erpCode}]]></xml-property>
         </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="imgLogo" id="12186">
             <property name="nullsOrdering">nulls lowest</property>
@@ -167,120 +167,14 @@ c + v;</expression>
                         <cell id="770">
                             <property name="paddingLeft">1pt</property>
                             <property name="textAlign">left</property>
-                            <image name="defaultLogo" id="12230">
-                                <property name="height">0.8in</property>
-                                <property name="dataSet">imgLogo</property>
-                                <list-property name="boundDataColumns">
-                                    <structure>
-                                        <property name="name">id</property>
-                                        <text-property name="displayName">id</text-property>
-                                        <expression name="expression" type="javascript">dataSetRow["id"]</expression>
-                                        <property name="dataType">string</property>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">img</property>
-                                        <text-property name="displayName">img</text-property>
-                                        <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
-                                        <property name="dataType">blob</property>
-                                        <property name="allowExport">true</property>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">imgTradeMark</property>
-                                        <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
-                                        <property name="dataType">blob</property>
-                                        <property name="allowExport">true</property>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">imgLogo</property>
-                                        <expression name="expression" type="javascript">reportContext.getAppContext().get("logo.png");</expression>
-                                        <property name="dataType">blob</property>
-                                        <property name="allowExport">true</property>
-                                    </structure>
-                                </list-property>
-                                <property name="source">embed</property>
-                                <property name="imageName">logo.png</property>
-                            </image>
                             <image name="customLogo" id="12231">
                                 <property name="height">0.8in</property>
                                 <property name="dataSet">imgLogo</property>
-                                <list-property name="visibility">
-                                    <structure>
-                                        <property name="format">all</property>
-                                        <expression name="valueExpr" type="javascript">row["imgTradeMark"]!=null || row["img"]==null</expression>
-                                    </structure>
-                                </list-property>
                                 <list-property name="boundDataColumns">
-                                    <structure>
-                                        <property name="name">id</property>
-                                        <expression name="expression" type="javascript">dataSetRow["id"]</expression>
-                                        <property name="dataType">string</property>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">entityName</property>
-                                        <expression name="expression" type="javascript">dataSetRow["entityName"]</expression>
-                                        <property name="dataType">string</property>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">name</property>
-                                        <expression name="expression" type="javascript">dataSetRow["name"]</expression>
-                                        <property name="dataType">string</property>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">entityType</property>
-                                        <expression name="expression" type="javascript">dataSetRow["entityType"]</expression>
-                                        <property name="dataType">string</property>
-                                    </structure>
                                     <structure>
                                         <property name="name">img</property>
                                         <text-property name="displayName">img</text-property>
                                         <expression name="expression" type="javascript">reportContext.getAppContext().get("logo.png");</expression>
-                                        <property name="dataType">blob</property>
-                                        <property name="allowExport">true</property>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">imgTradeMark</property>
-                                        <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
-                                        <property name="dataType">blob</property>
-                                        <property name="allowExport">true</property>
-                                    </structure>
-                                </list-property>
-                                <property name="source">expr</property>
-                                <expression name="valueExpr">row["img"]</expression>
-                            </image>
-                            <image name="trademarkLogo" id="12188">
-                                <property name="height">0.8in</property>
-                                <property name="dataSet">imgLogo</property>
-                                <list-property name="visibility">
-                                    <structure>
-                                        <property name="format">all</property>
-                                        <expression name="valueExpr" type="javascript">row["img"]==null</expression>
-                                    </structure>
-                                </list-property>
-                                <list-property name="boundDataColumns">
-                                    <structure>
-                                        <property name="name">id</property>
-                                        <expression name="expression" type="javascript">dataSetRow["id"]</expression>
-                                        <property name="dataType">string</property>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">entityName</property>
-                                        <expression name="expression" type="javascript">dataSetRow["entityName"]</expression>
-                                        <property name="dataType">string</property>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">name</property>
-                                        <expression name="expression" type="javascript">dataSetRow["name"]</expression>
-                                        <property name="dataType">string</property>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">entityType</property>
-                                        <expression name="expression" type="javascript">dataSetRow["entityType"]</expression>
-                                        <property name="dataType">string</property>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">img</property>
-                                        <text-property name="displayName">img</text-property>
-                                        <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
                                         <property name="dataType">blob</property>
                                         <property name="allowExport">true</property>
                                     </structure>
