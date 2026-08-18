@@ -84,6 +84,17 @@ function main() {
 	// portal-form.lib.js::portalResolveDefinition).
 	var alfTicket = getArgument("portalTicket", null);
 
+	/*
+	 * withItemForm=true adds the DEFAULT form of a datalist item to each list step.
+	 *
+	 * Opt-in and per call, like withControls on the columns web script: without it
+	 * the answer is byte identical. It exists because Share never edits every field
+	 * of a row in the grid either - the parent of an ingredient, for one, is only on
+	 * the row pop-up, whose fields come from the item's default form. A client that
+	 * renders its own grid has no other way to offer that surface.
+	 */
+	var withItemForm = getArgument("withItemForm", null) == "true";
+
 	if (wizardId == null || ("" + wizardId).length === 0) {
 		model.error = "wizardId is required";
 		status.setCode(400, model.error);
@@ -177,6 +188,23 @@ function main() {
 					// Only an entity form may be resolved through the nodeRef: for a
 					// datalist the nodeRef is the entity's, not the list item's.
 					type === "form");
+
+				if (withItemForm && type === "entityDataList") {
+					// A null formId skips the cascade and takes the item's default
+					// form - the one the row pop-up uses, and the only one that
+					// carries the fields the datagrid deliberately leaves out.
+					entry.itemDefinition = portalResolveDefinition(
+						itemId,
+						null,
+						stepMode,
+						lookupList,
+						prefixedSiteId,
+						prefixedEntityType,
+						nodeRef,
+						skipSecurityRules,
+						alfTicket,
+						false);
+				}
 			}
 
 			steps.push(entry);
