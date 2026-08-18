@@ -11273,7 +11273,10 @@
                     <field id="bcpg:nutListFormulatedValuePrepared" label="hidden" read-only="true" />
                     <field id="bcpg:nutListFormulatedValuePerServing" label="hidden" read-only="true" />
                     <field id="bcpg:nutListReductionFormulatedValue" label="hidden" read-only="true" />
-                    <field id="bcpg:nutListGDAPerc" help="{&quot;width&quot;:200}" />
+                    <!-- Computed by the formulation, and wiped by it: offering the
+                         supplier a box for it asks for a value that will be overwritten. -->
+                    <field id="bcpg:nutListGDAPerc" help="{&quot;width&quot;:200}" read-only="true" />
+                    <field id="bcpg:nutListValuePerServing" read-only="true" />
                     <field id="bcpg:nutListReferenceValue" />
                     <field id="bcpg:nutListUnitPrepared" read-only="true" label="hidden" />
                     <field id="bcpg:variantColumn1" read-only="true" label="hidden" />

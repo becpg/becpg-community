@@ -385,6 +385,17 @@ function main() {
 	 */
 	var withControls = getArgument("withControls") == "true";
 
+	/*
+	 * withDefaults=true adds the model's <default> to every column.
+	 *
+	 * Same opt-in rule as withControls: without the argument the answer is byte
+	 * identical. A column is resolved without a node, so the value the repository
+	 * returns with it is the model default and nothing else - which is what tells
+	 * a client rendering its own grid that an unticked boolean legitimately means
+	 * false, rather than a question nobody has answered.
+	 */
+	var withDefaults = getArgument("withDefaults") == "true";
+
 	var skipSecurityRules = false;
 	var referer = getRequestHeader("Referer");
 	if (referer !== null && referer.indexOf("/share/page/wizard") !== -1) {
@@ -412,6 +423,7 @@ function main() {
 	}
 	
 	// pass form ui model to FTL
+	model.withDefaults = withDefaults;
 	model.columns = getColumns(itemType, list, formId, mode, prefixedSiteId, prefixedEntityType, entityNodeRef, null, skipSecurityRules, withControls);
 
 }
