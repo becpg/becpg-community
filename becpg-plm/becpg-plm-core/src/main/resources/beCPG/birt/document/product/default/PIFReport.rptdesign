@@ -47,7 +47,7 @@ c + v;</expression>
                 </structure>
             </list-property>
             <property name="dataSource">DataXml</property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{name;STRING;/name},{title;STRING;/title},{legalName;STRING;/legalName},{description;STRING;/description},{preparationTips;STRING;/preparationTips},{storageConditionsDescription;STRING;/storageConditions/description},{precautionOfUseDescription;STRING;/precautionOfUse/description},{versionLabel;STRING;/versionLabel},{versionLabelBcpg;STRING;/versionLabel[@prefix='bcpg']},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{creator;STRING;/creator},{modifier;STRING;/modifier},{netWeight;DOUBLE;/netWeight},{productUnit;STRING;/productUnit},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{eanCode;STRING;/eanCode},{erpCode;STRING;/erpCode}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{name;STRING;/name},{title;STRING;/title},{legalName;STRING;/legalName},{description;STRING;/description},{preparationTips;STRING;/preparationTips},{storageConditionsDescription;STRING;/storageConditions/description},{precautionOfUseDescription;STRING;/precautionOfUse/description},{versionLabel;STRING;/versionLabel},{versionLabelBcpg;STRING;/versionLabel[@prefix='bcpg']},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{created;TIMESTAMP;/created},{creator;STRING;/creator},{modifier;STRING;/modifier},{netWeight;DOUBLE;/netWeight},{productUnit;STRING;/productUnit},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{eanCode;STRING;/eanCode},{erpCode;STRING;/erpCode}]]></xml-property>
         </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="imgLogo" id="12186">
             <property name="nullsOrdering">nulls lowest</property>
@@ -63,7 +63,7 @@ c + v;</expression>
         <style name="becpg-header-type" id="12189">
             <property name="color">black</property>
             <property name="fontWeight">bold</property>
-            <property name="fontSize">13pt</property>
+            <property name="fontSize">12pt</property>
             <property name="textAlign">center</property>
             <property name="fontFamily">"arial"</property>
             <property name="marginBottom">2pt</property>
@@ -209,26 +209,31 @@ c + v;</expression>
                                 <list-property name="boundDataColumns">
                                     <structure>
                                         <property name="name">created</property>
+                                        <text-property name="displayName">created</text-property>
                                         <expression name="expression" type="javascript">dataSetRow["created"]</expression>
                                         <property name="dataType">date-time</property>
                                     </structure>
                                     <structure>
                                         <property name="name">modified</property>
+                                        <text-property name="displayName">modified</text-property>
                                         <expression name="expression" type="javascript">dataSetRow["modified"]</expression>
                                         <property name="dataType">date-time</property>
                                     </structure>
                                     <structure>
                                         <property name="name">code</property>
+                                        <text-property name="displayName">code</text-property>
                                         <expression name="expression" type="javascript">dataSetRow["code"]</expression>
                                         <property name="dataType">string</property>
                                     </structure>
                                     <structure>
                                         <property name="name">versionLabelToShow</property>
+                                        <text-property name="displayName">versionLabelToShow</text-property>
                                         <expression name="expression" type="javascript">dataSetRow["versionLabelToShow"]</expression>
                                         <property name="dataType">string</property>
                                     </structure>
                                     <structure>
                                         <property name="name">erpCode</property>
+                                        <text-property name="displayName">erpCode</text-property>
                                         <expression name="expression" type="javascript">dataSetRow["erpCode"]</expression>
                                         <property name="dataType">string</property>
                                     </structure>
@@ -239,48 +244,111 @@ c + v;</expression>
                                 <column id="1519"/>
                                 <row id="7352">
                                     <cell id="7260">
+                                        <property name="style">becpg-meta-cell-label</property>
+                                        <property name="textAlign">right</property>
                                         <label id="3406">
                                             <text-property name="text">Créé le :</text-property>
                                         </label>
                                     </cell>
                                     <cell id="7261">
+                                        <property name="style">becpg-meta-cell-data</property>
+                                        <property name="textAlign">right</property>
                                         <data id="3407">
+                                            <structure name="dateTimeFormat">
+                                                <property name="category">Medium Date</property>
+                                                <property name="pattern">Medium Date</property>
+                                            </structure>
+                                            <property name="dataSet">Product</property>
+                                            <list-property name="boundDataColumns">
+                                                <structure>
+                                                    <property name="name">created</property>
+                                                    <text-property name="displayName">created</text-property>
+                                                    <expression name="expression" type="javascript">dataSetRow["created"]</expression>
+                                                    <property name="dataType">date-time</property>
+                                                </structure>
+                                            </list-property>
                                             <property name="resultSetColumn">created</property>
                                         </data>
                                     </cell>
                                 </row>
                                 <row id="779">
                                     <cell id="780">
+                                        <property name="style">becpg-meta-cell-label</property>
+                                        <property name="textAlign">right</property>
                                         <label id="1520">
                                             <text-property name="text">Modifié le :</text-property>
                                         </label>
                                     </cell>
                                     <cell id="1516">
+                                        <property name="style">becpg-meta-cell-data</property>
+                                        <property name="textAlign">right</property>
                                         <data id="1522">
+                                            <structure name="dateTimeFormat">
+                                                <property name="category">Medium Date</property>
+                                                <property name="pattern">Medium Date</property>
+                                            </structure>
+                                            <property name="whiteSpace">nowrap</property>
+                                            <property name="dataSet">Product</property>
+                                            <list-property name="boundDataColumns">
+                                                <structure>
+                                                    <property name="name">modified</property>
+                                                    <text-property name="displayName">modified</text-property>
+                                                    <expression name="expression" type="javascript">dataSetRow["modified"]</expression>
+                                                    <property name="dataType">date</property>
+                                                    <property name="allowExport">true</property>
+                                                </structure>
+                                            </list-property>
                                             <property name="resultSetColumn">modified</property>
                                         </data>
                                     </cell>
                                 </row>
                                 <row id="783">
                                     <cell id="784">
+                                        <property name="style">becpg-meta-cell-label</property>
+                                        <property name="textAlign">right</property>
                                         <label id="1521">
                                             <text-property name="text">Code beCPG :</text-property>
                                         </label>
                                     </cell>
                                     <cell id="1517">
+                                        <property name="style">becpg-meta-cell-data</property>
+                                        <property name="textAlign">right</property>
                                         <data id="1523">
+                                            <property name="whiteSpace">nowrap</property>
+                                            <property name="dataSet">Product</property>
+                                            <list-property name="boundDataColumns">
+                                                <structure>
+                                                    <property name="name">code</property>
+                                                    <text-property name="displayName">code</text-property>
+                                                    <expression name="expression" type="javascript">dataSetRow["code"]</expression>
+                                                    <property name="dataType">string</property>
+                                                </structure>
+                                            </list-property>
                                             <property name="resultSetColumn">code</property>
                                         </data>
                                     </cell>
                                 </row>
                                 <row id="786">
                                     <cell id="787">
+                                        <property name="style">becpg-meta-cell-label</property>
+                                        <property name="textAlign">right</property>
                                         <label id="788">
                                             <text-property name="text">Version :</text-property>
                                         </label>
                                     </cell>
                                     <cell id="789">
+                                        <property name="style">becpg-meta-cell-data</property>
+                                        <property name="textAlign">right</property>
                                         <data id="790">
+                                            <property name="dataSet">Product</property>
+                                            <list-property name="boundDataColumns">
+                                                <structure>
+                                                    <property name="name">versionLabelToShow</property>
+                                                    <text-property name="displayName">versionLabelToShow</text-property>
+                                                    <expression name="expression" type="javascript">dataSetRow["versionLabelToShow"]</expression>
+                                                    <property name="dataType">string</property>
+                                                </structure>
+                                            </list-property>
                                             <property name="resultSetColumn">versionLabelToShow</property>
                                         </data>
                                     </cell>
