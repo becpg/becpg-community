@@ -375,7 +375,7 @@ public class AggregateReportModelBuilder {
             }
             return;
         }
-        List<FileInfo> fileInfos = fileFolderService.listFiles(folderNodeRef);
+        List<FileInfo> fileInfos = fileFolderService.list(folderNodeRef);
         if (logger.isDebugEnabled()) {
             logger.debug("collectFilesRecursively at depth " + depth + " for folder " + folderNodeRef + " found " + (fileInfos != null ? fileInfos.size() : 0) + " items");
         }
