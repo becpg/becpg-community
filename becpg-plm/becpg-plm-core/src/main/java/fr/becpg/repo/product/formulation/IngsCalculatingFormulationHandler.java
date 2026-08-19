@@ -361,10 +361,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			boolean fixCompositeYield = !formulatedProduct.isGeneric() && !evaporatedDataItems.isEmpty()
 					&& formulatedProduct.getIngList().stream().anyMatch(item -> item.getParent() != null);
 
-			if (fixCompositeYield) {
-				clampNegativeQtyPercWithYield(formulatedProduct.getIngList());
-			}
-
 			aggregateParentQtyPercWithYield(formulatedProduct.getIngList());
 
 			if (fixCompositeYield) {
@@ -622,28 +618,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 
 		setter.accept(parent, sum);
-	}
-
-	/**
-	 * Clamps any negative "with yield" percentage to zero.
-	 * <p>
-	 * When the product yield implies more evaporation than the evaporating ingredients can absorb,
-	 * the leftover-evaporation fallback subtracts the unapplied amount from the first fully
-	 * evaporating ingredient, which can drive its percentage below zero. A mass fraction can never
-	 * be negative, so it is floored at zero; the resulting deviation from 100 % is then corrected by
-	 * {@link #normalizeQtyPercWithYield(List)}.
-	 *
-	 * @param ingList the formulated product ingredient list
-	 */
-	private void clampNegativeQtyPercWithYield(List<IngListDataItem> ingList) {
-		for (IngListDataItem item : ingList) {
-			if ((item.getQtyPercWithYield() != null) && (item.getQtyPercWithYield() < 0d)) {
-				item.setQtyPercWithYield(0d);
-			}
-			if ((item.getQtyPercWithSecondaryYield() != null) && (item.getQtyPercWithSecondaryYield() < 0d)) {
-				item.setQtyPercWithSecondaryYield(0d);
-			}
-		}
 	}
 
 	/**
