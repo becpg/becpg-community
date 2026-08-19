@@ -283,6 +283,24 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 
 	}
 
+	/**
+	 * One level, three ingredients, the loss larger than the free water.
+	 *
+	 * Its expected label moved from "lait 54,2 %, oeuf 45,8 %" to "lait 53,6 %, oeuf 46,4 %" in
+	 * c48a5812db, on an unchanged fixture and without a word in the commit message. Recomputed from
+	 * the rule #21401 specifies, the values it holds now are the right ones :
+	 *
+	 * <pre>
+	 * 100 kg in for 80 kg net : 20 kg lost, water 10 kg at 100 % absorbs 10, leaving 10 to share
+	 * available water : egg 40 x 10 % = 4, milk 50 x 20 % = 10, total 14
+	 * milk 50 - 10 x 10 / 14 = 42.857 -> 53.57 %
+	 * egg  40 - 10 x  4 / 14 = 37.143 -> 46.43 %
+	 * </pre>
+	 *
+	 * So that commit corrected the calculation rather than regressing it. Recorded here because
+	 * nothing else recorded it, and the scenario that would have shown it was replaced in the same
+	 * commit - see {@link #testEvaporationDistributedByAvailableWater()}.
+	 */
 	@Test
 	public void testMonoLevelEvap() {
 
@@ -351,12 +369,106 @@ public class EvaporatingLabelingFormulationIT extends AbstractFinishedProductTes
 	}
 
 	/**
-	 *  Water evaporation distribution based on available water
+	 * The scenario #21401 was opened on, restored.
+	 *
+	 * It was the only cover of "distribute the evaporation over the water each ingredient actually
+	 * holds" until c48a5812db replaced its composition wholesale while keeping its name, so the case
+	 * the ticket is named after stopped being tested. What makes it worth its own test is the
+	 * ingredient holding no water at all : sugar must come out untouched while the loss is shared
+	 * between the three that can supply it.
+	 *
+	 * 117.46 kg in for 70 kg net : the 47.46 kg lost exceed what any single ingredient can give.
+	 *
+	 * The expected label is not the one the test carried before it was replaced. Applying the rule
+	 * #21401 specifies - the ingredients at 100 % are consumed first, the rest is shared over the
+	 * water each one actually holds - gives sugar 71.43, egg 16.54, flour 12.03 :
+	 *
+	 * <pre>
+	 * water 38.46 absorbs 38.46 of the 47.46 lost, leaving 9.00 to share
+	 * available water : flour 9 x 13.5 % = 1.215, egg 20 x 88 % = 17.6, total 18.815
+	 * flour 9 - 9.00 x 1.215 / 18.815 = 8.4188 -> 12.03 %
+	 * egg  20 - 9.00 x 17.6  / 18.815 = 11.5812 -> 16.54 %
+	 * sugar holds no water and stays at 50 -> 71.43 %
+	 * </pre>
+	 *
+	 * The 17.4 / 11.1 this test asserted until c48a5812db were therefore wrong, and that commit fixed
+	 * them without saying so - it replaced the scenario in the same move, so nothing recorded it.
+	 */
+	@Test
+	public void testEvaporationDistributedByAvailableWater() {
+		StandardChocolateEclairTestProduct testProduct = new StandardChocolateEclairTestProduct.Builder().withAlfrescoRepository(alfrescoRepository)
+				.withNodeService(nodeService).withDestFolder(getTestFolderNodeRef()).withCompo(false).withLabeling(false).withIngredients(true)
+				.build();
+
+		inWriteTx(() -> {
+			testProduct.initCompoProduct();
+			return null;
+		});
+
+		try {
+			final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+				FinishedProductData product = testProduct.createTestProduct();
+				product.setName("testEvaporationDistributedByAvailableWater - BisCuiCui");
+				product.withQty(70d);
+
+				nodeService.setProperty(testProduct.getFlourNodeRef(), PLMModel.PROP_EVAPORATED_RATE, 13.5d);
+				nodeService.setProperty(testProduct.getEggNodeRef(), PLMModel.PROP_EVAPORATED_RATE, 88d);
+				nodeService.setProperty(testProduct.getIngFlourNodeRef(), PLMModel.PROP_EVAPORATED_RATE, 13.5d);
+				nodeService.setProperty(testProduct.getIngEggNodeRef(), PLMModel.PROP_EVAPORATED_RATE, 88d);
+
+				product.withCompoList(List.of(
+						CompoListDataItem.build().withQtyUsed(9d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+								.withProduct(testProduct.getFlourNodeRef()),
+						CompoListDataItem.build().withQtyUsed(20d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+								.withProduct(testProduct.getEggNodeRef()),
+						CompoListDataItem.build().withQtyUsed(50d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+								.withProduct(testProduct.getSugarNodeRef()),
+						CompoListDataItem.build().withQtyUsed(38.46d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare)
+								.withProduct(testProduct.getWaterNodeRef())));
+
+				return alfrescoRepository.save(product).getNodeRef();
+			});
+
+			Assert.assertNotNull(finishedProductNodeRef);
+
+			checkILL(finishedProductNodeRef,
+					new ArrayList<>(List.of(
+							LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render),
+							LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.#%} ({2})")
+									.withLabelingRuleType(LabelingRuleType.Format),
+							LabelingRuleListDataItem.build().withName("Param1").withFormula("ingsLabelingWithYield=true")
+									.withLabelingRuleType(LabelingRuleType.Prefs))),
+					"sucre 71,4%, oeuf 16,5%, farine 12%", Locale.FRENCH);
+
+			inReadTx(() -> {
+				FinishedProductData formulatedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+				Assert.assertNotNull("Ingredient list should not be null", formulatedProduct.getIngList());
+
+				// Sugar holds no water : the evaporation must leave it exactly where it was.
+				IngListDataItem sugar = findIngByName(formulatedProduct.getIngList(), StandardChocolateEclairTestProduct.SUGAR_NAME);
+				Assert.assertNotNull("Sugar missing from the ingredient list", sugar);
+				Assert.assertEquals("Sugar holds no water and must not evaporate", 71.4d, sugar.getQtyPercWithYield(), 0.1d);
+				return null;
+			});
+		} finally {
+			inWriteTx(() -> {
+				nodeService.setProperty(testProduct.getIngFlourNodeRef(), PLMModel.PROP_EVAPORATED_RATE, 0d);
+				nodeService.setProperty(testProduct.getIngEggNodeRef(), PLMModel.PROP_EVAPORATED_RATE, 10d);
+				return null;
+			});
+		}
+	}
+
+	/**
+	 * Water evaporation distribution based on available water.
 	 *
 	 * This test reproduces the scenario where:
 	 * - Ingredients have different evaporation rates
 	 * - Some ingredients have less water available than what the proportional rate would require
 	 * - The fix ensures evaporation is distributed based on available water, not just rates
+	 *
+	 * Its composition replaced the one #21401 was opened on, in c48a5812db ; that original scenario
+	 * lives in {@link #testEvaporationDistributedByAvailableWater()}.
 	 */
 	@Test
 	public void testEvaporationWithLimitedAvailableWater() {
