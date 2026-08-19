@@ -629,7 +629,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 	private boolean shouldGenerate(final NodeRef entityNodeRef, final NodeRef entityNodeTo, boolean generateAllReports,
 			final NodeRef selectedReportNodeRef, Boolean isDefault, NodeRef documentNodeRef, NodeRef tplNodeRef, String reportKind) {
-		if (tplNodeRef != null && reportKind != null) {
+		if (tplNodeRef != null && reportKind != null && !reportKind.isEmpty()) {
 			List<String> reportKindProp = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS);
 			return reportKindProp != null && reportKindProp.contains(reportKind);
 		}
