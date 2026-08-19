@@ -2,8 +2,11 @@ package fr.becpg.repo.product.report;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,6 +21,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -30,6 +34,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.json.JsonHelper;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.entity.EntityReportData;
@@ -135,11 +140,16 @@ public class AggregateReportEngine implements BeCPGReportEngine {
     }
 
     private NodeRef getEntityNodeRef(Map<String, Object> params) {
-        NodeRef entityNodeRef = (NodeRef) params.get(PARAM_ENTITY_NODEREF);
-        if (entityNodeRef == null) {
-            throw new IllegalArgumentException("PARAM_ENTITY_NODEREF is missing from report parameters");
+        if (params == null) {
+            throw new IllegalArgumentException("Report parameters cannot be null");
         }
-        return entityNodeRef;
+        Object entityParam = params.get(PARAM_ENTITY_NODEREF);
+        if (entityParam instanceof NodeRef nodeRef) {
+            return nodeRef;
+        } else if (entityParam instanceof String str && NodeRef.isNodeRef(str)) {
+            return new NodeRef(str);
+        }
+        throw new IllegalArgumentException("PARAM_ENTITY_NODEREF is missing or invalid in report parameters");
     }
 
     private byte[] assembleFinalPdf(byte[] bodyPdfBytes, List<AnnexSection> sections, AggregateReportConfig config, byte[] logoBytes, Map<String, String> propertiesMap, Map<String, String> customI18n) throws Exception {
@@ -205,7 +215,7 @@ public class AggregateReportEngine implements BeCPGReportEngine {
     private void readPropertiesNode(NodeRef propNodeRef, Map<String, String> targetMap) {
         ContentReader reader = contentService.getReader(propNodeRef, ContentModel.PROP_CONTENT);
         if (reader != null && reader.exists()) {
-            try (InputStream in = reader.getContentInputStream()) {
+            try (Reader in = new InputStreamReader(reader.getContentInputStream(), StandardCharsets.UTF_8)) {
                 Properties props = new Properties();
                 props.load(in);
                 for (String key : props.stringPropertyNames()) {
@@ -278,13 +288,22 @@ public class AggregateReportEngine implements BeCPGReportEngine {
     private Map<String, String> gatherEntityProperties(NodeRef entityNodeRef) {
         Map<String, String> propertiesMap = new HashMap<>();
         Map<QName, Serializable> nodeProps = nodeService.getProperties(entityNodeRef);
+        Locale currentLocale = I18NUtil.getLocale();
         for (Map.Entry<QName, Serializable> entry : nodeProps.entrySet()) {
             String localName = entry.getKey().getLocalName();
             String prefix = entry.getKey().toPrefixString(namespaceService);
             Serializable val = entry.getValue();
             if (val != null) {
-                propertiesMap.put(localName, val.toString());
-                propertiesMap.put(prefix, val.toString());
+                String strVal;
+                if (val instanceof MLText mlText) {
+                    strVal = MLTextHelper.getClosestValue(mlText, currentLocale);
+                } else {
+                    strVal = val.toString();
+                }
+                if (strVal != null) {
+                    propertiesMap.put(localName, strVal);
+                    propertiesMap.put(prefix, strVal);
+                }
             }
         }
 
@@ -300,11 +319,6 @@ public class AggregateReportEngine implements BeCPGReportEngine {
     private void streamOutput(byte[] finalPdfBytes, OutputStream out) throws Exception {
         out.write(finalPdfBytes);
         out.flush();
-        try {
-            out.close();
-        } catch (Exception ex) {
-            logger.warn("Error closing output stream: " + ex.getMessage());
-        }
     }
 
     private NodeRef extractJsonAggregatorFile(List<NodeRef> assocFiles) {

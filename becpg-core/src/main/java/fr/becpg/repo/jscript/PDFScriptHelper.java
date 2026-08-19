@@ -68,7 +68,7 @@ public class PDFScriptHelper extends BaseScopableProcessorExtension {
 	}
 
 	/** Constant <code>logger</code> */
-	private static Log logger = LogFactory.getLog(PDFScriptHelper.class);
+	private static final Log logger = LogFactory.getLog(PDFScriptHelper.class);
 
 	/**
 	 * <p>appendPDF.</p>
@@ -78,6 +78,9 @@ public class PDFScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a {@link org.alfresco.repo.jscript.ScriptNode} object.
 	 */
 	public ScriptNode appendPDF(ScriptNode targetPDFNode, ScriptNode toAppendPDFNode) {
+		if (targetPDFNode == null || toAppendPDFNode == null) {
+			return targetPDFNode;
+		}
 		if (logger.isDebugEnabled()) {
 			logger.debug("Append PDF " + toAppendPDFNode.getName() + " to " + targetPDFNode.getName());
 		}
@@ -89,23 +92,14 @@ public class PDFScriptHelper extends BaseScopableProcessorExtension {
 			// Append the PDFs using PDFMergerUtility
 			PDFMergerUtility merger = new PDFMergerUtility();
 			merger.appendDocument(pdfTarget, pdf);
-			merger.setDestinationFileName(targetPDFNode.getName());
-			merger.mergeDocuments(null);
 
-			// Create a temporary directory for saving the merged PDF
-			Path tempDir = Files.createTempDirectory(TempFileProvider.getTempDir().toPath(), targetPDFNode.getNodeRef().getId());
-
-			Path mergedPDFPath = tempDir.resolve(targetPDFNode.getName());
-			pdfTarget.save(mergedPDFPath.toFile());
-
-			// Save the merged PDF back to the repository
-			saveMergedPDF(targetPDFNode, mergedPDFPath.toFile());
-
-			// Clean up the temporary file and directory
-
-			Files.delete(mergedPDFPath); 
-
-			Files.delete(tempDir); 
+			File tempFile = TempFileProvider.createTempFile("merged_", ".pdf");
+			try {
+				pdfTarget.save(tempFile);
+				saveMergedPDF(targetPDFNode, tempFile);
+			} finally {
+				tempFile.delete();
+			}
 
 		} catch (IOException e) {
 			throw new AlfrescoRuntimeException("Error processing PDF documents", e);
@@ -143,6 +137,9 @@ public class PDFScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a {@link org.alfresco.repo.jscript.ScriptNode} object
 	 */
 	public ScriptNode mergePDFs(ScriptNode targetPDFNode, Object[] sourceNodes) {
+		if (targetPDFNode == null) {
+			return null;
+		}
 		if (logger.isDebugEnabled()) {
 			logger.debug("Merging multiple PDFs into " + targetPDFNode.getName() + " (source count: " + (sourceNodes != null ? sourceNodes.length : 0) + ")");
 		}

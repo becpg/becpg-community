@@ -381,9 +381,9 @@ public class ReportPdfAggregator {
                         logger.debug("[TokenLocator] Found token text: " + token + " on page index " + currentPageIndex);
                     }
 
-                    if (start < textPositions.size() && (end + 1) < textPositions.size()) {
+                    if (start < textPositions.size()) {
                         TextPosition firstChar = textPositions.get(start);
-                        TextPosition lastChar = textPositions.get(end + 1);
+                        TextPosition lastChar = textPositions.get(Math.min(end + 1, textPositions.size() - 1));
 
                         FoundToken ft = new FoundToken();
                         ft.token = token;
@@ -617,7 +617,7 @@ public class ReportPdfAggregator {
             parts.addAll(baseParts);
         } else {
             int tocPos = tocConfig != null ? tocConfig.getPosition() : 0;
-            if (tocPos == 0) {
+            if (tocPos <= 0) {
                 parts.add(partTocPlaceholder);
                 parts.addAll(baseParts);
             } else if (tocPos == 1) {
@@ -627,9 +627,12 @@ public class ReportPdfAggregator {
                         parts.add(partTocPlaceholder);
                     }
                 }
+                if (!parts.contains(partTocPlaceholder)) {
+                    parts.add(partTocPlaceholder);
+                }
             } else {
                 int targetSecIdx = tocPos - 2;
-                AnnexSection targetSection = (targetSecIdx < sections.size()) ? sections.get(targetSecIdx) : null;
+                AnnexSection targetSection = (targetSecIdx >= 0 && targetSecIdx < sections.size()) ? sections.get(targetSecIdx) : null;
                 if (targetSection != null) {
                     for (MergePart part : baseParts) {
                         parts.add(part);
@@ -687,11 +690,7 @@ public class ReportPdfAggregator {
                 }
             }
             if (partTocPlaceholder != null) {
-                Map<String, Integer> sectionPageNumbers = new HashMap<>();
-                for (Map.Entry<AnnexSection, Integer> entry : sectionToMergedPageMap.entrySet()) {
-                    sectionPageNumbers.put(entry.getKey().getReportKind(), entry.getValue() + 1);
-                }
-                partTocPlaceholder.generatedPlaceholder = generateDynamicTocPage(sections, sectionPageNumbers, tocConfig, customI18n);
+                partTocPlaceholder.generatedPlaceholder = generateDynamicTocPage(sections, sectionToMergedPageMap, tocConfig, customI18n);
             }
         }
     }
@@ -865,7 +864,7 @@ public class ReportPdfAggregator {
         }
 
         for (PageNumberLocator.FoundPageNumber fpn : birtPageNums) {
-            if (fpn.pageIndex < finalDoc.getNumberOfPages() && fpn.y <= PageNumberLocator.MAX_FOOTER_Y) {
+            if (fpn.pageIndex >= 0 && fpn.pageIndex < finalDoc.getNumberOfPages() && fpn.y <= PageNumberLocator.MAX_FOOTER_Y) {
                 PDPage page = finalDoc.getPage(fpn.pageIndex);
                 float pdfY = fpn.y;
                 try (PDPageContentStream canvas = new PDPageContentStream(finalDoc, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
@@ -884,9 +883,6 @@ public class ReportPdfAggregator {
         PDPage tocPage = finalDoc.getPage(tocPageIndex);
         float y = tocPage.getMediaBox().getHeight() - 130;
         for (AnnexSection sec : sections) {
-            if (sec.getDocuments() == null || sec.getDocuments().isEmpty()) {
-                continue;
-            }
             Integer targetMergedPage = sectionToMergedPageMap.get(sec);
             if (targetMergedPage != null && targetMergedPage >= 0 && targetMergedPage < finalDoc.getNumberOfPages()) {
                 PDAnnotationLink link = new PDAnnotationLink();
@@ -908,8 +904,8 @@ public class ReportPdfAggregator {
                 link.setAction(action);
 
                 tocPage.getAnnotations().add(link);
+                y -= 25;
             }
-            y -= 25;
         }
     }
 
@@ -978,7 +974,7 @@ public class ReportPdfAggregator {
     private static byte[] getPagesSegment(byte[] pdf, int startPage0, int endPage0) throws IOException {
         try (PDDocument source = loadPdf(pdf); PDDocument target = new PDDocument()) {
             for (int i = startPage0; i <= endPage0; i++) {
-                target.addPage(source.getPage(i));
+                target.importPage(source.getPage(i));
             }
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             target.save(out);
@@ -1042,14 +1038,17 @@ public class ReportPdfAggregator {
 
     private static void stampComponentHeading(PDDocument doc, int pageIndex, String componentName, ComponentHeadingStyle style) throws IOException {
         PDPage page = doc.getPage(pageIndex);
-        float height = page.getMediaBox().getHeight();
+        PDRectangle mediaBox = page.getMediaBox();
+        float x0 = mediaBox.getLowerLeftX();
+        float y0 = mediaBox.getLowerLeftY();
+        float height = mediaBox.getHeight();
         try (PDPageContentStream canvas = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
             canvas.beginText();
             Color color = parseColor(style.getColor(), COLOR_PRIMARY);
             canvas.setNonStrokingColor(color);
             PDType1Font font = resolveFont(style.getFont(), true);
             canvas.setFont(font, style.getSize() != null ? style.getSize() : 11);
-            canvas.newLineAtOffset(50, height - 85);
+            canvas.newLineAtOffset(x0 + 50, y0 + height - 85);
             String text = (style.getPrefix() != null ? style.getPrefix() : "") + componentName.toUpperCase();
             canvas.showText(sanitizeTextForFont(text, font));
             canvas.endText();
@@ -1057,11 +1056,17 @@ public class ReportPdfAggregator {
     }
 
     private static void overwriteTokenWithPageNumber(PDDocument doc, int entryPageIndex, TokenLocator.FoundToken ft, int resolvedPageNumber, int targetPageIndex, PlaceholderStyle placeholderStyle) throws IOException {
+        if (entryPageIndex < 0 || entryPageIndex >= doc.getNumberOfPages()) {
+            return;
+        }
         PDPage page = doc.getPage(entryPageIndex);
-        float pdfY = page.getMediaBox().getHeight() - ft.y;
+        PDRectangle mediaBox = page.getMediaBox();
+        float x0 = mediaBox.getLowerLeftX();
+        float y0 = mediaBox.getLowerLeftY();
+        float pdfY = y0 + mediaBox.getHeight() - ft.y;
         try (PDPageContentStream canvas = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
             canvas.setNonStrokingColor(Color.WHITE);
-            canvas.addRect(ft.x - 2, pdfY - 2, ft.width + 4, ft.height + 4);
+            canvas.addRect(x0 + ft.x - 2, pdfY - 2, ft.width + 4, ft.height + 4);
             canvas.fill();
 
             String pageStr = String.valueOf(resolvedPageNumber);
@@ -1074,51 +1079,60 @@ public class ReportPdfAggregator {
             canvas.beginText();
             canvas.setNonStrokingColor(parseColor(colorHex, COLOR_BLACK));
             canvas.setFont(font, fontSize);
-            canvas.newLineAtOffset(drawX, pdfY);
+            canvas.newLineAtOffset(x0 + drawX, pdfY);
             canvas.showText(pageStr);
             canvas.endText();
 
-            PDAnnotationLink link = new PDAnnotationLink();
-            PDBorderStyleDictionary border = new PDBorderStyleDictionary();
-            border.setWidth(0);
-            link.setBorderStyle(border);
+            if (targetPageIndex >= 0 && targetPageIndex < doc.getNumberOfPages()) {
+                PDAnnotationLink link = new PDAnnotationLink();
+                PDBorderStyleDictionary border = new PDBorderStyleDictionary();
+                border.setWidth(0);
+                link.setBorderStyle(border);
 
-            PDRectangle rect = new PDRectangle();
-            rect.setLowerLeftX(drawX - 2);
-            rect.setLowerLeftY(pdfY - 2);
-            rect.setUpperRightX(drawX + strWidth + 2);
-            rect.setUpperRightY(pdfY + ft.height + 2);
-            link.setRectangle(rect);
+                PDRectangle rect = new PDRectangle();
+                rect.setLowerLeftX(x0 + drawX - 2);
+                rect.setLowerLeftY(pdfY - 2);
+                rect.setUpperRightX(x0 + drawX + strWidth + 2);
+                rect.setUpperRightY(pdfY + ft.height + 2);
+                link.setRectangle(rect);
 
-            PDActionGoTo action = new PDActionGoTo();
-            PDPageDestination dest = new PDPageFitWidthDestination();
-            dest.setPage(doc.getPage(targetPageIndex));
-            action.setDestination(dest);
-            link.setAction(action);
+                PDActionGoTo action = new PDActionGoTo();
+                PDPageDestination dest = new PDPageFitWidthDestination();
+                dest.setPage(doc.getPage(targetPageIndex));
+                action.setDestination(dest);
+                link.setAction(action);
 
-            page.getAnnotations().add(link);
+                page.getAnnotations().add(link);
+            }
         }
     }
 
     private static void overwriteTokenWithText(PDDocument doc, int entryPageIndex, TokenLocator.FoundToken ft, String text, PlaceholderStyle placeholderStyle) throws IOException {
+        if (entryPageIndex < 0 || entryPageIndex >= doc.getNumberOfPages()) {
+            return;
+        }
         PDPage page = doc.getPage(entryPageIndex);
-        float pdfY = page.getMediaBox().getHeight() - ft.y;
+        PDRectangle mediaBox = page.getMediaBox();
+        float x0 = mediaBox.getLowerLeftX();
+        float y0 = mediaBox.getLowerLeftY();
+        float pdfY = y0 + mediaBox.getHeight() - ft.y;
         try (PDPageContentStream canvas = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
             canvas.setNonStrokingColor(Color.WHITE);
-            canvas.addRect(ft.x - 2, pdfY - 2, ft.width + 4, ft.height + 4);
+            canvas.addRect(x0 + ft.x - 2, pdfY - 2, ft.width + 4, ft.height + 4);
             canvas.fill();
 
             PDType1Font font = resolveFont(placeholderStyle != null ? placeholderStyle.getFont() : DEFAULT_FONT_ARIAL, false);
             float fontSize = (placeholderStyle != null && placeholderStyle.getSize() != null) ? placeholderStyle.getSize().floatValue() : 8.5f;
-            float strWidth = font.getStringWidth(text) / 1000.0f * fontSize;
+            String sanitizedText = sanitizeTextForFont(text, font);
+            float strWidth = font.getStringWidth(sanitizedText) / 1000.0f * fontSize;
             float drawX = ft.x + ft.width - strWidth;
 
             String colorHex = (placeholderStyle != null && placeholderStyle.getColor() != null) ? placeholderStyle.getColor() : DEFAULT_COLOR_MUTED;
             canvas.beginText();
             canvas.setNonStrokingColor(parseColor(colorHex, COLOR_MUTED));
             canvas.setFont(font, fontSize);
-            canvas.newLineAtOffset(drawX, pdfY + 1);
-            canvas.showText(sanitizeTextForFont(text, font));
+            canvas.newLineAtOffset(x0 + drawX, pdfY + 1);
+            canvas.showText(sanitizedText);
             canvas.endText();
         }
     }
@@ -1141,6 +1155,11 @@ public class ReportPdfAggregator {
         PDDocument doc = new PDDocument();
         try {
             PDImageXObject image = PDImageXObject.createFromByteArray(doc, bytes, "annex-image");
+            if (image.getWidth() <= 0 || image.getHeight() <= 0) {
+                doc.close();
+                logger.warn("Image has invalid dimensions: " + image.getWidth() + "x" + image.getHeight());
+                return null;
+            }
             PDPage page = new PDPage(PDRectangle.A4);
             doc.addPage(page);
 
@@ -1194,6 +1213,8 @@ public class ReportPdfAggregator {
         for (int i = startPage - 1; i < totalPages; i++) {
             PDPage page = doc.getPage(i);
             PDRectangle mediaBox = page.getMediaBox();
+            float x0 = mediaBox.getLowerLeftX();
+            float y0 = mediaBox.getLowerLeftY();
             float width = mediaBox.getWidth();
             float height = mediaBox.getHeight();
 
@@ -1203,15 +1224,15 @@ public class ReportPdfAggregator {
                 if (header != null && !isBodyPage) {
                     canvas.setStrokingColor(Color.LIGHT_GRAY);
                     canvas.setLineWidth(0.5f);
-                    canvas.moveTo(50, height - 60);
-                    canvas.lineTo(width - 50, height - 60);
+                    canvas.moveTo(x0 + 50, y0 + height - 60);
+                    canvas.lineTo(x0 + width - 50, y0 + height - 60);
                     canvas.stroke();
 
                     canvas.beginText();
                     canvas.setNonStrokingColor(COLOR_PRIMARY);
                     PDType1Font boldFont = resolveFont(DEFAULT_FONT_ARIAL_BOLD, true);
                     canvas.setFont(boldFont, 8);
-                    canvas.newLineAtOffset(50, height - 45);
+                    canvas.newLineAtOffset(x0 + 50, y0 + height - 45);
                     canvas.showText(sanitizeTextForFont(title != null ? title : "", boldFont));
                     canvas.endText();
 
@@ -1220,7 +1241,7 @@ public class ReportPdfAggregator {
                         canvas.beginText();
                         canvas.setNonStrokingColor(Color.DARK_GRAY);
                         canvas.setFont(regularFont, 8);
-                        canvas.newLineAtOffset(50, height - 55);
+                        canvas.newLineAtOffset(x0 + 50, y0 + height - 55);
                         canvas.showText(sanitizeTextForFont(subtitle, regularFont));
                         canvas.endText();
                     }
@@ -1228,12 +1249,12 @@ public class ReportPdfAggregator {
                     if (logoImg != null) {
                         float logoWidth = 60;
                         float logoHeight = 20;
-                        canvas.drawImage(logoImg, width - 50 - logoWidth, height - 50, logoWidth, logoHeight);
+                        canvas.drawImage(logoImg, x0 + width - 50 - logoWidth, y0 + height - 50, logoWidth, logoHeight);
                     } else if (dateStr != null && !dateStr.isEmpty()) {
                         canvas.beginText();
                         canvas.setNonStrokingColor(Color.GRAY);
                         canvas.setFont(regularFont, 8);
-                        canvas.newLineAtOffset(width - 150, height - 45);
+                        canvas.newLineAtOffset(x0 + width - 150, y0 + height - 45);
                         canvas.showText(sanitizeTextForFont(dateStr, regularFont));
                         canvas.endText();
                     }
@@ -1241,15 +1262,15 @@ public class ReportPdfAggregator {
 
                 if (paginationEnabled && isBodyPage) {
                     canvas.setNonStrokingColor(Color.WHITE);
-                    canvas.addRect(width - 150, 20, 120, 30);
+                    canvas.addRect(x0 + width - 150, y0 + 20, 120, 30);
                     canvas.fill();
                 }
 
                 if (paginationEnabled) {
                     canvas.setStrokingColor(Color.LIGHT_GRAY);
                     canvas.setLineWidth(0.5f);
-                    canvas.moveTo(50, 50);
-                    canvas.lineTo(width - 50, 50);
+                    canvas.moveTo(x0 + 50, y0 + 50);
+                    canvas.lineTo(x0 + width - 50, y0 + 50);
                     canvas.stroke();
 
                     String pageFormat = "Page ${page} / ${total}";
@@ -1266,7 +1287,7 @@ public class ReportPdfAggregator {
                     canvas.setNonStrokingColor(parseColor(pageColorHex, COLOR_SECONDARY));
                     PDType1Font regularFont = resolveFont(pageFontName, false);
                     canvas.setFont(regularFont, pageFontSize);
-                    canvas.newLineAtOffset(width - 120, 38);
+                    canvas.newLineAtOffset(x0 + width - 120, y0 + 38);
                     canvas.showText(sanitizeTextForFont(pageText, regularFont));
                     canvas.endText();
                 }
@@ -1304,7 +1325,7 @@ public class ReportPdfAggregator {
                 stripper.setStartPage(1);
                 stripper.setEndPage(1);
                 String text = stripper.getText(doc);
-                if (text != null && (text.contains("beCPG") || text.contains("DIP") || text.contains("PIF"))) {
+                if (text != null && text.contains("beCPG")) {
                     return true;
                 }
             }
@@ -1314,7 +1335,7 @@ public class ReportPdfAggregator {
         return false;
     }
 
-    private static byte[] generateDynamicTocPage(List<AnnexSection> sections, Map<String, Integer> sectionPages, TableOfContentsModel config, Map<String, String> customI18n) throws IOException {
+    private static byte[] generateDynamicTocPage(List<AnnexSection> sections, Map<AnnexSection, Integer> sectionToMergedPageMap, TableOfContentsModel config, Map<String, String> customI18n) throws IOException {
         try (PDDocument doc = new PDDocument()) {
             PDPage page = new PDPage(PDRectangle.A4);
             doc.addPage(page);
@@ -1341,17 +1362,16 @@ public class ReportPdfAggregator {
                 float y = height - 130;
                 PDType1Font regularFont = resolveFont(DEFAULT_FONT_ARIAL, false);
                 for (AnnexSection sec : sections) {
-                    if (sec.getDocuments() == null || sec.getDocuments().isEmpty()) {
-                        continue;
-                    }
-                    Integer pNum = sectionPages.get(sec.getReportKind());
-                    if (pNum != null) {
+                    Integer pageIndex = sectionToMergedPageMap.get(sec);
+                    if (pageIndex != null) {
+                        int pNum = pageIndex + 1;
                         String sectionTitle = resolveI18nKey(sec.getTitle(), customI18n);
+                        String sanitizedTitle = sanitizeTextForFont(sectionTitle, regularFont);
                         canvas.beginText();
                         canvas.setNonStrokingColor(Color.DARK_GRAY);
                         canvas.setFont(regularFont, 10);
                         canvas.newLineAtOffset(50, y);
-                        canvas.showText(sanitizeTextForFont(sectionTitle, regularFont));
+                        canvas.showText(sanitizedTitle);
                         canvas.endText();
 
                         canvas.beginText();
@@ -1359,14 +1379,18 @@ public class ReportPdfAggregator {
                         canvas.showText(String.valueOf(pNum));
                         canvas.endText();
 
-                        canvas.setStrokingColor(Color.LIGHT_GRAY);
-                        canvas.setLineWidth(0.5f);
-                        canvas.setLineDashPattern(new float[]{1, 3}, 0);
-                        canvas.moveTo(150 + regularFont.getStringWidth(sectionTitle) / 100f, y + 2);
-                        canvas.lineTo(width - 90, y + 2);
-                        canvas.stroke();
+                        float titleWidth = regularFont.getStringWidth(sanitizedTitle) / 1000.0f * 10.0f;
+                        float lineStartX = Math.min(50 + titleWidth + 10, width - 90);
+                        if (lineStartX < width - 90) {
+                            canvas.setStrokingColor(Color.LIGHT_GRAY);
+                            canvas.setLineWidth(0.5f);
+                            canvas.setLineDashPattern(new float[]{1, 3}, 0);
+                            canvas.moveTo(lineStartX, y + 2);
+                            canvas.lineTo(width - 90, y + 2);
+                            canvas.stroke();
+                        }
+                        y -= 25;
                     }
-                    y -= 25;
                 }
             }
             ByteArrayOutputStream out = new ByteArrayOutputStream();

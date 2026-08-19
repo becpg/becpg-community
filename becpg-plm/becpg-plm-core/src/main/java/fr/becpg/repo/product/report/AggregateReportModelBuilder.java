@@ -5,6 +5,7 @@ import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -14,9 +15,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Component;
 
 import fr.becpg.model.ReportModel;
+import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.MessageHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
@@ -31,6 +35,7 @@ import fr.becpg.repo.report.pdf.ReportPdfAggregator.AnnexSection;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.*;
 
 @Component("aggregateReportModelBuilder")
@@ -56,6 +61,9 @@ public class AggregateReportModelBuilder {
 
     @Autowired
     private EntityReportService entityReportService;
+
+    @Autowired
+    private EntityDictionaryService entityDictionaryService;
 
     @Autowired
     private TransactionService transactionService;
@@ -231,10 +239,9 @@ public class AggregateReportModelBuilder {
                     NodeRef compNodeRef = item.getProduct();
                     if (compNodeRef != null) {
                         QName type = nodeService.getType(compNodeRef);
-                        String prefixType = type.toPrefixString(namespaceService);
-                        boolean isAllowed = allowedTypes == null || allowedTypes.isEmpty() || allowedTypes.contains(prefixType);
+                        boolean isAllowed = isTypeAllowed(type, allowedTypes);
                         if (logger.isDebugEnabled()) {
-                            logger.debug("Inspecting composition child component: " + compNodeRef + ", type: " + prefixType + ", isAllowed: " + isAllowed);
+                            logger.debug("Inspecting composition child component: " + compNodeRef + ", type: " + type + ", isAllowed: " + isAllowed);
                         }
                         if (isAllowed) {
                             if (!collected.contains(compNodeRef)) {
@@ -253,6 +260,26 @@ public class AggregateReportModelBuilder {
         } catch (Exception e) {
             logger.error("Exception while traversing composition for product: " + e.getMessage(), e);
         }
+    }
+
+    private boolean isTypeAllowed(QName type, List<String> allowedTypes) {
+        if (allowedTypes == null || allowedTypes.isEmpty()) {
+            return true;
+        }
+        for (String allowed : allowedTypes) {
+            try {
+                QName allowedQName = QName.createQName(allowed, namespaceService);
+                if (allowedQName != null && (type.equals(allowedQName) || entityDictionaryService.isSubClass(type, allowedQName))) {
+                    return true;
+                }
+            } catch (Exception e) {
+                // Ignore namespace parsing error and fallback to string matching
+            }
+            if (allowed.equals(type.toPrefixString(namespaceService)) || allowed.equals(type.getLocalName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void collectPackagingComponents(NodeRef productNodeRef, List<NodeRef> collected, String targetPkgLevel) {
@@ -316,7 +343,13 @@ public class AggregateReportModelBuilder {
             logger.error("On-the-fly report refresh failed for node " + entityNodeRef + ": " + e.getMessage(), e);
         }
 
-        String compName = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_TITLE);
+        Object titleProp = nodeService.getProperty(entityNodeRef, ContentModel.PROP_TITLE);
+        String compName = null;
+        if (titleProp instanceof MLText mlText) {
+            compName = MLTextHelper.getClosestValue(mlText, I18NUtil.getLocale());
+        } else if (titleProp != null) {
+            compName = titleProp.toString();
+        }
         if (compName == null || compName.isEmpty()) {
             compName = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
         }
@@ -401,7 +434,7 @@ public class AggregateReportModelBuilder {
                     ContentReader reader = contentService.getReader(fileNodeRef, ContentModel.PROP_CONTENT);
                     if (reader != null && reader.exists()) {
                         String mt = reader.getMimetype();
-                        boolean mimeAllowed = mimeTypes == null || mimeTypes.contains(mt);
+                        boolean mimeAllowed = mimeTypes == null || mimeTypes.isEmpty() || mimeTypes.contains(mt);
                         if (logger.isDebugEnabled()) {
                             logger.debug("Inspecting file " + fileNodeRef + " (" + file.getName() + "), mimetype: " + mt + ", mimeAllowed: " + mimeAllowed);
                         }
@@ -411,7 +444,13 @@ public class AggregateReportModelBuilder {
                                 logger.debug("File " + fileNodeRef + " has ASPECT_REPORT_KIND: " + hasAspect);
                             }
                             if (hasAspect) {
-                                List<String> rKinds = (List<String>) nodeService.getProperty(fileNodeRef, ReportModel.PROP_REPORT_KINDS);
+                                Serializable rKindsProp = nodeService.getProperty(fileNodeRef, ReportModel.PROP_REPORT_KINDS);
+                                List<String> rKinds = null;
+                                if (rKindsProp instanceof List<?> list) {
+                                    rKinds = (List<String>) list;
+                                } else if (rKindsProp instanceof String str && !str.isEmpty()) {
+                                    rKinds = Collections.singletonList(str);
+                                }
                                 boolean kindMatches = rKinds != null && rKinds.contains(reportKind);
                                 if (logger.isDebugEnabled()) {
                                     logger.debug("File " + fileNodeRef + " reportKinds property: " + rKinds + ", matches '" + reportKind + "': " + kindMatches);

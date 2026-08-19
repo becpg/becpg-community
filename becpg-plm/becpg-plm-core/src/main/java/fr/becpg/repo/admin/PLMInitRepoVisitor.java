@@ -2044,11 +2044,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					}
 
 					try {
-						NodeRef existingNull = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "null.rptdesign");
-						if (existingNull != null) {
-							nodeService.deleteNode(existingNull);
-						}
-
 						NodeRef pifJsonNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/PIFReport.agg.json", true);
 						NodeRef pifPropNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/PIFReport.properties", true);
 						NodeRef pifFrPropNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/PIFReport_fr.properties", true);
