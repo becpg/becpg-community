@@ -367,6 +367,8 @@ public class ReportPdfAggregator {
     }
 
     public static class PageNumberLocator extends PDFTextStripper {
+        public static final float MAX_FOOTER_Y = 80.0f;
+
         public static class FoundPageNumber {
             public int pageIndex;
             public float x;
@@ -398,15 +400,20 @@ public class ReportPdfAggregator {
 
         @Override
         protected void writeString(String string, List<TextPosition> textPositions) throws IOException {
-            if (string != null && string.contains("Page")) {
+            if (string != null && string.contains("Page") && textPositions != null && !textPositions.isEmpty()) {
                 int startIdx = string.indexOf("Page");
-                TextPosition pageChar = textPositions.get(startIdx);
-                FoundPageNumber fpn = new FoundPageNumber();
-                fpn.pageIndex = currentPageIndex;
-                fpn.x = pageChar.getXDirAdj();
-                fpn.y = currentPageHeight - pageChar.getYDirAdj();
-                fpn.height = pageChar.getHeightDir();
-                pageNumbers.add(fpn);
+                if (startIdx >= 0 && startIdx < textPositions.size()) {
+                    TextPosition pageChar = textPositions.get(startIdx);
+                    float yFromBottom = currentPageHeight - pageChar.getYDirAdj();
+                    if (yFromBottom <= MAX_FOOTER_Y) {
+                        FoundPageNumber fpn = new FoundPageNumber();
+                        fpn.pageIndex = currentPageIndex;
+                        fpn.x = pageChar.getXDirAdj();
+                        fpn.y = yFromBottom;
+                        fpn.height = pageChar.getHeightDir();
+                        pageNumbers.add(fpn);
+                    }
+                }
             }
         }
     }
@@ -821,7 +828,7 @@ public class ReportPdfAggregator {
         }
 
         for (PageNumberLocator.FoundPageNumber fpn : birtPageNums) {
-            if (fpn.pageIndex < finalDoc.getNumberOfPages()) {
+            if (fpn.pageIndex < finalDoc.getNumberOfPages() && fpn.y <= PageNumberLocator.MAX_FOOTER_Y) {
                 PDPage page = finalDoc.getPage(fpn.pageIndex);
                 float pdfY = fpn.y;
                 try (PDPageContentStream canvas = new PDPageContentStream(finalDoc, page, PDPageContentStream.AppendMode.APPEND, true, true)) {

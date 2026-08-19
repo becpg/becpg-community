@@ -33,6 +33,10 @@ import fr.becpg.repo.report.template.ReportTplInformation;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.sample.StandardChocolateEclairTestProduct;
 import fr.becpg.report.client.ReportFormat;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import fr.becpg.test.PLMBaseTestCase;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
@@ -469,39 +473,23 @@ public class AggregateReportIT extends PLMBaseTestCase {
             return null;
         });
 
-        // 3. Register PIF aggregate report template
-        final NodeRef pifTemplateNodeRef = inWriteTx(() -> {
-            NodeRef systemFolder = customRepoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
-                    TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-            NodeRef reportsFolder = customRepoService.getOrCreateFolderByPath(systemFolder, RepoConsts.PATH_REPORTS,
-                    TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
-            NodeRef productReportTplFolder = customRepoService.getOrCreateFolderByPath(reportsFolder, PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
-                    TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
-
-            NodeRef pifJsonNodeRef = reportTplService.createTplRessource(productReportTplFolder, "beCPG/birt/document/product/default/PIFReport.agg.json", true);
-            NodeRef pifPropNodeRef = reportTplService.createTplRessource(productReportTplFolder, "beCPG/birt/document/product/default/PIFReport.properties", true);
-            NodeRef pifFrPropNodeRef = reportTplService.createTplRessource(productReportTplFolder, "beCPG/birt/document/product/default/PIFReport_fr.properties", true);
-            NodeRef pifEnPropNodeRef = reportTplService.createTplRessource(productReportTplFolder, "beCPG/birt/document/product/default/PIFReport_en.properties", true);
-
-            List<NodeRef> pifResources = new ArrayList<>();
-            pifResources.add(pifJsonNodeRef);
-            pifResources.add(pifPropNodeRef);
-            pifResources.add(pifFrPropNodeRef);
-            pifResources.add(pifEnPropNodeRef);
-
-            ReportTplInformation pifTplInfo = new ReportTplInformation();
-            pifTplInfo.setReportType(ReportType.Document);
-            pifTplInfo.setReportFormat(ReportFormat.PDF);
-            pifTplInfo.setNodeType(PLMModel.TYPE_FINISHEDPRODUCT);
-            pifTplInfo.setDefaultTpl(false);
-            pifTplInfo.setSystemTpl(false);
-            pifTplInfo.setResources(pifResources);
-
-            NodeRef tplNodeRef = reportTplService.createTplRptDesign(productReportTplFolder, "PIFReportChocolateEclairIT",
-                    "beCPG/birt/document/product/default/PIFReport.rptdesign", pifTplInfo, true);
-            nodeService.setProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_IS_AGGREGATE, true);
-
-            return tplNodeRef;
+        // 3. Retrieve PIF aggregate report template created via init repo
+        final NodeRef pifTemplateNodeRef = inReadTx(() -> {
+            String pifReportName = TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PIF_REPORT);
+            NodeRef tpl = reportTplService.getUserReportTemplate(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, pifReportName);
+            if (tpl == null) {
+                List<NodeRef> userTpls = reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, null);
+                if (userTpls != null) {
+                    for (NodeRef userTpl : userTpls) {
+                        Boolean isAgg = (Boolean) nodeService.getProperty(userTpl, ReportModel.PROP_REPORT_TPL_IS_AGGREGATE);
+                        String name = (String) nodeService.getProperty(userTpl, ContentModel.PROP_NAME);
+                        if (Boolean.TRUE.equals(isAgg) && name != null && name.contains("PIF")) {
+                            return userTpl;
+                        }
+                    }
+                }
+            }
+            return tpl;
         });
 
         // 4. Generate English PIF Report
@@ -534,6 +522,146 @@ public class AggregateReportIT extends PLMBaseTestCase {
             }
             return null;
         });
+    }
+
+    @Test
+    public void testParallelPIFGenerationsBenchmarkIT() throws Exception {
+        int threadCount = 4; // 4 concurrent parallel PIF generations on 4 distinct products
+
+        // 1. Create N distinct rich test products using StandardChocolateEclairTestProduct.Builder
+        List<NodeRef> targetProducts = new ArrayList<>();
+        for (int i = 0; i < threadCount; i++) {
+            final int idx = i;
+            NodeRef productNodeRef = inWriteTx(() -> {
+                NodeRef benchmarkFolder = customRepoService.getOrCreateFolderByPath(getTestFolderNodeRef(), "ParallelBenchmarkFolder_" + idx, "ParallelBenchmarkFolder_" + idx);
+                FinishedProductData testProduct = new StandardChocolateEclairTestProduct.Builder()
+                        .withAlfrescoRepository(alfrescoRepository)
+                        .withNodeService(nodeService)
+                        .withDestFolder(benchmarkFolder)
+                        .withCompo(true)
+                        .withLabeling(true)
+                        .withGenericRawMaterial(true)
+                        .withStocks(true)
+                        .withIngredients(true)
+                        .withSurvey(true)
+                        .withScoreList(true)
+                        .withClaim(true)
+                        .withSpecification(true)
+                        .withNuts(true)
+                        .withProcess(true)
+                        .build()
+                        .createTestProduct();
+
+                NodeRef pfRef = testProduct.getNodeRef();
+                nodeService.setProperty(pfRef, ContentModel.PROP_NAME, "Chocolate Eclair Benchmark " + idx);
+
+                // Attach CPSR PDF document to each product
+                NodeRef docsFolder = customRepoService.getOrCreateFolderByPath(pfRef, RepoConsts.PATH_DOCUMENTS,
+                        TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS));
+                byte[] cpsrPdfBytes = createMockPdf("CPSR PART A - Safety Assessment", "CPSR PART B - Toxicological Profile");
+                NodeRef cpsrDocNodeRef = nodeService.createNode(docsFolder, ContentModel.ASSOC_CONTAINS,
+                        QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "cpsr_report_" + idx + ".pdf"),
+                        ContentModel.TYPE_CONTENT).getChildRef();
+                ContentWriter writer = contentService.getWriter(cpsrDocNodeRef, ContentModel.PROP_CONTENT, true);
+                writer.setMimetype("application/pdf");
+                writer.putContent(new ByteArrayInputStream(cpsrPdfBytes));
+
+                Map<QName, Serializable> aspectProps = new HashMap<>();
+                aspectProps.put(ReportModel.PROP_REPORT_KINDS, (Serializable) Collections.singletonList("annexe-cpsr"));
+                nodeService.addAspect(cpsrDocNodeRef, ReportModel.ASPECT_REPORT_KIND, aspectProps);
+
+                return pfRef;
+            });
+            targetProducts.add(productNodeRef);
+        }
+
+        // 2. Retrieve PIF aggregate report template created via init repo
+        final NodeRef pifTemplateNodeRef = inReadTx(() -> {
+            String pifReportName = TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PIF_REPORT);
+            NodeRef tpl = reportTplService.getUserReportTemplate(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, pifReportName);
+            if (tpl == null) {
+                List<NodeRef> userTpls = reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, null);
+                if (userTpls != null) {
+                    for (NodeRef userTpl : userTpls) {
+                        Boolean isAgg = (Boolean) nodeService.getProperty(userTpl, ReportModel.PROP_REPORT_TPL_IS_AGGREGATE);
+                        String name = (String) nodeService.getProperty(userTpl, ContentModel.PROP_NAME);
+                        if (Boolean.TRUE.equals(isAgg) && name != null && name.contains("PIF")) {
+                            return userTpl;
+                        }
+                    }
+                }
+            }
+            return tpl;
+        });
+
+        // Warm up single run on first product
+        inWriteTx(() -> {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            entityReportService.generateReport(targetProducts.get(0), pifTemplateNodeRef, new EntityReportParameters(), Locale.ENGLISH, ReportFormat.PDF, out);
+            return null;
+        });
+
+        // 3. Parallel Benchmark Execution (Each thread targets its own distinct product)
+        CountDownLatch readyLatch = new CountDownLatch(threadCount);
+        CountDownLatch startLatch = new CountDownLatch(1);
+        CountDownLatch finishLatch = new CountDownLatch(threadCount);
+        List<Long> durations = Collections.synchronizedList(new ArrayList<>());
+        List<Integer> pdfSizes = Collections.synchronizedList(new ArrayList<>());
+        ExecutorService pool = Executors.newFixedThreadPool(threadCount);
+
+        long startMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        long wallClockStart = System.currentTimeMillis();
+
+        for (int i = 0; i < threadCount; i++) {
+            final int threadIdx = i;
+            final NodeRef productForThread = targetProducts.get(threadIdx);
+            pool.submit(() -> {
+            	inWriteTx(() -> {
+            		return AuthenticationUtil.runAsSystem(() -> {
+            			readyLatch.countDown();
+            			try {
+            				startLatch.await();
+            				long t0 = System.currentTimeMillis();
+            				
+            				ByteArrayOutputStream out = new ByteArrayOutputStream();
+            				EntityReportParameters reportParameters = new EntityReportParameters();
+            				entityReportService.generateReport(productForThread, pifTemplateNodeRef, reportParameters, Locale.ENGLISH, ReportFormat.PDF, out);
+            				
+            				long t1 = System.currentTimeMillis();
+            				byte[] result = out.toByteArray();
+            				durations.add(t1 - t0);
+            				if (result != null) {
+            					pdfSizes.add(result.length);
+            				}
+            			} catch (Exception e) {
+            				logger.error("[PARALLEL BENCHMARK Thread " + threadIdx + "] Failed: " + e.getMessage(), e);
+            			} finally {
+            				finishLatch.countDown();
+            			}
+            			return null;
+            		});
+            	});
+            });
+        }
+
+        readyLatch.await(); // Wait for all worker threads to get ready
+        startLatch.countDown(); // Start all parallel requests simultaneously
+        finishLatch.await(); // Wait for all requests to finish
+        pool.shutdown();
+
+        long wallClockDuration = System.currentTimeMillis() - wallClockStart;
+        long endMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+
+        logger.info("========================================================================");
+        logger.info("[PARALLEL PIF BENCHMARK RESULTS]");
+        logger.info("  * Parallel Threads / Requests: " + threadCount);
+        logger.info("  * Total Wall-Clock Time: " + wallClockDuration + " ms");
+        logger.info("  * Average Duration per Report: " + (durations.isEmpty() ? 0 : (durations.stream().mapToLong(Long::longValue).sum() / durations.size())) + " ms");
+        logger.info("  * Min Duration: " + durations.stream().mapToLong(Long::longValue).min().orElse(0) + " ms");
+        logger.info("  * Max Duration: " + durations.stream().mapToLong(Long::longValue).max().orElse(0) + " ms");
+        logger.info("  * Average PDF Size: " + (pdfSizes.isEmpty() ? 0 : (pdfSizes.stream().mapToInt(Integer::intValue).sum() / pdfSizes.size())) + " bytes");
+        logger.info("  * Heap Memory Delta: " + ((endMem - startMem) / (1024 * 1024)) + " MB");
+        logger.info("========================================================================");
     }
 
     @Test
@@ -699,6 +827,31 @@ public class AggregateReportIT extends PLMBaseTestCase {
             assertTrue(text.contains("3"));
             assertTrue(text.contains("Page 1 / 3"));
             assertTrue(text.contains("Page 3 / 3"));
+        }
+    }
+
+    @Test
+    public void testBodyPageTextNotCoveredByPageNumberLocator() throws Exception {
+        byte[] bodyPdf = createMockPdfWithBirtPageNumbers(
+                "See Page 2 for details about Packaging Page",
+                "Second Page Content"
+        );
+
+        ReportPdfAggregator.PaginationModel paginationConfig = new ReportPdfAggregator.PaginationModel();
+        paginationConfig.setEnabled(true);
+        paginationConfig.setFormat("Page ${page} / ${total}");
+
+        byte[] finalPdf = ReportPdfAggregator.assemble(bodyPdf, Collections.emptyList(), null, null, null, Collections.emptyMap(), null, paginationConfig);
+
+        assertNotNull(finalPdf);
+        try (PDDocument doc = Loader.loadPDF(finalPdf)) {
+            assertEquals(2, doc.getNumberOfPages());
+
+            PDFTextStripper stripper = new PDFTextStripper();
+            String page1Text = stripper.getText(doc);
+            assertTrue(page1Text.contains("See Page 2 for details about Packaging Page"));
+            assertTrue(page1Text.contains("Page 1 / 2"));
+            assertTrue(page1Text.contains("Page 2 / 2"));
         }
     }
 
