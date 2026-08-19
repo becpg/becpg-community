@@ -38,6 +38,7 @@ import fr.becpg.repo.report.pdf.ReportPdfAggregator.AggregateReportConfig;
 import fr.becpg.repo.report.pdf.ReportPdfAggregator.AnnexSection;
 import fr.becpg.report.client.ReportException;
 import fr.becpg.report.client.ReportFormat;
+import fr.becpg.report.client.ReportParams;
 
 @Service("aggregateReportEngine")
 public class AggregateReportEngine implements BeCPGReportEngine {
@@ -164,7 +165,7 @@ public class AggregateReportEngine implements BeCPGReportEngine {
 
         String lang = null;
         if (params != null) {
-            Object langObj = params.get("lang");
+            Object langObj = params.get(ReportParams.PARAM_LANG);
             if (langObj instanceof String s && !s.isBlank()) {
                 lang = s;
             }
