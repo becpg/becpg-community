@@ -30,14 +30,30 @@ public class ReportPdfAggregator {
 
     private static final Log logger = LogFactory.getLog(ReportPdfAggregator.class);
 
-    public static final String DEFAULT_FONT_HELVETICA = "Helvetica";
-    public static final String DEFAULT_FONT_HELVETICA_BOLD = "Helvetica-Bold";
+    public static final String DEFAULT_FONT_ARIAL = "Arial";
+    public static final String DEFAULT_FONT_ARIAL_BOLD = "Arial-Bold";
     public static final String DEFAULT_COLOR_PRIMARY = "#1F3864";
     public static final String DEFAULT_COLOR_SECONDARY = "#404040";
     public static final String DEFAULT_COLOR_MUTED = "#808080";
     public static final String DEFAULT_COLOR_BLACK = "#000000";
     public static final String DEFAULT_PREFIX_HEADING = "➣ ";
     public static final String DEFAULT_MIMETYPE_PDF = "application/pdf";
+
+    private static PDType1Font resolveFont(String fontName, boolean bold) {
+        if (fontName != null) {
+            String lower = fontName.toLowerCase();
+            if (lower.contains("times")) {
+                return new PDType1Font(bold ? Standard14Fonts.FontName.TIMES_BOLD : Standard14Fonts.FontName.TIMES_ROMAN);
+            }
+            if (lower.contains("courier")) {
+                return new PDType1Font(bold ? Standard14Fonts.FontName.COURIER_BOLD : Standard14Fonts.FontName.COURIER);
+            }
+            if (lower.contains("bold")) {
+                bold = true;
+            }
+        }
+        return new PDType1Font(bold ? Standard14Fonts.FontName.HELVETICA_BOLD : Standard14Fonts.FontName.HELVETICA);
+    }
 
     public static PDDocument loadPdf(byte[] pdfBytes) throws IOException {
         if (pdfBytes == null || pdfBytes.length == 0) {
@@ -70,7 +86,7 @@ public class ReportPdfAggregator {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ComponentHeadingStyle implements Serializable {
         private static final long serialVersionUID = 1L;
-        private String font;
+        private String font = DEFAULT_FONT_ARIAL_BOLD;
         private Integer size = 11;
         private String color = DEFAULT_COLOR_PRIMARY;
         private String prefix = DEFAULT_PREFIX_HEADING;
@@ -132,7 +148,7 @@ public class ReportPdfAggregator {
         private static final long serialVersionUID = 1L;
         private boolean enabled = false;
         private String title = "TABLE OF CONTENTS";
-        private String font = DEFAULT_FONT_HELVETICA_BOLD;
+        private String font = DEFAULT_FONT_ARIAL_BOLD;
         private Integer size = 16;
         private String color = DEFAULT_COLOR_PRIMARY;
         private Integer position = 0;
@@ -157,7 +173,7 @@ public class ReportPdfAggregator {
         private boolean enabled = false;
         private String format = "Page ${page} / ${total}";
         private Integer startNumberingAt = 1;
-        private String font = DEFAULT_FONT_HELVETICA;
+        private String font = DEFAULT_FONT_ARIAL;
         private Integer size = 8;
         private String color = DEFAULT_COLOR_SECONDARY;
 
@@ -178,7 +194,7 @@ public class ReportPdfAggregator {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class PlaceholderStyle implements Serializable {
         private static final long serialVersionUID = 1L;
-        private String font = DEFAULT_FONT_HELVETICA_BOLD;
+        private String font = DEFAULT_FONT_ARIAL_BOLD;
         private Integer size = 9;
         private String color = DEFAULT_COLOR_BLACK;
 
@@ -967,7 +983,7 @@ public class ReportPdfAggregator {
             doc.addPage(page);
             try (PDPageContentStream canvas = new PDPageContentStream(doc, page)) {
                 canvas.beginText();
-                PDType1Font font = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
+                PDType1Font font = resolveFont(DEFAULT_FONT_ARIAL_BOLD, true);
                 canvas.setFont(font, 12);
                 canvas.setNonStrokingColor(java.awt.Color.DARK_GRAY);
                 canvas.newLineAtOffset(100, 500);
@@ -987,7 +1003,7 @@ public class ReportPdfAggregator {
             canvas.beginText();
             java.awt.Color color = java.awt.Color.decode(style.getColor() != null ? style.getColor() : DEFAULT_COLOR_PRIMARY);
             canvas.setNonStrokingColor(color);
-            PDType1Font font = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
+            PDType1Font font = resolveFont(style.getFont(), true);
             canvas.setFont(font, style.getSize() != null ? style.getSize() : 11);
             canvas.newLineAtOffset(50, height - 85);
             String text = (style.getPrefix() != null ? style.getPrefix() : "") + componentName.toUpperCase();
@@ -1005,7 +1021,7 @@ public class ReportPdfAggregator {
             canvas.fill();
 
             String pageStr = String.valueOf(resolvedPageNumber);
-            PDType1Font font = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
+            PDType1Font font = resolveFont(placeholderStyle != null ? placeholderStyle.getFont() : DEFAULT_FONT_ARIAL_BOLD, true);
             float fontSize = (placeholderStyle != null && placeholderStyle.getSize() != null) ? placeholderStyle.getSize().floatValue() : 9.0f;
             float strWidth = font.getStringWidth(pageStr) / 1000.0f * fontSize;
             float drawX = ft.x + ft.width - strWidth;
@@ -1048,7 +1064,7 @@ public class ReportPdfAggregator {
             canvas.addRect(ft.x - 2, pdfY - 2, ft.width + 4, ft.height + 4);
             canvas.fill();
 
-            PDType1Font font = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
+            PDType1Font font = resolveFont(placeholderStyle != null ? placeholderStyle.getFont() : DEFAULT_FONT_ARIAL, false);
             float fontSize = (placeholderStyle != null && placeholderStyle.getSize() != null) ? placeholderStyle.getSize().floatValue() : 8.5f;
             float strWidth = font.getStringWidth(text) / 1000.0f * fontSize;
             float drawX = ft.x + ft.width - strWidth;
@@ -1149,13 +1165,13 @@ public class ReportPdfAggregator {
 
                     canvas.beginText();
                     canvas.setNonStrokingColor(new java.awt.Color(31, 56, 100));
-                    PDType1Font boldFont = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
+                    PDType1Font boldFont = resolveFont(DEFAULT_FONT_ARIAL_BOLD, true);
                     canvas.setFont(boldFont, 8);
                     canvas.newLineAtOffset(50, height - 45);
                     canvas.showText(sanitizeTextForFont(title != null ? title : "", boldFont));
                     canvas.endText();
 
-                    PDType1Font regularFont = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
+                    PDType1Font regularFont = resolveFont(DEFAULT_FONT_ARIAL, false);
                     if (subtitle != null && !subtitle.isEmpty()) {
                         canvas.beginText();
                         canvas.setNonStrokingColor(java.awt.Color.DARK_GRAY);
@@ -1198,10 +1214,14 @@ public class ReportPdfAggregator {
                     }
                     String pageText = pageFormat.replace("${page}", String.valueOf(i + 1)).replace("${total}", String.valueOf(totalPages));
 
+                    String pageFontName = (paginationConfig != null && paginationConfig.getFont() != null) ? paginationConfig.getFont() : DEFAULT_FONT_ARIAL;
+                    float pageFontSize = (paginationConfig != null && paginationConfig.getSize() != null) ? paginationConfig.getSize().floatValue() : 8.0f;
+                    String pageColorHex = (paginationConfig != null && paginationConfig.getColor() != null) ? paginationConfig.getColor() : DEFAULT_COLOR_SECONDARY;
+
                     canvas.beginText();
-                    canvas.setNonStrokingColor(java.awt.Color.DARK_GRAY);
-                    PDType1Font regularFont = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
-                    canvas.setFont(regularFont, 8);
+                    canvas.setNonStrokingColor(java.awt.Color.decode(pageColorHex));
+                    PDType1Font regularFont = resolveFont(pageFontName, false);
+                    canvas.setFont(regularFont, pageFontSize);
                     canvas.newLineAtOffset(width - 120, 38);
                     canvas.showText(sanitizeTextForFont(pageText, regularFont));
                     canvas.endText();
@@ -1266,7 +1286,7 @@ public class ReportPdfAggregator {
                 canvas.beginText();
                 java.awt.Color titleColor = java.awt.Color.decode(config.getColor() != null ? config.getColor() : DEFAULT_COLOR_PRIMARY);
                 canvas.setNonStrokingColor(titleColor);
-                PDType1Font boldFont = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
+                PDType1Font boldFont = resolveFont(config.getFont() != null ? config.getFont() : DEFAULT_FONT_ARIAL_BOLD, true);
                 canvas.setFont(boldFont, config.getSize() != null ? config.getSize() : 16);
                 canvas.newLineAtOffset(50, height - 80);
                 canvas.showText(sanitizeTextForFont(resolveI18nKey(config.getTitle(), customI18n), boldFont));
@@ -1279,7 +1299,7 @@ public class ReportPdfAggregator {
                 canvas.stroke();
 
                 float y = height - 130;
-                PDType1Font regularFont = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
+                PDType1Font regularFont = resolveFont(DEFAULT_FONT_ARIAL, false);
                 for (AnnexSection sec : sections) {
                     if (sec.getDocuments() == null || sec.getDocuments().isEmpty()) {
                         continue;

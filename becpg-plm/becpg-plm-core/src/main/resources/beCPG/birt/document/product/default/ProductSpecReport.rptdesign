@@ -6359,7 +6359,7 @@ else{
             <property name="backgroundRepeat">no-repeat</property>
         </style>
             <style name="toc-header" id="8001">
-            <property name="fontFamily">Helvetica</property>
+            <property name="fontFamily">"arial"</property>
             <property name="fontSize">14pt</property>
             <property name="fontWeight">bold</property>
             <property name="color">#1F3864</property>
@@ -6369,7 +6369,7 @@ else{
             <property name="marginBottom">15pt</property>
         </style>
         <style name="toc-level1" id="8002">
-            <property name="fontFamily">Helvetica</property>
+            <property name="fontFamily">"arial"</property>
             <property name="fontSize">10pt</property>
             <property name="fontWeight">bold</property>
             <property name="color">#333333</property>
@@ -6377,7 +6377,7 @@ else{
             <property name="paddingBottom">4pt</property>
         </style>
         <style name="toc-num-level1" id="8003">
-            <property name="fontFamily">Helvetica</property>
+            <property name="fontFamily">"arial"</property>
             <property name="fontSize">10pt</property>
             <property name="fontWeight">bold</property>
             <property name="color">#1F3864</property>
@@ -6387,7 +6387,7 @@ else{
             <property name="noWrap">true</property>
         </style>
         <style name="section-title" id="8004">
-            <property name="fontFamily">Helvetica</property>
+            <property name="fontFamily">"arial"</property>
             <property name="fontSize">12pt</property>
             <property name="fontWeight">bold</property>
             <property name="color">#1F3864</property>

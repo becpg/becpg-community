@@ -10,7 +10,7 @@
   "tableOfContents": {
     "enabled": false,
     "title": "TABLE OF CONTENTS",
-    "font": "Helvetica-Bold",
+    "font": "Arial-Bold",
     "size": 16,
     "color": "#1F3864"
   },
@@ -19,13 +19,13 @@
     "enabled": false,
     "format": "Page ${page} / ${total}",
     "startNumberingAt": 1,
-    "font": "Helvetica",
+    "font": "Arial",
     "size": 8,
     "color": "#404040"
   },
 
   "componentHeadingStyle": {
-    "font": "Helvetica-Bold",
+    "font": "Arial-Bold",
     "size": 11,
     "color": "#1F3864",
     "prefix": "> "

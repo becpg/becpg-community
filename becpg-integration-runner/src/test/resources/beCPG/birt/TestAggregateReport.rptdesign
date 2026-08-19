@@ -5,40 +5,40 @@
     <property name="units">in</property>
     <styles>
         <style name="report-title" id="2">
-            <property name="fontFamily">Helvetica</property>
+            <property name="fontFamily">"arial"</property>
             <property name="fontSize">16pt</property>
             <property name="fontWeight">bold</property>
             <property name="color">#000000</property>
             <property name="textAlign">center</property>
         </style>
         <style name="toc-header" id="3">
-            <property name="fontFamily">Helvetica</property>
+            <property name="fontFamily">"arial"</property>
             <property name="fontSize">14pt</property>
             <property name="fontWeight">bold</property>
             <property name="color">#000000</property>
             <property name="textAlign">center</property>
         </style>
         <style name="toc-level1" id="4">
-            <property name="fontFamily">Helvetica</property>
+            <property name="fontFamily">"arial"</property>
             <property name="fontSize">10pt</property>
             <property name="fontWeight">bold</property>
             <property name="color">#000000</property>
         </style>
         <style name="toc-num-level1" id="5">
-            <property name="fontFamily">Helvetica</property>
+            <property name="fontFamily">"arial"</property>
             <property name="fontSize">8pt</property>
             <property name="fontWeight">bold</property>
             <property name="color">#000000</property>
             <property name="textAlign">right</property>
         </style>
         <style name="footer-text" id="6">
-            <property name="fontFamily">Helvetica</property>
+            <property name="fontFamily">"arial"</property>
             <property name="fontSize">8pt</property>
             <property name="color">#1F3864</property>
             <property name="fontWeight">bold</property>
         </style>
         <style name="section-title" id="7">
-            <property name="fontFamily">Helvetica</property>
+            <property name="fontFamily">"arial"</property>
             <property name="fontSize">12pt</property>
             <property name="fontWeight">bold</property>
             <property name="color">#1F3864</property>
