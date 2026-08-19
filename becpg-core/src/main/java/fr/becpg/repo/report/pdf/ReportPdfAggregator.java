@@ -5,6 +5,7 @@ import fr.becpg.repo.helper.MessageHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -28,6 +29,13 @@ import java.util.*;
 public class ReportPdfAggregator {
 
     private static final Log logger = LogFactory.getLog(ReportPdfAggregator.class);
+
+    public static PDDocument loadPdf(byte[] pdfBytes) throws IOException {
+        if (pdfBytes == null || pdfBytes.length == 0) {
+            return null;
+        }
+        return Loader.loadPDF(new RandomAccessReadBuffer(pdfBytes));
+    }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class HeaderModel implements Serializable {
@@ -390,7 +398,7 @@ public class ReportPdfAggregator {
             throw new IllegalArgumentException("Body PDF is empty");
         }
 
-        try (PDDocument doc = Loader.loadPDF(bodyPdf)) {
+        try (PDDocument doc = loadPdf(bodyPdf)) {
             int numBodyPages = doc.getNumberOfPages();
             if (logger.isDebugEnabled()) {
                 logger.debug("Core body PDF pages count: " + numBodyPages);
@@ -605,7 +613,7 @@ public class ReportPdfAggregator {
             for (MergePart part : parts) {
                 if (part.isBody) {
                     byte[] bodyPartBytes = getPagesSegment(bodyPdf, part.bodyStart, part.bodyEnd);
-                    PDDocument segmentDoc = Loader.loadPDF(bodyPartBytes);
+                    PDDocument segmentDoc = loadPdf(bodyPartBytes);
                     docsToClose.add(segmentDoc);
                     merger.appendDocument(finalDocMerged, segmentDoc);
 
@@ -616,7 +624,7 @@ public class ReportPdfAggregator {
                     }
                 } else {
                     if (part.generatedPlaceholder != null) {
-                        PDDocument phDoc = Loader.loadPDF(part.generatedPlaceholder);
+                        PDDocument phDoc = loadPdf(part.generatedPlaceholder);
                         docsToClose.add(phDoc);
                         merger.appendDocument(finalDocMerged, phDoc);
                         mergedPageCount++;
@@ -654,7 +662,7 @@ public class ReportPdfAggregator {
         boolean tocEnabled = tocConfig != null && tocConfig.isEnabled();
         boolean paginationEnabled = paginationConfig != null && paginationConfig.isEnabled();
 
-        try (PDDocument finalDoc = Loader.loadPDF(mergedPdfBytes)) {
+        try (PDDocument finalDoc = loadPdf(mergedPdfBytes)) {
             if (headingStyle != null) {
                 stampComponentHeadings(finalDoc, sections, docToMergedPageMap, headingStyle);
             }
@@ -724,7 +732,7 @@ public class ReportPdfAggregator {
 
     private static void coverOldPageNumbers(PDDocument finalDoc, byte[] bodyPdf, int numBodyPages, Map<Integer, Integer> originalToMergedPageMap, List<AnnexSection> sections, Map<AnnexDocument, Integer> docToMergedPageMap) throws IOException {
         List<PageNumberLocator.FoundPageNumber> birtPageNums = new ArrayList<>();
-        try (PDDocument originalBodyDoc = Loader.loadPDF(bodyPdf)) {
+        try (PDDocument originalBodyDoc = loadPdf(bodyPdf)) {
             PageNumberLocator pageNumLocator = new PageNumberLocator();
             birtPageNums.addAll(pageNumLocator.locatePageNumbers(originalBodyDoc));
         }
@@ -882,7 +890,7 @@ public class ReportPdfAggregator {
     }
 
     private static byte[] getPagesSegment(byte[] pdf, int startPage0, int endPage0) throws IOException {
-        try (PDDocument source = Loader.loadPDF(pdf); PDDocument target = new PDDocument()) {
+        try (PDDocument source = loadPdf(pdf); PDDocument target = new PDDocument()) {
             for (int i = startPage0; i <= endPage0; i++) {
                 target.addPage(source.getPage(i));
             }
@@ -1034,7 +1042,7 @@ public class ReportPdfAggregator {
             return null;
         }
         try {
-            return Loader.loadPDF(bytes);
+            return loadPdf(bytes);
         } catch (Exception e) {
             return convertImageToPdfDocument(bytes);
         }
@@ -1192,7 +1200,7 @@ public class ReportPdfAggregator {
 
     private static boolean hasExistingBeCPGLayout(byte[] pdfBytes) {
         if (pdfBytes == null || pdfBytes.length == 0) return false;
-        try (PDDocument doc = Loader.loadPDF(pdfBytes)) {
+        try (PDDocument doc = loadPdf(pdfBytes)) {
             if (doc.getNumberOfPages() > 0) {
                 PDFTextStripper stripper = new PDFTextStripper();
                 stripper.setStartPage(1);
