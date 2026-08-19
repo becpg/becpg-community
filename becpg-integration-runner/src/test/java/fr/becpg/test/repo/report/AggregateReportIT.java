@@ -494,7 +494,7 @@ public class AggregateReportIT extends PLMBaseTestCase {
             pifTplInfo.setReportFormat(ReportFormat.PDF);
             pifTplInfo.setNodeType(PLMModel.TYPE_FINISHEDPRODUCT);
             pifTplInfo.setDefaultTpl(false);
-            pifTplInfo.setSystemTpl(true);
+            pifTplInfo.setSystemTpl(false);
             pifTplInfo.setResources(pifResources);
 
             NodeRef tplNodeRef = reportTplService.createTplRptDesign(productReportTplFolder, "PIFReportChocolateEclairIT",

@@ -171,6 +171,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String PRODUCT_REPORT_RD_PATH = "beCPG/birt/document/product/default/ProductReport_RD.rptdesign";
 	/** Constant <code>PRODUCT_REPORT_RD_NAME="path.productreportrdtemplate"</code> */
 	private static final String PRODUCT_REPORT_RD_NAME = "path.productreportrdtemplate";
+	private static final String PRODUCT_REPORT_COMPO_QUALI_QUANTI_PATH = "beCPG/birt/document/product/default/ProductReport_CompoQualiQuanti.rptdesign";
+	private static final String PRODUCT_REPORT_COMPO_QUALI_QUANTI_NAME = "path.productreportcompoqualiquantitemplate";
 	/** Constant <code>PRODUCT_REPORT_TECHNICAL_SHEET_NAME="path.productreporttechnicalsheettemplat"{trunked}</code> */
 	private static final String PRODUCT_REPORT_TECHNICAL_SHEET_NAME = "path.productreporttechnicalsheettemplate";
 
@@ -226,6 +228,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		reportKindCodes.put(PRODUCT_REPORT_PRODUCTION_PATH, "ProductionSheet");
 		reportKindCodes.put(PRODUCT_REPORT_RAWMATERIAL_PATH, "SupplierSheet");
 		reportKindCodes.put(PRODUCT_REPORT_SUPPLIER_PATH, "SupplierSheet");
+		reportKindCodes.put(PRODUCT_REPORT_COMPO_QUALI_QUANTI_PATH, "annexe-compo-quali-quanti");
 		reportKindCodes.put(NONE_KIND_REPORT, "None");
 	}
 
@@ -1879,6 +1882,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			String productReportPackagingName = I18NUtil.getMessage(PRODUCT_REPORT_TECHNICAL_SHEET_NAME, Locale.getDefault());
 			String productReportCostName = I18NUtil.getMessage(PRODUCT_REPORT_COST_NAME, Locale.getDefault());
 			String productReportRDName = I18NUtil.getMessage(PRODUCT_REPORT_RD_NAME, Locale.getDefault());
+			String productReportCompoQualiQuantiName = I18NUtil.getMessage(PRODUCT_REPORT_COMPO_QUALI_QUANTI_NAME, Locale.getDefault());
 			String qualityControlAgingName = I18NUtil.getMessage(QUALITY_CONTROL_AGING_NAME, Locale.getDefault());
 			String productReportSupplierName = I18NUtil.getMessage(PRODUCT_REPORT_SUPPLIER_NAME, Locale.getDefault());
 
@@ -1891,8 +1895,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			String[] defaultReportName = { productReportClientName, productReportTechnicalName, productReportProductionName,
 					productReportPackagingName, productReportSupplierName, productReportClientName };
 
-			String[][] otherReport = { { PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_COST_PATH, PRODUCT_REPORT_RD_PATH }, null, null, null, null, { PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_COST_PATH } };
-			String[][] otherReportName = { { productReportProductionName, productReportCostName, productReportRDName }, null, null, null, null, { productReportProductionName, productReportCostName } };
+			String[][] otherReport = { { PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_COST_PATH, PRODUCT_REPORT_RD_PATH, PRODUCT_REPORT_COMPO_QUALI_QUANTI_PATH }, null, null, null, null, { PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_COST_PATH } };
+			String[][] otherReportName = { { productReportProductionName, productReportCostName, productReportRDName, productReportCompoQualiQuantiName }, null, null, null, null, { productReportProductionName, productReportCostName } };
 
 			String[] productReportResource = { PRODUCT_REPORT_DE_RESOURCE, PRODUCT_REPORT_EN_US_RESOURCE, PRODUCT_REPORT_EN_RESOURCE,
 					PRODUCT_REPORT_ES_RESOURCE, PRODUCT_REPORT_FI_RESOURCE, PRODUCT_REPORT_FR_RESOURCE, PRODUCT_REPORT_IT_RESOURCE,
@@ -1930,6 +1934,30 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				reportKindListProps.put(BeCPGModel.PROP_LV_CODE, reportKindCode);
 				reportKindListProps.put(BeCPGModel.PROP_LV_VALUE, mltValue);
 				reportKindDefaultValues.put(reportKind, reportKindListProps);
+			}
+
+			List<String> annexReportKinds = Arrays.asList(
+					"annexe-compo-quali-quanti",
+					"annexe-mp",
+					"annexe-emb-primaire",
+					"annexe-emb-secondaire",
+					"annexe-cpsr",
+					"annexe-stability-micro",
+					"annexe-claim-efficacy",
+					"annexe-gmp-animal-testing",
+					"annexe-photos",
+					"annexe-qualite"
+			);
+			for (String rk : annexReportKinds) {
+				MLText mltValue = new MLText();
+				mltValue.put(Locale.FRENCH, I18NUtil.getMessage("becpg.reportkind." + rk.toLowerCase() + ".value", Locale.FRENCH));
+				mltValue.put(Locale.ENGLISH, I18NUtil.getMessage("becpg.reportkind." + rk.toLowerCase() + ".value", Locale.ENGLISH));
+
+				Map<QName, Serializable> props = new HashMap<>();
+				props.put(ContentModel.PROP_NAME, rk);
+				props.put(BeCPGModel.PROP_LV_CODE, rk);
+				props.put(BeCPGModel.PROP_LV_VALUE, mltValue);
+				reportKindDefaultValues.put(rk, props);
 			}
 
 			visitReportKindList(reportKindDefaultValues);
@@ -1990,6 +2018,74 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 					}
 
+				}
+
+				if (productType.equals(PLMModel.TYPE_FINISHEDPRODUCT)) {
+					try {
+						NodeRef aggJsonNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/ProductSpecReport.agg.json", false);
+						List<NodeRef> aggResources = new ArrayList<>(resources);
+						aggResources.add(aggJsonNodeRef);
+
+						ReportTplInformation aggTplInfo = new ReportTplInformation();
+						aggTplInfo.setReportType(ReportType.Document);
+						aggTplInfo.setReportFormat(ReportFormat.PDF);
+						aggTplInfo.setNodeType(productType);
+						aggTplInfo.setDefaultTpl(false);
+						aggTplInfo.setSystemTpl(true);
+						aggTplInfo.setResources(aggResources);
+						aggTplInfo.setSupportedLocale(supportedLocale);
+
+						NodeRef aggTplNodeRef = reportTplService.createTplRptDesign(folderNodeRef,
+								TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PRODUCT_SPEC_REPORT),
+								"beCPG/birt/document/product/default/ProductSpecReport.rptdesign", aggTplInfo, false);
+						nodeService.setProperty(aggTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_AGGREGATE, true);
+					} catch (Exception e) {
+						logger.error("Failed to create Specification Technique aggregate report template", e);
+					}
+
+					try {
+						NodeRef existingNull = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "null.rptdesign");
+						if (existingNull != null) {
+							nodeService.deleteNode(existingNull);
+						}
+
+						NodeRef pifJsonNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/PIFReport.agg.json", true);
+						NodeRef pifPropNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/PIFReport.properties", true);
+						NodeRef pifFrPropNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/PIFReport_fr.properties", true);
+						NodeRef pifEnPropNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/PIFReport_en.properties", true);
+
+						List<NodeRef> pifResources = new ArrayList<>(resources);
+						pifResources.add(pifJsonNodeRef);
+						pifResources.add(pifPropNodeRef);
+						pifResources.add(pifFrPropNodeRef);
+						pifResources.add(pifEnPropNodeRef);
+
+						ReportTplInformation pifTplInfo = new ReportTplInformation();
+						pifTplInfo.setReportType(ReportType.Document);
+						pifTplInfo.setReportFormat(ReportFormat.PDF);
+						pifTplInfo.setNodeType(productType);
+						pifTplInfo.setDefaultTpl(false);
+						pifTplInfo.setSystemTpl(false);
+						pifTplInfo.setResources(pifResources);
+						pifTplInfo.setSupportedLocale(supportedLocale);
+
+						String pifReportName = TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PIF_REPORT);
+						if (pifReportName == null || pifReportName.isEmpty()) {
+							pifReportName = "Dossier d'information produit";
+						}
+
+						NodeRef pifTplNodeRef = reportTplService.createTplRptDesign(folderNodeRef,
+								pifReportName,
+								"beCPG/birt/document/product/default/PIFReport.rptdesign", pifTplInfo, true);
+						nodeService.setProperty(pifTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_AGGREGATE, true);
+
+						MLText titleMlt = TranslateHelper.getTranslatedPathMLText(PlmRepoConsts.PATH_PIF_REPORT);
+						if (titleMlt != null && !titleMlt.isEmpty()) {
+							nodeService.setProperty(pifTplNodeRef, ContentModel.PROP_TITLE, titleMlt);
+						}
+					} catch (Exception e) {
+						logger.error("Failed to create PIF aggregate report template", e);
+					}
 				}
 
 				i++;
