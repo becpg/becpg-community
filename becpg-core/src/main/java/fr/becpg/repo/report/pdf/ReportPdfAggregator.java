@@ -1,7 +1,17 @@
 package fr.becpg.repo.report.pdf;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import fr.becpg.repo.helper.MessageHelper;
+import java.awt.Color;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pdfbox.Loader;
@@ -11,6 +21,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
@@ -23,8 +34,9 @@ import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlin
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
 
-import java.io.*;
-import java.util.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import fr.becpg.repo.helper.MessageHelper;
 
 public class ReportPdfAggregator {
 
@@ -38,6 +50,27 @@ public class ReportPdfAggregator {
     public static final String DEFAULT_COLOR_BLACK = "#000000";
     public static final String DEFAULT_PREFIX_HEADING = "> ";
     public static final String DEFAULT_MIMETYPE_PDF = "application/pdf";
+
+    public static final Color COLOR_PRIMARY = parseColor(DEFAULT_COLOR_PRIMARY, new Color(31, 56, 100));
+    public static final Color COLOR_SECONDARY = parseColor(DEFAULT_COLOR_SECONDARY, Color.DARK_GRAY);
+    public static final Color COLOR_MUTED = parseColor(DEFAULT_COLOR_MUTED, Color.GRAY);
+    public static final Color COLOR_BLACK = parseColor(DEFAULT_COLOR_BLACK, Color.BLACK);
+
+    private static Color parseColor(String colorHex, Color defaultColor) {
+        if (colorHex == null || colorHex.trim().isEmpty()) {
+            return defaultColor;
+        }
+        try {
+            String trimmed = colorHex.trim();
+            if (!trimmed.startsWith("#") && !trimmed.startsWith("0x")) {
+                trimmed = "#" + trimmed;
+            }
+            return Color.decode(trimmed);
+        } catch (Exception e) {
+            logger.warn("Could not decode color '" + colorHex + "', using fallback color: " + defaultColor);
+            return defaultColor;
+        }
+    }
 
     private static PDType1Font resolveFont(String fontName, boolean bold) {
         if (fontName != null) {
@@ -811,15 +844,15 @@ public class ReportPdfAggregator {
                     if (ad.isBeCPGDoc()) {
                         Integer startPageIdx = docToMergedPageMap.get(ad);
                         if (startPageIdx != null) {
-                            PDDocument adDoc = loadDocumentOrConvertImage(ad.getPdfBytes());
-                            if (adDoc != null) {
-                                PageNumberLocator pageNumLocator = new PageNumberLocator();
-                                List<PageNumberLocator.FoundPageNumber> annexPageNums = pageNumLocator.locatePageNumbers(adDoc);
-                                for (PageNumberLocator.FoundPageNumber fpn : annexPageNums) {
-                                    fpn.pageIndex = startPageIdx + fpn.pageIndex;
-                                    birtPageNums.add(fpn);
+                            try (PDDocument adDoc = loadDocumentOrConvertImage(ad.getPdfBytes())) {
+                                if (adDoc != null) {
+                                    PageNumberLocator pageNumLocator = new PageNumberLocator();
+                                    List<PageNumberLocator.FoundPageNumber> annexPageNums = pageNumLocator.locatePageNumbers(adDoc);
+                                    for (PageNumberLocator.FoundPageNumber fpn : annexPageNums) {
+                                        fpn.pageIndex = startPageIdx + fpn.pageIndex;
+                                        birtPageNums.add(fpn);
+                                    }
                                 }
-                                try { adDoc.close(); } catch (Exception e) {}
                             }
                         }
                     }
@@ -832,7 +865,7 @@ public class ReportPdfAggregator {
                 PDPage page = finalDoc.getPage(fpn.pageIndex);
                 float pdfY = fpn.y;
                 try (PDPageContentStream canvas = new PDPageContentStream(finalDoc, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
-                    canvas.setNonStrokingColor(java.awt.Color.WHITE);
+                    canvas.setNonStrokingColor(Color.WHITE);
                     canvas.addRect(fpn.x - 10, pdfY - 5, 150, fpn.height + 10);
                     canvas.fill();
                 }
@@ -970,7 +1003,7 @@ public class ReportPdfAggregator {
         return key;
     }
 
-    private static String sanitizeTextForFont(String text, org.apache.pdfbox.pdmodel.font.PDFont font) {
+    private static String sanitizeTextForFont(String text, PDFont font) {
         if (text == null) return "";
         StringBuilder sb = new StringBuilder();
         for (char c : text.toCharArray()) {
@@ -992,7 +1025,7 @@ public class ReportPdfAggregator {
                 canvas.beginText();
                 PDType1Font font = resolveFont(DEFAULT_FONT_ARIAL_BOLD, true);
                 canvas.setFont(font, 12);
-                canvas.setNonStrokingColor(java.awt.Color.DARK_GRAY);
+                canvas.setNonStrokingColor(Color.DARK_GRAY);
                 canvas.newLineAtOffset(100, 500);
                 canvas.showText(sanitizeTextForFont(text, font));
                 canvas.endText();
@@ -1008,7 +1041,7 @@ public class ReportPdfAggregator {
         float height = page.getMediaBox().getHeight();
         try (PDPageContentStream canvas = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
             canvas.beginText();
-            java.awt.Color color = java.awt.Color.decode(style.getColor() != null ? style.getColor() : DEFAULT_COLOR_PRIMARY);
+            Color color = parseColor(style.getColor(), COLOR_PRIMARY);
             canvas.setNonStrokingColor(color);
             PDType1Font font = resolveFont(style.getFont(), true);
             canvas.setFont(font, style.getSize() != null ? style.getSize() : 11);
@@ -1023,7 +1056,7 @@ public class ReportPdfAggregator {
         PDPage page = doc.getPage(entryPageIndex);
         float pdfY = page.getMediaBox().getHeight() - ft.y;
         try (PDPageContentStream canvas = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
-            canvas.setNonStrokingColor(java.awt.Color.WHITE);
+            canvas.setNonStrokingColor(Color.WHITE);
             canvas.addRect(ft.x - 2, pdfY - 2, ft.width + 4, ft.height + 4);
             canvas.fill();
 
@@ -1035,7 +1068,7 @@ public class ReportPdfAggregator {
 
             String colorHex = (placeholderStyle != null && placeholderStyle.getColor() != null) ? placeholderStyle.getColor() : DEFAULT_COLOR_BLACK;
             canvas.beginText();
-            canvas.setNonStrokingColor(java.awt.Color.decode(colorHex));
+            canvas.setNonStrokingColor(parseColor(colorHex, COLOR_BLACK));
             canvas.setFont(font, fontSize);
             canvas.newLineAtOffset(drawX, pdfY);
             canvas.showText(pageStr);
@@ -1067,7 +1100,7 @@ public class ReportPdfAggregator {
         PDPage page = doc.getPage(entryPageIndex);
         float pdfY = page.getMediaBox().getHeight() - ft.y;
         try (PDPageContentStream canvas = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
-            canvas.setNonStrokingColor(java.awt.Color.WHITE);
+            canvas.setNonStrokingColor(Color.WHITE);
             canvas.addRect(ft.x - 2, pdfY - 2, ft.width + 4, ft.height + 4);
             canvas.fill();
 
@@ -1078,10 +1111,10 @@ public class ReportPdfAggregator {
 
             String colorHex = (placeholderStyle != null && placeholderStyle.getColor() != null) ? placeholderStyle.getColor() : DEFAULT_COLOR_MUTED;
             canvas.beginText();
-            canvas.setNonStrokingColor(java.awt.Color.decode(colorHex));
+            canvas.setNonStrokingColor(parseColor(colorHex, COLOR_MUTED));
             canvas.setFont(font, fontSize);
             canvas.newLineAtOffset(drawX, pdfY + 1);
-            canvas.showText(text);
+            canvas.showText(sanitizeTextForFont(text, font));
             canvas.endText();
         }
     }
@@ -1164,14 +1197,14 @@ public class ReportPdfAggregator {
 
             try (PDPageContentStream canvas = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
                 if (header != null && !isBodyPage) {
-                    canvas.setStrokingColor(java.awt.Color.LIGHT_GRAY);
+                    canvas.setStrokingColor(Color.LIGHT_GRAY);
                     canvas.setLineWidth(0.5f);
                     canvas.moveTo(50, height - 60);
                     canvas.lineTo(width - 50, height - 60);
                     canvas.stroke();
 
                     canvas.beginText();
-                    canvas.setNonStrokingColor(new java.awt.Color(31, 56, 100));
+                    canvas.setNonStrokingColor(COLOR_PRIMARY);
                     PDType1Font boldFont = resolveFont(DEFAULT_FONT_ARIAL_BOLD, true);
                     canvas.setFont(boldFont, 8);
                     canvas.newLineAtOffset(50, height - 45);
@@ -1181,7 +1214,7 @@ public class ReportPdfAggregator {
                     PDType1Font regularFont = resolveFont(DEFAULT_FONT_ARIAL, false);
                     if (subtitle != null && !subtitle.isEmpty()) {
                         canvas.beginText();
-                        canvas.setNonStrokingColor(java.awt.Color.DARK_GRAY);
+                        canvas.setNonStrokingColor(Color.DARK_GRAY);
                         canvas.setFont(regularFont, 8);
                         canvas.newLineAtOffset(50, height - 55);
                         canvas.showText(sanitizeTextForFont(subtitle, regularFont));
@@ -1194,7 +1227,7 @@ public class ReportPdfAggregator {
                         canvas.drawImage(logoImg, width - 50 - logoWidth, height - 50, logoWidth, logoHeight);
                     } else if (dateStr != null && !dateStr.isEmpty()) {
                         canvas.beginText();
-                        canvas.setNonStrokingColor(java.awt.Color.GRAY);
+                        canvas.setNonStrokingColor(Color.GRAY);
                         canvas.setFont(regularFont, 8);
                         canvas.newLineAtOffset(width - 150, height - 45);
                         canvas.showText(sanitizeTextForFont(dateStr, regularFont));
@@ -1203,13 +1236,13 @@ public class ReportPdfAggregator {
                 }
 
                 if (paginationEnabled && isBodyPage) {
-                    canvas.setNonStrokingColor(java.awt.Color.WHITE);
+                    canvas.setNonStrokingColor(Color.WHITE);
                     canvas.addRect(width - 150, 20, 120, 30);
                     canvas.fill();
                 }
 
                 if (paginationEnabled) {
-                    canvas.setStrokingColor(java.awt.Color.LIGHT_GRAY);
+                    canvas.setStrokingColor(Color.LIGHT_GRAY);
                     canvas.setLineWidth(0.5f);
                     canvas.moveTo(50, 50);
                     canvas.lineTo(width - 50, 50);
@@ -1226,7 +1259,7 @@ public class ReportPdfAggregator {
                     String pageColorHex = (paginationConfig != null && paginationConfig.getColor() != null) ? paginationConfig.getColor() : DEFAULT_COLOR_SECONDARY;
 
                     canvas.beginText();
-                    canvas.setNonStrokingColor(java.awt.Color.decode(pageColorHex));
+                    canvas.setNonStrokingColor(parseColor(pageColorHex, COLOR_SECONDARY));
                     PDType1Font regularFont = resolveFont(pageFontName, false);
                     canvas.setFont(regularFont, pageFontSize);
                     canvas.newLineAtOffset(width - 120, 38);
@@ -1291,7 +1324,7 @@ public class ReportPdfAggregator {
 
             try (PDPageContentStream canvas = new PDPageContentStream(doc, page)) {
                 canvas.beginText();
-                java.awt.Color titleColor = java.awt.Color.decode(config.getColor() != null ? config.getColor() : DEFAULT_COLOR_PRIMARY);
+                Color titleColor = parseColor(config.getColor(), COLOR_PRIMARY);
                 canvas.setNonStrokingColor(titleColor);
                 PDType1Font boldFont = resolveFont(config.getFont() != null ? config.getFont() : DEFAULT_FONT_ARIAL_BOLD, true);
                 canvas.setFont(boldFont, config.getSize() != null ? config.getSize() : 16);
@@ -1299,7 +1332,7 @@ public class ReportPdfAggregator {
                 canvas.showText(sanitizeTextForFont(resolveI18nKey(config.getTitle(), customI18n), boldFont));
                 canvas.endText();
 
-                canvas.setStrokingColor(java.awt.Color.LIGHT_GRAY);
+                canvas.setStrokingColor(Color.LIGHT_GRAY);
                 canvas.setLineWidth(1.0f);
                 canvas.moveTo(50, height - 95);
                 canvas.lineTo(width - 50, height - 95);
@@ -1315,7 +1348,7 @@ public class ReportPdfAggregator {
                     if (pNum != null) {
                         String sectionTitle = resolveI18nKey(sec.getTitle(), customI18n);
                         canvas.beginText();
-                        canvas.setNonStrokingColor(java.awt.Color.DARK_GRAY);
+                        canvas.setNonStrokingColor(Color.DARK_GRAY);
                         canvas.setFont(regularFont, 10);
                         canvas.newLineAtOffset(50, y);
                         canvas.showText(sanitizeTextForFont(sectionTitle, regularFont));
@@ -1326,7 +1359,7 @@ public class ReportPdfAggregator {
                         canvas.showText(String.valueOf(pNum));
                         canvas.endText();
 
-                        canvas.setStrokingColor(java.awt.Color.LIGHT_GRAY);
+                        canvas.setStrokingColor(Color.LIGHT_GRAY);
                         canvas.setLineWidth(0.5f);
                         canvas.setLineDashPattern(new float[]{1, 3}, 0);
                         canvas.moveTo(150 + regularFont.getStringWidth(sectionTitle) / 100f, y + 2);
