@@ -86,14 +86,6 @@ public class SurveyServiceImpl implements SurveyService {
 	 */
 	private static final String CONF_SUBSIDIARY_SCOPE_ENABLED = "beCPG.survey.subsidiaryScope.enabled";
 
-	/**
-	 * Constant <code>CONF_CREATE_MISSING_ROWS="beCPG.survey.createMissingRows.enabled"</code>
-	 * <p>
-	 * Opt-in, <code>false</code> in the shipped configuration : see
-	 * {@link #createMissingRows(NodeRef, String, Map, Set, Predicate)}.
-	 */
-	private static final String CONF_CREATE_MISSING_ROWS = "beCPG.survey.createMissingRows.enabled";
-
 	/*
 	 * data :
 	 * [{"qid":"q1","cid":"q1r1"},{"qid":"q2","cid":"q2r1","comment":"Test"},{"qid":"q3a","cid":"q3ar1","listOptions":"1"},{"qid":"q3b","cid":"q3br1","listOptions":"1,3"},{"qid":"q4a","cid":"q4ar2"}]
@@ -227,10 +219,7 @@ public class SurveyServiceImpl implements SurveyService {
 	        }
 	    }
 
-	    final Predicate<SurveyQuestion> subsidiaryScope = createSubsidiaryScopeFilter(entityNodeRef);
-	    final Set<String> written = new HashSet<>();
-
-	    for (SurveyListDataItem survey : filterSubsidiaryScope(getSurveys(entityNodeRef, dataListName), subsidiaryScope)) {
+	    for (SurveyListDataItem survey : filterSubsidiaryScope(getSurveys(entityNodeRef, dataListName), createSubsidiaryScopeFilter(entityNodeRef))) {
 	    	final List<NodeRef> choices = survey.getChoices();
 	        // Reset survey
 	        survey.setComment(null);
@@ -240,174 +229,42 @@ public class SurveyServiceImpl implements SurveyService {
 
 	        JSONObject value = valueByQid.get(survey.getQuestion().getId());
 	        if (value != null) {
-	            applyValue(survey, value, choices);
-	            written.add(survey.getQuestion().getId());
+	            // Handle comment
+	            String comment = value.optString("comment", null);
+	            if (comment != null) {
+	                survey.setComment(comment);
+
+	                if (choices != null && !choices.isEmpty()) {
+	                    SurveyQuestion choice = (SurveyQuestion) alfrescoRepository.findOne(choices.get(0));
+	                    String type = choice.getResponseCommentType();
+	                    try {
+	                        switch (type) {
+	                            case "number", "int", "percentage":
+	                                survey.setNumberComment(Double.parseDouble(comment));
+	                                break;
+	                            case "date", "dateTime":
+	                            	 survey.setDateComment(ISO8601DateFormat.parse(comment));
+	                                break;
+	                            default:
+	                                break;
+	                        }
+	                    } catch (Exception e) {
+	                        logger.error("Cannot convert '"+comment+"' into '"+type+"' for survey "+survey.getName(), e);
+	                    }
+	                }
+	            }
+
+	            // Handle choices
+	            String options = value.optString("listOptions", value.optString("cid", null));
+	            if (options != null) {
+	                for (String cid : options.split(",")) {
+	                    survey.getChoices().add(createNodeRef(cid.trim()));
+	                }
+	            }
 	        }
 
 	        alfrescoRepository.save(survey);
 	    }
-
-	    if (Boolean.parseBoolean(systemConfigurationService.confValue(CONF_CREATE_MISSING_ROWS))) {
-	        createMissingRows(entityNodeRef, dataListName, valueByQid, written, subsidiaryScope);
-	    }
-	}
-
-	/**
-	 * Applies one posted answer to a survey row, whether that row already existed or has just been
-	 * created. The row must have been reset by the caller.
-	 *
-	 * @param survey a {@link fr.becpg.repo.survey.data.SurveyListDataItem} object
-	 * @param value a {@link org.json.JSONObject} object, the posted answer
-	 * @param previousChoices the choices the row carried before the reset, which name the response
-	 *            comment type : a freshly created row has none
-	 */
-	private void applyValue(SurveyListDataItem survey, JSONObject value, List<NodeRef> previousChoices) {
-	    String comment = value.optString("comment", null);
-	    if (comment != null) {
-	        survey.setComment(comment);
-
-	        if (previousChoices != null && !previousChoices.isEmpty()) {
-	            SurveyQuestion choice = (SurveyQuestion) alfrescoRepository.findOne(previousChoices.get(0));
-	            String type = choice.getResponseCommentType();
-	            try {
-	                switch (type) {
-	                    case "number", "int", "percentage":
-	                        survey.setNumberComment(Double.parseDouble(comment));
-	                        break;
-	                    case "date", "dateTime":
-	                        survey.setDateComment(ISO8601DateFormat.parse(comment));
-	                        break;
-	                    default:
-	                        break;
-	                }
-	            } catch (Exception e) {
-	                logger.error("Cannot convert '"+comment+"' into '"+type+"' for survey "+survey.getName(), e);
-	            }
-	        }
-	    }
-
-	    String options = value.optString("listOptions", value.optString("cid", null));
-	    if (options != null) {
-	        for (String cid : options.split(",")) {
-	            survey.getChoices().add(createNodeRef(cid.trim()));
-	        }
-	    }
-	}
-
-	/**
-	 * Stores the answers to the questions the questionnaire SERVES but that no row asks.
-	 * <p>
-	 * {@link #getSurveyData(NodeRef, String, Boolean)} walks the existing rows and then follows
-	 * <code>survey:nextQuestion</code> recursively, so a follow-up question is described, revealed
-	 * and answerable while nothing on the entity can hold its answer. Without this, that answer is
-	 * accepted, acknowledged and dropped in silence.
-	 * <p>
-	 * A row is only ever created for a question inside that same closure : a supplier answers a
-	 * questionnaire, it never authors one.
-	 *
-	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @param dataListName a {@link java.lang.String} object
-	 * @param valueByQid the posted answers, keyed by question id
-	 * @param written the question ids an existing row already took
-	 * @param subsidiaryScope a {@link java.util.function.Predicate} object, see
-	 *            {@link #createSubsidiaryScopeFilter(NodeRef)}
-	 */
-	private void createMissingRows(NodeRef entityNodeRef, String dataListName, Map<String, JSONObject> valueByQid,
-			Set<String> written, Predicate<SurveyQuestion> subsidiaryScope) {
-
-		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
-		NodeRef dataListNodeRef = listContainerNodeRef != null ? entityListDAO.getList(listContainerNodeRef, dataListName) : null;
-		if (dataListNodeRef == null) {
-			return;
-		}
-
-		Map<String, SurveyQuestion> servedByQid = servedQuestions(entityNodeRef, dataListName, subsidiaryScope);
-
-		for (Map.Entry<String, JSONObject> entry : valueByQid.entrySet()) {
-			if (written.contains(entry.getKey())) {
-				continue;
-			}
-			SurveyQuestion question = servedByQid.get(entry.getKey());
-			if (question == null) {
-				continue;
-			}
-
-			SurveyListDataItem survey = new SurveyListDataItem(question.getNodeRef(), false);
-			survey.setParentNodeRef(dataListNodeRef);
-			survey.setSort(question.getSort());
-			survey.setChoices(new ArrayList<>());
-			applyValue(survey, entry.getValue(), null);
-			alfrescoRepository.save(survey);
-
-			logger.info("Created a survey row for question " + entry.getKey() + " on list " + dataListName + " of entity "
-					+ entityNodeRef + " : the questionnaire served it without a row to store it in");
-		}
-	}
-
-	/**
-	 * The questions the questionnaire really serves : those of the existing rows, and everything
-	 * reachable from them through <code>survey:nextQuestion</code>, subsidiary scope applied.
-	 * <p>
-	 * The walk follows the SAME two edges {@link #appendQuestionDefinition(JSONArray, SurveyQuestion,
-	 * Set, Map, Predicate)} follows, and that matters : a follow-up hangs off the CHOICE that reveals
-	 * it, not off the question, for every question rendered as radio buttons. Walking the question's
-	 * own <code>nextQuestion</code> alone would miss exactly the case this exists for.
-	 *
-	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
-	 * @param dataListName a {@link java.lang.String} object
-	 * @param subsidiaryScope a {@link java.util.function.Predicate} object
-	 * @return a {@link java.util.Map} object, keyed by question id
-	 */
-	private Map<String, SurveyQuestion> servedQuestions(NodeRef entityNodeRef, String dataListName,
-			Predicate<SurveyQuestion> subsidiaryScope) {
-
-		SurveyQuestionCache cache = getSurveyQuestionCache();
-		Map<NodeRef, SurveyQuestion> byNodeRef = cache.getSurveyQuestionByNodeRef();
-		Map<String, SurveyQuestion> served = new LinkedHashMap<>();
-		List<SurveyQuestion> pending = new ArrayList<>();
-
-		for (SurveyListDataItem survey : filterSubsidiaryScope(getSurveys(entityNodeRef, dataListName), subsidiaryScope)) {
-			SurveyQuestion question = survey.getQuestion() != null ? byNodeRef.get(survey.getQuestion()) : null;
-			if (question != null) {
-				pending.add(question);
-			}
-		}
-
-		while (!pending.isEmpty()) {
-			SurveyQuestion question = pending.remove(pending.size() - 1);
-			if (served.put(question.getNodeRef().getId(), question) != null) {
-				continue;
-			}
-
-			appendNextQuestions(question, pending, subsidiaryScope);
-			for (NodeRef choiceNodeRef : cache.getSurveyQuestionsByParent().getOrDefault(question, List.of())) {
-				SurveyQuestion choice = byNodeRef.get(choiceNodeRef);
-				if (choice != null) {
-					appendNextQuestions(choice, pending, subsidiaryScope);
-				}
-			}
-		}
-
-		return served;
-	}
-
-	/**
-	 * Queues everything a question or a choice reveals, subsidiary scope applied.
-	 *
-	 * @param from a {@link fr.becpg.repo.survey.data.SurveyQuestion} object
-	 * @param pending a {@link java.util.List} object, the walk's stack
-	 * @param subsidiaryScope a {@link java.util.function.Predicate} object
-	 */
-	private void appendNextQuestions(SurveyQuestion from, List<SurveyQuestion> pending,
-			Predicate<SurveyQuestion> subsidiaryScope) {
-		if (from.getNextQuestions() == null) {
-			return;
-		}
-		for (SurveyQuestion next : from.getNextQuestions()) {
-			if (next != null && subsidiaryScope.test(next)) {
-				pending.add(next);
-			}
-		}
 	}
 
 
