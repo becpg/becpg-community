@@ -415,14 +415,14 @@ public class ReportPdfAggregator {
 
             Map<AnnexSection, Integer> sectionToMergedPageMap = new HashMap<>();
             Map<AnnexDocument, Integer> docToMergedPageMap = new HashMap<>();
-            calculateMergedPageMetrics(parts, sectionToMergedPageMap, docToMergedPageMap);
+            Integer tocPageIndex = calculateMergedPageMetrics(parts, sectionToMergedPageMap, docToMergedPageMap);
 
             generateRealTocIfEnabled(parts, sections, sectionToMergedPageMap, tocConfig, customI18n);
 
             Map<Integer, Integer> originalToMergedPageMap = new HashMap<>();
             byte[] mergedPdfBytes = executeSequentialMerge(parts, bodyPdf, docToMergedPageMap, originalToMergedPageMap);
 
-            byte[] result = postProcessMergedPdf(mergedPdfBytes, bodyPdf, numBodyPages, sections, sectionToMergedPageMap, docToMergedPageMap, textTokens, outlineBookmarks, header, logoBytes, properties, headingStyle, tocConfig, paginationConfig, originalToMergedPageMap, customI18n, placeholderStyle);
+            byte[] result = postProcessMergedPdf(mergedPdfBytes, bodyPdf, numBodyPages, sections, sectionToMergedPageMap, docToMergedPageMap, textTokens, outlineBookmarks, header, logoBytes, properties, headingStyle, tocConfig, paginationConfig, originalToMergedPageMap, customI18n, placeholderStyle, tocPageIndex);
             if (logger.isDebugEnabled()) {
                 logger.debug("[ReportPdfAggregator] Assemble operation completed successfully. Final PDF size: " + result.length + " bytes");
             }
@@ -555,14 +555,17 @@ public class ReportPdfAggregator {
         return parts;
     }
 
-    private static void calculateMergedPageMetrics(List<MergePart> parts, Map<AnnexSection, Integer> sectionToMergedPageMap, Map<AnnexDocument, Integer> docToMergedPageMap) throws Exception {
+    private static Integer calculateMergedPageMetrics(List<MergePart> parts, Map<AnnexSection, Integer> sectionToMergedPageMap, Map<AnnexDocument, Integer> docToMergedPageMap) throws Exception {
         int runningPageCount = 0;
+        Integer tocPageIndex = null;
         for (MergePart part : parts) {
             if (part.isBody) {
                 runningPageCount += (part.bodyEnd - part.bodyStart) + 1;
             } else {
                 if (part.section != null) {
                     sectionToMergedPageMap.put(part.section, runningPageCount);
+                } else {
+                    tocPageIndex = runningPageCount;
                 }
                 if (part.generatedPlaceholder != null) {
                     runningPageCount += 1;
@@ -580,6 +583,7 @@ public class ReportPdfAggregator {
                 }
             }
         }
+        return tocPageIndex;
     }
 
     private static void generateRealTocIfEnabled(List<MergePart> parts, List<AnnexSection> sections, Map<AnnexSection, Integer> sectionToMergedPageMap, TableOfContentsModel tocConfig, Map<String, String> customI18n) throws Exception {
@@ -658,7 +662,7 @@ public class ReportPdfAggregator {
         return mergedPdfBytes;
     }
 
-    private static byte[] postProcessMergedPdf(byte[] mergedPdfBytes, byte[] bodyPdf, int numBodyPages, List<AnnexSection> sections, Map<AnnexSection, Integer> sectionToMergedPageMap, Map<AnnexDocument, Integer> docToMergedPageMap, List<TokenLocator.FoundToken> textTokens, Map<String, Integer> outlineBookmarks, HeaderModel header, byte[] logoBytes, Map<String, String> properties, ComponentHeadingStyle headingStyle, TableOfContentsModel tocConfig, PaginationModel paginationConfig, Map<Integer, Integer> originalToMergedPageMap, Map<String, String> customI18n, PlaceholderStyle placeholderStyle) throws Exception {
+    private static byte[] postProcessMergedPdf(byte[] mergedPdfBytes, byte[] bodyPdf, int numBodyPages, List<AnnexSection> sections, Map<AnnexSection, Integer> sectionToMergedPageMap, Map<AnnexDocument, Integer> docToMergedPageMap, List<TokenLocator.FoundToken> textTokens, Map<String, Integer> outlineBookmarks, HeaderModel header, byte[] logoBytes, Map<String, String> properties, ComponentHeadingStyle headingStyle, TableOfContentsModel tocConfig, PaginationModel paginationConfig, Map<Integer, Integer> originalToMergedPageMap, Map<String, String> customI18n, PlaceholderStyle placeholderStyle, Integer tocPageIndex) throws Exception {
         boolean tocEnabled = tocConfig != null && tocConfig.isEnabled();
         boolean paginationEnabled = paginationConfig != null && paginationConfig.isEnabled();
 
@@ -674,11 +678,11 @@ public class ReportPdfAggregator {
             }
 
             if (tocEnabled) {
-                addClickableToCLinks(finalDoc, sections, sectionToMergedPageMap);
+                addClickableToCLinks(finalDoc, sections, sectionToMergedPageMap, tocPageIndex);
             }
 
             if (header != null || paginationEnabled) {
-                stampRunningHeadersFooters(finalDoc, header, logoBytes, properties, originalToMergedPageMap, sections, docToMergedPageMap, tocEnabled, paginationConfig, paginationEnabled, customI18n);
+                stampRunningHeadersFooters(finalDoc, header, logoBytes, properties, originalToMergedPageMap, sections, docToMergedPageMap, tocPageIndex, paginationConfig, paginationEnabled, customI18n);
             }
 
             ByteArrayOutputStream finalOut = new ByteArrayOutputStream();
@@ -790,15 +794,18 @@ public class ReportPdfAggregator {
         }
     }
 
-    private static void addClickableToCLinks(PDDocument finalDoc, List<AnnexSection> sections, Map<AnnexSection, Integer> sectionToMergedPageMap) throws IOException {
-        PDPage tocPage = finalDoc.getPage(1);
+    private static void addClickableToCLinks(PDDocument finalDoc, List<AnnexSection> sections, Map<AnnexSection, Integer> sectionToMergedPageMap, Integer tocPageIndex) throws IOException {
+        if (tocPageIndex == null || tocPageIndex < 0 || tocPageIndex >= finalDoc.getNumberOfPages()) {
+            return;
+        }
+        PDPage tocPage = finalDoc.getPage(tocPageIndex);
         float y = tocPage.getMediaBox().getHeight() - 130;
         for (AnnexSection sec : sections) {
             if (sec.getDocuments() == null || sec.getDocuments().isEmpty()) {
                 continue;
             }
             Integer targetMergedPage = sectionToMergedPageMap.get(sec);
-            if (targetMergedPage != null) {
+            if (targetMergedPage != null && targetMergedPage >= 0 && targetMergedPage < finalDoc.getNumberOfPages()) {
                 PDAnnotationLink link = new PDAnnotationLink();
                 PDBorderStyleDictionary border = new PDBorderStyleDictionary();
                 border.setWidth(0);
@@ -823,10 +830,10 @@ public class ReportPdfAggregator {
         }
     }
 
-    private static void stampRunningHeadersFooters(PDDocument finalDoc, HeaderModel header, byte[] logoBytes, Map<String, String> properties, Map<Integer, Integer> originalToMergedPageMap, List<AnnexSection> sections, Map<AnnexDocument, Integer> docToMergedPageMap, boolean tocEnabled, PaginationModel paginationConfig, boolean paginationEnabled, Map<String, String> customI18n) throws IOException {
+    private static void stampRunningHeadersFooters(PDDocument finalDoc, HeaderModel header, byte[] logoBytes, Map<String, String> properties, Map<Integer, Integer> originalToMergedPageMap, List<AnnexSection> sections, Map<AnnexDocument, Integer> docToMergedPageMap, Integer tocPageIndex, PaginationModel paginationConfig, boolean paginationEnabled, Map<String, String> customI18n) throws IOException {
         Set<Integer> noHeaderPageIndexes = new HashSet<>(originalToMergedPageMap.values());
-        if (tocEnabled) {
-            noHeaderPageIndexes.add(1);
+        if (tocPageIndex != null) {
+            noHeaderPageIndexes.add(tocPageIndex);
         }
         for (AnnexSection section : sections) {
             if (section.getDocuments() != null) {
@@ -937,7 +944,7 @@ public class ReportPdfAggregator {
 
     private static byte[] generatePlaceholderPdf(String text) throws IOException {
         try (PDDocument doc = new PDDocument()) {
-            PDPage page = new PDPage();
+            PDPage page = new PDPage(PDRectangle.A4);
             doc.addPage(page);
             try (PDPageContentStream canvas = new PDPageContentStream(doc, page)) {
                 canvas.beginText();
@@ -1222,7 +1229,7 @@ public class ReportPdfAggregator {
 
     private static byte[] generateDynamicTocPage(List<AnnexSection> sections, Map<String, Integer> sectionPages, TableOfContentsModel config, Map<String, String> customI18n) throws IOException {
         try (PDDocument doc = new PDDocument()) {
-            PDPage page = new PDPage();
+            PDPage page = new PDPage(PDRectangle.A4);
             doc.addPage(page);
             PDRectangle mediaBox = page.getMediaBox();
             float width = mediaBox.getWidth();
