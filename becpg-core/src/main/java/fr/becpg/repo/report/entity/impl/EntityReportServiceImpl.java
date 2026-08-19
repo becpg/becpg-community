@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -400,6 +401,13 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		List<NodeRef> tplsNodeRef = getReportTplsToGenerate(entityNodeRef);
 
 		tplsNodeRef = reportTplService.cleanDefaultTpls(tplsNodeRef);
+
+		if (reportKind != null && !reportKind.isEmpty()) {
+			tplsNodeRef = tplsNodeRef.stream().filter(tplNodeRef -> {
+				List<String> reportKindProp = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS);
+				return reportKindProp != null && reportKindProp.contains(reportKind);
+			}).collect(Collectors.toList());
+		}
 
 		List<NodeRef> newReports = new ArrayList<>();
 
