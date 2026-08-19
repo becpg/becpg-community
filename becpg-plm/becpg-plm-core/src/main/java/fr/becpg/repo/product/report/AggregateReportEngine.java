@@ -238,20 +238,38 @@ public class AggregateReportEngine implements BeCPGReportEngine {
     }
 
     private byte[] loadLogoBytes(AggregateReportConfig config, List<NodeRef> assocFiles) throws Exception {
-        String logoName = config.getHeader() != null ? config.getHeader().getLogo() : null;
-        if (logoName == null || assocFiles == null) {
+        if (assocFiles == null || assocFiles.isEmpty()) {
             return null;
         }
-
-        for (NodeRef assoc : assocFiles) {
-            String name = (String) nodeService.getProperty(assoc, ContentModel.PROP_NAME);
-            if (logoName.equalsIgnoreCase(name) || (name != null && name.toLowerCase().startsWith("logo"))) {
-                ContentReader r = contentService.getReader(assoc, ContentModel.PROP_CONTENT);
-                if (r != null && r.exists()) {
-                    try (InputStream is = r.getContentInputStream()) {
-                        return is.readAllBytes();
+        String logoName = config.getHeader() != null ? config.getHeader().getLogo() : null;
+        if (logoName != null && !logoName.trim().isEmpty()) {
+            for (NodeRef assoc : assocFiles) {
+                String name = (String) nodeService.getProperty(assoc, ContentModel.PROP_NAME);
+                if (logoName.equalsIgnoreCase(name)) {
+                    byte[] bytes = readContentBytes(assoc);
+                    if (bytes != null) {
+                        return bytes;
                     }
                 }
+            }
+        }
+        for (NodeRef assoc : assocFiles) {
+            String name = (String) nodeService.getProperty(assoc, ContentModel.PROP_NAME);
+            if (name != null && name.toLowerCase().startsWith("logo")) {
+                byte[] bytes = readContentBytes(assoc);
+                if (bytes != null) {
+                    return bytes;
+                }
+            }
+        }
+        return null;
+    }
+
+    private byte[] readContentBytes(NodeRef nodeRef) throws Exception {
+        ContentReader r = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
+        if (r != null && r.exists()) {
+            try (InputStream is = r.getContentInputStream()) {
+                return is.readAllBytes();
             }
         }
         return null;
