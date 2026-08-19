@@ -523,6 +523,10 @@ public class MLTextHelper {
 	/**
 	 * <p>getUserLocale.</p>
 	 *
+	 * Users without a language of their own follow the browser or the server language. Missing
+	 * translations are resolved by the resource bundles themselves, there is no reason to force
+	 * every other language to English here.
+	 *
 	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
 	 * @param personNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @return a {@link java.util.Locale} object
@@ -530,19 +534,7 @@ public class MLTextHelper {
 	public static Locale getUserLocale(NodeService nodeService, NodeRef personNodeRef) {
 		String loc = (String) nodeService.getProperty(personNodeRef, BeCPGModel.PROP_USER_LOCALE);
 		if ((loc == null) || loc.isEmpty()) {
-			Locale currentLocale = Locale.getDefault();
-
-			if (useBrowserLocale()) {
-				currentLocale = I18NUtil.getLocale();
-			}
-			if (!Locale.FRENCH.getLanguage().equals(currentLocale.getLanguage())) {
-				if (Locale.US.getCountry().equals(currentLocale.getCountry())) {
-					return Locale.US;
-				}
-				return Locale.ENGLISH;
-			}
-			return Locale.FRENCH;
-
+			return useBrowserLocale() ? I18NUtil.getLocale() : Locale.getDefault();
 		}
 		return MLTextHelper.parseLocale(loc);
 	}
