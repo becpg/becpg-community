@@ -143,6 +143,15 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 			throws IOException, ReportException, ParseException {
 		ContentReader reader = contentService.getReader(entry.getImageNodeRef(), ContentModel.PROP_CONTENT);
 		if ((reader == null) || !reader.exists()) {
+			/*
+			 * Sortie silencieuse jusqu'ici : le rapport partait ampute de l'image sans
+			 * que rien ne le signale, ni dans les logs ni au lecteur du rapport.
+			 */
+			logger.warn("No content for report image " + entry + ", it will be missing from the report");
+
+			reportData.getLogs()
+					.add(new ReportableError(ReportableErrorType.ERROR, "No content for image: " + entry,
+							MLTextHelper.getI18NMessage("message.report.image.missing", entry.getName()), List.of(tplNodeRef)));
 			return;
 		}
 		try (InputStream in = reader.getContentInputStream()) {
@@ -226,7 +235,21 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 					if (RetryingTransactionHelper.extractRetryCause(e) != null) {
 						throw e;
 					}
-					logger.error(e, e);
+
+					/*
+					 * Une image qui echoue ne doit pas faire echouer le rapport, mais
+					 * elle ne doit pas non plus disparaitre en silence : jusqu'ici seul
+					 * un log etait emis, si bien que le document sortait ampute d'une
+					 * image sans que son lecteur puisse le savoir.
+					 */
+					logger.error("Failed to send report image: " + entry, e);
+
+					String reason = (e.getMessage() != null) ? e.getMessage() : e.getClass().getSimpleName();
+
+					reportData.getLogs()
+							.add(new ReportableError(ReportableErrorType.ERROR, "Failed to send image: " + entry,
+									MLTextHelper.getI18NMessage("message.report.image.error", entry.getName(), reason),
+									List.of(tplNodeRef)));
 				}
 			}
 			
@@ -237,17 +260,36 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 				reportSession.setTimeZone(timeZoneParam);
 			}
 			
+			/*
+			 * Le datasource transite par un fichier temporaire, pas par le heap.
+			 *
+			 * Une version precedente serialisait dans un ByteArrayOutputStream puis
+			 * en tirait un toByteArray() : cela maintenait deux copies completes du
+			 * datasource en memoire par rapport concurrent, en plus de l'arbre
+			 * dom4j. Sur des datasources de plusieurs Mo et une dizaine de rapports
+			 * simultanes, c'est un consommateur de heap de premier ordre. Le
+			 * fichier temporaire borne l'empreinte a un tampon, au prix d'ecritures
+			 * sequentielles.
+			 */
+			File tempFile = null;
 			try {
-				java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream();
-				org.apache.commons.io.output.CountingOutputStream countingOut = new org.apache.commons.io.output.CountingOutputStream(bos);
-				try (OutputStream outStream = new BufferedOutputStream(countingOut)) {
+				tempFile = TempFileProvider.createTempFile("datasource-", ".xml");
+
+				try (OutputStream outStream = new BufferedOutputStream(new FileOutputStream(tempFile))) {
 					XMLWriter writer = new XMLWriter(outStream);
 					writer.write(reportData.getXmlDataSource());
 					writer.flush();
 				}
-				
-				long datasourceSize = countingOut.getByteCount();
-				
+
+				long datasourceSize = tempFile.length();
+
+				/*
+				 * On publie la taille des l'ecriture, avant l'envoi : l'appelant
+				 * peut ainsi la porter a son audit sans refaire une passe de
+				 * serialisation, y compris si l'envoi echoue ensuite.
+				 */
+				reportData.setDatasourceSize(datasourceSize);
+
 				if (datasourceSize > reportDatasourceMaxSizeInBytes()) {
 					reportData.getLogs()
 							.add(new ReportableError(ReportableErrorType.WARNING, "Datasource size exceeds: " + params,
@@ -255,8 +297,8 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 											FileUtils.byteCountToDisplaySize(datasourceSize),
 											FileUtils.byteCountToDisplaySize(reportDatasourceMaxSizeInBytes())), List.of(tplNodeRef)));
 				}
-				
-				try (InputStream in = new BufferedInputStream(new java.io.ByteArrayInputStream(bos.toByteArray()))) {
+
+				try (InputStream in = new BufferedInputStream(new FileInputStream(tempFile))) {
 					List<String> errors = generateReport(reportSession, in, out);
 					
 					for (String error : errors) {
@@ -266,8 +308,22 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 					}
 				}
 			} catch (IOException e) {
-				logger.error("Failed to write/read XML datasource", e);
+				/*
+				 * Ce bloc couvre aussi l'envoi du rapport : un abandon de l'appelant
+				 * remonte ici. Le message reste volontairement explicite sur les deux
+				 * causes possibles, il a longtemps laisse croire a un probleme de
+				 * datasource alors que le client etait simplement parti.
+				 */
+				logger.error("Failed to write XML datasource or to stream the report to the report server", e);
 				throw new ReportException("Failed to process datasource", e);
+			} finally {
+				if ((tempFile != null) && tempFile.exists()) {
+					try {
+						Files.delete(tempFile.toPath());
+					} catch (IOException e) {
+						logger.warn("Could not delete temporary datasource file " + tempFile, e);
+					}
+				}
 			}
 		});
 

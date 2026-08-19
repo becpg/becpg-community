@@ -40,6 +40,8 @@ public class EntityReportData {
 	
 	private Set<ReportableError> logs = new LinkedHashSet<>();
 	
+	private Long datasourceSize;
+	
 	/**
 	 * <p>Getter for the field <code>xmlDataSource</code>.</p>
 	 *
@@ -92,6 +94,28 @@ public class EntityReportData {
 	 */
 	public void setLogs(Set<ReportableError> logs) {
 		this.logs = logs;
+	}
+
+	/**
+	 * <p>Getter for the field <code>datasourceSize</code>.</p>
+	 *
+	 * Taille en octets du datasource XML une fois serialise, renseignee par le
+	 * moteur qui l'a effectivement serialise. Evite a l'appelant de refaire une
+	 * passe de serialisation complete juste pour la mesurer.
+	 *
+	 * @return la taille en octets, ou {@code null} si aucun moteur ne l'a publiee
+	 */
+	public Long getDatasourceSize() {
+		return datasourceSize;
+	}
+
+	/**
+	 * <p>Setter for the field <code>datasourceSize</code>.</p>
+	 *
+	 * @param datasourceSize la taille en octets du datasource serialise
+	 */
+	public void setDatasourceSize(Long datasourceSize) {
+		this.datasourceSize = datasourceSize;
 	}
 	
 	/**

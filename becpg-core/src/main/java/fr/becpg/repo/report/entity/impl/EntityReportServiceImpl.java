@@ -289,7 +289,10 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	 * @param generateAllReports a boolean
 	 */
 	private void generateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo, boolean generateAllReports) {
-		ReentrantLock lock = mutexFactory.getMutex("report-"+nodeRefTo.getId());
+		// La cle doit etre identique a celle passee plus bas a removeMutex, sans quoi
+		// l'entree n'est jamais retiree de la table des mutex.
+		String mutexKey = "report-" + nodeRefTo.getId();
+		ReentrantLock lock = mutexFactory.getMutex(mutexKey);
 	    boolean lockAcquired = false;
 	    
 	    try {
@@ -312,7 +315,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	        // Only release the lock if we acquired it in this method call
 	        if (lockAcquired) {
 	            lock.unlock();
-	            mutexFactory.removeMutex(nodeRefTo.toString(), lock);
+	            mutexFactory.removeMutex(mutexKey, lock);
 	        }
 	    }
 	}
@@ -514,15 +517,29 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 												
 												filterByReportKind(reportData.getXmlDataSource(), tplNodeRef);
 												
-												auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, estimateXmlSize(reportData.getXmlDataSource()));
-												
 												if (logger.isTraceEnabled()) {
 													logger.trace(FILTERED_DATASOURCE_XML_TRACE + getTruncatedXml(reportData.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
 												}
 												
 											}
 											
-											engine.createReport(tplNodeRef, reportData, writer.getContentOutputStream(), params);
+											try {
+												engine.createReport(tplNodeRef, reportData, writer.getContentOutputStream(), params);
+											} finally {
+												/*
+												 * La taille du datasource etait mesuree juste avant cet appel par une
+												 * passe de serialisation complete jetee ensuite, alors que le moteur XML
+												 * serialise de toute facon le meme arbre pour l'envoyer : deux passes
+												 * par rapport. On lit desormais la valeur publiee par le moteur, avec
+												 * repli sur la mesure si aucun moteur ne l'a renseignee.
+												 *
+												 * Dans un finally pour que l'attribut reste renseigne en cas d'echec,
+												 * comme c'etait le cas quand il etait pose avant l'appel.
+												 */
+												if (engine.isXmlEngine()) {
+													auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, datasourceSize(reportData));
+												}
+											}
 											
 											auditScope.addCheckpoint(CREATE_REPORT);
 											
@@ -688,6 +705,27 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	 * @param element a {@link org.dom4j.Element} object
 	 * @return a long
 	 */
+	/**
+	 * Taille du datasource XML pour l'audit.
+	 *
+	 * Le moteur qui serialise reellement le datasource publie la taille obtenue
+	 * (voir ReportServerEngine) : on la reutilise plutot que de refaire une passe
+	 * de serialisation complete. Le repli couvre les moteurs qui ne la publient
+	 * pas et le cas ou la generation echoue avant serialisation.
+	 *
+	 * @param reportData les donnees du rapport
+	 * @return la taille en octets, 0 si le datasource est absent
+	 */
+	private long datasourceSize(EntityReportData reportData) {
+		Long published = reportData.getDatasourceSize();
+		if (published != null) {
+			return published;
+		}
+
+		Element xmlDataSource = reportData.getXmlDataSource();
+		return xmlDataSource != null ? estimateXmlSize(xmlDataSource) : 0L;
+	}
+
 	private long estimateXmlSize(Element element) {
 		class CountingOutputStream extends OutputStream {
 			private long count = 0;
@@ -1172,15 +1210,29 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 									
 									filterByReportKind(reportData.getXmlDataSource(), tplNodeRef);
 									
-									auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, estimateXmlSize(reportData.getXmlDataSource()));
-									
 									if (logger.isTraceEnabled()) {
 										logger.trace(FILTERED_DATASOURCE_XML_TRACE + getTruncatedXml(reportData.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
 									}
 									
 								}
 								
-								engine.createReport(tplNodeRef, reportData, writer.getContentOutputStream(), params);
+								try {
+									engine.createReport(tplNodeRef, reportData, writer.getContentOutputStream(), params);
+								} finally {
+									/*
+									 * La taille du datasource etait mesuree juste avant cet appel par une
+									 * passe de serialisation complete jetee ensuite, alors que le moteur XML
+									 * serialise de toute facon le meme arbre pour l'envoyer : deux passes
+									 * par rapport. On lit desormais la valeur publiee par le moteur, avec
+									 * repli sur la mesure si aucun moteur ne l'a renseignee.
+									 *
+									 * Dans un finally pour que l'attribut reste renseigne en cas d'echec,
+									 * comme c'etait le cas quand il etait pose avant l'appel.
+									 */
+									if (engine.isXmlEngine()) {
+										auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, datasourceSize(reportData));
+									}
+								}
 								
 								auditScope.addCheckpoint(CREATE_REPORT);
 								
@@ -1263,6 +1315,31 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	 */
 	private void internalGenerateReport(NodeRef entityNodeRef, NodeRef templateNodeRef, EntityReportParameters reportParameters, Locale locale,
 			ReportFormat reportFormat, OutputStream outputStream, Set<ReportableError> engineErrors) {
+
+		/*
+		 * Le chemin distant ne posait aucun contexte de cache L2, contrairement au
+		 * chemin batch (voir internalGenerateReports). Sans contexte,
+		 * L2CacheSupport.getCurrentThreadCache() rend une HashMap jetable a chaque
+		 * appel : tous les findOne manquent et chaque ligne de datalist recharge
+		 * ses cibles d'association. Sur un produit fini avec compoList, ingList et
+		 * nutList, c'est un N+1 caracteristique.
+		 *
+		 * On n'ouvre un contexte que s'il n'y en a pas deja : un contexte imbrique
+		 * repartirait sur un cache vide et penaliserait la generation batch, qui a
+		 * deja rechauffe le sien.
+		 */
+		if (L2CacheSupport.isThreadCacheEnable()) {
+			doInternalGenerateReport(entityNodeRef, templateNodeRef, reportParameters, locale, reportFormat, outputStream, engineErrors);
+		} else {
+			L2CacheSupport.doInCacheContext(
+					() -> doInternalGenerateReport(entityNodeRef, templateNodeRef, reportParameters, locale, reportFormat, outputStream,
+							engineErrors),
+					false, true);
+		}
+	}
+
+	private void doInternalGenerateReport(NodeRef entityNodeRef, NodeRef templateNodeRef, EntityReportParameters reportParameters, Locale locale,
+			ReportFormat reportFormat, OutputStream outputStream, Set<ReportableError> engineErrors) {
 		AuthenticationUtil.runAsSystem(() -> {
 			Locale currentLocal = I18NUtil.getLocale();
 			Locale currentContentLocal = I18NUtil.getContentLocale();
@@ -1318,14 +1395,28 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 						filterByReportKind(reportData.getXmlDataSource(), templateNodeRef);
 						
-						auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, estimateXmlSize(reportData.getXmlDataSource()));
-
 						if (logger.isTraceEnabled()) {
 							logger.trace(FILTERED_DATASOURCE_XML_TRACE + getTruncatedXml(reportData.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
 						}
 					}
 
-					engine.createReport(templateNodeRef, reportData, outputStream, params);
+					try {
+						engine.createReport(templateNodeRef, reportData, outputStream, params);
+					} finally {
+						/*
+						 * La taille du datasource etait mesuree juste avant cet appel par une
+						 * passe de serialisation complete jetee ensuite, alors que le moteur XML
+						 * serialise de toute facon le meme arbre pour l'envoyer : deux passes
+						 * par rapport. On lit desormais la valeur publiee par le moteur, avec
+						 * repli sur la mesure si aucun moteur ne l'a renseignee.
+						 *
+						 * Dans un finally pour que l'attribut reste renseigne en cas d'echec,
+						 * comme c'etait le cas quand il etait pose avant l'appel.
+						 */
+						if (engine.isXmlEngine()) {
+							auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, datasourceSize(reportData));
+						}
+					}
 					
 					auditScope.addCheckpoint(CREATE_REPORT);
 
