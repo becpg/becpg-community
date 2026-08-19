@@ -223,6 +223,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 							ContentModel.TYPE_CONTENT, properties).getChildRef();
 					ContentReader reader = contentService.getReader(document, ContentModel.PROP_CONTENT);
 					ContentWriter writer = contentService.getWriter(documentCopy, ContentModel.PROP_CONTENT, true);
+					nodeService.addAspect(documentCopy, ContentModel.ASPECT_VERSIONABLE, null);
 					writer.setEncoding(reader.getEncoding());
 					writer.setMimetype(reader.getMimetype());
 					nodeService.createAssociation(documentCopy, document, ContentModel.ASSOC_ORIGINAL);
@@ -403,7 +404,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 			Version versionToRestore = versionHistory.getAllVersions().stream()
 					.filter(v -> v.getFrozenModifiedDate().before(projectCreationDate))
 					.max(Comparator.comparing(Version::getFrozenModifiedDate))
-					.orElse(null);
+					.orElse(versionHistory.getRootVersion());
 			if (versionToRestore != null) {
 				versionService.revert(documentNodeRef, versionToRestore);
 				documentNodeRef = signatureService.cancelDocument(documentNodeRef);
