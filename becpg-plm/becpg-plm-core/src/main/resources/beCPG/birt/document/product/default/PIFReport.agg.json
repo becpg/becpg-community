@@ -24,7 +24,7 @@
     "font": "Arial-Bold",
     "size": 11,
     "color": "#004254",
-    "prefix": "➣ "
+    "prefix": "> "
   },
 
   "placeholderStyle": {

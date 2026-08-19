@@ -36,7 +36,7 @@ public class ReportPdfAggregator {
     public static final String DEFAULT_COLOR_SECONDARY = "#404040";
     public static final String DEFAULT_COLOR_MUTED = "#808080";
     public static final String DEFAULT_COLOR_BLACK = "#000000";
-    public static final String DEFAULT_PREFIX_HEADING = "➣ ";
+    public static final String DEFAULT_PREFIX_HEADING = "> ";
     public static final String DEFAULT_MIMETYPE_PDF = "application/pdf";
 
     private static PDType1Font resolveFont(String fontName, boolean bold) {
