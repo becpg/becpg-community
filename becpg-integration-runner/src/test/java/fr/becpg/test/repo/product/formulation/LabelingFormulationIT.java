@@ -623,6 +623,97 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 				qtyPercWithYieldByIng.get(ing2).doubleValue(), subPercs.get(1), 0.2d);
 	}
 
+	/**
+	 * #34702, retour du 19/08 sur « FA - PIZZA PIECE » : l'étiquetage cru gonfle lui aussi le détail.
+	 *
+	 * The first fix was gated on {@code ingsLabelingWithYield}, so a label rendered without the yield
+	 * kept the old calculation : "tomate purée 20,2 % (tomate 20,2 %, huile végétale 0,2 %)" where the
+	 * ingredient list reads 20.1685 / 19.9668 / 0.2017. The bracket overflowed its parent by 1.2 %.
+	 *
+	 * The discrepancy comes from the composite not covering the raw material that brings it - here
+	 * 99 % next to a 1 % sibling - and not from the yield, so it shows up with or without it.
+	 */
+	@Test
+	public void testRenderSubIngsOfSharedCompositeWithoutYield() {
+
+		NodeRef compositeRawMaterialNodeRef = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("Shared composite raw material " + Calendar.getInstance().getTimeInMillis());
+			MLText legalName = new MLText("Legal shared composite raw material");
+			legalName.addValue(Locale.FRENCH, "Legal shared composite raw material");
+			legalName.addValue(Locale.ENGLISH, "Legal shared composite raw material");
+			rawMaterial.setLegalName(legalName);
+			rawMaterial.setDensity(1d);
+
+			List<IngListDataItem> ingList = new ArrayList<>();
+			ingList.add(IngListDataItem.build().withQtyPerc(99d).withIngredient(ing3).withIsManual(false));
+			ingList.add(IngListDataItem.build().withParent(ingList.get(0)).withQtyPerc(99d).withIngredient(ing1).withIsManual(false));
+			ingList.add(IngListDataItem.build().withParent(ingList.get(0)).withQtyPerc(1d).withIngredient(ing2).withIsManual(false));
+			ingList.add(IngListDataItem.build().withQtyPerc(1d).withIngredient(ing4).withIsManual(false));
+			rawMaterial.setIngList(ingList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial).getNodeRef();
+		});
+
+		// No yield anywhere : 100 kg in, 100 kg net.
+		NodeRef finishedProductNodeRef1 = inWriteTx(() -> {
+			FinishedProductData finishedProduct1 = new FinishedProductData();
+			finishedProduct1.setName("Finished product shared composite raw " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct1.setLegalName("legal Finished product shared composite raw");
+			finishedProduct1.setQty(100d);
+			finishedProduct1.setUnit(ProductUnit.kg);
+
+			List<CompoListDataItem> compoList1 = new ArrayList<>();
+			compoList1.add(CompoListDataItem.build().withQtyUsed(20d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(compositeRawMaterialNodeRef));
+			compoList1.add(CompoListDataItem.build().withQtyUsed(80d).withUnit(ProductUnit.kg).withLossPerc(0d)
+					.withDeclarationType(DeclarationType.Declare).withProduct(rawMaterial1NodeRef));
+
+			finishedProduct1.getCompoListView().setCompoList(compoList1);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		});
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+
+		labelingRuleList
+				.add(LabelingRuleListDataItem.build().withName("Rendu").withFormula("render()").withLabelingRuleType(LabelingRuleType.Render));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("%").withFormula("{0} {1,number,0.###%} ({2})")
+				.withLabelingRuleType(LabelingRuleType.Format));
+		// Deliberately no ingsLabelingWithYield : this is the raw label.
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Param1").withFormula("subIngsDefaultFormat = \"{0} {1,number,0.###%} ({2})\"")
+				.withLabelingRuleType(LabelingRuleType.Prefs));
+		labelingRuleList.add(LabelingRuleListDataItem.build().withName("Detail").withLabelingRuleType(LabelingRuleType.Detail)
+				.withComponents(Collections.singletonList(ing3)).withReplacements(null));
+
+		ProductData formulatedProduct = formulateWithLabelingRules(finishedProductNodeRef1, labelingRuleList);
+
+		Map<NodeRef, Double> qtyPercByIng = new HashMap<>();
+		for (IngListDataItem ingListDataItem : formulatedProduct.getIngList()) {
+			qtyPercByIng.put(ingListDataItem.getIng(), ingListDataItem.getQtyPerc());
+		}
+
+		String rendered = getFirstIll(formulatedProduct, Locale.FRENCH);
+		String context = "\n   - labeling  : " + rendered + "\n   - ingList   : composite=" + qtyPercByIng.get(ing3) + " child1="
+				+ qtyPercByIng.get(ing1) + " child2=" + qtyPercByIng.get(ing2);
+		logger.info("Rendered raw labeling of a shared composite:" + context);
+
+		double compositePerc = extractCompositePerc(rendered);
+		List<Double> subPercs = extractSubIngPercentages(rendered);
+
+		Assert.assertEquals("Expecting the two sub ingredients between brackets:" + context, 2, subPercs.size());
+		Assert.assertEquals("The composite ingredient must be the sum of its sub ingredients:" + context, compositePerc,
+				subPercs.get(0) + subPercs.get(1), 0.2d);
+
+		// And the raw label must tell the same story as the "Quantity" column of the ingredient list.
+		Assert.assertEquals("Composite percentage differs from the ingredient list:" + context,
+				qtyPercByIng.get(ing3).doubleValue(), compositePerc, 0.2d);
+		Assert.assertEquals("First sub ingredient differs from the ingredient list:" + context,
+				qtyPercByIng.get(ing1).doubleValue(), subPercs.get(0), 0.2d);
+		Assert.assertEquals("Second sub ingredient differs from the ingredient list:" + context,
+				qtyPercByIng.get(ing2).doubleValue(), subPercs.get(1), 0.2d);
+	}
+
 	/** The percentage rendered for the ingredient that carries a detail, ie the one followed by a bracket. */
 	private double extractCompositePerc(String rendered) {
 		Matcher matcher = Pattern.compile("([0-9]+(?:[.,][0-9]+)?)\\s*%\\s*\\(").matcher(rendered);

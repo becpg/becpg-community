@@ -3751,11 +3751,17 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	/**
 	 * <p>The ratio to hand to the sub ingredients of a detailed ingredient, so that they add up to it.</p>
 	 *
-	 * A composite is rendered with the yield, while its sub ingredients are divided by the "without yield" total it
-	 * carries - the only total the labeling tree maintains - and their own quantities do not add up to that total
-	 * either, being expressed against the item that brings them. The bracket then adds up to more than the ingredient
-	 * it details, the more so as the product loses weight around it (#34702). Scaling the rendered ratio by that
-	 * discrepancy makes the bracket a breakdown of its parent again.
+	 * The sub ingredients of a composite are divided by the total their parent carries, while their own quantities are
+	 * expressed against the item that brings them - the two only coincide when the composite covers that item on its
+	 * own. As soon as it shares it, the bracket adds up to more than the ingredient it details (#34702). Scaling the
+	 * rendered ratio by that discrepancy makes the bracket a breakdown of its parent again.
+	 *
+	 * This holds whether or not the yield is rendered : the discrepancy comes from the composite not covering its
+	 * item, not from the yield, which only widens it.
+	 *
+	 * Only an overshoot is corrected. Sub ingredients adding up to less than their parent are a composite that is
+	 * only partly declared - a raw material detailing one of its four ingredients - and rescaling those would inflate
+	 * the few that are declared up to the whole parent.
 	 *
 	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
 	 * @param component a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
@@ -3764,7 +3770,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	private BigDecimal computeSubIngsRatio(CompositeLabeling parent, LabelingComponent component, BigDecimal ratio) {
 
-		if (!ingsLabelingWithYield || !(component instanceof CompositeLabeling composite)) {
+		if (!(component instanceof CompositeLabeling composite)) {
 			return computeQtyPerc(parent, component, ratio, false);
 		}
 
@@ -3774,6 +3780,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		if ((renderedRatio == null) || (qtyTotal == null) || (subIngsQty == null) || (subIngsQty == 0d)) {
 			return computeQtyPerc(parent, component, ratio, false);
+		}
+
+		// Sub ingredients falling short of their parent are a partial declaration, which is legitimate :
+		// only an overshoot is impossible, and it is the signature of the scale artefact corrected here.
+		if (subIngsQty <= qtyTotal) {
+			return renderedRatio;
 		}
 
 		return renderedRatio.multiply(BigDecimal.valueOf(qtyTotal), PRECISION).divide(BigDecimal.valueOf(subIngsQty), PRECISION);
