@@ -9,6 +9,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,9 @@ public class AggregateReportModelBuilder {
 
     @Autowired
     private EntityReportService entityReportService;
+
+    @Autowired
+    private TransactionService transactionService;
 
     public List<AnnexSection> buildAnnexSections(NodeRef fpNodeRef, AggregateReportConfig config) {
         return buildAnnexSections(fpNodeRef, config, null);
@@ -302,9 +306,12 @@ public class AggregateReportModelBuilder {
 
         try {
             if (logger.isDebugEnabled()) {
-                logger.debug("Triggering getOrRefreshReportsOfKind for node " + entityNodeRef + ", reportKind: " + reportKind);
+                logger.debug("Triggering getOrRefreshReportsOfKind in isolated transaction for node " + entityNodeRef + ", reportKind: " + reportKind);
             }
-            entityReportService.getOrRefreshReportsOfKind(entityNodeRef, reportKind);
+            transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+                entityReportService.getOrRefreshReportsOfKind(entityNodeRef, reportKind);
+                return null;
+            }, false, true);
         } catch (Exception e) {
             logger.error("On-the-fly report refresh failed for node " + entityNodeRef + ": " + e.getMessage(), e);
         }
