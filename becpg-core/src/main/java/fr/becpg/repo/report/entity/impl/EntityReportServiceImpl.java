@@ -289,8 +289,8 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	 * @param generateAllReports a boolean
 	 */
 	private void generateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo, boolean generateAllReports) {
-		// La cle doit etre identique a celle passee plus bas a removeMutex, sans quoi
-		// l'entree n'est jamais retiree de la table des mutex.
+		// Must be the very key passed to removeMutex below, otherwise the entry is
+		// never removed from the mutex table.
 		String mutexKey = "report-" + nodeRefTo.getId();
 		ReentrantLock lock = mutexFactory.getMutex(mutexKey);
 	    boolean lockAcquired = false;
@@ -527,14 +527,11 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 												engine.createReport(tplNodeRef, reportData, writer.getContentOutputStream(), params);
 											} finally {
 												/*
-												 * La taille du datasource etait mesuree juste avant cet appel par une
-												 * passe de serialisation complete jetee ensuite, alors que le moteur XML
-												 * serialise de toute facon le meme arbre pour l'envoyer : deux passes
-												 * par rapport. On lit desormais la valeur publiee par le moteur, avec
-												 * repli sur la mesure si aucun moteur ne l'a renseignee.
+												 * The datasource size is read from the engine, which serializes the
+												 * tree anyway, instead of measuring it here with a second full pass.
+												 * Falls back to measuring it when no engine published one.
 												 *
-												 * Dans un finally pour que l'attribut reste renseigne en cas d'echec,
-												 * comme c'etait le cas quand il etait pose avant l'appel.
+												 * In a finally block so the attribute stays recorded on failure.
 												 */
 												if (engine.isXmlEngine()) {
 													auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, datasourceSize(reportData));
@@ -706,15 +703,15 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	 * @return a long
 	 */
 	/**
-	 * Taille du datasource XML pour l'audit.
+	 * Size of the XML datasource, for auditing.
 	 *
-	 * Le moteur qui serialise reellement le datasource publie la taille obtenue
-	 * (voir ReportServerEngine) : on la reutilise plutot que de refaire une passe
-	 * de serialisation complete. Le repli couvre les moteurs qui ne la publient
-	 * pas et le cas ou la generation echoue avant serialisation.
+	 * The engine that actually serializes the datasource publishes the size it
+	 * obtains, so it is reused here rather than recomputed with a full pass. The
+	 * fallback covers engines that publish nothing and generations that fail
+	 * before serialization.
 	 *
-	 * @param reportData les donnees du rapport
-	 * @return la taille en octets, 0 si le datasource est absent
+	 * @param reportData the report data
+	 * @return the size in bytes, 0 when there is no datasource
 	 */
 	private long datasourceSize(EntityReportData reportData) {
 		Long published = reportData.getDatasourceSize();
@@ -1220,14 +1217,11 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 									engine.createReport(tplNodeRef, reportData, writer.getContentOutputStream(), params);
 								} finally {
 									/*
-									 * La taille du datasource etait mesuree juste avant cet appel par une
-									 * passe de serialisation complete jetee ensuite, alors que le moteur XML
-									 * serialise de toute facon le meme arbre pour l'envoyer : deux passes
-									 * par rapport. On lit desormais la valeur publiee par le moteur, avec
-									 * repli sur la mesure si aucun moteur ne l'a renseignee.
+									 * The datasource size is read from the engine, which serializes the
+									 * tree anyway, instead of measuring it here with a second full pass.
+									 * Falls back to measuring it when no engine published one.
 									 *
-									 * Dans un finally pour que l'attribut reste renseigne en cas d'echec,
-									 * comme c'etait le cas quand il etait pose avant l'appel.
+									 * In a finally block so the attribute stays recorded on failure.
 									 */
 									if (engine.isXmlEngine()) {
 										auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, datasourceSize(reportData));
@@ -1317,16 +1311,13 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 			ReportFormat reportFormat, OutputStream outputStream, Set<ReportableError> engineErrors) {
 
 		/*
-		 * Le chemin distant ne posait aucun contexte de cache L2, contrairement au
-		 * chemin batch (voir internalGenerateReports). Sans contexte,
-		 * L2CacheSupport.getCurrentThreadCache() rend une HashMap jetable a chaque
-		 * appel : tous les findOne manquent et chaque ligne de datalist recharge
-		 * ses cibles d'association. Sur un produit fini avec compoList, ingList et
-		 * nutList, c'est un N+1 caracteristique.
+		 * Runs within an L2 cache context, like the batch path does. Without one,
+		 * L2CacheSupport.getCurrentThreadCache() hands back a throwaway map on every
+		 * call, so entity lookups all miss and each data list row reloads its
+		 * association targets, which is an N+1 on entities with many data lists.
 		 *
-		 * On n'ouvre un contexte que s'il n'y en a pas deja : un contexte imbrique
-		 * repartirait sur un cache vide et penaliserait la generation batch, qui a
-		 * deja rechauffe le sien.
+		 * A context is only opened when none is active: a nested one would start
+		 * from an empty cache and penalize a caller that already warmed its own.
 		 */
 		if (L2CacheSupport.isThreadCacheEnable()) {
 			doInternalGenerateReport(entityNodeRef, templateNodeRef, reportParameters, locale, reportFormat, outputStream, engineErrors);
@@ -1404,14 +1395,11 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 						engine.createReport(templateNodeRef, reportData, outputStream, params);
 					} finally {
 						/*
-						 * La taille du datasource etait mesuree juste avant cet appel par une
-						 * passe de serialisation complete jetee ensuite, alors que le moteur XML
-						 * serialise de toute facon le meme arbre pour l'envoyer : deux passes
-						 * par rapport. On lit desormais la valeur publiee par le moteur, avec
-						 * repli sur la mesure si aucun moteur ne l'a renseignee.
+						 * The datasource size is read from the engine, which serializes the
+						 * tree anyway, instead of measuring it here with a second full pass.
+						 * Falls back to measuring it when no engine published one.
 						 *
-						 * Dans un finally pour que l'attribut reste renseigne en cas d'echec,
-						 * comme c'etait le cas quand il etait pose avant l'appel.
+						 * In a finally block so the attribute stays recorded on failure.
 						 */
 						if (engine.isXmlEngine()) {
 							auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, datasourceSize(reportData));

@@ -135,14 +135,12 @@ public class EntityReportWebScript extends AbstractEntityWebScript {
 		} catch (IOException e1) {
 
 			/*
-			 * Seul SocketException etait rattrape ici. Or quand l'appelant abandonne
-			 * (temporisation cote client), Tomcat leve une ClientAbortException, qui
-			 * est une IOException sans etre une SocketException : elle remontait donc
-			 * en erreur, la reponse etant deja partiellement ecrite, ce qui produisait
-			 * la cascade "getOutputStream() has already been called".
+			 * A caller giving up mid-stream surfaces as a ClientAbortException, which is
+			 * an IOException but not a SocketException. Letting it through would fail the
+			 * request with a partially written response.
 			 *
-			 * On ne rattrape que l'abandon client : une vraie erreur d'E/S doit
-			 * continuer a remonter, sans quoi on masquerait un probleme reel.
+			 * Only the client abort is swallowed: a genuine IO error must keep
+			 * propagating rather than be hidden.
 			 */
 			if (!isClientAbort(e1)) {
 				throw e1;
@@ -159,9 +157,9 @@ public class EntityReportWebScript extends AbstractEntityWebScript {
 	}
 
 	/**
-	 * Un abandon de l'appelant se presente sous plusieurs formes selon le
-	 * connecteur : SocketException, ou ClientAbortException de Tomcat, que l'on
-	 * reconnait par son nom pour ne pas dependre des classes du conteneur.
+	 * A client abort takes different shapes depending on the connector: a
+	 * SocketException, or the container's ClientAbortException, matched by name so
+	 * that this class does not depend on container internals.
 	 */
 	private boolean isClientAbort(IOException e) {
 		for (Throwable cause = e; cause != null; cause = cause.getCause()) {

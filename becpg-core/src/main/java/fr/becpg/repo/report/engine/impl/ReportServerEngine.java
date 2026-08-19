@@ -144,8 +144,8 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 		ContentReader reader = contentService.getReader(entry.getImageNodeRef(), ContentModel.PROP_CONTENT);
 		if ((reader == null) || !reader.exists()) {
 			/*
-			 * Sortie silencieuse jusqu'ici : le rapport partait ampute de l'image sans
-			 * que rien ne le signale, ni dans les logs ni au lecteur du rapport.
+			 * An image without content would otherwise be dropped silently, leaving the
+			 * report incomplete with nothing to tell its reader.
 			 */
 			logger.warn("No content for report image " + entry + ", it will be missing from the report");
 
@@ -237,10 +237,8 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 					}
 
 					/*
-					 * Une image qui echoue ne doit pas faire echouer le rapport, mais
-					 * elle ne doit pas non plus disparaitre en silence : jusqu'ici seul
-					 * un log etait emis, si bien que le document sortait ampute d'une
-					 * image sans que son lecteur puisse le savoir.
+					 * A failing image must not fail the whole report, but it must not vanish
+					 * silently either: the reader has to know the document is incomplete.
 					 */
 					logger.error("Failed to send report image: " + entry, e);
 
@@ -261,15 +259,11 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 			}
 			
 			/*
-			 * Le datasource transite par un fichier temporaire, pas par le heap.
-			 *
-			 * Une version precedente serialisait dans un ByteArrayOutputStream puis
-			 * en tirait un toByteArray() : cela maintenait deux copies completes du
-			 * datasource en memoire par rapport concurrent, en plus de l'arbre
-			 * dom4j. Sur des datasources de plusieurs Mo et une dizaine de rapports
-			 * simultanes, c'est un consommateur de heap de premier ordre. Le
-			 * fichier temporaire borne l'empreinte a un tampon, au prix d'ecritures
-			 * sequentielles.
+			 * The datasource is streamed through a temporary file rather than buffered
+			 * in memory. Buffering it would hold a full copy of the datasource per
+			 * concurrent report, on top of the dom4j tree, which does not scale with
+			 * large datasources. The temporary file bounds the footprint to a buffer,
+			 * at the cost of sequential writes.
 			 */
 			File tempFile = null;
 			try {
@@ -284,9 +278,9 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 				long datasourceSize = tempFile.length();
 
 				/*
-				 * On publie la taille des l'ecriture, avant l'envoi : l'appelant
-				 * peut ainsi la porter a son audit sans refaire une passe de
-				 * serialisation, y compris si l'envoi echoue ensuite.
+				 * Published as soon as it is known, before sending: the caller can then
+				 * record it without serializing the tree a second time, even if the send
+				 * fails afterwards.
 				 */
 				reportData.setDatasourceSize(datasourceSize);
 
@@ -309,10 +303,8 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 				}
 			} catch (IOException e) {
 				/*
-				 * Ce bloc couvre aussi l'envoi du rapport : un abandon de l'appelant
-				 * remonte ici. Le message reste volontairement explicite sur les deux
-				 * causes possibles, il a longtemps laisse croire a un probleme de
-				 * datasource alors que le client etait simplement parti.
+				 * This block also covers sending the report, so a caller giving up surfaces
+				 * here too. The message names both causes rather than blaming the datasource.
 				 */
 				logger.error("Failed to write XML datasource or to stream the report to the report server", e);
 				throw new ReportException("Failed to process datasource", e);
@@ -321,6 +313,7 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 					try {
 						Files.delete(tempFile.toPath());
 					} catch (IOException e) {
+						// Never let a cleanup failure mask the original exception.
 						logger.warn("Could not delete temporary datasource file " + tempFile, e);
 					}
 				}

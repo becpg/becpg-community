@@ -99,11 +99,11 @@ public class EntityReportData {
 	/**
 	 * <p>Getter for the field <code>datasourceSize</code>.</p>
 	 *
-	 * Taille en octets du datasource XML une fois serialise, renseignee par le
-	 * moteur qui l'a effectivement serialise. Evite a l'appelant de refaire une
-	 * passe de serialisation complete juste pour la mesurer.
+	 * Size in bytes of the serialized XML datasource, published by the engine that
+	 * actually serialized it. Saves the caller a full serialization pass just to
+	 * measure it.
 	 *
-	 * @return la taille en octets, ou {@code null} si aucun moteur ne l'a publiee
+	 * @return the size in bytes, or {@code null} when no engine published one
 	 */
 	public Long getDatasourceSize() {
 		return datasourceSize;
@@ -112,7 +112,7 @@ public class EntityReportData {
 	/**
 	 * <p>Setter for the field <code>datasourceSize</code>.</p>
 	 *
-	 * @param datasourceSize la taille en octets du datasource serialise
+	 * @param datasourceSize the size in bytes of the serialized datasource
 	 */
 	public void setDatasourceSize(Long datasourceSize) {
 		this.datasourceSize = datasourceSize;
