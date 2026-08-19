@@ -151,17 +151,15 @@ public class PDFScriptHelper extends BaseScopableProcessorExtension {
 		}
 		try {
 			ContentReader targetReader = getReader(targetPDFNode.getNodeRef());
-			try (PDDocument pdfTarget = Loader.loadPDF(targetReader.getContentInputStream().readAllBytes())) {
+			try (InputStream targetIs = targetReader.getContentInputStream();
+					PDDocument pdfTarget = Loader.loadPDF(targetIs.readAllBytes())) {
 				PDFMergerUtility merger = new PDFMergerUtility();
 				for (Object src : sourceNodes) {
-					ScriptNode srcNode = null;
-					if (src instanceof ScriptNode) {
-						srcNode = (ScriptNode) src;
-					}
-					if (srcNode != null) {
+					if (src instanceof ScriptNode srcNode) {
 						ContentReader srcReader = getReader(srcNode.getNodeRef());
 						if (srcReader != null && srcReader.exists()) {
-							try (PDDocument pdfSrc = Loader.loadPDF(srcReader.getContentInputStream().readAllBytes())) {
+							try (InputStream srcIs = srcReader.getContentInputStream();
+									PDDocument pdfSrc = Loader.loadPDF(srcIs.readAllBytes())) {
 								merger.appendDocument(pdfTarget, pdfSrc);
 							}
 						}
