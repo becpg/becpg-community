@@ -78,7 +78,9 @@ public class PDFScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a {@link org.alfresco.repo.jscript.ScriptNode} object.
 	 */
 	public ScriptNode appendPDF(ScriptNode targetPDFNode, ScriptNode toAppendPDFNode) {
-		logger.debug("Append PDF " + toAppendPDFNode.getName() + " to " + targetPDFNode.getName());
+		if (logger.isDebugEnabled()) {
+			logger.debug("Append PDF " + toAppendPDFNode.getName() + " to " + targetPDFNode.getName());
+		}
 
 		try (InputStream is = getReader(toAppendPDFNode.getNodeRef()).getContentInputStream();
 			InputStream tis = getReader(targetPDFNode.getNodeRef()).getContentInputStream();
@@ -131,6 +133,47 @@ public class PDFScriptHelper extends BaseScopableProcessorExtension {
 		} catch (FileExistsException e) {
 			throw new AlfrescoRuntimeException("Failed to save merged PDF to repository", e);
 		}
+	}
+
+	/**
+	 * <p>mergePDFs.</p>
+	 *
+	 * @param targetPDFNode a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 * @param sourceNodes an array of {@link org.alfresco.repo.jscript.ScriptNode} objects
+	 * @return a {@link org.alfresco.repo.jscript.ScriptNode} object
+	 */
+	public ScriptNode mergePDFs(ScriptNode targetPDFNode, Object[] sourceNodes) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Merging multiple PDFs into " + targetPDFNode.getName() + " (source count: " + (sourceNodes != null ? sourceNodes.length : 0) + ")");
+		}
+		try {
+			ContentReader targetReader = getReader(targetPDFNode.getNodeRef());
+			try (PDDocument pdfTarget = Loader.loadPDF(targetReader.getContentInputStream().readAllBytes())) {
+				PDFMergerUtility merger = new PDFMergerUtility();
+				for (Object src : sourceNodes) {
+					ScriptNode srcNode = null;
+					if (src instanceof ScriptNode) {
+						srcNode = (ScriptNode) src;
+					}
+					if (srcNode != null) {
+						ContentReader srcReader = getReader(srcNode.getNodeRef());
+						if (srcReader != null && srcReader.exists()) {
+							try (PDDocument pdfSrc = Loader.loadPDF(srcReader.getContentInputStream().readAllBytes())) {
+								merger.appendDocument(pdfTarget, pdfSrc);
+							}
+						}
+					}
+				}
+
+				File tempFile = TempFileProvider.createTempFile("merged_", ".pdf");
+				pdfTarget.save(tempFile);
+				saveMergedPDF(targetPDFNode, tempFile);
+				tempFile.delete();
+			}
+		} catch (Exception e) {
+			throw new AlfrescoRuntimeException("Error merging PDFs in script", e);
+		}
+		return targetPDFNode;
 	}
 
 	/**
