@@ -2534,10 +2534,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				if (component instanceof CompositeLabeling) {
 
 					MessageFormat formater = getIngTextFormat(component, qtyPerc, ((CompositeLabeling) component).getIngList().size() > 1);
-					// The sub ings are scaled by their own "with yield" quantity against the "without yield" total of
-					// their parent : the ratio must stay in the same "without yield" space, otherwise the yield is
-					// applied twice (see #34702). Same rule as the flat table below.
-					BigDecimal subRatio = computeQtyPerc(parent, component, ratio, false);
+					BigDecimal subRatio = computeSubIngsRatio(parent, component, ratio);
 
 					if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType()) || computePercByParent) {
 						subRatio = DEFAULT_RATIO;
@@ -2983,6 +2980,70 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return computeQtyPerc(parent, component, ratio, ingsLabelingWithYield);
 	}
 
+	/**
+	 * <p>The ratio to hand to the sub ingredients of a detailed ingredient, so that they add up to it.</p>
+	 *
+	 * A composite is rendered with the yield, while its sub ingredients are divided by the "without yield" total it
+	 * carries - the only total the labeling tree maintains - and their own quantities do not add up to that total
+	 * either, being expressed against the item that brings them. The bracket then adds up to more than the ingredient
+	 * it details, the more so as the product loses weight around it (#34702). Scaling the rendered ratio by that
+	 * discrepancy makes the bracket a breakdown of its parent again.
+	 *
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param component a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param ratio a {@link java.math.BigDecimal} object
+	 * @return a {@link java.math.BigDecimal} object
+	 */
+	private BigDecimal computeSubIngsRatio(CompositeLabeling parent, LabelingComponent component, BigDecimal ratio) {
+
+		if (!ingsLabelingWithYield || !(component instanceof CompositeLabeling composite)) {
+			return computeQtyPerc(parent, component, ratio, false);
+		}
+
+		BigDecimal renderedRatio = useVolume ? computeVolumePerc(parent, component, ratio) : computeQtyPerc(parent, component, ratio);
+		Double qtyTotal = useVolume ? composite.getVolumeTotal() : composite.getQtyTotal();
+		Double subIngsQty = sumSubIngsQty(composite);
+
+		if ((renderedRatio == null) || (qtyTotal == null) || (subIngsQty == null) || (subIngsQty == 0d)) {
+			return computeQtyPerc(parent, component, ratio, false);
+		}
+
+		return renderedRatio.multiply(BigDecimal.valueOf(qtyTotal), PRECISION).divide(BigDecimal.valueOf(subIngsQty), PRECISION);
+	}
+
+	/**
+	 * <p>The quantity the sub ingredients of a composite add up to, read in the space the labeling renders.</p>
+	 *
+	 * Answers null as soon as one sub ingredient carries no quantity : a composite that is only partly quantified
+	 * cannot be rebalanced on its sub ingredients without inflating the few that do carry one.
+	 *
+	 * @param composite a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @return a {@link java.lang.Double} object, or null
+	 */
+	private Double sumSubIngsQty(CompositeLabeling composite) {
+
+		double sum = 0d;
+
+		for (CompositeLabeling subIng : composite.getIngList().values()) {
+			Double qty = useVolume ? subIng.getVolume(ingsLabelingWithYield) : subIng.getQty(ingsLabelingWithYield);
+			if (qty == null) {
+				return null;
+			}
+			sum += qty;
+		}
+
+		return sum;
+	}
+
+	/**
+	 * <p>computeQtyPerc.</p>
+	 *
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param component a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param ratio a {@link java.math.BigDecimal} object
+	 * @param withYield a boolean
+	 * @return a {@link java.math.BigDecimal} object
+	 */
 	private BigDecimal computeQtyPerc(CompositeLabeling parent, LabelingComponent component, BigDecimal ratio, boolean withYield) {
 
 		if ((ratio == null) || (parent == null)) {
