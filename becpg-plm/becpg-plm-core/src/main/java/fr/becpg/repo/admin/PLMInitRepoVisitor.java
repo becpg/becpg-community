@@ -2071,7 +2071,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 						String pifReportName = TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PIF_REPORT);
 						if (pifReportName == null || pifReportName.isEmpty()) {
-							pifReportName = "Dossier d'information produit";
+							pifReportName = "Product Information File";
 						}
 
 						NodeRef pifTplNodeRef = reportTplService.createTplRptDesign(folderNodeRef,

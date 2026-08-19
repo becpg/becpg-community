@@ -30,6 +30,15 @@ public class ReportPdfAggregator {
 
     private static final Log logger = LogFactory.getLog(ReportPdfAggregator.class);
 
+    public static final String DEFAULT_FONT_HELVETICA = "Helvetica";
+    public static final String DEFAULT_FONT_HELVETICA_BOLD = "Helvetica-Bold";
+    public static final String DEFAULT_COLOR_PRIMARY = "#1F3864";
+    public static final String DEFAULT_COLOR_SECONDARY = "#404040";
+    public static final String DEFAULT_COLOR_MUTED = "#808080";
+    public static final String DEFAULT_COLOR_BLACK = "#000000";
+    public static final String DEFAULT_PREFIX_HEADING = "➣ ";
+    public static final String DEFAULT_MIMETYPE_PDF = "application/pdf";
+
     public static PDDocument loadPdf(byte[] pdfBytes) throws IOException {
         if (pdfBytes == null || pdfBytes.length == 0) {
             return null;
@@ -63,8 +72,8 @@ public class ReportPdfAggregator {
         private static final long serialVersionUID = 1L;
         private String font;
         private Integer size = 11;
-        private String color = "#1F3864";
-        private String prefix = "➣ ";
+        private String color = DEFAULT_COLOR_PRIMARY;
+        private String prefix = DEFAULT_PREFIX_HEADING;
 
         public String getFont() { return font; }
         public void setFont(String font) { this.font = font; }
@@ -87,7 +96,7 @@ public class ReportPdfAggregator {
         private boolean componentHeading = true;
         private String sort;
         private boolean dedup = true;
-        private List<String> mimeTypes = Collections.singletonList("application/pdf");
+        private List<String> mimeTypes = Collections.singletonList(DEFAULT_MIMETYPE_PDF);
         private String emptyPlaceholder;
         private boolean required = false;
         private String pkgLevel;
@@ -123,9 +132,9 @@ public class ReportPdfAggregator {
         private static final long serialVersionUID = 1L;
         private boolean enabled = false;
         private String title = "TABLE OF CONTENTS";
-        private String font = "Helvetica-Bold";
+        private String font = DEFAULT_FONT_HELVETICA_BOLD;
         private Integer size = 16;
-        private String color = "#1F3864";
+        private String color = DEFAULT_COLOR_PRIMARY;
         private Integer position = 0;
 
         public boolean isEnabled() { return enabled; }
@@ -148,9 +157,9 @@ public class ReportPdfAggregator {
         private boolean enabled = false;
         private String format = "Page ${page} / ${total}";
         private Integer startNumberingAt = 1;
-        private String font = "Helvetica";
+        private String font = DEFAULT_FONT_HELVETICA;
         private Integer size = 8;
-        private String color = "#404040";
+        private String color = DEFAULT_COLOR_SECONDARY;
 
         public boolean isEnabled() { return enabled; }
         public void setEnabled(boolean enabled) { this.enabled = enabled; }
@@ -169,9 +178,9 @@ public class ReportPdfAggregator {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class PlaceholderStyle implements Serializable {
         private static final long serialVersionUID = 1L;
-        private String font = "Helvetica-Bold";
+        private String font = DEFAULT_FONT_HELVETICA_BOLD;
         private Integer size = 9;
-        private String color = "#000000";
+        private String color = DEFAULT_COLOR_BLACK;
 
         public String getFont() { return font; }
         public void setFont(String font) { this.font = font; }
@@ -292,7 +301,9 @@ public class ReportPdfAggregator {
 
         public List<FoundToken> findTokens(PDDocument document) throws IOException {
             int numPages = document.getNumberOfPages();
-            logger.info("[TokenLocator] Scanning " + numPages + " pages for ToC placeholders {{page:key}}...");
+            if (logger.isDebugEnabled()) {
+                logger.debug("[TokenLocator] Scanning " + numPages + " pages for ToC placeholders {{page:key}}...");
+            }
             for (int i = 0; i < numPages; i++) {
                 currentPageIndex = i;
                 setStartPage(i + 1);
@@ -300,7 +311,9 @@ public class ReportPdfAggregator {
                 Writer dummy = new StringWriter();
                 writeText(document, dummy);
             }
-            logger.info("[TokenLocator] Scan complete. Total placeholders found: " + foundTokens.size());
+            if (logger.isDebugEnabled()) {
+                logger.debug("[TokenLocator] Scan complete. Total placeholders found: " + foundTokens.size());
+            }
             return foundTokens;
         }
 
@@ -311,7 +324,9 @@ public class ReportPdfAggregator {
                 int end = string.indexOf("}}", start);
                 if (end != -1 && end > start) {
                     String token = string.substring(start, end + 2);
-                    logger.info("[TokenLocator] Found token text: " + token + " on page index " + currentPageIndex);
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("[TokenLocator] Found token text: " + token + " on page index " + currentPageIndex);
+                    }
 
                     if (start < textPositions.size() && (end + 1) < textPositions.size()) {
                         TextPosition firstChar = textPositions.get(start);
@@ -638,7 +653,9 @@ public class ReportPdfAggregator {
 
                     for (int p = part.bodyStart; p <= part.bodyEnd; p++) {
                         originalToMergedPageMap.put(p, mergedPageCount);
-                        logger.info("[ReportPdfAggregator] Map body page: original index " + p + " -> merged index " + mergedPageCount);
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("[ReportPdfAggregator] Map body page: original index " + p + " -> merged index " + mergedPageCount);
+                        }
                         mergedPageCount++;
                     }
                 } else {
@@ -652,7 +669,9 @@ public class ReportPdfAggregator {
                             if (ad.getPdfBytes() != null && ad.getPdfBytes().length > 0) {
                                 PDDocument adDoc = loadDocumentOrConvertImage(ad.getPdfBytes());
                                 if (adDoc != null) {
-                                    logger.info("[ReportPdfAggregator] Appending component doc '" + ad.getComponentName() + "' starting on merged index " + mergedPageCount + "...");
+                                    if (logger.isDebugEnabled()) {
+                                        logger.debug("[ReportPdfAggregator] Appending component doc '" + ad.getComponentName() + "' starting on merged index " + mergedPageCount + "...");
+                                    }
                                     docsToClose.add(adDoc);
                                     merger.appendDocument(finalDocMerged, adDoc);
                                     docToMergedPageMap.put(ad, mergedPageCount);
@@ -966,7 +985,7 @@ public class ReportPdfAggregator {
         float height = page.getMediaBox().getHeight();
         try (PDPageContentStream canvas = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
             canvas.beginText();
-            java.awt.Color color = java.awt.Color.decode(style.getColor() != null ? style.getColor() : "#1F3864");
+            java.awt.Color color = java.awt.Color.decode(style.getColor() != null ? style.getColor() : DEFAULT_COLOR_PRIMARY);
             canvas.setNonStrokingColor(color);
             PDType1Font font = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
             canvas.setFont(font, style.getSize() != null ? style.getSize() : 11);
@@ -991,7 +1010,7 @@ public class ReportPdfAggregator {
             float strWidth = font.getStringWidth(pageStr) / 1000.0f * fontSize;
             float drawX = ft.x + ft.width - strWidth;
 
-            String colorHex = (placeholderStyle != null && placeholderStyle.getColor() != null) ? placeholderStyle.getColor() : "#000000";
+            String colorHex = (placeholderStyle != null && placeholderStyle.getColor() != null) ? placeholderStyle.getColor() : DEFAULT_COLOR_BLACK;
             canvas.beginText();
             canvas.setNonStrokingColor(java.awt.Color.decode(colorHex));
             canvas.setFont(font, fontSize);
@@ -1034,7 +1053,7 @@ public class ReportPdfAggregator {
             float strWidth = font.getStringWidth(text) / 1000.0f * fontSize;
             float drawX = ft.x + ft.width - strWidth;
 
-            String colorHex = (placeholderStyle != null && placeholderStyle.getColor() != null) ? placeholderStyle.getColor() : "#808080";
+            String colorHex = (placeholderStyle != null && placeholderStyle.getColor() != null) ? placeholderStyle.getColor() : DEFAULT_COLOR_MUTED;
             canvas.beginText();
             canvas.setNonStrokingColor(java.awt.Color.decode(colorHex));
             canvas.setFont(font, fontSize);
@@ -1245,7 +1264,7 @@ public class ReportPdfAggregator {
 
             try (PDPageContentStream canvas = new PDPageContentStream(doc, page)) {
                 canvas.beginText();
-                java.awt.Color titleColor = java.awt.Color.decode(config.getColor() != null ? config.getColor() : "#1F3864");
+                java.awt.Color titleColor = java.awt.Color.decode(config.getColor() != null ? config.getColor() : DEFAULT_COLOR_PRIMARY);
                 canvas.setNonStrokingColor(titleColor);
                 PDType1Font boldFont = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
                 canvas.setFont(boldFont, config.getSize() != null ? config.getSize() : 16);
