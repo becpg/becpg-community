@@ -290,7 +290,8 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	 * @param generateAllReports a boolean
 	 */
 	private void generateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo, boolean generateAllReports) {
-		ReentrantLock lock = mutexFactory.getMutex("report-"+nodeRefTo.getId());
+		String mutexKey = "report-" + nodeRefTo.getId();
+		ReentrantLock lock = mutexFactory.getMutex(mutexKey);
 	    boolean lockAcquired = false;
 	    
 	    try {
@@ -313,7 +314,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	        // Only release the lock if we acquired it in this method call
 	        if (lockAcquired) {
 	            lock.unlock();
-	            mutexFactory.removeMutex(nodeRefTo.toString(), lock);
+	            mutexFactory.removeMutex(mutexKey, lock);
 	        }
 	    }
 	}
@@ -346,21 +347,34 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 							I18NUtil.setLocale(defaultLocale);
 							I18NUtil.setContentLocale(defaultLocale);
 							
-							ruleService.disableRules();
-							policyBehaviourFilter.disableBehaviour(nodeRefFrom, ContentModel.ASPECT_AUDITABLE);
+							boolean rulesEnabled = ruleService.isEnabled();
+							boolean auditableEnabled = policyBehaviourFilter.isEnabled(nodeRefFrom, ContentModel.ASPECT_AUDITABLE);
 							
-							List<NodeRef> newReports = getReports(nodeRefFrom, nodeRefTo, defaultLocale, generateAllReports, reportKind);
-							updateReportsAssoc(nodeRefTo, newReports);
+							if (rulesEnabled) {
+								ruleService.disableRules();
+							}
+							if (auditableEnabled) {
+								policyBehaviourFilter.disableBehaviour(nodeRefFrom, ContentModel.ASPECT_AUDITABLE);
+							}
+							
+							try {
+								List<NodeRef> newReports = getReports(nodeRefFrom, nodeRefTo, defaultLocale, generateAllReports, reportKind);
+								updateReportsAssoc(nodeRefTo, newReports, reportKind);
+							} finally {
+								if (rulesEnabled) {
+									ruleService.enableRules();
+								}
+								if (auditableEnabled) {
+									policyBehaviourFilter.enableBehaviour(nodeRefFrom, ContentModel.ASPECT_AUDITABLE);
+								}
+							}
 							
 							return null;
 						});
-						
 
 					} finally {
 						I18NUtil.setLocale(currentLocal);
 						I18NUtil.setContentLocale(currentContentLocal);
-						ruleService.enableRules();
-						policyBehaviourFilter.enableBehaviour(nodeRefFrom);
 					}
 				}
 				return true;
@@ -1722,19 +1736,44 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param newReports a {@link java.util.List} object
 	 */
-	private void updateReportsAssoc(NodeRef entityNodeRef, List<NodeRef> newReports) {
+	private void updateReportsAssoc(NodeRef entityNodeRef, List<NodeRef> newReports, String reportKind) {
+		List<NodeRef> currentReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
 
 		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_WORKING_COPY)) {
-			for (NodeRef dbReport : associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS)) {
+			for (NodeRef dbReport : currentReports) {
 				if (!newReports.contains(dbReport)) {
-					logger.debug("delete old report: " + dbReport);
-					nodeService.addAspect(dbReport, ContentModel.ASPECT_TEMPORARY, null);
-					nodeService.deleteNode(dbReport);
+					boolean isSameKind = false;
+					if (reportKind != null && !reportKind.isEmpty()) {
+						List<String> reportKinds = (List<String>) nodeService.getProperty(dbReport, ReportModel.PROP_REPORT_KINDS);
+						isSameKind = reportKinds != null && reportKinds.contains(reportKind);
+					} else {
+						isSameKind = true;
+					}
+
+					if (isSameKind) {
+						logger.debug("delete old report: " + dbReport);
+						nodeService.addAspect(dbReport, ContentModel.ASPECT_TEMPORARY, null);
+						nodeService.deleteNode(dbReport);
+					}
 				}
 			}
 		}
 
-		associationService.update(entityNodeRef, ReportModel.ASSOC_REPORTS, newReports);
+		if (reportKind != null && !reportKind.isEmpty()) {
+			List<NodeRef> finalReports = new ArrayList<>(newReports);
+			for (NodeRef dbReport : currentReports) {
+				if (!finalReports.contains(dbReport) && nodeService.exists(dbReport)) {
+					List<String> reportKinds = (List<String>) nodeService.getProperty(dbReport, ReportModel.PROP_REPORT_KINDS);
+					boolean isSameKind = reportKinds != null && reportKinds.contains(reportKind);
+					if (!isSameKind) {
+						finalReports.add(dbReport);
+					}
+				}
+			}
+			associationService.update(entityNodeRef, ReportModel.ASSOC_REPORTS, finalReports);
+		} else {
+			associationService.update(entityNodeRef, ReportModel.ASSOC_REPORTS, newReports);
+		}
 	}
 
 	/**
