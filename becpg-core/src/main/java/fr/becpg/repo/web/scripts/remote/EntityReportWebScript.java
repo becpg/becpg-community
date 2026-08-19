@@ -132,7 +132,21 @@ public class EntityReportWebScript extends AbstractEntityWebScript {
 				entityReportService.generateReport(entityNodeRef, templateNodeRef, reportParameters, locale,
 						ReportFormat.valueOf(format.toUpperCase()), resp.getOutputStream());
 			}
-		} catch (SocketException e1) {
+		} catch (IOException e1) {
+
+			/*
+			 * Seul SocketException etait rattrape ici. Or quand l'appelant abandonne
+			 * (temporisation cote client), Tomcat leve une ClientAbortException, qui
+			 * est une IOException sans etre une SocketException : elle remontait donc
+			 * en erreur, la reponse etant deja partiellement ecrite, ce qui produisait
+			 * la cascade "getOutputStream() has already been called".
+			 *
+			 * On ne rattrape que l'abandon client : une vraie erreur d'E/S doit
+			 * continuer a remonter, sans quoi on masquerait un probleme reel.
+			 */
+			if (!isClientAbort(e1)) {
+				throw e1;
+			}
 
 			// the client cut the connection - our mission was accomplished
 			// apart from a little error message
@@ -142,6 +156,23 @@ public class EntityReportWebScript extends AbstractEntityWebScript {
 
 		}
 
+	}
+
+	/**
+	 * Un abandon de l'appelant se presente sous plusieurs formes selon le
+	 * connecteur : SocketException, ou ClientAbortException de Tomcat, que l'on
+	 * reconnait par son nom pour ne pas dependre des classes du conteneur.
+	 */
+	private boolean isClientAbort(IOException e) {
+		for (Throwable cause = e; cause != null; cause = cause.getCause()) {
+			if ((cause instanceof SocketException) || cause.getClass().getName().endsWith("ClientAbortException")) {
+				return true;
+			}
+			if (cause.getCause() == cause) {
+				break;
+			}
+		}
+		return false;
 	}
 
 }
