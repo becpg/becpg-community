@@ -70,6 +70,7 @@ import fr.becpg.repo.sample.CharactTestHelper;
 import fr.becpg.repo.regulatory.RequirementType;
 import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
+import fr.becpg.test.repo.product.LabelingInvariants;
 
 /**
  *
@@ -575,7 +576,14 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		Assert.assertNotNull("IngLabelingList is null", formulatedProduct.getLabelingListView().getIngLabelingList());
 		Assert.assertFalse("IngLabelingList is empty", formulatedProduct.getLabelingListView().getIngLabelingList().isEmpty());
 
-		return formulatedProduct.getLabelingListView().getIngLabelingList().get(0).getValue().getValue(locale);
+		IngLabelingListDataItem first = formulatedProduct.getLabelingListView().getIngLabelingList().get(0);
+		String rendered = first.getValue().getValue(locale);
+
+		// The tests below go through formulateWithLabelingRules, not checkILL, so the invariants are
+		// checked here too rather than only on the labels checkILL compares.
+		LabelingInvariants.assertHolds(rendered, formulatedProduct.getName());
+
+		return rendered;
 	}
 
 	private List<Double> extractPercentages(String rendered) {
