@@ -208,7 +208,8 @@ public class ReportPdfAggregator {
     public static class AnnexDocument {
         private final String componentName;
         private final byte[] pdfBytes;
-        private boolean isBeCPGDoc;
+        private final boolean isBeCPGDoc;
+        private int pageCount = -1;
 
         public AnnexDocument(String componentName, byte[] pdfBytes) {
             this.componentName = componentName;
@@ -219,6 +220,21 @@ public class ReportPdfAggregator {
         public String getComponentName() { return componentName; }
         public byte[] getPdfBytes() { return pdfBytes; }
         public boolean isBeCPGDoc() { return isBeCPGDoc; }
+
+        public int getPageCount() {
+            if (pageCount < 0 && pdfBytes != null && pdfBytes.length > 0) {
+                try (PDDocument doc = loadDocumentOrConvertImage(pdfBytes)) {
+                    if (doc != null) {
+                        pageCount = doc.getNumberOfPages();
+                    } else {
+                        pageCount = 0;
+                    }
+                } catch (Exception e) {
+                    pageCount = 0;
+                }
+            }
+            return Math.max(pageCount, 0);
+        }
     }
 
     public static class AnnexSection {
@@ -572,11 +588,10 @@ public class ReportPdfAggregator {
                 } else {
                     for (AnnexDocument ad : part.section.getDocuments()) {
                         if (ad.getPdfBytes() != null && ad.getPdfBytes().length > 0) {
-                            PDDocument adDoc = loadDocumentOrConvertImage(ad.getPdfBytes());
-                            if (adDoc != null) {
+                            int pages = ad.getPageCount();
+                            if (pages > 0) {
                                 docToMergedPageMap.put(ad, runningPageCount);
-                                runningPageCount += adDoc.getNumberOfPages();
-                                try { adDoc.close(); } catch (Exception e) {}
+                                runningPageCount += pages;
                             }
                         }
                     }
@@ -781,17 +796,6 @@ public class ReportPdfAggregator {
                 }
             }
         }
-
-        int totalPages = finalDoc.getNumberOfPages();
-        for (int p = 0; p < totalPages; p++) {
-            PDPage page = finalDoc.getPage(p);
-            float width = page.getMediaBox().getWidth();
-            try (PDPageContentStream canvas = new PDPageContentStream(finalDoc, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
-                canvas.setNonStrokingColor(java.awt.Color.WHITE);
-                canvas.addRect(width - 180, 5, 165, 50);
-                canvas.fill();
-            }
-        }
     }
 
     private static void addClickableToCLinks(PDDocument finalDoc, List<AnnexSection> sections, Map<AnnexSection, Integer> sectionToMergedPageMap, Integer tocPageIndex) throws IOException {
@@ -841,13 +845,9 @@ public class ReportPdfAggregator {
                     if (ad.isBeCPGDoc()) {
                         Integer startPageIdx = docToMergedPageMap.get(ad);
                         if (startPageIdx != null) {
-                            PDDocument adDoc = loadDocumentOrConvertImage(ad.getPdfBytes());
-                            if (adDoc != null) {
-                                int pages = adDoc.getNumberOfPages();
-                                for (int p = startPageIdx; p < startPageIdx + pages; p++) {
-                                    noHeaderPageIndexes.add(p);
-                                }
-                                try { adDoc.close(); } catch (Exception e) {}
+                            int pages = ad.getPageCount();
+                            for (int p = startPageIdx; p < startPageIdx + pages; p++) {
+                                noHeaderPageIndexes.add(p);
                             }
                         }
                     }
@@ -1160,9 +1160,9 @@ public class ReportPdfAggregator {
                     }
                 }
 
-                if (paginationEnabled) {
+                if (paginationEnabled && isBodyPage) {
                     canvas.setNonStrokingColor(java.awt.Color.WHITE);
-                    canvas.addRect(0, 0, width, 45);
+                    canvas.addRect(width - 150, 20, 120, 30);
                     canvas.fill();
                 }
 
@@ -1208,12 +1208,20 @@ public class ReportPdfAggregator {
     private static boolean hasExistingBeCPGLayout(byte[] pdfBytes) {
         if (pdfBytes == null || pdfBytes.length == 0) return false;
         try (PDDocument doc = loadPdf(pdfBytes)) {
+            if (doc.getDocumentInformation() != null) {
+                String producer = doc.getDocumentInformation().getProducer();
+                String creator = doc.getDocumentInformation().getCreator();
+                if ((producer != null && (producer.contains("BIRT") || producer.contains("beCPG")))
+                        || (creator != null && (creator.contains("BIRT") || creator.contains("beCPG")))) {
+                    return true;
+                }
+            }
             if (doc.getNumberOfPages() > 0) {
                 PDFTextStripper stripper = new PDFTextStripper();
                 stripper.setStartPage(1);
                 stripper.setEndPage(1);
                 String text = stripper.getText(doc);
-                if (text != null && (text.contains("beCPG") || text.contains("Fiche") || text.contains("FICHE") || text.contains("COMPOSITION") || text.contains("Composition") || text.contains("Specification") || text.contains("Spécification") || text.contains("DIP") || text.contains("PIF"))) {
+                if (text != null && (text.contains("beCPG") || text.contains("DIP") || text.contains("PIF"))) {
                     return true;
                 }
             }
