@@ -8,6 +8,8 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.schedule.AbstractScheduledLockedJob;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
@@ -34,6 +36,8 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
 public class EntityReportJob extends AbstractScheduledLockedJob implements Job {
+
+	private static final Log logger = LogFactory.getLog(EntityReportJob.class);
 
 	/** Constant <code>MAX_RESULTS=50</code> */
 	private static final int MAX_RESULTS = 50;
@@ -99,6 +103,8 @@ public class EntityReportJob extends AbstractScheduledLockedJob implements Job {
 						.inStore(RepoConsts.VERSION_STORE).inDBIfPossible().list();
 				pendingNodes.addAll(versionPendingNodes);
 			}
+
+			removeDeletedNodes(nodeService, pendingNodes, batchId);
 		}
 
 		if (!pendingNodes.isEmpty()) {
@@ -125,5 +131,25 @@ public class EntityReportJob extends AbstractScheduledLockedJob implements Job {
 		}
 		
 		return pendingNodes.size();
+	}
+
+	/**
+	 * Removes the nodes that no longer exist from the pending list.
+	 *
+	 * A deleted node still carrying the aspect is returned by the search index but cannot be
+	 * flagged in error, so queuing a batch for it would reschedule that batch on every job run.
+	 *
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object
+	 * @param pendingNodes a {@link java.util.List} object
+	 * @param batchId a {@link java.lang.String} object
+	 */
+	private void removeDeletedNodes(NodeService nodeService, List<NodeRef> pendingNodes, String batchId) {
+		List<NodeRef> deletedNodes = pendingNodes.stream().filter(nodeRef -> !nodeService.exists(nodeRef)).toList();
+
+		if (!deletedNodes.isEmpty()) {
+			pendingNodes.removeAll(deletedNodes);
+			logger.warn("Skipping " + deletedNodes.size() + " deleted node(s) still marked as pending report for batch '" + batchId
+					+ "': " + deletedNodes);
+		}
 	}
 }
