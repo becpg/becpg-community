@@ -146,6 +146,9 @@ public class PDFScriptHelper extends BaseScopableProcessorExtension {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Merging multiple PDFs into " + targetPDFNode.getName() + " (source count: " + (sourceNodes != null ? sourceNodes.length : 0) + ")");
 		}
+		if (sourceNodes == null || sourceNodes.length == 0) {
+			return targetPDFNode;
+		}
 		try {
 			ContentReader targetReader = getReader(targetPDFNode.getNodeRef());
 			try (PDDocument pdfTarget = Loader.loadPDF(targetReader.getContentInputStream().readAllBytes())) {
@@ -166,9 +169,12 @@ public class PDFScriptHelper extends BaseScopableProcessorExtension {
 				}
 
 				File tempFile = TempFileProvider.createTempFile("merged_", ".pdf");
-				pdfTarget.save(tempFile);
-				saveMergedPDF(targetPDFNode, tempFile);
-				tempFile.delete();
+				try {
+					pdfTarget.save(tempFile);
+					saveMergedPDF(targetPDFNode, tempFile);
+				} finally {
+					tempFile.delete();
+				}
 			}
 		} catch (Exception e) {
 			throw new AlfrescoRuntimeException("Error merging PDFs in script", e);
