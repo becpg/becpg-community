@@ -55,7 +55,18 @@ public class BeCPGLocaleResolver extends AcceptHeaderLocaleResolver {
 
 	private static final String LOCALE_ATTRIBUTE = "locale";
 
+	private static final UserLocales NO_USER_LOCALES = new UserLocales(null, null);
+
 	private volatile SupportedLocales supportedUILocales;
+
+	/**
+	 * <p>The languages stored on the profile of the current user.</p>
+	 *
+	 * @param uiLocale the language of the interface, <code>null</code> when the profile has none
+	 * @param contentLocale the language of the data, <code>null</code> when the profile has none
+	 */
+	private record UserLocales(Locale uiLocale, Locale contentLocale) {
+	}
 
 	/**
 	 * <p>The interface languages beCPG is translated in, indexed for a lookup that allocates
@@ -71,13 +82,19 @@ public class BeCPGLocaleResolver extends AcceptHeaderLocaleResolver {
 	@Override
 	public Locale resolveLocale(HttpServletRequest request) {
 
-		Locale userLocale = applyUserLocales(resolveUser(request));
+		UserLocales userLocales = applyUserLocales(resolveUser(request));
 
-		if (userLocale != null) {
-			return userLocale;
+		if (userLocales.uiLocale() != null) {
+			return userLocales.uiLocale();
 		}
 
-		return applyRequestLocale(extractRequestLocale(request));
+		Locale requestLocale = extractRequestLocale(request);
+
+		if (userLocales.contentLocale() == null) {
+			I18NUtil.setContentLocale(requestLocale);
+		}
+
+		return applyUILocale(requestLocale);
 	}
 
 	/**
@@ -118,15 +135,16 @@ public class BeCPGLocaleResolver extends AcceptHeaderLocaleResolver {
 	 * <p>Applies the languages stored on the user profile to the current thread.</p>
 	 *
 	 * @param user the current user, may be <code>null</code>
-	 * @return the interface language of the user, or <code>null</code> when the user has none
+	 * @return the languages of the user, each of them <code>null</code> when the profile has none
 	 */
-	private Locale applyUserLocales(User user) {
+	private UserLocales applyUserLocales(User user) {
 
 		if (user == null) {
-			return null;
+			return NO_USER_LOCALES;
 		}
 
 		Locale uiLocale = null;
+		Locale contentLocale = null;
 
 		for (Map.Entry<String, Boolean> entry : user.getCapabilities().entrySet()) {
 			String capability = entry.getKey();
@@ -134,11 +152,12 @@ public class BeCPGLocaleResolver extends AcceptHeaderLocaleResolver {
 				uiLocale = I18NUtil.parseLocale(capability.substring(USER_LOCALE_PREFIX.length()));
 				I18NUtil.setLocale(uiLocale);
 			} else if (capability.startsWith(USER_CONTENT_LOCALE_PREFIX)) {
-				I18NUtil.setContentLocale(I18NUtil.parseLocale(capability.substring(USER_CONTENT_LOCALE_PREFIX.length())));
+				contentLocale = I18NUtil.parseLocale(capability.substring(USER_CONTENT_LOCALE_PREFIX.length()));
+				I18NUtil.setContentLocale(contentLocale);
 			}
 		}
 
-		return uiLocale;
+		return new UserLocales(uiLocale, contentLocale);
 	}
 
 	/**
@@ -165,15 +184,13 @@ public class BeCPGLocaleResolver extends AcceptHeaderLocaleResolver {
 	}
 
 	/**
-	 * <p>Applies the requested language to the current thread, keeping it as content language and
-	 * downgrading the interface language when beCPG is not translated in it.</p>
+	 * <p>Applies the interface language of the request to the current thread, downgrading it when
+	 * beCPG is not translated in the requested language.</p>
 	 *
 	 * @param requestLocale the language asked for by the request
 	 * @return the interface language of the request
 	 */
-	private Locale applyRequestLocale(Locale requestLocale) {
-
-		I18NUtil.setContentLocale(requestLocale);
+	private Locale applyUILocale(Locale requestLocale) {
 
 		Locale uiLocale = toSupportedUILocale(requestLocale);
 
