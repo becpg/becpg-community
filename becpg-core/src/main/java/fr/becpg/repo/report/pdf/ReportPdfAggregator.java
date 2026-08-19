@@ -2,15 +2,19 @@ package fr.becpg.repo.report.pdf;
 
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -1308,10 +1312,6 @@ public class ReportPdfAggregator {
             // ignore
         }
         return false;
-    }
-
-    private static byte[] generateDynamicTocPage(List<AnnexSection> sections, Map<String, Integer> sectionPages, TableOfContentsModel config) throws IOException {
-        return generateDynamicTocPage(sections, sectionPages, config, null);
     }
 
     private static byte[] generateDynamicTocPage(List<AnnexSection> sections, Map<String, Integer> sectionPages, TableOfContentsModel config, Map<String, String> customI18n) throws IOException {
