@@ -18,6 +18,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.ExcelHelper.ExcelCellStyles;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.report.search.impl.DefaultExcelReportSearchPlugin;
+import fr.becpg.repo.report.search.impl.ExcelExportCache;
 
 /**
  * <p>DynamicCharactListExcelReportSearchPlugin class.</p>
@@ -31,9 +32,9 @@ public class DynamicCharactListExcelReportSearchPlugin extends DefaultExcelRepor
 	/** {@inheritDoc} */
 	@Override
 	public int fillSheet(Sheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
-			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
+			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, ExcelExportCache cache) {
 
-		ExcelCellStyles excelCellStyles = new ExcelCellStyles(sheet.getWorkbook());
+		ExcelCellStyles excelCellStyles = cache.getCellStyles(sheet.getWorkbook());
 
 		for (NodeRef entityNodeRef : searchResults) {
 			if (entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), mainType)) {

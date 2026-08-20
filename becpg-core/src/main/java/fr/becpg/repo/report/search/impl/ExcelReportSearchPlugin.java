@@ -52,7 +52,7 @@ public interface ExcelReportSearchPlugin {
 	 * @return a int.
 	 */
 	int fillSheet(Sheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameter,
-			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache);
+			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, ExcelExportCache cache);
 
 	/**
 	 * <p>isDefault.</p>

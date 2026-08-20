@@ -231,6 +231,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		QName fieldQname;
 		QName itemType;
 		String formula = null;
+		String structureKey;
 
 		public AttributeExtractorStructure(AttributeExtractorField field, ClassAttributeDefinition fieldDef, QName itemType) {
 			this.fieldDef = fieldDef;
@@ -315,6 +316,27 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 		public boolean isNested() {
 			return (childrens != null) && !childrens.isEmpty();
+		}
+
+		/**
+		 * The fields this structure extracts: itself and, recursively, its children. Two structures
+		 * reading the same field but not the same children describe two different extractions.
+		 *
+		 * @return a {@link java.lang.String} object
+		 */
+		public String getStructureKey() {
+			if (structureKey == null) {
+				StringBuilder key = new StringBuilder(getFieldName());
+
+				if (childrens != null) {
+					for (AttributeExtractorStructure child : childrens) {
+						key.append('|').append(child.getStructureKey());
+					}
+				}
+
+				structureKey = key.toString();
+			}
+			return structureKey;
 		}
 
 		public ClassAttributeDefinition getFieldDef() {
