@@ -37,11 +37,47 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import jakarta.annotation.PreDestroy;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.tenant.TenantUtil;
 
 @Component("aggregateReportModelBuilder")
 public class AggregateReportModelBuilder {
 
     private static final Log logger = LogFactory.getLog(AggregateReportModelBuilder.class);
+
+    private static final int SUB_REPORT_MAX_THREADS = 2;
+
+    private final ExecutorService subReportExecutor = Executors.newFixedThreadPool(SUB_REPORT_MAX_THREADS, new ThreadFactory() {
+        private final AtomicInteger threadNumber = new AtomicInteger(1);
+
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread thread = new Thread(r, "aggregate-subreport-" + threadNumber.getAndIncrement());
+            thread.setDaemon(true);
+            return thread;
+        }
+    });
+
+    @PreDestroy
+    public void destroy() {
+        subReportExecutor.shutdown();
+        try {
+            if (!subReportExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
+                subReportExecutor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            subReportExecutor.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+    }
 
     @Autowired
     private NodeService nodeService;
@@ -179,13 +215,8 @@ public class AggregateReportModelBuilder {
         if (logger.isDebugEnabled()) {
             logger.debug("Found " + compoComponents.size() + " composition components for node: " + fpNodeRef + ": " + compoComponents);
         }
-        for (NodeRef compNode : compoComponents) {
-            List<AnnexDocument> docs = collectDocumentsForNode(compNode, annex.getReportKind(), annex.getMimeTypes(), false);
-            if (logger.isDebugEnabled()) {
-                logger.debug("Collected " + docs.size() + " documents for composition component: " + compNode + " (reportKind: " + annex.getReportKind() + ")");
-            }
-            documents.addAll(docs);
-        }
+        List<AnnexDocument> docs = collectDocumentsForNodesParallel(compoComponents, annex.getReportKind(), annex.getMimeTypes());
+        documents.addAll(docs);
         if (logger.isDebugEnabled()) {
             logger.debug("Total COMPO_CHILDREN documents collected: " + documents.size() + " for reportKind: " + annex.getReportKind());
         }
@@ -203,16 +234,57 @@ public class AggregateReportModelBuilder {
         if (logger.isDebugEnabled()) {
             logger.debug("Found " + packagingComponents.size() + " packaging components for node: " + fpNodeRef + ": " + packagingComponents);
         }
-        for (NodeRef pkgNode : packagingComponents) {
-            List<AnnexDocument> docs = collectDocumentsForNode(pkgNode, annex.getReportKind(), annex.getMimeTypes(), false);
-            if (logger.isDebugEnabled()) {
-                logger.debug("Collected " + docs.size() + " documents for packaging component: " + pkgNode + " (reportKind: " + annex.getReportKind() + ")");
-            }
-            documents.addAll(docs);
-        }
+        List<AnnexDocument> docs = collectDocumentsForNodesParallel(packagingComponents, annex.getReportKind(), annex.getMimeTypes());
+        documents.addAll(docs);
         if (logger.isDebugEnabled()) {
             logger.debug("Total PACKAGING_CHILDREN documents collected: " + documents.size() + " for reportKind: " + annex.getReportKind());
         }
+    }
+
+    private List<AnnexDocument> collectDocumentsForNodesParallel(List<NodeRef> entityNodeRefs, String reportKind, List<String> mimeTypes) {
+        if (entityNodeRefs == null || entityNodeRefs.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        String runAsUser = AuthenticationUtil.getRunAsUser();
+        if (runAsUser == null) {
+            runAsUser = AuthenticationUtil.getSystemUserName();
+        }
+        String tenantDomain = TenantUtil.getCurrentDomain();
+        Locale locale = I18NUtil.getLocale();
+        Locale contentLocale = I18NUtil.getContentLocale();
+
+        final String finalRunAsUser = runAsUser;
+        List<Future<List<AnnexDocument>>> futures = new ArrayList<>(entityNodeRefs.size());
+
+        for (NodeRef compNode : entityNodeRefs) {
+            futures.add(subReportExecutor.submit(() -> {
+                return TenantUtil.runAsTenant(() -> {
+                    return AuthenticationUtil.runAs(() -> {
+                        I18NUtil.setLocale(locale);
+                        I18NUtil.setContentLocale(contentLocale);
+                        return collectDocumentsForNode(compNode, reportKind, mimeTypes, false);
+                    }, finalRunAsUser);
+                }, tenantDomain);
+            }));
+        }
+
+        List<AnnexDocument> allDocuments = new ArrayList<>();
+        for (int i = 0; i < futures.size(); i++) {
+            NodeRef compNode = entityNodeRefs.get(i);
+            try {
+                List<AnnexDocument> docs = futures.get(i).get();
+                if (docs != null) {
+                    allDocuments.addAll(docs);
+                }
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Collected " + (docs != null ? docs.size() : 0) + " documents for component: " + compNode + " (reportKind: " + reportKind + ")");
+                }
+            } catch (Exception e) {
+                logger.error("Failed to generate/collect sub-report for component " + compNode + ": " + e.getMessage(), e);
+            }
+        }
+        return allDocuments;
     }
 
     private void collectCompoComponents(NodeRef productNodeRef, List<NodeRef> collected, Set<NodeRef> visited, boolean recurse, List<String> allowedTypes) {
