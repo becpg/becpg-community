@@ -56,6 +56,7 @@ import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.GUID;
+import org.alfresco.util.Pair;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -143,7 +144,10 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 			pagination.put("hasMoreItems", pagingResult.hasMoreItems());
 			pagination.put("count", pagingResult.getPage().size());
-			pagination.put("totalItems", pagingResult.getTotalResultCount().getFirst());
+			Pair<Integer, Integer> totalResultCount = pagingResult.getTotalResultCount();
+			if ((totalResultCount != null) && (totalResultCount.getSecond() != null)) {
+				pagination.put("totalItems", totalResultCount.getSecond());
+			}
 
 			JSONArray jsonEntities = new JSONArray();
 

@@ -316,6 +316,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			} else {
 			    pagingNodes = advSearchResults.subList(startIndex, endIndex);
 			}
+			boolean advSearchCapped = !isMaxResultsQuery && (advSearchResultsSize == advSearchMaxResults);
 			return new PagingResults<NodeRef>() {
 				@Override
 				public boolean hasMoreItems() {
@@ -323,7 +324,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				}
 				@Override
 				public Pair<Integer, Integer> getTotalResultCount() {
-					return new Pair<>(advSearchResultsSize, advSearchResultsSize);
+					return new Pair<>(advSearchResultsSize, advSearchCapped ? null : advSearchResultsSize);
 				}
 				@Override
 				public String getQueryExecutionId() {
@@ -351,7 +352,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Returning " + refs.getTotalResultCount() + " entities");
 				}
-				return refs;
+				return withKnownTotalCount(refs, queryBuilder);
 			}
 			
 			if (logger.isDebugEnabled()) {
@@ -360,6 +361,54 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		}
 		return new EmptyPagingResults<>();
 
+	}
+
+	/**
+	 * <p>Completes a page whose total is unknown with the number of matches reported by the index.</p>
+	 *
+	 * <p>The transactional query engine stops counting one row past the requested page, so it cannot tell
+	 * how many entities match as soon as another page follows. The index reports that number without
+	 * reading the nodes back, at the cost of its eventual consistency. An index that reports fewer
+	 * entities than the page holds is not answering for this query, and the total is left unknown.</p>
+	 *
+	 * @param refs a {@link org.alfresco.query.PagingResults} object, the page returned by the query
+	 * @param queryBuilder a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object, the builder that ran the query
+	 * @return a {@link org.alfresco.query.PagingResults} object
+	 */
+	private PagingResults<NodeRef> withKnownTotalCount(PagingResults<NodeRef> refs, BeCPGQueryBuilder queryBuilder) {
+
+		if (refs.getTotalResultCount().getSecond() != null) {
+			return refs;
+		}
+
+		int indexedCount = queryBuilder.indexedCount().intValue();
+		if (indexedCount < refs.getPage().size()) {
+			return refs;
+		}
+
+		int totalCount = Math.max(indexedCount, refs.getTotalResultCount().getFirst());
+
+		return new PagingResults<NodeRef>() {
+			@Override
+			public List<NodeRef> getPage() {
+				return refs.getPage();
+			}
+
+			@Override
+			public boolean hasMoreItems() {
+				return refs.hasMoreItems();
+			}
+
+			@Override
+			public Pair<Integer, Integer> getTotalResultCount() {
+				return new Pair<>(totalCount, totalCount);
+			}
+
+			@Override
+			public String getQueryExecutionId() {
+				return refs.getQueryExecutionId();
+			}
+		};
 	}
 
 	/**

@@ -41,6 +41,7 @@ import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.model.filefolder.GetChildrenCannedQueryFactory;
 import org.alfresco.repo.node.getchildren.GetChildrenCannedQuery;
 import org.alfresco.repo.rule.RuleModel;
+import org.alfresco.repo.search.QueryParserException;
 import org.alfresco.repo.search.impl.parsers.FTSQueryException;
 import org.alfresco.repo.search.impl.querymodel.QueryModelException;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -1654,22 +1655,13 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	/**
-	 * <p>search.</p>
+	 * <p>Builds the search parameters shared by every execution of the current query: store, locale,
+	 * language, full text template and consistency. Only the paging and the sort are left to the caller.</p>
 	 *
 	 * @param runnedQuery a {@link java.lang.String} object
-	 * @param sort a {@link java.util.Map} object
-	 * @param page a int
-	 * @param maxResults a int
-	 * @return a {@link org.alfresco.query.PagingResults} object
+	 * @return a {@link org.alfresco.service.cmr.search.SearchParameters} object
 	 */
-	private PagingResults<NodeRef> search(String runnedQuery, Map<String, Boolean> sort, int page, int maxResults) {
-
-		List<NodeRef> nodes = new ArrayList<>();
-
-		boolean hasMore = false;
-		int totalFirst = 0;
-		int totalSecond = 0;
-		int skipCount = 0;
+	private SearchParameters buildSearchParameters(String runnedQuery) {
 
 		SearchParameters sp = new SearchParameters();
 		sp.addStore(store);
@@ -1712,6 +1704,29 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		// eventual consistency; or
 		sp.setQueryConsistency(queryConsistancy);
 
+		return sp;
+	}
+
+	/**
+	 * <p>search.</p>
+	 *
+	 * @param runnedQuery a {@link java.lang.String} object
+	 * @param sort a {@link java.util.Map} object
+	 * @param page a int
+	 * @param maxResults a int
+	 * @return a {@link org.alfresco.query.PagingResults} object
+	 */
+	private PagingResults<NodeRef> search(String runnedQuery, Map<String, Boolean> sort, int page, int maxResults) {
+
+		List<NodeRef> nodes = new ArrayList<>();
+
+		boolean hasMore = false;
+		int totalFirst = 0;
+		Integer totalSecond = null;
+		int skipCount = 0;
+
+		SearchParameters sp = buildSearchParameters(runnedQuery);
+
 		if (logger.isDebugEnabled()) {
 			logger.debug("Use maxResults :" + maxResults);
 		}
@@ -1753,7 +1768,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				hasMore = result.hasMore();
 				totalFirst = (int) result.getNumberFound();
 
-				totalSecond = !hasMore ? (int) result.getNumberFound() : (int) (skipCount + result.getNumberFound() + 1);
+				totalSecond = isExactCount(totalFirst, hasMore, skipCount, maxResults) ? totalFirst : null;
 
 				if (AuthenticationUtil.isMtEnabled()) {
 					for (NodeRef node : result.getNodeRefs()) {
@@ -1777,6 +1792,32 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		return asPagingResults(nodes, hasMore, new Pair<>(totalFirst, totalSecond));
 
+	}
+
+	/**
+	 * <p>Tells whether the number of matches reported by the engine is the exact total.</p>
+	 *
+	 * <p>The transactional engine stops reading one row past the requested page, so as soon as another
+	 * page exists its count is only a lower bound. The index, on the contrary, always reports the whole
+	 * number of matches, whatever the page asked for.</p>
+	 *
+	 * @param numberFound the number of matches reported by the engine
+	 * @param hasMore whether another page follows the current one
+	 * @param skipCount the number of rows skipped before the current page
+	 * @param maxResults the size of the requested page
+	 * @return true when the count can be published as a total
+	 */
+	private boolean isExactCount(int numberFound, boolean hasMore, int skipCount, int maxResults) {
+
+		if (!hasMore) {
+			return true;
+		}
+
+		if (maxResults == RepoConsts.MAX_RESULTS_UNLIMITED) {
+			return false;
+		}
+
+		return numberFound > (skipCount + maxResults + 1);
 	}
 
 	/**
@@ -1863,6 +1904,47 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		}
 
 		return ret;
+	}
+
+	/**
+	 * <p>
+	 * indexedCount.
+	 * </p>
+	 *
+	 * Number of nodes matching the query, read from the index.
+	 *
+	 * Unlike {@link fr.becpg.repo.search.BeCPGQueryBuilder#count()}, the matching nodes are not read back:
+	 * the index reports the number of matches on its own, which keeps the call cheap whatever the size of
+	 * the result set. The counterpart is the eventual consistency of the index, so the count can lag behind
+	 * a transaction that has just been committed.
+	 *
+	 * @return a {@link java.lang.Long} object.
+	 */
+	public Long indexedCount() {
+
+		SearchParameters sp = buildSearchParameters(buildQuery());
+		sp.setQueryConsistency(QueryConsistency.EVENTUAL);
+		sp.setLimitBy(LimitBy.FINAL_SIZE);
+		sp.setLimit(0);
+		sp.setMaxItems(0);
+		sp.setMaxPermissionChecks(Integer.MAX_VALUE);
+		sp.setMaxPermissionCheckTimeMillis(Integer.MAX_VALUE);
+		sp.setBulkFetchEnabled(false);
+
+		ResultSet result = null;
+		try {
+			result = searchService.query(sp);
+
+			return result != null ? result.getNumberFound() : 0L;
+		} catch (QueryParserException | FTSQueryException | QueryModelException e) {
+			logger.error("Cannot count results of query :" + sp.getQuery(), e);
+
+			return 0L;
+		} finally {
+			if (result != null) {
+				result.close();
+			}
+		}
 	}
 
 	/**
