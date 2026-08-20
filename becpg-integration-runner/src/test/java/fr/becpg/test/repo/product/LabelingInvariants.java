@@ -60,6 +60,9 @@ public final class LabelingInvariants {
 
 	private static final Pattern HTML_TAG = Pattern.compile("<[^>]+>");
 
+	/** A nested detail, ie "epices 8,3% [ing6 8,3%]" : its content restates an entry already counted. */
+	private static final Pattern NESTED_DETAIL = Pattern.compile("\\[[^\\]]*\\]");
+
 	private LabelingInvariants() {
 		// utility class
 	}
@@ -75,15 +78,16 @@ public final class LabelingInvariants {
 	}
 
 	/**
-	 * A bracket details the ingredient it follows, so it cannot add up to more than that ingredient.
+	 * A bracket details the ingredient it follows, so it cannot add up to MORE than that ingredient.
 	 *
-	 * This is what #34702 broke twice: the sub ingredients were scaled against a total that was not
-	 * the one their parent was rendered against, so "tomato puree 21.6 % (tomato 25.3 %, oil 0.3 %)"
-	 * came out of a product whose ingredient list said 21.4 and 0.2.
+	 * This is what #34702 broke twice and #34758 with it: the sub ingredients were scaled against a
+	 * total that was not the one their parent was rendered against, so "tomato puree 21.6 % (tomato
+	 * 25.3 %, oil 0.3 %)" came out of a product whose ingredient list said 21.4 and 0.2.
 	 *
-	 * Only brackets whose every entry carries a percentage are checked : a composite that is only
-	 * partly quantified legitimately shows fewer percentages than it has sub ingredients, and its
-	 * bracket is then not expected to reach its parent.
+	 * Falling short is not checked, being legitimate: a composite may be only partly declared - a raw
+	 * material detailing one of its ingredients and not the rest - and its bracket then stays below
+	 * its parent on purpose. Only the overshoot is impossible, which is the same rule the renderer
+	 * applies to decide whether to rescale.
 	 *
 	 * @param rendered the label the formulation rendered
 	 * @param context what to name in the failure message
@@ -98,29 +102,10 @@ public final class LabelingInvariants {
 		while (detailed.find()) {
 			double parent = toDouble(detailed.group(1));
 			String bracket = detailed.group(2);
-			if (!isFullyQuantified(bracket)) {
-				continue;
-			}
-			double children = sumPercentages(bracket);
-			Assert.assertEquals("A bracket must add up to the ingredient it details, in " + context + " : parent " + parent + " %, bracket \""
-					+ bracket.trim() + "\" = " + children + " %", parent, children, RENDERING_TOLERANCE);
+			double children = sumPercentages(NESTED_DETAIL.matcher(bracket).replaceAll(""));
+			Assert.assertTrue("A bracket cannot add up to more than the ingredient it details, in " + context + " : parent " + parent
+					+ " %, bracket \"" + bracket.trim() + "\" = " + children + " %", children <= (parent + RENDERING_TOLERANCE));
 		}
-	}
-
-	/**
-	 * Tells whether every entry of a bracket carries a percentage.
-	 *
-	 * @param bracket the text between the brackets
-	 * @return true when each comma separated entry holds a percentage
-	 */
-	private static boolean isFullyQuantified(String bracket) {
-		String[] entries = bracket.split(",");
-		for (String entry : entries) {
-			if (!PERCENTAGE.matcher(entry).find()) {
-				return false;
-			}
-		}
-		return entries.length > 0;
 	}
 
 	/**
