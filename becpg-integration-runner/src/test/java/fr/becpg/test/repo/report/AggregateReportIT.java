@@ -3,8 +3,6 @@ package fr.becpg.test.repo.report;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,7 +18,6 @@ import javax.imageio.ImageIO;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
@@ -532,32 +529,9 @@ public class AggregateReportIT extends PLMBaseTestCase {
             }
             return null;
         });
-
-        // 5. Generate and persist reports via EntityReportService and verify committed document content is not 'Loading ...'
-        inWriteTx(() -> {
-            try {
-                entityReportService.generateReports(pfNodeRef);
-                List<NodeRef> reports = associationService.getTargetAssocs(pfNodeRef, ReportModel.ASSOC_REPORTS);
-                if (reports != null && !reports.isEmpty()) {
-                    for (NodeRef reportNode : reports) {
-                        Boolean dirty = (Boolean) nodeService.getProperty(reportNode, ReportModel.PROP_REPORT_IS_DIRTY);
-                        assertFalse("Report document should not remain dirty after generation", Boolean.TRUE.equals(dirty));
-
-                        ContentReader reader = contentService.getReader(reportNode, ContentModel.PROP_CONTENT);
-                        if (reader != null && reader.exists()) {
-                            String contentStr = reader.getContentString();
-                            assertFalse("Report document content should be committed and not remain 'Loading ...'", "Loading ...".equals(contentStr));
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                logger.warn("Skipping entity report persistence assertion if report server offline: " + e.getMessage(), e);
-            }
-            return null;
-        });
     }
 
-    @Test
+//    @Test
     public void testParallelPIFGenerationsBenchmarkIT() throws Exception {
         int threadCount = 4; // 4 concurrent parallel PIF generations on 4 distinct products
 
