@@ -1,0 +1,106 @@
+{
+  "header": {
+    "logo": "becpg-logo.png",
+    "title": "SLabel.pifReportTitle",
+    "subtitle": "${legalName}",
+    "date": "${cm:modified?date}",
+    "startNumberingAt": 1
+  },
+
+  "tableOfContents": {
+    "enabled": false
+  },
+
+  "pagination": {
+    "enabled": true,
+    "format": "Page ${page} / ${total}",
+    "startNumberingAt": 1,
+    "font": "Arial",
+    "size": 8,
+    "color": "#404040"
+  },
+
+  "componentHeadingStyle": {
+    "font": "Arial-Bold",
+    "size": 11,
+    "color": "#004254",
+    "prefix": "> "
+  },
+
+  "placeholderStyle": {
+    "font": "Arial-Bold",
+    "size": 9,
+    "color": "#000000"
+  },
+
+  "annexes": [
+    {
+      "reportKind": "annexe-compo-quali-quanti",
+      "title": "SLabel.pifAnnexCompoQualiQuanti",
+      "scope": "ENTITY",
+      "componentHeading": false,
+      "emptyPlaceholder": "SLabel.pifAnnexCompoQualiQuantiEmptyPlaceholder",
+      "required": true,
+      "mimeTypes": ["application/pdf"]
+    },
+    {
+      "reportKind": "annexe-mp",
+      "title": "SLabel.pifAnnexRawMaterials",
+      "scope": "COMPO_CHILDREN",
+      "recurse": true,
+      "componentTypes": ["bcpg:rawMaterial", "bcpg:semiFinishedProduct"],
+      "componentHeading": true,
+      "sort": "COMPO_ORDER",
+      "dedup": true,
+      "required": true,
+      "mimeTypes": ["application/pdf"]
+    },
+    {
+      "reportKind": "annexe-emb-primaire",
+      "title": "SLabel.pifAnnexPrimaryPackaging",
+      "scope": "PACKAGING_CHILDREN",
+      "pkgLevel": "Primary",
+      "componentHeading": true,
+      "sort": "COMPO_ORDER",
+      "dedup": true,
+      "required": true,
+      "mimeTypes": ["application/pdf"]
+    },
+    {
+      "reportKind": "annexe-cpsr",
+      "title": "SLabel.pifAnnexCPSR",
+      "scope": "ENTITY",
+      "componentHeading": false,
+      "emptyPlaceholder": "SLabel.pifAnnexCPSREmptyPlaceholder",
+      "required": true,
+      "mimeTypes": ["application/pdf"]
+    },
+    {
+      "reportKind": "annexe-stability-micro",
+      "title": "SLabel.pifAnnexStabilityMicro",
+      "scope": "ENTITY",
+      "componentHeading": false,
+      "emptyPlaceholder": "SLabel.pifAnnexStabilityMicroEmptyPlaceholder",
+      "required": true,
+      "mimeTypes": ["application/pdf"]
+    },
+    {
+      "reportKind": "annexe-claim-efficacy",
+      "title": "SLabel.pifAnnexClaimEfficacy",
+      "scope": "ENTITY",
+      "componentHeading": false,
+      "emptyPlaceholder": "SLabel.pifAnnexClaimEfficacyEmptyPlaceholder",
+      "required": true,
+      "mimeTypes": ["application/pdf"]
+    },
+    {
+      "reportKind": "annexe-gmp-animal-testing",
+      "title": "SLabel.pifAnnexGMPAnimalTesting",
+      "scope": "ENTITY",
+      "componentHeading": false,
+      "emptyPlaceholder": "SLabel.pifAnnexGMPAnimalTestingEmptyPlaceholder",
+      "required": true,
+      "mimeTypes": ["application/pdf"]
+    }
+  ]
+}

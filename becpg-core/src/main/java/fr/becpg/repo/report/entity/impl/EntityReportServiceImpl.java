@@ -24,6 +24,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -289,35 +291,30 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	 * @param generateAllReports a boolean
 	 */
 	private void generateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo, boolean generateAllReports) {
-		// Must be the very key passed to removeMutex below, otherwise the entry is
-		// never removed from the mutex table.
+		generateReports(nodeRefFrom, nodeRefTo, generateAllReports, null);
+	}
+
+	private void generateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo, boolean generateAllReports, String reportKind) {
 		String mutexKey = "report-" + nodeRefTo.getId();
 		ReentrantLock lock = mutexFactory.getMutex(mutexKey);
-	    boolean lockAcquired = false;
-	    
-	    try {
-	        // Check if we already hold the lock or can acquire it
-	        if (lock.isHeldByCurrentThread()) {
-	            // We already hold the lock, just proceed
-	            lockAcquired = true;
-	        } else {
-	            // Try to acquire the lock
-	            lockAcquired = lock.tryLock();
-	            if (!lockAcquired) {
-	                logger.warn("Failed to acquire lock for NodeRef: " + nodeRefTo.toString());
-	                return; // Exit early if lock acquisition failed
-	            }
-	        }
-	        
-	        // Only proceed with report generation if we have the lock
-	        internalGenerateReports(nodeRefFrom != null ? nodeRefFrom : nodeRefTo, nodeRefTo, generateAllReports);
-	    } finally {
-	        // Only release the lock if we acquired it in this method call
-	        if (lockAcquired) {
-	            lock.unlock();
-	            mutexFactory.removeMutex(mutexKey, lock);
-	        }
-	    }
+		boolean lockAcquiredInThisCall = false;
+
+		if (!lock.isHeldByCurrentThread()) {
+			lockAcquiredInThisCall = lock.tryLock();
+			if (!lockAcquiredInThisCall) {
+				logger.warn("Failed to acquire lock for NodeRef: " + nodeRefTo.toString());
+				return;
+			}
+		}
+
+		try {
+			internalGenerateReports(nodeRefFrom != null ? nodeRefFrom : nodeRefTo, nodeRefTo, generateAllReports, reportKind);
+		} finally {
+			if (lockAcquiredInThisCall) {
+				lock.unlock();
+				mutexFactory.removeMutex(mutexKey, lock);
+			}
+		}
 	}
 
 	/**
@@ -327,7 +324,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	 * @param nodeRefTo a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param generateAllReports a boolean
 	 */
-	private void internalGenerateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo, boolean generateAllReports) {
+	private void internalGenerateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo, boolean generateAllReports, String reportKind) {
 
 		if (nodeRefFrom == null) {
 			throw new IllegalArgumentException("nodeRef is null");
@@ -348,21 +345,34 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 							I18NUtil.setLocale(defaultLocale);
 							I18NUtil.setContentLocale(defaultLocale);
 							
-							ruleService.disableRules();
-							policyBehaviourFilter.disableBehaviour(nodeRefFrom, ContentModel.ASPECT_AUDITABLE);
+							boolean rulesEnabled = ruleService.isEnabled();
+							boolean auditableEnabled = policyBehaviourFilter.isEnabled(nodeRefFrom, ContentModel.ASPECT_AUDITABLE);
 							
-							List<NodeRef> newReports = getReports(nodeRefFrom, nodeRefTo, defaultLocale, generateAllReports);
-							updateReportsAssoc(nodeRefTo, newReports);
+							if (rulesEnabled) {
+								ruleService.disableRules();
+							}
+							if (auditableEnabled) {
+								policyBehaviourFilter.disableBehaviour(nodeRefFrom, ContentModel.ASPECT_AUDITABLE);
+							}
+							
+							try {
+								List<NodeRef> newReports = getReports(nodeRefFrom, nodeRefTo, defaultLocale, generateAllReports, reportKind);
+								updateReportsAssoc(nodeRefTo, newReports, reportKind);
+							} finally {
+								if (rulesEnabled) {
+									ruleService.enableRules();
+								}
+								if (auditableEnabled) {
+									policyBehaviourFilter.enableBehaviour(nodeRefFrom, ContentModel.ASPECT_AUDITABLE);
+								}
+							}
 							
 							return null;
 						});
-						
 
 					} finally {
 						I18NUtil.setLocale(currentLocal);
 						I18NUtil.setContentLocale(currentContentLocal);
-						ruleService.enableRules();
-						policyBehaviourFilter.enableBehaviour(nodeRefFrom);
 					}
 				}
 				return true;
@@ -378,9 +388,11 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	 * @param entityNodeTo a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param defaultLocale a {@link java.util.Locale} object
 	 * @param generateAllReports a boolean
+	 * @param reportKind 
 	 * @return a {@link java.util.List} object
 	 */
-	private List<NodeRef> getReports(final NodeRef entityNodeRef, final NodeRef entityNodeTo, Locale defaultLocale, boolean generateAllReports) {
+	private List<NodeRef> getReports(final NodeRef entityNodeRef, final NodeRef entityNodeTo, Locale defaultLocale, boolean generateAllReports,
+			String reportKind) {
 
 		Set<ReportableError> engineErrors = new HashSet<>();
 
@@ -401,6 +413,13 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		List<NodeRef> tplsNodeRef = getReportTplsToGenerate(entityNodeRef);
 
 		tplsNodeRef = reportTplService.cleanDefaultTpls(tplsNodeRef);
+
+		if (reportKind != null && !reportKind.isEmpty()) {
+			tplsNodeRef = tplsNodeRef.stream().filter(tplNodeRef -> {
+				List<String> reportKindProp = extractReportKindsList(nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS));
+				return !reportKindProp.isEmpty() && reportKindProp.contains(reportKind);
+			}).collect(Collectors.toList());
+		}
 
 		List<NodeRef> newReports = new ArrayList<>();
 
@@ -469,16 +488,13 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 									
 									if (writer != null) {
 										
-										if (generateAllReports
-												|| ((selectedReportNodeRef != null) && (documentNodeRef != null)
-														&& selectedReportNodeRef.toString().equals(documentNodeRef.toString()))
-												|| ((selectedReportNodeRef == null) && Boolean.TRUE.equals(isDefault))
-												|| !entityNodeRef.equals(entityNodeTo)) {
+										if (shouldGenerate(entityNodeRef, entityNodeTo, generateAllReports, selectedReportNodeRef, isDefault,
+												documentNodeRef, tplNodeRef, reportKind)) {
 											
 											String reportKindCode = "";
 											if (tplNodeRef != null) {
-												List<String> reportKindProp = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS);
-												if ((reportKindProp != null) && !reportKindProp.isEmpty()) {
+												List<String> reportKindProp = extractReportKindsList(nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS));
+												if (!reportKindProp.isEmpty()) {
 													reportKindCode = reportKindProp.get(0);
 												}
 											}
@@ -620,6 +636,19 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		return newReports;
 	}
 
+	private boolean shouldGenerate(final NodeRef entityNodeRef, final NodeRef entityNodeTo, boolean generateAllReports,
+			final NodeRef selectedReportNodeRef, Boolean isDefault, NodeRef documentNodeRef, NodeRef tplNodeRef, String reportKind) {
+		if (tplNodeRef != null && reportKind != null && !reportKind.isEmpty()) {
+			List<String> reportKindProp = extractReportKindsList(nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS));
+			return !reportKindProp.isEmpty() && reportKindProp.contains(reportKind);
+		}
+		return generateAllReports
+				|| ((selectedReportNodeRef != null) && (documentNodeRef != null)
+						&& selectedReportNodeRef.toString().equals(documentNodeRef.toString()))
+				|| ((selectedReportNodeRef == null) && Boolean.TRUE.equals(isDefault))
+				|| !entityNodeRef.equals(entityNodeTo);
+	}
+
 	/**
 	 * <p>filterByReportKind.</p>
 	 *
@@ -636,8 +665,8 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 			
 			String reportKindCode = "";
 			if (tplNodeRef != null) {
-				List<String> reportKindProp = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS);
-				if ((reportKindProp != null) && !reportKindProp.isEmpty()) {
+				List<String> reportKindProp = extractReportKindsList(nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS));
+				if (!reportKindProp.isEmpty()) {
 					reportKindCode = reportKindProp.get(0);
 				}
 			}
@@ -1162,8 +1191,8 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 							String reportKindCode = "";
 							if (tplNodeRef != null) {
-								List<String> reportKindProp = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS);
-								if ((reportKindProp != null) && !reportKindProp.isEmpty()) {
+								List<String> reportKindProp = extractReportKindsList(nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS));
+								if (!reportKindProp.isEmpty()) {
 									reportKindCode = reportKindProp.get(0);
 								}
 							}
@@ -1350,8 +1379,8 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 				String reportKindCode = "";
 				if (templateNodeRef != null) {
-					List<String> reportKindProp = (List<String>) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_KINDS);
-					if ((reportKindProp != null) && !reportKindProp.isEmpty()) {
+					List<String> reportKindProp = extractReportKindsList(nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_KINDS));
+					if (!reportKindProp.isEmpty()) {
 						reportKindCode = reportKindProp.get(0);
 					}
 				}
@@ -1775,17 +1804,48 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		return ret;
 	}
 
+	@SuppressWarnings("unchecked")
+	private List<String> extractReportKindsList(Serializable propVal) {
+		if (propVal instanceof List<?> list) {
+			return (List<String>) list;
+		} else if (propVal instanceof String str && !str.isEmpty()) {
+			return Collections.singletonList(str);
+		}
+		return Collections.emptyList();
+	}
+
+	private List<String> getReportKinds(NodeRef reportNodeRef) {
+		List<String> reportKinds = extractReportKindsList(nodeService.getProperty(reportNodeRef, ReportModel.PROP_REPORT_KINDS));
+		if (!reportKinds.isEmpty()) {
+			return reportKinds;
+		}
+		NodeRef tplNodeRef = associationService.getTargetAssoc(reportNodeRef, ReportModel.ASSOC_REPORT_TPL);
+		if (tplNodeRef != null) {
+			return extractReportKindsList(nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS));
+		}
+		return Collections.emptyList();
+	}
+
+	private boolean isReportOfKind(NodeRef reportNodeRef, String reportKind) {
+		List<String> reportKinds = getReportKinds(reportNodeRef);
+		if (reportKind != null && !reportKind.isEmpty()) {
+			return reportKinds.contains(reportKind);
+		}
+		return reportKinds.isEmpty();
+	}
+
 	/**
 	 * <p>updateReportsAssoc.</p>
 	 *
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
 	 * @param newReports a {@link java.util.List} object
 	 */
-	private void updateReportsAssoc(NodeRef entityNodeRef, List<NodeRef> newReports) {
+	private void updateReportsAssoc(NodeRef entityNodeRef, List<NodeRef> newReports, String reportKind) {
+		List<NodeRef> currentReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
 
 		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_WORKING_COPY)) {
-			for (NodeRef dbReport : associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS)) {
-				if (!newReports.contains(dbReport)) {
+			for (NodeRef dbReport : currentReports) {
+				if (!newReports.contains(dbReport) && isReportOfKind(dbReport, reportKind)) {
 					logger.debug("delete old report: " + dbReport);
 					nodeService.addAspect(dbReport, ContentModel.ASPECT_TEMPORARY, null);
 					nodeService.deleteNode(dbReport);
@@ -1793,7 +1853,13 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 			}
 		}
 
-		associationService.update(entityNodeRef, ReportModel.ASSOC_REPORTS, newReports);
+		List<NodeRef> finalReports = new ArrayList<>(newReports);
+		for (NodeRef dbReport : currentReports) {
+			if (!finalReports.contains(dbReport) && nodeService.exists(dbReport) && !isReportOfKind(dbReport, reportKind)) {
+				finalReports.add(dbReport);
+			}
+		}
+		associationService.update(entityNodeRef, ReportModel.ASSOC_REPORTS, finalReports);
 	}
 
 	/**
@@ -2006,13 +2072,9 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 				List<AssociationRef> assocRefs = nodeService.getTargetAssocs(reportNodeRef, ReportModel.ASSOC_REPORT_TPL);
 
 				for (AssociationRef assocRef : assocRefs) {
-					Serializable reportKindsProp = nodeService.getProperty(assocRef.getTargetRef(), ReportModel.PROP_REPORT_KINDS);
-
-					if (reportKindsProp instanceof List<?>) {
-						List<?> reportKinds = (List<?>) reportKindsProp;
-						if (reportKinds.contains(reportKind)) {
-							reports.add(reportNodeRef);
-						}
+					List<String> reportKinds = extractReportKindsList(nodeService.getProperty(assocRef.getTargetRef(), ReportModel.PROP_REPORT_KINDS));
+					if (reportKinds.contains(reportKind)) {
+						reports.add(reportNodeRef);
 					}
 				}
 			}
@@ -2066,13 +2128,14 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	@Override
 	public List<NodeRef> getOrRefreshReportsOfKind(NodeRef entityNodeRef, String reportKind) {
 		List<NodeRef> reportsOfKind = getReportsOfKind(entityNodeRef, reportKind);
-		boolean shouldGenerate = shouldGenerateReport(entityNodeRef, null)
+		boolean shouldGenerate = reportsOfKind.isEmpty()
+				|| shouldGenerateReport(entityNodeRef, null)
 				|| reportsOfKind.stream().anyMatch(r -> shouldGenerateReport(entityNodeRef, r));
 		if (!shouldGenerate) {
 			return reportsOfKind;
 		}
 		logger.debug("Entity report is not up to date for entity " + entityNodeRef);
-		internalGenerateReports(entityNodeRef, entityNodeRef, true);
+		generateReports(entityNodeRef, entityNodeRef, false, reportKind);
 		return getReportsOfKind(entityNodeRef, reportKind);
 	}
 
