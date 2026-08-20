@@ -160,7 +160,7 @@ public class AggregateReportModelBuilder {
         if (logger.isDebugEnabled()) {
             logger.debug("Collecting ENTITY annex for node: " + fpNodeRef + ", reportKind: " + annex.getReportKind());
         }
-        List<AnnexDocument> docs = collectDocumentsForNode(fpNodeRef, annex.getReportKind(), annex.getMimeTypes());
+        List<AnnexDocument> docs = collectDocumentsForNode(fpNodeRef, annex.getReportKind(), annex.getMimeTypes(), true);
         documents.addAll(docs);
         if (logger.isDebugEnabled()) {
             logger.debug("Collected " + docs.size() + " ENTITY documents for node: " + fpNodeRef + ", reportKind: " + annex.getReportKind());
@@ -180,7 +180,7 @@ public class AggregateReportModelBuilder {
             logger.debug("Found " + compoComponents.size() + " composition components for node: " + fpNodeRef + ": " + compoComponents);
         }
         for (NodeRef compNode : compoComponents) {
-            List<AnnexDocument> docs = collectDocumentsForNode(compNode, annex.getReportKind(), annex.getMimeTypes());
+            List<AnnexDocument> docs = collectDocumentsForNode(compNode, annex.getReportKind(), annex.getMimeTypes(), false);
             if (logger.isDebugEnabled()) {
                 logger.debug("Collected " + docs.size() + " documents for composition component: " + compNode + " (reportKind: " + annex.getReportKind() + ")");
             }
@@ -204,7 +204,7 @@ public class AggregateReportModelBuilder {
             logger.debug("Found " + packagingComponents.size() + " packaging components for node: " + fpNodeRef + ": " + packagingComponents);
         }
         for (NodeRef pkgNode : packagingComponents) {
-            List<AnnexDocument> docs = collectDocumentsForNode(pkgNode, annex.getReportKind(), annex.getMimeTypes());
+            List<AnnexDocument> docs = collectDocumentsForNode(pkgNode, annex.getReportKind(), annex.getMimeTypes(), false);
             if (logger.isDebugEnabled()) {
                 logger.debug("Collected " + docs.size() + " documents for packaging component: " + pkgNode + " (reportKind: " + annex.getReportKind() + ")");
             }
@@ -323,7 +323,7 @@ public class AggregateReportModelBuilder {
         }
     }
 
-    private List<AnnexDocument> collectDocumentsForNode(NodeRef entityNodeRef, String reportKind, List<String> mimeTypes) {
+    private List<AnnexDocument> collectDocumentsForNode(NodeRef entityNodeRef, String reportKind, List<String> mimeTypes, boolean isRootEntityDocument) {
         List<AnnexDocument> results = new ArrayList<>();
         Set<NodeRef> collectedNodeRefs = new HashSet<>();
 
@@ -332,13 +332,20 @@ public class AggregateReportModelBuilder {
         }
 
         try {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Triggering getOrRefreshReportsOfKind in isolated transaction for node " + entityNodeRef + ", reportKind: " + reportKind);
-            }
-            transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-                entityReportService.getOrRefreshReportsOfKind(entityNodeRef, reportKind);
-                return null;
-            }, false, true);
+        	if (isRootEntityDocument) {
+        		if (logger.isDebugEnabled()) {
+        			logger.debug("Triggering getOrRefreshReportsOfKind in same transaction for node " + entityNodeRef + ", reportKind: " + reportKind);
+        		}
+    			entityReportService.getOrRefreshReportsOfKind(entityNodeRef, reportKind);
+        	} else {
+        		if (logger.isDebugEnabled()) {
+        			logger.debug("Triggering getOrRefreshReportsOfKind in isolated transaction for node " + entityNodeRef + ", reportKind: " + reportKind);
+        		}
+        		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+        			entityReportService.getOrRefreshReportsOfKind(entityNodeRef, reportKind);
+        			return null;
+        		}, false, true);
+        	}
         } catch (Exception e) {
             logger.error("On-the-fly report refresh failed for node " + entityNodeRef + ": " + e.getMessage(), e);
         }
