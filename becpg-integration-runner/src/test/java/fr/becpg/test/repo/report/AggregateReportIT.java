@@ -1,5 +1,32 @@
 package fr.becpg.test.repo.report;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import javax.imageio.ImageIO;
+
+import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.repository.ContentReader;
+import org.alfresco.service.cmr.repository.ContentWriter;
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -14,47 +41,27 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.ContentWriter;
-import org.alfresco.service.namespace.NamespaceService;
-import org.alfresco.service.namespace.QName;
-
-import fr.becpg.repo.report.pdf.ReportPdfAggregator;
-import fr.becpg.repo.report.pdf.ReportPdfAggregator.HeaderModel;
-import fr.becpg.repo.report.pdf.ReportPdfAggregator.ComponentHeadingStyle;
-import fr.becpg.repo.report.pdf.ReportPdfAggregator.AnnexSection;
-import fr.becpg.repo.report.pdf.ReportPdfAggregator.AnnexDocument;
+import fr.becpg.model.PLMModel;
+import fr.becpg.model.ReportModel;
+import fr.becpg.repo.PlmRepoConsts;
+import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.RepoService;
+import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.report.entity.EntityReportParameters;
-import fr.becpg.repo.report.template.ReportTplService;
+import fr.becpg.repo.report.entity.EntityReportService;
+import fr.becpg.repo.report.pdf.ReportPdfAggregator;
+import fr.becpg.repo.report.pdf.ReportPdfAggregator.AnnexDocument;
+import fr.becpg.repo.report.pdf.ReportPdfAggregator.AnnexSection;
+import fr.becpg.repo.report.pdf.ReportPdfAggregator.ComponentHeadingStyle;
+import fr.becpg.repo.report.pdf.ReportPdfAggregator.HeaderModel;
 import fr.becpg.repo.report.template.ReportTplInformation;
+import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.sample.StandardChocolateEclairTestProduct;
 import fr.becpg.report.client.ReportFormat;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import fr.becpg.test.PLMBaseTestCase;
-import fr.becpg.repo.PlmRepoConsts;
-import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.model.PLMModel;
-import fr.becpg.model.ReportModel;
-import fr.becpg.repo.helper.RepoService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.Serializable;
-import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
-import java.util.*;
-
-import static org.junit.Assert.*;
 
 public class AggregateReportIT extends PLMBaseTestCase {
 
@@ -68,6 +75,9 @@ public class AggregateReportIT extends PLMBaseTestCase {
 
     @Autowired
     private RepoService customRepoService;
+
+    @Autowired
+    private AssociationService associationService;
 
     @Test
     public void testPdfBoxAggregatorUnit() throws Exception {
@@ -418,7 +428,7 @@ public class AggregateReportIT extends PLMBaseTestCase {
             return null;
         });
     }
-
+    
     @Test
     public void testGeneratePIFReportForChocolateEclairIT() throws Exception {
 
@@ -519,6 +529,29 @@ public class AggregateReportIT extends PLMBaseTestCase {
                 }
             } catch (Exception e) {
                 logger.warn("Skipping BIRT PIF report assertion due to execution exception (BIRT server offline): " + e.getMessage(), e);
+            }
+            return null;
+        });
+
+        // 5. Generate and persist reports via EntityReportService and verify committed document content is not 'Loading ...'
+        inWriteTx(() -> {
+            try {
+                entityReportService.generateReports(pfNodeRef);
+                List<NodeRef> reports = associationService.getTargetAssocs(pfNodeRef, ReportModel.ASSOC_REPORTS);
+                if (reports != null && !reports.isEmpty()) {
+                    for (NodeRef reportNode : reports) {
+                        Boolean dirty = (Boolean) nodeService.getProperty(reportNode, ReportModel.PROP_REPORT_IS_DIRTY);
+                        assertFalse("Report document should not remain dirty after generation", Boolean.TRUE.equals(dirty));
+
+                        ContentReader reader = contentService.getReader(reportNode, ContentModel.PROP_CONTENT);
+                        if (reader != null && reader.exists()) {
+                            String contentStr = reader.getContentString();
+                            assertFalse("Report document content should be committed and not remain 'Loading ...'", "Loading ...".equals(contentStr));
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                logger.warn("Skipping entity report persistence assertion if report server offline: " + e.getMessage(), e);
             }
             return null;
         });

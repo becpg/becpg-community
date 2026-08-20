@@ -319,6 +319,11 @@ public class AggregateReportEngine implements BeCPGReportEngine {
     private void streamOutput(byte[] finalPdfBytes, OutputStream out) throws Exception {
         out.write(finalPdfBytes);
         out.flush();
+        try {
+            out.close();
+        } catch (Exception ex) {
+            logger.warn("Error closing output stream: " + ex.getMessage());
+        }
     }
 
     private NodeRef extractJsonAggregatorFile(List<NodeRef> assocFiles) {
