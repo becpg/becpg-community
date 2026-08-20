@@ -1,10 +1,7 @@
 
 package fr.becpg.repo.report.search.actions;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +24,8 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import fr.becpg.common.BeCPGException;
+import fr.becpg.repo.helper.ExcelStreamHelper;
 import fr.becpg.repo.report.search.impl.ExcelReportSearchRenderer;
 import fr.becpg.repo.report.search.impl.ExcelReportSearchRenderer.ExcelSheetExportContext;
 
@@ -123,7 +122,7 @@ public class ExcelSearchDownloadExporter extends AbstractSearchDownloadExporter 
 			}
 
 		} catch (ContentIOException | IOException e) {
-			logger.error("Error generating excel report", e);
+			throw new BeCPGException("Cannot read the excel report template: " + templateNodeRef, e);
 		}
 	}
 
@@ -150,62 +149,89 @@ public class ExcelSearchDownloadExporter extends AbstractSearchDownloadExporter 
 		}
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 *
+	 * The sheets of a template all describe the same entity, so they are filled in a single
+	 * transaction: opening one per sheet charges the export the price of a transaction for every
+	 * single row it writes.
+	 */
 	@Override
 	public void startNode(NodeRef entityNodeRef) {
 
-	    incFilesAddedCount();
+		incFilesAddedCount();
 
-	    for (Sheet sheet : sheets) {
-	        ExcelSheetExportContext excelSheetExportContext = context.get(sheet.getSheetName());
+		transactionHelper.doInTransaction(() -> {
+			fillSheets(entityNodeRef);
+			return null;
+		}, true, true);
 
-	        if (excelSheetExportContext == null) {
-	            continue;
-	        }
+		updateStatus();
 
-	        transactionHelper.doInTransaction(() -> {
-
-	            excelReportSearchRenderer.fillSheet(sheet, List.of(entityNodeRef), excelSheetExportContext);
-
-	            sheet.setForceFormulaRecalculation(true);
-	            return null;
-
-	        }, true, true);
-
-	        updateStatus();
-	    }
-
-	    // Periodically clear per-sheet caches to limit memory growth
-	    nodesSinceLastCacheClear++;
-	    if (nodesSinceLastCacheClear >= cacheClearEvery) {
-	      for (ExcelSheetExportContext ctx : context.values()) {
-	        if (ctx != null) {
-	          ctx.clearCache();
-	        }
-	      }
-	      nodesSinceLastCacheClear = 0;
-	      if (logger.isDebugEnabled()) {
-	        logger.debug("Cleared Excel sheet caches after processing batch of " + cacheClearEvery + " nodes");
-	      }
-	    }
+		clearCachesEveryBatch();
 	}
 
+	/**
+	 * Write the rows the given entity adds to each sheet of the template.
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	private void fillSheets(NodeRef entityNodeRef) {
+		for (Sheet sheet : sheets) {
+			ExcelSheetExportContext excelSheetExportContext = context.get(sheet.getSheetName());
 
+			if (excelSheetExportContext == null) {
+				continue;
+			}
 
-	/** {@inheritDoc} */
+			excelReportSearchRenderer.fillSheet(sheet, List.of(entityNodeRef), excelSheetExportContext);
+
+			sheet.setForceFormulaRecalculation(true);
+		}
+	}
+
+	/**
+	 * Drop what was extracted for the entities of the previous batch, to bound the memory an export
+	 * holds whatever the number of results.
+	 */
+	private void clearCachesEveryBatch() {
+
+		nodesSinceLastCacheClear++;
+
+		if (nodesSinceLastCacheClear < cacheClearEvery) {
+			return;
+		}
+
+		for (ExcelSheetExportContext sheetContext : context.values()) {
+			if (sheetContext != null) {
+				sheetContext.clearCache();
+			}
+		}
+
+		nodesSinceLastCacheClear = 0;
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Cleared Excel sheet caches after processing batch of " + cacheClearEvery + " nodes");
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * A workbook that could not be written entirely is not published: the client would download a
+	 * file it can only open by repairing it, instead of being told that its export failed.
+	 */
 	@Override
 	public void endExport() {
 		if ((tempFile == null) || (workbook == null)) {
 			return;
 		}
 
-		try (OutputStream outputStream = new FileOutputStream(tempFile)) {
+		try {
 			workbook.setForceFormulaRecalculation(true);
-			workbook.write(outputStream);
-		} catch (FileNotFoundException e) {
-			logger.error("Failed to create excel file", e);
+			ExcelStreamHelper.writeWorkbook(workbook, tempFile);
 		} catch (ContentIOException | IOException e) {
-			logger.error("Error generating excel report", e);
+			throw new BeCPGException("Error generating excel report", e);
 		} finally {
 			closeWorkbook();
 		}

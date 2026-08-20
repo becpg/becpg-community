@@ -1,7 +1,6 @@
 
 package fr.becpg.repo.report.search.actions;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -10,10 +9,8 @@ import org.alfresco.repo.download.DownloadStatusUpdateService;
 import org.alfresco.repo.download.DownloadStorage;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.view.ExporterContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.common.BeCPGException;
 import fr.becpg.config.mapping.MappingException;
 import fr.becpg.repo.report.search.impl.ReportServerSearchContext;
 import fr.becpg.repo.report.search.impl.ReportServerSearchRenderer;
@@ -27,9 +24,6 @@ import fr.becpg.report.client.ReportFormat;
  * @version $Id: $Id
  */
 public class ReportSearchDownloadExporter extends AbstractSearchDownloadExporter {
-
-	/** Constant <code>logger</code> */
-	private static Log logger = LogFactory.getLog(ReportSearchDownloadExporter.class);
 
 	private ReportServerSearchRenderer reportServerSearchRenderer;
 
@@ -91,7 +85,7 @@ public class ReportSearchDownloadExporter extends AbstractSearchDownloadExporter
 		try {
 			exportSearchCtx = reportServerSearchRenderer.createContext(templateNodeRef);
 		} catch (MappingException e) {
-			logger.error("Failed to read report mapping", e);
+			throw new BeCPGException("Cannot read the report mapping of template: " + templateNodeRef, e);
 		}
 	}
 
@@ -106,19 +100,23 @@ public class ReportSearchDownloadExporter extends AbstractSearchDownloadExporter
 		updateStatus();
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * {@inheritDoc}
+	 *
+	 * A report that could not be rendered is not published: the client would download a file the
+	 * report server never produced, instead of being told that its export failed.
+	 */
 	@Override
 	public void endExport() {
-		if (tempFile != null) {
-			try (OutputStream outputStream = new FileOutputStream(tempFile)) {
-				reportServerSearchRenderer.createReport(templateNodeRef, exportSearchCtx, outputStream, format);
-			} catch (FileNotFoundException e) {
-				logger.error("Failed to create report file", e);
-			} catch (ReportException | IOException e) {
-				logger.error("Error generating report", e);
-			}
+		if (tempFile == null) {
+			return;
 		}
 
+		try (OutputStream outputStream = new FileOutputStream(tempFile)) {
+			reportServerSearchRenderer.createReport(templateNodeRef, exportSearchCtx, outputStream, format);
+		} catch (ReportException | IOException e) {
+			throw new BeCPGException("Error generating report of template: " + templateNodeRef, e);
+		}
 	}
 
 }
