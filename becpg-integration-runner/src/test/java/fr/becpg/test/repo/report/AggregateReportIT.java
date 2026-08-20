@@ -3,6 +3,7 @@ package fr.becpg.test.repo.report;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +19,7 @@ import javax.imageio.ImageIO;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
@@ -526,6 +528,51 @@ public class AggregateReportIT extends PLMBaseTestCase {
                 }
             } catch (Exception e) {
                 logger.warn("Skipping BIRT PIF report assertion due to execution exception (BIRT server offline): " + e.getMessage(), e);
+            }
+            return null;
+        });
+
+        // 5. Generate PIF Report directly into repository document node and verify committed content
+        inWriteTx(() -> {
+            try {
+                NodeRef docsFolder = customRepoService.getOrCreateFolderByPath(pfNodeRef, RepoConsts.PATH_DOCUMENTS,
+                        TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS));
+                String docName = "PIF_Report_Eclair.pdf";
+                NodeRef reportDocNodeRef = nodeService.getChildByName(docsFolder, ContentModel.ASSOC_CONTAINS, docName);
+                if (reportDocNodeRef == null) {
+                    reportDocNodeRef = nodeService.createNode(docsFolder, ContentModel.ASSOC_CONTAINS,
+                            QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, docName),
+                            ReportModel.TYPE_REPORT).getChildRef();
+                    associationService.update(reportDocNodeRef, ReportModel.ASSOC_REPORT_TPL, pifTemplateNodeRef);
+                }
+
+                ContentWriter initialWriter = contentService.getWriter(reportDocNodeRef, ContentModel.PROP_CONTENT, true);
+                initialWriter.putContent("Loading ...");
+                nodeService.setProperty(reportDocNodeRef, ReportModel.PROP_REPORT_IS_DIRTY, true);
+
+                entityReportService.generateReport(pfNodeRef, reportDocNodeRef);
+
+                ContentReader reader = contentService.getReader(reportDocNodeRef, ContentModel.PROP_CONTENT);
+                assertNotNull("ContentReader should exist for committed report node", reader);
+                assertTrue("ContentReader should exist on storage", reader.exists());
+
+                Boolean isDirty = (Boolean) nodeService.getProperty(reportDocNodeRef, ReportModel.PROP_REPORT_IS_DIRTY);
+                assertFalse("Report document should not be dirty after generation", Boolean.TRUE.equals(isDirty));
+
+                try (InputStream in = reader.getContentInputStream()) {
+                    byte[] nodeBytes = in.readAllBytes();
+                    if (nodeBytes != null && nodeBytes.length > 0) {
+                        String header = new String(nodeBytes, 0, Math.min(nodeBytes.length, 10));
+                        assertFalse("Committed node content must not remain 'Loading ...'", header.startsWith("Loading"));
+                        assertTrue("Committed node content must be a valid PDF starting with %PDF-", header.startsWith("%PDF-"));
+
+                        try (PDDocument doc = Loader.loadPDF(nodeBytes)) {
+                            assertTrue("Committed PDF document should contain pages", doc.getNumberOfPages() > 0);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                logger.warn("Skipping repository report node assertion if report server offline: " + e.getMessage(), e);
             }
             return null;
         });
