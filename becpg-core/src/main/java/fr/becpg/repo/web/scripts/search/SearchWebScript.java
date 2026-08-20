@@ -14,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
@@ -139,7 +140,10 @@ public class SearchWebScript extends AbstractSearchWebScript {
 			res.getWriter().write(ret.toString(3));
 
 		} catch (JSONException e) {
-			throw new WebScriptException("Unable to serialize JSON");
+			// Keep the cause: this catch also fires when the "query" parameter is not the expected
+			// JSON criteria object, and the bare "Unable to serialize JSON" message sent the reader
+			// looking for a serialization bug instead of a malformed request.
+			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Unable to read the search criteria: " + e.getMessage(), e);
 		} finally {
 			if (logger.isDebugEnabled() && watch!=null) {
 				watch.stop();
@@ -186,7 +190,13 @@ public class SearchWebScript extends AbstractSearchWebScript {
 		for (NodeRef nodeRef : results) {
 			if (serviceRegistry.getNodeService().exists(nodeRef)
 					&& (serviceRegistry.getPermissionService().hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED)) {
-				items.put(new JSONObject(getExtractor(nodeRef, metadataFields).extract(nodeRef)));
+				try {
+					items.put(new JSONObject(getExtractor(nodeRef, metadataFields).extract(nodeRef)));
+				} catch (RuntimeException e) {
+					// One unextractable node must not cost the user the whole result page. Name it in
+					// the log so the offending data can be found, and carry on with the other hits.
+					logger.error("Skipping " + nodeRef + " in the search results: " + e.getMessage(), e);
+				}
 			}
 		}
 

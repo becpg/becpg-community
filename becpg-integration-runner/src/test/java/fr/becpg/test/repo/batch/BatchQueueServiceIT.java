@@ -3,6 +3,7 @@ package fr.becpg.test.repo.batch;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
@@ -16,6 +17,7 @@ import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.BatchStep;
+import fr.becpg.repo.batch.BatchStepAdapter;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.test.RepoBaseTestCase;
 
@@ -425,6 +427,120 @@ public class BatchQueueServiceIT extends RepoBaseTestCase {
 				assertFalse(errorIds.contains(batchFullId));
 			}
 		}
+	}
+	
+	@Test
+	public void testBatchStepWithErrorHandling_SkipDeletedNode() throws InterruptedException {
+		List<NodeRef> testNodes = createTestNodes(3);
+		NodeRef deletedNode = testNodes.get(1);
+		AtomicInteger processedCount = new AtomicInteger(0);
+		AtomicBoolean stepInError = new AtomicBoolean(false);
+		
+		inWriteTx(() -> {
+			nodeService.deleteNode(deletedNode);
+			return null;
+		});
+		
+		BatchInfo batchInfo = new BatchInfo("test.deleted.batch", "test.deleted.batch.desc");
+		batchInfo.setRunAsSystem(true);
+		batchInfo.setWorkerThreads(1);
+		
+		BatchStep<NodeRef> step = batchQueueService.createBatchStepWithErrorHandling(
+			batchInfo, 
+			testNodes, 
+			new BatchProcessor.BatchProcessWorkerAdaptor<NodeRef>() {
+				@Override
+				public void process(NodeRef entry) throws Throwable {
+					processedCount.incrementAndGet();
+					nodeService.setProperty(entry, BeCPGModel.PROP_CODE, "processed");
+				}
+			}
+		);
+		
+		step.setBatchStepListener(new BatchStepAdapter() {
+			@Override
+			public void onError(String lastErrorEntryId, String lastError) {
+				stepInError.set(true);
+			}
+		});
+		
+		batchQueueService.queueBatch(batchInfo, List.of(step));
+		waitForBatchEnd(batchInfo);
+		
+		// The deleted node is skipped instead of failing the batch over and over
+		assertEquals(2, processedCount.get());
+		assertFalse("Deleted node should not be reported as a batch error", stepInError.get());
+	}
+	
+	@Test
+	public void testPausedBatchResumeOrder() throws InterruptedException {
+		AtomicInteger mediumProcessed = new AtomicInteger(0);
+		AtomicInteger lowProcessed = new AtomicInteger(0);
+		AtomicInteger mediumProcessedWhenLowStarted = new AtomicInteger(-1);
+		
+		BatchInfo mediumBatchInfo = new BatchInfo("batch.starved.medium.id", "batch.starved.medium.desc");
+		mediumBatchInfo.setPriority(BatchPriority.MEDIUM);
+		mediumBatchInfo.setBatchSize(1);
+		mediumBatchInfo.setWorkerThreads(1);
+		BatchStep<Integer> mediumStep = new BatchStep<>();
+		mediumStep.setWorkProvider(new EntityListBatchProcessWorkProvider<Integer>(IntStream.range(0, 10).boxed().toList()));
+		mediumStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<Integer>() {
+			@Override
+			public void process(Integer entry) throws Throwable {
+				mediumProcessed.addAndGet(1);
+				Thread.sleep(500);
+			}
+		});
+		
+		batchQueueService.queueBatch(mediumBatchInfo, List.of(mediumStep));
+		
+		Thread.sleep(1000);
+		
+		BatchInfo highBatchInfo = new BatchInfo("batch.starved.high.id", "batch.starved.high.desc");
+		highBatchInfo.setPriority(BatchPriority.HIGH);
+		highBatchInfo.setBatchSize(1);
+		highBatchInfo.setWorkerThreads(1);
+		BatchStep<Integer> highStep = new BatchStep<>();
+		highStep.setWorkProvider(new EntityListBatchProcessWorkProvider<Integer>(IntStream.range(0, 5).boxed().toList()));
+		highStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<Integer>() {
+			@Override
+			public void process(Integer entry) throws Throwable {
+				Thread.sleep(500);
+			}
+		});
+		
+		// The high priority batch preempts the medium one, which is paused first
+		batchQueueService.queueBatch(highBatchInfo, List.of(highStep));
+		
+		Thread.sleep(1000);
+		
+		BatchInfo lowBatchInfo = new BatchInfo("batch.starved.low.id", "batch.starved.low.desc");
+		lowBatchInfo.setPriority(BatchPriority.LOW);
+		lowBatchInfo.setBatchSize(1);
+		lowBatchInfo.setWorkerThreads(1);
+		BatchStep<Integer> lowStep = new BatchStep<>();
+		lowStep.setWorkProvider(new EntityListBatchProcessWorkProvider<Integer>(IntStream.range(0, 5).boxed().toList()));
+		lowStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<Integer>() {
+			@Override
+			public void process(Integer entry) throws Throwable {
+				mediumProcessedWhenLowStarted.compareAndSet(-1, mediumProcessed.get());
+				lowProcessed.addAndGet(1);
+				Thread.sleep(200);
+			}
+		});
+		
+		// The low priority batch pauses itself behind the high priority one
+		batchQueueService.queueBatch(lowBatchInfo, List.of(lowStep));
+		
+		waitForBatchEnd(highBatchInfo);
+		waitForBatchEnd(mediumBatchInfo);
+		waitForBatchEnd(lowBatchInfo);
+		
+		assertEquals(10, mediumProcessed.get());
+		assertEquals(5, lowProcessed.get());
+		
+		// The medium batch was paused first: it must resume before the low priority one
+		assertEquals("Low priority batch resumed before the starved medium one", 10, mediumProcessedWhenLowStarted.get());
 	}
 	
 	private List<NodeRef> createTestNodes(int count) {

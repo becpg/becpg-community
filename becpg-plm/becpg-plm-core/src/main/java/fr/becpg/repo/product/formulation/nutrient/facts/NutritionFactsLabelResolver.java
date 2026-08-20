@@ -68,6 +68,9 @@ public class NutritionFactsLabelResolver {
 	/** Key of the "% Daily Value*" column header. */
 	public static final String LABEL_DAILY_VALUE = "dailyValue";
 
+	/** Key of the "%DV" column header, used where a column is too narrow for the full wording. */
+	public static final String LABEL_DAILY_VALUE_SHORT = "dailyValueShort";
+
 	/** Key of the "Per serving" column header of the dual column format. */
 	public static final String LABEL_PER_SERVING = "perServing";
 
@@ -75,7 +78,8 @@ public class NutritionFactsLabelResolver {
 	public static final String LABEL_PER_CONTAINER = "perContainer";
 
 	private static final List<String> PANEL_LABEL_KEYS = List.of(LABEL_TITLE, LABEL_SERVINGS_PER_CONTAINER, LABEL_SERVING_SIZE,
-			LABEL_AMOUNT_PER_SERVING, LABEL_AMOUNT_PER_SERVING_SHORT, LABEL_DAILY_VALUE, LABEL_PER_SERVING, LABEL_PER_CONTAINER);
+			LABEL_AMOUNT_PER_SERVING, LABEL_AMOUNT_PER_SERVING_SHORT, LABEL_DAILY_VALUE, LABEL_DAILY_VALUE_SHORT, LABEL_PER_SERVING,
+			LABEL_PER_CONTAINER);
 
 	private static final String NUTRIENT_KEY_PREFIX = "nutritionFacts.nutrient.";
 
@@ -147,6 +151,19 @@ public class NutritionFactsLabelResolver {
 	 */
 	public static String formatWithValue(String label, String value, Locale locale) {
 		return new MessageFormat(label, locale).format(new Object[] { value != null ? value : "" });
+	}
+
+	/**
+	 * <p>Wording carrying its value, when the regulated sentence embeds one, "Includes 10g Added
+	 * Sugars" being the case the FDA spells out. A wording that embeds none is returned as it is.</p>
+	 *
+	 * @param label a {@link java.lang.String} object
+	 * @param value a {@link java.lang.String} object
+	 * @param locale a {@link java.util.Locale} object
+	 * @return a {@link java.lang.String} object
+	 */
+	public static String withValue(String label, String value, Locale locale) {
+		return embedsValue(label) ? formatWithValue(label, value, locale) : label;
 	}
 
 	/**

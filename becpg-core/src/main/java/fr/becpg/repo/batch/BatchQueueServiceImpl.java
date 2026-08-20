@@ -111,6 +111,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	
 	private Deque<BatchCommand<?>> pausedCommands = new ConcurrentLinkedDeque<>();
 	
+	private Map<String, Set<NodeRef>> discardedEntries = new ConcurrentHashMap<>();
+	
 	private ReentrantLock batchQueueLock = new ReentrantLock();
 
 	@Autowired(required = false)
@@ -124,6 +126,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	private static final String STEPS_MAX = "stepsMax";
 	/** Constant <code>STEP_COUNT="stepCount"</code> */
 	private static final String STEP_COUNT = "stepCount";
+	/** Constant <code>MAX_DISCARDED_ENTRIES=1000</code> */
+	private static final int MAX_DISCARDED_ENTRIES = 1000;
 
 	/** {@inheritDoc} */
 	@Override
@@ -299,6 +303,31 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 			return null;
 		}
 		return runningCommands.get(runningCommands.size() - 1);
+	}
+	
+	/**
+	 * <p>pollNextPausedCommand.</p>
+	 *
+	 * Removes and returns the paused batch that must run next: the most prioritary one, and among
+	 * batches of equal priority the one paused first, so that a repeatedly preempted batch cannot be
+	 * starved by more recently paused ones.
+	 *
+	 * @return a {@link fr.becpg.repo.batch.BatchQueueServiceImpl.BatchCommand} object
+	 */
+	private BatchCommand<?> pollNextPausedCommand() {
+		BatchCommand<?> nextCommand = null;
+		
+		for (BatchCommand<?> pausedCommand : pausedCommands) {
+			if ((nextCommand == null) || (pausedCommand.getBatchInfo().getPriority() < nextCommand.getBatchInfo().getPriority())) {
+				nextCommand = pausedCommand;
+			}
+		}
+		
+		if (nextCommand != null) {
+			pausedCommands.remove(nextCommand);
+		}
+		
+		return nextCommand;
 	}
 	
 	/** {@inheritDoc} */
@@ -552,7 +581,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 						runningCommands.remove(this);
 					}
 					if (!pausedCommands.isEmpty()) {
-						BatchCommand<?> nextCommand = pausedCommands.pop();
+						BatchCommand<?> nextCommand = pollNextPausedCommand();
 						if (nextCommand != null) {
 							if (cancelledBatches.contains(nextCommand.getBatchId())) {
 								cancelledBatches.remove(nextCommand.getBatchId());
@@ -578,7 +607,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		}
 
 		private void pauseCommand(BatchCommand<?> command) {
-			pausedCommands.push(command);
+			pausedCommands.addLast(command);
 		}
 		
 		private void pushAndSetBatchAuthentication(BatchStep<T> batchStep) {
@@ -795,6 +824,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	/** {@inheritDoc} */
 	@Override
 	public BatchInfo retryBatchInError(String batchErrorId) {
+		discardedEntries.remove(batchErrorId);
 		List<NodeRef> nodeRefs = new ArrayList<>(getBatchErrorsMap().get(batchErrorId));
 		String[] split = batchErrorId.split("\\|");
 		BatchInfo batchInfo = new BatchInfo("becpg.batch.retry." + batchErrorId, "becpg.batch.retry", I18NUtil.getMessage(split[1]));
@@ -850,6 +880,9 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 			return new BatchProcessor.BatchProcessWorkerAdaptor<>() {
 				@Override
 				public void process(NodeRef entry) throws Throwable {
+					if (isDiscardedEntry(batchFullId, entry)) {
+						return;
+					}
 					List<String> batchErrorIds = (List<String>) nodeService.getProperty(entry, BeCPGModel.PROP_BATCH_ERROR_IDS);
 					if (batchErrorIds == null || !batchErrorIds.contains(batchFullId)) {
 						try {
@@ -861,14 +894,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 							}
 							policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 							logger.error("Error processing entry '" + entry + "' for batch : '" + batchInfo.getBatchId(), e);
-							if (batchErrorIds == null) {
-								batchErrorIds = new ArrayList<>();
-							}
-							if (!batchErrorIds.contains(batchFullId)) {
-								batchErrorIds.add(batchFullId);
-								nodeService.setProperty(entry, BeCPGModel.PROP_BATCH_ERROR_IDS, (Serializable) batchErrorIds);
-								beCPGCacheService.clearCache(BatchQueueServiceImpl.class.getName());
-							}
+							markEntryInError(batchFullId, entry, batchErrorIds);
 							if (errorHandler != null) {
 								errorHandler.accept(entry, e);
 							}
@@ -880,6 +906,80 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 					}
 				}
 			};
+		}
+	}
+	
+	/**
+	 * <p>isDiscardedEntry.</p>
+	 *
+	 * An entry that cannot be flagged in error on the node itself has to be excluded by the queue,
+	 * otherwise it would fail again on every run of the batch and reschedule it endlessly.
+	 *
+	 * @param batchFullId a {@link java.lang.String} object
+	 * @param entry a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @return a boolean
+	 */
+	private boolean isDiscardedEntry(String batchFullId, NodeRef entry) {
+		if (!nodeService.exists(entry)) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("skip entry '" + entry + "' from batch '" + batchFullId + "' as it does not exist anymore");
+			}
+			return true;
+		}
+		
+		Set<NodeRef> batchDiscardedEntries = discardedEntries.get(batchFullId);
+		
+		if ((batchDiscardedEntries != null) && batchDiscardedEntries.contains(entry)) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("skip entry '" + entry + "' from batch '" + batchFullId + "' as it could not be flagged as failed");
+			}
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * <p>discardEntry.</p>
+	 *
+	 * @param batchFullId a {@link java.lang.String} object
+	 * @param entry a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 */
+	private void discardEntry(String batchFullId, NodeRef entry) {
+		Set<NodeRef> batchDiscardedEntries = discardedEntries.computeIfAbsent(batchFullId, k -> ConcurrentHashMap.newKeySet());
+		
+		if (batchDiscardedEntries.size() < MAX_DISCARDED_ENTRIES) {
+			batchDiscardedEntries.add(entry);
+		}
+	}
+	
+	/**
+	 * <p>markEntryInError.</p>
+	 *
+	 * Flags the entry as failed so that it is skipped on the next runs of the batch. When the flag
+	 * cannot be written, the entry is discarded in memory instead, otherwise the batch would be
+	 * rescheduled endlessly on it.
+	 *
+	 * @param batchFullId a {@link java.lang.String} object
+	 * @param entry a {@link org.alfresco.service.cmr.repository.NodeRef} object
+	 * @param batchErrorIds a {@link java.util.List} object
+	 * @throws java.lang.Exception if the flag cannot be written and the transaction has to be retried
+	 */
+	private void markEntryInError(String batchFullId, NodeRef entry, List<String> batchErrorIds) throws Exception {
+		List<String> errorIds = batchErrorIds == null ? new ArrayList<>() : new ArrayList<>(batchErrorIds);
+		
+		if (!errorIds.contains(batchFullId)) {
+			errorIds.add(batchFullId);
+			try {
+				nodeService.setProperty(entry, BeCPGModel.PROP_BATCH_ERROR_IDS, (Serializable) errorIds);
+				beCPGCacheService.clearCache(BatchQueueServiceImpl.class.getName());
+			} catch (Exception e) {
+				if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+					throw e;
+				}
+				logger.warn("Cannot flag entry '" + entry + "' as failed for batch '" + batchFullId + "', discarding it: " + e.getMessage());
+				discardEntry(batchFullId, entry);
+			}
 		}
 	}
 

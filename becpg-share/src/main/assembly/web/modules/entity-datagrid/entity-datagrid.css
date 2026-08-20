@@ -86,47 +86,117 @@
     min-height:0px;
 }
 
-.columns-conf-list .columns-conf-item {
-    margin-bottom: 0em;
-    line-height: 1em;
-    padding: 2px 0;
-    position: relative;
-    min-height: 20px;
-    break-inside: avoid;
-    -webkit-column-break-inside: avoid;
-    page-break-inside: avoid;
+/* Checkbox picker shared by the column chooser and the bulk edit field chooser */
+.picker-list-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    padding-top: 0.5em;
+    margin-bottom: 0.8em;
 }
 
-.columns-conf-list .columns-conf-item input[type="checkbox"] {
-    position: absolute;
-    left: -9999px;
-    opacity: 0;
+/* The title takes the free space but gives it back before the toolbar wraps to a second line. */
+.picker-list-title {
+    flex: 1 1 auto;
+    min-width: 6em;
+    font-weight: bold;
+    padding-right: 1em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.columns-conf-list .columns-conf-item label {
-    position: relative;
-    cursor: pointer;
-    padding-left: 24px;
-    line-height: 1.4em;
-    margin-bottom: 0;
-    display: inline-block;
-    min-height: 16px;
-}
-
-.columns-conf-list .columns-conf-item label:before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 2px;
-    width: 13px;
-    height: 13px;
-    border: 1px solid #5a5a5a;
+/* The dialog stylesheet stretches every text field of a form to 30em, which here would push the
+   buttons onto a second line. */
+.form-field .picker-list-header input[type="text"].picker-list-filter {
+    flex: none;
+    width: 12em !important;
+    padding: 1px 6px;
+    margin-right: 0.5em;
+    font-size: 0.92em;
+    border: 1px solid #ccc;
     border-radius: 2px;
-    background-color: transparent;
 }
 
-.columns-conf-list .columns-conf-item:last-child {
+.picker-list-toggle {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 0.8em;
+    white-space: nowrap;
+}
+
+.picker-list-toggle label {
     margin-bottom: 0;
+    cursor: pointer;
+}
+
+.picker-list-actions input[type="button"] {
+    margin-left: 0.3em;
+}
+
+/* overscroll-behavior keeps the wheel inside the list once it reaches its end: chaining to the page
+   behind moves the popup, which the skin keeps centred on the window. */
+.picker-list {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 1.5em;
+    max-height: 50vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    margin: 0;
+    padding: 0 0.5em 0 0;
+    list-style: none;
+}
+
+/* position anchors the hidden checkbox below: without it the line is not its containing block, the
+   checkbox is laid out against the dialog and drifts away from its label as the list is scrolled. */
+.picker-list .picker-list-item {
+    display: flex;
+    align-items: center;
+    position: relative;
+    min-width: 0;
+    min-height: 20px;
+    padding: 2px 0;
+    line-height: 1.4em;
+}
+
+.picker-list .picker-list-item input[type="checkbox"] {
+    flex: none;
+    margin: 0 6px 0 0;
+}
+
+/* The skin parks the real checkbox at -9999px and draws its own box on the label. Clicking a line
+   gives that hidden input the focus, and the browser scrolls the page over to wherever it sits, so
+   it is brought back onto its own line. */
+.picker-list .picker-list-item input[type="checkbox"]:not(:checked),
+.picker-list .picker-list-item input[type="checkbox"]:checked,
+.picker-list-header .picker-list-toggle input[type="checkbox"]:not(:checked),
+.picker-list-header .picker-list-toggle input[type="checkbox"]:checked {
+    left: auto;
+}
+
+.picker-list .picker-list-item label {
+    flex: auto;
+    min-width: 0;
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
+/* The skin sizes a checkbox label to the 13px of its box, which would cut the descenders off the
+   truncated text. The text keeps its own line box and is centred back on the box. */
+.picker-list .picker-list-item .picker-list-label {
+    display: block;
+    line-height: 17px;
+    margin: -2px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.picker-list-no-match {
+    padding: 1em 0;
+    font-style: italic;
 }
 
 
@@ -213,6 +283,15 @@ div.multi-level-warning {
     background-color: white;
 }
 
+/* The cells hold positioned content of their own - the progress gauge, the score badges - which
+   comes after the header in the document and would otherwise be painted over it while scrolling.
+   The whole header group is raised instead of the individual cells, so that the columns keep their
+   own stacking below and the menus, which YUI opens at 3 and above, still come out on top. */
+.datagrid .yui-dt thead {
+  position: relative;
+  z-index: 2;
+}
+
 .datagrid .yui-dt thead th {
   position: -webkit-sticky; /* for Safari */
   position: sticky;
@@ -253,9 +332,11 @@ div.multi-level-warning {
     border-collapse: collapse;
 }
 
+/* Rows are as tall as their tallest cell - a thumbnail, a wrapped nutritional scale - so the
+   plain values have to be centred to stay on the same line as the badges and the gauges. */
 .datagrid .grid.yui-dt .yui-dt-data td {
     border-bottom: 1px solid #f0f0f0;
-    vertical-align: top;
+    vertical-align: middle;
 }
 
 .datagrid .grid.yui-dt .yui-dt-data .yui-dt-last td {

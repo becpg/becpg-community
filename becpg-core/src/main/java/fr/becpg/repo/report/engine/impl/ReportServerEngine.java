@@ -18,16 +18,12 @@
  ******************************************************************************/
 package fr.becpg.repo.report.engine.impl;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicLong;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -38,8 +34,8 @@ import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.util.TempFileProvider;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.hc.core5.http.ParseException;
 import org.dom4j.io.XMLWriter;
 import org.springframework.util.StopWatch;
@@ -143,6 +139,15 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 			throws IOException, ReportException, ParseException {
 		ContentReader reader = contentService.getReader(entry.getImageNodeRef(), ContentModel.PROP_CONTENT);
 		if ((reader == null) || !reader.exists()) {
+			/*
+			 * An image without content would otherwise be dropped silently, leaving the
+			 * report incomplete with nothing to tell its reader.
+			 */
+			logger.warn("No content for report image " + entry + ", it will be missing from the report");
+
+			reportData.getLogs()
+					.add(new ReportableError(ReportableErrorType.ERROR, "No content for image: " + entry,
+							MLTextHelper.getI18NMessage("message.report.image.missing", entry.getName()), List.of(tplNodeRef)));
 			return;
 		}
 		try (InputStream in = reader.getContentInputStream()) {
@@ -226,7 +231,19 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 					if (RetryingTransactionHelper.extractRetryCause(e) != null) {
 						throw e;
 					}
-					logger.error(e, e);
+
+					/*
+					 * A failing image must not fail the whole report, but it must not vanish
+					 * silently either: the reader has to know the document is incomplete.
+					 */
+					logger.error("Failed to send report image: " + entry, e);
+
+					String reason = (e.getMessage() != null) ? e.getMessage() : e.getClass().getSimpleName();
+
+					reportData.getLogs()
+							.add(new ReportableError(ReportableErrorType.ERROR, "Failed to send image: " + entry,
+									MLTextHelper.getI18NMessage("message.report.image.error", entry.getName(), reason),
+									List.of(tplNodeRef)));
 				}
 			}
 			
@@ -237,36 +254,47 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 				reportSession.setTimeZone(timeZoneParam);
 			}
 			
+			/*
+			 * The datasource is serialized straight into the request body. Nothing is
+			 * materialized beforehand: no temporary file, and no copy of the datasource
+			 * in memory besides the dom4j tree it is built from. The report server
+			 * consumes the body as a stream, so it parses while this writes.
+			 *
+			 * The size is therefore only known once the body has been written, which is
+			 * why the audit value and the threshold warning are recorded after the call
+			 * rather than before it.
+			 */
+			AtomicLong datasourceSize = new AtomicLong();
 			try {
-				java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream();
-				org.apache.commons.io.output.CountingOutputStream countingOut = new org.apache.commons.io.output.CountingOutputStream(bos);
-				try (OutputStream outStream = new BufferedOutputStream(countingOut)) {
-					XMLWriter writer = new XMLWriter(outStream);
+				List<String> errors = generateReport(reportSession, outStream -> {
+					CountingOutputStream counter = new CountingOutputStream(outStream);
+					XMLWriter writer = new XMLWriter(new BufferedOutputStream(counter));
 					writer.write(reportData.getXmlDataSource());
 					writer.flush();
-				}
-				
-				long datasourceSize = countingOut.getByteCount();
-				
-				if (datasourceSize > reportDatasourceMaxSizeInBytes()) {
+					datasourceSize.set(counter.getByteCount());
+				}, out);
+
+				reportData.setDatasourceSize(datasourceSize.get());
+
+				if (datasourceSize.get() > reportDatasourceMaxSizeInBytes()) {
 					reportData.getLogs()
 							.add(new ReportableError(ReportableErrorType.WARNING, "Datasource size exceeds: " + params,
 									MLTextHelper.getI18NMessage("message.report.datasource.size",
-											FileUtils.byteCountToDisplaySize(datasourceSize),
+											FileUtils.byteCountToDisplaySize(datasourceSize.get()),
 											FileUtils.byteCountToDisplaySize(reportDatasourceMaxSizeInBytes())), List.of(tplNodeRef)));
 				}
-				
-				try (InputStream in = new BufferedInputStream(new java.io.ByteArrayInputStream(bos.toByteArray()))) {
-					List<String> errors = generateReport(reportSession, in, out);
-					
-					for (String error : errors) {
-						reportData.getLogs().add(
-								new ReportableError(ReportableErrorType.ERROR, error,
-										MLTextHelper.getI18NMessage("message.report.error", error), List.of(tplNodeRef)));
-					}
+
+				for (String error : errors) {
+					reportData.getLogs().add(
+							new ReportableError(ReportableErrorType.ERROR, error,
+									MLTextHelper.getI18NMessage("message.report.error", error), List.of(tplNodeRef)));
 				}
 			} catch (IOException e) {
-				logger.error("Failed to write/read XML datasource", e);
+				/*
+				 * This block also covers sending the report, so a caller giving up surfaces
+				 * here too. The message names both causes rather than blaming the datasource.
+				 */
+				logger.error("Failed to write XML datasource or to stream the report to the report server", e);
 				throw new ReportException("Failed to process datasource", e);
 			}
 		});

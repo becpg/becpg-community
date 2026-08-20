@@ -35,6 +35,12 @@
     var $html = Alfresco.util.encodeHTML, $links = Alfresco.util.activateLinks;
 
     /**
+     * Prefix of the permissions a single selected row is enough to grant, the action
+     * silently skipping the rows that do not carry them.
+     */
+    var ANY_ROW_PERMISSION_PREFIX = "any:";
+
+    /**
      * Entity DataGrid constructor.
      * 
      * @param htmlId
@@ -414,6 +420,16 @@
                  * Used to speedUp path pagination
                  */
                 queryExecutionId: null,
+
+                /**
+                 * Incremented every time the active data list changes. Columns and data requests
+                 * carry the token they were fired with, so a response that arrives after the user
+                 * switched to another list is dropped instead of overwriting the displayed list.
+                 *
+                 * @property activeListToken
+                 * @type number
+                 */
+                activeListToken: 0,
 
 
                 /**
@@ -887,6 +903,29 @@
                  * </pre>
                  */
                 _onDataListFailure: function EntityDataGrid__onDataListFailure(p_response, p_message) {
+                    if (p_message != null && p_message.listToken !== undefined
+                        && p_message.listToken !== this.activeListToken) {
+                        // the user already switched to another list: nothing to report nor to retry
+                        return;
+                    }
+
+                    var status = p_response != null && p_response.serverResponse != null ? p_response.serverResponse.status : null;
+
+                    // A lost session is not a form configuration problem: re-run the login flow
+                    // instead of reporting a misleading error the user cannot act upon.
+                    if (status === 401 || status === 403) {
+                        window.location.reload(true);
+                        return;
+                    }
+
+                    // Any other failure here is transient (repository restart, proxy error, ticket
+                    // renewal, network blip): retry once silently before reporting anything.
+                    if (!this.columnsRetried) {
+                        this.columnsRetried = true;
+                        YAHOO.lang.later(1000, this, this.populateDataGrid);
+                        return;
+                    }
+
                     Alfresco.util.PopupManager.displayPrompt(
                         {
                             title: p_message.title,
@@ -935,13 +974,20 @@
                     this.renderDataListMeta();
 
                     // Query the visible columns for this list's item
-                    // type
+                    // type. The token pins the response to the list that was
+                    // active when the request was fired.
+                    var listToken = this.activeListToken;
+
                     Alfresco.util.Ajax.jsonGet(
                         {
                             url: this._getColumnUrl(this.options.columnFormId),
                             successCallback:
                             {
                                 fn: this.onDatalistColumns,
+                                obj:
+                                {
+                                    listToken: listToken
+                                },
                                 scope: this
                             },
                             failureCallback:
@@ -950,7 +996,8 @@
                                 obj:
                                 {
                                     title: this.msg("message.error.columns.title"),
-                                    text: this.msg("message.error.columns.description")
+                                    text: this.msg("message.error.columns.description"),
+                                    listToken: listToken
                                 },
                                 scope: this
                             }
@@ -1149,7 +1196,14 @@
                  * @param response
                  *            {Object} Ajax data structure
                  */
-                onDatalistColumns: function EntityDataGrid_onDatalistColumns(response) {
+                onDatalistColumns: function EntityDataGrid_onDatalistColumns(response, obj) {
+                    if (obj != null && obj.listToken !== this.activeListToken) {
+                        // Late answer for a list the user already left: rebuilding the grid here
+                        // would show the previous list's columns under the current list's rows.
+                        return;
+                    }
+
+                    this.columnsRetried = false;
                     this.datalistColumns = response.json.columns;
                     // Set-up YUI History Managers and Paginator
                     this._setupHistoryManagers();
@@ -2309,6 +2363,19 @@
                     Bubbling.fire(this.scopeId + "selectedItemsChanged");
                 },
                 /**
+                 * Tells whether a permission is granted as soon as one selected row
+                 * carries it, instead of requiring every one of them.
+                 *
+                 * @method _isAnyRowPermission
+                 * @param permission
+                 *            {String} Permission read from the action
+                 *            configuration
+                 * @return {Boolean} True when a single matching row is enough
+                 */
+                _isAnyRowPermission: function DataListToolbar__isAnyRowPermission(permission) {
+                    return permission.indexOf(ANY_ROW_PERMISSION_PREFIX) === 0;
+                },
+                /**
                  * Selected Items Changed event handler. Determines
                  * whether to enable or disable the multi-item action
                  * drop-down
@@ -2329,8 +2396,8 @@
                         Dom.addClass(this.id + "-message", "hidden");
                     }
 
-                    var items = this.getSelectedItems(), item, userAccess = {}, itemAccess, menuItems = this.widgets.selectedItems
-                        .getMenu().getItems(), menuItem, actionPermissions, disabled, i, ii, disabledForAllPages;
+                    var items = this.getSelectedItems(), item, userAccess = {}, anyUserAccess = {}, itemAccess, menuItems = this.widgets.selectedItems
+                        .getMenu().getItems(), menuItem, actionPermissions, permission, disabled, i, ii, disabledForAllPages;
 
                     // Check each item for user permissions
                     for (i = 0, ii = items.length; i < ii; i++) {
@@ -2338,12 +2405,14 @@
 
                         // Required user access level - logical AND of
                         // each
-                        // item's permissions
+                        // item's permissions, and logical OR of them for
+                        // the actions asking for a single matching row
                         itemAccess = item.permissions.userAccess;
                         for (var index in itemAccess) {
                             if (itemAccess.hasOwnProperty(index)) {
                                 userAccess[index] = (userAccess[index] === undefined ? itemAccess[index]
                                     : userAccess[index] && itemAccess[index]);
+                                anyUserAccess[index] = anyUserAccess[index] || itemAccess[index];
                             }
                         }
                     }
@@ -2370,13 +2439,17 @@
                                         // Disable if the user doesn't
                                         // have ALL the
                                         // permissions
-                                        if (actionPermissions[i] != "allPages") {
-                                            if ((!userAccess[actionPermissions[i]])) {
+                                        if (actionPermissions[i] == "allPages") {
+                                            disabledForAllPages = false;
+                                        } else if (this._isAnyRowPermission(actionPermissions[i])) {
+                                            permission = actionPermissions[i].substring(ANY_ROW_PERMISSION_PREFIX.length);
+                                            if (!anyUserAccess[permission]) {
                                                 disabled = true;
                                                 break;
                                             }
-                                        } else {
-                                            disabledForAllPages = false;
+                                        } else if (!userAccess[actionPermissions[i]]) {
+                                            disabled = true;
+                                            break;
                                         }
                                     }
                                 }
@@ -2586,6 +2659,9 @@
                     var obj = args[1];
 
                     if ((obj !== null)) {
+
+                        // invalidates every columns/data request still in flight for the previous list
+                        this.activeListToken++;
 
                         if (obj.dataList) {
                             if (this.datalistMeta != null && this.datalistMeta.name != null) {
@@ -3044,6 +3120,8 @@
                  */
                 _updateDataGrid: function EntityDataGrid__updateDataGrid(p_obj) {
                     p_obj = p_obj || {};
+                    // pins this request to the currently active list (see activeListToken)
+                    var listToken = this.activeListToken;
                     var successFilter = YAHOO.lang.merge({}, p_obj.filter !== undefined ? p_obj.filter
                         : this.currentFilter), loadingMessage = null, timerShowLoadingMessage = null, me = this, params =
                         {
@@ -3118,6 +3196,11 @@
                         oPayload) {
                         destroyLoaderMessage();
 
+                        if (listToken !== this.activeListToken) {
+                            // rows of a list the user already left: keep what is displayed
+                            return;
+                        }
+
                         if (p_obj.updateOnly && this.scopeId == "") {
                             this.widgets.dataTable.onDataReturnUpdateRows.call(this.widgets.dataTable,
                                 sRequest, oResponse, oPayload);
@@ -3146,6 +3229,12 @@
 
                     var failureHandler = function EntityDataGrid__uDG_failureHandler(sRequest, oResponse) {
                         destroyLoaderMessage();
+
+                        if (listToken !== this.activeListToken) {
+                            // failure of a list the user already left: do not report it on the new one
+                            return;
+                        }
+
                         // Clear out deferred functions
                         this.afterDataGridUpdate = [];
 

@@ -1,47 +1,40 @@
 <#--
-  Linear panel, 21 CFR 101.9(j)(13)(ii)(A)(2).
+  Linear panel for a small or intermediate-sized package, 21 CFR 101.9(j)(13)(ii)(A)(2).
 
-  The whole declaration is a single run-on sentence rather than a table, which small packages
-  are allowed to use. Nutrients are named by their regulated abbreviation and their percentage
-  follows in parentheses.
+  The declaration is a run-on sentence rather than a table, which a package too small for a
+  tabular panel is allowed to use. The panel still opens on the heading the regulation shows,
+  "Nutrition Facts" followed by the servings, and states the calories in the heavy face; the
+  nutrients follow, named by their regulated abbreviation, their percentage parenthesised.
+
+  A sentence needs width rather than height, so the panel is drawn across the package.
 -->
 <#import "nutritionFacts-lib.ftlx" as nf>
-<#-- Arial at 8pt averages about 4.1pt per character, so 136pt of content width takes 33 of them. -->
-<#assign SENTENCE_CHARS_PER_LINE = 33>
+<#assign WIDTH = 504>
+<#assign W = WIDTH in nf>
 
-<#assign y = nf.BORDER + 2>
+<#assign HEADING_SIZE = 14>
+
+<#assign y = nf.BORDER + 3>
 <#assign body>
 
-	<text x="${nf.PAD}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-family="${nf.FONT_HEAVY}" font-weight="900" font-size="${nf.SERVING_SIZE}">${nf_data.label("title")}</text>
-	<#assign y = y + nf.SERVING_ROW_H>
-
-	<#if nf_data.serving().servingSize()??>
-	<text x="${nf.PAD}" y="${nf.baseline(y, nf.NUTRIENT_SIZE)}" font-size="${nf.NUTRIENT_SIZE}" font-weight="bold">${nf_data.label("servingSize")} ${nf_data.serving().servingSize()}</text>
-	<#assign y = y + nf.NUTRIENT_ROW_H>
-	</#if>
-
-	<@nf.rule y=y/>
-	<#assign y = y + nf.HAIRLINE + 2>
+	<text x="${nf.PAD}" y="${nf.baseline(y, HEADING_SIZE)}" font-size="${HEADING_SIZE}" font-family="${nf.FONT_HEAVY}" font-weight="900" xml:space="preserve">${nf_data.label("title")}<#if nf_data.serving().hasServingsPerContainer()> <tspan font-family="${nf.FONT_BODY}" font-weight="normal" font-size="${nf.SERVING_SIZE}">${nf_data.serving().servingsPerContainer()} ${nf_data.label("servingsPerContainer")},</tspan></#if><#if nf_data.serving().servingSize()??> <tspan font-size="${nf.SERVING_SIZE}">${nf_data.label("servingSize")} ${nf_data.serving().servingSize()},</tspan></#if></text>
+	<#assign y = y + nf.lineHeight(HEADING_SIZE)>
 
 	<#if nf_data.calories()??>
-	<text x="${nf.PAD}" y="${nf.baseline(y, nf.NUTRIENT_SIZE)}" font-size="${nf.NUTRIENT_SIZE}" font-weight="bold">${nf_data.label("amountPerServing")} ${nf_data.calories().label()}<#if nf_data.calories().value()??> ${nf_data.calories().value()}</#if></text>
-	<#assign y = y + nf.NUTRIENT_ROW_H>
+	<text x="${nf.PAD}" y="${nf.baseline(y, HEADING_SIZE)}" font-size="${nf.NUTRIENT_SIZE}" xml:space="preserve"><#if nf_data.label("amountPerServing")?has_content>${nf_data.label("amountPerServing")}: </#if><tspan font-family="${nf.FONT_HEAVY}" font-weight="900" font-size="${HEADING_SIZE}">${nf_data.calories().label()}<#if nf_data.calories().value()??> ${nf_data.calories().value()}</#if>,</tspan></text>
+	<#assign y = y + nf.lineHeight(HEADING_SIZE)>
 	</#if>
 
-	<#list nf.wrap(nf.linearSentence(nf_data), SENTENCE_CHARS_PER_LINE) as sentenceLine>
-	<text x="${nf.PAD}" y="${nf.baseline(y, nf.NUTRIENT_SIZE)}" font-size="${nf.NUTRIENT_SIZE}">${sentenceLine}</text>
-	<#assign y = y + nf.NUTRIENT_ROW_H>
-	</#list>
+	<@nf.paragraph segments=nf.linearSegments(nf_data) y=y/>
+	<#assign y = nf.cursorY>
 
 	<#if nf_data.footNote()?has_content>
 	<@nf.rule y=y/>
 	<#assign y = y + nf.HAIRLINE + 2>
-	<#list nf.wrap(nf_data.footNote(), 44) as footNoteLine>
-	<text x="${nf.PAD}" y="${nf.baseline(y, nf.FOOTNOTE_SIZE)}" font-size="${nf.FOOTNOTE_SIZE}">${footNoteLine}</text>
-	<#assign y = y + nf.FOOTNOTE_LINE_H>
-	</#list>
+	<@nf.footNote text=nf_data.footNote() y=y/>
+	<#assign y = nf.cursorY>
 	</#if>
 
-	<#assign y = y + nf.BORDER + 1>
+	<#assign y = y + nf.BORDER + 2>
 </#assign>
 <@nf.panel height=y>${body}</@nf.panel>

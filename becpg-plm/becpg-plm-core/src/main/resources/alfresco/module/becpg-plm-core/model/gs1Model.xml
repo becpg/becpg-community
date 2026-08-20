@@ -2919,6 +2919,14 @@
 						<facetable>true</facetable>
 					</index>
                 </property>
+				<property name="gs1:carbonFootprintDate">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
 				
 			</properties>
 			<associations>
@@ -2989,6 +2997,19 @@
 					</index>
 				</property>
 			</properties>
+		</aspect>
+		<aspect name="gs1:labelClaimListAspect">
+			<properties>
+				<property name="gs1:lclClaimMarkedOnPackage">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true" />
+					<constraints>
+						<constraint ref="bcpg:nullableBoolean" />
+					</constraints>
+				</property>
+			</properties>
+			<associations/>
 		</aspect>
 
 		<aspect name="gs1:referencedTradeItemAspect">

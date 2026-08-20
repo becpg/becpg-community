@@ -533,15 +533,26 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 												
 												filterByReportKind(reportData.getXmlDataSource(), tplNodeRef);
 												
-												auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, estimateXmlSize(reportData.getXmlDataSource()));
-												
 												if (logger.isTraceEnabled()) {
 													logger.trace(FILTERED_DATASOURCE_XML_TRACE + getTruncatedXml(reportData.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
 												}
 												
 											}
 											
-											engine.createReport(tplNodeRef, reportData, writer.getContentOutputStream(), params);
+											try {
+												engine.createReport(tplNodeRef, reportData, writer.getContentOutputStream(), params);
+											} finally {
+												/*
+												 * The datasource size is read from the engine, which serializes the
+												 * tree anyway, instead of measuring it here with a second full pass.
+												 * Falls back to measuring it when no engine published one.
+												 *
+												 * In a finally block so the attribute stays recorded on failure.
+												 */
+												if (engine.isXmlEngine()) {
+													auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, datasourceSize(reportData));
+												}
+											}
 											
 											auditScope.addCheckpoint(CREATE_REPORT);
 											
@@ -720,6 +731,27 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	 * @param element a {@link org.dom4j.Element} object
 	 * @return a long
 	 */
+	/**
+	 * Size of the XML datasource, for auditing.
+	 *
+	 * The engine that actually serializes the datasource publishes the size it
+	 * obtains, so it is reused here rather than recomputed with a full pass. The
+	 * fallback covers engines that publish nothing and generations that fail
+	 * before serialization.
+	 *
+	 * @param reportData the report data
+	 * @return the size in bytes, 0 when there is no datasource
+	 */
+	private long datasourceSize(EntityReportData reportData) {
+		Long published = reportData.getDatasourceSize();
+		if (published != null) {
+			return published;
+		}
+
+		Element xmlDataSource = reportData.getXmlDataSource();
+		return xmlDataSource != null ? estimateXmlSize(xmlDataSource) : 0L;
+	}
+
 	private long estimateXmlSize(Element element) {
 		class CountingOutputStream extends OutputStream {
 			private long count = 0;
@@ -1204,15 +1236,26 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 									
 									filterByReportKind(reportData.getXmlDataSource(), tplNodeRef);
 									
-									auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, estimateXmlSize(reportData.getXmlDataSource()));
-									
 									if (logger.isTraceEnabled()) {
 										logger.trace(FILTERED_DATASOURCE_XML_TRACE + getTruncatedXml(reportData.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
 									}
 									
 								}
 								
-								engine.createReport(tplNodeRef, reportData, writer.getContentOutputStream(), params);
+								try {
+									engine.createReport(tplNodeRef, reportData, writer.getContentOutputStream(), params);
+								} finally {
+									/*
+									 * The datasource size is read from the engine, which serializes the
+									 * tree anyway, instead of measuring it here with a second full pass.
+									 * Falls back to measuring it when no engine published one.
+									 *
+									 * In a finally block so the attribute stays recorded on failure.
+									 */
+									if (engine.isXmlEngine()) {
+										auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, datasourceSize(reportData));
+									}
+								}
 								
 								auditScope.addCheckpoint(CREATE_REPORT);
 								
@@ -1295,6 +1338,28 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	 */
 	private void internalGenerateReport(NodeRef entityNodeRef, NodeRef templateNodeRef, EntityReportParameters reportParameters, Locale locale,
 			ReportFormat reportFormat, OutputStream outputStream, Set<ReportableError> engineErrors) {
+
+		/*
+		 * Runs within an L2 cache context, like the batch path does. Without one,
+		 * L2CacheSupport.getCurrentThreadCache() hands back a throwaway map on every
+		 * call, so entity lookups all miss and each data list row reloads its
+		 * association targets, which is an N+1 on entities with many data lists.
+		 *
+		 * A context is only opened when none is active: a nested one would start
+		 * from an empty cache and penalize a caller that already warmed its own.
+		 */
+		if (L2CacheSupport.isThreadCacheEnable()) {
+			doInternalGenerateReport(entityNodeRef, templateNodeRef, reportParameters, locale, reportFormat, outputStream, engineErrors);
+		} else {
+			L2CacheSupport.doInCacheContext(
+					() -> doInternalGenerateReport(entityNodeRef, templateNodeRef, reportParameters, locale, reportFormat, outputStream,
+							engineErrors),
+					false, true);
+		}
+	}
+
+	private void doInternalGenerateReport(NodeRef entityNodeRef, NodeRef templateNodeRef, EntityReportParameters reportParameters, Locale locale,
+			ReportFormat reportFormat, OutputStream outputStream, Set<ReportableError> engineErrors) {
 		AuthenticationUtil.runAsSystem(() -> {
 			Locale currentLocal = I18NUtil.getLocale();
 			Locale currentContentLocal = I18NUtil.getContentLocale();
@@ -1350,14 +1415,25 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 
 						filterByReportKind(reportData.getXmlDataSource(), templateNodeRef);
 						
-						auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, estimateXmlSize(reportData.getXmlDataSource()));
-
 						if (logger.isTraceEnabled()) {
 							logger.trace(FILTERED_DATASOURCE_XML_TRACE + getTruncatedXml(reportData.getXmlDataSource(), MAX_TRACE_XML_LENGTH) + "\n\n");
 						}
 					}
 
-					engine.createReport(templateNodeRef, reportData, outputStream, params);
+					try {
+						engine.createReport(templateNodeRef, reportData, outputStream, params);
+					} finally {
+						/*
+						 * The datasource size is read from the engine, which serializes the
+						 * tree anyway, instead of measuring it here with a second full pass.
+						 * Falls back to measuring it when no engine published one.
+						 *
+						 * In a finally block so the attribute stays recorded on failure.
+						 */
+						if (engine.isXmlEngine()) {
+							auditScope.putAttribute(ReportAuditPlugin.DATASOURCE_SIZE, datasourceSize(reportData));
+						}
+					}
 					
 					auditScope.addCheckpoint(CREATE_REPORT);
 

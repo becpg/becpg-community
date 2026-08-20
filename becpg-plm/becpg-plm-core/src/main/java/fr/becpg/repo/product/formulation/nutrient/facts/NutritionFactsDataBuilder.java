@@ -267,29 +267,19 @@ public class NutritionFactsDataBuilder {
 			NutritionFactsOptions options) {
 
 		String unit = carriesUnit(regulated) ? regulated.displayRule().unit() : null;
-		String unitValue = withUnit(regulated.displayValuePerServing(), unit);
-		String value = unitValue;
+		String value = withUnit(regulated.displayValuePerServing(), unit);
 
 		String rawLabel = NutritionFactsLabelResolver.nutrientLabel(options.regulationKey(), regulated.nutCode(),
 				regulatedNutrients.charactNames().get(regulated.nutCode()), locale);
-		String plainLabel = NutritionFactsLabelResolver.withoutValue(rawLabel, locale);
-		String label = rawLabel;
-
-		boolean valueInLabel = NutritionFactsLabelResolver.embedsValue(label);
-		if (valueInLabel) {
-			label = NutritionFactsLabelResolver.formatWithValue(label, value, locale);
-		}
+		Wordings wordings = Wordings.of(rawLabel,
+				NutritionFactsLabelResolver.nutrientAbbreviation(options.regulationKey(), regulated.nutCode(), rawLabel, locale), value, locale);
 
 		SharedDailyValues shared = regulatedNutrients.sharedDailyValues();
 
-		String abbreviation = NutritionFactsLabelResolver.nutrientAbbreviation(options.regulationKey(), regulated.nutCode(), label, locale);
-		if (NutritionFactsLabelResolver.embedsValue(abbreviation)) {
-			abbreviation = NutritionFactsLabelResolver.formatWithValue(abbreviation, unitValue, locale);
-		}
-
-		return new NutritionFactsLine(regulated.nutCode(), label, abbreviation, plainLabel, value, withUnit(regulated.displayValuePerContainer(), unit),
-				toPercent(shared.percentOf(regulated)), toPercent(regulated.gdaPercPerContainer()), regulated.displayRule().indentLevel(),
-				regulated.displayRule().bold(), regulated.showsDailyValue() && !shared.isFoldedIn(regulated.nutCode()), valueInLabel);
+		return new NutritionFactsLine(regulated.nutCode(), wordings.label(), wordings.abbreviation(), wordings.plainLabel(),
+				wordings.plainAbbreviation(), value, withUnit(regulated.displayValuePerContainer(), unit), toPercent(shared.percentOf(regulated)),
+				toPercent(regulated.gdaPercPerContainer()), regulated.displayRule().indentLevel(), regulated.displayRule().bold(),
+				regulated.showsDailyValue() && !shared.isFoldedIn(regulated.nutCode()), wordings.valueInLabel());
 	}
 
 	/**
@@ -321,22 +311,34 @@ public class NutritionFactsDataBuilder {
 	}
 
 	/**
-	 * Wording of the serving, preferring what the user wrote ("2/3 cup (55g)"), then the country
-	 * specific wording, and falling back on the serving size itself so that the line is never
-	 * printed empty on a product that only carries a quantity.
+	 * Wording of the serving, preferring what the user wrote ("2/3 cup"), then the country specific
+	 * wording, and falling back on the serving size itself so that the line is never printed empty
+	 * on a product that only carries a quantity.
 	 */
 	private String servingSize(ProductData product, Locale locale) {
 		String servingSizeText = closestValue(product, PLMModel.PROP_PRODUCT_SERVING_SIZE_TEXT, locale);
 		if ((servingSizeText != null) && !servingSizeText.isBlank()) {
-			return servingSizeText;
+			return withWeight(servingSizeText, product);
 		}
 
 		String byCountry = MLTextHelper.getClosestValue(product.getServingSizeByCountry(), locale);
 		if ((byCountry != null) && !byCountry.isBlank()) {
-			return byCountry;
+			return withWeight(byCountry, product);
 		}
 
 		return formatServingSize(product);
+	}
+
+	/**
+	 * The regulation states the household measure and its metric weight together, "2/3 cup (55g)",
+	 * so the weight is appended to a wording that does not carry it already.
+	 */
+	private String withWeight(String wording, ProductData product) {
+		String weight = formatServingSize(product);
+		if ((weight == null) || wording.contains(weight) || wording.contains("(")) {
+			return wording;
+		}
+		return wording + " (" + weight + ")";
 	}
 
 	private String formatServingSize(ProductData product) {
@@ -373,6 +375,21 @@ public class NutritionFactsDataBuilder {
 		/** Tells whether the percentage of a nutrient is already carried by another line. */
 		boolean isFoldedIn(String nutCode) {
 			return foldedIn.contains(nutCode);
+		}
+	}
+
+	/**
+	 * The four wordings a line carries: the regulated sentence and its abbreviation, each in the
+	 * form that embeds the value ("Includes 10g Added Sugars") and in the form that does not, which
+	 * is what the formats printing the figures in their own columns need.
+	 */
+	private record Wordings(String label, String abbreviation, String plainLabel, String plainAbbreviation, boolean valueInLabel) {
+
+		static Wordings of(String rawLabel, String rawAbbreviation, String value, Locale locale) {
+			return new Wordings(NutritionFactsLabelResolver.withValue(rawLabel, value, locale),
+					NutritionFactsLabelResolver.withValue(rawAbbreviation, value, locale),
+					NutritionFactsLabelResolver.withoutValue(rawLabel, locale),
+					NutritionFactsLabelResolver.withoutValue(rawAbbreviation, locale), NutritionFactsLabelResolver.embedsValue(rawLabel));
 		}
 	}
 

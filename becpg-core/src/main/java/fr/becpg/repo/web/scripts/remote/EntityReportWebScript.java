@@ -132,7 +132,19 @@ public class EntityReportWebScript extends AbstractEntityWebScript {
 				entityReportService.generateReport(entityNodeRef, templateNodeRef, reportParameters, locale,
 						ReportFormat.valueOf(format.toUpperCase()), resp.getOutputStream());
 			}
-		} catch (SocketException e1) {
+		} catch (IOException e1) {
+
+			/*
+			 * A caller giving up mid-stream surfaces as a ClientAbortException, which is
+			 * an IOException but not a SocketException. Letting it through would fail the
+			 * request with a partially written response.
+			 *
+			 * Only the client abort is swallowed: a genuine IO error must keep
+			 * propagating rather than be hidden.
+			 */
+			if (!isClientAbort(e1)) {
+				throw e1;
+			}
 
 			// the client cut the connection - our mission was accomplished
 			// apart from a little error message
@@ -142,6 +154,23 @@ public class EntityReportWebScript extends AbstractEntityWebScript {
 
 		}
 
+	}
+
+	/**
+	 * A client abort takes different shapes depending on the connector: a
+	 * SocketException, or the container's ClientAbortException, matched by name so
+	 * that this class does not depend on container internals.
+	 */
+	private boolean isClientAbort(IOException e) {
+		for (Throwable cause = e; cause != null; cause = cause.getCause()) {
+			if ((cause instanceof SocketException) || cause.getClass().getName().endsWith("ClientAbortException")) {
+				return true;
+			}
+			if (cause.getCause() == cause) {
+				break;
+			}
+		}
+		return false;
 	}
 
 }

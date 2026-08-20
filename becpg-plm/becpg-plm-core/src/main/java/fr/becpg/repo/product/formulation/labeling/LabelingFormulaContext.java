@@ -2659,7 +2659,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 						String subLabel = "";
 						if (component instanceof CompositeLabeling) {
-							BigDecimal subRatio = computeQtyPerc(lblCompositeContext, component, DEFAULT_RATIO, false);
+							BigDecimal subRatio = computeSubIngsRatio(lblCompositeContext, component, DEFAULT_RATIO);
 
 							if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType()) || computePercByParent) {
 								subRatio = DEFAULT_RATIO;
@@ -2912,7 +2912,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			tableContent.append("<table class=\"labelingTable\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\""
 					+ ((styleCss == null) || (styleCss).isBlank() ? "border: solid 1px; border-collapse:collapse" : styleCss) + "\" rules=\"none\">");
 
-			List<HtmlTableStruct> flatList = flatCompositeLabeling(lblCompositeContext, DEFAULT_RATIO, 0);
+			List<HtmlTableStruct> flatList = flatCompositeLabeling(lblCompositeContext, DEFAULT_RATIO, DEFAULT_RATIO, 0);
 			if (!flatList.isEmpty()) {
 
 				if ((htmlFlatTableHeaderFormat != null) && !htmlFlatTableHeaderFormat.isBlank()) {
@@ -3003,14 +3003,19 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	/**
-	 * <p>flatCompositeLabeling.</p>
+	 * <p>Flattens a labeling tree into the rows of the table, which carries a "without yield" and a "with yield"
+	 * column side by side.</p>
+	 *
+	 * Each column needs its own ratio : sharing one leaves the sub ingredients of the second column scaled in the
+	 * space of the first, so the bracket repeats the raw percentages after the yield (#34758).
 	 *
 	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
-	 * @param ratio a {@link java.math.BigDecimal} object
+	 * @param ratio a {@link java.math.BigDecimal} object, the ratio of the "without yield" column
+	 * @param ratioWithYield a {@link java.math.BigDecimal} object, the ratio of the "with yield" column
 	 * @param level a {@link java.lang.Integer} object
 	 * @return a {@link java.util.List} object
 	 */
-	private List<HtmlTableStruct> flatCompositeLabeling(CompositeLabeling parent, BigDecimal ratio, Integer level) {
+	private List<HtmlTableStruct> flatCompositeLabeling(CompositeLabeling parent, BigDecimal ratio, BigDecimal ratioWithYield, Integer level) {
 		List<HtmlTableStruct> ret = new ArrayList<>();
 
 		for (Map.Entry<IngTypeItem, List<LabelingComponent>> kv : getSortedIngListByType(parent).entrySet()) {
@@ -3022,8 +3027,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
-				Double qtyPercWithYield = roundedDouble(computeQtyPerc(parent, component, ratio, true));
-				Double volumePercWithYield = roundedDouble(computeVolumePerc(parent, component, ratio, true));
+				Double qtyPercWithYield = roundedDouble(computeQtyPerc(parent, component, ratioWithYield, true));
+				Double volumePercWithYield = roundedDouble(computeVolumePerc(parent, component, ratioWithYield, true));
 
 				qtyPercWithYield = (useVolume ? volumePercWithYield : qtyPercWithYield);
 
@@ -3054,16 +3059,20 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				if (!shouldSkip(component, qtyPerc)) {
 					if (component instanceof CompositeLabeling) {
-						BigDecimal subRatio = computeQtyPerc(parent, component, ratio, false);
+						// One ratio per column : the sub ingredients of the "with yield" column must be scaled in
+						// that space, otherwise the bracket repeats the raw percentages after the yield (#34758).
+						BigDecimal subRatio = computeSubIngsRatio(parent, component, ratio, false);
+						BigDecimal subRatioWithYield = computeSubIngsRatio(parent, component, ratioWithYield, true);
 						if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType()) || computePercByParent) {
 							subRatio = DEFAULT_RATIO;
+							subRatioWithYield = DEFAULT_RATIO;
 						}
 
 						ret.add(new HtmlTableStruct(component, ingName, qtyPerc, qtyPercWithYield, geoOriginsLabel != null ? geoOriginsLabel : "",
 								otherGeoOriginsLabel != null ? otherGeoOriginsLabel : "", bioOriginsLabel != null ? bioOriginsLabel : "",
 								additionalInformation, level));
 
-						ret.addAll(flatCompositeLabeling((CompositeLabeling) component, subRatio, level + 1));
+						ret.addAll(flatCompositeLabeling((CompositeLabeling) component, subRatio, subRatioWithYield, level + 1));
 
 					} else {
 						logger.error(String.format(UNSUPPORTED_ING_TYPE, component.getName()));
@@ -3371,7 +3380,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				if (component instanceof CompositeLabeling) {
 
 					MessageFormat formater = getIngTextFormat(component, qtyPerc, ((CompositeLabeling) component).getIngList().size() > 1);
-					BigDecimal subRatio = computeQtyPerc(parent, component, ratio, ingsLabelingWithYield && (component instanceof IngItem));
+					BigDecimal subRatio = computeSubIngsRatio(parent, component, ratio);
 
 					if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType()) || computePercByParent) {
 						subRatio = DEFAULT_RATIO;
@@ -3880,6 +3889,92 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	public BigDecimal computeQtyPerc(CompositeLabeling parent, LabelingComponent component, BigDecimal ratio) {
 		return computeQtyPerc(parent, component, ratio, ingsLabelingWithYield);
+	}
+
+	/**
+	 * <p>The ratio to hand to the sub ingredients of a detailed ingredient, so that they add up to it.</p>
+	 *
+	 * The sub ingredients of a composite are divided by the total their parent carries, while their own quantities are
+	 * expressed against the item that brings them - the two only coincide when the composite covers that item on its
+	 * own. As soon as it shares it, the bracket adds up to more than the ingredient it details (#34702). Scaling the
+	 * rendered ratio by that discrepancy makes the bracket a breakdown of its parent again.
+	 *
+	 * This holds whether or not the yield is rendered : the discrepancy comes from the composite not covering its
+	 * item, not from the yield, which only widens it.
+	 *
+	 * Only an overshoot is corrected. Sub ingredients adding up to less than their parent are a composite that is
+	 * only partly declared - a raw material detailing one of its four ingredients - and rescaling those would inflate
+	 * the few that are declared up to the whole parent.
+	 *
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param component a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param ratio a {@link java.math.BigDecimal} object
+	 * @return a {@link java.math.BigDecimal} object
+	 */
+	private BigDecimal computeSubIngsRatio(CompositeLabeling parent, LabelingComponent component, BigDecimal ratio) {
+		return computeSubIngsRatio(parent, component, ratio, ingsLabelingWithYield);
+	}
+
+	/**
+	 * <p>The ratio to hand to the sub ingredients of a detailed ingredient, in a given yield space.</p>
+	 *
+	 * The flat table renders a "without yield" and a "with yield" column side by side, so it needs one ratio per
+	 * column : a single one leaves the sub ingredients of the second column scaled in the space of the first, and
+	 * the bracket then repeats the raw percentages after the yield (#34758).
+	 *
+	 * @param parent a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param component a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object
+	 * @param ratio a {@link java.math.BigDecimal} object
+	 * @param withYield a boolean
+	 * @return a {@link java.math.BigDecimal} object
+	 */
+	private BigDecimal computeSubIngsRatio(CompositeLabeling parent, LabelingComponent component, BigDecimal ratio, boolean withYield) {
+
+		if (!(component instanceof CompositeLabeling composite)) {
+			return computeQtyPerc(parent, component, ratio, false);
+		}
+
+		BigDecimal renderedRatio = useVolume ? computeVolumePerc(parent, component, ratio, withYield)
+				: computeQtyPerc(parent, component, ratio, withYield);
+		Double qtyTotal = useVolume ? composite.getVolumeTotal() : composite.getQtyTotal();
+		Double subIngsQty = sumSubIngsQty(composite, withYield);
+
+		if ((renderedRatio == null) || (qtyTotal == null) || (subIngsQty == null) || (subIngsQty == 0d)) {
+			return computeQtyPerc(parent, component, ratio, false);
+		}
+
+		// Sub ingredients falling short of their parent are a partial declaration, which is legitimate :
+		// only an overshoot is impossible, and it is the signature of the scale artefact corrected here.
+		if (subIngsQty <= qtyTotal) {
+			return renderedRatio;
+		}
+
+		return renderedRatio.multiply(BigDecimal.valueOf(qtyTotal), PRECISION).divide(BigDecimal.valueOf(subIngsQty), PRECISION);
+	}
+
+	/**
+	 * <p>The quantity the sub ingredients of a composite add up to, read in the space the labeling renders.</p>
+	 *
+	 * Answers null as soon as one sub ingredient carries no quantity : a composite that is only partly quantified
+	 * cannot be rebalanced on its sub ingredients without inflating the few that do carry one.
+	 *
+	 * @param composite a {@link fr.becpg.repo.product.data.ing.CompositeLabeling} object
+	 * @param withYield a boolean
+	 * @return a {@link java.lang.Double} object, or null
+	 */
+	private Double sumSubIngsQty(CompositeLabeling composite, boolean withYield) {
+
+		double sum = 0d;
+
+		for (CompositeLabeling subIng : composite.getIngList().values()) {
+			Double qty = useVolume ? subIng.getVolume(withYield) : subIng.getQty(withYield);
+			if (qty == null) {
+				return null;
+			}
+			sum += qty;
+		}
+
+		return sum;
 	}
 
 	/**

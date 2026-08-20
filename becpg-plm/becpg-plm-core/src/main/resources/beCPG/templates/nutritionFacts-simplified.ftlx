@@ -23,7 +23,7 @@
 
 	<text x="${nf.PAD}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}" font-weight="bold">${nf_data.label("servingSize")}</text>
 	<#if nf_data.serving().servingSize()??>
-	<text x="${nf.RIGHT}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}" font-weight="bold" text-anchor="end">${nf_data.serving().servingSize()}</text>
+	<text x="${nf.right()}" y="${nf.baseline(y, nf.SERVING_SIZE)}" font-size="${nf.SERVING_SIZE}" font-weight="bold" text-anchor="end">${nf_data.serving().servingSize()}</text>
 	</#if>
 	<#assign y = y + nf.SERVING_ROW_H>
 
@@ -33,11 +33,8 @@
 	<#if nf_data.notSignificantSource()?has_content>
 	<@nf.rule y=y/>
 	<#assign y = y + nf.HAIRLINE + 1>
-	<#list nf.wrap(nf_data.notSignificantSource(), 44) as statementLine>
-	<text x="${nf.PAD}" y="${nf.baseline(y, nf.FOOTNOTE_SIZE)}" font-size="${nf.FOOTNOTE_SIZE}">${statementLine}</text>
-	<#assign y = y + nf.FOOTNOTE_LINE_H>
-	</#list>
-	<#assign y = y + nf.BORDER + 1>
+	<@nf.footNote text=nf_data.notSignificantSource() y=y/>
+	<#assign y = nf.cursorY + nf.BORDER + 1>
 	<#else>
 	<#assign y = nf.cursorY>
 	</#if>

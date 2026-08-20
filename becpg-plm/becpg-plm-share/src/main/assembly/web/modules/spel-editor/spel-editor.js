@@ -17,6 +17,109 @@
    var $html = Alfresco.util.encodeHTML, $hasEventInterest = Alfresco.util.hasEventInterest;
 
    /**
+    * Suggestions offered whatever the formula being edited: the operators of the language and the
+    * functions the formulation exposes through the beCPG bean.
+    */
+   var COMMON_HINTS = [
+      'entity',
+      'dataListItem',
+      'dataListItemEntity',
+      'variantData',
+      'meatContentData',
+      '#this',
+      '#root',
+      '$Value instanceof T($Type)',
+      '$String matches "$Regexp"',
+      'T($type)',
+      '$false ? $trueExp : $falseExp',
+      '$list.^[$property == $value]',
+      '$list.![$property]',
+      '@beCPG.sum($range,$formula)',
+      '@beCPG.avg($range,$formula)',
+      '@beCPG.min($range,$formula)',
+      '@beCPG.max($range,$formula)',
+      '@beCPG.sum($arrayOfDouble)',
+      '@beCPG.avg($arrayOfDouble)',
+      '@beCPG.min($arrayOfDouble)',
+      '@beCPG.max($arrayOfDouble)',
+      '@beCPG.findDuplicates($range)',
+      '@beCPG.removeDuplicates($range)',
+      '@beCPG.formatNumber($number,$format?)',
+      '@beCPG.formatDate($date,$format?)',
+      '@beCPG.filter($range,$formula)',
+      '@beCPG.replaceByFormula($range,$formula)',
+      '@beCPG.filterByAssoc($range, $assocQname, $values)',
+      '@beCPG.join($pattern, $range)',
+      '@beCPG.getOrDefault($range, $index, $defaultValue)',
+      '@beCPG.children($parent, $compositeList)',
+      '@beCPG.applyFormulaToList($range,$formula)',
+      '@beCPG.findOne($nodeRef)',
+      '@beCPG.propValue($nodeRef?,"bcpg:productQty")',
+      '@beCPG.assocValue($nodeRef?,"bcpg:client")',
+      '@beCPG.assocValues($nodeRef?,"bcpg:client")',
+      '@beCPG.sourcesAssocValues($nodeRef?,"bcpg:client")',
+      '@beCPG.assocPropValues($nodeRef?,"bcpg:client","cm:name")',
+      '@beCPG.assocAssocValues($nodeRef?,"bcpg:client","bcpg:plant")',
+      '@beCPG.setValue($entity?, $qname, $value)',
+      '@beCPG.propMLValue($nodeRef, $qname, $locale)',
+      '@beCPG.propMLValue($entity, $qname, $locale)',
+      '@beCPG.propMLValue($mltext, $locale)',
+      '@beCPG.propMLConstraint($value, $qname, $locale)',
+      '@beCPG.updateMLText($mlText,$locale,$value)',
+      '@beCPG.copy($fromNodeRef,propQnames,listQNames)',
+      '@beCPG.runScript($scriptNodeRef)',
+      '@beCPG.extractCustomList($nodeRef?, $listType)',
+      '@beCPG.saveCustomList($range)',
+      '@glop.optimize($args...)',
+      'isClaimed($claimNodeRef)',
+      'isLiquid()',
+      'isRawMaterial()',
+      'isPackaging()',
+      'isPackagingKit()',
+      'isSemiFinished()',
+      'isLocalSemiFinished()',
+      'addError($msg)',
+      'addWarning($msg)' ];
+
+   /**
+    * Suggestions added when a labeling rule is edited. A Render rule calls the labeling context
+    * itself, and its rendering methods are methods rather than properties, so the autocomplete web
+    * script, which enumerates bean properties, never surfaces them.
+    */
+   var LABELING_HINTS = [
+      'render()',
+      'render($showGroup)',
+      'renderGroupList()',
+      'renderAllergens()',
+      'renderDetectedAllergens()',
+      'renderInvoluntaryAllergens()',
+      'renderInvoluntaryAllergenInProcess()',
+      'renderInvoluntaryInRawMaterial()',
+      'renderFootNotes()',
+      'renderAsHtmlTable()',
+      'renderAsHtmlTable($styleCss,$showTotal)',
+      'renderAsFlatHtmlTable()',
+      'renderAsFlatHtmlTable($styleCss,$showTotal)',
+      'renderNutritionFacts("vertical")',
+      'renderNutritionFacts("sideBySide")',
+      'renderNutritionFacts("tabular")',
+      'renderNutritionFacts("linear")',
+      'renderNutritionFacts("linearSmall")',
+      'renderNutritionFacts("simplified")',
+      'renderNutritionFacts("dualColumn")',
+      'renderNutritionFacts("canada")',
+      'renderNutritionFacts($format,$regulationKey)',
+      'renderTemplate($templateName)',
+      'renderTemplate($templateName,$model)' ];
+
+   /**
+    * Name of the property the labeling rules carry their formula in. The field name is the only
+    * signal always available to the control, the datalist being unknown when the rule is edited
+    * from the labeling view.
+    */
+   var LABELING_FORMULA_FIELD = "lrFormula";
+
+   /**
     * SpelEditor constructor.
     * 
     * @param {String}
@@ -239,7 +342,9 @@
    	                        		matchBrackets: true
 
                            			});
-   	                        
+
+                           	instance.widgets.editor.becpgHints = instance._buildHints();
+
                            	CodeMirror.commands.autocomplete = function(cm) {
                                    cm.showHint({hint: CodeMirror.hint.spel});
                                  };
@@ -247,73 +352,11 @@
                                 CodeMirror.registerHelper("hint", "spel", function(editor, options) {
                                	 var cur = editor.getCursor(), token = editor.getTokenAt(cur);
                         			 var start = token.start, end = cur.ch;
-                        			 
-                        			  return {
-                        			      list: [
-                        			             'entity',
-                        			             'dataListItem',
-                        			             'dataListItemEntity', 
-                        			             'variantData',
-                        			             'meatContentData',
-                        			             '#this',
-                        			             '#root',
-                        			             '$Value instanceof T($Type)',
-                        			             '$String matches "$Regexp"',
-                        			             'T($type)',
-                        			             '$false ? $trueExp : $falseExp',
-                        			             '$list.^[$property == $value]',
-                        			             '$list.![$property]',
-                        			             '@beCPG.sum($range,$formula)',
-                        			             '@beCPG.avg($range,$formula)',
-                        			             '@beCPG.min($range,$formula)',
-                        			             '@beCPG.max($range,$formula)',
-                        			             '@beCPG.sum($arrayOfDouble)',
-                        			             '@beCPG.avg($arrayOfDouble)',
-                        			             '@beCPG.min($arrayOfDouble)',
-                        			             '@beCPG.max($arrayOfDouble)',
-												 '@beCPG.findDuplicates($range)',
-                                                 '@beCPG.removeDuplicates($range)',
-                        			             '@beCPG.formatNumber($number,$format?)',
-                        			             '@beCPG.formatDate($date,$format?)',
-                        			             '@beCPG.filter($range,$formula)',
-												 '@beCPG.replaceByFormula($range,$formula)',
-												 '@beCPG.filterByAssoc($range, $assocQname, $values)',
-												 '@beCPG.join($pattern, $range)',
-												 '@beCPG.getOrDefault($range, $index, $defaultValue)',
-                        			             '@beCPG.children($parent, $compositeList)',
-                        			             '@beCPG.applyFormulaToList($range,$formula)',
-                        			             '@beCPG.findOne($nodeRef)',
-                        			             '@beCPG.propValue($nodeRef?,"bcpg:productQty")',
-                        			             '@beCPG.assocValue($nodeRef?,"bcpg:client")',
-                        			             '@beCPG.assocValues($nodeRef?,"bcpg:client")',
- 												 '@beCPG.sourcesAssocValues($nodeRef?,"bcpg:client")',
-                        			             '@beCPG.assocPropValues($nodeRef?,"bcpg:client","cm:name")',
-												 '@beCPG.assocAssocValues($nodeRef?,"bcpg:client","bcpg:plant")',
-                        			             '@beCPG.setValue($entity?, $qname, $value)',
-                        			             '@beCPG.propMLValue($nodeRef, $qname, $locale)',
-                        			             '@beCPG.propMLValue($entity, $qname, $locale)',
-                        			             '@beCPG.propMLValue($mltext, $locale)',
-                                                 '@beCPG.propMLConstraint($value, $qname, $locale)',
-                        			             '@beCPG.updateMLText($mlText,$locale,$value)',
-                        			             '@beCPG.copy($fromNodeRef,propQnames,listQNames)',
-                        			             '@beCPG.runScript($scriptNodeRef)',
-                        			             '@beCPG.extractCustomList($nodeRef?, $listType)',
-                        			             '@beCPG.saveCustomList($range)',
-												 '@glop.optimize($args...)',
-												 'isClaimed($claimNodeRef)',
-                        			             'isLiquid()',
-                        			             'isRawMaterial()',
-                        			             'isPackaging()',
-                        			             'isPackagingKit()',
-                        			             'isSemiFinished()',
-                        			             'isLocalSemiFinished()',
-												 'addError($msg)',
-											     'addWarning($msg)'
-                        			             ],
-                        			             
-                        			      from: CodeMirror.Pos(cur.line, start),
-                        			      to: CodeMirror.Pos(cur.line, end)
-                        			    };
+							  return {
+							      list: editor.becpgHints || COMMON_HINTS,
+							      from: CodeMirror.Pos(cur.line, start),
+							      to: CodeMirror.Pos(cur.line, end)
+							    };
                                	  });
                        	 
                         }
@@ -339,6 +382,22 @@
                         // Ignore
                      }
                      beCPG.SpelEditor.superclass.destroy.call(this);
+                  },
+
+                  /**
+                   * Builds the suggestions this editor offers on Ctrl-Space. A labeling rule gets the
+                   * rendering methods of the labeling context first, the common suggestions keeping
+                   * their place below, so that the list a user actually needs opens on top.
+                   * 
+                   * @method _buildHints
+                   * @return {array} the suggestions of the edited formula
+                   */
+                  _buildHints : function SpelEditor__buildHints() {
+                     var field = this.options.field;
+                     if (field && field.indexOf(LABELING_FORMULA_FIELD) !== -1) {
+                        return LABELING_HINTS.concat(COMMON_HINTS);
+                     }
+                     return COMMON_HINTS;
                   },
 
                   /**

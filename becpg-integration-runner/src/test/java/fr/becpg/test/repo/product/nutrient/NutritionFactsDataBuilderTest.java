@@ -156,6 +156,38 @@ public class NutritionFactsDataBuilderTest {
 	}
 
 	@Test
+	public void testServingWordingCarriesTheMetricWeight() {
+
+		mockMlProperty(PLMModel.PROP_PRODUCT_SERVING_SIZE_TEXT, "2/3 cup");
+		ProductData product = standardProduct();
+		product.setServingSize(55d);
+		product.setServingSizeUnit(ProductUnit.g);
+
+		Assert.assertEquals("The FDA states the household measure and its weight together", "2/3 cup (55g)",
+				build(product).serving().servingSize());
+	}
+
+	@Test
+	public void testServingWordingAlreadyStatingItsWeightIsLeftAlone() {
+
+		mockMlProperty(PLMModel.PROP_PRODUCT_SERVING_SIZE_TEXT, "2/3 cup (55g)");
+		ProductData product = standardProduct();
+		product.setServingSize(55d);
+		product.setServingSizeUnit(ProductUnit.g);
+
+		Assert.assertEquals("2/3 cup (55g)", build(product).serving().servingSize());
+	}
+
+	@Test
+	public void testAddedSugarsIsShortenedWhereTheAmountHasItsOwnColumn() {
+
+		NutritionFactsLine addedSugars = lineOf(build(standardProduct()), "Includes 10g Added Sugars");
+
+		Assert.assertEquals("A dual column panel puts the amount alongside, so the sentence is the shortened one",
+				"Incl. Added Sugars", addedSugars.columnLabel());
+	}
+
+	@Test
 	public void testPanelWordingIsSnapshotForTheTemplate() {
 
 		NutritionFactsData data = build(standardProduct());

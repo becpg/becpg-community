@@ -34,29 +34,50 @@
 		 */
 
 		/**
+		 * Opens the details of the selected rows.
+		 *
+		 * A list mixes rows whose value the formulation computes and rows the user fills in
+		 * himself, and only the former ones have a detail. Selecting the whole list has to
+		 * stay possible, so the rows without a detail are left out instead of blocking the
+		 * action.
+		 *
 		 * @method onActionShowDetails
 		 * @param items {Object | Array} Object literal representing the Data
 		 *            Item to be actioned, or an Array thereof
 		 */
 		onActionShowDetails: function EntityDataGrid_onActionShowDetails(p_items) {
-			var items = YAHOO.lang.isArray(p_items) ? p_items : [p_items], nodeRefs = [];
+			var items = YAHOO.lang.isArray(p_items) ? p_items : [p_items], me = this;
 
-			for (var i = 0, ii = items.length; i < ii; i++) {
-				nodeRefs.push(items[i].nodeRef);
-			}
-			
-			if (nodeRefs.length > 50 && !(this.allPages && this.queryExecutionId)) {
-				Alfresco.util.PopupManager.displayMessage({
-					text: this.msg("message.too.many.items", nodeRefs.length)
-				});
-				return;
-			}
-			var url = Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-charact-details/entity-charact-details" + "?entityNodeRef="
-				+ this.options.entityNodeRef + "&itemType="
-				+ encodeURIComponent(this.options.itemType != null ? this.options.itemType : this.datalistMeta.itemType) + "&dataListName="
-				+ encodeURIComponent(this.datalistMeta.name) + "&dataListItems=" + nodeRefs.join(",");
+			this._withEverySelectedItem(items, function(selectedItems) {
+				var nodeRefs = [];
 
-			this._showPanel(url, this.id, null, "60em");
+				for (var i = 0, ii = selectedItems.length; i < ii; i++) {
+					if (me._isDetailable(selectedItems[i])) {
+						nodeRefs.push(selectedItems[i].nodeRef);
+					}
+				}
+
+				if (nodeRefs.length === 0) {
+					Alfresco.util.PopupManager.displayMessage({
+						text: me.msg("message.no.details")
+					});
+					return;
+				}
+
+				if (nodeRefs.length > 50 && !(me.allPages && me.queryExecutionId)) {
+					Alfresco.util.PopupManager.displayMessage({
+						text: me.msg("message.too.many.items", nodeRefs.length)
+					});
+					return;
+				}
+
+				var url = Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-charact-details/entity-charact-details" + "?entityNodeRef="
+					+ me.options.entityNodeRef + "&itemType="
+					+ encodeURIComponent(me.options.itemType != null ? me.options.itemType : me.datalistMeta.itemType) + "&dataListName="
+					+ encodeURIComponent(me.datalistMeta.name) + "&dataListItems=" + nodeRefs.join(",");
+
+				me._showPanel(url, me.id, null, "60em");
+			});
 
 		},
 
@@ -100,6 +121,18 @@
 				me._showWusedPopup("bulk-edit", items, onActionBulkEdit_redirect);
 			});
 
+		},
+
+		/**
+		 * Tells whether a row holds a formulated value, the only one the details window
+		 * can break down by raw material.
+		 *
+		 * @method _isDetailable
+		 * @param item {Object} Selected row
+		 * @return {Boolean} True when the row has a detail
+		 */
+		_isDetailable: function EntityDataGrid__isDetailable(item) {
+			return !!(item.permissions && item.permissions.userAccess && item.permissions.userAccess.details);
 		},
 
 		/**
@@ -186,64 +219,78 @@
 			});
 		},
 
+		/**
+		 * Replaces the where-used drop-down by the list of the fields the bulk edit form can hold.
+		 *
+		 * The list is rendered like the column chooser, search field and four columns included, but
+		 * without the select all buttons: a form holding every field of the type is unusable.
+		 *
+		 * @method _setupPropsPicker
+		 * @param nodeRefs {Array} the entities the bulk edit will apply to
+		 */
 		_setupPropsPicker: function EntityDataGrid__setupPropsPicker(nodeRefs) {
-			var containerEl = Dom.get(this.id + '-wused-selected-picker').parentNode, html = "";
-			if (containerEl != null) {
-				var inc = 0;
-				var colCount = 0;
+			var pickerEl = Dom.get(this.id + '-wused-selected-picker');
+			var itemType = this.options.itemType != null ? this.options.itemType : this.datalistMeta.itemType;
 
-				var itemType = this.options.itemType != null ? this.options.itemType : this.datalistMeta.itemType;
+			if (pickerEl == null || itemType == null) {
+				return;
+			}
 
-				if (itemType != null) {
-					// Query the visible columns for this list's
-					// item type
-					Alfresco.util.Ajax.jsonGet({
-						url: Alfresco.constants.URL_SERVICECONTEXT + "module/entity-datagrid/config/columns?mode=bulk-edit&itemType=" + encodeURIComponent(itemType)
-							+ "&formId=bulk-edit",
-						successCallback: {
-							fn: function(response) {
+			var containerEl = pickerEl.parentNode;
 
-								for (var i = 0, ii = response.json.columns.length; i < ii; i++) {
+			Alfresco.util.Ajax.jsonGet({
+				url: Alfresco.constants.URL_SERVICECONTEXT + "module/entity-datagrid/config/columns?mode=bulk-edit&itemType=" + encodeURIComponent(itemType)
+					+ "&formId=bulk-edit",
+				successCallback: {
+					fn: function(response) {
 
-									var column = response.json.columns[i];
+						this._renderCheckboxPicker({
+							containerEl: containerEl,
+							panel: this.widgets.wUsedPanel,
+							title: this.msg("label.select-prop.title"),
+							itemsHtml: this._buildFieldPickerItems(response.json.columns),
+							selectAllButtons: false
+						});
 
-									var propName = this._buildFormsName(column);
-									var propLabel = column.label;
-									if (!column.protectedField && !column.disabled && propLabel != "hidden" && propLabel != "datasource" && !column.readOnly) {
+						var divEl = Dom.get(this.id + '-bulk-edit-ft');
+						divEl.innerHTML = '<input id="' + this.id + '-bulk-edit-ok" type="button" value="' + this.msg("button.ok") + '" />';
 
-										var className = "";
-										if (colCount < Math.floor(inc / 5)) {
-											className = "reset ";
-										}
-										colCount = Math.floor(inc / 5);
-										className += "column-" + colCount;
+						this.widgets.okBkButton = Alfresco.util.createYUIButton(this, "bulk-edit-ok", function() {
+							this.widgets.wUsedPanel.hide();
+							this._onEditSelected(nodeRefs, containerEl);
+						});
 
-										html += '<li class="' + className + '"><input id="propSelected-' + i + '" type="checkbox" name="propChecked" value="'
-											+ propName + '" /><label for="propSelected-' + i + '" >' + propLabel + '</label></li>';
-										inc++;
-									}
-								}
+					},
+					scope: this
+				}
+			});
+		},
 
-								html = "<span>" + this.msg("label.select-prop.title")
-									+ "</span><br/><br/><ul style=\"width:" + ((colCount + 1) * 20) + "em;\">" + html + "</ul>";
+		/**
+		 * Builds the checkbox lines of the bulk edit field chooser.
+		 *
+		 * @method _buildFieldPickerItems
+		 * @param columns {Array} the columns returned by the configuration webscript
+		 * @return {String} the list items markup
+		 */
+		_buildFieldPickerItems: function EntityDataGrid__buildFieldPickerItems(columns) {
+			var itemsHtml = "";
 
-								containerEl.innerHTML = html;
+			for (var i = 0, ii = columns.length; i < ii; i++) {
+				var column = columns[i];
 
-
-								var divEl = Dom.get(this.id + '-bulk-edit-ft');
-								divEl.innerHTML = '<input id="' + this.id + '-bulk-edit-ok" type="button" value="' + this.msg("button.ok") + '" />';
-
-								this.widgets.okBkButton = Alfresco.util.createYUIButton(this, "bulk-edit-ok", function() {
-									this.widgets.wUsedPanel.hide();
-									this._onEditSelected(nodeRefs, containerEl);
-								});
-
-							},
-							scope: this
-						}
+				if (!column.protectedField && !column.disabled && !column.readOnly
+					&& column.label != "hidden" && column.label != "datasource") {
+					itemsHtml += this._buildPickerItem({
+						id: "propSelected-" + i,
+						value: this._buildFormsName(column),
+						label: column.label,
+						checked: false
 					});
 				}
 			}
+
+			return itemsHtml;
 		},
 
 		_buildFormsName: function EntityDataGrid__buildFormsName(col) {
