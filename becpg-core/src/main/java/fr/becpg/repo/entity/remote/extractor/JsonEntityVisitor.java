@@ -64,6 +64,7 @@ import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.GUID;
+import org.alfresco.util.Pair;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -179,11 +180,24 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		}
 	}
 
+	/**
+	 * <p>Describes the page being written: how many entities it holds, whether another page follows and,
+	 * when the search engine is able to give it, how many entities match the request as a whole.</p>
+	 *
+	 * <p><code>totalItems</code> is left out when the total is unknown, which happens when the database
+	 * engine served the request and stopped counting one row past the page. Publishing the count it
+	 * reports in that case would announce one entity more than the caller can actually read back.</p>
+	 */
 	private JSONObject buildPaginationObject(PagingResults<NodeRef> pagingResult) throws JSONException {
 		JSONObject pagination = new JSONObject();
 		pagination.put(PAGINATION_HAS_MORE_ITEMS, pagingResult.hasMoreItems());
 		pagination.put(PAGINATION_COUNT, pagingResult.getPage().size());
-		pagination.put(PAGINATION_TOTAL_ITEMS, pagingResult.getTotalResultCount().getFirst());
+
+		Pair<Integer, Integer> totalResultCount = pagingResult.getTotalResultCount();
+		if ((totalResultCount != null) && (totalResultCount.getSecond() != null)) {
+			pagination.put(PAGINATION_TOTAL_ITEMS, totalResultCount.getSecond());
+		}
+
 		return pagination;
 	}
 
