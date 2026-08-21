@@ -1911,16 +1911,14 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			Map<String, Map<QName, Serializable>> reportKindDefaultValues = new HashMap<>();
 			Map<String, Map<QName, Serializable>> reportKindTplAssoc = new HashMap<>();
-			List<String> defaultKindReport = new ArrayList<>(Arrays.asList(defaultReport));
-			defaultKindReport.add(NONE_KIND_REPORT);
+			for (Map.Entry<String, String> entry : reportKindCodes.entrySet()) {
+				String reportPath = entry.getKey();
+				String reportKindCode = entry.getValue();
 
-			for (String reportKind : defaultKindReport) {
-				if (PRODUCT_REPORT_PACKAGING_PATH.equals(reportKind) || PRODUCT_REPORT_COST_PATH.equals(reportKind)
-						|| PRODUCT_REPORT_RD_PATH.equals(reportKind)) {
+				if (PRODUCT_REPORT_PACKAGING_PATH.equals(reportPath) || PRODUCT_REPORT_COST_PATH.equals(reportPath)
+						|| PRODUCT_REPORT_RD_PATH.equals(reportPath)) {
 					continue;
 				}
-
-				String reportKindCode = reportKindCodes.get(reportKind);
 
 				MLText mltValue = new MLText();
 				mltValue.put(Locale.FRENCH, I18NUtil.getMessage("becpg.reportkind." + reportKindCode.toLowerCase() + ".value", Locale.FRENCH));
@@ -1929,14 +1927,14 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				// for aspect on report template
 				Map<QName, Serializable> reportKindTplProps = new HashMap<>();
 				reportKindTplProps.put(ReportModel.PROP_REPORT_KINDS, reportKindCode);
-				reportKindTplAssoc.put(reportKind, reportKindTplProps);
+				reportKindTplAssoc.put(reportPath, reportKindTplProps);
 
 				//for reportKindList default values
 				Map<QName, Serializable> reportKindListProps = new HashMap<>();
 				reportKindListProps.put(ContentModel.PROP_NAME, reportKindCode);
 				reportKindListProps.put(BeCPGModel.PROP_LV_CODE, reportKindCode);
 				reportKindListProps.put(BeCPGModel.PROP_LV_VALUE, mltValue);
-				reportKindDefaultValues.put(reportKind, reportKindListProps);
+				reportKindDefaultValues.put(reportPath, reportKindListProps);
 			}
 
 			List<String> annexReportKinds = Arrays.asList(
