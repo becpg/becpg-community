@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -1458,7 +1459,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		if (RemoteHelper.isJSONValue(propType)) {
 			tmpArray.put(new JSONObject((String) value));
 		} else {
-			Object formatted = JsonHelper.formatValue(value);
+			Object formatted = formatPropValue(propType, value);
 			if (formatted != null && !formatted.toString().isEmpty()) {
 				tmpArray.put(formatted);
 			}
@@ -1480,10 +1481,29 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		if (RemoteHelper.isJSONValue(propType)) {
 			entity.put(entityDictionaryService.toPrefixString(propType), new JSONObject((String) value));
 		} else {
-			Object formatted = JsonHelper.formatValue(value);
+			Object formatted = formatPropValue(propType, value);
 			if (formatted != null && !formatted.toString().isEmpty()) {
 				entity.put(entityDictionaryService.toPrefixString(propType), formatted);
 			}
 		}
+	}
+
+	/**
+	 * Formats a property value for the JSON payload.
+	 * <p>
+	 * A <code>d:date</code> is published as a plain calendar day, which is what the JSON schema
+	 * announces for it. Published as an instant, it would be shifted by a day for every reader
+	 * whose time zone differs from the one the value was written in.
+	 *
+	 * @param propType a {@link org.alfresco.service.namespace.QName} object
+	 * @param value a {@link java.io.Serializable} object
+	 * @return a {@link java.lang.Object} object
+	 */
+	private Object formatPropValue(QName propType, Serializable value) {
+		if ((value instanceof Date date) && RemoteHelper.isDayProperty(propType, entityDictionaryService)) {
+			return RemoteHelper.formatDay(date);
+		}
+
+		return JsonHelper.formatValue(value);
 	}
 }
