@@ -58,8 +58,8 @@
 				</MemberFormatter>
 			</Level>
 			<#if .locale == "fr" >
-				<Level name="Week" caption="${msg("jsolap.week.title")}" column="nWeek" type="String"  levelType="TimeWeeks"  />
-				<Level name="Quarter" caption="${msg("jsolap.quarter.title")}" column="nQuarter" type="String"  levelType="TimeQuarters"  />
+				<Level name="Week" caption="${msg("jsolap.week.title")}" column="NWeek" type="String"  levelType="TimeWeeks"  />
+				<Level name="Quarter" caption="${msg("jsolap.quarter.title")}" column="NQuarter" type="String"  levelType="TimeQuarters"  />
 			<#else>
 				<Level name="Week" caption="${msg("jsolap.week.title")}" column="enNWeek" type="String"  levelType="TimeWeeks"  />
 				<Level name="Quarter" caption="${msg("jsolap.quarter.title")}" column="enNQuarter" type="String"  levelType="TimeQuarters"  />
@@ -245,11 +245,11 @@
 		
 		<Dimension name="site" caption="${msg("jsolap.site.title")}" foreignKey="site_id" >
 			<Hierarchy name="site" caption="${msg("jsolap.site.title")}"  primaryKey="site_id" hasAll="true" allMemberCaption="${msg("jsolap.site.caption")}">
-				<Table name="becpg_activities_names" alias="becpg_activities_names">
+				<View alias="becpg_activities_names_site">
 					<SQL dialect="generic">
-						becpg_activities_names.user_id IS NULL AND becpg_activities_names.entity_id IS NULL
+						select id, entity_id, entity_type, entity_mime_type, user_id, site_id, name from becpg_activities_names where becpg_activities_names.user_id IS NULL AND becpg_activities_names.entity_id IS NULL
 					</SQL>
-				</Table>
+				</View>
 				<Level name="site" caption="${msg("jsolap.site.title")}" column="site_id" nameColumn="name"  type="String" />
 			</Hierarchy>
 		</Dimension>
@@ -262,11 +262,11 @@
 		
 		<Dimension  name="user" caption="${msg("jsolap.user.title")}" foreignKey="user_id" >
 			<Hierarchy name="users" caption="${msg("jsolap.user.caption")}" primaryKey="user_id" hasAll="true" allMemberCaption="${msg("jsolap.user.caption")}" >
-			   <Table name="becpg_activities_names" alias="becpg_activities_names">
+			   <View alias="becpg_activities_names_user">
 					<SQL dialect="generic">
-						 becpg_activities_names.site_id IS NULL AND becpg_activities_names.entity_id IS NULL
+						select id, entity_id, entity_type, entity_mime_type, user_id, site_id, name from becpg_activities_names where becpg_activities_names.site_id IS NULL AND becpg_activities_names.entity_id IS NULL
 					</SQL>
-				</Table>
+				</View>
 			
 				<Level name="user" caption="${msg("jsolap.user.title")}" column="user_id" nameColumn="name"  type="String" />
 			</Hierarchy>
@@ -274,11 +274,11 @@
 		
 		<Dimension name="entity" caption="${msg("jsolap.activityEntity.title")}"  foreignKey="entity_id">
 			<Hierarchy name="entity" caption="${msg("jsolap.activityEntity.title")}" primaryKey="entity_id"  hasAll="true" allMemberCaption="${msg("jsolap.entity.caption")}">
-				<Table name="becpg_activities_names" alias="becpg_activities_names">
+				<View alias="becpg_activities_names_site">
 					<SQL dialect="generic">
-						 becpg_activities_names.user_id IS NULL AND becpg_activities_names.site_id IS NULL
+						select id, entity_id, entity_type, entity_mime_type, user_id, site_id, name from becpg_activities_names where becpg_activities_names.user_id IS NULL AND becpg_activities_names.site_id IS NULL
 					</SQL>
-				</Table>
+				</View>
 				<Level name="entityType" caption="${msg("jsolap.activityEntity.type")}" column="entity_type"  nameColumn="entity_type" type="String" />
 				<Level name="entityMime" caption="${msg("jsolap.activityEntity.mime")}" column="entity_mime_type"  nameColumn="entity_mime_type" type="String" />
 				<Level name="entityName" caption="${msg("jsolap.activityEntity.name")}" column="entity_id"  nameColumn="name" type="String" />
@@ -499,7 +499,7 @@
 		</Dimension>
 		
 		
-		<Measure name="requirementsNumber" caption="${msg("jsolap.requirementsNumber.title")}" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
+		<Measure name="requirementsNumber" caption="${msg("jsolap.requirementsNumber.title")}" column="nodeRef" datatype="Integer" aggregator="distinct-count" visible="true" />
     </Cube>
 
 
@@ -514,8 +514,8 @@
 						doc->>"$.qa_ncType" as ncType,
 						doc->>"$.qa_ncPriority" as ncPriority,
 						doc->>"$.qa_ncState" as ncState,
-						doc->>"$.qa_ncQuantityNc" as ncQuantityNc,
-						doc->>"$.qa_ncCost" as ncCost,
+						CAST(doc->>"$.qa_ncQuantityNc" AS DECIMAL(20,6)) as ncQuantityNc,
+						CAST(doc->>"$.qa_ncCost" AS DECIMAL(20,6)) as ncCost,
 						doc->>"$.qa_batchId" as batchId,
 						doc->>"$.qa_claimType" as claimType,
 						doc->>"$.qa_claimOriginHierarchy1[0]" as claimOriginHierarchy1,
@@ -656,7 +656,7 @@
 		<DimensionUsage name="claimClosingDate" caption="${msg("jsolap.closingDate.title")}" source="timeDimension" foreignKey="claimClosingDate" />
 		
 		
-		<Measure name="noderef" caption="${msg("jsolap.incidentsNumber.title")}" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
+		<Measure name="noderef" caption="${msg("jsolap.incidentsNumber.title")}" column="nodeRef" datatype="Integer" aggregator="distinct-count" visible="true" />
 		<Measure name="ncQuantityNc" caption="${msg("jsolap.nonConformQuantity.title")}" column="ncQuantityNc" datatype="Numeric" aggregator="sum" visible="true"  />
 		<Measure name="ncCost" caption="${msg("jsolap.nonConformityCost.title")}" column="ncCost" datatype="Numeric" aggregator="sum" visible="true"  />
 	</Cube>
@@ -669,15 +669,15 @@
 							a.nodeRef,
 							a.entityNodeRef,
 							a.doc->>"$.pjt_tlTaskName" as tlTaskName,
-							a.doc->>"$.pjt_tlDuration" as tlDuration,
-							a.doc->>"$.pjt_tlRealDuration" as tlRealDuration,
+							CAST(a.doc->>"$.pjt_tlDuration" AS DECIMAL(20,6)) as tlDuration,
+							CAST(a.doc->>"$.pjt_tlRealDuration" AS DECIMAL(20,6)) as tlRealDuration,
 							CAST(a.doc->>"$.pjt_tlStart" as DATE) as tlStart,
 							CAST(a.doc->>"$.pjt_tlEnd" as DATE) as tlEnd,
 							CAST(a.doc->>"$.pjt_tlTargetStart" as DATE) as tlTargetStart,
 							CAST(a.doc->>"$.pjt_tlTargetEnd" as DATE) as tlTargetEnd,
 							a.doc->>"$.pjt_tlState" as tlState,
-							a.doc->>"$.pjt_tlWork" as tlWork,
-							a.doc->>"$.pjt_tlLoggedTime" as tlLoggedTime,
+							CAST(a.doc->>"$.pjt_tlWork" AS DECIMAL(20,6)) as tlWork,
+							CAST(a.doc->>"$.pjt_tlLoggedTime" AS DECIMAL(20,6)) as tlLoggedTime,
 							a.doc->>"$.bcpg_sort" as sortOrder,
 							CAST(a.doc->>"$.cm_modified" as DATE) as projectDateModified,
 							b.doc->>"$.pjt_projectManager[0]" as projectManager,
@@ -686,24 +686,24 @@
 							b.doc->>"$.cm_name" as projectName,
 							b.doc->>"$.pjt_projectHierarchy1[0]" as	projectHierarchy1,
 							b.doc->>"$.pjt_projectHierarchy2[0]" as	projectHierarchy2,
-							b.doc->>"$.pjt_projectOverdue" as projectOverdue,
+							CAST(b.doc->>"$.pjt_projectOverdue" AS DECIMAL(20,6)) as projectOverdue,
 							b.doc->>"$.bcpg_code" as projectCode,
 							b.doc->>"$.metadata_siteId" as siteId,
 							b.doc->>"$.metadata_siteName" as siteName,
 							SUBSTRING_INDEX(b.doc->>"$.pjt_projectEntity_bcpg_nodeRef", '|', -1) as projectEntityNodeRef,
 							b.doc->>"$.bcpg_entityTplRef[0]" as entityTplRef,
-							<#-- Supplier portal: a refusal rate and a response delay cannot be
+							CAST(<#-- Supplier portal: a refusal rate and a response delay cannot be
 							     expressed as Mondrian measures over `tlState` alone — a measure
 							     aggregates a column, it does not filter rows. The three columns
 							     below carry the predicate into SQL so `refusedSteps`,
 							     `completedSteps` and `avgResponseDelay` are plain aggregates. -->
-							CASE WHEN a.doc->>"$.pjt_tlState" = 'Refused' THEN 1 ELSE 0 END as tlRefused,
-							CASE WHEN a.doc->>"$.pjt_tlState" = 'Completed' THEN 1 ELSE 0 END as tlCompleted,
-							<#-- Days between the date a task was due and the date it actually
+							CASE WHEN a.doc->>"$.pjt_tlState" = 'Refused' THEN 1 ELSE 0 END AS DECIMAL(20,6)) as tlRefused,
+							CAST(CASE WHEN a.doc->>"$.pjt_tlState" = 'Completed' THEN 1 ELSE 0 END AS DECIMAL(20,6)) as tlCompleted,
+							CAST(<#-- Days between the date a task was due and the date it actually
 							     ended: negative when answered early, positive when late. NULL
 							     while the task is open, so the average only counts answered
 							     tasks instead of reading an open one as "on time". -->
-							DATEDIFF(CAST(a.doc->>"$.pjt_tlEnd" as DATE), CAST(a.doc->>"$.pjt_tlTargetEnd" as DATE)) as tlResponseDelay
+							DATEDIFF(CAST(a.doc->>"$.pjt_tlEnd" as DATE), CAST(a.doc->>"$.pjt_tlTargetEnd" as DATE)) AS DECIMAL(20,6)) as tlResponseDelay
 						from
 							taskList a inner join pjt_project b on a.entityNodeRef = b.nodeRef
 					</SQL>
@@ -853,16 +853,16 @@
 		<DimensionUsage name="tlTargetEnd" caption="${msg("jsolap.tlTargetEnd.title")}" source="timeDimension" foreignKey="tlTargetEnd" />
 		<DimensionUsage name="projectDateModified" caption="${msg("jsolap.modificationDate.title")}" source="timeDimension"  foreignKey="projectDateModified" />	
 		
-		<Measure name="stepsNumber" caption="${msg("jsolap.tasksNumber.title")}" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
+		<Measure name="stepsNumber" caption="${msg("jsolap.tasksNumber.title")}" column="nodeRef" datatype="Integer" aggregator="distinct-count" visible="true" />
 		<Measure name="averageForecastDurations" caption="${msg("jsolap.averageForecastDurations.title")}" column="tlDuration" datatype="Numeric" aggregator="avg" visible="true"  />
 		<Measure name="averageActualDurations" caption="${msg("jsolap.averageActualDurations.title")}" column="tlRealDuration" datatype="Numeric" aggregator="avg" visible="true"  />
-		<Measure name="workload" caption="${msg("jsolap.workload.title")}" column="tlWork" datatype="Integer" aggregator="sum" visible="true"></Measure>
-		<Measure name="loggedTime" caption="${msg("jsolap.loggedTime.title")}" column="tlLoggedTime" datatype="Integer" aggregator="sum" visible="true"></Measure>
-		<Measure name="avgLoggedTime" caption="${msg("jsolap.avgLoggedTime.title")}" column="tlLoggedTime" datatype="Integer" aggregator="avg" visible="true"></Measure>
+		<Measure name="workload" caption="${msg("jsolap.workload.title")}" column="tlWork" datatype="Numeric" aggregator="sum" visible="true"></Measure>
+		<Measure name="loggedTime" caption="${msg("jsolap.loggedTime.title")}" column="tlLoggedTime" datatype="Numeric" aggregator="sum" visible="true"></Measure>
+		<Measure name="avgLoggedTime" caption="${msg("jsolap.avgLoggedTime.title")}" column="tlLoggedTime" datatype="Numeric" aggregator="avg" visible="true"></Measure>
 
 		<#-- Supplier portal (§4.6.6): "taux de refus" and "délai de réponse aux tâches". -->
-		<Measure name="refusedSteps" caption="${msg("jsolap.refusedSteps.title")}" column="tlRefused" datatype="Integer" aggregator="sum" visible="true" />
-		<Measure name="completedSteps" caption="${msg("jsolap.completedSteps.title")}" column="tlCompleted" datatype="Integer" aggregator="sum" visible="true" />
+		<Measure name="refusedSteps" caption="${msg("jsolap.refusedSteps.title")}" column="tlRefused" datatype="Numeric" aggregator="sum" visible="true" />
+		<Measure name="completedSteps" caption="${msg("jsolap.completedSteps.title")}" column="tlCompleted" datatype="Numeric" aggregator="sum" visible="true" />
 		<Measure name="avgResponseDelay" caption="${msg("jsolap.avgResponseDelay.title")}" column="tlResponseDelay" datatype="Numeric" aggregator="avg" visible="true" />
 
 		<CalculatedMember name="averageDurations" caption="${msg("jsolap.averageDurations.title")}" dimension="Measures" visible="true">
@@ -888,8 +888,8 @@
 						select
 							a.entityNodeRef as scoreNodeRef,
 							a.doc->>"$.pjt_slScoreCriterion" as slScoreCriterion,
-							a.doc->>"$.pjt_slWeight" as slWeight,
-							a.doc->>"$.pjt_slScore" as slScore,
+							CAST(a.doc->>"$.pjt_slWeight" AS DECIMAL(20,6)) as slWeight,
+							CAST(a.doc->>"$.pjt_slScore" AS DECIMAL(20,6)) as slScore,
 							COALESCE(p.nodeRef, pjt.nodeRef, c.nodeRef, s.nodeRef) as entityNodeRef,
 							COALESCE(p.doc->>"$.cm_name", pjt.doc->>"$.cm_name", c.doc->>"$.cm_name", s.doc->>"$.cm_name") as entityName,
 							COALESCE(p.doc->>"$.bcpg_productHierarchy1[0]", pjt.doc->>"$.pjt_projectHierarchy1[0]", c.doc->>"$.bcpg_clientHierarchy1[0]", s.doc->>"$.bcpg_supplierHierarchy1[0]") as entityHierarchy1,
@@ -899,7 +899,7 @@
 							COALESCE(p.doc->>"$.metadata_siteId", pjt.doc->>"$.metadata_siteId", c.doc->>"$.metadata_siteId", s.doc->>"$.metadata_siteId") as siteId,
 							COALESCE(p.doc->>"$.metadata_siteName", pjt.doc->>"$.metadata_siteName", c.doc->>"$.metadata_siteName", s.doc->>"$.metadata_siteName") as siteName,
 							COALESCE(p.doc->>"$.type", pjt.doc->>"$.type", c.doc->>"$.type", s.doc->>"$.type") as entityType,
-							COALESCE(p.doc->>"$.pjt_projectScore", pjt.doc->>"$.pjt_projectScore", c.doc->>"$.pjt_projectScore", s.doc->>"$.pjt_projectScore") as projectScore
+							CAST(COALESCE(p.doc->>"$.pjt_projectScore", pjt.doc->>"$.pjt_projectScore", c.doc->>"$.pjt_projectScore", s.doc->>"$.pjt_projectScore") AS DECIMAL(20,6)) as projectScore
 						from
 							scoreList a
 							LEFT JOIN bcpg_product p ON a.entityNodeRef = p.nodeRef
@@ -1028,15 +1028,15 @@
 						CAST(doc->>"$.pjt_projectDueDate" as DATE)  as projectDueDate,
 						CAST(doc->>"$.pjt_projectCompletionDate" as DATE)  as completionDate,
 						doc->>"$.pjt_projectPriority" as projectPriority,
-						doc->>"$.pjt_completionPercent" as completionPercent,
-						doc->>"$.pjt_projectScore" as projectScore,
-						doc->>"$.pjt_projectOverdue" as projectOverdue,
+						CAST(doc->>"$.pjt_completionPercent" AS DECIMAL(20,6)) as completionPercent,
+						CAST(doc->>"$.pjt_projectScore" AS DECIMAL(20,6)) as projectScore,
+						CAST(doc->>"$.pjt_projectOverdue" AS DECIMAL(20,6)) as projectOverdue,
 						doc->>"$.pjt_projectManager[0]" as projectManager,
 						doc->>"$.pjt_projectOrigin" as projectOrigin,
 						doc->>"$.pjt_projectSponsor" as projectSponsor,
 						doc->>"$.bcpg_entityTplRef[0]" as entityTplRef,
 						SUBSTRING_INDEX(doc->>"$.pjt_projectEntity_bcpg_nodeRef", '|', -1) as projectEntityNodeRef,
-						DATEDIFF(CAST(doc->>"$.pjt_projectCompletionDate" as DATE),CAST(doc->>"$.pjt_projectStartDate" as DATE)) as duration
+						CAST(DATEDIFF(CAST(doc->>"$.pjt_projectCompletionDate" as DATE),CAST(doc->>"$.pjt_projectStartDate" as DATE)) AS DECIMAL(20,6)) as duration
 					from
 						pjt_project
 				</SQL>
@@ -1211,7 +1211,7 @@
 										a.nodeRef as nodeRef,
 										b.doc->>"$.pjt_tlTaskName" as taskName,
 										b.doc->>"$.pjt_tlState" as taskState,
-										b.doc->>"$.pjt_tlDuration" as tlDuration
+										CAST(b.doc->>"$.pjt_tlDuration" AS DECIMAL(20,6)) as tlDuration
 									from
 										assoc_pjt_projectCurrentTasks a left join taskList b on a.nodeRef = b.nodeRef	
 								</SQL>
@@ -1258,7 +1258,7 @@
 		<DimensionUsage name="completionDate" caption="${msg("jsolap.completionDate.title")}" source="timeDimension" foreignKey="completionDate" />
 	
 
-		<Measure name="projectsNumber" caption="${msg("jsolap.projectsNumber.title")}" column="noderef" datatype="Numeric" aggregator="count" visible="true" />
+		<Measure name="projectsNumber" caption="${msg("jsolap.projectsNumber.title")}" column="nodeRef" datatype="Integer" aggregator="count" visible="true" />
 		<Measure name="averageDuration" caption="${msg("jsolap.averageDuration.title")}" column="duration" datatype="Numeric" aggregator="avg" visible="true" />
 		<Measure name="averageProgress" caption="${msg("jsolap.averageProgress.title")}" column="completionPercent" datatype="Numeric" aggregator="avg" visible="true"  />
 		<Measure name="averageNote" caption="${msg("jsolap.averageNote.title")}" column="projectScore" datatype="Numeric" aggregator="avg" visible="true"  />
@@ -1270,7 +1270,7 @@
 		</CalculatedMember> 
 		
 		<CalculatedMember name="cumulatedProjectNumber" caption="${msg("jsolap.cumulatedProjectNumber.title")}" dimension="Measures" visible="true">
-			<Formula>SUM(YTD(),[Measures].[projectsNumberDistinct])</Formula>
+			<Formula>SUM(YTD(),[Measures].[projectsNumber])</Formula>
 		</CalculatedMember> 
 	
 	</Cube>
@@ -1284,12 +1284,12 @@
 							a.doc->>"$.bcpg_nutListNut[0]" as name,
 							a.doc->>"$.bcpg_nutListNut_bcpg_nodeRef[0]" as nodeRef,
 							a.doc->>"$.bcpg_nutListGroup" as nutGroup,
-							a.doc->>"$.bcpg_nutListValue" as nutValue,
-							a.doc->>"$.bcpg_nutListMaxi" as nutMaxi,
-							a.doc->>"$.bcpg_nutListMini" as nutMini,
-							a.doc->>"$.bcpg_nutListFormulatedValue" as nutFormulatedValue,
-							a.doc->>"$.bcpg_nutListGDAPerc" as nutListGDAPerc,
-							a.doc->>"$.bcpg_nutListValuePerServing" as nutListValuePerServing,
+							CAST(a.doc->>"$.bcpg_nutListValue" AS DECIMAL(20,6)) as nutValue,
+							CAST(a.doc->>"$.bcpg_nutListMaxi" AS DECIMAL(20,6)) as nutMaxi,
+							CAST(a.doc->>"$.bcpg_nutListMini" AS DECIMAL(20,6)) as nutMini,
+							CAST(a.doc->>"$.bcpg_nutListFormulatedValue" AS DECIMAL(20,6)) as nutFormulatedValue,
+							CAST(a.doc->>"$.bcpg_nutListGDAPerc" AS DECIMAL(20,6)) as nutListGDAPerc,
+							CAST(a.doc->>"$.bcpg_nutListValuePerServing" AS DECIMAL(20,6)) as nutListValuePerServing,
 							b.nodeRef as productNodeRef,
 							b.doc->>"$.cm_name" as productName,
 							b.doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
@@ -1303,7 +1303,7 @@
 							b.doc->>"$.cm_versionLabel" as productVersionLabel,
 							b.doc->>"$.metadata_siteId" as siteId,
 							b.doc->>"$.metadata_siteName" as siteName,
-							b.doc->>"$.bcpg_nutrientProfilingScore" as nutrientProfilingScore,
+							CAST(b.doc->>"$.bcpg_nutrientProfilingScore" AS DECIMAL(20,6)) as nutrientProfilingScore,
 							b.doc->>"$.bcpg_nutrientProfilingClass" as nutrientProfilingClass
 						from
 							nutList a inner join bcpg_product b on a.entityNodeRef = b.nodeRef 
@@ -1428,9 +1428,9 @@
 					a.entityNodeRef,
 					a.doc->>"$.bcpg_lcaListLca[0]" as name,
 					a.doc->>"$.bcpg_lcaListLca_bcpg_nodeRef[0]" as nodeRef,
-					a.doc->>"$.bcpg_lcaListValue" as lcaValue,
-					a.doc->>"$.bcpg_lcaListPreviousValue" as lcaPreviousValue,
-					a.doc->>"$.bcpg_lcaListFutureValue" as lcaFutureValue,
+					CAST(a.doc->>"$.bcpg_lcaListValue" AS DECIMAL(20,6)) as lcaValue,
+					CAST(a.doc->>"$.bcpg_lcaListPreviousValue" AS DECIMAL(20,6)) as lcaPreviousValue,
+					CAST(a.doc->>"$.bcpg_lcaListFutureValue" AS DECIMAL(20,6)) as lcaFutureValue,
 					b.nodeRef as productNodeRef,
 					b.doc->>"$.cm_name" as productName,
 					b.doc->>"$.bcpg_productHierarchy1[0]" as productHierarchy1,
@@ -1444,8 +1444,8 @@
 					b.doc->>"$.cm_versionLabel" as productVersionLabel,
 					b.doc->>"$.metadata_siteId" as siteId,
 					b.doc->>"$.metadata_siteName" as siteName,
-					b.doc->>"$.bcpg_lcaScore" as lcaScore,
-					b.doc->>"$.bcpg_ecoScore" as ecoScore
+					CAST(b.doc->>"$.bcpg_lcaScore" AS DECIMAL(20,6)) as lcaScore,
+					CAST(b.doc->>"$.bcpg_ecoScore" AS DECIMAL(20,6)) as ecoScore
 				from
 					lcaList a inner join bcpg_product b on a.entityNodeRef = b.nodeRef 
 			</SQL>
@@ -1569,20 +1569,20 @@
 						doc->>"$.bcpg_erpCode" as erpCode,
 						doc->>"$.bcpg_eanCode" as eanCode,
 						doc->>"$.bcpg_legalName" as legalName,
-						doc->>"$.bcpg_nutrientProfilingScore" as nutrientProfilingScore,
+						CAST(doc->>"$.bcpg_nutrientProfilingScore" AS DECIMAL(20,6)) as nutrientProfilingScore,
 						doc->>"$.bcpg_nutrientProfilingClass" as nutrientProfilingClass,
-						doc->>"$.bcpg_lcaScore" as lcaScore,
-						doc->>"$.bcpg_ecoScore" as ecoScore,
+						CAST(doc->>"$.bcpg_lcaScore" AS DECIMAL(20,6)) as lcaScore,
+						CAST(doc->>"$.bcpg_ecoScore" AS DECIMAL(20,6)) as ecoScore,
 						doc->>"$.bcpg_storageConditionsRef" as storageConditions,
 						CAST( doc->>"$.cm_created" as DATE) as productDateCreated,
 						CAST( doc->>"$.cm_modified" as DATE) as productDateModified,
 						CAST( doc->>"$.bcpg_startEffectivity" as DATE) as startEffectivity,
 						CAST( doc->>"$.bcpg_endEffectivity" as DATE) as endEffectivity,
 						doc->>"$.bcpg_productState" as productState,
-						doc->>"$.bcpg_projectedQty" as projectedQty,
-						doc->>"$.bcpg_unitTotalCost" as unitTotalCost,
-						doc->>"$.bcpg_profitability" as profitability,
-						doc->>"$.bcpg_unitPrice" as unitPrice,
+						CAST(doc->>"$.bcpg_projectedQty" AS DECIMAL(20,6)) as projectedQty,
+						CAST(doc->>"$.bcpg_unitTotalCost" AS DECIMAL(20,6)) as unitTotalCost,
+						CAST(doc->>"$.bcpg_profitability" AS DECIMAL(20,6)) as profitability,
+						CAST(doc->>"$.bcpg_unitPrice" AS DECIMAL(20,6)) as unitPrice,
 						doc->>"$.cm_versionLabel" as versionLabel,
 						doc->>"$.cm_creator" as creator,
 						doc->>"$.cm_modifier" as modifier
@@ -1943,7 +1943,7 @@
 			</Hierarchy>
 		</Dimension>
 	
-		<Dimension type="StandardDimension" foreignKey="noderef"  name="packaging" caption="${msg("jsolap.packaging.title")}">
+		<Dimension type="StandardDimension" foreignKey="nodeRef"  name="packaging" caption="${msg("jsolap.packaging.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.packaging.caption")}" primaryKeyTable="packagingList" primaryKey="entityNodeRef">
 				<View name="packagingList" alias="packagingList">
 						<SQL dialect="generic">
@@ -2004,8 +2004,8 @@
 		<DimensionUsage name="startEffectivity" caption="${msg("jsolap.effectivityStart.title")}" source="timeDimension" foreignKey="startEffectivity" />
 		<DimensionUsage name="endEffectivity" caption="${msg("jsolap.effectivityEnd.title")}" source="timeDimension" foreignKey="endEffectivity" />
 		
-		<Measure name="productNumber" caption="${msg("jsolap.productNumber.title")}" column="noderef" datatype="Integer" aggregator="distinct-count" visible="true" />
-		<Measure name="projectedQty" caption="${msg("jsolap.projectedQuantity.title")}" column="projectedQty" datatype="Integer" aggregator="sum" visible="true">
+		<Measure name="productNumber" caption="${msg("jsolap.productNumber.title")}" column="nodeRef" datatype="Integer" aggregator="distinct-count" visible="true" />
+		<Measure name="projectedQty" caption="${msg("jsolap.projectedQuantity.title")}" column="projectedQty" datatype="Numeric" aggregator="sum" visible="true">
 		</Measure>
 		<Measure name="unitTotalCost" caption="${msg("jsolap.saleUnitCosts.title")}" column="unitTotalCost" datatype="Numeric" aggregator="avg" visible="true" >
 		</Measure>
