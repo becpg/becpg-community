@@ -8,11 +8,7 @@
   },
 
   "tableOfContents": {
-    "enabled": true,
-    "title": "SLabel.tableOfContents",
-    "font": "Arial-Bold",
-    "size": 16,
-    "color": "#1F3864"
+    "enabled": false
   },
 
   "pagination": {
@@ -45,8 +41,10 @@
       "recurse": true,
       "componentTypes": ["bcpg:rawMaterial", "bcpg:semiFinishedProduct"],
       "componentHeading": true,
+      "emptyPlaceholder": "SLabel.annexRawMaterialsEmptyPlaceholder",
       "sort": "COMPO_ORDER",
       "dedup": true,
+      "required": true,
       "mimeTypes": ["application/pdf"]
     },
     {
@@ -55,8 +53,10 @@
       "scope": "PACKAGING_CHILDREN",
       "pkgLevel": "Primary",
       "componentHeading": true,
+      "emptyPlaceholder": "SLabel.annexPrimaryPackagingEmptyPlaceholder",
       "sort": "COMPO_ORDER",
       "dedup": true,
+      "required": true,
       "mimeTypes": ["application/pdf"]
     },
     {
@@ -65,8 +65,10 @@
       "scope": "PACKAGING_CHILDREN",
       "pkgLevel": "Secondary",
       "componentHeading": true,
+      "emptyPlaceholder": "SLabel.annexSecondaryPackagingEmptyPlaceholder",
       "sort": "COMPO_ORDER",
       "dedup": true,
+      "required": true,
       "mimeTypes": ["application/pdf"]
     },
     {
@@ -75,7 +77,7 @@
       "scope": "ENTITY",
       "componentHeading": false,
       "emptyPlaceholder": "SLabel.annexPhotosEmptyPlaceholder",
-      "required": false,
+      "required": true,
       "mimeTypes": ["application/pdf", "image/png", "image/jpeg"]
     },
     {
@@ -83,7 +85,17 @@
       "title": "SLabel.annexQualityDocuments",
       "scope": "ENTITY",
       "componentHeading": false,
-      "required": false,
+      "emptyPlaceholder": "SLabel.annexQualityDocumentsEmptyPlaceholder",
+      "required": true,
+      "mimeTypes": ["application/pdf"]
+    },
+    {
+      "reportKind": "annexe-subcontractor",
+      "title": "SLabel.annexSubcontractors",
+      "scope": "ENTITY",
+      "componentHeading": false,
+      "emptyPlaceholder": "SLabel.annexSubcontractorsEmptyPlaceholder",
+      "required": true,
       "mimeTypes": ["application/pdf"]
     }
   ]

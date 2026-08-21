@@ -1949,7 +1949,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					"annexe-claim-efficacy",
 					"annexe-gmp-animal-testing",
 					"annexe-photos",
-					"annexe-qualite"
+					"annexe-qualite",
+					"annexe-subcontractor"
 			);
 			for (String rk : annexReportKinds) {
 				MLText mltValue = new MLText();
@@ -2025,9 +2026,16 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 				if (productType.equals(PLMModel.TYPE_FINISHEDPRODUCT)) {
 					try {
-						NodeRef aggJsonNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/ProductSpecReport.agg.json", false);
+						NodeRef aggJsonNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/ProductSpecReport.agg.json", true);
+						NodeRef aggPropNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/ProductSpecReport.properties", true);
+						NodeRef aggFrPropNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/ProductSpecReport_fr.properties", true);
+						NodeRef aggEnPropNodeRef = reportTplService.createTplRessource(folderNodeRef, "beCPG/birt/document/product/default/ProductSpecReport_en.properties", true);
+
 						List<NodeRef> aggResources = new ArrayList<>(resources);
 						aggResources.add(aggJsonNodeRef);
+						aggResources.add(aggPropNodeRef);
+						aggResources.add(aggFrPropNodeRef);
+						aggResources.add(aggEnPropNodeRef);
 
 						ReportTplInformation aggTplInfo = new ReportTplInformation();
 						aggTplInfo.setReportType(ReportType.Document);
