@@ -121,16 +121,7 @@ public class OlapServiceImpl implements OlapService {
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef getOlapQueriesFolder() {
-		// #24931: create the folder on first access. No bootstrap patch ever created it, so it was
-		// missing from every fresh installation: getFolderByPath returned null, the web script did not
-		// expose olapQueriesFolder, and Saiku had nowhere to store queries and dashboards.
-		NodeRef systemFolder = repoService.getFolderByPath("/" + RepoConsts.PATH_SYSTEM);
-		if (systemFolder == null) {
-			logger.warn("Folder " + RepoConsts.PATH_SYSTEM + " not found: the OLAP space is unavailable");
-			return null;
-		}
-		return repoService.getOrCreateFolderByPath(systemFolder, RepoConsts.PATH_OLAP_QUERIES,
-				RepoConsts.PATH_OLAP_QUERIES);
+		return repoService.getFolderByPath("/" + RepoConsts.PATH_SYSTEM + "/" + RepoConsts.PATH_OLAP_QUERIES);
 	}
 
 	/** {@inheritDoc} */
